@@ -1,0 +1,58 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base", "Base\Base.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Startup", "Startup\Startup.csproj", "{AFE09CEA-4F37-4A4A-94EE-760D581F5D51}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{95A2BF58-8568-4512-BD82-F0240FFC7558}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		DesignTimeDebugging = DesignTimeDebugging
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Debug.ActiveCfg = Debug|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Debug.Build.0 = Debug|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.DesignTimeDebugging.ActiveCfg = DesignTimeDebugging|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.DesignTimeDebugging.Build.0 = DesignTimeDebugging|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Release.ActiveCfg = Release|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Release.Build.0 = Release|.NET
+		{AFE09CEA-4F37-4A4A-94EE-760D581F5D51}.Debug.ActiveCfg = Debug|.NET
+		{AFE09CEA-4F37-4A4A-94EE-760D581F5D51}.Debug.Build.0 = Debug|.NET
+		{AFE09CEA-4F37-4A4A-94EE-760D581F5D51}.DesignTimeDebugging.ActiveCfg = Debug|.NET
+		{AFE09CEA-4F37-4A4A-94EE-760D581F5D51}.DesignTimeDebugging.Build.0 = Debug|.NET
+		{AFE09CEA-4F37-4A4A-94EE-760D581F5D51}.Release.ActiveCfg = Release|.NET
+		{AFE09CEA-4F37-4A4A-94EE-760D581F5D51}.Release.Build.0 = Release|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.Debug.ActiveCfg = Debug|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.Debug.Build.0 = Debug|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.DesignTimeDebugging.ActiveCfg = Debug|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.DesignTimeDebugging.Build.0 = Debug|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.Release.ActiveCfg = Release|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.Release.Build.0 = Release|.NET
+		{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}.Debug.ActiveCfg = Debug
+		{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}.Debug.Build.0 = Debug
+		{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}.DesignTimeDebugging.ActiveCfg = Debug
+		{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}.DesignTimeDebugging.Build.0 = Debug
+		{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}.Release.ActiveCfg = Release
+		{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}.Release.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionItems) = postSolution
+		Icon1.ico = Icon1.ico
+		LayerButtons.bmp = LayerButtons.bmp
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
