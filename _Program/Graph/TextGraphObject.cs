@@ -160,7 +160,13 @@ namespace Altaxo
 		protected internal int m_LayerNumber=-1; // number of the layer or -1 for the current layer
 		protected internal int m_PlotNumber=-1; // number of the plot curve or -1 in case this is disabled
 		protected internal int m_PlotPointNumber=-1; // number of the plot point or -1 for the whole curve
-		
+
+		protected internal float m_cyLineSpace; // cached linespace value of the font
+		protected internal float m_cyAscent;    // cached ascent value of the font
+		protected internal float m_cyDescent; /// cached descent value of the font
+		protected internal float m_Width; // cached width of the item
+
+
 		// help items
 		protected Font	m_Font;
 		public    float	m_yShift=0; 
@@ -236,6 +242,10 @@ namespace Altaxo
 
 	public class TextLine	: System.Collections.CollectionBase
 	{
+		protected internal float m_cyLineSpace; // linespace value : cyAscent + cyDescent
+		protected internal float m_cyAscent;    // height of the items above the ground line
+		protected internal float m_cyDescent; /// heigth of the items below the ground line
+		protected internal float m_Width; // cached width of the line (sum of width of all items)
 
 		public TextItem this[int i]
 		{
@@ -290,8 +300,9 @@ namespace Altaxo
 
 		protected TextLine.TextLineCollection m_TextLines;
 		protected bool m_bStructureInSync=false; // true when the text was interpretet and the structure created
-
+		protected bool m_bMeasureInSync=false; // true when all items are measured
 		
+
 #region "Constructors"
 
 		public ExtendedTextGraphObject()
@@ -337,6 +348,8 @@ namespace Altaxo
 
 		protected void Interpret(Graphics g)
 		{
+			this.m_bMeasureInSync = false; // if structure is changed, the measure is out of sync
+
 			char[] searchchars = new Char[] { '\\', '\r', '\n', ')' };
 
 			// Modification of StringFormat is necessary to avoid 
@@ -375,8 +388,7 @@ namespace Altaxo
 			int currTxtIdx = 0;
 
 			TextItem currTextItem = new TextItem(currFont);
-			TextItem firstItem = currTextItem; // preserve the first item
-			itemstack.Push(currTextItem);
+//			TextItem firstItem = currTextItem; // preserve the first item
 			
 
 
@@ -401,12 +413,12 @@ namespace Altaxo
 					// currTxtIdx to (bi-1) to the current text item
 					currTextItem.m_Text += m_Text.Substring(currTxtIdx,bi-currTxtIdx);
 					
-					if('\r'==m_Text[bi])
+					if('\r'==m_Text[bi]) // carriage return character : simply ignore it
 					{
 						// simply ignore this character, since we search for \n
 						currTxtIdx=bi+1;
 					}
-					else if('\n'==m_Text[bi])
+					else if('\n'==m_Text[bi]) // newline character : create a new line
 					{
 						currTxtIdx = bi+1;
 						// create a new line
@@ -416,7 +428,7 @@ namespace Altaxo
 						currTextItem = new TextItem(currTextItem,null);
 						currTextLine.Add(currTextItem);
 					}
-					else if('\\'==m_Text[bi])
+					else if('\\'==m_Text[bi]) // backslash : look what comes after
 					{
 						if(bi+1<m_Text.Length && (')'==m_Text[bi+1] || '\\'==m_Text[bi+1])) // if a closing brace or a backslash, take these as chars
 						{
@@ -455,6 +467,15 @@ namespace Altaxo
 									currTxtIdx = bi+3;
 								}
 									break; // underlined
+								case 's':
+								case 'S': // strikeout
+								{
+									itemstack.Push(currTextItem);
+									currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily,currTextItem.Font.Size,currTextItem.Font.Style | FontStyle.Strikeout, GraphicsUnit.World));
+									currTextLine.Add(currTextItem);
+									currTxtIdx = bi+3;
+								}
+									break; // end strikeout
 								case 'g':
 								case 'G':
 								{
@@ -549,10 +570,19 @@ namespace Altaxo
 					else if(')'==m_Text[bi]) // closing brace
 					{
 						// the formating is finished, we can return to the formating of the previous section
-						TextItem preservedprevious = itemstack.Count >0 ? (TextItem)itemstack.Pop() : firstItem;
-						currTextItem = new TextItem(preservedprevious,null);
-						currTextLine.Add(currTextItem);
-						currTxtIdx = bi+1;
+						if(itemstack.Count>0)
+						{
+							TextItem preservedprevious = (TextItem)itemstack.Pop();
+							currTextItem = new TextItem(preservedprevious,null);
+							currTextLine.Add(currTextItem);
+							currTxtIdx = bi+1;
+						}
+						else // if the stack is empty, take the brace as it is, and use the default style
+						{
+							currTextItem.m_Text += m_Text[bi];
+							currTxtIdx = bi+1;
+						}
+
 					}
 				}
 
@@ -562,6 +592,82 @@ namespace Altaxo
 		}
 	
 
+		protected void MeasureStructure(Graphics g, object obj)
+		{
+			float currPosX=0;
+			float currPosY=0;
+			PointF zeroPoint = new PointF(0,0);
+			SizeF currSize;
+	
+			float maxLineWidth=0;
+			float maxLineSpace=0;
+
+			
+			// Modification of StringFormat is necessary to avoid 
+			// too big spaces between successive words
+			StringFormat strfmt = StringFormat.GenericTypographic;
+			strfmt.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+
+			strfmt.LineAlignment = StringAlignment.Far;
+			strfmt.Alignment = StringAlignment.Near;
+
+			
+			for(int nLine=0;nLine<m_TextLines.Count;nLine++)
+			{
+
+				float maxLineAscent=0;
+				float maxLineDescent=0;
+				float sumItemWidth=0;
+				for(int nItem=0;nItem<m_TextLines[nLine].Count;nItem++)
+				{
+
+					TextItem ti = m_TextLines[nLine][nItem];
+
+					if(ti.IsEmpty)
+					{
+						continue;
+					}
+					else if(ti.IsText)
+					{
+						MeasureFont(g,ti.Font, out ti.m_cyLineSpace, out ti.m_cyAscent, out ti.m_cyDescent);
+						ti.m_Width = g.MeasureString(ti.m_Text, ti.Font, 0, strfmt).Width;
+						
+						maxLineAscent = Math.Max(ti.m_cyAscent-ti.m_yShift,maxLineAscent);
+						maxLineDescent = Math.Max(ti.m_cyDescent+ti.m_yShift,maxLineDescent);
+						sumItemWidth += ti.m_Width;
+					}
+
+					else if(ti.IsSymbol)
+					{
+						if(obj is Altaxo.Graph.Layer)
+						{
+							Graph.Layer layer = (Graph.Layer)obj;
+							if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
+								layer = layer.ParentLayerList[ti.m_LayerNumber];
+
+							if(ti.m_PlotNumber<layer.PlotAssociations.Count)
+							{
+								Graph.PlotAssociation pa = layer.PlotAssociations[ti.m_PlotNumber];
+								MeasureFont(g,ti.Font,out ti.m_cyLineSpace, out ti.m_cyAscent, out ti.m_cyDescent);
+								ti.m_Width = g.MeasureString(ti.m_Text, ti.Font, 0, strfmt).Width;
+
+								maxLineAscent = Math.Max(ti.m_cyAscent-ti.m_yShift,maxLineAscent);
+								maxLineDescent = Math.Max(ti.m_cyDescent+ti.m_yShift,maxLineDescent);
+								sumItemWidth += ti.m_Width;
+							}
+						}
+					} // end if ti.IsSymbol
+				} // end for all items in the line
+
+				// now put the line properties
+				m_TextLines[nLine].m_cyAscent = maxLineAscent;
+				m_TextLines[nLine].m_cyDescent = maxLineDescent;
+				m_TextLines[nLine].m_cyLineSpace = maxLineAscent + maxLineDescent;
+				m_TextLines[nLine].m_Width = sumItemWidth;
+			} // for all lines
+
+			m_bMeasureInSync = true;
+		} // end of function MeasureStructure
 
 
 
@@ -576,6 +682,8 @@ namespace Altaxo
 			set
 			{
 				m_Font = value;
+				this.m_bStructureInSync=false; // since the font is cached in the structure, it must be renewed
+				this.m_bMeasureInSync=false;
 			}
 		}
 
@@ -605,13 +713,13 @@ namespace Altaxo
 
 
 	
-		public void MeasureFont(Graphics g, Font ft, out float cyLineSpace, out float cyAscent, out float cyDescent)
+		public static void MeasureFont(Graphics g, Font ft, out float cyLineSpace, out float cyAscent, out float cyDescent)
 		{	
 			// get some properties of the font
-			cyLineSpace = m_Font.GetHeight(g); // space between two lines
-			int   iCellSpace  = m_Font.FontFamily.GetLineSpacing(FontStyle.Regular);
-			int   iCellAscent = m_Font.FontFamily.GetCellAscent(FontStyle.Regular);
-			int   iCellDescent = m_Font.FontFamily.GetCellDescent(FontStyle.Regular);
+			cyLineSpace = ft.GetHeight(g); // space between two lines
+			int   iCellSpace  = ft.FontFamily.GetLineSpacing(ft.Style);
+			int   iCellAscent = ft.FontFamily.GetCellAscent(ft.Style);
+			int   iCellDescent = ft.FontFamily.GetCellDescent(ft.Style);
 			cyAscent  = cyLineSpace*iCellAscent/iCellSpace;
 			cyDescent = cyLineSpace*iCellDescent/iCellSpace; 
 		}
@@ -621,17 +729,20 @@ namespace Altaxo
 			if(!this.m_bStructureInSync)
 				this.Interpret(g);
 
+			if(!this.m_bMeasureInSync)
+				this.MeasureStructure(g,obj);
 
 			System.Drawing.Drawing2D.GraphicsState gs = g.Save();
-			//g.TranslateTransform(X,Y);
-			//g.RotateTransform(m_Rotation);
+			
+			g.TranslateTransform(X,Y);
+			g.RotateTransform(m_Rotation);
 
 			// Modification of StringFormat is necessary to avoid 
 			// too big spaces between successive words
 			StringFormat strfmt = StringFormat.GenericTypographic;
 			strfmt.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
-			strfmt.LineAlignment = StringAlignment.Far;
+			strfmt.LineAlignment = StringAlignment.Near;
 			strfmt.Alignment = StringAlignment.Near;
 
 			float PlotSymbolWidth = g.MeasureString("MMM",m_Font,new PointF(0,0),strfmt).Width;
@@ -642,6 +753,11 @@ namespace Altaxo
 
 			float currPosX=0;
 			float currPosY=0;
+			if(m_TextLines.Count>0)
+			{
+				currPosY = m_TextLines[0].m_cyAscent; 
+			}
+
 			SizeF currSize;
 			for(int nLine=0;nLine<m_TextLines.Count;nLine++)
 			{
@@ -656,13 +772,10 @@ namespace Altaxo
 
 					if(ti.IsText)
 					{
-						// now measure the string
-						PointF currPosPoint = new PointF(currPosX, currPosY + ti.m_yShift);
-						currSize = g.MeasureString(ti.m_Text, ti.Font, currPosPoint, strfmt);
-						g.DrawString(ti.m_Text, ti.Font, new SolidBrush(m_Color), currPosPoint, strfmt);
-
+						g.DrawString(ti.m_Text, ti.Font, new SolidBrush(m_Color), new PointF(currPosX, currPosY + ti.m_yShift - ti.m_cyAscent), strfmt);
+						Console.WriteLine("{0} {1} {2}",ti.m_Text,ti.m_yShift,ti.m_cyAscent);
 						// update positions
-						currPosX += currSize.Width;
+						currPosX += ti.m_Width;
 					} // end of if ti.IsText
 
 					else if(ti.IsSymbol && obj is Altaxo.Graph.Layer)
@@ -674,11 +787,9 @@ namespace Altaxo
 						if(ti.m_PlotNumber<layer.PlotAssociations.Count)
 						{
 							Graph.PlotAssociation pa = layer.PlotAssociations[ti.m_PlotNumber];
-							
-							float cyLineSpace, cyAscent, cyDescent;
-							MeasureFont(g,ti.Font,out cyLineSpace, out cyAscent, out cyDescent);
-							SizeF symsize = pa.PlotStyle.PaintSymbol(g, new PointF(currPosX,currPosY + ti.m_yShift -cyDescent-cyAscent/2+cyDescent/4), PlotSymbolWidth);
-							currPosX += symsize.Width;
+						
+							pa.PlotStyle.PaintSymbol(g, new PointF(currPosX,currPosY + ti.m_yShift - ti.m_cyDescent-ti.m_cyAscent/2+ti.m_cyDescent/4), ti.m_Width);
+							currPosX += ti.m_Width;
 						}
 
 					} // end if ti.IsSymbol
