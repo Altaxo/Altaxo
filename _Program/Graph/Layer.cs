@@ -51,7 +51,7 @@ namespace Altaxo.Graph
 			m_LayerPosition = new PointF(prtSize.Width*0.14f,prtSize.Height*0.14f);
 			m_LayerSize = new SizeF(prtSize.Width*0.76f,prtSize.Height*0.7f);
 
-			TextGraphObject tgo = new TextGraphObject(129,90,"Das ist ein Test",new Font(FontFamily.GenericSansSerif,72,GraphicsUnit.World),Color.Black);
+			ExtendedTextGraphObject tgo = new ExtendedTextGraphObject(129,90,@"\g(Das) \i(ist) \u(ein) \b(Test)",new Font(FontFamily.GenericSansSerif,36,GraphicsUnit.World),Color.Black);
 			tgo.Rotation = 0;
 			coll.Add(tgo);
 			CalculateMatrix();
