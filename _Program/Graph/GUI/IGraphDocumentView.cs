@@ -192,7 +192,7 @@ namespace Altaxo.Graph
 		/// <param name="currentLayer">The layer number. The controller has to make this number the CurrentLayerNumber.</param>
 		/// <param name="parent">The parent control which is the parent of the context menu.</param>
 		/// <param name="pt">The location where the context menu should be shown.</param>
-		void EhView_ShowDataContextMenu(int currentLayer, System.Windows.Forms.Form parent, Point pt);
+		void EhView_ShowDataContextMenu(int currentLayer, System.Windows.Forms.Control parent, Point pt);
 
 		/// <summary>
 		/// This function is called if the user changed the GraphTool.

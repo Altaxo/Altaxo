@@ -71,7 +71,8 @@ namespace Altaxo.Worksheet
 				TableView frm = new TableView((System.Windows.Forms.Form)parent,null);
 				frm.Location = m_Location;
 				frm.Size = m_Size;
-			
+				frm.Dock = DockStyle.Fill;
+
 				((ITableController)m_Controller).View = frm;
 
 				if(m_Controller is System.Runtime.Serialization.IDeserializationCallback)
@@ -106,13 +107,14 @@ namespace Altaxo.Worksheet
 				parent.MdiChildActivate += new EventHandler(this.EhMdiChildDeactivate);
 			}
 
+			// Monitor closed and closing events to intervent if neccessary
+			parent.Closing += new CancelEventHandler(this.EhClosing);
+			parent.Closed += new EventHandler(this.EhClosed);
 
 			// the setting of the graph controller should be left out until the end, since it calls back some functions of
 			// the view so that the view should be initialized before
 			m_Ctrl = ctrl;
-
-			// now show our window
-			this.Show();
+		
 		}
 
 		/// <summary>
@@ -249,19 +251,19 @@ namespace Altaxo.Worksheet
 				m_Ctrl.EhView_TableAreaSizeChanged(e);
 		}
 
-		/*
-		protected override void OnClosed(System.EventArgs e)
+		
+		protected void EhClosed(object sender, System.EventArgs e)
 		{
 			if(null!=m_Ctrl)
 				m_Ctrl.EhView_Closed(e);
 		}
 
-		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+		protected void EhClosing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			if(null!=m_Ctrl)
 				m_Ctrl.EhView_Closing(e);
 		}
-*/
+
 	
 		protected void EhMdiChildActivate(object sender, EventArgs e)
 		{

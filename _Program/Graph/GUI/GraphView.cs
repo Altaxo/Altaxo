@@ -12,7 +12,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(GraphView.SerializationSurrogate0))]
 	[SerializationVersion(0,"Initial version.")]
-	public class GraphView : System.Windows.Forms.Form, IGraphView
+	public class GraphView : System.Windows.Forms.UserControl, IGraphView
 	{
 		private System.Windows.Forms.ImageList m_GraphToolsImages;
 		private System.Windows.Forms.ImageList m_LayerButtonImages;
@@ -95,9 +95,7 @@ namespace Altaxo.Graph
 
 		public GraphView(System.Windows.Forms.Form parent, IGraphController ctrl)
 		{
-			if(null!=parent)
-				this.MdiParent = parent;
-
+			
 			//
 			// Required for Windows Form Designer support
 			//
@@ -116,14 +114,14 @@ namespace Altaxo.Graph
 				parent.MdiChildActivate += new EventHandler(this.EhMdiChildDeactivate);
 			}
 
-
+			// Monitor closed and closing events to intervent if neccessary
+			parent.Closing += new CancelEventHandler(this.EhGraphView_Closing);
+			parent.Closed += new EventHandler(this.EhGraphView_Closed);
 
 			// the setting of the graph controller should be left out until the end, since it calls back some functions of
 			// the view so that the view should be initialized before
 			m_Ctrl = ctrl;
 
-			// now show our window
-			this.Show();
 		}
 
 		/// <summary>
@@ -198,14 +196,11 @@ namespace Altaxo.Graph
 			// 
 			// GraphView
 			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(292, 266);
 			this.Controls.Add(this.m_GraphPanel);
 			this.Controls.Add(this.m_LayerToolbar);
 			this.Name = "GraphView";
 			this.Text = "GraphView";
-			this.Closing += new System.ComponentModel.CancelEventHandler(this.EhGraphView_Closing);
-			this.Closed += new System.EventHandler(this.EhGraphView_Closed);
 			this.ResumeLayout(false);
 
 		}
@@ -310,7 +305,7 @@ namespace Altaxo.Graph
 
 		protected void EhMdiChildActivate(object sender, EventArgs e)
 		{
-			if(((System.Windows.Forms.Form)sender).ActiveMdiChild==this)
+			if(((System.Windows.Forms.Form)sender).ActiveMdiChild==this.ParentForm)
 			{
 				// if no toolbar present already, create a toolbar
 				if(null==m_GraphToolsToolBar)
@@ -323,7 +318,7 @@ namespace Altaxo.Graph
 
 		protected void EhMdiChildDeactivate(object sender, EventArgs e)
 		{
-			if(((System.Windows.Forms.Form)sender).ActiveMdiChild!=this)
+			if(((System.Windows.Forms.Form)sender).ActiveMdiChild!=this.ParentForm)
 			{
 				if(null!=m_GraphToolsToolBar)
 					m_GraphToolsToolBar.Parent=null;
@@ -345,7 +340,7 @@ namespace Altaxo.Graph
 		{
 			get
 			{
-				return this;
+				return this.ParentForm;
 			}
 		}
 
@@ -354,7 +349,13 @@ namespace Altaxo.Graph
 		{
 			set
 			{
-				this.Menu = value; // do not clone the menu
+				if(null!=this.ParentForm)
+				{
+					if(null!=this.ParentForm.Menu)
+						this.ParentForm.Menu.MergeMenu( value ); // do not clone the menu
+					else
+						this.ParentForm.Menu = value; // do not clone the menu
+				}
 			}
 		}
 

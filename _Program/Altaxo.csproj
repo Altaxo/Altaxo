@@ -349,21 +349,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\TitleFormatLayerControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\TitleFormatLayerControl.resx"
-                    DependentUpon = "TitleFormatLayerControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Graph\TitleFormatLayerController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Graph\TwoDimMeshDataAssociation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -425,7 +410,7 @@
                 />
                 <File
                     RelPath = "Graph\GUI\GraphView.cs"
-                    SubType = "Form"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
@@ -522,6 +507,21 @@
                     RelPath = "Graph\GUI\TextControlDialog.resx"
                     DependentUpon = "TextControlDialog.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\TitleFormatLayerControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\TitleFormatLayerControl.resx"
+                    DependentUpon = "TitleFormatLayerControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\TitleFormatLayerController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\DialogFactory.cs"

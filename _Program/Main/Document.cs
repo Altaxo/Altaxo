@@ -151,15 +151,7 @@ namespace Altaxo
 		{
 			
 			Altaxo.Data.DataTable dt1 = CreateNewTable(worksheetName, bCreateDefaultColumns);
-			Altaxo.Gui.WorkbenchForm form = new Altaxo.Gui.WorkbenchForm(parentForm);
-			Altaxo.Worksheet.TableView view = new Altaxo.Worksheet.TableView(form,null);
-			form.Controls.Add(view);
-			view.Dock = System.Windows.Forms.DockStyle.Fill;
-			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(view,dt1);
-			ctrl.View.TableViewForm.Text = dt1.TableName;
-			m_Worksheets.Add(ctrl.View.TableViewForm);
-			form.Show();
-			return ctrl.View;
+			return CreateNewWorksheet(parentForm,dt1);
 		}
 	
 		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parent, bool bCreateDefaultColumns)
@@ -175,20 +167,27 @@ namespace Altaxo
 
 		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parentForm, Altaxo.Data.DataTable table)
 		{
-			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(new Altaxo.Worksheet.TableView(parentForm,null),table);
+			Altaxo.Gui.WorkbenchForm form = new Altaxo.Gui.WorkbenchForm(parentForm);
+			Altaxo.Worksheet.TableView view = new Altaxo.Worksheet.TableView(form,null);
+			form.Controls.Add(view);
+			view.Dock = System.Windows.Forms.DockStyle.Fill;
+			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(view,table);
 			ctrl.View.TableViewForm.Text = table.TableName;
 			m_Worksheets.Add(ctrl.View.TableViewForm);
+			form.Show();
 			return ctrl.View;
 		}
 
 
-		public Altaxo.Graph.IGraphView CreateNewGraph(System.Windows.Forms.Form parent)
+		public Altaxo.Graph.IGraphView CreateNewGraph(System.Windows.Forms.Form parentForm)
 		{
-		//	Altaxo.Graph.GraphForm frm = new Altaxo.Graph.GraphForm(parent,this);
-		//	m_GraphForms.Add(frm);
-			
-			Altaxo.Graph.GraphController ctrl = new Altaxo.Graph.GraphController(new Altaxo.Graph.GraphView(parent,null));
+			Altaxo.Gui.WorkbenchForm form = new Altaxo.Gui.WorkbenchForm(parentForm);
+			Altaxo.Graph.GraphView view = new Altaxo.Graph.GraphView(form,null);
+			form.Controls.Add(view);
+			view.Dock = System.Windows.Forms.DockStyle.Fill;
+			Altaxo.Graph.GraphController ctrl = new Altaxo.Graph.GraphController(view);
 			m_GraphForms.Add(ctrl.View.Form);
+			form.Show();
 			return ctrl.View;
 		}
 
@@ -197,7 +196,6 @@ namespace Altaxo
 		{
 			m_GraphForms.Add(view.Form);
 		}
-
 
 
 		/// <summary>This will remove the GraphForm <paramref>frm</paramref> from the graph forms collection.</summary>

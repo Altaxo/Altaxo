@@ -804,7 +804,7 @@ namespace Altaxo.Graph
 		/// <param name="currLayer">The layer number. The controller has to make this number the CurrentLayerNumber.</param>
 		/// <param name="parent">The parent control which is the parent of the context menu.</param>
 		/// <param name="pt">The location where the context menu should be shown.</param>
-		public virtual void EhView_ShowDataContextMenu(int currLayer, System.Windows.Forms.Form parent, Point pt)
+		public virtual void EhView_ShowDataContextMenu(int currLayer, System.Windows.Forms.Control parent, Point pt)
 		{
 			int oldCurrLayer = this.CurrentLayerNumber;
 			this.CurrentLayerNumber = currLayer;
