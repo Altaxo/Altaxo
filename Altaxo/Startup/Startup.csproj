@@ -16,7 +16,7 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "WinExe"
-                PreBuildEvent = "copy ..\..\Altaxo\Startup\Altaxo*.resources ..\data\resources"
+                PreBuildEvent = "copy ..\..\Altaxo\Startup\Altaxo*.resources ..\data\resources&#xd;&#xa;copy ..\..\Altaxo\Startup\AltaxoCore.addin ..\AddIns"
                 PostBuildEvent = "copy ..\..\Altaxo\Startup\*.config"
                 RootNamespace = ""
                 RunPostBuildEvent = "OnBuildSuccess"
@@ -119,8 +119,7 @@
                 />
                 <File
                     RelPath = "AltaxoCore.addin"
-                    Link = "..\..\AddIns\AltaxoCore.addin"
-                    BuildAction = "None"
+                    BuildAction = "Content"
                 />
                 <File
                     RelPath = "AltaxoStartup.cs"

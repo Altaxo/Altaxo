@@ -26,7 +26,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zCommandBar", "..\Libraries
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zMagicLibrary", "..\Libraries\MagicLibrary\zMagicLibrary.csproj", "{993E6ED0-F820-4264-9989-B6341C179CB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zMagicLibrary", "..\Libraries\MagicLibrary\src\zMagicLibrary.csproj", "{993E6ED0-F820-4264-9989-B6341C179CB4}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
