@@ -485,7 +485,7 @@ namespace Altaxo.Data
         {
           info.CreateElement("Script");
           info.AddValue("ColName", s.GetColumnName((Altaxo.Data.DataColumn)entry.Key));
-          info.AddValue("Content",(Altaxo.Data.ColumnScript)entry.Value);
+          info.AddValue("Content",entry.Value);
           info.CommitElement();
         }
         info.CommitArray();
@@ -1010,6 +1010,8 @@ namespace Altaxo.Data
         for(int i=nFirstColumn+nDelCount-1;i>=nFirstColumn;i--)
         {
           string columnName = GetColumnName(this[i]);
+          if(this.m_ColumnScripts.Contains(this[i]))
+            this.m_ColumnScripts.Remove(this[i]);
           this.m_ColumnInfo.Remove(m_ColumnsByNumber[i]);
           this.m_ColumnsByName.Remove(columnName);
           this[i].ParentObject=null;
@@ -1045,16 +1047,25 @@ namespace Altaxo.Data
 
       DataColumn[] tmpColumn = new DataColumn[numberMoved];
       DataColumnInfo[] tmpInfo = new DataColumnInfo[numberMoved];
+      object[] tmpScript = new object[numberMoved];
 
       for(int i=0;i<numberMoved;i++)
       {
         tmpColumn[i] = this[selectedColumns[i]];
         tmpInfo[i] = (DataColumnInfo)this.m_ColumnInfo[m_ColumnsByNumber[i]];
+        tmpScript[i] = this.m_ColumnScripts[tmpColumn[i]];
       }
 
       this.RemoveColumns(selectedColumns,false);
 
       destination.Insert(tmpColumn,tmpInfo,0,true);
+
+      // Move the column scripts also
+      for(int i=0; i<numberMoved; i++)
+      {
+        if(tmpScript[i]!=null)
+          destination.m_ColumnScripts.Add(tmpColumn[i],tmpScript[i]);
+      }
     }
 
     #endregion

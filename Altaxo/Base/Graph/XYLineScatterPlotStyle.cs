@@ -370,7 +370,8 @@ namespace Altaxo.Graph
         PlotRangeList rangeList;
         PointF[] plotPoints;
         pd.GetRangesAndPoints(layer,out rangeList, out plotPoints);
-        Paint(g,layer,pd,rangeList,plotPoints);
+        if(rangeList!=null)
+          Paint(g,layer,pd,rangeList,plotPoints);
       }
       else if(plotObject is Altaxo.Calc.IScalarFunctionDD)
         Paint(g,layer,(Altaxo.Calc.IScalarFunctionDD)plotObject);

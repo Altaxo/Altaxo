@@ -24,6 +24,8 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
+//using System.Runtime.InteropServices;
+
 
 namespace Altaxo.Graph
 {
@@ -634,6 +636,9 @@ namespace Altaxo.Graph
       }
     } // end function PaintOneRange
 
+
+    //[DllImport("gdiplus.dll")]
+    //protected static extern int GdipDrawLines(System.IntPtr g, System.IntPtr p, PointF[] points, int count);
 
 
     public void SplineConnection_PaintOneRange(

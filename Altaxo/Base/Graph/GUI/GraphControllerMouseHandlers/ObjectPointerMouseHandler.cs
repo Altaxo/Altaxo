@@ -31,7 +31,6 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 {
-  #region Object Pointer Mouse Handler
   /// <summary>
   /// Handles the mouse events when the <see cref="GraphTools.ObjectPointer"/> tools is selected.
   /// </summary>
@@ -327,11 +326,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         int nLayer = (int)m_SelectedObjects[graphObject];
         if(graphObject.DoubleClick!=null)
         {
-          if(true==graphObject.OnDoubleClick())
-          {
-            ClearSelections();
-          }
-              
+          graphObject.OnDoubleClick();
+         
+          ClearSelections();
         }
       }
       return this;
@@ -522,7 +519,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
   } // end of class
 
-  #endregion // object pointer mouse handler
+
 
 
 }

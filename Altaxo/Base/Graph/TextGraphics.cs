@@ -24,6 +24,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
+using System.Text.RegularExpressions;
 
 namespace Altaxo.Graph
 {
@@ -515,6 +516,15 @@ namespace Altaxo.Graph
       this.m_bMeasureInSync=false;
     }
 
+
+    static Regex _regexIntArgument = new Regex(@"\(\n*(?<argone>\d+)\n*\)");
+    static Regex _regexIntStrgArgument = new Regex(@"\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\w+)\n*\)");
+    static Regex _regexIntIntArgument = new Regex(@"\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*\)");
+    static Regex _regexIntIntStrgArgument = new Regex(@"\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*,\n*(?<argthree>\w+)\n*\)");
+    // Be aware that double quote characters is in truth only one quote character, this is the syntax of a verbatim literal string
+    static Regex _regexIntIntQstrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*,\n*\""(?<argthree>([^\\\""]*(\\\"")*(\\\\)*)+)\""\n*\)");
+
+
     protected void Interpret(Graphics g)
     {
       this.m_bMeasureInSync = false; // if structure is changed, the measure is out of sync
@@ -727,6 +737,17 @@ namespace Altaxo.Graph
                   // either in the Form 
                   // \%(PlotCurveNumber) or
                   // \%(LayerNumber, PlotCurveNumber) or
+
+
+                  string matchstring = m_Text.Substring(bi+2);
+                  Match match = _regexIntIntQstrgArgument.Match(m_Text,bi+2);
+                  if(match.Success)
+                  {
+                    string lay = match.Result("${argone}");
+                    string plt = match.Result("${argtwo}");
+                    string pcol = match.Result("${argthree}");
+                  }
+
 
                   // find the corresponding closing brace
                   int closingbracepos = m_Text.IndexOf(")",bi+1);

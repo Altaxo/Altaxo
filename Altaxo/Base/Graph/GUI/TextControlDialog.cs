@@ -322,7 +322,7 @@ namespace Altaxo.Graph.GUI
       // m_btBold
       // 
       this.m_btBold.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.m_btBold.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btBold.Image")));
+      this.m_btBold.Image = ((System.Drawing.Image)(resources.GetObject("m_btBold.Image")));
       this.m_btBold.Location = new System.Drawing.Point(40, 112);
       this.m_btBold.Name = "m_btBold";
       this.m_btBold.Size = new System.Drawing.Size(32, 24);
@@ -332,7 +332,7 @@ namespace Altaxo.Graph.GUI
       // m_btItalic
       // 
       this.m_btItalic.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.m_btItalic.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btItalic.Image")));
+      this.m_btItalic.Image = ((System.Drawing.Image)(resources.GetObject("m_btItalic.Image")));
       this.m_btItalic.Location = new System.Drawing.Point(72, 112);
       this.m_btItalic.Name = "m_btItalic";
       this.m_btItalic.Size = new System.Drawing.Size(32, 24);
@@ -342,7 +342,7 @@ namespace Altaxo.Graph.GUI
       // m_btUnderline
       // 
       this.m_btUnderline.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.m_btUnderline.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btUnderline.Image")));
+      this.m_btUnderline.Image = ((System.Drawing.Image)(resources.GetObject("m_btUnderline.Image")));
       this.m_btUnderline.Location = new System.Drawing.Point(104, 112);
       this.m_btUnderline.Name = "m_btUnderline";
       this.m_btUnderline.Size = new System.Drawing.Size(32, 24);
@@ -351,7 +351,7 @@ namespace Altaxo.Graph.GUI
       // 
       // m_btSupIndex
       // 
-      this.m_btSupIndex.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btSupIndex.Image")));
+      this.m_btSupIndex.Image = ((System.Drawing.Image)(resources.GetObject("m_btSupIndex.Image")));
       this.m_btSupIndex.Location = new System.Drawing.Point(168, 112);
       this.m_btSupIndex.Name = "m_btSupIndex";
       this.m_btSupIndex.Size = new System.Drawing.Size(32, 24);
@@ -360,7 +360,7 @@ namespace Altaxo.Graph.GUI
       // 
       // m_btSubIndex
       // 
-      this.m_btSubIndex.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btSubIndex.Image")));
+      this.m_btSubIndex.Image = ((System.Drawing.Image)(resources.GetObject("m_btSubIndex.Image")));
       this.m_btSubIndex.Location = new System.Drawing.Point(200, 112);
       this.m_btSubIndex.Name = "m_btSubIndex";
       this.m_btSubIndex.Size = new System.Drawing.Size(32, 24);
@@ -370,7 +370,7 @@ namespace Altaxo.Graph.GUI
       // m_btGreek
       // 
       this.m_btGreek.Font = new System.Drawing.Font("Symbol", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.m_btGreek.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btGreek.Image")));
+      this.m_btGreek.Image = ((System.Drawing.Image)(resources.GetObject("m_btGreek.Image")));
       this.m_btGreek.Location = new System.Drawing.Point(232, 112);
       this.m_btGreek.Name = "m_btGreek";
       this.m_btGreek.Size = new System.Drawing.Size(32, 24);
@@ -379,11 +379,12 @@ namespace Altaxo.Graph.GUI
       // 
       // m_edText
       // 
-      this.m_edText.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right);
+      this.m_edText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.m_edText.Location = new System.Drawing.Point(8, 144);
       this.m_edText.Multiline = true;
       this.m_edText.Name = "m_edText";
+      this.m_edText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
       this.m_edText.Size = new System.Drawing.Size(400, 80);
       this.m_edText.TabIndex = 0;
       this.m_edText.Text = "textBox1";
@@ -391,9 +392,9 @@ namespace Altaxo.Graph.GUI
       // 
       // m_pnPreview
       // 
-      this.m_pnPreview.Anchor = (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+      this.m_pnPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
         | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right);
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.m_pnPreview.Location = new System.Drawing.Point(8, 240);
       this.m_pnPreview.Name = "m_pnPreview";
       this.m_pnPreview.Size = new System.Drawing.Size(408, 96);
@@ -402,7 +403,7 @@ namespace Altaxo.Graph.GUI
       // 
       // m_btNormal
       // 
-      this.m_btNormal.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btNormal.Image")));
+      this.m_btNormal.Image = ((System.Drawing.Image)(resources.GetObject("m_btNormal.Image")));
       this.m_btNormal.Location = new System.Drawing.Point(8, 112);
       this.m_btNormal.Name = "m_btNormal";
       this.m_btNormal.Size = new System.Drawing.Size(32, 24);
@@ -411,7 +412,7 @@ namespace Altaxo.Graph.GUI
       // 
       // m_btStrikeout
       // 
-      this.m_btStrikeout.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btStrikeout.Image")));
+      this.m_btStrikeout.Image = ((System.Drawing.Image)(resources.GetObject("m_btStrikeout.Image")));
       this.m_btStrikeout.Location = new System.Drawing.Point(136, 112);
       this.m_btStrikeout.Name = "m_btStrikeout";
       this.m_btStrikeout.Size = new System.Drawing.Size(32, 24);
@@ -422,30 +423,29 @@ namespace Altaxo.Graph.GUI
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
       this.ClientSize = new System.Drawing.Size(424, 342);
-      this.Controls.AddRange(new System.Windows.Forms.Control[] {
-                                                                  this.m_btStrikeout,
-                                                                  this.m_btNormal,
-                                                                  this.m_pnPreview,
-                                                                  this.m_edText,
-                                                                  this.m_btGreek,
-                                                                  this.m_btSubIndex,
-                                                                  this.m_btSupIndex,
-                                                                  this.m_btUnderline,
-                                                                  this.m_btItalic,
-                                                                  this.m_btBold,
-                                                                  this.m_cbRotation,
-                                                                  this.m_lblRotation,
-                                                                  this.m_edPosY,
-                                                                  this.m_lblPosY,
-                                                                  this.m_edPosX,
-                                                                  this.m_lblPosX,
-                                                                  this.m_cbBackground,
-                                                                  this.m_lblBackground,
-                                                                  this.m_cbFontColor,
-                                                                  this.m_cbFontSize,
-                                                                  this.m_cbFonts,
-                                                                  this.m_btCancel,
-                                                                  this.m_btOK});
+      this.Controls.Add(this.m_btStrikeout);
+      this.Controls.Add(this.m_btNormal);
+      this.Controls.Add(this.m_pnPreview);
+      this.Controls.Add(this.m_edText);
+      this.Controls.Add(this.m_edPosY);
+      this.Controls.Add(this.m_edPosX);
+      this.Controls.Add(this.m_btGreek);
+      this.Controls.Add(this.m_btSubIndex);
+      this.Controls.Add(this.m_btSupIndex);
+      this.Controls.Add(this.m_btUnderline);
+      this.Controls.Add(this.m_btItalic);
+      this.Controls.Add(this.m_btBold);
+      this.Controls.Add(this.m_cbRotation);
+      this.Controls.Add(this.m_lblRotation);
+      this.Controls.Add(this.m_lblPosY);
+      this.Controls.Add(this.m_lblPosX);
+      this.Controls.Add(this.m_cbBackground);
+      this.Controls.Add(this.m_lblBackground);
+      this.Controls.Add(this.m_cbFontColor);
+      this.Controls.Add(this.m_cbFontSize);
+      this.Controls.Add(this.m_cbFonts);
+      this.Controls.Add(this.m_btCancel);
+      this.Controls.Add(this.m_btOK);
       this.Name = "TextControlDialog";
       this.Text = "Text Control";
       this.ResumeLayout(false);
