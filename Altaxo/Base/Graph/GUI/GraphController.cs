@@ -921,6 +921,20 @@ namespace Altaxo.Graph.GUI
       this.CurrentGraphTool = currGraphTool;
     }
 
+    /// <summary>
+    /// Called if a key is pressed in the view.
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <param name="keyData"></param>
+    /// <returns></returns>
+    public bool EhView_ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+      if(this.m_MouseState!=null)
+        return this.m_MouseState.ProcessCmdKey(ref msg, keyData);
+      else
+        return false;
+    }
+
     
     /// <summary>
     /// Called if the host window is about to be closed.
@@ -1069,13 +1083,13 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">The EventArgs.</param>
     protected void EhGraph_Changed(object sender, System.EventArgs e)
     {
-      this.m_FrozenGraphIsDirty = true;
+     
 
       // if something changed on the graph, make sure that the layer and plot number reflect this changed
       this.EnsureValidityOfCurrentLayerNumber();
       this.EnsureValidityOfCurrentPlotNumber();
-      if(View!=null)
-        View.InvalidateGraph();
+      
+      RefreshGraph();
     }
 
     /// <summary>
@@ -1611,6 +1625,18 @@ namespace Altaxo.Graph.GUI
       }
     }
 
+
+    /// <summary>
+    /// Does a complete new drawing of the graph, even if the graph is cached in a bitmap.
+    /// </summary>
+    public void RefreshGraph()
+    {
+      this.m_FrozenGraphIsDirty = true;
+      
+      if(null!=m_View) 
+        m_View.InvalidateGraph();
+    }
+
     /// <summary>
     /// Recalculates and sets the value of m_Zoom so the whole page is visible
     /// </summary>
@@ -1618,7 +1644,7 @@ namespace Altaxo.Graph.GUI
     {
       this.m_Zoom = CalculateAutoZoom();
       m_View.GraphScrollSize = new Size(0,0);
-      m_View.InvalidateGraph();
+      RefreshGraph();
     }
 
     /// <summary>
@@ -1784,7 +1810,7 @@ namespace Altaxo.Graph.GUI
         foreach(object o in removedObjects)
           this.m_SelectedObjects.Remove(o);
 
-        this.View.InvalidateGraph();
+        this.RefreshGraph();
       }
 
     }
@@ -1979,6 +2005,17 @@ namespace Altaxo.Graph.GUI
       public virtual void AfterPaint(GraphController grac, Graphics g)
       {
       }
+
+      /// <summary>
+      /// This function is called if a key is pressed.
+      /// </summary>
+      /// <param name="msg"></param>
+      /// <param name="keyData"></param>
+      /// <returns></returns>
+      public virtual bool ProcessCmdKey(ref Message msg, Keys keyData)
+      {
+        return false; // per default the key is not processed
+      }
     }
     #endregion // abstract mouse state handler
 
@@ -2044,7 +2081,7 @@ namespace Altaxo.Graph.GUI
           }
           else  // if the graph was not frozen before - what reasons ever
           {
-            grac.m_View.InvalidateGraph(); // rise a normal paint event
+            grac.RefreshGraph(); // rise a normal paint event
           }
           
 
@@ -2092,7 +2129,7 @@ namespace Altaxo.Graph.GUI
           if(bShiftKey || bControlKey) // if shift or control is pressed, remove the selection
           {
             grac.m_SelectedObjects.Remove(clickedSelectedObject);
-            grac.m_View.InvalidateGraph(); // repaint the graph
+            grac.RefreshGraph(); // repaint the graph
           }
           else // not shift or control pressed -> so activate the object moving mode
           {
@@ -2240,8 +2277,8 @@ namespace Altaxo.Graph.GUI
       
         if(bRepaint)
         {
-          grac.m_FrozenGraphIsDirty = true;
-          grac.m_View.InvalidateGraph(); // redraw the contents
+          //grac.m_FrozenGraphIsDirty = true;
+          grac.RefreshGraph(); // redraw the contents
         }
       }
 
@@ -2255,7 +2292,7 @@ namespace Altaxo.Graph.GUI
         EndMovingObjects(grac);
 
         if(bRepaint)
-          grac.m_View.InvalidateGraph(); 
+          grac.RefreshGraph(); 
       }
 
       public override void AfterPaint(GraphController grac, Graphics g)
@@ -2313,7 +2350,7 @@ namespace Altaxo.Graph.GUI
           if(!dlg.SimpleTextGraphics.Empty)
           {
             grac.Layers[grac.CurrentLayerNumber].GraphObjects.Add(dlg.SimpleTextGraphics);
-            grac.m_View.InvalidateGraph();
+            grac.RefreshGraph();
           }
         }
         return new ObjectPointerMouseHandler();
@@ -2421,8 +2458,7 @@ namespace Altaxo.Graph.GUI
           
             // here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
             // of the grac
-            grac.m_View.InvalidateGraph();
-          
+            grac.View.InvalidateGraph(); // no refresh necessary, only invalidate to show the cross
           }
         }
        
@@ -2487,7 +2523,21 @@ namespace Altaxo.Graph.GUI
       }
 
 
-     
+      /// <summary>
+      /// This function is called if a key is pressed.
+      /// </summary>
+      /// <param name="msg"></param>
+      /// <param name="keyData"></param>
+      /// <returns></returns>
+      public override bool ProcessCmdKey(ref Message msg, Keys keyData)
+      {
+        if(keyData == Keys.Left)
+        {
+          System.Diagnostics.Trace.WriteLine("Read tool key handler, left key pressed!");
+          return true;
+        }
+        return false; // per default the key is not processed
+      }
 
 
     } // end of class

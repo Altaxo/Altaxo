@@ -134,6 +134,9 @@ namespace Altaxo.Graph.GUI
       }
       set
       {
+        //ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow oldValue = this.m_ParentWorkbenchWindowController;
+        //ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow newValue = value;
+
         this.m_ParentWorkbenchWindowController = value; 
       }
     }
@@ -222,13 +225,24 @@ namespace Altaxo.Graph.GUI
     {
       get { return true; }
     }
-    
+  
     /// <summary>
     /// Is called when the view content is selected inside the window
     /// tab. NOT when the windows is selected.
     /// </summary>
     public void Selected()
     {
+    }
+
+
+    /// <summary>
+    /// Is called when the window is switched to.
+    /// -> Inside the tab (Called before Selected())
+    /// -> Inside the workbench.
+    /// </summary>
+    public void SwitchedTo()
+    {
+      View.TakeFocus();
     }
     
     /// <summary>
@@ -287,14 +301,7 @@ namespace Altaxo.Graph.GUI
       get { return false; }
     }
   
-    /// <summary>
-    /// Is called when the window is switched to.
-    /// -> Inside the tab (Called before Selected())
-    /// -> Inside the workbench.
-    /// </summary>
-    public void SwitchedTo()
-    {
-    }
+    
 
     /// <summary>
     /// Is called each time the name for the content has changed.

@@ -40,6 +40,7 @@ namespace Altaxo.Graph.GUI
     private System.Windows.Forms.ImageList m_LayerButtonImages;
     private System.Windows.Forms.ToolBar m_LayerToolbar;
     private GraphPanel m_GraphPanel;
+    private System.Windows.Forms.TextBox m_TextBox;
     private System.ComponentModel.IContainer components;
     private IGraphController m_Ctrl;
 
@@ -114,6 +115,9 @@ namespace Altaxo.Graph.GUI
 
     public GraphView()
     {
+      this.SetStyle(ControlStyles.Selectable,true);
+      this.UpdateStyles();
+
       //
       // Required for Windows Form Designer support
       //
@@ -147,7 +151,7 @@ namespace Altaxo.Graph.GUI
       this.m_GraphToolsImages = new System.Windows.Forms.ImageList(this.components);
       this.m_LayerButtonImages = new System.Windows.Forms.ImageList(this.components);
       this.m_LayerToolbar = new System.Windows.Forms.ToolBar();
-      this.m_GraphPanel = new GraphPanel();
+      this.m_GraphPanel = new Altaxo.Graph.GUI.GraphPanel();
       this.SuspendLayout();
       // 
       // m_GraphToolsImages
@@ -192,11 +196,10 @@ namespace Altaxo.Graph.GUI
       // 
       // GraphView
       // 
-      this.ClientSize = new System.Drawing.Size(292, 266);
       this.Controls.Add(this.m_GraphPanel);
       this.Controls.Add(this.m_LayerToolbar);
       this.Name = "GraphView";
-      this.Text = "GraphView";
+      this.Size = new System.Drawing.Size(292, 266);
       this.ResumeLayout(false);
 
     }
@@ -498,6 +501,35 @@ namespace Altaxo.Graph.GUI
     
       return tb;
     }
+
+    /// <summary>
+    /// This function is to solve the problem, that after selection of the graph window by
+    /// clicking in the tab, the View did not receive KeyPressed messages. 
+    /// The cause was that by clicking the tab, the control did not receive focus, because
+    /// it was at this moment invisible. By making it explicit visible it now can receive the focus.
+    /// </summary>
+    public void TakeFocus()
+    {
+      this.Parent.Show();
+      this.Show();
+      this.Focus();
+     
+    }
+
+   
+
+
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+      if(null!=this.Controller)
+      {
+        if(true==Controller.EhView_ProcessCmdKey(ref msg, keyData))
+          return true;
+      }
+//      System.Diagnostics.Trace.WriteLine("GraphView CmdKey pressed");
+      return base.ProcessCmdKey (ref msg, keyData);
+    }
+
   }
 }
   

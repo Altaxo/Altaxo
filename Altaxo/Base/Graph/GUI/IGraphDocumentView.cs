@@ -161,6 +161,11 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     void OnViewDeselection();
 
+
+    /// <summary>
+    /// The view should set the focus to itself or to a control which can receive the focus.
+    /// </summary>
+    void TakeFocus();
   }
 
 
@@ -274,7 +279,13 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">EventArgs.</param>
     void EhView_GraphPanelSizeChanged(System.EventArgs e);
 
-    
+    /// <summary>
+    /// Called if a key is pressed in the view.
+    /// </summary>
+    /// <param name="msg"></param>
+    /// <param name="keyData"></param>
+    /// <returns></returns>
+    bool EhView_ProcessCmdKey(ref Message msg, Keys keyData);
 
   }
 

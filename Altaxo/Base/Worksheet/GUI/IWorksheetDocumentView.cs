@@ -124,6 +124,11 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     System.Windows.Forms.Cursor TableAreaCursor { get; set; }
 
+    /// <summary>
+    /// The view should set the focus to itself or to a child control which can receive the focus.
+    /// </summary>
+    void TakeFocus();
+
   }
 
 

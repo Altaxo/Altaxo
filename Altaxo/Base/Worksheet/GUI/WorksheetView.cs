@@ -310,6 +310,13 @@ namespace Altaxo.Worksheet.GUI
       }
     }
 
+    public void TakeFocus()
+    {
+      this.Parent.Show();
+      this.Show();
+      this.Focus();
+    }
+
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public MainMenu TableViewMenu
     {

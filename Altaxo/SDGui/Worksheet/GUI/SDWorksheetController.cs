@@ -125,16 +125,16 @@ namespace Altaxo.Worksheet.GUI
       }
       set 
       { 
-        ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow oldValue = this.m_ParentWorkbenchWindowController;
-        ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow newValue = value;
+        //ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow oldValue = this.m_ParentWorkbenchWindowController;
+        //ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow newValue = value;
 
-        if(oldValue!=null)
-          oldValue.WindowSelected -= new EventHandler(EhParent_WindowsSelected);
+        //if(oldValue!=null)
+          //oldValue.WindowSelected -= new EventHandler(EhParent_WindowsSelected);
 
-        if(newValue!=null)
-          newValue.WindowSelected += new EventHandler(EhParent_WindowsSelected);
+        //if(newValue!=null)
+          //newValue.WindowSelected += new EventHandler(EhParent_WindowsSelected);
 
-        this.m_ParentWorkbenchWindowController = newValue; 
+        this.m_ParentWorkbenchWindowController = value; 
 
       }
     }
@@ -216,13 +216,21 @@ namespace Altaxo.Worksheet.GUI
     }
 
     /// <summary>
+    /// Is called when the window is switched to.
+    /// -> Inside the tab (Called before Selected())
+    /// -> Inside the workbench.
+    /// </summary>
+    public void SwitchedTo()
+    {
+      View.TakeFocus();
+    }
+
+    /// <summary>
     /// Is called when the view content is selected inside the window
     /// tab. NOT when the windows is selected.
     /// </summary>
     public void Selected()
     {
-      if(this.View is System.Windows.Forms.Control)
-        ((System.Windows.Forms.Control)View).Focus();
     }
     
     /// <summary>
@@ -280,14 +288,7 @@ namespace Altaxo.Worksheet.GUI
       get { return false; }
     }
   
-    /// <summary>
-    /// Is called when the window is switched to.
-    /// -> Inside the tab (Called before Selected())
-    /// -> Inside the workbench.
-    /// </summary>
-    public void SwitchedTo()
-    {
-    }
+   
     
     /// <summary>
     /// Is called when the content is changed after a save/load operation

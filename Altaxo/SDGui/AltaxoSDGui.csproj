@@ -154,107 +154,107 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\ProjectService.cs"
+                    RelPath = "Graph\GUI\Main\ProjectService.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\ZippedStreamWrapper.cs"
+                    RelPath = "Graph\GUI\Main\ZippedStreamWrapper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\GUI\FileScout.cs"
+                    RelPath = "Graph\GUI\Main\GUI\FileScout.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\GUI\OutputWindowController.cs"
+                    RelPath = "Graph\GUI\Main\GUI\OutputWindowController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\GUI\ProjectScout.cs"
+                    RelPath = "Graph\GUI\Main\GUI\ProjectScout.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\GUI\ProjectScout.resx"
+                    RelPath = "Graph\GUI\Main\GUI\ProjectScout.resx"
                     DependentUpon = "ProjectScout.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Main\GUI\WindowsMdiWorkbenchLayout.cs"
+                    RelPath = "Graph\GUI\Main\GUI\WindowsMdiWorkbenchLayout.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\GUI\Workbench1.cs"
+                    RelPath = "Graph\GUI\Main\GUI\Workbench1.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\GUI\WorkbenchForm.cs"
+                    RelPath = "Graph\GUI\Main\GUI\WorkbenchForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\GUI\WorkbenchForm.resx"
+                    RelPath = "Graph\GUI\Main\GUI\WorkbenchForm.resx"
                     DependentUpon = "WorkbenchForm.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Main\GUI\WorkbenchViewController.cs"
+                    RelPath = "Graph\GUI\Main\GUI\WorkbenchViewController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\MenuCommands\AddReferenceToOwnAssemblies.cs"
+                    RelPath = "Graph\GUI\Main\MenuCommands\AddReferenceToOwnAssemblies.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\MenuCommands\AltaxoToolbarService.cs"
+                    RelPath = "Graph\GUI\Main\MenuCommands\AltaxoToolbarService.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\MenuCommands\AutostartCommands.cs"
+                    RelPath = "Graph\GUI\Main\MenuCommands\AutostartCommands.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\MenuCommands\FileCommands.cs"
+                    RelPath = "Graph\GUI\Main\MenuCommands\FileCommands.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\MenuCommands\GraphCommands.cs"
+                    RelPath = "Graph\GUI\Main\MenuCommands\GraphCommands.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\MenuCommands\HelpCommands.cs"
+                    RelPath = "Graph\GUI\Main\MenuCommands\HelpCommands.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\MenuCommands\OpenScriptDialog.cs"
+                    RelPath = "Graph\GUI\Main\MenuCommands\OpenScriptDialog.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\MenuCommands\PLSPlotCommands.cs"
+                    RelPath = "Graph\GUI\Main\MenuCommands\PLSPlotCommands.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\MenuCommands\SelectedColumnCondition.cs"
+                    RelPath = "Graph\GUI\Main\MenuCommands\SelectedColumnCondition.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\MenuCommands\WorksheetCommands.cs"
+                    RelPath = "Graph\GUI\Main\MenuCommands\WorksheetCommands.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
