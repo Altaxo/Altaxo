@@ -117,6 +117,11 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
+			Current.ProjectService.SaveProjectAs();
+		}
+
+		public  void RunOld1()
+		{
 			bool bRet = true;
 			SaveFileDialog dlg = this.GetSaveAsDialog();
 			if(dlg.ShowDialog(Current.MainWindow) == DialogResult.OK)
@@ -163,7 +168,10 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			new FileSaveAs().Run();
+			if(Current.ProjectService.CurrentProjectFileName != null)
+				Current.ProjectService.SaveProject();
+			else
+				Current.ProjectService.SaveProjectAs();
 		}
 	}
 
@@ -172,7 +180,10 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			// TODO  implement this command here
+			if(Current.Project.IsDirty)
+				Current.ProjectService.SaveProjectAs();
+		
+			Current.ProjectService.CloseProject(false);
 		}
 	}
 

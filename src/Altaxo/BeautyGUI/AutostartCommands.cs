@@ -37,7 +37,6 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 		
 		public override void Run()
 		{
-
 			Altaxo.Current.SetProjectService( new Altaxo.Main.ProjectService() );
 
 			Altaxo.Current.SetPrintingService( new Altaxo.Main.PrintingService() );
@@ -66,6 +65,8 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			w.RedrawAllComponents();
 			
 		}
+
+	
 	}
 
 
@@ -76,12 +77,12 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 		public override void Run()
 		{
 
-			Altaxo.Current.SetProjectService( new Altaxo.Main.ProjectService() );
+			Altaxo.Main.ProjectService projectService = (Altaxo.Main.ProjectService)ServiceManager.Services.GetService(typeof(Altaxo.Main.ProjectService));
+			Altaxo.Current.SetProjectService( projectService );
 
-			Altaxo.Current.SetPrintingService( new Altaxo.Main.PrintingService() );
+			Altaxo.Main.IPrintingService printingService = (Altaxo.Main.IPrintingService)ServiceManager.Services.GetService(typeof(Altaxo.Main.IPrintingService));
+			Altaxo.Current.SetPrintingService( printingService );
 
-			// we construct the main document
-			Altaxo.Current.ProjectService.CurrentOpenProject = new AltaxoDocument();
 
 
 			//Altaxo.MainController ctrl = new Altaxo.MainController(new Altaxo.AltaxoDocument());
@@ -92,6 +93,13 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			WorkbenchSingleton.Workbench = w;
 			
 			w.InitializeWorkspace();
+
+			projectService.ProjectChanged += new ProjectEventHandler(w.EhProjectChanged);
+			
+			// we construct the main document (for now)
+			Altaxo.Current.ProjectService.CurrentOpenProject = new AltaxoDocument();
+
+	
 			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 			w.SetMemento((IXmlConvertable)propertyService.GetProperty(workbenchMemento, new WorkbenchMemento()));
 			w.UpdateViews(null, null);

@@ -103,10 +103,27 @@ namespace Altaxo.Main
 			}
 			set 
 			{
+				Altaxo.AltaxoDocument oldProject = openProject;
+
+				if(oldProject!=null)
+					oldProject.DirtyChanged -= new EventHandler(this.EhProjectDirtyChanged);
+
+
 				openProject = value;
+
+				if(openProject!=null)
+					openProject.DirtyChanged += new EventHandler(this.EhProjectDirtyChanged);
+
+
+				if(!object.Equals(oldProject,value)	)
+					OnProjectChanged();
 			}
 		}
 
+		public string CurrentProjectFileName
+		{
+			get { return this.openProjectFileName; }
+		}
 
 
 		public override void InitializeService()
@@ -123,7 +140,7 @@ namespace Altaxo.Main
 			zippedStream.PutNextEntry(ZipEntry);
 			zippedStream.SetLevel(0);
 			info.BeginWriting(zippedStream);
-			//info.AddValue("MainWindow",new MainControllerMemento(this));
+			info.AddValue("MainWindow",Current.Workbench);
 			info.EndWriting();
 		}
 
@@ -237,7 +254,7 @@ namespace Altaxo.Main
 			AltaxoDocument newdocument = new AltaxoDocument();
 			newdocument.RestoreFromZippedFile(zipFile,info);
 
-			this.openProject = newdocument;
+			this.CurrentOpenProject = newdocument;
 			Current.Workbench.CloseAllViews();
 			RestoreWindowStateFromZippedFile(zipFile,info,newdocument);
 						
@@ -257,6 +274,7 @@ namespace Altaxo.Main
 			SaveWindowStateToZippedFile(zippedStream, info);
 			zippedStream.Close();
 			myStream.Close();
+			this.openProject.IsDirty = false;
 		}
 
 		public void SaveProject()
@@ -285,14 +303,14 @@ namespace Altaxo.Main
 			fdiag.AddExtension    = true;
 			
 			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
-			fdiag.Filter = stringParserService.Parse("${res:SharpDevelop.FileFilter.CombineFiles}|*.axoprj|${res:SharpDevelop.FileFilter.AllFiles}|*.*");
+			fdiag.Filter = stringParserService.Parse("${res:Altaxo.FileFilter.ProjectFiles}|*.axoprj|${res:Altaxo.FileFilter.AllFiles}|*.*");
 			
 			if (fdiag.ShowDialog() == DialogResult.OK) 
 			{
 				string filename = fdiag.FileName;
 				SaveProject(filename);
 				IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-				messageService.ShowMessage(filename, resourceService.GetString("Internal.Project.Combine.CombineSavedMessage"));
+				messageService.ShowMessage(filename, resourceService.GetString("Altaxo.Project.ProjectSavedMessage"));
 			}
 		}
 
@@ -311,8 +329,8 @@ namespace Altaxo.Main
 				Altaxo.AltaxoDocument closedProject = CurrentOpenProject;
 				//CurrentSelectedProject = null;
 				//CurrentOpenCombine = CurrentSelectedCombine = null;
-				CurrentOpenProject = null;
 				openProjectFileName = null;
+				CurrentOpenProject = new Altaxo.AltaxoDocument();
 				WorkbenchSingleton.Workbench.CloseAllViews();
 				OnProjectClosed(new ProjectEventArgs(closedProject));
 				//closedProject.Dispose();
@@ -446,6 +464,13 @@ namespace Altaxo.Main
 				Current.Workbench.CloseContent(ctrl);
 		}
 
+
+		void EhProjectDirtyChanged(object sender, EventArgs e)
+		{
+			OnProjectDirtyChanged(new Altaxo.Main.ProjectEventArgs(this.openProject));
+		}
+
+
 		//********* own events
 		protected virtual void OnProjectOpened(ProjectEventArgs e)
 		{
@@ -453,6 +478,8 @@ namespace Altaxo.Main
 			{
 				ProjectOpened(this, e);
 			}
+
+			OnProjectChanged();
 		}
 		
 		protected virtual void OnProjectClosed(ProjectEventArgs e)
@@ -461,21 +488,52 @@ namespace Altaxo.Main
 			{
 				ProjectClosed(this, e);
 			}
+
+			OnProjectChanged();
 		}
 
-		public virtual void OnRenameProject(ProjectRenameEventArgs e)
+		protected virtual void OnRenameProject(ProjectRenameEventArgs e)
 		{
 			if (ProjectRenamed != null) 
 			{
 				ProjectRenamed(this, e);
 			}
+
+			OnProjectChanged();
 		}
 
+		protected virtual void OnProjectDirtyChanged(ProjectEventArgs e)
+		{
+			if (ProjectDirtyChanged != null) 
+			{
+				ProjectDirtyChanged(this, e);
+			}
+
+			OnProjectChanged();
+		}
 		
-		
+		protected virtual void OnProjectChanged()
+		{
+			if(ProjectChanged != null)
+				ProjectChanged(this, new ProjectEventArgs(this.CurrentOpenProject));
+
+		}
+
+
 		public event ProjectEventHandler ProjectOpened;
 		public event ProjectEventHandler ProjectClosed;
 		public event ProjectRenameEventHandler ProjectRenamed;
+		/// <summary>
+		/// Fired when the dirty state of the project changed.
+		/// </summary>
+		public event ProjectEventHandler ProjectDirtyChanged;
+		
+		/// <summary>
+		/// Event fired when any of the other event is fired: ProjectOpened,
+		/// ProjectClosed, ProjectRenamed and ProjectDirty. Firstly, the specific
+		/// event is fired, and then, this event is fired.
+		/// </summary>
+		public event ProjectEventHandler ProjectChanged;
 	}
 
 

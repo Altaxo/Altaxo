@@ -3,6 +3,7 @@
 	<Runtime>
 		<Import assembly="../bin/SharpDevelop.Base.dll"/>
 		<Import assembly="../bin/BeautyGui.exe"/>
+		<Import assembly="../bin/AltaxoBase.dll"/>
 	</Runtime>
 	<Extension path="/Workspace/Autostart">
 		<Class id="InitializeWorkbenchCommand" class="Altaxo.Main.Commands.InitializeWorkbench1Command"/>
@@ -40,6 +41,8 @@
 		<Class id="ToolbarService" class="ICSharpCode.SharpDevelop.Services.ToolbarService"/>
 		<Class id="AltaxoToolbarService" class="ICSharpCode.SharpDevelop.Services.AltaxoToolbarService"/>
 		<Class id="DisplayBindingService" class="ICSharpCode.SharpDevelop.Services.DisplayBindingService"/>
+		<Class id="AltaxoProjectService" class="Altaxo.Main.ProjectService"/>
+		<Class id="PrintingService" class="Altaxo.Main.PrintingService"/>
 	</Extension>
 	<Extension path="/SharpDevelop/Workbench/DisplayBindings">
 		<DisplayBinding id="Browser" supportedformats="Web Pages" class="ICSharpCode.SharpDevelop.BrowserDisplayBinding.BrowserDisplayBinding"/>

@@ -33,6 +33,24 @@ namespace ICSharpCode.SharpDevelop.Gui
 	{
 		readonly static string mainMenuPath    = "/SharpDevelop/Workbench/MainMenu";
 
+		#region "Serialization"
+	
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Workbench1),0)]
+		public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo	info)
+			{
+				Workbench1 s = (Workbench1)obj;
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo	info, object parent)
+			{
+				return o;
+			}
+		}
+
+
+
+		#endregion
 
 		public new void InitializeWorkspace()
 		{
@@ -110,6 +128,31 @@ namespace ICSharpCode.SharpDevelop.Gui
 				CommandBar[] toolBars = toolBarService.CreateToolbars();
 				ToolBars = toolBars;
 			}
+		}
+
+		public void EhProjectChanged(object sender, Altaxo.Main.ProjectEventArgs e)
+		{
+			UpdateMenu(null, null);
+			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
+			Altaxo.Main.ProjectService projectService = (Altaxo.Main.ProjectService)ServiceManager.Services.GetService(typeof(Altaxo.Main.ProjectService));
+			System.Text.StringBuilder title = new System.Text.StringBuilder();
+			title.Append(resourceService.GetString("MainWindow.DialogName"));
+			if (projectService != null) 
+			{
+				if(projectService.CurrentProjectFileName == null)
+				{
+					title.Append(" - ");
+					title.Append(resourceService.GetString("Altaxo.Project.UntitledName"));
+				}
+				else
+				{
+					title.Append(" - ");
+					title.Append(projectService.CurrentProjectFileName);
+				}
+				if(projectService.CurrentOpenProject!= null && projectService.CurrentOpenProject.IsDirty)
+					title.Append("*");
+			} 
+			this.Title = title.ToString();
 		}
 
 	}
