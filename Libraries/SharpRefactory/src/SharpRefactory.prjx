@@ -1,0 +1,157 @@
+<Project name="SharpRefactory" description="rfewewrwerewrwe" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
+  <Contents>
+    <File name=".\Main.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\AssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\AbstractASTVisitor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\AttributeTargets.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\IASTVisitor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\AbstractNode.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\GlobalScope\AttributeSection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\CompilationUnit.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\ConstructorDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\GlobalScope\DelegateDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\DestructorDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\EventAddRegion.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\EventDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\EventRemoveRegion.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\VariableDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\FieldDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\IndexerDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\INode.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\MethodDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\GlobalScope\NamespaceDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\OperatorDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\PropertyDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\PropertyGetRegion.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\PropertySetRegion.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\GlobalScope\TypeDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\TypeReference.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\GlobalScope\UsingAliasDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\GlobalScope\UsingDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\AssignmentExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\BaseReferenceExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\BinaryOperatorExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\CastExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\CheckedExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\ConditionalExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\DirectionExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\Expression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\FieldReferenceExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\IdentifierExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\IndexerExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\InvocationExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\ObjectCreateExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel\ParameterDeclarationExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\ParenthesizedExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\PointerReferenceExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\PrimitiveExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\SizeOfExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\StackAllocExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\ThisReferenceExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\TypeOfExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\TypeReferenceExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\UnaryOperatorExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\UncheckedExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\BlockStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\BreakStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\CheckedStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\ContinueStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\DoWhileStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\EmptyStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\FixedStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\ForeachStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\ForStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\GotoCaseStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\GotoStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\IfElseStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\IfStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\LabelStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\LockStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\ReturnStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\Statement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\StatementExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\SwitchStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\ThrowStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\TryCatchStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\UncheckedStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\UnsafeStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\UsingStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\LocalVariableDeclaration.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Statements\WhileStatement.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\TypeLevel" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\GlobalScope" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Enums.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\generated\cs.ATG" subtype="Code" buildaction="Nothing" dependson="" data="" />
+    <File name=".\Parser\generated\gen.bat" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\Parser\generated\Parser.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\generated\Parser.frame" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\Parser\generated\Scanner.frame" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\Parser\generated\trace.txt" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\Parser\AST\Modifier.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PrettyPrinter" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\PrettyPrinter\PrettyPrintVisitor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PrettyPrinter\PrettyPrintData.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PrettyPrinter\PrettyPrintUtil.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PrettyPrinter\SpecialVisitor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\CodeDOM" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\CodeDOM\CodeDOMVisitor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\DebugASTVisitor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\ArrayInitializerExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\Expressions\ArrayCreateExpression.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\generated\Scanner.cs.gen" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\Parser\generated\Scanner.frame~" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\VBConverter" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\VBConverter\VBNetVisitor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\VBConverter\VBNetRefactory.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\generated\cs.ATG~" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\Parser\generated\Parser.frame~" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\Lexer" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\Lexer\Reader\IReader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Lexer\Reader\FileReader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Lexer\Reader\StringReader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Lexer\Reader" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\Lexer\Lexer.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\generated\Error.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\generated\Modifiers.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\generated\ParserUtil.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Lexer\Specials\SpecialTracker.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Lexer\Specials" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\Lexer\Specials\SpecialType.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Lexer\Specials\PreProcessingDirective.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Lexer\Specials\Comment.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Lexer\Specials\BlankLine.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Lexer\Specials\CommentType.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\AST\LookupTableVisitor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PrettyPrinter\OutputFormatter.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Lexer\Tokens.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+  </Contents>
+  <References />
+  <DeploymentInformation target="" script="" strategy="File" />
+  <Configuration runwithwarnings="False" name="Release">
+    <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <Execution commandlineparameters="" consolepause="True" />
+    <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+  </Configuration>
+  <Configurations active="Release">
+    <Configuration runwithwarnings="False" name="Debug">
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Module" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="True" />
+      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="" executeBeforeBuild=".\Parser\generated\gen.bat" executeAfterBuild="" />
+    </Configuration>
+    <Configuration runwithwarnings="False" name="Release">
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="True" />
+      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+    </Configuration>
+    <Configuration runwithwarnings="False" name="Debug2">
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="True" />
+      <Output directory="..\..\..\..\bin" assembly="SharpRefactory" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+    </Configuration>
+    <Configuration runwithwarnings="False" name="New Configuration">
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="True" />
+      <Output directory="..\..\..\..\bin" assembly="SharpRefactory" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+    </Configuration>
+  </Configurations>
+</Project>
