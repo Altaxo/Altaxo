@@ -100,14 +100,14 @@
                     HintPath = "..\..\Libraries\bin\MagicLibrary.DLL"
                 />
                 <Reference
-                    Name = "ICSharpCode.Core"
-                    AssemblyName = "ICSharpCode.Core"
-                    HintPath = "..\..\Libraries\bin\ICSharpCode.Core.dll"
-                />
-                <Reference
                     Name = "UtilityLibrary"
                     AssemblyName = "UtilityLibrary"
                     HintPath = "..\..\Libraries\bin\UtilityLibrary.dll"
+                />
+                <Reference
+                    Name = "ICSharpCode.Core"
+                    Project = "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
@@ -124,36 +124,6 @@
                 />
                 <File
                     RelPath = "BeautyGUI.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Base\Gui\IMementoCapable.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Base\Gui\IPadContent.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Base\Gui\IWorkbench.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Base\Gui\IWorkbenchLayout.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Base\Gui\PadContentCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Base\Gui\ViewContentCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

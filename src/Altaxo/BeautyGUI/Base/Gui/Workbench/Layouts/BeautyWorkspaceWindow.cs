@@ -17,36 +17,9 @@ namespace Altaxo.Main.GUI
 
 		public BeautyWorkspaceWindow(System.Windows.Forms.Form parent)
 		{
-
-			//if(null!=parent)
-				//this.MdiParent = parent;
-
-
-			// register event so to be informed when activated
-			if(parent is IMdiActivationEventSource)
-			{
-				((IMdiActivationEventSource)parent).MdiChildDeactivateBefore += new EventHandler(this.EhMdiChildDeactivate);
-				((IMdiActivationEventSource)parent).MdiChildActivateAfter += new EventHandler(this.EhMdiChildActivate);
-			}
-			else if(parent!=null)
-			{
-				parent.MdiChildActivate += new EventHandler(this.EhMdiChildActivate);
-				parent.MdiChildActivate += new EventHandler(this.EhMdiChildDeactivate);
-			}
 		}
 
-
-		protected void EhMdiChildActivate(object sender, EventArgs e)
-		{
-			if(null!=this.MdiChildActivateAfter)
-				this.MdiChildActivateAfter(sender,e);
-		}
-
-		protected void EhMdiChildDeactivate(object sender, EventArgs e)
-		{
-			if(null!=this.MdiChildDeactivateBefore)
-				this.MdiChildDeactivateBefore(sender,e);
-		}
+		
 
 		#region IMdiActivationEventSource Members
 

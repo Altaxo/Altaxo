@@ -9,7 +9,10 @@ namespace Altaxo.Main.GUI
 	/// </summary>
 	[SerializationSurrogate(0,typeof(WorkbenchForm.SerializationSurrogate0))]
 	[SerializationVersion(0,"Initial version.")]
-	public class WorkbenchForm : System.Windows.Forms.Form, IMdiActivationEventSource, Main.GUI.IWorkbenchWindowView
+	public class WorkbenchForm 
+		:
+		System.Windows.Forms.Form,
+		Main.GUI.IWorkbenchWindowView
 	{
 		IWorkbenchWindowController m_Controller;
 
@@ -58,7 +61,7 @@ namespace Altaxo.Main.GUI
 				// We create the view firstly without controller to have the creation finished
 				// before the controler is set
 				// otherwise we will have callbacks to not initialized variables
-				WorkbenchForm frm = new WorkbenchForm((System.Windows.Forms.Form)parent);
+				WorkbenchForm frm = new WorkbenchForm();				
 				frm.Location = m_Location;
 				frm.Size = m_Size;
 			
@@ -84,50 +87,26 @@ namespace Altaxo.Main.GUI
 		#endregion
 
 
-		public WorkbenchForm(System.Windows.Forms.Form parent)
+		public WorkbenchForm()
 		{
+		}
+		
 
-			if(null!=parent)
-				this.MdiParent = parent;
-
-
-			// register event so to be informed when activated
-			if(parent is IMdiActivationEventSource)
-			{
-				((IMdiActivationEventSource)parent).MdiChildDeactivateBefore += new EventHandler(this.EhMdiChildDeactivate);
-				((IMdiActivationEventSource)parent).MdiChildActivateAfter += new EventHandler(this.EhMdiChildActivate);
-			}
-			else if(parent!=null)
-			{
-				parent.MdiChildActivate += new EventHandler(this.EhMdiChildActivate);
-				parent.MdiChildActivate += new EventHandler(this.EhMdiChildDeactivate);
-			}
+		protected override void OnClosed(EventArgs e)
+		{
+			base.OnClosed (e);
+			if(m_Controller!=null)
+				m_Controller.EhView_OnClosed();
 		}
 
-
-		protected void EhMdiChildActivate(object sender, EventArgs e)
+		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
 		{
-		if(null!=this.MdiChildActivateAfter)
-			this.MdiChildActivateAfter(sender,e);
+			if(m_Controller!=null)
+				e.Cancel = m_Controller.EhView_OnClosing(e.Cancel);
+
+			base.OnClosing (e);
 		}
 
-		protected void EhMdiChildDeactivate(object sender, EventArgs e)
-		{
-		if(null!=this.MdiChildDeactivateBefore)
-			this.MdiChildDeactivateBefore(sender,e);
-		}
-
-		#region IMdiActivationEventSource Members
-
-		public event System.EventHandler MdiChildDeactivateBefore;
-
-		public event System.EventHandler MdiChildActivateBefore;
-
-		public event System.EventHandler MdiChildDeactivateAfter;
-
-		public event System.EventHandler MdiChildActivateAfter;
-
-		#endregion
 
 		#region IWorkbenchView Members
 

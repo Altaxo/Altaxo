@@ -37,8 +37,8 @@ namespace Altaxo.Graph.GUI
 	public class GraphController 
 		:
 		IGraphController,
-		System.Runtime.Serialization.IDeserializationCallback,
-		Main.GUI.IWorkbenchContentController
+		System.Runtime.Serialization.IDeserializationCallback
+		
 	{
 
 		#region Member variables
@@ -908,29 +908,30 @@ namespace Altaxo.Graph.GUI
 			this.CurrentGraphTool = currGraphTool;
 		}
 
+		
 		/// <summary>
-		/// Handles the event when the graph view is about to be closed.
+		/// Called if the host window is about to be closed.
 		/// </summary>
-		/// <param name="e">CancelEventArgs.</param>
-		public virtual void EhView_Closing(System.ComponentModel.CancelEventArgs e)
+		/// <returns>True if the closing should be canceled, false otherwise.</returns>
+		public bool HostWindowClosing()
 		{
-			if(!App.Current.IsClosing)
+			if(!App.Current.IsClosingAll)
 			{
 
 				System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.m_View.Window,"Do you really want to close this graph?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
 
 				if(dlgres==System.Windows.Forms.DialogResult.No)
 				{
-					e.Cancel = true;
+					return true; // cancel the closing
 				}
 			}
+			return false;
 		}
 
 		/// <summary>
-		/// Handles the event when the graph view is closed.
+		/// Called by the host window after the host window was closed.
 		/// </summary>
-		/// <param name="e">EventArgs.</param>
-		public virtual void EhView_Closed(System.EventArgs e)
+		public void HostWindowClosed()
 		{
 			App.Current.RemoveGraph(this);
 		}
@@ -1075,7 +1076,33 @@ namespace Altaxo.Graph.GUI
 			Graphics g = ppea.Graphics;
 			DoPaint(g,true);
 		}
+
 		
+
+		/// <summary>
+		/// This is called if the host window is selected.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		protected void EhParentWindowSelected(object sender, EventArgs e)
+		{
+			if(View!=null)
+				View.OnViewSelection();
+		}
+
+/// <summary>
+/// This is called if the host window is deselected.
+/// </summary>
+/// <param name="sender"></param>
+/// <param name="e"></param>
+		protected void EhParentWindowDeselected(object sender, EventArgs e)
+		{
+			if(View!=null)
+				View.OnViewDeselection();
+		}
+
+
+
 		#endregion
 
 		#region Methods
@@ -1569,7 +1596,7 @@ namespace Altaxo.Graph.GUI
 
 		#region IWorkbenchContentController Members
 
-		Altaxo.Main.GUI.IWorkbenchContentView Altaxo.Main.GUI.IWorkbenchContentController.View
+		Altaxo.Main.GUI.IWorkbenchContentView Altaxo.Main.GUI.IWorkbenchContentController.WorkbenchContentView
 		{
 			get
 			{
@@ -1598,9 +1625,174 @@ namespace Altaxo.Graph.GUI
 		public Main.GUI.IWorkbenchWindowController ParentWorkbenchWindowController 
 		{ 
 			get { return m_ParentWorkbenchWindowController; }
-			set { m_ParentWorkbenchWindowController = value; }
+			set 
+			{
+				if(null!=m_ParentWorkbenchWindowController)
+				{
+					m_ParentWorkbenchWindowController.WindowDeselected -= new EventHandler(EhParentWindowDeselected);
+					m_ParentWorkbenchWindowController.WindowSelected -= new EventHandler(EhParentWindowSelected);
+				}
+					
+				m_ParentWorkbenchWindowController = value;
+
+				if(null!=m_ParentWorkbenchWindowController)
+				{
+					m_ParentWorkbenchWindowController.WindowDeselected += new EventHandler(EhParentWindowDeselected);
+					m_ParentWorkbenchWindowController.WindowSelected += new EventHandler(EhParentWindowSelected);
+				}
+			}
 		}
 
+		#endregion
+
+		#region ICSharpCode.SharpDevelop.Gui
+
+		public void Dispose()
+		{
+		}
+
+		/// <summary>
+		/// This is the Windows.Forms control for the view.
+		/// </summary>
+		public System.Windows.Forms.Control Control 
+		{
+			get { return this.View as System.Windows.Forms.Control; }
+		}
+
+		/// <summary>
+		/// The workbench window in which this view is displayed.
+		/// </summary>
+		public ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow  WorkbenchWindow 
+		{
+			get 
+			{
+				return (ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow)this.ParentWorkbenchWindowController; 
+			}
+			set
+			{
+				this.ParentWorkbenchWindowController = (Main.GUI.IWorkbenchWindowController)value; 
+			}
+		}
+		
+		/// <summary>
+		/// A generic name for the file, when it does have no file name
+		/// (e.g. newly created files)
+		/// </summary>
+		public string UntitledName 
+		{
+			get { return "UntitledTable"; }
+			set {}
+		}
+		
+		/// <summary>
+		/// This is the whole name of the content, e.g. the file name or
+		/// the url depending on the type of the content.
+		/// </summary>
+		public string ContentName 
+		{
+			get 
+			{ 
+				return this.Doc.Name; 
+			}
+			set 
+			{
+			}
+		}
+
+		/// <summary>
+		/// The text on the tab page when more than one view content
+		/// is attached to a single window.
+		/// </summary>
+		public string TabPageText 
+		{
+			get { return ContentName; }
+		}
+		
+		/// <summary>
+		/// If this property returns true the view is untitled.
+		/// </summary>
+		public bool IsUntitled 
+		{
+			get { return false; }
+		}
+		
+		/// <summary>
+		/// If this property returns true the content has changed since
+		/// the last load/save operation.
+		/// </summary>
+		public bool IsDirty 
+		{
+			get { return false; }
+			set {}
+		}
+		
+		/// <summary>
+		/// If this property returns true the content could not be altered.
+		/// </summary>
+		public bool IsReadOnly 
+		{
+			get { return false; }
+		}
+		
+		/// <summary>
+		/// If this property returns true the content can't be written.
+		/// </summary>
+		public bool IsViewOnly 
+		{
+			get { return true; }
+		}
+		
+		/// <summary>
+		/// Reinitializes the content. (Re-initializes all add-in tree stuff)
+		/// and redraws the content. Call this not directly unless you know
+		/// what you do.
+		/// </summary>
+		public void RedrawContent()
+		{
+		}
+		
+		/// <summary>
+		/// Saves this content to the last load/save location.
+		/// </summary>
+		public void Save()
+		{
+		}
+
+		
+		/// <summary>
+		/// Saves the content to the location <code>fileName</code>
+		/// </summary>
+		public void Save(string fileName)
+		{
+		}
+		
+		/// <summary>
+		/// Loads the content from the location <code>fileName</code>
+		/// </summary>
+		public void Load(string fileName)
+		{
+		}
+		
+
+		protected virtual void OnBeforeSave(EventArgs e)
+		{
+			if (BeforeSave != null) 
+			{
+				BeforeSave(this, e);
+			}
+		}
+		/// <summary>
+		/// Is called each time the name for the content has changed.
+		/// </summary>
+		public event EventHandler ContentNameChanged;
+		
+		/// <summary>
+		/// Is called when the content is changed after a save/load operation
+		/// and this signals that changes could be saved.
+		/// </summary>
+		public event EventHandler DirtyChanged;
+
+		public event EventHandler BeforeSave;
 		#endregion
 
 		#region Inner Classes

@@ -119,10 +119,9 @@ namespace Altaxo.Worksheet.GUI
 	/// <summary>
 	/// Interface for all classes that can control a IWorksheetView to show data from a DataTable. 
 	/// </summary>
-	public interface IWorksheetController
+	public interface IWorksheetController : Altaxo.Main.GUI.IWorkbenchContentController
+	
 	{
-
-
 		/// <summary>
 		/// This returns the Table that is managed by this controller.
 		/// </summary>
@@ -133,7 +132,7 @@ namespace Altaxo.Worksheet.GUI
 		/// </summary>
 		/// <remarks>Setting the view is only neccessary on deserialization, so the controller
 		/// can restrict setting the view only if the own view variable is still null.</remarks>
-		IWorksheetView View { get; set; }
+		new IWorksheetView View { get; set; }
 
 		/// <summary>
 		/// Handles the scroll event of the vertical scroll bar.
@@ -192,16 +191,6 @@ namespace Altaxo.Worksheet.GUI
 		/// <param name="e">EventArgs.</param>
 		void EhView_TableAreaSizeChanged(System.EventArgs e);
 
-		/// <summary>
-		/// Handles the event when the graph view is closed.
-		/// </summary>
-		/// <param name="e">EventArgs.</param>
-		void EhView_Closed(System.EventArgs e);
-
-		/// <summary>
-		/// Handles the event when the graph view is about to be closed.
-		/// </summary>
-		/// <param name="e">CancelEventArgs.</param>
-		void EhView_Closing(System.ComponentModel.CancelEventArgs e);
+		
 	}
 }

@@ -196,27 +196,6 @@ namespace Altaxo.Graph.GUI
 				this.GraphMenu = m_Menu;
 
 			
-
-			// register event so to be informed when activated
-			if(this.Parent is IMdiActivationEventSource)
-			{
-				((IMdiActivationEventSource)this.Parent).MdiChildDeactivateBefore += new EventHandler(this.EhMdiChildDeactivate);
-				((IMdiActivationEventSource)this.Parent).MdiChildActivateAfter += new EventHandler(this.EhMdiChildActivate);
-			}
-			else if(this.Parent is System.Windows.Forms.Form)
-			{
-				((System.Windows.Forms.Form)this.Parent).MdiChildActivate += new EventHandler(this.EhMdiChildActivate);
-				((System.Windows.Forms.Form)this.Parent).MdiChildActivate += new EventHandler(this.EhMdiChildDeactivate);
-			}
-
-			if(this.ParentForm!=null)
-			{
-				// Monitor closed and closing events to intervent if neccessary
-				this.ParentForm.Closing += new CancelEventHandler(this.EhGraphView_Closing);
-				this.ParentForm.Closed += new EventHandler(this.EhGraphView_Closed);
-			}
-			// the setting of the graph controller should be left out until the end, since it calls back some functions of
-			// the view so that the view should be initialized before
 		}
 
 
@@ -291,17 +270,7 @@ namespace Altaxo.Graph.GUI
 				m_Ctrl.EhView_GraphPanelSizeChanged(e);
 		}
 
-		private void EhGraphView_Closed(object sender, System.EventArgs e)
-		{
-			if(null!=m_Ctrl)
-				m_Ctrl.EhView_Closed(e);
-		}
-
-		private void EhGraphView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			if(null!=m_Ctrl)
-				m_Ctrl.EhView_Closing(e);
-		}
+	
 
 		private void EhGraphToolsToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
 		{
@@ -309,27 +278,27 @@ namespace Altaxo.Graph.GUI
 				m_Ctrl.EhView_CurrentGraphToolChoosen((GraphTools)e.Button.Tag);
 		}
 
-		protected void EhMdiChildActivate(object sender, EventArgs e)
-		{
-			if(((System.Windows.Forms.Form)sender).ActiveMdiChild==this.ParentForm)
-			{
-				// if no toolbar present already, create a toolbar
-				if(null==m_GraphToolsToolBar)
-					m_GraphToolsToolBar = CreateGraphToolsToolbar();
 
-				// restore the parent - so the toolbar is shown
-				m_GraphToolsToolBar.Parent = (System.Windows.Forms.Form)(sender);
-			}
+		public void OnViewSelection()
+		{
+			if(null==m_GraphToolsToolBar)
+				m_GraphToolsToolBar = CreateGraphToolsToolbar();
+
+			// restore the parent - so the toolbar is shown
+			// TODO replace this by a service
+			if(App.Current!=null && App.Current.View != null)
+				m_GraphToolsToolBar.Parent = (Form)App.Current.View;
 		}
 
-		protected void EhMdiChildDeactivate(object sender, EventArgs e)
+		
+
+		public void OnViewDeselection()
 		{
-			if(((System.Windows.Forms.Form)sender).ActiveMdiChild!=this.ParentForm)
-			{
-				if(null!=m_GraphToolsToolBar)
-					m_GraphToolsToolBar.Parent=null;
-			}
+			if(null!=m_GraphToolsToolBar)
+				m_GraphToolsToolBar.Parent=null;
 		}
+
+	
 
 		#region IGraphView Members
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]

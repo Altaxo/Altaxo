@@ -43,11 +43,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 		IWorkbenchWindow ActiveWorkbenchWindow {
 			get;
 		}
+
 		
 		IWorkbenchLayout WorkbenchLayout {
 			get;
 			set;
 		}
+
 		
 		/// <summary>
 		/// Inserts a new <see cref="IViewContent"/> object in the workspace.

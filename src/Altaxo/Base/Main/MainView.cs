@@ -33,7 +33,7 @@ namespace Altaxo
 	/// <summary>
 	/// Summary description for Form1.
 	/// </summary>
-	public class MainView : System.Windows.Forms.Form , IMainView, IMdiActivationEventSource
+	public class MainView : System.Windows.Forms.Form , IMainView
 	{
 
 		private static MainView sm_theApplication=null;
@@ -48,32 +48,6 @@ namespace Altaxo
 		/// </summary>
 		private IMainController m_Ctrl; 
 	
-		public event EventHandler MdiChildActivateBefore;
-		public event EventHandler MdiChildDeactivateBefore;
-		public event EventHandler MdiChildActivateAfter;
-		public event EventHandler MdiChildDeactivateAfter;
-
-	
-		protected override void OnMdiChildActivate(EventArgs e)
-		{
-			e = new EventArgs();
-
-			if(null!=MdiChildDeactivateBefore) // this is called first, only the active child should have a handler on that event so it can deactivate its own toolbars etc.
-				MdiChildDeactivateBefore(this,e);
-
-			if(null!=MdiChildActivateBefore) // then the child activation event is fired, so the child which is active now can register its own toolbars
-				MdiChildActivateBefore(this,e);
-
-			base.OnMdiChildActivate(e); // the call to the base classes handler in the middle
-
-			if(null!=MdiChildDeactivateAfter)
-				MdiChildDeactivateAfter(this,e);
-
-			if(null!=MdiChildActivateAfter)
-				MdiChildActivateAfter(this,e);
-		}
-
-
 		public MainView()
 			{
 				sm_theApplication = this;

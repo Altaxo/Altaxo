@@ -1,11 +1,12 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
 using System;
+using System.Collections;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
@@ -18,8 +19,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <summary>
 		/// The window title.
 		/// </summary>
-		string Title 
-		{
+		string Title {
 			get;
 			set;
 		}
@@ -27,8 +27,18 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <summary>
 		/// The current view content which is shown inside this window.
 		/// </summary>
-		IViewContent ViewContent 
-		{
+		IViewContent ViewContent {
+			get;
+		}
+		
+		/// <summary>
+		/// returns null if no sub view contents are attached.
+		/// </summary>
+		ArrayList SubViewContents {
+			get;
+		}
+		
+		IBaseViewContent ActiveViewContent {
 			get;
 		}
 		
@@ -44,8 +54,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		void SelectWindow();
 		
-		//		void OnWindowSelected(EventArgs e);
+		void SwitchView(int viewNumber);
+		
+//		void OnWindowSelected(EventArgs e);
+		/// <summary>
+		/// Only for internal use.
+		/// </summary>
 		void OnWindowDeselected(EventArgs e);
+		
+		void AttachSecondaryViewContent(ISecondaryViewContent secondaryViewContent);
 		
 		/// <summary>
 		/// Is called when the window is selected.

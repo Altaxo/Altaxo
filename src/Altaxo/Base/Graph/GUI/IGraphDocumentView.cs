@@ -141,6 +141,18 @@ namespace Altaxo.Graph.GUI
 		/// by adjusting the number of layer buttons or similar. The current layer number should be preserved.
 		/// </summary>
 		int       NumberOfLayers { set; }
+
+
+		/// <summary>
+		/// Is called when the view is selected.
+		/// </summary>
+		void OnViewSelection();
+
+		/// <summary>
+		/// Is called when the view is deselected
+		/// </summary>
+		void OnViewDeselection();
+
 	}
 
 
@@ -162,9 +174,8 @@ namespace Altaxo.Graph.GUI
 /// <summary>
 /// This interface has to be implemented by any controller that wants to control a GraphView
 /// </summary>
-	public interface IGraphController
+	public interface IGraphController : Main.GUI.IWorkbenchContentController
 	{
-
 
 		/// <summary>
 		/// This returns the GraphDocument that is managed by this controller.
@@ -248,18 +259,7 @@ namespace Altaxo.Graph.GUI
 		/// <param name="e">EventArgs.</param>
 		void EhView_GraphPanelSizeChanged(System.EventArgs e);
 
-		/// <summary>
-		/// Handles the event when the graph view is closed.
-		/// </summary>
-		/// <param name="e">EventArgs.</param>
-		void EhView_Closed(System.EventArgs e);
-
-		/// <summary>
-		/// Handles the event when the graph view is about to be closed.
-		/// </summary>
-		/// <param name="e">CancelEventArgs.</param>
-		void EhView_Closing(System.ComponentModel.CancelEventArgs e);
-
+		
 
 	}
 

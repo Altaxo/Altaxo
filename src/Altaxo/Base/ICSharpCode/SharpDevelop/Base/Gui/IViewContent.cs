@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -14,32 +14,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 	/// IViewContent is the base interface for all editable data
 	/// inside SharpDevelop.
 	/// </summary>
-	public interface IViewContent : IDisposable
+	public interface IViewContent : IBaseViewContent
 	{
-#if !LINUX
-		/// <summary>
-		/// This is the Windows.Forms control for the view.
-		/// </summary>
-		Control Control 
-		{
-			get;
-		}
-#endif
-		/// <summary>
-		/// The workbench window in which this view is displayed.
-		/// </summary>
-		IWorkbenchWindow  WorkbenchWindow 
-		{
-			get;
-			set;
-		}
 		
 		/// <summary>
 		/// A generic name for the file, when it does have no file name
 		/// (e.g. newly created files)
 		/// </summary>
-		string UntitledName 
-		{
+		string UntitledName {
 			get;
 			set;
 		}
@@ -48,8 +30,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// This is the whole name of the content, e.g. the file name or
 		/// the url depending on the type of the content.
 		/// </summary>
-		string ContentName 
-		{
+		string ContentName {
 			get;
 			set;
 		}
@@ -57,8 +38,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <summary>
 		/// If this property returns true the view is untitled.
 		/// </summary>
-		bool IsUntitled 
-		{
+		bool IsUntitled {
 			get;
 		}
 		
@@ -66,8 +46,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// If this property returns true the content has changed since
 		/// the last load/save operation.
 		/// </summary>
-		bool IsDirty 
-		{
+		bool IsDirty {
 			get;
 			set;
 		}
@@ -75,25 +54,16 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <summary>
 		/// If this property returns true the content could not be altered.
 		/// </summary>
-		bool IsReadOnly 
-		{
+		bool IsReadOnly {
 			get;
 		}
 		
 		/// <summary>
 		/// If this property returns true the content can't be written.
 		/// </summary>
-		bool IsViewOnly 
-		{
+		bool IsViewOnly {
 			get;
 		}
-		
-		/// <summary>
-		/// Reinitializes the content. (Re-initializes all add-in tree stuff)
-		/// and redraws the content. Call this not directly unless you know
-		/// what you do.
-		/// </summary>
-		void RedrawContent();
 		
 		/// <summary>
 		/// Saves this content to the last load/save location.
@@ -120,5 +90,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// and this signals that changes could be saved.
 		/// </summary>
 		event EventHandler DirtyChanged;
+		
+		event EventHandler BeforeSave;
 	}
 }

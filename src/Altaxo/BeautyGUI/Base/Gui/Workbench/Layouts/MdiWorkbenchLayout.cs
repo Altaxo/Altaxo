@@ -38,22 +38,27 @@ namespace ICSharpCode.SharpDevelop.Gui
 		static PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 		static string configFile = propertyService.ConfigDirectory + "MdiLayoutConfig.xml";
 		Form wbForm;
-		
+		IWorkbench m_Workbench;
+
+
 		DockingManager dockManager;
 		ICSharpCode.SharpDevelop.Gui.Components.OpenFileTab tabControl = new ICSharpCode.SharpDevelop.Gui.Components.OpenFileTab();
 		
+		protected IWorkbenchWindow m_ActiveWorkbenchWindow;
+
 		public IWorkbenchWindow ActiveWorkbenchwindow {
 			get {
-				if (tabControl.SelectedTab == null)  {
-					return null;
-				}
-				return (IWorkbenchWindow)tabControl.SelectedTab.Tag;
+				if(m_ActiveWorkbenchWindow==null && tabControl.SelectedTab != null)
+					m_ActiveWorkbenchWindow = (IWorkbenchWindow)tabControl.SelectedTab.Tag;
+
+				return m_ActiveWorkbenchWindow;
 			}
 		}
 		
 		public void Attach(IWorkbench workbench)
 		{
-			wbForm = (Form)((DefaultWorkbench)workbench).View;
+			m_Workbench = workbench;
+			wbForm = (Form)workbench.ViewObject;
 			wbForm.Controls.Clear();
 			wbForm.IsMdiContainer = true;
 			
@@ -98,8 +103,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 				ShowPad(content);
 			}
 			
-			tabControl.SelectionChanged += new EventHandler(ActiveMdiChanged);			
-			
+			tabControl.SelectionChanged += new EventHandler(this.EhTabControl_SelectionChanged);			
+			wbForm.MdiChildActivate += new EventHandler(this.EhView_MdiChildActivate);
+
 			try { 
 				if (File.Exists(configFile)) {
 					dockManager.LoadConfigFromFile(configFile);
@@ -182,6 +188,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (dockManager != null) {
 				dockManager.SaveConfigToFile(configFile);
 			}
+
+			tabControl.SelectionChanged -= new EventHandler(this.EhTabControl_SelectionChanged);			
+			wbForm.MdiChildActivate -= new EventHandler(this.EhView_MdiChildActivate);
+
 			
 #if LellidMod
 			foreach (Altaxo.Main.GUI.IWorkbenchWindowView wv in wbForm.MdiChildren) 
@@ -210,6 +220,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 			((DefaultWorkbenchWindow)wbForm).TopMenu.MdiContainer = null;
 			wbForm.IsMdiContainer = false;
 			wbForm.Controls.Clear();
+
+			m_Workbench = null;
+			wbForm = null;
 		}
 		
 		Hashtable contentHash = new Hashtable();
@@ -305,7 +318,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 
 		//	content.Control.Visible = true;
 			
-			if (wbForm.MdiChildren.Length == 0 || wbForm.ActiveMdiChild.WindowState == FormWindowState.Maximized) 
+			if (wbForm.MdiChildren.Length == 0 || wbForm.ActiveMdiChild==null || wbForm.ActiveMdiChild.WindowState == FormWindowState.Maximized) 
 			{
 				((Form)window).WindowState = FormWindowState.Maximized;
 			}
@@ -331,8 +344,44 @@ namespace ICSharpCode.SharpDevelop.Gui
 			return window;
 #endif
 			}
+
+		protected void EhTabControl_SelectionChanged(object sender, System.EventArgs e)
+		{
+			// we have to make the window that is associated with the tab
+			// the active mdi child
+			m_ActiveWorkbenchWindow = (IWorkbenchWindow)tabControl.SelectedTab.Tag;
+
+			// bring this window now to the foreground
+			System.Windows.Forms.Form childForm = ((Altaxo.Main.GUI.IWorkbenchWindowController)m_ActiveWorkbenchWindow).View as System.Windows.Forms.Form;
+			childForm.Activate();
+		}
+
+
+		/// <summary>
+		/// Is called from the view when the currently active MDI child window has changed
+		/// </summary>
+		protected void EhView_MdiChildActivate(object sender, System.EventArgs e)
+		{
+			System.Windows.Forms.Form activatedWindow = wbForm.ActiveMdiChild;
+
+			if(activatedWindow is Altaxo.Main.GUI.BeautyWorkspaceWindow)
+			{
+				m_ActiveWorkbenchWindow = ((Altaxo.Main.GUI.BeautyWorkspaceWindow)activatedWindow).Controller;
+			
+			
+				foreach(IViewContent content in m_Workbench.ViewContentCollection)
+					if(!object.Equals(content.WorkbenchWindow,m_ActiveWorkbenchWindow))
+						content.WorkbenchWindow.OnWindowDeselected(EventArgs.Empty);
+
+				// TODO change this to .OnSelectWindow since the window is already selected
+				m_ActiveWorkbenchWindow.SelectWindow();
+			}
+
+			OnActiveWindowChanged(this,EventArgs.Empty);
+		}
+
 		
-		void ActiveMdiChanged(object sender, EventArgs e)
+		void OnActiveWindowChanged(object sender, EventArgs e)
 		{
 			if (ActiveWorkbenchWindowChanged != null) {
 				ActiveWorkbenchWindowChanged(this, e);

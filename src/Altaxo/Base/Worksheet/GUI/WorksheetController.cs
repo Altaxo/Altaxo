@@ -18,9 +18,7 @@ namespace Altaxo.Worksheet.GUI
 	[SerializationVersion(0)]
 	public class WorksheetController :
 		IWorksheetController,  
-		System.Runtime.Serialization.IDeserializationCallback,
-		Main.GUI.IWorkbenchContentController,
-		ICSharpCode.SharpDevelop.Gui.IViewContent	
+		System.Runtime.Serialization.IDeserializationCallback
 	{
 		public enum SelectionType { Nothing, DataRowSelection, DataColumnSelection, PropertyColumnSelection }
 
@@ -2378,6 +2376,8 @@ namespace Altaxo.Worksheet.GUI
 					this.VertScrollPos     = this.m_VertScrollPos;
 					this.HorzScrollPos     = this.m_HorzScrollPos;
 
+			
+					
 					// Simulate a SizeChanged event 
 					this.EhView_TableAreaSizeChanged(new EventArgs());
 
@@ -2720,9 +2720,42 @@ namespace Altaxo.Worksheet.GUI
 			App.Current.RemoveWorksheet(this);
 		}
 
+		/// <summary>
+		/// Called if the host window is about to be closed.
+		/// </summary>
+		/// <returns>True if the closing should be canceled, false otherwise.</returns>
+		public bool HostWindowClosing()
+		{
+			if(!App.Current.IsClosingAll)
+			{
+				System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,"Do you really want to close this worksheet and delete the corresponding table?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
+
+				if(dlgres==System.Windows.Forms.DialogResult.No)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Called by the host window after the host window was closed.
+		/// </summary>
+		public void HostWindowClosed()
+		{
+			// if the view is closed, we delete the corresponding table
+			if(null!=Data.DataTableCollection.GetParentDataTableCollectionOf(DataTable))
+				Data.DataTableCollection.GetParentDataTableCollectionOf(DataTable).Remove(DataTable);
+			DataTable.Dispose();
+
+			
+			// we then remove the view from the list of windows
+			App.Current.RemoveWorksheet(this);
+		}
+
 		public void EhView_Closing(System.ComponentModel.CancelEventArgs e)
 		{
-			if(!App.Current.IsClosing)
+			if(!App.Current.IsClosingAll)
 			{
 				System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,"Do you really want to close this worksheet and delete the corresponding table?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
 
@@ -2998,7 +3031,7 @@ namespace Altaxo.Worksheet.GUI
 
 		#region IWorkbenchContentController Members
 
-		Altaxo.Main.GUI.IWorkbenchContentView Altaxo.Main.GUI.IWorkbenchContentController.View
+		Altaxo.Main.GUI.IWorkbenchContentView Altaxo.Main.GUI.IWorkbenchContentController.WorkbenchContentView
 		{
 			get
 			{
@@ -3068,10 +3101,24 @@ namespace Altaxo.Worksheet.GUI
 		/// </summary>
 		public string ContentName 
 		{
-			get { return this.Doc.Name; }
-			set {}
+			get 
+			{ 
+				return this.Doc.Name; 
+			}
+			set 
+			{
+			}
 		}
 		
+		/// <summary>
+		/// The text on the tab page when more than one view content
+		/// is attached to a single window.
+		/// </summary>
+		public string TabPageText 
+		{
+			get { return ContentName; }
+		}
+
 		/// <summary>
 		/// If this property returns true the view is untitled.
 		/// </summary>
@@ -3136,6 +3183,14 @@ namespace Altaxo.Worksheet.GUI
 		public void Load(string fileName)
 		{
 		}
+
+		protected virtual void OnBeforeSave(EventArgs e)
+		{
+			if (BeforeSave != null) 
+			{
+				BeforeSave(this, e);
+			}
+		}
 		
 		/// <summary>
 		/// Is called each time the name for the content has changed.
@@ -3147,6 +3202,9 @@ namespace Altaxo.Worksheet.GUI
 		/// and this signals that changes could be saved.
 		/// </summary>
 		public event EventHandler DirtyChanged;
+
+		public event EventHandler BeforeSave;
+
 		#endregion
 	
 	}

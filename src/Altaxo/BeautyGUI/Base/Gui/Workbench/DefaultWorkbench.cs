@@ -68,8 +68,19 @@ namespace ICSharpCode.SharpDevelop.Gui
 			get { return m_View; }
 			set { m_View = value; }
 		}
+		
+		public object ViewObject
+		{
+			get 
+			{
+				return m_View;
+			}
+		}
 
-	
+		public bool IsClosingAll
+		{
+			get { return closeAll; }
+		}
 
 		// Lellid: move this to the view
 		public bool FullScreen {
@@ -167,7 +178,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			CreateNewWorksheet(Doc.CreateNewTable("WKS0",false));
 
 			// we construct a empty graph by default
-			//CreateNewGraph(Doc.CreateNewGraphDocument());
+			CreateNewGraph(Doc.CreateNewGraphDocument());
 
 #if LellidMod
 #else
@@ -527,9 +538,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 
 		public Altaxo.Graph.GUI.IGraphController CreateNewGraph(Altaxo.Graph.GraphDocument graph)
 		{
-			Altaxo.Main.GUI.IWorkbenchWindowController wbv_controller = new Altaxo.Main.GUI.WorkbenchWindowController();
-			Altaxo.Main.GUI.WorkbenchForm wbvform = new Altaxo.Main.GUI.WorkbenchForm(this.View.Form);
-			wbv_controller.View = wbvform;
+			//Altaxo.Main.GUI.IWorkbenchWindowController wbv_controller = new Altaxo.Main.GUI.WorkbenchWindowController();
+			//Altaxo.Main.GUI.WorkbenchForm wbvform = new Altaxo.Main.GUI.WorkbenchForm(this.View.Form);
+			//wbv_controller.View = wbvform;
 
 			if(graph==null)
 				graph = this.Doc.CreateNewGraphDocument();
@@ -538,11 +549,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 			Altaxo.Graph.GUI.GraphView view = new Altaxo.Graph.GUI.GraphView();
 			ctrl.View = view;
 
-			
-			wbv_controller.Content = ctrl;
+			this.workbenchContentCollection.Add((IViewContent)ctrl);
 
-			this.workbenchContentCollection.Add((IViewContent)wbv_controller);
-			wbvform.Show();
+      if(this.layout!=null)
+				this.layout.ShowView(ctrl);
+			
+			//wbv_controller.Content = ctrl;
+
+			//wbvform.Show();
 			return ctrl;
 		}
 
@@ -559,18 +573,23 @@ namespace ICSharpCode.SharpDevelop.Gui
 
 		public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table)
 		{
-			Altaxo.Main.GUI.IWorkbenchWindowController wbv_controller = new Altaxo.Main.GUI.WorkbenchWindowController();
-			Altaxo.Main.GUI.BeautyWorkspaceWindow wbvform = new Altaxo.Main.GUI.BeautyWorkspaceWindow(this.View.Form);
-			wbv_controller.View = wbvform;
+			//Altaxo.Main.GUI.IWorkbenchWindowController wbv_controller = new Altaxo.Main.GUI.WorkbenchWindowController();
+			//Altaxo.Main.GUI.BeautyWorkspaceWindow wbvform = new Altaxo.Main.GUI.BeautyWorkspaceWindow(this.View.Form);
+			//wbv_controller.View = wbvform;
 
 			Altaxo.Worksheet.GUI.WorksheetController ctrl = new Altaxo.Worksheet.GUI.WorksheetController(this.Doc.CreateNewTableLayout(table));
 			Altaxo.Worksheet.GUI.WorksheetView view = new Altaxo.Worksheet.GUI.WorksheetView();
 			ctrl.View = view;
 
-			wbv_controller.Content = ctrl;
-			
 			this.workbenchContentCollection.Add((IViewContent)ctrl);
-			wbvform.Show();
+
+			if(this.layout!=null)
+				this.layout.ShowView(ctrl);
+			
+
+			//wbv_controller.Content = ctrl;
+			
+			//wbvform.Show();
 			return ctrl;
 		}
 
