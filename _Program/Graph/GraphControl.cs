@@ -82,13 +82,12 @@ namespace Altaxo.Graph
 		protected int m_ActualLayer = 0;
 		protected GraphTools m_CurrentGraphTool = GraphTools.ObjectPointer;
 		private GraphPanel m_GraphPanel;
-		protected PointF m_LastMouseDownPoint; // MouseCoordinaates of the last mouse down
+		protected PointF m_LastMouseDownPoint;
+		private System.Windows.Forms.ImageList m_GraphToolsImages;
+		private System.ComponentModel.IContainer components;
 
+		private ToolBar m_GraphToolsToolBar=null;
 
-		/// <summary> 
-		/// Required designer variable
-		/// </summary>
-		private System.ComponentModel.Container components = null;
 
 		public GraphControl()
 		{
@@ -147,7 +146,10 @@ namespace Altaxo.Graph
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
+			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(GraphControl));
 			this.m_GraphPanel = new Altaxo.Graph.GraphPanel();
+			this.m_GraphToolsImages = new System.Windows.Forms.ImageList(this.components);
 			this.SuspendLayout();
 			// 
 			// m_GraphPanel
@@ -162,6 +164,13 @@ namespace Altaxo.Graph
 			this.m_GraphPanel.DoubleClick += new System.EventHandler(this.OnGraphPanel_DoubleClick);
 			this.m_GraphPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnGraphPanel_MouseMove);
 			this.m_GraphPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnGraphPanel_MouseDown);
+			// 
+			// m_GraphToolsImages
+			// 
+			this.m_GraphToolsImages.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+			this.m_GraphToolsImages.ImageSize = new System.Drawing.Size(16, 16);
+			this.m_GraphToolsImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_GraphToolsImages.ImageStream")));
+			this.m_GraphToolsImages.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// GraphControl
 			// 
@@ -182,7 +191,13 @@ namespace Altaxo.Graph
 			set 
 			{
 				m_CurrentGraphTool = value;
-				// TODO  reflect the change in the tool bar
+				
+				if(null!=this.m_GraphToolsToolBar)
+				{
+					for(int i=0;i<m_GraphToolsToolBar.Buttons.Count;i++)
+						m_GraphToolsToolBar.Buttons[i].Pushed = (i==(int)value);
+				}
+
 			}
 		}
 
@@ -190,11 +205,62 @@ namespace Altaxo.Graph
 		public void OnActivationOfParentForm()
 		{
 			Console.WriteLine("GraphControl activated");
+	
+			if(null==m_GraphToolsToolBar)
+			{
+				// 
+				// m_GraphToolsToolBar
+				// 
+				this.m_GraphToolsToolBar = new ToolBar();
+				this.m_GraphToolsToolBar.ImageList = this.m_GraphToolsImages;
+				this.m_GraphToolsToolBar.ButtonSize = new System.Drawing.Size(16, 24);
+				this.m_GraphToolsToolBar.AutoSize = true;
+				//this.m_GraphToolsToolBar.DropDownArrows = true;
+				//this.m_GraphToolsToolBar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+				//this.m_GraphToolsToolBar.Name = "m_GraphToolsToolBar";
+				//this.m_GraphToolsToolBar.ShowToolTips = true;
+				//this.m_GraphToolsToolBar.Size = new System.Drawing.Size(16, 24);
+				//this.m_GraphToolsToolBar.TabIndex = 1;
+				//this.m_GraphToolsToolBar.TextAlign = System.Windows.Forms.ToolBarTextAlign.Right;
+				this.m_GraphToolsToolBar.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.m_GraphToolsToolbar_ButtonClick);
+
+				for(int i=0;i<2;i++)
+				{
+					ToolBarButton tbb = new ToolBarButton();
+					tbb.ImageIndex=i;
+					//this.m_PushedLayerBotton = tbb;
+					//tbb.Style = ToolBarButtonStyle.ToggleButton;
+					tbb.Tag = (GraphControl.GraphTools)i; 
+					m_GraphToolsToolBar.Buttons.Add(tbb);
+				}
+				this.m_GraphToolsToolBar.Dock = DockStyle.Bottom;
+			}
+				
+			foreach(ToolBarButton bt in this.m_GraphToolsToolBar.Buttons)
+				bt.Pushed = (((GraphTools)bt.Tag)==CurrentGraphTool);
+
+			this.m_GraphToolsToolBar.Parent = (System.Windows.Forms.Form)(App.CurrentApplication);
+		}
+
+
+		private void m_GraphToolsToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
+		{
+			// because the buttons should behave like radio buttons, we
+			// have to unpush all buttons except the one pushed
+			foreach(ToolBarButton bt in this.m_GraphToolsToolBar.Buttons)
+				bt.Pushed = (bt==e.Button);
+
+			this.CurrentGraphTool = (GraphTools)e.Button.Tag; 
 		}
 
 		public void OnDeactivationOfParentForm()
 		{
 			Console.WriteLine("GraphControl deactivated");
+		
+					
+			if(null!=m_GraphToolsToolBar)
+				m_GraphToolsToolBar.Parent=null;
+
 		}
 
 

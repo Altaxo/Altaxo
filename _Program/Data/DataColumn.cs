@@ -725,7 +725,21 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="v">The column the data will be copied from.</param>
 		public abstract void CopyDataFrom(Altaxo.Data.DataColumn v);
+		
+		/// <summary>
+		/// Removes a number of rows (given by <paramref name="nCount"/>) beginning from nFirstRow,
+		/// i.e. remove rows number nFirstRow ... nFirstRow+nCount-1.
+		/// </summary>
+		/// <param name="nFirstRow">Number of first row to delete.</param>
+		/// <param name="nCount">Number of rows to delete.</param>
 		public abstract void RemoveRows(int nFirstRow, int nCount); // removes nCount rows starting from nFirstRow 
+		
+		
+		/// <summary>
+		/// Inserts <paramref name="nCount"/> empty rows before row number <paramref name="nBeforeRow"/>. 
+		/// </summary>
+		/// <param name="nBeforeRow">The row number before the additional rows are inserted.</param>
+		/// <param name="nCount">Number of empty rows to insert.</param>
 		public abstract void InsertRows(int nBeforeRow, int nCount); // inserts additional empty rows
 		// -----------------------------------------------------------------------------
 		// 
@@ -733,33 +747,21 @@ namespace Altaxo.Data
 		//
 		// -----------------------------------------------------------------------------
 
-		// Note: unfortunately (and maybe also undocumented) we can not use
-		// the names op_Addition, op_Subtraction and so one, because these
-		// names seems to be used by the compiler for the operators itself
-		// so we use here vopAddition and so on
-
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		// Note: unfortunately (and maybe also undocumented) we can not use
 		// the names op_Addition, op_Subtraction and so one, because these
 		// names seems to be used by the compiler for the operators itself
 		// so we use here vopAddition and so on (the v from virtual)
 
+		/// <summary>
+		/// Adds another data column to this data column (item by item). 
+		/// </summary>
+		/// <param name="a">The data column to add.</param>
+		/// <param name="b">The result of the addition (this+a).</param>
+		/// <returns>True if successful, false if this operation is not supported.</returns>
 		public virtual bool vop_Addition(DataColumn a, out DataColumn b)
 		{	b=null; return false; }
+
 		public virtual bool vop_Addition_Rev(DataColumn a, out DataColumn b)
 		{	b=null; return false; }
 		public virtual bool vop_Addition(AltaxoVariant a, out DataColumn b)
@@ -767,6 +769,12 @@ namespace Altaxo.Data
 		public virtual bool vop_Addition_Rev(AltaxoVariant a, out DataColumn b)
 		{	b=null; return false; }
 
+		/// <summary>
+		/// Subtracts another data column from this data column (item by item). 
+		/// </summary>
+		/// <param name="a">The data column to subtract.</param>
+		/// <param name="b">The result of the subtraction (this-a).</param>
+		/// <returns>True if successful, false if this operation is not supported.</returns>
 		public virtual bool vop_Subtraction(DataColumn a, out DataColumn b)
 		{	b=null; return false; }
 		public virtual bool vop_Subtraction_Rev(DataColumn a, out DataColumn b)
@@ -776,6 +784,12 @@ namespace Altaxo.Data
 		public virtual bool vop_Subtraction_Rev(AltaxoVariant a, out DataColumn b)
 		{	b=null; return false; }
 
+		/// <summary>
+		/// Multiplies another data column to this data column (item by item). 
+		/// </summary>
+		/// <param name="a">The data column to multiply.</param>
+		/// <param name="b">The result of the multiplication (this*a).</param>
+		/// <returns>True if successful, false if this operation is not supported.</returns>
 		public virtual bool vop_Multiplication(DataColumn a, out DataColumn b)
 		{	b=null; return false; }
 		public virtual bool vop_Multiplication_Rev(DataColumn a, out DataColumn b)
@@ -785,6 +799,12 @@ namespace Altaxo.Data
 		public virtual bool vop_Multiplication_Rev(AltaxoVariant a, out DataColumn b)
 		{	b=null; return false; }
 
+		/// <summary>
+		/// Divides this data column by another data column(item by item). 
+		/// </summary>
+		/// <param name="a">The data column used for division.</param>
+		/// <param name="b">The result of the division (this/a).</param>
+		/// <returns>True if successful, false if this operation is not supported.</returns>
 		public virtual bool vop_Division(DataColumn a, out DataColumn b)
 		{	b=null; return false; }
 		public virtual bool vop_Division_Rev(DataColumn a, out DataColumn b)

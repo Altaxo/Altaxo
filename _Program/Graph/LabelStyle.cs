@@ -108,10 +108,8 @@ namespace Altaxo.Graph
 
 				string txt = majorticks[i].ToString();
 				g.DrawString(txt, m_Font, Brushes.Black, tickorg.X + dist_x, tickorg.Y + dist_y, strfmt);
+			
 			}
-
-
-
 
 		}
 

@@ -43,6 +43,9 @@ namespace Altaxo.Data
 		protected System.Collections.ArrayList columnsByNumber = new System.Collections.ArrayList();
 		protected int nNumberOfRows=0; // the max. Number of Rows of the columns of the table
 
+
+
+
 		/// <summary>
 		/// ColumnScripts, key is the corresponding column, value is of type WorksheetColumnScript
 		/// </summary>
@@ -863,6 +866,106 @@ namespace Altaxo.Data
 		}
 
 
+/*
+		public class PropertyColumnCollection : System.Collections.CollectionBase
+		{
+			DataTable m_Parent;
+			System.Collections.Hashtable columnsByName;
+
+			string lastColumnNameGenerated;
+			string lastColumnNameAdded;
+
+			PropertyColumnCollection(DataTable parent)
+			{
+				m_Parent = parent;
+			}
+
+
+			public void Add(Altaxo.Data.DataColumn datac)
+			{
+				Add(Count,datac);
+			}
+
+			public void Add(int idx, Altaxo.Data.DataColumn datac)
+			{
+				bool bColumnWasReplaced = false;
+
+				if(idx<Count) // we have to replace the column
+				{
+					if(this[idx].GetType()==datac.GetType()) // test whether the column types are equal
+					{
+						// if the types are equal, then copy the data and then the column name
+						this[idx] = datac; // first copy the data
+						//this[idx].CopyColumnInformationFrom(datac);
+						// and now the names
+						if(datac.ColumnName!=null && datac.ColumnName != this[idx].ColumnName)
+						{
+							// so we try to replace the column names
+							columnsByName.Remove(this[idx].ColumnName);
+							// Test for unique column name
+							if(null!=columnsByName[datac.ColumnName])
+							{
+								this[idx].ColumnName = this.FindUniqueColumnName(datac.ColumnName);
+								this.lastColumnNameGenerated = this[idx].ColumnName; // store the last generated column name
+							}
+							// put it back into the name array
+							this[idx].ColumnName = datac.ColumnName;
+							this[idx].CopyHeaderInformationFrom(datac);
+							columnsByName.Add(this[idx].ColumnName,this[idx]);
+						}
+						bColumnWasReplaced = true;
+						return; // we are ready in this case
+					}
+					else  // the types are not equal, so we have to remove the col and insert a new one
+					{
+						string oldcolname = this[idx].ColumnName;
+						columnsByName.Remove(oldcolname);
+						this[idx].Dispose();
+						this[idx]=null;
+						bColumnWasReplaced=true;
+
+						if(datac.ColumnName==null)
+							datac.ColumnName = oldcolname; // use if possible the name of the old column
+					}
+				}
+
+				// Test for unique column name
+				if(null==datac.ColumnName || null!=columnsByName[datac.ColumnName])
+				{
+					datac.ColumnName = this.FindUniqueColumnName(datac.ColumnName);
+					this.lastColumnNameGenerated = datac.ColumnName; // store the last generated column name
+				}
+
+				// store this column name as the last column name that was added for purpose 
+				// of finding new names in the future
+				this.lastColumnNameAdded = datac.ColumnName;
+
+				datac.ParentTable = this; // set the column parent
+				if(idx<Count)
+				{
+					this[idx] = datac;
+					datac.SetColumnNumber( idx ); // set the column number
+				}
+				else
+				{
+					this.InnerList.Add(datac); // insert the column first, then
+					datac.SetColumnNumber( Count -1 ); // set the column number
+				}
+				columnsByName.Add(datac.ColumnName,datac);	
+
+				// raise data event to all listeners
+				m_Parent.OnColumnDataChanged(datac,0,datac.Count,bColumnWasReplaced);
+			}
+
+
+			DataColumn this[int i]
+			{
+				get { return (DataColumn)base.InnerList[i]; }
+				set { base.InnerList[i]=value; }
+			}
+
+		}
+*/
 
 	} // end class Altaxo.Data.DataTable
 	
