@@ -17,12 +17,22 @@ using ICSharpCode.SharpDevelop.Services;
 namespace Altaxo.Main
 {
 	
+	/// <summary>
+	/// The event handler to indicate the changing of an Altaxo project.
+	/// </summary>
 	public delegate void ProjectEventHandler(object sender, ProjectEventArgs e);
 	
+
+	/// <summary>
+	/// Usefull to indicate the change of an Altaxo project.
+	/// </summary>
 	public class ProjectEventArgs : EventArgs
 	{
-		Altaxo.AltaxoDocument project;
+		private Altaxo.AltaxoDocument project;
 		
+		/// <summary>
+		/// Returns the project which was changed.
+		/// </summary>
 		public Altaxo.AltaxoDocument Project
 		{
 			get 
@@ -31,29 +41,35 @@ namespace Altaxo.Main
 			}
 		}
 		
-		public ProjectEventArgs(Altaxo.AltaxoDocument combine)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="renamedProject">The project which was changed.</param>
+		public ProjectEventArgs(Altaxo.AltaxoDocument renamedProject)
 		{
-			this.project = project;
+			this.project = renamedProject;
 		}
 	}
 
 
+	/// <summary>
+	/// The event handler to indicate the renaming of a project.
+	/// </summary>
 	public delegate void ProjectRenameEventHandler(object sender, ProjectRenameEventArgs e);
 	
-	public class ProjectRenameEventArgs : EventArgs
+	/// <summary>
+	/// Usefull to indicate the renaming of an Altaxo project.
+	/// </summary>
+	public class ProjectRenameEventArgs : ProjectEventArgs
 	{ 
-		Altaxo.AltaxoDocument project;
+	
 		string   oldName;
 		string   newName;
 		
-		public Altaxo.AltaxoDocument Project 
-		{
-			get 
-			{
-				return project;
-			}
-		}
-		
+		/// <summary>
+		/// The name of the project before renaming.
+		/// </summary>
+	
 		public string OldName 
 		{
 			get 
@@ -62,6 +78,9 @@ namespace Altaxo.Main
 			}
 		}
 		
+		/// <summary>
+		/// The name of the project after renaming.
+		/// </summary>
 		public string NewName 
 		{
 			get 
@@ -70,14 +89,25 @@ namespace Altaxo.Main
 			}
 		}
 		
-		public ProjectRenameEventArgs(Altaxo.AltaxoDocument project, string oldName, string newName)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="renamedProject">The project renamed.</param>
+		/// <param name="oldName">The old name of the project.</param>
+		/// <param name="newName">The new name of the project.</param>
+		public ProjectRenameEventArgs(Altaxo.AltaxoDocument renamedProject, string oldName, string newName)
+			: base(renamedProject)
 		{
-			this.project = project;
 			this.oldName = oldName;
 			this.newName = newName;
 		}
 	}
 
+	/// <summary>
+	/// Handles administrative tasks concerning an Altaxo project.
+	/// </summary>
+	/// <remarks>This should be instantiated only once. You can reach the current project service
+	/// by calling <see>Current.ProjectService</see>.</remarks>
 	public class ProjectService : ICSharpCode.Core.Services.AbstractService
 	{
 		/// <summary>
@@ -95,6 +125,9 @@ namespace Altaxo.Main
 		ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(ResourceService));
 
 
+		/// <summary>
+		/// The currently open Altaxo project.
+		/// </summary>
 		public Altaxo.AltaxoDocument CurrentOpenProject 
 		{
 			get 
@@ -120,17 +153,27 @@ namespace Altaxo.Main
 			}
 		}
 
+		/// <summary>
+		/// The name of the currently open project. Is either the file name or the untitled name.
+		/// </summary>
 		public string CurrentProjectFileName
 		{
 			get { return this.openProjectFileName; }
 		}
 
-
+		/// <summary>
+		/// Initializes the project service.
+		/// </summary>
 		public override void InitializeService()
 		{
 			base.InitializeService();
 		}
 
+		/// <summary>
+		/// Saves the state of the main window into a zipped file.
+		/// </summary>
+		/// <param name="zippedStream">The file stream of the zip file.</param>
+		/// <param name="info">The serialization info used to serialize the state of the main window.</param>
 		public void SaveWindowStateToZippedFile(ZipOutputStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
 		{
 			System.Text.StringBuilder errorText = new System.Text.StringBuilder();
@@ -180,6 +223,12 @@ namespace Altaxo.Main
 		}
 
 
+		/// <summary>
+		/// Restores the state of the main window from a zipped Altaxo project file.
+		/// </summary>
+		/// <param name="zipFile">The zip file where the state file can be found into.</param>
+		/// <param name="info">The deserialization info used to retrieve the data.</param>
+		/// <param name="restoredDoc">The previously (also from the zip file!) restored Altaxo document.</param>
 		public void RestoreWindowStateFromZippedFile(ZipFile zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info, AltaxoDocument restoredDoc)
 		{
 			System.Collections.ArrayList restoredControllers = new System.Collections.ArrayList();
@@ -215,6 +264,10 @@ namespace Altaxo.Main
 
 		}
 
+		/// <summary>
+		/// Opens a Altaxo project. If the current project is dirty, the user is ask for saving the current project.
+		/// </summary>
+		/// <param name="filename"></param>
 		public void OpenProject(string filename)
 		{
 			if (CurrentOpenProject != null) 
@@ -277,6 +330,10 @@ namespace Altaxo.Main
 		}
 
 
+		/// <summary>
+		/// Opens a Altaxo project from a project file (without asking the user).
+		/// </summary>
+		/// <param name="filename"></param>
 		private void Load(string filename)
 		{
 			System.Text.StringBuilder errorText = new System.Text.StringBuilder();
@@ -343,11 +400,19 @@ namespace Altaxo.Main
 			this.openProject.IsDirty = false;
 		}
 
+		/// <summary>
+		/// Saves a project under the current file name.
+		/// </summary>
 		public void SaveProject()
 		{
 			SaveProject(openProjectFileName);
 		}
 
+		/// <summary>
+		/// Saves the current project under a provided file name. If the provided file name differs
+		/// from the current file name, a project renaming event is triggered.
+		/// </summary>
+		/// <param name="filename">The new project file name.</param>
 		public void SaveProject(string filename)
 		{
 			string oldFileName = this.openProjectFileName;
@@ -362,6 +427,9 @@ namespace Altaxo.Main
 				FileErrorPolicy.ProvideAlternative);
 		}
 
+		/// <summary>
+		/// Asks the user for a file name for the current project, and then saves the project under the given name.
+		/// </summary>
 		public void SaveProjectAs()
 		{
 			SaveFileDialog fdiag = new SaveFileDialog();
@@ -380,6 +448,10 @@ namespace Altaxo.Main
 			}
 		}
 
+		/// <summary>
+		/// Asks the user whether or not the project should be saved, and saves it in case the user answers with yes.
+		/// </summary>
+		/// <param name="e">Cancel event args. On return, the e.Cancel property is set to true, if the users cancel the saving.</param>
 		public virtual void AskForSavingOfProject(System.ComponentModel.CancelEventArgs e)
 		{
 			string text = resourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Text");
@@ -407,12 +479,11 @@ namespace Altaxo.Main
 		
 		}
 
-		public void CloseProject()
-		{
-			CloseProject(true);
-		}
 
-		public void CloseProject(bool saveCombinePreferencies)
+		/// <summary>
+		/// Closes a project. If the project is dirty, the user is asked for saving the project.
+		/// </summary>
+		public void CloseProject()
 		{
 
 			if (CurrentOpenProject != null) 
@@ -430,10 +501,14 @@ namespace Altaxo.Main
 					//CurrentSelectedProject = null;
 					//CurrentOpenCombine = CurrentSelectedCombine = null;
 					openProjectFileName = null;
-					CurrentOpenProject = new Altaxo.AltaxoDocument();
 					WorkbenchSingleton.Workbench.CloseAllViews();
 					OnProjectClosed(new ProjectEventArgs(closedProject));
 					//closedProject.Dispose();
+					
+					// now create a new project
+					CurrentOpenProject = new Altaxo.AltaxoDocument();
+					OnProjectOpened(new ProjectEventArgs(CurrentOpenProject));
+
 				}
 			}
 		}
@@ -630,6 +705,30 @@ namespace Altaxo.Main
 		}
 
 	
+		/// <summary>
+		/// This function will delete a graph document and close all corresponding views.
+		/// </summary>
+		/// <param name="graph">The graph document to delete.</param>
+		/// <param name="force">If true, the graph document is deleted without safety question,
+		/// if false, the user is ask before the graph document is deleted.</param>
+		public void DeleteGraphDocument(Altaxo.Graph.GraphDocument graph, bool force)
+		{
+			if(!force && 
+				System.Windows.Forms.DialogResult.No == System.Windows.Forms.MessageBox.Show(
+				Current.MainWindow,
+				"Are you sure to remove the graph document and the corresponding views?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo,System.Windows.Forms.MessageBoxIcon.Warning))
+				return;
+
+			// close all windows
+			IViewContent[] foundContent = SearchContentForDocument(graph);
+			foreach(IViewContent content in foundContent)
+			{
+				content.WorkbenchWindow.CloseWindow(true);
+			}
+
+			Current.Project.GraphDocumentCollection.Remove(graph);
+
+		}
 
 		/// <summary>This will remove the GraphController <paramref>ctrl</paramref> from the graph forms collection.</summary>
 		/// <param name="ctrl">The GraphController to remove.</param>
@@ -662,6 +761,11 @@ namespace Altaxo.Main
 
 
 		//********* own events
+
+		/// <summary>
+		/// Fires the ProjectOpened event.
+		/// </summary>
+		/// <param name="e">Event args indicating which project was opened.</param>
 		protected virtual void OnProjectOpened(ProjectEventArgs e)
 		{
 			if (ProjectOpened != null) 
@@ -672,6 +776,10 @@ namespace Altaxo.Main
 			OnProjectChanged();
 		}
 		
+		/// <summary>
+		/// Fires the project closed event.
+		/// </summary>
+		/// <param name="e">Indicates which project was closed.</param>
 		protected virtual void OnProjectClosed(ProjectEventArgs e)
 		{
 			if (ProjectClosed != null) 
@@ -682,6 +790,10 @@ namespace Altaxo.Main
 			OnProjectChanged();
 		}
 
+		/// <summary>
+		/// Fires the <see>ProjectRenamed</see> event.
+		/// </summary>
+		/// <param name="e">Indicates which project was renamed, and the old and the new name of the project.</param>
 		protected virtual void OnRenameProject(ProjectRenameEventArgs e)
 		{
 			if (ProjectRenamed != null) 
@@ -692,6 +804,10 @@ namespace Altaxo.Main
 			OnProjectChanged();
 		}
 
+		/// <summary>
+		/// Fires the <see>ProjectDirtyChanged</see> event.
+		/// </summary>
+		/// <param name="e">Indicats on which project the dirty flag changed.</param>
 		protected virtual void OnProjectDirtyChanged(ProjectEventArgs e)
 		{
 			if (ProjectDirtyChanged != null) 
@@ -702,6 +818,11 @@ namespace Altaxo.Main
 			OnProjectChanged();
 		}
 		
+		/// <summary>
+		/// Fires the <see>ProjectChanged</see> event. This occurs <b>after</b> the events <see>ProjectOpened</see>, 
+		/// <see>ProjectClosed</see>, <see>ProjectRenamed</see>, and <see>ProjectDirtyChanged</see> event. Usefull if
+		/// you not want to subscribe to the above mentioned single events.
+		/// </summary>
 		protected virtual void OnProjectChanged()
 		{
 			if(ProjectChanged != null)
@@ -710,8 +831,19 @@ namespace Altaxo.Main
 		}
 
 
+		/// <summary>
+		/// Fired when a project is opened or a new empty project is created.
+		/// </summary>
 		public event ProjectEventHandler ProjectOpened;
+
+		/// <summary>
+		/// Fired when the current open project is closed.
+		/// </summary>
 		public event ProjectEventHandler ProjectClosed;
+
+		/// <summary>
+		/// Fired when the current open project is renamed.
+		/// </summary>
 		public event ProjectRenameEventHandler ProjectRenamed;
 		/// <summary>
 		/// Fired when the dirty state of the project changed.
@@ -719,9 +851,8 @@ namespace Altaxo.Main
 		public event ProjectEventHandler ProjectDirtyChanged;
 		
 		/// <summary>
-		/// Event fired when any of the other event is fired: ProjectOpened,
-		/// ProjectClosed, ProjectRenamed and ProjectDirty. Firstly, the specific
-		/// event is fired, and then, this event is fired.
+		/// Event fired <b>after</b> any of the following other events is fired: <see>ProjectOpened</see>, 
+		/// <see>ProjectClosed</see>, <see>ProjectRenamed</see>, and <see>ProjectDirtyChanged</see>.
 		/// </summary>
 		public event ProjectEventHandler ProjectChanged;
 	}

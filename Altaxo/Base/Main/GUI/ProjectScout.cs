@@ -216,6 +216,9 @@ namespace Altaxo.Main.GUI
 			rootNode.Expand();
 			viewNodes.Expand();
 
+			Current.ProjectService.ProjectOpened += new ProjectEventHandler(this.EhProjectOpened);
+			Current.ProjectService.ProjectClosed += new ProjectEventHandler(this.EhProjectClosed);
+		
 			Current.Project.DataTableCollection.CollectionChanged += new EventHandler(DataTableCollection_Changed);
 			Current.Project.GraphDocumentCollection.CollectionChanged += new EventHandler(GraphDocumentCollection_Changed);
 			
@@ -396,6 +399,20 @@ namespace Altaxo.Main.GUI
 
 		}
 
+		private void EhProjectOpened(object sender, ProjectEventArgs e)
+		{
+			e.Project.DataTableCollection.CollectionChanged += new EventHandler(DataTableCollection_Changed);
+			e.Project.GraphDocumentCollection.CollectionChanged += new EventHandler(GraphDocumentCollection_Changed);
+
+			DataTableCollection_Changed(sender,e);
+			GraphDocumentCollection_Changed(sender,e);
+		}
+
+		private void EhProjectClosed(object sender, ProjectEventArgs e)
+		{
+			e.Project.DataTableCollection.CollectionChanged -= new EventHandler(DataTableCollection_Changed);
+			e.Project.GraphDocumentCollection.CollectionChanged -= new EventHandler(GraphDocumentCollection_Changed);
+		}
 
 		TreeNode nodeClickedNow;
 		protected override void OnMouseUp(MouseEventArgs e)

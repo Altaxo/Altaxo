@@ -262,7 +262,8 @@
 	<Extension path="/SharpDevelop/Workbench/MainMenu">
 		<MenuItem id="File" label="${res:XML.MainMenu.FileMenu}">
 			<MenuItem id="New" label="${res:XML.MainMenu.FileMenu.New}">
-				<MenuItem id="Worksheet" label="${res:XML.MainMenu.FileMenu.New.Worksheet}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.Worksheet.Description}" shortcut="Control|W" class="Altaxo.Main.Commands.CreateNewWorksheet"/>
+				<MenuItem id="StandardWorksheet" label="${res:XML.MainMenu.FileMenu.New.StandardWorksheet}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.StandardWorksheet.Description}" shortcut="Control|W" class="Altaxo.Main.Commands.CreateNewStandardWorksheet"/>
+				<MenuItem id="EmptyWorksheet"    label="${res:XML.MainMenu.FileMenu.New.Worksheet}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.Worksheet.Description}" shortcut="Control|E" class="Altaxo.Main.Commands.CreateNewWorksheet"/>
 				<MenuItem id="Graph" label="${res:XML.MainMenu.FileMenu.New.Graph}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.Graph.Description}" shortcut="Control|G" class="Altaxo.Main.Commands.CreateNewGraph"/>
 				<MenuItem id="WksGraphFromFile" label="${res:XML.MainMenu.FileMenu.New.WksGraphFromFile}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.WksGraphFromFile.Description}" shortcut="Control|N" class="Altaxo.Main.Commands.CreateNewWorksheetOrGraphFromFile"/>
 				<MenuItem id="File" label="${res:XML.MainMenu.FileMenu.New.File}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.File.Description}" shortcut="Control|N" class="ICSharpCode.SharpDevelop.Commands.CreateNewFile"/>

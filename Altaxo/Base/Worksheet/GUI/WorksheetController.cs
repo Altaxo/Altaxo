@@ -191,6 +191,7 @@ namespace Altaxo.Worksheet.GUI
 			m_CellEditControl.TabIndex = 0;
 			m_CellEditControl.Text = "";
 			m_CellEditControl.Hide();
+			m_CellEdit_IsArmed = false;
 			m_CellEditControl.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnCellEditControl_KeyDown);
 			m_CellEditControl.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnCellEditControl_KeyPress);
 			//m_View.TableViewWindow.Controls.Add(m_CellEditControl);
@@ -1275,26 +1276,61 @@ namespace Altaxo.Worksheet.GUI
 			get { return View.TableAreaSize.Height; }
 		}
 
+		#endregion
+
+		#region Selection related
+
+		/// <summary>
+		/// Returns the currently selected data columns
+		/// </summary>
 		public IndexSelection SelectedColumns
 		{
 			get	{	return m_SelectedColumns;	}
 		}
 
+		/// <summary>
+		/// Returns the currently selected data rows.
+		/// </summary>
 		public IndexSelection SelectedRows
 		{
 			get { return m_SelectedRows; }
 		}
 
+		/// <summary>
+		/// Returns the currently selected property columns.
+		/// </summary>
 		public IndexSelection SelectedPropertyColumns
 		{
 			get { return m_SelectedPropertyColumns; }
 		}
 
-		#endregion
+	
+		/// <summary>
+		/// Returns true if one or more columns, rows or property columns are selected.
+		/// </summary>
+		public bool AreColumnsOrRowsSelected
+		{
+			get { return SelectedColumns.Count>0 || SelectedRows.Count>0 || SelectedPropertyColumns.Count>0; }
+		}
 
-		#region "public methods"
+		/// <summary>
+		/// Clears all selections of columns, rows or property columns.
+		/// </summary>
+		public void ClearAllSelections()
+		{
+			SelectedColumns.Clear();
+			SelectedRows.Clear();
+			SelectedPropertyColumns.Clear();
 
+			if(this.View!=null)
+				this.View.TableAreaInvalidate();
+		}
 
+		
+
+		/// <summary>
+		/// Remove the selected columns, rows or property columns.
+		/// </summary>
 		public void RemoveSelected()
 		{
 			this.DataTable.Suspend();
@@ -1379,6 +1415,9 @@ namespace Altaxo.Worksheet.GUI
 		}
 
 
+		/// <summary>
+		/// Sets the column kind of the first selected column to a X column.
+		/// </summary>
 		public void SetSelectedColumnAsX()
 		{
 			if(SelectedColumns.Count>0)
@@ -1389,6 +1428,10 @@ namespace Altaxo.Worksheet.GUI
 			}
 		}
 
+		/// <summary>
+		/// Sets the group number of the currently selected columns to <code>nGroup</code>.
+		/// </summary>
+		/// <param name="nGroup">The group number to set for the selected columns.</param>
 		public void SetSelectedColumnsGroup(int nGroup)
 		{
 			int len = SelectedColumns.Count;
@@ -1400,8 +1443,16 @@ namespace Altaxo.Worksheet.GUI
 			this.View.TableAreaInvalidate();
 		}
 
+		#endregion
 
-		public Altaxo.Worksheet.ColumnStyle GetColumnStyle(int i)
+		#region "style related public methods"
+
+		/// <summary>
+		/// Retrieves the column style for the data column with index i.
+		/// </summary>
+		/// <param name="i">The index of the data column for which the style has to be returned.</param>
+		/// <returns>The column style of the data column.</returns>
+		public Altaxo.Worksheet.ColumnStyle GetDataColumnStyle(int i)
 		{
 			// zuerst in der ColumnStylesCollection nach dem passenden Namen
 			// suchen, ansonsten default-Style zurückgeben
@@ -1434,6 +1485,11 @@ namespace Altaxo.Worksheet.GUI
 
 
 
+		/// <summary>
+		/// Retrieves the column style for the property column with index i.
+		/// </summary>
+		/// <param name="i">The index of the property column for which the style has to be returned.</param>
+		/// <returns>The column style of the property column.</returns>
 		public Altaxo.Worksheet.ColumnStyle GetPropertyColumnStyle(int i)
 		{
 			// zuerst in der ColumnStylesCollection nach dem passenden Namen
@@ -1468,6 +1524,7 @@ namespace Altaxo.Worksheet.GUI
 		#endregion
 
 		#region Data event handlers
+
 
 		public void EhTableDataChanged(object sender, EventArgs e)
 		{
@@ -1578,6 +1635,7 @@ namespace Altaxo.Worksheet.GUI
 		{
 			this.ReadCellEditContent();
 			m_CellEditControl.Hide();
+			m_CellEdit_IsArmed = false;
 		}
 
 		private void OnCellEditControl_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -1651,7 +1709,7 @@ namespace Altaxo.Worksheet.GUI
 			{
 				e.Handled=true;
 				m_CellEdit_IsArmed=false;
-				this.m_CellEditControl.Hide();
+				m_CellEditControl.Hide();
 			}
 		}
 
@@ -1661,13 +1719,13 @@ namespace Altaxo.Worksheet.GUI
 			{
 				if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.DataCell)
 				{
-					GetColumnStyle(m_CellEdit_EditedCell.Column).SetColumnValueAtRow(m_CellEditControl.Text,m_CellEdit_EditedCell.Row,DataTable[m_CellEdit_EditedCell.Column]);
+					GetDataColumnStyle(m_CellEdit_EditedCell.Column).SetColumnValueAtRow(m_CellEditControl.Text,m_CellEdit_EditedCell.Row,DataTable[m_CellEdit_EditedCell.Column]);
 				}
 				else if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.PropertyCell)
 				{
 					GetPropertyColumnStyle(m_CellEdit_EditedCell.Column).SetColumnValueAtRow(m_CellEditControl.Text,m_CellEdit_EditedCell.Row,DataTable.PropCols[m_CellEdit_EditedCell.Column]);
 				}
-				
+				this.m_CellEditControl.Hide();
 				this.m_CellEdit_IsArmed=false;
 			}
 		}
@@ -1677,13 +1735,14 @@ namespace Altaxo.Worksheet.GUI
 			
 			if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.DataCell)
 			{
-				m_CellEditControl.Text = GetColumnStyle(m_CellEdit_EditedCell.Column).GetColumnValueAtRow(m_CellEdit_EditedCell.Row,DataTable[m_CellEdit_EditedCell.Column]);
+				m_CellEditControl.Text = GetDataColumnStyle(m_CellEdit_EditedCell.Column).GetColumnValueAtRow(m_CellEdit_EditedCell.Row,DataTable[m_CellEdit_EditedCell.Column]);
 			}
 			else if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.PropertyCell)
 			{
 				m_CellEditControl.Text = this.GetPropertyColumnStyle(m_CellEdit_EditedCell.Column).GetColumnValueAtRow(m_CellEdit_EditedCell.Row,DataTable.PropCols[m_CellEdit_EditedCell.Column]);
 			}
 
+			m_CellEditControl.Parent = this.View.TableViewWindow;
 			m_CellEditControl.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			m_CellEditControl.SelectAll();
 			m_CellEditControl.Modified=false;
@@ -1939,6 +1998,7 @@ namespace Altaxo.Worksheet.GUI
 					{
 						this.ReadCellEditContent();
 						m_CellEditControl.Hide();
+						m_CellEdit_IsArmed = false;
 					}
 
 					// The value of the ScrollBar in the view has an offset, since he
@@ -2192,6 +2252,7 @@ namespace Altaxo.Worksheet.GUI
 					{
 						this.ReadCellEditContent();
 						m_CellEditControl.Hide();
+						m_CellEdit_IsArmed = false;
 					}
 					
 					if(View!=null)
@@ -2337,7 +2398,7 @@ namespace Altaxo.Worksheet.GUI
 			int horzSize = this.TableAreaWidth-m_TableLayout.RowHeaderStyle.Width;
 			while(i>=0)
 			{
-				horzSize -= GetColumnStyle(i).Width;
+				horzSize -= GetDataColumnStyle(i).Width;
 				if(horzSize>0 && i>0)
 					i--;
 				else
@@ -2453,7 +2514,7 @@ namespace Altaxo.Worksheet.GUI
 					cs = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.ColumnStyles[DataTable[m_DragColumnWidth_ColumnNumber]];
 					if(null==cs)
 					{
-						Altaxo.Worksheet.ColumnStyle template = GetColumnStyle(this.m_DragColumnWidth_ColumnNumber);
+						Altaxo.Worksheet.ColumnStyle template = GetDataColumnStyle(this.m_DragColumnWidth_ColumnNumber);
 						cs = (Altaxo.Worksheet.ColumnStyle)template.Clone();
 						m_TableLayout.ColumnStyles.Add(DataTable[m_DragColumnWidth_ColumnNumber],cs);
 					}
@@ -2479,6 +2540,7 @@ namespace Altaxo.Worksheet.GUI
 			this.m_MouseDownPosition = new Point(e.X, e.Y);
 			this.ReadCellEditContent();
 			m_CellEditControl.Hide();
+			m_CellEdit_IsArmed = false;
 
 			if(this.m_DragColumnWidth_ColumnNumber>=-1)
 			{
@@ -2506,7 +2568,7 @@ namespace Altaxo.Worksheet.GUI
 				
 					if(null==cs)
 					{
-						Altaxo.Worksheet.ColumnStyle template = GetColumnStyle(this.m_DragColumnWidth_ColumnNumber);
+						Altaxo.Worksheet.ColumnStyle template = GetDataColumnStyle(this.m_DragColumnWidth_ColumnNumber);
 						cs = (Altaxo.Worksheet.ColumnStyle)template.Clone();
 						m_TableLayout.ColumnStyles.Add(DataTable[m_DragColumnWidth_ColumnNumber],cs);
 					}
@@ -2716,7 +2778,7 @@ namespace Altaxo.Worksheet.GUI
 
 				for(int nCol=firstColToDraw, nIncCol=0; nIncCol<numberOfColumnsToDraw; nCol++,nIncCol++)
 				{
-					Altaxo.Worksheet.ColumnStyle cs = GetColumnStyle(nCol);
+					Altaxo.Worksheet.ColumnStyle cs = GetDataColumnStyle(nCol);
 					cellRectangle = this.GetXCoordinatesOfColumn(nCol,cellRectangle);
 
 					bool bColumnSelected = bAreColumnsSelected && m_SelectedColumns.ContainsKey(nCol);
@@ -2873,7 +2935,7 @@ namespace Altaxo.Worksheet.GUI
 				for(int i=dg.FirstVisibleColumn;i<dg.DataTable.DataColumns.ColumnCount && actualColumnLeft<this.m_CachedWidth;i++)
 				{
 					actualColumnLeft = actualColumnRight;
-					Altaxo.Worksheet.ColumnStyle cs = dg.GetColumnStyle(i);
+					Altaxo.Worksheet.ColumnStyle cs = dg.GetDataColumnStyle(i);
 					actualColumnRight = actualColumnLeft+cs.Width;
 					this.Add(new ColumnStyleCacheItem(cs,actualColumnLeft,actualColumnRight));
 
@@ -2969,7 +3031,7 @@ namespace Altaxo.Worksheet.GUI
 				for(int i=firstVisibleColumn;i<columnCount;i++)
 				{
 					cellRect.X=actualColumnRight;
-					Altaxo.Worksheet.ColumnStyle cs = dg.GetColumnStyle(i);
+					Altaxo.Worksheet.ColumnStyle cs = dg.GetDataColumnStyle(i);
 					actualColumnRight += cs.Width;
 					if(actualColumnRight>mouseCoord.X)
 					{
@@ -3324,20 +3386,51 @@ namespace Altaxo.Worksheet.GUI
 		
 		public void Cut(object sender, EventArgs e)
 		{
+			if(this.m_CellEdit_IsArmed)
+			{
+				this.m_CellEditControl.Cut();
+			}
+			else if(this.AreColumnsOrRowsSelected)
+			{
+				// Copy the selected Columns to the clipboard
+				DataGridOperations.CopyToClipboard(this);
+			}
 		}
+
 		public void Copy(object sender, EventArgs e)
 		{
-			// Copy the selected Columns to the clipboard
-			DataGridOperations.CopyToClipboard(this);
+			if(this.m_CellEdit_IsArmed)
+			{
+				this.m_CellEditControl.Copy();
+			}
+			else if(this.AreColumnsOrRowsSelected)
+			{
+				// Copy the selected Columns to the clipboard
+				DataGridOperations.CopyToClipboard(this);
+			}
+		
 		}
 		public void Paste(object sender, EventArgs e)
 		{
-			DataGridOperations.PasteFromClipboard(this);
+			if(this.m_CellEdit_IsArmed)
+			{
+				this.m_CellEditControl.Paste();
+			}
+			else
+			{
+				DataGridOperations.PasteFromClipboard(this);
+			}
 		}
 		public void Delete(object sender, EventArgs e)
 		{
-			if(this.SelectedColumns.Count>0 && this.SelectedRows.Count>0 && this.SelectedPropertyColumns.Count>0)
+			if(this.m_CellEdit_IsArmed)
+			{
+				this.m_CellEditControl.Clear();
+			}
+			else if(this.AreColumnsOrRowsSelected)
+			{
 				this.RemoveSelected();
+			}
 			else
 			{
 				// nothing is selected, we assume that the user wants to delete the worksheet itself

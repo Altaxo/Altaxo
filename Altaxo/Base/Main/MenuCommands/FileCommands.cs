@@ -15,6 +15,16 @@ namespace Altaxo.Main.Commands
 			Current.ProjectService.CreateNewWorksheet();
 		}
 	}
+
+	public class CreateNewStandardWorksheet : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			Altaxo.Worksheet.GUI.IWorksheetController controller = Current.ProjectService.CreateNewWorksheet();
+			controller.Doc.DataColumns.Add(new Altaxo.Data.DoubleColumn(),"A",Altaxo.Data.ColumnKind.X);
+			controller.Doc.DataColumns.Add(new Altaxo.Data.DoubleColumn(),"B",Altaxo.Data.ColumnKind.V);
+		}
+	}
 	
 	public class CreateNewGraph : AbstractMenuCommand
 	{
@@ -178,7 +188,7 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			Current.ProjectService.CloseProject(false);
+			Current.ProjectService.CloseProject();
 		}
 	}
 

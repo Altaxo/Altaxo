@@ -26,6 +26,8 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph;
 using Altaxo.Serialization;
+using ICSharpCode.SharpDevelop.Gui;
+
 
 namespace Altaxo.Graph.GUI
 {
@@ -37,8 +39,9 @@ namespace Altaxo.Graph.GUI
 	public class GraphController 
 		:
 		IGraphController,
-		System.Runtime.Serialization.IDeserializationCallback
-		
+		System.Runtime.Serialization.IDeserializationCallback,
+		ICSharpCode.SharpDevelop.Gui.IEditable,
+		ICSharpCode.SharpDevelop.Gui.IClipboardHandler
 	{
 
 		#region Member variables
@@ -1813,6 +1816,76 @@ namespace Altaxo.Graph.GUI
 		public event EventHandler DirtyChanged;
 
 		public event EventHandler BeforeSave;
+		#endregion
+
+
+		#region ICSharpCode.SharpDevelop.Gui.IEditable
+		
+		public IClipboardHandler ClipboardHandler 
+		{
+			get { return this; }
+		}
+		
+		public string Text 
+		{
+			get { return null; }
+			set {}
+		}
+		
+		public void Undo()
+		{
+		}
+		public void Redo()
+		{
+		}
+		#endregion
+
+		#region ICSharpCode.SharpDevelop.Gui.IClipboardHandler
+		
+		public bool EnableCut 
+		{
+			get { return false; }
+		}
+		public bool EnableCopy 
+		{
+			get { return true; }
+		}
+		public bool EnablePaste 
+		{
+			get { return true; }
+		}
+		public bool EnableDelete 
+		{
+			get { return true; }
+		}
+		public bool EnableSelectAll 
+		{
+			get { return false; }
+		}
+		
+		public void Cut(object sender, EventArgs e)
+		{
+		}
+		public void Copy(object sender, EventArgs e)
+		{
+		
+		}
+		public void Paste(object sender, EventArgs e)
+		{
+		}
+		public void Delete(object sender, EventArgs e)
+		{
+			// if(this.SelectedColumns.Count>0 && this.SelectedRows.Count>0 && this.SelectedPropertyColumns.Count>0)
+			// this.RemoveSelected();
+			// else
+			{
+				// nothing is selected, we assume that the user wants to delete the worksheet itself
+				Current.ProjectService.DeleteGraphDocument(this.Doc,false);
+			}
+		}
+		public void SelectAll(object sender, EventArgs e)
+		{
+		}
 		#endregion
 
 		#region Inner Classes

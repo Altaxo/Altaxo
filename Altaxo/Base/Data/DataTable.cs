@@ -272,6 +272,49 @@ namespace Altaxo.Data
 			}
 		}
 
+
+		/// <summary>
+		/// This class is responsible for the special purpose to serialize a data table for clipboard. Do not use
+		/// it for permanent serialization purposes, since it does not contain version handling.
+		/// </summary>
+		public class ClipboardSurrogate : System.Runtime.Serialization.ISerializable
+		{
+			DataTable _table;
+			Altaxo.Worksheet.IndexSelection _selectedDataColumns;
+			Altaxo.Worksheet.IndexSelection _selectedDataRows;
+			Altaxo.Worksheet.IndexSelection _selectedPropertyColumns;
+
+			/// <summary>
+			/// Constructor. Besides the table, the current selections must be provided. Only the areas that corresponds to the selections are
+			/// serialized. The serialization process has to occur immediately after this constructor, because only a reference
+			/// to the table is hold by this object.
+			/// </summary>
+			/// <param name="table">The table to serialize.</param>
+			/// <param name="selectedDataColumns">The selected data columns.</param>
+			/// <param name="selectedDataRows">The selected data rows.</param>
+			/// <param name="selectedPropertyColumns">The selected property columns.</param>
+			public ClipboardSurrogate(DataTable table, Altaxo.Worksheet.IndexSelection selectedDataColumns, 
+				Altaxo.Worksheet.IndexSelection selectedDataRows,
+				Altaxo.Worksheet.IndexSelection selectedPropertyColumns)
+			{
+				this._table										= table;
+				this._selectedDataColumns			= selectedDataColumns;
+				this._selectedDataRows				= selectedDataRows;
+				this._selectedPropertyColumns = selectedPropertyColumns;
+			}
+
+			#region ISerializable Members
+
+			public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+			{
+				// TODO:  Add ClipboardSurrogate.GetObjectData implementation
+			}
+
+			#endregion
+
+		}
+
+
 		#endregion
 
 		/// <summary>
