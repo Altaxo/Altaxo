@@ -91,7 +91,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     }
 
 
-    protected virtual void FinishDrawing()
+    protected override void FinishDrawing()
     {
       Graph.RectangleGraphic go =  Graph.RectangleGraphic.FromLTRB(_Points[0].layerCoord.X,_Points[0].layerCoord.Y,_Points[1].layerCoord.X,_Points[1].layerCoord.Y);
 

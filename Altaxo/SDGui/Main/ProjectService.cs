@@ -316,7 +316,21 @@ namespace Altaxo.Main
     private void Save(string filename)
     {
       Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-      System.IO.Stream myStream = new System.IO.FileStream(filename,System.IO.FileMode.OpenOrCreate);
+      
+      bool fileAlreadyExists = System.IO.File.Exists(filename);
+
+
+      
+      System.IO.Stream myStream;
+      string tempFileName=null;
+      if(fileAlreadyExists)
+      {
+        tempFileName = System.IO.Path.GetTempFileName();
+        myStream = new System.IO.FileStream(tempFileName,System.IO.FileMode.Create,FileAccess.Write,FileShare.None);
+      }
+      else
+        myStream = new System.IO.FileStream(filename,System.IO.FileMode.Create,FileAccess.Write,FileShare.None);
+
       ZipOutputStream zippedStream = new ZipOutputStream(myStream);
       ZipOutputStreamWrapper zippedStreamWrapper = new ZipOutputStreamWrapper(zippedStream);
 
@@ -333,6 +347,38 @@ namespace Altaxo.Main
 
       zippedStream.Close();
       myStream.Close();
+
+        try
+        {
+          if(savingException==null)
+          {
+            // Test the file for integrity
+            string testfilename = tempFileName!=null ? tempFileName:filename;
+            myStream = new System.IO.FileStream(testfilename,System.IO.FileMode.Open,FileAccess.Read,FileShare.None);
+            ZipFile zipFile = new ZipFile(myStream);
+            foreach(ZipEntry zipEntry in zipFile)
+            {
+              if(!zipEntry.IsDirectory)
+              {
+                System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
+              }
+            }
+            zipFile.Close();
+            // end test
+          }
+        }
+        catch(Exception exc)
+        {
+          savingException = exc;
+        }
+
+        // now, if no exception happened, copy the temporary file back to the original file
+        if(null!=tempFileName && null==savingException)
+        {
+          System.IO.File.Copy(tempFileName,filename,true);
+          System.IO.File.Delete(tempFileName);
+        }
+      
       
       if(null!=savingException)
         throw savingException;

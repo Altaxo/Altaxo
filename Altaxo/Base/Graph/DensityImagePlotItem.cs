@@ -216,6 +216,10 @@ namespace Altaxo.Graph
     {
       return m_PlotAssociation.ToString();
     }
+    public override string GetName(string style)
+    {
+      return GetName(0);
+    }
 
     public override string ToString()
     {

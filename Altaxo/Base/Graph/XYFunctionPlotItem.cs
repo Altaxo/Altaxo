@@ -212,7 +212,10 @@ namespace Altaxo.Graph
     {
       return m_PlotData.ToString();
     }
-
+    public override string GetName(string style)
+    {
+      return GetName(0);
+    }
     public override string ToString()
     {
       return GetName(int.MaxValue);

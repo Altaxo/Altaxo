@@ -724,7 +724,6 @@ namespace Altaxo.Graph
     /// the function must have knowledge how to calculate the points out of the data. This will be done
     /// by a function provided by the calling function.
     /// </summary>
-    /// <param name="getCoordinates">Provides the class, which converts the physical values to layer coordinates.</param>
     /// <param name="rangeList">On return, this gives the list of plot ranges.</param>
     /// <param name="ptArray">On return, this is an array of plot points in layer coordinates.</param>
     /// <returns>True if the function is successfull, otherwise false.</returns>

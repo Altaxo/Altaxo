@@ -60,6 +60,16 @@ namespace Altaxo.Data
     {
       get;
     }
+
+    /*
+    /// <summary>
+    /// Returns a descriptive name for the column. A level of zero only returns a basic (short) name. The higher the level,
+    /// the longer should be the returned name.
+    /// </summary>
+    /// <param name="level">Name level.</param>
+    /// <returns>The descriptive name of the column according with a length according to the level.</returns>
+    string GetName(int level);
+    */
   }
 
 }

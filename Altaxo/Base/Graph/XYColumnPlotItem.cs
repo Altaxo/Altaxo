@@ -24,10 +24,48 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
+using Altaxo.Data;
 
 
 namespace Altaxo.Graph
 {
+  /// <summary>
+  /// Enumerates the style how a <see>XYColumnPlotItem</see> is labeled into the <see>TextGraphics</see>. 
+  /// </summary>
+  public enum XYColumnPlotItemLabelTextStyle
+  {
+    /// <summary>Y column name is shown.</summary>
+    YS = 0x10,
+    /// <summary>Y column name and table name is shown.</summary>
+    YM = 0x20,
+    /// <summary>Y column name, collection name and table name is shown.</summary>
+    YL = 0x30,
+    /// <summary>X column name is shown.</summary>
+    XS = 0x01,
+    /// <summary>X column name and Y column name is shown.</summary>
+    XSYS=0x11,
+    /// <summary>X column name and Y column name and table name is shown.</summary>
+    XSYM=0x21,
+    /// <summary>X column name and Y column name, collection name and table name is shown.</summary>
+    XSYL=0x31,
+    /// <summary>X column name and table name is shown.</summary>
+    XM=0x02,
+    /// <summary>X column name and table name and Y column name is shown.</summary>
+    XMYS=0x12,
+    /// <summary>X column name and table name and Y column name and table name is shown.</summary>
+    XMYM=0x22,
+    /// <summary>X column name and table name and Y column name, collection name and table name is shown.</summary>
+    XMYL=0x32,
+    /// <summary>X column name, collection name and table name is shown.</summary>
+    XL = 0x03,
+    /// <summary>X column name, collection name and table name and Y column name is shown.</summary>
+    XLXS=0x13,
+    /// <summary>X column name, collection name and table name and Y column name and table name is shown.</summary>
+    XLYM=0x23,
+    /// <summary>X column name, collection name and table name and Y column name, collection name and table name is shown.</summary>
+    XLYL=0x33
+  }
+
   /// <summary>
   /// Association of data and style specialized for x-y-plots of column data.
   /// </summary>
@@ -221,8 +259,76 @@ namespace Altaxo.Graph
 
     public override string GetName(int level)
     {
-      return m_PlotAssociation.ToString();
+      switch(level)
+      {
+        case 0:
+          return GetName(XYColumnPlotItemLabelTextStyle.YS);
+        case 1:
+          return GetName(XYColumnPlotItemLabelTextStyle.YM);
+        case 2:
+          return GetName(XYColumnPlotItemLabelTextStyle.XSYM);
+        default:
+          return GetName(XYColumnPlotItemLabelTextStyle.XMYM);
+      }
     }
+
+    public override string GetName(string style)
+    {
+      XYColumnPlotItemLabelTextStyle result=XYColumnPlotItemLabelTextStyle.YS;
+      try
+      {
+        result = (XYColumnPlotItemLabelTextStyle)Enum.Parse(typeof(XYColumnPlotItemLabelTextStyle),style,true);
+      }
+      catch(Exception)
+      {
+      }
+      return GetName(result);
+    }
+
+
+    public virtual string GetName(XYColumnPlotItemLabelTextStyle style)
+    {
+      int st = (int)style;
+      int sx = st&0x0F;
+      int sy = (st&0xF0)>>4;
+
+      System.Text.StringBuilder stb = new System.Text.StringBuilder();
+      if(sx>0)
+      {
+        stb.Append(this.GetName(m_PlotAssociation.XColumn,sx-1));
+        if(sx>0 && sy>0)
+          stb.Append("(X)");
+        if(sy>0)
+          stb.Append(",");
+      }
+      if(sy>0)
+      {
+        stb.Append(this.GetName(m_PlotAssociation.YColumn,sy-1));
+        if(sx>0 && sy>0)
+          stb.Append("(Y)");
+      }
+
+      return stb.ToString();
+    }
+
+    private string GetName(Data.IReadableColumn col, int level)
+    {
+      if(col is Data.DataColumn)
+      {
+        Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
+        string tablename = table==null ? string.Empty : table.Name + "\\";
+        string collectionname = table==null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
+        if(level<=0)
+          return ((DataColumn)col).Name;
+        else if(level==1)
+          return tablename + ((DataColumn)col).Name;
+        else
+          return tablename + collectionname + ((DataColumn)col).Name;
+      }
+      else
+        return col.FullName;
+    }
+
 
     public override string ToString()
     {

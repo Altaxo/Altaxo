@@ -45,6 +45,8 @@ namespace Altaxo.Graph
     protected internal int m_LayerNumber=-1; // number of the layer or -1 for the current layer
     protected internal int m_PlotNumber=-1; // number of the plot curve or -1 in case this is disabled
     protected internal int m_PlotPointNumber=-1; // number of the plot point or -1 for the whole curve
+    protected internal string m_PlotLabelStyle=null; // named style or name of property column
+    protected internal bool m_PlotLabelStyleIsPropColName=false; // if true, then PlotLabelStyle is the name of a property column
 
     protected internal float m_cyLineSpace; // cached linespace value of the font
     protected internal float m_cyAscent;    // cached ascent value of the font
@@ -112,6 +114,29 @@ namespace Altaxo.Graph
         m_Text = value;
       }
     }
+
+
+    public void SetAsPlotCurveName(int layerNumber, int plotNumber, string plotLabelStyle, bool isPropCol)
+    {
+      m_Type = InnerType.PlotCurveName;
+      m_Text=null;
+      m_PlotPointNumber = -1;
+      m_LayerNumber = layerNumber;
+      m_PlotNumber = plotNumber;
+      m_PlotLabelStyle = plotLabelStyle;
+      m_PlotLabelStyleIsPropColName = isPropCol;
+    }
+
+    public void SetAsPlotCurveName(int plotNumber)
+    {
+      SetAsPlotCurveName(-1,plotNumber,null,false);
+    }
+
+    public void SetAsPlotCurveName(int layerNumber, int plotNumber)
+    {
+      SetAsPlotCurveName(layerNumber,plotNumber,null,false);
+    }
+
 
     public void SetAsPlotCurveName(int args, int[] arg)
     {
@@ -517,10 +542,11 @@ namespace Altaxo.Graph
     }
 
 
-    static Regex _regexIntArgument = new Regex(@"\(\n*(?<argone>\d+)\n*\)");
-    static Regex _regexIntStrgArgument = new Regex(@"\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\w+)\n*\)");
-    static Regex _regexIntIntArgument = new Regex(@"\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*\)");
-    static Regex _regexIntIntStrgArgument = new Regex(@"\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*,\n*(?<argthree>\w+)\n*\)");
+    static Regex _regexIntArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*\)");
+    static Regex _regexIntIntArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*\)");
+    static Regex _regexIntQstrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*\""(?<argtwo>([^\\\""]*(\\\"")*(\\\\)*)+)\""\n*\)");
+    static Regex _regexIntStrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\w+)\n*\)");
+    static Regex _regexIntIntStrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*,\n*(?<argthree>\w+)\n*\)");
     // Be aware that double quote characters is in truth only one quote character, this is the syntax of a verbatim literal string
     static Regex _regexIntIntQstrgArgument = new Regex(@"\G\(\n*(?<argone>\d+)\n*,\n*(?<argtwo>\d+)\n*,\n*\""(?<argthree>([^\\\""]*(\\\"")*(\\\\)*)+)\""\n*\)");
 
@@ -737,54 +763,62 @@ namespace Altaxo.Graph
                   // either in the Form 
                   // \%(PlotCurveNumber) or
                   // \%(LayerNumber, PlotCurveNumber) or
-
-
-                  string matchstring = m_Text.Substring(bi+2);
-                  Match match = _regexIntIntQstrgArgument.Match(m_Text,bi+2);
+                  Match match;
+                  int layerNumber=-1;
+                  int plotNumber=-1;
+                  string plotLabelStyle=null;
+                  bool   plotLabelStyleIsPropColName=false;
+                  if((match = _regexIntArgument.Match(m_Text,bi+2)).Success)
+                  {
+                    plotNumber = int.Parse(match.Result("${argone}"));
+                  }
+                  else if((match = _regexIntIntArgument.Match(m_Text,bi+2)).Success)
+                  {
+                    layerNumber = int.Parse(match.Result("${argone}"));
+                    plotNumber =  int.Parse(match.Result("${argtwo}"));
+                  }
+                  else if((match = _regexIntQstrgArgument.Match(m_Text,bi+2)).Success)
+                  {
+                    plotNumber     = int.Parse(match.Result("${argone}"));
+                    plotLabelStyle =  match.Result("${argtwo}");
+                    plotLabelStyleIsPropColName=true;
+                  }
+                  else if((match = _regexIntStrgArgument.Match(m_Text,bi+2)).Success)
+                  {
+                    plotNumber     = int.Parse(match.Result("${argone}"));
+                    plotLabelStyle =  match.Result("${argtwo}");
+                  }
+                  else if((match = _regexIntIntStrgArgument.Match(m_Text,bi+2)).Success)
+                  {
+                    layerNumber = int.Parse(match.Result("${argone}"));
+                    plotNumber =  int.Parse(match.Result("${argtwo}"));
+                    plotLabelStyle = match.Result("${argthree}");
+                  }
+                  else if((match = _regexIntIntQstrgArgument.Match(m_Text,bi+2)).Success)
+                  {
+                    layerNumber = int.Parse(match.Result("${argone}"));
+                    plotNumber =  int.Parse(match.Result("${argtwo}"));
+                    plotLabelStyle = match.Result("${argthree}");
+                    plotLabelStyleIsPropColName=true;
+                  }
+      
                   if(match.Success)
                   {
-                    string lay = match.Result("${argone}");
-                    string plt = match.Result("${argtwo}");
-                    string pcol = match.Result("${argthree}");
-                  }
+                    itemstack.Push(currTextItem);
+                    currTextItem = new TextItem(currTextItem,null);
+                    currTextLine.Add(currTextItem);
+                    currTextItem.SetAsPlotCurveName(layerNumber,plotNumber,plotLabelStyle,plotLabelStyleIsPropColName);
 
-
-                  // find the corresponding closing brace
-                  int closingbracepos = m_Text.IndexOf(")",bi+1);
-                  if(closingbracepos<0) // no brace found, so threat this as normal text
-                  {
-                    currTextItem.Text += m_Text.Substring(bi,3);
-                    currTxtIdx += 3;
-                    continue;
+                    currTextItem = new TextItem(currTextItem,null); // create a normal text item behind the symbol item
+                    currTextLine.Add(currTextItem); // to have room for the following text
+                    currTxtIdx = bi+2+match.Length;
                   }
-                  // count the commas between here and the closing brace to get
-                  // the number of arguments
-                  int parsepos=bi+3;
-                  int[] arg = new int[2];
-                  int args;
-                  for(args=0;args<2 && parsepos<closingbracepos;args++)
+                  else
                   {
-                    int commapos = m_Text.IndexOf(",",parsepos,closingbracepos-parsepos);
-                    int endpos = commapos>0 ? commapos : closingbracepos; // the end of this argument
-                    try { arg[args]=System.Convert.ToInt32(m_Text.Substring(parsepos,endpos-parsepos)); }
-                    catch(Exception) { break; }
-                    parsepos = endpos+1;
-                  }
-                  if(args==0) // if not successfully parsed at least one number
-                  {
-                    currTextItem.Text += m_Text.Substring(bi,3);
+                    currTextItem.Text += m_Text.Substring(bi,2);
                     currTxtIdx += 3;
                     continue;   // handle it as if it where normal text
                   }
-
-                  itemstack.Push(currTextItem);
-                  currTextItem = new TextItem(currTextItem,null);
-                  currTextLine.Add(currTextItem);
-                  currTextItem.SetAsPlotCurveName(args,arg);
-
-                  currTextItem = new TextItem(currTextItem,null); // create a normal text item behind the symbol item
-                  currTextLine.Add(currTextItem); // to have room for the following text
-                  currTxtIdx = closingbracepos+1;
                 }
                   break; // percent symbol
                 default:
@@ -883,10 +917,37 @@ namespace Altaxo.Graph
               if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
                 layer = layer.ParentLayerList[ti.m_LayerNumber];
 
+              Graph.PlotItem pa=null;
               if(ti.m_PlotNumber<layer.PlotItems.Count)
               {
-                Graph.PlotItem pa = layer.PlotItems[ti.m_PlotNumber];
+                pa = layer.PlotItems[ti.m_PlotNumber];
+              }
+              if(pa!=null)
+              {
                 ti.PlotCurveName = pa.GetName(0);
+
+                if(ti.m_PlotLabelStyle!=null && !ti.m_PlotLabelStyleIsPropColName && pa is XYColumnPlotItem)
+                {
+                  Graph.XYColumnPlotItemLabelTextStyle style = Graph.XYColumnPlotItemLabelTextStyle.YS;
+                  try { style = (Graph.XYColumnPlotItemLabelTextStyle)Enum.Parse(typeof(Graph.XYColumnPlotItemLabelTextStyle),ti.m_PlotLabelStyle,true); }
+                  catch(Exception) {}
+                  ti.PlotCurveName = ((XYColumnPlotItem)pa).GetName(style);
+                }
+
+                if(ti.m_PlotLabelStyleIsPropColName && ti.m_PlotLabelStyle!=null && pa.Data is XYColumnPlotData)
+                {
+                  XYColumnPlotData pb = (XYColumnPlotData)pa.Data;
+                  Data.DataTable tbl = null;
+                  if(pb.YColumn is Data.DataColumn)
+                    tbl = Data.DataTable.GetParentDataTableOf((Data.DataColumn)pb.YColumn);
+                  
+                  if(tbl!=null)
+                  {
+                    int colNumber = tbl.DataColumns.GetColumnNumber((Data.DataColumn)pb.YColumn);
+                    if(tbl.PropertyColumns.ContainsColumn(ti.m_PlotLabelStyle))
+                      ti.PlotCurveName = tbl.PropertyColumns[ti.m_PlotLabelStyle][colNumber].ToString();
+                  }
+                }
               }
             }
           

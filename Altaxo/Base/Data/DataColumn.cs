@@ -295,6 +295,7 @@ namespace Altaxo.Data
       get { return m_Parent is Main.INamedObjectCollection ? ((Main.INamedObjectCollection)m_Parent).GetNameOfChildObject(this) : null; }
     }
 
+   
 
 
     /// <summary>

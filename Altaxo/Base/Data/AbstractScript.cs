@@ -197,14 +197,13 @@ namespace Altaxo.Data
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Altaxo.Data.TableScript s = (Altaxo.Data.TableScript)obj;
+        Altaxo.Data.AbstractScript s = (Altaxo.Data.AbstractScript)obj;
     
         info.AddValue("Text",s.m_ScriptText);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        Altaxo.Data.TableScript s = null!=o ? (Altaxo.Data.TableScript)o : new Altaxo.Data.TableScript();
-
+        Altaxo.Data.AbstractScript s = (Altaxo.Data.AbstractScript)o;
         s.m_ScriptText = info.GetString("Text");
         return s;
       }

@@ -517,8 +517,8 @@ namespace Altaxo.Data
         for(int i=0;i<count;i++)
         {
           info.OpenElement();
-          string name = info.GetString();
-          ColumnScript script = (ColumnScript)info.GetValue(s);
+          string name =   info.GetString();
+          IColumnScriptText script = (IColumnScriptText)info.GetValue(s);
           info.CloseElement();
           s.ColumnScripts.Add(s[name],script);
         }
