@@ -2477,6 +2477,8 @@ namespace Altaxo.Graph
           hit = go.HitTest(layerC);
           if(null!=hit)
           {
+            if(null==hit.Remove && (hit.HittedObject is GraphicsObject))
+              hit.Remove = new DoubleClickHandler(EhTitlesOrLegend_Remove);
             return ForwardTransform(hit);
           }
         }
@@ -2574,12 +2576,17 @@ namespace Altaxo.Graph
         hit = go.HitTest(layerC);
         if(null!=hit)
         {
+          if(null==hit.Remove && (hit.HittedObject is GraphicsObject)) 
+            hit.Remove = new DoubleClickHandler(EhGraphicsObject_Remove);
           return ForwardTransform(hit);
         }
       }
 
       if(null!=(hit=m_PlotItems.HitTest(this,layerC)))
+      {
+        if(hit.DoubleClick==null) hit.DoubleClick=PlotItemEditorMethod;
         return ForwardTransform(hit);
+      }
      
       return null;
     }
@@ -2593,6 +2600,7 @@ namespace Altaxo.Graph
     public static DoubleClickHandler AxisStyleEditorMethod;
     public static DoubleClickHandler AxisLabelStyleEditorMethod;
     public static DoubleClickHandler LayerPositionEditorMethod;
+    public static DoubleClickHandler PlotItemEditorMethod;
 
     #endregion
 
@@ -2628,6 +2636,45 @@ namespace Altaxo.Graph
 
     #region Handler of child events
 
+    static bool EhGraphicsObject_Remove(IHitTestObject o)
+    {
+      GraphicsObject go = (GraphicsObject)o.HittedObject;
+      o.ParentLayer.GraphObjects.Remove(go);
+      return true;
+    }
+    static bool EhTitlesOrLegend_Remove(IHitTestObject o)
+    {
+      GraphicsObject go = (GraphicsObject)o.HittedObject;
+      XYPlotLayer layer = o.ParentLayer;
+
+      if(object.ReferenceEquals(go,layer.m_Legend))
+      {
+        layer.m_Legend=null;
+        return true;
+      }
+      else if(object.ReferenceEquals(go,layer.m_LeftAxisTitle))
+      {
+        layer.m_LeftAxisTitle=null;
+        return true;
+      }
+      else if(object.ReferenceEquals(go,layer.m_BottomAxisTitle))
+      {
+        layer.m_BottomAxisTitle=null;
+        return true;
+      }
+      else if(object.ReferenceEquals(go,layer.m_RightAxisTitle))
+      {
+        layer.m_RightAxisTitle=null;
+        return true;
+      }
+      else if(object.ReferenceEquals(go,layer.m_TopAxisTitle))
+      {
+        layer.m_TopAxisTitle=null;
+        return true;
+      }
+
+      return false;
+    }
     /// <summary>
     /// This handler is called if a x-boundary from any of the plotassociations of this layer
     /// has changed. We then have to recalculate the boundaries.

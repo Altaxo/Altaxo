@@ -247,9 +247,15 @@ namespace Altaxo.Graph
     public override IHitTestObject HitTest(XYPlotLayer layer, PointF hitpoint)
     {
       if(null!=this.m_PlotStyle)
-        return m_PlotStyle.HitTest(layer,m_PlotAssociation,hitpoint);
-      else
-        return null;
+      {
+        IHitTestObject result = m_PlotStyle.HitTest(layer,m_PlotAssociation,hitpoint);
+        if(null!=result)
+          result.HittedObject = this;
+        return result;
+        
+      }
+
+      return null;
     }
 
   }

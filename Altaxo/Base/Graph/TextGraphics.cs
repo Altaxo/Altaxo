@@ -1222,16 +1222,28 @@ namespace Altaxo.Graph
       return new TextGraphics(this);
     }
 
+    public static DoubleClickHandler  PlotItemEditorMethod;
+    public static DoubleClickHandler TextGraphicsEditorMethod;
+
+
     public override IHitTestObject HitTest(PointF pt)
     {
+      IHitTestObject result;
       foreach(GraphicsPath gp in this.m_CachedSymbolPositions.Keys)
       {
         if(gp.IsVisible(pt))
         {
-          return new HitTestObject(gp,m_CachedSymbolPositions[gp]);
+          result =  new HitTestObject(gp,m_CachedSymbolPositions[gp]);
+          result.DoubleClick = PlotItemEditorMethod;
+          return result;
         }
       }
-      return base.HitTest(pt);
+      
+      result = base.HitTest(pt);
+      if(null!=result)
+        result.DoubleClick = TextGraphicsEditorMethod;
+      return result;
+
     }
 
     

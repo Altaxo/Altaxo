@@ -61,7 +61,7 @@ namespace Altaxo.Graph
     /// This will return the object itself, i.e. the object which corresponds to the selection path.
     /// </summary>
     /// <returns></returns>
-    object  HittedObject { get; }
+    object  HittedObject { get; set;}
 
     XYPlotLayer ParentLayer { get; set; }
 
@@ -74,9 +74,14 @@ namespace Altaxo.Graph
 
 
     /// <summary>
-    /// Delegate to handle double click events.
+    /// Delegate to handle double click events. Should return true if the object was removed during the processing. Otherwise returns false.
     /// </summary>
     DoubleClickHandler DoubleClick { get; set; }
+
+    /// <summary>
+    /// Handler to remove the hitted object. Should return true if the object is removed, otherwise false.
+    /// </summary>
+    DoubleClickHandler Remove { get; set; }
 
     /// <summary>
     /// This function is called if a double click to the object occured.
@@ -124,6 +129,7 @@ namespace Altaxo.Graph
     public object HittedObject
     {
       get { return _hitobject; }
+      set { _hitobject = value; }
     }
 
     public virtual void ShiftPosition(float x, float y)
@@ -151,6 +157,18 @@ namespace Altaxo.Graph
       set { _DoubleClick=value; }
     }
 
+    /// <summary>
+    /// Handler to remove the hitted object. Should return true if the object is removed, otherwise false.
+    /// </summary>
+    DoubleClickHandler _Remove;
+    /// <summary>
+    /// Handler to remove the hitted object. Should return true if the object is removed, otherwise false.
+    /// </summary>
+    public DoubleClickHandler Remove
+    {
+      get { return _Remove; }
+      set { _Remove=value; }
+    }
     /// <summary>
     /// This handles the double-click event
     /// </summary>

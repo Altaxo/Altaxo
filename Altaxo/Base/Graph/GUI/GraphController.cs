@@ -318,6 +318,9 @@ namespace Altaxo.Graph.GUI
     {
       // register here editor methods
       LayerController.RegisterEditHandlers();
+      XYPlotLayer.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
+      TextGraphics.PlotItemEditorMethod = new DoubleClickHandler(EhEditPlotItem);
+      TextGraphics.TextGraphicsEditorMethod = new DoubleClickHandler(EhEditTextGraphics);
     }
 
     #endregion // Constructors
@@ -1125,7 +1128,57 @@ namespace Altaxo.Graph.GUI
         View.OnViewDeselection();
     }
 
+ 
+    /// <summary>
+    /// Handles the double click event onto a plot item.
+    /// </summary>
+    /// <param name="hit">Object containing information about the double clicked object.</param>
+    /// <returns>True if the object should be deleted, false otherwise.</returns>
+    protected static bool EhEditPlotItem(IHitTestObject hit)
+    {
+      XYPlotLayer actLayer = hit.ParentLayer;
+      PlotItem pa = (PlotItem)hit.HittedObject;
 
+
+      // get plot group
+      PlotGroup plotGroup = actLayer.PlotItems.GetPlotGroupOf(pa);
+        
+        
+      //LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);
+      Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(Current.MainWindow,pa,plotGroup);
+
+      return false;
+    }
+
+    /// <summary>
+    /// Handles the double click event onto a plot item.
+    /// </summary>
+    /// <param name="hit">Object containing information about the double clicked object.</param>
+    /// <returns>True if the object should be deleted, false otherwise.</returns>
+    protected static bool EhEditTextGraphics(IHitTestObject hit)
+    {
+      XYPlotLayer layer = hit.ParentLayer;
+      TextGraphics tg = (TextGraphics)hit.HittedObject;
+
+      TextControlDialog dlg = new TextControlDialog(layer,tg);
+      if(DialogResult.OK==dlg.ShowDialog(Current.MainWindow))
+      {
+        if(!dlg.SimpleTextGraphics.Empty)
+        {
+          tg.CopyFrom(dlg.SimpleTextGraphics);
+        }
+        else // item is empty, so must be deleted in the layer and in the selectedObjects
+        {
+          if(null!=hit.Remove)
+            return hit.Remove(hit);
+          else
+            return false;
+        }
+      }
+
+
+      return false;
+    }
 
     #endregion
 
@@ -1743,8 +1796,6 @@ namespace Altaxo.Graph.GUI
 
     #endregion
 
-
-
     #region Inner Classes
 
     #region Mouse Handler Classes
@@ -2004,8 +2055,6 @@ namespace Altaxo.Graph.GUI
       {
         base.OnDoubleClick(grac,e);
 
-        System.Console.WriteLine("DoubleClick!");
-
         // if there is exactly one object selected, try to open the corresponding configuration dialog
         if(grac.m_SelectedObjects.Count==1)
         {
@@ -2015,25 +2064,11 @@ namespace Altaxo.Graph.GUI
           int nLayer = (int)grac.m_SelectedObjects[graphObject];
           if(graphObject.DoubleClick!=null)
           {
-            graphObject.OnDoubleClick();
-          }
-          else if(graphObject.HittedObject is Graph.TextGraphics)
-          {
-            TextControlDialog dlg = new TextControlDialog(grac.Layers[nLayer],(TextGraphics)graphObject.HittedObject);
-            if(DialogResult.OK==dlg.ShowDialog(grac.m_View.Window))
+            if(true==graphObject.OnDoubleClick())
             {
-              if(!dlg.SimpleTextGraphics.Empty)
-              {
-                ((TextGraphics)graphObject.HittedObject).CopyFrom(dlg.SimpleTextGraphics);
-              }
-              else // item is empty, so must be deleted in the layer and in the selectedObjects
-              {
-                grac.m_SelectedObjects.Remove(graphObject);
-                grac.Layers[nLayer].Remove((GraphicsObject)graphObject.HittedObject);
-              }
-
-              grac.m_View.InvalidateGraph(); // repaint the graph
+              grac.ClearSelections();
             }
+              
           }
         }
         return this;
