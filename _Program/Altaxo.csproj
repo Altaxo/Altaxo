@@ -349,6 +349,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\PlotItemList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\PlotStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

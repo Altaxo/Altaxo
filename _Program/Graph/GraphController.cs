@@ -700,7 +700,7 @@ namespace Altaxo.Graph
 
 
 				// get plot group
-				PlotGroup plotGroup = actLayer.PlotGroups.GetPlotGroupOf(pa);
+				PlotGroup plotGroup = actLayer.PlotItems.GetPlotGroupOf(pa);
 				PlotStyleDialog dlg = new PlotStyleDialog((PlotStyle)pa.Style,plotGroup);
 				DialogResult dr = dlg.ShowDialog(this.m_View.Window);
 				if(dr==DialogResult.OK)

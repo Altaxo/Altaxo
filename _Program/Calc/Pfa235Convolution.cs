@@ -251,11 +251,11 @@ namespace Altaxo.Calc.FFT
 			}
 
 			// allocate the scratch array
-			bool auto_scratch = false;
+			//bool auto_scratch = false;
 			if ( null==scratch ) 
 			{
 				scratch = new  double[size];
-				auto_scratch = true;
+				//auto_scratch = true;
 			}
 
 			//---------------------------------------------------------------------------//

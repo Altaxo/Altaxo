@@ -129,7 +129,7 @@ namespace Altaxo.Graph
 		/// <param name="newList">The new PlotList, which was cloned from oldList before.</param>
 		/// <param name="oldList">The old PlotList, to which the items in these PlotGroupList refers to.</param>
 		/// <returns></returns>
-		public PlotGroup Clone(Layer.PlotList newList, Layer.PlotList oldList)
+		public PlotGroup Clone(Altaxo.Graph.PlotList newList, Altaxo.Graph.PlotList oldList)
 		{
 			PlotGroup newGroup = new PlotGroup(this.Style);
 
@@ -291,7 +291,7 @@ namespace Altaxo.Graph
 				/// <param name="newList">The new PlotList, which was cloned from oldList before.</param>
 				/// <param name="oldList">The old PlotList, to which the items in these PlotGroupList refers to.</param>
 				/// <returns></returns>
-				public PlotGroup.Collection Clone(Layer.PlotList newList, Layer.PlotList oldList)
+				public PlotGroup.Collection Clone(Altaxo.Graph.PlotList newList, Altaxo.Graph.PlotList oldList)
 				{
 					PlotGroup.Collection coto = new PlotGroup.Collection();
 					for(int i=0;i<this.Count;i++)

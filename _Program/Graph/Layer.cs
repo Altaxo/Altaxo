@@ -256,9 +256,9 @@ namespace Altaxo.Graph
 
 		protected GraphObjectCollection m_GraphObjects = new GraphObjectCollection();
 
-		protected PlotList m_PlotItems;
+		protected Altaxo.Graph.PlotList m_PlotItems;
 
-		protected PlotGroup.Collection m_PlotGroups = new PlotGroup.Collection();
+		//protected PlotGroup.Collection m_PlotGroups = new PlotGroup.Collection();
 
 		/// <summary>
 		/// The parent layer collection which contains this layer (or null if not member of such collection).
@@ -412,7 +412,6 @@ namespace Altaxo.Graph
 				info.AddValue("LinkedLayer",s.m_LinkedLayer);
 			
 				info.AddValue("GraphObjects",s.m_GraphObjects);
-				info.AddValue("PlotGroups",s.m_PlotGroups);
 				info.AddValue("Plots",s.m_PlotItems);
 
 
@@ -499,9 +498,8 @@ namespace Altaxo.Graph
 				s.m_LinkedLayer = (Layer)info.GetValue("LinkedLayer",typeof(Layer));
 			
 				s.m_GraphObjects = (Graph.GraphObjectCollection)info.GetValue("GraphObjects",typeof(Graph.GraphObjectCollection));
-				s.m_PlotGroups = (Graph.PlotGroup.Collection)info.GetValue("PlotGroups",typeof(Graph.PlotGroup.Collection));
 
-				s.m_PlotItems = (PlotList)info.GetValue("Plots",typeof(PlotList));
+				s.m_PlotItems = (Altaxo.Graph.PlotList)info.GetValue("Plots",typeof(Altaxo.Graph.PlotList));
 
 				return s;
 			}
@@ -595,10 +593,10 @@ namespace Altaxo.Graph
 			
 			this.m_GraphObjects = null==from.m_GraphObjects ? null : new GraphObjectCollection(from.m_GraphObjects);
 
-			this.m_PlotItems = null==from.m_PlotItems ? null : new PlotList(this,from.m_PlotItems);
+			this.m_PlotItems = null==from.m_PlotItems ? null : new Altaxo.Graph.PlotList(this,from.m_PlotItems);
 
 			// special way neccessary to handle plot groups
-			this.m_PlotGroups = null==from.m_PlotGroups ? null : from.m_PlotGroups.Clone(this.m_PlotItems,from.m_PlotItems);
+			//this.m_PlotGroups = null==from.m_PlotGroups ? null : from.m_PlotGroups.Clone(this.m_PlotItems,from.m_PlotItems);
 
 			m_ForwardMatrix = new Matrix();
 			m_ReverseMatrix = new Matrix();
@@ -635,7 +633,7 @@ namespace Altaxo.Graph
 
 			CalculateMatrix();
 
-			m_PlotItems = new PlotList(this);
+			m_PlotItems = new Altaxo.Graph.PlotList(this);
 
 			// create axes and add event handlers to them
 			m_xAxis = new LinearAxis(); // the X-Axis
@@ -684,7 +682,7 @@ namespace Altaxo.Graph
 		
 			if(null!=m_GraphObjects) m_GraphObjects.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
-			if(null!=m_PlotGroups) m_PlotGroups.Changed += new EventHandler(this.OnChildChangedEventHandler);
+			//if(null!=m_PlotGroups) m_PlotGroups.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
 			if(null!=m_PlotItems)
 			{
@@ -813,15 +811,17 @@ namespace Altaxo.Graph
 		}
 
 
-		public PlotList PlotItems
+		public Altaxo.Graph.PlotList PlotItems
 		{
 			get { return m_PlotItems; }
 		}
 
+		/*
 		public PlotGroup.Collection PlotGroups
 		{
 			get { return m_PlotGroups; }
 		}
+		*/
 
 		public void AddPlotAssociation(PlotAssociation[] pal)
 		{
@@ -2144,7 +2144,7 @@ namespace Altaxo.Graph
 		/// if would be possible to merge only the changed boundary into the x-axis boundary.
 		/// But since we don't know about that, we have to completely recalculate the boundary be using the boundaries of
 		/// all PlotAssociations of this layer.</remarks>
-		protected void OnPlotAssociationXBoundariesChanged(object sender, BoundariesChangedEventArgs e)
+		public void OnPlotAssociationXBoundariesChanged(object sender, BoundariesChangedEventArgs e)
 		{
 			if(0==m_PlotAssociationXBoundariesChanged_EventSuspendCount)
 			{
@@ -2173,7 +2173,7 @@ namespace Altaxo.Graph
 		/// if would be possible to merge only the changed boundary into the y-axis boundary.
 		/// But since we don't know about that, we have to completely recalculate the boundary be using the boundaries of
 		/// all PlotAssociations of this layer.</remarks>
-		protected void OnPlotAssociationYBoundariesChanged(object sender, BoundariesChangedEventArgs e)
+		public void OnPlotAssociationYBoundariesChanged(object sender, BoundariesChangedEventArgs e)
 		{
 			if(0==m_PlotAssociationYBoundariesChanged_EventSuspendCount)
 			{
@@ -2221,208 +2221,6 @@ namespace Altaxo.Graph
 		#endregion
 
 		#region Inner classes
-
-
-		[SerializationSurrogate(0,typeof(PlotList.SerializationSurrogate0))]
-			[SerializationVersion(0)]
-			public class PlotList : Altaxo.Data.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, IChildChangedEventSink, System.ICloneable
-		{
-			/// <summary>The parent layer of this list.</summary>
-			private Layer m_Owner; 
-
-
-			#region Serialization
-			/// <summary>Used to serialize the PlotList Version 0.</summary>
-			public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-			{
-				public object[] m_PlotItems = null; 
-
-				/// <summary>
-				/// Serializes PlotList Version 0.
-				/// </summary>
-				/// <param name="obj">The PlotList to serialize.</param>
-				/// <param name="info">The serialization info.</param>
-				/// <param name="context">The streaming context.</param>
-				public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
-				{
-					PlotList s = (PlotList)obj;
-					info.AddValue("Data",s.myList);
-				}
-
-				/// <summary>
-				/// Deserializes the PlotList Version 0.
-				/// </summary>
-				/// <param name="obj">The empty PlotList object to deserialize into.</param>
-				/// <param name="info">The serialization info.</param>
-				/// <param name="context">The streaming context.</param>
-				/// <param name="selector">The deserialization surrogate selector.</param>
-				/// <returns>The deserialized PlotList.</returns>
-				public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-				{
-					PlotList s = (PlotList)obj;
-
-					s.myList = (System.Collections.ArrayList)info.GetValue("Data",typeof(System.Collections.ArrayList));
-					return s;
-				}
-			}
-
-			/// <summary>
-			/// Finale measures after deserialization.
-			/// </summary>
-			/// <param name="obj">Not used.</param>
-			public virtual void OnDeserialization(object obj)
-			{
-				// restore the event chain
-				for(int i=0;i<Count;i++)
-					WireItem(this[i]);
-			}
-				
-			#endregion
-
-
-
-			public PlotList(Layer owner)
-			{
-				m_Owner = owner;
-			}
-
-			/// <summary>
-			/// Copy constructor. Clones (!) all items. The parent owner is set to null and has to be set afterwards.
-			/// </summary>
-			/// <param name="from">The PlotList to clone this list from.</param>
-			public PlotList(PlotList from)
-				:
-				this(null,from)
-			{
-			}
-
-			/// <summary>
-			/// Copy constructor. Clones (!) all the items in the list.
-			/// </summary>
-			/// <param name="owner">The new owner of the cloned list.</param>
-			/// <param name="from">The list to clone all items from.</param>
-			public PlotList(Layer owner, PlotList from)
-			{
-				m_Owner = owner;
-
-				// Clone all the items in the list.
-				for(int i=0;i<from.Count;i++)
-					Add((PlotItem)from[i].Clone()); // clone the items
-			}
-
-			public object Clone()
-			{
-				return new PlotList(this);
-			}
-
-			public Layer ParentLayer
-			{
-				get { return m_Owner; }
-				set
-				{
-					SetParentLayer(value,false);
-				}
-			}
-		
-
-			/// <summary>
-			/// Sets the parent layer.
-			/// </summary>
-			/// <param name="parent">The parent layer to set for this collection.</param>
-			/// <param name="bSuppressEvents">If true, only the parent layer will set, but nothing else. If false, the boundaries of the items in the collection are merged into the parent layer collection.</param>
-			/// <remarks>Use this with bSuppressEvents = true if you are in constructor or deserialization code where not all variables are currently initalized.</remarks>
-			public void SetParentLayer(Layer parent, bool bSuppressEvents)
-			{
-				if(null==parent)
-				{
-					throw new ArgumentNullException();
-				}
-				else
-				{
-					m_Owner = parent;
-						
-					if(!bSuppressEvents)
-					{
-						// if the owner changed, it has possibly other x and y axis boundaries, so we have to set the plot items to this new boundaries
-						for(int i=0;i<Count;i++)
-							SetItemBoundaries(this[i]);
-					}
-				}
-			}
-
-			/// <summary>
-			/// Restores the event chain of a item.
-			/// </summary>
-			/// <param name="plotitem">The plotitem for which the event chain should be restored.</param>
-			public void WireItem(Graph.PlotItem plotitem)
-			{
-				SetItemBoundaries(plotitem);
-				plotitem.Changed += new EventHandler(this.OnChildChanged);
-			}
-
-			/// <summary>
-			/// This sets the type of the item boundaries to the type of the owner layer
-			/// </summary>
-			/// <param name="plotitem">The plot item for which the boundary type should be set.</param>
-			public void SetItemBoundaries(Graph.PlotItem plotitem)
-			{
-				if(plotitem.Data is Graph.IXBoundsHolder)
-				{
-					IXBoundsHolder pa = (IXBoundsHolder)plotitem.Data;
-					pa.SetXBoundsFromTemplate(m_Owner.XAxis.DataBounds); // ensure that data bound object is of the right type
-					pa.XBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationXBoundariesChanged);
-					pa.MergeXBoundsInto(m_Owner.XAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
-				}
-				if(plotitem.Data is Graph.IYBoundsHolder)
-				{
-					IYBoundsHolder pa = (IYBoundsHolder)plotitem.Data;
-					pa.SetYBoundsFromTemplate(m_Owner.YAxis.DataBounds); // ensure that data bound object is of the right type
-					pa.YBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationYBoundariesChanged);
-					pa.MergeYBoundsInto(m_Owner.YAxis.DataBounds); // merge the y-boundaries in the y-Axis data boundaries
-				}
-			}
-
-			public void Add(Graph.PlotItem plotitem)
-			{
-				if(plotitem==null)
-					throw new ArgumentNullException();
-
-				base.InnerList.Add(plotitem);
-				WireItem(plotitem);
-				OnChanged();
-			}
-
-			public PlotItem this[int i]
-			{
-				get { return (PlotItem)base.InnerList[i]; }
-			}
-			
-			public int IndexOf(PlotItem it)
-			{
-				return base.InnerList.IndexOf(it,0,Count);
-			}
-				
-			#region IChangedEventSource Members
-
-			public event System.EventHandler Changed;
-
-
-			public virtual void OnChildChanged(object child, EventArgs e)
-			{
-				if(null!=Changed)
-					Changed(this,e);
-			}
-
-			protected virtual void OnChanged()
-			{
-				if(null!=Changed)
-					Changed(this,new ChangedEventArgs(this,null));
-			}
-
-			#endregion
-		}
-
-
 
 		/// <summary>
 		/// Holds a bunch of layers by it's index.

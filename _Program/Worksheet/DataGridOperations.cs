@@ -71,10 +71,9 @@ namespace Altaxo.Worksheet
 			for(int i=0;i<pa.Length;i++)
 			{
 				Altaxo.Graph.PlotItem pi = new Altaxo.Graph.XYDataPlot(pa[i],(Altaxo.Graph.LineScatterPlotStyle)templatePlotStyle.Clone());
-				gv.Controller.Doc.Layers[0].PlotItems.Add(pi);
 				newPlotGroup.Add(pi);
 			}
-			gv.Controller.Doc.Layers[0].PlotGroups.Add(newPlotGroup);
+			gv.Controller.Doc.Layers[0].PlotItems.Add(newPlotGroup);
 		}
 
 

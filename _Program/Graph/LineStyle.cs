@@ -466,7 +466,8 @@ namespace Altaxo.Graph
 			}
 			else // no line symbol gap required, so we can use DrawLines to draw the lines
 			{
-				g.DrawLines(this.m_PenHolder, linepts);
+				if(linepts.Length>1) // we don't want to have a drawing exception if number of points is only one
+					g.DrawLines(this.m_PenHolder, linepts);
 			}
 		} // end function PaintOneRange
 

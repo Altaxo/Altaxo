@@ -1969,7 +1969,7 @@ namespace Altaxo.Graph
 				
 				if(!addedItems.ContainsKey(pa)) // if not already added to the list box
 				{
-					PlotGroup grp = m_Layer.PlotGroups.GetPlotGroupOf(pa);
+					PlotGroup grp = m_Layer.PlotItems.GetPlotGroupOf(pa);
 				
 					if(null!=grp)
 					{
@@ -2025,7 +2025,6 @@ namespace Altaxo.Graph
 
 
 			m_Layer.PlotItems.Clear();
-			m_Layer.PlotGroups.Clear();
 
 			// now we must get all items out of the listbox and look
 			// for which items are new or changed
@@ -2056,7 +2055,7 @@ namespace Altaxo.Graph
 						PLCon member = (PLCon)item.m_Group[j];
 						m_Layer.PlotItems.Add(member.plotassociation);
 					} // end for
-					m_Layer.PlotGroups.Add(item.m_OriginalGroup); // add the unchanged group back to the layer
+					m_Layer.PlotItems.Add(item.m_OriginalGroup); // add the unchanged group back to the layer
 				} // if item.IsUnchangedOldGroup
 				else if(item.IsChangedOldGroup) // group exists before, but was changed
 				{
@@ -2079,7 +2078,7 @@ namespace Altaxo.Graph
 							}
 						}
 					} // end for
-					m_Layer.PlotGroups.Add(item.m_OriginalGroup); // add the plot group back to the layer
+					m_Layer.PlotItems.Add(item.m_OriginalGroup); // add the plot group back to the layer
 				} // else if item.IsChangedOldGroup
 				else if(item.IsNewGroup) // if it is a new group
 				{
@@ -2105,7 +2104,7 @@ namespace Altaxo.Graph
 							}
 						}
 					} // for all items in that new group
-					m_Layer.PlotGroups.Add(newplotgrp); // add the new plot group to the layer
+					m_Layer.PlotItems.Add(newplotgrp); // add the new plot group to the layer
 				} // if it was a new group
 			} // end for all items in the list box
 			
@@ -2183,7 +2182,7 @@ namespace Altaxo.Graph
 				PlotItem pa = ((PLCon)this.m_Contents_lbContents.SelectedItems[0]).plotassociation;
 				if(null!=pa)
 				{
-					PlotGroup plotGroup = m_Layer.PlotGroups.GetPlotGroupOf(pa);
+					PlotGroup plotGroup = m_Layer.PlotItems.GetPlotGroupOf(pa);
 					// open the plot style dialog of the selected item
 					PlotStyleDialog dlg = new PlotStyleDialog(null==plotGroup ? (PlotStyle)pa.Style : (PlotStyle)plotGroup.MasterItem.Style,plotGroup);
 					DialogResult dr = dlg.ShowDialog(this);

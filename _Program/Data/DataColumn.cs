@@ -323,7 +323,7 @@ namespace Altaxo.Data
 		protected int m_Group=0; // number of group this column is belonging to
 		
 		/// <summary>The kind of the column, <see cref="ColumnKind"/></summary>
-		protected ColumnKind m_Kind = ColumnKind.Y; // kind of column
+		protected ColumnKind m_Kind = ColumnKind.V; // kind of column
 
 		/// <summary>The column count, i.e. one more than the index to the last valid element.</summary>
 		protected int m_Count=0; // Index of last valid data + 1
