@@ -212,6 +212,85 @@ namespace Altaxo.Calc.FFT
     }
 
     
+    private static void zzTestNativeReImOne_RandomPos(uint n)
+    {
+      double[] re = new double[n];
+      double[] im = new double[n];
+      
+      System.Random rnd = new System.Random();
+
+      int repos = rnd.Next((int)n);
+      int impos = rnd.Next((int)n);
+
+      re[repos]=1;
+      im[impos]=1;
+
+     
+
+      NativeFourierMethods.NativeFFT(re,im,re,im,(int)n,false);
+
+      for(uint i=0;i<n;i++)
+      {
+        Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos(re={1},im={2}) re[{3}]",n,repos,impos,i), 
+          Math.Cos((2*Math.PI*i*(double)repos)/n) + Math.Sin((2*Math.PI*i*(double)impos)/n),
+          re[i],n*1E-14);
+        Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos(re={1},im={2}) arb im[{3}]",n,repos,impos,i), 
+          -Math.Sin((2*Math.PI*i*(double)repos)/n) + Math.Cos((2*Math.PI*i*(double)impos)/n), 
+          im[i],n*1E-14);
+      }
+    }
+
+    [Test]
+    public void TestNativeReImOne_RandomPos()
+    {
+      // Testing 2^n
+      for(uint i=nLowerLimit;i<=nUpperLimit;i++)
+        zzTestNativeReImOne_RandomPos(i);
+    }
+
+
+    private static void zzTestReImRandomValues(uint n)
+    {
+      double[] re = new double[n];
+      double[] im = new double[n];
+      
+      System.Random rnd = new System.Random();
+
+      // fill re and im with random values
+      for(int i=0;i<n;i++)
+      {
+        re[i] = rnd.NextDouble();
+        im[i] = rnd.NextDouble();
+      }
+
+      double[] re1 = new double[n];
+      double[] im1 = new double[n];
+
+      Array.Copy(re,0,re1,0,n);
+      Array.Copy(im,0,im1,0,n);
+
+      ChirpFFT.FFT(re,im,n,false);
+      NativeFourierMethods.NativeFFT(re1,im1,re1,im1,(int)n,false);
+
+      for(uint i=0;i<n;i++)
+      {
+        Assertion.AssertEquals(string.Format("FFT (real part) at pos {0}",i), 
+          re1[i],
+          re[i],n*1E-14);
+        Assertion.AssertEquals(string.Format("FFT (imaginary part) at pos {0}",i), 
+          im1[i], 
+          im[i],n*1E-14);
+      }
+    }
+
+
+    [Test]
+    public void TestReImRandomValues()
+    {
+      // Testing 2^n
+      for(uint i=nLowerLimit;i<=nUpperLimit;i++)
+        zzTestReImRandomValues(i);
+    }
 
 
   }

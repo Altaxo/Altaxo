@@ -92,52 +92,91 @@ namespace Altaxo.Calc.FFT
      FastHartleyTransform.fht_ifft(arrsize, fht1real,fht1imag);
     NormalizeArrays(fht1real, fht1imag, 1.0/arrsize, arrsize);
     CopyFromSplittedArraysToComplex(resarray,fht1real,fht1imag,arrsize);
-	
-   
   }
 
+
+    /// <summary>
+    /// Performs a convolution of two comlex arrays with are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the values of the
+    /// input arrays will be destroyed!
+    /// </summary>
+    /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+    /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+    /// <param name="arr1real">The real part of the first input array.</param>
+    /// <param name="arr1imag">The imaginary part of the first input array.</param>
+    /// <param name="arr2real">The real part of the second input array.</param>
+    /// <param name="arr2imag">The imaginary part of the second input array.</param>
+    /// <param name="arrsize">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+    static void fhtconvolution(double[] resultreal, double[] resultimag, double[] arr1real, double[] arr1imag, double[] arr2real, double[] arr2imag, int arrsize)
+    {
+      FastHartleyTransform.fht_fft(arrsize, arr1real, arr1imag);
+      FastHartleyTransform.fht_fft(arrsize, arr2real, arr2imag);
+      MultiplySplittedComplexArrays(resultreal, resultimag, arr1real, arr1imag, arr2real, arr2imag, arrsize);
+      FastHartleyTransform.fht_ifft(arrsize, resultreal,resultimag);
+      NormalizeArrays(resultreal, resultimag, 1.0/arrsize, arrsize);
+    }
    
+    /// <summary>
+    /// Returns the neccessary transformation size for a chirp transformation of length n.
+    /// </summary>
+    /// <param name="n">The length of the chirp transformation.</param>
+    /// <returns>Neccessary length of the transformation arrays. Note that this is based on a convolution of
+    /// base 2.</returns>
+    public static int GetNecessaryTransformationSize(int n)
+    {
+      if(n<=2)
+        return 2;
+
+      int ldnn = 2+ld((uint)(n-2));
+      return (1<<ldnn);
+    }
 
 // der Chirpalgorithmus funktioniert auch noch bei arrsize=1+2^n mit der nächstgelegenen Potenz 2^(n+1) !!!
 
     public static void chirpnativefft(Complex[] result, Complex[] arr, int arrsize, bool bBackward)
     {
       int phasesign = bBackward ? 1 : -1;
+      int arrsize2 = arrsize+arrsize;
      
       if(arrsize<=2)
         throw new ArgumentException("This algorithm works for array sizes > 2 only.");
 
-      int ldnn = 2+ld((uint)(arrsize-2));
-      int msize = (1<<ldnn);
-      
+      int msize = GetNecessaryTransformationSize(arrsize);
+     
       Complex[] xjfj = new Complex[msize];
       Complex[] fserp = new Complex[msize];
       Complex[] resarray = new Complex[msize];
-      Complex[] cmparray = new Complex[arrsize];
+      //Complex[] cmparray = new Complex[arrsize];
 
-      // fillArray(xjfj,std::complex<double>(0,0),msize);
-      // fillArray(fserp,std::complex<double>(0,0),msize);
-      // fillArray(resarray,std::complex<double>(0,0),msize);
 
       // bilde xj*fj
+      double prefactor = phasesign * Math.PI / arrsize;
+      int np = 0;
       for(int i=0;i<arrsize;i++)
       {
-        double phi = phasesign * Math.PI*((i*i)%(2*arrsize))/arrsize;
+        double phi = prefactor*np; // np should be equal to (i*i)%arrsize2
         Complex val = new Complex(Math.Cos(phi),Math.Sin(phi));
         xjfj[i] = arr[i] * val;
+
+        np += i+i+1;  // np == (k*k)%n2
+        if ( np >= arrsize2 ) 
+          np -= arrsize2;
+
       }
 
       // fill positive and negative part of fserp
       fserp[0]=new Complex(1,0);
+      prefactor = -phasesign * Math.PI / arrsize;
+      np = 1; // since we start the loop with 1
       for(int i=1;i<arrsize;i++)
       {
-        double phi = -phasesign * Math.PI*((i*i)%(2*arrsize))/arrsize;
+        double phi = prefactor * np; // np should be equal to (i*i)%arrsize2
         fserp[i].Re = fserp[msize-i].Re = Math.Cos(phi);
         fserp[i].Im = fserp[msize-i].Im = Math.Sin(phi);
+        
+        np += i+i+1;  // np == (k*k)%n2
+        if ( np >= arrsize2 ) 
+          np -= arrsize2;
       }
-
-      //printArray("fserp",fserp,msize);
-
 
       // convolute xjfj with fserp
       //NativeCyclicConvolution(resarray,xjfj,fserp,msize);
@@ -145,16 +184,95 @@ namespace Altaxo.Calc.FFT
       //printArray("Result of convolution",resarray,msize);
 
       // multipliziere mit fserpschlange
+      prefactor = phasesign * Math.PI / arrsize;
+      np = 0;
       for(int i=0;i<arrsize;i++)
       {
-        double phi = phasesign * Math.PI*((i*i)%(2*arrsize))/arrsize;
+        double phi = prefactor * np; // np should be equal to (i*i)%arrsize2
         result[i] = resarray[i]* new Complex(Math.Cos(phi),Math.Sin(phi));
+            
+        np += i+i+1;  // np == (i*i)%n2
+        if ( np >= arrsize2 ) 
+          np -= arrsize2;
       }
-
-
-
     }
 
+
+    public static void chirpnativefft(
+      double[] resultreal, 
+      double[] resultimag,
+      double[] inputreal,
+      double[] inputimag,
+      int arrsize,
+      bool bBackward)
+    {
+      int phasesign = bBackward ? 1 : -1;
+      int arrsize2 = arrsize+arrsize;
+     
+      if(arrsize<=2)
+        throw new ArgumentException("This algorithm works for array sizes > 2 only.");
+
+      int msize = GetNecessaryTransformationSize(arrsize);
+     
+      double[] xjfj_real  = new double[msize];
+      double[] xjfj_imag  = new double[msize];
+      double[] fserp_real = new double[msize];
+      double[] fserp_imag = new double[msize];
+      double[] resarray_real = new double[msize];
+      double[] resarray_imag = new double[msize];
+
+      // bilde xj*fj
+      double prefactor = phasesign * Math.PI / arrsize;
+      int np = 0;
+      for(int i=0;i<arrsize;i++)
+      {
+        double phi = prefactor*np; // np should be equal to (i*i)%arrsize2
+        double vre = Math.Cos(phi);
+        double vim = Math.Sin(phi);
+        xjfj_real[i] = inputreal[i] * vre - inputimag[i] * vim;
+        xjfj_imag[i] = inputreal[i] * vim + inputimag[i] * vre;
+
+        np += i+i+1;  // np == (k*k)%n2
+        if ( np >= arrsize2 ) 
+          np -= arrsize2;
+
+      }
+
+      // fill positive and negative part of fserp
+      fserp_real[0]=1; fserp_imag[0]=0;
+      prefactor = -phasesign * Math.PI / arrsize;
+      np = 1; // since we start the loop with 1
+      for(int i=1;i<arrsize;i++)
+      {
+        double phi = prefactor * np; // np should be equal to (i*i)%arrsize2
+        fserp_real[i] = fserp_real[msize-i] = Math.Cos(phi);
+        fserp_imag[i] = fserp_imag[msize-i] = Math.Sin(phi);
+        
+        np += i+i+1;  // np == (k*k)%n2
+        if ( np >= arrsize2 ) 
+          np -= arrsize2;
+      }
+
+      // convolute xjfj with fserp
+      //NativeCyclicConvolution(resarray,xjfj,fserp,msize);
+      fhtconvolution(resarray_real,resarray_imag,xjfj_real,xjfj_imag,fserp_real,fserp_imag,msize);
+
+      // multipliziere mit fserpschlange
+      prefactor = phasesign * Math.PI / arrsize;
+      np = 0;
+      for(int i=0;i<arrsize;i++)
+      {
+        double phi = prefactor * np; // np should be equal to (i*i)%arrsize2
+        double vre = Math.Cos(phi);
+        double vim = Math.Sin(phi);
+        resultreal[i] = resarray_real[i]*vre - resarray_imag[i]*vim;
+        resultimag[i] = resarray_real[i]*vim + resarray_imag[i]*vre;
+            
+        np += i+i+1;  // np == (i*i)%n2
+        if ( np >= arrsize2 ) 
+          np -= arrsize2;
+      }
+    }
 
     /// <summary>
     /// Performs an FFT of arbitrary length by the chirp method. Use this method only if no other
@@ -164,6 +282,7 @@ namespace Altaxo.Calc.FFT
     /// <param name="y">Array of imaginary values.</param>
     /// <param name="n">Number of points to transform.</param>
     /// <param name="backward">If false, a forward FFT is performed. If true, a inverse FFT is performed.</param>
+    /*
     public static void
       FFT(double[] x, double[] y, uint n, bool backward)
     {
@@ -172,9 +291,13 @@ namespace Altaxo.Calc.FFT
       Complex[] result = new Complex[n];
       chirpnativefft(result,arr,(int)n, backward);
       CopyFromComplexToSplittedArrays(x,y,result,(int)n);
-
     }
-
+*/
+    public static void
+      FFT(double[] x, double[] y, uint n, bool backward)
+    {
+      chirpnativefft(x,y,x,y,(int)n, backward);
+    }
 
 
     static void make_fft_chirp(double[] wr, double[] wi, uint n, bool backward)

@@ -1042,7 +1042,7 @@ namespace Altaxo.Calc.FFT
   /// This class provides reference methods concerning FFT that are slow and not very accurate.
   /// Do not use them except for comparism and testing purposes!
   /// </summary>
-  class NativeFourierMethods
+  public class NativeFourierMethods
   {
     
 
@@ -1113,6 +1113,59 @@ namespace Altaxo.Calc.FFT
           double phi = iss*2*Math.PI*((i*k)%count)/count;
           resultarr[k] += new Complex(arr[i]*Math.Cos(phi),arr[i]*Math.Sin(phi));
         }
+      }
+    }
+
+    /// <summary>
+    /// Performs a native fouriertransformation of a complex value array.
+    /// </summary>
+    /// <param name="resultreal">Used to store the real part of the result of the transformation. May be equal to the input array.</param>
+    /// <param name="resultimag">Used to store the imaginary part of the result of the transformation.  May be equal to the input array.</param>
+    /// <param name="inputreal">The real part of the array to transform.</param>
+    /// <param name="inputimag">The real part of the array to transform.</param>
+    /// <param name="count">Number of points to transform.</param>
+    /// <param name="bBackward">If false, a forward transform will performed, if true, a inverse transform will be performed.</param>
+    public static void NativeFFT(double[] resultreal, double[] resultimag, double[] inputreal, double[] inputimag, int count, bool bBackward)
+    {
+      bool useShadowCopy = false;
+      double[] resre = resultreal;
+      double[] resim = resultimag;
+
+      if( object.ReferenceEquals(resultreal,inputreal) || 
+          object.ReferenceEquals(resultreal,inputimag) ||
+          object.ReferenceEquals(resultimag,inputreal) ||
+          object.ReferenceEquals(resultimag,inputimag)
+        )
+        useShadowCopy = true;
+
+      if(useShadowCopy)
+      {
+        resre = new double[count];
+        resim = new double[count];
+      }
+
+      int iss = bBackward ? 1 : -1;
+      for(int k=0;k<count;k++)
+      {
+        double sumreal=0, sumimag=0;
+        for(int i=0;i<count;i++)
+        {
+          double phi = iss*2*Math.PI*((i*k)%count)/count;
+          double  vre = Math.Cos(phi);
+          double vim = Math.Sin(phi);
+          double addre = inputreal[i]*vre - inputimag[i]*vim;
+          double addim = inputreal[i]*vim + inputimag[i]*vre;
+          sumreal += addre;
+          sumimag += addim;
+        }
+        resre[k] = sumreal;
+        resim[k] = sumimag;
+      }
+
+      if(useShadowCopy)
+      {
+        Array.Copy(resre,0,resultreal,0,count);
+        Array.Copy(resim,0,resultimag,0,count);
       }
     }
   }

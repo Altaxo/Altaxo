@@ -35,7 +35,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 2^n
       for(int i=2;i<=65536;i*=2)
-        TestZero(i);
+        zzTestZero(i);
     }
 
     [Test]
@@ -43,7 +43,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 3^n
       for(int i=3;i<100000;i*=3)
-        TestZero(i);
+        zzTestZero(i);
     }
   
     [Test]
@@ -51,11 +51,11 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 5^n
       for(int i=5;i<100000;i*=5)
-        TestZero(i);
+        zzTestZero(i);
     }
 
 
-    private static void TestZero(int n)
+    private static void zzTestZero(int n)
     {
       double[] re = new double[n];
       double[] im = new double[n];
@@ -77,7 +77,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 2^n
       for(int i=2;i<=65536;i*=2)
-        TestReOne_ZeroPos(i);
+        zzTestReOne_ZeroPos(i);
     }
 
     [Test]
@@ -85,7 +85,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 3^n
       for(int i=3;i<100000;i*=3)
-        TestReOne_ZeroPos(i);
+        zzTestReOne_ZeroPos(i);
     }
   
     [Test]
@@ -93,10 +93,10 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 5^n
       for(int i=5;i<100000;i*=5)
-        TestReOne_ZeroPos(i);
+        zzTestReOne_ZeroPos(i);
     }
 
-    private static void TestReOne_ZeroPos(int n)
+    private static void zzTestReOne_ZeroPos(int n)
     {
       double[] re = new double[n];
       double[] im = new double[n];
@@ -120,7 +120,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 2^n
       for(int i=2;i<=65536;i*=2)
-        TestImOne_ZeroPos(i);
+        zzTestImOne_ZeroPos(i);
     }
 
     [Test]
@@ -128,7 +128,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 3^n
       for(int i=3;i<100000;i*=3)
-        TestImOne_ZeroPos(i);
+        zzTestImOne_ZeroPos(i);
     }
   
     [Test]
@@ -136,18 +136,18 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 5^n
       for(int i=5;i<100000;i*=5)
-        TestImOne_ZeroPos(i);
+        zzTestImOne_ZeroPos(i);
     }
 
     [Test]
     public void TestImOne_ZeroPosArbN()
     {
-      TestImOne_ZeroPos(2*2*2*3*3*5);
-      TestImOne_ZeroPos(2*2*3*3*3*5);
-      TestImOne_ZeroPos(2*3*3*5*5*5);
+      zzTestImOne_ZeroPos(2*2*2*3*3*5);
+      zzTestImOne_ZeroPos(2*2*3*3*3*5);
+      zzTestImOne_ZeroPos(2*3*3*5*5*5);
     }
 
-    private static void TestImOne_ZeroPos(int n)
+    private static void zzTestImOne_ZeroPos(int n)
     {
       double[] re = new double[n];
       double[] im = new double[n];
@@ -171,7 +171,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 2^n
       for(int i=2;i<=65536;i*=2)
-        TestReOne_OnePos(i);
+        zzTestReOne_OnePos(i);
     }
 
     [Test]
@@ -179,7 +179,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 3^n
       for(int i=3;i<100000;i*=3)
-        TestReOne_OnePos(i);
+        zzTestReOne_OnePos(i);
     }
   
     [Test]
@@ -187,18 +187,18 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 5^n
       for(int i=5;i<100000;i*=5)
-        TestReOne_OnePos(i);
+        zzTestReOne_OnePos(i);
     }
 
     [Test]
     public void TestReOne_OnePosArbN()
     {
-      TestReOne_OnePos(2*2*2*3*3*5);
-      TestReOne_OnePos(2*2*3*3*3*5);
-      TestReOne_OnePos(2*3*3*5*5*5);
+      zzTestReOne_OnePos(2*2*2*3*3*5);
+      zzTestReOne_OnePos(2*2*3*3*3*5);
+      zzTestReOne_OnePos(2*3*3*5*5*5);
     }
 
-    private static void TestReOne_OnePos(int n)
+    private static void zzTestReOne_OnePos(int n)
     {
       double[] re = new double[n];
       double[] im = new double[n];
@@ -222,7 +222,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 2^n
       for(int i=2;i<=65536;i*=2)
-        TestImOne_OnePos(i);
+        zzTestImOne_OnePos(i);
     }
 
     [Test]
@@ -230,7 +230,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 3^n
       for(int i=3;i<100000;i*=3)
-        TestImOne_OnePos(i);
+        zzTestImOne_OnePos(i);
     }
   
     [Test]
@@ -238,18 +238,18 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 5^n
       for(int i=5;i<100000;i*=5)
-        TestImOne_OnePos(i);
+        zzTestImOne_OnePos(i);
     }
 
     [Test]
     public void TestImOne_OnePosArbN()
     {
-      TestImOne_OnePos(2*2*2*3*3*5);
-      TestImOne_OnePos(2*2*3*3*3*5);
-      TestImOne_OnePos(2*3*3*5*5*5);
+      zzTestImOne_OnePos(2*2*2*3*3*5);
+      zzTestImOne_OnePos(2*2*3*3*3*5);
+      zzTestImOne_OnePos(2*3*3*5*5*5);
     }
 
-    private static void TestImOne_OnePos(int n)
+    private static void zzTestImOne_OnePos(int n)
     {
       double[] re = new double[n];
       double[] im = new double[n];
@@ -273,7 +273,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 2^n
       for(int i=2;i<=65536;i*=2)
-        TestReImOne_RandomPos(i);
+        zzTestReImOne_RandomPos(i);
     }
 
     [Test]
@@ -281,7 +281,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 3^n
       for(int i=3;i<100000;i*=3)
-        TestReImOne_RandomPos(i);
+        zzTestReImOne_RandomPos(i);
     }
   
     [Test]
@@ -289,19 +289,19 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 5^n
       for(int i=5;i<100000;i*=5)
-        TestReImOne_RandomPos(i);
+        zzTestReImOne_RandomPos(i);
     }
 
     [Test]
     public void TestReImOne_RandomPosArbN()
     {
-      TestReImOne_RandomPos(2*2*2*3*3*5);
-      TestReImOne_RandomPos(2*2*3*3*3*5);
-      TestReImOne_RandomPos(2*3*3*5*5*5);
+      zzTestReImOne_RandomPos(2*2*2*3*3*5);
+      zzTestReImOne_RandomPos(2*2*3*3*3*5);
+      zzTestReImOne_RandomPos(2*3*3*5*5*5);
     }
 
 
-    private static void TestReImOne_RandomPos(int n)
+    private static void zzTestReImOne_RandomPos(int n)
     {
       double[] re = new double[n];
       double[] im = new double[n];
@@ -354,7 +354,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 2^n
       for(int i=2;i<=1000;i*=2)
-        TestZero(i,i);
+        zzTestZero(i,i);
     }
 
     [Test]
@@ -362,7 +362,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 3^n
       for(int i=3;i<1000;i*=3)
-        TestZero(i,i);
+        zzTestZero(i,i);
     }
   
     [Test]
@@ -370,7 +370,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 5^n
       for(int i=5;i<1000;i*=5)
-        TestZero(i,i);
+        zzTestZero(i,i);
     }
 
     [Test]
@@ -378,7 +378,7 @@ namespace Altaxo.Calc.FFT
     {
       // Testing 5^n
       for(int i=10;i<=1000;i*=10)
-        TestZero(i,i);
+        zzTestZero(i,i);
     }
 
     [Test]
@@ -390,12 +390,12 @@ namespace Altaxo.Calc.FFT
         int u = GetRandomN(1000);
         int v = GetRandomN(1000);
         Console.WriteLine("TestZero({0},{1})",u,v);
-        TestZero(u,v);
+        zzTestZero(u,v);
       }
     }
 
 
-    private static void TestZero(int u, int v)
+    private static void zzTestZero(int u, int v)
     {
       int n = u*v;
       double[] re = new double[n];
@@ -420,11 +420,11 @@ namespace Altaxo.Calc.FFT
       {
         int u = GetRandomN(1000);
         int v = GetRandomN(1000);
-        TestReOne_OnePos1stDim(u,v);
+        zzTestReOne_OnePos1stDim(u,v);
       }
     }
 
-    private static void TestReOne_OnePos1stDim(int u, int v)
+    private static void zzTestReOne_OnePos1stDim(int u, int v)
     {
       Console.WriteLine("TestReOn_OnePos1stDim({0},{1})",u,v);
 
@@ -456,11 +456,11 @@ namespace Altaxo.Calc.FFT
       {
         int u = GetRandomN(1000);
         int v = GetRandomN(1000);
-        TestReOne_OnePos2ndDim(u,v);
+        zzTestReOne_OnePos2ndDim(u,v);
       }
     }
 
-    private static void TestReOne_OnePos2ndDim(int u, int v)
+    private static void zzTestReOne_OnePos2ndDim(int u, int v)
     {
       Console.WriteLine("TestReOn_OnePos2ndDim({0},{1})",u,v);
 
@@ -493,11 +493,11 @@ namespace Altaxo.Calc.FFT
       {
         int u = GetRandomN(1000);
         int v = GetRandomN(1000);
-        TestReOne_OnePosBothDim(u,v);
+        zzTestReOne_OnePosBothDim(u,v);
       }
     }
 
-    private static void TestReOne_OnePosBothDim(int u, int v)
+    private static void zzTestReOne_OnePosBothDim(int u, int v)
     {
       Console.WriteLine("TestReOn_OnePosBothDim({0},{1})",u,v);
 
@@ -529,11 +529,11 @@ namespace Altaxo.Calc.FFT
       {
         int u = GetRandomN(1000);
         int v = GetRandomN(1000);
-        TestReOne_ArbPosBothDim(u,v);
+        zzTestReOne_ArbPosBothDim(u,v);
       }
     }
 
-    private static void TestReOne_ArbPosBothDim(int u, int v)
+    private static void zzTestReOne_ArbPosBothDim(int u, int v)
     {
       int upos = rnd.Next(u);
       int vpos = rnd.Next(v);
@@ -570,11 +570,11 @@ namespace Altaxo.Calc.FFT
       {
         int u = GetRandomN(1000);
         int v = GetRandomN(1000);
-        TestImOne_ArbPosBothDim(u,v);
+        zzTestImOne_ArbPosBothDim(u,v);
       }
     }
 
-    private static void TestImOne_ArbPosBothDim(int u, int v)
+    private static void zzTestImOne_ArbPosBothDim(int u, int v)
     {
       int upos = rnd.Next(u);
       int vpos = rnd.Next(v);
