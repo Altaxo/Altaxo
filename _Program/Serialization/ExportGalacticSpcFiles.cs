@@ -158,7 +158,7 @@ namespace Altaxo.Serialization.Galactic
 			string[] colnames = new string[numnumeric];
 			for(int i=0,j=0;i<colcol.ColumnCount;i++)
 				if(colcol[i] is Altaxo.Data.INumericColumn)
-					colnames[j++]= colcol[i].ColumnName;
+					colnames[j++]= colcol.GetColumnName(i);
 				
 			// now set the contents of the combo box
 			m_Form.FillXValuesColumnBox(colnames);
@@ -181,7 +181,7 @@ namespace Altaxo.Serialization.Galactic
 			// Fill the Combo Box with Column names
 			string[] colnames = new string[colcol.ColumnCount];
 			for(int i=0;i<colcol.ColumnCount;i++)
-				colnames[i]= colcol[i].ColumnName;
+				colnames[i]= colcol.GetColumnName(i);
 				
 			// now set the contents of the combo box
 			m_Form.FillExtFileNameColumnBox(colnames);

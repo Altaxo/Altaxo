@@ -235,13 +235,8 @@ namespace Altaxo
 
 			if(bCreateDefaultColumns)
 			{
-				Altaxo.Data.DoubleColumn colA = new Altaxo.Data.DoubleColumn("A");
-				colA.Kind = Data.ColumnKind.X;
-
-				Altaxo.Data.DoubleColumn colB = new Altaxo.Data.DoubleColumn("B");
-
-				dt1.DataColumns.Add(colA);
-				dt1.DataColumns.Add(colB);
+				dt1.DataColumns.Add(new Altaxo.Data.DoubleColumn(),"A",Altaxo.Data.ColumnKind.X);
+				dt1.DataColumns.Add(new Altaxo.Data.DoubleColumn(),"B");
 			}
 
 			DataTableCollection.Add(dt1);

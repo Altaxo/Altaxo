@@ -53,7 +53,7 @@ namespace Altaxo.Worksheet
 			{
 				Altaxo.Data.DataColumn ycol = dg.DataTable[dg.SelectedColumns[i]];
 
-				Altaxo.Data.DataColumn xcol = dg.DataTable.DataColumns.FindXColumnOfGroup(ycol.Group);
+				Altaxo.Data.DataColumn xcol = dg.DataTable.DataColumns.FindXColumnOf(ycol);
 			
 				if(null!=xcol)
 					pa[i] = new Graph.XYColumnPlotData(xcol,ycol);
@@ -134,7 +134,7 @@ namespace Altaxo.Worksheet
 			for(int i=0;i<selectedColumns.Count;i++)
 			{
 				if(!(srctable[selectedColumns[i]] is Altaxo.Data.INumericColumn))
-					return string.Format("The column[{0}] (name:{1}) is not a numeric column!",selectedColumns[i],srctable[selectedColumns[i]].ColumnName);
+					return string.Format("The column[{0}] (name:{1}) is not a numeric column!",selectedColumns[i],srctable[selectedColumns[i]].Name);
 			}
 
 
@@ -194,12 +194,11 @@ namespace Altaxo.Worksheet
 			// first store the factors
 			for(int i=0;i<resultMat.Cols;i++)
 			{
-				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn(i.ToString());
-				col.Group=0;
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 				for(int j=0;j<resultMat.Rows;j++)
 					col[j] = resultMat[j,i];
 				
-				table.DataColumns.Add(col);
+				table.DataColumns.Add(col,i.ToString());
 			}
 
 			table.Resume();
@@ -329,51 +328,49 @@ namespace Altaxo.Worksheet
 			double meanScore = Altaxo.Calc.MatrixMath.LengthOf(meanX);
 			Altaxo.Calc.MatrixMath.NormalizeRows(meanX);
 		
-			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("MeanFactor");
-			col.Group=0;
+			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 			for(int i=0;i<factors.Rows;i++)
 				col[i] = meanScore;
-			table.DataColumns.Add(col);
+			table.DataColumns.Add(col,"MeanFactor",Altaxo.Data.ColumnKind.V,0);
 		}
 
 			// first store the factors
 			for(int i=0;i<factors.Cols;i++)
 			{
-				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("Factor"+i.ToString());
-				col.Group=1;
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 				for(int j=0;j<factors.Rows;j++)
 					col[j] = factors[j,i];
 				
-				table.DataColumns.Add(col);
+				table.DataColumns.Add(col,"Factor"+i.ToString(),Altaxo.Data.ColumnKind.V,1);
 			}
 
 			// now store the mean of the matrix
 		{
-			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("MeanLoad");
-			col.Group=2;
+			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+			
 			for(int j=0;j<meanX.Cols;j++)
 				col[j] = meanX[0,j];
-			table.DataColumns.Add(col);
+			table.DataColumns.Add(col,"MeanLoad",Altaxo.Data.ColumnKind.V,2);
 		}
 
 			// now store the loads - careful - they are horizontal in the matrix
 			for(int i=0;i<loads.Rows;i++)
 			{
-				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("Load"+i.ToString());
-				col.Group=3;
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+				
 				for(int j=0;j<loads.Cols;j++)
 					col[j] = loads[i,j];
 				
-				table.DataColumns.Add(col);
+				table.DataColumns.Add(col,"Load"+i.ToString(),Altaxo.Data.ColumnKind.V,3);
 			}
 
 			// now store the residual variances, they are vertical in the vector
 		{
-			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("ResidualVariance");
-			col.Group=4;
+			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+			
 			for(int i=0;i<residualVariances.Rows;i++)
 				col[i] = residualVariances[i,0];
-			table.DataColumns.Add(col);
+			table.DataColumns.Add(col,"ResidualVariance",Altaxo.Data.ColumnKind.V,4);
 		}
 
 			table.Resume();
@@ -480,7 +477,7 @@ namespace Altaxo.Worksheet
 
 				for(int i=0;i<numcols;i++)
 				{
-					int grp = srctable[numericDataCols[i]].Group;
+					int grp = srctable.DataColumns.GetColumnGroup(numericDataCols[i]);
 					
 
 					if(group0<0)
@@ -530,7 +527,7 @@ namespace Altaxo.Worksheet
 				int ccol=0;
 				for(int i=0;i<numcols;i++)
 				{
-					if(srctable[numericDataCols[i]].Group != group0)
+					if(srctable.DataColumns.GetColumnGroup(numericDataCols[i]) != group0)
 						continue;
 
 					Altaxo.Data.INumericColumn col = srctable[numericDataCols[i]] as Altaxo.Data.INumericColumn;
@@ -548,7 +545,7 @@ namespace Altaxo.Worksheet
 				ccol=0;
 				for(int i=0;i<numcols;i++)
 				{
-					if(srctable[numericDataCols[i]].Group != group1)
+					if(srctable.DataColumns.GetColumnGroup(numericDataCols[i]) != group1)
 						continue;
 
 					Altaxo.Data.INumericColumn col = srctable[numericDataCols[i]] as Altaxo.Data.INumericColumn;
@@ -631,61 +628,60 @@ namespace Altaxo.Worksheet
 			// store the x-loads - careful - they are horizontal in the matrix
 			for(int i=0;i<xLoads.Rows;i++)
 			{
-				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("XLoad"+i.ToString());
-				col.Group=0;
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+
 				for(int j=0;j<xLoads.Cols;j++)
 					col[j] = xLoads[i,j];
 					
-				table.DataColumns.Add(col);
+				table.DataColumns.Add(col,"XLoad"+i.ToString(),Altaxo.Data.ColumnKind.V,0);
 			}
 
 			// now store the loads - careful - they are horizontal in the matrix
 			for(int i=0;i<yLoads.Rows;i++)
 			{
-				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("YLoad"+i.ToString());
-				col.Group=1;
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+				
 				for(int j=0;j<yLoads.Cols;j++)
 					col[j] = yLoads[i,j];
 				
-				table.DataColumns.Add(col);
+				table.DataColumns.Add(col,"YLoad"+i.ToString(),Altaxo.Data.ColumnKind.V,1);
 			}
 
 			// now store the weights - careful - they are horizontal in the matrix
 			for(int i=0;i<W.Rows;i++)
 			{
-				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("Weight"+i.ToString());
-				col.Group=2;
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+			
 				for(int j=0;j<W.Cols;j++)
 					col[j] = W[i,j];
 				
-				table.DataColumns.Add(col);
+				table.DataColumns.Add(col,"Weight"+i.ToString(),Altaxo.Data.ColumnKind.V,2);
 			}
 
 			// now store the cross product vector - it is a horizontal vector
 		{
 			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("CrossP");
-			col.Group=3;
+			
 			for(int j=0;j<V.Cols;j++)
 				col[j] = V[0,j];
-			table.DataColumns.Add(col);
+			table.DataColumns.Add(col,"CrossP",Altaxo.Data.ColumnKind.V,3);
 		}
 
 		{
 			// now a cross validation - this can take a long time for bigger matrices
 			Altaxo.Calc.IMatrix crossPRESSMatrix;
 			Altaxo.Calc.MatrixMath.PartialLeastSquares_CrossValidation_HO(matrixX,matrixY,numFactors, out crossPRESSMatrix);
-			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("CrossPRESS");
-			col.Group=4;
+			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 			for(int i=0;i<crossPRESSMatrix.Rows;i++)
 				col[i] = crossPRESSMatrix[i,0];
-			table.DataColumns.Add(col);
+			table.DataColumns.Add(col,"CrossPRESS",Altaxo.Data.ColumnKind.V,4);
 		}
 
 			// calculate the self predicted y values - for one factor and for two
 			Altaxo.Calc.IMatrix yPred = new Altaxo.Calc.MatrixMath.HOMatrix(matrixY.Rows,matrixY.Cols);
-			Altaxo.Data.DoubleColumn presscol = new Altaxo.Data.DoubleColumn("PRESS");
-			presscol.Group = 4;
-			table.DataColumns.Add(presscol);
+			Altaxo.Data.DoubleColumn presscol = new Altaxo.Data.DoubleColumn();
+			
+			table.DataColumns.Add(presscol,"PRESS",Altaxo.Data.ColumnKind.V,4);
 			presscol[0] = Altaxo.Calc.MatrixMath.SumOfSquares(matrixY); // gives the press for 0 factors, i.e. the variance of the y-matrix
 			for(int nFactor=1;nFactor<=numFactors;nFactor++)
 			{
@@ -699,12 +695,11 @@ namespace Altaxo.Worksheet
 				// but we store them vertically now
 				for(int i=0;i<yPred.Cols;i++)
 				{
-					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("YPred"+nFactor.ToString()+ "_" + i.ToString());
-					col.Group=5+nFactor;
+					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 					for(int j=0;j<yPred.Rows;j++)
 						col[j] = yPred[j,i] + meanY[0,i];
 				
-					table.DataColumns.Add(col);
+					table.DataColumns.Add(col,"YPred"+nFactor.ToString()+ "_" + i.ToString(),Altaxo.Data.ColumnKind.V,5+nFactor);
 				}
 			} // for nFactor...
 
@@ -736,8 +731,31 @@ namespace Altaxo.Worksheet
 			if(numcols==0)
 				return; // nothing selected
 
-			bool bTableCreated = false;
 			Data.DataTable table = null; // the created table
+
+
+			// add a text column and some double columns
+			// note: statistics is only possible for numeric columns since
+			// otherwise in one column doubles and i.e. dates are mixed, which is not possible
+
+			// 1st column is the name of the column of which the statistics is made
+			Data.TextColumn colCol = new Data.TextColumn("Col");
+		
+			// 2nd column is the mean
+			Data.DoubleColumn colMean = new Data.DoubleColumn("Mean");
+
+			// 3rd column is the standard deviation
+			Data.DoubleColumn colSd = new Data.DoubleColumn("sd");
+
+			// 4th column is the standard e (N)
+			Data.DoubleColumn colSe = new Data.DoubleColumn("se");
+
+			// 5th column is the sum
+			Data.DoubleColumn colSum = new Data.DoubleColumn("Sum");
+
+			// 6th column is the number of items for statistics
+			Data.DoubleColumn colN = new Data.DoubleColumn("N");
+
 			int currRow=0;
 			for(int si=0;si<numcols;si++)
 			{
@@ -748,44 +766,6 @@ namespace Altaxo.Worksheet
 				int rows = bUseSelectedRows ? selectedRows.Count : srctable.DataColumns.RowCount;
 				if(rows==0)
 					continue;
-				
-				if(!bTableCreated)
-				{
-					bTableCreated=true;
-
-					table = new Altaxo.Data.DataTable();
-
-
-					// add a text column and some double columns
-					// note: statistics is only possible for numeric columns since
-					// otherwise in one column doubles and i.e. dates are mixed, which is not possible
-
-					// 1st column is the name of the column of which the statistics is made
-					Data.TextColumn c0 = new Data.TextColumn("Col");
-					c0.Kind = Data.ColumnKind.X;
-
-					// 2nd column is the mean
-					Data.DoubleColumn c1 = new Data.DoubleColumn("Mean");
-
-					// 3rd column is the standard deviation
-					Data.DoubleColumn c2 = new Data.DoubleColumn("sd");
-
-					// 4th column is the standard e (N)
-					Data.DoubleColumn c3 = new Data.DoubleColumn("se");
-
-					// 5th column is the sum
-					Data.DoubleColumn c4 = new Data.DoubleColumn("Sum");
-
-					// 6th column is the number of items for statistics
-					Data.DoubleColumn c5 = new Data.DoubleColumn("N");
-			
-					table.DataColumns.Add(c0);
-					table.DataColumns.Add(c1);
-					table.DataColumns.Add(c2);
-					table.DataColumns.Add(c3);
-					table.DataColumns.Add(c4);
-					table.DataColumns.Add(c5);
-				} // if !TableCreated
 
 				// now do the statistics 
 				Data.INumericColumn ncol = (Data.INumericColumn)col;
@@ -812,25 +792,29 @@ namespace Altaxo.Worksheet
 					double sd = NN>1 ? Math.Sqrt(ymy0sqr/(NN-1)) : 0;
 					double se = sd/Math.Sqrt(NN);
 
-					table[0][currRow] = col.ColumnName;
-					table[1][currRow] = mean; // mean
-					table[2][currRow] = sd;
-					table[3][currRow] = se;
-					table[4][currRow] = sum;
-					table[5][currRow] = NN;
+					colCol[currRow] = col.Name;
+					colMean[currRow] = mean; // mean
+					colSd[currRow] = sd;
+					colSe[currRow] = se;
+					colSum[currRow] = sum;
+					colN[currRow] = NN;
 					currRow++; // for the next column
 				}
 			} // for all selected columns
 			
 	
-			// if a table was created, we add the table to the data set and
-			// create a worksheet
-			if(bTableCreated)
+			if(currRow!=0)
 			{
+				table.DataColumns.Add(colCol,"Col",Altaxo.Data.ColumnKind.X);
+				table.DataColumns.Add(colMean,"Mean");
+				table.DataColumns.Add(colSd,"Sd");
+				table.DataColumns.Add(colSe,"Se");
+				table.DataColumns.Add(colSum,"Sum");
+				table.DataColumns.Add(colN,"N");
+
 				mainDocument.DataTableCollection.Add(table);
 				// create a new worksheet without any columns
 				App.Current.CreateNewWorksheet(table);
-
 			}
 		}
 

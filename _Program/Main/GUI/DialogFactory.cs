@@ -62,7 +62,6 @@ namespace Altaxo.Main.GUI
 
 				table.Resume();
 			}
-
 		}
 
 

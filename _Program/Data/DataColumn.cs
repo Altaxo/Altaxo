@@ -23,12 +23,6 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
-	
-
-
-
-
-
 
 	/// <summary>
 	/// This is the base class of all data columns in Altaxo. This base class provides readable, writeable 
@@ -46,7 +40,7 @@ namespace Altaxo.Data
 		IDefinedCount,
 		ICloneable,
 		Altaxo.Main.IDocumentNode,
-		Main.INameOwner,
+		//Main.INameOwner,
 		Main.IResumable
 	{
 		///<summary>The name of the column.</summary>
@@ -108,6 +102,7 @@ namespace Altaxo.Data
 		public event System.EventHandler Changed;
 
 
+		#region ChangeEventArgs
 
 		public class ChangeEventArgs : System.EventArgs
 		{
@@ -119,7 +114,7 @@ namespace Altaxo.Data
 			/// to recalculate the row count of the table, since it is possible that the table row count also decreased in this case.</summary>
 			protected bool m_RowCountDecreased; // true if during event switch of period, the row m_Count  of this column decreases 
 
-			#region ChangeEventArgs
+		
 
 			public ChangeEventArgs(int minRow, int maxRow, bool rowCountDecreased)
 			{
@@ -228,7 +223,7 @@ namespace Altaxo.Data
 		/// This class is responsible for the serialization of the DataColumn (version 0).
 		/// </summary>
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataColumn),0)]
-		public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			/// <summary>Serializes the DataColumn given by object obj.</summary>
 			/// <param name="obj">The <see cref="DataColumn"/> instance which should be serialized.</param>
@@ -299,10 +294,11 @@ namespace Altaxo.Data
 		{
 			this.m_ColumnName							= from.m_ColumnName;
 			this.m_ColumnNumber						= from.m_ColumnNumber;
-			this.m_Count									= from.m_Count;
-			this.m_SuspendCount = 0;
 			this.m_Group									= from.m_Group;
 			this.m_Kind										= from.m_Kind;
+
+			this.m_Count									= from.m_Count;
+			this.m_SuspendCount = 0;
 			this.m_Parent									= null;
 		}
 
@@ -316,7 +312,12 @@ namespace Altaxo.Data
 
 	
 
-		/// <summary>
+	
+
+	
+#if  WithDataMess
+
+			/// <summary>
 		/// Copies the head of the column, i.e. the column name from another column.
 		/// The column number is not copied, since this has to be set by the parent table.
 		/// </summary>
@@ -330,7 +331,7 @@ namespace Altaxo.Data
 			this.ColumnName = ano.m_ColumnName;
 		}
 
-		/// <value>The column group number this column belongs to.</value>
+			/// <value>The column group number this column belongs to.</value>
 		public int Group
 		{
 			get { return m_Group; }
@@ -369,6 +370,65 @@ namespace Altaxo.Data
 			}
 		}
 
+			/// <value>
+		/// The position of the column in the parent table, has to be syncronized by the
+		/// parent table.
+		/// </value>
+		public int ColumnNumber
+		{
+			get
+			{
+				return m_ColumnNumber;
+			}
+		}
+
+		/// <summary>
+		/// Sets the column number, only the parent data table should do that!
+		/// This is because the column number must be synchronized with the
+		/// position of the column in the parent data table and only that table knows about the position.
+		/// </summary>
+		/// <param name="n">The position of the column in the parent data table.</param>
+		protected internal void SetColumnNumber(int n)
+		{
+			m_ColumnNumber=n;
+		}
+
+			/// <summary>
+		/// Gets/sets the column name. If the column belongs to a table, the new name is checked by
+		/// the parent table for uniqueness.
+		/// </summary>
+		public string ColumnName
+		{
+			get
+			{
+				return m_ColumnName;
+			}
+			set
+			{
+				string oldName = m_ColumnName;
+				m_ColumnName = value;
+				if(m_ColumnName!=oldName)
+				{
+					if(this.m_Parent is Main.IChildChangedEventSink)
+						((Main.IChildChangedEventSink)ParentObject).OnChildChanged(this,new Main.NameChangedEventArgs(oldName,m_ColumnName));
+				}
+			}
+		}
+
+			public virtual string Name
+		{
+			get { return m_ColumnName; }
+		}
+#else
+
+		public virtual string Name
+		{
+			get { return m_Parent is Main.INamedObjectCollection ? ((Main.INamedObjectCollection)m_Parent).GetNameOfChildObject(this) : this.GetType().ToString(); }
+		}
+
+#endif
+
+
 		/// <summary>
 		/// copies the header information, like label and so on
 		/// from another column to this column
@@ -379,60 +439,7 @@ namespace Altaxo.Data
 		{
 		}
 
-		/// <summary>
-		/// This function fires the data changed event if the suspend count is zero.
-		/// </summary>
-		/// <param name="minRow">lower row number of the area of rows which was changed.</param>
-		/// <param name="maxRow">upper row number in the area of rows which was changed.</param>
-		/// <param name="rowCountDecreased">Must be true if the row count decreased.</param>
-		/// <remarks>The data changed event is only fired when the data changed suspend counter is zero.
-		/// If it is zero, then before the data changed event is fired, the column "contacts" its parent table by
-		/// calling the function <see cref="DataColumnCollection.OnColumnDataChanged"/>, informing the parent table of this change. If the parent table
-		/// has a not-zero suspend counter, then it will suspend data changed notifications also for this column and the event is not fired.
-		/// If the suspend counter of the parent table is zero, it firstly informs its parent data set by calling the function
-		/// <see cref="DataTableCollection.OnChildChanged"/>. If the suspend counter of the DataTableCollection is not zero, then it will suspend the data changed events of the table. And the table will
-		/// then suspend the data changed events of this column, so the event is not fired in this case<para/>
-		/// That means in the end: only if the suspend counter of this column, the parent data table, and the parent data set of this table are all zero,
-		/// then the data changed event is fired at all.</remarks>
-		 
-/*
-		protected void NotifyDataChanged(int minRow, int maxRow, bool rowCountDecreased)
-		{
-			bool bWasDirtyBefore = this.IsDirty;
 
-			if(null!=m_Parent || null!=DataChanged)
-			{
-				if(minRow < m_MinRowChanged)
-					m_MinRowChanged = minRow;
-				if(maxRow > m_MaxRowChanged) 
-					m_MaxRowChanged = maxRow;
-				
-				m_bRowCountDecreased |= rowCountDecreased;
-			}
-
-			if(null!=m_Parent && 0==m_SuspendCount)
-			{
-				// always inform the parent first,
-				// because the parent can change our bDataEventEnabled to false)
-				this.m_Parent.OnColumnDataChanged(this,m_MinRowChanged,m_MaxRowChanged,m_bRowCountDecreased);
-			}
-			
-			if(0==m_SuspendCount) // look again for this variable, because the parent can change it during OnDataChanged
-			{	
-				if(null!=DataChanged)
-					DataChanged(this, m_MinRowChanged,m_MaxRowChanged,m_bRowCountDecreased);
-			
-				ResetDirty();
-			}
-			else // Data events disabled
-			{
-				// if the row is not dirty up to now, add it to the DataTables dirty column collection
-				if(!bWasDirtyBefore && null!=DirtySet)
-					DirtySet(this);
-			}
-		}
-
-*/
 
 		/// <summary>
 		/// A call to this function suspends data changed event notifications
@@ -511,6 +518,7 @@ namespace Altaxo.Data
 		/// <remarks>
 		/// If this type of data column is not used in a datagrid, you can return null for this type.
 		/// </remarks>
+		// TODO: reimplement this using attributes in the style class
 		public abstract System.Type GetColumnStyleType();
 
 		/// <summary>
@@ -525,29 +533,7 @@ namespace Altaxo.Data
 			}
 		}
 
-		/// <value>
-		/// The position of the column in the parent table, has to be syncronized by the
-		/// parent table.
-		/// </value>
-		public int ColumnNumber
-		{
-			get
-			{
-				return m_ColumnNumber;
-			}
-		}
-
-		/// <summary>
-		/// Sets the column number, only the parent data table should do that!
-		/// This is because the column number must be synchronized with the
-		/// position of the column in the parent data table and only that table knows about the position.
-		/// </summary>
-		/// <param name="n">The position of the column in the parent data table.</param>
-		protected internal void SetColumnNumber(int n)
-		{
-			m_ColumnNumber=n;
-		}
-
+	
 		/// <summary>
 		/// Constructs a data column with no name associated.
 		/// </summary>
@@ -578,28 +564,7 @@ namespace Altaxo.Data
 			this.m_ColumnName = name;
 		}
 
-		/// <summary>
-		/// Gets/sets the column name. If the column belongs to a table, the new name is checked by
-		/// the parent table for uniqueness.
-		/// </summary>
-		public string ColumnName
-		{
-			get
-			{
-				return m_ColumnName;
-			}
-			set
-			{
-				string oldName = m_ColumnName;
-				m_ColumnName = value;
-				if(m_ColumnName!=oldName)
-				{
-					if(this.m_Parent is Main.IChildChangedEventSink)
-						((Main.IChildChangedEventSink)ParentObject).OnChildChanged(this,new Main.NameChangedEventArgs(oldName,m_ColumnName));
-				}
-			}
-		}
-
+	
 		/// <summary>
 		/// Returns either the column name if the column has no parent table, or the parent table name, followed by
 		/// a backslash and the column name if the column has a table.
@@ -650,12 +615,13 @@ namespace Altaxo.Data
 		public virtual object ParentObject
 		{
 			get { return m_Parent; }
+			set
+			{
+				m_Parent = value;
+			}
 		}
 
-		public virtual string Name
-		{
-			get { return m_ColumnName; }
-		}
+	
 
 		protected internal void SetParent(DataColumnCollection parentcoll)
 		{

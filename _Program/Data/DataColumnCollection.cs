@@ -41,24 +41,42 @@ namespace Altaxo.Data
 		public delegate void OnDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow);   // delegate declaration
 		public delegate void OnDirtySet(Altaxo.Data.DataColumnCollection sender);
 		
+		#region ChangeEventArgs
+		/// <summary>
+		/// Used for notifying receivers about what columns in this collection have changed.
+		/// </summary>
 		public class ChangeEventArgs : System.EventArgs
 		{
 			protected int m_MinColChanged;
 			protected int m_MaxColChanged;
 			protected int m_MinRowChanged;
 			protected int m_MaxRowChanged;
-			protected int m_MaxDecreasedToRow;
+			protected bool m_RowCountDecreased;
 
-			public ChangeEventArgs(int columnNumber, int minRow, int maxRow, bool rowCountDecreased, int columnCount)
+			/// <summary>
+			/// Constructor.
+			/// </summary>
+			/// <param name="columnNumber">The number of the column that has changed.</param>
+			/// <param name="minRow">The first number of column that has changed.</param>
+			/// <param name="maxRow">The last number of column that has changed.</param>
+			/// <param name="rowCountDecreased">If true, in one of the columns the row count has decreased, so a complete recalculation of the row count of the collection is neccessary.</param>
+			public ChangeEventArgs(int columnNumber, int minRow, int maxRow, bool rowCountDecreased)
 			{
 				m_MinColChanged = columnNumber;
 				m_MaxColChanged = columnNumber;
 				m_MinRowChanged = minRow;
 				m_MaxRowChanged = maxRow;
-				m_MaxDecreasedToRow = rowCountDecreased ?  columnCount : int.MaxValue;
+				m_RowCountDecreased = rowCountDecreased;
 			}
 
-			public void Accumulate(int columnNumber, int minRow, int maxRow, bool rowCountDecreased, int columnCount)
+			/// <summary>
+			/// Accumulates the change state by adding a change info from a column.
+			/// </summary>
+			/// <param name="columnNumber">The number of column that has changed.</param>
+			/// <param name="minRow">The lowest row number that has changed.</param>
+			/// <param name="maxRow">The highest row number that has changed.</param>
+			/// <param name="rowCountDecreased">True if the row count of the column has decreased.</param>
+			public void Accumulate(int columnNumber, int minRow, int maxRow, bool rowCountDecreased)
 			{
 				if(columnNumber<m_MinColChanged)
 					m_MinColChanged=columnNumber;
@@ -68,10 +86,13 @@ namespace Altaxo.Data
 					m_MinRowChanged=minRow;
 				if(maxRow > m_MaxRowChanged)
 					m_MaxRowChanged=maxRow;
-				if(rowCountDecreased && columnCount>m_MaxDecreasedToRow)
-					m_MaxDecreasedToRow = columnCount;
+				m_RowCountDecreased |= rowCountDecreased;
 			}
 
+			/// <summary>
+			/// Accumulate the change state by adding another change state.
+			/// </summary>
+			/// <param name="args">The other change state to be added.</param>
 			public void Accumulate(ChangeEventArgs args)
 			{
 				if(args.m_MinColChanged < this.m_MinColChanged)
@@ -86,40 +107,184 @@ namespace Altaxo.Data
 				if(args.MaxRowChanged  > this.m_MaxRowChanged)
 					this.m_MaxRowChanged = args.m_MaxRowChanged;
 				
-				if(args.m_MaxDecreasedToRow < this.m_MaxDecreasedToRow)
-					this.m_MaxDecreasedToRow = args.m_MaxDecreasedToRow;
+				m_RowCountDecreased |= args.m_RowCountDecreased;
 			}
 
+			/// <summary>
+			/// Creates a change state that reflects the removal of some columns.
+			/// </summary>
+			/// <param name="firstColumnNumber">The first column number that was removed.</param>
+			/// <param name="originalNumberOfColumns">The number of columns in the collection before the removal.</param>
+			/// <param name="maxRowCountOfRemovedColumns">The maximum row count of the removed columns.</param>
+			/// <returns>The change state that reflects the removal.</returns>
 			public static ChangeEventArgs CreateColumnRemoveArgs(int firstColumnNumber, int originalNumberOfColumns, int maxRowCountOfRemovedColumns)
 			{
-				ChangeEventArgs args = new ChangeEventArgs(firstColumnNumber,0,maxRowCountOfRemovedColumns,true,0);
+				ChangeEventArgs args = new ChangeEventArgs(firstColumnNumber,0,maxRowCountOfRemovedColumns,true);
 				if(originalNumberOfColumns > args.m_MaxColChanged)
 					args.m_MaxColChanged = originalNumberOfColumns;
 				return args;
 			}
 
+			/// <summary>
+			/// Create the change state that reflects the addition of one column.
+			/// </summary>
+			/// <param name="columnIndex">The index of the added column.</param>
+			/// <param name="rowCountOfAddedColumn">The row count of the added column.</param>
+			/// <returns></returns>
+			public static ChangeEventArgs CreateColumnAddArgs(int columnIndex, int rowCountOfAddedColumn)
+			{
+				ChangeEventArgs args = new ChangeEventArgs(columnIndex,0,rowCountOfAddedColumn,false);
+				return args;
+			}
+
+			/// <summary>
+			/// Create the change state that reflects the replace of one column by another (or copying data).
+			/// </summary>
+			/// <param name="columnIndex">The index of the column to replace.</param>
+			/// <param name="oldRowCount">The row count of the old (replaced) column.</param>
+			/// <param name="newRowCount">The row count of the new column.</param>
+			/// <returns></returns>
+			public static ChangeEventArgs CreateColumnCopyOrReplaceArgs(int columnIndex, int oldRowCount, int newRowCount)
+			{
+				ChangeEventArgs args = new ChangeEventArgs(columnIndex,0,Math.Max(oldRowCount,newRowCount),newRowCount<oldRowCount);
+				return args;
+			}
+
+			/// <summary>
+			/// Returns the lowest column number that has changed.
+			/// </summary>
 			public int MinColChanged
 			{
 				get { return m_MinColChanged; }
 			}
+			/// <summary>
+			/// Returns the highest column number that has changed.
+			/// </summary>
 			public int MaxColChanged
 			{
 				get { return m_MaxColChanged; }
 			}
+			/// <summary>
+			/// Returns the lowest row number that has changed.
+			/// </summary>
 			public int MinRowChanged
 			{
 				get { return m_MinRowChanged; }
 			}
+			/// <summary>
+			/// Returns the highest row number that has changed.
+			/// </summary>
 			public int MaxRowChanged
 			{
 				get { return m_MaxRowChanged; }
 			}
-			public int MaxDecreasedToRow
+			/// <summary>
+			/// Returns whether the row count may have decreased.
+			/// </summary>
+			public bool RowCountDecreased
 			{
-				get { return m_MaxDecreasedToRow; }
+				get { return m_RowCountDecreased; }
 			}
 		}
 
+		#endregion
+
+		#region ColumnInfo
+		private class DataColumnInfo : ICloneable
+		{
+			/// <summary>
+			/// The column number, i.e. it's position in the array
+			/// </summary>
+			public int Number;
+
+			/// <summary>
+			/// The name of the column.
+			/// </summary>
+			public string Name;
+
+			/// <summary>
+			/// The kind of the column.
+			/// </summary>
+			public ColumnKind Kind;
+
+			/// <summary>
+			/// The group this column belongs to.
+			/// </summary>
+			public int Group;
+
+			/// <summary>
+			/// Constructs a DataColumnInfo object.
+			/// </summary>
+			/// <param name="name">The name of the column.</param>
+			/// <param name="number">The position of the column in the collection.</param>
+			public DataColumnInfo(string name, int number)
+			{
+				this.Name   = name;
+				this.Number = number;
+			}
+
+			/// <summary>
+			/// Constructs a DataColumnInfo object.
+			/// </summary>
+			/// <param name="name">The name of the column.</param>
+			public DataColumnInfo(string name)
+			{
+				this.Name   = name;			
+			}
+
+			/// <summary>
+			/// Constructs a DataColumnInfo object.
+			/// </summary>
+			/// <param name="name">The name of the column.</param>
+			/// <param name="kind">The kind of the column.</param>
+			public DataColumnInfo(string name, ColumnKind kind)
+			{
+				this.Name = name;
+				this.Kind = kind;
+			}
+
+			/// <summary>
+			/// Constructs a DataColumnInfo object.
+			/// </summary>
+			/// <param name="name">The name of the column.</param>
+			/// <param name="kind">The kind of the column.</param>
+			/// <param name="groupNumber">The group number of the column.</param>
+			public DataColumnInfo(string name, ColumnKind kind, int groupNumber)
+			{
+				this.Name = name;
+				this.Kind = kind;
+				this.Group = groupNumber;
+			}
+			/// <summary>
+			/// Copy constructor.
+			/// </summary>
+			/// <param name="from">Another object to copy from.</param>
+			public DataColumnInfo(DataColumnInfo from)
+			{
+				this.Name   = from.Name;
+				this.Number = from.Number;
+				this.Group  = from.Group;
+				this.Kind   = from.Kind;
+			}
+
+			#region ICloneable Members
+
+			/// <summary>
+			/// Clones the object.
+			/// </summary>
+			/// <returns>The cloned object.</returns>
+			public object Clone()
+			{
+				return new DataColumnInfo(this);
+			}
+
+			#endregion
+		}
+
+	
+		#endregion
+
+		#region Member data
 		// Data
 
 		/// <summary>
@@ -132,7 +297,17 @@ namespace Altaxo.Data
 		/// </summary>
 		protected System.Collections.ArrayList m_ColumnsByNumber = new System.Collections.ArrayList();
 		
-		
+		/// <summary>
+		/// Holds the columns (value) accessible by name (key).
+		/// </summary>
+		protected System.Collections.Hashtable m_ColumnsByName=new System.Collections.Hashtable();
+
+		/// <summary>
+		/// This hashtable has the columns as keys and DataColumnInfo objects as values. 
+		/// It stores information like the position of the column, the kind of the column.
+		/// </summary>
+		protected System.Collections.Hashtable m_ColumnInfo = new System.Collections.Hashtable();
+
 		/// <summary>
 		/// Cached number of rows. This is the maximum of the Count of all DataColumns contained in this collection.
 		/// </summary>
@@ -144,9 +319,7 @@ namespace Altaxo.Data
 		/// </summary>
 		protected ColumnScriptCollection m_ColumnScripts = new ColumnScriptCollection();
 
-		// Helper Data
-		protected System.Collections.Hashtable m_ColumnsByName=new System.Collections.Hashtable();
-		
+			
 		protected string m_LastColumnNameAdded=""; // name of the last column wich was added to the table
 		protected string m_LastColumnNameGenerated=""; // name of the last column name that was automatically generated
 
@@ -158,9 +331,9 @@ namespace Altaxo.Data
 
 		private bool m_DeserializationFinished=false;
 
+		#endregion
 
-
-		#region "Serialization"
+		#region Serialization
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
@@ -189,7 +362,7 @@ namespace Altaxo.Data
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataColumnCollection),0)]
-		public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info	)
 			{
@@ -205,7 +378,7 @@ namespace Altaxo.Data
 				foreach(System.Collections.DictionaryEntry entry in s.m_ColumnScripts)
 				{
 					info.CreateElement("Script");
-					info.AddValue("ColName", ((Altaxo.Data.DataColumn)entry.Key).ColumnName);
+					info.AddValue("ColName", s.GetColumnName((Altaxo.Data.DataColumn)entry.Key));
 					info.AddValue("Content",(Altaxo.Data.ColumnScript)entry.Value);
 					info.CommitElement();
 				}
@@ -264,7 +437,7 @@ namespace Altaxo.Data
 
 
 					// add it also to the column name cache
-					m_ColumnsByName.Add(dc.ColumnName,dc);
+					m_ColumnsByName.Add(dc.Name,dc);
 
 					// count the maximumn number of rows
 					if(dc.Count>m_NumberOfRows)
@@ -276,7 +449,11 @@ namespace Altaxo.Data
 
 		#endregion
 
+		#region Constructors
 
+		/// <summary>
+		/// Constructs an empty collection with no parent.
+		/// </summary>
 		public DataColumnCollection()
 		{
 			this.m_Parent = null;
@@ -293,13 +470,16 @@ namespace Altaxo.Data
 
 			// Copy all Columns
 			for(int i=0;i<from.ColumnCount;i++)
-				this.Add( (DataColumn)from[i].Clone());
-
+			{
+				DataColumn newCol = (DataColumn)from[i].Clone();
+				DataColumnInfo newInfo = (DataColumnInfo)GetColumnInfo(from[i]).Clone();
+				this.Add( newCol, newInfo);
+			}
 			// Copy all Column scripts
 			foreach(System.Collections.DictionaryEntry d in from.ColumnScripts)
 			{
 				DataColumn srccol = (DataColumn)d.Key; // the original column this script belongs to
-				DataColumn destcol = this[srccol.ColumnName]; // the new (cloned) column the script now belongs to
+				DataColumn destcol = this[srccol.Name]; // the new (cloned) column the script now belongs to
 				ColumnScript destscript = (ColumnScript)((ColumnScript)d.Value).Clone(); // the cloned script
 
 				// add the cloned script to the own collection
@@ -307,11 +487,18 @@ namespace Altaxo.Data
 			}
 		}
 
+		/// <summary>
+		/// Clones the collection and all columns in it (deep copy).
+		/// </summary>
+		/// <returns></returns>
 		public virtual object Clone()
 		{
 			return new DataColumnCollection(this);
 		}
 
+		/// <summary>
+		/// Disposes the collection and all columns in it.
+		/// </summary>
 		public virtual void Dispose()
 		{
 			// first relase all column scripts
@@ -333,99 +520,463 @@ namespace Altaxo.Data
 			this.m_NumberOfRows = 0;
 		}
 
-		#region Column Addition / Access / Removal 
+		#endregion
+		
+		#region Add / Replace Column
 
-		public void AddColumns(System.Collections.ArrayList cols)
+		/// <summary>
+		/// Add a column under the name <code>name</code>.
+		/// </summary>
+		/// <param name="datac">The column to add.</param>
+		/// <param name="name">The name under which the column to add.</param>
+		public void Add(Altaxo.Data.DataColumn datac, string name)
 		{
-			for(int i=0;i<cols.Count;i++)
-			{
-				if(cols[i] is Altaxo.Data.DBNullColumn)
-					Add(new Altaxo.Data.DoubleColumn());
-				else
-					Add((Altaxo.Data.DataColumn)cols[i]);
-			}
+			Add(datac,new DataColumnInfo(name));
 		}
 
-
+		/// <summary>
+		/// Adds a column by choosing a new unused name for that column automatically.
+		/// </summary>
+		/// <param name="datac"></param>
 		public void Add(Altaxo.Data.DataColumn datac)
 		{
-			Add(ColumnCount,datac);
+			Add(datac,new DataColumnInfo(this.FindNewColumnName()));
 		}
 
-		public virtual void Add(int idx, Altaxo.Data.DataColumn datac)
+		/// <summary>
+		/// Adds a column with a given name and kind.
+		/// </summary>
+		/// <param name="datac">The column to add.</param>
+		/// <param name="name">The name of the column.</param>
+		/// <param name="kind">The kind of the column.</param>
+		public void Add(Altaxo.Data.DataColumn datac, string name, ColumnKind kind)
 		{
-			bool bColumnWasReplaced = false;
+			Add(datac,new DataColumnInfo(name,kind));
+		}
 
-			if(idx<ColumnCount) // we have to replace the column
+		/// <summary>
+		/// Add a column with a given name, kind, and group number.
+		/// </summary>
+		/// <param name="datac">The column to add.</param>
+		/// <param name="name">The name of the column.</param>
+		/// <param name="kind">The kind of the column.</param>
+		/// <param name="groupNumber">The group number of the column.</param>
+		public void Add(Altaxo.Data.DataColumn datac, string name, ColumnKind kind, int groupNumber)
+		{
+			Add(datac,new DataColumnInfo(name,kind,groupNumber));
+		}
+
+
+		/// <summary>
+		/// Add a column using a DataColumnInfo object. The provided info must not be used elsewhere, since it is used directly.
+		/// </summary>
+		/// <param name="datac">The column to add.</param>
+		/// <param name="info">The DataColumnInfo object for the column to add.</param>
+		private void Add(Altaxo.Data.DataColumn datac, DataColumnInfo info)
+		{
+			System.Diagnostics.Debug.Assert(this.ContainsColumn(datac)==false);
+			
+			info.Number = this.m_ColumnsByNumber.Count;
+
+			this.m_ColumnsByNumber.Add(datac);
+			this.m_ColumnsByName[info.Name]=datac;
+			this.m_ColumnInfo[datac] = info;
+			datac.ParentObject = this;
+
+			this.EnsureUniqueColumnKindsForIndependentVariables(info.Group,datac);
+
+			this.OnChildChanged(null,ChangeEventArgs.CreateColumnAddArgs(info.Number,datac.Count));
+		}
+
+
+		/// <summary>
+		/// Copies the data of the column (columns have same type, index is inside bounds), or replaces 
+		/// the column (columns of different types, index inside bounds), or adds the column (index outside bounds).
+		/// </summary>
+		/// <param name="index">The column position where to replace or add.</param>
+		/// <param name="datac">The column from which the data should be copied or which should replace the existing column or which should be added.</param>
+		public void CopyOrReplaceOrAdd(int index, DataColumn datac)
+		{
+			if(index<ColumnCount)
 			{
-				if(this[idx].GetType()==datac.GetType()) // test whether the column types are equal
+				if(this[index].GetType().Equals(datac.GetType()))
 				{
-					// if the types are equal, then copy the data and then the column name
-					this[idx] = datac; // first copy the data
-					//this[idx].CopyColumnInformationFrom(datac);
-					// and now the names
-					if(datac.ColumnName!=null && datac.ColumnName != this[idx].ColumnName)
-					{
-						// so we try to replace the column names
-						m_ColumnsByName.Remove(this[idx].ColumnName);
-						// Test for unique column name
-						if(null!=m_ColumnsByName[datac.ColumnName])
-						{
-							this[idx].ColumnName = this.FindUniqueColumnName(datac.ColumnName);
-							this.m_LastColumnNameGenerated = this[idx].ColumnName; // store the last generated column name
-						}
-						// put it back into the name array
-						this[idx].ColumnName = datac.ColumnName;
-						this[idx].CopyHeaderInformationFrom(datac);
-						m_ColumnsByName.Add(this[idx].ColumnName,this[idx]);
-					}
-					bColumnWasReplaced = true;
-					return; // we are ready in this case
+					this[index].CopyDataFrom(datac);
 				}
-				else  // the types are not equal, so we have to remove the col and insert a new one
+				else
 				{
-					string oldcolname = this[idx].ColumnName;
-					m_ColumnsByName.Remove(oldcolname);
-					this[idx].Dispose();
-					m_ColumnsByNumber[idx]=null;
-					bColumnWasReplaced=true;
-
-					if(datac.ColumnName==null)
-						datac.ColumnName = oldcolname; // use if possible the name of the old column
+					Replace(index,datac);
 				}
-			}
-
-			// Test for unique column name
-			if(null==datac.ColumnName || null!=m_ColumnsByName[datac.ColumnName])
-			{
-				datac.ColumnName = this.FindUniqueColumnName(datac.ColumnName);
-				this.m_LastColumnNameGenerated = datac.ColumnName; // store the last generated column name
-			}
-
-			// store this column name as the last column name that was added for purpose 
-			// of finding new names in the future
-			this.m_LastColumnNameAdded = datac.ColumnName;
-
-			datac.SetParent( this ); // set the column parent
-			if(idx<m_ColumnsByNumber.Count)
-			{
-				m_ColumnsByNumber[idx] = datac;
-				datac.SetColumnNumber( idx ); // set the column number
 			}
 			else
 			{
-				m_ColumnsByNumber.Add(datac); // insert the column first, then
-				datac.SetColumnNumber( ColumnCount -1 ); // set the column number
+				Add(datac);
 			}
-			m_ColumnsByName.Add(datac.ColumnName,datac);	
+		}
 
-			// raise data event to all listeners
-			//OnColumnDataChanged(datac,0,datac.Count-1,bColumnWasReplaced);
-			//this.OnChildChanged(datac,new DataColumn.ChangeEventArgs(0,datac.Count-1,bColumnWasReplaced));
-			this.OnChildChanged(null, new ChangeEventArgs(datac.ColumnNumber,0,datac.Count,bColumnWasReplaced,datac.Count));
+		/// <summary>
+		/// Replace the column at index <code>index</code> (if index is inside bounds) or add the column.
+		/// </summary>
+		/// <param name="index">The position of the column which should be replaced.</param>
+		/// <param name="datac">The column which replaces the existing column or which is be added to the collection.</param>
+		public void ReplaceOrAdd(int index, DataColumn datac)
+		{
+			if(index<ColumnCount)
+				Replace(index, datac);
+			else
+				Add(datac);
+		}
+
+		/// <summary>
+		/// Replace an existing column at index <code>index</code> by a new column <code>newCol.</code>
+		/// </summary>
+		/// <param name="index">The position of the column which should be replaced.</param>
+		/// <param name="newCol">The new column that replaces the old one.</param>
+		public void Replace(int index, DataColumn newCol)
+		{
+			if(index>=ColumnCount)
+				throw new System.IndexOutOfRangeException(string.Format("Index ({0})for replace operation was outside the bounds, the actual column count is {1}",index,ColumnCount));
+
+		
+			DataColumn oldCol = this[index];
+			if(!oldCol.Equals(newCol))
+			{
+				int oldRowCount = oldCol.Count;
+				oldCol.ParentObject = null;
+				DataColumnInfo info = GetColumnInfo(index);
+				m_ColumnsByName[info.Name] = newCol;
+				m_ColumnsByNumber[index] = newCol;
+				m_ColumnInfo.Remove(oldCol);
+				m_ColumnInfo.Add(newCol,info);
+				newCol.ParentObject = this;
+				
+				object script = m_ColumnScripts[oldCol];
+				if(null!=script)
+				{
+					m_ColumnScripts.Remove(oldCol);
+					m_ColumnScripts.Add(newCol,script);
+				}
+
+				this.OnChildChanged(null,ChangeEventArgs.CreateColumnCopyOrReplaceArgs(index,oldRowCount,newCol.Count));
+
+			}
+		}
+
+		#endregion
+
+		#region Column removal
+
+		/// <summary>
+		/// Removes a number of columns of the collection.
+		/// </summary>
+		/// <param name="nFirstColumn">The first number of column to remove.</param>
+		/// <param name="nDelCount">The number of columns to remove.</param>
+		public virtual void RemoveColumns(int nFirstColumn, int nDelCount)
+		{
+			int nOriginalColumnCount = ColumnCount;
+			// first, Dispose the columns and set the places to null
+			for(int i=nFirstColumn+nDelCount-1;i>=nFirstColumn;i--)
+			{
+				string columnName = GetColumnName(this[i]);
+				this.m_ColumnInfo.Remove(m_ColumnsByNumber[i]);
+				this.m_ColumnsByName.Remove(columnName);
+				this[i].ParentObject=null;
+				this[i].Dispose();
+			}
+			this.m_ColumnsByNumber.RemoveRange(nFirstColumn, nDelCount);
+			
+			// renumber the remaining columns
+			for(int i=m_ColumnsByNumber.Count-1;i>=nFirstColumn;i--)
+				((DataColumnInfo)m_ColumnInfo[m_ColumnsByNumber[i]]).Number = i; 
+
+			// raise datachange event that some columns have changed
+			this.OnChildChanged(null, ChangeEventArgs.CreateColumnRemoveArgs(nFirstColumn, nOriginalColumnCount, RowCount));
+		}
+
+		public void RemoveColumn(int nFirstColumn)
+		{
+			RemoveColumns(nFirstColumn,1);
+		}
+
+		#endregion
+
+		#region Column Information getting/setting
+	
+		/// <summary>
+		/// Returns whether the column is contained in this collection.
+		/// </summary>
+		/// <param name="datac">The column in question.</param>
+		/// <returns>True if the column is contained in this collection.</returns>
+		public bool ContainsColumn(DataColumn datac)
+		{
+			return m_ColumnInfo.ContainsKey(datac);
+		}
+
+		/// <summary>
+		/// Test if a column of a given name is present in this collection.
+		/// </summary>
+		/// <param name="columnname">The columnname to test for presence.</param>
+		/// <returns>True if the column with the name is contained in the collection.</returns>
+		public bool ContainsColumn(string columnname)
+		{
+			return m_ColumnsByName.ContainsKey(columnname);
+		}
+
+		/// <summary>
+		/// Returns the position of the column in the Collection.
+		/// </summary>
+		/// <param name="col">The column.</param>
+		/// <returns>The position of the column, or -1 if the column is not contained.</returns>
+		public int GetColumnNumber(Altaxo.Data.DataColumn datac)
+		{
+			DataColumnInfo info = GetColumnInfo(datac);
+			return info==null ? -1 : info.Number;
+		}
+	
+
+		/// <summary>
+		/// Returns the name of a column.
+		/// </summary>
+		/// <param name="datac">The column..</param>
+		/// <returns>The name of the column.</returns>
+		public string GetColumnName(DataColumn datac)
+		{
+			return GetColumnInfo(datac).Name;
+		}
+
+		/// <summary>
+		/// Returns the name of the column at position idx.
+		/// </summary>
+		/// <param name="datac">The position of the column (column number).</param>
+		/// <returns>The name of the column.</returns>
+		public string GetColumnName(int idx)
+		{
+			return GetColumnInfo(idx).Name;
+		}
+
+		/// <summary>
+		/// Sets the name of the column <code>datac</code>.
+		/// </summary>
+		/// <param name="datac">The column which name is to set.</param>
+		/// <param name="newName">The new name of the column.</param>
+		public void SetColumnName(DataColumn datac, string newName)
+		{
+			string oldName = GetColumnInfo(datac).Name;
+			if(oldName != newName)
+			{
+				if(this.ContainsColumn(newName))
+				{
+					throw new System.ApplicationException("Try to set column name to the name of a already present column: " + newName);
+				}
+				else
+				{
+					GetColumnInfo(datac).Name = newName;
+					m_ColumnsByName.Remove(oldName);
+					m_ColumnsByName.Add(newName,datac);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sets the name of the column at position<code>index</code>.
+		/// </summary>
+		/// <param name="index">The column number.</param>
+		/// <param name="newName">The new name of the column.</param>
+		public void SetColumnName(int index, string newName)
+		{
+			SetColumnName(this[index],newName);
+		}
+
+		/// <summary>
+		/// Rename the column with the name <code>oldName</code> to <code>newName</code>.
+		/// </summary>
+		/// <param name="oldName">The old name of the column.</param>
+		/// <param name="newName">The new name of the column.</param>
+		public void SetColumnName(string oldName, string newName)
+		{
+			SetColumnName(this[oldName],newName);
+		}
+	
+		/// <summary>
+		/// Returns the goup number of the column <code>datac</code>.
+		/// </summary>
+		/// <param name="datac">The column.</param>
+		/// <returns>The group number of this column.</returns>
+		public int GetColumnGroup(DataColumn datac)
+		{
+			return GetColumnInfo(datac).Group;
+		}
+		/// <summary>
+		/// Returns the goup number of the column at index <code>idx</code>
+		/// </summary>
+		/// <param name="idx">The column number of the column.</param>
+		/// <returns>The group number of this column.</returns>
+		public int GetColumnGroup(int idx)
+		{
+			return GetColumnInfo(idx).Group;
+		}
+
+		/// <summary>
+		/// Sets the group number of the column with the given column number <code>idx</code>.
+		/// </summary>
+		/// <param name="idx">The column number of the column.</param>
+		/// <param name="groupNumber">The group number to set for this column.</param>
+		public void SetColumnGroup(int idx, int groupNumber)
+		{
+			GetColumnInfo(idx).Group = groupNumber;
+			EnsureUniqueColumnKindsForIndependentVariables(groupNumber,this[idx]);
+		}
+		
+		/// <summary>
+		/// Returns the kind of the column <code>datac</code>.
+		/// </summary>
+		/// <param name="datac">The column for which the kind is returned.</param>
+		/// <returns>The kind of the provided column.</returns>
+		public ColumnKind GetColumnKind(DataColumn datac)
+		{
+			return GetColumnInfo(datac).Kind;
+		}
+
+		/// <summary>
+		/// Sets the kind of the column with column number <code>idx</code>.
+		/// </summary>
+		/// <param name="idx">The column number of the column.</param>
+		/// <param name="columnKind">The new kind of the column.</param>
+		public void SetColumnKind(int idx, ColumnKind columnKind)
+		{
+			DataColumnInfo info = GetColumnInfo(idx);
+			info.Kind = columnKind;
+			EnsureUniqueColumnKindsForIndependentVariables(info.Group,this[idx]);
+		}
+
+		/// <summary>
+		/// Ensures that for a given group number there is only one column for each independent variable (X,Y,Z).
+		/// </summary>
+		/// <param name="groupNumber">The group number of the columns which are checked for this rule.</param>
+		/// <param name="exceptThisColumn">If not null, this column is treated with priority. If this column is a independent variable column, it can
+		/// keep its kind.</param>
+		protected void EnsureUniqueColumnKindsForIndependentVariables(int groupNumber, DataColumn exceptThisColumn)
+		{
+			bool X_present=false;
+			bool Y_present=false;
+			bool Z_present=false;
+
+			if(exceptThisColumn!=null)
+			{
+				switch(GetColumnInfo(exceptThisColumn).Kind)
+				{
+					case ColumnKind.X:
+						X_present=true;
+						break;
+					case ColumnKind.Y:
+						Y_present=true;
+						break;
+					case ColumnKind.Z:
+						Z_present=true;
+						break;
+				}
+			}
+
+
+			foreach(System.Collections.DictionaryEntry entry in this.m_ColumnInfo)
+			{
+				if(((DataColumnInfo)entry.Value).Group==groupNumber && !entry.Key.Equals(exceptThisColumn))
+				{
+					DataColumnInfo info = (DataColumnInfo)entry.Value;
+					switch(info.Kind)
+					{
+						case ColumnKind.X:
+							if(X_present)
+								info.Kind = ColumnKind.V;
+							else
+								X_present = true;
+							break;
+						case ColumnKind.Y:
+							if(Y_present)
+								info.Kind = ColumnKind.V;
+							else
+								Y_present = true;
+							break;
+						case ColumnKind.Z:
+							if(Z_present)
+								info.Kind = ColumnKind.V;
+							else
+								Z_present = true;
+							break;
+					}
+				}
+			}
 		}
 
 
+		/// <summary>
+		/// removes the x-property from all columns in the group nGroup
+		/// </summary>
+		/// <param name="nGroup">the group number for the columns from which to remove the x-property</param>
+		/// <param name="exceptThisColumn">If not null, this column is treated with priority, it can keep its kind.</param>
+		public void DeleteXProperty(int nGroup, DataColumn exceptThisColumn)
+		{
+			int len = this.ColumnCount;
+			for(int i=len-1;i>=0;i--)
+			{
+				DataColumn dc = (DataColumn)m_ColumnsByNumber[i];
+				DataColumnInfo info = (DataColumnInfo)this.m_ColumnInfo[dc];
+				if(info.Group==nGroup && info.Kind==ColumnKind.X && !dc.Equals(exceptThisColumn))
+				{
+					info.Kind = ColumnKind.V;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Using a given column, find the related X column of this.
+		/// </summary>
+		/// <param name="datac">The column for which to find the related X column.</param>
+		/// <returns>The related X column, or null if it is not found.</returns>
+		public Altaxo.Data.DataColumn FindXColumnOf(DataColumn datac)
+		{
+			return FindXColumnOfGroup(GetColumnGroup(datac));
+		}
+
+		/// <summary>
+		/// Returns the X column of the column group <code>nGroup</code>.
+		/// </summary>
+		/// <param name="nGroup">The column group number.</param>
+		/// <returns>The X column of the provided group, or null if it is not found.</returns>
+		public Altaxo.Data.DataColumn FindXColumnOfGroup(int nGroup)
+		{
+			int len = this.ColumnCount;
+			for(int i=len-1;i>=0;i--)
+			{
+				DataColumn dc = (DataColumn)m_ColumnsByNumber[i];
+				DataColumnInfo info = (DataColumnInfo)this.m_ColumnInfo[dc];
+				if(info.Group==nGroup && info.Kind==ColumnKind.X)
+				{
+					return dc;
+				}
+			}
+			return null;
+		}
+
+		private DataColumnInfo GetColumnInfo(DataColumn datac)
+		{
+			return (DataColumnInfo)m_ColumnInfo[datac];
+		}
+
+		private DataColumnInfo GetColumnInfo(int idx)
+		{
+			return (DataColumnInfo)m_ColumnInfo[m_ColumnsByNumber[idx]];
+		}
+
+		private DataColumnInfo GetColumnInfo(string columnName)
+		{
+			return (DataColumnInfo)m_ColumnInfo[m_ColumnsByName[columnName]];
+		}
+
+		#endregion
+
+
+		#region Row insertion/removal
 		/// <summary>
 		/// Insert a number of empty rows in all columns.
 		/// </summary>
@@ -456,7 +1007,26 @@ namespace Altaxo.Data
 			Resume();
 		}
 
+	
 
+		/// <summary>
+		/// Removes a single row of all columns.
+		/// </summary>
+		/// <param name="nFirstRow">The row to remove.</param>
+		public void RemoveRow(int nFirstRow)
+		{
+			RemoveRows(nFirstRow,1);
+		}
+
+
+		#endregion
+
+		#region Indexer
+
+		/// <summary>
+		/// Returns the column with name <code>s</code>. Sets the column with name <code>s</code> by copying data from
+		/// the other column (not by replacing). An exception is thrown if the two columns are not of the same type.
+		/// </summary>
 		public Altaxo.Data.DataColumn this[string s]
 		{
 			get
@@ -481,6 +1051,10 @@ namespace Altaxo.Data
 		}
 
 		
+		/// <summary>
+		/// Returns the column at index <code>idx</code>. Sets the column at index<code>idx</code> by copying data from
+		/// the other column (not by replacing). An exception is thrown if the two columns are not of the same type.
+		/// </summary>
 		public Altaxo.Data.DataColumn this[int idx]
 		{
 			get
@@ -505,55 +1079,15 @@ namespace Altaxo.Data
 		}
 
 
-		public virtual void RemoveColumns(int nFirstColumn, int nDelCount)
-		{
-			int nOriginalColumnCount = ColumnCount;
-			// first, Dispose the columns and set the places to null
-			for(int i=nFirstColumn+nDelCount-1;i>=nFirstColumn;i--)
-			{
-				this.m_ColumnsByName.Remove(this[i].ColumnName);
-				this[i].Dispose();
-			}
-			this.m_ColumnsByNumber.RemoveRange(nFirstColumn, nDelCount);
-			
-			// renumber the remaining columns
-			for(int i=m_ColumnsByNumber.Count-1;i>=nFirstColumn;i--)
-				this[i].SetColumnNumber(i);
+	
 
-			// raise datachange event that some columns have changed
-			this.OnChildChanged(null, ChangeEventArgs.CreateColumnRemoveArgs(nFirstColumn, nOriginalColumnCount, RowCount));
-		}
+		#endregion Indexer
 
-		public void RemoveColumn(int nFirstColumn)
-		{
-			RemoveColumns(nFirstColumn,1);
-		}
+		#region Collection Properties
 
-		public void DeleteRows(int nFirstRow, int nDelCount)
-		{
-			this.Suspend();
-			
-			for(int i=this.ColumnCount-1;i>=0;i--)
-			{
-				this[i].RemoveRows(nFirstRow,nDelCount);
-			}
-
-			this.Resume();
-		}
-
-		public void DeleteRow(int nFirstRow)
-		{
-			DeleteRows(nFirstRow,1);
-		}
-
-
-
-
-		#endregion // Column addition / access / removal
-
-
-		#region Properties
-
+		/// <summary>
+		/// The row count, i.e. the maximum of the row counts of all columns.
+		/// </summary>
 		public int RowCount
 		{
 			get
@@ -562,6 +1096,9 @@ namespace Altaxo.Data
 			}
 		}
 	
+		/// <summary>
+		/// The number of columns in the collection.
+		/// </summary>
 		public int ColumnCount
 		{
 			get
@@ -571,12 +1108,18 @@ namespace Altaxo.Data
 		}
 	
 
+		/// <summary>
+		/// The parent of this collection.
+		/// </summary>
 		public virtual object ParentObject
 		{
 			get { return m_Parent; }
 			set { m_Parent=value; }
 		}
 
+		/// <summary>
+		/// The name of this collection.
+		/// </summary>
 		public virtual string Name
 		{
 			get 
@@ -586,59 +1129,90 @@ namespace Altaxo.Data
 			}
 		}
 
+	
+
+		/// <summary>
+		/// Returns the collection of column scripts.
+		/// </summary>
 		public ColumnScriptCollection ColumnScripts
 		{
 			get { return this.m_ColumnScripts; }
 		}
 
+		/// <summary>
+		/// Returns an array containing all column names that are contained in this collection.
+		/// </summary>
+		/// <returns>An array containing all column names that are contained in this collection.</returns>
+		public string[] GetColumnNames()
+		{
+			string[] arr = new string[this.ColumnCount];
+			for(int i=0;i<arr.Length;i++)
+				arr[i] = GetColumnName(i);
+
+			return arr;
+		}
+
+		/// <summary>
+		/// Tests whether or not all columns in this collection have the same type.
+		/// </summary>
+		/// <param name="firstdifferentcolumnindex">Out: returns the first column that has a different type from the first column</param>.
+		/// <returns>True if all columns are of the same type.</returns>
+		public bool AreAllColumnsOfTheSameType(out int firstdifferentcolumnindex)
+		{
+			firstdifferentcolumnindex=0;
+
+			if(0==this.ColumnCount)
+				return true;
+
+			System.Type t1st = this[0].GetType();
+
+			int len = this.ColumnCount;
+			for(int i=0;i<len;i++)
+			{
+				if(this[i].GetType()!=t1st)
+				{
+					firstdifferentcolumnindex = i;
+					return false;
+				}
+			}
+
+			return true;
+		}
 
 		#endregion
 
-		/// <summary>
-		/// removes the x-property from all columns in the group nGroup
-		/// </summary>
-		/// <param name="nGroup">the group number for the columns from which to remove the x-property</param>
-		public void DeleteXProperty(int nGroup, DataColumn exceptThisColumn)
-		{
-			int len = this.ColumnCount;
-			for(int i=len-1;i>=0;i--)
-			{
-				DataColumn dc = (DataColumn)m_ColumnsByNumber[i];
-				if(dc.Group==nGroup && dc.XColumn && !dc.Equals(exceptThisColumn))
-				{
-					dc.XColumn=false;
-				}
-			}
-		}
-
-		public Altaxo.Data.DataColumn FindXColumnOfGroup(int nGroup)
-		{
-			int len = this.ColumnCount;
-			for(int i=len-1;i>=0;i--)
-			{
-				DataColumn dc = (DataColumn)m_ColumnsByNumber[i];
-				if(dc.Group==nGroup && dc.XColumn)
-				{
-					return dc;
-				}
-			}
-			return null;
-		}
-
-
 		#region Event handling
 
+		/// <summary>
+		/// Returns true if this object has outstanding changed not reported yet to the parent.
+		/// </summary>
+		public virtual bool IsDirty
+		{
+			get
+			{
+				return null!=m_ChangeData;
+			}
+		}
 
+		/// <summary>
+		/// True if the notification of changes is currently suspended.
+		/// </summary>
 		public bool IsSuspended
 		{
 			get { return m_SuspendCount>0; }
 		}
 
+		/// <summary>
+		/// Suspend the notification of changes.
+		/// </summary>
 		public virtual void Suspend()
 		{
 			m_SuspendCount++;
 		}
 
+		/// <summary>
+		/// Resume the notification of changed.
+		/// </summary>
 		public void Resume()
 		{
 			if(m_SuspendCount>0 && (--m_SuspendCount)==0)
@@ -667,19 +1241,23 @@ namespace Altaxo.Data
 		}
 
 
-
+		/// <summary>
+		/// Accumulates the changes reported by the DataColumns.
+		/// </summary>
+		/// <param name="sender">One of the columns of this collection.</param>
+		/// <param name="e">The change details.</param>
 		void AccumulateChildChangeData(object sender, EventArgs e)
 		{
 			DataColumn.ChangeEventArgs changed = e as DataColumn.ChangeEventArgs;
 			if(changed!=null && sender is DataColumn)
 			{
-				int columnNumber = ((DataColumn)sender).ColumnNumber;
+				int columnNumber = GetColumnNumber((DataColumn)sender);
 				int columnCount = ((DataColumn)sender).Count;
 
 				if(m_ChangeData==null)
-					m_ChangeData = new ChangeEventArgs(columnNumber,changed.MinRowChanged,changed.MaxRowChanged,changed.RowCountDecreased, columnCount);
+					m_ChangeData = new ChangeEventArgs(columnNumber,changed.MinRowChanged,changed.MaxRowChanged,changed.RowCountDecreased);
 				else 
-					m_ChangeData.Accumulate(columnNumber,changed.MinRowChanged,changed.MaxRowChanged,changed.RowCountDecreased, columnCount);
+					m_ChangeData.Accumulate(columnNumber,changed.MinRowChanged,changed.MaxRowChanged,changed.RowCountDecreased);
 
 				// update the row count in case the nMaxRow+1 is greater than the chached row count
 				if(columnCount > m_NumberOfRows)
@@ -694,19 +1272,14 @@ namespace Altaxo.Data
 			}
 		}
 
-		public void HandleImmediateChildChangeCases(object sender, System.EventArgs e)
-		{
-			ColumnKindChangeEventArgs ck = e as ColumnKindChangeEventArgs;
-			if(ck!=null)
-			{
-				if(ck.NewKind==ColumnKind.X)
-					this.DeleteXProperty(((DataColumn)sender).Group,(DataColumn)sender);
-			}
-		}
-
+		/// <summary>
+		/// Handle the change notification from the child data columns.
+		/// </summary>
+		/// <param name="sender">The sender of the change notification.</param>
+		/// <param name="e">The change details.</param>
+		/// <returns>True if the child should suspend it's notifications, else false.</returns>
 		public bool OnChildChanged(object sender, System.EventArgs e)
 		{
-			HandleImmediateChildChangeCases(sender, e);
 			if(IsSuspended)
 			{
 				if(sender is Main.IResumable)
@@ -738,6 +1311,10 @@ namespace Altaxo.Data
 			}
 		}
 
+		/// <summary>
+		/// Fires the change event.
+		/// </summary>
+		/// <param name="e">The change details.</param>
 		protected virtual void OnChanged(ChangeEventArgs e)
 		{
 			if(null!=Changed)
@@ -747,12 +1324,20 @@ namespace Altaxo.Data
 
 
 
+		/// <summary>
+		/// Refreshes the row count by observing all columns.
+		/// </summary>
 		public void RefreshRowCount()
 		{
 			RefreshRowCount(true);
 		}
 
 
+		/// <summary>
+		/// Refreshes the row count.
+		/// </summary>
+		/// <param name="bSearchOnlyUntilOldRowCountReached">If false, all columns are observed. If true, the columns are
+		/// observed only until one column is reached, which has the same value of the row count as this collection.</param>
 		public void RefreshRowCount(bool bSearchOnlyUntilOldRowCountReached)
 		{
 			int rowCount=0;
@@ -779,30 +1364,7 @@ namespace Altaxo.Data
 
 
 		#endregion
-
-
-		/// <summary>
-		/// Test if a column of a given name is present in this collection.
-		/// </summary>
-		/// <param name="columnname">The columnname to test for presence.</param>
-		/// <returns>True if the column with the name is contained in the collection.</returns>
-		public bool ContainsColumn(string columnname)
-		{
-			return m_ColumnsByName.ContainsKey(columnname);
-		}
-
-		public virtual bool IsDirty
-		{
-			get
-			{
-				return null!=m_ChangeData;
-			}
-		}
-
 	
-
-
-
 		#region Automatic column naming
 
 		public string FindNewColumnName()
@@ -865,7 +1427,7 @@ namespace Altaxo.Data
 			// for the very first try, if no base provided, try to use a name that follows the name of the last columns
 			if(null==_sbase )
 			{
-				string tryName = GetNextColumnName(m_ColumnsByNumber.Count>0 ? this[ColumnCount-1].ColumnName : "");
+				string tryName = GetNextColumnName(m_ColumnsByNumber.Count>0 ? GetColumnName(ColumnCount-1) : "");
 				if(null==this[tryName])
 					return tryName;
 			}
@@ -960,37 +1522,7 @@ namespace Altaxo.Data
 
 		#endregion
 
-
-		public string[] GetColumnNames()
-		{
-			string[] arr = new string[this.ColumnCount];
-			for(int i=0;i<arr.Length;i++)
-				arr[i] = this[i].ColumnName;
-
-			return arr;
-		}
-
-		public bool AreAllColumnsOfTheSameType(out int firstdifferentcolumnindex)
-		{
-			firstdifferentcolumnindex=0;
-
-			if(0==this.ColumnCount)
-				return true;
-
-			System.Type t1st = this[0].GetType();
-
-			int len = this.ColumnCount;
-			for(int i=0;i<len;i++)
-			{
-				if(this[i].GetType()!=t1st)
-				{
-					firstdifferentcolumnindex = i;
-					return false;
-				}
-			}
-
-			return true;
-		}
+		#region Special Collection methods
 
 		/// <summary>
 		/// Transpose transpose the table, i.e. exchange columns and rows
@@ -1003,7 +1535,7 @@ namespace Altaxo.Data
 
 			if(!AreAllColumnsOfTheSameType(out firstdifferent))
 			{
-				return String.Format("Column[{0}] ({1}) has a different type than the first column transpose is not possible!",firstdifferent,this[firstdifferent].ColumnName);
+				return String.Format("Column[{0}] ({1}) has a different type than the first column transpose is not possible!",firstdifferent,GetColumnName(firstdifferent));
 			}
 
 			// now we can start by adding additional columns of the row count is greater
@@ -1068,23 +1600,36 @@ namespace Altaxo.Data
 
 			return null; // no error message
 		}
+
+		#endregion
+
 		#region INamedObjectCollection Members
 
+		/// <summary>
+		/// Returns the column with the name <code>name</code>.
+		/// </summary>
+		/// <param name="name">The name of the column to retrieve.</param>
+		/// <returns>The column with name <code>name</code>, or null if not found.</returns>
 		public object GetChildObjectNamed(string name)
 		{
 			return this.m_ColumnsByName[name];
 		}
 
+		/// <summary>
+		/// Retrieves the name of a child column <code>o</code>.
+		/// </summary>
+		/// <param name="o">The child column.</param>
+		/// <returns>The name of the column.</returns>
 		public string GetNameOfChildObject(object o)
 		{
-			DataColumn dc = o as DataColumn;
-			if(dc!=null && m_ColumnsByName.ContainsKey(dc.Name))
-				return dc.Name;
-
-			return null;
+			DataColumnInfo info = (DataColumnInfo)this.m_ColumnInfo[o];
+			if(info!=null)
+				return info.Name;
+			else 
+				return null;
 		}
 
 		#endregion
-	} // end class Altaxo.Data.DataColumnCollection
 
+	} // end class Altaxo.Data.DataColumnCollection
 }

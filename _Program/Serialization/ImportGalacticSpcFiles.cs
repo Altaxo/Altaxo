@@ -197,12 +197,9 @@ namespace Altaxo.Serialization.Galactic
 					{
 						firstfilename = filename;
 						xcol = new Altaxo.Data.DoubleColumn(xvalues.Length);
-						xcol.ColumnName = "SPC X values";
-						xcol.Kind = Altaxo.Data.ColumnKind.X;
-
 						for(int i=0;i<xvalues.Length;i++)
 							xcol[i] = xvalues[i];
-						table.DataColumns.Add(xcol);
+						table.DataColumns.Add(xcol,"SPC X values",Altaxo.Data.ColumnKind.X);
 					}
 					else // xcol was set before - so check the outcoming xvalues now that they match the xcols of the first imported spcfile
 					{
@@ -227,10 +224,9 @@ namespace Altaxo.Serialization.Galactic
 
 					// now add the y-values
 					Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn(yvalues.Length);
-					ycol.ColumnName = filename;
 					for(int i=0;i<yvalues.Length;i++)
 						ycol[i] = yvalues[i];
-					table.DataColumns.Add(ycol);
+					table.DataColumns.Add(ycol,filename);
 				} // foreache file
 
 				if(errorList.Length>0)

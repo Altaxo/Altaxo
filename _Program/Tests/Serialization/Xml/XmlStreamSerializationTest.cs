@@ -23,9 +23,9 @@ namespace Altaxo.Test.Serialization.Xml
 		[XmlSerializationSurrogateFor(typeof(Foo),0)]
 			public class Ser1 : IXmlSerializationSurrogate
 		{
-			public object Deserialize(IXmlDeserializationInfo info, object parent)
+			public object Deserialize(object o, IXmlDeserializationInfo info, object parent)
 			{
-				Foo foo = new Foo();
+				Foo foo = o!=null ? (Foo)o : new Foo();
 				int val = info.GetInt32();
 
 				int count = info.GetInt32Attribute("Count");

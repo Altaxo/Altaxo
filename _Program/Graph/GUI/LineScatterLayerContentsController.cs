@@ -169,7 +169,7 @@ namespace Altaxo.Graph.GUI
 				Data.DataColumn ycol = tab[item.column];
 				if(null!=ycol)
 				{
-					Data.DataColumn xcol = tab.DataColumns.FindXColumnOfGroup(ycol.Group);
+					Data.DataColumn xcol = tab.DataColumns.FindXColumnOf(ycol);
 					if(null==xcol)
 						return  new Graph.XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(),ycol),new XYLineScatterPlotStyle());
 					else
@@ -219,7 +219,7 @@ namespace Altaxo.Graph.GUI
 				TreeNode[] toadd = new TreeNode[dt.DataColumns.ColumnCount];
 				for(int i=0;i<toadd.Length;i++)
 				{
-					toadd[i] = new TreeNode(dt[i].ColumnName);
+					toadd[i] = new TreeNode(dt[i].Name);
 				}
 				node.Nodes.AddRange(toadd);
 			}

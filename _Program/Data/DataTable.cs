@@ -402,6 +402,14 @@ namespace Altaxo.Data
 			get { return m_PropertyColumns; }
 		}
 		
+		
+		public virtual void CopyOrReplaceOrAdd(int idx, Altaxo.Data.DataColumn datac)
+		{
+			Suspend();
+			m_DataColumns.CopyOrReplaceOrAdd(idx,datac); // add the column to the collection
+			// no need to insert a property row here (only when inserting)
+			Resume();
+		}
 
 
 		public DataColumnCollection Col
@@ -454,15 +462,7 @@ namespace Altaxo.Data
 			}
 
 
-		public virtual void Add(int idx, Altaxo.Data.DataColumn datac)
-		{
-			Suspend();
-			
-			m_DataColumns.Add(idx,datac); // add the column to the collection
-			m_PropertyColumns.InsertRows(idx,1); // but now we have to insert a additional property row at exactly the new position of the column
-
-			Resume();
-		}
+	
 
 
 		public virtual void RemoveColumns(int nFirstColumn, int nDelCount)

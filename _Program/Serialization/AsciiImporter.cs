@@ -686,9 +686,9 @@ namespace Altaxo.Serialization
 			string sLine;
 			stream.Position=0; // rewind the stream to the beginning
 			System.IO.StreamReader sr = new System.IO.StreamReader(stream,System.Text.Encoding.ASCII,true);
-			System.Collections.ArrayList newcols = new System.Collections.ArrayList();
+			Altaxo.Data.DataColumnCollection newcols = new Altaxo.Data.DataColumnCollection();
 		
-			System.Collections.ArrayList newpropcols = new System.Collections.ArrayList();
+			Altaxo.Data.DataColumnCollection newpropcols = new Altaxo.Data.DataColumnCollection();
 
 			// in case a structure is provided, allocate already the columsn
 			
@@ -758,7 +758,7 @@ namespace Altaxo.Serialization
 				
 					if(i==0) // is it the column name line
 					{
-						((Altaxo.Data.DataColumn)newcols[k]).ColumnName = substr[k];
+						newcols.SetColumnName(k, substr[k]);
 					}
 					else // this are threated as additional properties
 					{
@@ -811,8 +811,6 @@ namespace Altaxo.Serialization
 						{
 							Altaxo.Data.DoubleColumn newc = new Altaxo.Data.DoubleColumn();
 							newc[i]=val;
-							if(newcols[k] is Altaxo.Data.DBNullColumn)
-								newc.CopyHeaderFrom((Altaxo.Data.DBNullColumn)newcols[k]);
 							newcols[k] = newc;
 						}
 						else
@@ -829,8 +827,7 @@ namespace Altaxo.Serialization
 							{
 								Altaxo.Data.DateTimeColumn newc = new Altaxo.Data.DateTimeColumn();
 								newc[i]=valDateTime;
-								if(newcols[k] is Altaxo.Data.DBNullColumn)
-									newc.CopyHeaderFrom((Altaxo.Data.DBNullColumn)newcols[k]);
+								
 								newcols[k] = newc;
 							}
 							else
@@ -847,17 +844,17 @@ namespace Altaxo.Serialization
 			
 			// insert the new columns or replace the old ones
 			table.Suspend();
-			for(int i=0;i<newcols.Count;i++)
+			for(int i=0;i<newcols.ColumnCount;i++)
 			{
 				if(newcols[i] is Altaxo.Data.DBNullColumn)
 					continue;
-				table.Add(i,(Altaxo.Data.DataColumn)newcols[i]);
+				table.CopyOrReplaceOrAdd(i,(Altaxo.Data.DataColumn)newcols[i]);
 			} // end for loop
 
 			// add the property columns
-			for(int i=0;i<newpropcols.Count;i++)
+			for(int i=0;i<newpropcols.ColumnCount;i++)
 			{
-				table.PropCols.Add(i,(Altaxo.Data.DataColumn)newpropcols[i]);
+				table.PropCols.CopyOrReplaceOrAdd(i,(Altaxo.Data.DataColumn)newpropcols[i]);
 			}
 			table.Resume();
 		} // end of function ImportAscii

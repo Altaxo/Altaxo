@@ -122,7 +122,13 @@ namespace Altaxo.Worksheet
 			if(bSelected)
 				dc.FillRectangle(m_SelectedBackgroundBrush,cellRectangle);
 		
-			string myString = string.Format("{0} ({1}{2})",data.ColumnName, data.XColumn? "X":data.Kind.ToString(),data.Group); 
+			Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)Main.DocumentPath.GetRootNodeImplementing(data,typeof(Altaxo.Data.DataColumnCollection));
+			string myString;
+			
+			if(dataColCol==null)
+				myString = data.Name;
+			else
+				myString= string.Format("{0} ({1}{2})",data.Name, dataColCol.GetColumnKind(data).ToString(),dataColCol.GetColumnGroup(data)); 
 		
 			if(bSelected)
 				dc.DrawString(myString,m_TextFont,m_SelectedTextBrush,cellRectangle,m_TextFormat);
@@ -132,9 +138,9 @@ namespace Altaxo.Worksheet
 		
 		}
 		
-		public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
+		public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn datac)
 		{
-			return data.ColumnName;
+			return datac.Name;
 		}
 
 		public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)

@@ -1014,7 +1014,7 @@ namespace Altaxo.Worksheet.GUI
 				if(null!=err)
 					return err;
 
-				if(m_Col.ColumnName==name)
+				if(m_Col.Name==name)
 					return null;
 				else if(m_Ctrl.Doc.DataColumns.ContainsColumn(name))
 					return "This column name already exists, please choose another name!";
@@ -1031,13 +1031,18 @@ namespace Altaxo.Worksheet.GUI
 
 			Altaxo.Data.DataColumn col = Doc[m_SelectedColumns[0]];
 			Main.GUI.TextValueInputController ctrl = new Main.GUI.TextValueInputController(
-				col.ColumnName,
+				col.Name,
 				new Main.GUI.RenameColumnDialog()
 				);
 
 			ctrl.Validator = new ColumnRenameValidator(col,this);
 			if(ctrl.ShowDialog(View.TableViewForm))
-				col.ColumnName = ctrl.InputText;
+			{
+				if(Doc.DataColumns.ContainsColumn(col))
+					Doc.DataColumns.SetColumnName(col,ctrl.InputText);
+				if(Doc.PropCols.ContainsColumn(col))
+					Doc.PropCols.SetColumnName(col,ctrl.InputText);
+			}
 		}
 
 		
@@ -1046,7 +1051,7 @@ namespace Altaxo.Worksheet.GUI
 			if(this.m_SelectedColumns.Count==0)
 				return;
 
-			int grpNumber = Doc[m_SelectedColumns[0]].Group;
+			int grpNumber = Doc.DataColumns.GetColumnGroup(m_SelectedColumns[0]);
 			Main.GUI.IntegerValueInputController ctrl = new Main.GUI.IntegerValueInputController(
 				grpNumber,
 				new Main.GUI.SingleValueDialog("Set group number","Please enter a group number (>=0):")
@@ -1059,7 +1064,7 @@ namespace Altaxo.Worksheet.GUI
 				for(int i=0;i<m_SelectedColumns.Count;i++)
 				{
 					int idx = m_SelectedColumns[i];
-					Doc[idx].Group = ctrl.EnteredContents;
+					Doc.DataColumns.SetColumnGroup(idx, ctrl.EnteredContents);
 				}
 			}
 		}
@@ -1311,14 +1316,14 @@ namespace Altaxo.Worksheet.GUI
 					}
 					else
 					{
-						this.DataTable.DataColumns.DeleteRows(begin,end-begin);
+						this.DataTable.DataColumns.RemoveRows(begin,end-begin);
 						begin=idx;
 						end=idx+1;
 					}
 				} // end for
 				// the last index must also be deleted, if not done already
 				if(begin>=0 && end>=0)
-					this.DataTable.DataColumns.DeleteRows(begin,end-begin);
+					this.DataTable.DataColumns.RemoveRows(begin,end-begin);
 
 
 				this.m_SelectedRows.Clear(); // now the columns are deleted, so they cannot be selected
@@ -1338,7 +1343,7 @@ namespace Altaxo.Worksheet.GUI
 		{
 			if(SelectedColumns.Count>0)
 			{
-				this.DataTable[SelectedColumns[0]].XColumn=true;
+				this.DataTable.DataColumns.SetColumnKind(SelectedColumns[0],Altaxo.Data.ColumnKind.X);
 				SelectedColumns.Clear();
 				this.View.TableAreaInvalidate(); // draw new because 
 			}
@@ -1349,7 +1354,7 @@ namespace Altaxo.Worksheet.GUI
 			int len = SelectedColumns.Count;
 			for(int i=0;i<len;i++)
 			{
-				DataTable[SelectedColumns[i]].Group = nGroup;
+				DataTable.DataColumns.SetColumnGroup(SelectedColumns[i], nGroup);
 			}
 			SelectedColumns.Clear();
 			this.View.TableAreaInvalidate();
