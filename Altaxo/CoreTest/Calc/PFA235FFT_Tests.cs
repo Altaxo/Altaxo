@@ -22,8 +22,9 @@
 
 using System;
 using NUnit.Framework;
+using Altaxo.Calc.FFT;
 
-namespace Altaxo.Calc.FFT
+namespace AltaxoTest.Calc.FFT
 {
 
   [TestFixture]
@@ -62,7 +63,7 @@ namespace Altaxo.Calc.FFT
 
       Pfa235FFT fft = new Pfa235FFT(n);
 
-      fft.FFT(re,im,Pfa235FFT.Direction.Inverse);
+      fft.FFT(re,im,FourierDirection.Inverse);
 
       for(int i=0;i<n;i++)
       {
@@ -105,7 +106,7 @@ namespace Altaxo.Calc.FFT
 
       Pfa235FFT fft = new Pfa235FFT(n);
 
-      fft.FFT(re,im,Pfa235FFT.Direction.Inverse);
+      fft.FFT(re,im,FourierDirection.Inverse);
       
       for(int i=0;i<n;i++)
       {
@@ -156,7 +157,7 @@ namespace Altaxo.Calc.FFT
 
       Pfa235FFT fft = new Pfa235FFT(n);
 
-      fft.FFT(re,im,Pfa235FFT.Direction.Inverse);
+      fft.FFT(re,im,FourierDirection.Inverse);
 
       for(int i=0;i<n;i++)
       {
@@ -207,7 +208,7 @@ namespace Altaxo.Calc.FFT
 
       Pfa235FFT fft = new Pfa235FFT(n);
 
-      fft.FFT(re,im,Pfa235FFT.Direction.Inverse);
+      fft.FFT(re,im,FourierDirection.Inverse);
 
       for(int i=0;i<n;i++)
       {
@@ -258,7 +259,7 @@ namespace Altaxo.Calc.FFT
 
       Pfa235FFT fft = new Pfa235FFT(n);
 
-      fft.FFT(re,im,Pfa235FFT.Direction.Inverse);
+      fft.FFT(re,im,FourierDirection.Inverse);
 
       for(int i=0;i<n;i++)
       {
@@ -316,7 +317,7 @@ namespace Altaxo.Calc.FFT
 
       Pfa235FFT fft = new Pfa235FFT(n);
 
-      fft.FFT(re,im,Pfa235FFT.Direction.Inverse);
+      fft.FFT(re,im,FourierDirection.Inverse);
 
       for(int i=0;i<n;i++)
       {
@@ -403,7 +404,7 @@ namespace Altaxo.Calc.FFT
 
       Pfa235FFT fft = new Pfa235FFT(u,v);
 
-      fft.FFT(re,im,Pfa235FFT.Direction.Inverse);
+      fft.FFT(re,im,FourierDirection.Inverse);
 
       for(int i=0;i<n;i++)
       {
@@ -436,7 +437,7 @@ namespace Altaxo.Calc.FFT
 
       Pfa235FFT fft = new Pfa235FFT(u,v);
 
-      fft.FFT(re,im,Pfa235FFT.Direction.Inverse);
+      fft.FFT(re,im,FourierDirection.Inverse);
 
       for(int i=0;i<u;i++)
       {
@@ -472,7 +473,7 @@ namespace Altaxo.Calc.FFT
 
       Pfa235FFT fft = new Pfa235FFT(u,v);
 
-      fft.FFT(re,im,Pfa235FFT.Direction.Inverse);
+      fft.FFT(re,im,FourierDirection.Inverse);
 
       for(int i=0;i<u;i++)
       {
@@ -509,7 +510,7 @@ namespace Altaxo.Calc.FFT
 
       Pfa235FFT fft = new Pfa235FFT(u,v);
 
-      fft.FFT(re,im,Pfa235FFT.Direction.Inverse);
+      fft.FFT(re,im,FourierDirection.Inverse);
 
       for(int i=0;i<u;i++)
       {
@@ -549,7 +550,7 @@ namespace Altaxo.Calc.FFT
 
       Pfa235FFT fft = new Pfa235FFT(u,v);
 
-      fft.FFT(re,im,Pfa235FFT.Direction.Inverse);
+      fft.FFT(re,im,FourierDirection.Inverse);
 
       for(int i=0;i<u;i++)
       {
@@ -590,7 +591,7 @@ namespace Altaxo.Calc.FFT
 
       Pfa235FFT fft = new Pfa235FFT(u,v);
 
-      fft.FFT(re,im,Pfa235FFT.Direction.Inverse);
+      fft.FFT(re,im,FourierDirection.Inverse);
 
       for(int i=0;i<u;i++)
       {

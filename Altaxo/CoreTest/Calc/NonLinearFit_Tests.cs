@@ -23,7 +23,7 @@
 using System;
 using Altaxo.Calc;
 using NUnit.Framework;
-namespace Altaxo.Test.NLFIT
+namespace AltaxoTest.Calc.NLFIT
 {
 
   [TestFixture]

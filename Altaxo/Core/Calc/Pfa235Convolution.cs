@@ -251,7 +251,7 @@ namespace Altaxo.Calc.FFT
     ///
     /// * 2D and 3D versions are not yet available !!!
     ///</remarks>
-    public bool Convolute (double[] data, double[] response, double[] result, double[] scratch, Direction isign)
+    public bool Convolute (double[] data, double[] response, double[] result, double[] scratch, FourierDirection isign)
     {
       // return status
       bool status = true;
@@ -296,12 +296,12 @@ namespace Altaxo.Calc.FFT
         Array.Copy(response,scratch, size);
 
         // transform both arrays simultaneously - this is a forward FFT
-        base.FFT(result,scratch,Direction.Forward);
+        base.FFT(result,scratch, FourierDirection.Forward);
     
         // multiply FFTs to convolve
         int n = dim[0], n2 = n/2;
 
-        if (isign == Direction.Forward) 
+        if (isign == FourierDirection.Forward) 
         {
       
           double scale = 0.25/n;
@@ -350,7 +350,7 @@ namespace Altaxo.Calc.FFT
         }
 
         // transform back - this is an inverse FFT
-        base.FFT(result,scratch,Direction.Inverse);
+        base.FFT(result,scratch, FourierDirection.Inverse);
 
         //---------------------------------------------------------------------------//
         //  2-dimensional convolution
@@ -368,10 +368,10 @@ namespace Altaxo.Calc.FFT
         FillZero(scratch); // imaginary part of response
 
         // transform both arrays - this is a forward FFT
-        base.FFT(data,result,Direction.Forward);
-        base.FFT(response,scratch,Direction.Forward);
+        base.FFT(data,result, FourierDirection.Forward);
+        base.FFT(response,scratch,FourierDirection.Forward);
 
-        if (isign == Direction.Forward) 
+        if (isign == FourierDirection.Forward) 
         { 
           double scale = 1.0/n/m;
           for (int i = 0; i < n; i++)
@@ -409,7 +409,7 @@ namespace Altaxo.Calc.FFT
         } 
 
         // transform back - this is an inverse FFT
-        base.FFT(result,scratch,Direction.Inverse);
+        base.FFT(result,scratch,FourierDirection.Inverse);
 
         //---------------------------------------------------------------------------//
         //  3-dimensional convolution
@@ -428,10 +428,10 @@ namespace Altaxo.Calc.FFT
         FillZero(scratch); // imaginary part of response
 
         // transform both arrays - this is a forward FFT
-        base.FFT(data,result,Direction.Forward);
-        base.FFT(response,scratch,Direction.Forward);
+        base.FFT(data,result,FourierDirection.Forward);
+        base.FFT(response,scratch,FourierDirection.Forward);
 
-        if (isign == Direction.Forward) 
+        if (isign == FourierDirection.Forward) 
         {
           double scale = 1.0/n/m/p;
           for (int i = 0; i < n; i++)
@@ -471,7 +471,7 @@ namespace Altaxo.Calc.FFT
         }
 
         // transform back - this is an inverse FFT
-        base.FFT(result,scratch,Direction.Inverse);
+        base.FFT(result,scratch,FourierDirection.Inverse);
       }
 
       ErrorExit:

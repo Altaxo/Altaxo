@@ -25,7 +25,7 @@ using Altaxo.Calc;
 using NUnit.Framework;
 
 
-namespace Altaxo.Test.Calc
+namespace AltaxoTest.Calc
 {
   [TestFixture]
   public class TestGammaRelated

@@ -132,9 +132,9 @@ namespace Altaxo.Calc.FFT
 
 // der Chirpalgorithmus funktioniert auch noch bei arrsize=1+2^n mit der nächstgelegenen Potenz 2^(n+1) !!!
 
-    public static void chirpnativefft(Complex[] result, Complex[] arr, int arrsize, bool bBackward)
+    private static void chirpnativefft(Complex[] result, Complex[] arr, int arrsize, FourierDirection direction)
     {
-      int phasesign = bBackward ? 1 : -1;
+      int phasesign = direction==FourierDirection.Forward ? 1 : -1;
       int arrsize2 = arrsize+arrsize;
      
       if(arrsize<=2)
@@ -198,15 +198,15 @@ namespace Altaxo.Calc.FFT
     }
 
 
-    public static void chirpnativefft(
+    private static void chirpnativefft(
       double[] resultreal, 
       double[] resultimag,
       double[] inputreal,
       double[] inputimag,
       int arrsize,
-      bool bBackward)
+      FourierDirection direction)
     {
-      int phasesign = bBackward ? 1 : -1;
+      int phasesign = direction==FourierDirection.Forward ? 1 : -1;
       int arrsize2 = arrsize+arrsize;
      
       if(arrsize<=2)
@@ -281,7 +281,7 @@ namespace Altaxo.Calc.FFT
     /// <param name="x">Array of real values.</param>
     /// <param name="y">Array of imaginary values.</param>
     /// <param name="n">Number of points to transform.</param>
-    /// <param name="backward">If false, a forward FFT is performed. If true, a inverse FFT is performed.</param>
+    /// <param name="direction">Direction of Fourier transform.</param>
     /*
     public static void
       FFT(double[] x, double[] y, uint n, bool backward)
@@ -294,9 +294,9 @@ namespace Altaxo.Calc.FFT
     }
 */
     public static void
-      FFT(double[] x, double[] y, uint n, bool backward)
+      FFT(double[] x, double[] y, uint n, FourierDirection direction)
     {
-      chirpnativefft(x,y,x,y,(int)n, backward);
+      chirpnativefft(x,y,x,y,(int)n, direction);
     }
 
 

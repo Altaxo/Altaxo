@@ -22,8 +22,9 @@
 
 using System;
 using NUnit.Framework;
+using Altaxo.Calc.FFT;
 
-namespace Altaxo.Calc.FFT
+namespace AltaxoTest.Calc.FFT
 {
 
   [TestFixture]
@@ -43,7 +44,7 @@ namespace Altaxo.Calc.FFT
       double[] im = new double[n];
 
 
-      ChirpFFT.FFT(re,im,n,false);
+      ChirpFFT.FFT(re,im,n,FourierDirection.Inverse);
 
       for(uint i=0;i<n;i++)
       {
@@ -73,7 +74,7 @@ namespace Altaxo.Calc.FFT
 
      
 
-      ChirpFFT.FFT(re,im,n,false);
+      ChirpFFT.FFT(re,im,n,FourierDirection.Inverse);
       
       for(uint i=0;i<n;i++)
       {
@@ -99,7 +100,7 @@ namespace Altaxo.Calc.FFT
 
       im[0] = 1;
 
-      ChirpFFT.FFT(re,im,n,false);
+      ChirpFFT.FFT(re,im,n,FourierDirection.Inverse);
 
       for(uint i=0;i<n;i++)
       {
@@ -124,7 +125,7 @@ namespace Altaxo.Calc.FFT
 
       re[1] = 1;
 
-      ChirpFFT.FFT(re,im,n,false);
+      ChirpFFT.FFT(re,im,n,FourierDirection.Inverse);
 
       for(uint i=0;i<n;i++)
       {
@@ -152,7 +153,7 @@ namespace Altaxo.Calc.FFT
       im[1] = 1;
 
      
-      ChirpFFT.FFT(re,im,n,false);
+      ChirpFFT.FFT(re,im,n,FourierDirection.Inverse);
 
       for(uint i=0;i<n;i++)
       {
@@ -189,7 +190,7 @@ namespace Altaxo.Calc.FFT
 
      
 
-      ChirpFFT.FFT(re,im,n,false);
+      ChirpFFT.FFT(re,im,n,FourierDirection.Inverse);
 
       for(uint i=0;i<n;i++)
       {
@@ -212,41 +213,7 @@ namespace Altaxo.Calc.FFT
     }
 
     
-    private static void zzTestNativeReImOne_RandomPos(uint n)
-    {
-      double[] re = new double[n];
-      double[] im = new double[n];
-      
-      System.Random rnd = new System.Random();
 
-      int repos = rnd.Next((int)n);
-      int impos = rnd.Next((int)n);
-
-      re[repos]=1;
-      im[impos]=1;
-
-     
-
-      NativeFourierMethods.NativeFFT(re,im,re,im,(int)n,false);
-
-      for(uint i=0;i<n;i++)
-      {
-        Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos(re={1},im={2}) re[{3}]",n,repos,impos,i), 
-          Math.Cos((2*Math.PI*i*(double)repos)/n) + Math.Sin((2*Math.PI*i*(double)impos)/n),
-          re[i],n*1E-14);
-        Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos(re={1},im={2}) arb im[{3}]",n,repos,impos,i), 
-          -Math.Sin((2*Math.PI*i*(double)repos)/n) + Math.Cos((2*Math.PI*i*(double)impos)/n), 
-          im[i],n*1E-14);
-      }
-    }
-
-    [Test]
-    public void TestNativeReImOne_RandomPos()
-    {
-      // Testing 2^n
-      for(uint i=nLowerLimit;i<=nUpperLimit;i++)
-        zzTestNativeReImOne_RandomPos(i);
-    }
 
 
     private static void zzTestReImRandomValues(uint n)
@@ -269,8 +236,8 @@ namespace Altaxo.Calc.FFT
       Array.Copy(re,0,re1,0,n);
       Array.Copy(im,0,im1,0,n);
 
-      ChirpFFT.FFT(re,im,n,false);
-      NativeFourierMethods.NativeFFT(re1,im1,re1,im1,(int)n,false);
+      ChirpFFT.FFT(re,im,n,FourierDirection.Inverse);
+      NativeFourierMethods.FFT(re1,im1,re1,im1,(int)n, FourierDirection.Inverse);
 
       for(uint i=0;i<n;i++)
       {

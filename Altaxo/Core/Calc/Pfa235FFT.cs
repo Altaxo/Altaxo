@@ -65,7 +65,7 @@ namespace Altaxo.Calc.FFT
 
 
 
-    public enum Direction { Forward = -1, Inverse = 1 };
+//    public enum Direction { Forward = -1, Inverse = 1 };
     // constructors and assigment
 
 
@@ -488,7 +488,7 @@ int FFT (complex<FLOAT> c[], int isign)
     /// <returns>Currently undefined, not used.</returns>
     //-----------------------------------------------------------------------------//
 
-    public int FFT (double[] re, double[] im, Direction isign)
+    public int FFT (double[] re, double[] im, FourierDirection isign)
     {
       if (ndim == 0) 
       {
@@ -500,7 +500,7 @@ int FFT (complex<FLOAT> c[], int isign)
       {
 
         // leading dimension is ignored, row_order doesn't matter
-        gpfa(re, 0, im, 0, trigs,0, 1, 0, dim[0], 1, -(int)isign);
+        gpfa(re, 0, im, 0, trigs,0, 1, 0, dim[0], 1, (int)isign);
 
       } 
       else if (ndim == 2) 
@@ -521,10 +521,10 @@ int FFT (complex<FLOAT> c[], int isign)
         {
           int offset = id * lot * i;
           gpfa(re,offset, im,offset, trigs,trindex[two], 
-            1, id, dim[two], Math.Min(lot,dim[one]-i*lot), -(int)isign);
+            1, id, dim[two], Math.Min(lot,dim[one]-i*lot), (int)isign);
         }
         gpfa(re, 0, im, 0, trigs,trindex[one], 
-          id, 1, dim[one], dim[two], -(int)isign);
+          id, 1, dim[one], dim[two], (int)isign);
 
       } 
       else if (ndim == 3) 
@@ -545,20 +545,20 @@ int FFT (complex<FLOAT> c[], int isign)
         {
           int offset = id * lot * i;
           gpfa(re,offset, im,offset, trigs,trindex[three], 
-            1, id, dim[three], Math.Min(lot,dim[two]*dim[one]-i*lot), -(int)isign);
+            1, id, dim[three], Math.Min(lot,dim[two]*dim[one]-i*lot), (int)isign);
         }
         for (int i = 0; i < dim[one]; ++i) 
         {
           int offset = id * dim[two] * i;
           gpfa(re,offset, im,offset, trigs,trindex[two], 
-            id, 1, dim[two], dim[three], -(int)isign);
+            id, 1, dim[two], dim[three], (int)isign);
         }
         lot = (id * dim[two] + nthreads - 1) / nthreads;
         for (int i = 0; i < nthreads; ++i) 
         {
           int offset = lot * i;
           gpfa(re,offset, im,offset, trigs,trindex[one],
-            id*dim[two], 1, dim[one], Math.Min(lot,id*dim[two]-i*lot), -(int)isign);
+            id*dim[two], 1, dim[one], Math.Min(lot,id*dim[two]-i*lot), (int)isign);
         }
       }
       return 1;
