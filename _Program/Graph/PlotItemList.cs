@@ -29,7 +29,15 @@ namespace Altaxo.Graph
 {
 	[SerializationSurrogate(0,typeof(PlotList.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class PlotList : Altaxo.Data.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, IChildChangedEventSink, System.ICloneable
+	public class PlotList 
+		:
+		Altaxo.Data.CollectionBase,
+		System.Runtime.Serialization.IDeserializationCallback,
+		IChangedEventSource,
+		IChildChangedEventSink,
+		System.ICloneable,
+		Main.IDocumentNode,
+		Main.INamedObjectCollection
 	{
 		/// <summary>The parent layer of this list.</summary>
 		private Layer m_Owner; 
@@ -99,6 +107,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				PlotList s = null!=o ? (PlotList)o : new PlotList();
 
 				int count = info.OpenArray();
@@ -195,6 +204,15 @@ namespace Altaxo.Graph
 			}
 		}
 		
+		public object ParentObject
+		{
+			get { return m_Owner; }
+		}
+
+		public virtual string Name
+		{
+			get {return "PlotItems"; }
+		}
 
 		/// <summary>
 		/// Sets the parent layer.
@@ -227,6 +245,7 @@ namespace Altaxo.Graph
 		/// <param name="plotitem">The plotitem for which the event chain should be restored.</param>
 		public void WireItem(Graph.PlotItem plotitem)
 		{
+			plotitem.ParentObject = this;
 			SetItemBoundaries(plotitem);
 			plotitem.Changed += new EventHandler(this.OnChildChanged);
 		}
@@ -295,6 +314,38 @@ namespace Altaxo.Graph
 		{
 			OnChanged();
 		}
+
+		#region NamedObjectCollection
+
+			/// <summary>
+			/// retrieves the object with the name <code>name</code>.
+			/// </summary>
+			/// <param name="name">The objects name.</param>
+			/// <returns>The object with the specified name.</returns>
+		public virtual object GetChildObjectNamed(string name)
+		{
+			double number;
+			if(double.TryParse(name,System.Globalization.NumberStyles.Integer,System.Globalization.NumberFormatInfo.InvariantInfo, out number))
+			{
+				int idx=(int)number;
+				if(idx>=0 && idx<this.Count)
+					return this[idx];
+			}
+			return null;
+		}
+
+			/// <summary>
+			/// Retrieves the name of the provided object.
+			/// </summary>
+			/// <param name="o">The object for which the name should be found.</param>
+			/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
+		public virtual string GetNameOfChildObject(object o)
+		{
+			int idx = this.InnerList.IndexOf(o);
+			return idx>=0 ? idx.ToString() : null;
+		}
+
+		#endregion
 
 		#region IChangedEventSource Members
 

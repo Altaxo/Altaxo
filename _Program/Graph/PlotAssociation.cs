@@ -87,8 +87,19 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(PlotAssociation.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class PlotAssociation : IXYBoundsHolder, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, System.ICloneable
+	public class PlotAssociation 
+		:
+		IXYBoundsHolder, 
+		System.Runtime.Serialization.IDeserializationCallback,
+		IChangedEventSource, 
+		System.ICloneable,
+		Main.IDocumentNode
 	{
+		/// <summary>
+		/// The parent object.
+		/// </summary>
+		protected object m_Parent;
+
 		protected Altaxo.Data.IReadableColumn m_xColumn; // the X-Column
 		protected Altaxo.Data.IReadableColumn m_yColumn; // the Y-Column
 
@@ -164,14 +175,31 @@ namespace Altaxo.Graph
 			{
 				PlotAssociation s = (PlotAssociation)obj;
 				
-				info.AddValue("XColumn",s.m_xColumn);
-				info.AddValue("YColumn",s.m_yColumn);
+				if(s.m_xColumn is Main.IDocumentNode)
+				{
+					info.AddValue("XColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_xColumn));
+				}
+				else
+				{
+					info.AddValue("XColumn",s.m_xColumn);
+				}
+				
+				
+				if(s.m_yColumn is Main.IDocumentNode)
+				{
+					info.AddValue("YColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_yColumn));
+				}
+				else
+				{
+					info.AddValue("YColumn",s.m_yColumn);
+				}
 
 				info.AddValue("XBoundaries",s.m_xBoundaries);
 				info.AddValue("YBoundaries",s.m_yBoundaries);
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				PlotAssociation s = null!=o ? (PlotAssociation)o : new PlotAssociation();
 
 				s.m_xColumn = (Altaxo.Data.IReadableColumn)info.GetValue("XColumn",typeof(Altaxo.Data.IReadableColumn));
@@ -249,6 +277,22 @@ namespace Altaxo.Graph
 		{
 			return new PlotAssociation(this);
 		}
+
+		public object ParentObject
+		{
+			get { return m_Parent; }
+			set { m_Parent = null; }
+		}
+
+		public string Name
+		{
+			get
+			{
+				Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
+				return noc==null ? null : noc.GetNameOfChildObject(this);
+			}
+		}
+
 
 		public void MergeXBoundsInto(PhysicalBoundaries pb)
 		{

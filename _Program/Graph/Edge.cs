@@ -41,6 +41,7 @@ namespace Altaxo.Graph
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 		{
+			info.OpenInnerContent();
 			string val = info.GetString("Value");
 			return System.Enum.Parse(typeof(EdgeType),val,true);
 		}
@@ -69,6 +70,7 @@ namespace Altaxo.Graph
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
 
+				info.OpenInnerContent();
 				EdgeType type = (EdgeType)info.GetValue("EdgeType",null);
 				Edge s = null!=o ? (Edge)o : new Edge(type);
 				return s;

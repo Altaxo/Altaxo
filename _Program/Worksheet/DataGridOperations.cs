@@ -53,7 +53,7 @@ namespace Altaxo.Worksheet
 			{
 				Altaxo.Data.DataColumn ycol = dg.DataTable[dg.SelectedColumns[i]];
 
-				Altaxo.Data.DataColumn xcol = dg.DataTable.FindXColumnOfGroup(ycol.Group);
+				Altaxo.Data.DataColumn xcol = dg.DataTable.DataColumns.FindXColumnOfGroup(ycol.Group);
 			
 				if(null!=xcol)
 					pa[i] = new Graph.PlotAssociation(xcol,ycol);
@@ -93,7 +93,7 @@ namespace Altaxo.Worksheet
 			// if nothing is selected, assume that the whole table should be plotted
 			int len = dg.SelectedColumns.Count;
 
-			Graph.D2EquidistantMeshDataAssociation assoc = new Graph.D2EquidistantMeshDataAssociation(dg.Doc,len==0 ? null : dg.SelectedColumns.GetSelectedIndizes());
+			Graph.D2EquidistantMeshDataAssociation assoc = new Graph.D2EquidistantMeshDataAssociation(dg.Doc.DataColumns,len==0 ? null : dg.SelectedColumns.GetSelectedIndizes());
 
 			
 			// now create a new Graph with this plot associations
@@ -199,7 +199,7 @@ namespace Altaxo.Worksheet
 				for(int j=0;j<resultMat.Rows;j++)
 					col[j] = resultMat[j,i];
 				
-				table.Add(col);
+				table.DataColumns.Add(col);
 			}
 
 			table.ResumeDataChangedNotifications();
@@ -232,7 +232,7 @@ namespace Altaxo.Worksheet
 			)
 		{
 			bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
-			int prenumcols = bUseSelectedColumns ? selectedColumns.Count : srctable.ColumnCount;
+			int prenumcols = bUseSelectedColumns ? selectedColumns.Count : srctable.DataColumns.ColumnCount;
 			
 			// check for the number of numeric columns
 			int numcols = 0;
@@ -333,7 +333,7 @@ namespace Altaxo.Worksheet
 			col.Group=0;
 			for(int i=0;i<factors.Rows;i++)
 				col[i] = meanScore;
-			table.Add(col);
+			table.DataColumns.Add(col);
 		}
 
 			// first store the factors
@@ -344,7 +344,7 @@ namespace Altaxo.Worksheet
 				for(int j=0;j<factors.Rows;j++)
 					col[j] = factors[j,i];
 				
-				table.Add(col);
+				table.DataColumns.Add(col);
 			}
 
 			// now store the mean of the matrix
@@ -353,7 +353,7 @@ namespace Altaxo.Worksheet
 			col.Group=2;
 			for(int j=0;j<meanX.Cols;j++)
 				col[j] = meanX[0,j];
-			table.Add(col);
+			table.DataColumns.Add(col);
 		}
 
 			// now store the loads - careful - they are horizontal in the matrix
@@ -364,7 +364,7 @@ namespace Altaxo.Worksheet
 				for(int j=0;j<loads.Cols;j++)
 					col[j] = loads[i,j];
 				
-				table.Add(col);
+				table.DataColumns.Add(col);
 			}
 
 			// now store the residual variances, they are vertical in the vector
@@ -373,7 +373,7 @@ namespace Altaxo.Worksheet
 			col.Group=4;
 			for(int i=0;i<residualVariances.Rows;i++)
 				col[i] = residualVariances[i,0];
-			table.Add(col);
+			table.DataColumns.Add(col);
 		}
 
 			table.ResumeDataChangedNotifications();
@@ -407,7 +407,7 @@ namespace Altaxo.Worksheet
 			
 			// this is the number of columns (for now), but it can be less than this in case
 			// not all columns are numeric
-			int prenumcols = bUseSelectedColumns ? selectedColumns.Count : srctable.ColumnCount;
+			int prenumcols = bUseSelectedColumns ? selectedColumns.Count : srctable.DataColumns.ColumnCount;
 			int[] numericDataCols = new int[prenumcols];
 
 			// check for the number of numeric columns
@@ -636,7 +636,7 @@ namespace Altaxo.Worksheet
 				for(int j=0;j<xLoads.Cols;j++)
 					col[j] = xLoads[i,j];
 					
-				table.Add(col);
+				table.DataColumns.Add(col);
 			}
 
 			// now store the loads - careful - they are horizontal in the matrix
@@ -647,7 +647,7 @@ namespace Altaxo.Worksheet
 				for(int j=0;j<yLoads.Cols;j++)
 					col[j] = yLoads[i,j];
 				
-				table.Add(col);
+				table.DataColumns.Add(col);
 			}
 
 			// now store the weights - careful - they are horizontal in the matrix
@@ -658,7 +658,7 @@ namespace Altaxo.Worksheet
 				for(int j=0;j<W.Cols;j++)
 					col[j] = W[i,j];
 				
-				table.Add(col);
+				table.DataColumns.Add(col);
 			}
 
 			// now store the cross product vector - it is a horizontal vector
@@ -667,7 +667,7 @@ namespace Altaxo.Worksheet
 			col.Group=3;
 			for(int j=0;j<V.Cols;j++)
 				col[j] = V[0,j];
-			table.Add(col);
+			table.DataColumns.Add(col);
 		}
 
 		{
@@ -678,14 +678,14 @@ namespace Altaxo.Worksheet
 			col.Group=4;
 			for(int i=0;i<crossPRESSMatrix.Rows;i++)
 				col[i] = crossPRESSMatrix[i,0];
-			table.Add(col);
+			table.DataColumns.Add(col);
 		}
 
 			// calculate the self predicted y values - for one factor and for two
 			Altaxo.Calc.IMatrix yPred = new Altaxo.Calc.MatrixMath.HOMatrix(matrixY.Rows,matrixY.Cols);
 			Altaxo.Data.DoubleColumn presscol = new Altaxo.Data.DoubleColumn("PRESS");
 			presscol.Group = 4;
-			table.Add(presscol);
+			table.DataColumns.Add(presscol);
 			presscol[0] = Altaxo.Calc.MatrixMath.SumOfSquares(matrixY); // gives the press for 0 factors, i.e. the variance of the y-matrix
 			for(int nFactor=1;nFactor<=numFactors;nFactor++)
 			{
@@ -704,7 +704,7 @@ namespace Altaxo.Worksheet
 					for(int j=0;j<yPred.Rows;j++)
 						col[j] = yPred[j,i] + meanY[0,i];
 				
-					table.Add(col);
+					table.DataColumns.Add(col);
 				}
 			} // for nFactor...
 
@@ -729,7 +729,7 @@ namespace Altaxo.Worksheet
 			)
 		{
 			bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
-			int numcols = bUseSelectedColumns ? selectedColumns.Count : srctable.ColumnCount;
+			int numcols = bUseSelectedColumns ? selectedColumns.Count : srctable.DataColumns.ColumnCount;
 
 			bool bUseSelectedRows = (null!=selectedRows && 0!=selectedRows.Count);
 
@@ -745,7 +745,7 @@ namespace Altaxo.Worksheet
 				if(!(col is Altaxo.Data.INumericColumn))
 					continue;
 
-				int rows = bUseSelectedRows ? selectedRows.Count : srctable.RowCount;
+				int rows = bUseSelectedRows ? selectedRows.Count : srctable.DataColumns.RowCount;
 				if(rows==0)
 					continue;
 				
@@ -779,12 +779,12 @@ namespace Altaxo.Worksheet
 					// 6th column is the number of items for statistics
 					Data.DoubleColumn c5 = new Data.DoubleColumn("N");
 			
-					table.Add(c0);
-					table.Add(c1);
-					table.Add(c2);
-					table.Add(c3);
-					table.Add(c4);
-					table.Add(c5);
+					table.DataColumns.Add(c0);
+					table.DataColumns.Add(c1);
+					table.DataColumns.Add(c2);
+					table.DataColumns.Add(c3);
+					table.DataColumns.Add(c4);
+					table.DataColumns.Add(c5);
 				} // if !TableCreated
 
 				// now do the statistics 
@@ -845,12 +845,12 @@ namespace Altaxo.Worksheet
 			)
 		{
 			bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
-			int numcols = bUseSelectedColumns ? selectedColumns.Count : srctable.ColumnCount;
+			int numcols = bUseSelectedColumns ? selectedColumns.Count : srctable.DataColumns.ColumnCount;
 			if(numcols==0)
 				return; // nothing selected
 
 			bool bUseSelectedRows = (null!=selectedRows && 0!=selectedRows.Count);
-			int numrows = bUseSelectedRows ? selectedRows.Count : srctable.RowCount;
+			int numrows = bUseSelectedRows ? selectedRows.Count : srctable.DataColumns.RowCount;
 			if(numrows==0)
 				return;
 
@@ -874,11 +874,11 @@ namespace Altaxo.Worksheet
 			// 5th column is the number of items for statistics
 			Data.DoubleColumn c5 = new Data.DoubleColumn("N");
 			
-			table.Add(c1);
-			table.Add(c2);
-			table.Add(c3);
-			table.Add(c4);
-			table.Add(c5);
+			table.DataColumns.Add(c1);
+			table.DataColumns.Add(c2);
+			table.DataColumns.Add(c3);
+			table.DataColumns.Add(c4);
+			table.DataColumns.Add(c5);
 
 			table.SuspendDataChangedNotifications();
 
@@ -975,8 +975,8 @@ namespace Altaxo.Worksheet
 
 		public static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, TableController dg)
 		{
-			int rows = dg.Doc.RowCount;
-			int cols = dg.Doc.ColumnCount;
+			int rows = dg.Doc.DataColumns.RowCount;
+			int cols = dg.Doc.DataColumns.ColumnCount;
 
 			// reserve two arrays (one for real part, which is filled with the table contents)
 			// and the imaginary part - which is left zero here)
@@ -1027,7 +1027,7 @@ namespace Altaxo.Worksheet
 				for(int j=0;j<rows;j++)
 					col[j] = rePart[i*rows+j];
 				
-				table.Add(col);
+				table.DataColumns.Add(col);
 			}
 			table.ResumeDataChangedNotifications();
 			mainDocument.TableSet.Add(table);
@@ -1076,12 +1076,12 @@ namespace Altaxo.Worksheet
 					table.SuspendDataChangedNotifications();
 					for(int i=0;i<sizex;i++)
 					{
-						string colname = table.FindUniqueColumnName(i.ToString());
+						string colname = table.DataColumns.FindUniqueColumnName(i.ToString());
 						Altaxo.Data.DoubleColumn dblcol = new Altaxo.Data.DoubleColumn(colname);
 						for(int j=sizey-1;j>=0;j--)
 							dblcol[j] = colorfunc(bmp.GetPixel(i,j));
 
-						table.Add(dblcol); // Spalte hinzufügen
+						table.DataColumns.Add(dblcol); // Spalte hinzufügen
 					} // end for all x coordinaates
 
 					table.ResumeDataChangedNotifications();

@@ -115,6 +115,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				GraphObject s = (GraphObject)o;
 
 				s.m_Position = (PointF)info.GetValue("Position",s);  

@@ -138,8 +138,8 @@ namespace Altaxo
 
 				Altaxo.Data.DoubleColumn colB = new Altaxo.Data.DoubleColumn("B");
 
-				dt1.Add(colA);
-				dt1.Add(colB);
+				dt1.DataColumns.Add(colA);
+				dt1.DataColumns.Add(colB);
 			}
 
 			TableSet.Add(dt1);

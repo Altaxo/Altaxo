@@ -236,7 +236,7 @@ namespace Altaxo.Worksheet.GUI
 				return;
 			}
 
-			m_DataTable.ColumnScripts[m_DataColumn] = m_ColumnScript;
+			m_DataTable.DataColumns.ColumnScripts[m_DataColumn] = m_ColumnScript;
 			View.Form.DialogResult = System.Windows.Forms.DialogResult.OK;
 			View.Form.Close();
 		}
@@ -263,7 +263,7 @@ namespace Altaxo.Worksheet.GUI
 		public void EhView_Update()
 		{
 			m_ColumnScript.ScriptBody = View.FormulaText;
-			m_DataTable.ColumnScripts[m_DataColumn] = m_ColumnScript;
+			m_DataTable.DataColumns.ColumnScripts[m_DataColumn] = m_ColumnScript;
 			this.View.Form.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.View.Form.Close();
 		}

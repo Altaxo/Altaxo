@@ -140,6 +140,12 @@ namespace Altaxo.Serialization.Xml
 			
 		}
 
+		public void OpenInnerContent()
+		{
+			PushNodeStack();
+			m_CurrentNode = (XmlElement)m_CurrentNode.FirstChild;
+		}
+
 		public void OpenElement()
 		{
 			PushNodeStack();
@@ -241,6 +247,11 @@ namespace Altaxo.Serialization.Xml
 		{
 			return 0;
 		}
+		public int OpenInnerContentAsArray()
+		{
+			return OpenArray();
+		}
+
 		public void CloseArray(int count)
 		{
 		}

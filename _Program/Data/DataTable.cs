@@ -38,8 +38,16 @@ namespace Altaxo.Data
 	/// There is also a similar concept like metadata in database programs: Each column can have some property values associated with. The property values
 	/// are organized in property columns and can be retrieved by the <see cref="DataTable.PropCols"/> property of the table.</remarks>
 	[SerializationSurrogate(0,typeof(Altaxo.Data.DataTable.SerializationSurrogate0))]
-	[SerializationVersion(0)]
-	public class DataTable : DataColumnCollection, System.Runtime.Serialization.IDeserializationCallback, ICloneable
+	[SerializationSurrogate(1,typeof(Altaxo.Data.DataTable.SerializationSurrogate1))]
+	[SerializationVersion(1)]
+	public class DataTable 
+		:
+		System.Runtime.Serialization.IDeserializationCallback, 
+		ICloneable,
+		Altaxo.Main.IDocumentNode,
+		IDisposable,
+		Main.INamedObjectCollection,
+		Main.INameOwner
 		{
 		// Types
 		
@@ -63,6 +71,9 @@ namespace Altaxo.Data
 		/// type DoubleColumn.</remarks>
 		protected DataColumnCollection m_PropertyColumns = new DataColumnCollection();
 		
+
+		protected DataColumnCollection m_DataColumns = new DataColumnCollection();
+
 		// Helper Data
 
 		/// <summary>
@@ -117,6 +128,29 @@ namespace Altaxo.Data
 			}
 		}
 
+		public new class SerializationSurrogate1 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
+	
+				info.AddValue("Name",s.m_TableName); // name of the Table
+				info.AddValue("DataCols", s.DataColumns); // the data columns of that table
+				info.AddValue("PropCols", s.m_PropertyColumns); // the property columns of that table
+
+			}
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
+
+				s.m_TableName = info.GetString("Name");
+				s.m_DataColumns = (DataColumnCollection)info.GetValue("DataCols",typeof(DataColumnCollection));
+				s.m_PropertyColumns = (DataColumnCollection)info.GetValue("PropCols",typeof(DataColumnCollection));
+
+				return s;
+			}
+		}
+
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable),0)]
 		public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
@@ -124,7 +158,7 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
 				info.AddValue("Name",s.m_TableName); // name of the Table
-				info.AddBaseValueStandalone("DataCols",s,typeof(Altaxo.Data.DataColumnCollection));
+				info.AddValue("DataCols",s.m_DataColumns);
 				info.AddValue("PropCols", s.m_PropertyColumns); // the property columns of that table
 
 			}
@@ -132,18 +166,20 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DataTable s = null!=o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
 	
+				info.OpenInnerContent();
+
 				s.m_TableName = info.GetString("Name");
-				info.GetBaseValueStandalone("DataCols",s,typeof(Altaxo.Data.DataColumnCollection),s);
-				s.m_PropertyColumns = (DataColumnCollection)info.GetValue(s);
+				s.m_DataColumns = (DataColumnCollection)info.GetValue("DataCols",s);
+				s.m_PropertyColumns = (DataColumnCollection)info.GetValue("PropCols",s);
 
 				return s;
 			}
 		}
 
-		public override void OnDeserialization(object obj)
+		public virtual void OnDeserialization(object obj)
 		{
-			base.Parent = this;
-			base.OnDeserialization(obj);
+			//base.Parent = this;
+			//base.OnDeserialization(obj);
 
 			if(!m_Table_DeserializationFinished && obj is DeserializationFinisher)
 			{
@@ -152,6 +188,8 @@ namespace Altaxo.Data
 
 				// now inform the dependent objects
 				DeserializationFinisher finisher = new DeserializationFinisher(this);
+				this.m_DataColumns.Parent = this;
+				this.m_DataColumns.OnDeserialization(finisher);
 				this.m_PropertyColumns.Parent = this;
 				this.m_PropertyColumns.OnDeserialization(finisher);
 			}
@@ -162,31 +200,38 @@ namespace Altaxo.Data
 		public DataTable()
 			: base()
 		{
-			base.Parent = this;
 			this.m_TableName = null;
+			// base.Parent = this;
+			m_DataColumns.Parent = this;
 			m_PropertyColumns.Parent = this;
 		}
 
 		public DataTable(string name)
 			: base()
 		{
-			base.Parent = this;
+		
 			this.m_TableName = name;
+			// 	base.Parent = this;
+			m_DataColumns.Parent = this;
 			m_PropertyColumns.Parent = this;
 		}
 
 		public DataTable(Altaxo.Data.TableSet parent) : base()
 		{
-			base.Parent = this;
+			
 			this.m_ParentDataSet = parent;
+			// 	base.Parent = this;
+			m_DataColumns.Parent = this;
 			m_PropertyColumns.Parent = this;
 		}
 
 		public DataTable(Altaxo.Data.TableSet parent, string name) : base()
 		{
-			base.Parent = this;
+			
 			this.m_ParentDataSet = parent;
 			this.m_TableName = name;
+			// 	base.Parent = this;
+			m_DataColumns.Parent = this;
 			m_PropertyColumns.Parent = this;
 		}
   
@@ -195,17 +240,20 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="from">The data table to copy the structure from.</param>
 		public DataTable(DataTable from)
-			: base(from)
 		{
-			base.Parent = this;
+			
 			this.m_ParentDataSet = null; 
 			this.m_TableName = from.m_TableName;
+			// 	base.Parent = this;
+			this.m_DataColumns = (DataColumnCollection)from.m_DataColumns.Clone();
+			m_DataColumns.Parent = this;
+
 			this.m_PropertyColumns = (DataColumnCollection)from.m_PropertyColumns.Clone();
 			this.m_PropertyColumns.Parent = this; // set the parent of the cloned PropertyColumns
 		}
 
 	
-		public override object Clone()
+		public virtual object Clone()
 		{
 			return new DataTable(this);
 		}
@@ -216,12 +264,12 @@ namespace Altaxo.Data
 			set { m_ParentDataSet = value; }
 		}
 
-		public override object ParentObject
+		public virtual object ParentObject
 		{
 			get { return m_ParentDataSet; }
 		}
 
-		public override string Name
+		public virtual string Name
 		{
 			get { return m_TableName; }
 		}
@@ -229,7 +277,7 @@ namespace Altaxo.Data
 /// <summary>
 /// get or sets the name of the Table
 /// </summary>
-		public new string TableName
+		public string TableName
 		{
 			get
 			{
@@ -271,17 +319,36 @@ namespace Altaxo.Data
 		
 
 
-
-
-		public override void SuspendDataChangedNotifications()
+		public DataColumnCollection Col
 		{
-			base.SuspendDataChangedNotifications();
+			get { return m_DataColumns; }
+		}
+		public DataColumnCollection DataColumns
+		{
+			get { return m_DataColumns; }
+		}
+
+		public DataColumn this[int i]
+		{
+			get { return m_DataColumns[i]; }
+			set { m_DataColumns[i]=value; }
+		}
+		public DataColumn this[string name]
+		{
+			get { return m_DataColumns[name]; }
+			set { m_DataColumns[name]=value; }
+		}
+
+
+		public virtual void SuspendDataChangedNotifications()
+		{
+			m_DataColumns.SuspendDataChangedNotifications();
 			m_PropertyColumns.SuspendDataChangedNotifications();
 		}
 
-		public override void ResumeDataChangedNotifications()
+		public virtual void ResumeDataChangedNotifications()
 		{
-			base.ResumeDataChangedNotifications();
+			m_DataColumns.ResumeDataChangedNotifications();
 			m_PropertyColumns.ResumeDataChangedNotifications();
 		}
 
@@ -294,40 +361,97 @@ namespace Altaxo.Data
 		}
 
 
-			public override bool IsDirty
+		/// <summary>
+		/// Transpose transpose the table, i.e. exchange columns and rows
+		/// this can only work if all columns in the table are of the same type
+		/// </summary>
+		/// <returns>null if succeeded, error string otherwise</returns>
+		public virtual string Transpose()
+		{
+			// TODO: do also look at the property columns for transposing
+			m_DataColumns.Transpose();
+
+			return null; // no error message
+		}
+
+
+			public virtual bool IsDirty
 			{
 				get
 				{
-					return base.IsDirty | m_PropertyColumns.IsDirty;
+					return m_DataColumns.IsDirty | m_PropertyColumns.IsDirty;
 				}
 				set
 				{
-					base.IsDirty = value;
+					m_DataColumns.IsDirty = value;
 					m_PropertyColumns.IsDirty = value;
 				}
 			}
 
 
-		public override void Add(int idx, Altaxo.Data.DataColumn datac)
+		public virtual void Add(int idx, Altaxo.Data.DataColumn datac)
 		{
 			SuspendDataChangedNotifications();
 			
-			base.Add(idx,datac); // add the column to the collection
+			m_DataColumns.Add(idx,datac); // add the column to the collection
 			m_PropertyColumns.InsertRows(idx,1); // but now we have to insert a additional property row at exactly the new position of the column
 
 			ResumeDataChangedNotifications();
 		}
 
 
-		public override void RemoveColumns(int nFirstColumn, int nDelCount)
+		public virtual void RemoveColumns(int nFirstColumn, int nDelCount)
 		{
 	
 			SuspendDataChangedNotifications();
 			
-			base.RemoveColumns(nFirstColumn, nDelCount); // remove the columns from the collection
+			m_DataColumns.RemoveColumns(nFirstColumn, nDelCount); // remove the columns from the collection
 			m_PropertyColumns.RemoveRows(nFirstColumn, nDelCount); // remove also the corresponding rows from the Properties
 
 			ResumeDataChangedNotifications();
+		}
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			m_DataColumns.Dispose();
+			m_PropertyColumns.Dispose();
+		}
+
+		#endregion
+
+		/// <summary>
+		/// retrieves the object with the name <code>name</code>.
+		/// </summary>
+		/// <param name="name">The objects name.</param>
+		/// <returns>The object with the specified name.</returns>
+		public object GetChildObjectNamed(string name)
+		{
+			switch(name)
+			{
+				case "DataCols":
+					return m_DataColumns;
+				case "PropCols":
+					return this.m_PropertyColumns;
+			}
+		return null;
+		}
+
+		/// <summary>
+		/// Retrieves the name of the provided object.
+		/// </summary>
+		/// <param name="o">The object for which the name should be found.</param>
+		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
+		public string GetNameOfChildObject(object o)
+		{
+			if(o==null)
+				return null;
+			else if(o.Equals(m_DataColumns))
+				return "DataCols";
+			else if(o.Equals(m_PropertyColumns))
+				return "PropCols";
+			else
+				return null;
 		}
 	} // end class Altaxo.Data.DataTable
 	

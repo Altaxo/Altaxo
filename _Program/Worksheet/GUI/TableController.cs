@@ -963,7 +963,7 @@ namespace Altaxo.Worksheet
 
 			//Data.ColumnScript colScript = (Data.ColumnScript)altaxoDataGrid1.columnScripts[dataCol];
 
-			Data.ColumnScript colScript = this.DataTable.ColumnScripts[dataCol];
+			Data.ColumnScript colScript = this.DataTable.DataColumns.ColumnScripts[dataCol];
 
 			Altaxo.Gui.DialogFactory.ShowColumnScriptDialog(this.View.TableViewForm,this.DataTable,dataCol,colScript);
 
@@ -1014,7 +1014,7 @@ namespace Altaxo.Worksheet
 
 				if(m_Col.ColumnName==name)
 					return null;
-				else if(m_Ctrl.Doc.ContainsColumn(name))
+				else if(m_Ctrl.Doc.DataColumns.ContainsColumn(name))
 					return "This column name already exists, please choose another name!";
 				else
 					return null;
@@ -1178,16 +1178,16 @@ namespace Altaxo.Worksheet
 			{
 				if(null!=m_Table)
 				{
-					m_Table.FireDataChanged -= new Altaxo.Data.DataTable.OnDataChanged(this.OnTableDataChanged);
-					m_Table.PropCols.FireDataChanged -= new Altaxo.Data.DataTable.OnDataChanged(this.OnPropertyDataChanged);
+					m_Table.DataColumns.FireDataChanged -= new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnTableDataChanged);
+					m_Table.PropCols.FireDataChanged -= new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnPropertyDataChanged);
 					m_Table.TableNameChanged -= new EventHandler(this.OnTableNameChanged);
 				}
 
 				m_Table = value;
 				if(null!=m_Table)
 				{
-					m_Table.FireDataChanged += new Altaxo.Data.DataTable.OnDataChanged(this.OnTableDataChanged);
-					m_Table.PropCols.FireDataChanged += new Altaxo.Data.DataTable.OnDataChanged(this.OnPropertyDataChanged);
+					m_Table.DataColumns.FireDataChanged += new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnTableDataChanged);
+					m_Table.PropCols.FireDataChanged += new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnPropertyDataChanged);
 					m_Table.TableNameChanged -= new EventHandler(this.OnTableNameChanged);
 					this.SetCachedNumberOfDataColumns();
 					this.SetCachedNumberOfDataRows();
@@ -1299,14 +1299,14 @@ namespace Altaxo.Worksheet
 					}
 					else
 					{
-						this.DataTable.DeleteRows(begin,end-begin);
+						this.DataTable.DataColumns.DeleteRows(begin,end-begin);
 						begin=idx;
 						end=idx+1;
 					}
 				} // end for
 				// the last index must also be deleted, if not done already
 				if(begin>=0 && end>=0)
-					this.DataTable.DeleteRows(begin,end-begin);
+					this.DataTable.DataColumns.DeleteRows(begin,end-begin);
 
 
 				this.m_SelectedRows.Clear(); // now the columns are deleted, so they cannot be selected
@@ -1413,10 +1413,10 @@ namespace Altaxo.Worksheet
 		#region Data event handlers
 		public void OnTableDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow)
 		{
-			if(this.m_NumberOfTableRows!=DataTable.RowCount)
+			if(this.m_NumberOfTableRows!=DataTable.DataColumns.RowCount)
 				this.SetCachedNumberOfDataRows();
 			
-			if(this.m_NumberOfTableCols!=DataTable.ColumnCount)
+			if(this.m_NumberOfTableCols!=DataTable.DataColumns.ColumnCount)
 				this.SetCachedNumberOfDataColumns();
 		}
 
@@ -1450,9 +1450,9 @@ namespace Altaxo.Worksheet
 		{
 			// ask for table dimensions, compare with cached dimensions
 			// and adjust the scroll bars appropriate
-			if(DataTable.ColumnCount != this.m_NumberOfTableCols)
+			if(DataTable.DataColumns.ColumnCount != this.m_NumberOfTableCols)
 			{
-				this.m_NumberOfTableCols = DataTable.ColumnCount;
+				this.m_NumberOfTableCols = DataTable.DataColumns.ColumnCount;
 				AdjustXScrollBarMaximum();
 			}
 
@@ -1465,9 +1465,9 @@ namespace Altaxo.Worksheet
 			// and adjust the scroll bars appropriate
 			int nOldDataRows = this.m_NumberOfTableRows;
 
-			if(DataTable.RowCount != nOldDataRows)
+			if(DataTable.DataColumns.RowCount != nOldDataRows)
 			{
-				this.m_NumberOfTableRows = DataTable.RowCount;
+				this.m_NumberOfTableRows = DataTable.DataColumns.RowCount;
 				AdjustYScrollBarMaximum();
 			}
 
@@ -1663,7 +1663,7 @@ namespace Altaxo.Worksheet
 
 			// Calculate the position of the new cell		
 			int newCellCol = this.m_CellEdit_EditedCell.Column + dx;
-			if(newCellCol>=DataTable.ColumnCount)
+			if(newCellCol>=DataTable.DataColumns.ColumnCount)
 			{
 				newCellCol=0;
 				dy+=1;
@@ -1672,7 +1672,7 @@ namespace Altaxo.Worksheet
 			{
 				if(this.m_CellEdit_EditedCell.Row>0) // move to the last cell only if not on cell 0
 				{
-					newCellCol=DataTable.ColumnCount-1;
+					newCellCol=DataTable.DataColumns.ColumnCount-1;
 					dy-=1;
 				}
 				else
@@ -1750,7 +1750,7 @@ namespace Altaxo.Worksheet
 			int newCellCol = this.m_CellEdit_EditedCell.Column + dy;
 			if(newCellCol>=DataTable.PropCols.ColumnCount)
 			{
-				if(m_CellEdit_EditedCell.Row+1<DataTable.ColumnCount)
+				if(m_CellEdit_EditedCell.Row+1<DataTable.DataColumns.ColumnCount)
 				{
 					newCellCol=0;
 					dx+=1;
@@ -1775,7 +1775,7 @@ namespace Altaxo.Worksheet
 			}
 
 			int newCellRow = m_CellEdit_EditedCell.Row + dx;
-			if(newCellRow>=DataTable.ColumnCount)
+			if(newCellRow>=DataTable.DataColumns.ColumnCount)
 			{
 				if(newCellCol+1<DataTable.PropCols.ColumnCount) // move to the first cell only if not on the very last cell
 				{
@@ -1784,7 +1784,7 @@ namespace Altaxo.Worksheet
 				}
 				else // we where on the last cell
 				{
-					newCellRow=DataTable.ColumnCount-1;
+					newCellRow=DataTable.DataColumns.ColumnCount-1;
 					newCellCol=DataTable.PropCols.ColumnCount-1;
 				}
 			}
@@ -1792,7 +1792,7 @@ namespace Altaxo.Worksheet
 			{
 				if(this.m_CellEdit_EditedCell.Column>0) // move to the last cell only if not on cell 0
 				{
-					newCellRow=DataTable.ColumnCount-1;
+					newCellRow=DataTable.DataColumns.ColumnCount-1;
 					newCellCol-=1;
 				}
 				else
@@ -2758,7 +2758,7 @@ namespace Altaxo.Worksheet
 				this.m_CachedWidth = dg.TableAreaWidth;
 				dg.m_LastFullyVisibleColumn = dg.FirstVisibleColumn;
 
-				for(int i=dg.FirstVisibleColumn;i<dg.DataTable.ColumnCount && actualColumnLeft<this.m_CachedWidth;i++)
+				for(int i=dg.FirstVisibleColumn;i<dg.DataTable.DataColumns.ColumnCount && actualColumnLeft<this.m_CachedWidth;i++)
 				{
 					actualColumnLeft = actualColumnRight;
 					Altaxo.Worksheet.ColumnStyle cs = dg.GetColumnStyle(i);
@@ -2846,7 +2846,7 @@ namespace Altaxo.Worksheet
 			{
 				int firstVisibleColumn = dg.FirstVisibleColumn;
 				int actualColumnRight = dg.m_RowHeaderStyle.Width;
-				int columnCount = dg.DataTable.ColumnCount;
+				int columnCount = dg.DataTable.DataColumns.ColumnCount;
 
 				if(mouseCoord.X<actualColumnRight)
 				{
@@ -2881,7 +2881,7 @@ namespace Altaxo.Worksheet
 			{
 				int firstVisibleColumn = dg.FirstVisibleColumn;
 				int actualColumnRight = dg.m_RowHeaderStyle.Width;
-				int columnCount = dg.DataTable.ColumnCount;
+				int columnCount = dg.DataTable.DataColumns.ColumnCount;
 
 				if(mouseCoord.Y<dg.m_ColumnHeaderStyle.Height)
 				{

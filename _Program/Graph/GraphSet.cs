@@ -193,9 +193,20 @@ namespace Altaxo.Graph
 				Changed(this,System.EventArgs.Empty);
 		}
 
-		public object GetObjectNamed(string name)
+		public object GetChildObjectNamed(string name)
 		{
 			return m_GraphsByName[name];
+		}
+
+		public string GetNameOfChildObject(object o)
+		{
+			if(o is GraphDocument)
+			{
+				GraphDocument gr = (GraphDocument)o;
+				if(m_GraphsByName.ContainsKey(gr.Name))
+					return gr.Name;
+			}
+			return null;
 		}
 
 		#region IChangedEventSource Members

@@ -32,7 +32,11 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(XYLayerAxisStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class XYLayerAxisStyle : System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, ICloneable
+	public class XYLayerAxisStyle
+		: 
+		System.Runtime.Serialization.IDeserializationCallback,
+		IChangedEventSource,
+		ICloneable
 	{
 		/// <summary>Edge of the layer this axis is drawn on.</summary>
 		protected Edge m_Edge = new Edge(EdgeType.Left);
@@ -136,6 +140,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				XYLayerAxisStyle s = null!=o ? (XYLayerAxisStyle)o : new XYLayerAxisStyle();
 				
 				s.m_Edge         = (Edge)info.GetValue("Edge",s);

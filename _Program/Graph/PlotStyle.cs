@@ -29,8 +29,10 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Summary description for PlotStyle.
 	/// </summary>
-	public abstract class PlotStyle : ICloneable
+	public abstract class PlotStyle : ICloneable, Main.IDocumentNode
 	{
+		protected object m_Parent;
+
 		public static Color[] PlotColors = 
 			{
 				Color.Black,
@@ -99,6 +101,24 @@ namespace Altaxo.Graph
 			get { return false; }
 			set { }
 		}
+		#region IDocumentNode Members
+
+		public object ParentObject
+		{
+			get	{ return m_Parent;	}
+			set { m_Parent = value; }
+		}
+
+		public string Name
+		{
+			get
+			{
+				Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
+				return noc==null ? null : noc.GetNameOfChildObject(this);
+			}
+		}
+
+		#endregion
 	} // end of interface PlotStyle
 
 
@@ -165,6 +185,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				LineScatterPlotStyle s = null!=o ? (LineScatterPlotStyle)o : new LineScatterPlotStyle();
 				// do not use settings lie s.LineStyle= here, since the LineStyle is cloned, but maybe not fully deserialized here!!!
 				s.LineStyle = (LineStyle)info.GetValue("LineStyle",typeof(LineStyle));

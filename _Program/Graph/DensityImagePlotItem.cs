@@ -31,7 +31,10 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(DensityImagePlotItem.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class DensityImagePlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback
+	public class DensityImagePlotItem 
+		:
+		PlotItem, 
+		System.Runtime.Serialization.IDeserializationCallback
 	{
 		protected D2EquidistantMeshDataAssociation m_PlotAssociation;
 		protected DensityImagePlotStyle       m_PlotStyle;
@@ -84,6 +87,7 @@ namespace Altaxo.Graph
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
 
+				info.OpenInnerContent();
 				D2EquidistantMeshDataAssociation pa = (D2EquidistantMeshDataAssociation)info.GetValue("Data",o);
 				DensityImagePlotStyle ps = (DensityImagePlotStyle)info.GetValue("Style",o);
 

@@ -115,6 +115,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				TextGraphObject s = null!=o ? (TextGraphObject)o : new TextGraphObject(); 
 				info.GetBaseValueEmbedded(s,typeof(TextGraphObject).BaseType,parent);
 
@@ -474,6 +475,7 @@ namespace Altaxo.Graph
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 		{
+			info.OpenInnerContent();
 			string val = info.GetString("Value");
 			return System.Enum.Parse(typeof(BackgroundStyle),val,true);
 		}
@@ -500,6 +502,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				string val = info.GetString("Value");
 				return System.Enum.Parse(typeof(XAnchorPositionType),val,true);
 			}
@@ -515,6 +518,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				string val = info.GetString("Value");
 				return System.Enum.Parse(typeof(YAnchorPositionType),val,true);
 			}
@@ -637,6 +641,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				ExtendedTextGraphObject s = null!=o ? (ExtendedTextGraphObject)o : new ExtendedTextGraphObject(); 
 				info.GetBaseValueEmbedded(s,typeof(ExtendedTextGraphObject).BaseType,parent);
 

@@ -45,7 +45,8 @@ namespace Altaxo.Graph
 		System.Runtime.Serialization.IDeserializationCallback,
 		System.ICloneable,
 		IChangedEventSource,
-		Main.IDocumentNode	
+		Main.IDocumentNode,
+		Main.INameOwner
 	{
 
 		/// <summary>
@@ -140,20 +141,27 @@ namespace Altaxo.Graph
 			{
 				GraphDocument s = (GraphDocument)obj;
 
-				info.AddBaseValueEmbedded(s,typeof(GraphDocument).BaseType);
+				// info.AddBaseValueEmbedded(s,typeof(GraphDocument).BaseType);
 				// now the data of our class
+				info.AddValue("Name",s.m_Name);
 				info.AddValue("PageBounds",s.m_PageBounds);
 				info.AddValue("PrintableBounds",s.m_PrintableBounds);
+				info.AddValue("Layers",s.m_Layers);
 
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				GraphDocument s = null!=o ? (GraphDocument)o : new GraphDocument();
 
-				info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
-
+			//	info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
+				s.m_Name            =  info.GetString("Name"); 
 				s.m_PageBounds			= (RectangleF)info.GetValue("PageBounds",s);
 				s.m_PrintableBounds = (RectangleF)info.GetValue("PrintableBounds",s);
+
+				s.m_Layers          = (Layer.LayerCollection)info.GetValue("Layers",s);
+				s.m_Layers.ParentObject = s;
+
 
 				return s;
 			}
@@ -201,7 +209,7 @@ namespace Altaxo.Graph
 				{
 					// test if an object with this name is already in the parent
 					Altaxo.Main.INamedObjectCollection parentColl = ParentObject as Altaxo.Main.INamedObjectCollection;
-					if(null!=parentColl && null!=parentColl.GetObjectNamed(value))
+					if(null!=parentColl && null!=parentColl.GetChildObjectNamed(value))
 						throw new ApplicationException(string.Format("The graph {0} can not be renamed to {1}, since another graph with the same name already exists",this.Name,value));
 
 					string oldValue = m_Name;

@@ -49,7 +49,7 @@ namespace Altaxo.Data
 			: base(name)
 	{
 	}
-		public DateTimeColumn(DataTable parenttable, string name)
+		public DateTimeColumn(DataColumnCollection parenttable, string name)
 			: base(parenttable,name)
 	{
 	}
@@ -139,6 +139,8 @@ namespace Altaxo.Data
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
 				Altaxo.Data.DateTimeColumn s = null!=o ? (Altaxo.Data.DateTimeColumn)o : new Altaxo.Data.DateTimeColumn();
+				
+				info.OpenInnerContent();
 
 				// deserialize the base class
 				info.GetBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn),parent);

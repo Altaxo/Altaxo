@@ -50,6 +50,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				PlotRange s = null!=o ? (PlotRange)o : new PlotRange(0,0);
 				
 				s.m_LowerBound = info.GetInt32("LowerBound");
@@ -128,6 +129,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				string val = info.GetString("Value");
 				return System.Enum.Parse(typeof(FillDirection),val,true);
 			}
@@ -156,6 +158,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				string val = info.GetString("Value");
 				return System.Enum.Parse(typeof(ConnectionStyle),val,true);
 			}
@@ -251,6 +254,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				LineStyle s = null!=o ? (LineStyle)o : new LineStyle();
 
 				s.m_PenHolder = (PenHolder)info.GetValue("Pen",typeof(PenHolder));  

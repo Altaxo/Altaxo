@@ -32,8 +32,16 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(DensityImagePlotStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class DensityImagePlotStyle : System.ICloneable, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
+	public class DensityImagePlotStyle 
+		:
+		System.ICloneable, 
+		System.Runtime.Serialization.IDeserializationCallback, 
+		IChangedEventSource,
+		Main.IDocumentNode
 	{
+
+
+			protected object m_Parent;
 
 			/// <summary>
 			/// The image which is shown during paint.
@@ -93,6 +101,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				DensityImagePlotStyle s = null!=o ? (DensityImagePlotStyle)o : new DensityImagePlotStyle();
 
 				// Nothing to deserialize in the moment
@@ -265,6 +274,22 @@ namespace Altaxo.Graph
 		}
 
 		#endregion
+
+		public virtual object ParentObject
+		{
+			get { return m_Parent; }
+			set { m_Parent = value; }
+		}
+
+		public virtual string Name
+		{
+			get
+			{
+				Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
+				return null==noc ? null : noc.GetNameOfChildObject(this);
+			}
+		}
+
 
 	} // end of class DensityImagePlotStyle
 }

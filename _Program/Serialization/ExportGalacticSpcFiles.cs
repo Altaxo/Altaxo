@@ -146,7 +146,7 @@ namespace Altaxo.Serialization.Galactic
 			if(this.m_CreateSpectrumFrom==Options.CreateSpectrumFrom.Row)
 				colcol = m_Table.PropCols;
 			else
-				colcol = m_Table;
+				colcol = m_Table.DataColumns;
 
 			// count the number of numeric columns
 			int numnumeric=0;
@@ -174,7 +174,7 @@ namespace Altaxo.Serialization.Galactic
 		{
 			Altaxo.Data.DataColumnCollection colcol;
 			if(this.m_CreateSpectrumFrom==Options.CreateSpectrumFrom.Row)
-				colcol = m_Table;
+				colcol = m_Table.DataColumns;
 			else
 				colcol = m_Table.PropCols;
 
@@ -314,7 +314,7 @@ namespace Altaxo.Serialization.Galactic
 
 				int i,j;
 				bool bUseRowSel = (null!=m_SelectedRows && this.m_SelectedRows.Count>0);
-				int numOfSpectra = bUseRowSel ? m_SelectedRows.Count : m_Table.RowCount;
+				int numOfSpectra = bUseRowSel ? m_SelectedRows.Count : m_Table.DataColumns.RowCount;
 
 				for(j=0;j<numOfSpectra;j++)
 				{
@@ -472,7 +472,7 @@ namespace Altaxo.Serialization.Galactic
 
 			// test that all x and y cells have numeric values
 			bool bUseSel = null!=selectedColumns && selectedColumns.Count>0;
-			int spectrumlen = (bUseSel)? selectedColumns.Count : table.ColumnCount ;
+			int spectrumlen = (bUseSel)? selectedColumns.Count : table.DataColumns.ColumnCount ;
 
 			int i,j;
 

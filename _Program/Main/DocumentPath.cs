@@ -1,0 +1,196 @@
+using System;
+
+namespace Altaxo.Main
+{
+	/// <summary>
+	/// DocumentPath holds a path to a document
+	/// </summary>
+	public class DocumentPath : System.Collections.Specialized.StringCollection
+	{
+		
+		#region Serialization
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocumentPath),0)]
+		public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				DocumentPath s = (DocumentPath)obj;
+				info.AddAttributeValue("Count",s.Count);
+				for(int i=0;i<s.Count;i++)
+					info.AddValue("e",s[i]);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				DocumentPath s = null!=o ? (DocumentPath)o : new DocumentPath();
+				int count = info.OpenInnerContentAsArray();
+				for(int i=0;i<count;i++)
+					s.Add(info.GetString());
+				return s;
+			}
+		}
+
+		#endregion
+		
+		public DocumentPath()
+		{
+		}
+
+		#region static navigation methods
+
+		/// <summary>
+		/// Get the root node of the node <code>node</code>. The root node is defined as last node in the hierarchie that
+		/// either has not implemented the <see cref="IDocumentNode"/> interface or has no parent.
+		/// </summary>
+		/// <param name="node">The node from where the search begins.</param>
+		/// <returns>The root node, i.e. the last node in the hierarchie that
+		/// either has not implemented the <see cref="IDocumentNode"/> interface or has no parent</returns>
+		public static object GetRootNode(IDocumentNode node)
+		{
+			object root = node.ParentObject;
+			while(root!= null && root is IDocumentNode)
+				root = ((IDocumentNode)root).ParentObject;
+			
+			return root;
+		}
+
+		/// <summary>
+		/// Get the first parent node of the node <code>node</code> that implements the given type <code>type.</code>.
+		/// </summary>
+		/// <param name="node">The node from where the search begins.</param>
+		/// <param name="type">The type to search for.</param>
+		/// <returns>The first parental node that implements the type <code>type.</code>
+		/// </returns>
+		public static object GetRootNodeImplementing(IDocumentNode node, System.Type type)
+		{
+			object root = node.ParentObject;
+			while(root!= null && root is IDocumentNode && !type.IsInstanceOfType(root))
+				root = ((IDocumentNode)root).ParentObject;
+			
+			return type.IsInstanceOfType(root) ? root : null;
+		}
+
+
+		/// <summary>
+		/// Get the absolute path of the node <code>node</code> starting from the root.
+		/// </summary>
+		/// <param name="node">The node for which the path is retrieved.</param>
+		/// <returns>The absolute path of the node. The first element is a "/" to mark this as absolute path.</returns>
+		public static DocumentPath GetAbsolutePath(IDocumentNode node)
+		{
+			DocumentPath path = GetPath(node,int.MaxValue);
+			path.Insert(0,"/");
+			return path;
+		}
+
+		/// <summary>
+		/// Get the absolute path of the node <code>node>/code> starting either from the root, or from the object in the depth
+		/// <code>maxDepth</code>, whatever is reached first.
+		/// </summary>
+		/// <param name="node">The node for which the path is to be retrieved.</param>
+		/// <param name="maxDepth">The maximal hierarchie depth (the maximal number of path elements returned).</param>
+		/// <returns>The path from the root or from the node in the depth <code>maxDepth</code>, whatever is reached first. The path is <b>not</b> prepended
+		/// by a "/".
+		/// </returns>
+		public static DocumentPath GetPath(IDocumentNode node, int maxDepth)
+		{
+			DocumentPath path = new DocumentPath();
+			
+			int depth=0;
+			object root = node;
+			while(root!= null && root is IDocumentNode)
+			{
+				if(depth>=maxDepth)
+					break;
+
+				string name = ((IDocumentNode)root).Name;
+				path.Insert(0,name);
+				root = ((IDocumentNode)root).ParentObject;
+				++depth;
+			}
+
+			return path;
+		}
+
+
+		/// <summary>
+		/// Retrieves the relative path from the node <code>startnode</code> to the node <code>endnode</code>.
+		/// </summary>
+		/// <param name="startnode">The node where the path begins.</param>
+		/// <param name="endnode">The node where the path ends.</param>
+		/// <returns>If the two nodes share a common root, the function returns the relative path from <code>startnode</code> to <code>endnode</code>.
+		/// If the nodes have no common root, then the function returns the absolute path of the endnode.</returns>
+		public static DocumentPath GetRelativePathFromTo(IDocumentNode startnode, IDocumentNode endnode)
+		{
+			return GetRelativePathFromTo(startnode,endnode,null);
+		}
+
+
+		/// <summary>
+		/// Retrieves the relative path from the node <code>startnode</code> to the node <code>endnode</code>.
+		/// </summary>
+		/// <param name="startnode">The node where the path begins.</param>
+		/// <param name="endnode">The node where the path ends.</param>
+		/// <param name="stoppernode">A object which is used as stopper. If the relative path would step down below this node in the hierarchie,
+		/// not the relative path, but the absolute path of the endnode is returned. This is usefull for instance for serialization purposes.You can set the stopper node
+		/// to the root object of serialization, so that path in the inner of the serialization tree are relative paths, whereas paths to objects not includes in the
+		/// serialization tree are returned as absolute paths. The stoppernode can be null.</param>
+		/// <returns>If the two nodes share a common root, the function returns the relative path from <code>startnode</code> to <code>endnode</code>.
+		/// If the nodes have no common root, then the function returns the absolute path of the endnode.</returns>
+		public static DocumentPath GetRelativePathFromTo(IDocumentNode startnode, IDocumentNode endnode, object stoppernode)
+		{
+			System.Collections.Hashtable hash = new System.Collections.Hashtable();
+
+
+			// store the complete hierarchie of objects as keys in the hash, (values are the hierarchie depth)
+			int endnodedepth=0;
+			object root = endnode;
+			while(root!= null && root is IDocumentNode)
+			{
+				hash.Add(root,endnodedepth);
+				root = ((IDocumentNode)root).ParentObject;
+				++endnodedepth;
+			}
+
+			// the whole endnode hierarchie is now in the hash, now look to find the first node starting from startnode, which has the same root
+			// i.e. which is contained in the hash table
+
+			int startnodedepth=0;
+			root = startnode;
+			while(root!=null && root is IDocumentNode)
+			{
+				if(hash.ContainsKey(root))
+				{
+					endnodedepth = (int)hash[root]; // the depth of the endnode to this root
+					break;
+				}
+
+				if(root.Equals(stoppernode)) // stop also if the stopper node is reached
+				{
+					break;
+				}
+
+				root = ((IDocumentNode)root).ParentObject;
+				++startnodedepth;
+			}
+
+
+			if(!hash.ContainsKey(root))
+			{
+				return GetAbsolutePath(endnode); // no common root -> return AbsolutePath
+			}
+			else
+			{
+				DocumentPath path;
+				path = GetPath(endnode,endnodedepth); // path of endnode depth
+				for(int i=0;i<startnodedepth;i++)
+					path.Insert(0,".."); // insert "root dir entries" 
+
+				return path;
+			}
+
+		}
+		#endregion
+
+
+	}
+}

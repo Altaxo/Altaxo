@@ -50,6 +50,7 @@ namespace Altaxo.Calc
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				bool rel = info.GetBoolean("IsRelative");
 				double val = info.GetDouble("Value");
 				return new RelativeOrAbsoluteValue(val,rel);

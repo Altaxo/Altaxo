@@ -202,7 +202,7 @@ namespace Altaxo.Serialization.Galactic
 
 						for(int i=0;i<xvalues.Length;i++)
 							xcol[i] = xvalues[i];
-						table.Add(xcol);
+						table.DataColumns.Add(xcol);
 					}
 					else // xcol was set before - so check the outcoming xvalues now that they match the xcols of the first imported spcfile
 					{
@@ -230,7 +230,7 @@ namespace Altaxo.Serialization.Galactic
 					ycol.ColumnName = filename;
 					for(int i=0;i<yvalues.Length;i++)
 						ycol[i] = yvalues[i];
-					table.Add(ycol);
+					table.DataColumns.Add(ycol);
 				} // foreache file
 
 				if(errorList.Length>0)

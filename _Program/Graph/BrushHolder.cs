@@ -37,6 +37,7 @@ namespace Altaxo.Graph
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 		{
+			info.OpenInnerContent();
 			string val = info.GetString("Value");
 			return System.Enum.Parse(typeof(BrushType),val,true);
 		}
@@ -133,6 +134,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				BrushHolder s = null!=o ? (BrushHolder)o : new BrushHolder(Color.Black);
 
 				s.m_BrushType  = (BrushType)info.GetValue("Type",s);

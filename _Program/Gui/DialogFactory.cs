@@ -54,7 +54,7 @@ namespace Altaxo.Gui
 				{
 					for(int i=0;i<ct.IntegerValue;i++)
 					{
-						table.Add((Altaxo.Data.DataColumn)Activator.CreateInstance(columntype));
+						table.DataColumns.Add((Altaxo.Data.DataColumn)Activator.CreateInstance(columntype));
 					}
 				}
 

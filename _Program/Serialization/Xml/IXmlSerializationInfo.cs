@@ -52,6 +52,11 @@ namespace Altaxo.Serialization.Xml
 
 	
 
+		/// <summary>
+		/// Used to start deserialization of a class. Procceeds from the object node to the interior of the node.
+		/// </summary>
+		void OpenInnerContent();
+		int OpenInnerContentAsArray();
 
 		void OpenElement();
 		void CloseElement();

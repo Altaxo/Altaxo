@@ -33,7 +33,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(Layer.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class Layer : System.Runtime.Serialization.IDeserializationCallback, System.ICloneable
+	public class Layer : System.Runtime.Serialization.IDeserializationCallback, System.ICloneable, Altaxo.Main.IDocumentNode
 	{
 		#region Enumerations
 
@@ -68,6 +68,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				string val = info.GetString("Value");
 				return System.Enum.Parse(typeof(SizeType),val,true);
 			}
@@ -144,6 +145,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				string val = info.GetString("Value");
 				return System.Enum.Parse(typeof(PositionType),val,true);
 			}
@@ -177,6 +179,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				string val = info.GetString("Value");
 				return System.Enum.Parse(typeof(AxisLinkType),val,true);
 			}
@@ -631,6 +634,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				Layer s = null!=o ? (Layer)o : new Layer();
 
 				// Layer style
@@ -2444,6 +2448,27 @@ namespace Altaxo.Graph
 		
 		#endregion
 
+		#region IDocumentNode Members
+
+		public object ParentObject
+		{
+			get
+			{
+				// TODO:  Add Layer.ParentObject getter implementation
+				return this.m_ParentLayerCollection;
+			}
+		}
+
+		public string Name
+		{
+			get
+			{
+				return "L"+this.Number.ToString();
+			}
+		}
+
+		#endregion
+
 		#region Inner classes
 
 		/// <summary>
@@ -2511,17 +2536,16 @@ namespace Altaxo.Graph
 				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 				{
 					LayerCollection s = (LayerCollection)obj;
-					info.CreateArray("Layers",s.Count);
+					info.AddAttributeValue("Count",s.Count);
 					for(int i=0;i<s.Count;i++)
 						info.AddValue("Layer",s[i]);
-					info.CommitArray();
+					
 
 				}
 				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 				{
 					LayerCollection s = null!=o ? (LayerCollection)o : new LayerCollection();
-
-					int count = info.OpenArray();
+					int count = info.OpenInnerContentAsArray();				
 					for(int i=0;i<count;i++)
 					{
 						Layer l = (Layer)info.GetValue("Layer",s);
@@ -2771,5 +2795,7 @@ namespace Altaxo.Graph
 	
 	
 		#endregion // Inner classes
+
+	
 	}
 }

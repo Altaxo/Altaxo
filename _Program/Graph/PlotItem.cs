@@ -31,8 +31,19 @@ namespace Altaxo.Graph
 	/// PlotItem holds the pair of data and style neccessary to plot a curve, function,
 	/// surface and so on.  
 	/// </summary>
-	public abstract class  PlotItem : IChangedEventSource, System.ICloneable
+	public abstract class  PlotItem
+		:
+		IChangedEventSource,
+		System.ICloneable,
+		Main.IDocumentNode,
+		Main.INamedObjectCollection
 	{
+
+		/// <summary>
+		/// The parent object.
+		/// </summary>
+		protected object m_Parent;
+
 		/// <summary>
 		/// Get/sets the data object of this plot.
 		/// </summary>
@@ -64,6 +75,22 @@ namespace Altaxo.Graph
 		/// <returns>The cloned copy of this object.</returns>
 		/// <remarks>The data (DataColumns which belongs to a table in the document's TableSet) are not cloned, only the reference to this columns is cloned.</remarks>
 		public abstract object Clone();
+
+
+		public virtual object ParentObject
+		{
+			get { return m_Parent; }
+			set { m_Parent = value; }
+		}
+
+		public virtual string Name
+		{
+			get
+			{
+				Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
+				return noc==null ? null : noc.GetNameOfChildObject(this);
+			}
+		}
 
 		/// <summary>
 		/// Fired if the data object changed or something inside the data object changed
@@ -132,6 +159,41 @@ namespace Altaxo.Graph
 		{
 			OnStyleChanged();
 		}
+
+			/// <summary>
+			/// retrieves the object with the name <code>name</code>.
+			/// </summary>
+			/// <param name="name">The objects name.</param>
+			/// <returns>The object with the specified name.</returns>
+		public virtual object GetChildObjectNamed(string name)
+		{
+			switch(name)
+			{
+				case "Data":
+					return this.Data;
+				case "Style":
+					return this.Style;
+			}
+			return null;
+		}
+
+			/// <summary>
+			/// Retrieves the name of the provided object.
+			/// </summary>
+			/// <param name="o">The object for which the name should be found.</param>
+			/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
+		public virtual string GetNameOfChildObject(object o)
+		{
+			if(o==null)
+				return null;
+			else if(o.Equals(this.Data))
+				return "Data";
+			else if(o.Equals(this.Style))
+				return "Style";
+			else
+				return null;
+		}
+
 	} // end of class PlotItem
 
 
@@ -192,6 +254,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				PlotAssociation pa = (PlotAssociation)info.GetValue("Data",typeof(PlotAssociation));
 				PlotStyle ps  = (PlotStyle)info.GetValue("Style",typeof(PlotStyle));
 
@@ -272,6 +335,7 @@ namespace Altaxo.Graph
 					
 						if(null!=m_PlotAssociation )
 						{
+							m_PlotAssociation.ParentObject = this;
 							m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
 						}
 
@@ -304,6 +368,7 @@ namespace Altaxo.Graph
 						// create event wire to new Plotstyle
 						if(null!=m_PlotStyle && m_PlotStyle is IChangedEventSource)
 						{
+							m_PlotStyle.ParentObject = this;
 							((IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
 						}
 

@@ -309,6 +309,10 @@ namespace Altaxo.Serialization.Xml
 
 			return count;
 		}
+		public int OpenInnerContentAsArray()
+		{
+			return OpenArray();
+		}
 
 		public void CloseArray(int count)
 		{
@@ -391,6 +395,10 @@ namespace Altaxo.Serialization.Xml
 		}
 
 	
+		public void OpenInnerContent()
+		{
+			m_Reader.ReadStartElement();
+		}
 
 		public void OpenElement()
 		{

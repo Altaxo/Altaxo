@@ -130,6 +130,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				SimpleLabelStyle s = null!=o ? (SimpleLabelStyle)o : new SimpleLabelStyle(EdgeType.Left);
 
 				s.m_Edge = (Edge)info.GetValue("Edge",s);

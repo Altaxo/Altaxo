@@ -115,7 +115,7 @@ namespace Altaxo.Graph
 				string[] tables = App.Current.Doc.TableSet.GetSortedTableNames();
 				View.Tables_Initialize(tables,0);
 				
-				string[] columns = App.Current.Doc.TableSet[tables[0]].GetColumnNames();
+				string[] columns = App.Current.Doc.TableSet[tables[0]].DataColumns.GetColumnNames();
 				View.Columns_Initialize(columns,0);
 
 				View.XColumn_Initialize(m_xCol==null ? String.Empty : m_xCol.FullName);
@@ -144,7 +144,7 @@ namespace Altaxo.Graph
 		{
 			if(null!=View)
 			{
-				string[] columns = App.Current.Doc.TableSet[tablename].GetColumnNames();
+				string[] columns = App.Current.Doc.TableSet[tablename].DataColumns.GetColumnNames();
 				View.Columns_Initialize(columns,0);
 			}
 		}

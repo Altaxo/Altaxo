@@ -119,6 +119,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				PhysicalBoundaries s = (PhysicalBoundaries)o;
 
 				s.numberOfItems = info.GetInt32("NumberOfItems");  
@@ -344,6 +345,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				FinitePhysicalBoundaries s = null!=o ? (FinitePhysicalBoundaries)o : new FinitePhysicalBoundaries();
 				info.GetBaseValueEmbedded(s,typeof(FinitePhysicalBoundaries).BaseType,parent);
 				return s;
@@ -489,6 +491,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				PositiveFinitePhysicalBoundaries s = null!=o ? (PositiveFinitePhysicalBoundaries)o : new PositiveFinitePhysicalBoundaries();
 				info.GetBaseValueEmbedded(s,typeof(PositiveFinitePhysicalBoundaries).BaseType,parent);
 				return s;

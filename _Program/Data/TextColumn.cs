@@ -48,7 +48,7 @@ namespace Altaxo.Data
 			: base(name)
 	{
 	}
-		public TextColumn(Altaxo.Data.DataTable parenttable, string name)
+		public TextColumn(DataColumnCollection parenttable, string name)
 			: base(parenttable,name)
 	{
 	}
@@ -138,6 +138,7 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.TextColumn s = null!=o ? (Altaxo.Data.TextColumn)o : new Altaxo.Data.TextColumn();
 
+				info.OpenInnerContent();
 				// deserialize the base class
 				info.GetBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn),parent);
 

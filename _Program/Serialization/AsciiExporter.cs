@@ -43,8 +43,8 @@ namespace Altaxo.Serialization
 
 			// export the table using tabulator as separator
 
-			int nRows = table.RowCount;
-			int nColumns = table.ColumnCount;
+			int nRows = table.DataColumns.RowCount;
+			int nColumns = table.DataColumns.ColumnCount;
 
 
 			for(int i=0;i<nRows;i++)

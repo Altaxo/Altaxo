@@ -31,8 +31,15 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(D2EquidistantMeshDataAssociation.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class D2EquidistantMeshDataAssociation : IXYBoundsHolder, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, System.ICloneable
+	public class D2EquidistantMeshDataAssociation 
+		:
+		IXYBoundsHolder, System.Runtime.Serialization.IDeserializationCallback,
+		IChangedEventSource,
+		System.ICloneable,
+		Main.IDocumentNode
 	{
+		protected object m_Parent;
+
 		protected Altaxo.Data.IReadableColumn[] m_DataColumns; // the columns that are involved in the picture
 
 
@@ -127,6 +134,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
+				info.OpenInnerContent();
 				D2EquidistantMeshDataAssociation s = null!=o ? (D2EquidistantMeshDataAssociation)o : new D2EquidistantMeshDataAssociation();
 
 				s.m_XColumn = (Altaxo.Data.INumericColumn)info.GetValue("XColumn",typeof(Altaxo.Data.INumericColumn));
@@ -461,6 +469,21 @@ namespace Altaxo.Graph
 		{
 			if(null!=Changed)
 				Changed(this,new System.EventArgs());
+		}
+
+		public virtual object ParentObject
+		{
+			get { return m_Parent; }
+			set { m_Parent = value; }
+		}
+
+		public virtual string Name
+		{
+			get
+			{
+				Main.INamedObjectCollection noc = ParentObject as Main.INamedObjectCollection;
+				return null==noc ? null : noc.GetNameOfChildObject(this);
+			}
 		}
 	}
 
