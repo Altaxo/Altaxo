@@ -433,6 +433,16 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
+	public class Analysis2DCenteredFFT : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+		{
+			string err = DataGridOperations.TwoDimCenteredFFT(Current.Project, ctrl);
+			if(null!=err)
+				System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+		}
+	}
+
 	public class AnalysisStatisticsOnColumns : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)

@@ -1070,7 +1070,9 @@ namespace Altaxo.Data
 			System.Collections.SortedList groupNums = new System.Collections.SortedList();
 			for(int i=0;i<ColumnCount;i++)
 			{
-				groupNums.Add(this.GetColumnGroup(i),null);
+				int group = this.GetColumnGroup(i);
+				if(!groupNums.ContainsKey(group))
+					groupNums.Add(group,null);
 			}
 
 			for(int i=0;i<int.MaxValue;i++)

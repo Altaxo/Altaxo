@@ -780,7 +780,7 @@ namespace Altaxo.Graph.GUI
 				
 				
 				//LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);
-				Main.GUI.DialogFactory.ShowLineScatterPlotStyleAndDataDialog(this.m_View.Form,pa,plotGroup);
+				Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(this.m_View.Form,pa,plotGroup);
 			}
 			
 				

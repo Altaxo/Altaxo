@@ -364,6 +364,7 @@
 			<MenuItem id="WorksheetAnalysis" label="${res:XML.MainMenu.AnalysisMenu}">
 				<MenuItem id="1DFFT" label="${res:XML.MainMenu.AnalysisMenu.FFT}" description="${res:XML.MainMenu.AnalysisMenu.FFT.Description}" class="Altaxo.Worksheet.Commands.AnalysisFFT"/>
 				<MenuItem id="2DFFT" label="${res:XML.MainMenu.AnalysisMenu.2DFFT}" description="${res:XML.MainMenu.AnalysisMenu.2DFFT.Description}" class="Altaxo.Worksheet.Commands.Analysis2DFFT"/>
+				<MenuItem id="2DCenteredFFT" label="${res:XML.MainMenu.AnalysisMenu.2DCenteredFFT}" description="${res:XML.MainMenu.AnalysisMenu.2DCenteredFFT.Description}" class="Altaxo.Worksheet.Commands.Analysis2DCenteredFFT"/>
 				<MenuItem id="StatisticsOnCols" label="${res:XML.MainMenu.AnalysisMenu.StatisticsOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.StatisticsOnColumns.Description}" class="Altaxo.Worksheet.Commands.AnalysisStatisticsOnColumns"/>
 				<MenuItem id="StatisticsOnRows" label="${res:XML.MainMenu.AnalysisMenu.StatisticsOnRows}" description="${res:XML.MainMenu.AnalysisMenu.StatisticsOnRows.Description}" class="Altaxo.Worksheet.Commands.AnalysisStatisticsOnRows"/>
 				<MenuItem id="PCAOnCols" label="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns.Description}" class="Altaxo.Worksheet.Commands.AnalysisPCAOnCols"/>

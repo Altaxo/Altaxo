@@ -224,13 +224,32 @@ namespace Altaxo.Data
 			{
 				throw new ArgumentException("Try to copy " + v.GetType() + " to " + this.GetType(),"v"); // throw exception
 			}
-			Altaxo.Data.DoubleColumn vd = (Altaxo.Data.DoubleColumn)v;
 
-			// suggestion, but __not__ implemented:
-			// if v is a standalone column, then simply take the dataarray
-			// otherwise: copy the data by value	
+			this.CopyDataFrom(((Altaxo.Data.DoubleColumn)v).m_Array);
+		}				
+
+		/// <summary>
+		/// Returns the used length of the array. This is one plus the highest index of the number different from Double.NaN.
+		/// </summary>
+		/// <param name="values">The array for which the used length has to be determined.</param>
+		/// <param name="currentlength">The current length of the array. Normally values.Length, but you can provide a value less than this.</param>
+		/// <returns>The used length, i.e. numbers above the used length until the end of the array are NaNs.</returns>
+		static public int GetUsedLength(double[] values, int currentlength)
+		{
+			for(int i=currentlength-1;i>=0;i--)
+			{
+				if(!Double.IsNaN(values[i]))
+					return i+1;
+			}
+			return 0;
+		}
+
+		public void CopyDataFrom(double[] srcarray)
+		{
 			int oldCount = this.m_Count;
-			if(null==vd.m_Array || vd.m_Count==0)
+			int srcarraycount=GetUsedLength(srcarray,srcarray.Length);
+
+			if(null==srcarray || 0==srcarraycount)
 			{
 				m_Array=null;
 				m_Capacity=0;
@@ -238,13 +257,15 @@ namespace Altaxo.Data
 			}
 			else
 			{
-				m_Array = (double[])vd.m_Array.Clone();
+				if(m_Capacity<srcarraycount)
+					m_Array = new double[srcarraycount];
+				System.Array.Copy(srcarray,m_Array,srcarraycount);
 				m_Capacity = m_Array.Length;
-				m_Count = ((Altaxo.Data.DoubleColumn)v).m_Count;
+				m_Count = srcarraycount;
 			}
 			if(oldCount>0 || m_Count>0) // message only if really was a change
 				NotifyDataChanged(0,oldCount>m_Count? (oldCount):(m_Count),m_Count<oldCount);
-		}				
+		}
 
 		protected void Realloc(int i)
 		{

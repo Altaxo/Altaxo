@@ -529,6 +529,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\GUI\DensityImagePlotStyleControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\DensityImagePlotStyleControl.resx"
+                    DependentUpon = "DensityImagePlotStyleControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\DensityImagePlotStyleController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\GUI\GraphController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

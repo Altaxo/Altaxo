@@ -29,6 +29,12 @@ namespace Altaxo.Worksheet
 	[SerializationVersion(0)]
 	public class ColumnHeaderStyle : ColumnStyle
 	{
+		[NonSerialized]
+		private StringFormat m_LeftUpperFormat = new StringFormat();
+		[NonSerialized]
+		private StringFormat m_RightUpperFormat = new StringFormat();
+
+
 		#region Serialization
 			public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 			{
@@ -105,13 +111,34 @@ namespace Altaxo.Worksheet
 		public ColumnHeaderStyle()
 		{
 			m_Size = 40;
+			/*
 			m_TextFormat.Alignment=StringAlignment.Center;
 			m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
+			m_TextFormat.LineAlignment=StringAlignment.Far;
+
+			m_LeftUpperFormat.Alignment = StringAlignment.Near;
+			m_LeftUpperFormat.LineAlignment = StringAlignment.Near;
+
+			m_RightUpperFormat.Alignment = StringAlignment.Far;
+			m_RightUpperFormat.LineAlignment = StringAlignment.Near;
+			*/
+
+			m_TextFormat.Alignment=StringAlignment.Center;
+			m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
+			m_TextFormat.LineAlignment=StringAlignment.Near;
+
+			m_LeftUpperFormat.Alignment = StringAlignment.Near;
+			m_LeftUpperFormat.LineAlignment = StringAlignment.Far;
+
+			m_RightUpperFormat.Alignment = StringAlignment.Far;
+			m_RightUpperFormat.LineAlignment = StringAlignment.Far;
 		}
 
 		public ColumnHeaderStyle(ColumnHeaderStyle chs)
 			: base(chs)
 		{
+			m_LeftUpperFormat = (StringFormat)chs.m_LeftUpperFormat.Clone();
+			m_RightUpperFormat = (StringFormat)chs.m_RightUpperFormat.Clone();
 		}
 
 		public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
@@ -123,17 +150,22 @@ namespace Altaxo.Worksheet
 				dc.FillRectangle(m_SelectedBackgroundBrush,cellRectangle);
 		
 			Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)Main.DocumentPath.GetRootNodeImplementing(data,typeof(Altaxo.Data.DataColumnCollection));
-			string myString;
+			string columnnumber = dataColCol.GetColumnNumber(data).ToString();
+			string kindandgroup = string.Format("({0}{1})", dataColCol.GetColumnKind(data).ToString(),dataColCol.GetColumnGroup(data));
 			
-			if(dataColCol==null)
-				myString = data.Name;
-			else
-				myString= string.Format("{0} ({1}{2})",data.Name, dataColCol.GetColumnKind(data).ToString(),dataColCol.GetColumnGroup(data)); 
-		
+			
 			if(bSelected)
-				dc.DrawString(myString,m_TextFont,m_SelectedTextBrush,cellRectangle,m_TextFormat);
+			{
+				dc.DrawString(columnnumber,m_TextFont,m_SelectedTextBrush,cellRectangle,m_LeftUpperFormat);
+				dc.DrawString(kindandgroup,m_TextFont,m_SelectedTextBrush,cellRectangle,m_RightUpperFormat);
+				dc.DrawString(data.Name,m_TextFont,m_SelectedTextBrush,cellRectangle,m_TextFormat);
+			}
 			else
-				dc.DrawString(myString,m_TextFont,m_TextBrush,cellRectangle,m_TextFormat);
+			{
+				dc.DrawString(columnnumber,m_TextFont,m_TextBrush,cellRectangle,m_LeftUpperFormat);
+				dc.DrawString(kindandgroup,m_TextFont,m_TextBrush,cellRectangle,m_RightUpperFormat);
+				dc.DrawString(data.Name,m_TextFont,m_TextBrush,cellRectangle,m_TextFormat);
+			}
 		
 		
 		}

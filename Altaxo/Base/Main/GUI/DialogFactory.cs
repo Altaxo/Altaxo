@@ -65,6 +65,18 @@ namespace Altaxo.Main.GUI
 		}
 
 
+		public static bool ShowPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
+		{
+			if(pa is Graph.XYColumnPlotItem || pa is Graph.XYFunctionPlotItem)
+				return ShowLineScatterPlotStyleAndDataDialog(parentWindow,pa,plotGroup);
+			else if(pa is Graph.DensityImagePlotItem)
+				return ShowDensityImagePlotStyleAndDataDialog(parentWindow,pa,plotGroup);
+			else
+			{
+				System.Windows.Forms.MessageBox.Show(parentWindow,"Sorry, a configuration dialog for " + pa.GetType().ToString() + " is not yet implemented!");
+				return false;
+			}
+		}
 
 
 		public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
@@ -82,6 +94,21 @@ namespace Altaxo.Main.GUI
 			GUI.TabbedDialogController tdcctrl = new GUI.TabbedDialogController("Line/Scatter Plot",true);
 			tdcctrl.AddTab("Style",stylectrl,styleview);
 			tdcctrl.AddTab("Data",datactrl,dataview);
+			GUI.TabbedDialogView  tdcview = new GUI.TabbedDialogView();
+			tdcctrl.View = tdcview;
+
+			return tdcctrl.ShowDialog(parentWindow);
+		}
+
+		public static bool ShowDensityImagePlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
+		{
+			// Plot Style
+			DensityImagePlotStyleController	stylectrl = new DensityImagePlotStyleController((Graph.DensityImagePlotStyle)pa.Style);
+			DensityImagePlotStyleControl			styleview = new DensityImagePlotStyleControl();
+			stylectrl.View = styleview;
+
+			GUI.TabbedDialogController tdcctrl = new GUI.TabbedDialogController("Density Image Plot",true);
+			tdcctrl.AddTab("Style",stylectrl,styleview);
 			GUI.TabbedDialogView  tdcview = new GUI.TabbedDialogView();
 			tdcctrl.View = tdcview;
 

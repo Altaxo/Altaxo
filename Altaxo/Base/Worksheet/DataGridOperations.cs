@@ -960,7 +960,8 @@ namespace Altaxo.Worksheet
 
 		}
 
-		public static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, GUI.WorksheetController dg)
+
+		protected static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, GUI.WorksheetController dg, out double[] rePart, out double[] imPart)
 		{
 			int rows = dg.Doc.DataColumns.RowCount;
 			int cols = dg.Doc.DataColumns.ColumnCount;
@@ -968,8 +969,8 @@ namespace Altaxo.Worksheet
 			// reserve two arrays (one for real part, which is filled with the table contents)
 			// and the imaginary part - which is left zero here)
 
-			double[] rePart = new double[rows*cols];
-			double[] imPart = new double[rows*cols];
+			rePart = new double[rows*cols];
+			imPart = new double[rows*cols];
 
 			// fill the real part with the table contents
 			for(int i=0;i<cols;i++)
@@ -1002,7 +1003,24 @@ namespace Altaxo.Worksheet
 				rePart[i] = Math.Sqrt(rePart[i]*rePart[i]+imPart[i]*imPart[i]);
 			}
 
+			return null;
+		}
 
+		public static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, GUI.WorksheetController dg)
+		{
+			int rows = dg.Doc.DataColumns.RowCount;
+			int cols = dg.Doc.DataColumns.ColumnCount;
+
+			// reserve two arrays (one for real part, which is filled with the table contents)
+			// and the imaginary part - which is left zero here)
+
+			double[] rePart;
+			double[] imPart;
+
+			string stringresult = TwoDimFFT(mainDocument,dg,out rePart, out imPart);
+
+			if(stringresult!=null)
+				return stringresult;
 
 			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("Fourieramplitude of " + dg.Doc.Name);
 
@@ -1023,6 +1041,54 @@ namespace Altaxo.Worksheet
 
 			return null;
 		}
+
+		public static string TwoDimCenteredFFT(Altaxo.AltaxoDocument mainDocument, GUI.WorksheetController dg)
+		{
+			int rows = dg.Doc.DataColumns.RowCount;
+			int cols = dg.Doc.DataColumns.ColumnCount;
+
+			// reserve two arrays (one for real part, which is filled with the table contents)
+			// and the imaginary part - which is left zero here)
+
+			double[] rePart;
+			double[] imPart;
+
+			string stringresult = TwoDimFFT(mainDocument,dg,out rePart, out imPart);
+
+			if(stringresult!=null)
+				return stringresult;
+
+			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("Fourieramplitude of " + dg.Doc.Name);
+
+			// Fill the Table so that the zero frequency point is in the middle
+			// this means for the point order:
+			// for even number of points, i.e. 8 points, the frequencies are -3, -2, -1, 0, 1, 2, 3, 4  (the frequency 4 is the nyquist part)
+			// for odd number of points, i.e. 9 points, the frequencies are -4, -3, -2, -1, 0, 1, 2, 3, 4 (for odd number of points there is no nyquist part)
+
+			table.Suspend();
+			int colsNegative = (cols-1)/2; // number of negative frequency points
+			int colsPositive = cols - colsNegative; // number of positive (or null) frequency points
+			int rowsNegative= (rows-1)/2;
+			int rowsPositive = rows - rowsNegative;
+			for(int i=0;i<cols;i++)
+			{
+				int sc = i<colsNegative ?  i + colsPositive : i - colsNegative; // source column index centered  
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+				for(int j=0;j<rows;j++)
+				{
+					int sr = j<rowsNegative ? j + rowsPositive : j - rowsNegative; // source row index centered
+					col[j] = rePart[sc*rows+sr];
+				}
+				table.DataColumns.Add(col);
+			}
+			table.Resume();
+			mainDocument.DataTableCollection.Add(table);
+			// create a new worksheet without any columns
+			Current.ProjectService.CreateNewWorksheet(table);
+
+			return null;
+		}
+
 
 		public delegate double ColorAmplitudeFunction(System.Drawing.Color c);
 

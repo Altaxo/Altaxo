@@ -302,7 +302,7 @@ namespace Altaxo.Graph.GUI
 			{
 				PlotGroup plotGroup = m_Layer.PlotItems.GetPlotGroupOf(pa);
 				//LineScatterPlotStyleController.ShowPlotStyleDialog(View.Form,pa,plotGroup);
-				Main.GUI.DialogFactory.ShowLineScatterPlotStyleAndDataDialog(View.Form,pa,plotGroup);
+				Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(View.Form,pa,plotGroup);
 			}
 		}
 
@@ -485,7 +485,7 @@ namespace Altaxo.Graph.GUI
 			else if(item.IsSingleKnownItem)
 			{
 				PlotGroup pg = this.m_Layer.PlotItems.GetPlotGroupOf(item.PlotItem);
-				Altaxo.Main.GUI.DialogFactory.ShowLineScatterPlotStyleAndDataDialog(Current.MainWindow, item.PlotItem, pg);
+				Altaxo.Main.GUI.DialogFactory.ShowPlotStyleAndDataDialog(Current.MainWindow, item.PlotItem, pg);
 			}
 		}
 

@@ -26,6 +26,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
+using Altaxo.Data;
+
 
 namespace Altaxo.Serialization.Galactic
 {
@@ -177,6 +179,27 @@ namespace Altaxo.Serialization.Galactic
 			return null;
 		}
 
+
+
+		/// <summary>
+		/// Compare the values in a double array with values in a double column and see if they match.
+		/// </summary>
+		/// <param name="values">An array of double values.</param>
+		/// <param name="col">A double column to compare with the double array.</param>
+		/// <returns>True if the length of the array is equal to the length of the <see>DoubleColumn</see> and the values in 
+		/// both array match to each other, otherwise false.</returns>
+		public static bool ValuesMatch(double[] values, DoubleColumn col)
+		{
+			if(values.Length!=col.Count)
+				return false;
+
+			for(int i=0;i<values.Length;i++)
+				if(col.GetDoubleAt(i) != values[i])
+					return false;
+
+			return true;
+		}
+
 		/// <summary>
 		/// Imports a couple of SPC files into a table. The spectra are added as columns to the table. If the x column
 		/// of the rightmost column does not match the x-data of the spectra, a new x-column is also created.
@@ -207,36 +230,44 @@ namespace Altaxo.Serialization.Galactic
 
 				bool bMatchsXColumn=false;
 
-				if(null!=xcol && xvalues.Length==xcol.Count)
+				// first look if our default xcolumn matches the xvalues
+				if(null!=xcol)
+					bMatchsXColumn=ValuesMatch(xvalues,xcol);
+					
+				// if no match, then consider all xcolumns from right to left, maybe some fits
+				if(!bMatchsXColumn)
 				{
-					bMatchsXColumn=true;
-					// now check the match in the xvalues
-					for(int i=0;i<xvalues.Length;i++)
+					for(int ncol=table.DataColumns.ColumnCount-1;ncol>=0;ncol--)
 					{
-						if(xcol.GetDoubleAt(i) != xvalues[i])
+						if(  (ColumnKind.X == table.DataColumns.GetColumnKind(ncol)) &&
+									(table.DataColumns[ncol] is DoubleColumn) &&
+									(ValuesMatch(xvalues,(DoubleColumn)table.DataColumns[ncol]))
+									)
 						{
-							bMatchsXColumn = false;
+							xcol = (DoubleColumn)table.DataColumns[ncol];
+							lastColumnGroup = table.DataColumns.GetColumnGroup(xcol);
+							bMatchsXColumn=true;
 							break;
 						}
 					}
 				}
-					
 
 				// create a new x column if the last one does not match
 				if(!bMatchsXColumn)
 				{
-					xcol = new Altaxo.Data.DoubleColumn(xvalues.Length);
-					for(int i=0;i<xvalues.Length;i++)
-						xcol[i] = xvalues[i];
+					xcol = new Altaxo.Data.DoubleColumn();
+					xcol.CopyDataFrom(xvalues);
 					lastColumnGroup = table.DataColumns.GetUnusedColumnGroupNumber();
 					table.DataColumns.Add(xcol,"SPC X values",Altaxo.Data.ColumnKind.X,lastColumnGroup);
 				}
 
 				// now add the y-values
-				Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn(yvalues.Length);
-				for(int i=0;i<yvalues.Length;i++)
-					ycol[i] = yvalues[i];
-				table.DataColumns.Add(ycol,table.DataColumns.FindNewColumnName(),Altaxo.Data.ColumnKind.V,lastColumnGroup);
+				Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn();
+				ycol.CopyDataFrom(yvalues);
+				table.DataColumns.Add(ycol,
+					table.DataColumns.FindUniqueColumnName(System.IO.Path.GetFileNameWithoutExtension(filename)),
+					Altaxo.Data.ColumnKind.V,
+					lastColumnGroup);
 
 				// add also a property column named "FilePath" if not existing so far
 				if(!table.PropCols.ContainsColumn("FilePath"))
