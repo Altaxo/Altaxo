@@ -11,3 +11,5 @@ Layerdialog -> Button Plotassociations and EditRange does not work
 TextDialog -> die Eingabe von Schriftgrößen, die nicht vorgesehen sind, funktioniert nicht
 
 after restoring a document, the rows in a table seems to have line breaks
+
+11.12.03 pressing x (close button) on a modified project, but then cancel, the project is closed!

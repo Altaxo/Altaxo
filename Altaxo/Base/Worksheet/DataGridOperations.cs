@@ -1161,7 +1161,7 @@ namespace Altaxo.Worksheet
 		/// </remarks>
 		public static void PasteFromTable(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
 		{
-			if(dg.AreColumnsOrRowsSelected)
+			if(!dg.AreColumnsOrRowsSelected)
 			{
 				PasteFromTableToUnselected(dg,sourcetable);
 			}
@@ -1171,15 +1171,26 @@ namespace Altaxo.Worksheet
 			}
 			else if(dg.SelectedColumns.Count>0 && dg.SelectedColumns.Count == sourcetable.DataColumns.RowCount)
 			{
-				//PasteFromTableRowsToSelectedColumns(dg,sourcetable);
+				PasteFromTableRowsToSelectedColumns(dg,sourcetable);
 			}
 			else if(dg.SelectedRows.Count>0 && dg.SelectedRows.Count == sourcetable.DataColumns.RowCount)
 			{
-				//PasteFromTableRowsToSelectedRows(dg,sourcetable);
+				PasteFromTableRowsToSelectedRows(dg,sourcetable);
 			}
 			else if(dg.SelectedRows.Count>0 && dg.SelectedRows.Count == sourcetable.DataColumns.ColumnCount)
 			{
-				//PasteFromTableColumnsToSelectedRows(dg,sourcetable);
+				PasteFromTableColumnsToSelectedRows(dg,sourcetable);
+			}
+				// here should follow the exact matches with property colums
+
+				// now the not exact matches
+			else if(dg.SelectedColumns.Count>0)
+			{
+				PasteFromTableColumnsToSelectedColumns(dg,sourcetable);
+			}
+			else if(dg.SelectedRows.Count>0)
+			{
+				PasteFromTableRowsToSelectedRows(dg,sourcetable);
 			}
 		}
 
@@ -1293,6 +1304,88 @@ namespace Altaxo.Worksheet
 
 
 		/// <summary>
+		/// Pastes data from a table (usually deserialized table from the clipboard) into a worksheet, which has
+		/// currently selected rows. The number of selected rows has to match the number of rows of the source table.
+		/// </summary>
+		/// <param name="dg">The worksheet to paste into.</param>
+		/// <param name="sourcetable">The table which contains the data to paste into the worksheet.</param>
+		/// <remarks>The operation is defined as follows: if the is no column selection, the data are inserted beginning at the first column of the destination table.
+		/// If there is a column selection, the data are inserted in the selected columns, and then in the columns after the last selected columns.
+		/// No exception is thrown if a column type does not match the corresponding source column type.
+		/// The columns to paste into do not change their name, kind or group number. Property columns in the source table
+		/// are pasted into the destination table.</remarks>
+		protected static void PasteFromTableRowsToSelectedRows(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
+		{
+			Altaxo.Data.DataTable desttable = dg.DataTable;
+
+			Altaxo.Data.DataColumn[] propertycolumnmap = MapOrCreatePropertyColumns(desttable,sourcetable);
+			Altaxo.Data.DataColumn[] destdatacolumnmap = MapOrCreateDataColumns(desttable,dg.SelectedColumns,sourcetable);
+
+			for(int nCol=0;nCol<sourcetable.DataColumns.ColumnCount;nCol++)
+			{
+			// now fill the data into that column
+
+				try
+				{
+					int nDestRow=-1;
+					for(int nSrcRow=0;nSrcRow<sourcetable.DataColumns.RowCount;nSrcRow++)
+					{
+						nDestRow = nSrcRow<dg.SelectedRows.Count ? dg.SelectedRows[nSrcRow] : nDestRow+1;
+						destdatacolumnmap[nCol][nDestRow] = sourcetable.DataColumns[nCol][nSrcRow];
+					}
+				}
+				catch(Exception)
+				{
+				}
+
+
+				// also fill in the property values
+				int nDestColumnIndex = desttable.DataColumns.GetColumnNumber(destdatacolumnmap[nCol]);
+				FillRow(propertycolumnmap,nDestColumnIndex,sourcetable.PropCols,nCol);
+			} // for all data columns
+
+		}
+
+
+		/// <summary>
+		/// Pastes data columns from the source table (usually deserialized table from the clipboard) into rows of the destination table, which has
+		/// currently selected rows. The number of selected rows has to match the number of columns of the source table.
+		/// </summary>
+		/// <param name="dg">The worksheet to paste into.</param>
+		/// <param name="sourcetable">The table which contains the data to paste into the worksheet.</param>
+		/// <remarks>The operation is defined as follows: if there is no column selection, the data are inserted beginning at the first column of the destination table.
+		/// If there is a column selection, the data are inserted in the selected columns, and then in the columns after the last selected columns.
+		/// No exception is thrown if a cell type does not match the corresponding source cell type.
+		/// The columns to paste into do not change their name, kind or group number. Property columns in the source table
+		/// are not used for this operation.</remarks>
+		protected static void PasteFromTableColumnsToSelectedRows(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
+		{
+			Altaxo.Data.DataTable desttable = dg.DataTable;
+			Altaxo.Data.DataColumn[] destdatacolumnmap = MapOrCreateDataColumnsToRows(desttable,dg.SelectedColumns,sourcetable);
+
+
+			int nDestRow=-1;
+			for(int nSrcCol=0;nSrcCol<sourcetable.DataColumns.ColumnCount;nSrcCol++)
+			{
+				nDestRow = nSrcCol<dg.SelectedRows.Count ? dg.SelectedRows[nSrcCol] : nDestRow+1;
+
+				for(int nSrcRow=0;nSrcRow<sourcetable.DataColumns.RowCount;nSrcRow++)
+				{
+					int nDestCol = nSrcRow;
+					try	{	destdatacolumnmap[nDestCol][nDestRow] = sourcetable.DataColumns[nSrcCol][nSrcRow];	}
+					catch(Exception) {}
+				}
+			}
+		}
+
+
+		protected static void PasteFromTableRowsToSelectedColumns(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
+		{
+			PasteFromTableColumnsToSelectedRows(dg,sourcetable);
+		}
+
+
+		/// <summary>
 		/// Maps each property column of the source table to a corresponding property columns of the destination table. If no matching property
 		/// column can be found in the destination table, a new matching property column is added to the destination table.
 		/// </summary>
@@ -1331,6 +1424,97 @@ namespace Altaxo.Worksheet
 			return columnmap;
 		}
 
+
+		/// <summary>
+		/// Maps each data column of the source table to a corresponding data columns of the destination table. 
+		/// The matching is based on the index (order) and on the currently selected columns of the destination table.
+		/// Attention: The match here does <b>not</b> mean that the two columns are data compatible to each other!
+		/// </summary>
+		/// <param name="desttable">The destination table.</param>
+		/// <param name="selectedDestColumns">The currently selected columns of the destination table.</param>
+		/// <param name="sourcetable">The source table.</param>
+		/// <returns>An array of columns. Each column of the array is a data column in the destination table, which
+		/// matches (by index) the data column in the source table.</returns>
+		/// <remarks>
+		/// 1.) Since the returned columns are part of the DataColumns collection of the destination table, you must not
+		/// use these for inserting i.e. in other tables.
+		/// 2.) The match is based on the index and the selected columns of the destination table. The rules are as follows: if there is
+		/// no selection, the first column of the destination table matches the first column of the source table, and so forth.
+		/// If there is a column selection, the first selected column of the destination table matches the first column of the source table,
+		/// the second selected column of the destination table matches the second column of the source table. If more source columns than selected columns in the destination
+		/// table exists, the match is done 1:1 after the last selected column of the destination table. If there is no further column in the destination
+		/// table to match, new columns are created in the destination table.
+		/// </remarks>
+		static protected Altaxo.Data.DataColumn[] MapOrCreateDataColumns(Altaxo.Data.DataTable desttable, IndexSelection selectedDestColumns, Altaxo.Data.DataTable sourcetable)
+		{
+			Altaxo.Data.DataColumn[] columnmap = new Altaxo.Data.DataColumn[sourcetable.DataColumns.ColumnCount];
+			int nDestCol=-1;
+			for(int nCol=0;nCol<sourcetable.DataColumns.ColumnCount;nCol++)
+			{
+				nDestCol = nCol<selectedDestColumns.Count ? selectedDestColumns[nCol] : nDestCol+1;
+
+				string name = sourcetable.DataColumns.GetColumnName(nCol);
+				int    group = sourcetable.DataColumns.GetColumnGroup(nCol);
+				Altaxo.Data.ColumnKind kind = sourcetable.DataColumns.GetColumnKind(nCol);
+
+				if(nDestCol<desttable.DataColumns.ColumnCount)
+				{
+					columnmap[nCol] = desttable.DataColumns[nDestCol];
+				}
+				else
+				{
+					columnmap[nCol] = (DataColumn)Activator.CreateInstance(sourcetable.DataColumns[nCol].GetType());
+					desttable.DataColumns.Add(columnmap[nCol], name, kind, group);
+				}
+			}
+			return columnmap;
+		}
+
+
+
+		/// <summary>
+		/// Maps each data column of the source table to a corresponding data row (!) of the destination table. 
+		/// The matching is based on the index (order) and on the currently selected columns of the destination table.
+		/// Attention: The match here does <b>not</b> mean that the data of destination columns and source rows are compatible to each other!
+		/// </summary>
+		/// <param name="desttable">The destination table.</param>
+		/// <param name="selectedDestColumns">The currently selected columns of the destination table.</param>
+		/// <param name="sourcetable">The source table.</param>
+		/// <returns>An array of columns. Each column of the array is a data column in the destination table, which
+		/// matches (by index) the data row (!) in the source table with the same index.</returns>
+		/// <remarks>
+		/// 1.) Since the returned columns are part of the DataColumns collection of the destination table, you must not
+		/// use these for inserting i.e. in other tables.
+		/// 2.) The match is based on the index and the selected columns of the destination table. The rules are as follows: if there is
+		/// no selection, the first column of the destination table matches the first row of the source table, and so forth.
+		/// If there is a column selection, the first selected column of the destination table matches the first row of the source table,
+		/// the second selected column of the destination table matches the second row of the source table. If there are more source rows than selected columns in the destination
+		/// table exists, the match is done 1:1 after the last selected column of the destination table. If there is no further column in the destination
+		/// table to match, new columns are created in the destination table. The type of the newly created columns in the destination table is
+		/// the same as the first column of the source table in this case.
+		/// </remarks>
+		static protected Altaxo.Data.DataColumn[] MapOrCreateDataColumnsToRows(Altaxo.Data.DataTable desttable, IndexSelection selectedDestColumns, Altaxo.Data.DataTable sourcetable)
+		{
+			Altaxo.Data.DataColumn[] columnmap = new Altaxo.Data.DataColumn[sourcetable.DataColumns.RowCount];
+			int nDestCol=-1;
+			int group=0;
+			for(int nCol=0;nCol<sourcetable.DataColumns.RowCount;nCol++) 
+			{
+				nDestCol = nCol<selectedDestColumns.Count ? selectedDestColumns[nCol] : nDestCol+1;
+
+				if(nDestCol<desttable.DataColumns.ColumnCount)
+				{
+					group = desttable.DataColumns.GetColumnGroup(nDestCol); // we preserve the group of the last existing column for creation of new columns
+					columnmap[nCol] = desttable.DataColumns[nDestCol];
+				}
+				else
+				{
+					columnmap[nCol] = (DataColumn)Activator.CreateInstance(sourcetable.DataColumns[0].GetType());
+					desttable.DataColumns.Add(columnmap[nCol], desttable.DataColumns.FindNewColumnName(), ColumnKind.V, group);
+				}
+			}
+			return columnmap;
+		}
 
 		public static void PasteFromClipboard(GUI.WorksheetController dg)
 		{

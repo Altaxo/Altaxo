@@ -836,12 +836,12 @@ namespace Altaxo.Data
 			if(!oldCol.Equals(newCol))
 			{
 				int oldRowCount = oldCol.Count;
-				oldCol.ParentObject = null;
 				DataColumnInfo info = GetColumnInfo(index);
 				m_ColumnsByName[info.Name] = newCol;
 				m_ColumnsByNumber[index] = newCol;
 				m_ColumnInfo.Remove(oldCol);
 				m_ColumnInfo.Add(newCol,info);
+				oldCol.ParentObject = null;
 				newCol.ParentObject = this;
 				
 				object script = m_ColumnScripts[oldCol];

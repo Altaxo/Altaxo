@@ -732,20 +732,37 @@ namespace Altaxo.Worksheet.GUI
 
 		public void ImportAscii()
 		{
-			System.IO.Stream myStream;
-			OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-			openFileDialog1.InitialDirectory = "c:\\" ;
-			openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*" ;
-			openFileDialog1.FilterIndex = 2 ;
-			openFileDialog1.RestoreDirectory = true ;
-
-			if(openFileDialog1.ShowDialog() == DialogResult.OK)
+			using(OpenFileDialog openFileDialog1 = new OpenFileDialog())
 			{
-				if((myStream = openFileDialog1.OpenFile())!= null)
+
+				openFileDialog1.InitialDirectory = "c:\\" ;
+				openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*" ;
+				openFileDialog1.FilterIndex = 2 ;
+				openFileDialog1.RestoreDirectory = true ;
+				openFileDialog1.Multiselect = true;
+
+				if(openFileDialog1.ShowDialog() == DialogResult.OK && openFileDialog1.FileNames.Length>0)
 				{
-					this.ImportAscii(myStream);
-					myStream.Close();
+					// if user has clicked ok, import all selected files into Altaxo
+					string [] filenames = openFileDialog1.FileNames;
+					Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
+					
+					System.IO.Stream myStream = new System.IO.FileStream(filenames[0],System.IO.FileMode.Open,System.IO.FileAccess.Read);
+					if((myStream = openFileDialog1.OpenFile())!= null)
+					{
+						this.ImportAscii(myStream);
+						myStream.Close();
+					}
+
+					// import also the other files, but this time we create new tables
+					for(int i=1;i<filenames.Length;i++)
+					{
+						myStream = new System.IO.FileStream(filenames[0],System.IO.FileMode.Open,System.IO.FileAccess.Read);
+						Altaxo.Worksheet.GUI.IWorksheetController wkscontroller = Current.ProjectService.CreateNewWorksheet();
+						((Altaxo.Worksheet.GUI.WorksheetController)wkscontroller).ImportAscii(myStream);
+						myStream.Close();
+					} // for all files
+
 				}
 			}
 		}
