@@ -28,7 +28,10 @@ namespace Altaxo.Data
 	
 	[SerializationSurrogate(0,typeof(Altaxo.Data.DataColumnCollection.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class DataColumnCollection :System.Runtime.Serialization.IDeserializationCallback
+	public class DataColumnCollection :
+		System.Runtime.Serialization.IDeserializationCallback, 
+		IDisposable,
+		ICloneable
 	{
 		// Types
 		public delegate void OnDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow);   // delegate declaration
@@ -141,11 +144,61 @@ namespace Altaxo.Data
 		#endregion
 
 
-		public DataColumnCollection(DataTable parent)
+		public DataColumnCollection()
 		{
-			this.m_Parent = parent;
+			this.m_Parent = null;
 		}
 
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="from">The column collection to copy this data column collection from.</param>
+		public DataColumnCollection(DataColumnCollection from)
+		{
+			this.m_LastColumnNameAdded = from.m_LastColumnNameAdded;
+			this.m_LastColumnNameGenerated = from.m_LastColumnNameGenerated;
+
+			// Copy all Columns
+			for(int i=0;i<from.ColumnCount;i++)
+				this.Add( (DataColumn)from[i].Clone());
+
+			// Copy all Column scripts
+			foreach(System.Collections.DictionaryEntry d in from.ColumnScripts)
+			{
+				DataColumn srccol = (DataColumn)d.Key; // the original column this script belongs to
+				DataColumn destcol = this[srccol.ColumnName]; // the new (cloned) column the script now belongs to
+				ColumnScript destscript = (ColumnScript)((ColumnScript)d.Value).Clone(); // the cloned script
+
+				// add the cloned script to the own collection
+				this.ColumnScripts.Add(destcol,destscript);
+			}
+		}
+
+		public virtual object Clone()
+		{
+			return new DataColumnCollection(this);
+		}
+
+		public virtual void Dispose()
+		{
+			// first relase all column scripts
+			foreach(System.Collections.DictionaryEntry d in this.m_ColumnScripts)
+			{
+				if(d.Value is IDisposable)
+					((IDisposable)d.Value).Dispose();
+			}
+			m_ColumnScripts.Clear();
+
+
+			// release all owned Data columns
+			this.m_ColumnsByName.Clear();
+
+			for(int i=0;i<m_ColumnsByNumber.Count;i++)
+				this[i].Dispose();
+
+			m_ColumnsByNumber.Clear();
+			this.m_NumberOfRows = 0;
+		}
 
 		#region Column Addition / Access / Removal 
 

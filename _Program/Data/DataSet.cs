@@ -243,6 +243,14 @@ namespace Altaxo.Data
 
 		}
 
+		public void Remove(Altaxo.Data.DataTable theTable)
+		{
+			if(tablesByName.ContainsValue(theTable))
+				tablesByName.Remove(theTable.TableName);
+
+			this.OnTableDataChanged(theTable);
+		}
+
 
 		/// <summary>
 		/// sucht nach dem nächsten freien Standard-Tabellennamen

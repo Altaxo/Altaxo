@@ -27,8 +27,16 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
 	/// </summary>
-	public abstract class Axis : IChangedEventSource
+	public abstract class Axis : ICloneable, IChangedEventSource
 	{
+		#region ICloneable Members
+		/// <summary>
+		/// Creates a copy of the axis.
+		/// </summary>
+		/// <returns>The cloned copy of the axis.</returns>
+		public abstract object Clone();
+		#endregion
+		
 		#region IChangedEventSource Members
 
 		/// <summary>
@@ -177,7 +185,7 @@ namespace Altaxo.Graph
 		/// <summary>True if the axis end is fixed to m_BaseEnd.</summary>
 		protected bool   m_AxisEndFixed = false;
 		/// <summary>Holds the <see cref="PhysicalBoundaries"/> for that axis.</summary>
-		protected FinitePhysicalBoundaries m_DataBounds = new FinitePhysicalBoundaries();
+		protected PhysicalBoundaries m_DataBounds = new FinitePhysicalBoundaries();
 
 		// cached values
 		/// <summary>Current axis origin (cached value).</summary>
@@ -268,6 +276,32 @@ namespace Altaxo.Graph
 			m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnBoundariesChanged);
 		}
 
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="from">A other linear axis from which to copy from.</param>
+		public LinearAxis(LinearAxis from)
+		{
+			this.m_AxisEnd				= from.m_AxisEnd;
+			this.m_AxisEndByMajor = from.m_AxisEndByMajor;
+			this.m_AxisEndFixed		= from.m_AxisEndFixed;
+			this.m_AxisOrg				= from.m_AxisOrg;
+			this.m_AxisOrgByMajor = from.m_AxisOrgByMajor;
+			this.m_AxisOrgFixed		= from.m_AxisOrgFixed;
+			this.m_AxisSpan				= from.m_AxisSpan;
+			this.m_BaseEnd				= from.m_BaseEnd;
+			this.m_BaseOrg				= from.m_BaseOrg;
+			this.m_DataBounds			= null==from.m_DataBounds ? new FinitePhysicalBoundaries() : (PhysicalBoundaries)from.m_DataBounds.Clone(); 
+			m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnBoundariesChanged);
+			this.m_MajorSpan			= from.m_MajorSpan;
+			this.m_MinorTicks			= from.m_MinorTicks;
+			this.m_OneByAxisSpan	= from.m_OneByAxisSpan;
+		}
+
+		public override object Clone()
+		{
+			return new LinearAxis(this);
+		}
 
 		/// <summary>
 		/// Get/sets the axis origin (physical units).
@@ -594,7 +628,7 @@ namespace Altaxo.Graph
 		protected bool   m_AxisEndFixed = false;
 
 		/// <summary>The boundary object. It collectes only positive values for the axis is logarithmic.</summary>
-		protected PositiveFinitePhysicalBoundaries m_DataBounds = null;
+		protected PhysicalBoundaries m_DataBounds = null;
 
 
 		#region Serialization
@@ -667,6 +701,29 @@ namespace Altaxo.Graph
 			m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnBoundariesChanged);
 		}
 
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="from">The axis to copy from.</param>
+		public Log10Axis(Log10Axis from)
+		{
+			this.m_AxisEndFixed = from.m_AxisEndFixed;
+			this.m_AxisOrgFixed = from.m_AxisOrgFixed;
+			this.m_DataBounds   = null==from.m_DataBounds ? new PositiveFinitePhysicalBoundaries() : (PhysicalBoundaries)from.m_DataBounds.Clone();
+			m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnBoundariesChanged);
+			this.m_DecadesPerMajorTick = from.m_DecadesPerMajorTick;
+			this.m_Log10End = from.m_Log10End;
+			this.m_Log10Org = from.m_Log10Org;
+		}
+
+		/// <summary>
+		/// Creates a clone copy of this axis.
+		/// </summary>
+		/// <returns>The cloned copy.</returns>
+		public override object Clone()
+		{
+			return new Log10Axis(this);
+		}
 
 		/// <summary>
 		/// PhysicalToNormal translates physical values into a normal value linear along the axis

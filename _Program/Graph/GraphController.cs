@@ -271,9 +271,9 @@ namespace Altaxo.Graph
 			this.m_VertRes = grfx.DpiY;
 			grfx.Dispose();
 
-			if(null!=App.CurrentApplication) // if we are at design time, this is null and we use the default values above
+			if(null!=App.Current) // if we are at design time, this is null and we use the default values above
 			{
-				System.Drawing.Printing.PrintDocument doc = App.CurrentApplication.PrintDocument;
+				System.Drawing.Printing.PrintDocument doc = App.Current.PrintDocument;
 			
 				// Test whether or not a printer is installed
 				System.Drawing.Printing.PrinterSettings prnset = new System.Drawing.Printing.PrinterSettings();
@@ -493,7 +493,7 @@ namespace Altaxo.Graph
 		{
 			try
 			{
-				App.CurrentApplication.PageSetupDialog.ShowDialog(this.m_View.Window);
+				App.Current.PageSetupDialog.ShowDialog(this.m_View.Window);
 			}
 			catch(Exception exc)
 			{
@@ -510,10 +510,10 @@ namespace Altaxo.Graph
 		{
 			try
 			{
-				if(DialogResult.OK==App.CurrentApplication.PrintDialog.ShowDialog(this.m_View.Window))
+				if(DialogResult.OK==App.Current.PrintDialog.ShowDialog(this.m_View.Window))
 				{
-					App.CurrentApplication.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
-					App.CurrentApplication.PrintDocument.Print();
+					App.Current.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
+					App.Current.PrintDocument.Print();
 				}
 			}
 			catch(Exception ex)
@@ -522,7 +522,7 @@ namespace Altaxo.Graph
 			}
 			finally
 			{
-				App.CurrentApplication.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
+				App.Current.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
 			}
 		}
 	
@@ -537,8 +537,8 @@ namespace Altaxo.Graph
 			try
 			{
 				System.Windows.Forms.PrintPreviewDialog dlg = new System.Windows.Forms.PrintPreviewDialog();
-				App.CurrentApplication.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
-				dlg.Document = App.CurrentApplication.PrintDocument;
+				App.Current.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
+				dlg.Document = App.Current.PrintDocument;
 				dlg.ShowDialog(this.m_View.Window);
 				dlg.Dispose();
 			}
@@ -548,7 +548,7 @@ namespace Altaxo.Graph
 			}
 			finally
 			{
-				App.CurrentApplication.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
+				App.Current.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
 			}
 		}
 

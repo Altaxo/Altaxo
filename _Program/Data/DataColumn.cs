@@ -56,7 +56,7 @@ namespace Altaxo.Data
 		/// </summary>
 		pErr=5,
 		/// <summary>
-		/// Column values are - errór values.
+		/// Column values are - error values.
 		/// </summary>
 		mErr=6,
 		/// <summary>
@@ -143,8 +143,16 @@ namespace Altaxo.Data
 	/// The indexer column is a simple readable numeric column. The value of an element is 
 	/// it's index in the column, i.e. GetDoubleAt(i) simply returns the value i.
 	/// </summary>
-	public class IndexerColumn : INumericColumn, IReadableColumn
+	public class IndexerColumn : INumericColumn, IReadableColumn, ICloneable
 	{
+		/// <summary>
+		/// Creates a cloned instance of this object.
+		/// </summary>
+		/// <returns>The cloned instance of this object.</returns>
+		public object Clone()
+		{
+			return new IndexerColumn();
+		}
 		/// <summary>
 		/// Simply returns the value i.
 		/// </summary>
@@ -191,7 +199,7 @@ namespace Altaxo.Data
 	/// The EquallySpacedColumn is a simple readable numeric column. The value of an element is 
 	/// calculated from y = a+b*i. This means the value of the first element is a, the values are equally spaced by b.
 	/// </summary>
-	public class EquallySpacedColumn : INumericColumn, IReadableColumn
+	public class EquallySpacedColumn : INumericColumn, IReadableColumn, ICloneable
 	{
 		/// <summary>The start value, i.e. the value at index 0.</summary>
 		protected double m_Start=0;
@@ -207,6 +215,15 @@ namespace Altaxo.Data
 		{
 			m_Start = start;
 			m_Increment = increment;
+		}
+
+		/// <summary>
+		/// Creates a cloned instance of this object.
+		/// </summary>
+		/// <returns>The cloned instance of this object.</returns>
+		public object Clone()
+		{
+			return new EquallySpacedColumn(m_Start, m_Increment);
 		}
 
 		/// <summary>
@@ -274,7 +291,13 @@ namespace Altaxo.Data
 	[SerializationSurrogate(0,typeof(Altaxo.Data.DataColumn.SerializationSurrogate0))]
 	[SerializationVersion(0)]
 	[Serializable()]
-	public abstract class DataColumn : IDisposable, System.Runtime.Serialization.IDeserializationCallback, IReadableColumn, IWriteableColumn, IDefinedCount
+	public abstract class DataColumn :
+		IDisposable,
+		System.Runtime.Serialization.IDeserializationCallback, 
+		IReadableColumn, 
+		IWriteableColumn, 
+		IDefinedCount,
+		ICloneable
 	{
 		///<summary>The name of the column.</summary>
 		protected string m_ColumnName=null;
@@ -407,6 +430,26 @@ namespace Altaxo.Data
 		{
 		}
 		#endregion
+
+		public DataColumn(DataColumn from)
+		{
+			this.m_bRowCountDecreased			= false;
+			this.m_ColumnName							= from.m_ColumnName;
+			this.m_ColumnNumber						= from.m_ColumnNumber;
+			this.m_Count									= from.m_Count;
+			this.m_DataEventsSuspendCount = 0;
+			this.m_Group									= from.m_Group;
+			this.m_Kind										= from.m_Kind;
+			this.m_MaxRowChanged					= int.MinValue;
+			this.m_MinRowChanged					= int.MaxValue;
+			this.m_Parent									= null;
+		}
+
+		/// <summary>
+		/// Creates a cloned instance of this object.
+		/// </summary>
+		/// <returns>The cloned instance of this object.</returns>
+		public abstract object Clone();
 
 
 		/// <summary>

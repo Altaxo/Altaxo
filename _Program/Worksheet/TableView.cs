@@ -247,13 +247,13 @@ namespace Altaxo.Worksheet
 				m_Ctrl.EhView_TableAreaSizeChanged(e);
 		}
 
-		private void EhDataView_Closed(object sender, System.EventArgs e)
+		protected override void OnClosed(System.EventArgs e)
 		{
 			if(null!=m_Ctrl)
 				m_Ctrl.EhView_Closed(e);
 		}
 
-		private void EhDataView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
 		{
 			if(null!=m_Ctrl)
 				m_Ctrl.EhView_Closing(e);
@@ -270,7 +270,7 @@ namespace Altaxo.Worksheet
 					m_GraphToolsToolBar = CreateGraphToolsToolbar();
 
 				// restore the parent - so the toolbar is shown
-				m_GraphToolsToolBar.Parent = (System.Windows.Forms.Form)(App.CurrentApplication);
+				m_GraphToolsToolBar.Parent = (System.Windows.Forms.Form)(App.Current);
 			*/
 				}
 		}

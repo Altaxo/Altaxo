@@ -39,7 +39,7 @@ namespace Altaxo.Data
 	/// are organized in property columns and can be retrieved by the <see cref="DataTable.PropCols"/> property of the table.</remarks>
 	[SerializationSurrogate(0,typeof(Altaxo.Data.DataTable.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class DataTable : DataColumnCollection, System.Runtime.Serialization.IDeserializationCallback
+	public class DataTable : DataColumnCollection, System.Runtime.Serialization.IDeserializationCallback, ICloneable
 		{
 		// Types
 		
@@ -61,7 +61,7 @@ namespace Altaxo.Data
 		/// descriptive name (the property column is then of type TextColumn).
 		/// This can also be another parameter which corresponds with that column, i.e. frequency. In this case the property column would be of
 		/// type DoubleColumn.</remarks>
-		protected DataColumnCollection m_PropertyColumns;
+		protected DataColumnCollection m_PropertyColumns = new DataColumnCollection();
 		
 		// Helper Data
 
@@ -120,37 +120,56 @@ namespace Altaxo.Data
 		#endregion
 
 		public DataTable()
-			: base(null)
+			: base()
 		{
 			base.Parent = this;
 			this.m_TableName = null;
-			m_PropertyColumns = new DataColumnCollection(this);
+			m_PropertyColumns.Parent = this;
 		}
 
 		public DataTable(string name)
-			: base(null)
+			: base()
 		{
 			base.Parent = this;
 			this.m_TableName = name;
-			m_PropertyColumns = new DataColumnCollection(this);
+			m_PropertyColumns.Parent = this;
 		}
 
-		public DataTable(Altaxo.Data.DataSet parent) : base(null)
+		public DataTable(Altaxo.Data.DataSet parent) : base()
 		{
 			base.Parent = this;
 			this.m_ParentDataSet = parent;
-			m_PropertyColumns = new DataColumnCollection(this);
+			m_PropertyColumns.Parent = this;
 		}
 
-		public DataTable(Altaxo.Data.DataSet parent, string name) : base(null)
+		public DataTable(Altaxo.Data.DataSet parent, string name) : base()
 		{
 			base.Parent = this;
 			this.m_ParentDataSet = parent;
 			this.m_TableName = name;
-			m_PropertyColumns = new DataColumnCollection(this);
+			m_PropertyColumns.Parent = this;
 		}
   
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="from">The data table to copy the structure from.</param>
+		public DataTable(DataTable from)
+			: base(from)
+		{
+			base.Parent = null;
+			this.m_ParentDataSet = null; 
+			this.m_TableName = from.m_TableName;
+			this.m_PropertyColumns = (DataColumnCollection)from.m_PropertyColumns.Clone();
+			this.m_PropertyColumns.Parent = this; // set the parent of the cloned PropertyColumns
+		}
+
 	
+		public override object Clone()
+		{
+			return new DataTable(this);
+		}
+
 		public Altaxo.Data.DataSet ParentDataSet
 		{
 			get { return m_ParentDataSet; }

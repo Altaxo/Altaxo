@@ -499,6 +499,11 @@ namespace Altaxo.Worksheet
 			m_MainMenu.MenuItems.Add(mi);
 			index = m_MainMenu.MenuItems.Count-1;
 
+			// Worksheet - Duplicate Worksheet
+			mi = new MenuItem("Duplicate Worksheet");
+			mi.Click += new EventHandler(EhMenuWorksheetDuplicate_OnClick);
+			//mi.Shortcut = ShortCuts.
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 
 			// Worksheet - Transpose
 			mi = new MenuItem("Transpose");
@@ -720,6 +725,16 @@ namespace Altaxo.Worksheet
 		// Worksheet (Popup)
 		// ******************************************************************
 		// ******************************************************************
+		protected void EhMenuWorksheetDuplicate_OnClick(object sender, System.EventArgs e)
+		{
+			Altaxo.Data.DataTable clonedTable = (Altaxo.Data.DataTable)this.DataTable.Clone();
+
+			// find a new name for the cloned table and add it to the DataSet
+			clonedTable.TableName = DataTable.ParentDataSet.FindNewTableName();
+			DataTable.ParentDataSet.Add(clonedTable);
+			App.Current.CreateNewWorksheet(clonedTable);
+		}
+
 		protected void EhMenuWorksheetTranspose_OnClick(object sender, System.EventArgs e)
 		{
 			string msg = this.DataTable.Transpose();
@@ -2321,12 +2336,19 @@ namespace Altaxo.Worksheet
 
 		public void EhView_Closed(EventArgs e)
 		{
-			// TODO:  Add TableController.EhView_Closed implementation
+			// if the view is closed, we delete the corresponding table
+			DataTable.ParentDataSet.Remove(DataTable);
+			DataTable.Dispose();
 		}
 
 		public void EhView_Closing(System.ComponentModel.CancelEventArgs e)
 		{
-			// TODO:  Add TableController.EhView_Closing implementation
+			System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,"Do you really want to close this worksheet and delete the corresponding table?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
+
+			if(dlgres==System.Windows.Forms.DialogResult.No)
+			{
+				e.Cancel = true;
+			}
 		}
 
 		#endregion

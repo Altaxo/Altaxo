@@ -578,6 +578,7 @@ namespace Altaxo
 
 		public void EhView_Closing(System.ComponentModel.CancelEventArgs e)
 		{
+			e.Cancel = false;
 		}
 
 		public void EhView_Closed(System.EventArgs e)
@@ -613,15 +614,11 @@ namespace Altaxo
 
 		private static MainController sm_theApplication;
 
-		public static MainController CurrentApplication
-		{
-			get { return sm_theApplication; }
-		}
-
 		public static MainController Current
 		{
 			get { return sm_theApplication; }
 		}
+
 
 		/// <summary>
 		/// The main entry point for the application.

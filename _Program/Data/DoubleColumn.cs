@@ -54,6 +54,18 @@ namespace Altaxo.Data
 			m_Capacity = initialcapacity;
 		}
 	
+		public DoubleColumn(DoubleColumn from)
+			: base(from)
+		{
+			this.m_Capacity = from.m_Capacity;
+			this.m_Array		= null==from.m_Array ? null : (double[])from.m_Array.Clone();
+		}
+
+		public override object Clone()
+		{
+			return new DoubleColumn(this);
+		}
+
 
 		#region "Serialization"
 		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate

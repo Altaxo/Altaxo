@@ -31,6 +31,20 @@ namespace Altaxo.Data
 	/// </summary>
 	public class DBNullColumn : DataColumn
 	{
+		public DBNullColumn()
+		{
+		}
+
+		public DBNullColumn(DBNullColumn from)
+			: base(from)
+		{
+		}
+
+		public override object Clone()
+		{
+			return new DBNullColumn(this);
+		}
+
 		public override System.Type GetColumnStyleType()
 		{ 
 			return null;
