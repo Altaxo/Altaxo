@@ -1478,6 +1478,36 @@ namespace Altaxo.Calc.Probability
     {
       get { return high; }
     }
+
+  
+    public double PDF(double z)
+    {
+      if(z<low)
+        return 0;
+      else if(z>=high)
+        return 0;
+      else
+        return 1.0/(high-low);
+    }
+
+    public double CDF(double z)
+    {
+      if(z<low)
+        return 0;
+      else if(z>=high)
+        return 1;
+      else
+        return (z-low)/(high-low);
+    }
+
+    public double Quantile(double p)
+    {
+      if(p<0 || p>1)
+        throw new ArgumentException("Probability must be between 0 and 1");
+      return low + p*(high-low);
+    }
+
+  
   }
 
   #endregion

@@ -49,6 +49,8 @@ namespace Altaxo
 
     private static Altaxo.Main.Services.IOutputService sm_theOutputService;
 
+    private static Altaxo.Main.Services.IDataDisplayService sm_theDataDisplayService;
+
     private static bool sm_theApplicationIsClosing;
 
     /// <summary>
@@ -164,6 +166,29 @@ namespace Altaxo
         sm_theOutputService = outputservice; 
       else
         throw new ApplicationException("The output service can not be re-set to another value, only initialized for the first time!");
+
+    }
+
+
+    /// <summary>
+    /// Returns the data display window, which is used to show the data obtained from the data reader tool.
+    /// </summary>
+    public static Altaxo.Main.Services.IDataDisplayService DataDisplay
+    {
+      get { return sm_theDataDisplayService; }
+    }
+
+
+    /// <summary>
+    /// Sets the current data display service.
+    /// </summary>
+    /// <param name="service">The instance of the data display service to use in this application.</param>
+    public static void SetDataDisplayService(Altaxo.Main.Services.IDataDisplayService service)
+    {
+      if(null==sm_theDataDisplayService)
+        sm_theDataDisplayService = service; 
+      else
+        throw new ApplicationException("The data display service can not be re-set to another value, only initialized for the first time!");
 
     }
 

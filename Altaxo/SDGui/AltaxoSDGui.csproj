@@ -164,6 +164,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\GUI\DataDisplayController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\GUI\FileScout.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

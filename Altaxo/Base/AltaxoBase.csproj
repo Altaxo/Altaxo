@@ -933,6 +933,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Main\Services\IDataDisplayService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\Services\IOutputService.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

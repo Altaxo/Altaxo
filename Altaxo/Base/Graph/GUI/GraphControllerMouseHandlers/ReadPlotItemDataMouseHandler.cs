@@ -26,6 +26,7 @@ using System.Drawing.Drawing2D;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Altaxo.Data;
 using Altaxo.Graph;
 using Altaxo.Serialization;
 
@@ -131,14 +132,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           PointF newPixelCoord = _grac.PrintableAreaToPixelCoordinates(printableCoord);
           Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
             
-          
-            
-          Current.Console.WriteLine("{0}[{1}] X={2}, Y={3}",
-            m_PlotItem.ToString(),
-            scatterPoint.RowIndex,
-            //             scatterPoint.PlotIndex,
+
+          this.DisplayData(m_PlotItem,scatterPoint.RowIndex,
             m_PlotItem.XYColumnPlotData.XColumn[scatterPoint.RowIndex],
             m_PlotItem.XYColumnPlotData.YColumn[scatterPoint.RowIndex]);
+
 
           
           
@@ -171,21 +169,30 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       //Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
       //Cursor.Position = ((Control)_grac.View).PointToScreen(newPixelCoord);
           
-            
-      Current.Console.WriteLine("{0}[{1}] X={2}, Y={3}",
-        m_PlotItem.ToString(),
-        scatterPoint.RowIndex,
-        //             scatterPoint.PlotIndex,
+   
+
+      this.DisplayData(m_PlotItem,scatterPoint.RowIndex,
         m_PlotItem.XYColumnPlotData.XColumn[scatterPoint.RowIndex],
         m_PlotItem.XYColumnPlotData.YColumn[scatterPoint.RowIndex]);
 
-          
+
           
       // here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
       // of the grac
       _grac.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
        
     }
+
+
+    void DisplayData(object plotItem, int rowIndex, AltaxoVariant x, AltaxoVariant y)
+  {
+      Current.DataDisplay.WriteOneLine(string.Format(
+        "{0}[{1}] X={2}, Y={3}",
+        plotItem.ToString(),
+        rowIndex,
+        x,
+        y));
+  }
 
 
     /// <summary>
