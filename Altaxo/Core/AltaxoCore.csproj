@@ -99,11 +99,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\ChirpFFT.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Calc\complex.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -125,11 +120,6 @@
                 />
                 <File
                     RelPath = "Calc\ExpIntegralRelated.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\FourierTransform.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -179,16 +169,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\Pfa235Convolution.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\Pfa235FFT.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Calc\Polynomials.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -214,12 +194,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\FFT\ChirpFFT.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\FFT\FourierDirection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\FFT\FourierTransform.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\FFT\NativeFourierMethods.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\FFT\Pfa235Convolution.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\FFT\Pfa235FFT.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
