@@ -236,6 +236,19 @@ namespace Altaxo.Calc.Regression.Multivariate
       return string.Format("{0}{1}",_XLeverage_ColumnName, numberOfFactors);
     }
 
+
+    /// <summary>
+    /// Gets the column name of a X-Leverage column
+    /// </summary>
+    /// <param name="whichY">Number of y-value.</param>
+    /// <param name="numberOfFactors">Number of factors for which the redidual is calculated.</param>
+    /// <returns>The name of the column.</returns>
+    public static string GetXLeverage_ColumnName(int whichY, int numberOfFactors)
+    {
+      return string.Format("{0}{1}.{2}",_XLeverage_ColumnName, whichY, numberOfFactors);
+    }
+
+
     protected static void NotFound(string name)
     {
       throw new ArgumentException("Column " + name + " not found in the table.");
@@ -296,26 +309,48 @@ namespace Altaxo.Calc.Regression.Multivariate
     #endregion
 
     #region Abstract members
+   
     /// <summary>
     /// Execute an analysis and stores the result in the provided table.
     /// </summary>
-    /// <param name="matrixX">The matrix of spectra (horizontal oriented).</param>
-    /// <param name="matrixY">The matrix of concentrations.</param>
+    /// <param name="matrixX">The matrix of spectra (horizontal oriented), centered and preprocessed.</param>
+    /// <param name="matrixY">The matrix of concentrations, centered.</param>
     /// <param name="plsOptions">Information how to perform the analysis.</param>
     /// <param name="plsContent">A structure to store information about the results of the analysis.</param>
     /// <param name="table">The table where to store the results to.</param>
     /// <param name="press">On return, gives a vector holding the PRESS values of the analysis.</param>
-    public abstract void ExecuteAnalysis(
+    public virtual void ExecuteAnalysis(
       IMatrix matrixX,
       IMatrix matrixY,
       MultivariateAnalysisOptions plsOptions,
       MultivariateContentMemento plsContent,
       DataTable table,
       out IROVector press
-      );
+      )
+    {
+      int numFactors = Math.Min(matrixX.Columns,plsOptions.MaxNumberOfFactors);
+      MultivariateRegression regress = this.CreateNewRegressionObject();
+      regress.AnalyzeFromPreprocessed(matrixX,matrixY,numFactors);
+      plsContent.NumberOfFactors = regress.NumberOfFactors;
+      plsContent.CrossValidationType = plsOptions.CrossPRESSCalculation;
+      press = regress.GetPRESSFromPreprocessed(matrixX);
+
+      Import(regress.CalibrationModel,table);
+ 
+    }
 
   
      public abstract MultivariateRegression CreateNewRegressionObject();
+
+
+
+    /// <summary>
+    /// Stores the calibrationSet into the data table table.
+    /// </summary>
+    /// <param name="calibrationSet">The data source.</param>
+    /// <param name="table">The table where to store the data of the calibrationSet.</param>
+    public abstract void Import(IMultivariateCalibrationModel calibrationSet,DataTable table);
+
 
     /// <summary>
     /// Calculate the cross PRESS values and stores the results in the provided table.
@@ -413,7 +448,33 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     /// <param name="table">Table where the calibration model is stored.</param>
     /// <param name="preferredNumberOfFactors">Number of factors used to calculate leverage.</param>
-    public abstract void CalculateXLeverage(DataTable table, int preferredNumberOfFactors);
+    public virtual void CalculateXLeverage(
+      DataTable table, int numberOfFactors)
+    {
+      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+
+      if(plsMemo==null)
+        throw new ArgumentException("Table does not contain a PLSContentMemento");
+
+      IMultivariateCalibrationModel calib = this.GetCalibrationModel(table);
+      IMatrix matrixX = GetRawSpectra(plsMemo);
+
+      MultivariateRegression.PreprocessSpectraForPrediction(calib,plsMemo.SpectralPreprocessing,matrixX);
+
+      MultivariateRegression regress = this.CreateNewRegressionObject();
+      regress.SetCalibrationModel(calib);
+
+      IROMatrix xLeverage = regress.GetXLeverageFromRaw(matrixX,numberOfFactors);
+
+      for(int i=0;i<xLeverage.Columns;i++)
+      {
+        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        MatrixMath.SetColumn(xLeverage,i,DataColumnWrapper.ToVertMatrix(col,xLeverage.Rows),0);
+        table.DataColumns.Add(col,GetXLeverage_ColumnName(numberOfFactors),Altaxo.Data.ColumnKind.V,GetXLeverage_ColumnGroup());
+      }
+    }
+
+
 
     /// <summary>
     /// Calculates the prediction scores. In case of a single y-variable, the prediction score is a vector of the same length than a spectrum.
@@ -422,9 +483,13 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="table">The table where the calibration model is stored.</param>
     /// <param name="preferredNumberOfFactors">Number of factors used to calculate the prediction scores.</param>
     /// <returns>A matrix with the prediction scores. Each score (for one y-value) is a row in the matrix.</returns>
-    public abstract IROMatrix CalculatePredictionScores(DataTable table, int preferredNumberOfFactors);
-
-   
+    public virtual IROMatrix CalculatePredictionScores(DataTable table, int preferredNumberOfFactors)
+    {
+      MultivariateRegression regress = this.CreateNewRegressionObject();
+      IMultivariateCalibrationModel model = this.GetCalibrationModel(table);
+      regress.SetCalibrationModel(model);
+      return regress.GetPredictionScores(preferredNumberOfFactors);
+    }
 
 
     /// <summary>

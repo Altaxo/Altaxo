@@ -47,30 +47,17 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
-    public override void ExecuteAnalysis(
-      IMatrix matrixX,
-      IMatrix matrixY,
-      MultivariateAnalysisOptions plsOptions,
-      MultivariateContentMemento plsContent,
-      DataTable table,
-      out IROVector press
-      )
+    public override void Import(
+      IMultivariateCalibrationModel calibrationSet,
+      DataTable table)
     {
 
-      plsContent.CrossValidationType = plsOptions.CrossPRESSCalculation;
-      int numFactors = plsOptions.MaxNumberOfFactors;
-      numFactors = Math.Min(numFactors,matrixX.Columns);
-      numFactors = Math.Min(numFactors,matrixX.Rows);
-
-      //MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,ref numFactors,xLoads,yLoads,W,V,PRESS);
-      plsContent.NumberOfFactors = numFactors;
+       PCRCalibrationModel calib = (PCRCalibrationModel)calibrationSet;
 
 
-      IROMatrix xLoads, xScores;
-      IROVector V;
-      PCRRegression.ExecuteAnalysis(matrixX,matrixY, ref numFactors,out xLoads, out xScores, out V);
-
-
+      int numFactors = calib.NumberOfFactors;
+      int numberOfY = calib.NumberOfY;
+      int numberOfPoints = calib.XLoads.Rows;
      
 
 
@@ -79,8 +66,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-        for(int j=0;j<xLoads.Columns;j++)
-          col[j] = xLoads[i,j];
+        for(int j=0;j<calib.XLoads.Columns;j++)
+          col[j] = calib.XLoads[i,j];
           
         table.DataColumns.Add(col,GetXLoad_ColumnName(i),Altaxo.Data.ColumnKind.V,0);
       }
@@ -90,19 +77,19 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
       
-        for(int j=0;j<xScores.Rows;j++)
-          col[j] = xScores[j,i];
+        for(int j=0;j<calib.XScores.Rows;j++)
+          col[j] = calib.XScores[j,i];
         
         table.DataColumns.Add(col,GetXScore_ColumnName(i),Altaxo.Data.ColumnKind.V,0);
       }
 
       // now store the y-loads (this are the preprocessed y in this case
-      for(int cn=0;cn<plsContent.NumberOfConcentrationData;cn++)
+      for(int cn=0;cn<numberOfY;cn++)
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
       
-        for(int i=0;i<plsContent.NumberOfMeasurements;i++)
-          col[i] = matrixY[i,cn];
+        for(int i=0;i<numberOfPoints;i++)
+          col[i] = calib.YLoads[i,cn];
         
         table.DataColumns.Add(col,GetYLoad_ColumnName(cn),Altaxo.Data.ColumnKind.V,0);
       }
@@ -112,15 +99,11 @@ namespace Altaxo.Calc.Regression.Multivariate
       Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
       
       for(int j=0;j<numFactors;j++)
-        col[j] = V[j];
+        col[j] = calib.CrossProduct[j];
       table.DataColumns.Add(col,GetCrossProduct_ColumnName(),Altaxo.Data.ColumnKind.V,3);
     }
 
-
-
-      PCRRegression.CalculatePRESS(matrixY,xScores,numFactors, out press);
-
-     
+    
     }
 
  
@@ -274,101 +257,11 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     }
 
-    public override void CalculatePredictedY(
-      IMultivariateCalibrationModel mcalib,
-      SpectralPreprocessingOptions preprocessOptions,
-      IMatrix matrixX,
-      int numberOfFactors, 
-      MatrixMath.BEMatrix  predictedY, 
-      IMatrix spectralResiduals)
-    {
-      PCRCalibrationModel calib = (PCRCalibrationModel)mcalib;
-
-      MultivariateRegression.PreprocessSpectraForPrediction(calib,preprocessOptions,matrixX);
-
-      PCRRegression.Predict(
-        matrixX,
-        calib.XLoads,
-        calib.YLoads,
-        calib.XScores,
-        calib.CrossProduct,
-        numberOfFactors,
-        predictedY,
-        spectralResiduals);
-
-      // mean and scale prediced Y
-      MatrixMath.MultiplyRow(predictedY,calib.PreprocessingModel.YScale,predictedY);
-      MatrixMath.AddRow(predictedY,calib.PreprocessingModel.YMean,predictedY);
-    }  
-
-    /// <summary>
-    /// For a given set of calibration (!) spectra, cross predicts the y-values and stores them in the matrix <c>predictedY</c>. Cross prediction means that the prediction is
-    /// done with exclusion of the spectra to predict from the calibration model.
-    /// </summary>
-    /// <param name="calib">The calibration model of the analysis.</param>
-    /// <param name="preprocessOptions">The information how to preprocess the spectra.</param>
-    /// <param name="matrixX">The matrix of calibration spectra. Each spectrum is a row in the matrix.</param>
-    /// <param name="numberOfFactors">The number of factors used for prediction.</param>
-    /// <param name="predictedY">On return, this matrix holds the cross predicted y-values. Each row in this matrix corresponds to the same row (spectrum) in matrixX.</param>
-    /// <param name="spectralResiduals">If you set this parameter to a appropriate matrix, the spectral residuals will be stored in this matrix. Set this parameter to null if you don't need the residuals.</param>
-    public override void CalculateCrossPredictedY(
-      IMultivariateCalibrationModel mcalib,
-      ICrossValidationGroupingStrategy groupingStrategy,
-      SpectralPreprocessingOptions preprocessOptions,
-      IROVector xOfX,
-      IMatrix matrixX,
-      IMatrix matrixY,
-      int numberOfFactors, 
-      IMatrix predictedY, 
-      IMatrix spectralResiduals)
-
-    {
-      // TODO implement this!
-      throw new NotImplementedException("Sorry, not implemented yet");
-    }
-
-    public override void CalculateXLeverage(
-      DataTable table, int numberOfFactors)
-    {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-
-      if(plsMemo==null)
-        throw new ArgumentException("Table does not contain a PLSContentMemento");
-
-
-      PCRCalibrationModel calib;
-      Export(table, out calib);
-      Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-
-
-      IMatrix subscores = new MatrixMath.BEMatrix(calib.XScores.Rows,numberOfFactors);
-      MatrixMath.Submatrix(calib.XScores,subscores);
-
-      MatrixMath.SingularValueDecomposition decompose = new MatrixMath.SingularValueDecomposition(subscores);
-
-      col.CopyDataFrom(decompose.HatDiagonal);
-
-      table.DataColumns.Add(col,GetXLeverage_ColumnName(numberOfFactors),Altaxo.Data.ColumnKind.V,GetXLeverage_ColumnGroup());
-    }
-
-
+    
   
 
    
-    public override IROMatrix CalculatePredictionScores(DataTable table, int preferredNumberOfFactors)
-    {
-      MultivariateContentMemento memento = table.GetTableProperty("Content") as MultivariateContentMemento;
-
-      PCRCalibrationModel calib;
-      Export(table,out calib);
-
-      Matrix predictionScores = new Matrix(memento.NumberOfSpectralData,memento.NumberOfConcentrationData);
-      PCRRegression.GetPredictionScoreMatrix(calib.XLoads,calib.YLoads,calib.XScores,calib.CrossProduct,preferredNumberOfFactors,predictionScores);
-     
-      
-      return predictionScores.Transpose();
-    }
-
+  
 
 
     #endregion

@@ -32,6 +32,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 	{
     PLS1CalibrationModel _calib;
 
+    protected IExtensibleVector _PRESS;
+    public IROVector PRESS {  get { return this._PRESS; }}
+    public override IROVector GetPRESSFromPreprocessed(IROMatrix matrixX)  {  return this._PRESS; }
    
 
     protected override MultivariateCalibrationModel InternalCalibrationModel { get { return _calib; }}
@@ -80,6 +83,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       int numberOfFactors = _calib.NumberOfFactors = Math.Min(matrixX.Columns, maxFactors);
       IMatrix helperY = new MatrixMath.BEMatrix(matrixY.Rows,1);
       
+      _PRESS = null;
+
       for(int i=0;i<matrixY.Columns;i++)
       {
         MatrixMath.Submatrix(matrixY,helperY,0,i);
@@ -92,6 +97,10 @@ namespace Altaxo.Calc.Regression.Multivariate
         _calib.YLoads[i] = cal.YLoads;
         _calib.XWeights[i] = cal.XWeights;
         _calib.CrossProduct[i] = cal.CrossProduct;
+
+        if(_PRESS==null)
+          _PRESS = VectorMath.CreateExtensibleVector(r.PRESS.Length);
+        VectorMath.Add(_PRESS,r.PRESS,_PRESS);
       }
     }
 
@@ -133,5 +142,29 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
   
+
+    /// <summary>
+    /// Calculates the prediction scores (for use withthe preprocessed spectra).
+    /// </summary>
+    /// <param name="numFactors">Number of factors used to calculate the prediction scores.</param>
+    /// <param name="predictionScores">Supplied matrix for holding the prediction scores.</param>
+    protected override void InternalGetPredictionScores(int numFactors, IMatrix predictionScores)
+    {
+      IMatrix pred = new MatrixMath.BEMatrix(predictionScores.Rows,1);
+      for(int i=0;i<_calib.NumberOfY;i++)
+      {
+        PLS2Regression.GetPredictionScoreMatrix(_calib.XLoads[i],_calib.YLoads[i],_calib.XWeights[i],_calib.CrossProduct[i],numFactors,pred);
+        MatrixMath.SetColumn(pred,predictionScores,i);
+      }
+    }
+
+
+    protected override void InternalGetXLeverageFromPreprocessed(IROMatrix matrixX, int numFactors, IMatrix xLeverage)
+    {
+      for(int i=0;i<_calib.NumberOfY;i++)
+        PLS2Regression.CalculateXLeverageFromPreprocessed(matrixX,_calib.XWeights[i],numFactors,xLeverage,i);
+    }
+
+
 	}
 }

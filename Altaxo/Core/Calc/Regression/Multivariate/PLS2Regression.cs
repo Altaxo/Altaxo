@@ -34,7 +34,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     PLS2CalibrationModel _calib;
 
     protected IExtensibleVector _PRESS;
-    public IROVector PRESS { get { return this._PRESS; }}
+    public IROVector PRESS {  get { return this._PRESS; }}
+    public override IROVector GetPRESSFromPreprocessed(IROMatrix matrixX)  {  return this._PRESS; }
+    
     
 
     protected override MultivariateCalibrationModel InternalCalibrationModel { get { return _calib; }}
@@ -48,7 +50,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       base.Reset();
     }
 
-    public IPLS2CalibrationModel CalibrationModel
+    public new IPLS2CalibrationModel CalibrationModel
     {
       get { return _calib; }
     }
@@ -133,7 +135,20 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
-   
+    /// <summary>
+    /// Calculates the prediction scores (for use withthe preprocessed spectra).
+    /// </summary>
+    /// <param name="numFactors">Number of factors used to calculate the prediction scores.</param>
+    /// <param name="predictionScores">Supplied matrix for holding the prediction scores.</param>
+    protected override void InternalGetPredictionScores(int numFactors, IMatrix predictionScores)
+    {
+      GetPredictionScoreMatrix(_calib.XLoads,_calib.YLoads,_calib.XWeights,_calib.CrossProduct,numFactors,predictionScores);
+    }
+
+    protected override void InternalGetXLeverageFromPreprocessed(IROMatrix matrixX, int numFactors, IMatrix xLeverage)
+    {
+      PLS2Regression.CalculateXLeverageFromPreprocessed(matrixX,_calib.XWeights,numFactors,xLeverage,0);
+    }
    
 
     /// <summary>
@@ -391,6 +406,27 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
    
+    public static void CalculateXLeverageFromPreprocessed(
+      IROMatrix matrixX,
+      IROMatrix W, // weighting matrix
+      int numFactors, // number of factors to use for prediction
+      IMatrix leverage, // Matrix of predicted y-values, must be same number of rows as spectra
+      int leverageColumn
+      )
+    {
+
+      // get the score matrix
+      MatrixMath.BEMatrix weights = new MatrixMath.BEMatrix(numFactors,W.Columns);
+      MatrixMath.Submatrix(W,weights,0,0);
+      MatrixMath.BEMatrix scoresMatrix = new MatrixMath.BEMatrix(matrixX.Rows,weights.Rows);
+      MatrixMath.MultiplySecondTransposed(matrixX,weights,scoresMatrix);
+    
+      MatrixMath.SingularValueDecomposition decomposition = MatrixMath.GetSingularValueDecomposition(scoresMatrix);
+
+
+      for(int i=0;i<matrixX.Rows;i++)
+        leverage[i,leverageColumn] = decomposition.HatDiagonal[i];
+    }
    
 
   

@@ -46,33 +46,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       return new PLS2Regression();
     }
 
-    /// <summary>
-    /// Execute an analysis and stores the result in the provided table.
-    /// </summary>
-    /// <param name="matrixX">The matrix of spectra (horizontal oriented), centered and preprocessed.</param>
-    /// <param name="matrixY">The matrix of concentrations, centered.</param>
-    /// <param name="plsOptions">Information how to perform the analysis.</param>
-    /// <param name="plsContent">A structure to store information about the results of the analysis.</param>
-    /// <param name="table">The table where to store the results to.</param>
-    /// <param name="press">On return, gives a vector holding the PRESS values of the analysis.</param>
-    public override void ExecuteAnalysis(
-      IMatrix matrixX,
-      IMatrix matrixY,
-      MultivariateAnalysisOptions plsOptions,
-      MultivariateContentMemento plsContent,
-      DataTable table,
-      out IROVector press
-      )
-    {
-      int numFactors = Math.Min(matrixX.Columns,plsOptions.MaxNumberOfFactors);
-      PLS2Regression regress = PLS2Regression.CreateFromPreprocessed(matrixX,matrixY,numFactors);
-      plsContent.NumberOfFactors = regress.NumberOfFactors;
-      plsContent.CrossValidationType = plsOptions.CrossPRESSCalculation;
-      press = regress.PRESS;
-
-      Import(table,regress.CalibrationModel);
- 
-    }
+    
 
  
 
@@ -82,6 +56,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       PLS2CalibrationModel model;
       Export(calibTable,out model);
+    
+
       return model;
     }
 
@@ -124,9 +100,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
-    public void Import(
-      DataTable table,
-      IMultivariateCalibrationModel calibrationSet)
+    public override void Import(
+      IMultivariateCalibrationModel calibrationSet,
+      DataTable table)
     {
       PLS2CalibrationModel calib = (PLS2CalibrationModel)calibrationSet;
 
@@ -193,6 +169,10 @@ namespace Altaxo.Calc.Regression.Multivariate
       calibrationSet.NumberOfY = numberOfY;
       calibrationSet.NumberOfFactors = numberOfFactors;
       MultivariatePreprocessingModel preprocessSet = new MultivariatePreprocessingModel();
+      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      if(plsMemo!=null)
+        preprocessSet.PreprocessOptions = plsMemo.SpectralPreprocessing;
+
       calibrationSet.SetPreprocessingModel(preprocessSet);
 
       Altaxo.Collections.AscendingIntegerCollection sel = new Altaxo.Collections.AscendingIntegerCollection();
@@ -275,51 +255,10 @@ namespace Altaxo.Calc.Regression.Multivariate
   
   
 
-    public override void CalculateXLeverage(
-      DataTable table, int numberOfFactors)
-    {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-
-      if(plsMemo==null)
-        throw new ArgumentException("Table does not contain a PLSContentMemento");
-
-
-      PLS2CalibrationModel calib;
-      Export(table, out calib);
-
-
-      IMatrix matrixX = GetRawSpectra(plsMemo);
-      MultivariateRegression.PreprocessSpectraForPrediction(calib,plsMemo.SpectralPreprocessing,matrixX);
-
-      // get the score matrix
-      MatrixMath.BEMatrix weights = new MatrixMath.BEMatrix(numberOfFactors,calib.XWeights.Columns);
-      MatrixMath.Submatrix(calib.XWeights,weights,0,0);
-      MatrixMath.BEMatrix scoresMatrix = new MatrixMath.BEMatrix(matrixX.Rows,weights.Rows);
-      MatrixMath.MultiplySecondTransposed(matrixX,weights,scoresMatrix);
-    
-      MatrixMath.SingularValueDecomposition decomposition = MatrixMath.GetSingularValueDecomposition(scoresMatrix);
-
-      Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-      col.CopyDataFrom(decomposition.HatDiagonal);
-
-      table.DataColumns.Add(col,GetXLeverage_ColumnName(numberOfFactors),Altaxo.Data.ColumnKind.V,GetXLeverage_ColumnGroup());
-    }
-
-
   
 
    
-    public override IROMatrix CalculatePredictionScores(DataTable table, int preferredNumberOfFactors)
-    {
-      MultivariateContentMemento memento = table.GetTableProperty("Content") as MultivariateContentMemento;
-
-      PLS2CalibrationModel model;
-      Export(table,out model);
-
-      Matrix predictionScores = new Matrix(memento.NumberOfConcentrationData,memento.NumberOfSpectralData);
-      PLS2Regression.GetPredictionScoreMatrix(model.XLoads,model.YLoads,model.XWeights,model.CrossProduct,preferredNumberOfFactors,predictionScores);
-      return predictionScores;
-    }
+   
 
 
 

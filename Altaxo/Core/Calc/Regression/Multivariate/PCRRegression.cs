@@ -31,6 +31,24 @@ namespace Altaxo.Calc.Regression.Multivariate
   public class PCRRegression : MultivariateRegression
   {
     PCRCalibrationModel _calib;
+
+    protected IExtensibleVector _PRESS;
+    public override IROVector GetPRESSFromPreprocessed(IROMatrix matrixX)
+    {
+      IROVector result;
+     CalculatePRESS(
+      matrixX,
+      _calib.XLoads,
+      _calib.YLoads,
+      _calib.XScores,
+      _calib.CrossProduct,
+      _calib.NumberOfFactors,
+      out result);
+
+      return result;
+
+    }
+
  
 
     protected override MultivariateCalibrationModel InternalCalibrationModel { get { return _calib; }}
@@ -77,6 +95,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROVector V;
       ExecuteAnalysis(matrixX, matrixY, ref numFactors, out xLoads, out xScores, out V);
 
+
+
       IMatrix yLoads = new MatrixMath.BEMatrix(matrixY.Rows,matrixY.Columns);
       MatrixMath.Copy(matrixY,yLoads);
 
@@ -119,6 +139,21 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
    
+    /// <summary>
+    /// Calculates the prediction scores (for use withthe preprocessed spectra).
+    /// </summary>
+    /// <param name="numFactors">Number of factors used to calculate the prediction scores.</param>
+    /// <param name="predictionScores">Supplied matrix for holding the prediction scores.</param>
+    protected override void InternalGetPredictionScores(int numFactors, IMatrix predictionScores)
+    {
+      GetPredictionScoreMatrix(_calib.XLoads,_calib.YLoads,_calib.XScores,_calib.CrossProduct,numFactors,predictionScores);
+    }
+
+    protected override void InternalGetXLeverageFromPreprocessed(IROMatrix matrixX, int numFactors, IMatrix xLeverage)
+    {
+      CalculateXLeverageFromPreprocessed(_calib.XScores,numFactors,xLeverage);
+    }
+
 
     public static void ExecuteAnalysis(
       IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
@@ -267,6 +302,7 @@ namespace Altaxo.Calc.Regression.Multivariate
      
     }
 
+
     public static void CalculatePRESS(
       IROMatrix matrixX,
       IROMatrix xLoads,
@@ -321,6 +357,22 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     }
 
+
+    public static void CalculateXLeverageFromPreprocessed(
+      IROMatrix xScores,
+      int numberOfFactors,
+      IMatrix leverage)
+    {
+      IMatrix subscores = new MatrixMath.BEMatrix(xScores.Rows,numberOfFactors);
+      MatrixMath.Submatrix(xScores,subscores);
+
+      MatrixMath.SingularValueDecomposition decompose = new MatrixMath.SingularValueDecomposition(subscores);
+
+      
+      for(int i=0;i<xScores.Rows;i++)
+        leverage[i,0] = decompose.HatDiagonal[i];
+
+    }
 
 
   }

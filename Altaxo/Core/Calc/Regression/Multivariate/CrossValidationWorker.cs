@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     
 
-    public int NumberOfFactors { get { return NumberOfFactors; }}
+    public int NumberOfFactors { get { return _numFactors; }}
 
     public CrossValidationWorker(
       IROVector xOfX,

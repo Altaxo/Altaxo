@@ -56,13 +56,34 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column
       );
 
+    /// <summary>
+    /// Calculates the prediction scores (for use withthe preprocessed spectra).
+    /// </summary>
+    /// <param name="numFactors">Number of factors used to calculate the prediction scores.</param>
+    /// <param name="predictionScores">Supplied matrix for holding the prediction scores.</param>
+    protected abstract void InternalGetPredictionScores(int numFactors, IMatrix predictionScores);
+
+    protected abstract void InternalGetXLeverageFromPreprocessed(IROMatrix matrixX, int numFactors, IMatrix xLeverage);
+
     public abstract void SetCalibrationModel(IMultivariateCalibrationModel calib);
+
+    /// <summary>
+    /// Returns the predicted error sum of squares (PRESS) for this analysis. The length of the vector returned
+    /// is the number of factors in the analysis plus one.
+    /// </summary>
+    /// <param name="matrixX">The preprocessed spectra.</param>
+    /// <returns>The PRESS vector.</returns>
+    public abstract IROVector GetPRESSFromPreprocessed(IROMatrix matrixX);
 
     #endregion
 
     #region Properties and helpers
     
     protected abstract MultivariateCalibrationModel InternalCalibrationModel { get; }
+    public virtual IMultivariateCalibrationModel CalibrationModel
+                                                      {
+    get { return InternalCalibrationModel; }
+}
 
     public int NumberOfFactors { get { return InternalCalibrationModel.NumberOfFactors; }}
 
@@ -588,6 +609,31 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     #endregion
+
+    public virtual IROMatrix GetPredictionScores(int numberOfFactors)
+    {
+      IMatrix result = new MatrixMath.BEMatrix(InternalCalibrationModel.NumberOfX,InternalCalibrationModel.NumberOfY);
+      this.InternalGetPredictionScores(numberOfFactors,result);
+      return result;
+    }
+
+    public virtual IROMatrix GetXLeverageFromPreprocessed(IROMatrix matrixX, int numFactors)
+    {
+      IMatrix result = new MatrixMath.BEMatrix(matrixX.Rows,1);
+      this.InternalGetXLeverageFromPreprocessed(matrixX,numFactors,result);
+      return result;
+    }
+
+    public virtual IROMatrix GetXLeverageFromRaw(SpectralPreprocessingOptions preprocessOptions, IMatrix matrixX, int numFactors)
+    {
+      MultivariateRegression.PreprocessSpectraForPrediction(InternalCalibrationModel,preprocessOptions,matrixX);
+      return GetXLeverageFromPreprocessed(matrixX,numFactors);
+    }
+
+    public virtual IROMatrix GetXLeverageFromRaw(IMatrix matrixX, int numFactors)
+    {
+      return GetXLeverageFromRaw(InternalCalibrationModel.PreprocessingModel.PreprocessOptions,matrixX,numFactors);
+    }
 
   }
 }

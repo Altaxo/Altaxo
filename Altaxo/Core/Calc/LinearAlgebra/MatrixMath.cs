@@ -2031,6 +2031,27 @@ namespace Altaxo.Calc.LinearAlgebra
 
     }
 
+
+    /// <summary>
+    /// Sets one column in the destination matrix equal to the vertical vector provided by src matix.
+    /// </summary>
+    /// <param name="src">The source matrix. Must be a vertical vector (cols=1) with the same number of rows than the destination matrix.</param>
+    /// <param name="srccol">The column in the source matrix to copy from.</param>
+    /// <param name="dest">The destination matrix where to copy the vertical vector into.</param>
+    /// <param name="destcol">The column in the destination matrix where to copy the vector to.</param>
+    public static void SetColumn(IROMatrix src, int srccol, IMatrix dest, int destcol)
+    {
+      if(destcol>=dest.Columns)
+        throw new ArithmeticException(string.Format("Try to set column {0} in the matrix with dim({1},{2}) is not allowed!",destcol,dest.Rows,dest.Columns));
+      if(srccol>=src.Columns)
+        throw new ArithmeticException(string.Format("Parameter srccol out of range ({0}>={1})!",srccol,src.Columns));
+      if(dest.Rows != src.Rows)
+        throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({3})!",destcol,dest.Rows,src.Rows));
+    
+      for(int i=0;i<dest.Rows;i++)
+        dest[i,destcol]=src[i,srccol];
+    }
+
     /// <summary>
     /// Sets one column in the destination matrix equal to the vertical vector provided by src matix.
     /// </summary>

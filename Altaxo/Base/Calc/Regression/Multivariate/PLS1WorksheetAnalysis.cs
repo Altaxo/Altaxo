@@ -48,71 +48,44 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
-    public override void ExecuteAnalysis(
-      IMatrix matrixX,
-      IMatrix matrixY,
-      MultivariateAnalysisOptions plsOptions,
-      MultivariateContentMemento plsContent,
-      DataTable table,
-      out IROVector press
-      )
+    public override void Import(
+      IMultivariateCalibrationModel calibrationSet,
+      DataTable table)
     {
-      // the difference between Pls2 and Pls1 is that in Pls1 only one y value is
-      // handled
-      plsContent.NumberOfFactors = plsContent.NumberOfMeasurements;
-      plsContent.CrossValidationType = plsOptions.CrossPRESSCalculation;
-      IExtensibleVector PRESS     = null;
+       PLS1CalibrationModel calib = (PLS1CalibrationModel)calibrationSet;
 
-      for(int yn=0;yn<matrixY.Columns;yn++)
+      for(int yn=0;yn<calib.NumberOfY;yn++)
       {
-
-        MatrixMath.BEMatrix matrixYpls1 = new MatrixMath.BEMatrix(matrixY.Rows,1);
-        MatrixMath.Submatrix(matrixY,matrixYpls1,yn,0);
-
-
-        // now do a PLS with it
-        MatrixMath.BEMatrix xLoads   = new MatrixMath.BEMatrix(0,0);
-        MatrixMath.BEMatrix yLoads   = new MatrixMath.BEMatrix(0,0);
-        MatrixMath.BEMatrix W       = new MatrixMath.BEMatrix(0,0);
-        MatrixMath.REMatrix V       = new MatrixMath.REMatrix(0,0);
-        IExtensibleVector localPRESS     = VectorMath.CreateExtensibleVector(0);
-     
-
-
-        int numFactors = Math.Min(matrixX.Columns,plsOptions.MaxNumberOfFactors);
-        PLS2Regression.ExecuteAnalysis(matrixX,matrixYpls1,ref numFactors,xLoads,yLoads,W,V,localPRESS);
-        plsContent.NumberOfFactors = Math.Min(plsContent.NumberOfFactors,numFactors);
-  
-        // store the x-loads - careful - they are horizontal in the matrix
-        for(int i=0;i<xLoads.Rows;i++)
+      // store the x-loads - careful - they are horizontal in the matrix
+        for(int i=0;i<calib.XLoads[yn].Rows;i++)
         {
           Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-          for(int j=0;j<xLoads.Columns;j++)
-            col[j] = xLoads[i,j];
+          for(int j=0;j<calib.XLoads[yn].Columns;j++)
+            col[j] = calib.XLoads[yn][i,j];
           
           table.DataColumns.Add(col,GetXLoad_ColumnName(yn,i),Altaxo.Data.ColumnKind.V,0);
         }
 
 
         // now store the y-loads - careful - they are horizontal in the matrix
-        for(int i=0;i<yLoads.Rows;i++)
+        for(int i=0;i<calib.YLoads[yn].Rows;i++)
         {
           Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
         
-          for(int j=0;j<yLoads.Columns;j++)
-            col[j] = yLoads[i,j];
+          for(int j=0;j<calib.YLoads[yn].Columns;j++)
+            col[j] = calib.YLoads[yn][i,j];
         
           table.DataColumns.Add(col,GetYLoad_ColumnName(yn,i),Altaxo.Data.ColumnKind.V,1);
         }
 
         // now store the weights - careful - they are horizontal in the matrix
-        for(int i=0;i<W.Rows;i++)
+        for(int i=0;i<calib.XWeights[yn].Rows;i++)
         {
           Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
       
-          for(int j=0;j<W.Columns;j++)
-            col[j] = W[i,j];
+          for(int j=0;j<calib.XWeights[yn].Columns;j++)
+            col[j] = calib.XWeights[yn][i,j];
         
           table.DataColumns.Add(col,GetXWeight_ColumnName(yn,i),Altaxo.Data.ColumnKind.V,0);
         }
@@ -121,19 +94,15 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
       
-        for(int j=0;j<V.Columns;j++)
-          col[j] = V[0,j];
+        for(int j=0;j<calib.CrossProduct[yn].Columns;j++)
+          col[j] = calib.CrossProduct[yn][0,j];
         table.DataColumns.Add(col,GetCrossProduct_ColumnName(yn),Altaxo.Data.ColumnKind.V,3);
       }
 
-        if(PRESS==null)
-          PRESS=VectorMath.CreateExtensibleVector(localPRESS.Length);
-        VectorMath.Add(PRESS,localPRESS,PRESS);
       
       } // for all y (constituents)
 
 
-      press = PRESS;
     }
 
     
@@ -284,120 +253,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
 
-    public override void CalculatePredictedY(
-      IMultivariateCalibrationModel mcalib,
-      SpectralPreprocessingOptions preprocessOptions,
-      IMatrix matrixX,
-      int numberOfFactors, 
-      MatrixMath.BEMatrix  predictedY, 
-      IMatrix spectralResiduals)
-    {
-      PLS1CalibrationModel calib = (PLS1CalibrationModel)mcalib;
 
-      MultivariateRegression.PreprocessSpectraForPrediction(calib,preprocessOptions,matrixX);
-
-      for(int yn=0;yn<calib.NumberOfY;yn++)
-      {
-
-        PLS2Regression.Predict(
-          matrixX,
-          calib.XLoads[yn],
-          calib.YLoads[yn],
-          calib.XWeights[yn],
-          calib.CrossProduct[yn],
-          numberOfFactors,
-          MatrixMath.ToSubMatrix(predictedY,0,yn,predictedY.Rows,1),
-          null==spectralResiduals?null:MatrixMath.ToSubMatrix(spectralResiduals,0,yn,spectralResiduals.Rows,1));
-      }
-      // mean and scale prediced Y
-      MatrixMath.MultiplyRow(predictedY,calib.PreprocessingModel.YScale,predictedY);
-      MatrixMath.AddRow(predictedY,calib.PreprocessingModel.YMean,predictedY);
-    }  
-
-
-    /// <summary>
-    /// For a given set of calibration (!) spectra, cross predicts the y-values and stores them in the matrix <c>predictedY</c>. Cross prediction means that the prediction is
-    /// done with exclusion of the spectra to predict from the calibration model.
-    /// </summary>
-    /// <param name="calib">The calibration model of the analysis.</param>
-    /// <param name="preprocessOptions">The information how to preprocess the spectra.</param>
-    /// <param name="matrixX">The matrix of calibration spectra. Each spectrum is a row in the matrix.</param>
-    /// <param name="numberOfFactors">The number of factors used for prediction.</param>
-    /// <param name="predictedY">On return, this matrix holds the cross predicted y-values. Each row in this matrix corresponds to the same row (spectrum) in matrixX.</param>
-    /// <param name="spectralResiduals">If you set this parameter to a appropriate matrix, the spectral residuals will be stored in this matrix. Set this parameter to null if you don't need the residuals.</param>
-    public override void CalculateCrossPredictedY(
-      IMultivariateCalibrationModel mcalib,
-      ICrossValidationGroupingStrategy groupingStrategy,
-      SpectralPreprocessingOptions preprocessOptions,
-      IROVector xOfX,
-      IMatrix matrixX,
-      IMatrix matrixY,
-      int numberOfFactors, 
-      IMatrix predictedY, 
-      IMatrix spectralResiduals)
-
-    {
-      // TODO implement this!
-      throw new NotImplementedException("Sorry, not implemented yet");
-    }
-
-    
-    public override void CalculateXLeverage(
-      DataTable table, int numberOfFactors)
-    {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-
-      if(plsMemo==null)
-        throw new ArgumentException("Table does not contain a PLSContentMemento");
-
-
-      PLS1CalibrationModel calib;
-      Export(table, out calib);
-
-      IVector totalLeverage = VectorMath.CreateExtensibleVector(plsMemo.NumberOfMeasurements);
-
-      IMatrix matrixX = GetRawSpectra(plsMemo);
-      MultivariateRegression.PreprocessSpectraForPrediction(calib,plsMemo.SpectralPreprocessing,matrixX);
-
-      for(int yn=0;yn<calib.NumberOfY;yn++)
-      {
-        // get the score matrix
-        MatrixMath.BEMatrix weights = new MatrixMath.BEMatrix(numberOfFactors,calib.NumberOfX);
-        MatrixMath.Submatrix(calib.XWeights[yn],weights,0,0);
-        MatrixMath.BEMatrix scoresMatrix = new MatrixMath.BEMatrix(matrixX.Rows,weights.Rows);
-        MatrixMath.MultiplySecondTransposed(matrixX,weights,scoresMatrix);
-    
-        MatrixMath.SingularValueDecomposition decomposition = MatrixMath.GetSingularValueDecomposition(scoresMatrix);
-
-        VectorMath.Add(VectorMath.ToROVector(decomposition.HatDiagonal),totalLeverage,totalLeverage);
-      }
-      
-      Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-      VectorMath.Copy(totalLeverage,DataColumnWrapper.ToVector(col,totalLeverage.Length));
-      table.DataColumns.Add(col,GetXLeverage_ColumnName(numberOfFactors),Altaxo.Data.ColumnKind.V,GetXLeverage_ColumnGroup());
-    }
-
-
-    public override IROMatrix CalculatePredictionScores(DataTable table, int preferredNumberOfFactors)
-    {
-      MultivariateContentMemento memento = table.GetTableProperty("Content") as MultivariateContentMemento;
-
-      PLS1CalibrationModel calib;
-      Export(table,out calib);
-
-      Matrix predictionScores = new Matrix(memento.NumberOfConcentrationData,memento.NumberOfSpectralData);
-      for(int yn=0;yn<calib.NumberOfY;yn++)
-      {
-        PLS2Regression.GetPredictionScoreMatrix(
-          calib.XLoads[yn],
-          calib.YLoads[yn],
-          calib.XWeights[yn],
-          calib.CrossProduct[yn],
-          preferredNumberOfFactors,
-          MatrixMath.ToSubMatrix(predictionScores,yn,0,1,predictionScores.Columns));
-      }
-      return predictionScores;
-    }
+   
 
     #endregion
   }
