@@ -115,6 +115,8 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     protected Bitmap m_FrozenGraph;
 
+    protected bool   m_FrozenGraphIsDirty;
+
     /// <summary>
     /// Necessary to determine if deserialization finisher already has finished serialization.
     /// </summary>
@@ -1067,6 +1069,8 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">The EventArgs.</param>
     protected void EhGraph_Changed(object sender, System.EventArgs e)
     {
+      this.m_FrozenGraphIsDirty = true;
+
       // if something changed on the graph, make sure that the layer and plot number reflect this changed
       this.EnsureValidityOfCurrentLayerNumber();
       this.EnsureValidityOfCurrentPlotNumber();
@@ -1081,6 +1085,8 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">The event arguments.</param>
     protected void EhGraph_BoundsChanged(object sender, System.EventArgs e)
     {
+      this.m_FrozenGraphIsDirty = true;
+
       if(View!=null)
       {
         if(this.AutoZoom)
@@ -1249,6 +1255,84 @@ namespace Altaxo.Graph.GUI
       return null;
     }
 
+
+    private void DoPaint(Graphics g, bool bForPrinting)
+    {
+      if(bForPrinting)
+      {
+        DoPaintUnbuffered(g,bForPrinting);
+      }
+      else
+      {
+
+        if(m_FrozenGraph==null || m_FrozenGraph.Width!=m_View.GraphSize.Width || m_FrozenGraph.Height!=m_View.GraphSize.Height)
+        {
+          if(m_FrozenGraph!=null)
+          {
+            m_FrozenGraph.Dispose();
+            m_FrozenGraph = null;
+          }
+        
+          // create a frozen bitmap of the graph
+          // using(Graphics g = m_View.CreateGraphGraphics())
+          
+          m_FrozenGraph = new Bitmap(m_View.GraphSize.Width,m_View.GraphSize.Height,g);
+          m_FrozenGraphIsDirty = true;
+        }
+
+        if(m_FrozenGraph==null)
+        {
+          DoPaintUnbuffered(g,bForPrinting);
+        }
+        else if(m_FrozenGraphIsDirty)
+        {
+          using(Graphics gbmp = Graphics.FromImage(m_FrozenGraph))
+          {
+            DoPaintUnbuffered(gbmp,false);
+            m_FrozenGraphIsDirty=false;
+          }
+         
+          g.DrawImageUnscaled(m_FrozenGraph,0,0,m_View.GraphSize.Width,m_View.GraphSize.Height);
+          ScaleForPaint(g,bForPrinting);
+        }
+        else
+        {
+          g.DrawImageUnscaled(m_FrozenGraph,0,0,m_View.GraphSize.Width,m_View.GraphSize.Height);
+          ScaleForPaint(g,bForPrinting); // to be in the same state as when drawing unbuffered
+        }
+         
+        // special painting depending on current selected tool
+       this.m_MouseState.AfterPaint(this,g);
+      }
+    }
+
+    /// <summary>
+    /// This functions scales the graphics context to be ready for painting.
+    /// </summary>
+    /// <param name="g">The graphics context.</param>
+    /// <param name="bForPrinting">Indicates if the contexts is to be scaled
+    /// for printing purposed (true) or for painting to the screen (false).</param>
+    private void ScaleForPaint(Graphics g, bool bForPrinting)
+    {
+      // g.SmoothingMode = SmoothingMode.AntiAlias;
+      // get the dpi settings of the graphics context,
+      // for example; 96dpi on screen, 600dpi for the printer
+      // used to adjust grid and margin sizing.
+      this.m_HorizRes = g.DpiX;
+      this.m_VertRes = g.DpiY;
+
+      g.PageUnit = GraphicsUnit.Point;
+        
+      if(bForPrinting)
+        g.PageScale=1;
+      else
+        g.PageScale = this.m_Zoom;
+
+      float pointsh = UnitPerInch*m_View.GraphScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
+      float pointsv = UnitPerInch*m_View.GraphScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
+      g.TranslateTransform(pointsh,pointsv);
+    }
+
     /// <summary>
     /// Central routine for painting the graph. The painting can either be on the screen (bForPrinting=false), or
     /// on a printer or file (bForPrinting=true).
@@ -1256,27 +1340,11 @@ namespace Altaxo.Graph.GUI
     /// <param name="g">The graphics context painting to.</param>
     /// <param name="bForPrinting">If true, margins and background are not painted, as is usefull for printing.
     /// Also, if true, the scale is temporarely set to 1.</param>
-    private void DoPaint(Graphics g, bool bForPrinting)
+    private void DoPaintUnbuffered(Graphics g, bool bForPrinting)
     {
       try
       {
-        // g.SmoothingMode = SmoothingMode.AntiAlias;
-        // get the dpi settings of the graphics context,
-        // for example; 96dpi on screen, 600dpi for the printer
-        // used to adjust grid and margin sizing.
-        this.m_HorizRes = g.DpiX;
-        this.m_VertRes = g.DpiY;
-
-        g.PageUnit = GraphicsUnit.Point;
-        
-        if(bForPrinting)
-          g.PageScale=1;
-        else
-          g.PageScale = this.m_Zoom;
-
-        float pointsh = UnitPerInch*m_View.GraphScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
-        float pointsv = UnitPerInch*m_View.GraphScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
-        g.TranslateTransform(pointsh,pointsv);
+        ScaleForPaint(g,bForPrinting);
 
         if(!bForPrinting)
         {
@@ -1297,19 +1365,23 @@ namespace Altaxo.Graph.GUI
         g.TranslateTransform(m_Graph.PrintableBounds.X,m_Graph.PrintableBounds.Y); // translate the painting to the printable area
         m_Graph.DoPaint(g,bForPrinting);
 
-        // finally, mark the selected objects
-        if(!bForPrinting && m_SelectedObjects.Count>0)
-        {
-          foreach(IHitTestObject graphObject in m_SelectedObjects.Keys)
-          {
-            int nLayer = (int)m_SelectedObjects[graphObject];
-            g.DrawPath(Pens.Blue,graphObject.SelectionPath);
-          }
-        }
+       
+
+      
       }
       catch(System.Exception ex)
       {
-        System.Windows.Forms.MessageBox.Show(this.m_View.Window,ex.ToString());
+         g.PageUnit = GraphicsUnit.Point;
+         g.PageScale=1;
+
+        // System.Windows.Forms.MessageBox.Show(this.m_View.Window,ex.ToString());
+      
+        g.DrawString(ex.ToString(),
+          new System.Drawing.Font("Arial",10),
+          System.Drawing.Brushes.Black,
+          m_Graph.PrintableBounds);
+
+      
       }
 
     }
@@ -1899,6 +1971,14 @@ namespace Altaxo.Graph.GUI
       {
         return this;
       }
+
+      /// <summary>
+      /// This function is called just after the paint event.
+      /// </summary>
+      /// <param name="g"></param>
+      public virtual void AfterPaint(GraphController grac, Graphics g)
+      {
+      }
     }
     #endregion // abstract mouse state handler
 
@@ -1955,24 +2035,18 @@ namespace Altaxo.Graph.GUI
             // Console.WriteLine("Moving mdiff={0}, gdiff={1}, ldiff={2}", mouseDiff,graphDiff,layerDiff);
           }
           // now paint the objects on the new position
+          
+         
           if(null!=grac.m_FrozenGraph)
           {
             Graphics g = grac.m_View.CreateGraphGraphics();
-            // first paint the frozen graph, and upon that, paint all selection rectangles
-            g.DrawImageUnscaled(grac.m_FrozenGraph,0,0,grac.m_View.GraphSize.Width,grac.m_View.GraphSize.Height);
-
-            // now translate the graphics to graph units and paint all selection path
-            grac.TranslateGraphicsToGraphUnits(g);
-            foreach(IHitTestObject graphObject in grac.m_SelectedObjects.Keys)
-            {
-              //int nLayer = (int)grac.m_SelectedObjects[graphObject];            // get the layer number the graphObject belongs to
-              g.DrawPath(Pens.Blue,graphObject.SelectionPath); // draw the selection path
-            }
+            grac.DoPaint(g,false);
           }
           else  // if the graph was not frozen before - what reasons ever
           {
             grac.m_View.InvalidateGraph(); // rise a normal paint event
           }
+          
 
         }
         return this;
@@ -2135,11 +2209,13 @@ namespace Altaxo.Graph.GUI
           m_MoveObjectsLastMovePoint = currentMousePosition;
 
           // create a frozen bitmap of the graph
+          /*
           Graphics g = grac.m_View.CreateGraphGraphics(); // do not translate the graphics here!
           grac.m_FrozenGraph = new Bitmap(grac.m_View.GraphSize.Width,grac.m_View.GraphSize.Height,g);
           Graphics gbmp = Graphics.FromImage(grac.m_FrozenGraph);
           grac.DoPaint(gbmp,false);
           gbmp.Dispose();
+          */
         }
       }
 
@@ -2153,14 +2229,20 @@ namespace Altaxo.Graph.GUI
         m_bMoveObjectsOnMouseMove = false;
         m_bObjectsWereMoved=false;
         m_MoveObjectsLastMovePoint = new Point(0,0); // this is not neccessary, but only for "order"
+        
+        
+        /*
         if(null!=grac.m_FrozenGraph) 
         {
           grac.m_FrozenGraph.Dispose(); grac.m_FrozenGraph=null;
         }
+        */
       
         if(bRepaint)
+        {
+          grac.m_FrozenGraphIsDirty = true;
           grac.m_View.InvalidateGraph(); // redraw the contents
-
+        }
       }
 
       /// <summary>
@@ -2174,6 +2256,21 @@ namespace Altaxo.Graph.GUI
 
         if(bRepaint)
           grac.m_View.InvalidateGraph(); 
+      }
+
+      public override void AfterPaint(GraphController grac, Graphics g)
+      {
+        g.TranslateTransform(grac.Doc.PrintableBounds.X,grac.Doc.PrintableBounds.Y);
+        // finally, mark the selected objects
+        if(grac.m_SelectedObjects.Count>0)
+        {
+          foreach(IHitTestObject graphObject in grac.m_SelectedObjects.Keys)
+          {
+            int nLayer = (int)grac.m_SelectedObjects[graphObject];
+            g.DrawPath(Pens.Blue,graphObject.SelectionPath);
+          }
+        }
+        base.AfterPaint (grac,g);
       }
 
 
@@ -2246,6 +2343,11 @@ namespace Altaxo.Graph.GUI
       protected XYColumnPlotItem m_PlotItem;
 
       /// <summary>
+      /// Coordinates of the red data reader cross (in printable coordinates)
+      /// </summary>
+      protected PointF m_Cross;
+
+      /// <summary>
       /// Handles the mouse move event.
       /// </summary>
       /// <param name="grac">The GraphController that sends this event.</param>
@@ -2299,6 +2401,10 @@ namespace Altaxo.Graph.GUI
           {
             // convert this layer coordinates first to PrintableAreaCoordinates
             PointF printableCoord = clickedObject.ParentLayer.LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
+            m_Cross = printableCoord;
+            m_Cross.X+=grac.Doc.PrintableBounds.X;
+            m_Cross.Y+=grac.Doc.PrintableBounds.Y;
+           
             PointF newPixelCoord = grac.PrintableAreaToPixelCoordinates(printableCoord);
             Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
 
@@ -2315,6 +2421,7 @@ namespace Altaxo.Graph.GUI
           
             // here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
             // of the grac
+            grac.m_View.InvalidateGraph();
           
           }
         }
@@ -2364,6 +2471,19 @@ namespace Altaxo.Graph.GUI
       
 
         return this;
+      }
+
+
+      public override void AfterPaint(GraphController grac, Graphics g)
+      {
+        // draw a red cross onto the selected data point
+
+        g.DrawLine(System.Drawing.Pens.Red,m_Cross.X+1,m_Cross.Y,m_Cross.X+10,m_Cross.Y);
+        g.DrawLine(System.Drawing.Pens.Red,m_Cross.X-1,m_Cross.Y,m_Cross.X-10,m_Cross.Y);
+        g.DrawLine(System.Drawing.Pens.Red,m_Cross.X,m_Cross.Y+1,m_Cross.X,m_Cross.Y+10);
+        g.DrawLine(System.Drawing.Pens.Red,m_Cross.X,m_Cross.Y-1,m_Cross.X,m_Cross.Y-10);
+        
+        base.AfterPaint (grac,g);
       }
 
 
