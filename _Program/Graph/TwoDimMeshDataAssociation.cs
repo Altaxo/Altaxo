@@ -29,15 +29,15 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Summary description for PlotAssociation.
 	/// </summary>
-	[SerializationSurrogate(0,typeof(TwoDimMeshDataAssociation.SerializationSurrogate0))]
+	[SerializationSurrogate(0,typeof(D2EquidistantMeshDataAssociation.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class TwoDimMeshDataAssociation : IXYBoundsHolder, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, System.ICloneable
+	public class D2EquidistantMeshDataAssociation : IXYBoundsHolder, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, System.ICloneable
 	{
 		protected Altaxo.Data.IReadableColumn[] m_DataColumns; // the columns that are involved in the picture
 
 
-		protected Altaxo.Data.IndexerColumn m_XColumn;
-		protected Altaxo.Data.IndexerColumn m_YColumn;
+		protected Altaxo.Data.INumericColumn m_XColumn;
+		protected Altaxo.Data.INumericColumn m_YColumn;
 
 		// cached or temporary data
 		protected PhysicalBoundaries m_xBoundaries; 
@@ -49,8 +49,6 @@ namespace Altaxo.Graph
 		/// Number of rows, here the maximum of the row counts of all columns.
 		/// </summary>
 		protected int                m_Rows;
-
-		protected int    m_PlottablePoints; // number of plottable points
 		protected bool   m_bCachedDataValid=false;
 
 		// events
@@ -70,31 +68,45 @@ namespace Altaxo.Graph
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 			/// <summary>
-			/// Serializes PlotAssociation Version 0.
+			/// Serializes D2EquidistantMeshDataAssociation Version 0.
 			/// </summary>
-			/// <param name="obj">The PlotAssociation to serialize.</param>
+			/// <param name="obj">The D2EquidistantMeshDataAssociation to serialize.</param>
 			/// <param name="info">The serialization info.</param>
 			/// <param name="context">The streaming context.</param>
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
-				TwoDimMeshDataAssociation s = (TwoDimMeshDataAssociation)obj;
+				D2EquidistantMeshDataAssociation s = (D2EquidistantMeshDataAssociation)obj;
 				
+				info.AddValue("XColumn",s.m_XColumn);
+				info.AddValue("YColumn",s.m_YColumn);
 				info.AddValue("DataColumns",s.m_DataColumns);
+
+				info.AddValue("XBoundaries",s.m_xBoundaries);
+				info.AddValue("YBoundaries",s.m_yBoundaries);
+				info.AddValue("VBoundaries",s.m_vBoundaries);
+
 			}
 			/// <summary>
-			/// Deserializes the PlotAssociation Version 0.
+			/// Deserializes theD2EquidistantMeshDataAssociation Version 0.
 			/// </summary>
-			/// <param name="obj">The empty PlotAssociation object to deserialize into.</param>
+			/// <param name="obj">The empty D2EquidistantMeshDataAssociation object to deserialize into.</param>
 			/// <param name="info">The serialization info.</param>
 			/// <param name="context">The streaming context.</param>
 			/// <param name="selector">The deserialization surrogate selector.</param>
-			/// <returns>The deserialized PlotAssociation.</returns>
+			/// <returns>The deserialized D2EquidistantMeshDataAssociation.</returns>
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
-				TwoDimMeshDataAssociation s = (TwoDimMeshDataAssociation)obj;
+				D2EquidistantMeshDataAssociation s = (D2EquidistantMeshDataAssociation)obj;
 
+
+				s.m_XColumn = (Altaxo.Data.INumericColumn)info.GetValue("XColumn",typeof(Altaxo.Data.INumericColumn));
+				s.m_YColumn = (Altaxo.Data.INumericColumn)info.GetValue("YColumn",typeof(Altaxo.Data.INumericColumn));
 				s.m_DataColumns = (Altaxo.Data.IReadableColumn[])info.GetValue("DataColumns",typeof(Altaxo.Data.IReadableColumn[]));
 		
+				s.m_xBoundaries = (PhysicalBoundaries)info.GetValue("XBoundaries",typeof(PhysicalBoundaries));
+				s.m_yBoundaries = (PhysicalBoundaries)info.GetValue("YBoundaries",typeof(PhysicalBoundaries));
+				s.m_vBoundaries = (PhysicalBoundaries)info.GetValue("VBoundaries",typeof(PhysicalBoundaries));
+
 				return s;
 			}
 		}
@@ -105,16 +117,25 @@ namespace Altaxo.Graph
 		/// <param name="obj">Not used.</param>
 		public virtual void OnDeserialization(object obj)
 		{
-			m_XColumn = new Altaxo.Data.IndexerColumn();
-			m_XColumn = new Altaxo.Data.IndexerColumn();
+			// restore the event chain
+
+			if(m_XColumn is Altaxo.Data.DataColumn)
+				((Altaxo.Data.DataColumn)m_XColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
+
+			if(m_YColumn is Altaxo.Data.DataColumn)
+				((Altaxo.Data.DataColumn)m_YColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
 
 			for(int i=0;i<m_DataColumns.Length;i++)
 			{
-				// restore the event chain
 				if(m_DataColumns[i] is Altaxo.Data.DataColumn)
 					((Altaxo.Data.DataColumn)m_DataColumns[i]).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
 			}			
 		
+			m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
+			m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
+			m_vBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
+
+
 			// do not calculate cached data here, since it is done the first time this data is really needed
 			this.m_bCachedDataValid=false;
 		}
@@ -122,7 +143,7 @@ namespace Altaxo.Graph
 
 
 
-		public TwoDimMeshDataAssociation(Altaxo.Data.DataColumnCollection coll, int[] selected)
+		public D2EquidistantMeshDataAssociation(Altaxo.Data.DataColumnCollection coll, int[] selected)
 		{
 			m_XColumn = new Altaxo.Data.IndexerColumn();
 			m_YColumn = new Altaxo.Data.IndexerColumn();
@@ -152,11 +173,18 @@ namespace Altaxo.Graph
 		/// </summary>
 		/// <param name="from">The object to copy from.</param>
 		/// <remarks>Only clones the references to the data columns, not the columns itself.</remarks>
-		public TwoDimMeshDataAssociation(TwoDimMeshDataAssociation from)
+		public D2EquidistantMeshDataAssociation(D2EquidistantMeshDataAssociation from)
 		{
-			m_XColumn = new Altaxo.Data.IndexerColumn();
-			m_YColumn = new Altaxo.Data.IndexerColumn();
-			
+			if(from.m_XColumn is Altaxo.Data.DataColumn && ((Altaxo.Data.DataColumn)from.m_XColumn).Parent!=null)
+				m_XColumn = from.m_XColumn;
+			else
+				m_XColumn = (Altaxo.Data.INumericColumn)from.m_XColumn.Clone();
+
+			if(from.m_YColumn is Altaxo.Data.DataColumn && ((Altaxo.Data.DataColumn)from.m_YColumn).Parent!=null)
+				m_YColumn = from.m_YColumn;
+			else
+				m_YColumn = (Altaxo.Data.INumericColumn)from.m_YColumn.Clone();
+
 			int len = from.m_DataColumns.Length;
 			m_DataColumns = new Altaxo.Data.IReadableColumn[len];
 	
@@ -184,7 +212,7 @@ namespace Altaxo.Graph
 		/// <remarks>The data columns refered by this object are <b>not</b> cloned, only the reference is cloned here.</remarks>
 		public object Clone()
 		{
-			return new TwoDimMeshDataAssociation(this);
+			return new D2EquidistantMeshDataAssociation(this);
 		}
 
 		public void MergeXBoundsInto(PhysicalBoundaries pb)
@@ -337,13 +365,10 @@ namespace Altaxo.Graph
 				m_Rows = 0;
 				return;
 			}
-
-			m_PlottablePoints = 0;
-
 			
-			this.m_xBoundaries.EventsEnabled = false; // disable events
-			this.m_yBoundaries.EventsEnabled = false; // disable events
-			this.m_vBoundaries.EventsEnabled = false;
+			this.m_xBoundaries.BeginUpdate(); // disable events
+			this.m_yBoundaries.BeginUpdate(); // disable events
+			this.m_vBoundaries.BeginUpdate();
 			
 			this.m_xBoundaries.Reset();
 			this.m_yBoundaries.Reset();
@@ -381,9 +406,9 @@ namespace Altaxo.Graph
 
 
 			// now when the cached data are valid, we can reenable the events
-			this.m_xBoundaries.EventsEnabled = true; // enable events
-			this.m_yBoundaries.EventsEnabled = true; // enable events
-			this.m_vBoundaries.EventsEnabled = true; // enable events
+			this.m_xBoundaries.EndUpdate(); // enable events
+			this.m_yBoundaries.EndUpdate(); // enable events
+			this.m_vBoundaries.EndUpdate(); // enable events
 
 		}
 

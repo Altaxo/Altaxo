@@ -549,7 +549,6 @@ namespace Altaxo
 
 		#endregion
 
-
 		#region IMainController members
 		/// <summary>
 		/// The document which is visualized by the controller, contains all data tables, graph, worksheet views and graph views
@@ -589,6 +588,11 @@ namespace Altaxo
 					e.Cancel = true;
 				}
 			}
+			else // the document is not dirty
+			{
+				e.Cancel = false;
+			}
+
 
 
 			// update the closing flag - if e.Cancel is true, the application is not longer in the closing state

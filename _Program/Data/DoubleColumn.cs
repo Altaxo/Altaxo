@@ -29,6 +29,7 @@ namespace Altaxo.Data
 	/// </summary>
 	[SerializationSurrogate(0,typeof(Altaxo.Data.DoubleColumn.SerializationSurrogate0))]
 	[SerializationVersion(0)]
+	[Serializable()]
 	public class DoubleColumn : Altaxo.Data.DataColumn, System.Runtime.Serialization.IDeserializationCallback, INumericColumn
 	{
 		private double[] m_Array;

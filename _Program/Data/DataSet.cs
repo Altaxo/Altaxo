@@ -226,6 +226,11 @@ namespace Altaxo.Data
 			}
 		}
 
+		public bool ContainsTable(string tablename)
+		{
+			return tablesByName.ContainsKey(tablename);
+		}
+
 		public void Add(Altaxo.Data.DataTable theTable)
 		{
 			if(null==theTable.TableName || 0==theTable.TableName.Length) // if no table name provided

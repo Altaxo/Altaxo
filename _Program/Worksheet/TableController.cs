@@ -38,6 +38,8 @@ namespace Altaxo.Worksheet
 		protected System.Windows.Forms.MainMenu m_MainMenu; 
 		protected System.Windows.Forms.MenuItem m_MenuItemEditRemove;
 		protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
+		protected System.Windows.Forms.MenuItem m_MenuItemColumnRename;
+
 
 		/// <summary>Which selection was done last: selection (i) a data column, (ii) a data row, or (iii) a property column.</summary>
 		protected SelectionType m_LastSelectionType;
@@ -321,6 +323,7 @@ namespace Altaxo.Worksheet
 
 				// restore the event chain to the Table
 				this.DataTable = this.m_Table;
+
 			}
 		}
 		#endregion
@@ -514,6 +517,12 @@ namespace Altaxo.Worksheet
 			m_MainMenu.MenuItems.Add(mi);
 			index = m_MainMenu.MenuItems.Count-1;
 
+			// Worksheet - Rename Worksheet
+			mi = new MenuItem("Rename Worksheet..");
+			mi.Click += new EventHandler(EhMenuWorksheetRename_OnClick);
+			//mi.Shortcut = ShortCuts.
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+
 			// Worksheet - Duplicate Worksheet
 			mi = new MenuItem("Duplicate Worksheet");
 			mi.Click += new EventHandler(EhMenuWorksheetDuplicate_OnClick);
@@ -558,6 +567,14 @@ namespace Altaxo.Worksheet
 			m_MenuItemColumnSetColumnValues=mi;
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 	
+			// Column - Rename column
+			mi = new MenuItem("Rename column..");
+			mi.Click += new EventHandler(EhMenuColumnRename_OnClick);
+			//mi.Shortcut = ShortCuts.
+			m_MenuItemColumnRename=mi;
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+
+
 			// Column - SetAsX
 			mi = new MenuItem("Set column as X");
 			mi.Click += new EventHandler(EhMenuColumnSetColumnAsX_OnClick);
@@ -775,6 +792,37 @@ namespace Altaxo.Worksheet
 		// Worksheet (Popup)
 		// ******************************************************************
 		// ******************************************************************
+
+		protected string ValidateNewWorksheetName(string wksname)
+		{
+			if(wksname==null || wksname.Length==0)
+				return "The worksheet name must not be empty, please enter a valid name!";
+
+			wksname.Trim();
+			if(wksname.Length==0)
+				return "The worksheet name must not be empty, please enter a valid name!";
+
+			if(Doc.ParentDataSet==null)
+				return null; // if there is no parent data set we can enter anything
+			else if(Doc.ParentDataSet.ContainsTable(wksname))
+				return "This worksheet name already exists, please choose another name!";
+			else
+				return null;
+		}
+
+		protected void EhMenuWorksheetRename_OnClick(object sender, System.EventArgs e)
+		{
+			Main.TextValueInputController ctrl = new Main.TextValueInputController(
+				Doc.TableName,
+				new Main.SingleValueDialog("Rename Worksheet","Enter a name for the worksheet:")
+				);
+
+			ctrl.ValidatingHandler = new Altaxo.Main.TextValueInputController.TextValidatingHandler(this.ValidateNewWorksheetName);
+			if(ctrl.ShowDialog(View.TableViewForm))
+				Doc.TableName = ctrl.InputText.Trim();
+		}
+
+
 		protected void EhMenuWorksheetDuplicate_OnClick(object sender, System.EventArgs e)
 		{
 			Altaxo.Data.DataTable clonedTable = (Altaxo.Data.DataTable)this.DataTable.Clone();
@@ -815,6 +863,7 @@ namespace Altaxo.Worksheet
 		protected void EhMenuColumn_OnPopup(object sender, System.EventArgs e)
 		{
 			this.m_MenuItemColumnSetColumnValues.Enabled = 1==this.SelectedColumns.Count;
+			this.m_MenuItemColumnRename.Enabled = 1==this.SelectedColumns.Count;
 		}
 		protected void EhMenuColumnSetColumnValues_OnClick(object sender, System.EventArgs e)
 		{
@@ -849,8 +898,34 @@ namespace Altaxo.Worksheet
 		protected void EhMenuColumnSetColumnAsX_OnClick(object sender, System.EventArgs e)
 		{
 			this.SetSelectedColumnAsX();
-
 		}
+
+
+		protected string ValidateNewColumnName(string colname)
+		{
+			if(Doc.ContainsColumn(colname))
+				return "This column name already exists, please choose another name!";
+			else
+				return null;
+		}
+
+		protected void EhMenuColumnRename_OnClick(object sender, System.EventArgs e)
+		{
+			if(this.m_SelectedColumns.Count==0)
+				return;
+
+			Altaxo.Data.DataColumn col = Doc[m_SelectedColumns[0]];
+			Main.TextValueInputController ctrl = new Main.TextValueInputController(
+				col.ColumnName,
+				new Main.RenameColumnDialog()
+				);
+
+			ctrl.ValidatingHandler = new Altaxo.Main.TextValueInputController.TextValidatingHandler(this.ValidateNewColumnName);
+			if(ctrl.ShowDialog(View.TableViewForm))
+				col.ColumnName = ctrl.InputText;
+		}
+
+		
 		protected void EhMenuColumnExtractPropertyValues_OnClick(object sender, System.EventArgs e)
 		{			// extract the properties from the (first) selected property column
 			if(this.SelectedPropertyColumns.Count==0)
@@ -926,6 +1001,7 @@ namespace Altaxo.Worksheet
 				{
 					m_Table.FireDataChanged -= new Altaxo.Data.DataTable.OnDataChanged(this.OnTableDataChanged);
 					m_Table.PropCols.FireDataChanged -= new Altaxo.Data.DataTable.OnDataChanged(this.OnPropertyDataChanged);
+					m_Table.TableNameChanged -= new EventHandler(this.OnTableNameChanged);
 				}
 
 				m_Table = value;
@@ -933,6 +1009,7 @@ namespace Altaxo.Worksheet
 				{
 					m_Table.FireDataChanged += new Altaxo.Data.DataTable.OnDataChanged(this.OnTableDataChanged);
 					m_Table.PropCols.FireDataChanged += new Altaxo.Data.DataTable.OnDataChanged(this.OnPropertyDataChanged);
+					m_Table.TableNameChanged -= new EventHandler(this.OnTableNameChanged);
 					this.SetCachedNumberOfDataColumns();
 					this.SetCachedNumberOfDataRows();
 					this.SetCachedNumberOfPropertyColumns();
@@ -1246,6 +1323,12 @@ namespace Altaxo.Worksheet
 		{
 			if(this.m_NumberOfPropertyCols != sender.ColumnCount)
 				SetCachedNumberOfPropertyColumns();
+		}
+
+		public void OnTableNameChanged(object sender, System.EventArgs e)
+		{
+			if(View!=null)
+				View.TableViewForm.Text = Doc.TableName;
 		}
 		#endregion
 

@@ -82,12 +82,12 @@ namespace Altaxo
 			
 				for(int i=0;i<m_Worksheets.Count;i++)
 				{
-					m_Worksheets[i] = ((IDeserializationSubstitute)m_Worksheets[i]).GetRealObject(App.Current);
+					m_Worksheets[i] = ((IDeserializationSubstitute)m_Worksheets[i]).GetRealObject(App.Current.View.Form);
 					((System.Windows.Forms.Form)m_Worksheets[i]).Show();
 				}
 				for(int i=0;i<m_GraphForms.Count;i++)
 				{
-					m_GraphForms[i] = ((IDeserializationSubstitute)m_GraphForms[i]).GetRealObject(App.Current);
+					m_GraphForms[i] = ((IDeserializationSubstitute)m_GraphForms[i]).GetRealObject(App.Current.View.Form);
 					((System.Windows.Forms.Form)m_GraphForms[i]).Show();
 				}
 			}

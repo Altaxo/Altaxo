@@ -688,7 +688,7 @@ namespace Altaxo.Graph
 
 			if(null!=m_PlotItems)
 			{
-				m_PlotItems.ParentLayer = this;
+				m_PlotItems.SetParentLayer(this,true); // sets the parent layer, but suppresses the events following this.
 				m_PlotItems.Changed += new EventHandler(this.OnChildChangedEventHandler);
 			}
 		}
@@ -1389,7 +1389,7 @@ namespace Altaxo.Graph
 				//but (alas!) not all boundaries are now of the new type!
 				m_PlotAssociationXBoundariesChanged_EventSuspendCount++; 
 				
-				m_xAxis.DataBounds.EventsEnabled=false;
+				m_xAxis.DataBounds.BeginUpdate(); // Suppress events from the y-axis now
 				m_xAxis.DataBounds.Reset();
 				foreach(PlotItem pa in this.PlotItems)
 				{
@@ -1403,7 +1403,7 @@ namespace Altaxo.Graph
 					}
 				}
 				m_PlotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0,m_PlotAssociationXBoundariesChanged_EventSuspendCount-1);
-				m_xAxis.DataBounds.EventsEnabled=true;
+				m_xAxis.DataBounds.EndUpdate();
 			}
 		}
 
@@ -1431,7 +1431,7 @@ namespace Altaxo.Graph
 				//but (alas!) not all boundaries are now of the new type!
 				m_PlotAssociationYBoundariesChanged_EventSuspendCount++; 
 
-				m_yAxis.DataBounds.EventsEnabled=false;
+				m_yAxis.DataBounds.BeginUpdate();
 				m_yAxis.DataBounds.Reset();
 				foreach(PlotItem pa in this.PlotItems)
 				{
@@ -1445,7 +1445,7 @@ namespace Altaxo.Graph
 					}
 				}
 				m_PlotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0,m_PlotAssociationYBoundariesChanged_EventSuspendCount-1);
-				m_yAxis.DataBounds.EventsEnabled=true;
+				m_yAxis.DataBounds.EndUpdate();
 			}
 		}
 
@@ -2149,7 +2149,7 @@ namespace Altaxo.Graph
 			if(0==m_PlotAssociationXBoundariesChanged_EventSuspendCount)
 			{
 				// now we have to inform all the PlotAssociations that a new axis was loaded
-				m_xAxis.DataBounds.EventsEnabled=false;
+				m_xAxis.DataBounds.BeginUpdate();
 				m_xAxis.DataBounds.Reset();
 				foreach(PlotItem pa in this.PlotItems)
 				{
@@ -2159,7 +2159,7 @@ namespace Altaxo.Graph
 						((IXBoundsHolder)pa.Data).MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
 					}
 				}
-				m_xAxis.DataBounds.EventsEnabled=true;
+				m_xAxis.DataBounds.EndUpdate();
 			}
 		}
 
@@ -2178,7 +2178,7 @@ namespace Altaxo.Graph
 			if(0==m_PlotAssociationYBoundariesChanged_EventSuspendCount)
 			{
 				// now we have to inform all the PlotAssociations that a new axis was loaded
-				m_yAxis.DataBounds.EventsEnabled=false;
+				m_yAxis.DataBounds.BeginUpdate();
 				m_yAxis.DataBounds.Reset();
 				foreach(PlotItem pa in this.PlotItems)
 				{
@@ -2189,7 +2189,7 @@ namespace Altaxo.Graph
 				
 					}
 				}
-				m_yAxis.DataBounds.EventsEnabled=true;
+				m_yAxis.DataBounds.EndUpdate();
 			}
 		}
 		
@@ -2320,12 +2320,29 @@ namespace Altaxo.Graph
 				get { return m_Owner; }
 				set
 				{
-					if(null==value)
-						throw new ArgumentNullException();
-					else
-					{
-						m_Owner = value;
+					SetParentLayer(value,false);
+				}
+			}
+		
+
+			/// <summary>
+			/// Sets the parent layer.
+			/// </summary>
+			/// <param name="parent">The parent layer to set for this collection.</param>
+			/// <param name="bSuppressEvents">If true, only the parent layer will set, but nothing else. If false, the boundaries of the items in the collection are merged into the parent layer collection.</param>
+			/// <remarks>Use this with bSuppressEvents = true if you are in constructor or deserialization code where not all variables are currently initalized.</remarks>
+			public void SetParentLayer(Layer parent, bool bSuppressEvents)
+			{
+				if(null==parent)
+				{
+					throw new ArgumentNullException();
+				}
+				else
+				{
+					m_Owner = parent;
 						
+					if(!bSuppressEvents)
+					{
 						// if the owner changed, it has possibly other x and y axis boundaries, so we have to set the plot items to this new boundaries
 						for(int i=0;i<Count;i++)
 							SetItemBoundaries(this[i]);
@@ -2333,15 +2350,14 @@ namespace Altaxo.Graph
 				}
 			}
 
-
 			/// <summary>
 			/// Restores the event chain of a item.
 			/// </summary>
 			/// <param name="plotitem">The plotitem for which the event chain should be restored.</param>
 			public void WireItem(Graph.PlotItem plotitem)
 			{
-				plotitem.Changed += new EventHandler(this.OnChildChanged);
 				SetItemBoundaries(plotitem);
+				plotitem.Changed += new EventHandler(this.OnChildChanged);
 			}
 
 			/// <summary>

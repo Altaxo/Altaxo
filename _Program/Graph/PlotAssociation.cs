@@ -126,6 +126,10 @@ namespace Altaxo.Graph
 				
 				info.AddValue("XColumn",s.m_xColumn);
 				info.AddValue("YColumn",s.m_yColumn);
+
+				info.AddValue("XBoundaries",s.m_xBoundaries);
+				info.AddValue("YBoundaries",s.m_yBoundaries);
+
 			}
 			/// <summary>
 			/// Deserializes the PlotAssociation Version 0.
@@ -141,7 +145,10 @@ namespace Altaxo.Graph
 
 				s.m_xColumn = (Altaxo.Data.IReadableColumn)info.GetValue("XColumn",typeof(Altaxo.Data.IReadableColumn));
 				s.m_yColumn = (Altaxo.Data.IReadableColumn)info.GetValue("YColumn",typeof(Altaxo.Data.IReadableColumn));
-		
+
+				s.m_xBoundaries = (PhysicalBoundaries)info.GetValue("XBoundaries",typeof(PhysicalBoundaries));
+				s.m_yBoundaries = (PhysicalBoundaries)info.GetValue("YBoundaries",typeof(PhysicalBoundaries));
+	
 				return s;
 			}
 		}
@@ -159,6 +166,11 @@ namespace Altaxo.Graph
 			if(m_yColumn is Altaxo.Data.DataColumn)
 				((Altaxo.Data.DataColumn)m_yColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
 		
+			if(null!=m_xBoundaries)
+				m_xBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
+
+			if(null!=m_yBoundaries)
+				m_yBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
 		}
 		#endregion
 
@@ -342,8 +354,8 @@ namespace Altaxo.Graph
 			m_PlottablePoints = 0;
 
 			
-			this.m_xBoundaries.EventsEnabled = false; // disable events
-			this.m_yBoundaries.EventsEnabled = false; // disable events
+			this.m_xBoundaries.BeginUpdate(); // disable events
+			this.m_yBoundaries.BeginUpdate(); // disable events
 			
 			this.m_xBoundaries.Reset();
 			this.m_yBoundaries.Reset();
@@ -375,8 +387,8 @@ namespace Altaxo.Graph
 
 
 			// now when the cached data are valid, we can reenable the events
-			this.m_xBoundaries.EventsEnabled = true; // enable events
-			this.m_yBoundaries.EventsEnabled = true; // enable events
+			this.m_xBoundaries.EndUpdate(); // enable events
+			this.m_yBoundaries.EndUpdate(); // enable events
 		}
 
 		void OnColumnDataChangedEventHandler(Altaxo.Data.DataColumn dc, int nMinRow, int nMaxRow, bool bRowCountDecreased)

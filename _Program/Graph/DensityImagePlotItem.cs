@@ -33,11 +33,11 @@ namespace Altaxo.Graph
 	[SerializationVersion(0)]
 	public class DensityImagePlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback
 	{
-		protected TwoDimMeshDataAssociation m_PlotAssociation;
+		protected D2EquidistantMeshDataAssociation m_PlotAssociation;
 		protected DensityImagePlotStyle       m_PlotStyle;
 
 		#region Serialization
-		/// <summary>Used to serialize theXYDataPlot Version 0.</summary>
+		/// <summary>Used to serialize the DensityImagePlotItem Version 0.</summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 			/// <summary>
@@ -64,7 +64,7 @@ namespace Altaxo.Graph
 			{
 				DensityImagePlotItem s = (DensityImagePlotItem)obj;
 
-				s.m_PlotAssociation = (TwoDimMeshDataAssociation)info.GetValue("Data",typeof(TwoDimMeshDataAssociation));
+				s.m_PlotAssociation = (D2EquidistantMeshDataAssociation)info.GetValue("Data",typeof(D2EquidistantMeshDataAssociation));
 				s.m_PlotStyle = (DensityImagePlotStyle)info.GetValue("Style",typeof(DensityImagePlotStyle));
 		
 				return s;
@@ -84,16 +84,16 @@ namespace Altaxo.Graph
 				m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
 			}
 
-			if(null!=m_PlotStyle && m_PlotStyle is IChangedEventSource)
+			if(null!=m_PlotStyle)
 			{
-				((IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
+				m_PlotStyle.Changed += new EventHandler(OnStyleChangedEventHandler);
 			}
 		}
 		#endregion
 
 
 
-		public DensityImagePlotItem(TwoDimMeshDataAssociation pa, DensityImagePlotStyle ps)
+		public DensityImagePlotItem(D2EquidistantMeshDataAssociation pa, DensityImagePlotStyle ps)
 		{
 			this.Data = pa;
 			this.Style = ps;
@@ -118,7 +118,7 @@ namespace Altaxo.Graph
 			{
 				if(null==value)
 					throw new System.ArgumentNullException();
-				else if(!(value is TwoDimMeshDataAssociation))
+				else if(!(value is D2EquidistantMeshDataAssociation))
 					throw new System.ArgumentException("The provided data object is not of the type " + m_PlotAssociation.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
 				else
 				{
@@ -129,7 +129,7 @@ namespace Altaxo.Graph
 							m_PlotAssociation.Changed -= new EventHandler(OnDataChangedEventHandler);
 						}
 
-						m_PlotAssociation = (TwoDimMeshDataAssociation)value;
+						m_PlotAssociation = (D2EquidistantMeshDataAssociation)value;
 					
 						if(null!=m_PlotAssociation )
 						{
@@ -155,17 +155,17 @@ namespace Altaxo.Graph
 					if(!object.ReferenceEquals(m_PlotStyle,value))
 					{
 						// delete event wiring to old PlotStyle
-						if(null!=m_PlotStyle && m_PlotStyle is IChangedEventSource)
+						if(null!=m_PlotStyle)
 						{
-							((IChangedEventSource)m_PlotStyle).Changed -= new EventHandler(OnStyleChangedEventHandler);
+							m_PlotStyle.Changed -= new EventHandler(OnStyleChangedEventHandler);
 						}
 					
 						m_PlotStyle = (DensityImagePlotStyle)value;
 
 						// create event wire to new Plotstyle
-						if(null!=m_PlotStyle && m_PlotStyle is IChangedEventSource)
+						if(null!=m_PlotStyle)
 						{
-							((IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
+							m_PlotStyle.Changed += new EventHandler(OnStyleChangedEventHandler);
 						}
 
 						// indicate the style has changed

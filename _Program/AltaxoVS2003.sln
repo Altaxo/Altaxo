@@ -1,5 +1,9 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoVS2003", "AltaxoVS2003.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altaxo", "Altaxo.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoTests", "Tests\AltaxoTests.csproj", "{95A2BF58-8568-4512-BD82-F0240FFC7558}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -16,6 +20,12 @@ Global
 		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.DesignTimeDebugging.Build.0 = DesignTimeDebugging|.NET
 		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Release.ActiveCfg = Release|.NET
 		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Release.Build.0 = Release|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.Debug.ActiveCfg = Debug|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.Debug.Build.0 = Debug|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.DesignTimeDebugging.ActiveCfg = Debug|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.DesignTimeDebugging.Build.0 = Debug|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.Release.ActiveCfg = Release|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		LayerButtons.bmp = LayerButtons.bmp

@@ -59,7 +59,7 @@ namespace Altaxo.Graph
 		protected double minValue=double.MaxValue;
 		protected double maxValue=double.MinValue;
 	
-		private bool		m_bEventsEnabled=true;
+		private int 		m_EventsSuspendCount=0;
 		private double	m_SavedMinValue, m_SavedMaxValue; // stores the minValue and MaxValue in the moment if the events where disabled
 		private int			m_SavedNumberOfItems; // stores the number of items when events are disabled
 
@@ -103,8 +103,6 @@ namespace Altaxo.Graph
 				s.minValue = info.GetDouble("MinValue");
 				s.maxValue = info.GetDouble("MaxValue");
 
-				s.m_bEventsEnabled = true;
-
 				return s;
 			}
 		}
@@ -136,31 +134,38 @@ namespace Altaxo.Graph
 
 		public bool EventsEnabled
 		{
-			get { return this.m_bEventsEnabled; }
-			set 
+			get { return m_EventsSuspendCount<=0; }
+		}
+
+
+		public void EndUpdate()
+		{
+			if(m_EventsSuspendCount>0)
 			{
-				if(false==value && true==m_bEventsEnabled) // disable events
-				{
-					this.m_SavedNumberOfItems = this.numberOfItems;
-					this.m_SavedMinValue = this.minValue;
-					this.m_SavedMaxValue = this.maxValue;
-				}
-				else if(true==value && false==m_bEventsEnabled) // enable events
-				{
-					// if anything changed in the meantime, fire the event
-					if(this.m_SavedNumberOfItems!=this.numberOfItems)
-						OnNumberOfItemsChanged();
+				--m_EventsSuspendCount;
+				// if anything changed in the meantime, fire the event
+				if(this.m_SavedNumberOfItems!=this.numberOfItems)
+					OnNumberOfItemsChanged();
 
-					bool bLower = (this.m_SavedMinValue!=this.minValue);
-					bool bUpper = (this.m_SavedMaxValue!=this.maxValue);
+				bool bLower = (this.m_SavedMinValue!=this.minValue);
+				bool bUpper = (this.m_SavedMaxValue!=this.maxValue);
 
-					if(bLower || bUpper)
-						OnBoundaryChanged(bLower,bUpper);
-				}
-				this.m_bEventsEnabled = value;
+				if(bLower || bUpper)
+					OnBoundaryChanged(bLower,bUpper);
 			}
 		}
 
+		public void BeginUpdate()
+		{
+			++m_EventsSuspendCount;
+			if(m_EventsSuspendCount==1) // events are freshly disabled
+			{
+					this.m_SavedNumberOfItems = this.numberOfItems;
+					this.m_SavedMinValue = this.minValue;
+					this.m_SavedMaxValue = this.maxValue;
+			}
+		}
+	
 		/// <summary>
 		/// Processes a single value from a numeric column <paramref name="col"/>[<paramref name="idx"/>].
 		/// If the data value is inside the considered value range, the boundaries are

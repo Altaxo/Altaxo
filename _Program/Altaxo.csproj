@@ -448,6 +448,31 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Main\RenameColumnDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\RenameColumnDialog.resx"
+                    DependentUpon = "RenameColumnDialog.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\SingleValueDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\SingleValueDialog.resx"
+                    DependentUpon = "SingleValueDialog.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\SingleValueFormController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Serialization\AsciiExporter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -94,7 +94,7 @@ namespace Altaxo.Worksheet
 			// if nothing is selected, assume that the whole table should be plotted
 			int len = dg.SelectedColumns.Count;
 
-			Graph.TwoDimMeshDataAssociation assoc = new Graph.TwoDimMeshDataAssociation(dg.Doc,len==0 ? null : dg.SelectedColumns.GetSelectedIndizes());
+			Graph.D2EquidistantMeshDataAssociation assoc = new Graph.D2EquidistantMeshDataAssociation(dg.Doc,len==0 ? null : dg.SelectedColumns.GetSelectedIndizes());
 
 			
 			// now create a new Graph with this plot associations
@@ -203,6 +203,9 @@ namespace Altaxo.Worksheet
 			// now do PCA with the matrix
 			Altaxo.Calc.MatrixMath.VOMatrix factors = new Altaxo.Calc.MatrixMath.VOMatrix(0,0);
 			Altaxo.Calc.MatrixMath.HOMatrix loads = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
+			Altaxo.Calc.MatrixMath.HorizontalVector meanX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
+			// first, center the matrix
+			Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixX,meanX);
 			Altaxo.Calc.MatrixMath.NIPALS_HO(matrixX,0,1E-9,factors,loads);
 
 			// now we have to create a new table where to place the calculated factors and loads
@@ -216,7 +219,7 @@ namespace Altaxo.Worksheet
 			// first store the factors
 			for(int i=0;i<factors.Cols;i++)
 			{
-				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("Fac"+i.ToString());
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("Factor"+i.ToString());
 				col.Group=0;
 				for(int j=0;j<factors.Rows;j++)
 					col[j] = factors[j,i];
@@ -224,11 +227,20 @@ namespace Altaxo.Worksheet
 				table.Add(col);
 			}
 
+			// now store the mean of the matrix
+		{
+			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("Mean");
+			col.Group=1;
+			for(int j=0;j<meanX.Cols;j++)
+				col[j] = meanX[0,j];
+			table.Add(col);
+		}
+
 			// now store the loads - careful - they are horizontal in the matrix
 			for(int i=0;i<loads.Rows;i++)
 			{
 				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("Load"+i.ToString());
-				col.Group=1;
+				col.Group=2;
 				for(int j=0;j<loads.Cols;j++)
 					col[j] = loads[i,j];
 				
@@ -670,7 +682,6 @@ namespace Altaxo.Worksheet
 
 				// now copy the data object to the clipboard
 				System.Windows.Forms.Clipboard.SetDataObject(dao,true);
-
 			}
 
 		}

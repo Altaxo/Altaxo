@@ -70,6 +70,9 @@ namespace Altaxo.Data
 		/// </summary>
 		private bool  m_Table_DeserializationFinished=false;
 
+		public event System.EventHandler TableNameChanged;
+
+
 		#region "Serialization"
 		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
@@ -188,15 +191,19 @@ namespace Altaxo.Data
 			}
 			set
 			{
-
-				if(null!=ParentDataSet)
+				if(m_TableName==null || m_TableName!=value)
 				{
-					if(null!=ParentDataSet[value])
+					if(null!=ParentDataSet)
 					{
-						throw(new AltaxoUniqueNameException());
+						if(null!=ParentDataSet[value])
+						{
+							throw(new AltaxoUniqueNameException());
+						}
 					}
+					m_TableName = value;
+					if(null!=TableNameChanged)
+						TableNameChanged(this,new System.EventArgs());
 				}
-				m_TableName = value;
 			}
 		}
 

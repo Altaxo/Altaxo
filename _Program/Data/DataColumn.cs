@@ -75,7 +75,7 @@ namespace Altaxo.Data
 	/// This designates a vector structure, which holds elements. A single element at a given index can be read out
 	/// by returning a AltaxoVariant.
 	/// </summary>
-	public interface IReadableColumn
+	public interface IReadableColumn : ICloneable
 	{
 
 		/// <summary>
@@ -110,7 +110,7 @@ namespace Altaxo.Data
 	/// <summary>
 	/// A column, for which the elements can be set by assigning a AltaxoVariant to a element at index i.
 	/// </summary>
-	public interface IWriteableColumn
+	public interface IWriteableColumn : ICloneable
 	{
 		/// <summary>
 		/// Indexer property for setting the element at index i by a AltaxoVariant.
@@ -129,7 +129,7 @@ namespace Altaxo.Data
 	/// for columns which hold integer values or floating point values. Also true for DateTime columns, since they
 	/// can converted in seconds since a given reference date.
 	/// </summary>
-	public interface INumericColumn 
+	public interface INumericColumn : IReadableColumn, ICloneable
 	{
 		/// <summary>
 		/// Returns the value of a column element at index i as numeric value (double).
@@ -143,6 +143,7 @@ namespace Altaxo.Data
 	/// The indexer column is a simple readable numeric column. The value of an element is 
 	/// it's index in the column, i.e. GetDoubleAt(i) simply returns the value i.
 	/// </summary>
+	[Serializable]
 	public class IndexerColumn : INumericColumn, IReadableColumn, ICloneable
 	{
 		/// <summary>
@@ -199,6 +200,7 @@ namespace Altaxo.Data
 	/// The EquallySpacedColumn is a simple readable numeric column. The value of an element is 
 	/// calculated from y = a+b*i. This means the value of the first element is a, the values are equally spaced by b.
 	/// </summary>
+	[Serializable]
 	public class EquallySpacedColumn : INumericColumn, IReadableColumn, ICloneable
 	{
 		/// <summary>The start value, i.e. the value at index 0.</summary>
@@ -311,6 +313,8 @@ namespace Altaxo.Data
 		/// <summary>
 		/// The parent table this column belongs to.
 		/// </summary>
+		
+		[NonSerialized]
 		protected Altaxo.Data.DataColumnCollection m_Parent=null;
 
 		/// <summary>The group number the column belongs to.</summary>

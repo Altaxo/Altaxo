@@ -30,7 +30,9 @@ namespace Altaxo.Graph
 	/// with a single data point in the table. Splining of data is not implemented here. Beause of this limitation, the image can only be shown
 	/// on linear axes.
 	/// </summary>
-	public class DensityImagePlotStyle
+	[SerializationSurrogate(0,typeof(DensityImagePlotStyle.SerializationSurrogate0))]
+	[SerializationVersion(0)]
+	public class DensityImagePlotStyle : System.ICloneable, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
 	{
 
 			/// <summary>
@@ -44,6 +46,84 @@ namespace Altaxo.Graph
 		/// </summary>
 		bool m_bCachedDataValid=false;
 
+
+		#region Serialization
+		/// <summary>Used to serialize the LineScatterPlotStyle Version 0.</summary>
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes LineScatterPlotStyle Version 0.
+			/// </summary>
+			/// <param name="obj">The DensityImagePlotStyle to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
+			
+				// nothing to save up to now
+			}
+			/// <summary>
+			/// Deserializes the DensityImagePlotStyle Version 0.
+			/// </summary>
+			/// <param name="obj">The empty DensityImagePlotStyle to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized DensityImagePlotStyle.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				DensityImagePlotStyle s = (DensityImagePlotStyle)obj;
+				s.InitializeMembers();
+
+				// Nothing to deserialize in the moment
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+			// At the moment, there is nothing to do here
+		}
+		#endregion
+
+
+		/// <summary>
+		/// Initialized the member variables to default values.
+		/// </summary>
+		protected void InitializeMembers()
+		{
+			m_Image = null;
+			m_bCachedDataValid = false;
+		}
+
+		/// <summary>
+		/// Initializes the style to default values.
+		/// </summary>
+		public DensityImagePlotStyle()
+		{
+			InitializeMembers();
+		}
+
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="from">The style to copy from.</param>
+		public DensityImagePlotStyle(DensityImagePlotStyle from)
+		{
+			InitializeMembers();
+		}
+
+
+		public object Clone()
+		{
+			return new DensityImagePlotStyle(this);
+		}
 
 		/// <summary>
 		/// Called by the parent plot item to indicate that the associated data has changed. Used to invalidate the cached bitmap to force
@@ -65,10 +145,10 @@ namespace Altaxo.Graph
 		/// <param name="plotObject">The data to plot.</param>
 		public void Paint(Graphics gfrx, Graph.Layer gl, object plotObject) // plots the curve with the choosen style
 			{
-			if(!(plotObject is TwoDimMeshDataAssociation))
+			if(!(plotObject is D2EquidistantMeshDataAssociation))
 				return; // we cannot plot any other than a TwoDimMeshDataAssociation now
 
-				TwoDimMeshDataAssociation myPlotAssociation = (TwoDimMeshDataAssociation)plotObject;
+				D2EquidistantMeshDataAssociation myPlotAssociation = (D2EquidistantMeshDataAssociation)plotObject;
 
 				Altaxo.Data.INumericColumn xColumn = myPlotAssociation.XColumn as Altaxo.Data.INumericColumn;
 				Altaxo.Data.INumericColumn yColumn = myPlotAssociation.YColumn as Altaxo.Data.INumericColumn;
@@ -155,5 +235,17 @@ namespace Altaxo.Graph
 			}
 
 		
+		#region IChangedEventSource Members
+
+		public event System.EventHandler Changed;
+
+		protected virtual void OnChanged()
+		{
+			if(null!=Changed)
+				Changed(this,new EventArgs());
+		}
+
+		#endregion
+
 	} // end of class DensityImagePlotStyle
 }
