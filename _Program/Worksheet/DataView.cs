@@ -338,6 +338,7 @@ namespace Altaxo.Worksheet
 			set
 			{
 				m_HorzScrollBar.Maximum = value;
+				m_HorzScrollBar.Refresh();
 			}
 		}
 
@@ -350,6 +351,7 @@ namespace Altaxo.Worksheet
 			set
 			{
 				m_VertScrollBar.Maximum = value;
+				m_VertScrollBar.Refresh();
 			}
 		}
 
@@ -394,6 +396,18 @@ namespace Altaxo.Worksheet
 			{
 				return m_GridPanel.Size;
 			}
+		}
+
+		public bool TableAreaCapture
+		{
+			get { return this.m_GridPanel.Capture; }
+			set { this.m_GridPanel.Capture = value; }
+		}
+
+		public System.Windows.Forms.Cursor TableAreaCursor
+		{
+			get { return this.m_GridPanel.Cursor; }
+			set { this.m_GridPanel.Cursor = value; }
 		}
 
 		#endregion

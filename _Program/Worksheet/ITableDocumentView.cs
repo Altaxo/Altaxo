@@ -83,6 +83,17 @@ namespace Altaxo.Worksheet
 		/// Returns the size (in pixel) of the area, wherein the table is painted.
 		/// </summary>
 		Size TableAreaSize { get; }
+
+		/// <summary>
+		/// Gets / sets if the mouse is captured in the table view area.
+		/// </summary>
+		bool TableAreaCapture { get; set; }
+
+		/// <summary>
+		/// Get / sets the mouse cursor in the table view area.
+		/// </summary>
+		System.Windows.Forms.Cursor TableAreaCursor { get; set; }
+
 	}
 
 

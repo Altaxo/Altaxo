@@ -517,16 +517,6 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
-                <File
-                    RelPath = "Worksheet\Worksheet.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Worksheet\Worksheet.resx"
-                    DependentUpon = "Worksheet.cs"
-                    BuildAction = "EmbeddedResource"
-                />
             </Include>
         </Files>
     </CSHARP>

@@ -26,7 +26,7 @@ namespace Altaxo.Worksheet
 {
 	public class DataGridOperations
 	{
-		public static void PlotLine(DataGrid dg)
+		public static void PlotLine(TableController dg)
 		{
 			// first, create a plot association for every selected column in
 			// the data grid
@@ -53,14 +53,14 @@ namespace Altaxo.Worksheet
 		
 		}
 
-		public static void StatisticsOnColumns(DataGrid dg)
+		public static void StatisticsOnColumns(TableController dg)
 		{
 			int len = dg.SelectedColumns.Count;
 			if(len==0)
 				return; // nothing selected
 
 			bool bWorksheetCreated = false;
-			Altaxo.Worksheet.Worksheet wks=null; // the created worksheet
+			Altaxo.Worksheet.ITableView wks=null; // the created worksheet
 			Data.DataTable table=null; // the created table
 			int currRow=0;
 			for(int si=0;si<dg.SelectedColumns.Count;si++)
@@ -102,7 +102,7 @@ namespace Altaxo.Worksheet
 					// 6th column is the number of items for statistics
 					Data.DoubleColumn c5 = new Data.DoubleColumn("N");
 
-					table = wks.DataGrid.DataTable;
+					table = wks.Controller.Doc;
 				
 					table.Add(c0);
 					table.Add(c1);
@@ -150,7 +150,7 @@ namespace Altaxo.Worksheet
 			}
 
 
-		public static void FFT(DataGrid dg)
+		public static void FFT(TableController dg)
 		{
 			int len = dg.SelectedColumns.Count;
 			if(len==0)
@@ -183,7 +183,7 @@ namespace Altaxo.Worksheet
 		}
 
 
-		public static void ImportPicture(DataGrid dg)
+		public static void ImportPicture(Altaxo.Data.DataTable table)
 		{
 			ColorAmplitudeFunction colorfunc;
 			System.IO.Stream myStream;
@@ -211,7 +211,6 @@ namespace Altaxo.Worksheet
 					// the name of the columns should preferabbly simply
 					// the index in x direction
 
-					Altaxo.Data.DataTable table = dg.DataTable;
 					table.SuspendDataChangedNotifications();
 					for(int i=0;i<sizex;i++)
 					{
@@ -231,7 +230,7 @@ namespace Altaxo.Worksheet
 			}	
 		}
 
-		public static void CopyToClipboard(DataGrid dg)
+		public static void CopyToClipboard(TableController dg)
 		{
 			Altaxo.Data.DataTable dt = dg.DataTable;
 			System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
