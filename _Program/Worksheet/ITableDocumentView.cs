@@ -50,22 +50,22 @@ namespace Altaxo.Worksheet
 		/// <summary>
 		/// Get / sets the maximum value of the horizontal scroll bar 
 		/// </summary>
-		int HorzScrollMaximum{ get; set; }
+		int HorzScrollMaximum{ set; }
 		
 		/// <summary>
 		/// Get / sets the maximum value of the vertical scroll bar 
 		/// </summary>
-		int VertScrollMaximum { get; set; }
+		int VertScrollMaximum { set; }
 
 		/// <summary>
 		/// Get /sets the horizontal scroll value
 		/// </summary>
-		int HorzScrollValue { get; set; }
+		int HorzScrollValue { set; }
 
 		/// <summary>
 		/// Get /sets the vertical scroll value
 		/// </summary>
-		int VertScrollValue { get; set; }
+		int VertScrollValue { set; }
 
 		/// <summary>
 		/// This creates a graphics context for the area where the table is shown.

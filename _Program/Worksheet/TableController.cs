@@ -73,9 +73,18 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		protected ColumnStyleCache m_ColumnStyleCache = new ColumnStyleCache();
 		
 		
+		/// <summary>
+		/// Horizontal scroll position; number of first column that is shown.
+		/// </summary>
 		private int m_HorzScrollPos;
+		/// <summary>
+		/// Vertical scroll position; Positive values: number of first data column
+		/// that is shown. Negative Values scroll more up in case of property columns.
+		/// </summary>
 		private int m_VertScrollPos;
-		
+		private int m_HorzScrollMax;
+		private int m_VertScrollMax;
+
 		private int  m_LastVisibleColumn=0;
 		private int  m_LastFullyVisibleColumn=0;
 
@@ -1305,9 +1314,21 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 						m_CellEditControl.Hide();
 					}
 
-					this.View.VertScrollValue = value;
+					// The value of the ScrollBar in the view has an offset, since he
+					// can not have negative values;
+					this.View.VertScrollValue = value + this.TotalEnabledPropertyColumns;
 					this.View.InvalidateTableArea();
 				}
+			}
+		}
+
+		public int VertScrollMaximum
+		{
+			get { return this.m_VertScrollMax; }
+			set 
+			{
+				this.m_VertScrollMax = value;
+				View.VertScrollMaximum = value + this.TotalEnabledPropertyColumns;
 			}
 		}
 		
@@ -1316,41 +1337,73 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		{
 			get
 			{
-				return Math.Max(0,VertScrollPos - TotalEnabledPropertyColumns);
+				return Math.Max(0,VertScrollPos);
 			}
 			set
 			{
-				VertScrollPos = TotalEnabledPropertyColumns + Math.Max(0,value);
-				this.View.InvalidateTableArea();
+				VertScrollPos = Math.Max(0,value);
 			}
 		}
 
 
+		/// <summary>
+		/// This returns the vertical position of the first visible data row.;
+		/// </summary>
+		public int VerticalPositionOfFirstVisibleDataRow
+		{
+			get 
+			{
+				return this.m_ColumnHeaderStyle.Height + (VertScrollPos>=0 ? 0 : -VertScrollPos*this.m_PropertyColumnHeaderStyle.Height); 
+			}
+		}
+		/// <summary>
+		/// Gets the first table row that is visible under the coordinate top.
+		/// </summary>
+		/// <param name="top">The upper coordinate of the cliping rectangle.</param>
+		/// <returns>The first table row that is visible below the top coordinate.</returns>
 		public int GetFirstVisibleTableRow(int top)
 		{
-			int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
-			return FirstVisibleTableRow + Math.Max(0,firstTotRow-RemainingEnabledPropertyColumns);
+			int posOfDataRow0 = this.VerticalPositionOfFirstVisibleDataRow;
+
+			//int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
+			//return FirstVisibleTableRow + Math.Max(0,firstTotRow-RemainingEnabledPropertyColumns);
+		int firstVis = (int)Math.Floor((top-posOfDataRow0)/(double)m_RowHeaderStyle.Height);
+		return (firstVis<0? 0 : firstVis ) + FirstVisibleTableRow;
 		}
 
+		/// <summary>
+		/// How many data rows are visible between top and bottom (in pixel)?
+		/// </summary>
+		/// <param name="top">The top y coordinate.</param>
+		/// <param name="bottom">The bottom y coordinate.</param>
+		/// <returns>The number of data rows visible between these two coordinates.</returns>
 		public int GetVisibleTableRows(int top, int bottom)
 		{
-			int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
-			int lastTotRow  = (int)Math.Ceiling((bottom-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height)-1;
-			return Math.Max(0,1 + lastTotRow - firstTotRow);
+			int posOfDataRow0 = this.VerticalPositionOfFirstVisibleDataRow;
+
+			if(top<posOfDataRow0)
+				top = posOfDataRow0;
+
+			int firstRow = (int)Math.Floor((top-posOfDataRow0)/(double)m_RowHeaderStyle.Height);
+			int lastRow  = (int)Math.Ceiling((bottom-posOfDataRow0)/(double)m_RowHeaderStyle.Height)-1;
+			return Math.Max(0,1 + lastRow - firstRow);
 		}
 
 		public int GetFullyVisibleTableRows(int top, int bottom)
 		{
-			int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
-			int lastTotRow  = (int)Math.Floor((bottom-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height)-1;
-			return Math.Max(0, 1+ lastTotRow - firstTotRow);
+			int posOfDataRow0 = this.VerticalPositionOfFirstVisibleDataRow;
+
+			if(top<posOfDataRow0)
+				top = posOfDataRow0;
+
+			int firstRow = (int)Math.Floor((top-posOfDataRow0)/(double)m_RowHeaderStyle.Height);
+			int lastRow  = (int)Math.Floor((bottom-posOfDataRow0)/(double)m_RowHeaderStyle.Height)-1;
+			return Math.Max(0, 1+ lastRow - firstRow);
 		}
 
 		public int GetTopCoordinateOfTableRow(int nRow)
 		{
-			return		m_ColumnHeaderStyle.Height 
-				+ RemainingEnabledPropertyColumns*m_RowHeaderStyle.Height
-				+ (nRow-FirstVisibleTableRow)*m_RowHeaderStyle.Height;
+			return	this.VerticalPositionOfFirstVisibleDataRow + (nRow- (VertScrollPos<0?0:VertScrollPos)) * m_RowHeaderStyle.Height;
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -1358,7 +1411,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		{
 			get
 			{
-				return GetVisibleTableRows(0,this.View.TableAreaSize.Height);
+				return GetVisibleTableRows(0,this.TableAreaHeight);
 			}
 		}
 
@@ -1395,7 +1448,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		{
 			get
 			{
-				return m_ShowColumnProperties ? Math.Max(0,this.m_NumberOfPropertyCols-VertScrollPos) : 0;
+				return m_ShowColumnProperties ? Math.Max(0,-VertScrollPos) : 0;
 			}
 		}
 
@@ -1407,10 +1460,21 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		}
 
 
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int FirstVisiblePropertyColumn
+		{
+			get
+			{
+				return (m_ShowColumnProperties && VertScrollPos<0) ? TotalEnabledPropertyColumns+VertScrollPos : -1;
+			}
+		}
+
+
 		public int GetFirstVisiblePropertyColumn(int top)
 		{
-			int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
-			return m_ShowColumnProperties ? firstTotRow+VertScrollPos : 0;
+			int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height));
+			return m_ShowColumnProperties ? firstTotRow+FirstVisiblePropertyColumn : 0;
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -1425,15 +1489,15 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 		public int GetTopCoordinateOfPropertyColumn(int nCol)
 		{
-			return m_ColumnHeaderStyle.Height + (nCol-FirstVisiblePropertyColumn)*m_RowHeaderStyle.Height;
+			return m_ColumnHeaderStyle.Height + (nCol-FirstVisiblePropertyColumn)*m_PropertyColumnHeaderStyle.Height;
 		}
 
 		public int GetVisiblePropertyColumns(int top, int bottom)
 		{
 			if(this.m_ShowColumnProperties)
 			{
-				int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
-				int lastTotRow  = (int)Math.Ceiling((bottom-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height)-1;
+				int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height));
+				int lastTotRow  = (int)Math.Ceiling((bottom-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height)-1;
 				int maxPossRows = Math.Max(0,RemainingEnabledPropertyColumns-firstTotRow);
 				return Math.Min(maxPossRows,Math.Max(0,1 + lastTotRow - firstTotRow));
 			}
@@ -1445,8 +1509,8 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		{
 			if(m_ShowColumnProperties)
 			{
-				int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
-				int lastTotRow  = (int)Math.Floor((bottom-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height)-1;
+				int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height));
+				int lastTotRow  = (int)Math.Floor((bottom-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height)-1;
 				int maxPossRows = Math.Max(0,RemainingEnabledPropertyColumns-firstTotRow);
 				return Math.Min(maxPossRows,Math.Max(0,1 + lastTotRow - firstTotRow));
 			}
@@ -1474,14 +1538,6 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		}
 
 		
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int FirstVisiblePropertyColumn
-		{
-			get
-			{
-				return (m_ShowColumnProperties && VertScrollPos<m_NumberOfPropertyCols) ? VertScrollPos : -1;
-			}
-		}
 
 		#endregion
 
@@ -1512,6 +1568,17 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 				}
 			}
 		}
+
+		public int HorzScrollMaximum
+		{
+			get { return this.m_HorzScrollMax; }
+			set 
+			{
+				this.m_HorzScrollMax = value;
+				View.HorzScrollMaximum = value;
+			}
+		}
+
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int FirstVisibleColumn
 		{
@@ -1655,15 +1722,15 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		protected void SetScrollPositionTo(int nCol, int nRow)
 		{
 			int oldCol = HorzScrollPos;
-			if(View.HorzScrollMaximum<nCol)
-				View.HorzScrollMaximum = nCol;
-			HorzScrollPos=nCol;
+			if(this.HorzScrollMaximum<nCol)
+				this.HorzScrollMaximum = nCol;
+			this.HorzScrollPos=nCol;
 
 			m_ColumnStyleCache.Update(this);
 
-			if(View.VertScrollMaximum<nRow)
-				View.VertScrollMaximum=nRow;
-			VertScrollPos=nRow;
+			if(this.VertScrollMaximum<nRow)
+				this.VertScrollMaximum=nRow;
+			this.VertScrollPos=nRow;
 		}
 
 
@@ -1693,7 +1760,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 		public void EhView_VertScrollBarScroll(System.Windows.Forms.ScrollEventArgs e)
 		{
-			VertScrollPos = e.NewValue;
+			VertScrollPos = e.NewValue - this.TotalEnabledPropertyColumns;
 		}
 
 		public void EhView_HorzScrollBarScroll(System.Windows.Forms.ScrollEventArgs e)
@@ -1933,9 +2000,10 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 				// if visible, draw property column header items
 				yShift=this.GetTopCoordinateOfPropertyColumn(firstPropertyColumnToDraw);
+				cellRectangle.Height = m_PropertyColumnHeaderStyle.Height;
 				for(int nPropCol=firstPropertyColumnToDraw, nInc=0;nInc<numberOfPropertyColumnsToDraw;nPropCol++,nInc++)
 				{
-					cellRectangle.Y = yShift+nInc*m_RowHeaderStyle.Height;
+					cellRectangle.Y = yShift+nInc*m_PropertyColumnHeaderStyle.Height;
 					bool bPropColSelected = bArePropColsSelected && m_SelectedPropertyColumns.ContainsKey(nPropCol);
 					this.m_PropertyColumnHeaderStyle.Paint(dc,cellRectangle,nPropCol,this.DataTable.PropCols[nPropCol],bPropColSelected);
 				}
@@ -1943,6 +2011,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 			// draw the table row Header Items
 			yShift=this.GetTopCoordinateOfTableRow(firstTableRowToDraw);
+			cellRectangle.Height = m_RowHeaderStyle.Height;
 			for(int nRow = firstTableRowToDraw,nInc=0; nInc<numberOfTableRowsToDraw; nRow++,nInc++)
 			{
 				cellRectangle.Y = yShift+nInc*m_RowHeaderStyle.Height;
@@ -1961,7 +2030,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 					Altaxo.Worksheet.ColumnStyle cs = GetPropertyColumnStyle(nPropCol);
 					bool bPropColSelected = bArePropColsSelected && m_SelectedPropertyColumns.ContainsKey(nPropCol);
 					cellRectangle.Y=this.GetTopCoordinateOfPropertyColumn(nPropCol);
-					cellRectangle.Height = m_RowHeaderStyle.Height;
+					cellRectangle.Height = m_PropertyColumnHeaderStyle.Height;
 					
 					for(int nCol=firstColToDraw, nIncCol=0; nIncCol<numberOfColumnsToDraw; nCol++,nIncCol++)
 					{
