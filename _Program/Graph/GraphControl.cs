@@ -33,7 +33,6 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Hosts a graph and handles the painting of the graph and the actions to modify the graph
 	/// </summary>
-	/// <remarks>This control hosts a lot of click logic</remarks>
 	public class GraphControl : System.Windows.Forms.UserControl
 	{
 		/// <summary>
@@ -82,11 +81,24 @@ namespace Altaxo.Graph
 		protected int m_ActualLayer = 0;
 		protected GraphTools m_CurrentGraphTool = GraphTools.ObjectPointer;
 		private GraphPanel m_GraphPanel;
-		protected PointF m_LastMouseDownPoint;
+//		protected PointF m_LastMouseDownPoint;
 		private System.Windows.Forms.ImageList m_GraphToolsImages;
 		private System.ComponentModel.IContainer components;
 
 		private ToolBar m_GraphToolsToolBar=null;
+		private MouseStateHandler m_MouseState= new ObjectPointerMouseHandler();
+
+
+		/// <summary>
+		/// The hashtable of the selected objects. The key is the selected object itself,
+		/// the data is a int object, which stores the layer number the object belongs to.
+		/// </summary>
+		protected System.Collections.Hashtable m_SelectedObjects = new System.Collections.Hashtable();
+
+		/// <summary>
+		/// This holds a frozen image of the graph during the moving time
+		/// </summary>
+		protected Bitmap m_FrozenGraph=null;
 
 
 		public GraphControl()
@@ -177,7 +189,6 @@ namespace Altaxo.Graph
 			this.Controls.AddRange(new System.Windows.Forms.Control[] {
 																																	this.m_GraphPanel});
 			this.Name = "GraphControl";
-			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.AltaxoGraphControl_MouseDown);
 			this.ResumeLayout(false);
 
 		}
@@ -196,6 +207,19 @@ namespace Altaxo.Graph
 				{
 					for(int i=0;i<m_GraphToolsToolBar.Buttons.Count;i++)
 						m_GraphToolsToolBar.Buttons[i].Pushed = (i==(int)value);
+				}
+
+				// select the appropriate mouse handler
+				switch(m_CurrentGraphTool)
+				{
+					case GraphTools.ObjectPointer:
+						if(!(m_MouseState is ObjectPointerMouseHandler))
+							m_MouseState = new ObjectPointerMouseHandler();
+						break;
+					case GraphTools.Text:
+						if(!(m_MouseState is TextToolMouseHandler))
+							m_MouseState = new TextToolMouseHandler();
+					break;
 				}
 
 			}
@@ -516,77 +540,6 @@ namespace Altaxo.Graph
 
 		}
 
-		private void AltaxoGraphControl_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			PointF mousePT = PixelToPrintableAreaCoordinates(new PointF(e.X,e.Y));
-			GraphicsPath gp;
-			GraphObject go;
-
-			foreach(Altaxo.Graph.Layer gl in graphLayers)
-			{
-				go = gl.HitTest(mousePT, out gp);
-
-				if(go!=null)
-				{
-					Graphics g = this.CreateGraphics();
-					g.PageUnit = GraphicsUnit.Point;
-					g.PageScale = this.m_Zoom;
-					float pointsh = UnitPerInch*this.AutoScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
-					float pointsv = UnitPerInch*this.AutoScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
-					g.TranslateTransform(pointsh,pointsv);
-
-					g.DrawPath(Pens.Blue,gp);
-				}
-
-			}
-		}
-
-
-		
-		
-		private void OnGraphPanel_Click(object sender, System.EventArgs e)
-		{
-			System.Console.WriteLine("Click");
-
-			if(this.m_CurrentGraphTool==GraphTools.Text)
-			{
-				// get the page coordinates (in Point (1/72") units)
-				PointF printAreaCoord = PixelToPrintableAreaCoordinates(m_LastMouseDownPoint);
-				// with knowledge of the current active layer, calculate the layer coordinates from them
-				PointF layerCoord = Layer[ActualLayer].GraphToLayerCoordinates(printAreaCoord);
-
-				ExtendedTextGraphObject tgo = new ExtendedTextGraphObject();
-				tgo.Position = layerCoord;
-
-				// deselect the text tool
-				this.CurrentGraphTool = GraphTools.ObjectPointer;
-
-				TextControlDialog dlg = new TextControlDialog(Layer[ActualLayer],tgo);
-				if(DialogResult.OK==dlg.ShowDialog(this))
-				{
-					// add the resulting textgraphobject to the layer
-					if(!dlg.TextGraphObject.Empty)
-					{
-						Layer[ActualLayer].GraphObjects.Add(dlg.TextGraphObject);
-						this.m_GraphPanel.Invalidate();
-					}
-				}
-			}
-		}
-
-		private void OnGraphPanel_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			System.Console.WriteLine("MouseDown {0},{1}",e.X,e.Y);
-
-			switch(this.m_CurrentGraphTool)
-			{
-				case GraphTools.ObjectPointer:
-					OnGraphPanel_ObjectPointerMouseDown(sender, e);
-					break;
-			} // end of switch
-
-			m_LastMouseDownPoint = new PointF(e.X,e.Y); // store the position of the mouse down
-		}
 
 		/// <summary>
 		/// Translates the graphics properties to graph (printable area), so that the beginning of printable area now is (0,0) and the units are in Points (1/72 inch)
@@ -608,68 +561,7 @@ namespace Altaxo.Graph
 			g.TranslateTransform(pointsh,pointsv);
 		}
 
-
-
-		/// <summary>
-		/// The hashtable of the selected objects. The key is the selected object itself,
-		/// the data is a int object, which stores the layer number the object belongs to.
-		/// </summary>
-		protected System.Collections.Hashtable m_SelectedObjects = new System.Collections.Hashtable();
-		/// <summary>
-		/// If true, the selected objects where moved when a MouseMove event is fired
-		/// </summary>
-		protected bool m_bMoveObjectsOnMouseMove=false;
-		/// <summary>Stores the mouse position of the last point to where the selected objects where moved</summary>
-		protected PointF m_MoveObjectsLastMovePoint;
-		/// <summary>If objects where really moved during the moving mode, this value become true</summary>
-		protected bool m_bObjectsWereMoved=false;
-
-		/// <summary>
-		/// This holds a frozen image of the graph during the moving time
-		/// </summary>
-		protected Bitmap m_FrozenGraph=null;
-
-		/// <summary>
-		/// Actions neccessary to start the dragging of graph objects
-		/// </summary>
-		/// <param name="currentMousePosition">the current mouse position in pixel</param>
-		protected void StartMovingObjects(PointF currentMousePosition)
-		{
-			if(!m_bMoveObjectsOnMouseMove)
-			{
-				m_bMoveObjectsOnMouseMove=true;
-				m_bObjectsWereMoved=false; // up to now no objects were really moved
-				m_MoveObjectsLastMovePoint = currentMousePosition;
-
-				// create a frozen bitmap of the graph
-				Graphics g = this.m_GraphPanel.CreateGraphics(); // do not translate the graphics here!
-				m_FrozenGraph = new Bitmap(m_GraphPanel.Width,m_GraphPanel.Height,g);
-				Graphics gbmp = Graphics.FromImage(m_FrozenGraph);
-				this.DoPaint(gbmp,false);
-				gbmp.Dispose();
-			}
-		}
-
-		/// <summary>
-		/// Actions neccessary to end the dragging of graph objects
-		/// </summary>
-		protected void EndMovingObjects()
-		{
-			bool bRepaint = m_bObjectsWereMoved; // repaint the graph when objects were really moved
-
-			m_bMoveObjectsOnMouseMove = false;
-			m_bObjectsWereMoved=false;
-			m_MoveObjectsLastMovePoint = new Point(0,0); // this is not neccessary, but only for "order"
-			if(null!=m_FrozenGraph) 
-			{
-				m_FrozenGraph.Dispose(); m_FrozenGraph=null;
-			}
-			
-			if(bRepaint)
-				InvalidateGraph(); // redraw the contents
-
-		}
-		
+	
 
 		/// <summary>
 		/// Originates a repainting of the graph
@@ -679,6 +571,7 @@ namespace Altaxo.Graph
 			this.m_GraphPanel.Invalidate();
 		}
 
+
 		/// <summary>
 		/// Clears the selection list and repaints the graph if neccessary
 		/// </summary>
@@ -686,7 +579,9 @@ namespace Altaxo.Graph
 		{
 			bool bRepaint = (m_SelectedObjects.Count>0); // is a repaint neccessary
 			m_SelectedObjects.Clear();
-			EndMovingObjects();
+			
+			
+			this.m_MouseState = new ObjectPointerMouseHandler();
 
 			if(bRepaint)
 				InvalidateGraph(); 
@@ -762,179 +657,387 @@ namespace Altaxo.Graph
 		}
 
 
-		/// <summary>
-		/// Handles the MouseDown event when the object pointer tool is selected
-		/// </summary>
-		/// <param name="sender">The sender of the event</param>
-		/// <param name="e">The mouse event args</param>
-		/// <remarks>
-		/// The strategy to handle the mousedown event is as following:
-		/// 
-		/// Have we clicked on already selected objects?
-		///		if yes (we have clicked on already selected objects) and the shift or control key was pressed -> deselect the object and repaint
-		///		if yes (we have clicked on already selected objects) and none shift nor control key was pressed-> activate the object moving  mode
-		///		if no (we have not clicked on already selected objects) and shift or control key was pressed -> search for the object and add it to the selected objects, then aktivate moving mode
-		///		if no (we have not clicked on already selected objects) and no shift or control key pressed -> if a object was found add it to the selected objects and activate moving mode
-		///		                                                                                               if no object was found clear the selection list, deactivate moving mode
-		/// </remarks>
-		private void OnGraphPanel_ObjectPointerMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			if(e.Button != MouseButtons.Left)
-				return; // then there is nothing to do here
-
-			// first, if we have a mousedown without shift key and the
-			// position has changed with respect to the last mousedown
-			// we have to deselect all objects
-			PointF mouseXY = new PointF(e.X,e.Y);
-			bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
-			bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
-			PointF graphXY = this.PixelToPrintableAreaCoordinates(mouseXY); // Graph area coordinates
-
-	
-			// have we clicked on one of the already selected objects
-			GraphObject clickedSelectedObject=null;
-			bool bClickedOnAlreadySelectedObjects=IsPixelPositionOnAlreadySelectedObject(mouseXY, out clickedSelectedObject);
-
-			if(bClickedOnAlreadySelectedObjects)
-			{
-				if(bShiftKey || bControlKey) // if shift or control is pressed, remove the selection
-				{
-					m_SelectedObjects.Remove(clickedSelectedObject);
-					InvalidateGraph(); // repaint the graph
-				}
-				else // not shift or control pressed -> so activate the object moving mode
-				{
-					this.StartMovingObjects(mouseXY);
-				}
-			} // end if bClickedOnAlreadySelectedObjects
-			else // not clicked on a already selected object
-			{
-				// search for a object first
-				GraphObject clickedObject;
-				int clickedLayerNumber=0;
-				FindGraphObjectAtPixelPosition(mouseXY, out clickedObject, out clickedLayerNumber);
-
-				if(bShiftKey || bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
-				{
-					if(null!=clickedObject)
-					{
-						m_SelectedObjects.Add(clickedObject,clickedLayerNumber);
-						DrawSelectionRectangleImmediately(clickedObject,clickedLayerNumber);
-						this.StartMovingObjects(mouseXY);
-					}
-				}
-				else // no shift or control key pressed
-				{
-					if(null!=clickedObject)
-					{
-						ClearSelections();
-						m_SelectedObjects.Add(clickedObject,clickedLayerNumber);
-						DrawSelectionRectangleImmediately(clickedObject,clickedLayerNumber);
-						this.StartMovingObjects(mouseXY);
-					}
-					else // if clicked to nothing 
-					{
-						ClearSelections(); // clear the selection list
-					}
-				} // end else no shift or control
-
-			} // end else (not cklicked on already selected object)
-		} // end of function
 
 
-		private void OnGraphPanel_DoubleClick(object sender, System.EventArgs e)
-		{
-			System.Console.WriteLine("DoubleClick!");
-
-			// if there is exactly one object selected, try to open the corresponding configuration dialog
-			if(m_SelectedObjects.Count==1)
-			{
-				IEnumerator graphEnum = m_SelectedObjects.Keys.GetEnumerator(); // get the enumerator
-				graphEnum.MoveNext(); // set the enumerator to the first item
-				GraphObject graphObject = (GraphObject)graphEnum.Current;
-				int nLayer = (int)m_SelectedObjects[graphObject];
-				if(graphObject is Graph.ExtendedTextGraphObject)
-				{
-					TextControlDialog dlg = new TextControlDialog(Layer[nLayer],(ExtendedTextGraphObject)graphObject);
-					if(DialogResult.OK==dlg.ShowDialog(this))
-					{
-						if(!dlg.TextGraphObject.Empty)
-						{
-							((ExtendedTextGraphObject)graphObject).CopyFrom(dlg.TextGraphObject);
-						}
-						else // item is empty, so must be deleted in the layer and in the selectedObjects
-						{
-							m_SelectedObjects.Remove(graphObject);
-							Layer[nLayer].GraphObjects.Remove(graphObject);
-						}
-
-						InvalidateGraph(); // repaint the graph
-					}
-				}
-			}
-
-		}
 
 		private void OnGraphPanel_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			System.Console.WriteLine("MouseUp {0},{1}",e.X,e.Y);
-			EndMovingObjects();
+			m_MouseState = m_MouseState.OnMouseUp(this,e);
 		}
-
-
+		private void OnGraphPanel_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+			m_MouseState = m_MouseState.OnMouseDown(this,e);
+		}
 		private void OnGraphPanel_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			System.Console.WriteLine("MouseMove {0},{1}",e.X,e.Y);
-
-			PointF mouseDiff = new PointF(e.X - m_MoveObjectsLastMovePoint.X, e.Y - this.m_MoveObjectsLastMovePoint.Y);
-			if(m_bMoveObjectsOnMouseMove && 0!= m_SelectedObjects.Count && (mouseDiff.X!=0 || mouseDiff.Y!=0))
-			{
-				// move all the selected objects to the new position
-				// first update the position of the selected objects to reflect the new position
-				this.m_MoveObjectsLastMovePoint.X = e.X;
-				this.m_MoveObjectsLastMovePoint.Y = e.Y;
-
-				// indicate the objects has moved now
-				this.m_bObjectsWereMoved = true;
-
-
-				// this difference, which is in mouse coordinates, must first be 
-				// converted to Graph coordinates (1/72"), and then transformed for
-				// each object to the layer coordinate differences of the layer
-		
-				PointF graphDiff = this.PixelToPageDifferences(mouseDiff); // calulate the moving distance in page units = graph units
-
-				foreach(GraphObject graphObject in m_SelectedObjects.Keys)
-				{
-					// get the layer number the graphObject belongs to
-					int nLayer = (int)m_SelectedObjects[graphObject];
-					PointF layerDiff = Layer[nLayer].GraphToLayerDifferences(graphDiff); // calculate the moving distance in layer units
-					graphObject.X += layerDiff.X;
-					graphObject.Y += layerDiff.Y;
-					// Console.WriteLine("Moving mdiff={0}, gdiff={1}, ldiff={2}", mouseDiff,graphDiff,layerDiff);
-				}
-				// now paint the objects on the new position
-				if(null!=m_FrozenGraph)
-				{
-					Graphics g = this.m_GraphPanel.CreateGraphics();
-					// first paint the frozen graph, and upon that, paint all selection rectangles
-					g.DrawImageUnscaled(m_FrozenGraph,0,0,m_GraphPanel.Width,m_GraphPanel.Height);
-
-					// now translate the graphics to graph units and paint all selection path
-					this.TranslateGraphicsToGraphUnits(g);
-					foreach(GraphObject graphObject in m_SelectedObjects.Keys)
-					{
-						int nLayer = (int)m_SelectedObjects[graphObject]; 						// get the layer number the graphObject belongs to
-						g.DrawPath(Pens.Blue,Layer[nLayer].LayerToGraphCoordinates(graphObject.GetSelectionPath())); // draw the selection path
-					}
-				}
-				else  // if the graph was not frozen before - what reasons ever
-				{
-					this.m_GraphPanel.Invalidate(); // rise a normal paint event
-				}
-
-			}
+			m_MouseState = this.m_MouseState.OnMouseMove(this,e);
+		}
+		private void OnGraphPanel_Click(object sender, System.EventArgs e)
+		{
+			m_MouseState = m_MouseState.OnClick(this,e);
+		}
+		private void OnGraphPanel_DoubleClick(object sender, System.EventArgs e)
+		{
+			m_MouseState = m_MouseState.OnDoubleClick(this,e);
 		}
 
-	} // end of class
+
+		#region Mouse Handler Classes
+
+		#region abstract mouse state handler
+		/// <summary>
+		/// The abstract base class of all MouseStateHandlers.
+		/// </summary>
+		public abstract class MouseStateHandler
+		{
+			protected PointF m_LastMouseUp;
+			protected PointF m_LastMouseDown;
+
+			public virtual MouseStateHandler OnMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+			{
+				return this;
+			}
+			public virtual MouseStateHandler OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+			{
+				m_LastMouseUp = new Point(e.X,e.Y);
+				return this;
+			}
+			public virtual MouseStateHandler OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+			{
+				m_LastMouseDown = new Point(e.X,e.Y);
+				return this;
+			}
+			public virtual MouseStateHandler OnClick(object sender, System.EventArgs e)
+			{
+				return this;
+			}
+			public virtual MouseStateHandler OnDoubleClick(object sender, System.EventArgs e)
+			{
+					return this;
+			}
+		}
+		#endregion // abstract mouse state handler
+
+		#region Object Pointer Mouse Handler
+		/// <summary>
+		/// Handles the mouse events when the ObjectPointer tools is selected.
+		/// </summary>
+		public class ObjectPointerMouseHandler : MouseStateHandler
+		{
+			/// <summary>
+			/// If true, the selected objects where moved when a MouseMove event is fired
+			/// </summary>
+			protected bool m_bMoveObjectsOnMouseMove=false;
+			/// <summary>Stores the mouse position of the last point to where the selected objects where moved</summary>
+			protected PointF m_MoveObjectsLastMovePoint;
+			/// <summary>If objects where really moved during the moving mode, this value become true</summary>
+			protected bool m_bObjectsWereMoved=false;
+
+
+			public override MouseStateHandler OnMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+			{
+				base.OnMouseMove(sender,e);
+
+				GraphControl grac = sender as GraphControl;
+
+				System.Console.WriteLine("MouseMove {0},{1}",e.X,e.Y);
+
+				PointF mouseDiff = new PointF(e.X - m_MoveObjectsLastMovePoint.X, e.Y - m_MoveObjectsLastMovePoint.Y);
+				if(m_bMoveObjectsOnMouseMove && 0!= grac.m_SelectedObjects.Count && (mouseDiff.X!=0 || mouseDiff.Y!=0))
+				{
+					// move all the selected objects to the new position
+					// first update the position of the selected objects to reflect the new position
+					m_MoveObjectsLastMovePoint.X = e.X;
+					m_MoveObjectsLastMovePoint.Y = e.Y;
+
+					// indicate the objects has moved now
+					m_bObjectsWereMoved = true;
+
+
+					// this difference, which is in mouse coordinates, must first be 
+					// converted to Graph coordinates (1/72"), and then transformed for
+					// each object to the layer coordinate differences of the layer
+		
+					PointF graphDiff = grac.PixelToPageDifferences(mouseDiff); // calulate the moving distance in page units = graph units
+
+					foreach(GraphObject graphObject in grac.m_SelectedObjects.Keys)
+					{
+						// get the layer number the graphObject belongs to
+						int nLayer = (int)grac.m_SelectedObjects[graphObject];
+						PointF layerDiff = grac.Layer[nLayer].GraphToLayerDifferences(graphDiff); // calculate the moving distance in layer units
+						graphObject.X += layerDiff.X;
+						graphObject.Y += layerDiff.Y;
+						// Console.WriteLine("Moving mdiff={0}, gdiff={1}, ldiff={2}", mouseDiff,graphDiff,layerDiff);
+					}
+					// now paint the objects on the new position
+					if(null!=grac.m_FrozenGraph)
+					{
+						Graphics g = grac.m_GraphPanel.CreateGraphics();
+						// first paint the frozen graph, and upon that, paint all selection rectangles
+						g.DrawImageUnscaled(grac.m_FrozenGraph,0,0,grac.m_GraphPanel.Width,grac.m_GraphPanel.Height);
+
+						// now translate the graphics to graph units and paint all selection path
+						grac.TranslateGraphicsToGraphUnits(g);
+						foreach(GraphObject graphObject in grac.m_SelectedObjects.Keys)
+						{
+							int nLayer = (int)grac.m_SelectedObjects[graphObject]; 						// get the layer number the graphObject belongs to
+							g.DrawPath(Pens.Blue,grac.Layer[nLayer].LayerToGraphCoordinates(graphObject.GetSelectionPath())); // draw the selection path
+						}
+					}
+					else  // if the graph was not frozen before - what reasons ever
+					{
+						grac.m_GraphPanel.Invalidate(); // rise a normal paint event
+					}
+
+				}
+				return this;
+			}
+
+			/// <summary>
+			/// Handles the MouseDown event when the object pointer tool is selected
+			/// </summary>
+			/// <param name="sender">The sender of the event</param>
+			/// <param name="e">The mouse event args</param>
+			/// <remarks>
+			/// The strategy to handle the mousedown event is as following:
+			/// 
+			/// Have we clicked on already selected objects?
+			///		if yes (we have clicked on already selected objects) and the shift or control key was pressed -> deselect the object and repaint
+			///		if yes (we have clicked on already selected objects) and none shift nor control key was pressed-> activate the object moving  mode
+			///		if no (we have not clicked on already selected objects) and shift or control key was pressed -> search for the object and add it to the selected objects, then aktivate moving mode
+			///		if no (we have not clicked on already selected objects) and no shift or control key pressed -> if a object was found add it to the selected objects and activate moving mode
+			///		                                                                                               if no object was found clear the selection list, deactivate moving mode
+			/// </remarks>
+			public override MouseStateHandler OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+			{
+				base.OnMouseDown(sender, e);
+
+				GraphControl grac = sender as GraphControl;
+
+				if(e.Button != MouseButtons.Left)
+					return this; // then there is nothing to do here
+
+				// first, if we have a mousedown without shift key and the
+				// position has changed with respect to the last mousedown
+				// we have to deselect all objects
+				PointF mouseXY = new PointF(e.X,e.Y);
+				bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
+				bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
+				PointF graphXY = grac.PixelToPrintableAreaCoordinates(mouseXY); // Graph area coordinates
+
+	
+				// have we clicked on one of the already selected objects
+				GraphObject clickedSelectedObject=null;
+				bool bClickedOnAlreadySelectedObjects=grac.IsPixelPositionOnAlreadySelectedObject(mouseXY, out clickedSelectedObject);
+
+				if(bClickedOnAlreadySelectedObjects)
+				{
+					if(bShiftKey || bControlKey) // if shift or control is pressed, remove the selection
+					{
+						grac.m_SelectedObjects.Remove(clickedSelectedObject);
+						grac.InvalidateGraph(); // repaint the graph
+					}
+					else // not shift or control pressed -> so activate the object moving mode
+					{
+						StartMovingObjects(grac,mouseXY);
+					}
+				} // end if bClickedOnAlreadySelectedObjects
+				else // not clicked on a already selected object
+				{
+					// search for a object first
+					GraphObject clickedObject;
+					int clickedLayerNumber=0;
+					grac.FindGraphObjectAtPixelPosition(mouseXY, out clickedObject, out clickedLayerNumber);
+
+					if(bShiftKey || bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
+					{
+						if(null!=clickedObject)
+						{
+							grac.m_SelectedObjects.Add(clickedObject,clickedLayerNumber);
+							grac.DrawSelectionRectangleImmediately(clickedObject,clickedLayerNumber);
+							StartMovingObjects(grac,mouseXY);
+						}
+					}
+					else // no shift or control key pressed
+					{
+						if(null!=clickedObject)
+						{
+							ClearSelections(grac);
+							grac.m_SelectedObjects.Add(clickedObject,clickedLayerNumber);
+							grac.DrawSelectionRectangleImmediately(clickedObject,clickedLayerNumber);
+							StartMovingObjects(grac,mouseXY);
+						}
+						else // if clicked to nothing 
+						{
+							ClearSelections(grac); // clear the selection list
+						}
+					} // end else no shift or control
+
+				} // end else (not cklicked on already selected object)
+			return this;
+			} // end of function
+
+			public override MouseStateHandler OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+			{
+				GraphControl grac = sender as GraphControl;
+				System.Console.WriteLine("MouseUp {0},{1}",e.X,e.Y);
+				EndMovingObjects(grac);
+				return this;
+			}
+
+			public override MouseStateHandler OnDoubleClick(object sender, System.EventArgs e)
+			{
+				base.OnDoubleClick(sender,e);
+				GraphControl grac = sender as GraphControl;
+
+				System.Console.WriteLine("DoubleClick!");
+
+				// if there is exactly one object selected, try to open the corresponding configuration dialog
+				if(grac.m_SelectedObjects.Count==1)
+				{
+					IEnumerator graphEnum = grac.m_SelectedObjects.Keys.GetEnumerator(); // get the enumerator
+					graphEnum.MoveNext(); // set the enumerator to the first item
+					GraphObject graphObject = (GraphObject)graphEnum.Current;
+					int nLayer = (int)grac.m_SelectedObjects[graphObject];
+					if(graphObject is Graph.ExtendedTextGraphObject)
+					{
+						TextControlDialog dlg = new TextControlDialog(grac.Layer[nLayer],(ExtendedTextGraphObject)graphObject);
+						if(DialogResult.OK==dlg.ShowDialog(grac))
+						{
+							if(!dlg.TextGraphObject.Empty)
+							{
+								((ExtendedTextGraphObject)graphObject).CopyFrom(dlg.TextGraphObject);
+							}
+							else // item is empty, so must be deleted in the layer and in the selectedObjects
+							{
+								grac.m_SelectedObjects.Remove(graphObject);
+								grac.Layer[nLayer].GraphObjects.Remove(graphObject);
+							}
+
+							grac.InvalidateGraph(); // repaint the graph
+						}
+					}
+				}
+				return this;
+			}
+
+
+			public override MouseStateHandler OnClick(object sender, System.EventArgs e)
+			{
+
+				System.Console.WriteLine("Click");
+
+				return this;
+			}
+
+
+			/// <summary>
+			/// Actions neccessary to start the dragging of graph objects
+			/// </summary>
+			/// <param name="currentMousePosition">the current mouse position in pixel</param>
+			protected void StartMovingObjects(GraphControl grac, PointF currentMousePosition)
+			{
+				if(!m_bMoveObjectsOnMouseMove)
+				{
+					m_bMoveObjectsOnMouseMove=true;
+					m_bObjectsWereMoved=false; // up to now no objects were really moved
+					m_MoveObjectsLastMovePoint = currentMousePosition;
+
+					// create a frozen bitmap of the graph
+					Graphics g = grac.m_GraphPanel.CreateGraphics(); // do not translate the graphics here!
+					grac.m_FrozenGraph = new Bitmap(grac.m_GraphPanel.Width,grac.m_GraphPanel.Height,g);
+					Graphics gbmp = Graphics.FromImage(grac.m_FrozenGraph);
+					grac.DoPaint(gbmp,false);
+					gbmp.Dispose();
+				}
+			}
+
+			/// <summary>
+			/// Actions neccessary to end the dragging of graph objects
+			/// </summary>
+			protected void EndMovingObjects(GraphControl grac)
+			{
+				bool bRepaint = m_bObjectsWereMoved; // repaint the graph when objects were really moved
+
+				m_bMoveObjectsOnMouseMove = false;
+				m_bObjectsWereMoved=false;
+				m_MoveObjectsLastMovePoint = new Point(0,0); // this is not neccessary, but only for "order"
+				if(null!=grac.m_FrozenGraph) 
+				{
+					grac.m_FrozenGraph.Dispose(); grac.m_FrozenGraph=null;
+				}
+			
+				if(bRepaint)
+					grac.InvalidateGraph(); // redraw the contents
+
+			}
+
+			/// <summary>
+			/// Clears the selection list and repaints the graph if neccessary
+			/// </summary>
+			public void ClearSelections(GraphControl grac)
+			{
+				bool bRepaint = (grac.m_SelectedObjects.Count>0); // is a repaint neccessary
+				grac.m_SelectedObjects.Clear();
+				EndMovingObjects(grac);
+
+				if(bRepaint)
+					grac.InvalidateGraph(); 
+			}
+
+
+		} // end of class
+
+		#endregion // object pointer mouse handler
+
+		#region Text tool mouse handler
+
+		/// <summary>
+		/// This class handles the mouse events in case the text tool is selected.
+		/// </summary>
+	public class TextToolMouseHandler : MouseStateHandler
+	{
+		/// <summary>
+		/// Handles the click event by opening the text tool dialog.
+		/// </summary>
+		/// <param name="sender">The graph control.</param>
+		/// <param name="e">EventArgs.</param>
+		/// <returns>The mouse state handler for handling the next mouse events.</returns>
+		public override MouseStateHandler OnClick(object sender, System.EventArgs e)
+		{
+			base.OnClick(sender,e);
+
+			GraphControl grac = sender as GraphControl;
+
+			// get the page coordinates (in Point (1/72") units)
+			PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
+			// with knowledge of the current active layer, calculate the layer coordinates from them
+			PointF layerCoord = grac.Layer[grac.ActualLayer].GraphToLayerCoordinates(printAreaCoord);
+
+			ExtendedTextGraphObject tgo = new ExtendedTextGraphObject();
+			tgo.Position = layerCoord;
+
+			// deselect the text tool
+			grac.CurrentGraphTool = GraphTools.ObjectPointer;
+
+			TextControlDialog dlg = new TextControlDialog(grac.Layer[grac.ActualLayer],tgo);
+			if(DialogResult.OK==dlg.ShowDialog(grac))
+			{
+				// add the resulting textgraphobject to the layer
+				if(!dlg.TextGraphObject.Empty)
+				{
+					grac.Layer[grac.ActualLayer].GraphObjects.Add(dlg.TextGraphObject);
+					grac.m_GraphPanel.Invalidate();
+				}
+			}
+			return new ObjectPointerMouseHandler();
+		}
+	}
+
+		#endregion // Text Tool Mouse Handler
+
+		#endregion // Mouse Handlers
+
+
+	} // end of class Graph
 } // end of namespace

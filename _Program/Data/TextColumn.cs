@@ -277,7 +277,7 @@ namespace Altaxo.Data
 			for(int i=m_Count-1, j=newlen-1; i>=nInsBeforeColumn;i--,j--)
 				m_Array[j] = m_Array[i];
 
-			for(int i=nInsBeforeColumn+nInsCount-1;i>=nInsBeforeColumn;i++)
+			for(int i=nInsBeforeColumn+nInsCount-1;i>=nInsBeforeColumn;i--)
 				m_Array[i]=NullValue;
 		
 			this.m_Count=newlen;

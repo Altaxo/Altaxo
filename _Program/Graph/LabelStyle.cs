@@ -24,13 +24,28 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph
 {
+
+	/// <remarks>LabelStyle is the abstract base class of all LabelStyles. It is derived from
+	/// LayerEdge, since the formatting mainly depends on which edge of the layer the label is positioned.</remarks>
 	public abstract class LabelStyle : LayerEdge
 	{
+		/// <summary>
+		/// Creates the abstract base class instance. You have to provided, for which edge of the layer
+		/// this LabelStyle is intended.
+		/// </summary>
+		/// <param name="st"></param>
 		public LabelStyle(EdgeType st)
 			: base(st)
 		{
 		}
 
+		/// <summary>
+		/// Abstract paint function for the LabelStyle.
+		/// </summary>
+		/// <param name="g">The graphics context.</param>
+		/// <param name="layer">The layer the lables belongs to.</param>
+		/// <param name="axis">The axis for which to paint the (major) labels.</param>
+		/// <param name="axisstyle">The axis style the axis is formatted with.</param>
 		public abstract void Paint(Graphics g, Layer layer, Axis axis, XYLayerAxisStyle axisstyle);
 
 
@@ -38,8 +53,14 @@ namespace Altaxo.Graph
 
 
 	/// <summary>
-	/// Summary description for SimpleLabelStyle.
+	/// 
 	/// </summary>
+	/// <remarks>This class paints a simple label based the general numeric format, i.e. 
+	/// a fixed decimal point representation for small numeric values and a exponential
+	/// form representation using the 'E' as separator between mantissa and exponent.
+	/// Some effort has been done to make sure that all labels have the same number of trailing decimal
+	/// digits.
+	/// </remarks>
 	public class SimpleLabelStyle : LabelStyle
 	{
 		protected Font m_Font = new Font(FontFamily.GenericSansSerif,18,GraphicsUnit.World);
@@ -101,13 +122,54 @@ namespace Altaxo.Graph
 
 			// print the major ticks
 			double[] majorticks = axis.GetMajorTicks();
+			bool[] bExponentialForm = new Boolean[majorticks.Length];
+			// determine the number of trailing decimal digits
+			string mtick;
+			int posdecimalseparator;
+			int posexponent;
+			int digits;
+			int maxtrailingdigits=0;
+			int maxexponentialdigits=1;
+			System.Globalization.NumberFormatInfo numinfo = System.Globalization.NumberFormatInfo.InvariantInfo;
+			for(int i=0;i<majorticks.Length;i++)
+			{
+				mtick = majorticks[i].ToString(numinfo);
+				posdecimalseparator = mtick.LastIndexOf(numinfo.NumberDecimalSeparator);
+				if(posdecimalseparator<0) continue;
+				posexponent = mtick.LastIndexOf('E');
+				if(posexponent<0) // no exponent-> count the trailing decimal digits
+				{
+					bExponentialForm[i]=false;
+					digits = mtick.Length-posdecimalseparator-1;
+					if(digits>maxtrailingdigits)
+						maxtrailingdigits = digits;
+				}
+				else // the exponential form is used
+				{
+					bExponentialForm[i]=true;
+					// the total digits used for exponential form are the characters until the 'E' of the exponent
+					// minus the decimal separator minus the minus sign
+					digits = mtick[0]=='-' ? posexponent-2 : posexponent-1; // the digits
+					if(digits>maxexponentialdigits)
+						maxexponentialdigits=digits;
+				}
+			}
+
+
+			// now format the lables
+			string exponentialformat=string.Format("G{0}",maxexponentialdigits);
+			string fixedformat = string.Format("F{0}",maxtrailingdigits);
 			for(int i=0;i<majorticks.Length;i++)
 			{
 				double r = axis.PhysicalToNormal(majorticks[i]);
 				PointF tickorg = GetEdgePoint(layerSize,r);
 
-				string txt = majorticks[i].ToString();
-				g.DrawString(txt, m_Font, Brushes.Black, tickorg.X + dist_x, tickorg.Y + dist_y, strfmt);
+				if(bExponentialForm[i])
+					mtick = majorticks[i].ToString(exponentialformat);
+				else
+					mtick = majorticks[i].ToString(fixedformat);
+
+				g.DrawString(mtick, m_Font, Brushes.Black, tickorg.X + dist_x, tickorg.Y + dist_y, strfmt);
 			
 			}
 

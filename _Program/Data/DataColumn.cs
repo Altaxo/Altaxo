@@ -224,7 +224,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// The parent table this column belongs to.
 		/// </summary>
-		protected Altaxo.Data.DataTable m_Table=null;
+		protected Altaxo.Data.DataColumnCollection m_Parent=null;
 
 		/// <summary>The group number the column belongs to.</summary>
 		/// <remarks>Normal columns are organized in groups. Every group of colums has either no or
@@ -322,7 +322,7 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)obj;
 				// s.m_Table = (Altaxo.Data.DataTable)(info.GetValue("Parent",typeof(Altaxo.Data.DataTable)));
-				s.m_Table = null;
+				s.m_Parent = null;
 				s.m_ColumnName = info.GetString("Name");
 				s.m_ColumnNumber = info.GetInt32("Number");
 				s.m_Count = info.GetInt32("Count");
@@ -386,8 +386,8 @@ namespace Altaxo.Data
 		{
 			// throw an exception, if the destination column has a parent, that is not supported!
 			// because the m_Table has to set up the names and so on
-			if(this.m_Table!=null)
-				throw new ApplicationException("The column " + this.ColumnName + " has the parent m_Table " + m_Table.TableName);
+			if(this.m_Parent!=null)
+				throw new ApplicationException("The column " + this.ColumnName + " has the parent m_Table " + m_Parent.TableName);
 			
 			this.m_ColumnName = ano.m_ColumnName;
 		}
@@ -418,9 +418,9 @@ namespace Altaxo.Data
 			get { return m_Kind==ColumnKind.X; }
 			set
 			{
-				if(null!=this.m_Table && true==value)
+				if(null!=this.m_Parent && true==value)
 				{
-					m_Table.DeleteXProperty(m_Group);
+					m_Parent.DeleteXProperty(m_Group);
 				}
 				if(true==value)
 					m_Kind = ColumnKind.X;
@@ -447,7 +447,7 @@ namespace Altaxo.Data
 		/// <param name="rowCountDecreased">Must be true if the row count decreased.</param>
 		/// <remarks>The data changed event is only fired when the data changed suspend counter is zero.
 		/// If it is zero, then before the data changed event is fired, the column "contacts" its parent table by
-		/// calling the function <see cref="DataTable.OnColumnDataChanged"/>, informing the parent table of this change. If the parent table
+		/// calling the function <see cref="DataColumnCollection.OnColumnDataChanged"/>, informing the parent table of this change. If the parent table
 		/// has a not-zero suspend counter, then it will suspend data changed notifications also for this column and the event is not fired.
 		/// If the suspend counter of the parent table is zero, it firstly informs its parent data set by calling the function
 		/// <see cref="DataSet.OnTableDataChanged"/>. If the suspend counter of the DataSet is not zero, then it will suspend the data changed events of the table. And the table will
@@ -456,7 +456,7 @@ namespace Altaxo.Data
 		/// then the data changed event is fired at all.</remarks>
 		protected void NotifyDataChanged(int minRow, int maxRow, bool rowCountDecreased)
 		{
-			if(null!=m_Table)
+			if(null!=m_Parent)
 			{
 				bool bWasDirtyBefore = this.IsDirty;
 
@@ -468,7 +468,7 @@ namespace Altaxo.Data
 				{
 					// always inform the parent first,
 					// because the parent can change our bDataEventEnabled to false)
-					this.m_Table.OnColumnDataChanged(this,m_MinRowChanged,m_MaxRowChanged,m_bRowCountDecreased);
+					this.m_Parent.OnColumnDataChanged(this,m_MinRowChanged,m_MaxRowChanged,m_bRowCountDecreased);
 				}
 				if(m_DataEventsSuspendCount==0) // look again for this variable, because the parent can change it during OnDataChanged
 				{	
@@ -537,8 +537,8 @@ namespace Altaxo.Data
 		/// <param name="n">The position of the column in the parent data table.</param>
 		protected internal void SetColumnNumber(int n)
 		{
-			if(null!=m_Table && m_Table[n]!=this) // test if the column is really there
-				throw new ApplicationException("Try to set wrong column number to column " + this.ColumnName + ", m_Table " + m_Table.TableName);
+			if(null!=m_Parent && m_Parent[n]!=this) // test if the column is really there
+				throw new ApplicationException("Try to set wrong column number to column " + this.ColumnName + ", m_Table " + m_Parent.TableName);
 
 			m_ColumnNumber=n;
 		}
@@ -563,13 +563,13 @@ namespace Altaxo.Data
 		/// Constructs a data column with the name <paramref name="name"/>, which belongs to the parent data
 		/// table parenttable. The column is <b>not</b> automatically inserted in the parent table!
 		/// </summary>
-		/// <param name="parenttable">The parent table this column belongs to.</param>
+		/// <param name="parentcoll">The parent DataColumnCollection this column belongs to.</param>
 		/// <param name="name">The initial name of the column.</param>
 		/// <remarks>This function is mainly intended for use by the parent table, since only the
 		/// parent table knows about which name can be used for the column.</remarks>
-		protected DataColumn(Altaxo.Data.DataTable parenttable, string name)
+		protected DataColumn(Altaxo.Data.DataColumnCollection parentcoll, string name)
 		{
-			this.m_Table = parenttable;
+			this.m_Parent = parentcoll;
 			this.m_ColumnName = name;
 		}
 
@@ -587,10 +587,10 @@ namespace Altaxo.Data
 			{
 				if(m_ColumnName!=value)
 				{
-				if(this.m_Table==null)
+				if(this.m_Parent==null)
 					m_ColumnName = value; // set value directly if no parent table
 				else // parent table is not null, so lets check the name by the parent
-					m_ColumnName = m_Table.FindUniqueColumnName(value);
+					m_ColumnName = m_Parent.FindUniqueColumnName(value);
 				}
 			}
 		}
@@ -603,7 +603,7 @@ namespace Altaxo.Data
 		{
 			get 
 			{
-				return null==m_Table ? m_ColumnName : String.Format("{0}\\{1}",m_Table.TableName,m_ColumnName);
+				return null==m_Parent ? m_ColumnName : String.Format("{0}\\{1}",m_Parent.TableName,m_ColumnName);
 			}
 			}
 
@@ -637,17 +637,21 @@ namespace Altaxo.Data
 		{
 			get
 			{
-				return m_Table;
-			}
-			set
-			{
-				// TODO !!! the parent table is not notified of that change in the moment. 
-				m_Table = value;
-
+				return m_Parent.Parent;
 			}
 		}
-		
-		
+
+		public Altaxo.Data.DataColumnCollection Parent
+		{
+			get { return m_Parent; }
+			set { m_Parent = value; }
+		}
+
+		protected internal void SetParent(DataColumnCollection parentcoll)
+		{
+			m_Parent = parentcoll;
+		}
+
 		// indexers
 		/// <summary>
 		/// Sets the value at a given index i with a value val, which is a AltaxoVariant.
@@ -696,7 +700,7 @@ namespace Altaxo.Data
 		/// </summary>
 		public void Dispose()
 		{
-			this.m_Table=null;
+			this.m_Parent=null;
 			this.m_ColumnNumber = int.MinValue;
 			this.Clear();
 			if(null!=ColumnDisposed)

@@ -140,6 +140,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Data\DataColumnCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Data\DataSet.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -405,7 +410,7 @@
                 />
                 <File
                     RelPath = "Worksheet\DataGrid.cs"
-                    SubType = "Component"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File

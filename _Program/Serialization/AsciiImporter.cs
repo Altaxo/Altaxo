@@ -640,6 +640,7 @@ namespace Altaxo.Serialization
 			System.IO.StreamReader sr = new System.IO.StreamReader(stream,System.Text.Encoding.ASCII,true);
 			System.Collections.ArrayList newcols = new System.Collections.ArrayList();
 		
+			System.Collections.ArrayList newpropcols = new System.Collections.ArrayList();
 
 			// in case a structure is provided, allocate already the columsn
 			
@@ -656,6 +657,14 @@ namespace Altaxo.Serialization
 					else
 						newcols.Add(new Altaxo.Data.DBNullColumn());;
 				}
+			}
+
+			// add also additional property columns if not enough there
+			if(impopt.nMainHeaderLines>1) // if there are more than one header line, allocate also property columns
+			{
+				int toAdd = impopt.nMainHeaderLines-1;
+				for(int i=0;i<toAdd;i++)
+					newpropcols.Add(new Data.TextColumn());
 			}
 
 			// if decimal separator statistics is provided by impopt, create a number format info object
@@ -702,6 +711,10 @@ namespace Altaxo.Serialization
 					if(i==0) // is it the column name line
 					{
 						((Altaxo.Data.DataColumn)newcols[k]).ColumnName = substr[k];
+					}
+					else // this are threated as additional properties
+					{
+						((Data.DataColumn)newpropcols[i-1])[k] = substr[k]; // set the properties
 					}
 				}
 			}
@@ -792,6 +805,12 @@ namespace Altaxo.Serialization
 					continue;
 				table.Add(i,(Altaxo.Data.DataColumn)newcols[i]);
 			} // end for loop
+
+			// add the property columns
+			for(int i=0;i<newpropcols.Count;i++)
+			{
+				table.PropCols.Add(i,(Altaxo.Data.DataColumn)newpropcols[i]);
+			}
 			table.ResumeDataChangedNotifications();
 		} // end of function ImportAscii
 	} // end class 

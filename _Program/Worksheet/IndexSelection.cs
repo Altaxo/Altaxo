@@ -28,7 +28,9 @@ namespace Altaxo.Worksheet
 	public class IndexSelection : System.Collections.SortedList 
 	{
 		protected int lastSelectedIndex=0;
-		
+		protected bool m_ExtendedSelectionBehaviour=true;
+
+
 		public IndexSelection()
 		{
 		}
@@ -43,7 +45,7 @@ namespace Altaxo.Worksheet
 
 		public int this[int i]
 		{
-		get { return (int)base.GetKey(i); }
+			get { return (int)base.GetKey(i); }
 		}
 
 		public bool IsSelected(int nIndex)
@@ -62,15 +64,30 @@ namespace Altaxo.Worksheet
 			}
 			else if(bShiftKey)
 			{
-				// deselect all and then select from lastSelectedColumn to this
-				// this is the behaviour of the windows explorer
 				if(0==this.Count)
 					lastSelectedIndex=0;
-				else
+
+				if(!m_ExtendedSelectionBehaviour && 0!=this.Count) // standard behaviour : clear the selection list before selecting the new range
+				{
+					// if standard behaviour, clear the list before selecting the new area
+					// but keep lastSelectedIndex !
 					this.Clear();
-				int step = lastSelectedIndex<=nIndex ? 1 : -1;
-				for(int i=lastSelectedIndex;i<=nIndex;i+=step)
-					this.Add(i,null);
+				}
+
+
+				int beg, end;
+				if(nIndex>=LastSelection)
+				{	beg = lastSelectedIndex; end = nIndex;  }
+				else 
+				{	beg=nIndex; end=lastSelectedIndex;	}
+
+				// select all from lastSelectionIndex to here
+				for(int i=beg;i<=end;i++)
+				{
+					if(!this.ContainsKey(i))
+						this.Add(i,null);
+				}
+
 			}
 			else // no modifier key 
 			{

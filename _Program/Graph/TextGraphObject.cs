@@ -940,7 +940,7 @@ namespace Altaxo.Graph
 						{
 							Graph.PlotAssociation pa = layer.PlotAssociations[ti.m_PlotNumber];
 						
-							pa.PlotStyle.PaintSymbol(g, new PointF(currPosX,currPosY + ti.m_yShift - ti.m_cyDescent-ti.m_cyAscent/2+ti.m_cyDescent/4), ti.m_Width);
+							pa.PlotStyle.PaintSymbol(g, new PointF(currPosX,currPosY + ti.m_yShift  + 0.5f*ti.m_cyDescent - 0.5f*ti.m_cyAscent), ti.m_Width);
 							currPosX += ti.m_Width;
 						}
 

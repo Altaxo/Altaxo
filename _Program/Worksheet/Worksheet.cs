@@ -191,7 +191,7 @@ namespace Altaxo.Worksheet
 			this.altaxoDataGrid1.BackColor = System.Drawing.SystemColors.AppWorkspace;
 			this.altaxoDataGrid1.DataTable = null;
 			this.altaxoDataGrid1.FirstVisibleColumn = 0;
-			this.altaxoDataGrid1.FirstVisibleRow = 0;
+			this.altaxoDataGrid1.FirstVisibleTableRow = 0;
 			this.altaxoDataGrid1.Name = "altaxoDataGrid1";
 			this.altaxoDataGrid1.Size = new System.Drawing.Size(392, 269);
 			this.altaxoDataGrid1.TabIndex = 0;
@@ -381,7 +381,7 @@ namespace Altaxo.Worksheet
 					| System.Windows.Forms.AnchorStyles.Right);
 				this.altaxoDataGrid1.BackColor = System.Drawing.SystemColors.AppWorkspace;
 				this.altaxoDataGrid1.FirstVisibleColumn = 0;
-				this.altaxoDataGrid1.FirstVisibleRow = 0;
+				this.altaxoDataGrid1.FirstVisibleTableRow = 0;
 				this.altaxoDataGrid1.Name = "altaxoDataGrid1";
 				this.altaxoDataGrid1.TabIndex = 0;
 				altaxoDataGrid1.Size = this.Size;

@@ -81,10 +81,20 @@ namespace Altaxo.Worksheet
 
 		public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
 		{
+			m_CellPen.Cached = true;
 			dc.DrawRectangle(m_CellPen.Pen,cellRectangle);
-			
-			string str = string.Format("{0} ({1}{2})",data.ColumnName, data.XColumn? "X":data.Kind.ToString(),data.Group); 
-			dc.DrawString(str,m_TextFont,this.m_TextBrush,cellRectangle,m_TextFormat);
+		
+			if(bSelected)
+				dc.FillRectangle(m_SelectedBackgroundBrush,cellRectangle);
+		
+			string myString = string.Format("{0} ({1}{2})",data.ColumnName, data.XColumn? "X":data.Kind.ToString(),data.Group); 
+		
+			if(bSelected)
+				dc.DrawString(myString,m_TextFont,m_SelectedTextBrush,cellRectangle,m_TextFormat);
+			else
+				dc.DrawString(myString,m_TextFont,m_TextBrush,cellRectangle,m_TextFormat);
+		
+		
 		}
 		
 		public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
