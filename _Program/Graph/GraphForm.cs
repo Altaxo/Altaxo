@@ -28,6 +28,20 @@ namespace Altaxo.Graph
 		private ToolBarButton m_PushedLayerBotton=null;
 
 	
+
+		protected void OnAMdiChildActivate(object sender, EventArgs e)
+		{
+			if(((System.Windows.Forms.Form)sender).ActiveMdiChild==this)
+				this.m_GraphControl.OnActivationOfParentForm();
+		}
+
+		protected void OnAMdiChildDeactivate(object sender, EventArgs e)
+		{
+			if(((System.Windows.Forms.Form)sender).ActiveMdiChild!=this)
+				this.m_GraphControl.OnDeactivationOfParentForm();
+		}
+
+
 		public GraphForm(System.Windows.Forms.Form parent, AltaxoDocument doc)
 		: this(parent,doc,null)
 		{
@@ -43,8 +57,20 @@ namespace Altaxo.Graph
 
 			parentDocument = doc;
 			this.MdiParent=parent;
-
 			InitLayerToolbar();
+
+			// register event so to be informed when activated
+			if(parent is Altaxo.App)
+			{
+				((Altaxo.App)parent).MdiChildDeactivateBefore += new EventHandler(this.OnAMdiChildDeactivate);
+				((Altaxo.App)parent).MdiChildActivateAfter += new EventHandler(this.OnAMdiChildActivate);
+			}
+			else
+			{
+				parent.MdiChildActivate += new EventHandler(this.OnAMdiChildActivate);
+				parent.MdiChildActivate += new EventHandler(this.OnAMdiChildDeactivate);
+			}
+
 			this.Show();
 		}
 

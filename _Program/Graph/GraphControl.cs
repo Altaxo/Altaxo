@@ -105,6 +105,25 @@ namespace Altaxo.Graph
 		#endregion
 
 
+
+		public bool IamOnTheActiveMdiChild
+		{
+			get { return this.ParentForm==this.ParentForm.ParentForm.ActiveMdiChild; } 
+		}
+
+
+		public void OnActivationOfParentForm()
+		{
+			Console.WriteLine("GraphControl activated");
+		}
+
+		public void OnDeactivationOfParentForm()
+		{
+			Console.WriteLine("GraphControl deactivated");
+		}
+
+
+
 		public Layer.LayerCollection Layer
 		{
 			get { return this.graphLayers; }

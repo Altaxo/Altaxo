@@ -54,7 +54,16 @@ namespace Altaxo
 
 		private System.Windows.Forms.PrintDialog m_PrintDialog;
 		private System.Windows.Forms.MenuItem menuWindowPopup;
+		private System.Windows.Forms.MenuItem menuWindow_Cascade;
+		private System.Windows.Forms.MenuItem menuWindow_TileHorizontally;
+		private System.Windows.Forms.MenuItem menuWindow_TileVertically;
+		private System.Windows.Forms.MenuItem menuWindow_ArrangeIcons;
 	
+		public EventHandler MdiChildActivateBefore;
+		public EventHandler MdiChildDeactivateBefore;
+		public EventHandler MdiChildActivateAfter;
+		public EventHandler MdiChildDeactivateAfter;
+
 		public System.Windows.Forms.PrintDialog PrintDialog
 		{
 			get { return m_PrintDialog; }
@@ -67,8 +76,25 @@ namespace Altaxo
 		
 		protected override void OnMdiChildActivate(EventArgs e)
 		{
-			base.OnMdiChildActivate(e);
-			Console.WriteLine("GraphForm activated");
+			Console.WriteLine("ChildForm {0} activated",this.ActiveMdiChild.Name);
+
+			if(null!=MdiChildDeactivateBefore) // this is called first, only the active child should have a handler on that event so it can deactivate its own toolbars etc.
+				MdiChildDeactivateBefore(this,new EventArgs());
+
+			if(null!=MdiChildActivateBefore) // then the child activation event is fired, so the child which is active now can register its own toolbars
+				MdiChildActivateBefore(this,new EventArgs());
+
+			this.ActiveMdiChild.Activate();
+
+
+			base.OnMdiChildActivate(e); // the call to the base classes handler in the middle
+
+			if(null!=MdiChildDeactivateAfter)
+				MdiChildDeactivateAfter(this,new EventArgs());
+
+			if(null!=MdiChildActivateAfter)
+				MdiChildActivateAfter(this,new EventArgs());
+			
 		}
 
 
@@ -132,6 +158,10 @@ namespace Altaxo
 			this.menuFileOpen = new System.Windows.Forms.MenuItem();
 			this.menuFileSaveAs = new System.Windows.Forms.MenuItem();
 			this.menuWindowPopup = new System.Windows.Forms.MenuItem();
+			this.menuWindow_Cascade = new System.Windows.Forms.MenuItem();
+			this.menuWindow_TileHorizontally = new System.Windows.Forms.MenuItem();
+			this.menuWindow_TileVertically = new System.Windows.Forms.MenuItem();
+			this.menuWindow_ArrangeIcons = new System.Windows.Forms.MenuItem();
 			// 
 			// mainMenu1
 			// 
@@ -178,8 +208,37 @@ namespace Altaxo
 			// 
 			this.menuWindowPopup.Index = 1;
 			this.menuWindowPopup.MdiList = true;
+			this.menuWindowPopup.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																										this.menuWindow_Cascade,
+																																										this.menuWindow_TileHorizontally,
+																																										this.menuWindow_TileVertically,
+																																										this.menuWindow_ArrangeIcons});
 			this.menuWindowPopup.MergeOrder = 10;
 			this.menuWindowPopup.Text = "Window";
+			// 
+			// menuWindow_Cascade
+			// 
+			this.menuWindow_Cascade.Index = 0;
+			this.menuWindow_Cascade.Text = "Cascade";
+			this.menuWindow_Cascade.Click += new System.EventHandler(this.menuWindow_Cascade_Click);
+			// 
+			// menuWindow_TileHorizontally
+			// 
+			this.menuWindow_TileHorizontally.Index = 1;
+			this.menuWindow_TileHorizontally.Text = "Tile Horizontally";
+			this.menuWindow_TileHorizontally.Click += new System.EventHandler(this.menuWindow_TileHorizontally_Click);
+			// 
+			// menuWindow_TileVertically
+			// 
+			this.menuWindow_TileVertically.Index = 2;
+			this.menuWindow_TileVertically.Text = "Tile Vertically";
+			this.menuWindow_TileVertically.Click += new System.EventHandler(this.menuWindow_TileVertically_Click);
+			// 
+			// menuWindow_ArrangeIcons
+			// 
+			this.menuWindow_ArrangeIcons.Index = 3;
+			this.menuWindow_ArrangeIcons.Text = "Arrange Icons";
+			this.menuWindow_ArrangeIcons.Click += new System.EventHandler(this.menuWindow_ArrangeIcons_Click);
 			// 
 			// App
 			// 
@@ -369,6 +428,26 @@ namespace Altaxo
 				}
 			}
 
+		}
+
+		private void menuWindow_Cascade_Click(object sender, System.EventArgs e)
+		{
+			this.LayoutMdi(MdiLayout.Cascade);
+		}
+
+		private void menuWindow_TileHorizontally_Click(object sender, System.EventArgs e)
+		{
+			this.LayoutMdi(MdiLayout.TileHorizontal);
+		}
+
+		private void menuWindow_TileVertically_Click(object sender, System.EventArgs e)
+		{
+			this.LayoutMdi(MdiLayout.TileVertical);
+		}
+
+		private void menuWindow_ArrangeIcons_Click(object sender, System.EventArgs e)
+		{
+			this.LayoutMdi(MdiLayout.ArrangeIcons);
 		}
 	}
 }
