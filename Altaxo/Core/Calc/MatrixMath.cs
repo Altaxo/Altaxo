@@ -57,6 +57,17 @@ namespace Altaxo.Calc
         SetDimension(rows,cols);
       }
 
+      /// <summary>
+      /// Uses an already existing array for the matrix data.
+      /// </summary>
+      /// <param name="x">Jagged double array containing the matrix data. The data are used directly (no copy)!</param>
+      public BEMatrix(double[][]x)
+      {
+        this.m_Array = x;
+        this.m_Rows = m_Array.Length;
+        this.m_Cols = this.m_Rows==0 ? 0 : this.m_Array[0].Length;
+      }
+
       public void Clear()
       {
         SetDimension(0,0);
@@ -755,6 +766,23 @@ namespace Altaxo.Calc
 
     #endregion
 
+    #region Type conversion
+
+    
+
+    /// <summary>
+    /// This wraps a jagged double array to the <see>IMatrix</see> interface. The data is not copied!
+    /// </summary>
+    /// <param name="x">The jagged array. Each double[] vector is a row of the matrix.</param>
+    /// <returns></returns>
+    public static IMatrix ToMatrix(double[][] x)
+    {
+      return new BEMatrix(x);
+    }
+
+
+
+    #endregion
 
     #region Addition, Subtraction, Multiply and combined operations
 
@@ -1895,7 +1923,7 @@ namespace Altaxo.Calc
           {
             if ((k < nrt) & (e[k] != 0.0)) 
             {
-              for (int j = k+1; j < nu; j++) 
+              for (int j = k+1; j < n; j++) // Lellinger (2004/03/28): end variable changed from nu to n
               {
                 double t = 0;
                 for (int i = k+1; i < n; i++) 
@@ -2281,6 +2309,16 @@ namespace Altaxo.Calc
       public double[] Diagonal
       {
         get { return s; }
+      }
+
+      public double[][] U
+      {
+        get { return u; }
+      }
+
+      public double[][] V
+      {
+        get { return v; }
       }
     }
   

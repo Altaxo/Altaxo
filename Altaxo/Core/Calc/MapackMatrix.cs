@@ -1404,7 +1404,7 @@ namespace Altaxo.Calc
           {
             if ((k < nrt) & (e[k] != 0.0)) 
             {
-              for (int j = k+1; j < nu; j++) 
+              for (int j = k+1; j < n; j++) // Lellinger (2004/03/28): end variable changed from nu to n
               {
                 double t = 0;
                 for (int i = k+1; i < n; i++) 

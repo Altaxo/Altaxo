@@ -119,6 +119,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\TestSingularValueDecomposition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\FFT\CommonFFTTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
