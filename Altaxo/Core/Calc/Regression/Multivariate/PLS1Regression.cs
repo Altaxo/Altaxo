@@ -121,8 +121,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       if(numFactors>NumberOfFactors)
         throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})",numFactors,NumberOfFactors));
 
-      IMatrix helperY = new MatrixMath.BEMatrix(_calib.NumberOfY,1);
-      IMatrix helperS = new MatrixMath.BEMatrix(XU.Rows,1);
+      IMatrix helperY = predictedY==null ? null : new MatrixMath.BEMatrix(XU.Rows,1);
+      IMatrix helperS = spectralResiduals==null ? null : new MatrixMath.BEMatrix(XU.Rows,1);
       for(int i=0;i<_calib.NumberOfY;i++)
       {
         PLS2Regression.Predict(
@@ -136,8 +136,10 @@ namespace Altaxo.Calc.Regression.Multivariate
           helperS // Matrix of spectral residuals, n rows x 1 column, can be zero
           );
 
-        MatrixMath.Copy(helperY,predictedY,0,i);
-        MatrixMath.Copy(helperS,spectralResiduals,0,i);
+       if(null!=predictedY)
+         MatrixMath.Copy(helperY,predictedY,0,i);
+        if(null!=spectralResiduals)
+          MatrixMath.Copy(helperS,spectralResiduals,0,i);
       }
     }
 

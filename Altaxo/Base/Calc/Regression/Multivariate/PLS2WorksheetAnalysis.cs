@@ -172,7 +172,6 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
       if(plsMemo!=null)
         preprocessSet.PreprocessOptions = plsMemo.SpectralPreprocessing;
-
       calibrationSet.SetPreprocessingModel(preprocessSet);
 
       Altaxo.Collections.AscendingIntegerCollection sel = new Altaxo.Collections.AscendingIntegerCollection();

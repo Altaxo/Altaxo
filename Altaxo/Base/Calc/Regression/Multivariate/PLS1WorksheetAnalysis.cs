@@ -119,7 +119,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       return model;
     }
 
-    #region Calculation after analysis
+  
 
     static int GetNumberOfX(Altaxo.Data.DataTable table)
     {
@@ -174,6 +174,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       calibrationSet.NumberOfY=numberOfY;
       calibrationSet.NumberOfFactors=numberOfFactors;
       MultivariatePreprocessingModel preprocessSet = new MultivariatePreprocessingModel();
+      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      if(plsMemo!=null)
+        preprocessSet.PreprocessOptions = plsMemo.SpectralPreprocessing;
       calibrationSet.SetPreprocessingModel(preprocessSet);
         
       Altaxo.Collections.AscendingIntegerCollection sel = new Altaxo.Collections.AscendingIntegerCollection();
@@ -255,7 +258,5 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
    
-
-    #endregion
   }
 }

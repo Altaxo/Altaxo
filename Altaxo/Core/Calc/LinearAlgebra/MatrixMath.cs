@@ -878,6 +878,75 @@ namespace Altaxo.Calc.LinearAlgebra
     }
     #endregion
 
+    #region MatrixColumnROVector
+    /// <summary>
+    /// Wrapper for a matrix column to a read-only vector.
+    /// </summary>
+    public class MatrixColumnROVector : IROVector
+    {
+      IROMatrix _m;
+      int     _col;
+
+      /// <summary>
+      /// Constructor of a matrix column vector by providing the matrix and the column number of that matrix that is wrapped.
+      /// </summary>
+      /// <param name="m">The matrix.</param>
+      /// <param name="col">The column number of the matrix that is wrapped to a vector.</param>
+      public MatrixColumnROVector(IROMatrix m, int col)
+      {
+        if(m==null)
+          throw new ArgumentNullException("IMatrix m is null");
+        if(col<0 || col>=m.Columns)
+          throw new ArgumentOutOfRangeException("The parameter row is either <0 or greater than the rows of the matrix");
+
+        _m = m;
+        _col = col;
+
+      }
+
+      #region IROVector Members
+
+      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
+      /// <value>The element at index i.</value>
+      double Altaxo.Calc.LinearAlgebra.IROVector.this[int i]
+      {
+        get
+        {
+          return _m[i,_col];
+        }
+      }
+
+      /// <summary>The smallest valid index of this vector</summary>
+      public int LowerBound
+      {
+        get
+        {
+          return 0;
+        }
+      }
+
+      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
+      public int UpperBound
+      {
+        get
+        {
+          return _m.Rows-1;
+        }
+      }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length
+      {
+        get
+        {
+          return _m.Rows;
+        }
+      }
+
+      #endregion
+    }
+    #endregion
+
     #region MatrixColumnVector
     /// <summary>
     /// Wrapper for a matrix row to a vector.
@@ -1267,6 +1336,17 @@ namespace Altaxo.Calc.LinearAlgebra
     public static IVector RowToVector(IMatrix x, int row, int columnoffset, int length)
     {
       return new MatrixRowVector(x,row,columnoffset,length);
+    }
+
+
+    /// <summary>
+    /// Returns a read-only vector representing a matrix column by providing the matrix and the row number of that matrix that is wrapped.
+    /// </summary>
+    /// <param name="x">The matrix.</param>
+    /// <param name="column">The column number of the matrix that is wrapped to a vector.</param>
+    public static IROVector ColumnToROVector(IROMatrix x, int column)
+    {
+      return new MatrixColumnROVector(x,column);
     }
 
     /// <summary>

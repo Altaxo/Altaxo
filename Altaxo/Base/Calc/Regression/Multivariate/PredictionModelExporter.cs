@@ -190,7 +190,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       for(int i=0;i<_numberOfY;i++)
       {
-        WriteVector("Score"+i.ToString(),MatrixMath.RowToROVector(predictionScores,i),_numberOfX);
+        WriteVector("Score"+i.ToString(),MatrixMath.ColumnToROVector(predictionScores,i),_numberOfX);
       }
       _writer.WriteEndElement();
     }

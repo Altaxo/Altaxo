@@ -106,63 +106,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     
     }
 
- 
 
-    public override IMultivariateCalibrationModel GetCalibrationModel(
-      DataTable calibTable)
-    {
-      PCRCalibrationModel model;
-      Export(calibTable,out model);
-      return model;
-    }
-
-    #region Calculation after analysis
-
-    static int GetNumberOfX(Altaxo.Data.DataTable table)
-    {
-      Altaxo.Data.DataColumn col = table.DataColumns[GetXLoad_ColumnName(0)];
-      if(col==null) NotFound(GetXLoad_ColumnName(0));
-      return col.Count;
-    }
-
-    static int GetNumberOfMeasurements(Altaxo.Data.DataTable table)
-    {
-      Altaxo.Data.DataColumn col = table.DataColumns[GetYLoad_ColumnName(0)];
-      if(col==null) NotFound(GetYLoad_ColumnName(0));
-      return col.Count;
-    }
-
-    static int GetNumberOfY(Altaxo.Data.DataTable table)
-    {
-      if(table.DataColumns[GetYLoad_ColumnName(0)]==null) NotFound(GetYLoad_ColumnName(0));
-      for(int i=0;;i++)
-      {
-        if(null==table.DataColumns[GetYLoad_ColumnName(i)])
-          return i;
-      }
-    }
-
-    static int GetNumberOfFactors(Altaxo.Data.DataTable table)
-    {
-      Altaxo.Data.DataColumn col = table.DataColumns[GetCrossProduct_ColumnName()];
-      if(col==null) NotFound(GetCrossProduct_ColumnName());
-      return col.Count;
-    }
-    public static bool IsPCRCalibrationModel(Altaxo.Data.DataTable table)
-    {
-      if(null==table.DataColumns[GetXOfX_ColumnName()]) return false;
-      if(null==table.DataColumns[GetXMean_ColumnName()]) return false;
-      if(null==table.DataColumns[GetXScale_ColumnName()]) return false;
-      if(null==table.DataColumns[GetYMean_ColumnName()]) return false;
-      if(null==table.DataColumns[GetYScale_ColumnName()]) return false;
-
-      if(null==table.DataColumns[GetXLoad_ColumnName(0)]) return false;
-      if(null==table.DataColumns[GetXScore_ColumnName(0)]) return false;
-      if(null==table.DataColumns[GetYLoad_ColumnName(0)]) return false;
-      if(null==table.DataColumns[GetCrossProduct_ColumnName()]) return false;
-
-      return true;
-    }
     /// <summary>
     /// Exports a table to a PLS2CalibrationSet
     /// </summary>
@@ -183,6 +127,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       calibrationSet.NumberOfY = numberOfY;
       calibrationSet.NumberOfFactors = numberOfFactors;
       MultivariatePreprocessingModel preprocessSet = new MultivariatePreprocessingModel();
+      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      if(plsMemo!=null)
+        preprocessSet.PreprocessOptions = plsMemo.SpectralPreprocessing;
       calibrationSet.SetPreprocessingModel(preprocessSet);
 
       Altaxo.Collections.AscendingIntegerCollection sel = new Altaxo.Collections.AscendingIntegerCollection();
@@ -190,7 +137,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       col = table[GetXOfX_ColumnName()];
       if(col==null || !(col is INumericColumn)) NotFound(GetXOfX_ColumnName());
-     preprocessSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col,numberOfX);
+      preprocessSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col,numberOfX);
 
 
       col = table[GetXMean_ColumnName()];
@@ -258,12 +205,65 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     
+ 
+
+    public override IMultivariateCalibrationModel GetCalibrationModel(
+      DataTable calibTable)
+    {
+      PCRCalibrationModel model;
+      Export(calibTable,out model);
+      return model;
+    }
+
+    
+    static int GetNumberOfX(Altaxo.Data.DataTable table)
+    {
+      Altaxo.Data.DataColumn col = table.DataColumns[GetXLoad_ColumnName(0)];
+      if(col==null) NotFound(GetXLoad_ColumnName(0));
+      return col.Count;
+    }
+
+    static int GetNumberOfMeasurements(Altaxo.Data.DataTable table)
+    {
+      Altaxo.Data.DataColumn col = table.DataColumns[GetYLoad_ColumnName(0)];
+      if(col==null) NotFound(GetYLoad_ColumnName(0));
+      return col.Count;
+    }
+
+    static int GetNumberOfY(Altaxo.Data.DataTable table)
+    {
+      if(table.DataColumns[GetYLoad_ColumnName(0)]==null) NotFound(GetYLoad_ColumnName(0));
+      for(int i=0;;i++)
+      {
+        if(null==table.DataColumns[GetYLoad_ColumnName(i)])
+          return i;
+      }
+    }
+
+    static int GetNumberOfFactors(Altaxo.Data.DataTable table)
+    {
+      Altaxo.Data.DataColumn col = table.DataColumns[GetCrossProduct_ColumnName()];
+      if(col==null) NotFound(GetCrossProduct_ColumnName());
+      return col.Count;
+    }
+    public static bool IsPCRCalibrationModel(Altaxo.Data.DataTable table)
+    {
+      if(null==table.DataColumns[GetXOfX_ColumnName()]) return false;
+      if(null==table.DataColumns[GetXMean_ColumnName()]) return false;
+      if(null==table.DataColumns[GetXScale_ColumnName()]) return false;
+      if(null==table.DataColumns[GetYMean_ColumnName()]) return false;
+      if(null==table.DataColumns[GetYScale_ColumnName()]) return false;
+
+      if(null==table.DataColumns[GetXLoad_ColumnName(0)]) return false;
+      if(null==table.DataColumns[GetXScore_ColumnName(0)]) return false;
+      if(null==table.DataColumns[GetYLoad_ColumnName(0)]) return false;
+      if(null==table.DataColumns[GetCrossProduct_ColumnName()]) return false;
+
+      return true;
+    }
+    
   
 
-   
   
-
-
-    #endregion
   }
 }

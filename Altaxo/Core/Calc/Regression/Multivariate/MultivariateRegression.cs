@@ -57,14 +57,27 @@ namespace Altaxo.Calc.Regression.Multivariate
       );
 
     /// <summary>
-    /// Calculates the prediction scores (for use withthe preprocessed spectra).
+    /// Calculates the prediction scores (for use with the preprocessed spectra).
     /// </summary>
     /// <param name="numFactors">Number of factors used to calculate the prediction scores.</param>
     /// <param name="predictionScores">Supplied matrix for holding the prediction scores.</param>
     protected abstract void InternalGetPredictionScores(int numFactors, IMatrix predictionScores);
 
+    /// <summary>
+    /// Calculates the spectral leverage values from the preprocessed spectra.
+    /// </summary>
+    /// <param name="matrixX">Matrix of preprocessed spectra (number of observations, number of X).</param>
+    /// <param name="numFactors">Number of factors used for calculation.</param>
+    /// <param name="xLeverage">Resulting spectral leverages. This matrix must have the dimensions (number of observations, number of leverage data). The number of leverage data is
+    /// normally one, with the exception of the PLS1 analysis, where it is equal to the number of Y.</param>
     protected abstract void InternalGetXLeverageFromPreprocessed(IROMatrix matrixX, int numFactors, IMatrix xLeverage);
 
+    /// <summary>
+    /// This sets the calibration model data of the analysis to the provided data. This can be used to set back previously stored
+    /// calibration data for use in the prediction functions.
+    /// </summary>
+    /// <param name="calib">The calibration set for use in the analysis. The provided calibration model have to correspond to
+    /// the type of analysis.</param>
     public abstract void SetCalibrationModel(IMultivariateCalibrationModel calib);
 
     /// <summary>
@@ -79,12 +92,22 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #region Properties and helpers
     
+    /// <summary>
+    /// Returns the calibration model of the analysis.
+    /// </summary>
     protected abstract MultivariateCalibrationModel InternalCalibrationModel { get; }
+    
+    /// <summary>
+    /// Returns the calibration model of the analysis.
+    /// </summary>
     public virtual IMultivariateCalibrationModel CalibrationModel
-                                                      {
-    get { return InternalCalibrationModel; }
-}
+    {
+      get { return InternalCalibrationModel; }
+    }
 
+    /// <summary>
+    /// Returns the number of factors calculated during the analysis.
+    /// </summary>
     public int NumberOfFactors { get { return InternalCalibrationModel.NumberOfFactors; }}
 
     /// <summary>
@@ -92,7 +115,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     public virtual int NumberOfSpectralResiduals { get { return 1; }}
 
-    
+    /// <summary>
+    /// Resets the regression, so that it appears like newly created.
+    /// </summary>
     public virtual void Reset()
     {
       InternalCalibrationModel.NumberOfFactors=0;
@@ -260,6 +285,14 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #region AnalyzeFromRaw
 
+    /// <summary>
+    /// Creates an analyis from the raw spectra and raw concentrations.
+    /// </summary>
+    /// <param name="preprocessOptions">Information how to preprocess the data.</param>
+    /// <param name="xOfX">The spectral x variable (e.g. frequencies, wavelength).</param>
+    /// <param name="matrixX">Matrix of preprocessed spectra (number of observations, number of wavelengths).</param>
+    /// <param name="matrixY">Matrix of preprocessed y values (number of observations, number of y).</param>
+    /// <param name="maxFactors">Maximum number of factors to calculate.</param>
     public void AnalyzeFromRaw( 
       SpectralPreprocessingOptions preprocessOptions,
       IROVector xOfX,
@@ -280,6 +313,13 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #region Prediction from Raw
 
+    /// <summary>
+    /// Predicts y values from raw (unpreprocessed) spectra.
+    /// </summary>
+    /// <param name="XU">Matrix of spectra used for prediction (number of spectra, number of wavelengths).</param>
+    /// <param name="numFactors">Number of factors used for prediction.</param>
+    /// <param name="predictedY">In return, holds the predicted y values. You have to provide a matrix of
+    /// dimensions (number of spectra, number of y).</param>
     public void PredictYFromRaw(
       IMatrix XU, // unknown spectrum or spectra,  horizontal oriented
       int numFactors, // number of factors to use for prediction
@@ -402,6 +442,11 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
+    /// <summary>
+    /// Preprocess the raw spectra for prediction (use the preprocess data from the analysis).
+    /// </summary>
+    /// <param name="calib">The preprocessing data.</param>
+    /// <param name="matrixX">Matrix of raw spectra. On return, contains the preprocessed spectra.</param>
     public static void PreprocessSpectraForPrediction(
       IMultivariatePreprocessingModel calib, 
       IMatrix matrixX)
@@ -426,6 +471,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
+    /// <summary>
+    /// Preprocess the y values for analysis (mean center, scale currently not used).
+    /// </summary>
+    /// <param name="matrixY">Matrix of y values. On return, this contains the preprocessed y values.</param>
+    /// <param name="meanY">On return, contains the mean y value(s).</param>
+    /// <param name="scaleY">On return, contains the scale value(s).</param>
     public static void PreprocessYForAnalysis(IMatrix matrixY,
       out IVector meanY, out IVector scaleY)
     {
@@ -451,6 +502,12 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
+    /// <summary>
+    /// This calculates from the predicted (but still centered) y values the raw y values.
+    /// </summary>
+    /// <param name="matrixY">Matrix of (centered) y values. On return, contains the uncentered y values.</param>
+    /// <param name="meanY">Vector of mean y value(s).</param>
+    /// <param name="scaleY">Vector of y scale value(s).</param>
     public static void PostprocessY(IMatrix matrixY,
       IROVector meanY, IROVector scaleY)
     {
@@ -461,6 +518,11 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
+    /// <summary>
+    /// This calculates from the predicted (but still centered) y values the raw y values.
+    /// </summary>
+    /// <param name="matrixY">Matrix of (centered) y values. On return, contains the uncentered y values.</param>
+    /// <param name="calib">Contains the calibration data (mean y and scale y).</param>
     public static void PostprocessY(IMultivariatePreprocessingModel calib, IMatrix matrixY)
     {
       PostprocessY(matrixY,calib.YMean,calib.YScale);
@@ -482,6 +544,15 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
     
+    /// <summary>
+    /// This function separates the spectra into a bunch of spectra used for calibration and the rest of spectra
+    /// used for prediction. This separation is repeated until all spectra are used exactly one time for prediction.
+    /// </summary>
+    /// <param name="X">Matrix of spectra (horizontal oriented).</param>
+    /// <param name="Y">Matrix of y values.</param>
+    /// <param name="groupingStrategy">The strategy how to separate the spectra into the calibration and prediction spectra.</param>
+    /// <param name="crossFunction">The function that is called for each separation.</param>
+    /// <returns>The mean number of spectra that was used for prediction.</returns>
     public static double CrossValidationIteration(
       IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
       IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
@@ -565,7 +636,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       CrossPRESSEvaluator worker = new CrossPRESSEvaluator(xOfX,numFactors,groupingStrategy,preprocessOptions,regress);
       double result = CrossValidationIteration(X,Y,groupingStrategy,new CrossValidationIterationFunction(worker.EhCrossPRESS));
 
-      crossPRESS = VectorMath.ToROVector(worker.CrossPRESS,worker.NumberOfFactors);
+      crossPRESS = VectorMath.ToROVector(worker.CrossPRESS,worker.NumberOfFactors+1);
 
       return result;
     }

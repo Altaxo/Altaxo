@@ -470,7 +470,10 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
         MatrixMath.SetColumn(xLeverage,i,DataColumnWrapper.ToVertMatrix(col,xLeverage.Rows),0);
-        table.DataColumns.Add(col,GetXLeverage_ColumnName(numberOfFactors),Altaxo.Data.ColumnKind.V,GetXLeverage_ColumnGroup());
+        table.DataColumns.Add(
+          col,
+          xLeverage.Columns==1 ? GetXLeverage_ColumnName(numberOfFactors) : GetXLeverage_ColumnName(i,numberOfFactors),
+          Altaxo.Data.ColumnKind.V,GetXLeverage_ColumnGroup());
       }
     }
 
@@ -1425,11 +1428,11 @@ namespace Altaxo.Calc.Regression.Multivariate
     public void CalculateAndStorePredictionScores(DataTable table, int preferredNumberOfFactors)
     {
       IROMatrix predictionScores = this.CalculatePredictionScores(table,preferredNumberOfFactors);
-      for(int i=0;i<predictionScores.Rows;i++)
+      for(int i=0;i<predictionScores.Columns;i++)
       {
         DoubleColumn col = new DoubleColumn();
-        for(int j=0;j<predictionScores.Columns;j++)
-          col[j] = predictionScores[i,j];
+        for(int j=0;j<predictionScores.Rows;j++)
+          col[j] = predictionScores[j,i];
 
         table.DataColumns.Add(col,GetPredictionScore_ColumnName(i,preferredNumberOfFactors),Altaxo.Data.ColumnKind.V,GetPredictionScore_ColumnGroup());
       }

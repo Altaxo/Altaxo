@@ -347,7 +347,10 @@ namespace Altaxo.Calc.Regression.Multivariate
         }
         // xu now contains the spectral residual,
         // Cu now contains the predicted y values
-        MatrixMath.SetRow(Cu,0,predictedY,nSpectrum);
+        if(null!=predictedY)
+        {
+          MatrixMath.SetRow(Cu,0,predictedY,nSpectrum);
+        }
 
         if(null!=spectralResiduals)
         {
@@ -368,14 +371,14 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="W">Matrix of spectral weightings [factors,spectral bins].</param>
     /// <param name="V">Cross product matrix[1,factors].</param>
     /// <param name="numFactors">Number of factors to use to calculate the score matrix.</param>
-    /// <param name="predictionScores">Output: the resulting score matrix[numberOfConcentrations, spectral bins]</param>
+    /// <param name="predictionScores">Output: the resulting score matrix[ spectral bins, numberOfConcentrations]</param>
     public static void GetPredictionScoreMatrix(
       IROMatrix xLoads, // x-loads matrix
       IROMatrix yLoads, // y-loads matrix
       IROMatrix W, // weighting matrix
       IROMatrix V,  // Cross product vector
       int numFactors, // number of factors to use for prediction
-      IMatrix predictionScores // Matrix of predicted y-values, must be same number of rows as spectra
+      IMatrix predictionScores 
       )
     {
 
@@ -397,7 +400,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       MatrixMath.Multiply(invbidiag,subyloads,helper);
 
       //Matrix scores = new Matrix(yLoads.Columns,xLoads.Columns);
-      MatrixMath.MultiplyFirstTransposed(helper,subweights,predictionScores); // we calculate the transpose of scores (i.e. scores are horizontal oriented here)
+      //MatrixMath.MultiplyFirstTransposed(helper,subweights,predictionScores); // we calculate the transpose of scores (i.e. scores are horizontal oriented here)
+      MatrixMath.MultiplyFirstTransposed(subweights,helper,predictionScores); // we calculate the transpose of scores (i.e. scores are horizontal oriented here)
 
       // now calculate the ys from the scores and the spectra
 
