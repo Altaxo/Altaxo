@@ -80,11 +80,6 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "nunit.framework"
-                    AssemblyName = "nunit.framework"
-                    HintPath = "nunit.framework.dll"
-                />
-                <Reference
                     Name = "Base"
                     Project = "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
@@ -93,6 +88,11 @@
                     Name = "ICSharpCode.SharpZipLib"
                     AssemblyName = "ICSharpCode.SharpZipLib"
                     HintPath = "..\..\Libraries\bin\ICSharpCode.SharpZipLib.dll"
+                />
+                <Reference
+                    Name = "nunit.framework"
+                    AssemblyName = "nunit.framework"
+                    HintPath = "..\..\Libraries\bin\nunit.framework.dll"
                 />
             </References>
         </Build>
