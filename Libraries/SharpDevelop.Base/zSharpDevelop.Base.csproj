@@ -395,27 +395,27 @@
                 />
                 <File
                     RelPath = "Gui\Components\OpenFileTab.cs"
-                    SubType = "Code"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Components\SdMenu.cs"
-                    SubType = "Code"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Components\SdMenuCheckBox.cs"
-                    SubType = "Code"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Components\SdMenuCommand.cs"
-                    SubType = "Code"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Components\SdMenuSeparator.cs"
-                    SubType = "Code"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File

@@ -16,6 +16,7 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Altaxo\Setup\Setup
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zICSharpCode.Core", "Libraries\ICSharpCode.Core\zICSharpCode.Core.csproj", "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
 	ProjectSection(ProjectDependencies) = postProject
+		{012F4935-9036-4F02-8C03-060EC9514A1D} = {012F4935-9036-4F02-8C03-060EC9514A1D}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zSharpDevelop.Base", "Libraries\SharpDevelop.Base\zSharpDevelop.Base.csproj", "{AF2C9C35-FC89-4648-9D13-26538C00AFE1}"

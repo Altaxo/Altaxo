@@ -213,22 +213,22 @@
                 />
                 <File
                     RelPath = "Gui\Dialogs\GotoLineNumberDialog.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\ReplaceDialog.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\ReplaceInFilesDialog.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\SortOptionsDialog.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -248,7 +248,7 @@
                 />
                 <File
                     RelPath = "Gui\Editor\SharpDevelopTextAreaControl.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
@@ -293,17 +293,17 @@
                 />
                 <File
                     RelPath = "Gui\OptionPanels\BehaviorTextEditorPanel.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\OptionPanels\CodeTemplatePanel.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\OptionPanels\GeneralTextEditorPanel.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
@@ -312,7 +312,7 @@
                 />
                 <File
                     RelPath = "Gui\OptionPanels\MarkersTextEditorPanel.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
