@@ -71,7 +71,6 @@ namespace Altaxo.Worksheet
 		
 		#endregion
 
-
 		#region Serialization
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetLayout),0)]
@@ -219,6 +218,9 @@ namespace Altaxo.Worksheet
 
 			this.m_ShowPropertyColumns = true;
 		}
+
+    
+
 
 		public WorksheetLayout(Altaxo.Data.DataTable table)
 			: this()

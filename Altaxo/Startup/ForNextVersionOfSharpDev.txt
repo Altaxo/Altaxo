@@ -14,3 +14,20 @@ SharpDevelopDefaultTextEditor.addin:
 - Referenz zu AltaxoBase.dll hinzufügen
 - ContextMenu: die Befehle gegen entsprechend abgeänderte Befehle von Altaxo tauschen
 
+
+8.2.2004 : Unstimmigkeit in TextView.cs :
+StringFormat.GenericTypographic wird nicht geklont, und es wird nicht explizit LineAlignment und
+Alignment festgelegt
+Beispielcode der das Problem verdeutlicht:
+
+	 StringFormat strg1 = System.Drawing.StringFormat.GenericTypographic;
+
+      Console.WriteLine(strg1.LineAlignment.ToString());
+
+      strg1.LineAlignment = StringAlignment.Far;
+
+      Console.WriteLine(strg1.LineAlignment.ToString());
+
+      StringFormat strg2 = StringFormat.GenericTypographic;
+
+      Console.WriteLine(strg2.LineAlignment.ToString());

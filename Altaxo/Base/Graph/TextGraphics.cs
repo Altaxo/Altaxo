@@ -514,7 +514,7 @@ namespace Altaxo.Graph
 
 			// Modification of StringFormat is necessary to avoid 
 			// too big spaces between successive words
-			StringFormat strfmt = StringFormat.GenericTypographic;
+			StringFormat strfmt = (StringFormat)StringFormat.GenericTypographic.Clone();
 			strfmt.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
 			strfmt.LineAlignment = StringAlignment.Far;
@@ -804,7 +804,7 @@ namespace Altaxo.Graph
 			
 			// Modification of StringFormat is necessary to avoid 
 			// too big spaces between successive words
-			StringFormat strfmt = StringFormat.GenericTypographic;
+			StringFormat strfmt = (StringFormat)StringFormat.GenericTypographic.Clone();
 			strfmt.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
 			strfmt.LineAlignment = StringAlignment.Far;
@@ -1130,7 +1130,7 @@ namespace Altaxo.Graph
 
 			// Modification of StringFormat is necessary to avoid 
 			// too big spaces between successive words
-			StringFormat strfmt = StringFormat.GenericTypographic;
+			StringFormat strfmt = (StringFormat)StringFormat.GenericTypographic.Clone();
 			strfmt.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
 
 			strfmt.LineAlignment = StringAlignment.Near;

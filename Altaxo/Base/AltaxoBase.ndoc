@@ -1,11 +1,14 @@
 <project>
     <assemblies>
         <assembly location="V:\C\CALC\Altaxo\src\Altaxo\Base\bin\Debug\AltaxoBase.dll" documentation="V:\C\CALC\Altaxo\src\Altaxo\Base\bin\Debug\AltaxoBase.xml" />
+        <assembly location="V:\C\Altaxo\src\Altaxo\Core\bin\Debug\AltaxoCore.dll" documentation="V:\C\Altaxo\src\Altaxo\Core\bin\Debug\AltaxoCore.xml" />
     </assemblies>
     <namespaces>
         <namespace name="Altaxo"></namespace>
         <namespace name="Altaxo.Calc"></namespace>
         <namespace name="Altaxo.Calc.FFT"></namespace>
+        <namespace name="Altaxo.Calc.Interpolation"></namespace>
+        <namespace name="Altaxo.Calc.Random"></namespace>
         <namespace name="Altaxo.Data"></namespace>
         <namespace name="Altaxo.Graph"></namespace>
         <namespace name="Altaxo.Graph.Commands"></namespace>

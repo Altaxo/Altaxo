@@ -129,6 +129,10 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "AssemblyInfo.cs"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\RelativeOrAbsoluteValue.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -632,11 +636,6 @@
                 <File
                     RelPath = "Main\App.ico"
                     BuildAction = "Content"
-                />
-                <File
-                    RelPath = "Main\AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Main\Document.cs"

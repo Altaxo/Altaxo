@@ -215,6 +215,7 @@ namespace Altaxo.Worksheet.Commands
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
 			Altaxo.Data.DataTable clonedTable = (Altaxo.Data.DataTable)ctrl.DataTable.Clone();
+     
 
 			// find a new name for the cloned table and add it to the DataTableCollection
 			clonedTable.Name = Data.DataTableCollection.GetParentDataTableCollectionOf(ctrl.DataTable).FindNewTableName();

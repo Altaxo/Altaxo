@@ -3415,7 +3415,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			double tau   = (Math.Sqrt(5.0)+1.0) / 2.0;
 
 			ErrorFlag error_flag;
-      int i, wk_dim1, wk_offset;
+      int i, wk_dim1;
 
 			double avdf, avar,  gf1, gf2, gf3, gf4,
 				avh, err, p, q, delta, r1, r2, r3, r4;

@@ -461,6 +461,7 @@ namespace Altaxo.Main
 		/// Creates a table and the view content for that table.
 		/// </summary>
 		/// <param name="worksheetName">The name of the table to create.</param>
+		/// <param name="bCreateDefaultColumns">If true, a default x and a y column is created.</param>
 		/// <returns>The view content for the provided table.</returns>
 		public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(string worksheetName, bool bCreateDefaultColumns)
 		{
