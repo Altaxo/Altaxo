@@ -1241,9 +1241,20 @@ namespace Altaxo.Calc
     /// <returns>Bessel function of the first kind of order zero for argument x.</returns>
     public static double BesselJ0 (double x)
     {
-      return _BesselJ0.BesselJ0(x);
+      return _BesselJ0.BesselJ0(x,false);
     }
 
+    /// <summary>
+    /// BesselJ0(x) calculates the double precision Bessel function of 
+    /// the first kind of order zero for double precision argument x. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Bessel function of the first kind of order zero for argument x.</returns>
+    public static double BesselJ0(double x, bool bDebug)
+    {
+      return _BesselJ0.BesselJ0(x, bDebug);
+    }
 
     class _BesselJ0
     {
@@ -1280,6 +1291,7 @@ namespace Altaxo.Calc
       /// the first kind of order zero for double precision argument x. 
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>Bessel function of the first kind of order zero for argument x</returns>
       /// <remarks><code>
       /// Series for BJ0        on the interval  0.          to  1.60000E+01 
@@ -1292,7 +1304,7 @@ namespace Altaxo.Calc
       /// CATEGORY C10A1, REVISION 891214 originally written by Fullerton W.,(LANL)
       /// to C++.
       /// </code></remarks>
-      public static double BesselJ0 (double x)
+      public static double BesselJ0 (double x, bool bDebug)
       {
   
       
@@ -1325,7 +1337,20 @@ namespace Altaxo.Calc
     /// first kind of order one for argument x.</returns>
     public static double BesselJ1 (double x)
     {
-      return _BesselJ1.BesselJ1(x);
+      return _BesselJ1.BesselJ1(x, false);
+    }
+
+    /// <summary>
+    /// BesselJ1(x) calculates the double precision Bessel function of the 
+    /// first kind of order one for double precision argument x. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Bessel function of the 
+    /// first kind of order one for argument x.</returns>
+    public static double BesselJ1 (double x, bool bDebug)
+    {
+      return _BesselJ1.BesselJ1(x, bDebug);
     }
 
     class _BesselJ1
@@ -1365,6 +1390,7 @@ namespace Altaxo.Calc
       /// first kind of order one for double precision argument x. 
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>Bessel function of the 
       /// first kind of order one for argument x.</returns>
       /// <remarks><code>
@@ -1378,7 +1404,7 @@ namespace Altaxo.Calc
       ///                               significant figures required  32.36 
       ///                                    decimal places required  33.57 
       /// </code></remarks>
-      public static double BesselJ1 (double x)
+      public static double BesselJ1 (double x, bool bDebug)
       {
         double ret_val = 0.0;
       
@@ -1388,7 +1414,7 @@ namespace Altaxo.Calc
     
         if (y == 0.0) return 0.0;
     
-        if (y <= xmin) 
+        if (bDebug && y <= xmin) 
           System.Diagnostics.Trace.WriteLine("Warning (BesselJ1): abs(x) so small J1(x) underflows");
     
         if (y > xmin) 
@@ -1410,7 +1436,6 @@ namespace Altaxo.Calc
     #region BesselJn
 
   
-
     /// <summary>
     /// BesselJ(n,x) calculates the double precision Bessel function of the 
     /// first kind of order n for double precision argument x. 
@@ -1425,16 +1450,39 @@ namespace Altaxo.Calc
     /// </code></remarks>
     public static double BesselJ (int n, double x)
     {
+      return BesselJ(n, x, false);
+    }
+
+    /// <summary>
+    /// BesselJ(n,x) calculates the double precision Bessel function of the 
+    /// first kind of order n for double precision argument x. 
+    /// </summary>
+    /// <param name="n">The order of the bessel function.</param>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Bessel function of the 
+    /// first kind of order n for argument x.</returns>
+    /// <remarks><code>
+    /// Miller's downward recurrence algorithm is used.
+    /// Implemented by B. M. Gammel, last revision 13.03.1996
+    /// </code></remarks>
+    public static double BesselJ (int n, double x, bool bDebug)
+    {
       const double accuracy  = 40.0,
               bignum    = 1.0e10,
               invbignum = 1.0e-10;
 
       if (n < 0) 
-        throw new ArgumentException("index n less than 0");
+      {
+        if(bDebug)
+          throw new ArgumentException("index n less than 0");
+        else
+          return double.NaN;
+      }
       else if (n == 0)
-        return BesselJ0(x);
+        return BesselJ0(x, bDebug);
       else if (n == 1)
-        return BesselJ1(x);
+        return BesselJ1(x, bDebug);
       else 
       {    
         double ret_val;
@@ -1445,8 +1493,8 @@ namespace Altaxo.Calc
         {
           double bj,bjm,bjp;
           double tox = 2.0 / ax;
-          bjm = BesselJ0(ax);
-          bj  = BesselJ1(ax);
+          bjm = BesselJ0(ax, bDebug);
+          bj  = BesselJ1(ax, bDebug);
           for (int j = 1; j < n; j++) 
           {
             bjp = j * tox * bj - bjm;
@@ -1499,7 +1547,20 @@ namespace Altaxo.Calc
     /// second kind of order zero for argument x.</returns>
     public static double BesselY0 (double x)
     {
-      return _BesselY0.BesselY0(x);
+      return _BesselY0.BesselY0(x, false);
+    }
+
+    /// <summary>
+    /// BesselY0(x) calculates the double precision Bessel function of the 
+    /// second kind of order zero for double precision argument X. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Bessel function of the 
+    /// second kind of order zero for argument x.</returns>
+    public static double BesselY0 (double x, bool bDebug)
+    {
+      return _BesselY0.BesselY0(x, bDebug);
     }
 
     class _BesselY0
@@ -1538,6 +1599,7 @@ namespace Altaxo.Calc
       /// second kind of order zero for double precision argument X. 
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>Bessel function of the 
       /// second kind of order zero for argument x.</returns>
       /// <remarks><code>
@@ -1551,10 +1613,15 @@ namespace Altaxo.Calc
       ///                               significant figures required  30.31 
       ///                                    decimal places required  31.73 
       /// </code></remarks>
-      public static double BesselY0 (double x)
+      public static double BesselY0 (double x, bool bDebug)
       {
         if (x <= 0.0) 
-          throw new ArgumentException("x is zero or negative");
+        {
+          if(bDebug)
+            throw new ArgumentException("x is zero or negative");
+          else
+            return double.NaN;
+        }
 
 
         if (x > 4.0) 
@@ -1567,7 +1634,7 @@ namespace Altaxo.Calc
         {
           double y = 0.0;
           if (x > xsml) y = x * x;
-          return twodpi * Math.Log(x*0.5) * BesselJ0(x) + 0.375 
+          return twodpi * Math.Log(x*0.5) * BesselJ0(x, bDebug) + 0.375 
             + dcsevl(y * 0.125-1.0, _BesselY0_by0cs, _BesselY0_nty0);
         }
       } 
@@ -1586,7 +1653,20 @@ namespace Altaxo.Calc
     /// second kind of order for argument x.</returns>
     public static double BesselY1 (double x)
     {
-      return _BesselY1.BesselY1(x);
+      return _BesselY1.BesselY1(x, false);
+    }
+
+    /// <summary>
+    /// BesselY1(x) calculates the double precision Bessel function of the 
+    /// second kind of order for double precision argument x.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Bessel function of the 
+    /// second kind of order for argument x.</returns>
+    public static double BesselY1 (double x, bool bDebug)
+    {
+      return _BesselY1.BesselY1(x, bDebug);
     }
 
     class _BesselY1
@@ -1626,6 +1706,7 @@ namespace Altaxo.Calc
       /// second kind of order for double precision argument x.
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>Bessel function of the 
       /// second kind of order for argument x.</returns>
       /// <remarks><code>
@@ -1639,23 +1720,32 @@ namespace Altaxo.Calc
       ///                               significant figures required  32.17 
       ///                                    decimal places required  32.71 
       /// </code></remarks>
-      public static double BesselY1 (double x)
+      public static double BesselY1 (double x, bool bDebug)
       {
         double y;
 
 
         if (x <= 0.0) 
-          throw new ArgumentException("x is zero or negative");
+        {
+          if(bDebug)
+            throw new ArgumentException("x is zero or negative");
+          else
+            return double.NaN;
+        }
 
 
         if (x > 4.0) goto L20;
 
         if (x < xmin) 
-          throw new ArgumentException("x so small Y1(x) overflows");
+        {
+          if(bDebug)
+            throw new ArgumentException("x so small Y1(x) overflows");
+          else return double.NaN;
+        }
 
         y = 0.0;
         if (x > xsml) y = x * x;
-        return twodpi * Math.Log(x * 0.5) * BesselJ1(x) 
+        return twodpi * Math.Log(x * 0.5) * BesselJ1(x,bDebug) 
           + (dcsevl(y * 0.125 - 1.0, _BesselY1_by1cs, _BesselY1_nty1) + 0.5) / x;
 
         L20:
@@ -1668,8 +1758,6 @@ namespace Altaxo.Calc
     #endregion
 
     #region BesselYn
-    
-
     
 
     /// <summary>
@@ -1685,17 +1773,40 @@ namespace Altaxo.Calc
     /// </code></remarks>
     public static double BesselY (int n, double x)
     {
+      return BesselY(n, x, false);
+    }
+    
+
+    /// <summary>
+    /// BesselY(n,x) calculates the double precision Bessel function of the 
+    /// second kind of order n for double precision argument x. 
+    /// </summary>
+    /// <param name="n">The order of the Bessel function.</param>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Bessel function of the 
+    /// second kind of order n for argument x.</returns>
+    /// <remarks><code>
+    /// Implemented by B. M. Gammel, last revision 13.03.1996
+    /// </code></remarks>
+    public static double BesselY (int n, double x, bool bDebug)
+    {
       if (n < 0) 
-        throw new ArgumentException("index n less than 0");
+      {
+        if(bDebug)
+          throw new ArgumentException("index n less than 0");
+        else
+          return double.NaN;
+      }
       else if (n == 0)
-        return BesselY0(x);
+        return BesselY0(x, bDebug);
       else if (n == 1)
-        return BesselY1(x);
+        return BesselY1(x, bDebug);
       else 
       {
         double tox = 2.0/x,
-          by  = BesselY1(x),
-          bym = BesselY0(x);
+          by  = BesselY1(x, bDebug),
+          bym = BesselY0(x, bDebug);
         for (int j = 1; j < n; j++) 
         {
           double byp = j * tox * by - bym;
@@ -1721,8 +1832,24 @@ namespace Altaxo.Calc
     /// argument x.</returns>
     public static double BesselI0 (double x)
     {
-      return _BesselI0.BesselI0(x);
+      return _BesselI0.BesselI0(x, false);
     }
+
+    /// <summary>
+    /// BesselI0(x) calculates the double precision modified (hyperbolic)
+    /// Bessel function of the first kind of order zero and double precision 
+    /// argument x.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Modified (hyperbolic)
+    /// Bessel function of the first kind of order zero and double precision 
+    /// argument x.</returns>
+    public static double BesselI0 (double x, bool bDebug)
+    {
+      return _BesselI0.BesselI0(x, bDebug);
+    }
+
     class _BesselI0
     {
       static readonly double[] _BesselI0_bi0cs = 
@@ -1777,6 +1904,7 @@ namespace Altaxo.Calc
       /// argument x.
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>Modified (hyperbolic)
       /// Bessel function of the first kind of order zero and double precision 
       /// argument x.</returns>
@@ -1791,7 +1919,7 @@ namespace Altaxo.Calc
       ///                               significant figures required  33.31 
       ///                                    decimal places required  33.65 
       /// </code></remarks>
-      public static double BesselI0 (double x)
+      public static double BesselI0 (double x, bool bDebug)
       {
 
         double ret_val;
@@ -1803,14 +1931,20 @@ namespace Altaxo.Calc
         if (y > 3.0) goto L20;
 
         ret_val = 1.0;
-        if (y > _BesselI0_xsml) ret_val = dcsevl(y * y / 4.5 - 1.0, _BesselI0_bi0cs, _BesselI0_nti0) + 2.75;
+        if (y > _BesselI0_xsml)
+          ret_val = dcsevl(y * y / 4.5 - 1.0, _BesselI0_bi0cs, _BesselI0_nti0) + 2.75;
         return ret_val;
 
         L20:
           if (y > _BesselI0_xmax) 
-            throw new ArgumentException("abs(x) so big I0(x) overflows");
+          {
+            if(bDebug)
+              throw new ArgumentException("abs(x) so big I0(x) overflows");
+            else
+              return double.NaN;
+          }
 
-        return Math.Exp(y) * BesselExpI0(x);
+        return Math.Exp(y) * BesselExpI0(x,bDebug);
       }
     }
     #endregion
@@ -1829,7 +1963,24 @@ namespace Altaxo.Calc
     /// zero for argument x.</returns>
     public static double BesselExpI0 (double x)
     {
-      return _BesselExpI0.BesselExpI0(x);
+      return _BesselExpI0.BesselExpI0(x, false);
+    }
+
+
+    /// <summary>
+    /// BesselExpI0(x) calculates the double precision exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the first kind of order 
+    /// zero for double precision argument x.  The result is the Bessel 
+    /// function i0(X) multiplied by exp(-abs(x)). 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>The exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the first kind of order 
+    /// zero for argument x.</returns>
+    public static double BesselExpI0 (double x, bool bDebug)
+    {
+      return _BesselExpI0.BesselExpI0(x, bDebug);
     }
     
     class _BesselExpI0
@@ -1996,6 +2147,7 @@ namespace Altaxo.Calc
       /// function i0(X) multiplied by exp(-abs(x)). 
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>The exponentially scaled 
       /// modified (hyperbolic) Bessel function of the first kind of order 
       /// zero for argument x.</returns>
@@ -2022,13 +2174,9 @@ namespace Altaxo.Calc
       ///                               significant figures required  30.15 
       ///                                    decimal places required  32.63 
       /// </code></remarks>
-      public static double BesselExpI0 (double x)
+      public static double BesselExpI0 (double x, bool bDebug)
       {
-
         double ret_val;
-
-
-  
 
         double y = Math.Abs(x);
         if (y > 3.0) goto L20;
@@ -2060,9 +2208,24 @@ namespace Altaxo.Calc
     /// argument x.</returns>
     public static double BesselI1 (double x)
     {
-      return _BesselI1.BesselI1( x );
+      return _BesselI1.BesselI1( x, false );
     }
     
+    /// <summary>
+    /// BesselI1(x) calculates the double precision modified (hyperbolic) 
+    /// Bessel function of the first kind of order one and double precision 
+    /// argument x. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>The modified (hyperbolic) 
+    /// Bessel function of the first kind of order one and double precision 
+    /// argument x.</returns>
+    public static double BesselI1 (double x, bool bDebug)
+    {
+      return _BesselI1.BesselI1( x, bDebug );
+    }
+
     class _BesselI1
     {
       static readonly double[] _BesselI1_bi1cs = 
@@ -2098,6 +2261,7 @@ namespace Altaxo.Calc
       /// argument x. 
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>The modified (hyperbolic) 
       /// Bessel function of the first kind of order one and double precision 
       /// argument x.</returns>
@@ -2112,7 +2276,7 @@ namespace Altaxo.Calc
       ///                               significant figures required  31.45 
       ///                                    decimal places required  32.46 
       /// </code></remarks>
-      public static double BesselI1 (double x)
+      public static double BesselI1 (double x, bool bDebug)
       {
   
 
@@ -2128,19 +2292,25 @@ namespace Altaxo.Calc
         ret_val = 0.0;
         if (y == 0.0) return ret_val;
     
-        if (y <= _BesselI1_xmin) 
+        if (bDebug && y <= _BesselI1_xmin) 
           System.Diagnostics.Trace.WriteLine("Warning (BesselI1): abs(x) so small I1(x) underflows");
     
-        if (y > _BesselI1_xmin) ret_val = x * 0.5;
+        if (y > _BesselI1_xmin)
+          ret_val = x * 0.5;
         if (y > _BesselI1_xsml) 
           ret_val = x * (dcsevl(y * y / 4.5 - 1.0, _BesselI1_bi1cs, _BesselI1_nti1) + 0.875);
         return ret_val;
     
         L20:
           if (y > _BesselI1_xmax) 
-            throw new ArgumentException("abs(x) so big I1(x) overflows");
+          {
+            if(bDebug)
+              throw new ArgumentException("abs(x) so big I1(x) overflows");
+            else
+              return double.NaN;
+          }
 
-        ret_val = Math.Exp(y) * BesselExpI1(x);
+        ret_val = Math.Exp(y) * BesselExpI1(x, bDebug);
 
         return ret_val;
       }
@@ -2162,7 +2332,23 @@ namespace Altaxo.Calc
     /// one for argument x.</returns>
     public static double BesselExpI1 (double x)
     {
-      return _BesselExpI1.BesselExpI1( x );
+      return _BesselExpI1.BesselExpI1( x, false );
+    }
+
+    /// <summary>
+    /// BesselExpI1(x) calculates the double precision exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the first kind of order 
+    /// one for double precision argument x.  The result is I1(x) 
+    /// multiplied by exp(-abs(x)). 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>The exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the first kind of order 
+    /// one for argument x.</returns>
+    public static double BesselExpI1 (double x, bool bDebug)
+    {
+      return _BesselExpI1.BesselExpI1( x, bDebug );
     }
 
     class _BesselExpI1
@@ -2328,6 +2514,7 @@ namespace Altaxo.Calc
       /// multiplied by exp(-abs(x)). 
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>The exponentially scaled 
       /// modified (hyperbolic) Bessel function of the first kind of order 
       /// one for argument x.</returns>
@@ -2354,7 +2541,7 @@ namespace Altaxo.Calc
       ///                               significant figures required  29.97 
       ///                                    decimal places required  32.66 
       /// </code></remarks>
-      public static double BesselExpI1 (double x)
+      public static double BesselExpI1 (double x, bool bDebug)
       {
 
         double ret_val;
@@ -2367,7 +2554,7 @@ namespace Altaxo.Calc
         ret_val = 0.0;
         if (y == 0.0) return ret_val;
 
-        if (y <= xmin) 
+        if (bDebug && y <= xmin) 
           System.Diagnostics.Trace.WriteLine("Warning (BesselExpI1): abs(x) so small I1(x) underflows");
    
         if (y > xmin) ret_val = x * 0.5;
@@ -2403,7 +2590,23 @@ namespace Altaxo.Calc
     /// precision argument x.</returns>
     public static double BesselK0 (double x)
     {
-      return _BesselK0.BesselK0( x );
+      return _BesselK0.BesselK0( x, false );
+    }
+
+    /// <summary>
+    /// BesselK0(x) calculates the double precision modified (hyperbolic) 
+    /// Bessel function of the third kind of order zero for double 
+    /// precision argument x.  The argument must be greater than zero 
+    /// but not so large that the result underflows.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Modified (hyperbolic) 
+    /// Bessel function of the third kind of order zero for double 
+    /// precision argument x.</returns>
+    public static double BesselK0 (double x, bool bDebug)
+    {
+      return _BesselK0.BesselK0( x, bDebug );
     }
 
     class _BesselK0
@@ -2444,6 +2647,7 @@ namespace Altaxo.Calc
       /// but not so large that the result underflows.
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>Modified (hyperbolic) 
       /// Bessel function of the third kind of order zero for double 
       /// precision argument x.</returns>
@@ -2458,26 +2662,30 @@ namespace Altaxo.Calc
       ///                               significant figures required  32.05 
       ///                                    decimal places required  33.11 
       /// </code></remarks>
-      public static double BesselK0 (double x)
+      public static double BesselK0 (double x, bool bDebug)
       {
   
         double y;
 
         if (x <= 0.0) 
-          throw new ArgumentException("x is zero or negative");
-
+        {
+          if(bDebug)
+            throw new ArgumentException("x is zero or negative");
+          else
+            return double.NaN;
+        }
         if (x > 2.0) goto L20;
         y = 0.0;
         if (x > xsml) y = x * x;
-        return  -Math.Log(x*0.5) * BesselI0(x) - 0.25 + dcsevl(y*0.5-1.0, bk0cs, ntk0);
+        return  -Math.Log(x*0.5) * BesselI0(x, bDebug) - 0.25 + dcsevl(y*0.5-1.0, bk0cs, ntk0);
     
         L20:
-          if (x > xmax) 
+          if (bDebug && x > xmax) 
           {
             System.Diagnostics.Trace.WriteLine("Warning (BesselK0): x so big K0(x) underflows");
             return 0.0;
           }
-        return Math.Exp(-x) * BesselExpK0(x);
+        return Math.Exp(-x) * BesselExpK0(x, bDebug);
       }
     }
     #endregion
@@ -2496,7 +2704,22 @@ namespace Altaxo.Calc
     /// order zero for positive double precision argument x.</returns>
     public static double BesselExpK0 (double x)
     {
-      return _BesselExpK0.BesselExpK0( x );
+      return _BesselExpK0.BesselExpK0( x, false );
+    }
+
+    /// <summary>
+    /// BesselExpK0 (x)  computes the double precision exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the third kind of 
+    /// order zero for positive double precision argument X. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the third kind of 
+    /// order zero for positive double precision argument x.</returns>
+    public static double BesselExpK0 (double x, bool bDebug)
+    {
+      return _BesselExpK0.BesselExpK0( x, bDebug );
     }
 
     class _BesselExpK0
@@ -2616,6 +2839,7 @@ namespace Altaxo.Calc
       /// order zero for positive double precision argument X. 
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>Exponentially scaled 
       /// modified (hyperbolic) Bessel function of the third kind of 
       /// order zero for positive double precision argument x.</returns>
@@ -2642,12 +2866,17 @@ namespace Altaxo.Calc
       ///                               significant figures required  29.68 
       ///                                    decimal places required  32.40 
       /// </code></remarks>
-      public static double BesselExpK0 (double x)
+      public static double BesselExpK0 (double x, bool bDebug)
       {
       
 
         if (x <= 0.0) 
-          throw new ArgumentException("x is zero or negative");
+        {
+          if(bDebug)
+            throw new ArgumentException("x is zero or negative");
+          else
+            return double.NaN;
+        }
 
         double y;
 
@@ -2656,7 +2885,7 @@ namespace Altaxo.Calc
         y = 0.0;
         if (x > xsml) y = x * x;
     
-        return Math.Exp(x) * (-Math.Log(x * 0.5) * BesselI0(x) - 0.25 
+        return Math.Exp(x) * (-Math.Log(x * 0.5) * BesselI0(x, bDebug) - 0.25 
           + dcsevl(y * 0.5 - 1.0, bk0cs, ntk0));
     
         L20:
@@ -2682,7 +2911,23 @@ namespace Altaxo.Calc
     /// argument x.</returns>
     public static double BesselK1 (double x)
     {
-      return _BesselK1.BesselK1( x );
+      return _BesselK1.BesselK1( x, false );
+    }
+
+    /// <summary>
+    /// BesselK1(x) calculates the double precision modified (hyperbolic) 
+    /// Bessel function of the third kind of order one for double precision 
+    /// argument x.  The argument must be large enough that the result does 
+    /// not overflow and small enough that the result does not underflow. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Modified (hyperbolic) 
+    /// Bessel function of the third kind of order one for double precision 
+    /// argument x.</returns>
+    public static double BesselK1 (double x, bool bDebug)
+    {
+      return _BesselK1.BesselK1( x, bDebug );
     }
 
     class _BesselK1
@@ -2721,6 +2966,7 @@ namespace Altaxo.Calc
       /// not overflow and small enough that the result does not underflow. 
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>Modified (hyperbolic) 
       /// Bessel function of the third kind of order one for double precision 
       /// argument x.</returns>
@@ -2735,33 +2981,42 @@ namespace Altaxo.Calc
       ///                               significant figures required  30.61 
       ///                                    decimal places required  31.64 
       /// </code></remarks>
-      public static double BesselK1 (double x)
+      public static double BesselK1 (double x, bool bDebug)
       {
 
   
         double y;
 
         if (x <= 0.0) 
-          throw new ArgumentException("x is zero or negative");
-
+        {
+          if(bDebug)
+            throw new ArgumentException("x is zero or negative");
+          else
+            return double.NaN;
+        }
         if (x > 2.0) goto L20;
 
         if (x < xmin) 
-          throw new ArgumentException("x so small K1 overflows");
-    
+        {
+          if(bDebug)
+            throw new ArgumentException("x so small K1 overflows");
+          else
+            return double.NaN;
+        }
+
         y = 0.0;
         if (x > xsml) y = x * x;
 
-        return Math.Log(x * 0.5) * BesselI1(x) 
+        return Math.Log(x * 0.5) * BesselI1(x,bDebug) 
           + (dcsevl( y * 0.5 - 1.0, bk1cs, ntk1) + 0.75) / x;
 
         L20:
-          if (x > xmax) 
+          if (bDebug && x > xmax) 
           {
             System.Diagnostics.Trace.WriteLine("Warning (BesselK1): x so big K1(x) underflows");
             return 0.0;
           }
-        return Math.Exp(-x) * BesselExpK1(x);
+        return Math.Exp(-x) * BesselExpK1(x, bDebug);
       }
     }
 
@@ -2780,7 +3035,22 @@ namespace Altaxo.Calc
     /// one for positive double precision argument x.</returns>
     public static double BesselExpK1( double x)
     {
-      return _BesselExpK1.BesselExpK1( x );
+      return _BesselExpK1.BesselExpK1( x, false );
+    }
+
+    /// <summary>
+    /// BesselExpK1(x) computes the double precision exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the third kind of order 
+    /// one for positive double precision argument x. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the third kind of order 
+    /// one for positive double precision argument x.</returns>
+    public static double BesselExpK1( double x, bool bDebug)
+    {
+      return _BesselExpK1.BesselExpK1( x, bDebug );
     }
 
     class _BesselExpK1
@@ -2900,6 +3170,7 @@ namespace Altaxo.Calc
       /// one for positive double precision argument x. 
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>Exponentially scaled 
       /// modified (hyperbolic) Bessel function of the third kind of order 
       /// one for positive double precision argument x.</returns>
@@ -2926,23 +3197,32 @@ namespace Altaxo.Calc
       ///                               significant figures required  30.25 
       ///                                    decimal places required  32.38 
       /// </code></remarks>
-      public static double BesselExpK1 (double x)
+      public static double BesselExpK1 (double x, bool bDebug)
       {
   
 
         double y;
 
         if (x <= 0.0) 
-          throw new ArgumentException("x is zero or negative");
-
+        {
+          if(bDebug)
+            throw new ArgumentException("x is zero or negative");
+          else
+            return double.NaN;
+        }
         if (x > 2.0) goto L20;
 
         if (x < xmin) 
-          throw new ArgumentException("x so small K1(x) overflows");
+        {
+          if(bDebug)
+            throw new ArgumentException("x so small K1(x) overflows");
+          else
+            return double.NaN;
+        }
 
         y = 0.0;
         if (x > xsml) y = x * x;
-        return Math.Exp(x) * (Math.Log(x * 0.5) * BesselI1(x) 
+        return Math.Exp(x) * (Math.Log(x * 0.5) * BesselI1(x, bDebug) 
           + (dcsevl( y * 0.5 - 1.0, bk1cs, ntk1) + 0.75) / x);
 
         L20:
@@ -2964,8 +3244,21 @@ namespace Altaxo.Calc
     /// <returns>Airy function for argument x.</returns>
     public static double AiryAi (double x)
     {
-      return _AiryAi.AiryAi(x);
+      return _AiryAi.AiryAi(x, false);
     }
+
+    /// <summary>
+    /// AiryAi(x) calculates the double precision Airy function for double 
+    /// precision argument x. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Airy function for argument x.</returns>
+    public static double AiryAi (double x, bool bDebug)
+    {
+      return _AiryAi.AiryAi(x, bDebug);
+    }
+
     class _AiryAi
     {
         
@@ -3017,6 +3310,7 @@ namespace Altaxo.Calc
       /// precision argument x. 
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>Airy function for argument x.</returns>
       /// <remarks><code>
       /// This is a translation from the Fortran version of SLATEC, FNLIB,
@@ -3035,7 +3329,7 @@ namespace Altaxo.Calc
       ///                               significant figures required  31.50 
       ///                                    decimal places required  33.68 
       /// </code></remarks>
-      public static double AiryAi (double x)
+      public static double AiryAi (double x, bool bDebug)
       {
 
         double z, theta, xm;
@@ -3052,10 +3346,11 @@ namespace Altaxo.Calc
 
         L30:
           if (x > xmax) goto L40;
-        return AiryExpAi(x) * Math.Exp(x * -2.0 * Math.Sqrt(x) / 3.0);
+        return AiryExpAi(x, bDebug) * Math.Exp(x * -2.0 * Math.Sqrt(x) / 3.0);
 
         L40:  
-          System.Diagnostics.Trace.WriteLine("Warning (AiryAi): x so big Ai(x) underflows");
+          if( bDebug)
+            System.Diagnostics.Trace.WriteLine("Warning (AiryAi): x so big Ai(x) underflows");
         return 0.0;
       }
     }
@@ -3075,7 +3370,23 @@ namespace Altaxo.Calc
     /// Airy function depending on the value of the argument.</returns>
     public static double AiryExpAi (double x)
     {
-      return _AiryExpAi.AiryExpAi(x);
+      return _AiryExpAi.AiryExpAi(x, false);
+    }
+
+    /// <summary>
+    /// AiryExpAi(x) calculates the Airy function or the exponentially scaled 
+    /// Airy function depending on the value of the argument.  The function 
+    /// and argument are both double precision. Returns
+    /// Ai(x)                       for x &lt;= 0.0 
+    /// Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Airy function or the exponentially scaled 
+    /// Airy function depending on the value of the argument.</returns>
+    public static double AiryExpAi (double x, bool bDebug)
+    {
+      return _AiryExpAi.AiryExpAi(x, bDebug);
     }
 
     class _AiryExpAi
@@ -3236,6 +3547,7 @@ namespace Altaxo.Calc
       /// Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>Airy function or the exponentially scaled 
       /// Airy function depending on the value of the argument.</returns>
       /// <remarks><code>
@@ -3267,7 +3579,7 @@ namespace Altaxo.Calc
       ///                               significant figures required  28.74 
       ///                                    decimal places required  32.24 
       /// </code></remarks>
-      public static double AiryExpAi (double x)
+      public static double AiryExpAi (double x, bool bDebug)
       {
   
       
@@ -3312,9 +3624,21 @@ namespace Altaxo.Calc
     /// second kind for double precision argument x.</returns>
     public static double AiryBi (double x)
     {
-      return _AiryBi.AiryBi(x);
+      return _AiryBi.AiryBi(x,false);
     }
 
+    /// <summary>
+    /// AiryBi(x) calculates the double precision Airy function of the 
+    /// second kind for double precision argument x. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Airy function of the 
+    /// second kind for double precision argument x.</returns>
+    public static double AiryBi (double x, bool bDebug)
+    {
+      return _AiryBi.AiryBi(x, bDebug);
+    }
 
     class _AiryBi
     {
@@ -3408,6 +3732,7 @@ namespace Altaxo.Calc
       /// second kind for double precision argument x. 
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>Airy function of the 
       /// second kind for double precision argument x.</returns>
       /// <remarks><code>
@@ -3439,7 +3764,7 @@ namespace Altaxo.Calc
       ///                        approx significant figures required  31.6 
       ///                                    decimal places required  32.90 
       /// </code></remarks>
-      public static double AiryBi (double x)
+      public static double AiryBi (double x, bool bDebug)
       {
       
 
@@ -3462,9 +3787,14 @@ namespace Altaxo.Calc
 
         L40:
           if (x > xmax) 
-            throw new ArgumentException("x so big that Bi(x) overflows");
+          {
+            if(bDebug)
+              throw new ArgumentException("x so big that Bi(x) overflows");
+            else
+              return double.NaN;
+          }
 
-        return AiryExpBi(x) * Math.Exp(x * 2.0 * Math.Sqrt(x) / 3.0);
+        return AiryExpBi(x,bDebug) * Math.Exp(x * 2.0 * Math.Sqrt(x) / 3.0);
       }
     }
     #endregion
@@ -3486,7 +3816,26 @@ namespace Altaxo.Calc
     /// argument x.</returns>
     public static double AiryExpBi (double x)
     {
-      return _AiryExpBi.AiryExpBi(x);
+      return _AiryExpBi.AiryExpBi(x, false);
+    }
+
+    /// <summary>
+    /// AiryExpBi(x) calculates the double precision Airy function of the 
+    /// second kind or the double precision exponentially scaled Airy 
+    /// function of the second kind, depending on the value of the 
+    /// double precision argument x. Returns 
+    ///     Bi(x)                      for x &lt;= 0.0
+    ///     Bi(x)*exp( -2/3 * x^(3/2)) for x &gt;= 0.0 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Airy function of the 
+    /// second kind or the exponentially scaled Airy 
+    /// function of the second kind, depending on the value of the 
+    /// argument x.</returns>
+    public static double AiryExpBi (double x, bool bDebug)
+    {
+      return _AiryExpBi.AiryExpBi(x, bDebug);
     }
 
     class _AiryExpBi
@@ -3732,6 +4081,7 @@ namespace Altaxo.Calc
       ///     Bi(x)*exp( -2/3 * x^(3/2)) for x &gt;= 0.0 
       /// </summary>
       /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
       /// <returns>Airy function of the 
       /// second kind or the exponentially scaled Airy 
       /// function of the second kind, depending on the value of the 
@@ -3777,7 +4127,7 @@ namespace Altaxo.Calc
       ///                               significant figures required  31.15 
       ///                                    decimal places required  33.37 
       /// </code></remarks>
-      public static double AiryExpBi (double x)
+      public static double AiryExpBi (double x, bool bDebug)
       {
     
 

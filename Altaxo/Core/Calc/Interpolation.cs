@@ -49,26 +49,11 @@
 
 
 using System;
+using Altaxo.Calc;
 
 namespace Altaxo.Calc.Interpolation
 {
-  public interface IVector
-  {
-    double this[int i]
-    {
-      get; set;
-    }
-
-    int Lo();
-    int Hi();
-    bool Empty();
-    int LowerBound { get; }
-    int UpperBound { get; }
-    
-    int Elements(); // change this later to length property
-
-  }
-
+  
   public class IntVector
   {
     protected int[] x;
@@ -127,9 +112,7 @@ namespace Altaxo.Calc.Interpolation
       set { x[i-lo] = value; }
     }
 
-    public int Lo() { return lo; }
-    public int Hi() { return hi; }
-    public bool Empty() { return hi<lo; }
+   
     public int LowerBound { get { return lo; }}
     public int UpperBound { get { return hi;} }
 
@@ -148,14 +131,14 @@ namespace Altaxo.Calc.Interpolation
       this.lo = lo;
       this.hi = hi;
     }
-    public int Elements() // change this later to length property
+    public int Length // change this later to length property
     {
-      return hi-lo+1;
+      get { return hi-lo+1; }
     }
 
-    public void CopyFrom(IVector a)
+    public void CopyFrom(IROVector a)
     {
-      Resize(a.Lo(),a.Hi());
+      Resize(a.LowerBound,a.UpperBound);
       for(int i=lo;i<hi;i++)
         x[i-lo] = a[i];
     }
@@ -215,8 +198,8 @@ namespace Altaxo.Calc.Interpolation
     };
 
 
-    protected IVector x;
-    protected IVector y;
+    protected IROVector x;
+    protected IROVector y;
   
     #region Helper functions
     protected static double sqr(double x)
@@ -230,9 +213,9 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    protected static bool MatchingIndexRange (IVector a, IVector b)
+    protected static bool MatchingIndexRange (IROVector a, IROVector b)
     {
-      return (a.Lo() == b.Lo() && a.Hi() == b.Hi());
+      return (a.LowerBound == b.LowerBound && a.UpperBound == b.UpperBound);
     }
     #endregion
 
@@ -251,7 +234,7 @@ namespace Altaxo.Calc.Interpolation
     //
     //----------------------------------------------------------------------------//
 
-    public static int FindIntervall (double u, IVector x) 
+    public static int FindIntervall (double u, IROVector x) 
     {
       int i, j;
       int lo =  x.LowerBound;
@@ -333,18 +316,18 @@ namespace Altaxo.Calc.Interpolation
     //
     //---------------------------------------------------
     public double CubicSplineHorner (double u,
-      IVector x,
-      IVector y, 
-      IVector y1,
-      IVector y2, 
-      IVector y3)
+      IROVector x,
+      IROVector y, 
+      IROVector y1,
+      IROVector y2, 
+      IROVector y3)
     {
       // special case that there are no data. Return 0.0.
-      if (x.Empty()) return 0.0;
+      if (x.Length==0) return 0.0;
 
       int i = FindIntervall(u,x);  
-      if (i  < x.Lo()) i = x.Lo();  // extrapolate to the left
-      if (i == x.Hi()) i--;   // extrapolate to the right
+      if (i  < x.LowerBound) i = x.LowerBound;  // extrapolate to the left
+      if (i == x.UpperBound) i--;   // extrapolate to the right
       double dx = u - x[i];
       return (y[i] + dx * (y1[i] + dx * (y2[i] + dx * y3[i])));
     }
@@ -369,14 +352,14 @@ namespace Altaxo.Calc.Interpolation
     //
     //----------------------------------------------------------------------------//
 
-    public void CubicSplineCoefficients (IVector x, 
-      IVector y, 
-      IVector y1, 
+    public void CubicSplineCoefficients (IROVector x, 
+      IROVector y, 
+      IROVector y1, 
       IVector y2,
       IVector y3)
     {
-      int lo = x.Lo(), 
-        hi = x.Hi();
+      int lo = x.LowerBound, 
+        hi = x.UpperBound;
 
       for (int i = lo; i < hi; i++) 
       {
@@ -390,7 +373,7 @@ namespace Altaxo.Calc.Interpolation
     }
 
     
-    public abstract int Interpolate (IVector x, IVector y);
+    public abstract int Interpolate (IROVector x, IROVector y);
     public abstract double GetX (double x);
     public abstract double GetY (double x);
 
@@ -417,10 +400,10 @@ namespace Altaxo.Calc.Interpolation
     //
     //----------------------------------------------------------------------------//
 
-    public virtual void Parametrize (IVector x, IVector y, IVector t, Parametrization parametrization)
+    public virtual void Parametrize (IROVector x, IROVector y, IVector t, Parametrization parametrization)
     {
-      int lo = x.Lo(),
-        hi = x.Hi(),
+      int lo = x.LowerBound,
+        hi = x.UpperBound,
         i; 
 
       switch (parametrization)
@@ -499,7 +482,7 @@ namespace Altaxo.Calc.Interpolation
         Matpack.Error("MpCurveBase::DrawCurve: scene is not open for drawing");
 
       // nothing to draw if zero or one element
-      if (x->Elements() < 2) return;
+      if (x->Length < 2) return;
 
       // Find index of the element in the abscissa vector x, that is smaller
       // than the lower (upper) value xlo (xhi) of the drawing range. If xlo is
@@ -569,7 +552,7 @@ namespace Altaxo.Calc.Interpolation
   public class LinearInterpolation
   {
   
-    public static int GetNextIndexOfValidPair(IVector xcol, IVector ycol, int sourceLength, int currentIndex)
+    public static int GetNextIndexOfValidPair(IROVector xcol, IROVector ycol, int sourceLength, int currentIndex)
     {
       for(int sourceIndex=currentIndex;sourceIndex<sourceLength;sourceIndex++)
       {
@@ -587,8 +570,8 @@ namespace Altaxo.Calc.Interpolation
     }
 
     public static string Interpolate(
-      IVector xcol,
-      IVector ycol,
+      IROVector xcol,
+      IROVector ycol,
       int sourceLength,
       double xstart, double xincrement, int numberOfValues,
       double yOutsideOfBounds,
@@ -691,7 +674,7 @@ namespace Altaxo.Calc.Interpolation
     // 
     //----------------------------------------------------------------------------//
 
-    public override int Interpolate(IVector x, IVector y)
+    public override int Interpolate(IROVector x, IROVector y)
     {
       // check input parameters
 
@@ -703,7 +686,7 @@ namespace Altaxo.Calc.Interpolation
       base.y = y;
 
       // Empty data vectors - free auxilliary storage
-      if (x.Empty()) 
+      if (x.Length==0) 
       {
         y1.Remove();
         y2.Remove();
@@ -711,8 +694,8 @@ namespace Altaxo.Calc.Interpolation
         return 0; // ok
       }
 
-      int lo = x.Lo(),
-        hi = x.Hi();
+      int lo = x.LowerBound,
+        hi = x.UpperBound;
   
       // Resize the auxilliary vectors. Note, that there is no reallocation if the
       // vector already has the appropriate dimension.
@@ -720,14 +703,14 @@ namespace Altaxo.Calc.Interpolation
       y2.Resize(lo,hi);
       y3.Resize(lo,hi);
 
-      if (x.Elements() == 1) 
+      if (x.Length == 1) 
       {
     
         // default derivative is 0.0
         y1[lo] = y2[lo] = y3[lo] = 0.0;
 
       } 
-      else if (x.Elements() == 2) 
+      else if (x.Length == 2) 
       {
     
         // set derivatives for a line
@@ -745,7 +728,7 @@ namespace Altaxo.Calc.Interpolation
         for (int i = lo+1; i < hi; i++)
           y1[i] = deriv2(x,y,i);
 
-        if (x.Elements() > 3) 
+        if (x.Length > 3) 
         {
 
           // adjust derivatives at boundaries
@@ -783,7 +766,7 @@ namespace Altaxo.Calc.Interpolation
     // 
     //-----------------------------------------------------------------------------//
 
-    static double deriv1 (IVector x, IVector y, int i, int sgn)
+    static double deriv1 (IROVector x, IROVector y, int i, int sgn)
     {
       double di,dis,di2,his;
       int i1,i2;
@@ -807,7 +790,7 @@ namespace Altaxo.Calc.Interpolation
     //-----------------------------------------------------------------------------//
 
 
-    static double deriv2 (IVector x, IVector y, int i)
+    static double deriv2 (IROVector x, IROVector y, int i)
     {
       double di0,di1,di2,hi0;
       int i1,i2;
@@ -829,7 +812,7 @@ namespace Altaxo.Calc.Interpolation
     // 
     //-----------------------------------------------------------------------------//
 
-    static void fritsch (IVector x, IVector y, IVector d)
+    static void fritsch (IROVector x, IROVector y, IVector d)
     {
       int i,i1;
       bool stop;
@@ -844,7 +827,7 @@ namespace Altaxo.Calc.Interpolation
       do 
       {
         stop = true;
-        for (i = x.Lo(); i < x.Hi(); i++) 
+        for (i = x.LowerBound; i < x.UpperBound; i++) 
         {
           i1 = i + 1;
           d1 = (y[i1]-y[i]) / (x[i1]-x[i]);
@@ -896,7 +879,7 @@ namespace Altaxo.Calc.Interpolation
     // The abscissa vector must be strictly increasing.
     //----------------------------------------------------------------------------//
 
-    public override int Interpolate (IVector x, IVector y)
+    public override int Interpolate (IROVector x, IROVector y)
     {
       // check input parameters
 
@@ -908,7 +891,7 @@ namespace Altaxo.Calc.Interpolation
       base.y = y;
 
       // Empty data vectors - free auxilliary storage
-      if (x.Empty()) 
+      if (x.Length==0) 
       {
         y1.Remove();
         y2.Remove();
@@ -916,8 +899,8 @@ namespace Altaxo.Calc.Interpolation
         return 0; // ok
       }
      
-      int lo = x.Lo(), lo1 = lo+1, lo2 = lo+2, 
-        hi = x.Hi(), hi1 = hi-1, hi2 = hi-2, hi3 = hi-3;
+      int lo = x.LowerBound, lo1 = lo+1, lo2 = lo+2, 
+        hi = x.UpperBound, hi1 = hi-1, hi2 = hi-2, hi3 = hi-3;
 
       // Resize the auxilliary vectors. Note, that there is no reallocation if the
       // vectors already have the appropriate dimensions.
@@ -925,14 +908,14 @@ namespace Altaxo.Calc.Interpolation
       y2.Resize(lo,hi);
       y3.Resize(lo,hi);
 
-      if (x.Elements() == 1) 
+      if (x.Length == 1) 
       {
     
         // default derivatives are 0.0
         y1[lo] = y2[lo] = y3[lo] = 0.0;
 
       } 
-      else if (x.Elements() == 2) 
+      else if (x.Length == 2) 
       {
     
         // set derivatives for a line
@@ -975,7 +958,7 @@ namespace Altaxo.Calc.Interpolation
         y1[lo] = (den != 0.0) ? num / den : 0.0;
     
         // i = 1 
-        if (x.Elements() > 3) 
+        if (x.Length > 3) 
         {
 
           num = Math.Abs(m(lo2) - m(lo1)) * m(lo) + Math.Abs(m(lo) - m_m1) * m(lo1);
@@ -1053,7 +1036,7 @@ namespace Altaxo.Calc.Interpolation
     //  G is the geometry vector of the control points
     //
     //--------------------------------------------------------------------------
-    public override int Interpolate (IVector x, IVector y)
+    public override int Interpolate (IROVector x, IROVector y)
     {
       // verify index range
       if ( ! MatchingIndexRange(x,y) ) 
@@ -1068,8 +1051,8 @@ namespace Altaxo.Calc.Interpolation
 
     public override double GetX (double t)
     {
-      int lo = x.Lo(), 
-        hi = x.Hi(), 
+      int lo = x.LowerBound, 
+        hi = x.UpperBound, 
         i  = FindIntervall(t,x);  
 
       if (i < lo || i >= hi || hi-lo == 1) 
@@ -1115,8 +1098,8 @@ namespace Altaxo.Calc.Interpolation
     }
     public override double GetY (double t)
     {
-      int lo = x.Lo(), 
-        hi = x.Hi(), 
+      int lo = x.LowerBound, 
+        hi = x.UpperBound, 
         i  = FindIntervall(t,x);  
 
       if (i < lo || hi-lo == 1) 
@@ -1288,7 +1271,7 @@ void DrawClosedCurve (Scene &scene)
     //
     //----------------------------------------------------------------------------//
 
-    public override int Interpolate (IVector x, IVector y)
+    public override int Interpolate (IROVector x, IROVector y)
     {
       // verify index range
       if ( ! MatchingIndexRange(x,y) ) 
@@ -1305,8 +1288,8 @@ void DrawClosedCurve (Scene &scene)
 
     public override double GetX (double t)
     {
-      int lo = x.Lo(), 
-        hi = x.Hi(), 
+      int lo = x.LowerBound, 
+        hi = x.UpperBound, 
         i  = FindIntervall(t,x);  
 
       if (i < lo || i >= hi || hi-lo == 1) 
@@ -1353,8 +1336,8 @@ void DrawClosedCurve (Scene &scene)
 
     public override double GetY (double t)
     {
-      int lo = x.Lo(), 
-        hi = x.Hi(), 
+      int lo = x.LowerBound, 
+        hi = x.UpperBound, 
         i  = FindIntervall(t,x);  
 
       if (i < lo || hi-lo == 1) 
@@ -1520,13 +1503,13 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     // 
     //-----------------------------------------------------------------------------//
 
-    static double deriv1 (IVector x, IVector y, int i, int sgn)
+    static double deriv1 (IROVector x, IROVector y, int i, int sgn)
     {
-      if (x.Elements() <= 1) 
+      if (x.Length <= 1) 
         return 0.0;
 
-      else if (x.Elements() == 2)
-        return (y[y.Hi()]-y[y.Lo()]) / (x[x.Hi()]-x[x.Lo()]);
+      else if (x.Length == 2)
+        return (y[y.UpperBound]-y[y.LowerBound]) / (x[x.UpperBound]-x[x.LowerBound]);
   
       else 
       {
@@ -1639,14 +1622,14 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //
     //----------------------------------------------------------------------------//
 
-    public static void Differences (IVector x, IVector dx)
+    public static void Differences (IROVector x, IVector dx)
     {
       int sgn;
       double t;
 
       // get dimensions
-      int lo = x.Lo(),
-        hi = x.Hi(); 
+      int lo = x.LowerBound,
+        hi = x.UpperBound; 
 
       if (hi > lo) 
       {
@@ -1678,14 +1661,14 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //
     //----------------------------------------------------------------------------//
 
-    public static void InverseDifferences (IVector x, IVector dx)
+    public static void InverseDifferences (IROVector x, IVector dx)
     {
       int lo,hi,sgn;
       double t;
 
       // get dimensions
-      lo = x.Lo(); 
-      hi = x.Hi(); 
+      lo = x.LowerBound; 
+      hi = x.UpperBound; 
 
       if (hi > lo) 
       {
@@ -1718,13 +1701,13 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //         
     //----------------------------------------------------------------------------//
 
-    protected void SplineA (double p, IVector dx, IVector z)
+    protected void SplineA (double p, IROVector dx, IVector z)
     {
       double h1,h2,p2;
 
       // get dimensions
-      int lo = dx.Lo(),
-        hi = dx.Hi();
+      int lo = dx.LowerBound,
+        hi = dx.UpperBound;
 
       // calculate vector z
       z[lo] = 0.0;
@@ -1760,15 +1743,15 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //----------------------------------------------------------------------------//
 
     protected void SplineB1 (double p, 
-      IVector dx, IVector y, 
-      IVector y1, IVector f, IVector z)
+      IROVector dx, IROVector y, 
+      IVector y1, IVector f, IROVector z)
     {
       int j = 0, k;
       double h,h1=0.0,h2,r1=0.0,r2;
 
       // get dimensions
-      int lo  = dx.Lo(),
-        hi  = dx.Hi(),
+      int lo  = dx.LowerBound,
+        hi  = dx.UpperBound,
         lo1 = lo+1,
         hi1 = hi-1;
 
@@ -1815,13 +1798,13 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //----------------------------------------------------------------------------//
 
     protected void SplineC1 (double p,
-      IVector x, IVector dx, 
-      IVector y, IVector y1,
+      IROVector x, IROVector dx, 
+      IROVector y, IROVector y1,
       IVector a, IVector b, IVector c, IVector d)
     {
       // get dimensions
-      int lo = x.Lo(),
-        hi = x.Hi(); 
+      int lo = x.LowerBound,
+        hi = x.UpperBound; 
    
       // auxilliaries
       double p2 = 2.0 + p,
@@ -1861,15 +1844,15 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //----------------------------------------------------------------------------//
 
     protected void SplineB2 (double p, 
-      IVector dx, IVector y, 
-      IVector y2, IVector f, IVector z)
+      IROVector dx, IROVector y, 
+      IVector y2, IVector f, IROVector z)
     {
       int j = 0 ,k;
       double h,h1 = 0.0,h2,r1=0.0,r2;
 
       // get dimensions
-      int lo  = dx.Lo(),
-        hi  = dx.Hi(),
+      int lo  = dx.LowerBound,
+        hi  = dx.UpperBound,
         lo1 = lo+1,
         hi1 = hi-1;
 
@@ -1916,13 +1899,13 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //----------------------------------------------------------------------------//
 
     void SplineC2 (double p, 
-      IVector x, IVector dx, 
-      IVector y, IVector y2,
+      IROVector x, IROVector dx, 
+      IROVector y, IROVector y2,
       IVector a, IVector b, IVector c, IVector d)
     {
       // get dimensions
-      int lo = x.Lo(),
-        hi = x.Hi(); 
+      int lo = x.LowerBound,
+        hi = x.UpperBound; 
    
       // auxilliaries
       double pp = 0.5 / (p*(3.0+p)+3.0);
@@ -2042,7 +2025,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //
     //----------------------------------------------------------------------------//
 
-    public override int Interpolate (IVector x, IVector y)
+    public override int Interpolate (IROVector x, IROVector y)
     {
       // check input parameters
 
@@ -2054,7 +2037,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       base.y = y;
 
       // Empty data vectors - free auxilliary storage
-      if (x.Empty()) 
+      if (x.Length==0) 
       {
         dx.Remove();
         dy.Remove();
@@ -2065,8 +2048,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         return 0; // ok
       }
 
-      int lo = x.Lo(),
-        hi = x.Hi();
+      int lo = x.LowerBound,
+        hi = x.UpperBound;
 
       dx.Resize(lo,hi);  // abscissa difference vector
       dy.Resize(lo,hi);  // vector of derivatives
@@ -2144,11 +2127,11 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     public override double GetY (double u)
     {
       // special case that there are no data. Return 0.0.
-      if (x.Empty()) return 0.0;
+      if (x.Length==0) return 0.0;
 
       int i = FindIntervall(u,x);  
 
-      if (i < x.Lo()) 
+      if (i < x.LowerBound) 
       {     // extrapolation
 
         i++;
@@ -2160,7 +2143,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         return y0 + dx * (y1 + dx * y2);
     
       } 
-      else if (i == x.Hi()) 
+      else if (i == x.UpperBound) 
       { // extrapolation
 
         i--;
@@ -2225,7 +2208,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //
     //----------------------------------------------------------------------------//
 
-    public override int Interpolate (IVector x, IVector y)
+    public override int Interpolate (IROVector x, IROVector y)
     {
       // check input parameters
 
@@ -2237,16 +2220,16 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       base.y = y;
 
       // Empty data vectors - free auxilliary storage
-      if (x.Empty()) 
+      if (x.Length==0) 
       {
         y1.Remove();
         tmp.Remove();
         return 0; // ok
       }
 
-      int lo = x.Lo(),
-        hi = x.Hi(),
-        n = x.Elements();
+      int lo = x.LowerBound,
+        hi = x.UpperBound,
+        n = x.Length;
 
       y1.Resize(lo,hi);    // spline coefficients
 
@@ -2353,9 +2336,9 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     }
     public override double GetY (double u)
     {
-      int lo = x.Lo(), 
-        hi = x.Hi(), 
-        n  = x.Elements(),
+      int lo = x.LowerBound, 
+        hi = x.UpperBound, 
+        n  = x.Length,
         i  = lo+1; 
 
       // special cases
@@ -2441,7 +2424,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //
     //----------------------------------------------------------------------------//
     
-    public override int Interpolate (IVector x, IVector y)
+    public override int Interpolate (IROVector x, IROVector y)
 
     {
       // check input parameters
@@ -2454,7 +2437,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       base.y = y;  
 
       // Empty data vectors - free auxilliary storage
-      if (x.Empty()) 
+      if (x.Length==0) 
       {
         C.Remove();
         D.Remove();
@@ -2483,10 +2466,10 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     public override  double GetY (double u)
     {
       // special case that there are no data. Return 0.0.
-      if (x.Empty()) return 0.0;
+      if (x.Length==0) return 0.0;
 
-      int lo = x.Lo(), 
-        hi = x.Hi();
+      int lo = x.LowerBound, 
+        hi = x.UpperBound;
 
       // allocate (resize) auxilliary vectors - the resize method has the property
       // that no (de-)allocation is done, if the size of the vector is not changed.
@@ -2608,7 +2591,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //
     //----------------------------------------------------------------------------//
 
-    public override int Interpolate (IVector x, IVector y)
+    public override int Interpolate (IROVector x, IROVector y)
     {
       // check input parameters
 
@@ -2620,7 +2603,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       base.y = y;  
 
       // Empty data vectors - free auxilliary storage
-      if (x.Empty()) 
+      if (x.Length==0) 
       {
         xr.Remove();
         yr.Remove();
@@ -2628,8 +2611,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         return 0;
       }
 
-      int lo = x.Lo(),
-        hi = x.Hi();
+      int lo = x.LowerBound,
+        hi = x.UpperBound;
 
       xr.Resize(lo,hi);
       yr.Resize(lo,hi);
@@ -2638,7 +2621,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       int i, j, j1, denom, nend;
       double xj, yj, x2, y2;
 
-      int n  = x.Elements()-1;
+      int n  = x.Length-1;
 
       if (n < 1) 
         throw new ArgumentException(string.Format("less than two points where given ({0})",n+1));
@@ -2756,8 +2739,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     {
       const double SquareEps = DBL_EPSILON * DBL_EPSILON;
 
-      int lo = xr.Lo(), 
-        hi = yr.Hi();
+      int lo = xr.LowerBound, 
+        hi = yr.UpperBound;
 
       double val = yr[lo];
       for (int i = lo+1; i <= hi; i++) 
@@ -2805,7 +2788,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       int j;
       yj = y[nend];
       j = nend;
-      for (int k = x.Lo(); k < nend; k++)
+      for (int k = x.LowerBound; k < nend; k++)
         if (Math.Abs(y[k]) < Math.Abs(yj)) 
         {
           j = k;
@@ -3361,7 +3344,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //
     //----------------------------------------------------------------------------//
 
-    public override int Interpolate (IVector x, IVector y)
+    public override int Interpolate (IROVector x, IROVector y)
     {
       // check input parameters
 
@@ -3374,7 +3357,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
   
 
       // Empty data vectors - free auxilliary storage
-      if (x.Empty()) 
+      if (x.Length==0) 
       {
         xstore.Remove();
         ystore.Remove();
@@ -3397,9 +3380,9 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       base.x = xstore;
       base.y = ystore;
 
-      int lo = x.Lo(),
-        hi = x.Hi(),
-        n  = x.Elements();
+      int lo = x.LowerBound,
+        hi = x.UpperBound,
+        n  = x.Length;
 
 
       // Resize the auxilliary vectors. Note, that there is no reallocation if the
@@ -3415,7 +3398,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       wkv.Resize(0,1*(n+2));
 
       // set derivatives for a single point
-      if (x.Elements() == 1) 
+      if (x.Length == 1) 
       {
         y0[lo] = y[lo];
         y1[lo] = y2[lo] = y3[lo] = 0.0;
@@ -3423,7 +3406,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       }
 
       // set derivatives for a line
-      if (x.Elements() == 2) 
+      if (x.Length == 2) 
       {
         y0[lo] = y[lo]; 
         y0[hi] = y[hi];
@@ -3462,7 +3445,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
       // set ss to (double*)0 if a NullVector is given
       double[] ss = null;
-      if (! se.Empty()) ss = se.Store();
+      if (se.Length>0) ss = se.Store();
 
       // Parameter adjustments
       wk_dim1 = n + 2;
@@ -3630,7 +3613,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     public override double GetY (double u) { return CubicSplineHorner(u,x,y0,y1,y2,y3); }
 
 
-    void SetErrorVariance (IVector dyy, double errvar)
+    void SetErrorVariance (IROVector dyy, double errvar)
     {
       dy.CopyFrom(dyy);
       var = errvar;
@@ -3688,7 +3671,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     void   GetFitResults (out double smpar, out double ndf, out double gcv, out double msqred,
       out double msqerr, out double var, out double msqdf)
     {
-      if (! wkr.Empty() ) 
+      if (wkr.Length>0 ) 
       {
         smpar   = wkr[0]; 
         ndf     = wkr[1]; 

@@ -581,6 +581,10 @@ namespace Altaxo.Calc
       return Complex.FromRealImaginary(a,0)/z;
     }
 
+    public static Complex NaN
+    {
+      get { return new Complex(double.NaN, double.NaN); }
+    }
 
     #endregion
 

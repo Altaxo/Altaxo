@@ -71,7 +71,7 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Return first number with sign of second number
+    /// Return first number with the sign of second number
     /// </summary>
     /// <param name="x">The first number.</param>
     /// <param name="y">The second number whose sign is used.</param>
@@ -96,15 +96,40 @@ namespace Altaxo.Calc
     #endregion
 
 
+    #region hypot2f
+
+    /// <summary>
+    /// The standard hypot() function for two arguments taking care of overflows and zerodivides. 
+    /// </summary>
+    /// <param name="x">First argument.</param>
+    /// <param name="y">Second argument.</param>
+    /// <returns>Square root of the sum of x-square and y-square.</returns>
+    public static float hypot (float x, float y)
+    {
+      float f,h;
+      float ax=Math.Abs(x), ay=Math.Abs(y);
+      if (ax > ay) 
+      {
+        f = ay/ax; h = ax;
+      }
+      else 
+      {
+        f = ax/ay; h = ay;
+      }
+      return (float)(h*Math.Sqrt(1+f*f));
+    }
+
+    #endregion
+
     #region hypot2d
 
+    /// <summary>
+    /// The standard hypot() function for two arguments taking care of overflows and zerodivides. 
+    /// </summary>
+    /// <param name="x">First argument.</param>
+    /// <param name="y">Second argument.</param>
+    /// <returns>Square root of the sum of x-square and y-square.</returns>
     public static double hypot (double x, double y)
-      //
-      // The standard hypot() function for two arguments taking care
-      // of overflows and zerodivides. 
-      //
-      // Version for double arguments.
-      //
     {
       double f,h;
       double ax=Math.Abs(x), ay=Math.Abs(y);
@@ -125,6 +150,13 @@ namespace Altaxo.Calc
 
     //-----------------------------------------------------------------------------//
 
+    /// <summary>
+    /// The standard hypot() function for three arguments taking care of overflows and zerodivides. 
+    /// </summary>
+    /// <param name="x">First argument.</param>
+    /// <param name="y">Second argument.</param>
+    /// <param name="z">Third argument.</param>
+    /// <returns>Square root of the sum of x-square, y-square and z-square.</returns>
     public static float hypot (float x, float y, float z)
       //
       // The standard hypot() function for three arguments taking care
@@ -162,6 +194,13 @@ namespace Altaxo.Calc
 
     #region hypot3d
 
+    /// <summary>
+    /// The standard hypot() function for three arguments taking care of overflows and zerodivides. 
+    /// </summary>
+    /// <param name="x">First argument.</param>
+    /// <param name="y">Second argument.</param>
+    /// <param name="z">Third argument.</param>
+    /// <returns>Square root of the sum of x-square, y-square and z-square.</returns>
     public static double hypot (double x, double y, double z)
       //
       // The standard hypot() function for three arguments taking care
@@ -201,7 +240,54 @@ namespace Altaxo.Calc
 
     #region LogRel
 
-    static readonly double[] alnrcs_LogRel = 
+
+    /// <summary>
+    /// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns></returns>
+    /// <remarks>
+    /// <code>
+    /// June 1977 edition.   W. Fullerton, c3, Los Alamos Scientific Lab.
+    ///
+    /// series for alnr       on the interval -3.75000e-01 to  3.75000e-01
+    ///                                        with weighted error   6.35e-32
+    ///                                         log weighted error  31.20
+    ///                               significant figures required  30.93
+    ///                                    decimal places required  32.01
+    /// </code></remarks>
+    public static double LogRel (double x)
+    {
+      return _LogRel.LogRel(x,false);
+    }
+
+
+    /// <summary>
+    /// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="bDebug">If true, an exception will be thrown if errors occur, if false, double.NaN is returned in this case.</param>
+    /// <returns></returns>
+    /// <remarks>
+    /// <code>
+    /// June 1977 edition.   W. Fullerton, c3, Los Alamos Scientific Lab.
+    ///
+    /// series for alnr       on the interval -3.75000e-01 to  3.75000e-01
+    ///                                        with weighted error   6.35e-32
+    ///                                         log weighted error  31.20
+    ///                               significant figures required  30.93
+    ///                                    decimal places required  32.01
+    /// </code></remarks>
+    public static double LogRel (double x, bool bDebug)
+    {
+      return _LogRel.LogRel(x,bDebug);
+    }
+
+
+    class _LogRel
+
+    {
+      static readonly double[] alnrcs_LogRel = 
   {
     0.10378693562743769800686267719098e+1,
     -0.13364301504908918098766041553133e+0,
@@ -248,58 +334,63 @@ namespace Altaxo.Calc
     0.63533936180236187354180266666666e-31
   };
 
-    static int nlnrel_LogRel = 0;
-    static double xmin_LogRel = 0.0;
+ 
+      static readonly int nlnrel_LogRel = Series.initds(alnrcs_LogRel, 43, 0.1*0.5 * DBL_EPSILON);
+      static readonly double xmin_LogRel= -1.0 + Math.Sqrt(DBL_EPSILON);
 
-    /// <summary>
-    /// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
-    /// </summary>
-    /// <param name="x"></param>
-    /// <returns></returns>
-    /// <remarks>
-    /// June 1977 edition.   W. Fullerton, c3, Los Alamos Scientific Lab.
-    ///
-    /// series for alnr       on the interval -3.75000e-01 to  3.75000e-01
-    ///                                        with weighted error   6.35e-32
-    ///                                         log weighted error  31.20
-    ///                               significant figures required  30.93
-    ///                                    decimal places required  32.01
-    /// </remarks>
-    public static double LogRel (double x)
-    {
 
-      if (nlnrel_LogRel == 0) 
+      /// <summary>
+      /// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <param name="bDebug">If true, an exception will be thrown if errors occur, if false, double.NaN is returned in this case.</param>
+      /// <returns>log(1+z)</returns>
+      /// <remarks>
+      /// June 1977 edition.   W. Fullerton, c3, Los Alamos Scientific Lab.
+      ///
+      /// series for alnr       on the interval -3.75000e-01 to  3.75000e-01
+      ///                                        with weighted error   6.35e-32
+      ///                                         log weighted error  31.20
+      ///                               significant figures required  30.93
+      ///                                    decimal places required  32.01
+      /// </remarks>
+      public static double LogRel (double x, bool bDebug)
       {
-        nlnrel_LogRel = Series.initds(alnrcs_LogRel, 43, 0.1*0.5 * DBL_EPSILON);
-        xmin_LogRel = -1.0 + Math.Sqrt(DBL_EPSILON);
-      }
+
+       
   
-      if (x <= -1.0) 
-        throw new ArgumentException("x <= -1");
+        if (x <= -1.0)
+        {
+          if(bDebug)
+            throw new ArgumentException("x <= -1");
+          else
+            return double.NaN;
+        }
 
-      if (x < xmin_LogRel) 
-      {
-        System.Diagnostics.Trace.WriteLine("Warning (LogRel function): answer less than half precision because x too near -1");
+        if (x < xmin_LogRel && bDebug) 
+        {
+          System.Diagnostics.Trace.WriteLine("Warning (LogRel function): answer less than half precision because x too near -1");
+        }
+
+        if (Math.Abs(x) <= 0.375) 
+          return x * (1.0 - x * Series.dcsevl(x/0.375,alnrcs_LogRel,nlnrel_LogRel));
+        else 
+          return Math.Log(1.0 + x);
       }
 
-      if (Math.Abs(x) <= 0.375) 
-        return x * (1.0 - x * Series.dcsevl(x/0.375,alnrcs_LogRel,nlnrel_LogRel));
-      else 
-        return Math.Log(1.0 + x);
-    }
 
-
-
+    } // end class _LogRel
     #endregion
 
     #region LogRel (complex)
+
 
     /// <summary>
     /// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
     /// </summary>
     /// <param name="z">The complex argument z.</param>
     /// <returns>Log(1+z) with relative error accuracy near z=0.</returns>
-    /// <remarks>
+    /// <remarks><code>
     /// April 1977 version.  W. Fullerton, c3, Los Alamos Scientific Lab.
     ///
     /// let   rho = abs(z)  and
@@ -308,17 +399,40 @@ namespace Altaxo.Calc
     ///       log(1+z) = complex (log(r), arg(1+z))
     ///                = complex (0.5*log(r**2), arg(1+z))
     ///                = complex (0.5*LogRel(2*x+rho**2), arg(1+z))
-    /// </remarks>
+    /// </code></remarks>
     public static Complex LogRel(Complex z)
     {
-      if (ComplexMath.Abs(1.0 + z) < Math.Sqrt(DBL_EPSILON))
+      return LogRel(z,false);
+    }
+
+
+
+    /// <summary>
+    /// LogRel(z) = log(1+z) with relative error accuracy near z = 0.
+    /// </summary>
+    /// <param name="z">The complex argument z.</param>
+    /// <param name="bDebug">If true, an exception will be thrown if errors occur, if false, double.NaN is returned in this case.</param>
+    /// <returns>Log(1+z) with relative error accuracy near z=0.</returns>
+    /// <remarks><code>
+    /// April 1977 version.  W. Fullerton, c3, Los Alamos Scientific Lab.
+    ///
+    /// let   rho = abs(z)  and
+    ///       r**2 = abs(1+z)**2 = (1+x)**2 + y**2 = 1 + 2*x + rho**2 .
+    /// now if rho is small we may evaluate LogRel(z) accurately by
+    ///       log(1+z) = complex (log(r), arg(1+z))
+    ///                = complex (0.5*log(r**2), arg(1+z))
+    ///                = complex (0.5*LogRel(2*x+rho**2), arg(1+z))
+    /// </code></remarks>
+    public static Complex LogRel(Complex z, bool bDebug)
+    {
+      if (bDebug && ComplexMath.Abs(1.0 + z) < Math.Sqrt(DBL_EPSILON))
         System.Diagnostics.Trace.WriteLine("Warning (LogRel): answer less than half precision because z too near -1");
 
       double rho = ComplexMath.Abs(z);
       if (rho > 0.375)
         return ComplexMath.Log(1.0 + z);
     
-      return new Complex(0.5*LogRel(2.0*z.Re+rho*rho), ComplexMath.Arg(1.0+z));
+      return new Complex(0.5*LogRel(2.0*z.Re+rho*rho,bDebug), ComplexMath.Arg(1.0+z));
     }
 
     #endregion

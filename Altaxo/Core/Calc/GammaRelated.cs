@@ -58,15 +58,15 @@ namespace Altaxo.Calc
     /// <summary>
     /// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
     /// </summary>
-    public const double DBL_EPSILON = 2.2204460492503131e-016;
+    const double DBL_EPSILON = 2.2204460492503131e-016;
     /// <summary>
     /// The smallest positive number that can be represented by <see cref="System.Double"/>.
     /// </summary>
-    public const double DBL_MIN     = double.Epsilon;
+    const double DBL_MIN     = double.Epsilon;
     /// <summary>
     /// The biggest positive number that can be represented by <see cref="System.Double"/>.
     /// </summary>
-    public const double DBL_MAX     = double.MaxValue;
+    const double DBL_MAX     = double.MaxValue;
 
     #endregion
 
@@ -193,7 +193,9 @@ namespace Altaxo.Calc
 
     #region d9lgmc
 
-    static readonly double[] algmcs = 
+    class d9lgmc
+    {
+      static readonly double[] algmcs = 
   { 
     0.1666389480451863247205729650822,
     -1.384948176067563840732986059135e-5,
@@ -212,57 +214,58 @@ namespace Altaxo.Calc
     1.276642195630062933333333333333e-31 
   };
 
-    static int nalgm;
-    static bool d9lgmc_first = true;
+      static int nalgm;
+      static bool d9lgmc_first = true;
 
 
-    /// <summary>
-    /// Compute the log gamma correction factor for x >= 10.0 so that 
-    /// log (dgamma(x)) = log(sqrt(2*pi)) + (x-0.5)*log(x) - x + d9lgmc(x) 
-    /// </summary>
-    /// <param name="x">The function argument x.</param>
-    /// <returns>The log gamma correction factor for x>=10.0.</returns>
-    /// <remarks>
-    /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W.,(LANL)
-    /// to C++.
-    ///
-    /// Series for ALGM       on the interval  0.          to  1.00000E-02 
-    ///                                        with weighted error   1.28E-31 
-    ///
-    ///                                         log weighted error  30.89 
-    ///                               significant figures required  29.81 
-    ///                                    decimal places required  31.48 
-    /// </remarks>
-    static double d9lgmc(double x)
-    {
-
-      double xbig = 1.0 / Math.Sqrt(0.5*DBL_EPSILON);
-      double xmax = Math.Exp( Math.Min(Math.Log(DBL_MAX / 12.0), -Math.Log(DBL_MIN * 12.0)) );
-
-      double ret_val;
-
-      if (d9lgmc_first) 
+      /// <summary>
+      /// Compute the log gamma correction factor for x >= 10.0 so that 
+      /// log (dgamma(x)) = log(sqrt(2*pi)) + (x-0.5)*log(x) - x + d9lgmc(x) 
+      /// </summary>
+      /// <param name="x">The function argument x.</param>
+      /// <returns>The log gamma correction factor for x>=10.0.</returns>
+      /// <remarks>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for ALGM       on the interval  0.          to  1.00000E-02 
+      ///                                        with weighted error   1.28E-31 
+      ///
+      ///                                         log weighted error  30.89 
+      ///                               significant figures required  29.81 
+      ///                                    decimal places required  31.48 
+      /// </remarks>
+      public static double f(double x)
       {
-        nalgm = Series.initds(algmcs, 15, 0.5*DBL_EPSILON);
-        d9lgmc_first = false;
+
+        double xbig = 1.0 / Math.Sqrt(0.5*DBL_EPSILON);
+        double xmax = Math.Exp( Math.Min(Math.Log(DBL_MAX / 12.0), -Math.Log(DBL_MIN * 12.0)) );
+
+        double ret_val;
+
+        if (d9lgmc_first) 
+        {
+          nalgm = Series.initds(algmcs, 15, 0.5*DBL_EPSILON);
+          d9lgmc_first = false;
+        }
+
+        if (x < 10.0) 
+          throw new ArgumentException("x must be >= 10"); 
+
+        if (x >= xmax) goto L20;
+
+        ret_val = 1.0 / (x * 12.0);
+        if (x < xbig) 
+          ret_val = Series.dcsevl(sqr(10.0 / x) * 2.0 - 1.0, algmcs, nalgm) / x;
+        return ret_val;
+    
+        L20:
+          ret_val = 0.0;  
+        throw new ArgumentException("x so big d9lgmc(x) underflows");
       }
 
-      if (x < 10.0) 
-        throw new ArgumentException("x must be >= 10"); 
-
-      if (x >= xmax) goto L20;
-
-      ret_val = 1.0 / (x * 12.0);
-      if (x < xbig) 
-        ret_val = Series.dcsevl(sqr(10.0 / x) * 2.0 - 1.0, algmcs, nalgm) / x;
-      return ret_val;
-    
-      L20:
-        ret_val = 0.0;  
-      throw new ArgumentException("x so big d9lgmc(x) underflows");
     }
-
     #endregion
 
     #region d9lgic
@@ -312,57 +315,59 @@ namespace Altaxo.Calc
 
     #region d9lgit
 
-    static readonly double sqeps_d9lgit = Math.Sqrt(DBL_EPSILON);
-    const double           eps_d9lgit   = 0.25 * DBL_EPSILON;
-
-    /// <summary>
-    /// Compute the logarithm of Tricomi's incomplete Gamma function 
-    /// with Perron's continued fraction for large x and a >= x.
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="x"></param>
-    /// <param name="algap1"></param>
-    /// <returns></returns>
-    /// <remarks>
-    /// This is a translation from the Fortran version of D9LGIT, SLATEC, FNLIB,
-    /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W.,(LANL)
-    /// to C++.
-    /// </remarks>
-    static double d9lgit (double a, double x, double algap1)
+    class d9lgit
     {
-      // machine constants
+      static readonly double sqeps_d9lgit = Math.Sqrt(DBL_EPSILON);
+      const double           eps_d9lgit   = 0.25 * DBL_EPSILON;
 
-      if (x <= 0.0 || a < x) 
-        throw new ArgumentException("x must be > 0.0 and <= a");
-
-      double ax  = a + x,
-        a1x = ax + 1.0,
-        r = 0.0,
-        p = 1.0,
-        s = p;
-      for (int k = 1; k <= 200; ++k) 
+      /// <summary>
+      /// Compute the logarithm of Tricomi's incomplete Gamma function 
+      /// with Perron's continued fraction for large x and a >= x.
+      /// </summary>
+      /// <param name="a"></param>
+      /// <param name="x"></param>
+      /// <param name="algap1"></param>
+      /// <returns></returns>
+      /// <remarks>
+      /// This is a translation from the Fortran version of D9LGIT, SLATEC, FNLIB,
+      /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      /// </remarks>
+      public static double f (double a, double x, double algap1)
       {
-        double fk = (double) k,
-          t  =  (a + fk) * x * (r + 1.0);
-        r = t / ((ax + fk) * (a1x + fk) - t);
-        p *= r;
-        s += p;
-        if (Math.Abs(p) < eps_d9lgit * s) goto result;
-      }
+        // machine constants
 
-      throw new ArgumentException("no convergence in 200 terms of continued fraction");
+        if (x <= 0.0 || a < x) 
+          throw new ArgumentException("x must be > 0.0 and <= a");
 
-      result:
+        double ax  = a + x,
+          a1x = ax + 1.0,
+          r = 0.0,
+          p = 1.0,
+          s = p;
+        for (int k = 1; k <= 200; ++k) 
+        {
+          double fk = (double) k,
+            t  =  (a + fk) * x * (r + 1.0);
+          r = t / ((ax + fk) * (a1x + fk) - t);
+          p *= r;
+          s += p;
+          if (Math.Abs(p) < eps_d9lgit * s) goto result;
+        }
+
+        throw new ArgumentException("no convergence in 200 terms of continued fraction");
+
+        result:
   
-        double hstar = 1.0 - x * s / a1x;
-      if (hstar < sqeps_d9lgit) 
-      {
-        System.Diagnostics.Trace.WriteLine("Warning (d9lgit function): answer less than half precision");
-      }
+          double hstar = 1.0 - x * s / a1x;
+        if (hstar < sqeps_d9lgit) 
+        {
+          System.Diagnostics.Trace.WriteLine("Warning (d9lgit function): answer less than half precision");
+        }
 
-      return ( -x - algap1 - Math.Log(hstar) );
-    } 
-
+        return ( -x - algap1 - Math.Log(hstar) );
+      } 
+    }
 
     #endregion
 
@@ -461,159 +466,163 @@ namespace Altaxo.Calc
 
     #region d9gmic
 
-    const double euler_d9gmic = 0.5772156649015328606065120900824;
-    static readonly double bot_d9gmic = Math.Log(DBL_MIN); 
-    const double eps_d9gmic = 0.25 * DBL_EPSILON;
-
-    /// <summary>
-    /// Compute the complementary incomplete gamma function for a near 
-    /// a negative integer and for small x.
-    /// </summary>
-    /// <param name="a"></param>
-    /// <param name="x"></param>
-    /// <param name="alx"></param>
-    /// <returns></returns>
-    /// <remarks>
-    /// This is a translation from the Fortran version of D9GMIC, SLATEC, FNLIB,
-    /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W.,(LANL)
-    /// to C++.
-    ///
-    /// Routines called: LnGamma(x)
-    /// </remarks>
-    static double d9gmic (double a, double x, double alx)
+    class d9gmic
     {
+      const double euler_d9gmic = 0.5772156649015328606065120900824;
+      static readonly double bot_d9gmic = Math.Log(DBL_MIN); 
+      const double eps_d9gmic = 0.25 * DBL_EPSILON;
 
-      double ret_val, alng, sgng, s, t, fkp1, fk, fm, te;
-
-      if (a > 0.0) 
-        throw new ArgumentException("a must be near a negative integer");
-
-      if (x <= 0.0) 
-        throw new ArgumentException("x must be > zero");
-
-      int m = (int) (-(a - 0.5));
-      fm = (double) m;
-
-      te = 1.0;
-      t = 1.0;
-      s = t;
-      for (int k = 1; k <= 200; ++k) 
+      /// <summary>
+      /// Compute the complementary incomplete gamma function for a near 
+      /// a negative integer and for small x.
+      /// </summary>
+      /// <param name="a"></param>
+      /// <param name="x"></param>
+      /// <param name="alx"></param>
+      /// <returns></returns>
+      /// <remarks>
+      /// This is a translation from the Fortran version of D9GMIC, SLATEC, FNLIB,
+      /// CATEGORY C7E, REVISION 900720, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Routines called: LnGamma(x)
+      /// </remarks>
+      public static double f(double a, double x, double alx)
       {
-        fkp1 = (double) (k + 1);
-        te = -x * te / (fm + fkp1);
-        t = te / fkp1;
-        s += t;
-        if (Math.Abs(t) < eps_d9gmic * s) goto L30;
-      }
 
-      throw new ArgumentException("no convergence in 200 terms of continued fraction");
+        double ret_val, alng, sgng, s, t, fkp1, fk, fm, te;
 
-      L30:
-        ret_val = -alx - euler_d9gmic + x * s / (fm + 1.0);
+        if (a > 0.0) 
+          throw new ArgumentException("a must be near a negative integer");
 
-      if (m == 0) 
+        if (x <= 0.0) 
+          throw new ArgumentException("x must be > zero");
+
+        int m = (int) (-(a - 0.5));
+        fm = (double) m;
+
+        te = 1.0;
+        t = 1.0;
+        s = t;
+        for (int k = 1; k <= 200; ++k) 
+        {
+          fkp1 = (double) (k + 1);
+          te = -x * te / (fm + fkp1);
+          t = te / fkp1;
+          s += t;
+          if (Math.Abs(t) < eps_d9gmic * s) goto L30;
+        }
+
+        throw new ArgumentException("no convergence in 200 terms of continued fraction");
+
+        L30:
+          ret_val = -alx - euler_d9gmic + x * s / (fm + 1.0);
+
+        if (m == 0) 
+          return ret_val;
+
+        if (m == 1) 
+          return -ret_val - 1.0 + 1.0 / x;
+
+        te = fm;
+        t = 1.0;
+        s = t;
+        int mm1 = m - 1;
+        for (int k = 1; k <= mm1; ++k) 
+        {
+          fk = (double) k;
+          te = -x * te / fk;
+          t = te / (fm - fk);
+          s += t;
+          if (Math.Abs(t) < eps_d9gmic * Math.Abs(s)) goto L50;
+        }
+
+        L50:
+          for (int k = 1; k <= m; ++k)
+            ret_val += 1.0 / k;
+
+        sgng = 1.0;
+        if (m % 2 == 1) sgng = -1.0;
+        alng = Math.Log(ret_val) - LnGamma(fm + 1.0);
+
+        ret_val = 0.0;
+        if (alng > bot_d9gmic)
+          ret_val = sgng * Math.Exp(alng);
+
+        if (s != 0.0)
+          ret_val += CopySign(Math.Exp(-fm * alx + Math.Log(Math.Abs(s) / fm)),s);
+
+        if (ret_val == 0.0 && s == 0.0)
+          throw new ArgumentException("result underflows");
+
         return ret_val;
-
-      if (m == 1) 
-        return -ret_val - 1.0 + 1.0 / x;
-
-      te = fm;
-      t = 1.0;
-      s = t;
-      int mm1 = m - 1;
-      for (int k = 1; k <= mm1; ++k) 
-      {
-        fk = (double) k;
-        te = -x * te / fk;
-        t = te / (fm - fk);
-        s += t;
-        if (Math.Abs(t) < eps_d9gmic * Math.Abs(s)) goto L50;
       }
-
-      L50:
-        for (int k = 1; k <= m; ++k)
-          ret_val += 1.0 / k;
-
-      sgng = 1.0;
-      if (m % 2 == 1) sgng = -1.0;
-      alng = Math.Log(ret_val) - LnGamma(fm + 1.0);
-
-      ret_val = 0.0;
-      if (alng > bot_d9gmic)
-        ret_val = sgng * Math.Exp(alng);
-
-      if (s != 0.0)
-        ret_val += CopySign(Math.Exp(-fm * alx + Math.Log(Math.Abs(s) / fm)),s);
-
-      if (ret_val == 0.0 && s == 0.0)
-        throw new ArgumentException("result underflows");
-
-      return ret_val;
     }
-
     #endregion
 
     #region dgamlm
 
-    static readonly double alnsml = Math.Log(DBL_MIN);
-    static readonly double  alnbig = Math.Log(DBL_MAX);
-
-    /// <summary>
-    /// Calculate the minimum and maximum legal bounds for x in Gamma(x). 
-    /// xmin and xmax are not the only bounds, but they are the only non- 
-    /// trivial ones to calculate. 
-    /// </summary>
-    /// <param name="xmin">
-    /// double precision minimum legal value of x in gamma(x).  Any 
-    /// smaller value of x might result in underflow. 
-    /// </param>
-    /// <param name="xmax">
-    ///   xmax  double precision maximum legal value of x in gamma(x).  Any 
-    ///       larger value of x might cause overflow. 
-    /// </param>
-    /// <remarks>
-    /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C7A, R2 REVISION 900315, originally written by Fullerton W.,(LANL)
-    /// to C++.
-    /// </remarks>
-    static void dgamlm (out double xmin, out double xmax)
+    class dgamlm
     {
+      static readonly double alnsml = Math.Log(DBL_MIN);
+      static readonly double  alnbig = Math.Log(DBL_MAX);
 
-      double xold,xln;
-      int i;
-
-      xmin = -alnsml;
-      for (i = 1; i <= 10; ++i) 
+      /// <summary>
+      /// Calculate the minimum and maximum legal bounds for x in Gamma(x). 
+      /// xmin and xmax are not the only bounds, but they are the only non- 
+      /// trivial ones to calculate. 
+      /// </summary>
+      /// <param name="xmin">
+      /// double precision minimum legal value of x in gamma(x).  Any 
+      /// smaller value of x might result in underflow. 
+      /// </param>
+      /// <param name="xmax">
+      ///   xmax  double precision maximum legal value of x in gamma(x).  Any 
+      ///       larger value of x might cause overflow. 
+      /// </param>
+      /// <remarks>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C7A, R2 REVISION 900315, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      /// </remarks>
+      public static void f(out double xmin, out double xmax)
       {
-        xold = xmin;
-        xln = Math.Log(xmin);
-        xmin -= xmin * ((xmin + 0.5) * xln - xmin - 0.2258 + alnsml)/(xmin * xln + 0.5);
-        if (Math.Abs(xmin - xold) < 0.005) goto L20;
+
+        double xold,xln;
+        int i;
+
+        xmin = -alnsml;
+        for (i = 1; i <= 10; ++i) 
+        {
+          xold = xmin;
+          xln = Math.Log(xmin);
+          xmin -= xmin * ((xmin + 0.5) * xln - xmin - 0.2258 + alnsml)/(xmin * xln + 0.5);
+          if (Math.Abs(xmin - xold) < 0.005) goto L20;
+        }
+
+        xmin = xmax = double.NaN;
+        throw new ArgumentException("unable to find xmin");
+
+        L20:
+          xmin = -xmin + 0.01;
+        xmax = alnbig;
+        for (i = 1; i <= 10; ++i) 
+        {
+          xold = xmax;
+          xln = Math.Log(xmax);
+          xmax -= xmax * ((xmax - 0.5) * xln - xmax + 0.9189 - alnbig) 
+            / (xmax * xln - 0.5);
+          if (Math.Abs(xmax - xold) < 0.005) goto L40;
+        }
+
+        xmin = xmax = double.NaN;
+        throw new ArgumentException("unable to find xmax");
+
+        L40:
+          xmax += -0.01;
+        xmin = Math.Max(xmin,-xmax + 1.0);
       }
-
-      xmin = xmax = double.NaN;
-      throw new ArgumentException("unable to find xmin");
-
-      L20:
-        xmin = -xmin + 0.01;
-      xmax = alnbig;
-      for (i = 1; i <= 10; ++i) 
-      {
-        xold = xmax;
-        xln = Math.Log(xmax);
-        xmax -= xmax * ((xmax - 0.5) * xln - xmax + 0.9189 - alnbig) 
-          / (xmax * xln - 0.5);
-        if (Math.Abs(xmax - xold) < 0.005) goto L40;
-      }
-
-      xmin = xmax = double.NaN;
-      throw new ArgumentException("unable to find xmax");
-
-      L40:
-        xmax += -0.01;
-      xmin = Math.Max(xmin,-xmax + 1.0);
     }
-
 
     #endregion
 
@@ -628,22 +637,45 @@ namespace Altaxo.Calc
     /// <param name="x">The function argument x.</param>
     /// <param name="sgn">The sign of the gamma function.</param>
     /// <returns>The logarithm of the absolute value of the gamma function.</returns>
-    /// <remarks>
+    /// <remarks><code>
     /// This is a translation from the Fortran version of DLGAMS, SLATEC, FNLIB,
     /// CATEGORY C7A, REVISION 891214, originally written by Fullerton W.,(LANL)
     /// to C++.
     ///
     /// Routines called: 
     ///  LnGamma(x)
-    /// </remarks>
+    /// </code></remarks>
     public static double LnGamma (double x, out double sgn)
+    {
+      return LnGamma(x, out sgn, false);
+    }
+
+    /// <summary>
+    /// LnGamma(x,sgn) returns the double precision natural
+    /// logarithm of the absolute value of the Gamma function for
+    /// double precision argument x. The sign of the gamma function
+    /// is returned in sgn.
+    /// </summary>
+    /// <param name="x">The function argument x.</param>
+    /// <param name="sgn">The sign of the gamma function.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>The logarithm of the absolute value of the gamma function.</returns>
+    /// <remarks><code>
+    /// This is a translation from the Fortran version of DLGAMS, SLATEC, FNLIB,
+    /// CATEGORY C7A, REVISION 891214, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    ///
+    /// Routines called: 
+    ///  LnGamma(x)
+    /// </code></remarks>
+    public static double LnGamma (double x, out double sgn, bool bDebug)
     {
       if (x <= 0.0 && (int)(Dmod(-Dint(x), 2.0) + 0.1) == 0) 
         sgn = -1.0;
       else
         sgn = 1.0;
   
-      return LnGamma(x);
+      return LnGamma(x, bDebug);
     }
 
     /// <summary>
@@ -664,6 +696,28 @@ namespace Altaxo.Calc
     /// </remarks>
     public static double LnGamma (double x)
     {
+      return LnGamma(x, false);
+    }
+
+    /// <summary>
+    /// Calculates the double precision logarithm of the 
+    /// absolute value of the Gamma function for double precision 
+    /// argument x. 
+    /// </summary>
+    /// <param name="x">The function argument x.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>The logarithm of the absolute value of the Gamma function.</returns>
+    /// <remarks>
+    /// This is a translation from the Fortran version of DLNGAM, SLATEC, FNLIB,
+    /// CATEGORY C7A, REVISION 900727, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    ///
+    /// Routines called: 
+    ///   Gamma(x)
+    ///   d9lgmc(x)
+    /// </remarks>
+    public static double LnGamma (double x, bool bDebug)
+    {
       const double sq2pil = 0.91893853320467274178032973640562;
       const double sqpi2l = 0.225791352644727432363097614947441;
       const double pi     = 3.1415926535897932384626433832795;
@@ -675,31 +729,90 @@ namespace Altaxo.Calc
       if (y > 10.0) goto L20;
 
       // log(abs(Gamma(x))) for abs(x) <= 10.0 
-      return Math.Log(Math.Abs(Gamma(x)));
+      return Math.Log(Math.Abs(Gamma(x, bDebug)));
 
       L20:
         if (y > xmax) 
-          throw new ArgumentException("Abs(x) so big LnGamma(x) overflows");
+        {
+          if(bDebug)
+            throw new ArgumentException("Abs(x) so big LnGamma(x) overflows");
+          else
+            return double.NaN;
+        }
 
       if (x > 0.0)
-        return sq2pil + (x - 0.5) * Math.Log(x) - x + d9lgmc(y);
+        return sq2pil + (x - 0.5) * Math.Log(x) - x + d9lgmc.f(y);
     
       double sinpiy = Math.Abs(Math.Sin(pi * y));
 
       if (sinpiy == 0.0) 
-        throw new ArgumentException("x is a negative integer");
+      {
+        if(bDebug)
+          throw new ArgumentException("x is a negative integer");
+        else
+          return double.NaN;
+      }
 
-      if (Math.Abs((x - Dint(x - 0.5)) / x) < dxrel) 
+      if (bDebug && Math.Abs((x - Dint(x - 0.5)) / x) < dxrel) 
         System.Diagnostics.Trace.WriteLine("answer less than half precision because x too near negative integer");
     
-      return sqpi2l + (x - 0.5) * Math.Log(y) - x - Math.Log(sinpiy) - d9lgmc(y);
+      return sqpi2l + (x - 0.5) * Math.Log(y) - x - Math.Log(sinpiy) - d9lgmc.f(y);
     }
 
     #endregion
 
     #region Gamma
 
-    static readonly double[] gamcs = 
+    /// <summary>
+    /// Gamma(x) calculates the double precision complete Gamma function 
+    /// for double precision argument x. 
+    /// </summary>
+    /// <param name="x">The function argument x.</param>
+    /// <returns>The Gamma function of the argument x.</returns>
+    /// <remarks>
+    /// <code>
+    /// This is a translation from the Fortran version of SLATEC, FNLIB,
+    /// CATEGORY C7A, REVISION 920618, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    ///
+    /// Series for GAM        on the interval  0.          to  1.00000E+00 
+    ///                                        with weighted error   5.79E-32 
+    ///                                         log weighted error  31.24 
+    ///                               significant figures required  30.00 
+    ///                                    decimal places required  32.05 
+    /// </code></remarks>
+    public static double Gamma(double x)
+    {
+      return _Gamma.Gamma(x, false);
+    }
+
+    /// <summary>
+    /// Gamma(x) calculates the double precision complete Gamma function 
+    /// for double precision argument x. 
+    /// </summary>
+    /// <param name="x">The function argument x.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>The Gamma function of the argument x.</returns>
+    /// <remarks>
+    /// <code>
+    /// This is a translation from the Fortran version of SLATEC, FNLIB,
+    /// CATEGORY C7A, REVISION 920618, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    ///
+    /// Series for GAM        on the interval  0.          to  1.00000E+00 
+    ///                                        with weighted error   5.79E-32 
+    ///                                         log weighted error  31.24 
+    ///                               significant figures required  30.00 
+    ///                                    decimal places required  32.05 
+    /// </code></remarks>
+    public static double Gamma(double x, bool bDebug)
+    {
+      return _Gamma.Gamma(x, bDebug);
+    }
+
+    class _Gamma
+    {
+      static readonly double[] gamcs = 
   { 
     0.008571195590989331421920062399942,
     0.004415381324841006757191315771652,
@@ -745,115 +858,170 @@ namespace Altaxo.Calc
     -5.793070335782135784625493333333e-32 
   };
 
-    static int n_Gamma;
-    static bool first_Gamma = true;
-    static double xmin_Gamma, xmax_Gamma;
+      static int n_Gamma;
+      static bool first_Gamma = true;
+      static double xmin_Gamma, xmax_Gamma;
 
-    /// <summary>
-    /// Gamma(x) calculates the double precision complete Gamma function 
-    /// for double precision argument x. 
-    /// </summary>
-    /// <param name="x">The function argument x.</param>
-    /// <returns>The Gamma function of the argument x.</returns>
-    /// <remarks>
-    /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C7A, REVISION 920618, originally written by Fullerton W.,(LANL)
-    /// to C++.
-    ///
-    /// Series for GAM        on the interval  0.          to  1.00000E+00 
-    ///                                        with weighted error   5.79E-32 
-    ///                                         log weighted error  31.24 
-    ///                               significant figures required  30.00 
-    ///                                    decimal places required  32.05 
-    /// </remarks>
-    public static double Gamma(double x)
-    {
-    
-      const double pi     = 3.1415926535897932384626433832795;
-      const double sq2pil = 0.91893853320467274178032973640562;
-      double  dxrel  = Math.Sqrt(DBL_EPSILON);
-
-      double ret_val;
-
-      if (first_Gamma) 
+      /// <summary>
+      /// Gamma(x) calculates the double precision complete Gamma function 
+      /// for double precision argument x. 
+      /// </summary>
+      /// <param name="x">The function argument x.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+      /// <returns>The Gamma function of the argument x.</returns>
+      /// <remarks>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C7A, REVISION 920618, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for GAM        on the interval  0.          to  1.00000E+00 
+      ///                                        with weighted error   5.79E-32 
+      ///                                         log weighted error  31.24 
+      ///                               significant figures required  30.00 
+      ///                                    decimal places required  32.05 
+      /// </remarks>
+      public static double Gamma(double x, bool bDebug)
       {
-        n_Gamma = Series.initds(gamcs, 42, 0.5 * DBL_EPSILON * 0.1);
-        dgamlm(out xmin_Gamma, out xmax_Gamma);
-        first_Gamma = false;
-      }
-
-      int i,n;
-
-      double y = Math.Abs(x);
-      if (y > 10.0) goto L50;    
-
-      // compute gamma(x) for -xbnd <= x <= xbnd.  Reduce interval and find 
-      // gamma(1+y) for 0.0 <= y < 1.0 first of all. 
-
-      n = (int)x;
-      if (x < 0.0) --n;
-      y = x - n;
-      --n;
-
-      ret_val = Series.dcsevl(y * 2.0 - 1.0, gamcs, n_Gamma) + 0.9375;
-      if (n == 0) return ret_val;
     
-      if (n > 0) goto L30;
+        const double pi     = 3.1415926535897932384626433832795;
+        const double sq2pil = 0.91893853320467274178032973640562;
+        double  dxrel  = Math.Sqrt(DBL_EPSILON);
 
-      // compute gamma(x) for x < 1.0 
+        double ret_val;
 
-      n = -n;
-      if (x == 0.0) 
-        throw new ArgumentException("x is 0");
+        if (first_Gamma) 
+        {
+          n_Gamma = Series.initds(gamcs, 42, 0.5 * DBL_EPSILON * 0.1);
+          dgamlm.f(out xmin_Gamma, out xmax_Gamma);
+          first_Gamma = false;
+        }
 
-      if (x < 0.0 && x + n - 2 == 0.0) 
-        throw new ArgumentException("x is a negative integer");
+        int i,n;
 
-      if (x < -0.5 && Math.Abs((x - Dint(x - 0.5)) / x) < dxrel) 
-        System.Diagnostics.Trace.WriteLine("Gamma function: answer less than half precision because x too near negative integer");
+        double y = Math.Abs(x);
+        if (y > 10.0) goto L50;    
 
-      for (i = 1; i <= n; ++i) 
-        ret_val /= x + i - 1;
-      return ret_val;
+        // compute gamma(x) for -xbnd <= x <= xbnd.  Reduce interval and find 
+        // gamma(1+y) for 0.0 <= y < 1.0 first of all. 
 
-      // gamma(x) for x >= 2.0 and x <= 10.0 
+        n = (int)x;
+        if (x < 0.0) --n;
+        y = x - n;
+        --n;
 
-      L30:
+        ret_val = Series.dcsevl(y * 2.0 - 1.0, gamcs, n_Gamma) + 0.9375;
+        if (n == 0) return ret_val;
+    
+        if (n > 0) goto L30;
+
+        // compute gamma(x) for x < 1.0 
+
+        n = -n;
+        if (x == 0.0) 
+        {
+          if(bDebug)
+            throw new ArgumentException("x is 0");
+          else
+            return double.NaN;
+        }
+
+        if (x < 0.0 && x + n - 2 == 0.0) 
+        {
+          if(bDebug)
+            throw new ArgumentException("x is a negative integer");
+          else
+            return double.NaN;
+        }
+
+        if (bDebug && x < -0.5 && Math.Abs((x - Dint(x - 0.5)) / x) < dxrel) 
+          System.Diagnostics.Trace.WriteLine("Gamma function: answer less than half precision because x too near negative integer");
+
         for (i = 1; i <= n; ++i) 
-          ret_val = (y + i) * ret_val;
-      return ret_val;
+          ret_val /= x + i - 1;
+        return ret_val;
+
+        // gamma(x) for x >= 2.0 and x <= 10.0 
+
+        L30:
+          for (i = 1; i <= n; ++i) 
+            ret_val = (y + i) * ret_val;
+        return ret_val;
     
-      // gamma(x) for abs(x) > 10.0.  recall y = abs(x).
+        // gamma(x) for abs(x) > 10.0.  recall y = abs(x).
 
-      L50:
-        if (x > xmax_Gamma) 
-          throw new ArgumentException("x so big Gamma(x) overflows"); 
+        L50:
+          if (x > xmax_Gamma) 
+          {
+            if(bDebug)
+              throw new ArgumentException("x so big Gamma(x) overflows"); 
+            else
+              return double.NaN;
+          }
 
-      ret_val = 0.0;
+        ret_val = 0.0;
 
-      if (x < xmin_Gamma)
-        System.Diagnostics.Trace.WriteLine("Gamma function: x so small Gamma(x) underflows");
+        if (bDebug && x < xmin_Gamma)
+          System.Diagnostics.Trace.WriteLine("Gamma function: x so small Gamma(x) underflows");
     
-      if (x < xmin_Gamma) return ret_val;
+        if (x < xmin_Gamma) 
+          return ret_val;
     
-      ret_val = Math.Exp((y - 0.5) * Math.Log(y) - y + sq2pil + d9lgmc(y));
-      if (x > 0.0) return ret_val;
+        ret_val = Math.Exp((y - 0.5) * Math.Log(y) - y + sq2pil + d9lgmc.f(y));
+        if (x > 0.0) return ret_val;
     
-      if (Math.Abs((x - Dint(x - 0.5)) / x) < dxrel) 
-        System.Diagnostics.Trace.WriteLine("Gamma function: answer less than half precision because x too near negative integer");
+        if (bDebug && Math.Abs((x - Dint(x - 0.5)) / x) < dxrel) 
+          System.Diagnostics.Trace.WriteLine("Gamma function: answer less than half precision because x too near negative integer");
 
-      double sinpiy = Math.Sin(pi * y);
-      if (sinpiy == 0.0) 
-        throw new ArgumentException("x is a negative integer"); 
-
-      return -pi / (y * sinpiy * ret_val);
+        double sinpiy = Math.Sin(pi * y);
+        if (sinpiy == 0.0) 
+        {
+          if(bDebug)
+            throw new ArgumentException("x is a negative integer"); 
+          else
+            return double.NaN;
+        }
+        return -pi / (y * sinpiy * ret_val);
+      }
     }
-
     #endregion
 
     #region Fac
 
-    static readonly double[] facn = 
+    /// <summary>
+    /// Fac(n) calculates the double precision factorial for the integer argument n.
+    /// </summary>
+    /// <param name="n">The argument n.</param>
+    /// <returns>The factorial of n.</returns>
+    /// <remarks>
+    /// This is a translation from the Fortran version of SLATEC, FNLIB,
+    /// CATEGORY C1, REVISION 900315, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    /// </remarks>
+    public static double Fac (int n)
+    {
+      return _Fac.Fac(n, false);
+    }
+
+    /// <summary>
+    /// Fac(n) calculates the double precision factorial for the integer argument n.
+    /// </summary>
+    /// <param name="n">The argument n.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>The factorial of n.</returns>
+    /// <remarks>
+    /// This is a translation from the Fortran version of SLATEC, FNLIB,
+    /// CATEGORY C1, REVISION 900315, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    /// </remarks>
+    public static double Fac (int n, bool bDebug)
+    {
+      return _Fac.Fac(n, bDebug);
+    }
+
+
+    class _Fac
+    {
+      static readonly double[] facn = 
   { 
     1.0,
     1.0,
@@ -888,42 +1056,54 @@ namespace Altaxo.Calc
     2.6525285981219105863630848e32 
   };
 
-    const double sq2pil_Fac = 0.91893853320467274178032973640562;
-    static int nmax_Fac = 0;
-    static double xmin_Fac, xmax_Fac;
+      const double sq2pil_Fac = 0.91893853320467274178032973640562;
+      static int nmax_Fac = 0;
+      static double xmin_Fac, xmax_Fac;
 
-    /// <summary>
-    /// Fac(n) calculates the double precision factorial for the integer argument n.
-    /// </summary>
-    /// <param name="n">The argument n.</param>
-    /// <returns>The factorial of n.</returns>
-    /// <remarks>
-    /// This is a translation from the Fortran version of SLATEC, FNLIB,
-    /// CATEGORY C1, REVISION 900315, originally written by Fullerton W.,(LANL)
-    /// to C++.
-    /// </remarks>
-    public static double Fac (int n)
-    {
-    
-    
-      if (nmax_Fac == 0) 
+      /// <summary>
+      /// Fac(n) calculates the double precision factorial for the integer argument n.
+      /// </summary>
+      /// <param name="n">The argument n.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+      /// <returns>The factorial of n.</returns>
+      /// <remarks>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C1, REVISION 900315, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      /// </remarks>
+      public static double Fac (int n, bool bDebug)
       {
-        dgamlm(out xmin_Fac, out xmax_Fac);
-        nmax_Fac = (int) (xmax_Fac - 1.0);
+    
+    
+        if (nmax_Fac == 0) 
+        {
+          dgamlm.f(out xmin_Fac, out xmax_Fac);
+          nmax_Fac = (int) (xmax_Fac - 1.0);
+        }
+
+        if (n < 0) 
+        {
+          if(bDebug)
+            throw new ArgumentException("factorial of negative integer undefined");
+          else 
+            return double.NaN;
+        }
+
+        if (n <= 30)
+          return facn[n];
+        if (n > nmax_Fac) 
+        {
+          if(bDebug)
+            throw new ArgumentException("n so big Fac(n) overflows");
+          else
+            return double.PositiveInfinity;
+        }
+
+        double x = (double) (n + 1);
+        return Math.Exp((x - 0.5) * Math.Log(x) - x + sq2pil_Fac + d9lgmc.f(x));
       }
 
-      if (n < 0) 
-        throw new ArgumentException("factorial of negative integer undefined");
-
-      if (n <= 30)
-        return facn[n];
-      if (n > nmax_Fac) 
-        throw new ArgumentException("n so big Fac(n) overflows");
-
-      double x = (double) (n + 1);
-      return Math.Exp((x - 0.5) * Math.Log(x) - x + sq2pil_Fac + d9lgmc(x));
     }
-
     #endregion
 
     #region RcpGamma
@@ -934,7 +1114,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x"></param>
     /// <returns></returns>
-    /// <remarks>
+    /// <remarks><code>
     /// This is a translation from the Fortran version of DGAMR, SLATEC, FNLIB,
     /// CATEGORY C7A, REVISION 900727, originally written by Fullerton W.,(LANL)
     /// to C++.
@@ -942,19 +1122,40 @@ namespace Altaxo.Calc
     /// Routines called: 
     ///   Gamma(x)
     ///   LnGamma(x,sgn)
-    /// </remarks>
+    /// </code></remarks>
     static double RcpGamma (double x)
+    {
+      return RcpGamma(x, false);
+    }
+
+    /// <summary>
+    /// RcpGamma(x) calculates the double precision reciprocal of the
+    /// complete Gamma function for double precision argument x.
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns></returns>
+    /// <remarks><code>
+    /// This is a translation from the Fortran version of DGAMR, SLATEC, FNLIB,
+    /// CATEGORY C7A, REVISION 900727, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    ///
+    /// Routines called: 
+    ///   Gamma(x)
+    ///   LnGamma(x,sgn)
+    /// </code></remarks>
+    static double RcpGamma (double x, bool bDebug)
     {
       if (x <= 0.0 && Dint(x) == x)
         return 0.0;
       else if (Math.Abs(x) > 10.0) 
       {
         double alngx, sgngx;
-        alngx = LnGamma(x, out sgngx);
+        alngx = LnGamma(x, out sgngx, bDebug);
         return sgngx * Math.Exp(-alngx);
       } 
       else
-        return 1.0 / Gamma(x); 
+        return 1.0 / Gamma(x, bDebug); 
     }
 
 
@@ -975,7 +1176,7 @@ namespace Altaxo.Calc
     /// <param name="x">The function value x.</param>
     /// <param name="a">The exponent.</param>
     /// <returns>The incomplete gamma function of x and a.</returns>
-    /// <remarks>
+    /// <remarks><code>
     /// This is a translation from the Fortran version of DGAMI, SLATEC, FNLIB,
     /// CATEGORY C7E, REVISION 900315, originally written by Fullerton W.,(LANL)
     /// to C++.
@@ -983,26 +1184,60 @@ namespace Altaxo.Calc
     /// Routines called: 
     ///   LnGamma(x)      - logarithm of the Gamma function
     ///   GammaIT(x,a)    - Tricomi's incomplete gamma function
-    /// </remarks>
+    /// </code></remarks>
     static double GammaI (double x, double a)
     {  
+      return GammaI(x, a, false);
+    }
+
+    /// <summary>
+    /// Evaluate the incomplete gamma function defined by
+    ///
+    ///   GammaI = integral from t = 0 to x of exp(-t) * t**(a-1.0)
+    ///
+    /// GammaI(x,a) is evaluated for positive values of a and non-negative values
+    /// of x.  A slight deterioration of 2 or 3 digits accuracy will occur
+    /// when GammaI is very large or very small, because logarithmic variables
+    /// are used.  The function and both arguments are double precision.
+    /// </summary>
+    /// <param name="x">The function value x.</param>
+    /// <param name="a">The exponent.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>The incomplete gamma function of x and a.</returns>
+    /// <remarks><code>
+    /// This is a translation from the Fortran version of DGAMI, SLATEC, FNLIB,
+    /// CATEGORY C7E, REVISION 900315, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    ///
+    /// Routines called: 
+    ///   LnGamma(x)      - logarithm of the Gamma function
+    ///   GammaIT(x,a)    - Tricomi's incomplete gamma function
+    /// </code></remarks>
+    static double GammaI (double x, double a, bool bDebug)
+    {  
       if (a <= 0.0) 
-        throw new ArgumentException("a must be greater than zero");
+      {
+        if(bDebug)
+          throw new ArgumentException("a must be greater than zero");
+        else
+          return double.NaN;
+      }
       if (x < 0.0) 
-        throw new ArgumentException("x must be greater or equal than zero");
+      {
+        if(bDebug)
+          throw new ArgumentException("x must be greater or equal than zero");
+        else
+          return double.NaN;
+      }
   
       // The only error possible in the expression below is a fatal overflow.
-      return (x == 0.0) ? 0.0 : Math.Exp(LnGamma(a)+a*Math.Log(x)) * GammaIT(x,a);
+      return (x == 0.0) ? 0.0 : Math.Exp(LnGamma(a, bDebug)+a*Math.Log(x)) * GammaIT(x,a, bDebug);
     }
 
 
     #endregion
 
     #region GammaIT
-
-    static readonly double  alneps_GammaIT = -Math.Log(0.5 * DBL_EPSILON);
-    static readonly double  sqeps_GammaIT  = Math.Sqrt(DBL_EPSILON);
-
 
     /// <summary>
     /// GammaIT(x,a) evaluates Tricomi's incomplete gamma function defined by
@@ -1015,7 +1250,7 @@ namespace Altaxo.Calc
     /// <param name="x">The function argument x.</param>
     /// <param name="a">The function argument a.</param>
     /// <returns>Tricomi's incomplete gamma function of x and a.</returns>
-    /// <remarks>
+    /// <remarks><code>
     /// GammaIT(x,a) is evaluated for arbitrary real values of a and for
     /// non-negative values of x (even though GammaIT is defined for x &lt; 0.0), 
     /// except that for x = 0 and a &lt;= 0.0, GammaIT is infinite,
@@ -1048,82 +1283,194 @@ namespace Altaxo.Calc
     ///   d9gmit(a,x,algap1,sgngam)
     ///   d9lgit(a,x,algap1) 
     ///   d9lgic(a,x,alx)
-    /// </remarks>
-    static double GammaIT(double x, double a)
+    /// </code></remarks>
+    public static double GammaIT(double x, double a)
     {
-      // machine constants
+      return _GammaIT.GammaIT(x, a, false);
+    }
 
-      double alng, aeps, h, t, ainta, sgngam=0.0, sga, alx = 0.0, algap1 = 0.0;
- 
-      if (x < 0.0) 
-        throw new ArgumentException("x must be greater or equal than zero");
-  
-      if (x != 0.0) 
-        alx = Math.Log(x);
+    /// <summary>
+    /// GammaIT(x,a) evaluates Tricomi's incomplete gamma function defined by
+    /// 
+    ///   GammaIT = x**(-a)/Gamma(a) * integral from 0 to x of exp(-t) * t**(a-1.0)
+    /// 
+    /// for a > 0.0 and by analytic continuation for a &lt;= 0.0.
+    /// Gamma(x) is the complete gamma function of x.
+    /// </summary>
+    /// <param name="x">The function argument x.</param>
+    /// <param name="a">The function argument a.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Tricomi's incomplete gamma function of x and a.</returns>
+    /// <remarks><code>
+    /// GammaIT(x,a) is evaluated for arbitrary real values of a and for
+    /// non-negative values of x (even though GammaIT is defined for x &lt; 0.0), 
+    /// except that for x = 0 and a &lt;= 0.0, GammaIT is infinite,
+    /// which is a fatal error.
+    /// 
+    /// The function and both arguments are double.
+    /// A slight deterioration of 2 or 3 digits accuracy will occur when
+    /// GammaIT is very large or very small in absolute value, because log-
+    /// arithmic variables are used.  Also, if the parameter  a  is very 
+    /// close to a negative integer (but not a negative integer), there is
+    /// a loss of accuracy, which is reported if the result is less than
+    /// half machine precision.
+    ///
+    /// This is a translation from the Fortran version of DGAMIT, SLATEC, FNLIB,
+    /// CATEGORY C7E, REVISION 920528, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    ///
+    /// References:
+    ///    (1) W. Gautschi, A computational procedure for incomplete 
+    ///        gamma functions, ACM Transactions on Mathematical 
+    ///        Software 5, 4 (December 1979), pp. 466-481.
+    ///    (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
+    ///        ACM Transactions on Mathematical Software 5, 4 
+    ///        (December 1979), pp. 482-489.
+    ///
+    /// Routines called: 
+    ///   LnGamma(x)      - logarithm of the Gamma function
+    ///   LnGamma(x,sgn)  - logarithm and sign of the Gamma function
+    ///   RcpGamma(x)     - reciprocal of the Gamma function
+    ///   d9gmit(a,x,algap1,sgngam)
+    ///   d9lgit(a,x,algap1) 
+    ///   d9lgic(a,x,alx)
+    /// </code></remarks>
+    public static double GammaIT(double x, double a, bool bDebug)
+    {
+      return _GammaIT.GammaIT(x, a, bDebug);
+    }
 
-      sga = (a < 0.0) ? -1.0 : 1.0;
-      ainta = Dint(a + sga * 0.5);
-      aeps = a - ainta;
-  
-      if (x > 0.0) 
+
+
+
+    class _GammaIT
+    {
+      static readonly double  alneps_GammaIT = -Math.Log(0.5 * DBL_EPSILON);
+      static readonly double  sqeps_GammaIT  = Math.Sqrt(DBL_EPSILON);
+
+
+      /// <summary>
+      /// GammaIT(x,a) evaluates Tricomi's incomplete gamma function defined by
+      /// 
+      ///   GammaIT = x**(-a)/Gamma(a) * integral from 0 to x of exp(-t) * t**(a-1.0)
+      /// 
+      /// for a > 0.0 and by analytic continuation for a &lt;= 0.0.
+      /// Gamma(x) is the complete gamma function of x.
+      /// </summary>
+      /// <param name="x">The function argument x.</param>
+      /// <param name="a">The function argument a.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+      /// <returns>Tricomi's incomplete gamma function of x and a.</returns>
+      /// <remarks><code>
+      /// GammaIT(x,a) is evaluated for arbitrary real values of a and for
+      /// non-negative values of x (even though GammaIT is defined for x &lt; 0.0), 
+      /// except that for x = 0 and a &lt;= 0.0, GammaIT is infinite,
+      /// which is a fatal error.
+      /// 
+      /// The function and both arguments are double.
+      /// A slight deterioration of 2 or 3 digits accuracy will occur when
+      /// GammaIT is very large or very small in absolute value, because log-
+      /// arithmic variables are used.  Also, if the parameter  a  is very 
+      /// close to a negative integer (but not a negative integer), there is
+      /// a loss of accuracy, which is reported if the result is less than
+      /// half machine precision.
+      ///
+      /// This is a translation from the Fortran version of DGAMIT, SLATEC, FNLIB,
+      /// CATEGORY C7E, REVISION 920528, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// References:
+      ///    (1) W. Gautschi, A computational procedure for incomplete 
+      ///        gamma functions, ACM Transactions on Mathematical 
+      ///        Software 5, 4 (December 1979), pp. 466-481.
+      ///    (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
+      ///        ACM Transactions on Mathematical Software 5, 4 
+      ///        (December 1979), pp. 482-489.
+      ///
+      /// Routines called: 
+      ///   LnGamma(x)      - logarithm of the Gamma function
+      ///   LnGamma(x,sgn)  - logarithm and sign of the Gamma function
+      ///   RcpGamma(x)     - reciprocal of the Gamma function
+      ///   d9gmit(a,x,algap1,sgngam)
+      ///   d9lgit(a,x,algap1) 
+      ///   d9lgic(a,x,alx)
+      /// </code></remarks>
+      public static double GammaIT(double x, double a, bool bDebug)
       {
-        if (x > 1.0) 
-        {
-          if (a < x) 
-          {
-            alng = d9lgic(a, x, alx); 
-            // evaluate dgamit in terms of log(dgamic(a, x))
-            h = 1.0;
-            if (aeps == 0.0 && ainta <= 0.0) goto L50;
-            algap1 = LnGamma(a + 1.0, out sgngam);
-            t = Math.Log(Math.Abs(a)) + alng - algap1;
-            if (t > alneps_GammaIT) 
-            {
-              t -= a * alx;
-              return  -sga * sgngam * Math.Exp(t);  
-            }
+        // machine constants
 
-            if (t > -alneps_GammaIT)
-              h = 1.0 - sga * sgngam * Math.Exp(t);
+        double alng, aeps, h, t, ainta, sgngam=0.0, sga, alx = 0.0, algap1 = 0.0;
+ 
+        if (x < 0.0) 
+        {
+          if(bDebug)
+            throw new ArgumentException("x must be greater or equal than zero");
+          else
+            return double.NaN;
+        }
+        if (x != 0.0) 
+          alx = Math.Log(x);
+
+        sga = (a < 0.0) ? -1.0 : 1.0;
+        ainta = Dint(a + sga * 0.5);
+        aeps = a - ainta;
   
-            if (Math.Abs(h) > sqeps_GammaIT) goto L50;
+        if (x > 0.0) 
+        {
+          if (x > 1.0) 
+          {
+            if (a < x) 
+            {
+              alng = d9lgic(a, x, alx); 
+              // evaluate dgamit in terms of log(dgamic(a, x))
+              h = 1.0;
+              if (aeps == 0.0 && ainta <= 0.0) goto L50;
+              algap1 = LnGamma(a + 1.0, out sgngam, bDebug);
+              t = Math.Log(Math.Abs(a)) + alng - algap1;
+              if (t > alneps_GammaIT) 
+              {
+                t -= a * alx;
+                return  -sga * sgngam * Math.Exp(t);  
+              }
+
+              if (t > -alneps_GammaIT)
+                h = 1.0 - sga * sgngam * Math.Exp(t);
   
-            System.Diagnostics.Trace.WriteLine("Warning (GammaIT function): answer less than half precision");
+              if (Math.Abs(h) > sqeps_GammaIT) goto L50;
   
-          L50:
-            t = -a * alx + Math.Log(Math.Abs(h));
-            return CopySign(Math.Exp(t), h);
+              if(bDebug)
+                System.Diagnostics.Trace.WriteLine("Warning (GammaIT function): answer less than half precision");
+  
+            L50:
+              t = -a * alx + Math.Log(Math.Abs(h));
+              return CopySign(Math.Exp(t), h);
+            } 
+            else 
+            { // a >= x
+              t = d9lgit.f(a, x, LnGamma(a + 1.0, bDebug));
+              return Math.Exp(t);
+            }
           } 
           else 
-          { // a >= x
-            t = d9lgit(a, x, LnGamma(a + 1.0));
-            return Math.Exp(t);
+          { // x <= 1.0
+            if (a >= -0.5 || aeps != 0.0)
+              algap1 = LnGamma(a + 1.0, out sgngam, bDebug);
+            return d9gmit(a, x, algap1, sgngam);
           }
         } 
         else 
-        { // x <= 1.0
-          if (a >= -0.5 || aeps != 0.0)
-            algap1 = LnGamma(a + 1.0, out sgngam);
-          return d9gmit(a, x, algap1, sgngam);
+        { // x == 0
+          if (ainta > 0.0 || aeps != 0.0)
+            return RcpGamma(a + 1.0, bDebug);
+          else
+            return 0.0;
         }
-      } 
-      else 
-      { // x == 0
-        if (ainta > 0.0 || aeps != 0.0)
-          return RcpGamma(a + 1.0);
-        else
-          return 0.0;
       }
     }
-
     #endregion
 
     #region GammaIC
 
-    const double eps_GammaIC = 0.25 * DBL_EPSILON;
-    static readonly double sqeps_GammaIC = Math.Sqrt(DBL_EPSILON);
-    static readonly double alneps_GammaIC = -Math.Log(0.5 * DBL_EPSILON);
-    
     /// <summary>
     /// Evaluate the complementary incomplete Gamma function
     ///
@@ -1133,10 +1480,10 @@ namespace Altaxo.Calc
     /// non-negative values of x (even though GammaIC is defined for x &lt; 0.0), 
     /// except that for x = 0 and a &lt;= 0.0, GammaIC is undefined.
     /// </summary>
-    /// <param name="x"></param>
+    /// <param name="x">The function argument.</param>
     /// <param name="a"></param>
-    /// <returns></returns>
-    /// <remarks>
+    /// <returns>Complementary incomplete Gamma function of arguments x and a.</returns>
+    /// <remarks><code>
     /// A slight deterioration of 2 or 3 digits accuracy will occur when
     /// GammaIC is very large or very small in absolute value, because log-
     /// arithmic variables are used.  Also, if the parameter A is very close
@@ -1158,97 +1505,199 @@ namespace Altaxo.Calc
     ///     (December 1979), pp. 482-489.
     ///
     /// Routines called: d9gmit, d9gmic, d9lgic, d9lgit, LnGamma(x), LnGamma(x,a)
-    /// </remarks>
-    static double GammaIC (double x, double a)
+    /// </code></remarks>
+    public static double GammaIC (double x, double a)
     {
-
-      double aeps, sgng, e, h, t, ainta, alngs=0, gstar, sgngs=0, algap1, sgngam, sga, alx;
-      bool izero;
-
-      if (x < 0.0) 
-        throw new ArgumentException("x must be greater or equal than zero");
-
-      if (x > 0.0) goto L20;
-
-      if (a > 0.0)
-        return Math.Exp(LnGamma(a + 1.0) - Math.Log(a));
-      else 
-        throw new ArgumentException("x = 0 and a <= 0 so GammaIC is undefined");
-
-      L20:
-        alx = Math.Log(x);
-      sga = (a < 0) ? -1.0 : 1.0;
-      ainta = Dint(a + sga * 0.5);
-      aeps = a - ainta;
-
-      izero = false;
-      if (x >= 1.0) goto L40;
-
-      if (a > 0.5 || Math.Abs(aeps) > 0.001) goto L30;
-
-      e = 2.0;
-      if (-ainta > 1.0)
-        e = (-ainta + 2.0) * 2.0 / (ainta * ainta - 1.0);
-
-      e -= alx * Math.Pow(x, -0.001);
-      if (e * Math.Abs(aeps) > eps_GammaIC) goto L30;
-
-      return d9gmic(a, x, alx);
-
-      L30:
-        algap1 = LnGamma(a + 1.0, out sgngam);
-      gstar = d9gmit(a, x, algap1, sgngam);
-
-      if (gstar == 0.0) 
-        izero = true;
-      else 
-      {
-        alngs = Math.Log((Math.Abs(gstar)));
-        sgngs = Math.Sign(gstar);
-      }
-
-      goto L50;
-
-      L40:
-        if (a < x)  
-          return Math.Exp(d9lgic(a, x, alx));
-
-      sgngam = 1.0;
-      algap1 = LnGamma(a + 1.0);
-      sgngs = 1.0;
-      alngs = d9lgit(a, x, algap1);
-
-      // evaluation of GammaIC(x,a) in terms of Tricomi's incomplete gamma function
-
-      L50:
-
-        h = 1.0;
-
-      if (!izero) 
-      {
-        t = a * alx + alngs;
-        if (t > alneps_GammaIC) 
-        {
-          sgng =  -sgngs * sga * sgngam;
-          t += algap1 - Math.Log((Math.Abs(a)));
-          return sgng * Math.Exp(t);
-        }
-    
-        if (t > -alneps_GammaIC)
-          h = 1.0 - sgngs * Math.Exp(t);
-    
-        if (Math.Abs(h) < sqeps_GammaIC) 
-        {
-          System.Diagnostics.Trace.WriteLine("Warning (GammaIC function): answer less than half precision");
-        }
-      }
-
-      sgng = Math.Sign(h) * sga * sgngam;
-      t = Math.Log(Math.Abs(h)) + algap1 - Math.Log((Math.Abs(a)));
-      return sgng * Math.Exp(t);
+      return _GammaIC.GammaIC(x, a, false);
     }
 
 
+    /// <summary>
+    /// Evaluate the complementary incomplete Gamma function
+    ///
+    ///   GammaIC(x,a) = integral from x to infinity of exp(-t) * t**(a-1)
+    ///
+    /// GammaIC(x,a) is evaluated for arbitrary real values of A and for
+    /// non-negative values of x (even though GammaIC is defined for x &lt; 0.0), 
+    /// except that for x = 0 and a &lt;= 0.0, GammaIC is undefined.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="a"></param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Complementary incomplete Gamma function of arguments x and a.</returns>
+    /// <remarks><code>
+    /// A slight deterioration of 2 or 3 digits accuracy will occur when
+    /// GammaIC is very large or very small in absolute value, because log-
+    /// arithmic variables are used.  Also, if the parameter A is very close
+    /// to a negative integer (but not a negative integer), there is a loss 
+    /// of accuracy, which is reported if the result is less than half
+    /// machine precision.
+    ///
+    /// This is a translation from the Fortran version of DGAMIC, SLATEC, FNLIB,
+    /// CATEGORY C7E, REVISION 920528, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    ///
+    /// References:
+    ///
+    /// (1) W. Gautschi, A computational procedure for incomplete
+    ///     gamma functions, ACM Transactions on Mathematical
+    ///     Software 5, 4 (December 1979), pp. 466-481.
+    /// (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
+    ///     ACM Transactions on Mathematical Software 5, 4 
+    ///     (December 1979), pp. 482-489.
+    ///
+    /// Routines called: d9gmit, d9gmic, d9lgic, d9lgit, LnGamma(x), LnGamma(x,a)
+    /// </code></remarks>
+    public static double GammaIC (double x, double a, bool bDebug)
+    {
+      return _GammaIC.GammaIC(x, a, bDebug);
+    }
+
+
+
+    class _GammaIC
+    {
+      const double eps_GammaIC = 0.25 * DBL_EPSILON;
+      static readonly double sqeps_GammaIC = Math.Sqrt(DBL_EPSILON);
+      static readonly double alneps_GammaIC = -Math.Log(0.5 * DBL_EPSILON);
+    
+      /// <summary>
+      /// Evaluate the complementary incomplete Gamma function
+      ///
+      ///   GammaIC(x,a) = integral from x to infinity of exp(-t) * t**(a-1)
+      ///
+      /// GammaIC(x,a) is evaluated for arbitrary real values of A and for
+      /// non-negative values of x (even though GammaIC is defined for x &lt; 0.0), 
+      /// except that for x = 0 and a &lt;= 0.0, GammaIC is undefined.
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <param name="a"></param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+      /// <returns>Complementary incomplete Gamma function of arguments x and a.</returns>
+      /// <remarks><code>
+      /// A slight deterioration of 2 or 3 digits accuracy will occur when
+      /// GammaIC is very large or very small in absolute value, because log-
+      /// arithmic variables are used.  Also, if the parameter A is very close
+      /// to a negative integer (but not a negative integer), there is a loss 
+      /// of accuracy, which is reported if the result is less than half
+      /// machine precision.
+      ///
+      /// This is a translation from the Fortran version of DGAMIC, SLATEC, FNLIB,
+      /// CATEGORY C7E, REVISION 920528, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// References:
+      ///
+      /// (1) W. Gautschi, A computational procedure for incomplete
+      ///     gamma functions, ACM Transactions on Mathematical
+      ///     Software 5, 4 (December 1979), pp. 466-481.
+      /// (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
+      ///     ACM Transactions on Mathematical Software 5, 4 
+      ///     (December 1979), pp. 482-489.
+      ///
+      /// Routines called: d9gmit, d9gmic, d9lgic, d9lgit, LnGamma(x), LnGamma(x,a)
+      /// </code></remarks>
+      public static double GammaIC (double x, double a, bool bDebug)
+      {
+
+        double aeps, sgng, e, h, t, ainta, alngs=0, gstar, sgngs=0, algap1, sgngam, sga, alx;
+        bool izero;
+
+        if (x < 0.0) 
+        {
+          if(bDebug)
+            throw new ArgumentException("x must be greater or equal than zero");
+          else
+            return double.NaN;
+        }
+
+        if (x > 0.0) goto L20;
+
+        if (a > 0.0)
+          return Math.Exp(LnGamma(a + 1.0) - Math.Log(a));
+        else 
+        {
+          if(bDebug)
+            throw new ArgumentException("x = 0 and a <= 0 so GammaIC is undefined");
+          else
+            return double.NaN;
+        }
+
+        L20:
+          alx = Math.Log(x);
+        sga = (a < 0) ? -1.0 : 1.0;
+        ainta = Dint(a + sga * 0.5);
+        aeps = a - ainta;
+
+        izero = false;
+        if (x >= 1.0) goto L40;
+
+        if (a > 0.5 || Math.Abs(aeps) > 0.001) goto L30;
+
+        e = 2.0;
+        if (-ainta > 1.0)
+          e = (-ainta + 2.0) * 2.0 / (ainta * ainta - 1.0);
+
+        e -= alx * Math.Pow(x, -0.001);
+        if (e * Math.Abs(aeps) > eps_GammaIC) goto L30;
+
+        return d9gmic.f(a, x, alx);
+
+        L30:
+          algap1 = LnGamma(a + 1.0, out sgngam, bDebug);
+        gstar = d9gmit(a, x, algap1, sgngam);
+
+        if (gstar == 0.0) 
+          izero = true;
+        else 
+        {
+          alngs = Math.Log((Math.Abs(gstar)));
+          sgngs = Math.Sign(gstar);
+        }
+
+        goto L50;
+
+        L40:
+          if (a < x)  
+            return Math.Exp(d9lgic(a, x, alx));
+
+        sgngam = 1.0;
+        algap1 = LnGamma(a + 1.0, bDebug);
+        sgngs = 1.0;
+        alngs = d9lgit.f(a, x, algap1);
+
+        // evaluation of GammaIC(x,a) in terms of Tricomi's incomplete gamma function
+
+        L50:
+
+          h = 1.0;
+
+        if (!izero) 
+        {
+          t = a * alx + alngs;
+          if (t > alneps_GammaIC) 
+          {
+            sgng =  -sgngs * sga * sgngam;
+            t += algap1 - Math.Log((Math.Abs(a)));
+            return sgng * Math.Exp(t);
+          }
+    
+          if (t > -alneps_GammaIC)
+            h = 1.0 - sgngs * Math.Exp(t);
+    
+          if (Math.Abs(h) < sqeps_GammaIC) 
+          {
+            if(bDebug)
+              System.Diagnostics.Trace.WriteLine("Warning (GammaIC function): answer less than half precision");
+          }
+        }
+
+        sgng = Math.Sign(h) * sga * sgngam;
+        t = Math.Log(Math.Abs(h)) + algap1 - Math.Log((Math.Abs(a)));
+        return sgng * Math.Exp(t);
+      }
+
+    }
     #endregion
 
     #region LnBeta and Beta
@@ -1260,14 +1709,34 @@ namespace Altaxo.Calc
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns>The logarithm of the complete beta function.</returns>
-    /// <remarks>
+    /// <remarks><code>
     /// This is a translation from the Fortran version of DLBETA(A,B), SLATEC, FNLIB,
     /// CATEGORY C7B, REVISION 900727, originally written by Fullerton W.,(LANL)
     /// to C++.
     /// 
     /// Calls d9lgmc(x), LogRel(x), LnGamma(x), Gamma(x)
-    /// </remarks>
+    /// </code></remarks>
     public static double LnBeta (double a, double b)
+    {
+      return LnBeta(a, b, false);
+    }
+
+    /// <summary>
+    /// LnBeta(a,b) calculates the double precision natural logarithm of
+    /// the complete beta function for double precision arguments a and b.
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>The logarithm of the complete beta function.</returns>
+    /// <remarks><code>
+    /// This is a translation from the Fortran version of DLBETA(A,B), SLATEC, FNLIB,
+    /// CATEGORY C7B, REVISION 900727, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    /// 
+    /// Calls d9lgmc(x), LogRel(x), LnGamma(x), Gamma(x)
+    /// </code></remarks>
+    public static double LnBeta (double a, double b, bool bDebug)
     {
       const double sq2pil = 0.91893853320467274178032973640562;
 
@@ -1276,14 +1745,19 @@ namespace Altaxo.Calc
         q = Math.Max(a,b);
 
       if (p <= 0.0) 
-        throw new ArgumentException("both arguments must be greater than zero");
+      {
+        if(bDebug)
+          throw new ArgumentException("both arguments must be greater than zero");
+        else
+          return double.NaN;
+      }
 
       double d1 = p + q;
 
       if (p >= 10.0) 
       {
         // p and q are big
-        double corr = d9lgmc(p) + d9lgmc(q) - d9lgmc(d1);
+        double corr = d9lgmc.f(p) + d9lgmc.f(q) - d9lgmc.f(d1);
         double d3 = Math.Log(q) * -0.5 + sq2pil;
         double d2 = d3 + corr;
         d1 = d2 + (p - 0.5) * Math.Log(p / (p + q));
@@ -1294,7 +1768,7 @@ namespace Altaxo.Calc
       else if (q >= 10.0) 
       {
         // p is small, but q is big
-        double corr = d9lgmc(q) - d9lgmc(d1);
+        double corr = d9lgmc.f(q) - d9lgmc.f(d1);
         d1 = LnGamma(p) + corr;
         double d2 = -p / (p + q);
         ret_val = d1 + p - p * Math.Log(p + q) + (q - 0.5) * LogRel(d2);
@@ -1303,12 +1777,11 @@ namespace Altaxo.Calc
       else 
       {
         // p and q are small
-        ret_val = Math.Log( Gamma(p) * (Gamma(q) / Gamma(d1)) );
+        ret_val = Math.Log( Gamma(p,bDebug) * (Gamma(q,bDebug) / Gamma(d1,bDebug)) );
       }
 
       return ret_val;
     }
-
 
     /// <summary>
     /// Beta(a,b) calculates the complete beta function for double precision arguments a and b using Exp(LnBeta(a,b)).
@@ -1318,30 +1791,65 @@ namespace Altaxo.Calc
     /// <returns>The complete beta function of arguments a and b.</returns>
     public static double Beta(double a, double b)
     {
-      return Math.Exp(LnBeta(a,b));
+      return Math.Exp(LnBeta(a,b,false));
+    }
+
+    /// <summary>
+    /// Beta(a,b) calculates the complete beta function for double precision arguments a and b using Exp(LnBeta(a,b)).
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>The complete beta function of arguments a and b.</returns>
+    public static double Beta(double a, double b, bool bDebug)
+    {
+      return Math.Exp(LnBeta(a,b,bDebug));
     }
 
     #endregion
 
     #region BetaI and BetaIR
 
-    const double eps_BetaI    = 0.5 * DBL_EPSILON;
-    const double sml_BetaI    = DBL_MIN;
-    static readonly double alneps_BetaI = Math.Log(eps_BetaI);
-    static readonly double alnsml_BetaI = Math.Log(sml_BetaI);
+    /// <summary>
+    /// BetaI(x,a,b) calculates the double precision incomplete beta function.
+    /// BetaI(x,a,b) = Integral(0,x) t**(a-1) (1-t)**(b-1) dt
+    /// </summary>
+    /// <param name="x">Function argument.</param>
+    /// <param name="a">First exponent, see summary.</param>
+    /// <param name="b">Second exponent, see summary.</param>
+    /// <returns>The incomplete beta function of the parameters x, a and b.</returns>
+    public static double BetaI(double x, double a, double b)
+    {
+      return _BetaIR.BetaIR(x,a,b,false)/Beta(a,b,false);
+    }
 
     /// <summary>
+    /// BetaI(x,a,b) calculates the double precision incomplete beta function.
+    /// BetaI(x,a,b) = Integral(0,x) t**(a-1) (1-t)**(b-1) dt
+    /// </summary>
+    /// <param name="x">Function argument.</param>
+    /// <param name="a">First exponent, see summary.</param>
+    /// <param name="b">Second exponent, see summary.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>The incomplete beta function of the parameters x, a and b.</returns>
+    public static double BetaI(double x, double a, double b, bool bDebug)
+    {
+      return _BetaIR.BetaIR(x,a,b,bDebug)/Beta(a,b,bDebug);
+    }
+
+   
+    /// <summary>
     /// BetaIR(x,a,b) calculates the double precision incomplete beta function ratio.
-    ///
+    /// <code>
     ///                 B_x(a,b)    Integral(0,x) t**(a-1) (1-t)**(b-1) dt
     ///     I_x(a,b) = --------- = ---------------------------------------
     ///                 B(a,b)                   B(a,b)
-    /// </summary>
+    /// </code></summary>
     /// <param name="x">upper limit of integration.  x must be in (0,1) inclusive.</param>
-    /// <param name="pin">first beta distribution parameter. a must be > 0.</param>
-    /// <param name="qin">second beta distribution parameter.  b must be > 0.</param>
+    /// <param name="a">first beta distribution parameter. a must be > 0.</param>
+    /// <param name="b">second beta distribution parameter.  b must be > 0.</param>
     /// <returns>The incomplete beta function ratio.</returns>
-    /// <remarks>
+    /// <remarks><code>
     /// The incomplete beta function ratio is the probability that a
     /// random variable from a beta distribution having parameters a and b
     /// will be less than or equal to x.
@@ -1353,125 +1861,191 @@ namespace Altaxo.Calc
     ///             Communications of the ACM 17, 3 (March 1974), pp. 156.
     /// 
     /// Calls   LnBeta(a,b)
-    /// </remarks>
-    public static double BetaIR(double x, double pin, double qin)
+    /// </code></remarks>
+    public static double BetaIR(double x, double a, double b)
     {
-    
-      double ret_val, d__1, term, c__, p, q, y, p1, xb, xi, ps, finsum;
-      int i__, i__1, n, ib;
+      return _BetaIR.BetaIR(x,a,b,false);
+    }
 
-      // check arguments
-      if (x < 0.0 || x > 1.0) 
-        throw new ArgumentException("x is not in the range (0,1)");
-
-      if (pin <= 0.0 || qin <= 0.0) 
-        throw new ArgumentException("p and/or q is less or equal than zero");
-
-      y = x;
-      p = pin;
-      q = qin;
-
-      if (q <= p && x < 0.8) goto L20;
-      if (x < 0.2) goto L20;
-
-      y = 1.0 - y;
-      p = qin;
-      q = pin;
-
-      L20:
-        if ((p + q) * y / (p + 1.0) < eps_BetaI) goto L80;
-
-      // Evaluate the infinite sum first.  Term will equal
-      // y**p/beta(ps,p) * (1.-ps)-sub-i * y**i / fac(i).
-
-      ps = q - Dint(q);
-      if (ps == 0.0) ps = 1.0;
-      xb = p * Math.Log(y) - LnBeta(ps, p) - Math.Log(p);
-      ret_val = 0.0;
-      if (xb < alnsml_BetaI) goto L40;
-
-      ret_val = Math.Exp(xb);
-      term = ret_val * p;
-      if (ps == 1.0) goto L40;
-
-      // Computing MAX 
-      d__1 = alneps_BetaI / Math.Log(y);
-      n = (int) Math.Max(d__1,4.0);
-      i__1 = n;
-      for (i__ = 1; i__ <= i__1; ++i__) 
-      {
-        xi = (double) i__;
-        d__1 = term * (xi - ps);
-        term = d__1 * y / xi;
-        ret_val += term / (p + xi);
-      }
-
-      // Now evaluate the finite sum, maybe.
-
-      L40:
-        if (q <= 1.0) goto L70;
-
-      xb = p * Math.Log(y) + q * Math.Log(1.0 - y) - LnBeta(p, q) - Math.Log(q);
-
-      // Computing MAX
-      d__1 = xb / alnsml_BetaI;
-      ib = (int) Math.Max(d__1,0.0);
-      term = Math.Exp(xb - ib * alnsml_BetaI);
-      c__ = 1.0 / (1.0 - y);
-      d__1 = p + q;
-      p1 = q * c__ / (d__1 - 1.0);
-
-      finsum = 0.0;
-      n = (int) q;
-      if (q == (double) n) --n;
-
-      i__1 = n;
-      for (i__ = 1; i__ <= i__1; ++i__) 
-      {
-        if (p1 <= 1.0 && term / eps_BetaI <= finsum) goto L60;
-        xi = (double) i__;
-        d__1 = (q - xi + 1.0) * c__;
-        term = d__1 * term / (p + q - xi);
-        if (term > 1.0) --ib;
-        if (term > 1.0) term *= sml_BetaI;
-        if (ib == 0) finsum += term;
-      }
-
-      L60:
-        ret_val += finsum;
-
-      L70:
-        if (y != x || p != pin)
-          ret_val = 1.0 - ret_val;
-
-      // Computing MAX
-      d__1 = Math.Min(ret_val,1.0);
-      ret_val = Math.Max(d__1,0.0);
-      return ret_val;
-  
-      L80:
-        ret_val = 0.0;
-      xb = p * Math.Log((Math.Max(y,sml_BetaI))) - Math.Log(p) - LnBeta(p,q);
-      if (xb > alnsml_BetaI && y != 0.0)
-        ret_val = Math.Exp(xb);
-      if (y != x || p != pin)
-        ret_val = 1.0 - ret_val;
-  
-      return ret_val;
+    /// <summary>
+    /// BetaIR(x,a,b) calculates the double precision incomplete beta function ratio.
+    /// <code>
+    ///                 B_x(a,b)    Integral(0,x) t**(a-1) (1-t)**(b-1) dt
+    ///     I_x(a,b) = --------- = ---------------------------------------
+    ///                 B(a,b)                   B(a,b)
+    /// </code></summary>
+    /// <param name="x">upper limit of integration.  x must be in (0,1) inclusive.</param>
+    /// <param name="a">first beta distribution parameter. a must be > 0.</param>
+    /// <param name="b">second beta distribution parameter.  b must be > 0.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>The incomplete beta function ratio.</returns>
+    /// <remarks><code>
+    /// The incomplete beta function ratio is the probability that a
+    /// random variable from a beta distribution having parameters a and b
+    /// will be less than or equal to x.
+    /// This is a translation from the Fortran version of DBETAI(X,PIN,QIN), SLATEC,
+    /// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    /// 
+    /// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179, 
+    ///             Communications of the ACM 17, 3 (March 1974), pp. 156.
+    /// 
+    /// Calls   LnBeta(a,b)
+    /// </code></remarks>
+    public static double BetaIR(double x, double a, double b, bool bDebug)
+    {
+      return _BetaIR.BetaIR(x,a,b,bDebug);
     }
 
 
-    /// <summary>
-    /// BetaI(x,a,b) calculates the double precision incomplete beta function.
-    /// BetaI(x,a,b) = Integral(0,x) t**(a-1) (1-t)**(b-1) dt
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns>The incomplete beta function of the parameters x, a and b.</returns>
-    public static double BetaI(double x, double a, double b)
+
+    class _BetaIR
     {
-      return BetaIR(x,a,b)/Beta(a,b);
+
+      const double eps_BetaI    = 0.5 * DBL_EPSILON;
+      const double sml_BetaI    = DBL_MIN;
+      static readonly double alneps_BetaI = Math.Log(eps_BetaI);
+      static readonly double alnsml_BetaI = Math.Log(sml_BetaI);
+
+      /// <summary>
+      /// BetaIR(x,a,b) calculates the double precision incomplete beta function ratio.
+      /// <code>
+      ///                 B_x(a,b)    Integral(0,x) t**(a-1) (1-t)**(b-1) dt
+      ///     I_x(a,b) = --------- = ---------------------------------------
+      ///                 B(a,b)                   B(a,b)
+      /// </code></summary>
+      /// <param name="x">upper limit of integration.  x must be in (0,1) inclusive.</param>
+      /// <param name="pin">first beta distribution parameter. a must be > 0.</param>
+      /// <param name="qin">second beta distribution parameter.  b must be > 0.</param>
+      /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+      /// <returns>The incomplete beta function ratio.</returns>
+      /// <remarks><code>
+      /// The incomplete beta function ratio is the probability that a
+      /// random variable from a beta distribution having parameters a and b
+      /// will be less than or equal to x.
+      /// This is a translation from the Fortran version of DBETAI(X,PIN,QIN), SLATEC,
+      /// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      /// 
+      /// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179, 
+      ///             Communications of the ACM 17, 3 (March 1974), pp. 156.
+      /// 
+      /// Calls   LnBeta(a,b)
+      /// </code></remarks>
+      public static double BetaIR(double x, double pin, double qin, bool bDebug)
+      {
+    
+        double ret_val, d__1, term, c__, p, q, y, p1, xb, xi, ps, finsum;
+        int i__, i__1, n, ib;
+
+        // check arguments
+        if (x < 0.0 || x > 1.0) 
+        {
+          if(bDebug)
+            throw new ArgumentException("x is not in the range (0,1)");
+          else
+            return double.NaN;
+        }
+        if (pin <= 0.0 || qin <= 0.0)
+        {
+          if(bDebug)
+            throw new ArgumentException("p and/or q is less or equal than zero");
+          else
+            return double.NaN;
+        }
+        y = x;
+        p = pin;
+        q = qin;
+
+        if (q <= p && x < 0.8) goto L20;
+        if (x < 0.2) goto L20;
+
+        y = 1.0 - y;
+        p = qin;
+        q = pin;
+
+        L20:
+          if ((p + q) * y / (p + 1.0) < eps_BetaI) goto L80;
+
+        // Evaluate the infinite sum first.  Term will equal
+        // y**p/beta(ps,p) * (1.-ps)-sub-i * y**i / fac(i).
+
+        ps = q - Dint(q);
+        if (ps == 0.0) ps = 1.0;
+        xb = p * Math.Log(y) - LnBeta(ps, p, bDebug) - Math.Log(p);
+        ret_val = 0.0;
+        if (xb < alnsml_BetaI) goto L40;
+
+        ret_val = Math.Exp(xb);
+        term = ret_val * p;
+        if (ps == 1.0) goto L40;
+
+        // Computing MAX 
+        d__1 = alneps_BetaI / Math.Log(y);
+        n = (int) Math.Max(d__1,4.0);
+        i__1 = n;
+        for (i__ = 1; i__ <= i__1; ++i__) 
+        {
+          xi = (double) i__;
+          d__1 = term * (xi - ps);
+          term = d__1 * y / xi;
+          ret_val += term / (p + xi);
+        }
+
+        // Now evaluate the finite sum, maybe.
+
+        L40:
+          if (q <= 1.0) goto L70;
+
+        xb = p * Math.Log(y) + q * Math.Log(1.0 - y) - LnBeta(p, q, bDebug) - Math.Log(q);
+
+        // Computing MAX
+        d__1 = xb / alnsml_BetaI;
+        ib = (int) Math.Max(d__1,0.0);
+        term = Math.Exp(xb - ib * alnsml_BetaI);
+        c__ = 1.0 / (1.0 - y);
+        d__1 = p + q;
+        p1 = q * c__ / (d__1 - 1.0);
+
+        finsum = 0.0;
+        n = (int) q;
+        if (q == (double) n) --n;
+
+        i__1 = n;
+        for (i__ = 1; i__ <= i__1; ++i__) 
+        {
+          if (p1 <= 1.0 && term / eps_BetaI <= finsum) goto L60;
+          xi = (double) i__;
+          d__1 = (q - xi + 1.0) * c__;
+          term = d__1 * term / (p + q - xi);
+          if (term > 1.0) --ib;
+          if (term > 1.0) term *= sml_BetaI;
+          if (ib == 0) finsum += term;
+        }
+
+        L60:
+          ret_val += finsum;
+
+        L70:
+          if (y != x || p != pin)
+            ret_val = 1.0 - ret_val;
+
+        // Computing MAX
+        d__1 = Math.Min(ret_val,1.0);
+        ret_val = Math.Max(d__1,0.0);
+        return ret_val;
+  
+        L80:
+          ret_val = 0.0;
+        xb = p * Math.Log((Math.Max(y,sml_BetaI))) - Math.Log(p) - LnBeta(p,q, bDebug);
+        if (xb > alnsml_BetaI && y != 0.0)
+          ret_val = Math.Exp(xb);
+        if (y != x || p != pin)
+          ret_val = 1.0 - ret_val;
+  
+        return ret_val;
+      }
+
     }
 
     #endregion
@@ -1596,115 +2170,179 @@ namespace Altaxo.Calc
     /// <param name="z">The complex argument.</param>
     /// <returns>The Gamma function of the complex argument z.</returns>
     /// <remarks>
-    ///-----------------------------------------------------------------------------//
-    /// july 1977 edition.  w. fullerton, c3, los alamos scientific lab.
-    /// a preliminary version that is portable, but not accurate enough.
-    ///-----------------------------------------------------------------------------//
+    /// July 1977 edition.  w. fullerton, c3, los alamos scientific lab.
+    /// A preliminary version that is portable, but not accurate enough.
     /// </remarks>
     public static Complex Gamma(Complex z)
     {
-      return ComplexMath.Exp(LnGamma(z));
+      return ComplexMath.Exp(LnGamma(z, false));
     }
+
+    /// <summary>
+    /// Complex Gamma function.
+    /// </summary>
+    /// <param name="z">The complex argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>The Gamma function of the complex argument z.</returns>
+    /// <remarks>
+    /// July 1977 edition.  w. fullerton, c3, los alamos scientific lab.
+    /// A preliminary version that is portable, but not accurate enough.
+    /// </remarks>
+    public static Complex Gamma(Complex z, bool bDebug)
+    {
+      return ComplexMath.Exp(LnGamma(z, bDebug));
+    }
+
+
 
     #endregion
 
     #region LnGamma(complex)
-
-    static double _LnGamma_bound = 0.0;
-    static double            _LnGamma_dxrel = 0.0; 
-    static double              _LnGamma_rmax  = 0.0;
-
-    
-    //-----------------------------------------------------------------------------//
-    // August 1980 edition.  W. Fullerton c3, Los Alamos Scientific Lab.
-    // Eventually clngam should make use of c8lgmc for all z except for
-    // z in the vicinity of 1 and 2.
-    //-----------------------------------------------------------------------------//
-
-    static Complex LnGamma (Complex zin)
+    /// <summary>
+    /// Complex logarithm of the gamma function.
+    /// </summary>
+    /// <param name="z">The complex argument.</param>
+    /// <returns>The complex logarithm of the gamma function of the complex argument z.</returns>
+    /// <remarks>
+    /// August 1980 edition.  W. Fullerton c3, Los Alamos Scientific Lab.
+    /// Eventually clngam should make use of c8lgmc for all z except for
+    /// z in the vicinity of 1 and 2.
+    /// </remarks>
+    public static Complex LnGamma (Complex z)
     {
-      const double sq2pil = 0.91893853320467274;
-
-      Complex retval;
-
-
-
-      if (_LnGamma_bound == 0.0) 
-      {
-        int nn = (int)(-0.30 * Math.Log(0.5*DBL_EPSILON));
-        _LnGamma_bound = 0.1171 * nn * Math.Pow(0.1 * 0.5 * DBL_EPSILON, -1.0/(2.0*nn-1.0));
-        _LnGamma_dxrel = Math.Sqrt(DBL_EPSILON);
-        _LnGamma_rmax  = DBL_MAX/Math.Log(DBL_MAX);
-      }
-  
-      Complex z = zin;
-      double x = zin.Re, 
-        y = zin.Im;
-  
-      double cabsz = ComplexMath.Abs(z);
-
-      if (cabsz > _LnGamma_rmax) 
-        throw new ArgumentException("z so big LnGamma(z) overflows");  
-
-      int n;
-      double argsum;
-      Complex corr = new Complex(0.0, 0.0);
-
-      if (x >= 0.0 && cabsz  > _LnGamma_bound) goto L50;
-      if (x <  0.0 && Math.Abs(y) > _LnGamma_bound) goto L50;
-            
-      if (cabsz < _LnGamma_bound) goto L20;
-
-      // use the reflection formula for real(z) negative, 
-      // abs(z) large, and abs(imag(y)) small.
-      if (y > 0.0) z = z.GetConjugate();
-      corr = ComplexMath.Exp(-Complex.FromRealImaginary(0.0,2.0*Math.PI)*z);
-
-      if (corr.Re == 1.0 && corr.Im == 0.0) 
-        throw new ArgumentException("z is a negative integer");
-
-      retval = sq2pil + 1.0 - Complex.FromRealImaginary(0.0,Math.PI)*(z-0.5) - LogRel(-corr)
-        + (z-0.5) * ComplexMath.Log(1.0-z) - z - c9lgmc(1.0-z);
-      if (y > 0.0) retval = retval.GetConjugate();
-
-      if (Math.Abs(y) > _LnGamma_dxrel) return retval;
-
-      if (0.5 * ComplexMath.Abs((1.0-corr)*retval/z) < _LnGamma_dxrel) 
-      {
-        System.Diagnostics.Trace.WriteLine("Warning (LnGamma): answer less than half precision because z too near negative integer");
-        return retval;
-      }
-
-      // Use the recursion relation for cabs(z) small
-
-      L20:
-        if (x >= -0.5 || Math.Abs(y) > _LnGamma_dxrel) goto L30;
-
-      if (ComplexMath.Abs( (z-(double)((int)(x-0.5))) / x) < _LnGamma_dxrel)    
-        System.Diagnostics.Trace.WriteLine("Warning (LnGamma): answer less than half precision because z too near negative integer"); 
-      L30:
-        n = (int)(Math.Sqrt(_LnGamma_bound*_LnGamma_bound - y*y) - x + 1.0);
-      argsum = 0.0;
-      corr = Complex.FromRealImaginary(1.0, 0.0);
-      for (int i = 1; i <= n; i++) 
-      {
-        argsum += z.GetArgument();
-        corr *= z;
-        z += 1.0;
-      }
-
-      if (corr.Re == 0.0 && corr.Im == 0.0) 
-        throw new ArgumentException("z is a negative integer");
-  
-      corr = -Complex.FromRealImaginary(Math.Log(ComplexMath.Abs(corr)), argsum);
-
-      // Use Stirling's approximation for large z
-
-      L50:
-        retval = sq2pil + (z-0.5)*ComplexMath.Log(z) - z + corr + c9lgmc(z);
-      return retval;
+      return _LnGamma.LnGamma(z,false);
     }
 
+ 
+    /// <summary>
+    /// Complex logarithm of the gamma function.
+    /// </summary>
+    /// <param name="z">The complex argument.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>The complex logarithm of the gamma function of the complex argument z.</returns>
+    /// <remarks>
+    /// August 1980 edition.  W. Fullerton c3, Los Alamos Scientific Lab.
+    /// Eventually clngam should make use of c8lgmc for all z except for
+    /// z in the vicinity of 1 and 2.
+    /// </remarks>
+    public static Complex LnGamma (Complex z, bool bDebug)
+    {
+      return _LnGamma.LnGamma(z,bDebug);
+    }
+
+  
+
+    class _LnGamma
+    {
+      static double _LnGamma_bound = 0.0;
+      static double            _LnGamma_dxrel = 0.0; 
+      static double              _LnGamma_rmax  = 0.0;
+
+    
+      //-----------------------------------------------------------------------------//
+      // August 1980 edition.  W. Fullerton c3, Los Alamos Scientific Lab.
+      // Eventually clngam should make use of c8lgmc for all z except for
+      // z in the vicinity of 1 and 2.
+      //-----------------------------------------------------------------------------//
+
+      public static Complex LnGamma (Complex zin, bool bDebug)
+      {
+        const double sq2pil = 0.91893853320467274;
+
+        Complex retval;
+
+
+
+        if (_LnGamma_bound == 0.0) 
+        {
+          int nn = (int)(-0.30 * Math.Log(0.5*DBL_EPSILON));
+          _LnGamma_bound = 0.1171 * nn * Math.Pow(0.1 * 0.5 * DBL_EPSILON, -1.0/(2.0*nn-1.0));
+          _LnGamma_dxrel = Math.Sqrt(DBL_EPSILON);
+          _LnGamma_rmax  = DBL_MAX/Math.Log(DBL_MAX);
+        }
+  
+        Complex z = zin;
+        double x = zin.Re, 
+          y = zin.Im;
+  
+        double cabsz = ComplexMath.Abs(z);
+
+        if (cabsz > _LnGamma_rmax) 
+        {
+          if(bDebug)
+            throw new ArgumentException("z so big LnGamma(z) overflows");  
+          else
+            return Complex.NaN;
+        }
+        int n;
+        double argsum;
+        Complex corr = new Complex(0.0, 0.0);
+
+        if (x >= 0.0 && cabsz  > _LnGamma_bound) goto L50;
+        if (x <  0.0 && Math.Abs(y) > _LnGamma_bound) goto L50;
+            
+        if (cabsz < _LnGamma_bound) goto L20;
+
+        // use the reflection formula for real(z) negative, 
+        // abs(z) large, and abs(imag(y)) small.
+        if (y > 0.0) z = z.GetConjugate();
+        corr = ComplexMath.Exp(-Complex.FromRealImaginary(0.0,2.0*Math.PI)*z);
+
+        if (corr.Re == 1.0 && corr.Im == 0.0) 
+        {
+          if(bDebug)
+            throw new ArgumentException("z is a negative integer");
+          else
+            return Complex.NaN;
+        }
+
+        retval = sq2pil + 1.0 - Complex.FromRealImaginary(0.0,Math.PI)*(z-0.5) - LogRel(-corr)
+          + (z-0.5) * ComplexMath.Log(1.0-z) - z - c9lgmc(1.0-z);
+        if (y > 0.0) retval = retval.GetConjugate();
+
+        if (Math.Abs(y) > _LnGamma_dxrel) return retval;
+
+        if (0.5 * ComplexMath.Abs((1.0-corr)*retval/z) < _LnGamma_dxrel) 
+        {
+          if(bDebug)
+            System.Diagnostics.Trace.WriteLine("Warning (LnGamma): answer less than half precision because z too near negative integer");
+          return retval;
+        }
+
+        // Use the recursion relation for cabs(z) small
+
+        L20:
+          if (x >= -0.5 || Math.Abs(y) > _LnGamma_dxrel) goto L30;
+
+        if (bDebug && ComplexMath.Abs( (z-(double)((int)(x-0.5))) / x) < _LnGamma_dxrel)    
+          System.Diagnostics.Trace.WriteLine("Warning (LnGamma): answer less than half precision because z too near negative integer"); 
+        L30:
+          n = (int)(Math.Sqrt(_LnGamma_bound*_LnGamma_bound - y*y) - x + 1.0);
+        argsum = 0.0;
+        corr = Complex.FromRealImaginary(1.0, 0.0);
+        for (int i = 1; i <= n; i++) 
+        {
+          argsum += z.GetArgument();
+          corr *= z;
+          z += 1.0;
+        }
+
+        if (corr.Re == 0.0 && corr.Im == 0.0) 
+        {
+          if(bDebug)
+            throw new ArgumentException("z is a negative integer");
+          else
+            return Complex.NaN;
+        }
+        corr = -Complex.FromRealImaginary(Math.Log(ComplexMath.Abs(corr)), argsum);
+
+        // Use Stirling's approximation for large z
+
+        L50:
+          retval = sq2pil + (z-0.5)*ComplexMath.Log(z) - z + corr + c9lgmc(z);
+        return retval;
+      }
+    }
     #endregion
 
   } // end of class GammaRelated

@@ -42,7 +42,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The function argument.</param>
     /// <returns>Exponential integral  Ei(x)</returns>
-    double ExpIntegralEi (double x)
+    public static double ExpIntegralEi (double x)
     {
       return calcei(x,1);
     }
@@ -56,7 +56,7 @@ namespace Altaxo.Calc
     /// <returns>The
     /// function  exp(-x) * Ei(x), where  Ei(x)  is the exponential
     /// integral.</returns>
-    double ExpIntegralExpEi (double x)
+    public static double ExpIntegralExpEi (double x)
     {
       return calcei(x,3);
     }
@@ -67,7 +67,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The function argument.</param>
     /// <returns>The exponential integral E1(x).</returns>
-    double ExpIntegralE1 (double x)
+    public static double ExpIntegralE1 (double x)
     {
       return calcei(x,2);
     }

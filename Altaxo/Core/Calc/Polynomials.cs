@@ -42,34 +42,28 @@ namespace Altaxo.Calc
   {
     #region HermiteH
 
-    //-----------------------------------------------------------------------------//
-    //
-    // void HermiteH (int n, double x, double &y, double &dy, double &d2y);
-    //
-    // Computes the value of the Hermite polynomial of degree n 
-    // and its first and second derivatives at a given point 
-    //
-    // Input:
-    //   n  = degree of the polynomial >= 0
-    //   x  = point in which the computation is performed 
-    // Output:
-    //   y  = value of the polynomial in x 
-    //   dy = value of the first derivative in x 
-    //   d2y= value of the second derivative in x 
-    //
-    // Note: 
-    //   This C++ implementation is based on the Fortran function 
-    //      VAHEPO
-    //   from
-    //       "Fortran routines for spectral methods"
-    //   by  Daniele Funaro 
-    //       Department of Mathematics 
-    //       University of Pavia 
-    //       Via Abbiategrasso 209, 27100 Pavia, Italy 
-    //       e-mails: fun18@ipvian.ian.pv.cnr.it 
-    //                funaro@dragon.ian.pv.cnr.it 
-    //-----------------------------------------------------------------------------//
-
+    /// <summary>
+    /// Computes the value of the Hermite polynomial of degree n 
+    /// and its first and second derivatives at a given point. 
+    /// </summary>
+    /// <param name="n">Degree of the polynomial &gt;= 0.</param>
+    /// <param name="x">Point in which the computation is performed.</param>
+    /// <param name="y">Output: value of the polynomial in x.</param>
+    /// <param name="dy">Output: value of the first derivative in x.</param>
+    /// <param name="d2y">Output: value of the second derivative in x.</param>
+    /// <remarks><code>
+    /// Note: 
+    ///   This C++ implementation is based on the Fortran function 
+    ///      VAHEPO
+    ///   from
+    ///       "Fortran routines for spectral methods"
+    ///   by  Daniele Funaro 
+    ///       Department of Mathematics 
+    ///       University of Pavia 
+    ///       Via Abbiategrasso 209, 27100 Pavia, Italy 
+    ///       e-mails: fun18@ipvian.ian.pv.cnr.it 
+    ///                funaro@dragon.ian.pv.cnr.it 
+    /// </code></remarks>
     public static void HermiteH (int n, double x, out double y, out double dy, out double d2y)
     {
       // check parameters
@@ -105,37 +99,30 @@ namespace Altaxo.Calc
     #endregion
 
     #region LaguerreL
-    
-    //-----------------------------------------------------------------------------//
-    //
-    // void LaguerreL (int n, double a, double x, 
-    //                 double &y, double &dy, double &d2y);
-    //
-    // Computes the value of the Laguerre polynomial of degree n 
-    // and its first and second derivatives at a given point 
-    //
-    // Input:
-    //   n  = degree of the polynomial 
-    //   a  = parameter > -1 
-    //   x  = point in which the computation is performed, x >= 0
-    // Output:
-    //   y  = value of the polynomial in x 
-    //   dy = value of the first derivative in x 
-    //   d2y= value of the second derivative in x 
-    //
-    // Note: 
-    //   This C++ implementation is based on the Fortran function 
-    //       VALAPO
-    //   from
-    //       "Fortran routines for spectral methods"
-    //   by  Daniele Funaro 
-    //       Department of Mathematics 
-    //       University of Pavia 
-    //       Via Abbiategrasso 209, 27100 Pavia, Italy 
-    //       e-mails: fun18@ipvian.ian.pv.cnr.it 
-    //                funaro@dragon.ian.pv.cnr.it 
-    //-----------------------------------------------------------------------------//
-
+   
+    /// <summary>
+    /// Computes the value of the Laguerre polynomial of degree n 
+    /// and its first and second derivatives at a given point. 
+    /// </summary>
+    /// <param name="n">Degree of the polynomial </param>
+    /// <param name="a">Parameter &gt; -1 </param>
+    /// <param name="x">Point in which the computation is performed, x &gt;= 0</param>
+    /// <param name="y">Output: value of the polynomial in x </param>
+    /// <param name="dy">Output: value of the first derivative in x </param>
+    /// <param name="d2y">Output: value of the second derivative in x</param>
+    /// <remarks><code>
+    /// Note: 
+    ///   This C++ implementation is based on the Fortran function 
+    ///       VALAPO
+    ///   from
+    ///       "Fortran routines for spectral methods"
+    ///   by  Daniele Funaro 
+    ///       Department of Mathematics 
+    ///       University of Pavia 
+    ///       Via Abbiategrasso 209, 27100 Pavia, Italy 
+    ///       e-mails: fun18@ipvian.ian.pv.cnr.it 
+    ///                funaro@dragon.ian.pv.cnr.it 
+    /// </code></remarks>
     public static void LaguerreL (int n, double a, double x, out double y, out double dy, out double d2y)
     {
       // check parameters
@@ -176,37 +163,32 @@ namespace Altaxo.Calc
     #endregion
 
     #region JacobiP
-    //-----------------------------------------------------------------------------//
-    //
-    // void JacobiP (int n, double a, double b, double x, 
-    //               double &y, double &dy, double &d2y);
-    //
-    // Computes the value of the Jacobi polynomial of degree n 
-    // and its first and second derivatives at a given point.
-    //
-    // Input:
-    //   n  = degree of the polynomial >= 0
-    //   a  = parameter > -1 
-    //   b  = parameter > -1 
-    //   x  = point in which the computation is performed, -1 <= x <= 1
-    // Output:
-    //   y  = value of the polynomial in x 
-    //   dy = value of the first derivative in x 
-    //   d2y= value of the second derivative in x 
-    //
-    // Note: 
-    //   This C++ implementation is based on the Fortran function 
-    //       VAJAPO
-    //   from
-    //       "Fortran routines for spectral methods"
-    //   by  Daniele Funaro 
-    //       Department of Mathematics 
-    //       University of Pavia 
-    //       Via Abbiategrasso 209, 27100 Pavia, Italy 
-    //       e-mails: fun18@ipvian.ian.pv.cnr.it 
-    //                funaro@dragon.ian.pv.cnr.it 
-    //-----------------------------------------------------------------------------//
+   
 
+    /// <summary>
+    /// Computes the value of the Jacobi polynomial of degree n 
+    /// and its first and second derivatives at a given point.
+    /// </summary>
+    /// <param name="n">Degree of the polynomial &gt;= 0.</param>
+    /// <param name="a">Parameter &gt; -1.</param>
+    /// <param name="b">Parameter &gt; -1.</param>
+    /// <param name="x">Point in which the computation is performed, -1 &lt;= x &lt;= 1.</param>
+    /// <param name="y">Output: value of the polynomial in x.</param>
+    /// <param name="dy">Output: value of the first derivative in x.</param>
+    /// <param name="d2y">Output: value of the second derivative in x.</param>
+    /// <remarks><code>
+    /// Note: 
+    ///   This C++ implementation is based on the Fortran function 
+    ///       VAJAPO
+    ///   from
+    ///       "Fortran routines for spectral methods"
+    ///   by  Daniele Funaro 
+    ///       Department of Mathematics 
+    ///       University of Pavia 
+    ///       Via Abbiategrasso 209, 27100 Pavia, Italy 
+    ///       e-mails: fun18@ipvian.ian.pv.cnr.it 
+    ///                funaro@dragon.ian.pv.cnr.it 
+    /// </code></remarks>
     public static void JacobiP (int n, double a, double b, double x, 
       out double y, out double dy, out double d2y)
     {
@@ -252,34 +234,30 @@ namespace Altaxo.Calc
     #endregion
 
     #region ChebyshevT
-    //-----------------------------------------------------------------------------//
-    //
-    // void ChebyshevT (int n, double x, double &y, double &dy, double &d2y);
-    //
-    // Computes the value of the Chebyshev polynomial of degree n 
-    // and its first and second derivatives at a given point 
-    //
-    // Input:
-    //   n  = degree of the polynomial >= 0
-    //   x  = point in which the computation is performed, -1 <= x <= 1
-    // Output:
-    //   y  = value of the polynomial in x 
-    //   dy = value of the first derivative in x 
-    //   d2y= value of the second derivative in x 
-    //
-    // Note: 
-    //   This C++ implementation is based on the Fortran function 
-    //      VACHPO
-    //   from
-    //       "Fortran routines for spectral methods"
-    //   by  Daniele Funaro 
-    //       Department of Mathematics 
-    //       University of Pavia 
-    //       Via Abbiategrasso 209, 27100 Pavia, Italy 
-    //       e-mails: fun18@ipvian.ian.pv.cnr.it 
-    //                funaro@dragon.ian.pv.cnr.it 
-    //-----------------------------------------------------------------------------//
+    
 
+    /// <summary>
+    /// Computes the value of the Chebyshev polynomial of degree n 
+    /// and its first and second derivatives at a given point.
+    /// </summary>
+    /// <param name="n">Degree of the polynomial &gt;= 0.</param>
+    /// <param name="x">Point in which the computation is performed, -1 &lt;= x &lt;= 1.</param>
+    /// <param name="y">Output: value of the polynomial in x.</param>
+    /// <param name="dy">Output: value of the first derivative in x.</param>
+    /// <param name="d2y">Output: value of the second derivative in x.</param>
+    /// <remarks><code>
+    /// Note: 
+    ///   This C++ implementation is based on the Fortran function 
+    ///      VACHPO
+    ///   from
+    ///       "Fortran routines for spectral methods"
+    ///   by  Daniele Funaro 
+    ///       Department of Mathematics 
+    ///       University of Pavia 
+    ///       Via Abbiategrasso 209, 27100 Pavia, Italy 
+    ///       e-mails: fun18@ipvian.ian.pv.cnr.it 
+    ///                funaro@dragon.ian.pv.cnr.it 
+    /// </code></remarks>
     public static void ChebyshevT (int n, double x, out double y, out double dy, out double d2y)
     {
       // check parameters
@@ -317,34 +295,30 @@ namespace Altaxo.Calc
     #endregion
 
     #region LegendreP
-    //-----------------------------------------------------------------------------//
-    //
-    // void LegendreP (int n, double x, double &y, double &dy, double &d2y);
-    //
-    // Computes the value of the Legendre polynomial of degree n 
-    // and its first and second derivatives at a given point 
-    //
-    // Input:
-    //   n  = degree of the polynomial  >= 0
-    //   x  = point in which the computation is performed, -1 <= x <= 1
-    // Output:
-    //   y  = value of the polynomial in x 
-    //   dy = value of the first derivative in x 
-    //   d2y= value of the second derivative in x 
-    //
-    // Note: 
-    //   This C++ implementation is based on the Fortran function 
-    //      VALEPO
-    //   from
-    //       "Fortran routines for spectral methods"
-    //   by  Daniele Funaro 
-    //       Department of Mathematics 
-    //       University of Pavia 
-    //       Via Abbiategrasso 209, 27100 Pavia, Italy 
-    //       e-mails: fun18@ipvian.ian.pv.cnr.it 
-    //                funaro@dragon.ian.pv.cnr.it 
-    //-----------------------------------------------------------------------------//
+    
 
+    /// <summary>
+    /// Computes the value of the Legendre polynomial of degree n 
+    /// and its first and second derivatives at a given point. 
+    /// </summary>
+    /// <param name="n">Degree of the polynomial  &gt;= 0.</param>
+    /// <param name="x">Point in which the computation is performed, -1 &lt;= x &lt;= 1.</param>
+    /// <param name="y">Output: value of the polynomial in x.</param>
+    /// <param name="dy">Output: value of the first derivative in x.</param>
+    /// <param name="d2y">Output: value of the second derivative in x.</param>
+    /// <remarks><code>
+    /// Note: 
+    ///   This C++ implementation is based on the Fortran function 
+    ///      VALEPO
+    ///   from
+    ///       "Fortran routines for spectral methods"
+    ///   by  Daniele Funaro 
+    ///       Department of Mathematics 
+    ///       University of Pavia 
+    ///       Via Abbiategrasso 209, 27100 Pavia, Italy 
+    ///       e-mails: fun18@ipvian.ian.pv.cnr.it 
+    ///                funaro@dragon.ian.pv.cnr.it 
+    /// </code></remarks>
     public static void LegendreP (int n, double x, out double y, out double dy, out double d2y)
     {
       // check parameters
@@ -441,19 +415,22 @@ namespace Altaxo.Calc
 
     #region SphericalHarmonicY
 
-    //-----------------------------------------------------------------------------//
-    //
-    // Computes the spherical harmonics Y_lm(theta,phi) with l and m 
-    // integers satisfying -l <= m <= l and arbitrary angles theta and phi. 
-    //
-    //-----------------------------------------------------------------------------//
 
     static bool odd(int x)
     {
-      return (x%2)!=0;
+      return (x&1)!=0;
     }
     const double M_4PI = 12.56637061435917295385057;
 
+    /// <summary>
+    /// Computes the spherical harmonics Y_lm(theta,phi) with l and m 
+    /// integers satisfying -l &lt;= m &lt;= l and arbitrary angles theta and phi. 
+    /// </summary>
+    /// <param name="l">First integer.</param>
+    /// <param name="m">Second integer, must be in the range -l &lt;= m &lt;= l.</param>
+    /// <param name="theta">First angle.</param>
+    /// <param name="phi">Second angle.</param>
+    /// <returns>The spherical harmonics Y_lm(theta,phi).</returns>
     public static Complex SphericalHarmonicY (int l, int m, double theta, double phi)
     {
       Complex e; 
