@@ -96,7 +96,7 @@ namespace Altaxo.Calc
       }
     }
 
-    public int Cols
+    public int Columns
     {
       get
       {
@@ -112,7 +112,7 @@ namespace Altaxo.Calc
       {
         m_bVerticalVectors = false;
         m_NumVectors = a.Rows;
-        m_VectorLen = a.Cols;
+        m_VectorLen = a.Columns;
         m_Array = new double[m_NumVectors][];
         for(int i=0;i<m_NumVectors;i++)
           m_Array[i] = new double[m_VectorLen];
@@ -139,7 +139,7 @@ namespace Altaxo.Calc
       if(m_NumVectors==0 && m_VectorLen==0)
       {
         m_bVerticalVectors = true;
-        m_NumVectors = a.Cols;
+        m_NumVectors = a.Columns;
         m_VectorLen = a.Rows;
         m_Array = new double[m_NumVectors][];
         for(int i=0;i<m_NumVectors;i++)
@@ -148,15 +148,15 @@ namespace Altaxo.Calc
       }
       else if(this.m_bVerticalVectors==true)
       {
-        double [][] newArray = new double[m_NumVectors+a.Cols][];
+        double [][] newArray = new double[m_NumVectors+a.Columns][];
         for(int i=0;i<m_NumVectors;i++)
           newArray[i] = m_Array[i];
-        for(int i=m_NumVectors; i<m_NumVectors+a.Cols; i++)
+        for(int i=m_NumVectors; i<m_NumVectors+a.Columns; i++)
           newArray[i] = new double[m_VectorLen];
         m_Array = newArray;
-        m_NumVectors += a.Cols;
+        m_NumVectors += a.Columns;
 
-        MatrixMath.Copy(a,this, 0, this.Cols-a.Cols);
+        MatrixMath.Copy(a,this, 0, this.Columns-a.Columns);
       }
       else
         throw new System.NotImplementedException("This worst case is not implemented yet.");
@@ -168,10 +168,10 @@ namespace Altaxo.Calc
       for(int i=0;i<Rows;i++)
       {
         s.Append("\n(");
-        for(int j=0;j<Cols;j++)
+        for(int j=0;j<Columns;j++)
         {
           s.Append(this[i,j].ToString());
-          if(j+1<Cols) 
+          if(j+1<Columns) 
             s.Append(",");
           else
             s.Append(")");
@@ -192,11 +192,11 @@ namespace Altaxo.Calc
     {
       // Presumtion:
       // a.Cols == b.Rows;
-      if(a.Cols!=b.Rows)
-        throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Cols,b.Rows,b.Cols));
+      if(a.Columns!=b.Rows)
+        throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Columns,b.Rows,b.Columns));
 
       int rows = a.Rows;
-      int cols = b.Cols;
+      int cols = b.Columns;
       TransposableMatrix c = new TransposableMatrix(rows,cols);
 
       int summands = b.Rows;
@@ -218,12 +218,12 @@ namespace Altaxo.Calc
     {
       // Presumtion:
       // a.Cols == b.Rows;
-      if(a.Cols!=b.Cols || a.Rows!=b.Rows)
-        throw new ArithmeticException(string.Format("Try to subtract a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Cols,b.Rows,b.Cols));
+      if(a.Columns!=b.Columns || a.Rows!=b.Rows)
+        throw new ArithmeticException(string.Format("Try to subtract a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Columns,b.Rows,b.Columns));
 
-      TransposableMatrix c = new TransposableMatrix(a.Rows,a.Cols);
+      TransposableMatrix c = new TransposableMatrix(a.Rows,a.Columns);
       for(int i=0;i<c.Rows;i++)
-        for(int j=0;j<c.Cols;j++)
+        for(int j=0;j<c.Columns;j++)
           c[i,j] = a[i,j]-b[i,j];
 
       return c; 
@@ -236,9 +236,9 @@ namespace Altaxo.Calc
     public TransposableMatrix ColumnsToZeroMean()
     {
       // allocate the mean vector
-      TransposableMatrix mean = new TransposableMatrix(1,Cols);
+      TransposableMatrix mean = new TransposableMatrix(1,Columns);
 
-      for(int col = 0; col<Cols; col++)
+      for(int col = 0; col<Columns; col++)
       {
         double sum = 0;
         for(int row=0;row<Rows;row++)
@@ -267,10 +267,10 @@ namespace Altaxo.Calc
 
     public void SetColumn(int col, TransposableMatrix b)
     {
-      if(col>=this.Cols)
-        throw new ArithmeticException(string.Format("Try to set column {0} in the matrix with dim({1},{2}) is not allowed!",col,this.Rows,this.Cols));
-      if(b.Cols!=1)
-        throw new ArithmeticException(string.Format("Try to set column {0} with a matrix of more than one, namely {1} columns, is not allowed!",col,b.Cols));
+      if(col>=this.Columns)
+        throw new ArithmeticException(string.Format("Try to set column {0} in the matrix with dim({1},{2}) is not allowed!",col,this.Rows,this.Columns));
+      if(b.Columns!=1)
+        throw new ArithmeticException(string.Format("Try to set column {0} with a matrix of more than one, namely {1} columns, is not allowed!",col,b.Columns));
       if(this.Rows != b.Rows)
         throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({3})!",col,this.Rows,b.Rows));
     
@@ -281,13 +281,13 @@ namespace Altaxo.Calc
     public void SetRow(int row, TransposableMatrix b)
     {
       if(row>=this.Rows)
-        throw new ArithmeticException(string.Format("Try to set row {0} in the matrix with dim({1},{2}) is not allowed!",row,this.Rows,this.Cols));
+        throw new ArithmeticException(string.Format("Try to set row {0} in the matrix with dim({1},{2}) is not allowed!",row,this.Rows,this.Columns));
       if(b.Rows!=1)
         throw new ArithmeticException(string.Format("Try to set row {0} with a matrix of more than one, namely {1} rows, is not allowed!",row,b.Rows));
-      if(this.Cols != b.Cols)
-        throw new ArithmeticException(string.Format("Try to set row {0}, but number of columns of the matrix ({1}) not match number of colums of the vector ({3})!",row,this.Cols,b.Cols));
+      if(this.Columns != b.Columns)
+        throw new ArithmeticException(string.Format("Try to set row {0}, but number of columns of the matrix ({1}) not match number of colums of the vector ({3})!",row,this.Columns,b.Columns));
     
-      for(int j=0;j<this.Cols;j++)
+      for(int j=0;j<this.Columns;j++)
         this[row,j]=b[0,row];
     }
 
@@ -298,10 +298,10 @@ namespace Altaxo.Calc
       for(int i=0;i<Rows;i++)
       {
         double sum=0;
-        for(int j=0;j<Cols;j++)
+        for(int j=0;j<Columns;j++)
           sum += this[i,j]*this[i,j];
         sum = Math.Sqrt(sum);
-        for(int j=0;j<Cols;j++)
+        for(int j=0;j<Columns;j++)
           this[i,j] /= sum;
       }
     }
@@ -310,7 +310,7 @@ namespace Altaxo.Calc
     {
       double sum=0;
       for(int i=0;i<Rows;i++)
-        for(int j=0;j<Cols;j++)
+        for(int j=0;j<Columns;j++)
           sum += this[i,j]*this[i,j];
       return sum;
     }
@@ -319,12 +319,12 @@ namespace Altaxo.Calc
     {
       // Presumtion:
       // a.Cols == b.Rows;
-      if(this.Cols!=m.Cols || this.Rows != m.Rows)
-        throw new ArithmeticException(string.Format("Try to compare a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",m.Rows,m.Cols,this.Rows,this.Cols));
+      if(this.Columns!=m.Columns || this.Rows != m.Rows)
+        throw new ArithmeticException(string.Format("Try to compare a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",m.Rows,m.Columns,this.Rows,this.Columns));
 
       double thresh = Math.Sqrt(m.SumOfSquares())*accuracy;
       for(int i=0;i<Rows;i++)
-        for(int j=0;j<Cols;j++)
+        for(int j=0;j<Columns;j++)
           if(Math.Abs(this[i,j]-m[i,j])>thresh)
             return false;
 
@@ -342,13 +342,13 @@ namespace Altaxo.Calc
       TransposableMatrix t_prev=null;
       TransposableMatrix t=null;
 
-      loads = new TransposableMatrix(numFactors,X.Cols);
+      loads = new TransposableMatrix(numFactors,X.Columns);
       factors = new TransposableMatrix(X.Rows,numFactors);
 
       for(int nFactor=0; nFactor<numFactors; nFactor++)
       {
         // 1. Guess the transposed Vector lT, use first row of X matrix
-        l = X.Submatrix(1,X.Cols);    // l is now a horizontal vector
+        l = X.Submatrix(1,X.Columns);    // l is now a horizontal vector
 
         for(int iter=0;iter<500;iter++)
         {

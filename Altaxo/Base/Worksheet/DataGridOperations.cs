@@ -182,7 +182,7 @@ namespace Altaxo.Worksheet
 
       // now create the matrices to multiply from the 
 
-      Altaxo.Calc.MatrixMath.VOMatrix firstMat = new Altaxo.Calc.MatrixMath.VOMatrix(rowsfirsthalf,halfselect);
+      Altaxo.Calc.MatrixMath.REMatrix firstMat = new Altaxo.Calc.MatrixMath.REMatrix(rowsfirsthalf,halfselect);
       for(int i=0;i<halfselect;i++)
       {
         Altaxo.Data.INumericColumn col = (Altaxo.Data.INumericColumn)srctable[selectedColumns[i]];
@@ -190,7 +190,7 @@ namespace Altaxo.Worksheet
           firstMat[j,i] = col.GetDoubleAt(j);
       }
       
-      Altaxo.Calc.MatrixMath.HOMatrix secondMat = new Altaxo.Calc.MatrixMath.HOMatrix(halfselect,rowssecondhalf);
+      Altaxo.Calc.MatrixMath.BEMatrix secondMat = new Altaxo.Calc.MatrixMath.BEMatrix(halfselect,rowssecondhalf);
       for(int i=0;i<halfselect;i++)
       {
         Altaxo.Data.INumericColumn col = (Altaxo.Data.INumericColumn)srctable[selectedColumns[i+halfselect]];
@@ -199,7 +199,7 @@ namespace Altaxo.Worksheet
       }
 
       // now multiply the two matrices
-      Altaxo.Calc.MatrixMath.HOMatrix resultMat = new Altaxo.Calc.MatrixMath.HOMatrix(rowsfirsthalf,rowssecondhalf);
+      Altaxo.Calc.MatrixMath.BEMatrix resultMat = new Altaxo.Calc.MatrixMath.BEMatrix(rowsfirsthalf,rowssecondhalf);
       Altaxo.Calc.MatrixMath.Multiply(firstMat,secondMat,resultMat);
 
 
@@ -282,10 +282,10 @@ namespace Altaxo.Worksheet
 
       // Create a matrix of appropriate dimensions and fill it
 
-      Altaxo.Calc.MatrixMath.HOMatrix matrixX;
+      Altaxo.Calc.MatrixMath.BEMatrix matrixX;
       if(bHorizontalOrientedSpectrum)
       {
-        matrixX = new Altaxo.Calc.MatrixMath.HOMatrix(numrows,numcols);
+        matrixX = new Altaxo.Calc.MatrixMath.BEMatrix(numrows,numcols);
         int ccol = 0; // current column in the matrix
         for(int i=0;i<prenumcols;i++)
         {
@@ -304,7 +304,7 @@ namespace Altaxo.Worksheet
       } // end if it was a horizontal oriented spectrum
       else // if it is a vertical oriented spectrum
       {
-        matrixX = new Altaxo.Calc.MatrixMath.HOMatrix(numcols,numrows);
+        matrixX = new Altaxo.Calc.MatrixMath.BEMatrix(numcols,numrows);
         int ccol = 0; // current column in the matrix
         for(int i=0;i<prenumcols;i++)
         {
@@ -323,9 +323,9 @@ namespace Altaxo.Worksheet
       } // if it was a vertical oriented spectrum
 
       // now do PCA with the matrix
-      Altaxo.Calc.MatrixMath.VOMatrix factors = new Altaxo.Calc.MatrixMath.VOMatrix(0,0);
-      Altaxo.Calc.MatrixMath.HOMatrix loads = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
-      Altaxo.Calc.MatrixMath.HOMatrix residualVariances = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
+      Altaxo.Calc.MatrixMath.REMatrix factors = new Altaxo.Calc.MatrixMath.REMatrix(0,0);
+      Altaxo.Calc.MatrixMath.BEMatrix loads = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
+      Altaxo.Calc.MatrixMath.BEMatrix residualVariances = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
       Altaxo.Calc.MatrixMath.HorizontalVector meanX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
       // first, center the matrix
       Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixX,meanX);
@@ -474,8 +474,8 @@ namespace Altaxo.Worksheet
 
 
       // now check and fill in values
-      Altaxo.Calc.MatrixMath.HOMatrix matrixX;
-      Altaxo.Calc.MatrixMath.HOMatrix matrixY;
+      Altaxo.Calc.MatrixMath.BEMatrix matrixX;
+      Altaxo.Calc.MatrixMath.BEMatrix matrixY;
 
       if(bHorizontalOrientedSpectrum)
       {
@@ -540,7 +540,7 @@ namespace Altaxo.Worksheet
         // group1 is now the group of x-values
       
         // fill in the y-values
-        matrixY = new Altaxo.Calc.MatrixMath.HOMatrix(numrows,groupcount0);
+        matrixY = new Altaxo.Calc.MatrixMath.BEMatrix(numrows,groupcount0);
         int ccol=0;
         for(int i=0;i<numcols;i++)
         {
@@ -558,7 +558,7 @@ namespace Altaxo.Worksheet
         }
 
         // fill in the x-values
-        matrixX = new Altaxo.Calc.MatrixMath.HOMatrix(numrows,groupcount1);
+        matrixX = new Altaxo.Calc.MatrixMath.BEMatrix(numrows,groupcount1);
         ccol=0;
         for(int i=0;i<numcols;i++)
         {
@@ -588,7 +588,7 @@ namespace Altaxo.Worksheet
           return "At least one numeric property column must exist to hold the y-values!";
 
         // fill in the y-values
-        matrixY = new Altaxo.Calc.MatrixMath.HOMatrix(numcols,numpropcols);
+        matrixY = new Altaxo.Calc.MatrixMath.BEMatrix(numcols,numpropcols);
         for(int i=0;i<numpropcols;i++)
         {
           Altaxo.Data.INumericColumn col = srctable.PropCols[numericPropCols[i]] as Altaxo.Data.INumericColumn;
@@ -600,7 +600,7 @@ namespace Altaxo.Worksheet
         } // end fill in yvalues
 
         // fill in the x-values, i.e. the spectrum
-        matrixX = new Altaxo.Calc.MatrixMath.HOMatrix(numcols,numrows);
+        matrixX = new Altaxo.Calc.MatrixMath.BEMatrix(numcols,numrows);
         for(int i=0;i<numcols;i++)
         {
           Altaxo.Data.INumericColumn col = srctable[numericDataCols[i]] as Altaxo.Data.INumericColumn;
@@ -615,10 +615,10 @@ namespace Altaxo.Worksheet
 
 
       // now do a PLS with it
-      Altaxo.Calc.MatrixMath.HOMatrix xLoads   = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
-      Altaxo.Calc.MatrixMath.HOMatrix yLoads   = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
-      Altaxo.Calc.MatrixMath.HOMatrix W       = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
-      Altaxo.Calc.MatrixMath.VOMatrix V       = new Altaxo.Calc.MatrixMath.VOMatrix(0,0);
+      Altaxo.Calc.MatrixMath.BEMatrix xLoads   = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
+      Altaxo.Calc.MatrixMath.BEMatrix yLoads   = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
+      Altaxo.Calc.MatrixMath.BEMatrix W       = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
+      Altaxo.Calc.MatrixMath.REMatrix V       = new Altaxo.Calc.MatrixMath.REMatrix(0,0);
 
 
       // Before we can apply PLS, we have to center the x and y matrices
@@ -695,7 +695,7 @@ namespace Altaxo.Worksheet
     }
 
       // calculate the self predicted y values - for one factor and for two
-      Altaxo.Calc.IMatrix yPred = new Altaxo.Calc.MatrixMath.HOMatrix(matrixY.Rows,matrixY.Cols);
+      Altaxo.Calc.IMatrix yPred = new Altaxo.Calc.MatrixMath.BEMatrix(matrixY.Rows,matrixY.Cols);
       Altaxo.Data.DoubleColumn presscol = new Altaxo.Data.DoubleColumn();
       
       table.DataColumns.Add(presscol,"PRESS",Altaxo.Data.ColumnKind.V,4);

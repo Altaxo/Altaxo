@@ -25,61 +25,7 @@ using System;
 
 namespace Altaxo.Calc
 {
-  #region Matrix interface definitions
-
-  /// <summary>
-  /// IMatrix represents the simplest form of a 2D matrix, which is readable and writeable.
-  /// </summary>
-  public interface IMatrix
-  {
-    /// <summary>Get / sets an element of the matrix at (row, col).</summary>
-    double this[int row, int col] { get; set; }
-    /// <summary>The number of rows of the matrix.</summary>
-    int Rows { get; }
-    /// <summary>The number of columns of the matrix.</summary>
-    int Cols { get; }
-  }
-
-  /// <summary>
-  /// IRightExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
-  /// can be appended to the right of the matrix. 
-  /// </summary>
-  public interface IRightExtensibleMatrix : IMatrix
-  {
-    /// <summary>
-    /// Append matrix a to the right edge of this matrix. Matrix a must have the same number of rows than this matrix, except this matrix
-    /// is still empty, in which case the right dimension of this matrix is set.
-    /// </summary>
-    /// <param name="a">The matrix to append.</param>
-    void AppendRight(IMatrix a);
-  }
-
-
-  /// <summary>
-  /// IBottomExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
-  /// can be appended to the bottom of the matrix. 
-  /// </summary>
-  public interface IBottomExtensibleMatrix : IMatrix
-  {
-    /// <summary>
-    /// Append matrix a to the bottom of this matrix. Matrix a must have the same number of columns than this matrix, except this matrix
-    /// is still empty, in which case the right dimension of this matrix is set.
-    /// </summary>
-    /// <param name="a">The matrix to append.</param>
-    void AppendBottom(IMatrix a);
-  }
-
-  /// <summary>
-  /// IExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
-  /// can be appended either to the right or to the bottom of the matrix. 
-  /// </summary>
-  public interface IExtensibleMatrix : IRightExtensibleMatrix, IBottomExtensibleMatrix
-  {
-  }
-
-  #endregion
-
-
+ 
   /// <summary>
   /// Class MatrixMath provides common static methods for matrix manipulation
   /// and arithmetic in tow dimensions.
@@ -89,10 +35,10 @@ namespace Altaxo.Calc
     #region Helper matrix implementations
 
     /// <summary>
-    /// HOMatrix is intended to be used by matrix math for 
-    /// temporary variables. It is Horizontal oriented, i.e. consists of a number of horizontal vectors.
+    /// BEMatrix is a matrix implementation that is relatively easy to extend to the botton, i.e. to append rows.
+    /// It is horizontal oriented, i.e. the storage is as a number of horizontal vectors.
     /// </summary>
-    public class HOMatrix : IMatrix, IBottomExtensibleMatrix
+    public class BEMatrix : IMatrix, IBottomExtensibleMatrix
     {
       /// <summary>The rows of the matrix = number of double[] arrays in it.</summary>
       private int m_Rows;
@@ -106,7 +52,7 @@ namespace Altaxo.Calc
       /// </summary>
       /// <param name="rows">Number of rows of the matrix.</param>
       /// <param name="cols">Number of cols of the matrix.</param>
-      public HOMatrix(int rows, int cols)
+      public BEMatrix(int rows, int cols)
       {
         SetDimension(rows,cols);
       }
@@ -169,7 +115,7 @@ namespace Altaxo.Calc
       /// <summary>
       /// Number of columns of the matrix.
       /// </summary>
-      public int Cols
+      public int Columns
       {
         get
         {
@@ -191,14 +137,14 @@ namespace Altaxo.Calc
         if(a.Rows==0)
           return; // nothing to append
 
-        if(this.Cols>0)
+        if(this.Columns>0)
         {
-          if(a.Cols!=this.Cols) // throw an error if this column is not empty and the columns does not match
-            throw new ArithmeticException(string.Format("The number of columns of this matrix ({0}) and of the matrix to append ({1}) does not match!",this.Cols,a.Cols)); 
+          if(a.Columns!=this.Columns) // throw an error if this column is not empty and the columns does not match
+            throw new ArithmeticException(string.Format("The number of columns of this matrix ({0}) and of the matrix to append ({1}) does not match!",this.Columns,a.Columns)); 
         }
         else // if the matrix was empty before
         {
-          m_Cols = a.Cols;
+          m_Cols = a.Columns;
         }
 
         int newRows = a.Rows + this.Rows;
@@ -230,10 +176,10 @@ namespace Altaxo.Calc
 
 
     /// <summary>
-    /// VOMatrix is intended to be used by matrix math for 
-    /// temporary variables. It is Vertical oriented, i.e. consists of a number of vertical vectors.
+    /// REMatrix is a matrix implementation that is relatively easy to extend to the right, i.e. to append columns.
+    /// It is vertical oriented, i.e. the storage is as a number of vertical vectors.
     /// </summary>
-    public class VOMatrix : IMatrix, IRightExtensibleMatrix
+    public class REMatrix : IMatrix, IRightExtensibleMatrix
     {
       /// <summary>The rows of the matrix = length of each double[] array.</summary>
       private int m_Rows;
@@ -247,7 +193,7 @@ namespace Altaxo.Calc
       /// </summary>
       /// <param name="rows">Number of rows of the matrix.</param>
       /// <param name="cols">Number of cols of the matrix.</param>
-      public VOMatrix(int rows, int cols)
+      public REMatrix(int rows, int cols)
       {
         SetDimension(rows,cols);
       }
@@ -310,7 +256,7 @@ namespace Altaxo.Calc
       /// <summary>
       /// Number of columns of the matrix.
       /// </summary>
-      public int Cols
+      public int Columns
       {
         get
         {
@@ -329,7 +275,7 @@ namespace Altaxo.Calc
       /// <param name="a">Matrix to append to the right of this matrix.</param>
       public void AppendRight(IMatrix a)
       {
-        if(a.Cols==0)
+        if(a.Columns==0)
           return; // nothing to append
 
         if(this.Rows>0)
@@ -342,7 +288,7 @@ namespace Altaxo.Calc
           m_Rows = a.Rows;
         }
 
-        int newCols = a.Cols + this.Cols;
+        int newCols = a.Columns + this.Columns;
         
         // we must newly allocate the bone array, if neccessary
         if(newCols>=m_Array.Length)
@@ -372,7 +318,7 @@ namespace Altaxo.Calc
     /// <summary>
     /// Implements a horizontal vector, i.e. a matrix which has only one row, but many columns.
     /// </summary>
-    public class HorizontalVector : IMatrix
+    public class HorizontalVector : IMatrix, IVector
     {
       /// <summary>
       /// Holds the elements of the vector 
@@ -425,7 +371,7 @@ namespace Altaxo.Calc
       /// <summary>
       /// Number of columns, i.e. number of elements of the horizontal vector.
       /// </summary>
-      public int Cols
+      public int Columns
       {
         get
         {
@@ -435,13 +381,57 @@ namespace Altaxo.Calc
 
       #endregion
 
+      #region IVector Members
+
+      public double this[int i]
+      {
+        get
+        {
+          return m_Array[i];
+        }
+        set
+        {
+          m_Array[i] = value;
+        }
+      }
+
+      #endregion
+
+      #region IROVector Members
+
+
+      public int LowerBound
+      {
+        get
+        {
+          return 0;
+        }
+      }
+
+      public int UpperBound
+      {
+        get
+        {
+          return m_Array.Length-1;
+        }
+      }
+
+      public int Length
+      {
+        get
+        {
+          return m_Array.Length;
+        }
+      }
+
+      #endregion
     }
 
 
     /// <summary>
     /// Implements a vertical vector, i.e. a matrix which has only one column, but many rows.
     /// </summary>
-    public class VerticalVector : IMatrix
+    public class VerticalVector : IMatrix, IVector
     {
       /// <summary>
       /// Holds the elements of the vertical vector.
@@ -494,7 +484,7 @@ namespace Altaxo.Calc
       /// <summary>
       /// Number of columns of the matrix, always 1 (one) since it is a vertical vector.
       /// </summary>
-      public int Cols
+      public int Columns
       {
         get
         {
@@ -504,12 +494,57 @@ namespace Altaxo.Calc
 
       #endregion
 
+      #region IVector Members
+
+      public double this[int i]
+      {
+        get
+        {
+          return m_Array[i];
+        }
+        set
+        {
+          m_Array[i] = value;
+        }
+      }
+
+      #endregion
+
+      #region IROVector Members
+
+    
+
+      public int LowerBound
+      {
+        get
+        {
+          return 0;
+        }
+      }
+
+      public int UpperBound
+      {
+        get
+        {
+          return m_Array.Length-1;
+        }
+      }
+
+      public int Length
+      {
+        get
+        {
+          return m_Array.Length;
+        }
+      }
+
+      #endregion
     }
 
     /// <summary>
     /// Implements a scalar as a special case of the matrix which has the dimensions (1,1).
     /// </summary>
-    public class Scalar : IMatrix
+    public class Scalar : IMatrix, IVector
     {
       /// <summary>
       /// Holds the only element of the matrix.
@@ -582,7 +617,7 @@ namespace Altaxo.Calc
       /// <summary>
       /// Number of columns of the matrix. Always 1 (one).
       /// </summary>
-      public int Cols
+      public int Columns
       {
         get
         {
@@ -592,6 +627,52 @@ namespace Altaxo.Calc
 
       #endregion
 
+      #region IVector Members
+
+      public double this[int i]
+      {
+        get
+        {
+          return this.m_Value;
+        }
+        set
+        {
+          this.m_Value = value;
+        }
+      }
+
+      #endregion
+
+      #region IROVector Members
+
+     
+
+      public int LowerBound
+      {
+        get
+        {
+          return 0;
+        }
+      }
+
+      public int UpperBound
+      {
+        get
+        {
+          return 0;
+        }
+      }
+
+      public int Length
+      {
+        get
+        {
+         
+          return 1;
+        }
+      }
+
+      #endregion
     }
 
     #endregion
@@ -613,18 +694,18 @@ namespace Altaxo.Calc
       if(null==name)
         name="";
 
-      if(a.Rows==0 || a.Cols==0)
-        return string.Format("EmptyMatrix {0}({1},{2})",name, a.Rows, a.Cols);
+      if(a.Rows==0 || a.Columns==0)
+        return string.Format("EmptyMatrix {0}({1},{2})",name, a.Rows, a.Columns);
 
       System.Text.StringBuilder s = new System.Text.StringBuilder();
       s.Append("Matrix " + name + ":");
       for(int i=0;i<a.Rows;i++)
       {
         s.Append("\n(");
-        for(int j=0;j<a.Cols;j++)
+        for(int j=0;j<a.Columns;j++)
         {
           s.Append(a[i,j].ToString());
-          if(j+1<a.Cols) 
+          if(j+1<a.Columns) 
             s.Append(";");
           else
             s.Append(")");
@@ -646,18 +727,18 @@ namespace Altaxo.Calc
     /// <param name="a">First multiplicant.</param>
     /// <param name="b">Second multiplicant.</param>
     /// <param name="c">The matrix where to store the result. Has to be of dimension (a.Rows, b.Columns).</param>
-    public static void Multiply(IMatrix a, IMatrix b, IMatrix c)
+    public static void Multiply(IROMatrix a, IROMatrix b, IMatrix c)
     {
       int crows = a.Rows; // the rows of resultant matrix
-      int ccols = b.Cols; // the cols of resultant matrix
+      int ccols = b.Columns; // the cols of resultant matrix
       int numil = b.Rows; // number of summands for most inner loop
 
       // Presumtion:
       // a.Cols == b.Rows;
-      if(a.Cols!=numil)
-        throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Cols,b.Rows,b.Cols));
-      if(c.Rows != crows || c.Cols != ccols)
-        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",c.Rows,c.Cols,crows,ccols));
+      if(a.Columns!=numil)
+        throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Columns,b.Rows,b.Columns));
+      if(c.Rows != crows || c.Columns != ccols)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",c.Rows,c.Columns,crows,ccols));
 
       for(int i=0;i<crows;i++)
       {
@@ -678,17 +759,17 @@ namespace Altaxo.Calc
     /// <param name="a">First multiplicant.</param>
     /// <param name="b">Second multiplicant.</param>
     /// <param name="c">The matrix where to store the result. Has to be of dimension (a.Rows, b.Columns).</param>
-    public static void MultiplyFirstTransposed(IMatrix a, IMatrix b, IMatrix c)
+    public static void MultiplyFirstTransposed(IROMatrix a, IROMatrix b, IMatrix c)
     {
-      int crows = a.Cols; // the rows of resultant matrix
-      int ccols = b.Cols; // the cols of resultant matrix
+      int crows = a.Columns; // the rows of resultant matrix
+      int ccols = b.Columns; // the cols of resultant matrix
       int numil = b.Rows; // number of summands for most inner loop
 
       // Presumtion:
       if(a.Rows!=numil)
-        throw new ArithmeticException(string.Format("Try to multiplicate a transposed matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Cols,b.Rows,b.Cols));
-      if(c.Rows != crows || c.Cols != ccols)
-        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})",c.Rows,c.Cols,crows,ccols));
+        throw new ArithmeticException(string.Format("Try to multiplicate a transposed matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Columns,b.Rows,b.Columns));
+      if(c.Rows != crows || c.Columns != ccols)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})",c.Rows,c.Columns,crows,ccols));
 
       for(int i=0;i<crows;i++)
       {
@@ -710,18 +791,18 @@ namespace Altaxo.Calc
     /// <param name="a">First multiplicant.</param>
     /// <param name="b">Second multiplicant.</param>
     /// <param name="c">The matrix where to store the result. Has to be of dimension (a.Rows, b.Columns).</param>
-    public static void MultiplySecondTransposed(IMatrix a, IMatrix b, IMatrix c)
+    public static void MultiplySecondTransposed(IROMatrix a, IROMatrix b, IMatrix c)
     {
       int crows = a.Rows; // the rows of resultant matrix
       int ccols = b.Rows; // the cols of resultant matrix
-      int numil = b.Cols; // number of summands for most inner loop
+      int numil = b.Columns; // number of summands for most inner loop
 
       // Presumtion:
       // a.Cols == b.Rows;
-      if(a.Cols!=numil)
-        throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Cols,b.Rows,b.Cols));
-      if(c.Rows != crows || c.Cols != ccols)
-        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})",c.Rows,c.Cols,crows,ccols));
+      if(a.Columns!=numil)
+        throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Columns,b.Rows,b.Columns));
+      if(c.Rows != crows || c.Columns != ccols)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the expected dimension ({2},{3})",c.Rows,c.Columns,crows,ccols));
 
       for(int i=0;i<crows;i++)
       {
@@ -743,14 +824,14 @@ namespace Altaxo.Calc
     /// <param name="a">The first multiplicant.</param>
     /// <param name="b">The second multiplicant.</param>
     /// <param name="c">The resulting matrix.</param>
-    public static void MultiplyScalar(IMatrix a, double b, IMatrix c)
+    public static void MultiplyScalar(IROMatrix a, double b, IMatrix c)
     {
-      if(c.Rows != a.Rows || c.Cols != a.Cols)
-        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1})) has not the expected dimension ({2},{3})",c.Rows,c.Cols,a.Rows,a.Cols));
+      if(c.Rows != a.Rows || c.Columns != a.Columns)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1})) has not the expected dimension ({2},{3})",c.Rows,c.Columns,a.Rows,a.Columns));
 
       for(int i=0;i<a.Rows;i++)
       {
-        for(int j=0;j<a.Cols;j++)
+        for(int j=0;j<a.Columns;j++)
         {
           c[i,j] = a[i,j]*b;
         }
@@ -764,17 +845,17 @@ namespace Altaxo.Calc
     /// <param name="a">First matrix to add..</param>
     /// <param name="b">Second operand..</param>
     /// <param name="c">The resultant matrix a+b. Has to be of same dimension as a and b.</param>
-    public static void Add(IMatrix a, IMatrix b, IMatrix c)
+    public static void Add(IROMatrix a, IROMatrix b, IMatrix c)
     {
       // Presumtion:
       // a.Cols == b.Rows;
-      if(a.Cols!=b.Cols || a.Rows!=b.Rows)
-        throw new ArithmeticException(string.Format("Try to add a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Cols,b.Rows,b.Cols));
-      if(c.Rows != a.Rows || c.Cols != a.Cols)
-        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the proper dimension ({2},{3})",c.Rows,c.Cols,a.Rows,a.Cols));
+      if(a.Columns!=b.Columns || a.Rows!=b.Rows)
+        throw new ArithmeticException(string.Format("Try to add a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Columns,b.Rows,b.Columns));
+      if(c.Rows != a.Rows || c.Columns != a.Columns)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the proper dimension ({2},{3})",c.Rows,c.Columns,a.Rows,a.Columns));
 
       for(int i=0;i<c.Rows;i++)
-        for(int j=0;j<c.Cols;j++)
+        for(int j=0;j<c.Columns;j++)
           c[i,j] = a[i,j]+b[i,j];
     }
 
@@ -785,17 +866,17 @@ namespace Altaxo.Calc
     /// <param name="a">Minuend.</param>
     /// <param name="b">Subtrahend.</param>
     /// <param name="c">The resultant matrix a-b. Has to be of same dimension as a and b.</param>
-    public static void Subtract(IMatrix a, IMatrix b, IMatrix c)
+    public static void Subtract(IROMatrix a, IROMatrix b, IMatrix c)
     {
       // Presumtion:
       // a.Cols == b.Rows;
-      if(a.Cols!=b.Cols || a.Rows!=b.Rows)
-        throw new ArithmeticException(string.Format("Try to subtract a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Cols,b.Rows,b.Cols));
-      if(c.Rows != a.Rows || c.Cols != a.Cols)
-        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the proper dimension ({2},{3})",c.Rows,c.Cols,a.Rows,a.Cols));
+      if(a.Columns!=b.Columns || a.Rows!=b.Rows)
+        throw new ArithmeticException(string.Format("Try to subtract a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Columns,b.Rows,b.Columns));
+      if(c.Rows != a.Rows || c.Columns != a.Columns)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the proper dimension ({2},{3})",c.Rows,c.Columns,a.Rows,a.Columns));
 
       for(int i=0;i<c.Rows;i++)
-        for(int j=0;j<c.Cols;j++)
+        for(int j=0;j<c.Columns;j++)
           c[i,j] = a[i,j]-b[i,j];
     }
 
@@ -805,18 +886,18 @@ namespace Altaxo.Calc
     /// <param name="a">First multiplicant.</param>
     /// <param name="b">Second multiplicant.</param>
     /// <param name="c">The matrix where to subtract the result of the multipication from. Has to be of dimension (a.Rows, b.Columns).</param>
-    public static void SelfSubtractProduct(IMatrix a, IMatrix b, IMatrix c)
+    public static void SelfSubtractProduct(IROMatrix a, IROMatrix b, IMatrix c)
     {
       int crows = a.Rows; // the rows of resultant matrix
-      int ccols = b.Cols; // the cols of resultant matrix
+      int ccols = b.Columns; // the cols of resultant matrix
       int numil = b.Rows; // number of summands for most inner loop
 
       // Presumtion:
       // a.Cols == b.Rows;
-      if(a.Cols!=numil)
-        throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Cols,b.Rows,b.Cols));
-      if(c.Rows != crows || c.Cols != ccols)
-        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",c.Rows,c.Cols,crows,ccols));
+      if(a.Columns!=numil)
+        throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Columns,b.Rows,b.Columns));
+      if(c.Rows != crows || c.Columns != ccols)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",c.Rows,c.Columns,crows,ccols));
 
       for(int i=0;i<crows;i++)
       {
@@ -837,14 +918,14 @@ namespace Altaxo.Calc
     /// <param name="a">First multiplicant.</param>
     /// <param name="b">Second multiplicant.</param>
     /// <param name="c">The matrix where to subtract the result of the multipication from. Has to be of dimension (a.Rows, b.Columns).</param>
-    public static void SelfSubtractProduct(IMatrix a, double b, IMatrix c)
+    public static void SelfSubtractProduct(IROMatrix a, double b, IMatrix c)
     {
       int crows = a.Rows; // the rows of resultant matrix
-      int ccols = a.Cols; // the cols of resultant matrix
+      int ccols = a.Columns; // the cols of resultant matrix
 
       // Presumtion:
-      if(c.Rows != crows || c.Cols != ccols)
-        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",c.Rows,c.Cols,crows,ccols));
+      if(c.Rows != crows || c.Columns != ccols)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",c.Rows,c.Columns,crows,ccols));
 
       for(int i=0;i<crows;i++)
       {
@@ -866,10 +947,10 @@ namespace Altaxo.Calc
     /// centered matrix. The original matrix data are lost.</remarks>
     public static void ColumnsToZeroMean(IMatrix a, IMatrix mean)
     {
-      if(null!=mean && (mean.Rows != 1 || mean.Cols != a.Cols))
-        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",mean.Rows,mean.Cols,1,a.Cols));
+      if(null!=mean && (mean.Rows != 1 || mean.Columns != a.Columns))
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",mean.Rows,mean.Columns,1,a.Columns));
 
-      for(int col = 0; col<a.Cols; col++)
+      for(int col = 0; col<a.Columns; col++)
       {
         double sum = 0;
         for(int row=0;row<a.Rows;row++)
@@ -893,10 +974,10 @@ namespace Altaxo.Calc
     /// centered matrix. The original matrix data are lost.</remarks>
     public static void ColumnsToZeroMeanAndUnitVariance(IMatrix a, IMatrix meanvec, IMatrix scorevec)
     {
-      if(null!=meanvec && (meanvec.Rows != 1 || meanvec.Cols != a.Cols))
-        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",meanvec.Rows,meanvec.Cols,1,a.Cols));
+      if(null!=meanvec && (meanvec.Rows != 1 || meanvec.Columns != a.Columns))
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",meanvec.Rows,meanvec.Columns,1,a.Columns));
 
-      for(int col = 0; col<a.Cols; col++)
+      for(int col = 0; col<a.Columns; col++)
       {
         double sum = 0;
         double sumsqr = 0;
@@ -926,11 +1007,11 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a">The matrix.</param>
     /// <returns>The sum of the squares of all elements in the matrix a.</returns>
-    public static double SumOfSquares(IMatrix a)
+    public static double SumOfSquares(IROMatrix a)
     {
       double sum=0;
       for(int i=0;i<a.Rows;i++)
-        for(int j=0;j<a.Cols;j++)
+        for(int j=0;j<a.Columns;j++)
           sum += Square(a[i,j]);
       return sum;
     }
@@ -941,14 +1022,14 @@ namespace Altaxo.Calc
     /// <param name="a">The first matrix.</param>
     /// <param name="b">The second matrix. Must have same dimensions than a.</param>
     /// <returns>The sum of the squared differences of each element in a to the corresponding element in b, i.e. Sum[(a[i,j]-b[i,j])²].</returns>
-    public static double SumOfSquaredDifferences(IMatrix a, IMatrix b)
+    public static double SumOfSquaredDifferences(IROMatrix a, IROMatrix b)
     {
-      if(a.Rows != b.Rows || a.Cols != a.Cols)
-        throw new ArithmeticException(string.Format("The two provided matrices (a({0},{1])) and b({2},{3})) have not the same dimensions.",a.Rows,a.Cols,b.Rows,b.Cols));
+      if(a.Rows != b.Rows || a.Columns != a.Columns)
+        throw new ArithmeticException(string.Format("The two provided matrices (a({0},{1])) and b({2},{3})) have not the same dimensions.",a.Rows,a.Columns,b.Rows,b.Columns));
 
       double sum=0;
       for(int i=0;i<a.Rows;i++)
-        for(int j=0;j<a.Cols;j++)
+        for(int j=0;j<a.Columns;j++)
           sum += Square(a[i,j]-b[i,j]);
       return sum;
     }
@@ -959,7 +1040,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a">The matrix.</param>
     /// <returns>The square root of the sum of the squares of the matrix a.</returns>
-    public static double LengthOf(IMatrix a)
+    public static double LengthOf(IROMatrix a)
     {
       return Math.Sqrt(SumOfSquares(a));
     }
@@ -969,13 +1050,13 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="a">The matrix to test.</param>
     /// <returns>True if all elements are zero or if one of the two dimensions of the matrix is zero. False if the matrix contains nonzero elements.</returns>
-    public static bool IsZeroMatrix(IMatrix a)
+    public static bool IsZeroMatrix(IROMatrix a)
     {
-      if(a.Rows==0 || a.Cols==0)
+      if(a.Rows==0 || a.Columns==0)
         return true; // we consider a matrix with one dimension zero also as zero matrix
 
       for(int i=0;i<a.Rows;i++)
-        for(int j=0;j<a.Cols;j++)
+        for(int j=0;j<a.Columns;j++)
           if(a[i,j]!=0)
             return false;
 
@@ -991,7 +1072,7 @@ namespace Altaxo.Calc
     public static void SetMatrixElements(IMatrix a, double scalar)
     {
       for(int i=0;i<a.Rows;i++)
-        for(int j=0;j<a.Cols;j++)
+        for(int j=0;j<a.Columns;j++)
           a[i,j]=scalar;
     }
 
@@ -1013,10 +1094,10 @@ namespace Altaxo.Calc
     /// <param name="dest">The destination matrix where to store the submatrix. It's dimensions are the dimensions of the submatrix.</param>
     /// <param name="rowoffset">The row offset = vertical origin of the submatrix in the source matrix.</param>
     /// <param name="coloffset">The column offset = horizontal origin of the submatrix in the source matrix.</param>
-    public static void  Submatrix(IMatrix src, IMatrix dest, int rowoffset, int coloffset)
+    public static void  Submatrix(IROMatrix src, IMatrix dest, int rowoffset, int coloffset)
     {
       for(int i=0;i<dest.Rows;i++)
-        for(int j=0;j<dest.Cols;j++)
+        for(int j=0;j<dest.Columns;j++)
           dest[i,j] = src[i+rowoffset,j+coloffset];
     }
 
@@ -1026,10 +1107,10 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="src">The source matrix.</param>
     /// <param name="dest">The destination matrix where to store the submatrix. It's dimensions are the dimensions of the submatrix.</param>
-    public static void Submatrix(IMatrix src, IMatrix dest)
+    public static void Submatrix(IROMatrix src, IMatrix dest)
     {
       for(int i=0;i<dest.Rows;i++)
-        for(int j=0;j<dest.Cols;j++)
+        for(int j=0;j<dest.Columns;j++)
           dest[i,j] = src[i,j];
     }
 
@@ -1038,13 +1119,13 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="src">The source matrix to copy.</param>
     /// <param name="dest">The destination matrix to copy to.</param>
-    public static void Copy(IMatrix src, IMatrix dest)
+    public static void Copy(IROMatrix src, IMatrix dest)
     {
-      if(dest.Rows != src.Rows || dest.Cols != src.Cols)
-        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the dimension of the source matrix ({2},{3})",dest.Rows,dest.Cols,src.Rows,src.Cols));
+      if(dest.Rows != src.Rows || dest.Columns != src.Columns)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the dimension of the source matrix ({2},{3})",dest.Rows,dest.Columns,src.Rows,src.Columns));
 
       int rows=src.Rows;
-      int cols=src.Cols;
+      int cols=src.Columns;
       for(int i=0;i<rows;i++)
         for(int j=0;j<cols;j++)
           dest[i,j] = src[i,j];
@@ -1059,10 +1140,10 @@ namespace Altaxo.Calc
     /// <param name="dest">The destination matrix. Must have equal or higher dim than the source matrix.</param>
     /// <param name="destrow">The vertical origin of copy operation in the destination matrix.</param>
     /// <param name="destcol">The horizontal origin of copy operation in the destination matrix.</param>
-    public static void Copy(IMatrix src, IMatrix dest, int destrow, int destcol)
+    public static void Copy(IROMatrix src, IMatrix dest, int destrow, int destcol)
     {
       int rows=src.Rows;
-      int cols=src.Cols;
+      int cols=src.Columns;
       for(int i=0;i<rows;i++)
         for(int j=0;j<cols;j++)
           dest[i+destrow,j+destcol] = src[i,j];
@@ -1075,12 +1156,12 @@ namespace Altaxo.Calc
     /// <param name="src">The source matrix. Must be a vertical vector (cols=1) with the same number of rows than the destination matrix.</param>
     /// <param name="dest">The destination matrix where to copy the vertical vector into.</param>
     /// <param name="col">The column in the destination matrix where to copy the vector to.</param>
-    public static void SetColumn(IMatrix src, IMatrix dest, int col)
+    public static void SetColumn(IROMatrix src, IMatrix dest, int col)
     {
-      if(col>=dest.Cols)
-        throw new ArithmeticException(string.Format("Try to set column {0} in the matrix with dim({1},{2}) is not allowed!",col,dest.Rows,dest.Cols));
-      if(src.Cols!=1)
-        throw new ArithmeticException(string.Format("Try to set column {0} with a matrix of more than one, namely {1} columns, is not allowed!",col,src.Cols));
+      if(col>=dest.Columns)
+        throw new ArithmeticException(string.Format("Try to set column {0} in the matrix with dim({1},{2}) is not allowed!",col,dest.Rows,dest.Columns));
+      if(src.Columns!=1)
+        throw new ArithmeticException(string.Format("Try to set column {0} with a matrix of more than one, namely {1} columns, is not allowed!",col,src.Columns));
       if(dest.Rows != src.Rows)
         throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({3})!",col,dest.Rows,src.Rows));
     
@@ -1095,16 +1176,16 @@ namespace Altaxo.Calc
     /// <param name="srcRow">The row in the source matrix where to copy from.</param>
     /// <param name="dest">The destination matrix where to copy the horizontal vector into.</param>
     /// <param name="destRow">The row in the destination matrix where to copy the vector to.</param>
-    public static void SetRow(IMatrix src, int srcRow, IMatrix dest, int destRow)
+    public static void SetRow(IROMatrix src, int srcRow, IMatrix dest, int destRow)
     {
       if(destRow>=dest.Rows)
-        throw new ArithmeticException(string.Format("Try to set row {0} in the matrix with dim({1},{2}) is not allowed!",destRow,dest.Rows,dest.Cols));
+        throw new ArithmeticException(string.Format("Try to set row {0} in the matrix with dim({1},{2}) is not allowed!",destRow,dest.Rows,dest.Columns));
       if(srcRow>=src.Rows)
         throw new ArithmeticException(string.Format("The source row number ({0}) exceeds the actual number of rows ({1})in the source matrix!",srcRow,src.Rows));
-      if(dest.Cols != src.Cols)
-        throw new ArithmeticException(string.Format("Number of columns of the matrix ({0}) not match number of colums of the vector ({1})!",dest.Cols,src.Cols));
+      if(dest.Columns != src.Columns)
+        throw new ArithmeticException(string.Format("Number of columns of the matrix ({0}) not match number of colums of the vector ({1})!",dest.Columns,src.Columns));
     
-      for(int j=0;j<dest.Cols;j++)
+      for(int j=0;j<dest.Columns;j++)
         dest[destRow,j]=src[srcRow,j];
     }
 
@@ -1120,10 +1201,10 @@ namespace Altaxo.Calc
       for(int i=0;i<a.Rows;i++)
       {
         double sum=0;
-        for(int j=0;j<a.Cols;j++)
+        for(int j=0;j<a.Columns;j++)
           sum += Square(a[i,j]);
         sum = 1/Math.Sqrt(sum);
-        for(int j=0;j<a.Cols;j++)
+        for(int j=0;j<a.Columns;j++)
           a[i,j] *= sum;
       }
     }
@@ -1136,7 +1217,7 @@ namespace Altaxo.Calc
     /// <param name="a">The matrix which should be column normalized.</param>
     public static void NormalizeCols(IMatrix a)
     {
-      for(int i=0;i<a.Cols;i++)
+      for(int i=0;i<a.Columns;i++)
       {
         double sum=0;
         for(int j=0;j<a.Rows;j++)
@@ -1155,8 +1236,8 @@ namespace Altaxo.Calc
     /// <returns>Square root of the sum of squares of the column, i.e. the original length of the column vector before normalization.</returns>
     public static double NormalizeOneColumn(IMatrix a, int col)
     {
-      if(col>=a.Cols)
-        throw new ArithmeticException(string.Format("Matrix a is expected to have at least {0} columns, but has the actual dimensions({1},{2})",col+1,a.Rows,a.Cols));
+      if(col>=a.Columns)
+        throw new ArithmeticException(string.Format("Matrix a is expected to have at least {0} columns, but has the actual dimensions({1},{2})",col+1,a.Rows,a.Columns));
   
       double sum=0;
       for(int i=0;i<a.Rows;i++)
@@ -1179,7 +1260,7 @@ namespace Altaxo.Calc
     public static void InvertDiagonalMatrix(IMatrix a)
     {
       int rows = a.Rows;
-      int cols = a.Cols;
+      int cols = a.Columns;
 
       if(cols!=rows)
         throw new ArithmeticException(string.Format("A diagonal matrix has to be quadratic, but you provided a matrix of dimension({0},{1})!",rows,cols));
@@ -1197,16 +1278,16 @@ namespace Altaxo.Calc
     /// <param name="b">The second matrix. Basis for calculation of threshold.</param>
     /// <param name="accuracy">The accuracy.</param>
     /// <returns></returns>
-    public static bool IsEqual(IMatrix a, IMatrix b, double accuracy)
+    public static bool IsEqual(IROMatrix a, IROMatrix b, double accuracy)
     {
       // Presumtion:
       // a.Cols == b.Rows;
-      if(a.Cols!=b.Cols || a.Rows != b.Rows)
-        throw new ArithmeticException(string.Format("Try to compare a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Cols,b.Rows,b.Cols));
+      if(a.Columns!=b.Columns || a.Rows != b.Rows)
+        throw new ArithmeticException(string.Format("Try to compare a matrix of dim({0},{1}) with one of dim({2},{3}) is not possible!",a.Rows,a.Columns,b.Rows,b.Columns));
 
-      double thresh = Math.Sqrt(SumOfSquares(b))*accuracy/((double)b.Rows*b.Cols);;
+      double thresh = Math.Sqrt(SumOfSquares(b))*accuracy/((double)b.Rows*b.Columns);;
       for(int i=0;i<a.Rows;i++)
-        for(int j=0;j<a.Cols;j++)
+        for(int j=0;j<a.Columns;j++)
           if(Math.Abs(a[i,j]-b[i,j])>thresh)
             return false;
 
@@ -1242,11 +1323,11 @@ namespace Altaxo.Calc
         residualVarianceVector.AppendBottom(new MatrixMath.Scalar(originalVariance));
 
   
-      IMatrix l = new HorizontalVector(X.Cols);
+      IMatrix l = new HorizontalVector(X.Columns);
       IMatrix t_prev = null;
       IMatrix t = new VerticalVector(X.Rows);
 
-      int maxFactors = numFactors<=0 ? X.Cols : Math.Min(numFactors,X.Cols);
+      int maxFactors = numFactors<=0 ? X.Columns : Math.Min(numFactors,X.Columns);
 
       for(int nFactor=0; nFactor<maxFactors; nFactor++)
       {
@@ -1319,8 +1400,8 @@ namespace Altaxo.Calc
     /// <param name="W">Returns the matrix of weighting values. Should be initially empty.</param>
     /// <param name="V">Returns the vector of cross products. Should be initially empty.</param>
     public static void PartialLeastSquares_HO(
-      IMatrix _X, // matrix of spectra (a spectra is a row of this matrix)
-      IMatrix _Y, // matrix of concentrations (a mixture is a row of this matrix)
+      IROMatrix _X, // matrix of spectra (a spectra is a row of this matrix)
+      IROMatrix _Y, // matrix of concentrations (a mixture is a row of this matrix)
       ref int numFactors,
       IBottomExtensibleMatrix xLoads, // out: the loads of the X matrix
       IBottomExtensibleMatrix yLoads, // out: the loads of the Y matrix
@@ -1343,23 +1424,23 @@ namespace Altaxo.Calc
 
 
       // use the mean spectrum as first row of the W matrix
-      MatrixMath.HorizontalVector mean = new HorizontalVector(_X.Cols);
+      MatrixMath.HorizontalVector mean = new HorizontalVector(_X.Columns);
       //  MatrixMath.ColumnsToZeroMean(X,mean);
       //W.AppendBottom(mean);
 
-      IMatrix X = new HOMatrix(_X.Rows,_X.Cols);
+      IMatrix X = new BEMatrix(_X.Rows,_X.Columns);
       MatrixMath.Copy(_X,X);
-      IMatrix Y = new HOMatrix(_Y.Rows,_Y.Cols);
+      IMatrix Y = new BEMatrix(_Y.Rows,_Y.Columns);
       MatrixMath.Copy(_Y,Y);
 
       IMatrix u_prev = null;
-      IMatrix w = new HorizontalVector(X.Cols); // horizontal vector of X (spectral) weighting
+      IMatrix w = new HorizontalVector(X.Columns); // horizontal vector of X (spectral) weighting
       IMatrix t = new VerticalVector(X.Rows); // vertical vector of X  scores
       IMatrix u = new VerticalVector(X.Rows); // vertical vector of Y scores
-      IMatrix p = new HorizontalVector(X.Cols); // horizontal vector of X loads
-      IMatrix q = new HorizontalVector(Y.Cols); // horizontal vector of Y loads
+      IMatrix p = new HorizontalVector(X.Columns); // horizontal vector of X loads
+      IMatrix q = new HorizontalVector(Y.Columns); // horizontal vector of Y loads
 
-      int maxFactors = Math.Min(X.Cols,X.Rows);
+      int maxFactors = Math.Min(X.Columns,X.Rows);
       numFactors = numFactors<=0 ? maxFactors : Math.Min(numFactors,maxFactors);
 
       for(int nFactor=0; nFactor<numFactors; nFactor++)
@@ -1437,27 +1518,27 @@ namespace Altaxo.Calc
 
 
     public static void PartialLeastSquares_Predict_HO(
-      IMatrix XU, // unknown spectrum or spectra,  horizontal oriented
-      IMatrix xLoads, // x-loads matrix
-      IMatrix yLoads, // y-loads matrix
-      IMatrix W, // weighting matrix
-      IMatrix V,  // Cross product vector
+      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+      IROMatrix xLoads, // x-loads matrix
+      IROMatrix yLoads, // y-loads matrix
+      IROMatrix W, // weighting matrix
+      IROMatrix V,  // Cross product vector
       int numFactors, // number of factors to use for prediction
       ref IMatrix predictedY // Matrix of predicted y-values, must be same number of rows as spectra
       )
     {
       // now predicting a "unkown" spectra
       MatrixMath.Scalar si = new MatrixMath.Scalar(0);
-      MatrixMath.HorizontalVector Cu = new MatrixMath.HorizontalVector(yLoads.Cols);
+      MatrixMath.HorizontalVector Cu = new MatrixMath.HorizontalVector(yLoads.Columns);
 
-      MatrixMath.HorizontalVector wi = new MatrixMath.HorizontalVector(XU.Cols);
-      MatrixMath.HorizontalVector cuadd = new MatrixMath.HorizontalVector(yLoads.Cols);
+      MatrixMath.HorizontalVector wi = new MatrixMath.HorizontalVector(XU.Columns);
+      MatrixMath.HorizontalVector cuadd = new MatrixMath.HorizontalVector(yLoads.Columns);
       
       // xu holds a single spectrum extracted out of XU
-      MatrixMath.HorizontalVector xu = new MatrixMath.HorizontalVector(XU.Cols);
+      MatrixMath.HorizontalVector xu = new MatrixMath.HorizontalVector(XU.Columns);
 
       // xl holds temporarily a row of the xLoads matrix+
-      MatrixMath.HorizontalVector xl = new MatrixMath.HorizontalVector(xLoads.Cols);
+      MatrixMath.HorizontalVector xl = new MatrixMath.HorizontalVector(xLoads.Columns);
 
 
       int maxFactors = Math.Min(yLoads.Rows,numFactors);
@@ -1489,26 +1570,26 @@ namespace Altaxo.Calc
     } // end partial-least-squares-predict
 
     public static void PartialLeastSquares_CrossValidation_HO(
-      IMatrix X, // matrix of spectra (a spectra is a row of this matrix)
-      IMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
+      IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
+      IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
       int numFactors,
       out IMatrix crossPRESSMatrix // vertical value of PRESS values for the cross validation
       )
     {
-      IBottomExtensibleMatrix xLoads = new MatrixMath.HOMatrix(0,0); // out: the loads of the X matrix
-      IBottomExtensibleMatrix yLoads = new MatrixMath.HOMatrix(0,0); // out: the loads of the Y matrix
-      IBottomExtensibleMatrix W = new MatrixMath.HOMatrix(0,0); // matrix of weighting values
-      IRightExtensibleMatrix V = new MatrixMath.VOMatrix(0,0); // matrix of cross products
+      IBottomExtensibleMatrix xLoads = new MatrixMath.BEMatrix(0,0); // out: the loads of the X matrix
+      IBottomExtensibleMatrix yLoads = new MatrixMath.BEMatrix(0,0); // out: the loads of the Y matrix
+      IBottomExtensibleMatrix W = new MatrixMath.BEMatrix(0,0); // matrix of weighting values
+      IRightExtensibleMatrix V = new MatrixMath.REMatrix(0,0); // matrix of cross products
 
       double[] crossPRESS = null;
 
       int numberOfExcludedSpectraOfGroup = 1;
 
-      IMatrix XX = new HOMatrix(X.Rows-numberOfExcludedSpectraOfGroup,X.Cols);
-      IMatrix YY = new HOMatrix(Y.Rows-numberOfExcludedSpectraOfGroup,Y.Cols);
-      IMatrix XU = new HOMatrix(numberOfExcludedSpectraOfGroup,X.Cols);
-      IMatrix YU = new HOMatrix(numberOfExcludedSpectraOfGroup,Y.Cols);
-      IMatrix predY = new HOMatrix(numberOfExcludedSpectraOfGroup,Y.Cols);
+      IMatrix XX = new BEMatrix(X.Rows-numberOfExcludedSpectraOfGroup,X.Columns);
+      IMatrix YY = new BEMatrix(Y.Rows-numberOfExcludedSpectraOfGroup,Y.Columns);
+      IMatrix XU = new BEMatrix(numberOfExcludedSpectraOfGroup,X.Columns);
+      IMatrix YU = new BEMatrix(numberOfExcludedSpectraOfGroup,Y.Columns);
+      IMatrix predY = new BEMatrix(numberOfExcludedSpectraOfGroup,Y.Columns);
 
       for(int nGroup=0;nGroup < X.Rows;nGroup++)
       {
@@ -1529,10 +1610,10 @@ namespace Altaxo.Calc
 
 
         // do a PLS with the builded matrices
-        xLoads = new MatrixMath.HOMatrix(0,0); // clear xLoads
-        yLoads = new MatrixMath.HOMatrix(0,0); // clear yLoads
-        W      = new MatrixMath.HOMatrix(0,0); // clear W
-        V      = new MatrixMath.VOMatrix(0,0); // clear V
+        xLoads = new MatrixMath.BEMatrix(0,0); // clear xLoads
+        yLoads = new MatrixMath.BEMatrix(0,0); // clear yLoads
+        W      = new MatrixMath.BEMatrix(0,0); // clear W
+        V      = new MatrixMath.REMatrix(0,0); // clear V
         int actnumfactors=numFactors;
         PartialLeastSquares_HO(XX, YY, ref actnumfactors, xLoads,yLoads,W,V); 
         numFactors = Math.Min(numFactors,actnumfactors); // if we have here a lesser number of factors, use it for all further calculations
