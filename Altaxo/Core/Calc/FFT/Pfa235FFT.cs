@@ -65,7 +65,7 @@ namespace Altaxo.Calc.FFT
 
 
 
-//    public enum Direction { Forward = -1, Inverse = 1 };
+    //    public enum Direction { Forward = -1, Inverse = 1 };
     // constructors and assigment
 
 

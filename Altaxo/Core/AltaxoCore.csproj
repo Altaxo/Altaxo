@@ -99,6 +99,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\BinaryMath.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\complex.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

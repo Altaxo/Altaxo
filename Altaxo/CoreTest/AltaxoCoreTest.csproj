@@ -119,12 +119,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\FFT\CommonFFTTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\FFT\PFA235FFT_Tests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Calc\FFT\TestChirpFFT.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\FFT\TestFastHartleyTransform.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

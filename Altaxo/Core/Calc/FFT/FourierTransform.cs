@@ -28,7 +28,7 @@ using System;
 namespace Altaxo.Calc.FFT
 {
   /// <summary>
-  /// Summary description for FFT.
+  /// Fast Fourier Transform class based on the Fast Hartley Transform.
   /// </summary>
   public class FastHartleyTransform
   {
@@ -87,7 +87,7 @@ namespace Altaxo.Calc.FFT
     // CForm[Table[N[Sec[Pi/(2^n)]/2,50],{n,3,60}]]
     //----------------------------------------------------------------------------//
 
-    private static double[] halsec=
+    private readonly static double[] halsec=
   {
     0.0,
     0.0,
@@ -158,7 +158,7 @@ namespace Altaxo.Calc.FFT
     // CForm[Table[N[Cos[Pi/(2^n)],50],{n,1,60}]]
     //----------------------------------------------------------------------------//
 
-    private static double[] costab=
+    private readonly static double[] costab=
   {
     0.0,
     0.70710678118654752440084436210484903928483593768847,
@@ -229,7 +229,7 @@ namespace Altaxo.Calc.FFT
     // CForm[Table[N[Sin[Pi/(2^n)],50],{n,1,60}]]
     //----------------------------------------------------------------------------//
 
-    private static double[] sintab=
+    private readonly static double[] sintab=
   {
     1.0,
     0.70710678118654752440084436210484903928483593768847,
@@ -301,7 +301,7 @@ namespace Altaxo.Calc.FFT
     // CForm[Table[N[Cos[Pi/(2^n)],50],{n,1,60}]]
     //----------------------------------------------------------------------------//
 
-    private static double[] coswrk=
+    private readonly static double[] coswrk=
   {
     0.0,
     0.70710678118654752440084436210484903928483593768847,
@@ -371,7 +371,7 @@ namespace Altaxo.Calc.FFT
     // CForm[Table[N[Sin[Pi/(2^n)],50],{n,1,60}]]
     //----------------------------------------------------------------------------//
 
-    private static double[] sinwrk=
+    private readonly static double[] sinwrk=
   {
     1.0,
     0.70710678118654752440084436210484903928483593768847,
@@ -1036,7 +1036,59 @@ namespace Altaxo.Calc.FFT
         real[i] = (a+b)*0.5;
       }
     }
-  }
 
- 
+
+    /// <summary>
+    /// Does a fourier transform of 'n' points of the 'real' and 'imag' arrays.
+    /// </summary>
+    /// <param name="real">The array holding the real part of the values.</param>
+    /// <param name="imag">The array holding the imaginary part of the values.</param>
+    /// <param name="direction">The direction of the Fourier transformation.</param>
+    public static void FFT(double[] real, double[] imag, FourierDirection direction)
+    {
+      if(real.Length!=imag.Length)
+        throw new ArgumentException("Length of real and imag array do not match!");
+      
+      FFT(real,imag,real.Length,direction);
+    }
+
+    /// <summary>
+    /// Does a fourier transform of 'n' points of the 'real' and 'imag' arrays.
+    /// </summary>
+    /// <param name="real">The array holding the real part of the values.</param>
+    /// <param name="imag">The array holding the imaginary part of the values.</param>
+    /// <param name="n">Number of points to transform. Have to be a power of 2 (unchecked!)</param>
+    /// <param name="direction">The direction of the Fourier transformation.</param>
+    public static void FFT(double[] real, double[] imag, int n, FourierDirection direction)
+    {
+      if(direction==FourierDirection.Forward)
+        fht_fft(n,real,imag);
+      else
+        fht_ifft(n,real,imag);
+    }
+
+    /// <summary>
+    /// Does a real-valued fourier transform of 'n' points of the
+    /// 'real' array.  On forward transform, the real part of the transform ends
+    /// up in the first half of the array and the imaginary part of the
+    /// transform ends up in the second half of the array. On backward transform, real and imaginary part
+    /// have to be located in the same way like the result of the forward transform.
+    /// </summary>
+    /// <param name="n">The number of points to transform. Has to be a power of 2 (unchecked!).</param>
+    /// <param name="real">The array holding the real values to transform.</param>
+    /// <param name="direction">The direction of the Fourier transform.</param>
+    public static void RealFFT(double[] real, int n, FourierDirection direction)
+    {
+      fht(real,n);
+
+      for (int i=1,j=n-1,k=n/2;i<k;i++,j--) 
+      {
+        double a,b;
+        a = real[i];
+        b = real[j];
+        real[j] = (a-b)*0.5;
+        real[i] = (a+b)*0.5;
+      }
+    }
+  }
 }

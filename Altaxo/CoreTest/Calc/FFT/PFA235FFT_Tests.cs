@@ -28,15 +28,29 @@ namespace AltaxoTest.Calc.FFT
 {
 
   [TestFixture]
-  public class TestPFA235FFT_1D_Inverse
+  public class TestPFA235FFT_1D
   {
+    CommonFFTTests _test;
+
+    public TestPFA235FFT_1D()
+    {
+      _test = new CommonFFTTests(new CommonFFTTests.FFTRoutine(MyFFT));
+     
+    }
+
+    void MyFFT(double[] real, double[] imag, FourierDirection direction)
+    {
+      Pfa235FFT fft = new Pfa235FFT(real.Length);
+      fft.FFT(real, imag, direction);
+    }
+
 
     [Test]
     public void TestZero2N()
     {
       // Testing 2^n
       for(int i=2;i<=65536;i*=2)
-        zzTestZero(i);
+        _test.TestZero(i);
     }
 
     [Test]
@@ -44,7 +58,7 @@ namespace AltaxoTest.Calc.FFT
     {
       // Testing 3^n
       for(int i=3;i<100000;i*=3)
-        zzTestZero(i);
+        _test.TestZero(i);
     }
   
     [Test]
@@ -52,33 +66,15 @@ namespace AltaxoTest.Calc.FFT
     {
       // Testing 5^n
       for(int i=5;i<100000;i*=5)
-        zzTestZero(i);
+        _test.TestZero(i);
     }
-
-
-    private static void zzTestZero(int n)
-    {
-      double[] re = new double[n];
-      double[] im = new double[n];
-
-      Pfa235FFT fft = new Pfa235FFT(n);
-
-      fft.FFT(re,im,FourierDirection.Inverse);
-
-      for(int i=0;i<n;i++)
-      {
-        Assertion.AssertEquals("FFT of zero should give re=0", 0, re[i],0);
-        Assertion.AssertEquals("FFT of zero should give im=0", 0, im[i],0);
-      }
-    }
-  
 
     [Test]
     public void TestReOne_ZeroPos2N()
     {
       // Testing 2^n
       for(int i=2;i<=65536;i*=2)
-        zzTestReOne_ZeroPos(i);
+        _test.TestReOne_ZeroPos(i);
     }
 
     [Test]
@@ -86,7 +82,7 @@ namespace AltaxoTest.Calc.FFT
     {
       // Testing 3^n
       for(int i=3;i<100000;i*=3)
-        zzTestReOne_ZeroPos(i);
+        _test.TestReOne_ZeroPos(i);
     }
   
     [Test]
@@ -94,34 +90,16 @@ namespace AltaxoTest.Calc.FFT
     {
       // Testing 5^n
       for(int i=5;i<100000;i*=5)
-        zzTestReOne_ZeroPos(i);
+        _test.TestReOne_ZeroPos(i);
     }
 
-    private static void zzTestReOne_ZeroPos(int n)
-    {
-      double[] re = new double[n];
-      double[] im = new double[n];
-
-      re[0] = 1;
-
-      Pfa235FFT fft = new Pfa235FFT(n);
-
-      fft.FFT(re,im,FourierDirection.Inverse);
-      
-      for(int i=0;i<n;i++)
-      {
-        Assertion.AssertEquals("FFT of 1 at pos 0 should give re=1", 1, re[i],0);
-        Assertion.AssertEquals("FFT of 1 at pos 0 should give im=0", 0, im[i],0);
-      }
-    }
-
-
+ 
     [Test]
     public void TestImOne_ZeroPos2N()
     {
       // Testing 2^n
       for(int i=2;i<=65536;i*=2)
-        zzTestImOne_ZeroPos(i);
+        _test.TestImOne_ZeroPos(i);
     }
 
     [Test]
@@ -129,7 +107,7 @@ namespace AltaxoTest.Calc.FFT
     {
       // Testing 3^n
       for(int i=3;i<100000;i*=3)
-        zzTestImOne_ZeroPos(i);
+        _test.TestImOne_ZeroPos(i);
     }
   
     [Test]
@@ -137,42 +115,23 @@ namespace AltaxoTest.Calc.FFT
     {
       // Testing 5^n
       for(int i=5;i<100000;i*=5)
-        zzTestImOne_ZeroPos(i);
+        _test.TestImOne_ZeroPos(i);
     }
 
     [Test]
     public void TestImOne_ZeroPosArbN()
     {
-      zzTestImOne_ZeroPos(2*2*2*3*3*5);
-      zzTestImOne_ZeroPos(2*2*3*3*3*5);
-      zzTestImOne_ZeroPos(2*3*3*5*5*5);
+      _test.TestImOne_ZeroPos(2*2*2*3*3*5);
+      _test.TestImOne_ZeroPos(2*2*3*3*3*5);
+      _test.TestImOne_ZeroPos(2*3*3*5*5*5);
     }
-
-    private static void zzTestImOne_ZeroPos(int n)
-    {
-      double[] re = new double[n];
-      double[] im = new double[n];
-
-      im[0] = 1;
-
-      Pfa235FFT fft = new Pfa235FFT(n);
-
-      fft.FFT(re,im,FourierDirection.Inverse);
-
-      for(int i=0;i<n;i++)
-      {
-        Assertion.AssertEquals("FFT of im 1 at pos 0 should give re=0", 0, re[i],0);
-        Assertion.AssertEquals("FFT of im 1 at pos 0 should give im=1", 1, im[i],0);
-      }
-    }
-
 
     [Test]
     public void TestReOne_OnePos2N()
     {
       // Testing 2^n
       for(int i=2;i<=65536;i*=2)
-        zzTestReOne_OnePos(i);
+        _test.TestReOne_OnePos(i);
     }
 
     [Test]
@@ -180,7 +139,7 @@ namespace AltaxoTest.Calc.FFT
     {
       // Testing 3^n
       for(int i=3;i<100000;i*=3)
-        zzTestReOne_OnePos(i);
+        _test.TestReOne_OnePos(i);
     }
   
     [Test]
@@ -188,42 +147,23 @@ namespace AltaxoTest.Calc.FFT
     {
       // Testing 5^n
       for(int i=5;i<100000;i*=5)
-        zzTestReOne_OnePos(i);
+        _test.TestReOne_OnePos(i);
     }
 
     [Test]
     public void TestReOne_OnePosArbN()
     {
-      zzTestReOne_OnePos(2*2*2*3*3*5);
-      zzTestReOne_OnePos(2*2*3*3*3*5);
-      zzTestReOne_OnePos(2*3*3*5*5*5);
+      _test.TestReOne_OnePos(2*2*2*3*3*5);
+      _test.TestReOne_OnePos(2*2*3*3*3*5);
+      _test.TestReOne_OnePos(2*3*3*5*5*5);
     }
-
-    private static void zzTestReOne_OnePos(int n)
-    {
-      double[] re = new double[n];
-      double[] im = new double[n];
-
-      re[1] = 1;
-
-      Pfa235FFT fft = new Pfa235FFT(n);
-
-      fft.FFT(re,im,FourierDirection.Inverse);
-
-      for(int i=0;i<n;i++)
-      {
-        Assertion.AssertEquals(string.Format("FFT({0}) of re 1 at pos 1 re[{1}]",n,i), Math.Cos((2*Math.PI*i)/n), re[i],n*1E-15);
-        Assertion.AssertEquals(string.Format("FFT({0}) of re 1 at pos 1 im[{1}]",n,i), -Math.Sin((2*Math.PI*i)/n), im[i],n*1E-15);
-      }
-    }
-  
 
     [Test]
     public void TestImOne_OnePos2N()
     {
       // Testing 2^n
       for(int i=2;i<=65536;i*=2)
-        zzTestImOne_OnePos(i);
+        _test.TestImOne_OnePos(i);
     }
 
     [Test]
@@ -231,7 +171,7 @@ namespace AltaxoTest.Calc.FFT
     {
       // Testing 3^n
       for(int i=3;i<100000;i*=3)
-        zzTestImOne_OnePos(i);
+        _test.TestImOne_OnePos(i);
     }
   
     [Test]
@@ -239,42 +179,24 @@ namespace AltaxoTest.Calc.FFT
     {
       // Testing 5^n
       for(int i=5;i<100000;i*=5)
-        zzTestImOne_OnePos(i);
+        _test.TestImOne_OnePos(i);
     }
 
     [Test]
     public void TestImOne_OnePosArbN()
     {
-      zzTestImOne_OnePos(2*2*2*3*3*5);
-      zzTestImOne_OnePos(2*2*3*3*3*5);
-      zzTestImOne_OnePos(2*3*3*5*5*5);
+      _test.TestImOne_OnePos(2*2*2*3*3*5);
+      _test.TestImOne_OnePos(2*2*3*3*3*5);
+      _test.TestImOne_OnePos(2*3*3*5*5*5);
     }
 
-    private static void zzTestImOne_OnePos(int n)
-    {
-      double[] re = new double[n];
-      double[] im = new double[n];
-
-      im[1] = 1;
-
-      Pfa235FFT fft = new Pfa235FFT(n);
-
-      fft.FFT(re,im,FourierDirection.Inverse);
-
-      for(int i=0;i<n;i++)
-      {
-        Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos 1 re[{1}]",n,i), Math.Sin((2*Math.PI*i)/n), re[i],n*1E-15);
-        Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos 1 im[{1}]",n,i), Math.Cos((2*Math.PI*i)/n), im[i],n*1E-15);
-      }
-    }
-
-
+ 
     [Test]
     public void TestReImOne_RandomPos2N()
     {
       // Testing 2^n
       for(int i=2;i<=65536;i*=2)
-        zzTestReImOne_RandomPos(i);
+        _test.TestReImOne_RandomPos(i,5);
     }
 
     [Test]
@@ -282,7 +204,7 @@ namespace AltaxoTest.Calc.FFT
     {
       // Testing 3^n
       for(int i=3;i<100000;i*=3)
-        zzTestReImOne_RandomPos(i);
+        _test.TestReImOne_RandomPos(i,5);
     }
   
     [Test]
@@ -290,45 +212,18 @@ namespace AltaxoTest.Calc.FFT
     {
       // Testing 5^n
       for(int i=5;i<100000;i*=5)
-        zzTestReImOne_RandomPos(i);
+        _test.TestReImOne_RandomPos(i,5);
     }
 
     [Test]
     public void TestReImOne_RandomPosArbN()
     {
-      zzTestReImOne_RandomPos(2*2*2*3*3*5);
-      zzTestReImOne_RandomPos(2*2*3*3*3*5);
-      zzTestReImOne_RandomPos(2*3*3*5*5*5);
+      _test.TestReImOne_RandomPos(2*2*2*3*3*5,5);
+      _test.TestReImOne_RandomPos(2*2*3*3*3*5,5);
+      _test.TestReImOne_RandomPos(2*3*3*5*5*5,5);
     }
 
 
-    private static void zzTestReImOne_RandomPos(int n)
-    {
-      double[] re = new double[n];
-      double[] im = new double[n];
-      
-      System.Random rnd = new System.Random();
-
-      int repos = rnd.Next(n);
-      int impos = rnd.Next(n);
-
-      re[repos]=1;
-      im[impos]=1;
-
-      Pfa235FFT fft = new Pfa235FFT(n);
-
-      fft.FFT(re,im,FourierDirection.Inverse);
-
-      for(int i=0;i<n;i++)
-      {
-        Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos(re={1},im={2}) re[{3}]",n,repos,impos,i), 
-          Math.Cos((2*Math.PI*i*(double)repos)/n) + Math.Sin((2*Math.PI*i*(double)impos)/n),
-          re[i],n*1E-14);
-        Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos(re={1},im={2}) arb im[{3}]",n,repos,impos,i), 
-          -Math.Sin((2*Math.PI*i*(double)repos)/n) + Math.Cos((2*Math.PI*i*(double)impos)/n), 
-          im[i],n*1E-14);
-      }
-    }
   }
 
 

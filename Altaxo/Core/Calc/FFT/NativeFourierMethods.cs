@@ -108,6 +108,20 @@ namespace Altaxo.Calc.FFT
     }
 
     /// <summary>
+    /// Performs a inline native fouriertransformation of real and imaginary part arrays.
+    /// </summary>
+    /// <param name="real">The real part of the array to transform.</param>
+    /// <param name="imag">The real part of the array to transform.</param>
+    /// <param name="direction">Direction of the Fourier transform.</param>
+    public static void FFT(double[] real, double[] imag, FourierDirection direction)
+    {
+      if(real.Length!=imag.Length)
+        throw new ArgumentException("Length of real and imaginary array do not match!");
+
+      FFT(real, imag, real, imag, real.Length, direction);
+    }
+
+    /// <summary>
     /// Performs a native fouriertransformation of a complex value array.
     /// </summary>
     /// <param name="resultreal">Used to store the real part of the result of the transformation. May be equal to the input array.</param>

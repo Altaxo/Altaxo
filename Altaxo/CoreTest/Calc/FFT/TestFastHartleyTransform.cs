@@ -28,64 +28,68 @@ namespace AltaxoTest.Calc.FFT
 {
 
   [TestFixture]
-  public class TestNativeFFT
+  public class TestFastHartleyTransform
   {
-    const int nLowerLimit=5;
-    const int nUpperLimit=100;
+    const int nLowerLimit=4;
+    const int nUpperLimit=16384;
     const double maxTolerableEpsPerN=1E-15;
 
-    CommonFFTTests _test = new CommonFFTTests(new CommonFFTTests.FFTRoutine(NativeFourierMethods.FFT));
- 
-
-  
+    static CommonFFTTests _test = new CommonFFTTests(new CommonFFTTests.FFTRoutine(FastHartleyTransform.FFT));
 
     [Test]
     public void TestZero()
     {
-      
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+      // Testing 2^n
+      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
         _test.TestZero(i);
     }
 
     [Test]
     public void TestReOne_ZeroPos()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+      // Testing 2^n
+      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
         _test.TestReOne_ZeroPos(i);
     }
 
     [Test]
     public void TestImOne_ZeroPos()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+      // Testing 2^n
+      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
         _test.TestImOne_ZeroPos(i);
     }
 
     [Test]
     public void TestReOne_OnePos()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+      // Testing 2^n
+      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
         _test.TestReOne_OnePos(i);
     }
-    
+
     [Test]
     public void TestImOne_OnePos()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+      // Testing 2^n
+      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
         _test.TestImOne_OnePos(i);
     }
 
     [Test]
     public void TestReImOne_RandomPos()
     {
-      double oldTolerance = _test.SetTolerance(1E-14);
-
-      for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReImOne_RandomPos(i,5);
-
-      _test.SetTolerance(oldTolerance);
+      // Testing 2^n
+      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+        _test.TestReImOne_RandomPos(i,10);
     }
 
+    [Test]
+    public void TestReImRandomValues()
+    {
+      // Testing 2^n
+      for(int i=nLowerLimit;i<=256;i*=2)
+        _test.TestReImRandomValues(i);
+    }
   }
-
 }

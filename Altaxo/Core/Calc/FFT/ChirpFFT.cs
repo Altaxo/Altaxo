@@ -74,25 +74,25 @@ namespace Altaxo.Calc.FFT
     }
 
 
-   static void fhtconvolution( Complex[] resarray,
-     Complex[] arr1, Complex[] arr2, int arrsize)
-  {
-    double[] fht1real = new double[arrsize];
-    double[] fht1imag = new double[arrsize];
-    double[] fht2real = new double[arrsize];
-    double[] fht2imag = new double[arrsize];
+    static void fhtconvolution( Complex[] resarray,
+      Complex[] arr1, Complex[] arr2, int arrsize)
+    {
+      double[] fht1real = new double[arrsize];
+      double[] fht1imag = new double[arrsize];
+      double[] fht2real = new double[arrsize];
+      double[] fht2imag = new double[arrsize];
 
-    CopyFromComplexToSplittedArrays(fht1real,fht1imag,arr1,arrsize);
-    CopyFromComplexToSplittedArrays(fht2real,fht2imag,arr2,arrsize);
+      CopyFromComplexToSplittedArrays(fht1real,fht1imag,arr1,arrsize);
+      CopyFromComplexToSplittedArrays(fht2real,fht2imag,arr2,arrsize);
 
-    // do a convolution by fourier transform both parts, multiply and inverse fft
-    FastHartleyTransform.fht_fft(arrsize, fht1real, fht1imag);
-     FastHartleyTransform.fht_fft(arrsize, fht2real, fht2imag);
-    MultiplySplittedComplexArrays(fht1real, fht1imag, fht1real, fht1imag, fht2real, fht2imag, arrsize);
-     FastHartleyTransform.fht_ifft(arrsize, fht1real,fht1imag);
-    NormalizeArrays(fht1real, fht1imag, 1.0/arrsize, arrsize);
-    CopyFromSplittedArraysToComplex(resarray,fht1real,fht1imag,arrsize);
-  }
+      // do a convolution by fourier transform both parts, multiply and inverse fft
+      FastHartleyTransform.fht_fft(arrsize, fht1real, fht1imag);
+      FastHartleyTransform.fht_fft(arrsize, fht2real, fht2imag);
+      MultiplySplittedComplexArrays(fht1real, fht1imag, fht1real, fht1imag, fht2real, fht2imag, arrsize);
+      FastHartleyTransform.fht_ifft(arrsize, fht1real,fht1imag);
+      NormalizeArrays(fht1real, fht1imag, 1.0/arrsize, arrsize);
+      CopyFromSplittedArraysToComplex(resarray,fht1real,fht1imag,arrsize);
+    }
 
 
     /// <summary>
@@ -130,7 +130,7 @@ namespace Altaxo.Calc.FFT
       return (1<<ldnn);
     }
 
-// der Chirpalgorithmus funktioniert auch noch bei arrsize=1+2^n mit der nächstgelegenen Potenz 2^(n+1) !!!
+    // der Chirpalgorithmus funktioniert auch noch bei arrsize=1+2^n mit der nächstgelegenen Potenz 2^(n+1) !!!
 
     private static void chirpnativefft(Complex[] result, Complex[] arr, int arrsize, FourierDirection direction)
     {
@@ -274,6 +274,23 @@ namespace Altaxo.Calc.FFT
       }
     }
 
+
+    /// <summary>
+    /// Performs an FFT of arbitrary length by the chirp method. Use this method only if no other
+    /// FFT is applicable.
+    /// </summary>
+    /// <param name="x">Array of real values.</param>
+    /// <param name="y">Array of imaginary values.</param>
+    /// <param name="direction">Direction of Fourier transform.</param>
+    public static void
+      FFT(double[] x, double[] y, FourierDirection direction)
+    {
+      if(x.Length!=y.Length)
+        throw new ArgumentException("Length of real and imaginary array do not match!");
+
+      chirpnativefft(x, y, x, y, x.Length, direction);
+    }
+
     /// <summary>
     /// Performs an FFT of arbitrary length by the chirp method. Use this method only if no other
     /// FFT is applicable.
@@ -282,6 +299,13 @@ namespace Altaxo.Calc.FFT
     /// <param name="y">Array of imaginary values.</param>
     /// <param name="n">Number of points to transform.</param>
     /// <param name="direction">Direction of Fourier transform.</param>
+    public static void
+      FFT(double[] x, double[] y, uint n, FourierDirection direction)
+    {
+      chirpnativefft(x,y,x,y,(int)n, direction);
+    }
+
+
     /*
     public static void
       FFT(double[] x, double[] y, uint n, bool backward)
@@ -293,12 +317,6 @@ namespace Altaxo.Calc.FFT
       CopyFromComplexToSplittedArrays(x,y,result,(int)n);
     }
 */
-    public static void
-      FFT(double[] x, double[] y, uint n, FourierDirection direction)
-    {
-      chirpnativefft(x,y,x,y,(int)n, direction);
-    }
-
 
     static void make_fft_chirp(double[] wr, double[] wi, uint n, bool backward)
     {
