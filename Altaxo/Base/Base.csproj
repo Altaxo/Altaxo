@@ -214,6 +214,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Collections\AscendingIntegerCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Collections\IAscendingIntegerCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Collections\IntegerRangeAsCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Data\CollectionBase.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

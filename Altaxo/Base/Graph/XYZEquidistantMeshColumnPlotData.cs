@@ -23,6 +23,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Data;
+using Altaxo.Collections;
 
 namespace Altaxo.Graph
 {
@@ -333,12 +334,12 @@ namespace Altaxo.Graph
 		{
 		}
 
-		public XYZEquidistantMeshColumnPlotData(Altaxo.Data.DataColumnCollection coll, int[] selected)
+		public XYZEquidistantMeshColumnPlotData(Altaxo.Data.DataColumnCollection coll, IAscendingIntegerCollection selected)
 		{
 			m_XColumn = new Altaxo.Data.IndexerColumn();
 			m_YColumn = new Altaxo.Data.IndexerColumn();
 
-			int len = selected==null ? coll.ColumnCount : selected.Length;
+			int len = selected==null ? coll.ColumnCount : selected.Count;
 			m_DataColumns = new Altaxo.Data.IReadableColumn[len];
 			for(int i=0;i<len;i++)
 			{

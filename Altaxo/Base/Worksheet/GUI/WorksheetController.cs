@@ -8,6 +8,7 @@ using Altaxo.Graph;
 using Altaxo.Data;
 using Altaxo.Serialization;
 using Altaxo.Serialization.Ascii;
+using Altaxo.Collections;
 using ICSharpCode.SharpDevelop.Gui;
 
 
@@ -1420,7 +1421,7 @@ namespace Altaxo.Worksheet.GUI
 			if(this.m_SelectedRows.Count>0)
 			{
 				this.DataTable.DataColumns.RemoveRowsInColumns(
-					m_SelectedColumns.Count>0 ? (Altaxo.Worksheet.IAscendingIntegerCollection)m_SelectedColumns : new IntegerRange(0,this.DataTable.DataColumns.ColumnCount),
+					m_SelectedColumns.Count>0 ? (IAscendingIntegerCollection)m_SelectedColumns : new IntegerRangeAsCollection(0,this.DataTable.DataColumns.ColumnCount),
 					m_SelectedRows);
 
 				m_SelectedColumns.Clear();
@@ -2757,8 +2758,8 @@ namespace Altaxo.Worksheet.GUI
 					{
 						if(m_SelectedColumns.Count==0)
 						{
-							foreach(object obj in m_SelectedPropertyRows.Keys)
-							m_SelectedColumns.Add(obj,null);
+							for(int kk=0;kk<m_SelectedPropertyRows.Count;kk++)
+								m_SelectedColumns.Add(m_SelectedPropertyRows[kk]);
 						}
 						m_SelectedPropertyRows.Clear();
 					}
@@ -2830,7 +2831,7 @@ namespace Altaxo.Worksheet.GUI
 				for(int nPropCol=firstPropertyColumnToDraw, nInc=0;nInc<numberOfPropertyColumnsToDraw;nPropCol++,nInc++)
 				{
 					cellRectangle.Y = yShift+nInc*m_TableLayout.PropertyColumnHeaderStyle.Height;
-					bool bPropColSelected = bArePropertyColsSelected && m_SelectedPropertyColumns.ContainsKey(nPropCol);
+					bool bPropColSelected = bArePropertyColsSelected && m_SelectedPropertyColumns.Contains(nPropCol);
 					this.m_TableLayout.PropertyColumnHeaderStyle.Paint(dc,cellRectangle,nPropCol,this.DataTable.PropCols[nPropCol],bPropColSelected);
 				}
 			}
@@ -2841,7 +2842,7 @@ namespace Altaxo.Worksheet.GUI
 			for(int nRow = firstTableRowToDraw,nInc=0; nInc<numberOfTableRowsToDraw; nRow++,nInc++)
 			{
 				cellRectangle.Y = yShift+nInc*m_TableLayout.RowHeaderStyle.Height;
-				m_TableLayout.RowHeaderStyle.Paint(dc,cellRectangle,nRow,null, bAreRowsSelected && m_SelectedRows.ContainsKey(nRow));
+				m_TableLayout.RowHeaderStyle.Paint(dc,cellRectangle,nRow,null, bAreRowsSelected && m_SelectedRows.Contains(nRow));
 			}
 			
 
@@ -2855,7 +2856,7 @@ namespace Altaxo.Worksheet.GUI
 				for(int nPropCol=firstPropertyColumnToDraw, nIncPropCol=0; nIncPropCol<numberOfPropertyColumnsToDraw; nPropCol++, nIncPropCol++)
 				{
 					Altaxo.Worksheet.ColumnStyle cs = GetPropertyColumnStyle(nPropCol);
-					bool bPropColSelected = bArePropertyColsSelected && m_SelectedPropertyColumns.ContainsKey(nPropCol);
+					bool bPropColSelected = bArePropertyColsSelected && m_SelectedPropertyColumns.Contains(nPropCol);
 					bool bPropColIncluded = bArePropertyColsSelected  ? bPropColSelected : true; // Property cells are only included if the column is explicite selected
 
 					cellRectangle.Y=this.GetTopCoordinateOfPropertyColumn(nPropCol);
@@ -2863,7 +2864,7 @@ namespace Altaxo.Worksheet.GUI
 					
 					for(int nCol=firstColToDraw, nIncCol=0; nIncCol<numberOfColumnsToDraw; nCol++,nIncCol++)
 					{
-						bool bPropRowSelected = bArePropertyRowsSelected && selectedPropertyRows.ContainsKey(nCol);
+						bool bPropRowSelected = bArePropertyRowsSelected && selectedPropertyRows.Contains(nCol);
 						bool bPropRowIncluded = bArePropertyRowsSelected ? bPropRowSelected : true;
 
 						cellRectangle = this.GetXCoordinatesOfColumn(nCol,cellRectangle);
@@ -2881,9 +2882,9 @@ namespace Altaxo.Worksheet.GUI
 					Altaxo.Worksheet.ColumnStyle cs = GetDataColumnStyle(nCol);
 					cellRectangle = this.GetXCoordinatesOfColumn(nCol,cellRectangle);
 
-					bool bColumnSelected = bAreColumnsSelected && m_SelectedColumns.ContainsKey(nCol);
+					bool bColumnSelected = bAreColumnsSelected && m_SelectedColumns.Contains(nCol);
 					bool bDataColumnIncluded = bAreColumnsSelected  ? bColumnSelected : true;
-					bool bPropertyRowSelected = bArePropertyRowsSelected && m_SelectedPropertyRows.ContainsKey(nCol);
+					bool bPropertyRowSelected = bArePropertyRowsSelected && m_SelectedPropertyRows.Contains(nCol);
 
 					if(bDrawColumnHeader) // must the column Header been drawn?
 					{
@@ -2897,7 +2898,7 @@ namespace Altaxo.Worksheet.GUI
 					cellRectangle.Height = m_TableLayout.RowHeaderStyle.Height;
 					for(int nRow=firstTableRowToDraw, nIncRow=0;nIncRow<numberOfTableRowsToDraw;nRow++,nIncRow++)
 					{
-						bool bRowSelected = bAreRowsSelected && m_SelectedRows.ContainsKey(nRow);
+						bool bRowSelected = bAreRowsSelected && m_SelectedRows.Contains(nRow);
 						bool bDataRowIncluded = bAreRowsSelected ? bRowSelected : true;
 						cellRectangle.Y= yShift+nIncRow*m_TableLayout.RowHeaderStyle.Height;
 						cs.Paint(dc,cellRectangle,nRow,DataTable[nCol],bAreCellsSelected && bDataColumnIncluded && bDataRowIncluded);

@@ -21,6 +21,7 @@
 
 using System;
 using Altaxo.Serialization;
+using Altaxo.Collections;
 
 
 namespace Altaxo.Data
@@ -38,8 +39,8 @@ namespace Altaxo.Data
 		Main.IChildChangedEventSink
 	{
 		// Types
-	//	public delegate void OnDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow);   // delegate declaration
-	//	public delegate void OnDirtySet(Altaxo.Data.DataColumnCollection sender);
+		//	public delegate void OnDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow);   // delegate declaration
+		//	public delegate void OnDirtySet(Altaxo.Data.DataColumnCollection sender);
 		
 		#region ChangeEventArgs
 		/// <summary>
@@ -191,7 +192,7 @@ namespace Altaxo.Data
 
 		#region ColumnInfo
 		[Serializable]
-		private class DataColumnInfo : ICloneable
+			private class DataColumnInfo : ICloneable
 		{
 			/// <summary>
 			/// The column number, i.e. it's position in the array
@@ -518,12 +519,12 @@ namespace Altaxo.Data
 		/// it for permanent serialization purposes, since it does not contain version handling.
 		/// </summary>
 		[Serializable]
-		public class ClipboardMemento : System.Runtime.Serialization.ISerializable
+			public class ClipboardMemento : System.Runtime.Serialization.ISerializable
 		{
 			DataColumnCollection _collection;
-			Altaxo.Worksheet.IndexSelection _selectedColumns;
-			Altaxo.Worksheet.IndexSelection _selectedRows;
-			bool                            _useOnlySelections;
+			IAscendingIntegerCollection _selectedColumns;
+			IAscendingIntegerCollection _selectedRows;
+			bool                        _useOnlySelections;
 
 			/// <summary>
 			/// Constructor. Besides the table, the current selections must be provided. Only the areas that corresponds to the selections are
@@ -536,8 +537,8 @@ namespace Altaxo.Data
 			/// <param name="useOnlySelections">If true, only the selections are serialized. If false and there is no selection, the whole collection is serialized.</param>
 			public ClipboardMemento(
 				DataColumnCollection collection,
-				Altaxo.Worksheet.IndexSelection selectedColumns, 
-				Altaxo.Worksheet.IndexSelection selectedRows,
+				IAscendingIntegerCollection selectedColumns, 
+				IAscendingIntegerCollection selectedRows,
 				bool useOnlySelections)
 			{
 				this._collection										= collection;
@@ -629,7 +630,7 @@ namespace Altaxo.Data
 					DataColumn column = (DataColumn)info.GetValue("Column_"+nCol.ToString(),typeof(DataColumn));
 				
 				
-				_collection.Add(column,name,kind,group);
+					_collection.Add(column,name,kind,group);
 				}
 			}
 
@@ -878,7 +879,7 @@ namespace Altaxo.Data
 		/// <param name="nDelCount">The number of columns to remove.</param>
 		public virtual void RemoveColumns(int nFirstColumn, int nDelCount)
 		{
-			RemoveColumns(new Altaxo.Worksheet.IntegerRange(nFirstColumn,nDelCount));
+			RemoveColumns(new IntegerRangeAsCollection(nFirstColumn,nDelCount));
 		}
 
 		/// <summary>
@@ -899,17 +900,15 @@ namespace Altaxo.Data
 			RemoveColumns(this.GetColumnNumber(datac),1);
 		}
 
-		public void RemoveColumns(Altaxo.Worksheet.IAscendingIntegerCollection selectedColumns)
+		public void RemoveColumns(IAscendingIntegerCollection selectedColumns)
 		{
 			int nOriginalColumnCount = ColumnCount;
 
 			int currentPosition = selectedColumns.Count-1;
-			int nVeryFirstColumn=0;
-			int nFirstColumn;
-			int nDelCount;
-			while(selectedColumns.GetNextRangeDescending(ref currentPosition, out nFirstColumn, out nDelCount))
+			int nFirstColumn=0;
+			int nDelCount=0;
+			while(selectedColumns.GetNextRangeDescending(ref currentPosition, ref nFirstColumn, ref nDelCount))
 			{
-				nVeryFirstColumn = nFirstColumn;
 				// first, Dispose the columns and set the places to null
 				for(int i=nFirstColumn+nDelCount-1;i>=nFirstColumn;i--)
 				{
@@ -923,7 +922,7 @@ namespace Altaxo.Data
 			}
 
 			// renumber the remaining columns
-			for(int i=m_ColumnsByNumber.Count-1;i>=nVeryFirstColumn;i--)
+			for(int i=m_ColumnsByNumber.Count-1;i>=nFirstColumn;i--)
 				((DataColumnInfo)m_ColumnInfo[m_ColumnsByNumber[i]]).Number = i; 
 
 			// raise datachange event that some columns have changed
@@ -1256,23 +1255,23 @@ namespace Altaxo.Data
 		/// <param name="nCount">Number of rows to remove, starting from nFirstRow.</param>
 		public void RemoveRows(int nFirstRow, int nCount)
 		{
-			RemoveRows(new Altaxo.Worksheet.IntegerRange(nFirstRow,nCount));
+			RemoveRows(new IntegerRangeAsCollection(nFirstRow,nCount));
 		}
 
 		/// <summary>
 		/// Removes the <code>selectedRows</code> from the table.
 		/// </summary>
 		/// <param name="selectedRows">Collection of indizes to the rows that should be removed.</param>
-		public void RemoveRows(Altaxo.Worksheet.IAscendingIntegerCollection selectedRows)
+		public void RemoveRows(IAscendingIntegerCollection selectedRows)
 		{
-			RemoveRowsInColumns(new Altaxo.Worksheet.IntegerRange(0,ColumnCount),selectedRows);
+			RemoveRowsInColumns(new IntegerRangeAsCollection(0,ColumnCount),selectedRows);
 		}
 
 		/// <summary>
 		/// Removes the <code>selectedRows</code> from the table.
 		/// </summary>
 		/// <param name="selectedRows">Collection of indizes to the rows that should be removed.</param>
-		public void RemoveRowsInColumns(Altaxo.Worksheet.IAscendingIntegerCollection selectedColumns, Altaxo.Worksheet.IAscendingIntegerCollection selectedRows)
+		public void RemoveRowsInColumns(IAscendingIntegerCollection selectedColumns, IAscendingIntegerCollection selectedRows)
 		{
 			// if we remove rows, we have to do that in reverse order
 			Suspend();
@@ -1281,10 +1280,10 @@ namespace Altaxo.Data
 			{
 				int colidx = selectedColumns[selcol];
 
-				int rangestart, rangecount;
+				int rangestart=0, rangecount=0;
 				int i = selectedRows.Count-1;
 
-				while(selectedRows.GetNextRangeDescending(ref i, out rangestart, out rangecount))
+				while(selectedRows.GetNextRangeDescending(ref i, ref rangestart, ref rangecount))
 				{
 					this[colidx].RemoveRows(rangestart,rangecount);
 				}
@@ -1403,7 +1402,8 @@ namespace Altaxo.Data
 		public virtual object ParentObject
 		{
 			get { return m_Parent; }
-			set {
+			set 
+			{
 				object oldParent = m_Parent;
 				m_Parent=value;
 
@@ -1588,12 +1588,12 @@ namespace Altaxo.Data
 				if(object.ReferenceEquals(this,pce.OldParent) && this.ContainsColumn((DataColumn)sender))
 					this.RemoveColumn((DataColumn)sender);
 				else if(object.ReferenceEquals(this,pce.NewParent) && !this.ContainsColumn((DataColumn)sender))
-						throw new ApplicationException("Not allowed to set child's parent to this collection before adding it to the collection");
+					throw new ApplicationException("Not allowed to set child's parent to this collection before adding it to the collection");
 			
 				return true;
 			}
 
-		return false;
+			return false;
 		}
 
 
@@ -1602,7 +1602,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="sender">The sender of the change notification.</param>
 		/// <param name="e">The change details.</param>
-			public void OnChildChanged(object sender, System.EventArgs e)
+		public void OnChildChanged(object sender, System.EventArgs e)
 		{
 			if(HandleImmediateChildChangeCases(sender, e))
 				return;

@@ -26,6 +26,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
+using Altaxo.Collections;
+
 namespace Altaxo.Serialization.Galactic
 {
 	/// <summary>
@@ -74,7 +76,7 @@ namespace Altaxo.Serialization.Galactic
 		/// <param name="table">The table which contains the data to export.</param>
 		/// <param name="selectedRows">The rows selected in the table.</param>
 		/// <param name="selectedColumns">The columns selected in the table.</param>
-		public void Initialize(Altaxo.Data.DataTable table, Altaxo.Worksheet.IndexSelection selectedRows, Altaxo.Worksheet.IndexSelection selectedColumns)
+		public void Initialize(Altaxo.Data.DataTable table, IAscendingIntegerCollection selectedRows, IAscendingIntegerCollection selectedColumns)
 		{
 			m_Controller = new ExportGalacticSpcFileDialogController(this,table,selectedRows,selectedColumns);
 		}

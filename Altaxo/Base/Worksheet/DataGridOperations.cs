@@ -22,6 +22,7 @@ using System;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using Altaxo.Data;
+using Altaxo.Collections;
 
 namespace Altaxo.Worksheet
 {
@@ -94,7 +95,7 @@ namespace Altaxo.Worksheet
 			// if nothing is selected, assume that the whole table should be plotted
 			int len = dg.SelectedColumns.Count;
 
-			Graph.XYZEquidistantMeshColumnPlotData assoc = new Graph.XYZEquidistantMeshColumnPlotData(dg.Doc.DataColumns,len==0 ? null : dg.SelectedColumns.GetSelectedIndizes());
+			Graph.XYZEquidistantMeshColumnPlotData assoc = new Graph.XYZEquidistantMeshColumnPlotData(dg.Doc.DataColumns,len==0 ? null : dg.SelectedColumns);
 
 			
 			// now create a new Graph with this plot associations
@@ -122,7 +123,7 @@ namespace Altaxo.Worksheet
 		public static string MultiplyColumnsToMatrix(
 			Altaxo.AltaxoDocument mainDocument,
 			Altaxo.Data.DataTable srctable,
-			Altaxo.Worksheet.IndexSelection selectedColumns
+			IAscendingIntegerCollection selectedColumns
 			)
 		{
 			// check that there are columns selected
@@ -225,8 +226,8 @@ namespace Altaxo.Worksheet
 		public static string PrincipalComponentAnalysis(
 			Altaxo.AltaxoDocument mainDocument,
 			Altaxo.Data.DataTable srctable,
-			Altaxo.Worksheet.IndexSelection selectedColumns,
-			Altaxo.Worksheet.IndexSelection selectedRows,
+			IAscendingIntegerCollection selectedColumns,
+			IAscendingIntegerCollection selectedRows,
 			bool bHorizontalOrientedSpectrum,
 			int maxNumberOfFactors
 			)
@@ -395,9 +396,9 @@ namespace Altaxo.Worksheet
 		public static string PartialLeastSquaresAnalysis(
 			Altaxo.AltaxoDocument mainDocument,
 			Altaxo.Data.DataTable srctable,
-			Altaxo.Worksheet.IndexSelection selectedColumns,
-			Altaxo.Worksheet.IndexSelection selectedRows,
-			Altaxo.Worksheet.IndexSelection selectedPropertyColumns,
+			IAscendingIntegerCollection selectedColumns,
+			IAscendingIntegerCollection selectedRows,
+			IAscendingIntegerCollection selectedPropertyColumns,
 			bool bHorizontalOrientedSpectrum
 			)
 		{
@@ -720,8 +721,8 @@ namespace Altaxo.Worksheet
 		public static void StatisticsOnColumns(
 			Altaxo.AltaxoDocument mainDocument,
 			Altaxo.Data.DataTable srctable,
-			Altaxo.Worksheet.IndexSelection selectedColumns,
-			Altaxo.Worksheet.IndexSelection selectedRows
+			IAscendingIntegerCollection selectedColumns,
+			IAscendingIntegerCollection selectedRows
 			)
 		{
 			bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
@@ -826,8 +827,8 @@ namespace Altaxo.Worksheet
 		public static void StatisticsOnRows(
 			Altaxo.AltaxoDocument mainDocument,
 			Altaxo.Data.DataTable srctable,
-			Altaxo.Worksheet.IndexSelection selectedColumns,
-			Altaxo.Worksheet.IndexSelection selectedRows
+			IAscendingIntegerCollection selectedColumns,
+			IAscendingIntegerCollection selectedRows
 			)
 		{
 			bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
@@ -1434,7 +1435,7 @@ namespace Altaxo.Worksheet
 		/// table exists, the match is done 1:1 after the last selected column of the destination table. If there is no further column in the destination
 		/// table to match, new columns are created in the destination table.
 		/// </remarks>
-		static protected Altaxo.Data.DataColumn[] MapOrCreateDataColumns(Altaxo.Data.DataTable desttable, IndexSelection selectedDestColumns, Altaxo.Data.DataTable sourcetable)
+		static protected Altaxo.Data.DataColumn[] MapOrCreateDataColumns(Altaxo.Data.DataTable desttable, IAscendingIntegerCollection selectedDestColumns, Altaxo.Data.DataTable sourcetable)
 		{
 			Altaxo.Data.DataColumn[] columnmap = new Altaxo.Data.DataColumn[sourcetable.DataColumns.ColumnCount];
 			int nDestCol=-1;
@@ -1482,7 +1483,7 @@ namespace Altaxo.Worksheet
 		/// table to match, new columns are created in the destination table. The type of the newly created columns in the destination table is
 		/// the same as the first column of the source table in this case.
 		/// </remarks>
-		static protected Altaxo.Data.DataColumn[] MapOrCreateDataColumnsToRows(Altaxo.Data.DataTable desttable, IndexSelection selectedDestColumns, Altaxo.Data.DataTable sourcetable)
+		static protected Altaxo.Data.DataColumn[] MapOrCreateDataColumnsToRows(Altaxo.Data.DataTable desttable, IAscendingIntegerCollection selectedDestColumns, Altaxo.Data.DataTable sourcetable)
 		{
 			Altaxo.Data.DataColumn[] columnmap = new Altaxo.Data.DataColumn[sourcetable.DataColumns.RowCount];
 			int nDestCol=-1;

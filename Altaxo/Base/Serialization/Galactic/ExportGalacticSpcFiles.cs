@@ -26,6 +26,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
+using Altaxo.Collections;
 
 namespace Altaxo.Serialization.Galactic
 {
@@ -81,10 +82,10 @@ namespace Altaxo.Serialization.Galactic
 		protected Altaxo.Data.DataTable m_Table;
 
 		/// <summary>The selected rows of the table (only this data are exported).</summary>
-		protected Altaxo.Worksheet.IndexSelection m_SelectedRows;
+		protected IAscendingIntegerCollection m_SelectedRows;
 
 		/// <summary>The selected columns of the table (only this data are exported).</summary>
-		protected Altaxo.Worksheet.IndexSelection m_SelectedColumns;
+		protected IAscendingIntegerCollection m_SelectedColumns;
 
 		/// <summary>Stores if one spectrum is created from one table row or from one table column (<see cref="Options.CreateSpectrumFrom"/>).</summary>
 		protected Options.CreateSpectrumFrom m_CreateSpectrumFrom;
@@ -105,8 +106,8 @@ namespace Altaxo.Serialization.Galactic
 		public ExportGalacticSpcFileDialogController(
 			ExportGalacticSpcFileDialog dlg,
 			Altaxo.Data.DataTable table,
-			Altaxo.Worksheet.IndexSelection selectedRows,
-			Altaxo.Worksheet.IndexSelection selectedColumns)
+			IAscendingIntegerCollection selectedRows,
+			IAscendingIntegerCollection selectedColumns)
 		{
 			m_Form = dlg;
 			m_Table = table;
@@ -520,7 +521,7 @@ namespace Altaxo.Serialization.Galactic
 			Altaxo.Data.DataTable table,
 			int rownumber, 
 			Altaxo.Data.INumericColumn xcolumn,
-			Altaxo.Worksheet.IndexSelection selectedColumns)
+			IAscendingIntegerCollection selectedColumns)
 		{
 
 			// test that all x and y cells have numeric values
@@ -574,7 +575,7 @@ namespace Altaxo.Serialization.Galactic
 			Altaxo.Data.DataTable table,
 			int columnnumber, 
 			Altaxo.Data.INumericColumn xcolumn,
-			Altaxo.Worksheet.IndexSelection selectedRows)
+			IAscendingIntegerCollection selectedRows)
 		{
 
 			if(!(table.DataColumns[columnnumber] is Altaxo.Data.INumericColumn))

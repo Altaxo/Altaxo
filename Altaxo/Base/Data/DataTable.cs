@@ -20,6 +20,7 @@
 
 using System;
 using Altaxo.Serialization;
+using Altaxo.Collections;
 
 
 namespace Altaxo.Data
@@ -50,7 +51,7 @@ namespace Altaxo.Data
 		Main.INameOwner,
 		Main.IChildChangedEventSink,
 		Main.ISuspendable
-		{
+	{
 		// Types
 		
 		// Data
@@ -159,9 +160,9 @@ namespace Altaxo.Data
 				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
 				if(null!=ss)
 				{
-				System.Runtime.Serialization.ISerializationSurrogate surr =
-					ss.GetSurrogate(typeof(Altaxo.Data.DataColumnCollection),context, out ss);
-				surr.SetObjectData(obj,info,context,selector);
+					System.Runtime.Serialization.ISerializationSurrogate surr =
+						ss.GetSurrogate(typeof(Altaxo.Data.DataColumnCollection),context, out ss);
+					surr.SetObjectData(obj,info,context,selector);
 				}
 				else 
 				{
@@ -199,7 +200,7 @@ namespace Altaxo.Data
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable),0)]
-		public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo	info)
 			{
@@ -278,13 +279,13 @@ namespace Altaxo.Data
 		/// it for permanent serialization purposes, since it does not contain version handling.
 		/// </summary>
 		[Serializable]
-		public class ClipboardMemento : System.Runtime.Serialization.ISerializable
+			public class ClipboardMemento : System.Runtime.Serialization.ISerializable
 		{
 			DataTable _table;
-			Altaxo.Worksheet.IndexSelection _selectedDataColumns;
-			Altaxo.Worksheet.IndexSelection _selectedDataRows;
-			Altaxo.Worksheet.IndexSelection _selectedPropertyColumns;
-			Altaxo.Worksheet.IndexSelection _selectedPropertyRows;
+			IAscendingIntegerCollection _selectedDataColumns;
+			IAscendingIntegerCollection _selectedDataRows;
+			IAscendingIntegerCollection _selectedPropertyColumns;
+			IAscendingIntegerCollection _selectedPropertyRows;
 
 			/// <summary>
 			/// Constructor. Besides the table, the current selections must be provided. Only the areas that corresponds to the selections are
@@ -295,11 +296,11 @@ namespace Altaxo.Data
 			/// <param name="selectedDataColumns">The selected data columns.</param>
 			/// <param name="selectedDataRows">The selected data rows.</param>
 			/// <param name="selectedPropertyColumns">The selected property columns.</param>
-			public ClipboardMemento(DataTable table, Altaxo.Worksheet.IndexSelection selectedDataColumns, 
-				Altaxo.Worksheet.IndexSelection selectedDataRows,
-				Altaxo.Worksheet.IndexSelection selectedPropertyColumns,
-				Altaxo.Worksheet.IndexSelection selectedPropertyRows
-					)
+			public ClipboardMemento(DataTable table, IAscendingIntegerCollection selectedDataColumns, 
+				IAscendingIntegerCollection selectedDataRows,
+				IAscendingIntegerCollection selectedPropertyColumns,
+				IAscendingIntegerCollection selectedPropertyRows
+				)
 			{
 				this._table										= table;
 				this._selectedDataColumns			= selectedDataColumns;
@@ -735,13 +736,13 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Signals that the table has changed, but has not currently signaled that change to it's parent.
 		/// </summary>
-			public virtual bool IsDirty
+		public virtual bool IsDirty
+		{
+			get
 			{
-				get
-				{
-					return m_ChangeData!=null;
-				}
+				return m_ChangeData!=null;
 			}
+		}
 
 		/// <summary>
 		/// Remove the data columns <b>and the corresponding property rows</b> beginning at index nFirstColumn.
@@ -750,7 +751,7 @@ namespace Altaxo.Data
 		/// <param name="nDelCount">The number of columns to remove.</param>
 		public virtual void RemoveColumns(int nFirstColumn, int nDelCount)
 		{
-			RemoveColumns(new Altaxo.Worksheet.IntegerRange(nFirstColumn,nDelCount));
+			RemoveColumns(new IntegerRangeAsCollection(nFirstColumn,nDelCount));
 		}
 
 
@@ -758,7 +759,7 @@ namespace Altaxo.Data
 		/// Remove the selected data columns <b>and the corresponding property rows</b>.
 		/// </summary>
 		/// <param name="selectedColumns">A collection of the indizes to the columns that have to be removed.</param>
-		public virtual void RemoveColumns(Altaxo.Worksheet.IAscendingIntegerCollection selectedColumns)
+		public virtual void RemoveColumns(IAscendingIntegerCollection selectedColumns)
 		{
 	
 			Suspend();
@@ -796,7 +797,7 @@ namespace Altaxo.Data
 				case "PropCols":
 					return this.m_PropertyColumns;
 			}
-		return null;
+			return null;
 		}
 
 		/// <summary>
@@ -850,7 +851,7 @@ namespace Altaxo.Data
 		/// <param name="child">The child object for which the parent table should be found.</param>
 		public static Altaxo.Data.DataTable GetParentDataTableOf(Main.IDocumentNode child)
 		{
-				return (DataTable)Main.DocumentPath.GetRootNodeImplementing(child,typeof(DataTable));
+			return (DataTable)Main.DocumentPath.GetRootNodeImplementing(child,typeof(DataTable));
 		}
 		
 	} // end class Altaxo.Data.DataTable
