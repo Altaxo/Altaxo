@@ -470,44 +470,54 @@ namespace Altaxo.Worksheet
 			} // else vertically oriented spectrum
 
 
-				// now do a PLS with it
-				Altaxo.Calc.MatrixMath.HOMatrix xLoads   = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
-				Altaxo.Calc.MatrixMath.HOMatrix yLoads   = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
-				Altaxo.Calc.MatrixMath.HOMatrix W       = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
-				Altaxo.Calc.MatrixMath.VOMatrix V       = new Altaxo.Calc.MatrixMath.VOMatrix(0,0);
+			// now do a PLS with it
+			Altaxo.Calc.MatrixMath.HOMatrix xLoads   = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
+			Altaxo.Calc.MatrixMath.HOMatrix yLoads   = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
+			Altaxo.Calc.MatrixMath.HOMatrix W       = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
+			Altaxo.Calc.MatrixMath.VOMatrix V       = new Altaxo.Calc.MatrixMath.VOMatrix(0,0);
 
-				Altaxo.Calc.MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,5,xLoads,yLoads,W,V);
+
+			// Before we can apply PLS, we have to center the x and y matrices
+			Altaxo.Calc.MatrixMath.HorizontalVector meanX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
+			Altaxo.Calc.MatrixMath.HorizontalVector scaleX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
+			Altaxo.Calc.MatrixMath.HorizontalVector meanY = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixY.Cols);
+
+
+			Altaxo.Calc.MatrixMath.ColumnsToZeroMeanAndUnitVariance(matrixX, meanX, scaleX);
+			Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixY, meanY);
+
+			Altaxo.Calc.MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,5,xLoads,yLoads,W,V);
 	
 
-				// now we have to create a new table where to place the calculated factors and loads
-				// we will do that in a vertical oriented manner, i.e. even if the loads are
-				// here in horizontal vectors: in our table they are stored in (vertical) columns
-				Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("PLS of " + srctable.TableName);
+			// now we have to create a new table where to place the calculated factors and loads
+			// we will do that in a vertical oriented manner, i.e. even if the loads are
+			// here in horizontal vectors: in our table they are stored in (vertical) columns
+			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("PLS of " + srctable.TableName);
 
-				// Fill the Table
-				table.SuspendDataChangedNotifications();
+			// Fill the Table
+			table.SuspendDataChangedNotifications();
 
-				// store the x-loads - careful - they are horizontal in the matrix
-				for(int i=0;i<xLoads.Rows;i++)
-				{
-					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("XLoad"+i.ToString());
-					col.Group=0;
-					for(int j=0;j<xLoads.Cols;j++)
-						col[j] = xLoads[i,j];
+			// store the x-loads - careful - they are horizontal in the matrix
+			for(int i=0;i<xLoads.Rows;i++)
+			{
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("XLoad"+i.ToString());
+				col.Group=0;
+				for(int j=0;j<xLoads.Cols;j++)
+					col[j] = xLoads[i,j];
 					
-					table.Add(col);
-				}
+				table.Add(col);
+			}
 
-				// now store the loads - careful - they are horizontal in the matrix
-				for(int i=0;i<yLoads.Rows;i++)
-				{
-					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("YLoad"+i.ToString());
-					col.Group=1;
-					for(int j=0;j<yLoads.Cols;j++)
-						col[j] = yLoads[i,j];
+			// now store the loads - careful - they are horizontal in the matrix
+			for(int i=0;i<yLoads.Rows;i++)
+			{
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("YLoad"+i.ToString());
+				col.Group=1;
+				for(int j=0;j<yLoads.Cols;j++)
+					col[j] = yLoads[i,j];
 				
-					table.Add(col);
-				}
+				table.Add(col);
+			}
 
 			// now store the weights - careful - they are horizontal in the matrix
 			for(int i=0;i<W.Rows;i++)
@@ -536,13 +546,14 @@ namespace Altaxo.Worksheet
 			{
 				Altaxo.Calc.MatrixMath.PartialLeastSquares_Predict_HO(matrixX,xLoads,yLoads,W,V,numFactors, ref yPred);
 
-				// now store the loads - careful - they are horizontal in the matrix
-				for(int i=0;i<yPred.Rows;i++)
+				// now store the predicted y - careful - they are horizontal in the matrix,
+				// but we store them vertically now
+				for(int i=0;i<yPred.Cols;i++)
 				{
 					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("YPred"+numFactors.ToString()+ "_" + i.ToString());
 					col.Group=3+numFactors;
-					for(int j=0;j<yPred.Cols;j++)
-						col[j] = yPred[i,j];
+					for(int j=0;j<yPred.Rows;j++)
+						col[j] = yPred[j,i] + meanY[0,i];
 				
 					table.Add(col);
 				}
@@ -551,7 +562,7 @@ namespace Altaxo.Worksheet
 			} // for numFactors...
 
 
-				table.ResumeDataChangedNotifications();
+			table.ResumeDataChangedNotifications();
 			mainDocument.DataSet.Add(table);
 			// create a new worksheet without any columns
 			App.Current.CreateNewWorksheet(table);
@@ -561,118 +572,118 @@ namespace Altaxo.Worksheet
 
 
 
-			public static void StatisticsOnColumns(
-				Altaxo.AltaxoDocument mainDocument,
-				Altaxo.Data.DataTable srctable,
-				Altaxo.Worksheet.IndexSelection selectedColumns,
-				Altaxo.Worksheet.IndexSelection selectedRows
-				)
+		public static void StatisticsOnColumns(
+			Altaxo.AltaxoDocument mainDocument,
+			Altaxo.Data.DataTable srctable,
+			Altaxo.Worksheet.IndexSelection selectedColumns,
+			Altaxo.Worksheet.IndexSelection selectedRows
+			)
+		{
+			bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
+			int numcols = bUseSelectedColumns ? selectedColumns.Count : srctable.ColumnCount;
+
+			bool bUseSelectedRows = (null!=selectedRows && 0!=selectedRows.Count);
+
+			if(numcols==0)
+				return; // nothing selected
+
+			bool bTableCreated = false;
+			Data.DataTable table = null; // the created table
+			int currRow=0;
+			for(int si=0;si<numcols;si++)
 			{
-				bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
-				int numcols = bUseSelectedColumns ? selectedColumns.Count : srctable.ColumnCount;
+				Altaxo.Data.DataColumn col = bUseSelectedColumns ? srctable[selectedColumns[si]] : srctable[si];
+				if(!(col is Altaxo.Data.INumericColumn))
+					continue;
 
-				bool bUseSelectedRows = (null!=selectedRows && 0!=selectedRows.Count);
-
-				if(numcols==0)
-					return; // nothing selected
-
-				bool bTableCreated = false;
-				Data.DataTable table = null; // the created table
-				int currRow=0;
-				for(int si=0;si<numcols;si++)
-				{
-					Altaxo.Data.DataColumn col = bUseSelectedColumns ? srctable[selectedColumns[si]] : srctable[si];
-					if(!(col is Altaxo.Data.INumericColumn))
-						continue;
-
-					int rows = bUseSelectedRows ? selectedRows.Count : srctable.RowCount;
-					if(rows==0)
-						continue;
+				int rows = bUseSelectedRows ? selectedRows.Count : srctable.RowCount;
+				if(rows==0)
+					continue;
 				
-					if(!bTableCreated)
-					{
-						bTableCreated=true;
+				if(!bTableCreated)
+				{
+					bTableCreated=true;
 
-						table = new Altaxo.Data.DataTable();
+					table = new Altaxo.Data.DataTable();
 
 
-						// add a text column and some double columns
-						// note: statistics is only possible for numeric columns since
-						// otherwise in one column doubles and i.e. dates are mixed, which is not possible
+					// add a text column and some double columns
+					// note: statistics is only possible for numeric columns since
+					// otherwise in one column doubles and i.e. dates are mixed, which is not possible
 
-						// 1st column is the name of the column of which the statistics is made
-						Data.TextColumn c0 = new Data.TextColumn("Col");
-						c0.Kind = Data.ColumnKind.X;
+					// 1st column is the name of the column of which the statistics is made
+					Data.TextColumn c0 = new Data.TextColumn("Col");
+					c0.Kind = Data.ColumnKind.X;
 
-						// 2nd column is the mean
-						Data.DoubleColumn c1 = new Data.DoubleColumn("Mean");
+					// 2nd column is the mean
+					Data.DoubleColumn c1 = new Data.DoubleColumn("Mean");
 
-						// 3rd column is the standard deviation
-						Data.DoubleColumn c2 = new Data.DoubleColumn("sd");
+					// 3rd column is the standard deviation
+					Data.DoubleColumn c2 = new Data.DoubleColumn("sd");
 
-						// 4th column is the standard e (N)
-						Data.DoubleColumn c3 = new Data.DoubleColumn("se");
+					// 4th column is the standard e (N)
+					Data.DoubleColumn c3 = new Data.DoubleColumn("se");
 
-						// 5th column is the sum
-						Data.DoubleColumn c4 = new Data.DoubleColumn("Sum");
+					// 5th column is the sum
+					Data.DoubleColumn c4 = new Data.DoubleColumn("Sum");
 
-						// 6th column is the number of items for statistics
-						Data.DoubleColumn c5 = new Data.DoubleColumn("N");
+					// 6th column is the number of items for statistics
+					Data.DoubleColumn c5 = new Data.DoubleColumn("N");
 			
-						table.Add(c0);
-						table.Add(c1);
-						table.Add(c2);
-						table.Add(c3);
-						table.Add(c4);
-						table.Add(c5);
-					} // if !TableCreated
+					table.Add(c0);
+					table.Add(c1);
+					table.Add(c2);
+					table.Add(c3);
+					table.Add(c4);
+					table.Add(c5);
+				} // if !TableCreated
 
-					// now do the statistics 
-					Data.INumericColumn ncol = (Data.INumericColumn)col;
-					double sum=0;
-					double sumsqr=0;
-					int NN=0;
-					for(int i=0;i<rows;i++)
-					{
-						double val = bUseSelectedRows ? ncol.GetDoubleAt(selectedRows[i]) : ncol.GetDoubleAt(i);
-						if(Double.IsNaN(val))
-							continue;
+				// now do the statistics 
+				Data.INumericColumn ncol = (Data.INumericColumn)col;
+				double sum=0;
+				double sumsqr=0;
+				int NN=0;
+				for(int i=0;i<rows;i++)
+				{
+					double val = bUseSelectedRows ? ncol.GetDoubleAt(selectedRows[i]) : ncol.GetDoubleAt(i);
+					if(Double.IsNaN(val))
+						continue;
 
-						NN++;
-						sum+=val;
-						sumsqr+=(val*val);
-					}
-					// now fill a new row in the worksheet
+					NN++;
+					sum+=val;
+					sumsqr+=(val*val);
+				}
+				// now fill a new row in the worksheet
 
-					if(NN>0)
-					{
-						double mean = sum/NN;
-						double ymy0sqr = sumsqr - sum*sum/NN;
-						if(ymy0sqr<0) ymy0sqr=0; // if this is lesser zero, it is a rounding error, so set it to zero
-						double sd = NN>1 ? Math.Sqrt(ymy0sqr/(NN-1)) : 0;
-						double se = sd/Math.Sqrt(NN);
+				if(NN>0)
+				{
+					double mean = sum/NN;
+					double ymy0sqr = sumsqr - sum*sum/NN;
+					if(ymy0sqr<0) ymy0sqr=0; // if this is lesser zero, it is a rounding error, so set it to zero
+					double sd = NN>1 ? Math.Sqrt(ymy0sqr/(NN-1)) : 0;
+					double se = sd/Math.Sqrt(NN);
 
-						table[0][currRow] = col.ColumnName;
-						table[1][currRow] = mean; // mean
-						table[2][currRow] = sd;
-						table[3][currRow] = se;
-						table[4][currRow] = sum;
-						table[5][currRow] = NN;
-						currRow++; // for the next column
-					}
-				} // for all selected columns
+					table[0][currRow] = col.ColumnName;
+					table[1][currRow] = mean; // mean
+					table[2][currRow] = sd;
+					table[3][currRow] = se;
+					table[4][currRow] = sum;
+					table[5][currRow] = NN;
+					currRow++; // for the next column
+				}
+			} // for all selected columns
 			
 	
-				// if a table was created, we add the table to the data set and
-				// create a worksheet
-				if(bTableCreated)
-				{
-					mainDocument.DataSet.Add(table);
-					// create a new worksheet without any columns
-					App.Current.CreateNewWorksheet(table);
+			// if a table was created, we add the table to the data set and
+			// create a worksheet
+			if(bTableCreated)
+			{
+				mainDocument.DataSet.Add(table);
+				// create a new worksheet without any columns
+				App.Current.CreateNewWorksheet(table);
 
-				}
 			}
+		}
 
 
 

@@ -701,8 +701,19 @@ namespace Altaxo.Graph
 
 				// get plot group
 				PlotGroup plotGroup = actLayer.PlotItems.GetPlotGroupOf(pa);
-				PlotStyleDialog dlg = new PlotStyleDialog((PlotStyle)pa.Style,plotGroup);
-				DialogResult dr = dlg.ShowDialog(this.m_View.Window);
+				//PlotStyleDialog dlg = new PlotStyleDialog((PlotStyle)pa.Style,plotGroup);
+				
+				Graph.LineScatterPlotStyleController	ctrl = new Graph.LineScatterPlotStyleController((PlotStyle)pa.Style,plotGroup);
+				Graph.LineScatterPlotStyleControl view = new Graph.LineScatterPlotStyleControl();
+				ctrl.View = view;
+
+				Main.DialogShellController dsc = new Main.DialogShellController(
+					new Main.DialogShellView(view), ctrl);
+
+				bool dr = dsc.ShowDialog(this.m_View.Form);
+				
+				
+				/*
 				if(dr==DialogResult.OK)
 				{
 					if(null!=plotGroup)
@@ -723,7 +734,10 @@ namespace Altaxo.Graph
 
 					// this.InvalidateGraph(); // renew the picture
 				}
+				*/
 			}
+			
+				
 
 		}
 

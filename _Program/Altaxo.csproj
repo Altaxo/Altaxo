@@ -319,6 +319,21 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Graph\LineScatterPlotStyleControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\LineScatterPlotStyleControl.resx"
+                    DependentUpon = "LineScatterPlotStyleControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\LineScatterPlotStyleController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\LineStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -421,6 +436,21 @@
                     RelPath = "Main\AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\DialogShellController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\DialogShellView.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\DialogShellView.resx"
+                    DependentUpon = "DialogShellView.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Main\Document.cs"

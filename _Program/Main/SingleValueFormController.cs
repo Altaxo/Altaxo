@@ -13,6 +13,9 @@ namespace Altaxo.Main
 		/// </summary>
 		System.Windows.Forms.Form Form { get; }
 	
+		/// <summary>
+		/// Get / sets the contents of the edit box of the view.
+		/// </summary>
 		string EditBoxContents { get; set; }
 
 		/// <summary>

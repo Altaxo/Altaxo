@@ -1175,8 +1175,8 @@ namespace Altaxo.Calc
 		/// <summary>
 		/// Partial least squares (PLS) decomposition of the matrizes X and Y.
 		/// </summary>
-		/// <param name="X">The X ("spectrum") matrix.</param>
-		/// <param name="Y">The Y ("concentration") matrix.</param>
+		/// <param name="_X">The X ("spectrum") matrix.</param>
+		/// <param name="_Y">The Y ("concentration") matrix.</param>
 		/// <param name="numFactors">Number of factors to calculate.</param>
 		/// <param name="xLoads">Returns the matrix of eigenvectors of X. Should be initially empty.</param>
 		/// <param name="yLoads">Returns the matrix of eigenvectors of Y. Should be initially empty. </param>
