@@ -529,12 +529,10 @@ namespace Altaxo.Graph
 			OnChildChanged(child, e);
 		}
 
-		public bool OnChildChanged(object child, EventArgs e)
+		public void OnChildChanged(object child, EventArgs e)
 		{
 			if(null!=Changed)
 				Changed(this,e);
-
-			return false;
 		}
 
 		#endregion

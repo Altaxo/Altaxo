@@ -33,7 +33,8 @@ namespace Altaxo
 	public class AltaxoDocument 
 		: 
 		IDeserializationCallback,
-		Main.INamedObjectCollection	
+		Main.INamedObjectCollection	,
+		Main.IChildChangedEventSink	
 	{
 		protected Altaxo.Data.DataTableCollection m_DataSet = null; // The root of all the data
 
@@ -41,12 +42,13 @@ namespace Altaxo
 
 		protected Altaxo.Worksheet.WorksheetLayoutCollection m_TableLayoutList = null;
 
-		protected System.Collections.ArrayList m_Worksheets;
+	//	protected System.Collections.ArrayList m_Worksheets;
 		/// <summary>The list of GraphForms for the document.</summary>
-		protected System.Collections.ArrayList m_GraphForms;
+	//	protected System.Collections.ArrayList m_GraphForms;
 
 		[NonSerialized]
 		protected bool m_IsDirty=false;
+		public event EventHandler DirtyChanged;
 		[NonSerialized]
 		private bool m_DeserializationFinished=false;
 
@@ -55,8 +57,8 @@ namespace Altaxo
 			m_DataSet = new Altaxo.Data.DataTableCollection(this);
 			m_GraphSet = new Altaxo.Graph.GraphDocumentCollection(this);
 			m_TableLayoutList = new Altaxo.Worksheet.WorksheetLayoutCollection(this);
-			m_Worksheets = new System.Collections.ArrayList();
-			m_GraphForms = new System.Collections.ArrayList();
+		//	m_Worksheets = new System.Collections.ArrayList();
+		//	m_GraphForms = new System.Collections.ArrayList();
 		}
 
 		#region Serialization
@@ -66,16 +68,16 @@ namespace Altaxo
 			{
 				AltaxoDocument s = (AltaxoDocument)obj;
 				info.AddValue("DataTableCollection",s.m_DataSet);
-				info.AddValue("Worksheets",s.m_Worksheets);
-				info.AddValue("GraphForms",s.m_GraphForms);
+				//info.AddValue("Worksheets",s.m_Worksheets);
+			//	info.AddValue("GraphForms",s.m_GraphForms);
 			}
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				AltaxoDocument s = (AltaxoDocument)obj;
 				s.m_DataSet = (Altaxo.Data.DataTableCollection)info.GetValue("DataTableCollection",typeof(Altaxo.Data.DataTableCollection));
 				// s.tstObj    = (AltaxoTestObject02)info.GetValue("TstObj",typeof(AltaxoTestObject02));
-				s.m_Worksheets = (System.Collections.ArrayList)info.GetValue("Worksheets",typeof(System.Collections.ArrayList));
-				s.m_GraphForms = (System.Collections.ArrayList)info.GetValue("GraphForms",typeof(System.Collections.ArrayList));
+				//s.m_Worksheets = (System.Collections.ArrayList)info.GetValue("Worksheets",typeof(System.Collections.ArrayList));
+			//	s.m_GraphForms = (System.Collections.ArrayList)info.GetValue("GraphForms",typeof(System.Collections.ArrayList));
 				s.m_IsDirty = false;
 				return s;
 			}
@@ -91,7 +93,7 @@ namespace Altaxo
 				m_DataSet.ParentDocument = this;
 				m_DataSet.OnDeserialization(finisher);
 
-			
+			/*
 				for(int i=0;i<m_Worksheets.Count;i++)
 				{
 					m_Worksheets[i] = ((IDeserializationSubstitute)m_Worksheets[i]).GetRealObject(App.Current.View.Form);
@@ -102,6 +104,7 @@ namespace Altaxo
 					m_GraphForms[i] = ((IDeserializationSubstitute)m_GraphForms[i]).GetRealObject(App.Current.View.Form);
 					((System.Windows.Forms.Form)m_GraphForms[i]).Show();
 				}
+				*/
 			}
 		}
 
@@ -190,18 +193,6 @@ namespace Altaxo
 
 		#endregion
 
-		public AltaxoDocument(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-		{
-			m_DataSet = (Altaxo.Data.DataTableCollection)(info.GetValue("DataTableCollection",typeof(Altaxo.Data.DataTableCollection)));
-		}
-
-		public void GetObjectData(
-			System.Runtime.Serialization.SerializationInfo info,
-			System.Runtime.Serialization.StreamingContext context
-			)
-		{
-			info.AddValue("DataTableCollection",m_DataSet);
-		}
 		
 		public Altaxo.Data.DataTableCollection DataTableCollection
 		{
@@ -217,15 +208,30 @@ namespace Altaxo
 			get { return this.m_TableLayoutList; }
 		}
 
-		public void OnDirtySet(object sender)
+		protected virtual void OnDirtyChanged()
 		{
-			m_IsDirty=true;
+			if(null!=DirtyChanged)
+				DirtyChanged(this,EventArgs.Empty);
 		}
 
 		public bool IsDirty
 		{
 			get { return m_IsDirty; }
-			set { m_IsDirty = value; }
+			set 
+			{
+				bool oldValue = m_IsDirty;
+				m_IsDirty = value;
+				if(oldValue!=m_IsDirty)
+				{
+					OnDirtyChanged();
+				}
+
+			}
+		}
+
+		public void OnChildChanged(object sender, EventArgs e)
+		{
+			this.IsDirty = true;
 		}
 
 		public Altaxo.Data.DataTable CreateNewTable(string worksheetName, bool bCreateDefaultColumns)

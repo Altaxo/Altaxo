@@ -188,7 +188,7 @@ namespace Altaxo.Worksheet
 
 
 			// and store the result in a new worksheet 
-			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("ResultMatrix of " + srctable.TableName);
+			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("ResultMatrix of " + srctable.Name);
 			table.Suspend();
 
 			// first store the factors
@@ -318,7 +318,7 @@ namespace Altaxo.Worksheet
 			// now we have to create a new table where to place the calculated factors and loads
 			// we will do that in a vertical oriented manner, i.e. even if the loads are
 			// here in horizontal vectors: in our table they are stored in (vertical) columns
-			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("PCA of " + srctable.TableName);
+			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("PCA of " + srctable.Name);
 
 			// Fill the Table
 			table.Suspend();
@@ -620,7 +620,7 @@ namespace Altaxo.Worksheet
 			// now we have to create a new table where to place the calculated factors and loads
 			// we will do that in a vertical oriented manner, i.e. even if the loads are
 			// here in horizontal vectors: in our table they are stored in (vertical) columns
-			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("PLS of " + srctable.TableName);
+			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("PLS of " + srctable.Name);
 
 			// Fill the Table
 			table.Suspend();
@@ -660,7 +660,7 @@ namespace Altaxo.Worksheet
 
 			// now store the cross product vector - it is a horizontal vector
 		{
-			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("CrossP");
+			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 			
 			for(int j=0;j<V.Cols;j++)
 				col[j] = V[0,j];
@@ -739,22 +739,22 @@ namespace Altaxo.Worksheet
 			// otherwise in one column doubles and i.e. dates are mixed, which is not possible
 
 			// 1st column is the name of the column of which the statistics is made
-			Data.TextColumn colCol = new Data.TextColumn("Col");
+			Data.TextColumn colCol = new Data.TextColumn();
 		
 			// 2nd column is the mean
-			Data.DoubleColumn colMean = new Data.DoubleColumn("Mean");
+			Data.DoubleColumn colMean = new Data.DoubleColumn();
 
 			// 3rd column is the standard deviation
-			Data.DoubleColumn colSd = new Data.DoubleColumn("sd");
+			Data.DoubleColumn colSd = new Data.DoubleColumn();
 
 			// 4th column is the standard e (N)
-			Data.DoubleColumn colSe = new Data.DoubleColumn("se");
+			Data.DoubleColumn colSe = new Data.DoubleColumn();
 
 			// 5th column is the sum
-			Data.DoubleColumn colSum = new Data.DoubleColumn("Sum");
+			Data.DoubleColumn colSum = new Data.DoubleColumn();
 
 			// 6th column is the number of items for statistics
-			Data.DoubleColumn colN = new Data.DoubleColumn("N");
+			Data.DoubleColumn colN = new Data.DoubleColumn();
 
 			int currRow=0;
 			for(int si=0;si<numcols;si++)
@@ -844,25 +844,25 @@ namespace Altaxo.Worksheet
 			// otherwise in one column doubles and i.e. dates are mixed, which is not possible
 
 			// 1st column is the mean, and holds the sum during the calculation
-			Data.DoubleColumn c1 = new Data.DoubleColumn("Mean");
+			Data.DoubleColumn c1 = new Data.DoubleColumn();
 
 			// 2rd column is the standard deviation, and holds the square sum during calculation
-			Data.DoubleColumn c2 = new Data.DoubleColumn("sd");
+			Data.DoubleColumn c2 = new Data.DoubleColumn();
 
 			// 3th column is the standard e (N)
-			Data.DoubleColumn c3 = new Data.DoubleColumn("se");
+			Data.DoubleColumn c3 = new Data.DoubleColumn();
 
 			// 4th column is the sum
-			Data.DoubleColumn c4 = new Data.DoubleColumn("Sum");
+			Data.DoubleColumn c4 = new Data.DoubleColumn();
 
 			// 5th column is the number of items for statistics
-			Data.DoubleColumn c5 = new Data.DoubleColumn("N");
+			Data.DoubleColumn c5 = new Data.DoubleColumn();
 			
-			table.DataColumns.Add(c1);
-			table.DataColumns.Add(c2);
-			table.DataColumns.Add(c3);
-			table.DataColumns.Add(c4);
-			table.DataColumns.Add(c5);
+			table.DataColumns.Add(c1,"Mean");
+			table.DataColumns.Add(c2,"sd");
+			table.DataColumns.Add(c3,"se");
+			table.DataColumns.Add(c4,"Sum");
+			table.DataColumns.Add(c5,"N");
 
 			table.Suspend();
 
@@ -1001,7 +1001,7 @@ namespace Altaxo.Worksheet
 
 
 
-			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("Fourieramplitude of " + dg.Doc.TableName);
+			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("Fourieramplitude of " + dg.Doc.Name);
 
 			// Fill the Table
 			table.Suspend();
@@ -1060,12 +1060,11 @@ namespace Altaxo.Worksheet
 					table.Suspend();
 					for(int i=0;i<sizex;i++)
 					{
-						string colname = table.DataColumns.FindUniqueColumnName(i.ToString());
-						Altaxo.Data.DoubleColumn dblcol = new Altaxo.Data.DoubleColumn(colname);
+						Altaxo.Data.DoubleColumn dblcol = new Altaxo.Data.DoubleColumn();
 						for(int j=sizey-1;j>=0;j--)
 							dblcol[j] = colorfunc(bmp.GetPixel(i,j));
 
-						table.DataColumns.Add(dblcol); // Spalte hinzufügen
+						table.DataColumns.Add(dblcol,table.DataColumns.FindUniqueColumnName(i.ToString())); // Spalte hinzufügen
 					} // end for all x coordinaates
 
 					table.Resume();
@@ -1193,13 +1192,13 @@ namespace Altaxo.Worksheet
 				{
 					Altaxo.Data.DataColumn col;
 					if(Altaxo.Serialization.Parsing.IsDateTime(propvalue))
-						col = new Altaxo.Data.DateTimeColumn(propname);
+						col = new Altaxo.Data.DateTimeColumn();
 					else if(Altaxo.Serialization.Parsing.IsNumeric(propvalue))
-						col = new Altaxo.Data.DoubleColumn(propname);
+						col = new Altaxo.Data.DoubleColumn();
 					else
-						col = new Altaxo.Data.TextColumn(propname);
+						col = new Altaxo.Data.TextColumn();
 				
-					store.Add(col); // add the column to the collection
+					store.Add(col,propname); // add the column to the collection
 				}
 
 				// now the column is present we can store the value in it.

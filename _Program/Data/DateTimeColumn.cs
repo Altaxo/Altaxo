@@ -39,30 +39,24 @@ namespace Altaxo.Data
 	{
 		private DateTime[] m_Array;
 		private int        m_Capacity; // shortcut to m_Array.Length;
+		private int        m_Count;
 		public static readonly DateTime NullValue = DateTime.MinValue;
 	
 		public DateTimeColumn()
 		{
 		}
 
-		public DateTimeColumn(string name)
-			: base(name)
-	{
-	}
-		public DateTimeColumn(DataColumnCollection parenttable, string name)
-			: base(parenttable,name)
-	{
-	}
 	
 		public DateTimeColumn(int initialcapacity)
 		{
+			m_Count = 0;
 			m_Array = new DateTime[initialcapacity];
 			m_Capacity = initialcapacity;
 		}
 				
 		public DateTimeColumn(DateTimeColumn from)
-			: base(from)
 		{
+			this.m_Count    = from.m_Count;
 			this.m_Capacity = from.m_Capacity;
 			this.m_Array		= null==from.m_Array ? null : (DateTime[])from.m_Array.Clone();
 		}
@@ -121,6 +115,7 @@ namespace Altaxo.Data
 
 				s.m_Array = (DateTime[])(info.GetValue("Data",typeof(DateTime[])));
 				s.m_Capacity = null==s.m_Array ? 0 : s.m_Array.Length;
+				s.m_Count = s.m_Capacity;
 				return s;
 			}
 		}
@@ -149,6 +144,7 @@ namespace Altaxo.Data
 				s.m_Array = new DateTime[count];
 				info.GetArray(s.m_Array,count);
 				s.m_Capacity = null==s.m_Array ? 0 : s.m_Array.Length;
+				s.m_Count = s.m_Capacity;
 				return s;
 			}
 		}
@@ -172,6 +168,15 @@ namespace Altaxo.Data
 			new SerializationSurrogate0().GetObjectData(this,info,context);
 		}
 		#endregion
+
+
+		public override int Count
+		{
+			get
+			{
+				return m_Count;
+			}
+		}
 
 
 		public DateTime[] Array
@@ -296,6 +301,10 @@ namespace Altaxo.Data
 						for(m_Count=i; m_Count>0 && (DateTime.MinValue==m_Array[m_Count-1]); --m_Count);
 						bCountDecreased=true;;
 					}
+					else // i is above the used area
+					{
+						return; // no need for a change notification here
+					}
 				}
 				else // value is a valid value
 				{
@@ -334,7 +343,7 @@ namespace Altaxo.Data
 
 		public override void InsertRows(int nInsBeforeColumn, int nInsCount)
 		{
-			if(nInsCount<=0)
+			if(nInsCount<=0 || nInsBeforeColumn>=Count)
 				return; // nothing to do
 
 			int newlen = this.m_Count + nInsCount;

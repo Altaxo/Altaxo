@@ -3,13 +3,13 @@ using System;
 namespace Altaxo.Main
 {
 	/// <summary>Designates a object which supports the changed event.</summary>
-	interface IChangedEventSource
+	public interface IChangedEventSource
 	{
 		/// <summary>Fired when something in the object has changed.</summary>
 		event System.EventHandler Changed;
 	}
 
-	interface IChildChangedEventSink
+	public interface IChildChangedEventSink
 	{
 		/// <summary>
 		/// This function is used by the childs of an object to signal an parent object that they have changed. If the function returns true, the child have to suspend it's
@@ -19,13 +19,13 @@ namespace Altaxo.Main
 		/// <param name="e">EventArgs, can be a derived class to provide details of the change.</param>
 		/// <returns>The parent returns false normally. If the parent is suspended, it returns true to signal the child
 		/// that it should also suspend its notification. </returns>
-		bool OnChildChanged(object child, EventArgs e);
+		void OnChildChanged(object child, EventArgs e);
 	}
 
 	/// <summary>
 	/// All objects that can be suspended and resumed should implement this interface
 	/// </summary>
-	public interface IResumable
+	public interface ISuspendable
 	{
 		/// <summary>
 		/// Suspend all change notifications.

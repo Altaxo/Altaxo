@@ -415,9 +415,9 @@ namespace Altaxo
 					{
 						Altaxo.Data.DataTable table = deserObject as Altaxo.Data.DataTable;
 						if(table.Name==null || table.Name==string.Empty)
-							table.TableName = this.Doc.DataTableCollection.FindNewTableName();
+							table.Name = this.Doc.DataTableCollection.FindNewTableName();
 						else if( this.Doc.DataTableCollection.ContainsTable(table.Name))
-							table.TableName = this.Doc.DataTableCollection.FindNewTableName(table.Name);
+							table.Name = this.Doc.DataTableCollection.FindNewTableName(table.Name);
 
 						this.Doc.DataTableCollection.Add(table);
 						info.AnnounceDeserializationEnd(this.Doc); // fire the event to resolve path references
@@ -996,7 +996,7 @@ namespace Altaxo
 
 
 
-	class App
+	public class App
 	{
 		// public static System.Runtime.Serialization.SurrogateSelector m_SurrogateSelector;
 
@@ -1013,7 +1013,7 @@ namespace Altaxo
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main() 
+		public static void Main() 
 		{
 			sm_theApplication = new MainController(new MainView(), new AltaxoDocument());
 

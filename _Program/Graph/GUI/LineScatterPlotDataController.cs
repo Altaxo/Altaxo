@@ -56,7 +56,8 @@ namespace Altaxo.Graph.GUI
 		XYColumnPlotData m_PlotAssociation;
 
 
-		bool m_bDirty = false;
+		bool m_bDirty =false;
+
 		int m_PlotRange_From;
 		int m_PlotRange_To;
 		Altaxo.Data.IReadableColumn m_xCol;
@@ -198,11 +199,13 @@ namespace Altaxo.Graph.GUI
 
 		public bool Apply()
 		{
-			m_PlotAssociation.XColumn = m_xCol;
-			m_PlotAssociation.YColumn = m_yCol;
-			m_PlotAssociation.PlotRangeStart = this.m_PlotRange_From;
-			m_PlotAssociation.PlotRangeLength = this.m_PlotRange_To >= this.m_MaxPossiblePlotRange_To ? int.MaxValue : this.m_PlotRange_To+1-this.m_PlotRange_From;
-
+			if(m_bDirty)
+			{
+				m_PlotAssociation.XColumn = m_xCol;
+				m_PlotAssociation.YColumn = m_yCol;
+				m_PlotAssociation.PlotRangeStart = this.m_PlotRange_From;
+				m_PlotAssociation.PlotRangeLength = this.m_PlotRange_To >= this.m_MaxPossiblePlotRange_To ? int.MaxValue : this.m_PlotRange_To+1-this.m_PlotRange_From;
+			}
 			m_bDirty = false;
 			return true; // successfull
 		}

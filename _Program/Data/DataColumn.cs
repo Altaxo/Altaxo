@@ -39,36 +39,17 @@ namespace Altaxo.Data
 		IWriteableColumn, 
 		IDefinedCount,
 		ICloneable,
-		Altaxo.Main.IDocumentNode,
-		//Main.INameOwner,
-		Main.IResumable
+		Altaxo.Main.IDocumentNode,		
+		Main.ISuspendable
 	{
-		///<summary>The name of the column.</summary>
-		protected string m_ColumnName=null;
 		
-		/// <summary>The number (position) of the column in the data table.</summary>
-		/// <remarks>For normal columns, this value is positive (zero for the first column).<para/>
-		/// For property columns ("horizontal columns"), this value is negative (-1 for the first
-		/// property column).</remarks>
-		protected int m_ColumnNumber=0;
+	
 
 		/// <summary>
 		/// The parent table this column belongs to.
 		/// </summary>
-		
 		[NonSerialized]
 		protected object m_Parent=null;
-
-		/// <summary>The group number the column belongs to.</summary>
-		/// <remarks>Normal columns are organized in groups. Every group of colums has either no or
-		/// exactly one designated x-column (i.e. independend variable).</remarks>
-		protected int m_Group=0; // number of group this column is belonging to
-		
-		/// <summary>The kind of the column, <see cref="ColumnKind"/></summary>
-		protected ColumnKind m_Kind = ColumnKind.V; // kind of column
-
-		/// <summary>The column count, i.e. one more than the index to the last valid element.</summary>
-		protected int m_Count=0; // Index of last valid data + 1
 
 		/// <summary>If the capacity of the column is not enough, a new array is aquired, with the new size
 		/// newSize = addSpace+increaseFactor*oldSize.</summary>
@@ -84,6 +65,9 @@ namespace Altaxo.Data
 		/// call <see cref="Resume"/></remarks>
 		protected int  m_SuspendCount=0;
 
+		/// <summary>
+		/// Used to accumulate change data
+		/// </summary>
 		protected ChangeEventArgs m_ChangeData;
 
 
@@ -186,12 +170,6 @@ namespace Altaxo.Data
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)obj;
-				// info.AddValue("Parent",s.m_Table); // not serialize the parent, see remarks
-				info.AddValue("Name",s.m_ColumnName);
-				info.AddValue("Number",s.m_ColumnNumber);
-				info.AddValue("Count",s.m_Count);
-				info.AddValue("Kind",(int)s.m_Kind);
-				info.AddValue("Group",s.m_Group);
 			}
 
 			/// <summary>
@@ -207,11 +185,6 @@ namespace Altaxo.Data
 				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)obj;
 				// s.m_Table = (Altaxo.Data.DataTable)(info.GetValue("Parent",typeof(Altaxo.Data.DataTable)));
 				s.m_Parent = null;
-				s.m_ColumnName = info.GetString("Name");
-				s.m_ColumnNumber = info.GetInt32("Number");
-				s.m_Count = info.GetInt32("Count");
-				s.m_Kind  = (ColumnKind)info.GetInt32("Kind");
-				s.m_Group = info.GetInt32("Group");
 
 				// set the helper data
 				return s;
@@ -234,12 +207,6 @@ namespace Altaxo.Data
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info	)
 			{
 				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)obj;
-				// info.AddValue("Parent",s.m_Table); // not serialize the parent, see remarks
-				info.AddValue("Name",s.m_ColumnName);
-				info.AddValue("Number",s.m_ColumnNumber);
-				info.AddValue("Count",s.m_Count);
-				info.AddValue("Kind",(int)s.m_Kind);
-				info.AddValue("Group",s.m_Group);
 			}
 
 			/// <summary>
@@ -253,15 +220,6 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)o;
 				// s.m_Table = (Altaxo.Data.DataTable)(info.GetValue("Parent",typeof(Altaxo.Data.DataTable)));
-				
-				
-				s.m_ColumnName = info.GetString("Name");
-				s.m_ColumnNumber = info.GetInt32("Number");
-				s.m_Count = info.GetInt32("Count");
-				s.m_Kind  = (ColumnKind)info.GetInt32("Kind");
-				s.m_Group = info.GetInt32("Group");
-
-				
 				return s;
 			}
 		}
@@ -290,18 +248,6 @@ namespace Altaxo.Data
 
 		#endregion
 
-		public DataColumn(DataColumn from)
-		{
-			this.m_ColumnName							= from.m_ColumnName;
-			this.m_ColumnNumber						= from.m_ColumnNumber;
-			this.m_Group									= from.m_Group;
-			this.m_Kind										= from.m_Kind;
-
-			this.m_Count									= from.m_Count;
-			this.m_SuspendCount = 0;
-			this.m_Parent									= null;
-		}
-
 
 		/// <summary>
 		/// Creates a cloned instance of this object.
@@ -310,123 +256,17 @@ namespace Altaxo.Data
 		public abstract object Clone();
 
 
-	
 
-	
 
-	
-#if  WithDataMess
-
-			/// <summary>
-		/// Copies the head of the column, i.e. the column name from another column.
-		/// The column number is not copied, since this has to be set by the parent table.
-		/// </summary>
-		/// <param name="ano">Column the head is copied from.</param>
-		/// <remarks>This function will throw an ApplicationException, if this column (the column the head should be
-		/// copied to) already has a parent. This is because if the column has a parent, the parent object is
-		/// responsible for naming the child columns, so the direct renaming done here is not allowed in this case.
-		/// </remarks>
-		public void CopyHeaderFrom(DataColumn ano)
-		{
-			this.ColumnName = ano.m_ColumnName;
-		}
-
-			/// <value>The column group number this column belongs to.</value>
-		public int Group
-		{
-			get { return m_Group; }
-			set { m_Group = value; }
-		}
 
 		/// <summary>
-		/// The kind of the column. See <see cref="ColumnKind"/>.
+		/// Get the name of the column.
 		/// </summary>
-		public ColumnKind Kind
-		{
-			get { return m_Kind; }
-			set 
-			{
-				m_Kind = value;
-			}
-		}
-
-		/// <value>Get/sets if this column is the X column. A X column is the column, which holds the first
-		/// independent variable in a group of columns.</value>
-		public bool XColumn
-		{
-			get { return m_Kind==ColumnKind.X; }
-			set
-			{
-				ColumnKind oldValue = m_Kind;
-				if(true==value)
-					m_Kind = ColumnKind.X;
-			
-
-				if(oldValue!=m_Kind && m_Parent is Main.IChildChangedEventSink)
-				{
-					//m_Parent.DeleteXProperty(m_Group);
-					((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this,new ColumnKindChangeEventArgs(oldValue,m_Kind));
-				}
-			}
-		}
-
-			/// <value>
-		/// The position of the column in the parent table, has to be syncronized by the
-		/// parent table.
-		/// </value>
-		public int ColumnNumber
-		{
-			get
-			{
-				return m_ColumnNumber;
-			}
-		}
-
-		/// <summary>
-		/// Sets the column number, only the parent data table should do that!
-		/// This is because the column number must be synchronized with the
-		/// position of the column in the parent data table and only that table knows about the position.
-		/// </summary>
-		/// <param name="n">The position of the column in the parent data table.</param>
-		protected internal void SetColumnNumber(int n)
-		{
-			m_ColumnNumber=n;
-		}
-
-			/// <summary>
-		/// Gets/sets the column name. If the column belongs to a table, the new name is checked by
-		/// the parent table for uniqueness.
-		/// </summary>
-		public string ColumnName
-		{
-			get
-			{
-				return m_ColumnName;
-			}
-			set
-			{
-				string oldName = m_ColumnName;
-				m_ColumnName = value;
-				if(m_ColumnName!=oldName)
-				{
-					if(this.m_Parent is Main.IChildChangedEventSink)
-						((Main.IChildChangedEventSink)ParentObject).OnChildChanged(this,new Main.NameChangedEventArgs(oldName,m_ColumnName));
-				}
-			}
-		}
-
-			public virtual string Name
-		{
-			get { return m_ColumnName; }
-		}
-#else
-
 		public virtual string Name
 		{
 			get { return m_Parent is Main.INamedObjectCollection ? ((Main.INamedObjectCollection)m_Parent).GetNameOfChildObject(this) : this.GetType().ToString(); }
 		}
 
-#endif
 
 
 		/// <summary>
@@ -451,7 +291,13 @@ namespace Altaxo.Data
 		/// </remarks>
 		public void Suspend()
 		{
+			System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");		
 			m_SuspendCount++;
+		}
+
+		public bool IsSuspended 
+		{
+			get { return m_SuspendCount>0; }
 		}
 
 		/// <summary>
@@ -462,18 +308,15 @@ namespace Altaxo.Data
 		/// and the arguments of the handler contain the changed area of rows during the suspend time.</remarks>
 		public void Resume()
 		{
+			System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");		
+
 			if(m_SuspendCount>0 && (--m_SuspendCount)==0 && m_ChangeData!=null)
 			{
-				if(m_Parent is Main.IChildChangedEventSink && true==((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData))
-				{
-					this.Suspend();
-					// Note: AccumulateChangeData is not neccessary here, since we still have the ChangeData
-				}
-				else // parent is not suspended
-				{
-					OnChanged(m_ChangeData); // Fire the changed event
-					m_ChangeData=null; // dispose the change data
-				}		
+				if(m_Parent is Main.IChildChangedEventSink)
+					((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
+
+				if(!IsSuspended)
+					OnDataChanged(); // Fire the changed event
 			}
 		}
 
@@ -487,28 +330,29 @@ namespace Altaxo.Data
 
 		protected void NotifyDataChanged(int minRow, int maxRow, bool rowCountDecreased)
 		{
-			if(this.m_SuspendCount>0) // IsSuspended
-			{
-				AccumulateChangeData(minRow, maxRow, rowCountDecreased);
-			}
-			else // not suspended
-			{
-				if(m_Parent is Main.IChildChangedEventSink && true==((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData))
-				{
-					this.Suspend();
-					AccumulateChangeData(minRow, maxRow, rowCountDecreased);
-				}
-				else // parent is not suspended
-				{
-					OnChanged(m_ChangeData); // Fire the changed event
-				}
-			}
+			if(m_Parent==null && Changed==null)
+				return; // nobody is listening
+
+			AccumulateChangeData(minRow, maxRow, rowCountDecreased);
+		
+			if(IsSuspended)
+				return;
+
+			if(m_Parent is Main.IChildChangedEventSink)
+				((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
+	
+			if(!IsSuspended) // parent is not suspended
+				OnDataChanged(); // Fire the changed event 
 		}
 	
-		protected virtual void OnChanged(System.EventArgs e)
+		
+	
+		protected virtual void OnDataChanged()
 		{
 			if(null!=Changed)
-				Changed(this, e!=null? e : EventArgs.Empty);
+				Changed(this, m_ChangeData);
+
+			m_ChangeData=null;
 		}
 
 
@@ -540,30 +384,7 @@ namespace Altaxo.Data
 		protected DataColumn()
 		{
 		}
-
-		/// <summary>
-		/// Constructs a data column with the name <paramref name="name"/>
-		/// </summary>
-		/// <param name="name">The initial name of the data column.</param>
-		protected DataColumn(string name)
-		{
-			m_ColumnName = name;
-		}
-
-		/// <summary>
-		/// Constructs a data column with the name <paramref name="name"/>, which belongs to the parent data
-		/// table parenttable. The column is <b>not</b> automatically inserted in the parent table!
-		/// </summary>
-		/// <param name="parentcoll">The parent DataColumnCollection this column belongs to.</param>
-		/// <param name="name">The initial name of the column.</param>
-		/// <remarks>This function is mainly intended for use by the parent table, since only the
-		/// parent table knows about which name can be used for the column.</remarks>
-		protected DataColumn(Altaxo.Data.DataColumnCollection parentcoll, string name)
-		{
-			this.m_Parent = parentcoll;
-			this.m_ColumnName = name;
-		}
-
+		
 	
 		/// <summary>
 		/// Returns either the column name if the column has no parent table, or the parent table name, followed by
@@ -573,8 +394,7 @@ namespace Altaxo.Data
 		{
 			get 
 			{
-				Altaxo.Data.DataTable table = this.ParentTable;
-				return null==m_Parent ? m_ColumnName : String.Format("{0}\\{1}",table.TableName,m_ColumnName);
+				return Main.DocumentPath.GetPathString(this,3);
 			}
 		}
 
@@ -582,13 +402,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Returns the row count, i.e. the one more than the index to the last valid data element in the column. 
 		/// </summary>
-		public int Count
-		{
-			get
-			{
-				return m_Count;
-			}
-		}
+		public abstract int Count { get; }
 		
 		/// <summary>
 		/// Returns the column type followed by a backslash and the column name.
@@ -597,36 +411,30 @@ namespace Altaxo.Data
 		{
 			get
 			{
-				return null==m_ColumnName ? this.GetType().ToString(): this.GetType().ToString() + "(\"" + m_ColumnName + "\")";
+				return null==this.Name ? this.GetType().ToString(): this.GetType().ToString() + "(\"" + this.Name + "\")";
 			}
 		}
 
-		/// <summary>
-		/// Gets/sets the parent table.
-		/// </summary>
-		public Altaxo.Data.DataTable ParentTable
-		{
-			get
-			{
-				return (DataTable)Main.DocumentPath.GetRootNodeImplementing(this,typeof(DataTable));
-			}
-		}
-
+	
 		public virtual object ParentObject
 		{
 			get { return m_Parent; }
 			set
 			{
+				object oldParent = m_Parent;
 				m_Parent = value;
+
+				if(!object.ReferenceEquals(oldParent,m_Parent))
+				{
+					if(oldParent is Main.IChildChangedEventSink)
+						((Main.IChildChangedEventSink)oldParent).OnChildChanged(this,new Main.ParentChangedEventArgs(oldParent,m_Parent));
+					if(m_Parent is Main.IChildChangedEventSink)
+						((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this,new Main.ParentChangedEventArgs(oldParent,m_Parent));
+
+				}
 			}
 		}
-
 	
-
-		protected internal void SetParent(DataColumnCollection parentcoll)
-		{
-			m_Parent = parentcoll;
-		}
 
 		// indexers
 		/// <summary>
@@ -676,8 +484,7 @@ namespace Altaxo.Data
 		/// </summary>
 		public void Dispose()
 		{
-			this.m_Parent=null;
-			this.m_ColumnNumber = int.MinValue;
+			this.ParentObject=null;
 			this.Clear();
 			if(null!=ColumnDisposed)
 				ColumnDisposed(this,EventArgs.Empty);

@@ -567,12 +567,11 @@ namespace Altaxo.Graph
 
 		#region IChildChangedEventSink Members
 
-		public bool OnChildChanged(object child, EventArgs e)
+		public void OnChildChanged(object child, EventArgs e)
 		{
 			if(null!=Changed)
 				Changed(this,e);
-		
-			return false;
+
 		}
 
 		#endregion

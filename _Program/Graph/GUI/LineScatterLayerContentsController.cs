@@ -105,7 +105,7 @@ namespace Altaxo.Graph.GUI
 				int i=0;
 				foreach(Data.DataTable dt in App.Current.Doc.DataTableCollection)
 				{
-					nodes[i++] = new TreeNode(dt.TableName,new TreeNode[1]{new TreeNode()});
+					nodes[i++] = new TreeNode(dt.Name,new TreeNode[1]{new TreeNode()});
 				}
 
 				View.DataAvailable_Initialize(nodes);

@@ -266,7 +266,7 @@ namespace Altaxo.Worksheet.GUI
 
 				// set the menu of this class
 				m_View.TableViewMenu = this.m_MainMenu;
-				m_View.TableViewTitle = this.m_Table.TableName;
+				m_View.TableViewTitle = this.m_Table.Name;
 
 
 				// restore the event chain to the Table
@@ -882,7 +882,7 @@ namespace Altaxo.Worksheet.GUI
 				if(null!=err)
 					return err;
 
-				if(m_Table.TableName==wksname)
+				if(m_Table.Name==wksname)
 					return null;
 				else if(m_Ctrl.Doc.ParentDataSet==null)
 					return null; // if there is no parent data set we can enter anything
@@ -896,13 +896,13 @@ namespace Altaxo.Worksheet.GUI
 		protected void EhMenuWorksheetRename_OnClick(object sender, System.EventArgs e)
 		{
 			Main.GUI.TextValueInputController ctrl = new Main.GUI.TextValueInputController(
-				Doc.TableName,
+				Doc.Name,
 				new Main.GUI.SingleValueDialog("Rename Worksheet","Enter a name for the worksheet:")
 				);
 
 			ctrl.Validator = new WorksheetRenameValidator(Doc,this);
 			if(ctrl.ShowDialog(View.TableViewForm))
-				Doc.TableName = ctrl.InputText.Trim();
+				Doc.Name = ctrl.InputText.Trim();
 		}
 
 
@@ -911,7 +911,7 @@ namespace Altaxo.Worksheet.GUI
 			Altaxo.Data.DataTable clonedTable = (Altaxo.Data.DataTable)this.DataTable.Clone();
 
 			// find a new name for the cloned table and add it to the DataTableCollection
-			clonedTable.TableName = DataTable.ParentDataSet.FindNewTableName();
+			clonedTable.Name = DataTable.ParentDataSet.FindNewTableName();
 			DataTable.ParentDataSet.Add(clonedTable);
 			App.Current.CreateNewWorksheet(clonedTable);
 		}
@@ -1198,7 +1198,7 @@ namespace Altaxo.Worksheet.GUI
 				{
 					oldTable.DataColumns.Changed -= new EventHandler(this.EhTableDataChanged);
 					oldTable.PropCols.Changed -= new EventHandler(this.EhPropertyDataChanged);
-					oldTable.TableNameChanged -= new EventHandler(this.EhTableNameChanged);
+					oldTable.NameChanged -= new Main.NameChangedEventHandler(this.EhTableNameChanged);
 				}
 
 				m_Table = newTable;
@@ -1206,7 +1206,7 @@ namespace Altaxo.Worksheet.GUI
 				{
 					newTable.DataColumns.Changed += new EventHandler(this.EhTableDataChanged);
 					newTable.PropCols.Changed += new EventHandler(this.EhPropertyDataChanged);
-					newTable.TableNameChanged += new EventHandler(this.EhTableNameChanged);
+					newTable.NameChanged += new Main.NameChangedEventHandler(this.EhTableNameChanged);
 					this.SetCachedNumberOfDataColumns();
 					this.SetCachedNumberOfDataRows();
 					this.SetCachedNumberOfPropertyColumns();
@@ -1522,10 +1522,10 @@ namespace Altaxo.Worksheet.GUI
 				SetCachedNumberOfPropertyColumns();
 		}
 
-		public void EhTableNameChanged(object sender, System.EventArgs e)
+		public void EhTableNameChanged(object sender, Main.NameChangedEventArgs e)
 		{
 			if(View!=null)
-				View.TableViewForm.Text = Doc.TableName;
+				View.TableViewForm.Text = Doc.Name;
 		}
 		#endregion
 

@@ -58,6 +58,23 @@ namespace Altaxo.Main
 			set { _IsAbsolutePath = value; }
 		}
 
+		public override string ToString()
+		{
+			System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder(128);
+			if(this.IsAbsolutePath)
+				stringBuilder.Append("/");
+
+			if(this.Count>0)
+				stringBuilder.Append(this[0]);
+
+			for(int i=1;i<this.Count;i++)
+			{
+				stringBuilder.Append("/");
+				stringBuilder.Append(this[i]);
+			}
+			return stringBuilder.ToString();
+		}
+
 		#region static navigation methods
 
 		/// <summary>
@@ -134,6 +151,10 @@ namespace Altaxo.Main
 			return path;
 		}
 
+		public static string GetPathString(IDocumentNode node, int maxDepth)
+		{
+			return GetPath(node,maxDepth).ToString();
+		}
 
 		/// <summary>
 		/// Retrieves the relative path from the node <code>startnode</code> to the node <code>endnode</code>.

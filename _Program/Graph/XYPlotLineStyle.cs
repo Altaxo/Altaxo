@@ -1240,12 +1240,10 @@ namespace Altaxo.Graph
 			OnChildChanged(child,e);
 		}
 
-		public virtual bool OnChildChanged(object child, EventArgs e)
+		public virtual void OnChildChanged(object child, EventArgs e)
 		{
 			if(null!=Changed)
 				Changed(this,e);
-
-			return false;
 		}
 
 		#endregion

@@ -39,30 +39,25 @@ namespace Altaxo.Data
 	{
 		private double[] m_Array;
 		private int      m_Capacity; // shortcut to m_Array.Length;
+		private int        m_Count;
 		public static readonly double NullValue = Double.NaN;
 		
 		public DoubleColumn()
 		{
 		}
 
-		public DoubleColumn(string name)
-			: base(name)
-		{
-		}
-		public DoubleColumn(DataColumnCollection parenttable, string name)
-			: base(parenttable,name)
-		{
-		}
+		
 	
 		public DoubleColumn(int initialcapacity)
 		{
+			m_Count = 0;
 			m_Array = new double[initialcapacity];
 			m_Capacity = initialcapacity;
 		}
 	
 		public DoubleColumn(DoubleColumn from)
-			: base(from)
 		{
+			this.m_Count    = from.m_Count; 
 			this.m_Capacity = from.m_Capacity;
 			this.m_Array		= null==from.m_Array ? null : (double[])from.m_Array.Clone();
 		}
@@ -127,6 +122,8 @@ namespace Altaxo.Data
 
 				s.m_Array = (double[])(info.GetValue("Data",typeof(double[])));
 				s.m_Capacity = null==s.m_Array ? 0 : s.m_Array.Length;
+				s.m_Count = s.m_Capacity;
+
 				return s;
 			}
 		}
@@ -153,6 +150,8 @@ namespace Altaxo.Data
 				s.m_Array = new double[count];
 				info.GetArray(s.m_Array,count);
 				s.m_Capacity = null==s.m_Array ? 0 : s.m_Array.Length;
+				s.m_Count = s.m_Capacity;
+
 				return s;
 			}
 		}
@@ -177,6 +176,13 @@ namespace Altaxo.Data
 
 		#endregion
 
+		public override int Count
+		{
+			get
+			{
+				return m_Count;
+			}
+		}
 
 		public double[] Array
 		{
@@ -302,6 +308,10 @@ namespace Altaxo.Data
 						for(m_Count=i; m_Count>0 && Double.IsNaN(m_Array[m_Count-1]); --m_Count);
 						bCountDecreased=true;;
 					}
+					else // i is above the used area
+					{
+						return; // no need for a change notification here
+					}
 				}
 				else // value is not NaN
 				{
@@ -340,7 +350,7 @@ namespace Altaxo.Data
 
 		public override void InsertRows(int nInsBeforeColumn, int nInsCount)
 		{
-			if(nInsCount<=0)
+			if(nInsCount<=0 || nInsBeforeColumn>=Count)
 				return; // nothing to do
 
 			int newlen = this.m_Count + nInsCount;

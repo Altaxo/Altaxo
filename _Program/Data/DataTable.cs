@@ -49,7 +49,7 @@ namespace Altaxo.Data
 		Main.INamedObjectCollection,
 		Main.INameOwner,
 		Main.IChildChangedEventSink,
-		Main.IResumable
+		Main.ISuspendable
 		{
 		// Types
 		
@@ -64,10 +64,6 @@ namespace Altaxo.Data
 		/// </summary>
 		protected string m_TableName=null; // the name of the table
 
-		/// <summary>
-		/// If true, the table was changed and the table has not notified the parent and the listeners about that.
-		/// </summary>
-		protected bool m_IsDirty = false;
 
 		/// <summary>
 		/// Collection of property columns, i.e. "horizontal" columns.
@@ -76,11 +72,11 @@ namespace Altaxo.Data
 		/// descriptive name (the property column is then of type TextColumn).
 		/// This can also be another parameter which corresponds with that column, i.e. frequency. In this case the property column would be of
 		/// type DoubleColumn.</remarks>
-		protected DataColumnCollection m_PropertyColumns = new DataColumnCollection();
+		protected DataColumnCollection m_PropertyColumns;
 		/// <summary>
 		/// Collection of data columns, i.e. the normal, "vertical" columns.
 		/// </summary>
-		protected DataColumnCollection m_DataColumns = new DataColumnCollection();
+		protected DataColumnCollection m_DataColumns;
 
 		// Helper Data
 
@@ -96,9 +92,15 @@ namespace Altaxo.Data
 		[NonSerialized()]
 		private System.Collections.ArrayList m_SuspendedChildCollection = new System.Collections.ArrayList();
 		
-		public event System.EventHandler Changed;
+		/// <summary>
+		/// If not null, the table was changed and the table has not notified the parent and the listeners about that.
+		/// </summary>
+		protected System.EventArgs m_ChangeData = null;
 
-		public event System.EventHandler TableNameChanged;
+
+		public event System.EventHandler Changed;
+		public event Main.ParentChangedEventHandler ParentChanged;
+		public event Main.NameChangedEventHandler NameChanged;
 
 
 		#region "Serialization"
@@ -217,9 +219,8 @@ namespace Altaxo.Data
 		#endregion
 
 		public DataTable()
+			: this(new DataColumnCollection(),new DataColumnCollection())
 		{
-			m_DataColumns.ParentObject = this;
-			m_PropertyColumns.ParentObject = this;
 		}
 
 		public DataTable(string name)
@@ -245,19 +246,30 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="from">The data table to copy the structure from.</param>
 		public DataTable(DataTable from)
+			: this((DataColumnCollection)from.m_DataColumns.Clone(),(DataColumnCollection)from.m_PropertyColumns.Clone())
 		{
 			
 			this.m_Parent = null; // do not clone the parent
 			this.m_TableName = from.m_TableName;
-			
-			this.m_DataColumns = (DataColumnCollection)from.m_DataColumns.Clone();
-			m_DataColumns.ParentObject = this;
-
-			this.m_PropertyColumns = (DataColumnCollection)from.m_PropertyColumns.Clone();
-			this.m_PropertyColumns.ParentObject = this; // set the parent of the cloned PropertyColumns
 		}
 
-	
+		/// <summary>
+		/// Constructor for internal use only. Takes the two DataColumnCollections as Data and Properties.
+		/// </summary>
+		/// <param name="datacoll">The data columns.</param>
+		/// <param name="propcoll">The property columns.</param>
+		protected DataTable(DataColumnCollection datacoll, DataColumnCollection propcoll)
+		{
+			this.m_DataColumns = datacoll;
+			m_DataColumns.ParentObject = this;
+			m_DataColumns.ParentChanged += new Main.ParentChangedEventHandler(this.EhChildParentChanged);
+
+			this.m_PropertyColumns = propcoll;
+			this.m_PropertyColumns.ParentObject = this; // set the parent of the cloned PropertyColumns
+			m_PropertyColumns.ParentChanged += new Main.ParentChangedEventHandler(this.EhChildParentChanged);
+
+		}
+
 		public virtual object Clone()
 		{
 			return new DataTable(this);
@@ -272,24 +284,32 @@ namespace Altaxo.Data
 
 		public void Suspend()
 		{
+			System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");		
 			++m_SuspendCount; // suspend one step higher
 		}
 
 		public void Resume()
 		{
+			System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");		
 			if(m_SuspendCount>0 && (--m_SuspendCount)==0)
 			{
-					this.m_ResumeInProgress = true;
-					foreach(Main.IResumable obj in m_SuspendedChildCollection)
-						obj.Resume();
-					m_SuspendedChildCollection.Clear();
-					this.m_ResumeInProgress = false;
+				this.m_ResumeInProgress = true;
+				foreach(Main.ISuspendable obj in m_SuspendedChildCollection)
+					obj.Resume();
+				m_SuspendedChildCollection.Clear();
+				this.m_ResumeInProgress = false;
 
 				// send accumulated data if available and release it thereafter
-				if(this.IsDirty)
+				if(null!=m_ChangeData)
 				{
-					OnChildChanged(null,EventArgs.Empty); // simulate a data changed event
-					this.m_IsDirty = false;
+					if(m_Parent is Main.IChildChangedEventSink)
+					{
+						((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
+					}
+					if(!IsSuspended)
+					{
+						OnDataChanged(); // Fire the changed event
+					}		
 				}
 			}
 		}
@@ -297,41 +317,35 @@ namespace Altaxo.Data
 
 		void AccumulateChildChangeData(object sender, EventArgs e)
 		{
-			if(sender!=null)
-				this.m_IsDirty = true;
+			if(sender!=null && m_ChangeData==null)
+				this.m_ChangeData = new EventArgs();
 		}
 	
-		public bool OnChildChanged(object sender, System.EventArgs e)
+		public void OnChildChanged(object sender, System.EventArgs e)
 		{
-			if(IsSuspended)
+			if(this.IsSuspended &&  sender is Main.ISuspendable)
 			{
-				if(sender is Main.IResumable)
-					m_SuspendedChildCollection.Add(sender); // add sender to suspended child
-				else
-					AccumulateChildChangeData(sender,e);	// AccumulateNotificationData
-				return true; // signal the child that it should be suspend further notifications
+				m_SuspendedChildCollection.Add(sender); // add sender to suspended child
+				((Main.ISuspendable)sender).Suspend();
+				return;
 			}
-			else // not suspended
+
+			AccumulateChildChangeData(sender,e);	// AccumulateNotificationData
+			
+			if(m_ResumeInProgress || IsSuspended)
+				return;
+
+			if(m_Parent is Main.IChildChangedEventSink )
 			{
-				if(m_ResumeInProgress)
+				((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
+				if(IsSuspended) // maybe parent has suspended us now
 				{
-					AccumulateChildChangeData(sender,e);// AccumulateNotificationData(...) -> not available here 
-					return false;  // signal not suspended to the parent
-				}
-				else // no resume in progress
-				{
-					if(m_Parent is Main.IChildChangedEventSink && true==((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, EventArgs.Empty))
-					{
-						this.Suspend();
-						return this.OnChildChanged(sender, e); // we call the function recursively, but now we are suspended
-					}
-					else // parent is not suspended
-					{
-						OnChanged(EventArgs.Empty); // Fire the changed event
-						return false; // signal not suspended to the parent
-					}
+					this.OnChildChanged(sender, e); // we call the function recursively, but now we are suspended
+					return;
 				}
 			}
+			
+			OnDataChanged(); // Fire the changed event
 		}
 
 		
@@ -341,28 +355,54 @@ namespace Altaxo.Data
 				Changed(this,e);
 		}
 
+		/// <summary>
+		/// Fires the data change event.
+		/// </summary>
+		protected virtual void OnDataChanged()
+		{
+			if(null!=Changed)
+				Changed(this,m_ChangeData);
+
+			m_ChangeData=null;
+		}
+
 		#endregion
 
 		public Altaxo.Data.DataTableCollection ParentDataSet
 		{
-			get { return m_Parent as Altaxo.Data.DataTableCollection; }
-			set { m_Parent = value; }
+			get { return m_Parent as Altaxo.Data.DataTableCollection; }			
 		}
 
 		public virtual object ParentObject
 		{
-			get { return m_Parent; }
+			get
+			{ 
+				return m_Parent;
+			}
+			set
+			{
+				object oldParent = m_Parent;
+				m_Parent = value;
+				if(!object.ReferenceEquals(oldParent,m_Parent))
+				{
+					OnParentChanged(oldParent,m_Parent);
+				}
+			}
 		}
 
-		public virtual string Name
+		protected virtual void OnParentChanged(object oldParent,object newParent)
 		{
-			get { return m_TableName; }
+			if(ParentChanged!=null)
+				ParentChanged(this,new Main.ParentChangedEventArgs(oldParent,newParent));
 		}
 
-/// <summary>
-/// get or sets the name of the Table
-/// </summary>
-		public string TableName
+
+		
+
+		/// <summary>
+		/// get or sets the name of the Table
+		/// </summary>
+		public string Name
 		{
 			get
 			{
@@ -370,22 +410,37 @@ namespace Altaxo.Data
 			}
 			set
 			{
-				if(m_TableName==null || m_TableName!=value)
+				string oldName = m_TableName;
+				m_TableName = value;
+
+				if(oldName!=m_TableName)
 				{
-					if(null!=ParentDataSet)
+					try
 					{
-						if(null!=ParentDataSet[value])
-						{
-							throw new AltaxoUniqueNameException();
-						}
+						OnNameChanged(oldName,m_TableName);
 					}
-					m_TableName = value;
-					if(null!=TableNameChanged)
-						TableNameChanged(this,new System.EventArgs());
+					catch(Exception ex)
+					{
+						m_TableName = oldName;
+						throw ex;
+					}
 				}
 			}
 		}
 
+		protected virtual void OnNameChanged(string oldName, string newName)
+		{
+			if(NameChanged != null)
+				NameChanged(this, new Main.NameChangedEventArgs(oldName,newName));
+		}
+
+
+		protected void EhChildParentChanged(object sender, Main.ParentChangedEventArgs e)
+		{
+			// this event should not happen, or someone try to 
+			// change the parents of my collection
+			throw new ApplicationException("Unexpected change of DataColumnsCollection's parent belonging to table " + this.Name);
+		}
 
 		/// <summary>
 		/// Returns the property collection of the table.
@@ -411,11 +466,11 @@ namespace Altaxo.Data
 			Resume();
 		}
 
-
 		public DataColumnCollection Col
 		{
 			get { return m_DataColumns; }
 		}
+
 		public DataColumnCollection DataColumns
 		{
 			get { return m_DataColumns; }
@@ -426,6 +481,7 @@ namespace Altaxo.Data
 			get { return m_DataColumns[i]; }
 			set { m_DataColumns[i]=value; }
 		}
+
 		public DataColumn this[string name]
 		{
 			get { return m_DataColumns[name]; }
@@ -457,13 +513,9 @@ namespace Altaxo.Data
 			{
 				get
 				{
-					return m_IsDirty;
+					return m_ChangeData!=null;
 				}
 			}
-
-
-	
-
 
 		public virtual void RemoveColumns(int nFirstColumn, int nDelCount)
 		{
@@ -475,6 +527,7 @@ namespace Altaxo.Data
 
 			Resume();
 		}
+
 		#region IDisposable Members
 
 		public void Dispose()
@@ -518,6 +571,17 @@ namespace Altaxo.Data
 			else
 				return null;
 		}
+
+
+		
+		/// <summary>
+		/// Gets/sets the parent table.
+		/// </summary>
+		public static Altaxo.Data.DataTable GetParentDataTableOf(Main.IDocumentNode child)
+		{
+				return (DataTable)Main.DocumentPath.GetRootNodeImplementing(child,typeof(DataTable));
+		}
+		
 	} // end class Altaxo.Data.DataTable
 	
 }

@@ -37,12 +37,8 @@ namespace Altaxo.Data
 		Main.INamedObjectCollection,
 		Altaxo.Main.IChangedEventSource,
 		Altaxo.Main.IChildChangedEventSink,
-		Main.IResumable
+		Main.ISuspendable
 	{
-		// Types
-		public delegate void OnDataChanged(Altaxo.Data.DataTableCollection sender);   // delegate declaration
-		public delegate void OnDirtySet(Altaxo.Data.DataTableCollection sender);
-
 		// Data
 		protected System.Collections.Hashtable m_TablesByName = new System.Collections.Hashtable();
 		protected AltaxoDocument m_Parent=null;
@@ -56,7 +52,7 @@ namespace Altaxo.Data
 		[NonSerialized()]
 		private   bool m_ResumeInProgress=false;
 		[NonSerialized()]
-		protected bool m_IsDirty=false;
+		protected System.EventArgs m_ChangeData=null;
 		[NonSerialized()]
 		private bool m_DeserializationFinished=false;
 
@@ -112,7 +108,7 @@ namespace Altaxo.Data
 				// set the m_Parent object for the data tables
 				foreach(DataTable dt in m_TablesByName.Values)
 				{
-					dt.ParentDataSet = this;
+					dt.ParentObject = this;
 					dt.OnDeserialization(finisher);
 				}
 			}
@@ -161,108 +157,70 @@ namespace Altaxo.Data
 
 		public void Suspend()
 		{
+			System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");		
+
 			++m_SuspendCount; // suspend one step higher
 		}
 
 		public void Resume()
 		{
+			System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");		
 			if(m_SuspendCount>0 && (--m_SuspendCount)==0)
 			{
 				this.m_ResumeInProgress = true;
-				foreach(Main.IResumable obj in m_SuspendedChildCollection)
+				foreach(Main.ISuspendable obj in m_SuspendedChildCollection)
 					obj.Resume();
 				m_SuspendedChildCollection.Clear();
 				this.m_ResumeInProgress = false;
-			
-				// send accumulated data if available and release it thereafter
-				if(this.IsDirty)
-				{
-					OnChildChanged(null,EventArgs.Empty); // simulate a data changed event
-					this.m_IsDirty = false;
-				}
 
-			
+				// send accumulated data if available and release it thereafter
+				if(null!=m_ChangeData)
+				{
+					if(m_Parent is Main.IChildChangedEventSink)
+					{
+						((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
+					}
+					if(!IsSuspended)
+					{
+						OnDataChanged(); // Fire the changed event
+					}		
+				}
 			}
 		}
 
 
 		void AccumulateChildChangeData(object sender, EventArgs e)
 		{
-			if(sender!=null)
-				this.m_IsDirty = true;
+			if(sender!=null && m_ChangeData==null)
+				this.m_ChangeData=new EventArgs();
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// <remarks>This is the standard pseudocode for changed notifications:
-		/// <code>
-		/// bool OnChildChanged(object sender, ... (additional arguments specifing changed details)
-		/// {
-		/// if(IsSuspended)
-		///		{
-		///		if(sender is Main.IResumable)
-		///     m_SuspendedChildCollection.Add(sender); // add sender to suspended child
-		///   else
-		///    	AccumulateChildChangeData(sender,e);
-		///		return true; // signal the child that it should be suspend further notifications
-		///		}
-		///	else // not suspended
-		///		{
-		///		if(m_ResumeInProgress)
-		///			{
-		///			AccumulateChildChangeData(sender,e);	// if we have notification data, accumulate them
-		///			return false;  // signal not suspended to the parent
-		///			}
-		///		else // no resume in progress
-		///			{
-		///			if(m_Parent is Main.IChildChangedEventSink and true==((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, EventArgs.Empty))
-		///				{
-		///				this.Suspend();
-		///				return this.OnChildChanged(sender, e); // we call the function recursively, but now we are suspended
-		///				}
-		///			else // parent is not suspended
-		///				{
-		///				OnChanged(); // Fire the changed event
-		///				return false; // signal not suspended to the parent
-		///				}
-		///			}
-		///		}
-		/// </code> 
-		///</remarks>
-		public bool OnChildChanged(object sender, System.EventArgs e)
+	
+		public void OnChildChanged(object sender, System.EventArgs e)
 		{
-			if(IsSuspended)
+			if(this.IsSuspended &&  sender is Main.ISuspendable)
 			{
-				if(sender is Main.IResumable)
-					m_SuspendedChildCollection.Add(sender); // add sender to suspended child
-				else
-					AccumulateChildChangeData(sender,e);
-				return true; // signal the child that it should be suspend further notifications
+				m_SuspendedChildCollection.Add(sender); // add sender to suspended child
+				((Main.ISuspendable)sender).Suspend();
+				return;
 			}
-			else // not suspended
+
+			AccumulateChildChangeData(sender,e);	// AccumulateNotificationData
+			
+			if(m_ResumeInProgress || IsSuspended)
+				return;
+
+			if(m_Parent is Main.IChildChangedEventSink )
 			{
-				if(m_ResumeInProgress)
+				((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
+				if(IsSuspended) // maybe parent has suspended us now
 				{
-					AccumulateChildChangeData(sender,e);
-					return false;  // signal not suspended to the parent
-				}
-				else // no resume in progress
-				{
-					if(m_Parent is Main.IChildChangedEventSink && true==((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, EventArgs.Empty))
-					{
-						this.Suspend();
-						return this.OnChildChanged(sender, e); // we call the function recursively, but now we are suspended
-					}
-					else // parent is not suspended
-					{
-						OnChanged(EventArgs.Empty); // Fire the changed event
-						return false; // signal not suspended to the parent
-					}
+					this.OnChildChanged(sender, e); // we call the function recursively, but now we are suspended
+					return;
 				}
 			}
+			
+			OnDataChanged(); // Fire the changed event
 		}
 
 		protected virtual void OnChanged(EventArgs e)
@@ -270,6 +228,15 @@ namespace Altaxo.Data
 			if(null!=Changed)
 				Changed(this,e);
 		}
+
+		protected virtual void OnDataChanged()
+		{
+			if(null!=Changed)
+				Changed(this,m_ChangeData);
+		
+			m_ChangeData=null;
+		}
+
 
 		#endregion
 
@@ -286,7 +253,7 @@ namespace Altaxo.Data
 		{
 			get
 			{
-				return m_IsDirty;
+				return m_ChangeData!=null;
 			}
 		}
 
@@ -297,13 +264,6 @@ namespace Altaxo.Data
 			System.Array.Sort(arr);
 			return arr;
 		}
-
-		protected internal void ResetDirty()
-		{
-			this.m_SuspendedChildCollection.Clear();
-			m_IsDirty=false;
-		}
-
 
 		public Altaxo.Data.DataTable this[string name]
 		{
@@ -318,16 +278,24 @@ namespace Altaxo.Data
 			return m_TablesByName.ContainsKey(tablename);
 		}
 
+		public bool ContainsTable(DataTable table)
+		{
+			DataTable found = this[table.Name];
+			return found != null && object.ReferenceEquals(found,table);
+		}
+
 		public void Add(Altaxo.Data.DataTable theTable)
 		{
-			if(null==theTable.TableName || 0==theTable.TableName.Length) // if no table name provided
-				theTable.TableName = FindNewTableName();									// find a new one
-			else if(m_TablesByName.ContainsKey(theTable.TableName)) // else if this table name is already in use
-				theTable.TableName = FindNewTableName(theTable.TableName); // find a new table name based on the original name
+			if(null==theTable.Name || 0==theTable.Name.Length) // if no table name provided
+				theTable.Name = FindNewTableName();									// find a new one
+			else if(m_TablesByName.ContainsKey(theTable.Name)) // else if this table name is already in use
+				theTable.Name = FindNewTableName(theTable.Name); // find a new table name based on the original name
 
 			// now the table has a unique name in any case
-			m_TablesByName.Add(theTable.TableName,theTable);
-			theTable.ParentDataSet = this; 
+			m_TablesByName.Add(theTable.Name,theTable);
+			theTable.ParentObject = this; 
+			theTable.NameChanged += new Main.NameChangedEventHandler(this.EhTableNameChanged);
+			theTable.ParentChanged += new Main.ParentChangedEventHandler(this.EhTableParentChanged);
 
 			// raise data event to all listeners
 			OnChanged(EventArgs.Empty);
@@ -337,11 +305,42 @@ namespace Altaxo.Data
 		public void Remove(Altaxo.Data.DataTable theTable)
 		{
 			if(m_TablesByName.ContainsValue(theTable))
-				m_TablesByName.Remove(theTable.TableName);
+			{
+				m_TablesByName.Remove(theTable.Name);
+				theTable.ParentChanged -= new Main.ParentChangedEventHandler(this.EhTableParentChanged);
+				theTable.NameChanged -= new Main.NameChangedEventHandler(this.EhTableNameChanged);
+				theTable.ParentObject=null;
+			}
 
 			this.OnChanged(EventArgs.Empty);
 		}
 
+		protected void EhTableParentChanged(object sender, Main.ParentChangedEventArgs pce)
+		{
+			if(object.ReferenceEquals(this,pce.OldParent) && this.ContainsTable((DataTable)sender))
+				this.Remove((DataTable)sender);
+			else
+				if(!this.ContainsTable((DataTable)sender))
+				throw new ApplicationException("Not allowed to set child's parent to this collection before adding it to the collection");
+		}
+
+		protected void EhTableNameChanged(object sender, Main.NameChangedEventArgs nce)
+		{
+			if(object.ReferenceEquals(this[nce.NewName],sender))
+				return; // Table alredy renamed
+
+			if(this.ContainsTable(nce.NewName))
+				throw new ApplicationException("Table with name " + nce.NewName + " already exists!");
+
+			if(!this.ContainsTable(nce.OldName))
+				throw new ApplicationException("Error renaming table " + nce.OldName + " : this table name was not found in the collection!" );
+				
+			if(!object.ReferenceEquals(this[nce.OldName],sender))
+				throw new ApplicationException("Names between DataTableCollection and Tables not in sync");
+
+			m_TablesByName.Remove(nce.OldName);
+			m_TablesByName.Add(nce.NewName,(DataTable)sender);
+		}
 
 		/// <summary>
 		/// Looks for the next free standard table name.
@@ -379,6 +378,17 @@ namespace Altaxo.Data
 					return gr.Name;
 			}
 			return null;
+		}
+
+
+		/// <summary>
+		/// Gets the parent DataTableCollection of a child table, a child ColumnCollection, or a child column.
+		/// </summary>
+		/// <param name="child">Can be a DataTable, a DataColumnCollection, or a DataColumn for which the parent table collection is searched.</param>
+		/// <returns>The parent DataTableCollection, if it exists, or null otherwise.</returns>
+		public static Altaxo.Data.DataTableCollection GetParentDataTableCollectionOf(Main.IDocumentNode child)
+		{
+			return (DataTableCollection)Main.DocumentPath.GetRootNodeImplementing(child,typeof(DataTableCollection));
 		}
 	}
 }

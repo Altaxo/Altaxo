@@ -34,12 +34,12 @@ namespace Altaxo.Data
 		IDisposable,
 		ICloneable,
 		Main.INamedObjectCollection,
-		Main.IResumable,
+		Main.ISuspendable,
 		Main.IChildChangedEventSink
 	{
 		// Types
-		public delegate void OnDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow);   // delegate declaration
-		public delegate void OnDirtySet(Altaxo.Data.DataColumnCollection sender);
+	//	public delegate void OnDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow);   // delegate declaration
+	//	public delegate void OnDirtySet(Altaxo.Data.DataColumnCollection sender);
 		
 		#region ChangeEventArgs
 		/// <summary>
@@ -329,6 +329,8 @@ namespace Altaxo.Data
 		protected ChangeEventArgs m_ChangeData;
 		public event EventHandler Changed;
 
+		public event Main.ParentChangedEventHandler ParentChanged;
+	
 		private bool m_DeserializationFinished=false;
 
 		#endregion
@@ -370,7 +372,18 @@ namespace Altaxo.Data
 
 				info.CreateArray("ColumnArray",s.m_ColumnsByNumber.Count);
 				for(int i=0;i<s.m_ColumnsByNumber.Count;i++)
-					info.AddValue("Col",s.m_ColumnsByNumber[i]);
+				{
+					info.CreateElement("Column");
+
+					DataColumnInfo colinfo = s.GetColumnInfo(i);
+					info.AddValue("Name",colinfo.Name);
+					info.AddValue("Kind",(int)colinfo.Kind);
+					info.AddValue("Group",colinfo.Group);
+					info.AddValue("Data",s.m_ColumnsByNumber[i]);
+
+					info.CommitElement();
+
+				}
 				info.CommitArray();
 
 				// serialize the column scripts
@@ -388,16 +401,21 @@ namespace Altaxo.Data
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				Altaxo.Data.DataColumnCollection s = null!=o ? (Altaxo.Data.DataColumnCollection)o : new Altaxo.Data.DataColumnCollection();
-	
-				
 
 				// deserialize the columns
 				int count = info.OpenArray();
 				for(int i=0;i<count;i++)
 				{
+					info.OpenElement(); // Column
+
+					string name = info.GetString("Name");
+					ColumnKind  kind = (ColumnKind)info.GetInt32("Kind");
+					int    group = info.GetInt32("Group");
 					object col = info.GetValue(s);
 					if(col!=null)
-						s.Add((DataColumn)col);
+						s.Add((DataColumn)col,new DataColumnInfo(name,kind,group));
+
+					info.CloseElement(); // Column
 				}
 				info.CloseArray(count);
 
@@ -432,7 +450,7 @@ namespace Altaxo.Data
 				for(int i=0;i<nCols;i++)
 				{
 					dc = (DataColumn)m_ColumnsByNumber[i];
-					dc.SetParent( this );
+					dc.ParentObject = this;
 					dc.OnDeserialization(finisher);
 
 
@@ -698,6 +716,11 @@ namespace Altaxo.Data
 			RemoveColumns(nFirstColumn,1);
 		}
 
+		public void RemoveColumn(DataColumn datac)
+		{
+			RemoveColumns(this.GetColumnNumber(datac),1);
+		}
+
 		#endregion
 
 		#region Column Information getting/setting
@@ -725,7 +748,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Returns the position of the column in the Collection.
 		/// </summary>
-		/// <param name="col">The column.</param>
+		/// <param name="datac">The column.</param>
 		/// <returns>The position of the column, or -1 if the column is not contained.</returns>
 		public int GetColumnNumber(Altaxo.Data.DataColumn datac)
 		{
@@ -747,7 +770,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Returns the name of the column at position idx.
 		/// </summary>
-		/// <param name="datac">The position of the column (column number).</param>
+		/// <param name="idx">The position of the column (column number).</param>
 		/// <returns>The name of the column.</returns>
 		public string GetColumnName(int idx)
 		{
@@ -910,7 +933,7 @@ namespace Altaxo.Data
 
 
 		/// <summary>
-		/// removes the x-property from all columns in the group nGroup
+		/// Removes the x-property from all columns in the group nGroup.
 		/// </summary>
 		/// <param name="nGroup">the group number for the columns from which to remove the x-property</param>
 		/// <param name="exceptThisColumn">If not null, this column is treated with priority, it can keep its kind.</param>
@@ -958,16 +981,31 @@ namespace Altaxo.Data
 			return null;
 		}
 
+		/// <summary>
+		/// Get the column info for the column <code>datac</code>.
+		/// </summary>
+		/// <param name="datac">The column for which the column information is returned.</param>
+		/// <returns>The column information of the provided column.</returns>
 		private DataColumnInfo GetColumnInfo(DataColumn datac)
 		{
 			return (DataColumnInfo)m_ColumnInfo[datac];
 		}
 
+		/// <summary>
+		/// Get the column info for the column with index<code>idx</code>.
+		/// </summary>
+		/// <param name="idx">The column index of the column for which the column information is returned.</param>
+		/// <returns>The column information of the column.</returns>
 		private DataColumnInfo GetColumnInfo(int idx)
 		{
 			return (DataColumnInfo)m_ColumnInfo[m_ColumnsByNumber[idx]];
 		}
 
+		/// <summary>
+		/// Get the column info for the column with name <code>columnName</code>.
+		/// </summary>
+		/// <param name="columnName">The column name of the column for which the column information is returned.</param>
+		/// <returns>The column information of the column.</returns>
 		private DataColumnInfo GetColumnInfo(string columnName)
 		{
 			return (DataColumnInfo)m_ColumnInfo[m_ColumnsByName[columnName]];
@@ -975,8 +1013,8 @@ namespace Altaxo.Data
 
 		#endregion
 
-
 		#region Row insertion/removal
+
 		/// <summary>
 		/// Insert a number of empty rows in all columns.
 		/// </summary>
@@ -1114,7 +1152,19 @@ namespace Altaxo.Data
 		public virtual object ParentObject
 		{
 			get { return m_Parent; }
-			set { m_Parent=value; }
+			set {
+				object oldParent = m_Parent;
+				m_Parent=value;
+
+				if(!object.ReferenceEquals(oldParent,m_Parent))
+					OnParentChanged(oldParent,m_Parent);
+			}
+		}
+
+		protected virtual void OnParentChanged(object oldParent, object newParent)
+		{
+			if(null!=ParentChanged)
+				ParentChanged(this,new Altaxo.Main.ParentChangedEventArgs(oldParent,newParent));
 		}
 
 		/// <summary>
@@ -1207,6 +1257,7 @@ namespace Altaxo.Data
 		/// </summary>
 		public virtual void Suspend()
 		{
+			System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");		
 			m_SuspendCount++;
 		}
 
@@ -1215,10 +1266,11 @@ namespace Altaxo.Data
 		/// </summary>
 		public void Resume()
 		{
+			System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");		
 			if(m_SuspendCount>0 && (--m_SuspendCount)==0)
 			{
 				this.m_ResumeInProgress = true;
-				foreach(Main.IResumable obj in m_SuspendedChildCollection)
+				foreach(Main.ISuspendable obj in m_SuspendedChildCollection)
 					obj.Resume();
 				m_SuspendedChildCollection.Clear();
 				this.m_ResumeInProgress = false;
@@ -1226,15 +1278,13 @@ namespace Altaxo.Data
 				// send accumulated data if available and release it thereafter
 				if(null!=m_ChangeData)
 				{
-					if(m_Parent is Main.IChildChangedEventSink && true==((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData))
+					if(m_Parent is Main.IChildChangedEventSink)
 					{
-						this.Suspend();
-						// Note: AccumulateChangeData is not neccessary here, since we still have the ChangeData
+						((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
 					}
-					else // parent is not suspended
+					if(!IsSuspended)
 					{
-						OnChanged(m_ChangeData); // Fire the changed event
-						m_ChangeData=null; // dispose the change data
+						OnDataChanged(); // Fire the changed event
 					}		
 				}
 			}
@@ -1272,43 +1322,51 @@ namespace Altaxo.Data
 			}
 		}
 
+		protected void HandleImmediateChildChangeCases(object sender, EventArgs e)
+		{
+			if(e is Main.ParentChangedEventArgs)
+			{
+				Main.ParentChangedEventArgs pce = (Main.ParentChangedEventArgs)e;
+				if(object.ReferenceEquals(this,pce.OldParent) && this.ContainsColumn((DataColumn)sender))
+					this.RemoveColumn((DataColumn)sender);
+				else
+					if(!this.ContainsColumn((DataColumn)sender))
+						throw new ApplicationException("Not allowed to set child's parent to this collection before adding it to the collection");
+			}
+		}
+
+
 		/// <summary>
 		/// Handle the change notification from the child data columns.
 		/// </summary>
 		/// <param name="sender">The sender of the change notification.</param>
 		/// <param name="e">The change details.</param>
-		/// <returns>True if the child should suspend it's notifications, else false.</returns>
-		public bool OnChildChanged(object sender, System.EventArgs e)
+			public void OnChildChanged(object sender, System.EventArgs e)
 		{
-			if(IsSuspended)
+				HandleImmediateChildChangeCases(sender, e);
+			if(this.IsSuspended &&  sender is Main.ISuspendable)
 			{
-				if(sender is Main.IResumable)
-					m_SuspendedChildCollection.Add(sender); // add sender to suspended child
-				else
-					AccumulateChildChangeData(sender,e);	// AccumulateNotificationData
-				return true; // signal the child that it should be suspend further notifications
+				m_SuspendedChildCollection.Add(sender); // add sender to suspended child
+				((Main.ISuspendable)sender).Suspend();
+				return;
 			}
-			else // not suspended
+
+			AccumulateChildChangeData(sender,e);	// AccumulateNotificationData
+			
+			if(m_ResumeInProgress || IsSuspended)
+				return;
+
+			if(m_Parent is Main.IChildChangedEventSink )
 			{
-				if(m_ResumeInProgress)
+				((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
+				if(IsSuspended) // maybe parent has suspended us now
 				{
-					AccumulateChildChangeData(sender,e);// AccumulateNotificationData(...) -> not available here 
-					return false;  // signal not suspended to the parent
-				}
-				else // no resume in progress
-				{
-					if(m_Parent is Main.IChildChangedEventSink && true==((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData))
-					{
-						this.Suspend();
-						return this.OnChildChanged(sender, e); // we call the function recursively, but now we are suspended
-					}
-					else // parent is not suspended
-					{
-						OnChanged(m_ChangeData); // Fire the changed event
-						return false; // signal not suspended to the parent
-					}
+					this.OnChildChanged(sender, e); // we call the function recursively, but now we are suspended
+					return;
 				}
 			}
+			
+			OnDataChanged(); // Fire the changed event
 		}
 
 		/// <summary>
@@ -1321,6 +1379,17 @@ namespace Altaxo.Data
 				Changed(this,e);
 		}
 
+
+		/// <summary>
+		/// Fires the change event.
+		/// </summary>
+		protected virtual void OnDataChanged()
+		{
+			if(null!=Changed)
+				Changed(this,m_ChangeData);
+
+			m_ChangeData=null;
+		}
 
 
 
@@ -1367,12 +1436,21 @@ namespace Altaxo.Data
 	
 		#region Automatic column naming
 
+		/// <summary>
+		/// Finds a new unique column name.
+		/// </summary>
+		/// <returns>The new unique column name.</returns>
 		public string FindNewColumnName()
 		{
 			return FindUniqueColumnName(null);
 		}
 
 
+		/// <summary>
+		/// Calculates a new column name dependend on the last name. You have to check whether the returned name is already in use by yourself.
+		/// </summary>
+		/// <param name="lastName">The last name that was used to name a column.</param>
+		/// <returns>The logical next name of a column calculated from the previous name.</returns>
 		public static string GetNextColumnName(string lastName)
 		{
 			int lastNameLength = lastName.Length;
@@ -1413,6 +1491,11 @@ namespace Altaxo.Data
 
 		}
 
+		/// <summary>
+		/// Get a unique column name based on a provided string.
+		/// </summary>
+		/// <param name="_sbase">The base name.</param>
+		/// <returns>An unique column name based on the provided string.</returns>
 		public string FindUniqueColumnName(string _sbase)
 		{
 			// die ColumnNamen sollen hier wie folgt gehen
@@ -1630,6 +1713,14 @@ namespace Altaxo.Data
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Gets the parent column collection of a column.
+		/// </summary>
+		public static Altaxo.Data.DataColumnCollection GetParentDataColumnCollectionOf(Altaxo.Data.DataColumn column)
+		{
+			return (DataColumnCollection)Main.DocumentPath.GetRootNodeImplementing(column,typeof(DataColumnCollection));
+		}
 
 	} // end class Altaxo.Data.DataColumnCollection
 }

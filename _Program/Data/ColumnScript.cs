@@ -319,8 +319,9 @@ namespace Altaxo.Data
 					case ScriptStyle.SetColumnValues:
 						codeheader =  "namespace Altaxo{\r\npublic class SetColVal : Altaxo.Calc.ColScriptExeBase{\r\n" +
 							"public override void Execute(Altaxo.Data.DataColumn myColumn) {\r\n" +
-							"Altaxo.Data.DataTable col = (null!=myColumn)? myColumn.ParentTable:null;\r\n" +
-							"Altaxo.Data.DataTableCollection   tab = (null!=col)? col.ParentDataSet:null;\r\n"+
+							"Altaxo.Data.DataColumnCollection col = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(myColumn);\r\n" +
+							"Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf(myColumn);\r\n" +
+							"Altaxo.Data.DataTableCollection tables = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myColumn);\r\n"+
 							"for(int i=" + m_RowFrom + ";i" + m_RowCondition + m_RowTo + ";i" + m_RowInc + ") {\r\n";
 						//codestart  =  "cts[i]=";
 						//codetail = "} /*for*/ } /*Execute*/  } /*class*/  } /*namespace*/"; 
@@ -328,8 +329,9 @@ namespace Altaxo.Data
 					case ScriptStyle.SetColumn:
 						codeheader =  "namespace Altaxo {\r\npublic class SetColVal : Altaxo.Calc.ColScriptExeBase {\r\n" +
 							"public override void Execute(Altaxo.Data.DataColumn myColumn) {\r\n" +
-							"Altaxo.Data.DataTable col = (null!=myColumn)? myColumn.ParentTable:null;\r\n"+
-							"Altaxo.Data.DataTableCollection   tab = (null!=col)? col.ParentDataSet:null;\r\n";
+							"Altaxo.Data.DataColumnCollection col = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(myColumn);\r\n" +
+							"Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf(myColumn);\r\n" +
+							"Altaxo.Data.DataTableCollection tables = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myColumn);\r\n";
 													
 						//codestart = "col[\"" + dataColumn.ColumnName + "\"]=";
 						//codetail = "} /*Execute*/ } /*class*/ } /*namespace*/";
@@ -337,8 +339,9 @@ namespace Altaxo.Data
 					case ScriptStyle.FreeStyle:
 						codeheader =	"namespace Altaxo {\r\npublic class SetColVal : Altaxo.Calc.ColScriptExeBase {\r\n"+
 							"public override void Execute(Altaxo.Data.DataColumn myColumn) {\r\n" +
-							"Altaxo.Data.DataTable col = (null!=myColumn)? myColumn.ParentTable:null;\r\n"+
-							"Altaxo.Data.DataTableCollection   tab = (null!=col)? col.ParentDataSet:null;\r\n";
+							"Altaxo.Data.DataColumnCollection col = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(myColumn);\r\n" +
+							"Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf(myColumn);\r\n" +
+							"Altaxo.Data.DataTableCollection tables = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myColumn);\r\n";
 						//codestart = "public override void Execute(Altaxo.Data.DataTable col) {\n";
 						//codetail = " } /*class*/ } /*namespace*/ \n// You have to provide the end brace of Execute(...), after this you can add own member functions";
 						break;				
@@ -570,11 +573,8 @@ namespace Altaxo.Data
 				return false;
 			}
 
-			if(null!=myColumn) 
-				myTable= (Altaxo.Data.DataTable)Main.DocumentPath.GetRootNodeImplementing(myColumn,typeof(Altaxo.Data.DataTable));
-			if(null!=myTable) 
-				myDataSet = (Altaxo.Data.DataTableCollection)Main.DocumentPath.GetRootNodeImplementing(myTable,typeof(Altaxo.Data.DataTableCollection));
-
+			myTable= Altaxo.Data.DataTable.GetParentDataTableOf(myColumn);
+			myDataSet = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myColumn);
 
 			if(null!=myDataSet) 
 				myDataSet.Suspend();

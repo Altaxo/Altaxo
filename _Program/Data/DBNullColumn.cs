@@ -35,14 +35,17 @@ namespace Altaxo.Data
 		{
 		}
 
-		public DBNullColumn(DBNullColumn from)
-			: base(from)
-		{
-		}
-
 		public override object Clone()
 		{
-			return new DBNullColumn(this);
+			return new DBNullColumn();
+		}
+
+		public override int Count
+		{
+			get
+			{
+				return 0;
+			}
 		}
 
 		public override System.Type GetColumnStyleType()

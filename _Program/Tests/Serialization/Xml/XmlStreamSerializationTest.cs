@@ -199,11 +199,12 @@ namespace Altaxo.Test.Serialization.Xml
 			
 			
 			System.IO.FileStream outfile = System.IO.File.Create(@"C:\temp\xmlteststream01.xml");
-			XmlStreamSerializationInfo info = new XmlStreamSerializationInfo(outfile,true);
+			XmlStreamSerializationInfo info = new XmlStreamSerializationInfo();
 			info.DefaultArrayEncoding = encoding;
 			t1 = DateTime.Now;
+			info.BeginWriting(outfile);
 			info.AddValue("FooNode",o);
-			info.Finish();
+			info.EndWriting();
 			outfile.Close();
 
 			t2 = DateTime.Now;
@@ -213,9 +214,10 @@ namespace Altaxo.Test.Serialization.Xml
 			
 			t1 = DateTime.Now;
 			System.IO.FileStream inpstream = System.IO.File.Open(@"C:\temp\xmlteststream01.xml",System.IO.FileMode.Open);
-			XmlStreamSerializationInfo info3 = new XmlStreamSerializationInfo(inpstream,false);
+			XmlStreamDeserializationInfo info3 = new XmlStreamDeserializationInfo();
+			info3.BeginReading(inpstream);
 			Foo o3 = (Foo)info3.GetValue(null);
-			info3.Finish();
+			info3.EndReading();
 			t2 = DateTime.Now;
 			dt = t2-t1;
 			Console.WriteLine("Document restored, duration {0}.",dt);
@@ -239,10 +241,11 @@ namespace Altaxo.Test.Serialization.Xml
 			ZipStream.PutNextEntry(ZipEntry);
 			ZipStream.SetLevel(ziplevel);
 
-			XmlStreamSerializationInfo info = new XmlStreamSerializationInfo(ZipStream,true);
+			XmlStreamSerializationInfo info = new XmlStreamSerializationInfo();
 			t1 = DateTime.Now;
+			info.BeginWriting(ZipStream);
 			info.AddValue("FooNode",o);
-			info.Finish();
+			info.EndWriting();
 			ZipStream.Finish();
 			ZipStream.Close();
 			zipoutfile.Close();
@@ -255,9 +258,10 @@ namespace Altaxo.Test.Serialization.Xml
 			t1 = DateTime.Now;
 			ZipFile zipfile = new ZipFile(@"C:\temp\xmlteststream01.xml.zip");
 			System.IO.Stream zipinpstream = zipfile.GetInputStream(new ZipEntry("Table/Table1.xml"));
-			XmlStreamSerializationInfo info3 = new XmlStreamSerializationInfo(zipinpstream,false);
+			XmlStreamDeserializationInfo info3 = new XmlStreamDeserializationInfo();
+			info3.BeginReading(zipinpstream);
 			Foo o3 = (Foo)info3.GetValue(null);
-			info3.Finish();
+			info3.EndReading();
 			zipinpstream.Close();
 			zipfile.Close();
 			t2 = DateTime.Now;
