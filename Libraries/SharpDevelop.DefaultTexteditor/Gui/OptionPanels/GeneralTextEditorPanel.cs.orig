@@ -1,0 +1,83 @@
+// <file>
+//     <copyright see="prj:///doc/copyright.txt"/>
+//     <license see="prj:///doc/license.txt"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <version value="$version"/>
+// </file>
+
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+using ICSharpCode.SharpDevelop.Internal.ExternalTool;
+using ICSharpCode.Core.Properties;
+using ICSharpCode.Core.Services;
+
+using ICSharpCode.Core.AddIns.Codons;
+using ICSharpCode.SharpDevelop.Gui.Dialogs;
+
+namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.OptionPanels
+{
+	/// <summary>
+	/// General texteditor options panel.
+	/// </summary>
+	public class GeneralTextEditorPanel : AbstractOptionPanel
+	{
+		static FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+		Font selectedFont;
+		
+		
+		public GeneralTextEditorPanel() : base(fileUtilityService.SharpDevelopRootPath + @"\data\resources\panels\GeneralTextEditorPanel.xfrm")
+		{
+			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
+			selectedFont = resourceService.LoadFont("Courier New", 10);
+
+			CustomizationObjectChanged += new EventHandler(SetValues);
+			ControlDictionary["browseButton"].Click += new EventHandler(SelectFontEvent);
+		}
+		
+		public override bool ReceiveDialogMessage(DialogMessage message)
+		{
+			if (message == DialogMessage.OK) {
+				((IProperties)CustomizationObject).SetProperty("DoubleBuffer",         ((CheckBox)ControlDictionary["enableDoublebufferingCheckBox"]).Checked);
+				((IProperties)CustomizationObject).SetProperty("UseAntiAliasFont",     ((CheckBox)ControlDictionary["enableAAFontRenderingCheckBox"]).Checked);
+				((IProperties)CustomizationObject).SetProperty("EnableCodeCompletion", ((CheckBox)ControlDictionary["enableCodeCompletionCheckBox"]).Checked);
+				((IProperties)CustomizationObject).SetProperty("EnableFolding",        ((CheckBox)ControlDictionary["enableFoldingCheckBox"]).Checked);
+				((IProperties)CustomizationObject).SetProperty("DefaultFont",          selectedFont);
+			}
+			return true;
+		}
+		
+		void SetValues(object sender, EventArgs e)
+		{
+			((CheckBox)ControlDictionary["enableDoublebufferingCheckBox"]).Checked = ((IProperties)CustomizationObject).GetProperty("DoubleBuffer", true);
+			((CheckBox)ControlDictionary["enableCodeCompletionCheckBox"]).Checked  = ((IProperties)CustomizationObject).GetProperty("EnableCodeCompletion", true);
+			((CheckBox)ControlDictionary["enableFoldingCheckBox"]).Checked         = ((IProperties)CustomizationObject).GetProperty("EnableFolding", true);
+			
+			ControlDictionary["fontNameDisplayTextBox"].Text = ((IProperties)CustomizationObject).GetProperty("DefaultFont", selectedFont).ToString();
+			
+			((CheckBox)ControlDictionary["enableAAFontRenderingCheckBox"]).Checked = ((IProperties)CustomizationObject).GetProperty("UseAntiAliasFont", false);
+			selectedFont = ParseFont(ControlDictionary["fontNameDisplayTextBox"].Text);
+		}
+		
+		static Font ParseFont(string font)
+		{
+			string[] descr = font.Split(new char[]{',', '='});
+			return new Font(descr[1], Single.Parse(descr[3]));
+		}
+		
+		void SelectFontEvent(object sender, EventArgs e)
+		{
+			using (FontDialog fdialog = new FontDialog()) {
+				fdialog.Font = selectedFont;
+				if (fdialog.ShowDialog() == DialogResult.OK) {
+					Font newFont  = new Font(fdialog.Font.FontFamily, (float)Math.Round(fdialog.Font.Size));
+					ControlDictionary["fontNameDisplayTextBox"].Text = newFont.ToString();
+					selectedFont  = newFont;
+					((IProperties)CustomizationObject).SetProperty("DefaultFont",          selectedFont);
+					
+				}
+			}
+		}
+	}
+}
