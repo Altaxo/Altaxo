@@ -13,6 +13,7 @@
 		<Class id="StartParserServiceThread" class="ICSharpCode.SharpDevelop.Commands.StartParserServiceThread"/>
 		<!-- #assembly preload -->
 		<Class id="StartSharpAssemblyPreloadThread" class="ICSharpCode.SharpDevelop.Commands.StartSharpAssemblyPreloadThread"/>
+		<Class id="AddReferenceToOwnAssemblies" class="Altaxo.Main.Commands.AddReferenceToOwnAssemblies"/>
 		<Class id="StartWorkbenchCommand" class="Altaxo.Main.Commands.StartWorkbench1Command"/>
 	</Extension>
 	<Extension path="/Workspace/Services">

@@ -853,6 +853,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Main\MenuCommands\AddReferenceToOwnAssemblies.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\MenuCommands\AltaxoToolbarService.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
