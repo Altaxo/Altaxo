@@ -103,6 +103,10 @@ namespace Altaxo.Graph
       get { return false; }
       set { }
     }
+    public virtual IHitTestObject HitTest(XYPlotLayer layer, object plotObject, PointF hitpoint)
+    {
+      return null;
+    }
     #region IDocumentNode Members
 
     public object ParentObject

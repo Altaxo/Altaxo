@@ -68,6 +68,9 @@ namespace Altaxo.Graph
     /// </summary>
     /// <returns>The cloned copy of this object.</returns>
     public abstract object Clone();
+
+    public abstract IHitTestObject HitTest(XYPlotLayer layer, PointF pt);
+    
   }
 
 

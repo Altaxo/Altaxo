@@ -239,10 +239,15 @@ namespace Altaxo.Graph
     }
 
 
-    public virtual GraphicsPath HitTest(PointF pt)
+    public virtual IHitTestObject HitTest(PointF pt)
     {
       GraphicsPath gp = GetSelectionPath();
-      return gp.IsVisible(pt) ? gp : null;
+      if(gp.IsVisible(pt))
+      {
+        return new HitTestObject(gp,this);
+      }
+      else
+        return null;
     }
 
 

@@ -371,7 +371,7 @@ namespace Altaxo.Graph
     }
 
 
-    public override GraphicsPath HitTest(PointF pt)
+    public override IHitTestObject HitTest(PointF pt)
     {
       GraphicsPath gp = new GraphicsPath();
       Matrix myMatrix = new Matrix();
@@ -380,7 +380,7 @@ namespace Altaxo.Graph
       myMatrix.Translate(X, Y);
       myMatrix.Rotate(this.Rotation);
       gp.Transform(myMatrix);
-      return gp.IsOutlineVisible(pt, myPen) ? gp : null;
+      return gp.IsOutlineVisible(pt, myPen) ? new HitTestObject(gp,this) : null;
     }
 
 

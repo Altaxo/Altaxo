@@ -234,10 +234,10 @@ namespace Altaxo.Graph
     }
 
 
-    public virtual GraphicsPath HitTest(XYPlotLayer layer, PointF pt)
+    public virtual IHitTestObject HitTest(XYPlotLayer layer, PointF pt)
     {
       GraphicsPath gp = GetSelectionPath(layer);
-      return gp.IsVisible(pt) ? gp : null;
+      return gp.IsVisible(pt) ? new HitTestObject(gp,this) : null;
     }
 
     /// <summary>
@@ -425,8 +425,9 @@ namespace Altaxo.Graph
 
       GraphicsPath gp = new GraphicsPath();
      
-      RectangleF sel = new RectangleF(orgP,new SizeF(endP.X-orgP.X,endP.Y-orgP.Y));
-      sel.Inflate(5*outVector.X,5*outVector.Y);
+      
+      RectangleF sel = RectangleF.FromLTRB(Math.Min(orgP.X,endP.X),Math.Min(orgP.Y,endP.Y),Math.Max(orgP.X,endP.X),Math.Max(orgP.Y,endP.Y));
+      sel.Inflate(Math.Abs(3*outVector.X),Math.Abs(3*outVector.Y));
       gp.AddRectangle(sel);
 
       return gp;

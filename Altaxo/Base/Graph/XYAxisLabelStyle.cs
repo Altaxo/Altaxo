@@ -128,6 +128,50 @@ namespace Altaxo.Graph
     }
 
 
+    public override IHitTestObject HitTest(XYPlotLayer layer, PointF pt)
+    {
+      GraphicsPath gp = GetSelectionPath(layer);
+      return gp.IsVisible(pt) ? new HitTestObject(gp,this) : null;
+    }
+
+
+    public void AdjustRectangle(ref RectangleF r, StringFormat fmt)
+    {
+      switch(fmt.LineAlignment)
+      {
+        case StringAlignment.Near:
+          break;
+        case StringAlignment.Center:
+          r.Y -= 0.5f*r.Height;
+          break;
+        case StringAlignment.Far:
+          r.Y -= r.Height;
+          break;
+      }
+      switch(fmt.Alignment)
+      {
+        case StringAlignment.Near:
+          break;
+        case StringAlignment.Center:
+          r.X -= 0.5f*r.Width;
+          break;
+        case StringAlignment.Far:
+          r.X -= r.Width;
+          break;
+      }
+    }
+    /// <summary>
+    /// Gives the path where the hit test is successfull.
+    /// </summary>
+    /// <param name="layer"></param>
+    /// <returns></returns>
+    public virtual GraphicsPath GetSelectionPath(XYPlotLayer layer)
+    {
+      GraphicsPath gp = new GraphicsPath();
+      gp.AddRectangle(_enclosingRectangle);
+      return gp;
+    }
+    private RectangleF _enclosingRectangle;
     public override void Paint(Graphics g, XYPlotLayer layer, Axis axis, XYAxisStyle axisstyle)
     {
       SizeF layerSize = layer.Size;
@@ -219,6 +263,7 @@ namespace Altaxo.Graph
 
 
       // now format the lables
+      _enclosingRectangle = RectangleF.Empty;
       string exponentialformat=string.Format("G{0}",maxexponentialdigits);
       string fixedformat = string.Format("F{0}",maxtrailingdigits);
       for(int i=0;i<majorticks.Length;i++)
@@ -231,7 +276,12 @@ namespace Altaxo.Graph
         else
           mtick = majorticks[i].ToString(fixedformat);
 
-        g.DrawString(mtick, m_Font, Brushes.Black, tickorg.X + dist_x, tickorg.Y + dist_y, strfmt);
+        PointF morg = new PointF(tickorg.X + dist_x, tickorg.Y + dist_y);
+        SizeF  msize = g.MeasureString(mtick, m_Font, morg, strfmt);
+        RectangleF mrect = new RectangleF(morg,msize);
+        AdjustRectangle(ref mrect, strfmt);
+        _enclosingRectangle = _enclosingRectangle.IsEmpty ? mrect : RectangleF.Union(_enclosingRectangle,mrect);
+        g.DrawString(mtick, m_Font, Brushes.Black, morg.X,morg.Y, strfmt);
       
       }
 

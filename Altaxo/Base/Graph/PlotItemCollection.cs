@@ -241,6 +241,17 @@ namespace Altaxo.Graph
       }
     }
 
+    public IHitTestObject HitTest(XYPlotLayer layer, PointF hitpoint)
+    {
+      IHitTestObject result;
+      for(int i=0;i<Count;i++)
+      {
+        if(null!=(result=this[i].HitTest(layer,hitpoint)))
+          return result;
+      }
+      return null;
+    }
+
     /// <summary>
     /// Restores the event chain of a item.
     /// </summary>

@@ -1666,12 +1666,11 @@ namespace Altaxo.Graph.GUI
     {
       // search for a object first
       PointF mousePT = PixelToPrintableAreaCoordinates(pixelPos);
-      GraphicsPath gp;
 
       for(int nLayer=0;nLayer<Layers.Count;nLayer++)
       {
         Altaxo.Graph.XYPlotLayer layer = Layers[nLayer];
-        foundObject = layer.HitTest(mousePT, out gp);
+        foundObject = layer.HitTest(mousePT);
         if(null!=foundObject)
         {
           foundInLayerNumber = nLayer;
@@ -1862,9 +1861,9 @@ namespace Altaxo.Graph.GUI
           foreach(IHitTestObject graphObject in grac.m_SelectedObjects.Keys)
           {
             // get the layer number the graphObject belongs to
-            int nLayer = (int)grac.m_SelectedObjects[graphObject];
-            PointF layerDiff = grac.Layers[nLayer].GraphToLayerDifferences(graphDiff); // calculate the moving distance in layer units
-            graphObject.ShiftPosition(layerDiff.X,layerDiff.Y);
+            //int nLayer = (int)grac.m_SelectedObjects[graphObject];
+            //PointF layerDiff = grac.Layers[nLayer].GraphToLayerDifferences(graphDiff); // calculate the moving distance in layer units
+            graphObject.ShiftPosition(graphDiff.X,graphDiff.Y);
             // Console.WriteLine("Moving mdiff={0}, gdiff={1}, ldiff={2}", mouseDiff,graphDiff,layerDiff);
           }
           // now paint the objects on the new position
@@ -1878,7 +1877,7 @@ namespace Altaxo.Graph.GUI
             grac.TranslateGraphicsToGraphUnits(g);
             foreach(IHitTestObject graphObject in grac.m_SelectedObjects.Keys)
             {
-              int nLayer = (int)grac.m_SelectedObjects[graphObject];            // get the layer number the graphObject belongs to
+              //int nLayer = (int)grac.m_SelectedObjects[graphObject];            // get the layer number the graphObject belongs to
               g.DrawPath(Pens.Blue,graphObject.SelectionPath); // draw the selection path
             }
           }
@@ -2014,7 +2013,7 @@ namespace Altaxo.Graph.GUI
             {
               if(!dlg.SimpleTextGraphics.Empty)
               {
-                ((TextGraphics)graphObject).CopyFrom(dlg.SimpleTextGraphics);
+                ((TextGraphics)graphObject.HittedObject).CopyFrom(dlg.SimpleTextGraphics);
               }
               else // item is empty, so must be deleted in the layer and in the selectedObjects
               {

@@ -370,8 +370,47 @@ namespace Altaxo.Graph
         Paint(g,layer,(Altaxo.Calc.IScalarFunctionDD)plotObject);
     }
 
-    public void Paint(Graphics g, Graph.XYPlotLayer layer, XYColumnPlotData myPlotAssociation)
+    /// <summary>
+    /// Test wether the mouse hits a plot item. The default implementation here returns null.
+    /// If you want to have a reaction on mouse click on a curve, implement this function.
+    /// </summary>
+    /// <param name="layer">The layer in which this plot item is drawn into.</param>
+    /// <param name="myPlotAssociation">The data that are plotted.</param>
+    /// <param name="hitpoint">The point where the mouse is pressed.</param>
+    /// <returns>Null if no hit, or a <see>IHitTestObject</see> if there was a hit.</returns>
+    public override IHitTestObject HitTest(XYPlotLayer layer, object plotData, PointF hitpoint)
     {
+      XYColumnPlotData myPlotAssociation = plotData as XYColumnPlotData;
+      if(null==myPlotAssociation)
+        return null;
+
+      PlotRangeList rangeList;
+      PointF[] ptArray;
+      if(GetRangesAndPoints(layer,myPlotAssociation,out rangeList,out ptArray))
+      {
+        GraphicsPath gp = new GraphicsPath();
+        gp.AddLines(ptArray);
+        if(gp.IsOutlineVisible(hitpoint.X,hitpoint.Y,new Pen(Color.Black,5)))
+        {
+          gp.Widen(new Pen(Color.Black,5));
+          return new HitTestObject(gp,this);
+        }
+      }
+
+      return null;
+    }
+
+  
+
+    public bool GetRangesAndPoints(
+      Graph.XYPlotLayer layer,
+      XYColumnPlotData myPlotAssociation,
+      out PlotRangeList rangeList,
+      out PointF[] ptArray)
+    {
+      rangeList=null;
+      ptArray=null;
+
       double layerWidth = layer.Size.Width;
       double layerHeight = layer.Size.Height;
 
@@ -380,74 +419,82 @@ namespace Altaxo.Graph
       Altaxo.Data.INumericColumn yColumn = myPlotAssociation.YColumn as Altaxo.Data.INumericColumn;
 
       if(null==xColumn || null==yColumn)
-        return; // this plotstyle is only for x and y double columns
+        return false; // this plotstyle is only for x and y double columns
 
-      if(myPlotAssociation.PlottablePoints>0)
+      if(myPlotAssociation.PlottablePoints<=0)
+        return false;
+
+      // allocate an array PointF to hold the line points
+      ptArray = new PointF[myPlotAssociation.PlottablePoints];
+
+      // Fill the array with values
+      // only the points where x and y are not NaNs are plotted!
+
+      int i,j;
+
+      bool bInPlotSpace = true;
+      int  rangeStart=0;
+      int  rangeOffset=0;
+      rangeList = new PlotRangeList();
+
+      int len = myPlotAssociation.PlotRangeEnd;
+      for(i=myPlotAssociation.PlotRangeStart,j=0;i<len;i++)
       {
-
-        // allocate an array PointF to hold the line points
-        PointF[] ptArray = new PointF[myPlotAssociation.PlottablePoints];
-
-        // Fill the array with values
-        // only the points where x and y are not NaNs are plotted!
-
-        int i,j;
-
-        bool bInPlotSpace = true;
-        int  rangeStart=0;
-        int  rangeOffset=0;
-        PlotRangeList rangeList = new PlotRangeList();
-
-        int len = myPlotAssociation.PlotRangeEnd;
-        for(i=myPlotAssociation.PlotRangeStart,j=0;i<len;i++)
+        if(Double.IsNaN(xColumn.GetDoubleAt(i)) || Double.IsNaN(yColumn.GetDoubleAt(i)))
         {
-          if(Double.IsNaN(xColumn.GetDoubleAt(i)) || Double.IsNaN(yColumn.GetDoubleAt(i)))
+          if(!bInPlotSpace)
           {
-            if(!bInPlotSpace)
-            {
-              bInPlotSpace=true;
-              rangeList.Add(new PlotRange(rangeStart,j,rangeOffset));
-            }
-            continue;
+            bInPlotSpace=true;
+            rangeList.Add(new PlotRange(rangeStart,j,rangeOffset));
           }
-          
-
-          double x_rel = layer.XAxis.PhysicalToNormal(xColumn.GetDoubleAt(i));
-          double y_rel = layer.YAxis.PhysicalToNormal(yColumn.GetDoubleAt(i));
-          
-          // after the conversion to relative coordinates it is possible
-          // that with the choosen axis the point is undefined 
-          // (for instance negative values on a logarithmic axis)
-          // in this case the returned value is NaN
-          if(!Double.IsNaN(x_rel) && !Double.IsNaN(y_rel))
-          {
-            if(bInPlotSpace)
-            {
-              bInPlotSpace=false;
-              rangeStart = j;
-              rangeOffset = i-j;
-            }
-
-            ptArray[j].X = (float)(layerWidth * x_rel);
-            ptArray[j].Y = (float)(layerHeight * (1-y_rel));
-            j++;
-          }
-          else
-          {
-            if(!bInPlotSpace)
-            {
-              bInPlotSpace=true;
-              rangeList.Add(new PlotRange(rangeStart,j,rangeOffset));
-            }
-          }
-        } // end for
-        if(!bInPlotSpace)
-        {
-          bInPlotSpace=true;
-          rangeList.Add(new PlotRange(rangeStart,j,rangeOffset)); // add the last range
+          continue;
         }
+          
 
+        double x_rel = layer.XAxis.PhysicalToNormal(xColumn.GetDoubleAt(i));
+        double y_rel = layer.YAxis.PhysicalToNormal(yColumn.GetDoubleAt(i));
+          
+        // after the conversion to relative coordinates it is possible
+        // that with the choosen axis the point is undefined 
+        // (for instance negative values on a logarithmic axis)
+        // in this case the returned value is NaN
+        if(!Double.IsNaN(x_rel) && !Double.IsNaN(y_rel))
+        {
+          if(bInPlotSpace)
+          {
+            bInPlotSpace=false;
+            rangeStart = j;
+            rangeOffset = i-j;
+          }
 
+          ptArray[j].X = (float)(layerWidth * x_rel);
+          ptArray[j].Y = (float)(layerHeight * (1-y_rel));
+          j++;
+        }
+        else
+        {
+          if(!bInPlotSpace)
+          {
+            bInPlotSpace=true;
+            rangeList.Add(new PlotRange(rangeStart,j,rangeOffset));
+          }
+        }
+      } // end for
+      if(!bInPlotSpace)
+      {
+        bInPlotSpace=true;
+        rangeList.Add(new PlotRange(rangeStart,j,rangeOffset)); // add the last range
+      }
+      return true;
+    }
+    
+      public void Paint(Graphics g, Graph.XYPlotLayer layer, XYColumnPlotData myPlotAssociation)
+      {
+        PlotRangeList rangeList;
+        PointF[] ptArray;
+      
+        if(GetRangesAndPoints(layer,myPlotAssociation,out rangeList,out ptArray))
+        {
         // now plot the point array
         PaintLine(g,layer,rangeList,ptArray);
         PaintScatter(g,layer,rangeList,ptArray);
@@ -455,6 +502,7 @@ namespace Altaxo.Graph
       }
     }
 
+   
 
     public void Paint(Graphics g, Graph.XYPlotLayer layer, Altaxo.Calc.IScalarFunctionDD plotFunction)
     {

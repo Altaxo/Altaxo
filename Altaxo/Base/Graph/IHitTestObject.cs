@@ -27,16 +27,35 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
+  /// <summary>
+  /// Handler type to process double click events
+  /// </summary>
+  public delegate bool DoubleClickHandler(IHitTestObject o);
+
 	/// <summary>
 	/// IHitTestObject is used as a return type for hit testing in the graph area.
 	/// </summary>
 	public interface IHitTestObject
 	{
+    
+
     /// <summary>
     /// This will return the selection path for the object.
     /// </summary>
     /// <returns></returns>
     GraphicsPath SelectionPath {get;}
+
+
+    /// <summary>
+    /// This will return the transformation matrix.
+    /// </summary>
+    Matrix Transformation {get;}
+
+    /// <summary>
+    /// Transform the internal positions according to the provided transformation matrix.
+    /// </summary>
+    /// <param name="x"></param>
+    void Transform(Matrix x);
 
     /// <summary>
     /// This will return the object itself, i.e. the object which corresponds to the selection path.
@@ -50,11 +69,25 @@ namespace Altaxo.Graph
     /// <param name="x">Shift value in x direction.</param>
     /// <param name="y">Shift value in y direction.</param>
     void ShiftPosition(float x, float y);
+
+
+    /// <summary>
+    /// Delegate to handle double click events.
+    /// </summary>
+    DoubleClickHandler DoubleClick { get; set; }
+
+    /// <summary>
+    /// This function is called if a double click to the object occured.
+    /// </summary>
+    /// <returns>False normally, true if this hit test object should be deleted from the list (for instance if the object itself was deleted).</returns>
+    bool OnDoubleClick();
 	}
 
   public class HitTestObject : IHitTestObject
   {
     GraphicsPath _gp;
+    Matrix _matrix;
+    Matrix _inversematrix;
     object _hitobject;
 
     #region IHitTestObject Members
@@ -63,7 +96,24 @@ namespace Altaxo.Graph
     {
       _gp = gp;
       _hitobject = hitobject;
+      _matrix = new Matrix();
+      _inversematrix = new Matrix();
     }
+
+    public Matrix Transformation
+    {
+      get { return _matrix; }
+    }
+
+    public void Transform(Matrix x)
+    {
+      _matrix.Multiply(x);
+      _inversematrix = (Matrix)_matrix.Clone();
+      _inversematrix.Invert();
+
+      _gp.Transform(x);
+    }
+
     public GraphicsPath SelectionPath
     {
       get { return _gp; }
@@ -74,7 +124,7 @@ namespace Altaxo.Graph
       get { return _hitobject; }
     }
 
-    public void ShiftPosition(float x, float y)
+    public virtual void ShiftPosition(float x, float y)
     {
     
       if(_hitobject is GraphicsObject)
@@ -83,9 +133,32 @@ namespace Altaxo.Graph
         mat.Translate(x,y);
         _gp.Transform(mat);
 
-        ((GraphicsObject)_hitobject).X += x;
-        ((GraphicsObject)_hitobject).Y += y;
+        PointF[] pos = new PointF[]{new PointF(x,y)};
+        _inversematrix.TransformVectors(pos);
+
+        ((GraphicsObject)_hitobject).X += pos[0].X;
+        ((GraphicsObject)_hitobject).Y += pos[0].Y;
       }
+    }
+
+   
+    DoubleClickHandler _DoubleClick;
+    public DoubleClickHandler DoubleClick
+    {
+      get { return _DoubleClick; }
+      set { _DoubleClick=value; }
+    }
+
+    /// <summary>
+    /// This handles the double-click event
+    /// </summary>
+    /// <returns>False normally, true if the HitTestObject should be removed from the list of selected objects (i.e. because the object was deleted).</returns>
+    public virtual bool OnDoubleClick()
+    {
+      if(DoubleClick!=null)
+        return DoubleClick(this);
+      else
+        return false;
     }
 
     #endregion

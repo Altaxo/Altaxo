@@ -2445,14 +2445,16 @@ namespace Altaxo.Graph
       g.Restore(savedgstate);
     }
 
-    private IHitTestObject ForwardTransform(GraphicsPath gp, object go)
+    private IHitTestObject ForwardTransform(IHitTestObject o)
     {
-      gp.Transform(m_ForwardMatrix);
-      return new HitTestObject(gp,go);
+      o.Transform(m_ForwardMatrix);
+      return o;
     }
 
-    public IHitTestObject HitTest(PointF pageC, out GraphicsPath gp)
+    public IHitTestObject HitTest(PointF pageC)
     {
+      IHitTestObject hit;
+
       PointF layerC = GraphToLayerCoordinates(pageC);
 
 
@@ -2471,35 +2473,55 @@ namespace Altaxo.Graph
       {
         if(null!=go)
         {
-          gp = go.HitTest(layerC);
-          if(null!=gp)
+          hit = go.HitTest(layerC);
+          if(null!=hit)
           {
-            return ForwardTransform(gp,go);
+            return ForwardTransform(hit);
           }
         }
       }
 
       // hit testing the axes
-      if(m_ShowLeftAxis && null!=(gp = m_LeftAxisStyle.HitTest(this,layerC)))
-        return ForwardTransform(gp,m_LeftAxisStyle);
-      if(m_ShowBottomAxis && null!=(gp = m_BottomAxisStyle.HitTest(this,layerC)))
-        return ForwardTransform(gp,m_BottomAxisStyle);
-      if(m_ShowRightAxis && null!=(gp = m_RightAxisStyle.HitTest(this,layerC)))
-        return ForwardTransform(gp,m_RightAxisStyle);
-      if(m_ShowTopAxis && null!=(gp = m_TopAxisStyle.HitTest(this,layerC)))
-        return ForwardTransform(gp,m_TopAxisStyle);
+      if(m_ShowLeftAxis && null!=(hit = m_LeftAxisStyle.HitTest(this,layerC)))
+      {
+        return ForwardTransform(hit);
+      }
+      if(m_ShowBottomAxis && null!=(hit = m_BottomAxisStyle.HitTest(this,layerC)))
+      {
+        return ForwardTransform(hit);
+      }
+      if(m_ShowRightAxis && null!=(hit = m_RightAxisStyle.HitTest(this,layerC)))
+      {
+        return ForwardTransform(hit);
+      }
+      if(m_ShowTopAxis && null!=(hit = m_TopAxisStyle.HitTest(this,layerC)))
+      {
+        return ForwardTransform(hit);
+      }
 
+      // hit testing the axes labels
+      if(m_ShowLeftAxis && null!=(hit = this.m_LeftLabelStyle.HitTest(this,layerC)))
+        return ForwardTransform(hit);
+      if(m_ShowBottomAxis && null!=(hit = m_BottomLabelStyle.HitTest(this,layerC)))
+        return ForwardTransform(hit);
+      if(m_ShowRightAxis && null!=(hit = m_RightLabelStyle.HitTest(this,layerC)))
+        return ForwardTransform(hit);
+      if(m_ShowTopAxis && null!=(hit = m_TopLabelStyle.HitTest(this,layerC)))
+        return ForwardTransform(hit);
 
       // now hit testing the other objects in the layer
       foreach(GraphicsObject go in m_GraphObjects)
       {
-        gp = go.HitTest(layerC);
-        if(null!=gp)
+        hit = go.HitTest(layerC);
+        if(null!=hit)
         {
-          return ForwardTransform(gp,go);
+          return ForwardTransform(hit);
         }
       }
-      gp=null;
+
+      if(null!=(hit=m_PlotItems.HitTest(this,layerC)))
+        return ForwardTransform(hit);
+     
       return null;
     }
 

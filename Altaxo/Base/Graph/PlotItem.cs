@@ -196,5 +196,17 @@ namespace Altaxo.Graph
         return null;
     }
 
+    /// <summary>
+    /// Test wether the mouse hits a plot item. The default implementation here returns null.
+    /// If you want to have a reaction on mouse click on a curve, implement this function.
+    /// </summary>
+    /// <param name="layer">The layer in which this plot item is drawn into.</param>
+    /// <param name="hitpoint">The point where the mouse is pressed.</param>
+    /// <returns>Null if no hit, or a <see>IHitTestObject</see> if there was a hit.</returns>
+    public virtual IHitTestObject HitTest(XYPlotLayer layer, PointF hitpoint)
+    {
+      return null;
+    }
+
   } // end of class PlotItem
 }
