@@ -29,12 +29,12 @@ namespace AltaxoTest.Calc.FFT
   /// <summary>
   /// Serves as template class for tests of correlation methods.
   /// </summary>
-  public class SplittedComplexCorrelationTests
+  public class RealCorrelationTests
   {
     /// <summary>
-    /// Delegate which is the function pointer type of the fourier transformation.
+    /// Delegate which is the function pointer type of the correlation.
     /// </summary>
-    public delegate void CorrelationRoutine(double[] src1real, double[] src1imag, double[] src2real, double[] src2imag, double[] resultreal, double[] resultimag, int n);
+    public delegate void CorrelationRoutine(double[] src1, double[] src2, double[] result, int n);
 
     /// <summary>
     /// Function pointer to the used Fourier transformation routine.
@@ -59,7 +59,7 @@ namespace AltaxoTest.Calc.FFT
     /// Initializes this class.
     /// </summary>
     /// <param name="routine">Pointer to the fourier transformation routine.</param>
-    public SplittedComplexCorrelationTests(CorrelationRoutine routine)
+    public RealCorrelationTests(CorrelationRoutine routine)
     {
       _corr = routine;
     }
@@ -71,18 +71,14 @@ namespace AltaxoTest.Calc.FFT
     public void TestBothZero(int n)
     {
       double[] re1 = new double[n];
-      double[] im1 = new double[n];
       double[] re2 = new double[n];
-      double[] im2 = new double[n];
       double[] re = new double[n];
-      double[] im = new double[n];
  
-      _corr(re1,im1, re2, im2, re, im, n);
+      _corr(re1, re2, re, n);
 
       for(int i=0;i<n;i++)
       {
         Assertion.AssertEquals("Correlation of zero should give re=0", 0, re[i],max_corr_error(n));
-        Assertion.AssertEquals("Correlation of zero should give im=0", 0, im[i],max_corr_error(n));
       }
     }
 
@@ -93,11 +89,8 @@ namespace AltaxoTest.Calc.FFT
     public void TestOneZero(int n)
     {
       double[] re1 = new double[n];
-      double[] im1 = new double[n];
       double[] re2 = new double[n];
-      double[] im2 = new double[n];
       double[] re = new double[n];
-      double[] im = new double[n];
  
       System.Random rnd = new System.Random();
  
@@ -105,17 +98,14 @@ namespace AltaxoTest.Calc.FFT
       for(int i=0;i<n;i++)
       {
         re1[i] = 0;
-        im1[i] = 0;
         re2[i] = rnd.NextDouble();
-        im2[i] = rnd.NextDouble();
       }
 
-      _corr(re1,im1, re2, im2, re, im, n);
+      _corr(re1, re2, re, n);
 
       for(int i=0;i<n;i++)
       {
         Assertion.AssertEquals("Correlation with array 1 zero should give re=0", 0, re[i],max_corr_error(n));
-        Assertion.AssertEquals("Correlation with array 1 zero should give im=0", 0, im[i],max_corr_error(n));
       }
 
     
@@ -123,17 +113,14 @@ namespace AltaxoTest.Calc.FFT
       for(int i=0;i<n;i++)
       {
         re1[i] = rnd.NextDouble();
-        im1[i] = rnd.NextDouble();
         re2[i] = 0;
-        im2[i] = 0;
       }
 
-      _corr(re1,im1, re2, im2, re, im, n);
+      _corr(re1, re2, re, n);
 
       for(int i=0;i<n;i++)
       {
         Assertion.AssertEquals("Correlation with array 2 zero should give re=0", 0, re[i],max_corr_error(n));
-        Assertion.AssertEquals("Correlation with array 2 zero should give im=0", 0, im[i],max_corr_error(n));
       }
 
 
@@ -142,28 +129,23 @@ namespace AltaxoTest.Calc.FFT
     public void TestReOne_ZeroPos(int n)
     {
       double[] re1 = new double[n];
-      double[] im1 = new double[n];
       double[] re2 = new double[n];
-      double[] im2 = new double[n];
       double[] re = new double[n];
-      double[] im = new double[n];
 
       re1[0] = 1;
       re2[0] = 1;
   
-      _corr(re1,im1, re2, im2, re, im, n);
+      _corr(re1, re2, re, n);
 
       for(int i=0;i<n;i++)
       {
         if(i==0)
         {
           Assertion.AssertEquals("Correlation should give re=1 at pos 0", 1, re[i],max_corr_error(n));
-          Assertion.AssertEquals("Correlation should give im=0 at pos 0", 0, im[i],max_corr_error(n));
         }
         else
         {
           Assertion.AssertEquals("Correlation should give re=0 at pos " + i.ToString(), 0, re[i],max_corr_error(n));
-          Assertion.AssertEquals("Correlation should give im=0 at pos " + i.ToString(), 0, im[i],max_corr_error(n));
         }
       }
     }
@@ -171,11 +153,8 @@ namespace AltaxoTest.Calc.FFT
     public void TestOneReOne_OtherRandom(int n)
     {
       double[] re1 = new double[n];
-      double[] im1 = new double[n];
       double[] re2 = new double[n];
-      double[] im2 = new double[n];
       double[] re = new double[n];
-      double[] im = new double[n];
 
       System.Random rnd = new System.Random();
  
@@ -183,106 +162,85 @@ namespace AltaxoTest.Calc.FFT
       for(int i=0;i<n;i++)
       {
         re1[i] = 0;
-        im1[i] = 0;
         re2[i] = rnd.NextDouble();
-        im2[i] = rnd.NextDouble();
       }
 
 
       re1[0] = 1;
   
-      _corr(re1,im1, re2, im2, re, im, n);
+      _corr(re1, re2, re, n);
 
       for(int i=0;i<n;i++)
       {
 
         Assertion.AssertEquals("Correlation should give re=re2 at pos " + i.ToString(), re2[i], re[i],max_corr_error(n));
-        Assertion.AssertEquals("Correlation should give im=im2 at pos " + i.ToString(), im2[i], im[i],max_corr_error(n));
       }
 
       for(int i=0;i<n;i++)
       {
         re1[i] = rnd.NextDouble();
-        im1[i] = rnd.NextDouble();
         re2[i] = 0;
-        im2[i] = 0;
       }
 
 
       re2[0] = 1;
   
-      _corr(re1,im1, re2, im2, re, im, n);
+      _corr(re1, re2, re, n);
 
       for(int i=0;i<n;i++)
       {
 
         Assertion.AssertEquals("Correlation should give re=re1 at pos " + i.ToString(), re1[(n-i)%n], re[i],max_corr_error(n));
-        Assertion.AssertEquals("Correlation should give im=im1 at pos " + i.ToString(), im1[(n-i)%n], im[i],max_corr_error(n));
       }
     }
 
-
-    public void TestOneImOne_OtherRandom(int n)
+    public void TestReOne_ReOne_OnePos(int n)
     {
       double[] re1 = new double[n];
-      double[] im1 = new double[n];
       double[] re2 = new double[n];
-      double[] im2 = new double[n];
       double[] re = new double[n];
-      double[] im = new double[n];
-
-      System.Random rnd = new System.Random();
- 
       
       for(int i=0;i<n;i++)
       {
         re1[i] = 0;
-        im1[i] = 0;
-        re2[i] = rnd.NextDouble();
-        im2[i] = rnd.NextDouble();
-      }
-
-
-      im1[0] = 1;
-  
-      _corr(re1,im1, re2, im2, re, im, n);
-
-      for(int i=0;i<n;i++)
-      {
-
-        Assertion.AssertEquals("Correlation should give re=-im2 at pos " + i.ToString(), -im2[i], re[i],max_corr_error(n));
-        Assertion.AssertEquals("Correlation should give im=re2 at pos " + i.ToString(), re2[i], im[i],max_corr_error(n));
-      }
-
-      for(int i=0;i<n;i++)
-      {
-        re1[i] = rnd.NextDouble();
-        im1[i] = rnd.NextDouble();
         re2[i] = 0;
-        im2[i] = 0;
       }
 
 
-      im2[0] = 1;
+      re1[0] = 1;
+      re2[1] = 1;
   
-      _corr(re1,im1, re2, im2, re, im, n);
+    _corr(re1, re2, re, n);
 
       for(int i=0;i<n;i++)
       {
+        Assertion.AssertEquals("Correlation should give re=re2[i+1] at pos " + i.ToString(), re2[i], re[i], max_corr_error(n));
+      }
 
-        Assertion.AssertEquals("Correlation should give re=-im1 at pos " + i.ToString(), -im1[(n-i)%n], re[i],max_corr_error(n));
-        Assertion.AssertEquals("Correlation should give im=im1 at pos " + i.ToString(), re1[(n-i)%n], im[i],max_corr_error(n));
+      for(int i=0;i<n;i++)
+      {
+        re1[i] = 0;
+        re2[i] = 0;
+      }
+
+      re1[1] = 1;
+      re2[0] = 1;
+  
+      _corr(re1, re2, re, n);
+
+      for(int i=0;i<n;i++)
+      {
+        Assertion.AssertEquals("Correlation should give re=re1[i-1] at pos " + i.ToString(), re1[(n-i)%n], re[i],max_corr_error(n));
       }
     }
+
+
 
     public void TestReOne_OnePos_OtherRandom(int n)
     {
       double[] re1 = new double[n];
-      double[] im1 = new double[n];
       double[] re2 = new double[n];
-      double[] im2 = new double[n];
       double[] re = new double[n];
-      double[] im = new double[n];
 
       System.Random rnd = new System.Random();
  
@@ -290,107 +248,44 @@ namespace AltaxoTest.Calc.FFT
       for(int i=0;i<n;i++)
       {
         re1[i] = 0;
-        im1[i] = 0;
         re2[i] = rnd.NextDouble();
-        im2[i] = rnd.NextDouble();
       }
 
 
       re1[1] = 1;
   
-      _corr(re1,im1, re2, im2, re, im, n);
+      _corr(re1, re2, re, n);
 
       for(int i=0;i<n;i++)
       {
 
         Assertion.AssertEquals("Correlation should give re=re2[i-1] at pos " + i.ToString(), re2[(n+i+1)%n], re[i],max_corr_error(n));
-        Assertion.AssertEquals("Correlation should give im=im2[i-1] at pos " + i.ToString(), im2[(n+i+1)%n], im[i],max_corr_error(n));
       }
 
       for(int i=0;i<n;i++)
       {
         re1[i] = rnd.NextDouble();
-        im1[i] = rnd.NextDouble();
         re2[i] = 0;
-        im2[i] = 0;
       }
-
 
       re2[1] = 1;
   
-      _corr(re1,im1, re2, im2, re, im, n);
+      _corr(re1, re2, re, n);
 
       for(int i=0;i<n;i++)
       {
 
         Assertion.AssertEquals("Correlation should give re=re1[i-1] at pos " + i.ToString(), re1[(n-i+1)%n], re[i],max_corr_error(n));
-        Assertion.AssertEquals("Correlation should give im=im1[i-1] at pos " + i.ToString(), im1[(n-i+1)%n], im[i],max_corr_error(n));
       }
 
-    }
-
-    public void TestImOne_OnePos_OtherRandom(int n)
-    {
-      double[] re1 = new double[n];
-      double[] im1 = new double[n];
-      double[] re2 = new double[n];
-      double[] im2 = new double[n];
-      double[] re = new double[n];
-      double[] im = new double[n];
-
-      System.Random rnd = new System.Random();
- 
-      
-      for(int i=0;i<n;i++)
-      {
-        re1[i] = 0;
-        im1[i] = 0;
-        re2[i] = rnd.NextDouble();
-        im2[i] = rnd.NextDouble();
-      }
-
-
-      im1[1] = 1;
-  
-      _corr(re1,im1, re2, im2, re, im, n);
-
-      for(int i=0;i<n;i++)
-      {
-
-        Assertion.AssertEquals("Correlation should give re=-im2 at pos " + i.ToString(), -im2[(n+i+1)%n], re[i],max_corr_error(n));
-        Assertion.AssertEquals("Correlation should give im=re2 at pos " + i.ToString(), re2[(n+i+1)%n], im[i],max_corr_error(n));
-      }
-
-      for(int i=0;i<n;i++)
-      {
-        re1[i] = rnd.NextDouble();
-        im1[i] = rnd.NextDouble();
-        re2[i] = 0;
-        im2[i] = 0;
-      }
-
-
-      im2[1] = 1;
-  
-      _corr(re1,im1, re2, im2, re, im, n);
-
-      for(int i=0;i<n;i++)
-      {
-
-        Assertion.AssertEquals("Correlation should give re=-im1 at pos " + i.ToString(), -im1[(n-i+1)%n], re[i],max_corr_error(n));
-        Assertion.AssertEquals("Correlation should give im=im1 at pos " + i.ToString(), re1[(n-i+1)%n], im[i],max_corr_error(n));
-      }
     }
 
 
     public void TestBothRandom(int n)
     {
       double[] re1 = new double[n];
-      double[] im1 = new double[n];
       double[] re2 = new double[n];
-      double[] im2 = new double[n];
       double[] re = new double[n];
-      double[] im = new double[n];
 
       double[] recmp = new double[n];
       double[] imcmp = new double[n];
@@ -402,18 +297,15 @@ namespace AltaxoTest.Calc.FFT
       for(int i=0;i<n;i++)
       {
         re1[i] = rnd.NextDouble();
-        im1[i] = rnd.NextDouble();
         re2[i] = rnd.NextDouble();
-        im2[i] = rnd.NextDouble();
       }
  
-      NativeFourierMethods.CyclicCorrelation(re1,im1,re2,im2,recmp,imcmp,n);
-      _corr(re1,im1, re2, im2, re, im, n);
+      NativeFourierMethods.CyclicCorrelation(re1,re2,recmp,n);
+      _corr(re1, re2, re, n);
 
       for(int i=0;i<n;i++)
       {
         Assertion.AssertEquals("Correlation should give re=recmp at pos " + i.ToString(), recmp[i], re[i],max_corr_error(n));
-        Assertion.AssertEquals("Correlation should give im=imcmp at pos " + i.ToString(), imcmp[i], im[i],max_corr_error(n));
       }
     }
   }

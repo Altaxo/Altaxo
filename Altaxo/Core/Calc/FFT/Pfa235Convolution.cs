@@ -555,7 +555,7 @@ namespace Altaxo.Calc.FFT
       int size = 0;
       if (ndim == 0) 
       {
-        throw new ArithmeticException("MpConvolution::Convolute no dimensions have been specified");
+        throw new ArithmeticException("Convolute: no dimensions have been specified");
       } 
       else if (ndim == 1) 
       {
@@ -637,12 +637,231 @@ namespace Altaxo.Calc.FFT
         // transform back - this is an inverse FFT
         base.FFT(resultre,resultim, FourierDirection.Inverse);
       }
+      else
+      {
+        throw new NotImplementedException("Sorry, convolution of dimension 2 or 3 is not implemented yet. Will you do it?");
+      }
 
       ErrorExit:
         return status;
     }
 
 
+
+    /// <summary>
+    /// Performs a correlation of two comlex arrays which are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the data into the
+    /// input arrays will be destroyed!
+    /// </summary>
+    /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
+    /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
+    /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
+    /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
+    /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+    /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+    /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+    public void CyclicCorrelationDestructive(
+      double[] src1real, double[] src1imag, 
+      double[] src2real, double[] src2imag,
+      double[] resultreal, double[] resultimag,
+      int n)
+    {
+      // return status
+      bool status = true;
+
+      // get total size of data array
+      int size = 0;
+      if (ndim == 0) 
+      {
+        throw new ArithmeticException("Convolute: no dimensions have been specified");
+      } 
+      else if (ndim == 1) 
+      {
+        size = dim[0];
+      } 
+      else if (ndim == 2) 
+      {
+        size = row_order ? (dim[0] * id) : (id * dim[1]);
+      } 
+      else if (ndim == 3) 
+      {
+        size = row_order ? (dim[0] * dim[1] * id) : (id * dim[1] * dim[2]);
+      }
+
+
+      if(ndim==1)
+      {
+        base.FFT( src1real, src1imag, FourierDirection.Forward);
+        base.FFT( src2real, src2imag, FourierDirection.Forward);
+        ArrayMath.MultiplySplittedComplexArraysCrossed(src1real, src1imag, src2real, src2imag, resultreal, resultimag, n, 1.0/n);
+        base.FFT( resultreal,resultimag, FourierDirection.Forward);
+      }
+      else
+        throw new NotImplementedException("Sorry, correlation for dimensions > 1 is not implemented yet! Will you do it?"); 
+    }
+
+
+    /// <summary>
+    /// Performs a cyclic correlation of two complex arrays which are in splitted form. The input arrays will leave intact.
+    /// </summary>
+    /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
+    /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
+    /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
+    /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
+    /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+    /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+    /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+    /// <remarks>Two helper arrays of length n are automatially allocated and freed during the operation.</remarks>
+    public void CyclicCorrelation(
+      double[] src1real, double[] src1imag, 
+      double[] src2real, double[] src2imag,
+      double[] resultreal, double[] resultimag,
+      int n)
+    {
+      double[] help1=null, help2=null;
+      CyclicCorrelation(src1real, src1imag,src2real,src2imag,resultreal,resultimag,
+        n,ref help1, ref help2);
+    }
+
+    /// <summary>
+    /// Performs a cyclic correlation of two complex arrays which are in splitted form. The input arrays will leave intact.
+    /// </summary>
+    /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
+    /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
+    /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
+    /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
+    /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+    /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+    /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+    /// <param name="scratchreal">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
+    /// <param name="scratchimag">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
+    public void CyclicCorrelation(
+      double[] src1real, double[] src1imag, 
+      double[] src2real, double[] src2imag,
+      double[] resultreal, double[] resultimag,
+      int n,
+      ref double[] scratchreal, ref double[] scratchimag
+      )
+    {
+      // return status
+      bool status = true;
+
+      // get total size of data array
+      int size = 0;
+      if (ndim == 0) 
+      {
+        throw new ArithmeticException("Convolute: no dimensions have been specified");
+      } 
+      else if (ndim == 1) 
+      {
+        size = dim[0];
+      } 
+      else if (ndim == 2) 
+      {
+        size = row_order ? (dim[0] * id) : (id * dim[1]);
+      } 
+      else if (ndim == 3) 
+      {
+        size = row_order ? (dim[0] * dim[1] * id) : (id * dim[1] * dim[2]);
+      }
+
+
+      if ( null==scratchreal || scratchreal.Length<n)
+        scratchreal = new  double[size];
+      if ( null==scratchimag || scratchimag.Length<n )
+        scratchimag = new  double[size];
+
+      // First copy the arrays data and response to result and scratch,
+      // respectively, to prevent overwriting of the original data.
+      Array.Copy(src1real,resultreal, n);
+      Array.Copy(src1imag,resultimag, n);
+      Array.Copy(src2real,scratchreal, n);
+      Array.Copy(src2imag,scratchimag, n);
+
+      if(ndim==1)
+      {
+        base.FFT( resultreal, resultimag, FourierDirection.Forward);
+        base.FFT( scratchreal, scratchimag, FourierDirection.Forward);
+        ArrayMath.MultiplySplittedComplexArraysCrossed(resultreal, resultimag, scratchreal, scratchimag, resultreal, resultimag, n, 1.0/n);
+        base.FFT( resultreal,resultimag, FourierDirection.Forward);
+      }
+      else
+        throw new NotImplementedException("Sorry, correlation for dimensions > 1 is not implemented yet! Will you do it?"); 
+
+    }
+
+    public bool CyclicCorrelation(double[] data, double[] response, double[] result, int nn, double[] scratch)
+    {
+      // return status
+      bool status = true;
+
+      // get total size of data array
+      int size = 0;
+      if (ndim == 0) 
+      {
+        throw new ArithmeticException("MpConvolution::Convolute no dimensions have been specified");
+      } 
+      else if (ndim == 1) 
+      {
+        size = dim[0];
+      } 
+      else if (ndim == 2) 
+      {
+        size = row_order ? (dim[0] * id) : (id * dim[1]);
+      } 
+      else if (ndim == 3) 
+      {
+        size = row_order ? (dim[0] * dim[1] * id) : (id * dim[1] * dim[2]);
+      }
+
+      // allocate the scratch array
+      //bool auto_scratch = false;
+      if ( null==scratch ) 
+      {
+        scratch = new  double[size];
+        //auto_scratch = true;
+      }
+
+      //---------------------------------------------------------------------------//
+      //  1-dimensional correlation (original data not are overwritten)
+      //---------------------------------------------------------------------------//
+
+      if (ndim == 1) 
+      {
+
+        // First copy the arrays data and response to result and scratch,
+        // respectively, to prevent overwriting of the original data.
+        Array.Copy(data,result,size);
+        Array.Copy(response,scratch, size);
+
+        // transform both arrays simultaneously - this is a forward FFT
+        base.FFT(result,scratch, FourierDirection.Forward);
+    
+        // multiply FFTs to convolve
+        int n = dim[0], n2 = n/2;
+     
+        double scale = 0.25/n;
+        result[0] *= scratch[0] / n;
+        scratch[0] = 0;
+        for (int i = 1; i <= n2; i++) 
+        {
+          double rr = result[i]  + result[n-i], 
+             ri = scratch[i] - scratch[n-i],
+            sr = scratch[i] + scratch[n-i],
+            si = result[n-i]  - result[i]; 
+          result[i]  = scale * (rr*sr + ri*si);   // real part
+          scratch[i] = scale * (rr*si - ri*sr);   // imaginary part 
+          result[n-i]  = result[i];     // symmetry
+          scratch[n-i] = -scratch[i];       // symmetry
+        }
+      } 
+
+      // transform back - this is an inverse FFT
+      base.FFT(result,scratch, FourierDirection.Inverse);
+
+
+      return true;
+    } 
+  
     protected static void FillZero(double[] array)
     {
       for(int i=0;i<array.Length;i++)

@@ -34,7 +34,7 @@ namespace AltaxoTest.Calc.FFT
     const int nUpperLimit=100;
     const double maxTolerableEpsPerN=1E-15;
 
-    CommonFFTTests _test = new CommonFFTTests(new CommonFFTTests.FFTRoutine(ChirpFFT.FFT));
+    SplittedComplexFFTTests _test = new SplittedComplexFFTTests(new SplittedComplexFFTTests.FFTRoutine(ChirpFFT.FFT));
     
   
 

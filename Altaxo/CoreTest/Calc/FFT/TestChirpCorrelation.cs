@@ -27,126 +27,150 @@ using Altaxo.Calc.FFT;
 namespace AltaxoTest.Calc.FFT
 {
 
-
   [TestFixture]
-  public class TestNativeFFT
+  public class TestChirpCorrelationCyclicSplittedComplex
   {
-    const int nLowerLimit=5;
-    const int nUpperLimit=100;
+    const int nLowerLimit=4;
+    const int nUpperLimit=66;
     const double maxTolerableEpsPerN=1E-15;
+    SplittedComplexCorrelationTests _test ;
 
-    SplittedComplexFFTTests _test = new SplittedComplexFFTTests(new SplittedComplexFFTTests.FFTRoutine(NativeFourierMethods.FFT));
- 
+    public TestChirpCorrelationCyclicSplittedComplex()
+    {
+      _test = new SplittedComplexCorrelationTests(new SplittedComplexCorrelationTests.CorrelationRoutine(ChirpFFT.CyclicCorrelation));
+    }
 
-  
 
     [Test]
-    public void TestZero()
+    public void Test01BothZero()
     {
       
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestZero(i);
+        _test.TestBothZero(i);
     }
 
     [Test]
-    public void TestReOne_ZeroPos()
+    public void Test02OneZero()
+    {
+      
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+        _test.TestOneZero(i);
+    }
+
+
+    [Test]
+    public void Test03ReOne_ZeroPos()
     {
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
         _test.TestReOne_ZeroPos(i);
     }
 
     [Test]
-    public void TestImOne_ZeroPos()
+    public void Test04OneReOne_OtherRandom()
     {
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestImOne_ZeroPos(i);
+        _test.TestOneReOne_OtherRandom(i);
     }
 
     [Test]
-    public void TestReOne_OnePos()
+    public void Test05OneImOne_OtherRandom()
     {
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReOne_OnePos(i);
+        _test.TestOneImOne_OtherRandom(i);
     }
     
     [Test]
-    public void TestImOne_OnePos()
+    public void Test06ReOne_OnePos_OtherRandom()
     {
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestImOne_OnePos(i);
+        _test.TestReOne_OnePos_OtherRandom(i);
+    }
+    
+    [Test]
+    public void Test07ImOne_OnePos_OtherRandom()
+    {
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+        _test.TestImOne_OnePos_OtherRandom(i);
     }
 
     [Test]
-    public void TestReImOne_RandomPos()
+    public void Test08BothRandom()
     {
-      double oldTolerance = _test.SetTolerance(1E-14);
-
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReImOne_RandomPos(i,5);
-
-      _test.SetTolerance(oldTolerance);
+        _test.TestBothRandom(i);
     }
+
 
   }
 
 
-  [TestFixture]
-  public class TestNativeRealFFT
-  {
-    const int nLowerLimit=5;
-    const int nUpperLimit=100;
-    const double maxTolerableEpsPerN=1E-15;
 
-    RealFFTTests _test = new RealFFTTests(new RealFFTTests.FFTRoutine(NativeFourierMethods.FFT));
- 
+
+  [TestFixture]
+  public class TestChirpCorrelationCyclicReal
+  {
+    const int nLowerLimit=4;
+    const int nUpperLimit=66;
+    const double maxTolerableEpsPerN=1E-15;
+    RealCorrelationTests _test ;
+
+    public TestChirpCorrelationCyclicReal()
+    {
+      _test = new RealCorrelationTests(new RealCorrelationTests.CorrelationRoutine(ChirpFFT.CyclicCorrelation));
+    }
+
 
     [Test]
-    public void Test01Zero()
+    public void Test01BothZero()
     {
       
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestZero(i);
+        _test.TestBothZero(i);
     }
 
     [Test]
-    public void Test02ReOne_ZeroPos()
+    public void Test02OneZero()
+    {
+      
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+        _test.TestOneZero(i);
+    }
+
+
+    [Test]
+    public void Test03ReOne_ZeroPos()
     {
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
         _test.TestReOne_ZeroPos(i);
     }
 
-  
-
     [Test]
-    public void Test03ReOne_OnePos()
+    public void Test04OneReOne_OtherRandom()
     {
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReOne_OnePos(i);
+        _test.TestOneReOne_OtherRandom(i);
     }
+
     
-  
     [Test]
-    public void Test04ReOne_RandomPos()
+    public void Test05ReOne_OnePos_OtherRandom()
     {
-      double oldTolerance = _test.SetTolerance(1E-14);
-
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReOne_RandomPos(i,5);
-
-      _test.SetTolerance(oldTolerance);
+        _test.TestReOne_OnePos_OtherRandom(i);
     }
 
     [Test]
-    public void Test05ReRandomValues()
+    public void Test06BothRandom()
     {
-      double oldTolerance = _test.SetTolerance(1E-14);
-
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestReRandomValues(i);
-
-      _test.SetTolerance(oldTolerance);
+        _test.TestBothRandom(i);
     }
+
 
   }
+
+
+
+
 
 }

@@ -90,7 +90,8 @@ namespace Altaxo.Calc
 
     /// <summary>
     /// Multiplies two splitted complex arrays which are the result of Fourier transformations in inverse order like result=x[w]*x[-w] (w is frequency) and stores the result in a splitted complex array.
-    /// Note that this is not simply x[i]*x[n-i], since there are the special points i=0 and i=n/2.
+    /// Note that this is not simply x[i]*x[n-i], since there are the special points i=0 and i=n/2. Furthermore, this operation is not
+    /// transitive, i.e. multiplying src1 with src2 gives not the same result as multipying src2 with src1. See remarks for detail.
     /// </summary>
     /// <param name="src1real">Real part of the first input array. Must be at least of length n.</param>
     /// <param name="src1imag">Imaginary part of the first input array. Must be at least of length n.</param>
@@ -98,38 +99,51 @@ namespace Altaxo.Calc
     /// <param name="src2imag">Imaginary part of the first input array. Must be at least of length n.</param>
     /// <param name="destreal">Real part of the resulting array. Must be at least of length n.</param>
     /// <param name="destimag">Imaginary part of the resulting array. Must be at least of length n.</param>
-    /// <param name="n">Normally, the size of the arrays. The multiplication is done from index 0 to n-1.</param>
-    /// <remarks>The resulting array may be identical to one of the input arrays.</remarks>
+    /// <param name="n">Normally, the size of the arrays. The multiplication is done from index 0 to n-1. See remarks for details.</param>
+    /// <param name="scale">A factor the result is multiplied with.</param>
+    /// <remarks>
+    /// <para>1. The resulting array may be identical to one of the input arrays.</para>
+    /// <para>This operation is defined as follows:</para>
+    /// <code>
+    /// result[i]   = scale * src1[i]  * src2[j];  with i=1..(n-1) and j=(n-1)..1
+    /// result[0]   = scale * src1[0]  * src2[0];
+    /// result[n/2] = scale * src1[n/2]* src2[n/2]; // (only if n is even)
+    /// </code>
+    ///</remarks>
     public static void MultiplySplittedComplexArraysCrossed(
       double[] src1real, double[] src1imag, 
       double[] src2real, double[] src2imag,
       double[] destreal, double[] destimag,
-      int n)
+      int n,
+      double scale)
     {
-      double real, imag;
-      int k=n/2;
+      double re1, im1, re2, im2;
+      int k=(n+1)/2; // n even: this is like n/2; n odd: this is like (n+1)/2
       for(int i=1,j=n-1;i<k;i++,j--)
       {
-        real = src1real[i]*src2real[j] - src1imag[i]*src2imag[j];
-        imag = src1real[i]*src2imag[j] + src1imag[i]*src2real[j];
-        destreal[i]=real;
-        destimag[i]=imag;
-        destreal[j]=real;
-        destimag[j]=imag;
+        re1 = src1real[i]*src2real[j] - src1imag[i]*src2imag[j];
+        im1 = src1real[i]*src2imag[j] + src1imag[i]*src2real[j];
+        re2 = src1real[j]*src2real[i] - src1imag[j]*src2imag[i];
+        im2 = src1real[j]*src2imag[i] + src1imag[j]*src2real[i];
+        destreal[i]=re1*scale;
+        destimag[i]=im1*scale;
+        destreal[j]=re2*scale;
+        destimag[j]=im2*scale;
       }
 
-      // Special points
-      real = src1real[0]*src2real[0] - src1imag[0]*src2imag[0];
-      imag = src1real[0]*src2imag[0] + src1imag[0]*src2real[0];
-      destreal[0] = real;
-      destimag[0] = imag;
+      // Special point i==0
+      re1 = src1real[0]*src2real[0] - src1imag[0]*src2imag[0];
+      im1 = src1real[0]*src2imag[0] + src1imag[0]*src2real[0];
+      destreal[0] = re1*scale;
+      destimag[0] = im1*scale;
 
-      if((n&1)==0) // if n is even, there is also a middle point that needs attention
+      // Special point i==n/2 (only of n is even)
+      if((n&1)==0) 
       {
-        real = src1real[k]*src2real[k] - src1imag[k]*src2imag[k];
-        imag = src1real[k]*src2imag[k] + src1imag[k]*src2real[k];
-        destreal[k] = real;
-        destimag[k] = imag;
+        re2 = src1real[k]*src2real[k] - src1imag[k]*src2imag[k];
+        im2 = src1real[k]*src2imag[k] + src1imag[k]*src2real[k];
+        destreal[k] = re2*scale;
+        destimag[k] = im2*scale;
       }
     }
 

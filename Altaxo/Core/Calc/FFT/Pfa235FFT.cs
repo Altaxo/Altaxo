@@ -564,6 +564,68 @@ int FFT (complex<FLOAT> c[], int isign)
       return 1;
     }
 
+
+    /// <summary>
+    /// Performs two FFTs of the two real values arrays and store the result
+    /// in the arrays.
+    /// </summary>
+    /// <param name="real1">Input/Output vector of first real array.</param>
+    /// <param name="real2">Input/Output vector of second real array.</param>
+    /// <param name="isign">Forward (-1) or reverse (1) transform. </param>
+    /// <returns>Currently undefined, not used.</returns>
+    //-----------------------------------------------------------------------------//
+
+    public int RealFFT (double[] real1, double[] real2, FourierDirection isign)
+    {
+      if (ndim == 0) 
+        throw new ArithmeticException("Pfa235FFT: no dimensions have been specified");
+      if (ndim == 0) 
+        throw new ArithmeticException("Pfa235FFT: Sorry, RealFFT is implemented only for one dimension!");
+
+      double re1, im1, re2, im2;
+      int n = dim[0];
+      if(isign == FourierDirection.Forward)
+      {
+ 
+        this.FFT(real1,real2,isign);
+        int i,j;
+        for(i=1,j=n-1;i<j;i++,j--)
+        {
+          re1 = real1[i] + real1[j];
+          im1 = real2[i] - real2[j];
+
+          re2 = real2[i] + real2[j];
+          im2 = real1[j] - real1[i];
+        
+          real1[i] = 0.5*re1;
+          real1[j] = 0.5*im1;
+          real2[i] = 0.5*re2;
+          real2[j] = 0.5*im2;
+        }
+      }
+      else // Backward transform
+      {
+        int i,j;
+        for(i=1,j=n-1;i<j;i++,j--)
+        {
+          re1 = real1[i];
+          im1 = real1[j];
+
+          re2 = real2[i];
+          im2 = real2[j];
+        
+          real1[i] = re1-im2;
+          real1[j] = re1+im2;
+          real2[i] = im1+re2;
+          real2[j] = re2-im1;
+        }
+
+        this.FFT(real1,real2,isign);
+      }
+
+      return 0;
+    }
+
     /// <summary>
     ///   Raise the integer x to an integer power n with the minimal number of 
     ///   multiplications. The exponent n must be non-negative.

@@ -99,4 +99,73 @@ namespace AltaxoTest.Calc.FFT
 
 
   }
+
+
+  [TestFixture]
+  public class TestNativeRealCorrelation
+  {
+    const int nLowerLimit=5;
+    const int nUpperLimit=100;
+    const double maxTolerableEpsPerN=1E-15;
+
+    RealCorrelationTests _test = new RealCorrelationTests(new RealCorrelationTests.CorrelationRoutine(NativeFourierMethods.CyclicCorrelation));
+ 
+
+    [Test]
+    public void Test01BothZero()
+    {
+      
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+        _test.TestBothZero(i);
+    }
+
+    [Test]
+    public void Test02OneZero()
+    {
+      
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+        _test.TestOneZero(i);
+    }
+
+
+    [Test]
+    public void Test03ReOne_ZeroPos()
+    {
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+        _test.TestReOne_ZeroPos(i);
+    }
+
+    [Test]
+    public void Test04ReOne_ReOne_OnePos()
+    {
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+        _test.TestReOne_ReOne_OnePos(i);
+    }
+
+    [Test]
+    public void Test05OneReOne_OtherRandom()
+    {
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+        _test.TestOneReOne_OtherRandom(i);
+    }
+ 
+    [Test]
+    public void Test06ReOne_OnePos_OtherRandom()
+    {
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+        _test.TestReOne_OnePos_OtherRandom(i);
+    }
+    
+  
+    [Test]
+    public void Test07BothRandom()
+    {
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
+        _test.TestBothRandom(i);
+    }
+
+
+  }
+
+
 }

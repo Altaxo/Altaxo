@@ -1100,6 +1100,19 @@ namespace Altaxo.Calc.FFT
         RealIFFT(real,n);
     }
 
+    /// <summary>
+    /// Does a real-valued fourier transform of 'n' points of the
+    /// 'real' array.  On forward transform, the real part of the transform ends
+    /// up in the first half of the array and the imaginary part of the
+    /// transform ends up in the second half of the array. On backward transform, real and imaginary part
+    /// have to be located in the same way like the result of the forward transform.
+    /// </summary>
+    /// <param name="real">The array holding the real values to transform.</param>
+    /// <param name="direction">The direction of the Fourier transform.</param>
+    public static void RealFFT(double[] real, FourierDirection direction)
+    {
+      RealFFT(real, real.Length, direction);
+    }
 
     /// <summary>
     /// Performs a cyclic convolution of two real valued arrays. The content of the input arrays is destroyed during this operation.
@@ -1275,11 +1288,104 @@ namespace Altaxo.Calc.FFT
     {
       FFT( src1real, src1imag, n);
       FFT( src2real, src2imag, n);
-      ArrayMath.MultiplySplittedComplexArrays(src1real, src1imag, src2real, src2imag, resultreal, resultimag, n);
-      IFFT( resultreal,resultimag, n);
-      ArrayMath.NormalizeArrays(resultreal, resultimag, 1.0/n, n);
+      ArrayMath.MultiplySplittedComplexArraysCrossed(src1real, src1imag, src2real, src2imag, resultreal, resultimag, n, 1.0/n);
+      FFT( resultreal,resultimag, n);
     }
 
 
+    /// <summary>
+    /// Performs a cyclic correlation of two complex arrays which are in splitted form. The input arrays will leave intact.
+    /// </summary>
+    /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
+    /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
+    /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
+    /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
+    /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+    /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+    /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+    /// <remarks>Two helper arrays of length n are automatially allocated and freed during the operation.</remarks>
+    public static void CyclicCorrelation(
+      double[] src1real, double[] src1imag, 
+      double[] src2real, double[] src2imag,
+      double[] resultreal, double[] resultimag,
+      int n)
+    {
+      double[] help1=null, help2=null;
+      CyclicCorrelation(src1real, src1imag,
+        src2real,src2imag,
+        resultreal,resultimag,
+        n,
+        ref help1, ref help2);
+    }
+
+    /// <summary>
+    /// Performs a cyclic correlation of two complex arrays which are in splitted form. The input arrays will leave intact.
+    /// </summary>
+    /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
+    /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
+    /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
+    /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
+    /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+    /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+    /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+    /// <param name="scratchreal">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
+    /// <param name="scratchimag">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
+    public static void CyclicCorrelation(
+      double[] src1real, double[] src1imag, 
+      double[] src2real, double[] src2imag,
+      double[] resultreal, double[] resultimag,
+      int n,
+      ref double[] scratchreal, ref double[] scratchimag
+      )
+    {
+      if ( null==scratchreal || scratchreal.Length<n)
+        scratchreal = new  double[n];
+      if ( null==scratchimag || scratchimag.Length<n )
+        scratchimag = new  double[n];
+
+      // First copy the arrays data and response to result and scratch,
+      // respectively, to prevent overwriting of the original data.
+      Array.Copy(src1real,resultreal, n);
+      Array.Copy(src1imag,resultimag, n);
+      Array.Copy(src2real,scratchreal, n);
+      Array.Copy(src2imag,scratchimag, n);
+
+      FFT( resultreal, resultimag, n);
+      FFT( scratchreal, scratchimag, n);
+      ArrayMath.MultiplySplittedComplexArraysCrossed(resultreal, resultimag, scratchreal, scratchimag, resultreal, resultimag, n, 1.0/n);
+      FFT( resultreal,resultimag, n);
+    }
+
+
+    /// <summary>
+    /// Performes a cyclic correlation between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
+    /// different from the other two arrays. 
+    /// </summary>
+    /// <param name="arr1">First array.</param>
+    /// <param name="arr2">Second array.</param>
+    /// <param name="resultarr">The array that stores the correleation result.</param>
+    /// <param name="n">Number of points to correlate.</param>
+    public static  void CyclicCorrelationDestructive(double[] arr1, double[] arr2, double[] resultarr, int n)
+    {
+      RealFFT(arr1,n);
+      RealFFT(arr2,n);
+      // multiply the result in arr1 (real part in the first half, imaginary part in the second half)
+      // with the complex conjugate of arr2 and store the result in result
+      int i, j;
+      double re, im;
+      double scale = 1.0/n;
+      for(i=1,j=n-1;i<j;++i,--j)
+      {
+        re = arr1[i]*arr2[i] + arr1[j]*arr2[j]; // + because of complex conjugate
+        im = arr1[i]*arr2[j] - arr1[j]*arr2[i];
+        resultarr[i]=re*scale;
+        resultarr[j]=im*scale;
+      }
+      // special points 0 and n/2
+      resultarr[0] = scale*arr1[0]*arr2[0];
+      resultarr[n/2] = scale*arr1[n/2]*arr2[n/2];
+
+      RealIFFT(resultarr,n);
+    }
   }
 }

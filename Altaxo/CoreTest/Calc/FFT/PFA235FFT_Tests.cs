@@ -30,11 +30,11 @@ namespace AltaxoTest.Calc.FFT
   [TestFixture]
   public class TestPFA235FFT_1D
   {
-    CommonFFTTests _test;
+    SplittedComplexFFTTests _test;
 
     public TestPFA235FFT_1D()
     {
-      _test = new CommonFFTTests(new CommonFFTTests.FFTRoutine(MyFFT));
+      _test = new SplittedComplexFFTTests(new SplittedComplexFFTTests.FFTRoutine(MyFFT));
      
     }
 
@@ -500,19 +500,109 @@ namespace AltaxoTest.Calc.FFT
 
   }
 
-
-  /// <summary>
-  /// Summary description for main.
-  /// </summary>
-  public class MainClass
+  [TestFixture]
+  public class TestPfa235FFTRealFFT
   {
+    const int nLowerLimit=5;
+    const int nUpperLimit=100;
+    const double maxTolerableEpsPerN=1E-15;
 
-    [STAThread]
-    public static void Main()
+    int[] _testLengths = { 2,3,4,5,6,8,9,10,12,15,16,18,25 };
+
+    RealFFTTests _test;
+     RealFFTTests _test2;
+
+    public TestPfa235FFTRealFFT()
     {
-      
-      //TestMpFFT1D.TestReOne_ZeroPos(8);
+      _test = new RealFFTTests(new RealFFTTests.FFTRoutine(MyRoutine1));
+      _test2 = new RealFFTTests(new RealFFTTests.FFTRoutine(MyRoutine2));
 
     }
+
+    void MyRoutine1(double[] real1, FourierDirection dir)
+    {
+      int n = real1.Length;
+      System.Random rnd = new System.Random();
+      double[] real2 = new double[n];
+      for(int i=0;i<n;i++)
+        real2[i] = rnd.NextDouble()/n;
+
+      Pfa235FFT fft = new Pfa235FFT(n);
+      fft.RealFFT(real1,real2,dir);
+    }
+
+    void MyRoutine2(double[] real1, FourierDirection dir)
+    {
+      int n = real1.Length;
+      System.Random rnd = new System.Random();
+      double[] real2 = new double[n];
+      for(int i=0;i<n;i++)
+        real2[i] = rnd.NextDouble()/n;
+
+      Pfa235FFT fft = new Pfa235FFT(n);
+      fft.RealFFT(real2,real1,dir);
+    }
+
+    [Test]
+    public void Test01Zero()
+    {
+      
+      foreach(int i in _testLengths)
+      {
+        _test.TestZero(i);
+        _test2.TestZero(i);
+      }
+    }
+
+    [Test]
+    public void Test02ReOne_ZeroPos()
+    {
+      foreach(int i in _testLengths)
+      {
+        _test.TestReOne_ZeroPos(i);
+        _test2.TestReOne_ZeroPos(i);
+      }
+    }
+
+  
+
+    [Test]
+    public void Test03ReOne_OnePos()
+    {
+      foreach(int i in _testLengths)
+      {
+        _test.TestReOne_OnePos(i);
+        _test2.TestReOne_OnePos(i);
+      }
+    }
+    
+  
+    [Test]
+    public void Test04ReOne_RandomPos()
+    {
+      double oldTolerance = _test.SetTolerance(1E-14);
+
+      foreach(int i in _testLengths)
+      {
+        _test.TestReOne_RandomPos(i,5);
+        _test2.TestReOne_RandomPos(i,5);
+      }
+
+      _test.SetTolerance(oldTolerance);
+    }
+
+    [Test]
+    public void Test05ReRandomValues()
+    {
+      double oldTolerance = _test.SetTolerance(1E-14);
+
+      foreach(int i in _testLengths)
+      {
+        _test.TestReRandomValues(i);
+        _test2.TestReRandomValues(i);
+      }
+      _test.SetTolerance(oldTolerance);
+    }
+
   }
 }

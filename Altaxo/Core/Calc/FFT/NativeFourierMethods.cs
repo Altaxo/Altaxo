@@ -41,11 +41,13 @@ namespace Altaxo.Calc.FFT
     /// Performes a cyclic correlation between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
     /// different from the other two arrays. 
     /// </summary>
+    /// <param name="arr1">First array (kernel).</param>
+    /// <param name="arr2">Second array (data).</param>
     /// <param name="resultarr">The array that stores the correleation result.</param>
-    /// <param name="arr1">First array.</param>
-    /// <param name="arr2">Second array.</param>
     /// <param name="count">Number of points to correlate.</param>
-    public static  void CyclicCorrelation(double[] resultarr, double[] arr1, double[] arr2, int count)
+    /// <remarks>Correlation of src1 with src2 is not the same as correlation of src2 with src1.
+    /// The correlation here is defined as corr(src1,src2)(j)=SUM(k) src1(k) src2(k+j).</remarks>
+    public static  void CyclicCorrelation(double[] arr1, double[] arr2, double[] resultarr, int count)
     {
       if(object.ReferenceEquals(resultarr,arr1) || object.ReferenceEquals(resultarr,arr2))
         throw new ArgumentException("Resultarr must not be identical to arr1 or arr2!");
@@ -65,13 +67,15 @@ namespace Altaxo.Calc.FFT
     /// Performes a cyclic correlation between splitted complex arrays and stores the result in resultarr. Resultarr must be
     /// different from the input arrays. 
     /// </summary>
-    /// <param name="src1real">First array (real part values).</param>
-    /// <param name="src1imag">First array (imaginary part values).</param>
-    /// <param name="src2real">Second array (real part values).</param>
-    /// <param name="src2imag">Second array (imaginary part values).</param>
+    /// <param name="src1real">First array (kernel, real part values).</param>
+    /// <param name="src1imag">First array (kernel, imaginary part values).</param>
+    /// <param name="src2real">Second array (data, real part values).</param>
+    /// <param name="src2imag">Second array (data, imaginary part values).</param>
     /// <param name="resultreal">The array that stores the correlation result (real part values.</param>
     /// <param name="resultimag">The array that stores the correlation result (imaginary part values.</param>
     /// <param name="n">Number of points to correlate.</param>
+    /// <remarks>Correlation of src1 with src2 is not the same as correlation of src2 with src1.
+    /// The correlation here is defined as corr(src1,src2)(j)=SUM(k) src1(k) src2(k+j).</remarks>
     public static void CyclicCorrelation( 
       double[] src1real, double[]src1imag,
       double[] src2real, double[] src2imag,
@@ -174,11 +178,11 @@ namespace Altaxo.Calc.FFT
     /// <summary>
     /// Performs a native fouriertransformation of a real value array.
     /// </summary>
-    /// <param name="resultarr">Used to store the result of the transformation.</param>
     /// <param name="arr">The double valued array to transform.</param>
+    /// <param name="resultarr">Used to store the result of the transformation.</param>
     /// <param name="count">Number of points to transform.</param>
     /// <param name="direction">Direction of the Fourier transform.</param>
-    public static void FFT(Complex[] resultarr, double[] arr, int count, FourierDirection direction)
+    public static void FFT(double[] arr, Complex[] resultarr, int count, FourierDirection direction)
     {
       int iss = direction==FourierDirection.Forward ? 1 : -1;
       for(int k=0;k<count;k++)
@@ -209,13 +213,13 @@ namespace Altaxo.Calc.FFT
     /// <summary>
     /// Performs a native fouriertransformation of a complex value array.
     /// </summary>
-    /// <param name="resultreal">Used to store the real part of the result of the transformation. May be equal to the input array.</param>
-    /// <param name="resultimag">Used to store the imaginary part of the result of the transformation.  May be equal to the input array.</param>
     /// <param name="inputreal">The real part of the array to transform.</param>
     /// <param name="inputimag">The real part of the array to transform.</param>
+    /// <param name="resultreal">Used to store the real part of the result of the transformation. May be equal to the input array.</param>
+    /// <param name="resultimag">Used to store the imaginary part of the result of the transformation.  May be equal to the input array.</param>
     /// <param name="count">Number of points to transform.</param>
     /// <param name="direction">Direction of the Fourier transform.</param>
-    public static void FFT(double[] resultreal, double[] resultimag, double[] inputreal, double[] inputimag, int count,FourierDirection direction)
+    public static void FFT(double[] inputreal, double[] inputimag, double[] resultreal, double[] resultimag, int count,FourierDirection direction)
     {
       bool useShadowCopy = false;
       double[] resre = resultreal;
@@ -258,6 +262,100 @@ namespace Altaxo.Calc.FFT
         Array.Copy(resim,0,resultimag,0,count);
       }
     }
+
+
+    /// <summary>
+    /// Performs a inline native fouriertransformation of real and imaginary part arrays.
+    /// </summary>
+    /// <param name="real">The real part of the array to transform.</param>
+    /// <param name="direction">Direction of the Fourier transform.</param>
+    public static void FFT(double[] real, FourierDirection direction)
+    {
+      FFT(real, real, real.Length, direction);
+    }
+
+    /// <summary>
+    /// Performs a native fouriertransformation of a complex value array.
+    /// </summary>
+    /// <param name="inputreal">The real part of the array to transform.</param>
+    /// <param name="resultreal">Used to store the real part of the result of the transformation. May be equal to the input array.</param>
+    /// <param name="count">Number of points to transform.</param>
+    /// <param name="direction">Direction of the Fourier transform.</param>
+    public static void FFT(double[] inputreal, double[] resultreal,  int count,FourierDirection direction)
+    {
+      bool useShadowCopy = false;
+      double[] resre = resultreal;
+
+      if( object.ReferenceEquals(resultreal,inputreal))
+        useShadowCopy = true;
+
+      if(useShadowCopy)
+      {
+        resre = new double[count];
+      }
+
+      int iss = direction==FourierDirection.Forward ? 1 : -1;
+
+      if(direction==FourierDirection.Forward)
+      {
+        for(int k=0;k<=count/2;k++)
+        {
+          double sumreal=0, sumimag=0;
+          for(int i=0;i<count;i++)
+          {
+            double phi = iss*2*Math.PI*((i*k)%count)/count;
+            double vre = Math.Cos(phi);
+            double vim = Math.Sin(phi);
+            double addre = inputreal[i]*vre;
+            double addim = inputreal[i]*vim;
+            sumreal += addre;
+            sumimag += addim;
+          }
+          if(k!=0 && (k+k)!=count)
+            resre[count-k] = sumimag; 
+          resre[k] = sumreal;
+        }
+
+      }
+      else // FourierDirection.Inverse
+      {
+        for(int k=0;k<count;k++)
+        {
+          double sumreal=0, sumimag=0;
+          sumreal = inputreal[0];
+          int i,j;
+          for(i=1,j=count-1;i<=j;i++,j--)
+          {
+            double phi = iss*2*Math.PI*((i*k)%count)/count;
+            double vre = Math.Cos(phi);
+            double vim = Math.Sin(phi);
+            double addre = inputreal[i]*vre - inputreal[count-i]*vim;
+            double addim = inputreal[i]*vim + inputreal[count-i]*vre;
+
+            if(i!=j)
+            {
+              sumreal += addre*2;
+              sumimag += addim*2;
+            }
+            else
+            {
+              sumreal += addre;
+              sumimag += addim;
+            }
+          }
+          resre[k] = sumreal;
+        }
+
+      }
+
+
+      if(useShadowCopy)
+      {
+        Array.Copy(resre,0,resultreal,0,count);
+      }
+    }
+
+
   }
 
 }

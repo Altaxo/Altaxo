@@ -149,6 +149,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\FFT\RealCorrelationTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\FFT\SplittedComplexConvolutionTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -164,6 +169,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\FFT\TestChirpCorrelation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\FFT\TestChirpFFT.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -174,12 +184,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\FFT\TestFastHartleyCorrelation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\FFT\TestFastHartleyTransform.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Calc\FFT\TestNativeFourierMethods.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\FFT\TestPFA235Correlation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

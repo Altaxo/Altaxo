@@ -363,6 +363,94 @@ namespace Altaxo.Calc.FFT
     }
 
 
+    /// <summary>
+    /// Returns the neccessary size of the padding arrays for a cyclic correlation of length n.
+    /// </summary>
+    /// <param name="n">The length of the cyclic correlation.</param>
+    /// <returns>Neccessary length of the scratch arrays. Note that this is based on a convolution of
+    /// base 2.</returns>
+    public static int GetNecessaryCorrelationSize(int n)
+    {
+      if(n<=2)
+        return 2;
+
+      int ldnn = 2+ld((uint)(n-1));
+      return (1<<ldnn);
+    }
+
+
+    /// <summary>
+    /// Performs a cyclic correlation of splitted complex data of arbitrary length.
+    /// </summary>
+    /// <param name="datare">Real part of the data array (first input array).</param>
+    /// <param name="dataim">Imaginary part of the data array (first input array).</param>
+    /// <param name="responsere">Real part of the response array (second input array).</param>
+    /// <param name="responseim">Imaginary part of the response array (second input array).</param>
+    /// <param name="resultre">The real part of the resulting array.</param>
+    /// <param name="resultim">The imaginary part of the resulting array.</param>
+    /// <param name="n">The convolution size. The input and result arrays may be larger, but of course not smaller than this number.</param>
+    public static void CyclicCorrelation(
+      double[] datare, double[] dataim,
+      double[] responsere, double[] responseim,
+      double[] resultre, double[] resultim,
+      int n)
+    {
+      int msize = GetNecessaryCorrelationSize(n);
+      // System.Diagnostics.Trace.WriteLine(string.Format("Enter chirp convolution with n={0}, m={1}",n,msize));
+      
+      double[] srcre = new double[msize];
+      double[] srcim = new double[msize];
+      double[] rspre = new double[msize];
+      double[] rspim = new double[msize];
+       
+
+      Array.Copy(datare,srcre,n);
+      Array.Copy(dataim,srcim,n);
+
+      // Copy the response not only to the beginning, but also immediatly after the data
+      Array.Copy(responsere,rspre,n);
+      Array.Copy(responsere,0,rspre,n,n-1);
+      Array.Copy(responseim,rspim,n);
+      Array.Copy(responseim,0,rspim,n,n-1);
+
+      FastHartleyTransform.CyclicCorrelationDestructive(srcre,srcim,rspre,rspim,srcre,srcim,msize);
+
+      Array.Copy(srcre,resultre,n);
+      Array.Copy(srcim,resultim,n);
+    }
+
+
+    /// <summary>
+    /// Performs a cyclic correlation of splitted complex data of arbitrary length.
+    /// </summary>
+    /// <param name="src1">The first input array.</param>
+    /// <param name="src2">The second input array.</param>
+    /// <param name="result">The resulting array.</param>
+    /// <param name="n">The correlation size. The input and result arrays may be larger, but of course not smaller than this number.</param>
+    public static void CyclicCorrelation(
+      double[] src1,
+      double[] src2, 
+      double[] result,
+      int n)
+    {
+      int msize = GetNecessaryCorrelationSize(n);
+      // System.Diagnostics.Trace.WriteLine(string.Format("Enter chirp convolution with n={0}, m={1}",n,msize));
+      
+      double[] srcre = new double[msize];
+      double[] rspre = new double[msize];
+       
+
+      Array.Copy(src1,srcre,n);
+
+      // Copy the response not only to the beginning, but also immediatly after the data
+      Array.Copy(src2,rspre,n);
+      Array.Copy(src2,0,rspre,n,n-1);
+
+      FastHartleyTransform.CyclicCorrelationDestructive(srcre,rspre,srcre,msize);
+
+      Array.Copy(srcre,result,n);
+    }
+
     /*
     public static void
       FFT(double[] x, double[] y, uint n, bool backward)
