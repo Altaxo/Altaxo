@@ -429,6 +429,10 @@ namespace Altaxo.Worksheet
 			mi.Click += new EventHandler(EhMenuFileImportPicture_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
 
+			// File - Import - Galactic SPC 
+			mi = new MenuItem("Galactic SPC...");
+			mi.Click += new EventHandler(EhMenuFileImportGalacticSPC_OnClick);
+			m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
 
 			// ------------------------------------------------------------------
 			// File - Export (Popup)
@@ -720,6 +724,12 @@ namespace Altaxo.Worksheet
 		{
 			DataGridOperations.ImportPicture(this.DataTable);
 
+		}
+
+
+		protected void EhMenuFileImportGalacticSPC_OnClick(object sender, System.EventArgs e)
+		{
+			Altaxo.Serialization.Galactic.Import.ShowDialog(this.View.TableViewForm, this.DataTable);
 		}
 
 		// ------------------------------------------------------------------

@@ -359,14 +359,19 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\LayerDialog.cs"
-                    SubType = "Form"
+                    RelPath = "Graph\LayerPositionControl.cs"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\LayerDialog.resx"
-                    DependentUpon = "LayerDialog.cs"
+                    RelPath = "Graph\LayerPositionControl.resx"
+                    DependentUpon = "LayerPositionControl.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\LayerPositionController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Graph\LineScatterLayerContentsControl.cs"

@@ -63,7 +63,7 @@ namespace Altaxo.Graph
 				| System.Windows.Forms.AnchorStyles.Left)));
 			this.m_lbEdges.Location = new System.Drawing.Point(8, 8);
 			this.m_lbEdges.Name = "m_lbEdges";
-			this.m_lbEdges.Size = new System.Drawing.Size(64, 316);
+			this.m_lbEdges.Size = new System.Drawing.Size(64, 420);
 			this.m_lbEdges.TabIndex = 2;
 			this.m_lbEdges.SelectedIndexChanged += new System.EventHandler(this.EhSecondChoice_SelChanged);
 			// 
@@ -75,7 +75,7 @@ namespace Altaxo.Graph
 			this.m_TabCtrl.Location = new System.Drawing.Point(80, 8);
 			this.m_TabCtrl.Name = "m_TabCtrl";
 			this.m_TabCtrl.SelectedIndex = 0;
-			this.m_TabCtrl.Size = new System.Drawing.Size(432, 320);
+			this.m_TabCtrl.Size = new System.Drawing.Size(552, 420);
 			this.m_TabCtrl.TabIndex = 3;
 			this.m_TabCtrl.SelectedIndexChanged += new System.EventHandler(this.EhTabCtrl_SelectedIndexChanged);
 			// 
@@ -84,7 +84,7 @@ namespace Altaxo.Graph
 			this.Controls.Add(this.m_TabCtrl);
 			this.Controls.Add(this.m_lbEdges);
 			this.Name = "LayerControl";
-			this.Size = new System.Drawing.Size(520, 336);
+			this.Size = new System.Drawing.Size(640, 440);
 			this.ResumeLayout(false);
 
 		}

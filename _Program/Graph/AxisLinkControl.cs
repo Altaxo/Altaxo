@@ -194,19 +194,19 @@ namespace Altaxo.Graph
 
 		private void EhLinkNone_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(null!=Controller && ((CheckBox)sender).Checked==true)
+			if(null!=Controller && ((RadioButton)sender).Checked==true)
 				Controller.EhView_LinkTypeChanged(Layer.AxisLinkType.None);
 		}
 
 		private void EhLinkStraight_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(null!=Controller && ((CheckBox)sender).Checked==true)
+			if(null!=Controller && ((RadioButton)sender).Checked==true)
 				Controller.EhView_LinkTypeChanged(Layer.AxisLinkType.Straight);
 		}
 
 		private void EhLinkCustom_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(null!=Controller && ((CheckBox)sender).Checked==true)
+			if(null!=Controller && ((RadioButton)sender).Checked==true)
 				Controller.EhView_LinkTypeChanged(Layer.AxisLinkType.Custom);
 		}
 
@@ -239,7 +239,6 @@ namespace Altaxo.Graph
 				Controller.EhView_EndAValidating(((TextBox)sender).Text,ref bCancel);
 				e.Cancel = bCancel;
 			}
-		
 		}
 
 		private void EhEndB_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -319,7 +318,7 @@ namespace Altaxo.Graph
 
 		public void EndB_Initialize(string text)
 		{
-			this.m_Layer_edLinkXAxisEndA.Text = text;
+			this.m_Layer_edLinkXAxisEndB.Text = text;
 		}
 
 		#endregion

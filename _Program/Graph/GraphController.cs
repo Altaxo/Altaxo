@@ -780,8 +780,9 @@ namespace Altaxo.Graph
 			// if we have clicked the button already down then open the layer dialog
 			if(null!=ActiveLayer && currLayer==oldCurrLayer && false==bAlternative)
 			{
-				LayerDialog dlg = new LayerDialog(ActiveLayer,LayerDialog.Tab.Scale,EdgeType.Bottom);
-				dlg.ShowDialog(this.m_View.Window);
+				LayerController.ShowDialog(this.View.Form,ActiveLayer);
+				//LayerDialog dlg = new LayerDialog(ActiveLayer,LayerDialog.Tab.Scale,EdgeType.Bottom);
+				//dlg.ShowDialog(this.m_View.Window);
 			}
 		}
 

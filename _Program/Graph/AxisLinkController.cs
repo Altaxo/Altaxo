@@ -174,22 +174,22 @@ namespace Altaxo.Graph
 
 		public void EhView_OrgAValidating(string orgA, ref bool bCancel)
 		{
-			bCancel = !NumberParsing.IsDouble(orgA, out m_OrgA);
+			bCancel = !NumberConversion.IsDouble(orgA, out m_OrgA);
 		}
 
 		public void EhView_OrgBValidating(string orgB, ref bool bCancel)
 		{
-			bCancel = !NumberParsing.IsDouble(orgB, out m_OrgB);
+			bCancel = !NumberConversion.IsDouble(orgB, out m_OrgB);
 		}
 
 		public void EhView_EndAValidating(string endA, ref bool bCancel)
 		{
-			bCancel = !NumberParsing.IsDouble(endA, out m_EndA);
+			bCancel = !NumberConversion.IsDouble(endA, out m_EndA);
 		}
 
 		public void EhView_EndBValidating(string endB, ref bool bCancel)
 		{
-			bCancel = !NumberParsing.IsDouble(endB, out m_EndA);
+			bCancel = !NumberConversion.IsDouble(endB, out m_EndA);
 		}
 
 		#endregion

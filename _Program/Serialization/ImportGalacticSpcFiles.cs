@@ -27,12 +27,12 @@ using System.ComponentModel;
 using System.Windows.Forms;
 
 
-namespace Altaxo.Serialization
+namespace Altaxo.Serialization.Galactic
 {
 	/// <summary>
 	/// Summary description for ImportGalacticSpcFiles.
 	/// </summary>
-	public class ImportGalacticSpcFiles
+	public class Import
 	{
 		public struct SPCHDR
 		{
@@ -72,7 +72,7 @@ namespace Altaxo.Serialization
 		}
 
 		/// <summary>
-		/// Exports a couple of x and y values into a non-evenly spaced Galactic SPC file.
+		/// Imports a Galactic SPC file into a x and an y array.
 		/// </summary>
 		/// <param name="xvalues">The x values of the spectrum.</param>
 		/// <param name="yvalues">The y values of the spectrum.</param>
@@ -169,6 +169,75 @@ namespace Altaxo.Serialization
 			}
 			
 			return null;
+		}
+
+		public static void ShowDialog(System.Windows.Forms.Form owner, Altaxo.Data.DataTable table)
+		{
+			System.Text.StringBuilder errorList = new System.Text.StringBuilder();
+			string firstfilename = null;
+			Altaxo.Data.DoubleColumn xcol=null;
+
+			System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
+			dlg.Filter = "Galactic SPC files (*.spc)|*.spc|All files (*.*)|*.*"  ;
+			dlg.FilterIndex = 1 ;
+			dlg.Multiselect = true; // allow selecting more than one file
+
+			if(System.Windows.Forms.DialogResult.OK==dlg.ShowDialog(owner))
+			{
+				double[] xvalues, yvalues;
+				// if user has clicked ok, import all selected files into Altaxo
+				Array.Sort(dlg.FileNames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
+				foreach(string filename in dlg.FileNames)
+				{
+					string error = ToArrays(filename,out xvalues, out yvalues);
+					if(null!=error)
+						errorList.Append(error);
+
+					if(null==xcol) // if this is the first file successfully imported, add the xvalues to the worksheet
+					{
+						firstfilename = filename;
+						xcol = new Altaxo.Data.DoubleColumn(xvalues.Length);
+						xcol.ColumnName = "SPC X values";
+						xcol.Kind = Altaxo.Data.ColumnKind.X;
+
+						for(int i=0;i<xvalues.Length;i++)
+							xcol[i] = xvalues[i];
+						table.Add(xcol);
+					}
+					else // xcol was set before - so check the outcoming xvalues now that they match the xcols of the first imported spcfile
+					{
+						if(xvalues.Length!=xcol.Count || yvalues.Length!=xcol.Count)
+						{
+							errorList.Append(string.Format("Warning: the length of the spectrum {0} ({1}) did not match the length of the first spectrum {2} ({3})!\n",filename,xvalues.Length,firstfilename,xcol.Count));
+						}
+						else
+						{
+							// now check the match in the xvalues
+							for(int i=0;i<xvalues.Length;i++)
+							{
+								if(xcol[i]!=xvalues[i])
+								{
+									errorList.Append(string.Format("Warning: the xvalues at position [{0}] did not match between the spectrum {1} and the first imported spectrum {2}!\n",i,filename,firstfilename)); 
+									break;
+								}
+							}
+						}
+		
+							}
+
+					// now add the y-values
+					Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn(yvalues.Length);
+					ycol.ColumnName = filename;
+					for(int i=0;i<yvalues.Length;i++)
+						ycol[i] = yvalues[i];
+					table.Add(ycol);
+				} // foreache file
+
+				if(errorList.Length>0)
+				{
+					System.Windows.Forms.MessageBox.Show(owner,errorList.ToString(),"Some errors occured during import!",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
+				}
+			}
 		}
 
 	}

@@ -1,17 +1,17 @@
 using System;
 using System.Windows.Forms;
 
-/// <summary>
-///	Mikael Wiberg 2003
-///		mikwib@hotmail.com (usual HoTMaiL spam filters)
-///		mick@ar.com.au (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
-///		md5mw@mdstud.chalmers.se (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
-///	
-///	Feel free to use this code as you wish, as long as you do not take credit for it yourself.
-///	If it is used in commercial projects or applications please mention my name.
-///	Feel free to donate any amount of money if this code makes you happy ;)
-///	Use this code at your own risk. If your machine blows up while using it - don't blame me.
-/// </summary>
+// 
+//	Mikael Wiberg 2003
+//		mikwib@hotmail.com (usual HoTMaiL spam filters)
+//		mick@ar.com.au (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
+//		md5mw@mdstud.chalmers.se (heavy spam filters on, harldy anything gets through, START the subject with C# and it will probably go through)
+//	
+//	Feel free to use this code as you wish, as long as you do not take credit for it yourself.
+//	If it is used in commercial projects or applications please mention my name.
+//	Feel free to donate any amount of money if this code makes you happy ;)
+//	Use this code at your own risk. If your machine blows up while using it - don't blame me.
+// 
 namespace MWCommon
 {
 	/// <summary>

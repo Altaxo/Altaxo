@@ -42,9 +42,10 @@ namespace Altaxo.Graph
 
 		enum ElementType { Unique, HorzVert, Edge };
 
-		protected LineScatterLayerContentsController m_LayerContentsController;
-		protected AxisScaleController[] m_AxisScaleController;
-		protected TitleFormatLayerController[] m_TitleFormatLayerController;
+		protected ILayerPositionController m_LayerPositionController;
+		protected ILineScatterLayerContentsController m_LayerContentsController;
+		protected IAxisScaleController[] m_AxisScaleController;
+		protected ITitleFormatLayerController[] m_TitleFormatLayerController;
 
 		
 		public int CurrHorzVertIdx
@@ -70,6 +71,8 @@ namespace Altaxo.Graph
 			m_Layer = layer;
 
 			m_LayerContentsController = new LineScatterLayerContentsController(m_Layer);
+
+			m_LayerPositionController = new LayerPositionController(m_Layer);
 
 			m_AxisScaleController = new AxisScaleController[2]{
 																													new AxisScaleController(m_Layer,AxisScaleController.AxisDirection.Vertical),
@@ -120,6 +123,7 @@ namespace Altaxo.Graph
 			View.AddTab("Scale","Scale");
 			View.AddTab("TitleAndFormat","Title&&Format");
 			View.AddTab("Contents","Contents");
+			View.AddTab("Position","Position");
 
 			// Set the controller of the current visible Tab
 			SetCurrentTabController(true);
@@ -142,6 +146,15 @@ namespace Altaxo.Graph
 					}
 
 					m_CurrentController = m_LayerContentsController;
+					break;
+				case "Position":
+					if(pageChanged)
+					{
+						SetLayerSecondaryChoice();
+						View.CurrentContent = new LayerPositionControl();
+					}
+
+					m_CurrentController = m_LayerPositionController;
 					break;
 				case "Scale":
 					if(pageChanged)
@@ -246,6 +259,9 @@ namespace Altaxo.Graph
 			int i;
 
 			if(!this.m_LayerContentsController.Apply())
+				return false;
+
+			if(!this.m_LayerPositionController.Apply())
 				return false;
 
 			// do the apply for all controllers that are allocated so far
