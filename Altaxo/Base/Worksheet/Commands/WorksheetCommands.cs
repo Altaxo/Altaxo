@@ -83,6 +83,40 @@ namespace Altaxo.Worksheet.Commands
       Current.ProjectService.CreateNewWorksheet(clonedTable);
     }
   
+    /// <summary>
+    /// This will create a property column as text column with the names of the data columns.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    public static void CreatePropertyColumnOfColumnNames(WorksheetController ctrl)
+    {
+      CreatePropertyColumnOfColumnNames(ctrl.Doc);
+    }
+
+    /// <summary>
+    /// This will create a property column as text column with the names of the data columns.
+    /// </summary>
+    /// <param name="table">The data table.</param>
+    public static void CreatePropertyColumnOfColumnNames(Altaxo.Data.DataTable table)
+    {
+      const string NameColumnName="ColumnName";
+      
+      Altaxo.Data.TextColumn col = table.PropertyColumns[NameColumnName] as Altaxo.Data.TextColumn;
+
+      if(col==null)
+      {
+        col = new Altaxo.Data.TextColumn();
+        table.PropertyColumns.Add(col,NameColumnName,Altaxo.Data.ColumnKind.Label,0);
+      }
+
+      col.Suspend();
+      for(int i=table.DataColumnCount-1;i>=0;i--)
+      {
+        col[i] = table.DataColumns.GetColumnName(i);
+      }
+      col.Resume();
+
+    }
+
 
     public static void Transpose(WorksheetController ctrl)
     {

@@ -471,6 +471,17 @@ namespace Altaxo.Data
       this.m_Parent = null; // do not clone the parent
       this.m_TableName = from.m_TableName;
       this.m_TableScript = null==from.m_TableScript ? null : (TableScript)from.m_TableScript.Clone();
+
+      // Clone also the table properties (deep copy)
+      if(from._TableProperties!=null)
+      {
+        foreach(string key in from._TableProperties)
+        {
+          ICloneable val = from._TableProperties[key] as ICloneable;
+          if(null!=val)
+            this.SetTableProperty(key,val.Clone());
+        }
+      }
     }
 
     /// <summary>

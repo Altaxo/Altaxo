@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="windows-1252"?>
-<TODOLIST PROJECTNAME="Altaxo" FILEFORMAT="5" NEXTUNIQUEID="17" LASTSORTBY="0" FILEVERSION="13" LASTSORTDIR="-1" LASTMODIFIED="5/14/2004">
+<TODOLIST PROJECTNAME="Altaxo" FILEFORMAT="5" NEXTUNIQUEID="20" LASTSORTBY="0" FILEVERSION="18" LASTSORTDIR="-1" LASTMODIFIED="5/16/2004">
     <TASK PRIORITY="5" LASTMOD="0.00000000" TITLE="Bugfixing" ID="1" POS="1">
         <TASK PRIORITY="5" LASTMOD="0.00000000" TITLE="Fouriertransformation did crash when trying to do it with 5 or 6 points" ID="2" POS="1"/>
     </TASK>
@@ -9,11 +9,15 @@
         <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38121.91122685" TITLE="14.05.04 fixed: Copy (Ctrl-C) does not work on property columns alone" ID="12" STARTDATE="38121.57194444" POS="3"/>
         <TASK STARTDATESTRING="4/23/2004" PRIORITY="5" LASTMOD="38121.96508102" TITLE="14.05.04 fixed: Statistics on Rows: crashes if a DateTime column is in the Worksheet" ID="5" STARTDATE="38100.51756944" POS="4"/>
         <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38121.98278935" TITLE="14.05.04 fixed: PlotLine: switch Gap by default off!" ID="13" STARTDATE="38121.61429398" POS="5"/>
+        <TASK STARTDATESTRING="5/16/2004" PRIORITY="5" LASTMOD="38123.86553241" TITLE="16.05.04 Duplicating a table did not duplicate the table properties" ID="17" STARTDATE="38123.84354167" POS="6"/>
     </TASK>
     <TASK STARTDATESTRING="4/23/2004" PRIORITY="5" LASTMOD="38100.51719907" TITLE="TODO" ID="3" STARTDATE="38100.51708333" POS="3">
-        <TASK STARTDATESTRING="4/23/2004" PRIORITY="5" LASTMOD="38100.51939815" TITLE="Statistics on columns : property columns should be included in the resulting worksheet" ID="7" STARTDATE="38100.51899306" POS="1"/>
-        <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38121.56476852" TITLE="In SPC export dialog, add &quot;Append column name&quot; to base file name" ID="10" STARTDATE="38121.56445602" POS="2"/>
-        <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38121.56524306" TITLE="Insert a menu item &quot;Copy column name to property column&quot;" ID="11" STARTDATE="38121.56487269" POS="3"/>
-        <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38121.65223380" TITLE="SPC import: Column FileName and Column Time" ID="14" STARTDATE="38121.65185185" POS="4"/>
+        <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38121.65223380" TITLE="SPC import: Column FileName and Column Time" ID="14" STARTDATE="38121.65185185" POS="1"/>
+    </TASK>
+    <TASK STARTDATESTRING="5/16/2004" PRIORITY="5" LASTMOD="38123.86000000" TITLE="Solved TODO" ID="18" STARTDATE="38123.85984954" POS="4">
+        <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38123.86017361" TITLE="16.05.04 Insert a menu item &quot;Copy column name to property column&quot;" ID="11" STARTDATE="38121.56487269" POS="1"/>
+        <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38123.86090278" TITLE="16.05.04 Solved by first copy column name and then append this column: In SPC export dialog, add &quot;Append column name&quot; to base file name" ID="10" STARTDATE="38121.56445602" POS="2"/>
+        <TASK STARTDATESTRING="4/23/2004" PRIORITY="5" LASTMOD="38123.87096065" TITLE="16.05.04 Statistics on columns : property columns should be included in the resulting worksheet" ID="7" STARTDATE="38100.51899306" POS="3"/>
+        <TASK STARTDATESTRING="5/16/2004" PRIORITY="5" LASTMOD="38123.89128472" TITLE="16.05.04 Calculation and plot of PLS XLeverage added" ID="19" STARTDATE="38123.89093750" POS="4"/>
     </TASK>
 </TODOLIST>

@@ -1051,7 +1051,6 @@
                     RelPath = "data\templates\project\ILAsm\ConsoleProject.xpt"
                     BuildAction = "Content"
                 />
-                <Folder RelPath = "data\templates\project\Java\" />
                 <File
                     RelPath = "data\templates\project\Misc\BlankCombine.xpt"
                     BuildAction = "Content"

@@ -654,7 +654,6 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
-                <Folder RelPath = "GUI\" />
                 <File
                     RelPath = "Main\AboutDialog.cs"
                     SubType = "Form"
@@ -858,7 +857,6 @@
                     DependentUpon = "MWTreeView.cs"
                     BuildAction = "EmbeddedResource"
                 />
-                <Folder RelPath = "Main\MenuCommands\" />
                 <File
                     RelPath = "Main\Services\IOutputService.cs"
                     SubType = "Code"

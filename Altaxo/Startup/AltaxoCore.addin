@@ -424,6 +424,8 @@
 		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotXResiduals.Description}" class="Altaxo.Worksheet.Commands.PLSPlotXResidualsIndividually" />
     					<MenuItem id="PlotActualVersusPredictedY" label="${res:XML.MainMenu.PlotMenu.PLS.PlotActualVersusPredictedY}" icon="Icons.16x16.PlotScatter"
 		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotActualVersusPredictedY.Description}" class="Altaxo.Worksheet.Commands.PLSPlotPredictedVersusActualYIndividually" />
+    					<MenuItem id="PlotXLeverage" label="${res:XML.MainMenu.PlotMenu.PLS.PlotXLeverage}" icon="Icons.16x16.PlotScatter"
+		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotXLeverage.Description}" class="Altaxo.Worksheet.Commands.PLSPlotXLeverage" />
       		  </MenuItem>
       		</Conditional>
 			</MenuItem>
@@ -434,6 +436,8 @@
 					class="Altaxo.Worksheet.Commands.AddDataColumns" />
 				<MenuItem id="AddPropertyColumns" label="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns}"
 					description="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.AddPropertyColumns" />
+				<MenuItem id="CreatePropColOfColNames" label="${res:XML.MainMenu.WorksheetMenu.CreatePropertyColumnOfColumnNames}"
+					description="${res:XML.MainMenu.WorksheetMenu.CreatePropertyColumnOfColumnNames.Description}" class="Altaxo.Worksheet.Commands.CreatePropertyColumnOfColumnNames"/>
 				<MenuItem id="Rename" label="${res:XML.MainMenu.WorksheetMenu.Rename}" description="${res:XML.MainMenu.WorksheetMenu.Rename.Description}"
 					class="Altaxo.Worksheet.Commands.WorksheetRename" />
 				<MenuItem id="Duplicate" label="${res:XML.MainMenu.WorksheetMenu.Duplicate}" description="${res:XML.MainMenu.WorksheetMenu.Duplicate.Description}"

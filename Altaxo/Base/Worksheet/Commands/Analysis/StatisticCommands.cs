@@ -24,6 +24,7 @@ using System;
 
 using Altaxo.Collections;
 using Altaxo.Worksheet.GUI;
+using Altaxo.Data;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
@@ -130,6 +131,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
       {
         table = new Altaxo.Data.DataTable("Statistics of " + srctable.Name);
         table.DataColumns.Add(colCol,"Col",Altaxo.Data.ColumnKind.X);
+
+        // new : add a copy of all property columns; can be usefull
+        for(int i=0;i<srctable.PropertyColumnCount;i++)
+          table.DataColumns.Add((DataColumn)srctable.PropertyColumns[i].Clone(),srctable.PropertyColumns.GetColumnName(i),srctable.PropertyColumns.GetColumnKind(i),srctable.PropertyColumns.GetColumnGroup(i));
+
         table.DataColumns.Add(colMean,"Mean");
         table.DataColumns.Add(colSd,"Sd");
         table.DataColumns.Add(colSe,"Se");

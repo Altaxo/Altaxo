@@ -168,8 +168,6 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
-                <Folder RelPath = "Calc\FFT\" />
-                <Folder RelPath = "Calc\Fitting\" />
                 <File
                     RelPath = "Calc\Fourier\ArrayMath.cs"
                     SubType = "Code"
@@ -222,6 +220,16 @@
                 />
                 <File
                     RelPath = "Calc\LinearAlgebra\IVector.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\LinearAlgebra\JaggedArrayMath.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\LinearAlgebra\JaggedArrayMatrix.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

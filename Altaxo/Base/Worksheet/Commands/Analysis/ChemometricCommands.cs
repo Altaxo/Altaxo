@@ -385,6 +385,17 @@ namespace Altaxo.Worksheet.Commands.Analysis
     const string _YPredicted_ColumnName = "YPredicted";
     const string _YResidual_ColumnName   = "YResidual";
     const string _SpectralResidual_ColumnName = "SpectralResidual";
+    const string _XLeverage_ColumnName        = "XLeverage";
+
+
+    const int _NumberOfFactors_ColumnGroup = 4;
+
+    const int _MeasurementLabel_ColumnGroup = 5;
+
+    const int _YPredicted_ColumnGroup = 5;
+    const int _YResidual_ColumnGroup = 5;
+    const int _XLeverage_ColumnGroup = 5;
+
 
     public static string GetXLoad_ColumnName(int numberOfFactors)
     {
@@ -444,8 +455,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       return string.Format("{0}{1}.{2}",_SpectralResidual_ColumnName, whichY, numberOfFactors);
     }
 
-    const int _PredictedYColumnGroup = 5;
-    const int _ResidualYColumnGroup = 5;
+ 
 
 
     #endregion
@@ -995,7 +1005,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       { 
         xNumFactor[i]=i;
       }
-      table.DataColumns.Add(xNumFactor,"NumberOfFactors",Altaxo.Data.ColumnKind.X,4);
+      table.DataColumns.Add(xNumFactor,_NumberOfFactors_ColumnName,Altaxo.Data.ColumnKind.X,_NumberOfFactors_ColumnGroup);
 
       Altaxo.Data.DoubleColumn crosspresscol = new Altaxo.Data.DoubleColumn();
 
@@ -1024,7 +1034,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Data.DoubleColumn measurementLabel = new Altaxo.Data.DoubleColumn();
       for(int i=0;i<measurementIndices.Count;i++)
         measurementLabel[i] = measurementIndices[i];
-      table.DataColumns.Add(measurementLabel,_MeasurementLabel_ColumnName,Altaxo.Data.ColumnKind.Label,5);
+      table.DataColumns.Add(measurementLabel,_MeasurementLabel_ColumnName,Altaxo.Data.ColumnKind.Label,_MeasurementLabel_ColumnGroup);
 
       // now add the original Y-Columns
       for(int i=0;i<matrixY.Columns;i++)
@@ -1612,7 +1622,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         for(int i=0;i<predictedY.Rows;i++)
           ycolumn[i] = predictedY[i,whichY];
       
-        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,_PredictedYColumnGroup);
+        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,_YPredicted_ColumnGroup);
       }
 
       // subract the original y data
@@ -1628,7 +1638,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         for(int i=0;i<predictedY.Rows;i++)
           ycolumn[i] = predictedY[i,whichY];
       
-        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,_ResidualYColumnGroup);
+        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,_YResidual_ColumnGroup);
       }
 
 
@@ -1647,9 +1657,26 @@ namespace Altaxo.Worksheet.Commands.Analysis
           }
           ycolumn[i] = sum;
         }
-        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,_ResidualYColumnGroup);
+        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,_YResidual_ColumnGroup);
       }
       
+    }
+
+    public static void CalculateXLeverage(Altaxo.Data.DataTable table)
+    {
+      PLSContentMemento plsMemo = table.GetTableProperty("Content") as PLSContentMemento;
+
+      if(plsMemo==null)
+        throw new ArgumentException("Table does not contain a PLSContentMemento");
+
+      IMatrix matrixX = GetOriginalSpectra(plsMemo);
+    
+      MatrixMath.SingularValueDecomposition decomposition = MatrixMath.GetSingularValueDecomposition(matrixX);
+
+      Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+      col.CopyDataFrom(decomposition.HatDiagonal);
+
+      table.DataColumns.Add(col,_XLeverage_ColumnName,Altaxo.Data.ColumnKind.V,_XLeverage_ColumnGroup);
     }
 
     #endregion
@@ -1947,6 +1974,39 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Graph.GUI.IGraphController graphctrl = Current.ProjectService.CreateNewGraph();
       PlotCrossPRESSValue(table,graphctrl.Doc.Layers[0]);
     }
+
+
+    /// <summary>
+    /// Plots the x (spectral) leverage into a provided layer.
+    /// </summary>
+    /// <param name="table">The table of PLS output data.</param>
+    /// <param name="layer">The layer to plot into.</param>
+    public static void PlotXLeverage(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer)
+    {
+      string xcolname = _MeasurementLabel_ColumnName;
+      string ycolname = _XLeverage_ColumnName;
+      
+      if(table[ycolname]==null)
+      {
+        CalculateXLeverage(table);
+      }
+
+      PlotOnlyLabel(layer,table[xcolname],table[ycolname],table[_MeasurementLabel_ColumnName]);
+
+      layer.BottomAxisTitleString = string.Format("Measurement");
+      layer.LeftAxisTitleString   = string.Format("X leverage");
+    }
+
+    /// <summary>
+    /// Plots the x (spectral) leverage into a graph.
+    /// </summary>
+    /// <param name="table">The table with the PLS model data.</param>
+    public static void PlotXLeverage(Altaxo.Data.DataTable table)
+    {
+      Altaxo.Graph.GUI.IGraphController graphctrl = Current.ProjectService.CreateNewGraph();
+      PlotXLeverage(table,graphctrl.Doc.Layers[0]);
+    }
+
 
     #endregion
   
