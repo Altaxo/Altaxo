@@ -24,9 +24,9 @@ using System;
 
 namespace Altaxo.Calc.Regression.PLS
 {
-	/// <summary>
-	/// Determines how to do a Partial Least Squares Analysis.
-	/// </summary>
+  /// <summary>
+  /// Determines how to do a Partial Least Squares Analysis.
+  /// </summary>
   public struct PLSAnalysisOptions
   {
     /// <summary>

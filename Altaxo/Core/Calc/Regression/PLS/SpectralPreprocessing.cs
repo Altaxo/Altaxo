@@ -41,9 +41,9 @@ namespace Altaxo.Calc.Regression.PLS
   }
 
   #region MultiplicativeScatterCorrection (MSC)
-	/// <summary>
-	/// This class processes the spectra for influence of multiplicative scattering.
-	/// </summary>
+  /// <summary>
+  /// This class processes the spectra for influence of multiplicative scattering.
+  /// </summary>
   public class MultiplicativeScatterCorrection
   {
   
@@ -75,8 +75,6 @@ namespace Altaxo.Calc.Regression.PLS
     }
   }
   #endregion  
-
-
 
   #region StandardNormalVariate (SNV)
   /// <summary>
@@ -119,6 +117,40 @@ namespace Altaxo.Calc.Regression.PLS
   }
   #endregion  
 
+  #region SavitzkyGolayCorrection
+  /// <summary>
+  /// This class processes the spectra for influence of scattering.
+  /// </summary>
+  public class SavitzkyGolayCorrection
+  {
+    SavitzkyGolay _filter = null;
+
+    /// <summary>This sets up a Savitzky-Golay-Filtering for all spectra.</summary>
+    /// <param name="numberOfPoints">Number of points. Must be an odd number, otherwise it is rounded up.</param>
+    /// <param name="derivativeOrder">Order of derivative you want to obtain. Set 0 for smothing.</param>
+    /// <param name="polynomialOrder">Order of the fitting polynomial. Usual values are 2 or 4.</param>
+    public SavitzkyGolayCorrection(int numberOfPoints, int derivativeOrder, int polynomialOrder)
+    {
+      _filter = new SavitzkyGolay(numberOfPoints,derivativeOrder,polynomialOrder);
+    }
+    /// <summary>
+    /// Processes the spectra in matrix xMatrix.
+    /// </summary>
+    /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
+    /// <param name="xMean">Not used, since this processing sets xMean by itself (to zero).</param>
+    /// <param name="xScale">Not used, since the processing sets xScale by itself.</param>
+    public void Process(IMatrix xMatrix, IVector xMean, IVector xScale)
+    {
+      IVector helpervector = VectorMath.ToVector(new double[xMatrix.Columns]);
+      for(int n=0;n<xMatrix.Rows;n++)
+      {
+        IVector vector = MatrixMath.RowToVector(xMatrix,n);
+        _filter.Apply(vector,helpervector);
+        MatrixMath.SetRow(helpervector,xMatrix,n);
+      }
+    }
+  }
+  #endregion  
 
   #region Detrending
   /// <summary>
@@ -198,4 +230,39 @@ namespace Altaxo.Calc.Regression.PLS
   }
   #endregion  
 
+
+  #region EnsembleMeanAndScaleCorrection
+  /// <summary>
+  /// This class takes the ensemble mean of all spectra and then subtracts the mean from all spectra.
+  /// It then takes the variance of each wavelength slot and divides all spectral slots by their ensemble variance.
+  /// </summary>
+  public class EnsembleMeanAndScaleCorrection
+  {
+   bool _ensembleMean;
+    bool _ensembleScale;
+  
+    public EnsembleMeanAndScaleCorrection(bool ensembleMean, bool ensembleScale)
+    {
+      _ensembleMean = ensembleMean;
+      _ensembleScale = ensembleScale;
+    }
+    /// <summary>
+    /// Processes the spectra in matrix xMatrix.
+    /// </summary>
+    /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
+    /// <param name="xMean">Not used, since this processing sets xMean by itself (to zero).</param>
+    /// <param name="xScale">Not used, since the processing sets xScale by itself.</param>
+    public void Process(IMatrix xMatrix, IVector xMean, IVector xScale)
+    {
+      if(_ensembleMean)
+      {
+        MatrixMath.ColumnsToZeroMean(xMatrix, xMean);
+      }
+      if(_ensembleScale)
+      {
+        MatrixMath.ColumnsToZeroMeanAndUnitVariance(xMatrix,null,xScale);
+      }
+    }
+  }
+  #endregion  
 }

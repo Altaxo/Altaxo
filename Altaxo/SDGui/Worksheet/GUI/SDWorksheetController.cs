@@ -205,7 +205,7 @@ namespace Altaxo.Worksheet.GUI
       if(this.View is System.Windows.Forms.Control)
         ((System.Windows.Forms.Control)View).Focus();
     }
-		
+    
     /// <summary>
     /// Is called when the view content is deselected inside the window
     /// tab before the other window is selected. NOT when the windows is deselected.
@@ -282,7 +282,7 @@ namespace Altaxo.Worksheet.GUI
     {
       get { return false; }
     }
-		
+    
     public bool EnableRedo 
     {
       get{ return false; }

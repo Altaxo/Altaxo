@@ -24,7 +24,7 @@ using System;
 
 namespace Altaxo.Calc.Regression.PLS
 {
-	
+  
   /// <summary>
   /// Determines how to do the calculation of Cross Validated Predicted Error Sum of Squares.
   /// </summary>

@@ -203,5 +203,5 @@ namespace Altaxo.Calc.LinearAlgebra
     #endregion
   }
 
-	
+  
 }

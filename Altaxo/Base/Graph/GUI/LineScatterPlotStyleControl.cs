@@ -736,8 +736,8 @@ namespace Altaxo.Graph.GUI
 
     private void EhSymbolShape_SelectionChangeCommit(object sender, System.EventArgs e)
     {
-    if(null!=this.Controller)
-      Controller.EhView_SymbolShapeChanged(this.m_cbSymbolShape.SelectedIndex);
+      if(null!=this.Controller)
+        Controller.EhView_SymbolShapeChanged(this.m_cbSymbolShape.SelectedIndex);
     }
 
     public void InitializeFillColor(string[] arr, string sel)

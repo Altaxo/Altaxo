@@ -1152,6 +1152,21 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Worksheet\GUI\SpectralPreprocessingControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\SpectralPreprocessingControl.resx"
+                    DependentUpon = "SpectralPreprocessingControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\SpectralPreprocessingController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Worksheet\GUI\TransposeWorksheetControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

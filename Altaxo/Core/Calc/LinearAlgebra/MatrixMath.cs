@@ -1416,14 +1416,16 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This will center the matrix so that the mean of each column is null, and the variance of each column is one.
     /// </summary>
     /// <param name="a">The matrix where the columns should be centered and normalized to standard variance.</param>
-    /// <param name="meanvec">You can provide a matrix of dimension(1,a.Cols) where the mean row vector is stored, or null if not interested in this vector.</param>
-    /// <param name="scorevec">You can provide a matrix of dimension(1,a.Cols) where the inverse of the variance of the columns is stored, or null if not interested in this vector.</param>
+    /// <param name="meanvec">You can provide a vector of length(a.Cols) where the mean row vector is stored, or null if not interested in this vector.</param>
+    /// <param name="scalevec">You can provide a vector of length(a.Cols) where the inverse of the variance of the columns is stored, or null if not interested in this vector.</param>
     /// <remarks>Calling this function will change the matrix a to a column
     /// centered matrix. The original matrix data are lost.</remarks>
-    public static void ColumnsToZeroMeanAndUnitVariance(IMatrix a, IMatrix meanvec, IMatrix scorevec)
+    public static void ColumnsToZeroMeanAndUnitVariance(IMatrix a, IVector meanvec, IVector scalevec)
     {
-      if(null!=meanvec && (meanvec.Rows != 1 || meanvec.Columns != a.Columns))
-        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",meanvec.Rows,meanvec.Columns,1,a.Columns));
+      if(null!=meanvec && (meanvec.Length != a.Columns))
+        throw new ArithmeticException(string.Format("The provided resultant mean vector (actual dim({0})has not the expected length ({1})",meanvec.Length,a.Columns));
+      if(null!=scalevec && (scalevec.Length != a.Columns))
+        throw new ArithmeticException(string.Format("The provided resultant scale vector (actual dim({0})has not the expected length ({1})",scalevec.Length,a.Columns));
 
       for(int col = 0; col<a.Columns; col++)
       {
@@ -1444,11 +1446,12 @@ namespace Altaxo.Calc.LinearAlgebra
           a[row,col] = (a[row,col]-mean)*scor; // subtract the mean from every element in the column
         
         if(null!=meanvec)
-          meanvec[0,col] = mean;
-        if(null!=scorevec)
-          scorevec[0,col] = scor;
+          meanvec[col] = mean;
+        if(null!=scalevec)
+          scalevec[col] = scor;
       }
     }
+
 
     /// <summary>
     /// Returns the sum of the squares of all elements.
@@ -1637,6 +1640,22 @@ namespace Altaxo.Calc.LinearAlgebra
         dest[destRow,j]=src[srcRow,j];
     }
 
+    /// <summary>
+    /// Sets one row in the destination matrix equal to the vector provided by src.
+    /// </summary>
+    /// <param name="src">The source vector. Must be of same length as the number of columns of the destination matrix.</param>
+    /// <param name="dest">The destination matrix where to copy the horizontal vector into.</param>
+    /// <param name="destRow">The row in the destination matrix where to copy the vector to.</param>
+    public static void SetRow(IROVector src, IMatrix dest, int destRow)
+    {
+      if(destRow>=dest.Rows)
+        throw new ArithmeticException(string.Format("Try to set row {0} in the matrix with dim({1},{2}) is not allowed!",destRow,dest.Rows,dest.Columns));
+      if(dest.Columns != src.Length)
+        throw new ArithmeticException(string.Format("Number of columns of the matrix ({0}) not match number of elements of the vector ({1})!",dest.Columns,src.Length));
+    
+      for(int j=0;j<dest.Columns;j++)
+        dest[destRow,j]=src[j];
+    }
 
 
     /// <summary>

@@ -24,12 +24,12 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-	/// <summary>
-	/// This provides array math for a special case of matrices, so called jagged arrays.
-	/// </summary>
-	public class JaggedArrayMath
-	{
-		private JaggedArrayMath()	{}
+  /// <summary>
+  /// This provides array math for a special case of matrices, so called jagged arrays.
+  /// </summary>
+  public class JaggedArrayMath
+  {
+    private JaggedArrayMath() {}
 
     #region Creation
     /// <summary>
@@ -526,5 +526,5 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #endregion
 
-	}
+  }
 }

@@ -1663,7 +1663,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         throw new ArgumentException("Argument srctable may not be null");
      
       int group;
-     Altaxo.Data.INumericColumn col;
+      Altaxo.Data.INumericColumn col;
 
       if(spectrumIsRow)
       {

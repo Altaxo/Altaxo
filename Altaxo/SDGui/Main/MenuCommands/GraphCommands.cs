@@ -152,7 +152,7 @@ namespace Altaxo.Graph.Commands
     static extern IntPtr CopyEnhMetaFile(IntPtr hemfSrc, IntPtr hNULL);
     [DllImport("gdi32.dll")]
     static extern bool DeleteEnhMetaFile(IntPtr hemf);
-	
+  
 
     /// <summary>
     /// Microsoft Knowledge Base Article - 323530 PRB: Metafiles on Clipboard Are Not Visible to All Applications
@@ -195,7 +195,7 @@ namespace Altaxo.Graph.Commands
       //System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream,ipHdc);
       System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream,ipHdc,ctrl.Doc.PageBounds,MetafileFrameUnit.Point);
 
-//      System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile("CreateMetaFile.emf",ipHdc);
+      //      System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile("CreateMetaFile.emf",ipHdc);
       grfx.ReleaseHdc(ipHdc);
       grfx.Dispose();
       grfx = Graphics.FromImage(mf);

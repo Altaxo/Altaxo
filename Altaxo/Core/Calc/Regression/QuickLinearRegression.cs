@@ -24,12 +24,12 @@ using System;
 
 namespace Altaxo.Calc.Regression
 {
-	/// <summary>
-	/// Class for doing a quick and dirty regression of order 1 only returning intercept and slope.
-	/// Can not handle too big or too input values.
-	/// </summary>
-	public class QuickLinearRegression
-	{
+  /// <summary>
+  /// Class for doing a quick and dirty regression of order 1 only returning intercept and slope.
+  /// Can not handle too big or too input values.
+  /// </summary>
+  public class QuickLinearRegression
+  {
     double _n;
     double _sx;
     double _sxx;
@@ -78,5 +78,5 @@ namespace Altaxo.Calc.Regression
     {
       return _n*_sxx-_sx*_sx;
     }
-	}
+  }
 }

@@ -27,7 +27,7 @@ using Altaxo.Collections;
 
 namespace Altaxo.Calc.Regression.PLS
 {
-	/// <summary>
+  /// <summary>
   /// This class is for remembering the content of the PLS calibration and where to found the original data.
   /// </summary>
   public class PLSContentMemento

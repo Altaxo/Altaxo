@@ -346,7 +346,7 @@ namespace Altaxo.Graph.GUI
       m_SelectedSymbolShape = -1;
       for(int i=0;i<names.Length;i++)
         if(names[i]==name)
-        m_SelectedSymbolShape = i;
+          m_SelectedSymbolShape = i;
     }
 
     public void SetLineSymbolGapCondition(AbstractXYPlotStyle ps)

@@ -230,7 +230,7 @@ namespace Altaxo.Graph.GUI
     public void Selected()
     {
     }
-		
+    
     /// <summary>
     /// Is called when the view content is deselected inside the window
     /// tab before the other window is selected. NOT when the windows is deselected.
@@ -278,7 +278,7 @@ namespace Altaxo.Graph.GUI
         BeforeSave(this, e);
       }
     }
-	
+  
     /// <summary>
     /// Is called each time the name for the content has changed.
     /// </summary>
@@ -311,7 +311,7 @@ namespace Altaxo.Graph.GUI
     {
       get { return false; }
     }
-		
+    
     public bool EnableRedo 
     {
       get{ return false; }

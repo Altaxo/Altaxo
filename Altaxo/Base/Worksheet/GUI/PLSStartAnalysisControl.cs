@@ -197,8 +197,8 @@ namespace Altaxo.Worksheet.GUI
 
     private void edMaxNumFactors_Validated(object sender, System.EventArgs e)
     {
-    if(_controller!=null)
-         _controller.EhView_MaxNumberOfFactorsChanged((int)this.edMaxNumFactors.Value);
+      if(_controller!=null)
+        _controller.EhView_MaxNumberOfFactorsChanged((int)this.edMaxNumFactors.Value);
     }
     private void rbCrossValidationNone_CheckedChanged(object sender, System.EventArgs e)
     {

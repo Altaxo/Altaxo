@@ -26,13 +26,13 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression
 {
-	/// <summary>
-	/// SavitzkyGolay implements the calculation of the Savitzky-Golay filter coefficients and their application
-	/// to smoth data, and to calculate derivatives.
-	/// </summary>
-	/// <remarks>Ref.: "Numerical recipes in C", chapter 14.8</remarks>
-	public class SavitzkyGolay
-	{
+  /// <summary>
+  /// SavitzkyGolay implements the calculation of the Savitzky-Golay filter coefficients and their application
+  /// to smoth data, and to calculate derivatives.
+  /// </summary>
+  /// <remarks>Ref.: "Numerical recipes in C", chapter 14.8</remarks>
+  public class SavitzkyGolay
+  {
     /// <summary>
     /// Calculate Savitzky-Golay coefficients.
     /// </summary>
