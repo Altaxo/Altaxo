@@ -22,6 +22,9 @@ namespace Altaxo.Graph
 		private IGraphController m_Ctrl;
 
 		[Browsable(false)]
+		private	MainMenu m_Menu;
+
+		[Browsable(false)]
 		private ToolBar m_GraphToolsToolBar=null;
 
 		[Browsable(false)]
@@ -29,12 +32,6 @@ namespace Altaxo.Graph
 
 		[Browsable(false)]
 		private int        m_CachedCurrentLayer = -1;
-
-		public GraphView()
-			: this(null,null)
-		{
-		}
-
 
 		#region Serialization
 		public class SerializationSurrogate0 : IDeserializationSubstitute, System.Runtime.Serialization.ISerializationSurrogate, System.Runtime.Serialization.ISerializable, System.Runtime.Serialization.IDeserializationCallback
@@ -76,7 +73,7 @@ namespace Altaxo.Graph
 				// We create the view firstly without controller to have the creation finished
 				// before the controler is set
 				// otherwise we will have callbacks to not initialized variables
-				GraphView frm = new GraphView((System.Windows.Forms.Form)parent,null);
+				GraphView frm = new GraphView();
 				frm.Location = m_Location;
 				frm.Size = m_Size;
 			
@@ -93,35 +90,12 @@ namespace Altaxo.Graph
 		#endregion
 
 
-		public GraphView(System.Windows.Forms.Form parent, IGraphController ctrl)
+		public GraphView()
 		{
-			
 			//
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
-
-
-			// register event so to be informed when activated
-			if(parent is IMdiActivationEventSource)
-			{
-				((IMdiActivationEventSource)parent).MdiChildDeactivateBefore += new EventHandler(this.EhMdiChildDeactivate);
-				((IMdiActivationEventSource)parent).MdiChildActivateAfter += new EventHandler(this.EhMdiChildActivate);
-			}
-			else if(parent!=null)
-			{
-				parent.MdiChildActivate += new EventHandler(this.EhMdiChildActivate);
-				parent.MdiChildActivate += new EventHandler(this.EhMdiChildDeactivate);
-			}
-
-			// Monitor closed and closing events to intervent if neccessary
-			parent.Closing += new CancelEventHandler(this.EhGraphView_Closing);
-			parent.Closed += new EventHandler(this.EhGraphView_Closed);
-
-			// the setting of the graph controller should be left out until the end, since it calls back some functions of
-			// the view so that the view should be initialized before
-			m_Ctrl = ctrl;
-
 		}
 
 		/// <summary>
@@ -206,7 +180,7 @@ namespace Altaxo.Graph
 		}
 		#endregion
 
-
+	
 		
 		public IGraphController Controller
 		{
@@ -214,6 +188,38 @@ namespace Altaxo.Graph
 			set { m_Ctrl = value; }
 		}
 		
+		protected override void OnParentChanged(EventArgs e)
+		{
+			base.OnParentChanged (e);
+
+			if(m_Menu != null)
+				this.GraphMenu = m_Menu;
+
+			
+
+			// register event so to be informed when activated
+			if(this.Parent is IMdiActivationEventSource)
+			{
+				((IMdiActivationEventSource)this.Parent).MdiChildDeactivateBefore += new EventHandler(this.EhMdiChildDeactivate);
+				((IMdiActivationEventSource)this.Parent).MdiChildActivateAfter += new EventHandler(this.EhMdiChildActivate);
+			}
+			else if(this.Parent is System.Windows.Forms.Form)
+			{
+				((System.Windows.Forms.Form)this.Parent).MdiChildActivate += new EventHandler(this.EhMdiChildActivate);
+				((System.Windows.Forms.Form)this.Parent).MdiChildActivate += new EventHandler(this.EhMdiChildDeactivate);
+			}
+
+			if(this.ParentForm!=null)
+			{
+				// Monitor closed and closing events to intervent if neccessary
+				this.ParentForm.Closing += new CancelEventHandler(this.EhGraphView_Closing);
+				this.ParentForm.Closed += new EventHandler(this.EhGraphView_Closed);
+			}
+			// the setting of the graph controller should be left out until the end, since it calls back some functions of
+			// the view so that the view should be initialized before
+		}
+
+
 		private void EhLayerToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
 		{
 			if(null!=m_Ctrl)
@@ -349,12 +355,13 @@ namespace Altaxo.Graph
 		{
 			set
 			{
-				if(null!=this.ParentForm)
+				m_Menu = value;
+				if(null!=this.ParentForm && null!=m_Menu)
 				{
 					if(null!=this.ParentForm.Menu)
-						this.ParentForm.Menu.MergeMenu( value ); // do not clone the menu
+						this.ParentForm.Menu.MergeMenu( m_Menu ); // do not clone the menu
 					else
-						this.ParentForm.Menu = value; // do not clone the menu
+						this.ParentForm.Menu = m_Menu; // do not clone the menu
 				}
 			}
 		}

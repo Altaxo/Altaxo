@@ -63,7 +63,7 @@ namespace Altaxo.Worksheet
 			
 			// now create a new Graph with this plot associations
 
-			Altaxo.Graph.IGraphView gv = App.Current.CreateNewGraph();
+			Altaxo.Graph.IGraphController gc = App.Current.CreateNewGraph();
 
 
 			Altaxo.Graph.PlotGroup newPlotGroup = new Altaxo.Graph.PlotGroup(templatePlotGroupStyle);
@@ -73,7 +73,7 @@ namespace Altaxo.Worksheet
 				Altaxo.Graph.PlotItem pi = new Altaxo.Graph.XYDataPlot(pa[i],(Altaxo.Graph.LineScatterPlotStyle)templatePlotStyle.Clone());
 				newPlotGroup.Add(pi);
 			}
-			gv.Controller.Doc.Layers[0].PlotItems.Add(newPlotGroup);
+			gc.Doc.Layers[0].PlotItems.Add(newPlotGroup);
 		}
 
 
@@ -98,10 +98,10 @@ namespace Altaxo.Worksheet
 			
 			// now create a new Graph with this plot associations
 
-			Altaxo.Graph.IGraphView gv = App.Current.CreateNewGraph();
+			Altaxo.Graph.IGraphController gc = App.Current.CreateNewGraph();
 
 			Altaxo.Graph.PlotItem pi = new Altaxo.Graph.DensityImagePlotItem(assoc,plotStyle);
-			gv.Controller.Doc.Layers[0].PlotItems.Add(pi);
+			gc.Doc.Layers[0].PlotItems.Add(pi);
 
 		}
 

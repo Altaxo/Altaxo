@@ -634,6 +634,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\WorkbenchForm.resx"
+                    DependentUpon = "WorkbenchForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\WorkbenchViewController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\MWControls\EventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

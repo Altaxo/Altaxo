@@ -5,7 +5,7 @@ namespace Altaxo.Worksheet
 	/// <summary>
 	/// Summary description for TableLayoutList.
 	/// </summary>
-	public class TableLayoutList : Main.IDocumentNode
+	public class TableLayoutList : Main.IDocumentNode, Main.INamedObjectCollection
 	{
 		protected object m_DocumentParent;
 		protected System.Collections.Hashtable m_TableLayouts;
@@ -62,13 +62,17 @@ namespace Altaxo.Worksheet
 
 		public TableLayout this[System.Guid guid]
 		{
-			get { return (TableLayout)m_TableLayouts[guid]; }		
+			get { return (TableLayout)m_TableLayouts[guid.ToString()]; }		
+		}
+		public TableLayout this[string guidAsString]
+		{
+			get { return (TableLayout)m_TableLayouts[guidAsString]; }		
 		}
 
 		public void Add(TableLayout layout)
 		{
 			layout.ParentObject = this;
-			m_TableLayouts[layout.Guid] = layout;
+			m_TableLayouts[layout.Guid.ToString()] = layout;
 		}
 
 		#region "ICollection support"
@@ -121,6 +125,25 @@ namespace Altaxo.Worksheet
 			{
 				return "TableLayouts";
 			}
+		}
+
+		#endregion
+
+		#region INamedObjectCollection Members
+
+		public object GetChildObjectNamed(string name)
+		{
+			return this[name];
+		}
+
+		public string GetNameOfChildObject(object o)
+		{
+			TableLayout layout = o as TableLayout;
+			if(layout==null)
+				return null;
+			if(null==this[layout.Guid])
+				return null; // is not contained in this collection
+			return layout.Guid.ToString();
 		}
 
 		#endregion

@@ -16,7 +16,7 @@ namespace Altaxo.Worksheet
 	/// </summary>
 	[SerializationSurrogate(0,typeof(TableController.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class TableController : ITableController,  System.Runtime.Serialization.IDeserializationCallback
+	public class TableController : ITableController,  System.Runtime.Serialization.IDeserializationCallback, Gui.IWorkbenchContentController
 	{
 		public enum SelectionType { Nothing, DataRowSelection, DataColumnSelection, PropertyColumnSelection }
 
@@ -28,7 +28,7 @@ namespace Altaxo.Worksheet
 		/// </summary>
 		private object m_DeserializationSurrogate;
 
-		/// <summary>Holds the data table.</summary>
+		/// <summary>Holds the data table cached from the layout.</summary>
 		protected Altaxo.Data.DataTable m_Table;
 
 
@@ -270,16 +270,65 @@ namespace Altaxo.Worksheet
 
 
 				// restore the event chain to the Table
-				this.DataTable = this.m_Table;
+				//this.DataTable = this.m_Table;
 
 			}
 		}
+
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TableController),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			Main.DocumentPath	_PathToLayout;
+			TableController   _TableController;
+
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				TableController s = (TableController)obj;
+				info.AddValue("Layout",Main.DocumentPath.GetAbsolutePath(s.m_TableLayout));
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				
+				TableController s = null!=o ? (TableController)o : new TableController(null,true);
+				
+				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
+				surr._TableController = s;
+				surr._PathToLayout = (Main.DocumentPath)info.GetValue("Layout",s);
+				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+				
+				return s;
+			}
+
+			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+			{
+
+				if(null!=_PathToLayout)
+				{
+					object o = Main.DocumentPath.GetObject(_PathToLayout,documentRoot,_TableController);
+					if(o is Altaxo.Worksheet.TableLayout)
+					{
+						_TableController.TableLayout = o as Altaxo.Worksheet.TableLayout;
+						_PathToLayout=null;
+					}
+				}
+				
+				if(null==_PathToLayout)
+				{
+					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+				}
+			}
+		}
+
 		#endregion
 
 		#region Constructors
 
 
-
+		public TableController(Altaxo.Worksheet.TableLayout layout)
+		: this(layout, false)
+		{
+		}
 	
 		/// <summary>
 		/// Creates a TableController which shows the table data into the 
@@ -287,31 +336,16 @@ namespace Altaxo.Worksheet
 		/// </summary>
 		/// <param name="view">The view to show the graph into.</param>
 		/// <param name="table">The data table.</param>
-		public TableController(ITableView view, Altaxo.Data.DataTable table, Altaxo.Worksheet.TableLayout layout)
+		protected TableController(Altaxo.Worksheet.TableLayout layout, bool bDeserializationConstructor)
 		{
 			SetMemberVariablesToDefault();
-			m_View = view;
-			m_View.TableController = this;
-			m_View.TableViewWindow.Controls.Add(m_CellEditControl);
-
-			if(null!=table)
-				this.DataTable = table; // Using DataTable here wires the event chain also
-			else
-				throw new ArgumentNullException("Leaving the table null in constructor is not supported here");
 
 			if(null!=layout)
-				this.m_TableLayout = layout; // Using DataTable here wires the event chain also
-			else
+				this.TableLayout = layout; // Using DataTable here wires the event chain also
+			else if(!bDeserializationConstructor)
 				throw new ArgumentNullException("Leaving the layout null in constructor is not supported here");
 
 			this.InitializeMenu();
-
-
-			// Simulate a SizeChanged event 
-			this.EhView_TableAreaSizeChanged(new EventArgs());
-
-			// set the menu of this class
-			m_View.TableViewMenu = this.m_MainMenu;
 		}
 
 		#endregion // Constructors
@@ -1142,25 +1176,35 @@ namespace Altaxo.Worksheet
 			{
 				return this.m_Table;
 			}
-			set
+		}
+
+
+		public TableLayout TableLayout
+		{
+			get { return m_TableLayout; }
+			set 
 			{
-				if(null!=m_Table)
+				m_TableLayout = value; 
+			
+				Altaxo.Data.DataTable oldTable = m_Table;
+				Altaxo.Data.DataTable newTable = null==m_TableLayout ? null : m_TableLayout.DataTable;
+			
+				if(null!=oldTable)
 				{
-					m_Table.DataColumns.FireDataChanged -= new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnTableDataChanged);
-					m_Table.PropCols.FireDataChanged -= new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnPropertyDataChanged);
-					m_Table.TableNameChanged -= new EventHandler(this.OnTableNameChanged);
+					oldTable.DataColumns.FireDataChanged -= new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnTableDataChanged);
+					oldTable.PropCols.FireDataChanged -= new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnPropertyDataChanged);
+					oldTable.TableNameChanged -= new EventHandler(this.OnTableNameChanged);
 				}
 
-				m_Table = value;
-				if(null!=m_Table)
+				m_Table = newTable;
+				if(null!=newTable)
 				{
-					m_Table.DataColumns.FireDataChanged += new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnTableDataChanged);
-					m_Table.PropCols.FireDataChanged += new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnPropertyDataChanged);
-					m_Table.TableNameChanged -= new EventHandler(this.OnTableNameChanged);
+					newTable.DataColumns.FireDataChanged += new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnTableDataChanged);
+					newTable.PropCols.FireDataChanged += new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnPropertyDataChanged);
+					newTable.TableNameChanged += new EventHandler(this.OnTableNameChanged);
 					this.SetCachedNumberOfDataColumns();
 					this.SetCachedNumberOfDataRows();
 					this.SetCachedNumberOfPropertyColumns();
-
 				}
 				else // Data table is null
 				{
@@ -1171,8 +1215,8 @@ namespace Altaxo.Worksheet
 					SetScrollPositionTo(0,0);
 					this.View.TableAreaInvalidate();
 				}
-			}	
-		}
+			}
+		}		
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int TableAreaWidth
@@ -1397,7 +1441,8 @@ namespace Altaxo.Worksheet
 			if(this.VertScrollPos>=m_NumberOfTableRows)
 				VertScrollPos = m_NumberOfTableRows>0 ? m_NumberOfTableRows-1 : 0;
 
-			this.View.TableAreaInvalidate();
+			if(View!=null)
+				View.TableAreaInvalidate();
 		}
 
 		public void AdjustXScrollBarMaximum()
@@ -1410,7 +1455,8 @@ namespace Altaxo.Worksheet
 	
 			m_ColumnStyleCache.ForceUpdate(this);
 
-			this.View.TableAreaInvalidate();
+			if(View!=null)
+				View.TableAreaInvalidate();
 		}
 
 
@@ -1418,12 +1464,12 @@ namespace Altaxo.Worksheet
 		{
 			// ask for table dimensions, compare with cached dimensions
 			// and adjust the scroll bars appropriate
-			if(DataTable.DataColumns.ColumnCount != this.m_NumberOfTableCols)
+			int oldDataCols = this.m_NumberOfTableCols;
+			this.m_NumberOfTableCols = DataTable.DataColumns.ColumnCount;
+			if(this.m_NumberOfTableCols!=oldDataCols && View!=null)
 			{
-				this.m_NumberOfTableCols = DataTable.DataColumns.ColumnCount;
 				AdjustXScrollBarMaximum();
 			}
-
 		}
 
 
@@ -1431,11 +1477,11 @@ namespace Altaxo.Worksheet
 		{
 			// ask for table dimensions, compare with cached dimensions
 			// and adjust the scroll bars appropriate
-			int nOldDataRows = this.m_NumberOfTableRows;
+			int oldDataRows = this.m_NumberOfTableRows;
+			this.m_NumberOfTableRows = DataTable.DataColumns.RowCount;
 
-			if(DataTable.DataColumns.RowCount != nOldDataRows)
+			if(m_NumberOfTableRows != oldDataRows && View!=null)
 			{
-				this.m_NumberOfTableRows = DataTable.DataColumns.RowCount;
 				AdjustYScrollBarMaximum();
 			}
 
@@ -1445,16 +1491,15 @@ namespace Altaxo.Worksheet
 		{
 			// ask for table dimensions, compare with cached dimensions
 			// and adjust the scroll bars appropriate
-			int nOldPropCols = this.m_NumberOfPropertyCols;
-			
-			// if we was scrolled to the most upper position, we later scroll
-			// to the most upper position again
-			bool bUpperPosition = (nOldPropCols == -this.VertScrollPos);
-
+			int oldPropCols = this.m_NumberOfPropertyCols;
 			this.m_NumberOfPropertyCols=m_Table.PropCols.ColumnCount;
 
-			if(nOldPropCols!=this.m_NumberOfPropertyCols)
+			if(oldPropCols!=this.m_NumberOfPropertyCols && View!=null)
 			{
+				// if we was scrolled to the most upper position, we later scroll
+				// to the most upper position again
+				bool bUpperPosition = (oldPropCols == -this.VertScrollPos);
+
 				// Adjust Y ScrollBar Maximum();
 				AdjustYScrollBarMaximum();
 
@@ -1849,8 +1894,11 @@ namespace Altaxo.Worksheet
 
 					// The value of the ScrollBar in the view has an offset, since he
 					// can not have negative values;
-					this.View.TableViewVertScrollValue = value + this.TotalEnabledPropertyColumns;
-					this.View.TableAreaInvalidate();
+					if(View!=null)
+					{
+						this.View.TableViewVertScrollValue = value + this.TotalEnabledPropertyColumns;
+						this.View.TableAreaInvalidate();
+					}
 				}
 			}
 		}
@@ -1861,7 +1909,9 @@ namespace Altaxo.Worksheet
 			set 
 			{
 				this.m_VertScrollMax = value;
-				View.TableViewVertScrollMaximum = value + this.TotalEnabledPropertyColumns;
+				
+				if(View!=null)
+					View.TableViewVertScrollMaximum = value + this.TotalEnabledPropertyColumns;
 			}
 		}
 		
@@ -2094,10 +2144,14 @@ namespace Altaxo.Worksheet
 						this.ReadCellEditContent();
 						m_CellEditControl.Hide();
 					}
-
-					this.View.TableViewHorzScrollValue = value;
+					
+					if(View!=null)
+						View.TableViewHorzScrollValue = value;
+					
 					this.m_ColumnStyleCache.ForceUpdate(this);
-					this.View.TableAreaInvalidate();
+					
+					if(View!=null)
+					View.TableAreaInvalidate();
 				}
 			}
 		}
@@ -2108,7 +2162,8 @@ namespace Altaxo.Worksheet
 			set 
 			{
 				this.m_HorzScrollMax = value;
-				View.TableViewHorzScrollMaximum = value;
+				if(View!=null)
+					View.TableViewHorzScrollMaximum = value;
 			}
 		}
 
@@ -2287,9 +2342,6 @@ namespace Altaxo.Worksheet
 			}
 			set
 			{
-				if(value==null)
-					throw new ArgumentNullException("The view for this TableController must not be null!");
-
 				ITableView oldView = m_View;
 				m_View = value;
 
@@ -2300,20 +2352,28 @@ namespace Altaxo.Worksheet
 					oldView.TableViewWindow.Controls.Remove(m_CellEditControl);
 				}
 
-				m_View.TableController = this;
-				m_View.TableViewMenu = m_MainMenu;
-				m_View.TableViewWindow.Controls.Add(m_CellEditControl);
+				if(null!=m_View)
+				{
+					m_View.TableController = this;
+					m_View.TableViewMenu = m_MainMenu;
+					m_View.TableViewWindow.Controls.Add(m_CellEditControl);
 
 			
-				// Werte für gerade vorliegende Scrollpositionen und Scrollmaxima zum (neuen) View senden
+					// Werte für gerade vorliegende Scrollpositionen und Scrollmaxima zum (neuen) View senden
 			
-				this.VertScrollMaximum = this.m_VertScrollMax;
-				this.HorzScrollMaximum = this.m_HorzScrollMax;
+					this.VertScrollMaximum = this.m_VertScrollMax;
+					this.HorzScrollMaximum = this.m_HorzScrollMax;
 
-				this.VertScrollPos     = this.m_VertScrollPos;
-				this.HorzScrollPos     = this.m_HorzScrollPos;
+					this.VertScrollPos     = this.m_VertScrollPos;
+					this.HorzScrollPos     = this.m_HorzScrollPos;
 
+					// Simulate a SizeChanged event 
+					this.EhView_TableAreaSizeChanged(new EventArgs());
 
+					// set the menu of this class
+					m_View.TableViewMenu = this.m_MainMenu;
+
+				}
 			}
 		}
 
@@ -2646,7 +2706,7 @@ namespace Altaxo.Worksheet
 			DataTable.Dispose();
 
 			// we then remove the view from the list of windows
-			App.Current.Doc.RemoveWorksheet(this.View.TableViewForm);
+			App.Current.RemoveWorksheet(this);
 		}
 
 		public void EhView_Closing(System.ComponentModel.CancelEventArgs e)
@@ -2924,5 +2984,38 @@ namespace Altaxo.Worksheet
 		} // end of class ClickedCellInfo
 
 		#endregion Class ClickedCellInfo
+
+		#region IWorkbenchContentController Members
+
+		Altaxo.Gui.IWorkbenchContentView Altaxo.Gui.IWorkbenchContentController.View
+		{
+			get
+			{
+				return m_View;
+			}
+			set
+			{
+				this.View = value as Altaxo.Worksheet.ITableView;
+			}
+		}
+
+		protected	Gui.IWorkbenchWindowController m_ParentWorkbenchWindowController;
+		public Gui.IWorkbenchWindowController ParentWorkbenchWindowController 
+		{ 
+			get { return m_ParentWorkbenchWindowController; }
+			set { m_ParentWorkbenchWindowController = value; }
+		}
+
+		public void CloseView()
+		{
+			this.View = null;
+		}
+
+		public void CreateView()
+		{
+			this.View = new TableView();
+		}
+
+		#endregion
 	}
 }

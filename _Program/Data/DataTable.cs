@@ -170,7 +170,9 @@ namespace Altaxo.Data
 
 				s.m_TableName = info.GetString("Name");
 				s.m_DataColumns = (DataColumnCollection)info.GetValue("DataCols",s);
+				s.m_DataColumns.Parent = s;
 				s.m_PropertyColumns = (DataColumnCollection)info.GetValue("PropCols",s);
+				s.m_PropertyColumns.Parent = s;
 
 				return s;
 			}

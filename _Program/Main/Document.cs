@@ -110,10 +110,8 @@ namespace Altaxo
 		}
 
 
-		public void SaveToZippedFile(ZipOutputStream zippedStream)
+		public void SaveToZippedFile(ZipOutputStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
 		{
-			Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-
 			// first, we save all tables into the tables subdirectory
 			foreach(Altaxo.Data.DataTable table in this.m_DataSet)
 			{
@@ -147,6 +145,46 @@ namespace Altaxo
 				info.EndWriting();
 			}
 			
+		}
+
+
+		public void RestoreFromZippedFile(ZipFile zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info)
+		{
+			foreach(ZipEntry zipEntry in zipFile)
+			{
+				if(!zipEntry.IsDirectory && zipEntry.Name.StartsWith("Tables/"))
+				{
+					System.IO.Stream zipinpstream =zipFile.GetInputStream(zipEntry);
+					info.BeginReading(zipinpstream);
+					object readedobject = info.GetValue("Table",this);
+					if(readedobject is Altaxo.Data.DataTable)
+						this.m_DataSet.Add((Altaxo.Data.DataTable)readedobject);
+					info.EndReading();
+				
+				}
+				else if(!zipEntry.IsDirectory && zipEntry.Name.StartsWith("Graphs/"))
+				{
+					System.IO.Stream zipinpstream =zipFile.GetInputStream(zipEntry);
+					info.BeginReading(zipinpstream);
+					object readedobject = info.GetValue("Graph",this);
+					if(readedobject is Altaxo.Graph.GraphDocument)
+						this.m_GraphSet.Add((Altaxo.Graph.GraphDocument)readedobject);
+					info.EndReading();
+					
+				}
+				else if(!zipEntry.IsDirectory && zipEntry.Name.StartsWith("TableLayouts/"))
+				{
+					System.IO.Stream zipinpstream =zipFile.GetInputStream(zipEntry);
+					info.BeginReading(zipinpstream);
+					object readedobject = info.GetValue("TableLayout",this);
+					if(readedobject is Altaxo.Worksheet.TableLayout)
+						this.m_TableLayoutList.Add((Altaxo.Worksheet.TableLayout)readedobject);
+					info.EndReading();
+					
+				}
+			}
+
+			info.AnnounceDeserializationEnd(this);
 		}
 
 
@@ -211,84 +249,20 @@ namespace Altaxo
 			return dt1;
 		}
 
-		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parentForm, string worksheetName, bool bCreateDefaultColumns)
+		public Altaxo.Graph.GraphDocument CreateNewGraphDocument()
 		{
-			
-			Altaxo.Data.DataTable dt1 = CreateNewTable(worksheetName, bCreateDefaultColumns);
-			return CreateNewWorksheet(parentForm,dt1);
+			Altaxo.Graph.GraphDocument doc = new Altaxo.Graph.GraphDocument();
+			GraphSet.Add(doc);
+
+			return doc;
 		}
+
 	
-		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parent, bool bCreateDefaultColumns)
+
+
+		public Altaxo.Worksheet.TableLayout CreateNewTableLayout(Altaxo.Data.DataTable table)
 		{
-			return CreateNewWorksheet(parent, this.TableSet.FindNewTableName(),bCreateDefaultColumns);
-		}
-
-		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parent)
-		{
-			return CreateNewWorksheet(parent, this.TableSet.FindNewTableName(),false);
-		}
-
-
-		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parentForm, Altaxo.Data.DataTable table)
-		{
-			Altaxo.Gui.WorkbenchForm form = new Altaxo.Gui.WorkbenchForm(parentForm);
-			Altaxo.Worksheet.TableView view = new Altaxo.Worksheet.TableView(form,null);
-			form.Controls.Add(view);
-			view.Dock = System.Windows.Forms.DockStyle.Fill;
-			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(view,table,this.CreateNewTableLayout());
-			ctrl.View.TableViewForm.Text = table.TableName;
-			m_Worksheets.Add(ctrl.View.TableViewForm);
-			form.Show();
-			return ctrl.View;
-		}
-
-
-		public Altaxo.Graph.IGraphView CreateNewGraph(System.Windows.Forms.Form parentForm, Altaxo.Graph.GraphDocument graph)
-		{
-			Altaxo.Gui.WorkbenchForm form = new Altaxo.Gui.WorkbenchForm(parentForm);
-			Altaxo.Graph.GraphView view = new Altaxo.Graph.GraphView(form,null);
-			form.Controls.Add(view);
-			view.Dock = System.Windows.Forms.DockStyle.Fill;
-			
-			if(graph==null)
-				graph = new Altaxo.Graph.GraphDocument();
-
-			this.m_GraphSet.Add(graph);
-
-			Altaxo.Graph.GraphController ctrl = new Altaxo.Graph.GraphController(view,graph);
-			m_GraphForms.Add(ctrl.View.Form);
-			form.Show();
-			return ctrl.View;
-		}
-
-
-		public void AddGraph(Altaxo.Graph.IGraphView view)
-		{
-			m_GraphForms.Add(view.Form);
-		}
-
-
-		/// <summary>This will remove the GraphForm <paramref>frm</paramref> from the graph forms collection.</summary>
-		/// <param name="frm">The GraphForm to remove.</param>
-		/// <remarks>No exception is thrown if the Form frm is not a member of the graph forms collection.</remarks>
-		public void RemoveGraph(System.Windows.Forms.Form frm)
-		{
-			if(m_GraphForms.Contains(frm))
-				m_GraphForms.Remove(frm);
-		}
-
-		/// <summary>This will remove the Worksheet <paramref>frm</paramref> from the corresponding forms collection.</summary>
-		/// <param name="frm">The Worksheet to remove.</param>
-		/// <remarks>No exception is thrown if the Form frm is not a member of the worksheet forms collection.</remarks>
-		public void RemoveWorksheet(System.Windows.Forms.Form frm)
-		{
-			if(m_Worksheets.Contains(frm))
-				m_Worksheets.Remove(frm);
-		}
-
-		public Altaxo.Worksheet.TableLayout CreateNewTableLayout()
-		{
-			Altaxo.Worksheet.TableLayout layout = new Altaxo.Worksheet.TableLayout();
+			Altaxo.Worksheet.TableLayout layout = new Altaxo.Worksheet.TableLayout(table);
 			this.m_TableLayoutList.Add(layout);
 			return layout;
 		}
@@ -301,6 +275,8 @@ namespace Altaxo
 					return this.m_DataSet;
 				case "Graphs":
 					return this.m_GraphSet;
+				case "TableLayouts":
+					return this.m_TableLayoutList;
 			}
 			return null;
 		}

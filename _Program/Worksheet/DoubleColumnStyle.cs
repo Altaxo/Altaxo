@@ -67,6 +67,22 @@ namespace Altaxo.Worksheet
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DoubleColumnStyle),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				DoubleColumnStyle s = (DoubleColumnStyle)obj;
+				info.AddBaseValueEmbedded(s,typeof(DoubleColumnStyle).BaseType);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				DoubleColumnStyle s = null!=o ? (DoubleColumnStyle)o : new DoubleColumnStyle();
+				info.GetBaseValueEmbedded(s,typeof(DoubleColumnStyle).BaseType,parent);
+				return s;
+			}
+		}
+
 		public override void OnDeserialization(object obj)
 		{
 			base.OnDeserialization(obj);

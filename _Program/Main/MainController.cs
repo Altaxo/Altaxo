@@ -84,10 +84,10 @@ namespace Altaxo
 		/// </summary>
 		Altaxo.IMainController Controller { set; }
 
-	/// <summary>
-	/// Sets the main menu for the main window
-	/// </summary>
-	System.Windows.Forms.MainMenu MainViewMenu {	set; }
+		/// <summary>
+		/// Sets the main menu for the main window
+		/// </summary>
+		System.Windows.Forms.MainMenu MainViewMenu {	set; }
 	}
 
 	#endregion
@@ -139,6 +139,8 @@ namespace Altaxo
 
 		public IMainView m_View;
 
+		protected System.Collections.ArrayList m_WorkbenchViews = new System.Collections.ArrayList();
+
 		MainMenu m_MainMenu;
 
 		private System.Windows.Forms.PageSetupDialog m_PageSetupDialog;
@@ -153,6 +155,34 @@ namespace Altaxo
 		/// </summary>
 		private bool m_ApplicationIsClosing;
 
+		#region Serialization
+		
+		public class MainControllerMemento
+		{
+			public MainControllerMemento(MainController ctrl)
+			{
+			}
+			public MainControllerMemento()
+			{
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MainControllerMemento),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				MainControllerMemento s = (MainControllerMemento)obj;
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				
+				MainControllerMemento s = null!=o ? (MainControllerMemento)o : new MainControllerMemento();
+				return s;
+			}
+		}
+
+		#endregion
 	
 		public MainController(IMainView view, AltaxoDocument doc)
 		{
@@ -180,10 +210,10 @@ namespace Altaxo
 
 
 			// wir konstruieren zu jeder Tabelle im Dokument ein GrafTabView
-			Doc.CreateNewWorksheet(View.Form);
+			CreateNewWorksheet();
 
 			// we construct a empty graph by default
-			Doc.CreateNewGraph(View.Form,null);
+			CreateNewGraph(null);
 		}
 
 		#region Menu Definition
@@ -351,12 +381,12 @@ namespace Altaxo
 
 		private void EhMenuFileNewWorksheet_OnClick(object sender, System.EventArgs e)
 		{
-			m_Doc.CreateNewWorksheet(View.Form);
+			CreateNewWorksheet();
 		}
 
 		private void EhMenuFileNewGraph_OnClick(object sender, System.EventArgs e)
 		{
-			m_Doc.CreateNewGraph(View.Form,null);
+			CreateNewGraph(null);
 		}
 
 	
@@ -392,7 +422,7 @@ namespace Altaxo
 						this.Doc.TableSet.Add(table);
 						info.AnnounceDeserializationEnd(this.Doc); // fire the event to resolve path references
 						
-						this.Doc.CreateNewWorksheet(this.View.Form,table);
+						CreateNewWorksheet(table);
 					}
 					else if(deserObject is Altaxo.Graph.GraphDocument)
 					{
@@ -405,7 +435,7 @@ namespace Altaxo
 						this.Doc.GraphSet.Add(graph);
 						info.AnnounceDeserializationEnd(this.Doc); // fire the event to resolve path references in the graph
 
-						this.Doc.CreateNewGraph(this.View.Form, graph);
+						CreateNewGraph(graph);
 					}
 
 				}
@@ -418,7 +448,7 @@ namespace Altaxo
 			OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
 			openFileDialog1.InitialDirectory = "c:\\temp\\" ;
-			openFileDialog1.Filter = "txt files (*.axo)|*.axo|All files (*.*)|*.*" ;
+			openFileDialog1.Filter = "txt files (*.axo)|*.axo|Altaxo zip files (*.zip)|*.zip|All files (*.*)|*.*" ;
 			openFileDialog1.FilterIndex = 2 ;
 			openFileDialog1.RestoreDirectory = true ;
 
@@ -426,72 +456,87 @@ namespace Altaxo
 			{
 				if((myStream = openFileDialog1.OpenFile())!= null)
 				{
-					//					System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Soap.SoapFormatter();
-					System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-
-					System.Runtime.Serialization.SurrogateSelector ss = new System.Runtime.Serialization.SurrogateSelector();
-					AltaxoStreamingContext additionalContext = new AltaxoStreamingContext();
-					additionalContext.m_SurrogateSelector = ss;
-					System.Runtime.Serialization.StreamingContext context = new System.Runtime.Serialization.StreamingContext(System.Runtime.Serialization.StreamingContextStates.All,additionalContext);
-					formatter.Context = context;
-
-					System.Collections.Hashtable versionList = (System.Collections.Hashtable)(formatter.Deserialize(myStream));
-
-					System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
-					foreach(Assembly assembly in assemblies)
+					if(openFileDialog1.FilterIndex==1)
 					{
-						// test if the assembly supports Serialization
-						Attribute suppVersioning = Attribute.GetCustomAttribute(assembly,typeof(Altaxo.Serialization.SupportsSerializationVersioningAttribute));
-						if(null==suppVersioning)
-							continue; // this assembly don't support this, so skip it
+						//					System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Soap.SoapFormatter();
+						System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 
-						Type[] definedtypes = assembly.GetTypes();
-						foreach(Type definedtype in definedtypes)
+						System.Runtime.Serialization.SurrogateSelector ss = new System.Runtime.Serialization.SurrogateSelector();
+						AltaxoStreamingContext additionalContext = new AltaxoStreamingContext();
+						additionalContext.m_SurrogateSelector = ss;
+						System.Runtime.Serialization.StreamingContext context = new System.Runtime.Serialization.StreamingContext(System.Runtime.Serialization.StreamingContextStates.All,additionalContext);
+						formatter.Context = context;
+
+						System.Collections.Hashtable versionList = (System.Collections.Hashtable)(formatter.Deserialize(myStream));
+
+						System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+						foreach(Assembly assembly in assemblies)
 						{
-							Attribute[] attributes = Attribute.GetCustomAttributes(definedtype,typeof(SerializationSurrogateAttribute));
-							// compare with assembly version and search for the serialization
-							// surrogate with the highest version where the version is lower than the
-							// file version
-							SerializationSurrogateAttribute bestattribute=null;
-							int bestversion=-1;
-							object hashversion = versionList[definedtype.FullName];
-							int objversion = null==hashversion ? 0 : (int)hashversion;
-							foreach(SerializationSurrogateAttribute att in attributes)
+							// test if the assembly supports Serialization
+							Attribute suppVersioning = Attribute.GetCustomAttribute(assembly,typeof(Altaxo.Serialization.SupportsSerializationVersioningAttribute));
+							if(null==suppVersioning)
+								continue; // this assembly don't support this, so skip it
+
+							Type[] definedtypes = assembly.GetTypes();
+							foreach(Type definedtype in definedtypes)
 							{
-								if(att.Version<=objversion && att.Version>bestversion)
+								Attribute[] attributes = Attribute.GetCustomAttributes(definedtype,typeof(SerializationSurrogateAttribute));
+								// compare with assembly version and search for the serialization
+								// surrogate with the highest version where the version is lower than the
+								// file version
+								SerializationSurrogateAttribute bestattribute=null;
+								int bestversion=-1;
+								object hashversion = versionList[definedtype.FullName];
+								int objversion = null==hashversion ? 0 : (int)hashversion;
+								foreach(SerializationSurrogateAttribute att in attributes)
 								{
-									bestattribute = att;
-									bestversion = att.Version;
+									if(att.Version<=objversion && att.Version>bestversion)
+									{
+										bestattribute = att;
+										bestversion = att.Version;
+									}
+								}
+								if(null!=bestattribute)
+								{
+									ss.AddSurrogate(definedtype, formatter.Context, bestattribute.Surrogate);
 								}
 							}
-							if(null!=bestattribute)
-							{
-								ss.AddSurrogate(definedtype, formatter.Context, bestattribute.Surrogate);
-							}
 						}
-					}
 
 			
-					/*
-					AltaxoAdditionalContext additionalContext = new AltaxoAdditionalContext();
-					additionalContext.m_SurrogateSelector = ss;
-					additionalContext.m_FormatterType = formatter.GetType();
-			*/
+						/*
+						AltaxoAdditionalContext additionalContext = new AltaxoAdditionalContext();
+						additionalContext.m_SurrogateSelector = ss;
+						additionalContext.m_FormatterType = formatter.GetType();
+				*/
 						
 					
-					formatter.SurrogateSelector=ss;
+						formatter.SurrogateSelector=ss;
 					
-					object obj = formatter.Deserialize(myStream);
-					m_Doc = (AltaxoDocument)obj;
-					m_Doc.OnDeserialization(new DeserializationFinisher(this));
-					System.Diagnostics.Trace.WriteLine("Deserialization of AltaxoDocument now completely finished.");
-					// document.RestoreWindowsAfterDeserialization();
-					// Code to write the stream goes here.
+						object obj = formatter.Deserialize(myStream);
+						m_Doc = (AltaxoDocument)obj;
+						m_Doc.OnDeserialization(new DeserializationFinisher(this));
+						System.Diagnostics.Trace.WriteLine("Deserialization of AltaxoDocument now completely finished.");
+						// document.RestoreWindowsAfterDeserialization();
+						// Code to write the stream goes here.
 
-					myStream.Close();
+						myStream.Close();
+					}
+					else if(openFileDialog1.FilterIndex==2)
+					{
+						ZipFile zipFile = new ZipFile(myStream);
+						Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
+						AltaxoDocument newdocument = new AltaxoDocument();
+						newdocument.RestoreFromZippedFile(zipFile,info);
+
+						m_Doc = newdocument;
+						this.RemoveAllWorkbenchViews();
+						this.RestoreWindowStateFromZippedFile(zipFile,info,m_Doc);
+						
+						myStream.Close();
+					} // Filterindex=2
 				}
 			}
-
 		}
 
 
@@ -578,7 +623,7 @@ namespace Altaxo
 			dlg.ShowDialog(View.Form);
 		}
 
-	#endregion
+		#endregion
 
 		#region Properties
 		public  System.Windows.Forms.PageSetupDialog PageSetupDialog
@@ -687,8 +732,10 @@ namespace Altaxo
 							this.SaveDocument(myStream);
 						else
 						{
+							Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
 							ZipOutputStream zippedStream = new ZipOutputStream(myStream);
-							this.Doc.SaveToZippedFile(zippedStream);
+							this.Doc.SaveToZippedFile(zippedStream, info);
+							this.SaveWindowStateToZippedFile(zippedStream, info);
 							zippedStream.Close();
 						}
 						bRet = false;; // now saving was successfull, we can close the form
@@ -719,82 +766,234 @@ namespace Altaxo
 		}
 
 
+		public void SaveWindowStateToZippedFile(ZipOutputStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
+		{
+		
+		{
+			// first, we save our own state 
+			ZipEntry ZipEntry = new ZipEntry("Workbench/MainWindow.xml");
+			zippedStream.PutNextEntry(ZipEntry);
+			zippedStream.SetLevel(0);
+			info.BeginWriting(zippedStream);
+			info.AddValue("MainWindow",new MainControllerMemento(this));
+			info.EndWriting();
+		}
+
+			// second, we save all workbench windows into the Workbench/Views 
+			int i=0;
+			foreach(Gui.IWorkbenchWindowController ctrl in this.m_WorkbenchViews)
+			{
+				i++;
+				ZipEntry ZipEntry = new ZipEntry("Workbench/Views/View"+i.ToString()+".xml");
+				zippedStream.PutNextEntry(ZipEntry);
+				zippedStream.SetLevel(0);
+				info.BeginWriting(zippedStream);
+				info.AddValue("WorkbenchViewContent",ctrl.Content);
+				info.EndWriting();
+			}
+		}
+
+
+		public void RestoreWindowStateFromZippedFile(ZipFile zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info, AltaxoDocument restoredDoc)
+		{
+			System.Collections.ArrayList restoredControllers = new System.Collections.ArrayList();
+			foreach(ZipEntry zipEntry in zipFile)
+			{
+				if(!zipEntry.IsDirectory && zipEntry.Name.StartsWith("Workbench/Views/"))
+				{
+					System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
+					info.BeginReading(zipinpstream);
+					object readedobject = info.GetValue("Table",this);
+					if(readedobject is Gui.IWorkbenchContentController)
+						restoredControllers.Add(readedobject);
+					info.EndReading();
+				}
+			}
+
+			info.AnnounceDeserializationEnd(restoredDoc);
+			info.AnnounceDeserializationEnd(this);
+
+			// now give all restored controllers a view and show them in the Main view
+
+			foreach(Gui.IWorkbenchContentController ctrl in restoredControllers)
+			{
+				ctrl.CreateView();
+				if(ctrl.View != null)
+				{
+					this.ShowContentInNewWorkbenchWindow(ctrl);
+				}
+			}
+
+		}
+
 		protected void SaveDocument(System.IO.Stream myStream)
 		{
-					System.Collections.Hashtable versionList = new System.Collections.Hashtable();
-					//					System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Soap.SoapFormatter();
-					System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-					System.Runtime.Serialization.SurrogateSelector ss = new System.Runtime.Serialization.SurrogateSelector();
-					AltaxoStreamingContext additionalContext = new AltaxoStreamingContext();
-					additionalContext.m_SurrogateSelector = ss;
-					System.Runtime.Serialization.StreamingContext context = new System.Runtime.Serialization.StreamingContext(System.Runtime.Serialization.StreamingContextStates.All,additionalContext);
-					formatter.Context = context;
+			System.Collections.Hashtable versionList = new System.Collections.Hashtable();
+			//					System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Soap.SoapFormatter();
+			System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+			System.Runtime.Serialization.SurrogateSelector ss = new System.Runtime.Serialization.SurrogateSelector();
+			AltaxoStreamingContext additionalContext = new AltaxoStreamingContext();
+			additionalContext.m_SurrogateSelector = ss;
+			System.Runtime.Serialization.StreamingContext context = new System.Runtime.Serialization.StreamingContext(System.Runtime.Serialization.StreamingContextStates.All,additionalContext);
+			formatter.Context = context;
 
 
-					System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
-					foreach(Assembly assembly in assemblies)
-					{
-						// test if the assembly supports Serialization
-						Attribute suppVersioning = Attribute.GetCustomAttribute(assembly,typeof(Altaxo.Serialization.SupportsSerializationVersioningAttribute));
-						if(null==suppVersioning)
-							continue; // this assembly don't support this, so skip it
+			System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+			foreach(Assembly assembly in assemblies)
+			{
+				// test if the assembly supports Serialization
+				Attribute suppVersioning = Attribute.GetCustomAttribute(assembly,typeof(Altaxo.Serialization.SupportsSerializationVersioningAttribute));
+				if(null==suppVersioning)
+					continue; // this assembly don't support this, so skip it
 				
-						Type[] definedtypes = assembly.GetTypes();
-						foreach(Type definedtype in definedtypes)
+				Type[] definedtypes = assembly.GetTypes();
+				foreach(Type definedtype in definedtypes)
+				{
+					SerializationVersionAttribute versionattribute = (SerializationVersionAttribute)Attribute.GetCustomAttribute(definedtype,typeof(SerializationVersionAttribute));
+							
+					if(null!=versionattribute)
+						versionList.Add(definedtype.FullName,versionattribute.Version);
+					
+					Attribute[] surrogateattributes = Attribute.GetCustomAttributes(definedtype,typeof(SerializationSurrogateAttribute));
+					// compare with assembly version and search for the serialization
+					// surrogate with the highest version where the version is lower than the
+					// file version
+					SerializationSurrogateAttribute bestattribute=null;
+					int bestversion=-1;
+					int objversion = null==versionattribute ? 0 : versionattribute.Version;
+					foreach(SerializationSurrogateAttribute att in surrogateattributes)
+					{
+						if(att.Version<=objversion && att.Version>bestversion)
 						{
-							SerializationVersionAttribute versionattribute = (SerializationVersionAttribute)Attribute.GetCustomAttribute(definedtype,typeof(SerializationVersionAttribute));
-							
-							if(null!=versionattribute)
-								versionList.Add(definedtype.FullName,versionattribute.Version);
-					
-							Attribute[] surrogateattributes = Attribute.GetCustomAttributes(definedtype,typeof(SerializationSurrogateAttribute));
-							// compare with assembly version and search for the serialization
-							// surrogate with the highest version where the version is lower than the
-							// file version
-							SerializationSurrogateAttribute bestattribute=null;
-							int bestversion=-1;
-							int objversion = null==versionattribute ? 0 : versionattribute.Version;
-							foreach(SerializationSurrogateAttribute att in surrogateattributes)
-							{
-								if(att.Version<=objversion && att.Version>bestversion)
-								{
-									bestattribute = att;
-									bestversion = att.Version;
-								}
-							}
-							if(null!=bestattribute)
-							{
-								ss.AddSurrogate(definedtype,formatter.Context, bestattribute.Surrogate);
-							}
-						} // end foreach type
-					} // end foreach assembly 
+							bestattribute = att;
+							bestversion = att.Version;
+						}
+					}
+					if(null!=bestattribute)
+					{
+						ss.AddSurrogate(definedtype,formatter.Context, bestattribute.Surrogate);
+					}
+				} // end foreach type
+			} // end foreach assembly 
 					
 							
-					formatter.SurrogateSelector=ss;
-					formatter.Serialize(myStream,versionList);
-					formatter.Serialize(myStream, m_Doc);
-					// Code to write the stream goes here.
-					myStream.Close();
+			formatter.SurrogateSelector=ss;
+			formatter.Serialize(myStream,versionList);
+			formatter.Serialize(myStream, m_Doc);
+			// Code to write the stream goes here.
+			myStream.Close();
 		} // end method
 
 
-
-		public Altaxo.Worksheet.ITableView CreateNewWorksheet(bool bCreateDefault)
+		public Altaxo.Worksheet.ITableController CreateNewWorksheet(string worksheetName, bool bCreateDefaultColumns)
 		{
-			return Doc.CreateNewWorksheet(View.Form, bCreateDefault);
+			
+			Altaxo.Data.DataTable dt1 = this.Doc.CreateNewTable(worksheetName, bCreateDefaultColumns);
+			return CreateNewWorksheet(dt1);
 		}
-		public Altaxo.Worksheet.ITableView CreateNewWorksheet(Altaxo.Data.DataTable table)
+	
+		public Altaxo.Worksheet.ITableController CreateNewWorksheet(bool bCreateDefaultColumns)
 		{
-			return Doc.CreateNewWorksheet(View.Form, table);
-		}
-
-		public Altaxo.Graph.IGraphView CreateNewGraph()
-		{
-			return Doc.CreateNewGraph(View.Form,null);
+			return CreateNewWorksheet(this.Doc.TableSet.FindNewTableName(),bCreateDefaultColumns);
 		}
 
+		public Altaxo.Worksheet.ITableController CreateNewWorksheet()
+		{
+			return CreateNewWorksheet(this.Doc.TableSet.FindNewTableName(),false);
+		}
 
+
+		public Altaxo.Worksheet.ITableController CreateNewWorksheet(Altaxo.Data.DataTable table)
+		{
+			Altaxo.Gui.IWorkbenchWindowController wbv_controller = new Altaxo.Gui.WorkbenchWindowController();
+			Altaxo.Gui.WorkbenchForm wbvform = new Altaxo.Gui.WorkbenchForm(this.View.Form);
+			wbv_controller.View = wbvform;
+
+			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(this.Doc.CreateNewTableLayout(table));
+			Altaxo.Worksheet.TableView view = new Altaxo.Worksheet.TableView();
+			ctrl.View = view;
+
+			wbv_controller.Content = ctrl;
+			
+			this.m_WorkbenchViews.Add(wbv_controller);
+			wbvform.Show();
+			return ctrl;
+		}
+
+	
+
+		public Altaxo.Graph.IGraphController CreateNewGraph()
+		{
+			return CreateNewGraph(Doc.CreateNewGraphDocument());
+		}
+
+	
+
+		public Altaxo.Graph.IGraphController CreateNewGraph(Altaxo.Graph.GraphDocument graph)
+		{
+			Altaxo.Gui.IWorkbenchWindowController wbv_controller = new Altaxo.Gui.WorkbenchWindowController();
+			Altaxo.Gui.WorkbenchForm wbvform = new Altaxo.Gui.WorkbenchForm(this.View.Form);
+			wbv_controller.View = wbvform;
+
+			if(graph==null)
+				graph = this.Doc.CreateNewGraphDocument();
+
+			Altaxo.Graph.GraphController ctrl = new Altaxo.Graph.GraphController(graph);
+			Altaxo.Graph.GraphView view = new Altaxo.Graph.GraphView();
+			ctrl.View = view;
+
+			
+			wbv_controller.Content = ctrl;
+
+			this.m_WorkbenchViews.Add(wbv_controller);
+			wbvform.Show();
+			return ctrl;
+		}
+
+
+		public void ShowContentInNewWorkbenchWindow(Gui.IWorkbenchContentController contentController)
+		{
+			Altaxo.Gui.IWorkbenchWindowController wbv_controller = new Altaxo.Gui.WorkbenchWindowController();
+			Altaxo.Gui.WorkbenchForm wbvform = new Altaxo.Gui.WorkbenchForm(this.View.Form);
+			wbv_controller.View = wbvform;
+
+				
+			wbv_controller.Content = contentController;
+			this.m_WorkbenchViews.Add(wbv_controller);
+			wbvform.Show();
+		}
+
+		/// <summary>This will remove the GraphForm <paramref>frm</paramref> from the graph forms collection.</summary>
+		/// <param name="frm">The GraphForm to remove.</param>
+		/// <remarks>No exception is thrown if the Form frm is not a member of the graph forms collection.</remarks>
+		public void RemoveGraph(Altaxo.Graph.GraphController ctrl)
+		{
+			if(this.m_WorkbenchViews.Contains(ctrl))
+				this.m_WorkbenchViews.Remove(ctrl);
+			else if(ctrl.ParentWorkbenchWindowController !=null && this.m_WorkbenchViews.Contains(ctrl.ParentWorkbenchWindowController))
+				this.m_WorkbenchViews.Remove(ctrl.ParentWorkbenchWindowController);
+		}
+
+		/// <summary>This will remove the Worksheet <paramref>frm</paramref> from the corresponding forms collection.</summary>
+		/// <param name="frm">The Worksheet to remove.</param>
+		/// <remarks>No exception is thrown if the Form frm is not a member of the worksheet forms collection.</remarks>
+		public void RemoveWorksheet(Altaxo.Worksheet.TableController ctrl)
+		{
+			if(this.m_WorkbenchViews.Contains(ctrl))
+				this.m_WorkbenchViews.Remove(ctrl);
+			else if(ctrl.ParentWorkbenchWindowController !=null && this.m_WorkbenchViews.Contains(ctrl.ParentWorkbenchWindowController))
+				this.m_WorkbenchViews.Remove(ctrl.ParentWorkbenchWindowController);
+		}
+
+		public void RemoveAllWorkbenchViews()
+		{
+			foreach(Gui.IWorkbenchWindowController ctrl in this.m_WorkbenchViews)
+				ctrl.CloseView();
+
+			this.m_WorkbenchViews.Clear();
+		}
 	}
+
 
 
 	class App

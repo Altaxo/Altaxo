@@ -9,8 +9,9 @@ namespace Altaxo.Gui
 	/// </summary>
 	[SerializationSurrogate(0,typeof(WorkbenchForm.SerializationSurrogate0))]
 	[SerializationVersion(0,"Initial version.")]
-	public class WorkbenchForm : System.Windows.Forms.Form, IMdiActivationEventSource
+	public class WorkbenchForm : System.Windows.Forms.Form, IMdiActivationEventSource, IWorkbenchWindowView
 	{
+		IWorkbenchWindowController m_Controller;
 
 		#region Serialization
 		public class SerializationSurrogate0 : IDeserializationSubstitute, System.Runtime.Serialization.ISerializationSurrogate, System.Runtime.Serialization.ISerializable, System.Runtime.Serialization.IDeserializationCallback
@@ -126,6 +127,40 @@ namespace Altaxo.Gui
 
 		public event System.EventHandler MdiChildActivateAfter;
 
+		#endregion
+
+		#region IWorkbenchView Members
+
+		public Form Form
+		{
+			get
+			{
+				return this;
+			}
+		}
+
+		public IWorkbenchWindowController Controller
+		{
+			get
+			{
+				return m_Controller;
+			}
+			set
+			{
+				m_Controller = value;
+			}
+		}
+
+		public void SetChild(IWorkbenchContentView child)
+		{
+			System.Windows.Forms.Control fc = (System.Windows.Forms.Control)child;
+			if(this.Controls.Count>0)
+				this.Controls.Clear();
+
+			this.Controls.Add(fc);
+			fc.Dock = System.Windows.Forms.DockStyle.Fill;
+		}
+	
 		#endregion
 	}
 }

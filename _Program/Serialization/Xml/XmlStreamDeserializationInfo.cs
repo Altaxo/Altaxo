@@ -37,7 +37,7 @@ namespace Altaxo.Serialization.Xml
 
 		public void EndReading()
 		{
-			m_Reader.Close();
+			// m_Reader.Close(); Do not close the reader, since the underlying stream is closed too then..., this will not work if reading zip files
 			m_Reader=null;
 		}
 

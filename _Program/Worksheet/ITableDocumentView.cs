@@ -25,7 +25,7 @@ namespace Altaxo.Worksheet
 	/// one Form or one control can implement more than one view. For instance a form
 	/// that want to show a table and a graph has to implement ITableView <b>and</b>
 	/// IGraphView.</remarks>
-	public interface ITableView
+	public interface ITableView : Gui.IWorkbenchContentView
 	{
 		/// <summary>Returns the windows of this view. In case the view is a Form, it returns the form. But if the view is only a control
 		/// on a form, it returns the control window.

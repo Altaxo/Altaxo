@@ -34,7 +34,11 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(GraphController.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class GraphController : IGraphController,  System.Runtime.Serialization.IDeserializationCallback
+	public class GraphController 
+		:
+		IGraphController,
+		System.Runtime.Serialization.IDeserializationCallback,
+		Gui.IWorkbenchContentController
 	{
 
 		#region Member variables
@@ -153,6 +157,48 @@ namespace Altaxo.Graph
 			}
 		}
 
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphController),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			Main.DocumentPath _PathToGraph;
+			GraphController   _GraphController;
+
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				GraphController s = (GraphController)obj;
+				info.AddValue("AutoZoom",s.m_AutoZoom);
+				info.AddValue("Zoom",s.m_Zoom);
+				info.AddValue("Graph",Main.DocumentPath.GetAbsolutePath(s.m_Graph));
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				
+				GraphController s = null!=o ? (GraphController)o : new GraphController(null,true);
+				s.m_AutoZoom = info.GetBoolean("AutoZoom");
+				s.m_Zoom = info.GetSingle("Zoom");
+				s.m_Graph = null;
+				
+				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
+				surr._GraphController = s;
+				surr._PathToGraph = (Main.DocumentPath)info.GetValue("Graph",s);
+				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+				
+				return s;
+			}
+
+			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+			{
+				object o = Main.DocumentPath.GetObject(_PathToGraph,documentRoot,_GraphController);
+				if(o is Altaxo.Graph.GraphDocument)
+				{
+					_GraphController.m_Graph = o as Altaxo.Graph.GraphDocument;
+					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+				}
+			}
+		}
+
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>
@@ -232,45 +278,31 @@ namespace Altaxo.Graph
 			m_FrozenGraph=null;
 		}
 
-
 		/// <summary>
-		/// Creates a GraphController for control of the View <paramref	name="view"/>. 
-		/// Also creates a default <see cref="GraphDocument"/> for use by this controller.
+		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.		
 		/// </summary>
-		/// <param name="view">The view this controller has to control.</param>
-		public GraphController(IGraphView view)
-			: this(view, null)
+		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
+		public GraphController(GraphDocument graphdoc)
+		: this(graphdoc,false)
 		{
 		}
 
 		/// <summary>
-		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/> into the 
-		/// View <paramref name="view"/>.
+		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.
 		/// </summary>
-		/// <param name="view">The view to show the graph into.</param>
 		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
-		public GraphController(IGraphView view, GraphDocument graphdoc)
+		/// <param name="bDeserializationConstructor">If true, this is a special constructor used only for deserialization, where no graphdoc needs to be supplied.</param>
+		protected GraphController(GraphDocument graphdoc, bool bDeserializationConstructor)
 		{
 			SetMemberVariablesToDefault();
-
-			
-			m_View = view;
-			m_View.Controller = this;
-
+		
 			if(null!=graphdoc)
 				this.m_Graph = graphdoc;
-			else
-				this.m_Graph = new GraphDocument();
+			else if(null==graphdoc && !bDeserializationConstructor)
+				throw new ArgumentNullException("graphdoc","GraphDoc must not be null");
 
 			this.InitializeMenu();
-
-			
-			// Adjust the zoom level just so, that area fits into control
-			Graphics grfx = m_View.CreateGraphGraphics();
-			this.m_HorizRes = grfx.DpiX;
-			this.m_VertRes = grfx.DpiY;
-			grfx.Dispose();
-
+	
 			if(null!=App.Current) // if we are at design time, this is null and we use the default values above
 			{
 				System.Drawing.Printing.PrintDocument doc = App.Current.PrintDocument;
@@ -301,22 +333,17 @@ namespace Altaxo.Graph
 				printableBounds.Width	= pageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
 				printableBounds.Height = pageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
 			
-				m_Graph.Changed += new EventHandler(this.EhGraph_Changed);
-				m_Graph.Layers.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
-				m_Graph.PageBounds = pageBounds;
-				m_Graph.PrintableBounds = printableBounds;
+				if(null!=m_Graph)
+				{
+					m_Graph.Changed += new EventHandler(this.EhGraph_Changed);
+					m_Graph.Layers.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
+					m_Graph.PageBounds = pageBounds;
+					m_Graph.PrintableBounds = printableBounds;
+				}
 			}
 
-			if(0==m_Graph.Layers.Count)
+			if(null!=m_Graph && 0==m_Graph.Layers.Count)
 				m_Graph.CreateNewLayerNormalBottomXLeftY();
-
-
-			// Calculate the zoom if Autozoom is on - simulate a SizeChanged event of the view to force calculation of new zoom factor
-			this.EhView_GraphPanelSizeChanged(new EventArgs());
-
-			// set the menu of this class
-			m_View.GraphMenu = this.m_MainMenu;
-			m_View.NumberOfLayers = m_Graph.Layers.Count; // tell the view how many layers we have
 		}
 
 		#endregion // Constructors
@@ -685,10 +712,8 @@ namespace Altaxo.Graph
 		/// <param name="e">Not used.</param>
 		private void EhMenuGraphDuplicate_OnClick(object sender, System.EventArgs e)
 		{
-			GraphView newView = new GraphView(View.Form.ParentForm,null);
 			GraphDocument newDoc = new GraphDocument(this.Doc);
-			GraphController newCtrl = new GraphController(newView,newDoc);
-			App.Current.Doc.AddGraph(newView);
+			App.Current.CreateNewGraph(newDoc);
 		}
 
 		private void EhMenuGraphLayer_OnClick(object sender, System.EventArgs e)
@@ -785,9 +810,6 @@ namespace Altaxo.Graph
 			get { return m_View; }
 			set
 			{
-				if(value==null)
-					throw new ArgumentNullException("The view to be set must not be null!");
-
 				IGraphView oldView = m_View;
 				m_View = value;
 
@@ -797,11 +819,28 @@ namespace Altaxo.Graph
 					oldView.Controller = null; // no longer the controller of this view
 				}
 
-				m_View.Controller = this;
-				m_View.GraphMenu = m_MainMenu;
-				m_View.NumberOfLayers = m_Graph.Layers.Count;
-				m_View.CurrentLayer = this.CurrentLayerNumber;
-				m_View.CurrentGraphTool = this.CurrentGraphTool;
+				if(null!=m_View)
+				{
+					m_View.Controller = this;
+					m_View.GraphMenu = m_MainMenu;
+					m_View.NumberOfLayers = m_Graph.Layers.Count;
+					m_View.CurrentLayer = this.CurrentLayerNumber;
+					m_View.CurrentGraphTool = this.CurrentGraphTool;
+				
+					// Adjust the zoom level just so, that area fits into control
+					Graphics grfx = m_View.CreateGraphGraphics();
+					this.m_HorizRes = grfx.DpiX;
+					this.m_VertRes = grfx.DpiY;
+					grfx.Dispose();
+
+					// Calculate the zoom if Autozoom is on - simulate a SizeChanged event of the view to force calculation of new zoom factor
+					this.EhView_GraphPanelSizeChanged(new EventArgs());
+
+					// set the menu of this class
+					m_View.GraphMenu = this.m_MainMenu;
+					m_View.NumberOfLayers = m_Graph.Layers.Count; // tell the view how many layers we have
+				
+				}
 			}
 		}
 
@@ -893,7 +932,7 @@ namespace Altaxo.Graph
 		/// <param name="e">EventArgs.</param>
 		public virtual void EhView_Closed(System.EventArgs e)
 		{
-			App.Current.Doc.RemoveGraph(this.m_View.Form);
+			App.Current.RemoveGraph(this);
 		}
 
 
@@ -993,14 +1032,18 @@ namespace Altaxo.Graph
 			EnsureValidityOfCurrentLayerNumber();
 
 			if(oldActiveLayer!=this.m_CurrentLayerNumber)
-				m_View.CurrentLayer = this.m_CurrentLayerNumber;
+			{
+				if(View!=null)
+					View.CurrentLayer = this.m_CurrentLayerNumber;
+			}
 
 			// even if the active layer number not changed, it can be that the layer itself has changed from
 			// one to another, so make sure that the current plot number is valid also
 			EnsureValidityOfCurrentPlotNumber();
 
 			// make sure the view knows about when the number of layers changed
-			m_View.NumberOfLayers = m_Graph.Layers.Count;
+			if(View!=null)
+				View.NumberOfLayers = m_Graph.Layers.Count;
 		}
 
 
@@ -1014,7 +1057,8 @@ namespace Altaxo.Graph
 			// if something changed on the graph, make sure that the layer and plot number reflect this changed
 			this.EnsureValidityOfCurrentLayerNumber();
 			this.EnsureValidityOfCurrentPlotNumber();
-			this.m_View.InvalidateGraph();
+			if(View!=null)
+				View.InvalidateGraph();
 		}
 
 		#endregion // GraphDocument event handlers
@@ -1226,7 +1270,8 @@ namespace Altaxo.Graph
 				if(oldValue!=this.m_CurrentLayerNumber)
 				{
 					// reflect the change in layer number in the layer tool bar
-					m_View.CurrentLayer = this.m_CurrentLayerNumber;
+					if(null!=View)
+						View.CurrentLayer = this.m_CurrentLayerNumber;
 
 					// since the layer changed, also the plots changed, so the menu has
 					// to reflect the new plots
@@ -1522,6 +1567,41 @@ namespace Altaxo.Graph
 			}		
 		}
 
+		#region IWorkbenchContentController Members
+
+		Altaxo.Gui.IWorkbenchContentView Altaxo.Gui.IWorkbenchContentController.View
+		{
+			get
+			{
+				return m_View;
+			}
+			set
+			{
+				this.View = value as Altaxo.Graph.IGraphView;
+			}
+		}
+
+		public void CloseView()
+		{
+			this.View = null;
+		}
+
+		public void CreateView()
+		{
+			if(View==null)
+			{
+				View = new GraphView();
+			}
+		}
+
+		protected	Gui.IWorkbenchWindowController m_ParentWorkbenchWindowController;
+		public Gui.IWorkbenchWindowController ParentWorkbenchWindowController 
+		{ 
+			get { return m_ParentWorkbenchWindowController; }
+			set { m_ParentWorkbenchWindowController = value; }
+		}
+
+		#endregion
 
 		#region Inner Classes
 

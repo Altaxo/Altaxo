@@ -115,6 +115,37 @@ namespace Altaxo.Worksheet
 			}
 		}
 
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColumnStyle),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				ColumnStyle s = (ColumnStyle)obj;
+				info.AddValue("Size",(float)s.m_Size);
+				info.AddValue("Pen",s.m_CellPen);
+				info.AddValue("TextBrush",s.m_TextBrush);
+				info.AddValue("SelTextBrush",s.m_SelectedTextBrush);
+				info.AddValue("BkgBrush",s.m_BackgroundBrush);
+				info.AddValue("SelBkgBrush",s.m_SelectedBackgroundBrush);
+				info.AddValue("Alignment",Enum.GetName(typeof(System.Drawing.StringAlignment),s.m_TextFormat.Alignment));
+				info.AddValue("Font",s.m_TextFont); 
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				ColumnStyle s = (ColumnStyle)o ;
+				s.m_Size = (int)info.GetSingle("Size");
+				s.m_CellPen = (Graph.PenHolder)info.GetValue("Pen",s);
+				s.m_TextBrush = (Graph.BrushHolder)info.GetValue("TextBrush",s);
+				s.m_SelectedTextBrush = (Graph.BrushHolder)info.GetValue("SelTextBrush",s);
+				s.m_BackgroundBrush = (Graph.BrushHolder)info.GetValue("BkgBrush",s);
+				s.m_SelectedBackgroundBrush = (Graph.BrushHolder)info.GetValue("SelBkgBrush",s);
+				s.m_TextFormat = new StringFormat();
+				s.m_TextFormat.Alignment = (StringAlignment)Enum.Parse(typeof(StringAlignment),info.GetString("Alignment"));
+				s.m_TextFont = (Font)info.GetValue("Font",s);
+				return s;
+			}
+		}
 		public virtual void OnDeserialization(object obj)
 		{
 		}

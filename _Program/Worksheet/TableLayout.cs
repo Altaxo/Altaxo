@@ -21,7 +21,15 @@ namespace Altaxo.Worksheet
 		/// </summary>
 		protected object m_OwnerWorksheet;
 
+		/// <summary>
+		/// The unique identifier of this object.
+		/// </summary>
 		protected System.Guid m_Guid;
+
+		/// <summary>
+		/// The data table this layout is for.
+		/// </summary>
+		protected Altaxo.Data.DataTable m_DataTable;
 
 		/// <summary>
 		/// defaultColumnsStyles stores the default column Styles in a Hashtable
@@ -71,12 +79,14 @@ namespace Altaxo.Worksheet
 		{
 			protected TableLayout                  m_TableLayout;
 			protected System.Collections.Hashtable m_ColStyles;
+			protected Main.DocumentPath  m_PathToTable;
 
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				TableLayout s = (TableLayout)obj;
 
 				info.AddValue("Guid",System.Xml.XmlConvert.ToString(s.m_Guid));
+				info.AddValue("Table",Main.DocumentPath.GetAbsolutePath(s.m_DataTable));
 				info.AddValue("RowHeaderStyle",s.m_RowHeaderStyle);
 				info.AddValue("ColumnHeaderStyle",s.m_ColumnHeaderStyle);
 				info.AddValue("PropertyColumnHeaderStyle",s.m_PropertyColumnHeaderStyle);
@@ -104,11 +114,18 @@ namespace Altaxo.Worksheet
 			{
 				
 				TableLayout s = null!=o ? (TableLayout)o : new TableLayout();
-				
+
+				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
+				surr.m_ColStyles = new System.Collections.Hashtable();
+				surr.m_TableLayout = s;
+
+
 				s.m_Guid = System.Xml.XmlConvert.ToGuid(info.GetString("Guid"));
+				surr.m_PathToTable = (Main.DocumentPath)info.GetValue("Table",s);
 				s.m_RowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle" , s);  
 				s.m_ColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("ColumnHeaderStyle",s);  
 				s.m_PropertyColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("PropertyColumnHeaderStyle",s);  
+
 
 				int count;
 				count = info.OpenArray(); // DefaultColumnStyles
@@ -116,20 +133,19 @@ namespace Altaxo.Worksheet
 				for(int i=0;i<count;i++)
 				{
 					object defstyle = info.GetValue("DefaultColumnStyle",s);
-					s.DefaultColumnStyles.Add(o.GetType(), defstyle);
+					s.DefaultColumnStyles.Add(defstyle.GetType(), defstyle);
 				}
 				info.CloseArray(count);
 
+
+				
 
 				// deserialize the columnstyles
 				// this must be deserialized in a new instance of this surrogate, since we can not resolve it immediately
 				count = info.OpenArray();
 				if(count>0)
 				{
-					XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
-					surr.m_ColStyles = new System.Collections.Hashtable();
-					surr.m_TableLayout = s;
-					for(int i=0;i<count;i++)
+						for(int i=0;i<count;i++)
 					{
 						info.OpenElement(); // "e"
 						Main.DocumentPath key = (Main.DocumentPath)info.GetValue("Column",s);
@@ -146,18 +162,33 @@ namespace Altaxo.Worksheet
 
 			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
 			{
+				if(this.m_PathToTable!=null)
+				{
+					object table = Main.DocumentPath.GetObject(this.m_PathToTable,this.m_TableLayout,documentRoot);
+					if(table is Altaxo.Data.DataTable)
+					{
+						this.m_TableLayout.m_DataTable = (Altaxo.Data.DataTable)table;
+						this.m_PathToTable = null;
+					}
+				}
+
+				System.Collections.ArrayList resolvedStyles = new System.Collections.ArrayList();
 				foreach(System.Collections.DictionaryEntry entry in this.m_ColStyles)
 				{
 					object resolvedobj = Main.DocumentPath.GetObject((Main.DocumentPath)entry.Key,m_TableLayout, documentRoot);
 					if(null!=resolvedobj)
 					{
 						m_TableLayout.ColumnStyles.Add(resolvedobj,entry.Value);
-						m_ColStyles.Remove(entry.Key);
+						resolvedStyles.Add(entry.Key);
 					}
 				}
 
+				foreach(object resstyle in resolvedStyles)
+					m_ColStyles.Remove(resstyle);
+
+
 				// if all columns have resolved, we can close the event link
-				if(m_ColStyles.Count==0)
+				if(m_ColStyles.Count==0 && this.m_PathToTable==null)
 					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
 			}
 		}
@@ -167,7 +198,7 @@ namespace Altaxo.Worksheet
 
 		#region Constructors
 
-		public TableLayout()
+		protected TableLayout()
 		{
 			m_Guid = System.Guid.NewGuid();
 
@@ -191,6 +222,11 @@ namespace Altaxo.Worksheet
 			this.m_ShowPropertyColumns = true;
 		}
 
+		public TableLayout(Altaxo.Data.DataTable table)
+			: this()
+		{
+			m_DataTable = table;
+		}
 
 		#endregion
 
@@ -199,6 +235,11 @@ namespace Altaxo.Worksheet
 		public System.Guid Guid
 		{
 			get { return m_Guid; }
+		}
+
+		public Altaxo.Data.DataTable DataTable
+		{
+			get { return m_DataTable; }
 		}
 
 		public System.Collections.Hashtable DefaultColumnStyles
