@@ -128,11 +128,6 @@
                     BuildAction = "None"
                 />
                 <File
-                    RelPath = "AltaxoOpenFileTab.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "AltaxoString.resources"
                     BuildAction = "None"
                 />
@@ -146,11 +141,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "AutostartCommands.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "BeautyGUI.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -160,48 +150,8 @@
                     BuildAction = "None"
                 />
                 <File
-                    RelPath = "BeautyWorkbench.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BeautyWorkbench.resx"
-                    DependentUpon = "BeautyWorkbench.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "BeautyWorkbenchWindow.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BeautyWorkbenchWindow.resx"
-                    DependentUpon = "BeautyWorkbenchWindow.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "BeautyWorkspaceController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BeautyWorkspaceWindow.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BeautyWorkspaceWindow.resx"
-                    DependentUpon = "BeautyWorkspaceWindow.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "BitmapResources.resources"
                     BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "MdiWorkbenchLayout.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "SplashScreen.png"
@@ -215,36 +165,7 @@
                     RelPath = "UsingSharpDevelopForAltaxo.txt"
                     BuildAction = "Content"
                 />
-                <File
-                    RelPath = "Workbench1.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Commands\AltaxoToolbarService.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Commands\FileCommands.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Commands\GraphCommands.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Commands\SelectedColumnCondition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Commands\WorksheetCommands.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
+                <Folder RelPath = "Commands\" />
                 <File
                     RelPath = "Dialogs\AddInTreeSettingsHandler.cs"
                     SubType = "Code"
