@@ -238,6 +238,18 @@ namespace Altaxo.Graph
     }
 
     /// <summary>
+    /// This routine ensures that the plot item updates all its cached data and send the appropriate
+    /// events if something has changed. Called before the layer paint routine paints the axes because
+    /// it must be ensured that the axes are scaled correctly before the plots are painted.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    public override void UpdateCachedData(IPlotArea layer)
+    {
+      if(null!=this.m_PlotAssociation)
+        m_PlotAssociation.CalculateCachedData();
+    }
+
+    /// <summary>
     /// Test wether the mouse hits a plot item. The default implementation here returns null.
     /// If you want to have a reaction on mouse click on a curve, implement this function.
     /// </summary>

@@ -226,5 +226,17 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// This routine ensures that the plot item updates all its cached data and send the appropriate
+    /// events if something has changed. Called before the layer paint routine paints the axes because
+    /// it must be ensured that the axes are scaled correctly before the plots are painted.
+    /// </summary>
+    /// <param name="layer">The plot layer.</param>
+    public override void UpdateCachedData(IPlotArea layer)
+    {
+     // nothing really to do here
+    }
+
+
   }
 }

@@ -2443,6 +2443,15 @@ namespace Altaxo.Graph
 
       RectangleF layerBounds = new RectangleF(m_LayerPosition,m_LayerSize);
 
+
+      // Before we paint the axis, we have to make sure that all plot items
+      // had their data updated, so that the axes are updated before they are drawn!
+       foreach(PlotItem pi in m_PlotItems)
+       {
+        pi.UpdateCachedData(this);
+       }
+
+
       if(m_ShowLeftAxis)
         m_LeftAxisStyle.Paint(g,this,this.m_yAxis);
       if(m_ShowLeftAxis)
