@@ -912,8 +912,10 @@
 		</MenuItem>
 	</Extension>
 		<Extension path="/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu">
-				<MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}"
-					class="Altaxo.Worksheet.Commands.RenameColumn" />
+				<Conditional selecteddatacolumns="one" action="Disable">
+  				<MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}"
+	  				class="Altaxo.Worksheet.Commands.RenameColumn" />
+	  		</Conditional>
 	</Extension>
 
 	<Extension path="/SharpDevelop/Workbench/SharpDevelopSideBar/ContextMenu">

@@ -169,7 +169,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <value>True if ensemble mean should be subtracted after the preprocessing (usually the case).</value>
     public bool EnsembleMeanAfterProcessing
     {
-      get { return _method != SpectralPreprocessingMethod.MultiplicativeScatteringCorrection; }
+      get { return true; }
     }
 
     /// <summary>

@@ -343,7 +343,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           calib.CrossProduct[yn],
           numberOfFactors,
           MatrixMath.ToSubMatrix(predictedY,0,yn,predictedY.Rows,1),
-          MatrixMath.ToSubMatrix(spectralResiduals,0,yn,spectralResiduals.Rows,1));
+          null==spectralResiduals?null:MatrixMath.ToSubMatrix(spectralResiduals,0,yn,spectralResiduals.Rows,1));
       }
       // mean and scale prediced Y
       MatrixMath.MultiplyRow(predictedY,calib.YScale,predictedY);

@@ -142,21 +142,49 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="regions">Vector of spectal regions. Each element is the index of the start of a new region.</param>
     public override void Process(IMatrix xMatrix, IVector xMean, IVector xScale, int[] regions)
     {
-      // 1.) Get the mean spectrum
-      // we want to have the mean of each matrix column, but not center the matrix now, since this
-      // is done later on
-      int cols = xMatrix.Columns;
-      int rows = xMatrix.Rows;
-      for(int n=0;n<cols;n++)
-      {
-        double sum = 0;
-        for(int i=0;i<rows;i++)
-          sum += xMatrix[i,n];
-        xMean[n] = sum/rows;
-      }
+      // note: we have a light deviation here to the literature:
+      // we repeat the multiple scattering correction until the xMean vector is self consistent,
+      // in detail: after each MSC correction, we calculate the new xMean and compare with the xMean
+      // of the step before. We repeat until the deviation of the xMean to the xMean_before is
+      // reasonable small.
+      // The reason for this deviation is that we don't want to store two separate xMean vectors: one used
+      // for MSC (the x in linear regression) and another to center the MSC corrected spectra
 
-      // 2.) Process the spectras
-      ProcessForPrediction(xMatrix,xMean,xScale, regions);
+      IVector xMeanBefore=null;
+      double threshold = 1E-14*MatrixMath.SumOfSquares(xMatrix)/xMatrix.Rows;
+      for(int cycle=0;cycle<50;cycle++)
+      {
+        // 1.) Get the mean spectrum
+        // we want to have the mean of each matrix column, but not center the matrix now, since this
+        // is done later on
+        int cols = xMatrix.Columns;
+        int rows = xMatrix.Rows;
+        for(int n=0;n<cols;n++)
+        {
+          double sum = 0;
+          for(int i=0;i<rows;i++)
+            sum += xMatrix[i,n];
+          xMean[n] = sum/rows;
+        }
+
+        // 2.) Process the spectras
+        ProcessForPrediction(xMatrix,xMean,xScale, regions);
+
+        // 3. Compare the xMean with the xMean_before
+        if(xMeanBefore==null)
+        {
+          xMeanBefore = VectorMath.CreateExtensibleVector(xMean.Length);
+          VectorMath.Copy(xMean,xMeanBefore);
+        }
+        else
+        {
+          double sumdiffsquare = VectorMath.SumOfSquaredDifferences(xMean,xMeanBefore);
+          if(sumdiffsquare<threshold)
+            break;
+          else
+            VectorMath.Copy(xMean,xMeanBefore);
+        }
+      }
     }
 
 

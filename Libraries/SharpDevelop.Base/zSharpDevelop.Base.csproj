@@ -975,7 +975,7 @@
                 />
                 <File
                     RelPath = "Gui\Workbench\Layouts\SdiWorkspaceWindow.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File

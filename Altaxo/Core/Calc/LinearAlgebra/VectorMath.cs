@@ -28,6 +28,9 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   public class VectorMath
   {
+    #region private Helper functions
+    static double Square(double x) { return x*x; }
+    #endregion
   
     #region Inner types
 
@@ -354,7 +357,42 @@ namespace Altaxo.Calc.LinearAlgebra
       return sum;
     }
 
-    
+
+    /// <summary>
+    /// Returns the sum of squared differences of the elements of xarray and yarray.
+    /// </summary>
+    /// <param name="xarray">The first array.</param>
+    /// <param name="yarray">The other array.</param>
+    /// <returns>The sum of squared differences all elements of xarray and yarray.</returns>
+    public static double SumOfSquaredDifferences(double[] xarray, double[] yarray)
+    {
+      if(xarray.Length!=yarray.Length)
+        throw new ArgumentException("Length of xarray is unequal length of yarray");
+
+      double sum = 0;
+      for(int i=0;i<xarray.Length;i++)
+        sum += Square(xarray[i]-yarray[i]);
+
+      return sum;
+    }
+
+    /// <summary>
+    /// Returns the sum of squared differences of the elements of xarray and yarray.
+    /// </summary>
+    /// <param name="xarray">The first array.</param>
+    /// <param name="yarray">The other array.</param>
+    /// <returns>The sum of squared differences all elements of xarray and yarray.</returns>
+    public static double SumOfSquaredDifferences(IROVector xarray, IROVector yarray)
+    {
+      if(xarray.Length!=yarray.Length)
+        throw new ArgumentException("Length of xarray is unequal length of yarray");
+
+      double sum = 0;
+      for(int i=0;i<xarray.Length;i++)
+        sum += Square(xarray[i]-yarray[i]);
+
+      return sum;
+    }
 
   }
 }

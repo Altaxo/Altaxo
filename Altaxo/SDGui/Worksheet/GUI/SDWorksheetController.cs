@@ -83,6 +83,12 @@ namespace Altaxo.Worksheet.GUI
     #region Context menu handlers
     protected override void OnRightClickDataColumnHeader(ClickedCellInfo clickedCell)
     {
+      if(!(this.SelectedDataColumns.Contains(clickedCell.Column)))
+      {
+        this.ClearAllSelections();
+        this.SelectedDataColumns.Add(clickedCell.Column);
+        this.m_View.TableAreaInvalidate();
+      }
       ICSharpCode.SharpDevelop.Services.MenuService menuService = (ICSharpCode.SharpDevelop.Services.MenuService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.MenuService));
       ContextMenu mnu = menuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu");
       mnu.Show(this.Control,clickedCell.MousePositionFirstDown);

@@ -34,6 +34,12 @@ using ICSharpCode.SharpDevelop.Internal.Project;
 
 namespace Altaxo.Worksheet.Commands
 {
+  /// <summary>
+  /// This helps in conditions where the number of selected data columns cares.
+  /// Valid values are all (all columns must be selected, none (no column must be selected),
+  /// one (exactly one column must be selected), any (one or more columns must be selected),
+  /// or the number of columns.
+  /// </summary>
   [ConditionAttribute()]
   public class SelectedDataCondition : AbstractCondition
   {
@@ -48,7 +54,7 @@ namespace Altaxo.Worksheet.Commands
       }
       set 
       {
-        selectedData = value;
+        selectedData = value.ToLower();
       }
     }
     
@@ -62,7 +68,35 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Worksheet.GUI.WorksheetController ctrl 
         = Current.Workbench.ActiveViewContent as Altaxo.Worksheet.GUI.WorksheetController; 
 
-      return ctrl.SelectedDataColumns.Count>=1;
+      int val = ctrl.SelectedDataColumns.Count;
+
+      switch(selectedData)
+      {
+        case "none":
+          return val==0;
+        case "one":
+          return val==1;
+        case "two":
+          return val==2;
+        case "all":
+          return val==ctrl.Doc.DataColumnCount;
+        case "any":
+          return val>0;
+        case "*":
+          return val>0;
+        default:
+        {
+          try 
+          {
+            int num = int.Parse(selectedData);
+            return val==num;
+          }
+          catch(Exception ex)
+          {
+            return false;
+          }
+        }
+      }
     }
   }
 }
