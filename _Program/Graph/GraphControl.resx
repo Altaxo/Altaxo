@@ -97,7 +97,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="m_GraphToolsImages.Location" type="System.Drawing.Point, System.Drawing, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>319, 30</value>
+    <value>117, 31</value>
   </data>
   <data name="m_GraphToolsImages.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
@@ -138,6 +138,9 @@
         /AE/BAAB5gE/Af4BfwQAAeIBPwH+AX8EAAHgAX8B/gF/BAAB4AEHAf4BfwQAAeABDwH+AX8EAAHgAR8B
         /gF/BAAB4AE/Af4BfwQAAeABfwH+AX8EAAHgAf8BzgFzBAAB4QH/AcABAwQAAeMD/wQAAecD/xoACw==
 </value>
+  </data>
+  <data name="m_LayerButtonImages.Location" type="System.Drawing.Point, System.Drawing, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>304, 30</value>
   </data>
   <data name="$this.Name">
     <value>GraphControl</value>

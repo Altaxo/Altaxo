@@ -85,7 +85,10 @@ namespace Altaxo.Graph
 		private Color m_MarginColor = Color.Green;
 		private float m_Zoom  = 0.4f;
 		private bool  m_AutoZoom = true; // if true, the sheet is zoomed as big as possible to fit into window
+		/// <summary>Number of the currently selected layer.</summary>
 		protected int m_ActualLayer = 0;
+		/// <summary>Number of the currently selected plot association.</summary>
+		protected int m_ActualPlotAssociation=0;
 		protected GraphTools m_CurrentGraphTool = GraphTools.ObjectPointer;
 		private GraphPanel m_GraphPanel;
 //		protected PointF m_LastMouseDownPoint;
@@ -101,6 +104,9 @@ namespace Altaxo.Graph
 		/// the data is a int object, which stores the layer number the object belongs to.
 		/// </summary>
 		protected System.Collections.Hashtable m_SelectedObjects = new System.Collections.Hashtable();
+		private System.Windows.Forms.ToolBar m_LayerToolbar;
+		private System.Windows.Forms.ImageList m_LayerButtonImages;
+		private System.Windows.Forms.ToolBarButton m_PushedLayerButton;
 
 		/// <summary>
 		/// This holds a frozen image of the graph during the moving time
@@ -144,6 +150,8 @@ namespace Altaxo.Graph
 			}
 
 			m_Graph.Layers.Add(new Altaxo.Graph.Layer(PrintableSize));
+
+			InitLayerToolbar();
 		}
 
 		/// <summary> 
@@ -172,14 +180,34 @@ namespace Altaxo.Graph
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(GraphControl));
 			this.m_GraphPanel = new Altaxo.Graph.GraphPanel();
 			this.m_GraphToolsImages = new System.Windows.Forms.ImageList(this.components);
+			this.m_LayerToolbar = new System.Windows.Forms.ToolBar();
+			this.m_LayerButtonImages = new System.Windows.Forms.ImageList(this.components);
 			this.SuspendLayout();
+			// 
+			// m_LayerButtonImages
+			// 
+			this.m_LayerButtonImages.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+			this.m_LayerButtonImages.ImageSize = new System.Drawing.Size(1, 1);
+			this.m_LayerButtonImages.TransparentColor = System.Drawing.Color.Transparent;
+			// 
+			// m_LayerToolbar
+			// 
+			this.m_LayerToolbar.ButtonSize = new System.Drawing.Size(22, 22);
+			this.m_LayerToolbar.Dock = System.Windows.Forms.DockStyle.Left;
+			this.m_LayerToolbar.DropDownArrows = true;
+			this.m_LayerToolbar.ImageList = this.m_LayerButtonImages;
+			this.m_LayerToolbar.Name = "m_LayerToolbar";
+			this.m_LayerToolbar.ShowToolTips = true;
+			this.m_LayerToolbar.Size = new System.Drawing.Size(22, 150);
+			this.m_LayerToolbar.TabIndex = 0;
+			this.m_LayerToolbar.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.m_LayerToolbar_ButtonClick);
 			// 
 			// m_GraphPanel
 			// 
 			this.m_GraphPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_GraphPanel.Name = "m_GraphPanel";
-			this.m_GraphPanel.Size = new System.Drawing.Size(150, 150);
-			this.m_GraphPanel.TabIndex = 0;
+			this.m_GraphPanel.Size = new System.Drawing.Size(128, 150);
+			this.m_GraphPanel.TabIndex = 1;
 			this.m_GraphPanel.Click += new System.EventHandler(this.OnGraphPanel_Click);
 			this.m_GraphPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnGraphPanel_MouseUp);
 			this.m_GraphPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.AltaxoGraphControl_Paint);
@@ -197,13 +225,50 @@ namespace Altaxo.Graph
 			// GraphControl
 			// 
 			this.Controls.AddRange(new System.Windows.Forms.Control[] {
-																																	this.m_GraphPanel});
+																																	this.m_GraphPanel,
+																																	this.m_LayerToolbar
+																																	});
 			this.Name = "GraphControl";
+			this.Size = new System.Drawing.Size(150, 150);
 			this.ResumeLayout(false);
 
 		}
 		#endregion
 
+
+		private void InitLayerToolbar()
+		{
+			ToolBarButton tbb = new ToolBarButton("0");
+			tbb.Pushed=true;
+			this.m_PushedLayerButton = tbb;
+			m_LayerToolbar.Buttons.Add(tbb);
+			this.m_LayerToolbar.Dock = DockStyle.Left;
+		}
+
+
+		private void m_LayerToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
+		{
+			
+			if(null!=this.m_PushedLayerButton)
+			{
+				// if we have clicked the button already down then open the layer dialog
+				if(this.m_PushedLayerButton==e.Button)
+				{
+					int nLayer = System.Convert.ToInt32(e.Button.Text);
+					LayerDialog dlg = new LayerDialog(Layers[nLayer],LayerDialog.Tab.Scale,EdgeType.Bottom);
+					dlg.ShowDialog(this);
+				}
+					// if the clicked button is not already pushed, then unpush the old button
+				else
+				{
+					this.m_PushedLayerButton.Pushed=false;
+				}
+			}
+				
+			e.Button.Pushed = true;
+			this.m_PushedLayerButton = e.Button;
+			ActualLayer = System.Convert.ToInt32(e.Button.Text);
+		}
 
 
 		public GraphTools CurrentGraphTool
@@ -305,15 +370,60 @@ namespace Altaxo.Graph
 
 		public int ActualLayer
 		{
-			get { return m_ActualLayer; }
+			get
+			{
+				// check the validity of the ActualLayer
+				if(0==m_Graph.Layers.Count)
+					m_ActualLayer=-1;
+				else if(m_ActualLayer>=m_Graph.Layers.Count)
+					m_ActualLayer=0;
+
+				return m_ActualLayer;
+			}
 			set
 			{
-				if(value<0 || value>=Layers.Count)
-					throw new ArgumentOutOfRangeException("ActualLayer",value,"Must between 0 and Layer.Count-1");
+				// negative values are only accepted if there is no layer
+				if(value<0 && m_Graph.Layers.Count>0)
+					throw new ArgumentOutOfRangeException("ActualLayer",value,"Accepted values must be >=0 if there is at least one layer in the graph!");
 
-				m_ActualLayer = value;
+				if(value>=m_Graph.Layers.Count)
+					throw new ArgumentOutOfRangeException("ActualLayer",value,"Accepted values must be less than the number of layers in the graph(currently " + m_Graph.Layers.Count.ToString() + ")!");
+
+				m_ActualLayer = value<0 ? -1 : value;
 			}
 		}
+
+		public int ActualPlotAssociation 
+		{
+			get 
+			{
+				// if Layer don't exist anymore, correct ActualLayer and ActualPlotAssocitation
+				if(ActualLayer<0)
+				{
+					m_ActualPlotAssociation=-1;
+				}
+				else // if Layer exists
+				{
+					// if the PlotAssociation don't exist anymore, correct it
+					if(0==this.m_Graph[ActualLayer].PlotAssociations.Count)
+						m_ActualPlotAssociation = -1;
+					if(m_ActualPlotAssociation>=this.m_Graph[ActualLayer].PlotAssociations.Count)
+						m_ActualPlotAssociation = 0;
+				}	
+				return m_ActualPlotAssociation;
+			}
+			set
+			{
+				if(ActualLayer>=0 && value<0)
+					throw new ArgumentOutOfRangeException("ActualPlotAssociation",value,"Must be greater or equal than zero");
+
+				if(ActualLayer>=0 && value>=m_Graph[ActualLayer].PlotAssociations.Count)
+					throw new ArgumentOutOfRangeException("ActualPlotAssociation",value,"Must be lesser than actual count: " + m_Graph[ActualLayer].PlotAssociations.Count.ToString());
+
+				m_ActualPlotAssociation = value<0 ? -1 : value;
+			}
+		}
+
 
 
 		public RectangleF PageBounds

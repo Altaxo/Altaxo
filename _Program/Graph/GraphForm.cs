@@ -35,9 +35,7 @@ namespace Altaxo.Graph
 		private AltaxoDocument parentDocument =null;
 
 		private Altaxo.Graph.GraphControl m_GraphControl;
-		private System.Windows.Forms.ImageList m_LayerButtonImages;
 		private System.ComponentModel.IContainer components;
-		private ToolBar m_LayerToolbar=null;
 		private System.Windows.Forms.MainMenu mainMenu1;
 		private System.Windows.Forms.MenuItem menuDataPopup;
 		private System.Windows.Forms.MenuItem menuDataSeparator;
@@ -45,7 +43,6 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.MenuItem menuFile_PageSetup;
 		private System.Windows.Forms.MenuItem menuFile_Print;
 		private System.Windows.Forms.MenuItem menuFile_PrintPreview;
-		private ToolBarButton m_PushedLayerBotton=null;
 
 	
 
@@ -84,7 +81,6 @@ namespace Altaxo.Graph
 
 			parentDocument = doc;
 			this.MdiParent=parent;
-			InitLayerToolbar();
 
 			// register event so to be informed when activated
 			if(parent is Altaxo.App)
@@ -131,10 +127,8 @@ namespace Altaxo.Graph
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(GraphForm));
 			this.m_GraphControl = new Altaxo.Graph.GraphControl();
-			this.m_LayerButtonImages = new System.Windows.Forms.ImageList(this.components);
 			this.mainMenu1 = new System.Windows.Forms.MainMenu();
 			this.menuItem1 = new System.Windows.Forms.MenuItem();
 			this.menuFile_PageSetup = new System.Windows.Forms.MenuItem();
@@ -156,12 +150,6 @@ namespace Altaxo.Graph
 			this.m_GraphControl.Size = new System.Drawing.Size(304, 266);
 			this.m_GraphControl.TabIndex = 0;
 			this.m_GraphControl.Zoom = 0.270784F;
-			// 
-			// m_LayerButtonImages
-			// 
-			this.m_LayerButtonImages.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-			this.m_LayerButtonImages.ImageSize = new System.Drawing.Size(1, 1);
-			this.m_LayerButtonImages.TransparentColor = System.Drawing.Color.Transparent;
 			// 
 			// mainMenu1
 			// 
@@ -226,66 +214,6 @@ namespace Altaxo.Graph
 		}
 		#endregion
 
-		private void m_LayerToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
-		{
-			
-			if(null!=this.m_PushedLayerBotton)
-			{
-				// if we have clicked the button already down then open the layer dialog
-				if(this.m_PushedLayerBotton==e.Button)
-				{
-					int nLayer = System.Convert.ToInt32(e.Button.Text);
-					LayerDialog dlg = new LayerDialog(m_GraphControl.Layers[nLayer],LayerDialog.Tab.Scale,EdgeType.Bottom);
-					dlg.ShowDialog(this);
-				}
-					// if the clicked button is not already pushed, then unpush the old button
-				else
-				{
-					this.m_PushedLayerBotton.Pushed=false;
-				}
-			}
-				
-			e.Button.Pushed = true;
-			this.m_PushedLayerBotton = e.Button;
-			m_GraphControl.ActualLayer = System.Convert.ToInt32(e.Button.Text);
-		}
-
-
-
-
-		private void InitLayerToolbar()
-		{
-			m_GraphControl.Dock = DockStyle.Fill;
-
-		// 
-		// m_LayerToolbar
-		// 
-		this.m_LayerToolbar = new ToolBar();
-		this.m_LayerToolbar.Parent = this;
-		this.m_LayerToolbar.ImageList = this.m_LayerButtonImages;
-		this.m_LayerToolbar.AutoSize = true;
-		this.m_LayerToolbar.ButtonSize = new System.Drawing.Size(22, 22);
-		this.m_LayerToolbar.DropDownArrows = true;
-		this.m_LayerToolbar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-		this.m_LayerToolbar.Name = "m_LayerToolbar";
-		this.m_LayerToolbar.ShowToolTips = true;
-		this.m_LayerToolbar.Size = new System.Drawing.Size(22, 44);
-		this.m_LayerToolbar.TabIndex = 1;
-		this.m_LayerToolbar.TextAlign = System.Windows.Forms.ToolBarTextAlign.Right;
-		this.m_LayerToolbar.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.m_LayerToolbar_ButtonClick);
-		this.m_LayerToolbar.BorderStyle = BorderStyle.None;
-
-		ToolBarButton tbb = new ToolBarButton("0");
-		tbb.Pushed=true;
-		this.m_PushedLayerBotton = tbb;
-
-		//tbb.Style = ToolBarButtonStyle.ToggleButton;
-		m_LayerToolbar.Buttons.Add(tbb);
-
-			this.m_LayerToolbar.Dock = DockStyle.Left;
-
-		}
-
 		private void menuData_Data(object sender, System.EventArgs e)
 		{
 			DataMenuItem dmi = (DataMenuItem)sender;
@@ -300,7 +228,7 @@ namespace Altaxo.Graph
 				if(null!=actLayer && dmi.tagValue<actLayer.PlotAssociations.Count)
 				{
 					dmi.Checked=true;
-					actLayer.ActualPlotAssociation = dmi.tagValue;
+					m_GraphControl.ActualPlotAssociation = dmi.tagValue;
 				}
 			}
 			else
@@ -309,7 +237,7 @@ namespace Altaxo.Graph
 				// of the plot association represented by this menu item
 				int actLayerNum = this.m_GraphControl.ActualLayer;
 				Layer actLayer = this.m_GraphControl.Layers[actLayerNum];
-				PlotAssociation pa = actLayer.PlotAssociations[actLayer.ActualPlotAssociation];
+				PlotAssociation pa = actLayer.PlotAssociations[m_GraphControl.ActualPlotAssociation];
 
 
 				// get plot group
@@ -355,7 +283,7 @@ namespace Altaxo.Graph
 
 
 			menuDataPopup.MenuItems.Add(this.menuDataSeparator);
-			int actPA = actLayer.ActualPlotAssociation;
+			int actPA = m_GraphControl.ActualPlotAssociation;
 			int len = actLayer.PlotAssociations.Count;
 			for(int i = 0; i<len; i++)
 			{

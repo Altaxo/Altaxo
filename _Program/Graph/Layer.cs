@@ -225,9 +225,8 @@ namespace Altaxo.Graph
 
 		protected GraphObjectCollection m_GraphObjects = new GraphObjectCollection();
 
-		protected PlotAssociationList plotAssociations;
+		protected PlotAssociationList m_PlotAssociations;
 		protected PlotGroup.Collection m_PlotGroups = new PlotGroup.Collection();
-		protected int m_ActualPlotAssociation = 0;
 
 		/// <summary>
 		/// The parent layer collection wich contains this layer (or null if not member of such collection).
@@ -290,7 +289,7 @@ namespace Altaxo.Graph
 
 			CalculateMatrix();
 
-			plotAssociations = new PlotAssociationList(this);
+			m_PlotAssociations = new PlotAssociationList(this);
 
 			// create axes and add event handlers to them
 			m_xAxis = new LinearAxis(); // the X-Axis
@@ -1040,7 +1039,7 @@ namespace Altaxo.Graph
 
 		public PlotAssociationList PlotAssociations
 		{
-			get { return plotAssociations; }
+			get { return m_PlotAssociations; }
 		}
 
 		public PlotGroup.Collection PlotGroups
@@ -1048,25 +1047,6 @@ namespace Altaxo.Graph
 			get { return m_PlotGroups; }
 		}
 
-		public int ActualPlotAssociation 
-		{
-			get 
-			{
-				if(m_ActualPlotAssociation>=plotAssociations.Count)
-					m_ActualPlotAssociation = 0;
-					
-				return m_ActualPlotAssociation;
-			}
-			set
-			{
-				if(value<0)
-					throw new ArgumentOutOfRangeException("ActualPlotAssociation",value,"Must be greater or equal than zero");
-				if(value>=plotAssociations.Count)
-					throw new ArgumentOutOfRangeException("ActualPlotAssociation",value,"Must be lesser than actual count: " + plotAssociations.Count.ToString());
-
-				m_ActualPlotAssociation = value;
-			}
-		}
 
 
 		public virtual void Paint(Graphics g)
@@ -1094,7 +1074,7 @@ namespace Altaxo.Graph
 			if(m_ShowTopAxis) m_TopLabelStyle.Paint(g,this,this.m_xAxis,m_TopAxisStyle);
 
 
-			foreach(PlotAssociation pa in plotAssociations)
+			foreach(PlotAssociation pa in m_PlotAssociations)
 			{
 				pa.Paint(g,this);
 			}
@@ -1107,7 +1087,7 @@ namespace Altaxo.Graph
 		public void AddPlotAssociation(PlotAssociation[] pal)
 		{
 			foreach(PlotAssociation pa in pal)
-				this.plotAssociations.Add(pa);
+				this.m_PlotAssociations.Add(pa);
 		}
 	
 
