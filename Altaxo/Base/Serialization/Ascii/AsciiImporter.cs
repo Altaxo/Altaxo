@@ -98,7 +98,7 @@ namespace Altaxo.Serialization.Ascii
       string sLine;
 
       stream.Position = 0;
-      System.IO.StreamReader sr = new System.IO.StreamReader(stream,System.Text.Encoding.ASCII,true);
+      System.IO.StreamReader sr = new System.IO.StreamReader(stream,System.Text.Encoding.Default,true);
       System.Collections.ArrayList result = new System.Collections.ArrayList();
     
       for(int i=0;i<nLines;i++)
@@ -263,7 +263,7 @@ namespace Altaxo.Serialization.Ascii
     {
       string sLine;
       stream.Position=0; // rewind the stream to the beginning
-      System.IO.StreamReader sr = new System.IO.StreamReader(stream,System.Text.Encoding.ASCII,true);
+      System.IO.StreamReader sr = new System.IO.StreamReader(stream,System.Text.Encoding.Default,true);
       Altaxo.Data.DataColumnCollection newcols = new Altaxo.Data.DataColumnCollection();
     
       Altaxo.Data.DataColumnCollection newpropcols = new Altaxo.Data.DataColumnCollection();
