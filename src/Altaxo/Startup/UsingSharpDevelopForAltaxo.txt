@@ -171,3 +171,21 @@ nachfolgend das Stückchen Code aus PropertyServices.cs (die StringDefinitionen u
 
 **************************** bis hierhin hatte ich sie abgeschickt *******************************************************
 SdiLayout verwendet die Datei MdiLayoutConfig.xml, soll das so sein ??
+
+
+11.11.2003
+
+Habe zuerst DefaultParserService leicht abgeändert, um auch zuzulassen, dass
+man C#-Skripte in modalen Dialogboxen schreiben kann. Das geht jetzt gut.
+
+Mußte dann noch in AssemblyInformation etwas ändern, denn es gab ein
+merkwürdiges Problem beim Debuggen: es war plötzlich nur noch Debuggen
+im Disassemblermodus möglich. Die Ursache war, dass ich für meine Scripte
+die Parseinformation aus Altaxo selbst benötige, also aus dem laufenden Programm.
+Also fix ein "Dummy-Project" zusammengebastelt, das für die benötigten Dateien
+AltaxoBase.dll usw. Referenzen enthält. Tja, nun lädt er diese Assemblies
+in AssemblyInformation.cs nochmal rein, obwohl sie ja schon am Laufen sind.
+Und zu allem Überfluß nun scheinbar ohne Debugginginformationen :(
+Musste also AssemblyInforamation.cs so abändern, dass zuerst nachgeguckt
+wird, ob die Assemblies schon geladen sind, und wenn sie geladen sind,
+werden gleich die geladenen Assemblies verwendet.

@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = ""
+                PostBuildEvent = "copy AltaxoBase.??? ..\..\..\..\bin"
                 RootNamespace = "Altaxo"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -137,6 +137,16 @@
                 <Reference
                     Name = "zMagicLibrary"
                     Project = "{993E6ED0-F820-4264-9989-B6341C179CB4}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "zSharpDevelop.DefaultTexteditor"
+                    Project = "{953B27D5-7B33-49F5-B649-54396C09B361}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "zICSharpCode.TextEditor"
+                    Project = "{BDA1E0BB-C18F-41B0-86C7-A4CEF4B60894}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
@@ -874,6 +884,11 @@
                 />
                 <File
                     RelPath = "Main\MenuCommands\GraphCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\OpenScriptDialog.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

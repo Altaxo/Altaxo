@@ -17,8 +17,8 @@ using ICSharpCode.Core.AddIns;
 using ICSharpCode.Core.Services;
 using ICSharpCode.SharpDevelop.Gui.Dialogs;
 
-using Altaxo;
-using Altaxo.Main;
+// using Altaxo;
+// using Altaxo.Main;
 
 
 namespace BeautyGUI
@@ -33,7 +33,7 @@ namespace BeautyGUI
 		{
 			//App.InitializeMainController(new ICSharpCode.SharpDevelop.Gui.BeautyWorkbench(new ICSharpCode.SharpDevelop.Gui.BeautyWorkbenchWindow(), new AltaxoDocument()));
 
-			Current.Main();
+			// Current.Main();
 		}
 	}
 }

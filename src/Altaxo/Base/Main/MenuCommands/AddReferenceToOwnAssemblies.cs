@@ -14,6 +14,7 @@ namespace Altaxo.Main.Commands
 		public override void Run()
 		{
 
+			
 			// get the parser service
 
 			ICSharpCode.SharpDevelop.Services.IParserService parserService = (ICSharpCode.SharpDevelop.Services.IParserService)ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.IParserService));
@@ -35,6 +36,8 @@ namespace Altaxo.Main.Commands
 				parserService.AddReferenceToCompletionLookup(project,reference);
 
 			}
+			
+		
 		}
 
 

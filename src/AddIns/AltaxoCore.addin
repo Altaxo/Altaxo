@@ -331,6 +331,7 @@
 				<MenuItem id="Rename" label="${res:XML.MainMenu.WorksheetMenu.Rename}" description="${res:XML.MainMenu.WorksheetMenu.Rename.Description}" class="Altaxo.Worksheet.Commands.WorksheetRename"/>
 				<MenuItem id="Duplicate" label="${res:XML.MainMenu.WorksheetMenu.Duplicate}" description="${res:XML.MainMenu.WorksheetMenu.Duplicate.Description}" class="Altaxo.Worksheet.Commands.WorksheetDuplicate"/>
 				<MenuItem id="Transpose" label="${res:XML.MainMenu.WorksheetMenu.Transpose}" description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}" class="Altaxo.Worksheet.Commands.WorksheetTranspose"/>
+				<MenuItem id="ExperimentalScriptWindow" label="${res:XML.MainMenu.WorksheetMenu.Transpose}" description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}" class="Altaxo.Worksheet.Commands.OpenScriptDialog"/>
 			</MenuItem>
 		</Conditional>
 		<Conditional activewindow="Altaxo.Graph.GUI.GraphController" action="Exclude">

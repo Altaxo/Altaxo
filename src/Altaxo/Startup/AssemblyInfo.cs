@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Altaxo.Serialization;
 
 //
 // General Information about an assembly is controlled through the following 
@@ -57,4 +56,3 @@ using Altaxo.Serialization;
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
-[assembly: SupportsSerializationVersioningAttribute()]
