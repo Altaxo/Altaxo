@@ -25,6 +25,7 @@ namespace Altaxo.Calc
 	/// <summary>
 	/// This structure holds a value, which is either absolute or relative to another value.
 	/// </summary>
+	[Serializable]
 	public struct RelativeOrAbsoluteValue
 	{
 		/// <summary>True if the value m_Value is relative, false if m_Value is absolute.</summary>

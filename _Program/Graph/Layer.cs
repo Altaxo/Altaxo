@@ -39,7 +39,7 @@ namespace Altaxo.Graph
 		/// The type of the size (i.e. width and height values.
 		/// </summary>
 		[Serializable]
-		public enum SizeType 
+			public enum SizeType 
 		{
 			/// <summary>
 			///  the value is a absolute value (not relative) in points (1/72 inch).
@@ -61,8 +61,8 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// The type of the position values  (i.e. x and y position of the layer).
 		/// </summary>
-	[Serializable]
-		public enum PositionType 
+		[Serializable]
+			public enum PositionType 
 		{
 			/// <summary>
 			/// The value is a absolute value (not relative) in points (1/72 inch).
@@ -123,7 +123,7 @@ namespace Altaxo.Graph
 		/// Provides how the axis is linked to the corresponding axis on the linked layer.
 		/// </summary>
 		[Serializable]
-		public enum AxisLinkType
+			public enum AxisLinkType
 		{
 			/// <summary>
 			/// The axis is not linked, i.e. independent.
@@ -160,12 +160,17 @@ namespace Altaxo.Graph
 		/// </remarks>
 		protected SizeF  m_LayerSize = new SizeF(0,0);
 
-		protected Matrix matrix = new Matrix();  // forward transformation matrix
-		protected Matrix matrixi = new Matrix(); // inverse transformation matrix
+		protected Matrix m_ForwardMatrix = new Matrix();  // forward transformation m_ForwardMatrix
+		protected Matrix m_ReverseMatrix = new Matrix(); // inverse transformation m_ForwardMatrix
 
 		#endregion // Cached member variables
 
 		#region Member variables
+
+		/// <summary>True if the layer area should be filled with a background brush.</summary>
+		protected bool m_bFillLayerArea=false;
+		/// <summary>The background brush for the layer area.</summary>
+		protected BrushHolder m_LayerAreaFillBrush = new BrushHolder(Color.Aqua);
 
 
 		/// <summary>
@@ -231,10 +236,6 @@ namespace Altaxo.Graph
 		protected bool m_ShowRightAxis = true;
 		/// <summary>True if the top axis should be drawn.</summary>
 		protected bool m_ShowTopAxis = true;
-		/// <summary>True if the layer area should be filled with a background brush.</summary>
-		protected bool m_bFillLayerArea=false;
-		/// <summary>The background brush for the layer area.</summary>
-		protected BrushHolder m_LayerAreaFillBrush = new BrushHolder(Color.Aqua);
 
 		protected XYLayerAxisStyle m_LeftAxisStyle = new XYLayerAxisStyle(EdgeType.Left);
 		protected XYLayerAxisStyle m_BottomAxisStyle = new XYLayerAxisStyle(EdgeType.Bottom);
@@ -320,7 +321,7 @@ namespace Altaxo.Graph
 
 		#endregion
 
-		#region "Serialization"
+		#region Serialization
 
 		/// <summary>Used to serialize the GraphDocument Version 0.</summary>
 		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
@@ -336,6 +337,10 @@ namespace Altaxo.Graph
 				Layer s = (Layer)obj;
 
 			
+				// Layer style
+				info.AddValue("FillLayerArea",s.m_bFillLayerArea);
+				info.AddValue("LayerAreaFillBrush",s.m_LayerAreaFillBrush);
+
 				// size, position, rotation and scale
 				
 				info.AddValue("WidthType",s.m_LayerWidthType);
@@ -370,6 +375,11 @@ namespace Altaxo.Graph
 
 			
 				// Styles
+				info.AddValue("ShowLeftAxis",s.m_ShowLeftAxis);
+				info.AddValue("ShowBottomAxis",s.m_ShowBottomAxis);
+				info.AddValue("ShowRightAxis",s.m_ShowRightAxis);
+				info.AddValue("ShowTopAxis",s.m_ShowTopAxis);
+
 				info.AddValue("LeftAxisStyle",s.m_LeftAxisStyle);
 				info.AddValue("BottomAxisStyle",s.m_BottomAxisStyle);
 				info.AddValue("RightAxisStyle",s.m_RightAxisStyle);
@@ -410,6 +420,12 @@ namespace Altaxo.Graph
 			{
 				Layer s = (Layer)obj;
 			
+				// Layer style
+				s.m_bFillLayerArea = info.GetBoolean("FillLayerArea");
+				s.m_LayerAreaFillBrush = (BrushHolder)info.GetValue("LayerAreaFillBrush",typeof(BrushHolder));
+
+
+
 				// size, position, rotation and scale
 				
 				s.m_LayerWidthType  = (SizeType)info.GetValue("WidthType",typeof(SizeType));
@@ -444,6 +460,11 @@ namespace Altaxo.Graph
 
 
 				// Styles
+				s.m_ShowLeftAxis = info.GetBoolean("ShowLeftAxis");
+				s.m_ShowBottomAxis = info.GetBoolean("ShowBottomAxis");
+				s.m_ShowRightAxis = info.GetBoolean("ShowRightAxis");
+				s.m_ShowTopAxis = info.GetBoolean("ShowTopAxis");
+
 				s.m_LeftAxisStyle = (Graph.XYLayerAxisStyle)info.GetValue("LeftAxisStyle",typeof(Graph.XYLayerAxisStyle));
 				s.m_BottomAxisStyle = (Graph.XYLayerAxisStyle)info.GetValue("BottomAxisStyle",typeof(Graph.XYLayerAxisStyle));
 				s.m_RightAxisStyle = (Graph.XYLayerAxisStyle)info.GetValue("RightAxisStyle",typeof(Graph.XYLayerAxisStyle));
@@ -482,6 +503,9 @@ namespace Altaxo.Graph
 		/// <param name="obj">Not used.</param>
 		public void OnDeserialization(object obj)
 		{
+			m_ForwardMatrix = new Matrix();
+			m_ReverseMatrix = new Matrix();
+			CalculateMatrix();
 		}
 		#endregion
 
@@ -754,19 +778,19 @@ namespace Altaxo.Graph
 
 		protected void CalculateMatrix()
 		{
-			matrix.Reset();
-			matrix.Translate(m_LayerPosition.X,m_LayerPosition.Y);
-			matrix.Scale(m_LayerScale,m_LayerScale);
-			matrix.Rotate(m_LayerAngle);
-			matrixi=matrix.Clone();
-			matrixi.Invert();
+			m_ForwardMatrix.Reset();
+			m_ForwardMatrix.Translate(m_LayerPosition.X,m_LayerPosition.Y);
+			m_ForwardMatrix.Scale(m_LayerScale,m_LayerScale);
+			m_ForwardMatrix.Rotate(m_LayerAngle);
+			m_ReverseMatrix=m_ForwardMatrix.Clone();
+			m_ReverseMatrix.Invert();
 		}
 
 
 		public PointF GraphToLayerCoordinates(PointF pagecoordinates)
 		{
 			PointF[] pf = { pagecoordinates };
-			matrixi.TransformPoints(pf);
+			m_ReverseMatrix.TransformPoints(pf);
 			return pf[0];
 		}
 
@@ -780,7 +804,7 @@ namespace Altaxo.Graph
 			// not very intelligent, maybe there is a simpler way to transform without
 			// taking the translation into account
 			PointF[] pf = { new PointF(pagediff.X + this.Position.X, pagediff.Y + this.Position.Y) };
-			matrixi.TransformPoints(pf);
+			m_ReverseMatrix.TransformPoints(pf);
 			return pf[0];
 		}
 
@@ -793,7 +817,7 @@ namespace Altaxo.Graph
 		/// <returns>graphics path now in graph coordinates</returns>
 		public GraphicsPath LayerToGraphCoordinates(GraphicsPath gp)
 		{
-			gp.Transform(matrix);
+			gp.Transform(m_ForwardMatrix);
 			return gp;
 		}
 
@@ -1818,7 +1842,7 @@ namespace Altaxo.Graph
 			//g.TranslateTransform(m_LayerPosition.X,m_LayerPosition.Y);
 			//g.RotateTransform(m_LayerAngle);
 			
-			g.MultiplyTransform(matrix);
+			g.MultiplyTransform(m_ForwardMatrix);
 
 			if(m_bFillLayerArea)
 				g.FillRectangle(m_LayerAreaFillBrush,0,0,m_LayerSize.Width,m_LayerSize.Height);
@@ -1885,7 +1909,7 @@ namespace Altaxo.Graph
 					gp = go.HitTest(layerC);
 					if(null!=gp)
 					{
-						gp.Transform(matrix);
+						gp.Transform(m_ForwardMatrix);
 						return go;
 					}
 				}
@@ -1899,7 +1923,7 @@ namespace Altaxo.Graph
 				gp = go.HitTest(layerC);
 				if(null!=gp)
 				{
-					gp.Transform(matrix);
+					gp.Transform(m_ForwardMatrix);
 					return go;
 				}
 			}
@@ -1980,6 +2004,7 @@ namespace Altaxo.Graph
 
 		#region Inner classes
 
+		[Serializable]
 		public class PlotAssociationList : System.Collections.ArrayList
 		{
 			private Layer m_Owner; // the parent of this list
@@ -2041,18 +2066,21 @@ namespace Altaxo.Graph
 			/// <summary>Fired when something in this collection changed, as for instance
 			/// adding or deleting layers, or exchanging layers.</summary>
 			public event System.EventHandler LayerCollectionChanged;
-
+			
+			private object[] m_DeserializedLayers=null;
 
 			/// <summary>
 			/// Fired if some of the layer signals that a redraw is neccessary.
 			/// </summary>
 			public event System.EventHandler Invalidate;
-
+		
 			#region "Serialization"
 
 			/// <summary>Used to serialize the LayerCollection Version 0.</summary>
 			public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 			{
+				System.Collections.ArrayList arr=null;
+
 				/// <summary>
 				/// Serializes LayerCollection Version 0.
 				/// </summary>
@@ -2062,7 +2090,7 @@ namespace Altaxo.Graph
 				public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 				{
 					LayerCollection s = (LayerCollection)obj;
-					info.AddValue("Data",s.InnerList);
+					info.AddValue("Data",s.InnerList.ToArray());
 				}
 
 				/// <summary>
@@ -2077,8 +2105,8 @@ namespace Altaxo.Graph
 				{
 					LayerCollection s = (LayerCollection)obj;
 
-					System.Collections.ArrayList arr =	(System.Collections.ArrayList)info.GetValue("Data",typeof(System.Collections.ArrayList));
-					s.InnerList.AddRange(arr);
+					s.m_DeserializedLayers =	(object[])info.GetValue("Data",typeof(System.Array));
+				
 					return s;
 				}
 			}
@@ -2089,7 +2117,13 @@ namespace Altaxo.Graph
 			/// <param name="obj">Not used.</param>
 			public virtual void OnDeserialization(object obj)
 			{
+				if(null!=m_DeserializedLayers)
+				{
+					foreach(Layer l in m_DeserializedLayers)
+						Add(l);
 				
+				m_DeserializedLayers=null;
+				}
 			}
 		#endregion
 

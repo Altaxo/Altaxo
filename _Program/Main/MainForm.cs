@@ -30,13 +30,6 @@ using Altaxo.Serialization;
 
 namespace Altaxo
 {
-
-	public class AltaxoAdditionalContext
-	{
-		public System.Runtime.Serialization.SurrogateSelector m_SurrogateSelector;
-		public System.Type m_FormatterType;
-	}
-
 	/// <summary>
 	/// Summary description for Form1.
 	/// </summary>
@@ -145,7 +138,8 @@ namespace Altaxo
 			// wir konstruieren zu jeder Tabelle im Dokument ein GrafTabView
 			document.CreateNewWorksheet(this);
 
-			new Altaxo.Graph.GraphForm(this,document);
+			// we construct a empty graph by default
+			document.CreateNewGraph(this);
 			}
 
 		/// <summary>

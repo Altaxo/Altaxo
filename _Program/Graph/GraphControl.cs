@@ -26,6 +26,7 @@ using System.Data;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
+using Altaxo.Serialization;
 
 
 namespace Altaxo.Graph
@@ -33,6 +34,8 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Hosts a graph and handles the painting of the graph and the actions to modify the graph
 	/// </summary>
+	[SerializationSurrogate(0,typeof(GraphControl.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class GraphControl : System.Windows.Forms.UserControl
 	{
 		/// <summary>
@@ -111,6 +114,80 @@ namespace Altaxo.Graph
 		/// This holds a frozen image of the graph during the moving time
 		/// </summary>
 		protected Bitmap m_FrozenGraph=null;
+
+
+		#region "Serialization"
+		// -------------------------------------------------------------------------------------------------------------------
+		//
+		// Serialization of a Windows Form object requires special measures. I decided to use a special trick:
+		// 1. For Serialization I use a SerializationSurrogate which casts the type of serialization object to itself's type 
+		//    (and __not__ the type of the data grid)
+		// 2. So during deserialization this serializationSurrogate type is deserialized, which requires that this type
+		//    derives from ISerializable, and the special deserialization constructor is used for deserialization
+		// 3. the data grid object itself can be created only after the entire object graph is deserialized
+		//    this is only ensured after the deserialization of Altaxo.Document
+		//    then the function GetRealObject is called on the child objects of Altaxo.Document, which are itself free to
+		//    call GetRealObject
+		//
+		// -------------------------------------------------------------------------------------------------------------------
+		public class SerializationSurrogate0 : IDeserializationSubstitute, System.Runtime.Serialization.ISerializationSurrogate, System.Runtime.Serialization.ISerializable, System.Runtime.Serialization.IDeserializationCallback
+		{
+			protected Altaxo.Graph.GraphDocument m_Graph;
+			protected float m_Zoom;
+			protected bool  m_AutoZoom; // if true, the sheet is zoomed as big as possible to fit into window
+
+			// we need a empty constructor
+			public SerializationSurrogate0() {}
+			// not used for deserialization, since the ISerializable constructor is used for that
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector){return obj;}
+			// not used for serialization, instead the ISerializationSurrogate is used for that
+			public void GetObjectData(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)	{}
+
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{	
+				//info.SetType(typeof(DataGridDeserializer));
+				info.SetType(this.GetType());
+				GraphControl s = (GraphControl)obj;
+				info.AddValue("Graph",s.m_Graph);
+				info.AddValue("AutoZoom",s.m_AutoZoom);
+				info.AddValue("Zoom",s.m_Zoom);
+			}
+
+
+			public SerializationSurrogate0(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context)
+			{
+				m_Graph = (GraphDocument)info.GetValue("Graph",typeof(GraphDocument));
+				m_AutoZoom = info.GetBoolean("AutoZoom");
+				m_Zoom = info.GetSingle("Zoom");
+			}
+
+			public void OnDeserialization(object o)
+			{
+			}
+
+			public object GetRealObject(object parent)
+			{
+				GraphControl dg = new GraphControl();
+				DeserializationFinisher finisher = new DeserializationFinisher(dg);
+			
+				if(null!=parent)
+					dg.Parent = (System.Windows.Forms.Control)parent;
+			
+				dg.m_Graph = this.m_Graph;
+				dg.m_AutoZoom = this.m_AutoZoom;
+				dg.m_Zoom = this.m_Zoom;
+				
+				// now finish the dependent objects
+				dg.m_Graph.OnDeserialization(finisher);
+
+				// restore the event chain
+
+				return dg;
+			}
+		} // end SerializationSurrogate0
+
+		#endregion
+
 
 
 		public GraphControl()
@@ -394,6 +471,7 @@ namespace Altaxo.Graph
 			get { return m_Graph.Layers; }
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int CurrentLayerNumber
 		{
 			get
@@ -422,6 +500,7 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int CurrentPlotNumber 
 		{
 			get 

@@ -137,4 +137,14 @@ namespace Altaxo.Serialization
 		{
 		}
 	}
+
+
+	
+	public class AltaxoAdditionalContext
+	{
+		public System.Runtime.Serialization.SurrogateSelector m_SurrogateSelector;
+		public System.Type m_FormatterType;
+	}
+
+
 }

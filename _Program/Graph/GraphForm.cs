@@ -24,12 +24,15 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
 	/// <summary>
 	/// Summary description for AltaxoGraph.
 	/// </summary>
+	[SerializationSurrogate(0,typeof(GraphForm.SerializationSurrogate0))]
+	[SerializationVersion(0,"Initial version.")]
 	public class GraphForm : System.Windows.Forms.Form
 	{
 		private AltaxoDocument parentDocument =null;
@@ -56,6 +59,64 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.MenuItem menuFile_PrintPreview;
 
 	
+
+		#region Serialization
+		public class SerializationSurrogate0 : IDeserializationSubstitute, System.Runtime.Serialization.ISerializationSurrogate, System.Runtime.Serialization.ISerializable, System.Runtime.Serialization.IDeserializationCallback
+		{
+			protected Point		m_Location;
+			protected Size		m_Size;
+			protected object	m_GraphControl=null;
+
+			// we need a empty constructor
+			public SerializationSurrogate0() {}
+
+			// not used for deserialization, since the ISerializable constructor is used for that
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector){return obj;}
+			// not used for serialization, instead the ISerializationSurrogate is used for that
+			public void GetObjectData(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)	{}
+
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				info.SetType(this.GetType());
+				GraphForm s = (GraphForm)obj;
+				info.AddValue("Location",s.Location);
+				info.AddValue("Size",s.Size);
+				info.AddValue("GraphControl",s.m_GraphControl);
+				
+			}
+
+			public SerializationSurrogate0(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context)
+			{
+				m_Location = (Point)info.GetValue("Location",typeof(Point));
+				m_Size     = (Size)info.GetValue("Size",typeof(Size));
+				m_GraphControl = info.GetValue("GraphControl",typeof(object));
+			}
+
+			public void OnDeserialization(object o)
+			{
+			}
+
+			public object GetRealObject(object parent)
+			{
+				// Create a new worksheet, parent window is the application window
+				GraphForm frm = new GraphForm(App.CurrentApplication,null,null);
+				frm.Location = m_Location;
+				frm.Size = m_Size;
+
+				// Change the IDeserializationSurrogate of the data grid control to the real object
+				// parent of the data grid is the worksheet created above
+				m_GraphControl = ((IDeserializationSubstitute)m_GraphControl).GetRealObject(frm);
+				frm.GraphControl = m_GraphControl as GraphControl;
+				frm.GraphControl.Size = frm.ClientSize;
+				// frm.Text = frm.GraphControl.DataTable.TableName;
+				m_GraphControl = null;
+				return frm;
+			}
+		}
+		#endregion
+
+
+
 
 		protected void OnAMdiChildActivate(object sender, EventArgs e)
 		{
@@ -112,6 +173,23 @@ namespace Altaxo.Graph
 		public Altaxo.Graph.GraphControl GraphControl
 		{
 			get { return m_GraphControl; }
+			set
+			{
+				if(null!=m_GraphControl)
+				{
+					m_GraphControl.Hide();
+					m_GraphControl.Dispose();
+				}
+				m_GraphControl = value;
+				m_GraphControl.Parent=this;
+				this.m_GraphControl.Anchor = (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+					| System.Windows.Forms.AnchorStyles.Left) 
+					| System.Windows.Forms.AnchorStyles.Right);
+				this.m_GraphControl.BackColor = System.Drawing.SystemColors.AppWorkspace;
+				this.m_GraphControl.TabIndex = 0;
+				m_GraphControl.Size = this.Size;
+				m_GraphControl.Show();
+			}
 		}
 
 
@@ -311,6 +389,8 @@ namespace Altaxo.Graph
 			this.Menu = this.mainMenu1;
 			this.Name = "GraphForm";
 			this.Text = "AltaxoGraph";
+			this.Closing += new System.ComponentModel.CancelEventHandler(this.GraphForm_Closing);
+			this.Closed += new System.EventHandler(this.GraphForm_Closed);
 			this.ResumeLayout(false);
 
 		}
@@ -501,6 +581,21 @@ namespace Altaxo.Graph
 		private void menuGraph_NewLayerLegend_Click(object sender, System.EventArgs e)
 		{
 			this.m_GraphControl.menuGraph_NewLayerLegend();
+		}
+
+		private void GraphForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this,"Do you really want to close this graph?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
+
+			if(dlgres==System.Windows.Forms.DialogResult.No)
+			{
+				e.Cancel = true;
+			}
+		}
+
+		private void GraphForm_Closed(object sender, System.EventArgs e)
+		{
+			App.document.RemoveGraph(this);
 		}
 
 		public class DataMenuItem : MenuItem

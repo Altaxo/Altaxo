@@ -34,7 +34,6 @@ namespace Altaxo.Worksheet
 	/// </summary>
 	[SerializationSurrogate(0,typeof(DataGrid.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-
 	public class DataGrid : System.Windows.Forms.UserControl
 	{
 		public enum SelectionType { Nothing, DataRowSelection, DataColumnSelection, PropertyColumnSelection }
@@ -281,20 +280,26 @@ namespace Altaxo.Worksheet
 				if(null!=parent)
 					dg.Parent = (System.Windows.Forms.Control)parent;
 			
-				dg.m_DataTable = m_DataTable;
 
 				dg.m_ColumnStyles = m_ColumnStyles;
 				dg.m_DefaultColumnStyles = this.m_DefaultColumnStyles;
 				dg.m_RowHeaderStyle = this.m_RowHeaderStyle; this.m_RowHeaderStyle=null;
 				dg.m_ColumnHeaderStyle = this.m_ColumnHeaderStyle; this.m_ColumnHeaderStyle=null;
 				
-				// now finish the dependent objects
-				dg.m_DataTable.OnDeserialization(finisher);
-				foreach(ColumnStyle cs in dg.m_ColumnStyles.Values) cs.OnDeserialization(finisher);
-				foreach(ColumnStyle cs in dg.m_DefaultColumnStyles.Values) cs.OnDeserialization(finisher);
+	
+				// finish deserialization of styles
+				foreach(ColumnStyle cs in dg.m_ColumnStyles.Values) 
+					cs.OnDeserialization(finisher);
+				
+				foreach(ColumnStyle cs in dg.m_DefaultColumnStyles.Values)
+					cs.OnDeserialization(finisher);
 				dg.m_RowHeaderStyle.OnDeserialization(finisher);
 				dg.m_ColumnHeaderStyle.OnDeserialization(finisher);
-				
+
+				// now finish the datatable and set it
+				m_DataTable.OnDeserialization(finisher);
+				dg.DataTable = m_DataTable; // this also restores the event links to the datatable
+
 				return dg;
 			}
 		} // end SerializationSurrogate0
@@ -313,10 +318,12 @@ namespace Altaxo.Worksheet
 			set
 			{
 				if(null!=m_DataTable)
+				{
 					m_DataTable.FireDataChanged -= new Altaxo.Data.DataTable.OnDataChanged(this.OnTableDataChanged);
+					m_DataTable.PropCols.FireDataChanged -= new Altaxo.Data.DataTable.OnDataChanged(this.OnPropertyDataChanged);
+				}
 
 				m_DataTable = value;
-				
 				if(null!=m_DataTable)
 				{
 					m_DataTable.FireDataChanged += new Altaxo.Data.DataTable.OnDataChanged(this.OnTableDataChanged);

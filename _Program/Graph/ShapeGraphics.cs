@@ -21,9 +21,13 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
+
+	[SerializationSurrogate(0,typeof(ShapeGraphic.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public abstract class ShapeGraphic : GraphObject
 	{
 
@@ -31,6 +35,70 @@ namespace Altaxo.Graph
 		protected Color m_lineColor  = Color.Black;
 		protected Color m_fillColor  = Color.White;
 		protected bool m_fill  = false;
+
+		#region Serialization
+		/// <summary>Used to serialize the ShapeGraphic Version 0.</summary>
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes ShapeGraphic Version 0.
+			/// </summary>
+			/// <param name="obj">The ShapeGraphic to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				ShapeGraphic s = (ShapeGraphic)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+	
+				// serialize the base class
+				surr.GetObjectData(obj,info,context); // stream the data of the base object
+
+				info.AddValue("LineColor",s.m_lineColor);
+				info.AddValue("LineWidth",s.m_lineWidth);
+
+				info.AddValue("Fill",s.m_fill);
+				info.AddValue("FillColor",s.m_fillColor);
+			}
+			/// <summary>
+			/// Deserializes the ShapeGraphic Version 0.
+			/// </summary>
+			/// <param name="obj">The empty ShapeGraphic object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized ShapeGraphic.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				ShapeGraphic s = (ShapeGraphic)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+				// deserialize the base class
+				surr.SetObjectData(obj,info,context,selector);
+		
+				s.m_lineColor = (Color)info.GetValue("LineColor",typeof(Color));
+				s.m_lineWidth = info.GetSingle("LineWidth");
+
+				s.m_fill = info.GetBoolean("Fill");
+				s.m_fillColor = (Color)info.GetValue("FillColor",typeof(Color));
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public override void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
 
 		public virtual float LineWidth
 		{ 
@@ -84,11 +152,65 @@ namespace Altaxo.Graph
 	} // 	End Class
 
 
-
+	[SerializationSurrogate(0,typeof(LineGraphic.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class LineGraphic : ShapeGraphic
 	{
+		#region Serialization
+		/// <summary>Used to serialize the LineGraphic Version 0.</summary>
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes LineGraphic Version 0.
+			/// </summary>
+			/// <param name="obj">The LineGraphic to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				LineGraphic s = (LineGraphic)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+	
+				// serialize the base class
+				surr.GetObjectData(obj,info,context); // stream the data of the base object
+			}
+			/// <summary>
+			/// Deserializes the LineGraphic Version 0.
+			/// </summary>
+			/// <param name="obj">The empty SLineGraphic object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized LineGraphic.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				LineGraphic s = (LineGraphic)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+				// deserialize the base class
+				surr.SetObjectData(obj,info,context,selector);
+		
+	
+				return s;
+			}
+		}
 
-#region "Constructors"
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public override void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
+
+		#region Constructors
 		public LineGraphic()
 		{
 		}
@@ -103,13 +225,13 @@ namespace Altaxo.Graph
 		{
 		}
 
-			public LineGraphic(PointF startPosition, PointF endPosition)
-				:
-				this(startPosition)
-			{
-				this.SetEndPosition(endPosition);
-				this.AutoSize = false;
-			}
+		public LineGraphic(PointF startPosition, PointF endPosition)
+			:
+			this(startPosition)
+		{
+			this.SetEndPosition(endPosition);
+			this.AutoSize = false;
+		}
 
 
 		public LineGraphic(float startX, float startY, PointF endPosition)
@@ -143,7 +265,7 @@ namespace Altaxo.Graph
 			this.AutoSize = false;
 		}
 
-#endregion
+		#endregion
 
 
 
@@ -182,8 +304,8 @@ namespace Altaxo.Graph
 		public void SetEndPosition(PointF Value)
 		{
 			SizeF siz = new SizeF(
-														Value.X - this.m_Position.X,
-														Value.Y - this.m_Position.Y);
+				Value.X - this.m_Position.X,
+				Value.Y - this.m_Position.Y);
 			SetSize(siz);
 		}
 
@@ -200,10 +322,67 @@ namespace Altaxo.Graph
 	} // End Class
 
 
+	[SerializationSurrogate(0,typeof(RectangleGraphic.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class RectangleGraphic : ShapeGraphic
 	{
+		#region Serialization
+		/// <summary>Used to serialize the RectangleGraphic Version 0.</summary>
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes RectangleGraphic Version 0.
+			/// </summary>
+			/// <param name="obj">The RectangleGraphic to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				RectangleGraphic s = (RectangleGraphic)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+	
+				// serialize the base class
+				surr.GetObjectData(obj,info,context); // stream the data of the base object
 
-#region "Constructors"
+			
+			}
+			/// <summary>
+			/// Deserializes the RectangleGraphic Version 0.
+			/// </summary>
+			/// <param name="obj">The empty RectangleGraphic object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized RectangleGraphic.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				RectangleGraphic s = (RectangleGraphic)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+				// deserialize the base class
+				surr.SetObjectData(obj,info,context,selector);
+		
+			
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public override void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
+
+		#region Constructors
 		public RectangleGraphic()
 		{
 		}
@@ -222,13 +401,13 @@ namespace Altaxo.Graph
 		}
 			
 
-			public RectangleGraphic( PointF graphicPosition , SizeF graphicSize)
-				:
-				this(graphicPosition)
-			{
-				this.SetSize(graphicSize);
-				this.AutoSize = false;
-			}
+		public RectangleGraphic( PointF graphicPosition , SizeF graphicSize)
+			:
+			this(graphicPosition)
+		{
+			this.SetSize(graphicSize);
+			this.AutoSize = false;
+		}
 
 		public RectangleGraphic( float posX , float posY, SizeF graphicSize)
 			:
@@ -277,7 +456,7 @@ namespace Altaxo.Graph
 		{
 		}
 
-#endregion
+		#endregion
 
 
 		public override void Paint( Graphics g, object obj)
@@ -298,9 +477,68 @@ namespace Altaxo.Graph
 		
 	} // End Class
 
+	
+	[SerializationSurrogate(0,typeof(EllipseGraphic.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class EllipseGraphic : ShapeGraphic
 	{
-#region "Constructors"
+
+		#region Serialization
+		/// <summary>Used to serialize the EllipseGraphic Version 0.</summary>
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes EllipseGraphic Version 0.
+			/// </summary>
+			/// <param name="obj">The EllipseGraphic to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				EllipseGraphic s = (EllipseGraphic)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+	
+				// serialize the base class
+				surr.GetObjectData(obj,info,context); // stream the data of the base object
+
+				
+			}
+			/// <summary>
+			/// Deserializes the EllipseGraphic Version 0.
+			/// </summary>
+			/// <param name="obj">The empty EllipseGraphic object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized EllipseGraphic.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				EllipseGraphic s = (EllipseGraphic)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+				// deserialize the base class
+				surr.SetObjectData(obj,info,context,selector);
+		
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public override void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
+
+		#region Constructors
 	
 		public EllipseGraphic()
 		{
@@ -373,7 +611,7 @@ namespace Altaxo.Graph
 		{
 		}
 
-#endregion
+		#endregion
 
 		public override void Paint( Graphics g, object obj )
 		{
@@ -382,7 +620,7 @@ namespace Altaxo.Graph
 			if( m_Rotation != 0)
 				g.RotateTransform(m_Rotation);
 
-					RectangleF rect = new RectangleF(X, Y, Width, Height);
+			RectangleF rect = new RectangleF(X, Y, Width, Height);
 			if( this.Fill )
 				g.FillEllipse(new SolidBrush(this.FillColor), rect);
 

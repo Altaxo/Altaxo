@@ -20,17 +20,83 @@
 
 using System;
 using System.Drawing;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
 	/// <summary>
 	/// Summary description for TextGraphObject.
 	/// </summary>
+	[SerializationSurrogate(0,typeof(TextGraphObject.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class TextGraphObject : GraphObject
 	{
 		protected Font m_Font;
 		protected string m_Text = "";
 		protected Color m_Color = Color.Black;
+
+		#region Serialization
+		/// <summary>Used to serialize the TextGraphObject Version 0.</summary>
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes TextGraphObject Version 0.
+			/// </summary>
+			/// <param name="obj">The TextGraphObject to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				TextGraphObject s = (TextGraphObject)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+	
+				// serialize the base class
+				surr.GetObjectData(obj,info,context); // stream the data of the base object
+
+				info.AddValue("Text",s.m_Text);
+				info.AddValue("Font",s.m_Font);
+				info.AddValue("Color",s.m_Color);
+				
+			}
+			/// <summary>
+			/// Deserializes the TextGraphObject Version 0.
+			/// </summary>
+			/// <param name="obj">The empty TextGraphObject object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized TextGraphObject.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				TextGraphObject s = (TextGraphObject)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+				// deserialize the base class
+				surr.SetObjectData(obj,info,context,selector);
+		
+				s.m_Text = info.GetString("Text");
+				s.m_Font = (Font)info.GetValue("Font",typeof(Font));
+				s.m_Color = (Color)info.GetValue("Color",typeof(Color));
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public override void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
+
 
 #region "Constructors"
 
@@ -353,9 +419,13 @@ namespace Altaxo.Graph
 	/// but also some formatting of the text, and quite important - the plot symbols
 	/// to be used either in the legend or in the axis titles
 	/// </summary>
+	[SerializationSurrogate(0,typeof(ExtendedTextGraphObject.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class ExtendedTextGraphObject : GraphObject
 	{
+		[Serializable]
 		public enum XAnchorPositionType { Left, Center, Right }
+		[Serializable]
 		public enum YAnchorPositionType { Top, Center, Bottom }
 
 		protected string m_Text = ""; // the text, which contains the formatting symbols
@@ -368,6 +438,7 @@ namespace Altaxo.Graph
 		protected XAnchorPositionType m_XAnchorType = XAnchorPositionType.Left;
 		protected YAnchorPositionType m_YAnchorType = YAnchorPositionType.Top;
 
+		#region Cached or temporary variables
 		protected TextLine.TextLineCollection m_TextLines;
 		protected bool m_bStructureInSync=false; // true when the text was interpretet and the structure created
 		protected bool m_bMeasureInSync=false; // true when all items are measured
@@ -378,10 +449,83 @@ namespace Altaxo.Graph
 		protected float m_cyBaseDescent=0; // descent of the base font
 		protected float m_WidthOfOne_n = 0; // Width of the lower letter n
 		protected float m_WidthOfThree_M = 0; // Width of three upper letters M
-	
 		protected PointF m_TextOffset; // offset of text to left upper corner of outer rectangle
+		#endregion // Cached or temporary variables
 
-#region "Constructors"
+
+		#region Serialization
+		/// <summary>Used to serialize the ExtendedTextGraphObject Version 0.</summary>
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes ExtendedTextGraphObject Version 0.
+			/// </summary>
+			/// <param name="obj">The ExtendedTextGraphObject to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				ExtendedTextGraphObject s = (ExtendedTextGraphObject)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+	
+				// serialize the base class
+				surr.GetObjectData(obj,info,context); // stream the data of the base object
+
+				info.AddValue("Text",s.m_Text);
+				info.AddValue("Font",s.m_Font);
+				info.AddValue("Brush",s.m_BrushHolder);
+				info.AddValue("BackgroundStyle",s.m_BackgroundStyle);
+				info.AddValue("LineSpacing",s.m_LineSpacingFactor);
+				info.AddValue("ShadowLength",s.m_ShadowLength);
+				info.AddValue("XAnchor",s.m_XAnchorType);
+				info.AddValue("YAnchor",s.m_YAnchorType);
+			}
+			/// <summary>
+			/// Deserializes the ExtendedTextGraphObject Version 0.
+			/// </summary>
+			/// <param name="obj">The empty ExtendedTextGraphObject object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized ExtendedTextGraphObject.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				ExtendedTextGraphObject s = (ExtendedTextGraphObject)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+				// deserialize the base class
+				surr.SetObjectData(obj,info,context,selector);
+		
+				s.m_Text = info.GetString("Text");
+				s.m_Font = (Font)info.GetValue("Font",typeof(Font));
+				s.m_BrushHolder = (BrushHolder)info.GetValue("Brush",typeof(BrushHolder));
+				s.m_BackgroundStyle = (BackgroundStyle)info.GetValue("BackgroundStyle",typeof(BackgroundStyle));
+				s.m_LineSpacingFactor = info.GetSingle("LineSpacing");
+				s.m_ShadowLength = info.GetSingle("ShadowLength");
+				s.m_XAnchorType = (XAnchorPositionType)info.GetValue("XAnchor",typeof(XAnchorPositionType));
+				s.m_YAnchorType = (YAnchorPositionType)info.GetValue("YAnchor",typeof(YAnchorPositionType));
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public override void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
+
+
+#region Constructors
 
 		public ExtendedTextGraphObject(ExtendedTextGraphObject from)
 		{

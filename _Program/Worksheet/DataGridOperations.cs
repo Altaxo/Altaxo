@@ -47,7 +47,7 @@ namespace Altaxo.Worksheet
 			
 			// now create a new Graph with this plot associations
 
-			Altaxo.Graph.GraphForm gf = new Altaxo.Graph.GraphForm(App.CurrentApplication,App.document);
+			Altaxo.Graph.GraphForm gf = App.document.CreateNewGraph(App.CurrentApplication);
 			gf.GraphControl.Layers[0].AddPlotAssociation(pa);
 		
 		}

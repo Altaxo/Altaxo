@@ -28,12 +28,9 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Summary description for GraphObjectCollection.
 	/// </summary>
+	[Serializable]
 	public class GraphObjectCollection : System.Collections.CollectionBase
 	{
-		protected int m_HorizRes=72;
-		protected int m_VertRes = 72;
-
-
 
 		public GraphObjectCollection()
 		: base()

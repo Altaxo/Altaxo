@@ -21,7 +21,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-
+using Altaxo.Serialization;
 using Altaxo.Data;
 
 namespace Altaxo.Graph
@@ -29,21 +29,78 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Summary description for PlotAssociation.
 	/// </summary>
+	[SerializationSurrogate(0,typeof(PlotAssociation.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class PlotAssociation
 	{
 		protected Altaxo.Data.IReadableColumn m_xColumn; // the X-Column
 		protected Altaxo.Data.IReadableColumn m_yColumn; // the Y-Column
 
+		protected PlotStyle m_PlotStyle = null;
+
+
+		// cached or temporary data
 		protected PhysicalBoundaries m_xBoundaries;
 		protected PhysicalBoundaries m_yBoundaries;
 
 		protected int    m_PlottablePoints; // number of plottable points
 		protected bool   m_bCachedDataValid=false;
 
-		protected PlotStyle m_PlotStyle = null;
-
+		// events
 		public event PhysicalBoundaries.BoundaryChangedHandler	XBoundariesChanged;
 		public event PhysicalBoundaries.BoundaryChangedHandler	YBoundariesChanged;
+
+		#region Serialization
+		/// <summary>Used to serialize the PlotAssociation Version 0.</summary>
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes PlotAssociation Version 0.
+			/// </summary>
+			/// <param name="obj">The PlotAssociation to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				PlotAssociation s = (PlotAssociation)obj;
+				
+				info.AddValue("XColumn",s.m_xColumn);
+				info.AddValue("YColumn",s.m_yColumn);
+			}
+			/// <summary>
+			/// Deserializes the PlotAssociation Version 0.
+			/// </summary>
+			/// <param name="obj">The empty PlotAssociation object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized PlotAssociation.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				PlotAssociation s = (PlotAssociation)obj;
+
+				s.m_xColumn = (Altaxo.Data.IReadableColumn)info.GetValue("XColumm",typeof(Altaxo.Data.IReadableColumn));
+				s.m_yColumn = (Altaxo.Data.IReadableColumn)info.GetValue("YColumm",typeof(Altaxo.Data.IReadableColumn));
+		
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+			// restore the event chain
+			if(m_xColumn is Altaxo.Data.DataColumn)
+				((Altaxo.Data.DataColumn)m_xColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChanged);
+			
+			if(m_yColumn is Altaxo.Data.DataColumn)
+				((Altaxo.Data.DataColumn)m_yColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChanged);
+		}
+		#endregion
+
 
 
 		public PlotAssociation(Altaxo.Data.DataColumn m_xColumn, Altaxo.Data.DataColumn m_yColumn)
@@ -227,7 +284,19 @@ namespace Altaxo.Graph
 			}
 			set
 			{
+
+				if(null!=m_xColumn && m_xColumn is Altaxo.Data.DataColumn)
+				{
+					((Altaxo.Data.DataColumn)m_xColumn).DataChanged -= new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChanged);
+				}
+
 				this.m_xColumn = value;
+
+				if(null!=m_xColumn && m_xColumn is Altaxo.Data.DataColumn)
+				{
+					((Altaxo.Data.DataColumn)m_xColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChanged);
+				}
+
 				CalculateCachedData();
 			}
 		}
@@ -240,7 +309,16 @@ namespace Altaxo.Graph
 			}
 			set
 			{
+				if(null!=m_yColumn && m_yColumn is Altaxo.Data.DataColumn)
+				{
+					((Altaxo.Data.DataColumn)m_yColumn).DataChanged -= new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChanged);
+				}
+
 				this.m_yColumn = value;
+				if(null!=m_yColumn && m_yColumn is Altaxo.Data.DataColumn)
+				{
+					((Altaxo.Data.DataColumn)m_yColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChanged);
+				}
 				CalculateCachedData();
 			}
 		}
@@ -252,6 +330,11 @@ namespace Altaxo.Graph
 
 		public void CalculateCachedData()
 		{
+			// we can calulate the bounds only if they are set before
+			if(null==m_xBoundaries || null==m_yBoundaries)
+				return;
+
+
 			m_PlottablePoints = 0;
 
 			

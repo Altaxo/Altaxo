@@ -21,11 +21,68 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Serialization;
+
 
 namespace Altaxo.Graph
 {
+	[SerializationSurrogate(0,typeof(ImageGraphic.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public abstract class ImageGraphic : GraphObject
 	{
+		#region Serialization
+		/// <summary>Used to serialize the ImageGraphic Version 0.</summary>
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes ImageGraphic Version 0.
+			/// </summary>
+			/// <param name="obj">The ImageGraphic to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				ImageGraphic s = (ImageGraphic)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+	
+				// serialize the base class
+				surr.GetObjectData(obj,info,context); // stream the data of the base object
+
+			}
+			/// <summary>
+			/// Deserializes the ImageGraphic Version 0.
+			/// </summary>
+			/// <param name="obj">The empty ImageGraphic object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized ImageGraphic.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				ImageGraphic s = (ImageGraphic)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+				// deserialize the base class
+				surr.SetObjectData(obj,info,context,selector);
+		
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public override void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
 		protected ImageGraphic()
 			:	base()
 		{
@@ -34,13 +91,78 @@ namespace Altaxo.Graph
 		public abstract Image GetImage();
 	} // 	End Class
 
+
+
+	[SerializationSurrogate(0,typeof(LinkedImageGraphic.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class LinkedImageGraphic : ImageGraphic
 	{
 		protected string m_ImagePath;
 		[NonSerialized()] 
 		protected Image m_Image;
 
-#region "Constructors"
+
+		#region Serialization
+		/// <summary>Used to serialize the LinkedImageGraphic Version 0.</summary>
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes LinkedImageGraphic Version 0.
+			/// </summary>
+			/// <param name="obj">The LinkedImageGraphic to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				LinkedImageGraphic s = (LinkedImageGraphic)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+	
+				// serialize the base class
+				surr.GetObjectData(obj,info,context); // stream the data of the base object
+
+				info.AddValue("ImagePath",s.m_ImagePath);
+
+			}
+			/// <summary>
+			/// Deserializes the LinkedImageGraphic Version 0.
+			/// </summary>
+			/// <param name="obj">The empty LinkedImageGraphic object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized LinkedImageGraphic.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				LinkedImageGraphic s = (LinkedImageGraphic)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+				// deserialize the base class
+				surr.SetObjectData(obj,info,context,selector);
+		
+				s.m_ImagePath = info.GetString("ImagePath");
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public override void OnDeserialization(object obj)
+		{
+			// load the image into memory here
+			GetImage();
+		}
+		#endregion
+
+
+
+		#region Constructors
 		public  LinkedImageGraphic()
 			:
 			base()
@@ -112,7 +234,7 @@ namespace Altaxo.Graph
 		{
 		}
 
-#endregion
+		#endregion
 
 		public override Image GetImage()
 		{
@@ -169,12 +291,70 @@ namespace Altaxo.Graph
 		}
 	} // End Class
 
-	[Serializable()]
+	[SerializationSurrogate(0,typeof(EmbeddedImageGraphic.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class EmbeddedImageGraphic : ImageGraphic
 	{
 		protected Image m_Image; 
 
-#region "Constructors"
+		#region Serialization
+		/// <summary>Used to serialize the EmbeddedImageGraphic Version 0.</summary>
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes EmbeddedImageGraphic Version 0.
+			/// </summary>
+			/// <param name="obj">The EmbeddedImageGraphic to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				EmbeddedImageGraphic s = (EmbeddedImageGraphic)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+	
+				// serialize the base class
+				surr.GetObjectData(obj,info,context); // stream the data of the base object
+
+				info.AddValue("Image",s.m_Image);
+
+			}
+			/// <summary>
+			/// Deserializes the EmbeddedImageGraphic Version 0.
+			/// </summary>
+			/// <param name="obj">The empty EmbeddedImageGraphic object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized EmbeddedImageGraphic.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				EmbeddedImageGraphic s = (EmbeddedImageGraphic)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+				// deserialize the base class
+				surr.SetObjectData(obj,info,context,selector);
+		
+				s.m_Image = (Image)info.GetValue("Image",typeof(Image));
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public override void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
+
+		#region Constructors
 
 		public  EmbeddedImageGraphic()
 			:
@@ -248,7 +428,7 @@ namespace Altaxo.Graph
 		{
 		} 
 
-#endregion
+		#endregion
 
 
 		public Image Image

@@ -24,62 +24,6 @@ using Altaxo.Serialization;
 
 namespace Altaxo
 {
-	//[Serializable()]
-	[SerializationSurrogate(0,typeof(AltaxoTestObject02.AltaxoTestSurrogateV1))]
-	[SerializationVersion(1,"Initial version")]
-	public class AltaxoTestObject02 : IDeserializationCallback
-	{
-		private DateTime a1;
-		public double b1=33;
-		public float c1=34.6f;
-
-		public AltaxoTestObject02()
-		{
-			b1 = 66;
-		}
-
-		public AltaxoTestObject02(DateTime a, double b)
-		{
-			a1 = a;
-			b1 = b;
-		}
-
-
-		public class AltaxoTestSurrogateV1 : System.Runtime.Serialization.ISerializationSurrogate , IDeserializationCallback
-		{
-			public void GetObjectData(	object obj,	
-				System.Runtime.Serialization.SerializationInfo info,
-				System.Runtime.Serialization.StreamingContext context	)
-			{
-				AltaxoTestObject02 s = (AltaxoTestObject02)obj;
-				info.AddValue("Date",s.a1);
-				info.AddValue("b1",s.b1);
-				//System.Runtime.Remoting.ObjRef or = s.br.CreateObjRef(s.br.GetType());
-				//info.AddValue("Brush", or);
-			}
-			public object SetObjectData(
-				object obj,
-				System.Runtime.Serialization.SerializationInfo info,
-				System.Runtime.Serialization.StreamingContext context,
-				System.Runtime.Serialization.ISurrogateSelector selector
-				)
-			{
-				AltaxoTestObject02 s = (AltaxoTestObject02)obj;
-				s.a1 = info.GetDateTime("Date");
-				s.b1 = info.GetDouble("b1");
-				return s;
-			}
-			public void OnDeserialization(object obj)
-			{
-			}
-		}
-
-		
-		public void OnDeserialization(object obj)
-		{
-		}
-
-	} // end class
 	/// <summary>
 	/// Summary description for AltaxoDocument.
 	/// </summary>
@@ -89,6 +33,8 @@ namespace Altaxo
 	{
 		protected Altaxo.Data.DataSet m_DataSet = null; // The root of all the data
 		protected System.Collections.ArrayList m_Worksheets;
+		/// <summary>The list of GraphForms for the document.</summary>
+		protected System.Collections.ArrayList m_GraphForms;
 	
 		[NonSerialized]
 		protected bool m_IsDirty=false;
@@ -99,6 +45,7 @@ namespace Altaxo
 		{
 			m_DataSet = new Altaxo.Data.DataSet(this);
 			m_Worksheets = new System.Collections.ArrayList();
+			m_GraphForms = new System.Collections.ArrayList();
 		}
 
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
@@ -108,6 +55,7 @@ namespace Altaxo
 				AltaxoDocument s = (AltaxoDocument)obj;
 				info.AddValue("DataSet",s.m_DataSet);
 				info.AddValue("Worksheets",s.m_Worksheets);
+				info.AddValue("GraphForms",s.m_GraphForms);
 			}
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
@@ -115,6 +63,7 @@ namespace Altaxo
 				s.m_DataSet = (Altaxo.Data.DataSet)info.GetValue("DataSet",typeof(Altaxo.Data.DataSet));
 				// s.tstObj    = (AltaxoTestObject02)info.GetValue("TstObj",typeof(AltaxoTestObject02));
 				s.m_Worksheets = (System.Collections.ArrayList)info.GetValue("Worksheets",typeof(System.Collections.ArrayList));
+				s.m_GraphForms = (System.Collections.ArrayList)info.GetValue("GraphForms",typeof(System.Collections.ArrayList));
 				s.m_IsDirty = false;
 				return s;
 			}
@@ -131,11 +80,15 @@ namespace Altaxo
 				m_DataSet.OnDeserialization(finisher);
 
 			
-				int len = m_Worksheets.Count;
-				for(int i=0;i<len;i++)
+				for(int i=0;i<m_Worksheets.Count;i++)
 				{
 					m_Worksheets[i] = ((IDeserializationSubstitute)m_Worksheets[i]).GetRealObject(App.CurrentApplication);
 					((System.Windows.Forms.Form)m_Worksheets[i]).Show();
+				}
+				for(int i=0;i<m_GraphForms.Count;i++)
+				{
+					m_GraphForms[i] = ((IDeserializationSubstitute)m_GraphForms[i]).GetRealObject(App.CurrentApplication);
+					((System.Windows.Forms.Form)m_GraphForms[i]).Show();
 				}
 			}
 		}
@@ -189,6 +142,22 @@ namespace Altaxo
 			form1.Text = worksheetName;
 			m_Worksheets.Add(form1);
 			return form1;
+		}
+
+		public Altaxo.Graph.GraphForm CreateNewGraph(System.Windows.Forms.Form parent)
+		{
+			Altaxo.Graph.GraphForm frm = new Altaxo.Graph.GraphForm(parent,this);
+			m_GraphForms.Add(frm);
+			return frm;
+		}
+
+		/// <summary>This will remove the GraphForm <paramref>frm</paramref> from the graph forms collection.</summary>
+		/// <param name="frm">The GraphForm to remove.</param>
+		/// <remarks>No exception is thrown if the Form frm is not a member of the graph forms collection.</remarks>
+		public void RemoveGraph(System.Windows.Forms.Form frm)
+		{
+			if(m_GraphForms.Contains(frm))
+				m_GraphForms.Remove(frm);
 		}
 
 		public Altaxo.Worksheet.Worksheet CreateNewWorksheet(System.Windows.Forms.Form parent, bool bCreateDefaultColumns)
