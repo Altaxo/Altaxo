@@ -312,7 +312,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       PCRCalibrationModel calib = (PCRCalibrationModel)mcalib;
 
-      PreProcessSpectra(calib,preprocessOptions,matrixX);
+      MultivariateRegression.PreprocessSpectraForPrediction(calib,preprocessOptions,matrixX);
 
       PCRRegression.Predict(
         matrixX,
@@ -341,8 +341,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="spectralResiduals">If you set this parameter to a appropriate matrix, the spectral residuals will be stored in this matrix. Set this parameter to null if you don't need the residuals.</param>
     public override void CalculateCrossPredictedY(
       IMultivariateCalibrationModel mcalib,
-      CrossPRESSCalculationType crossValidationType,
+      ICrossValidationGroupingStrategy groupingStrategy,
       SpectralPreprocessingOptions preprocessOptions,
+      IROVector xOfX,
       IMatrix matrixX,
       IMatrix matrixY,
       int numberOfFactors, 

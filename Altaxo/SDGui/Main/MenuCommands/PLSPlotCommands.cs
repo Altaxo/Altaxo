@@ -72,6 +72,13 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class PLSPlotCrossPredictedVersusActualYIndividually : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotCrossPredictedVersusActualY(ctrl.DataTable);
+    }
+  }
 
   public class PLSPlotYResidualsIndividually : AbstractWorksheetControllerCommand
   {
@@ -81,11 +88,27 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class PLSPlotYCrossResidualsIndividually : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotYCrossResiduals(ctrl.DataTable);
+    }
+  }
+
   public class PLSPlotXResidualsIndividually : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotXResiduals(ctrl.DataTable);
+    }
+  }
+
+  public class PLSPlotXCrossResidualsIndividually : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotXCrossResiduals(ctrl.DataTable);
     }
   }
 

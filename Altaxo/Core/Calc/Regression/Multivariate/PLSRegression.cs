@@ -28,14 +28,122 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// <summary>
   /// PLSRegression contains static methods for doing partial least squares regression analysis and prediction of the data.
   /// </summary>
-  public class PLSRegression
+  public class PLSRegression : MultivariateRegression
   {
-  
+    protected int _numFactors;
+    public override int NumberOfFactors { get { return _numFactors; }}
+    protected MatrixMath.BEMatrix _xLoads;
+    protected MatrixMath.BEMatrix _yLoads;
+    protected MatrixMath.BEMatrix _W;
+    protected MatrixMath.REMatrix _V;
+    protected IExtensibleVector _PRESS;
+    
+
+    protected void ResetAnalysis()
+    {
+      _numFactors = 0;
+      _xLoads   = new MatrixMath.BEMatrix(0,0);
+      _yLoads   = new MatrixMath.BEMatrix(0,0);
+      _W       = new MatrixMath.BEMatrix(0,0);
+      _V       = new MatrixMath.REMatrix(0,0);
+      _PRESS   = VectorMath.CreateExtensibleVector(0);
+    }
+
+    protected PLSRegression()
+    {
+     
+    }
+
+    /// <summary>
+    /// Creates an analyis from preprocessed spectra and preprocessed concentrations.
+    /// </summary>
+    /// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
+    /// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
+    /// <param name="maxFactors">Maximum number of factors for analysis.</param>
+    /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
+    public static PLSRegression CreateFromPreprocessed(IROMatrix matrixX, IROMatrix matrixY, int maxFactors)
+    {
+      PLSRegression result = new PLSRegression();
+      result.AnalyzeFromPreprocessed(matrixX,matrixY,maxFactors);
+      return result;
+    }
+
+    /// <summary>
+    /// Creates an analyis from preprocessed spectra and preprocessed concentrations.
+    /// </summary>
+    /// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
+    /// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
+    /// <param name="maxFactors">Maximum number of factors for analysis.</param>
+    /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
+    public override void AnalyzeFromPreprocessed(IROMatrix matrixX, IROMatrix matrixY, int maxFactors)
+    {
+      ResetAnalysis();
+      _numFactors = Math.Min(matrixX.Columns, maxFactors);
+      ExecuteAnalysis(matrixX, matrixY, ref _numFactors, _xLoads, _yLoads, _W, _V, _PRESS);
+    }
+
+    /// <summary>
+    /// This predicts concentrations of unknown spectra.
+    /// </summary>
+    /// <param name="XU">Matrix of unknown spectra (preprocessed the same way as the calibration spectra).</param>
+    /// <param name="numFactors">Number of factors used for prediction.</param>
+    /// <param name="predictedY">On return, holds the predicted y values. (They are centered).</param>
+    public override void PredictYFromPreprocessed(
+      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+      int numFactors, // number of factors to use for prediction
+      IMatrix predictedY // Matrix of predicted y-values, must be same number of rows as spectra
+      )
+    {
+      if(numFactors>_numFactors)
+        throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})",numFactors,_numFactors));
+
+      Predict(
+        XU, // unknown spectrum or spectra,  horizontal oriented
+        _xLoads, // x-loads matrix
+        _yLoads, // y-loads matrix
+        _W, // weighting matrix
+        _V,  // Cross product vector
+        numFactors, // number of factors to use for prediction
+        predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
+        null // Matrix of spectral residuals, n rows x 1 column, can be zero
+        );
+    }
+   
+    /// <summary>
+    /// This calculates the spectral residuals.
+    /// </summary>
+    /// <param name="XU">Spectra (horizontally oriented).</param>
+    /// <param name="numFactors">Number of factors used for calculation.</param>
+    /// <param name="spectralResiduals">On return, holds the spectral residual values.</param>
+    public void SpectralResidualsFromPrepocessed(
+      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+      int numFactors, // number of factors to use for prediction
+      IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
+      )
+    {
+      if(numFactors>_numFactors)
+        throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})",numFactors,_numFactors));
+
+      Predict(
+        XU, // unknown spectrum or spectra,  horizontal oriented
+        _xLoads, // x-loads matrix
+        _yLoads, // y-loads matrix
+        _W, // weighting matrix
+        _V,  // Cross product vector
+        numFactors, // number of factors to use for prediction
+        null,
+        spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
+        );
+    }
+
+
+   
+
     /// <summary>
     /// Partial least squares (PLS) decomposition of the matrizes X and Y.
     /// </summary>
-    /// <param name="_X">The X ("spectrum") matrix.</param>
-    /// <param name="_Y">The Y ("concentration") matrix.</param>
+    /// <param name="_X">The X ("spectrum") matrix, centered and preprocessed.</param>
+    /// <param name="_Y">The Y ("concentration") matrix (centered).</param>
     /// <param name="numFactors">Number of factors to calculate.</param>
     /// <param name="xLoads">Returns the matrix of eigenvectors of X. Should be initially empty.</param>
     /// <param name="yLoads">Returns the matrix of eigenvectors of Y. Should be initially empty. </param>
@@ -297,8 +405,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="numFactorsForCrossValidationPrediction">If greater than zero, this number of factors is used to calculated the predicted concentrations.</param>
     /// <param name="YCrossValidationPrediction">If numFactorsForCrossValidationPrediction is greater than zero, on return this matrix will contain the predicted y values. Can be set to null.
     /// for exactly that number of factors. The prediction is done exacly the same way that crossvalidation is done (exclude a given set of spectra, built a calibration, predict the excluded set of spectra).</param>
-     /// <param name="XCrossValidationSpectralResiduals">If numFactorsForCrossValidationPrediction is greater than zero, the spectral residuals from cross validation
-     /// are calculated and stored in this matrix.</param>
+    /// <param name="XCrossValidationSpectralResiduals">If numFactorsForCrossValidationPrediction is greater than zero, the spectral residuals from cross validation
+    /// are calculated and stored in this matrix.</param>
     public static void CrossValidation(
       IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
       IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
@@ -329,7 +437,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix YU=null; 
       IMatrix predY=null; 
       IMatrix predXRes=null;
-      YCrossValidationPrediction=null;
+      
 
       for(int nGroup=0 ,prevNumExcludedSpectra = int.MinValue ;nGroup < groups.Length;nGroup++)
       {
@@ -408,5 +516,46 @@ namespace Altaxo.Calc.Regression.Multivariate
       // calculate the mean number of excluded spectras
       meanNumberOfExcludedSpectra = ((double)X.Rows)/groups.Length;
     }
+
+
+
+
+
+    public static double GetCrossPRESS(
+      IROVector xOfX,
+      IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
+      IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
+      int numFactors,
+      ICrossValidationGroupingStrategy groupingStrategy,
+      SpectralPreprocessingOptions preprocessOptions,
+
+      out IROVector crossPRESS // vertical value of PRESS values for the cross validation
+      )
+    {
+      CrossPRESSEvaluator worker = new CrossPRESSEvaluator(xOfX,numFactors,groupingStrategy,preprocessOptions,new PLSRegression());
+      double result = CrossValidationIteration(X,Y,groupingStrategy,new CrossValidationIterationFunction(worker.EhCrossPRESS));
+
+      crossPRESS = VectorMath.ToROVector(worker.CrossPRESS,worker.NumberOfFactors);
+
+      return result;
+    }
+  
+    public static double GetYCrossPredicted(
+      IROVector xOfX,
+      IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
+      IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
+      int numFactors,
+      ICrossValidationGroupingStrategy groupingStrategy,
+      SpectralPreprocessingOptions preprocessOptions,
+
+      IMatrix yCrossPredicted // vertical value of PRESS values for the cross validation
+      )
+    {
+      CrossPredictedYEvaluator worker = new CrossPredictedYEvaluator(xOfX,numFactors,groupingStrategy,preprocessOptions,new PLSRegression(),yCrossPredicted);
+      double result = CrossValidationIteration(X,Y,groupingStrategy,new CrossValidationIterationFunction(worker.EhYCrossPredicted));
+
+      return result;
+    }
+   
   }
 }

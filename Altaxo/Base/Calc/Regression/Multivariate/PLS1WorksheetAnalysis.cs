@@ -333,7 +333,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       PLS1CalibrationModel calib = (PLS1CalibrationModel)mcalib;
 
-      PreProcessSpectra(calib,preprocessOptions,matrixX);
+      MultivariateRegression.PreprocessSpectraForPrediction(calib,preprocessOptions,matrixX);
 
       for(int yn=0;yn<calib.NumberOfY;yn++)
       {
@@ -366,8 +366,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="spectralResiduals">If you set this parameter to a appropriate matrix, the spectral residuals will be stored in this matrix. Set this parameter to null if you don't need the residuals.</param>
     public override void CalculateCrossPredictedY(
       IMultivariateCalibrationModel mcalib,
-      CrossPRESSCalculationType crossValidationType,
+      ICrossValidationGroupingStrategy groupingStrategy,
       SpectralPreprocessingOptions preprocessOptions,
+      IROVector xOfX,
       IMatrix matrixX,
       IMatrix matrixY,
       int numberOfFactors, 
@@ -376,7 +377,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     {
       // TODO implement this!
-     throw new NotImplementedException("Sorry, not implemented yet");
+      throw new NotImplementedException("Sorry, not implemented yet");
     }
 
     
@@ -395,7 +396,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IVector totalLeverage = VectorMath.CreateExtensibleVector(plsMemo.NumberOfMeasurements);
 
       IMatrix matrixX = GetRawSpectra(plsMemo);
-      PreProcessSpectra(calib,plsMemo.SpectralPreprocessing,matrixX);
+      MultivariateRegression.PreprocessSpectraForPrediction(calib,plsMemo.SpectralPreprocessing,matrixX);
 
       for(int yn=0;yn<calib.NumberOfY;yn++)
       {

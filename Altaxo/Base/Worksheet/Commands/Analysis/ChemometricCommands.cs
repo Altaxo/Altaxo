@@ -661,6 +661,29 @@ namespace Altaxo.Worksheet.Commands.Analysis
       layer.LeftAxisTitleString   = string.Format("Y residual{0} (#factors:{1})",whichY,numberOfFactors);
     }
 
+    /// <summary>
+    /// Plots the residual y values (of cross prediction) of a given component into a provided layer.
+    /// </summary>
+    /// <param name="table">The table of PLS output data.</param>
+    /// <param name="layer">The layer to plot into.</param>
+    /// <param name="whichY">The number of the component (y, concentration etc.) for which to plot the residuals.</param>
+    /// <param name="numberOfFactors">The number of factors used for calculation of the residuals.</param>
+    public static void PlotYCrossResiduals(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int whichY, int numberOfFactors)
+    {
+      string yrescolname = WorksheetAnalysis.GetYCrossResidual_ColumnName(whichY,numberOfFactors);
+      string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
+ 
+      // Calculate the residual if not here
+      if(table[yrescolname]==null)
+      {
+        GetAnalysis(table).CalculateCrossPredictedAndResidual(table, whichY, numberOfFactors,false,true,false);
+      }
+
+      PlotOnlyLabel(layer,table[yactcolname],table[yrescolname],table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
+
+      layer.BottomAxisTitleString = string.Format("Y original{0}",whichY);
+      layer.LeftAxisTitleString   = string.Format("Y cross residual{0} (#factors:{1})",whichY,numberOfFactors);
+    }
 
     /// <summary>
     /// Plots all preprocessed spectra into a newly created graph.
@@ -725,6 +748,30 @@ namespace Altaxo.Worksheet.Commands.Analysis
       layer.LeftAxisTitleString   = string.Format("X residual{0} (#factors:{1})",whichY,numberOfFactors);
     }
     
+
+
+    /// <summary>
+    /// Plots the x (spectral) residuals (of cross prediction) into a provided layer.
+    /// </summary>
+    /// <param name="table">The table of PLS output data.</param>
+    /// <param name="layer">The layer to plot into.</param>
+    /// <param name="whichY">The number of the component (y, concentration etc.) for which to plot the residuals.</param>
+    /// <param name="numberOfFactors">The number of factors used for calculation of the residuals.</param>
+    public static void PlotXCrossResiduals(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int whichY, int numberOfFactors)
+    {
+      string xresidualcolname = WorksheetAnalysis.GetXCrossResidual_ColumnName(whichY,numberOfFactors);
+      string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
+      
+      if(table[xresidualcolname]==null)
+      {
+        GetAnalysis(table).CalculateCrossPredictedAndResidual(table,whichY,numberOfFactors,false,false,true);
+      }
+
+      PlotOnlyLabel(layer,table[yactcolname],table[xresidualcolname],table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
+
+      layer.BottomAxisTitleString = string.Format("Y original{0}",whichY);
+      layer.LeftAxisTitleString   = string.Format("X cross residual{0} (#factors:{1})",whichY,numberOfFactors);
+    }
     /// <summary>
     /// Plots the predicted versus actual Y (concentration) into a provided layer.
     /// </summary>
@@ -745,6 +792,28 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       layer.BottomAxisTitleString = string.Format("Y original{0}",whichY);
       layer.LeftAxisTitleString   = string.Format("Y predicted{0} (#factors:{1})",whichY,numberOfFactors);
+    }
+
+    /// <summary>
+    /// Plots the cross predicted versus actual Y (concentration) into a provided layer.
+    /// </summary>
+    /// <param name="table">The table of PLS output data.</param>
+    /// <param name="layer">The layer to plot into.</param>
+    /// <param name="whichY">The number of the component (y, concentration etc.) for which to plot the residuals.</param>
+    /// <param name="numberOfFactors">The number of factors used for calculation of the residuals.</param>
+    public static void PlotCrossPredictedVersusActualY(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int whichY, int numberOfFactors)
+    {
+      string ypredcolname = WorksheetAnalysis.GetYCrossPredicted_ColumnName(whichY,numberOfFactors);
+      string yactcolname = WorksheetAnalysis.GetYOriginal_ColumnName(whichY);
+      if(table[ypredcolname]==null)
+      {
+        GetAnalysis(table).CalculateCrossPredictedAndResidual(table,whichY,numberOfFactors,true,false,false);
+      }
+
+      PlotOnlyLabel(layer,table[yactcolname],table[ypredcolname],table[WorksheetAnalysis.GetMeasurementLabel_ColumnName()]);
+
+      layer.BottomAxisTitleString = string.Format("Y original{0}",whichY);
+      layer.LeftAxisTitleString   = string.Format("Y cross predicted{0} (#factors:{1})",whichY,numberOfFactors);
     }
 
     /// <summary>
@@ -795,6 +864,26 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
+
+    /// <summary>
+    /// Plots the rediduals from cross prediction of all y components invidually in a graph.
+    /// </summary>
+    /// <param name="table">The table with the PLS model data.</param>
+    public static void PlotYCrossResiduals(Altaxo.Data.DataTable table)
+    {
+      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      if(plsMemo==null)
+        return;
+      if(plsMemo.PreferredNumberOfFactors<=0)
+        QuestPreferredNumberOfFactors(plsMemo);
+
+      for(int nComponent=0;nComponent<plsMemo.NumberOfConcentrationData;nComponent++)
+      {
+        Altaxo.Graph.GUI.IGraphController graphctrl = Current.ProjectService.CreateNewGraph();
+        PlotYCrossResiduals(table,graphctrl.Doc.Layers[0],nComponent,plsMemo.PreferredNumberOfFactors);
+      }
+    }
+
     /// <summary>
     /// Plots the prediction values of all y components invidually in a  graph.
     /// </summary>
@@ -815,7 +904,26 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
     /// <summary>
-    /// Plots the x (spectral) residuals of all y components invidually in a graph.
+    /// Plots the cross prediction values of all y components invidually in a  graph.
+    /// </summary>
+    /// <param name="table">The table with the PLS model data.</param>
+    public static void PlotCrossPredictedVersusActualY(Altaxo.Data.DataTable table)
+    {
+      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      if(plsMemo==null)
+        return;
+      if(plsMemo.PreferredNumberOfFactors<=0)
+        QuestPreferredNumberOfFactors(plsMemo);
+
+      for(int nComponent=0;nComponent<plsMemo.NumberOfConcentrationData;nComponent++)
+      {
+        Altaxo.Graph.GUI.IGraphController graphctrl = Current.ProjectService.CreateNewGraph();
+        PlotCrossPredictedVersusActualY(table,graphctrl.Doc.Layers[0],nComponent,plsMemo.PreferredNumberOfFactors);
+      }
+    }
+
+    /// <summary>
+    /// Plots the x (spectral) residuals of all spectra invidually in a graph.
     /// </summary>
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotXResiduals(Altaxo.Data.DataTable table)
@@ -833,6 +941,24 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
+    /// <summary>
+    /// Plots the x (spectral) residuals (of cross prediction) of all spectra invidually in a graph.
+    /// </summary>
+    /// <param name="table">The table with the PLS model data.</param>
+    public static void PlotXCrossResiduals(Altaxo.Data.DataTable table)
+    {
+      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      if(plsMemo==null)
+        return;
+      if(plsMemo.PreferredNumberOfFactors<=0)
+        QuestPreferredNumberOfFactors(plsMemo);
+
+      for(int nComponent=0;nComponent<plsMemo.NumberOfConcentrationData;nComponent++)
+      {
+        Altaxo.Graph.GUI.IGraphController graphctrl = Current.ProjectService.CreateNewGraph();
+        PlotXResiduals(table,graphctrl.Doc.Layers[0],nComponent,plsMemo.PreferredNumberOfFactors);
+      }
+    }
 
     /// <summary>
     /// Plots the PRESS value into a provided layer.

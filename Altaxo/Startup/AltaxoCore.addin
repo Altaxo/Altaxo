@@ -447,10 +447,16 @@
 		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotCrossPRESSValue.Description}" class="Altaxo.Worksheet.Commands.PLSPlotCrossPRESSValue" />
     					<MenuItem id="PlotYResiduals" label="${res:XML.MainMenu.PlotMenu.PLS.PlotYResiduals}" icon="Icons.16x16.PlotScatter"
 		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotYResiduals.Description}" class="Altaxo.Worksheet.Commands.PLSPlotYResidualsIndividually" />
+    					<MenuItem id="PlotYCrossResiduals" label="${res:XML.MainMenu.PlotMenu.PLS.PlotYCrossResiduals}" icon="Icons.16x16.PlotScatter"
+		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotYCrossResiduals.Description}" class="Altaxo.Worksheet.Commands.PLSPlotYCrossResidualsIndividually" />
     					<MenuItem id="PlotXResiduals" label="${res:XML.MainMenu.PlotMenu.PLS.PlotXResiduals}" icon="Icons.16x16.PlotScatter"
 		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotXResiduals.Description}" class="Altaxo.Worksheet.Commands.PLSPlotXResidualsIndividually" />
+    					<MenuItem id="PlotXCrossResiduals" label="${res:XML.MainMenu.PlotMenu.PLS.PlotXCrossResiduals}" icon="Icons.16x16.PlotScatter"
+		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotXCrossResiduals.Description}" class="Altaxo.Worksheet.Commands.PLSPlotXCrossResidualsIndividually" />
     					<MenuItem id="PlotActualVersusPredictedY" label="${res:XML.MainMenu.PlotMenu.PLS.PlotActualVersusPredictedY}" icon="Icons.16x16.PlotScatter"
 		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotActualVersusPredictedY.Description}" class="Altaxo.Worksheet.Commands.PLSPlotPredictedVersusActualYIndividually" />
+    					<MenuItem id="PlotActualVersusCrossPredictedY" label="${res:XML.MainMenu.PlotMenu.PLS.PlotActualVersusCrossPredictedY}" icon="Icons.16x16.PlotScatter"
+		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotActualVersusCrossPredictedY.Description}" class="Altaxo.Worksheet.Commands.PLSPlotCrossPredictedVersusActualYIndividually" />
     					<MenuItem id="PlotXLeverage" label="${res:XML.MainMenu.PlotMenu.PLS.PlotXLeverage}" icon="Icons.16x16.PlotScatter"
 		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotXLeverage.Description}" class="Altaxo.Worksheet.Commands.PLSPlotXLeverage" />
     					<MenuItem id="PlotPreprocessedSpectra" label="${res:XML.MainMenu.PlotMenu.PLS.PlotPreprocessedSpectra}" icon="Icons.16x16.PlotLine"

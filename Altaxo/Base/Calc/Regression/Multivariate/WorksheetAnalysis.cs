@@ -392,8 +392,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="spectralResiduals">If you set this parameter to a appropriate matrix, the spectral residuals will be stored in this matrix. Set this parameter to null if you don't need the residuals.</param>
     public abstract void CalculateCrossPredictedY(
       IMultivariateCalibrationModel mcalib,
-      CrossPRESSCalculationType crossValidationType,
+      ICrossValidationGroupingStrategy groupingStrategy,
       SpectralPreprocessingOptions preprocessOptions,
+      IROVector xOfX,
       IMatrix matrixX,
       IMatrix matrixY,
       int numberOfFactors, 
@@ -848,52 +849,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       return null;
     }
 
-    /// <summary>
-    /// This will convert the raw spectra (horizontally in matrixX) to preprocessed spectra according to the calibration model.
-    /// </summary>
-    /// <param name="calib">The calibration model containing the instructions to process the spectra.</param>
-    /// <param name="preprocessOptions">Contains the information how to preprocess the spectra.</param>
-    /// <param name="matrixX">The matrix of spectra. Each spectrum is a row of the matrix.</param>
-    public static void PreProcessSpectra(
-      IMultivariateCalibrationModel calib, 
-      SpectralPreprocessingOptions preprocessOptions,
-      IMatrix matrixX)
-    {
-      preprocessOptions.ProcessForPrediction(matrixX,calib.XMean,calib.XScale);
-    }
-
-    /// <summary>
-    /// Preprocesses the x and y matrices before usage in multivariate calibrations.
-    /// </summary>
-    /// <param name="preprocessOptions">Information how to preprocess the data.</param>
-    /// <param name="xOfX"></param>
-    /// <param name="matrixX"></param>
-    /// <param name="matrixY"></param>
-    /// <param name="meanX"></param>
-    /// <param name="scaleX"></param>
-    /// <param name="meanY"></param>
-    /// <param name="scaleY"></param>
-    public static void PreprocessMatrices(
-      SpectralPreprocessingOptions preprocessOptions,
-      IROVector xOfX,
-      IMatrix matrixX, 
-      IMatrix matrixY,
-      out IVector meanX, out IVector scaleX,
-      out IVector meanY, out IVector scaleY)
-    {
-      
-      // Before we can apply PLS, we have to center the x and y matrices
-      meanX = new MatrixMath.HorizontalVector(matrixX.Columns);
-      scaleX = new MatrixMath.HorizontalVector(matrixX.Columns);
-      //  MatrixMath.HorizontalVector scaleX = new MatrixMath.HorizontalVector(matrixX.Cols);
-      meanY = new MatrixMath.HorizontalVector(matrixY.Columns);
-      scaleY = new MatrixMath.HorizontalVector(matrixY.Columns);
-      VectorMath.Fill(scaleY,1);
-
-      preprocessOptions.IdentifyRegions(xOfX);
-      preprocessOptions.Process(matrixX,meanX,scaleX);
-      MatrixMath.ColumnsToZeroMean(matrixY, meanY);
-    }
+    
+   
 
     /// <summary>
     /// This maps the indices of a master x column to the indices of a column to map.
@@ -1198,6 +1155,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
+   
     public  virtual void CalculateCrossPredictedAndResidual(
       DataTable table,
       int whichY,
@@ -1215,12 +1173,26 @@ namespace Altaxo.Calc.Regression.Multivariate
       //      Export(table,out calib);
 
 
+     
       IMatrix matrixX = GetRawSpectra(plsMemo);
       IMatrix matrixY = GetOriginalY(plsMemo);
 
+
+      // do spectral preprocessing
+      // plsMemo.SpectralPreprocessing.ProcessForPrediction(matrixX,calib.XMean,calib.XScale);
+      // MultivariateAnalysis.PreprocessYForPrediction(matrixY,calib.YMean,calib.YScale);
+
       MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(matrixX.Rows,calib.NumberOfY);
       MatrixMath.BEMatrix spectralResiduals = new MatrixMath.BEMatrix(matrixX.Rows,1);
-      CalculateCrossPredictedY(calib,plsMemo.CrossValidationType,plsMemo.SpectralPreprocessing,matrixX,matrixY,numberOfFactors,predictedY,spectralResiduals);
+      CalculateCrossPredictedY(calib,
+        GetGroupingStrategy(plsMemo.CrossValidationType),
+        plsMemo.SpectralPreprocessing,
+        calib.XOfX,
+        matrixX,
+        matrixY,
+        numberOfFactors,
+        predictedY,
+        spectralResiduals);
 
       if(saveYPredicted)
       {
@@ -1532,7 +1504,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       // Preprocess
       plsContent.SpectralPreprocessing = preprocessOptions;
       IVector meanX,scaleX,meanY,scaleY;
-      PreprocessMatrices(preprocessOptions,xOfX,matrixX,matrixY,
+      MultivariateRegression.PreprocessForAnalysis(preprocessOptions,xOfX,matrixX,matrixY,
         out meanX, out scaleX, out meanY, out scaleY); 
 
       StorePreprocessedData(meanX,scaleX,meanY,scaleY,table);

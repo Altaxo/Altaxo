@@ -28,9 +28,122 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// <summary>
   /// PCRRegression contains static methods for doing principal component regression analysis and prediction of the data.
   /// </summary>
-  public class PCRRegression
+  public class PCRRegression : MultivariateRegression
   {
-  
+    PCRCalibrationModel _calib;
+ 
+
+    
+    protected void ResetAnalysis()
+    {
+      _calib = new PCRCalibrationModel();
+    }
+
+    protected PCRRegression()
+    {
+     
+    }
+
+    public override int NumberOfFactors { get { return _calib==null ? 0 : _calib.NumberOfFactors; }}
+
+    /// <summary>
+    /// Creates an analyis from preprocessed spectra and preprocessed concentrations.
+    /// </summary>
+    /// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
+    /// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
+    /// <param name="maxFactors">Maximum number of factors for analysis.</param>
+    /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
+    public static PCRRegression CreateFromPreprocessed(IROMatrix matrixX, IROMatrix matrixY, int maxFactors)
+    {
+      PCRRegression result = new PCRRegression();
+      result.AnalyzeFromPreprocessed(matrixX,matrixY,maxFactors);
+      return result;
+    }
+
+    /// <summary>
+    /// Creates an analyis from preprocessed spectra and preprocessed concentrations.
+    /// </summary>
+    /// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
+    /// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
+    /// <param name="maxFactors">Maximum number of factors for analysis.</param>
+    /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
+    public override void AnalyzeFromPreprocessed(IROMatrix matrixX, IROMatrix matrixY, int maxFactors)
+    {
+      ResetAnalysis();
+      int numFactors = Math.Min(matrixX.Columns, maxFactors);
+      IROMatrix xLoads, xScores;
+      IROVector V;
+      ExecuteAnalysis(matrixX, matrixY, ref numFactors, out xLoads, out xScores, out V);
+
+      IMatrix yLoads = new MatrixMath.BEMatrix(matrixY.Rows,matrixY.Columns);
+      MatrixMath.Copy(matrixY,yLoads);
+
+      
+      _calib.NumberOfFactors = numFactors;
+      _calib.XLoads = xLoads;
+      _calib.YLoads = yLoads;
+      _calib.XScores = xScores;
+      _calib.CrossProduct = V;
+    }
+
+    /// <summary>
+    /// This predicts concentrations of unknown spectra.
+    /// </summary>
+    /// <param name="XU">Matrix of unknown spectra (preprocessed the same way as the calibration spectra).</param>
+    /// <param name="numFactors">Number of factors used for prediction.</param>
+    /// <param name="predictedY">On return, holds the predicted y values. (They are centered).</param>
+    public override void PredictYFromPreprocessed(
+      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+      int numFactors, // number of factors to use for prediction
+      IMatrix predictedY // Matrix of predicted y-values, must be same number of rows as spectra
+      )
+    {
+      if(numFactors>_calib.NumberOfFactors)
+        throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})",numFactors,this.NumberOfFactors));
+
+      Predict(
+        XU, // unknown spectrum or spectra,  horizontal oriented
+        _calib.XLoads, // x-loads matrix
+        _calib.YLoads, // y-loads matrix
+        _calib.XScores, // weighting matrix
+        _calib.CrossProduct,  // Cross product vector
+        numFactors, // number of factors to use for prediction
+        predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
+        null // Matrix of spectral residuals, n rows x 1 column, can be zero
+        );
+    }
+   
+    /// <summary>
+    /// This calculates the spectral residuals.
+    /// </summary>
+    /// <param name="XU">Spectra (horizontally oriented).</param>
+    /// <param name="numFactors">Number of factors used for calculation.</param>
+    /// <param name="spectralResiduals">On return, holds the spectral residual values.</param>
+    public void SpectralResidualsFromPrepocessed(
+      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+      int numFactors, // number of factors to use for prediction
+      IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
+      )
+    {
+      if(numFactors>_calib.NumberOfFactors)
+        throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})",numFactors,this.NumberOfFactors));
+
+      Predict(
+        XU, // unknown spectrum or spectra,  horizontal oriented
+        _calib.XLoads, // x-loads matrix
+        _calib.YLoads, // y-loads matrix
+        _calib.XScores, // weighting matrix
+        _calib.CrossProduct,  // Cross product vector
+        numFactors, // number of factors to use for prediction
+        null,
+        spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
+        );
+    }
+
+
+
+
+
     public static void ExecuteAnalysis(
       IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
       IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)

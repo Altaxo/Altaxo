@@ -21,17 +21,76 @@
 #endregion
 
 using System;
-using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
-using System.Xml;
+
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-  /// <summary>
-  /// Summary description for MultivariateRelated.
-  /// </summary>
-  public class MultivariateRelated
+  public class MultivariatePreprocessingModel : IMultivariateCalibrationModel
   {
     
+    int _numberOfX;
+    int _numberOfY;
+    int _numberOfFactors;
+
+
+    IROVector _xOfX;
+    IROVector _xMean;
+    IROVector _xScale;
+    IROVector _yMean;
+    IROVector _yScale;
+
+
+    public int NumberOfX
+    {
+      get { return _numberOfX; }
+      set { _numberOfX = value; }
+    }
+
+    public int NumberOfY
+    {
+      get { return _numberOfY; }
+      set { _numberOfY = value; }
+    }
+
+    public int NumberOfFactors
+    {
+      get { return _numberOfFactors; }
+      set { _numberOfFactors = value; }
+    }
+
+    public IROVector XOfX
+    {
+      get { return _xOfX; }
+      set { _xOfX = value; }
+    }
+
+
+    public IROVector XMean
+    {
+      get { return _xMean; }
+      set { _xMean = value; }
+    }
+
+    public IROVector XScale
+    {
+      get { return _xScale; }
+      set { _xScale = value; }
+    }
+
+    public IROVector YMean
+    {
+      get { return _yMean; }
+      set { _yMean = value; }
+    }
+
+    public IROVector YScale
+    {
+      get { return _yScale; }
+      set { _yScale = value; }
+    }
+
+
+
   }
 }
