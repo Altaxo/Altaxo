@@ -323,7 +323,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 		}
 		
-		public void OpenCombine(object sender, CombineEventArgs e)
+		public virtual void OpenCombine(object sender, CombineEventArgs e)
 		{
 			ArrayList projects =  Combine.GetAllProjects(e.Combine);
 			foreach (ProjectCombineEntry entry in projects) {

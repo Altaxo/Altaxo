@@ -358,7 +358,6 @@ namespace ICSharpCode.Core.Services
 			Debug.Assert(b != null, "Resource " + name);
 			return b;
 		}
-
 #if ModifiedForAltaxo
     public Cursor GetCursor(string name)
     {

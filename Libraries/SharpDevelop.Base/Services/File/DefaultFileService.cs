@@ -287,6 +287,7 @@ namespace ICSharpCode.SharpDevelop.Services
 								if (viewContent is IPositionable) {
 									window.SwitchView(i);
 									((IPositionable)viewContent).JumpTo(Math.Max(0, line), Math.Max(0, column));
+									return;
 								}
 							}
 						} catch (Exception) {

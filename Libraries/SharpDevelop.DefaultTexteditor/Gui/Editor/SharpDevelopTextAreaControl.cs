@@ -120,21 +120,23 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 		}
 
-		void IconBarMouseDown(AbstractMargin iconBar, Point mousepos, MouseButtons mouseButtons)
+		protected virtual void IconBarMouseDown(AbstractMargin iconBar, Point mousepos, MouseButtons mouseButtons)
 		{
 			int realline = iconBar.TextArea.TextView.GetLogicalLine(mousepos);
 			if (realline >= 0 && realline < iconBar.TextArea.Document.TotalNumberOfLines) {
 				DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
-				if (debuggerService.CurrentDebugger.SupportsExecutionControl) {
+				if (debuggerService != null && debuggerService.CurrentDebugger.SupportsExecutionControl) {
 					debuggerService.ToggleBreakpointAt(FileName, realline + 1, 0);
 					iconBar.TextArea.Refresh(iconBar);
 				}
 			}
 		}
 		
-		void PaintIconBarBreakPoints(AbstractMargin iconBar, Graphics g, Rectangle rect)
+		protected virtual void PaintIconBarBreakPoints(AbstractMargin iconBar, Graphics g, Rectangle rect)
 		{
 			DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
+			if (debuggerService == null)
+				return;
 			lock (debuggerService.Breakpoints) {
 				foreach (Breakpoint breakpoint in debuggerService.Breakpoints) {
 					try {
