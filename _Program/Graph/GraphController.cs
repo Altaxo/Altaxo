@@ -830,7 +830,7 @@ namespace Altaxo.Graph
 		/// <param name="e">EventArgs.</param>
 		public virtual void EhView_Closed(System.EventArgs e)
 		{
-			App.document.RemoveGraph(this.m_View.Form);
+			App.Current.Doc.RemoveGraph(this.m_View.Form);
 		}
 
 

@@ -70,6 +70,7 @@ namespace Altaxo.Worksheet
 
 		public ColumnHeaderStyle()
 		{
+			m_Size = 40;
 			m_TextFormat.Alignment=StringAlignment.Center;
 			m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
 		}

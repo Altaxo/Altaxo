@@ -33,7 +33,7 @@ namespace Altaxo.Worksheet
 	[SerializationVersion(0)]
 	public abstract class ColumnStyle : System.ICloneable, System.Runtime.Serialization.IDeserializationCallback // pendant to DataGridColumnStyle
 	{
-		protected int m_Size=40;
+		protected int m_Size=80;
 		protected Graph.PenHolder m_CellPen = new Graph.PenHolder(Color.Blue,1);
 		protected StringFormat m_TextFormat = new StringFormat();
 		protected Font m_TextFont = new Font("Arial",8);								

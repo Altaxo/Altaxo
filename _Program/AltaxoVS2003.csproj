@@ -398,13 +398,18 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\MainForm.cs"
+                    RelPath = "Main\MainController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MainView.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\MainForm.resx"
-                    DependentUpon = "MainForm.cs"
+                    RelPath = "Main\MainView.resx"
+                    DependentUpon = "MainView.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

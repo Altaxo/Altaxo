@@ -68,7 +68,7 @@ namespace Altaxo.Worksheet
 				// We create the view firstly without controller to have the creation finished
 				// before the controler is set
 				// otherwise we will have callbacks to not initialized variables
-				TableView frm = new TableView(App.CurrentApplication,null);
+				TableView frm = new TableView((System.Windows.Forms.Form)parent,null);
 				frm.Location = m_Location;
 				frm.Size = m_Size;
 			
@@ -95,10 +95,10 @@ namespace Altaxo.Worksheet
 			InitializeComponent();
 
 			// register event so to be informed when activated
-			if(parent is Altaxo.App)
+			if(parent is IMdiActivationEventSource)
 			{
-				((Altaxo.App)parent).MdiChildDeactivateBefore += new EventHandler(this.EhMdiChildDeactivate);
-				((Altaxo.App)parent).MdiChildActivateAfter += new EventHandler(this.EhMdiChildActivate);
+				((IMdiActivationEventSource)parent).MdiChildDeactivateBefore += new EventHandler(this.EhMdiChildDeactivate);
+				((IMdiActivationEventSource)parent).MdiChildActivateAfter += new EventHandler(this.EhMdiChildActivate);
 			}
 			else if(parent!=null)
 			{

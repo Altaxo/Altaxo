@@ -120,7 +120,7 @@ namespace Altaxo
 			m_IsDirty=true;
 		}
 
-		public Altaxo.Worksheet.ITableView CreateNewWorksheet(string worksheetName, System.Windows.Forms.Form parent, bool bCreateDefaultColumns)
+		public Altaxo.Data.DataTable CreateNewTable(string worksheetName, bool bCreateDefaultColumns)
 		{
 			Altaxo.Data.DataTable dt1 = new Altaxo.Data.DataTable(worksheetName);
 
@@ -138,11 +138,29 @@ namespace Altaxo
 
 			DataSet.Add(dt1);
 
-			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(new Altaxo.Worksheet.TableView(parent,null),dt1);
-			ctrl.View.TableViewForm.Text = worksheetName;
+			return dt1;
+		}
+
+		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parentForm, string worksheetName, bool bCreateDefaultColumns)
+		{
+			
+			Altaxo.Data.DataTable dt1 = CreateNewTable(worksheetName, bCreateDefaultColumns);
+			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(new Altaxo.Worksheet.TableView(parentForm,null),dt1);
+			ctrl.View.TableViewForm.Text = dt1.TableName;
 			m_Worksheets.Add(ctrl.View.TableViewForm);
 			return ctrl.View;
 		}
+	
+		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parent, bool bCreateDefaultColumns)
+		{
+			return CreateNewWorksheet(parent, this.DataSet.FindNewTableName(),bCreateDefaultColumns);
+		}
+
+		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parent)
+		{
+			return CreateNewWorksheet(parent, this.DataSet.FindNewTableName(),true);
+		}
+
 
 		public Altaxo.Graph.IGraphView CreateNewGraph(System.Windows.Forms.Form parent)
 		{
@@ -163,15 +181,6 @@ namespace Altaxo
 				m_GraphForms.Remove(frm);
 		}
 
-		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parent, bool bCreateDefaultColumns)
-		{
-			return CreateNewWorksheet(this.DataSet.FindNewTableName(),parent,bCreateDefaultColumns);
-		}
-
-		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parent)
-		{
-			return CreateNewWorksheet(this.DataSet.FindNewTableName(),parent,true);
-		}
-
+	
 	}
 }

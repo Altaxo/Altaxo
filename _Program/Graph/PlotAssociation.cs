@@ -163,23 +163,14 @@ namespace Altaxo.Graph
 
 
 
-		public PlotAssociation(Altaxo.Data.DataColumn m_xColumn, Altaxo.Data.DataColumn m_yColumn)
+		public PlotAssociation(Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn)
 		{
-			this.m_xColumn = m_xColumn;
-			this.m_yColumn = m_yColumn;
+			XColumn = xColumn;
+			YColumn = yColumn;
 
 
-			m_xBoundaries = new FinitePhysicalBoundaries();
-			m_yBoundaries = new FinitePhysicalBoundaries();
-			
-			// add boundary event handler
-			m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
-			m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
-
-
-			// Add Event Handler
-			m_xColumn.DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
-			m_yColumn.DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
+			this.SetXBoundsFromTemplate( new FinitePhysicalBoundaries() );
+			this.SetYBoundsFromTemplate( new FinitePhysicalBoundaries() );
 		}
 	
 

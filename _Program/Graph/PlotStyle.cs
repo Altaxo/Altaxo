@@ -305,22 +305,17 @@ namespace Altaxo.Graph
 			double layerHeight = layer.Size.Height;
 
 
-			Altaxo.Data.DoubleColumn xColumn = myPlotAssociation.XColumn as Altaxo.Data.DoubleColumn;
-			Altaxo.Data.DoubleColumn yColumn = myPlotAssociation.YColumn as Altaxo.Data.DoubleColumn;
+			Altaxo.Data.INumericColumn xColumn = myPlotAssociation.XColumn as Altaxo.Data.INumericColumn;
+			Altaxo.Data.INumericColumn yColumn = myPlotAssociation.YColumn as Altaxo.Data.INumericColumn;
 
 			if(null==xColumn || null==yColumn)
 				return; // this plotstyle is only for x and y double columns
-
-			int len = System.Math.Min(xColumn.Count,yColumn.Count);
-
-
-			
 
 			if(myPlotAssociation.PlottablePoints>0)
 			{
 
 				// allocate an array PointF to hold the line points
-				PointF[] ptArray = new PointF[len];
+				PointF[] ptArray = new PointF[myPlotAssociation.PlottablePoints];
 
 				// Fill the array with values
 				// only the points where x and y are not NaNs are plotted!
@@ -331,9 +326,10 @@ namespace Altaxo.Graph
 				int  rangeStart=0;
 				PlotRangeList rangeList = new PlotRangeList();
 
+				int len = myPlotAssociation.PlottablePoints;
 				for(i=0,j=0;i<len;i++)
 				{
-					if(Double.IsNaN(xColumn[i]) || Double.IsNaN(yColumn[i]))
+					if(Double.IsNaN(xColumn.GetDoubleAt(i)) || Double.IsNaN(yColumn.GetDoubleAt(i)))
 					{
 						if(!bInPlotSpace)
 						{
@@ -344,8 +340,8 @@ namespace Altaxo.Graph
 					}
 					
 
-					double x_rel = layer.XAxis.PhysicalToNormal(xColumn[i]);
-					double y_rel = layer.YAxis.PhysicalToNormal(yColumn[i]);
+					double x_rel = layer.XAxis.PhysicalToNormal(xColumn.GetDoubleAt(i));
+					double y_rel = layer.YAxis.PhysicalToNormal(yColumn.GetDoubleAt(i));
 					
 					// after the conversion to relative coordinates it is possible
 					// that with the choosen axis the point is undefined 

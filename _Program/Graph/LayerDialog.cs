@@ -1932,7 +1932,7 @@ namespace Altaxo.Graph
 			// first stage - add all available tables to the nodes collection
 			
 			
-			foreach(Data.DataTable dt in App.document.DataSet)
+			foreach(Data.DataTable dt in App.Current.Doc.DataSet)
 			{
 				this.m_Content_tvDataAvail.Nodes.Add(new TreeNode(dt.TableName,new TreeNode[1]{new TreeNode()}));
 			}
@@ -1984,7 +1984,7 @@ namespace Altaxo.Graph
 
 			// create a new plotassociation from the column
 			// first, get the y column from table and name
-			Data.DataTable tab = App.doc.DataSet[item.table];
+			Data.DataTable tab = App.Current.Doc.DataSet[item.table];
 			if(null!=tab)
 			{
 				Data.DataColumn ycol = tab[item.column];
@@ -2095,7 +2095,7 @@ namespace Altaxo.Graph
 		
 		private void OnContents_tvDataAvailBeforeExpand(object sender, System.Windows.Forms.TreeViewCancelEventArgs e)
 		{
-			Data.DataTable dt = App.doc.DataSet[e.Node.Text];
+			Data.DataTable dt = App.Current.Doc.DataSet[e.Node.Text];
 			if(null!=dt)
 			{
 				this.m_Content_tvDataAvail.BeginUpdate();

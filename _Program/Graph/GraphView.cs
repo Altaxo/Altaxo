@@ -76,7 +76,7 @@ namespace Altaxo.Graph
 				// We create the view firstly without controller to have the creation finished
 				// before the controler is set
 				// otherwise we will have callbacks to not initialized variables
-				GraphView frm = new GraphView(App.CurrentApplication,null);
+				GraphView frm = new GraphView((System.Windows.Forms.Form)parent,null);
 				frm.Location = m_Location;
 				frm.Size = m_Size;
 			
@@ -105,10 +105,10 @@ namespace Altaxo.Graph
 
 
 			// register event so to be informed when activated
-			if(parent is Altaxo.App)
+			if(parent is IMdiActivationEventSource)
 			{
-				((Altaxo.App)parent).MdiChildDeactivateBefore += new EventHandler(this.EhMdiChildDeactivate);
-				((Altaxo.App)parent).MdiChildActivateAfter += new EventHandler(this.EhMdiChildActivate);
+				((IMdiActivationEventSource)parent).MdiChildDeactivateBefore += new EventHandler(this.EhMdiChildDeactivate);
+				((IMdiActivationEventSource)parent).MdiChildActivateAfter += new EventHandler(this.EhMdiChildActivate);
 			}
 			else if(parent!=null)
 			{
@@ -317,7 +317,7 @@ namespace Altaxo.Graph
 					m_GraphToolsToolBar = CreateGraphToolsToolbar();
 
 				// restore the parent - so the toolbar is shown
-				m_GraphToolsToolBar.Parent = (System.Windows.Forms.Form)(App.CurrentApplication);
+				m_GraphToolsToolBar.Parent = (System.Windows.Forms.Form)(sender);
 			}
 		}
 

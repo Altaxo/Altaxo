@@ -40,15 +40,16 @@ namespace Altaxo.Worksheet
 				Altaxo.Data.DataColumn ycol = dg.DataTable[dg.SelectedColumns[i]];
 
 				Altaxo.Data.DataColumn xcol = dg.DataTable.FindXColumnOfGroup(ycol.Group);
-				if(null==xcol)
-					xcol = ycol; // __fixme__ this should be a index column
-
-				pa[i] = new Graph.PlotAssociation((Altaxo.Data.DoubleColumn)xcol,(Altaxo.Data.DoubleColumn)ycol);
+			
+				if(null!=xcol)
+					pa[i] = new Graph.PlotAssociation(xcol,ycol);
+				else
+					pa[i] = new Graph.PlotAssociation( new Altaxo.Data.IndexerColumn(), ycol);
 			}
 			
 			// now create a new Graph with this plot associations
 
-			Altaxo.Graph.IGraphView gv = App.document.CreateNewGraph(App.CurrentApplication);
+			Altaxo.Graph.IGraphView gv = App.Current.CreateNewGraph();
 			gv.Controller.Doc.Layers[0].AddPlotAssociation(pa);
 		
 		}
@@ -77,7 +78,7 @@ namespace Altaxo.Worksheet
 					bWorksheetCreated=true;
 
 					// create a new worksheet without any columns
-					wks = App.doc.CreateNewWorksheet(App.CurrentApplication,false);
+					wks = App.Current.CreateNewWorksheet(false);
 
 					// add a text column and some double columns
 					// note: statistics is only possible for numeric columns since
