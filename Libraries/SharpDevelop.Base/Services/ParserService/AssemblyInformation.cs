@@ -98,7 +98,8 @@ namespace ICSharpCode.SharpDevelop.Services {
 			System.Reflection.Assembly[] alreadyLoadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
 			foreach(Assembly alreadyLoadedAssembly in alreadyLoadedAssemblies)
 			{
-				if(alreadyLoadedAssembly.Location == fileName)
+				// quest for AssemblyBuilder since call to Location with an AssemblyBuilder results in an exception
+				if(!(alreadyLoadedAssembly is System.Reflection.Emit.AssemblyBuilder) && (alreadyLoadedAssembly.Location == fileName))
 				{
 					asm = alreadyLoadedAssembly;
 					break;

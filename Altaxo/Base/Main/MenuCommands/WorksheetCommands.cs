@@ -271,7 +271,9 @@ namespace Altaxo.Worksheet.Commands
 
 			if(parserService!=null)
 			{
-				parserService.ShowDialog(form,Altaxo.Current.MainWindow,control.EditableContent);
+				parserService.RegisterModalContent(control.EditableContent);
+				form.ShowDialog(Altaxo.Current.MainWindow);
+				parserService.UnregisterModalContent();
 			}
 			else
 			{

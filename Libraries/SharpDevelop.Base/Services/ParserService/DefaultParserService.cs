@@ -354,26 +354,6 @@ namespace ICSharpCode.SharpDevelop.Services
 				}
 			}
 		}
-		
-#if OriginalSharpDevelopCode
-#else
-		object _activeModalContent;
-
-		/// <summary>
-		/// Shows a modal dialog, which can then be parsed by the parser
-		/// </summary>
-		/// <param name="form">The form to show as a modal dialog.</param>
-		/// <param name="owner">The owner of this dialog.</param>
-		/// <returns>The DialogResult as the result of the call to ShowDialog.</returns>
-		public System.Windows.Forms.DialogResult ShowDialog(System.Windows.Forms.Form form, System.Windows.Forms.IWin32Window owner, object content)
-		{
-			_activeModalContent = content;
-			System.Windows.Forms.DialogResult result = form.ShowDialog(owner);
-			_activeModalContent = null;
-
-			return result;
-		}
-#endif
 
 		public void StartParserThread()
 		{
@@ -382,6 +362,31 @@ namespace ICSharpCode.SharpDevelop.Services
 			t.Priority  = ThreadPriority.Lowest;
 			t.Start();
 		}
+
+#if OriginalSharpDevelopCode
+#else
+		object _activeModalContent;
+
+		/// <summary>
+		/// Registers a parseable content contained into a modal dialog box. This function must be
+		/// called immediately before the call to form.ShowDialog(..).
+		/// </summary>
+		/// <param name="content">The content of the dialog box. Must be IParseable and IEditable.</param>
+		public void RegisterModalContent(object content)
+		{
+			_activeModalContent = content; 
+		}
+
+		/// <summary>
+		/// Unregisters the parseable content of a modal dialog box. Must be immediatly called after return
+		/// from form.ShowDialog().
+		/// </summary>
+		public void UnregisterModalContent()
+		{
+			_activeModalContent = null; 
+		}
+	
+#endif
 
 		void ParserUpdateThread()
 		{

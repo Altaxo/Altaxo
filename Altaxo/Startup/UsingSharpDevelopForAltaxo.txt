@@ -205,3 +205,6 @@ sondern zum Schließen des gerade aktiven Fensters in der Anwendung.
 
 Augenscheinlichste Lösung: ich ersetze in DefaultTextEditor.addin
 die ContextMenüPunkte durch eigene Versionen.
+
+
+************************ bis hierhin am 3.12.2003 gesendet ***************************************
