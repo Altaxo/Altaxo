@@ -138,9 +138,9 @@ namespace Altaxo
 
 			DataSet.Add(dt1);
 
-			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(new Altaxo.Worksheet.DataView(parent,null),dt1);
-			ctrl.View.Form.Text = worksheetName;
-			m_Worksheets.Add(ctrl.View.Form);
+			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(new Altaxo.Worksheet.TableView(parent,null),dt1);
+			ctrl.View.TableViewForm.Text = worksheetName;
+			m_Worksheets.Add(ctrl.View.TableViewForm);
 			return ctrl.View;
 		}
 

@@ -14,13 +14,20 @@ namespace Altaxo.Worksheet
 	/// <summary>
 	/// Default controller which implements ITableController.
 	/// </summary>
-	public class TableController : ITableController
+	[SerializationSurrogate(0,typeof(TableController.SerializationSurrogate0))]
+	[SerializationVersion(0)]
+	public class TableController : ITableController,  System.Runtime.Serialization.IDeserializationCallback
 	{
 		public enum SelectionType { Nothing, DataRowSelection, DataColumnSelection, PropertyColumnSelection }
 
 
 		#region Member variables
 		
+		/// <summary>
+		/// Used to indicate that deserialization has not finished, and holds some deserialized values.
+		/// </summary>
+		private object m_DeserializationSurrogate;
+
 		/// <summary>Holds the data table.</summary>
 		protected Altaxo.Data.DataTable m_Table;
 
@@ -30,16 +37,16 @@ namespace Altaxo.Worksheet
 		/// <summary>The main menu of this controller.</summary>
 		protected System.Windows.Forms.MainMenu m_MainMenu; 
 		protected System.Windows.Forms.MenuItem m_MenuItemEditRemove;
-protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
+		protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 		/// <summary>Which selection was done last: selection (i) a data column, (ii) a data row, or (iii) a property column.</summary>
-		protected SelectionType m_LastSelectionType = SelectionType.Nothing;
+		protected SelectionType m_LastSelectionType;
 
 		/// <summary>
 		/// defaultColumnsStyles stores the default column Styles in a Hashtable
 		/// the key for the hash table is the Type of the ColumnStyle
 		/// </summary>
-		protected System.Collections.Hashtable m_DefaultColumnStyles = new System.Collections.Hashtable();
+		protected System.Collections.Hashtable m_DefaultColumnStyles;
 
 		/// <summary>
 		/// m_ColumnStyles stores the column styles for each data column individually,
@@ -47,30 +54,30 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		/// There is no need to store a column style here if the column is styled as default,
 		/// instead the defaultColumnStyle is used in this case
 		/// </summary>
-		protected internal System.Collections.Hashtable m_ColumnStyles = new System.Collections.Hashtable();
+		protected internal System.Collections.Hashtable m_ColumnStyles;
 
 
 		/// <summary>
 		/// The style of the row header. This is the leftmost column that shows usually the row number.
 		/// </summary>
-		protected RowHeaderStyle m_RowHeaderStyle = new RowHeaderStyle(); // holds the style of the row header (leftmost column of data grid)
+		protected RowHeaderStyle m_RowHeaderStyle; // holds the style of the row header (leftmost column of data grid)
 	
 		/// <summary>
 		/// The style of the column header. This is the upmost row that shows the name of the columns.
 		/// </summary>
-		protected ColumnHeaderStyle m_ColumnHeaderStyle = new ColumnHeaderStyle(); // the style of the column header (uppermost row of datagrid)
+		protected ColumnHeaderStyle m_ColumnHeaderStyle; // the style of the column header (uppermost row of datagrid)
 	
 		/// <summary>
 		/// The style of the property column header. This is the leftmost column in the left of the property columns,
 		/// that shows the names of the property columns.
 		/// </summary>
-		protected ColumnHeaderStyle m_PropertyColumnHeaderStyle = new ColumnHeaderStyle();
+		protected ColumnHeaderStyle m_PropertyColumnHeaderStyle;
 		
 		/// <summary>
 		/// holds the positions (int) of the right boundarys of the __visible__ (!) columns
 		/// i.e. columnBordersCache[0] is the with of the rowHeader plus the width of column[0]
 		/// </summary>
-		protected ColumnStyleCache m_ColumnStyleCache = new ColumnStyleCache();
+		protected ColumnStyleCache m_ColumnStyleCache;
 		
 		
 		/// <summary>
@@ -85,62 +92,57 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		private int m_HorzScrollMax;
 		private int m_VertScrollMax;
 
-		private int  m_LastVisibleColumn=0;
-		private int  m_LastFullyVisibleColumn=0;
+		private int  m_LastVisibleColumn;
+		private int  m_LastFullyVisibleColumn;
 
 		
 		/// <summary>
 		/// Holds the indizes to the selected data columns.
 		/// </summary>
-		protected IndexSelection m_SelectedColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected columns
+		protected IndexSelection m_SelectedColumns; // holds the selected columns
 		
 		/// <summary>
 		/// Holds the indizes to the selected rows.
 		/// </summary>
-		protected IndexSelection m_SelectedRows    = new Altaxo.Worksheet.IndexSelection(); // holds the selected rows
+		protected IndexSelection m_SelectedRows; // holds the selected rows
 		
 		/// <summary>
 		/// Holds the indizes to the selected property columns.
 		/// </summary>
-		protected IndexSelection m_SelectedPropertyColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected property columns
+		protected IndexSelection m_SelectedPropertyColumns; // holds the selected property columns
 
 
 		/// <summary>
 		/// Cached number of table rows.
 		/// </summary>
-		protected int m_NumberOfTableRows=0; // cached number of rows of the table
+		protected int m_NumberOfTableRows; // cached number of rows of the table
 		/// <summary>
 		/// Cached number of table columns.
 		/// </summary>
-		protected int m_NumberOfTableCols=0;
+		protected int m_NumberOfTableCols;
 		
 		/// <summary>
 		/// Cached number of property columns.
 		/// </summary>
-		protected int m_NumberOfPropertyCols=0; // cached number of property  columnsof the table
+		protected int m_NumberOfPropertyCols; // cached number of property  columnsof the table
 		
 		/// <summary>
 		/// The visibility of the property columns in the view. If true, the property columns are shown in the view.
 		/// </summary>
-		protected bool m_ShowColumnProperties=true; // are the property columns visible?
+		protected bool m_ShowPropertyColumns; // are the property columns visible?
 		
 		
 
 		private Point m_MouseDownPosition; // holds the position of a double click
-		private int  m_DragColumnWidth_ColumnNumber=int.MinValue; // stores the column number if mouse hovers over separator
-		private int  m_DragColumnWidth_OriginalPos = 0;
-		private int  m_DragColumnWidth_OriginalWidth=0;
-		private bool m_DragColumnWidth_InCapture=false;
+		private int  m_DragColumnWidth_ColumnNumber; // stores the column number if mouse hovers over separator
+		private int  m_DragColumnWidth_OriginalPos;
+		private int  m_DragColumnWidth_OriginalWidth;
+		private bool m_DragColumnWidth_InCapture;
 	
 
-		private bool                         m_CellEdit_IsArmed=false;
+		private bool                         m_CellEdit_IsArmed;
 		private ClickedCellInfo							 m_CellEdit_EditedCell;
 		private System.Windows.Forms.TextBox m_CellEditControl; 
-
-		#endregion
-
-
-		#region Constructors
 
 
 		/// <summary>
@@ -148,6 +150,87 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		/// </summary>
 		protected virtual void SetMemberVariablesToDefault()
 		{
+		m_DeserializationSurrogate=null;
+
+		m_Table=null;
+
+		m_View = null;
+		
+		// The main menu of this controller.
+		m_MainMenu = null; 
+		m_MenuItemEditRemove = null;
+		m_MenuItemColumnSetColumnValues = null;
+
+		// Which selection was done last: selection (i) a data column, (ii) a data row, or (iii) a property column.</summary>
+		m_LastSelectionType = SelectionType.Nothing;
+
+		// defaultColumnsStyles stores the default column Styles in a Hashtable
+		m_DefaultColumnStyles = new System.Collections.Hashtable();
+
+		// m_ColumnStyles stores the column styles for each data column individually,
+		m_ColumnStyles = new System.Collections.Hashtable();
+
+
+		// The style of the row header. This is the leftmost column that shows usually the row number.
+		m_RowHeaderStyle = new RowHeaderStyle(); // holds the style of the row header (leftmost column of data grid)
+	
+		// The style of the column header. This is the upmost row that shows the name of the columns.
+		m_ColumnHeaderStyle = new ColumnHeaderStyle(); // the style of the column header (uppermost row of datagrid)
+	
+		// The style of the property column header. This is the leftmost column in the left of the property columns,
+		m_PropertyColumnHeaderStyle = new ColumnHeaderStyle();
+		
+		// holds the positions (int) of the right boundarys of the __visible__ (!) columns
+		m_ColumnStyleCache = new ColumnStyleCache();
+		
+		
+		// Horizontal scroll position; number of first column that is shown.
+		m_HorzScrollPos=0;
+		
+		// Vertical scroll position; Positive values: number of first data column
+		m_VertScrollPos=0;
+		m_HorzScrollMax=1;
+		m_VertScrollMax=1;
+
+		m_LastVisibleColumn=0;
+		m_LastFullyVisibleColumn=0;
+
+		
+		// Holds the indizes to the selected data columns.
+		m_SelectedColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected columns
+		
+		// Holds the indizes to the selected rows.
+		m_SelectedRows    = new Altaxo.Worksheet.IndexSelection(); // holds the selected rows
+		
+		// Holds the indizes to the selected property columns.
+		m_SelectedPropertyColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected property columns
+
+
+		// Cached number of table rows.
+		m_NumberOfTableRows=0; // cached number of rows of the table
+
+		// Cached number of table columns.
+		m_NumberOfTableCols=0;
+		
+		// Cached number of property columns.
+		m_NumberOfPropertyCols=0; // cached number of property  columnsof the table
+		
+		// The visibility of the property columns in the view. If true, the property columns are shown in the view.
+		m_ShowPropertyColumns=true; // are the property columns visible?
+		
+		
+
+		m_MouseDownPosition = new Point(0,0); // holds the position of a double click
+		m_DragColumnWidth_ColumnNumber=int.MinValue; // stores the column number if mouse hovers over separator
+		m_DragColumnWidth_OriginalPos = 0;
+		m_DragColumnWidth_OriginalWidth=0;
+		m_DragColumnWidth_InCapture=false;
+	
+
+		m_CellEdit_IsArmed=false;
+		m_CellEdit_EditedCell = new ClickedCellInfo();
+
+
 			m_CellEditControl = new System.Windows.Forms.TextBox();
 			m_CellEditControl.AcceptsTab = true;
 			m_CellEditControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -159,9 +242,93 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 			m_CellEditControl.Hide();
 			m_CellEditControl.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnCellEditControl_KeyDown);
 			m_CellEditControl.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnCellEditControl_KeyPress);
-			m_View.Window.Controls.Add(m_CellEditControl);
+			//m_View.TableViewWindow.Controls.Add(m_CellEditControl);
 
 		}
+
+
+		#endregion
+
+		#region Serialization
+		/// <summary>Used to serialize the TableController Version 0.</summary>
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes the TableController (version 0).
+			/// </summary>
+			/// <param name="obj">The TableController to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				TableController s = (TableController)obj;
+
+				info.AddValue("DataTable",s.m_Table);
+				info.AddValue("DefColumnStyles",s.m_DefaultColumnStyles);
+				info.AddValue("ColumnStyles",s.m_ColumnStyles);
+				info.AddValue("RowHeaderStyle",s.m_RowHeaderStyle);
+				info.AddValue("ColumnHeaderStyle",s.m_ColumnHeaderStyle);
+				info.AddValue("PropertyColumnHeaderStyle",s.m_PropertyColumnHeaderStyle);
+			}
+			/// <summary>
+			/// Deserializes the TableController (version 0).
+			/// </summary>
+			/// <param name="obj">The empty TableController object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized TableController.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				TableController s = (TableController)obj;
+				s.SetMemberVariablesToDefault();
+
+				s.m_Table = (Altaxo.Data.DataTable)info.GetValue("DataTable",typeof(Altaxo.Data.DataTable));
+				s.m_DefaultColumnStyles= (System.Collections.Hashtable)info.GetValue("DefColumnStyles",typeof(System.Collections.Hashtable));
+				s.m_ColumnStyles = (System.Collections.Hashtable)info.GetValue("ColumnStyles",typeof(System.Collections.Hashtable));
+				s.m_RowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle",typeof(RowHeaderStyle));
+				s.m_ColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("ColumnHeaderStyle",typeof(ColumnHeaderStyle));
+				s.m_PropertyColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("PropertyColumnHeaderStyle",typeof(ColumnHeaderStyle));
+
+
+				s.m_DeserializationSurrogate = this;
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+			if(null!=this.m_DeserializationSurrogate && obj is DeserializationFinisher)
+			{
+				m_DeserializationSurrogate=null;
+
+				// first finish the document
+				DeserializationFinisher finisher = new DeserializationFinisher(this);
+				
+				m_Table.OnDeserialization(finisher);
+
+
+				// create the menu
+				this.InitializeMenu();
+
+				// set the menu of this class
+				m_View.TableViewMenu = this.m_MainMenu;
+
+
+				// restore the event chain to the Table
+				this.DataTable = this.m_Table;
+			}
+		}
+		#endregion
+
+		#region Constructors
+
+
+
 	
 		/// <summary>
 		/// Creates a TableController which shows the table data into the 
@@ -171,10 +338,10 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		/// <param name="table">The data table.</param>
 		public TableController(ITableView view, Altaxo.Data.DataTable table)
 		{
-			m_View = view;
-			m_View.Controller = this;
-
 			SetMemberVariablesToDefault();
+			m_View = view;
+			m_View.TableController = this;
+			m_View.TableViewWindow.Controls.Add(m_CellEditControl);
 
 			if(null!=table)
 				this.DataTable = table; // Using DataTable here wires the event chain also
@@ -487,7 +654,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 					}
 					catch(Exception ex)
 					{
-						System.Windows.Forms.MessageBox.Show(this.View.Window,"There was an error during ascii export, details follow:\n" + ex.ToString());
+						System.Windows.Forms.MessageBox.Show(this.View.TableViewWindow,"There was an error during ascii export, details follow:\n" + ex.ToString());
 					}
 					finally
 					{
@@ -505,7 +672,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 			dlg.Initialize(this.DataTable,this.SelectedRows,this.SelectedColumns);
 
-			dlg.ShowDialog(this.View.Window);
+			dlg.ShowDialog(this.View.TableViewWindow);
 		}
 
 		// ******************************************************************
@@ -553,20 +720,20 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 			string msg = this.DataTable.Transpose();
 
 			if(null!=msg)
-				System.Windows.Forms.MessageBox.Show(this.View.Window,msg);
+				System.Windows.Forms.MessageBox.Show(this.View.TableViewWindow,msg);
 		}
 		protected void EhMenuWorksheetAddColumns_OnClick(object sender, System.EventArgs e)
 		{
 			Altaxo.Data.DoubleColumn nc = new Altaxo.Data.DoubleColumn(this.DataTable.FindNewColumnName());
 			this.DataTable.Add(nc);
-			this.View.InvalidateTableArea();
+			this.View.TableAreaInvalidate();
 
 		}
 		protected void EhMenuWorksheetAddPropertyColumns_OnClick(object sender, System.EventArgs e)
 		{
 			Altaxo.Data.TextColumn nc = new Altaxo.Data.TextColumn(this.DataTable.PropCols.FindNewColumnName());
 			this.DataTable.PropCols.Add(nc);
-			this.View.InvalidateTableArea();
+			this.View.TableAreaInvalidate();
 
 		}
 
@@ -593,7 +760,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 			Data.ColumnScript colScript = this.DataTable.ColumnScripts[dataCol];
 
 			SetColumnValuesDialog dlg = new SetColumnValuesDialog(this.DataTable,dataCol,colScript);
-			DialogResult dres = dlg.ShowDialog(this.View.Window);
+			DialogResult dres = dlg.ShowDialog(this.View.TableViewWindow);
 			if(dres==DialogResult.OK)
 			{
 				if(colScript==null)	// store the column script in the hash table if not already there
@@ -668,11 +835,10 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 				{
 					m_Table.FireDataChanged += new Altaxo.Data.DataTable.OnDataChanged(this.OnTableDataChanged);
 					m_Table.PropCols.FireDataChanged += new Altaxo.Data.DataTable.OnDataChanged(this.OnPropertyDataChanged);
-					this.m_NumberOfTableCols = m_Table.ColumnCount;
-					this.m_NumberOfTableRows = m_Table.RowCount;
-					this.m_NumberOfPropertyCols = m_Table.PropCols.ColumnCount;
+					this.SetCachedNumberOfDataColumns();
+					this.SetCachedNumberOfDataRows();
+					this.SetCachedNumberOfPropertyColumns();
 
-					AdjustScrollBarProperties();
 				}
 				else // Data table is null
 				{
@@ -681,7 +847,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 					this.m_NumberOfPropertyCols = 0;
 					m_ColumnStyleCache.Clear();
 					SetScrollPositionTo(0,0);
-					this.View.InvalidateTableArea();
+					this.View.TableAreaInvalidate();
 				}
 			}	
 		}
@@ -796,7 +962,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 			// end code for the selected rows
 			this.DataTable.ResumeDataChangedNotifications();
-			this.View.InvalidateTableArea(); // necessary because we changed the selections
+			this.View.TableAreaInvalidate(); // necessary because we changed the selections
 
 
 
@@ -809,7 +975,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 			{
 				this.DataTable[SelectedColumns[0]].XColumn=true;
 				SelectedColumns.Clear();
-				this.View.InvalidateTableArea(); // draw new because 
+				this.View.TableAreaInvalidate(); // draw new because 
 			}
 		}
 
@@ -821,7 +987,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 				DataTable[SelectedColumns[i]].Group = nGroup;
 			}
 			SelectedColumns.Clear();
-			this.View.InvalidateTableArea();
+			this.View.TableAreaInvalidate();
 		}
 
 
@@ -894,53 +1060,94 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		#region Data event handlers
 		public void OnTableDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow)
 		{
-			// ask for table dimensions, compare with cached dimensions
-			// and adjust the scroll bars appropriate
-
-			int nOldRows = this.m_NumberOfTableRows;
-			int nOldCols = this.m_NumberOfTableCols;
-			int nOldPropCols = this.m_NumberOfPropertyCols;
-
-			m_NumberOfTableRows=DataTable.RowCount;
-			m_NumberOfTableCols=DataTable.ColumnCount;
-			m_NumberOfPropertyCols=DataTable.PropCols.ColumnCount;
-
-			if(nOldRows!=m_NumberOfTableRows || nOldCols!=m_NumberOfTableCols || nOldPropCols!=m_NumberOfPropertyCols)
-				this.AdjustScrollBarProperties();
+			if(this.m_NumberOfTableRows!=DataTable.RowCount)
+				this.SetCachedNumberOfDataRows();
+			
+			if(this.m_NumberOfTableCols!=DataTable.ColumnCount)
+				this.SetCachedNumberOfDataColumns();
 		}
 
-		/// <summary>
-		/// Sets the maximum of the horizontal and vertical scroll bar to reflect
-		/// the table's number of columns and rows.
-		/// </summary>
-		public void AdjustScrollBarProperties()
+	
+
+		public void AdjustYScrollBarMaximum()
 		{
-			int totNumRows = m_NumberOfTableRows + this.TotalEnabledPropertyColumns;
+			VertScrollMaximum = m_NumberOfTableRows>0 ? m_NumberOfTableRows-1 : 0;
 
-			if(this.VertScrollPos+1>totNumRows)
-				VertScrollPos = totNumRows>0 ? totNumRows-1 : 0;
+			if(this.VertScrollPos>=m_NumberOfTableRows)
+				VertScrollPos = m_NumberOfTableRows>0 ? m_NumberOfTableRows-1 : 0;
 
-			this.View.VertScrollMaximum = totNumRows>0 ? totNumRows-1	: 0;
+			this.View.TableAreaInvalidate();
+		}
+
+		public void AdjustXScrollBarMaximum()
+		{
+
+			this.HorzScrollMaximum = m_NumberOfTableCols>0 ? m_NumberOfTableCols-1 : 0;
 
 			if(HorzScrollPos+1>m_NumberOfTableCols)
 				HorzScrollPos = m_NumberOfTableCols>0 ? m_NumberOfTableCols-1 : 0;
 	
-			this.View.HorzScrollMaximum = m_NumberOfTableCols>0 ? m_NumberOfTableCols-1 : 0;
 			m_ColumnStyleCache.ForceUpdate(this);
 
-			this.View.InvalidateTableArea();
+			this.View.TableAreaInvalidate();
 		}
 
-		public void OnPropertyDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow)
+
+		protected virtual void SetCachedNumberOfDataColumns()
+		{
+			// ask for table dimensions, compare with cached dimensions
+			// and adjust the scroll bars appropriate
+		if(DataTable.ColumnCount != this.m_NumberOfTableCols)
+			{
+				this.m_NumberOfTableCols = DataTable.ColumnCount;
+				AdjustXScrollBarMaximum();
+			}
+
+		}
+
+
+		protected virtual void SetCachedNumberOfDataRows()
+		{
+			// ask for table dimensions, compare with cached dimensions
+			// and adjust the scroll bars appropriate
+			int nOldDataRows = this.m_NumberOfTableRows;
+
+			if(DataTable.RowCount != nOldDataRows)
+			{
+				this.m_NumberOfTableRows = DataTable.RowCount;
+				AdjustYScrollBarMaximum();
+			}
+
+		}
+
+		protected virtual void SetCachedNumberOfPropertyColumns()
 		{
 			// ask for table dimensions, compare with cached dimensions
 			// and adjust the scroll bars appropriate
 			int nOldPropCols = this.m_NumberOfPropertyCols;
+			
+			// if we was scrolled to the most upper position, we later scroll
+			// to the most upper position again
+			bool bUpperPosition = (nOldPropCols == -this.VertScrollPos);
 
-			this.m_NumberOfPropertyCols=sender.ColumnCount;
+			this.m_NumberOfPropertyCols=m_Table.PropCols.ColumnCount;
 
 			if(nOldPropCols!=this.m_NumberOfPropertyCols)
-				AdjustScrollBarProperties();	
+			{
+				// Adjust Y ScrollBar Maximum();
+				AdjustYScrollBarMaximum();
+
+				if(bUpperPosition) // we scroll again to the most upper position
+				{
+					this.VertScrollPos = -this.TotalEnabledPropertyColumns;
+				}
+			}
+		}
+
+		public void OnPropertyDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow)
+		{
+			if(this.m_NumberOfPropertyCols != sender.ColumnCount)
+				SetCachedNumberOfPropertyColumns();
 		}
 		#endregion
 
@@ -1154,7 +1361,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 			// 3. Fill the cell edit control with new content
 			m_CellEdit_EditedCell.Column=newCellCol;
 			m_CellEdit_EditedCell.Row=newCellRow;
-			m_CellEditControl.Parent = View.Window;
+			m_CellEditControl.Parent = View.TableViewWindow;
 			Rectangle cellRect = this.GetCoordinatesOfDataCell(m_CellEdit_EditedCell.Column,m_CellEdit_EditedCell.Row);
 			m_CellEditControl.Location = cellRect.Location;
 			m_CellEditControl.Size = cellRect.Size;
@@ -1162,7 +1369,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 			// 4. Invalidate the client area if scrolled in step (2)
 			if(bScrolled)
-				this.View.InvalidateTableArea();
+				this.View.TableAreaInvalidate();
 
 			return true;
 		}
@@ -1277,7 +1484,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 			// 3. Fill the cell edit control with new content
 			m_CellEdit_EditedCell.Column=newCellCol;
 			m_CellEdit_EditedCell.Row=newCellRow;
-			m_CellEditControl.Parent = View.Window;
+			m_CellEditControl.Parent = View.TableViewWindow;
 			Rectangle cellRect = this.GetCoordinatesOfPropertyCell(m_CellEdit_EditedCell.Column,m_CellEdit_EditedCell.Row);
 			m_CellEditControl.Location = cellRect.Location;
 			m_CellEditControl.Size = cellRect.Size;
@@ -1285,7 +1492,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 			// 4. Invalidate the client area if scrolled in step (2)
 			if(bScrolled)
-				this.View.InvalidateTableArea();
+				this.View.TableAreaInvalidate();
 
 			return true;
 		}
@@ -1293,7 +1500,6 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 
 		#endregion
-
 
 		#region Row positions (vertical scroll logic)
 
@@ -1316,8 +1522,8 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 					// The value of the ScrollBar in the view has an offset, since he
 					// can not have negative values;
-					this.View.VertScrollValue = value + this.TotalEnabledPropertyColumns;
-					this.View.InvalidateTableArea();
+					this.View.TableViewVertScrollValue = value + this.TotalEnabledPropertyColumns;
+					this.View.TableAreaInvalidate();
 				}
 			}
 		}
@@ -1328,7 +1534,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 			set 
 			{
 				this.m_VertScrollMax = value;
-				View.VertScrollMaximum = value + this.TotalEnabledPropertyColumns;
+				View.TableViewVertScrollMaximum = value + this.TotalEnabledPropertyColumns;
 			}
 		}
 		
@@ -1448,7 +1654,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		{
 			get
 			{
-				return m_ShowColumnProperties ? Math.Max(0,-VertScrollPos) : 0;
+				return m_ShowPropertyColumns ? Math.Max(0,-VertScrollPos) : 0;
 			}
 		}
 
@@ -1456,7 +1662,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int TotalEnabledPropertyColumns
 		{
-			get { return m_ShowColumnProperties ? this.m_NumberOfPropertyCols : 0; }
+			get { return m_ShowPropertyColumns ? this.m_NumberOfPropertyCols : 0; }
 		}
 
 
@@ -1466,7 +1672,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		{
 			get
 			{
-				return (m_ShowColumnProperties && VertScrollPos<0) ? TotalEnabledPropertyColumns+VertScrollPos : -1;
+				return (m_ShowPropertyColumns && VertScrollPos<0) ? TotalEnabledPropertyColumns+VertScrollPos : -1;
 			}
 		}
 
@@ -1474,7 +1680,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		public int GetFirstVisiblePropertyColumn(int top)
 		{
 			int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height));
-			return m_ShowColumnProperties ? firstTotRow+FirstVisiblePropertyColumn : 0;
+			return m_ShowPropertyColumns ? firstTotRow+FirstVisiblePropertyColumn : 0;
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -1494,7 +1700,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 		public int GetVisiblePropertyColumns(int top, int bottom)
 		{
-			if(this.m_ShowColumnProperties)
+			if(this.m_ShowPropertyColumns)
 			{
 				int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height));
 				int lastTotRow  = (int)Math.Ceiling((bottom-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height)-1;
@@ -1507,7 +1713,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 		public int GetFullyVisiblePropertyColumns(int top, int bottom)
 		{
-			if(m_ShowColumnProperties)
+			if(m_ShowPropertyColumns)
 			{
 				int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height));
 				int lastTotRow  = (int)Math.Floor((bottom-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height)-1;
@@ -1562,9 +1768,9 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 						m_CellEditControl.Hide();
 					}
 
-					this.View.HorzScrollValue = value;
+					this.View.TableViewHorzScrollValue = value;
 					this.m_ColumnStyleCache.ForceUpdate(this);
-					this.View.InvalidateTableArea();
+					this.View.TableAreaInvalidate();
 				}
 			}
 		}
@@ -1575,7 +1781,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 			set 
 			{
 				this.m_HorzScrollMax = value;
-				View.HorzScrollMaximum = value;
+				View.TableViewHorzScrollMaximum = value;
 			}
 		}
 
@@ -1754,7 +1960,33 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 			}
 			set
 			{
+				if(value==null)
+					throw new ArgumentNullException("The view for this TableController must not be null!");
+
+				ITableView oldView = m_View;
 				m_View = value;
+
+				if(null!=oldView)
+				{
+					oldView.TableViewMenu = null; // don't let the old view have the menu
+					oldView.TableController = null; // no longer the controller of this view
+					oldView.TableViewWindow.Controls.Remove(m_CellEditControl);
+				}
+
+				m_View.TableController = this;
+				m_View.TableViewMenu = m_MainMenu;
+				m_View.TableViewWindow.Controls.Add(m_CellEditControl);
+
+			
+				// Werte für gerade vorliegende Scrollpositionen und Scrollmaxima zum (neuen) View senden
+			
+				this.VertScrollMaximum = this.m_VertScrollMax;
+				this.HorzScrollMaximum = this.m_HorzScrollMax;
+
+				this.VertScrollPos     = this.m_VertScrollPos;
+				this.HorzScrollPos     = this.m_HorzScrollPos;
+
+
 			}
 		}
 
@@ -1798,7 +2030,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 				this.m_DragColumnWidth_ColumnNumber = int.MinValue;
 				this.View.TableAreaCapture=false;
 				this.View.TableAreaCursor = System.Windows.Forms.Cursors.Default;
-				this.View.InvalidateTableArea();
+				this.View.TableAreaInvalidate();
 
 			}
 		}
@@ -1847,7 +2079,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 					newWidth=10;
 				cs.Width=newWidth;
 				this.m_ColumnStyleCache.ForceUpdate(this);
-				this.View.InvalidateTableArea();
+				this.View.TableAreaInvalidate();
 			}
 			else // not in Capture mode
 			{
@@ -1890,7 +2122,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 				{
 					//m_CellEditControl = new TextBox();
 					m_CellEdit_EditedCell=clickedCell;
-					m_CellEditControl.Parent = View.Window;
+					m_CellEditControl.Parent = View.TableViewWindow;
 					m_CellEditControl.Location = clickedCell.CellRectangle.Location;
 					m_CellEditControl.Size = clickedCell.CellRectangle.Size;
 					m_CellEditControl.LostFocus += new System.EventHandler(this.OnTextBoxLostControl);
@@ -1900,7 +2132,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 				case ClickedAreaType.PropertyCell:
 				{
 					m_CellEdit_EditedCell=clickedCell;
-					m_CellEditControl.Parent = View.Window;
+					m_CellEditControl.Parent = View.TableViewWindow;
 					m_CellEditControl.Location = clickedCell.CellRectangle.Location;
 					m_CellEditControl.Size = clickedCell.CellRectangle.Size;
 					m_CellEditControl.LostFocus += new System.EventHandler(this.OnTextBoxLostControl);
@@ -1917,7 +2149,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 						m_SelectedColumns.Clear(); // if we click a column, we remove row selections
 					m_SelectedPropertyColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
 					m_LastSelectionType = SelectionType.PropertyColumnSelection;
-					this.View.InvalidateTableArea();
+					this.View.TableAreaInvalidate();
 				}
 					break;
 				case ClickedAreaType.DataColumnHeader:
@@ -1930,7 +2162,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 							m_SelectedRows.Clear(); // if we click a column, we remove row selections
 						m_SelectedColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
 						m_LastSelectionType = SelectionType.DataColumnSelection;
-						this.View.InvalidateTableArea();
+						this.View.TableAreaInvalidate();
 					}
 				}
 					break;
@@ -1942,7 +2174,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 						m_SelectedColumns.Clear(); // if we click a column, we remove row selections
 					m_SelectedRows.Select(clickedCell.Row,bShiftKey,bControlKey);
 					m_LastSelectionType = SelectionType.DataRowSelection;
-					this.View.InvalidateTableArea();
+					this.View.TableAreaInvalidate();
 				}
 					break;
 			}
@@ -2285,21 +2517,25 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 					return -1;
 				}
 
-				// calculate the raw row number
-				int rawrow = (int)Math.Floor((mouseCoord.Y-dg.m_ColumnHeaderStyle.Height)/(double)dg.m_RowHeaderStyle.Height);
-
-				cellRect.Y= dg.m_ColumnHeaderStyle.Height + rawrow * dg.m_RowHeaderStyle.Height;
-				cellRect.Height = dg.m_RowHeaderStyle.Height;
-
-				if(rawrow < dg.VisiblePropertyColumns)
+				if(mouseCoord.Y<dg.VerticalPositionOfFirstVisibleDataRow && dg.VisiblePropertyColumns>0)
 				{
+					// calculate the raw row number
+					int rawrow = (int)Math.Floor((mouseCoord.Y-dg.m_ColumnHeaderStyle.Height)/(double)dg.m_PropertyColumnHeaderStyle.Height);
+
+					cellRect.Y= dg.m_ColumnHeaderStyle.Height + rawrow * dg.m_PropertyColumnHeaderStyle.Height;
+					cellRect.Height = dg.m_PropertyColumnHeaderStyle.Height;
+
 					bPropertyCol=true;
 					return dg.FirstVisiblePropertyColumn+rawrow;
 				}
 				else
 				{
+					int rawrow = (int)Math.Floor((mouseCoord.Y-dg.VerticalPositionOfFirstVisibleDataRow)/(double)dg.m_RowHeaderStyle.Height);
+
+					cellRect.Y= dg.VerticalPositionOfFirstVisibleDataRow + rawrow * dg.m_RowHeaderStyle.Height;
+					cellRect.Height = dg.m_RowHeaderStyle.Height;
 					bPropertyCol=false;
-					return dg.FirstVisibleTableRow + rawrow - dg.VisiblePropertyColumns;
+					return dg.FirstVisibleTableRow + rawrow;
 				}
 			}
 

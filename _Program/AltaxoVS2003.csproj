@@ -463,16 +463,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\DataView.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Worksheet\DataView.resx"
-                    DependentUpon = "DataView.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "Worksheet\DateTimeColumnStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -511,6 +501,16 @@
                     RelPath = "Worksheet\TableController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\TableView.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\TableView.resx"
+                    DependentUpon = "TableView.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Worksheet\TextColumnStyle.cs"

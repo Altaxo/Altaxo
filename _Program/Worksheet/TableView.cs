@@ -8,11 +8,11 @@ using Altaxo.Serialization;
 namespace Altaxo.Worksheet
 {
 	/// <summary>
-	/// DataView is our class for visualizing data tables.
+	/// TableView is our class for visualizing data tables.
 	/// </summary>
-	[SerializationSurrogate(0,typeof(DataView.SerializationSurrogate0))]
+	[SerializationSurrogate(0,typeof(TableView.SerializationSurrogate0))]
 	[SerializationVersion(0,"Initial version.")]
-	public class DataView : System.Windows.Forms.Form, ITableView
+	public class TableView : System.Windows.Forms.Form, ITableView
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -46,7 +46,7 @@ namespace Altaxo.Worksheet
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				info.SetType(this.GetType());
-				DataView s = (DataView)obj;
+				TableView s = (TableView)obj;
 				info.AddValue("Location",s.Location);
 				info.AddValue("Size",s.Size);
 				info.AddValue("Controller",s.m_Ctrl);
@@ -68,7 +68,7 @@ namespace Altaxo.Worksheet
 				// We create the view firstly without controller to have the creation finished
 				// before the controler is set
 				// otherwise we will have callbacks to not initialized variables
-				DataView frm = new DataView(App.CurrentApplication,null);
+				TableView frm = new TableView(App.CurrentApplication,null);
 				frm.Location = m_Location;
 				frm.Size = m_Size;
 			
@@ -85,7 +85,7 @@ namespace Altaxo.Worksheet
 		#endregion
 
 		
-		public DataView(System.Windows.Forms.Form parent, ITableController ctrl)
+		public TableView(System.Windows.Forms.Form parent, ITableController ctrl)
 		{
 			if(null!=parent)
 				this.MdiParent = parent;
@@ -175,15 +175,15 @@ namespace Altaxo.Worksheet
 			this.m_GridPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseMove);
 			this.m_GridPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseDown);
 			// 
-			// DataView
+			// TableView
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(292, 266);
 			this.Controls.Add(this.m_GridPanel);
 			this.Controls.Add(this.m_HorzScrollBar);
 			this.Controls.Add(this.m_VertScrollBar);
-			this.Name = "DataView";
-			this.Text = "DataView";
+			this.Name = "TableView";
+			this.Text = "TableView";
 			this.ResumeLayout(false);
 
 		}
@@ -290,7 +290,7 @@ namespace Altaxo.Worksheet
 		#region ITableView Members
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public Control Window
+		public Control TableViewWindow
 		{
 			get
 			{
@@ -299,7 +299,7 @@ namespace Altaxo.Worksheet
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public Form Form
+		public Form TableViewForm
 		{
 			get
 			{
@@ -308,7 +308,7 @@ namespace Altaxo.Worksheet
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public ITableController Controller
+		public ITableController TableController
 		{
 			get
 			{
@@ -329,7 +329,7 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-		public int HorzScrollMaximum
+		public int TableViewHorzScrollMaximum
 		{
 			get
 			{
@@ -344,7 +344,7 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-		public int VertScrollMaximum
+		public int TableViewVertScrollMaximum
 		{
 			get
 			{
@@ -359,7 +359,7 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-		public int HorzScrollValue
+		public int TableViewHorzScrollValue
 		{
 			get
 			{
@@ -371,7 +371,7 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-		public int VertScrollValue
+		public int TableViewVertScrollValue
 		{
 			get
 			{
@@ -383,12 +383,12 @@ namespace Altaxo.Worksheet
 			}
 		}
 
-		public Graphics CreateTableAreaGraphics()
+		public Graphics TableAreaCreateGraphics()
 		{
 			return m_GridPanel.CreateGraphics();
 		}
 
-		public void InvalidateTableArea()
+		public void TableAreaInvalidate()
 		{
 			m_GridPanel.Invalidate();
 		}

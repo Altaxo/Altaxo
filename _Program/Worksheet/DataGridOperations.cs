@@ -102,7 +102,7 @@ namespace Altaxo.Worksheet
 					// 6th column is the number of items for statistics
 					Data.DoubleColumn c5 = new Data.DoubleColumn("N");
 
-					table = wks.Controller.Doc;
+					table = wks.TableController.Doc;
 				
 					table.Add(c0);
 					table.Add(c1);

@@ -21,22 +21,26 @@ namespace Altaxo.Worksheet
 	/// Interface for all classes that can display a DataTable under control of
 	/// a ITableController
 	/// </summary>
+	/// <remarks>I preceded all function and property names with Table... or so to make sure that
+	/// one Form or one control can implement more than one view. For instance a form
+	/// that want to show a table and a graph has to implement ITableView <b>and</b>
+	/// IGraphView.</remarks>
 	public interface ITableView
 	{
 		/// <summary>Returns the windows of this view. In case the view is a Form, it returns the form. But if the view is only a control
 		/// on a form, it returns the control window.
 		/// </summary>
-		System.Windows.Forms.Control Window { get; }
+		System.Windows.Forms.Control TableViewWindow { get; }
 		/// <summary>
 		/// Returns the form of this view. In case the view is a Form, it returns that form itself. In case the view is a control on a form,
 		/// it returns not the control but the hosting form of this control.
 		/// </summary>
-		System.Windows.Forms.Form    Form   { get; }
+		System.Windows.Forms.Form    TableViewForm   { get; }
 
 		/// <summary>
 		/// Returns the controller that controls this view. Sets the controller to this value.
 		/// </summary>
-		ITableController Controller { get; set;}
+		ITableController TableController { get; set;}
 
 		/// <summary>
 		/// This sets the menu. The menu itself is created and controlled by the controller.</summary>
@@ -50,34 +54,34 @@ namespace Altaxo.Worksheet
 		/// <summary>
 		/// Get / sets the maximum value of the horizontal scroll bar 
 		/// </summary>
-		int HorzScrollMaximum{ set; }
+		int TableViewHorzScrollMaximum{ set; }
 		
 		/// <summary>
 		/// Get / sets the maximum value of the vertical scroll bar 
 		/// </summary>
-		int VertScrollMaximum { set; }
+		int TableViewVertScrollMaximum { set; }
 
 		/// <summary>
 		/// Get /sets the horizontal scroll value
 		/// </summary>
-		int HorzScrollValue { set; }
+		int TableViewHorzScrollValue { set; }
 
 		/// <summary>
 		/// Get /sets the vertical scroll value
 		/// </summary>
-		int VertScrollValue { set; }
+		int TableViewVertScrollValue { set; }
 
 		/// <summary>
 		/// This creates a graphics context for the area where the table is shown.
 		/// </summary>
 		/// <returns>The graphics context. Should be compatible to the area on the screen where the table is shown.</returns>
-		Graphics CreateTableAreaGraphics();
+		Graphics TableAreaCreateGraphics();
 
 
 		/// <summary>
 		/// This forces redrawing of the entire Table window.
 		/// </summary>
-		void InvalidateTableArea();
+		void TableAreaInvalidate();
 
 		/// <summary>
 		/// Returns the size (in pixel) of the area, wherein the table is painted.
