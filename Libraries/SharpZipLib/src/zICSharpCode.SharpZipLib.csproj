@@ -16,7 +16,7 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "Library"
-                PreBuildEvent = "copy ..\..\..\*.key ..\..\obj\$(ConfigurationName)"
+                PreBuildEvent = "copy ..\..\..\*.key ..\..\obj"
                 PostBuildEvent = "copy ICSharpCode.SharpZipLib.* ..\..\..\..\..\rt$(ConfigurationName)\bin"
                 RootNamespace = "SharpZipLib"
                 RunPostBuildEvent = "OnBuildSuccess"

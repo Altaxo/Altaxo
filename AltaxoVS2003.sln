@@ -64,7 +64,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zICSharpCode.XmlForms", "Li
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zICSharpCode.SharpZipLib", "Libraries\SharpZipLib\src\ICSharpCode.SharpZipLib\zICSharpCode.SharpZipLib.csproj", "{62C31D94-812C-430E-AB9B-7DCF84D93BAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zICSharpCode.SharpZipLib", "Libraries\SharpZipLib\src\zICSharpCode.SharpZipLib.csproj", "{62C31D94-812C-430E-AB9B-7DCF84D93BAE}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
