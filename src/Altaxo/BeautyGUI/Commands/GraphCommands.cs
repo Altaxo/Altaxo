@@ -60,7 +60,7 @@ namespace Altaxo.Graph.Commands
 	/// <summary>
 	/// Handler for the menu item "File" - "Print".
 	/// </summary>
-	public class FilePrint : AbstractGraphControllerCommand
+	public class Print : AbstractGraphControllerCommand
 	{
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{
@@ -86,7 +86,7 @@ namespace Altaxo.Graph.Commands
 	/// <summary>
 	/// Handler for the menu item "File" - "Print Preview".
 	/// </summary>
-	public class FilePrintPreview : AbstractGraphControllerCommand
+	public class PrintPreview : AbstractGraphControllerCommand
 	{
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{
@@ -110,7 +110,7 @@ namespace Altaxo.Graph.Commands
 	}
 
 
-	public class FileSaveGraphAs : AbstractGraphControllerCommand
+	public class SaveGraphAsTemplate : AbstractGraphControllerCommand
 	{
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{
@@ -210,7 +210,7 @@ namespace Altaxo.Graph.Commands
 	/// <summary>
 	/// Handler for the menu item "Edit" - "New layer(axes)" - "Linked: Top X Right Y, X axis straight ".
 	/// </summary>
-	public class EditNewlayerLinkedTopXRightYXAxisStraight : AbstractGraphControllerCommand
+	public class NewLayerLinkedTopXRightY_XAxisStraight : AbstractGraphControllerCommand
 	{
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{
@@ -221,7 +221,7 @@ namespace Altaxo.Graph.Commands
 	/// <summary>
 	/// Duplicates the Graph and the Graph view to a new one.
 	/// </summary>
-	public class GraphDuplicate : AbstractGraphControllerCommand
+	public class DuplicateGraph : AbstractGraphControllerCommand
 	{
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{
@@ -230,7 +230,7 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
-	public class GraphLayer : AbstractGraphControllerCommand
+	public class LayerControl : AbstractGraphControllerCommand
 	{
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{
@@ -240,7 +240,7 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
-	public class GraphAddCurvePlot : AbstractGraphControllerCommand
+	public class AddCurvePlot : AbstractGraphControllerCommand
 	{
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{
@@ -252,7 +252,7 @@ namespace Altaxo.Graph.Commands
 	/// <summary>
 	/// Handler for the menu item "Graph" - "New layer legend.
 	/// </summary>
-	public class GraphNewLayerLegend : AbstractGraphControllerCommand
+	public class NewLayerLegend : AbstractGraphControllerCommand
 	{
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{

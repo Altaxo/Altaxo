@@ -339,6 +339,59 @@ namespace Altaxo.Serialization.Galactic
 				
 				MessageBox.Show(m_Form, string.Format("Export of {0} spectra successfull.",numOfSpectra)); 
 			}
+			else if(this.m_CreateSpectrumFrom == Options.CreateSpectrumFrom.Column)
+			{
+				Altaxo.Data.INumericColumn xcol;
+
+				if(this.m_XValuesFrom == Options.XValuesFrom.Column)
+				{
+					string colname = m_Form.XValuesColumnName;
+					if(null==colname)
+					{
+						MessageBox.Show(m_Form, "No x-column selected", "Error");
+						return;
+					}
+
+					xcol = this.m_Table.DataColumns[colname] as Altaxo.Data.INumericColumn;
+				}
+				else // xvalues are continuous number
+				{
+					xcol = new Altaxo.Data.IndexerColumn();
+				}
+
+				Altaxo.Data.DataColumn extFileNameCol=null;
+				if(this.m_ExtendFileNameWith == Options.ExtendFileNameWith.Column)
+					extFileNameCol = m_Table.PropCols[m_Form.ExtFileNameColumnName];
+
+
+
+				int i,j;
+				bool bUseColSel = (null!=m_SelectedColumns && this.m_SelectedColumns.Count>0);
+				int numOfSpectra = bUseColSel ? m_SelectedColumns.Count : m_Table.DataColumns.ColumnCount;
+
+				for(j=0;j<numOfSpectra;j++)
+				{
+					i = bUseColSel ? m_SelectedColumns[j] : j;
+
+					string filename = m_Form.BasicFileName;
+
+					if(null!=extFileNameCol)
+						filename += extFileNameCol[i].ToString();
+					else
+						filename += j.ToString() + ".spc";
+
+
+					string error = Export.FromColumn(filename,this.m_Table,i,xcol,this.m_SelectedRows);
+
+					if(null!=error)
+					{
+						MessageBox.Show(m_Form,error,"There were error(s) during export!");
+						return;
+					}
+				}
+				
+				MessageBox.Show(m_Form, string.Format("Export of {0} spectra successfull.",numOfSpectra)); 
+			}
 			m_Form.DialogResult = DialogResult.OK;
 			m_Form.Close();
 		}
@@ -506,6 +559,61 @@ namespace Altaxo.Serialization.Galactic
 			return FromArrays(xvalues,yvalues,filename);
 		}
 
+		/// <summary>
+		/// Exports to a single SPC spectrum from a single table column.
+		/// </summary>
+		/// <param name="filename">The name of the file where to export to.</param>
+		/// <param name="table">The table from which to export.</param>
+		/// <param name="columnnumber">The number of the table column that contains the data to export.</param>
+		/// <param name="xcolumn">The x column that contains the x data.</param>
+		/// <param name="selectedRows">The rows that where selected in the table, i.e. the rows which are exported. If this parameter is null
+		/// or no rows are selected, then all data of a column will be exported.</param>
+		/// <returns>Null if export was successfull, error description otherwise.</returns>
+		public static string FromColumn(
+			string filename,
+			Altaxo.Data.DataTable table,
+			int columnnumber, 
+			Altaxo.Data.INumericColumn xcolumn,
+			Altaxo.Worksheet.IndexSelection selectedRows)
+		{
+
+			if(!(table.DataColumns[columnnumber] is Altaxo.Data.INumericColumn))
+				return string.Format("Table column[{0}] ({1}) is not a numeric column!",columnnumber,table.DataColumns[columnnumber].FullName);
+
+
+
+			// test that all x and y cells have numeric values
+			bool bUseSel = null!=selectedRows && selectedRows.Count>0;
+			int spectrumlen = (bUseSel)? selectedRows.Count : table.DataColumns[columnnumber].Count;
+
+			int i,j;
+
+			for(j=0;j<spectrumlen;j++)
+			{
+				i = bUseSel ? selectedRows[j] : j;
+
+				if(xcolumn.GetDoubleAt(i) == Double.NaN)
+					return string.Format("X column at index {i} has no numeric value!",i);
+
+				if(((Altaxo.Data.INumericColumn)table.DataColumns[columnnumber]).GetDoubleAt(i) == Double.NaN)
+					return string.Format("Table cell [{0},{1}] (column {2}) has no numeric value!",columnnumber,i,table.DataColumns[columnnumber].FullName);
+			}
+
+
+			// this first test was successfull, so start exporting now
+	
+			double[] xvalues = new double[spectrumlen];
+			double[] yvalues = new double[spectrumlen];
+
+			for(j=0;j<spectrumlen;j++)
+			{
+				i = bUseSel ? selectedRows[j] : j;
+				xvalues[j]= xcolumn.GetDoubleAt(i);
+				yvalues[j]= ((Altaxo.Data.INumericColumn)table.DataColumns[columnnumber]).GetDoubleAt(i);
+
+			}
+			return FromArrays(xvalues,yvalues,filename);
+		}
 
 	} // end of class Export
 

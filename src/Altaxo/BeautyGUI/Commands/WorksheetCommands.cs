@@ -234,7 +234,7 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-	public class WorksheetAddColumns : AbstractWorksheetControllerCommand
+	public class AddDataColumns : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
@@ -242,7 +242,7 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-	public class WorksheetAddPropertyColumns : AbstractWorksheetControllerCommand
+	public class AddPropertyColumns : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
@@ -255,7 +255,7 @@ namespace Altaxo.Worksheet.Commands
 	#region Column commands
 
 
-	public class ColumnSetValues : AbstractWorksheetControllerCommand
+	public class SetColumnValues : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
@@ -274,7 +274,7 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-	public class ColumnSetAsX : AbstractWorksheetControllerCommand
+	public class SetColumnAsX : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
@@ -282,7 +282,7 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-	public class ColumnRename : AbstractWorksheetControllerCommand
+	public class RenameColumn : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
@@ -334,7 +334,7 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
-	public class ColumnSetGroupNumber : AbstractWorksheetControllerCommand
+	public class SetColumnGroupNumber : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
@@ -361,7 +361,7 @@ namespace Altaxo.Worksheet.Commands
 	}
 
 
-	public class ColumnExtractPropertyValues : AbstractWorksheetControllerCommand
+	public class ExtractPropertyValues : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
