@@ -51,6 +51,8 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.MenuItem menuNewLayer_TopXRightY_XAxisStraight;
 		private System.Windows.Forms.MenuItem menuItem4;
 		private System.Windows.Forms.MenuItem menuFileExportPageWMF;
+		private System.Windows.Forms.MenuItem menuGraphPopup;
+		private System.Windows.Forms.MenuItem menuGraph_NewLayerLegend;
 		private System.Windows.Forms.MenuItem menuFile_PrintPreview;
 
 	
@@ -143,6 +145,8 @@ namespace Altaxo.Graph
 			this.menuFile_PageSetup = new System.Windows.Forms.MenuItem();
 			this.menuFile_Print = new System.Windows.Forms.MenuItem();
 			this.menuFile_PrintPreview = new System.Windows.Forms.MenuItem();
+			this.menuItem4 = new System.Windows.Forms.MenuItem();
+			this.menuFileExportPageWMF = new System.Windows.Forms.MenuItem();
 			this.menuItem2 = new System.Windows.Forms.MenuItem();
 			this.menuItem3 = new System.Windows.Forms.MenuItem();
 			this.menuNewLayer_NormalBottomXLeftY = new System.Windows.Forms.MenuItem();
@@ -150,10 +154,10 @@ namespace Altaxo.Graph
 			this.menuNewLayer_LinkedTopX = new System.Windows.Forms.MenuItem();
 			this.menuNewLayer_LinkedRightY = new System.Windows.Forms.MenuItem();
 			this.menuNewLayer_TopXRightY_XAxisStraight = new System.Windows.Forms.MenuItem();
+			this.menuGraphPopup = new System.Windows.Forms.MenuItem();
+			this.menuGraph_NewLayerLegend = new System.Windows.Forms.MenuItem();
 			this.menuDataPopup = new System.Windows.Forms.MenuItem();
 			this.menuDataSeparator = new System.Windows.Forms.MenuItem();
-			this.menuItem4 = new System.Windows.Forms.MenuItem();
-			this.menuFileExportPageWMF = new System.Windows.Forms.MenuItem();
 			this.SuspendLayout();
 			// 
 			// m_GraphControl
@@ -173,6 +177,7 @@ namespace Altaxo.Graph
 			this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																																							this.menuItem1,
 																																							this.menuItem2,
+																																							this.menuGraphPopup,
 																																							this.menuDataPopup});
 			// 
 			// menuItem1
@@ -204,11 +209,26 @@ namespace Altaxo.Graph
 			this.menuFile_PrintPreview.Text = "Print Prewiew..";
 			this.menuFile_PrintPreview.Click += new System.EventHandler(this.menuFile_PrintPreview_Click);
 			// 
+			// menuItem4
+			// 
+			this.menuItem4.Index = 3;
+			this.menuItem4.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																							this.menuFileExportPageWMF});
+			this.menuItem4.Text = "Export Page";
+			// 
+			// menuFileExportPageWMF
+			// 
+			this.menuFileExportPageWMF.Index = 0;
+			this.menuFileExportPageWMF.Text = "Windows Metafile";
+			this.menuFileExportPageWMF.Click += new System.EventHandler(this.menuFileExportPageWMF_Click);
+			// 
 			// menuItem2
 			// 
 			this.menuItem2.Index = 1;
 			this.menuItem2.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																																							this.menuItem3});
+			this.menuItem2.MergeOrder = 1;
+			this.menuItem2.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
 			this.menuItem2.Text = "Edit";
 			// 
 			// menuItem3
@@ -252,11 +272,26 @@ namespace Altaxo.Graph
 			this.menuNewLayer_TopXRightY_XAxisStraight.Text = "(Linked): Top X + Right Y + X Axis Straight";
 			this.menuNewLayer_TopXRightY_XAxisStraight.Click += new System.EventHandler(this.menuNewLayer_LinkedTopXRightY_XAxisStraight_Click);
 			// 
+			// menuGraphPopup
+			// 
+			this.menuGraphPopup.Index = 2;
+			this.menuGraphPopup.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																									 this.menuGraph_NewLayerLegend});
+			this.menuGraphPopup.MergeOrder = 2;
+			this.menuGraphPopup.Text = "Graph";
+			// 
+			// menuGraph_NewLayerLegend
+			// 
+			this.menuGraph_NewLayerLegend.Index = 0;
+			this.menuGraph_NewLayerLegend.Text = "New Layer Legend";
+			this.menuGraph_NewLayerLegend.Click += new System.EventHandler(this.menuGraph_NewLayerLegend_Click);
+			// 
 			// menuDataPopup
 			// 
-			this.menuDataPopup.Index = 2;
+			this.menuDataPopup.Index = 3;
 			this.menuDataPopup.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																																									this.menuDataSeparator});
+			this.menuDataPopup.MergeOrder = 3;
 			this.menuDataPopup.Text = "Data";
 			this.menuDataPopup.Popup += new System.EventHandler(this.menuDataPopup_Popup);
 			this.menuDataPopup.Click += new System.EventHandler(this.menuDataPopup_Click);
@@ -266,19 +301,6 @@ namespace Altaxo.Graph
 			// 
 			this.menuDataSeparator.Index = 0;
 			this.menuDataSeparator.Text = "-";
-			// 
-			// menuItem4
-			// 
-			this.menuItem4.Index = 3;
-			this.menuItem4.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																																							this.menuFileExportPageWMF});
-			this.menuItem4.Text = "Export Page";
-			// 
-			// menuFileExportPageWMF
-			// 
-			this.menuFileExportPageWMF.Index = 0;
-			this.menuFileExportPageWMF.Text = "Windows Metafile";
-			this.menuFileExportPageWMF.Click += new System.EventHandler(this.menuFileExportPageWMF_Click);
 			// 
 			// GraphForm
 			// 
@@ -474,6 +496,11 @@ namespace Altaxo.Graph
 				} // end openfile ok
 			} // end dlgresult ok
 
+		}
+
+		private void menuGraph_NewLayerLegend_Click(object sender, System.EventArgs e)
+		{
+			this.m_GraphControl.menuGraph_NewLayerLegend();
 		}
 
 		public class DataMenuItem : MenuItem

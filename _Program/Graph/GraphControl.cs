@@ -916,6 +916,11 @@ namespace Altaxo.Graph
 			InvalidateGraph();
 		}
 
+		public void menuGraph_NewLayerLegend()
+		{
+			m_Graph.Layers[CurrentLayerNumber].CreateNewLayerLegend();
+		}
+
 
 		#endregion
 

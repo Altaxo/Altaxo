@@ -148,7 +148,11 @@ namespace Altaxo.Graph
 
 	public class TextItem
 	{
-		protected internal string m_Text; // the text to display
+		protected enum InnerType { Empty, Text, Symbol, PlotCurveName }
+
+		protected InnerType m_Type = InnerType.Empty;
+		
+		protected string m_Text; // the text to display
 
 		protected internal bool m_bUnderlined;
 		protected internal bool m_bItalic;
@@ -172,12 +176,30 @@ namespace Altaxo.Graph
 
 		public TextItem(Font ft)
 		{
+			m_Type = InnerType.Empty;
 			m_Text="";
 			m_Font = (null==ft)? null: (Font)ft.Clone();
 		}
 
+		public void SetAsText(string txt)
+		{
+			m_Type = InnerType.Text;
+			m_Text = txt;
+		}
+
+		public string Text 
+		{
+			get { return m_Text; }
+			set 
+			{ 
+				m_Type = InnerType.Text;
+				m_Text = value;
+			}
+		}
+
 		public void SetAsSymbol(int args, int[] arg)
 		{
+			m_Type = InnerType.Symbol;
 			m_Text=null;
 			switch(args)
 			{
@@ -199,6 +221,36 @@ namespace Altaxo.Graph
 			}
 		}
 
+		public string PlotCurveName
+		{
+			get { return m_Text; }
+			set
+			{
+				m_Type = InnerType.PlotCurveName;
+				m_Text = value;
+			}
+		}
+
+		public void SetAsPlotCurveName(int args, int[] arg)
+		{
+			m_Type = InnerType.PlotCurveName;
+			m_Text=null;
+			switch(args)
+			{
+				case 1:
+					m_LayerNumber=-1;
+					m_PlotNumber=arg[0];
+					m_PlotPointNumber=-1;
+					break;
+				case 2:
+					m_LayerNumber = arg[0];
+					m_PlotNumber = arg[1];
+					m_PlotPointNumber = -1;
+					break;
+			}
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -206,6 +258,7 @@ namespace Altaxo.Graph
 		/// <param name="ft"></param>
 		public TextItem(TextItem from, Font ft)
 		{
+			m_Type =	InnerType.Empty;
 			m_Text="";
 			m_bUnderlined = from.m_bUnderlined;
 			m_bItalic     = from.m_bItalic;
@@ -224,17 +277,25 @@ namespace Altaxo.Graph
 
 		public bool IsEmpty
 		{
-			get { return (m_Text==null || m_Text.Length==0) && m_LayerNumber<0 && m_PlotNumber<0; }
+			get { return m_Type == InnerType.Empty; }
 		}
 
 		public bool IsText
 		{
-			get { return m_Text!=null && m_Text.Length>0; }
+			get { return m_Type == InnerType.Text; }
 		}
 
 		public bool IsSymbol
 		{
-			get { return m_PlotNumber>=0; }
+			get { return m_Type == InnerType.Symbol; }
+		}
+
+		public bool IsPlotCurveName
+		{
+			get 
+			{
+				return m_Type == InnerType.PlotCurveName;
+			}
 		}
 	}
 
@@ -428,7 +489,7 @@ namespace Altaxo.Graph
 			int currTxtIdx = 0;
 
 			TextItem currTextItem = new TextItem(currFont);
-//			TextItem firstItem = currTextItem; // preserve the first item
+			//			TextItem firstItem = currTextItem; // preserve the first item
 			
 
 
@@ -444,14 +505,14 @@ namespace Altaxo.Graph
 				if(bi<0) // nothing was found
 				{
 					// move the rest of the text to the current item
-					currTextItem.m_Text += m_Text.Substring(currTxtIdx,m_Text.Length-currTxtIdx);
+					currTextItem.Text += m_Text.Substring(currTxtIdx,m_Text.Length-currTxtIdx);
 					currTxtIdx = m_Text.Length;
 				}
 				else // something was found
 				{
 					// first finish the current item by moving the text from
 					// currTxtIdx to (bi-1) to the current text item
-					currTextItem.m_Text += m_Text.Substring(currTxtIdx,bi-currTxtIdx);
+					currTextItem.Text += m_Text.Substring(currTxtIdx,bi-currTxtIdx);
 					
 					if('\r'==m_Text[bi]) // carriage return character : simply ignore it
 					{
@@ -472,7 +533,7 @@ namespace Altaxo.Graph
 					{
 						if(bi+1<m_Text.Length && (')'==m_Text[bi+1] || '\\'==m_Text[bi+1])) // if a closing brace or a backslash, take these as chars
 						{
-							currTextItem.m_Text += m_Text[bi+1];
+							currTextItem.Text += m_Text[bi+1];
 							currTxtIdx = bi+2;
 						}
 							// if the backslash not followed by a symbol and than a (, 
@@ -560,7 +621,7 @@ namespace Altaxo.Graph
 									int closingbracepos = m_Text.IndexOf(")",bi+1);
 									if(closingbracepos<0) // no brace found, so threat this as normal text
 									{
-										currTextItem.m_Text += m_Text.Substring(bi,3);
+										currTextItem.Text += m_Text.Substring(bi,3);
 										currTxtIdx += 3;
 										continue;
 									}
@@ -579,7 +640,7 @@ namespace Altaxo.Graph
 									}
 									if(args==0) // if not successfully parsed at least one number
 									{
-										currTextItem.m_Text += m_Text.Substring(bi,3);
+										currTextItem.Text += m_Text.Substring(bi,3);
 										currTxtIdx += 3;
 										continue;   // handle it as if it where normal text
 									}
@@ -594,16 +655,61 @@ namespace Altaxo.Graph
 									currTxtIdx = closingbracepos+1;
 								}
 									break; // curve symbol
+								case '%': // Plot Curve Name
+								{
+									// parse the arguments
+									// either in the Form 
+									// \%(PlotCurveNumber) or
+									// \%(LayerNumber, PlotCurveNumber) or
+
+									// find the corresponding closing brace
+									int closingbracepos = m_Text.IndexOf(")",bi+1);
+									if(closingbracepos<0) // no brace found, so threat this as normal text
+									{
+										currTextItem.Text += m_Text.Substring(bi,3);
+										currTxtIdx += 3;
+										continue;
+									}
+									// count the commas between here and the closing brace to get
+									// the number of arguments
+									int parsepos=bi+3;
+									int[] arg = new int[2];
+									int args;
+									for(args=0;args<2 && parsepos<closingbracepos;args++)
+									{
+										int commapos = m_Text.IndexOf(",",parsepos,closingbracepos-parsepos);
+										int endpos = commapos>0 ? commapos : closingbracepos; // the end of this argument
+										try { arg[args]=System.Convert.ToInt32(m_Text.Substring(parsepos,endpos-parsepos)); }
+										catch(Exception) { break; }
+										parsepos = endpos+1;
+									}
+									if(args==0) // if not successfully parsed at least one number
+									{
+										currTextItem.Text += m_Text.Substring(bi,3);
+										currTxtIdx += 3;
+										continue;   // handle it as if it where normal text
+									}
+
+									itemstack.Push(currTextItem);
+									currTextItem = new TextItem(currTextItem,null);
+									currTextLine.Add(currTextItem);
+									currTextItem.SetAsPlotCurveName(args,arg);
+
+									currTextItem = new TextItem(currTextItem,null); // create a normal text item behind the symbol item
+									currTextLine.Add(currTextItem); // to have room for the following text
+									currTxtIdx = closingbracepos+1;
+								}
+									break; // percent symbol
 								default:
 									// take the sequence as it is
-									currTextItem.m_Text += m_Text.Substring(bi,3);
+									currTextItem.Text += m_Text.Substring(bi,3);
 									currTxtIdx = bi+3;
 									break;
 							} // end of switch
 						}
 						else // if no formatting and also no closing brace or backslash, take it as it is
 						{
-							currTextItem.m_Text += m_Text[bi];
+							currTextItem.Text += m_Text[bi];
 							currTxtIdx = bi+1;
 						}
 					} // end if it was a backslash
@@ -619,7 +725,7 @@ namespace Altaxo.Graph
 						}
 						else // if the stack is empty, take the brace as it is, and use the default style
 						{
-							currTextItem.m_Text += m_Text[bi];
+							currTextItem.Text += m_Text[bi];
 							currTxtIdx = bi+1;
 						}
 
@@ -675,7 +781,30 @@ namespace Altaxo.Graph
 					else if(ti.IsText)
 					{
 						MeasureFont(g,ti.Font, out ti.m_cyLineSpace, out ti.m_cyAscent, out ti.m_cyDescent);
-						ti.m_Width = g.MeasureString(ti.m_Text, ti.Font, 0, strfmt).Width;
+						ti.m_Width = g.MeasureString(ti.Text, ti.Font, 0, strfmt).Width;
+						
+						maxLineAscent = Math.Max(ti.m_cyAscent-ti.m_yShift,maxLineAscent);
+						maxLineDescent = Math.Max(ti.m_cyDescent+ti.m_yShift,maxLineDescent);
+						sumItemWidth += ti.m_Width;
+					}
+					else if(ti.IsPlotCurveName)
+					{
+						// first of all, retrieve the actual name
+						if(obj is Altaxo.Graph.Layer)
+						{
+							Graph.Layer layer = (Graph.Layer)obj;
+							if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
+								layer = layer.ParentLayerList[ti.m_LayerNumber];
+
+							if(ti.m_PlotNumber<layer.PlotAssociations.Count)
+							{
+								Graph.PlotAssociation pa = layer.PlotAssociations[ti.m_PlotNumber];
+								ti.PlotCurveName = pa.ToString();
+							}
+						}
+					
+						MeasureFont(g,ti.Font, out ti.m_cyLineSpace, out ti.m_cyAscent, out ti.m_cyDescent);
+						ti.m_Width = g.MeasureString(ti.PlotCurveName, ti.Font, 0, strfmt).Width;
 						
 						maxLineAscent = Math.Max(ti.m_cyAscent-ti.m_yShift,maxLineAscent);
 						maxLineDescent = Math.Max(ti.m_cyDescent+ti.m_yShift,maxLineDescent);
@@ -793,7 +922,7 @@ namespace Altaxo.Graph
 			}
 		}
 
-			public Font Font
+		public Font Font
 		{
 			get
 			{
@@ -895,15 +1024,15 @@ namespace Altaxo.Graph
 				case BackgroundStyle.DarkMarbel:
 					g.FillRectangle(Brushes.Black,0.0f,0.0f,m_Bounds.Width,m_Bounds.Height);
 					g.FillPolygon(Brushes.LightGray,new PointF[] {
-						new PointF(0,0), // upper left point
-						new PointF(m_Bounds.Width,0), // go to the right
-						new PointF(m_Bounds.Width-m_ShadowLength,m_ShadowLength), // go 45 deg left down in the upper right corner
-						new PointF(m_ShadowLength,m_ShadowLength), // upper left corner of the inner rectangle
-						new PointF(m_ShadowLength,m_Bounds.Height-m_ShadowLength), // lower left corner of the inner rectangle
-						new PointF(0,m_Bounds.Height) // lower left corner
-					});
+																												 new PointF(0,0), // upper left point
+																												 new PointF(m_Bounds.Width,0), // go to the right
+																												 new PointF(m_Bounds.Width-m_ShadowLength,m_ShadowLength), // go 45 deg left down in the upper right corner
+																												 new PointF(m_ShadowLength,m_ShadowLength), // upper left corner of the inner rectangle
+																												 new PointF(m_ShadowLength,m_Bounds.Height-m_ShadowLength), // lower left corner of the inner rectangle
+																												 new PointF(0,m_Bounds.Height) // lower left corner
+																											 });
 
-						g.FillRectangle(Brushes.DimGray,m_ShadowLength,m_ShadowLength,m_Bounds.Width-2*m_ShadowLength,m_Bounds.Height-2*m_ShadowLength);
+					g.FillRectangle(Brushes.DimGray,m_ShadowLength,m_ShadowLength,m_Bounds.Width-2*m_ShadowLength,m_Bounds.Height-2*m_ShadowLength);
 					break;
 			} // end of switch BackgroundStyle
 		}
@@ -971,8 +1100,13 @@ namespace Altaxo.Graph
 
 					if(ti.IsText)
 					{
-						g.DrawString(ti.m_Text, ti.Font, m_BrushHolder, new PointF(currPosX, currPosY + ti.m_yShift - ti.m_cyAscent), strfmt);
-						Console.WriteLine("{0} {1} {2}",ti.m_Text,ti.m_yShift,ti.m_cyAscent);
+						g.DrawString(ti.Text, ti.Font, m_BrushHolder, new PointF(currPosX, currPosY + ti.m_yShift - ti.m_cyAscent), strfmt);
+						// update positions
+						currPosX += ti.m_Width;
+					} // end of if ti.IsText
+					else if(ti.IsPlotCurveName)
+					{
+						g.DrawString(ti.PlotCurveName, ti.Font, m_BrushHolder, new PointF(currPosX, currPosY + ti.m_yShift - ti.m_cyAscent), strfmt);
 						// update positions
 						currPosX += ti.m_Width;
 					} // end of if ti.IsText
@@ -995,7 +1129,7 @@ namespace Altaxo.Graph
 
 				} // for all items in a textline
 			
-			currPosY += baseLineSpace*this.m_LineSpacingFactor;
+				currPosY += baseLineSpace*this.m_LineSpacingFactor;
 			} // for all textlines
 			
 

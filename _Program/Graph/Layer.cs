@@ -230,6 +230,9 @@ namespace Altaxo.Graph
 		protected ExtendedTextGraphObject m_RightAxisTitle = null;
 		protected ExtendedTextGraphObject m_TopAxisTitle = null;
 
+		protected ExtendedTextGraphObject m_Legend = null;
+
+
 		protected GraphObjectCollection m_GraphObjects = new GraphObjectCollection();
 
 		protected PlotAssociationList m_PlotAssociations;
@@ -368,8 +371,11 @@ namespace Altaxo.Graph
 				m_RightAxisTitle=null;
 			else if(object.ReferenceEquals(go,this.m_BottomAxisTitle))
 				m_BottomAxisTitle=null;
+			else if(object.ReferenceEquals(go,this.m_Legend))
+				m_Legend=null;
 			else if(m_GraphObjects.Contains(go))
 				m_GraphObjects.Remove(go);
+
 		}
 
 		/// <summary>
@@ -409,8 +415,6 @@ namespace Altaxo.Graph
 					}
 
 				}
-
-
 			}
 		}
 
@@ -474,6 +478,48 @@ namespace Altaxo.Graph
 		}
 	
 
+		/// <summary>
+		/// Creates a new legend, removing the old one.
+		/// </summary>
+		/// <remarks>The position of the old legend is <b>only</b> used for the new legend if the old legend's position is
+		/// inside the layer. This prevents a "stealth" legend in case it is not visible by accident.
+		/// </remarks>
+		public void CreateNewLayerLegend()
+		{
+			// remove the legend if there are no plot curves on the layer
+			if(PlotAssociations.Count==0)
+			{
+				m_Legend=null;
+				OnInvalidate();
+				return;
+			}
+
+			ExtendedTextGraphObject tgo;
+
+			if(m_Legend!=null)
+				tgo = new ExtendedTextGraphObject(m_Legend);
+			else
+				tgo = new ExtendedTextGraphObject();
+
+
+			string strg="";
+			for(int i=0;i<this.PlotAssociations.Count;i++)
+			{
+				strg+= String.Format("{0}\\L({1}) \\%({2})",(i==0?"":"\n"), i,i);
+			}
+			tgo.Text = strg;
+
+			// if the position of the old legend is outside, use a new position
+			if(null==m_Legend || m_Legend.Position.X<0 || m_Legend.Position.Y<0 || 
+				m_Legend.Position.X>this.Size.Width || m_Legend.Position.Y>this.Size.Height)
+				tgo.SetPosition(new PointF(0.1f*this.Size.Width,0.1f*this.Size.Height));
+			else
+				tgo.SetPosition(m_Legend.Position);
+
+			m_Legend = tgo;
+
+			OnInvalidate();
+		}
 
 		#endregion // Layer Properties and Methods
 
@@ -1046,7 +1092,7 @@ namespace Altaxo.Graph
 		/// <value>True if y axis is linked to the linked layer y axis.</value>
 		public bool IsYAxisLinked
 		{
-			get { return this.m_LinkXAxis; }
+			get { return this.m_LinkYAxis; }
 			set
 			{
 				bool oldValue = this.m_LinkYAxis;
@@ -1593,19 +1639,32 @@ namespace Altaxo.Graph
 
 			RectangleF layerBounds = new RectangleF(m_LayerPosition,m_LayerSize);
 
-			if(m_ShowLeftAxis) m_LeftAxisStyle.Paint(g,this,this.m_yAxis);
-			if(m_ShowLeftAxis) m_LeftLabelStyle.Paint(g,this,this.m_yAxis,m_LeftAxisStyle);
-			if(m_ShowLeftAxis && null!=m_LeftAxisTitle) m_LeftAxisTitle.Paint(g,this);
-			if(m_ShowBottomAxis) m_BottomAxisStyle.Paint(g,this,this.m_xAxis);
-			if(m_ShowBottomAxis) m_BottomLabelStyle.Paint(g,this,this.m_xAxis,m_BottomAxisStyle);
-			if(m_ShowBottomAxis && null!=m_BottomAxisTitle) m_BottomAxisTitle.Paint(g,this);
-			if(m_ShowRightAxis) m_RightAxisStyle.Paint(g,this,this.m_yAxis);
-			if(m_ShowRightAxis) m_RightLabelStyle.Paint(g,this,this.m_yAxis,m_RightAxisStyle);
-			if(m_ShowRightAxis && null!=m_RightAxisTitle) m_RightAxisTitle.Paint(g,this);
-			if(m_ShowTopAxis) m_TopAxisStyle.Paint(g,this,this.m_xAxis);
-			if(m_ShowTopAxis) m_TopLabelStyle.Paint(g,this,this.m_xAxis,m_TopAxisStyle);
-			if(m_ShowTopAxis && null!=m_TopAxisTitle) m_TopAxisTitle.Paint(g,this);
-
+			if(m_ShowLeftAxis)
+				m_LeftAxisStyle.Paint(g,this,this.m_yAxis);
+			if(m_ShowLeftAxis)
+				m_LeftLabelStyle.Paint(g,this,this.m_yAxis,m_LeftAxisStyle);
+			if(m_ShowLeftAxis && null!=m_LeftAxisTitle)
+				m_LeftAxisTitle.Paint(g,this);
+			if(m_ShowBottomAxis)
+				m_BottomAxisStyle.Paint(g,this,this.m_xAxis);
+			if(m_ShowBottomAxis)
+				m_BottomLabelStyle.Paint(g,this,this.m_xAxis,m_BottomAxisStyle);
+			if(m_ShowBottomAxis && null!=m_BottomAxisTitle)
+				m_BottomAxisTitle.Paint(g,this);
+			if(m_ShowRightAxis)
+				m_RightAxisStyle.Paint(g,this,this.m_yAxis);
+			if(m_ShowRightAxis)
+				m_RightLabelStyle.Paint(g,this,this.m_yAxis,m_RightAxisStyle);
+			if(m_ShowRightAxis && null!=m_RightAxisTitle)
+				m_RightAxisTitle.Paint(g,this);
+			if(m_ShowTopAxis)
+				m_TopAxisStyle.Paint(g,this,this.m_xAxis);
+			if(m_ShowTopAxis)
+				m_TopLabelStyle.Paint(g,this,this.m_xAxis,m_TopAxisStyle);
+			if(m_ShowTopAxis && null!=m_TopAxisTitle)
+				m_TopAxisTitle.Paint(g,this);
+			if(m_Legend!=null)
+				m_Legend.Paint(g,this);
 
 			foreach(PlotAssociation pa in m_PlotAssociations)
 			{
@@ -1625,7 +1684,8 @@ namespace Altaxo.Graph
 						m_LeftAxisTitle,
 						m_BottomAxisTitle,
 						m_TopAxisTitle,
-						m_RightAxisTitle
+						m_RightAxisTitle,
+						m_Legend
 					};
 
 
@@ -1707,13 +1767,23 @@ namespace Altaxo.Graph
 			((PlotAssociation)sender).MergeYBoundsInto(m_yAxis.DataBounds);
 		}
 		
-		protected void OnXAxisChanged(object sender, System.EventArgs e)
+		protected virtual void OnXAxisChanged(object sender, System.EventArgs e)
 		{
+			// inform linked layers
+			if(null!=AxesChanged)
+				AxesChanged(this,new EventArgs());
+			
+			// renew the picture
 			OnInvalidate();
 		}
 
-		protected void OnYAxisChanged(object sender, System.EventArgs e)
+		protected virtual void OnYAxisChanged(object sender, System.EventArgs e)
 		{
+			// inform linked layers 
+			if(null!=AxesChanged)
+				AxesChanged(this,new EventArgs());
+
+			// renew the picture
 			OnInvalidate();
 		}
 
