@@ -193,6 +193,15 @@ namespace Altaxo.Main
     Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table);
 
     /// <summary>
+    /// Creates a view content for a table.
+    /// </summary>
+    /// <param name="table">The table which should be viewed.</param>
+    /// <param name="layout">The layout for the table.</param>
+    /// <returns>The view content for the provided table.</returns>
+    Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table, Altaxo.Worksheet.WorksheetLayout layout);
+
+
+    /// <summary>
     /// Opens a view that shows the table <code>table</code>. If no view for the table can be found,
     /// a new default view is created for the table.
     /// </summary>

@@ -1241,9 +1241,13 @@ namespace Altaxo.Calc
         double sum=0;
         for(int j=0;j<a.Columns;j++)
           sum += Square(a[i,j]);
-        sum = 1/Math.Sqrt(sum);
-        for(int j=0;j<a.Columns;j++)
-          a[i,j] *= sum;
+
+        if(sum!=0) // Normalize only of at least one element is not null
+        {
+          sum = 1/Math.Sqrt(sum);
+          for(int j=0;j<a.Columns;j++)
+            a[i,j] *= sum;
+        }
       }
     }
 
@@ -1260,9 +1264,13 @@ namespace Altaxo.Calc
         double sum=0;
         for(int j=0;j<a.Rows;j++)
           sum += Square(a[j,i]);
-        sum = 1/Math.Sqrt(sum);
-        for(int j=0;j<a.Rows;j++)
-          a[j,i] *= sum;
+        
+        if(sum!=0)
+        {
+          sum = 1/Math.Sqrt(sum);
+          for(int j=0;j<a.Rows;j++)
+            a[j,i] *= sum;
+        }
       }
     }
 
@@ -1483,9 +1491,9 @@ namespace Altaxo.Calc
 
       for(int nFactor=0; nFactor<numFactors; nFactor++)
       {
-        Console.WriteLine("Factor_{0}:",nFactor);
-        Console.WriteLine("X:"+X.ToString());
-        Console.WriteLine("Y:"+Y.ToString());
+        //Console.WriteLine("Factor_{0}:",nFactor);
+        //Console.WriteLine("X:"+X.ToString());
+        //Console.WriteLine("Y:"+Y.ToString());
 
   
         // 1. Use as start vector for the y score the first column of the 
@@ -1529,12 +1537,15 @@ namespace Altaxo.Calc
         double length_of_t = MatrixMath.LengthOf(t); 
         Scalar v = new Scalar(0);
         MatrixMath.MultiplyFirstTransposed(u,t,v);
-        v = v/Square(length_of_t); 
+        if(length_of_t!=0)
+          v = v/Square(length_of_t); 
       
         // 8. Calculate the new loads for the X (spectral) matrix
         MatrixMath.MultiplyFirstTransposed(t,X,p); // p is a horizontal vector of loads
         // Normalize p by the spectral scores
-        MatrixMath.MultiplyScalar(p,1/Square(length_of_t),p);
+
+        if(length_of_t!=0)
+          MatrixMath.MultiplyScalar(p,1/Square(length_of_t),p);
 
         // 9. Calculate the new residua for the X (spectral) and Y (concentration) matrix
         //MatrixMath.MultiplyScalar(t,length_of_t*v,t); // original t times the cross product

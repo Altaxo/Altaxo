@@ -519,11 +519,20 @@ namespace Altaxo.Main
     /// <returns>The view content for the provided table.</returns>
     public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table)
     {
-      //Altaxo.Main.GUI.IWorkbenchWindowController wbv_controller = new Altaxo.Main.GUI.WorkbenchWindowController();
-      //Altaxo.Main.GUI.WorkbenchForm wbvform = new Altaxo.Main.GUI.WorkbenchForm(this.View.Form);
-      //wbv_controller.View = wbvform;
+      return CreateNewWorksheet(table,this.CurrentOpenProject.CreateNewTableLayout(table));
+    }
 
-      Altaxo.Worksheet.GUI.SDWorksheetController ctrl = new Altaxo.Worksheet.GUI.SDWorksheetController(this.CurrentOpenProject.CreateNewTableLayout(table));
+
+    /// <summary>
+    /// Creates a view content for a table.
+    /// </summary>
+    /// <param name="table">The table which should be viewed.</param>
+    /// <param name="layout">The layout for the table.</param>
+    /// <returns>The view content for the provided table.</returns>
+    public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table, Altaxo.Worksheet.WorksheetLayout layout)
+    {
+      layout.DataTable = table;
+      Altaxo.Worksheet.GUI.SDWorksheetController ctrl = new Altaxo.Worksheet.GUI.SDWorksheetController(layout);
       Altaxo.Worksheet.GUI.WorksheetView view = new Altaxo.Worksheet.GUI.WorksheetView();
       ctrl.View = view;
 
@@ -531,10 +540,6 @@ namespace Altaxo.Main
       if(null!=Current.Workbench)
         Current.Workbench.ShowView(ctrl);
 
-      //wbv_controller.Content = ctrl;
-      
-      //this.m_WorkbenchViews.Add(wbv_controller);
-      //wbvform.Show();
       return ctrl;
     }
 

@@ -594,7 +594,7 @@ namespace Altaxo.Worksheet
           Altaxo.Data.INumericColumn col = srctable.PropCols[numericPropCols[i]] as Altaxo.Data.INumericColumn;
           for(int j=0;j<numcols;j++)
           {
-            matrixY[i,j] = col.GetDoubleAt(numericDataCols[j]);
+            matrixY[j,i] = col.GetDoubleAt(numericDataCols[j]);
           }
         
         } // end fill in yvalues

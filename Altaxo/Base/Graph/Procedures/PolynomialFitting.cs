@@ -108,8 +108,8 @@ namespace Altaxo.Graph.Procedures
 
       // Output of results
 
-      for(int i=0;i<fit.Parameter.Length;i++)
-        Current.OutputService.WriteLine(string.Format("A{0}: {1} +- {2}",i, fit.Parameter[i],fit.Covariances[i][i]));
+     // for(int i=0;i<fit.Parameter.Length;i++)
+     //   Current.OutputService.WriteLine(string.Format("A{0}: {1} +- {2}",i, fit.Parameter[i],fit.Covariances[i][i]));
 
 
 

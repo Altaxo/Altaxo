@@ -1009,6 +1009,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Worksheet\TablePlusLayout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Worksheet\TextColumnStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -91,6 +91,26 @@ namespace Altaxo.Main.Commands
             
             Current.ProjectService.CreateNewWorksheet(table);
           }
+          // if it is a table, add it to the DataTableCollection
+          else if(deserObject is Altaxo.Worksheet.TablePlusLayout)
+          {
+            Altaxo.Worksheet.TablePlusLayout tableAndLayout = deserObject as Altaxo.Worksheet.TablePlusLayout;
+            Altaxo.Data.DataTable table = tableAndLayout.Table;
+            if(table.Name==null || table.Name==string.Empty)
+              table.Name = Current.Project.DataTableCollection.FindNewTableName();
+            else if( Current.Project.DataTableCollection.ContainsTable(table.Name))
+              table.Name = Current.Project.DataTableCollection.FindNewTableName(table.Name);
+            Current.Project.DataTableCollection.Add(table);
+
+            if(tableAndLayout.Layout!=null)
+                Current.Project.TableLayouts.Add(tableAndLayout.Layout);
+
+            info.AnnounceDeserializationEnd(Current.Project); // fire the event to resolve path references
+
+            tableAndLayout.Layout.DataTable = table; // this is the table for the layout now
+            
+            Current.ProjectService.CreateNewWorksheet(table,tableAndLayout.Layout);
+          }
           else if(deserObject is Altaxo.Graph.GraphDocument)
           {
             Altaxo.Graph.GraphDocument graph = deserObject as Altaxo.Graph.GraphDocument;

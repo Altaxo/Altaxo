@@ -94,6 +94,12 @@ namespace Altaxo.Worksheet
     public void Add(WorksheetLayout layout)
     {
       layout.ParentObject = this;
+
+      // Test if this Guid is already present
+      object o = this[layout.Guid];
+      if(o!=null && !object.ReferenceEquals(o,layout))
+        layout.NewGuid();
+
       m_TableLayouts[layout.Guid.ToString()] = layout;
     }
 

@@ -259,9 +259,18 @@ namespace Altaxo.Worksheet
       get { return m_Guid; }
     }
 
+    /// <summary>
+    /// Don't use this! Only intended for use by WorksheetLayoutCollection.
+    /// </summary>
+    protected internal void NewGuid()
+    {
+      this.m_Guid = System.Guid.NewGuid();
+    }
+    
     public Altaxo.Data.DataTable DataTable
     {
       get { return m_DataTable; }
+      set { m_DataTable = value; }
     }
 
     public System.Collections.Hashtable DefaultColumnStyles

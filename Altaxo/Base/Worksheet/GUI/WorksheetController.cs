@@ -731,8 +731,17 @@ namespace Altaxo.Worksheet.GUI
         info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate","true");
       }
       info.BeginWriting(myStream);
-      info.AddValue("Table",this.DataTable);
-      info.AddValue("Layout",this.m_TableLayout);
+
+      // TODO there is an issue with TableLayout that prevents a nice deserialization 
+      // this is because TableLayout stores the name of its table during serialization
+      // onto deserialization this works well if the entire document is restored, but
+      // doesn't work if only a table and its layout is to be restored. In this case, the layout
+      // references the already present table with the same name in the document instead of the table
+      // deserialized. Also, the GUID isn't unique if the template is deserialized more than one time.
+
+      Altaxo.Worksheet.TablePlusLayout tableAndLayout = 
+        new Altaxo.Worksheet.TablePlusLayout(this.DataTable, this.m_TableLayout);
+      info.AddValue("TablePlusLayout",tableAndLayout);
       info.EndWriting();    
     }
 
@@ -2749,7 +2758,9 @@ namespace Altaxo.Worksheet.GUI
           bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
           bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
           
-          if(m_LastSelectionType!=SelectionType.PropertyColumnSelection && !bControlKey)
+          bool bWasSelectedBefore = this.SelectedPropertyColumns.IsSelected(clickedCell.Column);
+
+          if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.PropertyColumnSelection && !bControlKey))
           {
             m_SelectedColumns.Clear();
             m_SelectedRows.Clear(); // if we click a column, we remove row selections
@@ -2766,7 +2777,9 @@ namespace Altaxo.Worksheet.GUI
             m_SelectedColumns.Clear(); // if we click a column, we remove row selections
           */
 
-          m_SelectedPropertyColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
+          if(this.SelectedPropertyColumns.Count!=0 || !bWasSelectedBefore)
+            m_SelectedPropertyColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
+          
           m_LastSelectionType = SelectionType.PropertyColumnSelection;
           this.View.TableAreaInvalidate();
         }
@@ -2778,12 +2791,14 @@ namespace Altaxo.Worksheet.GUI
             bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
             bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
             
+            bool bWasSelectedBefore = this.SelectedColumns.IsSelected(clickedCell.Column);
+
             /*
             if(m_LastSelectionType==SelectionType.DataRowSelection && !bControlKey)
               m_SelectedRows.Clear(); // if we click a column, we remove row selections
             */
 
-            if(m_LastSelectionType!=SelectionType.DataColumnSelection && m_LastSelectionType!=SelectionType.PropertyRowSelection&& !bControlKey)
+            if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.DataColumnSelection && m_LastSelectionType!=SelectionType.PropertyRowSelection && !bControlKey))
             {
               m_SelectedColumns.Clear();
               m_SelectedRows.Clear(); // if we click a column, we remove row selections
@@ -2804,7 +2819,8 @@ namespace Altaxo.Worksheet.GUI
             }
             else
             {
-              m_SelectedColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
+              if(this.SelectedColumns.Count!=0 || !bWasSelectedBefore)
+                m_SelectedColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
               m_LastSelectionType = SelectionType.DataColumnSelection;
             }
 
@@ -2817,11 +2833,13 @@ namespace Altaxo.Worksheet.GUI
           bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
           bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
 
+          bool bWasSelectedBefore = this.SelectedRows.IsSelected(clickedCell.Row);
+
           /*
           if(m_LastSelectionType==SelectionType.DataColumnSelection && !bControlKey)
             m_SelectedColumns.Clear(); // if we click a column, we remove row selections
           */
-          if(m_LastSelectionType!=SelectionType.DataRowSelection && !bControlKey)
+          if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.DataRowSelection && !bControlKey))
           {
             m_SelectedColumns.Clear(); // if we click a column, we remove row selections
             m_SelectedRows.Clear();
@@ -2840,7 +2858,8 @@ namespace Altaxo.Worksheet.GUI
             m_SelectedPropertyRows.Clear();
           }
           
-          m_SelectedRows.Select(clickedCell.Row,bShiftKey,bControlKey);
+          if(this.SelectedRows.Count!=0 || !bWasSelectedBefore)
+            m_SelectedRows.Select(clickedCell.Row,bShiftKey,bControlKey);
           m_LastSelectionType = SelectionType.DataRowSelection;
           this.View.TableAreaInvalidate();
         }
