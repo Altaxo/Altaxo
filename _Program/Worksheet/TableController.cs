@@ -648,6 +648,18 @@ namespace Altaxo.Worksheet
 			//mi.Shortcut = ShortCuts.
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 
+			// Analysis -PLSOnRows
+			mi = new MenuItem("PLS on rows");
+			mi.Click += new EventHandler(EhMenuAnalysisPLSOnRows_OnClick);
+			//mi.Shortcut = ShortCuts.
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+			
+			// Analysis -PLSOnCols
+			mi = new MenuItem("PLS on columns");
+			mi.Click += new EventHandler(EhMenuAnalysisPLSOnCols_OnClick);
+			//mi.Shortcut = ShortCuts.
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+
 		}
 
 		#endregion // Menu definition
@@ -1053,6 +1065,20 @@ namespace Altaxo.Worksheet
 				System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
 		}
 
+		// Analysis - PLS on rows
+		protected void EhMenuAnalysisPLSOnRows_OnClick(object sender, System.EventArgs e)
+		{
+			string err=DataGridOperations.PartialLeastSquaresAnalysis(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows,this.SelectedPropertyColumns,true);
+			if(null!=err)
+				System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+		}
+		// Analysis - PLS on cols
+		protected void EhMenuAnalysisPLSOnCols_OnClick(object sender, System.EventArgs e)
+		{
+			string err=DataGridOperations.PartialLeastSquaresAnalysis(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows,this.SelectedPropertyColumns,false);
+			if(null!=err)
+				System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+		}
 
 		#endregion
 	
