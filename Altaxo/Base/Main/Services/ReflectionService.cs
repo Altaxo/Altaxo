@@ -28,7 +28,7 @@ namespace Altaxo.Main.Services
     }
 
     /// <summary>
-    /// Retrieves if a given subtype is derived from a basetype or implements the interface basetype.
+    /// Determines whether or not a given subtype is derived from a basetype or implements the interface basetype.
     /// </summary>
     /// <param name="subtype">The subtype.</param>
     /// <param name="basetype">The basetype.</param>
@@ -83,12 +83,16 @@ namespace Altaxo.Main.Services
 
     /// <summary>
     /// For a given type of attribute, attributeType, this function returns the attribute instances and the class
-    /// types this attributes apply to. If the attribute implements the IComparable interface, the list is sorted.
+    /// types this attributes apply to. If the attribute implements the IComparable interface, the list is sorted. The attribute has
+    /// to implement the <see>IClassForClassAttribute</see> interface, and only those attributes are considered, for which the
+    /// <see>IClassForClassAttribute.TargetType</see> match the type of the target argument.
     /// </summary>
     /// <param name="attributeType">The type of attribute (this has to be a class attribute type).</param>
     /// <returns>A list of dictionary entries. The keys are the attribute instances, the values are the class types this attributes apply to.</returns>
     public static DictionaryEntry[] GetAttributeInstancesAndClassTypesForClass(System.Type attributeType, object target)
     {
+      System.Diagnostics.Debug.Assert(IsSubClassOfOrImplements(attributeType,typeof(IClassForClassAttribute)));
+
       ArrayList list = new ArrayList();
       Assembly attributeAssembly = attributeType.Assembly;
 
@@ -154,12 +158,15 @@ namespace Altaxo.Main.Services
 
     /// <summary>
     /// Tries to get a class instance for a given attribute type. All loaded assemblies are searched for classes that attributeType applies to,
-    /// then for all found classes the instantiation of a class is tried, until a instance is created successfully.
+    /// then for all found classes the instantiation of a class is tried, until a instance is created successfully. Here, the attributeType has
+    /// to implement <see>IClassForClassAttribute</see>, and creationArg[0] has to match the type in <see>IClassForClassAttribute.TargetType</see>
     /// </summary>
     /// <param name="attributeType">The type of attribute  the class(es) to instantiate must be assigned to.</param>
     /// <param name="expectedType">The expected type of return value.</param>
     /// <param name="creationArgs">The creation arguments used to instantiate a class.</param>
     /// <returns>The instance of the first class for which the instantiation was successfull and results in the expectedType. Otherwise null.</returns>
+    /// <remarks>The instantiation is tried first with the full argument list. If that fails, the last element of the argument list is chopped and the instantiation is tried again.
+    /// This process is repeated until the instantiation was successfull or the argument list is empty (empty constructor is tried at last).</remarks>
     public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type expectedType, object[] creationArgs)
     {
       object result=null;
@@ -168,32 +175,36 @@ namespace Altaxo.Main.Services
 
       for(int i=list.Length-1;i>=0;i--)
       {
-        if(IsSubClassOfOrImplements( (System.Type)list[i].Value,expectedType))
+        if(!IsSubClassOfOrImplements( (System.Type)list[i].Value,expectedType))
+          continue;
+        // try to create the class
+        try
         {
-          // try to create the class
-          try
-          {
-            result = Activator.CreateInstance((System.Type)list[i].Value,creationArgs);
-            break;
-          }
-          catch(Exception ex)
-          {
-            System.Diagnostics.Debug.WriteLine(ex.ToString());
-          }
+          result = Activator.CreateInstance((System.Type)list[i].Value,creationArgs);
+          break;
+        }
+        catch(Exception ex)
+        {
+          System.Diagnostics.Debug.WriteLine(ex.ToString());
+        }
 
+        for(int l=creationArgs.Length-1;l>=0;l--)
+        {
+          object[] choppedArgs = new object[l];
+          Array.Copy(creationArgs,choppedArgs,l);
           // try to create the class finally without args
           try
           {
-            result = Activator.CreateInstance((System.Type)list[i].Value);
+            result = Activator.CreateInstance((System.Type)list[i].Value,choppedArgs);
             break;
           }
           catch(Exception ex)
           {
             System.Diagnostics.Debug.WriteLine(ex.ToString());
           }
-
-        
         }
+        if(result!=null)
+          break;
       }
       return result;
     }

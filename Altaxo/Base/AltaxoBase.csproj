@@ -325,11 +325,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\Axis.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Graph\BrushHolder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -530,12 +525,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\Axes\Axis.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\LinearAxis.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Log10Axis.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\Axes\Scaling\BoundaryRescaling.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Graph\Axes\Scaling\LogarithmicAxisRescaleConditions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Scaling\LogarithmicAxisRescaleController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -11,10 +11,10 @@ namespace Altaxo.Graph.GUI
 	/// <summary>
 	/// Summary description for OrgEndSpanControl.
 	/// </summary>
-	[UserControlForController(typeof(IOrgEndSpanControlEventReceiver))]
-	public class OrgEndSpanControl : System.Windows.Forms.UserControl, IOrgEndSpanControl
+	[UserControlForController(typeof(IOrgEndSpanViewEventReceiver))]
+	public class OrgEndSpanControl : System.Windows.Forms.UserControl, IOrgEndSpanView
 	{
-    IOrgEndSpanControlEventReceiver _controller;
+    IOrgEndSpanViewEventReceiver _controller;
 
     private System.Windows.Forms.Label lblLabel1;
     private System.Windows.Forms.TextBox edText1;
@@ -30,7 +30,7 @@ namespace Altaxo.Graph.GUI
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-    public IOrgEndSpanControlEventReceiver Controller 
+    public IOrgEndSpanViewEventReceiver Controller 
     {
       get { return _controller; }
       set { _controller = value; }
@@ -225,21 +225,39 @@ namespace Altaxo.Graph.GUI
       this.edText3.Text = txt;
     }
 
-    public void EnableChoiceValue1(bool enable)
+    public void EnableChoice1(bool enable)
     {
       this.cbCombo1.Enabled = enable;
+      
+    }
+
+    public void EnableChoice2(bool enable)
+    {
+      this.cbCombo2.Enabled = enable;
+     
+    }
+
+    public void EnableChoice3(bool enable)
+    {
+      this.cbCombo3.Enabled = enable;
+     
+    }
+
+    public void EnableValue1(bool enable)
+    {
+      
       this.edText1.Enabled = enable;
     }
 
-    public void EnableChoiceValue2(bool enable)
+    public void EnableValue2(bool enable)
     {
-      this.cbCombo2.Enabled = enable;
+      
       this.edText2.Enabled = enable;
     }
 
-    public void EnableChoiceValue3(bool enable)
+    public void EnableValue3(bool enable)
     {
-      this.cbCombo3.Enabled = enable;
+     
       this.edText3.Enabled = enable;
     }
 
@@ -282,9 +300,9 @@ namespace Altaxo.Graph.GUI
     }
   }
 
-  public interface IOrgEndSpanControl
+  public interface IOrgEndSpanView
   {
-    IOrgEndSpanControlEventReceiver Controller { get; set; }
+    IOrgEndSpanViewEventReceiver Controller { get; set; }
 
     void SetLabel1(string txt);
     void SetLabel2(string txt);
@@ -296,12 +314,16 @@ namespace Altaxo.Graph.GUI
     void SetValue2(string txt);
     void SetValue3(string txt);
 
-    void EnableChoiceValue1(bool enable);
-    void EnableChoiceValue2(bool enable);
-    void EnableChoiceValue3(bool enable);
+    void EnableChoice1(bool enable);
+    void EnableChoice2(bool enable);
+    void EnableChoice3(bool enable);
+
+    void EnableValue1(bool enable);
+    void EnableValue2(bool enable);
+    void EnableValue3(bool enable);
 
   }
-  public interface IOrgEndSpanControlEventReceiver
+  public interface IOrgEndSpanViewEventReceiver
   {
     void EhChoice1Changed(string txt, int selected);
     void EhChoice2Changed(string txt, int selected);

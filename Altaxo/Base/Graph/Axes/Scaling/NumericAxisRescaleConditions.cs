@@ -2,11 +2,11 @@ using System;
 
 namespace Altaxo.Graph.Axes.Scaling
 {
-	/// <summary>
-	/// Summary description for AxisRescaleConditions.
-	/// </summary>
-	public class NumericAxisRescaleConditions
-	{
+  /// <summary>
+  /// Summary description for AxisRescaleConditions.
+  /// </summary>
+  public class NumericAxisRescaleConditions : ICloneable, Altaxo.Main.IChangedEventSource
+  {
     protected BoundaryRescaling _orgRescaling;
     protected BoundaryRescaling _endRescaling;
     protected BoundaryRescaling _spanRescaling;
@@ -14,20 +14,57 @@ namespace Altaxo.Graph.Axes.Scaling
     protected double _end;
     protected double _span;
 
+    public event EventHandler Changed;
+
+    #region Serialization
+ 
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericAxisRescaleConditions),0)]
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        NumericAxisRescaleConditions s = (NumericAxisRescaleConditions)obj;
+        info.AddEnum("OrgRescaling",s._orgRescaling);
+        info.AddValue("Org",s._org);  
+        info.AddEnum("EndRescaling",s._endRescaling);
+        info.AddValue("End",s._end);  
+        info.AddEnum("SpanRescaling",s._spanRescaling);
+        info.AddValue("Span",s._span);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        
+        NumericAxisRescaleConditions s = null!=o ? (NumericAxisRescaleConditions)o : new NumericAxisRescaleConditions();
+
+        s._orgRescaling = (BoundaryRescaling)info.GetEnum("OrgRescaling",typeof(BoundaryRescaling));
+        s._org  = (double)info.GetDouble("Org");
+        s._endRescaling = (BoundaryRescaling)info.GetEnum("EndRescaling",typeof(BoundaryRescaling));
+        s._end  = (double)info.GetDouble("End");
+        s._spanRescaling = (BoundaryRescaling)info.GetEnum("SpanRescaling",typeof(BoundaryRescaling));
+        s._span = (double)info.GetDouble("Span");
+        return s;
+      }
+    }
+   
+    #endregion
 
 
     /// <summary>
     /// Copies the data from another object.
     /// </summary>
     /// <param name="from">The object to copy the data from.</param>
-    void CopyFrom(NumericAxisRescaleConditions from)
+    public void CopyFrom(NumericAxisRescaleConditions from)
     {
+      bool bEqual = this.IsEqualTo(from);
       this._orgRescaling = from._orgRescaling;
       this._endRescaling = from._endRescaling;
       this._spanRescaling = from._spanRescaling;
       this._org = from._org;
       this._end = from._end;
       this._span = from._span;
+
+      if(!bEqual)
+        OnChanged();
     }
 
     #region Accessors
@@ -82,6 +119,19 @@ namespace Altaxo.Graph.Axes.Scaling
 
     #endregion
 
+
+    public bool IsEqualTo( NumericAxisRescaleConditions b)
+    {
+      return
+    this._orgRescaling == b._orgRescaling &&
+    this._org == b._org &&
+    this._endRescaling == b._endRescaling &&
+    this._end == b._end &&
+    this._spanRescaling == b._spanRescaling &&
+    this._span == b._span;
+    }
+   
+
     /// <summary>
     /// Sets the scaling behaviour of the axis by providing org and end values.
     /// </summary>
@@ -95,7 +145,10 @@ namespace Altaxo.Graph.Axes.Scaling
       _org = org;
       _endRescaling = endRescaling;
       _end = end;
+
       _spanRescaling = BoundaryRescaling.Auto;
+
+      OnChanged();
     }
 
     /// <summary>
@@ -107,6 +160,11 @@ namespace Altaxo.Graph.Axes.Scaling
     {
       _spanRescaling = spanRescaling;
       _span = span;
+
+      _orgRescaling = BoundaryRescaling.Auto;
+      _endRescaling = BoundaryRescaling.Auto;
+
+      OnChanged();
     }
 
     /// <summary>
@@ -117,6 +175,8 @@ namespace Altaxo.Graph.Axes.Scaling
       _orgRescaling = BoundaryRescaling.Auto;
       _endRescaling = BoundaryRescaling.Auto;
       _spanRescaling = BoundaryRescaling.Auto;
+
+      OnChanged();
     }
 
     /// <summary>
@@ -188,5 +248,22 @@ namespace Altaxo.Graph.Axes.Scaling
         }
       }
     }
-	}
+    #region ICloneable Members
+
+    public virtual object Clone()
+    {
+      NumericAxisRescaleConditions result = new NumericAxisRescaleConditions();
+      result.CopyFrom(this);
+      return result;
+    }
+
+    #endregion
+
+    protected virtual void OnChanged()
+    {
+      if(Changed!=null)
+        Changed(this,EventArgs.Empty);
+
+    }
+  }
 }

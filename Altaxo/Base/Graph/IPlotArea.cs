@@ -22,6 +22,8 @@
 
 using System;
 using System.Drawing;
+using Altaxo.Graph.Axes;
+
 
 namespace Altaxo.Graph
 {

@@ -2,11 +2,36 @@ using System;
 
 namespace Altaxo.Graph.Axes.Scaling
 {
-	/// <summary>
-	/// Summary description for LogarithmicAxisRescaleConditions.
-	/// </summary>
-	public class LogarithmicAxisRescaleConditions : NumericAxisRescaleConditions
-	{
+  /// <summary>
+  /// Summary description for LogarithmicAxisRescaleConditions.
+  /// </summary>
+  public class LogarithmicAxisRescaleConditions : NumericAxisRescaleConditions
+  {
+
+    #region Serialization
+ 
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LogarithmicAxisRescaleConditions),0)]
+      public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        LogarithmicAxisRescaleConditions s = (LogarithmicAxisRescaleConditions)obj;
+
+        info.AddBaseValueEmbedded(s,s.GetType().BaseType);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        
+        LogarithmicAxisRescaleConditions s = null!=o ? (LogarithmicAxisRescaleConditions)o : new LogarithmicAxisRescaleConditions();
+
+        info.GetBaseValueEmbedded(s,s.GetType().BaseType,parent);
+
+        return s;
+      }
+    }
+   
+    #endregion
+
     /// <summary>
     /// This will process the temporary values for the axis origin and axis end. Depending on the rescaling conditions,
     /// the values of org and end are changed.
@@ -76,5 +101,16 @@ namespace Altaxo.Graph.Axes.Scaling
         }
       }
     }
-	}
+
+    #region ICloneable Members
+
+    public virtual object Clone()
+    {
+      LogarithmicAxisRescaleConditions result = new LogarithmicAxisRescaleConditions();
+      result.CopyFrom(this);
+      return result;
+    }
+
+    #endregion
+  }
 }

@@ -11,19 +11,20 @@ namespace Altaxo.Graph.Axes.Scaling
 	[UserControllerForObject(typeof(NumericAxisRescaleConditions))]
 	public class NumericAxisRescaleController 
     :
-    IOrgEndSpanControlEventReceiver,
+    IOrgEndSpanViewEventReceiver,
     IMVCAController
 	{
-    IOrgEndSpanControl _view;
-    NumericAxisRescaleConditions _doc;
+    protected IOrgEndSpanView _view;
+    protected NumericAxisRescaleConditions _doc;
+    protected Axis _axis;
     
-    double _org;
-    double _end;
-    double _span;
+    protected double _org;
+    protected double _end;
+    protected double _span;
 
-    BoundaryRescaling _orgRescaling;
-    BoundaryRescaling _endRescaling;
-    BoundaryRescaling _spanRescaling;
+    protected BoundaryRescaling _orgRescaling;
+    protected BoundaryRescaling _endRescaling;
+    protected BoundaryRescaling _spanRescaling;
 
   
 
@@ -31,6 +32,7 @@ namespace Altaxo.Graph.Axes.Scaling
     public NumericAxisRescaleController(NumericAxisRescaleConditions doc, Axis ax)
     {
       _doc = doc;
+      _axis = ax;
       
       _orgRescaling =  _doc.OrgRescaling;
       _endRescaling =  _doc.EndRescaling;
@@ -39,11 +41,19 @@ namespace Altaxo.Graph.Axes.Scaling
       _org =  _doc.Org;
       _end =  _doc.End;
       _span = _doc.Span;
+
+      if(ax!=null)
+      {
+        if(_orgRescaling==BoundaryRescaling.Auto)
+          _org = ax.Org;
+        if(_endRescaling==BoundaryRescaling.Auto)
+          _end = ax.End;
+        if(_spanRescaling==BoundaryRescaling.Auto)
+          _span = ax.End - ax.Org;
+        
+      }
     }
 
-    public NumericAxisRescaleController(object[] o)
-    {
-    }
 
     /// <summary>
     /// Has to match the indices of BoundaryRescaling
@@ -71,9 +81,13 @@ namespace Altaxo.Graph.Axes.Scaling
     protected virtual void SetEnableState()
     {
       bool enableSpan = _spanRescaling!=BoundaryRescaling.Auto;
-      _view.EnableChoiceValue1(!enableSpan);
-      _view.EnableChoiceValue2(!enableSpan);
-      _view.EnableChoiceValue3(enableSpan);
+      _view.EnableChoice1(!enableSpan);
+      _view.EnableChoice2(!enableSpan);
+      _view.EnableChoice3(true);
+
+      _view.EnableValue1(!enableSpan);
+      _view.EnableValue2(!enableSpan);
+      _view.EnableValue3(enableSpan);
     }
 
     #region IOrgEndSpanControlEventReceiver Members
@@ -94,7 +108,7 @@ namespace Altaxo.Graph.Axes.Scaling
       SetEnableState();
     }
 
-    public bool EhValue1Changed(string txt)
+    public virtual bool EhValue1Changed(string txt)
     {
       if(!NumberConversion.IsNumeric(txt))
         return true;
@@ -103,7 +117,7 @@ namespace Altaxo.Graph.Axes.Scaling
       return false;
     }
 
-    public bool EhValue2Changed(string txt)
+    public virtual bool EhValue2Changed(string txt)
     {
       if(!NumberConversion.IsNumeric(txt))
         return true;
@@ -112,7 +126,7 @@ namespace Altaxo.Graph.Axes.Scaling
       return false;   
     }
 
-    public bool EhValue3Changed(string txt)
+    public virtual bool EhValue3Changed(string txt)
     {
       if(!NumberConversion.IsNumeric(txt))
         return true;
@@ -133,7 +147,7 @@ namespace Altaxo.Graph.Axes.Scaling
         if(null!=_view && _view.Controller==this)
           _view.Controller=null;
 
-        _view = (IOrgEndSpanControl)value;
+        _view = (IOrgEndSpanView)value;
 
         if(_view!=null)
         {
@@ -161,6 +175,9 @@ namespace Altaxo.Graph.Axes.Scaling
         _doc.SetSpan(_spanRescaling,_span);
       else
         _doc.SetOrgAndEnd(_orgRescaling,_org,_endRescaling,_end);
+
+      if(null!=_axis)
+      _axis.ProcessDataBounds();
 
       return true;
     }
