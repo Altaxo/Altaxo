@@ -208,7 +208,7 @@ namespace Altaxo.Worksheet
       table.Suspend();
 
       // first store the factors
-      for(int i=0;i<resultMat.Cols;i++)
+      for(int i=0;i<resultMat.Columns;i++)
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
         for(int j=0;j<resultMat.Rows;j++)
@@ -326,7 +326,7 @@ namespace Altaxo.Worksheet
       Altaxo.Calc.MatrixMath.REMatrix factors = new Altaxo.Calc.MatrixMath.REMatrix(0,0);
       Altaxo.Calc.MatrixMath.BEMatrix loads = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
       Altaxo.Calc.MatrixMath.BEMatrix residualVariances = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
-      Altaxo.Calc.MatrixMath.HorizontalVector meanX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
+      Altaxo.Calc.MatrixMath.HorizontalVector meanX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Columns);
       // first, center the matrix
       Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixX,meanX);
       Altaxo.Calc.MatrixMath.NIPALS_HO(matrixX,maxNumberOfFactors,1E-9,factors,loads,residualVariances);
@@ -351,7 +351,7 @@ namespace Altaxo.Worksheet
     }
 
       // first store the factors
-      for(int i=0;i<factors.Cols;i++)
+      for(int i=0;i<factors.Columns;i++)
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
         for(int j=0;j<factors.Rows;j++)
@@ -364,7 +364,7 @@ namespace Altaxo.Worksheet
     {
       Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
       
-      for(int j=0;j<meanX.Cols;j++)
+      for(int j=0;j<meanX.Columns;j++)
         col[j] = meanX[0,j];
       table.DataColumns.Add(col,"MeanLoad",Altaxo.Data.ColumnKind.V,2);
     }
@@ -374,7 +374,7 @@ namespace Altaxo.Worksheet
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
         
-        for(int j=0;j<loads.Cols;j++)
+        for(int j=0;j<loads.Columns;j++)
           col[j] = loads[i,j];
         
         table.DataColumns.Add(col,"Load"+i.ToString(),Altaxo.Data.ColumnKind.V,3);
@@ -622,15 +622,15 @@ namespace Altaxo.Worksheet
 
 
       // Before we can apply PLS, we have to center the x and y matrices
-      Altaxo.Calc.MatrixMath.HorizontalVector meanX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
+      Altaxo.Calc.MatrixMath.HorizontalVector meanX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Columns);
       //  Altaxo.Calc.MatrixMath.HorizontalVector scaleX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
-      Altaxo.Calc.MatrixMath.HorizontalVector meanY = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixY.Cols);
+      Altaxo.Calc.MatrixMath.HorizontalVector meanY = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixY.Columns);
 
 
       Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixX, meanX);
       Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixY, meanY);
 
-      int numFactors = matrixX.Cols;
+      int numFactors = matrixX.Columns;
       Altaxo.Calc.MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,ref numFactors,xLoads,yLoads,W,V);
   
 
@@ -647,7 +647,7 @@ namespace Altaxo.Worksheet
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-        for(int j=0;j<xLoads.Cols;j++)
+        for(int j=0;j<xLoads.Columns;j++)
           col[j] = xLoads[i,j];
           
         table.DataColumns.Add(col,"XLoad"+i.ToString(),Altaxo.Data.ColumnKind.V,0);
@@ -658,7 +658,7 @@ namespace Altaxo.Worksheet
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
         
-        for(int j=0;j<yLoads.Cols;j++)
+        for(int j=0;j<yLoads.Columns;j++)
           col[j] = yLoads[i,j];
         
         table.DataColumns.Add(col,"YLoad"+i.ToString(),Altaxo.Data.ColumnKind.V,1);
@@ -669,7 +669,7 @@ namespace Altaxo.Worksheet
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
       
-        for(int j=0;j<W.Cols;j++)
+        for(int j=0;j<W.Columns;j++)
           col[j] = W[i,j];
         
         table.DataColumns.Add(col,"Weight"+i.ToString(),Altaxo.Data.ColumnKind.V,2);
@@ -679,7 +679,7 @@ namespace Altaxo.Worksheet
     {
       Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
       
-      for(int j=0;j<V.Cols;j++)
+      for(int j=0;j<V.Columns;j++)
         col[j] = V[0,j];
       table.DataColumns.Add(col,"CrossP",Altaxo.Data.ColumnKind.V,3);
     }
@@ -695,7 +695,7 @@ namespace Altaxo.Worksheet
     }
 
       // calculate the self predicted y values - for one factor and for two
-      Altaxo.Calc.IMatrix yPred = new Altaxo.Calc.MatrixMath.BEMatrix(matrixY.Rows,matrixY.Cols);
+      Altaxo.Calc.IMatrix yPred = new Altaxo.Calc.MatrixMath.BEMatrix(matrixY.Rows,matrixY.Columns);
       Altaxo.Data.DoubleColumn presscol = new Altaxo.Data.DoubleColumn();
       
       table.DataColumns.Add(presscol,"PRESS",Altaxo.Data.ColumnKind.V,4);
@@ -710,7 +710,7 @@ namespace Altaxo.Worksheet
 
         // now store the predicted y - careful - they are horizontal in the matrix,
         // but we store them vertically now
-        for(int i=0;i<yPred.Cols;i++)
+        for(int i=0;i<yPred.Columns;i++)
         {
           Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
           for(int j=0;j<yPred.Rows;j++)

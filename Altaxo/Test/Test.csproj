@@ -124,6 +124,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\TestChirpFFT.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\TestComplexMath.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

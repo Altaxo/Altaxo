@@ -1037,4 +1037,83 @@ namespace Altaxo.Calc.FFT
       }
     }
   }
+
+  /// <summary>
+  /// This class provides reference methods concerning FFT that are slow and not very accurate.
+  /// Do not use them except for comparism and testing purposes!
+  /// </summary>
+  class NativeFourierMethods
+  {
+    
+
+    /// <summary>
+    /// Performes a cyclic correlation between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
+    /// different from the other two arrays. 
+    /// </summary>
+    /// <param name="resultarr">The array that stores the correleation result.</param>
+    /// <param name="arr1">First array.</param>
+    /// <param name="arr2">Second array.</param>
+    /// <param name="count">Number of points to correlate.</param>
+    public static  void NativeCyclicCorrelation(double[] resultarr, double[] arr1, double[] arr2, int count)
+    {
+      if(object.ReferenceEquals(resultarr,arr1) || object.ReferenceEquals(resultarr,arr2))
+        throw new ArgumentException("Resultarr must not be identical to arr1 or arr2!");
+
+      int i,k;
+      for(k=0;k<count;k++)
+      {
+        resultarr[k]=0;
+        for(i=0;i<count;i++)
+        {
+          resultarr[k] += arr1[i]*arr2[(i+k)%count];
+        }
+      }
+    }
+
+
+    /// <summary>
+    /// Performes a cyclic convolution between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
+    /// different from the other two arrays. 
+    /// </summary>
+    /// <param name="resultarr">The array that stores the correleation result.</param>
+    /// <param name="arr1">First array.</param>
+    /// <param name="arr2">Second array.</param>
+    /// <param name="count">Number of points to correlate.</param>
+    public static void NativeCyclicConvolution(double[] resultarr, double[] arr1, double[] arr2, int count)
+    {
+      if(object.ReferenceEquals(resultarr,arr1) || object.ReferenceEquals(resultarr,arr2))
+        throw new ArgumentException("resultarr must not be identical to arr1 or arr2!");
+      
+      int i,k;
+      for(k=0;k<count;k++)
+      {
+        resultarr[k]=0;
+        for(i=0;i<count;i++)
+        {
+          resultarr[k] += arr1[i]*arr2[(count+k-i)%count];
+        }
+      }
+    }
+
+    /// <summary>
+    /// Performs a native fouriertransformation of a real value array.
+    /// </summary>
+    /// <param name="resultarr">Used to store the result of the transformation.</param>
+    /// <param name="arr">The double valued array to transform.</param>
+    /// <param name="count">Number of points to transform.</param>
+    /// <param name="bBackward">If false, a forward transform will performed, if true, a inverse transform will be performed.</param>
+    public static void NativeFFT(Complex[] resultarr, double[] arr, int count, bool bBackward)
+    {
+      int iss = bBackward ? -1 : 1;
+      for(int k=0;k<count;k++)
+      {
+        resultarr[k]=new Complex(0,0);
+        for(int i=0;i<count;i++)
+        {
+          double phi = iss*2*Math.PI*((i*k)%count)/count;
+          resultarr[k] += new Complex(arr[i]*Math.Cos(phi),arr[i]*Math.Sin(phi));
+        }
+      }
+    }
+  }
 }
