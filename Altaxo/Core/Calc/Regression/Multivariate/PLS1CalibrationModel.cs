@@ -26,7 +26,7 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-  public class PLS2CalibrationModel : IMultivariateCalibrationModel
+  public class PLS1CalibrationModel : IMultivariateCalibrationModel
   {
     IROVector _xOfX;
     IROVector _xMean;
@@ -34,14 +34,28 @@ namespace Altaxo.Calc.Regression.Multivariate
     IROVector _yMean;
     IROVector _yScale;
 
-    IROMatrix _xWeights;
-    IROMatrix _xLoads;
-    IROMatrix _yLoads;
-    IROMatrix _crossProduct;
+    IROMatrix[] _xWeights;
+    IROMatrix[] _xLoads;
+    IROMatrix[] _yLoads;
+    IROMatrix[] _crossProduct;
 
     int _numberOfX;
     int _numberOfY;
     int _numberOfFactors;
+
+    public PLS1CalibrationModel(int numberOfX, int numberOfY, int numberOfFactors)
+    {
+      _numberOfX = numberOfX;
+      _numberOfY = numberOfY;
+      _numberOfFactors = numberOfFactors;
+
+
+      _xWeights = new IROMatrix[_numberOfY] ;
+      _xLoads = new IROMatrix[_numberOfY];
+      _yLoads = new IROMatrix[_numberOfY];
+      _crossProduct = new IROMatrix[_numberOfY];
+    }
+
 
     public IROVector XOfX
     {
@@ -74,28 +88,24 @@ namespace Altaxo.Calc.Regression.Multivariate
       set { _yScale = value; }
     }
 
-    public IROMatrix XWeights
+    public IROMatrix[] XWeights
     {
       get { return _xWeights; }
-      set { _xWeights = value; }
     }
 
-    public IROMatrix XLoads
+    public IROMatrix[] XLoads
     {
       get { return _xLoads; }
-      set { _xLoads = value; }
     }
 
-    public IROMatrix YLoads
+    public IROMatrix[] YLoads
     {
       get { return _yLoads; }
-      set { _yLoads = value; }
     }
 
-    public IROMatrix CrossProduct
+    public IROMatrix[] CrossProduct
     {
       get { return _crossProduct; }
-      set { _crossProduct = value; }
     }
 
     public int NumberOfX
@@ -115,7 +125,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       get { return _numberOfFactors; }
       set { _numberOfFactors = value; }
     }
-   
+  
   }
 
 

@@ -385,7 +385,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if(!QuestPLSAnalysisOptions(out options, out preprocessOptions))
         return;
 
-      WorksheetAnalysis analysis = new PLS2WorksheetAnalysis();
+      WorksheetAnalysis analysis = (WorksheetAnalysis)System.Activator.CreateInstance(options.AnalysisMethod);
 
       string err= analysis.ExecuteAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,ctrl.SelectedPropertyColumns,false,options,preprocessOptions);
       if(null!=err)

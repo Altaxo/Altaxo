@@ -39,5 +39,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// How to do the calculation of Cross PRESS values.
     /// </summary>
     public CrossPRESSCalculationType CrossPRESSCalculation;
+
+    /// <summary>
+    /// Get/sets the class that will handles the analysis.
+    /// </summary>
+    public System.Type AnalysisMethod;
   }
 }

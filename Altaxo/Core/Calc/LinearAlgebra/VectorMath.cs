@@ -281,6 +281,30 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     #endregion
+
+    #region Arithmitic
+
+    /// <summary>
+    /// Adds (elementwise) two vectors a and b and stores the result in c. All vectors must have the same length.
+    /// </summary>
+    /// <param name="a">First summand.</param>
+    /// <param name="b">Second summand.</param>
+    /// <param name="c">The resulting vector.</param>
+    public static void Add(IROVector a, IROVector b, IVector c)
+    {
+      if(a.Length != b.Length)
+        throw new ArgumentException("Length of vectors a and b unequal");
+      if(c.Length != b.Length)
+        throw new ArgumentException("Length of vectors a and c unequal");
+      if(a.LowerBound != b.LowerBound || a.LowerBound != c.LowerBound)
+        throw new ArgumentException("Vectors a, b, and c have not the same LowerBound property");
+
+      int end = c.UpperBound;
+      for(int i=c.LowerBound;i<=end;i++)
+        c[i]=a[i]+b[i];
+    }
+
+    #endregion
     /// <summary>
     /// Returns the maximum of the elements in xarray.
     /// </summary>

@@ -30,6 +30,7 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// PLS2WorksheetAnalysis performs a PLS1 analysis and 
   /// stores the results in a given table
   /// </summary>
+  [System.ComponentModel.Description("PLS1")]
   public class PLS1WorksheetAnalysis : WorksheetAnalysis
   {
 
@@ -41,46 +42,19 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-    /// <summary>
-    /// This predicts the selected columns/rows against a user choosen calibration model.
-    /// The orientation of spectra is given by the parameter <c>spectrumIsRow</c>.
-    /// </summary>
-    /// <param name="ctrl">The worksheet controller containing the selected data.</param>
-    /// <param name="spectrumIsRow">If true, the spectra is horizontally oriented, else it is vertically oriented.</param>
-    public override void PredictValues(
-      DataTable srctable,
-      IAscendingIntegerCollection selectedColumns,
-      IAscendingIntegerCollection selectedRows,
-      bool spectrumIsRow,
-      int numberOfFactors,
-      DataTable modelTable,
-      DataTable destTable)
-    {
-      throw new NotImplementedException();
-    }
-
-    public  override void CalculatePredictedAndResidual(
-      DataTable table,
-      int whichY,
-      int numberOfFactors,
-      bool saveYPredicted,
-      bool saveYResidual,
-      bool saveXResidual)
-    {
-      throw new NotImplementedException();
-    }
-
     public override void ExecuteAnalysis(
       IMatrix matrixX,
       IMatrix matrixY,
       MultivariateAnalysisOptions plsOptions,
       MultivariateContentMemento plsContent,
-      DataTable table
+      DataTable table,
+      out IROVector press
       )
     {
       // the difference between Pls2 and Pls1 is that in Pls1 only one y value is
       // handled
       plsContent.NumberOfFactors = plsContent.NumberOfMeasurements;
+      IExtensibleVector PRESS     = null;
 
       for(int yn=0;yn<matrixY.Columns;yn++)
       {
@@ -94,13 +68,12 @@ namespace Altaxo.Calc.Regression.Multivariate
         MatrixMath.BEMatrix yLoads   = new MatrixMath.BEMatrix(0,0);
         MatrixMath.BEMatrix W       = new MatrixMath.BEMatrix(0,0);
         MatrixMath.REMatrix V       = new MatrixMath.REMatrix(0,0);
-        IExtensibleVector PRESS     = VectorMath.CreateExtensibleVector(0);
-
+        IExtensibleVector localPRESS     = VectorMath.CreateExtensibleVector(0);
      
 
 
         int numFactors = Math.Min(matrixX.Columns,plsOptions.MaxNumberOfFactors);
-        MatrixMath.PartialLeastSquares_HO(matrixX,matrixYpls1,ref numFactors,xLoads,yLoads,W,V,PRESS);
+        MatrixMath.PartialLeastSquares_HO(matrixX,matrixYpls1,ref numFactors,xLoads,yLoads,W,V,localPRESS);
         plsContent.NumberOfFactors = Math.Min(plsContent.NumberOfFactors,numFactors);
   
         // store the x-loads - careful - they are horizontal in the matrix
@@ -146,10 +119,18 @@ namespace Altaxo.Calc.Regression.Multivariate
         table.DataColumns.Add(col,GetCrossProduct_ColumnName(yn),Altaxo.Data.ColumnKind.V,3);
       }
 
-      
+        if(PRESS==null)
+          PRESS=VectorMath.CreateExtensibleVector(localPRESS.Length);
+        VectorMath.Add(PRESS,localPRESS,PRESS);
       
       } // for all y (constituents)
+
+
+      press = PRESS;
     }
+
+    
+   
 		
 
     public override void CalculateCrossPRESS(
@@ -160,6 +141,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       DataTable table
       )
     {
+      IVector totalCrossPress=null;
       Altaxo.Data.DoubleColumn crosspresscol = new Altaxo.Data.DoubleColumn();
 
       double meanNumberOfExcludedSpectra = 0;
@@ -181,35 +163,253 @@ namespace Altaxo.Calc.Regression.Multivariate
             out crossPRESSMatrix,
             out meanNumberOfExcludedSpectra);
 
-          VectorMath.Copy(crossPRESSMatrix,DataColumnWrapper.ToVector(crosspresscol));
+          if(totalCrossPress==null)
+            totalCrossPress = VectorMath.CreateExtensibleVector(crossPRESSMatrix.Length);
+
+          VectorMath.Add(crossPRESSMatrix,totalCrossPress,totalCrossPress);
         }
+
+        VectorMath.Copy(totalCrossPress,DataColumnWrapper.ToVector(crosspresscol,totalCrossPress.Length));
+
+        plsContent.MeanNumberOfMeasurementsInCrossPRESSCalculation = plsContent.NumberOfMeasurements-meanNumberOfExcludedSpectra;
+
+        table.DataColumns.Add(crosspresscol,GetCrossPRESSValue_ColumnName(),Altaxo.Data.ColumnKind.V,4);
+      
       }
-      table.DataColumns.Add(crosspresscol,GetCrossPRESSValue_ColumnName(),Altaxo.Data.ColumnKind.V,4);
+      else
+      {
+        table.DataColumns.Add(crosspresscol,GetCrossPRESSValue_ColumnName(),Altaxo.Data.ColumnKind.V,4);
+      }
 
     }
 
-    public override void CalculateXLeverage(DataTable table, int preferredNumberOfFactors)
+    public override IMultivariateCalibrationModel GetCalibrationModel(
+      DataTable calibTable)
     {
-      throw new NotImplementedException();
+      PLS1CalibrationModel model;
+      Export(calibTable,out model);
+      return model;
     }
 
+    #region Calculation after analysis
 
-    public override IMultivariateCalibrationModel GetCalibrationModel(DataTable calibTable)
+    static int GetNumberOfX(Altaxo.Data.DataTable table)
     {
-      throw new NotImplementedException();
+      Altaxo.Data.DataColumn col = table.DataColumns[GetXLoad_ColumnName(0,0)];
+      if(col==null) NotFound(GetXLoad_ColumnName(0,0));
+      return col.Count;
     }
+
+    static int GetNumberOfY(Altaxo.Data.DataTable table)
+    {
+      Altaxo.Data.DataColumn col = table.DataColumns[GetYLoad_ColumnName(0,0)];
+      if(col==null) NotFound(GetYLoad_ColumnName(0,0));
+      return col.Count;
+    }
+
+    static int GetNumberOfFactors(Altaxo.Data.DataTable table)
+    {
+      Altaxo.Data.DataColumn col = table.DataColumns[GetCrossProduct_ColumnName(0)];
+      if(col==null) NotFound(GetCrossProduct_ColumnName(0));
+      return col.Count;
+    }
+    public static bool IsPLS1CalibrationModel(Altaxo.Data.DataTable table)
+    {
+      if(null==table.DataColumns[GetXOfX_ColumnName()]) return false;
+      if(null==table.DataColumns[GetXMean_ColumnName()]) return false;
+      if(null==table.DataColumns[GetXScale_ColumnName()]) return false;
+      if(null==table.DataColumns[GetYMean_ColumnName()]) return false;
+      if(null==table.DataColumns[GetYScale_ColumnName()]) return false;
+
+      if(null==table.DataColumns[GetXLoad_ColumnName(0,0)]) return false;
+      if(null==table.DataColumns[GetXWeight_ColumnName(0,0)]) return false;
+      if(null==table.DataColumns[GetYLoad_ColumnName(0,0)]) return false;
+      if(null==table.DataColumns[GetCrossProduct_ColumnName(0)]) return false;
+
+      return true;
+    }
+    /// <summary>
+    /// Exports a table to a PLS2CalibrationSet
+    /// </summary>
+    /// <param name="calibrationSet"></param>
+    public static void Export(
+      DataTable _table,
+      out PLS1CalibrationModel calibrationSet)
+    {
+      int _numberOfX = GetNumberOfX(_table);
+      int _numberOfY = GetNumberOfY(_table);
+      int _numberOfFactors = GetNumberOfFactors(_table);
+
+      calibrationSet = new PLS1CalibrationModel(_numberOfX,_numberOfY,_numberOfFactors);
+        
+      Altaxo.Collections.AscendingIntegerCollection sel = new Altaxo.Collections.AscendingIntegerCollection();
+      Altaxo.Data.DataColumn col;
+
+      col = _table[GetXOfX_ColumnName()];
+      if(col==null || !(col is INumericColumn)) NotFound(GetXOfX_ColumnName());
+      calibrationSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col,_numberOfX);
+
+
+      col = _table[GetXMean_ColumnName()];
+      if(col==null) NotFound(GetXMean_ColumnName());
+      calibrationSet.XMean = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,_numberOfX);
+
+      col = _table[GetXScale_ColumnName()];
+      if(col==null) NotFound(GetXScale_ColumnName());
+      calibrationSet.XScale = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,_numberOfX);
+
+
+        
+      sel.Clear();
+      col = _table[GetYMean_ColumnName()];
+      if(col==null) NotFound(GetYMean_ColumnName());
+      sel.Add(_table.DataColumns.GetColumnNumber(col));
+      calibrationSet.YMean = DataColumnWrapper.ToROVector(col,_numberOfY);
+
+      sel.Clear();
+      col = _table[GetYScale_ColumnName()];
+      if(col==null) NotFound(GetYScale_ColumnName());
+      sel.Add(_table.DataColumns.GetColumnNumber(col));
+      calibrationSet.YScale = DataColumnWrapper.ToROVector(col,_numberOfY);
+
+
+      for(int yn=0;yn<_numberOfY;yn++)
+      {
+
+        sel.Clear();
+        for(int i=0;i<_numberOfFactors;i++)
+        {
+          string colname = GetXWeight_ColumnName(yn,i);
+          col = _table[colname];
+          if(col==null) NotFound(colname);
+          sel.Add(_table.DataColumns.GetColumnNumber(col));
+        }
+        calibrationSet.XWeights[yn] = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfX);
+
+
+        sel.Clear();
+        for(int i=0;i<_numberOfFactors;i++)
+        {
+          string colname = GetXLoad_ColumnName(yn,i);
+          col = _table[colname];
+          if(col==null) NotFound(colname);
+          sel.Add(_table.DataColumns.GetColumnNumber(col));
+        }
+        calibrationSet.XLoads[yn] = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfX);
+
+
+        sel.Clear();
+        for(int i=0;i<_numberOfFactors;i++)
+        {
+          string colname = GetYLoad_ColumnName(yn,i);
+          col = _table[colname];
+          if(col==null) NotFound(colname);
+          sel.Add(_table.DataColumns.GetColumnNumber(col));
+        }
+        calibrationSet.YLoads[yn] = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfY);
+
+        
+        sel.Clear();
+        col = _table[GetCrossProduct_ColumnName(yn)];
+        if(col==null) NotFound(GetCrossProduct_ColumnName());
+        sel.Add(_table.DataColumns.GetColumnNumber(col));
+        calibrationSet.CrossProduct[yn] = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfFactors);
+      }
+    }
+
+
+
+    public override void CalculatePredictedY(
+      IMultivariateCalibrationModel mcalib,
+      SpectralPreprocessingOptions preprocessOptions,
+      IMatrix matrixX,
+      int numberOfFactors, 
+      MatrixMath.BEMatrix  predictedY, 
+      IMatrix spectralResiduals)
+    {
+      PLS1CalibrationModel calib = (PLS1CalibrationModel)mcalib;
+
+      PreProcessSpectra(calib,preprocessOptions,matrixX);
+
+      for(int yn=0;yn<calib.NumberOfY;yn++)
+      {
+
+        MatrixMath.PartialLeastSquares_Predict_HO(
+          matrixX,
+          calib.XLoads[yn],
+          calib.YLoads[yn],
+          calib.XWeights[yn],
+          calib.CrossProduct[yn],
+          numberOfFactors,
+          MatrixMath.ToSubMatrix(predictedY,0,yn,predictedY.Rows,1),
+          MatrixMath.ToSubMatrix(spectralResiduals,0,yn,spectralResiduals.Rows,1));
+      }
+      // mean and scale prediced Y
+      MatrixMath.MultiplyRow(predictedY,calib.YScale,predictedY);
+      MatrixMath.AddRow(predictedY,calib.YMean,predictedY);
+    }  
+
+
+  
+
+    
+    public override void CalculateXLeverage(
+      DataTable table, int numberOfFactors)
+    {
+      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+
+      if(plsMemo==null)
+        throw new ArgumentException("Table does not contain a PLSContentMemento");
+
+
+      PLS1CalibrationModel calib;
+      Export(table, out calib);
+
+      IVector totalLeverage = VectorMath.CreateExtensibleVector(plsMemo.NumberOfMeasurements);
+
+      IMatrix matrixX = GetRawSpectra(plsMemo);
+      PreProcessSpectra(calib,plsMemo.SpectralPreprocessing,matrixX);
+
+      for(int yn=0;yn<calib.NumberOfY;yn++)
+      {
+        // get the score matrix
+        MatrixMath.BEMatrix weights = new MatrixMath.BEMatrix(numberOfFactors,calib.NumberOfX);
+        MatrixMath.Submatrix(calib.XWeights[yn],weights,0,0);
+        MatrixMath.BEMatrix scoresMatrix = new MatrixMath.BEMatrix(matrixX.Rows,weights.Rows);
+        MatrixMath.MultiplySecondTransposed(matrixX,weights,scoresMatrix);
+    
+        MatrixMath.SingularValueDecomposition decomposition = MatrixMath.GetSingularValueDecomposition(scoresMatrix);
+
+        VectorMath.Add(VectorMath.ToROVector(decomposition.HatDiagonal),totalLeverage,totalLeverage);
+      }
+      
+      Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+      VectorMath.Copy(totalLeverage,DataColumnWrapper.ToVector(col,totalLeverage.Length));
+      table.DataColumns.Add(col,GetXLeverage_ColumnName(numberOfFactors),Altaxo.Data.ColumnKind.V,GetXLeverage_ColumnGroup());
+    }
+
 
     public override IROMatrix CalculatePredictionScores(DataTable table, int preferredNumberOfFactors)
     {
-      throw new NotImplementedException();
       MultivariateContentMemento memento = table.GetTableProperty("Content") as MultivariateContentMemento;
-      //IMultivariateCalibrationModel model = memento.Analysis.GetCalibrationModel(table);
+
+      PLS1CalibrationModel calib;
+      Export(table,out calib);
 
       Matrix predictionScores = new Matrix(memento.NumberOfConcentrationData,memento.NumberOfSpectralData);
-      //MatrixMath.PartialLeastSquares_GetPredictionScoreMatrix(model.XLoads,model.YLoads,model.XWeights,model.CrossProduct,preferredNumberOfFactors,predictionScores);
+      for(int yn=0;yn<calib.NumberOfY;yn++)
+      {
+        MatrixMath.PartialLeastSquares_GetPredictionScoreMatrix(
+          calib.XLoads[yn],
+          calib.YLoads[yn],
+          calib.XWeights[yn],
+          calib.CrossProduct[yn],
+          preferredNumberOfFactors,
+          MatrixMath.ToSubMatrix(predictionScores,yn,0,1,predictionScores.Columns));
+      }
       return predictionScores;
     }
 
-
+    #endregion
   }
 }

@@ -41,10 +41,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
-    int NumberOfMeasurements
-    {
-      get; 
-    }
 
     IROVector XOfX
     {

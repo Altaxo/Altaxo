@@ -66,6 +66,22 @@ namespace Altaxo.Calc.Regression.Multivariate
     int _CalculatedNumberOfFactors;
 
     /// <summary>
+    /// Mean number of observations included in Cross PRESS calculation (used to calculate F-Ratio).
+    /// </summary>
+    double _MeanNumberOfMeasurementsInCrossPRESSCalculation;
+
+    /// <summary>
+    /// The name of the class used to analyse the data.
+    /// </summary>
+    string _ClassNameOfAnalysisClass;
+
+    /// <summary>
+    /// The instance of the class used to analyse the data.
+    /// </summary>
+     WorksheetAnalysis _InstanceOfAnalysisClass;
+
+
+    /// <summary>
     /// What to do with the spectra before processing them.
     /// </summary>
     SpectralPreprocessingOptions _spectralPreprocessing = new SpectralPreprocessingOptions();
@@ -193,6 +209,15 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
+    /// Mean number of observations included in cross PRESS calculation (used to calculate F-Ratio).
+    /// </summary>
+    public double MeanNumberOfMeasurementsInCrossPRESSCalculation
+    {
+      get { return _MeanNumberOfMeasurementsInCrossPRESSCalculation; }
+      set { _MeanNumberOfMeasurementsInCrossPRESSCalculation = value; }
+    }
+
+    /// <summary>
     /// What to do with the spectra before processing them.
     /// </summary>
     public SpectralPreprocessingOptions SpectralPreprocessing
@@ -206,10 +231,35 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     public WorksheetAnalysis Analysis
     {
-      get { return new PLS2WorksheetAnalysis(); }
+      get
+      {
+        if(_InstanceOfAnalysisClass!=null)
+          return _InstanceOfAnalysisClass;
+        else if(_ClassNameOfAnalysisClass!=null)
+        {
+          System.Type clstype = System.Type.GetType(_ClassNameOfAnalysisClass);
+          if(clstype==null)
+            throw new ApplicationException("Can not found the class used to analyse the data, the class type is: " + _ClassNameOfAnalysisClass);
+      
+          object instance = System.Activator.CreateInstance(clstype);
+          if(instance==null)
+            throw new ApplicationException("Can not create a instance of the analysis class (no empty constuctor?), class name: " + clstype.ToString());
+          if(!(instance is WorksheetAnalysis))
+            throw new ApplicationException("The current instance of the analysis class does not inherit from the WorksheetAnalysis class, class name: " + clstype.ToString());
+
+          _InstanceOfAnalysisClass = (WorksheetAnalysis)instance;
+
+
+          return _InstanceOfAnalysisClass;
+        }
+        else
+          throw new ApplicationException("Neither the name of the analysis class nor an instance was set before, therefore the class used to analyse the data is unknown");
+      }
+      set
+      {
+        _InstanceOfAnalysisClass = value;
+        _ClassNameOfAnalysisClass = value.GetType().FullName;
+      }
     }
-
   }
-
-
 }

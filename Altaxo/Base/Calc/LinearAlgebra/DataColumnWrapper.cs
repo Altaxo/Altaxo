@@ -58,7 +58,7 @@ namespace Altaxo.Calc.LinearAlgebra
       public int LowerBound { get { return 0; }}
     
       /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound { get { return _rows; }}
+      public int UpperBound { get { return _rows-1; }}
     
       /// <summary>The number of elements of this vector.</summary>
       public int Length { get {; return _rows; }}
@@ -106,7 +106,7 @@ namespace Altaxo.Calc.LinearAlgebra
       public int LowerBound { get { return 0; }}
     
       /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
-      public int UpperBound { get { return _rows; }}
+      public int UpperBound { get { return _rows-1; }}
     
       /// <summary>The number of elements of this vector.</summary>
       public int Length { get {; return _rows; }}

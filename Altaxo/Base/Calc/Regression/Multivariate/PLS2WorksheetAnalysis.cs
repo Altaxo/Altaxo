@@ -30,6 +30,7 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// PLS2WorksheetAnalysis performs a PLS2 analysis and 
   /// stores the results in a given table
   /// </summary>
+   [System.ComponentModel.Description("PLS2")]
   public class PLS2WorksheetAnalysis : WorksheetAnalysis
   {
     public override string AnalysisName
@@ -45,7 +46,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix matrixY,
       MultivariateAnalysisOptions plsOptions,
       MultivariateContentMemento plsContent,
-      DataTable table
+      DataTable table,
+      out IROVector press
       )
     {
 
@@ -56,6 +58,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       MatrixMath.BEMatrix W       = new MatrixMath.BEMatrix(0,0);
       MatrixMath.REMatrix V       = new MatrixMath.REMatrix(0,0);
       IExtensibleVector PRESS   = VectorMath.CreateExtensibleVector(0);
+      press = PRESS;
 
       int numFactors = Math.Min(matrixX.Columns,plsOptions.MaxNumberOfFactors);
       MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,ref numFactors,xLoads,yLoads,W,V,PRESS);
@@ -104,15 +107,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
-      this.StorePRESSData(PRESS,table);
 
-      if(plsOptions.CrossPRESSCalculation==CrossPRESSCalculationType.None)
-        this.StoreFRatioData(PRESS,plsContent.NumberOfMeasurements,table,plsContent);
-      else
-        CalculateCrossPRESS(matrixX,matrixY,
-          plsOptions,
-          plsContent,
-          table);
+     
     }
 
     public override void CalculateCrossPRESS(
@@ -143,9 +139,7 @@ namespace Altaxo.Calc.Regression.Multivariate
        
         table.DataColumns.Add(crosspresscol,GetCrossPRESSValue_ColumnName(),Altaxo.Data.ColumnKind.V,4);
 
-        this.StoreFRatioData(crossPRESSMatrix,
-          plsContent.NumberOfMeasurements-meanNumberOfExcludedSpectra,
-          table,plsContent);
+        plsContent.MeanNumberOfMeasurementsInCrossPRESSCalculation = plsContent.NumberOfMeasurements-meanNumberOfExcludedSpectra;
       }
       else
       {
@@ -293,14 +287,16 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     }
 
-    public static void CalculatePredictedY(
-      PLS2CalibrationModel calib,
+    public override void CalculatePredictedY(
+      IMultivariateCalibrationModel mcalib,
       SpectralPreprocessingOptions preprocessOptions,
       IMatrix matrixX,
       int numberOfFactors, 
       MatrixMath.BEMatrix  predictedY, 
       IMatrix spectralResiduals)
     {
+      PLS2CalibrationModel calib = (PLS2CalibrationModel)mcalib;
+
       PreProcessSpectra(calib,preprocessOptions,matrixX);
 
       MatrixMath.PartialLeastSquares_Predict_HO(
@@ -318,7 +314,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       MatrixMath.AddRow(predictedY,calib.YMean,predictedY);
     }  
 
-
+/*
     public  override void CalculatePredictedAndResidual(
       DataTable table,
       int whichY,
@@ -385,7 +381,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
       
     }
- 
+ */
 
     public override void CalculateXLeverage(
       DataTable table, int numberOfFactors)
@@ -418,90 +414,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
-    /// <summary>
-    /// This predicts the selected columns/rows against a user choosen calibration model.
-    /// The orientation of spectra is given by the parameter <c>spectrumIsRow</c>.
-    /// </summary>
-    /// <param name="ctrl">The worksheet controller containing the selected data.</param>
-    /// <param name="spectrumIsRow">If true, the spectra is horizontally oriented, else it is vertically oriented.</param>
-    public override void PredictValues(
-      DataTable srctable,
-      IAscendingIntegerCollection selectedColumns,
-      IAscendingIntegerCollection selectedRows,
-      bool spectrumIsRow,
-      int numberOfFactors,
-      DataTable modelTable,
-      DataTable destTable)
-    {
-   
-      PLS2CalibrationModel calibModel;
-      Export(modelTable, out calibModel);
-      MultivariateContentMemento memento = modelTable.GetTableProperty("Content") as MultivariateContentMemento;
-
-      // Fill matrixX with spectra
-      Altaxo.Collections.AscendingIntegerCollection spectralIndices;
-      Altaxo.Collections.AscendingIntegerCollection measurementIndices;
-      
-      
-      spectralIndices = new Altaxo.Collections.AscendingIntegerCollection(selectedColumns);
-      measurementIndices = new Altaxo.Collections.AscendingIntegerCollection(selectedRows);
-      RemoveNonNumericCells(srctable,measurementIndices,spectralIndices);
-
-      // exchange selection if spectrum is column
-      if(!spectrumIsRow)
-      {
-        Altaxo.Collections.AscendingIntegerCollection hlp;
-        hlp = spectralIndices;
-        spectralIndices = measurementIndices;
-        measurementIndices = hlp;
-      }
-      
-      // if there are more data than expected, we have to map the spectral indices
-      if(spectralIndices.Count>calibModel.NumberOfX)
-      {
-        double[] xofx = GetXOfSpectra(srctable,spectrumIsRow,spectralIndices,measurementIndices);
-
-        string errormsg;
-        AscendingIntegerCollection map = MapSpectralX(calibModel.XOfX,VectorMath.ToROVector(xofx),out errormsg);
-        if(map==null)
-          throw new ApplicationException("Can not map spectral data: " + errormsg);
-        else
-        {
-          AscendingIntegerCollection newspectralindices = new AscendingIntegerCollection();
-          for(int i=0;i<map.Count;i++)
-            newspectralindices.Add(spectralIndices[map[i]]);
-          spectralIndices = newspectralindices;
-        }
-      }
-
-      IMatrix matrixX = GetRawSpectra(srctable,spectrumIsRow,spectralIndices,measurementIndices);
-
-      MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(measurementIndices.Count,calibModel.NumberOfY);
-      CalculatePredictedY(calibModel,memento.SpectralPreprocessing,matrixX,numberOfFactors, predictedY,null);
-
-      // now save the predicted y in the destination table
-
-      Altaxo.Data.DoubleColumn labelCol = new Altaxo.Data.DoubleColumn();
-      for(int i=0;i<measurementIndices.Count;i++)
-      {
-        labelCol[i] = measurementIndices[i];
-      }
-      destTable.DataColumns.Add(labelCol,"MeasurementLabel",Altaxo.Data.ColumnKind.Label,0);
-
-      for(int k=0;k<predictedY.Columns;k++)
-      {
-        Altaxo.Data.DoubleColumn predictedYcol = new Altaxo.Data.DoubleColumn();
-
-        for(int i=0;i<measurementIndices.Count;i++)
-        {
-          predictedYcol[i] = predictedY[i,k];
-        }
-        destTable.DataColumns.Add(predictedYcol,"Predicted Y" + k.ToString(), Altaxo.Data.ColumnKind.V,0);
-      }
-
-      
-
-    }
+  
 
    
     public override IROMatrix CalculatePredictionScores(DataTable table, int preferredNumberOfFactors)

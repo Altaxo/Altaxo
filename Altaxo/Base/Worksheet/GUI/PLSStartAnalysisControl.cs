@@ -44,6 +44,8 @@ namespace Altaxo.Worksheet.GUI
     private System.Windows.Forms.RadioButton rbCrossValidationNone;
     private System.Windows.Forms.RadioButton rbCrossValidationEvery;
     private System.Windows.Forms.RadioButton rbCrossValidationGroups;
+    private System.Windows.Forms.ComboBox cbAnalysisMethod;
+    private System.Windows.Forms.Label label2;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -86,13 +88,15 @@ namespace Altaxo.Worksheet.GUI
       this.rbCrossValidationGroups = new System.Windows.Forms.RadioButton();
       this.rbCrossValidationEvery = new System.Windows.Forms.RadioButton();
       this.rbCrossValidationNone = new System.Windows.Forms.RadioButton();
+      this.cbAnalysisMethod = new System.Windows.Forms.ComboBox();
+      this.label2 = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.edMaxNumFactors)).BeginInit();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 8);
+      this.label1.Location = new System.Drawing.Point(16, 64);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(168, 32);
       this.label1.TabIndex = 0;
@@ -100,7 +104,7 @@ namespace Altaxo.Worksheet.GUI
       // 
       // edMaxNumFactors
       // 
-      this.edMaxNumFactors.Location = new System.Drawing.Point(16, 40);
+      this.edMaxNumFactors.Location = new System.Drawing.Point(16, 96);
       this.edMaxNumFactors.Name = "edMaxNumFactors";
       this.edMaxNumFactors.Size = new System.Drawing.Size(168, 20);
       this.edMaxNumFactors.TabIndex = 1;
@@ -112,7 +116,7 @@ namespace Altaxo.Worksheet.GUI
       this.groupBox1.Controls.Add(this.rbCrossValidationGroups);
       this.groupBox1.Controls.Add(this.rbCrossValidationEvery);
       this.groupBox1.Controls.Add(this.rbCrossValidationNone);
-      this.groupBox1.Location = new System.Drawing.Point(16, 72);
+      this.groupBox1.Location = new System.Drawing.Point(16, 128);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(168, 112);
       this.groupBox1.TabIndex = 2;
@@ -145,13 +149,32 @@ namespace Altaxo.Worksheet.GUI
       this.rbCrossValidationNone.Text = "None";
       this.rbCrossValidationNone.CheckedChanged += new System.EventHandler(this.rbCrossValidationNone_CheckedChanged);
       // 
+      // cbAnalysisMethod
+      // 
+      this.cbAnalysisMethod.Location = new System.Drawing.Point(16, 32);
+      this.cbAnalysisMethod.Name = "cbAnalysisMethod";
+      this.cbAnalysisMethod.Size = new System.Drawing.Size(168, 21);
+      this.cbAnalysisMethod.TabIndex = 3;
+      this.cbAnalysisMethod.Text = "comboBox1";
+      this.cbAnalysisMethod.SelectionChangeCommitted += new System.EventHandler(this.cbAnalysisMethod_SelectionChangeCommitted);
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(16, 16);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(100, 16);
+      this.label2.TabIndex = 4;
+      this.label2.Text = "Method:";
+      // 
       // PLSStartAnalysisControl
       // 
+      this.Controls.Add(this.label2);
+      this.Controls.Add(this.cbAnalysisMethod);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.edMaxNumFactors);
       this.Controls.Add(this.label1);
       this.Name = "PLSStartAnalysisControl";
-      this.Size = new System.Drawing.Size(192, 192);
+      this.Size = new System.Drawing.Size(192, 248);
       ((System.ComponentModel.ISupportInitialize)(this.edMaxNumFactors)).EndInit();
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
@@ -170,6 +193,13 @@ namespace Altaxo.Worksheet.GUI
     {
       edMaxNumFactors.Minimum = 1;
       edMaxNumFactors.Value = numFactors;
+    }
+
+    public void InitializeAnalysisMethod(string[] methods, int actMethod)
+    {
+      cbAnalysisMethod.Items.Clear();
+      cbAnalysisMethod.Items.AddRange(methods);
+      cbAnalysisMethod.SelectedIndex = actMethod;
     }
 
     public void InitializeCrossPressCalculation(CrossPRESSCalculationType val)
@@ -218,6 +248,12 @@ namespace Altaxo.Worksheet.GUI
       if(_controller!=null)
         _controller.EhView_CrossValidationSelected(CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements);
 
+    }
+
+    private void cbAnalysisMethod_SelectionChangeCommitted(object sender, System.EventArgs e)
+    {
+      if(_controller!=null)
+        _controller.EhView_AnalysisMethodChanged(cbAnalysisMethod.SelectedIndex);
     }
 
  

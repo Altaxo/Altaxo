@@ -33,6 +33,8 @@ namespace Altaxo.Worksheet.GUI
     MultivariateAnalysisOptions _doc;
     PLSStartAnalysisControl _view;
 
+    System.Collections.ArrayList _methoddictionary = new System.Collections.ArrayList();
+
     public PLSStartAnalysisController(MultivariateAnalysisOptions options)
     {
       _doc = options;
@@ -44,6 +46,7 @@ namespace Altaxo.Worksheet.GUI
       {
         _view.InitializeNumberOfFactors(_doc.MaxNumberOfFactors);
         _view.InitializeCrossPressCalculation(_doc.CrossPRESSCalculation);
+        InitializeAnalysisMethods();
       }
     }
 
@@ -80,6 +83,61 @@ namespace Altaxo.Worksheet.GUI
     {
       _doc.CrossPRESSCalculation = val; 
     }
+
+    static bool ReferencesOwnAssembly(System.Reflection.AssemblyName[] references)
+    {
+      string myassembly = System.Reflection.Assembly.GetCallingAssembly().GetName().FullName;
+
+      foreach(System.Reflection.AssemblyName assname in references)
+        if(assname.FullName==myassembly)
+          return true;
+      return false;
+    }
+
+    static bool IsOwnAssembly(System.Reflection.Assembly ass)
+    {
+      return ass.FullName==System.Reflection.Assembly.GetCallingAssembly().FullName;
+    }
+
+    public void InitializeAnalysisMethods()
+    {
+      _methoddictionary.Clear();
+      System.Collections.ArrayList nameList  = new System.Collections.ArrayList();
+
+      System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+      foreach(System.Reflection.Assembly assembly in assemblies)
+      {
+        if(IsOwnAssembly(assembly) || ReferencesOwnAssembly(assembly.GetReferencedAssemblies()))
+        {
+        
+        Type[] definedtypes = assembly.GetTypes();
+          foreach(Type definedtype in definedtypes)
+          {
+            if(definedtype.IsSubclassOf(typeof(Altaxo.Calc.Regression.Multivariate.WorksheetAnalysis)) && !definedtype.IsAbstract)
+            {
+              Attribute[] descriptionattributes = Attribute.GetCustomAttributes(definedtype,typeof(System.ComponentModel.DescriptionAttribute));
+            
+              string name = 
+                (descriptionattributes.Length>0) ?
+                ((System.ComponentModel.DescriptionAttribute)descriptionattributes[0]).Description :  definedtype.ToString();
+          
+              _methoddictionary.Add(definedtype);
+              nameList.Add(name);
+            }
+          }
+        } // end foreach type
+      } // end foreach assembly 
+      if(_view!=null)
+        _view.InitializeAnalysisMethod((string[])nameList.ToArray(typeof(string)),0);
+      _doc.AnalysisMethod = (System.Type)_methoddictionary[0];
+    }
+
+    public void EhView_AnalysisMethodChanged(int item)
+    {
+      _doc.AnalysisMethod = (System.Type)_methoddictionary[item];
+    }
+
+
     #region IApplyController Members
 
     public bool Apply()
