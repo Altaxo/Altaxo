@@ -253,6 +253,50 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearAxis),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				LinearAxis s = (LinearAxis)obj;
+				info.AddValue("BaseOrg",s.m_BaseOrg);  
+				info.AddValue("BaseEnd",s.m_BaseEnd);  
+				info.AddValue("MajorSpan",s.m_MajorSpan);
+				info.AddValue("MinorTicks",s.m_MinorTicks);
+				info.AddValue("OrgByMajor",s.m_AxisOrgByMajor);
+				info.AddValue("EndByMajor",s.m_AxisEndByMajor);
+
+				info.AddValue("OrgFixed",s.m_AxisOrgFixed);
+				info.AddValue("EndFixed",s.m_AxisEndFixed);
+
+				info.AddValue("Bounds",s.m_DataBounds);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				LinearAxis s = null!=o ? (LinearAxis)o : new LinearAxis();
+
+				s.m_BaseOrg = (double)info.GetDouble("BaseOrg");
+				s.m_BaseEnd = (double)info.GetDouble("BaseEnd");
+
+				s.m_MajorSpan = (double)info.GetDouble("MajorSpan");
+				s.m_MinorTicks = (int)info.GetInt32("MinorTicks");
+
+				s.m_AxisOrgByMajor = (double)info.GetDouble("OrgByMajor");
+				s.m_AxisEndByMajor = (double)info.GetDouble("EndByMajor");
+
+				s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
+				s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
+
+				s.m_DataBounds = (FinitePhysicalBoundaries)info.GetValue("Bounds",s);
+	
+				s.SetCachedValues();
+				// restore the event chain
+				s.m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnBoundariesChanged);
+	
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization of the linear axis.
 		/// </summary>
@@ -675,6 +719,41 @@ namespace Altaxo.Graph
 
 				s.m_DataBounds = (PositiveFinitePhysicalBoundaries)info.GetValue("Bounds",typeof(PositiveFinitePhysicalBoundaries));
 		
+				return s;
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Log10Axis),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				Log10Axis s = (Log10Axis)obj;
+				info.AddValue("Log10Org",s.m_Log10Org);  
+				info.AddValue("Log10End",s.m_Log10End);  
+				info.AddValue("DecadesPerMajor",s.m_DecadesPerMajorTick);
+
+				info.AddValue("OrgFixed",s.m_AxisOrgFixed);
+				info.AddValue("EndFixed",s.m_AxisEndFixed);
+
+				info.AddValue("Bounds",s.m_DataBounds);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				Log10Axis s = null!=o ? (Log10Axis)o : new Log10Axis();
+
+				s.m_Log10Org = (double)info.GetDouble("Log10Org");
+				s.m_Log10End = (double)info.GetDouble("Log10End");
+
+				s.m_DecadesPerMajorTick = (int)info.GetInt32("DecadesPerMajor");
+
+				s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
+				s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
+
+				s.m_DataBounds = (PositiveFinitePhysicalBoundaries)info.GetValue("Bounds",typeof(PositiveFinitePhysicalBoundaries));
+		
+				s.m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnBoundariesChanged);
+
 				return s;
 			}
 		}

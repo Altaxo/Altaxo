@@ -124,16 +124,16 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
 				info.AddValue("Name",s.m_TableName); // name of the Table
-				info.AddBaseValue(s);
+				info.AddBaseValueStandalone("DataCols",s,typeof(Altaxo.Data.DataColumnCollection));
 				info.AddValue("PropCols", s.m_PropertyColumns); // the property columns of that table
 
 			}
-			public object Deserialize(Altaxo.Serialization.Xml.IXmlSerializationInfo	info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo	info, object parent)
 			{
-				Altaxo.Data.DataTable s = new Altaxo.Data.DataTable();
+				Altaxo.Data.DataTable s = null!=o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
 	
 				s.m_TableName = info.GetString("Name");
-				info.GetBaseValue(s,parent);
+				info.GetBaseValueStandalone("DataCols",s,typeof(Altaxo.Data.DataColumnCollection),s);
 				s.m_PropertyColumns = (DataColumnCollection)info.GetValue(s);
 
 				return s;

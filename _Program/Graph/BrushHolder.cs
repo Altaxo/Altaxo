@@ -96,6 +96,47 @@ namespace Altaxo.Graph
 				return s;
 			} // end of SetObjectData
 		} // end of BrushHolderSurrogate0
+
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushHolder),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				BrushHolder s = (BrushHolder)obj;
+				info.AddValue("Type",s.m_BrushType);
+				switch(s.m_BrushType)
+				{
+					case BrushType.SolidBrush:
+						info.AddValue("ForeColor",s.m_ForeColor);
+						break;
+					case BrushType.HatchBrush:
+						info.AddValue("ForeColor",s.m_ForeColor);
+						info.AddValue("BackColor",s.m_BackColor);
+						info.AddValue("HatchStyle",s.m_HatchStyle);
+						break;
+				} // end of switch
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				BrushHolder s = null!=o ? (BrushHolder)o : new BrushHolder(Color.Black);
+
+				s.m_BrushType  = (BrushType)info.GetValue("Type",s);
+				switch(s.m_BrushType)
+				{
+					case BrushType.SolidBrush:
+						s.m_ForeColor = (Color)info.GetValue("ForeColor",s);
+						break;
+					case BrushType.HatchBrush:
+						s.m_ForeColor = (Color)info.GetValue("ForeColor",s);
+						s.m_BackColor = (Color)info.GetValue("BackColor",s);
+						break;
+				}
+				return s;
+			}
+		}
+
+
 		/// <summary>
 		/// Finale measures after deserialization of the linear axis.
 		/// </summary>

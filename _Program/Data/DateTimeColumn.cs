@@ -125,6 +125,33 @@ namespace Altaxo.Data
 			}
 		}
 
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DateTimeColumn),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				Altaxo.Data.DateTimeColumn s = (Altaxo.Data.DateTimeColumn)obj;
+				// serialize the base class
+				info.AddBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn));
+				info.AddArray("Data",s.m_Array,s.m_Count);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				Altaxo.Data.DateTimeColumn s = null!=o ? (Altaxo.Data.DateTimeColumn)o : new Altaxo.Data.DateTimeColumn();
+
+				// deserialize the base class
+				info.GetBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn),parent);
+
+				int count = info.GetInt32Attribute("Count");
+				s.m_Array = new DateTime[count];
+				info.GetArray(s.m_Array,count);
+				s.m_Capacity = null==s.m_Array ? 0 : s.m_Array.Length;
+				return s;
+			}
+		}
+
+
 		public override void OnDeserialization(object obj)
 		{
 			base.OnDeserialization(obj);

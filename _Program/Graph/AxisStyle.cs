@@ -116,6 +116,47 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYLayerAxisStyle),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				XYLayerAxisStyle s = (XYLayerAxisStyle)obj;
+				info.AddValue("Edge",s.m_Edge);
+				info.AddValue("AxisPen",s.m_AxisPen);  
+				info.AddValue("MajorPen",s.m_MajorTickPen);  
+				info.AddValue("MinorPen",s.m_MinorTickPen);
+				info.AddValue("MajorLength",s.m_MajorTickLength);
+				info.AddValue("MinorLength",s.m_MinorTickLength);
+				info.AddValue("MajorOuter",s.m_bOuterMajorTicks);
+				info.AddValue("MajorInner",s.m_bInnerMajorTicks);
+				info.AddValue("MinorOuter",s.m_bOuterMinorTicks);
+				info.AddValue("MinorInner",s.m_bInnerMinorTicks);
+				info.AddValue("AxisPosition",s.m_AxisPosition);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				XYLayerAxisStyle s = null!=o ? (XYLayerAxisStyle)o : new XYLayerAxisStyle();
+				
+				s.m_Edge         = (Edge)info.GetValue("Edge",s);
+				s.m_AxisPen			 = (PenHolder)info.GetValue("AxisPen",s);
+				s.m_MajorTickPen = (PenHolder)info.GetValue("MajorPen",s);
+				s.m_MinorTickPen = (PenHolder)info.GetValue("MinorPen",s);
+
+				s.m_MajorTickLength = (float)info.GetSingle("MajorLength");
+				s.m_MinorTickLength = (float)info.GetSingle("MinorLength");
+				s.m_bOuterMajorTicks = (bool)info.GetBoolean("MajorOuter");
+				s.m_bInnerMajorTicks = (bool)info.GetBoolean("MajorInner");
+				s.m_bOuterMinorTicks = (bool)info.GetBoolean("MinorOuter");
+				s.m_bInnerMinorTicks = (bool)info.GetBoolean("MinorInner");
+				s.m_AxisPosition = (Calc.RelativeOrAbsoluteValue)info.GetValue("AxisPosition",s);
+		
+				return s;
+			}
+		}
+
+	
+
 		/// <summary>
 		/// Finale measures after deserialization of the linear axis.
 		/// </summary>
@@ -147,6 +188,11 @@ namespace Altaxo.Graph
 
 		WireEventChain();
 
+		}
+
+		public XYLayerAxisStyle()
+			: this(EdgeType.Left)
+		{
 		}
 
 		/// <summary>

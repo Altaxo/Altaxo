@@ -124,7 +124,7 @@ namespace Altaxo.Data
 				info.CommitArray();
 
 				// serialize the column scripts
-				info.CreateArray("Scripts",s.m_ColumnScripts.Count);
+				info.CreateArray("ColumnScripts",s.m_ColumnScripts.Count);
 				foreach(System.Collections.DictionaryEntry entry in s.m_ColumnScripts)
 				{
 					info.CreateElement("Script");
@@ -135,17 +135,17 @@ namespace Altaxo.Data
 				info.CommitArray();
 			}
 
-			public object Deserialize(Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				Altaxo.Data.DataColumnCollection s = new Altaxo.Data.DataColumnCollection();
+				Altaxo.Data.DataColumnCollection s = null!=o ? (Altaxo.Data.DataColumnCollection)o : new Altaxo.Data.DataColumnCollection();
 	
 				// deserialize the columns
 				int count = info.OpenArray();
 				for(int i=0;i<count;i++)
 				{
-					object o = info.GetValue(s);
-					if(o!=null)
-						s.Add((DataColumn)o);
+					object col = info.GetValue(s);
+					if(col!=null)
+						s.Add((DataColumn)col);
 				}
 				info.CloseArray(count);
 

@@ -71,6 +71,40 @@ namespace Altaxo.Graph
 			}
 		}
 
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DensityImagePlotItem),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				DensityImagePlotItem s = (DensityImagePlotItem)obj;
+				info.AddValue("Data",s.m_PlotAssociation);  
+				info.AddValue("Style",s.m_PlotStyle);  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				DensityImagePlotItem s = null!=o ? (DensityImagePlotItem)o : new DensityImagePlotItem();
+
+				s.m_PlotAssociation = (D2EquidistantMeshDataAssociation)info.GetValue("Data",s);
+				s.m_PlotStyle = (DensityImagePlotStyle)info.GetValue("Style",s);
+		
+
+				// Restore the event chain
+
+				if(null!=s.m_PlotAssociation)
+				{
+					s.m_PlotAssociation.Changed += new EventHandler(s.OnDataChangedEventHandler);
+				}
+
+				if(null!=s.m_PlotStyle)
+				{
+					s.m_PlotStyle.Changed += new EventHandler(s.OnStyleChangedEventHandler);
+				}
+
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization of the linear axis.
 		/// </summary>

@@ -466,9 +466,9 @@ namespace Altaxo.Data
 			/// <param name="context">The streaming context.</param>
 			/// <param name="selector">The surrogate selector.</param>
 			/// <returns>The deserialized object.</returns>
-			public object Deserialize(Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)info.DeserializationInstance;
+				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)o;
 				// s.m_Table = (Altaxo.Data.DataTable)(info.GetValue("Parent",typeof(Altaxo.Data.DataTable)));
 				
 				s.m_ColumnName = info.GetString("Name");
@@ -478,7 +478,7 @@ namespace Altaxo.Data
 				s.m_Group = info.GetInt32("Group");
 
 				
-				s.m_Parent = parent as Altaxo.Data.DataColumnCollection;
+				// s.m_Parent = parent as Altaxo.Data.DataColumnCollection; // remarks: this is done during parent deserialization!
 				// set the helper data
 				s.m_MinRowChanged=int.MaxValue; // area of rows, which changed during event off period
 				s.m_MaxRowChanged=int.MinValue;

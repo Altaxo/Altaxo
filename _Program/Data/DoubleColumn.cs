@@ -138,15 +138,15 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DoubleColumn s = (Altaxo.Data.DoubleColumn)obj;
 				// serialize the base class
-				info.AddBaseValue(s);
+				info.AddBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn));
 				info.AddArray("Data",s.m_Array,s.m_Count);
 			}
-			public object Deserialize(Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				Altaxo.Data.DoubleColumn s = new Altaxo.Data.DoubleColumn();
+				Altaxo.Data.DoubleColumn s = null!=o ? (Altaxo.Data.DoubleColumn)o : new Altaxo.Data.DoubleColumn();
 
 				// deserialize the base class
-				info.GetBaseValue(s,parent);
+				info.GetBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn),parent);
 
 				int count = info.GetInt32Attribute("Count");
 				s.m_Array = new double[count];

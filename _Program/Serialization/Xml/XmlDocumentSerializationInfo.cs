@@ -186,11 +186,11 @@ namespace Altaxo.Serialization.Xml
 			}
 		}
 
-		public void AddBaseValue(object o)
+		public void AddBaseValueEmbedded(object o, System.Type basetype)
 		{
-			IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(o.GetType().BaseType);
+			IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(basetype);
 			if(null==ss)
-				throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized",o.GetType().BaseType));
+				throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized",basetype));
 			else
 			{
 				ss.Serialize(o,this);
@@ -198,6 +198,10 @@ namespace Altaxo.Serialization.Xml
 		}
 
 
+		public object GetValue(string name, object parentobject)
+		{
+			return GetValue(parentobject);
+		}
 		public object GetValue(object parentobject)
 		{
 			if(m_CurrentNode.HasAttribute("Type"))
@@ -211,7 +215,7 @@ namespace Altaxo.Serialization.Xml
 				{
 					PushNodeStack();
 					m_CurrentNode = (XmlElement)m_CurrentNode.FirstChild;
-					object retvalue =  surr.Deserialize(this,parentobject);
+					object retvalue =  surr.Deserialize(null,this,parentobject);
 					PopNodeStack();
 					m_CurrentNode = (XmlElement)m_CurrentNode.NextSibling;
 					return retvalue;
@@ -244,9 +248,30 @@ namespace Altaxo.Serialization.Xml
 		public object DeserializationInstance { get { return null; } }
 
 
-		public void GetBaseValue(object instance, object parent)
+		public void AddBaseValueStandalone(string name, object o, System.Type basetype)
 		{
 		}
+	
+		public void GetBaseValueEmbedded(object instance, System.Type basetype, object parent)
+		{
+		}
+		public void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent)
+		{
+		}
+
+		public void AddArray(string name, DateTime[] val, int count) {}
+		public void AddArray(string name, string[] val, int count) {}
+
+		public void GetArray(string[] val, int count) {}
+		public void GetArray(DateTime[] val, int count) {}
+		
+		public void AddValue(string name, bool val) {}
+		public bool GetBoolean() { return false; }
+		public bool GetBoolean(string name) { return false; }
+		public double GetDouble(string name) { return 0; }
+			public double GetSingle(string name) { return 0; }
+			public double GetSingle() { return 0; }
+		public void AddValue(string name, float val) {}
 		#endregion
 	}
 }

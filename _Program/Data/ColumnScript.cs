@@ -166,6 +166,34 @@ namespace Altaxo.Data
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.ColumnScript),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				Altaxo.Data.ColumnScript s = (Altaxo.Data.ColumnScript)obj;
+		
+				info.AddValue("Style",(int)s.m_ScriptStyle);
+				info.AddValue("Text",s.m_ScriptText);
+				info.AddValue("From",s.m_RowFrom);
+				info.AddValue("Cond",s.m_RowCondition);
+				info.AddValue("To",s.m_RowTo);
+				info.AddValue("Inc",s.m_RowInc);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				Altaxo.Data.ColumnScript s = null!=o ? (Altaxo.Data.ColumnScript)o : new Altaxo.Data.ColumnScript();
+				
+				s.m_ScriptStyle = (ScriptStyle)info.GetInt32("Style");
+				s.m_ScriptText = info.GetString("Text");
+				s.m_RowFrom = info.GetString("From");
+				s.m_RowCondition = info.GetString("Cond");
+				s.m_RowTo = info.GetString("To");
+				s.m_RowInc = info.GetString("Inc");
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Is called when deserialization has finished.
 		/// </summary>

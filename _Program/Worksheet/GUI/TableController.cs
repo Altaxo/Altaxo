@@ -411,6 +411,12 @@ namespace Altaxo.Worksheet
 			mi.Click += new EventHandler(EhMenuFilePrint_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 
+			// File - Save Table As
+			mi = new MenuItem("Save Table As..");
+			mi.Click += new EventHandler(EhMenuFileSaveTableAs_OnClick);
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+
+
 			// ------------------------------------------------------------------
 			// File - Import (Popup)
 			// ------------------------------------------------------------------
@@ -694,6 +700,28 @@ namespace Altaxo.Worksheet
 		protected void EhMenuFilePrint_OnClick(object sender, System.EventArgs e)
 		{
 		}
+
+		protected void EhMenuFileSaveTableAs_OnClick(object sender, System.EventArgs e)
+		{
+			System.IO.Stream myStream ;
+			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+ 
+			saveFileDialog1.Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*"  ;
+			saveFileDialog1.FilterIndex = 1 ;
+			saveFileDialog1.RestoreDirectory = true ;
+ 
+			if(saveFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				if((myStream = saveFileDialog1.OpenFile()) != null)
+				{
+					Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo(myStream,true);
+					info.AddValue("Table",this.DataTable);
+					info.Finish();
+					myStream.Close();
+				}
+			}
+		}
+
 		// ------------------------------------------------------------------
 		// File - Import (Popup)
 		// ------------------------------------------------------------------

@@ -22,6 +22,7 @@ namespace Altaxo.Serialization.Xml
 		XmlArrayEncoding m_DefaultArrayEncoding = XmlArrayEncoding.Xml;
 
 		private const int _size_of_double=8;
+		private const int _size_of_DateTime=8;
 
 		private object m_DeserializationInstance;
 
@@ -71,6 +72,10 @@ namespace Altaxo.Serialization.Xml
 			set {	m_DefaultArrayEncoding = value;	}
 		}
 
+		public void AddValue(string name, bool val)
+		{
+			m_Writer.WriteElementString(name,XmlConvert.ToString(val));
+		}
 		public void AddValue(string name, int val)
 		{
 			m_Writer.WriteElementString(name,XmlConvert.ToString(val));
@@ -84,6 +89,14 @@ namespace Altaxo.Serialization.Xml
 			m_Writer.WriteAttributeString(name,XmlConvert.ToString(val));
 		}
 
+		public bool GetBoolean()
+		{
+			return XmlConvert.ToBoolean(m_Reader.ReadElementString());
+		}
+		public bool GetBoolean(string name)
+		{
+			return XmlConvert.ToBoolean(m_Reader.ReadElementString());
+		}
 		public int GetInt32()
 		{
 			return XmlConvert.ToInt32(m_Reader.ReadElementString());
@@ -91,6 +104,24 @@ namespace Altaxo.Serialization.Xml
 		public int GetInt32(string name)
 		{
 			return GetInt32();
+		}
+
+		public double GetSingle()
+		{
+			return XmlConvert.ToSingle(m_Reader.ReadElementString());
+		}
+		public double GetSingle(string name)
+		{
+			return XmlConvert.ToSingle(m_Reader.ReadElementString());
+		}
+
+		public double GetDouble()
+		{
+			return XmlConvert.ToDouble(m_Reader.ReadElementString());
+		}
+		public double GetDouble(string name)
+		{
+			return XmlConvert.ToDouble(m_Reader.ReadElementString());
 		}
 
 		public string GetString()
@@ -107,6 +138,10 @@ namespace Altaxo.Serialization.Xml
 			return XmlConvert.ToInt32(m_Reader[name]);
 		}
 
+		public void AddValue(string name, float val)
+		{
+			m_Writer.WriteElementString(name, XmlConvert.ToString(val));
+		}
 		public void AddValue(string name, double val)
 		{
 			m_Writer.WriteElementString(name, XmlConvert.ToString(val));
@@ -146,6 +181,48 @@ namespace Altaxo.Serialization.Xml
 				{
 					AddArrayOfPrimitiveType(name,val,count,_size_of_double,m_DefaultArrayEncoding);
 				}
+			} // count>0
+			this.CommitArray();
+		}
+
+		public void AddArray(string name, DateTime[] val, int count)
+		{
+			this.CreateArray(name,count);
+
+			if(count>0)
+			{
+				if(m_DefaultArrayEncoding==XmlArrayEncoding.Xml)
+				{
+					m_Writer.WriteAttributeString("Encoding","Xml");
+					m_Writer.WriteStartElement("e");
+					m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[0]));
+					for(int i=1;i<count;i++)
+					{
+						m_Writer.WriteRaw("</e><e>");
+						m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i]));
+					}
+					m_Writer.WriteEndElement(); // node "e"
+				
+				}
+				else
+				{
+					AddArrayOfPrimitiveType(name,val,count,_size_of_DateTime,m_DefaultArrayEncoding);
+				}
+			} // count>0
+			this.CommitArray();
+		}
+
+		public void AddArray(string name, string[] val, int count)
+		{
+			this.CreateArray(name,count);
+
+			if(count>0)
+			{
+				for(int i=0;i<count;i++)
+				{
+					m_Writer.WriteElementString("e",val[i]);
+				}
+			
 			} // count>0
 			this.CommitArray();
 		}
@@ -268,10 +345,52 @@ namespace Altaxo.Serialization.Xml
 			}
 		}
 
-		public double GetDouble()
+		public void GetArray(DateTime[] val, int count)
 		{
-			return XmlConvert.ToDouble(m_Reader.ReadElementString());
+			// Attribute must be readed before ReadStartElement
+			if(count>0)
+			{
+				m_Reader.ReadStartElement(); // read the first inner element
+
+				switch(m_Reader.Name)
+				{
+					default:
+						for(int i=0;i<count;i++)
+							val[i] = XmlConvert.ToDateTime(m_Reader.ReadElementString());
+						break;
+					case "Base64":
+						GetArrayOfPrimitiveTypeBase64(val,count,_size_of_DateTime);
+						break;
+					case "BinHex":
+						GetArrayOfPrimitiveTypeBinHex(val,count,_size_of_DateTime);
+						break;
+				} // end of switch
+				m_Reader.ReadEndElement(); // read the outer XmlElement, i.e. "DoubleArray"
+			} // if count>0
+			else
+			{
+				m_Reader.Read();
+			}
 		}
+
+		public void GetArray(string[] val, int count)
+		{
+			// Attribute must be readed before ReadStartElement
+			if(count>0)
+			{
+				m_Reader.ReadStartElement(); // read the first inner element
+
+				for(int i=0;i<count;i++)
+					val[i] = m_Reader.ReadElementString();
+				m_Reader.ReadEndElement(); // read the outer XmlElement, i.e. "DoubleArray"
+			} // if count>0
+			else
+			{
+				m_Reader.Read();
+			}
+		}
+
+	
 
 		public void OpenElement()
 		{
@@ -308,19 +427,35 @@ namespace Altaxo.Serialization.Xml
 			}		
 		}
 
-		public void AddBaseValue(object o)
+		public void AddBaseValueEmbedded(object o, System.Type basetype)
 		{
-			IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(o.GetType().BaseType);
+			IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(basetype);
 			if(null==ss)
-				throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized",o.GetType().BaseType));
+				throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized",basetype));
 			else
 			{
 				ss.Serialize(o,this);
 			}		
 		}
+		public void AddBaseValueStandalone(string name, object o, System.Type basetype)
+		{
+			IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(basetype);
+			if(null==ss)
+				throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized",basetype));
+			else
+			{
+				m_Writer.WriteStartElement(name);
+				m_Writer.WriteAttributeString("Type",m_SurrogateSelector.GetFullyQualifiedTypeName(basetype));
+				ss.Serialize(o,this);
+				m_Writer.WriteEndElement();
+			}		
+		}
 
 
-
+		public object GetValue(string name, object parentobject)
+		{
+			return GetValue(parentobject);
+		}
 		public object GetValue(object parentobject)
 		{
 			string type = m_Reader.GetAttribute("Type");
@@ -335,7 +470,7 @@ namespace Altaxo.Serialization.Xml
 				else
 				{
 					m_Reader.ReadStartElement();
-					object retvalue =  surr.Deserialize(this,parentobject);
+					object retvalue =  surr.Deserialize(null,this,parentobject);
 					m_Reader.ReadEndElement();
 					return retvalue;
 				}
@@ -346,16 +481,26 @@ namespace Altaxo.Serialization.Xml
 			}
 		}
 
-		public void GetBaseValue(object instance, object parent)
+		public void GetBaseValueEmbedded(object instance, System.Type basetype, object parent )
 		{
-			IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(instance.GetType().BaseType);
+			IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(basetype);
 			if(null==ss)
-				throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized",instance.GetType().BaseType));
+				throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized",basetype));
 			else
 			{
-				this.m_DeserializationInstance = instance;
-				ss.Deserialize(this,parent);
-				this.m_DeserializationInstance = null;
+				ss.Deserialize(instance,this,parent);
+			}		
+		}
+		public void GetBaseValueStandalone(string name, object instance, System.Type basetype, object parent)
+		{
+			IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(basetype);
+			if(null==ss)
+				throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized",basetype));
+			else
+			{
+				m_Reader.ReadStartElement();
+				ss.Deserialize(instance,this,parent);
+				m_Reader.ReadEndElement();
 			}		
 		}
 

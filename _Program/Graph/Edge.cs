@@ -30,6 +30,23 @@ namespace Altaxo.Graph
 	[Serializable]
 	public enum EdgeType { Left=0, Bottom=1, Right=2, Top=3 }
 
+
+	
+	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EdgeType),0)]
+	public class EdgeTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+	{
+		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+		{
+			info.AddValue("Value",System.Enum.GetName(typeof(EdgeType),obj));  
+		}
+		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+		{
+			string val = info.GetString("Value");
+			return System.Enum.Parse(typeof(EdgeType),val,true);
+		}
+	}
+
+
 	/// <summary>
 	/// Edge provides some common functions that apply to one of the
 	/// edges of a rectangular area (left, right, bottom, top).
@@ -38,6 +55,27 @@ namespace Altaxo.Graph
 	public struct Edge
 	{
 		private EdgeType m_StyleType;
+
+
+		#region Serialization
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Edge),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				Edge s = (Edge)obj;
+				info.AddValue("EdgeType",s.m_StyleType);  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+
+				EdgeType type = (EdgeType)info.GetValue("EdgeType",null);
+				Edge s = null!=o ? (Edge)o : new Edge(type);
+				return s;
+			}
+		}
+		#endregion
+
 
 		public Edge(EdgeType st)
 		{
