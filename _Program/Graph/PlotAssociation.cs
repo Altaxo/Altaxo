@@ -92,6 +92,10 @@ namespace Altaxo.Graph
 		protected Altaxo.Data.IReadableColumn m_xColumn; // the X-Column
 		protected Altaxo.Data.IReadableColumn m_yColumn; // the Y-Column
 
+
+		protected int m_PlotRangeStart = 0;
+		protected int m_PlotRangeLength  = int.MaxValue;
+
 		// cached or temporary data
 		protected PhysicalBoundaries m_xBoundaries;
 		protected PhysicalBoundaries m_yBoundaries;
@@ -197,6 +201,9 @@ namespace Altaxo.Graph
 		{
 			XColumn = from.XColumn; // also wires event, do not clone the column data here!!!
 			YColumn = from.YColumn; // wires event, do not clone the column data here!!!
+
+			this.m_PlotRangeStart = from.m_PlotRangeStart;
+			this.m_PlotRangeLength  = from.m_PlotRangeLength;
 
 			this.SetXBoundsFromTemplate( new FinitePhysicalBoundaries() );
 			this.SetYBoundsFromTemplate( new FinitePhysicalBoundaries() );
@@ -360,18 +367,23 @@ namespace Altaxo.Graph
 			this.m_xBoundaries.Reset();
 			this.m_yBoundaries.Reset();
 
-			int len = int.MaxValue;
+			System.Diagnostics.Debug.Assert(m_PlotRangeStart>=0);
+
+			int end = this.m_PlotRangeLength;
+			if(end<this.m_PlotRangeLength)
+				end += m_PlotRangeStart;
+
 			if(m_xColumn is IDefinedCount)
-				len = System.Math.Min(len,((IDefinedCount)m_xColumn).Count);
+				end = System.Math.Min(end,((IDefinedCount)m_xColumn).Count);
 			if(m_yColumn is IDefinedCount)
-				len = System.Math.Min(len,((IDefinedCount)m_yColumn).Count);
+				end = System.Math.Min(end,((IDefinedCount)m_yColumn).Count);
 
 			// if both columns are indefinite long, we set the length to zero
-			if(len==int.MaxValue)
-				len=0;
+			if(end==int.MaxValue || end<0)
+				end=0;
 
 
-			for(int i=0;i<len;i++)
+			for(int i=m_PlotRangeStart;i<end;i++)
 			{
 				if(!m_xColumn.IsElementEmpty(i) && !m_yColumn.IsElementEmpty(i)) 
 				{
@@ -405,5 +417,23 @@ namespace Altaxo.Graph
 			if(null!=Changed)
 				Changed(this,new System.EventArgs());
 		}
+
+		public int PlotRangeStart
+		{
+			get { return this.m_PlotRangeStart; }
+			set
+			{
+				m_PlotRangeStart = value<0 ? 0 : value;
+			}
+		}
+
+		public int PlotRangeLength
+		{
+			get { return this.m_PlotRangeLength; }
+			set { this.m_PlotRangeLength = value<0 ? 0 : value; }
+		}
+
+		
+		
 	}
 }

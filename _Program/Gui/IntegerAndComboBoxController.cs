@@ -3,7 +3,7 @@ using System;
 namespace Altaxo.Gui
 {
 	#region Interfaces
-	public interface IIntegerAndComboBoxController : Main.IMVCController
+	public interface IIntegerAndComboBoxController : Main.IMVCController, Main.IApplyController
 	{
 		/// <summary>
 		/// Get/sets the view this controller controls.
@@ -82,10 +82,10 @@ namespace Altaxo.Gui
 
 			if(View!=null)
 			{
-				View.IntegerLabel_Initialize(m_IntegerLabelText);
-				View.IntegerEdit_Initialize(m_IntegerMinimum,m_IntegerMaximum,m_IntegerValue);
 				View.ComboBoxLabel_Initialize(m_ComboBoxLabelText);
 				View.ComboBox_Initialize(m_ComboBoxItems,m_SelectedItem);
+				View.IntegerLabel_Initialize(m_IntegerLabelText);
+				View.IntegerEdit_Initialize(m_IntegerMinimum,m_IntegerMaximum,m_IntegerValue);
 			}
 		}
 
@@ -107,6 +107,20 @@ namespace Altaxo.Gui
 			}
 		}
 	
+		public bool Apply()
+		{
+			return true; // all is done on the fly, we don't need actions here
+		}
+
+		public ListBoxEntry SelectedItem
+		{
+			get { return m_SelectedItem; }
+		}
+
+		public int IntegerValue
+		{
+			get { return this.m_IntegerValue; }
+		}
 
 		#region IMVCController Members
 

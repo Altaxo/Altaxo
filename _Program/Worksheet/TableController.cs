@@ -893,18 +893,22 @@ namespace Altaxo.Worksheet
 				System.Windows.Forms.MessageBox.Show(this.View.TableViewWindow,msg);
 		}
 		protected void EhMenuWorksheetAddColumns_OnClick(object sender, System.EventArgs e)
-		{
+		{/*
 			Altaxo.Data.DoubleColumn nc = new Altaxo.Data.DoubleColumn(this.DataTable.FindNewColumnName());
 			this.DataTable.Add(nc);
 			this.View.TableAreaInvalidate();
+			*/
 
+			Altaxo.Gui.DialogFactory.ShowAddColumnsDialog(this.View.TableViewForm,this.DataTable,false);
 		}
 		protected void EhMenuWorksheetAddPropertyColumns_OnClick(object sender, System.EventArgs e)
 		{
-			Altaxo.Data.TextColumn nc = new Altaxo.Data.TextColumn(this.DataTable.PropCols.FindNewColumnName());
+/*
+ 			Altaxo.Data.TextColumn nc = new Altaxo.Data.TextColumn(this.DataTable.PropCols.FindNewColumnName());
 			this.DataTable.PropCols.Add(nc);
 			this.View.TableAreaInvalidate();
-
+*/
+			Altaxo.Gui.DialogFactory.ShowAddColumnsDialog(this.View.TableViewForm,this.DataTable,true);
 		}
 
 		// ******************************************************************

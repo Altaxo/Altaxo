@@ -494,14 +494,9 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Gui\IntegerAndComboBoxControl.cs"
-                    SubType = "UserControl"
+                    RelPath = "Gui\DialogFactory.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\IntegerAndComboBoxControl.resx"
-                    DependentUpon = "IntegerAndComboBoxControl.cs"
-                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Gui\IntegerAndComboBoxController.cs"
@@ -512,6 +507,16 @@
                     RelPath = "Gui\ListBoxEntry.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\SpinAndComboBoxControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\SpinAndComboBoxControl.resx"
+                    DependentUpon = "SpinAndComboBoxControl.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Gui\MWControls\EventArgs.cs"

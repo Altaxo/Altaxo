@@ -216,10 +216,12 @@ namespace Altaxo.Graph
 			if(null!=dt)
 			{
 				node.Nodes.Clear();
-				for(int i=0;i<dt.ColumnCount;i++)
+				TreeNode[] toadd = new TreeNode[dt.ColumnCount];
+				for(int i=0;i<toadd.Length;i++)
 				{
-					node.Nodes.Add(new TreeNode(dt[i].ColumnName));
+					toadd[i] = new TreeNode(dt[i].ColumnName);
 				}
+				node.Nodes.AddRange(toadd);
 			}
 			
 		}

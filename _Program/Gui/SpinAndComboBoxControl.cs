@@ -72,7 +72,7 @@ namespace Altaxo.Gui
 																																		0});
 			this.m_IntegerUpDown.Name = "m_IntegerUpDown";
 			this.m_IntegerUpDown.Size = new System.Drawing.Size(216, 20);
-			this.m_IntegerUpDown.TabIndex = 0;
+			this.m_IntegerUpDown.TabIndex = 1;
 			this.m_IntegerUpDown.Value = new System.Decimal(new int[] {
 																																	1,
 																																	0,
@@ -84,10 +84,11 @@ namespace Altaxo.Gui
 			// 
 			this.m_ComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right)));
+			this.m_ComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_ComboBox.Location = new System.Drawing.Point(8, 144);
 			this.m_ComboBox.Name = "m_ComboBox";
 			this.m_ComboBox.Size = new System.Drawing.Size(216, 21);
-			this.m_ComboBox.TabIndex = 1;
+			this.m_ComboBox.TabIndex = 3;
 			this.m_ComboBox.SelectionChangeCommitted += new System.EventHandler(this.EhComboBox_SelectionChangeCommit);
 			// 
 			// m_IntegerLabel
@@ -97,7 +98,7 @@ namespace Altaxo.Gui
 			this.m_IntegerLabel.Location = new System.Drawing.Point(8, 16);
 			this.m_IntegerLabel.Name = "m_IntegerLabel";
 			this.m_IntegerLabel.Size = new System.Drawing.Size(208, 40);
-			this.m_IntegerLabel.TabIndex = 2;
+			this.m_IntegerLabel.TabIndex = 0;
 			this.m_IntegerLabel.Text = "Lorem ipsum";
 			this.m_IntegerLabel.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 
@@ -108,7 +109,7 @@ namespace Altaxo.Gui
 			this.m_ComboBoxLabel.Location = new System.Drawing.Point(8, 104);
 			this.m_ComboBoxLabel.Name = "m_ComboBoxLabel";
 			this.m_ComboBoxLabel.Size = new System.Drawing.Size(208, 32);
-			this.m_ComboBoxLabel.TabIndex = 3;
+			this.m_ComboBoxLabel.TabIndex = 2;
 			this.m_ComboBoxLabel.Text = "Lorem ipsum";
 			this.m_ComboBoxLabel.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 			// 

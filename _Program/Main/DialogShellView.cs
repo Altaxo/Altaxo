@@ -64,9 +64,9 @@ namespace Altaxo.Main
 		private void InitializeComponent()
 		{
 			this.m_ButtonPanel = new System.Windows.Forms.Panel();
-			this.m_btOK = new System.Windows.Forms.Button();
-			this.m_btCancel = new System.Windows.Forms.Button();
 			this.m_btApply = new System.Windows.Forms.Button();
+			this.m_btCancel = new System.Windows.Forms.Button();
+			this.m_btOK = new System.Windows.Forms.Button();
 			this.m_ButtonPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -81,14 +81,14 @@ namespace Altaxo.Main
 			this.m_ButtonPanel.Size = new System.Drawing.Size(292, 40);
 			this.m_ButtonPanel.TabIndex = 0;
 			// 
-			// m_btOK
+			// m_btApply
 			// 
-			this.m_btOK.Location = new System.Drawing.Point(16, 8);
-			this.m_btOK.Name = "m_btOK";
-			this.m_btOK.Size = new System.Drawing.Size(56, 24);
-			this.m_btOK.TabIndex = 0;
-			this.m_btOK.Text = "OK";
-			this.m_btOK.Click += new System.EventHandler(this.EhButtonOK_Click);
+			this.m_btApply.Location = new System.Drawing.Point(192, 8);
+			this.m_btApply.Name = "m_btApply";
+			this.m_btApply.Size = new System.Drawing.Size(72, 24);
+			this.m_btApply.TabIndex = 2;
+			this.m_btApply.Text = "Apply";
+			this.m_btApply.Click += new System.EventHandler(this.EhButtonApply_Click);
 			// 
 			// m_btCancel
 			// 
@@ -99,14 +99,14 @@ namespace Altaxo.Main
 			this.m_btCancel.Text = "Cancel";
 			this.m_btCancel.Click += new System.EventHandler(this.EhButtonCancel_Click);
 			// 
-			// m_btApply
+			// m_btOK
 			// 
-			this.m_btApply.Location = new System.Drawing.Point(192, 8);
-			this.m_btApply.Name = "m_btApply";
-			this.m_btApply.Size = new System.Drawing.Size(72, 24);
-			this.m_btApply.TabIndex = 2;
-			this.m_btApply.Text = "Apply";
-			this.m_btApply.Click += new System.EventHandler(this.EhButtonApply_Click);
+			this.m_btOK.Location = new System.Drawing.Point(16, 8);
+			this.m_btOK.Name = "m_btOK";
+			this.m_btOK.Size = new System.Drawing.Size(56, 24);
+			this.m_btOK.TabIndex = 0;
+			this.m_btOK.Text = "OK";
+			this.m_btOK.Click += new System.EventHandler(this.EhButtonOK_Click);
 			// 
 			// DialogShellView
 			// 
@@ -115,12 +115,14 @@ namespace Altaxo.Main
 			this.Controls.Add(this.m_ButtonPanel);
 			this.Name = "DialogShellView";
 			this.Text = "DialogShellView";
+			this.Load += new System.EventHandler(this.EhView_Load);
 			this.m_ButtonPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
 		#endregion
 
+	
 		private void EhButtonOK_Click(object sender, System.EventArgs e)
 		{
 			if(null!=m_Controller)
@@ -138,6 +140,11 @@ namespace Altaxo.Main
 			if(null!=m_Controller)
 				m_Controller.EhApply();
 
+		}
+
+		private void EhView_Load(object sender, System.EventArgs e)
+		{
+			this.ActiveControl = m_HostedControl;
 		}
 		#region IDialogShellView Members
 
@@ -159,6 +166,16 @@ namespace Altaxo.Main
 			{
 				m_Controller = value;
 			}
+		}
+
+		public bool ApplyVisible
+		{
+			set { this.m_btApply.Visible = value; }
+		}
+
+		public string Title
+		{
+			set { this.Text = value; }
 		}
 
 		#endregion

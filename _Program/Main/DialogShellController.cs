@@ -18,6 +18,16 @@ namespace Altaxo.Main
 		/// Get / sets the controler of this view.
 		/// </summary>
 		IDialogShellController Controller { get; set; }
+
+		/// <summary>
+		/// Sets if the Apply button should be visible.
+		/// </summary>
+		bool ApplyVisible { set; }
+
+		/// <summary>
+		/// Sets the title
+		/// </summary>
+		string Title { set; }
 	}
 
 	/// <summary>
@@ -65,6 +75,8 @@ namespace Altaxo.Main
 		private IDialogShellView m_View;
 		private IApplyController m_HostedController;
 
+		private string m_Title = String.Empty;
+		private bool   m_ApplyVisible = true;
 
 		/// <summary>
 		/// Creates the controller.
@@ -75,8 +87,29 @@ namespace Altaxo.Main
 		{
 			View = view;
 			m_HostedController = hostedController;
+			SetElements(true);
 		}
 
+		/// <summary>
+		/// Creates the controller.
+		/// </summary>
+		/// <param name="view">The view this controller is controlling.</param>
+		/// <param name="hostedController">The controller that controls the UserControl shown in the client area of the form.</param>
+		/// <param name="title">Title of the dialog.</param>
+		/// <param name="applyvisible">Indicates if the Apply button is visible or not.</param>
+		public DialogShellController(
+			IDialogShellView view, 
+			IApplyController hostedController,
+			string title,
+			bool   applyvisible)
+		{
+			View = view;
+			m_HostedController = hostedController;
+			m_Title = title;
+			m_ApplyVisible = applyvisible;
+
+			SetElements(true);
+		}
 		/// <summary>
 		/// Get / sets the view of this controller.
 		/// </summary>
@@ -85,8 +118,26 @@ namespace Altaxo.Main
 			get { return m_View; }
 			set
 			{
+				if(null!=m_View)
+					m_View.Controller = null;
+
 				m_View = value;
-				m_View.Controller = this;
+				
+				if(null!=m_View)
+				{
+					m_View.Controller = this;
+					SetElements(false);
+				}
+			}
+		}
+
+		void SetElements(bool bInit)
+		{
+
+			if(null!=View)
+			{
+				View.Title = m_Title;
+				View.ApplyVisible = m_ApplyVisible;
 			}
 		}
 
