@@ -622,6 +622,18 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #region Cross validation functions
 
+    /// <summary>
+    /// Get the cross predicted error sum of squares for the number of factors=0...numFactors.
+    /// </summary>
+    /// <param name="xOfX">The spectral wavelength values corresponding to the spectral bins.</param>
+    /// <param name="X">Matrix of spectra (a spectrum = a row in the matrix).</param>
+    /// <param name="Y">Matrix of y values (e.g. concentrations).</param>
+    /// <param name="numFactors">Maximum number of factors to calculate the cross PRESS for.</param>
+    /// <param name="groupingStrategy">The strategy how to group the spectra for cross prediction.</param>
+    /// <param name="preprocessOptions">Information how to preprocess the data.</param>
+    /// <param name="regress">The type of regression (e.g. PCR, PLS1, PLS2) provided as an empty regression object.</param>
+    /// <param name="crossPRESS">The vector of CROSS press values. Note that this vector has the length numFactor+1.</param>
+    /// <returns>The mean number of spectra used for prediction.</returns>
     public static double GetCrossPRESS(
       IROVector xOfX,
       IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
@@ -642,6 +654,18 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
+    /// <summary>
+    /// Calculates the cross predicted y values.
+    /// </summary>
+    /// <param name="xOfX">The spectral wavelength values corresponding to the spectral bins.</param>
+    /// <param name="X">Matrix of spectra (a spectrum = a row in the matrix).</param>
+    /// <param name="Y">Matrix of y values (e.g. concentrations).</param>
+    /// <param name="numFactors">Number of factors used for calculation.</param>
+    /// <param name="groupingStrategy">The strategy how to group the spectra for cross prediction.</param>
+    /// <param name="preprocessOptions">Information how to preprocess the data.</param>
+    /// <param name="regress">The type of regression (e.g. PCR, PLS1, PLS2) provided as an empty regression object.</param>
+    /// <param name="yCrossPredicted">Matrix of cross predicted y values. Must be of same dimension as the Y matrix.</param>
+    /// <returns>Mean number of spectra used for cross prediction.</returns>
     public static double GetCrossYPredicted(
       IROVector xOfX,
       IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
@@ -661,6 +685,18 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
+    /// <summary>
+    /// Calculates the spectral residuals obtained from cross validation.
+    /// </summary>
+    /// <param name="xOfX">The spectral wavelength values corresponding to the spectral bins.</param>
+    /// <param name="X">Matrix of spectra (a spectrum = a row in the matrix).</param>
+    /// <param name="Y">Matrix of y values (e.g. concentrations).</param>
+    /// <param name="numFactors">Number of factors used for calculation.</param>
+    /// <param name="groupingStrategy">The strategy how to group the spectra for cross prediction.</param>
+    /// <param name="preprocessOptions">Information how to preprocess the data.</param>
+    /// <param name="regress">The type of regression (e.g. PCR, PLS1, PLS2) provided as an empty regression object.</param>
+    /// <param name="crossXResiduals">Returns the matrix of spectral residuals</param>
+    /// <returns>Mean number of spectra used for prediction.</returns>
     public static double GetCrossXResiduals(
       IROVector xOfX,
       IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
@@ -681,6 +717,11 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #endregion
 
+    /// <summary>
+    /// Calculates the prediction scores.
+    /// </summary>
+    /// <param name="numberOfFactors">Number of factors used for calculation.</param>
+    /// <returns>The prediction score matrix. This matrix has the dimensions (NumberOfX, NumberOfY).</returns>
     public virtual IROMatrix GetPredictionScores(int numberOfFactors)
     {
       IMatrix result = new MatrixMath.BEMatrix(InternalCalibrationModel.NumberOfX,InternalCalibrationModel.NumberOfY);
@@ -688,6 +729,12 @@ namespace Altaxo.Calc.Regression.Multivariate
       return result;
     }
 
+    /// <summary>
+    /// Calculates the spectral leverage from preprocessed spectra.
+    /// </summary>
+    /// <param name="matrixX">Matrix of spectra (a spectrum = a row in the matrix).</param>
+    /// <param name="numFactors">Number of factors used for calculation.</param>
+    /// <returns>Matrix of spectral leverages. Normally, this is a (NumberOfPoints,1) matrix, with exception of PLS1, where it is a (NumberOfPoints,NumberOfY) matrix.</returns>
     public virtual IROMatrix GetXLeverageFromPreprocessed(IROMatrix matrixX, int numFactors)
     {
       IMatrix result = new MatrixMath.BEMatrix(matrixX.Rows,1);
@@ -695,12 +742,25 @@ namespace Altaxo.Calc.Regression.Multivariate
       return result;
     }
 
+    /// <summary>
+    /// Calculates the spectral leverage from raw spectra.
+    /// </summary>
+    /// <param name="preprocessOptions"></param>
+    /// <param name="matrixX">Matrix of spectra (a spectrum = a row in the matrix).</param>
+    /// <param name="numFactors">Number of factors used for calculation.</param>
+    /// <returns>Matrix of spectral leverages. Normally, this is a (NumberOfPoints,1) matrix, with exception of PLS1, where it is a (NumberOfPoints,NumberOfY) matrix.</returns>
     public virtual IROMatrix GetXLeverageFromRaw(SpectralPreprocessingOptions preprocessOptions, IMatrix matrixX, int numFactors)
     {
       MultivariateRegression.PreprocessSpectraForPrediction(InternalCalibrationModel,preprocessOptions,matrixX);
       return GetXLeverageFromPreprocessed(matrixX,numFactors);
     }
 
+    /// <summary>
+    /// Calculates the spectral leverage from raw spectra.
+    /// </summary>
+    /// <param name="matrixX">Matrix of spectra (a spectrum = a row in the matrix).</param>
+    /// <param name="numFactors">Number of factors used for calculation.</param>
+    /// <returns>Matrix of spectral leverages. Normally, this is a (NumberOfPoints,1) matrix, with exception of PLS1, where it is a (NumberOfPoints,NumberOfY) matrix.</returns>
     public virtual IROMatrix GetXLeverageFromRaw(IMatrix matrixX, int numFactors)
     {
       return GetXLeverageFromRaw(InternalCalibrationModel.PreprocessingModel.PreprocessOptions,matrixX,numFactors);
