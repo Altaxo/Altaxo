@@ -1161,48 +1161,176 @@ namespace Altaxo.Worksheet
 		/// </remarks>
 		public static void PasteFromTable(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
 		{
-			Altaxo.Data.DataTable desttable = dg.DataTable;
-			if(!dg.AreColumnsOrRowsSelected)
+			if(dg.AreColumnsOrRowsSelected)
 			{
-				int firstDataColumnIndex = int.MinValue;
-
-				// add first the data columns to the end of the table
-				for(int nCol=0;nCol<sourcetable.DataColumns.ColumnCount;nCol++)
-				{
-					string name = sourcetable.DataColumns.GetColumnName(nCol);
-					int    group = sourcetable.DataColumns.GetColumnGroup(nCol);
-					Altaxo.Data.ColumnKind kind = sourcetable.DataColumns.GetColumnKind(nCol);
-					Altaxo.Data.DataColumn col = (Altaxo.Data.DataColumn)sourcetable.DataColumns[nCol].Clone();
-					desttable.DataColumns.Add(col, name, kind, group);
-					if(firstDataColumnIndex<0)
-						firstDataColumnIndex = desttable.DataColumns.GetColumnNumber(col);
-				} // for all data columns
-
-				// now add also the property columns
-				for(int nCol=0;nCol<sourcetable.PropCols.ColumnCount;nCol++)
-				{
-					string name = sourcetable.PropCols.GetColumnName(nCol);
-					int    group = sourcetable.PropCols.GetColumnGroup(nCol);
-					Altaxo.Data.ColumnKind kind = sourcetable.PropCols.GetColumnKind(nCol);
-					Altaxo.Data.DataColumn col;
-
-					// if a property column with the same name and kind exist - use that one - else create a new one
-					if(desttable.PropCols.ContainsColumn(name) && desttable.PropCols[name].GetType() == sourcetable.PropCols[nCol].GetType())
-					{
-						col = desttable.PropCols[name];
-					}
-					else
-					{
-						// the prop col must be empty - we will add the data later
-						col = (DataColumn)Activator.CreateInstance(sourcetable.PropCols[nCol].GetType());
-						desttable.PropCols.Add(col, name, kind, group);
-					}
-					// now set the values of the freshly created or the already existing property column
-					for(int nDataCol=0;nDataCol<sourcetable.DataColumns.ColumnCount;nDataCol++)
-						col[firstDataColumnIndex + nDataCol] = sourcetable.PropCols[nCol][nDataCol];
-				} // for all contained property columns
-			} // if now columns or rows where selected
+				PasteFromTableToUnselected(dg,sourcetable);
+			}
+			else if(dg.SelectedColumns.Count>0 && dg.SelectedColumns.Count == sourcetable.DataColumns.ColumnCount)
+			{
+				PasteFromTableColumnsToSelectedColumns(dg,sourcetable);
+			}
+			else if(dg.SelectedColumns.Count>0 && dg.SelectedColumns.Count == sourcetable.DataColumns.RowCount)
+			{
+				//PasteFromTableRowsToSelectedColumns(dg,sourcetable);
+			}
+			else if(dg.SelectedRows.Count>0 && dg.SelectedRows.Count == sourcetable.DataColumns.RowCount)
+			{
+				//PasteFromTableRowsToSelectedRows(dg,sourcetable);
+			}
+			else if(dg.SelectedRows.Count>0 && dg.SelectedRows.Count == sourcetable.DataColumns.ColumnCount)
+			{
+				//PasteFromTableColumnsToSelectedRows(dg,sourcetable);
+			}
 		}
+
+		/// <summary>
+		/// Pastes data from a table (usually deserialized table from the clipboard) into a worksheet, which has
+		/// no current selections. This means that the data are appended to the end of the worksheet.
+		/// </summary>
+		/// <param name="dg">The worksheet to paste into.</param>
+		/// <param name="sourcetable">The table which contains the data to paste into the worksheet.</param>
+		protected static void PasteFromTableToUnselected(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
+		{
+			Altaxo.Data.DataTable desttable = dg.DataTable;
+			Altaxo.Data.DataColumn[] propertycolumnmap = MapOrCreatePropertyColumns(desttable,sourcetable);
+
+			// add first the data columns to the end of the table
+			for(int nCol=0;nCol<sourcetable.DataColumns.ColumnCount;nCol++)
+			{
+				string name = sourcetable.DataColumns.GetColumnName(nCol);
+				int    group = sourcetable.DataColumns.GetColumnGroup(nCol);
+				Altaxo.Data.ColumnKind kind = sourcetable.DataColumns.GetColumnKind(nCol);
+				Altaxo.Data.DataColumn destcolumn = (Altaxo.Data.DataColumn)sourcetable.DataColumns[nCol].Clone();
+				desttable.DataColumns.Add(destcolumn, name, kind, group);
+
+				// also fill in the property values
+				int nDestColumnIndex = desttable.DataColumns.GetColumnNumber(destcolumn);
+				FillRow(propertycolumnmap, nDestColumnIndex, sourcetable.PropCols, nCol);
+
+			} // for all data columns
+		}
+
+
+		/// <summary>
+		/// This fills a row of destination columns (different columns at same index) with values from another column collection. Both collections must have
+		/// the same number of columns and a 1:1 match of the column types. 
+		/// </summary>
+		/// <param name="destColumns">The collection of destination columns.</param>
+		/// <param name="destRowIndex">The row index of destination columns to fill.</param>
+		/// <param name="sourceColumns">The source table's property column collection.</param>
+		/// <param name="sourceRowIndex">The row index of the source columns to use.</param>
+		static private void FillRow(Altaxo.Data.DataColumn[] destColumns, int destRowIndex, Altaxo.Data.DataColumnCollection sourceColumns, int sourceRowIndex)
+		{
+			for(int nCol=0;nCol<sourceColumns.ColumnCount;nCol++)
+			{
+				destColumns[nCol][destRowIndex] = sourceColumns[nCol][sourceRowIndex];
+			}
+		}
+
+
+
+		/// <summary>
+		/// Pastes data from a table (usually deserialized table from the clipboard) into a worksheet, which has
+		/// currently selected columns. The number of selected columns has to match the number of columns of the source table.
+		/// </summary>
+		/// <param name="dg">The worksheet to paste into.</param>
+		/// <param name="sourcetable">The table which contains the data to paste into the worksheet.</param>
+		/// <remarks>The operation is defined as follows: if the is no ro selection, the data are inserted beginning at row[0] of the destination table.
+		/// If there is a row selection, the data are inserted in the selected rows, and then in the rows after the last selected rows.
+		/// No exception is thrown if a column type does not match the corresponding source column type.
+		/// The columns to paste into do not change their name, kind or group number. But property columns in the source table
+		/// are pasted into the destination table.</remarks>
+		protected static void PasteFromTableColumnsToSelectedColumns(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
+		{
+			System.Diagnostics.Debug.Assert(dg.SelectedColumns.Count==sourcetable.DataColumns.ColumnCount);
+			
+			Altaxo.Data.DataTable desttable = dg.DataTable;
+
+			Altaxo.Data.DataColumn[] propertycolumnmap = MapOrCreatePropertyColumns(desttable,sourcetable);
+
+			// use the selected columns, then use the following columns, then add columns
+			int nDestCol=-1;
+			for(int nSrcCol=0;nSrcCol<sourcetable.DataColumns.ColumnCount;nSrcCol++)
+			{
+				nDestCol = nSrcCol<dg.SelectedColumns.Count ? dg.SelectedColumns[nSrcCol] : nDestCol+1;
+				Altaxo.Data.DataColumn destcolumn;
+				if(nDestCol<desttable.DataColumns.ColumnCount)
+				{
+					destcolumn = desttable.DataColumns[nDestCol];
+				}
+				else
+				{
+
+					string name = sourcetable.DataColumns.GetColumnName(nSrcCol);
+					int    group = sourcetable.DataColumns.GetColumnGroup(nSrcCol);
+					Altaxo.Data.ColumnKind kind = sourcetable.DataColumns.GetColumnKind(nSrcCol);
+					destcolumn = (Altaxo.Data.DataColumn)Activator.CreateInstance(sourcetable.DataColumns[nSrcCol].GetType());
+					desttable.DataColumns.Add(destcolumn, name, kind, group);
+				}
+				
+				// now fill the data into that column
+				Altaxo.Data.DataColumn sourcecolumn = sourcetable.DataColumns[nSrcCol];
+
+				try
+				{
+					int nDestRow=-1;
+					for(int nSrcRow=0;nSrcRow<sourcetable.DataColumns.RowCount;nSrcRow++)
+					{
+						nDestRow = nSrcRow<dg.SelectedRows.Count ? dg.SelectedRows[nSrcRow] : nDestRow+1;
+						destcolumn[nDestRow] = sourcecolumn[nSrcRow];
+					}
+				}
+				catch(Exception)
+				{
+				}
+
+
+				// also fill in the property values
+				int nDestColumnIndex = desttable.DataColumns.GetColumnNumber(destcolumn);
+				FillRow(propertycolumnmap,nDestColumnIndex,sourcetable.PropCols,nSrcCol);
+			} // for all data columns
+		}
+
+
+		/// <summary>
+		/// Maps each property column of the source table to a corresponding property columns of the destination table. If no matching property
+		/// column can be found in the destination table, a new matching property column is added to the destination table.
+		/// </summary>
+		/// <param name="desttable">The destination table.</param>
+		/// <param name="sourcetable">The source table.</param>
+		/// <returns>An array of columns. Each column of the array is a property column in the destination table, which
+		/// matches the property column in the source table by index.</returns>
+		/// <remarks>
+		/// 1.) Since the returned columns are part of the PropCols collection of the destination table, you must not
+		/// use these for inserting i.e. in other tables.
+		/// 2.) The match is based on the names _and_ the types of the property columns. If there is no match,
+		/// a new property column of the same type as in the source table and with a reasonable name is created.
+		/// Therefore each mapped property column has the same type as its counterpart in the source table.
+		/// </remarks>
+		static protected Altaxo.Data.DataColumn[] MapOrCreatePropertyColumns(Altaxo.Data.DataTable desttable, Altaxo.Data.DataTable sourcetable)
+		{
+			Altaxo.Data.DataColumn[] columnmap = new Altaxo.Data.DataColumn[sourcetable.PropCols.ColumnCount];
+			for(int nCol=0;nCol<sourcetable.PropCols.ColumnCount;nCol++)
+			{
+				string name = sourcetable.PropCols.GetColumnName(nCol);
+				int    group = sourcetable.PropCols.GetColumnGroup(nCol);
+				Altaxo.Data.ColumnKind kind = sourcetable.PropCols.GetColumnKind(nCol);
+
+				// if a property column with the same name and kind exist - use that one - else create a new one
+				if(desttable.PropCols.ContainsColumn(name) && desttable.PropCols[name].GetType() == sourcetable.PropCols[nCol].GetType())
+				{
+					columnmap[nCol] = desttable.PropCols[name];
+				}
+				else
+				{
+					// the prop col must be empty - we will add the data later
+					columnmap[nCol] = (DataColumn)Activator.CreateInstance(sourcetable.PropCols[nCol].GetType());
+					desttable.PropCols.Add(columnmap[nCol], name, kind, group);
+				}
+			}
+			return columnmap;
+		}
+
 
 		public static void PasteFromClipboard(GUI.WorksheetController dg)
 		{
