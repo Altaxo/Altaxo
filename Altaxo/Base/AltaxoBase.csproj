@@ -375,6 +375,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\IGrippableObject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\IHitTestObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -726,6 +731,11 @@
                 />
                 <File
                     RelPath = "Graph\GUI\GraphControllerMouseHandlers\ReadPlotItemDataMouseHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\GraphControllerMouseHandlers\SingleLineDrawingMouseHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -45,7 +45,12 @@ namespace Altaxo.Graph.GUI
     /// <summary>
     /// Tool to snap in to a plot items points and read out the data
     /// </summary>
-    ReadPlotItemData
+    ReadPlotItemData,
+
+    /// <summary>
+    /// Tool to draw a single line.
+    /// </summary>
+    SingleLine
 
   }
 

@@ -215,7 +215,7 @@ namespace Altaxo.Graph
 
   [SerializationSurrogate(0,typeof(LineGraphic.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class LineGraphic : ShapeGraphic
+  public class LineGraphic : ShapeGraphic, IGrippableObject
   {
     #region Serialization
     /// <summary>Used to serialize the LineGraphic Version 0.</summary>
@@ -417,10 +417,24 @@ namespace Altaxo.Graph
       g.TranslateTransform(X, Y);
       g.RotateTransform(this.m_Rotation);
       Pen myPen = new Pen(this.LineColor, this.LineWidth);
-      g.DrawLine(myPen, X, Y, X + Width, Y + Height);
+      g.DrawLine(myPen, 0, 0,  Width,  Height);
       g.Restore(gs);
     }
+    #region IGrippableObject Members
 
+    public void ShowGrips(Graphics g)
+    {
+      g.DrawRectangle(Pens.Blue,X-6,Y-6,12,12);
+      g.DrawRectangle(Pens.Blue,X+Width-6,Y+Height-6,12,12);
+    }
+
+    public IGripManipulationHandle GripHitTest(PointF point)
+    {
+      // TODO:  Add LineGraphic.GripHitTest implementation
+      return null;
+    }
+
+    #endregion
   } // End Class
 
 

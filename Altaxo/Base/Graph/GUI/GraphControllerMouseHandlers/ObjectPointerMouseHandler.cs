@@ -37,6 +37,14 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
   /// </summary>
   public class ObjectPointerMouseHandler : MouseStateHandler
   {
+    #region Inner structures
+    protected struct Grip
+    {
+      public IGripManipulationHandle Handle;
+      public int Layer;
+      public IGrippableObject Object;
+    }
+    #endregion
     /// <summary>
     /// If true, the selected objects where moved when a MouseMove event is fired
     /// </summary>
@@ -49,6 +57,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>The graph controller this mouse handler belongs to.</summary>
     protected GraphController _grac;
 
+    protected Grip _grip;
     /// <summary>
     /// The hashtable of the selected objects. The key is the selected object itself,
     /// the data is a int object, which stores the layer number the object belongs to.
@@ -79,6 +88,16 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       base.OnMouseMove(grac,e);
         
       PointF mouseDiff = new PointF(e.X - m_MoveObjectsLastMovePoint.X, e.Y - m_MoveObjectsLastMovePoint.Y);
+      
+      if(null!=_grip.Handle)
+      {
+        PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(new Point(e.X,e.Y));
+        PointF newPosition = grac.Layers[_grip.Layer].GraphToLayerCoordinates(printAreaCoord);
+        _grip.Handle.MoveGrip(newPosition);
+        return this;
+      }
+
+      
       if(m_bMoveObjectsOnMouseMove && 0!= m_SelectedObjects.Count && (mouseDiff.X!=0 || mouseDiff.Y!=0))
       {
         // move all the selected objects to the new position
@@ -137,6 +156,10 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       if(e.Button != MouseButtons.Left)
         return this; // then there is nothing to do here
 
+     
+
+
+
       // first, if we have a mousedown without shift key and the
       // position has changed with respect to the last mousedown
       // we have to deselect all objects
@@ -144,6 +167,35 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
       bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
       PointF graphXY = grac.PixelToPrintableAreaCoordinates(mouseXY); // Graph area coordinates
+
+
+      // if we have exacly one object selected, and the one object is grippable,
+      // we hit test for the grip areas
+      if(m_SelectedObjects.Count==1)
+      {
+        foreach(IHitTestObject graphObject in m_SelectedObjects.Keys) // foreach is here only for one object!
+        {
+          IGrippableObject gripObject = graphObject.HittedObject as IGrippableObject;
+          if(null!=gripObject)
+          {
+            // first switch to the layer graphics context (from printable context)
+            int nLayer = (int)m_SelectedObjects[graphObject];
+
+            PointF layerCoord = grac.Doc.Layers[nLayer].GraphToLayerCoordinates(mouseXY);
+
+            _grip.Handle = gripObject.GripHitTest(layerCoord);
+
+            if(_grip.Handle!=null)
+            {
+              _grip.Layer = nLayer;
+              _grip.Object = gripObject;
+              return this;
+            }
+          }
+        }
+      }
+
+
 
   
       // have we clicked on one of the already selected objects
@@ -206,6 +258,13 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public override MouseStateHandler OnMouseUp(GraphController grac, System.Windows.Forms.MouseEventArgs e)
     {
       base.OnMouseUp(grac,e);
+
+
+      if(_grip.Handle!=null)
+      {
+        _grip.Handle=null;
+        return this;
+      }
 
       System.Console.WriteLine("MouseUp {0},{1}",e.X,e.Y);
       EndMovingObjects(grac);
@@ -332,6 +391,26 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           int nLayer = (int)m_SelectedObjects[graphObject];
           g.DrawPath(Pens.Blue,graphObject.SelectionPath);
         }
+      }
+
+      // show grips if there is a single selected objecct
+      if(m_SelectedObjects.Count==1)
+      {
+        foreach(IHitTestObject graphObject in m_SelectedObjects.Keys) // foreach is here only for one object!
+        {
+          IGrippableObject gripObject = graphObject.HittedObject as IGrippableObject;
+          if(null!=gripObject)
+          {
+            // first switch to the layer graphics context (from printable context)
+            int nLayer = (int)m_SelectedObjects[graphObject];
+
+            grac.Doc.Layers[nLayer].GraphToLayerCoordinates(g);
+
+            gripObject.ShowGrips(g);
+          }
+        }
+
+
       }
       base.AfterPaint (grac,g);
     }

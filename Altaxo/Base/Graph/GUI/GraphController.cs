@@ -1429,6 +1429,10 @@ namespace Altaxo.Graph.GUI
             if(!(m_MouseState is ReadPlotItemDataMouseHandler))
               m_MouseState = new ReadPlotItemDataMouseHandler(this);
             break;
+          case GraphTools.SingleLine:
+            if(!(m_MouseState is SingleLineDrawingMouseHandler))
+              m_MouseState = new SingleLineDrawingMouseHandler(this);
+            break;
 
         }
 

@@ -86,7 +86,7 @@ namespace AltaxoTest.Calc
     public void TestInverseBetaIR()
     {
       // N[BetaRegularized[1/2, 3, 6], 25]
-      Assertion.AssertEquals(0.5,GammaRelated.InverseBeta(0.85546875,3,6));
+      Assertion.AssertEquals(0.5,GammaRelated.InverseBetaRegularized(0.85546875,3,6));
     }
 
   }

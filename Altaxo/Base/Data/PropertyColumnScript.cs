@@ -107,17 +107,20 @@ namespace Altaxo.Data
       get
       {
         return
+          "using System;\r\n" + 
           "using Altaxo;\r\n" + 
+          "using Altaxo.Calc;\r\n" + 
           "using Altaxo.Data;\r\n" + 
           "namespace Altaxo.TableScripts\r\n" + 
           "{\r\n" + 
           "\tpublic class SetPropertyColumnValues : Altaxo.Calc.ColScriptExeBase\r\n" +
           "\t{\r\n"+
-          "\t\tpublic override void Execute(Altaxo.Data.DataColumn pcol)\r\n" +
+          "\t\tpublic override void Execute(Altaxo.Data.DataColumn mycol)\r\n" +
           "\t\t{\r\n" +
-          "\t\t\tAltaxo.Data.DataColumnCollection columnCollection = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(pcol);\r\n" +
-          "\t\t\tAltaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf(columnCollection);\r\n" +
-          "\t\t\tAltaxo.Data.DataTableCollection tables = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(table);\r\n"; 
+          "\t\t\tAltaxo.Data.DataColumnCollection pcol   = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(mycol);\r\n" +
+          "\t\t\tAltaxo.Data.DataTable            table  = Altaxo.Data.DataTable.GetParentDataTableOf(pcol);\r\n" +
+          "\t\t\tAltaxo.Data.DataColumnCollection col    = table==null? null : table.DataColumns;\r\n" +
+          "\t\t\tAltaxo.Data.DataTableCollection  tables = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(table);\r\n"; 
       }
     }
 

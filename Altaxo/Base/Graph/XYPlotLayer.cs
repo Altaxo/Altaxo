@@ -1317,6 +1317,16 @@ namespace Altaxo.Graph
       return pf[0];
     }
 
+
+    /// <summary>
+    /// This switches the graphics context from printable area coordinates to layer coordinates.
+    /// </summary>
+    /// <param name="g">The graphics state to change.</param>
+    public void GraphToLayerCoordinates(Graphics g)
+    {
+      g.MultiplyTransform(m_ForwardMatrix);
+    }
+
     /// <summary>
     /// Converts X,Y differences in page units to X,Y differences in layer units
     /// </summary>

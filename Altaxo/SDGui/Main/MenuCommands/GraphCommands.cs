@@ -555,5 +555,35 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+
+  /// <summary>
+  /// Test class for a selected item
+  /// </summary>
+  public class SingleLineDrawingTool : AbstractGraphToolsCommand
+  {
+    public override bool IsChecked 
+    {
+      get 
+      {
+        if(null!=Controller)
+        {
+          base.IsChecked = (Controller.CurrentGraphTool==GraphTools.SingleLine);
+        }
+
+        return base.IsChecked;
+      }
+      set 
+      {
+        base.IsChecked = value;
+        if(true==value && null!=Controller)
+        {
+          Controller.CurrentGraphTool=GraphTools.SingleLine;
+        }
+
+        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+
+      }
+    }
+  }
   
 }

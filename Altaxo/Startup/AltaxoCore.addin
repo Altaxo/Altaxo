@@ -291,6 +291,8 @@
 					class="Altaxo.Graph.Commands.SelectTextTool" />
 				<ToolbarItem id="ReadPlotItemData" icon="Icons.16x16.ReadData" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}"
 					class="Altaxo.Graph.Commands.ReadPlotItemDataTool" />
+				<ToolbarItem id="LineDrawingTool" icon="Icons.16x16.LineTool" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}"
+					class="Altaxo.Graph.Commands.SingleLineDrawingTool" />
 				<ToolbarItem id="GraphCmdsSeparator" tooltip="-" />
 				<ToolbarItem id="NewLayerLegend" icon="Icons.16x16.NewLegend" tooltip="${res:XML.MainMenu.GraphMenu.NewLayerLegend.Description}"
 					class="Altaxo.Graph.Commands.NewLayerLegend" />
