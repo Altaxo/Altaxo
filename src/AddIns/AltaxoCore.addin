@@ -1,52 +1,164 @@
-<AddIn name="SharpDevelop Core" author="Mike Krueger" copyright="GPL" url="http://www.icsharpcode.net" description="SharpDevelop core module" version="1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<!-- edited with XMLSPY v5 rel. 3 U (http://www.xmlspy.com) by DKI (DKI) -->
+<AddIn name="SharpDevelop Core" author="Mike Krueger" copyright="GPL" url="http://www.icsharpcode.net" description="SharpDevelop core module" version="1.0.0">
 	<Runtime>
 		<Import assembly="../bin/SharpDevelop.Base.dll"/>
 		<Import assembly="../bin/AltaxoBase.dll"/>
 	</Runtime>
+	<Extension path="/SharpDevelop/Workbench/Ambiences">
+		<Class id=".NET" class="ICSharpCode.SharpDevelop.Services.NetAmbience"/>
+	</Extension>
 	<Extension path="/Workspace/Autostart">
 		<Class id="InitializeWorkbenchCommand" class="Altaxo.Main.Commands.InitializeWorkbench1Command"/>
+		<Class id="StartCodeCompletionWizard" class="ICSharpCode.SharpDevelop.Commands.StartCodeCompletionWizard"/>
+		<Class id="StartParserServiceThread" class="ICSharpCode.SharpDevelop.Commands.StartParserServiceThread"/>
+		<!-- #assembly preload -->
+		<Class id="StartSharpAssemblyPreloadThread" class="ICSharpCode.SharpDevelop.Commands.StartSharpAssemblyPreloadThread"/>
 		<Class id="StartWorkbenchCommand" class="Altaxo.Main.Commands.StartWorkbench1Command"/>
 	</Extension>
-	<Extension path="/Workspace/Icons">
-		<!-- C# -->
-		<Icon id="C#Prj" language="C#" resource="C#.ProjectIcon"/>
-		<Icon id="C#File" extensions=".cs" resource="C#.FileIcon"/>
-		<!-- VB.NET -->
-		<Icon id="VBPrj" language="VBNET" resource="VB.ProjectIcon"/>
-		<Icon id="VBFile" extensions=".vb" resource="VB.FileIcon"/>
-		<!-- Java Script -->
-		<!--                <Icon id ="JSPrj" language = "JScript" location = "icons\JavaScriptProject.png"/>
-                <Icon id ="JSFile"    location = "icons\JavaScriptFileIcon.png" extensions=".js"/>
-                <Icon        location = "icons\JScriptFile.png" 		id = "JS.File.JsFileIcon"/>
-                <Icon        location = "icons\JScriptClassLibrary.png"         id = "JSCRIPT.Project.JsClassLibrary"/>
-                <Icon        location = "icons\FullJScriptProject.png" 		id = "JSCRIPT.Project.JsProjectIcon"/>
-                <Icon        location = "icons\ServiceJScriptProject.png"   	id = "JSCRIPT.Project.ServiceJsProject"/>
-                <Icon        location = "icons\EmptyJScriptWebApplication.png"  id = "JSCRIPT.Project.JsWebProjectIcon"/>
-                <Icon        location = "icons\JScriptWebService.png"       	id = "JSCRIPT.Project.JsWebServiceIcon"/>
-                <Icon        location = "icons\JavaScriptProject.png" 		id = "JSCRIPT.Project.EmptyJsProjectIcon"/>
-                <Icon        location = "icons\JScriptCubeFileIcon.png"     	id = "JSCRIPT.Project.JsServiceFileIcon"/> -->
-		<!-- Resources -->
-		<Icon id="ResourceFileIcon" extensions=".resources,.resx" resource="Icons.16x16.ResourceFileIcon"/>
-		<!-- XML -->
-		<Icon id="XmlFileIcon" extensions=".xml" resource="FileIcons.XmlIcon"/>
-		<!-- TextFiles -->
-		<Icon id="TextFileIcon" extensions=".txt,.doc" resource="Icons.16x16.TextFileIcon"/>
-	</Extension>
 	<Extension path="/Workspace/Services">
+		<Class id="ProjectService" class="ICSharpCode.SharpDevelop.Services.DefaultProjectService"/>
 		<Class id="FileService" class="ICSharpCode.SharpDevelop.Services.DefaultFileService"/>
+		<Class id="ParserService" class="ICSharpCode.SharpDevelop.Services.DefaultParserService"/>
 		<Class id="TaskService" class="ICSharpCode.SharpDevelop.Services.TaskService"/>
 		<Class id="StatusBarService" class="ICSharpCode.SharpDevelop.Services.DefaultStatusBarService"/>
 		<Class id="ToolbarService" class="ICSharpCode.SharpDevelop.Services.ToolbarService"/>
+		<Class id="LanguageService" class="ICSharpCode.SharpDevelop.Services.LanguageService"/>
+		<Class id="ClassBrowserIconsService" class="ICSharpCode.SharpDevelop.Services.ClassBrowserIconsService"/>
+		<Class id="LanguageBindingService" class="ICSharpCode.SharpDevelop.Services.LanguageBindingService"/>
+		<Class id="DisplayBindingService" class="ICSharpCode.SharpDevelop.Services.DisplayBindingService"/>
+		<Class id="AmbienceService" class="ICSharpCode.SharpDevelop.Services.AmbienceService"/>
 		<Class id="MenuService" class="ICSharpCode.SharpDevelop.Services.MenuService"/>
 		<Class id="AltaxoToolbarService" class="ICSharpCode.SharpDevelop.Services.AltaxoToolbarService"/>
-		<Class id="DisplayBindingService" class="ICSharpCode.SharpDevelop.Services.DisplayBindingService"/>
 		<Class id="AltaxoProjectService" class="Altaxo.Main.ProjectService"/>
-		<Class id="PrintingService" class="Altaxo.Main.PrintingService"/>
+		<Class id="AltaxoPrintingService" class="Altaxo.Main.PrintingService"/>
 	</Extension>
 	<Extension path="/SharpDevelop/Workbench/DisplayBindings">
 		<DisplayBinding id="Browser" supportedformats="Web Pages" class="ICSharpCode.SharpDevelop.BrowserDisplayBinding.BrowserDisplayBinding"/>
 	</Extension>
+	<Extension path="/SharpDevelop/Views/ProjectBrowser/NodeBuilders">
+		<Class id="DefaultBuilder" class="ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser.DefaultDotNetNodeBuilder"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Views/ClassScout/ContextMenu/ClassNode">
+		<MenuItem id="Export" label="ExportSignature" class="ICSharpCode.SharpDevelop.Commands.ClassScoutCommands.ExportClassSignature"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Views/ProjectBrowser/ContextMenu/CombineBrowserNode">
+		<MenuItem id="Compile" label="${res:XML.MainMenu.RunMenu.Compile}" class="ICSharpCode.SharpDevelop.Commands.Compile"/>
+		<MenuItem id="CompileAll" label="${res:XML.MainMenu.RunMenu.CompileAll}" class="ICSharpCode.SharpDevelop.Commands.CompileAll"/>
+		<MenuItem id="CombineBuildGroupSeparator" label="-"/>
+		<MenuItem id="CombineAddMenu" label="${res:ProjectComponent.ContextMenu.AddMenu}">
+			<MenuItem id="AddNewProject" label="${res:ProjectComponent.ContextMenu.AddNewProject}" icon="Icons.16x16.NewProjectIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddNewProjectToCombine"/>
+			<MenuItem id="AddNewCombine" label="${res:ProjectComponent.ContextMenu.AddNewCombine}" icon="Icons.16x16.NewProjectIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddNewCombineToCombine"/>
+			<MenuItem id="Separator1" label="-"/>
+			<MenuItem id="AddProject" label="${res:ProjectComponent.ContextMenu.AddProject}" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddProjectToCombine"/>
+			<MenuItem id="AddCombine" label="${res:ProjectComponent.ContextMenu.AddCombine}" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddCombineToCombine"/>
+		</MenuItem>
+		<MenuItem id="RemoveCombine" label="${res:ProjectComponent.ContextMenu.Remove}" icon="Icons.16x16.DeleteIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.RemoveEntryEvent"/>
+		<MenuItem id="RenameCombine" label="${res:ProjectComponent.ContextMenu.Rename}" shortcut="F2" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.RenameEntryEvent"/>
+		<MenuItem id="CombineOptionsSeparator" label="-"/>
+		<MenuItem id="CombineOptions" label="${res:ProjectComponent.ContextMenu.CombineOptions}" icon="Icons.16x16.PropertiesIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.CombineOptions"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Views/ProjectBrowser/ContextMenu/ResourceFolderNode">
+		<MenuItem id="AddResource" label="${res:ProjectComponent.ContextMenu.AddResourceFile}" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddResourceToProject"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Views/ProjectBrowser/ContextMenu/ReferenceFolderNode">
+		<MenuItem id="AddReference" label="${res:ProjectComponent.ContextMenu.AddReference}" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddReferenceToProject"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Views/ProjectBrowser/ContextMenu/ReferenceNode">
+		<MenuItem id="OpenFile" label="${res:ProjectComponent.ContextMenu.Open}" icon="Icons.16x16.OpenFileIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.OpenFileEvent"/>
+		<MenuItem id="OpenSeparator" label="-"/>
+		<MenuItem id="Remove" label="${res:ProjectComponent.ContextMenu.Remove}" icon="Icons.16x16.DeleteIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.RemoveEntryEvent"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Views/ProjectBrowser/ContextMenu/DefaultFileNode">
+		<MenuItem id="OpenFile" label="${res:ProjectComponent.ContextMenu.Open}" icon="Icons.16x16.OpenFileIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.OpenFileEvent"/>
+		<MenuItem id="OpenSeparator" label="-"/>
+		<MenuItem id="Remove" label="${res:ProjectComponent.ContextMenu.Remove}" icon="Icons.16x16.DeleteIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.RemoveEntryEvent"/>
+		<MenuItem id="Rename" label="${res:ProjectComponent.ContextMenu.Rename}" shortcut="F2" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.RenameEntryEvent"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Views/ProjectBrowser/ContextMenu/ProjectFileNode">
+		<MenuItem id="OpenFile" label="${res:ProjectComponent.ContextMenu.Open}" icon="Icons.16x16.OpenFileIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.OpenFileEvent"/>
+		<MenuItem id="OpenSeparator" label="-"/>
+		<MenuItem id="Add" label="${res:ProjectComponent.ContextMenu.AddMenu}">
+			<MenuItem id="NewFiles" label="${res:ProjectComponent.ContextMenu.NewFiles}" icon="Icons.16x16.NewDocumentIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddNewFileEvent"/>
+			<MenuItem id="AddFiles" label="${res:ProjectComponent.ContextMenu.AddFiles}" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddFilesToProject"/>
+			<MenuItem id="Separator1" label="-"/>
+			<MenuItem id="NewFolder" label="${res:ProjectComponent.ContextMenu.NewFolder}" icon="Icons.16x16.NewFolderIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.NewFolderEvent"/>
+		</MenuItem>
+		<MenuItem id="Include" label="${res:ProjectComponent.ContextMenu.IncludeMenu}">
+			<MenuItem id="IncludeFileIn" label="boguslabel" class="ICSharpCode.SharpDevelop.Commands.IncludeFilesBuilder"/>
+		</MenuItem>
+		<MenuItem id="IncludeSeparator" label="-"/>
+		<MenuItem id="Remove" label="${res:ProjectComponent.ContextMenu.Remove}" icon="Icons.16x16.DeleteIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.RemoveEntryEvent"/>
+		<MenuItem id="Rename" label="${res:ProjectComponent.ContextMenu.Rename}" shortcut="F2" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.RenameEntryEvent"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Views/ProjectBrowser/ContextMenu/DefaultDirectoryNode">
+		<MenuItem id="Add" label="${res:ProjectComponent.ContextMenu.AddMenu}">
+			<MenuItem id="NewFiles" label="${res:ProjectComponent.ContextMenu.NewFiles}" icon="Icons.16x16.NewDocumentIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddNewFileEvent"/>
+			<MenuItem id="AddFiles" label="${res:ProjectComponent.ContextMenu.AddFiles}" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddFilesToProject"/>
+			<MenuItem id="Separator1" label="-"/>
+			<MenuItem id="NewFolder" label="${res:ProjectComponent.ContextMenu.NewFolder}" icon="Icons.16x16.NewFolderIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.NewFolderEvent"/>
+		</MenuItem>
+		<MenuItem id="AddSeparator" label="-"/>
+		<MenuItem id="Remove" label="${res:ProjectComponent.ContextMenu.Remove}" icon="Icons.16x16.DeleteIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.RemoveEntryEvent"/>
+		<MenuItem id="Rename" label="${res:ProjectComponent.ContextMenu.Rename}" shortcut="F2" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.RenameEntryEvent"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Views/ProjectBrowser/ContextMenu/ProjectBrowserNode">
+		<MenuItem id="BuildProject" label="${res:XML.MainMenu.RunMenu.BuildProject}" icon="Icons.16x16.BuildCurrentSelectedProject" class="ICSharpCode.SharpDevelop.Commands.BuildCurrentProject"/>
+		<MenuItem id="RebuildProject" label="${res:XML.MainMenu.RunMenu.RebuildProject}" class="ICSharpCode.SharpDevelop.Commands.RebuildCurrentProject"/>
+		<MenuItem id="BuildGroupSeparator" label="-"/>
+		<MenuItem id="Add" label="${res:ProjectComponent.ContextMenu.AddMenu}">
+			<MenuItem id="NewFiles" label="${res:ProjectComponent.ContextMenu.NewFiles}" icon="Icons.16x16.NewDocumentIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddNewFileEvent"/>
+			<MenuItem id="AddFiles" label="${res:ProjectComponent.ContextMenu.AddFiles}" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddFilesToProject"/>
+			<MenuItem id="Separator1" label="-"/>
+			<MenuItem id="NewFolder" label="${res:ProjectComponent.ContextMenu.NewFolder}" icon="Icons.16x16.NewFolderIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.NewFolderEvent"/>
+		</MenuItem>
+		<MenuItem id="AddSeparator" label="-"/>
+		<MenuItem id="Remove" label="${res:ProjectComponent.ContextMenu.Remove}" icon="Icons.16x16.DeleteIcon" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.RemoveEntryEvent"/>
+		<MenuItem id="Rename" label="${res:ProjectComponent.ContextMenu.Rename}" shortcut="F2" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.RenameEntryEvent"/>
+		<MenuItem id="RemoveRenameSeparator" label="-"/>
+		<MenuItem id="RunTests" label="${res:ProjectComponent.ContextMenu.RunTests}" class="ICSharpCode.SharpDevelop.Commands.RunTestsInProject"/>
+		<MenuItem id="Deploy" label="${res:ProjectComponent.ContextMenu.Deploy}"/>
+		<MenuItem id="TestsDeploySeparator" label="-"/>
+		<!--	      	<MenuItem id = "ViewDocumentation"
+	                  label = "${res:ProjectComponent.ContextMenu.ViewDocumentation}" 
+	                  class = "ICSharpCode.SharpDevelop.Commands.ViewProjectDocumentation"/> -->
+		<MenuItem id="GenerateDocumentation" label="${res:ProjectComponent.ContextMenu.GenerateDocumentation}" class="ICSharpCode.SharpDevelop.Commands.GenerateProjectDocumentation"/>
+		<MenuItem id="SetAsStartupProjectSeparator" label="-"/>
+		<MenuItem id="SetAsStartupProject" label="${res:ProjectComponent.ContextMenu.SetAsStartupProject}" class="ICSharpCode.SharpDevelop.Commands.ProjectBrowser.SetAsStartupProject"/>
+		<MenuItem id="OptionsSeparator" label="-"/>
+		<MenuItem id="ProjectOptions" label="${res:ProjectComponent.ContextMenu.Options}" icon="Icons.16x16.PropertiesIcon" class="ICSharpCode.SharpDevelop.Commands.ViewProjectOptions"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Workbench/ProjectOptions/ConfigNodeMenu">
+		<MenuItem id="Add" label="${res:ProjectComponent.ContextMenu.AddMenu}" class="ICSharpCode.SharpDevelop.Commands.AddProjectConfiguration"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Workbench/ProjectOptions/SelectedConfigMenu">
+		<MenuItem id="Rename" label="Rename" class="ICSharpCode.SharpDevelop.Commands.RenameProjectConfiguration"/>
+		<MenuItem id="Remove" label="Remove" class="ICSharpCode.SharpDevelop.Commands.RemoveProjectConfiguration"/>
+		<MenuItem id="RenameRemoveSeparator" label="-"/>
+		<MenuItem id="SetActive" label="Set as active" class="ICSharpCode.SharpDevelop.Commands.SetActiveProjectConfiguration"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Workbench/ProjectOptions/GeneralOptions">
+		<DialogPanel id="Common" label="General">
+			<DialogPanel id="GeneralProjectPanel" label="${res:Dialog.Options.ProjectOptionsText}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.GeneralProjectOptions"/>
+			<DialogPanel id="Compile" label="${res:Dialog.Options.PrjOptions.CompileFile.PanelName}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CompileFileProjectOptions"/>
+			<DialogPanel id="Deploy" label="${res:Dialog.Options.PrjOptions.DeployFile.PanelName}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.DeployFileProjectOptions"/>
+		</DialogPanel>
+	</Extension>
 	<!-- TODO : complete the combine options dialog -->
+	<Extension path="/SharpDevelop/Workbench/CombineOptions">
+		<DialogPanel id="Common" label="${res:Dialog.Options.CombineOptions.CommonOptions}">
+			<DialogPanel id="Startup" label="${res:Dialog.Options.CombineOptions.Startup.PanelName}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CombineStartupPanel"/>
+			<!--			<DialogPanel id = "Dependency"
+			             label = "${res:Dialog.Options.CombineOptions.Dependencies.PanelName}"
+			             class = "ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CombineDependencyPanel"/> -->
+		</DialogPanel>
+		<!-- 
+		<DialogPanel id    = "Configuration"
+		             label = "${res:Dialog.Options.CombineOptions.ConfigurationOptions}">
+			<DialogPanel id = "Configuration"
+			             label = "${res:Dialog.Options.CombineOptions.Configurations.PanelName}"
+			             class = "ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CombineConfigurationPanel"/>
+		</DialogPanel> -->
+	</Extension>
 	<Extension path="/SharpDevelop/Workbench/OpenFileTab/ContextMenu">
 		<MenuItem id="Close" label="${res:OpenFileTabEventHandler.ContextMenu.Close}" class="ICSharpCode.SharpDevelop.Commands.TabStrip.CloseFileTab"/>
 		<MenuItem id="CloseSeparator" label="-"/>
@@ -68,9 +180,39 @@
 			<MenuItem id="CopyPathName" label="${res:OpenFileTabEventHandler.CopyPathName}" class="ICSharpCode.SharpDevelop.Commands.TabStrip.CopyPathName"/>
 		</Conditional>
 	</Extension>
+	<Extension path="/SharpDevelop/Workbench/FileFilter">
+		<FileFilter id="AllFiles" name="${res:SharpDevelop.FileFilter.AllFiles}" extensions="*.*"/>
+	</Extension>
 	<Extension path="/SharpDevelop/Workbench/Views">
+		<Class id="ProjectScout" class="ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser.ProjectBrowserView"/>
+		<Class id="ClassScout" class="ICSharpCode.SharpDevelop.Gui.Pads.ClassScout"/>
+		<Class id="FileScout" class="ICSharpCode.SharpDevelop.Gui.Pads.FileScout"/>
 		<Class id="SideBar" class="ICSharpCode.SharpDevelop.Gui.Pads.SideBarView"/>
+		<Class id="OpenTaskView" class="ICSharpCode.SharpDevelop.Gui.Pads.OpenTaskView"/>
+		<Class id="PropertyPad" class="ICSharpCode.SharpDevelop.Gui.Pads.PropertyPad"/>
 		<Class id="HelpBrowser" class="ICSharpCode.SharpDevelop.Gui.Pads.HelpBrowser"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Dialogs/OptionsDialog">
+		<DialogPanel id="UIOptions" label="${res:Dialog.Options.TreeViewOptions.SharpDevelopOptionsText}">
+			<DialogPanel id="SelectCulture" label="${res:Dialog.Options.IDEOptions.SelectCulture.PanelName}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.IDEOptionPanel"/>
+			<DialogPanel id="SelectStyle" label="${res:Dialog.Options.IDEOptions.SelectVisualStyle.PanelName}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.SelectStylePanel"/>
+			<DialogPanel id="LoadSave" label="${res:Dialog.Options.IDEOptions.LoadSaveOptions.PanelName}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.LoadSavePanel"/>
+			<DialogPanel id="ProjectAndCombine" label="${res:Dialog.Options.IDEOptions.ProjectAndCombineOptions.PanelName}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.ProjectAndCombinePanel"/>
+		</DialogPanel>
+		<DialogPanel id="CodingOptions" label="${res:Dialog.Options.IDEOptions.CodingOptionsText}">
+			<DialogPanel id="CodeGeneration" label="${res:Dialog.Options.IDEOptions.CodeGenerationOptionsPanel.Title}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CodeGenerationPanel"/>
+		</DialogPanel>
+		<DialogPanel id="ToolsOptions" label="${res:Dialog.Options.IDEOptions.ToolsOptionsText}">
+			<DialogPanel id="ExternalTools" label="${res:Dialog.Options.ExternalToolsText}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.ExternalToolPane"/>
+			<!--			<DialogPanel id = "HtmlHelp"
+			             label = "${res:Dialog.Options.IDEOptions.HelpGeneratingPanelText}"
+				     class = "ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.HelpGeneratingPanel"/> -->
+		</DialogPanel>
+	</Extension>
+	<Extension path="/SharpDevelop/Workbench/Combine/FileFilter">
+		<FileFilter id="Combine" name="${res:SharpDevelop.FileFilter.CombineFiles}" extensions="*.cmbx"/>
+		<FileFilter id="Project" name="${res:SharpDevelop.FileFilter.ProjectFiles}" extensions="*.prjx"/>
+		<FileFilter id="AllFiles" name="${res:SharpDevelop.FileFilter.AllFiles}" extensions="*.*"/>
 	</Extension>
 	<Extension path="/SharpDevelop/Workbench/ToolBar">
 		<ToolbarItem id="Standard">
@@ -79,6 +221,30 @@
 			<Conditional activewindow="*" action="Disable">
 				<ToolbarItem id="Save" icon="Icons.16x16.SaveIcon" tooltip="${res:XML.MainMenu.FileMenu.Save.Description}" class="ICSharpCode.SharpDevelop.Commands.SaveFile"/>
 				<ToolbarItem id="SaveAll" icon="Icons.16x16.SaveAllIcon" tooltip="${res:XML.MainMenu.FileMenu.SaveAll.Description}" class="ICSharpCode.SharpDevelop.Commands.SaveAllFiles"/>
+			</Conditional>
+			<ToolbarItem id="Separator1" tooltip="-"/>
+			<Conditional activewindow="*" action="Disable">
+				<ToolbarItem id="Cut" icon="Icons.16x16.CutIcon" tooltip="${res:XML.MainMenu.EditMenu.Cut.Description}" class="ICSharpCode.SharpDevelop.Commands.Cut"/>
+				<ToolbarItem id="Copy" icon="Icons.16x16.CopyIcon" tooltip="${res:XML.MainMenu.EditMenu.Copy.Description}" class="ICSharpCode.SharpDevelop.Commands.Copy"/>
+				<ToolbarItem id="Paste" icon="Icons.16x16.PasteIcon" tooltip="${res:XML.MainMenu.EditMenu.Paste.Description}" class="ICSharpCode.SharpDevelop.Commands.Paste"/>
+				<ToolbarItem id="Delete" icon="Icons.16x16.DeleteIcon" tooltip="${res:XML.MainMenu.EditMenu.Delete.Description}" class="ICSharpCode.SharpDevelop.Commands.Delete"/>
+			</Conditional>
+			<ToolbarItem id="CutSeparator" insertafter="Delete" insertbefore="Find" tooltip="-"/>
+			<Conditional action="Disable">
+				<Or>
+					<Condition activewindow="ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ITextAreaControlProvider"/>
+					<Condition iscombineopen="True"/>
+				</Or>
+			</Conditional>
+			<ToolbarItem id="CompileSeparator" insertafter="ClearBookmarks" tooltip="-"/>
+			<Conditional action="Disable">
+				<Or>
+					<Condition activewindow="ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ITextAreaControlProvider"/>
+					<Condition iscombineopen="True"/>
+				</Or>
+				<ToolbarItem id="Compile" icon="Icons.16x16.BuildCombine" tooltip="${res:XML.MainMenu.RunMenu.Compile.Description}" class="ICSharpCode.SharpDevelop.Commands.Compile"/>
+				<ToolbarItem id="BuildProject" icon="Icons.16x16.BuildCurrentSelectedProject" tooltip="${res:XML.MainMenu.RunMenu.BuildProject.Description}" class="ICSharpCode.SharpDevelop.Commands.BuildCurrentProject"/>
+				<ToolbarItem id="Run" icon="Icons.16x16.RunProgramIcon" tooltip="${res:XML.MainMenu.RunMenu.Run.Description}" class="ICSharpCode.SharpDevelop.Commands.RunCommand"/>
 			</Conditional>
 		</ToolbarItem>
 		<Conditional activewindow="Altaxo.Graph.GUI.GraphController" action="Disable">
@@ -98,6 +264,7 @@
 				<MenuItem id="Worksheet" label="${res:XML.MainMenu.FileMenu.New.Worksheet}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.Worksheet.Description}" shortcut="Control|W" class="Altaxo.Main.Commands.CreateNewWorksheet"/>
 				<MenuItem id="Graph" label="${res:XML.MainMenu.FileMenu.New.Graph}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.Graph.Description}" shortcut="Control|G" class="Altaxo.Main.Commands.CreateNewGraph"/>
 				<MenuItem id="WksGraphFromFile" label="${res:XML.MainMenu.FileMenu.New.WksGraphFromFile}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.WksGraphFromFile.Description}" shortcut="Control|N" class="Altaxo.Main.Commands.CreateNewWorksheetOrGraphFromFile"/>
+				<MenuItem id="File" label="${res:XML.MainMenu.FileMenu.New.File}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.File.Description}" shortcut="Control|N" class="ICSharpCode.SharpDevelop.Commands.CreateNewFile"/>
 			</MenuItem>
 			<MenuItem id="Open" label="${res:XML.MainMenu.FileMenu.Open}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Open.Description}" shortcut="Control|O" class="Altaxo.Main.Commands.FileOpen"/>
 			<MenuItem id="Close" label="${res:XML.MainMenu.FileMenu.Close}" description="${res:XML.MainMenu.FileMenu.Close.Desription}" class="Altaxo.Main.Commands.CloseProject"/>
@@ -135,7 +302,16 @@
 			<MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.Exit}" description="${res:XML.MainMenu.FileMenu.Exit.Desription}" class="Altaxo.Main.Commands.FileExit"/>
 		</MenuItem>
 		<MenuItem id="Edit" label="${res:XML.MainMenu.EditMenu}">
-			<MenuItem id="Separator1" label="-"/>
+			<MenuItem id="Cut" label="${res:XML.MainMenu.EditMenu.Cut}" icon="Icons.16x16.CutIcon" description="${res:XML.MainMenu.EditMenu.Cut.Description}" shortcut="Control|X" class="ICSharpCode.SharpDevelop.Commands.Cut"/>
+			<MenuItem id="Copy" label="${res:XML.MainMenu.EditMenu.Copy}" icon="Icons.16x16.CopyIcon" description="${res:XML.MainMenu.EditMenu.Copy.Description}" shortcut="Control|C" class="ICSharpCode.SharpDevelop.Commands.Copy"/>
+			<MenuItem id="Paste" label="${res:XML.MainMenu.EditMenu.Paste}" icon="Icons.16x16.PasteIcon" description="${res:XML.MainMenu.EditMenu.Paste.Description}" shortcut="Control|V" class="ICSharpCode.SharpDevelop.Commands.Paste"/>
+			<MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.Delete}" icon="Icons.16x16.DeleteIcon" description="${res:XML.MainMenu.EditMenu.Delete.Description}" class="ICSharpCode.SharpDevelop.Commands.Delete"/>
+			<MenuItem id="SelectAll" label="${res:XML.MainMenu.EditMenu.SelectAll}" description="${res:XML.MainMenu.EditMenu.SelectAll.Description}" shortcut="Control|A" class="ICSharpCode.SharpDevelop.Commands.SelectAll"/>
+		</MenuItem>
+		<MenuItem id="View" label="${res:XML.MainMenu.ViewMenu}">
+			<MenuItem id="ViewBuilder" label="" class="ICSharpCode.SharpDevelop.Commands.ViewMenuBuilder"/>
+			<MenuItem id="ViewItemsSeparator" label="-"/>
+			<MenuItem id="FullScreen" label="${res:XML.MainMenu.ViewMenu.FullScreen}" icon="Icons.16x16.FullScreen" description="${res:XML.MainMenu.ViewMenu.FullScreen.Description}" class="ICSharpCode.SharpDevelop.Commands.ToggleFullscreenCommand"/>
 		</MenuItem>
 		<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
 			<MenuItem id="Plot" label="${res:XML.MainMenu.PlotMenu}">
@@ -273,6 +449,13 @@
 				<MenuItem id="MoveItemDown" label="${res:SideBarComponent.ContextMenu.MoveTabItemDown}" class="ICSharpCode.SharpDevelop.Commands.SideBarMoveActiveItemDown"/>
 			</Conditional>
 		</Conditional>
+	</Extension>
+	<Extension path="/SharpDevelop/CompletionDatabaseWizard">
+		<DialogPanel id="SetupPanel" label="${res:Dialog.Wizards.CodeCompletionDatabaseWizard.SetupPanel.Title}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CompletionDatabaseWizard.SetupPanel"/>
+		<DialogPanel id="ChooseLocationPanel" label="${res:Dialog.Wizards.CodeCompletionDatabaseWizard.ChooseLocationPanel.Title}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CompletionDatabaseWizard.ChooseLocationPanel"/>
+		<DialogPanel id="UseExistingFilePanel" label="${res:Dialog.Wizards.CodeCompletionDatabaseWizard.UseExistingFilePanel.Title}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CompletionDatabaseWizard.UseExistingFilePanel"/>
+		<DialogPanel id="CreateDatabasePanel" label="${res:Dialog.Wizards.CodeCompletionDatabaseWizard.CreateDatabasePanel.Title}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CompletionDatabaseWizard.CreateDatabasePanel"/>
+		<DialogPanel id="CreationSuccessful" label="Finished" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CompletionDatabaseWizard.CreationFinishedPanel"/>
 	</Extension>
 	<!-- web references -->
 	<!--

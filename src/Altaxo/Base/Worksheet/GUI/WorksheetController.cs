@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph;
 using Altaxo.Serialization;
-
+using ICSharpCode.SharpDevelop.Gui;
 
 
 namespace Altaxo.Worksheet.GUI
@@ -17,8 +17,10 @@ namespace Altaxo.Worksheet.GUI
 	[SerializationSurrogate(0,typeof(WorksheetController.SerializationSurrogate0))]
 	[SerializationVersion(0)]
 	public class WorksheetController :
-		IWorksheetController,  
-		System.Runtime.Serialization.IDeserializationCallback
+		IWorksheetController,
+		System.Runtime.Serialization.IDeserializationCallback,
+		ICSharpCode.SharpDevelop.Gui.IEditable,
+		ICSharpCode.SharpDevelop.Gui.IClipboardHandler
 	{
 		public enum SelectionType { Nothing, DataRowSelection, DataColumnSelection, PropertyColumnSelection }
 
@@ -3249,5 +3251,77 @@ namespace Altaxo.Worksheet.GUI
 
 		#endregion
 	
+		#region ICSharpCode.SharpDevelop.Gui.IEditable
+		
+		public IClipboardHandler ClipboardHandler 
+		{
+			get { return this; }
+		}
+		
+		public string Text 
+		{
+			get { return null; }
+			set {}
+		}
+		
+		public void Undo()
+		{
+		}
+		public void Redo()
+		{
+		}
+		#endregion
+
+		#region ICSharpCode.SharpDevelop.Gui.IClipboardHandler
+		
+		public bool EnableCut 
+		{
+			get { return false; }
+		}
+		public bool EnableCopy 
+		{
+			get { return true; }
+		}
+		public bool EnablePaste 
+		{
+			get { return true; }
+		}
+		public bool EnableDelete 
+		{
+			get { return true; }
+		}
+		public bool EnableSelectAll 
+		{
+			get { return true; }
+		}
+		
+		public void Cut(object sender, EventArgs e)
+		{
+		}
+		public void Copy(object sender, EventArgs e)
+		{
+			// Copy the selected Columns to the clipboard
+			DataGridOperations.CopyToClipboard(this);
+		}
+		public void Paste(object sender, EventArgs e)
+		{
+			DataGridOperations.PasteFromClipboard(this);
+		}
+		public void Delete(object sender, EventArgs e)
+		{
+			this.RemoveSelected();
+
+		}
+		public void SelectAll(object sender, EventArgs e)
+		{
+			if(this.DataTable.DataColumns.ColumnCount>0)
+			{
+				this.SelectedColumns.Select(0,false,false);
+				this.SelectedColumns.Select(this.DataTable.DataColumns.ColumnCount-1,true,false);
+				if(View!=null)
+					View.TableAreaInvalidate();
+			}
+		}
+		#endregion
 	}
 }

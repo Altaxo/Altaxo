@@ -33,6 +33,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Startup", "Startup\Startup.
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zICSharpCode.TextEditor", "..\Libraries\ICSharpCode.TextEditor\src\zICSharpCode.TextEditor.csproj", "{BDA1E0BB-C18F-41B0-86C7-A4CEF4B60894}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zSharpDevelop.DefaultTexteditor", "..\Libraries\SharpDevelop.DefaultTexteditor\zSharpDevelop.DefaultTexteditor.csproj", "{953B27D5-7B33-49F5-B649-54396C09B361}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zCSharpBinding", "..\Libraries\CSharpBinding\zCSharpBinding.csproj", "{2AECC87C-9EB2-4A95-8997-A8ECFD8A707F}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -86,6 +98,24 @@ Global
 		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.DesignTimeDebugging.Build.0 = Debug|.NET
 		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Release.ActiveCfg = Release|.NET
 		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Release.Build.0 = Release|.NET
+		{BDA1E0BB-C18F-41B0-86C7-A4CEF4B60894}.Debug.ActiveCfg = Debug|.NET
+		{BDA1E0BB-C18F-41B0-86C7-A4CEF4B60894}.Debug.Build.0 = Debug|.NET
+		{BDA1E0BB-C18F-41B0-86C7-A4CEF4B60894}.DesignTimeDebugging.ActiveCfg = Debug|.NET
+		{BDA1E0BB-C18F-41B0-86C7-A4CEF4B60894}.DesignTimeDebugging.Build.0 = Debug|.NET
+		{BDA1E0BB-C18F-41B0-86C7-A4CEF4B60894}.Release.ActiveCfg = Release|.NET
+		{BDA1E0BB-C18F-41B0-86C7-A4CEF4B60894}.Release.Build.0 = Release|.NET
+		{953B27D5-7B33-49F5-B649-54396C09B361}.Debug.ActiveCfg = Debug|.NET
+		{953B27D5-7B33-49F5-B649-54396C09B361}.Debug.Build.0 = Debug|.NET
+		{953B27D5-7B33-49F5-B649-54396C09B361}.DesignTimeDebugging.ActiveCfg = Debug|.NET
+		{953B27D5-7B33-49F5-B649-54396C09B361}.DesignTimeDebugging.Build.0 = Debug|.NET
+		{953B27D5-7B33-49F5-B649-54396C09B361}.Release.ActiveCfg = Release|.NET
+		{953B27D5-7B33-49F5-B649-54396C09B361}.Release.Build.0 = Release|.NET
+		{2AECC87C-9EB2-4A95-8997-A8ECFD8A707F}.Debug.ActiveCfg = Debug|.NET
+		{2AECC87C-9EB2-4A95-8997-A8ECFD8A707F}.Debug.Build.0 = Debug|.NET
+		{2AECC87C-9EB2-4A95-8997-A8ECFD8A707F}.DesignTimeDebugging.ActiveCfg = Debug|.NET
+		{2AECC87C-9EB2-4A95-8997-A8ECFD8A707F}.DesignTimeDebugging.Build.0 = Debug|.NET
+		{2AECC87C-9EB2-4A95-8997-A8ECFD8A707F}.Release.ActiveCfg = Release|.NET
+		{2AECC87C-9EB2-4A95-8997-A8ECFD8A707F}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Icon1.ico = Icon1.ico

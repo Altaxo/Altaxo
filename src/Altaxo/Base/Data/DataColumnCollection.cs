@@ -1403,8 +1403,7 @@ namespace Altaxo.Data
 				Main.ParentChangedEventArgs pce = (Main.ParentChangedEventArgs)e;
 				if(object.ReferenceEquals(this,pce.OldParent) && this.ContainsColumn((DataColumn)sender))
 					this.RemoveColumn((DataColumn)sender);
-				else
-					if(!this.ContainsColumn((DataColumn)sender))
+				else if(object.ReferenceEquals(this,pce.NewParent) && !this.ContainsColumn((DataColumn)sender))
 						throw new ApplicationException("Not allowed to set child's parent to this collection before adding it to the collection");
 			
 				return true;

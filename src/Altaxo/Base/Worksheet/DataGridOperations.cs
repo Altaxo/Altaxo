@@ -1139,17 +1139,23 @@ namespace Altaxo.Worksheet
 		{
 			Altaxo.Data.DataTable dt = dg.DataTable;
 			System.Windows.Forms.DataObject dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
-		
-			if(dg.SelectedColumns.Count>0)
-			{
-				// columns are selected
-			}
-
 
 			if(dao.GetDataPresent("Altaxo.Columns"))
 			{
 				System.Collections.ArrayList arl = (System.Collections.ArrayList)dao.GetData("Altaxo.Columns");
-				System.Console.WriteLine("DataGridOperations-PasteFromClipboard");
+
+				int i;
+				// Paste into selected columns
+				for(i=0; i<dg.SelectedColumns.Count && i<arl.Count; i++)
+				{
+					dg.DataTable[dg.SelectedColumns[i]] = (Altaxo.Data.DataColumn)arl[i];
+				}
+
+				// then paste in new (!) colums
+				for( ; i<arl.Count;i++)
+				{
+					dg.DataTable.DataColumns.Add((Altaxo.Data.DataColumn)arl[i]);
+				}
 			}
 		}
 

@@ -23,9 +23,9 @@ using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Gui.Dialogs;
 using ICSharpCode.SharpDevelop.Gui.ErrorHandlers;
 
-#if OriginalCode
+//#if OriginalCode
 using SharpDevelop.Internal.Parser;
-#endif
+//#endif
 
 using ICSharpCode.SharpDevelop.Commands;
 
@@ -106,9 +106,9 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 		
 		public override void Run()
 		{
-#if OriginalSharpDevelopCode
+//#if OriginalSharpDevelopCode
 			ReflectionClass reflectionClass = new ReflectionClass(typeof(object), null);
-#endif			
+//#endif			
 			// register string tag provider (TODO: move to add-in tree :)
 			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
 			stringParserService.RegisterStringTagProvider(new ICSharpCode.SharpDevelop.Commands.SharpDevelopStringTagProvider());
