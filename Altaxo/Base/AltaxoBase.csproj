@@ -200,6 +200,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Data\AbstractScript.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Data\CollectionBase.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -276,6 +281,11 @@
                 />
                 <File
                     RelPath = "Data\OperatableObject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Data\PropertyColumnScript.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

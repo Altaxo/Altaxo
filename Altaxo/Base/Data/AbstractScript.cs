@@ -28,18 +28,99 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
- 
+  #region interface
+
+  /// <summary>
+  /// Interface to a script, e.g. a table or column script
+  /// </summary>
+  public interface IScriptText : ICloneable
+  {
+
+
+    string ScriptName
+    {
+      get;
+    }
+
+    /// <summary>
+    /// Get / sets the script text
+    /// </summary>
+    string ScriptText
+    {
+      get; set;
+    }
+
+
+    /// <summary>
+    /// Gives the type of the script object (full name), which is created after successfull compilation.
+    /// </summary>
+    string ScriptObjectType { get; }
+
+    /// <summary>
+    /// Gets the code header, i.e. the leading script text. It depends on the ScriptStyle.
+    /// </summary>
+    string CodeHeader
+    {
+      get;
+    }
+
+    string CodeStart
+    {
+      get;
+    }
+
+    /// <summary>
+    /// Get the ending text of the script, dependent on the ScriptStyle.
+    /// </summary>
+    string CodeTail
+    {
+      get;
+    }
+  
+
+    /// <summary>
+    /// Gets the index in the script (considered as string), where the
+    /// user area starts. This is momentarily behind the comment line
+    /// " ----- add your script below this line ------"
+    /// </summary>
+    int UserAreaScriptOffset
+    {
+      get;
+    }
+
+   
+    /// <summary>
+    /// Does the compilation of the script into an assembly.
+    /// If it was not compiled before or is dirty, it is compiled first.
+    /// From the compiled assembly, a new instance of the newly created script class is created
+    /// and stored in m_ScriptObject.
+    /// </summary>
+    /// <returns>True if successfully compiles, otherwise false.</returns>
+    bool Compile();
+  
+    
+    /// <summary>
+    /// Returns the compiler errors as array of strings.
+    /// </summary>
+    string[] Errors
+    {
+      get;
+    }
+
+
+    
+  }
+
+  #endregion
+
   /// <summary>
   /// Holds the text, the module (=executable), and some properties of a column script. 
   /// </summary>
-  [SerializationSurrogate(0,typeof(Altaxo.Data.TableScript.SerializationSurrogate0))]
-  [SerializationVersion(0)]
-  [Serializable()]
-  public class TableScript 
+  public abstract class AbstractScript
     :
-    IScriptText,    
-    System.Runtime.Serialization.IDeserializationCallback
-    
+    ICloneable, 
+    System.Runtime.Serialization.IDeserializationCallback,
+    IScriptText
   {
     /// <summary>
     /// The text of the column script.
@@ -68,7 +149,7 @@ namespace Altaxo.Data
     /// The script object. This is a instance of the newly created script class, which is derived class of <see cref="Altaxo.Calc.ColScriptExeBase"/>
     /// </summary>
     [NonSerialized()]
-    protected Altaxo.Calc.TableScriptExeBase m_ScriptObject; // the compiled and created script object
+    protected object m_ScriptObject; // the compiled and created script object
 
     /// <summary>
     /// The name of the script. This is set to a arbitrary unique name ending in ".cs".
@@ -89,40 +170,9 @@ namespace Altaxo.Data
 
 
     #region Serialization
-    /// <summary>
-    /// Responsible for serialization of the column script version 0.
-    /// </summary>
-    public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-    {
-      /// <summary>
-      /// Serializes the table script
-      /// </summary>
-      /// <param name="obj">The table script to serialize.</param>
-      /// <param name="info">Serialization info.</param>
-      /// <param name="context">Streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
-      {
-        Altaxo.Data.TableScript s = (Altaxo.Data.TableScript)obj;
-        info.AddValue("Text",s.m_ScriptText);
-      }
+ 
 
-      /// <summary>
-      /// Deserialized the column script.
-      /// </summary>
-      /// <param name="obj">The uninitialized column script instance.</param>
-      /// <param name="info">Serialization info.</param>
-      /// <param name="context">Streaming context.</param>
-      /// <param name="selector">Surrogate selector.</param>
-      /// <returns></returns>
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-      {
-        Altaxo.Data.TableScript s = (Altaxo.Data.TableScript)obj;
-        s.m_ScriptText = info.GetString("Text");
-        return s;
-      }
-    }
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.TableScript),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.AbstractScript),0)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -153,7 +203,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Creates an empty column script. Default Style is "Set Column".
     /// </summary>
-    public TableScript()
+    public AbstractScript()
     {
     }
 
@@ -161,7 +211,7 @@ namespace Altaxo.Data
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public TableScript(TableScript b)
+    public AbstractScript(AbstractScript b)
     {
       this.m_ScriptText  = b.m_ScriptText;
       this.m_ScriptAssembly = b.m_ScriptAssembly;
@@ -209,7 +259,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Get / sets the script text
     /// </summary>
-    public string ScriptText
+    public virtual string ScriptText
     {
       get 
       { 
@@ -249,67 +299,33 @@ namespace Altaxo.Data
     /// <summary>
     /// Gives the type of the script object (full name), which is created after successfull compilation.
     /// </summary>
-    public virtual string ScriptObjectType
+    public abstract string ScriptObjectType
     {
-      get { return "Altaxo.TableScripts.SetTableValues"; }
+      get;
     }
 
     /// <summary>
     /// Gets the code header, i.e. the leading script text. It depends on the ScriptStyle.
     /// </summary>
-    public virtual string CodeHeader
+    public abstract string CodeHeader
     {
-      get
-      {
-        return
-          "using Altaxo;\r\n" + 
-          "using Altaxo.Data;\r\n" + 
-          "namespace Altaxo.TableScripts\r\n" + 
-          "{\r\n" + 
-          "\tpublic class SetTableValues : Altaxo.Calc.TableScriptExeBase\r\n" +
-          "\t{\r\n"+
-          "\t\tpublic override void Execute(Altaxo.Data.DataTable table)\r\n" +
-          "\t\t{\r\n" +
-          "\t\t\tAltaxo.Data.DataColumnCollection col = table.DataColumns;\r\n" +
-          "\t\t\tAltaxo.Data.DataTableCollection tables = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(table);\r\n"; 
-      }
+      get;
     }
 
-    public virtual string CodeStart
+    public abstract string CodeStart
     {
-      get
-      {
-        return
-          "\t\t\t// ----- add your script below this line -----\r\n\t\t\t";
-      }
+      get;
     }
 
     /// <summary>
     /// Get the ending text of the script, dependent on the ScriptStyle.
     /// </summary>
-    public virtual string CodeTail
+    public abstract string CodeTail
     {
-      get
-      {
-        return 
-          "\r\n\r\n\r\n\r\n\r\n" +
-          "\t\t\t// ----- add your script above this line -----\r\n" +
-          "\t\t} // Execute method\r\n" +
-          "\t} // class\r\n" + 
-          "} //namespace\r\n";
-      }
+      get;
     }
 
-
-
-    /// <summary>
-    /// Clones the script.
-    /// </summary>
-    /// <returns>The cloned object.</returns>
-    public object Clone()
-    {
-      return new TableScript(this);
-    }
+    public abstract object Clone();
 
 
     /// <summary>
@@ -373,7 +389,7 @@ namespace Altaxo.Data
 
         try
         {
-          this.m_ScriptObject = (Altaxo.Calc.TableScriptExeBase)results.CompiledAssembly.CreateInstance(this.ScriptObjectType);
+          this.m_ScriptObject = results.CompiledAssembly.CreateInstance(this.ScriptObjectType);
           if(null==m_ScriptObject)
           {
             bSucceeded = false;
@@ -392,84 +408,7 @@ namespace Altaxo.Data
     }
 
 
-    /// <summary>
-    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-    /// If the script object exists, the Execute function of this script object is called.
-    /// </summary>
-    /// <param name="myTable">The data table this script is working on.</param>
-    /// <returns>True if executed without exceptions, otherwise false.</returns>
-    /// <remarks>If exceptions were thrown during execution, the exception messages are stored
-    /// inside the column script and can be recalled by the Errors property.</remarks>
-    public bool Execute(Altaxo.Data.DataTable myTable)
-    {
-      if(null==m_ScriptObject)
-      {
-        m_Errors = new string[1]{"Script Object is null"};
-        return false;
-      }
+ 
 
-      try
-      {
-        m_ScriptObject.Execute(myTable);
-      }
-      catch(Exception ex)
-      {
-        m_Errors = new string[1];
-        m_Errors[0] = ex.ToString();
-        return false;
-      }
-      return true;
-    }
-
-
-    /// <summary>
-    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-    /// If the script object exists, the data change notifications will be switched of (for all tables).
-    /// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
-    /// </summary>
-    /// <param name="myTable">The data table this script is working on.</param>
-    /// <returns>True if executed without exceptions, otherwise false.</returns>
-    /// <remarks>If exceptions were thrown during execution, the exception messages are stored
-    /// inside the column script and can be recalled by the Errors property.</remarks>
-    public bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataTable myTable)
-    {
-      bool bSucceeded=true;
-      Altaxo.Data.DataTableCollection   myDataSet=null;
-
-      // first, test some preconditions
-      if(null==m_ScriptObject)
-      {
-        m_Errors = new string[1]{"Script Object is null"};
-        return false;
-      }
-
-      myDataSet = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myTable);
-
-      if(null!=myDataSet) 
-        myDataSet.Suspend();
-      else if(null!=myTable)
-        myTable.Suspend();
-
-      try
-      {
-        m_ScriptObject.Execute(myTable);
-      }
-      catch(Exception ex)
-      {
-        bSucceeded = false;
-        m_Errors = new string[1];
-        m_Errors[0] = ex.ToString();
-      }
-      finally
-      {
-        if(null!=myDataSet) 
-          myDataSet.Resume();
-        else if(null!=myTable)
-          myTable.Resume();
-      }
-
-      return bSucceeded; 
-    }
-
-  } // end of class TableScript
+  } // end of class AbstractScript
 }

@@ -403,7 +403,7 @@ namespace Altaxo.Worksheet.Commands
 
       //Data.ColumnScript colScript = (Data.ColumnScript)altaxoDataGrid1.columnScripts[dataCol];
 
-      Data.ColumnScript colScript = ctrl.DataTable.DataColumns.ColumnScripts[dataCol];
+      Data.ColumnScript colScript = (Data.ColumnScript)(ctrl.DataTable.DataColumns.ColumnScripts[dataCol]);
 
       Altaxo.Main.GUI.DialogFactory.ShowColumnScriptDialog(ctrl.View.TableViewForm,ctrl.DataTable,dataCol,colScript);
     }

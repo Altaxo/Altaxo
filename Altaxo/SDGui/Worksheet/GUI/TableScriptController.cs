@@ -56,6 +56,12 @@ namespace Altaxo.Worksheet.GUI
   }
 
 
+
+  /// <summary>
+  /// Executes the script provided in the argument.
+  /// </summary>
+  public delegate bool ScriptExecutionHandler(IScriptText script);
+
   #endregion
 
   /// <summary>
@@ -64,7 +70,8 @@ namespace Altaxo.Worksheet.GUI
   public class TableScriptController : ITableScriptController
   {
     protected Altaxo.Data.DataTable m_DataTable;
-    public TableScript m_TableScript;
+    protected ScriptExecutionHandler m_ScriptExecution;
+    public IScriptText m_TableScript;
 
     protected ITableScriptView m_View;
 
@@ -74,11 +81,28 @@ namespace Altaxo.Worksheet.GUI
 
       if(null!=tableScript)
       {
-        this.m_TableScript = (TableScript)tableScript.Clone();
+        this.m_TableScript = (IScriptText)tableScript.Clone();
       }
       else
       {
         this.m_TableScript = new TableScript();
+      }
+
+      SetElements(true);
+
+    }
+
+    public TableScriptController(ScriptExecutionHandler exec, IScriptText script)
+    {
+      this.m_ScriptExecution = exec;
+
+      if(null!=script)
+      {
+        this.m_TableScript = (IScriptText)script.Clone();
+      }
+      else
+      {
+        throw new ArgumentNullException();
       }
 
       SetElements(true);
@@ -144,7 +168,11 @@ namespace Altaxo.Worksheet.GUI
         return;
       }
 
-      bSucceeded = m_TableScript.ExecuteWithSuspendedNotifications(m_DataTable);
+      if(m_DataTable!=null)
+        bSucceeded = ((TableScript)m_TableScript).ExecuteWithSuspendedNotifications(m_DataTable);
+      else if(m_ScriptExecution!=null)
+        bSucceeded = m_ScriptExecution(m_TableScript);
+
       if(!bSucceeded)
       {
         foreach(string s in m_TableScript.Errors)
@@ -154,7 +182,7 @@ namespace Altaxo.Worksheet.GUI
         return;
       }
 
-      this.m_DataTable.TableScript = m_TableScript;
+      // this.m_DataTable.TableScript = m_TableScript;
       View.Form.DialogResult = System.Windows.Forms.DialogResult.OK;
       View.Form.Close();
     }
@@ -181,7 +209,7 @@ namespace Altaxo.Worksheet.GUI
     public void EhView_Update()
     {
       m_TableScript.ScriptText = View.ScriptText;
-      this.m_DataTable.TableScript = m_TableScript;
+      // this.m_DataTable.TableScript = m_TableScript;
       this.View.Form.DialogResult = System.Windows.Forms.DialogResult.OK;
       this.View.Form.Close();
     }

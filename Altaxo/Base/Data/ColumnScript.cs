@@ -35,7 +35,7 @@ namespace Altaxo.Data
   [SerializationSurrogate(0,typeof(Altaxo.Data.ColumnScript.SerializationSurrogate0))]
   [SerializationVersion(0)]
   [Serializable()]
-  public class ColumnScript : ICloneable, System.Runtime.Serialization.IDeserializationCallback
+  public class ColumnScript : ICloneable, System.Runtime.Serialization.IDeserializationCallback, IColumnScriptText
   {
     /// <summary>
     /// ScriptStyle enumerates the style of the column script.
@@ -610,6 +610,50 @@ namespace Altaxo.Data
       return bSucceeded; 
     }
 
+    #region IScriptText Members
+
+    public string ScriptName
+    {
+      get
+      {
+        // TODO:  Add ColumnScript.ScriptName getter implementation
+        return null;
+      }
+    }
+
+    public string ScriptText
+    {
+      get
+      {
+        // TODO:  Add ColumnScript.ScriptText getter implementation
+        return null;
+      }
+      set
+      {
+        // TODO:  Add ColumnScript.ScriptText setter implementation
+      }
+    }
+
+    public string ScriptObjectType
+    {
+      get
+      {
+        // TODO:  Add ColumnScript.ScriptObjectType getter implementation
+        return null;
+      }
+    }
+
+    public int UserAreaScriptOffset
+    {
+      get
+      {
+        // TODO:  Add ColumnScript.UserAreaScriptOffset getter implementation
+        return 0;
+      }
+    }
+
+    #endregion
+
   } // end of class ColumnScript
 
 
@@ -650,9 +694,9 @@ namespace Altaxo.Data
     /// <summary>
     /// get / set the column scripts associated with the correspondig columns.
     /// </summary>
-    public ColumnScript this[DataColumn dc]
+    public IColumnScriptText this[DataColumn dc]
     {
-      get { return base[dc] as ColumnScript; }
+      get { return base[dc] as IColumnScriptText; }
       set { base[dc]=value; }
     }
   }
