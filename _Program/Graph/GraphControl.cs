@@ -86,12 +86,12 @@ namespace Altaxo.Graph
 		private float m_Zoom  = 0.4f;
 		private bool  m_AutoZoom = true; // if true, the sheet is zoomed as big as possible to fit into window
 		/// <summary>Number of the currently selected layer.</summary>
-		protected int m_ActualLayer = 0;
-		/// <summary>Number of the currently selected plot association.</summary>
-		protected int m_ActualPlotAssociation=0;
+		protected int m_CurrentLayerNumber = 0;
+		/// <summary>Number of the currently selected plot.</summary>
+		protected int m_CurrentPlotNumber=0;
 		protected GraphTools m_CurrentGraphTool = GraphTools.ObjectPointer;
 		private GraphPanel m_GraphPanel;
-//		protected PointF m_LastMouseDownPoint;
+		//		protected PointF m_LastMouseDownPoint;
 		private System.Windows.Forms.ImageList m_GraphToolsImages;
 		private System.ComponentModel.IContainer components;
 
@@ -106,7 +106,6 @@ namespace Altaxo.Graph
 		protected System.Collections.Hashtable m_SelectedObjects = new System.Collections.Hashtable();
 		private System.Windows.Forms.ToolBar m_LayerToolbar;
 		private System.Windows.Forms.ImageList m_LayerButtonImages;
-		private System.Windows.Forms.ToolBarButton m_PushedLayerButton;
 
 		/// <summary>
 		/// This holds a frozen image of the graph during the moving time
@@ -145,11 +144,13 @@ namespace Altaxo.Graph
 				printableBounds.Width	= m_PageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
 				printableBounds.Height = m_PageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
 			
+				m_Graph.Invalidate += new EventHandler(this.OnGraphDocument_Invalidate);
+				m_Graph.LayerCollectionChanged += new EventHandler(this.OnGraphDocument_LayerCollectionChanged);
 				m_Graph.PageBounds = pageBounds;
 				m_Graph.PrintableBounds = printableBounds;
 			}
 
-			m_Graph.Layers.Add(new Altaxo.Graph.Layer(PrintableSize));
+			m_Graph.CreateNewLayerNormalBottomXLeftY();
 
 			InitLayerToolbar();
 		}
@@ -227,7 +228,7 @@ namespace Altaxo.Graph
 			this.Controls.AddRange(new System.Windows.Forms.Control[] {
 																																	this.m_GraphPanel,
 																																	this.m_LayerToolbar
-																																	});
+																																});
 			this.Name = "GraphControl";
 			this.Size = new System.Drawing.Size(150, 150);
 			this.ResumeLayout(false);
@@ -238,37 +239,62 @@ namespace Altaxo.Graph
 
 		private void InitLayerToolbar()
 		{
-			ToolBarButton tbb = new ToolBarButton("0");
-			tbb.Pushed=true;
-			this.m_PushedLayerButton = tbb;
-			m_LayerToolbar.Buttons.Add(tbb);
 			this.m_LayerToolbar.Dock = DockStyle.Left;
+		}
+
+
+		public void PushCurrentlyActiveLayerToolbarButton()
+		{
+			int nCurrLayerNum = this.CurrentLayerNumber;
+			for(int i=0;i<m_LayerToolbar.Buttons.Count;i++)
+				m_LayerToolbar.Buttons[i].Pushed = (i==nCurrLayerNum);
+
+		}
+
+		/// <summary>
+		/// Looks if the actual number of layer buttons match the current number of layers in the graph.
+		/// If not, it adds or removes buttons so that the numbers match. Finally, it pushes the button of the current active layer.
+		/// </summary>
+		public void MatchLayerToolbarButtons()
+		{
+			int nNumLayers = Layers.Count;
+			int nNumButtons = m_LayerToolbar.Buttons.Count;
+
+			if(nNumLayers > nNumButtons)
+			{
+				for(int i=nNumButtons;i<nNumLayers;i++)
+					m_LayerToolbar.Buttons.Add(new ToolBarButton(i.ToString()));
+			}
+			else if(nNumButtons > nNumLayers)
+			{
+				for(int i=nNumButtons-1;i>=nNumLayers;i--)
+					m_LayerToolbar.Buttons.RemoveAt(i);
+			}
+
+			// finally, push the button of the currently active layer
+			PushCurrentlyActiveLayerToolbarButton();
 		}
 
 
 		private void m_LayerToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
 		{
-			
-			if(null!=this.m_PushedLayerButton)
+
+			int pushedLayerNumber = System.Convert.ToInt32(e.Button.Text);
+
+			// if we have clicked the button already down then open the layer dialog
+			if(pushedLayerNumber == this.CurrentLayerNumber)
 			{
-				// if we have clicked the button already down then open the layer dialog
-				if(this.m_PushedLayerButton==e.Button)
-				{
-					int nLayer = System.Convert.ToInt32(e.Button.Text);
-					LayerDialog dlg = new LayerDialog(Layers[nLayer],LayerDialog.Tab.Scale,EdgeType.Bottom);
-					dlg.ShowDialog(this);
-				}
-					// if the clicked button is not already pushed, then unpush the old button
-				else
-				{
-					this.m_PushedLayerButton.Pushed=false;
-				}
+				LayerDialog dlg = new LayerDialog(Layers[pushedLayerNumber],LayerDialog.Tab.Scale,EdgeType.Bottom);
+				dlg.ShowDialog(this);
 			}
-				
-			e.Button.Pushed = true;
-			this.m_PushedLayerButton = e.Button;
-			ActualLayer = System.Convert.ToInt32(e.Button.Text);
+				// if the clicked button is not already pushed, then unpush the old button
+			else
+			{
+				this.CurrentLayerNumber = pushedLayerNumber;
+			}
 		}
+	
+
 
 
 		public GraphTools CurrentGraphTool
@@ -368,59 +394,62 @@ namespace Altaxo.Graph
 			get { return m_Graph.Layers; }
 		}
 
-		public int ActualLayer
+		public int CurrentLayerNumber
 		{
 			get
 			{
-				// check the validity of the ActualLayer
+				// check the validity of the CurrentLayerNumber
 				if(0==m_Graph.Layers.Count)
-					m_ActualLayer=-1;
-				else if(m_ActualLayer>=m_Graph.Layers.Count)
-					m_ActualLayer=0;
+					m_CurrentLayerNumber=-1;
+				else if(m_CurrentLayerNumber>=m_Graph.Layers.Count)
+					m_CurrentLayerNumber=0;
 
-				return m_ActualLayer;
+				return m_CurrentLayerNumber;
 			}
 			set
 			{
 				// negative values are only accepted if there is no layer
 				if(value<0 && m_Graph.Layers.Count>0)
-					throw new ArgumentOutOfRangeException("ActualLayer",value,"Accepted values must be >=0 if there is at least one layer in the graph!");
+					throw new ArgumentOutOfRangeException("CurrentLayerNumber",value,"Accepted values must be >=0 if there is at least one layer in the graph!");
 
 				if(value>=m_Graph.Layers.Count)
-					throw new ArgumentOutOfRangeException("ActualLayer",value,"Accepted values must be less than the number of layers in the graph(currently " + m_Graph.Layers.Count.ToString() + ")!");
+					throw new ArgumentOutOfRangeException("CurrentLayerNumber",value,"Accepted values must be less than the number of layers in the graph(currently " + m_Graph.Layers.Count.ToString() + ")!");
 
-				m_ActualLayer = value<0 ? -1 : value;
+				m_CurrentLayerNumber = value<0 ? -1 : value;
+
+				// reflect the change in layer number in the layer tool bar
+				this.PushCurrentlyActiveLayerToolbarButton();
 			}
 		}
 
-		public int ActualPlotAssociation 
+		public int CurrentPlotNumber 
 		{
 			get 
 			{
-				// if Layer don't exist anymore, correct ActualLayer and ActualPlotAssocitation
-				if(ActualLayer<0)
+				// if Layer don't exist anymore, correct CurrentLayerNumber and ActualPlotAssocitation
+				if(CurrentLayerNumber<0)
 				{
-					m_ActualPlotAssociation=-1;
+					m_CurrentPlotNumber=-1;
 				}
 				else // if Layer exists
 				{
 					// if the PlotAssociation don't exist anymore, correct it
-					if(0==this.m_Graph[ActualLayer].PlotAssociations.Count)
-						m_ActualPlotAssociation = -1;
-					if(m_ActualPlotAssociation>=this.m_Graph[ActualLayer].PlotAssociations.Count)
-						m_ActualPlotAssociation = 0;
+					if(0==this.m_Graph[CurrentLayerNumber].PlotAssociations.Count)
+						m_CurrentPlotNumber = -1;
+					if(m_CurrentPlotNumber>=this.m_Graph[CurrentLayerNumber].PlotAssociations.Count)
+						m_CurrentPlotNumber = 0;
 				}	
-				return m_ActualPlotAssociation;
+				return m_CurrentPlotNumber;
 			}
 			set
 			{
-				if(ActualLayer>=0 && value<0)
-					throw new ArgumentOutOfRangeException("ActualPlotAssociation",value,"Must be greater or equal than zero");
+				if(CurrentLayerNumber>=0 && value<0)
+					throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"Must be greater or equal than zero");
 
-				if(ActualLayer>=0 && value>=m_Graph[ActualLayer].PlotAssociations.Count)
-					throw new ArgumentOutOfRangeException("ActualPlotAssociation",value,"Must be lesser than actual count: " + m_Graph[ActualLayer].PlotAssociations.Count.ToString());
+				if(CurrentLayerNumber>=0 && value>=m_Graph[CurrentLayerNumber].PlotAssociations.Count)
+					throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"Must be lesser than actual count: " + m_Graph[CurrentLayerNumber].PlotAssociations.Count.ToString());
 
-				m_ActualPlotAssociation = value<0 ? -1 : value;
+				m_CurrentPlotNumber = value<0 ? -1 : value;
 			}
 		}
 
@@ -700,6 +729,33 @@ namespace Altaxo.Graph
 
 
 		/// <summary>
+		/// Handler of event Invalidate of the graph document. Initiates the redrawing of the document.
+		/// </summary>
+		/// <param name="sender">The sender of the event, the graph document.</param>
+		/// <param name="e">The event arguments.</param>
+		protected void OnGraphDocument_Invalidate(object sender, System.EventArgs e)
+		{
+			InvalidateGraph();
+		}
+
+		/// <summary>
+		/// Handler of the event LayerCollectionChanged of the graph document. Forces to
+		/// check the LayerButtonBar to keep track that the number of buttons match the number of layers.</summary>
+		/// <param name="sender">The sender of the event (the GraphDocument).</param>
+		/// <param name="e">The event arguments.</param>
+		protected void OnGraphDocument_LayerCollectionChanged(object sender, System.EventArgs e)
+		{
+			// firstly, check if the CurrentLayerNumber or CurrentPlotNumber are valid
+			// anymore by using them
+			int nCurrLayerNum = this.CurrentLayerNumber;
+			int nCurrPlotNum  = this.CurrentPlotNumber;
+
+			MatchLayerToolbarButtons();
+
+		}
+
+
+		/// <summary>
 		/// Clears the selection list and repaints the graph if neccessary
 		/// </summary>
 		public void ClearSelections()
@@ -808,6 +864,34 @@ namespace Altaxo.Graph
 			m_MouseState = m_MouseState.OnDoubleClick(this,e);
 		}
 
+
+
+
+		#region Menu Handlers
+
+		public void menuNewLayer_NormalBottomXLeftY_Click(object sender, System.EventArgs e)
+		{
+		m_Graph.CreateNewLayerNormalBottomXLeftY();
+			InvalidateGraph();
+		}
+
+		public void menuNewLayer_LinkedTopXRightY_Click(object sender, System.EventArgs e)
+		{
+		m_Graph.CreateNewLayerLinkedTopXRightY(CurrentLayerNumber);
+		InvalidateGraph();
+		}
+
+		public void menuNewLayer_LinkedTopX_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		public void menuNewLayer_LinkedRightY_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		#endregion
 
 		#region Mouse Handler Classes
 
@@ -1139,7 +1223,7 @@ namespace Altaxo.Graph
 			// get the page coordinates (in Point (1/72") units)
 			PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
 			// with knowledge of the current active layer, calculate the layer coordinates from them
-			PointF layerCoord = grac.Layers[grac.ActualLayer].GraphToLayerCoordinates(printAreaCoord);
+			PointF layerCoord = grac.Layers[grac.CurrentLayerNumber].GraphToLayerCoordinates(printAreaCoord);
 
 			ExtendedTextGraphObject tgo = new ExtendedTextGraphObject();
 			tgo.Position = layerCoord;
@@ -1147,13 +1231,13 @@ namespace Altaxo.Graph
 			// deselect the text tool
 			grac.CurrentGraphTool = GraphTools.ObjectPointer;
 
-			TextControlDialog dlg = new TextControlDialog(grac.Layers[grac.ActualLayer],tgo);
+			TextControlDialog dlg = new TextControlDialog(grac.Layers[grac.CurrentLayerNumber],tgo);
 			if(DialogResult.OK==dlg.ShowDialog(grac))
 			{
 				// add the resulting textgraphobject to the layer
 				if(!dlg.TextGraphObject.Empty)
 				{
-					grac.Layers[grac.ActualLayer].GraphObjects.Add(dlg.TextGraphObject);
+					grac.Layers[grac.CurrentLayerNumber].GraphObjects.Add(dlg.TextGraphObject);
 					grac.m_GraphPanel.Invalidate();
 				}
 			}

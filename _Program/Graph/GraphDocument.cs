@@ -129,5 +129,58 @@ namespace Altaxo.Graph
 		} // end of function DoPaint
 
 
+		public PointF DefaultLayerPosition
+		{
+			get { return new PointF(0.145f*this.PrintableSize.Width, 0.139f*this.PrintableSize.Height); }
+		}
+		public SizeF DefaultLayerSize
+		{
+		get	{	return new SizeF(0.763f*this.PrintableSize.Width, 0.708f*this.PrintableSize.Height); }
+		}
+
+
+		#region Layer Creation
+
+		/// <summary>
+		/// Creates a new layer with bottom x axis and left y axis, which is not linked.
+		/// </summary>
+		public void CreateNewLayerNormalBottomXLeftY()
+		{
+			Layer newlayer= new Layer(DefaultLayerPosition,DefaultLayerSize);
+			newlayer.TopAxisEnabled=false;
+			newlayer.RightAxisEnabled=false;
+		
+			Layers.Add(newlayer);
+		}
+
+		/// <summary>
+		/// Creates a new layer with bottom x axis and left y axis, which is not linked.
+		/// </summary>
+		public void CreateNewLayerLinkedTopXRightY(int linklayernumber)
+		{
+			Layer newlayer= new Layer(DefaultLayerPosition,DefaultLayerSize);
+			Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
+			// link the new layer to the last old layer
+			newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
+			newlayer.SetPosition(0,Layer.PositionType.RelativeThisNearToLinkedLayerNear,0,Layer.PositionType.RelativeThisNearToLinkedLayerNear);
+			newlayer.SetSize(1,Layer.SizeType.RelativeToLinkedLayer,1,Layer.SizeType.RelativeToLinkedLayer);
+
+			// set enabling of axis
+			newlayer.BottomAxisEnabled=false;
+			newlayer.LeftAxisEnabled=false;
+		}
+
+
+		#endregion
+
+
+		#region inherited from Layer.Collection
+		protected internal override void OnInvalidate(Layer sender)
+		{
+			base.OnInvalidate(sender);
+		}
+		
+		#endregion
+
 	} // end of class GraphDocument
 } // end of namespace

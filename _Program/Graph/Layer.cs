@@ -284,8 +284,8 @@ namespace Altaxo.Graph
 		/// <param name="size">The size of the layer in points (1/72 inch).</param>
 		public Layer(PointF position, SizeF size)
 		{
-			m_LayerPosition = position;
-			m_LayerSize = size;
+			this.Size     = size;
+			this.Position = position;
 
 			CalculateMatrix();
 
@@ -308,7 +308,7 @@ namespace Altaxo.Graph
 			get { return this.m_LayerPosition; }
 			set
 			{
-				SetLayerPosition(value.X,PositionType.AbsoluteValue,value.Y,PositionType.AbsoluteValue);
+				SetPosition(value.X,PositionType.AbsoluteValue,value.Y,PositionType.AbsoluteValue);
 			}
 		}
 
@@ -317,7 +317,7 @@ namespace Altaxo.Graph
 			get { return this.m_LayerSize; }
 			set
 			{
-				SetLayerSize(value.Width,SizeType.AbsoluteValue, value.Height,SizeType.AbsoluteValue);
+				SetSize(value.Width,SizeType.AbsoluteValue, value.Height,SizeType.AbsoluteValue);
 			}
 		}
 
@@ -482,6 +482,15 @@ namespace Altaxo.Graph
 			}
 		}
 
+		/// <summary>
+		/// The layer number.
+		/// </summary>
+		/// <value>The layer number, i.e. the position of the layer in the layer collection.</value>
+		public int Number
+		{
+			get { return this.m_LayerNumber; } 
+		}
+
 		public LayerCollection ParentLayerList
 		{
 			get { return m_ParentLayerCollection; }
@@ -508,8 +517,8 @@ namespace Altaxo.Graph
 					return;
 
 
-				Layer oldValue = value;
-				m_LinkedLayer = this;
+				Layer oldValue = this.m_LinkedLayer;
+				m_LinkedLayer =  value;
 
 				if(!ReferenceEquals(oldValue,m_LinkedLayer))
 				{
@@ -568,7 +577,7 @@ namespace Altaxo.Graph
 
 
 
-		public void SetLayerPosition(double x, PositionType xpostype, double y, PositionType ypostype)
+		public void SetPosition(double x, PositionType xpostype, double y, PositionType ypostype)
 		{
 			this.m_LayerXPosition = x;
 			this.m_LayerXPositionType = xpostype;
@@ -776,7 +785,7 @@ namespace Altaxo.Graph
 
 
 
-		public void SetLayerSize(double width, SizeType widthtype, double height, SizeType heighttype)
+		public void SetSize(double width, SizeType widthtype, double height, SizeType heighttype)
 		{
 			this.m_LayerWidth = width;
 			this.m_LayerWidthType = widthtype;
@@ -1185,6 +1194,16 @@ namespace Altaxo.Graph
 		/// all changes to the layers.</remarks>
 		public class LayerCollection : System.Collections.CollectionBase
 		{
+			/// <summary>Fired when something in this collection changed, as for instance
+			/// adding or deleting layers, or exchanging layers.</summary>
+			public event System.EventHandler LayerCollectionChanged;
+
+
+			/// <summary>
+			/// Fired if some of the layer signals that a redraw is neccessary.
+			/// </summary>
+			public event System.EventHandler Invalidate;
+
 
 			/// <summary>
 			/// Creates an empty LayerCollection without parent.
@@ -1198,7 +1217,7 @@ namespace Altaxo.Graph
 			/// References the layer at index i.
 			/// </summary>
 			/// <value>The layer at index <paramref name="i"/>.</value>
-			public Layer this[int i]
+			public virtual Layer this[int i]
 			{
 				get 
 				{
@@ -1220,7 +1239,7 @@ namespace Altaxo.Graph
 			/// <remarks>To avoid the destruction of the linked layer connections, we avoid
 			/// firing the custom list actions here by using the InnerList property and
 			/// correct the layer numbers of the two exchanged elements directly.</remarks>
-			public void ExchangeElements(int i, int j)
+			public virtual void ExchangeElements(int i, int j)
 			{
 				// we use the inner list to do that because we do not want
 				// to have custom actions (this is mainly because otherwise we have
@@ -1233,6 +1252,8 @@ namespace Altaxo.Graph
 				// correct the Layer numbers for the two exchanged layers
 				this[i].SetParentAndNumber(this,i);
 				this[j].SetParentAndNumber(this,j);
+
+				OnLayerCollectionChanged();
 			}
 
 
@@ -1244,6 +1265,7 @@ namespace Altaxo.Graph
 			{
 				// we use List for adding since we want to have custom actions below
 				List.Add(l);
+				// since we use List, we don't need to have OnLayerCollectionChanged here!
 			}
 
 			/// <summary>
@@ -1253,6 +1275,8 @@ namespace Altaxo.Graph
 			{
 				foreach(Layer l in InnerList)
 					l.SetParentAndNumber(null,0);
+
+				OnLayerCollectionChanged();
 			}
 
 			/// <summary>
@@ -1273,6 +1297,7 @@ namespace Altaxo.Graph
 					if(Layer.ReferenceEquals(oldValue,this[i]))
 						this[i].LinkedLayer=null;
 				}
+				OnLayerCollectionChanged();
 			}
 
 			/// <summary>
@@ -1294,6 +1319,8 @@ namespace Altaxo.Graph
 					if(Layer.ReferenceEquals(oldValue,this[i]))
 						this[i].LinkedLayer=null;
 				}
+
+				OnLayerCollectionChanged();
 			}
 
 			/// <summary>
@@ -1307,11 +1334,21 @@ namespace Altaxo.Graph
 				// renumber the inserted and the following layers
 				for(int i=index;i<Count;i++)
 					this[i].SetParentAndNumber(this,i);
+
+				OnLayerCollectionChanged();
 			}
 
 
+			protected virtual void OnLayerCollectionChanged()
+			{
+				if(null!=LayerCollectionChanged)
+					LayerCollectionChanged(this,new EventArgs());
+			}
+
 			protected internal virtual void OnInvalidate(Layer sender)
 			{
+				if(null!=Invalidate)
+					Invalidate(this, new EventArgs());
 			}
 		}
 	}

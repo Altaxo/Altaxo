@@ -42,6 +42,12 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.MenuItem menuItem1;
 		private System.Windows.Forms.MenuItem menuFile_PageSetup;
 		private System.Windows.Forms.MenuItem menuFile_Print;
+		private System.Windows.Forms.MenuItem menuItem2;
+		private System.Windows.Forms.MenuItem menuItem3;
+		private System.Windows.Forms.MenuItem menuNewLayer_NormalBottomXLeftY;
+		private System.Windows.Forms.MenuItem menuNewLayer_LinkedTopXRightY;
+		private System.Windows.Forms.MenuItem menuNewLayer_LinkedTopX;
+		private System.Windows.Forms.MenuItem menuNewLayer_LinkedRightY;
 		private System.Windows.Forms.MenuItem menuFile_PrintPreview;
 
 	
@@ -136,11 +142,16 @@ namespace Altaxo.Graph
 			this.menuFile_PrintPreview = new System.Windows.Forms.MenuItem();
 			this.menuDataPopup = new System.Windows.Forms.MenuItem();
 			this.menuDataSeparator = new System.Windows.Forms.MenuItem();
+			this.menuItem2 = new System.Windows.Forms.MenuItem();
+			this.menuItem3 = new System.Windows.Forms.MenuItem();
+			this.menuNewLayer_NormalBottomXLeftY = new System.Windows.Forms.MenuItem();
+			this.menuNewLayer_LinkedTopXRightY = new System.Windows.Forms.MenuItem();
+			this.menuNewLayer_LinkedTopX = new System.Windows.Forms.MenuItem();
+			this.menuNewLayer_LinkedRightY = new System.Windows.Forms.MenuItem();
 			this.SuspendLayout();
 			// 
 			// m_GraphControl
 			// 
-			this.m_GraphControl.ActualLayer = 0;
 			this.m_GraphControl.AutoZoom = true;
 			this.m_GraphControl.CurrentGraphTool = Altaxo.Graph.GraphControl.GraphTools.ObjectPointer;
 			this.m_GraphControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -155,6 +166,7 @@ namespace Altaxo.Graph
 			// 
 			this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																																							this.menuItem1,
+																																							this.menuItem2,
 																																							this.menuDataPopup});
 			// 
 			// menuItem1
@@ -187,7 +199,7 @@ namespace Altaxo.Graph
 			// 
 			// menuDataPopup
 			// 
-			this.menuDataPopup.Index = 1;
+			this.menuDataPopup.Index = 2;
 			this.menuDataPopup.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																																									this.menuDataSeparator});
 			this.menuDataPopup.Text = "Data";
@@ -199,6 +211,47 @@ namespace Altaxo.Graph
 			// 
 			this.menuDataSeparator.Index = 0;
 			this.menuDataSeparator.Text = "-";
+			// 
+			// menuItem2
+			// 
+			this.menuItem2.Index = 1;
+			this.menuItem2.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																							this.menuItem3});
+			this.menuItem2.Text = "Edit";
+			// 
+			// menuItem3
+			// 
+			this.menuItem3.Index = 0;
+			this.menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																							this.menuNewLayer_NormalBottomXLeftY,
+																																							this.menuNewLayer_LinkedTopXRightY,
+																																							this.menuNewLayer_LinkedTopX,
+																																							this.menuNewLayer_LinkedRightY});
+			this.menuItem3.Text = "New Layer(Axes)";
+			// 
+			// menuNewLayer_NormalBottomXLeftY
+			// 
+			this.menuNewLayer_NormalBottomXLeftY.Index = 0;
+			this.menuNewLayer_NormalBottomXLeftY.Text = "(Normal): Bottom X + Left Y ";
+			this.menuNewLayer_NormalBottomXLeftY.Click += new System.EventHandler(this.menuNewLayer_NormalBottomXLeftY_Click);
+			// 
+			// menuNewLayer_LinkedTopXRightY
+			// 
+			this.menuNewLayer_LinkedTopXRightY.Index = 1;
+			this.menuNewLayer_LinkedTopXRightY.Text = "(Linked: Top X + Right Y";
+			this.menuNewLayer_LinkedTopXRightY.Click += new System.EventHandler(this.menuNewLayer_LinkedTopXRightY_Click);
+			// 
+			// menuNewLayer_LinkedTopX
+			// 
+			this.menuNewLayer_LinkedTopX.Index = 2;
+			this.menuNewLayer_LinkedTopX.Text = "(Linked): Top X";
+			this.menuNewLayer_LinkedTopX.Click += new System.EventHandler(this.menuNewLayer_LinkedTopX_Click);
+			// 
+			// menuNewLayer_LinkedRightY
+			// 
+			this.menuNewLayer_LinkedRightY.Index = 3;
+			this.menuNewLayer_LinkedRightY.Text = "(Linked): Right Y";
+			this.menuNewLayer_LinkedRightY.Click += new System.EventHandler(this.menuNewLayer_LinkedRightY_Click);
 			// 
 			// GraphForm
 			// 
@@ -223,21 +276,21 @@ namespace Altaxo.Graph
 				// if the menu item was not checked before, check it now
 				// by making the plot association shown by the menu item
 				// the actual plot association
-				int actLayerNum = this.m_GraphControl.ActualLayer;
+				int actLayerNum = this.m_GraphControl.CurrentLayerNumber;
 				Layer actLayer = this.m_GraphControl.Layers[actLayerNum];
 				if(null!=actLayer && dmi.tagValue<actLayer.PlotAssociations.Count)
 				{
 					dmi.Checked=true;
-					m_GraphControl.ActualPlotAssociation = dmi.tagValue;
+					m_GraphControl.CurrentPlotNumber = dmi.tagValue;
 				}
 			}
 			else
 			{
 				// if it was checked before, then bring up the plot style dialog
 				// of the plot association represented by this menu item
-				int actLayerNum = this.m_GraphControl.ActualLayer;
+				int actLayerNum = this.m_GraphControl.CurrentLayerNumber;
 				Layer actLayer = this.m_GraphControl.Layers[actLayerNum];
-				PlotAssociation pa = actLayer.PlotAssociations[m_GraphControl.ActualPlotAssociation];
+				PlotAssociation pa = actLayer.PlotAssociations[m_GraphControl.CurrentPlotNumber];
 
 
 				// get plot group
@@ -271,7 +324,7 @@ namespace Altaxo.Graph
 
 		private void menuDataPopup_Popup(object sender, System.EventArgs e)
 		{
-			int actLayerNum = this.m_GraphControl.ActualLayer;
+			int actLayerNum = this.m_GraphControl.CurrentLayerNumber;
 			Layer actLayer = this.m_GraphControl.Layers[actLayerNum];
 			if(null==actLayer)
 				return;
@@ -283,7 +336,7 @@ namespace Altaxo.Graph
 
 
 			menuDataPopup.MenuItems.Add(this.menuDataSeparator);
-			int actPA = m_GraphControl.ActualPlotAssociation;
+			int actPA = m_GraphControl.CurrentPlotNumber;
 			int len = actLayer.PlotAssociations.Count;
 			for(int i = 0; i<len; i++)
 			{
@@ -350,6 +403,26 @@ namespace Altaxo.Graph
 				App.CurrentApplication.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.m_GraphControl.OnPrintPage);
 			}
 			}
+
+		private void menuNewLayer_NormalBottomXLeftY_Click(object sender, System.EventArgs e)
+		{
+		m_GraphControl.menuNewLayer_NormalBottomXLeftY_Click(sender,e);
+		}
+
+		private void menuNewLayer_LinkedTopXRightY_Click(object sender, System.EventArgs e)
+		{
+			m_GraphControl.menuNewLayer_LinkedTopXRightY_Click(sender,e);
+		}
+
+		private void menuNewLayer_LinkedTopX_Click(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		private void menuNewLayer_LinkedRightY_Click(object sender, System.EventArgs e)
+		{
+		
+		}
 
 		public class DataMenuItem : MenuItem
 		{
