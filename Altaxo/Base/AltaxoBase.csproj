@@ -1005,11 +1005,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\DataGridOperations.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Worksheet\DateTimeColumnStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

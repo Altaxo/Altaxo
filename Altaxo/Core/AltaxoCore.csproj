@@ -247,6 +247,7 @@
                 />
                 <File
                     RelPath = "Calc\Probability\ProbabilityDistributions.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

@@ -879,7 +879,10 @@ namespace Altaxo.Data
       // now transpose the data columns
       m_DataColumns.Transpose();
 
+      savedDataColumns.InsertRows(0,numberOfPropertyColumnsChangeToDataColumns); // take offset caused by newly inserted prop columns->data columns into account
       savedDataColumns.MoveColumnsTo(this.PropertyColumns,0, savedDataColIndices);
+
+      savedPropColumns.RemoveRows(0,numberOfDataColumnsChangeToPropertyColumns); // take offset caused by data columns changed to property columns into account
       savedPropColumns.MoveColumnsTo(this.DataColumns,0,savedPropColIndices);
 
       // now insert both the temporary stored DataColumnCollections at the beginning

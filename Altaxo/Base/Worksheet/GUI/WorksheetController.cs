@@ -1556,7 +1556,7 @@ namespace Altaxo.Worksheet.GUI
       else if (newCellRow>LastFullyVisibleTableRow)
         navigateToRow = newCellRow + 1 - FullyVisibleTableRows;
       else
-        navigateToRow = FirstVisibleTableRow;
+        navigateToRow = this.VertScrollPos;
 
       if(navigateToCol!=FirstVisibleColumn || navigateToRow!=FirstVisibleTableRow)
       {
@@ -1671,7 +1671,7 @@ namespace Altaxo.Worksheet.GUI
       else if (newCellCol>LastFullyVisiblePropertyColumn)
         navigateToCol = newCellRow + 1 - this.FullyVisiblePropertyColumns;
       else
-        navigateToCol = FirstVisibleTableRow;
+        navigateToCol = this.VertScrollPos;
 
 
       if(newCellRow<FirstVisibleColumn)
@@ -2105,7 +2105,7 @@ namespace Altaxo.Worksheet.GUI
       Rectangle cellRect = GetXCoordinatesOfColumn(nRow);
 
       cellRect.Y = this.GetTopCoordinateOfPropertyColumn(nCol);
-      cellRect.Height = this.m_TableLayout.RowHeaderStyle.Height;
+      cellRect.Height = this.m_TableLayout.PropertyColumnHeaderStyle.Height;
       return cellRect;
     }
 
