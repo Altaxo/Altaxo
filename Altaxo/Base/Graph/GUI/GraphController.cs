@@ -1433,7 +1433,7 @@ namespace Altaxo.Graph.GUI
             break;
           case GraphTools.ReadPlotItemData:
             if(!(m_MouseState is ReadPlotItemDataMouseHandler))
-              m_MouseState = new ReadPlotItemDataMouseHandler();
+              m_MouseState = new ReadPlotItemDataMouseHandler(this);
             break;
 
         }
@@ -2366,13 +2366,25 @@ namespace Altaxo.Graph.GUI
     public class ReadPlotItemDataMouseHandler : MouseStateHandler
     {
       /// <summary>
-      /// If true, the selected objects where moved when a MouseMove event is fired
+      /// Number of the layer, in which the plot item resides which is currently selected.
       /// </summary>
-      protected bool m_bMoveObjectsOnMouseMove=false;
-      /// <summary>Stores the mouse position of the last point to where the selected objects where moved</summary>
-      protected PointF m_MoveObjectsLastMovePoint;
-      /// <summary>If objects where really moved during the moving mode, this value become true</summary>
-      protected bool m_bObjectsWereMoved=false;
+      protected int _LayerNumber;
+     
+      /// <summary>
+      /// The number of the plot item where the cross is currently.
+      /// </summary>
+      protected int _PlotItemNumber;
+
+
+      /// <summary>
+      /// Number of the plot point which has currently the cross onto.
+      /// </summary>
+      protected int _PlotIndex;
+
+      /// <summary>
+      /// The number of the data point (index into the data row) where the cross is currently.
+      /// </summary>
+      protected int _RowIndex;
 
       /// <summary>
       /// The plot item where the mouse snaps in
@@ -2383,6 +2395,13 @@ namespace Altaxo.Graph.GUI
       /// Coordinates of the red data reader cross (in printable coordinates)
       /// </summary>
       protected PointF m_Cross;
+
+      protected GraphController _grac;
+
+      public ReadPlotItemDataMouseHandler(GraphController grac)
+      {
+        _grac = grac;
+      }
 
       /// <summary>
       /// Handles the mouse move event.
@@ -2402,16 +2421,7 @@ namespace Altaxo.Graph.GUI
       /// </summary>
       /// <param name="grac">The sender of the event.</param>
       /// <param name="e">The mouse event args</param>
-      /// <remarks>
-      /// The strategy to handle the mousedown event is as following:
-      /// 
-      /// Have we clicked on already selected objects?
-      ///   if yes (we have clicked on already selected objects) and the shift or control key was pressed -> deselect the object and repaint
-      ///   if yes (we have clicked on already selected objects) and none shift nor control key was pressed-> activate the object moving  mode
-      ///   if no (we have not clicked on already selected objects) and shift or control key was pressed -> search for the object and add it to the selected objects, then aktivate moving mode
-      ///   if no (we have not clicked on already selected objects) and no shift or control key pressed -> if a object was found add it to the selected objects and activate moving mode
-      ///                                                                                                  if no object was found clear the selection list, deactivate moving mode
-      /// </remarks>
+     
       public override MouseStateHandler OnMouseDown(GraphController grac, System.Windows.Forms.MouseEventArgs e)
       {
         base.OnMouseDown(grac, e);
@@ -2432,25 +2442,29 @@ namespace Altaxo.Graph.GUI
           inv.TransformPoints(transXY);
           XYScatterPointInformation scatterPoint = m_PlotItem.GetNearestPlotPoint(clickedObject.ParentLayer,transXY[0]);
 
+          this._PlotItemNumber = GetPlotItemNumber(clickedLayerNumber,m_PlotItem);
+          this._LayerNumber = clickedLayerNumber;
 
 
           if(null!=scatterPoint)
           {
+            this._PlotIndex = scatterPoint.PlotIndex;
+            this._RowIndex = scatterPoint.RowIndex;
             // convert this layer coordinates first to PrintableAreaCoordinates
             PointF printableCoord = clickedObject.ParentLayer.LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
             m_Cross = printableCoord;
-            m_Cross.X+=grac.Doc.PrintableBounds.X;
-            m_Cross.Y+=grac.Doc.PrintableBounds.Y;
+            m_Cross.X+=_grac.Doc.PrintableBounds.X;
+            m_Cross.Y+=_grac.Doc.PrintableBounds.Y;
            
-            PointF newPixelCoord = grac.PrintableAreaToPixelCoordinates(printableCoord);
+            PointF newPixelCoord = _grac.PrintableAreaToPixelCoordinates(printableCoord);
             Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
-
+            
           
             
             Current.Console.WriteLine("{0}[{1}] X={2}, Y={3}",
               m_PlotItem.ToString(),
               scatterPoint.RowIndex,
- //             scatterPoint.PlotIndex,
+              //             scatterPoint.PlotIndex,
               m_PlotItem.XYColumnPlotData.XColumn[scatterPoint.RowIndex],
               m_PlotItem.XYColumnPlotData.YColumn[scatterPoint.RowIndex]);
 
@@ -2458,13 +2472,135 @@ namespace Altaxo.Graph.GUI
           
             // here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
             // of the grac
-            grac.View.InvalidateGraph(); // no refresh necessary, only invalidate to show the cross
+            _grac.View.InvalidateGraph(); // no refresh necessary, only invalidate to show the cross
           }
         }
        
          
         return this;
       } // end of function
+
+
+      
+
+
+      void ShowCross(XYScatterPointInformation scatterPoint)
+      {
+      
+          this._PlotIndex = scatterPoint.PlotIndex;
+          this._RowIndex = scatterPoint.RowIndex;
+          // convert this layer coordinates first to PrintableAreaCoordinates
+          PointF printableCoord = _grac.Layers[this._LayerNumber].LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
+          m_Cross = printableCoord;
+          m_Cross.X+=_grac.Doc.PrintableBounds.X;
+          m_Cross.Y+=_grac.Doc.PrintableBounds.Y;
+           
+          PointF newPixelCoord = _grac.PrintableAreaToPixelCoordinates(printableCoord);
+          //Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
+          //Cursor.Position = ((Control)_grac.View).PointToScreen(newPixelCoord);
+          
+            
+          Current.Console.WriteLine("{0}[{1}] X={2}, Y={3}",
+            m_PlotItem.ToString(),
+            scatterPoint.RowIndex,
+            //             scatterPoint.PlotIndex,
+            m_PlotItem.XYColumnPlotData.XColumn[scatterPoint.RowIndex],
+            m_PlotItem.XYColumnPlotData.YColumn[scatterPoint.RowIndex]);
+
+          
+          
+          // here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
+          // of the grac
+          _grac.View.InvalidateGraph(); // no refresh necessary, only invalidate to show the cross
+       
+      }
+
+
+      /// <summary>
+      /// Tests presumtions for a move of the cross.
+      /// </summary>
+      /// <returns>True if the cross can be moved, false if one of the presumtions does not hold.</returns>
+      bool TestMovementPresumtions()
+      {
+        if(m_PlotItem==null)
+          return false;
+        if(_grac==null || _grac.Doc==null || _grac.Doc.Layers==null)
+          return false;
+        if(this._LayerNumber<0 || this._LayerNumber>=_grac.Doc.Layers.Count)
+          return false;
+
+        return true;
+      }
+
+      /// <summary>
+      /// Moves the cross along the plot.
+      /// </summary>
+      /// <param name="increment"></param>
+      void MoveLeftRight(int increment)
+      {
+        if(!TestMovementPresumtions())
+          return;
+
+        XYScatterPointInformation scatterPoint = m_PlotItem.GetNextPlotPoint(_grac.Doc.Layers[this._LayerNumber],this._PlotIndex,increment);
+        
+        if(null!=scatterPoint)
+          ShowCross(scatterPoint);
+      }
+
+      /// <summary>
+      /// Moves the cross to the next plot item. If no plot item is found in this layer, it moves the cross to the next layer.
+      /// </summary>
+      /// <param name="increment"></param>
+      void MoveUpDown(int increment)
+      {
+        if(!TestMovementPresumtions())
+          return;
+
+        int numlayers = _grac.Layers.Count;
+        int nextlayer = _LayerNumber;
+        int nextplotitemnumber = this._PlotItemNumber;
+
+        XYScatterPointInformation scatterPoint=null;
+        XYColumnPlotItem plotitem = null;
+        do
+        {
+          nextplotitemnumber = this._PlotItemNumber + Math.Sign(increment);
+          if(nextplotitemnumber<0)
+          {
+            nextlayer-=1;
+            nextplotitemnumber = nextlayer<0 ? int.MaxValue : _grac.Layers[nextlayer].PlotItems.Count-1;
+          }
+          else if(nextplotitemnumber>=_grac.Layers[nextlayer].PlotItems.Count)
+          {
+            nextlayer+=1;
+            nextplotitemnumber=0;
+          }
+          // check if this results in a valid information
+          if(nextlayer<0 || nextlayer>=numlayers)
+            break;
+          
+          if(nextplotitemnumber<0 || nextplotitemnumber>=_grac.Layers[nextlayer].PlotItems.Count)
+            continue;
+  
+          plotitem =  _grac.Layers[nextlayer].PlotItems[nextplotitemnumber] as XYColumnPlotItem;
+          if(null==plotitem)
+            continue;
+  
+          scatterPoint = plotitem.GetNextPlotPoint(_grac.Layers[nextlayer],this._PlotIndex,0);
+        } while(scatterPoint==null);
+      
+        if(null!=scatterPoint)
+        {
+          this.m_PlotItem = plotitem;
+          this._LayerNumber = nextlayer;
+          this._PlotItemNumber = nextplotitemnumber;
+          this._PlotIndex = scatterPoint.PlotIndex;
+          this._RowIndex = scatterPoint.RowIndex;
+
+          ShowCross(scatterPoint);
+        }
+      }
+
 
       /// <summary>
       /// Handles the mouse up event.
@@ -2534,11 +2670,48 @@ namespace Altaxo.Graph.GUI
         if(keyData == Keys.Left)
         {
           System.Diagnostics.Trace.WriteLine("Read tool key handler, left key pressed!");
+          MoveLeftRight(-1);
           return true;
         }
+        else if(keyData == Keys.Right)
+        {
+          System.Diagnostics.Trace.WriteLine("Read tool key handler, right key pressed!");
+          MoveLeftRight(1);
+          return true;
+        }
+        else if(keyData == Keys.Up)
+        {
+          MoveUpDown(1);
+          return true;
+        }
+        else if(keyData == Keys.Down)
+        {
+          MoveUpDown(-1);
+          return true;
+        }
+
+
         return false; // per default the key is not processed
       }
 
+
+      /// <summary>
+      /// Find the plot item number of a given plot item.
+      /// </summary>
+      /// <param name="grac"></param>
+      /// <param name="layernumber"></param>
+      /// <param name="plotitem"></param>
+      /// <returns></returns>
+      int GetPlotItemNumber(int layernumber, XYColumnPlotItem plotitem)
+      {
+        if(layernumber<_grac.Doc.Layers.Count)
+        {
+          for(int i=0;i<_grac.Doc.Layers[layernumber].PlotItems.Count;i++)
+            if(object.ReferenceEquals(_grac.Doc.Layers[layernumber].PlotItems[i],plotitem))
+              return i;
+        }
+      return -1;
+      }
 
     } // end of class
 

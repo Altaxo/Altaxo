@@ -445,6 +445,41 @@ namespace Altaxo.Graph
     }
   
 
+    /// <summary>
+    /// For a given plot point of index oldplotindex, finds the index and coordinates of a plot point
+    /// of index oldplotindex+increment.
+    /// </summary>
+    /// <param name="layer">The layer this plot belongs to.</param>
+    /// <param name="plotData">The plot data that belongs to this plot style.</param>
+    /// <param name="oldplotindex">Old plot index.</param>
+    /// <param name="increment">Increment to the plot index.</param>
+    /// <returns>Information about the new plot point find at position (oldplotindex+increment). Returns null if no such point exists.</returns>
+    public XYScatterPointInformation GetNextPlotPoint(IPlotArea layer, object plotData, int oldplotindex, int increment)
+    {
+      XYColumnPlotData myPlotAssociation = plotData as XYColumnPlotData;
+      if(null==myPlotAssociation)
+        return null;
+
+      PlotRangeList rangeList;
+      PointF[] ptArray;
+      if(myPlotAssociation.GetRangesAndPoints(layer,out rangeList,out ptArray))
+      {
+        if(ptArray.Length==0)
+          return null;
+
+        int minindex = oldplotindex + increment;
+        minindex = Math.Max(minindex,0);
+        minindex = Math.Min(minindex,ptArray.Length-1);
+        // ok, minindex is the point we are looking for
+        // so we have a look in the rangeList, what row it belongs to
+        int rowindex = rangeList.GetRowIndexForPlotIndex(minindex);
+        return new XYScatterPointInformation(ptArray[minindex],rowindex,minindex);
+      }
+
+
+      return null;
+    }
+
     public bool GetRangesAndPoints(
       Graph.XYPlotLayer layer,
       XYColumnPlotData myPlotAssociation,

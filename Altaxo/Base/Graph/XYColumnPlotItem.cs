@@ -273,5 +273,22 @@ namespace Altaxo.Graph
       return null;
     }
 
+    /// <summary>
+    /// For a given plot point of index oldplotindex, finds the index and coordinates of a plot point
+    /// of index oldplotindex+increment.
+    /// </summary>
+    /// <param name="layer">The layer this plot belongs to.</param>
+    /// <param name="oldplotindex">Old plot index.</param>
+    /// <param name="increment">Increment to the plot index.</param>
+    /// <returns>Information about the new plot point find at position (oldplotindex+increment). Returns null if no such point exists.</returns>
+    public XYScatterPointInformation GetNextPlotPoint(IPlotArea layer, int oldplotindex, int increment)
+    {
+      if(this.m_PlotStyle is XYLineScatterPlotStyle)
+      {
+        return ((XYLineScatterPlotStyle)m_PlotStyle).GetNextPlotPoint(layer,m_PlotAssociation,oldplotindex,increment);
+      }
+      return null;
+    }
+
   }
 }
