@@ -34,7 +34,7 @@ namespace Altaxo.Serialization.Galactic
 	{
 
 		/// <summary>
-		/// Creating a spectrum either from either a row or from a column.
+		/// Creating a spectrum either from a row or from a column.
 		/// </summary>
 		/// <remarks>Choosing creating a spectrum from a row, the values of a single table row (or parts of it) are used to create
 		/// a spectrum, i.e. the y-values of the spectrum. In this case the x-values can come from a numeric property column.<para/>
@@ -617,6 +617,4 @@ namespace Altaxo.Serialization.Galactic
 		}
 
 	} // end of class Export
-
-
 }

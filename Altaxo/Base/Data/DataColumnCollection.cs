@@ -131,7 +131,7 @@ namespace Altaxo.Data
 			/// </summary>
 			/// <param name="columnIndex">The index of the added column.</param>
 			/// <param name="rowCountOfAddedColumn">The row count of the added column.</param>
-			/// <returns></returns>
+			/// <returns>The newly created ChangeEventArgs for this case.</returns>
 			public static ChangeEventArgs CreateColumnAddArgs(int columnIndex, int rowCountOfAddedColumn)
 			{
 				ChangeEventArgs args = new ChangeEventArgs(columnIndex,0,rowCountOfAddedColumn,false);
@@ -139,12 +139,24 @@ namespace Altaxo.Data
 			}
 
 			/// <summary>
+			/// Create the change state that reflects the renaming of one column.
+			/// </summary>
+			/// <param name="columnIndex">The index of the renamed column.</param>
+			/// <returns>The newly created ChangeEventArgs for this case.</returns>
+			public static ChangeEventArgs CreateColumnRenameArgs(int columnIndex)
+			{
+				ChangeEventArgs args = new ChangeEventArgs(columnIndex,0,0,false);
+				return args;
+			}
+
+
+			/// <summary>
 			/// Create the change state that reflects the replace of one column by another (or copying data).
 			/// </summary>
 			/// <param name="columnIndex">The index of the column to replace.</param>
 			/// <param name="oldRowCount">The row count of the old (replaced) column.</param>
 			/// <param name="newRowCount">The row count of the new column.</param>
-			/// <returns></returns>
+			/// <returns>The newly created ChangeEventArgs for this case.</returns>
 			public static ChangeEventArgs CreateColumnCopyOrReplaceArgs(int columnIndex, int oldRowCount, int newRowCount)
 			{
 				ChangeEventArgs args = new ChangeEventArgs(columnIndex,0,Math.Max(oldRowCount,newRowCount),newRowCount<oldRowCount);
@@ -1004,6 +1016,8 @@ namespace Altaxo.Data
 					GetColumnInfo(datac).Name = newName;
 					m_ColumnsByName.Remove(oldName);
 					m_ColumnsByName.Add(newName,datac);
+
+					this.OnChildChanged(null,ChangeEventArgs.CreateColumnRenameArgs(this.GetColumnNumber(datac)));
 				}
 			}
 		}
@@ -1045,6 +1059,26 @@ namespace Altaxo.Data
 		public int GetColumnGroup(int idx)
 		{
 			return GetColumnInfo(idx).Group;
+		}
+
+		/// <summary>
+		/// This function will return the smallest possible group number, which is currently not in use.
+		/// </summary>
+		/// <returns>The smallest unused group number (starting at 0).</returns>
+		public int GetUnusedColumnGroupNumber()
+		{
+			System.Collections.SortedList groupNums = new System.Collections.SortedList();
+			for(int i=0;i<ColumnCount;i++)
+			{
+				groupNums.Add(this.GetColumnGroup(i),null);
+			}
+
+			for(int i=0;i<int.MaxValue;i++)
+			{
+				if(!groupNums.Contains(i))
+					return i;
+			}
+			return 0;
 		}
 
 		/// <summary>

@@ -30,10 +30,13 @@ using System.Windows.Forms;
 namespace Altaxo.Serialization.Galactic
 {
 	/// <summary>
-	/// Summary description for ImportGalacticSpcFiles.
+	/// Provides methods and internal structures to be able to import Galactic (R) SPC files.
 	/// </summary>
 	public class Import
 	{
+		/// <summary>
+		/// The main header structure of the SPC file. This structure is located at the very beginning of the file.
+		/// </summary>
 		public struct SPCHDR
 		{
 			public byte ftflgs;
@@ -46,6 +49,9 @@ namespace Altaxo.Serialization.Galactic
 			public int fnsub;
 		}
 
+		/// <summary>
+		/// This structure describes a Subheader, i.e. a single spectrum.
+		/// </summary>
 		public struct SUBHDR
 		{
 			/// <summary> subflgs : always 0</summary>
@@ -72,7 +78,7 @@ namespace Altaxo.Serialization.Galactic
 		}
 
 		/// <summary>
-		/// Imports a Galactic SPC file into a x and an y array.
+		/// Imports a Galactic SPC file into a x and an y array. The file must not be a multi spectrum file (an exception is thrown in this case).
 		/// </summary>
 		/// <param name="xvalues">The x values of the spectrum.</param>
 		/// <param name="yvalues">The y values of the spectrum.</param>
@@ -171,12 +177,27 @@ namespace Altaxo.Serialization.Galactic
 			return null;
 		}
 
+		/// <summary>
+		/// Imports a couple of SPC files into a table. The spectra are added as columns to the table. If the x column
+		/// of the rightmost column does not match the x-data of the spectra, a new x-column is also created.
+		/// </summary>
+		/// <param name="filenames">An array of filenames to import.</param>
+		/// <param name="table">The table the spectra should be imported to.</param>
+		/// <returns>Null if no error occurs, or an error description.</returns>
 		public static string ImportSpcFiles(string[] filenames, Altaxo.Data.DataTable table)
 		{
-			string firstfilename = null;
 			Altaxo.Data.DoubleColumn xcol=null;
 			double[] xvalues, yvalues;
 			System.Text.StringBuilder errorList = new System.Text.StringBuilder();
+			int lastColumnGroup = 0;
+
+			if(table.DataColumns.ColumnCount>0)
+			{
+				lastColumnGroup = table.DataColumns.GetColumnGroup(table.DataColumns.ColumnCount-1);
+				Altaxo.Data.DataColumn xColumnOfRightMost = table.DataColumns.FindXColumnOfGroup(lastColumnGroup);
+				if(xColumnOfRightMost is Altaxo.Data.DoubleColumn)
+					xcol = (Altaxo.Data.DoubleColumn)xColumnOfRightMost;
+			}
 
 			foreach(string filename in filenames)
 			{
@@ -184,45 +205,58 @@ namespace Altaxo.Serialization.Galactic
 				if(null!=error)
 					errorList.Append(error);
 
-				if(null==xcol) // if this is the first file successfully imported, add the xvalues to the worksheet
+				bool bMatchsXColumn=false;
+
+				if(null!=xcol && xvalues.Length==xcol.Count)
 				{
-					firstfilename = filename;
+					bMatchsXColumn=true;
+					// now check the match in the xvalues
+					for(int i=0;i<xvalues.Length;i++)
+					{
+						if(xcol.GetDoubleAt(i) != xvalues[i])
+						{
+							bMatchsXColumn = false;
+							break;
+						}
+					}
+				}
+					
+
+				// create a new x column if the last one does not match
+				if(!bMatchsXColumn)
+				{
 					xcol = new Altaxo.Data.DoubleColumn(xvalues.Length);
 					for(int i=0;i<xvalues.Length;i++)
 						xcol[i] = xvalues[i];
-					table.DataColumns.Add(xcol,"SPC X values",Altaxo.Data.ColumnKind.X);
-				}
-				else // xcol was set before - so check the outcoming xvalues now that they match the xcols of the first imported spcfile
-				{
-					if(xvalues.Length!=xcol.Count || yvalues.Length!=xcol.Count)
-					{
-						errorList.Append(string.Format("Warning: the length of the spectrum {0} ({1}) did not match the length of the first spectrum {2} ({3})!\n",filename,xvalues.Length,firstfilename,xcol.Count));
-					}
-					else
-					{
-						// now check the match in the xvalues
-						for(int i=0;i<xvalues.Length;i++)
-						{
-							if(xcol[i]!=xvalues[i])
-							{
-								errorList.Append(string.Format("Warning: the xvalues at position [{0}] did not match between the spectrum {1} and the first imported spectrum {2}!\n",i,filename,firstfilename)); 
-								break;
-							}
-						}
-					}
-		
+					lastColumnGroup = table.DataColumns.GetUnusedColumnGroupNumber();
+					table.DataColumns.Add(xcol,"SPC X values",Altaxo.Data.ColumnKind.X,lastColumnGroup);
 				}
 
 				// now add the y-values
 				Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn(yvalues.Length);
 				for(int i=0;i<yvalues.Length;i++)
 					ycol[i] = yvalues[i];
-				table.DataColumns.Add(ycol,filename);
+				table.DataColumns.Add(ycol,table.DataColumns.FindNewColumnName(),Altaxo.Data.ColumnKind.V,lastColumnGroup);
+
+				// add also a property column named "FilePath" if not existing so far
+				if(!table.PropCols.ContainsColumn("FilePath"))
+					table.PropCols.Add(new Altaxo.Data.TextColumn(),"FilePath");
+
+				// now set the file name property cell
+				if(table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+				{
+					table.PropCols["FilePath"][table.DataColumns.GetColumnNumber(ycol)] = filename;
+				}
 			} // foreache file
 
 			return errorList.Length==0 ? null : errorList.ToString();
 		}
 
+		/// <summary>
+		/// Shows the SPC file import dialog, and imports the files to the table if the user clicked on "OK".
+		/// </summary>
+		/// <param name="owner">The windows owner of this dialog box.</param>
+		/// <param name="table">The table to import the SPC files to.</param>
 		public static void ShowDialog(System.Windows.Forms.Form owner, Altaxo.Data.DataTable table)
 		{
 

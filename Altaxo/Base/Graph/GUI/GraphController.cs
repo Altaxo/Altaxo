@@ -195,7 +195,7 @@ namespace Altaxo.Graph.GUI
 				object o = Main.DocumentPath.GetObject(_PathToGraph,documentRoot,_GraphController);
 				if(o is Altaxo.Graph.GraphDocument)
 				{
-					_GraphController.m_Graph = o as Altaxo.Graph.GraphDocument;
+					_GraphController.Doc = o as Altaxo.Graph.GraphDocument;
 					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
 				}
 			}
@@ -300,7 +300,7 @@ namespace Altaxo.Graph.GUI
 			SetMemberVariablesToDefault();
 		
 			if(null!=graphdoc)
-				this.m_Graph = graphdoc;
+				this.Doc = graphdoc;
 			else if(null==graphdoc && !bDeserializationConstructor)
 				throw new ArgumentNullException("graphdoc","GraphDoc must not be null");
 
@@ -336,17 +336,15 @@ namespace Altaxo.Graph.GUI
 				printableBounds.Width	= pageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
 				printableBounds.Height = pageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
 			
-				if(null!=m_Graph)
+				if(null!=Doc)
 				{
-					m_Graph.Changed += new EventHandler(this.EhGraph_Changed);
-					m_Graph.Layers.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
-					m_Graph.PageBounds = pageBounds;
-					m_Graph.PrintableBounds = printableBounds;
+					Doc.PageBounds = pageBounds;
+					Doc.PrintableBounds = printableBounds;
 				}
 			}
 
-			if(null!=m_Graph && 0==m_Graph.Layers.Count)
-				m_Graph.CreateNewLayerNormalBottomXLeftY();
+			if(null!=Doc && 0==Doc.Layers.Count)
+				Doc.CreateNewLayerNormalBottomXLeftY();
 		}
 
 		#endregion // Constructors
@@ -801,6 +799,28 @@ namespace Altaxo.Graph.GUI
 		public GraphDocument Doc
 		{
 			get { return m_Graph; }
+			set
+			{
+				GraphDocument oldDoc=m_Graph;
+				m_Graph = value;
+				if(!object.ReferenceEquals(m_Graph,oldDoc))
+				{
+					if(oldDoc!=null)
+					{
+						oldDoc.Changed -= new EventHandler(this.EhGraph_Changed);
+						oldDoc.Layers.LayerCollectionChanged -= new EventHandler(this.EhGraph_LayerCollectionChanged);
+					}
+					if(m_Graph!=null)
+					{
+						m_Graph.Changed += new EventHandler(this.EhGraph_Changed);
+						m_Graph.Layers.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
+
+						// Ensure the current layer and plot numbers are valid
+						this.EnsureValidityOfCurrentLayerNumber();
+						this.EnsureValidityOfCurrentPlotNumber();
+					}
+				}
+			}
 		}
 
 		/// <summary>

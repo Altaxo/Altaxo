@@ -43,7 +43,8 @@ namespace Altaxo.Graph
 		Main.IChangedEventSource,
 		Main.IChildChangedEventSink,
 		System.ICloneable, 
-		Main.IDocumentNode
+		Main.IDocumentNode,
+		Main.INamedObjectCollection
 	{
 		/// <summary>Fired when something in this collection changed, as for instance
 		/// adding or deleting layers, or exchanging layers.</summary>
@@ -460,6 +461,40 @@ namespace Altaxo.Graph
 			{
 				return "XYPlotLayer";
 			}
+		}
+
+		#endregion
+
+		#region INamedObjectCollection Members
+
+		/// <summary>
+		/// Returns the document name of the layer at index i. Actually, this is a name of the form L0, L1, L2 and so on.
+		/// </summary>
+		/// <param name="i">The layer index.</param>
+		/// <returns>The name of the layer at index i.</returns>
+		public static string GetNameOfLayer(int i)
+		{
+			return XYPlotLayer.GetDefaultNameOfLayer(i);
+		}
+
+		public object GetChildObjectNamed(string name)
+		{
+			for(int i=0;i<this.Count;i++)
+			{
+				if(GetNameOfLayer(i)==name)
+					return this[i];
+			}
+			return null;
+		}
+
+		public string GetNameOfChildObject(object o)
+		{
+			for(int i=0;i<this.Count;i++)
+			{
+				if(object.ReferenceEquals(o,this[i]))
+					return GetNameOfLayer(i);
+			}
+			return null;
 		}
 
 		#endregion

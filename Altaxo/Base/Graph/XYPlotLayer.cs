@@ -466,7 +466,6 @@ namespace Altaxo.Graph
 			
 				// XYPlotLayer specific
 				info.AddValue("LinkedLayer",s.LinkedLayer);
-			
 				info.AddValue("GraphObjects",s.m_GraphObjects);
 				info.AddValue("Plots",s.m_PlotItems);
 
@@ -552,7 +551,7 @@ namespace Altaxo.Graph
 			
 				// XYPlotLayer specific
 				s.m_LinkedLayer = (XYPlotLayer)info.GetValue("LinkedLayer",typeof(XYPlotLayer));
-			
+
 				s.m_GraphObjects = (Graph.GraphicsObjectCollection)info.GetValue("GraphObjects",typeof(Graph.GraphicsObjectCollection));
 
 				s.m_PlotItems = (Altaxo.Graph.PlotItemCollection)info.GetValue("Plots",typeof(Altaxo.Graph.PlotItemCollection));
@@ -630,7 +629,7 @@ namespace Altaxo.Graph
 				info.AddValue("Legend",s.m_Legend);
 			
 				// XYPlotLayer specific
-				info.AddValue("LinkedLayer",Main.DocumentPath.GetRelativePathFromTo(s,s.m_LinkedLayer));
+				info.AddValue("LinkedLayer", null!=s.m_LinkedLayer ? Main.DocumentPath.GetRelativePathFromTo(s,s.m_LinkedLayer) : null);
 			
 				info.AddValue("GraphicsObjectCollection",s.m_GraphObjects);
 				info.AddValue("Plots",s.m_PlotItems);
@@ -1826,18 +1825,31 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Set all parameters of the x axis link by once.
 		/// </summary>
+		/// <param name="linktype">The type of the axis link, i.e. None, Straight or Custom.</param>
 		/// <param name="orgA">The value a of x-axis link for link of axis origin: org' = a + b*org.</param>
 		/// <param name="orgB">The value b of x-axis link for link of axis origin: org' = a + b*org.</param>
 		/// <param name="endA">The value a of x-axis link for link of axis end: end' = a + b*end.</param>
 		/// <param name="endB">The value b of x-axis link for link of axis end: end' = a + b*end.</param>
-		public void SetXAxisLinkParameter(double orgA, double orgB, double endA, double endB)
+		public void SetXAxisLinkParameter(AxisLinkType linktype, double orgA, double orgB, double endA, double endB)
 		{
+			if(linktype==AxisLinkType.Straight)
+			{
+				orgA=0;
+				orgB=1;
+				endA=0;
+				endB=1;
+			}
+
+			bool linkaxis = (linktype!=AxisLinkType.None);
+
 			if(
+				(linkaxis != m_LinkXAxis) ||
 				(orgA!=m_LinkXAxisOrgA) ||
 				(orgB!=m_LinkXAxisOrgB) ||
 				(endA!=m_LinkXAxisEndA) ||
 				(endB!=m_LinkXAxisEndB) )
 			{
+				m_LinkXAxis     = linkaxis;
 				m_LinkXAxisOrgA = orgA;
 				m_LinkXAxisOrgB = orgB;
 				m_LinkXAxisEndA = endA;
@@ -1921,18 +1933,32 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Set all parameters of the y axis link by once.
 		/// </summary>
+		/// <param name="linktype">The type of the axis link, i.e. None, Straight or Custom.</param>
 		/// <param name="orgA">The value a of y-axis link for link of axis origin: org' = a + b*org.</param>
 		/// <param name="orgB">The value b of y-axis link for link of axis origin: org' = a + b*org.</param>
 		/// <param name="endA">The value a of y-axis link for link of axis end: end' = a + b*end.</param>
 		/// <param name="endB">The value b of y-axis link for link of axis end: end' = a + b*end.</param>
-		public void SetYAxisLinkParameter(double orgA, double orgB, double endA, double endB)
+		public void SetYAxisLinkParameter(AxisLinkType linktype, double orgA, double orgB, double endA, double endB)
 		{
+			if(linktype==AxisLinkType.Straight)
+			{
+				orgA=0;
+				orgB=1;
+				endA=0;
+				endB=1;
+			}
+
+			bool linkaxis = (linktype!=AxisLinkType.None);
+
+
 			if(
+				(linkaxis != m_LinkYAxis) ||
 				(orgA!=m_LinkYAxisOrgA) ||
 				(orgB!=m_LinkYAxisOrgB) ||
 				(endA!=m_LinkYAxisEndA) ||
 				(endB!=m_LinkYAxisEndB) )
 			{
+				m_LinkYAxis     = linkaxis;
 				m_LinkYAxisOrgA = orgA;
 				m_LinkYAxisOrgB = orgB;
 				m_LinkYAxisEndA = endA;
@@ -2029,6 +2055,7 @@ namespace Altaxo.Graph
 				this.m_xAxis.ProcessDataBounds(	
 					m_LinkXAxisOrgA+m_LinkXAxisOrgB*LinkedLayer.XAxis.Org,true,
 					m_LinkXAxisEndA+m_LinkXAxisEndB*LinkedLayer.XAxis.End,true);
+
 			}
 
 			if(IsYAxisLinked && null!=LinkedLayer)
@@ -2038,6 +2065,11 @@ namespace Altaxo.Graph
 					m_LinkYAxisEndA+m_LinkYAxisEndB*LinkedLayer.YAxis.End,true);
 			}
 
+			// indicate that the axes have changed
+			if(IsXAxisLinked || IsYAxisLinked)
+			{
+				this.OnAxesChanged();
+			}
 		}
 
 
@@ -2173,12 +2205,9 @@ namespace Altaxo.Graph
 			get { return m_LeftAxisTitle!=null ? m_LeftAxisTitle.Text : null; }
 			set
 			{
-				if(value==null || value=="")
-				{
-					m_LeftAxisTitle=null;
-				}
-				else
-				{
+				string newtitle = (value==null || value==String.Empty) ? null : value;
+				bool bChanged = !string.Equals(m_LeftAxisTitle,newtitle);
+				if(m_LeftAxisTitle==null && newtitle!=null)
 					if(m_LeftAxisTitle==null)
 					{
 						m_LeftAxisTitle = new TextGraphics();
@@ -2188,8 +2217,13 @@ namespace Altaxo.Graph
 						m_LeftAxisTitle.Position = new PointF(-0.125f*Size.Width,0.5f*Size.Height);
 					}
 
-					m_LeftAxisTitle.Text = value;
-				}
+				if(newtitle!=null)
+					m_LeftAxisTitle.Text = newtitle;
+				else
+					m_LeftAxisTitle = null;
+
+				if(bChanged)
+					this.OnInvalidate();	
 			}
 		}
 
@@ -2198,23 +2232,24 @@ namespace Altaxo.Graph
 			get { return m_RightAxisTitle!=null ? m_RightAxisTitle.Text : null; }
 			set
 			{
-				if(value==null || value=="")
+				string newtitle = (value==null || value==String.Empty) ? null : value;
+				bool bChanged = !string.Equals(m_RightAxisTitle,newtitle);
+				if(m_RightAxisTitle==null && newtitle!=null)
 				{
-					m_RightAxisTitle=null;
+					m_RightAxisTitle = new TextGraphics();
+					m_RightAxisTitle.Rotation=-90;
+					m_RightAxisTitle.XAnchor = TextGraphics.XAnchorPositionType.Center;
+					m_RightAxisTitle.YAnchor = TextGraphics.YAnchorPositionType.Top;
+					m_RightAxisTitle.Position = new PointF(1.125f*Size.Width,0.5f*Size.Height);
 				}
-				else
-				{
-					if(m_RightAxisTitle==null)
-					{
-						m_RightAxisTitle = new TextGraphics();
-						m_RightAxisTitle.Rotation=-90;
-						m_RightAxisTitle.XAnchor = TextGraphics.XAnchorPositionType.Center;
-						m_RightAxisTitle.YAnchor = TextGraphics.YAnchorPositionType.Top;
-						m_RightAxisTitle.Position = new PointF(1.125f*Size.Width,0.5f*Size.Height);
-					}
 
-					m_RightAxisTitle.Text = value;
-				}
+				if(newtitle!=null)
+					m_RightAxisTitle.Text = newtitle;
+				else
+					m_RightAxisTitle = null;
+
+				if(bChanged)
+					this.OnInvalidate();				
 			}
 		}
 
@@ -2223,15 +2258,10 @@ namespace Altaxo.Graph
 			get { return m_TopAxisTitle!=null ? m_TopAxisTitle.Text : null; }
 			set
 			{
-				if(value==null || value=="")
-				{
-					m_TopAxisTitle=null;
-				}
-				else
-				{
-					if(m_TopAxisTitle==null)
+				string newtitle = (value==null || value==String.Empty) ? null : value;
+				bool bChanged = !string.Equals(m_TopAxisTitle,newtitle);
+				if(m_TopAxisTitle==null && newtitle!=null)
 					{
-						m_TopAxisTitle = new TextGraphics();
 						m_TopAxisTitle = new TextGraphics();
 						m_TopAxisTitle.Rotation=0;
 						m_TopAxisTitle.XAnchor = TextGraphics.XAnchorPositionType.Center;
@@ -2239,8 +2269,15 @@ namespace Altaxo.Graph
 						m_TopAxisTitle.Position = new PointF(0.5f*Size.Width,-0.125f*Size.Height);
 					}
 
-					m_TopAxisTitle.Text = value;
-				}
+				if(newtitle!=null)
+					m_TopAxisTitle.Text = newtitle;
+				else
+					m_TopAxisTitle = null;
+
+				if(bChanged)
+					this.OnInvalidate();
+
+				
 			}
 		}
 
@@ -2249,13 +2286,9 @@ namespace Altaxo.Graph
 			get { return m_BottomAxisTitle!=null ? m_BottomAxisTitle.Text : null; }
 			set
 			{
-				if(value==null || value=="")
-				{
-					m_BottomAxisTitle=null;
-				}
-				else
-				{
-					if(m_BottomAxisTitle==null)
+				string newtitle = (value==null || value==String.Empty) ? null : value;
+				bool bChanged = !string.Equals(m_BottomAxisTitle,newtitle);
+					if(m_BottomAxisTitle==null && newtitle!=null)
 					{
 						m_BottomAxisTitle = new TextGraphics();
 						m_BottomAxisTitle.Rotation=0;
@@ -2264,8 +2297,13 @@ namespace Altaxo.Graph
 						m_BottomAxisTitle.Position = new PointF(0.5f*Size.Width,1.125f*Size.Height);
 					}
 
-					m_BottomAxisTitle.Text = value;
-				}
+							if(newtitle!=null)
+					m_BottomAxisTitle.Text = newtitle;
+				else
+					m_BottomAxisTitle = null;
+
+				if(bChanged)
+					this.OnInvalidate();
 			}
 		}
 
@@ -2503,8 +2541,21 @@ namespace Altaxo.Graph
 		{
 			get
 			{
-				return "L"+this.Number.ToString();
+				if(ParentObject is Main.INamedObjectCollection)
+					return ((Main.INamedObjectCollection)ParentObject).GetNameOfChildObject(this);
+				else
+					return GetDefaultNameOfLayer(this.Number);
 			}
+		}
+
+		/// <summary>
+		/// Returns the document name of the layer at index i. Actually, this is a name of the form L0, L1, L2 and so on.
+		/// </summary>
+		/// <param name="i">The layer index.</param>
+		/// <returns>The name of the layer at index i.</returns>
+		public static string GetDefaultNameOfLayer(int i)
+		{
+			return "L"+i.ToString(); // do not change it, since the name is used in serialization
 		}
 
 		#endregion

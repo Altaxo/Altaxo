@@ -208,20 +208,12 @@ namespace Altaxo.Graph.GUI
 		{
 			if(this.m_bXAxis)
 			{
-				m_Layer.XAxisLinkType = m_LinkType;
-				m_Layer.LinkXAxisOrgA = m_OrgA;
-				m_Layer.LinkXAxisEndA = m_OrgB;
-				m_Layer.LinkXAxisOrgB = m_EndA;
-				m_Layer.LinkXAxisEndB = m_EndB;
+				m_Layer.SetXAxisLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
 			}
 			else
 			{
-				m_Layer.YAxisLinkType = m_LinkType;
-				m_Layer.LinkYAxisOrgA = m_OrgA;
-				m_Layer.LinkYAxisEndA = m_OrgB;
-				m_Layer.LinkYAxisOrgB = m_EndA;
-				m_Layer.LinkYAxisEndB = m_EndB;
-				}
+				m_Layer.SetYAxisLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
+			}
 			return true;
 		}
 

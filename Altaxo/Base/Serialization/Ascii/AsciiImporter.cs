@@ -420,11 +420,17 @@ namespace Altaxo.Serialization.Ascii
 			
 			// insert the new columns or replace the old ones
 			table.Suspend();
+			bool tableWasEmptyBefore = table.DataColumns.ColumnCount==0;
 			for(int i=0;i<newcols.ColumnCount;i++)
 			{
 				if(newcols[i] is Altaxo.Data.DBNullColumn)
 					continue;
 				table.DataColumns.CopyOrReplaceOrAdd(i,newcols[i], newcols.GetColumnName(i));
+
+				// set the first column as x-column if the table was empty before, and there are more than one column
+				if(i==0 && tableWasEmptyBefore && newcols.ColumnCount>1)
+					table.DataColumns.SetColumnKind(0,Altaxo.Data.ColumnKind.X);
+
 			} // end for loop
 
 			// add the property columns
@@ -469,7 +475,7 @@ namespace Altaxo.Serialization.Ascii
 		/// <summary>
 		/// Imports ascii from a memory stream into a table. Returns null (!) if nothing is imported.
 		/// </summary>
-		/// <param name="stream">The stream to import ascii from.</param>
+		/// <param name="stream">The stream to import ascii from. Is not (!) closed at the end of this function.</param>
 		/// <returns>The table representation of the imported text, or null if nothing is imported.</returns>
 		public static Altaxo.Data.DataTable Import(System.IO.Stream stream)
 		{

@@ -12,4 +12,23 @@ TextDialog -> die Eingabe von Schriftgrößen, die nicht vorgesehen sind, funktion
 
 after restoring a document, the rows in a table seems to have line breaks -> fixed -> Checked
 
-11.12.03 pressing x (close button) on a modified project, but then cancel, the project is closed! -> fixed -> checked
+11.12.03	pressing x (close button) on a modified project, but then cancel, the project is closed! -> fixed -> checked
+
+18.12.03	MenuItem PlotLine -> Line/Symbol-Gap is on, but must be off
+					Group Items -> all items then should get the same styles (only color, line style etc. different)
+					-	die Link-Layer-Beziehung wird bei Öffnen des Documentes nicht richtig wieder hergestellt, weil
+						LayerCollection nicht zu INamedObjectCollection gehört, ausserdem wird beim Abspeichern auch dann ein Pfad gespeichert,
+						wenn der Layer gar nicht gelinkt ist! -> fixed -> checked
+					
+					if the linked layer resolution at opening of the document fails, the linkaxis properties should be resetted to default values to ensure
+					that nothing breaks
+					
+					Import ascii on an empty worksheet, the first column is __not__ the x-column -> fixed
+					
+					in XYPlotLayer die Funktion OnInvalidate umbenennen in OnChanged
+					
+					beim Umbenennen von Spalten wird das Bild nicht aufgefrischt -> fixed -> checked
+					
+					Bei Link von Layer0 -> Layer1 -> Layer2 wird die Achse von Layer2 nicht aktualisiert, wenn sie in Layer0 geändert wird -> fixed ->checked
+					
+					Breite des Symbols in der Legende hängt im Momemt vom TextFont ab, sollte aber besser von dem größten verwendeten Symbol abhängen.
