@@ -663,14 +663,13 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 					this.m_NumberOfTableRows = m_Table.RowCount;
 					this.m_NumberOfPropertyCols = m_Table.PropCols.ColumnCount;
 
-					SetScrollPositionTo(0,0);
-					m_ColumnStyleCache.ForceUpdate(this);
-					this.View.InvalidateTableArea();
+					AdjustScrollBarProperties();
 				}
 				else // Data table is null
 				{
 					this.m_NumberOfTableCols = 0;
 					this.m_NumberOfTableRows = 0;
+					this.m_NumberOfPropertyCols = 0;
 					m_ColumnStyleCache.Clear();
 					SetScrollPositionTo(0,0);
 					this.View.InvalidateTableArea();
@@ -689,279 +688,6 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 		{
 			get { return View.TableAreaSize.Height; }
 		}
-
-
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int HorzScrollPos
-		{
-			get { return m_HorzScrollPos; }
-			set
-			{
-				int oldValue = m_HorzScrollPos;
-				m_HorzScrollPos=value;
-
-				if(value!=oldValue)
-				{
-
-					if(m_CellEditControl.Visible)
-					{
-						this.ReadCellEditContent();
-						m_CellEditControl.Hide();
-					}
-
-					this.View.HorzScrollValue = value;
-					this.m_ColumnStyleCache.ForceUpdate(this);
-					this.View.InvalidateTableArea();
-				}
-			}
-		}
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int VertScrollPos
-		{
-			get { return m_VertScrollPos; }
-			set
-			{
-				int oldValue = m_VertScrollPos;
-				m_VertScrollPos=value;
-
-				if(value!=oldValue)
-				{
-					if(m_CellEditControl.Visible)
-					{
-						this.ReadCellEditContent();
-						m_CellEditControl.Hide();
-					}
-
-					this.View.VertScrollValue = value;
-					this.View.InvalidateTableArea();
-				}
-			}
-		}
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int FirstVisibleColumn
-		{
-			get
-			{
-				return HorzScrollPos;
-			}
-			set
-			{
-				HorzScrollPos=value;
-			}
-		}
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int VisibleColumns
-		{
-			get
-			{
-				return this.m_LastVisibleColumn>=FirstVisibleColumn ? 1+m_LastVisibleColumn-FirstVisibleColumn : 0;
-			}
-		}
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int FullyVisibleColumns
-		{
-			get
-			{
-				return m_LastFullyVisibleColumn>=FirstVisibleColumn ? 1+m_LastFullyVisibleColumn-FirstVisibleColumn : 0;
-			}
-		}
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int LastVisibleColumn
-		{
-			get
-			{
-				return FirstVisibleColumn + VisibleColumns -1;
-			}
-		}
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int LastFullyVisibleColumn
-		{
-			get
-			{
-				return FirstVisibleColumn + FullyVisibleColumns -1;
-			}
-		}
-		
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int FirstVisibleTableRow
-		{
-			get
-			{
-				return Math.Max(0,VertScrollPos - TotalEnabledPropertyColumns);
-			}
-			set
-			{
-				VertScrollPos = TotalEnabledPropertyColumns + Math.Max(0,value);
-				this.View.InvalidateTableArea();
-			}
-		}
-
-
-		public int GetFirstVisibleTableRow(int top)
-		{
-			int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
-			return FirstVisibleTableRow + Math.Max(0,firstTotRow-RemainingEnabledPropertyColumns);
-		}
-
-		public int GetVisibleTableRows(int top, int bottom)
-		{
-			int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
-			int lastTotRow  = (int)Math.Ceiling((bottom-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height)-1;
-			return Math.Max(0,1 + lastTotRow - firstTotRow);
-		}
-
-		public int GetFullyVisibleTableRows(int top, int bottom)
-		{
-			int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
-			int lastTotRow  = (int)Math.Floor((bottom-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height)-1;
-			return Math.Max(0, 1+ lastTotRow - firstTotRow);
-		}
-
-		public int GetTopCoordinateOfTableRow(int nRow)
-		{
-			return		m_ColumnHeaderStyle.Height 
-				+ RemainingEnabledPropertyColumns*m_RowHeaderStyle.Height
-				+ (nRow-FirstVisibleTableRow)*m_RowHeaderStyle.Height;
-		}
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int VisibleTableRows
-		{
-			get
-			{
-				return GetVisibleTableRows(0,this.View.TableAreaSize.Height);
-			}
-		}
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int FullyVisibleTableRows
-		{
-			get
-			{
-				return GetFullyVisibleTableRows(0,this.View.TableAreaSize.Height);
-			}
-		}
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int LastVisibleTableRow
-		{
-			get
-			{
-				return FirstVisibleTableRow + VisibleTableRows -1;
-			}
-		}
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int LastFullyVisibleTableRow
-		{
-			get
-			{
-				return FirstVisibleTableRow + FullyVisibleTableRows - 1;
-			}
-		}
-
-		/// <summary>Returns the remaining number of property columns that could be shown below the current scroll position.</summary>
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int RemainingEnabledPropertyColumns
-		{
-			get
-			{
-				return m_ShowColumnProperties ? Math.Max(0,this.m_NumberOfPropertyCols-VertScrollPos) : 0;
-			}
-		}
-
-		/// <summary>Returns number of property columns that are enabled for been shown on the grid.</summary>
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int TotalEnabledPropertyColumns
-		{
-			get { return m_ShowColumnProperties ? this.m_NumberOfPropertyCols : 0; }
-		}
-
-
-		public int GetFirstVisiblePropertyColumn(int top)
-		{
-			int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
-			return m_ShowColumnProperties ? firstTotRow+VertScrollPos : 0;
-		}
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int LastFullyVisiblePropertyColumn
-		{
-			get
-			{
-				return FirstVisiblePropertyColumn + this.FullyVisiblePropertyColumns -1;
-			}
-		}
-
-
-		public int GetTopCoordinateOfPropertyColumn(int nCol)
-		{
-			return m_ColumnHeaderStyle.Height + (nCol-FirstVisiblePropertyColumn)*m_RowHeaderStyle.Height;
-		}
-
-		public int GetVisiblePropertyColumns(int top, int bottom)
-		{
-			if(this.m_ShowColumnProperties)
-			{
-				int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
-				int lastTotRow  = (int)Math.Ceiling((bottom-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height)-1;
-				int maxPossRows = Math.Max(0,RemainingEnabledPropertyColumns-firstTotRow);
-				return Math.Min(maxPossRows,Math.Max(0,1 + lastTotRow - firstTotRow));
-			}
-			else
-				return 0;
-		}
-
-		public int GetFullyVisiblePropertyColumns(int top, int bottom)
-		{
-			if(m_ShowColumnProperties)
-			{
-				int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
-				int lastTotRow  = (int)Math.Floor((bottom-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height)-1;
-				int maxPossRows = Math.Max(0,RemainingEnabledPropertyColumns-firstTotRow);
-				return Math.Min(maxPossRows,Math.Max(0,1 + lastTotRow - firstTotRow));
-			}
-			else
-				return 0;
-		}
-
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int VisiblePropertyColumns
-		{
-			get
-			{
-				return GetVisiblePropertyColumns(0,this.View.TableAreaSize.Height);
-			}
-		}
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int FullyVisiblePropertyColumns
-		{
-			get
-			{
-				return GetFullyVisiblePropertyColumns(0,this.View.TableAreaSize.Height);
-			}
-		}
-
-		
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int FirstVisiblePropertyColumn
-		{
-			get
-			{
-				return (m_ShowColumnProperties && VertScrollPos<m_NumberOfPropertyCols) ? VertScrollPos : -1;
-			}
-		}
-
-
 
 		public IndexSelection SelectedColumns
 		{
@@ -1164,30 +890,37 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 			int nOldRows = this.m_NumberOfTableRows;
 			int nOldCols = this.m_NumberOfTableCols;
+			int nOldPropCols = this.m_NumberOfPropertyCols;
 
 			m_NumberOfTableRows=DataTable.RowCount;
 			m_NumberOfTableCols=DataTable.ColumnCount;
+			m_NumberOfPropertyCols=DataTable.PropCols.ColumnCount;
 
-			if(nOldRows!=m_NumberOfTableRows)
-			{
-				if(this.VertScrollPos+1>m_NumberOfTableRows)
-					VertScrollPos = m_NumberOfTableRows>0 ? m_NumberOfTableRows-1 : 0;
-
-				this.View.VertScrollMaximum = m_NumberOfTableRows>0 ? m_NumberOfTableRows-1	: 0;
-				}
-			if(nOldCols!=m_NumberOfTableCols)
-			{
-				if(HorzScrollPos+1>m_NumberOfTableCols)
-					HorzScrollPos = m_NumberOfTableCols>0 ? m_NumberOfTableCols-1 : 0;
-	
-				this.View.HorzScrollMaximum = m_NumberOfTableCols>0 ? m_NumberOfTableCols-1 : 0;
-				m_ColumnStyleCache.ForceUpdate(this);
-			}
-
-			this.View.InvalidateTableArea();
-
+			if(nOldRows!=m_NumberOfTableRows || nOldCols!=m_NumberOfTableCols || nOldPropCols!=m_NumberOfPropertyCols)
+				this.AdjustScrollBarProperties();
 		}
 
+		/// <summary>
+		/// Sets the maximum of the horizontal and vertical scroll bar to reflect
+		/// the table's number of columns and rows.
+		/// </summary>
+		public void AdjustScrollBarProperties()
+		{
+			int totNumRows = m_NumberOfTableRows + this.TotalEnabledPropertyColumns;
+
+			if(this.VertScrollPos+1>totNumRows)
+				VertScrollPos = totNumRows>0 ? totNumRows-1 : 0;
+
+			this.View.VertScrollMaximum = totNumRows>0 ? totNumRows-1	: 0;
+
+			if(HorzScrollPos+1>m_NumberOfTableCols)
+				HorzScrollPos = m_NumberOfTableCols>0 ? m_NumberOfTableCols-1 : 0;
+	
+			this.View.HorzScrollMaximum = m_NumberOfTableCols>0 ? m_NumberOfTableCols-1 : 0;
+			m_ColumnStyleCache.ForceUpdate(this);
+
+			this.View.InvalidateTableArea();
+		}
 
 		public void OnPropertyDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow)
 		{
@@ -1198,15 +931,7 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 			this.m_NumberOfPropertyCols=sender.ColumnCount;
 
 			if(nOldPropCols!=this.m_NumberOfPropertyCols)
-			{
-				if(this.VertScrollPos+1>this.m_NumberOfTableRows+m_NumberOfPropertyCols)
-					VertScrollPos = m_NumberOfTableRows+m_NumberOfPropertyCols>0 ? m_NumberOfTableRows+m_NumberOfPropertyCols-1 : 0;
-
-				this.View.VertScrollMaximum = m_NumberOfTableRows+m_NumberOfPropertyCols>0 ? m_NumberOfTableRows+m_NumberOfPropertyCols-1	: 0;
-			}
-
-			this.View.InvalidateTableArea();
-
+				AdjustScrollBarProperties();	
 		}
 		#endregion
 
@@ -1560,7 +1285,282 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 		#endregion
 
-		#region Column - Row positions
+
+		#region Row positions (vertical scroll logic)
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int VertScrollPos
+		{
+			get { return m_VertScrollPos; }
+			set
+			{
+				int oldValue = m_VertScrollPos;
+				m_VertScrollPos=value;
+
+				if(value!=oldValue)
+				{
+					if(m_CellEditControl.Visible)
+					{
+						this.ReadCellEditContent();
+						m_CellEditControl.Hide();
+					}
+
+					this.View.VertScrollValue = value;
+					this.View.InvalidateTableArea();
+				}
+			}
+		}
+		
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int FirstVisibleTableRow
+		{
+			get
+			{
+				return Math.Max(0,VertScrollPos - TotalEnabledPropertyColumns);
+			}
+			set
+			{
+				VertScrollPos = TotalEnabledPropertyColumns + Math.Max(0,value);
+				this.View.InvalidateTableArea();
+			}
+		}
+
+
+		public int GetFirstVisibleTableRow(int top)
+		{
+			int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
+			return FirstVisibleTableRow + Math.Max(0,firstTotRow-RemainingEnabledPropertyColumns);
+		}
+
+		public int GetVisibleTableRows(int top, int bottom)
+		{
+			int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
+			int lastTotRow  = (int)Math.Ceiling((bottom-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height)-1;
+			return Math.Max(0,1 + lastTotRow - firstTotRow);
+		}
+
+		public int GetFullyVisibleTableRows(int top, int bottom)
+		{
+			int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
+			int lastTotRow  = (int)Math.Floor((bottom-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height)-1;
+			return Math.Max(0, 1+ lastTotRow - firstTotRow);
+		}
+
+		public int GetTopCoordinateOfTableRow(int nRow)
+		{
+			return		m_ColumnHeaderStyle.Height 
+				+ RemainingEnabledPropertyColumns*m_RowHeaderStyle.Height
+				+ (nRow-FirstVisibleTableRow)*m_RowHeaderStyle.Height;
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int VisibleTableRows
+		{
+			get
+			{
+				return GetVisibleTableRows(0,this.View.TableAreaSize.Height);
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int FullyVisibleTableRows
+		{
+			get
+			{
+				return GetFullyVisibleTableRows(0,this.View.TableAreaSize.Height);
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int LastVisibleTableRow
+		{
+			get
+			{
+				return FirstVisibleTableRow + VisibleTableRows -1;
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int LastFullyVisibleTableRow
+		{
+			get
+			{
+				return FirstVisibleTableRow + FullyVisibleTableRows - 1;
+			}
+		}
+
+		/// <summary>Returns the remaining number of property columns that could be shown below the current scroll position.</summary>
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int RemainingEnabledPropertyColumns
+		{
+			get
+			{
+				return m_ShowColumnProperties ? Math.Max(0,this.m_NumberOfPropertyCols-VertScrollPos) : 0;
+			}
+		}
+
+		/// <summary>Returns number of property columns that are enabled for been shown on the grid.</summary>
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int TotalEnabledPropertyColumns
+		{
+			get { return m_ShowColumnProperties ? this.m_NumberOfPropertyCols : 0; }
+		}
+
+
+		public int GetFirstVisiblePropertyColumn(int top)
+		{
+			int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
+			return m_ShowColumnProperties ? firstTotRow+VertScrollPos : 0;
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int LastFullyVisiblePropertyColumn
+		{
+			get
+			{
+				return FirstVisiblePropertyColumn + this.FullyVisiblePropertyColumns -1;
+			}
+		}
+
+
+		public int GetTopCoordinateOfPropertyColumn(int nCol)
+		{
+			return m_ColumnHeaderStyle.Height + (nCol-FirstVisiblePropertyColumn)*m_RowHeaderStyle.Height;
+		}
+
+		public int GetVisiblePropertyColumns(int top, int bottom)
+		{
+			if(this.m_ShowColumnProperties)
+			{
+				int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
+				int lastTotRow  = (int)Math.Ceiling((bottom-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height)-1;
+				int maxPossRows = Math.Max(0,RemainingEnabledPropertyColumns-firstTotRow);
+				return Math.Min(maxPossRows,Math.Max(0,1 + lastTotRow - firstTotRow));
+			}
+			else
+				return 0;
+		}
+
+		public int GetFullyVisiblePropertyColumns(int top, int bottom)
+		{
+			if(m_ShowColumnProperties)
+			{
+				int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
+				int lastTotRow  = (int)Math.Floor((bottom-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height)-1;
+				int maxPossRows = Math.Max(0,RemainingEnabledPropertyColumns-firstTotRow);
+				return Math.Min(maxPossRows,Math.Max(0,1 + lastTotRow - firstTotRow));
+			}
+			else
+				return 0;
+		}
+
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int VisiblePropertyColumns
+		{
+			get
+			{
+				return GetVisiblePropertyColumns(0,this.TableAreaHeight);
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int FullyVisiblePropertyColumns
+		{
+			get
+			{
+				return GetFullyVisiblePropertyColumns(0,this.TableAreaHeight);
+			}
+		}
+
+		
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int FirstVisiblePropertyColumn
+		{
+			get
+			{
+				return (m_ShowColumnProperties && VertScrollPos<m_NumberOfPropertyCols) ? VertScrollPos : -1;
+			}
+		}
+
+		#endregion
+
+		#region Column positions (horizontal scroll logic)
+
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int HorzScrollPos
+		{
+			get { return m_HorzScrollPos; }
+			set
+			{
+				int oldValue = m_HorzScrollPos;
+				m_HorzScrollPos=value;
+
+				if(value!=oldValue)
+				{
+
+					if(m_CellEditControl.Visible)
+					{
+						this.ReadCellEditContent();
+						m_CellEditControl.Hide();
+					}
+
+					this.View.HorzScrollValue = value;
+					this.m_ColumnStyleCache.ForceUpdate(this);
+					this.View.InvalidateTableArea();
+				}
+			}
+		}
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int FirstVisibleColumn
+		{
+			get
+			{
+				return HorzScrollPos;
+			}
+			set
+			{
+				HorzScrollPos=value;
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int VisibleColumns
+		{
+			get
+			{
+				return this.m_LastVisibleColumn>=FirstVisibleColumn ? 1+m_LastVisibleColumn-FirstVisibleColumn : 0;
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int FullyVisibleColumns
+		{
+			get
+			{
+				return m_LastFullyVisibleColumn>=FirstVisibleColumn ? 1+m_LastFullyVisibleColumn-FirstVisibleColumn : 0;
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int LastVisibleColumn
+		{
+			get
+			{
+				return FirstVisibleColumn + VisibleColumns -1;
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int LastFullyVisibleColumn
+		{
+			get
+			{
+				return FirstVisibleColumn + FullyVisibleColumns -1;
+			}
+		}
+
 
 		private int GetFirstAndNumberOfVisibleColumn(int left, int right, out int numVisibleColumns)
 		{
@@ -1668,7 +1668,6 @@ protected System.Windows.Forms.MenuItem m_MenuItemColumnSetColumnValues;
 
 
 		#endregion
-
 
 		#region ITableController Members
 

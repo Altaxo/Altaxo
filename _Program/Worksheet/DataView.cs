@@ -337,7 +337,9 @@ namespace Altaxo.Worksheet
 			}
 			set
 			{
-				m_HorzScrollBar.Maximum = value;
+				// A issue in Windows: if I set the maximum to 100 and LargeChange is 10 (default),
+				// the ScrollBar scrolls only till 91. To fix this, I added LargeScale-1 to the intended maximum.
+				m_HorzScrollBar.Maximum = value + m_HorzScrollBar.LargeChange-1;
 				m_HorzScrollBar.Refresh();
 			}
 		}
@@ -350,7 +352,9 @@ namespace Altaxo.Worksheet
 			}
 			set
 			{
-				m_VertScrollBar.Maximum = value;
+				// A issue in Windows: if I set the maximum to 100 and LargeChange is 10 (default),
+				// the ScrollBar scrolls only till 91. To fix this, I added LargeScale-1 to the intended maximum.
+				m_VertScrollBar.Maximum = value + m_VertScrollBar.LargeChange-1;
 				m_VertScrollBar.Refresh();
 			}
 		}
