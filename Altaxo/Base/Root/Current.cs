@@ -30,9 +30,6 @@ using System.Reflection;
 using Altaxo.Serialization;
 using Altaxo.Main.GUI;
 
-using ICSharpCode.SharpZipLib.Zip;
-using ICSharpCode.SharpDevelop.Gui;
-
 
 namespace Altaxo
 {
@@ -47,7 +44,7 @@ namespace Altaxo
 
 		private static IWorkbench sm_theWorkbench;
 
-		private static Altaxo.Main.ProjectService sm_theProjectService;
+		private static Altaxo.Main.IProjectService sm_theProjectService;
 
 		private static Altaxo.Main.IPrintingService sm_thePrintingService;
 
@@ -58,7 +55,7 @@ namespace Altaxo
 			get { return sm_theWorkbench; }
 		}
 
-		public static Altaxo.Main.ProjectService ProjectService
+		public static Altaxo.Main.IProjectService ProjectService
 		{
 			get { return sm_theProjectService; }
 		}
@@ -88,10 +85,8 @@ namespace Altaxo
 			{
 				if(Current.Workbench is Form)
 					return (Form)Current.Workbench;
-				if(Current.Workbench is IExtendedWorkbench)
-					return (Form)((IExtendedWorkbench)Current.Workbench).ViewObject;
 				else
-					return null;
+					return (Form)Current.Workbench.ViewObject;				
 			}
 		}
 	
@@ -105,7 +100,7 @@ namespace Altaxo
 
 		}
 
-		public static void SetProjectService(Altaxo.Main.ProjectService projectservice)
+		public static void SetProjectService(Altaxo.Main.IProjectService projectservice)
 		{
 			if(null==sm_theProjectService)
 				sm_theProjectService = projectservice; 
@@ -122,6 +117,8 @@ namespace Altaxo
 				throw new ApplicationException("The printing service can not be re-set to another value, only initialized for the first time!");
 
 		}
+
+#if FormerGuiState
 		/// <summary>
 		/// The main entry point for the application. This function has to be called to
 		/// run the application.
@@ -156,5 +153,6 @@ namespace Altaxo
 				System.Windows.Forms.MessageBox.Show(e.ToString());
 			}
 		}
+#endif
 	}
 }

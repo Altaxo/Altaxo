@@ -76,8 +76,53 @@
                 />
                 <Reference
                     Name = "System.XML"
-                    AssemblyName = "System.XML"
+                    AssemblyName = "System.Xml"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
+                />
+                <Reference
+                    Name = "zCommandBar"
+                    Project = "{397ADB5E-E608-4304-A3F7-F97E62B33932}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "zICSharpCode.Core"
+                    Project = "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "zICSharpCode.TextEditor"
+                    Project = "{BDA1E0BB-C18F-41B0-86C7-A4CEF4B60894}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "zMagicLibrary"
+                    Project = "{993E6ED0-F820-4264-9989-B6341C179CB4}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "zSharpDevelop.Base"
+                    Project = "{AF2C9C35-FC89-4648-9D13-26538C00AFE1}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "zSharpDevelop.DefaultTexteditor"
+                    Project = "{953B27D5-7B33-49F5-B649-54396C09B361}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "System.Management"
+                    AssemblyName = "System.Management"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Management.dll"
+                />
+                <Reference
+                    Name = "ICSharpCode.SharpZipLib"
+                    AssemblyName = "ICSharpCode.SharpZipLib"
+                    HintPath = "..\..\Libraries\bin\ICSharpCode.SharpZipLib.dll"
+                />
+                <Reference
+                    Name = "Base"
+                    Project = "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
@@ -85,6 +130,51 @@
             <Include>
                 <File
                     RelPath = "AssemblyInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\ProjectService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\FileScout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\ProjectScout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\ProjectScout.resx"
+                    DependentUpon = "ProjectScout.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\GUI\WindowsMdiWorkbenchLayout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Root\MainController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\TableScriptControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\TableScriptControl.resx"
+                    DependentUpon = "TableScriptControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\TableScriptController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

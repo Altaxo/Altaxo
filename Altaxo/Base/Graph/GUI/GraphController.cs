@@ -26,7 +26,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph;
 using Altaxo.Serialization;
-using ICSharpCode.SharpDevelop.Gui;
+//using ICSharpCode.SharpDevelop.Gui;
 
 
 namespace Altaxo.Graph.GUI
@@ -39,9 +39,9 @@ namespace Altaxo.Graph.GUI
 	public class GraphController 
 		:
 		IGraphController,
-		System.Runtime.Serialization.IDeserializationCallback,
-		ICSharpCode.SharpDevelop.Gui.IEditable,
-		ICSharpCode.SharpDevelop.Gui.IClipboardHandler
+		System.Runtime.Serialization.IDeserializationCallback
+		//ICSharpCode.SharpDevelop.Gui.IEditable,
+		//ICSharpCode.SharpDevelop.Gui.IClipboardHandler
 	{
 
 		#region Member variables
@@ -1648,6 +1648,7 @@ namespace Altaxo.Graph.GUI
 
 		#region IWorkbenchContentController Members
 
+#if FormerGuiState
 		Altaxo.Main.GUI.IWorkbenchContentView Altaxo.Main.GUI.IWorkbenchContentController.WorkbenchContentView
 		{
 			get
@@ -1659,7 +1660,7 @@ namespace Altaxo.Graph.GUI
 				this.View = value as IGraphView;
 			}
 		}
-
+#endif
 		public void CloseView()
 		{
 			this.View = null;
@@ -1673,6 +1674,7 @@ namespace Altaxo.Graph.GUI
 			}
 		}
 
+#if FormerGuiState
 		protected	ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow m_ParentWorkbenchWindowController;
 		public Main.GUI.IWorkbenchWindowController ParentWorkbenchWindowController 
 		{ 
@@ -1694,7 +1696,7 @@ namespace Altaxo.Graph.GUI
 				}
 			}
 		}
-
+#endif
 		#endregion
 
 		#region IMVCController
@@ -1715,6 +1717,8 @@ namespace Altaxo.Graph.GUI
 		}
 
 		#endregion
+
+#if FormerGuiState
 
 		#region ICSharpCode.SharpDevelop.Gui
 
@@ -1866,7 +1870,6 @@ namespace Altaxo.Graph.GUI
 		public event EventHandler BeforeSave;
 		#endregion
 
-
 		#region ICSharpCode.SharpDevelop.Gui.IEditable
 		
 		public IClipboardHandler ClipboardHandler 
@@ -1937,6 +1940,8 @@ namespace Altaxo.Graph.GUI
 		{
 		}
 		#endregion
+
+#endif
 
 		#region Inner Classes
 

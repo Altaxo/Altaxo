@@ -115,44 +115,9 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Runtime.Serialization.Formatters.Soap.dll"
                 />
                 <Reference
-                    Name = "ICSharpCode.SharpZipLib"
-                    AssemblyName = "ICSharpCode.SharpZipLib"
-                    HintPath = "..\..\Libraries\bin\ICSharpCode.SharpZipLib.dll"
-                />
-                <Reference
                     Name = "zICSharpCode.Core"
                     Project = "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "zSharpDevelop.Base"
-                    Project = "{AF2C9C35-FC89-4648-9D13-26538C00AFE1}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "zCommandBar"
-                    Project = "{397ADB5E-E608-4304-A3F7-F97E62B33932}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "zMagicLibrary"
-                    Project = "{993E6ED0-F820-4264-9989-B6341C179CB4}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "zSharpDevelop.DefaultTexteditor"
-                    Project = "{953B27D5-7B33-49F5-B649-54396C09B361}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "zICSharpCode.TextEditor"
-                    Project = "{BDA1E0BB-C18F-41B0-86C7-A4CEF4B60894}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "System.Management"
-                    AssemblyName = "System.Management"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Management.dll"
                 />
                 <Reference
                     Name = "AltaxoCore"
@@ -689,6 +654,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\ICompressedFileContainerStream.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\IDocumentNode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -704,19 +674,9 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\MainController.cs"
+                    RelPath = "Main\IProjectService.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\MainView.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\MainView.resx"
-                    DependentUpon = "MainView.cs"
-                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Main\NameChangedEvent.cs"
@@ -730,11 +690,6 @@
                 />
                 <File
                     RelPath = "Main\PrintingService.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\ProjectService.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -759,17 +714,17 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Main\GUI\FileScout.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Main\GUI\IApplyController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Main\GUI\IntegerAndComboBoxController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\IWorkbench.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -782,16 +737,6 @@
                     RelPath = "Main\GUI\ModelViewController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\GUI\ProjectScout.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\GUI\ProjectScout.resx"
-                    DependentUpon = "ProjectScout.cs"
-                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Main\GUI\RenameColumnDialog.cs"
@@ -843,31 +788,6 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Main\GUI\WindowsMdiWorkbenchLayout.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\GUI\Workbench1.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\GUI\WorkbenchForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\GUI\WorkbenchForm.resx"
-                    DependentUpon = "WorkbenchForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Main\GUI\WorkbenchViewController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Main\GUI\MWControls\EventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -897,54 +817,10 @@
                     DependentUpon = "MWTreeView.cs"
                     BuildAction = "EmbeddedResource"
                 />
-                <File
-                    RelPath = "Main\MenuCommands\AddReferenceToOwnAssemblies.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\MenuCommands\AltaxoToolbarService.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\MenuCommands\AutostartCommands.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\MenuCommands\FileCommands.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\MenuCommands\GraphCommands.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\MenuCommands\OpenScriptDialog.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\MenuCommands\SelectedColumnCondition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\MenuCommands\WorksheetCommands.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
+                <Folder RelPath = "Main\MenuCommands\" />
                 <Folder RelPath = "Main\Services\" />
                 <File
                     RelPath = "Root\Current.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Root\MainController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1152,21 +1028,6 @@
                     RelPath = "Worksheet\GUI\SetColumnValuesDialog.resx"
                     DependentUpon = "SetColumnValuesDialog.cs"
                     BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Worksheet\GUI\TableScriptControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Worksheet\GUI\TableScriptControl.resx"
-                    DependentUpon = "TableScriptControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Worksheet\GUI\TableScriptController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Worksheet\GUI\WorksheetController.cs"

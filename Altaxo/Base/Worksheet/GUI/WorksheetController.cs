@@ -9,7 +9,7 @@ using Altaxo.Data;
 using Altaxo.Serialization;
 using Altaxo.Serialization.Ascii;
 using Altaxo.Collections;
-using ICSharpCode.SharpDevelop.Gui;
+//using ICSharpCode.SharpDevelop.Gui;
 
 
 namespace Altaxo.Worksheet.GUI
@@ -21,9 +21,9 @@ namespace Altaxo.Worksheet.GUI
 	[SerializationVersion(0)]
 	public class WorksheetController :
 		IWorksheetController,
-		System.Runtime.Serialization.IDeserializationCallback,
-		ICSharpCode.SharpDevelop.Gui.IEditable,
-		ICSharpCode.SharpDevelop.Gui.IClipboardHandler
+		System.Runtime.Serialization.IDeserializationCallback
+		//ICSharpCode.SharpDevelop.Gui.IEditable,
+		//ICSharpCode.SharpDevelop.Gui.IClipboardHandler
 	{
 		public enum SelectionType { Nothing, DataRowSelection, DataColumnSelection, PropertyColumnSelection, PropertyRowSelection }
 
@@ -1656,6 +1656,34 @@ namespace Altaxo.Worksheet.GUI
 
 			this.ContentName = Doc.Name;
 		}
+
+		/// <summary>
+		/// This is the whole name of the content, e.g. the file name or
+		/// the url depending on the type of the content.
+		/// </summary>
+		public string ContentName 
+		{
+			get 
+			{ 
+				return this.Doc.Name; 
+			}
+			set 
+			{
+				OnContentNameChanged(EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Is called each time the name for the content has changed.
+		/// </summary>
+		public event EventHandler ContentNameChanged;
+
+		protected virtual void OnContentNameChanged(System.EventArgs e)
+		{
+			if(null!=ContentNameChanged)
+				ContentNameChanged(this,e);
+		}
+
 		#endregion
 
 		#region Edit box event handlers
@@ -3252,6 +3280,7 @@ namespace Altaxo.Worksheet.GUI
 
 		#region IWorkbenchContentController Members
 
+#if FormerGuiState
 		Altaxo.Main.GUI.IWorkbenchContentView Altaxo.Main.GUI.IWorkbenchContentController.WorkbenchContentView
 		{
 			get
@@ -3271,6 +3300,8 @@ namespace Altaxo.Worksheet.GUI
 			set { m_ParentWorkbenchWindowController = value; }
 		}
 
+#endif
+
 		public void CloseView()
 		{
 			this.View = null;
@@ -3282,6 +3313,8 @@ namespace Altaxo.Worksheet.GUI
 		}
 
 		#endregion
+
+#if FormerGuiState
 
 		#region ICSharpCode.SharpDevelop.Gui
 
@@ -3322,27 +3355,9 @@ namespace Altaxo.Worksheet.GUI
 			set {}
 		}
 		
-		/// <summary>
-		/// This is the whole name of the content, e.g. the file name or
-		/// the url depending on the type of the content.
-		/// </summary>
-		public string ContentName 
-		{
-			get 
-			{ 
-				return this.Doc.Name; 
-			}
-			set 
-			{
-				OnContentNameChanged(EventArgs.Empty);
-			}
-		}
+		
 
-		protected virtual void OnContentNameChanged(System.EventArgs e)
-		{
-			if(null!=ContentNameChanged)
-				ContentNameChanged(this,e);
-		}
+		
 		
 		/// <summary>
 		/// The text on the tab page when more than one view content
@@ -3426,10 +3441,7 @@ namespace Altaxo.Worksheet.GUI
 			}
 		}
 		
-		/// <summary>
-		/// Is called each time the name for the content has changed.
-		/// </summary>
-		public event EventHandler ContentNameChanged;
+		
 		
 		/// <summary>
 		/// Is called when the content is changed after a save/load operation
@@ -3549,5 +3561,7 @@ namespace Altaxo.Worksheet.GUI
 			}
 		}
 		#endregion
+
+#endif
 	}
 }

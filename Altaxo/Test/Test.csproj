@@ -94,6 +94,11 @@
                     AssemblyName = "nunit.framework"
                     HintPath = "..\..\Libraries\bin\nunit.framework.dll"
                 />
+                <Reference
+                    Name = "AltaxoCore"
+                    Project = "{7045C197-9DA8-4FA4-886C-992ACADD838F}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
@@ -110,6 +115,21 @@
                 />
                 <File
                     RelPath = "Calc\PFA235FFT_Tests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\TestBesselRelated.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\TestComplexMath.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\TestGammaRelated.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

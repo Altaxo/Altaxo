@@ -284,6 +284,7 @@ namespace Altaxo.Worksheet.GUI
 			set
 			{
 				m_Menu = value;
+#if FormerGuiState
 				if(this.ParentForm is Altaxo.Main.GUI.WorkbenchForm && null!=m_Menu)
 				{
 					if(null!=this.ParentForm.Menu)
@@ -291,6 +292,7 @@ namespace Altaxo.Worksheet.GUI
 					else
 						this.ParentForm.Menu = m_Menu; // do not clone the menu
 				}
+#endif
 			}
 		}
 

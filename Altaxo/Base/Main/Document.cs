@@ -21,7 +21,8 @@
 using System;
 using System.Runtime.Serialization;
 using Altaxo.Serialization;
-using ICSharpCode.SharpZipLib.Zip;
+//using ICSharpCode.SharpZipLib.Zip;
+using Altaxo.Main;
 
 namespace Altaxo
 {
@@ -113,7 +114,7 @@ namespace Altaxo
 		}
 
 
-		public void SaveToZippedFile(ZipOutputStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
+		public void SaveToZippedFile(ICompressedFileContainerStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
 		{
 			System.Text.StringBuilder errorText = new System.Text.StringBuilder();
 
@@ -122,10 +123,11 @@ namespace Altaxo
 			{
 				try
 				{
-					ZipEntry ZipEntry = new ZipEntry("Tables/"+table.Name+".xml");
-					zippedStream.PutNextEntry(ZipEntry);
-					zippedStream.SetLevel(0);
-					info.BeginWriting(zippedStream);
+					zippedStream.StartFile("Tables/"+table.Name+".xml",0);
+					//ZipEntry ZipEntry = new ZipEntry("Tables/"+table.Name+".xml");
+					//zippedStream.PutNextEntry(ZipEntry);
+					//zippedStream.SetLevel(0);
+					info.BeginWriting(zippedStream.Stream);
 					info.AddValue("Table",table);
 					info.EndWriting();
 				}
@@ -140,10 +142,11 @@ namespace Altaxo
 			{
 				try
 				{
-					ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
-					zippedStream.PutNextEntry(ZipEntry);
-					zippedStream.SetLevel(0);
-					info.BeginWriting(zippedStream);
+					zippedStream.StartFile("Graphs/"+graph.Name+".xml",0);
+					//ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
+					//zippedStream.PutNextEntry(ZipEntry);
+					//zippedStream.SetLevel(0);
+					info.BeginWriting(zippedStream.Stream);
 					info.AddValue("Graph",graph);
 					info.EndWriting();
 				}
@@ -158,10 +161,11 @@ namespace Altaxo
 			{
 				try 
 				{
-					ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
-					zippedStream.PutNextEntry(ZipEntry);
-					zippedStream.SetLevel(0);
-					info.BeginWriting(zippedStream);
+					zippedStream.StartFile("TableLayouts/"+layout.Name+".xml",0);
+					//ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
+					//zippedStream.PutNextEntry(ZipEntry);
+					//zippedStream.SetLevel(0);
+					info.BeginWriting(zippedStream.Stream);
 					info.AddValue("WorksheetLayout",layout);
 					info.EndWriting();
 				}
@@ -176,11 +180,11 @@ namespace Altaxo
 		}
 
 
-		public void RestoreFromZippedFile(ZipFile zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info)
+		public void RestoreFromZippedFile(ICompressedFileContainer zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info)
 		{
 			System.Text.StringBuilder errorText = new System.Text.StringBuilder();
 
-			foreach(ZipEntry zipEntry in zipFile)
+			foreach(IFileContainerItem zipEntry in zipFile)
 			{
 				try
 				{

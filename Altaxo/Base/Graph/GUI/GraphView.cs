@@ -281,6 +281,7 @@ namespace Altaxo.Graph.GUI
 
 		public void OnViewSelection()
 		{
+#if FormerGuiState
 			if(Current.Workbench is Altaxo.AltaxoWorkbench)
 			{
 				if(null==m_GraphToolsToolBar)
@@ -291,6 +292,7 @@ namespace Altaxo.Graph.GUI
 				if(Current.MainWindow as Form != null)
 					m_GraphToolsToolBar.Parent = (Form)Current.MainWindow;
 			}
+#endif
 		}
 
 		
@@ -328,6 +330,7 @@ namespace Altaxo.Graph.GUI
 			set
 			{
 				m_Menu = value;
+#if FormerGuiState
 				if(this.ParentForm is Altaxo.Main.GUI.WorkbenchForm && null!=m_Menu)
 				{
 					if(null!=this.ParentForm.Menu)
@@ -335,6 +338,7 @@ namespace Altaxo.Graph.GUI
 					else
 						this.ParentForm.Menu = m_Menu; // do not clone the menu
 				}
+#endif
 			}
 		}
 

@@ -108,7 +108,7 @@ namespace Altaxo.Main
 	/// </summary>
 	/// <remarks>This should be instantiated only once. You can reach the current project service
 	/// by calling <see>Current.ProjectService</see>.</remarks>
-	public class ProjectService : ICSharpCode.Core.Services.AbstractService
+	public class ProjectService : ICSharpCode.Core.Services.AbstractService, IProjectService
 	{
 		/// <summary>
 		/// The currently opened Altaxo project.
