@@ -208,7 +208,7 @@ namespace Altaxo.Data
 			{ 
 				if(null==m_ScriptText)
 				{
-					m_ScriptText = this.CodeHeader + this.CodeTail;
+					m_ScriptText = this.CodeHeader + this.CodeStart + this.CodeTail;
 				}
 				return m_ScriptText;
 			}
@@ -217,6 +217,24 @@ namespace Altaxo.Data
 				m_ScriptText = value; 
 				m_IsDirty=true; 
 				m_Compiled=false;
+			}
+		}
+
+		/// <summary>
+		/// Gets the index in the script (considered as string), where the
+		/// user area starts. This is momentarily behind the comment line
+		/// " ----- add your script below this line ------"
+		/// </summary>
+		public int UserAreaScriptOffset
+		{
+			get
+			{
+				if(null==m_ScriptText)
+					return 0;
+				
+				int pos = m_ScriptText.IndexOf(this.CodeStart);
+
+				return pos<0 ? 0 : pos+this.CodeStart.Length;
 			}
 		}
 
@@ -236,8 +254,16 @@ namespace Altaxo.Data
 							"\tpublic override void Execute(Altaxo.Data.DataTable table)\r\n" +
 							"\t{\r\n" +
 							"\t\tAltaxo.Data.DataColumnCollection col = table.DataColumns;\r\n" +
-							"\t\tAltaxo.Data.DataTableCollection tables = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(table);\r\n" +
-							"\t\t// ----- add your script below this line -----\r\n";
+							"\t\tAltaxo.Data.DataTableCollection tables = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(table);\r\n"; 
+			}
+		}
+
+		public string CodeStart
+		{
+			get
+			{
+				return
+					"\t\t// ----- add your script below this line -----\r\n\t\t";
 			}
 		}
 

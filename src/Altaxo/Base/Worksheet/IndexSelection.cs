@@ -104,8 +104,16 @@ namespace Altaxo.Worksheet
 			}
 			else // no modifier key 
 			{
-				this.Clear();
-				this.Add(nIndex,null);
+				// Clear the selection, if the user clicked again on a single selection
+				if(this.Count==1 && this.ContainsKey(nIndex))
+				{
+					this.Clear();
+				}
+				else
+				{
+					this.Clear();
+					this.Add(nIndex,null);
+				}
 			}
 			lastSelectedIndex = nIndex;
 		}

@@ -10,6 +10,8 @@ namespace Altaxo.Worksheet.GUI
 		
 		string ScriptText	{	get; set; }
 
+		int ScriptCursorLocation { set; }
+
 		/// <summary>
 		/// Sets the working name of the script. Should be set to a unique name
 		/// ending in ".cs" to signal that this is a C# script.
@@ -72,6 +74,7 @@ namespace Altaxo.Worksheet.GUI
 			{
 				View.ScriptText= m_TableScript.ScriptText;
 				View.ScriptName = m_TableScript.ScriptName;
+				View.ScriptCursorLocation = m_TableScript.UserAreaScriptOffset;
 			}
 		}
 

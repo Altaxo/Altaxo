@@ -266,6 +266,7 @@ namespace Altaxo.Worksheet.Commands
 			control.Dock = System.Windows.Forms.DockStyle.Fill;
 			controller.View = control;
 
+			form.Text = "WorksheetScript of " + dataTable.Name;
 			ICSharpCode.SharpDevelop.Services.DefaultParserService parserService = (ICSharpCode.SharpDevelop.Services.DefaultParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.DefaultParserService));
 
 			if(parserService!=null)

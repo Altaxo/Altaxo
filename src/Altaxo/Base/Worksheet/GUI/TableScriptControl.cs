@@ -173,10 +173,26 @@ namespace Altaxo.Worksheet.GUI
 			}
 		}
 
+		public int ScriptCursorLocation
+		{
+			set
+			{
+					System.Drawing.Point point = edFormulaWrapper.textAreaControl.Document.OffsetToPosition(value);
+					this.edFormulaWrapper.JumpTo(point.Y,point.X);
+			}
+
+		}
+
 		public object EditableContent
 		{
 			get { return this.edFormulaWrapper; }
 		}
+
+		protected override bool ProcessDialogKey(Keys keyData)
+		{
+			return base.ProcessDialogKey (keyData);
+		}
+
 
 		public System.Windows.Forms.Form Form
 		{
