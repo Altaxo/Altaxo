@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "copy CSharpBinding.??? ..\..\..\..\rtd\AddIns\AddIns\BackendBindings&#xd;&#xa;copy ..\..\BackendBindings.addin ..\..\..\..\rtd\AddIns\AddIns\BackendBindings"
+                PostBuildEvent = "if not exist ..\..\..\..\rtd\AddIns\AddIns\BackendBindings mkdir ..\..\..\..\rtd\AddIns\AddIns\BackendBindings&#xd;&#xa;copy CSharpBinding.??? ..\..\..\..\rtd\AddIns\AddIns\BackendBindings&#xd;&#xa;copy ..\..\BackendBindings.addin ..\..\..\..\rtd\AddIns\AddIns\BackendBindings"
                 RootNamespace = "CSharpBinding"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""

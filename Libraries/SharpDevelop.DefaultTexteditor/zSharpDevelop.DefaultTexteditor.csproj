@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "copy SharpDevelop.DefaultTextEditor.??? ..\..\..\..\rtd\bin&#xd;&#xa;copy ICSharpCode.TextEditor.??? ..\..\..\..\rtd\bin&#xd;&#xa;copy ..\..\SharpDevelopDefaultTextEditor.addin ..\..\..\..\rtd\AddIns"
+                PostBuildEvent = "copy SharpDevelop.DefaultTextEditor.??? ..\..\..\..\rtd\bin&#xd;&#xa;copy ICSharpCode.TextEditor.??? ..\..\..\..\rtd\bin&#xd;&#xa;if not exist ..\..\..\..\rtd\AddIns mkdir ..\..\..\..\rtd\AddIns&#xd;&#xa;copy ..\..\SharpDevelopDefaultTextEditor.addin ..\..\..\..\rtd\AddIns"
                 RootNamespace = "SharpDevelop.DefaultTexteditor"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -248,7 +248,7 @@
                 />
                 <File
                     RelPath = "Gui\Editor\SharpDevelopTextAreaControl.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

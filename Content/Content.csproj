@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "xcopy ..\..\data\*.* ..\..\..\rtd\data /E /I /Y&#xd;&#xa;xcopy ..\..\doc\*.* ..\..\..\rtd\doc /E /I /Y"
+                PostBuildEvent = "xcopy ..\..\data\*.* ..\..\..\rtd\data /E /I /Y&#xd;&#xa;xcopy ..\..\doc\*.* ..\..\..\rtd\doc /E /I /Y&#xd;&#xa;xcopy ..\..\AddIns\*.* ..\..\..\rtd\AddIns /E /I /Y&#xd;&#xa;"
                 RootNamespace = "ContentProject"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
