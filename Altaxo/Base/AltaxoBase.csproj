@@ -730,8 +730,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\GUI\GraphControllerMouseHandlers\AbstractRectangularToolMouseHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\GUI\GraphControllerMouseHandlers\ArrowLineDrawingMouseHandler.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\GraphControllerMouseHandlers\EllipseDrawingMouseHandler.cs"
                     BuildAction = "Compile"
                 />
                 <File
@@ -750,7 +759,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\GUI\GraphControllerMouseHandlers\RectangularToolMouseHandler.cs"
+                    RelPath = "Graph\GUI\GraphControllerMouseHandlers\RectangleDrawingMouseHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -34,7 +34,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
   /// <summary>
   /// Handles the zooming into the axes of a plot, i.e changing the axis boundaries.
   /// </summary>
-  public class ZoomAxesMouseHandler : RectangularToolMouseHandler
+  public class ZoomAxesMouseHandler : AbstractRectangularToolMouseHandler
   {
     public ZoomAxesMouseHandler(GraphController grac)
       : base(grac)

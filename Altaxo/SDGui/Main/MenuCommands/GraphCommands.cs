@@ -598,7 +598,67 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+
+  /// <summary>
+  /// Drawing a rectangle on the graph.
+  /// </summary>
+  public class RectangleDrawingTool : AbstractGraphToolsCommand
+  {
+    public override bool IsChecked 
+    {
+      get 
+      {
+        if(null!=Controller)
+        {
+          base.IsChecked = (Controller.CurrentGraphToolType==typeof(GUI.GraphControllerMouseHandlers.RectangleDrawingMouseHandler));
+        }
+
+        return base.IsChecked;
+      }
+      set 
+      {
+        base.IsChecked = value;
+        if(true==value && null!=Controller)
+        {
+          Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.RectangleDrawingMouseHandler);
+        }
+
+        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+
+      }
+    }
+  }
   
+
+  /// <summary>
+  /// Drawing an ellipse on the graph.
+  /// </summary>
+  public class EllipseDrawingTool : AbstractGraphToolsCommand
+  {
+    public override bool IsChecked 
+    {
+      get 
+      {
+        if(null!=Controller)
+        {
+          base.IsChecked = (Controller.CurrentGraphToolType==typeof(GUI.GraphControllerMouseHandlers.EllipseDrawingMouseHandler));
+        }
+
+        return base.IsChecked;
+      }
+      set 
+      {
+        base.IsChecked = value;
+        if(true==value && null!=Controller)
+        {
+          Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.EllipseDrawingMouseHandler);
+        }
+
+        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+
+      }
+    }
+  }
   /// <summary>
   /// Magnifies the axes according to the selected area.
   /// </summary>

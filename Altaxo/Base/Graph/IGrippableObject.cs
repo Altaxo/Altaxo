@@ -3,12 +3,12 @@ using System.Drawing;
 
 namespace Altaxo.Graph
 {
-	/// <summary>
-	/// Provides an interface for all objects that are grippable, i.e. that show special areas by which
-	/// those objects can be manipulated.
-	/// </summary>
-	public interface IGrippableObject
-	{
+  /// <summary>
+  /// Provides an interface for all objects that are grippable, i.e. that show special areas by which
+  /// those objects can be manipulated.
+  /// </summary>
+  public interface IGrippableObject
+  {
 
     /// <summary>
     /// Shows the grips, i.e. the special areas for manipulation of the object.
@@ -24,7 +24,7 @@ namespace Altaxo.Graph
     /// <returns>Null if the point does not hit a grip area, and a grip manipulation handle if it hits such an area.</returns>
     IGripManipulationHandle GripHitTest(PointF point);
 
-	}
+  }
 
 
   /// <summary>

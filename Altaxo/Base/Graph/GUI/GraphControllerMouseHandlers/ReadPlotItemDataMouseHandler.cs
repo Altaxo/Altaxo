@@ -174,14 +174,14 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
 
     void DisplayData(object plotItem, int rowIndex, AltaxoVariant x, AltaxoVariant y)
-  {
+    {
       Current.DataDisplay.WriteOneLine(string.Format(
         "{0}[{1}] X={2}, Y={3}",
         plotItem.ToString(),
         rowIndex,
         x,
         y));
-  }
+    }
 
 
     /// <summary>

@@ -172,7 +172,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           
          
    
-          _grac.RepaintGraphArea(); // rise a normal paint event
+        _grac.RepaintGraphArea(); // rise a normal paint event
           
 
       }
@@ -226,6 +226,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         {
           _grip.Layer = nLayer;
           _grip.Object = gripObject;
+          return; // 
           
         }
       }
@@ -298,7 +299,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       if(_grip.Handle!=null)
       {
         _grip.Handle=null;
-       return;
+        _grac.RefreshGraph();
+        return;
       }
 
       System.Console.WriteLine("MouseUp {0},{1}",e.X,e.Y);
@@ -437,19 +439,18 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public void RemoveSelectedObjects()
     {
       System.Collections.ArrayList removedObjects = new System.Collections.ArrayList();
-      foreach(object o in this.m_SelectedObjects.Keys)
+      foreach(IHitTestObject o in this.m_SelectedObjects.Keys)
       {
-        if(o is GraphicsObject && ((GraphicsObject)o).Container!=null)
+        if(o.HittedObject is GraphicsObject && ((GraphicsObject)o.HittedObject).Container!=null)
         {
-          GraphicsObjectCollection coll = ((GraphicsObject)o).Container;
-          coll.Remove((GraphicsObject)o);
+          GraphicsObjectCollection coll = ((GraphicsObject)o.HittedObject).Container;
+          coll.Remove((GraphicsObject)o.HittedObject);
           removedObjects.Add(o);
         }
       }
 
       if(removedObjects.Count>0)
       {
-
         foreach(object o in removedObjects)
           this.m_SelectedObjects.Remove(o);
 

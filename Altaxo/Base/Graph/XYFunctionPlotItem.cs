@@ -237,7 +237,7 @@ namespace Altaxo.Graph
     /// <param name="layer">The plot layer.</param>
     public override void UpdateCachedData(IPlotArea layer)
     {
-     // nothing really to do here
+      // nothing really to do here
     }
 
 

@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="windows-1252"?>
-<TODOLIST PROJECTNAME="Altaxo" FILEFORMAT="5" NEXTUNIQUEID="32" LASTSORTBY="0" FILEVERSION="27" LASTSORTDIR="-1" LASTMODIFIED="11/19/2004">
+<TODOLIST PROJECTNAME="Altaxo" FILEFORMAT="5" NEXTUNIQUEID="34" LASTSORTBY="0" FILEVERSION="28" LASTSORTDIR="-1" LASTMODIFIED="25.11.2004">
     <TASK PRIORITY="5" LASTMOD="38308.73711806" TITLE="Unfixed bugs" ID="1" POS="1">
         <TASK PRIORITY="5" LASTMOD="0.00000000" TITLE="Fouriertransformation did crash when trying to do it with 5 or 6 points" ID="2" POS="1"/>
-        <TASK STARTDATESTRING="11/19/2004" PRIORITY="5" LASTMOD="38310.90598380" TITLE="TextGraphics do not update the plot if it changes" ID="30" STARTDATE="38310.90571759" POS="2"/>
-        <TASK STARTDATESTRING="5/17/2004" PRIORITY="5" LASTMOD="38124.73563657" TITLE="PLS analysis: The provided maximum number of factors is ignored." ID="20" STARTDATE="38124.73528935" POS="3"/>
+        <TASK STARTDATESTRING="19.11.2004" PRIORITY="5" LASTMOD="38310.90598380" TITLE="TextGraphics do not update the plot if it changes" ID="30" STARTDATE="38310.90571759" POS="2"/>
+        <TASK STARTDATESTRING="17.05.2004" PRIORITY="5" LASTMOD="38124.73563657" TITLE="PLS analysis: The provided maximum number of factors is ignored." ID="20" STARTDATE="38124.73528935" POS="3"/>
+        <TASK STARTDATESTRING="25.11.2004" PRIORITY="5" LASTMOD="38316.65971065" TITLE="Logarithmic plotting, so that there are 3 decades per major tick, the minor ticks are not plotted right" ID="32" STARTDATE="38316.65915509" POS="4"/>
+        <TASK STARTDATESTRING="25.11.2004" PRIORITY="5" LASTMOD="38316.66055556" TITLE="PlotRange did not work, the plot curve is not drawn if you enter a plot range begin" ID="33" STARTDATE="38316.65987269" POS="5"/>
     </TASK>
-    <TASK STARTDATESTRING="11/17/2004" PRIORITY="5" LASTMOD="38308.73758102" TITLE="Fixed bugs but untested" ID="23" STARTDATE="38308.73659722" POS="2"/>
-    <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38121.91074074" TITLE="Fixed bugs" ID="16" STARTDATE="38121.91065972" POS="3">
-        <TASK STARTDATESTRING="5/3/2004" PRIORITY="5" LASTMOD="38121.91149306" TITLE="12.05.04 fixed: If editing a property cell and then go to the next cell to the right, if the next cell is outside the view Altaxo shifts the worksheet vertically instead of horizontally" ID="9" STARTDATE="38110.99890046" POS="1"/>
-        <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38121.91104167" TITLE="14.05.04 fixed: BUG Worksheet Rename don't work (maybe after opening existing axoprj file)" ID="15" STARTDATE="38121.68756944" POS="2"/>
-        <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38121.91122685" TITLE="14.05.04 fixed: Copy (Ctrl-C) does not work on property columns alone" ID="12" STARTDATE="38121.57194444" POS="3"/>
-        <TASK STARTDATESTRING="4/23/2004" PRIORITY="5" LASTMOD="38121.96508102" TITLE="14.05.04 fixed: Statistics on Rows: crashes if a DateTime column is in the Worksheet" ID="5" STARTDATE="38100.51756944" POS="4"/>
-        <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38121.98278935" TITLE="14.05.04 fixed: PlotLine: switch Gap by default off!" ID="13" STARTDATE="38121.61429398" POS="5"/>
-        <TASK STARTDATESTRING="5/16/2004" PRIORITY="5" LASTMOD="38123.86553241" TITLE="16.05.04 Duplicating a table did not duplicate the table properties" ID="17" STARTDATE="38123.84354167" POS="6"/>
-        <TASK STARTDATESTRING="11/17/2004" PRIORITY="5" LASTMOD="38308.91487269" TITLE="17.11.04 GraphTextDialog: not shows vertical scrollbar if more than 5 lines of text" ID="24" STARTDATE="38308.73846065" POS="7"/>
-        <TASK STARTDATESTRING="11/17/2004" PRIORITY="5" LASTMOD="38308.91631944" TITLE="17.11.04 Deleting a column with a column script do not delete the column script -&gt; Crash during serialization" ID="22" STARTDATE="38308.70250000" POS="8"/>
-        <TASK STARTDATESTRING="11/17/2004" PRIORITY="5" LASTMOD="38308.93800926" TITLE="17.11.04 Graph: doubleClicking an item should remove the selection box" ID="25" STARTDATE="38308.74087963" POS="9"/>
+    <TASK STARTDATESTRING="17.11.2004" PRIORITY="5" LASTMOD="38308.73758102" TITLE="Fixed bugs but untested" ID="23" STARTDATE="38308.73659722" POS="2"/>
+    <TASK STARTDATESTRING="14.05.2004" PRIORITY="5" LASTMOD="38121.91074074" TITLE="Fixed bugs" ID="16" STARTDATE="38121.91065972" POS="3">
+        <TASK STARTDATESTRING="03.05.2004" PRIORITY="5" LASTMOD="38121.91149306" TITLE="12.05.04 fixed: If editing a property cell and then go to the next cell to the right, if the next cell is outside the view Altaxo shifts the worksheet vertically instead of horizontally" ID="9" STARTDATE="38110.99890046" POS="1"/>
+        <TASK STARTDATESTRING="14.05.2004" PRIORITY="5" LASTMOD="38121.91104167" TITLE="14.05.04 fixed: BUG Worksheet Rename don't work (maybe after opening existing axoprj file)" ID="15" STARTDATE="38121.68756944" POS="2"/>
+        <TASK STARTDATESTRING="14.05.2004" PRIORITY="5" LASTMOD="38121.91122685" TITLE="14.05.04 fixed: Copy (Ctrl-C) does not work on property columns alone" ID="12" STARTDATE="38121.57194444" POS="3"/>
+        <TASK STARTDATESTRING="23.04.2004" PRIORITY="5" LASTMOD="38121.96508102" TITLE="14.05.04 fixed: Statistics on Rows: crashes if a DateTime column is in the Worksheet" ID="5" STARTDATE="38100.51756944" POS="4"/>
+        <TASK STARTDATESTRING="14.05.2004" PRIORITY="5" LASTMOD="38121.98278935" TITLE="14.05.04 fixed: PlotLine: switch Gap by default off!" ID="13" STARTDATE="38121.61429398" POS="5"/>
+        <TASK STARTDATESTRING="16.05.2004" PRIORITY="5" LASTMOD="38123.86553241" TITLE="16.05.04 Duplicating a table did not duplicate the table properties" ID="17" STARTDATE="38123.84354167" POS="6"/>
+        <TASK STARTDATESTRING="17.11.2004" PRIORITY="5" LASTMOD="38308.91487269" TITLE="17.11.04 GraphTextDialog: not shows vertical scrollbar if more than 5 lines of text" ID="24" STARTDATE="38308.73846065" POS="7"/>
+        <TASK STARTDATESTRING="17.11.2004" PRIORITY="5" LASTMOD="38308.91631944" TITLE="17.11.04 Deleting a column with a column script do not delete the column script -&gt; Crash during serialization" ID="22" STARTDATE="38308.70250000" POS="8"/>
+        <TASK STARTDATESTRING="17.11.2004" PRIORITY="5" LASTMOD="38308.93800926" TITLE="17.11.04 Graph: doubleClicking an item should remove the selection box" ID="25" STARTDATE="38308.74087963" POS="9"/>
     </TASK>
-    <TASK STARTDATESTRING="4/23/2004" PRIORITY="5" LASTMOD="38100.51719907" TITLE="TODO" ID="3" STARTDATE="38100.51708333" POS="4">
-        <TASK STARTDATESTRING="11/19/2004" PRIORITY="5" LASTMOD="38310.98591435" TITLE="Creation of legend: default background should be black line" ID="31" STARTDATE="38310.98561343" POS="1"/>
-        <TASK STARTDATESTRING="11/19/2004" PRIORITY="5" LASTMOD="38310.90310185" TITLE="PlotStyle dialog box : show the name of the plot(s)" ID="28" STARTDATE="38310.90284722" POS="2"/>
-        <TASK STARTDATESTRING="11/19/2004" PRIORITY="5" LASTMOD="38310.90387731" TITLE="PlotStyle: correct the behaviour of connected plots (first varying color, then line style, then symbol)" ID="29" STARTDATE="38310.90320602" POS="3"/>
-        <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38121.65223380" TITLE="SPC import: Column FileName and Column Time" ID="14" STARTDATE="38121.65185185" POS="4"/>
+    <TASK STARTDATESTRING="23.04.2004" PRIORITY="5" LASTMOD="38100.51719907" TITLE="TODO" ID="3" STARTDATE="38100.51708333" POS="4">
+        <TASK STARTDATESTRING="19.11.2004" PRIORITY="5" LASTMOD="38310.98591435" TITLE="Creation of legend: default background should be black line" ID="31" STARTDATE="38310.98561343" POS="1"/>
+        <TASK STARTDATESTRING="19.11.2004" PRIORITY="5" LASTMOD="38310.90310185" TITLE="PlotStyle dialog box : show the name of the plot(s)" ID="28" STARTDATE="38310.90284722" POS="2"/>
+        <TASK STARTDATESTRING="19.11.2004" PRIORITY="5" LASTMOD="38310.90387731" TITLE="PlotStyle: correct the behaviour of connected plots (first varying color, then line style, then symbol)" ID="29" STARTDATE="38310.90320602" POS="3"/>
+        <TASK STARTDATESTRING="14.05.2004" PRIORITY="5" LASTMOD="38121.65223380" TITLE="SPC import: Column FileName and Column Time" ID="14" STARTDATE="38121.65185185" POS="4"/>
     </TASK>
-    <TASK STARTDATESTRING="5/16/2004" PRIORITY="5" LASTMOD="38123.86000000" TITLE="Solved TODO" ID="18" STARTDATE="38123.85984954" POS="5">
-        <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38123.86017361" TITLE="16.05.04 Insert a menu item &quot;Copy column name to property column&quot;" ID="11" STARTDATE="38121.56487269" POS="1"/>
-        <TASK STARTDATESTRING="5/14/2004" PRIORITY="5" LASTMOD="38123.86090278" TITLE="16.05.04 Solved by first copy column name and then append this column: In SPC export dialog, add &quot;Append column name&quot; to base file name" ID="10" STARTDATE="38121.56445602" POS="2"/>
-        <TASK STARTDATESTRING="4/23/2004" PRIORITY="5" LASTMOD="38123.87096065" TITLE="16.05.04 Statistics on columns : property columns should be included in the resulting worksheet" ID="7" STARTDATE="38100.51899306" POS="3"/>
-        <TASK STARTDATESTRING="5/16/2004" PRIORITY="5" LASTMOD="38123.89128472" TITLE="16.05.04 Calculation and plot of PLS XLeverage added" ID="19" STARTDATE="38123.89093750" POS="4"/>
+    <TASK STARTDATESTRING="16.05.2004" PRIORITY="5" LASTMOD="38123.86000000" TITLE="Solved TODO" ID="18" STARTDATE="38123.85984954" POS="5">
+        <TASK STARTDATESTRING="14.05.2004" PRIORITY="5" LASTMOD="38123.86017361" TITLE="16.05.04 Insert a menu item &quot;Copy column name to property column&quot;" ID="11" STARTDATE="38121.56487269" POS="1"/>
+        <TASK STARTDATESTRING="14.05.2004" PRIORITY="5" LASTMOD="38123.86090278" TITLE="16.05.04 Solved by first copy column name and then append this column: In SPC export dialog, add &quot;Append column name&quot; to base file name" ID="10" STARTDATE="38121.56445602" POS="2"/>
+        <TASK STARTDATESTRING="23.04.2004" PRIORITY="5" LASTMOD="38123.87096065" TITLE="16.05.04 Statistics on columns : property columns should be included in the resulting worksheet" ID="7" STARTDATE="38100.51899306" POS="3"/>
+        <TASK STARTDATESTRING="16.05.2004" PRIORITY="5" LASTMOD="38123.89128472" TITLE="16.05.04 Calculation and plot of PLS XLeverage added" ID="19" STARTDATE="38123.89093750" POS="4"/>
     </TASK>
 </TODOLIST>

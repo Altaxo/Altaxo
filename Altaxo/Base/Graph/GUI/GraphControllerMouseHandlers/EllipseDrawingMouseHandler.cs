@@ -28,31 +28,46 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph;
 using Altaxo.Serialization;
-namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
+namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers 
 {
+  
   /// <summary>
-  /// Summary description for ArrowLineDrawingMouseHandler.
+  /// Summary description for RectangleDrawingMouseHandler.
   /// </summary>
-  public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
+  public class EllipseDrawingMouseHandler : AbstractRectangularToolMouseHandler
   {
-    public ArrowLineDrawingMouseHandler(GraphController grac)
+    public EllipseDrawingMouseHandler(GraphController grac)
       : base(grac)
     {
-      if(_grac.View!=null)
-        _grac.View.SetPanelCursor(Cursors.Arrow);
+			
     }
 
     protected override void FinishDrawing()
     {
-      Graph.LineGraphic go = new LineGraphic(_Points[0].layerCoord,_Points[1].layerCoord);
-      //go.Pen.EndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(2,1,true);
-      
+      RectangleF rect = GetNormalRectangle(_Points[0].layerCoord,_Points[1].layerCoord);
+      Graph.EllipseGraphic go =  new Graph.EllipseGraphic(rect.X,rect.Y,rect.Width,rect.Height);
 
       // deselect the text tool
       this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
       _grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(go);
       _grac.RefreshGraph();
-      
     }
+ 
+    /// <summary>
+    /// Draws the ellipse
+    /// </summary>
+    /// <param name="g"></param>
+    public override void AfterPaint(Graphics g)
+    {
+      g.TranslateTransform(_grac.Doc.PrintableBounds.X,_grac.Doc.PrintableBounds.Y);
+
+      if(_currentPoint>=1)
+      {
+        RectangleF rect = GetNormalRectangle(_Points[0].printAreaCoord,_currentMousePrintAreaCoord);
+        g.DrawEllipse(Pens.Blue,rect);
+      }
+
+    }
+
   }
 }

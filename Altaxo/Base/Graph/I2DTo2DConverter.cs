@@ -55,7 +55,7 @@ namespace Altaxo.Graph
   /// </summary>
   public interface I2DPhysicalTo2DConverter : I2DTo2DConverter
   {
-      /// <summary>
+    /// <summary>
     /// Calculates from two physical values the coordinates of the point. Returns true if the conversion
     /// is possible, otherwise false.
     /// </summary>
@@ -65,7 +65,7 @@ namespace Altaxo.Graph
     /// <param name="ylocation">On return, gives the y coordinate of the converted value (for instance location).</param>
     /// <returns>True if the conversion was successfull, false if the conversion was not possible.</returns>
     bool Convert(Altaxo.Data.AltaxoVariant x, Altaxo.Data.AltaxoVariant y, out double xlocation, out double ylocation);
-   }
+  }
 
 
 

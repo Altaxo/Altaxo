@@ -59,7 +59,7 @@ namespace Altaxo.Data
 
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Data.ColumnScript",0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       /// <summary>
       /// ScriptStyle enumerates the style of the column script.

@@ -58,7 +58,7 @@ namespace Altaxo.Data
       {
         Altaxo.Data.AbstractScript s = (Altaxo.Data.AbstractScript)obj;
     
-         info.AddBaseValueEmbedded(s,typeof(Altaxo.Data.AbstractScript));
+        info.AddBaseValueEmbedded(s,typeof(Altaxo.Data.AbstractScript));
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
@@ -248,7 +248,7 @@ namespace Altaxo.Data
 
       try
       {
-       ((Altaxo.Calc.ColScriptExeBase)m_ScriptObject).Execute(myColumn);
+        ((Altaxo.Calc.ColScriptExeBase)m_ScriptObject).Execute(myColumn);
       }
       catch(Exception ex)
       {

@@ -1794,6 +1794,7 @@ namespace Altaxo.Graph
       }
       m_PlotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0,m_PlotAssociationXBoundariesChanged_EventSuspendCount-1);
       m_xAxis.DataBounds.EndUpdate();
+      m_xAxis.ProcessDataBounds();
     }
    
   
@@ -1841,6 +1842,7 @@ namespace Altaxo.Graph
       }
       m_PlotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0,m_PlotAssociationYBoundariesChanged_EventSuspendCount-1);
       m_yAxis.DataBounds.EndUpdate();
+      m_yAxis.ProcessDataBounds();
     }
     
 
@@ -2455,10 +2457,10 @@ namespace Altaxo.Graph
 
       // Before we paint the axis, we have to make sure that all plot items
       // had their data updated, so that the axes are updated before they are drawn!
-       foreach(PlotItem pi in m_PlotItems)
-       {
+      foreach(PlotItem pi in m_PlotItems)
+      {
         pi.UpdateCachedData(this);
-       }
+      }
 
 
       if(m_ShowLeftAxis)
@@ -2855,7 +2857,7 @@ namespace Altaxo.Graph
     LogicalToAreaConverter _LogicalToAreaConverter;
     public I2DTo2DConverter LogicalToAreaConversion
     {
-        get
+      get
       {
         _LogicalToAreaConverter.Update();
         return _LogicalToAreaConverter;
@@ -2918,9 +2920,9 @@ namespace Altaxo.Graph
       /// <returns>True if the conversion was successfull, false if the conversion was not possible.</returns>
       public bool Convert(double x_rel, double y_rel, out double xlocation, out double ylocation)
       {
-          xlocation = _layerWidth * x_rel;
-          ylocation = _layerHeight * (1-y_rel);
-          return !double.IsNaN(xlocation) && !double.IsNaN(ylocation);
+        xlocation = _layerWidth * x_rel;
+        ylocation = _layerHeight * (1-y_rel);
+        return !double.IsNaN(xlocation) && !double.IsNaN(ylocation);
       }
 
       public event System.EventHandler Changed;

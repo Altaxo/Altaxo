@@ -26,15 +26,15 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph
 {
-	/// <summary>
-	/// Drawing2DRelated contains static methods related to mathematics and helper
-	/// functions for classed from the System.Drawing namespace.
-	/// </summary>
-	public class Drawing2DRelated
-	{
-		private Drawing2DRelated()
-		{
-		}
+  /// <summary>
+  /// Drawing2DRelated contains static methods related to mathematics and helper
+  /// functions for classed from the System.Drawing namespace.
+  /// </summary>
+  public class Drawing2DRelated
+  {
+    private Drawing2DRelated()
+    {
+    }
 
     /// <summary>
     /// Calculates the distance between two points.
@@ -48,5 +48,5 @@ namespace Altaxo.Graph
       double y = p1.Y - p2.Y;
       return Math.Sqrt(x*x+y*y);
     }
-	}
+  }
 }

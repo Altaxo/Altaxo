@@ -108,7 +108,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
    
 
    
-  }
+    }
 
     protected virtual void ModifyCurrentMousePrintAreaCoordinate()
     {

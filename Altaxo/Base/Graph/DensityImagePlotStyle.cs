@@ -499,7 +499,7 @@ namespace Altaxo.Graph
 
       double xleft, xright, ytop, ybottom;
       if( gl.LogicalToAreaConversion.Convert(x_rel_left,y_rel_top, out xleft, out ytop) &&
-          gl.LogicalToAreaConversion.Convert(x_rel_right, y_rel_bottom, out xright, out ybottom))
+        gl.LogicalToAreaConversion.Convert(x_rel_right, y_rel_bottom, out xright, out ybottom))
       {
 
         GraphicsState savedGraphicsState = gfrx.Save();

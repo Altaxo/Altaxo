@@ -31,7 +31,6 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 {
-  #region abstract mouse state handler
   /// <summary>
   /// The abstract base class of all MouseStateHandlers.
   /// </summary>
@@ -123,6 +122,6 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       return false; // per default the key is not processed
     }
   }
-  #endregion // abstract mouse state handler
+ 
 
 }

@@ -1013,7 +1013,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">EventArgs.</param>
     public virtual void EhView_GraphPanelMouseClick(System.EventArgs e)
     {
-     m_MouseState.OnClick(e);
+      m_MouseState.OnClick(e);
     }
 
     /// <summary>
@@ -1022,7 +1022,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e"></param>
     public virtual void EhView_GraphPanelMouseDoubleClick(System.EventArgs e)
     {
-     m_MouseState.OnDoubleClick(e);
+      m_MouseState.OnDoubleClick(e);
     }
 
     /// <summary>
@@ -1307,7 +1307,7 @@ namespace Altaxo.Graph.GUI
         }
          
         // special painting depending on current selected tool
-       this.m_MouseState.AfterPaint(g);
+        this.m_MouseState.AfterPaint(g);
       }
     }
 
@@ -1376,8 +1376,8 @@ namespace Altaxo.Graph.GUI
       }
       catch(System.Exception ex)
       {
-         g.PageUnit = GraphicsUnit.Point;
-         g.PageScale=1;
+        g.PageUnit = GraphicsUnit.Point;
+        g.PageScale=1;
 
         // System.Windows.Forms.MessageBox.Show(this.m_View.Window,ex.ToString());
       
@@ -1405,7 +1405,7 @@ namespace Altaxo.Graph.GUI
     {
       get 
       {
-          return m_MouseState.GetType();
+        return m_MouseState.GetType();
       }
       set
       {

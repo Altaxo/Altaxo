@@ -461,31 +461,31 @@ namespace Altaxo.Graph.GUI
 
     #endregion
 
-/*
-    public ToolBar CreateGraphToolsToolbar()
-    {
-      ToolBar tb = new ToolBar();
-      tb.ImageList = this.m_GraphToolsImages;
-      tb.ButtonSize = new System.Drawing.Size(16, 24);
-      tb.AutoSize = true;
-      tb.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.EhGraphToolsToolbar_ButtonClick);
+    /*
+        public ToolBar CreateGraphToolsToolbar()
+        {
+          ToolBar tb = new ToolBar();
+          tb.ImageList = this.m_GraphToolsImages;
+          tb.ButtonSize = new System.Drawing.Size(16, 24);
+          tb.AutoSize = true;
+          tb.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.EhGraphToolsToolbar_ButtonClick);
 
-      for(int i=0;i<2;i++)
-      {
-        ToolBarButton tbb = new ToolBarButton();
-        tbb.ImageIndex=i;
-        tbb.Tag = (GraphTools)i; 
-        tb.Buttons.Add(tbb);
-      }
-      tb.Dock = DockStyle.Bottom;
+          for(int i=0;i<2;i++)
+          {
+            ToolBarButton tbb = new ToolBarButton();
+            tbb.ImageIndex=i;
+            tbb.Tag = (GraphTools)i; 
+            tb.Buttons.Add(tbb);
+          }
+          tb.Dock = DockStyle.Bottom;
   
         
-      foreach(ToolBarButton bt in tb.Buttons)
-        bt.Pushed = (((GraphTools)bt.Tag) == m_CachedCurrentGraphTool);
+          foreach(ToolBarButton bt in tb.Buttons)
+            bt.Pushed = (((GraphTools)bt.Tag) == m_CachedCurrentGraphTool);
     
-      return tb;
-    }
-*/
+          return tb;
+        }
+    */
     /// <summary>
     /// This function is to solve the problem, that after selection of the graph window by
     /// clicking in the tab, the View did not receive KeyPressed messages. 
@@ -517,7 +517,7 @@ namespace Altaxo.Graph.GUI
         if(true==Controller.EhView_ProcessCmdKey(ref msg, keyData))
           return true;
       }
-//      System.Diagnostics.Trace.WriteLine("GraphView CmdKey pressed");
+      //      System.Diagnostics.Trace.WriteLine("GraphView CmdKey pressed");
       return base.ProcessCmdKey (ref msg, keyData);
     }
 

@@ -34,7 +34,7 @@ namespace Altaxo.Graph
   {
     protected BrushHolder m_fillBrush; 
     protected PenHolder m_linePen; 
-  //  protected float m_lineWidth = 1;
+    //  protected float m_lineWidth = 1;
     protected bool m_fill  = false;
 
     #region Serialization
@@ -106,7 +106,7 @@ namespace Altaxo.Graph
       set
       {
         if(value > 0)
-           m_linePen.Width = value;
+          m_linePen.Width = value;
         else
           throw new ArgumentOutOfRangeException("LineWidth", "Line Width must be > 0");
       }
@@ -649,13 +649,13 @@ namespace Altaxo.Graph
       g.TranslateTransform(X,Y);
       if(m_Rotation !=- 0)
         g.RotateTransform(m_Rotation);
-      RectangleF rect = new RectangleF(X, Y, Width, Height);
+      RectangleF rect = new RectangleF(0, 0, Width, Height);
       if( this.Fill)
       {
         g.FillRectangle(new SolidBrush(this.FillColor), rect);
       }
       Pen myPen = new Pen(this.LineColor, this.LineWidth);
-      g.DrawRectangle(myPen, rect.X,rect.Y,rect.Width,rect.Height);
+      g.DrawRectangle(myPen,0,0,rect.Width,rect.Height);
       g.Restore(gs);
     }
     
@@ -847,7 +847,7 @@ namespace Altaxo.Graph
       if( m_Rotation != 0)
         g.RotateTransform(m_Rotation);
 
-      RectangleF rect = new RectangleF(X, Y, Width, Height);
+      RectangleF rect = new RectangleF(0, 0, Width, Height);
       if( this.Fill )
         g.FillEllipse(new SolidBrush(this.FillColor), rect);
 

@@ -28,31 +28,32 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph;
 using Altaxo.Serialization;
-namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
+namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers 
 {
-  /// <summary>
-  /// Summary description for ArrowLineDrawingMouseHandler.
-  /// </summary>
-  public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
-  {
-    public ArrowLineDrawingMouseHandler(GraphController grac)
+	/// <summary>
+	/// Summary description for RectangleDrawingMouseHandler.
+	/// </summary>
+  public class RectangleDrawingMouseHandler : AbstractRectangularToolMouseHandler
+	{
+		public RectangleDrawingMouseHandler(GraphController grac)
       : base(grac)
-    {
-      if(_grac.View!=null)
-        _grac.View.SetPanelCursor(Cursors.Arrow);
-    }
+		{
+			
+		}
 
     protected override void FinishDrawing()
     {
-      Graph.LineGraphic go = new LineGraphic(_Points[0].layerCoord,_Points[1].layerCoord);
-      //go.Pen.EndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(2,1,true);
-      
+      RectangleF rect = GetNormalRectangle(_Points[0].layerCoord,_Points[1].layerCoord);
+      Graph.RectangleGraphic go =  new Graph.RectangleGraphic(rect.X,rect.Y,rect.Width,rect.Height);
 
       // deselect the text tool
       this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
       _grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(go);
       _grac.RefreshGraph();
-      
     }
-  }
+ 
+	}
+
+
+ 
 }

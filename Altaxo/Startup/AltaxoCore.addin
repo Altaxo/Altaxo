@@ -291,8 +291,12 @@
 					class="Altaxo.Graph.Commands.SelectTextTool" />
 				<ToolbarItem id="ReadPlotItemData" icon="Icons.16x16.ReadData" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}"
 					class="Altaxo.Graph.Commands.ReadPlotItemDataTool" />
-				<ToolbarItem id="LineDrawingTool" icon="Icons.16x16.LineTool" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}"
+				<ToolbarItem id="LineDrawingTool" icon="Icons.16x16.LineTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.SingleLine.Description}"
 					class="Altaxo.Graph.Commands.SingleLineDrawingTool" />
+				<ToolbarItem id="RectangleDrawingTool" icon="Icons.16x16.Rectangle" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Rectangle.Description}"
+					class="Altaxo.Graph.Commands.RectangleDrawingTool" />
+				<ToolbarItem id="EllipseDrawingTool" icon="Icons.16x16.Ellipse" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Ellipse.Description}"
+					class="Altaxo.Graph.Commands.EllipseDrawingTool" />
 				<ToolbarItem id="ZoomAxes" icon="Icons.16x16.ZoomAxes" tooltip="${res:XML.MainMenu.GraphMenu.ZoomAxes.Description}"
 					class="Altaxo.Graph.Commands.ZoomAxesTool" />
 				<ToolbarItem id="GraphCmdsSeparator" tooltip="-" />

@@ -121,11 +121,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     void MoveLeftRight(float increment)
     {
       
-       m_Cross.X += increment;
+      m_Cross.X += increment;
 
-       DisplayCrossCoordinates();
+      DisplayCrossCoordinates();
 
-       _grac.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
+      _grac.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
     }
 
     /// <summary>
@@ -139,7 +139,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
       DisplayCrossCoordinates();
 
-       _grac.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
+      _grac.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
 
       
     }
@@ -203,4 +203,4 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
   } // end of class
 
- }
+}
