@@ -688,6 +688,182 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #endregion
 
+    #region Type conversion classes
+
+    #region MatrixRowVector
+    /// <summary>
+    /// Wrapper for a matrix row to a vector.
+    /// </summary>
+    public class MatrixRowVector : IVector
+    {
+      IMatrix _m;
+      int     _row;
+
+      /// <summary>
+      /// Constructor of a matrix row vector by providing the matrix and the row number of that matrix that is wrapped.
+      /// </summary>
+      /// <param name="m">The matrix.</param>
+      /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
+      public MatrixRowVector(IMatrix m, int row)
+      {
+        if(m==null)
+          throw new ArgumentNullException("IMatrix m is null");
+        if(row<0 || row>=m.Rows)
+          throw new ArgumentOutOfRangeException("The parameter row is either <0 or greater than the rows of the matrix");
+
+        _m = m;
+        _row = row;
+
+      }
+      #region IVector Members
+
+      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
+      /// <value>The element at index i.</value>
+      public double this[int i]
+      {
+        get
+        {
+          return _m[_row,i];
+        }
+        set
+        {
+          _m[_row,i] = value;
+        }
+      }
+
+      #endregion
+
+      #region IROVector Members
+
+      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
+      /// <value>The element at index i.</value>
+      double Altaxo.Calc.LinearAlgebra.IROVector.this[int i]
+      {
+        get
+        {
+          return _m[_row,i];
+        }
+      }
+
+      /// <summary>The smallest valid index of this vector</summary>
+      public int LowerBound
+      {
+        get
+        {
+          return 0;
+        }
+      }
+
+      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
+      public int UpperBound
+      {
+        get
+        {
+          return _m.Columns-1;
+        }
+      }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length
+      {
+        get
+        {
+          return _m.Columns;
+        }
+      }
+
+      #endregion
+    }
+    #endregion
+
+    #region MatrixColumnVector
+    /// <summary>
+    /// Wrapper for a matrix row to a vector.
+    /// </summary>
+    public class MatrixColumnVector : IVector
+    {
+      IMatrix _m;
+      int     _col;
+
+      /// <summary>
+      /// Constructor of a matrix row vector by providing the matrix and the row number of that matrix that is wrapped.
+      /// </summary>
+      /// <param name="m">The matrix.</param>
+      /// <param name="col">The column number of the matrix that is wrapped to a vector.</param>
+      public MatrixColumnVector(IMatrix m, int col)
+      {
+        if(m==null)
+          throw new ArgumentNullException("IMatrix m is null");
+        if(col<0 || col>=m.Columns)
+          throw new ArgumentOutOfRangeException("The parameter row is either <0 or greater than the rows of the matrix");
+
+        _m = m;
+        _col = col;
+
+      }
+      #region IVector Members
+
+      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
+      /// <value>The element at index i.</value>
+      public double this[int i]
+      {
+        get
+        {
+          return _m[i,_col];
+        }
+        set
+        {
+          _m[i,_col] = value;
+        }
+      }
+
+      #endregion
+
+      #region IROVector Members
+
+      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
+      /// <value>The element at index i.</value>
+      double Altaxo.Calc.LinearAlgebra.IROVector.this[int i]
+      {
+        get
+        {
+          return _m[i,_col];
+        }
+      }
+
+      /// <summary>The smallest valid index of this vector</summary>
+      public int LowerBound
+      {
+        get
+        {
+          return 0;
+        }
+      }
+
+      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
+      public int UpperBound
+      {
+        get
+        {
+          return _m.Rows-1;
+        }
+      }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length
+      {
+        get
+        {
+          return _m.Rows;
+        }
+      }
+
+      #endregion
+    }
+    #endregion
+
+    #endregion
+
 
     #region Helper functions
     /// <summary>
@@ -780,7 +956,25 @@ namespace Altaxo.Calc.LinearAlgebra
       return new BEMatrix(x);
     }
 
+    /// <summary>
+    /// Returns a vector representing a matrix row by providing the matrix and the row number of that matrix that is wrapped.
+    /// </summary>
+    /// <param name="x">The matrix.</param>
+    /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
+    public static IVector RowToVector(IMatrix x, int row)
+    {
+      return new MatrixRowVector(x,row);
+    }
 
+    /// <summary>
+    /// Returns a vector representing a matrix column by providing the matrix and the row number of that matrix that is wrapped.
+    /// </summary>
+    /// <param name="x">The matrix.</param>
+    /// <param name="column">The column number of the matrix that is wrapped to a vector.</param>
+    public static IVector ColumnToVector(IMatrix x, int column)
+    {
+      return new MatrixColumnVector(x,column);
+    }
 
     #endregion
 

@@ -35,12 +35,10 @@ using Altaxo.Main.GUI;
 namespace Altaxo
 {
   /// <summary>
-  /// This class holds the application instance.
+  /// This class provides access to application wide unique objects.
   /// </summary>
   public class Current
   {
-  
-    
     //private static object sm_theApplication;
 
     private static IWorkbench sm_theWorkbench;
@@ -53,31 +51,49 @@ namespace Altaxo
 
     private static bool sm_theApplicationIsClosing;
 
+    /// <summary>
+    /// Gets the main workbench.
+    /// </summary>
     public static IWorkbench Workbench
     {
       get { return sm_theWorkbench; }
     }
 
+    /// <summary>
+    /// Returns the project service, which provides methods to add worksheet and graphs, or open and close the document.
+    /// </summary>
     public static Altaxo.Main.IProjectService ProjectService
     {
       get { return sm_theProjectService; }
     }
 
+    /// <summary>
+    /// Returns the current altaxo project (the current document).
+    /// </summary>
     public static Altaxo.AltaxoDocument Project
     {
       get { return sm_theProjectService.CurrentOpenProject; }
     }
 
+    /// <summary>
+    /// Returns the printing service, which provides methods for page setup and printing.
+    /// </summary>
     public static Altaxo.Main.IPrintingService PrintingService
     {
       get { return sm_thePrintingService; }
     }
 
+    /// <summary>
+    /// Returns the console window, which can be used by your scripts for textual output.
+    /// </summary>
     public static Altaxo.Main.Services.IOutputService Console
     {
       get { return sm_theOutputService; }
     }
 
+    /// <summary>
+    /// Returns a flag which is true if the application is about to be closed.
+    /// </summary>
     public static bool ApplicationIsClosing
     {
       get { return sm_theApplicationIsClosing; }
@@ -99,6 +115,10 @@ namespace Altaxo
     }
   
 
+    /// <summary>
+    /// Sets the main workbench.
+    /// </summary>
+    /// <param name="workbench">The main workbench to use in this application.</param>
     public static void SetWorkbench(IWorkbench workbench)
     {
       if(null==sm_theWorkbench)
@@ -108,6 +128,10 @@ namespace Altaxo
 
     }
 
+    /// <summary>
+    /// Sets the main project service.
+    /// </summary>
+    /// <param name="projectservice">The project service instance to use in this application.</param>
     public static void SetProjectService(Altaxo.Main.IProjectService projectservice)
     {
       if(null==sm_theProjectService)
@@ -117,6 +141,10 @@ namespace Altaxo
 
     }
 
+    /// <summary>
+    /// Sets the current printing service.
+    /// </summary>
+    /// <param name="printingservice">The instance of printing service to use in this application.</param>
     public static void SetPrintingService(Altaxo.Main.IPrintingService printingservice)
     {
       if(null==sm_thePrintingService)
@@ -126,6 +154,10 @@ namespace Altaxo
 
     }
 
+    /// <summary>
+    /// Sets the current output service.
+    /// </summary>
+    /// <param name="outputservice">The instance of the output service to use in this application.</param>
     public static void SetOutputService(Altaxo.Main.Services.IOutputService outputservice)
     {
       if(null==sm_theOutputService)

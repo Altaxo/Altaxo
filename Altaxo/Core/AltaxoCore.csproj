@@ -273,6 +273,11 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <File
+                    RelPath = "Calc\Regression\QuickLinearRegression.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
                 <Folder RelPath = "Calc\Regression\PCR\" />
                 <File
                     RelPath = "Calc\Regression\PLS\CrossPRESSCalculationType.cs"
@@ -286,6 +291,11 @@
                 />
                 <File
                     RelPath = "Calc\Regression\PLS\PLSAnalysisOptions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\PLS\SpectralPreprocessing.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
