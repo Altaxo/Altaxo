@@ -2448,6 +2448,7 @@ namespace Altaxo.Graph
     private IHitTestObject ForwardTransform(IHitTestObject o)
     {
       o.Transform(m_ForwardMatrix);
+      o.ParentLayer=this;
       return o;
     }
 
@@ -2481,33 +2482,91 @@ namespace Altaxo.Graph
         }
       }
 
-      // hit testing the axes
-      if(m_ShowLeftAxis && null!=(hit = m_LeftAxisStyle.HitTest(this,layerC)))
+      // first hit testing all four corners of the layer
+      GraphicsPath layercorners = new GraphicsPath();
+      float catchrange = 6;
+      layercorners.AddEllipse(-catchrange,-catchrange,2*catchrange,2*catchrange);
+      layercorners.AddEllipse(m_LayerSize.Width-catchrange,0-catchrange,2*catchrange,2*catchrange);
+      layercorners.AddEllipse(0-catchrange,m_LayerSize.Height-catchrange,2*catchrange,2*catchrange);
+      layercorners.AddEllipse(m_LayerSize.Width-catchrange,m_LayerSize.Height-catchrange,2*catchrange,2*catchrange);
+      layercorners.CloseAllFigures();
+      if(layercorners.IsVisible(layerC))
       {
+        hit = new HitTestObject(layercorners,this);
+        hit.DoubleClick = LayerPositionEditorMethod;
         return ForwardTransform(hit);
       }
-      if(m_ShowBottomAxis && null!=(hit = m_BottomAxisStyle.HitTest(this,layerC)))
+
+
+
+      // hit testing the axes - first a small area around the axis line
+      // if hitting this, the editor for scaling the axis should be shown
+      if(m_ShowLeftAxis && null!=(hit = m_LeftAxisStyle.HitTest(this,layerC,false)))
       {
+        hit.DoubleClick=AxisScaleEditorMethod;
         return ForwardTransform(hit);
       }
-      if(m_ShowRightAxis && null!=(hit = m_RightAxisStyle.HitTest(this,layerC)))
+      if(m_ShowBottomAxis && null!=(hit = m_BottomAxisStyle.HitTest(this,layerC,false)))
       {
+        hit.DoubleClick=AxisScaleEditorMethod;
         return ForwardTransform(hit);
       }
-      if(m_ShowTopAxis && null!=(hit = m_TopAxisStyle.HitTest(this,layerC)))
+      if(m_ShowRightAxis && null!=(hit = m_RightAxisStyle.HitTest(this,layerC,false)))
       {
+        hit.DoubleClick=AxisScaleEditorMethod;
+        return ForwardTransform(hit);
+      }
+      if(m_ShowTopAxis && null!=(hit = m_TopAxisStyle.HitTest(this,layerC,false)))
+      {
+        hit.DoubleClick=AxisScaleEditorMethod;
+        return ForwardTransform(hit);
+      }
+
+
+      // hit testing the axes - secondly now wiht the ticks
+      // in this case the TitleAndFormat editor for the axis should be shown
+      if(m_ShowLeftAxis && null!=(hit = m_LeftAxisStyle.HitTest(this,layerC,true)))
+      {
+        if(hit.DoubleClick==null) hit.DoubleClick=AxisStyleEditorMethod;
+        return ForwardTransform(hit);
+      }
+      if(m_ShowBottomAxis && null!=(hit = m_BottomAxisStyle.HitTest(this,layerC,true)))
+      {
+        if(hit.DoubleClick==null) hit.DoubleClick=AxisStyleEditorMethod;
+        return ForwardTransform(hit);
+      }
+      if(m_ShowRightAxis && null!=(hit = m_RightAxisStyle.HitTest(this,layerC,true)))
+      {
+        if(hit.DoubleClick==null) hit.DoubleClick=AxisStyleEditorMethod;
+        return ForwardTransform(hit);
+      }
+      if(m_ShowTopAxis && null!=(hit = m_TopAxisStyle.HitTest(this,layerC,true)))
+      {
+        if(hit.DoubleClick==null) hit.DoubleClick=AxisStyleEditorMethod;
         return ForwardTransform(hit);
       }
 
       // hit testing the axes labels
       if(m_ShowLeftAxis && null!=(hit = this.m_LeftLabelStyle.HitTest(this,layerC)))
+      {
+        if(hit.DoubleClick==null) hit.DoubleClick=AxisLabelStyleEditorMethod;
         return ForwardTransform(hit);
+      }
       if(m_ShowBottomAxis && null!=(hit = m_BottomLabelStyle.HitTest(this,layerC)))
+      {
+        if(hit.DoubleClick==null) hit.DoubleClick=AxisLabelStyleEditorMethod;
         return ForwardTransform(hit);
+      }
       if(m_ShowRightAxis && null!=(hit = m_RightLabelStyle.HitTest(this,layerC)))
+      {
+        if(hit.DoubleClick==null) hit.DoubleClick=AxisLabelStyleEditorMethod;
         return ForwardTransform(hit);
+      }
       if(m_ShowTopAxis && null!=(hit = m_TopLabelStyle.HitTest(this,layerC)))
+      {
+        if(hit.DoubleClick==null) hit.DoubleClick=AxisLabelStyleEditorMethod;
         return ForwardTransform(hit);
+      }
 
       // now hit testing the other objects in the layer
       foreach(GraphicsObject go in m_GraphObjects)
@@ -2527,6 +2586,15 @@ namespace Altaxo.Graph
 
 
     #endregion // Painting and Hit testing
+
+    #region Editor methods
+
+    public static DoubleClickHandler AxisScaleEditorMethod;
+    public static DoubleClickHandler AxisStyleEditorMethod;
+    public static DoubleClickHandler AxisLabelStyleEditorMethod;
+    public static DoubleClickHandler LayerPositionEditorMethod;
+
+    #endregion
 
     #region Event firing
 

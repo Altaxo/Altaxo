@@ -95,7 +95,7 @@ namespace Altaxo.Serialization.Galactic
 
       try
       {
-        stream = new System.IO.FileStream(filename,System.IO.FileMode.Open);
+        stream = new System.IO.FileStream(filename,System.IO.FileMode.Open,System.IO.FileAccess.Read,System.IO.FileShare.Read);
         System.IO.BinaryReader binreader = new System.IO.BinaryReader(stream);
 
 

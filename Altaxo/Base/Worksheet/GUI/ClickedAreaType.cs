@@ -23,7 +23,7 @@ using System;
 
 namespace Altaxo.Worksheet.GUI
 {
-	
+  
 
   /// <summary>The type of area we have clicked into, used by ClickedCellInfo.</summary>
   public enum ClickedAreaType 

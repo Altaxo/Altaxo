@@ -488,13 +488,13 @@ namespace Altaxo.Graph
       return true;
     }
     
-      public void Paint(Graphics g, Graph.XYPlotLayer layer, XYColumnPlotData myPlotAssociation)
-      {
-        PlotRangeList rangeList;
-        PointF[] ptArray;
+    public void Paint(Graphics g, Graph.XYPlotLayer layer, XYColumnPlotData myPlotAssociation)
+    {
+      PlotRangeList rangeList;
+      PointF[] ptArray;
       
-        if(GetRangesAndPoints(layer,myPlotAssociation,out rangeList,out ptArray))
-        {
+      if(GetRangesAndPoints(layer,myPlotAssociation,out rangeList,out ptArray))
+      {
         // now plot the point array
         PaintLine(g,layer,rangeList,ptArray);
         PaintScatter(g,layer,rangeList,ptArray);

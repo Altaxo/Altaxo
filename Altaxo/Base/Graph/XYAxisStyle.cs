@@ -234,9 +234,9 @@ namespace Altaxo.Graph
     }
 
 
-    public virtual IHitTestObject HitTest(XYPlotLayer layer, PointF pt)
+    public virtual IHitTestObject HitTest(XYPlotLayer layer, PointF pt, bool withTicks)
     {
-      GraphicsPath gp = GetSelectionPath(layer);
+      GraphicsPath gp = GetSelectionPath(layer,withTicks);
       return gp.IsVisible(pt) ? new HitTestObject(gp,this) : null;
     }
 
@@ -416,7 +416,7 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="layer"></param>
     /// <returns></returns>
-    public virtual GraphicsPath GetSelectionPath(XYPlotLayer layer)
+    public virtual GraphicsPath GetSelectionPath(XYPlotLayer layer, bool withTicks)
     {
       PointF orgP;
       PointF endP;
@@ -427,7 +427,16 @@ namespace Altaxo.Graph
      
       
       RectangleF sel = RectangleF.FromLTRB(Math.Min(orgP.X,endP.X),Math.Min(orgP.Y,endP.Y),Math.Max(orgP.X,endP.X),Math.Max(orgP.Y,endP.Y));
-      sel.Inflate(Math.Abs(3*outVector.X),Math.Abs(3*outVector.Y));
+     
+      float inflateby = 3;
+      if(withTicks)
+      {
+        if(this.m_bInnerMajorTicks || this.m_bOuterMajorTicks)
+          inflateby = Math.Max(inflateby,this.m_MajorTickLength);
+        if(this.m_bInnerMinorTicks || this.m_bOuterMinorTicks)
+          inflateby = Math.Max(inflateby,this.m_MinorTickLength);
+      }
+      sel.Inflate(Math.Abs(inflateby*outVector.X),Math.Abs(inflateby*outVector.Y));
       gp.AddRectangle(sel);
 
       return gp;
@@ -528,5 +537,5 @@ namespace Altaxo.Graph
       if(null!=Changed)
         Changed(this,new EventArgs());
     }
-    }
+  }
 }

@@ -22,6 +22,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 
 namespace Altaxo.Graph
@@ -293,6 +294,12 @@ namespace Altaxo.Graph
 
     protected XAnchorPositionType m_XAnchorType = XAnchorPositionType.Left;
     protected YAnchorPositionType m_YAnchorType = YAnchorPositionType.Top;
+
+    /// <summary>
+    /// Hashtable where the keys are rectangles giving
+    /// the position of a symbol into the list, and the values are the plot items.
+    /// </summary>
+    protected System.Collections.Hashtable m_CachedSymbolPositions = new System.Collections.Hashtable();
 
     #region Cached or temporary variables
     protected TextLine.TextLineCollection m_TextLines;
@@ -1109,16 +1116,21 @@ namespace Altaxo.Graph
       if(!this.m_bMeasureInSync)
         this.MeasureStructure(g,obj);
 
+      m_CachedSymbolPositions.Clear();
+
       System.Drawing.Drawing2D.GraphicsState gs = g.Save();
       g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
       
 
+      Matrix transformmatrix= new Matrix();
+      transformmatrix.Translate(X,Y);
+      transformmatrix.Rotate(m_Rotation);
+      transformmatrix.Translate(m_Bounds.X,m_Bounds.Y);
+
       if(!bForPreview)
       {
         g.TranslateTransform(X,Y);
-
         g.RotateTransform(m_Rotation);
-
         g.TranslateTransform(m_Bounds.X,m_Bounds.Y);
       }
 
@@ -1180,8 +1192,17 @@ namespace Altaxo.Graph
             {
               Graph.PlotItem pa = layer.PlotItems[ti.m_PlotNumber];
             
-              ((AbstractXYPlotStyle)pa.Style).PaintSymbol(g, new PointF(currPosX,currPosY + ti.m_yShift  + 0.5f*ti.m_cyDescent - 0.5f*ti.m_cyAscent), ti.m_Width);
+              PointF symbolpos = new PointF(currPosX,currPosY + ti.m_yShift  + 0.5f*ti.m_cyDescent - 0.5f*ti.m_cyAscent);
+              ((AbstractXYPlotStyle)pa.Style).PaintSymbol(g, symbolpos, ti.m_Width);
               currPosX += ti.m_Width;
+            
+              if(!bForPreview)
+              {
+                GraphicsPath gp = new GraphicsPath();
+                gp.AddRectangle(new RectangleF(symbolpos.X,symbolpos.Y-0.5f*ti.m_cyLineSpace,ti.m_Width,ti.m_cyLineSpace));
+                gp.Transform(transformmatrix);
+                this.m_CachedSymbolPositions.Add(gp,pa);
+              }
             }
 
           } // end if ti.IsSymbol
@@ -1200,6 +1221,20 @@ namespace Altaxo.Graph
     {
       return new TextGraphics(this);
     }
+
+    public override IHitTestObject HitTest(PointF pt)
+    {
+      foreach(GraphicsPath gp in this.m_CachedSymbolPositions.Keys)
+      {
+        if(gp.IsVisible(pt))
+        {
+          return new HitTestObject(gp,m_CachedSymbolPositions[gp]);
+        }
+      }
+      return base.HitTest(pt);
+    }
+
+    
 
   }
 }

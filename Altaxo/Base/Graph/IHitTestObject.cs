@@ -32,11 +32,11 @@ namespace Altaxo.Graph
   /// </summary>
   public delegate bool DoubleClickHandler(IHitTestObject o);
 
-	/// <summary>
-	/// IHitTestObject is used as a return type for hit testing in the graph area.
-	/// </summary>
-	public interface IHitTestObject
-	{
+  /// <summary>
+  /// IHitTestObject is used as a return type for hit testing in the graph area.
+  /// </summary>
+  public interface IHitTestObject
+  {
     
 
     /// <summary>
@@ -63,6 +63,8 @@ namespace Altaxo.Graph
     /// <returns></returns>
     object  HittedObject { get; }
 
+    XYPlotLayer ParentLayer { get; set; }
+
     /// <summary>
     /// Shifts the position of the object according to the x and y values.
     /// </summary>
@@ -81,7 +83,7 @@ namespace Altaxo.Graph
     /// </summary>
     /// <returns>False normally, true if this hit test object should be deleted from the list (for instance if the object itself was deleted).</returns>
     bool OnDoubleClick();
-	}
+  }
 
   public class HitTestObject : IHitTestObject
   {
@@ -159,6 +161,13 @@ namespace Altaxo.Graph
         return DoubleClick(this);
       else
         return false;
+    }
+
+    XYPlotLayer _parentLayer;
+    public XYPlotLayer ParentLayer
+    {
+      get { return _parentLayer; }
+      set { _parentLayer = value; }
     }
 
     #endregion

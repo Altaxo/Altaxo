@@ -313,6 +313,13 @@ namespace Altaxo.Graph.GUI
         Doc.CreateNewLayerNormalBottomXLeftY();
     }
 
+
+    static GraphController()
+    {
+      // register here editor methods
+      LayerController.RegisterEditHandlers();
+    }
+
     #endregion // Constructors
 
     #region Menu Definition
@@ -1642,7 +1649,7 @@ namespace Altaxo.Graph.GUI
       foreach(IHitTestObject graphObject in m_SelectedObjects.Keys)
       {
         int nLayer = (int)m_SelectedObjects[graphObject];
-       // if(null!=graphObject.HitTest(Layers[nLayer].GraphToLayerCoordinates(graphXY)))
+        // if(null!=graphObject.HitTest(Layers[nLayer].GraphToLayerCoordinates(graphXY)))
         if(graphObject.SelectionPath.IsVisible(pixelPos))
         {
           foundObject = graphObject;
@@ -1693,7 +1700,7 @@ namespace Altaxo.Graph.GUI
       {
         // now translate the graphics to graph units and paint all selection path
         this.TranslateGraphicsToGraphUnits(g);
-//        g.DrawPath(Pens.Blue,Layers[nLayer].LayerToGraphCoordinates(graphObject.SelectionPath)); // draw the selection path
+        //        g.DrawPath(Pens.Blue,Layers[nLayer].LayerToGraphCoordinates(graphObject.SelectionPath)); // draw the selection path
         g.DrawPath(Pens.Blue,graphObject.SelectionPath); // draw the selection path
       }   
     }
@@ -2006,7 +2013,11 @@ namespace Altaxo.Graph.GUI
           graphEnum.MoveNext(); // set the enumerator to the first item
           IHitTestObject graphObject = (IHitTestObject)graphEnum.Current;
           int nLayer = (int)grac.m_SelectedObjects[graphObject];
-          if(graphObject.HittedObject is Graph.TextGraphics)
+          if(graphObject.DoubleClick!=null)
+          {
+            graphObject.OnDoubleClick();
+          }
+          else if(graphObject.HittedObject is Graph.TextGraphics)
           {
             TextControlDialog dlg = new TextControlDialog(grac.Layers[nLayer],(TextGraphics)graphObject.HittedObject);
             if(DialogResult.OK==dlg.ShowDialog(grac.m_View.Window))

@@ -143,6 +143,15 @@ namespace Altaxo.Graph.GUI
       this.m_TabCtrl.Controls.Add( tc );
     }
 
+    public void SelectTab(string name)
+    {
+      foreach(TabPage page in this.m_TabCtrl.Controls)
+      {
+        if(page.Name==name)
+          this.m_TabCtrl.SelectedTab = page;
+      }
+    }
+
     private void EhTabCtrl_SelectedIndexChanged(object sender, System.EventArgs e)
     {
       if(null!=m_Ctrl)

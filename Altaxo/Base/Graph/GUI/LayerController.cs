@@ -43,6 +43,7 @@ namespace Altaxo.Graph.GUI
 
     System.Windows.Forms.Control CurrentContent { get; set; }
 
+    void SelectTab(string name);
     void InitializeSecondaryChoice(string[] names, string name);
 
   }
@@ -86,9 +87,12 @@ namespace Altaxo.Graph.GUI
     }
 
   
-
-
     public LayerController(XYPlotLayer layer)
+      : this(layer,"Scale",EdgeType.Bottom)
+    {
+    }
+
+    public LayerController(XYPlotLayer layer, string currentPage, EdgeType currentEdge)
     {
       m_Layer = layer;
 
@@ -109,11 +113,96 @@ namespace Altaxo.Graph.GUI
                                                                       };
 
 
-      m_CurrentPage = "Scale";
-      m_CurrentEdge = EdgeType.Bottom;
+      m_CurrentPage = currentPage;
+      m_CurrentEdge = currentEdge;
 
       if(null!=View)
         SetViewElements();
+    }
+
+    public static void RegisterEditHandlers()
+    {
+      // register here editor methods
+
+      XYPlotLayer.AxisScaleEditorMethod = new DoubleClickHandler(EhAxisScaleEdit);
+      XYPlotLayer.AxisStyleEditorMethod = new DoubleClickHandler(EhAxisStyleEdit);
+      XYPlotLayer.AxisLabelStyleEditorMethod = new DoubleClickHandler(EhAxisLabelStyleEdit);
+      XYPlotLayer.LayerPositionEditorMethod = new DoubleClickHandler(EhLayerPositionEdit);
+
+    }
+
+    public static bool EhLayerPositionEdit(IHitTestObject hit)
+    {
+      XYPlotLayer layer = hit.HittedObject as XYPlotLayer;
+      if(layer==null)
+        return false;
+
+      ShowDialog(Current.MainWindow,layer, "Position", EdgeType.Bottom);
+
+      return false;
+    }
+
+    public static bool EhAxisScaleEdit(IHitTestObject hit)
+    {
+      XYAxisStyle style = hit.HittedObject as XYAxisStyle;
+      if(style==null || hit.ParentLayer==null)
+        return false;
+
+      EdgeType edge = EdgeType.Bottom;
+      if(hit.ParentLayer.LeftAxisStyle==style)
+        edge = EdgeType.Left;
+      else if(hit.ParentLayer.BottomAxisStyle==style)
+        edge = EdgeType.Bottom;
+      else if(hit.ParentLayer.RightAxisStyle==style)
+        edge = EdgeType.Right;
+      else if(hit.ParentLayer.TopAxisStyle==style)
+        edge = EdgeType.Top;
+
+      ShowDialog(Current.MainWindow, hit.ParentLayer, "Scale", edge);
+
+      return false;
+    }
+
+    public static bool EhAxisStyleEdit(IHitTestObject hit)
+    {
+      XYAxisStyle style = hit.HittedObject as XYAxisStyle;
+      if(style==null || hit.ParentLayer==null)
+        return false;
+
+      EdgeType edge = EdgeType.Bottom;
+      if(hit.ParentLayer.LeftAxisStyle==style)
+        edge = EdgeType.Left;
+      else if(hit.ParentLayer.BottomAxisStyle==style)
+        edge = EdgeType.Bottom;
+      else if(hit.ParentLayer.RightAxisStyle==style)
+        edge = EdgeType.Right;
+      else if(hit.ParentLayer.TopAxisStyle==style)
+        edge = EdgeType.Top;
+
+      ShowDialog(Current.MainWindow, hit.ParentLayer, "TitleAndFormat",edge);
+
+      return false;
+    }
+
+    public static bool EhAxisLabelStyleEdit(IHitTestObject hit)
+    {
+      XYAxisLabelStyle style = hit.HittedObject as XYAxisLabelStyle;
+      if(style==null || hit.ParentLayer==null)
+        return false;
+
+      EdgeType edge = EdgeType.Bottom;
+      if(hit.ParentLayer.LeftLabelStyle==style)
+        edge = EdgeType.Left;
+      else if(hit.ParentLayer.BottomLabelStyle==style)
+        edge = EdgeType.Bottom;
+      else if(hit.ParentLayer.RightLabelStyle==style)
+        edge = EdgeType.Right;
+      else if(hit.ParentLayer.TopLabelStyle==style)
+        edge = EdgeType.Top;
+
+      ShowDialog(Current.MainWindow, hit.ParentLayer, "TitleAndFormat",edge);
+
+      return false;
     }
 
     public ILayerView View
@@ -160,27 +249,10 @@ namespace Altaxo.Graph.GUI
 
       switch(m_CurrentPage)
       {
-        case "Contents":
-          if(pageChanged)
-          {
-            SetLayerSecondaryChoice();
-            View.CurrentContent = new LineScatterLayerContentsControl();
-          }
-
-          m_CurrentController = m_LayerContentsController;
-          break;
-        case "Position":
-          if(pageChanged)
-          {
-            SetLayerSecondaryChoice();
-            View.CurrentContent = new LayerPositionControl();
-          }
-
-          m_CurrentController = m_LayerPositionController;
-          break;
         case "Scale":
           if(pageChanged)
           {
+            View.SelectTab(m_CurrentPage);
             SetHorzVertSecondaryChoice();
             View.CurrentContent = new AxisScaleControl();
           }
@@ -192,11 +264,34 @@ namespace Altaxo.Graph.GUI
         case "TitleAndFormat":
           if(pageChanged)
           {
+            View.SelectTab(m_CurrentPage);
             SetEdgeSecondaryChoice();
             View.CurrentContent = new TitleFormatLayerControl();
           }
           m_CurrentController = m_TitleFormatLayerController[CurrEdgeIdx];
           break;
+        case "Contents":
+          if(pageChanged)
+          {
+            View.SelectTab(m_CurrentPage);
+            SetLayerSecondaryChoice();
+            View.CurrentContent = new LineScatterLayerContentsControl();
+          }
+
+          m_CurrentController = m_LayerContentsController;
+          break;
+        case "Position":
+          if(pageChanged)
+          {
+            View.SelectTab(m_CurrentPage);
+            SetLayerSecondaryChoice();
+            View.CurrentContent = new LayerPositionControl();
+          }
+
+          m_CurrentController = m_LayerPositionController;
+          break;
+       
+     
 
       }
 
@@ -263,7 +358,13 @@ namespace Altaxo.Graph.GUI
 
     public static bool ShowDialog(System.Windows.Forms.Form parentWindow, XYPlotLayer layer)
     {
-      LayerController ctrl = new LayerController(layer);
+      return ShowDialog(parentWindow,layer,"Scale",EdgeType.Bottom);
+    }
+
+    public static bool ShowDialog(System.Windows.Forms.Form parentWindow, XYPlotLayer layer, string currentPage, EdgeType currentEdge)
+    {
+     
+      LayerController ctrl = new LayerController(layer,currentPage,currentEdge);
       LayerControl view = new LayerControl();
       ctrl.View = view;
 

@@ -176,7 +176,7 @@ namespace Altaxo.Main.GUI
       foreach (FileList.FileListItem item in filelister.SelectedItems) 
       {
         
-        switch (Path.GetExtension(item.FullName)) 
+        switch (Path.GetExtension(item.FullName).ToLower()) 
         {
           case ".axoprj":
           case ".axoprz":
