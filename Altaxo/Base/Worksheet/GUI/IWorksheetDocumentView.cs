@@ -186,6 +186,12 @@ namespace Altaxo.Worksheet.GUI
     void EhView_TableAreaMouseDown(System.Windows.Forms.MouseEventArgs e);
 
     /// <summary>
+    /// Handles the mouse wheel event onto the graph in the controller class.
+    /// </summary>
+    /// <param name="e">MouseEventArgs.</param>
+    void EhView_TableAreaMouseWheel(System.Windows.Forms.MouseEventArgs e);
+
+    /// <summary>
     /// Handles the mouse move event onto the graph in the controller class.
     /// </summary>
     /// <param name="e">MouseEventArgs.</param>

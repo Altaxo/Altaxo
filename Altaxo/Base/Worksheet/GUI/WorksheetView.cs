@@ -182,6 +182,10 @@ namespace Altaxo.Worksheet.GUI
       this.m_GridPanel.DoubleClick += new System.EventHandler(this.EhTableArea_DoubleClick);
       this.m_GridPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseMove);
       this.m_GridPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseDown);
+      this.m_GridPanel.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseWheel);
+      this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseWheel);
+      //this.ParentForm.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.EhTableArea_MouseWheel);
+      
       // 
       // WorksheetView
       // 
@@ -256,6 +260,12 @@ namespace Altaxo.Worksheet.GUI
     {
       if(null!=m_Ctrl)
         m_Ctrl.EhView_TableAreaMouseUp(e);
+    }
+
+    private void EhTableArea_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+    {
+      if(null!=m_Ctrl)
+        m_Ctrl.EhView_TableAreaMouseWheel(e);
     }
 
     private void EhTableArea_SizeChanged(object sender, System.EventArgs e)
