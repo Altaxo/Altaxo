@@ -135,5 +135,21 @@ namespace Altaxo.Calc.LinearAlgebra
       return max;
     }
 
+    /// <summary>
+    /// Returns the sum of the elements in xarray.
+    /// </summary>
+    /// <param name="xarray">The array.</param>
+    /// <returns>The sum of all elements in xarray.</returns>
+    public static double Sum(double[] xarray)
+    {
+      double sum = 0;
+      for(int i=0;i<xarray.Length;i++)
+        sum += xarray[i];
+
+      return sum;
+    }
+
+    
+
   }
 }

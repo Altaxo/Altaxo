@@ -149,7 +149,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\LinearAlgebra\DataColumnToVectorWrapper.cs"
+                    RelPath = "Calc\LinearAlgebra\DataColumnWrapper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

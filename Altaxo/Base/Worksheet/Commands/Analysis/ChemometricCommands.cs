@@ -1288,7 +1288,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
         col = _table[_XOfX_ColumnName];
         if(col==null || !(col is INumericColumn)) NotFound(_XOfX_ColumnName);
-        calibrationSet.XOfX = new Altaxo.Calc.LinearAlgebra.DataColumnToVectorWrapper((INumericColumn)col,_numberOfX);
+        calibrationSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col,_numberOfX);
 
 
         sel.Clear();
