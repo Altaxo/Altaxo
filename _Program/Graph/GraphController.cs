@@ -840,11 +840,15 @@ namespace Altaxo.Graph
 		/// <param name="e">CancelEventArgs.</param>
 		public virtual void EhView_Closing(System.ComponentModel.CancelEventArgs e)
 		{
-			System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.m_View.Window,"Do you really want to close this graph?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
-
-			if(dlgres==System.Windows.Forms.DialogResult.No)
+			if(!App.Current.IsClosing)
 			{
-				e.Cancel = true;
+
+				System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.m_View.Window,"Do you really want to close this graph?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
+
+				if(dlgres==System.Windows.Forms.DialogResult.No)
+				{
+					e.Cancel = true;
+				}
 			}
 		}
 

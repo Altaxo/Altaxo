@@ -143,13 +143,23 @@ namespace Altaxo
 		{
 		const int SC_CLOSE = 0xF060;
 		const int WM_SYSCOMMAND = 0x0112;
+			const int WM_QUERYENDSESSION = 0x0011;
+			const int WM_ENDSESSION      = 0x0016;
+
 	
+			// Test if the user clicked the closing button (X)
 			if    ( m.Msg == WM_SYSCOMMAND && (int)m.WParam == SC_CLOSE && null!=m_Ctrl)
 			{
-					m_Ctrl.EhView_CloseMessage();
+				m_Ctrl.EhView_CloseMessage();
 			}
-			else
-				base.WndProc(ref m);
+				// Next, test for the PC shutting down.
+			else if ( (m.Msg == WM_QUERYENDSESSION ||  m.Msg == WM_ENDSESSION) && null!=m_Ctrl)
+			{
+				m_Ctrl.EhView_CloseMessage();
+			}
+
+			// now handle the message
+			base.WndProc(ref m);
 		}
 
 

@@ -120,7 +120,7 @@ namespace Altaxo
 		void EhView_Closed(System.EventArgs e);
 
 		/// <summary>
-		/// This is called if the Close message is captured from the view
+		/// This is called if the Close message or shutdown is captured from the view
 		/// </summary>
 		void EhView_CloseMessage();
 
@@ -148,6 +148,10 @@ namespace Altaxo
 		private System.Windows.Forms.PrintDialog m_PrintDialog;
 
 
+		/// <summary>
+		/// Flag that indicates that the Application is about to be closed.
+		/// </summary>
+		private bool m_ApplicationIsClosing;
 
 	
 		public MainController(IMainView view, AltaxoDocument doc)
@@ -438,69 +442,7 @@ namespace Altaxo
 
 		private void EhMenuFileSaveAs_OnClick(object sender, System.EventArgs e)
 		{
-			System.IO.Stream myStream ;
-			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
- 
-			saveFileDialog1.Filter = "Altaxo files (*.axo)|*.axo|All files (*.*)|*.*"  ;
-			saveFileDialog1.FilterIndex = 2 ;
-			saveFileDialog1.RestoreDirectory = true ;
- 
-			if(saveFileDialog1.ShowDialog() == DialogResult.OK)
-			{
-				if((myStream = saveFileDialog1.OpenFile()) != null)
-				{
-					System.Collections.Hashtable versionList = new System.Collections.Hashtable();
-					//					System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Soap.SoapFormatter();
-					System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-					System.Runtime.Serialization.SurrogateSelector ss = new System.Runtime.Serialization.SurrogateSelector();
-					System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
-					foreach(Assembly assembly in assemblies)
-					{
-						// test if the assembly supports Serialization
-						Attribute suppVersioning = Attribute.GetCustomAttribute(assembly,typeof(Altaxo.Serialization.SupportsSerializationVersioningAttribute));
-						if(null==suppVersioning)
-							continue; // this assembly don't support this, so skip it
-				
-						Type[] definedtypes = assembly.GetTypes();
-						foreach(Type definedtype in definedtypes)
-						{
-							SerializationVersionAttribute versionattribute = (SerializationVersionAttribute)Attribute.GetCustomAttribute(definedtype,typeof(SerializationVersionAttribute));
-							
-							if(null!=versionattribute)
-								versionList.Add(definedtype.FullName,versionattribute.Version);
-					
-							Attribute[] surrogateattributes = Attribute.GetCustomAttributes(definedtype,typeof(SerializationSurrogateAttribute));
-							// compare with assembly version and search for the serialization
-							// surrogate with the highest version where the version is lower than the
-							// file version
-							SerializationSurrogateAttribute bestattribute=null;
-							int bestversion=-1;
-							int objversion = null==versionattribute ? 0 : versionattribute.Version;
-							foreach(SerializationSurrogateAttribute att in surrogateattributes)
-							{
-								if(att.Version<=objversion && att.Version>bestversion)
-								{
-									bestattribute = att;
-									bestversion = att.Version;
-								}
-							}
-							if(null!=bestattribute)
-							{
-								ss.AddSurrogate(definedtype,formatter.Context, bestattribute.Surrogate);
-							}
-						} // end foreach type
-					} // end foreach assembly 
-					
-							
-					formatter.SurrogateSelector=ss;
-					formatter.Serialize(myStream,versionList);
-					App.m_SurrogateSelector = ss;
-					formatter.Serialize(myStream, m_Doc);
-					App.m_SurrogateSelector=null;
-					// Code to write the stream goes here.
-					myStream.Close();
-				} // end openfile ok
-			} // end dlgresult ok
+			this.ShowSaveAsDialog();
 		} // end method
 
 
@@ -595,6 +537,16 @@ namespace Altaxo
 			get { return m_PrintDialog; }
 		}
 
+
+		/// <summary>
+		/// Indicates if true that the Application is about to be closed. Can be used by child forms to prevent the confirmation dialog that 
+		/// normally appears also during close of the application, since the child windows also receive the closing message in this case.
+		/// </summary>
+		public bool IsClosing
+		{
+			get { return this.m_ApplicationIsClosing; }
+		}
+
 		#endregion
 
 
@@ -618,7 +570,29 @@ namespace Altaxo
 
 		public void EhView_Closing(System.ComponentModel.CancelEventArgs e)
 		{
-			e.Cancel = false;
+			e.Cancel = true; // in doubt cancel the closing
+
+			if(this.Doc.IsDirty)
+			{
+				System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.View.Form,"Do you want to save your document?","Attention",System.Windows.Forms.MessageBoxButtons.YesNoCancel);
+				if(dlgres==System.Windows.Forms.DialogResult.Yes)
+				{
+					if(!this.ShowSaveAsDialog())
+						e.Cancel = false;
+				}
+				else if(dlgres==System.Windows.Forms.DialogResult.No)
+				{
+					e.Cancel = false;
+				}
+				else if(dlgres==System.Windows.Forms.DialogResult.Cancel)
+				{
+					e.Cancel = true;
+				}
+			}
+
+
+			// update the closing flag - if e.Cancel is true, the application is not longer in the closing state
+			this.m_ApplicationIsClosing = (false==e.Cancel);
 		}
 
 		public void EhView_Closed(System.EventArgs e)
@@ -628,11 +602,107 @@ namespace Altaxo
 
 		public void EhView_CloseMessage()
 		{
-			System.Windows.Forms.Application.Exit();
+			this.m_ApplicationIsClosing = true;
 		}
 
 
 		#endregion
+
+		protected bool ShowSaveAsDialog()
+		{
+			bool bRet = true;
+			SaveFileDialog dlg = this.GetSaveAsDialog();
+			if(dlg.ShowDialog(this.View.Form) == DialogResult.OK)
+			{
+				System.IO.Stream myStream;
+				if((myStream = dlg.OpenFile()) != null)
+				{
+					try
+					{
+						this.SaveDocument(myStream);
+						bRet = false;; // now saving was successfull, we can close the form
+					}
+					catch(Exception exc)
+					{
+						System.Windows.Forms.MessageBox.Show(this.View.Form,"An error occured saving the document, details see below:\n" + exc.ToString(),"Error",System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+					}
+					finally
+					{
+						myStream.Close();
+					}
+				}
+			}
+			return bRet;
+		}
+
+		protected SaveFileDialog GetSaveAsDialog()
+		{
+			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+ 
+			saveFileDialog1.Filter = "Altaxo files (*.axo)|*.axo|All files (*.*)|*.*"  ;
+			saveFileDialog1.FilterIndex = 2 ;
+			saveFileDialog1.RestoreDirectory = true ;
+ 	
+
+			return saveFileDialog1;
+		}
+
+
+		protected void SaveDocument(System.IO.Stream myStream)
+		{
+					System.Collections.Hashtable versionList = new System.Collections.Hashtable();
+					//					System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Soap.SoapFormatter();
+					System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+					System.Runtime.Serialization.SurrogateSelector ss = new System.Runtime.Serialization.SurrogateSelector();
+					System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+					foreach(Assembly assembly in assemblies)
+					{
+						// test if the assembly supports Serialization
+						Attribute suppVersioning = Attribute.GetCustomAttribute(assembly,typeof(Altaxo.Serialization.SupportsSerializationVersioningAttribute));
+						if(null==suppVersioning)
+							continue; // this assembly don't support this, so skip it
+				
+						Type[] definedtypes = assembly.GetTypes();
+						foreach(Type definedtype in definedtypes)
+						{
+							SerializationVersionAttribute versionattribute = (SerializationVersionAttribute)Attribute.GetCustomAttribute(definedtype,typeof(SerializationVersionAttribute));
+							
+							if(null!=versionattribute)
+								versionList.Add(definedtype.FullName,versionattribute.Version);
+					
+							Attribute[] surrogateattributes = Attribute.GetCustomAttributes(definedtype,typeof(SerializationSurrogateAttribute));
+							// compare with assembly version and search for the serialization
+							// surrogate with the highest version where the version is lower than the
+							// file version
+							SerializationSurrogateAttribute bestattribute=null;
+							int bestversion=-1;
+							int objversion = null==versionattribute ? 0 : versionattribute.Version;
+							foreach(SerializationSurrogateAttribute att in surrogateattributes)
+							{
+								if(att.Version<=objversion && att.Version>bestversion)
+								{
+									bestattribute = att;
+									bestversion = att.Version;
+								}
+							}
+							if(null!=bestattribute)
+							{
+								ss.AddSurrogate(definedtype,formatter.Context, bestattribute.Surrogate);
+							}
+						} // end foreach type
+					} // end foreach assembly 
+					
+							
+					formatter.SurrogateSelector=ss;
+					formatter.Serialize(myStream,versionList);
+					App.m_SurrogateSelector = ss;
+					formatter.Serialize(myStream, m_Doc);
+					App.m_SurrogateSelector=null;
+					// Code to write the stream goes here.
+					myStream.Close();
+		} // end method
+
+
 
 		public Altaxo.Worksheet.ITableView CreateNewWorksheet(bool bCreateDefault)
 		{

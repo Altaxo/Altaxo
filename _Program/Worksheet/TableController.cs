@@ -2363,11 +2363,14 @@ namespace Altaxo.Worksheet
 
 		public void EhView_Closing(System.ComponentModel.CancelEventArgs e)
 		{
-			System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,"Do you really want to close this worksheet and delete the corresponding table?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
-
-			if(dlgres==System.Windows.Forms.DialogResult.No)
+			if(!App.Current.IsClosing)
 			{
-				e.Cancel = true;
+				System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,"Do you really want to close this worksheet and delete the corresponding table?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
+
+				if(dlgres==System.Windows.Forms.DialogResult.No)
+				{
+					e.Cancel = true;
+				}
 			}
 		}
 

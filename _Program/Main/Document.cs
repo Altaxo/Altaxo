@@ -120,6 +120,12 @@ namespace Altaxo
 			m_IsDirty=true;
 		}
 
+		public bool IsDirty
+		{
+			get { return m_IsDirty; }
+			set { m_IsDirty = value; }
+		}
+
 		public Altaxo.Data.DataTable CreateNewTable(string worksheetName, bool bCreateDefaultColumns)
 		{
 			Altaxo.Data.DataTable dt1 = new Altaxo.Data.DataTable(worksheetName);
