@@ -133,15 +133,23 @@ namespace Altaxo.Main
 
 		public void SaveWindowStateToZippedFile(ZipOutputStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
 		{
+			System.Text.StringBuilder errorText = new System.Text.StringBuilder();
 		
 		{
 			// first, we save our own state 
 			ZipEntry ZipEntry = new ZipEntry("Workbench/MainWindow.xml");
 			zippedStream.PutNextEntry(ZipEntry);
 			zippedStream.SetLevel(0);
-			info.BeginWriting(zippedStream);
-			info.AddValue("MainWindow",Current.Workbench);
-			info.EndWriting();
+			try
+			{
+				info.BeginWriting(zippedStream);
+				info.AddValue("MainWindow",Current.Workbench);
+				info.EndWriting();
+			}
+			catch( Exception exc)
+			{
+				errorText.Append(exc.ToString());
+			}
 		}
 
 			// second, we save all workbench windows into the Workbench/Views 
@@ -152,10 +160,20 @@ namespace Altaxo.Main
 				ZipEntry ZipEntry = new ZipEntry("Workbench/Views/View"+i.ToString()+".xml");
 				zippedStream.PutNextEntry(ZipEntry);
 				zippedStream.SetLevel(0);
-				info.BeginWriting(zippedStream);
-				info.AddValue("WorkbenchViewContent",ctrl);
-				info.EndWriting();
+				try
+				{
+					info.BeginWriting(zippedStream);
+					info.AddValue("WorkbenchViewContent",ctrl);
+					info.EndWriting();
+				}
+				catch(Exception exc)
+				{
+					errorText.Append(exc.ToString());
+				}
 			}
+
+			if(errorText.Length!=0)
+				throw new ApplicationException(errorText.ToString());
 		}
 
 
@@ -277,16 +295,30 @@ namespace Altaxo.Main
 			Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
 			System.IO.Stream myStream = new System.IO.FileStream(filename,System.IO.FileMode.OpenOrCreate);
 			ZipOutputStream zippedStream = new ZipOutputStream(myStream);
-			this.openProject.SaveToZippedFile(zippedStream, info);
-			SaveWindowStateToZippedFile(zippedStream, info);
+		
+			Exception savingException = null;
+			try
+			{
+				this.openProject.SaveToZippedFile(zippedStream, info);
+				SaveWindowStateToZippedFile(zippedStream, info);
+			}
+			catch(Exception exc)
+			{
+				savingException = exc;
+			}
+
 			zippedStream.Close();
 			myStream.Close();
+			
+			if(null!=savingException)
+				throw savingException;
+			
 			this.openProject.IsDirty = false;
 		}
 
 		public void SaveProject()
 		{
-			Save(openProjectFileName);
+			SaveProject(openProjectFileName);
 		}
 
 		public void SaveProject(string filename)

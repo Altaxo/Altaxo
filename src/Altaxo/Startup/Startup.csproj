@@ -118,6 +118,11 @@
                     BuildAction = "None"
                 />
                 <File
+                    RelPath = "AltaxoCore.addin"
+                    Link = "..\..\AddIns\AltaxoCore.addin"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "AltaxoStartup.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

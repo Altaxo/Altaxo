@@ -272,7 +272,7 @@ namespace Altaxo.Graph
 				int  rangeStart=0;
 				PlotRangeList rangeList = new PlotRangeList();
 
-				int len = myPlotAssociation.PlottablePoints;
+				int len = myPlotAssociation.PointCount;
 				for(i=0,j=0;i<len;i++)
 				{
 					if(Double.IsNaN(xColumn.GetDoubleAt(i)) || Double.IsNaN(yColumn.GetDoubleAt(i)))

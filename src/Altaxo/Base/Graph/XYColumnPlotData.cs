@@ -111,7 +111,14 @@ namespace Altaxo.Graph
 		protected PhysicalBoundaries m_xBoundaries;
 		protected PhysicalBoundaries m_yBoundaries;
 
+		/// <summary>
+		/// Number of valid pairs of plot data.
+		/// </summary>
 		protected int    m_PlottablePoints; // number of plottable points
+		/// <summary>
+		/// One more that the index to the last valid pair of plot data. 
+		/// </summary>
+		protected int    m_PointCount;
 		protected bool   m_bCachedDataValid=false;
 
 		// events
@@ -416,6 +423,9 @@ namespace Altaxo.Graph
 
 
 
+		/// <summary>
+		/// Number of valid plot data points.
+		/// </summary>
 		public int PlottablePoints
 		{
 			get
@@ -423,6 +433,20 @@ namespace Altaxo.Graph
 				if(!this.m_bCachedDataValid)
 					this.CalculateCachedData();
 				return this.m_PlottablePoints;
+			}
+		}
+
+		/// <summary>
+		/// One more than the index to the last valid plot data point. This is <b>not</b>
+		/// the number of plottable points, <seealso cref="PlottablePoints"/>
+		/// </summary>
+		public int PointCount
+		{
+			get
+			{
+				if(!this.m_bCachedDataValid)
+					this.CalculateCachedData();
+				return this.m_PointCount;
 			}
 		}
 
@@ -498,21 +522,21 @@ namespace Altaxo.Graph
 
 			System.Diagnostics.Debug.Assert(m_PlotRangeStart>=0);
 
-			int end = this.m_PlotRangeLength;
-			if(end<this.m_PlotRangeLength)
-				end += m_PlotRangeStart;
+			m_PointCount = this.m_PlotRangeLength;
+			if(m_PointCount<this.m_PlotRangeLength)
+				m_PointCount += m_PlotRangeStart;
 
 			if(m_xColumn is IDefinedCount)
-				end = System.Math.Min(end,((IDefinedCount)m_xColumn).Count);
+				m_PointCount = System.Math.Min(m_PointCount,((IDefinedCount)m_xColumn).Count);
 			if(m_yColumn is IDefinedCount)
-				end = System.Math.Min(end,((IDefinedCount)m_yColumn).Count);
+				m_PointCount = System.Math.Min(m_PointCount,((IDefinedCount)m_yColumn).Count);
 
 			// if both columns are indefinite long, we set the length to zero
-			if(end==int.MaxValue || end<0)
-				end=0;
+			if(m_PointCount==int.MaxValue || m_PointCount<0)
+				m_PointCount=0;
 
 
-			for(int i=m_PlotRangeStart;i<end;i++)
+			for(int i=m_PlotRangeStart;i<m_PointCount;i++)
 			{
 				if(!m_xColumn.IsElementEmpty(i) && !m_yColumn.IsElementEmpty(i)) 
 				{

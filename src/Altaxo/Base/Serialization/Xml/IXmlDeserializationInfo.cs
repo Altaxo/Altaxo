@@ -18,6 +18,8 @@ namespace Altaxo.Serialization.Xml
 
 		string GetString();
 		string GetString(string name);
+
+		// object GetEnum(string name, System.Type type); // not used, see remarks on serialization
 		
 
 		int GetInt32Attribute(string name);

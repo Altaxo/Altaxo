@@ -115,79 +115,128 @@ namespace Altaxo
 
 		public void SaveToZippedFile(ZipOutputStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
 		{
+			System.Text.StringBuilder errorText = new System.Text.StringBuilder();
+
 			// first, we save all tables into the tables subdirectory
 			foreach(Altaxo.Data.DataTable table in this.m_DataSet)
 			{
-				ZipEntry ZipEntry = new ZipEntry("Tables/"+table.Name+".xml");
-				zippedStream.PutNextEntry(ZipEntry);
-				zippedStream.SetLevel(0);
-				info.BeginWriting(zippedStream);
-				info.AddValue("Table",table);
-				info.EndWriting();
+				try
+				{
+					ZipEntry ZipEntry = new ZipEntry("Tables/"+table.Name+".xml");
+					zippedStream.PutNextEntry(ZipEntry);
+					zippedStream.SetLevel(0);
+					info.BeginWriting(zippedStream);
+					info.AddValue("Table",table);
+					info.EndWriting();
+				}
+				catch(Exception exc)
+				{
+					errorText.Append(exc.ToString());
+				}
 			}
 
 			// second, we save all graphs into the Graphs subdirectory
 			foreach(Altaxo.Graph.GraphDocument graph in this.m_GraphSet)
 			{
-				ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
-				zippedStream.PutNextEntry(ZipEntry);
-				zippedStream.SetLevel(0);
-				info.BeginWriting(zippedStream);
-				info.AddValue("Graph",graph);
-				info.EndWriting();
+				try
+				{
+					ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
+					zippedStream.PutNextEntry(ZipEntry);
+					zippedStream.SetLevel(0);
+					info.BeginWriting(zippedStream);
+					info.AddValue("Graph",graph);
+					info.EndWriting();
+				}
+				catch(Exception exc)
+				{
+					errorText.Append(exc.ToString());
+				}
 			}
 
 			// third, we save all TableLayouts into the TableLayouts subdirectory
 			foreach(Altaxo.Worksheet.WorksheetLayout layout in this.m_TableLayoutList)
 			{
-				ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
-				zippedStream.PutNextEntry(ZipEntry);
-				zippedStream.SetLevel(0);
-				info.BeginWriting(zippedStream);
-				info.AddValue("WorksheetLayout",layout);
-				info.EndWriting();
+				try 
+				{
+					ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
+					zippedStream.PutNextEntry(ZipEntry);
+					zippedStream.SetLevel(0);
+					info.BeginWriting(zippedStream);
+					info.AddValue("WorksheetLayout",layout);
+					info.EndWriting();
+				}
+				catch(Exception exc)
+				{
+					errorText.Append(exc.ToString());
+				}
 			}
-			
+
+			if(errorText.Length!=0)
+				throw new ApplicationException(errorText.ToString());
 		}
 
 
 		public void RestoreFromZippedFile(ZipFile zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info)
 		{
+			System.Text.StringBuilder errorText = new System.Text.StringBuilder();
+
 			foreach(ZipEntry zipEntry in zipFile)
 			{
-				if(!zipEntry.IsDirectory && zipEntry.Name.StartsWith("Tables/"))
+				try
 				{
-					System.IO.Stream zipinpstream =zipFile.GetInputStream(zipEntry);
-					info.BeginReading(zipinpstream);
-					object readedobject = info.GetValue("Table",this);
-					if(readedobject is Altaxo.Data.DataTable)
-						this.m_DataSet.Add((Altaxo.Data.DataTable)readedobject);
-					info.EndReading();
+					if(!zipEntry.IsDirectory && zipEntry.Name.StartsWith("Tables/"))
+					{
+						System.IO.Stream zipinpstream =zipFile.GetInputStream(zipEntry);
+						info.BeginReading(zipinpstream);
+						object readedobject = info.GetValue("Table",this);
+						if(readedobject is Altaxo.Data.DataTable)
+							this.m_DataSet.Add((Altaxo.Data.DataTable)readedobject);
+						info.EndReading();
 				
-				}
-				else if(!zipEntry.IsDirectory && zipEntry.Name.StartsWith("Graphs/"))
-				{
-					System.IO.Stream zipinpstream =zipFile.GetInputStream(zipEntry);
-					info.BeginReading(zipinpstream);
-					object readedobject = info.GetValue("Graph",this);
-					if(readedobject is Altaxo.Graph.GraphDocument)
-						this.m_GraphSet.Add((Altaxo.Graph.GraphDocument)readedobject);
-					info.EndReading();
+					}
+					else if(!zipEntry.IsDirectory && zipEntry.Name.StartsWith("Graphs/"))
+					{
+						System.IO.Stream zipinpstream =zipFile.GetInputStream(zipEntry);
+						info.BeginReading(zipinpstream);
+						object readedobject = info.GetValue("Graph",this);
+						if(readedobject is Altaxo.Graph.GraphDocument)
+							this.m_GraphSet.Add((Altaxo.Graph.GraphDocument)readedobject);
+						info.EndReading();
 					
-				}
-				else if(!zipEntry.IsDirectory && zipEntry.Name.StartsWith("TableLayouts/"))
-				{
-					System.IO.Stream zipinpstream =zipFile.GetInputStream(zipEntry);
-					info.BeginReading(zipinpstream);
-					object readedobject = info.GetValue("WorksheetLayout",this);
-					if(readedobject is Altaxo.Worksheet.WorksheetLayout)
-						this.m_TableLayoutList.Add((Altaxo.Worksheet.WorksheetLayout)readedobject);
-					info.EndReading();
+					}
+					else if(!zipEntry.IsDirectory && zipEntry.Name.StartsWith("TableLayouts/"))
+					{
+						System.IO.Stream zipinpstream =zipFile.GetInputStream(zipEntry);
+						info.BeginReading(zipinpstream);
+						object readedobject = info.GetValue("WorksheetLayout",this);
+						if(readedobject is Altaxo.Worksheet.WorksheetLayout)
+							this.m_TableLayoutList.Add((Altaxo.Worksheet.WorksheetLayout)readedobject);
+						info.EndReading();
 					
+					}
+				}
+				catch(Exception exc)
+				{
+					errorText.Append("Error deserializing ");
+					errorText.Append(zipEntry.Name);
+					errorText.Append(", ");
+					errorText.Append(exc.ToString());
 				}
 			}
 
-			info.AnnounceDeserializationEnd(this);
+			try
+			{
+				info.AnnounceDeserializationEnd(this);
+			}
+			catch(Exception exc)
+			{
+				errorText.Append(exc.ToString());
+			}
+
+
+			if(errorText.Length!=0)
+				throw new ApplicationException(errorText.ToString());
+
 		}
 
 

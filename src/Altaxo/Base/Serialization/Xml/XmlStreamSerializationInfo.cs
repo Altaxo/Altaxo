@@ -93,6 +93,13 @@ namespace Altaxo.Serialization.Xml
 			m_Writer.WriteElementString(name, XmlConvert.ToString(val));
 		}
 
+		/*
+		public void AddValue(string name, System.Enum val)
+		{
+			m_Writer.WriteElementString(name, val.ToString());
+		}
+		*/
+
 		public void CreateArray(string name, int count)
 		{
 			m_Writer.WriteStartElement(name);

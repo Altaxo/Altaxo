@@ -97,6 +97,14 @@ namespace Altaxo.Serialization.Xml
 			return GetString();
 		}
 
+		/*
+		public object GetEnum(string name, System.Type type)
+		{
+			string val = m_Reader.ReadElementString(name);
+			return System.Enum.Parse(type,val);
+		}
+		*/
+
 		public int GetInt32Attribute(string name)
 		{
 			return XmlConvert.ToInt32(m_Reader[name]);

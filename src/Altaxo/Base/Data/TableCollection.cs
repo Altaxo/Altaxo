@@ -189,7 +189,6 @@ namespace Altaxo.Data
 			if(sender!=null && m_ChangeData==null)
 				this.m_ChangeData=new EventArgs();
 		}
-
 	
 		public void OnChildChanged(object sender, System.EventArgs e)
 		{
@@ -217,6 +216,12 @@ namespace Altaxo.Data
 			
 			OnDataChanged(); // Fire the changed event
 		}
+
+		protected virtual void OnSelfChanged()
+		{
+			OnChildChanged(null,null);
+		}
+
 
 		protected virtual void OnChanged(EventArgs e)
 		{
@@ -285,7 +290,7 @@ namespace Altaxo.Data
 			theTable.ParentChanged += new Main.ParentChangedEventHandler(this.EhTableParentChanged);
 
 			// raise data event to all listeners
-			OnChanged(EventArgs.Empty);
+			this.OnSelfChanged();
 
 		}
 
@@ -299,7 +304,7 @@ namespace Altaxo.Data
 				theTable.ParentObject=null;
 			}
 
-			this.OnChanged(EventArgs.Empty);
+			this.OnSelfChanged();
 		}
 
 		protected void EhTableParentChanged(object sender, Main.ParentChangedEventArgs pce)

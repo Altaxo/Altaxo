@@ -88,6 +88,13 @@ namespace Altaxo.Serialization.Xml
 			m_CurrentNode.Attributes.Append(att);
 		}
 
+		public void AddValue(string name, System.Enum val)
+		{
+			XmlElement ele = m_Doc.CreateElement(name);
+			ele.InnerText = val.ToString();
+			m_CurrentNode.AppendChild(ele);
+		}
+
 		public int GetInt32()
 		{
 			int ret = int.Parse(m_CurrentNode.InnerText);
@@ -95,6 +102,12 @@ namespace Altaxo.Serialization.Xml
 			return ret;
 		}
 
+		public object GetEnum(string name, System.Type type)
+		{
+			object result = System.Enum.Parse(type,m_CurrentNode.InnerText);
+			m_CurrentNode = (XmlElement)m_CurrentNode.NextSibling;
+			return result;
+		}
 		public int GetInt32(string name) 
 		{
 			return GetInt32();

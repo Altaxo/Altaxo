@@ -366,12 +366,12 @@ namespace Altaxo.Graph
 				s.m_CachedMode = false;
 
 				if(0!=(cp&PenHolder.Configured.PenType))
-					s.m_PenType = (PenType)info.GetValue("Type",typeof(PenType));
+					s.m_PenType = (PenType)info.GetEnum("Type",typeof(PenType));
 				else
 					s.m_PenType = PenType.SolidColor;
 
 				if(0!=(cp & PenHolder.Configured.Alignment))
-					s.m_Alignment = (PenAlignment)info.GetValue("Alignment",typeof(PenAlignment));
+					s.m_Alignment = (PenAlignment)info.GetEnum("Alignment",typeof(PenAlignment));
 				else
 					s.m_Alignment = PenAlignment.Center;
 
@@ -391,12 +391,12 @@ namespace Altaxo.Graph
 					s.m_CompoundArray = new float[0];
 
 				if(0!=(cp & PenHolder.Configured.DashStyle))
-					s.m_DashStyle = (DashStyle)info.GetValue("DashStyle",typeof(DashStyle));
+					s.m_DashStyle = (DashStyle)info.GetEnum("DashStyle",typeof(DashStyle));
 				else
 					s.m_DashStyle = DashStyle.Solid;
 
 				if(0!=(cp & PenHolder.Configured.DashCap))
-					s.m_DashCap = (DashCap)info.GetValue("DashCap",typeof(DashCap));
+					s.m_DashCap = (DashCap)info.GetEnum("DashCap",typeof(DashCap));
 				else
 					s.m_DashCap = DashCap.Flat;
 
@@ -411,12 +411,12 @@ namespace Altaxo.Graph
 					s.m_DashPattern = null;
 
 				if(0!=(cp & PenHolder.Configured.EndCap))
-					s.m_EndCap = (LineCap)info.GetValue("EndCap",typeof(LineCap));
+					s.m_EndCap = (LineCap)info.GetEnum("EndCap",typeof(LineCap));
 				else 
 					s.m_EndCap = LineCap.Flat;
 
 				if(0!=(cp & PenHolder.Configured.LineJoin))
-					s.m_LineJoin = (LineJoin)info.GetValue("LineJoin",typeof(LineJoin));
+					s.m_LineJoin = (LineJoin)info.GetEnum("LineJoin",typeof(LineJoin));
 				else
 					s.m_LineJoin = LineJoin.Miter;
 
@@ -426,7 +426,7 @@ namespace Altaxo.Graph
 					s.m_MiterLimit = 10;
 
 				if(0!=(cp & PenHolder.Configured.StartCap))
-					s.m_StartCap = (LineCap)info.GetValue("StartCap",typeof(LineCap));
+					s.m_StartCap = (LineCap)info.GetEnum("StartCap",typeof(LineCap));
 				else
 					s.m_StartCap = LineCap.Flat;
 
@@ -447,6 +447,7 @@ namespace Altaxo.Graph
 			}
 		}
 
+	
 
 		public virtual void OnDeserialization(object obj)
 		{

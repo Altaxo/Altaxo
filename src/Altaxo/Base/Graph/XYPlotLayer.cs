@@ -33,7 +33,11 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(XYPlotLayer.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class XYPlotLayer : System.Runtime.Serialization.IDeserializationCallback, System.ICloneable, Altaxo.Main.IDocumentNode
+	public class XYPlotLayer 
+		:
+		System.Runtime.Serialization.IDeserializationCallback, 
+		System.ICloneable, 
+		Altaxo.Main.IDocumentNode
 	{
 		#region Enumerations
 
@@ -314,7 +318,8 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// The parent layer collection which contains this layer (or null if not member of such collection).
 		/// </summary>
-		protected XYPlotLayerCollection m_ParentLayerCollection=null;
+		protected object m_ParentLayerCollection=null;
+//		protected XYPlotLayerCollection m_ParentLayerCollection=null;
 	
 		/// <summary>
 		/// The index inside the parent collection of this layer (or 0 if not member of such collection).
@@ -947,9 +952,10 @@ namespace Altaxo.Graph
 			get { return this.m_LayerNumber; } 
 		}
 
+		
 		public XYPlotLayerCollection ParentLayerList
 		{
-			get { return m_ParentLayerCollection; }
+			get { return m_ParentLayerCollection as XYPlotLayerCollection; }
 		}
 
 		public GraphicsObjectCollection GraphObjects
@@ -2389,8 +2395,8 @@ namespace Altaxo.Graph
 
 		protected void OnInvalidate()
 		{
-			if(null!=this.m_ParentLayerCollection)
-				this.m_ParentLayerCollection.OnInvalidate(this);
+			if(this.m_ParentLayerCollection is Main.IChildChangedEventSink)
+				((Main.IChildChangedEventSink)this.m_ParentLayerCollection).OnChildChanged(this,EventArgs.Empty);
 		}
 
 		#endregion
@@ -2489,7 +2495,6 @@ namespace Altaxo.Graph
 		{
 			get
 			{
-				// TODO:  Add XYPlotLayer.ParentObject getter implementation
 				return this.m_ParentLayerCollection;
 			}
 		}

@@ -21,10 +21,11 @@ namespace Altaxo.Serialization.Xml
 		void AddValue(string name, double val);
 
 		void AddValue(string name, string val);
-		
-	
+
+		// void AddValue(string name, System.Enum val); not used since _all_ enums then get serialized by this function (also those who have a serialization surrogate)
 	
 		void CreateArray(string name, int count);
+
 		void CommitArray();
 
 		void AddArray(string name, double[] val, int count);

@@ -588,15 +588,7 @@ namespace Altaxo.Data
 		
 		#region Add / Replace Column
 
-		/// <summary>
-		/// Add a column under the name <code>name</code>.
-		/// </summary>
-		/// <param name="datac">The column to add.</param>
-		/// <param name="name">The name under which the column to add.</param>
-		public void Add(Altaxo.Data.DataColumn datac, string name)
-		{
-			Add(datac,new DataColumnInfo(name));
-		}
+
 
 		/// <summary>
 		/// Adds a column by choosing a new unused name for that column automatically.
@@ -604,13 +596,19 @@ namespace Altaxo.Data
 		/// <param name="datac"></param>
 		public void Add(Altaxo.Data.DataColumn datac)
 		{
-			string newname = datac.Name;
-			if(newname==null)
-				newname = this.FindNewColumnName();
-			else if(this.ContainsColumn(newname))
-				newname = this.FindUniqueColumnName(newname);
+		
 
-			Add(datac,new DataColumnInfo(newname));
+			Add(datac,datac.Name);
+		}
+
+		/// <summary>
+		/// Add a column under the name <code>name</code>.
+		/// </summary>
+		/// <param name="datac">The column to add.</param>
+		/// <param name="name">The name under which the column to add.</param>
+		public void Add(Altaxo.Data.DataColumn datac, string name)
+		{
+			Add(datac,name,ColumnKind.V);
 		}
 
 		/// <summary>
@@ -621,7 +619,7 @@ namespace Altaxo.Data
 		/// <param name="kind">The kind of the column.</param>
 		public void Add(Altaxo.Data.DataColumn datac, string name, ColumnKind kind)
 		{
-			Add(datac,new DataColumnInfo(name,kind));
+			Add(datac,name,kind,0);
 		}
 
 		/// <summary>
@@ -633,6 +631,11 @@ namespace Altaxo.Data
 		/// <param name="groupNumber">The group number of the column.</param>
 		public void Add(Altaxo.Data.DataColumn datac, string name, ColumnKind kind, int groupNumber)
 		{
+			if(name==null)
+				name = this.FindNewColumnName();
+			else if( m_ColumnsByName.ContainsKey(name))
+				name = this.FindUniqueColumnName(name);
+
 			Add(datac,new DataColumnInfo(name,kind,groupNumber));
 		}
 
@@ -646,7 +649,8 @@ namespace Altaxo.Data
 		{
 			System.Diagnostics.Debug.Assert(this.ContainsColumn(datac)==false);
 			System.Diagnostics.Debug.Assert(datac.ParentObject==null,"This private function should be only called with fresh DataColumns, if not, alter the behaviour of the calling function"); 
-			
+			System.Diagnostics.Debug.Assert(false==this.m_ColumnsByName.ContainsKey(info.Name),"Trying to add a column with a name that is already present (this error must be fixed in the calling function)");
+
 			info.Number = this.m_ColumnsByNumber.Count;
 
 			this.m_ColumnsByNumber.Add(datac);
