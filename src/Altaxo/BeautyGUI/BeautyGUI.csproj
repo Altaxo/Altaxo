@@ -16,7 +16,7 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "WinExe"
-                PreBuildEvent = ""
+                PreBuildEvent = "copy ..\Altaxo\BeautyGUI\Altaxo.resources ..\data\resources"
                 PostBuildEvent = "copy ..\Altaxo\BeautyGUI\*.config"
                 RootNamespace = ""
                 RunPostBuildEvent = "OnBuildSuccess"
@@ -109,10 +109,19 @@
                     Project = "{AF2C9C35-FC89-4648-9D13-26538C00AFE1}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "ICSharpCode.SharpZipLib"
+                    AssemblyName = "ICSharpCode.SharpZipLib"
+                    HintPath = "..\..\Libraries\bin\ICSharpCode.SharpZipLib.dll"
+                />
             </References>
         </Build>
         <Files>
             <Include>
+                <File
+                    RelPath = "Altaxo.resources"
+                    BuildAction = "None"
+                />
                 <File
                     RelPath = "App.ico"
                     BuildAction = "Content"
@@ -186,6 +195,11 @@
                 <Folder RelPath = "Base\Gui\Workbench\Layouts\" />
                 <File
                     RelPath = "Commands\FileCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\WorksheetCommands.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -98,6 +98,20 @@
 		<MenuItem id="Edit" label="${res:XML.MainMenu.EditMenu}">
 			<MenuItem id="Separator1" label="-"/>
 		</MenuItem>
+		<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
+			<MenuItem id="Plot" label="${res:XML.MainMenu.PlotMenu}">
+				<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Disable">
+					<MenuItem id="PlotLine" label="${res:XML.MainMenu.PlotMenu.PlotLine}" description="${res:XML.MainMenu.PlotMenu.PlotLine.Description}" class="Altaxo.Worksheet.Commands.PlotLine"/>
+					<MenuItem id="Separator1" label="-"/>
+					<!--			        <MenuItem id = "ViewDocumentation"
+				                  label = "${res:ProjectComponent.ContextMenu.ViewDocumentation}"
+				                  class = "ICSharpCode.SharpDevelop.Commands.ViewProjectDocumentation"/> -->
+					<MenuItem id="GenerateDocumentation" label="${res:ProjectComponent.ContextMenu.GenerateDocumentation}" class="ICSharpCode.SharpDevelop.Commands.GenerateProjectDocumentation"/>
+					<MenuItem id="Separator2" label="-"/>
+					<MenuItem id="Options" label="${res:XML.MainMenu.ProjectMenu.Options}" description="${res:XML.MainMenu.ProjectMenu.Options.Description}" class="ICSharpCode.SharpDevelop.Commands.ViewProjectOptions"/>
+				</Conditional>
+			</MenuItem>
+		</Conditional>
 		<!--	        <MenuItem id = "AddIns" label = "${res:XML.MainMenu.PluginMenu}">
 	                <MenuItem label = "-" />
 	                <MenuItem label = "${res:XML.MainMenu.PluginMenu.Manager}" description = "${res:XML.MainMenu.PluginMenu.Manager.Description}" class = "SharpDevelop.Actions.Edit.ShowPlugInManager"/> 

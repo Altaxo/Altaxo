@@ -29,7 +29,7 @@ using Reflector.UserInterface;
 using Altaxo;
 
 using ICSharpCode.SharpDevelop.Services;
-
+using ICSharpCode.SharpZipLib.Zip;
 
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -208,6 +208,100 @@ namespace ICSharpCode.SharpDevelop.Gui
 				// this.WorkbenchLayout = new MdiWorkbenchLayout();
 			}
 		}
+
+		public void SetDocumentFromFile(ZipFile zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info, AltaxoDocument restoredDoc)
+		{
+			this.m_Doc = restoredDoc;
+			this.CloseAllViews();
+			this.RestoreWindowStateFromZippedFile(zipFile,info,m_Doc);
+		}
+
+		#region Windows state saving /restoring
+
+		public class Memento
+		{
+			public Memento(BeautyWorkbench ctrl)
+			{
+			}
+			public Memento()
+			{
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Memento),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				Memento s = (Memento)obj;
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				
+				Memento s = null!=o ? (Memento)o : new Memento();
+				return s;
+			}
+		}
+
+		public void SaveWindowStateToZippedFile(ZipOutputStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
+		{
+		
+		{
+			// first, we save our own state 
+			ZipEntry ZipEntry = new ZipEntry("Workbench/MainWindow.xml");
+			zippedStream.PutNextEntry(ZipEntry);
+			zippedStream.SetLevel(0);
+			info.BeginWriting(zippedStream);
+			info.AddValue("MainWindow",new Memento(this));
+			info.EndWriting();
+		}
+
+			// second, we save all workbench windows into the Workbench/Views 
+			int i=0;
+			foreach(Altaxo.Main.GUI.IWorkbenchContentController ctrl in this.ViewContentCollection)
+			{
+				i++;
+				ZipEntry ZipEntry = new ZipEntry("Workbench/Views/View"+i.ToString()+".xml");
+				zippedStream.PutNextEntry(ZipEntry);
+				zippedStream.SetLevel(0);
+				info.BeginWriting(zippedStream);
+				info.AddValue("WorkbenchViewContent",ctrl);
+				info.EndWriting();
+			}
+		}
+
+		public void RestoreWindowStateFromZippedFile(ZipFile zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info, AltaxoDocument restoredDoc)
+		{
+			System.Collections.ArrayList restoredControllers = new System.Collections.ArrayList();
+			foreach(ZipEntry zipEntry in zipFile)
+			{
+				if(!zipEntry.IsDirectory && zipEntry.Name.StartsWith("Workbench/Views/"))
+				{
+					System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
+					info.BeginReading(zipinpstream);
+					object readedobject = info.GetValue("Table",this);
+					if(readedobject is Altaxo.Main.GUI.IWorkbenchContentController)
+						restoredControllers.Add(readedobject);
+					info.EndReading();
+				}
+			}
+
+			info.AnnounceDeserializationEnd(restoredDoc);
+			info.AnnounceDeserializationEnd(this);
+
+			// now give all restored controllers a view and show them in the Main view
+
+			foreach(Altaxo.Main.GUI.IWorkbenchContentController ctrl in restoredControllers)
+			{
+				ctrl.CreateView();
+				if(ctrl.WorkbenchContentView != null)
+				{
+					this.ShowView(ctrl);
+				}
+			}
+		}
+
+		#endregion
 		
 		public void InitializeWorkspace()
 		{

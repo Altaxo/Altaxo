@@ -240,7 +240,7 @@ namespace Altaxo.Main.GUI
 		{
 			get 
 			{
-				throw new NotImplementedException();
+				return this.m_Content;
 
 				/*
 				if (viewTabControl != null && viewTabControl.SelectedIndex > 0) 

@@ -202,6 +202,25 @@ namespace Altaxo
 		/// </summary>
 		/// <param name="ctrl">The view content to remove.</param>
 		void RemoveWorksheet(Altaxo.Worksheet.GUI.WorksheetController ctrl);
+	
+
+		/// <summary>
+		/// Sets the current document to a document readed from a altaxo project file.
+		/// </summary>
+		/// <param name="zipFile">The project file where the document was read from.</param>
+		/// <param name="info">The deserialization info used to read the document.</param>
+		/// <param name="restoredDoc">The readed document.</param>
+		void SetDocumentFromFile(ZipFile zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info, AltaxoDocument restoredDoc);
+
+
+		/// <summary>
+		/// Saves the state of the application window to a zipped file.
+		/// </summary>
+		/// <param name="zippedStream">The file stream, must be already open and writeable.</param>
+		/// <param name="info">The serialization info used to serialize the objects that represent the state.</param>
+		void SaveWindowStateToZippedFile(ZipOutputStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info);
+	
+	
 	}
 
 	/// <summary>
@@ -308,6 +327,14 @@ namespace Altaxo
 
 			// we construct a empty graph by default
 			CreateNewGraph(null);
+		}
+
+
+		public void SetDocumentFromFile(ZipFile zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info, AltaxoDocument restoredDoc)
+		{
+			this.m_Doc = restoredDoc;
+			this.CloseAllViews();
+			this.RestoreWindowStateFromZippedFile(zipFile,info,m_Doc);
 		}
 
 		#region Menu Definition
