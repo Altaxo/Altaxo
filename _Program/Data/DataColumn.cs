@@ -238,7 +238,7 @@ namespace Altaxo.Data
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
 				EquallySpacedColumn s = null!=o ? (EquallySpacedColumn)o : new EquallySpacedColumn(0,1);
-				info.OpenInnerContent();
+				
 				s.m_Start = info.GetDouble("StartValue");
 				s.m_Increment = info.GetDouble("Increment");
 				return s;
@@ -512,7 +512,7 @@ namespace Altaxo.Data
 				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)o;
 				// s.m_Table = (Altaxo.Data.DataTable)(info.GetValue("Parent",typeof(Altaxo.Data.DataTable)));
 				
-				info.OpenInnerContent();
+				
 				s.m_ColumnName = info.GetString("Name");
 				s.m_ColumnNumber = info.GetInt32("Number");
 				s.m_Count = info.GetInt32("Count");

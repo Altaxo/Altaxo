@@ -197,18 +197,65 @@ namespace Altaxo.Graph
 				info.AddValue("XBoundaries",s.m_xBoundaries);
 				info.AddValue("YBoundaries",s.m_yBoundaries);
 			}
+
+
+			Main.DocumentPath _xColumn = null;
+			Main.DocumentPath _yColumn = null;
+			PlotAssociation _plotAssociation = null;
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				bool bNeedsCallback = false;
 				PlotAssociation s = null!=o ? (PlotAssociation)o : new PlotAssociation();
 
-				s.m_xColumn = (Altaxo.Data.IReadableColumn)info.GetValue("XColumn",typeof(Altaxo.Data.IReadableColumn));
-				s.m_yColumn = (Altaxo.Data.IReadableColumn)info.GetValue("YColumn",typeof(Altaxo.Data.IReadableColumn));
+				object xColumn = info.GetValue("XColumn",typeof(Altaxo.Data.IReadableColumn));
+				object yColumn = info.GetValue("YColumn",typeof(Altaxo.Data.IReadableColumn));
+
+				if(xColumn is Altaxo.Data.DataColumn)
+					s.m_xColumn = (Altaxo.Data.DataColumn)xColumn;
+				else if (xColumn is Main.DocumentPath)
+					bNeedsCallback = true;
+
+
+				if(yColumn is Altaxo.Data.DataColumn)
+					s.m_yColumn = (Altaxo.Data.DataColumn)yColumn;
+				else if (yColumn is Main.DocumentPath)
+					bNeedsCallback = true;
+
+
 
 				s.m_xBoundaries = (PhysicalBoundaries)info.GetValue("XBoundaries",typeof(PhysicalBoundaries));
 				s.m_yBoundaries = (PhysicalBoundaries)info.GetValue("YBoundaries",typeof(PhysicalBoundaries));
 	
+
+
+				if(bNeedsCallback)
+				{
+					XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
+					surr._xColumn = xColumn as Main.DocumentPath;
+					surr._yColumn = yColumn as Main.DocumentPath;
+					surr._plotAssociation = s;
+
+					info.DeserializationAndHierarchyFinished += new EventHandler(surr.EhDeserializationFinished());
+
+				}
 				return s;
+			}
+
+			public void EhDeserializationFinished(object sender, System.EventArgs e)
+			{
+				if(this._xColumn != null)
+				{
+					object xColumn = Main.DocumentPath.GetObject(this._xColumn, this._plotAssociation);
+					if(xColumn is Altaxo.Data.IReadableColumn)
+						_plotAssociation.m_xColumn = (Altaxo.Data.IReadableColumn)xColumn;
+				}
+
+				if(this._yColumn != null)
+				{
+					object yColumn = Main.DocumentPath.GetObject(this._yColumn, this._plotAssociation);
+					if(yColumn is Altaxo.Data.IReadableColumn)
+						_plotAssociation.m_yColumn = (Altaxo.Data.IReadableColumn)yColumn;
+				}
 			}
 		}
 

@@ -273,7 +273,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				LinearAxis s = null!=o ? (LinearAxis)o : new LinearAxis();
 
 				s.m_BaseOrg = (double)info.GetDouble("BaseOrg");
@@ -741,7 +741,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				Log10Axis s = null!=o ? (Log10Axis)o : new Log10Axis();
 
 				s.m_Log10Org = (double)info.GetDouble("Log10Org");

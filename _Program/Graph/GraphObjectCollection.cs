@@ -86,7 +86,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				GraphObjectCollection s = null!=o ? (GraphObjectCollection)o : new GraphObjectCollection();
 
 				int count = info.OpenArray();

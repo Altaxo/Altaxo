@@ -227,6 +227,11 @@ namespace Altaxo
 			mi.Click += new EventHandler(EhMenuFileNewGraph_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
 
+			// File - New -WorksheetFromFile 
+			mi = new MenuItem("Worksheet from file");
+			mi.Click += new EventHandler(EhMenuFileNewWorksheetFromFile_OnClick);
+			m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
+
 			// ------------------------------------------------------------------
 
 			// File - Open
@@ -352,6 +357,41 @@ namespace Altaxo
 		private void EhMenuFileNewGraph_OnClick(object sender, System.EventArgs e)
 		{
 			m_Doc.CreateNewGraph(View.Form);
+		}
+
+		protected void EhMenuFileNewWorksheetFromFile_OnClick(object sender, System.EventArgs e)
+		{
+			System.IO.Stream myStream ;
+			OpenFileDialog openFileDialog1 = new OpenFileDialog();
+ 
+			openFileDialog1.Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*"  ;
+			openFileDialog1.FilterIndex = 1 ;
+			openFileDialog1.RestoreDirectory = true ;
+ 
+			if(openFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				if((myStream = openFileDialog1.OpenFile()) != null)
+				{
+					Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo(myStream,false);
+					object deserObject = info.GetValue("Table",null);
+					info.Finish();
+					myStream.Close();
+
+					// if it is a table, add it to the TableSet
+					if(deserObject is Altaxo.Data.DataTable)
+					{
+						Altaxo.Data.DataTable table = deserObject as Altaxo.Data.DataTable;
+						if(table.Name==null || table.Name==string.Empty)
+							table.TableName = this.Doc.TableSet.FindNewTableName();
+						else if( this.Doc.TableSet.ContainsTable(table.Name))
+							table.TableName = this.Doc.TableSet.FindNewTableName(table.Name);
+
+						this.Doc.TableSet.Add(table);
+						this.Doc.CreateNewWorksheet(this.View.Form,table);
+					}
+
+				}
+			}
 		}
 
 		private void EhMenuFileOpen_OnClick(object sender, System.EventArgs e)

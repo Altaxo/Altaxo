@@ -185,7 +185,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				LineScatterPlotStyle s = null!=o ? (LineScatterPlotStyle)o : new LineScatterPlotStyle();
 				// do not use settings lie s.LineStyle= here, since the LineStyle is cloned, but maybe not fully deserialized here!!!
 				s.LineStyle = (LineStyle)info.GetValue("LineStyle",typeof(LineStyle));

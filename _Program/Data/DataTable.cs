@@ -166,7 +166,7 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DataTable s = null!=o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
 	
-				info.OpenInnerContent();
+				
 
 				s.m_TableName = info.GetString("Name");
 				s.m_DataColumns = (DataColumnCollection)info.GetValue("DataCols",s);

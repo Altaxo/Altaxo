@@ -184,7 +184,7 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.ColumnScript s = null!=o ? (Altaxo.Data.ColumnScript)o : new Altaxo.Data.ColumnScript();
 				
-				info.OpenInnerContent();
+				
 
 				s.m_ScriptStyle = (ScriptStyle)info.GetInt32("Style");
 				s.m_ScriptText = info.GetString("Text");

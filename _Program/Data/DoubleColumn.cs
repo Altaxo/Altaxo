@@ -145,7 +145,7 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DoubleColumn s = null!=o ? (Altaxo.Data.DoubleColumn)o : new Altaxo.Data.DoubleColumn();
 
-				info.OpenInnerContent();
+				
 				// deserialize the base class
 				info.GetBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn),parent);
 

@@ -118,7 +118,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				ShapeGraphic s = (ShapeGraphic)o; 
 				info.GetBaseValueEmbedded(s,typeof(ShapeGraphic).BaseType,parent);
 
@@ -283,7 +283,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				LineGraphic s = null!=o ? (LineGraphic)o : new LineGraphic(); 
 				info.GetBaseValueEmbedded(s,typeof(LineGraphic).BaseType,parent);
 
@@ -495,7 +495,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				RectangleGraphic s = null!=o ? (RectangleGraphic)o : new RectangleGraphic(); 
 				info.GetBaseValueEmbedded(s,typeof(RectangleGraphic).BaseType,parent);
 
@@ -695,7 +695,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				EllipseGraphic s = null!=o ? (EllipseGraphic)o : new EllipseGraphic(); 
 				info.GetBaseValueEmbedded(s,typeof(EllipseGraphic).BaseType,parent);
 

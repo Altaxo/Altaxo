@@ -353,7 +353,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				PenHolder s = null!=o ? (PenHolder)o : new PenHolder();
 
 				s.m_ConfiguredProperties = (Configured)info.GetInt32("Configured");

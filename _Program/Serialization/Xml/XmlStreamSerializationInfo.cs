@@ -309,10 +309,7 @@ namespace Altaxo.Serialization.Xml
 
 			return count;
 		}
-		public int OpenInnerContentAsArray()
-		{
-			return OpenArray();
-		}
+	
 
 		public void CloseArray(int count)
 		{
@@ -394,11 +391,6 @@ namespace Altaxo.Serialization.Xml
 			}
 		}
 
-	
-		public void OpenInnerContent()
-		{
-			m_Reader.ReadStartElement();
-		}
 
 		public void OpenElement()
 		{
@@ -486,7 +478,7 @@ namespace Altaxo.Serialization.Xml
 					throw new ApplicationException(string.Format("Unable to find XmlSurrogate for type {0}!",type));
 				else
 				{
-					m_Reader.ReadStartElement();
+					m_Reader.ReadStartElement();  // note: this must now be done by  in the deserialization code
 					object retvalue =  surr.Deserialize(null,this,parentobject);
 					m_Reader.ReadEndElement();
 					return retvalue;
@@ -515,7 +507,7 @@ namespace Altaxo.Serialization.Xml
 				throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized",basetype));
 			else
 			{
-				m_Reader.ReadStartElement();
+				m_Reader.ReadStartElement(); // note: this must now be done by  in the deserialization code
 				ss.Deserialize(instance,this,parent);
 				m_Reader.ReadEndElement();
 			}		

@@ -43,7 +43,7 @@ namespace Altaxo.Graph
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 		{
-			info.OpenInnerContent();
+			
 			string val = info.GetString("Value");
 			return System.Enum.Parse(typeof(PlotGroupStyle),val,true);
 		}
@@ -142,7 +142,7 @@ namespace Altaxo.Graph
 
 				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 				{
-					info.OpenInnerContent();
+					
 					PlotGroup.Memento s = null!=o ? (PlotGroup.Memento)o : new PlotGroup.Memento();
 					s.m_Style = (PlotGroupStyle)info.GetValue("Style",typeof(PlotGroupStyle));
 
@@ -364,7 +364,7 @@ namespace Altaxo.Graph
 					}
 					public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 					{
-						info.OpenInnerContent();
+						
 						PlotGroup.Collection s = null!=o ? (PlotGroup.Collection)o : new PlotGroup.Collection();
 
 						int count = info.OpenArray();

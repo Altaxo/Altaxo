@@ -54,7 +54,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				string val = info.GetString("Value");
 				return System.Enum.Parse(typeof(Shape),val,true);
 			}
@@ -82,7 +82,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				string val = info.GetString("Value");
 				return System.Enum.Parse(typeof(Style),val,true);
 			}
@@ -109,7 +109,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				string val = info.GetString("Value");
 				return System.Enum.Parse(typeof(DropLine),val,true);
 			}
@@ -193,7 +193,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				ScatterStyle s = null!=o ? (ScatterStyle)o : new ScatterStyle();
 
 				s.m_Shape = (ScatterStyles.Shape)info.GetValue("Shape",typeof(ScatterStyles.Shape));  

@@ -146,12 +146,12 @@ namespace Altaxo.Graph
 				info.AddValue("Name",s.m_Name);
 				info.AddValue("PageBounds",s.m_PageBounds);
 				info.AddValue("PrintableBounds",s.m_PrintableBounds);
-				info.AddValue("Layers",s.m_Layers);
+				info.AddValue("LayerList",s.m_Layers);
 
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				GraphDocument s = null!=o ? (GraphDocument)o : new GraphDocument();
 
 			//	info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
@@ -159,7 +159,7 @@ namespace Altaxo.Graph
 				s.m_PageBounds			= (RectangleF)info.GetValue("PageBounds",s);
 				s.m_PrintableBounds = (RectangleF)info.GetValue("PrintableBounds",s);
 
-				s.m_Layers          = (Layer.LayerCollection)info.GetValue("Layers",s);
+				s.m_Layers          = (Layer.LayerCollection)info.GetValue("LayerList",s);
 				s.m_Layers.ParentObject = s;
 
 

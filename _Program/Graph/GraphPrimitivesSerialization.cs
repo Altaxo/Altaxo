@@ -22,7 +22,7 @@ namespace System.Drawing
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 		{
-			info.OpenInnerContent();
+			
 
 			/*
 			int a = info.GetInt32("A");
@@ -53,7 +53,7 @@ namespace System.Drawing
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 		{
-			info.OpenInnerContent();
+			
 			string val = info.GetString("Value");
 			return (Font)sm_Converter.ConvertFromInvariantString(val);
 		}
@@ -72,7 +72,7 @@ namespace System.Drawing
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 		{
-			info.OpenInnerContent();
+			
 			float w = info.GetSingle("Width");
 			float h = info.GetSingle("Height");
 			return new SizeF(w,h);
@@ -92,7 +92,7 @@ namespace System.Drawing
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 		{
-			info.OpenInnerContent();
+			
 			float x = info.GetSingle("X");
 			float y = info.GetSingle("Y");
 			return new PointF(x,y);
@@ -114,7 +114,7 @@ namespace System.Drawing
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 		{
-			info.OpenInnerContent();
+			
 			float x = info.GetSingle("X");
 			float y = info.GetSingle("Y");
 			float w = info.GetSingle("Width");

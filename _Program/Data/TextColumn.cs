@@ -138,7 +138,7 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.TextColumn s = null!=o ? (Altaxo.Data.TextColumn)o : new Altaxo.Data.TextColumn();
 
-				info.OpenInnerContent();
+				
 				// deserialize the base class
 				info.GetBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn),parent);
 

@@ -134,7 +134,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				D2EquidistantMeshDataAssociation s = null!=o ? (D2EquidistantMeshDataAssociation)o : new D2EquidistantMeshDataAssociation();
 
 				s.m_XColumn = (Altaxo.Data.INumericColumn)info.GetValue("XColumn",typeof(Altaxo.Data.INumericColumn));

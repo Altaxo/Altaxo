@@ -140,7 +140,7 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DateTimeColumn s = null!=o ? (Altaxo.Data.DateTimeColumn)o : new Altaxo.Data.DateTimeColumn();
 				
-				info.OpenInnerContent();
+				
 
 				// deserialize the base class
 				info.GetBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn),parent);

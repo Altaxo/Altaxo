@@ -50,13 +50,6 @@ namespace Altaxo.Serialization.Xml
 		void GetArray(DateTime[] val, int count);
 		void GetArray(string[] val, int count);
 
-	
-
-		/// <summary>
-		/// Used to start deserialization of a class. Procceeds from the object node to the interior of the node.
-		/// </summary>
-		void OpenInnerContent();
-		int OpenInnerContentAsArray();
 
 		void OpenElement();
 		void CloseElement();

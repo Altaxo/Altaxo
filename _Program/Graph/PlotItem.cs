@@ -254,7 +254,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				PlotAssociation pa = (PlotAssociation)info.GetValue("Data",typeof(PlotAssociation));
 				PlotStyle ps  = (PlotStyle)info.GetValue("Style",typeof(PlotStyle));
 

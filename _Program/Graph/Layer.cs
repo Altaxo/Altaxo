@@ -68,7 +68,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				string val = info.GetString("Value");
 				return System.Enum.Parse(typeof(SizeType),val,true);
 			}
@@ -145,7 +145,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				string val = info.GetString("Value");
 				return System.Enum.Parse(typeof(PositionType),val,true);
 			}
@@ -179,7 +179,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				string val = info.GetString("Value");
 				return System.Enum.Parse(typeof(AxisLinkType),val,true);
 			}
@@ -634,7 +634,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				Layer s = null!=o ? (Layer)o : new Layer();
 
 				// Layer style
@@ -2536,21 +2536,25 @@ namespace Altaxo.Graph
 				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 				{
 					LayerCollection s = (LayerCollection)obj;
-					info.AddAttributeValue("Count",s.Count);
+					
+					info.CreateArray("Layers",s.Count);
 					for(int i=0;i<s.Count;i++)
 						info.AddValue("Layer",s[i]);
-					
+					info.CommitArray();
 
 				}
 				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 				{
 					LayerCollection s = null!=o ? (LayerCollection)o : new LayerCollection();
-					int count = info.OpenInnerContentAsArray();				
+					
+					
+					int count = info.OpenArray();				
 					for(int i=0;i<count;i++)
 					{
 						Layer l = (Layer)info.GetValue("Layer",s);
 						s.Add(l);
 					}
+					info.CloseArray(count);
 
 					return s;
 				}

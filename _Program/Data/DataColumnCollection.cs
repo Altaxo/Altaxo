@@ -139,7 +139,7 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DataColumnCollection s = null!=o ? (Altaxo.Data.DataColumnCollection)o : new Altaxo.Data.DataColumnCollection();
 	
-				info.OpenInnerContent();
+				
 
 				// deserialize the columns
 				int count = info.OpenArray();

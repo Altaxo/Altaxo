@@ -107,7 +107,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				PlotList s = null!=o ? (PlotList)o : new PlotList();
 
 				int count = info.OpenArray();

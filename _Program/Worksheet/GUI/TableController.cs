@@ -395,6 +395,14 @@ namespace Altaxo.Worksheet
 			m_MainMenu.MenuItems.Add(mi);
 			index = m_MainMenu.MenuItems.Count-1;
 
+
+			// ------------------------------------------------------------------
+			// File - New (Popup)
+			// ------------------------------------------------------------------
+			mi = new MenuItem("New");
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+			index2 = m_MainMenu.MenuItems[index].MenuItems.Count-1;
+
 			// File - Page Setup
 			mi = new MenuItem("Page Setup..");
 			mi.Click += new EventHandler(EhMenuFilePageSetup_OnClick);
@@ -689,7 +697,8 @@ namespace Altaxo.Worksheet
 		// File Menu
 		// ******************************************************************
 		// ******************************************************************
-		protected void EhMenuFilePageSetup_OnClick(object sender, System.EventArgs e)
+	
+	protected void EhMenuFilePageSetup_OnClick(object sender, System.EventArgs e)
 		{
 		}
 

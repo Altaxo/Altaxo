@@ -48,7 +48,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				RectangleD s = null!=o ? (RectangleD)o : new RectangleD();
 				s.x = info.GetDouble("X");
 				s.y = info.GetDouble("Y");

@@ -140,7 +140,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				XYLayerAxisStyle s = null!=o ? (XYLayerAxisStyle)o : new XYLayerAxisStyle();
 				
 				s.m_Edge         = (Edge)info.GetValue("Edge",s);

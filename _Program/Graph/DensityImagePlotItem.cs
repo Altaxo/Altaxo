@@ -87,7 +87,7 @@ namespace Altaxo.Graph
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
 
-				info.OpenInnerContent();
+				
 				D2EquidistantMeshDataAssociation pa = (D2EquidistantMeshDataAssociation)info.GetValue("Data",o);
 				DensityImagePlotStyle ps = (DensityImagePlotStyle)info.GetValue("Style",o);
 

@@ -7,6 +7,7 @@ namespace Altaxo.Main
 	/// </summary>
 	public class DocumentPath : System.Collections.Specialized.StringCollection
 	{
+		protected bool _IsAbsolutePath;
 		
 		#region Serialization
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DocumentPath),0)]
@@ -15,24 +16,46 @@ namespace Altaxo.Main
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				DocumentPath s = (DocumentPath)obj;
-				info.AddAttributeValue("Count",s.Count);
+
+				info.AddValue("IsAbsolute",s._IsAbsolutePath);
+
+				info.CreateArray("Path",s.Count);
 				for(int i=0;i<s.Count;i++)
 					info.AddValue("e",s[i]);
+				info.CommitArray();
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
 				DocumentPath s = null!=o ? (DocumentPath)o : new DocumentPath();
-				int count = info.OpenInnerContentAsArray();
+				
+				
+				s._IsAbsolutePath = info.GetBoolean("IsAbsolute");
+
+				int count = info.OpenArray();
 				for(int i=0;i<count;i++)
 					s.Add(info.GetString());
+				info.CloseArray(count);
+
 				return s;
 			}
 		}
 
 		#endregion
 		
-		public DocumentPath()
+		public DocumentPath(bool isAbsolutePath)
 		{
+			_IsAbsolutePath = isAbsolutePath;
+		}
+
+		public DocumentPath()
+			: this(false)
+		{
+		}
+
+		public bool IsAbsolutePath
+		{
+			get { return _IsAbsolutePath; }
+			set { _IsAbsolutePath = value; }
 		}
 
 		#region static navigation methods
@@ -78,7 +101,7 @@ namespace Altaxo.Main
 		public static DocumentPath GetAbsolutePath(IDocumentNode node)
 		{
 			DocumentPath path = GetPath(node,int.MaxValue);
-			path.Insert(0,"/");
+			path.IsAbsolutePath = true;
 			return path;
 		}
 
@@ -188,6 +211,28 @@ namespace Altaxo.Main
 				return path;
 			}
 
+		}
+
+		public static object GetObject(DocumentPath path, IDocumentNode startnode)
+		{
+			object node = startnode;
+
+			if(path.IsAbsolutePath)
+				node = GetRootNode(startnode);
+
+			for(int i=0;i<path.Count && (node is Main.IDocumentNode);i++)
+			{
+				if(path[i]=="..")
+					node = ((Main.IDocumentNode)node).ParentObject;
+				else
+				{
+					if(node is Main.INamedObjectCollection)
+						node = ((Main.INamedObjectCollection)node).GetChildObjectNamed(path[i]);
+					else
+						return 0;
+				}
+			} // end for
+			return node;
 		}
 		#endregion
 

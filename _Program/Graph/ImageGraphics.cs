@@ -99,7 +99,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				ImageGraphic s =  (ImageGraphic)o;
 				info.GetBaseValueEmbedded(s,typeof(ImageGraphic).BaseType,parent);
 				return s;
@@ -212,7 +212,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				LinkedImageGraphic s = null!=o ? (LinkedImageGraphic)o : new LinkedImageGraphic();
 				info.GetBaseValueEmbedded(s,typeof(LinkedImageGraphic).BaseType,parent);
 				s.m_ImagePath = info.GetString("ImagePath");
@@ -455,7 +455,7 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				info.OpenInnerContent();
+				
 				EmbeddedImageGraphic s = null!=o ? (EmbeddedImageGraphic)o : new EmbeddedImageGraphic();
 				info.GetBaseValueEmbedded(s,typeof(EmbeddedImageGraphic).BaseType,parent);
 				s.m_Image = (Image)info.GetValue("Image",typeof(Image));
