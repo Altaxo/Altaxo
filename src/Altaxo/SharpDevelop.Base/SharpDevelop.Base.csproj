@@ -76,7 +76,7 @@
                 />
                 <Reference
                     Name = "System.XML"
-                    AssemblyName = "System.XML"
+                    AssemblyName = "System.Xml"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
@@ -265,6 +265,7 @@
                 />
                 <File
                     RelPath = "OriginalBase\AssemblyInfo.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -429,6 +430,7 @@
                 />
                 <File
                     RelPath = "OriginalBase\Gui\BrowserDisplayBinding\SHDocVw.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -578,6 +580,7 @@
                 />
                 <File
                     RelPath = "OriginalBase\Gui\Dialogs\DirtyFilesDialog.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1363,6 +1366,7 @@
                 />
                 <File
                     RelPath = "OriginalBase\Services\File\RingBuffer.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

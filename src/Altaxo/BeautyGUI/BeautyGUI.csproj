@@ -17,8 +17,8 @@
                 DelaySign = "false"
                 OutputType = "WinExe"
                 PreBuildEvent = ""
-                PostBuildEvent = ""
-                RootNamespace = "BeautyGUI"
+                PostBuildEvent = "copy ..\Altaxo\BeautyGUI\*.config"
+                RootNamespace = ""
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
@@ -36,7 +36,7 @@
                     NoStdLib = "false"
                     NoWarn = ""
                     Optimize = "false"
-                    OutputPath = "bin\Debug\"
+                    OutputPath = "..\..\bin\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -100,11 +100,6 @@
                     HintPath = "..\..\Libraries\bin\MagicLibrary.DLL"
                 />
                 <Reference
-                    Name = "UtilityLibrary"
-                    AssemblyName = "UtilityLibrary"
-                    HintPath = "..\..\Libraries\bin\UtilityLibrary.dll"
-                />
-                <Reference
                     Name = "ICSharpCode.Core"
                     Project = "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
@@ -128,13 +123,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "AutostartCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "BeautyGUI.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "BeautyGUI.exe.config"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "BeautyWorkbench.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -163,11 +167,38 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "BitmapResources.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "MdiWorkbenchLayout.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <File
+                    RelPath = "SplashScreen.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "StringResources.resources"
+                    BuildAction = "EmbeddedResource"
+                />
                 <Folder RelPath = "Base\Gui\Workbench\Layouts\" />
+                <File
+                    RelPath = "Commands\FileCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Dialogs\AddInTreeSettingsHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Dialogs\ExceptionBox.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
             </Include>
         </Files>
     </CSHARP>

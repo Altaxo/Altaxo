@@ -68,7 +68,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 
 		// Lellid: move this to the view
-		public bool FullScreen 
+		public bool WindowFullScreen
 		{
 			get 
 			{
@@ -92,7 +92,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public string Title 
+		public string WindowTitle 
 		{
 			get 
 			{
@@ -202,9 +202,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void OnActiveWindowChanged(object sender, EventArgs e)
 		{
-			if (!closeAll && ActiveWorkbenchWindowChanged != null) 
+			if (!closeAll && View_ActiveWorkbenchWindowChanged != null) 
 			{
-				ActiveWorkbenchWindowChanged(this, e);
+			View_ActiveWorkbenchWindowChanged(this, e);
 			}
 		}
 		
@@ -314,7 +314,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 #endif
 		}
 		
-		public event EventHandler ActiveWorkbenchWindowChanged;
+		public event EventHandler View_ActiveWorkbenchWindowChanged;
 		#region IMainView Members
 
 		Altaxo.IMainController Altaxo.IMainView.Controller

@@ -34,7 +34,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 	{
 		static PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 		static string configFile = propertyService.ConfigDirectory + "MdiLayoutConfig.xml";
-		Form wbForm;
+		BeautyWorkbenchWindow wbForm;
 		IExtendedWorkbench m_Workbench;
 
 
@@ -58,7 +58,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public void Attach(IWorkbench workbench)
 		{
 			m_Workbench = (IExtendedWorkbench)workbench;
-			wbForm = (Form)m_Workbench.ViewObject;
+			wbForm = (BeautyWorkbenchWindow)m_Workbench.ViewObject;
 			wbForm.Controls.Clear();
 			wbForm.IsMdiContainer = true;
 			
@@ -75,12 +75,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 			IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
 			wbForm.Controls.Add(statusBarService.Control);
 			
-			((DefaultWorkbench)workbench).commandBarManager.CommandBars.Add(((DefaultWorkbench)workbench).TopMenu);
-			foreach (CommandBar toolBar in ((DefaultWorkbench)workbench).ToolBars) 
+			wbForm.commandBarManager.CommandBars.Add(wbForm.TopMenu);
+			foreach (CommandBar toolBar in wbForm.ToolBars)
 			{
-				((DefaultWorkbench)workbench).commandBarManager.CommandBars.Add(toolBar);
+				wbForm.commandBarManager.CommandBars.Add(toolBar);
 			}
-			wbForm.Controls.Add(((DefaultWorkbench)workbench).commandBarManager);
+			wbForm.Controls.Add(wbForm.commandBarManager);
 			
 			wbForm.Menu = null;
 			dockManager.InnerControl = tabControl;

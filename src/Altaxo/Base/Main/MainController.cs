@@ -177,6 +177,12 @@ namespace Altaxo
 		Altaxo.Graph.GUI.IGraphController CreateNewGraph(Altaxo.Graph.GraphDocument graph);
 
 		/// <summary>
+		/// Creates a new table and the view content for that table.
+		/// </summary>
+		/// <returns>The content controller for that table.</returns>
+		Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet();
+
+		/// <summary>
 		/// Creates a view content for a table.
 		/// </summary>
 		/// <param name="table">The table which should be viewed.</param>

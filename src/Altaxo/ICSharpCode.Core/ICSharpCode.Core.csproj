@@ -18,7 +18,7 @@
                 OutputType = "Library"
                 PreBuildEvent = ""
                 PostBuildEvent = ""
-                RootNamespace = "ICSharpCode.Core"
+                RootNamespace = ""
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
@@ -93,6 +93,10 @@
         </Build>
         <Files>
             <Include>
+                <File
+                    RelPath = "AddIn.xsd"
+                    BuildAction = "EmbeddedResource"
+                />
                 <File
                     RelPath = "AssemblyInfo.cs"
                     SubType = "Code"
@@ -360,12 +364,12 @@
                 />
                 <File
                     RelPath = "Services\SaveErrorChooseDialog.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Services\SaveErrorInformDialog.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File

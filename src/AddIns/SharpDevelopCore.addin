@@ -1,0 +1,201 @@
+<!-- edited with XMLSPY v5 rel. 3 U (http://www.xmlspy.com) by DKI (DKI) -->
+<AddIn name="SharpDevelop Core" author="Mike Krueger" copyright="GPL" url="http://www.icsharpcode.net" description="SharpDevelop core module" version="1.0.0">
+	<Runtime>
+		<Import assembly="../bin/SharpDevelop.Base.dll"/>
+		<Import assembly="../bin/BeautyGui.exe"/>
+	</Runtime>
+	<Extension path="/Workspace/Autostart">
+		<Class id="InitializeWorkbenchCommand" class="ICSharpCode.SharpDevelop.Commands.InitializeWorkbenchCommand"/>
+		<Class id="StartWorkbenchCommand" class="ICSharpCode.SharpDevelop.Commands.StartWorkbenchCommand"/>
+	</Extension>
+	<Extension path="/Workspace/Icons">
+		<!-- C# -->
+		<Icon id="C#Prj" language="C#" resource="C#.ProjectIcon"/>
+		<Icon id="C#File" extensions=".cs" resource="C#.FileIcon"/>
+		<!-- VB.NET -->
+		<Icon id="VBPrj" language="VBNET" resource="VB.ProjectIcon"/>
+		<Icon id="VBFile" extensions=".vb" resource="VB.FileIcon"/>
+		<!-- Java -->
+		<Icon id="JavaPrj" language="Java" resource="JAVA.ProjectIcon"/>
+		<Icon id="JavaFile" extensions=".java" resource="JAVA.FileIcon"/>
+		<!-- Java Script -->
+		<!--                <Icon id ="JSPrj" language = "JScript" location = "icons\JavaScriptProject.png"/>
+                <Icon id ="JSFile"    location = "icons\JavaScriptFileIcon.png" extensions=".js"/>
+                <Icon        location = "icons\JScriptFile.png" 		id = "JS.File.JsFileIcon"/>
+                <Icon        location = "icons\JScriptClassLibrary.png"         id = "JSCRIPT.Project.JsClassLibrary"/>
+                <Icon        location = "icons\FullJScriptProject.png" 		id = "JSCRIPT.Project.JsProjectIcon"/>
+                <Icon        location = "icons\ServiceJScriptProject.png"   	id = "JSCRIPT.Project.ServiceJsProject"/>
+                <Icon        location = "icons\EmptyJScriptWebApplication.png"  id = "JSCRIPT.Project.JsWebProjectIcon"/>
+                <Icon        location = "icons\JScriptWebService.png"       	id = "JSCRIPT.Project.JsWebServiceIcon"/>
+                <Icon        location = "icons\JavaScriptProject.png" 		id = "JSCRIPT.Project.EmptyJsProjectIcon"/>
+                <Icon        location = "icons\JScriptCubeFileIcon.png"     	id = "JSCRIPT.Project.JsServiceFileIcon"/> -->
+		<!-- Resources -->
+		<Icon id="ResourceFileIcon" extensions=".resources,.resx" resource="Icons.16x16.ResourceFileIcon"/>
+		<!-- XML -->
+		<Icon id="XmlFileIcon" extensions=".xml" resource="FileIcons.XmlIcon"/>
+		<!-- TextFiles -->
+		<Icon id="TextFileIcon" extensions=".txt,.doc" resource="Icons.16x16.TextFileIcon"/>
+	</Extension>
+	<Extension path="/Workspace/Services">
+		<Class id="FileService" class="ICSharpCode.SharpDevelop.Services.DefaultFileService"/>
+		<Class id="TaskService" class="ICSharpCode.SharpDevelop.Services.TaskService"/>
+		<Class id="StatusBarService" class="ICSharpCode.SharpDevelop.Services.DefaultStatusBarService"/>
+		<Class id="ToolbarService" class="ICSharpCode.SharpDevelop.Services.ToolbarService"/>
+		<Class id="DisplayBindingService" class="ICSharpCode.SharpDevelop.Services.DisplayBindingService"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Workbench/DisplayBindings">
+		<DisplayBinding id="Browser" supportedformats="Web Pages" class="ICSharpCode.SharpDevelop.BrowserDisplayBinding.BrowserDisplayBinding"/>
+	</Extension>
+	<!-- TODO : complete the combine options dialog -->
+	<Extension path="/SharpDevelop/Workbench/OpenFileTab/ContextMenu">
+		<MenuItem id="Close" label="${res:OpenFileTabEventHandler.ContextMenu.Close}" class="ICSharpCode.SharpDevelop.Commands.TabStrip.CloseFileTab"/>
+		<MenuItem id="CloseSeparator" label="-"/>
+		<Conditional action="Disable">
+			<And>
+				<Condition ownerstate="FileDirty"/>
+				<Not>
+					<Condition ownerstate="FileUntitled"/>
+				</Not>
+			</And>
+			<MenuItem id="Save" label="${res:OpenFileTabEventHandler.ContextMenu.Save}" icon="Icons.16x16.SaveIcon" class="ICSharpCode.SharpDevelop.Commands.TabStrip.SaveFileTab"/>
+		</Conditional>
+		<MenuItem id="SaveAs" label="${res:OpenFileTabEventHandler.ContextMenu.SaveAs}" class="ICSharpCode.SharpDevelop.Commands.TabStrip.SaveFileAsTab"/>
+		<MenuItem id="SaveSeparator" label="-"/>
+		<Conditional action="Disable">
+			<Not>
+				<Condition ownerstate="FileUntitled"/>
+			</Not>
+			<MenuItem id="CopyPathName" label="${res:OpenFileTabEventHandler.CopyPathName}" class="ICSharpCode.SharpDevelop.Commands.TabStrip.CopyPathName"/>
+		</Conditional>
+	</Extension>
+	<Extension path="/SharpDevelop/Workbench/Views">
+		<Class id="SideBar" class="ICSharpCode.SharpDevelop.Gui.Pads.SideBarView"/>
+		<Class id="HelpBrowser" class="ICSharpCode.SharpDevelop.Gui.Pads.HelpBrowser"/>
+	</Extension>
+	<Extension path="/SharpDevelop/Workbench/ToolBar">
+		<ToolbarItem id="Standard">
+			<ToolbarItem id="New" icon="Icons.16x16.NewDocumentIcon" tooltip="${res:XML.MainMenu.FileMenu.New.File.Description}" class="ICSharpCode.SharpDevelop.Commands.CreateNewFile"/>
+			<ToolbarItem id="Open" icon="Icons.16x16.OpenFileIcon" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}" class="ICSharpCode.SharpDevelop.Commands.OpenFile"/>
+			<Conditional activewindow="*" action="Disable">
+				<ToolbarItem id="Save" icon="Icons.16x16.SaveIcon" tooltip="${res:XML.MainMenu.FileMenu.Save.Description}" class="ICSharpCode.SharpDevelop.Commands.SaveFile"/>
+				<ToolbarItem id="SaveAll" icon="Icons.16x16.SaveAllIcon" tooltip="${res:XML.MainMenu.FileMenu.SaveAll.Description}" class="ICSharpCode.SharpDevelop.Commands.SaveAllFiles"/>
+			</Conditional>
+		</ToolbarItem>
+	</Extension>
+	<Extension path="/SharpDevelop/Workbench/MainMenu">
+		<MenuItem id="File" label="${res:XML.MainMenu.FileMenu}">
+			<MenuItem id="New" label="${res:XML.MainMenu.FileMenu.New}">
+				<MenuItem id="File" label="${res:XML.MainMenu.FileMenu.New.File}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.File.Description}" shortcut="Control|N" class="ICSharpCode.SharpDevelop.Commands.CreateNewFile"/>
+				<MenuItem id="Worksheet" label="${res:XML.MainMenu.FileMenu.New.Worksheet}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.Worksheet.Description}" shortcut="Control|W" class="Altaxo.Main.Commands.CreateNewWorksheet"/>
+				<MenuItem id="Graph" label="${res:XML.MainMenu.FileMenu.New.Graph}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.Graph.Description}" shortcut="Control|G" class="Altaxo.Main.Commands.CreateNewGraph"/>
+			</MenuItem>
+			<MenuItem id="Open" label="${res:XML.MainMenu.FileMenu.Open}">
+				<MenuItem id="File" label="${res:XML.MainMenu.FileMenu.Open.File}" icon="Icons.16x16.OpenFileIcon" description="${res:XML.MainMenu.FileMenu.Open.File.Description}" shortcut="Control|O" class="ICSharpCode.SharpDevelop.Commands.OpenFile"/>
+			</MenuItem>
+			<MenuItem id="ReloadSeparator" label="-"/>
+			<MenuItem id="SaveSeparator" label="-"/>
+		</MenuItem>
+		<MenuItem id="Edit" label="${res:XML.MainMenu.EditMenu}">
+			<MenuItem id="Separator1" label="-"/>
+		</MenuItem>
+		<!--	        <MenuItem id = "AddIns" label = "${res:XML.MainMenu.PluginMenu}">
+	                <MenuItem label = "-" />
+	                <MenuItem label = "${res:XML.MainMenu.PluginMenu.Manager}" description = "${res:XML.MainMenu.PluginMenu.Manager.Description}" class = "SharpDevelop.Actions.Edit.ShowPlugInManager"/> 
+	        </MenuItem>-->
+		<MenuItem id="Window" label="${res:XML.MainMenu.WindowMenu}">
+			<Conditional action="Disable">
+				<Condition activewindow="*"/>
+				<MenuItem id="NextWindow" label="${res:XML.MainMenu.WindowMenu.NxtWindow}" icon="Icons.16x16.NextWindowIcon" description="${res:XML.MainMenu.WindowMenu.NxtWindow.Description}" shortcut="Control|Tab" class="ICSharpCode.SharpDevelop.Commands.SelectNextWindow"/>
+				<MenuItem id="PrevWindow" label="${res:XML.MainMenu.WindowMenu.PrvWindow}" icon="Icons.16x16.PrevWindowIcon" description="${res:XML.MainMenu.WindowMenu.PrvWindow.Description}" shortcut="Shift|Control|Tab" class="ICSharpCode.SharpDevelop.Commands.SelectPrevWindow"/>
+				<MenuItem id="NxtPrvSeparator" label="-"/>
+				<MenuItem id="CloseAll" label="${res:XML.MainMenu.FileMenu.CloseAll}" icon="Icons.16x16.CloseAllDocuments" description="${res:XML.MainMenu.FileMenu.CloseAll.Description}" class="ICSharpCode.SharpDevelop.Commands.CloseAllWindows"/>
+			</Conditional>
+			<MenuItem id="ContentBuilder" label="boguslabel" class="ICSharpCode.SharpDevelop.Commands.OpenContentsMenuBuilder"/>
+		</MenuItem>
+		<MenuItem id="Help" label="${res:XML.MainMenu.HelpMenu}">
+			<MenuItem id="Help" label="${res:XML.MainMenu.HelpMenu.Topics}" icon="Icons.16x16.HelpIcon" description="${res:XML.MainMenu.HelpMenu.Topics.Description}" shortcut="Alt|F1" class="ICSharpCode.SharpDevelop.Commands.ShowHelp"/>
+			<MenuItem id="TipOfTheDay" label="${res:XML.MainMenu.HelpMenu.Tips}" icon="Icons.16x16.TipOfTheDay" description="${res:XML.MainMenu.HelpMenu.Tips.Description}" class="ICSharpCode.SharpDevelop.Commands.ViewTipOfTheDay"/>
+			<MenuItem id="Separator1" label="-"/>
+			<MenuItem id="ViewGPL" label="${res:XML.MainMenu.HelpMenu.GPL}" icon="Icons.16x16.CopyLeftIcon" description="${res:XML.MainMenu.HelpMenu.GPL.Description}" class="ICSharpCode.SharpDevelop.Commands.ViewGPL"/>
+			<MenuItem id="ViewReadme" label="${res:XML.MainMenu.HelpMenu.ReadMe}" description="${res:XML.MainMenu.HelpMenu.ReadMe.Description}" link="home://../doc/ReadMe.html"/>
+			<MenuItem id="ViewStyleguide" label="${res:XML.MainMenu.HelpMenu.StyleGuide}" description="${res:XML.MainMenu.HelpMenu.StyleGuide.Description}" link="home://../doc/CodingStyleGuide.pdf"/>
+			<MenuItem id="Separator2" label="-"/>
+			<MenuItem id="Web" label="${res:XML.MainMenu.HelpMenu.WebMenu}">
+				<MenuItem id="ASP" label="&amp;AlphaSierraPapa" icon="Icons.16x16.WebSearchIcon" description="Visit my sponsors" link="http://www.alphasierrapapa.com/"/>
+				<MenuItem id="SharpDevelop" label="SharpDevelop">
+					<MenuItem id="Downloads" label="Downloads" icon="Icons.16x16.WebSearchIcon" link="http://www.icsharpcode.net/opensource/sd/download/"/>
+					<MenuItem id="Forum" label="Community Forums" icon="Icons.16x16.WebSearchIcon" link="http://www.icsharpcode.net/opensource/sd/forum/"/>
+					<MenuItem id="Announcement" label="Announcement List" icon="Icons.16x16.WebSearchIcon" link="http://www.icsharpcode.net/opensource/sd/announcementlist.asp"/>
+					<MenuItem id="Mail" label="Send Us a Mail" icon="Icons.16x16.WebSearchIcon" link="http://www.icsharpcode.net/opensource/sd/ContactUs.asp"/>
+				</MenuItem>
+				<MenuItem id="C#" label="C#">
+					<MenuItem id="cshrp.net" label="cshrp.net" icon="Icons.16x16.WebSearchIcon" link="http://www.cshrp.net/"/>
+					<MenuItem id="C# Help" label="C# Help" icon="Icons.16x16.WebSearchIcon" link="http://www.csharphelp.com"/>
+					<MenuItem id="C# Corner" label="C# Corner" icon="Icons.16x16.WebSearchIcon" link="http://www.c-sharpcorner.com"/>
+					<MenuItem id="GotDotNet" label="GotDotNet" icon="Icons.16x16.WebSearchIcon" description="Visit one of the best NET sites on the web" link="http://www.gotdotnet.com/"/>
+				</MenuItem>
+				<MenuItem id="IntegratedProjects" label="Integrated Projects">
+					<MenuItem id="Magic Library" label="Magic Library" icon="Icons.16x16.WebSearchIcon" description="One of the best .NET control libraries around." link="http://www.dotnetmagic.com"/>
+					<MenuItem id="NAnt" label="NAnt" icon="Icons.16x16.WebSearchIcon" description="THE .NET building tool." link="http://nant.sourceforge.net/"/>
+					<MenuItem id="NDoc" label="NDoc" icon="Icons.16x16.WebSearchIcon" description="I used the NDoc as the SharpDevelop documentation generator. Look out it is cool." link="http://ndoc.sourceforge.net/"/>
+					<MenuItem id="#ZipLib" label="#ZipLib" icon="Icons.16x16.WebSearchIcon" description="I used the NDoc as the SharpDevelop documentation generator. Look out it is cool." link="http://www.icsharpcode.net/OpenSource/NZipLib"/>
+					<MenuItem id="#CvsLib" label="#CvsLib" icon="Icons.16x16.WebSearchIcon" description="I used the NDoc as the SharpDevelop documentation generator. Look out it is cool." link="http://www.icsharpcode.net/OpenSource/NetCvsLib"/>
+				</MenuItem>
+				<MenuItem id="NETPlatforms" label=".NET Platforms">
+					<MenuItem id="DotGNU" label="DotGNU" icon="Icons.16x16.WebSearchIcon" description="The GNU .NET implementation" link="http://www.dotgnu.org"/>
+					<MenuItem id="Mono" label="Mono Project" icon="Icons.16x16.WebSearchIcon" description="A free .NET implementation effort, worth visiting" link="http://www.go-mono.com"/>
+					<MenuItem id="MSNET" label="MS .NET" icon="Icons.16x16.WebSearchIcon" description="The first .NET implementation" link="http://msdn.microsoft.com/net"/>
+				</MenuItem>
+			</MenuItem>
+			<MenuItem id="Separator3" label="-"/>
+			<MenuItem id="About" label="${res:XML.MainMenu.HelpMenu.About}" icon="Icons.16x16.AboutIcon" description="${res:XML.MainMenu.HelpMenu.About.Description}" class="ICSharpCode.SharpDevelop.Commands.AboutSharpDevelop"/>
+		</MenuItem>
+	</Extension>
+	<Extension path="/SharpDevelop/Workbench/SharpDevelopSideBar/ContextMenu">
+		<Conditional ownerstate="TabCanBeDeleted" action="Disable">
+			<MenuItem id="DeleteTab" label="${res:SideBarComponent.ContextMenu.DeleteTab}" class="ICSharpCode.SharpDevelop.Commands.SideBarDeleteTabHeader"/>
+		</Conditional>
+		<MenuItem id="RenameTab" label="${res:SideBarComponent.ContextMenu.RenameTab}" class="ICSharpCode.SharpDevelop.Commands.SideBarRenameTabHeader"/>
+		<MenuItem id="Separator1" label="-"/>
+		<MenuItem id="AddTab" label="${res:SideBarComponent.ContextMenu.AddTab}" class="ICSharpCode.SharpDevelop.Commands.SideBarAddTabHeader"/>
+		<MenuItem id="Separator2" label="-"/>
+		<Conditional ownerstate="CanMoveUp" action="Disable">
+			<MenuItem id="MoveTabUp" label="${res:SideBarComponent.ContextMenu.MoveTabUp}" class="ICSharpCode.SharpDevelop.Commands.SideBarMoveTabUp"/>
+		</Conditional>
+		<Conditional ownerstate="CanMoveDown" action="Disable">
+			<MenuItem id="MoveTabDown" label="${res:SideBarComponent.ContextMenu.MoveTabDown}" class="ICSharpCode.SharpDevelop.Commands.SideBarMoveTabDown"/>
+		</Conditional>
+	</Extension>
+	<Extension path="/SharpDevelop/Workbench/SharpDevelopSideBar/SideTab/ContextMenu">
+		<MenuItem id="RenameTabItem" label="${res:SideBarComponent.ContextMenu.RenameTabItem}" class="ICSharpCode.SharpDevelop.Commands.SideBarRenameTabItem"/>
+		<MenuItem id="DeleteTabItem" label="${res:SideBarComponent.ContextMenu.DeleteTabItem}" class="ICSharpCode.SharpDevelop.Commands.SideBarDeleteTabItem"/>
+		<Conditional ownerstate="TabCanBeDeleted">
+			<MenuItem id="Separator1" label="-"/>
+			<Conditional ownerstate="CanMoveItemUp" action="Disable">
+				<MenuItem id="MoveItemUp" label="${res:SideBarComponent.ContextMenu.MoveTabItemUp}" class="ICSharpCode.SharpDevelop.Commands.SideBarMoveActiveItemUp"/>
+			</Conditional>
+			<Conditional ownerstate="CanMoveItemDown" action="Disable">
+				<MenuItem id="MoveItemDown" label="${res:SideBarComponent.ContextMenu.MoveTabItemDown}" class="ICSharpCode.SharpDevelop.Commands.SideBarMoveActiveItemDown"/>
+			</Conditional>
+		</Conditional>
+	</Extension>
+	<!-- web references -->
+	<!--
+	<Extension path = "/SharpDevelop/Views/ProjectBrowser/ContextMenu/ReferenceFolderNode">
+		<MenuItem id = "AddWebReference"
+	                  label = "Add Web Reference" 
+	                  class = "ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddWebReferenceToProject"/>
+	</Extension>
+-->
+	<!--
+	<Extension path = "/SharpDevelop/Views/ProjectBrowser/ContextMenu/ReferenceNode">
+		<MenuItem id = "Refresh"
+			  label = "Refresh" 
+			  class = "ICSharpCode.SharpDevelop.Commands.ProjectBrowser.RefreshWebReference"/>
+	</Extension> -->
+	<Extension path="/SharpDevelop/Views/PropertyPad/ContextMenu">
+		<MenuItem id="ResetProperty" label="${res:ICSharpCode.SharpDevelop.Gui.Pads.PropertyPad.ContextMenu.Reset}" class="ICSharpCode.SharpDevelop.Gui.Pads.PropertyPadResetCommand"/>
+		<MenuItem id="Separator" label="-"/>
+		<MenuItem id="ShowDescription" label="${res:ICSharpCode.SharpDevelop.Gui.Pads.PropertyPad.ContextMenu.ShowDescription}" class="ICSharpCode.SharpDevelop.Gui.Pads.PropertyPadShowDescriptionCommand"/>
+	</Extension>
+</AddIn>

@@ -37,7 +37,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 	/// <summary>
 	/// This is the a Workspace with a multiple document interface.
 	/// </summary>
-	public class BeautyWorkbench : IWorkbench, Altaxo.IMainController
+	/// <remarks>
+	/// As long as SharpDevelop has no ViewObject defined in the IWorkbench
+	/// interface, we have to derive workbench from the WorkbenchForm.
+	/// You should not rely on this and use always the ViewObject method defined here and in the 
+	/// IExtendedWorkbench interface if you want to have a Windows Forms object.
+	/// </remarks>
+	public class BeautyWorkbench : BeautyWorkbenchWindow, IWorkbench, Altaxo.IMainController
 	{
 		readonly static string mainMenuPath    = "/SharpDevelop/Workbench/MainMenu";
 		readonly static string viewContentPath = "/SharpDevelop/Workbench/Views";
@@ -53,7 +59,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		IWorkbenchLayout layout = null;
 		
-		protected static PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
+		protected static PropertyService _propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 		
 
 		BeautyWorkbenchWindow m_View;
@@ -89,7 +95,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			{
 				fullscreen = value;
 				if(null!=View)
-					View.FullScreen = value;
+					View.WindowFullScreen = value;
 			}
 		}
 		
@@ -101,7 +107,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				m_Title = value;
 				
 				if(null!=View)
-					View.Title = value;
+					View.WindowTitle = value;
 			}
 		}
 		
@@ -147,12 +153,19 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public BeautyWorkbench(BeautyWorkbenchWindow window, Altaxo.AltaxoDocument doc)
 		{
+
+			// HACK : as long as we derive from the GUI window, we ignore the window parameter
+			// and use us itself as the view
+			if(this is System.Windows.Forms.Form)
+				m_View = this;
+			else
+				m_View = window;
 			
-			m_View = window;
+			
 			m_View.Controller = this;
 			
 			// we construct the main document
-			if(null==m_Doc)
+			if(null==doc)
 				m_Doc = new AltaxoDocument();
 			else
 				m_Doc = doc;
@@ -192,7 +205,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 				View.AllowDrop      = true;
 
-				this.WorkbenchLayout = new MdiWorkbenchLayout();
+				// this.WorkbenchLayout = new MdiWorkbenchLayout();
 			}
 		}
 		
@@ -235,7 +248,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public void CloseContent(IViewContent content)
 		{
-			if (propertyService.GetProperty("SharpDevelop.LoadDocumentProperties", true) && content is IMementoCapable) {
+			if (_propertyService.GetProperty("SharpDevelop.LoadDocumentProperties", true) && content is IMementoCapable) {
 				StoreMemento(content);
 			}
 			if (workbenchContentCollection.Contains(content)) 
@@ -264,7 +277,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			Debug.Assert(layout != null);
 			ViewContentCollection.Add(content);
-			if (propertyService.GetProperty("SharpDevelop.LoadDocumentProperties", true) && content is IMementoCapable) {
+			if (_propertyService.GetProperty("SharpDevelop.LoadDocumentProperties", true) && content is IMementoCapable) {
 				try {
 					IXmlConvertable memento = GetStoredMemento(content);
 					if (memento != null) {
@@ -305,9 +318,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public IXmlConvertable GetStoredMemento(IViewContent content)
 		{
 			if (content != null && content.ContentName != null) {
-				PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
+				PropertyService _propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 				
-				string directory = propertyService.ConfigDirectory + "temp";
+				string directory = _propertyService.ConfigDirectory + "temp";
 				if (!Directory.Exists(directory)) {
 					Directory.CreateDirectory(directory);
 				}
@@ -331,8 +344,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (content.ContentName == null) {
 				return;
 			}
-			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
-			string directory = propertyService.ConfigDirectory + "temp";
+			PropertyService _propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
+			string directory = _propertyService.ConfigDirectory + "temp";
 			if (!Directory.Exists(directory)) {
 				Directory.CreateDirectory(directory);
 			}
@@ -536,6 +549,18 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 
+		public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet()
+		{
+			return CreateNewWorksheet(this.Doc.DataTableCollection.FindNewTableName(),false);
+		}
+
+		public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(string worksheetName, bool bCreateDefaultColumns)
+		{
+			
+			Altaxo.Data.DataTable dt1 = this.Doc.CreateNewTable(worksheetName, bCreateDefaultColumns);
+			return CreateNewWorksheet(dt1);
+		}
+	
 		public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table)
 		{
 			//Altaxo.Main.GUI.IWorkbenchWindowController wbv_controller = new Altaxo.Main.GUI.WorkbenchWindowController();
