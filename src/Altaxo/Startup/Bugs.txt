@@ -1,0 +1,6 @@
+
+
+13.11.2003
+Plotting a column containing only one value,
+i.e. 1, will result in a plot from 1 to 1, and not all plot points are
+shown on that, since the Y -linearAxis then returns NaN

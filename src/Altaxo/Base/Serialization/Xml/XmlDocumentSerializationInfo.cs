@@ -187,6 +187,12 @@ namespace Altaxo.Serialization.Xml
 			m_CurrentNode.AppendChild(ele);
 		}
 
+		public bool IsSerializable(object o)
+		{
+			return null!=m_SurrogateSelector.GetSurrogate(o.GetType());
+		}
+
+
 		public void AddValue(string name, object o)
 		{
 			IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(o.GetType());

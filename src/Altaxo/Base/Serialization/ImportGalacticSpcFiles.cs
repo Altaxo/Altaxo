@@ -171,11 +171,60 @@ namespace Altaxo.Serialization.Galactic
 			return null;
 		}
 
-		public static void ShowDialog(System.Windows.Forms.Form owner, Altaxo.Data.DataTable table)
+		public static string ImportSpcFiles(string[] filenames, Altaxo.Data.DataTable table)
 		{
-			System.Text.StringBuilder errorList = new System.Text.StringBuilder();
 			string firstfilename = null;
 			Altaxo.Data.DoubleColumn xcol=null;
+			double[] xvalues, yvalues;
+			System.Text.StringBuilder errorList = new System.Text.StringBuilder();
+
+			foreach(string filename in filenames)
+			{
+				string error = ToArrays(filename,out xvalues, out yvalues);
+				if(null!=error)
+					errorList.Append(error);
+
+				if(null==xcol) // if this is the first file successfully imported, add the xvalues to the worksheet
+				{
+					firstfilename = filename;
+					xcol = new Altaxo.Data.DoubleColumn(xvalues.Length);
+					for(int i=0;i<xvalues.Length;i++)
+						xcol[i] = xvalues[i];
+					table.DataColumns.Add(xcol,"SPC X values",Altaxo.Data.ColumnKind.X);
+				}
+				else // xcol was set before - so check the outcoming xvalues now that they match the xcols of the first imported spcfile
+				{
+					if(xvalues.Length!=xcol.Count || yvalues.Length!=xcol.Count)
+					{
+						errorList.Append(string.Format("Warning: the length of the spectrum {0} ({1}) did not match the length of the first spectrum {2} ({3})!\n",filename,xvalues.Length,firstfilename,xcol.Count));
+					}
+					else
+					{
+						// now check the match in the xvalues
+						for(int i=0;i<xvalues.Length;i++)
+						{
+							if(xcol[i]!=xvalues[i])
+							{
+								errorList.Append(string.Format("Warning: the xvalues at position [{0}] did not match between the spectrum {1} and the first imported spectrum {2}!\n",i,filename,firstfilename)); 
+								break;
+							}
+						}
+					}
+		
+				}
+
+				// now add the y-values
+				Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn(yvalues.Length);
+				for(int i=0;i<yvalues.Length;i++)
+					ycol[i] = yvalues[i];
+				table.DataColumns.Add(ycol,filename);
+			} // foreache file
+
+			return errorList.Length==0 ? null : errorList.ToString();
+		}
+
+		public static void ShowDialog(System.Windows.Forms.Form owner, Altaxo.Data.DataTable table)
+		{
 
 			System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
 			dlg.Filter = "Galactic SPC files (*.spc)|*.spc|All files (*.*)|*.*"  ;
@@ -184,54 +233,15 @@ namespace Altaxo.Serialization.Galactic
 
 			if(System.Windows.Forms.DialogResult.OK==dlg.ShowDialog(owner))
 			{
-				double[] xvalues, yvalues;
 				// if user has clicked ok, import all selected files into Altaxo
 				Array.Sort(dlg.FileNames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-				foreach(string filename in dlg.FileNames)
+			
+				
+				string errors = ImportSpcFiles(dlg.FileNames,table);
+
+				if(errors!=null)
 				{
-					string error = ToArrays(filename,out xvalues, out yvalues);
-					if(null!=error)
-						errorList.Append(error);
-
-					if(null==xcol) // if this is the first file successfully imported, add the xvalues to the worksheet
-					{
-						firstfilename = filename;
-						xcol = new Altaxo.Data.DoubleColumn(xvalues.Length);
-						for(int i=0;i<xvalues.Length;i++)
-							xcol[i] = xvalues[i];
-						table.DataColumns.Add(xcol,"SPC X values",Altaxo.Data.ColumnKind.X);
-					}
-					else // xcol was set before - so check the outcoming xvalues now that they match the xcols of the first imported spcfile
-					{
-						if(xvalues.Length!=xcol.Count || yvalues.Length!=xcol.Count)
-						{
-							errorList.Append(string.Format("Warning: the length of the spectrum {0} ({1}) did not match the length of the first spectrum {2} ({3})!\n",filename,xvalues.Length,firstfilename,xcol.Count));
-						}
-						else
-						{
-							// now check the match in the xvalues
-							for(int i=0;i<xvalues.Length;i++)
-							{
-								if(xcol[i]!=xvalues[i])
-								{
-									errorList.Append(string.Format("Warning: the xvalues at position [{0}] did not match between the spectrum {1} and the first imported spectrum {2}!\n",i,filename,firstfilename)); 
-									break;
-								}
-							}
-						}
-		
-							}
-
-					// now add the y-values
-					Altaxo.Data.DoubleColumn ycol = new Altaxo.Data.DoubleColumn(yvalues.Length);
-					for(int i=0;i<yvalues.Length;i++)
-						ycol[i] = yvalues[i];
-					table.DataColumns.Add(ycol,filename);
-				} // foreache file
-
-				if(errorList.Length>0)
-				{
-					System.Windows.Forms.MessageBox.Show(owner,errorList.ToString(),"Some errors occured during import!",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
+					System.Windows.Forms.MessageBox.Show(owner,errors,"Some errors occured during import!",System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Exclamation);
 				}
 			}
 		}

@@ -186,11 +186,12 @@
 	<Extension path="/SharpDevelop/Workbench/Views">
 		<Class id="ProjectScout" class="ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser.ProjectBrowserView"/>
 		<Class id="ClassScout" class="ICSharpCode.SharpDevelop.Gui.Pads.ClassScout"/>
-		<Class id="FileScout" class="ICSharpCode.SharpDevelop.Gui.Pads.FileScout"/>
+		<Class id="FileScout" class="Altaxo.Main.GUI.FileScout"/>
 		<Class id="SideBar" class="ICSharpCode.SharpDevelop.Gui.Pads.SideBarView"/>
 		<Class id="OpenTaskView" class="ICSharpCode.SharpDevelop.Gui.Pads.OpenTaskView"/>
 		<Class id="PropertyPad" class="ICSharpCode.SharpDevelop.Gui.Pads.PropertyPad"/>
 		<Class id="HelpBrowser" class="ICSharpCode.SharpDevelop.Gui.Pads.HelpBrowser"/>
+		<Class id="AltaxoProjectScout" class="Altaxo.Main.GUI.ProjectScout"/>
 	</Extension>
 	<Extension path="/SharpDevelop/Dialogs/OptionsDialog">
 		<DialogPanel id="UIOptions" label="${res:Dialog.Options.TreeViewOptions.SharpDevelopOptionsText}">

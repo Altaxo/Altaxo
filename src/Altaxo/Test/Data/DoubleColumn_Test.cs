@@ -157,7 +157,7 @@ namespace AltaxoTest.Data
 					Assertion.AssertEquals(typeof(Altaxo.Data.DataColumn.ChangeEventArgs),e.GetType());
 					Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
 					Assertion.AssertEquals(5,ea.MinRowChanged);
-					Assertion.AssertEquals(5,ea.MaxRowChanged);
+					Assertion.AssertEquals(6,ea.MaxRowChanged);
 					Assertion.AssertEquals(false,ea.RowCountDecreased);
 					_CallCount++;;
 				
@@ -171,7 +171,7 @@ namespace AltaxoTest.Data
 					Assertion.AssertEquals(typeof(Altaxo.Data.DataColumn.ChangeEventArgs),e.GetType());
 					Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
 					Assertion.AssertEquals(5,ea.MinRowChanged);
-					Assertion.AssertEquals(5,ea.MaxRowChanged);
+					Assertion.AssertEquals(6,ea.MaxRowChanged);
 					Assertion.AssertEquals(true,ea.RowCountDecreased);
 					_CallCount++;;
 				
@@ -186,7 +186,7 @@ namespace AltaxoTest.Data
 					Assertion.AssertEquals(typeof(Altaxo.Data.DataColumn.ChangeEventArgs),e.GetType());
 					Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
 					Assertion.AssertEquals(7,ea.MinRowChanged);
-					Assertion.AssertEquals(7,ea.MaxRowChanged);
+					Assertion.AssertEquals(8,ea.MaxRowChanged);
 					Assertion.AssertEquals(false,ea.RowCountDecreased);
 					_CallCount++;;
 					((Altaxo.Main.ISuspendable)sender).Suspend();
@@ -201,7 +201,7 @@ namespace AltaxoTest.Data
 					Assertion.AssertEquals(typeof(Altaxo.Data.DataColumn.ChangeEventArgs),e.GetType());
 					Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
 					Assertion.AssertEquals(0,ea.MinRowChanged);
-					Assertion.AssertEquals(12,ea.MaxRowChanged);
+					Assertion.AssertEquals(13,ea.MaxRowChanged);
 					Assertion.AssertEquals(true,ea.RowCountDecreased);
 					_CallCount++;;
 					
@@ -218,7 +218,7 @@ namespace AltaxoTest.Data
 					Assertion.AssertEquals(typeof(Altaxo.Data.DataColumn.ChangeEventArgs),e.GetType());
 					Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
 					Assertion.AssertEquals(5,ea.MinRowChanged);
-					Assertion.AssertEquals(12,ea.MaxRowChanged);
+					Assertion.AssertEquals(13,ea.MaxRowChanged);
 					Assertion.AssertEquals(false,ea.RowCountDecreased);
 					_CallCount++;;
 				
@@ -232,7 +232,7 @@ namespace AltaxoTest.Data
 					Assertion.AssertEquals(typeof(Altaxo.Data.DataColumn.ChangeEventArgs),e.GetType());
 					Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
 					Assertion.AssertEquals(0,ea.MinRowChanged);
-					Assertion.AssertEquals(12,ea.MaxRowChanged);
+					Assertion.AssertEquals(13,ea.MaxRowChanged);
 					Assertion.AssertEquals(false,ea.RowCountDecreased);
 					_CallCount++;;
 					
@@ -246,7 +246,7 @@ namespace AltaxoTest.Data
 					Assertion.AssertEquals(typeof(Altaxo.Data.DataColumn.ChangeEventArgs),e.GetType());
 					Altaxo.Data.DataColumn.ChangeEventArgs ea = (Altaxo.Data.DataColumn.ChangeEventArgs)e;
 					Assertion.AssertEquals(9,ea.MinRowChanged);
-					Assertion.AssertEquals(12,ea.MaxRowChanged);
+					Assertion.AssertEquals(13,ea.MaxRowChanged);
 					Assertion.AssertEquals(false,ea.RowCountDecreased);
 					_CallCount++;;
 				

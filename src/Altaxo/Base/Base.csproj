@@ -739,6 +739,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Main\GUI\FileScout.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\GUI\IApplyController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -756,6 +761,11 @@
                 <File
                     RelPath = "Main\GUI\ModelViewController.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\ProjectScout.cs"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File

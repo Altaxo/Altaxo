@@ -267,6 +267,10 @@ namespace Altaxo.Serialization.Xml
 			m_Writer.WriteEndElement();
 		}
 
+		public bool IsSerializable(object o)
+		{
+			return null!=m_SurrogateSelector.GetSurrogate(o.GetType());
+		}
 
 		public void AddValue(string name, object o)
 		{

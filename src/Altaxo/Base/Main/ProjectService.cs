@@ -154,21 +154,24 @@ namespace Altaxo.Main
 
 			// second, we save all workbench windows into the Workbench/Views 
 			int i=0;
-			foreach(Main.GUI.IWorkbenchContentController ctrl in Current.Workbench.ViewContentCollection)
+			foreach(IViewContent ctrl in Current.Workbench.ViewContentCollection)
 			{
-				i++;
-				ZipEntry ZipEntry = new ZipEntry("Workbench/Views/View"+i.ToString()+".xml");
-				zippedStream.PutNextEntry(ZipEntry);
-				zippedStream.SetLevel(0);
-				try
+				if(info.IsSerializable(ctrl))
 				{
-					info.BeginWriting(zippedStream);
-					info.AddValue("WorkbenchViewContent",ctrl);
-					info.EndWriting();
-				}
-				catch(Exception exc)
-				{
-					errorText.Append(exc.ToString());
+					i++;
+					ZipEntry ZipEntry = new ZipEntry("Workbench/Views/View"+i.ToString()+".xml");
+					zippedStream.PutNextEntry(ZipEntry);
+					zippedStream.SetLevel(0);
+					try
+					{
+						info.BeginWriting(zippedStream);
+						info.AddValue("WorkbenchViewContent",ctrl);
+						info.EndWriting();
+					}
+					catch(Exception exc)
+					{
+						errorText.Append(exc.ToString());
+					}
 				}
 			}
 
@@ -198,10 +201,13 @@ namespace Altaxo.Main
 
 			// now give all restored controllers a view and show them in the Main view
 
-			foreach(Main.GUI.IWorkbenchContentController ctrl in restoredControllers)
+			foreach(IViewContent viewcontent in restoredControllers)
 			{
-				ctrl.CreateView();
-				if(ctrl.WorkbenchContentView != null)
+				Main.GUI.IWorkbenchContentController ctrl = viewcontent as Main.GUI.IWorkbenchContentController;
+				if(ctrl!=null)
+					ctrl.CreateView();
+				
+				if(viewcontent.Control != null)
 				{
 					Current.Workbench.ShowView(ctrl);
 				}

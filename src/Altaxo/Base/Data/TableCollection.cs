@@ -40,11 +40,20 @@ namespace Altaxo.Data
 		Main.ISuspendable
 	{
 		// Data
-		protected System.Collections.Hashtable m_TablesByName = new System.Collections.Hashtable();
+		protected System.Collections.SortedList m_TablesByName = new System.Collections.SortedList();
 		protected object m_Parent=null;
 
 		// helper data
+		/// <summary>
+		/// Fired when table(s) are added, removed or renamed, and when the content of one table has changed.
+		/// </summary>
 		public event System.EventHandler Changed;
+
+		/// <summary>
+		/// Fired when one or more tables are added, deleted or renamed. Not fired when content in the table has changed.
+		/// </summary>
+		public event System.EventHandler CollectionChanged;
+
 		[NonSerialized()]
 		protected System.Collections.ArrayList m_SuspendedChildCollection = new System.Collections.ArrayList();
 		[NonSerialized()]
@@ -52,9 +61,101 @@ namespace Altaxo.Data
 		[NonSerialized()]
 		private   bool m_ResumeInProgress=false;
 		[NonSerialized()]
-		protected System.EventArgs m_ChangeData=null;
+		protected ChangedEventArgs m_ChangeData=null;
 		[NonSerialized()]
 		private bool m_DeserializationFinished=false;
+
+
+		/// <summary>
+		/// Holds information about what has changed in the table.
+		/// </summary>
+		protected class ChangedEventArgs : System.EventArgs
+		{
+			/// <summary>
+			/// If true, one or more tables where added.
+			/// </summary>
+			public bool TableAdded;
+			/// <summary>
+			/// If true, one or more table where removed.
+			/// </summary>
+			public bool TableRemoved;
+			/// <summary>
+			/// If true, one or more tables where renamed.
+			/// </summary>
+			public bool TableRenamed;
+
+			/// <summary>
+			/// Empty constructor.
+			/// </summary>
+			public ChangedEventArgs()
+			{
+			}
+
+			/// <summary>
+			/// Returns an empty instance.
+			/// </summary>
+			public static new ChangedEventArgs Empty
+			{
+				get { return new ChangedEventArgs(); }
+			}
+
+			/// <summary>
+			/// Returns an instance with TableAdded set to true;.
+			/// </summary>
+			public static ChangedEventArgs IfTableAdded
+			{
+				get
+				{ 
+					ChangedEventArgs e =  new ChangedEventArgs();
+					e.TableAdded=true;
+					return e;
+				}
+			}
+			/// <summary>
+			/// Returns an instance with TableRemoved set to true.
+			/// </summary>
+			public static ChangedEventArgs IfTableRemoved
+			{
+				get
+				{ 
+					ChangedEventArgs e =  new ChangedEventArgs();
+					e.TableAdded=true;
+					return e;
+				}
+			}
+			/// <summary>
+			/// Returns an  instance with TableRenamed set to true.
+			/// </summary>
+			public static ChangedEventArgs IfTableRenamed
+			{
+				get
+				{ 
+					ChangedEventArgs e =  new ChangedEventArgs();
+					e.TableAdded=true;
+					return e;
+				}
+			}
+
+			
+			/// <summary>
+			/// Merges information from another instance in this ChangedEventArg.
+			/// </summary>
+			/// <param name="from"></param>
+			public void Merge(ChangedEventArgs from)
+			{
+				this.TableAdded |= from.TableAdded;
+				this.TableRemoved |= from.TableRemoved;
+				this.TableRenamed |= from.TableRenamed;
+			}
+
+			/// <summary>
+			/// Returns true when the collection has changed (addition, removal or renaming of tables).
+			/// </summary>
+			public bool CollectionChanged
+			{
+				get { return TableAdded | TableRemoved | TableRenamed; }
+			}
+		}
 
 
 		public DataTableCollection(AltaxoDocument _parent)
@@ -87,7 +188,7 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DataTableCollection s = (Altaxo.Data.DataTableCollection)obj;
 				// s.m_Parent = (AltaxoDocument)(info.GetValue("Parent",typeof(AltaxoDocument)));
-				s.m_TablesByName = (System.Collections.Hashtable)(info.GetValue("Tables",typeof(System.Collections.Hashtable)));
+				s.m_TablesByName = (System.Collections.SortedList)(info.GetValue("Tables",typeof(System.Collections.SortedList)));
 
 				// setup helper objects
 				s.m_SuspendedChildCollection = new System.Collections.ArrayList();
@@ -177,6 +278,9 @@ namespace Altaxo.Data
 					}
 					if(!IsSuspended)
 					{
+						if(m_ChangeData.CollectionChanged)
+							OnCollectionChanged();
+						
 						OnDataChanged(); // Fire the changed event
 					}		
 				}
@@ -184,10 +288,14 @@ namespace Altaxo.Data
 		}
 
 
-		void AccumulateChildChangeData(object sender, EventArgs e)
+		void AccumulateChildChangeData(object sender, System.EventArgs e)
 		{
-			if(sender!=null && m_ChangeData==null)
-				this.m_ChangeData=new EventArgs();
+
+			if(m_ChangeData==null)
+				m_ChangeData = ChangedEventArgs.Empty;
+
+			if(e is ChangedEventArgs)
+				m_ChangeData.Merge((ChangedEventArgs)e);
 		}
 	
 		public void OnChildChanged(object sender, System.EventArgs e)
@@ -214,12 +322,21 @@ namespace Altaxo.Data
 				}
 			}
 			
+			if(m_ChangeData.CollectionChanged)
+				OnCollectionChanged();
+
 			OnDataChanged(); // Fire the changed event
 		}
 
-		protected virtual void OnSelfChanged()
+		private void SelfChanged(ChangedEventArgs e)
 		{
-			OnChildChanged(null,null);
+			OnChildChanged(null,e);
+		}
+
+		protected virtual void OnCollectionChanged()
+		{
+			if(this.CollectionChanged!=null)
+				CollectionChanged(this,m_ChangeData);
 		}
 
 
@@ -253,7 +370,7 @@ namespace Altaxo.Data
 		{
 			string[] arr = new string[m_TablesByName.Count];
 			this.m_TablesByName.Keys.CopyTo(arr,0);
-			System.Array.Sort(arr);
+			// System.Array.Sort(arr);
 			return arr;
 		}
 
@@ -290,7 +407,7 @@ namespace Altaxo.Data
 			theTable.ParentChanged += new Main.ParentChangedEventHandler(this.EhTableParentChanged);
 
 			// raise data event to all listeners
-			this.OnSelfChanged();
+			this.SelfChanged(ChangedEventArgs.IfTableAdded);
 
 		}
 
@@ -304,7 +421,7 @@ namespace Altaxo.Data
 				theTable.ParentObject=null;
 			}
 
-			this.OnSelfChanged();
+			this.SelfChanged(ChangedEventArgs.IfTableRemoved);
 		}
 
 		protected void EhTableParentChanged(object sender, Main.ParentChangedEventArgs pce)
@@ -332,6 +449,8 @@ namespace Altaxo.Data
 
 			m_TablesByName.Remove(nce.OldName);
 			m_TablesByName.Add(nce.NewName,(DataTable)sender);
+
+			SelfChanged(ChangedEventArgs.IfTableRenamed);
 		}
 
 		/// <summary>

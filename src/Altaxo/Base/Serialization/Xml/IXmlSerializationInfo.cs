@@ -40,6 +40,8 @@ namespace Altaxo.Serialization.Xml
 
 		void AddValue(string name, object o);
 
+		bool IsSerializable(object o);
+
 		void AddBaseValueEmbedded(object o, System.Type basetype);
 		void AddBaseValueStandalone(string name, object o, System.Type basetype);
 
