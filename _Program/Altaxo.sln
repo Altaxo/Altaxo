@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altaxo", "Altaxo.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Debug
+		ConfigName.1 = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Debug.ActiveCfg = Debug|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Debug.Build.0 = Debug|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Release.ActiveCfg = Release|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(SolutionItems) = postSolution
+		Item:1 = LayerButtons.bmp
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

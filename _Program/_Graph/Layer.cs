@@ -1,0 +1,341 @@
+using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+
+
+namespace Altaxo.Graph
+{
+	/// <summary>
+	/// Summary description for GraphLayer.
+	/// </summary>
+	public class Layer
+	{
+		public PointF layerPosition = new PointF(119,80);
+		public SizeF  layerSize = new SizeF(626,407);
+		public float  layerAngel=0; // Rotation
+		public float  layerZoom=1;  // Zoom
+		protected Matrix matrix = new Matrix();  // forward transformation matrix
+		protected Matrix matrixi = new Matrix(); // inverse transformation matrix
+
+		protected Axis m_xAxis; // the X-Axis
+		protected Axis m_yAxis; // the Y-Axis
+
+		protected XYLayerAxisStyle m_LeftAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Left);
+		protected XYLayerAxisStyle m_BottomAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Bottom);
+		protected XYLayerAxisStyle m_RightAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Right);
+		protected XYLayerAxisStyle m_TopAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Top);
+
+		protected SimpleLabelStyle m_LeftLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Left);
+		protected SimpleLabelStyle m_BottomLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Bottom);
+		protected SimpleLabelStyle m_RightLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Right);
+		protected SimpleLabelStyle m_TopLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Top);
+
+		protected GraphObjectCollection coll = new GraphObjectCollection();
+
+		protected PlotAssociationList plotAssociations;
+		protected PlotGroup.Collection m_PlotGroups = new PlotGroup.Collection();
+		protected int m_ActualPlotAssociation = 0;
+
+
+		public Layer()
+		{
+			TextGraphObject tgo = new TextGraphObject(129,90,"Das ist ein Test",new Font(FontFamily.GenericSansSerif,72,GraphicsUnit.World),Color.Black);
+			tgo.Rotation = 0;
+			coll.Add(tgo);
+			CalculateMatrix();
+
+			plotAssociations = new PlotAssociationList(this);
+
+			// create axes and add event handlers to them
+			m_xAxis = new LinearAxis(); // the X-Axis
+			m_yAxis = new LinearAxis(); // the Y-Axis
+
+			m_xAxis.AxisChanged += new System.EventHandler(this.OnXAxisChanged);
+			m_yAxis.AxisChanged += new System.EventHandler(this.OnYAxisChanged);
+
+		}
+
+		#region "Layer Properties"
+
+		public Axis XAxis
+		{
+			get { return m_xAxis; }
+			set
+			{
+				if(null!=m_xAxis)
+					m_xAxis.AxisChanged -= new System.EventHandler(this.OnXAxisChanged);
+				
+				m_xAxis = value;
+
+				if(null!=m_xAxis)
+					m_xAxis.AxisChanged += new System.EventHandler(this.OnXAxisChanged);
+
+
+				// now we have to inform all the PlotAssociations that a new axis was loaded
+				foreach(PlotAssociation pa in this.PlotAssociations)
+				{
+					// first ensure the right data bound object is set on the PlotAssociation
+					pa.SetXBoundsFromTemplate(m_xAxis.DataBounds); // ensure that data bound object is of the right type
+					// now merge the bounds with x and yAxis
+					pa.MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+				}
+			}
+		}
+
+		public Axis YAxis
+		{
+			get { return m_yAxis; }
+			set
+			{
+				if(null!=m_yAxis)
+					m_yAxis.AxisChanged -= new System.EventHandler(this.OnYAxisChanged);
+				
+				m_yAxis = value;
+
+				if(null!=m_yAxis)
+					m_yAxis.AxisChanged += new System.EventHandler(this.OnYAxisChanged);
+
+
+				// now we have to inform all the PlotAssociations that a new axis was loaded
+				foreach(PlotAssociation pa in this.PlotAssociations)
+				{
+					// first ensure the right data bound object is set on the PlotAssociation
+					pa.SetYBoundsFromTemplate(m_yAxis.DataBounds); // ensure that data bound object is of the right type
+					// now merge the bounds with x and yAxis
+					pa.MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+				}
+			}
+		}
+
+
+		public XYLayerAxisStyle LeftAxisStyle
+		{
+			get { return m_LeftAxisStyle; }
+		}
+		public XYLayerAxisStyle BottomAxisStyle
+		{
+			get { return m_BottomAxisStyle; }
+		}
+		public XYLayerAxisStyle RightAxisStyle
+		{
+			get { return m_RightAxisStyle; }
+		}
+		public XYLayerAxisStyle TopAxisStyle
+		{
+			get { return m_TopAxisStyle; }
+		}
+
+
+		public LabelStyle LeftLabelStyle
+		{
+			get { return m_LeftLabelStyle; }
+		}
+		public LabelStyle RightLabelStyle
+		{
+			get { return m_RightLabelStyle; }
+		}
+		public LabelStyle BottomLabelStyle
+		{
+			get { return m_BottomLabelStyle; }
+		}
+		public LabelStyle TopLabelStyle
+		{
+			get { return m_TopLabelStyle; }
+		}
+
+
+#endregion // Layer Properties
+
+
+		protected void CalculateMatrix()
+		{
+			matrix.Reset();
+			matrix.Translate(layerPosition.X,layerPosition.Y);
+			matrix.Scale(layerZoom,layerZoom);
+			matrix.Rotate(layerAngel);
+			matrixi=matrix.Clone();
+			matrixi.Invert();
+		}
+
+
+		public PointF ToLayerCoordinates(PointF pagecoordinates)
+		{
+			PointF[] pf = { pagecoordinates };
+			matrixi.TransformPoints(pf);
+			return pf[0];
+		}
+
+		public GraphicsPath HitTest(PointF pageC)
+		{
+			PointF layerC = ToLayerCoordinates(pageC);
+			GraphicsPath gp;
+
+			foreach(GraphObject go in coll)
+			{
+				gp = go.HitTest(layerC);
+				if(null!=gp)
+				{
+					gp.Transform(matrix);
+					return gp;
+				}
+			}
+			return null;
+		}
+
+		public PlotAssociationList PlotAssociations
+		{
+			get { return plotAssociations; }
+		}
+
+		public PlotGroup.Collection PlotGroups
+		{
+			get { return m_PlotGroups; }
+		}
+
+		public int ActualPlotAssociation 
+		{
+			get 
+			{
+				if(m_ActualPlotAssociation>=plotAssociations.Count)
+					m_ActualPlotAssociation = 0;
+					
+					return m_ActualPlotAssociation;
+			}
+			set
+			{
+				if(value<0)
+					throw new ArgumentOutOfRangeException("ActualPlotAssociation",value,"Must be greater or equal than zero");
+				if(value>=plotAssociations.Count)
+					throw new ArgumentOutOfRangeException("ActualPlotAssociation",value,"Must be lesser than actual count: " + plotAssociations.Count.ToString());
+
+				m_ActualPlotAssociation = value;
+			}
+		}
+
+
+		public virtual void Paint(Graphics g)
+		{
+			GraphicsState savedgstate = g.Save();
+			//g.TranslateTransform(layerPosition.X,layerPosition.Y);
+			//g.RotateTransform(layerAngel);
+			
+			g.MultiplyTransform(matrix);
+			g.FillRectangle(Brushes.Aqua,0,0,layerSize.Width,layerSize.Height);
+
+			coll.DrawObjects(g,1);
+
+			RectangleF layerBounds = new RectangleF(layerPosition,layerSize);
+
+			m_LeftAxisStyle.Paint(g,this,this.m_yAxis);
+			m_LeftLabelStyle.Paint(g,this,this.m_yAxis,m_LeftAxisStyle);
+			m_BottomAxisStyle.Paint(g,this,this.m_xAxis);
+			m_BottomLabelStyle.Paint(g,this,this.m_xAxis,m_BottomAxisStyle);
+			m_RightAxisStyle.Paint(g,this,this.m_yAxis);
+			m_RightLabelStyle.Paint(g,this,this.m_yAxis,m_RightAxisStyle);
+			m_TopAxisStyle.Paint(g,this,this.m_xAxis);
+			m_TopLabelStyle.Paint(g,this,this.m_xAxis,m_TopAxisStyle);
+
+
+			foreach(PlotAssociation pa in plotAssociations)
+			{
+				pa.Paint(g,this);
+			}
+
+
+			g.Restore(savedgstate);
+		}
+
+	
+		public void AddPlotAssociation(PlotAssociation[] pal)
+		{
+			foreach(PlotAssociation pa in pal)
+				this.plotAssociations.Add(pa);
+		}
+	
+
+
+
+
+
+
+		public class PlotAssociationList : System.Collections.ArrayList
+		{
+			private Layer m_Owner; // the parent of this list
+
+			public PlotAssociationList(Layer owner)
+			{
+				m_Owner = owner;
+			}
+
+			public new void Add(object o)
+			{
+				if(o is PlotAssociation)
+				{
+					PlotAssociation pa = (PlotAssociation)o;
+					pa.SetXBoundsFromTemplate(m_Owner.XAxis.DataBounds); // ensure that data bound object is of the right type
+					pa.SetYBoundsFromTemplate(m_Owner.YAxis.DataBounds); // ensure that data bound object is of the right type
+					pa.XBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationXBoundariesChanged);
+					pa.YBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationYBoundariesChanged);
+					base.Add(pa);
+					// now merge the bounds with x and yAxis
+					pa.MergeXBoundsInto(m_Owner.XAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+					pa.MergeYBoundsInto(m_Owner.YAxis.DataBounds); // merge the y-boundaries in the y-Axis data boundaries
+				}
+				else
+					throw new ArgumentException("Only PlotAssociations can be added to the list, but you try to add a " + o.GetType());
+			}
+
+			public new PlotAssociation this[int i]
+			{
+				get { return (PlotAssociation)base[i]; }
+				set 
+				{
+					if(null!=base[i])
+					{
+						// remove the old event handlers
+						((PlotAssociation)base[i]).XBoundariesChanged -= new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationXBoundariesChanged);
+						((PlotAssociation)base[i]).YBoundariesChanged -= new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationYBoundariesChanged);
+					}
+					base[i] = value;
+					// add event handlers to the new value
+					((PlotAssociation)base[i]).XBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationXBoundariesChanged);
+					((PlotAssociation)base[i]).YBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationYBoundariesChanged);
+				}
+			}
+		}
+
+
+		protected void OnInvalidate()
+		{
+			// !!!todo!!! inform the parent to invalidate the plot 
+		}
+
+
+		#region "Layer Event Handlers"
+
+		protected void OnPlotAssociationXBoundariesChanged(object sender, BoundariesChangedEventArgs e)
+		{
+			((PlotAssociation)sender).MergeXBoundsInto(m_xAxis.DataBounds);
+		}
+
+		protected void OnPlotAssociationYBoundariesChanged(object sender, BoundariesChangedEventArgs e)
+		{
+			((PlotAssociation)sender).MergeYBoundsInto(m_yAxis.DataBounds);
+		}
+		
+		protected void OnXAxisChanged(object sender, System.EventArgs e)
+		{
+			OnInvalidate();
+		}
+
+		protected void OnYAxisChanged(object sender, System.EventArgs e)
+		{
+			OnInvalidate();
+		}
+
+		
+		#endregion
+
+	}
+
+}
