@@ -26,6 +26,9 @@ namespace Altaxo.Serialization.Xml
 {
   public interface IXmlDeserializationInfo
   {
+    /// <summary>Returns the name of the current xml element.</summary>
+    string CurrentElementName { get; }
+
     bool GetBoolean();
     bool GetBoolean(string name);
 

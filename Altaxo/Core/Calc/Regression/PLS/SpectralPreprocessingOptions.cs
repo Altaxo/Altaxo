@@ -53,6 +53,7 @@ namespace Altaxo.Calc.Regression.PLS
     SpectralPreprocessingMethod _method;
     int  _detrendingOrder;
     bool _ensembleScale;
+    double[] _regions;
 
     /// <summary>
     /// Sets up the main method used for spectral preprocessing.
@@ -62,6 +63,28 @@ namespace Altaxo.Calc.Regression.PLS
     {
       get { return _method; }
       set { _method = value; }
+    }
+
+    /// <summary>
+    /// Gets/sets the indices to regions. By default, this array is empty (zero length).
+    /// Each element of this array is an index into the spectrum. Each index parts the spectrum in two regions: one before up to the index-1, and a second
+    /// beginning from the index (to the next index or to the end).
+    /// </summary>
+    public double[] Regions
+    {
+      get { return _regions; }
+      set { _regions = value; }
+    }
+
+    /// <summary>
+    /// Default constructor. Set all options to none.
+    /// </summary>
+    public SpectralPreprocessingOptions()
+    {
+      _method = SpectralPreprocessingMethod.None;
+      _detrendingOrder = -1;
+      _ensembleScale = false;
+      _regions = new double[0];
     }
 
     /// <summary>
@@ -82,6 +105,7 @@ namespace Altaxo.Calc.Regression.PLS
       this._method = from._method;
       this._detrendingOrder = from._detrendingOrder;
       this._ensembleScale = from._ensembleScale;
+      this._regions = (double[])from._regions.Clone();
     }
 
     /// <summary>
@@ -152,10 +176,13 @@ namespace Altaxo.Calc.Regression.PLS
     /// Processes the spectra in matrix xMatrix according to the set-up options.
     /// </summary>
     /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
-    /// <param name="xMean">Not used, since this processing sets xMean by itself (to zero).</param>
-    /// <param name="xScale">Not used, since the processing sets xScale by itself.</param>
+    /// <param name="xMean">Will be filled with the spectral mean.</param>
+    /// <param name="xScale">Will be filled with the inverse spectral variance.(Or with 1 if the user has not choosen this option).</param>
     public void Process(IMatrix xMatrix, IVector xMean, IVector xScale)
     {
+      // before processing, fill xScale with 1
+      VectorMath.Fill(xScale,1);
+
       switch(_method)
       {
         case SpectralPreprocessingMethod.None:
@@ -180,6 +207,41 @@ namespace Altaxo.Calc.Regression.PLS
     
       if(EnsembleMeanAfterProcessing || EnsembleScale)
         new EnsembleMeanAndScaleCorrection(EnsembleMeanAfterProcessing,EnsembleScale).Process(xMatrix,xMean,xScale);
+    }
+
+    /// <summary>
+    /// Processes the spectra in matrix xMatrix according to the set-up options for prediction.
+    /// Since it is prediction, the xMean and xScale vectors must be supplied here!
+    /// </summary>
+    /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
+    /// <param name="xMean">Vector of spectral mean, must be supplied here.</param>
+    /// <param name="xScale">Vector of inverse spectral variance, must be supplied here.</param>
+    public void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale)
+    {
+      switch(_method)
+      {
+        case SpectralPreprocessingMethod.None:
+          break;
+        case SpectralPreprocessingMethod.MultiplicativeScatteringCorrection:
+          new MultiplicativeScatterCorrection().ProcessForPrediction(xMatrix,xMean,xScale);
+          break;
+        case SpectralPreprocessingMethod.StandardNormalVariate:
+          new StandardNormalVariateCorrection().ProcessForPrediction(xMatrix,xMean,xScale);
+          break;
+        case SpectralPreprocessingMethod.FirstDerivative:
+          new SavitzkyGolayCorrection(7,1,2).ProcessForPrediction(xMatrix,xMean,xScale);
+          break;
+        case SpectralPreprocessingMethod.SecondDerivative:
+          new SavitzkyGolayCorrection(11,2,3).ProcessForPrediction(xMatrix,xMean,xScale);
+          break;
+      }
+
+      if(UseDetrending)
+        new DetrendingCorrection(_detrendingOrder).ProcessForPrediction(xMatrix,xMean,xScale);
+
+    
+      if(EnsembleMeanAfterProcessing || EnsembleScale)
+        new EnsembleMeanAndScaleCorrection(EnsembleMeanAfterProcessing,EnsembleScale).ProcessForPrediction(xMatrix,xMean,xScale);
     }
     #region ICloneable Members
 

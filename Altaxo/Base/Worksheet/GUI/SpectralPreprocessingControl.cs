@@ -31,11 +31,11 @@ using Altaxo.Calc.Regression.PLS;
 
 namespace Altaxo.Worksheet.GUI
 {
-	/// <summary>
-	/// Summary description for SpectralPreprocessingControl.
-	/// </summary>
-	public class SpectralPreprocessingControl : System.Windows.Forms.UserControl
-	{
+  /// <summary>
+  /// Summary description for SpectralPreprocessingControl.
+  /// </summary>
+  public class SpectralPreprocessingControl : System.Windows.Forms.UserControl
+  {
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.GroupBox groupBox2;
     private System.Windows.Forms.RadioButton _rbMethodNone;
@@ -48,55 +48,55 @@ namespace Altaxo.Worksheet.GUI
     private System.Windows.Forms.RadioButton _rbDetrending1st;
     private System.Windows.Forms.RadioButton _rbDetrending2nd;
     private System.Windows.Forms.CheckBox _chkEnsembleScale;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
     public SpectralPreprocessingController Controller;
 
-		public SpectralPreprocessingControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public SpectralPreprocessingControl()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
+      // TODO: Add any initialization after the InitializeComponent call
 
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this._rbMethodNone = new System.Windows.Forms.RadioButton();
-      this._rbMethodMSC = new System.Windows.Forms.RadioButton();
-      this._rbMethodSNV = new System.Windows.Forms.RadioButton();
-      this._rbMethod1stDer = new System.Windows.Forms.RadioButton();
       this._rbMethod2ndDer = new System.Windows.Forms.RadioButton();
-      this._rbDetrendingNone = new System.Windows.Forms.RadioButton();
-      this._rbDetrendingZero = new System.Windows.Forms.RadioButton();
-      this._rbDetrending1st = new System.Windows.Forms.RadioButton();
+      this._rbMethod1stDer = new System.Windows.Forms.RadioButton();
+      this._rbMethodSNV = new System.Windows.Forms.RadioButton();
+      this._rbMethodMSC = new System.Windows.Forms.RadioButton();
+      this._rbMethodNone = new System.Windows.Forms.RadioButton();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
       this._rbDetrending2nd = new System.Windows.Forms.RadioButton();
+      this._rbDetrending1st = new System.Windows.Forms.RadioButton();
+      this._rbDetrendingZero = new System.Windows.Forms.RadioButton();
+      this._rbDetrendingNone = new System.Windows.Forms.RadioButton();
       this._chkEnsembleScale = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
@@ -116,6 +116,51 @@ namespace Altaxo.Worksheet.GUI
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Method";
       // 
+      // _rbMethod2ndDer
+      // 
+      this._rbMethod2ndDer.Location = new System.Drawing.Point(8, 112);
+      this._rbMethod2ndDer.Name = "_rbMethod2ndDer";
+      this._rbMethod2ndDer.Size = new System.Drawing.Size(104, 16);
+      this._rbMethod2ndDer.TabIndex = 4;
+      this._rbMethod2ndDer.Text = "2nd Derivative";
+      this._rbMethod2ndDer.CheckedChanged += new System.EventHandler(this._rbMethod2ndDer_CheckedChanged);
+      // 
+      // _rbMethod1stDer
+      // 
+      this._rbMethod1stDer.Location = new System.Drawing.Point(8, 88);
+      this._rbMethod1stDer.Name = "_rbMethod1stDer";
+      this._rbMethod1stDer.Size = new System.Drawing.Size(104, 16);
+      this._rbMethod1stDer.TabIndex = 3;
+      this._rbMethod1stDer.Text = "1st Derivative";
+      this._rbMethod1stDer.CheckedChanged += new System.EventHandler(this._rbMethod1stDer_CheckedChanged);
+      // 
+      // _rbMethodSNV
+      // 
+      this._rbMethodSNV.Location = new System.Drawing.Point(8, 64);
+      this._rbMethodSNV.Name = "_rbMethodSNV";
+      this._rbMethodSNV.Size = new System.Drawing.Size(104, 16);
+      this._rbMethodSNV.TabIndex = 2;
+      this._rbMethodSNV.Text = "SNV";
+      this._rbMethodSNV.CheckedChanged += new System.EventHandler(this._rbMethodSNV_CheckedChanged);
+      // 
+      // _rbMethodMSC
+      // 
+      this._rbMethodMSC.Location = new System.Drawing.Point(8, 40);
+      this._rbMethodMSC.Name = "_rbMethodMSC";
+      this._rbMethodMSC.Size = new System.Drawing.Size(104, 16);
+      this._rbMethodMSC.TabIndex = 1;
+      this._rbMethodMSC.Text = "MSC";
+      this._rbMethodMSC.CheckedChanged += new System.EventHandler(this._rbMethodMSC_CheckedChanged);
+      // 
+      // _rbMethodNone
+      // 
+      this._rbMethodNone.Location = new System.Drawing.Point(8, 16);
+      this._rbMethodNone.Name = "_rbMethodNone";
+      this._rbMethodNone.Size = new System.Drawing.Size(104, 16);
+      this._rbMethodNone.TabIndex = 0;
+      this._rbMethodNone.Text = "None";
+      this._rbMethodNone.CheckedChanged += new System.EventHandler(this._rbMethodNone_CheckedChanged);
+      // 
       // groupBox2
       // 
       this.groupBox2.Controls.Add(this._rbDetrending2nd);
@@ -129,61 +174,14 @@ namespace Altaxo.Worksheet.GUI
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Detrending";
       // 
-      // _rbMethodNone
+      // _rbDetrending2nd
       // 
-      this._rbMethodNone.Location = new System.Drawing.Point(8, 16);
-      this._rbMethodNone.Name = "_rbMethodNone";
-      this._rbMethodNone.Size = new System.Drawing.Size(104, 16);
-      this._rbMethodNone.TabIndex = 0;
-      this._rbMethodNone.Text = "None";
-      // 
-      // _rbMethodMSC
-      // 
-      this._rbMethodMSC.Location = new System.Drawing.Point(8, 40);
-      this._rbMethodMSC.Name = "_rbMethodMSC";
-      this._rbMethodMSC.Size = new System.Drawing.Size(104, 16);
-      this._rbMethodMSC.TabIndex = 1;
-      this._rbMethodMSC.Text = "MSC";
-      // 
-      // _rbMethodSNV
-      // 
-      this._rbMethodSNV.Location = new System.Drawing.Point(8, 64);
-      this._rbMethodSNV.Name = "_rbMethodSNV";
-      this._rbMethodSNV.Size = new System.Drawing.Size(104, 16);
-      this._rbMethodSNV.TabIndex = 2;
-      this._rbMethodSNV.Text = "SNV";
-      // 
-      // _rbMethod1stDer
-      // 
-      this._rbMethod1stDer.Location = new System.Drawing.Point(8, 88);
-      this._rbMethod1stDer.Name = "_rbMethod1stDer";
-      this._rbMethod1stDer.Size = new System.Drawing.Size(104, 16);
-      this._rbMethod1stDer.TabIndex = 3;
-      this._rbMethod1stDer.Text = "1st Derivative";
-      // 
-      // _rbMethod2ndDer
-      // 
-      this._rbMethod2ndDer.Location = new System.Drawing.Point(8, 112);
-      this._rbMethod2ndDer.Name = "_rbMethod2ndDer";
-      this._rbMethod2ndDer.Size = new System.Drawing.Size(104, 16);
-      this._rbMethod2ndDer.TabIndex = 4;
-      this._rbMethod2ndDer.Text = "2nd Derivative";
-      // 
-      // _rbDetrendingNone
-      // 
-      this._rbDetrendingNone.Location = new System.Drawing.Point(16, 16);
-      this._rbDetrendingNone.Name = "_rbDetrendingNone";
-      this._rbDetrendingNone.Size = new System.Drawing.Size(104, 16);
-      this._rbDetrendingNone.TabIndex = 0;
-      this._rbDetrendingNone.Text = "None";
-      // 
-      // _rbDetrendingZero
-      // 
-      this._rbDetrendingZero.Location = new System.Drawing.Point(16, 40);
-      this._rbDetrendingZero.Name = "_rbDetrendingZero";
-      this._rbDetrendingZero.Size = new System.Drawing.Size(104, 16);
-      this._rbDetrendingZero.TabIndex = 1;
-      this._rbDetrendingZero.Text = "spectrum mean";
+      this._rbDetrending2nd.Location = new System.Drawing.Point(16, 88);
+      this._rbDetrending2nd.Name = "_rbDetrending2nd";
+      this._rbDetrending2nd.Size = new System.Drawing.Size(104, 16);
+      this._rbDetrending2nd.TabIndex = 3;
+      this._rbDetrending2nd.Text = "quadratic";
+      this._rbDetrending2nd.CheckedChanged += new System.EventHandler(this._rbDetrending2nd_CheckedChanged);
       // 
       // _rbDetrending1st
       // 
@@ -192,14 +190,25 @@ namespace Altaxo.Worksheet.GUI
       this._rbDetrending1st.Size = new System.Drawing.Size(104, 16);
       this._rbDetrending1st.TabIndex = 2;
       this._rbDetrending1st.Text = "linear";
+      this._rbDetrending1st.CheckedChanged += new System.EventHandler(this._rbDetrending1st_CheckedChanged);
       // 
-      // _rbDetrending2nd
+      // _rbDetrendingZero
       // 
-      this._rbDetrending2nd.Location = new System.Drawing.Point(16, 88);
-      this._rbDetrending2nd.Name = "_rbDetrending2nd";
-      this._rbDetrending2nd.Size = new System.Drawing.Size(104, 16);
-      this._rbDetrending2nd.TabIndex = 3;
-      this._rbDetrending2nd.Text = "quadratic";
+      this._rbDetrendingZero.Location = new System.Drawing.Point(16, 40);
+      this._rbDetrendingZero.Name = "_rbDetrendingZero";
+      this._rbDetrendingZero.Size = new System.Drawing.Size(104, 16);
+      this._rbDetrendingZero.TabIndex = 1;
+      this._rbDetrendingZero.Text = "spectrum mean";
+      this._rbDetrendingZero.CheckedChanged += new System.EventHandler(this._rbDetrendingZero_CheckedChanged);
+      // 
+      // _rbDetrendingNone
+      // 
+      this._rbDetrendingNone.Location = new System.Drawing.Point(16, 16);
+      this._rbDetrendingNone.Name = "_rbDetrendingNone";
+      this._rbDetrendingNone.Size = new System.Drawing.Size(104, 16);
+      this._rbDetrendingNone.TabIndex = 0;
+      this._rbDetrendingNone.Text = "None";
+      this._rbDetrendingNone.CheckedChanged += new System.EventHandler(this._rbDetrendingNone_CheckedChanged);
       // 
       // _chkEnsembleScale
       // 
@@ -208,6 +217,7 @@ namespace Altaxo.Worksheet.GUI
       this._chkEnsembleScale.Size = new System.Drawing.Size(248, 24);
       this._chkEnsembleScale.TabIndex = 2;
       this._chkEnsembleScale.Text = "Variance scale (spectral ensemble)";
+      this._chkEnsembleScale.CheckedChanged += new System.EventHandler(this._chkEnsembleScale_CheckedChanged);
       // 
       // SpectralPreprocessingControl
       // 
@@ -221,7 +231,7 @@ namespace Altaxo.Worksheet.GUI
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
 
     #region Control logic
@@ -274,5 +284,69 @@ namespace Altaxo.Worksheet.GUI
 
 
     #endregion
-	}
+
+    #region Event logic
+
+    private void _rbMethodNone_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(Controller!=null && _rbMethodNone.Checked)
+        Controller.EhView_MethodChanged(SpectralPreprocessingMethod.None);
+    }
+
+    private void _rbMethodMSC_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(Controller!=null && _rbMethodMSC.Checked)
+        Controller.EhView_MethodChanged(SpectralPreprocessingMethod.MultiplicativeScatteringCorrection);
+    }
+
+    private void _rbMethodSNV_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(Controller!=null && _rbMethodSNV.Checked)
+        Controller.EhView_MethodChanged(SpectralPreprocessingMethod.StandardNormalVariate);
+    }
+
+    private void _rbMethod1stDer_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(Controller!=null && _rbMethod1stDer.Checked)
+        Controller.EhView_MethodChanged(SpectralPreprocessingMethod.FirstDerivative);
+    }
+
+    private void _rbMethod2ndDer_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(Controller!=null && _rbMethod2ndDer.Checked)
+        Controller.EhView_MethodChanged(SpectralPreprocessingMethod.SecondDerivative);
+    }
+
+    private void _rbDetrendingNone_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(Controller!=null && _rbDetrendingNone.Checked)
+        Controller.EhView_DetrendingChanged(-1);
+    }
+
+    private void _rbDetrendingZero_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(Controller!=null && _rbDetrendingZero.Checked)
+        Controller.EhView_DetrendingChanged(0);
+    }
+
+    private void _rbDetrending1st_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(Controller!=null && _rbDetrending1st.Checked)
+        Controller.EhView_DetrendingChanged(1);
+    }
+
+    private void _rbDetrending2nd_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(Controller!=null && _rbDetrending2nd.Checked)
+        Controller.EhView_DetrendingChanged(2);
+    }
+
+    private void _chkEnsembleScale_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(Controller!=null)
+        Controller.EhView_EnsembleScaleChanged(_chkEnsembleScale.Checked);
+    }
+
+    #endregion
+  }
 }

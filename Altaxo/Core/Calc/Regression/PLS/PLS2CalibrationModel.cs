@@ -29,8 +29,8 @@ namespace Altaxo.Calc.Regression.PLS
   public class PLS2CalibrationModel
   {
     IROVector _xOfX;
-    IROMatrix _xMean;
-    IROMatrix _xScale;
+    IROVector _xMean;
+    IROVector _xScale;
     IROMatrix _yMean;
     IROMatrix _yScale;
 
@@ -50,13 +50,13 @@ namespace Altaxo.Calc.Regression.PLS
     }
 
 
-    public IROMatrix XMean
+    public IROVector XMean
     {
       get { return _xMean; }
       set { _xMean = value; }
     }
 
-    public IROMatrix XScale
+    public IROVector XScale
     {
       get { return _xScale; }
       set { _xScale = value; }

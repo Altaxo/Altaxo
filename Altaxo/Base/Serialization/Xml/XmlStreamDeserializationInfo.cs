@@ -75,6 +75,11 @@ namespace Altaxo.Serialization.Xml
 
     public event XmlDeserializationCallbackEventHandler DeserializationFinished;
 
+    /// <summary>Returns the name of the current xml element.</summary>
+    public string CurrentElementName
+    { 
+      get { return m_Reader.LocalName; }
+    }
 
     public bool GetBoolean()
     {

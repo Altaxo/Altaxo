@@ -26,18 +26,21 @@ using Altaxo.Calc.Regression.PLS;
 
 namespace Altaxo.Worksheet.GUI
 {
-	/// <summary>
-	/// Controls the SpectralPreprocessingControl GUI for choosing <see>SpectralPreprocessingOptions</see>
-	/// </summary>
-	public class SpectralPreprocessingController : Main.GUI.IApplyController
-	{
+  /// <summary>
+  /// Controls the SpectralPreprocessingControl GUI for choosing <see>SpectralPreprocessingOptions</see>
+  /// </summary>
+  public class SpectralPreprocessingController : Main.GUI.IApplyController
+  {
     SpectralPreprocessingControl _view;
     SpectralPreprocessingOptions _doc;
     
 
-
-		public SpectralPreprocessingController(SpectralPreprocessingOptions doc)
-		{
+    /// <summary>
+    /// Constructor. Supply a document to control here.
+    /// </summary>
+    /// <param name="doc">The instance of option to set-up.</param>
+    public SpectralPreprocessingController(SpectralPreprocessingOptions doc)
+    {
       _doc = doc;
     }
 
@@ -51,7 +54,9 @@ namespace Altaxo.Worksheet.GUI
       }
     }
 
-
+    /// <summary>
+    /// Get/sets the GUI element that this controller controls.
+    /// </summary>
     public SpectralPreprocessingControl View
     {
       get { return _view; }
@@ -70,12 +75,35 @@ namespace Altaxo.Worksheet.GUI
       }
     }
 
+    /// <summary>
+    /// Returns the document.
+    /// </summary>
+    public SpectralPreprocessingOptions Doc
+    {
+      get { return _doc; }
+    }
+
+    public void EhView_MethodChanged(SpectralPreprocessingMethod newvalue)
+    {
+      _doc.Method = newvalue;
+    }
+
+    public void EhView_DetrendingChanged(int newvalue)
+    {
+      _doc.DetrendingOrder = newvalue;
+    }
+
+    public void EhView_EnsembleScaleChanged(bool newvalue)
+    {
+      _doc.EnsembleScale = newvalue;
+    }
+
     #region IApplyController Members
 
     public bool Apply()
     {
-      // TODO:  Add SpectralPreprocessingController.Apply implementation
-      return false;
+      // nothing to do since all is done
+      return true;
     }
 
     #endregion

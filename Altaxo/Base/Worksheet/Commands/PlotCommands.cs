@@ -29,7 +29,25 @@ namespace Altaxo.Worksheet.Commands
   /// </summary>
   public class PlotCommands
   {
+    /// <summary>
+    /// Plots the currently selected data columns of a worksheet.
+    /// </summary>
+    /// <param name="dg">The worksheet controller where the columns are selected in.</param>
+    /// <param name="bLine">If true, a line is plotted.</param>
+    /// <param name="bScatter">If true, scatter symbols are plotted.</param>
     public static void PlotLine(GUI.WorksheetController dg, bool bLine, bool bScatter)
+    {
+      PlotLine(dg.DataTable,dg.SelectedDataColumns,bLine,bScatter);
+    }
+
+    /// <summary>
+    /// Plots selected data columns of a table.
+    /// </summary>
+    /// <param name="table">The source table.</param>
+    /// <param name="selectedColumns">The data columns of the table that should be plotted.</param>
+    /// <param name="bLine">If true, the line style is activated (the points are connected by lines).</param>
+    /// <param name="bScatter">If true, the scatter style is activated (the points are plotted as symbols).</param>
+    public static void PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter)
     {
       Altaxo.Graph.XYLineScatterPlotStyle templatePlotStyle = new Altaxo.Graph.XYLineScatterPlotStyle();
       Altaxo.Graph.PlotGroupStyle templatePlotGroupStyle = Altaxo.Graph.PlotGroupStyle.All;
@@ -49,16 +67,16 @@ namespace Altaxo.Worksheet.Commands
       // first, create a plot association for every selected column in
       // the data grid
 
-      int len = dg.SelectedDataColumns.Count;
+      int len = selectedColumns.Count;
 
       Graph.XYColumnPlotData[] pa = new Graph.XYColumnPlotData[len];
 
       int nNumberOfPlotData=0;
       for(int i=0;i<len;i++)
       {
-        Altaxo.Data.DataColumn ycol = dg.DataTable[dg.SelectedDataColumns[i]];
+        Altaxo.Data.DataColumn ycol = table[selectedColumns[i]];
 
-        Altaxo.Data.DataColumn xcol = dg.DataTable.DataColumns.FindXColumnOf(ycol);
+        Altaxo.Data.DataColumn xcol = table.DataColumns.FindXColumnOf(ycol);
       
         if(null!=xcol)
           pa[i] = new Graph.XYColumnPlotData(xcol,ycol);
@@ -68,9 +86,9 @@ namespace Altaxo.Worksheet.Commands
         nNumberOfPlotData++;
 
         // if the next column is a label column, add it also
-        if((i+1)<len && ColumnKind.Label==dg.DataTable.DataColumns.GetColumnKind(dg.SelectedDataColumns[i+1]))
+        if((i+1)<len && ColumnKind.Label==table.DataColumns.GetColumnKind(selectedColumns[i+1]))
         {
-          pa[i].LabelColumn = dg.DataTable.DataColumns[dg.SelectedDataColumns[i+1]];
+          pa[i].LabelColumn = table.DataColumns[selectedColumns[i+1]];
           i++;
         }
 

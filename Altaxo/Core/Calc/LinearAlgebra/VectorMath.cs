@@ -101,6 +101,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
     #endregion
 
+    #region Filling
+
+    /// <summary>
+    /// Fills a vector with a certain value.
+    /// </summary>
+    /// <param name="x">The vector to fill.</param>
+    /// <param name="val">The value each element is set to.</param>
+    public static void Fill(IVector x, double val)
+    {
+      int end = x.UpperBound;
+      for(int i=x.LowerBound;i<=end;i++) x[i]=val;
+    }
+
+    #endregion
+
     /// <summary>
     /// Returns the maximum of the elements in xarray.
     /// </summary>

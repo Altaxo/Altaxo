@@ -27,6 +27,7 @@ using Altaxo.Worksheet.GUI;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.PLS;
 using Altaxo.Data;
+using Altaxo.Main.GUI;
 
 
 namespace Altaxo.Worksheet.Commands.Analysis
@@ -480,20 +481,22 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static void PLSOnRows(WorksheetController ctrl)
     {
       PLSAnalysisOptions options;
-      if(!QuestPLSAnalysisOptions(out options))
+      SpectralPreprocessingOptions preprocessOptions;
+      if(!QuestPLSAnalysisOptions(out options, out preprocessOptions))
         return;
 
-      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,ctrl.SelectedPropertyColumns,true,options);
+      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,ctrl.SelectedPropertyColumns,true,options,preprocessOptions);
       if(null!=err)
         System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
     }
     public static void PLSOnColumns(WorksheetController ctrl)
     {
       PLSAnalysisOptions options;
-      if(!QuestPLSAnalysisOptions(out options))
+      SpectralPreprocessingOptions preprocessOptions;
+      if(!QuestPLSAnalysisOptions(out options, out preprocessOptions))
         return;
 
-      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,ctrl.SelectedPropertyColumns,false,options);
+      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,ctrl.SelectedPropertyColumns,false,options,preprocessOptions);
       if(null!=err)
         System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
     }
@@ -594,7 +597,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       IMatrix matrixX = GetRawSpectra(ctrl.DataTable,spectrumIsRow,spectralIndices,measurementIndices);
 
       MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(measurementIndices.Count,calibModel.NumberOfY);
-      CalculatePredictedY(calibModel,matrixX,numberOfFactors, predictedY,null);
+      CalculatePredictedY(calibModel,memento.SpectralPreprocessing,matrixX,numberOfFactors, predictedY,null);
 
       // now save the predicted y in the destination table
 
@@ -753,6 +756,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="selectedPropertyColumns">The selected property column(s).</param>
     /// <param name="bHorizontalOrientedSpectrum">True if a spectrum is a single row, False if a spectrum is a single column.</param>
     /// <param name="plsOptions">Provides information about the max number of factors and the calculation of cross PRESS value.</param>
+    /// <param name="preprocessOptions">Provides information about how to preprocess the spectra.</param>
     /// <returns></returns>
     public static string PartialLeastSquaresAnalysis(
       Altaxo.AltaxoDocument mainDocument,
@@ -761,7 +765,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       IAscendingIntegerCollection selectedRows,
       IAscendingIntegerCollection selectedPropertyColumns,
       bool bHorizontalOrientedSpectrum,
-      PLSAnalysisOptions plsOptions
+      PLSAnalysisOptions plsOptions,
+      SpectralPreprocessingOptions preprocessOptions
       )
     {
       PLSContentMemento plsContent = new PLSContentMemento();
@@ -792,6 +797,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       plsContent.SpectralIndices      = spectralIndices;
       plsContent.SpectrumIsRow        = bHorizontalOrientedSpectrum;
       plsContent.TableName            = srctable.Name;
+      plsContent.SpectralPreprocessing = preprocessOptions;
 
 
       bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
@@ -1005,11 +1011,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       // Before we can apply PLS, we have to center the x and y matrices
       MatrixMath.HorizontalVector meanX = new MatrixMath.HorizontalVector(matrixX.Columns);
+      MatrixMath.HorizontalVector scaleX = new MatrixMath.HorizontalVector(matrixX.Columns);
       //  MatrixMath.HorizontalVector scaleX = new MatrixMath.HorizontalVector(matrixX.Cols);
       MatrixMath.HorizontalVector meanY = new MatrixMath.HorizontalVector(matrixY.Columns);
 
 
-      MatrixMath.ColumnsToZeroMean(matrixX, meanX);
+      preprocessOptions.Process(matrixX,meanX,scaleX);
       MatrixMath.ColumnsToZeroMean(matrixY, meanY);
 
       int numFactors = Math.Min(matrixX.Columns,plsOptions.MaxNumberOfFactors);
@@ -1034,7 +1041,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       for(int i=0;i<matrixX.Columns;i++)
       {
         colXMean[i] = meanX[i];
-        colXScale[i] = 1;
+        colXScale[i] = scaleX[i];
       }
 
       table.DataColumns.Add(colXMean,_XMean_ColumnName,Altaxo.Data.ColumnKind.V,0);
@@ -1291,17 +1298,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
         calibrationSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col,_numberOfX);
 
 
-        sel.Clear();
         col = _table[_XMean_ColumnName];
         if(col==null) NotFound(_XMean_ColumnName);
-        sel.Add(_table.DataColumns.GetColumnNumber(col));
-        calibrationSet.XMean = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfX);
+        calibrationSet.XMean = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,_numberOfX);
 
-        sel.Clear();
         col = _table[_XScale_ColumnName];
         if(col==null) NotFound(_XScale_ColumnName);
-        sel.Add(_table.DataColumns.GetColumnNumber(col));
-        calibrationSet.XScale = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfX);
+        calibrationSet.XScale = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,_numberOfX);
 
 
         
@@ -1750,16 +1753,25 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// This will convert the raw spectra (horizontally in matrixX) to preprocessed spectra according to the calibration model.
     /// </summary>
     /// <param name="calib">The calibration model containing the instructions to process the spectra.</param>
+    /// <param name="preprocessOptions">Contains the information how to preprocess the spectra.</param>
     /// <param name="matrixX">The matrix of spectra. Each spectrum is a row of the matrix.</param>
-    public static void PreProcessSpectra(PLS2CalibrationModel calib, IMatrix matrixX)
+    public static void PreProcessSpectra(
+      PLS2CalibrationModel calib, 
+      SpectralPreprocessingOptions preprocessOptions,
+      IMatrix matrixX)
     {
-      MatrixMath.SubtractRow(matrixX,calib.XMean,0,matrixX);
-      MatrixMath.DivideRow(matrixX,calib.XScale,0,0,matrixX);
+      preprocessOptions.ProcessForPrediction(matrixX,calib.XMean,calib.XScale);
     }
 
-    public static void CalculatePredictedY(PLS2CalibrationModel calib, IMatrix matrixX, int numberOfFactors, MatrixMath.BEMatrix  predictedY, IMatrix spectralResiduals)
+    public static void CalculatePredictedY(
+      PLS2CalibrationModel calib,
+      SpectralPreprocessingOptions preprocessOptions,
+      IMatrix matrixX,
+      int numberOfFactors, 
+      MatrixMath.BEMatrix  predictedY, 
+      IMatrix spectralResiduals)
     {
-      PreProcessSpectra(calib,matrixX);
+      PreProcessSpectra(calib,preprocessOptions,matrixX);
 
       MatrixMath.PartialLeastSquares_Predict_HO(
         matrixX,
@@ -1775,6 +1787,45 @@ namespace Altaxo.Worksheet.Commands.Analysis
       MatrixMath.MultiplyRow(predictedY,calib.YScale,0,predictedY);
       MatrixMath.AddRow(predictedY,calib.YMean,0,predictedY);
     }  
+
+
+    /// <summary>
+    /// Fills a provided table (should be empty) with the preprocessed spectra. The spectra are saved as columns (independently on their former orientation in the original worksheet).
+    /// </summary>
+    /// <param name="calibtable">The table containing the calibration model.</param>
+    /// <param name="desttable">The table where to store the preprocessed spectra. Should be empty.</param>
+    public static void CalculatePreprocessedSpectra(Altaxo.Data.DataTable calibtable, Altaxo.Data.DataTable desttable)
+    {
+      PLSContentMemento plsMemo = calibtable.GetTableProperty("Content") as PLSContentMemento;
+
+      if(plsMemo==null)
+        throw new ArgumentException("Table does not contain a PLSContentMemento");
+
+      PLS2CalibrationModel calib;
+      PLSCalibrationModelExporter exporter = new PLSCalibrationModelExporter(calibtable,1);
+      exporter.Export(out calib);
+
+      IMatrix matrixX = GetRawSpectra(plsMemo);
+
+      // do spectral preprocessing
+      plsMemo.SpectralPreprocessing.ProcessForPrediction(matrixX,calib.XMean,calib.XScale);
+
+
+      // for the new table, save the spectra as column
+      DoubleColumn xcol = new DoubleColumn();
+      for(int i=matrixX.Columns;i>=0;i--)
+        xcol[i] = calib.XOfX[i];
+      desttable.DataColumns.Add(xcol,_XOfX_ColumnName,ColumnKind.X,0);
+    
+
+      for(int n=0;n<matrixX.Rows;n++)
+      {
+        DoubleColumn col = new DoubleColumn();
+        for(int i=matrixX.Columns-1;i>=0;i--) 
+          col[i] = matrixX[n,i];
+        desttable.DataColumns.Add(col,n.ToString(),ColumnKind.V,0);
+      }
+    }
 
     public static void CalculatePredictedAndResidual(Altaxo.Data.DataTable table, int whichY, int numberOfFactors, bool saveYPredicted, bool saveYResidual, bool saveXResidual)
     {
@@ -1792,7 +1843,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(matrixX.Rows,calib.NumberOfY);
       MatrixMath.BEMatrix spectralResiduals = new MatrixMath.BEMatrix(matrixX.Rows,1);
-      CalculatePredictedY(calib,matrixX,numberOfFactors,predictedY,spectralResiduals);
+      CalculatePredictedY(calib,plsMemo.SpectralPreprocessing,matrixX,numberOfFactors,predictedY,spectralResiduals);
 
       if(saveYPredicted)
       {
@@ -1852,7 +1903,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 
       IMatrix matrixX = GetRawSpectra(plsMemo);
-      PreProcessSpectra(calib,matrixX);
+      PreProcessSpectra(calib,plsMemo.SpectralPreprocessing,matrixX);
 
       // get the score matrix
       MatrixMath.BEMatrix weights = new MatrixMath.BEMatrix(numberOfFactors,calib.XWeights.Columns);
@@ -1876,23 +1927,34 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// Asks the user for the maximum number of factors and the cross validation calculation.
     /// </summary>
     /// <param name="options">The PLS options to ask for. On return, this is the user's choice.</param>
+    /// <param name="preprocessOptions">The spectral preprocessing options to ask for (output).</param>
     /// <returns>True if the user has made his choice, false if the user pressed the Cancel button.</returns>
-    public static bool QuestPLSAnalysisOptions(out PLSAnalysisOptions options)
+    public static bool QuestPLSAnalysisOptions(out PLSAnalysisOptions options, out SpectralPreprocessingOptions preprocessOptions)
     {
       options = new PLSAnalysisOptions();
       options.MaxNumberOfFactors =20;
       options.CrossPRESSCalculation = CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements;
 
-      Altaxo.Worksheet.GUI.PLSStartAnalysisController ctrl = new Altaxo.Worksheet.GUI.PLSStartAnalysisController(options);
-      Altaxo.Worksheet.GUI.PLSStartAnalysisControl viewctrl = new PLSStartAnalysisControl();
-      ctrl.View = viewctrl;
+      PLSStartAnalysisController ctrlAA = new PLSStartAnalysisController(options);
+      PLSStartAnalysisControl    viewAA = new PLSStartAnalysisControl();
+      ctrlAA.View = viewAA;
 
-      Altaxo.Main.GUI.DialogShellController dlgctrl = new Altaxo.Main.GUI.DialogShellController(
-        new Altaxo.Main.GUI.DialogShellView(viewctrl),ctrl);
+      preprocessOptions = new SpectralPreprocessingOptions();
+      SpectralPreprocessingController  ctrlBB = new SpectralPreprocessingController(preprocessOptions);
+      SpectralPreprocessingControl     viewBB = new SpectralPreprocessingControl();
+      ctrlBB.View = viewBB;
 
-      if(dlgctrl.ShowDialog(Current.MainWindow))
+
+      TabbedDialogController dialogctrl = new TabbedDialogController("PLS Analysis",false);
+      dialogctrl.AddTab("Factors",ctrlAA,viewAA);
+      dialogctrl.AddTab("Preprocessing",ctrlBB,viewBB);
+      TabbedDialogView  dialogview = new TabbedDialogView();
+      dialogctrl.View = dialogview;
+
+      if(dialogctrl.ShowDialog(Current.MainWindow))
       {
-        options = ctrl.Doc;
+        options = ctrlAA.Doc;
+
         return true;
       }
       return false;
@@ -1975,6 +2037,22 @@ namespace Altaxo.Worksheet.Commands.Analysis
       layer.BottomAxisTitleString = string.Format("Y original{0}",whichY);
       layer.LeftAxisTitleString   = string.Format("Y residual{0} (#factors:{1})",whichY,numberOfFactors);
     }
+
+
+    /// <summary>
+    /// Plots all preprocessed spectra into a newly created graph.
+    /// </summary>
+    /// <param name="table">The table of PLS output data.</param>
+    public static void PlotPreprocessedSpectra(Altaxo.Data.DataTable table)
+    {
+      DataTable desttable = new DataTable();
+      desttable.Name = table.Name+".PS";
+      CalculatePreprocessedSpectra(table, desttable);
+      Current.Project.DataTableCollection.Add(desttable);
+
+      Worksheet.Commands.PlotCommands.PlotLine(desttable,new IntegerRangeAsCollection(1,desttable.DataColumnCount-1),true,false);
+    }
+
 
     /// <summary>
     /// Plots the x (spectral) residuals into a provided layer.

@@ -1131,6 +1131,36 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
     /// <summary>
+    /// Multiplies the row <c>rowb</c> of matrix b element by element to all rows of matrix a. 
+    /// </summary>
+    /// <param name="a">The source matrix.</param>
+    /// <param name="b">The vector which contains the row to multiply.</param>
+    /// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to matrix b).</param>
+    public static void MultiplyRow(IROMatrix a, IROVector b, IMatrix c)
+    {
+      int arows = a.Rows;
+      int acols = a.Columns;
+
+      int brows = 1;
+      int bcols = b.Length;
+
+      int crows = c.Rows;
+      int ccols = c.Columns;
+
+      // Presumtion:
+      if(arows != crows || acols != ccols)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",crows,ccols,arows,acols));
+      if(bcols != acols)
+        throw new ArithmeticException(string.Format("Vector b[{0}] has not the same number of columns than matrix a[{1},{2}]!",brows,arows,acols));
+      if(object.ReferenceEquals(b,c))
+        throw new ArithmeticException("Vector b and matrix c are identical, which is not allowed here!");
+
+      for(int i=0;i<arows;i++)
+        for(int j=0;j<acols;j++)
+          c[i,j] = a[i,j]*b[j];
+    }
+
+    /// <summary>
     /// Calculates a+b and stores the result in matrix c.
     /// </summary>
     /// <param name="a">First matrix to add..</param>
@@ -1290,6 +1320,34 @@ namespace Altaxo.Calc.LinearAlgebra
           c[i,j] = a[i,j]-b[brow,j];
     }
 
+    /// <summary>
+    /// Subtracts the row <c>rowb</c> of matrix b from all rows of matrix a. 
+    /// </summary>
+    /// <param name="a">The source matrix.</param>
+    /// <param name="b">The vector which contains the row to subtract.</param>
+    /// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to matrix b).</param>
+    public static void SubtractRow(IROMatrix a, IROVector b, IMatrix c)
+    {
+      int arows = a.Rows;
+      int acols = a.Columns;
+
+      int bcols = b.Length;
+
+      int crows = c.Rows;
+      int ccols = c.Columns;
+
+      // Presumtion:
+      if(arows != crows || acols != ccols)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",crows,ccols,arows,acols));
+      if(bcols != acols)
+        throw new ArithmeticException(string.Format("Vector b[{0}] has not the same length than rows of matrix a[{1},{2}]!",bcols,arows,acols));
+      if(object.ReferenceEquals(b,c))
+        throw new ArithmeticException("Vector b and Matrix c are identical, which is not allowed here!");
+
+      for(int i=0;i<arows;i++)
+        for(int j=0;j<acols;j++)
+          c[i,j] = a[i,j]-b[j];
+    }
     
     /// <summary>
     /// Subtracts the column <c>bcol</c> of matrix b from all columns of matrix a. 

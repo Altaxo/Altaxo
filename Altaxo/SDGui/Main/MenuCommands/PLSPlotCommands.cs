@@ -112,4 +112,12 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotXLeverage(ctrl.DataTable);
     }
   }
+
+  public class PLSPlotPreprocessedSpectra : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPreprocessedSpectra(ctrl.DataTable);
+    }
+  }
 }

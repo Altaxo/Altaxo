@@ -60,10 +60,15 @@ namespace Altaxo.Calc.Regression.PLS
     /// </summary>
     int _PreferredNumberOfFactors;
 
+    /// <summary>
+    /// What to do with the spectra before processing them.
+    /// </summary>
+    SpectralPreprocessingOptions _spectralPreprocessing = new SpectralPreprocessingOptions();
+
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PLSContentMemento),0)]
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PLSContentMemento),0)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
@@ -75,6 +80,41 @@ namespace Altaxo.Calc.Regression.PLS
         info.AddValue("ConcentrationIndices",s.ConcentrationIndices);
         info.AddValue("MeasurementIndices",s.MeasurementIndices);
         info.AddValue("PreferredNumberOfFactors", s._PreferredNumberOfFactors); // the property columns of that table
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo  info, object parent)
+      {
+        PLSContentMemento s = null!=o ? (PLSContentMemento)o : new PLSContentMemento();
+
+        s.TableName = info.GetString("Name");
+        s.SpectrumIsRow = info.GetBoolean("SpectrumIsRow");
+        s.SpectralIndices = (IAscendingIntegerCollection)info.GetValue("SpectralIndices",s);
+        s.ConcentrationIndices = (IAscendingIntegerCollection)info.GetValue("ConcentrationIndices",s);
+        s.MeasurementIndices = (IAscendingIntegerCollection)info.GetValue("MeasurementIndices",s);
+        s._PreferredNumberOfFactors = info.GetInt32("PreferredNumberOfFactors");
+       
+        return s;
+      }
+    }
+
+
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PLSContentMemento),1)]
+      public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
+      {
+        PLSContentMemento s = (PLSContentMemento)obj;
+        info.AddValue("TableName",s.TableName); // name of the Table
+        info.AddValue("SpectrumIsRow",s.SpectrumIsRow);
+        info.AddValue("SpectralIndices",s.SpectralIndices);
+        info.AddValue("ConcentrationIndices",s.ConcentrationIndices);
+        info.AddValue("MeasurementIndices",s.MeasurementIndices);
+        info.AddValue("PreferredNumberOfFactors", s._PreferredNumberOfFactors); // the property columns of that table
+
+        // new in version 1
+        info.AddArray("SpectralPreprocessingRegions",s._spectralPreprocessing.Regions,s._spectralPreprocessing.Regions.Length);
+        info.AddEnum("SpectralPreprocessingMethod", s._spectralPreprocessing.Method);
+        info.AddValue("SpectralPreprocessingDetrending", s._spectralPreprocessing.DetrendingOrder);
+        info.AddValue("SpectralPreprocessingEnsembleScale",s._spectralPreprocessing.EnsembleScale);
 
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo  info, object parent)
@@ -87,6 +127,17 @@ namespace Altaxo.Calc.Regression.PLS
         s.ConcentrationIndices = (IAscendingIntegerCollection)info.GetValue("ConcentrationIndices",s);
         s.MeasurementIndices = (IAscendingIntegerCollection)info.GetValue("MeasurementIndices",s);
         s._PreferredNumberOfFactors = info.GetInt32("PreferredNumberOfFactors");
+
+        // new in version 1
+        if(info.CurrentElementName=="SpectralPreprocessingRegions")
+        {
+          double[] regions;
+          info.GetArray("SpectralPreprocessingRegions", out regions);
+          s._spectralPreprocessing.Regions = regions;
+          s._spectralPreprocessing.Method  = (SpectralPreprocessingMethod)info.GetEnum("SpectralPreprocessingMethod",typeof(SpectralPreprocessingMethod));
+          s._spectralPreprocessing.DetrendingOrder = info.GetInt32("SpectralPreprocessingDetrending");
+          s._spectralPreprocessing.EnsembleScale = info.GetBoolean("SpectralPreprocessingEnsembleScale");
+        }
 
         return s;
       }
@@ -126,6 +177,16 @@ namespace Altaxo.Calc.Regression.PLS
       get { return _PreferredNumberOfFactors; }
       set { _PreferredNumberOfFactors = value; }
     }
+
+    /// <summary>
+    /// What to do with the spectra before processing them.
+    /// </summary>
+    public SpectralPreprocessingOptions SpectralPreprocessing
+    {
+      get { return _spectralPreprocessing; }
+      set { _spectralPreprocessing = value; }
+    }
+
   }
 
 

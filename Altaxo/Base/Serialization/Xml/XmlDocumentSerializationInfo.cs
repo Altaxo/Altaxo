@@ -90,6 +90,11 @@ namespace Altaxo.Serialization.Xml
       PopNodeStack();
     }
 
+    /// <summary>Returns the name of the current xml element.</summary>
+    public string CurrentElementName
+    { 
+      get { return m_Doc.LocalName; }
+    }
 
     public void AddValue(string name, int val)
     {

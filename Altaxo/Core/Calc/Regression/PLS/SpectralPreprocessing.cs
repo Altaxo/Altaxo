@@ -38,6 +38,16 @@ namespace Altaxo.Calc.Regression.PLS
     /// <param name="xMean">Output: On return, contains the ensemble mean of the spectra.</param>
     /// <param name="xScale">Output: On return, contains the scale of the spectral slots.</param>
     void Process(IMatrix xMatrix, IVector xMean, IVector xScale);
+
+
+    /// <summary>
+    /// Processes the spectra in matrix xMatrix for prediction. Thats why it is absolutely neccessary to
+    /// provide the right xMean and xScale vectors!
+    /// </summary>
+    /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
+    /// <param name="xMean">Contains the ensemble mean of the spectra.</param>
+    /// <param name="xScale">Contains the scale of the spectral slots.</param>
+    void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale);
   }
 
   #region MultiplicativeScatterCorrection (MSC)
@@ -56,8 +66,30 @@ namespace Altaxo.Calc.Regression.PLS
     public void Process(IMatrix xMatrix, IVector xMean, IVector xScale)
     {
       // 1.) Get the mean spectrum
-      MatrixMath.ColumnsToZeroMean(xMatrix,xMean);
+      // we want to have the mean of each matrix column, but not center the matrix now, since this
+      // is done later on
+      int cols = xMatrix.Columns;
+      int rows = xMatrix.Rows;
+      for(int n=0;n<cols;n++)
+      {
+        double sum = 0;
+        for(int i=0;i<rows;i++)
+          sum += xMatrix[i,n];
+        xMean[n] = sum/rows;
+      }
 
+      // 2.) Process the spectras
+      ProcessForPrediction(xMatrix,xMean,xScale);
+    }
+
+    /// <summary>
+    /// Processes the spectra in matrix xMatrix.
+    /// </summary>
+    /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
+    /// <param name="xMean">Output: On return, contains the ensemble mean of the spectra.</param>
+    /// <param name="xScale">Not used.</param>
+    public void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale)
+    {
       for(int n=0;n<xMatrix.Rows;n++)
       {
         // 2.) Do linear regression of the current spectrum versus the mean spectrum
@@ -82,7 +114,7 @@ namespace Altaxo.Calc.Regression.PLS
   /// </summary>
   public class StandardNormalVariateCorrection
   {
-  
+
     /// <summary>
     /// Processes the spectra in matrix xMatrix.
     /// </summary>
@@ -90,6 +122,17 @@ namespace Altaxo.Calc.Regression.PLS
     /// <param name="xMean">Not used, since this processing sets xMean by itself (to zero).</param>
     /// <param name="xScale">Not used, since the processing sets xScale by itself.</param>
     public void Process(IMatrix xMatrix, IVector xMean, IVector xScale)
+    {
+      ProcessForPrediction(xMatrix,xMean,xScale);
+    }
+
+    /// <summary>
+    /// Processes the spectra in matrix xMatrix for prediction.
+    /// </summary>
+    /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
+    /// <param name="xMean">Not used.</param>
+    /// <param name="xScale">Not used.</param>
+    public void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale)
     {
       for(int n=0;n<xMatrix.Rows;n++)
       {
@@ -133,6 +176,7 @@ namespace Altaxo.Calc.Regression.PLS
     {
       _filter = new SavitzkyGolay(numberOfPoints,derivativeOrder,polynomialOrder);
     }
+
     /// <summary>
     /// Processes the spectra in matrix xMatrix.
     /// </summary>
@@ -140,6 +184,17 @@ namespace Altaxo.Calc.Regression.PLS
     /// <param name="xMean">Not used, since this processing sets xMean by itself (to zero).</param>
     /// <param name="xScale">Not used, since the processing sets xScale by itself.</param>
     public void Process(IMatrix xMatrix, IVector xMean, IVector xScale)
+    {
+      ProcessForPrediction(xMatrix,xMean,xScale);
+    }
+
+    /// <summary>
+    /// Processes the spectra in matrix xMatrix for prediction.
+    /// </summary>
+    /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
+    /// <param name="xMean">Not used.</param>
+    /// <param name="xScale">Not used.</param>
+    public void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale)
     {
       IVector helpervector = VectorMath.ToVector(new double[xMatrix.Columns]);
       for(int n=0;n<xMatrix.Rows;n++)
@@ -170,6 +225,7 @@ namespace Altaxo.Calc.Regression.PLS
         throw new ArgumentOutOfRangeException("Order must be in the range between 0 and 2");
       _order = order;
     }
+
     /// <summary>
     /// Processes the spectra in matrix xMatrix.
     /// </summary>
@@ -177,6 +233,16 @@ namespace Altaxo.Calc.Regression.PLS
     /// <param name="xMean">Not used, since this processing sets xMean by itself (to zero).</param>
     /// <param name="xScale">Not used, since the processing sets xScale by itself.</param>
     public void Process(IMatrix xMatrix, IVector xMean, IVector xScale)
+    {
+      ProcessForPrediction(xMatrix,xMean,xScale);
+    }
+    /// <summary>
+    /// Processes the spectra in matrix xMatrix for prediction.
+    /// </summary>
+    /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
+    /// <param name="xMean">Not used.</param>
+    /// <param name="xScale">Not used.</param>
+    public void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale)
     {
       switch(_order)
       {
@@ -261,6 +327,24 @@ namespace Altaxo.Calc.Regression.PLS
       if(_ensembleScale)
       {
         MatrixMath.ColumnsToZeroMeanAndUnitVariance(xMatrix,null,xScale);
+      }
+    }
+
+    /// <summary>
+    /// Processes the spectra in matrix xMatrix for prediction.
+    /// </summary>
+    /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
+    /// <param name="xMean">Must be supplied, and will be subtracted from all spectra (if option set).</param>
+    /// <param name="xScale">Must be supplied, and will be multiplied to all spectra (if option set).</param>
+    public void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale)
+    {
+      if(_ensembleMean)
+      {
+        MatrixMath.SubtractRow(xMatrix, xMean,xMatrix);
+      }
+      if(_ensembleScale)
+      {
+        MatrixMath.MultiplyRow(xMatrix,xScale,xMatrix);
       }
     }
   }

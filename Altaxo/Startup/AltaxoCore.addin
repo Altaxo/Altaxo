@@ -440,6 +440,8 @@
 		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotActualVersusPredictedY.Description}" class="Altaxo.Worksheet.Commands.PLSPlotPredictedVersusActualYIndividually" />
     					<MenuItem id="PlotXLeverage" label="${res:XML.MainMenu.PlotMenu.PLS.PlotXLeverage}" icon="Icons.16x16.PlotScatter"
 		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotXLeverage.Description}" class="Altaxo.Worksheet.Commands.PLSPlotXLeverage" />
+    					<MenuItem id="PlotPreprocessedSpectra" label="${res:XML.MainMenu.PlotMenu.PLS.PlotPreprocessedSpectra}" icon="Icons.16x16.PlotLine"
+		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotPreprocessedSpectra.Description}" class="Altaxo.Worksheet.Commands.PLSPlotPreprocessedSpectra" />
       		  </MenuItem>
       		</Conditional>
 			</MenuItem>
