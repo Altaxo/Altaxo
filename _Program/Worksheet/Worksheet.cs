@@ -63,6 +63,7 @@ namespace Altaxo.Worksheet
 		private System.Windows.Forms.MenuItem menuFile_ExportAscii;
 		private System.Windows.Forms.MenuItem menuColumn_AddPropertyColumn;
 		private System.Windows.Forms.MenuItem menuColumn_ExtractPropertyValues;
+		private System.Windows.Forms.MenuItem menuFile_ExportGalacticSPC;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -180,11 +181,12 @@ namespace Altaxo.Worksheet
 			this.mnuAddColumn = new System.Windows.Forms.MenuItem();
 			this.menuSetColumnValues = new System.Windows.Forms.MenuItem();
 			this.menuColumnSetAsX = new System.Windows.Forms.MenuItem();
+			this.menuColumn_AddPropertyColumn = new System.Windows.Forms.MenuItem();
+			this.menuColumn_ExtractPropertyValues = new System.Windows.Forms.MenuItem();
 			this.menuAnalysisPopup = new System.Windows.Forms.MenuItem();
 			this.menuAnalysisFFT = new System.Windows.Forms.MenuItem();
 			this.m_Menu_Analysis_StatisticsOnColumns = new System.Windows.Forms.MenuItem();
-			this.menuColumn_AddPropertyColumn = new System.Windows.Forms.MenuItem();
-			this.menuColumn_ExtractPropertyValues = new System.Windows.Forms.MenuItem();
+			this.menuFile_ExportGalacticSPC = new System.Windows.Forms.MenuItem();
 			this.SuspendLayout();
 			// 
 			// altaxoDataGrid1
@@ -212,7 +214,8 @@ namespace Altaxo.Worksheet
 			// 
 			this.menuFilePopup.Index = 0;
 			this.menuFilePopup.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																																									this.menuFile_ExportAscii});
+																																									this.menuFile_ExportAscii,
+																																									this.menuFile_ExportGalacticSPC});
 			this.menuFilePopup.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
 			this.menuFilePopup.Text = "File";
 			// 
@@ -328,6 +331,18 @@ namespace Altaxo.Worksheet
 			this.menuColumnSetAsX.Text = "Set as X";
 			this.menuColumnSetAsX.Click += new System.EventHandler(this.menuColumnSetAsX_Click);
 			// 
+			// menuColumn_AddPropertyColumn
+			// 
+			this.menuColumn_AddPropertyColumn.Index = 3;
+			this.menuColumn_AddPropertyColumn.Text = "Add property column";
+			this.menuColumn_AddPropertyColumn.Click += new System.EventHandler(this.menuColumn_AddPropertyColumn_Click);
+			// 
+			// menuColumn_ExtractPropertyValues
+			// 
+			this.menuColumn_ExtractPropertyValues.Index = 4;
+			this.menuColumn_ExtractPropertyValues.Text = "Extract property values";
+			this.menuColumn_ExtractPropertyValues.Click += new System.EventHandler(this.menuColumn_ExtractPropertyValues_Click);
+			// 
 			// menuAnalysisPopup
 			// 
 			this.menuAnalysisPopup.Index = 5;
@@ -350,17 +365,11 @@ namespace Altaxo.Worksheet
 			this.m_Menu_Analysis_StatisticsOnColumns.Text = "Statistics on Columns";
 			this.m_Menu_Analysis_StatisticsOnColumns.Click += new System.EventHandler(this.OnAnalysis_StatisticsOnColumns);
 			// 
-			// menuColumn_AddPropertyColumn
+			// menuFile_ExportGalacticSPC
 			// 
-			this.menuColumn_AddPropertyColumn.Index = 3;
-			this.menuColumn_AddPropertyColumn.Text = "Add property column";
-			this.menuColumn_AddPropertyColumn.Click += new System.EventHandler(this.menuColumn_AddPropertyColumn_Click);
-			// 
-			// menuColumn_ExtractPropertyValues
-			// 
-			this.menuColumn_ExtractPropertyValues.Index = 4;
-			this.menuColumn_ExtractPropertyValues.Text = "Extract property values";
-			this.menuColumn_ExtractPropertyValues.Click += new System.EventHandler(this.menuColumn_ExtractPropertyValues_Click);
+			this.menuFile_ExportGalacticSPC.Index = 1;
+			this.menuFile_ExportGalacticSPC.Text = "Export Galactic SPC";
+			this.menuFile_ExportGalacticSPC.Click += new System.EventHandler(this.menuFile_ExportGalacticSPC_Click);
 			// 
 			// Worksheet
 			// 
@@ -578,6 +587,16 @@ namespace Altaxo.Worksheet
 			Altaxo.Data.DataColumn col = altaxoDataGrid1.DataTable.PropCols[altaxoDataGrid1.SelectedPropertyColumns[0]];
 
 			DataGridOperations.ExtractPropertiesFromColumn(col,altaxoDataGrid1.DataTable.PropCols);
+		}
+
+		private void menuFile_ExportGalacticSPC_Click(object sender, System.EventArgs e)
+		{
+			Altaxo.Serialization.Galactic.ExportGalacticSpcFileDialog dlg =
+				new Altaxo.Serialization.Galactic.ExportGalacticSpcFileDialog();
+
+			dlg.Initialize(altaxoDataGrid1.DataTable,altaxoDataGrid1.SelectedRows,altaxoDataGrid1.SelectedColumns);
+
+			dlg.ShowDialog(this);
 		}
 
 	} // end of class

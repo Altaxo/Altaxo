@@ -204,7 +204,21 @@ namespace Altaxo.Graph
 			{
 				System.Drawing.Printing.PrintDocument doc = App.CurrentApplication.PrintDocument;
 			
-				RectangleF pageBounds = doc.DefaultPageSettings.Bounds;
+				// Test whether or not a printer is installed
+				System.Drawing.Printing.PrinterSettings prnset = new System.Drawing.Printing.PrinterSettings();
+				RectangleF pageBounds;
+				System.Drawing.Printing.Margins ma;
+				if(prnset.IsValid)
+				{
+
+					pageBounds = doc.DefaultPageSettings.Bounds;
+					ma = doc.DefaultPageSettings.Margins;
+				}
+				else // obviously no printer installed, use A4 size (sorry, this is european size)
+				{
+					pageBounds = new RectangleF(0,0,1169,807);
+					ma = new System.Drawing.Printing.Margins(50,50,50,50);
+				}
 				// since Bounds are in 100th inch, we have to adjust them to points (72th inch)
 				pageBounds.X *= UnitPerInch/100;
 				pageBounds.Y *= UnitPerInch/100;
@@ -212,7 +226,6 @@ namespace Altaxo.Graph
 				pageBounds.Height *= UnitPerInch/100;
 
 				RectangleF printableBounds = new RectangleF();
-				System.Drawing.Printing.Margins ma = doc.DefaultPageSettings.Margins;
 				printableBounds.X			= ma.Left * UnitPerInch/100;
 				printableBounds.Y			= ma.Top * UnitPerInch/100;
 				printableBounds.Width	= pageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
@@ -394,7 +407,7 @@ namespace Altaxo.Graph
 					case GraphTools.Text:
 						if(!(m_MouseState is TextToolMouseHandler))
 							m_MouseState = new TextToolMouseHandler();
-					break;
+						break;
 				}
 
 			}
@@ -709,17 +722,17 @@ namespace Altaxo.Graph
 
 		public string SaveAsMetafile(System.IO.Stream stream)
 		{
-					// Code to write the stream goes here.
-					Graphics grfx = CreateGraphics();
-					IntPtr ipHdc = grfx.GetHdc();
-					System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream,ipHdc);
-					grfx.ReleaseHdc(ipHdc);
-					grfx.Dispose();
-					grfx = Graphics.FromImage(mf);
+			// Code to write the stream goes here.
+			Graphics grfx = CreateGraphics();
+			IntPtr ipHdc = grfx.GetHdc();
+			System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream,ipHdc);
+			grfx.ReleaseHdc(ipHdc);
+			grfx.Dispose();
+			grfx = Graphics.FromImage(mf);
 					
-					this.m_Graph.DoPaint(grfx,true);
+			this.m_Graph.DoPaint(grfx,true);
 
-					grfx.Dispose();
+			grfx.Dispose();
 			
 			return null;
 		}
@@ -966,14 +979,14 @@ namespace Altaxo.Graph
 
 		public void menuNewLayer_NormalBottomXLeftY_Click(object sender, System.EventArgs e)
 		{
-		m_Graph.CreateNewLayerNormalBottomXLeftY();
+			m_Graph.CreateNewLayerNormalBottomXLeftY();
 			InvalidateGraph();
 		}
 
 		public void menuNewLayer_LinkedTopXRightY_Click(object sender, System.EventArgs e)
 		{
-		m_Graph.CreateNewLayerLinkedTopXRightY(CurrentLayerNumber);
-		InvalidateGraph();
+			m_Graph.CreateNewLayerLinkedTopXRightY(CurrentLayerNumber);
+			InvalidateGraph();
 		}
 
 		public void menuNewLayer_LinkedTopX_Click(object sender, System.EventArgs e)
@@ -1031,7 +1044,7 @@ namespace Altaxo.Graph
 			}
 			public virtual MouseStateHandler OnDoubleClick(object sender, System.EventArgs e)
 			{
-					return this;
+				return this;
 			}
 		}
 		#endregion // abstract mouse state handler
@@ -1192,7 +1205,7 @@ namespace Altaxo.Graph
 					} // end else no shift or control
 
 				} // end else (not cklicked on already selected object)
-			return this;
+				return this;
 			} // end of function
 
 			public override MouseStateHandler OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -1313,44 +1326,44 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// This class handles the mouse events in case the text tool is selected.
 		/// </summary>
-	public class TextToolMouseHandler : MouseStateHandler
-	{
-		/// <summary>
-		/// Handles the click event by opening the text tool dialog.
-		/// </summary>
-		/// <param name="sender">The graph control.</param>
-		/// <param name="e">EventArgs.</param>
-		/// <returns>The mouse state handler for handling the next mouse events.</returns>
-		public override MouseStateHandler OnClick(object sender, System.EventArgs e)
+		public class TextToolMouseHandler : MouseStateHandler
 		{
-			base.OnClick(sender,e);
-
-			GraphControl grac = sender as GraphControl;
-
-			// get the page coordinates (in Point (1/72") units)
-			PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
-			// with knowledge of the current active layer, calculate the layer coordinates from them
-			PointF layerCoord = grac.Layers[grac.CurrentLayerNumber].GraphToLayerCoordinates(printAreaCoord);
-
-			ExtendedTextGraphObject tgo = new ExtendedTextGraphObject();
-			tgo.Position = layerCoord;
-
-			// deselect the text tool
-			grac.CurrentGraphTool = GraphTools.ObjectPointer;
-
-			TextControlDialog dlg = new TextControlDialog(grac.Layers[grac.CurrentLayerNumber],tgo);
-			if(DialogResult.OK==dlg.ShowDialog(grac))
+			/// <summary>
+			/// Handles the click event by opening the text tool dialog.
+			/// </summary>
+			/// <param name="sender">The graph control.</param>
+			/// <param name="e">EventArgs.</param>
+			/// <returns>The mouse state handler for handling the next mouse events.</returns>
+			public override MouseStateHandler OnClick(object sender, System.EventArgs e)
 			{
-				// add the resulting textgraphobject to the layer
-				if(!dlg.TextGraphObject.Empty)
+				base.OnClick(sender,e);
+
+				GraphControl grac = sender as GraphControl;
+
+				// get the page coordinates (in Point (1/72") units)
+				PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
+				// with knowledge of the current active layer, calculate the layer coordinates from them
+				PointF layerCoord = grac.Layers[grac.CurrentLayerNumber].GraphToLayerCoordinates(printAreaCoord);
+
+				ExtendedTextGraphObject tgo = new ExtendedTextGraphObject();
+				tgo.Position = layerCoord;
+
+				// deselect the text tool
+				grac.CurrentGraphTool = GraphTools.ObjectPointer;
+
+				TextControlDialog dlg = new TextControlDialog(grac.Layers[grac.CurrentLayerNumber],tgo);
+				if(DialogResult.OK==dlg.ShowDialog(grac))
 				{
-					grac.Layers[grac.CurrentLayerNumber].GraphObjects.Add(dlg.TextGraphObject);
-					grac.m_GraphPanel.Invalidate();
+					// add the resulting textgraphobject to the layer
+					if(!dlg.TextGraphObject.Empty)
+					{
+						grac.Layers[grac.CurrentLayerNumber].GraphObjects.Add(dlg.TextGraphObject);
+						grac.m_GraphPanel.Invalidate();
+					}
 				}
+				return new ObjectPointerMouseHandler();
 			}
-			return new ObjectPointerMouseHandler();
 		}
-	}
 
 		#endregion // Text Tool Mouse Handler
 
