@@ -7,7 +7,7 @@
     >
         <Build>
             <Settings
-                ApplicationIcon = ""
+                ApplicationIcon = "Icon1.ico"
                 AssemblyKeyContainerName = ""
                 AssemblyName = "Altaxo"
                 AssemblyOriginatorKeyFile = ""
@@ -129,6 +129,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\IScalarFunction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\Matrix.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -229,36 +234,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\AxisLinkControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\AxisLinkControl.resx"
-                    DependentUpon = "AxisLinkControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Graph\AxisLinkController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\AxisScaleControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\AxisScaleControl.resx"
-                    DependentUpon = "AxisScaleControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Graph\AxisScaleController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Graph\AxisStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -284,11 +259,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\GraphController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Graph\GraphDocument.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -304,31 +274,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\GraphPanel.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\GraphPanel.resx"
-                    DependentUpon = "GraphPanel.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Graph\GraphView.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\GraphView.resx"
-                    DependentUpon = "GraphView.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Graph\IGraphDocumentView.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Graph\ImageGraphics.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -340,81 +285,6 @@
                 />
                 <File
                     RelPath = "Graph\Layer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\LayerControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\LayerControl.resx"
-                    DependentUpon = "LayerControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Graph\LayerController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\LayerPositionControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\LayerPositionControl.resx"
-                    DependentUpon = "LayerPositionControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Graph\LayerPositionController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\LineScatterLayerContentsControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\LineScatterLayerContentsControl.resx"
-                    DependentUpon = "LineScatterLayerContentsControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Graph\LineScatterLayerContentsController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\LineScatterPlotDataControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\LineScatterPlotDataControl.resx"
-                    DependentUpon = "LineScatterPlotDataControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Graph\LineScatterPlotDataController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\LineScatterPlotStyleControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\LineScatterPlotStyleControl.resx"
-                    DependentUpon = "LineScatterPlotStyleControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Graph\LineScatterPlotStyleController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -474,16 +344,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\TextControlDialog.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\TextControlDialog.resx"
-                    DependentUpon = "TextControlDialog.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "Graph\TextGraphObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -507,6 +367,161 @@
                     RelPath = "Graph\TwoDimMeshDataAssociation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYCurvePlotData.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYCurvePlotItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\AxisLinkControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\AxisLinkControl.resx"
+                    DependentUpon = "AxisLinkControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\AxisLinkController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\AxisScaleControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\AxisScaleControl.resx"
+                    DependentUpon = "AxisScaleControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\AxisScaleController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\GraphController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\GraphPanel.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\GraphPanel.resx"
+                    DependentUpon = "GraphPanel.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\GraphView.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\GraphView.resx"
+                    DependentUpon = "GraphView.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\IGraphDocumentView.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\LayerControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\LayerControl.resx"
+                    DependentUpon = "LayerControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\LayerController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\LayerPositionControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\LayerPositionControl.resx"
+                    DependentUpon = "LayerPositionControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\LayerPositionController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\LineScatterLayerContentsControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\LineScatterLayerContentsControl.resx"
+                    DependentUpon = "LineScatterLayerContentsControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\LineScatterLayerContentsController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\LineScatterPlotDataControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\LineScatterPlotDataControl.resx"
+                    DependentUpon = "LineScatterPlotDataControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\LineScatterPlotDataController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\LineScatterPlotStyleControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\LineScatterPlotStyleControl.resx"
+                    DependentUpon = "LineScatterPlotStyleControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\LineScatterPlotStyleController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\TextControlDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\TextControlDialog.resx"
+                    DependentUpon = "TextControlDialog.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Gui\DialogFactory.cs"
@@ -688,6 +703,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Serialization\EnumParsing.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Serialization\ExportGalacticSpcFileDialog.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -758,39 +778,54 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\SetColumnValuesDialog.cs"
+                    RelPath = "Worksheet\TextColumnStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\ColumnScriptControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\ColumnScriptControl.resx"
+                    DependentUpon = "ColumnScriptControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\ColumnScriptController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\SetColumnValuesDialog.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\SetColumnValuesDialog.resx"
+                    RelPath = "Worksheet\GUI\SetColumnValuesDialog.resx"
                     DependentUpon = "SetColumnValuesDialog.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Worksheet\TableController.cs"
+                    RelPath = "Worksheet\GUI\TableController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\TablePanel.cs"
+                    RelPath = "Worksheet\GUI\TablePanel.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\TableView.cs"
+                    RelPath = "Worksheet\GUI\TableView.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\TableView.resx"
+                    RelPath = "Worksheet\GUI\TableView.resx"
                     DependentUpon = "TableView.cs"
                     BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Worksheet\TextColumnStyle.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
                 />
             </Include>
         </Files>

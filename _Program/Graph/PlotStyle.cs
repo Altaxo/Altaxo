@@ -31,7 +31,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	public abstract class PlotStyle : ICloneable
 	{
-	public static Color[] PlotColors = 
+		public static Color[] PlotColors = 
 			{
 				Color.Black,
 				Color.Red,
@@ -291,16 +291,16 @@ namespace Altaxo.Graph
 			}
 		}
 
-
-
 		public override void Paint(Graphics g, Graph.Layer layer, object plotObject)
 		{
+			if(plotObject is PlotAssociation)
+				Paint(g,layer,(PlotAssociation)plotObject);
+			else if(plotObject is Altaxo.Calc.IScalarFunctionDD)
+				Paint(g,layer,(Altaxo.Calc.IScalarFunctionDD)plotObject);
+		}
 
-			if(!(plotObject is PlotAssociation))
-				return; // we cannot plot any other than a PlotAssociation now
-
-			PlotAssociation myPlotAssociation = (PlotAssociation)plotObject;
-
+		public void Paint(Graphics g, Graph.Layer layer, PlotAssociation myPlotAssociation)
+		{
 			double layerWidth = layer.Size.Width;
 			double layerHeight = layer.Size.Height;
 
@@ -374,101 +374,191 @@ namespace Altaxo.Graph
 					rangeList.Add(new PlotRange(rangeStart,j)); // add the last range
 				}
 
-				// paint the line style
-				if(null!=m_LineStyle)
+
+				// now plot the point array
+				Paint(g,layer,rangeList,ptArray);
+			}
+		}
+
+
+		public void Paint(Graphics g, Graph.Layer layer, Altaxo.Calc.IScalarFunctionDD plotFunction)
+		{
+			const int functionPoints=1000;
+			double layerWidth = layer.Size.Width;
+			double layerHeight = layer.Size.Height;
+
+			// allocate an array PointF to hold the line points
+			PointF[] ptArray = new PointF[functionPoints];
+
+			double xorg = layer.XAxis.Org;
+			double xend = layer.XAxis.End;
+			// Fill the array with values
+			// only the points where x and y are not NaNs are plotted!
+
+			int i,j;
+
+			bool bInPlotSpace = true;
+			int  rangeStart=0;
+			PlotRangeList rangeList = new PlotRangeList();
+		
+			for(i=0,j=0;i<functionPoints;i++)
+			{
+				double x = layer.XAxis.NormalToPhysical(((double)i)/(functionPoints-1));
+				double y = plotFunction.Function(x);
+        
+				if(Double.IsNaN(x) || Double.IsNaN(y))
 				{
-					m_LineStyle.Paint(g,ptArray,rangeList,layer.Size, (m_LineSymbolGap && m_ScatterStyle.Shape!=ScatterStyles.Shape.NoSymbol)?SymbolSize:0);
+					if(!bInPlotSpace)
+					{
+						bInPlotSpace=true;
+						rangeList.Add(new PlotRange(rangeStart,j));
+					}
+					continue;
+				}
+					
+
+				double x_rel = layer.XAxis.PhysicalToNormal(x);
+				double y_rel = layer.YAxis.PhysicalToNormal(y);
+					
+				// after the conversion to relative coordinates it is possible
+				// that with the choosen axis the point is undefined 
+				// (for instance negative values on a logarithmic axis)
+				// in this case the returned value is NaN
+				if(!Double.IsNaN(x_rel) && !Double.IsNaN(y_rel))
+				{
+					if(bInPlotSpace)
+					{
+						bInPlotSpace=false;
+						rangeStart = j;
+					}
+
+					ptArray[j].X = (float)(layerWidth * x_rel);
+					ptArray[j].Y = (float)(layerHeight * (1-y_rel));
+					j++;
+				}
+				else
+				{
+					if(!bInPlotSpace)
+					{
+						bInPlotSpace=true;
+						rangeList.Add(new PlotRange(rangeStart,j));
+					}
+				}
+			} // end for
+			if(!bInPlotSpace)
+			{
+				bInPlotSpace=true;
+				rangeList.Add(new PlotRange(rangeStart,j)); // add the last range
+			}
+
+
+
+			// ------------------ end of creation of plot array -----------------------------------------------
+		
+			// now plot the point array
+			Paint(g,layer,rangeList,ptArray);
+		}
+
+		public void Paint(Graphics g, Graph.Layer layer, PlotRangeList rangeList, PointF[] ptArray)
+		{
+
+			// --------------------- now do the job of plotting ------------------------------------------------
+
+
+			// paint the line style
+			if(null!=m_LineStyle)
+			{
+				m_LineStyle.Paint(g,ptArray,rangeList,layer.Size, (m_LineSymbolGap && m_ScatterStyle.Shape!=ScatterStyles.Shape.NoSymbol)?SymbolSize:0);
+			}
+
+			// paint the drop style
+			if(null!=m_ScatterStyle && m_ScatterStyle.DropLine!=ScatterStyles.DropLine.NoDrop)
+			{
+				PenHolder ph = m_ScatterStyle.Pen;
+				ph.Cached=true;
+				Pen pen = ph.Pen; // do not dispose this pen, since it is cached
+				float xe=layer.Size.Width;
+				float ye=layer.Size.Height;
+				if( (0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Top)) && (0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Bottom)))
+				{
+					for(int j=0;j<ptArray.Length;j++)
+					{
+						float x = ptArray[j].X;
+						g.DrawLine(pen,x,0,x,ye);
+					}
+				}
+				else if( 0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Top))
+				{
+					for(int j=0;j<ptArray.Length;j++)
+					{
+						float x = ptArray[j].X;
+						float y = ptArray[j].Y;
+						g.DrawLine(pen,x,0,x,y);
+					}
+				}
+				else if( 0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Bottom))
+				{
+					for(int j=0;j<ptArray.Length;j++)
+					{
+						float x = ptArray[j].X;
+						float y = ptArray[j].Y;
+						g.DrawLine(pen,x,y,x,ye);
+					}
 				}
 
-				// paint the drop style
-				if(null!=m_ScatterStyle && m_ScatterStyle.DropLine!=ScatterStyles.DropLine.NoDrop)
+				if( (0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Left)) && (0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Right)))
 				{
-					PenHolder ph = m_ScatterStyle.Pen;
-					ph.Cached=true;
-					Pen pen = ph.Pen; // do not dispose this pen, since it is cached
-					float xe=layer.Size.Width;
-					float ye=layer.Size.Height;
-					if( (0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Top)) && (0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Bottom)))
+					for(int j=0;j<ptArray.Length;j++)
 					{
-						for(j=0;j<ptArray.Length;j++)
-						{
-							float x = ptArray[j].X;
-							g.DrawLine(pen,x,0,x,ye);
-						}
+						float y = ptArray[j].Y;
+						g.DrawLine(pen,0,y,xe,y);
 					}
-					else if( 0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Top))
-					{
-						for(j=0;j<ptArray.Length;j++)
-						{
-							float x = ptArray[j].X;
-							float y = ptArray[j].Y;
-							g.DrawLine(pen,x,0,x,y);
-						}
-					}
-					else if( 0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Bottom))
-					{
-						for(j=0;j<ptArray.Length;j++)
-						{
-							float x = ptArray[j].X;
-							float y = ptArray[j].Y;
-							g.DrawLine(pen,x,y,x,ye);
-						}
-					}
-
-					if( (0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Left)) && (0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Right)))
-					{
-						for(j=0;j<ptArray.Length;j++)
-						{
-							float y = ptArray[j].Y;
-							g.DrawLine(pen,0,y,xe,y);
-						}
-					}
-					else if( 0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Right))
-					{
-						for(j=0;j<ptArray.Length;j++)
-						{
-							float x = ptArray[j].X;
-							float y = ptArray[j].Y;
-							g.DrawLine(pen,x,y,xe,y);
-						}
-					}
-					else if( 0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Left))
-					{
-						for(j=0;j<ptArray.Length;j++)
-						{
-							float x = ptArray[j].X;
-							float y = ptArray[j].Y;
-							g.DrawLine(pen,0,y,x,y);
-						}
-					}
-				} // end paint the drop style
-
-
-				// paint the scatter style
-				if(null!=m_ScatterStyle && m_ScatterStyle.Shape!=ScatterStyles.Shape.NoSymbol)
+				}
+				else if( 0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Right))
 				{
+					for(int j=0;j<ptArray.Length;j++)
+					{
+						float x = ptArray[j].X;
+						float y = ptArray[j].Y;
+						g.DrawLine(pen,x,y,xe,y);
+					}
+				}
+				else if( 0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Left))
+				{
+					for(int j=0;j<ptArray.Length;j++)
+					{
+						float x = ptArray[j].X;
+						float y = ptArray[j].Y;
+						g.DrawLine(pen,0,y,x,y);
+					}
+				}
+			} // end paint the drop style
+
+
+			// paint the scatter style
+			if(null!=m_ScatterStyle && m_ScatterStyle.Shape!=ScatterStyles.Shape.NoSymbol)
+			{
 				// save the graphics stat since we have to translate the origin
 				System.Drawing.Drawing2D.GraphicsState gs = g.Save();
 
 
-					float xpos=0, ypos=0;
-					float xdiff,ydiff;
-					for(j=0;j<ptArray.Length;j++)
-					{
-						xdiff = ptArray[j].X - xpos;
-						ydiff = ptArray[j].Y - ypos;
-						xpos = ptArray[j].X;
-						ypos = ptArray[j].Y;
-						g.TranslateTransform(xdiff,ydiff);
-						m_ScatterStyle.Paint(g);
-					} // end for
+				float xpos=0, ypos=0;
+				float xdiff,ydiff;
+				for(int j=0;j<ptArray.Length;j++)
+				{
+					xdiff = ptArray[j].X - xpos;
+					ydiff = ptArray[j].Y - ypos;
+					xpos = ptArray[j].X;
+					ypos = ptArray[j].Y;
+					g.TranslateTransform(xdiff,ydiff);
+					m_ScatterStyle.Paint(g);
+				} // end for
 
-					g.Restore(gs); // Restore the graphics state
-
-				}
+				g.Restore(gs); // Restore the graphics state
 
 			}
 		}
+
 
 	/// <summary>
 	/// PaintSymbol paints the symbol including the line so
@@ -477,66 +567,66 @@ namespace Altaxo.Graph
 	/// <param name="g">Graphic context</param>
 	/// <param name="pos">Position of the starting of the line</param>
  
-		public override SizeF PaintSymbol(Graphics g, PointF pos, float width)
-		{
-			GraphicsState gs = g.Save();
+	public override SizeF PaintSymbol(Graphics g, PointF pos, float width)
+{
+	GraphicsState gs = g.Save();
 			
-			float symsize = this.SymbolSize;
-			float linelen = width/2; // distance from start to symbol centre
+	float symsize = this.SymbolSize;
+	float linelen = width/2; // distance from start to symbol centre
 
-			g.TranslateTransform(pos.X+linelen,pos.Y);
-			if(null!=this.LineStyle && this.LineStyle.Connection != LineStyles.ConnectionStyle.NoLine)
-			{
-				if(LineSymbolGap==true)
-				{
-					// plot a line with the length of symbolsize from 
-					this.LineStyle.PaintLine(g,new PointF(-linelen,0),new PointF(-symsize,0));
-					this.LineStyle.PaintLine(g, new PointF(symsize,0),new PointF(linelen,0));
-				}
-				else // no gap
-				{
-					this.LineStyle.PaintLine(g,new PointF(-linelen,0),new PointF(linelen,0));
-				}
-			}
-			// now Paint the symbol
-			if(null!=this.ScatterStyle && this.ScatterStyle.Shape != ScatterStyles.Shape.NoSymbol)
-				this.ScatterStyle.Paint(g);
+	g.TranslateTransform(pos.X+linelen,pos.Y);
+	if(null!=this.LineStyle && this.LineStyle.Connection != LineStyles.ConnectionStyle.NoLine)
+{
+	if(LineSymbolGap==true)
+{
+	// plot a line with the length of symbolsize from 
+	this.LineStyle.PaintLine(g,new PointF(-linelen,0),new PointF(-symsize,0));
+	this.LineStyle.PaintLine(g, new PointF(symsize,0),new PointF(linelen,0));
+}
+	else // no gap
+{
+	this.LineStyle.PaintLine(g,new PointF(-linelen,0),new PointF(linelen,0));
+}
+}
+	// now Paint the symbol
+	if(null!=this.ScatterStyle && this.ScatterStyle.Shape != ScatterStyles.Shape.NoSymbol)
+	this.ScatterStyle.Paint(g);
 
-			g.Restore(gs);
+	g.Restore(gs);
 	
-			return new SizeF(2*linelen,symsize);
-		}
-		#region IChangedEventSource Members
+	return new SizeF(2*linelen,symsize);
+}
+	#region IChangedEventSource Members
 
-		public event System.EventHandler Changed;
+	public event System.EventHandler Changed;
 
-		protected virtual void OnChanged()
-		{
-			if(null!=Changed)
-				Changed(this,new EventArgs());
-		}
+	protected virtual void OnChanged()
+{
+	if(null!=Changed)
+	Changed(this,new EventArgs());
+}
 
-		protected virtual void OnLineStyleChanged(object sender, EventArgs e)
-		{
-			OnChanged();
-		}
+	protected virtual void OnLineStyleChanged(object sender, EventArgs e)
+{
+	OnChanged();
+}
 
-		protected virtual void OnScatterStyleChanged(object sender, EventArgs e)
-		{
-			OnChanged();
-		}
+	protected virtual void OnScatterStyleChanged(object sender, EventArgs e)
+{
+	OnChanged();
+}
 
 
-		#endregion
+	#endregion
 
-		#region IChildChangedEventSink Members
+	#region IChildChangedEventSink Members
 
-		public void OnChildChanged(object child, EventArgs e)
-		{
-			if(null!=Changed)
-				Changed(this,e);
-		}
+	public void OnChildChanged(object child, EventArgs e)
+{
+	if(null!=Changed)
+	Changed(this,e);
+}
 
-		#endregion
-	} // end of class LineScatterPlotStyle
+	#endregion
+} // end of class LineScatterPlotStyle
 }

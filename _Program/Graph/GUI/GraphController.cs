@@ -452,7 +452,12 @@ namespace Altaxo.Graph
 			mi.Click += new EventHandler(EhMenuGraphLayer_OnClick);
 			//mi.Shortcut = ShortCuts.
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
-			
+
+			// Graph - Add curve plot
+			mi = new MenuItem("Add Curve Plot");
+			mi.Click += new EventHandler(EhMenuGraphAddCurvePlot_OnClick);
+			//mi.Shortcut = ShortCuts.
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 		}
 
 
@@ -664,6 +669,12 @@ namespace Altaxo.Graph
 			EnsureValidityOfCurrentLayerNumber();
 			if(null!=this.ActiveLayer)
 				Graph.LayerController.ShowDialog(this.View.Form,this.ActiveLayer);
+		}
+
+		private void EhMenuGraphAddCurvePlot_OnClick(object sender, System.EventArgs e)
+		{
+			EnsureValidityOfCurrentLayerNumber();
+			this.Doc.Layers[this.CurrentLayerNumber].PlotItems.Add(new XYCurvePlotItem(new XYCurvePlotData(),new LineScatterPlotStyle()));
 		}
 
 		/// <summary>

@@ -28,6 +28,7 @@ Global
 		{95A2BF58-8568-4512-BD82-F0240FFC7558}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
+		Icon1.ico = Icon1.ico
 		LayerButtons.bmp = LayerButtons.bmp
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
