@@ -145,7 +145,7 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// A linear axis, i.e a axis where physical values v can be translated to logical values l by v=a+b*l.
 	/// </summary>
-	[SerializationSurrogate(0,typeof(Altaxo.Data.DataColumn.SerializationSurrogate0))]
+	[SerializationSurrogate(0,typeof(LinearAxis.SerializationSurrogate0))]
 	[SerializationVersion(0)]
 	public class LinearAxis : Axis, System.Runtime.Serialization.IDeserializationCallback
 	{
@@ -181,45 +181,77 @@ namespace Altaxo.Graph
 
 
 		#region Serialization
+		/// <summary>Used to serialize the LinearAxis Version 0.</summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
+			/// <summary>
+			/// Serializes LinearAxis Version 0.
+			/// </summary>
+			/// <param name="obj">The axis to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				LinearAxis s = (LinearAxis)obj;
-				// I decided _not_ to serialize the parent object, since if we only want
-				// to serialize this column, we would otherwise serialize the entire object
-				// graph
-				// info.AddValue("Parent",s.m_Table); // 
-				/*
-				info.AddValue("Name",s.m_ColumnName);
-				info.AddValue("Number",s.m_ColumnNumber);
-				info.AddValue("Count",s.m_Count);
-				*/
+				info.AddValue("BaseOrg",s.m_BaseOrg);  
+				info.AddValue("BaseEnd",s.m_BaseEnd);  
+				info.AddValue("MajorSpan",s.m_MajorSpan);
+				info.AddValue("MinorTicks",s.m_MinorTicks);
+				info.AddValue("OrgByMajor",s.m_AxisOrgByMajor);
+				info.AddValue("EndByMajor",s.m_AxisEndByMajor);
+
+				info.AddValue("OrgFixed",s.m_AxisOrgFixed);
+				info.AddValue("EndFixed",s.m_AxisEndFixed);
+
+				info.AddValue("Bounds",s.m_DataBounds);
 			}
+			/// <summary>
+			/// Deserializes the Linear Axis Version 0.
+			/// </summary>
+			/// <param name="obj">The empty axis object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized linear axis.</returns>
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				LinearAxis s = (LinearAxis)obj;
-				// s.m_Table = (Altaxo.Data.DataTable)(info.GetValue("Parent",typeof(Altaxo.Data.DataTable)));
-				/*
-				s.m_Table = null;
-				s.m_ColumnName = info.GetString("Name");
-				s.m_ColumnNumber = info.GetInt32("Number");
-				s.m_Count = info.GetInt32("Count");
 
-				// set the helper data
-				s.m_MinRowChanged=int.MaxValue; // area of rows, which changed during event off period
-				s.m_MaxRowChanged=int.MinValue;
-				*/
+				s.m_BaseOrg = (double)info.GetDouble("BaseOrg");
+				s.m_BaseEnd = (double)info.GetDouble("BaseEnd");
+
+				s.m_MajorSpan = (double)info.GetDouble("MajorSpan");
+				s.m_MinorTicks = (int)info.GetInt32("MinorTicks");
+
+				s.m_AxisOrgByMajor = (double)info.GetDouble("OrgByMajor");
+				s.m_AxisEndByMajor = (double)info.GetDouble("EndByMajor");
+
+				s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
+				s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
+
+				s.m_DataBounds = (FinitePhysicalBoundaries)info.GetValue("Bounds",typeof(FinitePhysicalBoundaries));
+		
 				return s;
 			}
 		}
 
+		/// <summary>
+		/// Finale measures after deserialization of the linear axis.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
 		public virtual void OnDeserialization(object obj)
 		{
+			// restore the cached values
+			SetCachedValues();
+			// restore the event chain
+			m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnBoundariesChanged);
 		}
 		#endregion
 
 
+		/// <summary>
+		/// Creates a default linear axis with org=0 and end=1.
+		/// </summary>
 		public LinearAxis()
 		{
 			m_DataBounds = new FinitePhysicalBoundaries();
@@ -227,6 +259,9 @@ namespace Altaxo.Graph
 		}
 
 
+		/// <summary>
+		/// Get/sets the axis origin (physical units).
+		/// </summary>
 		public override double Org
 		{
 			get { return m_AxisOrg; } 
@@ -236,6 +271,10 @@ namespace Altaxo.Graph
 				ProcessDataBounds(m_AxisOrg,true,m_AxisEnd,true);
 			}
 		}
+
+		/// <summary>
+		/// Get/sets the axis end (physical units).
+		/// </summary>
 		public override double End 
 		{
 			get { return m_AxisEnd; } 
@@ -246,11 +285,19 @@ namespace Altaxo.Graph
 			}
 		}
 
+		/// <summary>
+		/// Get/sets the OrgFixed property. If true, the axis origin is fixed to a specific value.
+		/// </summary>
 		public override bool OrgFixed
 		{
 			get { return m_AxisOrgFixed; } 
 			set { m_AxisOrgFixed = value; }
 		}
+	
+		
+		/// <summary>
+		/// Get/sets the EndFixed property. If true, the axis end is fixed to a specific value.
+		/// </summary>
 		public override bool EndFixed 
 		{
 			get { return m_AxisEndFixed; } 
@@ -258,8 +305,19 @@ namespace Altaxo.Graph
 		}
 
 
-		public override PhysicalBoundaries DataBounds { get { return m_DataBounds; } }
+		/// <summary>
+		/// Get the internal DataBound object (mostly for merging).
+		/// </summary>
+		public override PhysicalBoundaries DataBounds 
+		{
+			get { return m_DataBounds; }
+		}
 
+		/// <summary>
+		/// Converts a value in axis (physical) units to a "normalized" value, which is 0 for the axis org and 1 for the axis end.
+		/// </summary>
+		/// <param name="x">Value to convert (physical units).</param>
+		/// <returns>Normalized value.</returns>
 		public override double PhysicalToNormal(double x)
 		{
 			return (x- m_AxisOrg ) * m_OneByAxisSpan; 
@@ -503,154 +561,96 @@ namespace Altaxo.Graph
 		majorspan = majornormspan * TenToThePowerOf(nSpanPotCorr);
 		minorticks = (int)(majornormspan / minornormspan);
 		} // end of function
-
-
-
-/*
-		static void CalculateDataBorders(	
-			double min,                // Minimum of data 
-			double max,                // Maximum of data
-			out int  nSpanPotCorr,     // corrected power of span
-			out int nAxisPotCorr,      // power of axis 
-			out double  aMaxTeiler,    // multiplikator für maximum
-			out double  aMinTeiler,    // Multiplikator for Minimum
-			out double aTeilerStep,    // Teilerschritt unter Berücksichtigung der korrigierten Span-Potenz
-			out double aEffectiveStep, // Teilerschritt ohne Berücksichtigung der korrigierten Potenz
-			out double aAxisStep       // Teilerschritt auf der Achse unter Berücksichtigung der Korrigierten Potenz
-			)
-		{
-			int i, finep, nDiffPotCorr;
-			double nMaxTeiler, nMinTeiler;
-			double teiler, xSpanPotCorr, xAxisPotCorr, xDiffPotCorr, x;
-
-			if(min>max) // should not happen, but can happen when there are no data and min and max are uninitialized 
-			{
-				min=max=0;
-			}
-
-			nSpanPotCorr = 0; xSpanPotCorr=1; // for the first step no power correction
-
-			double span = max - min; // span width between max and min
-
-			if(0==span)
-			{
-				double diff;
-				// if span width is zero, then 1% of the velue, in case of min==max==0 we use 1
-				if(0==max || 0==min) // if one is null, the other should also be null, but to be secure...
-					diff = 1;
-				else
-					diff = Math.Abs(min/100); // wir can be sure, that min==max, because span==0
-
-				min -= diff;
-				max += diff;
-					
-				span = max - min;
-			} // if 0==span
-
-
-
-			// now we calculate the power (order) of the axis values, 
-			// for this we use the greates absolute value
-			// of the minimum and the maximum
-			double max_axis_value = System.Math.Max(fabs(min),fabs(max));
-			nAxisPotCorr = (int)(3*Math.Floor((System.Math.Log10(max_axis_value)-1)/3));  // between 10 and  9999.9999 no power, above and below engineering powers
-			// Ermitteln der Potenz der Spannweite
-			nSpanPotCorr = (int)(3*Math.Floor((Math.Log10(span)-1)/3));  // zwischen 10 und 9999.9999 soll keine Potenz, rest entsprechend alle 3 Dekaden verschoben
-
-			nDiffPotCorr = nSpanPotCorr - nAxisPotCorr; // Differenz der Korrektur-Potenzen
-
-			// Teiler oder Multiplikator for die Axis-Korrektur ermitteln
-			xAxisPotCorr = TenToThePowerOf(Math.Abs(nAxisPotCorr));
-
-			// Teiler oder Multiplikator für die Span-Korrektur ermitteln
-			xSpanPotCorr = TenToThePowerOf(Math.Abs(nSpanPotCorr));
-
-			// Teiler oder Multiplikator für die Differenz-Korrektur ermitteln
-			xDiffPotCorr = TenToThePowerOf(Math.Abs(nDiffPotCorr));
-
-			if(nSpanPotCorr<0)
-			{
-				max *= xSpanPotCorr;
-				min *= xSpanPotCorr;
-				span = max - min;
-			}
-			else if(nSpanPotCorr>0)
-			{
-				// Span, min und max durch Potenz dividieren
-				min /= xSpanPotCorr;
-				max /= xSpanPotCorr;
-				span = max - min;
-			}
-
-
-			for(x = 10; x<span; x*=10);
-
-			for(finep=0;finep<=4;finep++)
-			{
-				switch(finep)
-				{
-					case 0:
-						teiler = x/10;
-						break;
-					case 1:
-						teiler = x/20;
-						break;
-					case 2:
-						teiler = x/25;
-						break;
-					case 3:
-						teiler = x/50;
-						break;
-					case 4:
-						teiler = x/100;
-						break;
-				} // end of switch
-
-				if(teiler<1)
-					break;  // sonst ist die Annahme nicht erfüllt, dass der Teiler eine Ganze Zahl ist
-
-
-				// wir nehmen mal an, daß der Teiler eine ganze Zahl ist
-
-				nMaxTeiler = Math.Floor(max/teiler);
-
-				if(nMaxTeiler*teiler < max)
-					nMaxTeiler++;
-
-				nMinTeiler = Math.Floor(min/teiler);
-
-				if(nMinTeiler*teiler > min)
-					nMinTeiler--;
-
-
-				// wenn es genug Teiler sind, können wir mit der Verfeinerung aufhören
-
-				if((nMaxTeiler - nMinTeiler)>=3)
-					break;
-
-			} // end of for-Statement
-
-
-			aMaxTeiler = nMaxTeiler;
-			aMinTeiler = nMinTeiler;
-			aTeilerStep = teiler;
-			aEffectiveStep = nSpanPotCorr < 0 ? teiler / xSpanPotCorr : teiler * xSpanPotCorr;
-			aAxisStep =      nDiffPotCorr < 0 ? teiler / xDiffPotCorr : teiler * xDiffPotCorr;
-		} // end of funktion
-*/		
-
 	} // end of class LinearAxis
 
 
+	/// <summary>
+	/// Represents a logarithmic axis, i.e. the physical values v correspond to logical values l by v=a*10^(b*l).
+	/// </summary>
+	[SerializationSurrogate(0,typeof(Log10Axis.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class Log10Axis : Axis
 	{
+		/// <summary>Decimal logarithm of axis org.</summary>
 		double m_Log10Org=0; // Log10 of physical axis org
+		/// <summary>Decimal logarithm of axis end.</summary>
 		double m_Log10End=1; // Log10 of physical axis end
+
+		/// <summary>Number of decades per major tick.</summary>
 		int    m_DecadesPerMajorTick=1; // how many decades is one major tick
+		/// <summary>True when the axis org is fixed to a specific value.</summary>
 		protected bool   m_AxisOrgFixed = false;
+		/// <summary>True when the axis end is fixed to a specific value.</summary>
 		protected bool   m_AxisEndFixed = false;
+
+		/// <summary>The boundary object. It collectes only positive values for the axis is logarithmic.</summary>
 		protected PositiveFinitePhysicalBoundaries m_DataBounds = null;
 
+
+		#region Serialization
+		/// <summary>Used to serialize the Log10Axis Version 0.</summary>
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes Log10Axis Version 0.
+			/// </summary>
+			/// <param name="obj">The axis to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				Log10Axis s = (Log10Axis)obj;
+				info.AddValue("Log10Org",s.m_Log10Org);  
+				info.AddValue("Log10End",s.m_Log10End);  
+				info.AddValue("DecadesPerMajor",s.m_DecadesPerMajorTick);
+
+				info.AddValue("OrgFixed",s.m_AxisOrgFixed);
+				info.AddValue("EndFixed",s.m_AxisEndFixed);
+
+				info.AddValue("Bounds",s.m_DataBounds);
+			}
+			/// <summary>
+			/// Deserializes the Linear Axis Version 0.
+			/// </summary>
+			/// <param name="obj">The empty axis object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized linear axis.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				Log10Axis s = (Log10Axis)obj;
+
+				s.m_Log10Org = (double)info.GetDouble("Log10Org");
+				s.m_Log10End = (double)info.GetDouble("Log10End");
+
+				s.m_DecadesPerMajorTick = (int)info.GetInt32("DecadesPerMajor");
+
+				s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
+				s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
+
+				s.m_DataBounds = (PositiveFinitePhysicalBoundaries)info.GetValue("Bounds",typeof(PositiveFinitePhysicalBoundaries));
+		
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization of the linear axis.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+			// restore the event chain
+			m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnBoundariesChanged);
+		}
+		#endregion
+
+
+
+		/// <summary>
+		/// Creates a default logarithmic axis with org=1 and end=10.
+		/// </summary>
 		public Log10Axis()
 		{
 			m_DataBounds = new PositiveFinitePhysicalBoundaries();
