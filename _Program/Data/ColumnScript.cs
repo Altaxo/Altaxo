@@ -50,7 +50,7 @@ namespace Altaxo.Data
 			/// </summary>
 			SetColumn,
 			/// <summary>
-			/// With this style, you can write code outside the function <see cref="Altaxo.Data.ColScriptExeBase.Execute"/>
+			/// With this style, you can write code outside the function <see cref="Altaxo.Calc.ColScriptExeBase.Execute"/>
 			/// You can even define your own classes and functions for use by the column script.
 			///	</summary>
 			FreeStyle };

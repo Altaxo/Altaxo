@@ -71,12 +71,15 @@ namespace Altaxo.Data
 
 
 
-
+	/// <summary>
+	/// This designates a vector structure, which holds elements. A single element at a given index can be read out
+	/// by returning a AltaxoVariant.
+	/// </summary>
 	public interface IReadableColumn
 	{
 
 		/// <summary>
-		/// the indexer property returns the element at index i as an AltaxoVariant
+		/// The indexer property returns the element at index i as an AltaxoVariant.
 		/// </summary>
 		AltaxoVariant this[int i] 
 		{
@@ -84,11 +87,11 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// IsElementEmpty returns true, if the value at index i of the column
+		/// Returns true, if the value at index i of the column
 		/// is null or invalid or in another state comparable to null or empty
 		/// </summary>
-		/// <param name="i"></param>
-		/// <returns>true if element is null/empty, false if element is valid</returns>
+		/// <param name="i">The index to the element.</param>
+		/// <returns>true if element is null/empty, false if the element is valid</returns>
 		bool IsElementEmpty(int i);
 
 		/// <summary>
@@ -104,8 +107,16 @@ namespace Altaxo.Data
 		}
 	}
 
+	/// <summary>
+	/// A column, for which the elements can be set by assigning a AltaxoVariant to a element at index i.
+	/// </summary>
 	public interface IWriteableColumn
 	{
+		/// <summary>
+		/// Indexer property for setting the element at index i by a AltaxoVariant.
+		/// This function should throw an exeption, if the type of the variant do not match
+		/// the type of the column.
+		/// </summary>
 		AltaxoVariant this[int i] 
 		{
 			set;
@@ -113,23 +124,50 @@ namespace Altaxo.Data
 	}
 
 
+	/// <summary>
+	/// This is a column with elements, which can be treated as numeric values. This is truly the case
+	/// for columns which hold integer values or floating point values. Also true for DateTime columns, since they
+	/// can converted in seconds since a given reference date.
+	/// </summary>
 	public interface INumericColumn 
 	{
+		/// <summary>
+		/// Returns the value of a column element at index i as numeric value (double).
+		/// </summary>
+		/// <param name="i">The index to the column element.</param>
+		/// <returns>The value of the column element as double value.</returns>
 		double GetDoubleAt(int i);
 	}
 
+	/// <summary>
+	/// The indexer column is a simple readable numeric column. The value of an element is 
+	/// it's index in the column, i.e. GetDoubleAt(i) simply returns the value i.
+	/// </summary>
 	public class IndexerColumn : INumericColumn, IReadableColumn
 	{
+		/// <summary>
+		/// Simply returns the value i.
+		/// </summary>
+		/// <param name="i">The index i.</param>
+		/// <returns>The index i.</returns>
 		public double GetDoubleAt(int i)
 		{
 			return i;
 		}
 
+		/// <summary>
+		/// This returns always true.
+		/// </summary>
+		/// <param name="i">The index i.</param>
+		/// <returns>Always true.</returns>
 		public bool IsElementEmpty(int i)
 		{
 			return false;
 		}
 
+		/// <summary>
+		/// Returns the index i as AltaxoVariant.
+		/// </summary>
 		public AltaxoVariant this[int i] 
 		{
 			get 
@@ -138,6 +176,9 @@ namespace Altaxo.Data
 			}
 		}
 
+		/// <summary>
+		/// The full name of a indexer column is "IndexerColumn".
+		/// </summary>
 		public string FullName
 		{
 			get { return "IndexerColumn"; }
@@ -146,8 +187,14 @@ namespace Altaxo.Data
 	}
 
 
+	/// <summary>
+	/// The interface to a column which has a definite number of elements.
+	/// </summary>
 	public interface IDefinedCount
 	{
+		/// <summary>
+		/// Get the number of elements of the column.
+		/// </summary>
 		int Count
 		{
 			get;
@@ -157,53 +204,120 @@ namespace Altaxo.Data
 
 
 	/// <summary>
-	/// Summary description for Altaxo.Data.DataColumn.
+	/// This is the base class of all data columns in Altaxo. This base class provides readable, writeable 
+	/// columns with a defined count.
 	/// </summary>
 	[SerializationSurrogate(0,typeof(Altaxo.Data.DataColumn.SerializationSurrogate0))]
 	[SerializationVersion(0)]
 	[Serializable()]
 	public abstract class DataColumn : IDisposable, System.Runtime.Serialization.IDeserializationCallback, IReadableColumn, IWriteableColumn, IDefinedCount
 	{
-		// Data Members
-		protected string m_ColumnName=null; // the name of the column in the data m_Table
-		protected int m_ColumnNumber=0; // number of the column in the data m_Table
+		///<summary>The name of the column.</summary>
+		protected string m_ColumnName=null;
+		
+		/// <summary>The number (position) of the column in the data table.</summary>
+		/// <remarks>For normal columns, this value is positive (zero for the first column).<para/>
+		/// For property columns ("horizontal columns"), this value is negative (-1 for the first
+		/// property column).</remarks>
+		protected int m_ColumnNumber=0;
+
+		/// <summary>
+		/// The parent table this column belongs to.
+		/// </summary>
 		protected Altaxo.Data.DataTable m_Table=null;
+
+		/// <summary>The group number the column belongs to.</summary>
+		/// <remarks>Normal columns are organized in groups. Every group of colums has either no or
+		/// exactly one designated x-column (i.e. independend variable).</remarks>
 		protected int m_Group=0; // number of group this column is belonging to
+		
+		/// <summary>The kind of the column, <see cref="ColumnKind"/></summary>
 		protected ColumnKind m_Kind = ColumnKind.Y; // kind of column
 
-		protected int m_Count=0; // Index of last valid data -1
+		/// <summary>The column count, i.e. one more than the index to the last valid element.</summary>
+		protected int m_Count=0; // Index of last valid data + 1
+
+		/// <summary>If the capacity of the column is not enough, a new array is aquired, with the new size
+		/// newSize = addSpace+increaseFactor*oldSize.</summary>
 		protected static double increaseFactor=2; // array space is increased by this factor plus addSpace
+		/// <summary>If the capacity of the column is not enough, a new array is aquired, with the new size
+		/// newSize = addSpace+increaseFactor*oldSize.</summary>
 		protected static int    addSpace=32; // array space is increased by multiplying with increasefactor + addspase
 
-		protected int m_MinRowChanged=int.MaxValue; // area of rows, which changed during event off period
+		/// <summary>Lower bound of the area of rows, which changed during the data change event off period.</summary>
+		protected int m_MinRowChanged=int.MaxValue;
+		/// <summary>Upper bound of the area of rows, which changed during the data change event off period.</summary>
 		protected int m_MaxRowChanged=int.MinValue;
+		/// <summary>Indicates, if the row count decreased during the data change event off period. In this case it is neccessary
+		/// to recalculate the row count of the table, since it is possible that the table row count also decreased in this case.</summary>
 		protected bool m_bRowCountDecreased=false; // true if during event switch of period, the row m_Count  of this column decreases 
+		
+		/// <summary>Counter of how many suspends to data change event notifications are pending.</summary>
+		/// <remarks>If this counter is zero, then every change to a element of this column fires a data change event. Applications doing a lot of changes at once can
+		/// suspend this events for a better performance by calling <see cref="SuspendDataChangedNotifications"/>. After finishing the application has to
+		/// call <see cref="ResumeDataChangedNotifications"/></remarks>
 		protected int  m_DataEventsSuspendCount=0;
 
-		public delegate void DataChangedHandler(Altaxo.Data.DataColumn sender, int nMinRow, int nMaxRow, bool m_bRowCountDecreased );   // delegate declaration
+		/// <summary>
+		/// Handler of data change events. The area of changed rows is provided by nMinRow and nMaxRow. If the row count
+		/// has decreased this is indicated by bRowCountDecreased is true.
+		/// </summary>
+		public delegate void DataChangedHandler(Altaxo.Data.DataColumn sender, int nMinRow, int nMaxRow, bool bRowCountDecreased );   // delegate declaration
 		public delegate void DirtySetHandler(Altaxo.Data.DataColumn sender);
 		public delegate void DisposedHandler(Altaxo.Data.DataColumn sender);
 
+		/// <summary>
+		/// Data changed events are fired if any of the data of this column is changed. If the event is suspended by a call to
+		/// <see cref="SuspendDataChangedNotifications"/>, the changes are stored internally. If the event is resumed, then
+		/// the accumulated changes are returned by the <see cref="DataChangedHandler"/>.</summary>
 		public event DataChangedHandler						DataChanged;
+		
+		/// <summary>This element is fired when the column is to be disposed.</summary><remarks>All instances, which have a reference
+		/// to this column, should have a wire to this event. In case the event is fired, it indicates
+		/// that the column should be disposed, so they have to unreference this column by setting the
+		/// reference to null.
+		/// </remarks>
 		public event DisposedHandler							ColumnDisposed;
+
+		/// <summary>
+		/// This event is fired once (and only once) when something in the column has changed,
+		/// and the column state switches from not dirty to dirty. Once the column state is dirty,
+		/// further changes to the column will _not_ fire the event.
+		/// </summary>
 		protected internal event DirtySetHandler	DirtySet;
  
 
 		#region Serialization
+		/// <summary>
+		/// This class is responsible for the serialization of the DataColumn (version 0).
+		/// </summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
+			/// <summary>Serializes the DataColumn given by object obj.</summary>
+			/// <param name="obj">The <see cref="DataColumn"/> instance which should be serialized.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <remarks>I decided _not_ to serialize the parent object, because there are situations were we
+			/// only want to serialize this column. But if we also serialize the parent table, we end up serializing all the object graph.
+			/// </remarks>
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)obj;
-				// I decided _not_ to serialize the parent object, since if we only want
-				// to serialize this column, we would otherwise serialize the entire object
-				// graph
-				// info.AddValue("Parent",s.m_Table); // 
+				// info.AddValue("Parent",s.m_Table); // not serialize the parent, see remarks
 				info.AddValue("Name",s.m_ColumnName);
 				info.AddValue("Number",s.m_ColumnNumber);
 				info.AddValue("Count",s.m_Count);
 				info.AddValue("Kind",(int)s.m_Kind);
 			}
+
+			/// <summary>
+			/// Deserializes the <see cref="DataColumn"/> instance.
+			/// </summary>
+			/// <param name="obj">The empty DataColumn instance, created by the runtime.</param>
+			/// <param name="info">Serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The surrogate selector.</param>
+			/// <returns>The deserialized object.</returns>
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)obj;
@@ -221,17 +335,35 @@ namespace Altaxo.Data
 			}
 		}
 
+		/// <summary>
+		/// This function is called on end of deserialization.
+		/// </summary>
+		/// <param name="obj">The deserialized DataColumn instance.</param>
 		public virtual void OnDeserialization(object obj)
 		{
 		}
 		#endregion
 
 
+		/// <summary>
+		/// A call to this function suspends data changed event notifications
+		/// </summary>
+		/// <remarks>If an application has
+		/// to change a lot of data in a column at once, it should call this function to avoid the firing
+		/// of the event every time it changes a single element. After processing all items, the application
+		/// has to resume the data changed event notification by calling <see cref="ResumeDataChangedNotifications"/>
+		/// </remarks>
 		public void SuspendDataChangedNotifications()
 		{
 			m_DataEventsSuspendCount++;
 		}
 
+		/// <summary>
+		/// This resumes the data changed notifications if the suspend counter has reached zero.
+		/// </summary>
+		/// <remarks>The area of changed rows is updated even in the suspend period. The suspend counter is
+		/// decreased by a call to this function. If it reaches zero, the data changed event is fired,
+		/// and the arguments of the handler contain the changed area of rows during the suspend time.</remarks>
 		public void ResumeDataChangedNotifications()
 		{
 			m_DataEventsSuspendCount--;
@@ -242,28 +374,34 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Copy the head of the column, i.e. Column comment, label unit and
-		/// scripts from another column
-		/// number is not copied, since this is set by the m_Table
+		/// Copies the head of the column, i.e. the column name from another column.
+		/// The column number is not copied, since this has to be set by the parent table.
 		/// </summary>
-		/// <param name="ano"></param>
+		/// <param name="ano">Column the head is copied from.</param>
+		/// <remarks>This function will throw an ApplicationException, if this column (the column the head should be
+		/// copied to) already has a parent. This is because if the column has a parent, the parent object is
+		/// responsible for naming the child columns, so the direct renaming done here is not allowed in this case.
+		/// </remarks>
 		public void CopyHeaderFrom(DataColumn ano)
 		{
 			// throw an exception, if the destination column has a parent, that is not supported!
 			// because the m_Table has to set up the names and so on
-
 			if(this.m_Table!=null)
 				throw new ApplicationException("The column " + this.ColumnName + " has the parent m_Table " + m_Table.TableName);
 			
 			this.m_ColumnName = ano.m_ColumnName;
 		}
 
+		/// <value>The column group number this column belongs to.</value>
 		public int Group
 		{
 			get { return m_Group; }
 			set { m_Group = value; }
 		}
 
+		/// <summary>
+		/// The kind of the column. See <see cref="ColumnKind"/>.
+		/// </summary>
 		public ColumnKind Kind
 		{
 			get { return m_Kind; }
@@ -273,6 +411,8 @@ namespace Altaxo.Data
 			}
 		}
 
+		/// <value>Get/sets if this column is the X column. A X column is the column, which holds the first
+		/// independent variable in a group of columns.</value>
 		public bool XColumn
 		{
 			get { return m_Kind==ColumnKind.X; }
@@ -299,6 +439,21 @@ namespace Altaxo.Data
 		{
 		}
 
+		/// <summary>
+		/// This function fires the data changed event if the suspend count is zero.
+		/// </summary>
+		/// <param name="minRow">lower row number of the area of rows which was changed.</param>
+		/// <param name="maxRow">upper row number in the area of rows which was changed.</param>
+		/// <param name="rowCountDecreased">Must be true if the row count decreased.</param>
+		/// <remarks>The data changed event is only fired when the data changed suspend counter is zero.
+		/// If it is zero, then before the data changed event is fired, the column "contacts" its parent table by
+		/// calling the function <see cref="DataTable.OnColumnDataChanged"/>, informing the parent table of this change. If the parent table
+		/// has a not-zero suspend counter, then it will suspend data changed notifications also for this column and the event is not fired.
+		/// If the suspend counter of the parent table is zero, it firstly informs its parent data set by calling the function
+		/// <see cref="DataSet.OnTableDataChanged"/>. If the suspend counter of the DataSet is not zero, then it will suspend the data changed events of the table. And the table will
+		/// then suspend the data changed events of this column, so the event is not fired in this case<para/>
+		/// That means in the end: only if the suspend counter of this column, the parent data table, and the parent data set of this table are all zero,
+		/// then the data changed event is fired at all.</remarks>
 		protected void NotifyDataChanged(int minRow, int maxRow, bool rowCountDecreased)
 		{
 			if(null!=m_Table)
@@ -331,17 +486,18 @@ namespace Altaxo.Data
 
 			}
 		}
+
 /// <summary>
-/// returns the type of the associated ColumnStyle
-/// if the data column is not used in a datagrid, 
-/// you can return null for this
-/// </summary>
-/// <returns>the type of the associated ColumnStyle</returns>
+/// Returns the type of the associated ColumnStyle for use in a worksheet view.</summary>
+		/// <returns>The type of the associated <see cref="Worksheet.ColumnStyle"/> class.</returns>
+		/// <remarks>
+/// If this type of data column is not used in a datagrid, you can return null for this type.
+/// </remarks>
 		public abstract System.Type GetColumnStyleType();
 
 		/// <summary>
-		/// Column is dirty if either there are new data, and no DataChange event fired up,
-		/// and/or the column m_Count was decreased
+		/// Column is dirty if either there are new changed or deleted rows, and no data changed event was fired for notification.
+		/// This value is reseted after the data changed event has notified the change.
 		/// </summary>
 		public bool IsDirty
 		{
@@ -351,6 +507,9 @@ namespace Altaxo.Data
 			}
 		}
 
+		/// <summary>
+		/// Resets the dirty attribute.
+		/// </summary>
 		protected void ResetDirty()
 		{
 			m_MinRowChanged=int.MaxValue;
@@ -358,10 +517,10 @@ namespace Altaxo.Data
 			m_bRowCountDecreased=false;
 		}
 
-		/// <summary>
-		/// the position of the column in the m_Table, has to be syncronized by the
-		/// parent m_Table
-		/// </summary>
+		/// <value>
+		/// The position of the column in the parent table, has to be syncronized by the
+		/// parent table.
+		/// </value>
 		public int ColumnNumber
 		{
 			get
@@ -371,11 +530,11 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>
-		/// Sets the column number, only the data m_Table should do that!
-		/// because this column number must be synchronized with the
-		/// position of the column in the data m_Table 
+		/// Sets the column number, only the parent data table should do that!
+		/// This is because the column number must be synchronized with the
+		/// position of the column in the parent data table and only that table knows about the position.
 		/// </summary>
-		/// <param name="n">hte position of the column in the parent data m_Table</param>
+		/// <param name="n">The position of the column in the parent data table.</param>
 		protected internal void SetColumnNumber(int n)
 		{
 			if(null!=m_Table && m_Table[n]!=this) // test if the column is really there
@@ -384,19 +543,40 @@ namespace Altaxo.Data
 			m_ColumnNumber=n;
 		}
 
+		/// <summary>
+		/// Constructs a data column with no name associated.
+		/// </summary>
 		protected DataColumn()
 		{
 		}
+
+		/// <summary>
+		/// Constructs a data column with the name <paramref name="name"/>
+		/// </summary>
+		/// <param name="name">The initial name of the data column.</param>
 		protected DataColumn(string name)
 		{
 			m_ColumnName = name;
 		}
+
+		/// <summary>
+		/// Constructs a data column with the name <paramref name="name"/>, which belongs to the parent data
+		/// table parenttable. The column is <b>not</b> automatically inserted in the parent table!
+		/// </summary>
+		/// <param name="parenttable">The parent table this column belongs to.</param>
+		/// <param name="name">The initial name of the column.</param>
+		/// <remarks>This function is mainly intended for use by the parent table, since only the
+		/// parent table knows about which name can be used for the column.</remarks>
 		protected DataColumn(Altaxo.Data.DataTable parenttable, string name)
 		{
 			this.m_Table = parenttable;
 			this.m_ColumnName = name;
 		}
 
+		/// <summary>
+		/// Gets/sets the column name. If the column belongs to a table, the new name is checked by
+		/// the parent table for uniqueness.
+		/// </summary>
 		public string ColumnName
 		{
 			get
@@ -405,10 +585,20 @@ namespace Altaxo.Data
 			}
 			set
 			{
-				m_ColumnName = value;
+				if(m_ColumnName!=value)
+				{
+				if(this.m_Table==null)
+					m_ColumnName = value; // set value directly if no parent table
+				else // parent table is not null, so lets check the name by the parent
+					m_ColumnName = m_Table.FindUniqueColumnName(value);
+				}
 			}
 		}
-		
+
+		/// <summary>
+		/// Returns either the column name if the column has no parent table, or the parent table name, followed by
+		/// a backslash and the column name if the column has a table.
+		/// </summary>
 		public string FullName
 		{
 			get 
@@ -418,6 +608,9 @@ namespace Altaxo.Data
 			}
 
 
+		/// <summary>
+		/// Returns the row count, i.e. the one more than the index to the last valid data element in the column. 
+		/// </summary>
 		public int Count
 		{
 			get
@@ -426,6 +619,9 @@ namespace Altaxo.Data
 			}
 		}
 		
+		/// <summary>
+		/// Returns the column type followed by a backslash and the column name.
+		/// </summary>
 		public string TypeAndName
 		{
 			get
@@ -434,6 +630,9 @@ namespace Altaxo.Data
 			}
 		}
 
+		/// <summary>
+		/// Gets/sets the parent table.
+		/// </summary>
 		public Altaxo.Data.DataTable ParentTable
 		{
 			get
@@ -442,20 +641,44 @@ namespace Altaxo.Data
 			}
 			set
 			{
+				// TODO !!! the parent table is not notified of that change in the moment. 
 				m_Table = value;
 
 			}
 		}
-		// hashcode
-		// public override int GetHashCode() { return guid.GetHashCode(); }
 		
 		
 		// indexers
+		/// <summary>
+		/// Sets the value at a given index i with a value val, which is a AltaxoVariant.
+		/// </summary>
+		/// <param name="i">The index (row number) which is set to the value val.</param>
+		/// <param name="val">The value val as <see cref="AltaxoVariant"/>.</param>
+		/// <remarks>The derived class should throw an exeption when the data type in the AltaxoVariant value val
+		/// do not match the column type.</remarks>
 		public abstract void SetValueAt(int i, AltaxoVariant val);
+		
+		
+		/// <summary>
+		/// This returns the value at a given index i as AltaxoVariant.
+		/// </summary>
+		/// <param name="i">The index (row number) to the element returned.</param>
+		/// <returns>The element at index i.</returns>
 		public abstract AltaxoVariant GetVariantAt(int i);
+		
+		/// <summary>
+		/// This function is used to determine if the element at index i is valid or not. If it is valid,
+		/// the derived class function has to return false. If it is empty or not valid, the function has
+		/// to return true.
+		/// </summary>
+		/// <param name="i">Index to the element in question.</param>
+		/// <returns>True if the element is empty or not valid.</returns>
 		public abstract bool IsElementEmpty(int i);
 
 
+		/// <summary>
+		/// Gets/sets the element at the index i by a value of type <see cref="AltaxoVariant"/>.
+		/// </summary>
 		public AltaxoVariant this[int i] 
 		{
 			get
@@ -468,6 +691,9 @@ namespace Altaxo.Data
 			}
 		}
 
+		/// <summary>
+		/// Clears the content of the column and fires the <see cref="ColumnDisposed"/> event.
+		/// </summary>
 		public void Dispose()
 		{
 			this.m_Table=null;
@@ -477,17 +703,27 @@ namespace Altaxo.Data
 				ColumnDisposed(this);
 		}
 
+		/// <summary>
+		/// Clears all rows.
+		/// </summary>
 		public void Clear()
 		{
 			RemoveRows(0,this.Count);
 		}
 
+		/// <summary>
+		/// Copies all elements of another DataColumn to this column. An exception is thrown if the data types of both columns are incompatible. 
+		/// See also <see cref="CopyDataFrom"/>.</summary>
 		public DataColumn Data
 		{
 			set { CopyDataFrom(value); }
 		}
 
-		// CopyData
+		/// <summary>
+		/// Copies the contents of another column v to this column. An exception should be thrown if the data types of
+		/// both columns are incompatible.
+		/// </summary>
+		/// <param name="v">The column the data will be copied from.</param>
 		public abstract void CopyDataFrom(Altaxo.Data.DataColumn v);
 		public abstract void RemoveRows(int nFirstRow, int nCount); // removes nCount rows starting from nFirstRow 
 		public abstract void InsertRows(int nBeforeRow, int nCount); // inserts additional empty rows
