@@ -32,10 +32,8 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(GraphObjectCollection.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class GraphObjectCollection : System.Collections.CollectionBase, IChangedEventSource, IChildChangedEventSink
+	public class GraphObjectCollection : Altaxo.Data.CollectionBase, IChangedEventSource, IChildChangedEventSink
 	{
-		private object[] m_DeserializedItems=null;
-
 
 		#region "Serialization"
 
@@ -52,7 +50,7 @@ namespace Altaxo.Graph
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				GraphObjectCollection s = (GraphObjectCollection)obj;
-				info.AddValue("Data",s.InnerList.ToArray());
+				info.AddValue("Data",s.myList);
 			}
 
 			/// <summary>
@@ -67,7 +65,7 @@ namespace Altaxo.Graph
 			{
 				GraphObjectCollection s = (GraphObjectCollection)obj;
 
-				s.m_DeserializedItems =	(object[])info.GetValue("Data",typeof(System.Array));
+				s.myList =	(System.Collections.ArrayList)info.GetValue("Data",typeof(System.Collections.ArrayList));
 				
 				return s;
 			}
@@ -79,13 +77,9 @@ namespace Altaxo.Graph
 		/// <param name="obj">Not used.</param>
 		public virtual void OnDeserialization(object obj)
 		{
-			if(null!=m_DeserializedItems)
-			{
-				foreach(GraphObject l in m_DeserializedItems)
-					Add(l);
-				
-				m_DeserializedItems=null;
-			}
+			// restore the event chain
+			for(int i=0;i<Count;i++)
+				this[i].Changed += new EventHandler(this.OnChildChanged);
 		}
 		#endregion
 

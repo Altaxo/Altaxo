@@ -144,9 +144,11 @@ namespace Altaxo.Graph
 			{
 				LineScatterPlotStyle s = (LineScatterPlotStyle)obj;
 
-				s.LineStyle = (LineStyle)info.GetValue("LineStyle",typeof(LineStyle));
-				s.ScatterStyle = (ScatterStyle)info.GetValue("ScatterStyle",typeof(ScatterStyle));
-				s.LineSymbolGap    = info.GetBoolean("LineSymbolGap");
+				// do not use settings lie s.LineStyle= here, since the LineStyle is cloned, but maybe not fully deserialized here!!!
+				s.m_LineStyle = (LineStyle)info.GetValue("LineStyle",typeof(LineStyle));
+				// do not use settings lie s.ScatterStyle= here, since the ScatterStyle is cloned, but maybe not fully deserialized here!!!
+				s.m_ScatterStyle = (ScatterStyle)info.GetValue("ScatterStyle",typeof(ScatterStyle));
+				s.m_LineSymbolGap = info.GetBoolean("LineSymbolGap");
 				return s;
 			}
 		}
@@ -157,6 +159,11 @@ namespace Altaxo.Graph
 		/// <param name="obj">Not used.</param>
 		public virtual void OnDeserialization(object obj)
 		{
+			// restore the event chain here
+			if(null!=m_LineStyle)
+				m_LineStyle.Changed += new EventHandler(this.OnLineStyleChanged);
+			if(null!=m_ScatterStyle)
+				m_ScatterStyle.Changed += new EventHandler(this.OnScatterStyleChanged);
 		}
 		#endregion
 
@@ -165,8 +172,8 @@ namespace Altaxo.Graph
 		public LineScatterPlotStyle(LineScatterPlotStyle from)
 		{
 			
-			this.LineStyle				=	null==from.m_LineStyle?null:(LineStyle)from.m_LineStyle.Clone();
-			this.ScatterStyle			= null==from.m_ScatterStyle?null:(ScatterStyle)from.m_ScatterStyle.Clone();
+			this.LineStyle				=	from.m_LineStyle;
+			this.ScatterStyle			= from.m_ScatterStyle;
 			// this.m_PlotAssociation	= null; // do not clone the plotassociation!
 			this.LineSymbolGap    = from.m_LineSymbolGap;
 		}

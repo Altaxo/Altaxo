@@ -366,7 +366,7 @@ namespace Altaxo.Graph
 	}
 
 
-	public class TextLine	: System.Collections.CollectionBase
+	public class TextLine	: Altaxo.Data.CollectionBase
 	{
 		protected internal float m_cyLineSpace; // linespace value : cyAscent + cyDescent
 		protected internal float m_cyAscent;    // height of the items above the ground line
@@ -392,7 +392,7 @@ namespace Altaxo.Graph
 			base.InnerList.Add(ti);
 		}
 
-		public class TextLineCollection : System.Collections.CollectionBase
+		public class TextLineCollection : Altaxo.Data.CollectionBase
 		{
 
 			public TextLine this[int i]

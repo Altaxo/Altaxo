@@ -74,9 +74,9 @@ namespace Altaxo.Graph
 		System.Windows.Forms.Form    Form   { get; }
 
 		/// <summary>
-		/// Returns the controller that controls this view.
+		/// Returns the controller that controls this view. Sets the controller to this value.
 		/// </summary>
-		IGraphController Controller { get; }
+		IGraphController Controller { get; set;}
 
 		/// <summary>
 		/// This sets the menu. The menu itself is created and controlled by the controller.</summary>

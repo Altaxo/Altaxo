@@ -70,7 +70,7 @@ namespace Altaxo.Graph
 	}
 
 	[Serializable]
-	public class PlotRangeList : System.Collections.CollectionBase
+	public class PlotRangeList : Altaxo.Data.CollectionBase
 	{
 		public PlotRange this[int i]
 		{

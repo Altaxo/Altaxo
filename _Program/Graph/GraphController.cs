@@ -107,10 +107,12 @@ namespace Altaxo.Graph
 		/// </summary>
 		protected Bitmap m_FrozenGraph;
 
+		/// <summary>
+		/// Necessary to determine if deserialization finisher already has finished serialization.
+		/// </summary>
+		private object m_DeserializationSurrogate;
 
 		#endregion Member variables
-
-		
 
 		#region Serialization
 		/// <summary>Used to serialize the GraphController Version 0.</summary>
@@ -145,6 +147,8 @@ namespace Altaxo.Graph
 				s.m_AutoZoom = info.GetBoolean("AutoZoom");
 				s.m_Zoom = info.GetSingle("Zoom");
 				s.m_Graph = (GraphDocument)info.GetValue("Graph",typeof(GraphDocument));
+
+				s.m_DeserializationSurrogate = this;
 				return s;
 			}
 		}
@@ -155,8 +159,15 @@ namespace Altaxo.Graph
 		/// <param name="obj">Not used.</param>
 		public virtual void OnDeserialization(object obj)
 		{
-			if(obj is DeserializationFinisher)
+			if(null!=this.m_DeserializationSurrogate && obj is DeserializationFinisher)
 			{
+				m_DeserializationSurrogate=null;
+
+				// first finish the document
+				DeserializationFinisher finisher = new DeserializationFinisher(this);
+				
+				m_Graph.OnDeserialization(finisher);
+
 
 				// create the menu
 				this.InitializeMenu();
@@ -177,10 +188,13 @@ namespace Altaxo.Graph
 		}
 		#endregion
 
-
 		#region Constructors
 
-		public void SetMemberVariablesToDefault()
+
+		/// <summary>
+		/// Set the member variables to default values. Intended only for use in constructors and deserialization code.
+		/// </summary>
+		protected virtual void SetMemberVariablesToDefault()
 		{
 			m_NonPageAreaColor = Color.Gray;
 		
@@ -210,29 +224,38 @@ namespace Altaxo.Graph
 			// A instance of a mouse handler class that currently handles the mouse events..</summary>
 			m_MouseState= new ObjectPointerMouseHandler();
 
-			/// <summary>
-			/// The hashtable of the selected objects. The key is the selected object itself,
-			/// the data is a int object, which stores the layer number the object belongs to.
-			/// </summary>
+			// The hashtable of the selected objects. The key is the selected object itself,
+			// the data is a int object, which stores the layer number the object belongs to.
 			m_SelectedObjects = new System.Collections.Hashtable();
 
-			/// <summary>
-			/// This holds a frozen image of the graph during the moving time
-			/// </summary>
+			// This holds a frozen image of the graph during the moving time
 			m_FrozenGraph=null;
 		}
 
 
+		/// <summary>
+		/// Creates a GraphController for control of the View <paramref	name="view"/>. 
+		/// Also creates a default <see cref="GraphDocument"/> for use by this controller.
+		/// </summary>
+		/// <param name="view">The view this controller has to control.</param>
 		public GraphController(IGraphView view)
 			: this(view, null)
 		{
 		}
 
+		/// <summary>
+		/// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/> into the 
+		/// View <paramref name="view"/>.
+		/// </summary>
+		/// <param name="view">The view to show the graph into.</param>
+		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
 		public GraphController(IGraphView view, GraphDocument graphdoc)
 		{
 			SetMemberVariablesToDefault();
 
+			
 			m_View = view;
+			m_View.Controller = this;
 
 			if(null!=graphdoc)
 				this.m_Graph = graphdoc;
@@ -298,6 +321,11 @@ namespace Altaxo.Graph
 
 		#region Menu Definition
 
+
+		/// <summary>
+		/// Creates the default menu of a graph view.
+		/// </summary>
+		/// <remarks>In case there is already a menu here, the old menu is overwritten.</remarks>
 		public void InitializeMenu()
 		{
 			int index=0, index2=0;
@@ -414,6 +442,10 @@ namespace Altaxo.Graph
 		}
 
 
+		/// <summary>
+		/// Updates a special menu item, the data item, with the currently available plot names. The active plot is marked with a
+		/// check.
+		/// </summary>
 		public void UpdateDataPopup()
 		{
 			if(null==this.m_MenuDataPopup)
@@ -452,11 +484,21 @@ namespace Altaxo.Graph
 
 		#region Menu event handlers
 
+		/// <summary>
+		/// Handler for the menu item "File" - "Setup Page".
+		/// </summary>
+		/// <param name="sender">Not used.</param>
+		/// <param name="e">Not used.</param>
 		private void EhMenuFilePageSetup_OnClick(object sender, System.EventArgs e)
 		{
 			App.CurrentApplication.PageSetupDialog.ShowDialog(this.m_View.Window);
 		}
 
+		/// <summary>
+		/// Handler for the menu item "File" - "Print".
+		/// </summary>
+		/// <param name="sender">Not used.</param>
+		/// <param name="e">Not used.</param>
 		private void EhMenuFilePrint_OnClick(object sender, System.EventArgs e)
 		{
 			if(DialogResult.OK==App.CurrentApplication.PrintDialog.ShowDialog(this.m_View.Window))
@@ -477,6 +519,11 @@ namespace Altaxo.Graph
 			}
 		}
 
+		/// <summary>
+		/// Handler for the menu item "File" - "Print Preview".
+		/// </summary>
+		/// <param name="sender">Not used.</param>
+		/// <param name="e">Not used.</param>
 		private void EhMenuFilePrintPreview_OnClick(object sender, System.EventArgs e)
 		{
 			try
@@ -497,31 +544,12 @@ namespace Altaxo.Graph
 			}
 		}
 
-		private void EhMenuEditNewlayerNormalBottomXLeftY_OnClick(object sender, System.EventArgs e)
-		{
-			m_Graph.CreateNewLayerNormalBottomXLeftY();
-		}
 
-		private void EhMenuEditNewlayerLinkedTopXRightY_OnClick(object sender, System.EventArgs e)
-		{
-			m_Graph.CreateNewLayerLinkedTopXRightY(CurrentLayerNumber);
-		}
-
-		private void EhMenuEditNewlayerLinkedTopX_OnClick(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void EhMenuEditNewlayerLinkedRightY_OnClick(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void EhMenuEditNewlayerLinkedTopXRightYXAxisStraight_OnClick(object sender, System.EventArgs e)
-		{
-			m_Graph.CreateNewLayerLinkedTopXRightY_XAxisStraight(CurrentLayerNumber);
-		}
-
+		/// <summary>
+		/// Handler for the menu item "File" - "Export Metafile".
+		/// </summary>
+		/// <param name="sender">Not used.</param>
+		/// <param name="e">Not used.</param>
 		private void EhMenuFileExportMetafile_OnClick(object sender, System.EventArgs e)
 		{
 			System.IO.Stream myStream ;
@@ -542,12 +570,77 @@ namespace Altaxo.Graph
 
 		}
 
+
+		/// <summary>
+		/// Handler for the menu item "Edit" - "New layer(axes)" - "Normal: Bottom X Left Y".
+		/// </summary>
+		/// <param name="sender">Not used.</param>
+		/// <param name="e">Not used.</param>
+		private void EhMenuEditNewlayerNormalBottomXLeftY_OnClick(object sender, System.EventArgs e)
+		{
+			m_Graph.CreateNewLayerNormalBottomXLeftY();
+		}
+
+		/// <summary>
+		/// Handler for the menu item "Edit" - "New layer(axes)" - "Linked: Top X Right Y".
+		/// </summary>
+		/// <param name="sender">Not used.</param>
+		/// <param name="e">Not used.</param>
+		private void EhMenuEditNewlayerLinkedTopXRightY_OnClick(object sender, System.EventArgs e)
+		{
+			m_Graph.CreateNewLayerLinkedTopXRightY(CurrentLayerNumber);
+		}
+
+		/// <summary>
+		/// Handler for the menu item "Edit" - "New layer(axes)" - "Linked: Top X".
+		/// </summary>
+		/// <param name="sender">Not used.</param>
+		/// <param name="e">Not used.</param>
+		private void EhMenuEditNewlayerLinkedTopX_OnClick(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		/// <summary>
+		/// Handler for the menu item "Edit" - "New layer(axes)" - "Linked: Right Y".
+		/// </summary>
+		/// <param name="sender">Not used.</param>
+		/// <param name="e">Not used.</param>
+		private void EhMenuEditNewlayerLinkedRightY_OnClick(object sender, System.EventArgs e)
+		{
+		
+		}
+
+		/// <summary>
+		/// Handler for the menu item "Edit" - "New layer(axes)" - "Linked: Top X Right Y, X axis straight ".
+		/// </summary>
+		/// <param name="sender">Not used.</param>
+		/// <param name="e">Not used.</param>
+		private void EhMenuEditNewlayerLinkedTopXRightYXAxisStraight_OnClick(object sender, System.EventArgs e)
+		{
+			m_Graph.CreateNewLayerLinkedTopXRightY_XAxisStraight(CurrentLayerNumber);
+		}
+
+
+		/// <summary>
+		/// Handler for the menu item "Graph" - "New layer legend.
+		/// </summary>
+		/// <param name="sender">Not used.</param>
+		/// <param name="e">Not used.</param>
 		private void EhMenuGraphNewLayerLegend_OnClick(object sender, System.EventArgs e)
 		{
 			m_Graph.Layers[CurrentLayerNumber].CreateNewLayerLegend();
 		}
 
 
+		/// <summary>
+		/// Handler for all submenu items of the data popup.".
+		/// </summary>
+		/// <param name="sender">The menuitem, must be of type <see cref="DataMenuItem"/>.</param>
+		/// <param name="e">Not used.</param>
+		/// <remarks>The handler either checks the menuitem, if it was unchecked. If it was already checked,
+		/// it shows the <see cref="PlotStyleDialog"/> dialog box.
+		/// </remarks>
 		private void EhMenuData_Data(object sender, System.EventArgs e)
 		{
 			DataMenuItem dmi = (DataMenuItem)sender;
@@ -608,24 +701,41 @@ namespace Altaxo.Graph
 
 		#region IGraphController interface definitions
 
+		/// <summary>
+		/// This returns the GraphDocument that is managed by this controller.
+		/// </summary>
 		public GraphDocument Doc
 		{
 			get { return m_Graph; }
 		}
 
+		/// <summary>
+		/// Returns the view that this controller controls.
+		/// </summary>
+		/// <remarks>Setting the view is only neccessary on deserialization, so the controller
+		/// can restrict setting the view only the own view is still null.</remarks>
 		public IGraphView View
 		{
 			get { return m_View; }
 			set
 			{
-				// accept only that value!=null && m_View is null
-
-				if((null!=value && null==m_View) || object.ReferenceEquals(value,m_View))
-					m_View = value;
-				else if(value==null)
+				if(value==null)
 					throw new ArgumentNullException("The view to be set must not be null!");
-				else
-					throw new ArgumentException("Not supported: Try to set the view, but the controller has already a view!");
+
+				IGraphView oldView = m_View;
+				m_View = value;
+
+				if(null!=oldView)
+				{
+					oldView.GraphMenu = null; // don't let the old view have the menu
+					oldView.Controller = null; // no longer the controller of this view
+				}
+
+				m_View.Controller = this;
+				m_View.GraphMenu = m_MainMenu;
+				m_View.NumberOfLayers = m_Graph.Layers.Count;
+				m_View.CurrentLayer = this.CurrentLayerNumber;
+				m_View.CurrentGraphTool = this.CurrentGraphTool;
 			}
 		}
 
@@ -680,11 +790,22 @@ namespace Altaxo.Graph
 			}
 		}
 
+		/// <summary>
+		/// This function is called if the user changed the GraphTool.
+		/// </summary>
+		/// <param name="currGraphTool">The new selected GraphTool.</param>
+		/// <remarks>The view should not reflect the newly selected graph tool. This should only be done if the view
+		/// receives the currently selected graphtool by setting its <see cref="IGraphView.CurrentGraphTool"/> property.
+		/// In case radio buttons are used, they should not push itself (autopush or similar should be disabled).</remarks>
 		public virtual void EhView_CurrentGraphToolChoosen(GraphTools currGraphTool)
 		{
 			this.CurrentGraphTool = currGraphTool;
 		}
 
+		/// <summary>
+		/// Handles the event when the graph view is about to be closed.
+		/// </summary>
+		/// <param name="e">CancelEventArgs.</param>
 		public virtual void EhView_Closing(System.ComponentModel.CancelEventArgs e)
 		{
 			System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.m_View.Window,"Do you really want to close this graph?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
@@ -695,12 +816,20 @@ namespace Altaxo.Graph
 			}
 		}
 
+		/// <summary>
+		/// Handles the event when the graph view is closed.
+		/// </summary>
+		/// <param name="e">EventArgs.</param>
 		public virtual void EhView_Closed(System.EventArgs e)
 		{
 			App.document.RemoveGraph(this.m_View.Form);
 		}
 
 
+		/// <summary>
+		/// Handles the event when the size of the graph area is changed.
+		/// </summary>
+		/// <param name="e">EventArgs.</param>
 		public virtual void EhView_GraphPanelSizeChanged(EventArgs e)
 		{
 			if(m_AutoZoom)
@@ -722,31 +851,55 @@ namespace Altaxo.Graph
 		}
 
 
+		/// <summary>
+		/// Handles the mouse up event onto the graph in the controller class.
+		/// </summary>
+		/// <param name="e">MouseEventArgs.</param>
 		public virtual void EhView_GraphPanelMouseUp(System.Windows.Forms.MouseEventArgs e)
 		{
 			m_MouseState = m_MouseState.OnMouseUp(this,e);
 		}
 
+		/// <summary>
+		/// Handles the mouse down event onto the graph in the controller class.
+		/// </summary>
+		/// <param name="e">MouseEventArgs.</param>
 		public virtual void EhView_GraphPanelMouseDown(System.Windows.Forms.MouseEventArgs e)
 		{
 			m_MouseState = m_MouseState.OnMouseDown(this,e);
 		}
 
+		/// <summary>
+		/// Handles the mouse move event onto the graph in the controller class.
+		/// </summary>
+		/// <param name="e">MouseEventArgs.</param>
 		public virtual void EhView_GraphPanelMouseMove(System.Windows.Forms.MouseEventArgs e)
 		{
 			m_MouseState = this.m_MouseState.OnMouseMove(this,e);
 		}
 
+		/// <summary>
+		/// Handles the click onto the graph event in the controller class.
+		/// </summary>
+		/// <param name="e">EventArgs.</param>
 		public virtual void EhView_GraphPanelMouseClick(System.EventArgs e)
 		{
 			m_MouseState = m_MouseState.OnClick(this,e);
 		}
 
+		/// <summary>
+		/// Handles the double click onto the graph event in the controller class.
+		/// </summary>
+		/// <param name="e"></param>
 		public virtual void EhView_GraphPanelMouseDoubleClick(System.EventArgs e)
 		{
 			m_MouseState = m_MouseState.OnDoubleClick(this,e);
 		}
 
+		/// <summary>
+		/// Handles the paint event of that area, where the graph is shown.
+		/// </summary>
+		/// <param name="e">The paint event args.</param>
 		public virtual void EhView_GraphPanelPaint(System.Windows.Forms.PaintEventArgs e)
 		{
 			this.DoPaint(e.Graphics,false);
@@ -780,6 +933,11 @@ namespace Altaxo.Graph
 		}
 
 
+		/// <summary>
+		/// Called if something in the <see cref="GraphDocument"/> changed.
+		/// </summary>
+		/// <param name="sender">Not used (always the GraphDocument).</param>
+		/// <param name="e">The EventArgs.</param>
 		protected void EhGraph_Changed(object sender, System.EventArgs e)
 		{
 			// if something changed on the graph, make sure that the layer and plot number reflect this changed
@@ -790,9 +948,13 @@ namespace Altaxo.Graph
 
 		#endregion // GraphDocument event handlers
 
-
 		#region Other event handlers
 		
+		/// <summary>
+		/// Called from the system to print out a page.
+		/// </summary>
+		/// <param name="sender">Not used.</param>
+		/// <param name="ppea">PrintPageEventArgs used to retrieve the graphic context for printing.</param>
 		public void EhPrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs ppea)
 		{
 			Graphics g = ppea.Graphics;
@@ -803,6 +965,11 @@ namespace Altaxo.Graph
 
 		#region Methods
 
+		/// <summary>
+		/// Saves the graph as an enhanced windows metafile into the stream <paramref name="stream"/>.
+		/// </summary>
+		/// <param name="stream">The stream to save the metafile into.</param>
+		/// <returns>Null if successfull, error description otherwise.</returns>
 		public string SaveAsMetafile(System.IO.Stream stream)
 		{
 			// Code to write the stream goes here.
@@ -820,6 +987,13 @@ namespace Altaxo.Graph
 			return null;
 		}
 
+		/// <summary>
+		/// Central routine for painting the graph. The painting can either be on the screen (bForPrinting=false), or
+		/// on a printer or file (bForPrinting=true).
+		/// </summary>
+		/// <param name="g">The graphics context painting to.</param>
+		/// <param name="bForPrinting">If true, margins and background are not painted, as is usefull for printing.
+		/// Also, if true, the scale is temporarely set to 1.</param>
 		private void DoPaint(Graphics g, bool bForPrinting)
 		{
 			try
@@ -881,6 +1055,10 @@ namespace Altaxo.Graph
 
 		#endregion // Methods
 
+		#region Properties
+		/// <summary>
+		/// Get / sets the currently active GraphTool.
+		/// </summary>
 		public GraphTools CurrentGraphTool
 		{
 			get
@@ -910,12 +1088,18 @@ namespace Altaxo.Graph
 			}
 		}
 
+		/// <summary>
+		/// Returns the layer collection. Is the same as m_GraphDocument.Layers.
+		/// </summary>
 		public Layer.LayerCollection Layers
 		{
 			get { return m_Graph.Layers; }
 		}
 
 
+		/// <summary>
+		/// Returns the currently active layer, or null if there is no active layer.
+		/// </summary>
 		public Layer ActiveLayer
 		{
 			get
@@ -943,6 +1127,9 @@ namespace Altaxo.Graph
 			}
 		}
 
+		/// <summary>
+		/// Get / sets the currently active layer by number.
+		/// </summary>
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int CurrentLayerNumber
 		{
@@ -978,6 +1165,10 @@ namespace Altaxo.Graph
 		}
 
 
+		/// <summary>
+		/// This ensures that the current plot number is valid. If there is no plot on the currently active layer,
+		/// the current plot number is set to -1.
+		/// </summary>
 		public void EnsureValidityOfCurrentPlotNumber()
 		{
 			EnsureValidityOfCurrentLayerNumber();
@@ -1006,6 +1197,9 @@ namespace Altaxo.Graph
 			}
 		}
 
+		/// <summary>
+		/// Get / sets the currently active plot by number.
+		/// </summary>
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int CurrentPlotNumber 
 		{
@@ -1027,6 +1221,7 @@ namespace Altaxo.Graph
 			}
 		}
 
+		#endregion // Properties
 
 		#region Scaling and Positioning
 
@@ -1071,21 +1266,43 @@ namespace Altaxo.Graph
 			}
 		}
 
-		
+		/// <summary>
+		/// Factor for horizontal conversion of page units (points=1/72 inch) to pixel.
+		/// The resolution used for this is <see cref="m_HorizRes"/>.
+		/// </summary>
+		/// <returns>The factor described above.</returns>
 		public float HorizFactorPageToPixel()
 		{
 			return this.m_HorizRes*this.m_Zoom/UnitPerInch;
 		}
+
+		/// <summary>
+		/// Factor for vertical conversion of page units (points=1/72 inch) to pixel.
+		/// The resolution used for this is <see cref="m_VertRes"/>.
+		/// </summary>
+		/// <returns>The factor described above.</returns>
 		public float VertFactorPageToPixel()
 		{
-			return this.m_HorizRes*this.m_Zoom/UnitPerInch;
+			return this.m_VertRes*this.m_Zoom/UnitPerInch;
 		}
 
+		/// <summary>
+		/// Converts page coordinates (in points=1/72 inch) to pixel units. Uses the resolutions <see cref="m_HorizRes"/>
+		/// and <see cref="m_VertRes"/> for calculation-
+		/// </summary>
+		/// <param name="pagec">The page coordinates to convert.</param>
+		/// <returns>The coordinates as pixel coordinates.</returns>
 		public PointF PageCoordinatesToPixel(PointF pagec)
 		{
 			return new PointF(pagec.X*HorizFactorPageToPixel(),pagec.Y*VertFactorPageToPixel());
 		}
 
+		/// <summary>
+		/// Converts pixel coordinates to page coordinates (in points=1/72 inch). Uses the resolutions <see cref="m_HorizRes"/>
+		/// and <see cref="m_VertRes"/> for calculation-
+		/// </summary>
+		/// <param name="pixelc">The pixel coordinates to convert.</param>
+		/// <returns>The coordinates as page coordinates (points=1/72 inch).</returns>
 		public PointF PixelToPageCoordinates(PointF pixelc)
 		{
 			return new PointF(pixelc.X/HorizFactorPageToPixel(),pixelc.Y/VertFactorPageToPixel());
@@ -1115,6 +1332,11 @@ namespace Altaxo.Graph
 			return r;
 		}
 
+		/// <summary>
+		/// This calculates the zoom factor using the size of the graph view, so that the page fits
+		/// best into the view.
+		/// </summary>
+		/// <returns>The calculated zoom factor.</returns>
 		protected virtual float CalculateAutoZoom()
 		{
 			float zoomh = (UnitPerInch*m_View.GraphSize.Width/this.m_HorizRes)/m_Graph.PageBounds.Width;
@@ -1238,29 +1460,67 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// The abstract base class of all MouseStateHandlers.
 		/// </summary>
+		/// <remarks>The mouse state handler are used to handle the mouse events of the graph view in different contexts,
+		/// depending on which GraphTool is choosen by the user.</remarks>
 		public abstract class MouseStateHandler
 		{
+			/// <summary>Stores the mouse position of the last mouse up event.</summary>
 			protected PointF m_LastMouseUp;
+			/// <summary>Stores the mouse position of the last mouse down event.</summary>
 			protected PointF m_LastMouseDown;
 
+			/// <summary>
+			/// Handles the mouse move event.
+			/// </summary>
+			/// <param name="sender">The GraphController that sends this event.</param>
+			/// <param name="e">MouseEventArgs as provided by the view.</param>
+			/// <returns>The next mouse state handler that should handle mouse events.</returns>
 			public virtual MouseStateHandler OnMouseMove(GraphController sender, System.Windows.Forms.MouseEventArgs e)
 			{
 				return this;
 			}
+
+			/// <summary>
+			/// Handles the mouse up event. Stores the position of the mouse into <see cref="m_LastMouseUp"/>.
+			/// </summary>
+			/// <param name="sender">The GraphController that sends this event.</param>
+			/// <param name="e">MouseEventArgs as provided by the view.</param>
+			/// <returns>The next mouse state handler that should handle mouse events.</returns>
 			public virtual MouseStateHandler OnMouseUp(GraphController sender, System.Windows.Forms.MouseEventArgs e)
 			{
 				m_LastMouseUp = new Point(e.X,e.Y);
 				return this;
 			}
+
+			/// <summary>
+			/// Handles the mouse down event. Stores the position of the mouse into <see cref="m_LastMouseDown"/>.
+			/// </summary>
+			/// <param name="sender">The GraphController that sends this event.</param>
+			/// <param name="e">MouseEventArgs as provided by the view.</param>
+			/// <returns>The next mouse state handler that should handle mouse events.</returns>
 			public virtual MouseStateHandler OnMouseDown(GraphController sender, System.Windows.Forms.MouseEventArgs e)
 			{
 				m_LastMouseDown = new Point(e.X,e.Y);
 				return this;
 			}
+			
+			/// <summary>
+			/// Handles the mouse click event.
+			/// </summary>
+			/// <param name="sender">The GraphController that sends this event.</param>
+			/// <param name="e">EventArgs as provided by the view.</param>
+			/// <returns>The next mouse state handler that should handle mouse events.</returns>
 			public virtual MouseStateHandler OnClick(GraphController sender, System.EventArgs e)
 			{
 				return this;
 			}
+			
+			/// <summary>
+			/// Handles the mouse doubleclick event.
+			/// </summary>
+			/// <param name="sender">The GraphController that sends this event.</param>
+			/// <param name="e">EventArgs as provided by the view.</param>
+			/// <returns>The next mouse state handler that should handle mouse events.</returns>
 			public virtual MouseStateHandler OnDoubleClick(GraphController sender, System.EventArgs e)
 			{
 				return this;
@@ -1270,7 +1530,7 @@ namespace Altaxo.Graph
 
 		#region Object Pointer Mouse Handler
 		/// <summary>
-		/// Handles the mouse events when the ObjectPointer tools is selected.
+		/// Handles the mouse events when the <see cref="GraphTools.ObjectPointer"/> tools is selected.
 		/// </summary>
 		public class ObjectPointerMouseHandler : MouseStateHandler
 		{
@@ -1284,6 +1544,12 @@ namespace Altaxo.Graph
 			protected bool m_bObjectsWereMoved=false;
 
 
+			/// <summary>
+			/// Handles the mouse move event.
+			/// </summary>
+			/// <param name="grac">The GraphController that sends this event.</param>
+			/// <param name="e">MouseEventArgs as provided by the view.</param>
+			/// <returns>The next mouse state handler that should handle mouse events.</returns>
 			public override MouseStateHandler OnMouseMove(GraphController grac, System.Windows.Forms.MouseEventArgs e)
 			{
 				base.OnMouseMove(grac,e);
@@ -1423,13 +1689,27 @@ namespace Altaxo.Graph
 				return this;
 			} // end of function
 
+			/// <summary>
+			/// Handles the mouse up event.
+			/// </summary>
+			/// <param name="grac">The GraphController that sends this event.</param>
+			/// <param name="e">MouseEventArgs as provided by the view.</param>
+			/// <returns>The next mouse state handler that should handle mouse events.</returns>
 			public override MouseStateHandler OnMouseUp(GraphController grac, System.Windows.Forms.MouseEventArgs e)
 			{
+				base.OnMouseUp(grac,e);
+
 				System.Console.WriteLine("MouseUp {0},{1}",e.X,e.Y);
 				EndMovingObjects(grac);
 				return this;
 			}
 
+			/// <summary>
+			/// Handles the mouse doubleclick event.
+			/// </summary>
+			/// <param name="grac">The GraphController that sends this event.</param>
+			/// <param name="e">EventArgs as provided by the view.</param>
+			/// <returns>The next mouse state handler that should handle mouse events.</returns>
 			public override MouseStateHandler OnDoubleClick(GraphController grac, System.EventArgs e)
 			{
 				base.OnDoubleClick(grac,e);
@@ -1466,8 +1746,15 @@ namespace Altaxo.Graph
 			}
 
 
+			/// <summary>
+			/// Handles the mouse click event.
+			/// </summary>
+			/// <param name="grac">The GraphController that sends this event.</param>
+			/// <param name="e">EventArgs as provided by the view.</param>
+			/// <returns>The next mouse state handler that should handle mouse events.</returns>
 			public override MouseStateHandler OnClick(GraphController grac, System.EventArgs e)
 			{
+				base.OnClick(grac,e);
 
 				System.Console.WriteLine("Click");
 
@@ -1581,11 +1868,20 @@ namespace Altaxo.Graph
 		#endregion // Mouse Handlers
 
 
+		/// <summary>
+		/// Used as menu items in the Data menu popup. Stores the plot number the menu item represents.
+		/// </summary>
 		public class DataMenuItem : MenuItem
 		{
+			/// <summary>The plot number this menu item represents.</summary>
 			public int PlotItemNumber=0;
 
+			/// <summary>Creates the default menu item (PlotItemNumber is 0).</summary>
 			public DataMenuItem() {}
+
+			/// <summary>Creates a menuitem with text and a handler.</summary>
+			/// <param name="t">The text the menuitem shows.</param>
+			/// <param name="e">The handler in case the menu item is clicked.</param>
 			public DataMenuItem(string t, EventHandler e) : base(t,e) {}
 		}
 

@@ -139,6 +139,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Data\CollectionBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Data\ColumnScript.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -219,16 +224,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\GraphControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\GraphControl.resx"
-                    DependentUpon = "GraphControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "Graph\GraphController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -237,16 +232,6 @@
                     RelPath = "Graph\GraphDocument.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\GraphForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\GraphForm.resx"
-                    DependentUpon = "GraphForm.cs"
-                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Graph\GraphObject.cs"

@@ -1669,7 +1669,7 @@ namespace Altaxo.Worksheet
 		}
 
 
-		public class ColumnStyleCache : System.Collections.CollectionBase
+		public class ColumnStyleCache : Altaxo.Data.CollectionBase
 		{
 			protected int m_CachedFirstVisibleColumn=0; // the column number of the first cached item, i.e. for this[0]
 			protected int m_CachedWidth=0; // cached width of painting area

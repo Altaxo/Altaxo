@@ -149,9 +149,9 @@ namespace Altaxo
 		//	Altaxo.Graph.GraphForm frm = new Altaxo.Graph.GraphForm(parent,this);
 		//	m_GraphForms.Add(frm);
 			
-			Altaxo.Graph.GraphView frm = new Altaxo.Graph.GraphView(parent,null);
-			m_GraphForms.Add(frm);
-			return frm;
+			Altaxo.Graph.GraphController ctrl = new Altaxo.Graph.GraphController(new Altaxo.Graph.GraphView(parent,null));
+			m_GraphForms.Add(ctrl.View.Form);
+			return ctrl.View;
 		}
 
 		/// <summary>This will remove the GraphForm <paramref>frm</paramref> from the graph forms collection.</summary>

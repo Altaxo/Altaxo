@@ -492,7 +492,6 @@ namespace Altaxo.Graph
 				s.m_PlotGroups = (Graph.PlotGroup.Collection)info.GetValue("PlotGroups",typeof(Graph.PlotGroup.Collection));
 
 				s.m_PlotItems = (PlotList)info.GetValue("Plots",typeof(PlotList));
-				s.m_PlotItems.ParentLayer = s; // restore the parent object
 
 				return s;
 			}
@@ -587,7 +586,11 @@ namespace Altaxo.Graph
 
 			if(null!=m_PlotGroups) m_PlotGroups.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
-			if(null!=m_PlotItems) m_PlotItems.Changed += new EventHandler(this.OnChildChangedEventHandler);
+			if(null!=m_PlotItems)
+			{
+				m_PlotItems.ParentLayer = this;
+				m_PlotItems.Changed += new EventHandler(this.OnChildChangedEventHandler);
+			}
 		}
 
 		/// <summary>
@@ -1327,7 +1330,7 @@ namespace Altaxo.Graph
 						((IYBoundsHolder)pa.Data).MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
 				
 					}
-					}
+				}
 				m_yAxis.DataBounds.EventsEnabled=true;
 			}
 		}
@@ -2100,71 +2103,61 @@ namespace Altaxo.Graph
 		#region Inner classes
 
 
-			[Serializable]
-			[SerializationSurrogate(0,typeof(PlotList.SerializationSurrogate0))]
+		[SerializationSurrogate(0,typeof(PlotList.SerializationSurrogate0))]
 			[SerializationVersion(0)]
-			public class PlotList : System.Collections.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, IChildChangedEventSink
+			public class PlotList : Altaxo.Data.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, IChildChangedEventSink
 		{
-				/// <summary>The parent layer of this list.</summary>
+			/// <summary>The parent layer of this list.</summary>
 			private Layer m_Owner; 
 
-				/// <summary>Used for deserialization to hold the array temporarly.</summary>
-			private object[] m_DeserializedItems=null;
 
-				#region Serialization
-				/// <summary>Used to serialize the PlotList Version 0.</summary>
-				public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+			#region Serialization
+			/// <summary>Used to serialize the PlotList Version 0.</summary>
+			public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+			{
+				public object[] m_PlotItems = null; 
+
+				/// <summary>
+				/// Serializes PlotList Version 0.
+				/// </summary>
+				/// <param name="obj">The PlotList to serialize.</param>
+				/// <param name="info">The serialization info.</param>
+				/// <param name="context">The streaming context.</param>
+				public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 				{
-					public object[] m_PlotItems = null; 
-
-					/// <summary>
-					/// Serializes PlotList Version 0.
-					/// </summary>
-					/// <param name="obj">The PlotList to serialize.</param>
-					/// <param name="info">The serialization info.</param>
-					/// <param name="context">The streaming context.</param>
-					public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
-					{
-						PlotList s = (PlotList)obj;
-						info.AddValue("Data",s.InnerList.ToArray());
-					}
-
-					/// <summary>
-					/// Deserializes the PlotList Version 0.
-					/// </summary>
-					/// <param name="obj">The empty PlotList object to deserialize into.</param>
-					/// <param name="info">The serialization info.</param>
-					/// <param name="context">The streaming context.</param>
-					/// <param name="selector">The deserialization surrogate selector.</param>
-					/// <returns>The deserialized PlotList.</returns>
-					public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-					{
-						PlotList s = (PlotList)obj;
-
-						s.m_DeserializedItems = (object[])info.GetValue("Data",typeof(object[]));
-						return s;
-					}
+					PlotList s = (PlotList)obj;
+					info.AddValue("Data",s.myList);
 				}
 
 				/// <summary>
-				/// Finale measures after deserialization.
+				/// Deserializes the PlotList Version 0.
 				/// </summary>
-				/// <param name="obj">Not used.</param>
-				public virtual void OnDeserialization(object obj)
+				/// <param name="obj">The empty PlotList object to deserialize into.</param>
+				/// <param name="info">The serialization info.</param>
+				/// <param name="context">The streaming context.</param>
+				/// <param name="selector">The deserialization surrogate selector.</param>
+				/// <returns>The deserialized PlotList.</returns>
+				public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 				{
-					if(null!=m_DeserializedItems)
-					{
-						foreach(object o in m_DeserializedItems)
-						{
-							if(o is PlotItem)
-								Add(o as PlotItem);
-						}
-						
-						m_DeserializedItems = null;
-					}
+					PlotList s = (PlotList)obj;
+
+					s.myList = (System.Collections.ArrayList)info.GetValue("Data",typeof(System.Collections.ArrayList));
+					return s;
 				}
+			}
+
+			/// <summary>
+			/// Finale measures after deserialization.
+			/// </summary>
+			/// <param name="obj">Not used.</param>
+			public virtual void OnDeserialization(object obj)
+			{
+				// restore the event chain
+				for(int i=0;i<Count;i++)
+					WireItem(this[i]);
+			}
 				
-				#endregion
+			#endregion
 
 
 
@@ -2181,19 +2174,33 @@ namespace Altaxo.Graph
 					if(null==value)
 						throw new ArgumentNullException();
 					else
+					{
 						m_Owner = value;
+						
+						// if the owner changed, it has possibly other x and y axis boundaries, so we have to set the plot items to this new boundaries
+						for(int i=0;i<Count;i++)
+							SetItemBoundaries(this[i]);
+					}
 				}
 			}
 
-			public new void Add(Graph.PlotItem plotitem)
+
+			/// <summary>
+			/// Restores the event chain of a item.
+			/// </summary>
+			/// <param name="plotitem">The plotitem for which the event chain should be restored.</param>
+			public void WireItem(Graph.PlotItem plotitem)
 			{
-				if(plotitem==null)
-					throw new ArgumentNullException();
-
-				base.InnerList.Add(plotitem);
-
 				plotitem.Changed += new EventHandler(this.OnChildChanged);
+				SetItemBoundaries(plotitem);
+			}
 
+			/// <summary>
+			/// This sets the type of the item boundaries to the type of the owner layer
+			/// </summary>
+			/// <param name="plotitem">The plot item for which the boundary type should be set.</param>
+			public void SetItemBoundaries(Graph.PlotItem plotitem)
+			{
 				if(plotitem.Data is Graph.IXBoundsHolder)
 				{
 					IXBoundsHolder pa = (IXBoundsHolder)plotitem.Data;
@@ -2208,7 +2215,15 @@ namespace Altaxo.Graph
 					pa.YBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationYBoundariesChanged);
 					pa.MergeYBoundsInto(m_Owner.YAxis.DataBounds); // merge the y-boundaries in the y-Axis data boundaries
 				}
+			}
 
+			public new void Add(Graph.PlotItem plotitem)
+			{
+				if(plotitem==null)
+					throw new ArgumentNullException();
+
+				base.InnerList.Add(plotitem);
+				WireItem(plotitem);
 				OnChanged();
 			}
 
@@ -2218,25 +2233,25 @@ namespace Altaxo.Graph
 			}
 			
 				
-				#region IChangedEventSource Members
+			#region IChangedEventSource Members
 
-				public event System.EventHandler Changed;
+			public event System.EventHandler Changed;
 
 
-				public virtual void OnChildChanged(object child, EventArgs e)
-				{
-					if(null!=Changed)
-						Changed(this,e);
-				}
-
-				protected virtual void OnChanged()
-				{
-					if(null!=Changed)
-						Changed(this,new ChangedEventArgs(this,null));
-				}
-
-				#endregion
+			public virtual void OnChildChanged(object child, EventArgs e)
+			{
+				if(null!=Changed)
+					Changed(this,e);
 			}
+
+			protected virtual void OnChanged()
+			{
+				if(null!=Changed)
+					Changed(this,new ChangedEventArgs(this,null));
+			}
+
+			#endregion
+		}
 
 
 
@@ -2247,14 +2262,13 @@ namespace Altaxo.Graph
 		/// its own function for adding the layers and moving them, since it has to track
 		/// all changes to the layers.</remarks>
 		[SerializationSurrogate(0,typeof(LayerCollection.SerializationSurrogate0))]
-		[SerializationVersion(0)]
-		public class LayerCollection : System.Collections.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
+			[SerializationVersion(0)]
+			public class LayerCollection : Altaxo.Data.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
 		{
 			/// <summary>Fired when something in this collection changed, as for instance
 			/// adding or deleting layers, or exchanging layers.</summary>
 			public event System.EventHandler LayerCollectionChanged;
 			
-			private object[] m_DeserializedLayers=null;
 
 			/// <summary>
 			/// Fired if either the layer collection changed or something in the layers changed
@@ -2266,7 +2280,6 @@ namespace Altaxo.Graph
 			/// <summary>Used to serialize the LayerCollection Version 0.</summary>
 			public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 			{
-
 				/// <summary>
 				/// Serializes LayerCollection Version 0.
 				/// </summary>
@@ -2276,7 +2289,7 @@ namespace Altaxo.Graph
 				public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 				{
 					LayerCollection s = (LayerCollection)obj;
-					info.AddValue("Data",s.InnerList.ToArray());
+					info.AddValue("Data",s.myList);
 				}
 
 				/// <summary>
@@ -2291,8 +2304,7 @@ namespace Altaxo.Graph
 				{
 					LayerCollection s = (LayerCollection)obj;
 
-					s.m_DeserializedLayers =	(object[])info.GetValue("Data",typeof(System.Array));
-				
+					s.myList = (System.Collections.ArrayList)info.GetValue("Data",typeof(System.Collections.ArrayList));
 					return s;
 				}
 			}
@@ -2303,15 +2315,11 @@ namespace Altaxo.Graph
 			/// <param name="obj">Not used.</param>
 			public virtual void OnDeserialization(object obj)
 			{
-				if(null!=m_DeserializedLayers)
-				{
-					foreach(Layer l in m_DeserializedLayers)
-						Add(l);
-				
-				m_DeserializedLayers=null;
-				}
+				// set the parent and the number of all items
+				for(int i=0;i<base.InnerList.Count;i++)
+					this[i].SetParentAndNumber(this,i);
 			}
-		#endregion
+			#endregion
 
 
 
@@ -2454,12 +2462,12 @@ namespace Altaxo.Graph
 				if(null!=LayerCollectionChanged)
 					LayerCollectionChanged(this,new EventArgs());
 			
-			OnChanged();
+				OnChanged();
 			}
 
 			protected internal virtual void OnInvalidate(Layer sender)
 			{
-			OnChanged();
+				OnChanged();
 			}
 
 			protected virtual void OnChanged()

@@ -73,19 +73,21 @@ namespace Altaxo.Graph
 
 			public object GetRealObject(object parent)
 			{
-				// Create a new worksheet, parent window is the application window
+				// We create the view firstly without controller to have the creation finished
+				// before the controler is set
+				// otherwise we will have callbacks to not initialized variables
 				GraphView frm = new GraphView(App.CurrentApplication,null);
 				frm.Location = m_Location;
 				frm.Size = m_Size;
-				frm.m_Ctrl = m_Controller as IGraphController;
-				frm.m_Ctrl.View = frm;
+			
+				((IGraphController)m_Controller).View = frm;
 
 				if(m_Controller is System.Runtime.Serialization.IDeserializationCallback)
 				{
 					DeserializationFinisher finisher = new DeserializationFinisher(frm);
 					((System.Runtime.Serialization.IDeserializationCallback)m_Controller).OnDeserialization(finisher);
 				}
-			return frm;
+				return frm;
 			}
 		}
 		#endregion
@@ -116,12 +118,9 @@ namespace Altaxo.Graph
 
 
 
-			// the creation of a new graph controller should be left out until the end, since it calls back some functions of
+			// the setting of the graph controller should be left out until the end, since it calls back some functions of
 			// the view so that the view should be initialized before
-			if(null==ctrl)
-				m_Ctrl = new GraphController(this);
-			else
-				m_Ctrl = ctrl;
+			m_Ctrl = ctrl;
 
 			// now show our window
 			this.Show();
@@ -217,80 +216,96 @@ namespace Altaxo.Graph
 		public IGraphController Controller
 		{
 			get { return m_Ctrl; }
+			set { m_Ctrl = value; }
 		}
 		
 		private void EhLayerToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
 		{
-			int pushedLayerNumber = System.Convert.ToInt32(e.Button.Text);
+			if(null!=m_Ctrl)
+			{
+				int pushedLayerNumber = System.Convert.ToInt32(e.Button.Text);
 		
-			m_Ctrl.EhView_CurrentLayerChoosen(pushedLayerNumber, false);
+				m_Ctrl.EhView_CurrentLayerChoosen(pushedLayerNumber, false);
+			}
 		}
 
 		private void EhLayerToolbar_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			if(e.Button == MouseButtons.Right)
+			if(null!=m_Ctrl)
 			{
-				Point pt = new Point(e.X,e.Y);
-				for(int i=0;i<m_LayerToolbar.Buttons.Count;i++)
+				if(e.Button == MouseButtons.Right)
 				{
-					if(m_LayerToolbar.Buttons[i].Rectangle.Contains(pt))
+					Point pt = new Point(e.X,e.Y);
+					for(int i=0;i<m_LayerToolbar.Buttons.Count;i++)
 					{
-						m_Ctrl.EhView_ShowDataContextMenu(i,this,pt);
-						return;
+						if(m_LayerToolbar.Buttons[i].Rectangle.Contains(pt))
+						{
+							m_Ctrl.EhView_ShowDataContextMenu(i,this,pt);
+							return;
+						}
 					}
 				}
 			}
 		}
 
-
 		private void EhGraphPanel_Click(object sender, System.EventArgs e)
 		{
-			m_Ctrl.EhView_GraphPanelMouseClick(e);
+			if(null!=m_Ctrl)
+				m_Ctrl.EhView_GraphPanelMouseClick(e);
 		}
 
 		private void EhGraphPanel_DoubleClick(object sender, System.EventArgs e)
 		{
-			m_Ctrl.EhView_GraphPanelMouseDoubleClick(e);
+			if(null!=m_Ctrl)
+				m_Ctrl.EhView_GraphPanelMouseDoubleClick(e);
 		}
 
 		private void EhGraphPanel_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
-			m_Ctrl.EhView_GraphPanelPaint(e);
+			if(null!=m_Ctrl)
+				m_Ctrl.EhView_GraphPanelPaint(e);
 		}
 
 		private void EhGraphPanel_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			m_Ctrl.EhView_GraphPanelMouseDown(e);
+			if(null!=m_Ctrl)
+				m_Ctrl.EhView_GraphPanelMouseDown(e);
 		}
 
 		private void EhGraphPanel_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			m_Ctrl.EhView_GraphPanelMouseMove(e);
+			if(null!=m_Ctrl)
+				m_Ctrl.EhView_GraphPanelMouseMove(e);
 		}
 
 		private void EhGraphPanel_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			m_Ctrl.EhView_GraphPanelMouseUp(e);
+			if(null!=m_Ctrl)
+				m_Ctrl.EhView_GraphPanelMouseUp(e);
 		}
 
 		private void EhGraphPanel_SizeChanged(object sender, System.EventArgs e)
 		{
-			m_Ctrl.EhView_GraphPanelSizeChanged(e);
+			if(null!=m_Ctrl)
+				m_Ctrl.EhView_GraphPanelSizeChanged(e);
 		}
 
 		private void EhGraphView_Closed(object sender, System.EventArgs e)
 		{
-			m_Ctrl.EhView_Closed(e);
+			if(null!=m_Ctrl)
+				m_Ctrl.EhView_Closed(e);
 		}
 
 		private void EhGraphView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			m_Ctrl.EhView_Closing(e);
+			if(null!=m_Ctrl)
+				m_Ctrl.EhView_Closing(e);
 		}
 
 		private void EhGraphToolsToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
 		{
-			m_Ctrl.EhView_CurrentGraphToolChoosen((GraphTools)e.Button.Tag);
+			if(null!=m_Ctrl)
+				m_Ctrl.EhView_CurrentGraphToolChoosen((GraphTools)e.Button.Tag);
 		}
 
 		protected void EhMdiChildActivate(object sender, EventArgs e)
@@ -466,7 +481,7 @@ namespace Altaxo.Graph
 			{
 				ToolBarButton tbb = new ToolBarButton();
 				tbb.ImageIndex=i;
-				tbb.Tag = (GraphControl.GraphTools)i; 
+				tbb.Tag = (GraphTools)i; 
 				tb.Buttons.Add(tbb);
 			}
 			tb.Dock = DockStyle.Bottom;

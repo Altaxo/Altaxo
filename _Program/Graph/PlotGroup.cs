@@ -201,14 +201,10 @@ namespace Altaxo.Graph
 				m_Parent.OnChildChangedEventHandler(this);
 		}
 
-			[SerializationSurrogate(0,typeof(Collection.SerializationSurrogate0))]
+			[SerializationSurrogate(0,typeof(PlotGroup.Collection.SerializationSurrogate0))]
 			[SerializationVersion(0)]
-			public class Collection : IChangedEventSource
+			public class Collection : Altaxo.Data.CollectionBase, IChangedEventSource
 		{
-			protected System.Collections.ArrayList m_List;
-
-				private object[] m_DeserializedItems;
-
 				#region "Serialization"
 
 				/// <summary>Used to serialize the Collection Version 0.</summary>
@@ -223,8 +219,8 @@ namespace Altaxo.Graph
 					/// <param name="context">The streaming context.</param>
 					public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 					{
-						Collection s = (Collection)obj;
-						info.AddValue("Data",s.m_List.ToArray());
+						PlotGroup.Collection s = (PlotGroup.Collection)obj;
+						info.AddValue("Data",s.myList);
 					}
 
 					/// <summary>
@@ -237,9 +233,9 @@ namespace Altaxo.Graph
 					/// <returns>The deserialized Collection.</returns>
 					public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 					{
-						Collection s = (Collection)obj;
+						PlotGroup.Collection s = (PlotGroup.Collection)obj;
 
-						s.m_DeserializedItems =	(object[])info.GetValue("Data",typeof(System.Array));
+						s.myList =	(System.Collections.ArrayList)info.GetValue("Data",typeof(System.Collections.ArrayList));
 		
 						return s;
 					}
@@ -251,33 +247,21 @@ namespace Altaxo.Graph
 				/// <param name="obj">Not used.</param>
 				public virtual void OnDeserialization(object obj)
 				{
-					if(null!=m_DeserializedItems)
-					{
-						m_List = new System.Collections.ArrayList();
-						m_List.AddRange(m_DeserializedItems);
-						m_DeserializedItems=null;
-					}
 				}
 				#endregion
 
 
-
-			public Collection()
-			{
-				m_List = new System.Collections.ArrayList();
-			}
-
-			public void Add(PlotGroup g)
+			public new void Add(PlotGroup g)
 			{
 				g.m_Parent=this;
-				m_List.Add(g);
+				base.InnerList.Add(g);
 
 				OnChanged();
 			}
 
-			public void Clear()
+			public new void Clear()
 			{
-				m_List.Clear();
+				base.InnerList.Clear();
 
 				OnChanged();
 			}
@@ -287,9 +271,9 @@ namespace Altaxo.Graph
 				// search for the (first) plot group, to which assoc belongs,
 				// and return this group
 
-				for(int i=0;i<m_List.Count;i++)
-					if(((PlotGroup)m_List[i]).Contains(assoc)	)
-						return ((PlotGroup)m_List[i]);
+				for(int i=0;i<Count;i++)
+					if(((PlotGroup)base.InnerList[i]).Contains(assoc)	)
+						return ((PlotGroup)base.InnerList[i]);
 
 				return null; // assoc belongs not to any plot group
 			}

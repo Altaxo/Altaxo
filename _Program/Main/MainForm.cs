@@ -452,6 +452,7 @@ namespace Altaxo
 					m_SurrogateSelector = null;	
 					document = (AltaxoDocument)obj;
 					document.OnDeserialization(new DeserializationFinisher(this));
+					System.Diagnostics.Trace.WriteLine("Deserialization of AltaxoDocument now completely finished.");
 					// document.RestoreWindowsAfterDeserialization();
 					// Code to write the stream goes here.
 
