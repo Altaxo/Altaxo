@@ -84,6 +84,12 @@ namespace Altaxo.Graph
 		/// </summary>
 		void EndB_Initialize(string text);
 
+
+		/// <summary>
+		/// Enables / Disables the edit boxes for the org and end values
+		/// </summary>
+		/// <param name="bEnable">True if the boxes are enabled for editing.</param>
+		void Enable_OrgAndEnd_Boxes(bool bEnable);
 	
 	}
 	#endregion
@@ -169,7 +175,9 @@ namespace Altaxo.Graph
 		public void EhView_LinkTypeChanged(Layer.AxisLinkType linktype)
 		{
 			m_LinkType = linktype;
-			
+
+			if(null!=View)
+				View.Enable_OrgAndEnd_Boxes(linktype == Layer.AxisLinkType.Custom);
 		}
 
 		public void EhView_OrgAValidating(string orgA, ref bool bCancel)

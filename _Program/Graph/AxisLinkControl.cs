@@ -16,14 +16,14 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.Label label26;
 		private System.Windows.Forms.Label label25;
 		private System.Windows.Forms.Label label24;
-		private System.Windows.Forms.TextBox m_Layer_edLinkXAxisEndB;
-		private System.Windows.Forms.TextBox m_Layer_edLinkXAxisEndA;
-		private System.Windows.Forms.TextBox m_Layer_edLinkXAxisOrgB;
-		private System.Windows.Forms.TextBox m_Layer_edLinkXAxisOrgA;
+		private System.Windows.Forms.TextBox m_edLinkAxisEndB;
+		private System.Windows.Forms.TextBox m_edLinkAxisEndA;
+		private System.Windows.Forms.TextBox m_edLinkAxisOrgB;
+		private System.Windows.Forms.TextBox m_edLinkAxisOrgA;
 		private System.Windows.Forms.Label label23;
-		private System.Windows.Forms.RadioButton m_Layer_rbLinkXAxisCustom;
-		private System.Windows.Forms.RadioButton m_Layer_rbLinkXAxisStraight;
-		private System.Windows.Forms.RadioButton m_Layer_rbLinkXAxisNone;
+		private System.Windows.Forms.RadioButton m_rbLinkAxisCustom;
+		private System.Windows.Forms.RadioButton m_rbLinkAxisStraight;
+		private System.Windows.Forms.RadioButton m_rbLinkAxisNone;
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -63,14 +63,14 @@ namespace Altaxo.Graph
 			this.label26 = new System.Windows.Forms.Label();
 			this.label25 = new System.Windows.Forms.Label();
 			this.label24 = new System.Windows.Forms.Label();
-			this.m_Layer_edLinkXAxisEndB = new System.Windows.Forms.TextBox();
-			this.m_Layer_edLinkXAxisEndA = new System.Windows.Forms.TextBox();
-			this.m_Layer_edLinkXAxisOrgB = new System.Windows.Forms.TextBox();
-			this.m_Layer_edLinkXAxisOrgA = new System.Windows.Forms.TextBox();
+			this.m_edLinkAxisEndB = new System.Windows.Forms.TextBox();
+			this.m_edLinkAxisEndA = new System.Windows.Forms.TextBox();
+			this.m_edLinkAxisOrgB = new System.Windows.Forms.TextBox();
+			this.m_edLinkAxisOrgA = new System.Windows.Forms.TextBox();
 			this.label23 = new System.Windows.Forms.Label();
-			this.m_Layer_rbLinkXAxisCustom = new System.Windows.Forms.RadioButton();
-			this.m_Layer_rbLinkXAxisStraight = new System.Windows.Forms.RadioButton();
-			this.m_Layer_rbLinkXAxisNone = new System.Windows.Forms.RadioButton();
+			this.m_rbLinkAxisCustom = new System.Windows.Forms.RadioButton();
+			this.m_rbLinkAxisStraight = new System.Windows.Forms.RadioButton();
+			this.m_rbLinkAxisNone = new System.Windows.Forms.RadioButton();
 			this.SuspendLayout();
 			// 
 			// label26
@@ -100,41 +100,41 @@ namespace Altaxo.Graph
 			this.label24.Text = "End";
 			this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// m_Layer_edLinkXAxisEndB
+			// m_edLinkAxisEndB
 			// 
-			this.m_Layer_edLinkXAxisEndB.Location = new System.Drawing.Point(88, 96);
-			this.m_Layer_edLinkXAxisEndB.Name = "m_Layer_edLinkXAxisEndB";
-			this.m_Layer_edLinkXAxisEndB.Size = new System.Drawing.Size(40, 20);
-			this.m_Layer_edLinkXAxisEndB.TabIndex = 18;
-			this.m_Layer_edLinkXAxisEndB.Text = "";
-			this.m_Layer_edLinkXAxisEndB.Validating += new System.ComponentModel.CancelEventHandler(this.EhEndB_Validating);
+			this.m_edLinkAxisEndB.Location = new System.Drawing.Point(88, 96);
+			this.m_edLinkAxisEndB.Name = "m_edLinkAxisEndB";
+			this.m_edLinkAxisEndB.Size = new System.Drawing.Size(40, 20);
+			this.m_edLinkAxisEndB.TabIndex = 18;
+			this.m_edLinkAxisEndB.Text = "";
+			this.m_edLinkAxisEndB.Validating += new System.ComponentModel.CancelEventHandler(this.EhEndB_Validating);
 			// 
-			// m_Layer_edLinkXAxisEndA
+			// m_edLinkAxisEndA
 			// 
-			this.m_Layer_edLinkXAxisEndA.Location = new System.Drawing.Point(40, 96);
-			this.m_Layer_edLinkXAxisEndA.Name = "m_Layer_edLinkXAxisEndA";
-			this.m_Layer_edLinkXAxisEndA.Size = new System.Drawing.Size(40, 20);
-			this.m_Layer_edLinkXAxisEndA.TabIndex = 17;
-			this.m_Layer_edLinkXAxisEndA.Text = "";
-			this.m_Layer_edLinkXAxisEndA.Validating += new System.ComponentModel.CancelEventHandler(this.EhEndA_Validating);
+			this.m_edLinkAxisEndA.Location = new System.Drawing.Point(40, 96);
+			this.m_edLinkAxisEndA.Name = "m_edLinkAxisEndA";
+			this.m_edLinkAxisEndA.Size = new System.Drawing.Size(40, 20);
+			this.m_edLinkAxisEndA.TabIndex = 17;
+			this.m_edLinkAxisEndA.Text = "";
+			this.m_edLinkAxisEndA.Validating += new System.ComponentModel.CancelEventHandler(this.EhEndA_Validating);
 			// 
-			// m_Layer_edLinkXAxisOrgB
+			// m_edLinkAxisOrgB
 			// 
-			this.m_Layer_edLinkXAxisOrgB.Location = new System.Drawing.Point(88, 72);
-			this.m_Layer_edLinkXAxisOrgB.Name = "m_Layer_edLinkXAxisOrgB";
-			this.m_Layer_edLinkXAxisOrgB.Size = new System.Drawing.Size(40, 20);
-			this.m_Layer_edLinkXAxisOrgB.TabIndex = 16;
-			this.m_Layer_edLinkXAxisOrgB.Text = "";
-			this.m_Layer_edLinkXAxisOrgB.Validating += new System.ComponentModel.CancelEventHandler(this.EhOrgB_Validating);
+			this.m_edLinkAxisOrgB.Location = new System.Drawing.Point(88, 72);
+			this.m_edLinkAxisOrgB.Name = "m_edLinkAxisOrgB";
+			this.m_edLinkAxisOrgB.Size = new System.Drawing.Size(40, 20);
+			this.m_edLinkAxisOrgB.TabIndex = 16;
+			this.m_edLinkAxisOrgB.Text = "";
+			this.m_edLinkAxisOrgB.Validating += new System.ComponentModel.CancelEventHandler(this.EhOrgB_Validating);
 			// 
-			// m_Layer_edLinkXAxisOrgA
+			// m_edLinkAxisOrgA
 			// 
-			this.m_Layer_edLinkXAxisOrgA.Location = new System.Drawing.Point(40, 72);
-			this.m_Layer_edLinkXAxisOrgA.Name = "m_Layer_edLinkXAxisOrgA";
-			this.m_Layer_edLinkXAxisOrgA.Size = new System.Drawing.Size(40, 20);
-			this.m_Layer_edLinkXAxisOrgA.TabIndex = 15;
-			this.m_Layer_edLinkXAxisOrgA.Text = "";
-			this.m_Layer_edLinkXAxisOrgA.Validating += new System.ComponentModel.CancelEventHandler(this.EhOrgA_Validating);
+			this.m_edLinkAxisOrgA.Location = new System.Drawing.Point(40, 72);
+			this.m_edLinkAxisOrgA.Name = "m_edLinkAxisOrgA";
+			this.m_edLinkAxisOrgA.Size = new System.Drawing.Size(40, 20);
+			this.m_edLinkAxisOrgA.TabIndex = 15;
+			this.m_edLinkAxisOrgA.Text = "";
+			this.m_edLinkAxisOrgA.Validating += new System.ComponentModel.CancelEventHandler(this.EhOrgA_Validating);
 			// 
 			// label23
 			// 
@@ -145,46 +145,46 @@ namespace Altaxo.Graph
 			this.label23.Text = "Org";
 			this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// m_Layer_rbLinkXAxisCustom
+			// m_rbLinkAxisCustom
 			// 
-			this.m_Layer_rbLinkXAxisCustom.Location = new System.Drawing.Point(16, 32);
-			this.m_Layer_rbLinkXAxisCustom.Name = "m_Layer_rbLinkXAxisCustom";
-			this.m_Layer_rbLinkXAxisCustom.Size = new System.Drawing.Size(104, 16);
-			this.m_Layer_rbLinkXAxisCustom.TabIndex = 13;
-			this.m_Layer_rbLinkXAxisCustom.Text = "Custom (a+bx)";
-			this.m_Layer_rbLinkXAxisCustom.CheckedChanged += new System.EventHandler(this.EhLinkCustom_CheckedChanged);
+			this.m_rbLinkAxisCustom.Location = new System.Drawing.Point(16, 32);
+			this.m_rbLinkAxisCustom.Name = "m_rbLinkAxisCustom";
+			this.m_rbLinkAxisCustom.Size = new System.Drawing.Size(104, 16);
+			this.m_rbLinkAxisCustom.TabIndex = 13;
+			this.m_rbLinkAxisCustom.Text = "Custom (a+bx)";
+			this.m_rbLinkAxisCustom.CheckedChanged += new System.EventHandler(this.EhLinkCustom_CheckedChanged);
 			// 
-			// m_Layer_rbLinkXAxisStraight
+			// m_rbLinkAxisStraight
 			// 
-			this.m_Layer_rbLinkXAxisStraight.Location = new System.Drawing.Point(16, 16);
-			this.m_Layer_rbLinkXAxisStraight.Name = "m_Layer_rbLinkXAxisStraight";
-			this.m_Layer_rbLinkXAxisStraight.Size = new System.Drawing.Size(104, 16);
-			this.m_Layer_rbLinkXAxisStraight.TabIndex = 12;
-			this.m_Layer_rbLinkXAxisStraight.Text = "Straight (1:1)";
-			this.m_Layer_rbLinkXAxisStraight.CheckedChanged += new System.EventHandler(this.EhLinkStraight_CheckedChanged);
+			this.m_rbLinkAxisStraight.Location = new System.Drawing.Point(16, 16);
+			this.m_rbLinkAxisStraight.Name = "m_rbLinkAxisStraight";
+			this.m_rbLinkAxisStraight.Size = new System.Drawing.Size(104, 16);
+			this.m_rbLinkAxisStraight.TabIndex = 12;
+			this.m_rbLinkAxisStraight.Text = "Straight (1:1)";
+			this.m_rbLinkAxisStraight.CheckedChanged += new System.EventHandler(this.EhLinkStraight_CheckedChanged);
 			// 
-			// m_Layer_rbLinkXAxisNone
+			// m_rbLinkAxisNone
 			// 
-			this.m_Layer_rbLinkXAxisNone.Location = new System.Drawing.Point(16, 0);
-			this.m_Layer_rbLinkXAxisNone.Name = "m_Layer_rbLinkXAxisNone";
-			this.m_Layer_rbLinkXAxisNone.Size = new System.Drawing.Size(104, 16);
-			this.m_Layer_rbLinkXAxisNone.TabIndex = 11;
-			this.m_Layer_rbLinkXAxisNone.Text = "None";
-			this.m_Layer_rbLinkXAxisNone.CheckedChanged += new System.EventHandler(this.EhLinkNone_CheckedChanged);
+			this.m_rbLinkAxisNone.Location = new System.Drawing.Point(16, 0);
+			this.m_rbLinkAxisNone.Name = "m_rbLinkAxisNone";
+			this.m_rbLinkAxisNone.Size = new System.Drawing.Size(104, 16);
+			this.m_rbLinkAxisNone.TabIndex = 11;
+			this.m_rbLinkAxisNone.Text = "None";
+			this.m_rbLinkAxisNone.CheckedChanged += new System.EventHandler(this.EhLinkNone_CheckedChanged);
 			// 
 			// LinkAxisControl
 			// 
 			this.Controls.Add(this.label26);
 			this.Controls.Add(this.label25);
 			this.Controls.Add(this.label24);
-			this.Controls.Add(this.m_Layer_edLinkXAxisEndB);
-			this.Controls.Add(this.m_Layer_edLinkXAxisEndA);
-			this.Controls.Add(this.m_Layer_edLinkXAxisOrgB);
-			this.Controls.Add(this.m_Layer_edLinkXAxisOrgA);
+			this.Controls.Add(this.m_edLinkAxisEndB);
+			this.Controls.Add(this.m_edLinkAxisEndA);
+			this.Controls.Add(this.m_edLinkAxisOrgB);
+			this.Controls.Add(this.m_edLinkAxisOrgA);
 			this.Controls.Add(this.label23);
-			this.Controls.Add(this.m_Layer_rbLinkXAxisCustom);
-			this.Controls.Add(this.m_Layer_rbLinkXAxisStraight);
-			this.Controls.Add(this.m_Layer_rbLinkXAxisNone);
+			this.Controls.Add(this.m_rbLinkAxisCustom);
+			this.Controls.Add(this.m_rbLinkAxisStraight);
+			this.Controls.Add(this.m_rbLinkAxisNone);
 			this.Name = "LinkAxisControl";
 			this.Size = new System.Drawing.Size(128, 120);
 			this.ResumeLayout(false);
@@ -194,19 +194,19 @@ namespace Altaxo.Graph
 
 		private void EhLinkNone_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(null!=Controller && ((RadioButton)sender).Checked==true)
+			if(null!=Controller && this.m_rbLinkAxisNone.Checked==true)
 				Controller.EhView_LinkTypeChanged(Layer.AxisLinkType.None);
 		}
 
 		private void EhLinkStraight_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(null!=Controller && ((RadioButton)sender).Checked==true)
+			if(null!=Controller && this.m_rbLinkAxisStraight.Checked==true)
 				Controller.EhView_LinkTypeChanged(Layer.AxisLinkType.Straight);
 		}
 
 		private void EhLinkCustom_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(null!=Controller && ((RadioButton)sender).Checked==true)
+			if(null!=Controller && this.m_rbLinkAxisCustom.Checked==true)
 				Controller.EhView_LinkTypeChanged(Layer.AxisLinkType.Custom);
 		}
 
@@ -275,10 +275,10 @@ namespace Altaxo.Graph
 
 		void EnableCustom(bool bEnab)
 		{
-			this.m_Layer_edLinkXAxisOrgA.Enabled = bEnab;
-			this.m_Layer_edLinkXAxisOrgB.Enabled = bEnab;
-			this.m_Layer_edLinkXAxisEndA.Enabled = bEnab;
-			this.m_Layer_edLinkXAxisEndB.Enabled = bEnab;
+			this.m_edLinkAxisOrgA.Enabled = bEnab;
+			this.m_edLinkAxisOrgB.Enabled = bEnab;
+			this.m_edLinkAxisEndA.Enabled = bEnab;
+			this.m_edLinkAxisEndB.Enabled = bEnab;
 		}
 
 		public void LinkType_Initialize(Layer.AxisLinkType linktype)
@@ -286,15 +286,15 @@ namespace Altaxo.Graph
 			switch(linktype)
 			{
 				case Layer.AxisLinkType.None:
-					this.m_Layer_rbLinkXAxisNone.Checked = true;
+					this.m_rbLinkAxisNone.Checked = true;
 					EnableCustom(false);
 					break;
 				case Layer.AxisLinkType.Straight:
-					this.m_Layer_rbLinkXAxisStraight.Checked = true;
+					this.m_rbLinkAxisStraight.Checked = true;
 					EnableCustom(false);
 					break;
 				case Layer.AxisLinkType.Custom:
-					this.m_Layer_rbLinkXAxisCustom.Checked = true;
+					this.m_rbLinkAxisCustom.Checked = true;
 					EnableCustom(true);
 					break;
 			}
@@ -303,23 +303,29 @@ namespace Altaxo.Graph
 
 		public void OrgA_Initialize(string text)
 		{
-			this.m_Layer_edLinkXAxisOrgA.Text = text;
+			this.m_edLinkAxisOrgA.Text = text;
 		}
 
 		public void OrgB_Initialize(string text)
 		{
-			this.m_Layer_edLinkXAxisOrgB.Text = text;
+			this.m_edLinkAxisOrgB.Text = text;
 		}
 
 		public void EndA_Initialize(string text)
 		{
-			this.m_Layer_edLinkXAxisEndA.Text = text;
+			this.m_edLinkAxisEndA.Text = text;
 		}
 
 		public void EndB_Initialize(string text)
 		{
-			this.m_Layer_edLinkXAxisEndB.Text = text;
+			this.m_edLinkAxisEndB.Text = text;
 		}
+
+		public void Enable_OrgAndEnd_Boxes(bool bEnable)
+		{
+			EnableCustom(bEnable);
+		}
+
 
 		#endregion
 
