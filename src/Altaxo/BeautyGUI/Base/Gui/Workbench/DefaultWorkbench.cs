@@ -5,6 +5,8 @@
 //     <version value="$version"/>
 // </file>
 
+// <originalsource>SharpDevelop 0.96</originalsource>
+// <originalfile>Base/Gui/Workbench/DefaultWorkbench</originalfile>
 using System;
 using System.IO;
 using System.Collections;
@@ -23,6 +25,8 @@ using ICSharpCode.Core.Properties;
 
 using ICSharpCode.Core.Services;
 
+using Altaxo;
+
 //using ICSharpCode.SharpDevelop.Services;
 
 //using UtilityLibrary.CommandBars;
@@ -36,7 +40,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 	/// <summary>
 	/// This is the a Workspace with a multiple document interface.
 	/// </summary>
-	public class DefaultWorkbench : Form, IWorkbench
+	public class DefaultWorkbench : IWorkbench, Altaxo.IMainController
 	{
 		readonly static string mainMenuPath    = "/SharpDevelop/Workbench/MainMenu";
 		readonly static string viewContentPath = "/SharpDevelop/Workbench/Views";
@@ -54,30 +58,42 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		protected static PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 		
+
+		DefaultWorkbenchWindow m_View;
+		string m_Title;
+
+
+		public DefaultWorkbenchWindow View
+		{
+			get { return m_View; }
+			set { m_View = value; }
+		}
+
+	
+
+		// Lellid: move this to the view
 		public bool FullScreen {
-			get {
+			get
+			{
 				return fullscreen;
 			}
-			set {
+			set
+			{
 				fullscreen = value;
-				if (fullscreen) {
-					FormBorderStyle    = FormBorderStyle.None;
-					defaultWindowState = WindowState;
-					WindowState        = FormWindowState.Maximized;
-				} else {
-					FormBorderStyle = FormBorderStyle.Sizable;
-					Bounds          = normalBounds;
-					WindowState     = defaultWindowState;
-				}
+				if(null!=View)
+					View.FullScreen = value;
 			}
 		}
 		
 		public string Title {
 			get {
-				return Text;
+				return m_Title;
 			}
 			set {
-				Text = value;
+				m_Title = value;
+				
+				if(null!=View)
+					View.Title = value;
 			}
 		}
 		
@@ -121,30 +137,70 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public DefaultWorkbench()
+		public DefaultWorkbench(DefaultWorkbenchWindow window, Altaxo.AltaxoDocument doc)
 		{
+			
+			m_View = window;
+			m_View.Controller = this;
+			
+			// we construct the main document
+			if(null==m_Doc)
+				m_Doc = new AltaxoDocument();
+			else
+				m_Doc = doc;
+
+			// we initialize the printer variables
+			m_PrintDocument = new System.Drawing.Printing.PrintDocument();
+			// we set the print document default orientation to landscape
+			m_PrintDocument.DefaultPageSettings.Landscape=true;
+			m_PageSetupDialog = new System.Windows.Forms.PageSetupDialog();
+			m_PageSetupDialog.Document = m_PrintDocument;
+			m_PrintDialog = new System.Windows.Forms.PrintDialog();
+			m_PrintDialog.Document = m_PrintDocument;
+
+			// we create the menu and assign it to the view
+			//this.InitializeMenu();
+			//View.MainViewMenu = this.m_MainMenu;
+
+
+			// wir konstruieren zu jeder Tabelle im Dokument ein GrafTabView
+			CreateNewWorksheet(Doc.CreateNewTable("WKS0",false));
+
+			// we construct a empty graph by default
+			//CreateNewGraph(Doc.CreateNewGraphDocument());
+
+#if LellidMod
+#else
 			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 			Text = resourceService.GetString("MainWindow.DialogName");
 			Icon = resourceService.GetIcon("Icons.SharpDevelopIcon");
-			
+#endif
+	
 			windowChangeEventHandler = new EventHandler(OnActiveWindowChanged);
 			
-			StartPosition = FormStartPosition.Manual;
+			if(View!=null)
+			{
+				View.StartPosition = FormStartPosition.Manual;
 			
-			AllowDrop      = true;
+				View.AllowDrop      = true;
+
+				this.WorkbenchLayout = new MdiWorkbenchLayout();
+			}
 		}
 		
 		public void InitializeWorkspace()
 		{
-			Menu = null;
+			View.Menu = null;
 			
 			//			statusBarManager.Control.Dock = DockStyle.Bottom;
 			
 			ActiveWorkbenchWindowChanged += new EventHandler(UpdateMenu);
 			
-			MenuComplete += new EventHandler(SetStandardStatusBar);
+			View.MenuComplete += new EventHandler(SetStandardStatusBar);
 			SetStandardStatusBar(null, null);
 			
+#if LellidMod
+#else
 			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
 			IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
 			
@@ -159,50 +215,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			fileService.FileRemoved += new FileEventHandler(fileService.RecentOpen.FileRemoved);
 			fileService.FileRenamed += new FileEventHandler(fileService.RecentOpen.FileRenamed);
-			
+#endif
+	
 			TopMenu.Selected += new CommandHandler(OnTopMenuSelected);
 			TopMenu.Deselected += new CommandHandler(OnTopMenuDeselected);
 			CreateToolBars();
 		}
 		
-		//		public void OpenCombine(string filename)
-		//		{
-		//			Debug.Assert(projectManager != null);
-		//			projectManager.ClearCombine();
-		//			CloseAllFiles();
-		//			projectManager.OpenCombine(filename);
-		//			UpdateMenu(null, null);
-		//		}
-		//
-		//		public void SaveCombine()
-		//		{
-		//			Debug.Assert(projectManager != null);
-		//			projectManager.SaveCombine();
-		//		}
-		//
-		//		public void ClearCombine()
-		//		{
-		//			Debug.Assert(projectManager != null);
-		//			projectManager.ClearCombine();
-		//		}
-		//
-		//		public void MarkFileDirty(string filename)
-		//		{
-		//			Debug.Assert(projectManager != null);
-		//			projectManager.MarkFileDirty(filename);
-		//		}
-		//
-		//		public void OpenFile(string fileName)
-		//		{
-		//			Debug.Assert(fileManager != null);
-		//			fileManager.OpenFile(fileName);
-		//		}
-		//
-		//		public void NewFile(string defaultName, string language, string content)
-		//		{
-		//			Debug.Assert(fileManager != null);
-		//			fileManager.NewFile(defaultName, language, content);
-		//		}
+		
 		
 		public void CloseContent(IViewContent content)
 		{
@@ -333,8 +353,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			WorkbenchMemento memento   = new WorkbenchMemento();
 			memento.Bounds             = normalBounds;
-			memento.DefaultWindowState = fullscreen ? defaultWindowState : WindowState;
-			memento.WindowState        = WindowState;
+			memento.DefaultWindowState = fullscreen ? defaultWindowState : View.WindowState;
+			memento.WindowState        = View.WindowState;
 			memento.FullScreen         = fullscreen;
 			return memento;
 		}
@@ -344,76 +364,24 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (xmlMemento != null) {
 				WorkbenchMemento memento = (WorkbenchMemento)xmlMemento;
 				
-				Bounds      = normalBounds = memento.Bounds;
-				WindowState = memento.WindowState;
+				View.Bounds      = normalBounds = memento.Bounds;
+				View.WindowState = memento.WindowState;
 				defaultWindowState = memento.DefaultWindowState;
 				FullScreen  = memento.FullScreen;
 			}
 		}
 		
-		protected override void OnResize(EventArgs e)
-		{
-			base.OnResize(e);
-			if (WindowState == FormWindowState.Normal) {
-				normalBounds = Bounds;
-			}
-			
-		}
 		
-		protected override void OnLocationChanged(EventArgs e)
-		{
-			base.OnLocationChanged(e);
-			if (WindowState == FormWindowState.Normal) {
-				normalBounds = Bounds;
-			}
-		}
 		
-		/*
-		void CheckRemovedFile(object sender, FileEventArgs e)
-		{
-			if (e.IsDirectory) {
-				foreach (IViewContent content in ViewContentCollection) {
-					if (content.ContentName.StartsWith(e.FileName)) {
-						content.WorkbenchWindow.CloseWindow(true);
-					}
-				}
-			} else {
-				foreach (IViewContent content in ViewContentCollection) {
-					// WINDOWS DEPENDENCY : ToUpper
-					if (content.ContentName != null &&
-					    content.ContentName.ToUpper() == e.FileName.ToUpper()) {
-						content.WorkbenchWindow.CloseWindow(true);
-						return;
-					}
-				}
-			}
-		}
 		
-		void CheckRenamedFile(object sender, FileEventArgs e)
-		{
-			if (e.IsDirectory) {
-				foreach (IViewContent content in ViewContentCollection) {
-					if (content.ContentName.StartsWith(e.SourceFile)) {
-						content.ContentName = e.TargetFile + content.ContentName.Substring(e.SourceFile.Length);
-					}
-				}
-			} else {
-				foreach (IViewContent content in ViewContentCollection) {
-					// WINDOWS DEPENDENCY : ToUpper
-					if (content.ContentName != null &&
-					    content.ContentName.ToUpper() == e.SourceFile.ToUpper()) {
-						content.ContentName = e.TargetFile;
-						return;
-					}
-				}
-			}
-		}
-		*/
 		protected void OnTopMenuSelected(MenuCommand mc)
 		{
+#if LellidMod
+#else
 			IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
 			
 			statusBarService.SetMessage(mc.Description);
+#endif
 		}
 		
 		protected void OnTopMenuDeselected(MenuCommand mc)
@@ -421,61 +389,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 			SetStandardStatusBar(null, null);
 		}
 		
-		protected override void OnClosing(CancelEventArgs e)
-		{
-			base.OnClosing(e);
-			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-			
-			projectService.SaveCombinePreferences();
-			while (WorkbenchSingleton.Workbench.ViewContentCollection.Count > 0) {
-				IViewContent content = WorkbenchSingleton.Workbench.ViewContentCollection[0];
-				content.WorkbenchWindow.CloseWindow(false);
-				if (WorkbenchSingleton.Workbench.ViewContentCollection.IndexOf(content) >= 0) {
-					e.Cancel = true;
-					return;
-				}
-			}
-			
-			// TODO : Dirty Files Dialog
-			//			foreach (IViewContent content in ViewContentCollection) {
-				//				if (content.IsDirty) {
-					//					ICSharpCode.SharpDevelop.Gui.Dialogs.DirtyFilesDialog dfd = new ICSharpCode.SharpDevelop.Gui.Dialogs.DirtyFilesDialog();
-			//					e.Cancel = dfd.ShowDialog() == DialogResult.Cancel;
-			//					return;
-			//				}
-			//			}
-		}
 		
-		protected override void OnClosed(EventArgs e)
-		{
-			base.OnClosed(e);
-			layout.Detach();
-			foreach (IPadContent content in PadContentCollection) {
-				content.Dispose();
-			}
-		}
 		
-		/*
-		void CombineOpened(object sender, CombineEventArgs e)
-		{
-			UpdateMenu(null, null);			
-		}
-		void SetProjectTitle(object sender, ProjectEventArgs e)
-		{
-			UpdateMenu(null, null);
-			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
-			if (e.Project != null) {
-				Title = String.Concat(e.Project.Name, " - ", resourceService.GetString("MainWindow.DialogName"));
-			} else {
-				Title = resourceService.GetString("MainWindow.DialogName");
-			}
-		}
-		*/
+		
 
 		void SetStandardStatusBar(object sender, EventArgs e)
 		{
+#if LellidMod
+#else
 			IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
 			statusBarService.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
+#endif
 		}
 		
 		void OnActiveWindowChanged(object sender, EventArgs e)
@@ -515,6 +439,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		//        toolbars this is not possible. (drawing fragments, slow etc.)
 		void CreateToolBars()
 		{
+#if LellidMod
+#else
 			ToolbarService toolBarService = (ToolbarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ToolbarService));
 			ToolBarEx[] toolBars = toolBarService.CreateToolbars();
 			
@@ -527,7 +453,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 						ToolBars[i].Items[j].ToolTip = toolBars[i].Items[j].ToolTip;
 					}
 				}
-			}			
+			}
+#endif
 		}
 		
 		public void UpdateViews(object sender, EventArgs e)
@@ -538,35 +465,164 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		protected override void OnDragEnter(DragEventArgs e)
-		{
-			base.OnDragEnter(e);
-			if (e.Data != null && e.Data.GetDataPresent(DataFormats.FileDrop)) {
-				string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-				foreach (string file in files) {
-					if (File.Exists(file)) {
-						e.Effect = DragDropEffects.Copy;
-						return;
-					}
-				}
-			}
-			e.Effect = DragDropEffects.None;
-		}
+	
 		
-		protected override void OnDragDrop(DragEventArgs e)
-		{
-			base.OnDragDrop(e);
-			if (e.Data != null && e.Data.GetDataPresent(DataFormats.FileDrop)) {
-				string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-				IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-				foreach (string file in files) {
-					if (File.Exists(file)) {
-						fileService.OpenFile(file);
-					}
-				}
-			}
-		}
-		
+			
 		public event EventHandler ActiveWorkbenchWindowChanged;
+		#region IMainController Members
+
+
+		/// <summary>
+		/// Das Wichtigste - das eigentliche Dokument
+		/// </summary>
+		public AltaxoDocument m_Doc=null;
+
+		private System.Windows.Forms.PageSetupDialog m_PageSetupDialog;
+
+		private System.Drawing.Printing.PrintDocument m_PrintDocument;
+
+		private System.Windows.Forms.PrintDialog m_PrintDialog;
+
+
+		/// <summary>
+		/// Flag that indicates that the Application is about to be closed.
+		/// </summary>
+		private bool m_ApplicationIsClosing;
+
+		#region Properties
+		public  System.Windows.Forms.PageSetupDialog PageSetupDialog
+		{
+			get { return m_PageSetupDialog; }
+		}
+
+		public  System.Drawing.Printing.PrintDocument PrintDocument
+		{
+			get { return m_PrintDocument; }
+		}
+
+
+		public System.Windows.Forms.PrintDialog PrintDialog
+		{
+			get { return m_PrintDialog; }
+		}
+
+
+		/// <summary>
+		/// Indicates if true that the Application is about to be closed. Can be used by child forms to prevent the confirmation dialog that 
+		/// normally appears also during close of the application, since the child windows also receive the closing message in this case.
+		/// </summary>
+		public bool IsClosing
+		{
+			get { return this.m_ApplicationIsClosing; }
+		}
+
+		#endregion
+
+		public Altaxo.Graph.GUI.IGraphController CreateNewGraph()
+		{
+			return CreateNewGraph(Doc.CreateNewGraphDocument());
+		}
+
+	
+
+		public Altaxo.Graph.GUI.IGraphController CreateNewGraph(Altaxo.Graph.GraphDocument graph)
+		{
+			Altaxo.Main.GUI.IWorkbenchWindowController wbv_controller = new Altaxo.Main.GUI.WorkbenchWindowController();
+			Altaxo.Main.GUI.WorkbenchForm wbvform = new Altaxo.Main.GUI.WorkbenchForm(this.View.Form);
+			wbv_controller.View = wbvform;
+
+			if(graph==null)
+				graph = this.Doc.CreateNewGraphDocument();
+
+			Altaxo.Graph.GUI.GraphController ctrl = new Altaxo.Graph.GUI.GraphController(graph);
+			Altaxo.Graph.GUI.GraphView view = new Altaxo.Graph.GUI.GraphView();
+			ctrl.View = view;
+
+			
+			wbv_controller.Content = ctrl;
+
+			this.workbenchContentCollection.Add((IViewContent)wbv_controller);
+			wbvform.Show();
+			return ctrl;
+		}
+
+	
+
+		Altaxo.IMainView Altaxo.IMainController.View
+		{
+			get
+			{
+				// TODO:  Add DefaultWorkbench.Altaxo.IMainController.View getter implementation
+				return (Altaxo.IMainView) this.m_View;
+			}
+		}
+
+		public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table)
+		{
+			Altaxo.Main.GUI.IWorkbenchWindowController wbv_controller = new Altaxo.Main.GUI.WorkbenchWindowController();
+			Altaxo.Main.GUI.BeautyWorkspaceWindow wbvform = new Altaxo.Main.GUI.BeautyWorkspaceWindow(this.View.Form);
+			wbv_controller.View = wbvform;
+
+			Altaxo.Worksheet.GUI.WorksheetController ctrl = new Altaxo.Worksheet.GUI.WorksheetController(this.Doc.CreateNewTableLayout(table));
+			Altaxo.Worksheet.GUI.WorksheetView view = new Altaxo.Worksheet.GUI.WorksheetView();
+			ctrl.View = view;
+
+			wbv_controller.Content = ctrl;
+			
+			this.workbenchContentCollection.Add((IViewContent)ctrl);
+			wbvform.Show();
+			return ctrl;
+		}
+
+		public void EhView_Closing(CancelEventArgs e)
+		{
+			// TODO:  Add DefaultWorkbench.EhView_Closing implementation
+		}
+
+		public void EhView_Closed(EventArgs e)
+		{
+			// TODO:  Add DefaultWorkbench.EhView_Closed implementation
+		}
+
+		/// <summary>This will remove the GraphController <paramref>ctrl</paramref> from the graph forms collection.</summary>
+		/// <param name="ctrl">The GraphController to remove.</param>
+		/// <remarks>No exception is thrown if the Form frm is not a member of the graph forms collection.</remarks>
+		public void RemoveGraph(Altaxo.Graph.GUI.GraphController ctrl)
+		{
+			if(this.workbenchContentCollection.Contains((IViewContent)ctrl))
+				this.workbenchContentCollection.Remove((IViewContent)ctrl);
+			else if(ctrl.ParentWorkbenchWindowController !=null && this.workbenchContentCollection.Contains((IViewContent)ctrl.ParentWorkbenchWindowController))
+				this.workbenchContentCollection.Remove((IViewContent)ctrl.ParentWorkbenchWindowController);
+		}
+
+		
+
+		/// <summary>This will remove the Worksheet <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
+		/// <param name="ctrl">The Worksheet to remove.</param>
+		/// <remarks>No exception is thrown if the Form frm is not a member of the worksheet forms collection.</remarks>
+		public void RemoveWorksheet(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+		{
+			if(this.workbenchContentCollection.Contains((IViewContent)ctrl))
+				this.workbenchContentCollection.Remove((IViewContent)ctrl);
+			else if(ctrl.ParentWorkbenchWindowController !=null && this.workbenchContentCollection.Contains((IViewContent)ctrl.ParentWorkbenchWindowController))
+				this.workbenchContentCollection.Remove((IViewContent)ctrl.ParentWorkbenchWindowController);
+		}
+
+
+		public void EhView_CloseMessage()
+		{
+			// TODO:  Add DefaultWorkbench.EhView_CloseMessage implementation
+		}
+
+		/// <summary>
+		/// The document which is visualized by the controller, contains all data tables, graph, worksheet views and graph views
+		/// </summary>
+		public AltaxoDocument Doc
+		{
+			get	{	return m_Doc; }
+		}
+
+
+		#endregion
 	}
 }

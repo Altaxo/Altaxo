@@ -164,12 +164,22 @@
                 />
                 <File
                     RelPath = "Base\Gui\Workbench\DefaultWorkbench.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Base\Gui\Workbench\DefaultWorkbench.resx"
                     DependentUpon = "DefaultWorkbench.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Base\Gui\Workbench\DefaultWorkbenchWindow.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Base\Gui\Workbench\DefaultWorkbenchWindow.resx"
+                    DependentUpon = "DefaultWorkbenchWindow.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
@@ -181,6 +191,11 @@
                     RelPath = "Base\Gui\Workbench\Layouts\BeautyWorkspaceWindow.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Base\Gui\Workbench\Layouts\BeautyWorkspaceWindow.resx"
+                    DependentUpon = "BeautyWorkspaceWindow.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Base\Gui\Workbench\Layouts\MdiWorkbenchLayout.cs"

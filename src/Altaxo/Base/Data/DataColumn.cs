@@ -289,7 +289,7 @@ namespace Altaxo.Data
 		/// </summary>
 		public virtual string Name
 		{
-			get { return m_Parent is Main.INamedObjectCollection ? ((Main.INamedObjectCollection)m_Parent).GetNameOfChildObject(this) : this.GetType().ToString(); }
+			get { return m_Parent is Main.INamedObjectCollection ? ((Main.INamedObjectCollection)m_Parent).GetNameOfChildObject(this) : null; }
 		}
 
 

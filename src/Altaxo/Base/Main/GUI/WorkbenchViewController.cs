@@ -51,7 +51,10 @@ namespace Altaxo.Main.GUI
 		void SetTitle(string title);
 	}
 
-	public class WorkbenchWindowController : IWorkbenchWindowController
+	public class WorkbenchWindowController 
+		:
+		IWorkbenchWindowController,
+		ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow	
 	{
 		protected Main.GUI.IWorkbenchWindowView m_View;
 		protected IWorkbenchContentController m_Content;

@@ -19,7 +19,7 @@ namespace BeautyGUI
 		[STAThread]
 		static void Main() 
 		{
-			App.InitializeMainController(new MainController(new MainView(), new AltaxoDocument()));
+			App.InitializeMainController(new ICSharpCode.SharpDevelop.Gui.DefaultWorkbench(new ICSharpCode.SharpDevelop.Gui.DefaultWorkbenchWindow(), new AltaxoDocument()));
 
 			App.Main();
 		}
