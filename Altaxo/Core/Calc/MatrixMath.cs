@@ -80,7 +80,7 @@ namespace Altaxo.Calc
 	/// Class MatrixMath provides common static methods for matrix manipulation
 	/// and arithmetic in tow dimensions.
 	/// </summary>
-	class MatrixMath
+	public class MatrixMath
 	{
 		#region Helper matrix implementations
 
