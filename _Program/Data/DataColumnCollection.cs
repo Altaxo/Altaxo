@@ -35,6 +35,11 @@ namespace Altaxo.Data
 		public delegate void OnDirtySet(Altaxo.Data.DataColumnCollection sender);
 		
 		// Data
+
+		/// <summary>
+		/// The data table this set is belonging to. In case this is a DataTable (by inheriting),
+		/// m_Parent points to itself. In case this is a PropertyCollection belonging to a DataTable, this points to the DataTable
+		/// </summary>
 		protected DataTable m_Parent=null; // the DataTable this set is belonging to
 		protected System.Collections.ArrayList m_ColumnsByNumber = new System.Collections.ArrayList();
 		protected int m_NumberOfRows=0; // the max. Number of Rows of the columns of the table

@@ -463,6 +463,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Worksheet\DataView.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\DataView.resx"
+                    DependentUpon = "DataView.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Worksheet\DateTimeColumnStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -474,6 +484,11 @@
                 />
                 <File
                     RelPath = "Worksheet\IndexSelection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\ITableDocumentView.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -491,6 +506,11 @@
                     RelPath = "Worksheet\SetColumnValuesDialog.resx"
                     DependentUpon = "SetColumnValuesDialog.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Worksheet\TableController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Worksheet\TextColumnStyle.cs"

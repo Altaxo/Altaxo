@@ -70,31 +70,6 @@ namespace Altaxo.Data
 		/// </summary>
 		private bool  m_Table_DeserializationFinished=false;
 
-
-
-		public DataTable(string name)
-			: base(null)
-		{
-			this.m_TableName = name;
-			base.Parent = this;
-			m_PropertyColumns = new DataColumnCollection(this);
-		}
-
-		public DataTable(Altaxo.Data.DataSet parent) : base(null)
-		{
-			this.m_ParentDataSet = parent;
-			base.Parent = this;
-			m_PropertyColumns = new DataColumnCollection(this);
-		}
-
-		public DataTable(Altaxo.Data.DataSet parent, string name) : base(null)
-		{
-			this.m_ParentDataSet = parent;
-			this.m_TableName = name;
-			base.Parent = this;
-			m_PropertyColumns = new DataColumnCollection(this);
-		}
-  
 		#region "Serialization"
 		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
@@ -127,20 +102,48 @@ namespace Altaxo.Data
 
 		public override void OnDeserialization(object obj)
 		{
+			base.Parent = this;
 			base.OnDeserialization(obj);
 
 			if(!m_Table_DeserializationFinished && obj is DeserializationFinisher)
 			{
 				m_Table_DeserializationFinished = true;
-				DeserializationFinisher finisher = new DeserializationFinisher(this);
-
 				// set the parent data table of the data column collection
-				base.Parent = this;
+
+				// now inform the dependent objects
+				DeserializationFinisher finisher = new DeserializationFinisher(this);
+				this.m_PropertyColumns.Parent = this;
+				this.m_PropertyColumns.OnDeserialization(finisher);
 			}
 		}
 
 		#endregion
 
+
+		public DataTable(string name)
+			: base(null)
+		{
+			this.m_TableName = name;
+			base.Parent = this;
+			m_PropertyColumns = new DataColumnCollection(this);
+		}
+
+		public DataTable(Altaxo.Data.DataSet parent) : base(null)
+		{
+			this.m_ParentDataSet = parent;
+			base.Parent = this;
+			m_PropertyColumns = new DataColumnCollection(this);
+		}
+
+		public DataTable(Altaxo.Data.DataSet parent, string name) : base(null)
+		{
+			this.m_ParentDataSet = parent;
+			this.m_TableName = name;
+			base.Parent = this;
+			m_PropertyColumns = new DataColumnCollection(this);
+		}
+  
+	
 		public Altaxo.Data.DataSet ParentDataSet
 		{
 			get { return m_ParentDataSet; }
