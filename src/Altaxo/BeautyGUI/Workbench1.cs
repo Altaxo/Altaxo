@@ -101,7 +101,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			if (ToolBars == null) 
 			{
+#if OriginalSharpDevelopCode
 				ToolbarService toolBarService = (ToolbarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ToolbarService));
+#else
+				// Note: original ToolbarService don't support checked toolbar items
+				AltaxoToolbarService toolBarService = (AltaxoToolbarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(AltaxoToolbarService));
+#endif
 				CommandBar[] toolBars = toolBarService.CreateToolbars();
 				ToolBars = toolBars;
 			}

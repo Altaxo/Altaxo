@@ -16,7 +16,7 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "WinExe"
-                PreBuildEvent = "copy ..\Altaxo\BeautyGUI\Altaxo.resources ..\data\resources"
+                PreBuildEvent = "copy ..\Altaxo\BeautyGUI\Altaxo*.resources ..\data\resources"
                 PostBuildEvent = "copy ..\Altaxo\BeautyGUI\*.config"
                 RootNamespace = ""
                 RunPostBuildEvent = "OnBuildSuccess"
@@ -124,13 +124,17 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "Altaxo.resources"
+                    RelPath = "AltaxoBitmap.resources"
                     BuildAction = "None"
                 />
                 <File
                     RelPath = "AltaxoOpenFileTab.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "AltaxoString.resources"
+                    BuildAction = "None"
                 />
                 <File
                     RelPath = "App.ico"
@@ -208,8 +212,17 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "UsingSharpDevelopForAltaxo.txt"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "Workbench1.cs"
                     SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\AltaxoToolbarService.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

@@ -38,6 +38,7 @@
 		<Class id="TaskService" class="ICSharpCode.SharpDevelop.Services.TaskService"/>
 		<Class id="StatusBarService" class="ICSharpCode.SharpDevelop.Services.DefaultStatusBarService"/>
 		<Class id="ToolbarService" class="ICSharpCode.SharpDevelop.Services.ToolbarService"/>
+		<Class id="AltaxoToolbarService" class="ICSharpCode.SharpDevelop.Services.AltaxoToolbarService"/>
 		<Class id="DisplayBindingService" class="ICSharpCode.SharpDevelop.Services.DisplayBindingService"/>
 	</Extension>
 	<Extension path="/SharpDevelop/Workbench/DisplayBindings">
@@ -78,10 +79,10 @@
 				<ToolbarItem id="SaveAll" icon="Icons.16x16.SaveAllIcon" tooltip="${res:XML.MainMenu.FileMenu.SaveAll.Description}" class="ICSharpCode.SharpDevelop.Commands.SaveAllFiles"/>
 			</Conditional>
 		</ToolbarItem>
-		<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Disable">
-			<ToolbarItem id="Worksheet">
-				<ToolbarItem id="New" icon="Icons.16x16.NewDocumentIcon" tooltip="${res:XML.MainMenu.FileMenu.New.File.Description}" class="ICSharpCode.SharpDevelop.Commands.CreateNewFile"/>
-				<ToolbarItem id="Open" icon="Icons.16x16.OpenFileIcon" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}" class="ICSharpCode.SharpDevelop.Commands.OpenFile"/>
+		<Conditional activewindow="Altaxo.Graph.GUI.GraphController" action="Disable">
+			<ToolbarItem id="Graph">
+				<ToolbarItem id="New" icon="Icons.16x16.GraphPointerTool" tooltip="${res:XML.MainMenu.FileMenu.New.File.Description}" class="Altaxo.Graph.Commands.SelectPointerTool"/>
+				<ToolbarItem id="Open" icon="Icons.16x16.TextTool" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}" class="Altaxo.Graph.Commands.SelectTextTool"/>
 				<Conditional activewindow="*" action="Disable">
 					<ToolbarItem id="Save" icon="Icons.16x16.SaveIcon" tooltip="${res:XML.MainMenu.FileMenu.Save.Description}" class="ICSharpCode.SharpDevelop.Commands.SaveFile"/>
 					<ToolbarItem id="SaveAll" icon="Icons.16x16.SaveAllIcon" tooltip="${res:XML.MainMenu.FileMenu.SaveAll.Description}" class="ICSharpCode.SharpDevelop.Commands.SaveAllFiles"/>

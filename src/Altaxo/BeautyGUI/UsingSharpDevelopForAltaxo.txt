@@ -1,0 +1,36 @@
+24.10.03
+Experimente mit eigenen Conditions. Geht gut, musste aber AddIn.xsd
+im Module ICSharpCode.Core ändern, damit meine Conditions überhaupt
+eingelesen werden. Bis jetzt die einzige Änderung am OriginalCode,
+wo mir nichts einfällt, wie man sie umgehen kann.
+
+
+26.10.03
+
+Habe die Projekt-Logik von Altaxo von der Workbench-Logik getrennt,
+in der Hoffnung,
+die Workbench von SharpDevelop nutzen zu können.
+Geht leider nicht vollständig, da die Methode "InitializeWorkspace()"
+Code enthält, der sich auf den ProjectService bezieht. Meine
+Projekte sehen jedoch vollständig anders aus, der ProjektService von
+SharpDevelop macht da
+wenig Sinn. Vollständiges Neuerstellen von Workbench.cs ist umständlich,
+da sich zum Teil das Layout direkt auf die Klasse DefaultWorkbench mittels
+Casting bezieht, da müsste man die Layout-Klassen ebenfalls ändern.
+Habe deshalb meine Workbench von DefaultWorkbench abgeleitet, und InitializeWorkspace()
+geändert. Musste einige Methoden 1:1 kopieren, weil sie in DefaultWorkbench als privat
+markiert waren, sie aber in "InitializeWorkspace()" gebraucht werden.
+
+
+
+27.10.03
+
+Wollte meine Graph-Tools in die Toolbar legen, musste aber feststellen,
+das der Toolbar-Service keine Toggle-ToolbarButtons erstellt.
+Musste eigenen Toolbar-Service erstellen, der bei Vorliegen eines 
+ICheckableMenuCommands ein Item vom Typ SdMenuCheckBox erstellt (statt eines
+Items vom Typ SdMenuCommand. Jetzt werden in der Toolbar also "gecheckte"
+Items eingedrückt dargestellt. Musste auch in meiner Workbench1-Klasse die 
+Methode CreateToolbars ändern, damit der neue AltaxoToolbarService benutzt wird.
+
+

@@ -261,5 +261,63 @@ namespace Altaxo.Graph.Commands
 	}
 
 
+	/// <summary>
+	/// Provides a abstract class for issuing commands that apply to worksheet controllers.
+	/// </summary>
+	public abstract class AbstractCheckableGraphControllerCommand : AbstractCheckableMenuCommand
+	{
+		/// <summary>
+		/// Determines the currently active worksheet and issues the command to that worksheet by calling
+		/// Run with the worksheet as a parameter.
+		/// </summary>
+		public override void Run()
+		{
+			Altaxo.Graph.GUI.GraphController ctrl 
+				= App.Current.Workbench.ActiveWorkbenchWindow.ActiveViewContent 
+				as Altaxo.Graph.GUI.GraphController;
+			
+			if(null!=ctrl)
+				Run(ctrl);
+		}
 	
+		/// <summary>
+		/// Override this function for adding own worksheet commands. You will get
+		/// the worksheet controller in the parameter.
+		/// </summary>
+		/// <param name="ctrl">The worksheet controller this command is applied to.</param>
+		public abstract void Run(Altaxo.Graph.GUI.GraphController ctrl);
+	}
+
+	/// <summary>
+	/// Test class for a selected item
+	/// </summary>
+	public class SelectPointerTool : AbstractCheckableGraphControllerCommand
+	{
+		public SelectPointerTool()			
+		{
+			this.IsChecked = true;
+		}
+
+		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+		{
+			// do nothing here
+		}
+	}
+
+	/// <summary>
+	/// Test class for a selected item
+	/// </summary>
+	public class SelectTextTool : AbstractCheckableGraphControllerCommand
+	{
+		public SelectTextTool()			
+		{
+			this.IsChecked = false;
+		}
+
+		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+		{
+			// do nothing here
+		}
+	}
+
 }
