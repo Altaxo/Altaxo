@@ -61,6 +61,7 @@ namespace Altaxo.Worksheet.GUI
 
       this.ScriptName = System.Guid.NewGuid().ToString() + ".cs";
       this.edFormula.Document.TextEditorProperties.TabIndent=2;
+      this.edFormulaWrapper.textAreaControl.InitializeFormatter();
     }
 
     /// <summary> 

@@ -358,6 +358,9 @@ namespace Altaxo.Data
       }
     }
 
+    public string CodeUserDefault { get { return string.Empty; }}
+
+    public string CodeEnd { get { return string.Empty; }}
 
     /// <summary>
     /// Get the assignment statement for the column value or the column, depending on the script style.
@@ -701,4 +704,6 @@ namespace Altaxo.Data
     }
   }
 
+
+ 
 }

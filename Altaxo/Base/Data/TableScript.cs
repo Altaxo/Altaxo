@@ -215,7 +215,7 @@ namespace Altaxo.Data
       { 
         if(null==m_ScriptText)
         {
-          m_ScriptText = this.CodeHeader + this.CodeStart + this.CodeTail;
+          m_ScriptText = this.CodeHeader + this.CodeStart + this.CodeUserDefault +  this.CodeEnd + this.CodeTail;
         }
         return m_ScriptText;
       }
@@ -251,7 +251,7 @@ namespace Altaxo.Data
     /// </summary>
     public virtual string ScriptObjectType
     {
-      get { return "Altaxo.TableScripts.SetTableValues"; }
+      get { return "Altaxo.Calc.SetTableValues"; }
     }
 
     /// <summary>
@@ -262,9 +262,11 @@ namespace Altaxo.Data
       get
       {
         return
+          "using System;\r\n" + 
           "using Altaxo;\r\n" + 
           "using Altaxo.Data;\r\n" + 
-          "namespace Altaxo.TableScripts\r\n" + 
+          "using Altaxo.Calc;\r\n" + 
+          "namespace Altaxo.Calc\r\n" + 
           "{\r\n" + 
           "\tpublic class SetTableValues : Altaxo.Calc.TableScriptExeBase\r\n" +
           "\t{\r\n"+
@@ -280,9 +282,35 @@ namespace Altaxo.Data
       get
       {
         return
-          "\t\t\t// ----- add your script below this line -----\r\n\t\t\t";
+          "\t\t\t// ----- add your script below this line -----\r\n";
       }
     }
+
+    public string CodeUserDefault
+    {
+      get
+      {
+        return
+          "\t\t\t\r\n" + 
+          "\t\t\tfor(int i=0;i<col.RowCount;i++)\r\n" +
+          "\t\t\t\t{\r\n" +
+          "\t\t\t\t// Add your code here\r\n" +
+          "\t\t\t\t}\r\n" +
+          "\t\t\t\r\n"
+          ;
+      }
+    }
+
+
+    public string CodeEnd
+    {
+      get
+      {
+        return
+          "\t\t\t// ----- add your script above this line -----\r\n";
+      }
+    }
+
 
     /// <summary>
     /// Get the ending text of the script, dependent on the ScriptStyle.
@@ -292,8 +320,6 @@ namespace Altaxo.Data
       get
       {
         return 
-          "\r\n\r\n\r\n\r\n\r\n" +
-          "\t\t\t// ----- add your script above this line -----\r\n" +
           "\t\t} // Execute method\r\n" +
           "\t} // class\r\n" + 
           "} //namespace\r\n";

@@ -57,17 +57,37 @@ namespace Altaxo.Data
     string ScriptObjectType { get; }
 
     /// <summary>
-    /// Gets the code header, i.e. the leading script text. It depends on the ScriptStyle.
+    /// Gets the code header, i.e. the leading script text. This includes the using statements
     /// </summary>
     string CodeHeader
     {
       get;
     }
 
+    /// <summary>
+    /// Gets the line before the user code starts
+    /// </summary>
     string CodeStart
     {
       get;
     }
+
+    /// <summary>
+    /// Gets the default code (i.e. an code example)
+    /// </summary>
+    string CodeUserDefault
+    {
+      get;
+    }
+
+    /// <summary>
+    /// Gets the line after the user code ends
+    /// </summary>
+    string CodeEnd
+    {
+      get;
+    }
+
 
     /// <summary>
     /// Get the ending text of the script, dependent on the ScriptStyle.
@@ -265,7 +285,7 @@ namespace Altaxo.Data
       { 
         if(null==m_ScriptText)
         {
-          m_ScriptText = this.CodeHeader + this.CodeStart + this.CodeTail;
+          m_ScriptText = this.CodeHeader + this.CodeStart + this.CodeUserDefault + this.CodeEnd + this.CodeTail;
         }
         return m_ScriptText;
       }
@@ -313,6 +333,16 @@ namespace Altaxo.Data
     }
 
     public abstract string CodeStart
+    {
+      get;
+    }
+
+    public abstract string CodeUserDefault
+    {
+      get;
+    }
+
+    public abstract string CodeEnd
     {
       get;
     }

@@ -149,7 +149,7 @@ namespace ICSharpCode.SharpDevelop.Gui
       }
     }
 
-    public new void UpdateViews(object sender, EventArgs e)
+    public void UpdateViews(object sender, EventArgs e)
     {
       IPadContent[] contents = (IPadContent[])(AddInTreeSingleton.AddInTree.GetTreeNode(viewContentPath).BuildChildItems(this)).ToArray(typeof(IPadContent));
       foreach (IPadContent content in contents) 

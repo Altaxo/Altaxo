@@ -230,6 +230,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Data\DataColumnScript.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Data\DataTable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

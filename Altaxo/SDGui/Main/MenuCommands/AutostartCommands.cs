@@ -82,7 +82,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
       w.SetMemento((IXmlConvertable)propertyService.GetProperty(workbenchMemento, new WorkbenchMemento()));
       w.UpdateViews(null, null);
       
-#if OriginalSharpDevelopCode
+#if !ModifiedForAltaxo
       WorkbenchSingleton.CreateWorkspace();
 #else
       w.WorkbenchLayout = new SdiWorkbenchLayout();
