@@ -371,6 +371,28 @@ namespace ICSharpCode.SharpDevelop.Services
 			t.Priority  = ThreadPriority.Lowest;
 			t.Start();
 		}
+#if ModifiedForAltaxo
+    object _activeModalContent;
+
+    /// <summary>
+    /// Registers a parseable content contained into a modal dialog box. This function must be
+    /// called immediately before the call to form.ShowDialog(..).
+    /// </summary>
+    /// <param name="content">The content of the dialog box. Must be IParseable and IEditable.</param>
+    public void RegisterModalContent(object content)
+    {
+      _activeModalContent = content; 
+    }
+
+    /// <summary>
+    /// Unregisters the parseable content of a modal dialog box. Must be immediatly called after return
+    /// from form.ShowDialog().
+    /// </summary>
+    public void UnregisterModalContent()
+    {
+      _activeModalContent = null; 
+    }
+#endif
 
 		void ParserUpdateThread()
 		{
@@ -393,7 +415,42 @@ namespace ICSharpCode.SharpDevelop.Services
 //				}
 ////// Alex: end of mod
 				try {
-					if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null && WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent != null) {
+#if ModifiedForAltaxo
+          if(_activeModalContent!=null)
+          {
+            IEditable editable = _activeModalContent as IEditable;
+            if (editable != null) 
+            {
+              string fileName = null;
+							
+              IParseableContent parseableContent = _activeModalContent as IParseableContent;
+              if (parseableContent != null) 
+              {
+                fileName = parseableContent.ParseableContentName;
+              } 
+              else if(_activeModalContent is ICSharpCode.SharpDevelop.Gui.IViewContent)
+              {
+                fileName = ((ICSharpCode.SharpDevelop.Gui.IViewContent)_activeModalContent).ContentName;
+              }
+              if (!(fileName == null || fileName.Length == 0)) 
+              {
+                Thread.Sleep(300);
+                IParseInformation parseInformation = null;
+                lock (parsings) 
+                {
+                  parseInformation = ParseFile(fileName, editable.Text);
+                }
+                if (parseInformation != null && editable is IParseInformationListener) 
+                {
+                  ((IParseInformationListener)editable).ParseInformationUpdated(parseInformation);
+                }
+              }
+            }
+
+            continue;
+          }
+#endif
+          if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null && WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent != null) {
 						IEditable editable = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent as IEditable;
 						if (editable != null) {
 							string fileName = null;

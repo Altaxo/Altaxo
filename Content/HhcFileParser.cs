@@ -38,7 +38,7 @@ namespace ICSharpCode.HelpConverter
 		}
 		
 
-    #if NotModifiedForAltaxo
+#if !ModifiedForAltaxo
     //  old MakeXmlComliant - does not work if spaces or linefeeds are between the tags
     void MakeXmlCompliant()
     {

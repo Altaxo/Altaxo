@@ -1,7 +1,13 @@
 <!-- This file is used to generate a xml help file which can be used
      inside the SharpDevelop help browser -->
 <HelpCollection>
-  <HelpFile hhc="SharpDevelop.hhc" chm="SharpDevelop.chm"/>
+  <HelpFolder name="Altaxo help">
+    <HelpFile hhc="AltaxoHelp.hhc" chm="AltaxoHelp.chm"/>
+  </HelpFolder>
+  
+  <HelpFolder name="Altaxo class reference">
+    <HelpFile hhc="AltaxoClassRef.hhc" chm="AltaxoClassRef.chm"/>
+  </HelpFolder>
   
   <HelpFolder name="#ziplib">
     <HelpFile hhc="031SharpZipLib.hhc" chm="031SharpZipLib.chm" />

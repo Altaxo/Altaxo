@@ -20,4 +20,9 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyVersion("1.0.4.4")]
 
 [assembly: AssemblyDelaySign(false)]
+
+#if !ModifiedForAltaxo
 [assembly: AssemblyKeyFile("..\\src\\Main\\Core\\CoreKey.key")]
+#else
+[assembly: AssemblyKeyFile("CoreKey.key")]
+#endif

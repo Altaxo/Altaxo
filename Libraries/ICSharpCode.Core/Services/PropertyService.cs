@@ -23,7 +23,7 @@ namespace ICSharpCode.Core.Services
 	/// </summary>
 	public class PropertyService : DefaultProperties, IService
 	{
-		
+#if !ModifiedForAltaxo
 		readonly static string propertyFileName    = "SharpDevelopProperties.xml";
 		readonly static string propertyFileVersion = "1.1";
 		
@@ -56,10 +56,69 @@ namespace ICSharpCode.Core.Services
 		                                         Path.DirectorySeparatorChar + "SharpDevelop" +
 		                                         Path.DirectorySeparatorChar;
 #endif
+#else
+    static string propertyFileName    = "SharpDevelopProperties.xml";
+		
+    static string propertyFileVersion = "1.1";
+		
+    static string propertyXmlRootNodeName  = "SharpDevelopProperties";
+		
+    static string dataDirectory;
+		
+    static string configDirectory;
+
+    static PropertyService()
+    {
+
+      // Data Directory
+      string confDataDirectory = System.Configuration.ConfigurationSettings.AppSettings["DataDirectory"];
+			
+      if (confDataDirectory != null) 
+      {
+        dataDirectory = confDataDirectory;
+      } 
+      else 
+      {
+        dataDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + 
+          Path.DirectorySeparatorChar + ".." +
+          Path.DirectorySeparatorChar + "data";
+      }
+
+			
+      // Config Directory
+      string confConfigDirectory = System.Configuration.ConfigurationSettings.AppSettings["ApplicationUserDataDirectory"];
+      if(confConfigDirectory==null)
+        confConfigDirectory = ".ICSharpCode" + Path.DirectorySeparatorChar + "SharpDevelop";
+
+
+#if !LINUX
+      configDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + confConfigDirectory +	Path.DirectorySeparatorChar;
+#else
+			configDirectory = "~" +	Path.DirectorySeparatorChar + confConfigDirectory +	Path.DirectorySeparatorChar;
+#endif
+
+      // Property file name
+      string confPropertyFileName = System.Configuration.ConfigurationSettings.AppSettings["PropertyFileName"];
+      if(confPropertyFileName!=null)
+        propertyFileName = confPropertyFileName;
+
+      // Property file version
+      string confPropertyFileVersion = System.Configuration.ConfigurationSettings.AppSettings["PropertyFileVersion"];
+      if(confPropertyFileVersion!=null)
+        propertyFileVersion = confPropertyFileVersion;
+		
+
+      // Xml Root node name
+      string confPropertyXmlRootNodeName = System.Configuration.ConfigurationSettings.AppSettings["PropertyXmlRootNodeName"];
+      if(confPropertyXmlRootNodeName!=null)
+        propertyXmlRootNodeName = confPropertyXmlRootNodeName;
+    }
+#endif
 		/// <summary>
 		/// returns the path of the default application configuration directory
 		/// </summary>
-		public string ConfigDirectory {
+		public string ConfigDirectory 
+    {
 			get {
 				return configDirectory;
 			}

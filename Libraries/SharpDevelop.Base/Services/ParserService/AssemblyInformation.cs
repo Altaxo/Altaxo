@@ -89,9 +89,28 @@ namespace ICSharpCode.SharpDevelop.Services {
 					}
 				}
 			}
-			
+#if !ModifiedForAltaxo			
 			System.Reflection.Assembly asm = nonLocking ? Assembly.Load(GetBytes(fileName)) : Assembly.LoadFrom(fileName);
-			foreach (Type type in asm.GetTypes()) {
+#else
+      System.Reflection.Assembly asm=null;
+			
+      System.Reflection.Assembly[] alreadyLoadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+      foreach(Assembly alreadyLoadedAssembly in alreadyLoadedAssemblies)
+      {
+        // quest for AssemblyBuilder since call to Location with an AssemblyBuilder results in an exception
+        if(!(alreadyLoadedAssembly is System.Reflection.Emit.AssemblyBuilder) && (alreadyLoadedAssembly.Location == fileName))
+        {
+          asm = alreadyLoadedAssembly;
+          break;
+        }
+      }
+
+      if(asm==null)
+      {
+        asm = nonLocking ? Assembly.Load(GetBytes(fileName)) : Assembly.LoadFrom(fileName);
+      }
+#endif
+      foreach (Type type in asm.GetTypes()) {
 				if (!type.FullName.StartsWith("<")) {
 					classes.Add(new ReflectionClass(type, docuNodes));
 				}

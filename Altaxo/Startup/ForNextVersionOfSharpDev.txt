@@ -31,3 +31,19 @@ Beispielcode der das Problem verdeutlicht:
       StringFormat strg2 = StringFormat.GenericTypographic;
 
       Console.WriteLine(strg2.LineAlignment.ToString());
+
+
+-----------------------------------------------------------------------------------
+Change from SharpDevelop 098 to 099
+
+modified files of SD099
+--------------------------------
+ICSharpCode.Core/AssemblyInfo.cs (only because of key location)
+ICSharpCode.Core/Services/PropertyService.cs (because user directory should be different from SharpDevelop)
+SharpDevelopBase/Services/ParserService/AssemblyInformation.cs (because double loading of already loaded DLLs)
+SharpDevelopBase/Services/ParserService/DefaultParserService.cs (because we want also content of modal dialogs to be parsed)
+
+Content/Doc/Help/HelpDescription.xml (delete SD-Help, include Altaxo help and Altaxo class reference)
+Content/HhcFileParser.cs (because original routine don't work with Altaxo help files)
+
+----- End of modified files ------------------------------
