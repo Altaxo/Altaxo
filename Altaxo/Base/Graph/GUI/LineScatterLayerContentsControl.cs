@@ -367,7 +367,8 @@ namespace Altaxo.Graph.GUI
 
 		private void EhPlotAssociations_Click(object sender, System.EventArgs e)
 		{
-		
+			if(null!=Controller)
+				Controller.EhView_PlotAssociationsClick(SelectedContents);
 		}
 
 		private void EhGroup_Click(object sender, System.EventArgs e)
@@ -385,7 +386,8 @@ namespace Altaxo.Graph.GUI
 
 		private void EhEditRange_Click(object sender, System.EventArgs e)
 		{
-		
+			if(null!=Controller)
+				Controller.EhView_EditRangeClick(SelectedContents);
 		}
 
 		private void EhShowRange_CheckedChanged(object sender, System.EventArgs e)

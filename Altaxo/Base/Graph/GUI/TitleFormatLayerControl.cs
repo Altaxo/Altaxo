@@ -401,7 +401,7 @@ namespace Altaxo.Graph.GUI
 		private void EhMajorTickLength_Validating(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			if(null!=m_Ctrl && 0==m_SuppressEvents)
-				m_Ctrl.EhView_MajorTickLengthChanged((string)this.m_Format_cbMajorTickLength.SelectedItem);
+				m_Ctrl.EhView_MajorTickLengthChanged((string)this.m_Format_cbMajorTickLength.Text);
 		}
 
 

@@ -24,7 +24,8 @@ namespace Altaxo.Graph.GUI
 
 		void EhView_GroupClick(int[] selidx);
 		void EhView_UngroupClick(int[] selidxs);
-
+		void EhView_EditRangeClick(int[] selidxs);
+		void EhView_PlotAssociationsClick(int[] selidxs);
 
 	}
 
@@ -468,6 +469,31 @@ namespace Altaxo.Graph.GUI
 			View.Contents_SetItemCount(m_ItemArray.Count);
 			SetDirty();
 		}
+
+
+		public void EhView_EditRangeClick(int[] selidxs)
+		{
+			// retrieve the selected items
+			if(selidxs.Length<1)
+				return; // we cannot ungroup anything if nothing selected
+
+				PLCon item = (PLCon)m_ItemArray[selidxs[0]];
+
+			if(item.IsGroup)
+			{
+			}
+			else if(item.IsSingleKnownItem)
+			{
+				PlotGroup pg = this.m_Layer.PlotItems.GetPlotGroupOf(item.PlotItem);
+				Altaxo.Main.GUI.DialogFactory.ShowLineScatterPlotStyleAndDataDialog(Current.MainWindow, item.PlotItem, pg);
+			}
+		}
+
+		public void EhView_PlotAssociationsClick(int[] selidxs)
+		{
+			EhView_EditRangeClick(selidxs);
+		}
+
 
 		#endregion
 

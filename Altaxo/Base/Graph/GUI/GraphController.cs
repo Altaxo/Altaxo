@@ -1530,6 +1530,34 @@ namespace Altaxo.Graph.GUI
 		}
 
 		/// <summary>
+		/// Removes the currently selected objects (currently only GraphicsObjects are removed)
+		/// </summary>
+		public void RemoveSelectedObjects()
+		{
+			System.Collections.ArrayList removedObjects = new System.Collections.ArrayList();
+			foreach(object o in this.m_SelectedObjects.Keys)
+			{
+				if(o is GraphicsObject && ((GraphicsObject)o).Container!=null)
+				{
+					GraphicsObjectCollection coll = ((GraphicsObject)o).Container;
+					coll.Remove((GraphicsObject)o);
+					removedObjects.Add(o);
+				}
+			}
+
+			if(removedObjects.Count>0)
+			{
+
+				foreach(object o in removedObjects)
+					this.m_SelectedObjects.Remove(o);
+
+				this.View.InvalidateGraph();
+			}
+
+		}
+
+
+		/// <summary>
 		/// Determines whether or not the pixel position in <paramref name="pixelPos"/> is on a already selected object
 		/// </summary>
 		/// <param name="pixelPos">The pixel position to test (on the graph panel)</param>
@@ -1875,9 +1903,11 @@ namespace Altaxo.Graph.GUI
 		}
 		public void Delete(object sender, EventArgs e)
 		{
-			// if(this.SelectedColumns.Count>0 && this.SelectedRows.Count>0 && this.SelectedPropertyColumns.Count>0)
-			// this.RemoveSelected();
-			// else
+			if(this.m_SelectedObjects.Count>0)
+			{
+				this.RemoveSelectedObjects();
+			}
+			else
 			{
 				// nothing is selected, we assume that the user wants to delete the worksheet itself
 				Current.ProjectService.DeleteGraphDocument(this.Doc,false);
