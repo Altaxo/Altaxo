@@ -145,7 +145,8 @@ namespace Altaxo.Calc.Probability
       {
         seedGenerator.GetBytes(bytes);
 
-        result = (uint)(0x7FFFFFFF & (bytes[0] & (bytes[1]<<8) & (bytes[2]<<16) & (bytes[3]<<24)));
+        result = 0x7FFFFFFFU & System.BitConverter.ToUInt32(bytes,0);
+      
       } while(result==0); // extremly seldom
       
       return result; 
@@ -1400,6 +1401,12 @@ namespace Altaxo.Calc.Probability
     {
     }
 
+    /// <summary>
+    /// Generates a random value distributed according to the distribution.
+    /// </summary>
+    /// <returns></returns>
+    public abstract double val();
+
     /// <summary>Initialize the distribution by providing the random generator used
     /// to produce the random values.</summary>
     /// <param name="ran">The random generator used to produce the random values.</param>
@@ -1432,7 +1439,7 @@ namespace Altaxo.Calc.Probability
   /// <summary>
   /// Generates uniformly distributed random numbers over [a,b]
   /// </summary>
-  class UniformDistribution : ProbabilityDistribution 
+  public class UniformDistribution : ProbabilityDistribution 
   {
     protected double scale, low, high;
     protected UniformDistribution() {}
@@ -1454,7 +1461,7 @@ namespace Altaxo.Calc.Probability
       scale = (high-low) / max_val;
     }
 
-    public double val() // we may not want a getter here, because debugging then changes the state of the generator
+    public override double val() // we may not want a getter here, because debugging then changes the state of the generator
     {
       return (scale * gen.Long() + low);
     }
@@ -1492,7 +1499,7 @@ namespace Altaxo.Calc.Probability
     {
       scale = 1.0 / max_val;
     }
-    public double val() 
+    public override double val() 
     {
       return scale * gen.Long();
     }
@@ -1533,7 +1540,7 @@ namespace Altaxo.Calc.Probability
       s = stdev;
       scale  = 2.0 / max_val;
     }
-    public virtual double val()
+    public override double val()
     {
       // We don't have an extra deviate
       if  (cached == 0) 
@@ -1677,7 +1684,7 @@ namespace Altaxo.Calc.Probability
       scale = 1.0/max_val;
     }
 
-    public double val() 
+    public override double val() 
     {
       return (-m * Math.Log( gen.Long() * scale)); 
     }
@@ -1742,7 +1749,7 @@ namespace Altaxo.Calc.Probability
     { 
       SetOrder(order,loc); 
     }
-    public  double val()
+    public override double val()
     {
       if (A < 6) 
       { // direct method
@@ -1907,7 +1914,7 @@ namespace Altaxo.Calc.Probability
       Initialize(order,loc);
     }
   
-    public double val()
+    public override double val()
     {
       // algorithm GD for A >= 1
       if (algorithmGD) 
@@ -2109,7 +2116,7 @@ namespace Altaxo.Calc.Probability
       RandomGenerator ran)
       : base(ran) 
     { Initialize(pa,pb); }
-    public double val()
+    public override double val()
     {         
       // returned on overflow
       const double infinity = DBL_MAX;
@@ -2274,7 +2281,7 @@ namespace Altaxo.Calc.Probability
       DenomChi2 = new ChiSquareDistribution(DF,ran);
     }
  
-    public double val() 
+    public override double val() 
     {
       double numerator   = NumChi2.val()/NF,
         denominator = DenomChi2.val()/DF;
@@ -2376,7 +2383,7 @@ namespace Altaxo.Calc.Probability
     {
       Initialize(mean);
     }
-    public double val()
+    public override double val()
     {
       double em, t, y; 
     
@@ -2483,7 +2490,7 @@ namespace Altaxo.Calc.Probability
       Initialize(prob,num);
     }
 
-    public double val()
+    public override double val()
     {
       double bnl;
 
@@ -3362,6 +3369,11 @@ namespace Altaxo.Calc.Probability
       scale = 2.0 / Maximum;
     }
     
+    public override double val()
+    {
+      throw new NotSupportedException("Use val(out double x, out double y, out double z) instead of this method");
+    }
+
     public void val( out double x, out double y, out double z)
     { 
       for (;;) 

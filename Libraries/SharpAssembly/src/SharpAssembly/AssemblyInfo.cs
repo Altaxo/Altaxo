@@ -46,4 +46,8 @@ using System.Runtime.CompilerServices;
 // .NET Framework documentation for more information about signing.
 // This is not required, if you don't want signing let these attributes like they're.
 [assembly: AssemblyDelaySign(false)]
+#if !ModifiedForAltaxo
 [assembly: AssemblyKeyFile("../src/Libraries/SharpAssembly/bin/ICSharpCode.SharpAssembly.key")]
+#else
+[assembly: AssemblyKeyFile("ICSharpCode.SharpAssembly.key")]
+#endif
