@@ -28,6 +28,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Graph.Axes;
+using Altaxo.Graph.Axes.Boundaries;
 
 
 namespace Altaxo.Graph
@@ -1787,7 +1788,7 @@ namespace Altaxo.Graph
       m_xAxis.DataBounds.Reset();
       foreach(PlotItem pa in this.PlotItems)
       {
-        if(pa is Graph.IXBoundsHolder)
+        if(pa is IXBoundsHolder)
         {
           // first ensure the right data bound object is set on the XYColumnPlotData
           ((IXBoundsHolder)pa).SetXBoundsFromTemplate(m_xAxis.DataBounds); // ensure that data bound object is of the right type
@@ -1838,7 +1839,7 @@ namespace Altaxo.Graph
       m_yAxis.DataBounds.Reset();
       foreach(PlotItem pa in this.PlotItems)
       {
-        if(pa is Graph.IYBoundsHolder)
+        if(pa is IYBoundsHolder)
         {
           // first ensure the right data bound object is set on the XYColumnPlotData
           ((IYBoundsHolder)pa).SetYBoundsFromTemplate(m_yAxis.DataBounds); // ensure that data bound object is of the right type
@@ -2755,7 +2756,7 @@ namespace Altaxo.Graph
         m_xAxis.DataBounds.Reset();
         foreach(PlotItem pa in this.PlotItems)
         {
-          if(pa is Graph.IXBoundsHolder)
+          if(pa is IXBoundsHolder)
           {
             // merge the bounds with x and yAxis
             ((IXBoundsHolder)pa).MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
@@ -2784,7 +2785,7 @@ namespace Altaxo.Graph
         m_yAxis.DataBounds.Reset();
         foreach(PlotItem pa in this.PlotItems)
         {
-          if(pa is Graph.IYBoundsHolder)
+          if(pa is IYBoundsHolder)
           {
             // merge the bounds with x and yAxis
             ((IYBoundsHolder)pa).MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object

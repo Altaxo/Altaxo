@@ -530,12 +530,72 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\Axes\DateTimeAxis.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\Axes\LinearAxis.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Graph\Axes\Log10Axis.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Boundaries\AbstractPhysicalBoundaries.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Boundaries\BoundariesChangedEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Boundaries\EventHandlers.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Boundaries\FiniteDateTimeBoundaries.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Boundaries\FiniteNumericalBoundaries.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Boundaries\IPhysicalBoundaries.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Boundaries\IXBoundsHolder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Boundaries\IXYBoundsHolder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Boundaries\IYBoundsHolder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Boundaries\NumericalBoundaries.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Boundaries\PositiveFiniteNumericalBoundaries.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

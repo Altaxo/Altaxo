@@ -26,6 +26,7 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Data;
 using Altaxo.Collections;
+using Altaxo.Graph.Axes.Boundaries;
 
 namespace Altaxo.Graph
 {
@@ -50,9 +51,9 @@ namespace Altaxo.Graph
     protected Altaxo.Data.INumericColumn m_YColumn;
 
     // cached or temporary data
-    protected PhysicalBoundaries m_xBoundaries; 
-    protected PhysicalBoundaries m_yBoundaries;
-    protected PhysicalBoundaries m_vBoundaries;
+    protected NumericalBoundaries m_xBoundaries; 
+    protected NumericalBoundaries m_yBoundaries;
+    protected NumericalBoundaries m_vBoundaries;
 
 
     /// <summary>
@@ -62,9 +63,9 @@ namespace Altaxo.Graph
     protected bool   m_bCachedDataValid=false;
 
     // events
-    public event PhysicalBoundaries.BoundaryChangedHandler  XBoundariesChanged;
-    public event PhysicalBoundaries.BoundaryChangedHandler  YBoundariesChanged;
-    public event PhysicalBoundaries.BoundaryChangedHandler  VBoundariesChanged;
+    public event BoundaryChangedHandler  XBoundariesChanged;
+    public event BoundaryChangedHandler  YBoundariesChanged;
+    public event BoundaryChangedHandler  VBoundariesChanged;
 
 
     /// <summary>
@@ -113,9 +114,9 @@ namespace Altaxo.Graph
         s.m_YColumn = (Altaxo.Data.INumericColumn)info.GetValue("YColumn",typeof(Altaxo.Data.INumericColumn));
         s.m_DataColumns = (Altaxo.Data.IReadableColumn[])info.GetValue("DataColumns",typeof(Altaxo.Data.IReadableColumn[]));
     
-        s.m_xBoundaries = (PhysicalBoundaries)info.GetValue("XBoundaries",typeof(PhysicalBoundaries));
-        s.m_yBoundaries = (PhysicalBoundaries)info.GetValue("YBoundaries",typeof(PhysicalBoundaries));
-        s.m_vBoundaries = (PhysicalBoundaries)info.GetValue("VBoundaries",typeof(PhysicalBoundaries));
+        s.m_xBoundaries = (NumericalBoundaries)info.GetValue("XBoundaries",typeof(NumericalBoundaries));
+        s.m_yBoundaries = (NumericalBoundaries)info.GetValue("YBoundaries",typeof(NumericalBoundaries));
+        s.m_vBoundaries = (NumericalBoundaries)info.GetValue("VBoundaries",typeof(NumericalBoundaries));
 
         return s;
       }
@@ -228,13 +229,13 @@ namespace Altaxo.Graph
         info.CloseArray(count);
         
         
-        s.m_xBoundaries = (PhysicalBoundaries)info.GetValue("XBoundaries",typeof(PhysicalBoundaries));
-        s.m_yBoundaries = (PhysicalBoundaries)info.GetValue("YBoundaries",typeof(PhysicalBoundaries));
-        s.m_vBoundaries = (PhysicalBoundaries)info.GetValue("VBoundaries",typeof(PhysicalBoundaries));
+        s.m_xBoundaries = (NumericalBoundaries)info.GetValue("XBoundaries",typeof(NumericalBoundaries));
+        s.m_yBoundaries = (NumericalBoundaries)info.GetValue("YBoundaries",typeof(NumericalBoundaries));
+        s.m_vBoundaries = (NumericalBoundaries)info.GetValue("VBoundaries",typeof(NumericalBoundaries));
 
-        s.m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
-        s.m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
-        s.m_vBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnVBoundariesChangedEventHandler);
+        s.m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
+        s.m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
+        s.m_vBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnVBoundariesChangedEventHandler);
 
 
         if(bSurrogateUsed)
@@ -321,9 +322,9 @@ namespace Altaxo.Graph
           ((Altaxo.Data.DataColumn)m_DataColumns[i]).Changed += new EventHandler(EhColumnDataChangedEventHandler);
       }     
     
-      m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
-      m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
-      m_vBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
+      m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
+      m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
+      m_vBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
 
 
       // do not calculate cached data here, since it is done the first time this data is really needed
@@ -356,9 +357,9 @@ namespace Altaxo.Graph
       }
 
 
-      this.SetXBoundsFromTemplate( new FinitePhysicalBoundaries() );
-      this.SetYBoundsFromTemplate( new FinitePhysicalBoundaries() );
-      this.SetVBoundsFromTemplate( new FinitePhysicalBoundaries() );
+      this.SetXBoundsFromTemplate( new FiniteNumericalBoundaries() );
+      this.SetYBoundsFromTemplate( new FiniteNumericalBoundaries() );
+      this.SetVBoundsFromTemplate( new FiniteNumericalBoundaries() );
 
     }
   
@@ -393,9 +394,9 @@ namespace Altaxo.Graph
       }
 
 
-      this.SetXBoundsFromTemplate( new FinitePhysicalBoundaries() );
-      this.SetYBoundsFromTemplate( new FinitePhysicalBoundaries() );
-      this.SetVBoundsFromTemplate( new FinitePhysicalBoundaries() );
+      this.SetXBoundsFromTemplate( new FiniteNumericalBoundaries() );
+      this.SetYBoundsFromTemplate( new FiniteNumericalBoundaries() );
+      this.SetVBoundsFromTemplate( new FiniteNumericalBoundaries() );
 
         
     }
@@ -410,37 +411,37 @@ namespace Altaxo.Graph
       return new XYZEquidistantMeshColumnPlotData(this);
     }
 
-    public void MergeXBoundsInto(PhysicalBoundaries pb)
+    public void MergeXBoundsInto(NumericalBoundaries pb)
     {
       if(!this.m_bCachedDataValid)
         this.CalculateCachedData();
       pb.Add(m_xBoundaries);
     }
 
-    public void MergeYBoundsInto(PhysicalBoundaries pb)
+    public void MergeYBoundsInto(NumericalBoundaries pb)
     {
       if(!this.m_bCachedDataValid)
         this.CalculateCachedData();
       pb.Add(m_yBoundaries);
     }
 
-    public void MergeVBoundsInto(PhysicalBoundaries pb)
+    public void MergeVBoundsInto(NumericalBoundaries pb)
     {
       if(!this.m_bCachedDataValid)
         this.CalculateCachedData();
       pb.Add(m_vBoundaries);
     }
 
-    public void SetXBoundsFromTemplate(PhysicalBoundaries val)
+    public void SetXBoundsFromTemplate(NumericalBoundaries val)
     {
       if(null==m_xBoundaries || val.GetType() != m_xBoundaries.GetType())
       {
         if(null!=m_xBoundaries)
         {
-          m_xBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
+          m_xBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
         }
-        m_xBoundaries = (PhysicalBoundaries)val.Clone();
-        m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
+        m_xBoundaries = (NumericalBoundaries)val.Clone();
+        m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
         this.m_bCachedDataValid = false;
 
         OnChanged();
@@ -448,16 +449,16 @@ namespace Altaxo.Graph
     }
 
 
-    public void SetYBoundsFromTemplate(PhysicalBoundaries val)
+    public void SetYBoundsFromTemplate(NumericalBoundaries val)
     {
       if(null==m_yBoundaries || val.GetType() != m_yBoundaries.GetType())
       {
         if(null!=m_yBoundaries)
         {
-          m_yBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
+          m_yBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
         }
-        m_yBoundaries = (PhysicalBoundaries)val.Clone();
-        m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
+        m_yBoundaries = (NumericalBoundaries)val.Clone();
+        m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
         this.m_bCachedDataValid = false;
 
         OnChanged();
@@ -465,16 +466,16 @@ namespace Altaxo.Graph
     }
 
 
-    public void SetVBoundsFromTemplate(PhysicalBoundaries val)
+    public void SetVBoundsFromTemplate(NumericalBoundaries val)
     {
       if(null==m_vBoundaries || val.GetType() != m_vBoundaries.GetType())
       {
         if(null!=m_vBoundaries)
         {
-          m_vBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
+          m_vBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
         }
-        m_vBoundaries = (PhysicalBoundaries)val.Clone();
-        m_vBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
+        m_vBoundaries = (NumericalBoundaries)val.Clone();
+        m_vBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnVBoundariesChangedEventHandler);
         this.m_bCachedDataValid = false;
 
         OnChanged();

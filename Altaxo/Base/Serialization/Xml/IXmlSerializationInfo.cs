@@ -44,6 +44,8 @@ namespace Altaxo.Serialization.Xml
 
     void AddValue(string name, string val);
 
+    void AddValue(string name, DateTime val);
+
     void AddEnum(string name, System.Enum val); // special name since otherwise _all_ enums would be serialized by that
  
     void SetNodeContent(string nodeContent); // sets Node content directly

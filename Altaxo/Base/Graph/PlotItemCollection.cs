@@ -24,6 +24,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
+using Altaxo.Graph.Axes.Boundaries;
 
 namespace Altaxo.Graph
 {
@@ -269,21 +270,21 @@ namespace Altaxo.Graph
     /// <param name="plotitem">The plot item for which the boundary type should be set.</param>
     public void SetItemBoundaries(Graph.PlotItem plotitem)
     {
-      if(plotitem is Graph.IXBoundsHolder)
+      if(plotitem is IXBoundsHolder)
       {
         IXBoundsHolder pa = (IXBoundsHolder)plotitem;
         if(null!=m_Owner)
           pa.SetXBoundsFromTemplate(m_Owner.XAxis.DataBounds); // ensure that data bound object is of the right type
-        pa.XBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.EhXBoundaryChanged);
+        pa.XBoundariesChanged += new BoundaryChangedHandler(this.EhXBoundaryChanged);
         if(null!=m_Owner)
           pa.MergeXBoundsInto(m_Owner.XAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
       }
-      if(plotitem is Graph.IYBoundsHolder)
+      if(plotitem is IYBoundsHolder)
       {
         IYBoundsHolder pa = (IYBoundsHolder)plotitem;
         if(null!=m_Owner)
           pa.SetYBoundsFromTemplate(m_Owner.YAxis.DataBounds); // ensure that data bound object is of the right type
-        pa.YBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.EhYBoundaryChanged);
+        pa.YBoundariesChanged += new BoundaryChangedHandler(this.EhYBoundaryChanged);
         if(null!=m_Owner)
           pa.MergeYBoundsInto(m_Owner.YAxis.DataBounds); // merge the y-boundaries in the y-Axis data boundaries
       }

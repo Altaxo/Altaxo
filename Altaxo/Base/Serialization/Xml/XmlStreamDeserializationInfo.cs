@@ -112,6 +112,12 @@ namespace Altaxo.Serialization.Xml
     {
       return XmlConvert.ToDouble(m_Reader.ReadElementString());
     }
+
+    public DateTime GetDateTime(string name)
+    {
+      return XmlConvert.ToDateTime(m_Reader.ReadElementString());
+    }
+
     public double GetDouble(string name)
     {
       return XmlConvert.ToDouble(m_Reader.ReadElementString());

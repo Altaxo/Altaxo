@@ -23,11 +23,27 @@
 using System;
 using Altaxo.Serialization;
 
-
-namespace Altaxo.Graph
+namespace Altaxo.Graph.Axes.Boundaries
 {
+  public class BoundariesChangedEventArgs : System.EventArgs
+  {
+    protected bool m_bLowerBoundChanged, m_bUpperBoundChanged;
 
-  
+    public BoundariesChangedEventArgs(bool bLowerBound, bool bUpperBound)
+    {
+      this.m_bLowerBoundChanged = bLowerBound;
+      this.m_bUpperBoundChanged = bUpperBound;
+    }
 
- 
+    public bool LowerBoundChanged 
+    {
+      get { return this.m_bLowerBoundChanged; }
+    }
+
+    public bool UpperBoundChanged 
+    {
+      get { return this.m_bUpperBoundChanged; }
+    }
+  }
+
 }

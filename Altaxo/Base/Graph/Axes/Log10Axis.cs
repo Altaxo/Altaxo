@@ -23,6 +23,7 @@
 using System;
 using Altaxo.Serialization;
 using Altaxo.Graph.Axes.Scaling;
+using Altaxo.Graph.Axes.Boundaries;
 
 
 namespace Altaxo.Graph.Axes
@@ -43,7 +44,7 @@ namespace Altaxo.Graph.Axes
     int    m_DecadesPerMajorTick=1; // how many decades is one major tick
 
     /// <summary>The boundary object. It collectes only positive values for the axis is logarithmic.</summary>
-    protected PhysicalBoundaries m_DataBounds = null;
+    protected NumericalBoundaries m_DataBounds = null;
 
     protected LogarithmicAxisRescaleConditions _rescaling = new LogarithmicAxisRescaleConditions();
 
@@ -89,7 +90,7 @@ namespace Altaxo.Graph.Axes
         //s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
         //s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
 
-        s.m_DataBounds = (PositiveFinitePhysicalBoundaries)info.GetValue("Bounds",typeof(PositiveFinitePhysicalBoundaries));
+        s.m_DataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds",typeof(PositiveFiniteNumericalBoundaries));
     
         return s;
       }
@@ -123,9 +124,9 @@ namespace Altaxo.Graph.Axes
         bool AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
         bool AxisEndFixed = (bool)info.GetBoolean("EndFixed");
 
-        s.m_DataBounds = (PositiveFinitePhysicalBoundaries)info.GetValue("Bounds",typeof(PositiveFinitePhysicalBoundaries));
+        s.m_DataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds",typeof(PositiveFiniteNumericalBoundaries));
     
-        s.m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnBoundariesChanged);
+        s.m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
 
 
         s._rescaling = new LogarithmicAxisRescaleConditions();
@@ -168,12 +169,12 @@ namespace Altaxo.Graph.Axes
 
         s.m_DecadesPerMajorTick = (int)info.GetInt32("DecadesPerMajor");
 
-       // s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
-       // s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
+        // s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
+        // s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
 
-        s.m_DataBounds = (PositiveFinitePhysicalBoundaries)info.GetValue("Bounds",typeof(PositiveFinitePhysicalBoundaries));
+        s.m_DataBounds = (PositiveFiniteNumericalBoundaries)info.GetValue("Bounds",typeof(PositiveFiniteNumericalBoundaries));
     
-        s.m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnBoundariesChanged);
+        s.m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
 
         // new in version 1
         s._rescaling = (LogarithmicAxisRescaleConditions)info.GetValue("Rescaling",s);
@@ -189,7 +190,7 @@ namespace Altaxo.Graph.Axes
     public virtual void OnDeserialization(object obj)
     {
       // restore the event chain
-      m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnBoundariesChanged);
+      m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
     }
     #endregion
 
@@ -200,8 +201,8 @@ namespace Altaxo.Graph.Axes
     /// </summary>
     public Log10Axis()
     {
-      m_DataBounds = new PositiveFinitePhysicalBoundaries();
-      m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnBoundariesChanged);
+      m_DataBounds = new PositiveFiniteNumericalBoundaries();
+      m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
     }
 
     /// <summary>
@@ -211,8 +212,8 @@ namespace Altaxo.Graph.Axes
     public Log10Axis(Log10Axis from)
     {
    
-      this.m_DataBounds   = null==from.m_DataBounds ? new PositiveFinitePhysicalBoundaries() : (PhysicalBoundaries)from.m_DataBounds.Clone();
-      m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnBoundariesChanged);
+      this.m_DataBounds   = null==from.m_DataBounds ? new PositiveFiniteNumericalBoundaries() : (NumericalBoundaries)from.m_DataBounds.Clone();
+      m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
       this.m_DecadesPerMajorTick = from.m_DecadesPerMajorTick;
       this.m_Log10End = from.m_Log10End;
       this.m_Log10Org = from.m_Log10Org;
@@ -484,7 +485,7 @@ namespace Altaxo.Graph.Axes
     }
 
 
-    public override PhysicalBoundaries DataBounds
+    public override NumericalBoundaries DataBounds
     {
       get { return this.m_DataBounds; }
     } // return a PhysicalBoundarie object that is associated with that axis

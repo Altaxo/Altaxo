@@ -24,6 +24,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
+using Altaxo.Graph.Axes.Boundaries;
 
 namespace Altaxo.Graph
 {
@@ -419,7 +420,7 @@ namespace Altaxo.Graph
 
         // now we can fill the image with our data
 
-        PhysicalBoundaries pb = m_ScalingStyle==ScalingStyle.Logarithmic ? (PhysicalBoundaries)new PositiveFinitePhysicalBoundaries() :  (PhysicalBoundaries)new FinitePhysicalBoundaries();
+        NumericalBoundaries pb = m_ScalingStyle==ScalingStyle.Logarithmic ? (NumericalBoundaries)new PositiveFiniteNumericalBoundaries() :  (NumericalBoundaries)new FiniteNumericalBoundaries();
         myPlotAssociation.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
         myPlotAssociation.MergeVBoundsInto(pb);
 

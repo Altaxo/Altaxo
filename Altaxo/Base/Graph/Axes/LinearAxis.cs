@@ -23,6 +23,7 @@
 using System;
 using Altaxo.Serialization;
 using Altaxo.Graph.Axes.Scaling;
+using Altaxo.Graph.Axes.Boundaries;
 
 namespace Altaxo.Graph.Axes
 {
@@ -48,7 +49,7 @@ namespace Altaxo.Graph.Axes
     protected int    m_MinorTicks=2;
    
     /// <summary>Holds the <see cref="PhysicalBoundaries"/> for that axis.</summary>
-    protected PhysicalBoundaries m_DataBounds = new FinitePhysicalBoundaries();
+    protected NumericalBoundaries m_DataBounds = new FiniteNumericalBoundaries();
 
     protected NumericAxisRescaleConditions _rescaling = new NumericAxisRescaleConditions();
 
@@ -83,8 +84,8 @@ namespace Altaxo.Graph.Axes
         info.AddValue("OrgByMajor",s.m_AxisOrgByMajor);
         info.AddValue("EndByMajor",s.m_AxisEndByMajor);
 
-       // info.AddValue("OrgFixed",s.m_AxisOrgFixed);
-       // info.AddValue("EndFixed",s.m_AxisEndFixed);
+        // info.AddValue("OrgFixed",s.m_AxisOrgFixed);
+        // info.AddValue("EndFixed",s.m_AxisEndFixed);
 
         info.AddValue("Bounds",s.m_DataBounds);
       }
@@ -112,7 +113,7 @@ namespace Altaxo.Graph.Axes
         // s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
         // s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
 
-        s.m_DataBounds = (FinitePhysicalBoundaries)info.GetValue("Bounds",typeof(FinitePhysicalBoundaries));
+        s.m_DataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds",typeof(FiniteNumericalBoundaries));
     
         return s;
       }
@@ -153,11 +154,11 @@ namespace Altaxo.Graph.Axes
         bool AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
         bool AxisEndFixed = (bool)info.GetBoolean("EndFixed");
 
-        s.m_DataBounds = (FinitePhysicalBoundaries)info.GetValue("Bounds",s);
+        s.m_DataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds",s);
   
         s.SetCachedValues();
         // restore the event chain
-        s.m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnBoundariesChanged);
+        s.m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
   
         s._rescaling = new NumericAxisRescaleConditions();
         s._rescaling.SetOrgAndEnd(AxisOrgFixed ? BoundaryRescaling.Fixed : BoundaryRescaling.Auto, s.Org, AxisEndFixed ? BoundaryRescaling.Fixed:BoundaryRescaling.Auto, s.End);
@@ -204,11 +205,11 @@ namespace Altaxo.Graph.Axes
         //s.m_AxisOrgFixed = (bool)info.GetBoolean("OrgFixed");
         //s.m_AxisEndFixed = (bool)info.GetBoolean("EndFixed");
 
-        s.m_DataBounds = (FinitePhysicalBoundaries)info.GetValue("Bounds",s);
+        s.m_DataBounds = (FiniteNumericalBoundaries)info.GetValue("Bounds",s);
   
         s.SetCachedValues();
         // restore the event chain
-        s.m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnBoundariesChanged);
+        s.m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(s.OnBoundariesChanged);
   
         // new in version 1
         s._rescaling = (NumericAxisRescaleConditions)info.GetValue("Rescaling",s);
@@ -226,7 +227,7 @@ namespace Altaxo.Graph.Axes
       // restore the cached values
       SetCachedValues();
       // restore the event chain
-      m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnBoundariesChanged);
+      m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
     }
     #endregion
 
@@ -236,8 +237,8 @@ namespace Altaxo.Graph.Axes
     /// </summary>
     public LinearAxis()
     {
-      m_DataBounds = new FinitePhysicalBoundaries();
-      m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnBoundariesChanged);
+      m_DataBounds = new FiniteNumericalBoundaries();
+      m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
     }
 
     /// <summary>
@@ -253,8 +254,8 @@ namespace Altaxo.Graph.Axes
       this.m_AxisSpan       = from.m_AxisSpan;
       this.m_BaseEnd        = from.m_BaseEnd;
       this.m_BaseOrg        = from.m_BaseOrg;
-      this.m_DataBounds     = null==from.m_DataBounds ? new FinitePhysicalBoundaries() : (PhysicalBoundaries)from.m_DataBounds.Clone(); 
-      m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnBoundariesChanged);
+      this.m_DataBounds     = null==from.m_DataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from.m_DataBounds.Clone(); 
+      m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
       this.m_MajorSpan      = from.m_MajorSpan;
       this.m_MinorTicks     = from.m_MinorTicks;
       this.m_OneByAxisSpan  = from.m_OneByAxisSpan;
@@ -272,9 +273,9 @@ namespace Altaxo.Graph.Axes
       this.m_BaseEnd        = from.m_BaseEnd;
       this.m_BaseOrg        = from.m_BaseOrg;
       if(null!=m_DataBounds)
-        m_DataBounds.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnBoundariesChanged);
-      this.m_DataBounds     = null==from.m_DataBounds ? new FinitePhysicalBoundaries() : (PhysicalBoundaries)from.m_DataBounds.Clone(); 
-      m_DataBounds.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnBoundariesChanged);
+        m_DataBounds.BoundaryChanged -= new BoundaryChangedHandler(this.OnBoundariesChanged);
+      this.m_DataBounds     = null==from.m_DataBounds ? new FiniteNumericalBoundaries() : (NumericalBoundaries)from.m_DataBounds.Clone(); 
+      m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.OnBoundariesChanged);
       this.m_MajorSpan      = from.m_MajorSpan;
       this.m_MinorTicks     = from.m_MinorTicks;
       this.m_OneByAxisSpan  = from.m_OneByAxisSpan;
@@ -329,7 +330,7 @@ namespace Altaxo.Graph.Axes
     /// <summary>
     /// Get the internal DataBound object (mostly for merging).
     /// </summary>
-    public override PhysicalBoundaries DataBounds 
+    public override NumericalBoundaries DataBounds 
     {
       get { return m_DataBounds; }
     }

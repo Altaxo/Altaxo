@@ -26,65 +26,14 @@ using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Data;
 using Altaxo.Graph.Axes;
+using Altaxo.Graph.Axes.Boundaries;
 
 
 namespace Altaxo.Graph
 {
 
-  /// <summary>
-  /// Implemented by objects that hold x bounds, for instance XYPlotAssociations.
-  /// </summary>
-  public interface IXBoundsHolder
-  {
-    /// <summary>Fired if the x boundaries of the object changed.</summary>
-    event PhysicalBoundaries.BoundaryChangedHandler XBoundariesChanged;
-
-    /// <summary>
-    /// This sets the x boundary object to a object of the same type as val. The inner data of the boundary, if present,
-    /// are copied into the new x boundary object.
-    /// </summary>
-    /// <param name="val">The template boundary object.</param>
-    void SetXBoundsFromTemplate(PhysicalBoundaries val);
-
-    /// <summary>
-    /// This merges the x boundary of the object with the boundary pb. The boundary pb is updated so that
-    /// it now includes the x boundary range of the object.
-    /// </summary>
-    /// <param name="pb">The boundary object pb which is updated to include the x boundaries of the object.</param>
-    void MergeXBoundsInto(PhysicalBoundaries pb);
-  }
-
-  /// <summary>
-  /// Implemented by objects that hold y bounds, for instance XYPlotAssociations.
-  /// </summary>
-  public interface IYBoundsHolder
-  {
-    /// <summary>Fired if the y boundaries of the object changed.</summary>
-    event PhysicalBoundaries.BoundaryChangedHandler YBoundariesChanged;
-
-    /// <summary>
-    /// This sets the y boundary object to a object of the same type as val. The inner data of the boundary, if present,
-    /// are copied into the new y boundary object.
-    /// </summary>
-    /// <param name="val">The template boundary object.</param>
-    void SetYBoundsFromTemplate(PhysicalBoundaries val);
-
-    /// <summary>
-    /// This merges the y boundary of the object with the boundary pb. The boundary pb is updated so that
-    /// it now includes the y boundary range of the object.
-    /// </summary>
-    /// <param name="pb">The boundary object pb which is updated to include the y boundaries of the object.</param>
-    void MergeYBoundsInto(PhysicalBoundaries pb);
-  }
-
-
-  /// <summary>
-  /// Implemented by objects that hold x bounds and y bounds, for instance XYPlotAssociations.
-  /// </summary>
-  public interface IXYBoundsHolder : IXBoundsHolder, IYBoundsHolder
-  {
-  }
-
+  
+ 
 
   /// <summary>
   /// Summary description for XYColumnPlotData.
@@ -112,8 +61,8 @@ namespace Altaxo.Graph
     protected int m_PlotRangeLength  = int.MaxValue;
 
     // cached or temporary data
-    protected PhysicalBoundaries m_xBoundaries;
-    protected PhysicalBoundaries m_yBoundaries;
+    protected NumericalBoundaries m_xBoundaries;
+    protected NumericalBoundaries m_yBoundaries;
 
     /// <summary>
     /// Number of valid pairs of plot data.
@@ -126,8 +75,8 @@ namespace Altaxo.Graph
     protected bool   m_bCachedDataValid=false;
 
     // events
-    public event PhysicalBoundaries.BoundaryChangedHandler  XBoundariesChanged;
-    public event PhysicalBoundaries.BoundaryChangedHandler  YBoundariesChanged;
+    public event BoundaryChangedHandler  XBoundariesChanged;
+    public event BoundaryChangedHandler  YBoundariesChanged;
 
 
     /// <summary>
@@ -172,8 +121,8 @@ namespace Altaxo.Graph
         s.m_xColumn = (Altaxo.Data.IReadableColumn)info.GetValue("XColumn",typeof(Altaxo.Data.IReadableColumn));
         s.m_yColumn = (Altaxo.Data.IReadableColumn)info.GetValue("YColumn",typeof(Altaxo.Data.IReadableColumn));
 
-        s.m_xBoundaries = (PhysicalBoundaries)info.GetValue("XBoundaries",typeof(PhysicalBoundaries));
-        s.m_yBoundaries = (PhysicalBoundaries)info.GetValue("YBoundaries",typeof(PhysicalBoundaries));
+        s.m_xBoundaries = (NumericalBoundaries)info.GetValue("XBoundaries",typeof(NumericalBoundaries));
+        s.m_yBoundaries = (NumericalBoundaries)info.GetValue("YBoundaries",typeof(NumericalBoundaries));
   
         return s;
       }
@@ -239,13 +188,13 @@ namespace Altaxo.Graph
 
 
 
-        s.m_xBoundaries = (PhysicalBoundaries)info.GetValue("XBoundaries",typeof(PhysicalBoundaries));
+        s.m_xBoundaries = (NumericalBoundaries)info.GetValue("XBoundaries",typeof(NumericalBoundaries));
         if(null!=s.m_xBoundaries)
-          s.m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
+          s.m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
 
-        s.m_yBoundaries = (PhysicalBoundaries)info.GetValue("YBoundaries",typeof(PhysicalBoundaries));
+        s.m_yBoundaries = (NumericalBoundaries)info.GetValue("YBoundaries",typeof(NumericalBoundaries));
         if(null!=s.m_yBoundaries)
-          s.m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
+          s.m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
 
 
 
@@ -305,10 +254,10 @@ namespace Altaxo.Graph
         ((Altaxo.Data.DataColumn)m_yColumn).Changed += new EventHandler(EhColumnDataChangedEventHandler);
     
       if(null!=m_xBoundaries)
-        m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
+        m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
 
       if(null!=m_yBoundaries)
-        m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
+        m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
     }
 
 
@@ -406,8 +355,8 @@ namespace Altaxo.Graph
       YColumn = yColumn;
 
 
-      this.SetXBoundsFromTemplate( new FinitePhysicalBoundaries() );
-      this.SetYBoundsFromTemplate( new FinitePhysicalBoundaries() );
+      this.SetXBoundsFromTemplate( new FiniteNumericalBoundaries() );
+      this.SetYBoundsFromTemplate( new FiniteNumericalBoundaries() );
 
     }
 
@@ -428,8 +377,8 @@ namespace Altaxo.Graph
       this.m_PlotRangeStart = from.m_PlotRangeStart;
       this.m_PlotRangeLength  = from.m_PlotRangeLength;
 
-      this.SetXBoundsFromTemplate( new FinitePhysicalBoundaries() );
-      this.SetYBoundsFromTemplate( new FinitePhysicalBoundaries() );
+      this.SetXBoundsFromTemplate( new FiniteNumericalBoundaries() );
+      this.SetYBoundsFromTemplate( new FiniteNumericalBoundaries() );
         
     }
 
@@ -459,30 +408,30 @@ namespace Altaxo.Graph
     }
 
 
-    public void MergeXBoundsInto(PhysicalBoundaries pb)
+    public void MergeXBoundsInto(NumericalBoundaries pb)
     {
       if(!this.m_bCachedDataValid)
         this.CalculateCachedData();
       pb.Add(m_xBoundaries);
     }
 
-    public void MergeYBoundsInto(PhysicalBoundaries pb)
+    public void MergeYBoundsInto(NumericalBoundaries pb)
     {
       if(!this.m_bCachedDataValid)
         this.CalculateCachedData();
       pb.Add(m_yBoundaries);
     }
 
-    public void SetXBoundsFromTemplate(PhysicalBoundaries val)
+    public void SetXBoundsFromTemplate(NumericalBoundaries val)
     {
       if(null==m_xBoundaries || val.GetType() != m_xBoundaries.GetType())
       {
         if(null!=m_xBoundaries)
         {
-          m_xBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
+          m_xBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
         }
-        m_xBoundaries = (PhysicalBoundaries)val.Clone();
-        m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
+        m_xBoundaries = (NumericalBoundaries)val.Clone();
+        m_xBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
         m_bCachedDataValid = false;
 
         OnChanged();
@@ -490,16 +439,16 @@ namespace Altaxo.Graph
     }
 
 
-    public void SetYBoundsFromTemplate(PhysicalBoundaries val)
+    public void SetYBoundsFromTemplate(NumericalBoundaries val)
     {
       if(null==m_yBoundaries || val.GetType() != m_yBoundaries.GetType())
       {
         if(null!=m_yBoundaries)
         {
-          m_yBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
+          m_yBoundaries.BoundaryChanged -= new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
         }
-        m_yBoundaries = (PhysicalBoundaries)val.Clone();
-        m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
+        m_yBoundaries = (NumericalBoundaries)val.Clone();
+        m_yBoundaries.BoundaryChanged += new BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
         m_bCachedDataValid = false;
 
         OnChanged();

@@ -1,38 +1,19 @@
-#region Copyright
-/////////////////////////////////////////////////////////////////////////////
-//    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
-//
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
-//
-//    This program is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with this program; if not, write to the Free Software
-//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-//
-/////////////////////////////////////////////////////////////////////////////
-#endregion
-
 using System;
-using Altaxo.Serialization;
-using Altaxo.Graph.Axes.Scaling;
-using Altaxo.Graph.Axes.Boundaries;
 
-
+#if false
 namespace Altaxo.Graph.Axes
 {
-  /// <summary>
-  /// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
-  /// </summary>
-  public abstract class Axis : ICloneable, Main.IChangedEventSource
+	/// <summary>
+	/// Summary description for DateTimeAxis.
+	/// </summary>
+	public class DateTimeAxis
   {
+    // cached values
+    /// <summary>Current axis origin (cached value).</summary>
+    protected DateTime m_AxisOrg=DateTime.MinValue;
+    /// <summary>Current axis end (cached value).</summary>
+    protected DateTime m_AxisEnd=DateTime.MaxValue;
+
     #region ICloneable Members
     /// <summary>
     /// Creates a copy of the axis.
@@ -74,7 +55,10 @@ namespace Altaxo.Graph.Axes
     /// <returns>
     /// the normalized value linear along the axis,
     /// 0 for axis origin, 1 for axis end</returns>
-    public abstract double PhysicalToNormal(double x);
+    public double PhysicalToNormal(DateTime x)
+    {
+      return (x-m_AxisOrg).TotalSeconds / (m_AxisEnd-m_AxisOrg).TotalSeconds; 
+    }
     /// <summary>
     /// NormalToPhysical is the inverse function to PhysicalToNormal
     /// It translates a normalized value (0 for the axis origin, 1 for the axis end)
@@ -82,8 +66,10 @@ namespace Altaxo.Graph.Axes
     /// </summary>
     /// <param name="x">the normal value (0 for axis origin, 1 for axis end</param>
     /// <returns>the corresponding physical value</returns>
-    public abstract double NormalToPhysical(double x);
-
+    public DateTime NormalToPhysical(double x)
+    {
+      return m_AxisOrg.AddSeconds(x*(m_AxisEnd-m_AxisOrg).TotalSeconds);
+    }
 
     /// <summary>
     /// PhysicalVariantToNormal translates physical values into a normal value linear along the axis
@@ -95,7 +81,10 @@ namespace Altaxo.Graph.Axes
     /// <returns>
     /// the normalized value linear along the axis,
     /// 0 for axis origin, 1 for axis end</returns>
-    public abstract double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x);
+    public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
+    {
+      return PhysicalToNormal((DateTime)x);
+    }
     /// <summary>
     /// NormalToPhysicalVariant is the inverse function to PhysicalToNormal
     /// It translates a normalized value (0 for the axis origin, 1 for the axis end)
@@ -103,14 +92,20 @@ namespace Altaxo.Graph.Axes
     /// </summary>
     /// <param name="x">the normal value (0 for axis origin, 1 for axis end</param>
     /// <returns>the corresponding physical value</returns>
-    public abstract Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x);
+    public override Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x)
+    {
+      return new Altaxo.Data.AltaxoVariant(NormalToPhysical(x));
+    }
 
     /// <summary>
     /// GetMajorTicks returns the physical values
     /// at which major ticks should occur
     /// </summary>
     /// <returns>physical values for the major ticks</returns>
-    public abstract double[] GetMajorTicks();
+    public  Altaxo.Data.AltaxoVariant[] GetMajorTicks()
+    {
+      return new AltaxoVariant[]{};
+    }
 
 
     /// <summary>
@@ -124,7 +119,7 @@ namespace Altaxo.Graph.Axes
     /// at which minor ticks should occur
     /// </summary>
     /// <returns>physical values for the minor ticks</returns>
-    public virtual double[] GetMinorTicks()
+    public virtual Altaxo.Data.AltaxoVariant[] GetMinorTicks()
     {
       return new double[]{}; // return a empty array per default
     }
@@ -133,7 +128,7 @@ namespace Altaxo.Graph.Axes
     /// <summary>
     /// Returns the <see cref="PhysicalBoundaries"/> object that is associated with that axis.
     /// </summary>
-    public abstract NumericalBoundaries DataBounds { get; } // return a PhysicalBoundarie object that is associated with that axis
+    public abstract PhysicalBoundaries DataBounds { get; } // return a PhysicalBoundarie object that is associated with that axis
 
     /// <summary>The axis origin, i.e. the first point in physical units.</summary>
     public abstract double Org { get; set;}
@@ -188,5 +183,6 @@ namespace Altaxo.Graph.Axes
       get { return sm_AvailableAxes; }
     }
   } // end of class Axis
-
 }
+
+#endif

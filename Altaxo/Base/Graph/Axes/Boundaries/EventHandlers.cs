@@ -20,14 +20,11 @@
 /////////////////////////////////////////////////////////////////////////////
 #endregion
 
-using System;
-using Altaxo.Serialization;
 
-
-namespace Altaxo.Graph
+namespace Altaxo.Graph.Axes.Boundaries
 {
 
-  
-
- 
+  public delegate void BoundaryChangedHandler(object sender, BoundariesChangedEventArgs args);
+  public delegate void ItemNumberChangedHandler(object sender, System.EventArgs args);
+	
 }

@@ -25,6 +25,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Data;
+using Altaxo.Graph.Axes.Boundaries;
 
 
 namespace Altaxo.Graph
@@ -35,7 +36,7 @@ namespace Altaxo.Graph
   /// </summary>
   [SerializationSurrogate(0,typeof(XYColumnPlotItem.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class XYColumnPlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, Graph.IXBoundsHolder, Graph.IYBoundsHolder, Graph.I2DPlotStyle
+  public class XYColumnPlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, IXBoundsHolder, IYBoundsHolder, Graph.I2DPlotStyle
   {
 
     protected XYColumnPlotData m_PlotAssociation;
@@ -171,8 +172,8 @@ namespace Altaxo.Graph
             if(null!=m_PlotAssociation)
             {
               m_PlotAssociation.Changed -= new EventHandler(OnDataChangedEventHandler);
-              m_PlotAssociation.XBoundariesChanged -= new PhysicalBoundaries.BoundaryChangedHandler(EhXBoundariesChanged);
-              m_PlotAssociation.YBoundariesChanged -= new PhysicalBoundaries.BoundaryChangedHandler(EhYBoundariesChanged);
+              m_PlotAssociation.XBoundariesChanged -= new BoundaryChangedHandler(EhXBoundariesChanged);
+              m_PlotAssociation.YBoundariesChanged -= new BoundaryChangedHandler(EhYBoundariesChanged);
             }
 
             m_PlotAssociation = (XYColumnPlotData)value;
@@ -181,8 +182,8 @@ namespace Altaxo.Graph
             {
               m_PlotAssociation.ParentObject = this;
               m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
-              m_PlotAssociation.XBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(EhXBoundariesChanged);
-              m_PlotAssociation.YBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(EhYBoundariesChanged);
+              m_PlotAssociation.XBoundariesChanged += new BoundaryChangedHandler(EhXBoundariesChanged);
+              m_PlotAssociation.YBoundariesChanged += new BoundaryChangedHandler(EhYBoundariesChanged);
             }
 
             OnDataChanged();
@@ -384,14 +385,14 @@ namespace Altaxo.Graph
         XBoundariesChanged(this,args);
     }
 
-    public event Altaxo.Graph.PhysicalBoundaries.BoundaryChangedHandler XBoundariesChanged;
+    public event BoundaryChangedHandler XBoundariesChanged;
 
-    public void SetXBoundsFromTemplate(PhysicalBoundaries val)
+    public void SetXBoundsFromTemplate(NumericalBoundaries val)
     {
       this.m_PlotAssociation.SetXBoundsFromTemplate(val);
     }
 
-    public void MergeXBoundsInto(PhysicalBoundaries pb)
+    public void MergeXBoundsInto(NumericalBoundaries pb)
     {
       this.m_PlotAssociation.MergeXBoundsInto(pb);
     }
@@ -406,14 +407,14 @@ namespace Altaxo.Graph
         YBoundariesChanged(this,args);
     }
 
-    public event Altaxo.Graph.PhysicalBoundaries.BoundaryChangedHandler YBoundariesChanged;
+    public event BoundaryChangedHandler YBoundariesChanged;
 
-    public void SetYBoundsFromTemplate(PhysicalBoundaries val)
+    public void SetYBoundsFromTemplate(NumericalBoundaries val)
     {
       this.m_PlotAssociation.SetYBoundsFromTemplate(val);
     }
 
-    public void MergeYBoundsInto(PhysicalBoundaries pb)
+    public void MergeYBoundsInto(NumericalBoundaries pb)
     {
       this.m_PlotAssociation.MergeYBoundsInto(pb);
     }
@@ -442,7 +443,7 @@ namespace Altaxo.Graph
     {
       get
       {
-       return this.m_PlotStyle.IsXYLineStyleSupported;
+        return this.m_PlotStyle.IsXYLineStyleSupported;
       }
     }
 

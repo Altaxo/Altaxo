@@ -353,6 +353,10 @@ namespace Altaxo.Serialization.Xml
     public float GetSingle() { return 0; }
     public void AddValue(string name, float val) {}
 
+
+    public void AddValue(string name, DateTime val) {}
+    public DateTime GetDateTime(string name) { return DateTime.MinValue; }
+
     public void SetProperty(string propertyname, string propertyvalue)
     {
       
