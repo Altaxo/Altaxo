@@ -541,10 +541,10 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="idx">The index of the column where to copy to, or replace.</param>
 		/// <param name="datac">The column to copy.</param>
-		public virtual void CopyOrReplaceOrAdd(int idx, Altaxo.Data.DataColumn datac)
+		public virtual void CopyOrReplaceOrAdd(int idx, Altaxo.Data.DataColumn datac, string name)
 		{
 			Suspend();
-			m_DataColumns.CopyOrReplaceOrAdd(idx,datac); // add the column to the collection
+			m_DataColumns.CopyOrReplaceOrAdd(idx,datac, name); // add the column to the collection
 			// no need to insert a property row here (only when inserting)
 			Resume();
 		}

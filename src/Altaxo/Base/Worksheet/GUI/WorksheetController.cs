@@ -1463,10 +1463,11 @@ namespace Altaxo.Worksheet.GUI
 			if(HorzScrollPos+1>m_NumberOfTableCols)
 				HorzScrollPos = m_NumberOfTableCols>0 ? m_NumberOfTableCols-1 : 0;
 	
-			m_ColumnStyleCache.ForceUpdate(this);
-
 			if(View!=null)
+			{
+				m_ColumnStyleCache.ForceUpdate(this);
 				View.TableAreaInvalidate();
+			}
 		}
 
 
@@ -1476,7 +1477,7 @@ namespace Altaxo.Worksheet.GUI
 			// and adjust the scroll bars appropriate
 			int oldDataCols = this.m_NumberOfTableCols;
 			this.m_NumberOfTableCols = DataTable.DataColumns.ColumnCount;
-			if(this.m_NumberOfTableCols!=oldDataCols && View!=null)
+			if(this.m_NumberOfTableCols!=oldDataCols)
 			{
 				AdjustXScrollBarMaximum();
 			}
@@ -1490,7 +1491,7 @@ namespace Altaxo.Worksheet.GUI
 			int oldDataRows = this.m_NumberOfTableRows;
 			this.m_NumberOfTableRows = DataTable.DataColumns.RowCount;
 
-			if(m_NumberOfTableRows != oldDataRows && View!=null)
+			if(m_NumberOfTableRows != oldDataRows)
 			{
 				AdjustYScrollBarMaximum();
 			}
@@ -1504,7 +1505,7 @@ namespace Altaxo.Worksheet.GUI
 			int oldPropCols = this.m_NumberOfPropertyCols;
 			this.m_NumberOfPropertyCols=m_Table.PropCols.ColumnCount;
 
-			if(oldPropCols!=this.m_NumberOfPropertyCols && View!=null)
+			if(oldPropCols!=this.m_NumberOfPropertyCols)
 			{
 				// if we was scrolled to the most upper position, we later scroll
 				// to the most upper position again

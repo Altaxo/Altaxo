@@ -267,6 +267,11 @@ namespace Altaxo.Data
 				this.Kind   = from.Kind;
 			}
 
+			public bool IsIndependentVariable
+			{
+				get { return Kind==ColumnKind.X || Kind==ColumnKind.Y || Kind==ColumnKind.Z; }
+			}
+
 			#region ICloneable Members
 
 			/// <summary>
@@ -599,7 +604,13 @@ namespace Altaxo.Data
 		/// <param name="datac"></param>
 		public void Add(Altaxo.Data.DataColumn datac)
 		{
-			Add(datac,new DataColumnInfo(this.FindNewColumnName()));
+			string newname = datac.Name;
+			if(newname==null)
+				newname = this.FindNewColumnName();
+			else if(this.ContainsColumn(newname))
+				newname = this.FindUniqueColumnName(newname);
+
+			Add(datac,new DataColumnInfo(newname));
 		}
 
 		/// <summary>
@@ -634,6 +645,7 @@ namespace Altaxo.Data
 		private void Add(Altaxo.Data.DataColumn datac, DataColumnInfo info)
 		{
 			System.Diagnostics.Debug.Assert(this.ContainsColumn(datac)==false);
+			System.Diagnostics.Debug.Assert(datac.ParentObject==null,"This private function should be only called with fresh DataColumns, if not, alter the behaviour of the calling function"); 
 			
 			info.Number = this.m_ColumnsByNumber.Count;
 
@@ -642,7 +654,8 @@ namespace Altaxo.Data
 			this.m_ColumnInfo[datac] = info;
 			datac.ParentObject = this;
 
-			this.EnsureUniqueColumnKindsForIndependentVariables(info.Group,datac);
+			if(info.IsIndependentVariable)
+				this.EnsureUniqueColumnKindsForIndependentVariables(info.Group,datac);
 
 			this.OnChildChanged(null,ChangeEventArgs.CreateColumnAddArgs(info.Number,datac.Count));
 		}
@@ -654,7 +667,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="index">The column position where to replace or add.</param>
 		/// <param name="datac">The column from which the data should be copied or which should replace the existing column or which should be added.</param>
-		public void CopyOrReplaceOrAdd(int index, DataColumn datac)
+		public void CopyOrReplaceOrAdd(int index, DataColumn datac, string name)
 		{
 			if(index<ColumnCount)
 			{
@@ -664,12 +677,14 @@ namespace Altaxo.Data
 				}
 				else
 				{
-					Replace(index,datac);
+					// if the column to add has a parent, we can not add the column directly (we are then not the owner), so we clone it
+					Replace(index,datac.ParentObject==null ? datac : (DataColumn)datac.Clone());
 				}
 			}
 			else
 			{
-				Add(datac);
+				// if the column to add has a parent, we can not add the column directly (we are then not the owner), so we clone it
+				Add(datac.ParentObject==null ? datac : (DataColumn)datac.Clone(), name);
 			}
 		}
 
@@ -1353,28 +1368,35 @@ namespace Altaxo.Data
 			DataColumn.ChangeEventArgs changed = e as DataColumn.ChangeEventArgs;
 			if(changed!=null && sender is DataColumn)
 			{
-				int columnNumber = GetColumnNumber((DataColumn)sender);
-				int columnCount = ((DataColumn)sender).Count;
+				int columnNumberOfSender = GetColumnNumber((DataColumn)sender);
+				int rowCountOfSender = ((DataColumn)sender).Count;
 
 				if(m_ChangeData==null)
-					m_ChangeData = new ChangeEventArgs(columnNumber,changed.MinRowChanged,changed.MaxRowChanged,changed.RowCountDecreased);
+					m_ChangeData = new ChangeEventArgs(columnNumberOfSender,changed.MinRowChanged,changed.MaxRowChanged,changed.RowCountDecreased);
 				else 
-					m_ChangeData.Accumulate(columnNumber,changed.MinRowChanged,changed.MaxRowChanged,changed.RowCountDecreased);
+					m_ChangeData.Accumulate(columnNumberOfSender,changed.MinRowChanged,changed.MaxRowChanged,changed.RowCountDecreased);
 
-				// update the row count in case the nMaxRow+1 is greater than the chached row count
-				if(columnCount > m_NumberOfRows)
-					m_NumberOfRows = columnCount;
+				// update the row count
+				if(this.m_NumberOfRows < rowCountOfSender)
+					m_NumberOfRows = rowCountOfSender;
+				this.m_NumberOfRowsDecreased |= changed.RowCountDecreased;
 			}
-			else if(e is ChangeEventArgs)
+			else if(e is DataColumnCollection.ChangeEventArgs)
 			{
+				DataColumnCollection.ChangeEventArgs changeargs = (DataColumnCollection.ChangeEventArgs)e;
 				if(null==m_ChangeData)
-					m_ChangeData = (ChangeEventArgs)e;
+					m_ChangeData = changeargs;
 				else
-					m_ChangeData.Accumulate((ChangeEventArgs)e);
+					m_ChangeData.Accumulate(changeargs);
+
+				// update the row count
+				if(this.m_NumberOfRows < changeargs.MaxRowChanged)
+					this.m_NumberOfRows = changeargs.MaxRowChanged;
+				this.m_NumberOfRowsDecreased |= changeargs.RowCountDecreased;
 			}
 		}
 
-		protected void HandleImmediateChildChangeCases(object sender, EventArgs e)
+		protected bool HandleImmediateChildChangeCases(object sender, EventArgs e)
 		{
 			if(e is Main.ParentChangedEventArgs)
 			{
@@ -1384,7 +1406,11 @@ namespace Altaxo.Data
 				else
 					if(!this.ContainsColumn((DataColumn)sender))
 						throw new ApplicationException("Not allowed to set child's parent to this collection before adding it to the collection");
+			
+				return true;
 			}
+
+		return false;
 		}
 
 
@@ -1395,7 +1421,9 @@ namespace Altaxo.Data
 		/// <param name="e">The change details.</param>
 			public void OnChildChanged(object sender, System.EventArgs e)
 		{
-				HandleImmediateChildChangeCases(sender, e);
+			if(HandleImmediateChildChangeCases(sender, e))
+				return;
+
 			if(this.IsSuspended &&  sender is Main.ISuspendable)
 			{
 				m_SuspendedChildCollection.Add(sender); // add sender to suspended child
@@ -1437,15 +1465,6 @@ namespace Altaxo.Data
 		/// </summary>
 		protected virtual void OnDataChanged()
 		{
-			// update our own row count - and invalidate the row count cache if necessary
-			if(m_ChangeData!=null)
-			{
-				if(this.m_NumberOfRows<m_ChangeData.MaxRowChanged)
-					this.m_NumberOfRows = m_ChangeData.MaxRowChanged;
-
-				m_NumberOfRowsDecreased |= m_ChangeData.RowCountDecreased;
-			}
-
 			if(null!=Changed)
 				Changed(this,m_ChangeData);
 

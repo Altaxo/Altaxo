@@ -848,13 +848,13 @@ namespace Altaxo.Serialization
 			{
 				if(newcols[i] is Altaxo.Data.DBNullColumn)
 					continue;
-				table.CopyOrReplaceOrAdd(i,(Altaxo.Data.DataColumn)newcols[i]);
+				table.DataColumns.CopyOrReplaceOrAdd(i,newcols[i], newcols.GetColumnName(i));
 			} // end for loop
 
 			// add the property columns
 			for(int i=0;i<newpropcols.ColumnCount;i++)
 			{
-				table.PropCols.CopyOrReplaceOrAdd(i,(Altaxo.Data.DataColumn)newpropcols[i]);
+				table.PropCols.CopyOrReplaceOrAdd(i,newpropcols[i], newpropcols.GetColumnName(i));
 			}
 			table.Resume();
 		} // end of function ImportAscii

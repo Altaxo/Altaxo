@@ -28,7 +28,7 @@
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE"
+                    DefineConstants = "DEBUG;TRACE;LellidMod"
                     DocumentationFile = ""
                     DebugSymbols = "true"
                     FileAlignment = "4096"
@@ -86,7 +86,7 @@
                 />
                 <Reference
                     Name = "System.XML"
-                    AssemblyName = "System.XML"
+                    AssemblyName = "System.Xml"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
@@ -119,6 +119,7 @@
                 />
                 <File
                     RelPath = "AssemblyInfo.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -157,6 +158,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Base\Gui\Components\OpenFileTab.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Base\Gui\Workbench\DefaultWorkbench.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -165,6 +171,26 @@
                     RelPath = "Base\Gui\Workbench\DefaultWorkbench.resx"
                     DependentUpon = "DefaultWorkbench.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Base\Gui\Workbench\WorkbenchMemento.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Base\Gui\Workbench\Layouts\BeautyWorkspaceWindow.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Base\Gui\Workbench\Layouts\MdiWorkbenchLayout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Base\Internal\Conditions\OwnerStateCondition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
             </Include>
         </Files>
