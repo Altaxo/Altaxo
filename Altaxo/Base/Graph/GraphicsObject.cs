@@ -34,7 +34,11 @@ namespace Altaxo.Graph
   /// </summary>
   [SerializationSurrogate(0,typeof(GraphicsObject.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public abstract class GraphicsObject : System.Runtime.Serialization.IDeserializationCallback, Main.IChangedEventSource, System.ICloneable
+  public abstract class GraphicsObject 
+    :
+    System.Runtime.Serialization.IDeserializationCallback,
+    Main.IChangedEventSource,
+    System.ICloneable  
   {
     /// <summary>
     /// If true, the graphical object sizes itself, for instance simple text objects.
@@ -256,6 +260,7 @@ namespace Altaxo.Graph
       gp.Transform(myMatrix);
       return gp;
     }
+
 
     public virtual bool HitTest(RectangleF rect)
     {

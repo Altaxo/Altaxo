@@ -918,12 +918,27 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Inserts multiple DataColumns into the collection at index <c>nDestinationIndex</c>
+    /// Inserts multiple DataColumns into the collection at index <c>nDestinationIndex</c>. The caller must garantuee, that the names are not already be present!
     /// </summary>
     /// <param name="columns">The array of data columns to insert.</param>
     /// <param name="info">The corresponding column information for the columns to insert.</param>
     /// <param name="nDestinationIndex">The index into the collection where the columns are inserted.</param>
     protected void Insert(DataColumn[] columns, DataColumnInfo[] info, int nDestinationIndex)
+    {
+      Insert(columns,info,nDestinationIndex,false);
+    }
+
+
+    /// <summary>
+    /// Inserts multiple DataColumns into the collection at index <c>nDestinationIndex</c>. The caller must garantuee, that the names are not already be present,
+    /// or the argument <c>renameColumnsIfNecessary</c> must be set to true!
+    /// </summary>
+    /// <param name="columns">The array of data columns to insert.</param>
+    /// <param name="info">The corresponding column information for the columns to insert.</param>
+    /// <param name="nDestinationIndex">The index into the collection where the columns are inserted.</param>
+    /// <param name="renameColumnsIfNecessary">If set to true, the columns to insert are automatically renamed if already be present in the destination collection. If false,
+    /// an exception is thrown if a column with the same name is already be present in the destination table.</param>
+    protected void Insert(DataColumn[] columns, DataColumnInfo[] info, int nDestinationIndex, bool renameColumnsIfNecessary)
     {
       this.Suspend();
       
@@ -932,14 +947,18 @@ namespace Altaxo.Data
      
       // first add the columns to the collection
       for(int i=0;i<numberToAdd;i++)
+      {
+        if(renameColumnsIfNecessary && this.ContainsColumn(info[i].Name))
+          info[i].Name = this.FindUniqueColumnNameWithBase(info[i].Name);
+
         this.Add(columns[i],info[i]);
+      }
 
       // then move the columns to the desired position
       this.ChangeColumnPosition(new Altaxo.Collections.IntegerRangeAsCollection(indexOfAddedColumns,numberToAdd),nDestinationIndex);
       
       this.Resume();
     }
-
 
     #endregion
 
@@ -1035,7 +1054,7 @@ namespace Altaxo.Data
 
       this.RemoveColumns(selectedColumns,false);
 
-      destination.Insert(tmpColumn,tmpInfo,0);
+      destination.Insert(tmpColumn,tmpInfo,0,true);
     }
 
     #endregion

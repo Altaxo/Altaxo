@@ -1240,10 +1240,10 @@ namespace Altaxo.Graph.GUI
         // finally, mark the selected objects
         if(!bForPrinting && m_SelectedObjects.Count>0)
         {
-          foreach(GraphicsObject graphObject in m_SelectedObjects.Keys)
+          foreach(IHitTestObject graphObject in m_SelectedObjects.Keys)
           {
             int nLayer = (int)m_SelectedObjects[graphObject];
-            g.DrawPath(Pens.Blue,Layers[nLayer].LayerToGraphCoordinates(graphObject.GetSelectionPath()));
+            g.DrawPath(Pens.Blue,graphObject.SelectionPath);
           }
         }
       }
@@ -1634,15 +1634,16 @@ namespace Altaxo.Graph.GUI
     /// <param name="pixelPos">The pixel position to test (on the graph panel)</param>
     /// <param name="foundObject">Returns the object the position <paramref name="pixelPos"/> is pointing to, else null</param>
     /// <returns>True when the pixel position is upon a selected object, else false</returns>
-    public bool IsPixelPositionOnAlreadySelectedObject(PointF pixelPos, out GraphicsObject foundObject)
+    public bool IsPixelPositionOnAlreadySelectedObject(PointF pixelPos, out IHitTestObject foundObject)
     {
       PointF graphXY = this.PixelToPrintableAreaCoordinates(pixelPos); // Graph area coordinates
 
       // have we clicked on one of the already selected objects
-      foreach(GraphicsObject graphObject in m_SelectedObjects.Keys)
+      foreach(IHitTestObject graphObject in m_SelectedObjects.Keys)
       {
         int nLayer = (int)m_SelectedObjects[graphObject];
-        if(null!=graphObject.HitTest(Layers[nLayer].GraphToLayerCoordinates(graphXY)))
+       // if(null!=graphObject.HitTest(Layers[nLayer].GraphToLayerCoordinates(graphXY)))
+        if(graphObject.SelectionPath.IsVisible(pixelPos))
         {
           foundObject = graphObject;
           return true;
@@ -1661,7 +1662,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="foundObject">Found object if there is one found, else null</param>
     /// <param name="foundInLayerNumber">The layer the found object belongs to, otherwise 0</param>
     /// <returns>True if a object was found at the pixel coordinates <paramref name="pixelPos"/>, else false.</returns>
-    public bool FindGraphObjectAtPixelPosition(PointF pixelPos, out GraphicsObject foundObject, out int foundInLayerNumber)
+    public bool FindGraphObjectAtPixelPosition(PointF pixelPos, out IHitTestObject foundObject, out int foundInLayerNumber)
     {
       // search for a object first
       PointF mousePT = PixelToPrintableAreaCoordinates(pixelPos);
@@ -1687,13 +1688,14 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     /// <param name="graphObject">The graph object for which a selection rectangle has to be drawn.</param>
     /// <param name="nLayer">The layer number the <paramref name="graphObject"/> belongs to.</param>
-    public void DrawSelectionRectangleImmediately(GraphicsObject graphObject, int nLayer)
+    public void DrawSelectionRectangleImmediately(IHitTestObject graphObject, int nLayer)
     {
       using(Graphics g = m_View.CreateGraphGraphics())
       {
         // now translate the graphics to graph units and paint all selection path
         this.TranslateGraphicsToGraphUnits(g);
-        g.DrawPath(Pens.Blue,Layers[nLayer].LayerToGraphCoordinates(graphObject.GetSelectionPath())); // draw the selection path
+//        g.DrawPath(Pens.Blue,Layers[nLayer].LayerToGraphCoordinates(graphObject.SelectionPath)); // draw the selection path
+        g.DrawPath(Pens.Blue,graphObject.SelectionPath); // draw the selection path
       }   
     }
 
@@ -1838,9 +1840,7 @@ namespace Altaxo.Graph.GUI
       public override MouseStateHandler OnMouseMove(GraphController grac, System.Windows.Forms.MouseEventArgs e)
       {
         base.OnMouseMove(grac,e);
-
-        System.Console.WriteLine("MouseMove {0},{1}",e.X,e.Y);
-
+        
         PointF mouseDiff = new PointF(e.X - m_MoveObjectsLastMovePoint.X, e.Y - m_MoveObjectsLastMovePoint.Y);
         if(m_bMoveObjectsOnMouseMove && 0!= grac.m_SelectedObjects.Count && (mouseDiff.X!=0 || mouseDiff.Y!=0))
         {
@@ -1859,13 +1859,12 @@ namespace Altaxo.Graph.GUI
     
           PointF graphDiff = grac.PixelToPageDifferences(mouseDiff); // calulate the moving distance in page units = graph units
 
-          foreach(GraphicsObject graphObject in grac.m_SelectedObjects.Keys)
+          foreach(IHitTestObject graphObject in grac.m_SelectedObjects.Keys)
           {
             // get the layer number the graphObject belongs to
             int nLayer = (int)grac.m_SelectedObjects[graphObject];
             PointF layerDiff = grac.Layers[nLayer].GraphToLayerDifferences(graphDiff); // calculate the moving distance in layer units
-            graphObject.X += layerDiff.X;
-            graphObject.Y += layerDiff.Y;
+            graphObject.ShiftPosition(layerDiff.X,layerDiff.Y);
             // Console.WriteLine("Moving mdiff={0}, gdiff={1}, ldiff={2}", mouseDiff,graphDiff,layerDiff);
           }
           // now paint the objects on the new position
@@ -1877,10 +1876,10 @@ namespace Altaxo.Graph.GUI
 
             // now translate the graphics to graph units and paint all selection path
             grac.TranslateGraphicsToGraphUnits(g);
-            foreach(GraphicsObject graphObject in grac.m_SelectedObjects.Keys)
+            foreach(IHitTestObject graphObject in grac.m_SelectedObjects.Keys)
             {
               int nLayer = (int)grac.m_SelectedObjects[graphObject];            // get the layer number the graphObject belongs to
-              g.DrawPath(Pens.Blue,grac.Layers[nLayer].LayerToGraphCoordinates(graphObject.GetSelectionPath())); // draw the selection path
+              g.DrawPath(Pens.Blue,graphObject.SelectionPath); // draw the selection path
             }
           }
           else  // if the graph was not frozen before - what reasons ever
@@ -1924,7 +1923,7 @@ namespace Altaxo.Graph.GUI
 
   
         // have we clicked on one of the already selected objects
-        GraphicsObject clickedSelectedObject=null;
+        IHitTestObject clickedSelectedObject=null;
         bool bClickedOnAlreadySelectedObjects=grac.IsPixelPositionOnAlreadySelectedObject(mouseXY, out clickedSelectedObject);
 
         if(bClickedOnAlreadySelectedObjects)
@@ -1942,7 +1941,7 @@ namespace Altaxo.Graph.GUI
         else // not clicked on a already selected object
         {
           // search for a object first
-          GraphicsObject clickedObject;
+          IHitTestObject clickedObject;
           int clickedLayerNumber=0;
           grac.FindGraphObjectAtPixelPosition(mouseXY, out clickedObject, out clickedLayerNumber);
 
@@ -2006,11 +2005,11 @@ namespace Altaxo.Graph.GUI
         {
           IEnumerator graphEnum = grac.m_SelectedObjects.Keys.GetEnumerator(); // get the enumerator
           graphEnum.MoveNext(); // set the enumerator to the first item
-          GraphicsObject graphObject = (GraphicsObject)graphEnum.Current;
+          IHitTestObject graphObject = (IHitTestObject)graphEnum.Current;
           int nLayer = (int)grac.m_SelectedObjects[graphObject];
-          if(graphObject is Graph.TextGraphics)
+          if(graphObject.HittedObject is Graph.TextGraphics)
           {
-            TextControlDialog dlg = new TextControlDialog(grac.Layers[nLayer],(TextGraphics)graphObject);
+            TextControlDialog dlg = new TextControlDialog(grac.Layers[nLayer],(TextGraphics)graphObject.HittedObject);
             if(DialogResult.OK==dlg.ShowDialog(grac.m_View.Window))
             {
               if(!dlg.SimpleTextGraphics.Empty)
@@ -2020,7 +2019,7 @@ namespace Altaxo.Graph.GUI
               else // item is empty, so must be deleted in the layer and in the selectedObjects
               {
                 grac.m_SelectedObjects.Remove(graphObject);
-                grac.Layers[nLayer].Remove(graphObject);
+                grac.Layers[nLayer].Remove((GraphicsObject)graphObject.HittedObject);
               }
 
               grac.m_View.InvalidateGraph(); // repaint the graph

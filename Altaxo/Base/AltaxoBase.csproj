@@ -355,6 +355,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\IHitTestObject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\ImageGraphics.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

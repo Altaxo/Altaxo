@@ -154,19 +154,24 @@ namespace Altaxo.Worksheet
       Altaxo.Data.DataColumnCollection dataColCol = (Altaxo.Data.DataColumnCollection)Main.DocumentPath.GetRootNodeImplementing(data,typeof(Altaxo.Data.DataColumnCollection));
       string columnnumber = dataColCol.GetColumnNumber(data).ToString();
       string kindandgroup = string.Format("({0}{1})", dataColCol.GetColumnKind(data).ToString(),dataColCol.GetColumnGroup(data));
-      
+      int fontheight = m_TextFont.Height;
+      Rectangle nameRectangle = cellRectangle;
+      nameRectangle.Height = Math.Max(fontheight,cellRectangle.Height-fontheight);
+      Rectangle numRectangle = cellRectangle;
+      numRectangle.Height = fontheight;
+      numRectangle.Y = Math.Max(cellRectangle.Y+cellRectangle.Height-fontheight,cellRectangle.Y);
       
       if(bSelected)
       {
-        dc.DrawString(columnnumber,m_TextFont,m_SelectedTextBrush,cellRectangle,m_LeftUpperFormat);
-        dc.DrawString(kindandgroup,m_TextFont,m_SelectedTextBrush,cellRectangle,m_RightUpperFormat);
-        dc.DrawString(data.Name,m_TextFont,m_SelectedTextBrush,cellRectangle,m_TextFormat);
+        dc.DrawString(columnnumber,m_TextFont,m_SelectedTextBrush,numRectangle,m_LeftUpperFormat);
+        dc.DrawString(kindandgroup,m_TextFont,m_SelectedTextBrush,numRectangle,m_RightUpperFormat);
+        dc.DrawString(data.Name,m_TextFont,m_SelectedTextBrush,nameRectangle,m_TextFormat);
       }
       else
       {
-        dc.DrawString(columnnumber,m_TextFont,m_TextBrush,cellRectangle,m_LeftUpperFormat);
-        dc.DrawString(kindandgroup,m_TextFont,m_TextBrush,cellRectangle,m_RightUpperFormat);
-        dc.DrawString(data.Name,m_TextFont,m_TextBrush,cellRectangle,m_TextFormat);
+        dc.DrawString(columnnumber,m_TextFont,m_TextBrush,numRectangle,m_LeftUpperFormat);
+        dc.DrawString(kindandgroup,m_TextFont,m_TextBrush,numRectangle,m_RightUpperFormat);
+        dc.DrawString(data.Name,m_TextFont,m_TextBrush,nameRectangle,m_TextFormat);
       }
     
     

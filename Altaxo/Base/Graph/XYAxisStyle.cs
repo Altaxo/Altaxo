@@ -34,11 +34,11 @@ namespace Altaxo.Graph
   /// </summary>
   [SerializationSurrogate(0,typeof(XYAxisStyle.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class XYAxisStyle
+  public class XYAxisStyle 
     : 
     System.Runtime.Serialization.IDeserializationCallback,
     Main.IChangedEventSource,
-    ICloneable
+    ICloneable   
   {
     /// <summary>Edge of the layer this axis is drawn on.</summary>
     protected Edge m_Edge = new Edge(EdgeType.Left);
@@ -233,6 +233,13 @@ namespace Altaxo.Graph
       return new XYAxisStyle(this);
     }
 
+
+    public virtual GraphicsPath HitTest(XYPlotLayer layer, PointF pt)
+    {
+      GraphicsPath gp = GetSelectionPath(layer);
+      return gp.IsVisible(pt) ? gp : null;
+    }
+
     /// <summary>
     /// OuterDistance returns the used space from the middle line of the axis
     /// to the last outer object (either the outer major thicks or half
@@ -404,6 +411,26 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Gives the path where the hit test is successfull.
+    /// </summary>
+    /// <param name="layer"></param>
+    /// <returns></returns>
+    public virtual GraphicsPath GetSelectionPath(XYPlotLayer layer)
+    {
+      PointF orgP;
+      PointF endP;
+      PointF outVector;
+      CalculatePositions(layer, out orgP, out endP, out outVector);
+
+      GraphicsPath gp = new GraphicsPath();
+     
+      RectangleF sel = new RectangleF(orgP,new SizeF(endP.X-orgP.X,endP.Y-orgP.Y));
+      sel.Inflate(5*outVector.X,5*outVector.Y);
+      gp.AddRectangle(sel);
+
+      return gp;
+    }
 
     /// <summary>
     /// Paint the axis in the Graphics context.
@@ -413,19 +440,10 @@ namespace Altaxo.Graph
     /// <param name="axis">The axis this axis style is used for.</param>
     public void Paint(Graphics g, XYPlotLayer layer, Axis axis)
     {
-      SizeF layerSize = layer.Size;
-
-
-      PointF orgP = m_Edge.GetOrg(layerSize);
-      PointF endP = m_Edge.GetEnd(layerSize);
-      PointF outVector = m_Edge.OuterVector;
-      PointF offset = m_Edge.OuterVector;
-      float foffset = this.GetOffset(layerSize);
-      offset.X *= foffset;
-      offset.Y *= foffset;
-      
-      orgP.X += offset.X; orgP.Y += offset.Y;
-      endP.X += offset.X; endP.Y += offset.Y;
+      PointF orgP;
+      PointF endP;
+      PointF outVector;
+      CalculatePositions(layer, out orgP, out endP, out outVector);
 
       g.DrawLine(m_AxisPen,orgP,endP);
 
@@ -475,6 +493,30 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Calculates the start and end position of the axis style.
+    /// </summary>
+    /// <param name="layer">The layer were the axis is drawn into.</param>
+    /// <param name="orgP">On return, gives the starting point.</param>
+    /// <param name="endP">On return, gives the end position of the axis.</param>
+    /// <param name="outVector">On return, gives a unit vector directing out of the layer (for instance for the left axis it points to the left).</param>
+    private void CalculatePositions(XYPlotLayer layer, out PointF orgP, out PointF endP, out PointF outVector)
+    {
+      SizeF layerSize = layer.Size;
+
+
+      orgP = m_Edge.GetOrg(layerSize);
+      endP = m_Edge.GetEnd(layerSize);
+      outVector = m_Edge.OuterVector;
+      PointF offset = m_Edge.OuterVector;
+      float foffset = this.GetOffset(layerSize);
+      offset.X *= foffset;
+      offset.Y *= foffset;
+      
+      orgP.X += offset.X; orgP.Y += offset.Y;
+      endP.X += offset.X; endP.Y += offset.Y;
+    }
+
     protected virtual void OnPenChangedEventHandler(object sender, EventArgs e)
     {
       OnChanged();
@@ -485,6 +527,5 @@ namespace Altaxo.Graph
       if(null!=Changed)
         Changed(this,new EventArgs());
     }
-
-  }
+    }
 }

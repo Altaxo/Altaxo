@@ -2444,7 +2444,14 @@ namespace Altaxo.Graph
 
       g.Restore(savedgstate);
     }
-    public GraphicsObject HitTest(PointF pageC, out GraphicsPath gp)
+
+    private IHitTestObject ForwardTransform(GraphicsPath gp, object go)
+    {
+      gp.Transform(m_ForwardMatrix);
+      return new HitTestObject(gp,go);
+    }
+
+    public IHitTestObject HitTest(PointF pageC, out GraphicsPath gp)
     {
       PointF layerC = GraphToLayerCoordinates(pageC);
 
@@ -2467,12 +2474,20 @@ namespace Altaxo.Graph
           gp = go.HitTest(layerC);
           if(null!=gp)
           {
-            gp.Transform(m_ForwardMatrix);
-            return go;
+            return ForwardTransform(gp,go);
           }
         }
       }
 
+      // hit testing the axes
+      if(m_ShowLeftAxis && null!=(gp = m_LeftAxisStyle.HitTest(this,layerC)))
+        return ForwardTransform(gp,m_LeftAxisStyle);
+      if(m_ShowBottomAxis && null!=(gp = m_BottomAxisStyle.HitTest(this,layerC)))
+        return ForwardTransform(gp,m_BottomAxisStyle);
+      if(m_ShowRightAxis && null!=(gp = m_RightAxisStyle.HitTest(this,layerC)))
+        return ForwardTransform(gp,m_RightAxisStyle);
+      if(m_ShowTopAxis && null!=(gp = m_TopAxisStyle.HitTest(this,layerC)))
+        return ForwardTransform(gp,m_TopAxisStyle);
 
 
       // now hit testing the other objects in the layer
@@ -2481,8 +2496,7 @@ namespace Altaxo.Graph
         gp = go.HitTest(layerC);
         if(null!=gp)
         {
-          gp.Transform(m_ForwardMatrix);
-          return go;
+          return ForwardTransform(gp,go);
         }
       }
       gp=null;
