@@ -157,7 +157,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				}
 				builder.Append(' ');
 			}
-			
+			//Console.WriteLine("C: " + c.Methods);
 			if (c.ClassType == ClassType.Delegate && c.Methods.Count > 0) {
 				foreach(IMethod m in c.Methods) {
 					if (m.Name != "Invoke") continue;

@@ -41,32 +41,34 @@ namespace ICSharpCode.SharpZipLib.BZip2
 {
 	
 	/// <summary>
-	/// An output stream that compresses into the BZip2 format (without the file
-	/// header chars) into another stream.
+	/// An output stream that compresses into the BZip2 format 
+	/// including file header chars into another stream.
 	/// TODO: Update to BZip2 1.0.1, 1.0.2
 	/// </summary>
 	public class BZip2OutputStream : Stream
 	{
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Gets a value indicating whether the current stream supports reading
 		/// </summary>
 		public override bool CanRead {
 			get {
-				return baseStream.CanRead;
+//				return baseStream.CanRead
+				return false;
 			}
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Gets a value indicating whether the current stream supports seeking
 		/// </summary>
 		public override bool CanSeek {
 			get {
-				return baseStream.CanSeek;
+//				return baseStream.CanSeek;
+				return false;
 			}
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Gets a value indicating whether the current stream supports writing
 		/// </summary>
 		public override bool CanWrite {
 			get {
@@ -75,7 +77,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Gets the length in bytes of the stream
 		/// </summary>
 		public override long Length {
 			get {
@@ -84,49 +86,57 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Gets or sets the current position of this stream.
 		/// </summary>
 		public override long Position {
 			get {
 				return baseStream.Position;
 			}
 			set {
-				baseStream.Position = value;
+//				baseStream.Position = value;
+				throw new NotSupportedException("BZip2OutputStream position cannot be set");
 			}
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Sets the current position of this stream to the given value.
 		/// </summary>
 		public override long Seek(long offset, SeekOrigin origin)
 		{
-			return baseStream.Seek(offset, origin);
+//			return baseStream.Seek(offset, origin);
+			throw new NotSupportedException("BZip2OutputStream Seek not supported");
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Sets the length of this stream to the given value.
 		/// </summary>
 		public override void SetLength(long val)
 		{
-			baseStream.SetLength(val);
+//			baseStream.SetLength(val);
+			throw new NotSupportedException("BZip2OutputStream SetLength not supported");
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Read a byte from the stream advancing the position.
 		/// </summary>
 		public override int ReadByte()
 		{
-			return baseStream.ReadByte();
+//			return baseStream.ReadByte();
+			throw new NotSupportedException("BZip2OutputStream ReadByte not supported");
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Read a block of bytes
 		/// </summary>
 		public override int Read(byte[] b, int off, int len)
 		{
-			return baseStream.Read(b, off, len);
+//			return baseStream.Read(b, off, len);
+			throw new NotSupportedException("BZip2OutputStream Read not supported");
 		}
 		
+		/// <summary>
+		/// Write a block of bytes to the stream
+		/// </summary>
 		public override void Write(byte[] buf, int off, int len)
 		{
 			for (int i = 0; i < len; ++i) {
@@ -153,7 +163,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		
 		static void Panic() 
 		{
-			//Console.WriteLine("panic");
+			throw new BZip2Exception("BZip2 output stream panic");
 		}
 		
 		void MakeMaps() 
@@ -360,10 +370,19 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		int currentChar = -1;
 		int runLength = 0;
 		
+		/// <summary>
+		/// Construct a default output stream with maximum block size
+		/// </summary>
+		/// <param name="inStream"></param>
 		public BZip2OutputStream(Stream inStream) : this(inStream, 9)
 		{
 		}
 		
+		/// <summary>
+		/// Construct output stream with custom block size
+		/// </summary>
+		/// <param name="inStream"></param>
+		/// <param name="inBlockSize"></param>
 		public BZip2OutputStream(Stream inStream, int inBlockSize)
 		{
 			block    = null;
@@ -374,10 +393,10 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			BsSetStream(inStream);
 			
 			workFactor = 50;
-			if(inBlockSize > 9) {
+			if (inBlockSize > 9) {
 				inBlockSize = 9;
 			}
-			if(inBlockSize < 1) {
+			if (inBlockSize < 1) {
 				inBlockSize = 1;
 			}
 			blockSize100k = inBlockSize;
@@ -386,6 +405,9 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			InitBlock();
 		}
 		
+		/// <summary>
+		/// write a byte to output
+		/// </summary>
 		public override void WriteByte(byte bv)
 		{
 			int b = (256 + bv) % 256;
@@ -458,11 +480,18 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		
 		bool closed = false;
 		
+		/// <summary>
+		/// Free any resources and other cleanup before garbage collection reclaims memory
+		/// </summary>
 		public void Finalize()
 		{
 			Close();
 		}
 		
+		/// <summary>
+		/// End the current block and end compression.
+		/// Close the stream and free any resources
+		/// </summary>
 		public override void Close()
 		{
 			if (closed) {
@@ -477,14 +506,15 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			EndBlock();
 			EndCompression();
 			closed = true;
-			//			super.close();
 			Flush();
 			baseStream.Close();
 		}
-		
+
+		/// <summary>
+		/// Flush output buffers
+		/// </summary>		
 		public override void Flush()
 		{
-			//			super.flush();
 			baseStream.Flush();
 		}
 		
@@ -498,6 +528,8 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			/*--- Write `magic' bytes h indicating file-format == huffmanised,
 			followed by a digit indicating blockSize100k.
 			---*/
+			
+			// TODO  adding header here should be optional?
 			BsPutUChar('B');
 			BsPutUChar('Z');
 			
@@ -893,7 +925,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 				for (int j = 0; j < 16; ++j) {
 					if (inUse[i * 16 + j]) {
 						inUse16[i] = true; 
-					} // TODO : insert break;
+					}
 				}
 			}
 			

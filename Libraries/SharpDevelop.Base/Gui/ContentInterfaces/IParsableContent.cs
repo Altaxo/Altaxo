@@ -20,6 +20,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 		string ParseableContentName {
 			get;
 		}
+
+		string ParseableText {
+			get;
+		}
 	}
 }
 

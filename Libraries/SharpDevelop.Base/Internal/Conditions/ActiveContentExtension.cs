@@ -32,13 +32,16 @@ namespace ICSharpCode.Core.AddIns
 		
 		public override bool IsValid(object owner)
 		{
-			if (WorkbenchSingleton.Workbench == null) {
+			if (WorkbenchSingleton.Workbench == null || WorkbenchSingleton.Workbench.ActiveWorkbenchWindow == null) {
 				return false;
 			}
 			try {
 				string name = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.IsUntitled ?
 				              WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.UntitledName : WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName;
 				
+				if (name == null) {
+					return false;
+				}
 				string extension = Path.GetExtension(name);
 				return extension.ToUpper() == activeextension.ToUpper();
 			} catch (Exception) {

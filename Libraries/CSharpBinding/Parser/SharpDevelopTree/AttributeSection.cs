@@ -10,7 +10,7 @@ namespace CSharpBinding.Parser.SharpDevelopTree
 		public AttributeSection(AttributeTarget attributeTarget,
 		                        AttributeCollection attributes) {
 			this.attributeTarget = attributeTarget;
-			this.attributes = attributes;
+			this.Attributes = attributes;
 		}
 	}
 	public class ASTAttribute : AbstractAttribute

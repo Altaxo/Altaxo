@@ -69,7 +69,9 @@ namespace ICSharpCode.SharpDevelop.Commands
 							if (binding != null) {
 								if (binding == null || !binding.CanCompile(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName)) {
 									IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-									messageService.ShowError("Language binding " + binding.Language + " can't compile " + WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
+									stringParserService.Properties["LanguageBinding"] = binding == null ? "null" : binding.Language;
+									stringParserService.Properties["FileName"] = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName;
+									messageService.ShowError("${res:ICSharpCode.SharpDevelop.Commands.RunCompile.LanguageBindingCantCompileFileError}");
 								} else {
 									new SaveFile().Run();
 									ICompilerResult res = binding.CompileFile(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
@@ -82,6 +84,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 									ShowAfterCompileStatus();
 								}
 							} else {
+								// should never happen anymore
 								IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
 								messageService.ShowError("No source file for compilation found. Please save unsaved files");
 							}
@@ -143,7 +146,9 @@ namespace ICSharpCode.SharpDevelop.Commands
 							if (binding != null) {
 								if (binding == null || !binding.CanCompile(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName)) {
 									IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-									messageService.ShowError("Language binding " + binding.Language + " can't compile " + WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
+									stringParserService.Properties["LanguageBinding"] = binding == null ? "null" : binding.Language;
+									stringParserService.Properties["FileName"] = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName;
+									messageService.ShowError("${res:ICSharpCode.SharpDevelop.Commands.RunCompile.LanguageBindingCantCompileFileError}");
 								} else {
 									new SaveFile().Run();
 									ICompilerResult res = binding.CompileFile(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
@@ -156,6 +161,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 									Compile.ShowAfterCompileStatus();
 								}
 							} else {
+								// should never happen anymore
 								IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
 								messageService.ShowError("No source file for compilation found. Please save unsaved files");
 							}
@@ -342,8 +348,8 @@ namespace ICSharpCode.SharpDevelop.Commands
 			
 						projectService.OnStartBuild();
 						projectService.CompileProject(projectService.CurrentSelectedProject);
-						taskService.CompilerOutput += resourceService.GetString("MainWindow.CompilerMessages.DoneLabel") + "\n\n" +
-						stringParserService.Parse("${res:MainWindow.CompilerMessages.StatsOutput}", new string[,] { {"SUCCEEDED", CombineEntry.BuildProjects.ToString()}, {"FAILED", CombineEntry.BuildErrors.ToString()} }) + "\n";
+						// taskService.CompilerOutput += resourceService.GetString("MainWindow.CompilerMessages.DoneLabel") + "\n\n" +
+						//     stringParserService.Parse("${res:MainWindow.CompilerMessages.StatsOutput}", new string[,] { {"SUCCEEDED", CombineEntry.BuildProjects.ToString()}, {"FAILED", CombineEntry.BuildErrors.ToString()} }) + "\n";
 					} catch (Exception e) {
 						IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
 						messageService.ShowError(e, "Error while compiling project " + projectService.CurrentSelectedProject.Name);
@@ -377,8 +383,8 @@ namespace ICSharpCode.SharpDevelop.Commands
 				
 						projectService.OnStartBuild();
 						projectService.RecompileProject(projectService.CurrentSelectedProject);
-						taskService.CompilerOutput += resourceService.GetString("MainWindow.CompilerMessages.DoneLabel") + "\n\n" +
-						stringParserService.Parse("${res:MainWindow.CompilerMessages.StatsOutput}", new string[,] { {"SUCCEEDED", CombineEntry.BuildProjects.ToString()}, {"FAILED", CombineEntry.BuildErrors.ToString()} }) + "\n";
+						// taskService.CompilerOutput += resourceService.GetString("MainWindow.CompilerMessages.DoneLabel") + "\n\n" +
+						//     stringParserService.Parse("${res:MainWindow.CompilerMessages.StatsOutput}", new string[,] { {"SUCCEEDED", CombineEntry.BuildProjects.ToString()}, {"FAILED", CombineEntry.BuildErrors.ToString()} }) + "\n";
 					} catch (Exception e) {
 						IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
 						messageService.ShowError(e, "Error while compiling project " + projectService.CurrentSelectedProject.Name);

@@ -39,6 +39,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		/// <summary>
+		/// Is called when the window is switched to.
+		/// -> Inside the tab (Called before Selected())
+		/// -> Inside the workbench.
+		/// </summary>
+		void SwitchedTo();
+		
+		/// <summary>
 		/// Is called when the view content is selected inside the window
 		/// tab. NOT when the windows is selected.
 		/// </summary>
@@ -49,7 +56,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// tab before the other window is selected. NOT when the windows is deselected.
 		/// </summary>
 		void Deselected();
-		
 		
 		/// <summary>
 		/// Reinitializes the content. (Re-initializes all add-in tree stuff)

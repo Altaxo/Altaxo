@@ -1,4 +1,5 @@
 #if TEST
+
 using System;
 using System.IO;
 using ICSharpCode.SharpZipLib.Zip;
@@ -19,7 +20,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		/// Basic compress/decompress test BZip2
 		/// </summary>
 		[Test]
-		public void TestBZip2()
+		public void BasicRoundTrip()
 		{
 			MemoryStream ms = new MemoryStream();
 			BZip2OutputStream outStream = new BZip2OutputStream(ms);
@@ -48,6 +49,34 @@ namespace ICSharpCode.SharpZipLib.BZip2
 				Assertion.AssertEquals(buf2[i], buf[i]);
 			}
 		}
+		
+		/// <summary>
+		/// Check that creating an empty archive is handled ok
+		/// </summary>
+		[Test]
+		public void CreateEmptyArchive()
+		{
+			MemoryStream ms = new MemoryStream();
+			BZip2OutputStream outStream = new BZip2OutputStream(ms);
+			outStream.Close();
+			ms = new MemoryStream(ms.GetBuffer());
+			
+			ms.Seek(0, SeekOrigin.Begin);
+			
+			BZip2InputStream inStream = new BZip2InputStream(ms);
+			byte[] buffer = new byte[1024];
+			int    pos  = 0;
+			while (true) {
+				int numRead = inStream.Read(buffer, 0, buffer.Length);
+				if (numRead <= 0) {
+					break;
+				}
+				pos += numRead;
+			}
+			
+			Assertion.AssertEquals(pos, 0);
+		}
+		
 	}
 }
 #endif

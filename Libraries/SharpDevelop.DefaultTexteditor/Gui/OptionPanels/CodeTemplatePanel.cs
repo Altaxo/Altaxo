@@ -51,8 +51,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels
 			ControlDictionary["removeGroupButton"].Click += new System.EventHandler(RemoveGroupEvent);
 			
 			
-			((RichTextBox)ControlDictionary["templateRichTextBox"]).Font = new System.Drawing.Font("Courier New", 10f);
-			((RichTextBox)ControlDictionary["templateRichTextBox"]).TextChanged += new EventHandler(TextChange);
+			((TextBox)ControlDictionary["templateTextBox"]).Font = new System.Drawing.Font("Courier New", 10f);
+			((TextBox)ControlDictionary["templateTextBox"]).TextChanged += new EventHandler(TextChange);
 			
 			((ListView)ControlDictionary["templateListView"]).Activation = ItemActivation.Standard;
 			((ListView)ControlDictionary["templateListView"]).ItemActivate         += new System.EventHandler(EditEvent);
@@ -87,12 +87,12 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels
 			bool groupSelected = CurrentTemplateGroup != null;
 			bool groupsEmpty   = templateGroups.Count != 0;
 			
-			SetEnabledStatus(groupSelected, "addButton", "editButton", "removeButton", "templateListView", "templateRichTextBox");
+			SetEnabledStatus(groupSelected, "addButton", "editButton", "removeButton", "templateListView", "templateTextBox");
 			SetEnabledStatus(groupsEmpty, "groupComboBox", "extensionLabel");
 			if (groupSelected) {
 				bool oneItemSelected = ((ListView)ControlDictionary["templateListView"]).SelectedItems.Count == 1;
 				bool isItemSelected  = ((ListView)ControlDictionary["templateListView"]).SelectedItems.Count > 0;
-				SetEnabledStatus(oneItemSelected, "editButton", "templateRichTextBox");
+				SetEnabledStatus(oneItemSelected, "editButton", "templateTextBox");
 				SetEnabledStatus(isItemSelected, "removeButton");
 			}
 		}
@@ -216,9 +216,9 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels
 			int i = GetCurrentIndex();
 			
 			if (i != -1) {
-				ControlDictionary["templateRichTextBox"].Text    = ((CodeTemplate)((ListView)ControlDictionary["templateListView"]).SelectedItems[0].Tag).Text;
+				ControlDictionary["templateTextBox"].Text    = ((CodeTemplate)((ListView)ControlDictionary["templateListView"]).SelectedItems[0].Tag).Text;
 			} else {
-				ControlDictionary["templateRichTextBox"].Text    = String.Empty;
+				ControlDictionary["templateTextBox"].Text    = String.Empty;
 			}
 			SetEnabledStatus();
 		}
@@ -227,7 +227,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels
 		{
 			int i = GetCurrentIndex();
 			if (i != -1) {
-				((CodeTemplate)((ListView)ControlDictionary["templateListView"]).SelectedItems[0].Tag).Text = ControlDictionary["templateRichTextBox"].Text;
+				((CodeTemplate)((ListView)ControlDictionary["templateListView"]).SelectedItems[0].Tag).Text = ControlDictionary["templateTextBox"].Text;
 			}
 		}
 		

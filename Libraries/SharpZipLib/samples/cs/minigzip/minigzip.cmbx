@@ -6,10 +6,10 @@
     <Entry filename=".\minigzip.prjx" />
   </Entries>
   <Configurations active="Debug">
-    <Configuration name="Release" description="">
+    <Configuration name="Release">
       <Entry name="minigzip" configurationname="Debug" build="False" />
     </Configuration>
-    <Configuration name="Debug" description="">
+    <Configuration name="Debug">
       <Entry name="minigzip" configurationname="Debug" build="False" />
     </Configuration>
   </Configurations>

@@ -503,6 +503,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\BrushRegistry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\Caret.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -518,17 +523,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\HRuler.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\IconBarMargin.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Ime.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\Ruler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

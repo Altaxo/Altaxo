@@ -6,6 +6,7 @@
 // </file>
 
 using System;
+using System.Reflection;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
@@ -108,7 +109,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		{
 			if (CurrentOpenCombine != null) {
 				if (saveCombinePreferencies)
-				  SaveCombinePreferences(CurrentOpenCombine, openCombineFileName);
+					SaveCombinePreferences(CurrentOpenCombine, openCombineFileName);
 				
 				Combine closedCombine = CurrentOpenCombine;
 				CurrentSelectedProject = null;
@@ -176,9 +177,11 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		void Save(string fileName)
 		{
-			openCombineFileName = fileName;
-			openCombine.SaveCombine(fileName);
-			openCombine.SaveAllProjects();
+			if (openCombine != null) {
+				openCombineFileName = fileName;
+				openCombine.SaveCombine(fileName);
+				openCombine.SaveAllProjects();
+			}
 		}
 		
 		public ProjectReference GetReferenceFromProject(IProject prj, string filename)
@@ -287,9 +290,14 @@ namespace ICSharpCode.SharpDevelop.Services
 			
 			// cut&pasted from CombineEntry.cs
 			stringParserService.Properties["Project"] = project.Name;
+			IProjectService   projectService   = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
 			IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
-			statusBarService.SetMessage("${res:MainWindow.StatusBar.CompilingMessage}");
+			IResourceService resourceService   = (IResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 			
+			statusBarService.SetMessage("${res:MainWindow.StatusBar.CompilingMessage}");
+			LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
+			
+			// create output directory, if not exists
 			string outputDir = ((AbstractProjectConfiguration)project.ActiveConfiguration).OutputDirectory;
 			try {
 				DirectoryInfo directoryInfo = new DirectoryInfo(outputDir);
@@ -299,9 +307,32 @@ namespace ICSharpCode.SharpDevelop.Services
 			} catch (Exception e) {
 				throw new ApplicationException("Can't create project output directory " + outputDir + " original exception:\n" + e.ToString());
 			}
-			// cut&paste EDND
-			LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
-			return languageBindingService.GetBindingPerLanguageName(project.ProjectType);
+			
+			AbstractProjectConfiguration conf = project.ActiveConfiguration as AbstractProjectConfiguration;
+			taskService.CompilerOutput += stringParserService.Parse("${res:MainWindow.CompilerMessages.BuildStartedOutput}", new string[,] { {"PROJECT", project.Name}, {"CONFIG", project.ActiveConfiguration.Name} }) + "\n";
+			taskService.CompilerOutput += resourceService.GetString("MainWindow.CompilerMessages.PerformingMainCompilationOutput") + "\n";
+			
+			if (conf != null && conf.ExecuteBeforeBuild != null && conf.ExecuteBeforeBuild.Length > 0) {
+				string command   = conf.ExecuteBeforeBuild;
+				string arguments = conf.ExecuteBeforeBuildArguments;
+				
+				if (File.Exists(command)) {
+					taskService.CompilerOutput += stringParserService.Parse("${res:MainWindow.CompilerMessages.ExecuteScript}", new string[,] { {"SCRIPT", conf.ExecuteBeforeBuild} }) + "\n";
+					ProcessStartInfo ps = new ProcessStartInfo(command, arguments);
+					ps.UseShellExecute = false;
+					ps.RedirectStandardOutput = true;
+					ps.WorkingDirectory = Path.GetDirectoryName(command);
+					Process process = new Process();
+					process.StartInfo = ps;
+					process.Start();
+					taskService.CompilerOutput += process.StandardOutput.ReadToEnd();
+				}
+			}
+			
+			ILanguageBinding binding = languageBindingService.GetBindingPerLanguageName(project.ProjectType);
+			
+			// cut&paste END
+			return binding;
 		}
 		
 		void AfterCompile(IProject project, ICompilerResult res)
@@ -311,25 +342,43 @@ namespace ICSharpCode.SharpDevelop.Services
 			foreach (CompilerError err in res.CompilerResults.Errors) {
 				taskService.Tasks.Add(new Task(project, err));
 			}
+			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
 			
-			if (taskService.Errors > 0) {
-				++CombineEntry.BuildErrors;
-			} else {
-				++CombineEntry.BuildProjects;
+			AbstractProjectConfiguration conf = project.ActiveConfiguration as AbstractProjectConfiguration;
+			
+			if (conf != null && taskService.Errors == 0 && conf.ExecuteAfterBuild != null && conf.ExecuteAfterBuild.Length > 0) {
+				taskService.CompilerOutput += stringParserService.Parse("${res:MainWindow.CompilerMessages.ExecuteScript}", new string[,] { {"SCRIPT", conf.ExecuteAfterBuild} }) + "\n";
+				string command   = conf.ExecuteAfterBuild;
+				string arguments = conf.ExecuteAfterBuildArguments;
+				
+				if (File.Exists(command)) {
+					ProcessStartInfo ps = new ProcessStartInfo(command, arguments);
+					ps.UseShellExecute = false;
+					ps.RedirectStandardOutput = true;
+					ps.WorkingDirectory = Path.GetDirectoryName(command);
+					Process process = new Process();
+					process.StartInfo = ps;
+					process.Start();
+					taskService.CompilerOutput += process.StandardOutput.ReadToEnd();
+				}
 			}
-			
-			taskService.CompilerOutput = res.CompilerOutput;
 			taskService.NotifyTaskChange();
+			taskService.CompilerOutput += res.CompilerOutput + stringParserService.Parse("${res:MainWindow.CompilerMessages.ProjectStatsOutput}", new string[,] { {"ERRORS", taskService.Errors.ToString()}, {"WARNINGS", taskService.Warnings.ToString()} }) + "\n\n";
+		
 		}
 		
-		public void RecompileProject(IProject project)
+		public ICompilerResult RecompileProject(IProject project)
 		{
-			AfterCompile(project, BeforeCompile(project).RecompileProject(project));
+			ICompilerResult res = BeforeCompile(project).RecompileProject(project);
+			AfterCompile(project, res);
+			return res;
 		}
 		
-		public void CompileProject(IProject project)
+		public ICompilerResult CompileProject(IProject project)
 		{
-			AfterCompile(project, BeforeCompile(project).CompileProject(project));
+			ICompilerResult res = BeforeCompile(project).CompileProject(project);
+			AfterCompile(project, res);
+			return res;
 		}
 		
 		void DoBeforeCompileAction()
@@ -346,7 +395,7 @@ namespace ICSharpCode.SharpDevelop.Services
 						if (content.FileName != null && content.IsDirty) {
 							if (!save) {
 								IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-								if (messageService.AskQuestion("Save changed files?")) {
+								if (messageService.AskQuestion("${res:MainWindow.SaveChangesMessage}")) {
 									save = true;
 								} else {
 									break;
@@ -497,10 +546,35 @@ namespace ICSharpCode.SharpDevelop.Services
 				string combinepath = Path.GetDirectoryName(combinefilename);
 				if (root["Files"] != null) {
 					IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-					foreach (XmlElement el in root["Files"].ChildNodes) {
-						string fileName = fileUtilityService.RelativeToAbsolutePath(combinepath, el.Attributes["filename"].InnerText);
-						if (File.Exists(fileName)) {
-							fileService.OpenFile(fileName);
+					Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();		
+					foreach (XmlElement el in root["Files"].ChildNodes) 
+					{
+						if (el.Name == "CustomViewContent") {
+							string className = el.Attributes["class"].InnerText;
+							string assemblyName = el.Attributes["assembly"].InnerText;
+							foreach (Assembly assembly in assemblies) {
+								if (assembly.GetName().Name == assemblyName) {
+									try {
+										IViewContentMemento memento = assembly.CreateInstance(className) as IViewContentMemento;
+										if (memento != null && el.ChildNodes.Count > 0) {
+											IViewContent content = memento.SetViewContentMemento((IViewContentMemento)memento.FromXmlElement((XmlElement)el.ChildNodes[0]));
+											if (content != null) {
+												WorkbenchSingleton.Workbench.ShowView(content);
+												DisplayBindingService displayBindingService = (DisplayBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(DisplayBindingService));
+												displayBindingService.AttachSubWindows(content.WorkbenchWindow);
+											}
+										}
+									}
+									catch {}
+									break;
+								}
+							}
+						}
+						else {
+							string fileName = fileUtilityService.RelativeToAbsolutePath(combinepath, el.Attributes["filename"].InnerText);
+							if (File.Exists(fileName)) {
+								fileService.OpenFile(fileName);
+							}
 						}
 					}
 				}
@@ -521,9 +595,16 @@ namespace ICSharpCode.SharpDevelop.Services
 					string name = properties.GetProperty("ActiveWindow", "");
 					foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
 						// WINDOWS DEPENDENCY : ToUpper
-						if (content.FileName != null &&
-							Path.GetFullPath(content.FileName).ToUpper() == Path.GetFullPath(name).ToUpper()) {
-							content.WorkbenchWindow.SelectWindow();
+						if (content.FileName != null) {
+							bool select = false;
+							try {
+								select = Path.GetFullPath(content.FileName).ToUpper() == Path.GetFullPath(name).ToUpper();
+							} catch (Exception) {
+								select = content.FileName == name;
+							}
+							if (select) {
+								content.WorkbenchWindow.SelectWindow();
+							}
 							break;
 						}
 					}
@@ -550,7 +631,19 @@ namespace ICSharpCode.SharpDevelop.Services
 			doc.DocumentElement.AppendChild(filesnode);
 			
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
-				if (content.FileName != null) {
+				if (content is IViewContentMementoCreator) {
+					XmlElement el = doc.CreateElement("CustomViewContent");
+					IViewContentMemento memento = ((IViewContentMementoCreator)content).CreateViewContentMemento();
+					XmlAttribute ass = doc.CreateAttribute("assembly");
+					ass.InnerText = memento.GetType().Assembly.GetName().Name;
+					el.Attributes.Append(ass);
+					XmlAttribute attr = doc.CreateAttribute("class");
+					attr.InnerText = memento.GetType().ToString();
+					el.Attributes.Append(attr);
+					el.AppendChild(memento.ToXmlElement(doc));
+					filesnode.AppendChild(el);
+				}
+				else if (content.FileName != null) {
 					XmlElement el = doc.CreateElement("File");
 					
 					XmlAttribute attr = doc.CreateAttribute("filename");
@@ -634,6 +727,27 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 			if (CurrentProjectChanged != null) {
 				CurrentProjectChanged(this, e);
+			}
+		}
+		
+		public virtual void OnConfigurationAdded(EventArgs e)
+		{
+			if(ConfigurationAdded != null) {
+				ConfigurationAdded(this, e);
+			}
+		}
+		
+		public virtual void OnConfigurationRemoved(EventArgs e)
+		{
+			if(ConfigurationRemoved != null) {
+				ConfigurationRemoved(this, e);
+			}
+		}
+		
+		public virtual void OnActiveConfigurationChanged(ConfigurationEventArgs e)
+		{
+			if(ActiveConfigurationChanged != null) {
+				ActiveConfigurationChanged(this, e);
 			}
 		}
 		
@@ -757,5 +871,8 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public event ProjectRenameEventHandler ProjectRenamed;
 		public event ProjectEventHandler       CurrentProjectChanged;
+		public event ConfigurationEventHandler ActiveConfigurationChanged;
+		public event EventHandler ConfigurationAdded;
+		public event EventHandler ConfigurationRemoved;
 	}
 }

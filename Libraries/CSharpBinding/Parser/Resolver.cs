@@ -44,6 +44,8 @@ namespace CSharpBinding.Parser
 		
 		bool showStatic = false;
 		
+		bool inNew = false;
+		
 		public bool ShowStatic {
 			get {
 				return showStatic;
@@ -66,6 +68,12 @@ namespace CSharpBinding.Parser
 			expression = expression.TrimStart(null);
 			if (expression == "") {
 				return null;
+			}
+			if (expression.StartsWith("new ")) {
+				inNew = true;
+				expression = expression.Substring(4);
+			} else {
+				inNew = false;
 			}
 			if (expression.StartsWith("using ")) {
 				// expression[expression.Length - 1] != '.'
@@ -140,6 +148,7 @@ namespace CSharpBinding.Parser
 //			Console.WriteLine("Here: Type is " + type.FullyQualifiedName);
 			IClass returnClass = SearchType(type.FullyQualifiedName, callingClass, cu);
 			if (returnClass == null) {
+//				Console.WriteLine("SearchType unsuccesful!");
 				// Try if type is Namespace:
 				string n = SearchNamespace(type.FullyQualifiedName, cu);
 				if (n == null) {
@@ -149,14 +158,28 @@ namespace CSharpBinding.Parser
 				ArrayList classes = new ArrayList();
 				for (int i = 0; i < content.Count; ++i) {
 					if (content[i] is IClass) {
-						classes.Add((IClass)content[i]);
+						if (inNew) {
+							IClass c = (IClass)content[i];
+//							Console.WriteLine("Testing " + c.Name);
+							if ((c.ClassType == ClassType.Class) || (c.ClassType == ClassType.Struct)) {
+								classes.Add(c);
+//								Console.WriteLine("Added");
+							}
+						} else {
+							classes.Add((IClass)content[i]);
+						}
 					}
 				}
 				string[] namespaces = parserService.GetNamespaceList(n);
 				return new ResolveResult(namespaces, classes);
 			}
+//			Console.WriteLine("showStatic = " + showStatic);
 //			Console.WriteLine("Returning Result!");
-			return new ResolveResult(returnClass, parserService.ListMembers(new ArrayList(), returnClass, callingClass, showStatic));
+			if (inNew) {
+				return new ResolveResult(returnClass, parserService.ListTypes(new ArrayList(), returnClass, callingClass));
+			} else {
+				return new ResolveResult(returnClass, parserService.ListMembers(new ArrayList(), returnClass, callingClass, showStatic));
+			}
 		}
 		
 		bool InStatic()
@@ -165,7 +188,7 @@ namespace CSharpBinding.Parser
 			if (property != null) {
 				return property.IsStatic;
 			}
-			IMethod method = GetMethod();
+			IMethod method = GetMethod(caretLine, caretColumn);
 			if (method != null) {
 				return method.IsStatic;
 			}
@@ -183,6 +206,7 @@ namespace CSharpBinding.Parser
 			} else {
 				curType = SearchType(type.FullyQualifiedName, null, null);
 				if (curType == null) {
+//					Console.WriteLine("Type of " + type.Name + " not found!");
 					return new ArrayList(1);
 				}
 			}
@@ -337,10 +361,10 @@ namespace CSharpBinding.Parser
 //			
 //			Console.WriteLine("LookUpTable has {0} entries", lookupTableVisitor.variables.Count);
 //			Console.WriteLine("Listing Variables:");
-			IDictionaryEnumerator enumerator = lookupTableVisitor.variables.GetEnumerator();
-			while (enumerator.MoveNext()) {
-				Console.WriteLine(enumerator.Key);
-			}
+//			IDictionaryEnumerator enumerator = lookupTableVisitor.variables.GetEnumerator();
+//			while (enumerator.MoveNext()) {
+//				Console.WriteLine(enumerator.Key);
+//			}
 //			Console.WriteLine("end listing");
 			ArrayList variables = (ArrayList)lookupTableVisitor.variables[name];
 			if (variables == null || variables.Count <= 0) {
@@ -352,7 +376,12 @@ namespace CSharpBinding.Parser
 			foreach (LocalLookupVariable v in variables) {
 //				Console.WriteLine("Position: ({0}/{1})", v.StartPos, v.EndPos);
 				if (IsInside(new Point(caretColumn, caretLine), v.StartPos, v.EndPos)) {
-					found = new ReturnType(v.TypeRef);
+					IClass c = SearchType(v.TypeRef.SystemType, callingClass, cu);
+					if (c != null) {
+						found = new ReturnType(c.FullyQualifiedName);
+					} else {
+						found = new ReturnType(v.TypeRef);
+					}
 //					Console.WriteLine("Variable found");
 					break;
 				}
@@ -439,6 +468,28 @@ namespace CSharpBinding.Parser
 			}
 //			Console.WriteLine("No static member in outer classes found");
 //			Console.WriteLine("DynamicLookUp resultless");
+//// Alex: look in namespaces
+//// Alex: look inside namespaces
+			string[] innamespaces=parserService.GetNamespaceList("");
+			foreach (string ns in innamespaces) {
+				ArrayList objs=parserService.GetNamespaceContents(ns);
+				if (objs==null) continue;
+				foreach (object o in objs) {
+					if (o is IClass) {
+						IClass oc=(IClass)o;
+						if (oc.Name==typeName || oc.FullyQualifiedName==typeName) {
+							//Debug.WriteLine(((IClass)o).Name);
+							/// now we can set completion data
+							objs.Clear();
+							objs=null;
+							return new ReturnType(oc.FullyQualifiedName);
+						}
+					}
+				}
+				if (objs==null) break;
+			}
+			innamespaces=null;
+//// Alex: end of mod
 			return null;
 		}
 		
@@ -452,7 +503,7 @@ namespace CSharpBinding.Parser
 			return null;
 		}
 		
-		IMethod GetMethod()
+		IMethod GetMethod(int caretLine, int caretColumn)
 		{
 			foreach (IMethod method in callingClass.Methods) {
 				if (method.BodyRegion != null && method.BodyRegion.IsInside(caretLine, caretColumn)) {
@@ -476,7 +527,7 @@ namespace CSharpBinding.Parser
 		
 		IReturnType SearchMethodParameter(string parameter)
 		{
-			IMethod method = GetMethod();
+			IMethod method = GetMethod(caretLine, caretColumn);
 			if (method == null) {
 //				Console.WriteLine("Method not found");
 				return null;
@@ -514,9 +565,43 @@ namespace CSharpBinding.Parser
 			return parserService.SearchType(name, curType, unit, caretLine, caretColumn);
 		}
 		
-		public ArrayList CtrlSpace(IParserService parserService, int caretLine, int caretColumn, string fileName)
+		public ArrayList NewCompletion(IParserService parserService, int caretLine, int caretColumn, string fileName)
 		{
 			ArrayList result = new ArrayList();
+			this.parserService = parserService;
+			IParseInformation parseInfo = parserService.GetParseInformation(fileName);
+			ICSharpCode.SharpRefactory.Parser.AST.CompilationUnit fileCompilationUnit = parseInfo.MostRecentCompilationUnit.Tag as ICSharpCode.SharpRefactory.Parser.AST.CompilationUnit;
+			if (fileCompilationUnit == null) {
+//				Console.WriteLine("!Warning: no parseinformation!");
+				return null;
+			}
+			CSharpVisitor cSharpVisitor = new CSharpVisitor();
+			cu = (ICompilationUnit)cSharpVisitor.Visit(fileCompilationUnit, null);
+			if (cu != null) {
+				callingClass = parserService.GetInnermostClass(cu, caretLine, caretColumn);
+//				Console.WriteLine("CallingClass is " + callingClass == null ? "null" : callingClass.Name);
+				if (callingClass != null) {
+					result.AddRange(parserService.GetNamespaceContents(callingClass.Namespace));
+//					foreach (IClass c in callingClass.
+				}
+			}
+			result.AddRange(parserService.GetNamespaceContents(""));
+			foreach (IUsing u in cu.Usings) {
+				if (u != null && (u.Region == null || u.Region.IsInside(caretLine, caretColumn))) {
+					foreach (string name in u.Usings) {
+						result.AddRange(parserService.GetNamespaceContents(name));
+					}
+					foreach (string alias in u.Aliases.Keys) {
+						result.Add(alias);
+					}
+				}
+			}
+			return result;
+		}
+		
+		public ArrayList CtrlSpace(IParserService parserService, int caretLine, int caretColumn, string fileName)
+		{
+			ArrayList result = new ArrayList(TypeReference.PrimitiveTypes);
 			this.parserService = parserService;
 			IParseInformation parseInfo = parserService.GetParseInformation(fileName);
 			ICSharpCode.SharpRefactory.Parser.AST.CompilationUnit fileCompilationUnit = parseInfo.MostRecentCompilationUnit.Tag as ICSharpCode.SharpRefactory.Parser.AST.CompilationUnit;
@@ -531,6 +616,20 @@ namespace CSharpBinding.Parser
 			if (cu != null) {
 				callingClass = parserService.GetInnermostClass(cu, caretLine, caretColumn);
 //				Console.WriteLine("CallingClass is " + callingClass == null ? "null" : callingClass.Name);
+				if (callingClass != null) {
+					IMethod method = GetMethod(caretLine, caretColumn);
+					if (method != null) {
+						foreach (IParameter p in method.Parameters) {
+							result.Add(new Field(new ReturnType(p.ReturnType.Name, p.ReturnType.ArrayDimensions, p.ReturnType.PointerNestingLevel), p.Name, Modifier.None, method.Region));
+						}
+					}
+					result.AddRange(parserService.GetNamespaceContents(callingClass.Namespace));
+					bool inStatic = InStatic();
+					result = parserService.ListMembers(result, callingClass, callingClass, inStatic);
+					if (inStatic == false) {
+						result = parserService.ListMembers(result, callingClass, callingClass, !inStatic);
+					}
+				}
 			}
 			foreach (string name in lookupTableVisitor.variables.Keys) {
 				ArrayList variables = (ArrayList)lookupTableVisitor.variables[name];
@@ -543,14 +642,6 @@ namespace CSharpBinding.Parser
 							break;
 						}
 					}
-				}
-			}
-			if (callingClass != null) {
-				result.AddRange(parserService.GetNamespaceContents(callingClass.Namespace));
-				bool inStatic = InStatic();
-				result = parserService.ListMembers(result, callingClass, callingClass, inStatic);
-				if (inStatic == false) {
-					result = parserService.ListMembers(result, callingClass, callingClass, !inStatic);
 				}
 			}
 			result.AddRange(parserService.GetNamespaceContents(""));

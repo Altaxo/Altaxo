@@ -154,6 +154,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Commands\ChooseConfigurationCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Commands\CustomStringTagProvider.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -414,6 +419,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\Components\SdMenuComboBox.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\Components\SdMenuCommand.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
@@ -540,6 +550,11 @@
                 />
                 <File
                     RelPath = "Gui\ContentInterfaces\IPrintable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\ContentInterfaces\IViewContentMemento.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -964,6 +979,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\Workbench\ViewContentEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\Workbench\WorkbenchMemento.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1090,6 +1110,16 @@
                 />
                 <File
                     RelPath = "Internal\Codons\MenuItems\MenuItemCodon.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Internal\Codons\Toolbars\AbstractComboBoxCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Internal\Codons\Toolbars\IComboBoxCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1664,6 +1694,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Internal\Project\Project\Collections\ConfigurationCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Internal\Project\Project\Collections\ProjectFileCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1849,6 +1884,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Services\Debugger\DefaultDebugger.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Services\Debugger\IDebugger.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Services\DisplayBinding\DisplayBindingService.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1935,6 +1980,11 @@
                 />
                 <File
                     RelPath = "Services\Project\CombineEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Services\Project\ConfigurationEventHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

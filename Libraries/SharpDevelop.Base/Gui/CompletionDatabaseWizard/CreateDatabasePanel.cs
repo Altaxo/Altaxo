@@ -52,6 +52,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CompletionDatabaseWi
 			} else {
 				EnableCancel = EnablePrevious = false;
 				generateThread = new Thread(new ThreadStart(CreateDatabase));
+				generateThread.IsBackground = true;
 				generateThread.Priority = ThreadPriority.Lowest;
 				generateThread.Start();
 				

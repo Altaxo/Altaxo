@@ -144,12 +144,16 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public IWorkbenchWindow GetOpenFile(string fileName)
 		{
-			string normalizedFileName = Path.GetFullPath(fileName).ToLower();
-			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
-				string normalizedContentName = content.IsUntitled ? content.UntitledName : Path.GetFullPath(content.FileName);
-				normalizedContentName = normalizedContentName.ToLower();
-				if (normalizedContentName == normalizedFileName) {
-					return content.WorkbenchWindow;
+			if (fileName != null && fileName.Length > 0) {
+				string normalizedFileName = (fileName.StartsWith("http://") ? fileName : Path.IsPathRooted(fileName) ? Path.GetFullPath(fileName) : fileName).ToLower();
+				foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
+					string normalizedContentName = content.IsUntitled ? content.UntitledName : (content.FileName == null ? "" : (content.FileName.StartsWith("http://") ? content.FileName : Path.GetFullPath(content.FileName)));
+					normalizedContentName = normalizedContentName.ToLower();
+					Console.WriteLine(normalizedContentName + " -- " + normalizedFileName);
+
+					if (normalizedContentName == normalizedFileName) {
+						return content.WorkbenchWindow;
+					}
 				}
 			}
 			return null;
@@ -177,7 +181,9 @@ namespace ICSharpCode.SharpDevelop.Services
 				OnFileRemoved(new FileEventArgs(fileName, true));
 			} else {
 				try {
-					File.Delete(fileName);
+					if (File.Exists(fileName)) {
+						File.Delete(fileName);
+					}
 				} catch (Exception e) {
 					IMessageService messageService = (IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
 					messageService.ShowError(e, "Can't remove file " + fileName);
@@ -223,6 +229,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 			IViewContent content = window.ViewContent;
 			if (content is IPositionable) {
+				window.SwitchView(0);
 				((IPositionable)content).JumpTo(Math.Max(0, line), Math.Max(0, column));
 			}
 		}

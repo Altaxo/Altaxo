@@ -42,6 +42,9 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		public void AddVariable(TypeReference typeRef, string name, Point startPos, Point endPos)
 		{
+			if (name == null || name.Length == 0) {
+				return;
+			}
 			ArrayList list;
 			if (variables[name] == null) {
 				variables[name] = list = new ArrayList();
@@ -78,6 +81,33 @@ namespace ICSharpCode.SharpRefactory.Parser
 				return data;
 			}
 			return foreachStatement.EmbeddedStatement.AcceptVisitor(this, data);
+		}
+		
+		public override object Visit(TryCatchStatement tryCatchStatement, object data)
+		{
+			if (tryCatchStatement == null) {
+				return data;
+			}
+			if (tryCatchStatement.StatementBlock != null) {
+				tryCatchStatement.StatementBlock.AcceptVisitor(this, data);
+			}
+			if (tryCatchStatement.CatchClauses != null) {
+				foreach (CatchClause catchClause in tryCatchStatement.CatchClauses) {
+					if (catchClause != null) {
+						if (catchClause.Type != null && catchClause.VariableName != null) {
+							AddVariable(new TypeReference (catchClause.Type),
+							            catchClause.VariableName,
+							            catchClause.StatementBlock.StartLocation,
+							            catchClause.StatementBlock.EndLocation);
+						}
+						catchClause.StatementBlock.AcceptVisitor(this, data);
+					}
+				}
+			}
+			if (tryCatchStatement.FinallyBlock != null) {
+				return tryCatchStatement.FinallyBlock.AcceptVisitor(this, data);
+			}
+			return data;
 		}
 	}
 }

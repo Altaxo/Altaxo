@@ -85,6 +85,18 @@ namespace ICSharpCode.SharpDevelop.Gui
 			Show();
 		}
 		
+		protected override void Dispose(bool isDisposing)
+		{
+			if (isDisposing) {
+				if (subViewContents != null) {
+					foreach (IDisposable disposeMe in subViewContents) {
+						disposeMe.Dispose();
+					}
+				}
+			}
+			base.Dispose(isDisposing);
+		}
+		
 		public SdiWorkspaceWindow(IViewContent content)
 		{
 			this.content = content;
@@ -92,23 +104,41 @@ namespace ICSharpCode.SharpDevelop.Gui
 			content.WorkbenchWindow = this;
 			content.TitleNameChanged += new EventHandler(SetTitleEvent);
 			content.DirtyChanged    += new EventHandler(SetTitleEvent);
-			content.BeforeSave      += new EventHandler(BeforeSave);
+			content.Saving          += new EventHandler(BeforeSave);
+			content.Saved           += new SaveEventHandler(AfterSave);
+			
 			SetTitleEvent(null, null);
 			
 			this.DockableAreas = WeifenLuo.WinFormsUI.DockAreas.Document;
-			
 			this.DockPadding.All = 2;
-			content.Control.Dock = DockStyle.Fill;
-			Controls.Add(content.Control);
+
+			if (content.CreateAsSubViewContent == true) {
+				InitializeSubViewContents();
+			} else {
+				content.Control.Dock = DockStyle.Fill;
+				Controls.Add(content.Control);
+			}
 			SetTitleEvent(this, EventArgs.Empty);
 			MenuService menuService = (MenuService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(MenuService));
 			this.TabPageContextMenu  = menuService.CreateContextMenu(this, contextMenuPath);
 		}
 		
+		void AfterSave(object sender, SaveEventArgs e)
+		{
+			if (subViewContents == null || subViewContents.Count == 0) {
+				return;
+			}
+			for (int i = 1; i < subViewContents.Count; ++i) {
+				try {
+					((ISecondaryViewContent)subViewContents[i]).NotifyAfterSave(e.Successful);
+				}
+				catch {}
+			}
+		}
+		
 		void BeforeSave(object sender, EventArgs e)
 		{
 			ISecondaryViewContent secondaryViewContent = ActiveViewContent as ISecondaryViewContent;
-			Console.WriteLine("Before SAVE  -- " + secondaryViewContent);
 			if (secondaryViewContent != null) {
 				secondaryViewContent.NotifyBeforeSave();
 			}
@@ -128,6 +158,23 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
+		void SetToolTipText()
+		{
+			if (content != null) {
+				try {
+					if (content.FileName != null && content.FileName.Length > 0) {
+						base.ToolTipText = Path.GetFullPath(content.FileName);
+					} else {
+						base.ToolTipText = null;
+					}
+				} catch (Exception) {
+					base.ToolTipText = content.FileName;
+				}
+			} else {
+				base.ToolTipText = null;
+			}
+		}
+		
 		public void SetTitleEvent(object sender, EventArgs e)
 		{
 			internalState = OpenFileTabState.Nothing;
@@ -135,7 +182,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (content == null) {
 				return;
 			}
-			
+			SetToolTipText();
 			string newTitle = "";
 			if (content.TitleName == null) {
 				myUntitledTitle = Path.GetFileNameWithoutExtension(content.UntitledName);
@@ -181,7 +228,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			content.TitleNameChanged -= new EventHandler(SetTitleEvent);
 			content.DirtyChanged     -= new EventHandler(SetTitleEvent);
-			content.BeforeSave       -= new EventHandler(BeforeSave);
+			content.Saving           -= new EventHandler(BeforeSave);
+			content.Saved            -= new SaveEventHandler(AfterSave);
 		}
 		
 		public bool CloseWindow(bool force)
@@ -199,7 +247,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 								new ICSharpCode.SharpDevelop.Commands.SaveFileAs().Run();
 								if (ViewContent.IsDirty) {
 									IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-									if (messageService.AskQuestion("Do you really want to discard your changes ?")) {
+									if (messageService.AskQuestion("${res:MainWindow.DiscardChangesMessage}")) {
 										break;
 									}
 								} else {
@@ -218,36 +266,41 @@ namespace ICSharpCode.SharpDevelop.Gui
 						return false;
 				}
 			}
+
 			OnCloseEvent(null);
 			Dispose();
 			return true;
 		}
 		
+		private void InitializeSubViewContents()
+		{
+			subViewContents = new ArrayList();
+			subViewContents.Add(content);
+				
+			viewTabControl		  = new TabControl();
+			viewTabControl.Alignment = TabAlignment.Bottom;
+			viewTabControl.Dock = DockStyle.Fill;
+			viewTabControl.SelectedIndexChanged += new EventHandler(viewTabControlIndexChanged);
+			Controls.Clear();
+			Controls.Add(viewTabControl);
+
+			TabPage newPage = new TabPage(stringParserService.Parse(content.TabPageText));
+			newPage.Tag = content;
+			content.Control.Dock = DockStyle.Fill;
+			newPage.Controls.Add(content.Control);
+			viewTabControl.TabPages.Add(newPage);
+		}
+
+
 		public void AttachSecondaryViewContent(ISecondaryViewContent subViewContent)
 		{
-			TabPage newPage;
-			
 			if (subViewContents == null) {
-				subViewContents = new ArrayList();
-				subViewContents.Add(content);
-				viewTabControl      = new TabControl();
-				viewTabControl.Alignment = TabAlignment.Bottom;
-				viewTabControl.Dock = DockStyle.Fill;
-				viewTabControl.SelectedIndexChanged += new EventHandler(viewTabControlIndexChanged);
-				
-				Controls.Clear();
-				Controls.Add(viewTabControl);
-				
-				newPage = new TabPage(stringParserService.Parse(content.TabPageText));
-				newPage.Tag = content;
-				content.Control.Dock = DockStyle.Fill;
-				newPage.Controls.Add(content.Control);
-				viewTabControl.TabPages.Add(newPage);
+				InitializeSubViewContents();
 			}
 			subViewContent.WorkbenchWindow = this;
 			subViewContents.Add(subViewContent);
 			
-			newPage = new TabPage(stringParserService.Parse(subViewContent.TabPageText));
+			TabPage newPage = new TabPage(stringParserService.Parse(subViewContent.TabPageText));
 			newPage.Tag = subViewContent;
 			try {
 				subViewContent.Control.Dock = DockStyle.Fill;
@@ -256,7 +309,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			viewTabControl.TabPages.Add(newPage);
 		}
 		
-		int oldIndex = -1;
+		int oldIndex = 0;
 		void viewTabControlIndexChanged(object sender, EventArgs e)
 		{
 			if (oldIndex >= 0) {
@@ -269,6 +322,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (viewTabControl.SelectedIndex >= 0) {
 				IBaseViewContent secondaryViewContent = subViewContents[viewTabControl.SelectedIndex] as IBaseViewContent;
 				if (secondaryViewContent != null) {
+					secondaryViewContent.SwitchedTo();
 					secondaryViewContent.Selected();
 				}
 			}

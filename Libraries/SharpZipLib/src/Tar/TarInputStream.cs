@@ -1,4 +1,5 @@
 // TarInputStream.cs
+//
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -47,22 +48,50 @@ namespace ICSharpCode.SharpZipLib.Tar
 	/// </summary>
 	public class TarInputStream : Stream
 	{
+		/// <summary>
+		/// Internal debugging flag
+		/// </summary>
 		protected bool debug;
+		
+		/// <summary>
+		/// Flag set when last block has been read
+		/// </summary>
 		protected bool hasHitEOF;
 		
+		/// <summary>
+		/// Size of this entry as recorded in header
+		/// </summary>
 		protected int entrySize;
-		protected int entryOffset;
 		
+		/// <summary>
+		/// Number of bytes read for this entry so far
+		/// </summary>
+		protected int entryOffset;
+
+		/// <summary>
+		/// Buffer used with calls to <code>Read()</code>
+		/// </summary>		
 		protected byte[] readBuf;
 		
+		/// <summary>
+		/// Working buffer
+		/// </summary>
 		protected TarBuffer buffer;
+		
+		/// <summary>
+		/// Current entry being read
+		/// </summary>
 		protected TarEntry  currEntry;
+		
+		/// <summary>
+		/// Factory used to create TarEntry or descendant class instance
+		/// </summary>
 		protected IEntryFactory eFactory;
 		
 		Stream inputStream;
 
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Gets a value indicating whether the current stream supports reading
 		/// </summary>
 		public override bool CanRead {
 			get {
@@ -71,26 +100,29 @@ namespace ICSharpCode.SharpZipLib.Tar
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Gets a value indicating whether the current stream supports seeking
+		/// This property always returns false.
 		/// </summary>
 		public override bool CanSeek {
-			// TODO is this valid?  should it return false?
 			get {
-				return inputStream.CanSeek;
+//				return inputStream.CanSeek;
+				return false;
 			}
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Gets a value indicating if the stream supports writing.
+		/// This property always returns false.
 		/// </summary>
 		public override bool CanWrite {
 			get {
-				return inputStream.CanWrite;
+//				return inputStream.CanWrite;
+				return false;
 			}
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// The length in bytes of the stream
 		/// </summary>
 		public override long Length {
 			get {
@@ -99,14 +131,17 @@ namespace ICSharpCode.SharpZipLib.Tar
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Gets or sets the position within the stream. 
+		/// Setting the Position is not supported and throws a NotSupportedExceptionNotSupportedException
 		/// </summary>
+		/// <exception cref="NotSupportedException">Any attempt to set position</exception>
 		public override long Position {
 			get {
 				return inputStream.Position;
 			}
 			set {
-				inputStream.Position = value;
+//				inputStream.Position = value;
+				throw new NotSupportedException("TarInputStream Seek not supported");
 			}
 		}
 		
@@ -119,43 +154,62 @@ namespace ICSharpCode.SharpZipLib.Tar
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Set the streams position.  This operation is not supported and will throw a NotSupportedException
 		/// </summary>
+		/// <exception cref="NotSupportedException">Any access</exception>
 		public override long Seek(long offset, SeekOrigin origin)
 		{
-			// TODO allow this?
-			return inputStream.Seek(offset, origin);
+//			return inputStream.Seek(offset, origin);
+			throw new NotSupportedException("TarInputStream Seek not supported");
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Sets the length of the stream
+		/// This operation is not supported and will throw a NotSupportedException
 		/// </summary>
+		/// <exception cref="NotSupportedException">Any access</exception>
 		public override void SetLength(long val)
 		{
-			inputStream.SetLength(val);
+//			inputStream.SetLength(val);
+			throw new NotSupportedException("TarInputStream SetLength not supported");
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Writes a block of bytes to this stream using data from a buffer.
+		/// This operation is not supported and will throw a NotSupportedException
 		/// </summary>
+		/// <exception cref="NotSupportedException">Any access</exception>
 		public override void Write(byte[] array, int offset, int count)
 		{
-			inputStream.Write(array, offset, count);
+//			inputStream.Write(array, offset, count);
+			throw new NotSupportedException("TarInputStream Write not supported");
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Writes a byte to the current position in the file stream.
+		/// This operation is not supported and will throw a NotSupportedException
 		/// </summary>
+		/// <exception cref="NotSupportedException">Any access</exception>
 		public override void WriteByte(byte val)
 		{
-			inputStream.WriteByte(val);
+//			inputStream.WriteByte(val);
+			throw new NotSupportedException("TarInputStream WriteByte not supported");
 		}
 			
-		
+
+		/// <summary>
+		/// Construct a TarInputStream with default block factor
+		/// </summary>
+		/// <param name="inputStream">stream to source data from</param>
 		public TarInputStream(Stream inputStream) : this(inputStream, TarBuffer.DefaultBlockFactor)
 		{
 		}
-		
+
+		/// <summary>
+		/// Construct a TarInputStream with user specified block factor
+		/// </summary>
+		/// <param name="inputStream">stream to source data from</param>
+		/// <param name="blockFactor">block factor to apply to archive</param>
 		public TarInputStream(Stream inputStream, int blockFactor)
 		{
 			this.inputStream = inputStream;
@@ -166,18 +220,30 @@ namespace ICSharpCode.SharpZipLib.Tar
 			this.hasHitEOF = false;
 			this.eFactory  = null;
 		}
-		
+
+		/// <summary>
+		/// set debug flag both locally and for buffer
+		/// </summary>
+		/// <param name="debugFlag">debug on or off</param>
 		public void SetDebug(bool debugFlag)
 		{
 			this.debug = debugFlag;
 			SetBufferDebug(debugFlag);
 		}
 
+		/// <summary>
+		/// set debug flag for buffer
+		/// </summary>
+		/// <param name="debug">debug on or off</param>
 		public void SetBufferDebug(bool debug)
 		{
 			this.buffer.SetDebug(debug);
 		}
 		
+		/// <summary>
+		/// Set the entry factory for this instance.
+		/// </summary>
+		/// <param name="factory">The factory for creating new entries</param>
 		public void SetEntryFactory(IEntryFactory factory)
 		{
 			this.eFactory = factory;
@@ -230,7 +296,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </param>
 		public void Skip(int numToSkip)
 		{
-			// TODO REVIEW
+			// TODO: REVIEW
 			// This is horribly inefficient, but it ensures that we
 			// properly skip over bytes via the TarBuffer...
 			//
@@ -339,7 +405,6 @@ namespace ICSharpCode.SharpZipLib.Tar
 					StringBuilder longName = null;
 					
 					if (header.typeFlag == TarHeader.LF_GNU_LONGNAME) {
-//						Console.WriteLine("TarInputStream: Long name found '" + header.name + "' size = " + header.size); // DEBUG
 						
 						byte[] nameBuffer = new byte[TarBuffer.BlockSize];
 						
@@ -358,8 +423,6 @@ namespace ICSharpCode.SharpZipLib.Tar
 							numToRead -= numRead;
 						}
 						
-//						Console.WriteLine("TarInputStream: Long name is '" + longName.ToString()); // DEBUG
-						
 						SkipToNextEntry();
 						headerBuf = this.buffer.ReadBlock();
 					} else if (header.typeFlag == TarHeader.LF_GHDR) {  // POSIX global extended header 
@@ -371,7 +434,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 						SkipToNextEntry();
 						headerBuf = this.buffer.ReadBlock();
 					} else if (header.typeFlag == TarHeader.LF_GNU_VOLHDR) {
-						// TODO could show volume name when verbose?
+						// TODO  could show volume name when verbose?
 						SkipToNextEntry();
 						headerBuf = this.buffer.ReadBlock();
 					} else if (header.typeFlag != TarHeader.LF_NORMAL && 
@@ -392,7 +455,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 						this.currEntry = this.eFactory.CreateEntry(headerBuf);
 					}
 					
-					// TODO -jr- ustar is not the only magic possible by any means
+					// TODO  ustar is not the only magic possible by any means
 					// tar, xtar, ...
 					if (!(headerBuf[257] == 'u' && headerBuf[258] == 's' && headerBuf[259] == 't' && headerBuf[260] == 'a' && headerBuf[261] == 'r')) {
 						throw new InvalidHeaderException("header magic is not 'ustar', but '" + headerBuf[257] + headerBuf[258] + headerBuf[259] + headerBuf[260] + headerBuf[261] +
@@ -405,7 +468,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 					
 					this.entryOffset = 0;
 					
-					// TODO REVIEW How do we resolve this discrepancy?!
+					// TODO  Review How do we resolve this discrepancy?!
 					this.entrySize = (int) this.currEntry.Size;
 				} catch (InvalidHeaderException ex) {
 					this.entrySize = 0;
@@ -484,7 +547,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 				byte[] rec = this.buffer.ReadBlock();
 				if (rec == null) {
 					// Unexpected EOF!
-					throw new IOException("unexpected EOF with " + numToRead + " bytes unread");
+					throw new TarException("unexpected EOF with " + numToRead + " bytes unread");
 				}
 				
 				int sz     = numToRead;
@@ -530,29 +593,68 @@ namespace ICSharpCode.SharpZipLib.Tar
 		}
 		
 		/// <summary>
-		/// This interface is provided, with the method setEntryFactory(), to allow
+		/// This interface is provided, along with the method setEntryFactory(), to allow
 		/// the programmer to have their own TarEntry subclass instantiated for the
 		/// entries return from getNextEntry().
 		/// </summary>
 		public interface IEntryFactory
 		{
+			/// <summary>
+			/// Create an entry based on name alone
+			/// </summary>
+			/// <param name="name">
+			/// Name of the new EntryPointNotFoundException to create
+			/// </param>
+			/// <returns>created TarEntry or descendant class</returns>
 			TarEntry CreateEntry(string name);
+			
+			/// <summary>
+			/// Create an instance based on an actual file
+			/// </summary>
+			/// <param name="fileName">
+			/// Name of file to represent in the entry
+			/// </param>
+			/// <returns>
+			/// Created TarEntry or descendant class
+			/// </returns>
 			TarEntry CreateEntryFromFile(string fileName);
+			
+			/// <summary>
+			/// Create a tar entry based on the header information passed
+			/// </summary>
+			/// <param name="headerBuf">
+			/// Buffer containing header information to base entry on
+			/// </param>
+			/// <returns>
+			/// Created TarEntry or descendant class
+			/// </returns>
 			TarEntry CreateEntry(byte[] headerBuf);
 		}
-		
+
+		/// <summary>
+		/// Standard entry factory class creating instances of the class TarEntry
+		/// </summary>
 		public class EntryFactoryAdapter : IEntryFactory
 		{
+			/// <summary>
+			/// Create a TarEntry based on named
+			/// </summary>
 			public TarEntry CreateEntry(string name)
 			{
 				return TarEntry.CreateTarEntry(name);
 			}
 			
+			/// <summary>
+			/// Create a tar entry with details obtained from <paramref name="fileName">file</paramref>
+			/// </summary>
 			public TarEntry CreateEntryFromFile(string fileName)
 			{
 				return TarEntry.CreateEntryFromFile(fileName);
 			}
-			
+
+			/// <summary>
+			/// Create and entry based on details in <paramref name="headerBuf">header</paramref>
+			/// </summary>			
 			public TarEntry CreateEntry(byte[] headerBuf)
 			{
 				return new TarEntry(headerBuf);

@@ -9,17 +9,38 @@ using System;
 using System.Collections;
 using System.IO;
 
+using ICSharpCode.Core.AddIns;
 using ICSharpCode.Core.Services;
-using ICSharpCode.Debugger;
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Internal.Project;
 
 namespace ICSharpCode.SharpDevelop.Services
 {
-	public class DebuggerService : THSDebugger, IService
+	public class DebuggerService : IService
 	{
 		System.Diagnostics.Process standardProcess = null;
 		bool                       isRunning       = false;
-//		DebuggerStepper            stepper         = null;
+		IDebugger                  defaultDebugger = null;
+		ArrayList                  debugger        = null;
+		
+		public IDebugger CurrentDebugger {
+			get {
+				if (debugger != null) {
+					IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+					// TODO: not really correct :/ it would be better to have the 'real' startup project, but this will do for now.
+					IProject project = projectService.CurrentSelectedProject;
+					foreach (IDebugger d in debugger) {
+						if (d.CanDebug(project)) {
+							return d;
+						}
+					}
+				}
+				if (defaultDebugger == null) {
+					defaultDebugger = new DefaultDebugger();
+				}
+				return defaultDebugger;
+			}
+		}
 		
 		public bool IsProcessRuning {
 			get {
@@ -40,7 +61,10 @@ namespace ICSharpCode.SharpDevelop.Services
 				standardProcess.Close();
 				standardProcess = null;
 			}
-			StopDebugger();
+			IDebugger debugger = CurrentDebugger;
+			if (debugger != null) {
+				debugger.Stop();
+			}
 			isRunning = false;
 			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 		}
@@ -48,7 +72,16 @@ namespace ICSharpCode.SharpDevelop.Services
 		#region ICSharpCode.Core.Services.IService interface implementation
 		public void InitializeService()
 		{
-			 OnInitialize(EventArgs.Empty);
+			OnInitialize(EventArgs.Empty);
+			IAddInTreeNode treeNode = null;
+			try {
+				treeNode = AddInTreeSingleton.AddInTree.GetTreeNode("/SharpDevelop/Services/DebuggerService/Debugger");
+			} catch (Exception e) {
+				Console.WriteLine(e);
+			}
+			if (treeNode != null) {
+				debugger = treeNode.BuildChildItems(this);
+			}
 		}
 		
 		public void UnloadService()
@@ -73,7 +106,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		public event EventHandler Unload;
 		#endregion
 		
-		public override void GotoSourceFile(string fileName, int lineNumber, int column)
+		public void GotoSourceFile(string fileName, int lineNumber, int column)
 		{
 			IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
 			fileService.JumpToFilePosition(fileName, lineNumber, column);
@@ -102,7 +135,10 @@ namespace ICSharpCode.SharpDevelop.Services
 			if (IsProcessRuning) {
 				return;
 			}
-			DebugApplication(fileName, arguments, workingDirectory);
+			IDebugger debugger = CurrentDebugger;
+			if (debugger != null) {
+				debugger.Start(fileName, arguments, workingDirectory);
+			}
 			
 //			lock (breakpoints) {
 //				foreach (Breakpoint breakpoint in breakpoints) {
@@ -115,34 +151,44 @@ namespace ICSharpCode.SharpDevelop.Services
 			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 		}
 		
+		public void Break()
+		{
+			IDebugger debugger = CurrentDebugger;
+			if (debugger != null && debugger.SupportsExecutionControl) {
+				debugger.Break();
+			}
+		}
+		
+		public void Continue()
+		{
+			IDebugger debugger = CurrentDebugger;
+			if (debugger != null && debugger.SupportsExecutionControl) {
+				debugger.Continue();
+			}
+		}
+
 		public void Step(bool stepInto)
 		{
-//			if (stepper != null) {
-//				stepper.Step(stepInto);
-//				Continue();
-//			}
+			IDebugger debugger = CurrentDebugger;
+			if (debugger == null || !debugger.SupportsStepping) {
+				return;
+			}
+			if (stepInto) {
+				debugger.StepInto();
+			} else {
+				debugger.StepOver();
+			}
 		}
 		
 		public void StepOut()
 		{
-//			if (stepper != null) {
-//				stepper.StepOut();
-//				Continue();
-//			}
+			IDebugger debugger = CurrentDebugger;
+			if (debugger == null || !debugger.SupportsStepping) {
+				return;
+			}
+			debugger.StepOut();
 		}
 		
-//		protected override void OnStepComplete(StepEventArgs e)
-//		{
-//			stepper = e.Thread.Stepper;
-//			base.OnStepComplete(e);
-//		}
-//		
-//		protected override void OnBreaked(ThreadEventArgs e)
-//		{
-//			stepper = e.Thread.Stepper;
-//			base.OnBreaked(e);
-//		}
-//		
 		public void Stop()
 		{
 			if (standardProcess != null) {
@@ -153,7 +199,10 @@ namespace ICSharpCode.SharpDevelop.Services
 				standardProcess.Dispose();
 				standardProcess = null;
 			} else {
-//				StopDebugger();
+				IDebugger debugger = CurrentDebugger;
+				if (debugger != null) {
+					debugger.Stop();
+				}
 			}
 			isRunning = false;
 			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
@@ -191,31 +240,5 @@ namespace ICSharpCode.SharpDevelop.Services
 //			                                                 "Unknown",Environment.NewLine)));
 //			base.OnModuleLoaded(e);
 //		}
-	}
-}
-
-
-namespace ICSharpCode.Debugger {
-	public class THSDebugger 
-	{
-		public virtual void GotoSourceFile(string fileName, int lineNumber, int column)
-		{
-		}
-		public void Continue()
-		{
-		}
-		public void Break()
-		{
-		}
-		public void StopDebugger()
-		{
-		}
-		public void DebugApplication(string fileName, string arguments, string workingDirectory)
-		{
-		}
-		public void ToggleBreakpointAt(string file, int y, int x)
-		{
-		}
-		public ArrayList Breakpoints = new ArrayList();
 	}
 }

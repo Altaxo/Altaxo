@@ -43,12 +43,20 @@ namespace ICSharpCode.SharpZipLib.Tar {
 	/// This exception is used to indicate that there is a problem
 	/// with a TAR archive header.
 	/// </summary>
-	public class InvalidHeaderException : System.IO.IOException
+	public class InvalidHeaderException : TarException
 	{
+		/// <summary>
+		/// Construct default instance
+		/// Used to indicate problems with Tar archive headers
+		/// </summary>
 		public InvalidHeaderException()
 		{
 		}
-	
+
+		/// <summary>
+		/// Construct instance with a message
+		/// Used to indicate problems with Tar archive headers
+		/// </summary>
 		public InvalidHeaderException(string msg) : base(msg)
 		{
 		}

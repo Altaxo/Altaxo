@@ -32,6 +32,9 @@ namespace Reflector.UserInterface
 		private State lastState = State.None;
 		private ImageList imageList; 
 
+		private bool useChevron = true;
+		private bool newLine    = false;
+
 		private enum State 
 		{ 
 			None, 
@@ -85,6 +88,30 @@ namespace Reflector.UserInterface
 			get 
 			{ 
 				return this.items; 
+			}
+		}
+
+		public bool NewLine
+		{
+			get
+			{
+				return newLine;
+			}
+			set 
+			{
+				newLine = value;
+			}
+		}
+
+		public bool UseChevron
+		{
+			get
+			{
+				return useChevron;
+			}
+			set
+			{
+				useChevron = value;
 			}
 		}
 
@@ -353,43 +380,43 @@ namespace Reflector.UserInterface
 			return hit;
 		}
 
-        private int GetNextItem(int index)
-        {
-            if (index < 0)
-            {
-                throw new ArgumentException("index");
-            }
+				private int GetNextItem(int index)
+				{
+						if (index < 0)
+						{
+								throw new ArgumentException("index");
+						}
 
-            int count = NativeMethods.SendMessage(this.Handle, NativeMethods.TB_BUTTONCOUNT, 0, 0);
-           
-            int nextIndex = index;
-            do
-            {
-                nextIndex = (nextIndex + 1) % count;
-            }
-            while ((nextIndex != index) && (!items[nextIndex].IsVisible));
-           
-            return nextIndex;
-        }
-           
-        private int GetPreviousItem(int index)
-        {
-            if (index < 0)
-            {
-                throw new ArgumentException("index");
-            }
+						int count = NativeMethods.SendMessage(this.Handle, NativeMethods.TB_BUTTONCOUNT, 0, 0);
+					 
+						int nextIndex = index;
+						do
+						{
+								nextIndex = (nextIndex + 1) % count;
+						}
+						while ((nextIndex != index) && (!items[nextIndex].IsVisible));
+					 
+						return nextIndex;
+				}
+					 
+				private int GetPreviousItem(int index)
+				{
+						if (index < 0)
+						{
+								throw new ArgumentException("index");
+						}
 
-            int count = NativeMethods.SendMessage(this.Handle, NativeMethods.TB_BUTTONCOUNT, 0, 0);
-           
-            int prevIndex = index;
-            do
-            {
-                prevIndex = (prevIndex + count - 1) % count;
-            }
-            while ((prevIndex != index) && (!items[prevIndex].IsVisible));
-           
-            return prevIndex;
-        }
+						int count = NativeMethods.SendMessage(this.Handle, NativeMethods.TB_BUTTONCOUNT, 0, 0);
+					 
+						int prevIndex = index;
+						do
+						{
+								prevIndex = (prevIndex + count - 1) % count;
+						}
+						while ((prevIndex != index) && (!items[prevIndex].IsVisible));
+					 
+						return prevIndex;
+				}
 
 		private int GetHotItem()
 		{
@@ -689,36 +716,35 @@ namespace Reflector.UserInterface
 				NativeMethods.RECT rc = tbcd.nmcd.rc;
 
 				Rectangle rectangle = new Rectangle(rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top);
+//// Alex:graphics and image must be released - lots of calls
+				using (Graphics graphics = Graphics.FromHdc(tbcd.nmcd.hdc)) {
+					CommandBarItem item = items[tbcd.nmcd.dwItemSpec];
 
-				Graphics graphics = Graphics.FromHdc(tbcd.nmcd.hdc);
-				CommandBarItem item = items[tbcd.nmcd.dwItemSpec];
-
-				bool hot = ((tbcd.nmcd.uItemState & NativeMethods.CDIS_HOT) != 0);
-				bool selected = ((tbcd.nmcd.uItemState & NativeMethods.CDIS_SELECTED) != 0);
-				bool disabled = ((tbcd.nmcd.uItemState & NativeMethods.CDIS_DISABLED) != 0);
+					bool hot = ((tbcd.nmcd.uItemState & NativeMethods.CDIS_HOT) != 0);
+					bool selected = ((tbcd.nmcd.uItemState & NativeMethods.CDIS_SELECTED) != 0);
+					bool disabled = ((tbcd.nmcd.uItemState & NativeMethods.CDIS_DISABLED) != 0);
 		
-				CommandBarCheckBox checkBox = item as CommandBarCheckBox;
-				if ((checkBox != null) && (checkBox.IsChecked))
-				{
-					ControlPaint.DrawBorder3D(graphics, rectangle, Border3DStyle.SunkenOuter);
+					CommandBarCheckBox checkBox = item as CommandBarCheckBox;
+					if ((checkBox != null) && (checkBox.IsChecked))
+					{
+						ControlPaint.DrawBorder3D(graphics, rectangle, Border3DStyle.SunkenOuter);
+					}
+					else if (selected)
+					{
+						ControlPaint.DrawBorder3D(graphics, rectangle, Border3DStyle.SunkenOuter);
+					}
+					else if (hot)
+					{
+						ControlPaint.DrawBorder3D(graphics, rectangle, Border3DStyle.RaisedInner);
+					}
+//// Alex: don't create references unnecessarily - lots of calls
+					if (item.Image != null)
+					{
+						Size size = item.Image.Size;
+						Point point = new Point(rc.left + ((rc.right - rc.left - size.Width) / 2), rc.top + ((rc.bottom - rc.top - size.Height) / 2));
+						NativeMethods.DrawImage(graphics, item.Image, point, disabled);
+					}
 				}
-				else if (selected)
-				{
-					ControlPaint.DrawBorder3D(graphics, rectangle, Border3DStyle.SunkenOuter);
-				}
-				else if (hot)
-				{
-					ControlPaint.DrawBorder3D(graphics, rectangle, Border3DStyle.RaisedInner);
-				}
-
-				Image image = item.Image;
-				if (image != null)
-				{
-					Size size = image.Size;
-					Point point = new Point(rc.left + ((rc.right - rc.left - size.Width) / 2), rc.top + ((rc.bottom - rc.top - size.Height) / 2));
-					NativeMethods.DrawImage(graphics, image, point, disabled);
-				}
-
 				m.Result = (IntPtr)NativeMethods.CDRF_SKIPDEFAULT;
 			}
 		}
@@ -1064,10 +1090,10 @@ namespace Reflector.UserInterface
 
 		private void RemoveItems()
 		{
-            while (NativeMethods.SendMessage(this.Handle, NativeMethods.TB_BUTTONCOUNT, 0, 0) > 0)
-            {
-                NativeMethods.SendMessage(this.Handle, NativeMethods.TB_DELETEBUTTON, 0, 0);
-            }
+						while (NativeMethods.SendMessage(this.Handle, NativeMethods.TB_BUTTONCOUNT, 0, 0) > 0)
+						{
+								NativeMethods.SendMessage(this.Handle, NativeMethods.TB_DELETEBUTTON, 0, 0);
+						}
 		}
 
 		private void UpdateSize()

@@ -23,6 +23,10 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		
 		static bool LoadHeaders(string fileName)
 		{
+			if (!File.Exists(fileName)) {
+				return false;
+			}
+			
 			XmlDocument doc = new XmlDocument();
 			try {
 				doc.Load(fileName);

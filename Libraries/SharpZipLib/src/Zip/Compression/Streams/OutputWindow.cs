@@ -1,4 +1,5 @@
 // OutputWindow.cs
+//
 // Copyright (C) 2001 Mike Krueger
 //
 // This file was translated from java, it was part of the GNU Classpath
@@ -56,6 +57,13 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		private int windowEnd  = 0;
 		private int windowFilled = 0;
 		
+		/// <summary>
+		/// write a byte to this output window
+		/// </summary>
+		/// <param name="abyte">value to write</param>
+		/// <exception cref="InvalidOperationException">
+		/// if window is full
+		/// </exception>
 		public void Write(int abyte)
 		{
 			if (windowFilled++ == WINDOW_SIZE) {
@@ -75,6 +83,14 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			}
 		}
 		
+		/// <summary>
+		/// Append a byte pattern already in the window itself
+		/// </summary>
+		/// <param name="len">length of pattern to copy</param>
+		/// <param name="dist">distance from end of window pattern occurs</param>
+		/// <exception cref="InvalidOperationException">
+		/// If the repeated data overflows the window
+		/// </exception>
 		public void Repeat(int len, int dist)
 		{
 			if ((windowFilled += len) > WINDOW_SIZE) {
@@ -88,8 +104,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 					System.Array.Copy(window, rep_start, window, windowEnd, len);
 					windowEnd += len;
 				} else {
-					/* We have to copy manually, since the repeat pattern overlaps.
-					*/
+					/* We have to copy manually, since the repeat pattern overlaps. */
 					while (len-- > 0) {
 						window[windowEnd++] = window[rep_start++];
 					}
@@ -99,6 +114,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			}
 		}
 		
+		/// <summary>
+		/// Copy from input manipulator to internal window
+		/// </summary>
+		/// <param name="input">source of data</param>
+		/// <param name="len">length of data to copy</param>
+		/// <returns>the number of bytes copied</returns>
 		public int CopyStored(StreamManipulator input, int len)
 		{
 			len = Math.Min(Math.Min(len, WINDOW_SIZE - windowFilled), input.AvailableBytes);
@@ -119,6 +140,15 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			return copied;
 		}
 		
+		/// <summary>
+		/// Copy dictionary to window
+		/// </summary>
+		/// <param name="dict">source dictionary</param>
+		/// <param name="offset">offset of start in source dictionary</param>
+		/// <param name="len">length of dictionary</param>
+		/// <exception cref="InvalidOperationException">
+		/// If window isnt empty
+		/// </exception>
 		public void CopyDict(byte[] dict, int offset, int len)
 		{
 			if (windowFilled > 0) {
@@ -132,17 +162,35 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			System.Array.Copy(dict, offset, window, 0, len);
 			windowEnd = len & WINDOW_MASK;
 		}
-		
+
+		/// <summary>
+		/// Get remaining unfilled space in window
+		/// </summary>
+		/// <returns>Number of bytes left in window</returns>
 		public int GetFreeSpace()
 		{
 			return WINDOW_SIZE - windowFilled;
 		}
 		
+		/// <summary>
+		/// Get bytes available for output in window
+		/// </summary>
+		/// <returns>Number of bytes filled</returns>
 		public int GetAvailable()
 		{
 			return windowFilled;
 		}
-		
+
+		/// <summary>
+		/// Copy contents of window to output
+		/// </summary>
+		/// <param name="output">buffer to copy to</param>
+		/// <param name="offset">offset to start at</param>
+		/// <param name="len">number of bytes to count</param>
+		/// <returns>The number of bytes copied</returns>
+		/// <exception cref="InvalidOperationException">
+		/// If a window underflow occurs
+		/// </exception>
 		public int CopyOutput(byte[] output, int offset, int len)
 		{
 			int copy_end = windowEnd;
@@ -167,7 +215,10 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			}
 			return copied;
 		}
-		
+
+		/// <summary>
+		/// Reset by clearing window so <see cref="GetAvailable">GetAvailable</see> returns 0
+		/// </summary>
 		public void Reset()
 		{
 			windowFilled = windowEnd = 0;

@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -85,7 +85,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 	
 	public class TextEditorDisplayBindingWrapper : AbstractViewContent, IMementoCapable, IPrintable, IEditable, IPositionable, ITextEditorControlProvider, IParseInformationListener, IClipboardHandler, IHelpProvider
 	{
-		public SharpDevelopTextAreaControl textAreaControl = new SharpDevelopTextAreaControl();
+		public SharpDevelopTextAreaControl textAreaControl = null;
 
 		public TextEditorControl TextEditorControl {
 			get {
@@ -169,8 +169,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			this.textAreaControl.Redo();
 		}
 		
+		protected virtual SharpDevelopTextAreaControl CreateSharpDevelopTextAreaControl()
+		{
+			return new SharpDevelopTextAreaControl();
+		}
+
 		public TextEditorDisplayBindingWrapper()
 		{
+			textAreaControl = CreateSharpDevelopTextAreaControl();
 			textAreaControl.Document.DocumentChanged += new DocumentEventHandler(TextAreaChangedEvent);
 			textAreaControl.ActiveTextAreaControl.Caret.CaretModeChanged += new EventHandler(CaretModeChanged);
 			textAreaControl.ActiveTextAreaControl.Enter += new EventHandler(CaretUpdate);
@@ -278,7 +284,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		public override void Save(string fileName)
 		{
-			OnBeforeSave(EventArgs.Empty);
+			OnSaving(EventArgs.Empty);
 			// KSL, Start new line
 			if (watcher != null) {
 				this.watcher.EnableRaisingEvents = false;
@@ -296,6 +302,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 			// KSL End
 			SetWatcher();
+			OnSaved(new SaveEventArgs(true));
 		}
 		
 		public override void Load(string fileName)
@@ -397,7 +404,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		{
 			if (textAreaControl.TextEditorProperties.EnableFolding) {
 				IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
-				string fileName = IsUntitled ? UntitledName : TitleName;
+				string fileName = IsUntitled ? UntitledName : FileName;
 				IParseInformation parseInfo;
 				if (fileName == null || fileName.Length == 0) {
 					if (language == "C#") {
@@ -409,6 +416,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					parseInfo = parserService.GetParseInformation(fileName);
 				}
 				textAreaControl.Document.FoldingManager.UpdateFoldings(fileName, parseInfo);
+//// Alex free parsings - not sure if better place is in UpdateFoldings asap
+				parseInfo=null;
 			}
 		}
 		
@@ -416,6 +425,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		{
 			if (textAreaControl.TextEditorProperties.EnableFolding) {
 				textAreaControl.Document.FoldingManager.UpdateFoldings(TitleName, parseInfo);
+//// Alex free parsings
+				parseInfo=null;
 				textAreaControl.ActiveTextAreaControl.TextArea.Invoke(new VoidDelegate(textAreaControl.ActiveTextAreaControl.TextArea.Refresh), new object[] { textAreaControl.ActiveTextAreaControl.TextArea.FoldMargin});
 			}
 		}

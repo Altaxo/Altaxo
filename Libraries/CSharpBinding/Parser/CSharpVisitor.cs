@@ -165,7 +165,7 @@ namespace CSharpBinding.Parser
 			ReturnType type = new ReturnType(methodDeclaration.TypeReference);
 			Class c       = (Class)currentClass.Peek();
 			
-			Method method = new Method(String.Concat(methodDeclaration.Name), type, methodDeclaration.Modifier, region, bodyRegion);
+			Method method = new Method(methodDeclaration.Name, type, methodDeclaration.Modifier, region, bodyRegion);
 			ParameterCollection parameters = new ParameterCollection();
 			if (methodDeclaration.Parameters != null) {
 				foreach (AST.ParameterDeclarationExpression par in methodDeclaration.Parameters) {

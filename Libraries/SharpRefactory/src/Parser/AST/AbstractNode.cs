@@ -63,6 +63,8 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 				return specials;
 			}
 			set {
+//// Alex: free for GC
+				if (specials!=null) specials.Clear();
 				specials = value;
 			}
 		}
@@ -75,7 +77,8 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 		
 		public virtual void AddChild(INode childNode)
 		{
-			children.Add(childNode);
+//// Alex: only if not already in
+			if (!children.Contains(childNode)) children.Add(childNode);
 		}
 		
 		public virtual object AcceptVisitor(IASTVisitor visitor, object data)

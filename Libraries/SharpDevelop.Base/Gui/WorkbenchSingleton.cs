@@ -63,7 +63,19 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public static void CreateWorkspace()
 		{
 			SetWbLayout();
+			OnWorkbenchCreated();
 			workbench.RedrawAllComponents();
 		}
+		
+		protected static void OnWorkbenchCreated()
+		{
+			if (WorkbenchCreated != null) {
+				WorkbenchCreated(null, EventArgs.Empty);
+			}
+		}
+		/// <summary>
+		/// Is called, when the workbench is created
+		/// </summary>
+		public static event EventHandler WorkbenchCreated;
 	}
 }

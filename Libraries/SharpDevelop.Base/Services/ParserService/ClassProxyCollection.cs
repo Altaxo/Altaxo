@@ -1,4 +1,4 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
@@ -198,7 +198,11 @@ namespace ICSharpCode.SharpDevelop.Services
 		/// <exception cref='System.ArgumentException'><paramref name='value'/> is not found in the Collection. </exception>
 		public void Remove(ClassProxy value) 
 		{
+//// Alex: free some used entries
+			nameHashtable.Remove(value.FullyQualifiedName.GetHashCode());
+			caseInsensitiveNameHashtable.Remove(value.FullyQualifiedName.ToLower().GetHashCode());
 			List.Remove(value);
+			value=null;	//// it's biggest table in the SD environment - make it smaller
 		}
 		
 		public class ClassProxyEnumerator : object, IEnumerator {

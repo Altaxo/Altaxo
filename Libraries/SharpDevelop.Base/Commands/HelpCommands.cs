@@ -53,6 +53,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 			              Path.DirectorySeparatorChar + "sharpdevelop.chm";
 			if (fileUtilityService.TestFileExists(fileName)) {
 				Help.ShowHelp((Form)WorkbenchSingleton.Workbench, fileName);
+				((Form)WorkbenchSingleton.Workbench).Select();
 			}
 		}
 	}

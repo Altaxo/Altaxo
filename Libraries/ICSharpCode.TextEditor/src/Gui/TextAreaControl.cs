@@ -31,7 +31,9 @@ namespace ICSharpCode.TextEditor
 	[ToolboxItem(false)]
 	public class TextAreaControl : Panel
 	{
-		TextEditorControl         motherTextEditorControl;
+		TextEditorControl motherTextEditorControl;
+		
+		HRuler     hRuler     = null;
 		
 		VScrollBar vScrollBar = new VScrollBar();
 		HScrollBar hScrollBar = new HScrollBar();
@@ -95,21 +97,40 @@ namespace ICSharpCode.TextEditor
 			ResizeRedraw = true;
 			
 			Document.DocumentChanged += new DocumentEventHandler(AdjustScrollBars);
+			SetStyle(ControlStyles.Selectable, true);
 		}
 		
 		protected override void OnResize(System.EventArgs e)
 		{
 			base.OnResize(e);
-			textArea.Bounds = new Rectangle(0, 0,
+			ResizeTextArea();
+		}
+		
+		public void ResizeTextArea()
+		{
+			int y = 0;
+			int h = 0;
+			if (hRuler != null) {
+				hRuler.Bounds = new Rectangle(0, 
+				                              0, 
+				                              Width - SystemInformation.HorizontalScrollBarArrowWidth,
+				                              textArea.TextView.FontHeight);
+							
+				y = hRuler.Bounds.Bottom;
+				h = hRuler.Bounds.Height;
+			}
+			
+			textArea.Bounds = new Rectangle(0, y,
 			                                Width - SystemInformation.HorizontalScrollBarArrowWidth,
-			                                Height - SystemInformation.VerticalScrollBarArrowHeight);
+			                                Height - SystemInformation.VerticalScrollBarArrowHeight - h);
 			SetScrollBarBounds();
 		}
 		
 		public void SetScrollBarBounds()
 		{
 			vScrollBar.Bounds = new Rectangle(textArea.Bounds.Right, 0, SystemInformation.HorizontalScrollBarArrowWidth, Height - SystemInformation.VerticalScrollBarArrowHeight);
-			hScrollBar.Bounds = new Rectangle(0, Height - SystemInformation.VerticalScrollBarArrowHeight, 
+			hScrollBar.Bounds = new Rectangle(0, 
+			                                  textArea.Bounds.Bottom,
 			                                  Width - SystemInformation.HorizontalScrollBarArrowWidth, 
 			                                  SystemInformation.VerticalScrollBarArrowHeight);
 		}
@@ -135,6 +156,21 @@ namespace ICSharpCode.TextEditor
 		public void OptionsChanged()
 		{
 			textArea.OptionsChanged();
+			
+			if (textArea.TextEditorProperties.ShowHorizontalRuler) {
+				if (hRuler == null) {
+					hRuler = new HRuler(textArea);
+					Controls.Add(hRuler);
+					ResizeTextArea();
+				}
+			} else {
+				if (hRuler != null) {
+					Controls.Remove(hRuler);
+					hRuler.Dispose();
+					hRuler = null;
+					ResizeTextArea();
+				}
+			}
 			
 			AdjustScrollBars(null, null);
 		}
@@ -168,7 +204,6 @@ namespace ICSharpCode.TextEditor
 		
 		public void ScrollToCaret()
 		{
-			Console.WriteLine("ScrollToCaret in TextAreaControl");
 			int curCharMin  = (int)(this.hScrollBar.Value - this.hScrollBar.Minimum);
 			int curCharMax  = curCharMin + textArea.TextView.VisibleColumnCount;
 			

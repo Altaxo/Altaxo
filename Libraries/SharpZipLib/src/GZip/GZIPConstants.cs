@@ -41,7 +41,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 	/// <summary>
 	/// This class contains constants used for gzip.
 	/// </summary>
-	public class GZipConstants 
+	public class GZipConstants
 	{
 		/// <summary>
 		/// Magic number found at start of GZIP header
@@ -59,10 +59,34 @@ namespace ICSharpCode.SharpZipLib.GZip
 			bit 6   reserved
 			bit 7   reserved
 		 */
+		 
+		/// <summary>
+		/// Flag bit mask for text
+		/// </summary>
 		public const int FTEXT    = 0x1;
+		
+		/// <summary>
+		/// Flag bitmask for Crc
+		/// </summary>
 		public const int FHCRC    = 0x2;
+		
+		/// <summary>
+		/// Flag bit mask for extra
+		/// </summary>
 		public const int FEXTRA   = 0x4;
+		
+		/// <summary>
+		/// flag bitmask for name
+		/// </summary>
 		public const int FNAME    = 0x8;
+		
+		/// <summary>
+		/// flag bit mask indicating comment is present
+		/// </summary>
 		public const int FCOMMENT = 0x10;
+		
+		GZipConstants()
+		{
+		}
 	}
 }

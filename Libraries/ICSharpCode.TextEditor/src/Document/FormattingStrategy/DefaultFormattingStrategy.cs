@@ -109,7 +109,7 @@ namespace ICSharpCode.TextEditor.Document
 		/// <summary>
 		/// This function sets the indentlevel in a range of lines.
 		/// </summary>
-		public void IndentLines(TextArea textArea, int begin, int end)
+		public virtual void IndentLines(TextArea textArea, int begin, int end)
 		{
 			int redocounter = 0;
 			for (int i = begin; i <= end; ++i) {
@@ -120,6 +120,53 @@ namespace ICSharpCode.TextEditor.Document
 			if (redocounter > 0) {
 				textArea.Document.UndoStack.UndoLast(redocounter);
 			}
+		}
+		
+		public virtual int SearchBracketBackward(IDocument document, int offset, char openBracket, char closingBracket)
+		{
+			int brackets = -1;
+			// first try "quick find" - find the matching bracket if there is no string/comment in the way
+			for (int i = offset; i > 0; --i) {
+				char ch = document.GetCharAt(i);
+				if (ch == openBracket) {
+					++brackets;
+					if (brackets == 0) return i;
+				} else if (ch == closingBracket) {
+					--brackets;
+				} else if (ch == '"') {
+					break;
+				} else if (ch == '\'') {
+					break;
+				} else if (ch == '/' && i > 0) {
+					if (document.GetCharAt(i - 1) == '/') break;
+					if (document.GetCharAt(i - 1) == '*') break;
+				}
+			}
+			return -1;
+		}
+		
+		public virtual int SearchBracketForward(IDocument document, int offset, char openBracket, char closingBracket)
+		{
+			int brackets = 1;
+			// try "quick find" - find the matching bracket if there is no string/comment in the way
+			for (int i = offset; i < document.TextLength; ++i) {
+				char ch = document.GetCharAt(i);
+				if (ch == openBracket) {
+					++brackets;
+				} else if (ch == closingBracket) {
+					--brackets;
+					if (brackets == 0) return i;
+				} else if (ch == '"') {
+					break;
+				} else if (ch == '\'') {
+					break;
+				} else if (ch == '/' && i > 0) {
+					if (document.GetCharAt(i - 1) == '/') break;
+				} else if (ch == '*' && i > 0) {
+					if (document.GetCharAt(i - 1) == '/') break;
+				}
+			}
+			return -1;
 		}
 	}
 }

@@ -22,7 +22,7 @@ namespace WeifenLuo.WinFormsUI
 {
 	internal class DockPanelPersist
 	{
-		private const string ConfigFileVersion = "0.9.1";
+		private const string ConfigFileVersion = "0.9.2";
 
 		private class DummyContent : DockContent
 		{
@@ -99,6 +99,20 @@ namespace WeifenLuo.WinFormsUI
 
 		private struct PaneStruct
 		{
+			private DockState m_visibleState;
+			public DockState VisibleState
+			{
+				get	{	return m_visibleState;	}
+				set	{	m_visibleState = value;	}
+			}
+
+			private bool m_isHidden;
+			public bool IsHidden
+			{
+				get	{	return m_isHidden;	}
+				set	{	m_isHidden = value;	}
+			}
+
 			private DockState m_dockState;
 			public DockState DockState
 			{
@@ -280,7 +294,8 @@ namespace WeifenLuo.WinFormsUI
 			{
 				xmlOut.WriteStartElement("Pane");
 				xmlOut.WriteAttributeString("ID", dockPanel.Panes.IndexOf(pane).ToString());
-				xmlOut.WriteAttributeString("DockState", pane.DockState.ToString());
+				xmlOut.WriteAttributeString("VisibleState", pane.VisibleState.ToString());
+				xmlOut.WriteAttributeString("IsHidden", pane.IsHidden.ToString());
 				xmlOut.WriteAttributeString("ActiveContent", dockPanel.Contents.IndexOf(pane.ActiveContent).ToString());
 				xmlOut.WriteStartElement("Contents");
 				xmlOut.WriteAttributeString("Count", pane.Contents.Count.ToString());
@@ -439,7 +454,9 @@ namespace WeifenLuo.WinFormsUI
 				if (xmlIn.Name != "Pane" || id != i)
 					throw new ArgumentException(ResourceHelper.GetString("DockPanel.LoadFromXml.InvalidXmlFormat"));
 
-				panes[i].DockState = (DockState)dockStateConverter.ConvertFrom(xmlIn.GetAttribute("DockState"));
+				panes[i].VisibleState = (DockState)dockStateConverter.ConvertFrom(xmlIn.GetAttribute("VisibleState"));
+				panes[i].IsHidden = Convert.ToBoolean(xmlIn.GetAttribute("IsHidden"));
+				panes[i].DockState = panes[i].IsHidden ? DockState.Hidden : panes[i].VisibleState;
 				panes[i].IndexActiveContent = Convert.ToInt32(xmlIn.GetAttribute("ActiveContent"));
 				panes[i].ZOrderIndex = -1;
 
@@ -552,7 +569,7 @@ namespace WeifenLuo.WinFormsUI
 				{
 					DockContent content = dockPanel.Contents[panes[i].IndexContents[j]];
 					if (j==0)
-						pane = dockPanel.DockPaneFactory.CreateDockPane(content, DockState.Unknown);
+						pane = dockPanel.DockPaneFactory.CreateDockPane(content, panes[i].VisibleState, true);
 					else
 						content.Pane = pane;
 				}

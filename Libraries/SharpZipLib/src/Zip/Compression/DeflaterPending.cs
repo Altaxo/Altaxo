@@ -1,5 +1,7 @@
 // DeflaterPending.cs
+//
 // Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2004 John Reilly
 //
 // This file was translated from java, it was part of the GNU Classpath
 // Copyright (C) 2001 Free Software Foundation, Inc.
@@ -45,6 +47,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 	/// </summary>
 	public class DeflaterPending : PendingBuffer
 	{
+		/// <summary>
+		/// Construct instance with default buffer size
+		/// </summary>
 		public DeflaterPending() : base(DeflaterConstants.PENDING_BUF_SIZE)
 		{
 		}

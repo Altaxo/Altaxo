@@ -55,6 +55,10 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		
 		static bool LoadTemplatesFromStream(string filename)
 		{
+			if (!File.Exists(filename)) {
+				return false;
+			}
+			
 			XmlDocument doc = new XmlDocument();
 			try {
 				doc.Load(filename);

@@ -38,12 +38,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 	{
 		public override void Run()
 		{
-			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-			
-			if (window == null || !(window.ViewContent is ITextEditorControlProvider)) {
-				return;
-			}
-			TextEditorControl textarea = ((ITextEditorControlProvider)window.ViewContent).TextEditorControl;
 			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 			TabbedOptions o = new TabbedOptions(resourceService.GetString("Dialog.Options.BufferOptions"),
@@ -54,7 +48,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			o.FormBorderStyle = FormBorderStyle.FixedDialog;
 			o.ShowDialog();
 			o.Dispose();
-			textarea.OptionsChanged();
 		}
 	}
 	

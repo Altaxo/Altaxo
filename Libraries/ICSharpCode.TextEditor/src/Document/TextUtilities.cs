@@ -1,11 +1,12 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
 using System;
+using System.Collections;
 using System.Text;
 using System.Diagnostics;
 
@@ -256,142 +257,16 @@ namespace ICSharpCode.TextEditor.Document
 			return document.GetText(line.Offset, line.Length);
 		}
 		
-		static bool ScanLineComment(IDocument document, int offset)
-		{
-			while (offset > 0 && offset < document.TextLength) {
-				char ch = document.GetCharAt(offset);
-				switch (ch) {
-					case '\r':
-					case '\n':
-						return false;
-					case '/':
-						if (document.GetCharAt(offset + 1) == '/') {
-							return true;
-						}
-						break;
-				}
-				--offset;
-			}
-			return false;
-		}
-		
+		//[Obsolete("Use IFormattingStrategy.SearchBracketBackward instead.")]
 		public static int SearchBracketBackward(IDocument document, int offset, char openBracket, char closingBracket)
 		{
-			int brackets = -1;
-			
-			bool inString = false;
-			bool inChar   = false;
-			
-			bool blockComment = false;
-			
-			while (offset >= 0 && offset < document.TextLength) {
-				char ch = document.GetCharAt(offset);
-				switch (ch) {
-					case '/':
-						if (blockComment) {
-							if (document.GetCharAt(offset + 1) == '*') {
-								blockComment = false;
-							}
-						}
-						if (!inString && !inChar && offset + 1 < document.TextLength) {
-							if (offset > 0 && document.GetCharAt(offset - 1) == '*') {
-								blockComment = true;
-							}
-						}
-						break;
-					case '"':
-						if (!inChar && !blockComment && !ScanLineComment(document, offset)) {
-							inString = !inString;
-						}
-						break;
-					case '\'':
-						if (!inString && !blockComment && !ScanLineComment(document, offset)) {
-							inChar = !inChar;
-						}
-						break;
-					default :
-						if (ch == closingBracket) {
-							if (!(inString || inChar || blockComment) && !ScanLineComment(document, offset)) {
-								--brackets;
-							}
-						} else if (ch == openBracket) {
-							if (!(inString || inChar || blockComment) && !ScanLineComment(document, offset)) {
-								++brackets;
-								if (brackets == 0) {
-									return offset;
-								}
-							}
-						}
-						break;
-				}
-				--offset;
-			}
-			return - 1;
+			return document.FormattingStrategy.SearchBracketBackward(document, offset, openBracket, closingBracket);
 		}
 		
+		//[Obsolete("Use IFormattingStrategy.SearchBracketForward instead.")]
 		public static int SearchBracketForward(IDocument document, int offset, char openBracket, char closingBracket)
 		{
-			int brackets = 1;
-			
-			bool inString = false;
-			bool inChar   = false;
-			
-			bool lineComment  = false;
-			bool blockComment = false;
-			
-			if (offset >= 0) {
-				while (offset < document.TextLength) {
-					char ch = document.GetCharAt(offset);
-					switch (ch) {
-						case '\r':
-						case '\n':
-							lineComment = false;
-							break;
-						case '/':
-							if (blockComment) {
-								Debug.Assert(offset > 0);
-								if (document.GetCharAt(offset - 1) == '*') {
-									blockComment = false;
-								}
-							}
-							if (!inString && !inChar && offset + 1 < document.TextLength) {
-								if (!blockComment && document.GetCharAt(offset + 1) == '/') {
-									lineComment = true;
-								}
-								if (!lineComment && document.GetCharAt(offset + 1) == '*') {
-									blockComment = true;
-								}
-							}
-							break;
-						case '"':
-							if (!(inChar || lineComment || blockComment)) {
-								inString = !inString;
-							}
-							break;
-						case '\'':
-							if (!(inString || lineComment || blockComment)) {
-								inChar = !inChar;
-							}
-							break;
-						default :
-							if (ch == openBracket) {
-								if (!(inString || inChar || lineComment || blockComment)) {
-									++brackets;
-								}
-							} else if (ch == closingBracket) {
-								if (!(inString || inChar || lineComment || blockComment)) {
-									--brackets;
-									if (brackets == 0) {
-										return offset;
-									}
-								}
-							}
-							break;
-					}
-					++offset;
-				}
-			}
-			return -1;
+			return document.FormattingStrategy.SearchBracketForward(document, offset, openBracket, closingBracket);
 		}
 		
 		/// <remarks>
@@ -423,7 +298,7 @@ namespace ICSharpCode.TextEditor.Document
 		
 		public static string GetWordAt(IDocument document, int offset)
 		{
-			if (!IsWordPart(document.GetCharAt(offset))) {
+			if (offset < 0 || offset >= document.TextLength - 1 || !IsWordPart(document.GetCharAt(offset))) {
 				return String.Empty;
 			}
 			int startOffset = offset;

@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -67,9 +67,14 @@ namespace ICSharpCode.TextEditor.Document
 				return defaultfont;
 			}
 			set {
+////// Alex: free resources properly
+//				if (defaultfont!=null) defaultfont.Dispose();
 				defaultfont    = value;
+//				if (boldfont!=null) boldfont.Dispose();
 				boldfont       = new Font(defaultfont, FontStyle.Bold);
+//				if (italicfont!=null) italicfont.Dispose();
 				italicfont     = new Font(defaultfont, FontStyle.Italic);
+//				if (bolditalicfont!=null) bolditalicfont.Dispose();
 				bolditalicfont = new Font(defaultfont, FontStyle.Bold | FontStyle.Italic);
 			}
 		}

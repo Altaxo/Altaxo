@@ -33,7 +33,11 @@ namespace ICSharpCode.TextEditor.Util
 			Size tipSize = Size.Empty;
 			SizeF tipSizeF = SizeF.Empty;
 			
-			RectangleF workingArea = SystemInformation.WorkingArea;
+			
+			Form ownerForm = control.FindForm();
+			if (ownerForm.Owner != null) ownerForm = ownerForm.Owner;
+			RectangleF workingArea = Screen.GetWorkingArea(ownerForm);
+			
 			PointF screenLocation = control.PointToScreen(Point.Empty);
 			
 			SizeF maxLayoutSize = new SizeF

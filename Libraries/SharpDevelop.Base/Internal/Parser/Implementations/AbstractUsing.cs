@@ -17,8 +17,8 @@ namespace SharpDevelop.Internal.Parser
 	{
 		protected IRegion region;
 		
-		protected StringCollection usings  = new StringCollection();
-		protected SortedList       aliases = new SortedList();
+		StringCollection usings  = new StringCollection();
+		SortedList       aliases = new SortedList();
 		
 		public IRegion Region {
 			get {
@@ -143,7 +143,6 @@ namespace SharpDevelop.Internal.Parser
 					}
 				}
 			}
-			
 			return null;
 		}
 		

@@ -17,5 +17,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public virtual void NotifyBeforeSave()
 		{
 		}
+		
+		public virtual void NotifyAfterSave(bool successful)
+		{
+		}
 	}
 }

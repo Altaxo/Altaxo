@@ -13,6 +13,7 @@ namespace SharpDevelop.Internal.Parser
 	[Serializable]
 	public abstract class AbstractNamedEntity : AbstractDecoration
 	{
+		static char[] nameDelimiters = new char[] { '.', '+' };
 //		public static Hashtable fullyQualifiedNames = new Hashtable();
 		string fullyQualifiedName = null;
 //		int nameHashCode = -1;
@@ -34,15 +35,15 @@ namespace SharpDevelop.Internal.Parser
 //				}
 			}
 		}
-
+		
+		
 		public virtual string Name {
 			get {
 				if (FullyQualifiedName != null) {
 					int lastIndex;
 					
 					if (CanBeSubclass) {
-						lastIndex = FullyQualifiedName.LastIndexOfAny
-							(new char[] { '.', '+' });
+						lastIndex = FullyQualifiedName.LastIndexOfAny(nameDelimiters);
 					} else {
 						lastIndex = FullyQualifiedName.LastIndexOf('.');
 					}

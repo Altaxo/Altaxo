@@ -19,6 +19,10 @@ namespace CSharpBinding.Parser
 		///<summary>IParser Interface</summary> 
 		string[] lexerTags;
 		public string[] LexerTags {
+//// Alex: get accessor
+			get {
+				return lexerTags;
+			}
 			set {
 				lexerTags = value;
 			}

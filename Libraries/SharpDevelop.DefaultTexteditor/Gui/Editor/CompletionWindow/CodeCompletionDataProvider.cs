@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -54,10 +54,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		}
 		ArrayList completionData = null;
 		bool ctrlSpace;
+		bool isNewCompletion;
 		
-		public CodeCompletionDataProvider(bool ctrlSpace)
+		public CodeCompletionDataProvider(bool ctrlSpace, bool isNewCompletion)
 		{
 			this.ctrlSpace = ctrlSpace;
+			this.isNewCompletion = isNewCompletion;
 		}
 		
 		public ICompletionData[] GenerateCompletionData(string fileName, TextArea textArea, char charTyped)
@@ -71,28 +73,43 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			caretColumn          = textArea.Caret.Offset - document.GetLineSegment(caretLineNumber - 1).Offset + 1;
 			IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
 			IExpressionFinder expressionFinder = parserService.GetExpressionFinder(fileName);
-			string expression    = expressionFinder == null ? TextUtilities.GetExpressionBeforeOffset(textArea, textArea.Caret.Offset) : expressionFinder.FindExpression(textArea.Document.GetText(0, textArea.Caret.Offset), textArea.Caret.Offset - 1);
+			string expression = expressionFinder == null ? TextUtilities.GetExpressionBeforeOffset(textArea, textArea.Caret.Offset) : expressionFinder.FindExpression(textArea.Document.GetText(0, textArea.Caret.Offset), textArea.Caret.Offset - 1);
 			ResolveResult results;
 			preSelection  = null;
-			
+			Console.WriteLine("expr : " + expression);
+				
 			if (ctrlSpace) {
+				if (isNewCompletion && expression == null) {
+					return null;
+				}
 				if (expression == null || expression.Length == 0) {
 					preSelection = "";
+					if (charTyped != '\0') {
+						preSelection = null;
+					}
 					AddResolveResults(parserService.CtrlSpace(parserService, caretLineNumber, caretColumn, fileName));
 					return (ICompletionData[])completionData.ToArray(typeof(ICompletionData));
 				}
+					
 				int idx = expression.LastIndexOf('.');
 				if (idx > 0) {
 					preSelection = expression.Substring(idx + 1);
 					expression = expression.Substring(0, idx);
+					if (charTyped != '\0') {
+						preSelection = null;
+					}
+					
 				} else {
 					preSelection = expression;
+					if (charTyped != '\0') {
+						preSelection = null;
+					}
 					AddResolveResults(parserService.CtrlSpace(parserService, caretLineNumber, caretColumn, fileName));
 					return (ICompletionData[])completionData.ToArray(typeof(ICompletionData));
 				}
 			}
 			
-			Console.WriteLine("Expression: >{0}<", expression);
+			//Console.WriteLine("Expression: >{0}<", expression);
 			
 			if (expression == null || expression.Length == 0) {
 				return null;
@@ -107,7 +124,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				}
 			} else {
 				//// we don't need to run parser on blank char here
-				if (charTyped==' ') {
+				if (charTyped == ' ') {
 					return null;
 				}
 				results = parserService.Resolve(expression,
@@ -115,7 +132,36 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				                                caretColumn,
 				                                fileName,
 				                                document.TextContent);
-				AddResolveResults(results);
+//// Alex: if expression references object in another namespace (using), no results are delivered
+				if (results != null) {
+					AddResolveResults(results);
+				} else {
+					string[] namespaces=parserService.GetNamespaceList("");
+					foreach (string ns in namespaces) {
+						ArrayList objs=parserService.GetNamespaceContents(ns);
+						if (objs==null) continue;
+						foreach (object o in objs) {
+							if (o is IClass) {
+								IClass oc=(IClass)o;
+								if (oc.Name==expression || oc.FullyQualifiedName==expression) {
+									Debug.WriteLine(((IClass)o).Name);
+									/// now we can set completion data
+									ArrayList members=new ArrayList();
+									AddResolveResults(parserService.ListMembers(members,oc,oc,true));
+									members.Clear();
+//// clear objects to indicate end of loop for namespaces
+									objs.Clear();
+									objs=null;
+									break;
+								}
+							}
+						}
+						if (objs==null) break;
+					}
+				}
+//// Alex: main contributor of new objects during reparse
+				results=null;
+				GC.Collect(0);
 			}
 			
 			return (ICompletionData[])completionData.ToArray(typeof(ICompletionData));
@@ -165,6 +211,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			
 		void AddResolveResults(ResolveResult results)
 		{
+			Console.WriteLine("ADD RESOLVE RESULTS : " + results);
 			if (results != null) {
 				AddResolveResults(results.Namespaces);
 				AddResolveResults(results.Members);

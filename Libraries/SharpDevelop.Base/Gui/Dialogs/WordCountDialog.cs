@@ -156,9 +156,11 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 						if (finfo.Subtype != Subtype.Directory && 
 						    finfo.BuildAction == BuildAction.Compile) {
 							Report r = GetReport(finfo.Name);
-							all += r;
-							items.Add(r);
-							// ((ListView)ControlDictionary["resultListView"]).Items.Add(r.ToListItem());
+							if (r != null) {
+								all += r;
+								items.Add(r);
+								// ((ListView)ControlDictionary["resultListView"]).Items.Add(r.ToListItem());
+							}
 						}
 					}
 				} else

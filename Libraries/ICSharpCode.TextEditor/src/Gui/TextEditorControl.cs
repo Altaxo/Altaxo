@@ -59,7 +59,11 @@ namespace ICSharpCode.TextEditor
 		
 		public TextEditorControl()
 		{
+			SetStyle(ControlStyles.ContainerControl, true);
+			SetStyle(ControlStyles.Selectable, true);
+			
 			textAreaPanel.Dock = DockStyle.Fill;
+			
 			Document = (new DocumentFactory()).CreateDocument();
 			Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy();
 			
@@ -311,7 +315,7 @@ namespace ICSharpCode.TextEditor
 //							gotNonWhitespace = true;
 //							curTabIndent    += TabIndent * primaryTextArea.TextArea.TextView.GetWidth(' ');
 //						}
-						g.DrawString(word.Word, word.Font, new SolidBrush(word.Color), xPos + margin.X, yPos);
+						g.DrawString(word.Word, word.Font, BrushRegistry.GetBrush(word.Color), xPos + margin.X, yPos);
 						SizeF drawingSize = g.MeasureString(word.Word, word.Font, new SizeF(margin.Width, fontHeight * 100), printingStringFormat);
 						Advance(ref xPos, ref yPos, margin.Width, drawingSize.Width, fontHeight);
 						break;

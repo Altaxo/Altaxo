@@ -6,6 +6,7 @@
 // </file>
 
 using System;
+using System.Text.RegularExpressions;
 using System.IO;
 using System.Drawing;
 using System.ComponentModel;
@@ -117,9 +118,23 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			ControlDictionary["searchPatternComboBox"].Text  = pattern;
 		}
 		
-		void SetupSearchReplaceManager()
+		bool SetupSearchReplaceManager()
 		{
-			SearchReplaceManager.SearchOptions.SearchPattern  = ControlDictionary["searchPatternComboBox"].Text;
+			string searchPattern = ControlDictionary["searchPatternComboBox"].Text;
+			bool   isRegEx = ((ComboBox)ControlDictionary["specialSearchStrategyComboBox"]).SelectedIndex == 1;
+			
+			if (isRegEx) {
+				try {
+					Regex r = new Regex(searchPattern);
+				} catch (Exception e) {
+					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+					messageService.ShowError(e.Message);
+					return false;
+				}
+			}
+			
+			SearchReplaceManager.SearchOptions.SearchPattern  = searchPattern;
+			
 			if (replaceMode) {
 				SearchReplaceManager.SearchOptions.ReplacePattern = ControlDictionary["replacePatternComboBox"].Text;
 			}
@@ -151,6 +166,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 					SearchReplaceManager.SearchOptions.DocumentIteratorType = DocumentIteratorType.WholeCombine;
 					break;
 			}
+			return true;
 		}
 		
 		void FindNextEvent(object sender, EventArgs e)
@@ -160,10 +176,11 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			}
 			
 			try {
-				Cursor = Cursors.WaitCursor;
-				SetupSearchReplaceManager();
-				SearchReplaceManager.FindNext();
-				this.Focus();
+				if (SetupSearchReplaceManager()) {
+					Cursor = Cursors.WaitCursor;
+					SearchReplaceManager.FindNext();
+					this.Focus();
+				}
 			}
 			finally {
 				Cursor = Cursors.Default;
@@ -177,10 +194,10 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			}
 			
 			try {
-				Cursor = Cursors.WaitCursor;
-				
-				SetupSearchReplaceManager();
-				SearchReplaceManager.Replace();
+				if (SetupSearchReplaceManager()) {
+					Cursor = Cursors.WaitCursor;
+					SearchReplaceManager.Replace();
+				}
 			}
 			finally {
 				Cursor = Cursors.Default;
@@ -194,10 +211,10 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			}
 			
 			try {
-				Cursor = Cursors.WaitCursor;
-				
-				SetupSearchReplaceManager();
-				SearchReplaceManager.ReplaceAll();
+				if (SetupSearchReplaceManager()) {
+					Cursor = Cursors.WaitCursor;
+					SearchReplaceManager.ReplaceAll();
+				}
 			} finally {
 				Cursor = Cursors.Default;
 			}
@@ -210,10 +227,10 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			}
 			
 			try {
-				Cursor = Cursors.WaitCursor;
-				
-				SetupSearchReplaceManager();
-				SearchReplaceManager.MarkAll();			
+				if (SetupSearchReplaceManager()) {
+					Cursor = Cursors.WaitCursor;
+					SearchReplaceManager.MarkAll();
+				}
 			} finally {
 				Cursor = Cursors.Default;
 			}

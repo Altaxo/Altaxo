@@ -111,7 +111,7 @@ namespace ICSharpCode.TextEditor
 				return new Point(column, line);
 			}
 			set {
-				line = value.Y;
+				line   = value.Y;
 				column = value.X;
 				ValidateCaretPos();
 				UpdateCaretPosition();
@@ -159,6 +159,9 @@ namespace ICSharpCode.TextEditor
 						break;
 				}
 			}
+			if (currentPos.X  < 0) {
+				currentPos = ScreenPosition;
+			}
 			SetCaretPos(currentPos.X, currentPos.Y);
 			ShowCaret(textArea.Handle);
 		}
@@ -166,7 +169,9 @@ namespace ICSharpCode.TextEditor
 		public void RecreateCaret()
 		{
 			DisposeCaret();
-			CreateCaret();
+			if (!hidden) {
+				CreateCaret();
+			}
 		}
 		
 		void DisposeCaret()
@@ -179,6 +184,7 @@ namespace ICSharpCode.TextEditor
 		void GotFocus(object sender, EventArgs e)
 		{
 			hidden = false;
+			Console.WriteLine("GOT FOCUS");
 			if (!textArea.MotherTextEditorControl.IsUpdating) {
 				CreateCaret();
 			}
@@ -197,9 +203,16 @@ namespace ICSharpCode.TextEditor
 					             textArea.TextView.DrawingPosition.Y + (textArea.Document.GetVisibleLine(this.line)) * textArea.TextView.FontHeight - textArea.TextView.TextArea.VirtualTop.Y);
 			}
 		}
-		
+		int oldLine = -1;
 		public void UpdateCaretPosition()
 		{
+			if (textArea.MotherTextAreaControl.TextEditorProperties.LineViewerStyle == LineViewerStyle.FullRow && oldLine != line) {
+				textArea.UpdateLine(oldLine);
+				textArea.UpdateLine(line);
+			}
+			oldLine = line;
+			
+			
 			if (hidden || textArea.MotherTextEditorControl.IsUpdating) {
 				return;
 			}
@@ -211,7 +224,7 @@ namespace ICSharpCode.TextEditor
 					ValidateCaretPos();
 					int lineNr = this.line;
 					int xpos = textArea.TextView.GetDrawingXPos(lineNr, this.column);
-					LineSegment lineSegment = textArea.Document.GetLineSegment(lineNr);
+					//LineSegment lineSegment = textArea.Document.GetLineSegment(lineNr);
 					Point pos = ScreenPosition;
 					if (xpos >= 0) {
 						bool success = SetCaretPos(pos.X, pos.Y);
@@ -235,6 +248,7 @@ namespace ICSharpCode.TextEditor
 			} catch (Exception e) {
 				Console.WriteLine("Got exception while update caret position : " + e);
 			}
+			
 		}
 		
 		public void Dispose()
@@ -262,7 +276,6 @@ namespace ICSharpCode.TextEditor
 		
 		protected virtual void OnPositionChanged(EventArgs e)
 		{
-			Console.WriteLine("Caret: OnPositionChanged");
 			ArrayList foldings = textArea.Document.FoldingManager.GetFoldingsFromPosition(line, column);
 			bool  shouldUpdate = false;
 			foreach (FoldMarker foldMarker in foldings) {
@@ -281,7 +294,6 @@ namespace ICSharpCode.TextEditor
 			if (PositionChanged != null) {
 				PositionChanged(this, e);
 			}
-			Console.WriteLine("calling ScrollToCaret");
 			textArea.ScrollToCaret();
 		}
 		

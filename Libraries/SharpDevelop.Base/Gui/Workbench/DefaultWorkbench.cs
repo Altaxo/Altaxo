@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -54,9 +54,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 			set {
 				fullscreen = value;
 				if (fullscreen) {
-					FormBorderStyle    = FormBorderStyle.None;
 					defaultWindowState = WindowState;
+					// - Hide window to prevet any further animations.
+					// - It fixes .NET Framework bug where the bounds of
+					//   visible window are set incorectly too.
+					Visible            = false;
+					FormBorderStyle    = FormBorderStyle.None;
 					WindowState        = FormWindowState.Maximized;
+					Visible            = true;
 				} else {
 					FormBorderStyle = FormBorderStyle.Sizable;
 					Bounds          = normalBounds;
@@ -164,7 +169,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (ViewContentCollection.Contains(content)) {
 				ViewContentCollection.Remove(content);
 			}
+			OnViewClosed(new ViewContentEventArgs(content));
 			content.Dispose();
+			content = null;
 		}
 		
 		public void CloseAllViews()
@@ -199,6 +206,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			layout.ShowView(content);
 			content.WorkbenchWindow.SelectWindow();
+			OnViewOpened(new ViewContentEventArgs(content));
 		}
 		
 		public virtual void ShowPad(IPadContent content)
@@ -281,6 +289,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (fileUtilityService.IsValidFileName(fullFileName)) {
 				fileUtilityService.ObservedSave(new NamedFileOperationDelegate(doc.Save), fullFileName, FileErrorPolicy.ProvideAlternative);
 			}
+			doc.RemoveAll();
 		}
 		
 		// interface IMementoCapable
@@ -464,14 +473,18 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		void UpdateMenu(object sender, EventArgs e)
 		{
+			UpdateMenus();
+			UpdateToolbars();
+		}
+		
+		public void UpdateMenus()
+		{
 			// update menu
 			foreach (object o in TopMenu.Items) {
 				if (o is IStatusUpdate) {
 					((IStatusUpdate)o).UpdateStatus();
 				}
 			}
-			
-			UpdateToolbars();
 		}
 		
 		public void UpdateToolbars()
@@ -544,6 +557,22 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
+		protected virtual void OnViewOpened(ViewContentEventArgs e)
+		{
+			if (ViewOpened != null) {
+				ViewOpened(this, e);
+			}
+		}
+		
+		protected virtual void OnViewClosed(ViewContentEventArgs e)
+		{
+			if (ViewClosed != null) {
+				ViewClosed(this, e);
+			}
+		}
+		
+		public event ViewContentEventHandler ViewOpened;
+		public event ViewContentEventHandler ViewClosed;
 		public event EventHandler ActiveWorkbenchWindowChanged;
 	}
 }

@@ -51,11 +51,17 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 		protected override void StartGeneration(IList items, string fileExtension)
 		{
 			editActionHandler.InsertString("public override bool Equals(object obj)");++numOps;
+			if (StartCodeBlockInSameLine) {
+				editActionHandler.InsertString(" {");++numOps;
+			} else {
+				Return();
+				editActionHandler.InsertString("{");++numOps;
+			}
 			Return();
-			editActionHandler.InsertString("{");++numOps;
-			Return();
+			Indent();
 			editActionHandler.InsertString("if (!(obj is " + currentClass.Name + ")) return false;");++numOps;
 			Return();
+			Indent();
 			editActionHandler.InsertString("if (this == obj) return true;");++numOps;
 			Return();
 			string className = "my" + currentClass.Name;
@@ -63,6 +69,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			Return();
 			IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
 			foreach (IField field in currentClass.Fields) {
+				Indent();
 				IClass cName = parserService.GetClass(field.ReturnType.FullyQualifiedName);
 				if (cName == null || cName.ClassType == ClassType.Struct || cName.ClassType == ClassType.Enum) {
 					editActionHandler.InsertString("if (" + field.Name + " != " + className + "." + field.Name + ") return false;");++numOps;
@@ -73,15 +80,21 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			}
 			
 			Return();
+			Indent();
 			editActionHandler.InsertString("return true");++numOps;
 			Return();
 			editActionHandler.InsertString("}");++numOps;
 			Return();
 			Return();
 			editActionHandler.InsertString("public virtual int GetHashCode()");++numOps;
+			if (StartCodeBlockInSameLine) {
+				editActionHandler.InsertString(" {");++numOps;
+			} else {
+				Return();
+				editActionHandler.InsertString("{");++numOps;
+			}
 			Return();
-			editActionHandler.InsertString("{");++numOps;
-			Return();
+			Indent();
 			editActionHandler.InsertString("return ");++numOps;
 			for (int i = 0; i < currentClass.Fields.Count; ++i) {
 				IField field = currentClass.Fields[i];

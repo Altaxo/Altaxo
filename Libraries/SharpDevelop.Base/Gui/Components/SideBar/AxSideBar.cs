@@ -1039,12 +1039,15 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 		public object GetData(string str, bool autoConvert)
 		{
 			foreach (object o in dataObjects) {
+				if (o == null) {
+					continue;
+				}
 				string typeStr = o.GetType().ToString();
 				if (typeStr == str) {
 					return o;
 				}
 				
-				if (typeStr == "ICSharpCode.SharpDevelop.Gui.Components.SharpDevelopSideTabItem" && str     == "TimeSprint.Alexandria.UI.SideBar.AxSideTabItem") {
+				if (typeStr == "ICSharpCode.SharpDevelop.Gui.Components.SharpDevelopSideTabItem" && str == "TimeSprint.Alexandria.UI.SideBar.AxSideTabItem") {
 					return o;
 				}
 				

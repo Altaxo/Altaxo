@@ -49,6 +49,12 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 			types.Add("void",    "System.Void");
 		}
 		
+		public static ICollection PrimitiveTypes {
+			get {
+				return types.Keys;
+			}
+		}
+		
 		public string Type {
 			get {
 				return type;
@@ -87,7 +93,7 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 		
 		string GetSystemType(string type)
 		{
-			if (types[type] != null) {
+			if (types.ContainsKey(type)) {
 				return (string)types[type];
 			}
 			return type;
@@ -101,7 +107,7 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 		
 		public TypeReference(string type, int pointerNestingLevel, int[] rankSpecifier)
 		{
-			this.type = type;
+			this.type       = type;
 			this.systemType = GetSystemType(type);
 			this.pointerNestingLevel = pointerNestingLevel;
 			this.rankSpecifier = rankSpecifier;

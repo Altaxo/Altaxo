@@ -28,9 +28,12 @@ namespace CSharpBinding.Parser
 					lastAccept = this.offset;
 				}
 				if (state == ACCEPTNOMORE) {
+					//Console.WriteLine("Expr:" + this.text.Substring(this.offset + 1, offset - this.offset));
 					return this.text.Substring(this.offset + 1, offset - this.offset);
 				}
 			}
+			
+//			Console.WriteLine("Expr:" + this.text.Substring(this.lastAccept + 1, offset - this.lastAccept));
 			return this.text.Substring(this.lastAccept + 1, offset - this.lastAccept);
 		}
 		
@@ -41,6 +44,7 @@ namespace CSharpBinding.Parser
 			this.initialOffset = offset;
 			StringBuilder outText = new StringBuilder();
 			int curOffset = 0;
+			
 			while (curOffset <= initialOffset) {
 				char ch = text[curOffset];
 				
@@ -173,6 +177,14 @@ namespace CSharpBinding.Parser
 			return '\0';
 		}
 		
+		char Peek(int n)
+		{
+			if (offset - n >= 0) {
+				return text[offset - n];
+			}
+			return '\0';
+		}
+		
 		char Peek()
 		{
 			if (offset >= 0) {
@@ -196,14 +208,16 @@ namespace CSharpBinding.Parser
 		static int Parent  = 6;
 		static int Curly   = 7;
 		static int Using   = 8;
+		static int Digit   = 9;
 		int curTokenType;
+		
+		readonly static string[] tokenStateName = new string[] {
+			"Err", "Dot", "StrLit", "Ident", "New", "Bracket", "Paren", "Curly", "Using", "Digit"
+		};
 		
 		string GetTokenName(int state)
 		{
-			string[] stateName = new string[] {
-				"Err", "Dot", "StrLit", "Ident", "New", "Bracket", "Paren", "Curly", "Using"
-			};
-			return stateName[state];
+			return tokenStateName[state];
 		}
 		
 		void ReadNextToken()
@@ -244,7 +258,10 @@ namespace CSharpBinding.Parser
 					}
 					break;
 				default:
-					if (IsIdentifierPart(ch)) {
+					if (IsDigit()) {
+						string digit = ReadDigit(ch);
+						curTokenType = Digit;
+					} else if (IsIdentifierPart(ch)) {
 						string ident = ReadIdentifier(ch);
 						if (ident != null) {
 							switch (ident) {
@@ -260,10 +277,22 @@ namespace CSharpBinding.Parser
 							}
 						}
 					}
+
 					break;
 			}
 		}
-		
+		bool IsDigit()
+		{
+			int n = 0;
+			while (true) {
+				char ch = Peek(n);
+				if (Char.IsDigit(ch)) {
+					n++;
+					continue;
+				}
+				return n > 0 && !Char.IsLetter(ch);
+			}
+		}
 		bool ReadStringLiteral(char litStart)
 		{
 			while (true) {
@@ -335,6 +364,15 @@ namespace CSharpBinding.Parser
 			return identifier;
 		}
 		
+		string ReadDigit(char ch)
+		{
+			string digit = ch.ToString();
+			while (Char.IsDigit(Peek()) || Peek() == '.') {
+				digit = GetNext() + digit;
+			}
+			return digit;
+		}
+		
 		bool IsIdentifierPart(char ch)
 		{
 			return Char.IsLetterOrDigit(ch) || ch == '_';
@@ -342,40 +380,50 @@ namespace CSharpBinding.Parser
 		#endregion
 		
 		#region finite state machine 
-		static int ERROR  = 0;
-		static int START  = 1;
-		static int DOT    = 2;
-		static int MORE   = 3;
-		static int CURLY  = 4;
-		static int CURLY2 = 5;
-		static int CURLY3 = 6;
+		readonly static int ERROR  = 0;
+		readonly static int START  = 1;
+		readonly static int DOT    = 2;
+		readonly static int MORE   = 3;
+		readonly static int CURLY  = 4;
+		readonly static int CURLY2 = 5;
+		readonly static int CURLY3 = 6;
 		
-		static int ACCEPT = 7;
-		static int ACCEPTNOMORE = 8;
-		static int ACCEPT2 = 9;
+		readonly static int ACCEPT = 7;
+		readonly static int ACCEPTNOMORE = 8;
+		readonly static int ACCEPT2 = 9;
 		
+		readonly static string[] stateName = new string[] {
+			"ERROR", 
+			"START", 
+			"DOT", 
+			"MORE", 
+			"CURLY", 
+			"CURLY2", 
+			"CURLY3", 
+			"ACCEPT", 
+			"ACCEPTNOMORE", 
+			"ACCEPT2"
+		};
+			
 		string GetStateName(int state)
 		{
-			string[] stateName = new string[] {
-				"ERROR", "START", "DOT", "MORE", "CURLY", "CURLY2", "CURLY3", "ACCEPT", "ACCEPTNOMORE", "ACCEPT2"
-			};
 			return stateName[state];
 		}
 		
 		int state = 0;
 		int lastAccept = 0;
 		static int[,] stateTable = new int[,] {
-			//                   Err,     Dot,     Str,      ID,         New,     Brk,     Par,     Cur,   Using,
-			/*ERROR*/        { ERROR,   ERROR,   ERROR,   ERROR,        ERROR,  ERROR,   ERROR,   ERROR,   ERROR},
-			/*START*/        { ERROR,     DOT,  ACCEPT,  ACCEPT,        ERROR,   MORE, ACCEPT2,   CURLY,   ACCEPTNOMORE},
-			/*DOT*/          { ERROR,   ERROR,  ACCEPT,  ACCEPT,        ERROR,   MORE,  ACCEPT,   CURLY,   ERROR},
-			/*MORE*/         { ERROR,   ERROR,  ACCEPT,  ACCEPT,        ERROR,   MORE, ACCEPT2,   CURLY,   ERROR},
-			/*CURLY*/        { ERROR,   ERROR,   ERROR,   ERROR,        ERROR, CURLY2,   ERROR,   ERROR,   ERROR},
-			/*CURLY2*/       { ERROR,   ERROR,   ERROR,  CURLY3,        ERROR,  ERROR,   ERROR,   ERROR,   ERROR},
-			/*CURLY3*/       { ERROR,   ERROR,   ERROR,   ERROR, ACCEPTNOMORE,  ERROR,   ERROR,   ERROR,   ERROR},
-			/*ACCEPT*/       { ERROR,    MORE,   ERROR,   ERROR,       ACCEPT,  ERROR,   ERROR,   ERROR,   ACCEPTNOMORE},
-			/*ACCEPTNOMORE*/ { ERROR,   ERROR,   ERROR,   ERROR,        ERROR,  ERROR,   ERROR,   ERROR,   ERROR},
-			/*ACCEPT2*/      { ERROR,    MORE,   ERROR,  ACCEPT,       ACCEPT,  ERROR,   ERROR,   ERROR,   ERROR},
+			//                   Err,     Dot,     Str,      ID,         New,     Brk,     Par,     Cur,   Using,       digit
+			/*ERROR*/        { ERROR,   ERROR,   ERROR,   ERROR,        ERROR,  ERROR,   ERROR,   ERROR,   ERROR,        ERROR},
+			/*START*/        { ERROR,     DOT,  ACCEPT,  ACCEPT,        ERROR,   MORE, ACCEPT2,   CURLY,   ACCEPTNOMORE, ERROR},
+			/*DOT*/          { ERROR,   ERROR,  ACCEPT,  ACCEPT,        ERROR,   MORE,  ACCEPT,   CURLY,   ERROR,        ACCEPT},
+			/*MORE*/         { ERROR,   ERROR,  ACCEPT,  ACCEPT,        ERROR,   MORE, ACCEPT2,   CURLY,   ERROR,        ACCEPT},
+			/*CURLY*/        { ERROR,   ERROR,   ERROR,   ERROR,        ERROR, CURLY2,   ERROR,   ERROR,   ERROR,        ERROR},
+			/*CURLY2*/       { ERROR,   ERROR,   ERROR,  CURLY3,        ERROR,  ERROR,   ERROR,   ERROR,   ERROR,        CURLY3},
+			/*CURLY3*/       { ERROR,   ERROR,   ERROR,   ERROR, ACCEPTNOMORE,  ERROR,   ERROR,   ERROR,   ERROR,        ERROR},
+			/*ACCEPT*/       { ERROR,    MORE,   ERROR,   ERROR,       ACCEPT,  ERROR,   ERROR,   ERROR,   ACCEPTNOMORE, ERROR},
+			/*ACCEPTNOMORE*/ { ERROR,   ERROR,   ERROR,   ERROR,        ERROR,  ERROR,   ERROR,   ERROR,   ERROR,        ERROR},
+			/*ACCEPT2*/      { ERROR,    MORE,   ERROR,  ACCEPT,       ACCEPT,  ERROR,   ERROR,   ERROR,   ERROR,        ACCEPT},
 		};
 		#endregion 
 	}

@@ -10,6 +10,23 @@ using System.Windows.Forms;
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
+	public delegate void SaveEventHandler(object sender, SaveEventArgs e);
+	
+	public class SaveEventArgs : System.EventArgs
+	{
+		bool successful;
+		
+		public bool Successful {
+			get {
+				return successful;
+			}
+		}
+		
+		public SaveEventArgs(bool successful)
+		{
+			this.successful = successful;
+		}
+	}
 	/// <summary>
 	/// IViewContent is the base interface for all editable data
 	/// inside SharpDevelop.
@@ -79,6 +96,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		/// <summary>
+		/// If this property is true, content will be created in the tab page
+		/// </summary>
+		bool CreateAsSubViewContent {
+			get;
+		}
+
+		/// <summary>
 		/// Saves this content to the last load/save location.
 		/// </summary>
 		void Save();
@@ -104,6 +128,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		event EventHandler DirtyChanged;
 		
-		event EventHandler BeforeSave;
+		event EventHandler     Saving;
+		event SaveEventHandler Saved;
 	}
 }

@@ -6,6 +6,7 @@
 // </file>
 
 using System;
+using System.Text.RegularExpressions;
 using System.IO;
 using System.Drawing;
 using System.ComponentModel;
@@ -140,14 +141,15 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		bool SetupSearchReplaceInFilesManager()
 		{
 			FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+			int documentIteratorComboBoxValue = ((ComboBox)ControlDictionary["searchLocationComboBox"]).SelectedIndex;
 			
 			string directoryName = ControlDictionary["directoryTextBox"].Text;
 			string fileMask      = ControlDictionary["fileMaskTextBox"].Text;
 			if (fileMask == null || fileMask.Length == 0) {
 				fileMask = "*";
 			}
-			
-			if (SearchReplaceInFilesManager.SearchOptions.DocumentIteratorType == DocumentIteratorType.Directory) {
+			const int searchFilesDocumentIteratorIndex = 0;
+			if (documentIteratorComboBoxValue == searchFilesDocumentIteratorIndex) {
 				
 				if (!fileUtilityService.IsValidFileName(directoryName)) {
 					messageService.ShowErrorFormatted("${res:NewProject.SearchReplace.FindInFilesInvalidDirectoryMessage}", directoryName);
@@ -159,7 +161,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 					return false;
 				}
 				
-				if (!fileUtilityService.IsValidFileName(fileMask) || fileMask.IndexOf('\\') >= 0) {
+				if (fileMask.IndexOf(Path.DirectorySeparatorChar) >= 0) {
 					messageService.ShowErrorFormatted("${res:NewProject.SearchReplace.FindInFilesInvalidFilemaskMessage}", fileMask);
 					return false;
 				}
@@ -167,12 +169,25 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			if (fileMask == null || fileMask.Length == 0) {
 				SearchReplaceInFilesManager.SearchOptions.FileMask = "*";
 			} else {
-				SearchReplaceInFilesManager.SearchOptions.FileMask        = fileMask;
+				SearchReplaceInFilesManager.SearchOptions.FileMask = fileMask;
 			}
 			SearchReplaceInFilesManager.SearchOptions.SearchDirectory = directoryName;
 			SearchReplaceInFilesManager.SearchOptions.SearchSubdirectories = ((CheckBox)ControlDictionary["includeSubdirectoriesCheckBox"]).Checked;
 			
-			SearchReplaceInFilesManager.SearchOptions.SearchPattern  = ControlDictionary["searchPatternComboBox"].Text;
+			string searchPattern = ControlDictionary["searchPatternComboBox"].Text;
+			bool   isRegEx = ((ComboBox)ControlDictionary["specialSearchStrategyComboBox"]).SelectedIndex == 1;
+			
+			if (isRegEx) {
+				try {
+					Regex r = new Regex(searchPattern);
+				} catch (Exception e) {
+					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+					messageService.ShowError(e.Message);
+					return false;
+				}
+			}
+			
+			SearchReplaceInFilesManager.SearchOptions.SearchPattern  = searchPattern;
 			if (replaceMode) {
 				SearchReplaceInFilesManager.SearchOptions.ReplacePattern = ControlDictionary["replacePatternComboBox"].Text;
 			}
@@ -193,7 +208,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 				SearchReplaceInFilesManager.SearchOptions.SearchStrategyType = SearchStrategyType.Normal;
 			}
 			
-			switch (((ComboBox)ControlDictionary["searchLocationComboBox"]).SelectedIndex) {
+			switch (documentIteratorComboBoxValue) {
 				case 0:
 					SearchReplaceInFilesManager.SearchOptions.DocumentIteratorType = DocumentIteratorType.Directory;
 					break;

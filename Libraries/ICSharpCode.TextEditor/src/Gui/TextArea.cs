@@ -52,7 +52,6 @@ namespace ICSharpCode.TextEditor
 		FoldMargin    foldMargin;
 		IconBarMargin iconBarMargin;
 		
-		
 		SelectionManager selectionManager;
 		Caret            caret;
 		
@@ -73,6 +72,7 @@ namespace ICSharpCode.TextEditor
 				return selectionManager;
 			}
 		}
+		
 		public Caret Caret {
 			get {
 				return caret;
@@ -175,6 +175,7 @@ namespace ICSharpCode.TextEditor
 //			SetStyle(ControlStyles.UserPaint, true);
 			SetStyle(ControlStyles.Opaque, false);
 			SetStyle(ControlStyles.ResizeRedraw, true);
+			SetStyle(ControlStyles.Selectable, true);
 			
 			textView = new TextView(this);
 			
@@ -265,7 +266,7 @@ namespace ICSharpCode.TextEditor
 		{
 			UpdateMatchingBracket();
 			textView.OptionsChanged();
-			caret.RecreateCaret();
+			caret.UpdateCaretPosition();
 			Refresh();
 		}
 		
@@ -284,6 +285,7 @@ namespace ICSharpCode.TextEditor
 		protected override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
 		{
 			base.OnMouseDown(e);
+			
 			foreach (AbstractMargin margin in leftMargins) {
 				if (margin.DrawingPosition.Contains(e.X, e.Y)) {
 					margin.HandleMouseDown(new Point(e.X, e.Y), e.Button);
@@ -665,6 +667,7 @@ namespace ICSharpCode.TextEditor
 //			++Caret.DesiredColumn;
 		}
 		
+		
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
@@ -725,8 +728,6 @@ namespace ICSharpCode.TextEditor
 		
 		void InvalidateLines(int xPos, int lineBegin, int lineEnd)
 		{
-			int firstLine = textView.FirstVisibleLine;
-			
 			lineBegin     = Math.Max(Document.GetVisibleLine(lineBegin), FirstPhysicalLine);
 			lineEnd       = Math.Min(Document.GetVisibleLine(lineEnd),   FirstPhysicalLine + textView.VisibleLineCount);
 			int y         = Math.Max(    0, (int)(lineBegin  * textView.FontHeight));

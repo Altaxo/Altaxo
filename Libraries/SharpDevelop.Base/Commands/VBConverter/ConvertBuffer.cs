@@ -44,6 +44,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 				p.Parse(new Lexer(new ICSharpCode.SharpRefactory.Parser.StringReader(((IEditable)window.ViewContent).Text)));
 				
 				if (p.Errors.count > 0) {
+					Console.WriteLine(p.Errors.ErrorOutput);
 					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
 					messageService.ShowError("Correct source code errors first (only correct source code would convert).");
 					return;

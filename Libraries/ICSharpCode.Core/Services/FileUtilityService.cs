@@ -9,6 +9,7 @@ using Microsoft.Win32;
 using System;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Drawing;
@@ -126,6 +127,7 @@ namespace ICSharpCode.Core.Services
 				}
 			} catch (Exception e) {
 				IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+				// don't translate this error (core messages generally can't be translated.)
 				messageService.ShowError(e, "Can't access directory " + directory);
 			}
 		}
@@ -192,6 +194,8 @@ namespace ICSharpCode.Core.Services
 			return erg;
 		}
 		
+		const string fileNameRegEx = @"^(([a-zA-Z]:)|.)[^:]*$";
+		
 		/// <summary>
 		/// This method checks the file fileName if it is valid.
 		/// </summary>
@@ -213,6 +217,10 @@ namespace ICSharpCode.Core.Services
 				return false;
 			}
 			
+			if (!Regex.IsMatch(fileName, fileNameRegEx)) {
+				return false;
+			}
+			
 			// platform dependend : Check for invalid file names (DOS)
 			// this routine checks for follwing bad file names :
 			// CON, PRN, AUX, NUL, COM1-9 and LPT1-9
@@ -226,7 +234,6 @@ namespace ICSharpCode.Core.Services
 			    nameWithoutExtension == "PRN" ||
 			    nameWithoutExtension == "AUX" ||
 			    nameWithoutExtension == "NUL") {
-		    	
 		    	return false;
 		    }
 			    

@@ -54,7 +54,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor
 										tag.Append(reversedTag[i]);
 									}
 									string tagString = tag.ToString();
-									if (tagString.Length > 0) {
+									if (tagString.Length > 0 && !tagString.StartsWith("!") && !tagString.StartsWith("?")) {
 										textArea.Document.Insert(caretOffset, "</" + tagString + ">");
 									}
 								}

@@ -39,27 +39,6 @@ using ICSharpCode.Core.AddIns;
 using ICSharpCode.Core.Services;
 using ICSharpCode.SharpDevelop.Gui.Dialogs;
 
-// using Altaxo;
-// using Altaxo.Main;
-
-
-namespace BeautyGUI
-{
-  class Startup
-  {
-    /// <summary>
-    /// The main entry point for the application.
-    /// </summary>
-    [STAThread]
-    static void OldMain() 
-    {
-      //App.InitializeMainController(new ICSharpCode.SharpDevelop.Gui.BeautyWorkbench(new ICSharpCode.SharpDevelop.Gui.BeautyWorkbenchWindow(), new AltaxoDocument()));
-
-      // Current.Main();
-    }
-  }
-}
-
 namespace ICSharpCode.SharpDevelop
 {
   /// <summary>
@@ -69,10 +48,8 @@ namespace ICSharpCode.SharpDevelop
   {
     static string[] commandLineArgs = null;
     
-    public static string[] CommandLineArgs 
-    {
-      get 
-      {
+		public static string[] CommandLineArgs {
+			get {
         return commandLineArgs;
       }
     }
@@ -81,21 +58,13 @@ namespace ICSharpCode.SharpDevelop
     {
       DialogResult result = new ExceptionBox(eargs.Exception).ShowDialog();
 
-      DataObject dataObject = new DataObject();
-      dataObject.SetData(DataFormats.Text, eargs.Exception.ToString());
-			try {
-				Clipboard.SetDataObject(dataObject, true);
-			} catch (Exception) {}
-      
-      switch (result) 
-      {
+			switch (result) {
         case DialogResult.Ignore:
           break;
         case DialogResult.Abort:
           Application.Exit();
           break;
         case DialogResult.Yes:
-          Process.Start("http://sourceforge.net/tracker/?func=add&group_id=73395&atid=537651");
           break;
       }
     }
@@ -111,68 +80,57 @@ namespace ICSharpCode.SharpDevelop
       
       SplashScreenForm.SetCommandLineArgs(args);
       
-      foreach (string parameter in SplashScreenForm.GetParameterList()) 
-      {
-        switch (parameter.ToUpper()) 
-        {
+ 			foreach (string parameter in SplashScreenForm.GetParameterList()) {
+				switch (parameter.ToUpper()) {
           case "NOLOGO":
             noLogo = true;
             break;
         }
       }
       
-      bool ignoreDefaultPath = false;
-      string [] addInDirs = ICSharpCode.SharpDevelop.AddInSettingsHandler.GetAddInDirectories(out ignoreDefaultPath);
-      AddInTreeSingleton.SetAddInDirectories(addInDirs, ignoreDefaultPath);
-      
-      if (!noLogo) 
-      {
+			if (!noLogo) {
         SplashScreenForm.SplashScreen.Show();
       }
       Application.ThreadException += new ThreadExceptionEventHandler(ShowErrorBox);
       
+			bool ignoreDefaultPath = false;
+			string [] addInDirs = ICSharpCode.SharpDevelop.AddInSettingsHandler.GetAddInDirectories(out ignoreDefaultPath);
+			AddInTreeSingleton.SetAddInDirectories(addInDirs, ignoreDefaultPath);
+			
       ArrayList commands = null;
-      try 
-      {
+			try {
         ServiceManager.Services.AddService(new MessageService());
         ServiceManager.Services.AddService(new ResourceService());
         ServiceManager.Services.AddService(new IconService());
         ServiceManager.Services.InitializeServicesSubsystem("/Workspace/Services");
       
         commands = AddInTreeSingleton.AddInTree.GetTreeNode("/Workspace/Autostart").BuildChildItems(null);
-        for (int i = 0; i < commands.Count - 1; ++i) 
-        {
+				for (int i = 0; i < commands.Count - 1; ++i) {
           ((ICommand)commands[i]).Run();
         }
-      } 
-      catch (XmlException e) 
-      {
-        MessageBox.Show("Could not load XML :\n" + e.Message);
+			} catch (XmlException e) {
+				MessageBox.Show("Could not load XML :" + Environment.NewLine + e.Message);
         return;
-      } 
-      catch (Exception e) 
-      {
-        MessageBox.Show("Loading error, please reinstall :\n" + e.ToString());
+			} catch (Exception e) {
+				MessageBox.Show("Loading error, please reinstall :"  + Environment.NewLine + e.ToString());
         return;
-      } 
-      finally 
-      {
-        if (SplashScreenForm.SplashScreen != null) 
-        {
+			} finally {
+				if (SplashScreenForm.SplashScreen != null) {
           SplashScreenForm.SplashScreen.Close();
         }
       }
       
+			try {
       // run the last autostart command, this must be the workbench starting command
-      if (commands.Count > 0) 
-      {
+				if (commands.Count > 0) {
         ((ICommand)commands[commands.Count - 1]).Run();
       }
-      
+			} finally {
       // unloading services
       ServiceManager.Services.UnloadAllServices();
     }
   }
+	}
 }
 
 

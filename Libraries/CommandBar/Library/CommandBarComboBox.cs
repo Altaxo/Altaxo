@@ -13,7 +13,7 @@ namespace Reflector.UserInterface
 
 	public class CommandBarComboBox : CommandBarControl
 	{
-		private ComboBox comboBox;
+		protected ComboBox comboBox;
 
 		public CommandBarComboBox(string text, ComboBox comboBox) : base(text)
 		{

@@ -22,7 +22,7 @@ namespace CSharpBinding.Parser.SharpDevelopTree
 		public void UpdateModifier()
 		{
 			if (classType == ClassType.Enum) {
-				foreach (Field f in fields) {
+				foreach (Field f in Fields) {
 					f.AddModifier(ModifierEnum.Public);
 				}
 				return;
@@ -30,10 +30,10 @@ namespace CSharpBinding.Parser.SharpDevelopTree
 			if (classType != ClassType.Interface) {
 				return;
 			}
-			foreach (Class c in innerClasses) {
+			foreach (Class c in InnerClasses) {
 				c.modifiers = c.modifiers | ModifierEnum.Public;
 			}
-			foreach (IMethod m in methods) {
+			foreach (IMethod m in Methods) {
 				if (m is Constructor) {
 					((Constructor)m).AddModifier(ModifierEnum.Public);
 				} else if (m is Method) {
@@ -42,16 +42,16 @@ namespace CSharpBinding.Parser.SharpDevelopTree
 					Debug.Assert(false, "Unexpected type in method of interface. Can not set modifier to public!");
 				}
 			}
-			foreach (Event e in events) {
+			foreach (Event e in Events) {
 				e.AddModifier(ModifierEnum.Public);
 			}
-			foreach (Field f in fields) {
+			foreach (Field f in Fields) {
 				f.AddModifier(ModifierEnum.Public);
 			}
-			foreach (Indexer i in indexer) {
+			foreach (Indexer i in Indexer) {
 				i.AddModifier(ModifierEnum.Public);
 			}
-			foreach (Property p in properties) {
+			foreach (Property p in Properties) {
 				p.AddModifier(ModifierEnum.Public);
 			}
 			

@@ -85,6 +85,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			listView.ItemActivate += new EventHandler(ListViewItemActivate);
 			listView.MouseMove    += new MouseEventHandler(ListViewMouseMove);
 			listView.Resize       += new EventHandler(ListViewResize);
+			listView.CreateControl();
 		}
 		
 		
@@ -105,7 +106,11 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		
 		void OnCombineClosed(object sender, CombineEventArgs e)
 		{
-			listView.Items.Clear();
+			try {
+				listView.Items.Clear();
+			} catch (Exception ex) {
+				Console.WriteLine(ex);
+			}
 		}
 		
 		void SelectTaskView(object sender, EventArgs e)
@@ -140,16 +145,20 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			}
 		}
 		
+		ListViewItem currentListViewItem = null;
 		void ListViewMouseMove(object sender, MouseEventArgs e)
 		{
 			ListViewItem item = listView.GetItemAt(e.X, e.Y);
-			if (item != null) {
-				Task task = (Task)item.Tag;
-				taskToolTip.SetToolTip(listView, task.Description);
-				taskToolTip.Active       = true;
-			} else {
-				taskToolTip.RemoveAll(); 
-				taskToolTip.Active       = false;
+			if (item != currentListViewItem) {
+				if (item != null) {
+					Task task = (Task)item.Tag;
+					taskToolTip.SetToolTip(listView, task.Description);
+					taskToolTip.Active       = true;
+				} else {
+					taskToolTip.RemoveAll(); 
+					taskToolTip.Active       = false;
+				}
+				currentListViewItem = item;
 			}
 		}
 		
@@ -185,10 +194,12 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 						break;
 				}
 				
-				string tmpPath = task.FileName;
-				if (task.Project != null) {
+				string tmpPath;
+				if (task.Project != null && task.FileName != null) {
 					tmpPath = fileUtilityService.AbsoluteToRelativePath(task.Project.BaseDirectory, task.FileName);
-				} 
+				} else {
+					tmpPath = task.FileName;
+				}
 				
 				string fileName = tmpPath;
 				string path     = tmpPath;
@@ -216,8 +227,10 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		
 		void ShowResults2(object sender, EventArgs e)
 		{
-			listView.CreateControl();
-			
+			// listView.CreateControl is called in the constructor now.
+			if (!listView.IsHandleCreated) {
+				return;
+			}
 			listView.BeginUpdate();
 			listView.Items.Clear();
 			FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));

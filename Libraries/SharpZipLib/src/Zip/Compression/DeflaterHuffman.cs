@@ -1,5 +1,7 @@
 // DeflaterHuffman.cs
+//
 // Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2004 John Reilly
 //
 // This file was translated from java, it was part of the GNU Classpath
 // Copyright (C) 2001 Free Software Foundation, Inc.
@@ -50,17 +52,17 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 	/// </summary>
 	public class DeflaterHuffman
 	{
-		private static  int BUFSIZE = 1 << (DeflaterConstants.DEFAULT_MEM_LEVEL + 6);
-		private static  int LITERAL_NUM = 286;
-		private static  int DIST_NUM = 30;
-		private static  int BITLEN_NUM = 19;
-		private static  int REP_3_6    = 16;
-		private static  int REP_3_10   = 17;
-		private static  int REP_11_138 = 18;
-		private static  int EOF_SYMBOL = 256;
-		private static  int[] BL_ORDER = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
+		static  int BUFSIZE = 1 << (DeflaterConstants.DEFAULT_MEM_LEVEL + 6);
+		static  int LITERAL_NUM = 286;
+		static  int DIST_NUM = 30;
+		static  int BITLEN_NUM = 19;
+		static  int REP_3_6    = 16;
+		static  int REP_3_10   = 17;
+		static  int REP_11_138 = 18;
+		static  int EOF_SYMBOL = 256;
+		static  int[] BL_ORDER = { 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 };
 		
-		private static byte[] bit4Reverse = {
+		static byte[] bit4Reverse = {
 			0,
 			8,
 			4,
@@ -79,17 +81,39 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			15
 		};
 		
+		/// <summary>
+		/// Not documented
+		/// </summary>
 		public class Tree 
 		{
+			/// <summary>
+			/// Not documented
+			/// </summary>
 			public short[] freqs;
+			
+			/// <summary>
+			/// Not documented
+			/// </summary>
 			public byte[]  length;
-			public int     minNumCodes, numCodes;
+			
+			/// <summary>
+			/// Not documented
+			/// </summary>
+			public int     minNumCodes;
+			
+			/// <summary>
+			/// Not documented
+			/// </summary>
+			public int     numCodes;
 			
 			short[] codes;
 			int[]   bl_counts;
 			int     maxLength;
 			DeflaterHuffman dh;
 			
+			/// <summary>
+			/// Not documented
+			/// </summary>
 			public Tree(DeflaterHuffman dh, int elems, int minCodes, int maxLength) 
 			{
 				this.dh =  dh;
@@ -99,6 +123,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 				bl_counts = new int[maxLength];
 			}
 			
+			/// <summary>
+			/// Resets the internal state of the tree
+			/// </summary>
 			public void Reset() 
 			{
 				for (int i = 0; i < freqs.Length; i++) {
@@ -108,6 +135,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 				length = null;
 			}
 			
+			/// <summary>
+			/// Not documented
+			/// </summary>
 			public void WriteSymbol(int code)
 			{
 				//				if (DeflaterConstants.DEBUGGING) {
@@ -117,27 +147,42 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 				dh.pending.WriteBits(codes[code] & 0xffff, length[code]);
 			}
 			
+			/// <summary>
+			/// Check that at least one frequency is non-zero
+			/// </summary>
+			/// <exception cref="SharpZipBaseException">
+			/// No frequencies are non-zero
+			/// </exception>
 			public void CheckEmpty()
 			{
 				bool empty = true;
 				for (int i = 0; i < freqs.Length; i++) {
 					if (freqs[i] != 0) {
-						//Console.WriteLine("freqs["+i+"] == "+freqs[i]);
+						//Console.WriteLine("freqs[" + i + "] == " + freqs[i]);
 						empty = false;
 					}
 				}
+				
 				if (!empty) {
-					throw new Exception();
+					throw new SharpZipBaseException("!Empty");
 				}
 				//Console.WriteLine("checkEmpty suceeded!");
 			}
-			
+
+			/// <summary>
+			/// Set static codes and length
+			/// </summary>
+			/// <param name="stCodes">new codes</param>
+			/// <param name="stLength">length for new codes</param>
 			public void SetStaticCodes(short[] stCodes, byte[] stLength)
 			{
 				codes = stCodes;
 				length = stLength;
 			}
 			
+			/// <summary>
+			/// Build dynamic codes and lengths
+			/// </summary>
 			public void BuildCodes() 
 			{
 				int numSymbols = freqs.Length;
@@ -153,19 +198,19 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 					nextCode[bits] = code;
 					code += bl_counts[bits] << (15 - bits);
 					//					if (DeflaterConstants.DEBUGGING) {
-					//						//Console.WriteLine("bits: "+(bits+1)+" count: "+bl_counts[bits]
-					//						                  +" nextCode: "+code); // HACK : Integer.toHexString(
+					//						//Console.WriteLine("bits: " + ( bits + 1) + " count: " + bl_counts[bits]
+					//						                  +" nextCode: "+code);
 					//					}
 				}
 				if (DeflaterConstants.DEBUGGING && code != 65536) {
-					throw new Exception("Inconsistent bl_counts!");
+					throw new SharpZipBaseException("Inconsistent bl_counts!");
 				}
 				
 				for (int i=0; i < numCodes; i++) {
 					int bits = length[i];
 					if (bits > 0) {
 						//						if (DeflaterConstants.DEBUGGING) {
-						//								//Console.WriteLine("codes["+i+"] = rev(" + nextCode[bits-1]+")," // HACK : Integer.toHexString(
+						//								//Console.WriteLine("codes["+i+"] = rev(" + nextCode[bits-1]+"),
 						//								                  +bits);
 						//						}
 						codes[i] = BitReverse(nextCode[bits-1]);
@@ -268,6 +313,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 				//				}
 			}
 			
+			/// <summary>
+			/// Not documented
+			/// </summary>
 			public void BuildTree()
 			{
 				int numSymbols = freqs.Length;
@@ -385,11 +433,16 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 				} while (heapLen > 1);
 				
 				if (heap[0] != childs.Length / 2 - 1) {
-					throw new Exception("Weird!");
+					throw new SharpZipBaseException("Heap invariant violated");
 				}
+				
 				BuildLength(childs);
 			}
 			
+			/// <summary>
+			/// Get encoded length
+			/// </summary>
+			/// <returns>Encoded length, the sum of frequencies * lengths</returns>
 			public int GetEncodedLength()
 			{
 				int len = 0;
@@ -399,6 +452,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 				return len;
 			}
 			
+			/// <summary>
+			/// Not documented
+			/// </summary>
 			public void CalcBLFreq(Tree blTree) 
 			{
 				int max_count;               /* max repeat count */
@@ -442,7 +498,11 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 					}
 				}
 			}
-			
+		
+			/// <summary>
+			/// Write tree values
+			/// </summary>
+			/// <param name="blTree">Tree to write</param>
 			public void WriteTree(Tree blTree)
 			{
 				int max_count;               /* max repeat count */
@@ -493,28 +553,34 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			}
 		}
 		
+		/// <summary>
+		/// Pending buffer to use
+		/// </summary>
 		public DeflaterPending pending;
-		private Tree literalTree, distTree, blTree;
 		
-		private short[] d_buf;
-		private byte[]  l_buf;
-		private int last_lit;
-		private int extra_bits;
+		Tree literalTree, distTree, blTree;
 		
-		private static short[] staticLCodes;
-		private static byte[]  staticLLength;
-		private static short[] staticDCodes;
-		private static byte[]  staticDLength;
+		short[] d_buf;
+		byte[]  l_buf;
+		int last_lit;
+		int extra_bits;
+		
+		static short[] staticLCodes;
+		static byte[]  staticLLength;
+		static short[] staticDCodes;
+		static byte[]  staticDLength;
 		
 		/// <summary>
 		/// Reverse the bits of a 16 bit value.
 		/// </summary>
-		public static short BitReverse(int value) 
+		/// <param name="toReverse">Value to reverse bits</param>
+		/// <returns>Value with bits reversed</returns>
+		public static short BitReverse(int toReverse) 
 		{
-			return (short) (bit4Reverse[value & 0xF] << 12 | 
-			                bit4Reverse[(value >> 4) & 0xF] << 8 | 
-			                bit4Reverse[(value >> 8) & 0xF] << 4 |
-			                bit4Reverse[value >> 12]);
+			return (short) (bit4Reverse[toReverse & 0xF] << 12 | 
+			                bit4Reverse[(toReverse >> 4) & 0xF] << 8 | 
+			                bit4Reverse[(toReverse >> 8) & 0xF] << 4 |
+			                bit4Reverse[toReverse >> 12]);
 		}
 		
 		
@@ -551,6 +617,10 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			}
 		}
 		
+		/// <summary>
+		/// Construct instance with pending buffer
+		/// </summary>
+		/// <param name="pending">Pending buffer to use</param>
 		public DeflaterHuffman(DeflaterPending pending)
 		{
 			this.pending = pending;
@@ -562,7 +632,10 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			d_buf = new short[BUFSIZE];
 			l_buf = new byte [BUFSIZE];
 		}
-		
+
+		/// <summary>
+		/// Reset internal state
+		/// </summary>		
 		public void Reset() 
 		{
 			last_lit = 0;
@@ -595,7 +668,10 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			}
 			return code + distance;
 		}
-		
+
+		/// <summary>
+		/// Write all trees to pending buffer
+		/// </summary>		
 		public void SendAllTrees(int blTreeCodes)
 		{
 			blTree.BuildCodes();
@@ -613,7 +689,10 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			//				blTree.CheckEmpty();
 			//			}
 		}
-		
+
+		/// <summary>
+		/// Compress current buffer writing data to pending buffer
+		/// </summary>
 		public void CompressBlock()
 		{
 			for (int i = 0; i < last_lit; i++) {
@@ -660,6 +739,13 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			//			}
 		}
 		
+		/// <summary>
+		/// Flush block to output with no compression
+		/// </summary>
+		/// <param name="stored">Data to write</param>
+		/// <param name="storedOffset">Index of first byte to write</param>
+		/// <param name="storedLength">Count of bytes to write</param>
+		/// <param name="lastBlock">True if this is the last block</param>
 		public void FlushStoredBlock(byte[] stored, int storedOffset, int storedLength, bool lastBlock)
 		{
 			//			if (DeflaterConstants.DEBUGGING) {
@@ -672,7 +758,14 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			pending.WriteBlock(stored, storedOffset, storedLength);
 			Reset();
 		}
-		
+
+		/// <summary>
+		/// Flush block to output with compression
+		/// </summary>		
+		/// <param name="stored">Data to flush</param>
+		/// <param name="storedOffset">Index of first byte to flush</param>
+		/// <param name="storedLength">Count of bytes to flush</param>
+		/// <param name="lastBlock">True if this is the last block</param>
 		public void FlushBlock(byte[] stored, int storedOffset, int storedLength, bool lastBlock)
 		{
 			literalTree.freqs[EOF_SYMBOL]++;
@@ -710,7 +803,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 				opt_len = static_len;
 			}
 			
-			if (storedOffset >= 0 && storedLength+4 < opt_len >> 3) {
+			if (storedOffset >= 0 && storedLength + 4 < opt_len >> 3) {
 				/* Store Block */
 				//				if (DeflaterConstants.DEBUGGING) {
 				//					//Console.WriteLine("Storing, since " + storedLength + " < " + opt_len
@@ -733,12 +826,20 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			}
 		}
 		
+		/// <summary>
+		/// Get value indicating if internal buffer is full
+		/// </summary>
+		/// <returns>true if buffer is full</returns>
 		public bool IsFull()
 		{
-//			return last_lit + 16 >= BUFSIZE; // HACK: This was == 'last_lit == BUFSIZE', but errors occured with DeflateFast
-			return last_lit >= BUFSIZE; // -jr- This is the correct form!
+			return last_lit >= BUFSIZE;
 		}
 		
+		/// <summary>
+		/// Add literal to buffer
+		/// </summary>
+		/// <param name="lit"></param>
+		/// <returns>Value indicating internal buffer is full</returns>
 		public bool TallyLit(int lit)
 		{
 			//			if (DeflaterConstants.DEBUGGING) {
@@ -754,6 +855,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			return IsFull();
 		}
 		
+		/// <summary>
+		/// Add distance code and length to literal and distance trees
+		/// </summary>
+		/// <param name="dist">Distance code</param>
+		/// <param name="len">Length</param>
+		/// <returns>Value indicating if internal buffer is full</returns>
 		public bool TallyDist(int dist, int len)
 		{
 			//			if (DeflaterConstants.DEBUGGING) {

@@ -85,12 +85,12 @@ namespace ICSharpCode.SharpDevelop.Services
 		/// Compiles a specific project, if the project isn't dirty this
 		/// method does nothing
 		/// </remarks>
-		void CompileProject(IProject project);
+		ICompilerResult CompileProject(IProject project);
 		
 		/// <remarks>
 		/// Compiles a specific project (forced!)
 		/// </remarks>
-		void RecompileProject(IProject project);
+		ICompilerResult RecompileProject(IProject project);
 		
 		/// <remarks>
 		/// Opens a new root combine, closes the old root combine automatically.
@@ -185,6 +185,21 @@ namespace ICSharpCode.SharpDevelop.Services
 		void OnRenameProject(ProjectRenameEventArgs e);
 		
 		/// <remarks>
+		/// Only to be called by AbstractProject
+		/// </remarks>
+		void OnActiveConfigurationChanged(ConfigurationEventArgs e);
+		
+		/// <remarks>
+		/// Only to be called by AbstractProject
+		/// </remarks>
+		void OnConfigurationAdded(EventArgs e);
+		
+		/// <remarks>
+		/// Only to be called by AbstractProject
+		/// </remarks>
+		void OnConfigurationRemoved(EventArgs e);
+		
+		/// <remarks>
 		/// Gets the file name of the output assembly of a given project
 		/// (Or at least the 'main' file)
 		/// </remarks>
@@ -245,5 +260,23 @@ namespace ICSharpCode.SharpDevelop.Services
 		/// Called after a project got renamed
 		/// </remarks>
 		event ProjectRenameEventHandler ProjectRenamed;
+		
+		/// <remarks>
+		/// Called after the active project configuration has
+		/// been changed.
+		/// </remarks>
+		event ConfigurationEventHandler ActiveConfigurationChanged;
+		
+		/// <summary>
+		/// Called after a new configurations has been
+		/// added to the project.
+		/// </summary>
+		event EventHandler ConfigurationAdded;
+		
+		/// <summary>
+		/// Called after a configuration has been removed
+		/// from the project.
+		/// </summary>
+		event EventHandler ConfigurationRemoved;
 	}
 }

@@ -30,6 +30,16 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			}
 		}
 		
+		public int FirstItem {
+			get {
+				return firstItem;
+			}
+			set {
+				firstItem = value;
+				OnFirstItemChanged(EventArgs.Empty);
+			}
+		}
+		
 		public ICompletionData SelectedCompletionData {
 			get {
 				if (selectedItem < 0) {
@@ -41,11 +51,11 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		
 		public int ItemHeight {
 			get {
-				return imageList.ImageSize.Height;
+				return Math.Max(imageList.ImageSize.Height, (int)(Font.Height * 1.25));
 			}
 		}
 		
-		int MaxVisibleItem {
+		public int MaxVisibleItem {
 			get {
 				return Height / ItemHeight;
 			}
@@ -53,23 +63,38 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		
 		public CodeCompletionListView(ICompletionData[] completionData)
 		{
+			if (this.completionData != null) {
+				Array.Clear(this.completionData, 0, completionData.Length);
+			}
+			
 			Array.Sort(completionData);
 			this.completionData = completionData;
+			
+//			this.KeyDown += new System.Windows.Forms.KeyEventHandler(OnKey);
 //			SetStyle(ControlStyles.Selectable, false);
 //			SetStyle(ControlStyles.UserPaint, true);
 //			SetStyle(ControlStyles.DoubleBuffer, false);
 		}
 		
+		public void Close() 
+		{
+			if (completionData != null) {
+				Array.Clear(completionData, 0, completionData.Length);
+			}
+			base.Dispose();
+		}
+		
 		public void SelectIndex(int index)
 		{
+			index = Math.Max(0, index);
 			int oldSelectedItem = selectedItem;
 			int oldFirstItem    = firstItem;
 			selectedItem = Math.Max(0, Math.Min(completionData.Length - 1, index));
 			if (selectedItem < firstItem) {
-				firstItem = selectedItem;
+				FirstItem = selectedItem;
 			}
 			if (firstItem + MaxVisibleItem <= selectedItem) {
-				firstItem = selectedItem - MaxVisibleItem + 1;
+				FirstItem = selectedItem - MaxVisibleItem + 1;
 			}
 			if (oldSelectedItem != selectedItem) {
 				if (firstItem != oldFirstItem) {
@@ -104,6 +129,29 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			SelectIndex(selectedItem - 1);
 		}
 		
+		public void SelectItemWithStart(char startCh)
+		{
+			for (int i = Math.Min(selectedItem + 1, completionData.Length - 1); i < completionData.Length; ++i) {
+				if (completionData[i].Text[0].ToLower()[0] == startCh) {
+					SelectIndex(i);
+					return;
+				}
+			}
+			
+			// now loop from start to current one
+			for (int i = 0; i < selectedItem; ++i) {
+				if (completionData[i].Text[0].ToLower()[0] == startCh) {
+					SelectIndex(i);
+					return;
+				}
+			}
+			
+			// if not found leave selection as it is
+			Refresh();
+			OnSelectedItemChanged(EventArgs.Empty);
+		}
+		
+	
 		public void SelectItemWithStart(string startText)
 		{
 			startText = startText.ToLower();
@@ -121,7 +169,9 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		protected override void OnPaint(PaintEventArgs pe)
 		{
 			float yPos       = 1;
-			float itemHeight = imageList.ImageSize.Height;
+			float itemHeight = ItemHeight;
+			// Maintain aspect ratio
+			int imageWidth = (int)(itemHeight * imageList.ImageSize.Width / imageList.ImageSize.Height);
 			
 			int curItem = firstItem;
 			Graphics g  = pe.Graphics;
@@ -138,8 +188,8 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 					// draw Icon
 					int   xPos   = 0;
 					if (imageList != null && completionData[curItem].ImageIndex < imageList.Images.Count) {
-						g.DrawImage(imageList.Images[completionData[curItem].ImageIndex], new RectangleF(1, yPos, imageList.ImageSize.Width, itemHeight));
-						xPos = imageList.ImageSize.Width;
+						g.DrawImage(imageList.Images[completionData[curItem].ImageIndex], new RectangleF(1, yPos, imageWidth, itemHeight));
+						xPos = imageWidth;
 					}
 					
 					// draw text
@@ -156,25 +206,12 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			g.DrawRectangle(SystemPens.Control, new Rectangle(0, 0, Width - 1, Height - 1));
 		}
 		
-		protected override void OnMouseEnter(System.EventArgs e)
-		{
-			Console.WriteLine("ON MOUSE ENTER!");
-		}
-		
-		protected override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
-		{
-			Console.WriteLine("ON MOUSE MOVE!");
-		}
-		
 		protected override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
 		{
-			Console.WriteLine("ON MOUSE DOWN!");
-			base.OnMouseDown(e);
-			
 			float yPos       = 1;
 			int curItem = firstItem;
-			float itemHeight = imageList.ImageSize.Height;
-			Console.WriteLine(e.X  + " -- " + e.Y);
+			float itemHeight = ItemHeight;
+			
 			while (curItem < completionData.Length && yPos < Height) {
 				RectangleF drawingBackground = new RectangleF(1, yPos, Width - 2, itemHeight);
 				if (drawingBackground.Contains(e.X, e.Y)) {
@@ -184,6 +221,21 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 				yPos += itemHeight;
 				++curItem;
 			}
+		}
+		
+		protected override void OnMouseWheel(MouseEventArgs mea) 
+		{
+			int numberOfLines = mea.Delta * SystemInformation.MouseWheelScrollLines / 120;
+			//BeginUpdate();
+			while (numberOfLines>0) {
+				SelectPrevItem();
+				numberOfLines--;
+			}
+			while (numberOfLines<0) {
+				SelectNextItem();
+				numberOfLines++;
+			}
+			//EndUpdate();			
 		}
 		
 		protected override void OnPaintBackground(PaintEventArgs pe)
@@ -197,6 +249,14 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			}
 		}
 		
+		protected virtual void OnFirstItemChanged(EventArgs e)
+		{
+			if (FirstItemChanged != null) {
+				FirstItemChanged(this, e);
+			}
+		}
+		
 		public event EventHandler SelectedItemChanged;
+		public event EventHandler FirstItemChanged;
 	}
 }

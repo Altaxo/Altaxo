@@ -46,12 +46,18 @@ namespace CSharpBinding.Parser
 		
 		public override object Visit(InvocationExpression invocationExpression, object data)
 		{
+//			Console.WriteLine("Visiting InvocationExpression");
 			if (invocationExpression.TargetObject is FieldReferenceExpression) {
 				FieldReferenceExpression field = (FieldReferenceExpression)invocationExpression.TargetObject;
 				IReturnType type = field.TargetObject.AcceptVisitor(this, data) as IReturnType;
+//				Console.WriteLine("Type from InvocationExpression is " + type.Name);
+				if (type.ArrayDimensions != null && type.ArrayDimensions.Length > 0) {
+					type = new ReturnType("System.Array");
+				}
 				ArrayList methods = resolver.SearchMethod(type, field.FieldName);
 				resolver.ShowStatic = false;
 				if (methods.Count <= 0) {
+					Console.WriteLine(field.FieldName + " method not found in " + type.FullyQualifiedName);
 					return null;
 				}
 				// TODO: Find the right method
@@ -62,6 +68,9 @@ namespace CSharpBinding.Parser
 					return null;
 				}
 				IReturnType type = new ReturnType(resolver.CallingClass.FullyQualifiedName);
+				if (type.ArrayDimensions != null && type.ArrayDimensions.Length > 0) {
+					type = new ReturnType("System.Array");
+				}
 				ArrayList methods = resolver.SearchMethod(type, id);
 				resolver.ShowStatic = false;
 				if (methods.Count <= 0) {
@@ -88,6 +97,7 @@ namespace CSharpBinding.Parser
 		
 		public override object Visit(FieldReferenceExpression fieldReferenceExpression, object data)
 		{
+//			Console.WriteLine("visiting FieldReferenceExpression: " + fieldReferenceExpression.ToString());
 			if (fieldReferenceExpression == null) {
 				return null;
 			}

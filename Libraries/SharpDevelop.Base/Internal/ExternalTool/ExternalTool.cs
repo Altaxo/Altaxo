@@ -107,6 +107,10 @@ namespace ICSharpCode.SharpDevelop.Internal.ExternalTool
 			
 			PromptForArguments = Boolean.Parse(el["PROMPTFORARGUMENTS"].InnerText);
 			
+			// option was introduced later
+			if(el["USEOUTPUTPAD"] != null) {
+				UseOutputPad = Boolean.Parse(el["USEOUTPUTPAD"].InnerText);
+			}
 		}
 		
 		public override string ToString()
@@ -140,6 +144,10 @@ namespace ICSharpCode.SharpDevelop.Internal.ExternalTool
 			
 			x = doc.CreateElement("PROMPTFORARGUMENTS");
 			x.InnerText = PromptForArguments.ToString();
+			el.AppendChild(x);
+			
+			x = doc.CreateElement("USEOUTPUTPAD");
+			x.InnerText = UseOutputPad.ToString();
 			el.AppendChild(x);
 			
 			return el;

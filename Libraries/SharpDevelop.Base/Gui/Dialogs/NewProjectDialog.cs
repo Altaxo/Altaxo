@@ -283,64 +283,68 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			
 			propertyService.SetProperty("ICSharpCode.SharpDevelop.Gui.Dialogs.NewProjectDialog.AutoCreateProjectSubdir", ((CheckBox)ControlDictionary["autoCreateSubDirCheckBox"]).Checked);
 			if (((ListView)ControlDictionary["templateListView"]).SelectedItems.Count == 1 && ((TextBox)ControlDictionary["locationTextBox"]).Text.Length > 0 && ((TextBox)ControlDictionary["solutionNameTextBox"]).Text.Length > 0) {
-					TemplateItem item = (TemplateItem)((ListView)ControlDictionary["templateListView"]).SelectedItems[0];
-					
+				TemplateItem item = (TemplateItem)((ListView)ControlDictionary["templateListView"]).SelectedItems[0];
+				try {
 					System.IO.Directory.CreateDirectory(ProjectSolution);
-					
-					ProjectCreateInformation cinfo = new ProjectCreateInformation();
-					
-					cinfo.CombinePath     = ProjectLocation;
-					cinfo.ProjectBasePath = ProjectSolution;
+				} catch (Exception) {
+					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+					messageService.ShowError("${res:ICSharpCode.SharpDevelop.Gui.Dialogs.NewProjectDialog.CantCreateDirectoryError}");
+					return;
+				}
+				
+				ProjectCreateInformation cinfo = new ProjectCreateInformation();
+				
+				cinfo.CombinePath     = ProjectLocation;
+				cinfo.ProjectBasePath = ProjectSolution;
 //					cinfo.Description     = stringParserService.Parse(item.Template.Description);
-					
-					cinfo.ProjectName     = ((TextBox)ControlDictionary["nameTextBox"]).Text;
+				
+				cinfo.ProjectName     = ((TextBox)ControlDictionary["nameTextBox"]).Text;
 //					cinfo.ProjectTemplate = item.Template;
+				
+				NewCombineLocation = item.Template.CreateProject(cinfo);
+				if (NewCombineLocation == null || NewCombineLocation.Length == 0) {
+					return;
+				}
+				if (openCombine) {
+					item.Template.OpenCreatedCombine();
+				}
+				
+				NewProjectLocation = Path.Combine(cinfo.ProjectBasePath, cinfo.ProjectName + ".prjx");
+				
+				DialogResult = DialogResult.OK;
+				/*
+				if (item.Template.LanguageName != null && item.Template.LanguageName.Length > 0)  {
 					
-					NewCombineLocation = item.Template.CreateProject(cinfo);
-					if (NewCombineLocation == null || NewCombineLocation.Length == 0) {
-						return;
+				}
+				
+				if (item.Template.WizardPath != null) {
+					IProperties customizer = new DefaultProperties();
+					customizer.SetProperty("Template", item.Template);
+					customizer.SetProperty("Creator",  this);
+					WizardDialog wizard = new WizardDialog("Project Wizard", customizer, item.Template.WizardPath);
+					if (wizard.ShowDialog() == DialogResult.OK) {
+						DialogResult = DialogResult.OK;
 					}
-					if (openCombine) {
-						item.Template.OpenCreatedCombine();
-					}
-					
-					// TODO :: THIS DOESN'T WORK !!!
-					NewProjectLocation = Path.ChangeExtension(NewCombineLocation, ".prjx");
-					
-					DialogResult = DialogResult.OK;
-					/*
-					if (item.Template.LanguageName != null && item.Template.LanguageName.Length > 0)  {
-						
-					}
-					
-					if (item.Template.WizardPath != null) {
-						IProperties customizer = new DefaultProperties();
-						customizer.SetProperty("Template", item.Template);
-						customizer.SetProperty("Creator",  this);
-						WizardDialog wizard = new WizardDialog("Project Wizard", customizer, item.Template.WizardPath);
-						if (wizard.ShowDialog() == DialogResult.OK) {
-							DialogResult = DialogResult.OK;
-						}
-					}
-					
-					NewCombineLocation = fileUtilityService.GetDirectoryNameWithSeparator(ProjectLocation) + ((TextBox)ControlDictionary["nameTextBox"]).Text + ".cmbx";
-					
-					if (File.Exists(NewCombineLocation)) {
-						DialogResult result = MessageBox.Show("Combine file " + NewCombineLocation + " already exists, do you want to overwrite\nthe existing file ?", "File already exists", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
-						switch(result) {
-							case DialogResult.Yes:
-								cmb.SaveCombine(NewCombineLocation);
-								break;
-							case DialogResult.No:
-								break;
-						}
-					} else {
-						cmb.SaveCombine(NewCombineLocation);
+				}
+				
+				NewCombineLocation = fileUtilityService.GetDirectoryNameWithSeparator(ProjectLocation) + ((TextBox)ControlDictionary["nameTextBox"]).Text + ".cmbx";
+				
+				if (File.Exists(NewCombineLocation)) {
+					DialogResult result = MessageBox.Show("Combine file " + NewCombineLocation + " already exists, do you want to overwrite\nthe existing file ?", "File already exists", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2);
+					switch(result) {
+						case DialogResult.Yes:
+							cmb.SaveCombine(NewCombineLocation);
+							break;
+						case DialogResult.No:
+							break;
 					}
 				} else {
-					MessageBox.Show(resourceService.GetString("Dialog.NewProject.EmptyProjectFieldWarning"), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					cmb.SaveCombine(NewCombineLocation);
 				}
-					*/
+			} else {
+				MessageBox.Show(resourceService.GetString("Dialog.NewProject.EmptyProjectFieldWarning"), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			}
+				*/
 			}
 		}
 		

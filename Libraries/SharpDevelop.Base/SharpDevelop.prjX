@@ -384,9 +384,18 @@
     <File name=".\Services\ParserService\Position.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Dialogs\OptionPanels\IDEOptions\TaskListOptions.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Internal\Conditions\ActiveContentExtension.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\ContentInterfaces\IViewContentMemento.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\ChooseConfigurationCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Internal\Project\Project\Collections\ConfigurationCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Components\SdMenuComboBox.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Internal\Codons\Toolbars\AbstractComboBoxCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Internal\Codons\Toolbars\IComboBoxCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Services\Project\ConfigurationEventHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Workbench\ViewContentEventHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Services\Debugger\IDebugger.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Services\Debugger\DefaultDebugger.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
-    <Reference type="Project" refto="Core" localcopy="False" />
     <Reference type="Assembly" refto="..\..\..\bin\ICSharpCode.XmlForms.dll" localcopy="False" />
     <Reference type="Assembly" refto="..\..\..\bin\ICSharpCode.SharpRefactory.dll" localcopy="False" />
     <Reference type="Assembly" refto="..\..\..\bin\ICSharpCode.SharpRefactoryVB.dll" localcopy="False" />
@@ -395,23 +404,24 @@
     <Reference type="Assembly" refto="..\..\..\bin\Interop.SHDocVw.dll" localcopy="True" />
     <Reference type="Assembly" refto="..\..\..\bin\ICSharpCode.SharpAssembly.dll" localcopy="True" />
     <Reference type="Assembly" refto="..\..\..\bin\ICSharpCode.SharpZipLib.dll" localcopy="True" />
+    <Reference type="Assembly" refto="..\..\..\bin\ICSharpCode.Core.dll" localcopy="True" />
   </References>
   <DeploymentInformation target="" script="" strategy="Script" />
-  <Configuration runwithwarnings="False" name="Debug">
-    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+  <Configuration runwithwarnings="True" name="Debug">
+    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
     <Execution commandlineparameters="" consolepause="True" />
-    <Output directory="..\..\..\bin" assembly="SharpDevelop.Base" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+    <Output directory="..\..\..\bin" assembly="SharpDevelop.Base" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
   </Configuration>
   <Configurations active="Debug">
-    <Configuration runwithwarnings="False" name="Debug">
-      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <Configuration runwithwarnings="True" name="Debug">
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\..\..\bin" assembly="SharpDevelop.Base" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory="..\..\..\bin" assembly="SharpDevelop.Base" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
-    <Configuration runwithwarnings="False" name="Release">
-      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="False" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <Configuration runwithwarnings="True" name="Release">
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="False" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\..\..\bin" assembly="SharpDevelop.Base" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory="..\..\..\bin" assembly="SharpDevelop.Base" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
   </Configurations>
 </Project>

@@ -29,6 +29,7 @@
 				<File name="UserControl1.cs"><![CDATA[${StandardHeader.C#}
 using System;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace DefaultNamespace
 {

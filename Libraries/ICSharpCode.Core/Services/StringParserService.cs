@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -56,10 +56,15 @@ namespace ICSharpCode.Core.Services
 		
 		public void RegisterStringTagProvider(IStringTagProvider tagProvider)
 		{
+			if (stringTagProviders != null) {
+				stringTagProviders.Clear();
+			}
 			foreach (string str in tagProvider.Tags) {
 				stringTagProviders[str.ToUpper()] = tagProvider;
 			}
 		}
+		
+		readonly static Regex pattern = new Regex(@"\$\{([^\}]*)\}");
 			
 		/// <summary>
 		/// Expands ${xyz} style property values.
@@ -68,8 +73,7 @@ namespace ICSharpCode.Core.Services
 		{
 			string output = input;
 			if (input != null) {
-				const string pattern = @"\$\{([^\}]*)\}";
-				foreach (Match m in Regex.Matches(input, pattern)) {
+				foreach (Match m in pattern.Matches(input)) {
 					if (m.Length > 0) {
 						string token         = m.ToString();
 						string propertyName  = m.Groups[1].Captures[0].Value;
@@ -135,6 +139,7 @@ namespace ICSharpCode.Core.Services
 					}
 				}
 			}
+			
 			return output;
 		}
 	}

@@ -81,7 +81,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		/// <summary>
 		/// Gets the arraylist which contains all project configurations.
 		/// </summary>
-		ArrayList Configurations {
+		ConfigurationCollection Configurations {
 			get;
 		}
 		

@@ -230,5 +230,69 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			PrintSpecials(token.kind);
 			text.Append(identifier);
 		}
+		
+		Stack braceStack = new Stack();
+		
+		public void BeginBrace(BraceStyle style)
+		{
+			switch (style) {
+				case BraceStyle.EndOfLine:
+					text.Append(" ");
+					PrintToken(Tokens.OpenCurlyBrace);
+					NewLine();
+					++IndentationLevel;
+					break;
+				case BraceStyle.NextLine:
+					NewLine();
+					Indent();
+					PrintToken(Tokens.OpenCurlyBrace);
+					NewLine();
+					++IndentationLevel;
+					break;
+				case BraceStyle.NextLineShifted:
+					NewLine();
+					++IndentationLevel;
+					Indent();
+					PrintToken(Tokens.OpenCurlyBrace);
+					NewLine();
+					break;
+				case BraceStyle.NextLineShifted2:
+					NewLine();
+					++IndentationLevel;
+					Indent();
+					PrintToken(Tokens.OpenCurlyBrace);
+					NewLine();
+					++IndentationLevel;
+					break;
+			}
+			braceStack.Push(style);
+		}
+		
+		public void EndBrace()
+		{
+			BraceStyle style = (BraceStyle)braceStack.Pop();
+			switch (style) {
+				case BraceStyle.EndOfLine:
+				case BraceStyle.NextLine:
+					--IndentationLevel;
+					Indent();
+					PrintToken(Tokens.CloseCurlyBrace);
+					NewLine();
+					break;
+				case BraceStyle.NextLineShifted:
+					Indent();
+					PrintToken(Tokens.CloseCurlyBrace);
+					NewLine();
+					--IndentationLevel;
+					break;
+				case BraceStyle.NextLineShifted2:
+					--IndentationLevel;
+					Indent();
+					PrintToken(Tokens.CloseCurlyBrace);
+					NewLine();
+					--IndentationLevel;
+					break;
+			}
+		}
 	}
 }

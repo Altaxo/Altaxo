@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krueger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -12,6 +12,7 @@ using System.Collections;
 using System.Collections.Utility;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -19,6 +20,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
 using System.Xml;
+using System.Text;
 
 using ICSharpCode.Core.Properties;
 using ICSharpCode.Core.Services;
@@ -44,11 +46,6 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		ParseInformation addedParseInformation = new ParseInformation();
 		ParseInformation removedParseInformation = new ParseInformation();
-
-//// Alex: this one keeps requests for parsing and is used to start parser (pulsed)
-//// otherwise continuous reparsing of files is causing leaks
-//		public static Queue ParserPulse=new Queue();	// required for monitoring when to restart thread
-//// Alex: end of mod
 
 		/// <remarks>
 		/// The keys are the assemblies loaded. This hash table ensures that no
@@ -257,6 +254,7 @@ namespace ICSharpCode.SharpDevelop.Services
 					AssemblyLoader assemblyLoader = new AssemblyLoader(this, fileName);
 					assemblyLoader.NonLocking = reference.ReferenceType != ReferenceType.Gac;
 					Thread t = new Thread(new ThreadStart(assemblyLoader.LoadAssemblyParseInformations));
+					t.IsBackground = true;
 					t.Start();
 				}
 			}
@@ -277,7 +275,6 @@ namespace ICSharpCode.SharpDevelop.Services
 				}
 			}
 			
-			
 			public AssemblyLoader(DefaultParserService parserService, string assemblyFileName)
 			{
 				this.parserService    = parserService;
@@ -290,9 +287,14 @@ namespace ICSharpCode.SharpDevelop.Services
 					return;
 				}
 				parserService.loadedAssemblies[assemblyFileName] = true;
+				//Console.WriteLine("Before: " + Environment.WorkingSet / (1024 * 1024) + " -- " + assemblyFileName);
 				try {
 					AssemblyInformation assemblyInformation = new AssemblyInformation();
 					assemblyInformation.Load(assemblyFileName, nonLocking);
+					
+					parserService.classes.Clear();
+					parserService.caseInsensitiveClasses.Clear();
+					
 					foreach (IClass newClass in assemblyInformation.Classes) {
 						parserService.AddClassToNamespaceList(newClass);
 						lock (parserService.classes) {
@@ -301,6 +303,7 @@ namespace ICSharpCode.SharpDevelop.Services
 					}
 				} catch (Exception) {
 				}
+				//Console.WriteLine("After: " + Environment.WorkingSet / (1024 * 1024) + " -- " + assemblyFileName);
 			}
 		}
 		
@@ -343,7 +346,7 @@ namespace ICSharpCode.SharpDevelop.Services
       _activeModalContent = null; 
     }
 #endif
-		
+
 		public override void UnloadService()
 		{
 			doneParserThread = true;
@@ -384,9 +387,13 @@ namespace ICSharpCode.SharpDevelop.Services
               string fileName = null;
 							
               IParseableContent parseableContent = _activeModalContent as IParseableContent;
+
+			  //ivoko: Pls, do not throw text = parseableContent.ParseableText away. I NEED it.
+			  string text = null;
               if (parseableContent != null) 
               {
                 fileName = parseableContent.ParseableContentName;
+				text = parseableContent.ParseableText;
               } 
               else if(_activeModalContent is ICSharpCode.SharpDevelop.Gui.IViewContent)
               {
@@ -396,14 +403,21 @@ namespace ICSharpCode.SharpDevelop.Services
               {
                 Thread.Sleep(300);
                 IParseInformation parseInformation = null;
-                lock (parsings) 
-                {
-                  parseInformation = ParseFile(fileName, editable.Text);
+ 				bool updated = false;
+				if (text == null) {
+					text = editable.Text;
+					}
+				int hash = text.GetHashCode();
+				if (lastUpdateSize[fileName] == null || (int)lastUpdateSize[fileName] != hash) {
+                parseInformation = ParseFile(fileName, editable.Text);
+				lastUpdateSize[fileName] = hash;
+				updated = true;
                 }
-                if (parseInformation != null && editable is IParseInformationListener) 
-                {
-                  ((IParseInformationListener)editable).ParseInformationUpdated(parseInformation);
-                }
+								if (updated) {
+									if (parseInformation != null && editable is IParseInformationListener) {
+										((IParseInformationListener)editable).ParseInformationUpdated(parseInformation);
+									}
+								}
               }
             }
 
@@ -418,8 +432,11 @@ namespace ICSharpCode.SharpDevelop.Services
 							IViewContent viewContent = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent;
 							IParseableContent parseableContent = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent as IParseableContent;
 							
+							//ivoko: Pls, do not throw text = parseableContent.ParseableText away. I NEED it.
+							string text = null;
 							if (parseableContent != null) {
 								fileName = parseableContent.ParseableContentName;
+								text = parseableContent.ParseableText;
 							} else {
 								fileName = viewContent.IsUntitled ? viewContent.UntitledName : viewContent.FileName;
 							}
@@ -428,14 +445,14 @@ namespace ICSharpCode.SharpDevelop.Services
 //								Thread.Sleep(300); // not required 
 								IParseInformation parseInformation = null;
 								bool updated = false;
-								lock (parsings) {
-									string text = editable.Text;
-									
-									if (lastUpdateSize[fileName] == null || (int)lastUpdateSize[fileName] != text.GetHashCode()) {
-										parseInformation = ParseFile(fileName, text, !viewContent.IsUntitled);
-										lastUpdateSize[fileName] = text.GetHashCode();
-										updated = true;
-									} 
+								if (text == null) {
+									text = editable.Text;
+								}
+								int hash = text.GetHashCode();
+								if (lastUpdateSize[fileName] == null || (int)lastUpdateSize[fileName] != hash) {
+									parseInformation = ParseFile(fileName, text, !viewContent.IsUntitled);
+									lastUpdateSize[fileName] = hash;
+									updated = true;
 								}
 								if (updated) {
 									if (parseInformation != null && editable is IParseInformationListener) {
@@ -480,9 +497,16 @@ namespace ICSharpCode.SharpDevelop.Services
 						}
 					}
 					cur = (Hashtable)cur[path[i]];
+					
+					if (caseInsensitiveCur[path[i].ToLower()] == null) {
+					    caseInsensitiveCur[path[i].ToLower()] = new Hashtable();
+					}
 					caseInsensitiveCur = (Hashtable)caseInsensitiveCur[path[i].ToLower()];
 				}
-				caseInsensitiveCur[addClass.Name.ToLower()] = cur[addClass.Name] = addClass;
+				
+				string name = addClass.Name == null ? "" : addClass.Name;
+				
+				caseInsensitiveCur[name.ToLower()] = cur[name] = addClass;
 				return cur;
 			}
 		}
@@ -505,15 +529,18 @@ namespace ICSharpCode.SharpDevelop.Services
 			
 			// try to load the class from our data file
 			int idx = classProxies.IndexOf(typeName, caseSensitive);
-			if (idx > 0) {
-				BinaryReader reader = new BinaryReader(new BufferedStream(new FileStream(codeCompletionMainFile, FileMode.Open, FileAccess.Read, FileShare.Read)));
-				reader.BaseStream.Seek(classProxies[idx].Offset, SeekOrigin.Begin);
-				IClass c = new PersistentClass(reader, classProxies);
-				reader.Close();
-				lock (classes) {
-					caseInsensitiveClasses[typeName.ToLower()] = classes[typeName] = new ClasstableEntry(null, null, c);
+			if (idx >= 0) {
+				if ((classes[typeName]==null || (((ClasstableEntry)classes[typeName]).Class.FullyQualifiedName!=((ClassProxy)classProxies[idx]).FullyQualifiedName)) ||
+				    (caseInsensitiveClasses[typeName.ToLower()]==null || (((ClasstableEntry)caseInsensitiveClasses[typeName.ToLower()]).Class.FullyQualifiedName!=((ClassProxy)classProxies[idx]).FullyQualifiedName))) {
+					BinaryReader reader = new BinaryReader(new BufferedStream(new FileStream(codeCompletionMainFile, FileMode.Open, FileAccess.Read, FileShare.Read)));
+					reader.BaseStream.Seek(classProxies[idx].Offset, SeekOrigin.Begin);
+					IClass c = new PersistentClass(reader, classProxies);
+					reader.Close();
+					lock (classes) {
+						caseInsensitiveClasses[typeName.ToLower()] = classes[typeName] = new ClasstableEntry(null, null, c);
+					}
+					return c;
 				}
-				return c;
 			}
 			
 			// not found -> maybe nested type -> trying to find class that contains this one.
@@ -530,7 +557,6 @@ namespace ICSharpCode.SharpDevelop.Services
 					}
 				}
 			}
-			
 			return null;
 		}
 		
@@ -594,6 +620,12 @@ namespace ICSharpCode.SharpDevelop.Services
 			
 			for (int i = 0; i < path.Length; ++i) {
 				if (!(cur[path[i]] is Hashtable)) {
+					foreach (DictionaryEntry entry in cur)  {
+						if (entry.Value is Hashtable) {
+							namespaceList.Add(entry.Key);
+						}
+					}
+					
 					return namespaceList;
 				}
 				cur = (Hashtable)cur[path[i]];
@@ -603,7 +635,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				cur = (Hashtable)cur[CaseInsensitiveKey];
 			}
 			
-			foreach (DictionaryEntry entry in cur)  {
+			foreach (DictionaryEntry entry in cur) {
 				if (entry.Value is Hashtable) {
 					namespaceList.Add(entry.Key);
 				} else {
@@ -683,7 +715,9 @@ namespace ICSharpCode.SharpDevelop.Services
 					if (c != null && c.Region != null && c.Region.IsInside(caretLine, caretColumn)) {
 						if (c != GetInnermostClass(cu, caretLine, caretColumn)) {
 							GetOuterClasses(classes, c, cu, caretLine, caretColumn);
-							classes.Add(c);
+							if (!classes.Contains(c)) {
+								classes.Add(c);
+							}
 						}
 						break;
 					}
@@ -699,7 +733,9 @@ namespace ICSharpCode.SharpDevelop.Services
 					if (c != null && c.Region != null && c.Region.IsInside(caretLine, caretColumn)) {
 						if (c != GetInnermostClass(cu, caretLine, caretColumn)) {
 							GetOuterClasses(classes, c, cu, caretLine, caretColumn);
-							classes.Add(c);	
+							if (!classes.Contains(c)) {
+								classes.Add(c);
+							}
 						}
 						break;
 					}
@@ -755,6 +791,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		{
 			return SearchType(name, curType, unit, caretLine, caretColumn, true);
 		}
+		
 		/// <remarks>
 		/// use the usings and the name of the namespace to find a class
 		/// </remarks>
@@ -790,17 +827,48 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 			string fullname = curType.FullyQualifiedName;
 //			Console.WriteLine("Fullname of class is: " + fullname);
-			string[] namespaces = fullname.Split(new char[] {'.'});
-			string curnamespace = "";
+//// Alex - remove unnecessary new object allocation
+			//string[] namespaces = fullname.Split(new char[] {'.'});
+			string[] namespaces = fullname.Split('.');
+//// Alex - change to stringbuilder version to remove unnecessary allocations
+			//string curnamespace = "";
+			StringBuilder curnamespace = new StringBuilder();
 			for (int i = 0; i < namespaces.Length; ++i) {
-				curnamespace += namespaces[i] + '.';
+				//curnamespace += namespaces[i] + '.';
+				curnamespace.Append(namespaces[i]);
+				curnamespace.Append('.');
 //				Console.WriteLine(curnamespace);
-				c = GetClass(curnamespace + name, caseSensitive);
+				//c = GetClass(curnamespace + name, caseSensitive);
+				StringBuilder nms=new StringBuilder(curnamespace.ToString());
+				nms.Append(name);
+				c = GetClass(nms.ToString(), caseSensitive);
 				if (c != null) {
 //					Console.WriteLine("found in Namespace " + curnamespace + name);
 					return c;
 				}
 			}
+//// Alex: try to find in namespaces referenced excluding system ones which were checked already
+			string[] innamespaces=GetNamespaceList("");
+			foreach (string ns in innamespaces) {
+				if (Array.IndexOf(DefaultParserService.assemblyList,ns)>=0) continue;
+				ArrayList objs=GetNamespaceContents(ns);
+				if (objs==null) continue;
+				foreach (object o in objs) {
+					if (o is IClass) {
+						IClass oc=(IClass)o;
+						if (oc.Name==name || oc.FullyQualifiedName==name) {
+							//Debug.WriteLine(((IClass)o).Name);
+							/// now we can set completion data
+							objs.Clear();
+							objs=null;
+							return oc;
+						}
+					}
+				}
+				if (objs==null) break;
+			}
+			innamespaces=null;
+//// Alex: end of mod
 			return null;
 		}
 		
@@ -853,6 +921,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public bool IsAccessible(IClass c, IDecoration member, IClass callingClass, bool isClassInInheritanceTree)
 		{
+//			Console.WriteLine("testing Accessibility");
 			if ((member.Modifiers & ModifierEnum.Internal) == ModifierEnum.Internal) {
 				return true;
 			}
@@ -867,16 +936,34 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public bool MustBeShown(IClass c, IDecoration member, IClass callingClass, bool showStatic, bool isClassInInheritanceTree)
 		{
-//			Console.WriteLine("MustBeShown, Class: " + c == null ? "null": c.FullyQualifiedName);
+//			Console.WriteLine("MustBeShown, Class: " + (c == null ? "null": c.FullyQualifiedName));
 			if (c != null && c.ClassType == ClassType.Enum) {
 				return true;
 			}
 //			Console.WriteLine("showStatic = " + showStatic);
+//			Console.WriteLine(member.Modifiers);
 			if ((!showStatic &&  ((member.Modifiers & ModifierEnum.Static) == ModifierEnum.Static)) ||
-			    ( showStatic && !((member.Modifiers & ModifierEnum.Static) == ModifierEnum.Static))) {
+			    ( showStatic && !(((member.Modifiers & ModifierEnum.Static) == ModifierEnum.Static) ||
+			                      ((member.Modifiers & ModifierEnum.Const)  == ModifierEnum.Const)))) { // const is automatically static
 				return false;
 			}
 			return IsAccessible(c, member, callingClass, isClassInInheritanceTree);
+		}
+		
+		public ArrayList ListTypes(ArrayList types, IClass curType, IClass callingClass)
+		{
+			bool isClassInInheritanceTree = IsClassInInheritanceTree(curType, callingClass);
+			foreach (IClass c in curType.InnerClasses) {
+				if (((c.ClassType == ClassType.Class) || (c.ClassType == ClassType.Struct)) &&
+				      IsAccessible(curType, c, callingClass, isClassInInheritanceTree)) {
+					types.Add(c);
+				}
+			}
+			IClass baseClass = BaseClass(curType);
+			if (baseClass != null) {
+				ListTypes(types, baseClass, callingClass);
+			}
+			return types;
 		}
 		
 		public ArrayList ListMembers(ArrayList members, IClass curType, IClass callingClass, bool showStatic)
@@ -928,6 +1015,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			foreach (IField f in curType.Fields) {
 //				Console.WriteLine("testing field " + f.Name);
 				if (MustBeShown(curType, f, callingClass, showStatic, isClassInInheritanceTree)) {
+//					Console.WriteLine("field added");
 					members.Add(f);
 				}
 			}
@@ -1028,11 +1116,9 @@ namespace ICSharpCode.SharpDevelop.Services
 				}
 				++i;
 			}
-			
-			if (i == name.Length) {
+			if (i >= name.Length) {
 				return new Position(cu, curClass.Region != null ? curClass.Region.BeginLine : -1, curClass.Region != null ? curClass.Region.BeginColumn : -1);
 			}
-			Debug.Assert(i == name.Length - 1);
 			IMember member = SearchMember(curClass, name[i]);
 			if (member == null || member.Region == null) {
 				return new Position(cu, -1, -1);
@@ -1070,6 +1156,7 @@ namespace ICSharpCode.SharpDevelop.Services
 					foreach (ProjectCombineEntry entry in projects) {
 						if (entry.Project.IsFileInProject(fileName)) {
 							fileContent = entry.Project.GetParseableFileContent(fileName);
+							break;
 						}
 					}
 				}
@@ -1179,6 +1266,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 			return null;
 		}
+		
 		public virtual IParser GetParser(string fileName)
 		{
 			IParser curParser = null;
@@ -1244,7 +1332,9 @@ namespace ICSharpCode.SharpDevelop.Services
 			// added exception handling here to prevent silly parser exceptions from
 			// being thrown and corrupting the textarea control
 			//try {
+				Console.WriteLine("Get parser for : " + fileName);
 				IParser parser = GetParser(fileName);
+				Console.WriteLine(parser);
 				if (parser != null) {
 					return parser.Resolve(this, expression, caretLineNumber, caretColumn, fileName, fileContent);
 				}

@@ -95,7 +95,7 @@ namespace SharpDevelop.Internal.Parser
 			
 			ParameterInfo[] p = propertyInfo.GetIndexParameters();
 			foreach (ParameterInfo parameterInfo in p) {
-				parameters.Add(new ReflectionParameter(parameterInfo, node));
+				Parameters.Add(new ReflectionParameter(parameterInfo, node));
 			}
 		}
 	}

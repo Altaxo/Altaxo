@@ -1,23 +1,31 @@
-<Project fileversion="1.0" name="minibzip2" projecttype="VBNET" description="erzeugt eine leere Forms Anwendung in VB.NET" newfilesearch="None" enableviewstate="True" projectdocumentation="">
-  <DeploymentInformation target="" script="" strategy="File" />
-  <References>
-    <Reference gac="System.Windows.Forms, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <Reference gac="System, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  </References>
+<Project name="minibzip2" standardNamespace="NewProject" description="erzeugt eine leere Forms Anwendung in VB.NET" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="VBNET">
   <Contents>
-    <File name=".\Main.vb" subtype="Code" buildaction="Compile" />
-    <File name=".\AssemblyInfo.vb" subtype="Code" buildaction="Compile" />
+    <File name=".\Main.vb" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\AssemblyInfo.vb" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Form1.resources" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
   </Contents>
+  <References>
+    <Reference type="Assembly" refto="..\..\..\bin\ICSharpCode.SharpZipLib.dll" localcopy="True" />
+  </References>
+  <DeploymentInformation target="" script="" strategy="File" />
+  <Configuration runwithwarnings="False" name="Debug">
+    <CodeGeneration includedebuginformation="True" optimize="True" generateoverflowchecks="True" rootnamespace="" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" imports="" />
+    <VBDOC outputfile="" enablevbdoc="False" filestoparse="" commentprefix="" />
+    <Execution consolepause="True" commandlineparameters="" />
+    <Output directory=".\bin" assembly="createzipfile" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
+  </Configuration>
   <Configurations active="Debug">
-    <Configuration name="Debug" description="">
-      <Output directory=".\bin" assembly="createzipfile" />
-      <CodeGeneration includedebuginformation="True" optimize="True" mainclass="" win32Icon="" target="Exe" definesymbols="" />
-      <Execution consolepause="True" runwithwarnings="False" />
+    <Configuration runwithwarnings="False" name="Debug">
+      <CodeGeneration includedebuginformation="True" optimize="True" generateoverflowchecks="True" rootnamespace="" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" imports="" />
+      <VBDOC outputfile="" enablevbdoc="False" filestoparse="" commentprefix="" />
+      <Execution consolepause="True" commandlineparameters="" />
+      <Output directory=".\bin" assembly="createzipfile" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
-    <Configuration name="Release" description="">
-      <Output directory=".\" assembly="sdffds" />
-      <CodeGeneration includedebuginformation="True" optimize="True" mainclass="" win32Icon="" target="Exe" definesymbols="" />
-      <Execution consolepause="True" runwithwarnings="False" />
+    <Configuration runwithwarnings="False" name="Release">
+      <CodeGeneration includedebuginformation="True" optimize="True" generateoverflowchecks="True" rootnamespace="" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" imports="" />
+      <VBDOC outputfile="" enablevbdoc="False" filestoparse="" commentprefix="" />
+      <Execution consolepause="True" commandlineparameters="" />
+      <Output directory=".\" assembly="sdffds" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
   </Configurations>
 </Project>

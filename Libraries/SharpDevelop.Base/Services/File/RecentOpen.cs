@@ -90,7 +90,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		public void AddLastFile(string name)
 		{
 			for (int i = 0; i < lastfile.Count; ++i) {
-				if (lastfile[i].ToString() == name) {
+				if (lastfile[i].ToString().ToLower() == name.ToLower()) {
 					lastfile.RemoveAt(i);
 				}
 			}
@@ -125,7 +125,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		public void AddLastProject(string name)
 		{
 			for (int i = 0; i < lastproject.Count; ++i) {
-				if (lastproject[i].ToString() == name) {
+				if (lastproject[i].ToString().ToLower() == name.ToLower()) {
 					lastproject.RemoveAt(i);
 				}
 			}

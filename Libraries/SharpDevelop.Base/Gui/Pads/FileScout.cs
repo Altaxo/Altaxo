@@ -378,7 +378,11 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			Items.Clear();
 		
 			try {
-				files = Directory.GetFiles(path);
+				if (Directory.Exists(path)) {
+					files = Directory.GetFiles(path);
+				} else {
+					return;
+				}
 			} catch (Exception) {
 				return;
 			}
@@ -708,13 +712,13 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			if (curNode.Nodes.Count == 1 && curNode.Nodes[0].Text.Equals("")) {
 				
 				string[] directories = null;
+				curNode.Nodes.Clear();
 				try {
 					directories  = Directory.GetDirectories(curNode.Tag.ToString() + Path.DirectorySeparatorChar);
 				} catch (Exception) {
 					return;
 				}
 				
-				curNode.Nodes.Clear();
 				
 				foreach (string fulldir in directories) {
 					try {

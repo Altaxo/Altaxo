@@ -33,15 +33,16 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels
 			}
 			((ComboBox)ControlDictionary["headerChooser"]).SelectedIndexChanged += new EventHandler(SelectedIndexChanged);
 			((ComboBox)ControlDictionary["headerChooser"]).SelectedIndex = 0;
-			((RichTextBox)ControlDictionary["headerTextBox"]).TextChanged += new EventHandler(TextChangedEvent);
+			((TextBox)ControlDictionary["headerTextBox"]).TextChanged += new EventHandler(TextChangedEvent);
 		}
+		
 		void TextChangedEvent(object sender , EventArgs e)
 		{
 			((StandardHeader)((ComboBox)ControlDictionary["headerChooser"]).SelectedItem).Header = ControlDictionary["headerTextBox"].Text;
 		}
 		void SelectedIndexChanged(object sender , EventArgs e)
 		{
-			((RichTextBox)ControlDictionary["headerTextBox"]).TextChanged -= new EventHandler(TextChangedEvent);
+			((TextBox)ControlDictionary["headerTextBox"]).TextChanged -= new EventHandler(TextChangedEvent);
 			int idx =((ComboBox)ControlDictionary["headerChooser"]).SelectedIndex;
 			if (idx >= 0) {
 				ControlDictionary["headerTextBox"].Text = ((StandardHeader)((ComboBox)ControlDictionary["headerChooser"]).SelectedItem).Header;
@@ -50,7 +51,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels
 				ControlDictionary["headerTextBox"].Text = "";
 				ControlDictionary["headerTextBox"].Enabled = false;
 			}
-			((RichTextBox)ControlDictionary["headerTextBox"]).TextChanged += new EventHandler(TextChangedEvent);
+			((TextBox)ControlDictionary["headerTextBox"]).TextChanged += new EventHandler(TextChangedEvent);
 		}
 		
 		public override bool StorePanelContents()

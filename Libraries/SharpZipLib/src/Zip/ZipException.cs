@@ -1,4 +1,5 @@
 // ZipException.cs
+//
 // Copyright (C) 2001 Mike Krueger
 //
 // This file was translated from java, it was part of the GNU Classpath
@@ -41,12 +42,12 @@ namespace ICSharpCode.SharpZipLib
 {
 	
 	/// <summary>
-	/// Is thrown during the creation or input of a zip file.
+	/// Represents errors specific to Zip file handling
 	/// </summary>
-	public class ZipException : Exception
+	public class ZipException : SharpZipBaseException
 	{
 		/// <summary>
-		/// Initializes a new instance of the ZipException class with default properties.
+		/// Initializes a new instance of the ZipException class.
 		/// </summary>
 		public ZipException()
 		{

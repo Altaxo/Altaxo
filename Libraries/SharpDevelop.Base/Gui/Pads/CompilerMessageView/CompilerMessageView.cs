@@ -18,7 +18,6 @@ using ICSharpCode.SharpDevelop.Services;
 
 using ICSharpCode.Core.Properties;
 using ICSharpCode.Core.Services;
-using ICSharpCode.Debugger;
 
 namespace ICSharpCode.SharpDevelop.Gui.Pads
 {

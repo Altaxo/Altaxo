@@ -35,7 +35,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		public StatusPanel(WizardDialog wizard)
 		{
 			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
-			smallFont  = resourceService.LoadFont("SansSerif",  14, GraphicsUnit.World);
+			smallFont  = resourceService.LoadFont("Tahoma",  14, GraphicsUnit.World);
 			normalFont = resourceService.LoadFont("Tahoma", 14, GraphicsUnit.World);
 			boldFont   = resourceService.LoadFont("Tahoma", 14, FontStyle.Bold, GraphicsUnit.World);
 			

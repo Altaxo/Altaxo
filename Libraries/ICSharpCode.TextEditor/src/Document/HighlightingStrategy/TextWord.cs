@@ -11,7 +11,6 @@ using System.Diagnostics;
 
 namespace ICSharpCode.TextEditor.Document
 {
-	
 	public enum TextWordType {
 		Word,
 		Space,
@@ -25,15 +24,51 @@ namespace ICSharpCode.TextEditor.Document
 	public class TextWord
 	{
 		HighlightColor  color;
-		LineSegment     word;
+		LineSegment     line;
 		IDocument       document;
 		
 		int          offset;
 		int          length;
-		TextWordType type;
 		
-		static TextWord spaceWord = new TextWord(TextWordType.Space);
-		static TextWord tabWord   = new TextWord(TextWordType.Tab);
+		class SpaceTextWord : TextWord
+		{
+			public SpaceTextWord()
+			{
+				length = 1;
+			}
+			public override TextWordType Type {
+				get {
+					return TextWordType.Space;
+				}
+			}
+			public override bool IsWhiteSpace {
+				get {
+					return true;
+				}
+			}
+		}
+		
+		class TabTextWord : TextWord
+		{
+			public TabTextWord()
+			{
+				length = 1;
+			}
+			
+			public override TextWordType Type {
+				get {
+					return TextWordType.Tab;
+				}
+			}
+			public override bool IsWhiteSpace {
+				get {
+					return true;
+				}
+			}
+		}
+		
+		static TextWord spaceWord = new SpaceTextWord();
+		static TextWord tabWord   = new TabTextWord();
 		
 		public bool hasDefaultColor;
 		
@@ -55,12 +90,9 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
-		public int  Length {
+		public int Length {
 			get {
-				if (type == TextWordType.Word) {
-					return length;
-				} 
-				return 1;
+				return length;
 			}
 		}
 		
@@ -70,23 +102,18 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
-		public TextWordType Type {
+		public virtual TextWordType Type {
 			get {
-				return type;
+				return TextWordType.Word;
 			}
 		}
 		
-//		string       myword = null;
 		public string Word {
 			get {
 				if (document == null) {
-					return "";
+					return String.Empty;
 				}
-				return document.GetText(word.Offset + offset, length);
-//				if (myword == null) {
-//					myword = document.GetText(word.Offset + offset, length);
-//				}
-//				return myword;
+				return document.GetText(line.Offset + offset, length);
 			}
 		}
 		
@@ -111,31 +138,29 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
-		public bool IsWhiteSpace {
+		public virtual bool IsWhiteSpace {
 			get {
-				return type == TextWordType.Space || type == TextWordType.Tab;
+				return false;
 			}
 		}
 		
-		// TAB
-		private TextWord(TextWordType type)
+		protected TextWord()
 		{
-			this.type = type;
 		}
 		
-		public TextWord(IDocument document, LineSegment word, int offset, int length, HighlightColor color, bool hasDefaultColor)
+		// TAB
+		public TextWord(IDocument document, LineSegment line, int offset, int length, HighlightColor color, bool hasDefaultColor)
 		{
 			Debug.Assert(document != null);
-			Debug.Assert(word != null);
+			Debug.Assert(line != null);
 			Debug.Assert(color != null);
 			
 			this.document = document;
-			this.word  = word;
+			this.line  = line;
 			this.offset = offset;
 			this.length = length;
 			this.color = color;
 			this.hasDefaultColor = hasDefaultColor;
-			this.type  = TextWordType.Word;
 		}
 		
 		/// <summary>

@@ -46,16 +46,22 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 		{
 			if (fileExtension == ".vb") {
 				editActionHandler.InsertString("Public Overrides Function ToString() As String");
+				Return();
 			} else {
 				editActionHandler.InsertString("public override string ToString()");
 			}
 			++numOps;
 			
-			Return();
 			if (fileExtension != ".vb") {
-				editActionHandler.InsertString("{");++numOps;
+				if (StartCodeBlockInSameLine) {
+					editActionHandler.InsertString(" {");++numOps;
+				} else {
+					Return();
+					editActionHandler.InsertString("{");++numOps;
+				}
 			}
 			Return();
+			Indent();
 			if (fileExtension == ".vb") {
 				editActionHandler.InsertString("Return String.Format(\"[");
 			} else {

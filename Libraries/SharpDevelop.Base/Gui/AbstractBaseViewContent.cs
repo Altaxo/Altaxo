@@ -33,9 +33,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 				return "Abstract Content";
 			}
 		}
+		
+		public virtual void SwitchedTo()
+		{
+		}
+		
 		public virtual void Selected()
 		{
 		}
+		
 		public virtual void Deselected()
 		{
 		}

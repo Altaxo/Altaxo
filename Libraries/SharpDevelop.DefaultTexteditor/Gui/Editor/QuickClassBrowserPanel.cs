@@ -20,12 +20,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		SharpDevelopTextAreaControl textAreaControl;
 		bool                        autoselect = true;
 		
-		class ComboBoxItem
+		class ComboBoxItem : System.IComparable
 		{
 			object item;
 			string text;
 			int    iconIndex;
 			static AmbienceService ambienceService = (AmbienceService)ServiceManager.Services.GetService(typeof(AmbienceService));
+			
+			
 			
 			public int IconIndex {
 				get {
@@ -44,7 +46,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					if (item is IClass) {
 						return ((IClass)item).Region.BeginLine - 1;
 					}
-					return (item as IMember).Region.BeginLine - 1;
+					
+					// also exception on delegate invoke
+					try {
+						return (item as IMember).Region.BeginLine - 1;
+					}
+					catch {
+						return 0;
+					}
 				}
 			}
 			
@@ -53,7 +62,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					if (item is IClass) {
 						return ((IClass)item).Region.BeginColumn - 1;
 					}
-					return (item as IMember).Region.BeginColumn - 1;
+					
+					// causes exception when delegate is selected in class windows - Invoke is visible in methods and when selected causes exception
+					try {
+						return (item as IMember).Region.BeginColumn - 1;
+					}
+					catch {
+						return 0;
+					}
 				}
 			}
 			
@@ -102,7 +118,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				return isInside;
 			}
 			
-			public int CompareTo(object obj)
+			public int CompareItemTo(object obj)
 			{
 				ComboBoxItem boxItem = (ComboBoxItem)obj;
 				
@@ -139,6 +155,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				}
 				return text;
 			}
+			
+			#region System.IComparable interface implementation
+			public int CompareTo(object obj)
+			{
+				return ToString().CompareTo(obj.ToString());
+			}
+			#endregion
+			
 		}
 		
 		public QuickClassBrowserPanel(SharpDevelopTextAreaControl textAreaControl)
@@ -159,43 +183,58 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		void CaretPositionChanged(object sender, EventArgs e)
 		{
+			// ignore simple movements
+			if (e != EventArgs.Empty) {
+				return;
+			}
 			try {
 				IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
 				IParseInformation parseInfo = parserService.GetParseInformation(textAreaControl.FileName);
 				if (parseInfo != null) {
-					currentCompilationUnit = (ICompilationUnit)parseInfo.MostRecentCompilationUnit;
-					
-					if (currentCompilationUnit != null) {
-						FillClassComboBox(true);
-						FillMembersComboBox();
+					if (currentCompilationUnit != (ICompilationUnit)parseInfo.MostRecentCompilationUnit) {
+						currentCompilationUnit = (ICompilationUnit)parseInfo.MostRecentCompilationUnit;
+						if (currentCompilationUnit != null) {
+							
+							FillClassComboBox(true);
+							FillMembersComboBox();
+						}
 					}
 					UpdateClassComboBox();
 					UpdateMembersComboBox();
-					classComboBox.Refresh();
-					membersComboBox.Refresh();
 				}
 			} catch (Exception) {}
 		}
 		
+		bool membersComboBoxSelectedMember = false;
 		void UpdateMembersComboBox()
 		{
-			membersComboBox.BeginUpdate();
 			autoselect = false;
 			try {
 				if (currentCompilationUnit != null) {
 					for (int i = 0; i < membersComboBox.Items.Count; ++i) {
 						if (((ComboBoxItem)membersComboBox.Items[i]).IsInside(textAreaControl.ActiveTextAreaControl.Caret.Line)) {
-							membersComboBox.SelectedIndex = i;
+							if (membersComboBox.SelectedIndex != i) {
+								membersComboBox.SelectedIndex = i;
+								
+							}
+							if (!membersComboBoxSelectedMember) {
+								membersComboBox.Refresh();
+							}
+							membersComboBoxSelectedMember = true;
 							return;
 						}
 					}
 				}
+				if (membersComboBoxSelectedMember) {
+					membersComboBox.Refresh();
+					membersComboBoxSelectedMember = false;
+				}
 			} finally {
 				autoselect = true;
-				membersComboBox.EndUpdate();
 			}
 		}
 		
+		bool classComboBoxSelectedMember = false;
 		void UpdateClassComboBox()
 		{
 			// Still needed ?
@@ -206,13 +245,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				}
 			}
 			
-			classComboBox.BeginUpdate();
 			autoselect = false;
 			try {
 				if (currentCompilationUnit != null) {
 //// Alex: when changing between files in different compilation units whole process must be restarted
 //// happens usually when files are opened from different project(s)
-					if (classComboBox.Items==null || classComboBox.Items.Count==0) {
+					if (classComboBox.Items == null || classComboBox.Items.Count == 0) {
 						FillClassComboBox(false);
 					}
 					for (int i = 0; i < classComboBox.Items.Count; ++i) {
@@ -225,16 +263,25 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 								}
 							}
 							if (!innerClassContainsCaret) {
-								classComboBox.SelectedIndex = i;
-								FillMembersComboBox();
+								if (classComboBox.SelectedIndex != i) {
+									classComboBox.SelectedIndex = i;
+									FillMembersComboBox();
+								}
+								if (!classComboBoxSelectedMember) {
+									classComboBox.Refresh();
+								}
+								classComboBoxSelectedMember = true;
 								return;
 							}
 						}
 					}
 				}
+				if (classComboBoxSelectedMember) {
+					classComboBox.Refresh();
+					classComboBoxSelectedMember = false;
+				}
 			} finally {
 				autoselect = true;
-				classComboBox.EndUpdate();
 			}
 //				classComboBox.SelectedIndex = -1;
 		}
@@ -250,7 +297,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				if (oldItem.GetType() != newItem.GetType()) {
 					return true;
 				}
-				if (newItem.CompareTo(oldItem) != 0) {
+				if (newItem.CompareItemTo(oldItem) != 0) {
 					return true;
 				}
 			}
@@ -263,21 +310,38 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			if (c != null) {
 				ArrayList items = new ArrayList();
 				ClassBrowserIconsService classBrowserIconService = (ClassBrowserIconsService)ServiceManager.Services.GetService(typeof(ClassBrowserIconsService));
+				int lastIndex = 0;
+				IComparer comparer = new Comparer(System.Globalization.CultureInfo.InvariantCulture);
 				foreach (IMethod m in c.Methods) {
 					items.Add(new ComboBoxItem(m, m.Name, classBrowserIconService.GetIcon(m)));
 				}
+				items.Sort(lastIndex, c.Methods.Count, comparer);
+				lastIndex = items.Count;
+				
 				foreach (IProperty p in c.Properties) {
 					items.Add(new ComboBoxItem(p, p.Name, classBrowserIconService.GetIcon(p)));
 				}
+				items.Sort(lastIndex, c.Properties.Count, comparer);
+				lastIndex = items.Count;
+				
 				foreach (IIndexer indexer in c.Indexer) {
 					items.Add(new ComboBoxItem(indexer, indexer.Name, classBrowserIconService.GetIcon(indexer)));
 				}
+				items.Sort(lastIndex, c.Indexer.Count, comparer);
+				lastIndex = items.Count;
+				
 				foreach (IField f in c.Fields) {
 					items.Add(new ComboBoxItem(f, f.Name, classBrowserIconService.GetIcon(f)));
 				}
+				items.Sort(lastIndex, c.Fields.Count, comparer);
+				lastIndex = items.Count;
+				
 				foreach (IEvent evt in c.Events) {
 					items.Add(new ComboBoxItem(evt, evt.Name, classBrowserIconService.GetIcon(evt)));
 				}
+				items.Sort(lastIndex, c.Events.Count, comparer);
+				lastIndex = items.Count;
+				
 				if (NeedtoUpdate(items, membersComboBox)) {
 					membersComboBox.BeginUpdate();
 					membersComboBox.Items.Clear();
@@ -286,7 +350,9 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					UpdateMembersComboBox();
 				}
 			} else {
-				membersComboBox.Items.Clear();
+				if (membersComboBox.Items.Count > 0) {
+					membersComboBox.Items.Clear();
+				}
 			}
 		}
 		
@@ -298,6 +364,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				AddClasses(items, c.InnerClasses);
 			}
 		}
+		
 		void FillClassComboBox(bool isUpdateRequired)
 		{
 			ArrayList items = new ArrayList();
@@ -312,7 +379,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					classComboBox.EndUpdate();
 				}
 				UpdateClassComboBox();
-			}
+			} 
 		}
 		
 		
@@ -336,7 +403,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			this.membersComboBox.SelectedIndexChanged += new System.EventHandler(this.ComboBoxSelectedIndexChanged);
 			this.membersComboBox.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.MeasureComboBoxItem);
 			this.membersComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ComboBoxDrawItem);
-			// 
+			
+			//
 			// classComboBox
 			// 
 			this.classComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
@@ -348,7 +416,9 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			this.classComboBox.SelectedIndexChanged += new System.EventHandler(this.ComboBoxSelectedIndexChanged);
 			this.classComboBox.MeasureItem += new System.Windows.Forms.MeasureItemEventHandler(this.MeasureComboBoxItem);
 			this.classComboBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ComboBoxDrawItem);
-			// 
+			this.classComboBox.Sorted = true;
+			
+			//
 			// QuickClassBrowserPanel
 			// 
 			this.Controls.Add(this.membersComboBox);
@@ -379,8 +449,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 		}
 		
+		// font - has to be static - don't create on each draw
+		static Font font = font = new Font("Arial", 8.25f);
+		static StringFormat drawStringFormat = new StringFormat(StringFormatFlags.NoWrap);
+//		static int drawingCount = 0;
+		
 		void ComboBoxDrawItem(object sender, System.Windows.Forms.DrawItemEventArgs e)
 		{
+//			Console.WriteLine("Draw " + (drawingCount++));
 			ComboBox comboBox = (ComboBox)sender;
 			e.DrawBackground();
 			if (e.Index >= 0) {
@@ -397,21 +473,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
 					drawItemBrush = SystemBrushes.HighlightText;
 				}
-				
 				if (e.State == DrawItemState.ComboBoxEdit && !item.IsInside(textAreaControl.ActiveTextAreaControl.Caret.Line)) {
-					drawItemBrush = new SolidBrush(SystemColors.ControlDark);
+					drawItemBrush = SystemBrushes.ControlDark;
 				}
-				StringFormat sf = new StringFormat();
-				sf.FormatFlags = StringFormatFlags.NoWrap;
-				Font       font = e.Font;
-				try {
-					font = new Font("Arial", 8.25f); // might fail
-				} catch (Exception) {}
 				e.Graphics.DrawString(item.ToString(),
 				                      font,
 				                      drawItemBrush,
 				                      drawingRect,
-				                      sf);
+				                      drawStringFormat);
 			}
 			e.DrawFocusRectangle();
 		}
@@ -429,16 +498,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			ComboBox comboBox = (ComboBox)sender;
 			if (e.Index >= 0) {
 				ComboBoxItem item = (ComboBoxItem)comboBox.Items[e.Index];
-				Font       font = comboBox.Font;
-				try {
-					font = new Font("Arial", 8.25f); // might fail
-				} catch (Exception) {}
 				SizeF size = e.Graphics.MeasureString(item.ToString(), font);
 				e.ItemWidth  = (int)size.Width;
 				ClassBrowserIconsService classBrowserIconService = (ClassBrowserIconsService)ServiceManager.Services.GetService(typeof(ClassBrowserIconsService));
 				e.ItemHeight = (int)Math.Max(size.Height, classBrowserIconService.ImageList.ImageSize.Height);
 			}
-			
 		}
 	}
 }

@@ -337,7 +337,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 					}
 				} else {
 					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-					messageService.ShowError("Can't print this window content");
+					messageService.ShowError("${res:ICSharpCode.SharpDevelop.Commands.Print.CantPrintWindowContentError}");
 				}
 			}
 		}

@@ -42,7 +42,7 @@ namespace WeifenLuo.WinFormsUI
 	{
 		public const int TabMaxWidth = 200;
 		public const int ButtonGapTop = 5;
-		public const int ButtonGapBottom = 4;
+		public const int ButtonGapBottom = 5;
 		public const int ButtonGapBetween = 0;
 		public const int ButtonGapRight = 3;
 		public const int TabGapTop = 3;

@@ -70,11 +70,17 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 				}
 				
 				editActionHandler.InsertString(csa.Convert(mw.Method.Modifiers) + "override " + returnType + " " + mw.Method.Name + "(" + parameters + ")");++numOps;
-				Return();
-				editActionHandler.InsertChar('{');++numOps;
+				if (StartCodeBlockInSameLine) {
+					editActionHandler.InsertString(" {");
+				} else {
+					Return();
+					editActionHandler.InsertString("{");
+				}
+				++numOps;
 				Return();
 				
 				if (returnType != "void") {
+					Indent();
 					string str = "return base." + mw.Method.Name + "(" + paramList + ");";
 					editActionHandler.InsertString(str);++numOps;
 				}

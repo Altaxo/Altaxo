@@ -41,6 +41,20 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		int  tabSize         = 4;
 		int  indentSize      = 4;
 		
+		BraceStyle nameSpaceBraceStyle = BraceStyle.NextLine;
+		BraceStyle classBraceStyle     = BraceStyle.NextLine;
+		BraceStyle interfaceBraceStyle = BraceStyle.NextLine;
+		BraceStyle structBraceStyle    = BraceStyle.NextLine;
+		BraceStyle enumBraceStyle      = BraceStyle.NextLine;
+		
+		BraceStyle constructorBraceStyle  = BraceStyle.EndOfLine;
+		BraceStyle destructorBraceStyle   = BraceStyle.EndOfLine;
+		BraceStyle methodBraceStyle       = BraceStyle.EndOfLine;
+		
+		BraceStyle propertyBraceStyle     = BraceStyle.EndOfLine;
+		BraceStyle propertyGetBraceStyle  = BraceStyle.EndOfLine;
+		BraceStyle propertySetBraceStyle  = BraceStyle.EndOfLine;
+		
 		public char IndentationChar {
 			get {
 				return indentationChar;
@@ -49,6 +63,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				indentationChar = value;
 			}
 		}
+		
 		public int TabSize {
 			get {
 				return tabSize;
@@ -57,6 +72,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				tabSize = value;
 			}
 		}
+		
 		public int IndentSize {
 			get {
 				return indentSize;
@@ -65,6 +81,105 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				indentSize = value;
 			}
 		}
+		
+		public BraceStyle NameSpaceBraceStyle {
+			get {
+				return nameSpaceBraceStyle;
+			}
+			set {
+				nameSpaceBraceStyle = value;
+			}
+		}
+		
+		public BraceStyle ClassBraceStyle {
+			get {
+				return classBraceStyle;
+			}
+			set {
+				classBraceStyle = value;
+			}
+		}
+		
+		public BraceStyle InterfaceBraceStyle {
+			get {
+				return interfaceBraceStyle;
+			}
+			set {
+				interfaceBraceStyle = value;
+			}
+		}
+		
+		public BraceStyle StructBraceStyle {
+			get {
+				return structBraceStyle;
+			}
+			set {
+				structBraceStyle = value;
+			}
+		}
+		
+		public BraceStyle EnumBraceStyle {
+			get {
+				return enumBraceStyle;
+			}
+			set {
+				enumBraceStyle = value;
+			}
+		}
+		
+		
+		public BraceStyle ConstructorBraceStyle {
+			get {
+				return constructorBraceStyle;
+			}
+			set {
+				constructorBraceStyle = value;
+			}
+		}
+		
+		public BraceStyle DestructorBraceStyle {
+			get {
+				return destructorBraceStyle;
+			}
+			set {
+				destructorBraceStyle = value;
+			}
+		}
+		
+		public BraceStyle MethodBraceStyle {
+			get {
+				return methodBraceStyle;
+			}
+			set {
+				methodBraceStyle = value;
+			}
+		}
+		
+		public BraceStyle PropertyBraceStyle {
+			get {
+				return propertyBraceStyle;
+			}
+			set {
+				propertyBraceStyle = value;
+			}
+		}
+		public BraceStyle PropertyGetBraceStyle {
+			get {
+				return propertyGetBraceStyle;
+			}
+			set {
+				propertyGetBraceStyle = value;
+			}
+		}
+		public BraceStyle PropertySetBraceStyle {
+			get {
+				return propertySetBraceStyle;
+			}
+			set {
+				propertySetBraceStyle = value;
+			}
+		}
+		
 		
 	}
 }

@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -140,11 +140,11 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 		}
 		
-		protected ArrayList configurations = new ArrayList();
+		protected ConfigurationCollection configurations = new ConfigurationCollection();
 		protected IConfiguration activeConfiguration = null;
 		
 		[Browsable(false)]
-		public ArrayList Configurations {
+		public ConfigurationCollection Configurations {
 			get {
 				return configurations;
 			}
@@ -162,8 +162,11 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 			set {
 				activeConfiguration = value;
+				IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+				projectService.OnActiveConfigurationChanged(new ConfigurationEventArgs(value));
+				
 				if (!IsDirty) {
-					IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+					
 					projectService.MarkProjectDirty(this);
 					isDirty = true;
 				}
@@ -208,13 +211,34 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 
 		public AbstractProject()
 		{
+			configurations.ItemAdded += new EventHandler(configurationAdded);
+			configurations.ItemRemoved += new EventHandler(configurationRemoved);
 		}
-
+		
+		void configurationAdded(object sender, EventArgs e)
+		{
+			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+			projectService.OnConfigurationAdded(new EventArgs());
+		}
+		
+		void configurationRemoved(object sender, EventArgs e)
+		{
+			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+			projectService.OnConfigurationRemoved(new EventArgs());
+		}
+		
 		public bool IsFileInProject(string filename)
 		{
+			string fileNameUppered = null;
+			try {
+				fileNameUppered = Path.GetFullPath(filename).ToUpper();
+			}
+			catch (Exception) {
+				return false;
+			}
 			foreach (ProjectFile file in projectFiles) {
 				// WINDOWS DEPENDENCY:
-				if (Path.GetFullPath(file.Name).ToUpper() == Path.GetFullPath(filename).ToUpper()) {
+				if (Path.GetFullPath(file.Name).ToUpper() == fileNameUppered) {
 					return true;
 				}
 			}
@@ -309,7 +333,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 						doc.Load(tempFile);
 						File.Delete(tempFile);
 					} else {
-						messageService.ShowError("damn! (should never happen)");
+						messageService.ShowError("Can't remove temp file. (should never happen)");
 					}
 				}
 			}
@@ -365,8 +389,11 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 								if (xmlAttribute.InnerText.Length == 0) {
 									val = String.Empty;
 								} else {
-									val = fileUtilityService.RelativeToAbsolutePath(basedirectory, xmlAttribute.InnerText);
-//									string command   = xmlAttribute.InnerText;
+									string fileName = xmlAttribute.InnerText;
+									fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
+									fileName = fileName.Replace('/', Path.DirectorySeparatorChar);
+									val = fileUtilityService.RelativeToAbsolutePath(basedirectory, fileName);
+									string command   = xmlAttribute.InnerText;
 //									string arguments = "";
 //									int    idx = command.IndexOf(' ');
 //									if (idx > 0) {
@@ -593,12 +620,89 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 		}
 		
+		// i really hate code duplication, see AssemblyInformation
+		// After .NET 2.0 we need a clean, application domain based assembly loading mechanism!!!
+		
+		byte[] GetBytes(string fileName)
+		{
+			FileStream fs = System.IO.File.OpenRead(fileName);
+			long size = fs.Length;
+			byte[] outArray = new byte[size];
+			fs.Read(outArray, 0, (int)size);
+			fs.Close();
+			return outArray;
+		}
+		
+		string loadingPath = String.Empty;
+		Assembly MyResolveEventHandler(object sender, ResolveEventArgs args)
+		{
+			string file = args.Name;
+			int idx = file.IndexOf(',');
+			if (idx >= 0) {
+				file = file.Substring(0, idx);
+			}
+			try {
+				if (File.Exists(loadingPath + file + ".exe")) {
+					return Assembly.Load(GetBytes(loadingPath + file + ".exe"));
+				} 
+				if (File.Exists(loadingPath + file + ".dll")) {
+					return Assembly.Load(GetBytes(loadingPath + file + ".dll"));
+				} 
+			} catch (Exception ex) {
+				Console.WriteLine("Can't load assembly : " + ex.ToString());
+			}
+			return null;
+		}
+		
+		void CopyAssemblyWithReferencesToPath(string referenceFileName, string destination, bool force)
+		{
+			try {
+				string destinationFileName = fileUtilityService.GetDirectoryNameWithSeparator(destination) + Path.GetFileName(referenceFileName);
+				try {
+					if (destinationFileName != referenceFileName) {
+						File.Copy(referenceFileName, destinationFileName, true);
+						if (File.Exists(Path.ChangeExtension(referenceFileName, ".pdb"))) {
+							File.Copy(Path.ChangeExtension(referenceFileName, ".pdb"), Path.ChangeExtension(destinationFileName, ".pdb"), true);
+						}
+					}
+				} catch (Exception e) {
+					Console.WriteLine("Can't copy reference file from {0} to {1} reason {2}", referenceFileName, destinationFileName, e);
+				}
+				
+				string referencePath = Path.GetDirectoryName(referenceFileName).ToLower();
+				Assembly asm = null;
+				try {
+					AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(MyResolveEventHandler);
+					loadingPath = Path.GetDirectoryName(referenceFileName) + Path.DirectorySeparatorChar;
+					asm = Assembly.Load(GetBytes(referenceFileName));
+				} finally {
+					AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(MyResolveEventHandler);
+				}						
+				if (asm != null) {
+					AssemblyName[] referenceNames = asm.GetReferencedAssemblies();
+					foreach (AssemblyName name in referenceNames) {
+						string fileName = Path.Combine(referencePath, name.Name + ".dll");
+						if (!File.Exists(fileName)) {
+							fileName = Path.Combine(referencePath, name.Name + ".exe");
+						}
+						if (File.Exists(fileName)) {
+							CopyAssemblyWithReferencesToPath(fileName, destination, force);
+						}
+					}
+				}
+			} catch (Exception e) {
+				Console.WriteLine("Exception while copying references : " + e.ToString());
+			}
+		}
+		
 		public void CopyReferencesToPath(string destination, bool force)
 		{
 			foreach (ProjectReference projectReference in ProjectReferences) {
 				if ((projectReference.LocalCopy || force) && projectReference.ReferenceType != ReferenceType.Gac) {
 					string referenceFileName   = projectReference.GetReferencedFileName(this);
 					string destinationFileName = fileUtilityService.GetDirectoryNameWithSeparator(destination) + Path.GetFileName(referenceFileName);
+					
+					// copy references from referenced projects. (needed, no cyclic references (shouldn't be possible) -> this works)
 					if (projectReference.ReferenceType == ReferenceType.Project) {
 						IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
 						IProject project = projectService.GetProject(projectReference.Reference);
@@ -606,37 +710,27 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 							project.CopyReferencesToPath(destination, force);
 						}
 					}
-					string referencePath = Path.GetDirectoryName(referenceFileName).ToLower();
+					
 					if (projectReference.ReferenceType == ReferenceType.Assembly) {
+						CopyAssemblyWithReferencesToPath(referenceFileName, destination, force);
+					} else {
 						try {
-							Assembly asm = Assembly.LoadFrom(referenceFileName);
-							if (asm != null) {
-								AssemblyName[] referenceNames = asm.GetReferencedAssemblies();
-								foreach (AssemblyName name in referenceNames) {
-									string fileName = Path.Combine(referencePath, name.Name + ".dll");
-									if (!File.Exists(fileName)) {
-										fileName = Path.Combine(referencePath, name.Name + ".exe");
+							if (File.Exists(destinationFileName)) {
+								if (File.GetLastWriteTime(destinationFileName).ToString() != File.GetLastWriteTime(referenceFileName).ToString()) {
+									File.Copy(referenceFileName, destinationFileName, true);
+									if (File.Exists(Path.ChangeExtension(referenceFileName, ".pdb"))) {
+										File.Copy(Path.ChangeExtension(referenceFileName, ".pdb"), Path.ChangeExtension(destinationFileName, ".pdb"), true);
 									}
-									try {
-										if (File.Exists(fileName)) {
-											File.Copy(fileName, Path.Combine(destination, Path.GetFileName(fileName)), true);
-										}
-									} catch (Exception e) {
-										Console.WriteLine("Can't copy dependend reference file from {0} to {1} reason {2}", referenceFileName, destinationFileName, e);
-									}
+								}
+							} else {
+								File.Copy(referenceFileName, destinationFileName, true);
+								if (File.Exists(Path.ChangeExtension(referenceFileName, ".pdb"))) {
+									File.Copy(Path.ChangeExtension(referenceFileName, ".pdb"), Path.ChangeExtension(destinationFileName, ".pdb"), true);
 								}
 							}
 						} catch (Exception e) {
-							Console.WriteLine("Exception while copying references : " + e.ToString());
+							Console.WriteLine("Can't copy reference file from {0} to {1} reason {2}", referenceFileName, destinationFileName, e);
 						}
-					}
-					
-					try {
-						if (destinationFileName != referenceFileName) {
-							File.Copy(referenceFileName, destinationFileName, true);
-						}
-					} catch (Exception e) {
-						Console.WriteLine("Can't copy reference file from {0} to {1} reason {2}", referenceFileName, destinationFileName, e);
 					}
 				}
 			}
@@ -721,5 +815,6 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		{
 			return new TypeConverter.StandardValuesCollection(((IProject)context.Instance).Configurations);
 		}
+		
 	}
 }

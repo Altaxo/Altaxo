@@ -132,11 +132,20 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 		{
 			if (conditionCollection != null) {
 				ConditionFailedAction failedAction = conditionCollection.GetCurrentConditionFailedAction(caller);
-				base.IsVisible = failedAction != ConditionFailedAction.Exclude;
-				base.IsEnabled = failedAction != ConditionFailedAction.Disable;
+				bool isVisible = failedAction != ConditionFailedAction.Exclude;
+				if (base.IsVisible != isVisible) {
+					base.IsVisible = isVisible;
+				}
+				bool isEnabled = failedAction != ConditionFailedAction.Disable;
+				if (base.IsEnabled != isEnabled) {
+					base.IsEnabled = isEnabled;
+				}
 			}
 			if (menuCommand != null && menuCommand is IMenuCommand) {
-				base.IsEnabled &= ((IMenuCommand)menuCommand).IsEnabled;
+				bool isEnabled = IsEnabled & ((IMenuCommand)menuCommand).IsEnabled;
+				if (base.IsEnabled != isEnabled) {
+					base.IsEnabled = isEnabled;
+				}
 			}
 			Text = stringParserService.Parse(localizedText);
 		}

@@ -44,10 +44,18 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			[XmlAttribute("executeAfterBuild")]
 			[ConvertToRelativePath()]
 			public string ExecuteAfterBuild = String.Empty;
+			
+			[XmlAttribute("executeBeforeBuildArguments")]
+			[ConvertToRelativePath()]
+			public string ExecuteBeforeBuildArguments = String.Empty;
+			
+			[XmlAttribute("executeAfterBuildArguments")]
+			[ConvertToRelativePath()]
+			public string ExecuteAfterBuildArguments = String.Empty;
 		}
 		
 		[XmlAttribute("runwithwarnings")]
-		protected bool runWithWarnings = false;
+		protected bool runWithWarnings = true;
 		
 		protected OutputConfiguration outputConfiguration = new OutputConfiguration();
 		
@@ -98,6 +106,26 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 			set {
 				outputConfiguration.ExecuteAfterBuild = value;
+			}
+		}
+		
+		[Browsable(false)]
+		public virtual string ExecuteBeforeBuildArguments {
+			get {
+				return outputConfiguration.ExecuteBeforeBuildArguments;
+			}
+			set {
+				outputConfiguration.ExecuteBeforeBuildArguments = value;
+			}
+		}
+		
+		[Browsable(false)]
+		public virtual string ExecuteAfterBuildArguments {
+			get {
+				return outputConfiguration.ExecuteAfterBuildArguments;
+			}
+			set {
+				outputConfiguration.ExecuteAfterBuildArguments = value;
 			}
 		}
 		

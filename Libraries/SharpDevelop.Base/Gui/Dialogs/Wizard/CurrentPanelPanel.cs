@@ -48,10 +48,11 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			Graphics g = pe.Graphics;
 			//			g.FillRectangle(new SolidBrush(SystemColors.Control), pe.ClipRectangle);
 			
-			g.FillRectangle(new LinearGradientBrush(new Point(0, 0), new Point(Width, Height),
-			                                        Color.White,
-			                                        SystemColors.Control),
-			                                        new Rectangle(0, 0, Width, Height));
+			using (Brush brush = new LinearGradientBrush(new Point(0, 0), new Point(Width, Height),
+			                                             Color.White,
+			                                             SystemColors.Control)) {
+				g.FillRectangle(brush, new Rectangle(0, 0, Width, Height));
+			}
 		}
 		
 		protected override void OnPaint(PaintEventArgs pe)

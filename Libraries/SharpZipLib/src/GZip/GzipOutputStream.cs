@@ -1,4 +1,5 @@
 // GzipOutputStream.cs
+//
 // Copyright (C) 2001 Mike Krueger
 //
 // This file was translated from java, it was part of the GNU Classpath
@@ -56,7 +57,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 	/// using System;
 	/// using System.IO;
 	/// 
-	/// using ICSharpCode.SharpZipLib.GZip;    // -jr- corrected
+	/// using ICSharpCode.SharpZipLib.GZip;
 	/// 
 	/// class MainClass
 	/// {
@@ -74,14 +75,10 @@ namespace ICSharpCode.SharpZipLib.GZip
 	/// </example>
 	public class GZipOutputStream : DeflaterOutputStream
 	{
-		//Variables
-		
 		/// <summary>
 		/// CRC-32 value for uncompressed data
 		/// </summary>
 		protected Crc32 crc = new Crc32();
-		
-		// Constructors
 		
 		/// <summary>
 		/// Creates a GzipOutputStream with the default buffer size
@@ -94,7 +91,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 		}
 		
 		/// <summary>
-		/// Creates a GZIPOutputStream with the specified buffer size
+		/// Creates a GZipOutputStream with the specified buffer size
 		/// </summary>
 		/// <param name="baseOutputStream">
 		/// The stream to read data (to be compressed) from
@@ -105,7 +102,6 @@ namespace ICSharpCode.SharpZipLib.GZip
 		public GZipOutputStream(Stream baseOutputStream, int size) : base(baseOutputStream, new Deflater(Deflater.DEFAULT_COMPRESSION, true), size)
 		{
 			WriteHeader();
-			//    System.err.println("wrote GZIP header (" + gzipHeader.length + " bytes )");
 		}
 		
 		void WriteHeader()
@@ -133,7 +129,13 @@ namespace ICSharpCode.SharpZipLib.GZip
 			};
 			baseOutputStream.Write(gzipHeader, 0, gzipHeader.Length);
 		}
-		
+
+		/// <summary>
+		/// Write given buffer to output updating crc
+		/// </summary>
+		/// <param name="buf">Buffer to write</param>
+		/// <param name="off">Offset of first byte in buf to write</param>
+		/// <param name="len">Number of bytes to write</param>
 		public override void Write(byte[] buf, int off, int len)
 		{
 			crc.Update(buf, off, len);
@@ -150,6 +152,9 @@ namespace ICSharpCode.SharpZipLib.GZip
 			baseOutputStream.Close();
 		}
 		
+		/// <summary>
+		/// Finish compression and write any footer information required to stream
+		/// </summary>
 		public override void Finish()
 		{
 			base.Finish();

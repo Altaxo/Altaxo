@@ -326,7 +326,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 			
 			return combineNode;
 		}
-
+		
 		protected override bool ProcessDialogKey(Keys keyData)
 		{
 			switch (keyData) {
@@ -357,8 +357,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			AbstractBrowserNode node = (AbstractBrowserNode)GetNodeAt(e.X, e.Y);
-
-			if (node != null) {
+			if (node != null && SelectedNode != node) {
 				SelectedNode = node;
 			}
 		}
@@ -371,7 +370,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 				OnDoubleClick(e);
 			}
 		}
-
+		
 		protected override void OnDoubleClick(EventArgs e)
 		{
 			if (SelectedNode != null && SelectedNode is AbstractBrowserNode) {
@@ -538,12 +537,12 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 			string name          = Path.GetFileName(filename);
 			string baseDirectory = node is DirectoryNode ? ((DirectoryNode)node).FolderName : node.Project.BaseDirectory;
 			string newfilename   = alreadyInPlace ? filename : Path.Combine(baseDirectory, name);
-			Console.WriteLine(filename + " --- " + newfilename);
+			//Console.WriteLine(filename + " --- " + newfilename);
 			
 			string oldrelativename = fileUtilityService.AbsoluteToRelativePath(node.Project.BaseDirectory, filename);
 			string newrelativename = fileUtilityService.AbsoluteToRelativePath(node.Project.BaseDirectory, newfilename);
 			
-			Console.WriteLine(oldrelativename + " --- " + newrelativename);
+			//Console.WriteLine(oldrelativename + " --- " + newrelativename);
 			AbstractBrowserNode oldparent = DefaultDotNetNodeBuilder.GetPath(oldrelativename, GetRootProjectNode(node), false);          // TODO : change this for more projects
 			AbstractBrowserNode newparent = DefaultDotNetNodeBuilder.GetPath(newrelativename, GetRootProjectNode(node), alreadyInPlace);
 
@@ -564,7 +563,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 			}
 
 			if (oldparent == newparent && oldnode != null) {
-				Console.WriteLine("same loc!!!");
+				//Console.WriteLine("same loc!!!");
 				// move/copy to the same location
 				return;
 			}
@@ -573,9 +572,16 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 				Directory.CreateDirectory(Path.GetDirectoryName(newfilename));
 			}
 			
+			IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+			
 			if (move) {
-				if (Path.GetFullPath(filename) != Path.GetFullPath(newfilename)) {
-					File.Copy(filename, newfilename, true);
+				if (Path.GetFullPath(filename).ToLower() != Path.GetFullPath(newfilename).ToLower()) {
+					try {
+						File.Copy(filename, newfilename, true);
+					} catch(UnauthorizedAccessException) {
+						messageService.ShowError("${res:ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddFilesToProject.FileIsReadOnly}");
+						return;
+					}
 					IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
 					fileService.RemoveFile(filename);
 				}
@@ -583,8 +589,13 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 					oldparent.Nodes.Remove(oldnode);
 				}
 			} else {
-				if (Path.GetFullPath(filename) != Path.GetFullPath(newfilename)) {
-					File.Copy(filename, newfilename, true);
+				if (Path.GetFullPath(filename).ToLower() != Path.GetFullPath(newfilename).ToLower()) {
+					try {
+						File.Copy(filename, newfilename, true);
+					} catch(UnauthorizedAccessException) {
+						messageService.ShowError("${res:ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddFilesToProject.FileIsReadOnly}");
+						return;
+					}
 				}
 			}
 			
@@ -599,6 +610,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 				}
 				
 				AbstractBrowserNode pbn = new FileNode(fInfo);
+				pbn.ContextmenuAddinTreePath = FileNode.ProjectFileContextMenuPath;
 				SortUtility.SortedInsert(pbn, newparent.Nodes, TreeNodeComparer.ProjectNode);
 				pbn.EnsureVisible();
 				projectService.SaveCombine();

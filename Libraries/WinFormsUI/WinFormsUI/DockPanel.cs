@@ -70,6 +70,9 @@ namespace WeifenLuo.WinFormsUI
 				ControlStyles.AllPaintingInWmPaint |
 				ControlStyles.DoubleBuffer, true);
 
+            SuspendLayout();
+            Font = SystemInformation.MenuFont;
+
 			m_autoHideWindow = new AutoHideWindow(this);
 			m_autoHideWindow.Visible = false;
 
@@ -90,7 +93,8 @@ namespace WeifenLuo.WinFormsUI
 			m_localWindowsHook = new LocalWindowsHook(HookType.WH_CALLWNDPROCRET);
 			m_localWindowsHook.HookInvoked += new LocalWindowsHook.HookEventHandler(this.HookEventHandler);
 			m_localWindowsHook.Install();
-		}
+            ResumeLayout();
+        }
 
 		// Windows hook event handler
 		private void HookEventHandler(object sender, HookEventArgs e)
@@ -538,7 +542,7 @@ namespace WeifenLuo.WinFormsUI
 			CalculateDockPadding();
 
 			Graphics g = e.Graphics;
-			g.FillRectangle(SystemBrushes.ControlDark, ClientRectangle);
+			g.FillRectangle(SystemBrushes.AppWorkspace, ClientRectangle);
 
 			CalculateTabs(DockState.DockLeftAutoHide);
 			CalculateTabs(DockState.DockRightAutoHide);
@@ -642,7 +646,7 @@ namespace WeifenLuo.WinFormsUI
 					{
 						int width = imageWidth + MeasureAutoHideTab.ImageGapLeft +
 							MeasureAutoHideTab.ImageGapRight +
-							(int)g.MeasureString(content.TabText, GetTabFont()).Width + 1 +
+							(int)g.MeasureString(content.TabText, Font).Width + 1 +
 							MeasureAutoHideTab.TextGapLeft + MeasureAutoHideTab.TextGapRight;
 						if (width > maxWidth)
 							maxWidth = width;
@@ -706,9 +710,9 @@ namespace WeifenLuo.WinFormsUI
 				rectText.Width -= MeasureAutoHideTab.ImageGapLeft + imageWidth + MeasureAutoHideTab.ImageGapRight + MeasureAutoHideTab.TextGapLeft;
 				rectText = GetTransformedRectangle(dockState, rectText);
 				if (dockState == DockState.DockLeftAutoHide || dockState == DockState.DockRightAutoHide)
-					g.DrawString(content.TabText, GetTabFont(), SystemBrushes.FromSystemColor(SystemColors.ControlDarkDark), rectText, StringFormatTabVertical);
+					g.DrawString(content.TabText, Font, SystemBrushes.FromSystemColor(SystemColors.ControlDarkDark), rectText, StringFormatTabVertical);
 				else
-					g.DrawString(content.TabText, GetTabFont(), SystemBrushes.FromSystemColor(SystemColors.ControlDarkDark), rectText, StringFormatTabHorizontal);
+					g.DrawString(content.TabText, Font, SystemBrushes.FromSystemColor(SystemColors.ControlDarkDark), rectText, StringFormatTabHorizontal);
 			}
 
 			// Set rotate back
@@ -838,11 +842,6 @@ namespace WeifenLuo.WinFormsUI
 			return null;
 		}
 
-		private Font GetTabFont()
-		{
-			return SystemInformation.MenuFont;
-		}
-
 		private Rectangle GetTabRectangle(DockState dockState, DockContent content)
 		{
 			return GetTabRectangle(dockState, content, false);
@@ -872,7 +871,7 @@ namespace WeifenLuo.WinFormsUI
 		{
 			return Math.Max(MeasureAutoHideTab.ImageGapBottom +
 				MeasureAutoHideTab.ImageGapTop + MeasureAutoHideTab.ImageHeight,
-				GetTabFont().Height) + MeasureAutoHideTab.TabGapTop;
+				Font.Height) + MeasureAutoHideTab.TabGapTop;
 		}
 
 		private Rectangle GetTabStripRectangle(DockState dockState)
@@ -1080,14 +1079,20 @@ namespace WeifenLuo.WinFormsUI
 				return;
 
 			Rectangle rect = DockArea;
-			if (dragHandler.DropTarget.Dock == DockStyle.Top || dragHandler.DropTarget.Dock == DockStyle.Bottom)
+			if (dragHandler.DropTarget.Dock == DockStyle.Top)
 				rect.Height = (int)(DockArea.Height * DockTopPortion);
-			else if (dragHandler.DropTarget.Dock == DockStyle.Left || dragHandler.DropTarget.Dock == DockStyle.Right)
-				rect.Width = (int)(DockArea.Width * DockTopPortion);
-			if (dragHandler.DropTarget.Dock == DockStyle.Bottom)
+			else if (dragHandler.DropTarget.Dock == DockStyle.Bottom)
+			{
+				rect.Height = (int)(DockArea.Height * DockBottomPortion);
 				rect.Y = DockArea.Bottom - rect.Height;
+			}
+			else if (dragHandler.DropTarget.Dock == DockStyle.Left)
+				rect.Width = (int)(DockArea.Width * DockLeftPortion);
 			else if (dragHandler.DropTarget.Dock == DockStyle.Right)
+			{
+				rect.Width = (int)(DockArea.Width * DockRightPortion);
 				rect.X = DockArea.Right - rect.Width;
+			}
 			else if (dragHandler.DropTarget.Dock == DockStyle.Fill)
 				rect = DocumentRectangle;
 

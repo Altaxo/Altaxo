@@ -77,13 +77,20 @@ properly handle an archive whose last record is shorter than the rest,
 or which contains garbage records after a zero block.
 */
 
-//      public static readonly int DEFAULT_RCDSIZE = 512;
-//      public const int DEFAULT_BLOCKFACTOR = 20;
-//	     public static readonly int DEFAULT_BLKSIZE = DEFAULT_RCDSIZE * DEFAULT_BLOCKFACTOR;
-
-      public static readonly int BlockSize = 512;
-      public static readonly int DefaultBlockFactor = 20;
-      public static readonly int DefaultRecordSize = BlockSize * DefaultBlockFactor;
+		/// <summary>
+		/// The size of a block in a tar archive
+		/// </summary>
+		public static readonly int BlockSize = 512;
+		
+		/// <summary>
+		/// Number of blocks in a record by default
+		/// </summary>
+		public static readonly int DefaultBlockFactor = 20;
+		
+		/// <summary>
+		/// Size in bytes of a record by default
+		/// </summary>
+		public static readonly int DefaultRecordSize = BlockSize * DefaultBlockFactor;
 		
 		Stream inputStream;
 		Stream outputStream;
@@ -93,38 +100,61 @@ or which contains garbage records after a zero block.
 		int    currentRecordIndex;
 
 		int    recordSize = DefaultRecordSize;
-      public int RecordSize
-      {
-         get { return recordSize; }
-      }
+		
+		/// <summary>
+		/// Get the recordsize for this buffer
+		/// </summary>
+		public int RecordSize {
+			get { 
+				return recordSize; 
+			}
+		}
 
-      int    blockFactor = DefaultBlockFactor;
+		int    blockFactor = DefaultBlockFactor;
 
-      public int BlockFactor
-      {
-         get { return blockFactor; }
-      }
+		/// <summary>
+		/// Get the Blocking factor for the buffer
+		/// </summary>
+		public int BlockFactor {
+			get { 
+				return blockFactor; 
+			}
+		}
 
 		bool   debug = false;
 
-      /// <summary>
-      /// Set the debugging flag for the buffer.
-      /// </summary>
-      public void SetDebug(bool debug)
-      {
-         this.debug = debug;
-      }
+		/// <summary>
+		/// Set the debugging flag for the buffer.
+		/// </summary>
+		public void SetDebug(bool debug)
+		{
+			this.debug = debug;
+		}
 		
 		
+		/// <summary>
+		/// Construct a default TarBuffer
+		/// </summary>
 		protected TarBuffer()
 		{
 		}
 		
+		/// <summary>
+		/// Create TarBuffer for reading with default BlockFactor
+		/// </summary>
+		/// <param name="inputStream">Stream to buffer</param>
+		/// <returns>TarBuffer</returns>
 		public static TarBuffer CreateInputTarBuffer(Stream inputStream)
 		{
 			return CreateInputTarBuffer(inputStream, TarBuffer.DefaultBlockFactor);
 		}
 
+		/// <summary>
+		/// Construct TarBuffer for reading inputStream setting BlockFactor
+		/// </summary>
+		/// <param name="inputStream">Stream to buffer</param>
+		/// <param name="blockFactor">Blocking factor to apply</param>
+		/// <returns>TarBuffer</returns>
 		public static TarBuffer CreateInputTarBuffer(Stream inputStream, int blockFactor)
 		{
 			TarBuffer tarBuffer = new TarBuffer();
@@ -135,11 +165,22 @@ or which contains garbage records after a zero block.
 			return tarBuffer;
 		}
 
+		/// <summary>
+		/// Construct TarBuffer for writing with default BlockFactor
+		/// </summary>
+		/// <param name="outputStream">output stream for buffer</param>
+		/// <returns>TarBuffer</returns>
 		public static TarBuffer CreateOutputTarBuffer(Stream outputStream)
 		{
 			return CreateOutputTarBuffer(outputStream, TarBuffer.DefaultBlockFactor);
 		}
 
+		/// <summary>
+		/// Construct TarBuffer for writing setting BlockFactor
+		/// </summary>
+		/// <param name="outputStream">output stream to buffer</param>
+		/// <param name="blockFactor">Blocking factor to apply</param>
+		/// <returns>TarBuffer</returns>
 		public static TarBuffer CreateOutputTarBuffer(Stream outputStream, int blockFactor)
 		{
 			TarBuffer tarBuffer = new TarBuffer();
@@ -156,20 +197,17 @@ or which contains garbage records after a zero block.
 		void Initialize(int blockFactor)
 		{
 			this.debug        = false;
-         this.blockFactor  = blockFactor;
-         this.recordSize   = blockFactor * BlockSize;
+			this.blockFactor  = blockFactor;
+			this.recordSize   = blockFactor * BlockSize;
 
 			this.recordBuffer  = new byte[RecordSize];
 			
-			if (inputStream != null) 
-			{
+			if (inputStream != null) {
 				this.currentRecordIndex = -1;
 				this.currentBlockIndex = BlockFactor;
-			} 
-			else 
-			{
-            this.currentRecordIndex = 0;
-            this.currentBlockIndex = 0;
+			} else {
+				this.currentRecordIndex = 0;
+				this.currentBlockIndex = 0;
 			}
 		}
 		
@@ -201,10 +239,8 @@ or which contains garbage records after a zero block.
 		/// </param>
 		public bool IsEOFBlock(byte[] block)
 		{
-			for (int i = 0, sz = BlockSize; i < sz; ++i) 
-			{
-				if (block[i] != 0) 
-				{
+			for (int i = 0, sz = BlockSize; i < sz; ++i) {
+				if (block[i] != 0) {
 					return false;
 				}
 			}
@@ -217,21 +253,17 @@ or which contains garbage records after a zero block.
 		/// </summary>
 		public void SkipBlock()
 		{
-			if (this.debug) 
-			{
+			if (this.debug) {
 				//Console.WriteLine.WriteLine("SkipBlock: recIdx = " + this.currentRecordIndex + " blkIdx = " + this.currentBlockIndex);
 			}
 			
-			if (this.inputStream == null) 
-			{
-				throw new System.IO.IOException("no input stream defined");
+			if (this.inputStream == null) {
+				throw new TarException("no input stream defined");
 			}
 			
-			if (this.currentBlockIndex >= this.BlockFactor) 
-			{
-				if (!this.ReadRecord()) 
-				{
-					return; // UNDONE
+			if (this.currentBlockIndex >= this.BlockFactor) {
+				if (!this.ReadRecord()) {
+					return;
 				}
 			}
 			
@@ -242,24 +274,20 @@ or which contains garbage records after a zero block.
 		/// Read a block from the input stream and return the data.
 		/// </summary>
 		/// <returns>
-		/// The block data.
+		/// The block of data read
 		/// </returns>
 		public byte[] ReadBlock()
 		{
-			if (this.debug) 
-			{
+			if (this.debug) {
 				//Console.WriteLine.WriteLine( "ReadBlock: blockIndex = " + this.currentBlockIndex + " recordIndex = " + this.currentRecordIndex );
 			}
 			
-			if (this.inputStream == null) 
-			{
-				throw new ApplicationException("TarBuffer.ReadBlock - no input stream defined");
+			if (this.inputStream == null) {
+				throw new TarException("TarBuffer.ReadBlock - no input stream defined");
 			}
 			
-			if (this.currentBlockIndex >= this.BlockFactor) 
-			{
-				if (!this.ReadRecord()) 
-				{
+			if (this.currentBlockIndex >= this.BlockFactor) {
+				if (!this.ReadRecord()) {
 					return null;
 				}
 			}
@@ -271,19 +299,20 @@ or which contains garbage records after a zero block.
 			return result;
 		}
 		
+		/// <summary>
+		/// Read a record from data stream.
+		/// </summary>
 		/// <returns>
-		/// false if End-Of-File, else true
+		/// alse if End-Of-File, else true
 		/// </returns>
 		bool ReadRecord()
 		{
-			if (this.debug) 
-			{
+			if (this.debug) {
 				//Console.WriteLine.WriteLine("ReadRecord: recordIndex = " + this.currentRecordIndex);
 			}
 			
-			if (this.inputStream == null) 
-			{
-				throw new System.IO.IOException("no input stream stream defined");
+			if (this.inputStream == null) {
+				throw new TarException("no input stream stream defined");
 			}
 						
 			this.currentBlockIndex = 0;
@@ -291,8 +320,7 @@ or which contains garbage records after a zero block.
 			int offset = 0;
 			int bytesNeeded = RecordSize;
 
-			while (bytesNeeded > 0) 
-			{
+			while (bytesNeeded > 0) {
 				long numBytes = this.inputStream.Read(this.recordBuffer, offset, bytesNeeded);
 				
 				//
@@ -308,17 +336,14 @@ or which contains garbage records after a zero block.
 				//
 				// Thanks to 'Yohann.Roussel@alcatel.fr' for this fix.
 				//
-				if (numBytes <= 0) 
-				{
+				if (numBytes <= 0) {
 					break;
 				}
 				
 				offset      += (int)numBytes;
 				bytesNeeded -= (int)numBytes;
-				if (numBytes != RecordSize)
-				{
-					if (this.debug) 
-					{
+				if (numBytes != RecordSize) {
+					if (this.debug) {
 						//Console.WriteLine.WriteLine("ReadRecord: INCOMPLETE READ " + numBytes + " of " + this.blockSize + " bytes read.");
 					}
 				}
@@ -352,7 +377,7 @@ or which contains garbage records after a zero block.
 		}
 		
 		/// <summary>
-		/// Write an archive block to the archive.
+		/// Write a block of data to the archive.
 		/// </summary>
 		/// <param name="block">
 		/// The data to write to the archive.
@@ -360,23 +385,19 @@ or which contains garbage records after a zero block.
 		/// 
 		public void WriteBlock(byte[] block)
 		{
-			if (this.debug) 
-			{
+			if (this.debug) {
 				//Console.WriteLine.WriteLine("WriteRecord: recIdx = " + this.currentRecordIndex + " blkIdx = " + this.currentBlockIndex );
 			}
 			
-			if (this.outputStream == null) 
-			{
-				throw new ApplicationException("TarBuffer.WriteBlock - no output stream defined");
+			if (this.outputStream == null) {
+				throw new TarException("TarBuffer.WriteBlock - no output stream defined");
 			}
 						
-			if (block.Length != BlockSize) 
-			{
-				throw new ApplicationException("TarBuffer.WriteBlock - block to write has length '" + block.Length + "' which is not the block size of '" + BlockSize + "'" );
+			if (block.Length != BlockSize) {
+				throw new TarException("TarBuffer.WriteBlock - block to write has length '" + block.Length + "' which is not the block size of '" + BlockSize + "'" );
 			}
 			
-			if (this.currentBlockIndex >= BlockFactor) 
-			{
+			if (this.currentBlockIndex >= BlockFactor) {
 				this.WriteRecord();
 			}
 
@@ -397,23 +418,19 @@ or which contains garbage records after a zero block.
 		/// </param>
 		public void WriteBlock(byte[] buf, int offset)
 		{
-			if (this.debug) 
-			{
+			if (this.debug) {
 				//Console.WriteLine.WriteLine("WriteBlock: recIdx = " + this.currentRecordIndex + " blkIdx = " + this.currentBlockIndex );
 			}
 			
-			if (this.outputStream == null) 
-			{
-				throw new ApplicationException("TarBuffer.WriteBlock - no output stream stream defined");
+			if (this.outputStream == null) {
+				throw new TarException("TarBuffer.WriteBlock - no output stream stream defined");
 			}
 						
-			if ((offset + BlockSize) > buf.Length) 
-			{
-				throw new ApplicationException("TarBuffer.WriteBlock - record has length '" + buf.Length + "' with offset '" + offset + "' which is less than the record size of '" + this.recordSize + "'" );
+			if ((offset + BlockSize) > buf.Length) {
+				throw new TarException("TarBuffer.WriteBlock - record has length '" + buf.Length + "' with offset '" + offset + "' which is less than the record size of '" + this.recordSize + "'" );
 			}
 			
-			if (this.currentBlockIndex >= this.BlockFactor) 
-			{
+			if (this.currentBlockIndex >= this.BlockFactor) {
 				this.WriteRecord();
 			}
 			
@@ -427,21 +444,20 @@ or which contains garbage records after a zero block.
 		/// </summary>
 		void WriteRecord()
 		{
-			if (this.debug) 
-			{
+			if (this.debug) {
 				//Console.WriteLine.WriteLine("Writerecord: record index = " + this.currentRecordIndex);
 			}
 			
-			if (this.outputStream == null) 
+			if (this.outputStream == null)
 			{
-				throw new ApplicationException("TarBuffer.WriteRecord no output stream defined");
+				throw new TarException("TarBuffer.WriteRecord no output stream defined");
 			}
 			
 			this.outputStream.Write(this.recordBuffer, 0, RecordSize);
 			this.outputStream.Flush();
 			
-         this.currentBlockIndex = 0;
-         this.currentRecordIndex++;
+			this.currentBlockIndex = 0;
+			this.currentRecordIndex++;
 		}
 		
 		/// <summary>
@@ -456,7 +472,7 @@ or which contains garbage records after a zero block.
 			
 			if (this.outputStream == null) 
 			{
-				throw new ApplicationException("TarBuffer.Flush no output stream defined");
+				throw new TarException("TarBuffer.Flush no output stream defined");
 			}
 			
 			if (this.currentBlockIndex > 0) 
@@ -472,7 +488,7 @@ or which contains garbage records after a zero block.
 		/// </summary>
 		public void Close()
 		{
-			if (this.debug) 
+			if (this.debug)
 			{
 				//Console.WriteLine.WriteLine("TarBuffer.Close().");
 			}
@@ -483,8 +499,8 @@ or which contains garbage records after a zero block.
 	
 				outputStream.Close();
 				outputStream = null;
-			} 
-			else if (inputStream != null) 
+			}
+			else if (inputStream != null)
 			{
 				inputStream.Close();
 				inputStream = null;

@@ -94,7 +94,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			string combineLocation = fileUtilityService.GetDirectoryNameWithSeparator(projectCreateInformation.CombinePath) + newCombineName + ".cmbx";
 			if (File.Exists(combineLocation)) {
 				IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-				if (messageService.AskQuestion("Combine file " + combineLocation + " already exists, do you want to overwrite\nthe existing file ?")) {
+				stringParserService.Properties["combineLocation"] = combineLocation;
+				if (messageService.AskQuestion("${res:ICSharpCode.SharpDevelop.Internal.Templates.CombineDescriptor.OverwriteProjectQuestion}")) {
 					newCombine.SaveCombine(combineLocation);
 				}
 			} else {

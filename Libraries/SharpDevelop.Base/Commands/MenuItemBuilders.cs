@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Collections;
 using System.Windows.Forms;
+using System.Text;
 
 using Reflector.UserInterface;
 
@@ -45,8 +46,17 @@ namespace ICSharpCode.SharpDevelop.Commands
 				SdMenuCommand[] items = new SdMenuCommand[recentOpen.RecentFile.Count];
 				
 				for (int i = 0; i < recentOpen.RecentFile.Count; ++i) {
-					string accelaratorKeyPrefix = i < 10 ? "&" + ((i + 1) % 10).ToString() + " " : "";
-					items[i] = new SdMenuCommand(null, null, accelaratorKeyPrefix + recentOpen.RecentFile[i].ToString(), new EventHandler(LoadRecentFile));
+//// Alex: stringbuilder to prevent allocations
+					StringBuilder accelaratorKeyPrefix=new StringBuilder("");
+					////string accelaratorKeyPrefix = i < 10 ? "&" + ((i + 1) % 10).ToString() + " " : "";
+					if (i<10) {
+						accelaratorKeyPrefix.Append("&");
+						accelaratorKeyPrefix.Append(((i + 1) % 10).ToString());
+						accelaratorKeyPrefix.Append(" ");
+					}
+					accelaratorKeyPrefix.Append(recentOpen.RecentFile[i].ToString());
+					////items[i] = new SdMenuCommand(null, null, accelaratorKeyPrefix + recentOpen.RecentFile[i].ToString(), new EventHandler(LoadRecentFile));
+					items[i] = new SdMenuCommand(null, null, accelaratorKeyPrefix.ToString(), new EventHandler(LoadRecentFile));
 					items[i].Tag = recentOpen.RecentFile[i].ToString();
 					items[i].Description = stringParserService.Parse(resourceService.GetString("Dialog.Componnents.RichMenuItem.LoadFileDescription"),
 					                                          new string[,] { {"FILE", recentOpen.RecentFile[i].ToString()} });
@@ -81,8 +91,17 @@ namespace ICSharpCode.SharpDevelop.Commands
 			if (recentOpen.RecentProject.Count > 0) {
 				SdMenuCommand[] items = new SdMenuCommand[recentOpen.RecentProject.Count];
 				for (int i = 0; i < recentOpen.RecentProject.Count; ++i) {
-					string accelaratorKeyPrefix = i < 10 ? "&" + ((i + 1) % 10).ToString() + " " : "";
-					items[i] = new SdMenuCommand(null, null, accelaratorKeyPrefix + recentOpen.RecentProject[i].ToString(), new EventHandler(LoadRecentProject));
+//// Alex: use String builder instead of concat's
+					////string accelaratorKeyPrefix = i < 10 ? "&" + ((i + 1) % 10).ToString() + " " : "";
+					StringBuilder accelaratorKeyPrefix = new StringBuilder("");
+					if (i<10) {
+						accelaratorKeyPrefix.Append("&");
+						accelaratorKeyPrefix.Append(((i + 1) % 10).ToString());
+						accelaratorKeyPrefix.Append(" ");
+					}
+					accelaratorKeyPrefix.Append(recentOpen.RecentProject[i].ToString());
+					////items[i] = new SdMenuCommand(null, null, accelaratorKeyPrefix + recentOpen.RecentProject[i].ToString(), new EventHandler(LoadRecentProject));
+					items[i] = new SdMenuCommand(null, null, accelaratorKeyPrefix.ToString(), new EventHandler(LoadRecentProject));
 					items[i].Tag = recentOpen.RecentProject[i].ToString();
 					items[i].Description = stringParserService.Parse(resourceService.GetString("Dialog.Componnents.RichMenuItem.LoadProjectDescription"),
 					                                         new string[,] { {"PROJECT", recentOpen.RecentProject[i].ToString()} });
@@ -109,7 +128,6 @@ namespace ICSharpCode.SharpDevelop.Commands
 	{
 		public CommandBarItem[] BuildSubmenu(ConditionCollection conditionCollection, object owner)
 		{
-			//			IconMenuStyle iconMenuStyle = (IconMenuStyle)propertyService.GetProperty("IconMenuItem.IconMenuStyle", IconMenuStyle.VSNet);
 			SdMenuCommand[] items = new SdMenuCommand[ToolLoader.Tool.Count];
 			for (int i = 0; i < ToolLoader.Tool.Count; ++i) {
 				SdMenuCommand item = new SdMenuCommand(null, null, ToolLoader.Tool[i].ToString(), new EventHandler(ToolEvt));
@@ -229,7 +247,6 @@ namespace ICSharpCode.SharpDevelop.Commands
 
 		public CommandBarItem[] BuildSubmenu(ConditionCollection conditionCollection, object owner)
 		{
-			//			IconMenuStyle iconMenuStyle = (IconMenuStyle)propertyService.GetProperty("IconMenuItem.IconMenuStyle", IconMenuStyle.VSNet);
 			int contentCount = WorkbenchSingleton.Workbench.ViewContentCollection.Count;
 			if (contentCount == 0) {
 				return new CommandBarItem[] {};

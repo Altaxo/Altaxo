@@ -9,9 +9,17 @@
         <TabIndex value="0" />
         <Location value="{X=8,Y=8}" />
         <Anchor value="Top, Left, Right" />
-        <Size value="{Width=336, Height=240}" />
+        <Size value="{Width=336, Height=296}" />
         <Text value="${res:Dialog.Options.PrjOptions.Configuration.CodeGenerationGroupBox}" />
         <Controls>
+          <System.Windows.Forms.CheckBox>
+            <Name value="optionExplicitCheckBox" />
+            <Location value="{X=8,Y=240}" />
+            <Size value="{Width=320, Height=24}" />
+            <Text value="${res:Dialog.Options.PrjOptions.Configuration.OptionExplicitCheckBox}" />
+            <Anchor value="Top, Left, Right" />
+            <TabIndex value="18" />
+          </System.Windows.Forms.CheckBox>
           <System.Windows.Forms.Label>
             <Name value="label5" />
             <Text value="${res:Dialog.Options.PrjOptions.Configuration.RootNamespaceLabel}" />
@@ -32,7 +40,7 @@
             <Name value="importsTextBox" />
             <Anchor value="Top, Left, Right" />
             <TabIndex value="15" />
-            <Location value="{X=128,Y=73}" />
+            <Location value="{X=128,Y=74}" />
             <Size value="{Width=200, Height=21}" />
             <Text value="" />
           </System.Windows.Forms.TextBox>
@@ -46,7 +54,7 @@
           </System.Windows.Forms.Label>
           <System.Windows.Forms.CheckBox>
             <Name value="generateDebugInformationCheckBox" />
-            <Location value="{X=8,Y=201}" />
+            <Location value="{X=8,Y=202}" />
             <Size value="{Width=320, Height=24}" />
             <Text value="${res:Dialog.Options.PrjOptions.Configuration.DebugInformationCheckBox}" />
             <Anchor value="Top, Left, Right" />
@@ -54,7 +62,7 @@
           </System.Windows.Forms.CheckBox>
           <System.Windows.Forms.CheckBox>
             <Name value="warningsAsErrorsCheckBox" />
-            <Location value="{X=8,Y=177}" />
+            <Location value="{X=8,Y=178}" />
             <Size value="{Width=320, Height=24}" />
             <Text value="${res:Dialog.Options.PrjOptions.Configuration.WarningsAsErrorsCheckBox}" />
             <Anchor value="Top, Left, Right" />
@@ -62,7 +70,7 @@
           </System.Windows.Forms.CheckBox>
           <System.Windows.Forms.CheckBox>
             <Name value="enableOptimizationCheckBox" />
-            <Location value="{X=8,Y=153}" />
+            <Location value="{X=8,Y=154}" />
             <Size value="{Width=320, Height=24}" />
             <Text value="${res:Dialog.Options.PrjOptions.Configuration.OptimizeCheckBox}" />
             <Anchor value="Top, Left, Right" />
@@ -70,7 +78,7 @@
           </System.Windows.Forms.CheckBox>
           <System.Windows.Forms.CheckBox>
             <Name value="generateOverflowChecksCheckBox" />
-            <Location value="{X=8,Y=129}" />
+            <Location value="{X=8,Y=130}" />
             <Size value="{Width=320, Height=24}" />
             <Text value="${res:Dialog.Options.PrjOptions.Configuration.OverflowCheckBox}" />
             <Anchor value="Top, Left, Right" />
@@ -80,7 +88,7 @@
             <Name value="mainClassTextBox" />
             <Anchor value="Top, Left, Right" />
             <TabIndex value="5" />
-            <Location value="{X=128,Y=49}" />
+            <Location value="{X=128,Y=50}" />
             <Size value="{Width=200, Height=21}" />
             <Text value="" />
           </System.Windows.Forms.TextBox>
@@ -96,7 +104,7 @@
             <Name value="symbolsTextBox" />
             <Anchor value="Top, Left, Right" />
             <TabIndex value="3" />
-            <Location value="{X=128,Y=25}" />
+            <Location value="{X=128,Y=26}" />
             <Size value="{Width=200, Height=21}" />
             <Text value="" />
           </System.Windows.Forms.TextBox>
@@ -108,6 +116,14 @@
             <Size value="{Width=112, Height=23}" />
             <Location value="{X=8,Y=24}" />
           </System.Windows.Forms.Label>
+          <System.Windows.Forms.CheckBox>
+            <Name value="optionStrictCheckBox" />
+            <Location value="{X=8,Y=264}" />
+            <Size value="{Width=320, Height=24}" />
+            <Text value="${res:Dialog.Options.PrjOptions.Configuration.OptionStrictCheckBox}" />
+            <Anchor value="Top, Left, Right" />
+            <TabIndex value="18" />
+          </System.Windows.Forms.CheckBox>
         </Controls>
       </System.Windows.Forms.GroupBox>
     </Controls>

@@ -41,6 +41,8 @@ namespace ICSharpCode.Core.Services
 		
 		Hashtable userStrings = null;
 		Hashtable userIcons   = null;
+		Hashtable localUserStrings = null;
+		Hashtable localUserIcons   = null;
 		
 		ArrayList strings = new ArrayList();
 		ArrayList icon    = new ArrayList();
@@ -61,6 +63,7 @@ namespace ICSharpCode.Core.Services
 		}
 		void LoadLanguageResources()
 		{
+			
 			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 			string language = propertyService.GetProperty(uiLanguageProperty, Thread.CurrentThread.CurrentUICulture.Name);
 			
@@ -72,6 +75,18 @@ namespace ICSharpCode.Core.Services
 				} catch (Exception) {}
 			}
 
+			if (System.Configuration.ConfigurationSettings.AppSettings["UserStrings"] != null) {
+				string resourceName = System.Configuration.ConfigurationSettings.AppSettings["UserStrings"];
+				resourceName = resourceName.Insert(resourceName.LastIndexOf(".resources"), "." + language);
+				localUserStrings = Load(resourceDirctory +  Path.DirectorySeparatorChar + resourceName);
+			}
+			if (System.Configuration.ConfigurationSettings.AppSettings["UserIcons"] != null) {
+				string resourceName = System.Configuration.ConfigurationSettings.AppSettings["UserIcons"];
+				resourceName = resourceName.Insert(resourceName.LastIndexOf(".resources"), "." + language);
+				localUserIcons   = Load(resourceDirctory +  Path.DirectorySeparatorChar + resourceName);
+			}
+
+			
 			localStrings = Load(stringResources, language);
 			if (localStrings == null && language.IndexOf('-') > 0) {
 				localStrings = Load(stringResources, language.Split('-')[0]);
@@ -218,6 +233,9 @@ namespace ICSharpCode.Core.Services
 		/// </exception>
 		public string GetString(string name)
 		{
+			if (this.localUserStrings != null && this.localUserStrings[name] != null) {
+				return localUserStrings[name].ToString();
+			}
 			if (this.userStrings != null && this.userStrings[name] != null) {
 				return userStrings[name].ToString();
 			}
@@ -267,7 +285,9 @@ namespace ICSharpCode.Core.Services
 		object GetImageResource(string name)
 		{
 			object iconobj = null;
-			if (this.userIcons != null && this.userIcons[name] != null) {
+			if (this.localUserIcons != null && this.localUserIcons[name] != null) {
+				iconobj = localUserIcons[name];
+			} else  if (this.userIcons != null && this.userIcons[name] != null) {
 				iconobj = userIcons[name];
 			} else  if (localIcons != null && localIcons[name] != null) {
 				iconobj = localIcons[name];

@@ -19,7 +19,7 @@ namespace SharpDevelop.Internal.Parser {
 
 		protected IMethod     getterMethod;
 		protected IMethod     setterMethod;
-		protected ParameterCollection parameters = new ParameterCollection();
+		ParameterCollection parameters = null;
 		
 		public virtual IRegion BodyRegion {
 			get {
@@ -30,6 +30,9 @@ namespace SharpDevelop.Internal.Parser {
 
 		public virtual ParameterCollection Parameters {
 			get {
+				if (parameters == null) {
+					parameters = new ParameterCollection();
+				}
 				return parameters;
 			}
 			set {

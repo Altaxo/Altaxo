@@ -71,6 +71,7 @@ namespace ICSharpCode.TextEditor
 			this.opentag    = opentag;
 			this.closingtag = closingtag;
 		}
+		
 		public Highlight GetHighlight(IDocument document, int offset)
 		{
 			char word = document.GetCharAt(Math.Max(0, Math.Min(document.TextLength - 1, offset)));

@@ -35,7 +35,7 @@ namespace SharpDevelop.Internal.Parser {
 			
 			Param param = asm.Tables.Param[index];
 			
-			name = assembly.GetStringFromHeap(param.Name);
+			Name = assembly.GetStringFromHeap(param.Name);
 			if (param.IsFlagSet(Param.FLAG_OUT)) {
 				modifier |= ParameterModifier.Out;
 			}
@@ -48,7 +48,7 @@ namespace SharpDevelop.Internal.Parser {
 			foreach(SharpCustomAttribute customattribute in attrib) {
 				SharpAssemblyAttribute newatt = new SharpAssemblyAttribute(asm, customattribute);
 				if (newatt.Name == "System.ParamArrayAttribute") modifier |= ParameterModifier.Params;
-				attributeCollection.Add(newatt);
+				AttributeCollection.Add(newatt);
 			}
 		
 		noatt:
@@ -66,7 +66,7 @@ namespace SharpDevelop.Internal.Parser {
 		
 		public SharpAssemblyParameter(SharpAssembly asm, string paramName, IReturnType type)
 		{
-			name = paramName;
+			Name = paramName;
 			if (type.Name.EndsWith("&")) {
 				modifier |= ParameterModifier.Ref;
 			}

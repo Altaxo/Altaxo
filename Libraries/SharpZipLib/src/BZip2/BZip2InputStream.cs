@@ -1,4 +1,5 @@
 // BZip2InputStream.cs
+//
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -41,13 +42,12 @@ namespace ICSharpCode.SharpZipLib.BZip2
 {
 	
 	/// <summary>
-	/// An input stream that decompresses from the BZip2 format (without the file
-	/// header chars) to be read as any other stream.
+	/// An input stream that decompresses files in the BZip2 format 
 	/// </summary>
 	public class BZip2InputStream : Stream
 	{
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Gets a value indicating if the stream supports reading
 		/// </summary>
 		public override bool CanRead {
 			get {
@@ -56,7 +56,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Gets a value indicating whether the current stream supports seeking.
 		/// </summary>
 		public override bool CanSeek {
 			get {
@@ -65,16 +65,18 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Gets a value indicating whether the current stream supports writing.
+		/// This property always returns false
 		/// </summary>
 		public override bool CanWrite {
 			get {
-				return baseStream.CanWrite;
+//				return baseStream.CanWrite;
+				return false;
 			}
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Gets the length in bytes of the stream.
 		/// </summary>
 		public override long Length {
 			get {
@@ -83,14 +85,17 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Gets or sets the streams position
+		/// Setting the position is not supported and will throw a NotSupportException
 		/// </summary>
+		/// <exception cref="NotSupportedException">Any attempt to set the position</exception>
 		public override long Position {
 			get {
 				return baseStream.Position;
 			}
 			set {
-				baseStream.Position = value;
+//				baseStream.Position = value;
+				throw new NotSupportedException("BZip2InputStream position cannot be set");
 			}
 		}
 		
@@ -105,37 +110,54 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Set the streams position.  This operation is not supported and will throw a NotSupportedException
 		/// </summary>
+		/// <exception cref="NotSupportedException">Any access</exception>
 		public override long Seek(long offset, SeekOrigin origin)
 		{
-			return baseStream.Seek(offset, origin);
+			throw new NotSupportedException("BZip2InputStream Seek not supported");
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Sets the length of this stream to the given value.
+		/// This operation is not supported and will throw a NotSupportedExceptionortedException
 		/// </summary>
+		/// <exception cref="NotSupportedException">Any access</exception>
 		public override void SetLength(long val)
 		{
-			baseStream.SetLength(val);
+			throw new NotSupportedException("BZip2InputStream SetLength not supported");
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Writes a block of bytes to this stream using data from a buffer.
+		/// This operation is not supported and will throw a NotSupportedException
 		/// </summary>
+		/// <exception cref="NotSupportedException">Any access</exception>
 		public override void Write(byte[] array, int offset, int count)
 		{
-			baseStream.Write(array, offset, count);
+			throw new NotSupportedException("BZip2InputStream Write not supported");
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Writes a byte to the current position in the file stream.
+		/// This operation is not supported and will throw a NotSupportedException
 		/// </summary>
+		/// <exception cref="NotSupportedException">Any access</exception>
 		public override void WriteByte(byte val)
 		{
-			baseStream.WriteByte(val);
+			throw new NotSupportedException("BZip2InputStream WriteByte not supported");
 		}
 		
+		/// <summary>
+		/// Read a sequence of bytes and advance position in stream
+		/// </summary>
+		/// <param name="b">Array of bytes to store values in</param>
+		/// <param name="off">Offset in array to begin storing data</param>
+		/// <param name="len">The maximum number of bytes to read</param>
+		/// <returns>The total number of bytes read into the buffer. This might be less
+		/// than the number of bytes requested if that number of bytes are not 
+		/// currently available or zero if the end of the stream is reached.
+		/// </returns>
 		public override int Read(byte[] b, int off, int len)
 		{
 			for (int i = 0; i < len; ++i) {
@@ -156,27 +178,6 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			if (baseStream != null) {
 				baseStream.Close();
 			}
-		}
-		
-		static void Cadvise()
-		{
-			//Console.WriteLine("CRC Error");
-			//throw new CCoruptionError();
-		}
-		
-		static void BadBGLengths() 
-		{
-			//Console.WriteLine("bad BG lengths");
-		}
-		
-		static void BitStreamEOF() 
-		{
-			//Console.WriteLine("bit stream eof");
-		}
-		
-		static void CompressedStreamEOF() 
-		{
-			//Console.WriteLine("compressed stream eof");
 		}
 		
 		void MakeMaps() 
@@ -210,8 +211,6 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		
 		bool blockRandomised;
 		
-		//		private int bytesIn;
-		//		private int bytesOut;
 		int bsBuff;
 		int bsLive;
 		IChecksum mCrc = new StrangeCRC();
@@ -265,7 +264,11 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		int i2, j2;
 		byte z;
 		
-		public BZip2InputStream(Stream zStream) 
+		/// <summary>
+		/// Construct instance for reading from stream
+		/// </summary>
+		/// <param name="stream">Data source</param>
+		public BZip2InputStream(Stream stream) 
 		{
 			// init arrays
 			for (int i = 0; i < BZip2Constants.N_GROUPS; ++i) {
@@ -276,12 +279,16 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			
 			ll8 = null;
 			tt  = null;
-			BsSetStream(zStream);
+			BsSetStream(stream);
 			Initialize();
 			InitBlock();
 			SetupBlock();
 		}
 		
+		/// <summary>
+		/// Read a byte from stream advancing position
+		/// </summary>
+		/// <returns>byte read or -1 on end of stream</returns>
 		public override int ReadByte()
 		{
 			if (streamEnd) {
@@ -314,7 +321,6 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		
 		void Initialize() 
 		{
-			// -jr- 18-Nov-2003 magic1 and 2 added here so stream is fully capable on its own
 			char magic1 = BsGetUChar();
 			char magic2 = BsGetUChar();
 			
@@ -354,7 +360,6 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			
 			blockRandomised = (BsR(1) == 1);
 			
-			//		currBlockNo++;
 			GetAndMoveToFrontDecode();
 			
 			mCrc.Reset();
@@ -385,19 +390,24 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			streamEnd = true;
 		}
 		
+		static void CompressedStreamEOF() 
+		{
+			throw new BZip2Exception("BZip2 input stream end of compressed stream");
+		}
+		
 		static void BlockOverrun() 
 		{
-			//Console.WriteLine("Block overrun");
+			throw new BZip2Exception("BZip2 input stream block overrun");
 		}
 		
 		static void BadBlockHeader() 
 		{
-			//Console.WriteLine("Bad block header");
+			throw new BZip2Exception("BZip2 input stream bad block header");
 		}
 		
 		static void CrcError() 
 		{
-			//Console.WriteLine("crc error");
+			throw new BZip2Exception("BZip2 input stream crc error");
 		}
 		
 		
@@ -632,7 +642,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			
 			while (zvec > limit[zt][zn]) {
 				if (zn > 20) { // the longest code
-					throw new ApplicationException("Bzip data error");  // -jr- 17-Dec-2003 from bzip 1.02 why 20???
+					throw new BZip2Exception("Bzip data error");  // -jr- 17-Dec-2003 from bzip 1.02 why 20???
 				}
 				zn++;
 				while (bsLive < 1) {
@@ -643,7 +653,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 				zvec = (zvec << 1) | zj;
 			}
 			if (zvec - baseArray[zt][zn] < 0 || zvec - baseArray[zt][zn] >= BZip2Constants.MAX_ALPHA_SIZE) {
-				throw new ApplicationException("Bzip data error");  // -jr- 17-Dec-2003 from bzip 1.02
+				throw new BZip2Exception("Bzip data error");  // -jr- 17-Dec-2003 from bzip 1.02
 			}
 			nextSym = perm[zt][zvec - baseArray[zt][zn]];
 			
@@ -783,7 +793,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 				if (rNToGo == 0) {
 					rNToGo = BZip2Constants.rNums[rTPos];
 					rTPos++;
-					if(rTPos == 512) {
+					if (rTPos == 512) {
 						rTPos = 0;
 					}
 				}
@@ -901,7 +911,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		void SetDecompressStructureSizes(int newSize100k) 
 		{
 			if (!(0 <= newSize100k   && newSize100k <= 9 && 0 <= blockSize100k && blockSize100k <= 9)) {
-				throw new ApplicationException("Invalid block size");
+				throw new BZip2Exception("Invalid block size");
 			}
 			
 			blockSize100k = newSize100k;

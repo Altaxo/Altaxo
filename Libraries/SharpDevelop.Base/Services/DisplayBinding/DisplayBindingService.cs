@@ -66,12 +66,13 @@ namespace ICSharpCode.SharpDevelop.Services
 		{
 			foreach (DisplayBindingCodon binding in bindings) {
 				if (binding.SecondaryDisplayBinding != null && binding.SecondaryDisplayBinding.CanAttachTo(workbenchWindow.ViewContent)) {
-					ISecondaryViewContent viewContent = binding.SecondaryDisplayBinding.CreateSecondaryViewContent(workbenchWindow.ViewContent);
-					if (viewContent != null) {
-						workbenchWindow.AttachSecondaryViewContent(viewContent);
+					ISecondaryViewContent [] viewContents = binding.SecondaryDisplayBinding.CreateSecondaryViewContent(workbenchWindow.ViewContent);
+					if (viewContents != null) {
+						foreach (ISecondaryViewContent viewContent in viewContents)
+							workbenchWindow.AttachSecondaryViewContent(viewContent);
 					} else {
 						IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-						messageService.ShowError("Can't attach secondary view content. " + viewContent + " returned null.\n(should never happen)");
+						messageService.ShowError("Can't attach secondary view content. " + workbenchWindow.ViewContent + " returned null.\n(should never happen)");
 					}
 				}
 			}

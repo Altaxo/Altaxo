@@ -25,8 +25,10 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 {
 	public class ScrollBox : UserControl
 	{
+		string[] text;
+		int[]    textHeights;
+		
 		Image  image;
-		string text;
 		Timer  timer;
 		int    scroll = -220;
 		
@@ -48,15 +50,6 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			}
 		}
 		
-		public string ScrollText {
-			get {
-				return text;
-			}
-			set {
-				text =  value;
-			}
-		}
-		
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing) {
@@ -75,14 +68,17 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			
 			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 			Font = resourceService.LoadFont("Tahoma", 10);
-			
-			text = "\"The most successful method of programming is to begin a program as simply as possible, test it, and then add to the program until it performs the required job.\"\n    -- PDP8 handbook, Pg 9-64\n\n\n";
-			text = "\"The primary purpose of the DATA statement is to give names to constants; instead of referring to pi as 3.141592653589793 at every\n appearance, the variable PI can be given that value with a DATA statement and used instead of the longer form of the constant. This also simplifies modifying the program, should the value of pi change.\"\n    -- FORTRAN manual for Xerox computers\n\n\n";
-			text = "\"No proper program contains an indication which as an operator-applied occurrence identifies an operator-defining occurrence which as an indication-applied occurrence identifies an indication-defining occurrence different from the one identified by the given indication as an indication- applied occurrence.\"\n   -- ALGOL 68 Report\n\n\n";
-			text = "\"The '#pragma' command is specified in the ANSI standard to have an arbitrary implementation-defined effect. In the GNU C preprocessor, `#pragma' first attempts to run the game rogue; if that fails, it tries to run the game hack; if that fails, it tries to run GNU Emacs displaying the Tower of Hanoi; if that fails, it reports a fatal error. In any case, preprocessing does not continue.\"\n   --From an old GNU C Preprocessor document";
+			text = new string[] {
+				"\"The most successful method of programming is to begin a program as simply as possible, test it, and then add to the program until it performs the required job.\"\n    -- PDP8 handbook, Pg 9-64",
+				"\"The primary purpose of the DATA statement is to give names to constants; instead of referring to pi as 3.141592653589793 at every\n appearance, the variable PI can be given that value with a DATA statement and used instead of the longer form of the constant. This also simplifies modifying the program, should the value of pi change.\"\n    -- FORTRAN manual for Xerox computers",
+				"\"No proper program contains an indication which as an operator-applied occurrence identifies an operator-defining occurrence which as an indication-applied occurrence identifies an indication-defining occurrence different from the one identified by the given indication as an indication- applied occurrence.\"\n   -- ALGOL 68 Report",
+				"\"The '#pragma' command is specified in the ANSI standard to have an arbitrary implementation-defined effect. In the GNU C preprocessor, `#pragma' first attempts to run the game rogue; if that fails, it tries to run the game hack; if that fails, it tries to run GNU Emacs displaying the Tower of Hanoi; if that fails, it reports a fatal error. In any case, preprocessing does not continue.\"\n   --From an old GNU C Preprocessor document",
+				"\"There are two ways of constructing a software design: one way is to make it so simple that there are obviously no deficiencies; the other is to make it so complicated that there are no obvious deficiencies.\"\n    -- C.A.R. Hoare",
+				"On two occasions, I have been asked [by members of Parliament], 'Pray, Mr. Babbage, if you put into the machine wrong figures, will the right answers come out?' I am not able to rightly apprehend the kind of confusion of ideas that could provoke such a question.\"\n   -- Charles Babbage (1791-1871)"
+			};
 			
 			timer = new Timer();
-			timer.Interval = 20;
+			timer.Interval = 40;
 			timer.Tick += new EventHandler(ScrollDown);
 			timer.Start();
 		}
@@ -99,15 +95,24 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 				pe.Graphics.DrawImage(image, 0, 0, Width, Height);
 			}
 		}
-		
+		int curText = 0;
 		protected override void OnPaint(PaintEventArgs pe)
 		{
 			Graphics g = pe.Graphics;
+			if (textHeights == null) {
+				textHeights = new int[text.Length]; 
+				for (int i = 0; i < text.Length; ++i) {
+					textHeights[i] = (int)g.MeasureString(text[i], Font, new SizeF(Width / 2, Height * 2)).Height;
+				}
+			}
+			g.DrawString(text[curText],
+			             Font,
+			             Brushes.Black, 
+			             new Rectangle(Width / 2, 0 - scroll, Width / 2, Height * 2));
 			
-			g.DrawString(text, Font, Brushes.Black, new Rectangle(Width / 2, 0 - scroll, Width / 2, Height));
-			SizeF size = g.MeasureString(text, Font);
-			if (scroll > (int)(size.Height + Height)) {
-				scroll = -(int)size.Height - Height;
+			if (scroll > textHeights[curText]) {
+				curText = (curText + 1) % text.Length;
+				scroll = -textHeights[curText] - Height;
 			}
 		}
 	}

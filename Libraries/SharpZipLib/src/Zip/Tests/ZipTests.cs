@@ -2,6 +2,7 @@
 
 using System;
 using System.IO;
+using System.Security;
 
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
@@ -33,6 +34,24 @@ namespace ICSharpCode.SharpZipLib.Zip
 				System.Random rnd = new Random();
 				rnd.NextBytes(data);
 			
+				zipStream.Write(data, 0, data.Length);
+			}
+		}
+
+		byte ScatterValue(byte rhs)
+		{
+			return (byte) (rhs * 253 + 7);
+		}
+		
+		void AddKnownDataToEntry(ZipOutputStream zipStream, int size)
+		{
+			if (size > 0) {
+				byte nextValue = 0;
+				byte [] data = new byte[size];
+				for (int i = 0; i < size; ++i) {
+					data[i] = nextValue;
+					nextValue = ScatterValue(nextValue);			
+				}
 				zipStream.Write(data, 0, data.Length);
 			}
 		}
@@ -129,20 +148,20 @@ namespace ICSharpCode.SharpZipLib.Zip
 			
 			ZipInputStream inStream = new ZipInputStream(ms);
 			
-			int    pos  = 0;
+			int    extractCount  = 0;
 			ZipEntry entry;
 			byte[] decompressedData = new byte[100];
 			while ((entry = inStream.GetNextEntry()) != null) {
 				while (true) {
-					int numRead = inStream.Read(decompressedData, pos, decompressedData.Length);
+					int numRead = inStream.Read(decompressedData, extractCount, decompressedData.Length);
 					if (numRead <= 0) {
 						break;
 					}
-					pos += numRead;
+					extractCount += numRead;
 				}
 			}
 			inStream.Close();
-			Assertion.AssertEquals("No data should be read from empty entries", pos, 0);
+			Assertion.AssertEquals("No data should be read from empty entries", extractCount, 0);
 		}
 
 		/// <summary>
@@ -162,8 +181,6 @@ namespace ICSharpCode.SharpZipLib.Zip
 			while ((entry = inStream.GetNextEntry()) != null) {
 				Assertion.Assert("No entries should be found in empty zip", entry == null);
 			}
-			
-			Assertion.Assert("No entries should be found in empty zip", entry == null);
 		}
 
 		/// <summary>
@@ -198,7 +215,6 @@ namespace ICSharpCode.SharpZipLib.Zip
 		
 		/// <summary>
 		/// Invalid passwords should be detected early if possible, non seekable stream
-		/// TODO test isnt quite right as wrong passwor dwill give an exception anyway?
 		/// </summary>
 		[Test]
 		[ExpectedException(typeof(ZipException))]
@@ -225,6 +241,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				}
 				pos += numRead;
 			}
+			
 		}
 
 		/// <summary>
@@ -259,6 +276,18 @@ namespace ICSharpCode.SharpZipLib.Zip
 			ZipOutputStream s = new ZipOutputStream(ms);
 			s.Finish();
 			s.PutNextEntry(new ZipEntry("dummyfile.tst"));
+		}
+		
+		/// <summary>
+		/// Test setting file commment to a value that is too long
+		/// </summary>
+		[Test]
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void CommentTooLong()
+		{
+			MemoryStream ms = new MemoryStream();
+			ZipOutputStream s = new ZipOutputStream(ms);
+			s.SetComment(new String('A', 65536));			
 		}
 		
 		/// <summary>
@@ -354,7 +383,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 		}
 		
 		/// <summary>
-		/// Basic stored file test, with encryption, non seekable output
+		/// Basic stored file test, with encryption, non seekable output.
+		/// NOTE this gets converted deflate level 0
 		/// </summary>
 		[Test]
 		public void BasicStoredEncryptedNonSeekable()
@@ -362,8 +392,12 @@ namespace ICSharpCode.SharpZipLib.Zip
 			ExerciseZip(CompressionMethod.Stored, 0, 50000, "Rosebud", false);
 		}
 
+		/// <summary>
+		/// Check that when the output stream cannot seek that requests for stored
+		/// are in fact converted to defalted level 0
+		/// </summary>
 		[Test]
-		public void StoredNoSeekableConvertToDeflate()
+		public void StoredNonSeekableConvertToDeflate()
 		{
 			MemStreamWithoutSeek ms = new MemStreamWithoutSeek();
 			
@@ -404,7 +438,6 @@ namespace ICSharpCode.SharpZipLib.Zip
 		
 		/// <summary>
 		/// Check that adding too many entries is detected and handled
-		/// TODO -jr- testing for 4G limits takes an eternity... what to do about that?
 		/// </summary>
 		[Test]
 		[ExpectedException(typeof(ZipException))]
@@ -420,6 +453,203 @@ namespace ICSharpCode.SharpZipLib.Zip
 			ms.Seek(0, SeekOrigin.Begin);
 			ZipFile zipFile = new ZipFile(ms);
 			Assertion.AssertEquals("Incorrect number of entries stored", target, zipFile.Size);
+		}
+
+		void MakeZipFile(string name, string[] names, int size, string comment)
+		{
+			using (FileStream fs = File.Create(name)) {
+				ZipOutputStream zOut = new ZipOutputStream(fs);
+				zOut.SetComment(comment);
+				for (int i = 0; i < names.Length; ++i) {
+					zOut.PutNextEntry(new ZipEntry(names[i]));
+					AddKnownDataToEntry(zOut, size);	
+				}
+				zOut.Close();
+				fs.Close();
+			}
+		}
+		
+		void MakeZipFile(string name, string entryNamePrefix, int entries, int size, string comment)
+		{
+			using (FileStream fs = File.Create(name)) {
+				ZipOutputStream zOut = new ZipOutputStream(fs);
+				zOut.SetComment(comment);
+				for (int i = 0; i < entries; ++i) {
+					zOut.PutNextEntry(new ZipEntry(entryNamePrefix + (i + 1).ToString()));
+					AddKnownDataToEntry(zOut, size);	
+				}
+				zOut.Close();
+				fs.Close();
+			}
+		}
+		
+		
+		void CheckKnownEntry(Stream inStream, int expectedCount) 
+		{
+			byte[] buffer = new Byte[1024];
+			int bytesRead;
+			int total = 0;
+			byte nextValue = 0;
+			while ((bytesRead = inStream.Read(buffer, 0, buffer.Length)) > 0) {
+				total += bytesRead;
+				for (int i = 0; i < bytesRead; ++i) {
+					Assertion.AssertEquals("Wrong value read from entry", nextValue, buffer[i]);
+					nextValue = ScatterValue(nextValue);			
+				}
+			}
+			Assertion.AssertEquals("Wrong number of bytes read from entry", expectedCount, total);
+		}
+		
+		/// <summary>
+		/// Simple round trip test for ZipFile class
+		/// </summary>
+		[Test]
+		public void ZipFileRoundTrip()
+		{
+			string tempFile = null;
+			try {
+				 tempFile = Path.GetTempPath();
+			} catch (SecurityException) {
+			}
+			
+			Assertion.AssertNotNull("No permission to execute this test?", tempFile);
+			
+			if (tempFile != null) {
+				tempFile = Path.Combine(tempFile, "SharpZipTest.Zip");
+				MakeZipFile(tempFile, "", 10, 1024, "");
+				
+				ZipFile zipFile = new ZipFile(tempFile);
+				foreach (ZipEntry e in zipFile) {
+					Stream instream = zipFile.GetInputStream(e);
+					CheckKnownEntry(instream, 1024);
+		 		}
+				
+				zipFile.Close();
+				
+				File.Delete(tempFile);
+			}
+		}
+
+		/// <summary>
+		/// Check that ZipFile finds entries when its got a long comment
+		/// </summary>
+		[Test]
+		public void ZipFileFindEntriesLongComment()
+		{
+			string tempFile = null;
+			try	{
+				 tempFile = Path.GetTempPath();
+			} catch (SecurityException) {
+			}
+			
+			Assertion.AssertNotNull("No permission to execute this test?", tempFile);
+			
+			if (tempFile != null) {
+				tempFile = Path.Combine(tempFile, "SharpZipTest.Zip");
+				string longComment = new String('A', 65535);
+				MakeZipFile(tempFile, "", 1, 1, longComment);
+				
+				ZipFile zipFile = new ZipFile(tempFile);
+				foreach (ZipEntry e in zipFile) {
+					Stream instream = zipFile.GetInputStream(e);
+					CheckKnownEntry(instream, 1);
+		 		}
+				
+				zipFile.Close();
+				
+				File.Delete(tempFile);
+			}
+			
+		}
+		
+		/// <summary>
+		/// Check that ZipFile class handles no entries in zip file
+		/// </summary>
+		[Test]
+		public void ZipFileHandlesNoEntries()
+		{
+			string tempFile = null;
+			try {
+				 tempFile = Path.GetTempPath();
+			} catch (SecurityException) {
+			}
+			
+			Assertion.AssertNotNull("No permission to execute this test?", tempFile);
+			
+			if (tempFile != null) {
+				tempFile = Path.Combine(tempFile, "SharpZipTest.Zip");
+				MakeZipFile(tempFile, "", 0, 1, "Aha");
+				
+				ZipFile zipFile = new ZipFile(tempFile);
+				zipFile.Close();
+				File.Delete(tempFile);
+			}
+			
+		}
+		
+		/// <summary>
+		/// Test ZipFile find method operation
+		/// </summary>
+		[Test]
+		public void ZipFileFind()
+		{
+			string tempFile = null;
+			try
+			{
+				 tempFile = Path.GetTempPath();
+			}
+			catch (SecurityException)
+			{
+			}
+			
+			Assertion.AssertNotNull("No permission to execute this test?", tempFile);
+			
+			if (tempFile != null) {
+				tempFile = Path.Combine(tempFile, "SharpZipTest.Zip");
+				MakeZipFile(tempFile, new String[] {"Farriera", "Champagne", "Urban myth" }, 10, "Aha");
+				
+				ZipFile zipFile = new ZipFile(tempFile);
+				Assertion.AssertEquals("Expected 1 entry", 3, zipFile.Size);
+				
+				int testIndex = zipFile.FindEntry("Farriera", false);
+				Assertion.AssertEquals("Case sensitive find failure", 0, testIndex);
+				Assertion.Assert(string.Compare(zipFile[testIndex].Name, "Farriera", false) == 0);
+				
+				testIndex = zipFile.FindEntry("Farriera", true);
+				Assertion.AssertEquals("Case insensitive find failure", 0, testIndex);
+				Assertion.Assert(string.Compare(zipFile[testIndex].Name, "Farriera", true) == 0);
+				
+				testIndex = zipFile.FindEntry("urban mYTH", false);
+				Assertion.AssertEquals("Case sensitive find failure", -1, testIndex);
+				
+				testIndex = zipFile.FindEntry("urban mYTH", true);
+				Assertion.AssertEquals("Case insensitive find failure", 2, testIndex);
+				Assertion.Assert(string.Compare(zipFile[testIndex].Name, "urban mYTH", true) == 0);
+				
+				testIndex = zipFile.FindEntry("Champane.", false);
+				Assertion.AssertEquals("Case sensitive find failure", -1, testIndex);
+				
+				testIndex = zipFile.FindEntry("Champane.", true);
+				Assertion.AssertEquals("Case insensitive find failure", -1, testIndex);
+				
+				zipFile.Close();
+				File.Delete(tempFile);
+			}
+		}
+		
+		
+		/// <summary>
+		/// Test ZipEntry static file name cleaning methods
+		/// </summary>
+		[Test]
+		public void FilenameCleaning()
+		{
+			Assertion.Assert(string.Compare(ZipEntry.CleanName("hello"), "hello") == 0);
+			Assertion.Assert(string.Compare(ZipEntry.CleanName(@"z:\eccles"), "eccles") == 0);
+			Assertion.Assert(string.Compare(ZipEntry.CleanName(@"\\server\share\eccles"), "eccles") == 0);
+			Assertion.Assert(string.Compare(ZipEntry.CleanName(@"\\server\share\dir\eccles"), "dir/eccles") == 0);
+			Assertion.Assert(string.Compare(ZipEntry.CleanName(@"\\server\share\eccles", false), "/eccles") == 0);
+			Assertion.Assert(string.Compare(ZipEntry.CleanName(@"c:\a\b\c\deus.dat", false), "/a/b/c/deus.dat") == 0);
 		}
 		
 	}

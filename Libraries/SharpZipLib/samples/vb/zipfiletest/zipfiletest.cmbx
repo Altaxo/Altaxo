@@ -1,15 +1,15 @@
 <Combine fileversion="1.0" name="zipfiletest" description="">
-  <StartMode startupentry="VBCreateZipFile" single="True">
+  <StartMode startupentry="zipfiletest" single="True">
     <Execute entry="zipfiletest" type="None" />
   </StartMode>
   <Entries>
     <Entry filename=".\zipfiletest.prjx" />
   </Entries>
   <Configurations active="Debug">
-    <Configuration name="Release" description="">
+    <Configuration name="Release">
       <Entry name="zipfiletest" configurationname="Debug" build="False" />
     </Configuration>
-    <Configuration name="Debug" description="">
+    <Configuration name="Debug">
       <Entry name="zipfiletest" configurationname="Debug" build="False" />
     </Configuration>
   </Configurations>

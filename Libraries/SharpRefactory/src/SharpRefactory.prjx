@@ -132,31 +132,31 @@
   </Contents>
   <References />
   <DeploymentInformation target="" script="" strategy="File" />
-  <Configuration runwithwarnings="False" name="Release">
-    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="0" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+  <Configuration runwithwarnings="False" name="Executable">
+    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
     <Execution commandlineparameters="" consolepause="True" />
-    <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild=".\Parser\generated\gen.bat" executeAfterBuild="" />
+    <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
   </Configuration>
-  <Configurations active="Release">
+  <Configurations active="Executable">
     <Configuration runwithwarnings="False" name="Debug">
-      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild=".\Parser\generated\gen.bat" executeAfterBuild="" />
+      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild=".\Parser\generated\gen.bat" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
     <Configuration runwithwarnings="False" name="Release">
-      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="0" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="Standard" warninglevel="0" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild=".\Parser\generated\gen.bat" executeAfterBuild="" />
+      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild=".\Parser\generated\gen.bat" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
     <Configuration runwithwarnings="False" name="Executable">
-      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
     <Configuration runwithwarnings="False" name="Executable/withoutATGGen">
-      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
   </Configurations>
 </Project>

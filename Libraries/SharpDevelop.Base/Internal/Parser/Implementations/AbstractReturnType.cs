@@ -40,8 +40,10 @@ namespace SharpDevelop.Internal.Parser
 				if (FullyQualifiedName == null) {
 					return null;
 				}
-				string[] name = FullyQualifiedName.Split(new char[] {'.'});
-				return name[name.Length - 1];
+ 				int index = FullyQualifiedName.LastIndexOf('.');
+				return index < 0 ? FullyQualifiedName : FullyQualifiedName.Substring(index + 1);
+//				string[] name = FullyQualifiedName.Split(new char[] {'.'});
+//				return name[name.Length - 1];
 			}
 		}
 

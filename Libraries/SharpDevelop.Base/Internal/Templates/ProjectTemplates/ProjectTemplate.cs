@@ -167,6 +167,13 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		string lastCombine    = null;
 //		string startupProject = null;
 		ProjectCreateInformation projectCreateInformation;
+
+		public ProjectCreateInformation ProjectCreateInformation
+		{
+			get { 
+				return projectCreateInformation; 
+			}
+		}
 		
 		public string CreateProject(ProjectCreateInformation projectCreateInformation)
 		{

@@ -122,7 +122,13 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 				}
 				
 				if (fileExtension == ".vb") {
-					editActionHandler.InsertString("override " + returnType + " " + property.Name + " {\n");
+					editActionHandler.InsertString("override " + returnType + " " + property.Name);
+					if (StartCodeBlockInSameLine) {
+						editActionHandler.InsertString(" {");++numOps;
+					} else {
+						Return();
+						editActionHandler.InsertString("{");++numOps;
+					}
 				} else {
 					editActionHandler.InsertString("Overrides Property " + property.Name + " As " + returnType + "\n");
 				}
@@ -136,7 +142,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 						editActionHandler.InsertString("\tEnd Get");++numOps;
 						Return();
 					} else {
-						editActionHandler.InsertString("\tget {");++numOps;
+						editActionHandler.InsertString("\tget");++numOps;
+						if (StartCodeBlockInSameLine) {
+							editActionHandler.InsertString(" {");++numOps;
+						} else {
+							Return();
+							editActionHandler.InsertString("{");++numOps;
+						}
+						
 						Return();
 						editActionHandler.InsertString("\t\treturn " + GetReturnValue(returnType) +";");++numOps;
 						Return();
@@ -152,7 +165,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 						editActionHandler.InsertString("\tEnd Set");++numOps;
 						Return();
 					} else {
-						editActionHandler.InsertString("\tset {");++numOps;
+						editActionHandler.InsertString("\tset");++numOps;
+						if (StartCodeBlockInSameLine) {
+							editActionHandler.InsertString(" {");++numOps;
+						} else {
+							Return();
+							editActionHandler.InsertString("{");++numOps;
+						}
+						
 						Return();
 						editActionHandler.InsertString("\t}");++numOps;
 						Return();
@@ -203,8 +223,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 					Return();
 				} else {
 					editActionHandler.InsertString("override " + returnType + " " + method.Name + "(" + parameters + ")");++numOps;
-					Return();
-					editActionHandler.InsertChar('{');++numOps;
+					if (StartCodeBlockInSameLine) {
+						editActionHandler.InsertString(" {");++numOps;
+					} else {
+						Return();
+						editActionHandler.InsertString("{");++numOps;
+					}
 					Return();
 				}
 				

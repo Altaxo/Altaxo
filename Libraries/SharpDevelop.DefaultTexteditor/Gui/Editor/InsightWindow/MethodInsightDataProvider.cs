@@ -93,7 +93,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				}
 			}
 			ResolveResult results = parserService.Resolve(methodObject, caretLineNumber, caretColumn, fileName, document.TextContent);
-			Console.WriteLine("results: method obj{0} " + results, methodObject);
+			
 			
 			if (results != null && results.Type != null) {
 				if (contructorInsight) {

@@ -17,6 +17,7 @@ using ICSharpCode.Core.Services;
 using ICSharpCode.Core.Properties;
 using ICSharpCode.Core.AddIns.Codons;
 
+
 namespace CSharpBinding
 {
 	public class OutputOptionsPanel : AbstractOptionPanel
@@ -41,12 +42,14 @@ namespace CSharpBinding
 			ControlDictionary["browseButton3"].Click += new EventHandler(SelectFile3);
 			ControlDictionary["browseButton4"].Click += new EventHandler(SelectFile4);
 			
-			ControlDictionary["assemblyNameTextBox"].Text    = compilerParameters.OutputAssembly;
-			ControlDictionary["outputDirectoryTextBox"].Text = compilerParameters.OutputDirectory;
-			ControlDictionary["parametersTextBox"].Text      = compilerParameters.CommandLineParameters;
-			ControlDictionary["executeScriptTextBox"].Text   = compilerParameters.ExecuteScript;
-			ControlDictionary["executeBeforeTextBox"].Text   = compilerParameters.ExecuteBeforeBuild;
-			ControlDictionary["executeAfterTextBox"].Text    = compilerParameters.ExecuteAfterBuild;
+			ControlDictionary["assemblyNameTextBox"].Text           = compilerParameters.OutputAssembly;
+			ControlDictionary["outputDirectoryTextBox"].Text        = compilerParameters.OutputDirectory;
+			ControlDictionary["parametersTextBox"].Text             = compilerParameters.CommandLineParameters;
+			ControlDictionary["executeScriptTextBox"].Text          = compilerParameters.ExecuteScript;
+			ControlDictionary["executeBeforeTextBox"].Text          = compilerParameters.ExecuteBeforeBuild;
+			ControlDictionary["executeAfterTextBox"].Text           = compilerParameters.ExecuteAfterBuild;
+			ControlDictionary["executeBeforeArgumentsTextBox"].Text = compilerParameters.ExecuteBeforeBuildArguments;
+			ControlDictionary["executeAfterArgumentsTextBox"].Text  = compilerParameters.ExecuteAfterBuildArguments;
 			
 			((CheckBox)ControlDictionary["pauseConsoleOutputCheckBox"]).Checked = compilerParameters.PauseConsoleOutput;
 			
@@ -63,19 +66,23 @@ namespace CSharpBinding
 			
 			FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
 			if (!fileUtilityService.IsValidFileName(ControlDictionary["assemblyNameTextBox"].Text)) {
-				MessageService.ShowError("Invalid assembly name specified");
+				MessageService.ShowError("${res:CSharpBinding.OutputOptionsPanel.InvalidAssemblyNameError}");
 				return false;
 			}
 			if (!fileUtilityService.IsValidFileName(ControlDictionary["outputDirectoryTextBox"].Text)) {
-				MessageService.ShowError("Invalid output directory specified");
+				MessageService.ShowError("${res:CSharpBinding.OutputOptionsPanel.InvalidOutputDirectoryError}");
 				return false;
 			}
 			
-			compilerParameters.OutputAssembly        = ControlDictionary["assemblyNameTextBox"].Text;
-			compilerParameters.OutputDirectory       = ControlDictionary["outputDirectoryTextBox"].Text;
-			compilerParameters.CommandLineParameters = ControlDictionary["parametersTextBox"].Text;
-			compilerParameters.ExecuteBeforeBuild    = ControlDictionary["executeBeforeTextBox"].Text;
-			compilerParameters.ExecuteAfterBuild     = ControlDictionary["executeAfterTextBox"].Text;
+			compilerParameters.OutputAssembly              = ControlDictionary["assemblyNameTextBox"].Text;
+			compilerParameters.OutputDirectory             = ControlDictionary["outputDirectoryTextBox"].Text;
+			
+			compilerParameters.CommandLineParameters       = ControlDictionary["parametersTextBox"].Text;
+			compilerParameters.ExecuteBeforeBuild          = ControlDictionary["executeBeforeTextBox"].Text;
+			compilerParameters.ExecuteAfterBuild           = ControlDictionary["executeAfterTextBox"].Text;
+			compilerParameters.ExecuteBeforeBuildArguments = ControlDictionary["executeBeforeArgumentsTextBox"].Text;
+			compilerParameters.ExecuteAfterBuildArguments  = ControlDictionary["executeAfterArgumentsTextBox"].Text;
+			
 			compilerParameters.ExecuteScript         = ControlDictionary["executeScriptTextBox"].Text;
 			compilerParameters.CompileTarget = (CompileTarget)((ComboBox)ControlDictionary["compileTargetComboBox"]).SelectedIndex;
 			compilerParameters.Win32Icon     = ControlDictionary["win32IconTextBox"].Text;

@@ -42,9 +42,10 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			base.OnPaintBackground(pe);
 			Graphics g = pe.Graphics;
 			
-			g.FillRectangle(new LinearGradientBrush(new Point(0, 0), new Point(Width, Height), 
-			                                        SystemColors.Window, SystemColors.Control),
-							new Rectangle(0, 0, Width, Height));
+			using (Brush brush = new LinearGradientBrush(new Point(0, 0), new Point(Width, Height),
+			                                             SystemColors.Window, SystemColors.Control)) {
+				g.FillRectangle(brush, new Rectangle(0, 0, Width, Height));
+			}
 		}
 	}
 	
@@ -142,7 +143,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		protected void SetOptionPanelTo(TreeNode node)
 		{
 			IDialogPanelDescriptor descriptor = node.Tag as IDialogPanelDescriptor;
-			if (descriptor != null && descriptor.DialogPanel != null) {
+			if (descriptor != null && descriptor.DialogPanel != null && descriptor.DialogPanel.Control != null) {
 				descriptor.DialogPanel.ReceiveDialogMessage(DialogMessage.Activated);
 				ControlDictionary["optionControlPanel"].Controls.Clear();
 				ControlDictionary["optionControlPanel"].Controls.Add(descriptor.DialogPanel.Control);

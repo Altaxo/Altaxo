@@ -22,6 +22,6 @@ namespace ICSharpCode.Core.AddIns.Codons
 	{
 		bool CanAttachTo(IViewContent content);
 		
-		ISecondaryViewContent CreateSecondaryViewContent(IViewContent viewContent);
+		ISecondaryViewContent [] CreateSecondaryViewContent(IViewContent viewContent);
 	}
 }

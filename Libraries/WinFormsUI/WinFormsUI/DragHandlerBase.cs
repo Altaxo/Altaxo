@@ -114,6 +114,11 @@ namespace WeifenLuo.WinFormsUI
 			else if (m.Msg == (int)Win32.Msgs.WM_KEYDOWN && (int)m.WParam == (int)Keys.Escape)
 				EndDrag(true);
 
+			return OnPreFilterMessage(ref m);
+		}
+
+		protected virtual bool OnPreFilterMessage(ref Message m)
+		{
 			return true;
 		}
 

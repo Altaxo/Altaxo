@@ -42,6 +42,8 @@ namespace ICSharpCode.SharpDevelop.Services {
 		{
 		}
 		
+		// i really hate code duplication, see AbstractProject.cs
+		// After .NET 2.0 we need a clean, application domain based assembly loading mechanism!!!
 		byte[] GetBytes(string fileName)
 		{
 			FileStream fs = System.IO.File.OpenRead(fileName);
@@ -52,48 +54,66 @@ namespace ICSharpCode.SharpDevelop.Services {
 			return outArray;
 		}
 		
+		string loadingPath = String.Empty;
+		Assembly MyResolveEventHandler(object sender, ResolveEventArgs args)
+		{
+			string file = args.Name;
+			int idx = file.IndexOf(',');
+			if (idx >= 0) {
+				file = file.Substring(0, idx);
+			}
+			try {
+				if (File.Exists(loadingPath + file + ".exe")) {
+					return Assembly.Load(GetBytes(loadingPath + file + ".exe"));
+				} 
+				if (File.Exists(loadingPath + file + ".dll")) {
+					return Assembly.Load(GetBytes(loadingPath + file + ".dll"));
+				} 
+			} catch (Exception ex) {
+				Console.WriteLine("Can't load assembly : " + ex.ToString());
+			}
+			return null;
+		}
+		
+		
 		public void Load(string fileName, bool nonLocking)
 		{
-//			AssemblyReader assembly = new AssemblyReader();
-//			assembly.Load(fileName);
-//			
-//			TypeDef[] typeDefTable = (TypeDef[])assembly.MetadataTable.Tables[TypeDef.TABLE_ID];
-//			
-//			for (int i = 0; i < typeDefTable.Length; ++i) {
-//				Console.WriteLine("ADD " + i);
-//				classes.Add(new SharpAssemblyClass(assembly, typeDefTable, i));
-//			}
-			
-			// read xml documentation for the assembly
-			XmlDocument doc        = null;
-			Hashtable   docuNodes  = new Hashtable();
-			string      xmlDocFile = System.IO.Path.ChangeExtension(fileName, ".xml");
-			
-			string   localizedXmlDocFile = System.IO.Path.GetDirectoryName(fileName) + System.IO.Path.DirectorySeparatorChar +
-			                               Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName + System.IO.Path.DirectorySeparatorChar +
-								           System.IO.Path.ChangeExtension(System.IO.Path.GetFileName(fileName), ".xml");
-			if (System.IO.File.Exists(localizedXmlDocFile)) {
-				xmlDocFile = localizedXmlDocFile;
-			}
-			if (System.IO.File.Exists(xmlDocFile)) {
-				doc = new XmlDocument();
-				doc.Load(xmlDocFile);
+			try {
+				AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(MyResolveEventHandler);
+				// read xml documentation for the assembly
+				XmlDocument doc        = null;
+				Hashtable   docuNodes  = new Hashtable();
+				string      xmlDocFile = System.IO.Path.ChangeExtension(fileName, ".xml");
 				
-				// convert the XmlDocument into a hash table
-				if (doc.DocumentElement != null && doc.DocumentElement["members"] != null) {
-					foreach (XmlNode node in doc.DocumentElement["members"].ChildNodes) {
-						if (node != null && node.Attributes != null && node.Attributes["name"] != null) {
-							docuNodes[node.Attributes["name"].InnerText] = node;
+				string   localizedXmlDocFile = System.IO.Path.GetDirectoryName(fileName) + System.IO.Path.DirectorySeparatorChar +
+				                               Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName + System.IO.Path.DirectorySeparatorChar +
+									           System.IO.Path.ChangeExtension(System.IO.Path.GetFileName(fileName), ".xml");
+				if (System.IO.File.Exists(localizedXmlDocFile)) {
+					xmlDocFile = localizedXmlDocFile;
+				}
+				if (System.IO.File.Exists(xmlDocFile)) {
+					doc = new XmlDocument();
+					doc.Load(xmlDocFile);
+					
+					// convert the XmlDocument into a hash table
+					if (doc.DocumentElement != null && doc.DocumentElement["members"] != null) {
+						foreach (XmlNode node in doc.DocumentElement["members"].ChildNodes) {
+							if (node != null && node.Attributes != null && node.Attributes["name"] != null) {
+								docuNodes[node.Attributes["name"].InnerText] = node;
+							}
 						}
 					}
 				}
-			}
-			
-			System.Reflection.Assembly asm = nonLocking ? Assembly.Load(GetBytes(fileName)) : Assembly.LoadFrom(fileName);
-			foreach (Type type in asm.GetTypes()) {
-				if (!type.FullName.StartsWith("<") && type.IsPublic) {
-					classes.Add(new ReflectionClass(type, docuNodes));
+				
+				loadingPath = Path.GetDirectoryName(fileName) + Path.DirectorySeparatorChar;
+				System.Reflection.Assembly asm = nonLocking ? Assembly.Load(GetBytes(fileName)) : Assembly.LoadFrom(fileName);
+				foreach (Type type in asm.GetTypes()) {
+					if (!type.FullName.StartsWith("<") && type.IsPublic) {
+						classes.Add(new ReflectionClass(type, docuNodes));
+					}
 				}
+			} finally {
+				AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(MyResolveEventHandler);
 			}
 		}
 	}

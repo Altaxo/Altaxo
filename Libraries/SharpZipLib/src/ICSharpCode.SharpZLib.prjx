@@ -14,7 +14,7 @@
     <File name=".\GZip\GZipOutputStream.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\GZip\GZipInputStream.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\GZip\GZipConstants.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\ZipException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Zip\ZipException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\NZipLib.ndoc" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\NZipLib.key" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\SharpZipLib.key" subtype="Code" buildaction="Exclude" dependson="" data="" />
@@ -56,26 +56,35 @@
     <File name=".\Zip\Compression\Tests\InflaterDeflaterTests.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Tar\Tests" subtype="Directory" buildaction="Compile" dependson="" data="" />
     <File name=".\Tar\Tests\TarTests.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\SharpZipBaseException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Tar\TarException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\GZip\GZipException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\BZip2\BZip2Exception.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Gac" refto="nunit.framework, Version=2.1.4.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" localcopy="True" />
   </References>
   <DeploymentInformation target="" script="" strategy="File" />
-  <Configuration runwithwarnings="False" name="Debug">
-    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="TEST" generatexmldocumentation="False" win32Icon="" />
+  <Configuration runwithwarnings="True" name="Release">
+    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="Standard" warninglevel="4" nowarn="" includedebuginformation="False" optimize="True" unsafecodeallowed="False" generateoverflowchecks="False" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
     <Execution commandlineparameters="" consolepause="True" />
-    <Output directory="..\bin" assembly="ICSharpCode.SharpZipLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+    <Output directory="..\bin" assembly="ICSharpCode.SharpZipLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
   </Configuration>
-  <Configurations active="Debug">
-    <Configuration runwithwarnings="False" name="Debug">
-      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="TEST" generatexmldocumentation="False" win32Icon="" />
+  <Configurations active="Release">
+    <Configuration runwithwarnings="False" name="DebugWithNunitTests">
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="Standard" warninglevel="4" nowarn="" includedebuginformation="True" optimize="False" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="TEST" generatexmldocumentation="True" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\bin" assembly="ICSharpCode.SharpZipLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory="..\bin" assembly="ICSharpCode.SharpZipLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
     <Configuration runwithwarnings="True" name="Release">
-      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="False" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="Standard" warninglevel="4" nowarn="" includedebuginformation="False" optimize="True" unsafecodeallowed="False" generateoverflowchecks="False" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\bin" assembly="ICSharpCode.SharpZipLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory="..\bin" assembly="ICSharpCode.SharpZipLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
+    </Configuration>
+    <Configuration runwithwarnings="False" name="Debug">
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="Standard" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
+      <Execution commandlineparameters="" consolepause="True" />
+      <Output directory="..\bin" assembly="ICSharpCode.SharpZipLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
   </Configurations>
 </Project>

@@ -18,7 +18,7 @@ namespace SharpDevelop.Internal.Parser
 		protected AttributeSectionCollection attributes    = null;
 		string documentation = null;
 //		int    documentationHash = -1;
-//		static Hashtable documentationHashtable = new Hashtable();
+//		public static Hashtable documentationHashtable = new Hashtable();
 		
 		
 		public virtual ModifierEnum Modifiers {

@@ -85,6 +85,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		bool      IsAccessible(IClass c, IDecoration member, IClass callingClass, bool isClassInInheritanceTree);
 		bool      MustBeShown(IClass c, IDecoration member, IClass callingClass, bool showStatic, bool isClassInInheritanceTree);
 		ArrayList ListMembers(ArrayList members, IClass curType, IClass callingClass, bool showStatic);
+		ArrayList ListTypes(ArrayList types, IClass curType, IClass callingClass);
 		
 		
 		////////////////////////////////////////////

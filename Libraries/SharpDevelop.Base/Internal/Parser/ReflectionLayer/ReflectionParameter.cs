@@ -15,7 +15,7 @@ namespace SharpDevelop.Internal.Parser
 	{
 		public ReflectionParameter(ParameterInfo parameterInfo, XmlNode methodNode)
 		{
-			name       = parameterInfo.Name;
+			Name       = parameterInfo.Name;
 			returnType = new ReflectionReturnType(parameterInfo.ParameterType);
 			
 			if (parameterInfo.IsOut) {
@@ -35,7 +35,7 @@ namespace SharpDevelop.Internal.Parser
 			if (methodNode != null) {
 				XmlNode paramDocu = methodNode.SelectSingleNode("member[@name='" + parameterInfo.Name + "']");
 				if (paramDocu != null) {
-					documentation = paramDocu.InnerXml;
+					Documentation = paramDocu.InnerXml;
 				}
 			}
 		}

@@ -278,7 +278,24 @@ namespace Altaxo.Graph.GUI
         BeforeSave(this, e);
       }
     }
+
+    /// <summary>
+    /// If this property is true, content will be created in the tab page
+    /// </summary>
+    public bool CreateAsSubViewContent 
+    {
+      get { return false; }
+    }
   
+    /// <summary>
+    /// Is called when the window is switched to.
+    /// -> Inside the tab (Called before Selected())
+    /// -> Inside the workbench.
+    /// </summary>
+    public void SwitchedTo()
+    {
+    }
+
     /// <summary>
     /// Is called each time the name for the content has changed.
     /// </summary>
@@ -292,6 +309,10 @@ namespace Altaxo.Graph.GUI
     public event EventHandler DirtyChanged;
 
     public event EventHandler BeforeSave;
+
+    public event EventHandler     Saving;
+    public event ICSharpCode.SharpDevelop.Gui.SaveEventHandler Saved;
+
     #endregion
 
     #region ICSharpCode.SharpDevelop.Gui.IEditable

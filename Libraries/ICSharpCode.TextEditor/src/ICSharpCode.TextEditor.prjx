@@ -44,7 +44,6 @@
     <File name=".\Actions\IEditAction.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Actions\MiscActions.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Actions\SelectionActions.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Gui\Ruler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Document\Selection\ISelection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Document\Selection\DefaultSelection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Document\Selection\SelectionCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -621,24 +620,26 @@
     <File name=".\Gui\CompletionWindow\AbstractCompletionWindow.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\CompletionWindow\CodeCompletionListView.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\data\syntaxmodes\ILAsm-Mode.xshd" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\Gui\BrushRegistry.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\HRuler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References />
   <DeploymentInformation target="" script="" strategy="File" />
   <Configuration runwithwarnings="False" name="Debug">
-    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
     <Execution commandlineparameters="" consolepause="True" />
-    <Output directory="..\..\..\..\bin" assembly="ICSharpCode.TextEditor" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+    <Output directory="..\..\..\..\bin" assembly="ICSharpCode.TextEditor" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
   </Configuration>
   <Configurations active="Debug">
     <Configuration runwithwarnings="False" name="Debug">
-      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.TextEditor" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.TextEditor" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
     <Configuration runwithwarnings="False" name="Release">
-      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="False" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="False" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory=".\" assembly="ICSharpCode.TextEditor" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory=".\" assembly="ICSharpCode.TextEditor" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
   </Configurations>
 </Project>

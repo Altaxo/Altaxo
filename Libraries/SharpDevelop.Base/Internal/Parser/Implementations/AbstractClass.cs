@@ -21,14 +21,14 @@ namespace SharpDevelop.Internal.Parser
 		protected IRegion          bodyRegion;
 		protected object           declaredIn;
 
-		protected StringCollection baseTypes       = new StringCollection();
+		StringCollection    baseTypes   = null;
 
-		protected ClassCollection    innerClasses = new ClassCollection();
-		protected FieldCollection    fields       = new FieldCollection();
-		protected PropertyCollection properties   = new PropertyCollection();
-		protected MethodCollection   methods      = new MethodCollection();
-		protected EventCollection    events       = new EventCollection();
-		protected IndexerCollection  indexer      = new IndexerCollection();
+		ClassCollection    innerClasses = null;
+		FieldCollection    fields       = null;
+		PropertyCollection properties   = null;
+		MethodCollection   methods      = null;
+		EventCollection    events       = null;
+		IndexerCollection  indexer      = null;
 
 		public abstract ICompilationUnit CompilationUnit {
 			get;
@@ -60,42 +60,63 @@ namespace SharpDevelop.Internal.Parser
 
 		public virtual StringCollection BaseTypes {
 			get {
+				if (baseTypes == null) {
+					baseTypes = new StringCollection();
+				}
 				return baseTypes;
 			}
 		}
 		
 		public virtual ClassCollection InnerClasses {
 			get {
+				if (innerClasses == null) {
+					innerClasses = new ClassCollection();
+				}
 				return innerClasses;
 			}
 		}
 
 		public virtual FieldCollection Fields {
 			get {
+				if (fields == null) {
+					fields = new FieldCollection();
+				}
 				return fields;
 			}
 		}
 
 		public virtual PropertyCollection Properties {
 			get {
+				if (properties == null) {
+					properties = new PropertyCollection();
+				}
 				return properties;
 			}
 		}
 
 		public IndexerCollection Indexer {
 			get {
+				if (indexer == null) {
+					indexer = new IndexerCollection();
+				}
 				return indexer;
 			}
 		}
 
 		public virtual MethodCollection Methods {
 			get {
+				if (methods == null) {
+					methods = new MethodCollection();
+				}
 				return methods;
 			}
 		}
 
 		public virtual EventCollection Events {
 			get {
+				if (events == null) {
+					events = new EventCollection();
+				}
 				return events;
 			}
 		}

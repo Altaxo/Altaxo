@@ -164,6 +164,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels
 			
 			ToolLoader.Tool = newlist;
 			ToolLoader.SaveTools();
+			
+			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateMenus();
 			return true;
 		}
 		

@@ -1,7 +1,7 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Kr�ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -167,7 +167,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			ILanguageBinding binding = languageBindingService.GetBindingPerProjectFile(filename);
 			if (binding == null) {
 				IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-				messageService.ShowError(stringParserService.Parse("Can't find language binding for ${FILENAME} ", new string[,] {{"FILENAME", filename}}));
+				messageService.ShowError(stringParserService.Parse("${res:Internal.Project.Combine.CantFindLanguageBindingError}", new string[,] {{"FILENAME", filename}}));
 				return null;
 			}
 			
@@ -195,7 +195,10 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			entries.Clear();
 			FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
 			foreach (XmlElement el in nodes) {
-				string abs_path = fileUtilityService.RelativeToAbsolutePath(path, el.Attributes["filename"].InnerText);
+				string fileName = el.Attributes["filename"].InnerText;
+				fileName = fileName.Replace('\\', Path.DirectorySeparatorChar);
+				fileName = fileName.Replace('/', Path.DirectorySeparatorChar);
+				string abs_path = fileUtilityService.RelativeToAbsolutePath(path, fileName);
 				AddEntry(abs_path);
 			}
 			
@@ -323,50 +326,62 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 
 		public object AddEntry(string filename)
 		{
-			if (Path.GetExtension(filename).ToUpper() == ".PRJX") {
-				IProject project = LoadProject(filename);
-				ProjectCombineEntry newEntry = new ProjectCombineEntry(project, filename);
-				entries.Add(newEntry);
-				combineExecuteDefinitions.Add(new CombineExecuteDefinition(newEntry, EntryExecuteType.None));
-				if (startProject == null)
-					startProject = project.Name;
-				
-				if (configurations.Count == 0) {
-					foreach (IConfiguration pconf in project.Configurations) {
-						CombineConfiguration cconf = new CombineConfiguration(pconf.Name, this);
-						configurations[pconf.Name] = cconf;
-						if (ActiveConfiguration == null)
-							ActiveConfiguration = cconf;
+			switch (Path.GetExtension(filename).ToUpper()) {
+				case ".PRJX": {
+					if (!File.Exists(filename)) {
+						string newName = Path.ChangeExtension(filename, ".cmbx");
+						if (File.Exists(newName)) {
+							filename = newName;
+							goto case ".CMBX";
+						}
 					}
-				}
-				
-				foreach (DictionaryEntry entry in configurations) {
-					CombineConfiguration conf = (CombineConfiguration)entry.Value;
-					conf.AddEntry(project);
-				}				
-				return project;
-			} else {
-				Combine combine = new Combine(filename);
-				CombineCombineEntry newEntry = new CombineCombineEntry(combine, filename);
-				entries.Add(newEntry);
-				combineExecuteDefinitions.Add(new CombineExecuteDefinition(newEntry, EntryExecuteType.None));
-				if (startProject == null)
-					startProject = combine.Name;
-				
-				if (configurations.Count == 0) {
-					foreach (DictionaryEntry dentry in combine.Configurations) {
-						CombineConfiguration cconf = ((CombineConfiguration)dentry.Value);
-						configurations[cconf.Name] = new CombineConfiguration(cconf.Name, this);
-						if (ActiveConfiguration == null)
-							ActiveConfiguration = cconf;
+					IProject project = LoadProject(filename);
+					ProjectCombineEntry newEntry = new ProjectCombineEntry(project, filename);
+					entries.Add(newEntry);
+					combineExecuteDefinitions.Add(new CombineExecuteDefinition(newEntry, EntryExecuteType.None));
+					if (startProject == null)
+						startProject = project.Name;
+					
+					if (configurations.Count == 0) {
+						foreach (IConfiguration pconf in project.Configurations) {
+							CombineConfiguration cconf = new CombineConfiguration(pconf.Name, this);
+							configurations[pconf.Name] = cconf;
+							if (ActiveConfiguration == null)
+								ActiveConfiguration = cconf;
+						}
 					}
+					
+					foreach (DictionaryEntry entry in configurations) {
+						CombineConfiguration conf = (CombineConfiguration)entry.Value;
+						conf.AddEntry(project);
+					}				
+					return project;
 				}
-				
-				foreach (DictionaryEntry entry in configurations) {
-					CombineConfiguration conf = (CombineConfiguration)entry.Value;
-					conf.AddEntry(combine);
+				case ".CMBX": {
+					Combine combine = new Combine(filename);
+					CombineCombineEntry newEntry = new CombineCombineEntry(combine, filename);
+					entries.Add(newEntry);
+					combineExecuteDefinitions.Add(new CombineExecuteDefinition(newEntry, EntryExecuteType.None));
+					if (startProject == null)
+						startProject = combine.Name;
+					
+					if (configurations.Count == 0) {
+						foreach (DictionaryEntry dentry in combine.Configurations) {
+							CombineConfiguration cconf = ((CombineConfiguration)dentry.Value);
+							configurations[cconf.Name] = new CombineConfiguration(cconf.Name, this);
+							if (ActiveConfiguration == null)
+								ActiveConfiguration = cconf;
+						}
+					}
+					
+					foreach (DictionaryEntry entry in configurations) {
+						CombineConfiguration conf = (CombineConfiguration)entry.Value;
+						conf.AddEntry(combine);
+					}
+					return combine;
 				}
-				return combine;
+				default:
+					throw new NotSupportedException("unknown extension " + Path.GetExtension(filename));
 			}
 		}
 		

@@ -64,9 +64,8 @@ namespace ICSharpCode.TextEditor
 		{
 			int delta = textArea.TextView.FontHeight / 8;
 			Rectangle rect = new Rectangle( 1 + delta, y+ delta, textArea.TextView.FontHeight - 2 * delta, textArea.TextView.FontHeight - 2 * delta);
-			
 			g.FillEllipse(isEnabled ? Brushes.Firebrick : Brushes.Beige, rect);
-			g.DrawEllipse(isEnabled ? Pens.Black        : Pens.DarkGray, rect);
+			g.DrawEllipse(isEnabled ? Pens.Black : Pens.DarkGray, rect);
 		}
 		
 		public void DrawBookmark(Graphics g, int y)
@@ -75,6 +74,30 @@ namespace ICSharpCode.TextEditor
 			Rectangle rect = new Rectangle(1, y + delta, base.drawingPosition.Width - 4, textArea.TextView.FontHeight - delta * 2);
 			FillRoundRect(g, Brushes.Cyan, rect);
 			DrawRoundRect(g, Pens.Black, rect);
+		}
+
+		public void DrawArrow(Graphics g, int y)
+		{
+			int delta = textArea.TextView.FontHeight / 8;
+			Rectangle rect = new Rectangle(1, y + delta, base.drawingPosition.Width - 4, textArea.TextView.FontHeight - delta * 2);
+			FillArrow(g, Brushes.Yellow, rect);
+			DrawArrow(g, Pens.Black, rect);	
+		}
+		
+		GraphicsPath CreateArrowGraphicsPath(Rectangle r)
+		{
+			GraphicsPath gp = new GraphicsPath();
+			int halfX = r.Width / 2;
+			int halfY = r.Height/ 2;
+			gp.AddLine(r.X, r.Y + halfY/2, r.X + halfX, r.Y + halfY/2);			
+			gp.AddLine(r.X + halfX, r.Y + halfY/2, r.X + halfX, r.Y);
+			gp.AddLine(r.X + halfX, r.Y, r.Right, r.Y + halfY);
+			gp.AddLine(r.Right, r.Y + halfY, r.X + halfX, r.Bottom);
+			gp.AddLine(r.X + halfX, r.Bottom, r.X + halfX, r.Bottom - halfY/2);
+			gp.AddLine(r.X + halfX, r.Bottom - halfY/2, r.X, r.Bottom - halfY/2);
+			gp.AddLine(r.X, r.Bottom - halfY/2, r.X, r.Y + halfY/2);
+			gp.CloseFigure();
+			return gp;
 		}
 		
 		GraphicsPath CreateRoundRectGraphicsPath(Rectangle r)
@@ -99,17 +122,32 @@ namespace ICSharpCode.TextEditor
 		
 		void DrawRoundRect(Graphics g, Pen p , Rectangle r)
 		{
-			GraphicsPath gp = CreateRoundRectGraphicsPath(r);
-			g.DrawPath(p, gp);
-			gp.Dispose();
+			using (GraphicsPath gp = CreateRoundRectGraphicsPath(r)) {
+				g.DrawPath(p, gp);
+			}
 		}
 		
 		void FillRoundRect(Graphics g, Brush b , Rectangle r)
 		{
-			GraphicsPath gp = CreateRoundRectGraphicsPath(r);
-			g.FillPath(b, gp);
-			gp.Dispose();
+			using (GraphicsPath gp = CreateRoundRectGraphicsPath(r)) {
+				g.FillPath(b, gp);
+			}
 		}
+
+		void DrawArrow(Graphics g, Pen p , Rectangle r)
+		{
+			using (GraphicsPath gp = CreateArrowGraphicsPath(r)) {
+				g.DrawPath(p, gp);
+			}
+		}
+		
+		void FillArrow(Graphics g, Brush b , Rectangle r)
+		{
+			using (GraphicsPath gp = CreateArrowGraphicsPath(r)) {
+				g.FillPath(b, gp);
+			}
+		}
+
 #endregion
 	}
 }

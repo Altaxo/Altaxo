@@ -14,12 +14,15 @@ namespace SharpDevelop.Internal.Parser
 	[Serializable]
 	public abstract class AbstractParameter : System.MarshalByRefObject, IParameter
 	{
-		protected string              name;
-		protected string              documentation;
-
+		string              name;
+		string              documentation;
+		
+//		int nameHashCode      = -1;
+//		int documentationHash = -1;
+		
 		protected IReturnType         returnType;
 		protected ParameterModifier   modifier;
-		protected AttributeCollection attributeCollection = new AttributeCollection();
+		AttributeCollection attributeCollection;
 
 		public bool IsOut {
 			get {
@@ -40,9 +43,14 @@ namespace SharpDevelop.Internal.Parser
 		public virtual string Name {
 			get {
 				return name;
+//				return (string)AbstractNamedEntity.fullyQualifiedNames[nameHashCode];
 			}
 			set {
 				name = value;
+//				nameHashCode = value.GetHashCode();
+//				if (AbstractNamedEntity.fullyQualifiedNames[nameHashCode] == null) {
+//					AbstractNamedEntity.fullyQualifiedNames[nameHashCode] = value;
+//				}
 			}
 		}
 
@@ -57,6 +65,9 @@ namespace SharpDevelop.Internal.Parser
 
 		public virtual AttributeCollection AttributeCollection {
 			get {
+				if (attributeCollection == null) {
+					attributeCollection = new AttributeCollection();
+				}
 				return attributeCollection;
 			}
 		}
@@ -73,6 +84,17 @@ namespace SharpDevelop.Internal.Parser
 		public string Documentation {
 			get {
 				return documentation;
+//				if (documentationHash == -1) {
+//					return String.Empty;
+//				}
+//				return (string)AbstractDecoration.documentationHashtable[documentationHash];
+			}
+			set {
+				documentation = value;
+//				documentationHash = value.GetHashCode();
+//				if (AbstractDecoration.documentationHashtable[documentationHash] == null) {
+//					AbstractDecoration.documentationHashtable[documentationHash] = value;
+//				}
 			}
 		}
 		

@@ -17,6 +17,9 @@ using ICSharpCode.Core.Properties;
 using ICSharpCode.Core.Services;
 using ICSharpCode.Core.AddIns.Codons;
 using ICSharpCode.SharpDevelop.Gui.Dialogs;
+using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.TextEditor;
+using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.OptionPanels
 {
@@ -68,6 +71,13 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.OptionPanels
 			}
 			
 			((IProperties)CustomizationObject).SetProperty("LineViewerStyle", (LineViewerStyle)((ComboBox)ControlDictionary["lineMarkerStyleComboBox"]).SelectedIndex);
+			
+			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+			
+			if (window != null && (window.ViewContent is ITextEditorControlProvider)) {
+				TextEditorControl textarea = ((ITextEditorControlProvider)window.ViewContent).TextEditorControl;
+				textarea.OptionsChanged();
+			}
 			
 			return true;
 		}

@@ -38,6 +38,10 @@ namespace ICSharpCode.SharpDevelop.Internal.ExternalTool
 		
 		static bool LoadToolsFromStream(string filename)
 		{
+			if (!File.Exists(filename)) {
+				return false;
+			}
+			
 			XmlDocument doc = new XmlDocument();
 			try {
 				doc.Load(filename);

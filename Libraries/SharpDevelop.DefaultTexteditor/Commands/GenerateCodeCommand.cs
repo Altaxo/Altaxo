@@ -147,8 +147,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			this.InitializeComponents();
 			
 			Point caretPos  = textEditorControl.ActiveTextAreaControl.Caret.Position;
-			Point visualPos = new Point(textEditorControl.ActiveTextAreaControl.TextArea.TextView.GetDrawingXPos(caretPos.Y, caretPos.X) + textEditorControl.ActiveTextAreaControl.TextArea.TextView.DrawingPosition.X,
-			          (int)((1 + caretPos.Y) * textEditorControl.ActiveTextAreaControl.TextArea.TextView.FontHeight) - textEditorControl.ActiveTextAreaControl.TextArea.VirtualTop.Y - 1 + textEditorControl.ActiveTextAreaControl.TextArea.TextView.DrawingPosition.Y);
+			TextArea textArea = textEditorControl.ActiveTextAreaControl.TextArea;
+			TextView textView = textArea.TextView;
+			Point visualPos;
+			int physicalline = textView.Document.GetVisibleLine(caretPos.Y);
+			visualPos = new Point(textView.GetDrawingXPos(caretPos.Y, caretPos.X) +
+			                      textView.DrawingPosition.X,
+			          (int)((1 + physicalline) * textView.FontHeight) - 
+			          textArea.VirtualTop.Y - 1 + textView.DrawingPosition.Y);
 			Location = textEditorControl.ActiveTextAreaControl.TextArea.PointToScreen(visualPos);
 			StartPosition   = FormStartPosition.Manual;
 			

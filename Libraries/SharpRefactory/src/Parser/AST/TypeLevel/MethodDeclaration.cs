@@ -70,6 +70,9 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 				return parameters;
 			}
 			set {
+				if (parameters != null) {
+					parameters.Clear();
+				}
 				parameters = value;
 			}
 		}
@@ -79,6 +82,9 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 				return attributes;
 			}
 			set {
+				if (attributes != null) {
+					attributes.Clear();
+				}
 				attributes = value;
 			}
 		}

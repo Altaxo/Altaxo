@@ -27,7 +27,7 @@ using System;
 namespace ${StandardNamespace}
 {
 	/// <summary>
-	/// Description of ${FileNameWithoutExtension}.	
+	/// Description of ${FileNameWithoutExtension}.
 	/// </summary>
 	public class ${FileNameWithoutExtension}
 	{

@@ -52,12 +52,19 @@ namespace CSharpBinding
 			string exe = ((CSharpCompilerParameters)project.ActiveConfiguration).OutputAssembly + ".exe";
 			string args = ((CSharpCompilerParameters)project.ActiveConfiguration).CommandLineParameters;
 			
+			
 			bool customStartup = false;
 			ProcessStartInfo psi;
 			if (parameters.ExecuteScript != null && parameters.ExecuteScript.Length > 0) {
 				customStartup = true;
-				psi = new ProcessStartInfo("\"" + parameters.ExecuteScript + "\"");
+				psi = new ProcessStartInfo("\"" + parameters.ExecuteScript + "\"", args);
 			} else {
+				if (parameters.CompileTarget == CompileTarget.Library) {
+					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+					messageService.ShowError("${res:BackendBindings.ExecutionManager.CantExecuteDLLError}");
+					return;
+				}
+			
 				string runtimeStarter = String.Empty;
 				
 				switch (parameters.NetRuntime) {

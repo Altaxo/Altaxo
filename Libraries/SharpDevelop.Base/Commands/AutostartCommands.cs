@@ -170,6 +170,31 @@ namespace ICSharpCode.SharpDevelop.Commands
 			}
 		}
 		
+		class FormKeyHandler : IMessageFilter
+		{
+			const int keyPressedMessage          = 0x100;
+			public bool PreFilterMessage(ref Message m)
+			{
+				if (m.Msg != keyPressedMessage) {
+					return false;
+				}
+				Keys keyPressed = (Keys)m.WParam.ToInt32() | Control.ModifierKeys;
+				
+				if (keyPressed == Keys.Escape) {
+					if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null) {
+						if (!WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent.Control.ContainsFocus) {
+							if (Form.ActiveForm == (Form)WorkbenchSingleton.Workbench) {
+								WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent.Control.Focus();
+								return true;
+							} 
+						}
+					}
+				}
+				return false;
+			}
+		}
+
+		
 		public override void Run()
 		{
 			ReflectionClass reflectionClass = new ReflectionClass(typeof(object), null);
@@ -187,18 +212,10 @@ namespace ICSharpCode.SharpDevelop.Commands
 			
 			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
 			
-			// load previous combine
-			if ((bool)propertyService.GetProperty("SharpDevelop.LoadPrevProjectOnStartup", false)) {
-				object recentOpenObj = propertyService.GetProperty("ICSharpCode.SharpDevelop.Gui.MainWindow.RecentOpen");
-				if (recentOpenObj is ICSharpCode.SharpDevelop.Services.RecentOpen) {
-					ICSharpCode.SharpDevelop.Services.RecentOpen recOpen = (ICSharpCode.SharpDevelop.Services.RecentOpen)recentOpenObj;
-					if (recOpen.RecentProject.Count > 0) { 
-						projectService.OpenCombine(recOpen.RecentProject[0].ToString());
-					}
-				}
-			}
+			bool didLoadCombineOrFile = false;
 			
 			foreach (string file in SplashScreenForm.GetRequestedFileList()) {
+				didLoadCombineOrFile = true;
 				switch (System.IO.Path.GetExtension(file).ToUpper()) {
 					case ".CMBX":
 					case ".PRJX":
@@ -216,9 +233,22 @@ namespace ICSharpCode.SharpDevelop.Commands
 				}
 			}
 			
+			// load previous combine
+			if (!didLoadCombineOrFile && (bool)propertyService.GetProperty("SharpDevelop.LoadPrevProjectOnStartup", false)) {
+				object recentOpenObj = propertyService.GetProperty("ICSharpCode.SharpDevelop.Gui.MainWindow.RecentOpen");
+				if (recentOpenObj is ICSharpCode.SharpDevelop.Services.RecentOpen) {
+					ICSharpCode.SharpDevelop.Services.RecentOpen recOpen = (ICSharpCode.SharpDevelop.Services.RecentOpen)recentOpenObj;
+					if (recOpen.RecentProject.Count > 0) { 
+						projectService.OpenCombine(recOpen.RecentProject[0].ToString());
+					}
+				}
+			}
+			
+			
 			f.Focus(); // windows.forms focus workaround	
 			
 			// finally run the workbench window ...
+			Application.AddMessageFilter(new FormKeyHandler());
 			Application.Run(f);
 			
 			// save the workbench memento in the ide properties

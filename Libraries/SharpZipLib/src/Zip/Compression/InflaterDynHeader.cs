@@ -154,7 +154,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 								lastLen = 0;
 							} else {
 								if (ptr == 0) {
-									throw new Exception();
+									throw new SharpZipBaseException();
 								}
 							}
 							repSymbol = symbol-16;
@@ -173,7 +173,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 							//  	      System.err.println("litdistLens repeated: "+count);
 							
 							if (ptr + count > num) {
-								throw new Exception();
+								throw new SharpZipBaseException();
 							}
 							while (count-- > 0) {
 								litdistLens[ptr++] = lastLen;

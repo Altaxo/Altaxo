@@ -3,13 +3,13 @@
 using System;
 using System.IO;
 
-using ICSharpCode.SharpZipLib.Tar;
 using NUnit.Framework;
 
 namespace ICSharpCode.SharpZipLib.Tar {
 	
 	/// <summary>
 	/// This class contains test cases for Tar archive handling
+	/// TODO  A whole lot more tests
 	/// </summary>
 	[TestFixture]
 	public class TarTestSuite

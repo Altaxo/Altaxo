@@ -58,7 +58,11 @@ namespace ICSharpCode.TextEditor.Document
 		
 		void DocumentChanged(object sender, DocumentEventArgs e)
 		{
+			int oldCount = foldMarker.Count;
 			document.UpdateSegmentListOnDocumentChange(foldMarker, e);
+			if (oldCount != foldMarker.Count) {
+				document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
+			}
 		}
 		
 		public ArrayList GetFoldingsFromPosition(int line, int column)
@@ -270,7 +274,7 @@ namespace ICSharpCode.TextEditor.Document
 		{
 			try {
 				string[] lines = str.Split('\n');
-				for (int i = 0; i < lines.Length; i += 4) {
+				for (int i = 0; i < lines.Length && lines[i].Length > 0; i += 4) {
 					int    offset = Int32.Parse(lines[i]);
 					int    length = Int32.Parse(lines[i + 1]);
 					string text   = lines[i + 2];

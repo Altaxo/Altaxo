@@ -33,7 +33,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		public string PreSelection {
 			get {
-				return null;
+				return String.Empty;
 			}
 		}
 		

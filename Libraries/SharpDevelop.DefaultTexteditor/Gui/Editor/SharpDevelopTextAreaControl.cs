@@ -26,7 +26,6 @@ using ICSharpCode.SharpDevelop.Services;
 using ICSharpCode.SharpDevelop.Gui.Components;
 using ICSharpCode.TextEditor.Gui.InsightWindow;
 using ICSharpCode.TextEditor.Gui.CompletionWindow;
-using ICSharpCode.Debugger;
 
 using System.Threading;
 
@@ -54,10 +53,15 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			GenerateEditActions();
 			
 			TextAreaDragDropHandler dragDropHandler = new TextAreaDragDropHandler();
-			Document.TextEditorProperties = new SharpDevelopTextEditorProperties();
-			
+			TextEditorProperties = new SharpDevelopTextEditorProperties();
 		}
 		
+		public virtual ICompletionDataProvider CreateCodeCompletionDataProvider(bool ctrlSpace)
+		{
+			//ivoko: please do not touch or discuss with me: we use another CCDP
+			return new CodeCompletionDataProvider(ctrlSpace, false);
+		}
+
 		protected override void InitializeTextAreaControl(TextAreaControl newControl)
 		{
 			base.InitializeTextAreaControl(newControl);
@@ -94,8 +98,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 // DISABLED (TAKEN OUT DEBUGGER)!		
 //		void IconBarMouseDown(AbstractMargin iconBar, Point mousepos, MouseButtons mouseButtons)
 //		{
-//			int physicalLine = iconBar.TextArea.TextView.FirstVisibleLine + (int)(mousepos.Y / iconBar.TextArea.TextView.FontHeight);
-//			int realline     = iconBar.TextArea.Document.GetFirstLogicalLine(physicalLine);
+//			int realline = iconBar.TextArea.TextView.GetLogicalLine(mousepos);
 //			if (realline >= 0 && realline < iconBar.TextArea.Document.TotalNumberOfLines) {
 //				DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
 //				debuggerService.ToggleBreakpointAt(FileName, realline + 1, 0);
@@ -197,8 +200,32 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 //		}
 //// ALex: end of mod
 		
-		InsightWindow        insightWindow        = null;
+		InsightWindow                 insightWindow        = null;
 		internal CodeCompletionWindow codeCompletionWindow = null;
+		
+		// some other languages could support it
+		protected virtual bool SupportsNew
+		{
+			get {
+				return false;
+			}
+		}
+		
+		// some other languages could support it
+		protected virtual bool SupportsDot
+		{
+			get {
+				return false;
+			}
+		}
+
+		// some other languages could support it
+		protected virtual bool SupportsRoundBracket
+		{
+			get {
+				return false;
+			}
+		}
 		
 		bool HandleKeyPress(char ch)
 		{
@@ -206,16 +233,17 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			if (codeCompletionWindow != null && !codeCompletionWindow.IsDisposed) {
 				codeCompletionWindow.ProcessKeyEvent(ch);
 			}
+			bool isCSharpOrVBNet = Path.GetExtension(fileName) == ".cs" || Path.GetExtension(fileName) == ".vb";
 			
 			switch (ch) {
 				case ' ':
-					//TextEditorProperties.AutoInsertTemplates
+					//TextEditorProperties.AutoInsertTemplates 
 					string word = GetWordBeforeCaret();
 					try {
-						if (word.ToLower() == "new") {
+						if ((isCSharpOrVBNet||SupportsNew) && word.ToLower() == "new") {
 							if (((SharpDevelopTextEditorProperties)Document.TextEditorProperties).EnableCodeCompletion) {
 								IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
-								codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(((Form)WorkbenchSingleton.Workbench), this, this.FileName, new CodeCompletionDataProvider(true), ch);
+								codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(((Form)WorkbenchSingleton.Workbench), this, this.FileName, new CodeCompletionDataProvider(true, true), ch);
 								return false;
 							}
 						} else {
@@ -271,6 +299,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 							insightWindow.AddInsightDataProvider(new IndexerInsightDataProvider());
 							insightWindow.ShowInsightWindow();
 						}
+						
 					} catch (Exception e) {
 						Console.WriteLine("EXCEPTION: " + e);
 					}
@@ -278,8 +307,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				case '.':
 					try {
 //						TextAreaPainter.IHaveTheFocusLock = true;
-						if (((SharpDevelopTextEditorProperties)Document.TextEditorProperties).EnableCodeCompletion) {
-							codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(((Form)WorkbenchSingleton.Workbench), this, fileName, new CodeCompletionDataProvider(false), ch);
+						if (((SharpDevelopTextEditorProperties)Document.TextEditorProperties).EnableCodeCompletion && (isCSharpOrVBNet||SupportsDot)) {
+							codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(((Form)WorkbenchSingleton.Workbench), this, fileName, CreateCodeCompletionDataProvider(false), ch);
 						}
 //						TextAreaPainter.IHaveTheFocusLock = false;
 					} catch (Exception e) {
@@ -325,7 +354,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			int newCaretOffset   = ActiveTextAreaControl.TextArea.Caret.Offset;
 			int finalCaretOffset = newCaretOffset;
 			int firstLine        = Document.GetLineNumberForOffset(newCaretOffset);
-			Console.WriteLine(firstLine);
+			
 			// save old properties, these properties cause strange effects, when not
 			// be turned off (like insert curly braces or other formatting stuff)
 			bool save1         = TextEditorProperties.AutoInsertCurlyBracket;
@@ -363,7 +392,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, firstLine, lastLine));
 			Document.CommitUpdate();
 			ActiveTextAreaControl.TextArea.Caret.Position = Document.OffsetToPosition(finalCaretOffset);
-			Console.WriteLine(firstLine + " -- " + lastLine);
 			TextEditorProperties.IndentStyle = IndentStyle.Smart;
 			Document.FormattingStrategy.IndentLines(ActiveTextAreaControl.TextArea, firstLine, lastLine);
 			
@@ -398,6 +426,5 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 //			return new HtmlDeclarationViewWindow();
 //		}
 //		
-		
 	}
 }

@@ -87,7 +87,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				
 				if (languageinfo == null) {
 					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-					messageService.ShowError("Can't create project with type :" + language);
+					stringParserService.Properties["type"] = language;
+					messageService.ShowError("${res:ICSharpCode.SharpDevelop.Internal.Templates.ProjectDescriptor.CantCreateProjectWithTypeError}");
 					return String.Empty;
 				}
 				
@@ -139,7 +140,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 					
 					if (File.Exists(fileName)) {
 						IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-						if (!messageService.AskQuestion("File " + fileName + " already exists, do you want to overwrite\nthe existing file ?", "File already exists")) {
+						stringParserService.Properties["fileName"] = fileName;
+						if (!messageService.AskQuestion("${res:ICSharpCode.SharpDevelop.Internal.Templates.ProjectDescriptor.OverwriteQuestion}", "${res:ICSharpCode.SharpDevelop.Internal.Templates.ProjectDescriptor.OverwriteQuestion.InfoName}")) {
 							continue;
 						}
 					}
@@ -156,7 +158,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 						sr.Close();
 					} catch (Exception ex) {
 						IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-						messageService.ShowError(ex, "File " + fileName + " could not be written.");
+						stringParserService.Properties["fileName"] = fileName;
+						messageService.ShowError(ex, "${res:ICSharpCode.SharpDevelop.Internal.Templates.ProjectDescriptor.FileCouldntBeWrittenError}");
 					}
 				}
 				
@@ -165,7 +168,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				
 				if (File.Exists(projectLocation)) {
 					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-					if (messageService.AskQuestion("Project file " + projectLocation + " already exists, do you want to overwrite\nthe existing file ?", "File already exists")) {
+					stringParserService.Properties["projectLocation"] = projectLocation;
+					if (messageService.AskQuestion("${res:ICSharpCode.SharpDevelop.Internal.Templates.ProjectDescriptor.OverwriteProjectQuestion}", "${res:ICSharpCode.SharpDevelop.Internal.Templates.ProjectDescriptor.OverwriteQuestion.InfoName}")) {
 						project.SaveProject(projectLocation);
 					}
 				} else {

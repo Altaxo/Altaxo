@@ -320,7 +320,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 						// set reference to the special context menu path
 						AbstractBrowserNode currentPathNode1;
 						currentPathNode1 = GetPath(relativeFile, parentNode, true);
-
+						
 						AbstractBrowserNode newNode = new FileNode(projectFile);
 						newNode.IconImage = resourceService.GetBitmap("Icons.16x16.WinForm");
 						newNode.ContextmenuAddinTreePath = FileNode.ProjectFileContextMenuPath;

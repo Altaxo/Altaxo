@@ -50,7 +50,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				IAmbience ambience = (IAmbience)AddInTreeSingleton.AddInTree.GetTreeNode("/SharpDevelop/Workbench/Ambiences").BuildChildItem(language, this);
 				if (ambience == null) {
 					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-					messageService.ShowError("Current ambience not found.\nGoto 'Options->Visual Style' and change the current language ambience.");
+					messageService.ShowError("${res:ICSharpCode.SharpDevelop.Services.AmbienceService.AmbienceNotFoundError}");
 					return null;
 				}
 				return new AmbienceReflectionDecorator(ambience);

@@ -66,7 +66,12 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 		
 		public AxSideTabItem(string name)
 		{
-			this.name = name.Split(new char[] {'\n'})[0];
+			int idx = name.IndexOf("\n");
+			if (idx > 0) {
+				this.name = name.Substring(0, idx);
+			} else {
+				this.name = name;
+			}			
 		}
 		
 		public AxSideTabItem(string name, object tag) : this(name)
@@ -124,7 +129,9 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 					rectangle.Width  -= 2;
 					rectangle.Height -= 2;
 					
-					g.FillRectangle(new SolidBrush(ControlPaint.Light(SystemColors.Control)) , rectangle);
+					using (Brush brush = new SolidBrush(ControlPaint.Light(SystemColors.Control))) {
+						g.FillRectangle(brush , rectangle);
+					}
 					
 					if (Icon != null) {
 						g.DrawImage(Icon, 1, rectangle.Y + 1);

@@ -75,10 +75,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 					// search an enqueue all base interfaces
 					foreach (string interfaceName in intf.BaseTypes) {
 						IClass baseType = null;
-						foreach (IUsing u in unit.Usings) {
-							baseType = u.SearchType(interfaceName);
-							if (baseType != null) {
-								break;
+						if (unit != null && unit.Usings != null) {
+							foreach (IUsing u in unit.Usings) {
+								baseType = u.SearchType(interfaceName);
+								if (baseType != null) {
+									break;
+								}
 							}
 						}
 						if (baseType != null) {
@@ -97,22 +99,44 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			
 			foreach (IProperty property in intf.Properties) {
 				string returnType = csa.Convert(property.ReturnType);
-				editActionHandler.InsertString("public " + returnType + " " + property.Name + " {");++numOps;
+				editActionHandler.InsertString("public " + returnType + " " + property.Name);++numOps;
+				if (StartCodeBlockInSameLine) {
+					editActionHandler.InsertString(" {");++numOps;
+				} else {
+					Return();
+					editActionHandler.InsertString("{");++numOps;
+				}
 				Return();
 				
 				if (property.CanGet) {
-					editActionHandler.InsertString("\tget {");++numOps;
+					editActionHandler.InsertString("\tget");++numOps;
+					if (StartCodeBlockInSameLine) {
+						editActionHandler.InsertString(" {");++numOps;
+					} else {
+						Return();
+						editActionHandler.InsertString("{");++numOps;
+					}
 					Return();
-					editActionHandler.InsertString("\t\treturn " + GetReturnValue(returnType) +";");++numOps;
+					Indent();Indent();
+					editActionHandler.InsertString("return " + GetReturnValue(returnType) +";");++numOps;
 					Return();
-					editActionHandler.InsertString("\t}");++numOps;
+					Indent();
+					editActionHandler.InsertString("}");++numOps;
 					Return();
 				}
 				
 				if (property.CanSet) {
-					editActionHandler.InsertString("\tset {");++numOps;
+					Indent();
+					editActionHandler.InsertString("set");++numOps;
+					if (StartCodeBlockInSameLine) {
+						editActionHandler.InsertString(" {");++numOps;
+					} else {
+						Return();
+						editActionHandler.InsertString("{");++numOps;
+					}
 					Return();
-					editActionHandler.InsertString("\t}");++numOps;
+					Indent();
+					editActionHandler.InsertString("}");++numOps;
 					Return();
 				}
 				
@@ -135,14 +159,20 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 				}
 				
 				editActionHandler.InsertString("public " + returnType + " " + method.Name + "(" + parameters + ")");++numOps;
-				Return();++numOps;
-				editActionHandler.InsertChar('{');++numOps;
+				if (StartCodeBlockInSameLine) {
+					editActionHandler.InsertString(" {");++numOps;
+				} else {
+					Return();
+					editActionHandler.InsertString("{");++numOps;
+				}
+				
 				Return();
 				
 				switch (returnType) {
 					case "void":
 						break;
 					default:
+						Indent();
 						editActionHandler.InsertString("return " + GetReturnValue(returnType) + ";");++numOps;
 						break;
 				}

@@ -76,19 +76,20 @@ namespace ICSharpCode.SharpDevelop.Commands.ProjectBrowser
 				fdiag.CheckFileExists = true;
 				
 				if (fdiag.ShowDialog() == DialogResult.OK) {
-//					bool alreadyInPlace = true;
-//					foreach (string file in fdiag.FileNames) {
-//						if (!Path.GetFullPath(file).StartsWith(Path.GetFullPath(node.Project.BaseDirectory))) {
-//							alreadyInPlace = false;
-//							break;
-//						}
-//					}
-//					
-//					if (alreadyInPlace) {
-//						foreach (string file in fdiag.FileNames) {
-//							ProjectBrowserView.MoveCopyFile(file, node, true, alreadyInPlace);
-//						}
-//					} else {
+					bool alreadyInPlace = false;
+					string baseDirectory = node is DirectoryNode ? ((DirectoryNode)node).FolderName : node.Project.BaseDirectory;
+					
+					// all selected files have the same path
+					string filename = fdiag.FileName;
+					if (Path.GetFullPath(Path.GetDirectoryName(filename)) == Path.GetFullPath(baseDirectory)) {
+						alreadyInPlace = true;
+					}
+					
+					if (alreadyInPlace) {
+						foreach (string file in fdiag.FileNames) {
+							ProjectBrowserView.MoveCopyFile(file, node, true, alreadyInPlace);
+						}
+					} else {
 						ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 						
 						int ret = new SharpMessageBox("${res:ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddFilesToProject.MoveOrCopyMessageBox.Name}",
@@ -103,7 +104,7 @@ namespace ICSharpCode.SharpDevelop.Commands.ProjectBrowser
 						foreach (string file in fdiag.FileNames) {
 							ProjectBrowserView.MoveCopyFile(file, node, ret == 0, false);
 						}
-//					}
+					}
 				}
 			}
 		}
@@ -126,47 +127,52 @@ namespace ICSharpCode.SharpDevelop.Commands.ProjectBrowser
 				return;
 			}
 			string path = baseFolderPath;
-			using (NewFileDialog nfd = new NewFileDialog(path )) {
+			
+			using (NewFileDialog nfd = new NewFileDialog(path)) {
 				if (nfd.ShowDialog() == DialogResult.OK) {
-					IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+					IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
 					
-					int count = 1;
-					string newFileName = window.ViewContent.UntitledName;
-					string baseName  = Path.GetFileNameWithoutExtension(newFileName);
-					string extension = Path.GetExtension(newFileName);
-					
-					// first try the default untitled name of the viewcontent filename
-					FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-					string fileName = fileUtilityService.GetDirectoryNameWithSeparator(baseFolderPath) + baseName +  extension;
-					
-					// if it is already in the project, or it does exists we try to get a name that is
-					while (node.Project.IsFileInProject(fileName) || File.Exists(fileName)) {
-						fileName = fileUtilityService.GetDirectoryNameWithSeparator(baseFolderPath) + baseName + count.ToString() + extension;
-						++count;
+					foreach (string createdFile in nfd.CreatedFiles) {
+						IWorkbenchWindow window = fileService.GetOpenFile(createdFile); //WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+						
+						int count = 1;
+						string newFileName = window.ViewContent.UntitledName;
+						string baseName  = Path.GetFileNameWithoutExtension(newFileName);
+						string extension = Path.GetExtension(newFileName);
+						
+						// first try the default untitled name of the viewcontent filename
+						FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+						string fileName = fileUtilityService.GetDirectoryNameWithSeparator(baseFolderPath) + baseName +  extension;
+						
+						// if it is already in the project, or it does exists we try to get a name that is
+						while (node.Project.IsFileInProject(fileName) || File.Exists(fileName)) {
+							fileName = fileUtilityService.GetDirectoryNameWithSeparator(baseFolderPath) + baseName + count.ToString() + extension;
+							++count;
+						}
+						
+						// now we have a valid filename which we could use
+						window.ViewContent.Save(fileName);
+						
+						LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
+						ProjectFile newFileInformation = new ProjectFile(fileName, languageBindingService.GetBindingPerLanguageName(node.Project.ProjectType).CanCompile(fileName) ? BuildAction.Compile : BuildAction.Nothing);
+						
+						AbstractBrowserNode newNode = new FileNode(newFileInformation);
+						newNode.ContextmenuAddinTreePath = FileNode.ProjectFileContextMenuPath;
+						
+						// Assume that the parent node of a 'leaf' (e.g. file) is
+						// a folder or project
+						AbstractBrowserNode parentNode = node;
+						if (!(parentNode is ProjectBrowserNode || parentNode is DirectoryNode)) {
+							parentNode = (AbstractBrowserNode)node.Parent;
+						}
+						
+						parentNode.Nodes.Add(newNode);
+						parentNode.Project.ProjectFiles.Add(newFileInformation);
+						
+						newNode.EnsureVisible();
+						browser.SelectedNode = newNode;
+	//					browser.StartLabelEdit();
 					}
-					
-					// now we have a valid filename which we could use
-					window.ViewContent.Save(fileName);
-					
-					ProjectFile newFileInformation = new ProjectFile(fileName, BuildAction.Compile);
-					
-					AbstractBrowserNode newNode = new FileNode(newFileInformation);
-					newNode.ContextmenuAddinTreePath = FileNode.ProjectFileContextMenuPath;
-					
-					// Assume that the parent node of a 'leaf' (e.g. file) is
-					// a folder or project
-					AbstractBrowserNode parentNode = node;
-					if (!(parentNode is ProjectBrowserNode || parentNode is DirectoryNode)) {
-						parentNode = (AbstractBrowserNode)node.Parent;
-					}
-					
-					parentNode.Nodes.Add(newNode);
-					parentNode.Project.ProjectFiles.Add(newFileInformation);
-					
-					newNode.EnsureVisible();
-					browser.SelectedNode = newNode;
-//					browser.StartLabelEdit();
-					
 					IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
 					projectService.SaveCombine();
 				}

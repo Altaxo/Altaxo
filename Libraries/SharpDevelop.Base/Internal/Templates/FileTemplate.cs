@@ -149,6 +149,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		string description  = null;
 		string wizardpath   = null;
 		string defaultName  = null;
+
+		bool   newFileDialogVisible = true;
 		
 		ArrayList files       = new ArrayList(); // contains FileDescriptionTemplate classes
 		ArrayList properties  = new ArrayList();
@@ -202,6 +204,11 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				return fileoptions;
 			}
 		}
+		public bool NewFileDialogVisible {
+			get {
+				return newFileDialogVisible;
+			}
+		}
 		
 		public ArrayList FileDescriptionTemplates {
 			get {
@@ -252,7 +259,13 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			category     = config.GetAttribute("category");
 			defaultName  = config.GetAttribute("defaultname");
 			languagename = config.GetAttribute("language");
-			
+
+			string newFileDialogVisibleAttr  = config.GetAttribute("newfiledialogvisible");
+			if (newFileDialogVisibleAttr != null && newFileDialogVisibleAttr.Length != 0) {
+				if (newFileDialogVisibleAttr.ToLower() == "false")
+					newFileDialogVisible = false;
+			}
+
 			if (doc.DocumentElement["Description"] != null) {
 				description  = doc.DocumentElement["Description"].InnerText;
 			}

@@ -39,6 +39,9 @@ namespace ICSharpCode.XmlForms {
 		IObjectCreator        objectCreator        = new DefaultObjectCreator();
 		IPropertyValueCreator propertyValueCreator = null;
 		
+		readonly static Regex fontRegex = new Regex(@"Name=(\.+)\,\s+Size=(\d+)");
+		readonly static Regex propertySet  = new Regex(@"(?<Property>[\w]+)\s*=\s*(?<Value>[\w\d]+)", RegexOptions.Compiled);
+		
 		/// <summary>
 		/// Gets the ControlDictionary for this XmlLoader.
 		/// </summary>
@@ -246,7 +249,7 @@ namespace ICSharpCode.XmlForms {
 						propertyObject = propertyInfo.GetValue(o, null);
 					}
 					
-					Regex propertySet  = new Regex(@"(?<Property>[\w]+)\s*=\s*(?<Value>[\w\d]+)", RegexOptions.Compiled);
+					
 					Match match = propertySet.Match(val);
 					while (true) {
 						if (!match.Success) {
@@ -266,10 +269,17 @@ namespace ICSharpCode.XmlForms {
 				} else if (propertyInfo.PropertyType == typeof(Color)) {
 					propertyInfo.SetValue(o, Color.FromName(val.Substring(7, val.Length - 8)), null);
 				} else if (propertyInfo.PropertyType == typeof(Font)) {
-					string[] font = val.Split(new char[]{','});
-					propertyInfo.SetValue(o, new Font(font[0], Int32.Parse(font[1])), null);
+					Match m = fontRegex.Match(val);
+					if (m.Success) {
+						propertyInfo.SetValue(o, new Font(m.Groups[0].Value, Int32.Parse(m.Groups[1].Value)), null);
+					} else {
+						// set some default font here
+						propertyInfo.SetValue(o, SystemInformation.MenuFont, null);
+					}
 				} else {
-					propertyInfo.SetValue(o, Convert.ChangeType(val, propertyInfo.PropertyType), null);
+					if (val.Length > 0) {
+						propertyInfo.SetValue(o, Convert.ChangeType(val, propertyInfo.PropertyType), null);
+					}
 				}
 			} catch (Exception) {
 				throw new ApplicationException("error while setting property " + propertyName + " of object "+ o.ToString() + " to value '" + val+ "'");

@@ -75,36 +75,6 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		}
 	}
 	
-	public class AuthorAboutTabPage : ICSharpCode.SharpDevelop.Gui.HtmlControl.HtmlControl
-	{
-		public AuthorAboutTabPage()
-		{
-			try {
-				FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-				PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
-				
-				string html = ConvertXml.ConvertToString(fileUtilityService.SharpDevelopRootPath +
-				                   Path.DirectorySeparatorChar + "doc" +
-				                   Path.DirectorySeparatorChar + "AUTHORS.xml",
-				                   
-				                   propertyService.DataDirectory +
-				                   Path.DirectorySeparatorChar + "ConversionStyleSheets" + 
-				                   Path.DirectorySeparatorChar + "ShowAuthors.xsl");
-				
-				Dock = DockStyle.Fill;
-				
-				base.CascadingStyleSheet = propertyService.DataDirectory + Path.DirectorySeparatorChar +
-				                           "resources" + Path.DirectorySeparatorChar +
-				                           "css" + Path.DirectorySeparatorChar +
-				                           "SharpDevelopStandard.css";
-				base.Html = html;
-			} catch (Exception e) {
-				IMessageService messageService = (IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-				messageService.ShowError(e);
-			}
-		}
-	}
-	
 	public class ChangeLogTabPage : ICSharpCode.SharpDevelop.Gui.HtmlControl.HtmlControl
 	{
 		public ChangeLogTabPage()

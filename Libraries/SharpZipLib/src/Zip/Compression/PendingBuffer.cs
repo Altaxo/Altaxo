@@ -1,5 +1,7 @@
 // PendingBuffer.cs
+//
 // Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2004 John Reilly
 //
 // This file was translated from java, it was part of the GNU Classpath
 // Copyright (C) 2001 Free Software Foundation, Inc.
@@ -50,49 +52,80 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 	/// </summary>
 	public class PendingBuffer
 	{
+		/// <summary>Internal work buffer
+		/// </summary>
 		protected byte[] buf;
+		
 		int    start;
 		int    end;
 		
 		uint    bits;
 		int    bitCount;
-		
+
+		/// <summary>
+		/// construct instance using default buffer size of 4096
+		/// </summary>
 		public PendingBuffer() : this( 4096 )
 		{
 			
 		}
 		
+		/// <summary>
+		/// construct instance using specified buffer size
+		/// </summary>
+		/// <param name="bufsize">
+		/// size to use for internal buffer
+		/// </param>
 		public PendingBuffer(int bufsize)
 		{
 			buf = new byte[bufsize];
 		}
-		
+
+		/// <summary>
+		/// Clear internal state/buffers
+		/// </summary>
 		public void Reset() 
 		{
 			start = end = bitCount = 0;
 		}
-		
+
+		/// <summary>
+		/// write a byte to buffer
+		/// </summary>
+		/// <param name="b">
+		/// value to write
+		/// </param>
 		public void WriteByte(int b)
 		{
 			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new Exception();
+				throw new SharpZipBaseException();
 			}
 			buf[end++] = (byte) b;
 		}
-		
+
+		/// <summary>
+		/// Write a short value to buffer LSB first
+		/// </summary>
+		/// <param name="s">
+		/// value to write
+		/// </param>
 		public void WriteShort(int s)
 		{
 			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new Exception();
+				throw new SharpZipBaseException();
 			}
 			buf[end++] = (byte) s;
 			buf[end++] = (byte) (s >> 8);
 		}
-		
+
+		/// <summary>
+		/// write an integer LSB first
+		/// </summary>
+		/// <param name="s">value to write</param>
 		public void WriteInt(int s)
 		{
 			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new Exception();
+				throw new SharpZipBaseException();
 			}
 			buf[end++] = (byte) s;
 			buf[end++] = (byte) (s >> 8);
@@ -100,25 +133,37 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			buf[end++] = (byte) (s >> 24);
 		}
 		
+		/// <summary>
+		/// Write a block of data to buffer
+		/// </summary>
+		/// <param name="block">data to write</param>
+		/// <param name="offset">offset of first byte to write</param>
+		/// <param name="len">number of bytes to write</param>
 		public void WriteBlock(byte[] block, int offset, int len)
 		{
 			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new Exception();
+				throw new SharpZipBaseException();
 			}
 			System.Array.Copy(block, offset, buf, end, len);
 			end += len;
 		}
-		
+
+		/// <summary>
+		/// The number of bits written to the buffer
+		/// </summary>
 		public int BitCount {
 			get {
 				return bitCount;
 			}
 		}
 		
+		/// <summary>
+		/// Align internal buffer on a byte boundary
+		/// </summary>
 		public void AlignToByte() 
 		{
 			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new Exception();
+				throw new SharpZipBaseException();
 			}
 			if (bitCount > 0) {
 				buf[end++] = (byte) bits;
@@ -129,11 +174,16 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			bits = 0;
 			bitCount = 0;
 		}
-		
+
+		/// <summary>
+		/// Write bits to internal buffer
+		/// </summary>
+		/// <param name="b">source of bits</param>
+		/// <param name="count">number of bits to write</param>
 		public void WriteBits(int b, int count)
 		{
 			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new Exception();
+				throw new SharpZipBaseException();
 			}
 			//			if (DeflaterConstants.DEBUGGING) {
 			//				//Console.WriteLine("writeBits("+b+","+count+")");
@@ -147,16 +197,23 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 				bitCount -= 16;
 			}
 		}
-		
+
+		/// <summary>
+		/// Write a short value to internal buffer most significant byte first
+		/// </summary>
+		/// <param name="s">value to write</param>
 		public void WriteShortMSB(int s) 
 		{
 			if (DeflaterConstants.DEBUGGING && start != 0) {
-				throw new Exception();
+				throw new SharpZipBaseException();
 			}
 			buf[end++] = (byte) (s >> 8);
 			buf[end++] = (byte) s;
 		}
 		
+		/// <summary>
+		/// Indicates if buffer has been flushed
+		/// </summary>
 		public bool IsFlushed {
 			get {
 				return end == 0;
@@ -197,7 +254,14 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			}
 			return length;
 		}
-		
+
+		/// <summary>
+		/// Convert internal buffer to byte array.
+		/// Buffer is empty on completion
+		/// </summary>
+		/// <returns>
+		/// converted buffer contents contents
+		/// </returns>
 		public byte[] ToByteArray()
 		{
 			byte[] ret = new byte[end - start];

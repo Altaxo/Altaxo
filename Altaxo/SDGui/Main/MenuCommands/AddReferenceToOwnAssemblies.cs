@@ -48,8 +48,10 @@ namespace Altaxo.Main.Commands
 
         // for now, reference only that assemblies that contain "Altaxo" in their name
         // since otherwise the internal database becomes crazy large
-        if(assembly.Location.ToLower().IndexOf("altaxo")<0)
+        if(assembly.ToString().ToLower().IndexOf("altaxo")<0)
           continue;
+
+        // System.Diagnostics.Trace.WriteLine("Try to add assembly to reference:" + assembly.ToString());
 
         ICSharpCode.SharpDevelop.Internal.Project.ProjectReference reference
           = new ICSharpCode.SharpDevelop.Internal.Project.ProjectReference(ICSharpCode.SharpDevelop.Internal.Project.ReferenceType.Assembly, assembly.Location);
@@ -159,7 +161,7 @@ namespace Altaxo.Main.Commands
 
       public event System.EventHandler NameChanged;
 
-      public System.Collections.ArrayList Configurations
+      public ICSharpCode.SharpDevelop.Internal.Project.Collections.ConfigurationCollection Configurations
       {
         get
         {

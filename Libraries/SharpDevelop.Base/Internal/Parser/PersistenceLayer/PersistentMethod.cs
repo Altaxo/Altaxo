@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 using System;
@@ -26,8 +26,10 @@ namespace SharpDevelop.Internal.Parser
 			}
 			
 			uint count = reader.ReadUInt32();
+			
+			Parameters.Clear();
 			for (uint i = 0; i < count; ++i) {
-				parameters.Add(new PersistentParameter(reader, classProxyCollection));
+				Parameters.Add(new PersistentParameter(reader, classProxyCollection));
 			}
 		}
 		
@@ -38,8 +40,8 @@ namespace SharpDevelop.Internal.Parser
 			writer.Write((uint)modifiers);
 			((PersistentReturnType)returnType).WriteTo(writer);
 			
-			writer.Write((uint)parameters.Count);
-			foreach (PersistentParameter p in parameters) {
+			writer.Write((uint)Parameters.Count);
+			foreach (PersistentParameter p in Parameters) {
 				p.WriteTo(writer);
 			}
 		}
@@ -56,8 +58,9 @@ namespace SharpDevelop.Internal.Parser
 			modifiers  = method.Modifiers;
 			returnType = new PersistentReturnType(classProxyCollection, method.ReturnType);
 			
+			Parameters.Clear();
 			foreach (IParameter param in method.Parameters) {
-				parameters.Add(new PersistentParameter(classProxyCollection, param));
+				Parameters.Add(new PersistentParameter(classProxyCollection, param));
 			}
 			
 			region = null;

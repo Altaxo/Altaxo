@@ -21,18 +21,20 @@ namespace ICSharpCode.TextEditor.Util
 		
 		void DrawTriangle(float x, float y, bool flipped)
 		{
-			base.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(192, 192, 192)), new RectangleF(x, y, triHeight, triHeight));
+			Brush brush = BrushRegistry.GetBrush(Color.FromArgb(192, 192, 192));
+			base.Graphics.FillRectangle(brush, new RectangleF(x, y, triHeight, triHeight));
 			float triHeight2 = triHeight / 2;
 			float triHeight4 = triHeight / 4;
+			brush = Brushes.Black;
 			if (flipped) {
-				base.Graphics.FillPolygon(new SolidBrush(Color.Black), new PointF[] {
+				base.Graphics.FillPolygon(brush, new PointF[] {
 					new PointF(x,                y + triHeight2 - triHeight4),
 					new PointF(x + triWidth / 2, y + triHeight2 + triHeight4),
 					new PointF(x + triWidth,     y + triHeight2 - triHeight4),
 				});
 				
 			} else {
-				base.Graphics.FillPolygon(new SolidBrush(Color.Black), new PointF[] {
+				base.Graphics.FillPolygon(brush, new PointF[] {
 					new PointF(x,                y +  triHeight2 + triHeight4),
 					new PointF(x + triWidth / 2, y +  triHeight2 - triHeight4),
 					new PointF(x + triWidth,     y +  triHeight2 + triHeight4),
@@ -86,11 +88,10 @@ namespace ICSharpCode.TextEditor.Util
 		public override void Draw(PointF location)
 		{
 			if (IsTextVisible()) {
-				RectangleF drawRectangle = new RectangleF
-					(location, AllocatedSize);
+				RectangleF drawRectangle = new RectangleF(location, AllocatedSize);
 				
 				Graphics.DrawString(tipText, tipFont,
-				                    new SolidBrush(Color),
+				                    BrushRegistry.GetBrush(Color),
 				                    drawRectangle,
 				                    GetInternalStringFormat());   
 			}

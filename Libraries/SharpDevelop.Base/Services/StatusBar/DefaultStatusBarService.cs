@@ -59,7 +59,6 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public void SetCaretPosition(int x, int y, int charOffset)
 		{
-			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
 			statusBar.CursorStatusBarPanel.Text = stringParserService.Parse("${res:StatusBarService.CursorStatusBarPanelText}", 
 			                                                                new string[,] { {"Line", String.Format("{0,-10}", y + 1)}, 
 			                                                                                {"Column", String.Format("{0,-5}", x + 1)}, 
@@ -68,7 +67,6 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public void SetInsertMode(bool insertMode)
 		{
-			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
 			statusBar.ModeStatusBarPanel.Text = insertMode ? stringParserService.Parse("${res:StatusBarService.CaretModes.Insert}") : stringParserService.Parse("${res:StatusBarService.CaretModes.Overwrite}");
 		}
 		

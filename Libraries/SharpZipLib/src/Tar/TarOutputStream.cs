@@ -1,4 +1,5 @@
 // TarOutputStream.cs
+//
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -47,18 +48,48 @@ namespace ICSharpCode.SharpZipLib.Tar
 	/// public
 	public class TarOutputStream : Stream
 	{
+		/// <summary>
+		/// flag indicating debugging code should be activated or not
+		/// </summary>
 		protected bool      debug;
+		
+		/// <summary>
+		/// Size for the current entry
+		/// </summary>
 		protected long      currSize;
+
+		/// <summary>
+		/// bytes written for this entry so far
+		/// </summary>		
 		protected int       currBytes;
+		
+		/// <summary>
+		/// single block working buffer 
+		/// </summary>
 		protected byte[]    blockBuf;
+
+		/// <summary>
+		/// current 'Assembly' buffer length
+		/// </summary>		
 		protected int       assemLen;
+		
+		/// <summary>
+		/// 'Assembly' buffer used to assmble data before writing
+		/// </summary>
 		protected byte[]    assemBuf;
 		
+		/// <summary>
+		/// TarBuffer used to provide correct blocking factor
+		/// </summary>
 		protected TarBuffer buffer;
+		
+		/// <summary>
+		/// the destination stream for the archive contents
+		/// </summary>
 		protected Stream    outputStream;
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// true if the stream supports reading; otherwise, false.
 		/// </summary>
 		public override bool CanRead {
 			get {
@@ -67,7 +98,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// true if the stream supports seeking; otherwise, false.
 		/// </summary>
 		public override bool CanSeek {
 			get {
@@ -76,7 +107,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		}
 		
 		/// <summary>
-		/// Indicate if stream supports writing
+		/// true if stream supports writing; otherwise, false.
 		/// </summary>
 		public override bool CanWrite {
 			get {
@@ -85,7 +116,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		}
 		
 		/// <summary>
-		/// Length of stream in bytes
+		/// length of stream in bytes
 		/// </summary>
 		public override long Length {
 			get {
@@ -114,7 +145,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		}
 		
 		/// <summary>
-		/// Set the length of the current stream
+		/// set the length of the current stream
 		/// </summary>
 		public override void SetLength(long val)
 		{
@@ -149,10 +180,19 @@ namespace ICSharpCode.SharpZipLib.Tar
 			outputStream.Flush();
 		}
 				
+		/// <summary>
+		/// Construct TarOutputStream using default block factor
+		/// </summary>
+		/// <param name="outputStream">stream to write to</param>
 		public TarOutputStream(Stream outputStream) : this(outputStream, TarBuffer.DefaultBlockFactor)
 		{
 		}
 		
+		/// <summary>
+		/// Construct TarOutputStream with user specified block factor
+		/// </summary>
+		/// <param name="outputStream">stream to write to</param>
+		/// <param name="blockFactor">blocking factor</param>
 		public TarOutputStream(Stream outputStream, int blockFactor)
 		{
 			this.outputStream = outputStream;
@@ -175,7 +215,12 @@ namespace ICSharpCode.SharpZipLib.Tar
 			this.debug = debugFlag;
 			SetBufferDebug(debugFlag);
 		}
-		
+
+
+		/// <summary>
+		///  Set the debug flag for the buffer
+		/// </summary>
+		/// <param name="debug">True for debug on false for debug off</param>
 		public void SetBufferDebug(bool debug)
 		{
 			this.buffer.SetDebug(debug);
@@ -281,7 +326,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			}
 			
 			if (this.currBytes < this.currSize) {
-				throw new IOException("entry closed at '" + this.currBytes + "' before the '" + this.currSize + "' bytes specified in the header were written");
+				throw new TarException("entry closed at '" + this.currBytes + "' before the '" + this.currSize + "' bytes specified in the header were written");
 			}
 		}
 		
@@ -317,15 +362,19 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </param>
 		public override void Write(byte[] wBuf, int wOffset, int numToWrite)
 		{
+			if (wBuf == null) {
+				throw new ArgumentNullException("TarOutputStream.Write buffer null");
+			}
+			
 			if ((this.currBytes + numToWrite) > this.currSize) {
-				throw new IOException("request to write '" + numToWrite + "' bytes exceeds size in header of '" + this.currSize + "' bytes");
+				throw new ArgumentOutOfRangeException("request to write '" + numToWrite + "' bytes exceeds size in header of '" + this.currSize + "' bytes");
 			}
 			
 			//
 			// We have to deal with assembly!!!
 			// The programmer can be writing little 32 byte chunks for all
-			// we know, and we must assemble complete records for writing.
-			// TODO REVIEW Maybe this should be in TarBuffer? Could that help to
+			// we know, and we must assemble complete blocks for writing.
+			// TODO  REVIEW Maybe this should be in TarBuffer? Could that help to
 			//        eliminate some of the buffer copying.
 			//
 			if (this.assemLen > 0) {

@@ -214,7 +214,8 @@ namespace ICSharpCode.TextEditor.Document
 				OnDocumentAboutToBeChanged(new DocumentEventArgs(this, 0, 0, value));
 				textBufferStrategy.SetContent(value);
 				lineTrackingStrategy.SetContent(value);
-				OnDocumentChanged(new DocumentEventArgs(this, 0, 0, value));				
+				
+				OnDocumentChanged(new DocumentEventArgs(this, 0, 0, value));
 				OnTextContentChanged(EventArgs.Empty);
 			}
 		}
@@ -249,7 +250,6 @@ namespace ICSharpCode.TextEditor.Document
 			
 			textBufferStrategy.Remove(offset, length);
 			lineTrackingStrategy.Remove(offset, length);
-			
 			
 			OnDocumentChanged(new DocumentEventArgs(this, offset, length));
 		}

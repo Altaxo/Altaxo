@@ -25,6 +25,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 	{
 		public VisualError(int offset, int length, string description, bool isError) : base(offset, length, TextMarkerType.WaveLine, isError ? Color.Red : Color.Orange)
 		{
+			
 			base.ToolTip = description;
 		}
 	}
@@ -49,8 +50,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		void ClearErrors()
 		{
-			textEditor.Document.MarkerStrategy.TextMarker.Clear();
-			textEditor.Refresh();
+			ArrayList markers = textEditor.Document.MarkerStrategy.TextMarker;
+			for (int i = 0; i < markers.Count;) {
+				if (markers[i] is VisualError) {
+					markers.RemoveAt(i);
+				} else {
+					i++; // Check next one
+				}
+			}
 		}
 		
 		void SetErrors(object sender, EventArgs e)
@@ -58,16 +65,23 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			ClearErrors();
 			TaskService taskService = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
 			foreach (Task task in taskService.Tasks) {
-				if (task.FileName == null || task.FileName.Length == 0) {
+				if (task.FileName == null || task.FileName.Length == 0 || task.Column < 0) {
 					continue;
 				}
 				if (Path.GetFullPath(task.FileName).ToLower() == Path.GetFullPath(textEditor.FileName).ToLower() && (task.TaskType == TaskType.Warning || task.TaskType == TaskType.Error)) {
 					if (task.Line >= 0 && task.Line < textEditor.Document.TotalNumberOfLines) {
 						LineSegment line = textEditor.Document.GetLineSegment(task.Line);
 						int offset = line.Offset + task.Column;
+						foreach (TextWord tw in line.Words) {
+							if (task.Column >= tw.Offset && task.Column < (tw.Offset + tw.Length)) {
+								textEditor.Document.MarkerStrategy.TextMarker.Add(new VisualError(offset, tw.Length, task.Description, task.TaskType == TaskType.Error));
+								break;
+							}
+						}
+						/*
 						int startOffset = offset;//Math.Min(textEditor.Document.TextLength, TextUtilities.FindWordStart(textEditor.Document, offset));
 						int endOffset   = Math.Max(1, TextUtilities.FindWordEnd(textEditor.Document, offset));
-						textEditor.Document.MarkerStrategy.TextMarker.Add(new VisualError(startOffset, endOffset - startOffset + 1, task.Description, task.TaskType == TaskType.Error));
+						textEditor.Document.MarkerStrategy.TextMarker.Add(new VisualError(startOffset, endOffset - startOffset + 1, task.Description, task.TaskType == TaskType.Error));*/
 					}
 				}
 			}

@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -28,7 +28,7 @@ namespace ICSharpCode.TextEditor.Document
 		Hashtable properties       = new Hashtable();
 		string[]  extensions;
 		
-		HighlightColor digitColor;
+		HighlightColor   digitColor;
 		HighlightRuleSet defaultRuleSet = null;
 		
 		public HighlightColor DigitColor {
@@ -262,6 +262,8 @@ namespace ICSharpCode.TextEditor.Document
 				}
 				
 				ArrayList words = ParseLine(document);
+//// Alex: clear old words
+				if (currentLine.Words!=null) currentLine.Words.Clear();
 				currentLine.Words = words;
 				currentLine.HighlightSpanStack = (currentSpanStack==null || currentSpanStack.Count==0) ? null : currentSpanStack;
 				
@@ -277,7 +279,7 @@ namespace ICSharpCode.TextEditor.Document
 			LineSegment previousLine = (lineNumber > 0 ? document.GetLineSegment(lineNumber - 1) : null);
 			
 			currentSpanStack = ((previousLine != null && previousLine.HighlightSpanStack != null) ? ((Stack)(previousLine.HighlightSpanStack.Clone())) : null);
-			if(currentSpanStack != null) {
+			if (currentSpanStack != null) {
 				while (currentSpanStack.Count > 0 && ((Span)currentSpanStack.Peek()).StopEOL) {
 					currentSpanStack.Pop();
 				}
@@ -361,6 +363,8 @@ namespace ICSharpCode.TextEditor.Document
 				processNextLine = false;
 			}
 			
+//// Alex: remove old words
+			if (currentLine.Words!=null) currentLine.Words.Clear();
 			currentLine.Words = words;
 			currentLine.HighlightSpanStack = (currentSpanStack != null && currentSpanStack.Count > 0) ? currentSpanStack : null;
 			

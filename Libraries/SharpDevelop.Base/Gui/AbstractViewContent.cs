@@ -48,6 +48,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
+		public virtual bool CreateAsSubViewContent {
+			get {
+				return false;
+			}
+		}
+
 		public AbstractViewContent()
 		{
 		}
@@ -130,16 +136,24 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		
-		protected virtual void OnBeforeSave(EventArgs e)
+		protected virtual void OnSaving(EventArgs e)
 		{
-			if (BeforeSave != null) {
-				BeforeSave(this, e);
+			if (Saving != null) {
+				Saving(this, e);
+			}
+		}
+		
+		protected virtual void OnSaved(SaveEventArgs e)
+		{
+			if (Saved != null) {
+				Saved(this, e);
 			}
 		}
 		
 		public event EventHandler TitleNameChanged;
 		public event EventHandler FileNameChanged;
 		public event EventHandler DirtyChanged;
-		public event EventHandler BeforeSave;
+		public event EventHandler     Saving;
+		public event SaveEventHandler Saved;
 	}
 }

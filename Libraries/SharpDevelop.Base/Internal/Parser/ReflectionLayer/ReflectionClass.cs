@@ -54,7 +54,7 @@ namespace SharpDevelop.Internal.Parser
 				classType = ClassType.Delegate;
 				MethodInfo invoke          = type.GetMethod("Invoke");
 				ReflectionMethod newMethod = new ReflectionMethod(invoke, null);
-				methods.Add(newMethod);
+				Methods.Add(newMethod);
 			} else if (type.IsInterface) {
 				classType = ClassType.Interface;
 			} else if (type.IsEnum) {
@@ -95,24 +95,24 @@ namespace SharpDevelop.Internal.Parser
 			
 			// set base classes
 			if (type.BaseType != null) { // it's null for System.Object ONLY !!!
-				baseTypes.Add(type.BaseType.FullName);
+				BaseTypes.Add(type.BaseType.FullName);
 			}
 			
 			if (classType != ClassType.Delegate) {
 				// add members
 				foreach (Type iface in type.GetInterfaces()) {
-					baseTypes.Add(iface.FullName);
+					BaseTypes.Add(iface.FullName);
 				}
 				
 				foreach (Type nestedType in type.GetNestedTypes(flags)) {
-					innerClasses.Add(new ReflectionClass(nestedType, xmlComments));
+					InnerClasses.Add(new ReflectionClass(nestedType, xmlComments));
 				}
 				
 				foreach (FieldInfo field in type.GetFields(flags)) {
 //					if (!field.IsSpecialName) {
 					IField newField = new ReflectionField(field, xmlComments);
 					if (!newField.IsInternal) {
-						fields.Add(newField);
+						Fields.Add(newField);
 					}
 //					}
 				}
@@ -128,12 +128,12 @@ namespace SharpDevelop.Internal.Parser
 					if (p == null || p.Length == 0) {
 						IProperty newProperty = new ReflectionProperty(propertyInfo, xmlComments);
 						if (!newProperty.IsInternal) {
-							properties.Add(newProperty);
+							Properties.Add(newProperty);
 						}
 					} else {
 						IIndexer newIndexer = new ReflectionIndexer(propertyInfo, xmlComments);
 						if (!newIndexer.IsInternal) {
-							indexer.Add(newIndexer);
+							Indexer.Add(newIndexer);
 						}
 					}
 //					}
@@ -144,7 +144,7 @@ namespace SharpDevelop.Internal.Parser
 						IMethod newMethod = new ReflectionMethod(methodInfo, xmlComments);
 						
 						if (!newMethod.IsInternal) {
-							methods.Add(newMethod);
+							Methods.Add(newMethod);
 						}
 					}
 				}
@@ -152,7 +152,7 @@ namespace SharpDevelop.Internal.Parser
 				foreach (ConstructorInfo constructorInfo in type.GetConstructors(flags)) {
 					IMethod newMethod = new ReflectionMethod(constructorInfo, xmlComments);
 					if (!newMethod.IsInternal) {
-						methods.Add(newMethod);
+						Methods.Add(newMethod);
 					}
 				}
 				
@@ -161,9 +161,8 @@ namespace SharpDevelop.Internal.Parser
 					IEvent newEvent = new ReflectionEvent(eventInfo, xmlComments);
 					
 					if (!newEvent.IsInternal) {
-						events.Add(newEvent);
+						Events.Add(newEvent);
 					}
-//					}
 				}
 			}
 		}

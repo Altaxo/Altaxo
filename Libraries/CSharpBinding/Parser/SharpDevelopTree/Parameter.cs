@@ -8,7 +8,7 @@ namespace CSharpBinding.Parser.SharpDevelopTree
 	{
 		public Parameter(string name, ReturnType type)
 		{
-			this.name = name;
+			Name = name;
 			returnType = type;
 		}
 	}

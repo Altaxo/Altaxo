@@ -1,4 +1,4 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
@@ -30,15 +30,27 @@ namespace ICSharpCode.SharpDevelop.Commands
 	public class SharpDevelopStringTagProvider :  IStringTagProvider 
 	{
 		IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+
+//// Alex - strings must be static as constants
+		static string[] tags = new string[] { "ITEMPATH", "ITEMDIR", "ITEMFILENAME", "ITEMEXT",
+				                      "CURLINE", "CURCOL", "CURTEXT",
+				                      "TARGETPATH", "TARGETDIR", "TARGETNAME", "TARGETEXT",
+				                      "PROJECTDIR", "PROJECTFILENAME",
+				                      "COMBINEDIR", "COMBINEFILENAME",
+				                      "STARTUPPATH"};
+
 		
 		public string[] Tags {
 			get {
+				/* Alex - return static array instead of creating each time new one
 				return new string[] { "ITEMPATH", "ITEMDIR", "ITEMFILENAME", "ITEMEXT",
 				                      "CURLINE", "CURCOL", "CURTEXT",
 				                      "TARGETPATH", "TARGETDIR", "TARGETNAME", "TARGETEXT",
 				                      "PROJECTDIR", "PROJECTFILENAME",
 				                      "COMBINEDIR", "COMBINEFILENAME",
 				                      "STARTUPPATH"};
+				*/
+				return tags;
 			}
 		}
 		

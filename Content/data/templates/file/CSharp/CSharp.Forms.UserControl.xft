@@ -24,12 +24,13 @@
 		<File name="${FullName}" language="C#"><![CDATA[${StandardHeader.C#}
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace ${StandardNamespace}
 {
 	/// <summary>
-	/// Description of ${FileNameWithoutExtension}.	
+	/// Description of ${FileNameWithoutExtension}.
 	/// </summary>
 	public class ${FileNameWithoutExtension} : System.Windows.Forms.UserControl
 	{

@@ -15,7 +15,7 @@ namespace CSharpBinding.Parser.SharpDevelopTree
 		public Indexer(ReturnType type, ParameterCollection parameters, Modifier m, IRegion region, IRegion bodyRegion)
 		{
 			returnType      = type;
-			this.parameters = parameters;
+			this.Parameters = parameters;
 			this.region     = region;
 			this.bodyRegion = bodyRegion;
 			modifiers = (ModifierEnum)m;

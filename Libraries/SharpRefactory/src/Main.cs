@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Specialized;
 using System.IO;
+using System.Windows.Forms;
+using System.Collections;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
@@ -52,7 +54,6 @@ class MainClass
 		StringCollection files = SearchDirectory("C:\\b", "*.cs");
 		foreach (string fileName in files) {
 			Parser p = new Parser();
-			Console.Write("Converting : " + fileName);
 			p.Parse(new Lexer(new FileReader(fileName)));
 			if (p.Errors.count == 0) {
 				StreamReader sr = File.OpenText(fileName);
@@ -65,7 +66,6 @@ class MainClass
 				sw.Write(ppv.Text);
 				sw.Close();
 				
-				Console.WriteLine(" done.");
 			} else {
 				Console.Write(" Source code errors:");
 				Console.WriteLine(p.Errors.ErrorOutput);
@@ -77,24 +77,37 @@ class MainClass
 	public static void Main (string[] args)
 	{
 //		PrettyPrintDirectories();
-		Parser p = new Parser();
-		string fileName = "C:\\a.cs";
-		Console.Write("Converting : " + fileName);
-		p.Parse(new Lexer(new FileReader(fileName)));
-		if (p.Errors.count == 0) {
-			StreamReader sr = File.OpenText(fileName);
-			string content = sr.ReadToEnd();
-			sr.Close();
-			PrettyPrintVisitor ppv = new PrettyPrintVisitor(content);
-			ppv.PrettyPrintOptions.IndentSize = 6;
-			ppv.Visit(p.compilationUnit, null);
+//		Parser p = new Parser();
+//		string fileName = "C:\\a.cs";
+//		Console.Write("Converting : " + fileName);
+//		p.Parse(new Lexer(new FileReader(fileName)));
+//		if (p.Errors.count == 0) {
+//			StreamReader sr = File.OpenText(fileName);
+//			string content = sr.ReadToEnd();
+//			sr.Close();
+//			PrettyPrintVisitor ppv = new PrettyPrintVisitor(content);
+//			ppv.PrettyPrintOptions.IndentSize = 6;
+//			ppv.Visit(p.compilationUnit, null);
+//			
+//			Console.WriteLine(ppv.Text);
+//			
+//			Console.WriteLine(" done.");
+//		} else {
+//			Console.Write(" Source code errors:");
+//			Console.WriteLine(p.Errors.ErrorOutput);
+//		}
+		
+		string searchPath = Path.GetFullPath(Application.StartupPath + @"\..\src");
+			StringCollection files = SearchDirectory(searchPath, "*.cs", true);
+			ArrayList defs = new ArrayList();
+			long oldSet = Environment.WorkingSet;
 			
-			Console.WriteLine(ppv.Text);
-			
-			Console.WriteLine(" done.");
-		} else {
-			Console.Write(" Source code errors:");
-			Console.WriteLine(p.Errors.ErrorOutput);
-		}
+			DateTime start = DateTime.Now;
+			foreach (string str in files) {
+				Lexer lexer = new Lexer(new FileReader(str));
+				Parser parser = new Parser();
+				parser.Parse(lexer);
+			}
+			Console.WriteLine("Time: " + (DateTime.Now - start) + " memory : " + (Environment.WorkingSet - oldSet));
 	}
 }

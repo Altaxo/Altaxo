@@ -94,7 +94,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ZipException.cs"
+                    RelPath = "SharpZipBaseException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -105,6 +105,11 @@
                 />
                 <File
                     RelPath = "BZip2\BZip2Constants.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "BZip2\BZip2Exception.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -144,6 +149,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "GZip\GZipException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "GZip\GzipInputStream.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -174,6 +184,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Tar\TarException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Tar\TarHeader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -195,6 +210,11 @@
                 />
                 <File
                     RelPath = "Zip\ZipEntry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Zip\ZipException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

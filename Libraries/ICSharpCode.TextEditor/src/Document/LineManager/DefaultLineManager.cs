@@ -83,7 +83,6 @@ namespace ICSharpCode.TextEditor.Document
 			
 			if (offset == textLength) {
 				if (lineCollection.Count == 0) {
-//					Console.WriteLine("Set line after textend to line of length 0");
 					return new LineSegment(0, 0);
 				}
 				LineSegment lastLine = (LineSegment)lineCollection[lineCollection.Count - 1];
@@ -101,7 +100,6 @@ namespace ICSharpCode.TextEditor.Document
 			
 			if (lineNr == lineCollection.Count) {
 				if (lineCollection.Count == 0) {
-//					Console.WriteLine("Set line after textend to line of length 0");
 					return new LineSegment(0, 0);
 				}
 				LineSegment lastLine = (LineSegment)lineCollection[lineCollection.Count - 1];
@@ -415,6 +413,9 @@ namespace ICSharpCode.TextEditor.Document
 					foldEnd = fm.EndLine;
 				}
 			}
+			// help GC
+			foldings.Clear();
+			foldings = null;
 			return foldEnd + visibleLineNumber - v;
 		}
 		

@@ -159,16 +159,19 @@ namespace ICSharpCode.TextEditor.Document
 						if (i < expr.Length) {
 							switch (expr[i]) {
 								case '!': // don't match the following expression
-								{ StringBuilder whatmatch = new StringBuilder();
+								{
+									StringBuilder whatmatch = new StringBuilder();
 									++i;
 									while (i < expr.Length && expr[i] != '@') {
 										whatmatch.Append(expr[i++]);
 									}
 									if (this.Offset + index + j + whatmatch.Length < document.TextLength) {
 										int k = 0;
-										for (; k < whatmatch.Length; ++k)
-											if (document.GetCharAt(this.Offset + index + j + k) != whatmatch[k])
+										for (; k < whatmatch.Length; ++k) {
+											if (document.GetCharAt(this.Offset + index + j + k) != whatmatch[k]) {
 												break;
+											}
+										}
 										if (k >= whatmatch.Length) {
 											return false;
 										}

@@ -20,5 +20,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// Is called before the save operation of the main IViewContent
 		/// </summary>
 		void NotifyBeforeSave();
+		
+		void NotifyAfterSave(bool successful);
 	}
 }

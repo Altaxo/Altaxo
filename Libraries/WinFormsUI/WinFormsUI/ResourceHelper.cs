@@ -29,9 +29,9 @@ namespace WeifenLuo.WinFormsUI
 #if !ModifiedForAltaxo
 			m_resourceManager = new ResourceManager("WeifenLuo.WinFormsUI.Strings", typeof(DockPanel).Assembly);
 #else
-			m_resourceManager = new ResourceManager("WeifenLuo.WinFormsUI.Resources.Strings", typeof(DockPanel).Assembly);
-#endif
-		}
+      m_resourceManager = new ResourceManager("WeifenLuo.WinFormsUI.Resources.Strings", typeof(DockPanel).Assembly);
+#endif		
+    }
 	
 		public static Bitmap LoadBitmap(string name)
 		{

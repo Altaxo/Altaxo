@@ -16,25 +16,33 @@ namespace SharpDevelop.Internal.Parser
 		{
 			string fullyQualifiedName = type.FullName.Replace("+", ".").Trim('&');
 			
-			while (fullyQualifiedName.EndsWith("[") ||
-			       fullyQualifiedName.EndsWith("]") ||
-			       fullyQualifiedName.EndsWith(",") ||
-			       fullyQualifiedName.EndsWith("*")) {
-				fullyQualifiedName = fullyQualifiedName.Substring(0, fullyQualifiedName.Length - 1);
+			// base.FullyQualifiedName = fullyQualifiedName.TrimEnd('[', ']', ',', '*');
+			for (int i = fullyQualifiedName.Length; i > 0; i--) {
+				char c = fullyQualifiedName[i - 1];
+				if (c != '[' && c != ']' && c != ',' && c != '*') {
+					if (i < fullyQualifiedName.Length)
+						fullyQualifiedName = fullyQualifiedName.Substring(0, i);
+					break;
+				}
 			}
 			base.FullyQualifiedName = fullyQualifiedName;
-			
+
 			SetPointerNestingLevel(type);
 			SetArrayDimensions(type);
-			arrayDimensions = (int[])arrays.ToArray(typeof(int));
+			if (arrays == null)
+				arrayDimensions = new int[0];
+			else
+				arrayDimensions = (int[])arrays.ToArray(typeof(int));
 		}
 		
-		ArrayList arrays = new ArrayList();
+		ArrayList arrays = null;
 		void SetArrayDimensions(Type type)
 		{
 			if (type.IsArray && type != typeof(Array)) {
+				if (arrays == null)
+					arrays = new ArrayList();
+				arrays.Add(type.GetArrayRank());
 				SetArrayDimensions(type.GetElementType());
-				arrays.Insert(0, type.GetArrayRank());
 			}
 		}
 		

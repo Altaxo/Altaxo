@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
@@ -43,6 +44,14 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		Hashtable icons        = new Hashtable();
 		bool allowUntitledFiles;
 		string basePath;
+		StringCollection createdFiles = new StringCollection();
+		
+		public StringCollection CreatedFiles {
+			get {
+				return createdFiles;
+			}
+		}
+		
 		public NewFileDialog(string basePath)
 		{
 			StandardHeader.SetHeaders();
@@ -140,16 +149,18 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 				if (titem.Template.Icon != null) {
 					icons[titem.Template.Icon] = 0; // "create template icon"
 				}
-				Category cat = GetCategory(titem.Template.Category);
-				cat.Templates.Add(titem); 
+				if (template.NewFileDialogVisible == true) {
+					Category cat = GetCategory(titem.Template.Category);
+					cat.Templates.Add(titem); 
 				
-				if (cat.Selected == false && template.WizardPath == null) {
-					cat.Selected = true;
-				}
-				if (!cat.HasSelectedTemplate && titem.Template.FileDescriptionTemplates.Count == 1) {
-					if (((FileDescriptionTemplate)titem.Template.FileDescriptionTemplates[0]).Name.StartsWith("Empty")) {
-						titem.Selected = true;
-						cat.HasSelectedTemplate = true;
+					if (cat.Selected == false && template.WizardPath == null) {
+						cat.Selected = true;
+					}
+					if (!cat.HasSelectedTemplate && titem.Template.FileDescriptionTemplates.Count == 1) {
+						if (((FileDescriptionTemplate)titem.Template.FileDescriptionTemplates[0]).Name.StartsWith("Empty")) {
+							titem.Selected = true;
+							cat.HasSelectedTemplate = true;
+						}
 					}
 				}
 				alltemplates.Add(titem);
@@ -277,7 +288,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 							if (!fileService.IsOpen(fileName)) {
 								break;
 							}
-						} else if (!File.Exists(Path.Combine(basePath, StringParserService.Parse(SelectedTemplate.DefaultName)))) {
+						} else if (!File.Exists(Path.Combine(basePath, fileName))) {
 							break;
 						}
 						++curNumber;
@@ -323,7 +334,9 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		public void SaveFile(string filename, string content, string languageName, bool showFile)
 		{
 			IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-			fileService.NewFile(StringParserService.Parse(filename), StringParserService.Parse(languageName), StringParserService.Parse(content));
+			string parsedFileName = StringParserService.Parse(filename);
+			createdFiles.Add(parsedFileName);
+			fileService.NewFile(parsedFileName, StringParserService.Parse(languageName), StringParserService.Parse(content));
 			DialogResult = DialogResult.OK;
 		}
 		
@@ -334,7 +347,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 				propertyService.SetProperty("Dialogs.NewProjectDialog.LargeImages", ((RadioButton)ControlDictionary["largeIconsRadioButton"]).Checked);
 				propertyService.SetProperty("Dialogs.NewFileDialog.LastSelectedCategory", ((TreeView)ControlDictionary["categoryTreeView"]).SelectedNode.Text);
 			}
-			
+			createdFiles.Clear();
 			if (((ListView)ControlDictionary["templateListView"]).SelectedItems.Count == 1) {
 				if (!AllPropertiesHaveAValue) {
 					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));

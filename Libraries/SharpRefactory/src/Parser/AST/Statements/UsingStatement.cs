@@ -17,7 +17,6 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 			}
 		}
 		
-		
 		public Statement EmbeddedStatement {
 			get {
 				return embeddedStatement;

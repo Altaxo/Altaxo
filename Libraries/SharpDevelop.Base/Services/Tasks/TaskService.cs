@@ -17,8 +17,8 @@ namespace ICSharpCode.SharpDevelop.Services
 {
 	public class TaskService : AbstractService
 	{
-		ArrayList tasks       = new ArrayList();
-		ArrayList commentTasks = new ArrayList();
+		ArrayList tasks          = new ArrayList();
+		ArrayList commentTasks   = new ArrayList();
 		string    compilerOutput = String.Empty;
 		
 		public ArrayList Tasks {
@@ -90,6 +90,16 @@ namespace ICSharpCode.SharpDevelop.Services
 			IFileService fileService = (IFileService)ServiceManager.Services.GetService(typeof(IFileService));
 			fileService.FileRenamed += new FileEventHandler(CheckFileRename);
 			fileService.FileRemoved += new FileEventHandler(CheckFileRemove);
+			
+			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+			projectService.CombineClosed += new CombineEventHandler(OnCombineClosed);
+		}
+		
+		void OnCombineClosed(object sender, CombineEventArgs e)
+		{
+			tasks.Clear();
+			commentTasks.Clear();
+			NotifyTaskChange();
 		}
 		
 		void CheckFileRemove(object sender, FileEventArgs e)
@@ -97,7 +107,13 @@ namespace ICSharpCode.SharpDevelop.Services
 			bool somethingChanged = false;
 			for (int i = 0; i < tasks.Count; ++i) {
 				Task curTask = (Task)tasks[i];
-				if (Path.GetFullPath(curTask.FileName) == Path.GetFullPath(e.FileName)) {
+				bool doRemoveTask = false;
+				try {
+					doRemoveTask = Path.GetFullPath(curTask.FileName) == Path.GetFullPath(e.FileName);
+				} catch {
+					doRemoveTask = curTask.FileName == e.FileName;
+				}
+				if (doRemoveTask) {
 					tasks.RemoveAt(i);
 					--i;
 					somethingChanged = true;
@@ -118,6 +134,14 @@ namespace ICSharpCode.SharpDevelop.Services
 					somethingChanged = true;
 				}
 			}
+			
+			foreach (Task curTask in commentTasks) {
+				if (Path.GetFullPath(curTask.FileName) == Path.GetFullPath(e.SourceFile)) {
+					curTask.FileName = Path.GetFullPath(e.TargetFile);
+					somethingChanged = true;
+				}
+			}
+			
 			
 			if (somethingChanged) {
 				NotifyTaskChange();

@@ -56,7 +56,7 @@ namespace ICSharpCode.TextEditor
 		
 		public GutterMargin(TextArea textArea) : base(textArea)
 		{
-			numberStringFormat.LineAlignment = StringAlignment.Near;
+			numberStringFormat.LineAlignment = StringAlignment.Far;
 			numberStringFormat.FormatFlags   = StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.FitBlackBox |
 			                                    StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
 		}
@@ -68,22 +68,21 @@ namespace ICSharpCode.TextEditor
 			}
 			HighlightColor lineNumberPainterColor = textArea.Document.HighlightingStrategy.GetColorFor("LineNumbers");
 			int fontHeight = lineNumberPainterColor.Font.Height;
-			
+			Brush fillBrush = textArea.Enabled ? BrushRegistry.GetBrush(lineNumberPainterColor.BackgroundColor) : SystemBrushes.InactiveBorder;
+			Brush drawBrush = BrushRegistry.GetBrush(lineNumberPainterColor.Color);
 			for (int y = 0; y < (DrawingPosition.Height + textArea.TextView.VisibleLineDrawingRemainder) / fontHeight + 1; ++y) {
 				int ypos = drawingPosition.Y + fontHeight * y  - textArea.TextView.VisibleLineDrawingRemainder;
 				Rectangle backgroundRectangle = new Rectangle(drawingPosition.X, ypos, drawingPosition.Width, fontHeight);
 				if (rect.IntersectsWith(backgroundRectangle)) {
-					g.FillRectangle(textArea.Enabled ? new SolidBrush(lineNumberPainterColor.BackgroundColor) : SystemBrushes.InactiveBorder, backgroundRectangle);
+					g.FillRectangle(fillBrush, backgroundRectangle);
 					int curLine = textArea.Document.GetFirstLogicalLine(textArea.Document.GetVisibleLine(textArea.TextView.FirstVisibleLine) + y);
-//					int curLine = y + textArea.TextView.FirstVisibleLine;
+					
 					if (curLine < textArea.Document.TotalNumberOfLines) {
-						numberStringFormat.Alignment = StringAlignment.Far;
 						g.DrawString((curLine + 1).ToString(),
-						                  lineNumberPainterColor.Font,
-						                  new SolidBrush(lineNumberPainterColor.Color),
-						                  backgroundRectangle,
-						                  numberStringFormat);
-						numberStringFormat.Alignment = StringAlignment.Near;
+						             lineNumberPainterColor.Font,
+						             drawBrush,
+						             backgroundRectangle,
+						             numberStringFormat);
 					}
 				}
 			}
@@ -94,8 +93,7 @@ namespace ICSharpCode.TextEditor
 		public override void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
 		{
 			selectionComeFromGutter = true;
-			int physicalLine = textArea.TextView.FirstVisibleLine + (int)(mousepos.Y / textArea.TextView.FontHeight);
-			int realline     = textArea.Document.GetFirstLogicalLine(physicalLine);
+			int realline = textArea.TextView.GetLogicalLine(mousepos);
 			if (realline >= 0 && realline < textArea.Document.TotalNumberOfLines) {
 				selectionStartPos = new Point(0, realline);
 				textArea.SelectionManager.ClearSelection();
@@ -113,8 +111,7 @@ namespace ICSharpCode.TextEditor
 		{
 			if (mouseButtons == MouseButtons.Left) {
 				if (selectionComeFromGutter) {
-					int physicalLine = textArea.TextView.FirstVisibleLine + (int)(mousepos.Y / textArea.TextView.FontHeight);
-					int realline     = textArea.Document.GetFirstLogicalLine(physicalLine);
+					int realline       = textArea.TextView.GetLogicalLine(mousepos);
 					Point realmousepos = new Point(0, realline);
 					if (realmousepos.Y < textArea.Document.TotalNumberOfLines) {
 						if (selectionStartPos.Y == realmousepos.Y) {
@@ -128,9 +125,8 @@ namespace ICSharpCode.TextEditor
 					}
 				} else {
 					if (textArea.SelectionManager.HasSomethingSelected) {
-						selectionStartPos =  textArea.Document.OffsetToPosition(textArea.SelectionManager.SelectionCollection[0].Offset);
-						int physicalLine = textArea.TextView.FirstVisibleLine + (int)(mousepos.Y / textArea.TextView.FontHeight);
-						int realline     = textArea.Document.GetFirstLogicalLine(physicalLine);
+						selectionStartPos  = textArea.Document.OffsetToPosition(textArea.SelectionManager.SelectionCollection[0].Offset);
+						int realline       = textArea.TextView.GetLogicalLine(mousepos);
 						Point realmousepos = new Point(0, realline);
 						if (realmousepos.Y < textArea.Document.TotalNumberOfLines) {
 							textArea.SelectionManager.ExtendSelection(textArea.Caret.Position, realmousepos);

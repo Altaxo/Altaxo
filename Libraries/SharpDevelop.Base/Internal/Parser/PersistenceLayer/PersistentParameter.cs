@@ -15,8 +15,8 @@ namespace SharpDevelop.Internal.Parser
 	{
 		public PersistentParameter(BinaryReader reader, ClassProxyCollection classProxyCollection)
 		{
-			name     = reader.ReadString();
-			documentation      = reader.ReadString();
+			Name     = reader.ReadString();
+			Documentation      = reader.ReadString();
 
 			modifier = (ParameterModifier)reader.ReadByte();
 						
@@ -28,18 +28,18 @@ namespace SharpDevelop.Internal.Parser
 		
 		public void WriteTo(BinaryWriter writer)
 		{
-			writer.Write(name);
-			writer.Write(documentation);
+			writer.Write(Name);
+			writer.Write(Documentation);
 			writer.Write((byte)modifier);
 			((PersistentReturnType)returnType).WriteTo(writer);
 		}
 		
 		public PersistentParameter(ClassProxyCollection classProxyCollection, IParameter param)
 		{
-			name          = param.Name;
-			documentation = param.Documentation;
-			if (documentation == null) {
-				documentation = String.Empty;
+			Name          = param.Name;
+			Documentation = param.Documentation;
+			if (Documentation == null) {
+				Documentation = String.Empty;
 			}
 			
 			returnType = new PersistentReturnType(classProxyCollection, param.ReturnType);

@@ -14,7 +14,7 @@ namespace SharpDevelop.Internal.Parser
 	public class AbstractAttributeSection : IAttributeSection
 	{
 		protected AttributeTarget     attributeTarget;
-		protected AttributeCollection attributes = new AttributeCollection();
+		AttributeCollection attributes = null;
 
 		public virtual AttributeTarget AttributeTarget {
 			get {
@@ -27,7 +27,13 @@ namespace SharpDevelop.Internal.Parser
 
 		public virtual AttributeCollection Attributes {
 			get {
+				if (attributes == null) {
+					attributes = new AttributeCollection();
+				}
 				return attributes;
+			}
+			set {
+				attributes = value;
 			}
 		}
 		

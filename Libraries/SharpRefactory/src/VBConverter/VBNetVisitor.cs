@@ -21,7 +21,6 @@ using System.CodeDom;
 using System.Text;
 using System.Collections;
 
-
 using ICSharpCode.SharpRefactory.Parser;
 using ICSharpCode.SharpRefactory.Parser.AST;
 
@@ -29,11 +28,13 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 {
 	public class VBNetVisitor : AbstractASTVisitor
 	{
+		readonly string newLineSep  = Environment.NewLine;
 		StringBuilder   sourceText  = new StringBuilder();
 		int             indentLevel = 0;
+		Errors          errors      = new Errors();
 		TypeDeclaration currentType = null;
 		bool            generateAttributeUnderScore = false;
-		Errors          errors      = new Errors();
+
 		public StringBuilder SourceText {
 			get {
 				return sourceText;
@@ -58,7 +59,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		
 		public void AppendNewLine()
 		{
-			sourceText.Append("\n");
+			sourceText.Append(newLineSep);
 		}
 		
 		void DebugOutput(object o)
@@ -77,13 +78,15 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(NamespaceDeclaration namespaceDeclaration, object data)
 		{
 			DebugOutput(namespaceDeclaration);
-			AppendIndentation();sourceText.Append("Namespace ");
+			AppendIndentation();
+			sourceText.Append("Namespace ");
 			sourceText.Append(namespaceDeclaration.NameSpace);
 			AppendNewLine();
 			++indentLevel;
 			namespaceDeclaration.AcceptChildren(this, data);
 			--indentLevel;
-			AppendIndentation();sourceText.Append("End Namespace");
+			AppendIndentation();
+			sourceText.Append("End Namespace");
 			AppendNewLine();
 			return null;
 		}
@@ -91,7 +94,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(UsingDeclaration usingDeclaration, object data)
 		{
 			DebugOutput(usingDeclaration);
-			AppendIndentation();sourceText.Append("Imports ");
+			AppendIndentation();
+			sourceText.Append("Imports ");
 			sourceText.Append(usingDeclaration.Namespace);
 			AppendNewLine();
 			return null;
@@ -100,7 +104,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(UsingAliasDeclaration usingAliasDeclaration, object data)
 		{
 			DebugOutput(usingAliasDeclaration);
-			AppendIndentation();sourceText.Append("Imports ");
+			AppendIndentation();
+			sourceText.Append("Imports ");
 			sourceText.Append(usingAliasDeclaration.Alias);
 			sourceText.Append(" = ");
 			sourceText.Append(usingAliasDeclaration.Namespace);
@@ -111,7 +116,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(AttributeSection attributeSection, object data)
 		{
 			DebugOutput(attributeSection);
-			AppendIndentation();sourceText.Append("<");
+			AppendIndentation();
+			sourceText.Append("<");
 			if (attributeSection.AttributeTarget != null && attributeSection.AttributeTarget.Length > 0) {
 				sourceText.Append(attributeSection.AttributeTarget);
 				sourceText.Append(": ");
@@ -160,6 +166,9 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			string modifier =  GetModifier(typeDeclaration.Modifier);
 			string type = String.Empty;
 			
+			if ((typeDeclaration.Modifier & Modifier.Abstract) == Modifier.Abstract)
+				modifier = modifier.Replace("MustOverride", "MustInherit");
+			
 			switch (typeDeclaration.Type) {
 				case Types.Class:
 					type = "Class ";
@@ -178,7 +187,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 					type = "Structure ";
 					break;
 			}
-			AppendIndentation();sourceText.Append(modifier);
+			AppendIndentation();
+			sourceText.Append(modifier);
 			sourceText.Append(type);
 			sourceText.Append(typeDeclaration.Name);
 			AppendNewLine();
@@ -205,7 +215,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			typeDeclaration.AcceptChildren(this, data);
 			currentType = oldType;
 			--indentLevel;
-			AppendIndentation();sourceText.Append("End ");
+			AppendIndentation();
+			sourceText.Append("End ");
 			sourceText.Append(type);
 			AppendNewLine();
 			generateAttributeUnderScore = false;
@@ -217,7 +228,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			DebugOutput(delegateDeclaration);
 			AppendNewLine();
 			AppendAttributes(delegateDeclaration.Attributes);
-			AppendIndentation();sourceText.Append(GetModifier(delegateDeclaration.Modifier));
+			AppendIndentation();
+			sourceText.Append(GetModifier(delegateDeclaration.Modifier));
 			sourceText.Append("Delegate ");
 			bool isFunction = (delegateDeclaration.ReturnType.Type != "void");
 			if (isFunction) {
@@ -242,7 +254,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		{
 			// called inside ENUMS
 //			AppendAttributes(field.Attributes);
-			AppendIndentation();sourceText.Append(variableDeclaration.Name);
+			AppendIndentation();
+			sourceText.Append(variableDeclaration.Name);
 			if (variableDeclaration.Initializer != null) {
 				sourceText.Append(" = ");
 				sourceText.Append(variableDeclaration.Initializer.AcceptVisitor(this, data));
@@ -258,7 +271,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				AppendAttributes(fieldDeclaration.Attributes);
 				AppendIndentation();
 				if (fieldDeclaration.Modifier == Modifier.None) {
-					sourceText.Append(" Private ");
+					sourceText.Append("Private ");
 				} else {
 					sourceText.Append(GetModifier(fieldDeclaration.Modifier));
 				}
@@ -303,8 +316,12 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 					--indentLevel;
 				}
 				
-				AppendIndentation();sourceText.Append("End ");sourceText.Append(defStr);
-				AppendNewLine();
+				if ((methodDeclaration.Modifier & Modifier.Abstract) != Modifier.Abstract) {
+					AppendIndentation();
+					sourceText.Append("End ");
+					sourceText.Append(defStr);
+					AppendNewLine();
+				}
 			}
 			return null;
 		}
@@ -314,7 +331,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			DebugOutput(propertyDeclaration);
 			AppendNewLine();
 			AppendAttributes(propertyDeclaration.Attributes);
-			AppendIndentation();sourceText.Append(GetModifier(propertyDeclaration.Modifier));
+			AppendIndentation();
+			sourceText.Append(GetModifier(propertyDeclaration.Modifier));
 			if (propertyDeclaration.IsReadOnly) {
 				sourceText.Append("ReadOnly ");
 			} else if (propertyDeclaration.IsWriteOnly) {
@@ -326,7 +344,9 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			sourceText.Append(GetTypeString(propertyDeclaration.TypeReference));
 			AppendNewLine();
 			
-			if (currentType.Type != Types.Interface) {
+			bool isAbstract = (propertyDeclaration.Modifier & Modifier.Abstract) == Modifier.Abstract;
+			
+			if (currentType.Type != Types.Interface && !isAbstract) {
 				if (propertyDeclaration.GetRegion != null) {
 					++indentLevel;
 					propertyDeclaration.GetRegion.AcceptVisitor(this, data);
@@ -339,7 +359,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 					--indentLevel;
 				}
 				
-				AppendIndentation();sourceText.Append("End Property");
+				AppendIndentation();
+				sourceText.Append("End Property");
 				AppendNewLine();
 			}
 			return null;
@@ -349,7 +370,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		{
 			DebugOutput(propertyGetRegion);
 			AppendAttributes(propertyGetRegion.Attributes);
-			AppendIndentation();sourceText.Append("Get");
+			AppendIndentation();
+			sourceText.Append("Get");
 			AppendNewLine();
 			
 			if (propertyGetRegion.Block != null) {
@@ -357,7 +379,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				propertyGetRegion.Block.AcceptVisitor(this, data);
 				--indentLevel;
 			} 
-			AppendIndentation();sourceText.Append("End Get");
+			AppendIndentation();
+			sourceText.Append("End Get");
 			AppendNewLine();
 			return null;
 		}
@@ -366,7 +389,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		{
 			DebugOutput(propertySetRegion);
 			AppendAttributes(propertySetRegion.Attributes);
-			AppendIndentation();sourceText.Append("Set");
+			AppendIndentation();
+			sourceText.Append("Set");
 			AppendNewLine();
 			
 			if (propertySetRegion.Block != null) {
@@ -375,7 +399,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				--indentLevel;
 			}
 			
-			AppendIndentation();sourceText.Append("End Set");
+			AppendIndentation();
+			sourceText.Append("End Set");
 			AppendNewLine();
 			return null;
 		}
@@ -430,7 +455,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		{
 			DebugOutput(constructorDeclaration);
 			AppendNewLine();
-			AppendIndentation();sourceText.Append(GetModifier(constructorDeclaration.Modifier));
+			AppendIndentation();
+			sourceText.Append(GetModifier(constructorDeclaration.Modifier));
 			sourceText.Append("Sub New");
 			sourceText.Append("(");
 			AppendParameters(constructorDeclaration.Parameters);
@@ -438,10 +464,22 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			AppendNewLine();
 			
 			++indentLevel;
+			ConstructorInitializer ci = constructorDeclaration.ConstructorInitializer;
+			if (ci != null) {
+				AppendIndentation();
+				if (ci.ConstructorInitializerType == ConstructorInitializerType.Base) {
+					sourceText.Append("MyBase.New");
+				} else {
+					sourceText.Append("MyClass.New");
+				}
+				sourceText.Append(GetParameters(ci.Arguments));
+				AppendNewLine();
+			}
 			constructorDeclaration.Body.AcceptChildren(this, data);
 			--indentLevel;
 			
-			AppendIndentation();sourceText.Append("End Sub");
+			AppendIndentation();
+			sourceText.Append("End Sub");
 			AppendNewLine();
 			return null;
 		}
@@ -450,14 +488,16 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		{
 			DebugOutput(destructorDeclaration);
 			AppendNewLine();
-			AppendIndentation();sourceText.Append("Overrides Protected Sub Finalize()");
+			AppendIndentation();
+			sourceText.Append("Overrides Protected Sub Finalize()");
 			AppendNewLine();
 			
 			++indentLevel;
 			destructorDeclaration.Body.AcceptChildren(this, data);
 			--indentLevel;
 			
-			AppendIndentation();sourceText.Append("End Sub");
+			AppendIndentation();
+			sourceText.Append("End Sub");
 			AppendNewLine();
 			return null;
 		}
@@ -477,6 +517,11 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			AppendIndentation();
 			sourceText.Append("Default ");
 			sourceText.Append(GetModifier(indexerDeclaration.Modifier));
+			if (indexerDeclaration.IsReadOnly) {
+				sourceText.Append("ReadOnly ");
+			} else if (indexerDeclaration.IsWriteOnly) {
+				sourceText.Append("WriteOnly ");
+			}
 			sourceText.Append("Property Blubber(");
 			AppendParameters(indexerDeclaration.Parameters);
 			sourceText.Append(") As ");
@@ -495,7 +540,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				--indentLevel;
 			}
 			
-			AppendIndentation();sourceText.Append("End Property");
+			AppendIndentation();
+			sourceText.Append("End Property");
 			AppendNewLine();
 			return null;
 		}
@@ -510,7 +556,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(StatementExpression statementExpression, object data)
 		{
 			DebugOutput(statementExpression);
-			AppendIndentation();sourceText.Append(statementExpression.Expression.AcceptVisitor(this, statementExpression).ToString());
+			AppendIndentation();
+			sourceText.Append(statementExpression.Expression.AcceptVisitor(this, statementExpression).ToString());
 			AppendNewLine();
 			return null;
 		}
@@ -519,23 +566,22 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		{
 			DebugOutput(localVariableDeclaration);
 			foreach (VariableDeclaration localVar in localVariableDeclaration.Variables) {
-				AppendIndentation();sourceText.Append(GetModifier(localVariableDeclaration.Modifier));
+				AppendIndentation();
+				sourceText.Append(GetModifier(localVariableDeclaration.Modifier));
+				if ((localVariableDeclaration.Modifier & Modifier.Const) != Modifier.Const) {
+					sourceText.Append("Dim ");
+				}
+				sourceText.Append(localVar.Name);
 				ArrayCreateExpression ace = localVar.Initializer as ArrayCreateExpression;
 				if (ace != null && (ace.ArrayInitializer == null || ace.ArrayInitializer.CreateExpressions == null)) {
-					string arrayParameters  = String.Empty;
-					foreach (INode node in ace.Parameters) {
-						arrayParameters += "(";
-						arrayParameters += node.AcceptVisitor(this, data);
-						arrayParameters += " - 1)";
+					foreach (ArrayCreationParameter param in ace.Parameters) {
+						sourceText.Append("(");
+						sourceText.Append(GetExpressionList(param.Expressions));
+						sourceText.Append(")");
 					}
-					sourceText.Append("Dim ");
-					sourceText.Append(localVar.Name);
-					sourceText.Append(arrayParameters);
 					sourceText.Append(" As ");
 					sourceText.Append(ConvertTypeString(ace.CreateType.Type));
 				} else {
-					sourceText.Append("Dim ");
-					sourceText.Append(localVar.Name);
 					sourceText.Append(" As ");
 					sourceText.Append(GetTypeString(localVariableDeclaration.Type));
 					if (localVar.Initializer != null) {
@@ -558,7 +604,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(ReturnStatement returnStatement, object data)
 		{
 			DebugOutput(returnStatement);
-			AppendIndentation();sourceText.Append("Return");
+			AppendIndentation();
+			sourceText.Append("Return");
 			if (returnStatement.ReturnExpression != null) {
 				sourceText.Append(" ");
 				sourceText.Append(returnStatement.ReturnExpression.AcceptVisitor(this, data).ToString());
@@ -583,7 +630,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				ifStatement.EmbeddedStatement.AcceptVisitor(this, data);
 				--indentLevel;
 				
-				AppendIndentation();sourceText.Append("End If");
+				AppendIndentation();
+				sourceText.Append("End If");
 				AppendNewLine();
 			} else {
 				sourceText.Append("RaiseEvent ");
@@ -596,7 +644,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(IfElseStatement ifElseStatement, object data)
 		{
 			DebugOutput(ifElseStatement);
-			AppendIndentation();sourceText.Append("If ");
+			AppendIndentation();
+			sourceText.Append("If ");
 			sourceText.Append(ifElseStatement.Condition.AcceptVisitor(this, data).ToString());
 			sourceText.Append(" Then");
 			AppendNewLine();
@@ -605,14 +654,16 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			ifElseStatement.EmbeddedStatement.AcceptVisitor(this, data);
 			--indentLevel;
 			
-			AppendIndentation();sourceText.Append("Else");
+			AppendIndentation();
+			sourceText.Append("Else");
 			AppendNewLine();
 			
 			++indentLevel;
 			ifElseStatement.EmbeddedElseStatement.AcceptVisitor(this, data);
 			--indentLevel;
 			
-			AppendIndentation();sourceText.Append("End If");
+			AppendIndentation();
+			sourceText.Append("End If");
 			AppendNewLine();
 			return null;
 		}
@@ -620,7 +671,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(WhileStatement whileStatement, object data)
 		{
 			DebugOutput(whileStatement);
-			AppendIndentation();sourceText.Append("While ");
+			AppendIndentation();
+			sourceText.Append("While ");
 			sourceText.Append(whileStatement.Condition.AcceptVisitor(this, data).ToString());
 			AppendNewLine();
 			
@@ -628,7 +680,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			whileStatement.EmbeddedStatement.AcceptVisitor(this, data);
 			--indentLevel;
 			
-			AppendIndentation();sourceText.Append("End While");
+			AppendIndentation();
+			sourceText.Append("End While");
 			AppendNewLine();
 			return null;
 		}
@@ -636,14 +689,16 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(DoWhileStatement doWhileStatement, object data)
 		{
 			DebugOutput(doWhileStatement);
-			AppendIndentation();sourceText.Append("Do While");
+			AppendIndentation();
+			sourceText.Append("Do");
 			AppendNewLine();
 			
 			++indentLevel;
 			doWhileStatement.EmbeddedStatement.AcceptVisitor(this, data);
 			--indentLevel;
 			
-			AppendIndentation();sourceText.Append("Loop");
+			AppendIndentation();
+			sourceText.Append("Loop While ");
 			sourceText.Append(doWhileStatement.Condition.AcceptVisitor(this, data).ToString());
 			AppendNewLine();
 			return null;
@@ -665,7 +720,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 					}
 				}
 			}
-			AppendIndentation();sourceText.Append("While ");
+			AppendIndentation();
+			sourceText.Append("While ");
 			if (forStatement.Condition == null) {
 				sourceText.Append("True ");
 			} else {
@@ -682,7 +738,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			}
 			--indentLevel;
 			
-			AppendIndentation();sourceText.Append("End While");
+			AppendIndentation();
+			sourceText.Append("End While");
 			AppendNewLine();
 			return null;
 		}
@@ -690,7 +747,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(LabelStatement labelStatement, object data)
 		{
 			DebugOutput(labelStatement);
-			AppendIndentation();sourceText.Append(labelStatement.Label);
+			AppendIndentation();
+			sourceText.Append(labelStatement.Label);
 			sourceText.Append(":");
 			AppendNewLine();
 			return null;
@@ -699,7 +757,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(GotoStatement gotoStatement, object data)
 		{
 			DebugOutput(gotoStatement);
-			AppendIndentation();sourceText.Append("Goto ");
+			AppendIndentation();
+			sourceText.Append("Goto ");
 			sourceText.Append(gotoStatement.Label);
 			AppendNewLine();
 			return null;
@@ -708,11 +767,13 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(SwitchStatement switchStatement, object data)
 		{
 			DebugOutput(switchStatement);
-			AppendIndentation();sourceText.Append("Select ");
+			AppendIndentation();
+			sourceText.Append("Select ");
 			sourceText.Append(switchStatement.SwitchExpression.AcceptVisitor(this, data).ToString());
 			AppendNewLine();
 			foreach (SwitchSection section in switchStatement.SwitchSections) {
-				AppendIndentation();sourceText.Append("Case ");
+				AppendIndentation();
+				sourceText.Append("Case ");
 				
 				for (int i = 0; i < section.SwitchLabels.Count; ++i) {
 					Expression label = (Expression)section.SwitchLabels[i];
@@ -731,7 +792,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				section.AcceptVisitor(this, data);
 				--indentLevel;
 			}
-			AppendIndentation();sourceText.Append("End Select ");
+			AppendIndentation();
+			sourceText.Append("End Select ");
 			AppendNewLine();
 			return null;
 		}
@@ -739,7 +801,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(BreakStatement breakStatement, object data)
 		{
 			DebugOutput(breakStatement);
-			AppendIndentation();sourceText.Append("' break");
+			AppendIndentation();
+			sourceText.Append("' break");
 			AppendNewLine();
 			return null;
 		}
@@ -747,7 +810,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(ContinueStatement continueStatement, object data)
 		{
 			DebugOutput(continueStatement);
-			AppendIndentation();sourceText.Append("' continue");
+			AppendIndentation();
+			sourceText.Append("' continue");
 			AppendNewLine();
 			return null;
 		}
@@ -755,7 +819,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(GotoCaseStatement gotoCaseStatement, object data)
 		{
 			DebugOutput(gotoCaseStatement);
-			AppendIndentation();sourceText.Append("' goto case ");
+			AppendIndentation();
+			sourceText.Append("' goto case ");
 			if (gotoCaseStatement.CaseExpression == null) {
 				sourceText.Append("default");
 			} else {
@@ -768,7 +833,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(ForeachStatement foreachStatement, object data)
 		{
 			DebugOutput(foreachStatement);
-			AppendIndentation();sourceText.Append("For Each ");
+			AppendIndentation();
+			sourceText.Append("For Each ");
 			sourceText.Append(foreachStatement.VariableName);
 			sourceText.Append(" As ");
 			sourceText.Append(this.GetTypeString(foreachStatement.TypeReference));
@@ -780,7 +846,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			foreachStatement.EmbeddedStatement.AcceptVisitor(this, data);
 			--indentLevel;
 			
-			AppendIndentation();sourceText.Append("Next");
+			AppendIndentation();
+			sourceText.Append("Next");
 			AppendNewLine();
 			return null;
 		}
@@ -788,7 +855,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(LockStatement lockStatement, object data)
 		{
 			DebugOutput(lockStatement);
-			AppendIndentation();sourceText.Append("SyncLock ");
+			AppendIndentation();
+			sourceText.Append("SyncLock ");
 			sourceText.Append(lockStatement.LockExpression.AcceptVisitor(this, data));
 			AppendNewLine();
 			
@@ -796,7 +864,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			lockStatement.EmbeddedStatement.AcceptVisitor(this, data);
 			--indentLevel;
 			
-			AppendIndentation();sourceText.Append("End SyncLock");
+			AppendIndentation();
+			sourceText.Append("End SyncLock");
 			AppendNewLine();
 			return null;
 		}
@@ -805,18 +874,41 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		{
 			DebugOutput(usingStatement);
 			// TODO : anything like this ?
-			AppendIndentation();sourceText.Append("' Using ");AppendNewLine();
+			AppendIndentation();
+			sourceText.Append("' Using ");AppendNewLine();
 			usingStatement.UsingStmnt.AcceptVisitor(this, data);
-			AppendIndentation();sourceText.Append("' Inside ");AppendNewLine();
+			AppendIndentation();
+			sourceText.Append("Try");AppendNewLine();
+			++indentLevel;
 			usingStatement.EmbeddedStatement.AcceptVisitor(this, data);
-			AppendIndentation();sourceText.Append("' End Using");AppendNewLine();
+			--indentLevel;
+			AppendIndentation();
+			sourceText.Append("Finally");AppendNewLine();
+			++indentLevel;
+			LocalVariableDeclaration varDecl = (usingStatement.UsingStmnt as LocalVariableDeclaration);
+			if (varDecl == null) {
+				AppendIndentation();
+				sourceText.Append("' could not find variable declaration");AppendNewLine();
+				AppendIndentation();
+				sourceText.Append("' TODO : Dispose object");AppendNewLine();
+			} else {
+				foreach(VariableDeclaration var in varDecl.Variables) {
+					AppendIndentation();
+					sourceText.AppendFormat("CType({0}, IDisposable).Dispose()", var.Name);
+					AppendNewLine();
+				}
+			}
+			--indentLevel;
+			AppendIndentation();
+			sourceText.Append("End Try");AppendNewLine();
 			return null;
 		}
 		
 		public override object Visit(TryCatchStatement tryCatchStatement, object data)
 		{
 			DebugOutput(tryCatchStatement);
-			AppendIndentation();sourceText.Append("Try");
+			AppendIndentation();
+			sourceText.Append("Try");
 			AppendNewLine();
 			
 			++indentLevel;
@@ -826,15 +918,22 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			if (tryCatchStatement.CatchClauses != null) {
 				int generated = 0;
 				foreach (CatchClause catchClause in tryCatchStatement.CatchClauses) {
-					AppendIndentation();sourceText.Append("Catch ");
-					if (catchClause.VariableName == null) {
-						sourceText.Append("generatedExceptionVariable" + generated.ToString());
-						++generated;
-					} else {
-						sourceText.Append(catchClause.VariableName);
+					AppendIndentation();
+					sourceText.Append("Catch");
+					if (catchClause.Type != null) {
+						sourceText.Append(" ");
+					
+						if (catchClause.VariableName == null) {
+							sourceText.Append("generatedExceptionVariable");
+							sourceText.Append(generated.ToString());
+							++generated;
+						} else {
+							sourceText.Append(catchClause.VariableName);
+						}
+						sourceText.Append(" As ");
+						sourceText.Append(catchClause.Type);
 					}
-					sourceText.Append(" As ");
-					sourceText.Append(catchClause.Type);
+					
 					AppendNewLine();
 					++indentLevel;
 					catchClause.StatementBlock.AcceptVisitor(this, data);
@@ -843,14 +942,16 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			}
 			
 			if (tryCatchStatement.FinallyBlock != null) {
-				AppendIndentation();sourceText.Append("Finally");
+				AppendIndentation();
+				sourceText.Append("Finally");
 				AppendNewLine();
 				
 				++indentLevel;
 				tryCatchStatement.FinallyBlock.AcceptVisitor(this, data);
 				--indentLevel;
 			}
-			AppendIndentation();sourceText.Append("End Try");
+			AppendIndentation();
+			sourceText.Append("End Try");
 			AppendNewLine();
 			return null;
 		}
@@ -858,7 +959,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(ThrowStatement throwStatement, object data)
 		{
 			DebugOutput(throwStatement);
-			AppendIndentation();sourceText.Append("Throw ");
+			AppendIndentation();
+			sourceText.Append("Throw ");
 			sourceText.Append(throwStatement.ThrowExpression.AcceptVisitor(this, data).ToString());
 			AppendNewLine();
 			return null;
@@ -885,6 +987,18 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
+		string ConvertCharLiteral(char ch)
+		{
+			if (Char.IsControl(ch)) {
+				return "Microsoft.VisualBasic.Chr(" + ((int)ch) + ")";
+			} else {
+				if (ch == '"') {
+					return "\"\"\"\"C";
+				}
+				return String.Concat("\"", ch.ToString(), "\"C");
+			}
+		}
+		
 		string ConvertChar(char ch)
 		{
 			switch (ch) {
@@ -896,12 +1010,13 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				case '\v':
 				case '\r':
 				case '\n':
-					return "\" + Microsoft.VisualBasic.Chr(" + ((int)ch) +") + \"";
+					return "\" & Microsoft.VisualBasic.Chr(" + ((int)ch) + ") & \"";
 				case '"':
 					return "\"\"";
 			}
 			return ch.ToString();
 		}
+
 		string ConvertString(string str)
 		{
 			StringBuilder sb = new StringBuilder();
@@ -910,6 +1025,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			}
 			return sb.ToString();
 		}
+
 		public override object Visit(PrimitiveExpression primitiveExpression, object data)
 		{
 			DebugOutput(primitiveExpression);
@@ -930,9 +1046,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			}
 			
 			if (primitiveExpression.Value is char) {
-				return String.Concat("\"",
-				                     ConvertChar((char)primitiveExpression.Value),
-				                     "\"C");
+				return ConvertCharLiteral((char)primitiveExpression.Value);
 			}
 			
 			return primitiveExpression.Value;
@@ -1099,23 +1213,24 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		public override object Visit(UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
 			DebugOutput(unaryOperatorExpression);
+			string expr = unaryOperatorExpression.Expression.AcceptVisitor(this, data).ToString();
 			switch (unaryOperatorExpression.Op) {
 				case UnaryOperatorType.BitNot:
-					return String.Concat("Not ", unaryOperatorExpression.Expression.AcceptVisitor(this, data));
+					return String.Concat("Not ", expr);
 				case UnaryOperatorType.Decrement:
-					return String.Concat("ConversionHelpers.Decrement (", unaryOperatorExpression.Expression.AcceptVisitor(this, data), ")");
+					return String.Concat("System.Threading.Interlocked.Decrement(", expr, ")");
 				case UnaryOperatorType.Increment:
-					return String.Concat("ConversionHelpers.Increment (", unaryOperatorExpression.Expression.AcceptVisitor(this, data), ")");
+					return String.Concat("System.Threading.Interlocked.Increment(", expr, ")");
 				case UnaryOperatorType.Minus:
-					return String.Concat("-", unaryOperatorExpression.Expression.AcceptVisitor(this, data));
+					return String.Concat("-", expr);
 				case UnaryOperatorType.Not:
-					return String.Concat("Not ", unaryOperatorExpression.Expression.AcceptVisitor(this, data));
+					return String.Concat("Not ", expr);
 				case UnaryOperatorType.Plus:
-					return unaryOperatorExpression.Expression.AcceptVisitor(this, data);
+					return expr;
 				case UnaryOperatorType.PostDecrement:
-					return String.Concat("ConversionHelpers.PostDecrement (", unaryOperatorExpression.Expression.AcceptVisitor(this, data), ")");
+					return String.Concat("System.Math.Max(System.Threading.Interlocked.Decrement(", expr, "),", expr, "+1)");
 				case UnaryOperatorType.PostIncrement:
-					return String.Concat("ConversionHelpers.PostIncrement (", unaryOperatorExpression.Expression.AcceptVisitor(this, data), ")");
+					return String.Concat("System.Math.Min(System.Threading.Interlocked.Increment(", expr, "),", expr, "-1)");
 				case UnaryOperatorType.Star:
 				case UnaryOperatorType.BitWiseAnd:
 					break;
@@ -1255,41 +1370,39 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				}
 				return String.Format("AddressOf {0}", handler);
 			}
-			return String.Format("New {0} {1}",
+			return String.Format("New {0}{1}",
 			                     GetTypeString(objectCreateExpression.CreateType),
 			                     GetParameters(objectCreateExpression.Parameters)
 			                     );
 		}
 		
-		public override object Visit(ArrayCreateExpression arrayCreateExpression, object data)
+		public override object Visit(ArrayCreateExpression ace, object data)
 		{
-			DebugOutput(arrayCreateExpression);
+			DebugOutput(ace);
 			string arrayInitializer = String.Empty;
 			string arrayParameters  = String.Empty;
 			
-			if (arrayCreateExpression.ArrayInitializer != null && arrayCreateExpression.ArrayInitializer.CreateExpressions != null) {
-				arrayInitializer = String.Concat(" {",
-				                                 GetExpressionList(arrayCreateExpression.ArrayInitializer.CreateExpressions),
-				                                 "}");
+			arrayInitializer += "{";
+			if (ace.ArrayInitializer != null && ace.ArrayInitializer.CreateExpressions != null) {
+				arrayInitializer += GetExpressionList(ace.ArrayInitializer.CreateExpressions);
 			}
+			arrayInitializer += "}";
 			
-			if (arrayCreateExpression.Parameters != null && arrayCreateExpression.Parameters.Count > 0) {
-				foreach (ArrayCreationParameter param in arrayCreateExpression.Parameters) {
+			if (ace.Parameters != null && ace.Parameters.Count > 0) {
+				foreach (ArrayCreationParameter param in ace.Parameters) {
 					// TODO: multidimensional arrays ?
-					foreach (Expression expr in param.Expressions) {
-						arrayParameters += "(";
-						arrayParameters += expr.AcceptVisitor(this, data);
-						arrayParameters += ")";
-					}
+					arrayParameters += String.Concat("(",
+				    	                             GetExpressionList(param.Expressions),
+				                           			 ")");
 				}
 			} else {
 				arrayParameters = "()";
 			}
 			
-			return String.Format("New {0}{2} {1}",
-			                     GetTypeString(arrayCreateExpression.CreateType),
-			                     arrayInitializer,
-			                     arrayParameters
+			return String.Format("New {0}{1} {2}",
+			                     GetTypeString(ace.CreateType),
+			                     arrayParameters,
+			                     arrayInitializer
 			                     );
 		}
 		
@@ -1336,10 +1449,16 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		
 		public override object Visit(ConditionalExpression conditionalExpression, object data)
 		{
-			errors.Error(-1, -1, String.Format("TODO: Conditionals :)"));
-			return String.Empty;
+			return String.Concat("Microsoft.VisualBasic.IIf(",
+				conditionalExpression.TestCondition.AcceptVisitor(this, data),
+				",",
+				conditionalExpression.TrueExpression.AcceptVisitor(this, data),
+				",",
+				conditionalExpression.FalseExpression.AcceptVisitor(this, data),
+				")");
 		}
 #endregion
+
 		string ConvertTypeString(string typeString)
 		{
 			switch (typeString) {
@@ -1378,6 +1497,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			}
 			return typeString;
 		}
+
 		string GetTypeString(TypeReference typeRef)
 		{
 			if (typeRef == null) {
@@ -1441,11 +1561,11 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				builder.Append("NotInheritable ");
 			}
 			
-			if ((modifier & Modifier.Const) == Modifier.Const) {
-				builder.Append("Const ");
-			}
 			if ((modifier & Modifier.Readonly) == Modifier.Readonly) {
 				builder.Append("ReadOnly ");
+			}
+			if ((modifier & Modifier.Const) == Modifier.Const) {
+				builder.Append("Const ");
 			}
 			
 			// TODO : Extern 
@@ -1487,6 +1607,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			}
 			return sb.ToString();
 		}
+
 		public void AppendParameters(ArrayList parameters)
 		{
 			if (parameters == null) {
@@ -1500,10 +1621,11 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				} else if ((pde.ParamModifiers & ParamModifiers.Out) == ParamModifiers.Out) {
 					// TODO : is ByRef correct for out parameters ?
 					sourceText.Append("ByRef ");
-				} else if ((pde.ParamModifiers & ParamModifiers.Params) == ParamModifiers.Params) {
-					sourceText.Append("ParamArray ");
 				} else {
 					sourceText.Append("ByVal ");
+				}
+				if ((pde.ParamModifiers & ParamModifiers.Params) == ParamModifiers.Params) {
+					sourceText.Append("ParamArray ");
 				}
 				sourceText.Append(pde.ParameterName);
 				sourceText.Append(" As ");
@@ -1513,6 +1635,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				}
 			}
 		}
+
 		public void AppendAttributes(ArrayList attr)
 		{
 			if (attr != null) {
@@ -1595,6 +1718,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			
 			return false;
 		}
+
 		bool TypeHasOnlyStaticMembers(TypeDeclaration typeDeclaration)
 		{
 			foreach (object o in typeDeclaration.Children) {

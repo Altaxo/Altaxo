@@ -28,16 +28,30 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		FileTemplate item;
 		FileDescriptionTemplate file;
 		
+		readonly static Regex scriptRegex  = new Regex("<%.*%>");
+		readonly static Regex replaceRegex = new Regex("\"");
+		
 		public string CompileScript(FileTemplate item, FileDescriptionTemplate file)
 		{
-			Regex r = new Regex("<%.*%>");
-			Match m = r.Match(file.Content);m = m.NextMatch();
+			Match m = scriptRegex.Match(file.Content);
+			m = m.NextMatch();
 			if (m.Success) {
 				this.item = item;
 				this.file = file;
 				return CompileAndGetOutput(GenerateCode());
-			} else {
-				return file.Content;
+			}
+			return file.Content;
+		}
+		
+		// TODO: AppDomain loading !!!
+		byte[] GetBytes(string fileName)
+		{
+			using (FileStream fs = new FileStream(fileName, FileMode.Open)) {
+				long size = fs.Length;
+				byte[] outArray = new byte[size];
+				fs.Read(outArray, 0, (int)size);
+				fs.Close();
+				return outArray;
 			}
 		}
 		
@@ -56,7 +70,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			sw.Write(fileContent);
 			sw.Close();
 			
-			string output = "", error = "";
+			string output = String.Empty;
+			string error  = String.Empty;
 			
 			Executor.ExecWaitWithCapture(GetCompilerName() + " /target:library \"/out:" + generatedDLL + "\" \"" + generatedScript +"\"", tf, ref output, ref error);
 			
@@ -69,7 +84,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				return ">>>>ERROR IN CODE GENERATION GENERATED SCRIPT WAS:\n" + fileContent + "\n>>>>END";
 			}
 			
-			Assembly asm = Assembly.LoadFile(generatedDLL);
+			Assembly asm = Assembly.Load(GetBytes(generatedDLL));
+			
 			object templateInstance = asm.CreateInstance("Template");
 			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
 			
@@ -86,7 +102,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		string GetCompilerName()
 		{
 			string runtimeDirectory = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
-			return '"' + Path.Combine(runtimeDirectory, "csc.exe") + '"';
+			return String.Concat('"', Path.Combine(runtimeDirectory, "csc.exe"), '"');
 		}
 		
 		string GenerateCode()
@@ -109,8 +125,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			outPut.Append("public string GenerateOutput() {\n");
 			outPut.Append("System.Text.StringBuilder outPut = new System.Text.StringBuilder();\n");
 			
-			Regex r = new Regex("<%.*%>");
-			for (Match m = r.Match(file.Content); m.Success; m = m.NextMatch()) {
+			for (Match m = scriptRegex.Match(file.Content); m.Success; m = m.NextMatch()) {
 				Group g = m.Groups[0];
 				outPut.Append("outPut.Append(@\"");
 				outPut.Append(file.Content.Substring(lastIndex, g.Index - lastIndex));
@@ -119,7 +134,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 				lastIndex = g.Index + g.Length;
 			}
 			outPut.Append("outPut.Append(@\"");
-			string formattedContent = Regex.Replace(file.Content.Substring(lastIndex, file.Content.Length - lastIndex), "\"", "\"\"");
+			string formattedContent = replaceRegex.Replace(file.Content.Substring(lastIndex, file.Content.Length - lastIndex), "\"\"");
 			outPut.Append(formattedContent);
 			outPut.Append("\");\n");
 			outPut.Append("return outPut.ToString();\n");

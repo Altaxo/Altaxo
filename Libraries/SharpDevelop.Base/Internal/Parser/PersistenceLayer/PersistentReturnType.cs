@@ -80,8 +80,10 @@ namespace SharpDevelop.Internal.Parser
 
 		public string Name {
  			get {
-				string[] name = FullyQualifiedName.Split(new char[] {'.'});
-				return name[name.Length - 1];
+//				string[] name = FullyQualifiedName.Split(new char[] {'.'});
+//				return name[name.Length - 1];
+ 				int index = FullyQualifiedName.LastIndexOf('.');
+				return index < 0 ? String.Empty : FullyQualifiedName.Substring(index + 1);
 			}
 		}
 
@@ -109,16 +111,17 @@ namespace SharpDevelop.Internal.Parser
 				return arrayDimensions;
 			}
 		}
-
-       int IComparable.CompareTo(object value) {
-          return 0;
-       }
-
+		
+		int IComparable.CompareTo(object value) 
+		{
+			return 0;
+		}
+		
 		// stub
-       	public object DeclaredIn {
-       		get {
-       			return null;
-       		}
-       	}
+		public object DeclaredIn {
+			get {
+				return null;
+			}
+		}
 	}
 }

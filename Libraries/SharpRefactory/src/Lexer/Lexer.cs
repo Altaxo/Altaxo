@@ -46,13 +46,6 @@ namespace ICSharpCode.SharpRefactory.Parser
 			this.kind = kind;
 		}
 		
-//		public Token(Tokens kind, int col, int line)
-//		{
-//			this.kind = kind;
-//			this.col  = col;
-//			this.line = line;
-//		}
-		
 		public Token(int kind, int col, int line, string val)
 		{
 			this.kind = kind;
@@ -372,67 +365,69 @@ namespace ICSharpCode.SharpRefactory.Parser
 			}
 			
 			string digit = sb.ToString();
-			string stringValue = String.Concat(prefix.ToString(), digit, suffix.ToString());
+			StringBuilder stringValue = new StringBuilder(prefix.ToString());
+			stringValue.Append(digit);
+			stringValue.Append(suffix.ToString());
 			if (isfloat) {
 				try {
 					NumberFormatInfo numberFormatInfo = new NumberFormatInfo();
 					numberFormatInfo.CurrencyDecimalSeparator = ".";
-					return new Token(Tokens.Literal, x, y, stringValue, Single.Parse(digit, numberFormatInfo));
+					return new Token(Tokens.Literal, x, y, stringValue.ToString(), Single.Parse(digit, numberFormatInfo));
 				} catch (Exception) {
 					errors.Error(y, x, String.Format("Can't parse float {0}", digit));
-					return new Token(Tokens.Literal, x, y, stringValue, 0f);
+					return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0f);
 				}
 			}
 			if (isdecimal) {
 				try {
 					NumberFormatInfo numberFormatInfo = new NumberFormatInfo();
 					numberFormatInfo.CurrencyDecimalSeparator = ".";
-					return new Token(Tokens.Literal, x, y, stringValue, Decimal.Parse(digit, numberFormatInfo));
+					return new Token(Tokens.Literal, x, y, stringValue.ToString(), Decimal.Parse(digit, numberFormatInfo));
 				} catch (Exception) {
 					errors.Error(y, x, String.Format("Can't parse decimal {0}", digit));
-					return new Token(Tokens.Literal, x, y, stringValue, 0m);
+					return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0m);
 				}
 			}
 			if (isdouble) {
 				try {
 					NumberFormatInfo numberFormatInfo = new NumberFormatInfo();
 					numberFormatInfo.CurrencyDecimalSeparator = ".";
-					return new Token(Tokens.Literal, x, y, stringValue, Double.Parse(digit, numberFormatInfo));
+					return new Token(Tokens.Literal, x, y, stringValue.ToString(), Double.Parse(digit, numberFormatInfo));
 				} catch (Exception) {
 					errors.Error(y, x, String.Format("Can't parse double {0}", digit));
-					return new Token(Tokens.Literal, x, y, stringValue, 0d);
+					return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0d);
 				}
 			}
 			if (islong) {
 				if (isunsigned) {
 					try {
-						return new Token(Tokens.Literal, x, y, stringValue, UInt64.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
+						return new Token(Tokens.Literal, x, y, stringValue.ToString(), UInt64.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
 					} catch (Exception) {
 						errors.Error(y, x, String.Format("Can't parse unsigned long {0}", digit));
-						return new Token(Tokens.Literal, x, y, stringValue, 0UL);
+						return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0UL);
 					}
 				} else {
 					try {
-						return new Token(Tokens.Literal, x, y, stringValue, Int64.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
+						return new Token(Tokens.Literal, x, y, stringValue.ToString(), Int64.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
 					} catch (Exception) {
 						errors.Error(y, x, String.Format("Can't parse long {0}", digit));
-						return new Token(Tokens.Literal, x, y, stringValue, 0L);
+						return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0L);
 					}
 				}
 			} else {
 				if (isunsigned) {
 					try {
-						return new Token(Tokens.Literal, x, y, stringValue, UInt32.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
+						return new Token(Tokens.Literal, x, y, stringValue.ToString(), UInt32.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
 					} catch (Exception) {
 						errors.Error(y, x, String.Format("Can't parse unsigned int {0}", digit));
-						return new Token(Tokens.Literal, x, y, stringValue, 0U);
+						return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0U);
 					}
 				} else {
 					try {
-						return new Token(Tokens.Literal, x, y, stringValue, Int32.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
+						return new Token(Tokens.Literal, x, y, stringValue.ToString(), Int32.Parse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Number));
 					} catch (Exception) {
 						errors.Error(y, x, String.Format("Can't parse int {0}", digit));
-						return new Token(Tokens.Literal, x, y, stringValue, 0);
+						return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0);
 					}
 				}
 			}
@@ -492,7 +487,12 @@ namespace ICSharpCode.SharpRefactory.Parser
 			if (ch != '"') {
 				errors.Error(y, x, String.Format("End of file reached inside verbatim string literal"));
 			}
-			return new Token(Tokens.Literal, x, y, String.Concat("@\"", s.ToString(), '"'), s.ToString());
+			
+			StringBuilder res = new StringBuilder("@\"");
+			res.Append(s.ToString());
+			res.Append('"');
+			
+			return new Token(Tokens.Literal, x, y, res.ToString(), s.ToString());
 		}
 		
 		string hexdigits = "0123456789ABCDEF";
@@ -886,7 +886,9 @@ namespace ICSharpCode.SharpRefactory.Parser
 							Point p = new Point(col ,line);
 							string comment = ReadToEOL();
 							tagComments.Add(new TagComment(tag, comment, p));
-							return sb.ToString() + tag + comment;
+							sb.Append(tag);
+							sb.Append(comment);
+							return sb.ToString();
 						}
 					}
 					if (ch == '\r') {

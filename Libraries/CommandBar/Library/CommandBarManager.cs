@@ -221,26 +221,35 @@ namespace Reflector.UserInterface
 				rbbi.cch = (commandBar.Text == null) ? 0 : commandBar.Text.Length;
 			}
 
+			int pad = 0;
+			foreach (CommandBarItem item in commandBar.Items)
+			{
+				if ( item is CommandBarSeparator)
+					pad += 2;
+			}
+
 			rbbi.fMask |= NativeMethods.RBBIM_STYLE;
 			rbbi.fStyle = NativeMethods.RBBS_CHILDEDGE | NativeMethods.RBBS_FIXEDBMP | NativeMethods.RBBS_GRIPPERALWAYS;
-			rbbi.fStyle |= NativeMethods.RBBS_BREAK;
-			rbbi.fStyle |= NativeMethods.RBBS_USECHEVRON;
+			if (commandBar.NewLine == true)
+				rbbi.fStyle |= NativeMethods.RBBS_BREAK;
+			if (commandBar.UseChevron == true)
+				rbbi.fStyle |= NativeMethods.RBBS_USECHEVRON;
 
 			rbbi.fMask |= NativeMethods.RBBIM_CHILD;
 			rbbi.hwndChild = commandBar.Handle; 
 
 			rbbi.fMask |= NativeMethods.RBBIM_CHILDSIZE;
 			rbbi.cyMinChild = commandBar.Height;
-			rbbi.cxMinChild = 0;
+			rbbi.cxMinChild = 0; //commandBar.Width;
 			rbbi.cyChild = 0;
 			rbbi.cyMaxChild = commandBar.Height; 
 			rbbi.cyIntegral = commandBar.Height;
 		
 			rbbi.fMask |= NativeMethods.RBBIM_SIZE;
-			rbbi.cx = commandBar.Width;
+			rbbi.cx = commandBar.Width + pad + 14;
 
 			rbbi.fMask |= NativeMethods.RBBIM_IDEALSIZE;
-			rbbi.cxIdeal = commandBar.Width;
+			rbbi.cxIdeal = commandBar.Width + pad + 14;
 
 			return rbbi;				
 		}

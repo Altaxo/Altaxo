@@ -30,9 +30,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		}
 		
 		[ DllImport( "oleaut32.dll", CharSet = CharSet.Unicode, PreserveSig = false )]
-		private static extern void LoadTypeLibEx( String strTypeLibName, RegKind regKind, 
-		  [ MarshalAs( UnmanagedType.Interface )] out Object typeLib );
-   
+		private static extern void LoadTypeLibEx( String strTypeLibName, RegKind regKind, [ MarshalAs( UnmanagedType.Interface )] out Object typeLib );
+		
 		SelectReferenceDialog selectDialog;
 		
 		public COMReferencePanel(SelectReferenceDialog selectDialog)
@@ -70,7 +69,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 				RegistryKey versionKey = typelibKey.OpenSubKey(version);
 				
 				string name = (string)versionKey.GetValue(null);
-					
+				
 				string tlbpath = GetTypelibPath(versionKey);
 				int guidpos = typelibKey.Name.LastIndexOf('{');
 				
@@ -82,33 +81,37 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		
 		void PopulateListView()
 		{
-			ArrayList typelibraries = new ArrayList();
-			RegistryKey root = Registry.ClassesRoot;
-			RegistryKey typelibsKey = root.OpenSubKey("TypeLib");
-			string[] keynames = typelibsKey.GetSubKeyNames();
-			if (keynames != null) {
-				foreach (string aTypelibKeyName in keynames) {
-					RegistryKey typelibKey = typelibsKey.OpenSubKey(aTypelibKeyName);
-					if (typelibKey == null) {
-						continue;
-					}
-					string[] versions = typelibKey.GetSubKeyNames();
-					if (versions.Length > 0) {
-						// Use the last version
-						string version = versions[versions.Length - 1];
-						RegistryKey versionKey = typelibKey.OpenSubKey(version);
-						string name = (string)versionKey.GetValue(null);
-						string typelibpath = GetTypelibPath(versionKey);
-						if (name != null && name.Length > 0 && typelibpath != null)	{
-							ListViewItem newItem = new ListViewItem(new string[] { name, typelibpath });
-							newItem.Tag = typelibKey;
-							Items.Add(newItem);
+			try {
+				ArrayList typelibraries = new ArrayList();
+				RegistryKey root = Registry.ClassesRoot;
+				RegistryKey typelibsKey = root.OpenSubKey("TypeLib");
+				string[] keynames = typelibsKey.GetSubKeyNames();
+				if (keynames != null) {
+					foreach (string aTypelibKeyName in keynames) {
+						RegistryKey typelibKey = typelibsKey.OpenSubKey(aTypelibKeyName);
+						if (typelibKey == null) {
+							continue;
+						}
+						string[] versions = typelibKey.GetSubKeyNames();
+						if (versions.Length > 0) {
+							// Use the last version
+							string version = versions[versions.Length - 1];
+							RegistryKey versionKey = typelibKey.OpenSubKey(version);
+							string name = (string)versionKey.GetValue(null);
+							string typelibpath = GetTypelibPath(versionKey);
+							if (name != null && name.Length > 0 && typelibpath != null)	{
+								ListViewItem newItem = new ListViewItem(new string[] { name, typelibpath });
+								newItem.Tag = typelibKey;
+								Items.Add(newItem);
+							}
 						}
 					}
 				}
+			} catch (Exception e) {
+				Console.WriteLine(e);
 			}
 		}
-
+		
 		string GetTypelibPath(RegistryKey versionKey)
 		{
 			// Get the default value of the (typically) 0\win32 subkey:
@@ -126,28 +129,28 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 					RegistryKey win32Key = NullKey.OpenSubKey("win32");
 					
 					return win32Key == null || win32Key.GetValue(null) == null ?
-						   null : win32Key.GetValue(null).ToString();
+						null : win32Key.GetValue(null).ToString();
 				}
 				catch (FormatException) {
 					// Wrong keys don't parse til int
 				}
 			}
-			return null;			
+			return null;
 		}
-
+		
 		public class ConversionEventHandler : ITypeLibImporterNotifySink
 		{
-   			public void ReportEvent( ImporterEventKind eventKind, int eventCode, string eventMsg )
-   			{
-      			// handle warning event here...
-   			}
-   
-   			public Assembly ResolveRef( object typeLib )
-   			{
-      			// resolve reference here and return a correct assembly...
-      			return null; 
-   			}   
-		}		
+			public void ReportEvent( ImporterEventKind eventKind, int eventCode, string eventMsg )
+			{
+				// handle warning event here...
+			}
+			
+			public Assembly ResolveRef( object typeLib )
+			{
+				// resolve reference here and return a correct assembly...
+				return null;
+			}
+		}
 	}
 }
 

@@ -81,6 +81,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		void RedrawAllComponents();
 		
+		/// <summary>
+		/// Is called, when a workbench view was opened
+		/// </summary>
+		event ViewContentEventHandler ViewOpened;
+		
+		/// <summary>
+		/// Is called, when a workbench view was closed
+		/// </summary>
+		event ViewContentEventHandler ViewClosed;
 		
 		/// <summary>
 		/// Is called, when the workbench window which the user has into

@@ -6,6 +6,7 @@
 // </file>
 
 using System;
+using System.Text;
 using System.Collections;
 using System.Drawing;
 using System.Threading;
@@ -29,7 +30,10 @@ namespace ICSharpCode.TextEditor
 		
 		MouseButtons button;
 		
-		Point mousedownpos = new Point(-1, -1);
+		static readonly Point nilPoint = new Point(-1, -1);
+		Point mousedownpos       = nilPoint;
+		Point selectionStartPos  = nilPoint;
+		
 		bool gotmousedown = false;
 		bool dodragdrop = false;
 		
@@ -66,13 +70,13 @@ namespace ICSharpCode.TextEditor
 		{
 			ShowHiddenCursor();
 			gotmousedown = false;
-			mousedownpos = new Point(-1, -1);
+			mousedownpos = nilPoint;
 		}
 		
 		void OnMouseUp(object sender, MouseEventArgs e)
 		{
 			gotmousedown = false;
-			mousedownpos = new Point(-1, -1);
+			mousedownpos = nilPoint;
 		}
 		
 		void TextAreaClick(object sender, EventArgs e)
@@ -126,22 +130,24 @@ namespace ICSharpCode.TextEditor
 					FoldMarker marker = textArea.TextView.GetFoldMarkerFromPosition(mousepos.X - textArea.TextView.DrawingPosition.X,
 					                                                                mousepos.Y - textArea.TextView.DrawingPosition.Y);
 					if (marker != null && marker.IsFolded) {
-						string text = marker.InnerText;
+						StringBuilder sb = new StringBuilder(marker.InnerText);
 						
 						// max 10 lines
 						int endLines = 0;
-						for (int i = 0; i < text.Length; ++i) {
-							if (text[i] == '\n') {
+						for (int i = 0; i < sb.Length; ++i) {
+							if (sb[i] == '\n') {
 								++endLines;
 								if (endLines >= 10) {
-									text = text.Substring(0, i) + "\n\r...";
+									sb.Remove(i + 1, sb.Length - i - 1);
+									sb.Append(Environment.NewLine);
+									sb.Append("...");
 									break;
 									
 								}
 							}
 						}
-						
-						toolTip.SetToolTip(textArea, text.Replace("\t", "    "));
+						sb.Replace("\t", "    ");
+						toolTip.SetToolTip(textArea, sb.ToString());
 						return;
 					}
 					
@@ -175,7 +181,6 @@ namespace ICSharpCode.TextEditor
 			textArea.SelectionManager.ExtendSelection(oldPos, textArea.Caret.Position);
 			textArea.SetDesiredColumn();		
 		}
-		Point selectionStartPos  = new Point(-1, -1);
 		void OnMouseDown(object sender, MouseEventArgs e)
 		{ 
 			if (dodragdrop) {
@@ -307,6 +312,7 @@ namespace ICSharpCode.TextEditor
 				                                                                mousepos.Y - textArea.TextView.DrawingPosition.Y);
 				if (marker != null && marker.IsFolded) {
 					marker.IsFolded = false;
+					textArea.MotherTextAreaControl.AdjustScrollBars(null, null);
 				}
 				if (textArea.Caret.Offset < textArea.Document.TextLength) {
 					switch (textArea.Document.GetCharAt(textArea.Caret.Offset)) {

@@ -146,16 +146,13 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			outputFormatter.PrintToken(Tokens.Namespace);
 			outputFormatter.Space();
 			outputFormatter.PrintIdentifier(namespaceDeclaration.NameSpace);
-			outputFormatter.NewLine();
-			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
-			outputFormatter.NewLine();
-			++outputFormatter.IndentationLevel;
-			namespaceDeclaration.AcceptChildren(this, data);
-			--outputFormatter.IndentationLevel;
 			
-			outputFormatter.Indent();
-			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
-			outputFormatter.NewLine();
+			outputFormatter.BeginBrace(this.prettyPrintOptions.NameSpaceBraceStyle);
+			
+			namespaceDeclaration.AcceptChildren(this, data);
+			
+			outputFormatter.EndBrace();
+			
 			return null;
 		}
 		
@@ -309,21 +306,29 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 					}
 				}
 			}
-			outputFormatter.NewLine();
-			outputFormatter.Indent();
-			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
-			outputFormatter.NewLine();
 			
-			++outputFormatter.IndentationLevel;
+			switch (typeDeclaration.Type) {
+				case Types.Class:
+					outputFormatter.BeginBrace(this.prettyPrintOptions.ClassBraceStyle);
+					break;
+				case Types.Enum:
+					outputFormatter.BeginBrace(this.prettyPrintOptions.EnumBraceStyle);
+					break;
+				case Types.Interface:
+					outputFormatter.BeginBrace(this.prettyPrintOptions.InterfaceBraceStyle);
+					break;
+				case Types.Struct:
+					outputFormatter.BeginBrace(this.prettyPrintOptions.StructBraceStyle);
+					break;
+			}
+			
 			if (typeDeclaration.Type == Types.Enum) {
 				VisitEnumMembers(typeDeclaration, data);
 			} else {
 				typeDeclaration.AcceptChildren(this, data);
 			}
-			--outputFormatter.IndentationLevel;
-			outputFormatter.Indent();
-			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
-			outputFormatter.NewLine();
+			outputFormatter.EndBrace();
+			
 			return null;
 		}
 		
@@ -401,22 +406,17 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				outputFormatter.PrintIdentifier(eventDeclaration.Name);
 				if (eventDeclaration.AddRegion == null && eventDeclaration.RemoveRegion == null) {
 					outputFormatter.PrintToken(Tokens.Semicolon);
-				} else {
-					outputFormatter.Space();
-					outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
 					outputFormatter.NewLine();
-					++outputFormatter.IndentationLevel;
+				} else {
+					outputFormatter.BeginBrace(this.prettyPrintOptions.PropertyBraceStyle);
 					if (eventDeclaration.AddRegion != null) {
 						eventDeclaration.AddRegion.AcceptVisitor(this, data);
 					}
 					if (eventDeclaration.RemoveRegion != null) {
 						eventDeclaration.RemoveRegion.AcceptVisitor(this, data);
 					}
-					--outputFormatter.IndentationLevel;
-					outputFormatter.Indent();
-					outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+					outputFormatter.EndBrace();
 				}
-				outputFormatter.NewLine();
 			}
 			return null;
 		}
@@ -428,17 +428,12 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			outputFormatter.PrintIdentifier("add");
 			if (addRegion.Block == null) {
 				outputFormatter.PrintToken(Tokens.Semicolon);
-			} else {
-				outputFormatter.Space();
-				outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
 				outputFormatter.NewLine();
-				++outputFormatter.IndentationLevel;
+			} else {
+				outputFormatter.BeginBrace(this.prettyPrintOptions.PropertyGetBraceStyle);
 				addRegion.Block.AcceptChildren(this, false);
-				--outputFormatter.IndentationLevel;
-				outputFormatter.Indent();
-				outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+				outputFormatter.EndBrace();
 			}
-			outputFormatter.NewLine();
 			return null;
 		}
 		
@@ -449,17 +444,12 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			outputFormatter.PrintIdentifier("remove");
 			if (removeRegion.Block == null) {
 				outputFormatter.PrintToken(Tokens.Semicolon);
-			} else {
-				outputFormatter.Space();
-				outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
 				outputFormatter.NewLine();
-				++outputFormatter.IndentationLevel;
+			} else {
+				outputFormatter.BeginBrace(this.prettyPrintOptions.PropertySetBraceStyle);
 				removeRegion.Block.AcceptChildren(this, false);
-				--outputFormatter.IndentationLevel;
-				outputFormatter.Indent();
-				outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+				outputFormatter.EndBrace();
 			}
-			outputFormatter.NewLine();
 			return null;
 		}
 		
@@ -500,16 +490,9 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			}
 			
-			outputFormatter.NewLine();
-			outputFormatter.Indent();
-			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
-			outputFormatter.NewLine();
-			++outputFormatter.IndentationLevel;
+			outputFormatter.BeginBrace(this.prettyPrintOptions.ConstructorBraceStyle);
 			constructorDeclaration.Body.AcceptChildren(this, data);
-			--outputFormatter.IndentationLevel;
-			outputFormatter.Indent();
-			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
-			outputFormatter.NewLine();
+			outputFormatter.EndBrace();
 			return null;
 		}
 		
@@ -522,16 +505,10 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			outputFormatter.PrintIdentifier(destructorDeclaration.Name);
 			outputFormatter.PrintToken(Tokens.OpenParenthesis);
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
-			outputFormatter.NewLine();
-			outputFormatter.Indent();
-			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
-			outputFormatter.NewLine();
-			++outputFormatter.IndentationLevel;
+			
+			outputFormatter.BeginBrace(this.prettyPrintOptions.DestructorBraceStyle);
 			destructorDeclaration.Body.AcceptChildren(this, data);
-			--outputFormatter.IndentationLevel;
-			outputFormatter.Indent();
-			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
-			outputFormatter.NewLine();
+			outputFormatter.EndBrace();
 			return null;
 		}
 		
@@ -548,18 +525,12 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			if (methodDeclaration.Body == null) {
 				outputFormatter.PrintToken(Tokens.Semicolon);
+				outputFormatter.NewLine();
 			} else {
-				outputFormatter.NewLine();
-				outputFormatter.Indent();
-				outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
-				outputFormatter.NewLine();
-				++outputFormatter.IndentationLevel;
+				outputFormatter.BeginBrace(this.prettyPrintOptions.MethodBraceStyle);
 				methodDeclaration.Body.AcceptChildren(this, data);
-				--outputFormatter.IndentationLevel;
-				outputFormatter.Indent();
-				outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+				outputFormatter.EndBrace();
 			}
-			outputFormatter.NewLine();
 			return null;
 		}
 		
@@ -757,7 +728,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 						outputFormatter.PrintToken(Tokens.Comma);
 					}
 				}
-			} 
+			}
 			outputFormatter.EmitSemicolon = true;
 			outputFormatter.PrintToken(Tokens.Semicolon);
 			outputFormatter.EmitSemicolon = false;

@@ -56,12 +56,24 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 				eventArgsName += "Args";
 				
 				editActionHandler.InsertString("protected " + (ew.Event.IsStatic ? "static" : "virtual") + " void On" + ew.Event.Name + "(" + eventArgsName + " e)");++numOps;
+				if (StartCodeBlockInSameLine) {
+					editActionHandler.InsertString(" {");++numOps;
+				} else {
+					Return();
+					editActionHandler.InsertString("{");++numOps;
+				}
 				Return();
-				editActionHandler.InsertChar('{');++numOps;
-				Return();
+				Indent();
+				editActionHandler.InsertString("if (" + ew.Event.Name + " != null)");++numOps;
+				if (StartCodeBlockInSameLine) {
+					editActionHandler.InsertString(" {");++numOps;
+				} else {
+					Return();
+					editActionHandler.InsertString("{");++numOps;
+				}
 				
-				editActionHandler.InsertString("if (" + ew.Event.Name + " != null) {");++numOps;
 				Return();
+				Indent();
 				editActionHandler.InsertString(ew.Event.Name + "(this, e);");++numOps;
 				Return();
 				editActionHandler.InsertChar('}');++numOps;

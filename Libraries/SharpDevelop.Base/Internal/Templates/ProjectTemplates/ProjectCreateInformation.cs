@@ -1,7 +1,7 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Kr�ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 using System.IO;
@@ -36,7 +36,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		
 		public string BinPath {
 			get {
-				return combinePath + Path.DirectorySeparatorChar + "bin";
+				return Path.Combine(combinePath, "bin");
 			}
 		}
 		

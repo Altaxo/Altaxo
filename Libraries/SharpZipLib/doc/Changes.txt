@@ -70,3 +70,41 @@ wonderfully."
 Changes since 0.6
 + Fix from John Reilly <jfreilly@hotmail.com>: A couple of things to fix up in TarInputStream.  Some Console.WriteLine stuff which should be removed/commented and a fix for handling directories.
 + 
+
+Changes since 0.6.1
++ Further encryption problems resolved
++ More tests added
++ More summary comments included
++ ZipFile locating central header optimised for case where file is not a zip file.
++ Add sample sz a commandline cs archiver for Zip files
++ Fix more end of stream return value bugs
++ Some tar bugs fixed
+
+Changes since 0.7
++ Add functionality to support cleaning of names to Zip file convention added to ZipEntry class
++ External file and attributes are now handled
++ IsDirectory now handles the attributes for archives made on DOS/Windows
++ ZipFile class now has an indexer property
++ ZipFile class has new functionality for searching for entries by name
++ ZipFile class now reads external attributes from central header entries
++ Fixed bug in ZipInputStream class where extra bytes containing unix attributes altered date and time causing checking of password to fail
++ ZipInputStream class now checks version required to extract.
++ ZipOutputStream class version made by is now fixed at 2.0
++ Cleaned up summary comments all over the place.
++ Some changes to Tar classes to allow Compact Framework compilation.
++ Add checking for invalid entries when scanning through extra data.
++ Decryption of entries from Zip files created on non-seekable output now works.
++ Deflating of zero length files is automatically converted to stored if possible to save a little space.
++ More tests.
+
+Changes since v0.8
++ ZipFile test checking for seekable stream shifted so it covers all constructors.
++ Flaw when checking local entry name against central directory name for MCBS strings worked around.
++ Some ZipEntry constructors made internal as they should have been originally
++ Some changes to allow compact framework compilation made.
++ Small alteration to TarEntry.cs to allow 1.0 compilation as well as 1.1 .
+
+Changes since v0.81
++ Exception hierarchy altered so all internal library exceptions are derived from the same base class
++ A bug in tar handling where case wasnt correctly preserved has been repaired
++ ZipFile class was failing to set the bit flags field when reading entries, this has been corrected.

@@ -44,7 +44,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		void AddOptionPanels(ArrayList dialogPanelDescriptors)
 		{
 			foreach (IDialogPanelDescriptor descriptor in dialogPanelDescriptors) {
-				if (descriptor.DialogPanel != null) { // may be null, if it is only a "path"
+				if (descriptor != null && descriptor.DialogPanel != null && descriptor.DialogPanel.Control != null) { // may be null, if it is only a "path"
 					descriptor.DialogPanel.CustomizationObject = properties;
 					descriptor.DialogPanel.Control.Dock = DockStyle.Fill;
 					descriptor.DialogPanel.ReceiveDialogMessage(DialogMessage.Activated);

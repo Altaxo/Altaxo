@@ -17,6 +17,7 @@ using System.Diagnostics;
 using System.Text;
 
 using ICSharpCode.Core.AddIns;
+using ICSharpCode.Core.Services;
 
 using ICSharpCode.Core.Properties;
 using ICSharpCode.Core.AddIns.Codons;
@@ -34,16 +35,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 	{
 		public static void SetSearchPattern()
 		{
-//			// Get Highlighted value and set it to FindDialog.searchPattern
-//			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-//			
-//			if (window != null && (window.ViewContent is ITextEditorControlProvider)) {
-//				TextAreaControl textarea = ((ITextEditorControlProvider)window.ViewContent).TextAreaControl;				
-//				string selectedText = textarea.Document.SelectedText;
-//				if (selectedText != null && selectedText.Length > 0) {
-//					SearchReplaceManager.SearchOptions.SearchPattern = selectedText;
-//				}
-//			}
+			// Get Highlighted value and set it to FindDialog.searchPattern
+			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+			
+			if (window != null && (window.ViewContent is ITextEditorControlProvider)) {
+				TextEditorControl textarea = ((ITextEditorControlProvider)window.ViewContent).TextEditorControl;				
+				string selectedText = textarea.ActiveTextAreaControl.TextArea.SelectionManager.SelectedText;
+				if (selectedText != null && selectedText.Length > 0) {
+					SearchReplaceManager.SearchOptions.SearchPattern = selectedText;
+				}
+			}
 		}
 		
 		public override void Run()
@@ -63,7 +64,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 	{
 		public override void Run()
 		{
-			SearchReplaceManager.FindNext();
+			try {
+				SearchReplaceManager.FindNext();
+			} catch (Exception e) {
+				IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+				messageService.ShowError(e);
+			}
 		}
 	}
 	
@@ -87,16 +93,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 	{
 		public static void SetSearchPattern()
 		{
-//			// Get Highlighted value and set it to FindDialog.searchPattern
-//			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-//			
-//			if (window != null && (window.ViewContent is ITextEditorControlProvider)) {
-//				TextAreaControl textarea = ((ITextEditorControlProvider)window.ViewContent).TextAreaControl;				
-//				string selectedText = textarea.Document.SelectedText;
-//				if (selectedText != null && selectedText.Length > 0) {
-//					SearchReplaceInFilesManager.SearchOptions.SearchPattern = selectedText;
-//				}
-//			}			
+			// Get Highlighted value and set it to FindDialog.searchPattern
+			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+			
+			if (window != null && (window.ViewContent is ITextEditorControlProvider)) {
+				TextEditorControl textarea = ((ITextEditorControlProvider)window.ViewContent).TextEditorControl;				
+				string selectedText = textarea.ActiveTextAreaControl.TextArea.SelectionManager.SelectedText;
+				if (selectedText != null && selectedText.Length > 0) {
+					SearchReplaceManager.SearchOptions.SearchPattern = selectedText;
+				}
+			}
 		}
 		public override void Run()
 		{

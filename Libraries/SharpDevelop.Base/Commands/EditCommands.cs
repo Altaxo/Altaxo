@@ -89,6 +89,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 			if (IsEnabled) {
 				IWorkbenchWindow window   = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 				IEditable        editable = window != null ? window.ActiveViewContent as IEditable : null;
+				
 				if (editable != null) {
 					editable.ClipboardHandler.Cut(null, null);
 				}

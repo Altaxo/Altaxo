@@ -30,7 +30,7 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		
 		protected AbstractCompletionWindow(Form parentForm, TextEditorControl control, string fileName)
 		{
-			workingScreen = Screen.GetWorkingArea(Location);
+			workingScreen = Screen.GetWorkingArea(parentForm);
 //			SetStyle(ControlStyles.Selectable, false);
 			
 			this.control  = control;
@@ -84,7 +84,7 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		
 		protected void ShowCompletionWindow()
 		{
-			Enabled =  false;
+			Enabled = true;
 			AbstractCompletionWindow.ShowWindow(base.Handle, AbstractCompletionWindow.SW_SHOWNA);
 			
 			control.Focus();
@@ -129,12 +129,7 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		
 		protected void TextEditorLostFocus(object sender, EventArgs e)
 		{
-			if (this.ContainsFocus) {
-				control.ActiveTextAreaControl.TextArea.Focus();
-				return;
-			}
-			
-			if (!control.ActiveTextAreaControl.TextArea.Focused) {
+			if (!control.ActiveTextAreaControl.TextArea.Focused && !this.ContainsFocus) {
 				Close();
 			}
 		}

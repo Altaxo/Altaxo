@@ -33,14 +33,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 		static string configFile        = Path.Combine(propertyService.ConfigDirectory, configFileName);
 		Form wbForm;
 		
-		DockPanel dockManager;
+		DockPanel dockPanel;
 		
 		public IWorkbenchWindow ActiveWorkbenchwindow {
 			get {
-				if (dockManager == null || dockManager.ActiveDocument == null)  {
+				if (dockPanel == null || dockPanel.ActiveDocument == null)  {
 					return null;
 				}
-				return (IWorkbenchWindow)dockManager.ActiveDocument;
+				return dockPanel.ActiveDocument as IWorkbenchWindow;
 			}
 		}
 		
@@ -49,10 +49,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 			wbForm = (Form)workbench;
 			wbForm.Show();
 			wbForm.Controls.Clear();
-			dockManager = new WeifenLuo.WinFormsUI.DockPanel();
+			dockPanel = new WeifenLuo.WinFormsUI.DockPanel();
+			wbForm.Controls.Add(this.dockPanel);
 			
-			this.dockManager.ActiveAutoHideContent = null;
-			this.dockManager.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.dockPanel.ActiveAutoHideContent = null;
+			this.dockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			
 			IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
 			
@@ -62,12 +63,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 			
 			wbForm.Menu = null;
-			dockManager.ActiveDocumentChanged += new EventHandler(ActiveMdiChanged);
+			dockPanel.ActiveDocumentChanged += new EventHandler(ActiveMdiChanged);
 			try {
 				if (File.Exists(configFile)) {
-					dockManager.LoadFromXml(configFile, new DeserializeDockContent(GetContent));
+					dockPanel.LoadFromXml(configFile, new DeserializeDockContent(GetContent));
 				} else {
-					dockManager.LoadFromXml(Assembly.GetCallingAssembly().GetManifestResourceStream(configFileName), new DeserializeDockContent(GetContent));
+					dockPanel.LoadFromXml(Assembly.GetCallingAssembly().GetManifestResourceStream(configFileName), new DeserializeDockContent(GetContent));
 				}
 			} catch (Exception) {
 				Console.WriteLine("can't load docking configuration, version clash ?");
@@ -84,7 +85,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			RedrawAllComponents();
 			
-			wbForm.Controls.Add(this.dockManager);
+			
 			wbForm.Controls.Add(((DefaultWorkbench)workbench).commandBarManager);
 			wbForm.Controls.Add(statusBarService.Control);
 			
@@ -103,8 +104,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public void Detach()
 		{
 			try {
-				if (dockManager != null) {
-					dockManager.SaveAsXml(configFile);
+				if (dockPanel != null) {
+					dockPanel.SaveAsXml(configFile);
 				}
 				
 				foreach (IViewContent viewContent in WorkbenchSingleton.Workbench.ViewContentCollection) {
@@ -117,14 +118,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 //				tabControl.TabPages.Clear();
 //				tabControl.Controls.Clear();
 				
-//				if (dockManager != null) {
-//					dockManager.Contents.Clear();
+//				if (dockPanel != null) {
+//					dockPanel.Contents.Clear();
 //				}
 				
 				wbForm.Controls.Clear();
-				if (dockManager != null) {
-					dockManager.Dispose();
-					dockManager = null;
+				if (dockPanel != null) {
+					dockPanel.Dispose();
+					dockPanel = null;
 				}
 				
 			} catch (Exception) {}
@@ -141,18 +142,38 @@ namespace ICSharpCode.SharpDevelop.Gui
 			public PadContentWrapper(IPadContent content)
 			{
 				this.content = content;
+				this.DockableAreas = ((((WeifenLuo.WinFormsUI.DockAreas.Float | WeifenLuo.WinFormsUI.DockAreas.DockLeft) | 
+				                        WeifenLuo.WinFormsUI.DockAreas.DockRight) | 
+				                        WeifenLuo.WinFormsUI.DockAreas.DockTop) | 
+				                        WeifenLuo.WinFormsUI.DockAreas.DockBottom);
 			}
 			
 			protected override string GetPersistString()
 			{
 				return content.GetType().ToString();
 			}
+			
+			protected override void Dispose(bool disposing)
+			{
+				base.Hide();
+//				base.Dispose(disposing);
+//				if (disposing) {
+//					if (content != null) {
+//						content.Dispose();
+//						content = null;
+//					}
+//				}
+			}
 		}
+		
 		DockContent CreateContent(IPadContent content)
 		{
+			if (contentHash[content] != null) {
+				return contentHash[content] as DockContent;
+			}
 			IProperties properties = (IProperties)propertyService.GetProperty("Workspace.ViewMementos", new DefaultProperties());
-			content.Control.Dock = DockStyle.None;
-			DockContent newContent= new PadContentWrapper(content);//dockManager.Contents.Add(content.Control, content.Title, imgList, 0);
+			
+			DockContent newContent = new PadContentWrapper(content);
 			if (content.Icon != null) {
 				IconService iconService = (IconService)ServiceManager.Services.GetService(typeof(IconService));
 				newContent.Icon = iconService.GetIcon(content.Icon);
@@ -162,16 +183,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			newContent.Text = content.Title;
 			contentHash[content] = newContent;
 			
-			newContent.DockableAreas = WeifenLuo.WinFormsUI.DockAreas.Float | 
-			                           WeifenLuo.WinFormsUI.DockAreas.DockLeft | 
-			                           WeifenLuo.WinFormsUI.DockAreas.DockRight | 
-			                           WeifenLuo.WinFormsUI.DockAreas.DockTop | 
-			                           WeifenLuo.WinFormsUI.DockAreas.DockBottom;
-		
-			newContent.DockPadding.Bottom = 3;
-			newContent.DockPadding.Top = 3;
-			newContent.HideOnClose = true;
-			newContent.ShowHint = WeifenLuo.WinFormsUI.DockState.DockBottom;
 			return newContent;
 		}
 		
@@ -179,10 +190,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			if (contentHash[content] == null) {
 				DockContent newContent = CreateContent(content);
-				newContent.Show(dockManager);
+				newContent.Show(dockPanel);
 			} else {
 				DockContent c = (DockContent)contentHash[content];
-				c.Show(dockManager);
+				c.Show(dockPanel);
 			}
 		}
 		
@@ -234,6 +245,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				ActiveMdiChanged(this, null);
 			}
 		}
+		
 		public IWorkbenchWindow ShowView(IViewContent content)
 		{
 			content.Control.Visible = true;
@@ -241,7 +253,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			SdiWorkspaceWindow sdiWorkspaceWindow = new SdiWorkspaceWindow(content);
 			sdiWorkspaceWindow.CloseEvent += new EventHandler(CloseWindowEvent);
-			sdiWorkspaceWindow.Show(dockManager);
+			sdiWorkspaceWindow.Show(dockPanel);
 			return sdiWorkspaceWindow;
 		}
 		
@@ -262,6 +274,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 			oldSelectedWindow = ActiveWorkbenchwindow;
 			if (oldSelectedWindow != null) {
 				oldSelectedWindow.OnWindowSelected(EventArgs.Empty);
+				oldSelectedWindow.ActiveViewContent.SwitchedTo();
+				oldSelectedWindow.ActiveViewContent.Control.Select();
+
 			}
 		}
 		

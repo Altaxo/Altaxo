@@ -36,8 +36,10 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Actions
 		{
 			SharpDevelopTextAreaControl sdtac = (SharpDevelopTextAreaControl)services.MotherTextEditorControl;
 			IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
-			sdtac.codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(((Form)WorkbenchSingleton.Workbench), services.MotherTextEditorControl, services.MotherTextEditorControl.FileName, new CodeCompletionDataProvider(true), '\0');
-			
+			sdtac.codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(((Form)WorkbenchSingleton.Workbench), 
+			                                                                       services.MotherTextEditorControl, 
+			                                                                       services.MotherTextEditorControl.FileName,
+			                                                                       sdtac.CreateCodeCompletionDataProvider(true), '\0');
 		}
 	}
 }

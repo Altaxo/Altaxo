@@ -78,7 +78,7 @@ namespace SharpDevelop.Internal.Parser
 			}
 			
 			foreach (ParameterInfo paramInfo in methodBase.GetParameters()) {
-				parameters.Add(new ReflectionParameter(paramInfo, node));
+				Parameters.Add(new ReflectionParameter(paramInfo, node));
 			}
 			
 			if (methodBase is MethodInfo) {

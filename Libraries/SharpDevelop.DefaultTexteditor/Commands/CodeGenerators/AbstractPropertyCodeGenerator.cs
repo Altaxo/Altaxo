@@ -35,10 +35,18 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 				if (fileExtension == ".vb") {
 					editActionHandler.InsertString("Public " + (fw.Field.IsStatic ? "Shared " : "") + "Property " + (Char.ToUpper(fw.Field.Name[0]) + fw.Field.Name.Substring(1)) + " As " + vba.Convert(fw.Field.ReturnType));
 				} else {
-					editActionHandler.InsertString("public " + (fw.Field.IsStatic ? "static " : "") + csa.Convert(fw.Field.ReturnType) + " " + Char.ToUpper(fw.Field.Name[0]) + fw.Field.Name.Substring(1) + " {");
+					editActionHandler.InsertString("public " + (fw.Field.IsStatic ? "static " : "") + csa.Convert(fw.Field.ReturnType) + " " + Char.ToUpper(fw.Field.Name[0]) + fw.Field.Name.Substring(1));
 				}
-				
 				++numOps;
+				
+				if (StartCodeBlockInSameLine) {
+					editActionHandler.InsertString(" {");
+				} else {
+					Return();
+					editActionHandler.InsertString("{");
+				}
+				++numOps;
+				
 				Return();
 				
 				GeneratePropertyBody(editActionHandler, fw, fileExtension);
@@ -60,10 +68,19 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			if (fileExtension == ".vb") {
 				editActionHandler.InsertString("Get");
 			} else {
-				editActionHandler.InsertString("get {");
+				editActionHandler.InsertString("get");
+				if (StartCodeBlockInSameLine) {
+					editActionHandler.InsertString(" {");
+				} else {
+					Return();
+					editActionHandler.InsertString("{");
+				}
+				++numOps;
+				
 			}
 			++numOps;
 			Return();
+			Indent();
 			if (fileExtension == ".vb") {
 				editActionHandler.InsertString("Return " + fw.Field.Name);
 			} else {
@@ -85,11 +102,19 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			if (fileExtension == ".vb") {
 				editActionHandler.InsertString("Set");
 			} else {
-				editActionHandler.InsertString("set {");
+				editActionHandler.InsertString("set");
+				if (StartCodeBlockInSameLine) {
+					editActionHandler.InsertString(" {");
+				} else {
+					Return();
+					editActionHandler.InsertString("{");
+				}
+				++numOps;
+				
 			}
 			++numOps;
 			Return();
-			
+			Indent();
 			if (fileExtension == ".vb") {
 				editActionHandler.InsertString(fw.Field.Name+ " = Value");
 			} else {

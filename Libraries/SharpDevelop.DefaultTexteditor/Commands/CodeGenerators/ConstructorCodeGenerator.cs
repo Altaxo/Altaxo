@@ -67,11 +67,17 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			if (fileExtension == ".vb") {
 				editActionHandler.InsertString("MyBase.New");
 			} else {
-				editActionHandler.InsertChar('{');
+				if (StartCodeBlockInSameLine) {
+					editActionHandler.InsertString(" {");
+				} else {
+					Return();
+					editActionHandler.InsertString("{");
+				}
 			}
 			++numOps;
 			Return();
 			for (int i = 0; i < items.Count; ++i) {
+				Indent();
 				FieldWrapper fw = (FieldWrapper)items[i];
 				if (fileExtension == ".vb") {
 					editActionHandler.InsertString("Me." + fw.Field.Name + " = " + fw.Field.Name);

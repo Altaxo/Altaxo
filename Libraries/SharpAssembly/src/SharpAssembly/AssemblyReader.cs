@@ -174,10 +174,10 @@ namespace ICSharpCode.SharpAssembly.Assembly {
 			return ms;
 		}
 		
-		public MethodBody LoadMethodBody(uint rva)
+		public ICSharpCode.SharpAssembly.Metadata.Rows.MethodBody LoadMethodBody(uint rva)
 		{
 			BinaryReader binaryReader = new BinaryReader(OpenStream(rva));
-			MethodBody body = new MethodBody();
+			ICSharpCode.SharpAssembly.Metadata.Rows.MethodBody body = new ICSharpCode.SharpAssembly.Metadata.Rows.MethodBody();
 			body.Load(binaryReader);
 			binaryReader.Close();
 			return body;

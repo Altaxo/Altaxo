@@ -29,6 +29,9 @@ namespace ICSharpCode.Core.AddIns
 			}
 		}
 		
+		Type prevType      = null;
+		bool prevValidFlag = false;
+		
 		public override bool IsValid(object owner)
 		{
 			if (WorkbenchSingleton.Workbench == null) {
@@ -41,15 +44,24 @@ namespace ICSharpCode.Core.AddIns
 				return false;
 			}
 			Type currentType = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent.GetType();
-			if (currentType.ToString() == activewindow) {
-				return true;
-			}
-			foreach (Type i in currentType.GetInterfaces()) {
-				if (i.ToString() == activewindow) {
+			
+			if (currentType.Equals(prevType)) {
+				return prevValidFlag;
+			} else {
+				prevType = currentType;
+				if (currentType.ToString() == activewindow) {
+					prevValidFlag = true;
 					return true;
 				}
+				foreach (Type i in currentType.GetInterfaces()) {
+					if (i.ToString() == activewindow) {
+						prevValidFlag = true;
+						return true;
+					}
+				}
 			}
-			return false;
+			prevValidFlag = false;
+			return false;			
 		}
 	}
 }

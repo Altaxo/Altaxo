@@ -13,7 +13,6 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyProduct("")> 
 <Assembly: AssemblyCopyright("")> 
 <Assembly: AssemblyTrademark("")> 
-<Assembly: CLSCompliant(True)> 
 
 'The following GUID is for the ID of the typelib if this project is exposed to COM
 <Assembly: Guid("9050E469-D9BC-443A-99A5-B353548B8B00")> 

@@ -116,6 +116,8 @@ namespace SharpDevelop.Internal.Parser
 	public interface IParser {
 		
 		string[] LexerTags {
+//// Alex - need to have get accessor too
+			get;
 			set;
 		}
 		

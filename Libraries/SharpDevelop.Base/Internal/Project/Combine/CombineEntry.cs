@@ -102,93 +102,97 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		public override void Build(bool doBuildAll)
 		{ // if you change something here look at the DefaultProjectService BeforeCompile method
 			if (doBuildAll || IsDirty) {
-				StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
-				stringParserService.Properties["Project"] = Name;
-				IProjectService   projectService   = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-				IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
-				TaskService       taskService      = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
-				IResourceService resourceService   = (IResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
-				
-				statusBarService.SetMessage("${res:MainWindow.StatusBar.CompilingMessage}");
-				LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
-				
-				// create output directory, if not exists
-				string outputDir = ((AbstractProjectConfiguration)project.ActiveConfiguration).OutputDirectory;
-				try {
-					DirectoryInfo directoryInfo = new DirectoryInfo(outputDir);
-					if (!directoryInfo.Exists) {
-						directoryInfo.Create();
-					}
-				} catch (Exception e) {
-					throw new ApplicationException("Can't create project output directory " + outputDir + " original exception:\n" + e.ToString());
-				}
-				
-				ILanguageBinding csc = languageBindingService.GetBindingPerLanguageName(project.ProjectType);
-				
-				AbstractProjectConfiguration conf = project.ActiveConfiguration as AbstractProjectConfiguration;
-				taskService.CompilerOutput += stringParserService.Parse("${res:MainWindow.CompilerMessages.BuildStartedOutput}", new string[,] { {"PROJECT", Project.Name}, {"CONFIG", Project.ActiveConfiguration.Name} }) + "\n";
-				taskService.CompilerOutput += resourceService.GetString("MainWindow.CompilerMessages.PerformingMainCompilationOutput") + "\n";
-				Console.WriteLine("BUILD!!!");
-				if (conf != null && conf.ExecuteBeforeBuild != null && conf.ExecuteBeforeBuild.Length > 0) {
-					string command   = conf.ExecuteBeforeBuild;
-					string arguments = "";
-					int    idx = command.IndexOf(' ');
-					if (idx > 0) {
-						arguments = command.Substring(idx + 1);
-						command   = command.Substring(0, idx);
-					}
-					if (File.Exists(command)) {
-						taskService.CompilerOutput += "Execute : " + conf.ExecuteBeforeBuild;
-						ProcessStartInfo ps = new ProcessStartInfo(command, arguments);
-						ps.UseShellExecute = false;
-						ps.RedirectStandardOutput = true;
-						ps.WorkingDirectory = Path.GetDirectoryName(command);
-						Process process = new Process();
-						process.StartInfo = ps;
-						process.Start();
-						taskService.CompilerOutput += process.StandardOutput.ReadToEnd();
-					}
-				}
-				
-				ICompilerResult res = csc.CompileProject(project);
-				
-				IsDirty = false;
-				foreach (CompilerError err in res.CompilerResults.Errors) {
-					IsDirty = true;
-					taskService.Tasks.Add(new Task(project, err));
-				}
-				
-				if (conf != null && !IsDirty && conf.ExecuteAfterBuild != null && conf.ExecuteAfterBuild.Length > 0) {
-					taskService.CompilerOutput += "Execute : " + conf.ExecuteAfterBuild;
-					string command   = conf.ExecuteAfterBuild;
-					string arguments = "";
-					int    idx = command.IndexOf(' ');
-					if (idx > 0) {
-						arguments = command.Substring(idx + 1);
-						command   = command.Substring(0, idx);
-					}
-					if (File.Exists(command)) {
-						ProcessStartInfo ps = new ProcessStartInfo(command, arguments);
-						ps.UseShellExecute = false;
-						ps.RedirectStandardOutput = true;
-						ps.WorkingDirectory = Path.GetDirectoryName(command);
-						Process process = new Process();
-						process.StartInfo = ps;
-						process.Start();
-						taskService.CompilerOutput += process.StandardOutput.ReadToEnd();
-					}
-				}
-				
-				
-				taskService.NotifyTaskChange();
+				IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+				ICompilerResult res = projectService.CompileProject(project);
+				TaskService taskService = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
 				
 				if (taskService.Errors > 0) {
 					++BuildErrors;
+					IsDirty = true;
 				} else {
 					++BuildProjects;
+					IsDirty = false;
 				}
 				
-				taskService.CompilerOutput += res.CompilerOutput + stringParserService.Parse("${res:MainWindow.CompilerMessages.ProjectStatsOutput}", new string[,] { {"ERRORS", taskService.Errors.ToString()}, {"WARNINGS", taskService.Warnings.ToString()} }) + "\n\n";
+// This code is now in the project service:
+//				StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+//				stringParserService.Properties["Project"] = Name;
+//				IProjectService   projectService   = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+//				IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
+//				TaskService       taskService      = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
+//				IResourceService resourceService   = (IResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
+//				
+//				statusBarService.SetMessage("${res:MainWindow.StatusBar.CompilingMessage}");
+//				LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
+//				
+//				// create output directory, if not exists
+//				string outputDir = ((AbstractProjectConfiguration)project.ActiveConfiguration).OutputDirectory;
+//				try {
+//					DirectoryInfo directoryInfo = new DirectoryInfo(outputDir);
+//					if (!directoryInfo.Exists) {
+//						directoryInfo.Create();
+//					}
+//				} catch (Exception e) {
+//					throw new ApplicationException("Can't create project output directory " + outputDir + " original exception:\n" + e.ToString());
+//				}
+//				
+//				ILanguageBinding csc = languageBindingService.GetBindingPerLanguageName(project.ProjectType);
+//				
+//				AbstractProjectConfiguration conf = project.ActiveConfiguration as AbstractProjectConfiguration;
+//				taskService.CompilerOutput += stringParserService.Parse("${res:MainWindow.CompilerMessages.BuildStartedOutput}", new string[,] { {"PROJECT", Project.Name}, {"CONFIG", Project.ActiveConfiguration.Name} }) + "\n";
+//				taskService.CompilerOutput += resourceService.GetString("MainWindow.CompilerMessages.PerformingMainCompilationOutput") + "\n";
+//				
+//				if (conf != null && conf.ExecuteBeforeBuild != null && conf.ExecuteBeforeBuild.Length > 0) {
+//					string command   = conf.ExecuteBeforeBuild;
+//					string arguments = conf.ExecuteBeforeBuildArguments;
+//					
+//					if (File.Exists(command)) {
+//						taskService.CompilerOutput += "Execute : " + conf.ExecuteBeforeBuild;
+//						ProcessStartInfo ps = new ProcessStartInfo(command, arguments);
+//						ps.UseShellExecute = false;
+//						ps.RedirectStandardOutput = true;
+//						ps.WorkingDirectory = Path.GetDirectoryName(command);
+//						Process process = new Process();
+//						process.StartInfo = ps;
+//						process.Start();
+//						taskService.CompilerOutput += process.StandardOutput.ReadToEnd();
+//					}
+//				}
+//				
+//				ICompilerResult res = csc.CompileProject(project);
+//				
+//				IsDirty = false;
+//				foreach (CompilerError err in res.CompilerResults.Errors) {
+//					IsDirty = true;
+//					taskService.Tasks.Add(new Task(project, err));
+//				}
+//				
+//				if (conf != null && !IsDirty && conf.ExecuteAfterBuild != null && conf.ExecuteAfterBuild.Length > 0) {
+//					taskService.CompilerOutput += "Execute : " + conf.ExecuteAfterBuild;
+//					string command   = conf.ExecuteAfterBuild;
+//					string arguments = conf.ExecuteAfterBuildArguments;
+//					
+//					if (File.Exists(command)) {
+//						ProcessStartInfo ps = new ProcessStartInfo(command, arguments);
+//						ps.UseShellExecute = false;
+//						ps.RedirectStandardOutput = true;
+//						ps.WorkingDirectory = Path.GetDirectoryName(command);
+//						Process process = new Process();
+//						process.StartInfo = ps;
+//						process.Start();
+//						taskService.CompilerOutput += process.StandardOutput.ReadToEnd();
+//					}
+//				}
+//				
+//				taskService.NotifyTaskChange();
+//				
+//				if (taskService.Errors > 0) {
+//					++BuildErrors;
+//				} else {
+//					++BuildProjects;
+//				}
+//				
+//				taskService.CompilerOutput += res.CompilerOutput + stringParserService.Parse("${res:MainWindow.CompilerMessages.ProjectStatsOutput}", new string[,] { {"ERRORS", taskService.Errors.ToString()}, {"WARNINGS", taskService.Warnings.ToString()} }) + "\n\n";
 			}
 		}
 		

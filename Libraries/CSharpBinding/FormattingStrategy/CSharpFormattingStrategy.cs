@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -14,6 +14,7 @@ using System.Text;
 
 using SharpDevelop.Internal.Parser;
 using ICSharpCode.TextEditor;
+using ICSharpCode.TextEditor.Actions;
 using ICSharpCode.TextEditor.Document;
 using ICSharpCode.Core.Properties;
 using ICSharpCode.Core.Services;
@@ -31,115 +32,68 @@ namespace CSharpBinding.FormattingStrategy
 		{
 		}
 		
+		#region SmartIndentLine
 		/// <summary>
 		/// Define CSharp specific smart indenting for a line :)
 		/// </summary>
 		protected override int SmartIndentLine(TextArea textArea, int lineNr)
 		{
-			if (lineNr > 0) {
-				LineSegment lineAbove = textArea.Document.GetLineSegment(lineNr - 1);
-				string  lineAboveText = lineAbove == null ? "" : textArea.Document.GetText(lineAbove).Trim();
-				
-				LineSegment curLine = textArea.Document.GetLineSegment(lineNr);
-				string  curLineText = textArea.Document.GetText(curLine).Trim();
-				
-				if ((lineAboveText.EndsWith(")") && curLineText.StartsWith("{")) ||   // after for, while, etc.
-					(lineAboveText.EndsWith("else") && curLineText.StartsWith("{")))  // after else
-				{
-					string indentation = GetIndentation(textArea, lineNr - 1);
-					textArea.Document.Replace(curLine.Offset, curLine.Length, indentation + curLineText);
-					return indentation.Length;
-				}
-				
-				if (curLineText.StartsWith("}")) { // indent closing bracket.
-					int closingBracketOffset = TextUtilities.SearchBracketBackward(textArea.Document, curLine.Offset + textArea.Document.GetText(curLine).IndexOf('}') - 1, '{', '}');
-					if (closingBracketOffset == -1) {  // no closing bracket found -> autoindent
-						return AutoIndentLine(textArea, lineNr);
-					}
-					
-					string indentation = GetIndentation(textArea, textArea.Document.GetLineNumberForOffset(closingBracketOffset));
-					
-					textArea.Document.Replace(curLine.Offset, curLine.Length, indentation + curLineText);
-					return indentation.Length;
-				}
-				
-				if (lineAboveText.EndsWith(";")) { // expression ended, reset to valid indent.
-					int closingBracketOffset = TextUtilities.SearchBracketBackward(textArea.Document, curLine.Offset + textArea.Document.GetText(curLine).IndexOf('}') - 1, '{', '}');
-					
-					if (closingBracketOffset == -1) {  // no closing bracket found -> autoindent
-						return AutoIndentLine(textArea, lineNr);
-					}
-					
-					int closingBracketLineNr = textArea.Document.GetLineNumberForOffset(closingBracketOffset);
-					LineSegment closingBracketLine = textArea.Document.GetLineSegment(closingBracketLineNr);
-					string  closingBracketLineText = textArea.Document.GetText(closingBracketLine).Trim();
-					
-					string indentation = GetIndentation(textArea, closingBracketLineNr);
-					
-					// special handling for switch statement formatting.
-					if (closingBracketLineText.StartsWith("switch")) {
-						if (lineAboveText.StartsWith("break;") || 
-						    lineAboveText.StartsWith("goto")   || 
-						    lineAboveText.StartsWith("return")) {
-							// nothing
-						} else {
-						indentation += ICSharpCode.TextEditor.Actions.Tab.GetIndentationString(textArea.Document);
-						}
-					}
-					indentation += ICSharpCode.TextEditor.Actions.Tab.GetIndentationString(textArea.Document);
-					
-					textArea.Document.Replace(curLine.Offset, curLine.Length, indentation + curLineText);
-					return indentation.Length;
-				}
-				
-				if (lineAboveText.EndsWith("{") || // indent opening bracket.
-				    lineAboveText.EndsWith(":") || // indent case xyz:
-				    (lineAboveText.EndsWith(")") &&  // indent single line if, for ... etc
-				    (lineAboveText.StartsWith("if") ||
-				     lineAboveText.StartsWith("while") ||
-				     lineAboveText.StartsWith("for"))) ||
-				     lineAboveText.EndsWith("else")) {
-						string indentation = GetIndentation(textArea, lineNr - 1) + ICSharpCode.TextEditor.Actions.Tab.GetIndentationString(textArea.Document);
-						textArea.Document.Replace(curLine.Offset, curLine.Length, indentation + curLineText);
-						return indentation.Length;
+			if (lineNr <= 0) return AutoIndentLine(textArea, lineNr);
+			//Console.WriteLine("Indent line #{0}", lineNr + 1);
+			
+			string oldText = textArea.Document.GetText(textArea.Document.GetLineSegment(lineNr));
+			
+			DocumentAccessor acc = new DocumentAccessor(textArea.Document, lineNr, lineNr);
+			
+			IndentationSettings set = new IndentationSettings();
+			set.IndentString = Tab.GetIndentationString(textArea.Document);
+			IndentationReformatter r = new IndentationReformatter();
+			
+			r.Reformat(acc, set);
+			
+			if (acc.ChangedLines > 0)
+				textArea.Document.UndoStack.UndoLast(2);
+			
+			string t = acc.Text;
+			if (t.Length == 0) {
+				// use AutoIndentation for new lines in comments / verbatim strings.
+				return AutoIndentLine(textArea, lineNr);
 			} else {
-				// try to indent linewrap
-				ArrayList bracketPos = new ArrayList();
-				for (int i = 0; i < lineAboveText.Length; ++i) { // search for a ( bracket that isn't closed
-					switch (lineAboveText[i]) {
-						case '(':
-							bracketPos.Add(i);
-							break;
-						case ')':
-							if (bracketPos.Count > 0) {
-								bracketPos.RemoveAt(bracketPos.Count - 1);
-							}
-							break;
-					}
+				int newIndentLength = t.Length - t.TrimStart().Length;
+				int oldIndentLength = oldText.Length - oldText.TrimStart().Length;
+				if (oldIndentLength != newIndentLength && lineNr == textArea.Caret.Position.Y) {
+					// fix cursor position if indentation was changed
+					int newX = textArea.Caret.Position.X - oldIndentLength + newIndentLength;
+					textArea.Caret.Position = new Point(Math.Max(newX, 0), lineNr);
 				}
-				
-				if (bracketPos.Count > 0) {
-					int bracketIndex = (int)bracketPos[bracketPos.Count - 1];
-					string indentation = GetIndentation(textArea, lineNr - 1);
-					
-					for (int i = 0; i <= bracketIndex; ++i) { // insert enough spaces to match
-					indentation += " ";                   // brace start in the next line
-					}
-					
-					textArea.Document.Replace(curLine.Offset, curLine.Length, indentation + curLineText);
-					return indentation.Length;
-				}
+				return newIndentLength;
 			}
-			}
-			return AutoIndentLine(textArea, lineNr);
 		}
 		
+		/// <summary>
+		/// This function sets the indentlevel in a range of lines.
+		/// </summary>
+		public override void IndentLines(TextArea textArea, int begin, int end)
+		{
+			IndentationSettings set = new IndentationSettings();
+			set.IndentString = Tab.GetIndentationString(textArea.Document);
+			IndentationReformatter r = new IndentationReformatter();
+			DocumentAccessor acc = new DocumentAccessor(textArea.Document, begin, end);
+			r.Reformat(acc, set);
+			
+			if (acc.ChangedLines > 0)
+				textArea.Document.UndoStack.UndoLast(acc.ChangedLines);
+		}
+		#endregion
+		
+		#region Private functions
 		bool NeedCurlyBracket(string text)
 		{
 			int curlyCounter = 0;
 			
 			bool inString = false;
 			bool inChar   = false;
+			bool verbatim = false;
 			
 			bool lineComment  = false;
 			bool blockComment = false;
@@ -149,6 +103,8 @@ namespace CSharpBinding.FormattingStrategy
 					case '\r':
 					case '\n':
 						lineComment = false;
+						inChar = false;
+						if (!verbatim) inString = false;
 						break;
 					case '/':
 						if (blockComment) {
@@ -168,6 +124,16 @@ namespace CSharpBinding.FormattingStrategy
 						break;
 					case '"':
 						if (!(inChar || lineComment || blockComment)) {
+							if (inString && verbatim) {
+								if (i + 1 < text.Length && text[i + 1] == '"') {
+									++i; // skip escaped quote
+									inString = false; // let the string go on
+								} else {
+									verbatim = false;
+								}
+							} else if (!inString && i > 0 && text[i - 1] == '@') {
+								verbatim = true;
+							}
 							inString = !inString;
 						}
 						break;
@@ -186,6 +152,10 @@ namespace CSharpBinding.FormattingStrategy
 							--curlyCounter;
 						}
 						break;
+					case '\\':
+						if ((inString && !verbatim) || inChar)
+							++i; // skip next character
+						break;
 				}
 			}
 			return curlyCounter > 0;
@@ -194,42 +164,50 @@ namespace CSharpBinding.FormattingStrategy
 		bool IsInsideStringOrComment(TextArea textArea, LineSegment curLine, int cursorOffset)
 		{
 			// scan cur line if it is inside a string or single line comment (//)
-			bool isInsideString  = false;
-			bool isInsideComment = false;
+			bool insideString  = false;
+			char stringstart = ' ';
+			bool verbatim = false; // true if the current string is verbatim (@-string)
+			char c = ' ';
+			char lastchar;
 			for (int i = curLine.Offset; i < cursorOffset; ++i) {
-				char ch = textArea.Document.GetCharAt(i);
-				if (ch == '"') {
-					isInsideString = !isInsideString;
-				}
-				if (ch == '/' && i + 1 < cursorOffset && textArea.Document.GetCharAt(i + 1) == '/') {
-					isInsideComment = true;
-					break;
+				lastchar = c;
+				c = textArea.Document.GetCharAt(i);
+				if (insideString) {
+					if (c == stringstart) {
+						if (verbatim && i + 1 < cursorOffset && textArea.Document.GetCharAt(i + 1) == '"')
+							++i; // skip escaped character
+						else
+							insideString = false;
+					} else if (c == '\\' && !verbatim) {
+						++i; // skip escaped character
+					}
+				} else if (c == '/' && i + 1 < cursorOffset && textArea.Document.GetCharAt(i + 1) == '/') {
+					return true;
+				} else if (c == '"' || c == '\'') {
+					stringstart = c;
+					insideString = true;
+					verbatim = (c == '"') && (lastchar == '@');
 				}
 			}
-			
-			return isInsideString || isInsideComment;
+			return insideString;
 		}
-
+		
 		bool IsInsideDocumentationComment(TextArea textArea, LineSegment curLine, int cursorOffset)
 		{
-			// scan cur line if it is inside a string or single line comment (//)
-			bool isInsideString  = false;
-			bool isInsideComment = false;
 			for (int i = curLine.Offset; i < cursorOffset; ++i) {
 				char ch = textArea.Document.GetCharAt(i);
 				if (ch == '"') {
-					isInsideString = !isInsideString;
+					// parsing strings correctly is too complicated (see above),
+					// but I don't now any case where a doc comment is after a string...
+					return false;
 				}
-				if (!isInsideString) {
-					if (ch == '/' && i + 2 < cursorOffset && textArea.Document.GetCharAt(i + 1) == '/' && textArea.Document.GetCharAt(i + 2) == '/') {
-						isInsideComment = true;
-						break;
-					}
+				if (ch == '/' && i + 2 < cursorOffset && textArea.Document.GetCharAt(i + 1) == '/' && textArea.Document.GetCharAt(i + 2) == '/') {
+					return true;
 				}
 			}
-			
-			return isInsideComment;
+			return false;
 		}
+		
 		IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
 		
 		bool IsBeforeRegion(TextArea textArea, IRegion region, int lineNr)
@@ -280,7 +258,7 @@ namespace CSharpBinding.FormattingStrategy
 			}
 			return null;
 		}
-			
+		
 		object GetMember(TextArea textArea, int lineNr)
 		{
 			string fileName = textArea.MotherTextEditorControl.FileName;
@@ -301,7 +279,9 @@ namespace CSharpBinding.FormattingStrategy
 			}
 			return null;
 		}
+		#endregion
 		
+		#region FormatLine
 		public override int FormatLine(TextArea textArea, int lineNr, int cursorOffset, char ch) // used for comment tag formater/inserter
 		{
 			LineSegment curLine   = textArea.Document.GetLineSegment(lineNr);
@@ -322,7 +302,7 @@ namespace CSharpBinding.FormattingStrategy
 						sb.Append("/// \n");
 						sb.Append(indentation);
 						sb.Append("/// </summary>");
-												
+						
 						if (member is IMethod) {
 							IMethod method = (IMethod)member;
 							if (method.Parameters != null && method.Parameters.Count > 0) {
@@ -365,7 +345,7 @@ namespace CSharpBinding.FormattingStrategy
 						while (index >= 0 && curLineText[index] != '<') {
 							--index;
 							if(curLineText[index] == '/')
-								return 0; // the tag was an end tag or already 
+								return 0; // the tag was an end tag or already
 						}
 						
 						if (index > 0) {
@@ -378,11 +358,15 @@ namespace CSharpBinding.FormattingStrategy
 								tag += ">";
 							}
 							if (!tag.StartsWith("/")) {
-								textArea.Document.Insert(textArea.Caret.Offset, "</" + tag.Substring(1));
+								textArea.Document.Insert(textArea.Caret.Offset, String.Concat("</", tag.Substring(1)));
 							}
 						}
 					}
 					break;
+				case ':':
+				case ')':
+				case ']':
+					
 				case '}':
 				case '{':
 					return textArea.Document.FormattingStrategy.IndentLine(textArea, lineNr);
@@ -411,46 +395,345 @@ namespace CSharpBinding.FormattingStrategy
 					LineSegment nextLine      = lineNr + 1 < textArea.Document.TotalNumberOfLines ? textArea.Document.GetLineSegment(lineNr + 1) : null;
 					string      nextLineText  = lineNr + 1 < textArea.Document.TotalNumberOfLines ? textArea.Document.GetText(nextLine) : "";
 					
-					if (lineAbove.HighlightSpanStack != null && lineAbove.HighlightSpanStack.Count > 0) {			
+					int addCursorOffset = 0;
+					
+					if (lineAbove.HighlightSpanStack != null && lineAbove.HighlightSpanStack.Count > 0) {
 						if (!((Span)lineAbove.HighlightSpanStack.Peek()).StopEOL) {	// case for /* style comments
 							int index = lineAboveText.IndexOf("/*");
 							if (index > 0) {
-								string indentation = GetIndentation(textArea, lineNr - 1);
+								StringBuilder indentation = new StringBuilder(GetIndentation(textArea, lineNr - 1));
 								for (int i = indentation.Length; i < index; ++ i) {
-									indentation += ' ';
+									indentation.Append(' ');
 								}
 								//// adding curline text
-								textArea.Document.Replace(curLine.Offset, curLine.Length, indentation + " * " + curLineText);
+								textArea.Document.Replace(curLine.Offset, curLine.Length, String.Concat(indentation.ToString(), " * ", curLineText));
 								return indentation.Length + 3 + curLineText.Length;
 							}
 							
 							index = lineAboveText.IndexOf("*");
 							if (index > 0) {
-								string indentation = GetIndentation(textArea, lineNr - 1);
+								StringBuilder indentation = new StringBuilder(GetIndentation(textArea, lineNr - 1));
 								for (int i = indentation.Length; i < index; ++ i) {
-									indentation += ' ';
+									indentation.Append(' ');
 								}
 								//// adding curline if present
-								textArea.Document.Replace(curLine.Offset, curLine.Length, indentation + "* " + curLineText);
+								textArea.Document.Replace(curLine.Offset, curLine.Length, String.Concat(indentation.ToString(), "* ", curLineText));
 								return indentation.Length + 2 + curLineText.Length;
 							}
 						} else { // don't handle // lines, because they're only one lined comments
 							int indexAbove = lineAboveText.IndexOf("///");
 							int indexNext  = nextLineText.IndexOf("///");
 							if (indexAbove > 0 && (indexNext != -1 || indexAbove + 4 < lineAbove.Length)) {
-								string indentation = GetIndentation(textArea, lineNr - 1);
+								StringBuilder indentation = new StringBuilder(GetIndentation(textArea, lineNr - 1));
 								for (int i = indentation.Length; i < indexAbove; ++ i) {
-									indentation += ' ';
+									indentation.Append(' ');
 								}
 								//// adding curline text if present
-								textArea.Document.Replace(curLine.Offset, cursorOffset - curLine.Offset, indentation + "/// " + curLineText);
+								textArea.Document.Replace(curLine.Offset, curLine.Length, String.Concat(indentation.ToString(), "/// ", curLineText));
+								textArea.Document.UndoStack.UndoLast(2);
 								return indentation.Length + 4 /*+ curLineText.Length*/;
+							}
+							
+							if (IsInString(lineAboveText, curLineText)) {
+								textArea.Document.Insert(lineAbove.Offset + lineAbove.Length,
+								                         "\" +");
+								curLine = textArea.Document.GetLineSegment(lineNr);
+								textArea.Document.Insert(curLine.Offset, "\"");
+								textArea.Document.UndoStack.UndoLast(3);
+								addCursorOffset = 1;
 							}
 						}
 					}
-					return IndentLine(textArea, lineNr);
+					return IndentLine(textArea, lineNr) + addCursorOffset;
 			}
 			return 0;
 		}
+		
+		bool IsInString(string start, string end)
+		{
+			bool inString = false;
+			for (int i = 0; i < start.Length; ++i) {
+				char c = start[i];
+				if (c == '"') {
+					if (!inString && i > 0 && start[i - 1] == '@')
+						return false; // no string line break for verbatim strings
+					inString = !inString;
+				}
+				if (!inString && i > 0 && start[i - 1] == '/' && (c == '/' || c == '*'))
+					return false;
+				if (inString && start[i] == '\\')
+					++i;
+			}
+			if (!inString) return false;
+			// we are possibly in a string, or a multiline string has just ended here
+			// check if the closing double quote is in end.
+			for (int i = 0; i < end.Length; ++i) {
+				char c = end[i];
+				if (c == '"') {
+					if (!inString && i > 0 && start[i - 1] == '@')
+						return false; // no string line break for verbatim strings
+					inString = !inString;
+				}
+				if (!inString && i > 0 && start[i - 1] == '/' && (c == '/' || c == '*'))
+					break;
+				if (inString && start[i] == '\\')
+					++i;
+			}
+			// return true if string was closed properly
+			return !inString;
+		}
+		#endregion
+		
+		#region SearchBracket helper functions
+		static int ScanLineStart(IDocument document, int offset)
+		{
+			for (int i = offset - 1; i > 0; --i) {
+				if (document.GetCharAt(i) == '\n')
+					return i + 1;
+			}
+			return 0;
+		}
+		
+		/// <summary>
+		/// Gets the type of code at offset.<br/>
+		/// 0 = Code,<br/>
+		/// 1 = Comment,<br/>
+		/// 2 = String<br/>
+		/// Block comments and multiline strings are not supported.
+		/// </summary>
+		static int GetStartType(IDocument document, int linestart, int offset)
+		{
+			bool inString = false;
+			bool inChar = false;
+			bool verbatim = false;
+			for(int i = linestart; i < offset; i++) {
+				switch (document.GetCharAt(i)) {
+					case '/':
+						if (!inString && !inChar && i + 1 < document.TextLength) {
+							if (document.GetCharAt(i + 1) == '/') {
+								return 1;
+							}
+						}
+						break;
+					case '"':
+						if (!inChar) {
+							if (inString && verbatim) {
+								if (i + 1 < document.TextLength && document.GetCharAt(i + 1) == '"') {
+									++i; // skip escaped quote
+									inString = false; // let the string go on
+								} else {
+									verbatim = false;
+								}
+							} else if (!inString && i > 0 && document.GetCharAt(i - 1) == '@') {
+								verbatim = true;
+							}
+							inString = !inString;
+						}
+						break;
+					case '\'':
+						if (!inString) inChar = !inChar;
+						break;
+					case '\\':
+						if ((inString && !verbatim) || inChar)
+							++i; // skip next character
+						break;
+				}
+			}
+			return (inString || inChar) ? 2 : 0;
+		}
+		#endregion
+		
+		#region SearchBracketBackward
+		public override int SearchBracketBackward(IDocument document, int offset, char openBracket, char closingBracket)
+		{
+			if (offset + 1 >= document.TextLength) return -1;
+			// this method parses a c# document backwards to find the matching bracket
+			
+			// first try "quick find" - find the matching bracket if there is no string/comment in the way
+			int quickResult = base.SearchBracketBackward(document, offset, openBracket, closingBracket);
+			if (quickResult >= 0) return quickResult;
+			
+			// we need to parse the line from the beginning, so get the line start position
+			int linestart = ScanLineStart(document, offset + 1);
+			
+			// we need to know where offset is - in a string/comment or in normal code?
+			// ignore cases where offset is in a block comment
+			int starttype = GetStartType(document, linestart, offset + 1);
+			if (starttype != 0) {
+				return -1; // start position is in a comment/string
+			}
+			
+			// I don't see any possibility to parse a C# document backwards...
+			// We have to do it forwards and push all bracket positions on a stack.
+			Stack bracketStack = new Stack();
+			bool  blockComment = false;
+			bool  lineComment  = false;
+			bool  inChar       = false;
+			bool  inString     = false;
+			bool  verbatim     = false;
+			
+			for(int i = 0; i <= offset; ++i) {
+				char ch = document.GetCharAt(i);
+				switch (ch) {
+					case '\r':
+					case '\n':
+						lineComment = false;
+						inChar = false;
+						if (!verbatim) inString = false;
+						break;
+					case '/':
+						if (blockComment) {
+							Debug.Assert(i > 0);
+							if (document.GetCharAt(i - 1) == '*') {
+								blockComment = false;
+							}
+						}
+						if (!inString && !inChar && i + 1 < document.TextLength) {
+							if (!blockComment && document.GetCharAt(i + 1) == '/') {
+								lineComment = true;
+							}
+							if (!lineComment && document.GetCharAt(i + 1) == '*') {
+								blockComment = true;
+							}
+						}
+						break;
+					case '"':
+						if (!(inChar || lineComment || blockComment)) {
+							if (inString && verbatim) {
+								if (i + 1 < document.TextLength && document.GetCharAt(i + 1) == '"') {
+									++i; // skip escaped quote
+									inString = false; // let the string go
+								} else {
+									verbatim = false;
+								}
+							} else if (!inString && offset > 0 && document.GetCharAt(i - 1) == '@') {
+								verbatim = true;
+							}
+							inString = !inString;
+						}
+						break;
+					case '\'':
+						if (!(inString || lineComment || blockComment)) {
+							inChar = !inChar;
+						}
+						break;
+					case '\\':
+						if ((inString && !verbatim) || inChar)
+							++i; // skip next character
+						break;
+						default :
+							if (ch == openBracket) {
+							if (!(inString || inChar || lineComment || blockComment)) {
+								bracketStack.Push(i);
+							}
+						} else if (ch == closingBracket) {
+							if (!(inString || inChar || lineComment || blockComment)) {
+								if (bracketStack.Count > 0)
+									bracketStack.Pop();
+							}
+						}
+						break;
+				}
+			}
+			if (bracketStack.Count > 0) return (int)bracketStack.Pop();
+			return -1;
+		}
+		#endregion
+		
+		#region SearchBracketForward
+		public override int SearchBracketForward(IDocument document, int offset, char openBracket, char closingBracket)
+		{
+			bool inString = false;
+			bool inChar   = false;
+			bool verbatim = false;
+			
+			bool lineComment  = false;
+			bool blockComment = false;
+			
+			if (offset < 0) return -1;
+			
+			// first try "quick find" - find the matching bracket if there is no string/comment in the way
+			int quickResult = base.SearchBracketForward(document, offset, openBracket, closingBracket);
+			if (quickResult >= 0) return quickResult;
+			
+			// we need to parse the line from the beginning, so get the line start position
+			int linestart = ScanLineStart(document, offset);
+			
+			// we need to know where offset is - in a string/comment or in normal code?
+			// ignore cases where offset is in a block comment
+			int starttype = GetStartType(document, linestart, offset);
+			if (starttype != 0) return -1; // start position is in a comment/string
+			
+			int brackets = 1;
+			
+			while (offset < document.TextLength) {
+				char ch = document.GetCharAt(offset);
+				switch (ch) {
+					case '\r':
+					case '\n':
+						lineComment = false;
+						inChar = false;
+						if (!verbatim) inString = false;
+						break;
+					case '/':
+						if (blockComment) {
+							Debug.Assert(offset > 0);
+							if (document.GetCharAt(offset - 1) == '*') {
+								blockComment = false;
+							}
+						}
+						if (!inString && !inChar && offset + 1 < document.TextLength) {
+							if (!blockComment && document.GetCharAt(offset + 1) == '/') {
+								lineComment = true;
+							}
+							if (!lineComment && document.GetCharAt(offset + 1) == '*') {
+								blockComment = true;
+							}
+						}
+						break;
+					case '"':
+						if (!(inChar || lineComment || blockComment)) {
+							if (inString && verbatim) {
+								if (offset + 1 < document.TextLength && document.GetCharAt(offset + 1) == '"') {
+									++offset; // skip escaped quote
+									inString = false; // let the string go
+								} else {
+									verbatim = false;
+								}
+							} else if (!inString && offset > 0 && document.GetCharAt(offset - 1) == '@') {
+								verbatim = true;
+							}
+							inString = !inString;
+						}
+						break;
+					case '\'':
+						if (!(inString || lineComment || blockComment)) {
+							inChar = !inChar;
+						}
+						break;
+					case '\\':
+						if ((inString && !verbatim) || inChar)
+							++offset; // skip next character
+						break;
+						default :
+							if (ch == openBracket) {
+							if (!(inString || inChar || lineComment || blockComment)) {
+								++brackets;
+							}
+						} else if (ch == closingBracket) {
+							if (!(inString || inChar || lineComment || blockComment)) {
+								--brackets;
+								if (brackets == 0) {
+									return offset;
+								}
+							}
+						}
+						break;
+				}
+				++offset;
+			}
+			return -1;
+		}
+		#endregion
 	}
 }

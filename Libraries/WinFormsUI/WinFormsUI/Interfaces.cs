@@ -23,21 +23,21 @@ namespace WeifenLuo.WinFormsUI
 
 	public interface IDockPaneFactory
 	{
-		DockPane CreateDockPane(DockContent content, DockState dockState);
-		DockPane CreateDockPane(DockContent content, DockState dockState, FloatWindow floatWindow);
+		DockPane CreateDockPane(DockContent content, DockState visibleState, bool isHidden);
+		DockPane CreateDockPane(DockContent content, DockState visibleState, bool isHidden, FloatWindow floatWindow);
 		DockPane CreateDockPane(DockContent content, Rectangle floatWindowBounds);
 	}
 
 	internal class DefaultDockPaneFactory : IDockPaneFactory
 	{
-		public DockPane CreateDockPane(DockContent content, DockState dockState)
+		public DockPane CreateDockPane(DockContent content, DockState visibleState, bool isHidden)
 		{
-			return new DockPane(content, dockState);
+			return new DockPane(content, visibleState, isHidden);
 		}
 
-		public DockPane CreateDockPane(DockContent content, DockState dockState, FloatWindow floatWindow)
+		public DockPane CreateDockPane(DockContent content, DockState visibleState, bool isHidden, FloatWindow floatWindow)
 		{
-			return new DockPane(content, dockState, floatWindow);
+			return new DockPane(content, visibleState, isHidden, floatWindow);
 		}
 
 		public DockPane CreateDockPane(DockContent content, Rectangle floatWindowBounds)

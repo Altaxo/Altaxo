@@ -476,7 +476,6 @@ namespace ICSharpCode.TextEditor.Actions
 			}
 		}
 	}
-	
 	public class Return : AbstractEditAction
 	{
 		/// <remarks>
@@ -489,9 +488,9 @@ namespace ICSharpCode.TextEditor.Actions
 				return;
 			}
 			textArea.BeginUpdate();
-			textArea.InsertChar('\n');
 			
-			++textArea.Caret.Line;
+			textArea.InsertString(Environment.NewLine); 
+			
 			int curLineNr = textArea.Caret.Line;
 			textArea.Caret.Column = textArea.Document.FormattingStrategy.FormatLine(textArea, curLineNr, textArea.Caret.Offset, '\n');
 			textArea.SetDesiredColumn();

@@ -5,7 +5,7 @@ using System.Text;
 using ICSharpCode.SharpRefactory.Parser;
 using ICSharpCode.SharpRefactory.Parser.AST;
 
-COMPILER CS    /* AW 2002-12-30 renamed from CompilationUnit to CS */
+COMPILER CS    /* AW 2002-12-30 renamed from CompilationUnit to CS  */
 
 string assemblyName = null;
 
@@ -107,7 +107,7 @@ bool IsType(string qualident)
 	}
 	
 	foreach (string ns in usingNamespaces) {
-		if (typeStrings.ContainsValue(ns + "." + qualident)) {
+		if (typeStrings.ContainsValue(String.Concat(ns, '.', qualident))) {
 			return true;
 		}
 	}
@@ -167,20 +167,26 @@ void CreateTypeStrings()
 /* Checks whether the next sequences of tokens is a qualident *
  * and returns the qualident string                           */
 /* !!! Proceeds from current peek position !!! */
-bool IsQualident (ref Token pt, out string qualident)
+bool IsQualident(ref Token pt, out string qualident)
 {
-	qualident = "";
 	if (pt.kind == Tokens.Identifier) {
-		qualident = pt.val;
+		StringBuilder qualidentsb = new StringBuilder(pt.val);
 		pt = Peek();
 		while (pt.kind == Tokens.Dot) {
 			pt = Peek();
-			if (pt.kind != Tokens.Identifier) return false;
-			qualident += "." + pt.val;
+			if (pt.kind != Tokens.Identifier) {
+				qualident = String.Empty;
+				return false;
+			}
+			qualidentsb.Append('.');
+			qualidentsb.Append(pt.val);
 			pt = Peek();
 		}
+		qualident = qualidentsb.ToString();
 		return true;
-	} else return false;
+	}
+	qualident = String.Empty;
+	return false;
 }
 
 /* skip: { "*" | "[" { "," } "]" } */

@@ -226,6 +226,33 @@ namespace WeifenLuo.WinFormsUI
 		public DockState DockState
 		{
 			get	{	return m_dockState;	}
+			set
+			{
+				if (m_dockState == value)
+					return;
+
+				if (value == DockState.Hidden || value == DockState.Unknown)
+					throw new InvalidOperationException(ResourceHelper.GetString("DockContent.DockState.InvalidState"));
+				if (DockPanel == null)
+					throw new InvalidOperationException(ResourceHelper.GetString("DockContent.DockState.NullPanel"));
+
+				if (value == DockState.Hidden)
+				{
+					IsHidden = true;
+					return;
+				}
+
+				if (!DockHelper.IsDockStateValid(value, DockableAreas))
+					throw new InvalidOperationException(ResourceHelper.GetString("DockContent.DockState.InvalidState"));
+
+				if (Pane.Contents.Count == 1)
+					Pane.DockState = value;
+				else
+					Pane = DockPanel.DockPaneFactory.CreateDockPane(this, value, false);
+
+				if (IsHidden)
+					IsHidden = true;
+			}
 		}
 		private DockState GetDockState()
 		{
@@ -395,6 +422,30 @@ namespace WeifenLuo.WinFormsUI
 			IsHidden = true;
 		}
 
+		internal void SetParent(Control value)
+		{
+			if (Parent == value)
+				return;
+
+			Control oldParent = Parent;
+
+			///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			/// Workaround for .Net Framework bug: removing control from Form may cause form
+			/// unclosable. Set focus to another dummy control.
+			///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			Form form = FindForm();
+			if (ContainsFocus)
+			{
+				if (form is FloatWindow)
+					((FloatWindow)form).DummyControl.Focus();
+				else if (DockPanel != null)
+					DockPanel.DummyControl.Focus();
+			}
+			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+			Parent = value;
+		}
+
 		public new void Show()
 		{
 			if (DockPanel == null)
@@ -435,7 +486,7 @@ namespace WeifenLuo.WinFormsUI
 					}
 
 				if (paneExisting == null || dockState == DockState.Float)
-					Pane = DockPanel.DockPaneFactory.CreateDockPane(this, dockState);
+					Pane = DockPanel.DockPaneFactory.CreateDockPane(this, dockState, false);
 				else
 					Pane = paneExisting;
 			}
@@ -447,7 +498,9 @@ namespace WeifenLuo.WinFormsUI
 		{
 			if (m_hiddenMdiChild != null)
 				m_hiddenMdiChild.Text = this.Text;
-			if (Pane != null)
+			if (DockHelper.IsDockStateAutoHide(DockState))
+				DockPanel.Invalidate();
+			else if (Pane != null)
 			{
 				if (Pane.FloatWindow != null)
 					Pane.FloatWindow.SetText();

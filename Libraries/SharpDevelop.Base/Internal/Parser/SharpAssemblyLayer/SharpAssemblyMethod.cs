@@ -132,7 +132,7 @@ namespace SharpDevelop.Internal.Parser {
 			
 			for (uint i = paramIndexStart; i < paramIndexEnd; ++i) {
 				uint j = (i - paramIndexStart);
-				parameters.Add(new SharpAssemblyParameter(asm, paramTable, i, j < returnTypes.Length ? returnTypes[j] : null));
+				Parameters.Add(new SharpAssemblyParameter(asm, paramTable, i, j < returnTypes.Length ? returnTypes[j] : null));
 			}
 		}
 		

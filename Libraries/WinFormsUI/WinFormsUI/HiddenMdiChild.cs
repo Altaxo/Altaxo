@@ -35,10 +35,10 @@ namespace WeifenLuo.WinFormsUI
 				throw(new InvalidOperationException());
 
 			m_content = content;
-			Menu = content.Menu;
+			if (((Form)content).Menu != null)
+				Menu = ((Form)content).Menu.CloneMenu();
 			FormBorderStyle = FormBorderStyle.None;
 			Text = m_content.Text;
-			Size = new Size(0, 0);
 			SetMdiParent(mdiParent);
 		}
 
@@ -46,7 +46,8 @@ namespace WeifenLuo.WinFormsUI
 		{
 			if (disposing)
 			{
-				((Form)m_content).Menu = Menu;
+				if (Menu != null)
+					((Form)m_content).Menu = Menu.CloneMenu();
 				m_content = null;
 				Menu = null;
 			}
@@ -58,6 +59,11 @@ namespace WeifenLuo.WinFormsUI
 			get	{	return m_content;	}
 		}
 
+		protected override Size DefaultSize
+		{
+			get	{	return new Size(0, 0);	}
+		}
+
 		internal void SetMdiParent(Form mdiParent)
 		{
 			if (mdiParent == null)
@@ -65,7 +71,6 @@ namespace WeifenLuo.WinFormsUI
 
 			MdiParent = mdiParent;
 			Show();
-			Size = new Size(0, 0);
 		}
 
 		protected override void WndProc(ref Message m)

@@ -1,5 +1,7 @@
 // Deflater.cs
+//
 // Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2004 John Reilly
 //
 // This file was translated from java, it was part of the GNU Classpath
 // Copyright (C) 2001 Free Software Foundation, Inc.
@@ -134,14 +136,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		private int level;
 		
 		/// <summary>
-		/// should we include a header.
+		/// If true no Zlib/RFC1950 headers or footers are generated
 		/// </summary>
-		private bool noHeader;
-		
-		//		/// <summary>
-		//		/// Compression strategy.
-		//		/// </summary>
-		//		private int strategy;
+		private bool noHeaderOrFooter;
 		
 		/// <summary>
 		/// The current state.
@@ -151,7 +148,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// <summary>
 		/// The total bytes of output written.
 		/// </summary>
-		private int totalOut;
+		private long totalOut;
 		
 		/// <summary>
 		/// The pending output.
@@ -187,29 +184,29 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// <summary>
 		/// Creates a new deflater with given compression level.
 		/// </summary>
-		/// <param name="lvl">
+		/// <param name="level">
 		/// the compression level, a value between NO_COMPRESSION
 		/// and BEST_COMPRESSION.
 		/// </param>
-		/// <param name="nowrap">
-		/// true, if we should suppress the deflate header at the
+		/// <param name="noHeaderOrFooter">
+		/// true, if we should suppress the Zlib/RFC1950 header at the
 		/// beginning and the adler checksum at the end of the output.  This is
-		/// useful for the GZIP format.
+		/// useful for the GZIP/PKZIP formats.
 		/// </param>
 		/// <exception cref="System.ArgumentOutOfRangeException">if lvl is out of range.</exception>
-		public Deflater(int lvl, bool nowrap)
+		public Deflater(int level, bool noHeaderOrFooter)
 		{
-			if (lvl == DEFAULT_COMPRESSION) {
-				lvl = 6;
-			} else if (lvl < NO_COMPRESSION || lvl > BEST_COMPRESSION) {
-				throw new ArgumentOutOfRangeException("lvl");
+			if (level == DEFAULT_COMPRESSION) {
+				level = 6;
+			} else if (level < NO_COMPRESSION || level > BEST_COMPRESSION) {
+				throw new ArgumentOutOfRangeException("level");
 			}
 			
 			pending = new DeflaterPending();
 			engine = new DeflaterEngine(pending);
-			this.noHeader = nowrap;
+			this.noHeaderOrFooter = noHeaderOrFooter;
 			SetStrategy(DeflateStrategy.Default);
-			SetLevel(lvl);
+			SetLevel(level);
 			Reset();
 		}
 		
@@ -221,7 +218,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// </summary>
 		public void Reset()
 		{
-			state = (noHeader ? BUSY_STATE : INIT_STATE);
+			state = (noHeaderOrFooter ? BUSY_STATE : INIT_STATE);
 			totalOut = 0;
 			pending.Reset();
 			engine.Reset();
@@ -248,7 +245,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// <summary>
 		/// Gets the number of output bytes so far.
 		/// </summary>
-		public int TotalOut {
+		public long TotalOut {
 			get {
 				return totalOut;
 			}
@@ -367,12 +364,13 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			}
 		}
 		
-#if TEST
-		// -jr- added to simplify some test cases..
+		/// <summary>
+		/// Get current compression level
+		/// </summary>
+		/// <returns>compression level</returns>
 		public int GetLevel() {
 			return level;
 		}
-#endif
 		
 		/// <summary>
 		/// Sets the compression strategy. Strategy is one of
@@ -380,46 +378,50 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// position where the strategy is changed, the same as for
 		/// setLevel() applies.
 		/// </summary>
-		/// <param name="stgy">
-		/// the new compression strategy.
+		/// <param name="strategy">
+		/// The new compression strategy.
 		/// </param>
-		public void SetStrategy(DeflateStrategy stgy)
+		public void SetStrategy(DeflateStrategy strategy)
 		{
-			engine.Strategy = stgy;
+			engine.Strategy = strategy;
 		}
 		
 		/// <summary>
-		/// Deflates the current input block to the given array.  It returns
-		/// the number of bytes compressed, or 0 if either
-		/// needsInput() or finished() returns true or length is zero.
+		/// Deflates the current input block with to the given array.
 		/// </summary>
 		/// <param name="output">
-		/// the buffer where to write the compressed data.
+		/// The buffer where compressed data is stored
 		/// </param>
+		/// <returns>
+		/// The number of compressed bytes added to the output, or 0 if either
+		/// needsInput() or finished() returns true or length is zero.
+		/// </returns>
 		public int Deflate(byte[] output)
 		{
 			return Deflate(output, 0, output.Length);
 		}
 		
 		/// <summary>
-		/// Deflates the current input block to the given array.  It returns
-		/// the number of bytes compressed, or 0 if either
-		/// needsInput() or finished() returns true or length is zero.
+		/// Deflates the current input block to the given array.
 		/// </summary>
 		/// <param name="output">
-		/// the buffer where to write the compressed data.
+		/// Buffer to store the compressed data.
 		/// </param>
 		/// <param name="offset">
-		/// the offset into the output array.
+		/// Offset into the output array.
 		/// </param>
 		/// <param name="length">
-		/// the maximum number of bytes that may be written.
+		/// The maximum number of bytes that may be stored.
 		/// </param>
+		/// <returns>
+		/// The number of compressed bytes added to the output, or 0 if either
+		/// needsInput() or finished() returns true or length is zero.
+		/// </returns>
 		/// <exception cref="System.InvalidOperationException">
-		/// if end() was called.
+		/// If end() was previously called.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// if offset and/or length don't match the array length.
+		/// If offset and/or length don't match the array length.
 		/// </exception>
 		public int Deflate(byte[] output, int offset, int length)
 		{
@@ -473,7 +475,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 					} else if (state == FLUSHING_STATE) {
 						if (level != NO_COMPRESSION) {
 							/* We have to supply some lookahead.  8 bit lookahead
-							 * are needed by the zlib inflater, and we must fill
+							 * is needed by the zlib inflater, and we must fill
 							 * the next byte, so that all bits are flushed.
 							 */
 							int neededbits = 8 + ((-pending.BitCount) & 7);
@@ -488,8 +490,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 						state = BUSY_STATE;
 					} else if (state == FINISHING_STATE) {
 						pending.AlignToByte();
-						/* We have completed the stream */
-						if (!noHeader) {
+
+						// Compressed data is complete.  Write footer information if required.
+						if (!noHeaderOrFooter) {
 							int adler = engine.Adler;
 							pending.WriteShortMSB(adler >> 16);
 							pending.WriteShortMSB(adler & 0xffff);
@@ -518,23 +521,23 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		
 		/// <summary>
 		/// Sets the dictionary which should be used in the deflate process.
-		/// The dictionary should be a byte array containing strings that are
+		/// The dictionary is a byte array containing strings that are
 		/// likely to occur in the data which should be compressed.  The
 		/// dictionary is not stored in the compressed output, only a
 		/// checksum.  To decompress the output you need to supply the same
 		/// dictionary again.
 		/// </summary>
 		/// <param name="dict">
-		/// the dictionary.
+		/// The dictionary data
 		/// </param>
 		/// <param name="offset">
-		/// an offset into the dictionary.
+		/// An offset into the dictionary.
 		/// </param>
 		/// <param name="length">
-		/// the length of the dictionary.
+		/// The length of the dictionary data to use
 		/// </param>
 		/// <exception cref="System.InvalidOperationException">
-		/// if setInput () or deflate () were already called or another dictionary was already set.
+		/// If setInput () or deflate () were already called or another dictionary was already set.
 		/// </exception>
 		public void SetDictionary(byte[] dict, int offset, int length)
 		{

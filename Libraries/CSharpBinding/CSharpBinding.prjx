@@ -132,6 +132,8 @@
     <File name=".\Project\.svn\wcprops\CSharpCompilerParameters.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\Project\.svn\wcprops\CSharpProject.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\Parser\ExpressionFinder.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\FormattingStrategy\DocumentAccessor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\FormattingStrategy\Indentation.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto="..\..\..\..\bin\SharpDevelop.Base.dll" localcopy="False" />
@@ -142,20 +144,20 @@
   </References>
   <DeploymentInformation target="" script="" strategy="File" />
   <Configuration runwithwarnings="True" name="Debug">
-    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
     <Execution commandlineparameters="" consolepause="False" />
-    <Output directory="..\..\..\..\AddIns\AddIns\BackendBindings" assembly="CSharpBinding" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+    <Output directory="..\..\..\..\AddIns\AddIns\BackendBindings" assembly="CSharpBinding" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
   </Configuration>
   <Configurations active="Debug">
     <Configuration runwithwarnings="True" name="Debug">
-      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="False" />
-      <Output directory="..\..\..\..\AddIns\AddIns\BackendBindings" assembly="CSharpBinding" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory="..\..\..\..\AddIns\AddIns\BackendBindings" assembly="CSharpBinding" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
     <Configuration runwithwarnings="False" name="Release">
-      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\..\..\..\AddIns\AddIns\BackendBindings" assembly="CSharpBinding" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory="..\..\..\..\AddIns\AddIns\BackendBindings" assembly="CSharpBinding" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
   </Configurations>
 </Project>

@@ -26,7 +26,7 @@ namespace SharpDevelop.Internal.Parser
 			
 			uint count = reader.ReadUInt32();
 			for (uint i = 0; i < count; ++i) {
-				parameters.Add(new PersistentParameter(reader, classProxyCollection));
+				Parameters.Add(new PersistentParameter(reader, classProxyCollection));
 			}
 		}
 		
@@ -38,8 +38,8 @@ namespace SharpDevelop.Internal.Parser
 			writer.Write((uint)modifiers);
 			((PersistentReturnType)returnType).WriteTo(writer);
 			
-			writer.Write((uint)parameters.Count);
-			foreach (PersistentParameter p in parameters) {
+			writer.Write((uint)Parameters.Count);
+			foreach (PersistentParameter p in Parameters) {
 				p.WriteTo(writer);
 			}
 		}
@@ -56,7 +56,7 @@ namespace SharpDevelop.Internal.Parser
 			returnType         = new PersistentReturnType(classProxyCollection, indexer.ReturnType);
 			
 			foreach (IParameter param in indexer.Parameters) {
-				parameters.Add(new PersistentParameter(classProxyCollection, param));
+				Parameters.Add(new PersistentParameter(classProxyCollection, param));
 			}
 			
 			region = getterRegion = setterRegion = null;

@@ -58,7 +58,20 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			myDoc.Load(oTransformed);
 			myDoc.Save(outputFile);
 		}
-
+		
+		public static void Convert(string inputFile, XmlReader xslReader, string outputFile, XsltArgumentList xsltArgList, System.Text.Encoding encoding)
+		{
+			using (FileStream fs = new FileStream(inputFile, FileMode.Open, FileAccess.Read)) {
+				using (StreamReader r = new StreamReader(fs, encoding)) {
+					XmlReader reader = new XmlTextReader(inputFile, r);
+					XmlReader oTransformed = TransformXmlToXml(reader, xslReader, xsltArgList);
+					XmlDocument myDoc = new XmlDocument();
+					myDoc.Load(oTransformed);
+					myDoc.Save(outputFile);
+				}
+			}
+		}
+		
 		public static string ConvertToString(string inputFile, string xslPath)
 		{
 			return ConvertToString(inputFile, xslPath, null);
@@ -145,19 +158,19 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 				// Return the empty xml reader
 				return new XmlTextReader("");
 			} else {
-					// Check if string starts with "<"
-					// If it does, it is an XML file
-					if (strInput.Substring(0,1) == "<")
-					{
-						//String could be an xml file - load
-						return new XmlTextReader(new StringReader(strInput));
-					}
-					else
-						{
-							// Assume this is a file path - return loaded XML
-							return new XmlTextReader(strInput);
-						}
+				// Check if string starts with "<"
+				// If it does, it is an XML file
+				if (strInput.Substring(0,1) == "<")
+				{
+					//String could be an xml file - load
+					return new XmlTextReader(new StringReader(strInput));
 				}
+				else
+				{
+					// Assume this is a file path - return loaded XML
+					return new XmlTextReader(strInput);
+				}
+			}
 		}
 	}
 }

@@ -99,26 +99,27 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 
  			foreach (ProjectFile finfo in p.ProjectFiles) {
 				if (finfo.BuildAction == BuildAction.Compile) {
-					int i = 0;
+			
 					IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
 					if (parserService.GetParser(finfo.Name) == null) {
 						continue;
 					}
-
-					for(i=0; i < 5 && parserService.GetParseInformation(finfo.Name) == null; i++) {
+					
+					for(int i = 0; i < 3 && parserService.GetParseInformation(finfo.Name) == null; i++) {
 						Thread.Sleep(100);
 					}
-
-					if (parserService.GetParseInformation(finfo.Name) == null) {
-						continue;
-					}
-
+					
 					IParseInformation parseInformation = parserService.GetParseInformation(finfo.Name);
+					if (parseInformation == null) {
+						parseInformation = parserService.ParseFile(finfo.Name);
+					}
+					
 					if (parseInformation != null) {
 						ICompilationUnit unit = parseInformation.BestCompilationUnit as ICompilationUnit;
 						if (unit != null) {
 						   AddToClassTree(prjNode, finfo.Name, unit);
 						}
+						parseInformation=null;
 					}
 				}
 			}

@@ -38,7 +38,25 @@ namespace ICSharpCode.SharpDevelop.Commands.TabStrip
 			}
 		}
 	}
-
+	
+	public class CloseAllButThisFileTab : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			IWorkbenchWindow window = Owner as IWorkbenchWindow;
+			IViewContent lastContent = null;
+			for (int i = 0 ; i < WorkbenchSingleton.Workbench.ViewContentCollection.Count;) {
+				IViewContent content = WorkbenchSingleton.Workbench.ViewContentCollection[i];
+				if (content.WorkbenchWindow != window && content != lastContent) {
+					content.WorkbenchWindow.CloseWindow(false);
+					lastContent = content;
+				} else {
+					++i;
+				}
+			}
+		}
+	}
+	
 	public class SaveFileTab : AbstractMenuCommand
 	{
 		public override void Run()
@@ -90,7 +108,7 @@ namespace ICSharpCode.SharpDevelop.Commands.TabStrip
 					
 					window.ViewContent.Save(fileName);
 					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-					messageService.ShowMessage(fileName, "File saved");
+					messageService.ShowMessage(fileName, "${res:ICSharpCode.SharpDevelop.Commands.SaveFile.FileSaved}");
 				}
 			}
 		}
@@ -107,7 +125,6 @@ namespace ICSharpCode.SharpDevelop.Commands.TabStrip
 			}
 		}
 	}
-	
 	
 	public class CopyPathName : AbstractMenuCommand
 	{

@@ -56,6 +56,8 @@ namespace ICSharpCode.SharpDevelop.Commands.ProjectBrowser
 		public override void Run()
 		{
 			ProjectBrowserView browser = (ProjectBrowserView)Owner;
+			browser.Select();
+			browser.Focus();
 			browser.StartLabelEdit();
 		}
 	}

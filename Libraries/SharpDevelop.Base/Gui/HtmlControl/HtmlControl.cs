@@ -14,7 +14,7 @@ namespace ICSharpCode.SharpDevelop.Gui.HtmlControl
 		IWebBrowser control = null;
 		AxHost.ConnectionPointCookie cookie;
 		
-		string url           = "";
+		string url           = "about:blank";
 		string html          = "";
 		string cssStyleSheet = "";
 		bool initialized     = false;
@@ -55,6 +55,16 @@ namespace ICSharpCode.SharpDevelop.Gui.HtmlControl
 		public string Url {
 			set {
 				this.url = value;
+				if (initialized) {
+					object flags       = 0;
+					object targetFrame = String.Empty;
+					object postData    = String.Empty;
+					object headers     = String.Empty;
+					IWebBrowser2 iwb2=(IWebBrowser2)this.control;
+					iwb2.Silent=true;
+					this.control.Navigate(url, ref flags, ref targetFrame, ref postData, ref headers);
+					
+				}
 			}
 		}
 		
@@ -102,7 +112,7 @@ namespace ICSharpCode.SharpDevelop.Gui.HtmlControl
 //// Alex: prevent dialog boxes - annoying when scripting is off
 			IWebBrowser2 iwb2=(IWebBrowser2)this.control;
 			iwb2.Silent=true;
-			this.control.Navigate("about:blank", ref flags, ref targetFrame, ref postData, ref headers);
+			this.control.Navigate(url, ref flags, ref targetFrame, ref postData, ref headers);
 		}
 		
 		void DelayedInitializeCaller(object sender, BrowserNavigateEventArgs e)

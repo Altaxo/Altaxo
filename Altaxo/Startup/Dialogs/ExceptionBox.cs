@@ -76,10 +76,11 @@ namespace ICSharpCode.SharpDevelop
     
     void CopyInfoToClipboard()
     {
-      if (copyErrorCheckBox.Checked) 
-      {
-        Clipboard.SetDataObject(new DataObject(System.Windows.Forms.DataFormats.Text, getClipboardString()), true);
-      }
+ 			if (copyErrorCheckBox.Checked) {
+				try {
+					Clipboard.SetDataObject(new DataObject(System.Windows.Forms.DataFormats.Text, getClipboardString()), true);
+				} catch (Exception) {}
+			}
     }
     
     // This method is used in the forms designer.
@@ -97,7 +98,7 @@ namespace ICSharpCode.SharpDevelop
     
     void continueButtonClick(object sender, System.EventArgs e)
     {
-      //      CopyInfoToClipboard();
+//			CopyInfoToClipboard();
       DialogResult = System.Windows.Forms.DialogResult.Ignore;
     }
     

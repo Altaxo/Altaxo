@@ -100,7 +100,7 @@ namespace ICSharpCode.TextEditor.Document
 				if (Bold) {
 					return Italic ? FontContainer.BoldItalicFont : FontContainer.BoldFont;
 				}
-				return Italic ? FontContainer.ItalicFont :FontContainer.DefaultFont;
+				return Italic ? FontContainer.ItalicFont : FontContainer.DefaultFont;
 			}
 		}
 		
@@ -192,6 +192,7 @@ namespace ICSharpCode.TextEditor.Document
 				} else {
 					color = (Color)(Color.GetType()).InvokeMember(c, BindingFlags.GetProperty, null, Color, new object[0]);
 				}
+				hasForgeground = true;
 			} else {
 				color = defaultColor.color;
 			}
@@ -206,6 +207,7 @@ namespace ICSharpCode.TextEditor.Document
 				} else {
 					backgroundcolor = (Color)(Color.GetType()).InvokeMember(c, BindingFlags.GetProperty, null, Color, new object[0]);
 				}
+				hasBackground = true;
 			} else {
 				backgroundcolor = defaultColor.BackgroundColor;
 			}

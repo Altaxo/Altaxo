@@ -17,6 +17,8 @@ using ICSharpCode.SharpDevelop.Gui.Components;
 using ICSharpCode.SharpDevelop.Internal.Project;
 using ICSharpCode.Core.AddIns.Codons;
 using ICSharpCode.Core.AddIns;
+using ICSharpCode.Core.Properties;
+using ICSharpCode.Core.AddIns.Conditions;
 
 using ICSharpCode.Core.Services;
 
@@ -43,7 +45,10 @@ namespace ICSharpCode.SharpDevelop.Services
 			
 			for (int i = 0; i < codons.Length; ++i) {
 				toolBars[i] = CreateToolBarFromCodon(WorkbenchSingleton.Workbench, codons[i]);
+				toolBars[i].UseChevron = false;
 			}
+			if (codons.Length > 0)
+				toolBars[0].NewLine = true;
 			return toolBars;
 		}
 		
@@ -53,21 +58,33 @@ namespace ICSharpCode.SharpDevelop.Services
 			
 			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 			foreach (ToolbarItemCodon childCodon in codon.SubItems) {
-				CommandBarItem item;
+				CommandBarItem item = null;
 				
-				if (childCodon.ToolTip != null) {
-					if (childCodon.ToolTip == "-") {
-						item = new CommandBarSeparator();
-					} else {
-						item = new SdMenuCommand(childCodon.Conditions, owner, childCodon.ToolTip);
-						item.Image = resourceService.GetBitmap(childCodon.Icon);
-					}
-				} else {
-					continue;
+				object o = null;
+				if(childCodon.Class != null) {
+					o = childCodon.AddIn.CreateObject(childCodon.Class);
+					item = null;
 				}
 				
-				if (childCodon.Class != null) {
-					((SdMenuCommand)item).Command = (ICommand)childCodon.AddIn.CreateObject(childCodon.Class);
+				if(o != null && o is IComboBoxCommand) {
+					item = new SdMenuComboBox(childCodon.Conditions, owner, (ICommand)o);
+					((IComboBoxCommand)o).Owner = item;
+				} else {
+					
+					if (childCodon.ToolTip != null) {
+						if (childCodon.ToolTip == "-") {
+							item = new CommandBarSeparator();
+						} else {
+							item = new SdMenuCommand(childCodon.Conditions, owner, childCodon.ToolTip);
+							item.Image = resourceService.GetBitmap(childCodon.Icon);
+						}
+					} else {
+						continue;
+					}
+					
+					if (childCodon.Class != null) {
+						((SdMenuCommand)item).Command = (ICommand)childCodon.AddIn.CreateObject(childCodon.Class);
+					}
 				}
 				bar.Items.Add(item);
 			}

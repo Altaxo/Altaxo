@@ -72,6 +72,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			}
 		}
 		
+		protected bool StartCodeBlockInSameLine {
+			get {
+				PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
+				IProperties p = (IProperties)propertyService.GetProperty("SharpDevelop.UI.CodeGenerationOptions", new DefaultProperties());
+				return p.GetProperty("StartBlockOnSameLine", true);
+			}
+		}
+		
 		public void GenerateCode(TextArea editActionHandler, IList items)
 		{
 			numOps = 0;
@@ -103,6 +111,29 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 		}
 		
 		protected abstract void StartGeneration(IList items, string fileExtension);
+		
+		protected void Indent()
+		{
+			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
+			IProperties p = ((IProperties)propertyService.GetProperty("ICSharpCode.TextEditor.Document.Document.DefaultDocumentAggregatorProperties", new DefaultProperties()));
+			
+			bool tabsToSpaces = p.GetProperty("TabsToSpaces", false);
+			
+			int  tabSize      = p.GetProperty("TabIndent", 4);
+			int  indentSize   = p.GetProperty("IndentationSize", 4);
+			
+			if (tabsToSpaces) {
+				editActionHandler.InsertString(new String(' ', indentSize));
+			} else {
+				editActionHandler.InsertString(new String('\t', indentSize / tabSize));
+				int trailingSpaces = indentSize % tabSize;
+				if (trailingSpaces > 0) {
+					editActionHandler.InsertString(new String(' ', trailingSpaces));
+					++numOps;
+				}
+			}
+			++numOps;
+		}
 		
 		protected void Return()
 		{

@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Collections;
+using System.Diagnostics;
 
 using ICSharpCode.TextEditor;
 
@@ -19,12 +20,13 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 	{
 		static ICompletionData[] completionData;
 		CodeCompletionListView   codeCompletionListView;
+		VScrollBar    vScrollBar = new VScrollBar();
 		
 		int                      startOffset;
 		int                      endOffset;
 		DeclarationViewWindow    declarationViewWindow = null;
 		Rectangle workingScreen;
-			
+		
 		public static CodeCompletionWindow ShowCompletionWindow(Form parent, TextEditorControl control, string fileName, ICompletionDataProvider completionDataProvider, char firstChar)
 		{
 			completionData = completionDataProvider.GenerateCompletionData(fileName, control.ActiveTextAreaControl.TextArea, firstChar);
@@ -44,26 +46,27 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			if (completionDataProvider.PreSelection != null) {
 				startOffset -= completionDataProvider.PreSelection.Length + 1;
 				endOffset--;
-			} 
+			}
 			
 			codeCompletionListView = new CodeCompletionListView(completionData);
 			codeCompletionListView.ImageList = completionDataProvider.ImageList;
 			codeCompletionListView.Dock = DockStyle.Fill;
 			codeCompletionListView.SelectedItemChanged += new EventHandler(CodeCompletionListViewSelectedItemChanged);
+			codeCompletionListView.DoubleClick += new EventHandler(CodeCompletionListViewDoubleClick);
+			codeCompletionListView.Click  += new EventHandler(CodeCompletionListViewClick);
 			Controls.Add(codeCompletionListView);
 			
-//			VScrollBar vScrollBar = new VScrollBar();
-//			vScrollBar.Dock = DockStyle.Right;
-//			vScrollBar.Minimum = 0;
-//			vScrollBar.Maximum = completionData.Length;
-//			vScrollBar.SmallChange = 1;
-//			vScrollBar.LargeChange = 3;
-//			vScrollBar.Enabled = true;
-//			vScrollBar.Visible = true;
-//			Controls.Add(vScrollBar);
-//			Console.WriteLine(vScrollBar);
+			if (completionData.Length > 10) {
+				vScrollBar.Dock = DockStyle.Right;
+				vScrollBar.Minimum = 0;
+				vScrollBar.Maximum = completionData.Length - 8;
+				vScrollBar.SmallChange = 1;
+				vScrollBar.LargeChange = 3;
+				codeCompletionListView.FirstItemChanged += new EventHandler(CodeCompletionListViewFirstItemChanged);
+				Controls.Add(vScrollBar);
+			}
 			
-			this.drawingSize = new Size(180, codeCompletionListView.ItemHeight * Math.Min(10, completionData.Length));
+			this.drawingSize = new Size(codeCompletionListView.ItemHeight * 10, codeCompletionListView.ItemHeight * Math.Min(10, completionData.Length));
 			SetLocation();
 			
 			declarationViewWindow = new DeclarationViewWindow(parentForm);
@@ -74,14 +77,28 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			if (completionDataProvider.PreSelection != null) {
 				CaretOffsetChanged(this, EventArgs.Empty);
 			}
+			
+			vScrollBar.Scroll += new ScrollEventHandler(DoScroll);
+		}
+		
+		void CodeCompletionListViewFirstItemChanged(object sender, EventArgs e)
+		{
+			vScrollBar.Value = Math.Min(vScrollBar.Maximum, codeCompletionListView.FirstItem);
 		}
 		
 		void SetDeclarationViewLocation()
 		{
-			Point pos = new Point(Bounds.Right, Bounds.Top);
-			if (pos.X + declarationViewWindow.Width >= workingScreen.Right) {
-				pos = new Point(Bounds.Left - declarationViewWindow.Width, pos.Y);
-			}
+			Console.WriteLine("SET DECLARATION VIEW LOCATION.");
+			//  This method uses the side with more free space
+			int leftSpace = Bounds.Left - workingScreen.Left;
+			int rightSpace = workingScreen.Right - Bounds.Right;
+			Point pos;
+			// The declaration view window has better line break when used on
+			// the right side, so prefer the right side to the left.
+			if (rightSpace * 2 > leftSpace)
+				pos = new Point(Bounds.Right, Bounds.Top);
+			else
+				pos = new Point(Bounds.Left - declarationViewWindow.Width, Bounds.Top);
 			if (declarationViewWindow.Location != pos) {
 				declarationViewWindow.Location = pos;
 			}
@@ -98,7 +115,7 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		void CodeCompletionListViewSelectedItemChanged(object sender, EventArgs e)
 		{
 			ICompletionData data = codeCompletionListView.SelectedCompletionData;
-			if (data != null) {
+			if (data != null && data.Description != null) {
 				declarationViewWindow.Description = data.Description;
 				SetDeclarationViewLocation();
 			} else {
@@ -108,7 +125,6 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		
 		public override bool ProcessKeyEvent(char ch)
 		{
-			Console.WriteLine("PRocesS: " + ch);
 			if (!Char.IsLetterOrDigit(ch) && ch != '_') {
 				InsertSelectedItem();
 				return false;
@@ -120,11 +136,19 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		protected override void CaretOffsetChanged(object sender, EventArgs e)
 		{
 			int offset = control.ActiveTextAreaControl.Caret.Offset;
+			//Console.WriteLine("StartOffset {0} endOffset {1} - Offset {2}", startOffset, endOffset, offset);
 			if (offset < startOffset || offset > endOffset) {
 				Close();
 			} else {
 				codeCompletionListView.SelectItemWithStart(control.Document.GetText(startOffset, offset - startOffset));
 			}
+		}
+		
+		protected void DoScroll(object sender, ScrollEventArgs sea)
+		{
+			codeCompletionListView.FirstItem = vScrollBar.Value;
+			codeCompletionListView.Refresh();
+			control.ActiveTextAreaControl.TextArea.Focus();
 		}
 		
 		protected override bool ProcessTextAreaKey(Keys keyData)
@@ -148,6 +172,12 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 						Close();
 					}
 					return false;
+				case Keys.Home:
+					codeCompletionListView.SelectIndex(0);
+					return true;
+				case Keys.End:
+					codeCompletionListView.SelectIndex(completionData.Length-1);
+					return true;
 				case Keys.PageDown:
 					codeCompletionListView.PageDown();
 					return true;
@@ -155,9 +185,11 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 					codeCompletionListView.PageUp();
 					return true;
 				case Keys.Down:
+				case Keys.Right:
 					codeCompletionListView.SelectNextItem();
 					return true;
 				case Keys.Up:
+				case Keys.Left:
 					codeCompletionListView.SelectPrevItem();
 					return true;
 				case Keys.Tab:
@@ -168,8 +200,19 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			return base.ProcessTextAreaKey(keyData);
 		}
 		
+		void CodeCompletionListViewDoubleClick(object sender, EventArgs e)
+		{
+			InsertSelectedItem();
+		}
+		
+		void CodeCompletionListViewClick(object sender, EventArgs e)
+		{
+			control.ActiveTextAreaControl.TextArea.Focus();
+		}
+		
 		protected override void OnClosed(EventArgs e)
 		{
+			codeCompletionListView.Close();
 			base.OnClosed(e);
 			declarationViewWindow.Close();
 			declarationViewWindow.Dispose();
@@ -180,8 +223,12 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			ICompletionData data = codeCompletionListView.SelectedCompletionData;
 			if (data != null) {
 				control.BeginUpdate();
-				control.Document.Remove(startOffset, endOffset - startOffset);
-				control.ActiveTextAreaControl.Caret.Position = control.Document.OffsetToPosition(startOffset);
+				
+				if (endOffset - startOffset > 0) {
+					//Console.WriteLine("start {0} length {1}", startOffset, endOffset - startOffset);
+					control.Document.Remove(startOffset, endOffset - startOffset);
+					control.ActiveTextAreaControl.Caret.Position = control.Document.OffsetToPosition(startOffset);
+				}
 				data.InsertAction(control);
 				control.EndUpdate();
 			}

@@ -100,14 +100,14 @@ namespace ICSharpCode.SharpRefactory.Parser
 				attr |=  MemberAttributes.Abstract;
 //			if ((modifier & Modifier.None) != 0)
 //				attr |=  MemberAttributes.AccessMask;
-//			if ((modifier & Modifier.None) != 0)
-//				attr |=  MemberAttributes.Assembly;
+			if ((modifier & Modifier.Internal) != 0)
+				attr |=  MemberAttributes.Assembly;
 			if ((modifier & Modifier.Const) != 0)
 				attr |=  MemberAttributes.Const;
-//			if ((modifier & Modifier.None) != 0)
-//				attr |=  MemberAttributes.Family;
-//			if ((modifier & Modifier.None) != 0)
-//				attr |=  MemberAttributes.FamilyAndAssembly;
+			if ((modifier & Modifier.Protected) != 0)
+				attr |=  MemberAttributes.Family;
+			if ((modifier & Modifier.Protected) != 0 && (modifier & Modifier.Internal) != 0)
+				attr |=  MemberAttributes.FamilyAndAssembly;
 //			if ((modifier & Modifier.None) != 0)
 //				attr |=  MemberAttributes.FamilyOrAssembly;
 			if ((modifier & Modifier.Sealed) != 0)
@@ -759,7 +759,10 @@ namespace ICSharpCode.SharpRefactory.Parser
 						// for example for : this.MyObject.MyMethod() leads to an exception, which 
 						// is correct in this case ... I know this is really HACKY :)
 						try {
-							targetExpr = ConvertToIdentifier(fRef2);
+							CodeExpression tExpr = ConvertToIdentifier(fRef2);
+							if (tExpr != null) {
+								targetExpr = tExpr;
+							}
 						} catch (Exception) {}
 					}
 				}
@@ -860,8 +863,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 				CodeExpression methodInvoker = (CodeExpression)assignmentExpression.Right.AcceptVisitor(this, null);
 				methodReference = false;
 					
-				if (assignmentExpression.Left is IdentifierExpression) 
-				{
+				if (assignmentExpression.Left is IdentifierExpression) {
 					AddStmt(new CodeAttachEventStatement(new CodeEventReferenceExpression(new CodeThisReferenceExpression(), ((IdentifierExpression)assignmentExpression.Left).Identifier),
 					                                                          methodInvoker));
 				} else {
@@ -917,7 +919,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		public override object Visit(CastExpression castExpression, object data)
 		{
-			string typeRef = castExpression.CastTo.Type;
+			string typeRef = ConvType(castExpression.CastTo.Type);
 			return new CodeCastExpression(typeRef, (CodeExpression)castExpression.Expression.AcceptVisitor(this, data));
 		}
 		
@@ -987,6 +989,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 				asm = typeof(System.String).Assembly;
 				t = asm.GetType(type);
 			}
+			
 			bool isField = t != null && (t.IsEnum || t.GetField(fieldName) != null);
 			if (!isField) {
 				int idx = type.LastIndexOf('.');
@@ -995,7 +998,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 					isField = IsField(type, fieldName);
 				}
 			}
-			Console.WriteLine(type + "." + fieldName + " -- " + isField);
+			
 			return isField;
 		}
 		
@@ -1019,6 +1022,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 		public override object Visit(FieldReferenceExpression fieldReferenceExpression, object data)
 		{
 			if (methodReference) {
+				methodReference = false;
 				return new CodeMethodReferenceExpression((CodeExpression)fieldReferenceExpression.TargetObject.AcceptVisitor(this, data), fieldReferenceExpression.FieldName);
 			}
 			if (IsFieldReferenceExpression(fieldReferenceExpression)) {
@@ -1080,32 +1084,37 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		CodeTypeReferenceExpression ConvertToIdentifier(FieldReferenceExpression fieldReferenceExpression)
 		{
-			string type = String.Empty;
+			StringBuilder type = new StringBuilder("");
 			
 			while (fieldReferenceExpression.TargetObject is FieldReferenceExpression) {
-				type = "."  + fieldReferenceExpression.FieldName + type;
+				type.Insert(0,'.');
+				type.Insert(1,fieldReferenceExpression.FieldName.ToCharArray());
 				fieldReferenceExpression = (FieldReferenceExpression)fieldReferenceExpression.TargetObject;
 			}
 			
-			type = "."  + fieldReferenceExpression.FieldName + type;
+			type.Insert(0,'.');
+			type.Insert(1,fieldReferenceExpression.FieldName.ToCharArray());
 			
 			if (fieldReferenceExpression.TargetObject is IdentifierExpression) {
-				type = ((IdentifierExpression)fieldReferenceExpression.TargetObject).Identifier + type;
-				string oldType = type;
-				int idx = type.LastIndexOf('.');
+				type.Insert(0, ((IdentifierExpression)fieldReferenceExpression.TargetObject).Identifier.ToCharArray());
+				string oldType = type.ToString();
+				int idx = oldType.LastIndexOf('.');
 				while (idx > 0) {
-					if (Type.GetType(type) != null) {
+					if (Type.GetType(type.ToString()) != null) {
 						break;
 					}
-					type = type.Substring(0, idx) + "+" + type.Substring(idx + 1);
-					idx = type.LastIndexOf('.');
+					string stype = type.ToString().Substring(idx + 1);
+					type = new StringBuilder(type.ToString().Substring(0, idx));
+					type.Append("+");
+					type.Append(stype);
+					idx = type.ToString().LastIndexOf('.');
 				}
-				if (Type.GetType(type) == null) {
-					type = oldType;
+				if (Type.GetType(type.ToString()) == null) {
+					type = new StringBuilder(oldType);
 				}
-				return new CodeTypeReferenceExpression(type);
+				return new CodeTypeReferenceExpression(type.ToString());
 			} else {
-				throw new Exception();
+				return null;
 			}
 		}
 		

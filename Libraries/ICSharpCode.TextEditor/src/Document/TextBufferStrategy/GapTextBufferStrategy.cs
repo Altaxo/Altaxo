@@ -40,7 +40,7 @@ namespace ICSharpCode.TextEditor.Document
 			buffer = text.ToCharArray();
 			gapBeginOffset = gapEndOffset = 0;
 		}
-				
+		
 		public char GetCharAt(int offset) 
 		{
 			return offset < gapBeginOffset ? buffer[offset] : buffer[offset + GapLength];
@@ -49,7 +49,7 @@ namespace ICSharpCode.TextEditor.Document
 		public string GetText(int offset, int length) 
 		{
 			int end = offset + length;
-	
+			
 			if (end < gapBeginOffset) {
 				return new string(buffer, offset, length);
 			}
@@ -58,9 +58,12 @@ namespace ICSharpCode.TextEditor.Document
 				return new string(buffer, offset + GapLength, length);
 			}
 			
-			StringBuilder buf = new StringBuilder();
-			buf.Append(buffer, offset,       gapBeginOffset - offset);
-			buf.Append(buffer, gapEndOffset, end - gapBeginOffset);
+			int block1Size = gapBeginOffset - offset;
+			int block2Size = end - gapBeginOffset;
+			
+			StringBuilder buf = new StringBuilder(block1Size + block2Size);
+			buf.Append(buffer, offset,       block1Size);
+			buf.Append(buffer, gapEndOffset, block2Size);
 			return buf.ToString();
 		}
 		

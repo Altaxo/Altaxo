@@ -521,7 +521,10 @@ namespace ICSharpCode.SharpRefactory.Parser
 		}
 		public virtual object Visit(ParenthesizedExpression parenthesizedExpression, object data)
 		{
-			return parenthesizedExpression.Expression.AcceptVisitor(this, data);
+			if (parenthesizedExpression.Expression != null) {
+				return parenthesizedExpression.Expression.AcceptVisitor(this, data);
+			} 
+			return data;
 		}
 		public virtual object Visit(FieldReferenceExpression fieldReferenceExpression, object data)
 		{

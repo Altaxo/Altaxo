@@ -41,5 +41,27 @@ namespace ICSharpCode.TextEditor.Document
 		/// This function sets the indentlevel in a range of lines.
 		/// </summary>
 		void IndentLines(TextArea textArea, int begin, int end);
-	}	
+		
+		/// <summary>
+		/// Finds the offset of the opening bracket in the block defined by offset skipping
+		/// brackets in strings and comments.
+		/// </summary>
+		/// <param name="document">The document to search in.</param>
+		/// <param name="offset">The offset of an position in the block or the offset of the closing bracket.</param>
+		/// <param name="openBracket">The character for the opening bracket.</param>
+		/// <param name="closingBracket">The character for the closing bracket.</param>
+		/// <returns>Returns the offset of the opening bracket or -1 if no matching bracket was found.</returns>
+		int SearchBracketBackward(IDocument document, int offset, char openBracket, char closingBracket);
+		
+		/// <summary>
+		/// Finds the offset of the closing bracket in the block defined by offset skipping
+		/// brackets in strings and comments.
+		/// </summary>
+		/// <param name="document">The document to search in.</param>
+		/// <param name="offset">The offset of an position in the block or the offset of the opening bracket.</param>
+		/// <param name="openBracket">The character for the opening bracket.</param>
+		/// <param name="closingBracket">The character for the closing bracket.</param>
+		/// <returns>Returns the offset of the closing bracket or -1 if no matching bracket was found.</returns>
+		int SearchBracketForward(IDocument document, int offset, char openBracket, char closingBracket);
+	}
 }

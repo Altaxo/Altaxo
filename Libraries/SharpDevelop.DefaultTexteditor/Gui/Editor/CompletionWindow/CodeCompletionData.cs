@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃƒÂ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -19,7 +19,7 @@ using ICSharpCode.TextEditor.Gui.CompletionWindow;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {
-	class CodeCompletionData : ICompletionData
+	public class CodeCompletionData : ICompletionData
 	{
 		static ClassBrowserIconsService classBrowserIconService = (ClassBrowserIconsService)ServiceManager.Services.GetService(typeof(ClassBrowserIconsService));
 		static IParserService           parserService           = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
@@ -121,6 +121,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			text = c.Name;
 			completionString = c.Name;
 			ambience.ConversionFlags = ConversionFlags.UseFullyQualifiedNames | ConversionFlags.ShowReturnType | ConversionFlags.ShowModifiers;
+//			Console.WriteLine("Convert : " + c);
 			description = ambience.Convert(c);
 			documentation = c.Documentation;
 		}
@@ -177,53 +178,71 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		{
 			((SharpDevelopTextAreaControl)control).ActiveTextAreaControl.TextArea.InsertString(completionString);
 		}
-
+		
+		internal static Regex whitespace = new Regex(@"\s+");
 		public static string GetDocumentation(string doc)
 		{
 			System.IO.StringReader reader = new System.IO.StringReader("<docroot>" + doc + "</docroot>");
 			XmlTextReader xml   = new XmlTextReader(reader);
 			StringBuilder ret   = new StringBuilder();
-			Regex whitespace    = new Regex(@"\s+");
+			////Regex whitespace    = new Regex(@"\s+");
 			
 			try {
 				xml.Read();
 				bool appendText = true;
+				bool inPara = false;
 				do {
 					if (xml.NodeType == XmlNodeType.Element) {
 						string elname = xml.Name.ToLower();
 						if (elname == "remarks") {
-							appendText = false;
-//							ret.Append("Remarks:\n");
+							ret.Append(Environment.NewLine);
+							ret.Append("Remarks:");
+							ret.Append(Environment.NewLine);
 						} else if (elname == "example") {
-							appendText = false;
-//							ret.Append("\nExample:");
+							ret.Append(Environment.NewLine);
+							ret.Append("Example:");
+							ret.Append(Environment.NewLine);
 						} else if (elname == "exception") {
-							appendText = false;
-//							ret.Append("\nException: " + GetCref(xml["cref"]) + ":\n");
+							ret.Append(Environment.NewLine);
+							ret.Append("Exception: ");
+							ret.Append(Environment.NewLine);
+							ret.Append(GetCref(xml.Value));
 						} else if (elname == "returns") {
-							appendText = false;
-//							ret.Append("\nReturns: ");
+							ret.Append(GetCref(xml["cref"]));
+							ret.Append(xml["langword"]);
 						} else if (elname == "see") {
-							appendText = false;
-//							ret.Append(GetCref(xml["cref"]) + xml["langword"]);
+							ret.Append(GetCref(xml["cref"]));
+							ret.Append(xml["langword"]);
 						} else if (elname == "seealso") {
-							appendText = false;
-//							ret.Append("See also: " + GetCref(xml["cref"]) + xml["langword"]);
+							ret.Append("See also: ");
+							ret.Append(GetCref(xml["cref"]));
 						} else if (elname == "paramref") {
-//							ret.Append(xml["name"]);
-							appendText = false;
+							if (!inPara) ret.Append(Environment.NewLine);
+							ret.Append(xml["name"]);
+							if (!inPara) ret.Append(": ");
 						} else if (elname == "param") {
-//							ret.Append(xml["name"].Trim() + ": ");
-							appendText = false;
+							if (!inPara) {
+								ret.Append(Environment.NewLine);
+							}
+							ret.Append(whitespace.Replace(xml["name"].Trim()," "));
+							if (!inPara) {
+								ret.Append(": ");
+							}
 						} else if (elname == "value") {
-							appendText = false;
-//							ret.Append("Value: ");
+							////appendText = false;
+							ret.Append(Environment.NewLine);
+							ret.Append("Value: ");
+						} else if (elname == "para") {
+							inPara = true;
 						}
 					} else if (xml.NodeType == XmlNodeType.EndElement) {
 						string elname = xml.Name.ToLower();
 //						if (elname == "para" || elname == "param") {
-//							ret.Append("\n");
+//							ret.Append(Environment.NewLine);
 //						}
+						if (elname == "para") {
+							inPara = false;
+						}
 					} else if (xml.NodeType == XmlNodeType.Text) {
 						if (appendText) {
 							ret.Append(whitespace.Replace(xml.Value, " "));
@@ -239,9 +258,15 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		static string GetCref(string cref)
 		{
-			if (cref == null) return "";
-			if (cref.Length < 2) return cref;
-			if (cref.Substring(1, 1) == ":") return cref.Substring(2, cref.Length - 2);
+			if (cref == null || cref.Trim().Length==0) {
+				return "";
+			}
+			if (cref.Length < 2) {
+				return cref;
+			}
+			if (cref.Substring(1, 1) == ":") {
+				return cref.Substring(2, cref.Length - 2);
+			}
 			return cref;
 		}
 		

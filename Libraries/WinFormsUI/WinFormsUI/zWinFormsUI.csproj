@@ -145,7 +145,7 @@
                 />
                 <File
                     RelPath = "DockPane.cs"
-                    SubType = "Component"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File

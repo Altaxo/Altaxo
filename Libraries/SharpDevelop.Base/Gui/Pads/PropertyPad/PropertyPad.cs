@@ -133,7 +133,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			
 			grid = new PropertyGrid();
 			grid.PropertyValueChanged += new PropertyValueChangedEventHandler(PropertyChanged);
-			grid.PropertySort = propertyService.GetProperty("FormsDesigner.DesignerOptions.PropertyGridSortAlphabetical", false) ? PropertySort.Alphabetical : PropertySort.Categorized;
+			grid.PropertySort = propertyService.GetProperty("FormsDesigner.DesignerOptions.PropertyGridSortAlphabetical", false) ? PropertySort.Alphabetical : PropertySort.CategorizedAlphabetical;
 			grid.Dock = DockStyle.Fill;
 			panel.Controls.Add(grid);
 			panel.Controls.Add(comboBox);
@@ -212,12 +212,14 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		void ComboBoxSelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (!inUpdate) {
-				ISelectionService selectionService = (ISelectionService)host.GetService(typeof(ISelectionService));
-				if (comboBox.SelectedIndex >= 0) {
-					selectionService.SetSelectedComponents(new object[] {comboBox.Items[comboBox.SelectedIndex] });
-				} else {
-					SetDesignableObject(null);
-					selectionService.SetSelectedComponents(new object[] { });
+				if (host!=null) {
+					ISelectionService selectionService = (ISelectionService)host.GetService(typeof(ISelectionService));
+					if (comboBox.SelectedIndex >= 0) {
+						selectionService.SetSelectedComponents(new object[] {comboBox.Items[comboBox.SelectedIndex] });
+          				} else {
+						SetDesignableObject(null);
+						selectionService.SetSelectedComponents(new object[] { });
+					}
 				}
 				if (SelectedObjectChanged != null) {
 					SelectedObjectChanged(this, EventArgs.Empty);
@@ -271,6 +273,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		{
 			PropertyPad.host = null;
 			grid.Site = null;
+			SetDesignableObject(null);
 			
 			ISelectionService selectionService = (ISelectionService)host.GetService(typeof(ISelectionService));
 			if (selectionService != null) {
@@ -291,22 +294,27 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		public static void SetDesignerHost(IDesignerHost host)
 		{
 			PropertyPad.host = host;
-			grid.Site = (new IDEContainer(host)).CreateSite(grid);
-			grid.PropertyTabs.AddTabType(typeof(System.Windows.Forms.Design.EventsTab), PropertyTabScope.Document);
+			if (host != null) {
+				grid.Site = (new IDEContainer(host)).CreateSite(grid);
+				grid.PropertyTabs.AddTabType(typeof(System.Windows.Forms.Design.EventsTab), PropertyTabScope.Document);
 			
-			ISelectionService selectionService = (ISelectionService)host.GetService(typeof(ISelectionService));
-			if (selectionService != null) {
-				selectionService.SelectionChanging += new EventHandler(SelectionChangingHandler);
-				selectionService.SelectionChanged  += new EventHandler(SelectionChangedHandler);
-			}
+				ISelectionService selectionService = (ISelectionService)host.GetService(typeof(ISelectionService));
+				if (selectionService != null) {
+					selectionService.SelectionChanging += new EventHandler(SelectionChangingHandler);
+					selectionService.SelectionChanged  += new EventHandler(SelectionChangedHandler);
+				}
 			
-			host.TransactionClosed += new DesignerTransactionCloseEventHandler(TransactionClose);
+				host.TransactionClosed += new DesignerTransactionCloseEventHandler(TransactionClose);
 			
-			IComponentChangeService componentChangeService = (IComponentChangeService)host.GetService(typeof(IComponentChangeService));
-			if (componentChangeService != null) {
-				componentChangeService.ComponentAdded   += new ComponentEventHandler(UpdateSelectedObjects);
-				componentChangeService.ComponentRemoved += new ComponentEventHandler(UpdateSelectedObjects);
-				componentChangeService.ComponentRename  += new ComponentRenameEventHandler(UpdateSelectedObjectsOnRename);
+				IComponentChangeService componentChangeService = (IComponentChangeService)host.GetService(typeof(IComponentChangeService));
+				if (componentChangeService != null) {
+					componentChangeService.ComponentAdded   += new ComponentEventHandler(UpdateSelectedObjects);
+					componentChangeService.ComponentRemoved += new ComponentEventHandler(UpdateSelectedObjects);
+					componentChangeService.ComponentRename  += new ComponentRenameEventHandler(UpdateSelectedObjectsOnRename);
+				}
+			} else {
+				grid.Site = null;
+				
 			}
 		}
 		
@@ -372,11 +380,14 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 				ICollection selection = selectionService.GetSelectedComponents();
 				object[] selArray = new object[selection.Count];
 				selection.CopyTo(selArray, 0);
-				grid.SelectedObjects = selArray;
 				
 				inUpdate = true;
 				try {
+					grid.SelectedObjects = selArray;
+					
 					SelectedObjectsChanged();
+				} catch (Exception) {
+					
 				} finally {
 					inUpdate = false;
 				}

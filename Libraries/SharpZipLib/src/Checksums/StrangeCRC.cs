@@ -40,7 +40,9 @@ using System;
 
 namespace ICSharpCode.SharpZipLib.Checksums 
 {
-	
+	/// <summary>
+	/// Bzip2 checksum algorithm
+	/// </summary>
 	public class StrangeCRC : IChecksum
 	{
 		readonly static uint[] crc32Table = {
@@ -109,24 +111,38 @@ namespace ICSharpCode.SharpZipLib.Checksums
 			0xafb010b1, 0xab710d06, 0xa6322bdf, 0xa2f33668,
 			0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
 		};
+		
 		int globalCrc;
-	
+
+		/// <summary>
+		/// construct Crc
+		/// </summary>	
 		public StrangeCRC() 
 		{
 			Reset();
 		}
-	
+
+		/// <summary>
+		/// reset state of Crc
+		/// </summary>
 		public void Reset()
 		{
 			globalCrc = -1;
 		}
-	
+
+		/// <summary>
+		/// current Crc value
+		/// </summary>
 		public long Value {
 			get {
 				return ~globalCrc;
 			}
 		}
 		
+		/// <summary>
+		/// update Crc value
+		/// </summary>
+		/// <param name="inCh">data update is based on</param>
 		public void Update(int inCh)
 		{
 			int temp = (globalCrc >> 24) ^ inCh;
@@ -135,12 +151,21 @@ namespace ICSharpCode.SharpZipLib.Checksums
 			}
 			globalCrc = (int)((globalCrc << 8) ^ crc32Table[temp]);
 		}
-		
+
+		/// <summary>
+		/// Update Crc based on a block of data
+		/// </summary>		
 		public void Update(byte[] buf)
 		{
 			Update(buf, 0, buf.Length);
 		}
 		
+		/// <summary>
+		/// update Crc based on a portion of a block of data
+		/// </summary>
+		/// <param name="buf">block of data</param>
+		/// <param name="off">index of first byte to use</param>
+		/// <param name="len">number of bytes to use</param>
 		public void Update(byte[] buf, int off, int len)
 		{
 			if (buf == null) {

@@ -131,15 +131,7 @@
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\ConversionStyleSheets\ShowAuthors.xsl"
-                    BuildAction = "Content"
-                />
-                <File
                     RelPath = "data\ConversionStyleSheets\ShowChangeLog.xsl"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\ConversionStyleSheets\ShowHowYouCanHelp.xsl"
                     BuildAction = "Content"
                 />
                 <File
@@ -244,10 +236,6 @@
                 />
                 <File
                     RelPath = "data\resources\StringResources.bg.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.br.resources"
                     BuildAction = "Content"
                 />
                 <File

@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krueger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -82,6 +82,12 @@ namespace CSharpBinding
 			[ConvertToRelativePathAttribute()]
 			[XmlAttribute("win32Icon")]
 			public string         win32Icon     = String.Empty;
+			
+			[XmlAttribute("noconfig")]
+			public bool noconfig = false;
+			
+			[XmlAttribute("nostdlib")]
+			public bool noStdLib = false;
 		}
 		
 		[XmlNodeName("Execution")]
@@ -218,6 +224,31 @@ namespace CSharpBinding
 			}
 		}
 		
+		[DefaultValue(false)]
+		[LocalizedProperty("${res:BackendBindings.CompilerOptions.CodeGeneration.NoStdLib}",
+		                   Category    = "${res:BackendBindings.CompilerOptions.CodeGeneration}",
+		                   Description = "${res:BackendBindings.CompilerOptions.CodeGeneration.NoStdLib.Description}")]
+		public bool NoStdLib {
+			get {
+				return codeGeneration.noStdLib;
+			}
+			set {
+				codeGeneration.noStdLib = value;
+			}
+		}
+		
+		[DefaultValue(false)]
+		[LocalizedProperty("${res:BackendBindings.CompilerOptions.CodeGeneration.NoConfig}",
+		                   Category    = "${res:BackendBindings.CompilerOptions.CodeGeneration}",
+		                   Description = "${res:BackendBindings.CompilerOptions.CodeGeneration.NoConfig.Description}")]
+		public bool NoConfig {
+			get {
+				return codeGeneration.noconfig;
+			}
+			set {
+				codeGeneration.noconfig = value;
+			}
+		}
 #endregion
 
 #region Errors and Warnings 
