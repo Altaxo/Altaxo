@@ -124,7 +124,7 @@ namespace Altaxo.Graph.GUI
 
 			// fill the font size combobox with reasonable values
 			this.m_cbFontSize.Items.AddRange(new string[]{"8","9","10","11","12","14","16","18","20","22","24","26","28","36","48","72"});
-			this.m_cbFontSize.SelectedItem = m_TextObject.Font.Size.ToString();
+			this.m_cbFontSize.Text = m_TextObject.Font.Size.ToString();
 
 
 			// fill the color dialog box
@@ -582,7 +582,7 @@ namespace Altaxo.Graph.GUI
 
 				try
 				{
-					string str = (string)this.m_cbFontSize.SelectedItem;
+					string str = (string)this.m_cbFontSize.Text;
 					float newSize = System.Convert.ToSingle(str);
 					Font oldFont = this.m_TextObject.Font;
 					this.m_TextObject.Font = new Font(oldFont.FontFamily,newSize,oldFont.Style,GraphicsUnit.World);

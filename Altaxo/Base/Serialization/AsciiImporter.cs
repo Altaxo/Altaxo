@@ -519,10 +519,19 @@ namespace Altaxo.Serialization
 		}
 
 
+		/// <summary>
+		/// Analyzes the first <code>nLines</code> of the ascii stream.
+		/// </summary>
+		/// <param name="nLines"></param>The number of lines to analyze. It is no error if the stream contains a less number of lines than provided here.</param>
+		/// <param name="defaultImportOptions">The default import options.</param>
+		/// <returns>Import options that can be used in a following step to read in the ascii stream. Null is returned if the stream contains no data.</returns>
 		public AsciiImportOptions Analyze(int nLines, AsciiImportOptions defaultImportOptions)
 		{
 
 			string sLine;
+			if(stream.CanSeek)
+				stream.Seek(0,System.IO.SeekOrigin.Begin);
+
 			System.IO.StreamReader sr = new System.IO.StreamReader(stream,System.Text.Encoding.ASCII,true);
 			System.Collections.ArrayList result = new System.Collections.ArrayList();
 		
@@ -534,6 +543,9 @@ namespace Altaxo.Serialization
 				result.Add(new AsciiLineAnalyzer(i,sLine));
 			}
 		
+			if(result.Count==0)
+				return null; // there is nothing to analyze
+
 			// now view the results
 			// calc the frequency o
 			System.Collections.SortedList sl= new System.Collections.SortedList();

@@ -1122,15 +1122,6 @@ namespace Altaxo.Worksheet
 					}
 				}
 				dao.SetData(sw.ToString());
-
-				// now copy the data into a Array and copy this also to the clipboard
-				System.Collections.ArrayList arl = new System.Collections.ArrayList();
-				for(i=0;i<nCols;i++)
-					arl.Add(dt[dg.SelectedColumns[i]]);
-
-				dao.SetData("Altaxo.Columns",arl);
-
-	
 			}
 
 			if(dg.AreColumnsOrRowsSelected)
@@ -1521,27 +1512,53 @@ namespace Altaxo.Worksheet
 			Altaxo.Data.DataTable dt = dg.DataTable;
 			System.Windows.Forms.DataObject dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
 
+			string[] formats = dao.GetFormats();
+			System.Diagnostics.Trace.WriteLine("Available formats:");
+			foreach(string format in formats)
+				System.Diagnostics.Trace.WriteLine(format);
+
 			if(dao.GetDataPresent("Altaxo.Data.DataTable.ClipboardMemento"))
 			{
 				Altaxo.Data.DataTable.ClipboardMemento tablememento = (Altaxo.Data.DataTable.ClipboardMemento)dao.GetData("Altaxo.Data.DataTable.ClipboardMemento");
 				PasteFromTable(dg,tablememento.DataTable);
+				return;
 			}
 
-			else if(dao.GetDataPresent("Altaxo.Columns"))
+			object clipboardobject=null;
+
+			if(dao.GetDataPresent("Csv"))
+				clipboardobject = dao.GetData("Csv");
+			else if(dao.GetDataPresent("Text"))
+				clipboardobject = dao.GetData("Text");
+
+			if(clipboardobject is System.IO.MemoryStream)
 			{
-				System.Collections.ArrayList arl = (System.Collections.ArrayList)dao.GetData("Altaxo.Columns");
-
-				int i;
-				// Paste into selected columns
-				for(i=0; i<dg.SelectedColumns.Count && i<arl.Count; i++)
+				System.IO.MemoryStream memstream = (System.IO.MemoryStream)clipboardobject;
+				Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
+				Altaxo.Serialization.AltaxoAsciiImporter importer = new Altaxo.Serialization.AltaxoAsciiImporter(memstream);
+				Altaxo.Serialization.AsciiImportOptions options = importer.Analyze(20,new Altaxo.Serialization.AsciiImportOptions());
+				if(options!=null)
 				{
-					dg.DataTable[dg.SelectedColumns[i]] = (Altaxo.Data.DataColumn)arl[i];
+					importer.ImportAscii(options,table);
+					PasteFromTable(dg,table);
 				}
+			}
+			else if(clipboardobject is string)
+			{
+				System.IO.MemoryStream memstream = new System.IO.MemoryStream();
+				System.IO.TextWriter textwriter = new System.IO.StreamWriter(memstream);
+				textwriter.Write((string)clipboardobject);
+				textwriter.Flush();
+				//textwriter.Close();
+				//memstream.Close();
 
-				// then paste in new (!) colums
-				for( ; i<arl.Count;i++)
+				Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
+				Altaxo.Serialization.AltaxoAsciiImporter importer = new Altaxo.Serialization.AltaxoAsciiImporter(memstream);
+				Altaxo.Serialization.AsciiImportOptions options = importer.Analyze(20,new Altaxo.Serialization.AsciiImportOptions());
+				if(options!=null)
 				{
-					dg.DataTable.DataColumns.Add((Altaxo.Data.DataColumn)arl[i]);
+					importer.ImportAscii(options,table);
+					PasteFromTable(dg,table);
 				}
 			}
 		}

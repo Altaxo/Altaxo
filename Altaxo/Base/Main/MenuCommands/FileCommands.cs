@@ -93,31 +93,34 @@ namespace Altaxo.Main.Commands
 		public override void Run()
 		{
 			
+
+			if(Current.Project.IsDirty)
+			{
+				System.ComponentModel.CancelEventArgs cancelargs = new System.ComponentModel.CancelEventArgs();
+				Current.ProjectService.AskForSavingOfProject(cancelargs);
+				if(cancelargs.Cancel)
+					return;
+			}
+
+			bool saveDirtyState = Current.Project.IsDirty; // save the dirty state of the project in case the user cancels the open file dialog
+			Current.Project.IsDirty = false; // set document to non-dirty
+
+
 			OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-			openFileDialog1.InitialDirectory = "c:\\temp\\" ;
 			openFileDialog1.Filter = "Altaxo project files (*.axoprj)|*.axoprj|All files (*.*)|*.*" ;
 			openFileDialog1.FilterIndex = 1 ;
 			openFileDialog1.RestoreDirectory = true ;
 
+			
+
 			if(openFileDialog1.ShowDialog() == DialogResult.OK)
 			{
 				Current.ProjectService.OpenProject(openFileDialog1.FileName);
-				
-				/*
-				if((myStream = openFileDialog1.OpenFile())!= null)
-				{
-		
-					ZipFile zipFile = new ZipFile(myStream);
-					Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
-					AltaxoDocument newdocument = new AltaxoDocument();
-					newdocument.RestoreFromZippedFile(zipFile,info);
-
-					Current.ProjectService.SetDocumentFromFile(zipFile,info,newdocument);
-						
-					myStream.Close();
-				}
-				*/
+			}
+			else // in case the user cancels the open file dialog
+			{
+				Current.Project.IsDirty = saveDirtyState; // restore the dirty state of the current project
 			}
 		}
 	}

@@ -317,6 +317,8 @@ namespace Altaxo.Graph.GUI
 		public void EhView_AxisPositionChanged(int sel)
 		{
 			m_AxisPosition = sel;
+			if(null!=View)
+				View.InitializeAxisPositionValueEnabled(m_AxisPosition!=0);
 		}
 
 		public void EhView_AxisPositionValueChanged(string text)

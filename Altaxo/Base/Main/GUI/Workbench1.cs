@@ -185,8 +185,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 					projectService.AskForSavingOfProject(e);
 				}
 			}
-
-			base.OnClosing(e);
+			if(!e.Cancel)
+			{
+				base.OnClosing(e);
+			}
 		}
 
 	}
