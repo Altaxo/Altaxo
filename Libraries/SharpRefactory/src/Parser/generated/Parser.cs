@@ -1650,6 +1650,9 @@ m, attributes);
 			
 			Expect(18);
 			Expect(19);
+
+#line  1194 "cs.ATG" 
+			d.EndLocation = t.EndLocation; 
 			if (la.kind == 14) {
 				Block(
 #line  1194 "cs.ATG" 
@@ -1658,8 +1661,7 @@ out stmt);
 				lexer.NextToken();
 			} else SynErr(139);
 
-#line  1194 "cs.ATG" 
-			d.EndLocation = t.EndLocation; 
+#line  1195 "cs.ATG" 
 			d.Body = (BlockStatement)stmt;
 			compilationUnit.AddChild(d);
 			
@@ -4105,7 +4107,7 @@ out expr);
 			}
 
 #line  1801 "cs.ATG" 
-			string val = t.val; 
+			string val = t.val; t.val = ""; 
 			Expect(13);
 			Expect(1);
 

@@ -404,11 +404,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Gui\Components\OpenFileTab.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Gui\Components\SdMenu.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
@@ -1159,12 +1154,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Internal\Conditions\ActiveWindowStateCondition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Internal\Conditions\CombineOpenCondition.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Internal\Conditions\IsProcessRunningCondition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Internal\Conditions\OpenWindowStateCondition.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

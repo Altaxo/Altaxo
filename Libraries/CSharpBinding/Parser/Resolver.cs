@@ -69,6 +69,13 @@ namespace CSharpBinding.Parser
 			if (expression == "") {
 				return null;
 			}
+			// disable the code completion for numbers like 3.47
+			try {
+				int.Parse(expression);
+//				Console.WriteLine(expression);
+				return null;
+			} catch (Exception) {
+			}
 			if (expression.StartsWith("new ")) {
 				inNew = true;
 				expression = expression.Substring(4);
@@ -116,6 +123,7 @@ namespace CSharpBinding.Parser
 			Lexer l = new Lexer(new StringReader(expression));
 			Expression expr = p.ParseExpression(l);
 			if (expr == null) {
+//				Console.WriteLine("expr == null");
 				return null;
 			}
 			lookupTableVisitor = new LookupTableVisitor();
@@ -174,6 +182,7 @@ namespace CSharpBinding.Parser
 				return new ResolveResult(namespaces, classes);
 			}
 //			Console.WriteLine("showStatic = " + showStatic);
+//			Console.WriteLine("inNew = " + inNew);
 //			Console.WriteLine("Returning Result!");
 			if (inNew) {
 				return new ResolveResult(returnClass, parserService.ListTypes(new ArrayList(), returnClass, callingClass));
@@ -378,7 +387,7 @@ namespace CSharpBinding.Parser
 				if (IsInside(new Point(caretColumn, caretLine), v.StartPos, v.EndPos)) {
 					IClass c = SearchType(v.TypeRef.SystemType, callingClass, cu);
 					if (c != null) {
-						found = new ReturnType(c.FullyQualifiedName);
+						found = new ReturnType(c.FullyQualifiedName, v.TypeRef.RankSpecifier, v.TypeRef.PointerNestingLevel);
 					} else {
 						found = new ReturnType(v.TypeRef);
 					}
@@ -468,8 +477,8 @@ namespace CSharpBinding.Parser
 			}
 //			Console.WriteLine("No static member in outer classes found");
 //			Console.WriteLine("DynamicLookUp resultless");
-//// Alex: look in namespaces
-//// Alex: look inside namespaces
+			// Alex: look in namespaces
+			// Alex: look inside namespaces
 			string[] innamespaces=parserService.GetNamespaceList("");
 			foreach (string ns in innamespaces) {
 				ArrayList objs=parserService.GetNamespaceContents(ns);
@@ -489,7 +498,6 @@ namespace CSharpBinding.Parser
 				if (objs==null) break;
 			}
 			innamespaces=null;
-//// Alex: end of mod
 			return null;
 		}
 		

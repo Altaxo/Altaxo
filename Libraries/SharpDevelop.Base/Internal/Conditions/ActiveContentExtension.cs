@@ -32,7 +32,7 @@ namespace ICSharpCode.Core.AddIns
 		
 		public override bool IsValid(object owner)
 		{
-			if (WorkbenchSingleton.Workbench == null || WorkbenchSingleton.Workbench.ActiveWorkbenchWindow == null) {
+			if (WorkbenchSingleton.Workbench == null || WorkbenchSingleton.Workbench.ActiveWorkbenchWindow == null || WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent == null) {
 				return false;
 			}
 			try {

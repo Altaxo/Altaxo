@@ -312,7 +312,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 				ret = ifElseStatement.EmbeddedStatement.AcceptVisitor(this, data);
 			}
 			if (ifElseStatement.EmbeddedElseStatement != null) {
-				ret = ifElseStatement.EmbeddedStatement.AcceptVisitor(this, data);
+				ret = ifElseStatement.EmbeddedElseStatement.AcceptVisitor(this, data);
 			}
 			return ret;
 		}

@@ -16,7 +16,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("2.0.*")]
+[assembly: AssemblyVersion("1.0.1.1649")]
 
 [assembly: AssemblyDelaySign(false)]
 //[assembly: AssemblyKeyFile("../../data/ICSharpCode.TextEditor.key")]

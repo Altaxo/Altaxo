@@ -183,7 +183,6 @@ namespace CSharpBinding.Parser
 		{
 			DefaultRegion region     = GetRegion(constructorDeclaration.StartLocation, constructorDeclaration.EndLocation);
 			DefaultRegion bodyRegion = GetRegion(constructorDeclaration.EndLocation, constructorDeclaration.Body != null ? constructorDeclaration.Body.EndLocation : new Point(-1, -1));
-			
 			Class c       = (Class)currentClass.Peek();
 			
 			Constructor constructor = new Constructor(constructorDeclaration.Modifier, region, bodyRegion);
@@ -197,6 +196,19 @@ namespace CSharpBinding.Parser
 			}
 			constructor.Parameters = parameters;
 			c.Methods.Add(constructor);
+			return null;
+		}
+		
+		public override object Visit(AST.DestructorDeclaration destructorDeclaration, object data)
+		{
+			DefaultRegion region     = GetRegion(destructorDeclaration.StartLocation, destructorDeclaration.EndLocation);
+			DefaultRegion bodyRegion = GetRegion(destructorDeclaration.EndLocation, destructorDeclaration.Body != null ? destructorDeclaration.Body.EndLocation : new Point(-1, -1));
+			Console.WriteLine(region + " --- " + bodyRegion);
+			
+			Class c       = (Class)currentClass.Peek();
+			
+			Destructor destructor = new Destructor(c.Name, destructorDeclaration.Modifier, region, bodyRegion);
+			c.Methods.Add(destructor);
 			return null;
 		}
 		

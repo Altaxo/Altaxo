@@ -30,11 +30,11 @@ using System.Windows.Forms;
 namespace ${StandardNamespace}
 {
 	/// <summary>
-	/// Description of ${FileNameWithoutExtension}.
+	/// Description of ${ClassName}.
 	/// </summary>
-	public class ${FileNameWithoutExtension} : System.Windows.Forms.UserControl
+	public class ${ClassName} : System.Windows.Forms.UserControl
 	{
-		public ${FileNameWithoutExtension}()
+		public ${ClassName}()
 		{
 			//
 			// The InitializeComponent() call is required for Windows Forms designer support.
@@ -55,9 +55,9 @@ namespace ${StandardNamespace}
 		private void InitializeComponent()
 		{
 			// 
-			// ${FileNameWithoutExtension}
+			// ${ClassName}
 			// 
-			this.Name = "${FileNameWithoutExtension}";
+			this.Name = "${ClassName}";
 			this.Size = new System.Drawing.Size(292, 266);
 		}
 		#endregion

@@ -227,6 +227,7 @@ namespace ICSharpCode.TextEditor.Document
 		
 		public void UpdateFoldings(string fileName, object parseInfo)
 		{
+			int oldFoldingsCount = foldMarker.Count;
 			lock (this) {
 				ArrayList newFoldings = foldingStrategy.GenerateFoldMarkers(document, fileName, parseInfo);
 				if (newFoldings != null && newFoldings.Count != 0) {
@@ -255,6 +256,10 @@ namespace ICSharpCode.TextEditor.Document
 				} else {
 					foldMarker.Clear();
 				}
+			}
+			if (oldFoldingsCount != foldMarker.Count) {
+				document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
+				document.CommitUpdate();
 			}
 		}
 		

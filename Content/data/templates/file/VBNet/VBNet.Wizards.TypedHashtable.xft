@@ -65,7 +65,7 @@ Imports System.Collections
 
 Namespace ${StandardNamespace}
 	
-	Public Class ${FileNameWithoutExtension}
+	Public Class ${ClassName}
 		Implements IDictionary
 		Implements ICollection
 		Implements IEnumerable
@@ -77,7 +77,7 @@ Namespace ${StandardNamespace}
 			innerHashtable = New Hashtable()
 		End Sub
 		
-		Public Sub New(ByVal original As ${FileNameWithoutExtension})
+		Public Sub New(ByVal original As ${ClassName})
 			innerHashtable = New Hashtable(original.innerHash)
 		End Sub
 		
@@ -121,7 +121,7 @@ Namespace ${StandardNamespace}
 		#Region "Implementation of IDictionary"
 		
 		Private Function _GetEnumerator() As IDictionaryEnumerator
-			Return New ${FileNameWithoutExtension}Enumerator(Me)
+			Return New ${ClassName}Enumerator(Me)
 		End Function
 		
 		Public Function IDictionary_GetEnumerator() As IDictionaryEnumerator Implements IDictionary.GetEnumerator
@@ -228,8 +228,8 @@ Namespace ${StandardNamespace}
 		#End Region
 		
 		#Region "Implementation of ICloneable"
-		Public Function Clone() As ${FileNameWithoutExtension}
-			Dim innerClone As ${FileNameWithoutExtension} = New ${FileNameWithoutExtension}()
+		Public Function Clone() As ${ClassName}
+			Dim innerClone As ${ClassName} = New ${ClassName}()
 			innerClone.innerHashtable = CType(innerHashtable.Clone(), Hashtable)
 			Return innerClone
 		End Function
@@ -248,8 +248,8 @@ Namespace ${StandardNamespace}
 			Return innerHashtable.ContainsValue(value)
 		End Function
 		
-		Public Shared Function Synchronized(ByVal nonSync As ${FileNameWithoutExtension}) As ${FileNameWithoutExtension}
-			Dim sync As ${FileNameWithoutExtension} = New ${FileNameWithoutExtension}()
+		Public Shared Function Synchronized(ByVal nonSync As ${ClassName}) As ${ClassName}
+			Dim sync As ${ClassName} = New ${ClassName}()
 			sync.innerHashtable = Hashtable.Synchronized(nonSync.innerHash)
 			Return sync
 		End Function
@@ -262,12 +262,12 @@ Namespace ${StandardNamespace}
 		End Property
 	End Class
 	
-	Public Class ${FileNameWithoutExtension}Enumerator
+	Public Class ${ClassName}Enumerator
 		Implements IDictionaryEnumerator
 		
 		Private innerEnumerator As IDictionaryEnumerator
 		
-		Friend Sub New(ByVal enumerable As ${FileNameWithoutExtension})
+		Friend Sub New(ByVal enumerable As ${ClassName})
 			innerEnumerator = enumerable.InnerHash.GetEnumerator()
 		End Sub
 		

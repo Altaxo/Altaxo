@@ -19,7 +19,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("1.0.4.7")]
+[assembly: AssemblyVersion("1.0.1.1649")]
 
 [assembly: AssemblyDelaySign(false)]
 #if !ModifiedForAltaxo

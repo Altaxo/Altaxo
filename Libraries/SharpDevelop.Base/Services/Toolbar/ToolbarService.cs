@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krueger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -14,7 +14,6 @@ using System.Windows.Forms;
 
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Gui.Components;
-using ICSharpCode.SharpDevelop.Internal.Project;
 using ICSharpCode.Core.AddIns.Codons;
 using ICSharpCode.Core.AddIns;
 using ICSharpCode.Core.Properties;
@@ -34,11 +33,18 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public ToolbarService()
 		{
-			this.node  = AddInTreeSingleton.AddInTree.GetTreeNode(toolBarPath);
+			try {
+				this.node = AddInTreeSingleton.AddInTree.GetTreeNode(toolBarPath);
+			} catch (TreePathNotFoundException) {
+				this.node = null;
+			}
 		}
 		
 		public CommandBar[] CreateToolbars()
 		{
+			if (node == null) {
+				return new CommandBar[] {};
+			}
 			ToolbarItemCodon[] codons = (ToolbarItemCodon[])(node.BuildChildItems(this)).ToArray(typeof(ToolbarItemCodon));
 			
 			CommandBar[] toolBars = new CommandBar[codons.Length];

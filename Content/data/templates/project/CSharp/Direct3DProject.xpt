@@ -41,7 +41,7 @@ using System.Windows.Forms;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 
-namespace MyDirect3DProject
+namespace ${ProjectName}
 {
 	/// <summary>
 	/// This is the main class of my Direct3D application

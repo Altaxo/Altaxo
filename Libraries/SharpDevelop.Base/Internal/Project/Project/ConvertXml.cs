@@ -127,17 +127,17 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			
 			XPathDocument inputData = new XPathDocument(oXML);
 			
-			return xslt.Transform(inputData, xsltArgList, new XmlSecureResolver(new XmlUrlResolver(), new PermissionSet(PermissionState.Unrestricted)));
+			return xslt.Transform(inputData, xsltArgList, new XmlUrlResolver());
 		}
 		
 		public static XmlReader TransformXmlToXml(XmlReader oXML, XmlReader XSLReader, XsltArgumentList xsltArgList)
 		{
 			XslTransform xslt = new XslTransform();
-			xslt.Load(XSLReader, new XmlSecureResolver(new XmlUrlResolver(), new PermissionSet(PermissionState.Unrestricted)), null);
+			xslt.Load(XSLReader, new XmlUrlResolver(), typeof(ConvertXml).Assembly.Evidence);
 			
 			XPathDocument inputData = new XPathDocument(oXML);
 			
-			return xslt.Transform(inputData, xsltArgList, new XmlSecureResolver(new XmlUrlResolver(), new PermissionSet(PermissionState.Unrestricted)));
+			return xslt.Transform(inputData, xsltArgList, new XmlUrlResolver());
 		}
 		
 		/// <summary>

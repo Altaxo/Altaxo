@@ -46,7 +46,7 @@ Imports NUnit.Framework
 Namespace ${StandardNamespace}.Tests
 	
 	<TestFixture> _
-	Public Class ${FileNameWithoutExtension}
+	Public Class ${ClassName}
 		<Test> _
 		Public Sub TestMethod
 			' TODO: Add your test.

@@ -39,8 +39,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		public AboutSharpDevelopTabPage()
 		{
 			Version v = Assembly.GetEntryAssembly().GetName().Version;
-			versionTextBox.Text = v.Major + "." + v.Minor;
-			buildTextBox.Text   = v.Build + "." + v.Revision;
+			versionTextBox.Text = v.Major + "." + v.Minor + "." + v.Build;
+			buildTextBox.Text   = v.Revision.ToString();
 			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 			versionLabel.Location = new System.Drawing.Point(8, 8);
 			versionLabel.Text = resourceService.GetString("Dialog.About.label1Text");
@@ -72,36 +72,6 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			sponsorLabel.TabIndex = 8;
 			Controls.Add(sponsorLabel);
 			Dock = DockStyle.Fill;
-		}
-	}
-	
-	public class ChangeLogTabPage : ICSharpCode.SharpDevelop.Gui.HtmlControl.HtmlControl
-	{
-		public ChangeLogTabPage()
-		{
-			try {
-				FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-				PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
-				
-				string html = ConvertXml.ConvertToString(fileUtilityService.SharpDevelopRootPath +
-				                   Path.DirectorySeparatorChar + "doc" +
-				                   Path.DirectorySeparatorChar + "ChangeLog.xml",
-				                   
-				                   propertyService.DataDirectory +
-				                   Path.DirectorySeparatorChar + "ConversionStyleSheets" + 
-				                   Path.DirectorySeparatorChar + "ShowChangeLog.xsl");
-				
-				Dock = DockStyle.Fill;
-				
-				base.CascadingStyleSheet = propertyService.DataDirectory + Path.DirectorySeparatorChar +
-				                           "resources" + Path.DirectorySeparatorChar +
-				                           "css" + Path.DirectorySeparatorChar +
-				                           "SharpDevelopStandard.css";
-				base.Html = html;
-			} catch (Exception e) {
-				IMessageService messageService = (IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-				messageService.ShowError(e);
-			}
 		}
 	}
 	

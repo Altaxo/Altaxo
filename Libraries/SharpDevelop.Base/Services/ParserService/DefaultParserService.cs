@@ -856,16 +856,19 @@ namespace ICSharpCode.SharpDevelop.Services
 				foreach (object o in objs) {
 					if (o is IClass) {
 						IClass oc=(IClass)o;
-						if (oc.Name==name || oc.FullyQualifiedName==name) {
+						//  || oc.Name==name
+						if (oc.FullyQualifiedName == name) {
 							//Debug.WriteLine(((IClass)o).Name);
 							/// now we can set completion data
 							objs.Clear();
-							objs=null;
+							objs = null;
 							return oc;
 						}
 					}
 				}
-				if (objs==null) break;
+				if (objs == null) {
+					break;
+				}
 			}
 			innamespaces=null;
 //// Alex: end of mod
@@ -915,6 +918,22 @@ namespace ICSharpCode.SharpDevelop.Services
 //					}
 					return baseClass;
 				}
+			}
+			// no baseType found
+			if (curClass.ClassType == ClassType.Enum) {
+//				Console.WriteLine("BaseType = System.Enum");
+				return GetClass("System.Enum", true);
+			} else if (curClass.ClassType == ClassType.Class) {
+				if (curClass.FullyQualifiedName != "System.Object") {
+//					Console.WriteLine("BaseType = System.Object");
+					return GetClass("System.Object", true);
+				}
+			} else if (curClass.ClassType == ClassType.Delegate) {
+//				Console.WriteLine("BaseType = System.Delegate");
+				return GetClass("System.Delegate", true);
+			} else if (curClass.ClassType == ClassType.Struct) {
+//				Console.WriteLine("BaseType = System.ValueType");
+				return GetClass("System.ValueType", true);
 			}
 			return null;
 		}
@@ -981,6 +1000,7 @@ namespace ICSharpCode.SharpDevelop.Services
 						members.Add(f);
 					}
 				}
+				ListMembers(members, GetClass("System.Enum", true), callingClass, showStatic);
 				return members;
 			}
 			
@@ -1202,6 +1222,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				                               );
 			}
 			if (parserOutput.ErrorsDuringCompile) {
+				Console.WriteLine("ERRORS DURING COMPILE");
 				parseInformation.DirtyCompilationUnit = parserOutput;
 			} else {
 				parseInformation.ValidCompilationUnit = parserOutput;

@@ -23,6 +23,7 @@ namespace CSharpBinding.Parser
 		
 		public override object Visit(PrimitiveExpression primitiveExpression, object data)
 		{
+//			Console.WriteLine("Visiting " + primitiveExpression);
 			if (primitiveExpression.Value != null) {
 //				Console.WriteLine("Visiting " + primitiveExpression.Value);
 				return new ReturnType(primitiveExpression.Value.GetType().FullName);
@@ -101,7 +102,13 @@ namespace CSharpBinding.Parser
 			if (fieldReferenceExpression == null) {
 				return null;
 			}
-			
+			// int. generates a FieldreferenceExpression with TargetObject TypeReferenceExpression and no FieldName
+			if (fieldReferenceExpression.FieldName == null || fieldReferenceExpression.FieldName == "") {
+				if (fieldReferenceExpression.TargetObject is TypeReferenceExpression) {
+					resolver.ShowStatic = true;
+					return new ReturnType(((TypeReferenceExpression)fieldReferenceExpression.TargetObject).TypeReference);
+				}
+			}
 			IReturnType returnType = fieldReferenceExpression.TargetObject.AcceptVisitor(this, data) as IReturnType;
 			if (returnType != null) {
 				string name = resolver.SearchNamespace(returnType.FullyQualifiedName, resolver.CompilationUnit);
@@ -234,11 +241,14 @@ namespace CSharpBinding.Parser
 		
 		public override object Visit(IndexerExpression indexerExpression, object data)
 		{
+			Console.WriteLine("TypeVisiting IndexerExpression");
 			IReturnType type = (IReturnType)indexerExpression.TargetObject.AcceptVisitor(this, data);
+			Console.WriteLine("Type is " + type.FullyQualifiedName);
 			if (type == null) {
 				return null;
 			}
 			if (type.ArrayDimensions == null || type.ArrayDimensions.Length == 0) {
+				Console.WriteLine("No Array, checking indexer");
 				// check if ther is an indexer
 				if (indexerExpression.TargetObject is ThisReferenceExpression) {
 					if (resolver.CallingClass == null) {
@@ -256,6 +266,7 @@ namespace CSharpBinding.Parser
 			
 			// TODO: what is a[0] if a is pointer to array or array of pointer ? 
 			if (type.ArrayDimensions[type.ArrayDimensions.Length - 1] != indexerExpression.Indices.Count) {
+				Console.WriteLine("Number of indices do not match the Array dimension");
 				return null;
 			}
 			int[] newArray = new int[type.ArrayDimensions.Length - 1];

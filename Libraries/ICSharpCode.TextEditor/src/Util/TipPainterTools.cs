@@ -45,7 +45,11 @@ namespace ICSharpCode.TextEditor.Util
 			return DrawHelpTip(control, graphics, font, countMessage,
 			            basicDescription, documentation);
  		}
-
+		
+		// btw. I know it's ugly.
+		public static Rectangle DrawingRectangle1;
+		public static Rectangle DrawingRectangle2;
+		
 		public static Size DrawHelpTip(Control control,
 		                               Graphics graphics, Font font,
 		                               string countMessage,
@@ -56,17 +60,13 @@ namespace ICSharpCode.TextEditor.Util
 			    IsVisibleText(basicDescription) ||
 			    IsVisibleText(documentation)) {
 				// Create all the TipSection objects.
-				TipText countMessageTip = new CountTipText(graphics, font,
-				                                      countMessage);
+				CountTipText countMessageTip = new CountTipText(graphics, font, countMessage);
 				
-				TipSpacer countSpacer = new TipSpacer
-					(graphics, new SizeF(IsVisibleText(countMessage) ? 4 : 0, 0));
+				TipSpacer countSpacer = new TipSpacer(graphics, new SizeF(IsVisibleText(countMessage) ? 4 : 0, 0));
 				
-				TipText descriptionTip = new TipText(graphics, font,
-				                                     basicDescription);
+				TipText descriptionTip = new TipText(graphics, font, basicDescription);
 				
-				TipSpacer docSpacer = new TipSpacer
-					(graphics, new SizeF(0, IsVisibleText(documentation) ? 4 : 0));
+				TipSpacer docSpacer = new TipSpacer(graphics, new SizeF(0, IsVisibleText(documentation) ? 4 : 0));
 				
 				TipText docTip = new TipText(graphics, font, documentation);
 				
@@ -86,7 +86,10 @@ namespace ICSharpCode.TextEditor.Util
 				                                           docTip);
 				
 				// Show it.
-				return TipPainter.DrawTip(control, graphics, mainSplitter2);
+				Size size = TipPainter.DrawTip(control, graphics, mainSplitter2);
+				DrawingRectangle1 = countMessageTip.DrawingRectangle1;
+				DrawingRectangle2 = countMessageTip.DrawingRectangle2;
+				return size;
 			}
 			return Size.Empty;
 		}

@@ -340,6 +340,25 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			DialogResult = DialogResult.OK;
 		}
 		
+		string GenerateValidClassName(string className)
+		{
+			int idx = 0;
+			while (idx < className.Length && className[idx] != '_' && !Char.IsLetter(className[idx])) {
+				++idx;
+			}
+			StringBuilder nameBuilder = new StringBuilder();
+			for (; idx < className.Length; ++idx) {
+				if (Char.IsLetterOrDigit(className[idx]) || className[idx] == '_') {
+					nameBuilder.Append(className[idx]);
+				}
+				if (className[idx] == ' ' || className[idx] == '-' ) {
+					nameBuilder.Append('_');
+				}
+			}
+			
+			return nameBuilder.ToString();
+		}
+		
 		void OpenEvent(object sender, EventArgs e)
 		{
 			if (((TreeView)ControlDictionary["categoryTreeView"]).SelectedNode != null) {
@@ -367,11 +386,15 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 					fileName = ControlDictionary["fileNameTextBox"].Text;
 				}
 				
-				StringParserService.Properties["FullName"] = fileName;
-				StringParserService.Properties["FileName"] = Path.GetFileName(fileName);
+				StringParserService.Properties["FullName"]                 = fileName;
+				StringParserService.Properties["FileName"]                 = Path.GetFileName(fileName);
 				StringParserService.Properties["FileNameWithoutExtension"] = Path.GetFileNameWithoutExtension(fileName);
-				StringParserService.Properties["Extension"] = Path.GetExtension(fileName);
-				StringParserService.Properties["Path"] = Path.GetDirectoryName(fileName);
+				StringParserService.Properties["Extension"]                = Path.GetExtension(fileName);
+				StringParserService.Properties["Path"]                     = Path.GetDirectoryName(fileName);
+				
+				StringParserService.Properties["ClassName"] = GenerateValidClassName(Path.GetFileNameWithoutExtension(fileName));
+				
+				
 				if (item.Template.WizardPath != null) {
 					IProperties customizer = new DefaultProperties();
 					customizer.SetProperty("Template", item.Template);

@@ -37,19 +37,24 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public ContextMenu CreateContextMenu(object owner, string addInTreePath)
 		{
-			ArrayList buildItems = AddInTreeSingleton.AddInTree.GetTreeNode(addInTreePath).BuildChildItems(owner);
-			CommandBarContextMenu contextMenu = new CommandBarContextMenu();
-			contextMenu.Popup += new EventHandler(ContextMenuPopupHandler);
-			foreach (object item in buildItems) {
-				if (item is CommandBarItem) {
-					contextMenu.Items.Add((CommandBarItem)item);
-				} else {
-					ISubmenuBuilder submenuBuilder = (ISubmenuBuilder)item;
-					contextMenu.Items.AddRange(submenuBuilder.BuildSubmenu(null, owner));
+			try {
+				ArrayList buildItems = AddInTreeSingleton.AddInTree.GetTreeNode(addInTreePath).BuildChildItems(owner);
+				CommandBarContextMenu contextMenu = new CommandBarContextMenu();
+				contextMenu.Popup += new EventHandler(ContextMenuPopupHandler);
+				foreach (object item in buildItems) {
+					if (item is CommandBarItem) {
+						contextMenu.Items.Add((CommandBarItem)item);
+					} else {
+						ISubmenuBuilder submenuBuilder = (ISubmenuBuilder)item;
+						contextMenu.Items.AddRange(submenuBuilder.BuildSubmenu(null, owner));
+					}
 				}
+					
+				return contextMenu;
+			} catch (TreePathNotFoundException) {
+				Console.WriteLine("Warning tree path '" + addInTreePath +"' not found.");
+				return null;
 			}
-				
-			return contextMenu;
 		}
 		
 		public void ShowContextMenu(object owner, string addInTreePath, Control parent, int x, int y)

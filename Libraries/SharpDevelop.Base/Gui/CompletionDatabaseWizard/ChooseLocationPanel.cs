@@ -63,7 +63,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CompletionDatabaseWi
 		void BrowseLocationEvent(object sender, EventArgs e)
 		{
 			FolderDialog fd = new FolderDialog();
-			if (fd.DisplayDialog("choose the location in which you want the code completion files to be generated") == DialogResult.OK) {
+			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+			if (fd.DisplayDialog(stringParserService.Parse("${res:ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CompletionDatabaseWizard.ChooseLocationPanel.ChooseLocationInfo}")) == DialogResult.OK) {
 				ControlDictionary["locationTextBox"].Text = fd.Path;
 			}
 		}

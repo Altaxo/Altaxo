@@ -42,10 +42,21 @@ namespace ICSharpCode.TextEditor.Util
 			}
 		}
 	
+		public Rectangle DrawingRectangle1;
+		public Rectangle DrawingRectangle2;
+		
 		public override void Draw(PointF location)
 		{
 			if (tipText != null && tipText.Length > 0) {
 				base.Draw(new PointF(location.X + triWidth + 4, location.Y));
+				DrawingRectangle1 = new Rectangle((int)location.X + 2, 
+				                                 (int)location.Y + 2, 
+				                                 (int)(triWidth), 
+				                                 (int)(triHeight));
+				DrawingRectangle2 = new Rectangle((int)(location.X + base.AllocatedSize.Width - triWidth  - 2),
+				                                 (int)location.Y + 2, 
+				                                 (int)(triWidth), 
+				                                 (int)(triHeight));
 				DrawTriangle(location.X + 2, location.Y + 2, false);
 				DrawTriangle(location.X + base.AllocatedSize.Width - triWidth  - 2, location.Y + 2, true);
 			}

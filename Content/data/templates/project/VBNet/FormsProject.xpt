@@ -34,7 +34,7 @@ Imports System
 Imports System.Drawing
 Imports System.Windows.Forms
 
-Namespace DefaultNamespace
+Namespace ${ProjectName}
 	
 	Public Class MainForm
 		Inherits System.Windows.Forms.Form

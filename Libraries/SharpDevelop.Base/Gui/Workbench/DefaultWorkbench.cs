@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krueger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -15,7 +15,6 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Xml;
 
-using ICSharpCode.SharpDevelop.Internal.Project;
 using ICSharpCode.Core.AddIns;
 using ICSharpCode.Core.Properties;
 
@@ -142,18 +141,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			MenuComplete += new EventHandler(SetStandardStatusBar);
 			SetStandardStatusBar(null, null);
-			
-			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-			IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-			
-			projectService.CurrentProjectChanged += new ProjectEventHandler(SetProjectTitle);
-			projectService.CombineOpened         += new CombineEventHandler(CombineOpened);
-
-			fileService.FileRemoved += new FileEventHandler(CheckRemovedFile);
-			fileService.FileRenamed += new FileEventHandler(CheckRenamedFile);
-			
-			fileService.FileRemoved += new FileEventHandler(fileService.RecentOpen.FileRemoved);
-			fileService.FileRenamed += new FileEventHandler(fileService.RecentOpen.FileRenamed);
 			
 //			TopMenu.Selected   += new CommandHandler(OnTopMenuSelected);
 //			TopMenu.Deselected += new CommandHandler(OnTopMenuDeselected);
@@ -332,47 +319,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		void CheckRemovedFile(object sender, FileEventArgs e)
-		{
-			if (e.IsDirectory) {
-				foreach (IViewContent content in ViewContentCollection) {
-					if (content.FileName.StartsWith(e.FileName)) {
-						content.WorkbenchWindow.CloseWindow(true);
-					}
-				}
-			} else {
-				foreach (IViewContent content in ViewContentCollection) {
-					// WINDOWS DEPENDENCY : ToUpper
-					if (content.FileName != null &&
-					    content.FileName.ToUpper() == e.FileName.ToUpper()) {
-						content.WorkbenchWindow.CloseWindow(true);
-						return;
-					}
-				}
-			}
-		}
-		
-		void CheckRenamedFile(object sender, FileEventArgs e)
-		{
-			if (e.IsDirectory) {
-				foreach (IViewContent content in ViewContentCollection) {
-					if (content.FileName.StartsWith(e.SourceFile)) {
-						content.FileName = e.TargetFile + content.FileName.Substring(e.SourceFile.Length);
-					}
-				}
-			} else {
-				foreach (IViewContent content in ViewContentCollection) {
-					// WINDOWS DEPENDENCY : ToUpper
-					if (content.FileName != null &&
-					    content.FileName.ToUpper() == e.SourceFile.ToUpper()) {
-						content.FileName  = e.TargetFile;
-						content.TitleName = Path.GetFileName(e.TargetFile);
-						return;
-					}
-				}
-			}
-		}
-		
 //		protected void OnTopMenuSelected(MenuCommand mc)
 //		{
 //			IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
@@ -388,29 +334,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);
-			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
 			
-			if (projectService != null) {
-				projectService.SaveCombinePreferences();
-				while (WorkbenchSingleton.Workbench.ViewContentCollection.Count > 0) {
-					IViewContent content = WorkbenchSingleton.Workbench.ViewContentCollection[0];
-					content.WorkbenchWindow.CloseWindow(false);
-					if (WorkbenchSingleton.Workbench.ViewContentCollection.IndexOf(content) >= 0) {
-						e.Cancel = true;
-						return;
-					}
-				}
-				projectService.CloseCombine(false);
-			}
-			
-			// TODO : Dirty Files Dialog
-			//			foreach (IViewContent content in ViewContentCollection) {
-				//				if (content.IsDirty) {
-					//					ICSharpCode.SharpDevelop.Gui.Dialogs.DirtyFilesDialog dfd = new ICSharpCode.SharpDevelop.Gui.Dialogs.DirtyFilesDialog();
-			//					e.Cancel = dfd.ShowDialog() == DialogResult.Cancel;
-			//					return;
-			//				}
-			//			}
 		}
 		
 		protected override void OnClosed(EventArgs e)
@@ -419,22 +343,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			layout.Detach();
 			foreach (IPadContent content in PadContentCollection) {
 				content.Dispose();
-			}
-		}
-		
-		void CombineOpened(object sender, CombineEventArgs e)
-		{
-			UpdateMenu(null, null);			
-		}
-		
-		void SetProjectTitle(object sender, ProjectEventArgs e)
-		{
-			UpdateMenu(null, null);
-			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
-			if (e.Project != null) {
-				Title = String.Concat(e.Project.Name, " - ", resourceService.GetString("MainWindow.DialogName"));
-			} else {
-				Title = resourceService.GetString("MainWindow.DialogName");
 			}
 		}
 		
@@ -466,9 +374,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void CreateMainMenu()
 		{
 			TopMenu = new CommandBar(CommandBarStyle.Menu);
-			CommandBarItem[] items = (CommandBarItem[])(AddInTreeSingleton.AddInTree.GetTreeNode(mainMenuPath).BuildChildItems(this)).ToArray(typeof(CommandBarItem));
-			TopMenu.Items.Clear();
-			TopMenu.Items.AddRange(items);
+			try {
+				IAddInTreeNode node = AddInTreeSingleton.AddInTree.GetTreeNode(mainMenuPath);
+				CommandBarItem[] items = (CommandBarItem[])(node.BuildChildItems(this)).ToArray(typeof(CommandBarItem));
+				TopMenu.Items.Clear();
+				TopMenu.Items.AddRange(items);
+			} catch (TreePathNotFoundException) {
+			}
 		}
 		
 		void UpdateMenu(object sender, EventArgs e)
@@ -511,11 +423,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public void UpdateViews(object sender, EventArgs e)
+		public void UpdatePadContents(object sender, EventArgs e)
 		{
-			IPadContent[] contents = (IPadContent[])(AddInTreeSingleton.AddInTree.GetTreeNode(viewContentPath).BuildChildItems(this)).ToArray(typeof(IPadContent));
-			foreach (IPadContent content in contents) {
-				ShowPad(content);
+			try {
+				IPadContent[] contents = (IPadContent[])(AddInTreeSingleton.AddInTree.GetTreeNode(viewContentPath).BuildChildItems(this)).ToArray(typeof(IPadContent));
+				foreach (IPadContent content in contents) {
+					ShowPad(content);
+				}
+			}  catch (TreePathNotFoundException) {
 			}
 		}
 			// Handle keyboard shortcuts
@@ -546,17 +461,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		protected override void OnDragDrop(DragEventArgs e)
 		{
 			base.OnDragDrop(e);
-			if (e.Data != null && e.Data.GetDataPresent(DataFormats.FileDrop)) {
-				string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-				IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-				foreach (string file in files) {
-					if (File.Exists(file)) {
-						fileService.OpenFile(file);
-					}
-				}
-			}
+			// TODO: D&D events
 		}
-		
+
 		protected virtual void OnViewOpened(ViewContentEventArgs e)
 		{
 			if (ViewOpened != null) {

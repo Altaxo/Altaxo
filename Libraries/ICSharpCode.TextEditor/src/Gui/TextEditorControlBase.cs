@@ -668,11 +668,7 @@ namespace ICSharpCode.TextEditor
 		// used in insight window
 		public virtual string GetRangeDescription(int selectedItem, int itemCount)
 		{
-//// stringbuilder
 			StringBuilder sb=new StringBuilder(selectedItem.ToString());
-			////return String.Concat(selectedItem.ToString(),
-			////                     " from ",
-			////                     itemCount.ToString());
 			sb.Append(" from ");
 			sb.Append(itemCount.ToString());
 			return sb.ToString();

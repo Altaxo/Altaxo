@@ -218,7 +218,6 @@
     <File name=".\Gui\CompletionDatabaseWizard\CreationFinishedPanel.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\CompletionDatabaseWizard\SetupPanel.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\CompletionDatabaseWizard\UseExistingFilePanel.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Gui\Components\OpenFileTab.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Components\SdMenuCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Components\SharpMessageBox.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Components\SideBar\AxSideBar.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -394,6 +393,8 @@
     <File name=".\Gui\Workbench\ViewContentEventHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Services\Debugger\IDebugger.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Services\Debugger\DefaultDebugger.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Internal\Conditions\ActiveWindowStateCondition.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Internal\Conditions\OpenWindowStateCondition.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto="..\..\..\bin\ICSharpCode.XmlForms.dll" localcopy="False" />

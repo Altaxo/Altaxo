@@ -1578,6 +1578,12 @@ namespace Altaxo.Calc.Probability
     }
     public virtual double Mean { get { return m; }}
     public virtual double Stdev {get { return s; }}
+
+
+    public double Quantile(double y)
+    {
+      return m+s*ErrorFunction.QuantileOfNormalDistribution01(y);
+    }
   }
 
 
@@ -2233,6 +2239,11 @@ namespace Altaxo.Calc.Probability
       return 2.0 * base.val();
     }
     public double Freedom  { get { return F; }}
+
+    public double Quantile(double y)
+    {
+      return 2*GammaRelated.InverseGammaRegularized(0.5*F,1-y);
+    }
   }
   #endregion
 

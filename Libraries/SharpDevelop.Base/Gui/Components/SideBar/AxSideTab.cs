@@ -262,20 +262,22 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 		{
 			return GetItemAt(pos.X, pos.Y);
 		}
-		
+		public int ItemHeight {
+			get {
+				return 20;
+			}
+		}
 		public void DrawTabContent(Graphics g, Font f, Rectangle rectangle)
 		{
-			int itemHeight = 20;
-			
 			for (int i = 0; i + ScrollIndex < Items.Count; ++i) {
 				AxSideTabItem item = (AxSideTabItem)Items[ScrollIndex + i];
-				if (rectangle.Height < i * itemHeight) {
+				if (rectangle.Height < i * ItemHeight) {
 					break;
 				}
 				item.DrawItem(g, f, new Rectangle(rectangle.X,
-				                                  rectangle.Y + i * itemHeight,
+				                                  rectangle.Y + i * ItemHeight,
 				                                  rectangle.Width,
-				                                  itemHeight));
+				                                  ItemHeight));
 			}
 		}
 		

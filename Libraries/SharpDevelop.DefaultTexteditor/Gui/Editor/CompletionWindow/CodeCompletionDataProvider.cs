@@ -31,7 +31,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 	public class CodeCompletionDataProvider : ICompletionDataProvider
 	{
 		static ClassBrowserIconsService classBrowserIconService = (ClassBrowserIconsService)ServiceManager.Services.GetService(typeof(ClassBrowserIconsService));
-//		static AmbienceService          ambienceService = (AmbienceService)ServiceManager.Services.GetService(typeof(AmbienceService));
 		Hashtable insertedElements           = new Hashtable();
 		Hashtable insertedPropertiesElements = new Hashtable();
 		Hashtable insertedEventElements      = new Hashtable();
@@ -114,8 +113,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			if (expression == null || expression.Length == 0) {
 				return null;
 			}
-			//// do not instantiate service here as some checks might fail
-			//IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
+			// do not instantiate service here as some checks might fail
+			// IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
 			if (charTyped == ' ' && (expression.LastIndexOf("using")>=0 || expression.ToUpper().LastIndexOf("IMPORTS")>=0)) {
 				if (expression == "using" || expression.EndsWith(" using") || expression.EndsWith("\tusing")|| expression.EndsWith("\nusing")|| expression.EndsWith("\rusing") ||
 				    expression.ToUpper() == "IMPORTS" || expression.ToUpper().EndsWith(" IMPORTS") || expression.ToUpper().EndsWith("\tIMPORTS")|| expression.ToUpper().EndsWith("\nIMPORTS")|| expression.ToUpper().EndsWith("\rIMPORTS")) {
@@ -123,7 +122,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					AddResolveResults(namespaces);
 				}
 			} else {
-				//// we don't need to run parser on blank char here
+				// we don't need to run parser on blank char here
 				if (charTyped == ' ') {
 					return null;
 				}
@@ -132,35 +131,38 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				                                caretColumn,
 				                                fileName,
 				                                document.TextContent);
-//// Alex: if expression references object in another namespace (using), no results are delivered
+				// if expression references object in another namespace (using), no results are delivered
 				if (results != null) {
 					AddResolveResults(results);
 				} else {
-					string[] namespaces=parserService.GetNamespaceList("");
-					foreach (string ns in namespaces) {
+					string[] namespaces = parserService.GetNamespaceList("");
+					
+					foreach(string ns in namespaces) {
 						ArrayList objs=parserService.GetNamespaceContents(ns);
 						if (objs==null) continue;
-						foreach (object o in objs) {
+						
+						foreach(object o in objs) {
 							if (o is IClass) {
-								IClass oc=(IClass)o;
-								if (oc.Name==expression || oc.FullyQualifiedName==expression) {
+								IClass oc = (IClass)o;
+								if(oc.Name == expression || oc.FullyQualifiedName==expression) {
 									Debug.WriteLine(((IClass)o).Name);
-									/// now we can set completion data
+									// now we can set completion data
 									ArrayList members=new ArrayList();
 									AddResolveResults(parserService.ListMembers(members,oc,oc,true));
 									members.Clear();
-//// clear objects to indicate end of loop for namespaces
+									// clear objects to indicate end of loop for namespaces
 									objs.Clear();
 									objs=null;
 									break;
 								}
 							}
 						}
-						if (objs==null) break;
+						if (objs == null) {
+							break;
+						}
 					}
 				}
-//// Alex: main contributor of new objects during reparse
-				results=null;
+				results = null;
 				GC.Collect(0);
 			}
 			

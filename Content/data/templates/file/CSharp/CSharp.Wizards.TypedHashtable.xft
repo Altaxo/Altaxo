@@ -64,76 +64,76 @@ using System.Collections;
 
 namespace ${StandardNamespace}
 {
-	${Properties.Accessibility} class ${FileNameWithoutExtension} : IDictionary, ICollection, IEnumerable, ICloneable
+	${Properties.Accessibility} class ${ClassName} : IDictionary, ICollection, IEnumerable, ICloneable
 	{
 		protected Hashtable innerHash;
 		
 		#region "Constructors"
-		public  ${FileNameWithoutExtension}()
+		public  ${ClassName}()
 		{
 			innerHash = new Hashtable();
 		}
 		
-		public ${FileNameWithoutExtension}(${FileNameWithoutExtension} original)
+		public ${ClassName}(${ClassName} original)
 		{
 			innerHash = new Hashtable(original.innerHash);
 		}
 		
-		public ${FileNameWithoutExtension}(IDictionary dictionary)
+		public ${ClassName}(IDictionary dictionary)
 		{
 			innerHash = new Hashtable(dictionary);
 		}
 		
-		public ${FileNameWithoutExtension}(int capacity)
+		public ${ClassName}(int capacity)
 		{
 			innerHash = new Hashtable(capacity);
 		}
 		
-		public ${FileNameWithoutExtension}(IDictionary dictionary, float loadFactor)
+		public ${ClassName}(IDictionary dictionary, float loadFactor)
 		{
 			innerHash = new Hashtable(dictionary, loadFactor);
 		}
 		
-		public ${FileNameWithoutExtension}(IHashCodeProvider codeProvider, IComparer comparer)
+		public ${ClassName}(IHashCodeProvider codeProvider, IComparer comparer)
 		{
 			innerHash = new Hashtable(codeProvider, comparer);
 		}
 		
-		public ${FileNameWithoutExtension}(int capacity, int loadFactor)
+		public ${ClassName}(int capacity, int loadFactor)
 		{
 			innerHash = new Hashtable(capacity, loadFactor);
 		}
 		
-		public ${FileNameWithoutExtension}(IDictionary dictionary, IHashCodeProvider codeProvider, IComparer comparer)
+		public ${ClassName}(IDictionary dictionary, IHashCodeProvider codeProvider, IComparer comparer)
 		{
 			innerHash = new Hashtable(dictionary, codeProvider, comparer);
 		}
 		
-		public ${FileNameWithoutExtension}(int capacity, IHashCodeProvider codeProvider, IComparer comparer)
+		public ${ClassName}(int capacity, IHashCodeProvider codeProvider, IComparer comparer)
 		{
 			innerHash = new Hashtable(capacity, codeProvider, comparer);
 		}
 		
-		public ${FileNameWithoutExtension}(IDictionary dictionary, float loadFactor, IHashCodeProvider codeProvider, IComparer comparer)
+		public ${ClassName}(IDictionary dictionary, float loadFactor, IHashCodeProvider codeProvider, IComparer comparer)
 		{
 			innerHash = new Hashtable(dictionary, loadFactor, codeProvider, comparer);
 		}
 		
-		public ${FileNameWithoutExtension}(int capacity, float loadFactor, IHashCodeProvider codeProvider, IComparer comparer)
+		public ${ClassName}(int capacity, float loadFactor, IHashCodeProvider codeProvider, IComparer comparer)
 		{
 			innerHash = new Hashtable(capacity, loadFactor, codeProvider, comparer);
 		}
 		#endregion
 
 		#region Implementation of IDictionary
-		public ${FileNameWithoutExtension}Enumerator GetEnumerator()
+		public ${ClassName}Enumerator GetEnumerator()
 		{
-			return new ${FileNameWithoutExtension}Enumerator(this);
+			return new ${ClassName}Enumerator(this);
 		}
 		
 		System.Collections.IDictionaryEnumerator IDictionary.GetEnumerator()
 		{
-			return new ${FileNameWithoutExtension}Enumerator(this);
+			return new ${ClassName}Enumerator(this);
 		}
 		
 		IEnumerator IEnumerable.GetEnumerator()
@@ -245,9 +245,9 @@ namespace ${StandardNamespace}
 		#endregion
 		
 		#region Implementation of ICloneable
-		public ${FileNameWithoutExtension} Clone()
+		public ${ClassName} Clone()
 		{
-			${FileNameWithoutExtension} clone = new ${FileNameWithoutExtension}();
+			${ClassName} clone = new ${ClassName}();
 			clone.innerHash = (Hashtable) innerHash.Clone();
 			return clone;
 		}
@@ -269,9 +269,9 @@ namespace ${StandardNamespace}
 			return innerHash.ContainsValue(value);
 		}
 		
-		public static ${FileNameWithoutExtension} Synchronized(${FileNameWithoutExtension} nonSync)
+		public static ${ClassName} Synchronized(${ClassName} nonSync)
 		{
-			${FileNameWithoutExtension} sync = new ${FileNameWithoutExtension}();
+			${ClassName} sync = new ${ClassName}();
 			sync.innerHash = Hashtable.Synchronized(nonSync.innerHash);
 			return sync;
 		}
@@ -284,11 +284,11 @@ namespace ${StandardNamespace}
 		}
 	}
 	
-	public class ${FileNameWithoutExtension}Enumerator : IDictionaryEnumerator
+	public class ${ClassName}Enumerator : IDictionaryEnumerator
 	{
 		private IDictionaryEnumerator innerEnumerator;
 		
-		internal ${FileNameWithoutExtension}Enumerator(${FileNameWithoutExtension} enumerable)
+		internal ${ClassName}Enumerator(${ClassName} enumerable)
 		{
 			innerEnumerator = enumerable.InnerHash.GetEnumerator();
 		}

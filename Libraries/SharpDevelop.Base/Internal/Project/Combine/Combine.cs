@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -381,7 +381,10 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 					return combine;
 				}
 				default:
-					throw new NotSupportedException("unknown extension " + Path.GetExtension(filename));
+					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+					StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+					messageService.ShowError(stringParserService.Parse("${res:Internal.Project.Combine.InvalidFileError}"));
+					return null;
 			}
 		}
 		

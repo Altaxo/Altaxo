@@ -18,6 +18,7 @@
 		${FileNameWithoutExtension} -> File name without extension
 		${Extension}                -> Extension in the form ".cs"
 		${Path}                     -> Full path of the file
+		${ClassName}                -> Class name (generally FileNameWithoutExtension w/o 'bad' characters)
 	 -->
 	<Files>
 		<File name="${FullName}" language="C#"><![CDATA[${StandardHeader.C#}
@@ -29,11 +30,11 @@ using System.Windows.Forms;
 namespace ${StandardNamespace}
 {
 	/// <summary>
-	/// Description of ${FileNameWithoutExtension}.
+	/// Description of ${ClassName}.
 	/// </summary>
-	public class ${FileNameWithoutExtension} : System.Windows.Forms.Form
+	public class ${ClassName} : System.Windows.Forms.Form
 	{
-		public ${FileNameWithoutExtension}()
+		public ${ClassName}()
 		{
 			//
 			// The InitializeComponent() call is required for Windows Forms designer support.
@@ -54,12 +55,12 @@ namespace ${StandardNamespace}
 		private void InitializeComponent()
 		{
 			// 
-			// ${FileNameWithoutExtension}
+			// ${ClassName}
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(292, 266);
-			this.Text = "${FileNameWithoutExtension}";
-			this.Name = "${FileNameWithoutExtension}";
+			this.Text = "${ClassName}";
+			this.Name = "${ClassName}";
 		}
 		#endregion
 	}

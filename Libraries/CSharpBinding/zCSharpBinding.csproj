@@ -124,6 +124,11 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "AssemblyInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "BackendBindings.addin"
                     BuildAction = "Content"
                 />
@@ -219,6 +224,11 @@
                 />
                 <File
                     RelPath = "Parser\SharpDevelopTree\Constructor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Parser\SharpDevelopTree\Destructor.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

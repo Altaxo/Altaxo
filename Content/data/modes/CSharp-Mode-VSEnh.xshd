@@ -49,18 +49,18 @@
 			</Span>
 		  	
 			<Span name = "STRING" bold = "false" italic = "false" color = "SystemColors.WindowText" stopateol = "true">
-				<Begin>"</Begin>
-				<End>"</End>
+				<Begin bold = "false" italic = "false" color = "SystemColors.WindowText">"</Begin>
+				<End bold = "false" italic = "false" color = "SystemColors.WindowText">"</End>
 			</Span>
 			
 			<Span name = "MORELINEDSTRING" bold = "false" italic = "false" color = "SystemColors.WindowText" stopateol = "false" noescapesequences="true">
-				<Begin>@@"</Begin>
-				<End>"</End>
+				<Begin bold = "false" italic = "false" color = "SystemColors.WindowText">@@"</Begin>
+				<End bold = "false" italic = "false" color = "SystemColors.WindowText">"</End>
 			</Span>
 			
-			<Span name = "CHAR" bold = "false" italic = "false" color = "Magenta" stopateol = "true">
-				<Begin>&apos;</Begin>
-				<End>&apos;</End>
+			<Span name = "CHAR" bold = "false" italic = "false" color = "SystemColors.WindowText" stopateol = "true">
+				<Begin bold = "false" italic = "false" color = "SystemColors.WindowText">&apos;</Begin>
+				<End bold = "false" italic = "false" color = "SystemColors.WindowText">&apos;</End>
 			</Span>
 			
 			<KeyWords name = "Punctuation" bold = "false" italic = "false" color = "Green">

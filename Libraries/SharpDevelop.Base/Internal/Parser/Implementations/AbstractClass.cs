@@ -202,6 +202,7 @@ namespace SharpDevelop.Internal.Parser
 				PutBaseClassesOnStack(topLevelClass);
 				baseTypeQueue.Enqueue("System.Object");
 			}
+			
 			public IEnumerator GetEnumerator()
 			{
 				return this;
@@ -228,30 +229,44 @@ namespace SharpDevelop.Internal.Parser
 
 			public bool MoveNext()
 			{
-				if (baseTypeQueue.Count == 0) {
-					return false;
-				}
-				string baseTypeName = baseTypeQueue.Dequeue().ToString();
-
-				IClass baseType = parserService.GetClass(baseTypeName, true);
-				if (baseType == null) {
-					ICompilationUnit unit = currentClass == null ? null : currentClass.CompilationUnit;
-					if (unit != null) {
-						foreach (IUsing u in unit.Usings) {
-							baseType = u.SearchType(baseTypeName);
-							if (baseType != null) {
-								break;
+				try {
+					if (baseTypeQueue.Count == 0) {
+						return false;
+					}
+					string baseTypeName = baseTypeQueue.Dequeue().ToString();
+					
+					IClass baseType = parserService.GetClass(baseTypeName, true);
+					
+					// search through all usings the top level class compilation unit has.
+					if (baseType == null) {
+						ICompilationUnit unit = currentClass == null ? null : currentClass.CompilationUnit;
+						if (unit != null) {
+							foreach (IUsing u in unit.Usings) {
+								baseType = u.SearchType(baseTypeName);
+								if (baseType != null) {
+									break;
+								}
 							}
 						}
 					}
+					
+					// search through all namespaces the top level class is defined in.
+					if (baseType == null) {
+						string[] namespaces = topLevelClass.Namespace.Split('.');
+						for (int i = namespaces.Length; i > 0 && baseType == null; --i) {
+							baseType = parserService.GetClass(String.Join(".", namespaces, 0, i) + "." + baseTypeName, true);
+						}
+					}
+					
+					if (baseType != null) {
+						currentClass = baseType;
+						PutBaseClassesOnStack(currentClass);
+					}
+					return baseType != null;
+				} catch (Exception e) {
+					Console.WriteLine(e);
 				}
-
-				if (baseType != null) {
-					currentClass = baseType;
-					PutBaseClassesOnStack(currentClass);
-				}
-
-				return baseType != null;
+				return false;
 			}
 
 			public void Reset()

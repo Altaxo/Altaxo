@@ -28,9 +28,9 @@ using ICSharpCode.SharpDevelop.Gui.Dialogs;
 using ICSharpCode.SharpDevelop.Services;
 
 #if !ModifiedForAltaxo
-
 using ICSharpCode.SharpRefactory.PrettyPrinter.VB;
 using ICSharpCode.SharpRefactory.Parser.VB;
+
 
 namespace ICSharpCode.SharpDevelop.Commands
 {
@@ -60,6 +60,4 @@ namespace ICSharpCode.SharpDevelop.Commands
 		}
 	}
 }
-
-
 #endif

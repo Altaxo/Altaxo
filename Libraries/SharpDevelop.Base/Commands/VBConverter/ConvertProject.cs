@@ -146,8 +146,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 			messageService.ShowMessage(message + "\n" + outputPath);
 		}
 	}
-	
-#if !ModifiedForAltaxo
+	 #if !ModifiedForAltaxo
 	public class VBConvertProjectToCSharp : AbstractProjectConverter
 	{
 		protected override string Extension {
@@ -155,9 +154,10 @@ namespace ICSharpCode.SharpDevelop.Commands
 				return ".cs";
 			}
 		}
-		
+
 		protected override string ConvertFile(string fileName)
 		{
+     
 			ICSharpCode.SharpRefactory.Parser.VB.Parser p = new ICSharpCode.SharpRefactory.Parser.VB.Parser();
 			
 			p.Parse(new ICSharpCode.SharpRefactory.Parser.VB.Lexer(new ICSharpCode.SharpRefactory.Parser.VB.FileReader(fileName)));
@@ -167,9 +167,9 @@ namespace ICSharpCode.SharpDevelop.Commands
 			
 			return vbv.SourceText.ToString();
 		}
+   
 	}
-#endif
-
+ #endif
 	public class CharpConvertProjectToVB : AbstractProjectConverter
 	{
 		protected override string Extension {

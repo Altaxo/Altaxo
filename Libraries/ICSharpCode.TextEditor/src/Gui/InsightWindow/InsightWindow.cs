@@ -77,6 +77,21 @@ namespace ICSharpCode.TextEditor.Gui.InsightWindow
 				 CloseCurrentDataProvider();
 			}
 		}
+		
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			base.OnMouseDown(e);
+			control.ActiveTextAreaControl.TextArea.Focus();
+			if (TipPainterTools.DrawingRectangle1.Contains(e.X, e.Y)) {
+				CurrentData = (CurrentData + DataProvider.InsightDataCount - 1) % DataProvider.InsightDataCount;
+				Refresh();
+			}
+			if (TipPainterTools.DrawingRectangle2.Contains(e.X, e.Y)) {
+				CurrentData = (CurrentData + 1) % DataProvider.InsightDataCount;
+				Refresh();
+			}
+		}
+		
 		#endregion
 		
 		#region Insight Window Drawing routines

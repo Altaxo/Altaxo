@@ -107,18 +107,26 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 				return activeTab;
 			}
 			set {
-				if (activeTab != null) {
-					activeTab.ScrollIndex = scrollBar.Value;
-				}
-				activeTab = value;
-				if (activeTab != null) {
-					scrollBar.SmallChange = 1;
-					scrollBar.LargeChange = sideTabContent.Height / 20;
-					scrollBar.Maximum  = activeTab.Items.Count;
-					scrollBar.Value    = activeTab.ScrollIndex;
+				if (activeTab != value) {
+					if (activeTab != null) {
+						activeTab.ScrollIndex = scrollBar.Value;
+					}
+					activeTab = value;
+					if (activeTab != null) {
+						scrollBar.SmallChange = 1;
+						scrollBar.LargeChange = sideTabContent.Height / activeTab.ItemHeight;
+						scrollBar.Maximum  = activeTab.Items.Count;
+						scrollBar.Value    = activeTab.ScrollIndex;
+					}
 				}
 				Refresh();
 			}
+		}
+		
+		protected override void OnResize(System.EventArgs e)
+		{
+			base.OnResize(e);
+			scrollBar.LargeChange = sideTabContent.Height / activeTab.ItemHeight;
 		}
 		
 		public AxSideBar()
@@ -665,7 +673,6 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 				activeTabMemberArea = new Rectangle(0, lastUpperY,
 				                                    Width - (scrollBar.Visible ? (SystemInformation.VerticalScrollBarWidth) : 0)  - 4, bottom - lastUpperY);
 				sideTabContent.Bounds  = activeTabMemberArea;
-				scrollBar.LargeChange  = 1;
 				scrollBar.Location     = new Point(Width - SystemInformation.VerticalScrollBarWidth - 4,
 				                                   lastUpperY);
 				scrollBar.Width    = SystemInformation.VerticalScrollBarWidth;

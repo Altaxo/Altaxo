@@ -28,7 +28,6 @@ namespace ICSharpCode.Core.AddIns
 				activewindow = value;
 			}
 		}
-		
 		Type prevType      = null;
 		bool prevValidFlag = false;
 		
@@ -37,13 +36,17 @@ namespace ICSharpCode.Core.AddIns
 			if (WorkbenchSingleton.Workbench == null) {
 				return false;
 			}
+			
 			if (activewindow == "*") {
 				return WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null;
 			}
-			if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow == null) {
+			
+			if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow == null || WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent == null) {
 				return false;
 			}
+			
 			Type currentType = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent.GetType();
+			
 			
 			if (currentType.Equals(prevType)) {
 				return prevValidFlag;

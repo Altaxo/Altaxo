@@ -25,12 +25,12 @@
 Imports System
 
 Namespace ${StandardNamespace}
-	' Description of ${FileNameWithoutExtension}.
-	Public NotInheritable Class ${FileNameWithoutExtension}
+	' Description of ${ClassName}.
+	Public NotInheritable Class ${ClassName}
 	
-		Private Shared _instance As ${FileNameWithoutExtension} = New ${FileNameWithoutExtension}()
+		Private Shared _instance As ${ClassName} = New ${ClassName}()
 		
-		Public ReadOnly Shared Property Instance As ${FileNameWithoutExtension}
+		Public ReadOnly Shared Property Instance As ${ClassName}
 			Get
 				Return _instance
 			End Get

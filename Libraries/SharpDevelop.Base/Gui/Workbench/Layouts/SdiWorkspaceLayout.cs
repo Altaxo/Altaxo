@@ -146,6 +146,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				                        WeifenLuo.WinFormsUI.DockAreas.DockRight) | 
 				                        WeifenLuo.WinFormsUI.DockAreas.DockTop) | 
 				                        WeifenLuo.WinFormsUI.DockAreas.DockBottom);
+				HideOnClose = true;
 			}
 			
 			protected override string GetPersistString()
@@ -155,14 +156,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			protected override void Dispose(bool disposing)
 			{
-				base.Hide();
-//				base.Dispose(disposing);
-//				if (disposing) {
-//					if (content != null) {
-//						content.Dispose();
-//						content = null;
-//					}
-//				}
+				base.Dispose(disposing);
+				if (disposing) {
+					if (content != null) {
+						content.Dispose();
+						content = null;
+					}
+				}
 			}
 		}
 		

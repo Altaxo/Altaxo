@@ -139,17 +139,19 @@ namespace ICSharpCode.TextEditor
 			vScrollBar.Minimum = 0;
 			// number of visible lines in document (folding!)
 			vScrollBar.Maximum = textArea.MaxVScrollValue;
-//			int max = 0;
-//			foreach (ISegment lineSegment in Document.ArrayList) {
-//				max = Math.Max(lineSegment.Length, max);
-//			}
+			int max = 0;
+			foreach (ISegment lineSegment in Document.LineSegmentCollection) {
+				if(Document.FoldingManager.IsLineVisible(Document.GetLineNumberForOffset(lineSegment.Offset))) {
+					max = Math.Max(lineSegment.Length, max);
+				}
+			}
 			hScrollBar.Minimum = 0;
-			hScrollBar.Maximum = (int)(1000 * textArea.TextView.GetWidth(' ')) ;//Math.Max(0, max + textArea.TextView.VisibleColumnCount - 1);
+			hScrollBar.Maximum = (Math.Max(0, max + textArea.TextView.VisibleColumnCount - 1));
 			
 			vScrollBar.LargeChange = Math.Max(0, textArea.TextView.DrawingPosition.Height);
 			vScrollBar.SmallChange = Math.Max(0, textArea.TextView.FontHeight);
 			
-			hScrollBar.LargeChange = Math.Max(0, textArea.TextView.DrawingPosition.Width);
+			hScrollBar.LargeChange = Math.Max(0, textArea.TextView.VisibleColumnCount - 1);
 			hScrollBar.SmallChange = Math.Max(0, (int)textArea.TextView.GetWidth(' '));
 		}
 		

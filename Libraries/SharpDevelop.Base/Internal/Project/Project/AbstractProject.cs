@@ -258,11 +258,11 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 
 			StringCollection newFiles   = new StringCollection();
-			StringCollection collection = fileUtilityService.SearchDirectory(basedirectory, "*");
+			StringCollection collection = fileUtilityService.SearchDirectory(basedirectory, "*", true, true);
 
 			foreach (string file in collection) {
 				string extension = Path.GetExtension(file).ToUpper();
-
+				
 				if (!IsFileInProject(file) &&
 				     extension != ".SCC" &&  // source safe control files -- Svante Lidmans
 				     extension != ".DLL" &&
@@ -270,8 +270,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 				     extension != ".EXE" &&
 				     extension != ".CMBX" &&
 				     extension != ".PRJX" &&
+				     extension != ".USER" &&
 				     !Path.GetDirectoryName(file).EndsWith("CVS") &&
-				     !Path.GetDirectoryName(file).EndsWith(".svn") &&
 				     !Path.GetDirectoryName(file).EndsWith("ProjectDocumentation")) {
 
 					newFiles.Add(file);

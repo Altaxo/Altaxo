@@ -83,12 +83,14 @@ namespace ICSharpCode.SharpDevelop.Commands.ProjectBrowser
 					fdiag.CheckFileExists = true;
 					if (fdiag.ShowDialog() == DialogResult.OK) {
 						object obj = node.Combine.AddEntry(fdiag.FileName);
-						if (obj is IProject) {
-							node.Nodes.Add(ProjectBrowserView.BuildProjectTreeNode((IProject)obj));
-						} else {
-							node.Nodes.Add(ProjectBrowserView.BuildCombineTreeNode((Combine)obj));
+						if(obj != null) {
+							if(obj is IProject) {
+								node.Nodes.Add(ProjectBrowserView.BuildProjectTreeNode((IProject)obj));
+							} else {
+								node.Nodes.Add(ProjectBrowserView.BuildCombineTreeNode((Combine)obj));
+							}
+							projectService.SaveCombine();
 						}
-						projectService.SaveCombine();
 					}
 				}
 			}
@@ -112,12 +114,14 @@ namespace ICSharpCode.SharpDevelop.Commands.ProjectBrowser
 					fdiag.CheckFileExists = true;
 					if (fdiag.ShowDialog() == DialogResult.OK) {
 						object obj = node.Combine.AddEntry(fdiag.FileName);
-						if (obj is IProject) {
-							node.Nodes.Add(ProjectBrowserView.BuildProjectTreeNode((IProject)obj));
-						} else {
-							node.Nodes.Add(ProjectBrowserView.BuildCombineTreeNode((Combine)obj));
+						if(obj != null) {
+							if (obj is IProject) {
+								node.Nodes.Add(ProjectBrowserView.BuildProjectTreeNode((IProject)obj));
+							} else {
+								node.Nodes.Add(ProjectBrowserView.BuildCombineTreeNode((Combine)obj));
+							}
+							projectService.SaveCombine();
 						}
-						projectService.SaveCombine();
 					}
 				}
 			}

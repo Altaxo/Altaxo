@@ -308,6 +308,27 @@ namespace CSharpBinding.FormattingStrategy
 				block.OneLineBlock = true;
 				block.Continuation = false;
 			}
+			
+			if (doc.ReadOnly) {
+				// We can't change the current line, but we should accept the existing
+				// indentation if possible (so if the current statement is not a multiline
+				// statement).
+				if (!oldBlock.Continuation && !oldBlock.OneLineBlock &&
+				    oldBlock.StartLine == block.StartLine &&
+				    block.StartLine < doc.LineNumber && lastRealChar != ':') {
+					// use indent StringBuilder to get the indentation of the current line
+					indent.Length = 0;
+					line = doc.Text; // get untrimmed line
+					for (int i = 0; i < line.Length; ++i) {
+						if (!Char.IsWhiteSpace(line[i]))
+							break;
+						indent.Append(line[i]);
+					}
+					block.InnerIndent = indent.ToString();
+				}
+				return;
+			}
+			
 			if (line[0] != '{') {
 				if (line[0] != ')' && oldBlock.Continuation && oldBlock.Bracket == '{')
 					indent.Append(set.IndentString);
@@ -330,7 +351,7 @@ namespace CSharpBinding.FormattingStrategy
 		}
 		
 		bool IsSingleStatementKeyword(string keyword) {
-			switch (block.LastWord) {
+			switch (keyword) {
 				case "if":
 				case "for":
 				case "while":

@@ -46,12 +46,6 @@
 					</Controls>
 				</System.Windows.Forms.TabPage>
 				<System.Windows.Forms.TabPage>
-					<Text value="${res:Dialog.About.ChangeLogTabName}"/>
-					<Controls>
-						<ICSharpCode.SharpDevelop.Gui.Dialogs.ChangeLogTabPage/>
-					</Controls>
-				</System.Windows.Forms.TabPage>
-				<System.Windows.Forms.TabPage>
 					<Text value="${res:Dialog.About.VersionInfoTabName}"/>
 					<Controls>
 						<ICSharpCode.SharpDevelop.Gui.Dialogs.VersionInformationTabPage/>

@@ -64,12 +64,8 @@ namespace CSharpBinding.Parser
 					case '\'':
 						outText.Append(ch);
 						curOffset++;
-						// to read '" and '\" ... this should work for these cases
-						if (curOffset <= initialOffset) {
-							outText.Append(text[curOffset++]);
-						}
-						if (curOffset <= initialOffset) {
-							outText.Append(text[curOffset++]);
+						if(! ReadChar(outText, text, ref curOffset)) {
+							return null;
 						}
 						break;
 					case '"':
@@ -116,6 +112,24 @@ namespace CSharpBinding.Parser
 				}
 			}
 			return false;
+		}
+		
+		bool ReadChar(StringBuilder outText, string text, ref int curOffset)
+		{
+			char first = text[curOffset];
+			
+			if (curOffset <= initialOffset) {
+				outText.Append(text[curOffset++]);
+			}
+			if (curOffset <= initialOffset) {
+				outText.Append(text[curOffset++]);
+			}
+			
+			// special case: '\''
+			if(first == '\\' && curOffset <= initialOffset) {
+				outText.Append(text[curOffset++]);
+			}
+			return text[curOffset - 1] == '\'';
 		}
 		
 		bool ReadString(StringBuilder outText, string text, ref int curOffset)

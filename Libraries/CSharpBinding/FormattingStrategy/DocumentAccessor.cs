@@ -7,11 +7,21 @@ using ICSharpCode.TextEditor.Document;
 
 namespace CSharpBinding.FormattingStrategy
 {
+	/// <summary>
+	/// Interface used for the indentation class to access the document.
+	/// </summary>
 	public interface IDocumentAccessor
 	{
+		/// <summary>Gets if something was changed in the document.</summary>
 		bool Dirty { get; }
+		/// <summary>Gets if the current line is read only (because it is not in the
+		/// selected text region)</summary>
+		bool ReadOnly { get; }
+		/// <summary>Gets the number of the current line.</summary>
 		int LineNumber { get; }
+		/// <summary>Gets/Sets the text of the current line.</summary>
 		string Text { get; set; }
+		/// <summary>Advances to the next line.</summary>
 		bool Next();
 	}
 	
@@ -42,6 +52,12 @@ namespace CSharpBinding.FormattingStrategy
 		bool dirty;
 		string text;
 		LineSegment line;
+		
+		public bool ReadOnly {
+			get {
+				return num < minLine;
+			}
+		}
 		
 		public bool Dirty {
 			get {
@@ -95,6 +111,12 @@ namespace CSharpBinding.FormattingStrategy
 		public bool Dirty {
 			get {
 				return dirty;
+			}
+		}
+		
+		public bool ReadOnly {
+			get {
+				return false;
 			}
 		}
 		

@@ -221,6 +221,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			if (newTitle != Title) {
 				Text = newTitle;
+				((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 			}
 		}
 		

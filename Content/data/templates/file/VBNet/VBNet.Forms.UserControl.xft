@@ -29,7 +29,7 @@ Imports System.Windows.Forms
 
 Namespace ${StandardNamespace}
 	
-	Public Class ${FileNameWithoutExtension}
+	Public Class ${ClassName}
 		Inherits System.Windows.Forms.UserControl
 		
 		Public Sub New()
@@ -47,9 +47,9 @@ Namespace ${StandardNamespace}
 		' not be able to load this method if it was changed manually.
 		Private Sub InitializeComponent()
 			'
-			'${FileNameWithoutExtension}
+			'${ClassName}
 			'
-			Me.Name = "${FileNameWithoutExtension}"
+			Me.Name = "${ClassName}"
 		End Sub
 		#End Region
 		

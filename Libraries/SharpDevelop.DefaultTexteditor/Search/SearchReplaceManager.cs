@@ -100,7 +100,8 @@ namespace ICSharpCode.TextEditor.Document
 				ISearchResult result = SearchReplaceManager.find.FindNext(searchOptions);
 				
 				if (result == null) {
-					MessageBox.Show((Form)WorkbenchSingleton.Workbench, "Mark all done", "Finished");
+					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+					messageService.ShowMessage("${res:ICSharpCode.TextEditor.Document.SearchReplaceManager.MarkAllDone}", "${res:Global.FinishedCaptionText}");
 					find.Reset();
 					return;
 				} else {
@@ -130,7 +131,8 @@ namespace ICSharpCode.TextEditor.Document
 				ISearchResult result = SearchReplaceManager.find.FindNext(SearchReplaceManager.searchOptions);
 				
 				if (result == null) {
-					MessageBox.Show((Form)WorkbenchSingleton.Workbench, "Replace all done", "Finished");
+					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+					messageService.ShowMessage("${res:ICSharpCode.TextEditor.Document.SearchReplaceManager.ReplaceAllDone}", "${res:Global.FinishedCaptionText}");
 					find.Reset();
 					return;
 				} else {

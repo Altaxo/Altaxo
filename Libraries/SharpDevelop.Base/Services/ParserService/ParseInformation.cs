@@ -1,7 +1,7 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Kr�ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -40,8 +40,6 @@ namespace ICSharpCode.SharpDevelop.Services
 				return validCompilationUnit;
 			}
 			set {
-//// Alex: GC hack
-				validCompilationUnit=null;
 				validCompilationUnit = value;
 			}
 		}
@@ -51,8 +49,6 @@ namespace ICSharpCode.SharpDevelop.Services
 				return dirtyCompilationUnit;
 			}
 			set {
-//// Alex: GC hack
-				dirtyCompilationUnit=null;
 				dirtyCompilationUnit = value;
 			}
 		}

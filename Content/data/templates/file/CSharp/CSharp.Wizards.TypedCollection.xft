@@ -70,41 +70,41 @@ namespace ${StandardNamespace}
 	///       A collection that stores <see cref='.${Properties.ItemType}'/> objects.
 	///    </para>
 	/// </summary>
-	/// <seealso cref='.${FileNameWithoutExtension}'/>
+	/// <seealso cref='.${ClassName}'/>
 <%}%>	[Serializable()]
-	${Properties.Accessibility} class ${FileNameWithoutExtension} : CollectionBase {
+	${Properties.Accessibility} class ${ClassName} : CollectionBase {
 		
 <%if (GenerateDocumentation) {%>		/// <summary>
 		///     <para>
-		///       Initializes a new instance of <see cref='.${FileNameWithoutExtension}'/>.
+		///       Initializes a new instance of <see cref='.${ClassName}'/>.
 		///    </para>
 		/// </summary>
-<%}%>		public ${FileNameWithoutExtension}()
+<%}%>		public ${ClassName}()
 		{
 		}
 		
 <%if (GenerateDocumentation) {%>		/// <summary>
 		///     <para>
-		///       Initializes a new instance of <see cref='.${FileNameWithoutExtension}'/> based on another <see cref='.${FileNameWithoutExtension}'/>.
+		///       Initializes a new instance of <see cref='.${ClassName}'/> based on another <see cref='.${ClassName}'/>.
 		///    </para>
 		/// </summary>
 		/// <param name='value'>
-		///       A <see cref='.${FileNameWithoutExtension}'/> from which the contents are copied
+		///       A <see cref='.${ClassName}'/> from which the contents are copied
 		/// </param>
-<%}%>		public ${FileNameWithoutExtension}(${FileNameWithoutExtension} val)
+<%}%>		public ${ClassName}(${ClassName} val)
 		{
 			this.AddRange(val);
 		}
 		
 <%if (GenerateDocumentation) {%>		/// <summary>
 		///     <para>
-		///       Initializes a new instance of <see cref='.${FileNameWithoutExtension}'/> containing any array of <see cref='.${Properties.ItemType}'/> objects.
+		///       Initializes a new instance of <see cref='.${ClassName}'/> containing any array of <see cref='.${Properties.ItemType}'/> objects.
 		///    </para>
 		/// </summary>
 		/// <param name='value'>
 		///       A array of <see cref='.${Properties.ItemType}'/> objects with which to intialize the collection
 		/// </param>
-<%}%>		public ${FileNameWithoutExtension}(${Properties.ItemType}[] val)
+<%}%>		public ${ClassName}(${Properties.ItemType}[] val)
 		{
 			this.AddRange(val);
 		}
@@ -128,20 +128,20 @@ namespace ${StandardNamespace}
 		
 <%if (GenerateDocumentation) {%>		/// <summary>
 		///    <para>Adds a <see cref='.${Properties.ItemType}'/> with the specified value to the 
-		///    <see cref='.${FileNameWithoutExtension}'/> .</para>
+		///    <see cref='.${ClassName}'/> .</para>
 		/// </summary>
 		/// <param name='value'>The <see cref='.${Properties.ItemType}'/> to add.</param>
 		/// <returns>
 		///    <para>The index at which the new element was inserted.</para>
 		/// </returns>
-		/// <seealso cref='.${FileNameWithoutExtension}.AddRange'/>
+		/// <seealso cref='.${ClassName}.AddRange'/>
 <%}%>		public int Add(${Properties.ItemType} val)
 		{
 			return List.Add(val);
 		}
 		
 <%if (GenerateDocumentation) {%>		/// <summary>
-		/// <para>Copies the elements of an array to the end of the <see cref='.${FileNameWithoutExtension}'/>.</para>
+		/// <para>Copies the elements of an array to the end of the <see cref='.${ClassName}'/>.</para>
 		/// </summary>
 		/// <param name='value'>
 		///    An array of type <see cref='.${Properties.ItemType}'/> containing the objects to add to the collection.
@@ -149,7 +149,7 @@ namespace ${StandardNamespace}
 		/// <returns>
 		///   <para>None.</para>
 		/// </returns>
-		/// <seealso cref='.${FileNameWithoutExtension}.Add'/>
+		/// <seealso cref='.${ClassName}.Add'/>
 <%}%>		public void AddRange(${Properties.ItemType}[] val)
 		{
 			for (int i = 0; i < val.Length; i++) {
@@ -159,17 +159,17 @@ namespace ${StandardNamespace}
 		
 <%if (GenerateDocumentation) {%>		/// <summary>
 		///     <para>
-		///       Adds the contents of another <see cref='.${FileNameWithoutExtension}'/> to the end of the collection.
+		///       Adds the contents of another <see cref='.${ClassName}'/> to the end of the collection.
 		///    </para>
 		/// </summary>
 		/// <param name='value'>
-		///    A <see cref='.${FileNameWithoutExtension}'/> containing the objects to add to the collection.
+		///    A <see cref='.${ClassName}'/> containing the objects to add to the collection.
 		/// </param>
 		/// <returns>
 		///   <para>None.</para>
 		/// </returns>
-		/// <seealso cref='.${FileNameWithoutExtension}.Add'/>
-<%}%>		public void AddRange(${FileNameWithoutExtension} val)
+		/// <seealso cref='.${ClassName}.Add'/>
+<%}%>		public void AddRange(${ClassName} val)
 		{
 			for (int i = 0; i < val.Count; i++)
 			{
@@ -179,29 +179,29 @@ namespace ${StandardNamespace}
 		
 <%if (GenerateDocumentation) {%>		/// <summary>
 		/// <para>Gets a value indicating whether the 
-		///    <see cref='.${FileNameWithoutExtension}'/> contains the specified <see cref='.${Properties.ItemType}'/>.</para>
+		///    <see cref='.${ClassName}'/> contains the specified <see cref='.${Properties.ItemType}'/>.</para>
 		/// </summary>
 		/// <param name='value'>The <see cref='.${Properties.ItemType}'/> to locate.</param>
 		/// <returns>
 		/// <para><see langword='true'/> if the <see cref='.${Properties.ItemType}'/> is contained in the collection; 
 		///   otherwise, <see langword='false'/>.</para>
 		/// </returns>
-		/// <seealso cref='.${FileNameWithoutExtension}.IndexOf'/>
+		/// <seealso cref='.${ClassName}.IndexOf'/>
 <%}%>		public bool Contains(${Properties.ItemType} val)
 		{
 			return List.Contains(val);
 		}
 		
 <%if (GenerateDocumentation) {%>		/// <summary>
-		/// <para>Copies the <see cref='.${FileNameWithoutExtension}'/> values to a one-dimensional <see cref='System.Array'/> instance at the 
+		/// <para>Copies the <see cref='.${ClassName}'/> values to a one-dimensional <see cref='System.Array'/> instance at the 
 		///    specified index.</para>
 		/// </summary>
-		/// <param name='array'><para>The one-dimensional <see cref='System.Array'/> that is the destination of the values copied from <see cref='.${FileNameWithoutExtension}'/> .</para></param>
+		/// <param name='array'><para>The one-dimensional <see cref='System.Array'/> that is the destination of the values copied from <see cref='.${ClassName}'/> .</para></param>
 		/// <param name='index'>The index in <paramref name='array'/> where copying begins.</param>
 		/// <returns>
 		///   <para>None.</para>
 		/// </returns>
-		/// <exception cref='System.ArgumentException'><para><paramref name='array'/> is multidimensional.</para> <para>-or-</para> <para>The number of elements in the <see cref='.${FileNameWithoutExtension}'/> is greater than the available space between <paramref name='arrayIndex'/> and the end of <paramref name='array'/>.</para></exception>
+		/// <exception cref='System.ArgumentException'><para><paramref name='array'/> is multidimensional.</para> <para>-or-</para> <para>The number of elements in the <see cref='.${ClassName}'/> is greater than the available space between <paramref name='arrayIndex'/> and the end of <paramref name='array'/>.</para></exception>
 		/// <exception cref='System.ArgumentNullException'><paramref name='array'/> is <see langword='null'/>. </exception>
 		/// <exception cref='System.ArgumentOutOfRangeException'><paramref name='arrayIndex'/> is less than <paramref name='array'/>'s lowbound. </exception>
 		/// <seealso cref='System.Array'/>
@@ -212,26 +212,26 @@ namespace ${StandardNamespace}
 		
 <%if (GenerateDocumentation) {%>		/// <summary>
 		///    <para>Returns the index of a <see cref='.${Properties.ItemType}'/> in 
-		///       the <see cref='.${FileNameWithoutExtension}'/> .</para>
+		///       the <see cref='.${ClassName}'/> .</para>
 		/// </summary>
 		/// <param name='value'>The <see cref='.${Properties.ItemType}'/> to locate.</param>
 		/// <returns>
 		/// <para>The index of the <see cref='.${Properties.ItemType}'/> of <paramref name='value'/> in the 
-		/// <see cref='.${FileNameWithoutExtension}'/>, if found; otherwise, -1.</para>
+		/// <see cref='.${ClassName}'/>, if found; otherwise, -1.</para>
 		/// </returns>
-		/// <seealso cref='.${FileNameWithoutExtension}.Contains'/>
+		/// <seealso cref='.${ClassName}.Contains'/>
 <%}%>		public int IndexOf(${Properties.ItemType} val)
 		{
 			return List.IndexOf(val);
 		}
 		
 <%if (GenerateDocumentation) {%>		/// <summary>
-		/// <para>Inserts a <see cref='.${Properties.ItemType}'/> into the <see cref='.${FileNameWithoutExtension}'/> at the specified index.</para>
+		/// <para>Inserts a <see cref='.${Properties.ItemType}'/> into the <see cref='.${ClassName}'/> at the specified index.</para>
 		/// </summary>
 		/// <param name='index'>The zero-based index where <paramref name='value'/> should be inserted.</param>
 		/// <param name=' value'>The <see cref='.${Properties.ItemType}'/> to insert.</param>
 		/// <returns><para>None.</para></returns>
-		/// <seealso cref='.${FileNameWithoutExtension}.Add'/>
+		/// <seealso cref='.${ClassName}.Add'/>
 <%}%>		public void Insert(int index, ${Properties.ItemType} val)
 		{
 			List.Insert(index, val);
@@ -239,7 +239,7 @@ namespace ${StandardNamespace}
 		
 <%if (GenerateDocumentation) {%>		/// <summary>
 		///    <para>Returns an enumerator that can iterate through 
-		///       the <see cref='.${FileNameWithoutExtension}'/> .</para>
+		///       the <see cref='.${ClassName}'/> .</para>
 		/// </summary>
 		/// <returns><para>None.</para></returns>
 		/// <seealso cref='System.Collections.IEnumerator'/>
@@ -250,9 +250,9 @@ namespace ${StandardNamespace}
 		
 <%if (GenerateDocumentation) {%>		/// <summary>
 		///    <para> Removes a specific <see cref='.${Properties.ItemType}'/> from the 
-		///    <see cref='.${FileNameWithoutExtension}'/> .</para>
+		///    <see cref='.${ClassName}'/> .</para>
 		/// </summary>
-		/// <param name='value'>The <see cref='.${Properties.ItemType}'/> to remove from the <see cref='.${FileNameWithoutExtension}'/> .</param>
+		/// <param name='value'>The <see cref='.${Properties.ItemType}'/> to remove from the <see cref='.${ClassName}'/> .</param>
 		/// <returns><para>None.</para></returns>
 		/// <exception cref='System.ArgumentException'><paramref name='value'/> is not found in the Collection. </exception>
 <%}%>		public void Remove(${Properties.ItemType} val)
@@ -265,7 +265,7 @@ namespace ${StandardNamespace}
 			IEnumerator baseEnumerator;
 			IEnumerable temp;
 			
-			public ${Properties.ItemType}Enumerator(${FileNameWithoutExtension} mappings)
+			public ${Properties.ItemType}Enumerator(${ClassName} mappings)
 			{
 				this.temp = ((IEnumerable)(mappings));
 				this.baseEnumerator = temp.GetEnumerator();

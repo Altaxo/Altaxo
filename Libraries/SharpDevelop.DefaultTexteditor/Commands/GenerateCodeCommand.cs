@@ -24,9 +24,9 @@ using ICSharpCode.Core.Services;
 
 using ICSharpCode.SharpDevelop.Gui.Dialogs;
 using ICSharpCode.TextEditor.Document;
-using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.TextEditor.Actions;
+using ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor;
 using ICSharpCode.TextEditor;
 using SharpDevelop.Internal.Parser;
 using ICSharpCode.SharpDevelop.Services;
@@ -111,6 +111,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 	
 	public class SurroundCodeAction : AbstractEditAction
 	{
+		
 		public override void Execute(TextArea editActionHandler)
 		{
 //			SelectionWindow selectionWindow = new SelectionWindow("Surround");
@@ -123,16 +124,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 	/// </summary>
 	public class FormVersion1 : Form
 	{
-		private System.Windows.Forms.ColumnHeader createdObject0;
-		private System.Windows.Forms.ListView categoryListView;
-		private System.Windows.Forms.Label statusLabel;
+		private System.Windows.Forms.ColumnHeader   createdObject0;
+		private System.Windows.Forms.ListView       categoryListView;
+		private System.Windows.Forms.Label          statusLabel;
 		private System.Windows.Forms.CheckedListBox selectionListBox;
 		
 		TextEditorControl textEditorControl;
 		
 		CodeGenerator SelectedCodeGenerator {
 			get {
-				if (categoryListView.SelectedItems.Count != 1) {
+				if (categoryListView.SelectedItems.Count <= 0) {
 					return null;
 				}
 				return (CodeGenerator)categoryListView.SelectedItems[0].Tag;
@@ -145,7 +146,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			
 			//  Must be called for initialization
 			this.InitializeComponents();
-			
+			selectionListBox.Sorted = true;
 			Point caretPos  = textEditorControl.ActiveTextAreaControl.Caret.Position;
 			TextArea textArea = textEditorControl.ActiveTextAreaControl.TextArea;
 			TextView textView = textArea.TextView;
@@ -194,13 +195,17 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 					categoryListView.Focus();
 					return true;
 				case Keys.Return:
-					if (categoryListView.Focused && SelectedCodeGenerator.Content.Count > 0) {
-						selectionListBox.Focus();
-					} else {
-						Close();
-						SelectedCodeGenerator.GenerateCode(textEditorControl.ActiveTextAreaControl.TextArea, selectionListBox.CheckedItems.Count > 0 ? (IList)selectionListBox.CheckedItems : (IList)selectionListBox.SelectedItems);
+					if (SelectedCodeGenerator != null) {
+						if (categoryListView.Focused && SelectedCodeGenerator.Content.Count > 0) {
+							selectionListBox.Focus();
+						} else {
+							Close();
+							SelectedCodeGenerator.GenerateCode(textEditorControl.ActiveTextAreaControl.TextArea, selectionListBox.CheckedItems.Count > 0 ? (IList)selectionListBox.CheckedItems : (IList)selectionListBox.SelectedItems);
+						}
+						return true;
+					}  else {
+						return false;
 					}
-					return true;
 			}
 			return base.ProcessDialogKey(keyData);
 		}
@@ -211,16 +216,23 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			if (codeGenerator == null) {
 				return;
 			}
+			
 			statusLabel.Text = codeGenerator.Hint;
 			selectionListBox.BeginUpdate();
 			selectionListBox.Items.Clear();
 			if (codeGenerator.Content.Count > 0) {
+				Hashtable objs = new Hashtable();
+				selectionListBox.Sorted = codeGenerator.Content.Count > 1;
 				foreach (object o in codeGenerator.Content) {
-					selectionListBox.Items.Add(o);
+					if (!objs.Contains(o.ToString())) {
+						selectionListBox.Items.Add(o);
+						objs.Add(o.ToString(), "");
+					} 
 				}
 				selectionListBox.SelectedIndex = 0;
 			} 
 			selectionListBox.EndUpdate();
+			selectionListBox.Refresh();
 		}
 		
 		/// <summary>
@@ -271,6 +283,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			categoryListView.View = System.Windows.Forms.View.Details;
 			categoryListView.Size = new System.Drawing.Size(264, 112);
 			categoryListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+			categoryListView.MultiSelect = false;
 			
 			// 
 			//  Set up member createdObject0

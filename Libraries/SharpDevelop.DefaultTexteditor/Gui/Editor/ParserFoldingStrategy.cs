@@ -32,6 +32,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			foreach (IClass innerClass in c.InnerClasses) {
 				AddClassMembers(innerClass, foldMarkers, document);
 			}
+			
 			foreach (IMethod m in c.Methods) {
 				if (m.BodyRegion != null && m.BodyRegion.EndLine > 0) {
 					foldMarkers.Add(new FoldMarker(document, m.Region.EndLine - 1, m.Region.EndColumn - 1,

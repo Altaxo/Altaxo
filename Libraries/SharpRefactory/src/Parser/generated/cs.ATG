@@ -1191,7 +1191,7 @@ ClassMemberDecl<Modifiers m, ArrayList attributes>
 	                                      d.Modifier = m.Modifier;
 	                                      d.StartLocation = startPos;
 	                                   .)
-	"(" ")" ( Block<out stmt> | ";" )  (. d.EndLocation = t.EndLocation; 
+	"(" ")" (. d.EndLocation = t.EndLocation; .) ( Block<out stmt> | ";" )  (. 
 	                                      d.Body = (BlockStatement)stmt;
 	                                      compilationUnit.AddChild(d);
 	                                   .)
@@ -1798,7 +1798,7 @@ PrimaryExpr<out Expression pexpr>
 			"bool"   | "byte"   | "char" | "decimal" | "double"
 			| "float"  | "int"    | "long" | "object"  | "sbyte"
 			| "short"  | "string" | "uint" | "ulong"   | "ushort"
-		) (. string val = t.val; .) "." ident (. pexpr = new FieldReferenceExpression(new TypeReferenceExpression(val), t.val); .)
+		) (. string val = t.val; t.val = ""; .) "." ident (. pexpr = new FieldReferenceExpression(new TypeReferenceExpression(val), t.val); .)
 		/*--- this access: */
 		| "this"                              (. pexpr = new ThisReferenceExpression(); .)
 		/*--- base access: */

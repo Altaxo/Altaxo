@@ -29,7 +29,7 @@ Imports System.Windows.Forms
 
 Namespace ${StandardNamespace}
 	
-	Public Class ${FileNameWithoutExtension}
+	Public Class ${ClassName}
 		Inherits System.Windows.Forms.Form
 		
 		Public Sub New()
@@ -49,12 +49,12 @@ Namespace ${StandardNamespace}
 		' not be able to load this method if it was changed manually.
 		Private Sub InitializeComponent()
 			'
-			'${FileNameWithoutExtension}
+			'${ClassName}
 			'
 			Me.AutoScaleBaseSize = New System.Drawing.Size(5, 13)
 			Me.ClientSize = New System.Drawing.Size(292, 266)
-			Me.Name = "${FileNameWithoutExtension}"
-			Me.Text = "${FileNameWithoutExtension}"
+			Me.Name = "${ClassName}"
+			Me.Text = "${ClassName}"
 		End Sub
 		#End Region
 		

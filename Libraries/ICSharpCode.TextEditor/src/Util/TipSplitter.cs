@@ -17,8 +17,7 @@ namespace ICSharpCode.TextEditor.Util
 		float     [] offsets;
 		TipSection[] tipSections;
 		
-		public TipSplitter(Graphics graphics, bool horizontal,
-		                   params TipSection[] sections): base(graphics)
+		public TipSplitter(Graphics graphics, bool horizontal, params TipSection[] sections): base(graphics)
 		{
 			Debug.Assert(sections != null);
 			
@@ -84,11 +83,9 @@ namespace ICSharpCode.TextEditor.Util
 			
 			foreach (TipSection section in tipSections) {
 				if (isHorizontal) {
-					section.SetAllocatedSize
-						(new SizeF(section.GetRequiredSize().Width, otherDim));
+					section.SetAllocatedSize(new SizeF(section.GetRequiredSize().Width, otherDim));
 				} else {
-					section.SetAllocatedSize
-						(new SizeF(otherDim, section.GetRequiredSize().Height));
+					section.SetAllocatedSize(new SizeF(otherDim, section.GetRequiredSize().Height));
 				}
 			}
 

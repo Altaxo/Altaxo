@@ -28,19 +28,19 @@ using System;
 namespace ${StandardNamespace}
 {
 	/// <summary>
-	/// Description of ${FileNameWithoutExtension}.
+	/// Description of ${ClassName}.
 	/// </summary>
-	public sealed class ${FileNameWithoutExtension}
+	public sealed class ${ClassName}
 	{
-		private static ${FileNameWithoutExtension} instance = new ${FileNameWithoutExtension}();
+		private static ${ClassName} instance = new ${ClassName}();
 		
-		public static ${FileNameWithoutExtension} Instance {
+		public static ${ClassName} Instance {
 			get {
 				return instance;
 			}
 		}
 		
-		private ${FileNameWithoutExtension}()
+		private ${ClassName}()
 		{
 		}
 	}

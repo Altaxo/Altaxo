@@ -92,17 +92,22 @@ namespace ICSharpCode.Core.Services
 		{
 			base.UnloadService();
 		}
-
-		public StringCollection SearchDirectory(string directory, string filemask, bool searchSubdirectories)
+		
+		public StringCollection SearchDirectory(string directory, string filemask, bool searchSubdirectories, bool ignoreHidden)
 		{
 			StringCollection collection = new StringCollection();
-			SearchDirectory(directory, filemask, collection, searchSubdirectories);
+			SearchDirectory(directory, filemask, collection, searchSubdirectories, ignoreHidden);
 			return collection;
+		}
+		
+		public StringCollection SearchDirectory(string directory, string filemask, bool searchSubdirectories)
+		{
+			return SearchDirectory(directory, filemask, searchSubdirectories, false);
 		}
 		
 		public StringCollection SearchDirectory(string directory, string filemask)
 		{
-			return SearchDirectory(directory, filemask, true);
+			return SearchDirectory(directory, filemask, true, false);
 		}
 		
 		/// <summary>
@@ -110,19 +115,25 @@ namespace ICSharpCode.Core.Services
 		/// <code>directory</code> and all subdirectories (if searchSubdirectories
 		/// is true. The found files are added to the StringCollection 
 		/// <code>collection</code>.
+		/// If <code>ignoreHidden</code> is true, hidden files and folders are ignored.
 		/// </summary>
-		void SearchDirectory(string directory, string filemask, StringCollection collection, bool searchSubdirectories)
+		void SearchDirectory(string directory, string filemask, StringCollection collection,
+		                     bool searchSubdirectories, bool ignoreHidden)
 		{
 			try {
 				string[] file = Directory.GetFiles(directory, filemask);
 				foreach (string f in file) {
+					if (ignoreHidden && (File.GetAttributes(f) & FileAttributes.Hidden) == FileAttributes.Hidden)
+						continue;
 					collection.Add(f);
 				}
 				
 				if (searchSubdirectories) {
 					string[] dir = Directory.GetDirectories(directory);
 					foreach (string d in dir) {
-						SearchDirectory(d, filemask, collection, searchSubdirectories);
+						if (ignoreHidden && (File.GetAttributes(d) & FileAttributes.Hidden) == FileAttributes.Hidden)
+							continue;
+						SearchDirectory(d, filemask, collection, searchSubdirectories, ignoreHidden);
 					}
 				}
 			} catch (Exception e) {
@@ -150,18 +161,20 @@ namespace ICSharpCode.Core.Services
 				return absPath;
 			}
 			
-			string erg = "";
+			StringBuilder erg = new StringBuilder();
 			
 			if(indx == bPath.Length) {
-				erg += "." + Path.DirectorySeparatorChar;
+				erg.Append('.');
+				erg.Append(Path.DirectorySeparatorChar);
 			} else {
 				for (int i = indx; i < bPath.Length; ++i) {
-					erg += ".." + Path.DirectorySeparatorChar;
+					erg.Append("..");
+					erg.Append(Path.DirectorySeparatorChar);
 				}
 			}
-			erg += String.Join(Path.DirectorySeparatorChar.ToString(), aPath, indx, aPath.Length-indx);
+			erg.Append(String.Join(Path.DirectorySeparatorChar.ToString(), aPath, indx, aPath.Length-indx));
 			
-			return erg;
+			return erg.ToString();
 		}
 		
 		/// <summary>
@@ -203,6 +216,7 @@ namespace ICSharpCode.Core.Services
 		{
 			// Fixme: 260 is the hardcoded maximal length for a path on my Windows XP system
 			//        I can't find a .NET property or method for determining this variable.
+			
 			if (fileName == null || fileName.Length == 0 || fileName.Length >= 260) {
 				return false;
 			}

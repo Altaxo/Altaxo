@@ -57,7 +57,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 		public override object Visit(LocalVariableDeclaration localVariableDeclaration, object data)
 		{
 			foreach (VariableDeclaration varDecl in localVariableDeclaration.Variables) {
-				AddVariable(localVariableDeclaration.Type, 
+				AddVariable(localVariableDeclaration.Type,
 				            varDecl.Name,
 				            localVariableDeclaration.StartLocation,
 				            CurrentBlock == null ? new Point(-1, -1) : CurrentBlock.EndLocation);

@@ -41,7 +41,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 			w.InitializeWorkspace();
 			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 			w.SetMemento((IXmlConvertable)propertyService.GetProperty(workbenchMemento, new WorkbenchMemento()));
-			w.UpdateViews(null, null);
+			w.UpdatePadContents(null, null);
 			WorkbenchSingleton.CreateWorkspace();
 			
 		}

@@ -75,6 +75,10 @@ namespace CSharpBinding.FormattingStrategy
 		/// </summary>
 		public override void IndentLines(TextArea textArea, int begin, int end)
 		{
+			if (textArea.Document.TextEditorProperties.IndentStyle != IndentStyle.Smart) {
+				base.IndentLines(textArea, begin, end);
+				return;
+			}
 			IndentationSettings set = new IndentationSettings();
 			set.IndentString = Tab.GetIndentationString(textArea.Document);
 			IndentationReformatter r = new IndentationReformatter();
@@ -375,16 +379,6 @@ namespace CSharpBinding.FormattingStrategy
 						return IndentLine(textArea, lineNr);
 					}
 					
-					if (textArea.TextEditorProperties.AutoInsertCurlyBracket) {
-						string oldLineText = TextUtilities.GetLineAsString(textArea.Document, lineNr - 1);
-						if (oldLineText.EndsWith("{")) {
-							if (NeedCurlyBracket(textArea.Document.TextContent)) {
-								textArea.Document.Insert(curLine.Offset + curLine.Length, "\n}");
-								IndentLine(textArea, lineNr + 1);
-							}
-						}
-					}
-					
 					string  lineAboveText = lineAbove == null ? "" : textArea.Document.GetText(lineAbove);
 					//// curLine might have some text which should be added to indentation
 					curLineText = "";
@@ -444,7 +438,17 @@ namespace CSharpBinding.FormattingStrategy
 							}
 						}
 					}
-					return IndentLine(textArea, lineNr) + addCursorOffset;
+					int result = IndentLine(textArea, lineNr) + addCursorOffset;
+					if (textArea.TextEditorProperties.AutoInsertCurlyBracket) {
+						string oldLineText = TextUtilities.GetLineAsString(textArea.Document, lineNr - 1);
+						if (oldLineText.EndsWith("{")) {
+							if (NeedCurlyBracket(textArea.Document.TextContent)) {
+								textArea.Document.Insert(curLine.Offset + curLine.Length, "\n}");
+								IndentLine(textArea, lineNr + 1);
+							}
+						}
+					}
+					return result;
 			}
 			return 0;
 		}
