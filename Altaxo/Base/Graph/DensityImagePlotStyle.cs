@@ -492,11 +492,11 @@ namespace Altaxo.Graph
       }
 
 
-      double x_rel_left = gl.XAxis.PhysicalToNormal(xColumn.GetDoubleAt(0));
-      double x_rel_right = gl.XAxis.PhysicalToNormal(xColumn.GetDoubleAt(rows-1));
+      double x_rel_left = gl.XAxis.PhysicalVariantToNormal(xColumn[0]);
+      double x_rel_right = gl.XAxis.PhysicalVariantToNormal(xColumn[rows-1]);
 
-      double y_rel_bottom = gl.YAxis.PhysicalToNormal(yColumn.GetDoubleAt(0));
-      double y_rel_top = gl.YAxis.PhysicalToNormal(yColumn.GetDoubleAt(cols-1));
+      double y_rel_bottom = gl.YAxis.PhysicalVariantToNormal(yColumn[0]);
+      double y_rel_top = gl.YAxis.PhysicalVariantToNormal(yColumn[cols-1]);
 
       double xleft, xright, ytop, ybottom;
       if( gl.LogicalToAreaConversion.Convert(x_rel_left,y_rel_top, out xleft, out ytop) &&

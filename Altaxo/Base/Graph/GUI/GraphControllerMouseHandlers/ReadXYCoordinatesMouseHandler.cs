@@ -33,7 +33,7 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 {
   /// <summary>
-  /// Handles the mouse events when the <see cref="GraphTools.ObjectPointer"/> tools is selected.
+  /// Handles the mouse events when the read coordinate tools is selected.
   /// </summary>
   public class ReadXYCoordinatesMouseHandler : MouseStateHandler
   {

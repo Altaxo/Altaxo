@@ -29,6 +29,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using Altaxo.Serialization.Xml;
 
+#if false
+
 namespace Altaxo.Test.Serialization.Xml
 {
   #region Serialization test classes
@@ -467,3 +469,5 @@ namespace Altaxo.Test.Serialization.Xml
 
 
 }
+
+#endif

@@ -903,7 +903,7 @@ namespace Altaxo.Graph.GUI
     /// <summary>
     /// This function is called if the user changed the GraphTool.
     /// </summary>
-    /// <param name="currGraphTool">The new selected GraphTool.</param>
+    /// <param name="currGraphToolType">The type of the new selected GraphTool.</param>
     /// <remarks>The view should not reflect the newly selected graph tool. This should only be done if the view
     /// receives the currently selected graphtool by setting its <see cref="IGraphView.CurrentGraphTool"/> property.
     /// In case radio buttons are used, they should not push itself (autopush or similar should be disabled).</remarks>

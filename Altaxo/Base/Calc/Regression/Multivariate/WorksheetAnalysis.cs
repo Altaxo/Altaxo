@@ -449,7 +449,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// Calculates the leverage of the spectral data.
     /// </summary>
     /// <param name="table">Table where the calibration model is stored.</param>
-    /// <param name="preferredNumberOfFactors">Number of factors used to calculate leverage.</param>
+    /// <param name="numberOfFactors">Number of factors used to calculate leverage.</param>
     public virtual void CalculateXLeverage(
       DataTable table, int numberOfFactors)
     {
@@ -500,7 +500,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// For a given set of spectra, predicts the y-values and stores them in the matrix <c>predictedY</c>
     /// </summary>
-    /// <param name="calib">The calibration model of the analysis.</param>
+    /// <param name="mcalib">The calibration model of the analysis.</param>
     /// <param name="preprocessOptions">The information how to preprocess the spectra.</param>
     /// <param name="matrixX">The matrix of spectra to predict. Each spectrum is a row in the matrix.</param>
     /// <param name="numberOfFactors">The number of factors used for prediction.</param>
@@ -545,7 +545,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Creates the corresponding grouping strategy out of the CrossPRESSCalculation enumeration in plsOptions.
     /// </summary>
-    /// <param name="crossValidation">Type of cross validation.</param>
+    /// <param name="crossValidationType">Type of cross validation.</param>
     /// <returns>The used grouping strategy. Returns null if no cross validation is choosen.</returns>
     public static ICrossValidationGroupingStrategy GetGroupingStrategy(CrossPRESSCalculationType crossValidationType)
     {

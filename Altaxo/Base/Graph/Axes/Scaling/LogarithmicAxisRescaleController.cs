@@ -13,7 +13,7 @@ namespace Altaxo.Graph.Axes.Scaling
     :
     NumericAxisRescaleController
   {
-    public LogarithmicAxisRescaleController(LogarithmicAxisRescaleConditions doc, Axis ax)
+    public LogarithmicAxisRescaleController(LogarithmicAxisRescaleConditions doc, NumericalAxis ax)
       : base(doc,ax)
     {
     }

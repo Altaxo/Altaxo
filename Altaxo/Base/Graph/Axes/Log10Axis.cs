@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Axes
   /// </summary>
   [SerializationSurrogate(0,typeof(Log10Axis.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class Log10Axis : Axis, System.Runtime.Serialization.IDeserializationCallback
+  public class Log10Axis : NumericalAxis, System.Runtime.Serialization.IDeserializationCallback
   {
     /// <summary>Decimal logarithm of axis org.</summary>
     double m_Log10Org=0; // Log10 of physical axis org

@@ -16,7 +16,7 @@ namespace Altaxo.Graph.Axes.Scaling
 	{
     protected IOrgEndSpanView _view;
     protected NumericAxisRescaleConditions _doc;
-    protected Axis _axis;
+    protected NumericalAxis _axis;
     
     protected double _org;
     protected double _end;
@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Axes.Scaling
   
 
 
-    public NumericAxisRescaleController(NumericAxisRescaleConditions doc, Axis ax)
+    public NumericAxisRescaleController(NumericAxisRescaleConditions doc, NumericalAxis ax)
     {
       _doc = doc;
       _axis = ax;

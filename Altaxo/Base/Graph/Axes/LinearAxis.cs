@@ -32,7 +32,7 @@ namespace Altaxo.Graph.Axes
   /// </summary>
   [SerializationSurrogate(0,typeof(LinearAxis.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class LinearAxis : Axis, System.Runtime.Serialization.IDeserializationCallback
+  public class LinearAxis : NumericalAxis, System.Runtime.Serialization.IDeserializationCallback
   {
     // primary values
     /// <summary>Proposed value of axis origin, proposed either by the lower physical boundary or by the user (if axis org is fixed).</summary>
@@ -48,7 +48,7 @@ namespace Altaxo.Graph.Axes
     /// <summary>Minor ticks per Major tick ( if there is one minor tick between two major ticks m_minorticks is 2!</summary>
     protected int    m_MinorTicks=2;
    
-    /// <summary>Holds the <see cref="PhysicalBoundaries"/> for that axis.</summary>
+    /// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
     protected NumericalBoundaries m_DataBounds = new FiniteNumericalBoundaries();
 
     protected NumericAxisRescaleConditions _rescaling = new NumericAxisRescaleConditions();

@@ -121,6 +121,11 @@ namespace Altaxo.Serialization.Xml
     {
       m_Writer.WriteElementString(name, XmlConvert.ToString(val));
     }
+
+    public void AddValue(string name, TimeSpan val)
+    {
+      m_Writer.WriteElementString(name, XmlConvert.ToString(val));
+    }
     
     public void AddEnum(string name, System.Enum val)
     {

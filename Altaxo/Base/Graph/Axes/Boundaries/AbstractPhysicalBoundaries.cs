@@ -3,7 +3,7 @@ using System;
 namespace Altaxo.Graph.Axes.Boundaries
 {
 	/// <summary>
-	/// Summary description for AbstractBoundaries.
+	/// Represents the boundaries of an axis.
 	/// </summary>
 	public abstract class AbstractPhysicalBoundaries : IPhysicalBoundaries
 	{
@@ -20,6 +20,11 @@ namespace Altaxo.Graph.Axes.Boundaries
 		{
 			numberOfItems = 0;
     }
+
+    /// <summary>
+    /// Copy constructor.
+    /// </summary>
+    /// <param name="from">The boundary object to copy from.</param>
     public AbstractPhysicalBoundaries(AbstractPhysicalBoundaries from)
     {
       numberOfItems = from.numberOfItems;
@@ -31,6 +36,9 @@ namespace Altaxo.Graph.Axes.Boundaries
     public event BoundaryChangedHandler   BoundaryChanged;
     public event ItemNumberChangedHandler NumberOfItemsChanged;
 
+    /// <summary>
+    /// Returns true of the change events are currently enabled.
+    /// </summary>
     public bool EventsEnabled
     {
       get
@@ -39,9 +47,15 @@ namespace Altaxo.Graph.Axes.Boundaries
       }
     }
 
+    /// <summary>
+    /// Suspends the change events by incrementing the suspend counter by one. Each call to this function must be paired with a call to <see>EndUpdate</see>.
+    /// </summary>
     public abstract void BeginUpdate();
     
 
+    /// <summary>
+    /// Resumes the change events by decrementing the suspend counter. Change events are resumed if the suspend counter reaches zero.
+    /// </summary>
     public abstract void EndUpdate();
    
 
@@ -79,6 +93,10 @@ namespace Altaxo.Graph.Axes.Boundaries
       } 
     }
 
+    /// <summary>
+    /// Merges another boundary object into this one here.
+    /// </summary>
+    /// <param name="b">The other boundary object.</param>
     public abstract void Add(IPhysicalBoundaries b);
     
 

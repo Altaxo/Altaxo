@@ -26,9 +26,7 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph.Axes.Boundaries
 {
   /// <summary>
-  /// Provides a abstract class for tracking the numerical
-  /// boundaries of a plot association. Every plot association has two of these objects
-  /// that help tracking the boundaries of X and Y axis
+  /// Provides a class for tracking the boundaries of a plot association where the x-axis is a DateTime axis.
   /// </summary>
   [SerializationSurrogate(0,typeof(FiniteDateTimeBoundaries.SerializationSurrogate0))]
   [SerializationVersion(0)]

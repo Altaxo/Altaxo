@@ -32,7 +32,7 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 {
   /// <summary>
-  /// Handles the mouse events when the <see cref="GraphTools.ObjectPointer"/> tools is selected.
+  /// Handles the mouse events when the object pointer tool is selected.
   /// </summary>
   public class ObjectPointerMouseHandler : MouseStateHandler
   {

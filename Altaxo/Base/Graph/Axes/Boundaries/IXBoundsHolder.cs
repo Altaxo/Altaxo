@@ -15,14 +15,14 @@ namespace Altaxo.Graph.Axes.Boundaries
     /// are copied into the new x boundary object.
     /// </summary>
     /// <param name="val">The template boundary object.</param>
-    void SetXBoundsFromTemplate(NumericalBoundaries val);
+    void SetXBoundsFromTemplate(IPhysicalBoundaries val);
 
     /// <summary>
     /// This merges the x boundary of the object with the boundary pb. The boundary pb is updated so that
     /// it now includes the x boundary range of the object.
     /// </summary>
     /// <param name="pb">The boundary object pb which is updated to include the x boundaries of the object.</param>
-    void MergeXBoundsInto(NumericalBoundaries pb);
+    void MergeXBoundsInto(IPhysicalBoundaries pb);
   }
 
 }

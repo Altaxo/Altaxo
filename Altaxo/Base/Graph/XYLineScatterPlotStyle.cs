@@ -28,6 +28,8 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
+  using Axes;
+
   /// <summary>
   /// Used for constructor of <see>XYLineScatterPlotStyle</see> to choose between Line, Scatter and both.
   /// </summary>
@@ -538,8 +540,8 @@ namespace Altaxo.Graph
         }
           
 
-        double x_rel = layer.XAxis.PhysicalToNormal(xColumn.GetDoubleAt(i));
-        double y_rel = layer.YAxis.PhysicalToNormal(yColumn.GetDoubleAt(i));
+        double x_rel = layer.XAxis.PhysicalVariantToNormal(xColumn[i]);
+        double y_rel = layer.YAxis.PhysicalVariantToNormal(yColumn[i]);
           
         // after the conversion to relative coordinates it is possible
         // that with the choosen axis the point is undefined 
@@ -607,10 +609,15 @@ namespace Altaxo.Graph
       PlotRangeList rangeList = new PlotRangeList();
       I2DTo2DConverter logicalToArea = layer.LogicalToAreaConversion;
 
+      NumericalAxis xaxis = layer.XAxis as NumericalAxis;
+      NumericalAxis yaxis = layer.YAxis as NumericalAxis;
+      if(xaxis==null || yaxis==null)
+        return;
+
       for(i=0,j=0;i<functionPoints;i++)
       {
         double x_rel = ((double)i)/(functionPoints-1);
-        double x = layer.XAxis.NormalToPhysical(x_rel);
+        double x = xaxis.NormalToPhysical(x_rel);
         double y = plotFunction.Evaluate(x);
         
         if(Double.IsNaN(x) || Double.IsNaN(y))
@@ -625,7 +632,7 @@ namespace Altaxo.Graph
           
 
         // double x_rel = layer.XAxis.PhysicalToNormal(x);
-        double y_rel = layer.YAxis.PhysicalToNormal(y);
+        double y_rel = yaxis.PhysicalToNormal(y);
           
         // chop relative values to an range of about -+ 10^6
         if(y_rel>MaxRelativeValue)

@@ -238,7 +238,7 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     /// <param name="graphToolType">The type of the new selected GraphTool.</param>
     /// <remarks>The view should not reflect the newly selected graph tool. This should only be done if the view
-    /// receives the currently selected graphtool by setting its <see cref="IGraphView.CurrentGraphTool"/> property.
+    /// receives the currently selected graphtool by setting its <see cref="IGraphView.CurrentGraphToolType"/> property.
     /// In case radio buttons are used, they should not push itself (autopush or similar should be disabled).</remarks>
     void EhView_CurrentGraphToolChoosen(System.Type graphToolType);
   

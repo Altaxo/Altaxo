@@ -33,7 +33,7 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 {
   /// <summary>
-  /// Handles the mouse events when the <see cref="GraphTools.ObjectPointer"/> tools is selected.
+  /// Handles the mouse events when the read plot item tool is selected.
   /// </summary>
   public class ReadPlotItemDataMouseHandler : MouseStateHandler
   {
@@ -323,7 +323,6 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Find the plot item number of a given plot item.
     /// </summary>
-    /// <param name="grac"></param>
     /// <param name="layernumber"></param>
     /// <param name="plotitem"></param>
     /// <returns></returns>

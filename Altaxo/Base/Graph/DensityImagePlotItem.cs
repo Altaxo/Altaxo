@@ -272,14 +272,16 @@ namespace Altaxo.Graph
 
     public event BoundaryChangedHandler XBoundariesChanged;
 
-    public void SetXBoundsFromTemplate(NumericalBoundaries val)
+    public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      this.m_PlotAssociation.SetXBoundsFromTemplate(val);
+      if(val is NumericalBoundaries)
+      this.m_PlotAssociation.SetXBoundsFromTemplate(val as NumericalBoundaries);
     }
 
-    public void MergeXBoundsInto(NumericalBoundaries pb)
+    public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
-      this.m_PlotAssociation.MergeXBoundsInto(pb);
+      if(pb is NumericalBoundaries)
+        this.m_PlotAssociation.MergeXBoundsInto(pb as NumericalBoundaries);
     }
 
     #endregion
@@ -294,14 +296,16 @@ namespace Altaxo.Graph
 
     public event BoundaryChangedHandler YBoundariesChanged;
 
-    public void SetYBoundsFromTemplate(NumericalBoundaries val)
+    public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
-      this.m_PlotAssociation.SetYBoundsFromTemplate(val);
+      if(val is NumericalBoundaries)
+      this.m_PlotAssociation.SetYBoundsFromTemplate(val as NumericalBoundaries);
     }
 
-    public void MergeYBoundsInto(NumericalBoundaries pb)
+    public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
-      this.m_PlotAssociation.MergeYBoundsInto(pb);
+      if(pb is NumericalBoundaries)
+        this.m_PlotAssociation.MergeYBoundsInto(pb as NumericalBoundaries);
     }
 
     #endregion

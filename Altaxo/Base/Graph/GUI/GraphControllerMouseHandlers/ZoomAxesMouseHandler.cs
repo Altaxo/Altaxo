@@ -28,6 +28,8 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph;
 using Altaxo.Serialization;
+using Altaxo.Data;
+
 namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 {
 
@@ -69,10 +71,10 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         Swap(ref yr0, ref yr1);
 
       // now with the help of the axes, calculate the new boundaries
-      double xo = layer.XAxis.NormalToPhysical(xr0);
-      double xe = layer.XAxis.NormalToPhysical(xr1);
-      double yo = layer.YAxis.NormalToPhysical(yr0);
-      double ye = layer.YAxis.NormalToPhysical(yr1);
+      AltaxoVariant xo = layer.XAxis.NormalToPhysicalVariant(xr0);
+      AltaxoVariant xe = layer.XAxis.NormalToPhysicalVariant(xr1);
+      AltaxoVariant yo = layer.YAxis.NormalToPhysicalVariant(yr0);
+      AltaxoVariant ye = layer.YAxis.NormalToPhysicalVariant(yr1);
 
      
 

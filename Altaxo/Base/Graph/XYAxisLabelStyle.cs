@@ -174,8 +174,12 @@ namespace Altaxo.Graph
       return gp;
     }
     private RectangleF _enclosingRectangle;
-    public override void Paint(Graphics g, XYPlotLayer layer, Axis axis, XYAxisStyle axisstyle)
+    public override void Paint(Graphics g, XYPlotLayer layer, Axis raxis, XYAxisStyle axisstyle)
     {
+      NumericalAxis axis = raxis as NumericalAxis;
+      if(axis==null)
+        return;
+
       SizeF layerSize = layer.Size;
       PointF orgP = m_Edge.GetOrg(layerSize);
       PointF endP = m_Edge.GetEnd(layerSize);

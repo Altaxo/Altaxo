@@ -274,19 +274,19 @@ namespace Altaxo.Graph
       {
         IXBoundsHolder pa = (IXBoundsHolder)plotitem;
         if(null!=m_Owner)
-          pa.SetXBoundsFromTemplate(m_Owner.XAxis.DataBounds); // ensure that data bound object is of the right type
+          pa.SetXBoundsFromTemplate(m_Owner.XAxis.DataBoundsObject); // ensure that data bound object is of the right type
         pa.XBoundariesChanged += new BoundaryChangedHandler(this.EhXBoundaryChanged);
         if(null!=m_Owner)
-          pa.MergeXBoundsInto(m_Owner.XAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+          pa.MergeXBoundsInto(m_Owner.XAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
       }
       if(plotitem is IYBoundsHolder)
       {
         IYBoundsHolder pa = (IYBoundsHolder)plotitem;
         if(null!=m_Owner)
-          pa.SetYBoundsFromTemplate(m_Owner.YAxis.DataBounds); // ensure that data bound object is of the right type
+          pa.SetYBoundsFromTemplate(m_Owner.YAxis.DataBoundsObject); // ensure that data bound object is of the right type
         pa.YBoundariesChanged += new BoundaryChangedHandler(this.EhYBoundaryChanged);
         if(null!=m_Owner)
-          pa.MergeYBoundsInto(m_Owner.YAxis.DataBounds); // merge the y-boundaries in the y-Axis data boundaries
+          pa.MergeYBoundsInto(m_Owner.YAxis.DataBoundsObject); // merge the y-boundaries in the y-Axis data boundaries
       }
     }
 

@@ -545,6 +545,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\Axes\NumericalAxis.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\Axes\Boundaries\AbstractPhysicalBoundaries.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -601,6 +606,11 @@
                 />
                 <File
                     RelPath = "Graph\Axes\Scaling\BoundaryRescaling.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Scaling\DateTimeAxisRescaleConditions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

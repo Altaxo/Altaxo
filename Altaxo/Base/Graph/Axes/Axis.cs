@@ -22,12 +22,14 @@
 
 using System;
 using Altaxo.Serialization;
-using Altaxo.Graph.Axes.Scaling;
-using Altaxo.Graph.Axes.Boundaries;
+using Altaxo.Data;
 
 
 namespace Altaxo.Graph.Axes
 {
+  using Scaling;
+  using Boundaries;
+
   /// <summary>
   /// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
   /// </summary>
@@ -65,27 +67,6 @@ namespace Altaxo.Graph.Axes
     #endregion
 
     /// <summary>
-    /// PhysicalToNormal translates physical values into a normal value linear along the axis
-    /// a physical value of the axis origin must return a value of zero
-    /// a physical value of the axis end must return a value of one
-    /// the function physicalToNormal must be provided by any derived class
-    /// </summary>
-    /// <param name="x">the physical value</param>
-    /// <returns>
-    /// the normalized value linear along the axis,
-    /// 0 for axis origin, 1 for axis end</returns>
-    public abstract double PhysicalToNormal(double x);
-    /// <summary>
-    /// NormalToPhysical is the inverse function to PhysicalToNormal
-    /// It translates a normalized value (0 for the axis origin, 1 for the axis end)
-    /// into the physical value
-    /// </summary>
-    /// <param name="x">the normal value (0 for axis origin, 1 for axis end</param>
-    /// <returns>the corresponding physical value</returns>
-    public abstract double NormalToPhysical(double x);
-
-
-    /// <summary>
     /// PhysicalVariantToNormal translates physical values into a normal value linear along the axis
     /// a physical value of the axis origin must return a value of zero
     /// a physical value of the axis end must return a value of one
@@ -106,54 +87,47 @@ namespace Altaxo.Graph.Axes
     public abstract Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x);
 
     /// <summary>
-    /// GetMajorTicks returns the physical values
-    /// at which major ticks should occur
+    /// This will return the location of the major ticks relative on this axis, that mean
+    /// the value range is 0..1.
     /// </summary>
-    /// <returns>physical values for the major ticks</returns>
-    public abstract double[] GetMajorTicks();
+    /// <returns>The array with relative (normal) major tick values.</returns>
+    public abstract double[] GetMajorTicksNormal();
+
+    /// <summary>
+    /// This will return the location of the minor ticks relative on this axis, that mean
+    /// the value range is 0..1.
+    /// </summary>
+    /// <returns>The array with relative (normal) minor tick values.</returns>
+    public abstract double[] GetMinorTicksNormal();
 
 
     /// <summary>
-    /// Returns the rescaling conditions for this axis
+    /// Returns the rescaling conditions for this axis as object.
     /// </summary>
-    public abstract NumericAxisRescaleConditions Rescaling { get; }
-
-  
-    /// <summary>
-    /// GetMinorTicks returns the physical values
-    /// at which minor ticks should occur
-    /// </summary>
-    /// <returns>physical values for the minor ticks</returns>
-    public virtual double[] GetMinorTicks()
-    {
-      return new double[]{}; // return a empty array per default
-    }
-
+    public abstract object RescalingObject { get; }
 
     /// <summary>
-    /// Returns the <see cref="PhysicalBoundaries"/> object that is associated with that axis.
+    /// Returns the <see cref="NumericalBoundaries"/> object that is associated with that axis.
     /// </summary>
-    public abstract NumericalBoundaries DataBounds { get; } // return a PhysicalBoundarie object that is associated with that axis
+    public abstract IPhysicalBoundaries DataBoundsObject { get; } // return a PhysicalBoundarie object that is associated with that axis
+
 
     /// <summary>The axis origin, i.e. the first point in physical units.</summary>
-    public abstract double Org { get; set;}
+    public abstract AltaxoVariant OrgAsVariant { get; set;}
     /// <summary>The axis end point in physical units.</summary>
-    public abstract double End { get; set;}
-    // /// <summary>Indicates that the axis origin is fixed to a certain value.</summary>
-    // public abstract bool   OrgFixed { get; set; }
-    // /// <summary>Indicates that the axis end is fixed to a certain value.</summary>
-    // public abstract bool   EndFixed { get; set; }
+    public abstract AltaxoVariant EndAsVariant { get; set;}
 
+    public abstract void ProcessDataBounds();
+
+    
     /// <summary>
     /// calculates the axis org and end using the databounds
     /// the org / end is adjusted only if it is not fixed
     /// and the DataBound object contains valid data
     /// </summary>
-    public abstract void ProcessDataBounds(double org, bool orgfixed, double end, bool endfixed); 
-    public abstract void ProcessDataBounds();
+    public abstract void ProcessDataBounds(AltaxoVariant org, bool orgfixed, AltaxoVariant end, bool endfixed); 
 
 
-  
 
     /// <summary>
     /// Static collection that holds all available axis types.

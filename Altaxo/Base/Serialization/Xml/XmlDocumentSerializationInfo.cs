@@ -23,6 +23,8 @@
 using System;
 using System.Xml;
 
+#if false
+
 namespace Altaxo.Serialization.Xml
 {
   /// <summary>
@@ -370,3 +372,5 @@ namespace Altaxo.Serialization.Xml
     #endregion
   }
 }
+
+#endif

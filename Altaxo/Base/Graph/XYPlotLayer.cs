@@ -1784,21 +1784,21 @@ namespace Altaxo.Graph
       //but (alas!) not all boundaries are now of the new type!
       m_PlotAssociationXBoundariesChanged_EventSuspendCount++; 
         
-      m_xAxis.DataBounds.BeginUpdate(); // Suppress events from the y-axis now
-      m_xAxis.DataBounds.Reset();
+      m_xAxis.DataBoundsObject.BeginUpdate(); // Suppress events from the y-axis now
+      m_xAxis.DataBoundsObject.Reset();
       foreach(PlotItem pa in this.PlotItems)
       {
         if(pa is IXBoundsHolder)
         {
           // first ensure the right data bound object is set on the XYColumnPlotData
-          ((IXBoundsHolder)pa).SetXBoundsFromTemplate(m_xAxis.DataBounds); // ensure that data bound object is of the right type
+          ((IXBoundsHolder)pa).SetXBoundsFromTemplate(m_xAxis.DataBoundsObject); // ensure that data bound object is of the right type
           // now merge the bounds with x and yAxis
-          ((IXBoundsHolder)pa).MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+          ((IXBoundsHolder)pa).MergeXBoundsInto(m_xAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         
         }
       }
       m_PlotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0,m_PlotAssociationXBoundariesChanged_EventSuspendCount-1);
-      m_xAxis.DataBounds.EndUpdate();
+      m_xAxis.DataBoundsObject.EndUpdate();
       m_xAxis.ProcessDataBounds();
     }
    
@@ -1835,21 +1835,21 @@ namespace Altaxo.Graph
       //but (alas!) not all boundaries are now of the new type!
       m_PlotAssociationYBoundariesChanged_EventSuspendCount++; 
 
-      m_yAxis.DataBounds.BeginUpdate();
-      m_yAxis.DataBounds.Reset();
+      m_yAxis.DataBoundsObject.BeginUpdate();
+      m_yAxis.DataBoundsObject.Reset();
       foreach(PlotItem pa in this.PlotItems)
       {
         if(pa is IYBoundsHolder)
         {
           // first ensure the right data bound object is set on the XYColumnPlotData
-          ((IYBoundsHolder)pa).SetYBoundsFromTemplate(m_yAxis.DataBounds); // ensure that data bound object is of the right type
+          ((IYBoundsHolder)pa).SetYBoundsFromTemplate(m_yAxis.DataBoundsObject); // ensure that data bound object is of the right type
           // now merge the bounds with x and yAxis
-          ((IYBoundsHolder)pa).MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+          ((IYBoundsHolder)pa).MergeYBoundsInto(m_yAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         
         }
       }
       m_PlotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0,m_PlotAssociationYBoundariesChanged_EventSuspendCount-1);
-      m_yAxis.DataBounds.EndUpdate();
+      m_yAxis.DataBoundsObject.EndUpdate();
       m_yAxis.ProcessDataBounds();
     }
     
@@ -2189,16 +2189,16 @@ namespace Altaxo.Graph
       if(IsXAxisLinked && null!=LinkedLayer)
       {
         this.m_xAxis.ProcessDataBounds( 
-          m_LinkXAxisOrgA+m_LinkXAxisOrgB*LinkedLayer.XAxis.Org,true,
-          m_LinkXAxisEndA+m_LinkXAxisEndB*LinkedLayer.XAxis.End,true);
+          m_LinkXAxisOrgA+m_LinkXAxisOrgB*LinkedLayer.XAxis.OrgAsVariant,true,
+          m_LinkXAxisEndA+m_LinkXAxisEndB*LinkedLayer.XAxis.EndAsVariant,true);
 
       }
 
       if(IsYAxisLinked && null!=LinkedLayer)
       {
         this.m_yAxis.ProcessDataBounds( 
-          m_LinkYAxisOrgA+m_LinkYAxisOrgB*LinkedLayer.YAxis.Org,true,
-          m_LinkYAxisEndA+m_LinkYAxisEndB*LinkedLayer.YAxis.End,true);
+          m_LinkYAxisOrgA+m_LinkYAxisOrgB*LinkedLayer.YAxis.OrgAsVariant,true,
+          m_LinkYAxisEndA+m_LinkYAxisEndB*LinkedLayer.YAxis.EndAsVariant,true);
       }
 
       // indicate that the axes have changed
@@ -2752,17 +2752,17 @@ namespace Altaxo.Graph
       if(0==m_PlotAssociationXBoundariesChanged_EventSuspendCount)
       {
         // now we have to inform all the PlotAssociations that a new axis was loaded
-        m_xAxis.DataBounds.BeginUpdate();
-        m_xAxis.DataBounds.Reset();
+        m_xAxis.DataBoundsObject.BeginUpdate();
+        m_xAxis.DataBoundsObject.Reset();
         foreach(PlotItem pa in this.PlotItems)
         {
           if(pa is IXBoundsHolder)
           {
             // merge the bounds with x and yAxis
-            ((IXBoundsHolder)pa).MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+            ((IXBoundsHolder)pa).MergeXBoundsInto(m_xAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
           }
         }
-        m_xAxis.DataBounds.EndUpdate();
+        m_xAxis.DataBoundsObject.EndUpdate();
       }
     }
 
@@ -2781,18 +2781,18 @@ namespace Altaxo.Graph
       if(0==m_PlotAssociationYBoundariesChanged_EventSuspendCount)
       {
         // now we have to inform all the PlotAssociations that a new axis was loaded
-        m_yAxis.DataBounds.BeginUpdate();
-        m_yAxis.DataBounds.Reset();
+        m_yAxis.DataBoundsObject.BeginUpdate();
+        m_yAxis.DataBoundsObject.Reset();
         foreach(PlotItem pa in this.PlotItems)
         {
           if(pa is IYBoundsHolder)
           {
             // merge the bounds with x and yAxis
-            ((IYBoundsHolder)pa).MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+            ((IYBoundsHolder)pa).MergeYBoundsInto(m_yAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         
           }
         }
-        m_yAxis.DataBounds.EndUpdate();
+        m_yAxis.DataBoundsObject.EndUpdate();
       }
     }
     

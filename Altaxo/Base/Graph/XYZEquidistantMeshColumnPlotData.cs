@@ -411,28 +411,28 @@ namespace Altaxo.Graph
       return new XYZEquidistantMeshColumnPlotData(this);
     }
 
-    public void MergeXBoundsInto(NumericalBoundaries pb)
+    public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       if(!this.m_bCachedDataValid)
         this.CalculateCachedData();
       pb.Add(m_xBoundaries);
     }
 
-    public void MergeYBoundsInto(NumericalBoundaries pb)
+    public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       if(!this.m_bCachedDataValid)
         this.CalculateCachedData();
       pb.Add(m_yBoundaries);
     }
 
-    public void MergeVBoundsInto(NumericalBoundaries pb)
+    public void MergeVBoundsInto(IPhysicalBoundaries pb)
     {
       if(!this.m_bCachedDataValid)
         this.CalculateCachedData();
       pb.Add(m_vBoundaries);
     }
 
-    public void SetXBoundsFromTemplate(NumericalBoundaries val)
+    public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
       if(null==m_xBoundaries || val.GetType() != m_xBoundaries.GetType())
       {
@@ -449,7 +449,7 @@ namespace Altaxo.Graph
     }
 
 
-    public void SetYBoundsFromTemplate(NumericalBoundaries val)
+    public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
       if(null==m_yBoundaries || val.GetType() != m_yBoundaries.GetType())
       {
@@ -466,7 +466,7 @@ namespace Altaxo.Graph
     }
 
 
-    public void SetVBoundsFromTemplate(NumericalBoundaries val)
+    public void SetVBoundsFromTemplate(IPhysicalBoundaries val)
     {
       if(null==m_vBoundaries || val.GetType() != m_vBoundaries.GetType())
       {

@@ -459,10 +459,10 @@ namespace Altaxo.Graph
       g.DrawLine(m_AxisPen,orgP,endP);
 
       // now the major ticks
-      double[] majorticks = axis.GetMajorTicks();
+      double[] majorticks = axis.GetMajorTicksNormal();
       for(int i=0;i<majorticks.Length;i++)
       {
-        double r = axis.PhysicalToNormal(majorticks[i]);
+        double r = majorticks[i];
         PointF tickorg = Edge.GetPointBetween(orgP,endP,r);
         PointF tickend;
         if(m_bOuterMajorTicks)
@@ -481,10 +481,10 @@ namespace Altaxo.Graph
         }
       }
       // now the major ticks
-      double[] minorticks = axis.GetMinorTicks();
+      double[] minorticks = axis.GetMinorTicksNormal();
       for(int i=0;i<minorticks.Length;i++)
       {
-        double r = axis.PhysicalToNormal(minorticks[i]);
+        double r = minorticks[i];
         PointF tickorg =  Edge.GetPointBetween(orgP,endP,r);
         PointF tickend;
         if(m_bOuterMinorTicks)

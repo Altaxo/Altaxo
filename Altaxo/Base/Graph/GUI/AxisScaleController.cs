@@ -169,7 +169,7 @@ namespace Altaxo.Graph.GUI
     {
       if(bInit)
       {
-        m_BoundaryController = (IMVCAController)Current.GUIFactoryService.GetControllerAndControl(new object[]{_tempAxis.Rescaling,_tempAxis},typeof(IMVCAController));
+        m_BoundaryController = (IMVCAController)Current.GUIFactoryService.GetControllerAndControl(new object[]{_tempAxis.RescalingObject,_tempAxis},typeof(IMVCAController));
       }
       if(null!=View)
       {
@@ -226,7 +226,7 @@ namespace Altaxo.Graph.GUI
             // this will fail for instance if we switch from linear to logarithmic with negative bounds
             try
             {
-              _tempAxis.ProcessDataBounds(_oldAxis.Org,true,_oldAxis.End,true);
+              _tempAxis.ProcessDataBounds(_oldAxis.OrgAsVariant,true,_oldAxis.EndAsVariant,true);
             }
             catch(Exception)
             {
@@ -237,7 +237,7 @@ namespace Altaxo.Graph.GUI
           }
         }
       }
-      catch(Exception ex)
+      catch(Exception )
       {
       }
     }

@@ -408,22 +408,25 @@ namespace Altaxo.Graph
     }
 
 
-    public void MergeXBoundsInto(NumericalBoundaries pb)
+    public void MergeXBoundsInto(IPhysicalBoundaries pb)
     {
       if(!this.m_bCachedDataValid)
         this.CalculateCachedData();
       pb.Add(m_xBoundaries);
     }
 
-    public void MergeYBoundsInto(NumericalBoundaries pb)
+    public void MergeYBoundsInto(IPhysicalBoundaries pb)
     {
       if(!this.m_bCachedDataValid)
         this.CalculateCachedData();
       pb.Add(m_yBoundaries);
     }
 
-    public void SetXBoundsFromTemplate(NumericalBoundaries val)
+    public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
+      if(!(val is NumericalBoundaries))
+        return;
+
       if(null==m_xBoundaries || val.GetType() != m_xBoundaries.GetType())
       {
         if(null!=m_xBoundaries)
@@ -439,8 +442,10 @@ namespace Altaxo.Graph
     }
 
 
-    public void SetYBoundsFromTemplate(NumericalBoundaries val)
+    public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
+      if(!(val is NumericalBoundaries))
+        return;
       if(null==m_yBoundaries || val.GetType() != m_yBoundaries.GetType())
       {
         if(null!=m_yBoundaries)
@@ -733,8 +738,8 @@ namespace Altaxo.Graph
         double x_rel,y_rel;
         double xcoord, ycoord;
 
-        x_rel = xAxis.PhysicalToNormal(xColumn.GetDoubleAt(i));
-        y_rel = yAxis.PhysicalToNormal(yColumn.GetDoubleAt(i));
+        x_rel = xAxis.PhysicalVariantToNormal(xColumn[i]);
+        y_rel = yAxis.PhysicalVariantToNormal(yColumn[i]);
 
         // chop relative values to an range of about -+ 10^6
         if(x_rel>MaxRelativeValue)

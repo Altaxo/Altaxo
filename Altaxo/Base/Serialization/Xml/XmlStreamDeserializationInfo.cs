@@ -118,6 +118,11 @@ namespace Altaxo.Serialization.Xml
       return XmlConvert.ToDateTime(m_Reader.ReadElementString());
     }
 
+    public TimeSpan GetTimeSpan(string name)
+    {
+      return XmlConvert.ToTimeSpan(m_Reader.ReadElementString());
+    }
+
     public double GetDouble(string name)
     {
       return XmlConvert.ToDouble(m_Reader.ReadElementString());
