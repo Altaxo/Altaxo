@@ -513,9 +513,9 @@ namespace Altaxo.Graph
 				else // if Layer exists
 				{
 					// if the PlotAssociation don't exist anymore, correct it
-					if(0==this.m_Graph[CurrentLayerNumber].PlotAssociations.Count)
+					if(0==this.m_Graph[CurrentLayerNumber].PlotItems.Count)
 						m_CurrentPlotNumber = -1;
-					if(m_CurrentPlotNumber>=this.m_Graph[CurrentLayerNumber].PlotAssociations.Count)
+					if(m_CurrentPlotNumber>=this.m_Graph[CurrentLayerNumber].PlotItems.Count)
 						m_CurrentPlotNumber = 0;
 				}	
 				return m_CurrentPlotNumber;
@@ -525,8 +525,8 @@ namespace Altaxo.Graph
 				if(CurrentLayerNumber>=0 && value<0)
 					throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"Must be greater or equal than zero");
 
-				if(CurrentLayerNumber>=0 && value>=m_Graph[CurrentLayerNumber].PlotAssociations.Count)
-					throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"Must be lesser than actual count: " + m_Graph[CurrentLayerNumber].PlotAssociations.Count.ToString());
+				if(CurrentLayerNumber>=0 && value>=m_Graph[CurrentLayerNumber].PlotItems.Count)
+					throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"Must be lesser than actual count: " + m_Graph[CurrentLayerNumber].PlotItems.Count.ToString());
 
 				m_CurrentPlotNumber = value<0 ? -1 : value;
 			}

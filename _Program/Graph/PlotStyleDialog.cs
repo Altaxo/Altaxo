@@ -108,7 +108,7 @@ namespace Altaxo.Graph
 			m_PlotGroup=plotGroup;
 			if(null!=m_PlotGroup)
 			{
-				m_PlotStyle = (PlotStyle)m_PlotGroup.MasterItem.PlotStyle.Clone();
+				m_PlotStyle = (PlotStyle)((PlotStyle)m_PlotGroup.MasterItem.Style).Clone();
 				m_PlotGroupStyle = m_PlotGroup.Style;
 			}
 			else // not member of a plotgroup

@@ -111,7 +111,6 @@ namespace Altaxo.Graph
 
 		protected LineStyle			m_LineStyle;
 		protected ScatterStyle	m_ScatterStyle;
-		// protected PlotAssociation m_PlotAssociation; // the plot association this plotstyle is for
 		protected bool  m_LineSymbolGap;
 
 

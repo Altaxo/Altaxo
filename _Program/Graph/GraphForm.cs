@@ -407,7 +407,7 @@ namespace Altaxo.Graph
 				// the actual plot association
 				int actLayerNum = this.m_GraphControl.CurrentLayerNumber;
 				Layer actLayer = this.m_GraphControl.Layers[actLayerNum];
-				if(null!=actLayer && dmi.tagValue<actLayer.PlotAssociations.Count)
+				if(null!=actLayer && dmi.tagValue<actLayer.PlotItems.Count)
 				{
 					dmi.Checked=true;
 					m_GraphControl.CurrentPlotNumber = dmi.tagValue;
@@ -419,12 +419,12 @@ namespace Altaxo.Graph
 				// of the plot association represented by this menu item
 				int actLayerNum = this.m_GraphControl.CurrentLayerNumber;
 				Layer actLayer = this.m_GraphControl.Layers[actLayerNum];
-				PlotAssociation pa = actLayer.PlotAssociations[m_GraphControl.CurrentPlotNumber];
+				PlotItem pa = actLayer.PlotItems[m_GraphControl.CurrentPlotNumber];
 
 
 				// get plot group
 				PlotGroup plotGroup = actLayer.PlotGroups.GetPlotGroupOf(pa);
-				PlotStyleDialog dlg = new PlotStyleDialog(pa.PlotStyle,plotGroup);
+				PlotStyleDialog dlg = new PlotStyleDialog((PlotStyle)pa.Style,plotGroup);
 				DialogResult dr = dlg.ShowDialog(this);
 				if(dr==DialogResult.OK)
 				{
@@ -432,16 +432,16 @@ namespace Altaxo.Graph
 					{
 						plotGroup.Style = dlg.PlotGroupStyle;
 						if(plotGroup.IsIndependent)
-							pa.PlotStyle = dlg.PlotStyle;
+							pa.Style = dlg.PlotStyle;
 						else
 						{
-							plotGroup.MasterItem.PlotStyle = dlg.PlotStyle;
+							plotGroup.MasterItem.Style = dlg.PlotStyle;
 							plotGroup.UpdateMembers();
 						}
 					}
 					else // pa was not member of a plot group
 					{
-						pa.PlotStyle = dlg.PlotStyle;
+						pa.Style = dlg.PlotStyle;
 					}
 
 						this.m_GraphControl.Invalidate(); // renew the picture
@@ -466,10 +466,10 @@ namespace Altaxo.Graph
 
 			menuDataPopup.MenuItems.Add(this.menuDataSeparator);
 			int actPA = m_GraphControl.CurrentPlotNumber;
-			int len = actLayer.PlotAssociations.Count;
+			int len = actLayer.PlotItems.Count;
 			for(int i = 0; i<len; i++)
 			{
-				PlotAssociation pa = actLayer.PlotAssociations[i];
+				PlotItem pa = actLayer.PlotItems[i];
 				DataMenuItem mi = new DataMenuItem(pa.ToString(), new EventHandler(menuData_Data));
 				mi.Checked = (i==actPA);
 				mi.tagValue = i;

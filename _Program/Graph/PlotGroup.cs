@@ -41,8 +41,11 @@ namespace Altaxo.Graph
 	[SerializationVersion(0)]
 	public class PlotGroup : System.Runtime.Serialization.IDeserializationCallback
 	{
+		/// <summary>
+		/// Designates which dependencies the plot styles have on each other.
+		/// </summary>
 		PlotGroupStyle m_Style;
-		System.Collections.ArrayList m_PlotAssociations;
+		System.Collections.ArrayList m_PlotItems;
 		private PlotGroup.Collection m_Parent;
 
 
@@ -61,7 +64,7 @@ namespace Altaxo.Graph
 			{
 				PlotGroup s = (PlotGroup)obj;
 				info.AddValue("Style",s.m_Style);  
-				info.AddValue("Group",s.m_PlotAssociations);  
+				info.AddValue("Group",s.m_PlotItems);  
 			}
 			/// <summary>
 			/// Deserializes the PlotGroup Version 0.
@@ -76,7 +79,7 @@ namespace Altaxo.Graph
 				PlotGroup s = (PlotGroup)obj;
 
 				s.m_Style = (PlotGroupStyle)info.GetValue("Style",typeof(PlotGroupStyle));
-				s.m_PlotAssociations = (System.Collections.ArrayList)info.GetValue("Group",typeof(System.Collections.ArrayList));
+				s.m_PlotItems = (System.Collections.ArrayList)info.GetValue("Group",typeof(System.Collections.ArrayList));
 				return s;
 			}
 		}
@@ -92,55 +95,55 @@ namespace Altaxo.Graph
 
 
 
-		public PlotGroup(PlotAssociation assoc, PlotGroupStyle style)
+		public PlotGroup(PlotItem assoc, PlotGroupStyle style)
 		{
 			m_Style = style;
-			m_PlotAssociations = new System.Collections.ArrayList();
-			m_PlotAssociations.Add(assoc);
+			m_PlotItems = new System.Collections.ArrayList();
+			m_PlotItems.Add(assoc);
 		}
 
 		public PlotGroup(PlotGroupStyle style)
 		{
 			m_Style = style;
-			m_PlotAssociations = new System.Collections.ArrayList();
+			m_PlotItems = new System.Collections.ArrayList();
 		}
 
 		public int Count
 		{
-			get { return null!=m_PlotAssociations ? m_PlotAssociations.Count : 0; }
+			get { return null!=m_PlotItems ? m_PlotItems.Count : 0; }
 		}
 
-		public PlotAssociation this[int i]
+		public PlotItem this[int i]
 		{
-			get { return (PlotAssociation)m_PlotAssociations[i]; }
+			get { return (PlotItem)m_PlotItems[i]; }
 		}
 
-		public void Add(PlotAssociation assoc)
+		public void Add(PlotItem assoc)
 		{
 			if(null!=assoc)
 			{
-				int cnt = m_PlotAssociations.Count;
+				int cnt = m_PlotItems.Count;
 				if(cnt>0)
 				{
-					assoc.PlotStyle.SetToNextStyle(((PlotAssociation)m_PlotAssociations[cnt-1]).PlotStyle,m_Style);
+					((PlotStyle)assoc.Style).SetToNextStyle((PlotStyle)((PlotItem)m_PlotItems[cnt-1]).Style,m_Style);
 				}
-				m_PlotAssociations.Add(assoc);
+				m_PlotItems.Add(assoc);
 			}
 		}
 
-		public bool Contains(PlotAssociation assoc)
+		public bool Contains(PlotItem assoc)
 		{
-			return this.m_PlotAssociations.Contains(assoc);
+			return this.m_PlotItems.Contains(assoc);
 		}
 
 		public void Clear()
 		{
-			m_PlotAssociations.Clear();
+			m_PlotItems.Clear();
 		}
 
-		public PlotAssociation MasterItem
+		public PlotItem MasterItem
 		{
-			get { return m_PlotAssociations.Count>0 ? (PlotAssociation)m_PlotAssociations[0] : null; }
+			get { return m_PlotItems.Count>0 ? (PlotItem)m_PlotItems[0] : null; }
 		}
 
 		public bool IsIndependent 
@@ -168,7 +171,7 @@ namespace Altaxo.Graph
 			if(!IsIndependent && Count>0)
 			{
 				for(int i=1;i<Count;i++)
-					this[i].PlotStyle.SetToNextStyle(this[i-1].PlotStyle,this.m_Style);
+					((PlotStyle)this[i].Style).SetToNextStyle((PlotStyle)this[i-1].Style,this.m_Style);
 			}
 		}
 
@@ -193,7 +196,7 @@ namespace Altaxo.Graph
 				m_List.Clear();
 			}
 
-			public PlotGroup GetPlotGroupOf(PlotAssociation assoc)
+			public PlotGroup GetPlotGroupOf(PlotItem assoc)
 			{
 				// search for the (first) plot group, to which assoc belongs,
 				// and return this group

@@ -940,10 +940,10 @@ namespace Altaxo.Graph
 							if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
 								layer = layer.ParentLayerList[ti.m_LayerNumber];
 
-							if(ti.m_PlotNumber<layer.PlotAssociations.Count)
+							if(ti.m_PlotNumber<layer.PlotItems.Count)
 							{
-								Graph.PlotAssociation pa = layer.PlotAssociations[ti.m_PlotNumber];
-								ti.PlotCurveName = pa.ToString();
+								Graph.PlotItem pa = layer.PlotItems[ti.m_PlotNumber];
+								ti.PlotCurveName = pa.GetName(0);
 							}
 						}
 					
@@ -963,9 +963,9 @@ namespace Altaxo.Graph
 							if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
 								layer = layer.ParentLayerList[ti.m_LayerNumber];
 
-							if(ti.m_PlotNumber<layer.PlotAssociations.Count)
+							if(ti.m_PlotNumber<layer.PlotItems.Count)
 							{
-								Graph.PlotAssociation pa = layer.PlotAssociations[ti.m_PlotNumber];
+								//Graph.PlotItem pa = layer.PlotAssociations[ti.m_PlotNumber];
 								MeasureFont(g,ti.Font,out ti.m_cyLineSpace, out ti.m_cyAscent, out ti.m_cyDescent);
 								ti.m_Width = g.MeasureString("MMM", ti.Font, 0, strfmt).Width;
 
@@ -1261,11 +1261,11 @@ namespace Altaxo.Graph
 						if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
 							layer = layer.ParentLayerList[ti.m_LayerNumber];
 
-						if(ti.m_PlotNumber<layer.PlotAssociations.Count)
+						if(ti.m_PlotNumber<layer.PlotItems.Count)
 						{
-							Graph.PlotAssociation pa = layer.PlotAssociations[ti.m_PlotNumber];
+							Graph.PlotItem pa = layer.PlotItems[ti.m_PlotNumber];
 						
-							pa.PlotStyle.PaintSymbol(g, new PointF(currPosX,currPosY + ti.m_yShift  + 0.5f*ti.m_cyDescent - 0.5f*ti.m_cyAscent), ti.m_Width);
+							((PlotStyle)pa.Style).PaintSymbol(g, new PointF(currPosX,currPosY + ti.m_yShift  + 0.5f*ti.m_cyDescent - 0.5f*ti.m_cyAscent), ti.m_Width);
 							currPosX += ti.m_Width;
 						}
 

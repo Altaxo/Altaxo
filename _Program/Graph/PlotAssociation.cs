@@ -26,18 +26,71 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph
 {
+
+	/// <summary>
+	/// Implemented by objects that hold x bounds, for instance XYPlotAssociations.
+	/// </summary>
+	public interface IXBoundsHolder
+	{
+		/// <summary>Fired if the x boundaries of the object changed.</summary>
+		event PhysicalBoundaries.BoundaryChangedHandler	XBoundariesChanged;
+
+		/// <summary>
+		/// This sets the x boundary object to a object of the same type as val. The inner data of the boundary, if present,
+		/// are copied into the new x boundary object.
+		/// </summary>
+		/// <param name="val">The template boundary object.</param>
+		void SetXBoundsFromTemplate(PhysicalBoundaries val);
+
+		/// <summary>
+		/// This merges the x boundary of the object with the boundary pb. The boundary pb is updated so that
+		/// it now includes the x boundary range of the object.
+		/// </summary>
+		/// <param name="pb">The boundary object pb which is updated to include the x boundaries of the object.</param>
+		void MergeXBoundsInto(PhysicalBoundaries pb);
+	}
+
+	/// <summary>
+	/// Implemented by objects that hold y bounds, for instance XYPlotAssociations.
+	/// </summary>
+	public interface IYBoundsHolder
+	{
+		/// <summary>Fired if the y boundaries of the object changed.</summary>
+		event PhysicalBoundaries.BoundaryChangedHandler	YBoundariesChanged;
+
+		/// <summary>
+		/// This sets the y boundary object to a object of the same type as val. The inner data of the boundary, if present,
+		/// are copied into the new y boundary object.
+		/// </summary>
+		/// <param name="val">The template boundary object.</param>
+		void SetYBoundsFromTemplate(PhysicalBoundaries val);
+
+		/// <summary>
+		/// This merges the y boundary of the object with the boundary pb. The boundary pb is updated so that
+		/// it now includes the y boundary range of the object.
+		/// </summary>
+		/// <param name="pb">The boundary object pb which is updated to include the y boundaries of the object.</param>
+		void MergeYBoundsInto(PhysicalBoundaries pb);
+	}
+
+
+	/// <summary>
+	/// Implemented by objects that hold x bounds and y bounds, for instance XYPlotAssociations.
+	/// </summary>
+	public interface IXYBoundsHolder : IXBoundsHolder, IYBoundsHolder
+	{
+	}
+
+
 	/// <summary>
 	/// Summary description for PlotAssociation.
 	/// </summary>
 	[SerializationSurrogate(0,typeof(PlotAssociation.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class PlotAssociation
+	public class PlotAssociation : IXYBoundsHolder
 	{
 		protected Altaxo.Data.IReadableColumn m_xColumn; // the X-Column
 		protected Altaxo.Data.IReadableColumn m_yColumn; // the Y-Column
-
-		protected PlotStyle m_PlotStyle = null;
-
 
 		// cached or temporary data
 		protected PhysicalBoundaries m_xBoundaries;
@@ -105,8 +158,6 @@ namespace Altaxo.Graph
 
 		public PlotAssociation(Altaxo.Data.DataColumn m_xColumn, Altaxo.Data.DataColumn m_yColumn)
 		{
-			m_PlotStyle = new LineScatterPlotStyle(this);
-
 			this.m_xColumn = m_xColumn;
 			this.m_yColumn = m_yColumn;
 
@@ -167,16 +218,6 @@ namespace Altaxo.Graph
 				CalculateCachedData();
 			}
 		}
-
-
-		public void Paint(Graphics g, Graph.Layer layer)
-		{
-			if(null!=this.m_PlotStyle)
-			{
-				m_PlotStyle.Paint(g,layer,this);
-			}
-		}
-
 
 
 		/*
@@ -253,27 +294,6 @@ namespace Altaxo.Graph
 					this.CalculateCachedData();
 				return this.m_PlottablePoints;
 			}
-		}
-
-		public PlotStyle PlotStyle
-		{
-			get
-			{
-				return m_PlotStyle;
-			}
-			set
-			{
-//				PlotStyle oldPlotStyle = m_PlotStyle;
-				m_PlotStyle = value;
-/*
-				if(null!=oldPlotStyle && !object.ReferenceEquals(oldPlotStyle,value))
-					oldPlotStyle.PlotAssociation=null; // good by my old plot association
-
-				if(null!=m_PlotStyle && !object.ReferenceEquals(m_PlotStyle.PlotAssociation,this))
-					m_PlotStyle.PlotAssociation = this; // implement my own association
-*/	
-
-		}
 		}
 
 		public Altaxo.Data.IReadableColumn XColumn

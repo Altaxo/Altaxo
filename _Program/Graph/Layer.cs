@@ -257,7 +257,7 @@ namespace Altaxo.Graph
 
 		protected GraphObjectCollection m_GraphObjects = new GraphObjectCollection();
 
-		protected PlotAssociationList m_PlotAssociations;
+		protected PlotList m_PlotItems;
 
 		protected PlotGroup.Collection m_PlotGroups = new PlotGroup.Collection();
 
@@ -404,7 +404,7 @@ namespace Altaxo.Graph
 			
 				info.AddValue("GraphObjects",s.m_GraphObjects);
 				info.AddValue("PlotGroups",s.m_PlotGroups);
-				info.AddValue("PlotAssociations",s.m_PlotAssociations);
+				info.AddValue("Plots",s.m_PlotItems);
 
 			}
 
@@ -489,7 +489,7 @@ namespace Altaxo.Graph
 			
 				s.m_GraphObjects = (Graph.GraphObjectCollection)info.GetValue("GraphObjects",typeof(Graph.GraphObjectCollection));
 				s.m_PlotGroups = (Graph.PlotGroup.Collection)info.GetValue("PlotGroups",typeof(Graph.PlotGroup.Collection));
-				s.m_PlotAssociations = (PlotAssociationList)info.GetValue("PlotAssociations",typeof(PlotAssociationList));
+				s.m_PlotItems = (PlotList)info.GetValue("Plots",typeof(PlotList));
 
 
 
@@ -534,7 +534,7 @@ namespace Altaxo.Graph
 
 			CalculateMatrix();
 
-			m_PlotAssociations = new PlotAssociationList(this);
+			m_PlotItems = new PlotList(this);
 
 			// create axes and add event handlers to them
 			m_xAxis = new LinearAxis(); // the X-Axis
@@ -673,9 +673,9 @@ namespace Altaxo.Graph
 		}
 
 
-		public PlotAssociationList PlotAssociations
+		public PlotList PlotItems
 		{
-			get { return m_PlotAssociations; }
+			get { return m_PlotItems; }
 		}
 
 		public PlotGroup.Collection PlotGroups
@@ -686,7 +686,7 @@ namespace Altaxo.Graph
 		public void AddPlotAssociation(PlotAssociation[] pal)
 		{
 			foreach(PlotAssociation pa in pal)
-				this.m_PlotAssociations.Add(pa);
+				this.m_PlotItems.Add(new XYDataPlot(pa,new LineScatterPlotStyle()));
 		}
 	
 
@@ -699,7 +699,7 @@ namespace Altaxo.Graph
 		public void CreateNewLayerLegend()
 		{
 			// remove the legend if there are no plot curves on the layer
-			if(PlotAssociations.Count==0)
+			if(PlotItems.Count==0)
 			{
 				m_Legend=null;
 				OnInvalidate();
@@ -715,7 +715,7 @@ namespace Altaxo.Graph
 
 
 			string strg="";
-			for(int i=0;i<this.PlotAssociations.Count;i++)
+			for(int i=0;i<this.PlotItems.Count;i++)
 			{
 				strg+= String.Format("{0}\\L({1}) \\%({2})",(i==0?"":"\n"), i,i);
 			}
@@ -1242,14 +1242,18 @@ namespace Altaxo.Graph
 					m_xAxis.AxisChanged += new System.EventHandler(this.OnXAxisChanged);
 
 
-				// now we have to inform all the PlotAssociations that a new axis was loaded
-				foreach(PlotAssociation pa in this.PlotAssociations)
+				// now we have to inform all the PlotItems that a new axis was loaded
+				foreach(PlotItem pa in this.PlotItems)
 				{
-					// first ensure the right data bound object is set on the PlotAssociation
-					pa.SetXBoundsFromTemplate(m_xAxis.DataBounds); // ensure that data bound object is of the right type
-					// now merge the bounds with x and yAxis
-					pa.MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
-				}
+					if(pa.Data is Graph.IXBoundsHolder)
+					{
+						// first ensure the right data bound object is set on the PlotAssociation
+						((IXBoundsHolder)pa.Data).SetXBoundsFromTemplate(m_xAxis.DataBounds); // ensure that data bound object is of the right type
+						// now merge the bounds with x and yAxis
+						((IXBoundsHolder)pa.Data).MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+				
+					}
+					}
 			}
 		}
 
@@ -1271,13 +1275,17 @@ namespace Altaxo.Graph
 
 
 				// now we have to inform all the PlotAssociations that a new axis was loaded
-				foreach(PlotAssociation pa in this.PlotAssociations)
+				foreach(PlotItem pa in this.PlotItems)
 				{
-					// first ensure the right data bound object is set on the PlotAssociation
-					pa.SetYBoundsFromTemplate(m_yAxis.DataBounds); // ensure that data bound object is of the right type
-					// now merge the bounds with x and yAxis
-					pa.MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
-				}
+					if(pa.Data is Graph.IYBoundsHolder)
+					{
+						// first ensure the right data bound object is set on the PlotAssociation
+						((IYBoundsHolder)pa.Data).SetYBoundsFromTemplate(m_yAxis.DataBounds); // ensure that data bound object is of the right type
+						// now merge the bounds with x and yAxis
+						((IYBoundsHolder)pa.Data).MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+				
+					}
+					}
 			}
 		}
 
@@ -1878,9 +1886,9 @@ namespace Altaxo.Graph
 			if(m_Legend!=null)
 				m_Legend.Paint(g,this);
 
-			foreach(PlotAssociation pa in m_PlotAssociations)
+			foreach(PlotItem pi in m_PlotItems)
 			{
-				pa.Paint(g,this);
+				pi.Paint(g,this);
 			}
 
 
@@ -2004,50 +2012,43 @@ namespace Altaxo.Graph
 
 		#region Inner classes
 
+
 		[Serializable]
-		public class PlotAssociationList : System.Collections.ArrayList
+		public class PlotList : System.Collections.CollectionBase
 		{
 			private Layer m_Owner; // the parent of this list
 
-			public PlotAssociationList(Layer owner)
+			public PlotList(Layer owner)
 			{
 				m_Owner = owner;
 			}
 
-			public new void Add(object o)
+			public new void Add(Graph.PlotItem plotitem)
 			{
-				if(o is PlotAssociation)
+				if(plotitem==null)
+					throw new ArgumentNullException();
+
+				base.InnerList.Add(plotitem);
+
+				if(plotitem.Data is Graph.IXBoundsHolder)
 				{
-					PlotAssociation pa = (PlotAssociation)o;
+					IXBoundsHolder pa = (IXBoundsHolder)plotitem.Data;
 					pa.SetXBoundsFromTemplate(m_Owner.XAxis.DataBounds); // ensure that data bound object is of the right type
-					pa.SetYBoundsFromTemplate(m_Owner.YAxis.DataBounds); // ensure that data bound object is of the right type
 					pa.XBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationXBoundariesChanged);
-					pa.YBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationYBoundariesChanged);
-					base.Add(pa);
-					// now merge the bounds with x and yAxis
 					pa.MergeXBoundsInto(m_Owner.XAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+				}
+				if(plotitem.Data is Graph.IYBoundsHolder)
+				{
+					IYBoundsHolder pa = (IYBoundsHolder)plotitem.Data;
+					pa.SetYBoundsFromTemplate(m_Owner.YAxis.DataBounds); // ensure that data bound object is of the right type
+					pa.YBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationYBoundariesChanged);
 					pa.MergeYBoundsInto(m_Owner.YAxis.DataBounds); // merge the y-boundaries in the y-Axis data boundaries
 				}
-				else
-					throw new ArgumentException("Only PlotAssociations can be added to the list, but you try to add a " + o.GetType());
 			}
 
-			public new PlotAssociation this[int i]
+			public new PlotItem this[int i]
 			{
-				get { return (PlotAssociation)base[i]; }
-				set 
-				{
-					if(null!=base[i])
-					{
-						// remove the old event handlers
-						((PlotAssociation)base[i]).XBoundariesChanged -= new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationXBoundariesChanged);
-						((PlotAssociation)base[i]).YBoundariesChanged -= new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationYBoundariesChanged);
-					}
-					base[i] = value;
-					// add event handlers to the new value
-					((PlotAssociation)base[i]).XBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationXBoundariesChanged);
-					((PlotAssociation)base[i]).YBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationYBoundariesChanged);
-				}
+				get { return (PlotItem)base.InnerList[i]; }
 			}
 		}
 
@@ -2079,7 +2080,6 @@ namespace Altaxo.Graph
 			/// <summary>Used to serialize the LayerCollection Version 0.</summary>
 			public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 			{
-				System.Collections.ArrayList arr=null;
 
 				/// <summary>
 				/// Serializes LayerCollection Version 0.

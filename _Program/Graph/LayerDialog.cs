@@ -1805,7 +1805,7 @@ namespace Altaxo.Graph
 		private class PLCon
 		{
 			public string table, column; // holds either name of table and column if freshly added
-			public PlotAssociation plotassociation;   // or the plot association itself in case of existing PlotAssociations
+			public PlotItem plotassociation;   // or the plot association itself in case of existing PlotAssociations
 			
 			// m_Group holds (in PLCon items) information about the group members
 			public System.Collections.ArrayList m_Group; 
@@ -1819,7 +1819,7 @@ namespace Altaxo.Graph
 				this.plotassociation=null;
 				this.m_Group=null;
 			}
-			public PLCon(PlotAssociation pa)
+			public PLCon(PlotItem pa)
 			{
 				this.table=null;
 				this.column=null;
@@ -1907,13 +1907,9 @@ namespace Altaxo.Graph
 
 			public override string ToString()
 			{
-				if(null!=plotassociation && null!=plotassociation.YColumn)
+				if(null!=plotassociation)
 				{
-					return this.plotassociation.YColumn.FullName;
-				}
-				else if(null!=column && null!=table)
-				{
-					return table + "_" + column;
+					return plotassociation.GetName(0);
 				}
 				else
 					return "<no more available>";
@@ -1948,9 +1944,9 @@ namespace Altaxo.Graph
 			this.m_Contents_lbContents.BeginUpdate();
 			this.m_Contents_lbContents.Items.Clear();
 			System.Collections.Hashtable addedItems = new System.Collections.Hashtable();
-			for(int i=0;i<m_Layer.PlotAssociations.Count;i++)
+			for(int i=0;i<m_Layer.PlotItems.Count;i++)
 			{
-				PlotAssociation pa = m_Layer.PlotAssociations[i];
+				PlotItem pa = m_Layer.PlotItems[i];
 				
 				if(!addedItems.ContainsKey(pa)) // if not already added to the list box
 				{
@@ -1981,7 +1977,7 @@ namespace Altaxo.Graph
 		}
 
 
-		private PlotAssociation NewPlotAssociationFromPLCon(PLCon item)
+		private PlotItem NewPlotAssociationFromPLCon(PLCon item)
 		{
 			if(!item.IsSingleNewItem)
 				return null;
@@ -1997,7 +1993,7 @@ namespace Altaxo.Graph
 					Data.DataColumn xcol = tab.FindXColumnOfGroup(ycol.Group);
 					if(null==xcol)
 						xcol=ycol;
-					return  new PlotAssociation(xcol,ycol);
+					return  new Graph.XYDataPlot(new PlotAssociation(xcol,ycol),new LineScatterPlotStyle());
 					// now enter the plotassociation back into the layer's plot association list
 				}
 			}
@@ -2008,7 +2004,7 @@ namespace Altaxo.Graph
 		{
 
 
-			m_Layer.PlotAssociations.Clear();
+			m_Layer.PlotItems.Clear();
 			m_Layer.PlotGroups.Clear();
 
 			// now we must get all items out of the listbox and look
@@ -2016,20 +2012,20 @@ namespace Altaxo.Graph
 			for(int i=0;i<this.m_Contents_lbContents.Items.Count;i++)
 			{
 				PLCon item = (PLCon)this.m_Contents_lbContents.Items[i];
-				PlotAssociation pa=null;
+				PlotItem pa=null;
 				
 				if(item.IsSingleNewItem)
 				{
 					pa = this.NewPlotAssociationFromPLCon(item);
 					if(null!=pa)
 					{
-						m_Layer.PlotAssociations.Add(pa);
+						m_Layer.PlotItems.Add(pa);
 					}
 				}
 				else if(item.IsSingleKnownItem)
 				{
 					pa = item.plotassociation;
-					m_Layer.PlotAssociations.Add(pa);
+					m_Layer.PlotItems.Add(pa);
 				}
 				else if(item.IsUnchangedOldGroup)
 				{
@@ -2038,7 +2034,7 @@ namespace Altaxo.Graph
 					for(int j=0;j<item.m_Group.Count;j++)
 					{
 						PLCon member = (PLCon)item.m_Group[j];
-						m_Layer.PlotAssociations.Add(member.plotassociation);
+						m_Layer.PlotItems.Add(member.plotassociation);
 					} // end for
 					m_Layer.PlotGroups.Add(item.m_OriginalGroup); // add the unchanged group back to the layer
 				} // if item.IsUnchangedOldGroup
@@ -2050,7 +2046,7 @@ namespace Altaxo.Graph
 						PLCon member = (PLCon)item.m_Group[j];
 						if(member.IsSingleKnownItem)
 						{
-							m_Layer.PlotAssociations.Add(member.plotassociation);
+							m_Layer.PlotItems.Add(member.plotassociation);
 							item.m_OriginalGroup.Add(member.plotassociation);
 						}
 						else // than it is a single new item
@@ -2058,7 +2054,7 @@ namespace Altaxo.Graph
 							pa = this.NewPlotAssociationFromPLCon(member);
 							if(null!=pa)
 							{
-								m_Layer.PlotAssociations.Add(member.plotassociation);
+								m_Layer.PlotItems.Add(member.plotassociation);
 								item.m_OriginalGroup.Add(pa);
 							}
 						}
@@ -2076,7 +2072,7 @@ namespace Altaxo.Graph
 						PLCon member = (PLCon)item.m_Group[j];
 						if(member.IsSingleKnownItem)
 						{
-							m_Layer.PlotAssociations.Add(member.plotassociation);
+							m_Layer.PlotItems.Add(member.plotassociation);
 							newplotgrp.Add(member.plotassociation);
 						}
 						else // than it is a single new item
@@ -2084,7 +2080,7 @@ namespace Altaxo.Graph
 							pa = this.NewPlotAssociationFromPLCon(member);
 							if(null!=pa)
 							{
-								m_Layer.PlotAssociations.Add(pa);
+								m_Layer.PlotItems.Add(pa);
 								newplotgrp.Add(pa);
 							}
 						}
@@ -2164,12 +2160,12 @@ namespace Altaxo.Graph
 		{
 			if(this.m_Contents_lbContents.SelectedItems.Count==1)
 			{
-				PlotAssociation pa = ((PLCon)this.m_Contents_lbContents.SelectedItems[0]).plotassociation;
+				PlotItem pa = ((PLCon)this.m_Contents_lbContents.SelectedItems[0]).plotassociation;
 				if(null!=pa)
 				{
 					PlotGroup plotGroup = m_Layer.PlotGroups.GetPlotGroupOf(pa);
 					// open the plot style dialog of the selected item
-					PlotStyleDialog dlg = new PlotStyleDialog(null==plotGroup ? pa.PlotStyle : plotGroup.MasterItem.PlotStyle,plotGroup);
+					PlotStyleDialog dlg = new PlotStyleDialog(null==plotGroup ? (PlotStyle)pa.Style : (PlotStyle)plotGroup.MasterItem.Style,plotGroup);
 					DialogResult dr = dlg.ShowDialog(this);
 					if(dr==DialogResult.OK)
 					{
@@ -2177,13 +2173,13 @@ namespace Altaxo.Graph
 						{
 							plotGroup.Style = dlg.PlotGroupStyle;
 							if(plotGroup.IsIndependent)
-								pa.PlotStyle = dlg.PlotStyle;
+								pa.Style = dlg.PlotStyle;
 							else
-								plotGroup.MasterItem.PlotStyle = dlg.PlotStyle;
+								plotGroup.MasterItem.Style = dlg.PlotStyle;
 						}
 						else // pa was not member of a plot group
 						{
-							pa.PlotStyle = dlg.PlotStyle;
+							pa.Style = dlg.PlotStyle;
 						}
 						this.Invalidate(); // renew the picture
 					}
