@@ -446,6 +446,13 @@ namespace Altaxo.Graph
 			mi.Click += new EventHandler(EhMenuGraphNewLayerLegend_OnClick);
 			//mi.Shortcut = ShortCuts.
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+
+			// Graph - Layer control
+			mi = new MenuItem("Layer control");
+			mi.Click += new EventHandler(EhMenuGraphLayer_OnClick);
+			//mi.Shortcut = ShortCuts.
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+			
 		}
 
 
@@ -652,7 +659,12 @@ namespace Altaxo.Graph
 			App.Current.Doc.AddGraph(newView);
 		}
 
-
+		private void EhMenuGraphLayer_OnClick(object sender, System.EventArgs e)
+		{
+			EnsureValidityOfCurrentLayerNumber();
+			if(null!=this.ActiveLayer)
+				Graph.LayerController.ShowDialog(this.View.Form,this.ActiveLayer);
+		}
 
 		/// <summary>
 		/// Handler for the menu item "Graph" - "New layer legend.

@@ -3,7 +3,7 @@ using System;
 namespace Altaxo.Graph
 {
 	#region Interfaces
-	public interface IAxisScaleController
+	public interface IAxisScaleController : Main.IApplyController
 	{
 		void EhView_AxisOrgChanged(string text);
 		void EhView_AxisEndChanged(string text);
@@ -68,8 +68,12 @@ namespace Altaxo.Graph
 			get { return m_View; }
 			set
 			{
+				if(null!=m_View)
+					m_View.Controller = null;
+
 				m_View = value;
 				m_View.Controller = this;
+				
 				SetElements();
 			}
 		}
@@ -108,17 +112,22 @@ namespace Altaxo.Graph
 		{
 			string[] names = new string[Axis.AvailableAxes.Keys.Count];
 			
-			if(null==m_AxisType)
-			{
-				m_AxisType = m_Axis.GetType().ToString();
-				m_AxisTypeChanged = false;
-			}
 
 			int i=0;
+			string curraxisname=null;
 			foreach(string axs in Axis.AvailableAxes.Keys)
 			{
 				names[i++] = axs;
+				if(m_Axis.GetType()==Axis.AvailableAxes[axs] && null==m_AxisType)
+					curraxisname = axs;
 			}
+
+			if(null==m_AxisType)
+			{
+				m_AxisType = curraxisname;
+				m_AxisTypeChanged = false;
+			}
+
 
 			if(null!=View)
 				View.InitializeAxisType(names,m_AxisType);
@@ -146,7 +155,7 @@ namespace Altaxo.Graph
 		}
 
 
-		protected int GetElements()
+		public bool Apply()
 		{
 			try
 			{
@@ -193,12 +202,12 @@ namespace Altaxo.Graph
 				if(m_AxisOrgChanged || m_AxisEndChanged)
 					m_Axis.ProcessDataBounds(org,true,end,true);
 			}
-			catch(Exception ex)
+			catch(Exception )
 			{
-				return 1; // failure
+				return false; // failure
 			}
 			
-			return 0; // all ok
+			return true; // all ok
 		}
 
 		public void EhView_AxisOrgChanged(string text)

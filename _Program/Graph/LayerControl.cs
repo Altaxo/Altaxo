@@ -14,6 +14,8 @@ namespace Altaxo.Graph
 	{
 		private System.Windows.Forms.ListBox m_lbEdges;
 		private System.Windows.Forms.TabControl m_TabCtrl;
+		private ILayerController m_Ctrl;
+
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -62,6 +64,7 @@ namespace Altaxo.Graph
 			this.m_lbEdges.Name = "m_lbEdges";
 			this.m_lbEdges.Size = new System.Drawing.Size(64, 316);
 			this.m_lbEdges.TabIndex = 2;
+			this.m_lbEdges.SelectedIndexChanged += new System.EventHandler(this.EhSecondChoice_SelChanged);
 			// 
 			// m_TabCtrl
 			// 
@@ -73,6 +76,7 @@ namespace Altaxo.Graph
 			this.m_TabCtrl.SelectedIndex = 0;
 			this.m_TabCtrl.Size = new System.Drawing.Size(432, 320);
 			this.m_TabCtrl.TabIndex = 3;
+			this.m_TabCtrl.SelectedIndexChanged += new System.EventHandler(this.EhTabCtrl_SelectedIndexChanged);
 			// 
 			// LayerControl
 			// 
@@ -91,12 +95,11 @@ namespace Altaxo.Graph
 		{
 			get
 			{
-				// TODO:  Add LayerControl.Controller getter implementation
-				return null;
+				return m_Ctrl;
 			}
 			set
 			{
-				// TODO:  Add LayerControl.Controller setter implementation
+				m_Ctrl = value;
 			}
 		}
 
@@ -115,6 +118,35 @@ namespace Altaxo.Graph
 			this.m_TabCtrl.Controls.Add( tc );
 		}
 
+		private void EhTabCtrl_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			if(null!=m_Ctrl)
+				m_Ctrl.EhView_PageChanged();
+		}
+
+		public System.Windows.Forms.Control CurrentTabContent
+		{
+			get
+			{
+				int sel = m_TabCtrl.SelectedIndex;
+				System.Windows.Forms.TabPage tp = m_TabCtrl.TabPages[sel];
+				return tp.Controls[0];
+			}
+		}
+
+		public void InitializeSecondaryChoice(string[] names, string name)
+		{
+			this.m_lbEdges.Items.Clear();
+			this.m_lbEdges.Items.AddRange(names);
+			this.m_lbEdges.SelectedItem = name;
+		}
+
 		#endregion
+
+		private void EhSecondChoice_SelChanged(object sender, System.EventArgs e)
+		{
+			if(null!=m_Ctrl)
+				m_Ctrl.EhView_SecondChoiceChanged(this.m_lbEdges.SelectedIndex, (string)this.m_lbEdges.SelectedItem);
+		}
 	}
 }

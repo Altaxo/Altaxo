@@ -212,13 +212,13 @@ namespace Altaxo.Graph
 		private void EhAxisType_SelectionChangeCommit(object sender, System.EventArgs e)
 		{
 			if(null!=m_Ctrl)
-				m_Ctrl.EhView_AxisTypeChanged(this.m_Scale_cbType.Text);
+				m_Ctrl.EhView_AxisTypeChanged((string)this.m_Scale_cbType.SelectedItem);
 		}
 
 		private void EhAxisRescale_SelectionChangeCommit(object sender, System.EventArgs e)
 		{
 			if(null!=m_Ctrl)
-				m_Ctrl.EhView_AxisRescaleChanged(this.m_Scale_cbType.Text);
+				m_Ctrl.EhView_AxisRescaleChanged((string)this.m_Scale_cbType.SelectedItem);
 		}
 
 	}

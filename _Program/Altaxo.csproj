@@ -439,6 +439,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\TitleFormatLayerControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\TitleFormatLayerControl.resx"
+                    DependentUpon = "TitleFormatLayerControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\TitleFormatLayerController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\TwoDimMeshDataAssociation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
