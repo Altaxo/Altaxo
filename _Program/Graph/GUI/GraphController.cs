@@ -178,7 +178,7 @@ namespace Altaxo.Graph
 
 				// restore event chain to GraphDocument
 				m_Graph.Changed += new EventHandler(this.EhGraph_Changed);
-				m_Graph.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
+				m_Graph.Layers.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
 
 
 				// Ensure the current layer and plot numbers are valid
@@ -302,7 +302,7 @@ namespace Altaxo.Graph
 				printableBounds.Height = pageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
 			
 				m_Graph.Changed += new EventHandler(this.EhGraph_Changed);
-				m_Graph.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
+				m_Graph.Layers.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
 				m_Graph.PageBounds = pageBounds;
 				m_Graph.PrintableBounds = printableBounds;
 			}
@@ -1159,7 +1159,7 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
-		/// Returns the layer collection. Is the same as m_GraphDocument.Layers.
+		/// Returns the layer collection. Is the same as m_GraphDocument.Layer.
 		/// </summary>
 		public Layer.LayerCollection Layers
 		{
@@ -1279,11 +1279,11 @@ namespace Altaxo.Graph
 			}
 			set
 			{
-				if(CurrentLayerNumber>=0 && 0!=this.m_Graph[CurrentLayerNumber].PlotItems.Count && value<0)
+				if(CurrentLayerNumber>=0 && 0!=this.m_Graph.Layers[CurrentLayerNumber].PlotItems.Count && value<0)
 					throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"CurrentPlotNumber has to be greater or equal than zero");
 
-				if(CurrentLayerNumber>=0 && value>=m_Graph[CurrentLayerNumber].PlotItems.Count)
-					throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"CurrentPlotNumber has to  be lesser than actual count: " + m_Graph[CurrentLayerNumber].PlotItems.Count.ToString());
+				if(CurrentLayerNumber>=0 && value>=m_Graph.Layers[CurrentLayerNumber].PlotItems.Count)
+					throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"CurrentPlotNumber has to  be lesser than actual count: " + m_Graph.Layers[CurrentLayerNumber].PlotItems.Count.ToString());
 
 				m_CurrentPlotNumber = value<0 ? -1 : value;
 

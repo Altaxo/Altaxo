@@ -698,6 +698,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\INamedObjectCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\Interfaces.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -716,6 +721,11 @@
                     RelPath = "Main\MainView.resx"
                     DependentUpon = "MainView.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\NameChangedEvent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Serialization\AsciiExporter.cs"

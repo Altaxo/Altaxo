@@ -243,7 +243,7 @@ namespace Altaxo.Data
 					{
 						if(null!=ParentDataSet[value])
 						{
-							throw(new AltaxoUniqueNameException());
+							throw new AltaxoUniqueNameException();
 						}
 					}
 					m_TableName = value;

@@ -185,6 +185,12 @@ namespace Altaxo.Graph
 		#endregion
 
 		#region Cached member variables
+
+		/// <summary>
+		/// The size and position of the printable area of the entire graph document.
+		/// Needed to calculate "relative to page size" layer size values.
+		/// </summary>
+		protected RectangleF m_PrintableGraphBounds;
 		/// <summary>
 		/// The cached layer position in points (1/72 inch) relative to the upper left corner
 		/// of the graph document (upper left corner of the printable area).
@@ -1092,6 +1098,29 @@ namespace Altaxo.Graph
 		#endregion // Layer Properties and Methods
 
 		#region Position and Size
+
+		/// <summary>
+		/// The boundaries of the printable area of the page in points (1/72 inch).
+		/// </summary>
+		public RectangleF PrintableGraphBounds
+		{
+			get { return m_PrintableGraphBounds; }
+		}
+		public SizeF PrintableGraphSize
+		{
+			get { return m_PrintableGraphBounds.Size; }
+		}
+		public void SetPrintableGraphBounds(RectangleF val, bool bRescale)
+		{
+			RectangleF oldBounds = m_PrintableGraphBounds;
+			m_PrintableGraphBounds=val;
+
+			if(m_PrintableGraphBounds!=oldBounds)
+			{
+				// TODO resize the layer properly to reflect the new dimensions
+			}
+		}
+
 		public PointF Position
 		{
 			get { return this.m_LayerPosition; }
@@ -1201,15 +1230,12 @@ namespace Altaxo.Graph
 		/// graph or the linked layer for the calculations.</remarks>
 		public double XPositionToPointUnits(double x, PositionType xpostype)
 		{
-			GraphDocument graph = this.ParentLayerList as GraphDocument;
-
 			switch(xpostype)
 			{
 				case PositionType.AbsoluteValue:
 					break;
 				case PositionType.RelativeToGraphDocument:
-					if(graph!=null)
-						x = x*graph.PrintableSize.Width;
+						x = x*PrintableGraphSize.Width;
 					break;
 				case PositionType.RelativeThisNearToLinkedLayerNear:
 					if(LinkedLayer!=null)
@@ -1243,15 +1269,12 @@ namespace Altaxo.Graph
 		/// graph or the linked layer for the calculations.</remarks>
 		public double YPositionToPointUnits(double y, PositionType ypostype)
 		{
-			GraphDocument graph = this.ParentLayerList as GraphDocument;
-
 			switch(ypostype)
 			{
 				case PositionType.AbsoluteValue:
 					break;
 				case PositionType.RelativeToGraphDocument:
-					if(graph!=null)
-						y = y*graph.PrintableSize.Height;
+						y = y*PrintableGraphSize.Height;
 					break;
 				case PositionType.RelativeThisNearToLinkedLayerNear:
 					if(LinkedLayer!=null)
@@ -1287,15 +1310,13 @@ namespace Altaxo.Graph
 		public double XPositionToUserUnits(double x, PositionType xpostype_to_convert_to)
 		{
 
-			GraphDocument graph = this.ParentLayerList as GraphDocument;
-
+	
 			switch(xpostype_to_convert_to)
 			{
 				case PositionType.AbsoluteValue:
 					break;
 				case PositionType.RelativeToGraphDocument:
-					if(graph!=null)
-						x = x/graph.PrintableSize.Width;
+						x = x/PrintableGraphSize.Width;
 					break;
 				case PositionType.RelativeThisNearToLinkedLayerNear:
 					if(LinkedLayer!=null)
@@ -1330,16 +1351,12 @@ namespace Altaxo.Graph
 		/// graph or the linked layer for the calculations.</remarks>
 		public double YPositionToUserUnits(double y, PositionType ypostype_to_convert_to)
 		{
-
-			GraphDocument graph = this.ParentLayerList as GraphDocument;
-
 			switch(ypostype_to_convert_to)
 			{
 				case PositionType.AbsoluteValue:
 					break;
 				case PositionType.RelativeToGraphDocument:
-					if(graph!=null)
-						y = y/graph.PrintableSize.Height;
+						y = y/PrintableGraphSize.Height;
 					break;
 				case PositionType.RelativeThisNearToLinkedLayerNear:
 					if(LinkedLayer!=null)
@@ -1395,13 +1412,10 @@ namespace Altaxo.Graph
 
 		protected double WidthToPointUnits(double width, SizeType widthtype)
 		{
-			GraphDocument graph = this.ParentLayerList as GraphDocument;
-
 			switch(widthtype)
 			{
 				case SizeType.RelativeToGraphDocument:
-					if(null!=graph)
-						width *= graph.PrintableSize.Width;
+						width *= PrintableGraphSize.Width;
 					break;
 				case SizeType.RelativeToLinkedLayer:
 					if(null!=LinkedLayer)
@@ -1413,12 +1427,10 @@ namespace Altaxo.Graph
 
 		protected double HeightToPointUnits(double height, SizeType heighttype)
 		{
-			GraphDocument graph = this.ParentLayerList as GraphDocument;
 			switch(heighttype)
 			{
 				case SizeType.RelativeToGraphDocument:
-					if(null!=graph)
-						height *= graph.PrintableSize.Height;
+						height *= PrintableGraphSize.Height;
 					break;
 				case SizeType.RelativeToLinkedLayer:
 					if(null!=LinkedLayer)
@@ -1441,9 +1453,7 @@ namespace Altaxo.Graph
 			switch(widthtype_to_convert_to)
 			{
 				case SizeType.RelativeToGraphDocument:
-					GraphDocument graph = this.ParentLayerList as GraphDocument;
-					if(null!=graph)
-						width /= graph.PrintableSize.Width;
+						width /= PrintableGraphSize.Width;
 					break;
 				case SizeType.RelativeToLinkedLayer:
 					if(null!=LinkedLayer)
@@ -1466,9 +1476,7 @@ namespace Altaxo.Graph
 			switch(heighttype_to_convert_to)
 			{
 				case SizeType.RelativeToGraphDocument:
-					GraphDocument graph = this.ParentLayerList as GraphDocument;
-					if(null!=graph)
-						height /= graph.PrintableSize.Height;
+						height /= PrintableGraphSize.Height;
 					break;
 				case SizeType.RelativeToLinkedLayer:
 					if(null!=LinkedLayer)
@@ -2446,7 +2454,7 @@ namespace Altaxo.Graph
 		/// all changes to the layers.</remarks>
 		[SerializationSurrogate(0,typeof(LayerCollection.SerializationSurrogate0))]
 			[SerializationVersion(0)]
-			public class LayerCollection : Altaxo.Data.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, System.ICloneable
+			public class LayerCollection : Altaxo.Data.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, System.ICloneable, Main.IDocumentNode
 		{
 			/// <summary>Fired when something in this collection changed, as for instance
 			/// adding or deleting layers, or exchanging layers.</summary>
@@ -2457,6 +2465,11 @@ namespace Altaxo.Graph
 			/// Fired if either the layer collection changed or something in the layers changed
 			/// </summary>
 			public event System.EventHandler Changed;
+
+			private object m_Parent;
+
+
+			private RectangleF m_PrintableBounds; // do not serialize this value, its only cached
 		
 			#region "Serialization"
 
@@ -2566,6 +2579,26 @@ namespace Altaxo.Graph
 				return new LayerCollection(this);
 			}
 
+
+			/// <summary>
+			/// The boundaries of the printable area of the page in points (1/72 inch).
+			/// </summary>
+			public RectangleF PrintableGraphBounds
+			{
+				get { return m_PrintableBounds; }
+			}
+			public void SetPrintableGraphBounds(RectangleF val, bool bRescale)
+			{
+				RectangleF oldBounds = m_PrintableBounds;
+				m_PrintableBounds=val;
+
+				if(m_PrintableBounds!=oldBounds)
+				{
+					foreach(Layer l in InnerList)
+						l.SetPrintableGraphBounds( val, bRescale );
+				}
+			}
+			
 			/// <summary>
 			/// References the layer at index i.
 			/// </summary>
@@ -2664,7 +2697,7 @@ namespace Altaxo.Graph
 			{
 				((Layer)oldValue).SetParentAndNumber(null,0);
 				((Layer)newValue).SetParentAndNumber(this,index);
-
+				((Layer)newValue).SetPrintableGraphBounds(this.PrintableGraphBounds,true);
 
 				for(int i=0;i<Count;i++)
 				{
@@ -2710,6 +2743,30 @@ namespace Altaxo.Graph
 				if(null!=Changed)
 					Changed(this, new EventArgs());
 			}
+			#region IDocumentNode Members
+
+			public object ParentObject
+			{
+				get
+				{
+					// TODO:  Add LayerCollection.ParentObject getter implementation
+					return m_Parent;
+				}
+				set 
+				{
+					m_Parent = value;
+				}
+			}
+
+			public string Name
+			{
+				get
+				{
+				return "Layer";
+				}
+			}
+
+			#endregion
 		}
 	
 	

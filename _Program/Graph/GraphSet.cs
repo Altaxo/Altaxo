@@ -1,28 +1,35 @@
 using System;
+using Altaxo;
+using Altaxo.Main;
 
 namespace Altaxo.Graph
 {
-	public class GraphSet : System.Runtime.Serialization.IDeserializationCallback, System.Collections.ICollection, Altaxo.Main.IDocumentNode
+	public class GraphSet : 
+		System.Runtime.Serialization.IDeserializationCallback,
+		System.Collections.ICollection,
+		Altaxo.Main.IDocumentNode,
+		Altaxo.IChangedEventSource,
+		Altaxo.Main.INamedObjectCollection
 	{
 		// Data
 		protected System.Collections.Hashtable m_GraphsByName = new System.Collections.Hashtable();
 		protected AltaxoDocument m_Parent=null;
+		protected bool bIsDirty=false;
 
-
-		public GraphSet(AltaxoDocument _parent)
+		public GraphSet(AltaxoDocument parent)
 		{
-			this.m_Parent = _parent;
+			this.m_Parent = parent;
 		}
 
 		public AltaxoDocument Parent
 		{
-			get { return this.parent; }
-			set { this.parent=value; }
+			get { return this.m_Parent; }
+			set { this.m_Parent=value; }
 		}
 
 		public object ParentObject
 		{
-			get { return this.parent; }
+			get { return this.m_Parent; }
 		}
 
 		public string Name
@@ -35,15 +42,15 @@ namespace Altaxo.Graph
 		{
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
-				Altaxo.Data.GraphSet s = (Altaxo.Data.GraphSet)obj;
+				Altaxo.Graph.GraphSet s = (Altaxo.Graph.GraphSet)obj;
 				// info.AddValue("Parent",s.parent);
-				info.AddValue("Graphs",s.tablesByName);
+				info.AddValue("Graphs",s.m_GraphsByName);
 			}
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
-				Altaxo.Data.GraphSet s = (Altaxo.Data.GraphSet)obj;
+				Altaxo.Graph.GraphSet s = (Altaxo.Graph.GraphSet)obj;
 				// s.parent = (AltaxoDocument)(info.GetValue("Parent",typeof(AltaxoDocument)));
-				s.tablesByName = (System.Collections.Hashtable)(info.GetValue("Graphs",typeof(System.Collections.Hashtable)));
+				s.m_GraphsByName = (System.Collections.Hashtable)(info.GetValue("Graphs",typeof(System.Collections.Hashtable)));
 			
 				return s;
 			}
@@ -51,17 +58,6 @@ namespace Altaxo.Graph
 
 		public void OnDeserialization(object obj)
 		{
-			if(!m_DeserializationFinished && obj is DeserializationFinisher) // if deserialization has completely finished now
-			{
-				m_DeserializationFinished = true;
-				DeserializationFinisher finisher = new DeserializationFinisher(this);
-				// set the parent object for the data tables
-				foreach(DataTable dt in tablesByName.Values)
-				{
-					dt.ParentGraphSet = this;
-					dt.OnDeserialization(finisher);
-				}
-			}
 		}
 
 		#endregion
@@ -131,37 +127,57 @@ namespace Altaxo.Graph
 		public void Add(Altaxo.Graph.GraphDocument theGraph)
 		{
 			if(null==theGraph.Name || 0==theGraph.Name.Length) // if no table name provided
-				theGraph.Name = FindNewGraphName();									// find a new one
+				theGraph.Name = FindNewName();									// find a new one
 			else if(m_GraphsByName.ContainsKey(theGraph.Name)) // else if this table name is already in use
-				theGraph.Name = FindNewGraphName(theGraph.Name); // find a new table name based on the original name
+				theGraph.Name = FindNewName(theGraph.Name); // find a new table name based on the original name
 
 			// now the table has a unique name in any case
-			m_GraphsByName.Add(theTable.TableName,theTable);
-			theGraph.Parent = this; 
+			m_GraphsByName.Add(theGraph.Name,theGraph);
+			theGraph.ParentObject = this; 
+			theGraph.NameChanged += new NameChangedEventHandler(this.EhChild_NameChanged);
 		}
 
 		public void Remove(Altaxo.Graph.GraphDocument theGraph)
 		{
-			if(m_GraphsByName.ContainsValue(theGraph))
-				m_GraphsByName.Remove(theGraph.Name);
-
-			this.OnTableDataChanged(theGraph);
+			if(theGraph!=null && theGraph.Name!=null)
+			{
+				GraphDocument gr = (GraphDocument)m_GraphsByName[theGraph.Name];
+				if(gr.Equals(theGraph))
+				{
+					m_GraphsByName.Remove(theGraph.Name);
+					theGraph.ParentObject = null;
+					theGraph.NameChanged -= new NameChangedEventHandler(this.EhChild_NameChanged);
+					this.OnChanged(theGraph);
+				}
+			}
 		}
 
-
+		protected void EhChild_NameChanged(object sender, NameChangedEventArgs e)
+		{
+			// we remove the old value from the hash and store it under the new value
+			object graph = m_GraphsByName[e.OldName];
+			if(graph!=null)
+			{
+				if(m_GraphsByName.ContainsKey(e.NewName))
+					throw new ApplicationException(string.Format("The GraphSet contains already a Graph named {0}, renaming the old graph {1} fails.",e.NewName,e.OldName));
+				m_GraphsByName.Remove(e.OldName);
+				m_GraphsByName[e.NewName] = graph;
+				this.OnChanged(this);
+			}
+		}
 		/// <summary>
-		/// Looks for the next free standard table name.
+		/// Looks for the next free standard  name.
 		/// </summary>
-		/// <returns>A new table name unique for this data set.</returns>
+		/// <returns>A new table name unique for this set.</returns>
 		public string FindNewName()
 		{
 			return FindNewName("GRAPH");
 		}	
 
 		/// <summary>
-		/// Looks for the next unique table name base on a basic name.
+		/// Looks for the next unique name base on a basic name.
 		/// </summary>
-		/// <returns>A new table name unique for this data set.</returns>
+		/// <returns>A new  name unique for this  set.</returns>
 		public string FindNewName(string basicname)
 		{
 			for(int i=0;;i++)
@@ -170,5 +186,22 @@ namespace Altaxo.Graph
 					return basicname+i; 
 			}
 		}	
+
+		public virtual void OnChanged(object sender)
+		{
+			if(null!=Changed)
+				Changed(this,System.EventArgs.Empty);
+		}
+
+		public object GetObjectNamed(string name)
+		{
+			return m_GraphsByName[name];
+		}
+
+		#region IChangedEventSource Members
+
+		public event System.EventHandler Changed;
+
+		#endregion
 	}
 }

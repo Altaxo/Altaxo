@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
 using Altaxo.Serialization;
+using Altaxo.Main;
 
 
 namespace Altaxo.Graph
@@ -39,7 +40,12 @@ namespace Altaxo.Graph
 	/// bounds is stored inside the class only to know what the original page size of the document was.</remarks>
 	[SerializationSurrogate(0,typeof(GraphDocument.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class GraphDocument : Layer.LayerCollection, System.Runtime.Serialization.IDeserializationCallback, System.ICloneable
+	public class GraphDocument 
+		:
+		System.Runtime.Serialization.IDeserializationCallback,
+		System.ICloneable,
+		IChangedEventSource,
+		Main.IDocumentNode	
 	{
 
 		/// <summary>
@@ -55,6 +61,12 @@ namespace Altaxo.Graph
 		/// The printable area of the document, i.e. the page size minus the margins at each sC:\Users\LelliD\C\CALC\Altaxo\Altaxo\Graph\GraphDocument.cside in points (1/72 inch)
 		/// </summary>
 		private RectangleF m_PrintableBounds = new RectangleF(14, 14, 814 , 567 );
+
+		Layer.LayerCollection m_Layers;
+
+		string m_Name;
+
+		object m_Parent;
 
 		#region "Serialization"
 
@@ -152,9 +164,8 @@ namespace Altaxo.Graph
 		/// Finale measures after deserialization.
 		/// </summary>
 		/// <param name="obj">Not used.</param>
-		public override void OnDeserialization(object obj)
+		public  void OnDeserialization(object obj)
 		{
-			base.OnDeserialization(obj);
 		}
 		#endregion
 
@@ -164,20 +175,59 @@ namespace Altaxo.Graph
 		/// </summary>
 		public GraphDocument()
 		{
+			this.m_Layers = new Altaxo.Graph.Layer.LayerCollection();
+			this.m_Layers.ParentObject = this;
 		}
 
 		public GraphDocument(GraphDocument from)
-			: base(from)
 		{
+			this.m_Layers = (Layer.LayerCollection)from.m_Layers.Clone();
+			this.m_Layers.ParentObject = this;
 			this.m_PageBounds = from.m_PageBounds;
 			this.m_PrintableBounds = from.m_PrintableBounds;
 		}
 
-		public override object Clone()
+		public object Clone()
 		{
 			return new GraphDocument(this);
 		}
 		
+		public string Name
+		{
+			get { return m_Name; }
+			set
+			{
+				if(m_Name!=value)
+				{
+					// test if an object with this name is already in the parent
+					Altaxo.Main.INamedObjectCollection parentColl = ParentObject as Altaxo.Main.INamedObjectCollection;
+					if(null!=parentColl && null!=parentColl.GetObjectNamed(value))
+						throw new ApplicationException(string.Format("The graph {0} can not be renamed to {1}, since another graph with the same name already exists",this.Name,value));
+
+					string oldValue = m_Name;
+					m_Name = value;
+					OnNameChanged(this,oldValue,value);
+				}
+			}
+		}
+		
+
+		public event NameChangedEventHandler NameChanged;
+		public virtual void OnNameChanged(object sender, string oldValue, string newValue)
+		{
+			if(NameChanged!=null)
+				NameChanged(sender, new Altaxo.Main.NameChangedEventArgs(oldValue,newValue));
+		}
+
+
+		public object ParentObject
+		{
+			get { return m_Parent; }
+			set 
+			{
+				m_Parent = value;
+			}
+		}
 		/// <summary>
 		/// The boundaries of the page in points (1/72 inch).
 		/// </summary>
@@ -203,7 +253,7 @@ namespace Altaxo.Graph
 
 				if(m_PrintableBounds!=oldBounds)
 				{
-					// TODO transform the layers to adapt the new settings
+					Layers.SetPrintableGraphBounds( value, true);
 				}
 			}
 		}
@@ -223,7 +273,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		public Layer.LayerCollection Layers
 		{
-			get { return this; } 
+			get { return m_Layers; } 
 		}
 
 
@@ -331,12 +381,23 @@ namespace Altaxo.Graph
 		/// Fires the Invalidate event.
 		/// </summary>
 		/// <param name="sender">The layer which needs to be repainted.</param>
-		protected internal override void OnInvalidate(Layer sender)
+		protected internal virtual void OnInvalidate(Layer sender)
 		{
-			base.OnInvalidate(sender);
+			OnChanged();
+		}
+
+		protected virtual void OnChanged()
+		{
+			if(null!=Changed)
+				Changed(this, new EventArgs());
 		}
 		
 		#endregion
 
+		#region IChangedEventSource Members
+
+		public event System.EventHandler Changed;
+
+		#endregion
 	} // end of class GraphDocument
 } // end of namespace
