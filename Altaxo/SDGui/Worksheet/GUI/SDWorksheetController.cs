@@ -136,23 +136,7 @@ namespace Altaxo.Worksheet.GUI
     }
     
        
-    /// <summary>
-    /// This is the whole name of the content, e.g. the file name or
-    /// the url depending on the type of the content.
-    /// </summary>
-    /// <returns>
-    /// Title Name, if not set it returns UntitledName
-    /// </returns>
-    public string TitleName 
-    {
-      get 
-      { 
-        return this.Doc.Name; 
-      }
-      set 
-      {
-      }
-    }
+   
 
     /// <summary>
     /// The text on the tab page when more than one view content
@@ -252,10 +236,6 @@ namespace Altaxo.Worksheet.GUI
       }
     }
     
-    /// <summary>
-    /// Is called each time the name for the content has changed.
-    /// </summary>
-    public event EventHandler TitleNameChanged;
     
     
     /// <summary>
@@ -380,8 +360,8 @@ namespace Altaxo.Worksheet.GUI
     {
       if(this.DataTable.DataColumns.ColumnCount>0)
       {
-        this.SelectedColumns.Select(0,false,false);
-        this.SelectedColumns.Select(this.DataTable.DataColumns.ColumnCount-1,true,false);
+        this.SelectedDataColumns.Select(0,false,false);
+        this.SelectedDataColumns.Select(this.DataTable.DataColumns.ColumnCount-1,true,false);
         if(View!=null)
           View.TableAreaInvalidate();
       }

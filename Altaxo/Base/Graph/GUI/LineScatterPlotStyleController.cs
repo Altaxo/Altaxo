@@ -187,6 +187,10 @@ namespace Altaxo.Graph.GUI
   public interface ILineScatterPlotStyleController
   {
     void EhView_PlotGroupIndependent_Changed(bool bPlotGroupIsIndependent);
+    /// <summary>Called if the selected index of the symbol shape has changed.</summary>
+    /// <param name="selectedIndex">The new selected index.</param>
+    void EhView_SymbolShapeChanged(int selectedIndex);
+
   }
 
   #endregion
@@ -202,6 +206,7 @@ namespace Altaxo.Graph.GUI
     protected PlotGroup m_PlotGroup;
     protected PlotGroupStyle m_PlotGroupStyle;
     ILineScatterPlotStyleView m_View;
+    protected int m_SelectedSymbolShape;
 
     public LineScatterPlotStyleController(AbstractXYPlotStyle ps, PlotGroup plotGroup)
     {
@@ -337,6 +342,11 @@ namespace Altaxo.Graph.GUI
       string name = sh.ToString();
       
       View.InitializeSymbolShape(names,name);
+
+      m_SelectedSymbolShape = -1;
+      for(int i=0;i<names.Length;i++)
+        if(names[i]==name)
+        m_SelectedSymbolShape = i;
     }
 
     public void SetLineSymbolGapCondition(AbstractXYPlotStyle ps)
@@ -630,6 +640,20 @@ namespace Altaxo.Graph.GUI
         this.SetPlotStyleElements();
       }
 
+    }
+
+    /// <summary>
+    /// Called if the selected index of the symbol shape has changed.
+    /// </summary>
+    /// <param name="selectedIndex"></param>
+    public void EhView_SymbolShapeChanged(int selectedIndex)
+    {
+      int oldSelected = this.m_SelectedSymbolShape;
+      m_SelectedSymbolShape = selectedIndex;
+
+      if(View!=null && oldSelected!=selectedIndex && (selectedIndex==0 || oldSelected==0))
+        View.InitializeLineSymbolGapCondition( selectedIndex!=0 );
+      
     }
 
     #endregion

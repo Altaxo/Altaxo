@@ -1,39 +1,16 @@
 <project SchemaVersion="1.3">
     <assemblies>
-        <assembly location="V:\C\Altaxo\src\Altaxo\Base\bin\Debug\AltaxoBase.dll" documentation="V:\C\Altaxo\src\Altaxo\Base\bin\Debug\AltaxoBase.xml" />
-        <assembly location="V:\C\Altaxo\src\Altaxo\Base\bin\Debug\AltaxoCore.dll" documentation="V:\C\Altaxo\src\Altaxo\Base\bin\Debug\AltaxoCore.xml" />
+        <assembly location="V:\C\Altaxo\src\Libraries\SharpZipLib\src\bin\Debug\ICSharpCode.SharpZipLib.dll" documentation="V:\C\Altaxo\src\Libraries\SharpZipLib\src\bin\Debug\ICSharpCode.SharpZipLib.xml" />
     </assemblies>
     <namespaces>
-        <namespace name="Altaxo"></namespace>
-        <namespace name="Altaxo.Calc"></namespace>
-        <namespace name="Altaxo.Calc.Fourier"></namespace>
-        <namespace name="Altaxo.Calc.Interpolation"></namespace>
-        <namespace name="Altaxo.Calc.LinearAlgebra"></namespace>
-        <namespace name="Altaxo.Calc.Probability"></namespace>
-        <namespace name="Altaxo.Calc.Regression"></namespace>
-        <namespace name="Altaxo.Calc.Regression.PLS"></namespace>
-        <namespace name="Altaxo.Collections"></namespace>
-        <namespace name="Altaxo.Data"></namespace>
-        <namespace name="Altaxo.Graph"></namespace>
-        <namespace name="Altaxo.Graph.GUI"></namespace>
-        <namespace name="Altaxo.Graph.Procedures"></namespace>
-        <namespace name="Altaxo.Graph.XYPlotLineStyles"></namespace>
-        <namespace name="Altaxo.Graph.XYPlotScatterStyles"></namespace>
-        <namespace name="Altaxo.Main"></namespace>
-        <namespace name="Altaxo.Main.GUI"></namespace>
-        <namespace name="Altaxo.Main.Services"></namespace>
-        <namespace name="Altaxo.Serialization"></namespace>
-        <namespace name="Altaxo.Serialization.Ascii"></namespace>
-        <namespace name="Altaxo.Serialization.Galactic"></namespace>
-        <namespace name="Altaxo.Serialization.Galactic.Options"></namespace>
-        <namespace name="Altaxo.Serialization.Xml"></namespace>
-        <namespace name="Altaxo.Worksheet"></namespace>
-        <namespace name="Altaxo.Worksheet.Commands"></namespace>
-        <namespace name="Altaxo.Worksheet.Commands.Analysis"></namespace>
-        <namespace name="Altaxo.Worksheet.GUI"></namespace>
-        <namespace name="MWCommon"></namespace>
-        <namespace name="MWControls"></namespace>
-        <namespace name="System.Drawing"></namespace>
+        <namespace name="ICSharpCode.SharpZipLib"></namespace>
+        <namespace name="ICSharpCode.SharpZipLib.BZip2"></namespace>
+        <namespace name="ICSharpCode.SharpZipLib.Checksums"></namespace>
+        <namespace name="ICSharpCode.SharpZipLib.GZip"></namespace>
+        <namespace name="ICSharpCode.SharpZipLib.Tar"></namespace>
+        <namespace name="ICSharpCode.SharpZipLib.Zip"></namespace>
+        <namespace name="ICSharpCode.SharpZipLib.Zip.Compression"></namespace>
+        <namespace name="ICSharpCode.SharpZipLib.Zip.Compression.Streams"></namespace>
     </namespaces>
     <documenters>
         <documenter name="JavaDoc">
@@ -166,10 +143,10 @@
             <property name="AdditionalOSList" value="" />
         </documenter>
         <documenter name="MSDN">
-            <property name="OutputDirectory" value="..\..\temp\doc\CoreAndBase\" />
-            <property name="HtmlHelpName" value="AltaxoClassRef" />
+            <property name="OutputDirectory" value="..\..\temp\doc\SharpZipLib\" />
+            <property name="HtmlHelpName" value="031SharpZipLib" />
             <property name="IncludeFavorites" value="False" />
-            <property name="Title" value="Altaxo(Core+Base) class reference (0.51.0.286, 2004/05/13)" />
+            <property name="Title" value="SharpZipLib class reference" />
             <property name="DefaultTOC" value="" />
             <property name="IncludeHierarchy" value="False" />
             <property name="ShowVisualBasic" value="False" />
@@ -178,7 +155,7 @@
             <property name="BinaryTOC" value="True" />
             <property name="OutputTarget" value="HtmlHelpAndWeb" />
             <property name="HeaderHtml" value="" />
-            <property name="FooterHtml" value="(C) 2002-2004 Dr. Dirk Lellinger, Assembly: %ASSEMBLY_NAME%" />
+            <property name="FooterHtml" value="" />
             <property name="FilesToInclude" value="" />
             <property name="LinkToSdkDocVersion" value="SDK_v1_1" />
             <property name="ExtensibilityStylesheet" value="" />

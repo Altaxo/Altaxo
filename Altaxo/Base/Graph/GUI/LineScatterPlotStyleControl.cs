@@ -350,6 +350,7 @@ namespace Altaxo.Graph.GUI
       this.m_cbSymbolShape.Size = new System.Drawing.Size(144, 21);
       this.m_cbSymbolShape.TabIndex = 3;
       this.m_cbSymbolShape.Text = "comboBox1";
+      this.m_cbSymbolShape.SelectionChangeCommitted += new System.EventHandler(this.EhSymbolShape_SelectionChangeCommit);
       // 
       // m_lblSymbolSize
       // 
@@ -733,6 +734,11 @@ namespace Altaxo.Graph.GUI
       this.m_cbLineFillDirection.Enabled = bFill;
     }
 
+    private void EhSymbolShape_SelectionChangeCommit(object sender, System.EventArgs e)
+    {
+    if(null!=this.Controller)
+      Controller.EhView_SymbolShapeChanged(this.m_cbSymbolShape.SelectedIndex);
+    }
 
     public void InitializeFillColor(string[] arr, string sel)
     {
@@ -781,7 +787,6 @@ namespace Altaxo.Graph.GUI
       this.m_chkPlotGroupLineType.Enabled=    !bIndependent;
       this.m_chkPlotGroupSymbol.Enabled=      !bIndependent;
     }
-
 
     public bool PlotGroupIncremental
     {

@@ -39,9 +39,9 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="ctrl">The worksheet controller for the table.</param>
     public static void RenameSelectedColumn(WorksheetController ctrl)
     {
-      if(ctrl.SelectedColumns.Count==1 && ctrl.SelectedPropertyColumns.Count==0)
+      if(ctrl.SelectedDataColumns.Count==1 && ctrl.SelectedPropertyColumns.Count==0)
       {
-        Altaxo.Data.DataColumn col = ctrl.Doc.DataColumns[ctrl.SelectedColumns[0]];
+        Altaxo.Data.DataColumn col = ctrl.Doc.DataColumns[ctrl.SelectedDataColumns[0]];
         Main.GUI.TextValueInputController tvctrl = new Main.GUI.TextValueInputController(
           col.Name,
           new Main.GUI.RenameColumnDialog()
@@ -51,7 +51,7 @@ namespace Altaxo.Worksheet.Commands
         if(tvctrl.ShowDialog(ctrl.View.TableViewForm))
           ctrl.Doc.DataColumns.SetColumnName(col,tvctrl.InputText);
       }
-      if(ctrl.SelectedColumns.Count==0 && ctrl.SelectedPropertyColumns.Count==1)
+      if(ctrl.SelectedDataColumns.Count==0 && ctrl.SelectedPropertyColumns.Count==1)
       {
         Altaxo.Data.DataColumn col = ctrl.Doc.PropCols[ctrl.SelectedPropertyColumns[0]];
         Main.GUI.TextValueInputController tvctrl = new Main.GUI.TextValueInputController(
@@ -140,11 +140,11 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="ctrl">The worksheet controller for the table.</param>
     public static void SetSelectedColumnGroupNumber(WorksheetController ctrl)
     {
-      if(ctrl.SelectedColumns.Count>0 || ctrl.SelectedPropertyColumns.Count>0)
+      if(ctrl.SelectedDataColumns.Count>0 || ctrl.SelectedPropertyColumns.Count>0)
       {
         int grpNumber = 0;
-        if(ctrl.SelectedColumns.Count>0)
-          grpNumber = ctrl.DataTable.DataColumns.GetColumnGroup(ctrl.SelectedColumns[0]);
+        if(ctrl.SelectedDataColumns.Count>0)
+          grpNumber = ctrl.DataTable.DataColumns.GetColumnGroup(ctrl.SelectedDataColumns[0]);
         else if(ctrl.SelectedPropertyColumns.Count>0)
           grpNumber = ctrl.DataTable.PropertyColumns.GetColumnGroup(ctrl.SelectedPropertyColumns[0]);
         
@@ -169,9 +169,9 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="nGroup">The group number to set for the selected columns.</param>
     public static void SetSelectedColumnGroupNumber(WorksheetController ctrl, int nGroup)
     {
-      for(int i=0;i<ctrl.SelectedColumns.Count;i++)
+      for(int i=0;i<ctrl.SelectedDataColumns.Count;i++)
       {
-        ctrl.DataTable.DataColumns.SetColumnGroup(ctrl.SelectedColumns[i], nGroup);
+        ctrl.DataTable.DataColumns.SetColumnGroup(ctrl.SelectedDataColumns[i], nGroup);
       }
       
       for(int i=0;i<ctrl.SelectedPropertyColumns.Count;i++)
@@ -193,10 +193,10 @@ namespace Altaxo.Worksheet.Commands
     public static string SetSelectedColumnPosition(WorksheetController ctrl)
     {
       // check condition - either DataColumns or propertycolumns can be selected - but not both
-      if(ctrl.SelectedColumns.Count>0 && ctrl.SelectedPropertyColumns.Count>0)
+      if(ctrl.SelectedDataColumns.Count>0 && ctrl.SelectedPropertyColumns.Count>0)
         return "Don't know what to do - both data and property columns are selected";
 
-      if(ctrl.SelectedColumns.Count==0 && ctrl.SelectedPropertyColumns.Count==0)
+      if(ctrl.SelectedDataColumns.Count==0 && ctrl.SelectedPropertyColumns.Count==0)
         return null; // nothing to do
 
       int newposition = int.MinValue;
@@ -227,18 +227,18 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="nPosition">The new position for the selected columns.</param>
     public static void SetSelectedColumnPosition(WorksheetController ctrl, int nPosition)
     {
-      if(ctrl.SelectedColumns.Count>0)
+      if(ctrl.SelectedDataColumns.Count>0)
       {
-        if(ctrl.SelectedColumns.Count+nPosition>ctrl.DataTable.DataColumnCount)
-          nPosition = Math.Max(0,ctrl.DataTable.DataColumnCount-ctrl.SelectedColumns.Count);
+        if(ctrl.SelectedDataColumns.Count+nPosition>ctrl.DataTable.DataColumnCount)
+          nPosition = Math.Max(0,ctrl.DataTable.DataColumnCount-ctrl.SelectedDataColumns.Count);
 
-        ctrl.DataTable.ChangeColumnPosition(ctrl.SelectedColumns, nPosition);
+        ctrl.DataTable.ChangeColumnPosition(ctrl.SelectedDataColumns, nPosition);
       }
       
       if(ctrl.SelectedPropertyColumns.Count>0)
       {
         if(ctrl.SelectedPropertyColumns.Count+nPosition>ctrl.DataTable.PropertyColumnCount)
-          nPosition = Math.Max(0,ctrl.DataTable.PropertyColumnCount-ctrl.SelectedColumns.Count);
+          nPosition = Math.Max(0,ctrl.DataTable.PropertyColumnCount-ctrl.SelectedDataColumns.Count);
 
         ctrl.DataTable.PropertyColumns.ChangeColumnPosition(ctrl.SelectedPropertyColumns, nPosition);
       }
@@ -256,9 +256,9 @@ namespace Altaxo.Worksheet.Commands
     public static void SetSelectedColumnAsX(WorksheetController ctrl)
     {
       bool bChanged = false;
-      if(ctrl.SelectedColumns.Count>0)
+      if(ctrl.SelectedDataColumns.Count>0)
       {
-        ctrl.DataTable.DataColumns.SetColumnKind(ctrl.SelectedColumns[0],Altaxo.Data.ColumnKind.X);
+        ctrl.DataTable.DataColumns.SetColumnKind(ctrl.SelectedDataColumns[0],Altaxo.Data.ColumnKind.X);
         bChanged = true;
       }
       if(ctrl.SelectedPropertyColumns.Count>0)
@@ -277,10 +277,10 @@ namespace Altaxo.Worksheet.Commands
     public static void SetSelectedColumnAsLabel(WorksheetController ctrl)
     {
       bool bChanged = false;
-      if(ctrl.SelectedColumns.Count>0)
+      if(ctrl.SelectedDataColumns.Count>0)
       {
-        for(int i=0;i<ctrl.SelectedColumns.Count;i++)
-          ctrl.DataTable.DataColumns.SetColumnKind(ctrl.SelectedColumns[i],Altaxo.Data.ColumnKind.Label);
+        for(int i=0;i<ctrl.SelectedDataColumns.Count;i++)
+          ctrl.DataTable.DataColumns.SetColumnKind(ctrl.SelectedDataColumns[i],Altaxo.Data.ColumnKind.Label);
         bChanged = true;
       }
       if(ctrl.SelectedPropertyColumns.Count>0)
@@ -301,10 +301,10 @@ namespace Altaxo.Worksheet.Commands
     public static void SetSelectedColumnAsValue(WorksheetController ctrl)
     {
       bool bChanged = false;
-      if(ctrl.SelectedColumns.Count>0)
+      if(ctrl.SelectedDataColumns.Count>0)
       {
-        for(int i=0;i<ctrl.SelectedColumns.Count;i++)
-          ctrl.DataTable.DataColumns.SetColumnKind(ctrl.SelectedColumns[i],Altaxo.Data.ColumnKind.V);
+        for(int i=0;i<ctrl.SelectedDataColumns.Count;i++)
+          ctrl.DataTable.DataColumns.SetColumnKind(ctrl.SelectedDataColumns[i],Altaxo.Data.ColumnKind.V);
         bChanged = true;
       }
       if(ctrl.SelectedPropertyColumns.Count>0)
@@ -394,10 +394,10 @@ namespace Altaxo.Worksheet.Commands
 
     public static void SetColumnValues(WorksheetController ctrl)
     {
-      if(ctrl.SelectedColumns.Count<=0)
+      if(ctrl.SelectedDataColumns.Count<=0)
         return; // no column selected
 
-      Altaxo.Data.DataColumn dataCol = ctrl.DataTable[ctrl.SelectedColumns[0]];
+      Altaxo.Data.DataColumn dataCol = ctrl.DataTable[ctrl.SelectedDataColumns[0]];
       if(null==dataCol)
         return;
 

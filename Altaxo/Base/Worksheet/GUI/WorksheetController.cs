@@ -97,12 +97,12 @@ namespace Altaxo.Worksheet.GUI
     /// <summary>
     /// Holds the indizes to the selected data columns.
     /// </summary>
-    protected IndexSelection m_SelectedColumns; // holds the selected columns
+    protected IndexSelection m_SelectedDataColumns; // holds the selected columns
     
     /// <summary>
     /// Holds the indizes to the selected rows.
     /// </summary>
-    protected IndexSelection m_SelectedRows; // holds the selected rows
+    protected IndexSelection m_SelectedDataRows; // holds the selected rows
     
     /// <summary>
     /// Holds the indizes to the selected property columns.
@@ -182,10 +182,10 @@ namespace Altaxo.Worksheet.GUI
 
     
       // Holds the indizes to the selected data columns.
-      m_SelectedColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected columns
+      m_SelectedDataColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected columns
     
       // Holds the indizes to the selected rows.
-      m_SelectedRows    = new Altaxo.Worksheet.IndexSelection(); // holds the selected rows
+      m_SelectedDataRows    = new Altaxo.Worksheet.IndexSelection(); // holds the selected rows
     
       // Holds the indizes to the selected property columns.
       m_SelectedPropertyColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected property columns
@@ -793,7 +793,7 @@ namespace Altaxo.Worksheet.GUI
     // ****************************************************************** 
     protected void EhMenuEdit_OnPopup(object sender, System.EventArgs e)
     {
-      this.m_MenuItemEditRemove.Enabled = (this.SelectedColumns.Count>0 || this.SelectedRows.Count>0);
+      this.m_MenuItemEditRemove.Enabled = (this.SelectedDataColumns.Count>0 || this.SelectedDataRows.Count>0);
     }
 
     protected void EhMenuEditRemove_OnClick(object sender, System.EventArgs e)
@@ -876,9 +876,9 @@ namespace Altaxo.Worksheet.GUI
     // ******************************************************************
     protected void EhMenuColumn_OnPopup(object sender, System.EventArgs e)
     {
-      this.m_MenuItemColumnSetColumnValues.Enabled = 1==this.SelectedColumns.Count;
-      this.m_MenuItemColumnRename.Enabled = 1==this.SelectedColumns.Count;
-      this.m_MenuItemColumnSetGroupNumber.Enabled = this.SelectedColumns.Count>=1;
+      this.m_MenuItemColumnSetColumnValues.Enabled = 1==this.SelectedDataColumns.Count;
+      this.m_MenuItemColumnRename.Enabled = 1==this.SelectedDataColumns.Count;
+      this.m_MenuItemColumnSetGroupNumber.Enabled = this.SelectedDataColumns.Count>=1;
     }
 
     protected void EhMenuColumnSetColumnValues_OnClick(object sender, System.EventArgs e)
@@ -1039,17 +1039,17 @@ namespace Altaxo.Worksheet.GUI
     /// <summary>
     /// Returns the currently selected data columns
     /// </summary>
-    public IndexSelection SelectedColumns
+    public IndexSelection SelectedDataColumns
     {
-      get { return m_SelectedColumns; }
+      get { return m_SelectedDataColumns; }
     }
 
     /// <summary>
     /// Returns the currently selected data rows.
     /// </summary>
-    public IndexSelection SelectedRows
+    public IndexSelection SelectedDataRows
     {
-      get { return m_SelectedRows; }
+      get { return m_SelectedDataRows; }
     }
 
     /// <summary>
@@ -1068,7 +1068,7 @@ namespace Altaxo.Worksheet.GUI
     /// SelectedColumns, but in SelectedPropertyRows, and SelectedColumns.Count returns 0.</remarks>
     public IndexSelection SelectedPropertyRows
     {
-      get { return m_SelectedPropertyRows.Count>0 ? m_SelectedPropertyRows : m_SelectedColumns; }
+      get { return m_SelectedPropertyRows.Count>0 ? m_SelectedPropertyRows : m_SelectedDataColumns; }
     }
 
 
@@ -1090,7 +1090,7 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     public bool AreDataCellsSelected
     {
-      get { return this.DataTable.DataColumns.ColumnCount>0 && SelectedColumns.Count>0 || SelectedRows.Count>0; }
+      get { return this.DataTable.DataColumns.ColumnCount>0 && SelectedDataColumns.Count>0 || SelectedDataRows.Count>0; }
     }
 
 
@@ -1107,8 +1107,8 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     public void ClearAllSelections()
     {
-      SelectedColumns.Clear();
-      SelectedRows.Clear();
+      SelectedDataColumns.Clear();
+      SelectedDataRows.Clear();
       SelectedPropertyColumns.Clear();
       SelectedPropertyRows.Clear();
 
@@ -1554,7 +1554,7 @@ namespace Altaxo.Worksheet.GUI
       if(newCellRow<FirstVisibleTableRow)
         navigateToRow = newCellRow;
       else if (newCellRow>LastFullyVisibleTableRow)
-        navigateToRow = newCellRow + 1 - FullyVisibleTableRows;
+        navigateToRow = newCellRow + 1 - FullyVisibleTableRows - this.FullyVisiblePropertyColumns;
       else
         navigateToRow = this.VertScrollPos;
 
@@ -1667,9 +1667,9 @@ namespace Altaxo.Worksheet.GUI
 
 
       if(newCellCol<FirstVisiblePropertyColumn)
-        navigateToCol = newCellCol;
+        navigateToCol = newCellCol-m_NumberOfPropertyCols;
       else if (newCellCol>LastFullyVisiblePropertyColumn)
-        navigateToCol = newCellRow + 1 - this.FullyVisiblePropertyColumns;
+        navigateToCol = newCellCol - this.FullyVisiblePropertyColumns + 1-m_NumberOfPropertyCols;
       else
         navigateToCol = this.VertScrollPos;
 
@@ -1708,6 +1708,12 @@ namespace Altaxo.Worksheet.GUI
 
     #region Row positions (vertical scroll logic)
 
+    /// <summary>
+    /// The vertical scroll position is defined as following:
+    /// If 0 (zero), the data row 0 is the first visible line (after the column header).
+    /// If positive, the data row with the number of VertScrollPos is the first visible row.
+    /// If negative, the property column with index PropertyColumnCount+VertScrollPos is the first visible line.
+    /// </summary>
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int VertScrollPos
     {
@@ -2286,7 +2292,7 @@ namespace Altaxo.Worksheet.GUI
       VertScrollPos = VertScrollPos + SystemInformation.MouseWheelScrollLines*e.Delta/120;
       Current.Console.WriteLine("MouseWheel {0}, {1}, {2}",e.Delta,oldScrollPos,VertScrollPos);
       */
-      }
+    }
 
     public void EhView_TableAreaMouseMove(System.Windows.Forms.MouseEventArgs e)
     {
@@ -2386,8 +2392,8 @@ namespace Altaxo.Worksheet.GUI
 
           if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.PropertyColumnSelection && !bControlKey))
           {
-            m_SelectedColumns.Clear();
-            m_SelectedRows.Clear(); // if we click a column, we remove row selections
+            m_SelectedDataColumns.Clear();
+            m_SelectedDataRows.Clear(); // if we click a column, we remove row selections
             m_SelectedPropertyColumns.Clear();
             m_SelectedPropertyRows.Clear();
           }
@@ -2415,7 +2421,7 @@ namespace Altaxo.Worksheet.GUI
             bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
             bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
             
-            bool bWasSelectedBefore = this.SelectedColumns.IsSelected(clickedCell.Column);
+            bool bWasSelectedBefore = this.SelectedDataColumns.IsSelected(clickedCell.Column);
 
             /*
             if(m_LastSelectionType==SelectionType.DataRowSelection && !bControlKey)
@@ -2424,8 +2430,8 @@ namespace Altaxo.Worksheet.GUI
 
             if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.DataColumnSelection && m_LastSelectionType!=SelectionType.PropertyRowSelection && !bControlKey))
             {
-              m_SelectedColumns.Clear();
-              m_SelectedRows.Clear(); // if we click a column, we remove row selections
+              m_SelectedDataColumns.Clear();
+              m_SelectedDataRows.Clear(); // if we click a column, we remove row selections
               m_SelectedPropertyColumns.Clear();
               m_SelectedPropertyRows.Clear();
             }
@@ -2443,8 +2449,8 @@ namespace Altaxo.Worksheet.GUI
             }
             else
             {
-              if(this.SelectedColumns.Count!=0 || !bWasSelectedBefore)
-                m_SelectedColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
+              if(this.SelectedDataColumns.Count!=0 || !bWasSelectedBefore)
+                m_SelectedDataColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
               m_LastSelectionType = SelectionType.DataColumnSelection;
             }
 
@@ -2457,7 +2463,7 @@ namespace Altaxo.Worksheet.GUI
           bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
           bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
 
-          bool bWasSelectedBefore = this.SelectedRows.IsSelected(clickedCell.Row);
+          bool bWasSelectedBefore = this.SelectedDataRows.IsSelected(clickedCell.Row);
 
           /*
           if(m_LastSelectionType==SelectionType.DataColumnSelection && !bControlKey)
@@ -2465,8 +2471,8 @@ namespace Altaxo.Worksheet.GUI
           */
           if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.DataRowSelection && !bControlKey))
           {
-            m_SelectedColumns.Clear(); // if we click a column, we remove row selections
-            m_SelectedRows.Clear();
+            m_SelectedDataColumns.Clear(); // if we click a column, we remove row selections
+            m_SelectedDataRows.Clear();
             m_SelectedPropertyColumns.Clear();
             m_SelectedPropertyRows.Clear();
           }
@@ -2474,16 +2480,16 @@ namespace Altaxo.Worksheet.GUI
           // if we had formerly selected property rows, we clear them but add them before as column selection
           if(m_SelectedPropertyRows.Count>0)
           {
-            if(m_SelectedColumns.Count==0)
+            if(m_SelectedDataColumns.Count==0)
             {
               for(int kk=0;kk<m_SelectedPropertyRows.Count;kk++)
-                m_SelectedColumns.Add(m_SelectedPropertyRows[kk]);
+                m_SelectedDataColumns.Add(m_SelectedPropertyRows[kk]);
             }
             m_SelectedPropertyRows.Clear();
           }
           
-          if(this.SelectedRows.Count!=0 || !bWasSelectedBefore)
-            m_SelectedRows.Select(clickedCell.Row,bShiftKey,bControlKey);
+          if(this.SelectedDataRows.Count!=0 || !bWasSelectedBefore)
+            m_SelectedDataRows.Select(clickedCell.Row,bShiftKey,bControlKey);
           m_LastSelectionType = SelectionType.DataRowSelection;
           this.View.TableAreaInvalidate();
         }
@@ -2510,8 +2516,8 @@ namespace Altaxo.Worksheet.GUI
       int firstPropertyColumnToDraw = this.GetFirstVisiblePropertyColumn(e.ClipRectangle.Top);
       int numberOfPropertyColumnsToDraw = this.GetVisiblePropertyColumns(e.ClipRectangle.Top,e.ClipRectangle.Bottom);
 
-      bool bAreColumnsSelected = m_SelectedColumns.Count>0;
-      bool bAreRowsSelected =    m_SelectedRows.Count>0;
+      bool bAreColumnsSelected = m_SelectedDataColumns.Count>0;
+      bool bAreRowsSelected =    m_SelectedDataRows.Count>0;
       bool bAreCellsSelected =  bAreRowsSelected || bAreColumnsSelected;
       
       bool bArePropertyColsSelected = m_SelectedPropertyColumns.Count>0;
@@ -2561,7 +2567,7 @@ namespace Altaxo.Worksheet.GUI
       for(int nRow = firstTableRowToDraw,nInc=0; nInc<numberOfTableRowsToDraw; nRow++,nInc++)
       {
         cellRectangle.Y = yShift+nInc*m_TableLayout.RowHeaderStyle.Height;
-        m_TableLayout.RowHeaderStyle.Paint(dc,cellRectangle,nRow,null, bAreRowsSelected && m_SelectedRows.Contains(nRow));
+        m_TableLayout.RowHeaderStyle.Paint(dc,cellRectangle,nRow,null, bAreRowsSelected && m_SelectedDataRows.Contains(nRow));
       }
       
 
@@ -2601,7 +2607,7 @@ namespace Altaxo.Worksheet.GUI
           Altaxo.Worksheet.ColumnStyle cs = GetDataColumnStyle(nCol);
           cellRectangle = this.GetXCoordinatesOfColumn(nCol,cellRectangle);
 
-          bool bColumnSelected = bAreColumnsSelected && m_SelectedColumns.Contains(nCol);
+          bool bColumnSelected = bAreColumnsSelected && m_SelectedDataColumns.Contains(nCol);
           bool bDataColumnIncluded = bAreColumnsSelected  ? bColumnSelected : true;
           bool bPropertyRowSelected = bArePropertyRowsSelected && m_SelectedPropertyRows.Contains(nCol);
 
@@ -2617,7 +2623,7 @@ namespace Altaxo.Worksheet.GUI
           cellRectangle.Height = m_TableLayout.RowHeaderStyle.Height;
           for(int nRow=firstTableRowToDraw, nIncRow=0;nIncRow<numberOfTableRowsToDraw;nRow++,nIncRow++)
           {
-            bool bRowSelected = bAreRowsSelected && m_SelectedRows.Contains(nRow);
+            bool bRowSelected = bAreRowsSelected && m_SelectedDataRows.Contains(nRow);
             bool bDataRowIncluded = bAreRowsSelected ? bRowSelected : true;
             cellRectangle.Y= yShift+nIncRow*m_TableLayout.RowHeaderStyle.Height;
             cs.Paint(dc,cellRectangle,nRow,DataTable[nCol],bAreCellsSelected && bDataColumnIncluded && bDataRowIncluded);

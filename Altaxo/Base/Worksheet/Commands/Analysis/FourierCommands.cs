@@ -36,18 +36,18 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static void FFT(WorksheetController dg)
     {
-      int len = dg.SelectedColumns.Count;
+      int len = dg.SelectedDataColumns.Count;
       if(len==0)
         return; // nothing selected
 
-      if(!(dg.DataTable[dg.SelectedColumns[0]] is Altaxo.Data.DoubleColumn))
+      if(!(dg.DataTable[dg.SelectedDataColumns[0]] is Altaxo.Data.DoubleColumn))
         return;
 
 
       // preliminary
 
       // we simply create a new column, copy the values
-      Altaxo.Data.DoubleColumn col = (Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedColumns[0]];
+      Altaxo.Data.DoubleColumn col = (Altaxo.Data.DoubleColumn)dg.DataTable[dg.SelectedDataColumns[0]];
 
 
       double[] arr=col.Array;

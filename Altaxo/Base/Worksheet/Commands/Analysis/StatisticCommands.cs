@@ -36,7 +36,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static void StatisticsOnColumns(WorksheetController ctrl)
     {
-      StatisticsOnColumns(Current.Project,ctrl.DataTable,ctrl.SelectedColumns,ctrl.SelectedRows);
+      StatisticsOnColumns(Current.Project,ctrl.DataTable,ctrl.SelectedDataColumns,ctrl.SelectedDataRows);
     }
 
     public static void StatisticsOnColumns(
@@ -145,7 +145,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static void StatisticsOnRows(WorksheetController ctrl)
     {
-      StatisticsOnRows(Current.Project,ctrl.DataTable,ctrl.SelectedColumns,ctrl.SelectedRows);
+      StatisticsOnRows(Current.Project,ctrl.DataTable,ctrl.SelectedDataColumns,ctrl.SelectedDataRows);
     }
 
     public static void StatisticsOnRows(

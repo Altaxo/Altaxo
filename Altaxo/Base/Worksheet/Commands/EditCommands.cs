@@ -43,7 +43,7 @@ namespace Altaxo.Worksheet.Commands
 
 
       // Property columns are only deleted, if selected alone or in conjunction with data row selection
-      if(ctrl.SelectedPropertyColumns.Count>0 && ctrl.SelectedPropertyRows.Count==0 && ctrl.SelectedColumns.Count==0)
+      if(ctrl.SelectedPropertyColumns.Count>0 && ctrl.SelectedPropertyRows.Count==0 && ctrl.SelectedDataColumns.Count==0)
       {
         ctrl.DataTable.PropCols.RemoveColumns(ctrl.SelectedPropertyColumns);
         ctrl.SelectedPropertyColumns.Clear();
@@ -53,21 +53,21 @@ namespace Altaxo.Worksheet.Commands
 
 
       // delete the selected columns if there are _only selected columns
-      if(ctrl.SelectedColumns.Count>0 && ctrl.SelectedRows.Count==0)
+      if(ctrl.SelectedDataColumns.Count>0 && ctrl.SelectedDataRows.Count==0)
       {
-        ctrl.DataTable.RemoveColumns(ctrl.SelectedColumns);
-        ctrl.SelectedColumns.Clear(); // now the columns are deleted, so they cannot be selected
+        ctrl.DataTable.RemoveColumns(ctrl.SelectedDataColumns);
+        ctrl.SelectedDataColumns.Clear(); // now the columns are deleted, so they cannot be selected
       }
 
       // if rows are selected, remove them in all selected columns or in all columns (if no column selection=
-      if(ctrl.SelectedRows.Count>0)
+      if(ctrl.SelectedDataRows.Count>0)
       {
         ctrl.DataTable.DataColumns.RemoveRowsInColumns(
-          ctrl.SelectedColumns.Count>0 ? (IAscendingIntegerCollection)ctrl.SelectedColumns : new IntegerRangeAsCollection(0,ctrl.DataTable.DataColumns.ColumnCount),
-          ctrl.SelectedRows);
+          ctrl.SelectedDataColumns.Count>0 ? (IAscendingIntegerCollection)ctrl.SelectedDataColumns : new IntegerRangeAsCollection(0,ctrl.DataTable.DataColumns.ColumnCount),
+          ctrl.SelectedDataRows);
 
-        ctrl.SelectedColumns.Clear();
-        ctrl.SelectedRows.Clear();
+        ctrl.SelectedDataColumns.Clear();
+        ctrl.SelectedDataRows.Clear();
       }
 
 
@@ -84,60 +84,170 @@ namespace Altaxo.Worksheet.Commands
     {
       Altaxo.Data.DataTable dt = dg.DataTable;
       System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
-      int i,j;
     
-      if(dg.SelectedColumns.Count>0)
+      if(dg.AreDataCellsSelected)
       {
-        // columns are selected
-        int nCols = dg.SelectedColumns.Count;
-        int nRows=0; // count the rows since they are maybe less than in the hole worksheet
-        for(i=0;i<nCols;i++)
-        {
-          nRows = System.Math.Max(nRows,dt[dg.SelectedColumns[i]].Count);
-        }
-
-        System.IO.StringWriter str = new System.IO.StringWriter();
-        for(i=0;i<nRows;i++)
-        {
-          for(j=0;j<nCols;j++)
-          {
-            if(j<nCols-1)
-              str.Write("{0};",dt[dg.SelectedColumns[j]][i].ToString());
-            else
-              str.WriteLine(dt[dg.SelectedColumns[j]][i].ToString());
-          }
-        }
-        dao.SetData(System.Windows.Forms.DataFormats.CommaSeparatedValue, str.ToString());
-
-
-        // now also as tab separated text
-        System.IO.StringWriter sw = new System.IO.StringWriter();
-        
-        for(i=0;i<nRows;i++)
-        {
-          for(j=0;j<nCols;j++)
-          {
-            sw.Write(dt[dg.SelectedColumns[j]][i].ToString());
-            if(j<nCols-1)
-              sw.Write("\t");
-            else
-              sw.WriteLine();
-          }
-        }
-        dao.SetData(sw.ToString());
+        WriteAsciiToClipBoardIfDataCellsSelected(dg,dao);
+      }
+      else if(dg.ArePropertyCellsSelected && !(dg.AreDataCellsSelected))
+      {
+        WriteAsciiToClipBoardIfOnlyPropertyCellsSelected(dg,dao);
       }
 
       if(dg.AreColumnsOrRowsSelected)
       {
         // copy the data as table with the selected columns
         Altaxo.Data.DataTable.ClipboardMemento tablememento = new Altaxo.Data.DataTable.ClipboardMemento(
-          dg.DataTable,dg.SelectedColumns,dg.SelectedRows,dg.SelectedPropertyColumns,dg.SelectedPropertyRows);
+          dg.DataTable,dg.SelectedDataColumns,dg.SelectedDataRows,dg.SelectedPropertyColumns,dg.SelectedPropertyRows);
         dao.SetData("Altaxo.Data.DataTable.ClipboardMemento",tablememento);
 
         // now copy the data object to the clipboard
         System.Windows.Forms.Clipboard.SetDataObject(dao,true);
+      
+      
+  
+      
       }
     }
+
+
+ 
+    /// <summary>
+    /// Writes ASCII to the clipboard if data cells are selected.
+    /// </summary>
+    /// <param name="dg">The worksheet controller</param>
+    /// <param name="dao">The clipboard data object</param>
+    protected static void WriteAsciiToClipBoardIfDataCellsSelected(GUI.WorksheetController dg, System.Windows.Forms.DataObject dao)
+    {
+      // columns are selected
+      DataTable dt = dg.DataTable;
+      Altaxo.Collections.AscendingIntegerCollection selCols = dg.SelectedDataColumns;
+      Altaxo.Collections.AscendingIntegerCollection selRows = dg.SelectedDataRows;
+      Altaxo.Collections.AscendingIntegerCollection selPropCols = dg.SelectedPropertyColumns;
+
+      if(selCols.Count==0)
+      {
+        selCols = new Altaxo.Collections.AscendingIntegerCollection();
+        selCols.AddRange(0,dg.Doc.DataColumnCount);
+      }
+
+      if(selRows.Count==0)
+      {
+        selRows = new Altaxo.Collections.AscendingIntegerCollection();
+        int nRows=0; // count the rows since they are maybe less than in the hole worksheet
+        for(int i=0;i<selCols.Count;i++)
+        {
+          nRows = System.Math.Max(nRows,dt[selCols[i]].Count);
+        }
+        selRows.AddRange(0,nRows);
+      }
+  
+      System.IO.StringWriter str = new System.IO.StringWriter();
+      for(int i=0;i<selPropCols.Count;i++)
+      {
+        for(int j=0;j<selCols.Count;j++)
+        {
+          str.Write(dt.PropertyColumns[selPropCols[i]][selCols[j]].ToString());
+          if(j<selCols.Count-1)
+            str.Write(";");
+          else
+            str.WriteLine();
+        }
+      }
+
+      for(int i=0;i<selRows.Count;i++)
+      {
+        for(int j=0;j<selCols.Count;j++)
+        {
+          str.Write(dt.DataColumns[selCols[j]][selRows[i]].ToString());
+          if(j<selCols.Count-1)
+            str.Write(";");
+          else
+            str.WriteLine();
+        }
+      }
+      dao.SetData(System.Windows.Forms.DataFormats.CommaSeparatedValue, str.ToString());
+
+
+      // now also as tab separated text
+      System.IO.StringWriter sw = new System.IO.StringWriter();
+        
+      for(int i=0;i<selPropCols.Count;i++)
+      {
+        for(int j=0;j<selCols.Count;j++)
+        {
+          str.Write(dt.PropertyColumns[selPropCols[i]][selCols[j]].ToString());
+          if(j<selCols.Count-1)
+            str.Write("\t");
+          else
+            str.WriteLine();
+        }
+      }
+      for(int i=0;i<selRows.Count;i++)
+      {
+        for(int j=0;j<selCols.Count;j++)
+        {
+          sw.Write(dt.DataColumns[selCols[j]][selRows[i]].ToString());
+          if(j<selCols.Count-1)
+            sw.Write("\t");
+          else
+            sw.WriteLine();
+        }
+      }
+      dao.SetData(sw.ToString());
+    }
+  
+
+    /// <summary>
+    /// Writes ASCII to the clipboard if only property cells are selected.
+    /// </summary>
+    /// <param name="dg">The worksheet controller</param>
+    /// <param name="dao">The clipboard data object</param>
+    protected static void WriteAsciiToClipBoardIfOnlyPropertyCellsSelected(GUI.WorksheetController dg, System.Windows.Forms.DataObject dao)
+    {
+      // columns are selected
+      DataTable dt = dg.DataTable;
+      Altaxo.Collections.AscendingIntegerCollection selCols = dg.SelectedPropertyColumns;
+      Altaxo.Collections.AscendingIntegerCollection selRows = dg.SelectedPropertyRows;
+      if(selRows.Count==0)
+      {
+        selRows = new Altaxo.Collections.AscendingIntegerCollection();
+        selRows.AddRange(0,dg.Doc.PropertyRowCount);
+      }
+
+      System.IO.StringWriter str = new System.IO.StringWriter();
+      for(int i=0;i<selRows.Count;i++)
+      {
+        for(int j=0;j<selCols.Count;j++)
+        {
+          str.Write(dt.PropertyColumns[selCols[j]][selRows[i]].ToString());
+          if(j<selCols.Count-1)
+            str.Write(";");
+          else
+            str.WriteLine();
+        }
+      }
+      dao.SetData(System.Windows.Forms.DataFormats.CommaSeparatedValue, str.ToString());
+
+
+      // now also as tab separated text
+      System.IO.StringWriter sw = new System.IO.StringWriter();
+        
+      for(int i=0;i<selRows.Count;i++)
+      {
+        for(int j=0;j<selCols.Count;j++)
+        {
+          sw.Write(dt.PropertyColumns[selCols[j]][selRows[i]].ToString());
+          if(j<selCols.Count-1)
+            sw.Write("\t");
+          else
+            sw.WriteLine();
+        }
+      }
+      dao.SetData(sw.ToString());
+    }
+  
+
 
     /// <summary>
     /// Pastes data from a table (usually deserialized table from the clipboard) into a worksheet.
@@ -159,30 +269,30 @@ namespace Altaxo.Worksheet.Commands
       {
         PasteFromTableToUnselected(dg,sourcetable);
       }
-      else if(dg.SelectedColumns.Count>0 && dg.SelectedColumns.Count == sourcetable.DataColumns.ColumnCount)
+      else if(dg.SelectedDataColumns.Count>0 && dg.SelectedDataColumns.Count == sourcetable.DataColumns.ColumnCount)
       {
         PasteFromTableColumnsToSelectedColumns(dg,sourcetable);
       }
-      else if(dg.SelectedColumns.Count>0 && dg.SelectedColumns.Count == sourcetable.DataColumns.RowCount)
+      else if(dg.SelectedDataColumns.Count>0 && dg.SelectedDataColumns.Count == sourcetable.DataColumns.RowCount)
       {
         PasteFromTableRowsToSelectedColumns(dg,sourcetable);
       }
-      else if(dg.SelectedRows.Count>0 && dg.SelectedRows.Count == sourcetable.DataColumns.RowCount)
+      else if(dg.SelectedDataRows.Count>0 && dg.SelectedDataRows.Count == sourcetable.DataColumns.RowCount)
       {
         PasteFromTableRowsToSelectedRows(dg,sourcetable);
       }
-      else if(dg.SelectedRows.Count>0 && dg.SelectedRows.Count == sourcetable.DataColumns.ColumnCount)
+      else if(dg.SelectedDataRows.Count>0 && dg.SelectedDataRows.Count == sourcetable.DataColumns.ColumnCount)
       {
         PasteFromTableColumnsToSelectedRows(dg,sourcetable);
       }
         // here should follow the exact matches with property colums
 
         // now the not exact matches
-      else if(dg.SelectedColumns.Count>0)
+      else if(dg.SelectedDataColumns.Count>0)
       {
         PasteFromTableColumnsToSelectedColumns(dg,sourcetable);
       }
-      else if(dg.SelectedRows.Count>0)
+      else if(dg.SelectedDataRows.Count>0)
       {
         PasteFromTableRowsToSelectedRows(dg,sourcetable);
       }
@@ -255,7 +365,7 @@ namespace Altaxo.Worksheet.Commands
       int nDestCol=-1;
       for(int nSrcCol=0;nSrcCol<sourcetable.DataColumns.ColumnCount;nSrcCol++)
       {
-        nDestCol = nSrcCol<dg.SelectedColumns.Count ? dg.SelectedColumns[nSrcCol] : nDestCol+1;
+        nDestCol = nSrcCol<dg.SelectedDataColumns.Count ? dg.SelectedDataColumns[nSrcCol] : nDestCol+1;
         Altaxo.Data.DataColumn destcolumn;
         if(nDestCol<desttable.DataColumns.ColumnCount)
         {
@@ -279,7 +389,7 @@ namespace Altaxo.Worksheet.Commands
           int nDestRow=-1;
           for(int nSrcRow=0;nSrcRow<sourcetable.DataColumns.RowCount;nSrcRow++)
           {
-            nDestRow = nSrcRow<dg.SelectedRows.Count ? dg.SelectedRows[nSrcRow] : nDestRow+1;
+            nDestRow = nSrcRow<dg.SelectedDataRows.Count ? dg.SelectedDataRows[nSrcRow] : nDestRow+1;
             destcolumn[nDestRow] = sourcecolumn[nSrcRow];
           }
         }
@@ -311,7 +421,7 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Data.DataTable desttable = dg.DataTable;
 
       Altaxo.Data.DataColumn[] propertycolumnmap = MapOrCreatePropertyColumns(desttable,sourcetable);
-      Altaxo.Data.DataColumn[] destdatacolumnmap = MapOrCreateDataColumns(desttable,dg.SelectedColumns,sourcetable);
+      Altaxo.Data.DataColumn[] destdatacolumnmap = MapOrCreateDataColumns(desttable,dg.SelectedDataColumns,sourcetable);
 
       for(int nCol=0;nCol<sourcetable.DataColumns.ColumnCount;nCol++)
       {
@@ -322,7 +432,7 @@ namespace Altaxo.Worksheet.Commands
           int nDestRow=-1;
           for(int nSrcRow=0;nSrcRow<sourcetable.DataColumns.RowCount;nSrcRow++)
           {
-            nDestRow = nSrcRow<dg.SelectedRows.Count ? dg.SelectedRows[nSrcRow] : nDestRow+1;
+            nDestRow = nSrcRow<dg.SelectedDataRows.Count ? dg.SelectedDataRows[nSrcRow] : nDestRow+1;
             destdatacolumnmap[nCol][nDestRow] = sourcetable.DataColumns[nCol][nSrcRow];
           }
         }
@@ -353,13 +463,13 @@ namespace Altaxo.Worksheet.Commands
     protected static void PasteFromTableColumnsToSelectedRows(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
     {
       Altaxo.Data.DataTable desttable = dg.DataTable;
-      Altaxo.Data.DataColumn[] destdatacolumnmap = MapOrCreateDataColumnsToRows(desttable,dg.SelectedColumns,sourcetable);
+      Altaxo.Data.DataColumn[] destdatacolumnmap = MapOrCreateDataColumnsToRows(desttable,dg.SelectedDataColumns,sourcetable);
 
 
       int nDestRow=-1;
       for(int nSrcCol=0;nSrcCol<sourcetable.DataColumns.ColumnCount;nSrcCol++)
       {
-        nDestRow = nSrcCol<dg.SelectedRows.Count ? dg.SelectedRows[nSrcCol] : nDestRow+1;
+        nDestRow = nSrcCol<dg.SelectedDataRows.Count ? dg.SelectedDataRows[nSrcCol] : nDestRow+1;
 
         for(int nSrcRow=0;nSrcRow<sourcetable.DataColumns.RowCount;nSrcRow++)
         {

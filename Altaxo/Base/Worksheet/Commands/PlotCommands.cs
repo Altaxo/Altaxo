@@ -40,6 +40,7 @@ namespace Altaxo.Worksheet.Commands
       }
       if(!bScatter)
       {
+        templatePlotStyle.LineSymbolGap = false;
         templatePlotStyle.XYPlotScatterStyle.Shape = Altaxo.Graph.XYPlotScatterStyles.Shape.NoSymbol;
         templatePlotGroupStyle &= (Altaxo.Graph.PlotGroupStyle.All ^ Altaxo.Graph.PlotGroupStyle.Symbol);
       }
@@ -48,14 +49,14 @@ namespace Altaxo.Worksheet.Commands
       // first, create a plot association for every selected column in
       // the data grid
 
-      int len = dg.SelectedColumns.Count;
+      int len = dg.SelectedDataColumns.Count;
 
       Graph.XYColumnPlotData[] pa = new Graph.XYColumnPlotData[len];
 
       int nNumberOfPlotData=0;
       for(int i=0;i<len;i++)
       {
-        Altaxo.Data.DataColumn ycol = dg.DataTable[dg.SelectedColumns[i]];
+        Altaxo.Data.DataColumn ycol = dg.DataTable[dg.SelectedDataColumns[i]];
 
         Altaxo.Data.DataColumn xcol = dg.DataTable.DataColumns.FindXColumnOf(ycol);
       
@@ -67,9 +68,9 @@ namespace Altaxo.Worksheet.Commands
         nNumberOfPlotData++;
 
         // if the next column is a label column, add it also
-        if((i+1)<len && ColumnKind.Label==dg.DataTable.DataColumns.GetColumnKind(dg.SelectedColumns[i+1]))
+        if((i+1)<len && ColumnKind.Label==dg.DataTable.DataColumns.GetColumnKind(dg.SelectedDataColumns[i+1]))
         {
-          pa[i].LabelColumn = dg.DataTable.DataColumns[dg.SelectedColumns[i+1]];
+          pa[i].LabelColumn = dg.DataTable.DataColumns[dg.SelectedDataColumns[i+1]];
           i++;
         }
 
@@ -106,9 +107,9 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Graph.DensityImagePlotStyle plotStyle = new Altaxo.Graph.DensityImagePlotStyle();
 
       // if nothing is selected, assume that the whole table should be plotted
-      int len = dg.SelectedColumns.Count;
+      int len = dg.SelectedDataColumns.Count;
 
-      Graph.XYZEquidistantMeshColumnPlotData assoc = new Graph.XYZEquidistantMeshColumnPlotData(dg.Doc.DataColumns,len==0 ? null : dg.SelectedColumns);
+      Graph.XYZEquidistantMeshColumnPlotData assoc = new Graph.XYZEquidistantMeshColumnPlotData(dg.Doc.DataColumns,len==0 ? null : dg.SelectedDataColumns);
 
       
       // now create a new Graph with this plot associations

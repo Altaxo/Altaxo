@@ -39,7 +39,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     #region MultiplyColumnsToMatrix
     public static void MultiplyColumnsToMatrix(WorksheetController ctrl)
     {
-      string err = MultiplyColumnsToMatrix(Current.Project,ctrl.Doc,ctrl.SelectedColumns);
+      string err = MultiplyColumnsToMatrix(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns);
       if(null!=err)
         System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
     }
@@ -162,7 +162,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
       if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
       {
-        string err= PrincipalComponentAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,true,ivictrl.EnteredContents);
+        string err= PrincipalComponentAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,true,ivictrl.EnteredContents);
         if(null!=err)
           System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
       }
@@ -179,7 +179,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
       if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
       {
-        string err= PrincipalComponentAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,false,ivictrl.EnteredContents);
+        string err= PrincipalComponentAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,false,ivictrl.EnteredContents);
         if(null!=err)
           System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
       }
@@ -458,7 +458,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if(!QuestPLSAnalysisOptions(out options))
         return;
 
-      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,true,options);
+      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,ctrl.SelectedPropertyColumns,true,options);
       if(null!=err)
         System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
     }
@@ -468,7 +468,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if(!QuestPLSAnalysisOptions(out options))
         return;
 
-      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,false,options);
+      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedDataColumns,ctrl.SelectedDataRows,ctrl.SelectedPropertyColumns,false,options);
       if(null!=err)
         System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
     }
@@ -535,8 +535,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Collections.AscendingIntegerCollection measurementIndices;
       
       
-      spectralIndices = new Altaxo.Collections.AscendingIntegerCollection(ctrl.SelectedColumns);
-      measurementIndices = new Altaxo.Collections.AscendingIntegerCollection(ctrl.SelectedRows);
+      spectralIndices = new Altaxo.Collections.AscendingIntegerCollection(ctrl.SelectedDataColumns);
+      measurementIndices = new Altaxo.Collections.AscendingIntegerCollection(ctrl.SelectedDataRows);
       RemoveNonNumericCells(ctrl.DataTable,measurementIndices,spectralIndices);
 
       // exchange selection if spectrum is column

@@ -190,6 +190,7 @@ Global
 		{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
+		Content\doc\altaxotodo.xml = Content\doc\altaxotodo.xml
 		Icon1.ico = Icon1.ico
 		LayerButtons.bmp = LayerButtons.bmp
 	EndGlobalSection

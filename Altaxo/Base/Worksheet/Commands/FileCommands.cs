@@ -160,7 +160,7 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Serialization.Galactic.ExportGalacticSpcFileDialog dlg =
         new Altaxo.Serialization.Galactic.ExportGalacticSpcFileDialog();
 
-      dlg.Initialize(ctrl.DataTable,ctrl.SelectedRows,ctrl.SelectedColumns);
+      dlg.Initialize(ctrl.DataTable,ctrl.SelectedDataRows,ctrl.SelectedDataColumns);
 
       dlg.ShowDialog(ctrl.View.TableViewWindow);
     }

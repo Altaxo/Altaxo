@@ -39,7 +39,7 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="ctrl">The worksheet controller for the table.</param>
     public static string SetSelectedRowPosition(WorksheetController ctrl)
     {
-      if(ctrl.SelectedRows.Count==0)
+      if(ctrl.SelectedDataRows.Count==0)
         return null; // nothing to do
 
       int newposition = int.MinValue;
@@ -70,9 +70,9 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="nPosition">The new position for the selected rows.</param>
     public static void SetSelectedRowPosition(WorksheetController ctrl, int nPosition)
     {
-      if(ctrl.SelectedRows.Count>0)
+      if(ctrl.SelectedDataRows.Count>0)
       {
-        ctrl.DataTable.DataColumns.ChangeRowPosition(ctrl.SelectedRows, nPosition);
+        ctrl.DataTable.DataColumns.ChangeRowPosition(ctrl.SelectedDataRows, nPosition);
       }
 
       ctrl.ClearAllSelections();

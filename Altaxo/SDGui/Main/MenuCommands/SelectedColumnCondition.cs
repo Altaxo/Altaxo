@@ -62,7 +62,7 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Worksheet.GUI.WorksheetController ctrl 
         = Current.Workbench.ActiveViewContent as Altaxo.Worksheet.GUI.WorksheetController; 
 
-      return ctrl.SelectedColumns.Count>=1;
+      return ctrl.SelectedDataColumns.Count>=1;
     }
   }
 }

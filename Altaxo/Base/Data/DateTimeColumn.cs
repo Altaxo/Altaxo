@@ -276,7 +276,7 @@ namespace Altaxo.Data
 
     public double GetDoubleAt(int i)
     {
-      return i<m_Count ? System.Convert.ToDouble(this[i]) : Double.NaN;
+      return i<m_Count ? this[i].Ticks/1E7 : Double.NaN;
     }
 
     public override bool IsElementEmpty(int i)
