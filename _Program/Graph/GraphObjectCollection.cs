@@ -22,15 +22,74 @@ using System;
 using System.Collections;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Serialization;
+
 
 namespace Altaxo.Graph
 {
 	/// <summary>
 	/// Summary description for GraphObjectCollection.
 	/// </summary>
-	[Serializable]
+	[SerializationSurrogate(0,typeof(GraphObjectCollection.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class GraphObjectCollection : System.Collections.CollectionBase, IChangedEventSource, IChildChangedEventSink
 	{
+		private object[] m_DeserializedItems=null;
+
+
+		#region "Serialization"
+
+		/// <summary>Used to serialize the GraphObjectCollection Version 0.</summary>
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+
+			/// <summary>
+			/// Serializes GraphObjectCollection Version 0.
+			/// </summary>
+			/// <param name="obj">The GraphObjectCollection to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				GraphObjectCollection s = (GraphObjectCollection)obj;
+				info.AddValue("Data",s.InnerList.ToArray());
+			}
+
+			/// <summary>
+			/// Deserializes the GraphObjectCollection Version 0.
+			/// </summary>
+			/// <param name="obj">The empty GraphObjectCollection object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized GraphObjectCollection.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				GraphObjectCollection s = (GraphObjectCollection)obj;
+
+				s.m_DeserializedItems =	(object[])info.GetValue("Data",typeof(System.Array));
+				
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+			if(null!=m_DeserializedItems)
+			{
+				foreach(GraphObject l in m_DeserializedItems)
+					Add(l);
+				
+				m_DeserializedItems=null;
+			}
+		}
+		#endregion
+
+
 
 		public GraphObjectCollection()
 		: base()

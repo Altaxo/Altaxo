@@ -39,13 +39,16 @@ namespace Altaxo.Graph
 
 		#region Member variables
 
+		// following default unit is point (1/72 inch)
+		/// <summary>For the graph elements all the units are in points. One point is 1/72 inch.</summary>
+		protected const float UnitPerInch = 72;
+
 
 		/// <summary>Holds the Graph document (the place were the layers, plots, graph elements... are stored).</summary>
 		protected Altaxo.Graph.GraphDocument m_Graph;
 
 		/// <summary>Holds the view (the window where the graph is visualized).</summary>
 		protected IGraphView m_View;
-
 		
 		/// <summary>The main menu of this controller.</summary>
 		protected System.Windows.Forms.MainMenu m_MainMenu; 
@@ -53,66 +56,61 @@ namespace Altaxo.Graph
 		/// <summary>Special menu item to show the currently available plots.</summary>
 		protected System.Windows.Forms.MenuItem m_MenuDataPopup;
 
-		// following default unit is point (1/72 inch)
-		/// <summary>For the graph elements all the units are in points. One point is 1/72 inch.</summary>
-		protected const float UnitPerInch = 72;
-
-		
-	
-
 		/// <summary>
 		/// Color for the area of the view, where there is no page.
 		/// </summary>
-		protected Color m_NonPageAreaColor = Color.Gray;
+		protected Color m_NonPageAreaColor;
 
 		/// <summary>
 		/// Brush to fill the page ground. Since the printable area is filled with another brush, in effect
 		/// this brush fills only the non printable margins of the page. 
 		/// </summary>
-		protected BrushHolder m_PageGroundBrush = new BrushHolder(Color.LightGray);
+		protected BrushHolder m_PageGroundBrush;
 
 		/// <summary>
 		/// Brush to fill the printable area of the graph.
 		/// </summary>
-		protected BrushHolder m_PrintableAreaBrush = new BrushHolder(Color.Snow);
+		protected BrushHolder m_PrintableAreaBrush;
 
 		/// <summary>Current horizontal resolution of the paint method.</summary>
-		protected float m_HorizRes  = 300;
+		protected float m_HorizRes;
 		
 		/// <summary>Current vertical resolution of the paint method.</summary>
-		protected float m_VertRes = 300;
+		protected float m_VertRes;
 
 		/// <summary>Current zoom factor. If AutoZoom is on, this factor is calculated automatically.</summary>
-		protected float m_Zoom  = 0.4f;
+		protected float m_Zoom;
 		
 		/// <summary>If true, the view is zoomed so that the page fits exactly into the viewing area.</summary>
-		protected bool  m_AutoZoom = true; // if true, the sheet is zoomed as big as possible to fit into window
-		
+		protected bool  m_AutoZoom; // if true, the sheet is zoomed as big as possible to fit into window
 		
 		/// <summary>Number of the currently selected layer (or -1 if no layer is present).</summary>
-		protected int m_CurrentLayerNumber = -1;
+		protected int m_CurrentLayerNumber;
+
 		/// <summary>Number of the currently selected plot (or -1 if no plot is present on the layer).</summary>
-		protected int m_CurrentPlotNumber = -1;
+		protected int m_CurrentPlotNumber;
 		
 		/// <summary>Currently selected GraphTool.</summary>
-		protected GraphTools m_CurrentGraphTool = GraphTools.ObjectPointer;
+		protected GraphTools m_CurrentGraphTool;
 		
 		/// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
-		protected MouseStateHandler m_MouseState= new ObjectPointerMouseHandler();
+		protected MouseStateHandler m_MouseState;
 
 		/// <summary>
 		/// The hashtable of the selected objects. The key is the selected object itself,
 		/// the data is a int object, which stores the layer number the object belongs to.
 		/// </summary>
-		protected System.Collections.Hashtable m_SelectedObjects = new System.Collections.Hashtable();
+		protected System.Collections.Hashtable m_SelectedObjects;
 
 		/// <summary>
 		/// This holds a frozen image of the graph during the moving time
 		/// </summary>
-		protected Bitmap m_FrozenGraph=null;
+		protected Bitmap m_FrozenGraph;
 
 
 		#endregion Member variables
+
+		
 
 		#region Serialization
 		/// <summary>Used to serialize the GraphController Version 0.</summary>
@@ -127,9 +125,9 @@ namespace Altaxo.Graph
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				GraphController s = (GraphController)obj;
-				info.AddValue("Graph",s.m_Graph);
 				info.AddValue("AutoZoom",s.m_AutoZoom);
 				info.AddValue("Zoom",s.m_Zoom);
+				info.AddValue("Graph",s.m_Graph);
 			}
 			/// <summary>
 			/// Deserializes the GraphController (version 0).
@@ -142,10 +140,11 @@ namespace Altaxo.Graph
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				GraphController s = (GraphController)obj;
+				s.SetMemberVariablesToDefault();
 
-				s.m_Graph = (GraphDocument)info.GetValue("Graph",typeof(GraphDocument));
 				s.m_AutoZoom = info.GetBoolean("AutoZoom");
 				s.m_Zoom = info.GetSingle("Zoom");
+				s.m_Graph = (GraphDocument)info.GetValue("Graph",typeof(GraphDocument));
 				return s;
 			}
 		}
@@ -156,13 +155,74 @@ namespace Altaxo.Graph
 		/// <param name="obj">Not used.</param>
 		public virtual void OnDeserialization(object obj)
 		{
-			
+			if(obj is DeserializationFinisher)
+			{
+
+				// create the menu
+				this.InitializeMenu();
+
+				// set the menu of this class
+				m_View.GraphMenu = this.m_MainMenu;
+
+
+				// restore event chain to GraphDocument
+				m_Graph.Changed += new EventHandler(this.EhGraph_Changed);
+				m_Graph.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
+
+
+				// Ensure the current layer and plot numbers are valid
+				this.EnsureValidityOfCurrentLayerNumber();
+				this.EnsureValidityOfCurrentPlotNumber();
+			}
 		}
 		#endregion
 
 
 		#region Constructors
-	
+
+		public void SetMemberVariablesToDefault()
+		{
+			m_NonPageAreaColor = Color.Gray;
+		
+			m_PageGroundBrush = new BrushHolder(Color.LightGray);
+
+			m_PrintableAreaBrush = new BrushHolder(Color.Snow);
+
+			m_HorizRes  = 300;
+		
+			m_VertRes = 300;
+
+			m_Zoom  = 0.4f;
+		
+			// If true, the view is zoomed so that the page fits exactly into the viewing area.</summary>
+			m_AutoZoom = true; // if true, the sheet is zoomed as big as possible to fit into window
+		
+		
+			// Number of the currently selected layer (or -1 if no layer is present).</summary>
+			m_CurrentLayerNumber = -1;
+		
+			// Number of the currently selected plot (or -1 if no plot is present on the layer).</summary>
+			m_CurrentPlotNumber = -1;
+		
+			// Currently selected GraphTool.</summary>
+			m_CurrentGraphTool = GraphTools.ObjectPointer;
+		
+			// A instance of a mouse handler class that currently handles the mouse events..</summary>
+			m_MouseState= new ObjectPointerMouseHandler();
+
+			/// <summary>
+			/// The hashtable of the selected objects. The key is the selected object itself,
+			/// the data is a int object, which stores the layer number the object belongs to.
+			/// </summary>
+			m_SelectedObjects = new System.Collections.Hashtable();
+
+			/// <summary>
+			/// This holds a frozen image of the graph during the moving time
+			/// </summary>
+			m_FrozenGraph=null;
+		}
+
+
 		public GraphController(IGraphView view)
 			: this(view, null)
 		{
@@ -170,6 +230,8 @@ namespace Altaxo.Graph
 
 		public GraphController(IGraphView view, GraphDocument graphdoc)
 		{
+			SetMemberVariablesToDefault();
+
 			m_View = view;
 
 			if(null!=graphdoc)
@@ -196,7 +258,6 @@ namespace Altaxo.Graph
 				System.Drawing.Printing.Margins ma;
 				if(prnset.IsValid)
 				{
-
 					pageBounds = doc.DefaultPageSettings.Bounds;
 					ma = doc.DefaultPageSettings.Margins;
 				}
@@ -555,6 +616,17 @@ namespace Altaxo.Graph
 		public IGraphView View
 		{
 			get { return m_View; }
+			set
+			{
+				// accept only that value!=null && m_View is null
+
+				if((null!=value && null==m_View) || object.ReferenceEquals(value,m_View))
+					m_View = value;
+				else if(value==null)
+					throw new ArgumentNullException("The view to be set must not be null!");
+				else
+					throw new ArgumentException("Not supported: Try to set the view, but the controller has already a view!");
+			}
 		}
 
 		/// <summary>

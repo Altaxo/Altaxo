@@ -390,7 +390,7 @@ namespace Altaxo.Graph
 				info.AddValue("RightLabelStyle",s.m_RightLabelStyle);
 				info.AddValue("TopLabelStyle",s.m_TopLabelStyle);
 			
-			
+		
 				// Titles and legend
 				info.AddValue("LeftAxisTitle",s.m_LeftAxisTitle);
 				info.AddValue("BottomAxisTitle",s.m_BottomAxisTitle);
@@ -404,6 +404,8 @@ namespace Altaxo.Graph
 				info.AddValue("GraphObjects",s.m_GraphObjects);
 				info.AddValue("PlotGroups",s.m_PlotGroups);
 				info.AddValue("Plots",s.m_PlotItems);
+
+
 
 			}
 

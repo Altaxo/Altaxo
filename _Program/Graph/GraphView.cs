@@ -64,7 +64,7 @@ namespace Altaxo.Graph
 			{
 				m_Location = (Point)info.GetValue("Location",typeof(Point));
 				m_Size     = (Size)info.GetValue("Size",typeof(Size));
-				m_Controller = info.GetValue("GraphControl",typeof(object));
+				m_Controller = info.GetValue("Controller",typeof(object));
 			}
 
 			public void OnDeserialization(object o)
@@ -78,7 +78,14 @@ namespace Altaxo.Graph
 				frm.Location = m_Location;
 				frm.Size = m_Size;
 				frm.m_Ctrl = m_Controller as IGraphController;
-				return frm;
+				frm.m_Ctrl.View = frm;
+
+				if(m_Controller is System.Runtime.Serialization.IDeserializationCallback)
+				{
+					DeserializationFinisher finisher = new DeserializationFinisher(frm);
+					((System.Runtime.Serialization.IDeserializationCallback)m_Controller).OnDeserialization(finisher);
+				}
+			return frm;
 			}
 		}
 		#endregion

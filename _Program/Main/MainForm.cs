@@ -387,7 +387,7 @@ namespace Altaxo
 			System.IO.Stream myStream;
 			OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-			openFileDialog1.InitialDirectory = "c:\\" ;
+			openFileDialog1.InitialDirectory = "c:\\temp\\" ;
 			openFileDialog1.Filter = "txt files (*.axo)|*.axo|All files (*.*)|*.*" ;
 			openFileDialog1.FilterIndex = 2 ;
 			openFileDialog1.RestoreDirectory = true ;

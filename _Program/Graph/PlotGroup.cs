@@ -201,10 +201,66 @@ namespace Altaxo.Graph
 				m_Parent.OnChildChangedEventHandler(this);
 		}
 
-		[Serializable]
+			[SerializationSurrogate(0,typeof(Collection.SerializationSurrogate0))]
+			[SerializationVersion(0)]
 			public class Collection : IChangedEventSource
 		{
 			protected System.Collections.ArrayList m_List;
+
+				private object[] m_DeserializedItems;
+
+				#region "Serialization"
+
+				/// <summary>Used to serialize the Collection Version 0.</summary>
+				public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+				{
+
+					/// <summary>
+					/// Serializes LayerCollection Version 0.
+					/// </summary>
+					/// <param name="obj">The Collection to serialize.</param>
+					/// <param name="info">The serialization info.</param>
+					/// <param name="context">The streaming context.</param>
+					public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+					{
+						Collection s = (Collection)obj;
+						info.AddValue("Data",s.m_List.ToArray());
+					}
+
+					/// <summary>
+					/// Deserializes the Collection Version 0.
+					/// </summary>
+					/// <param name="obj">The empty  object to deserialize into.</param>
+					/// <param name="info">The serialization info.</param>
+					/// <param name="context">The streaming context.</param>
+					/// <param name="selector">The deserialization surrogate selector.</param>
+					/// <returns>The deserialized Collection.</returns>
+					public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+					{
+						Collection s = (Collection)obj;
+
+						s.m_DeserializedItems =	(object[])info.GetValue("Data",typeof(System.Array));
+		
+						return s;
+					}
+				}
+
+				/// <summary>
+				/// Finale measures after deserialization.
+				/// </summary>
+				/// <param name="obj">Not used.</param>
+				public virtual void OnDeserialization(object obj)
+				{
+					if(null!=m_DeserializedItems)
+					{
+						m_List = new System.Collections.ArrayList();
+						m_List.AddRange(m_DeserializedItems);
+						m_DeserializedItems=null;
+					}
+				}
+				#endregion
+
+
 
 			public Collection()
 			{

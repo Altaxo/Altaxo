@@ -174,7 +174,9 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Returns the view that this controller controls.
 		/// </summary>
-		IGraphView View { get; }
+		/// <remarks>Setting the view is only neccessary on deserialization, so the controller
+		/// can restrict setting the view only the own view is still null.</remarks>
+		IGraphView View { get; set; }
 
 
 		/// <summary>
