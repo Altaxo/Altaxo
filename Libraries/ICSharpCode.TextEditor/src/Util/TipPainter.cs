@@ -15,12 +15,56 @@ namespace ICSharpCode.TextEditor.Util
 	{
 		const float HorizontalBorder = 2;
 		const float VerticalBorder   = 1;
+		static RectangleF workingArea = RectangleF.Empty;
 		
 		//static StringFormat centerTipFormat = CreateTipStringFormat();
 		
 		TipPainter()
 		{
+		}
+		
+		public static Size GetTipSize(Control control, Graphics graphics, Font font, string description)
+		{
+			return GetTipSize(control, graphics, new TipText (graphics, font, description));
+		}
+		
+		public static Size GetTipSize(Control control, Graphics graphics, TipSection tipData)
+		{
+			Size tipSize = Size.Empty;
+			SizeF tipSizeF = SizeF.Empty;
 			
+			if (workingArea == RectangleF.Empty) {
+				Form ownerForm = control.FindForm();
+				if (ownerForm.Owner != null) {
+					ownerForm = ownerForm.Owner;
+				}
+				
+				workingArea = Screen.GetWorkingArea(ownerForm);
+			}
+			
+			PointF screenLocation = control.PointToScreen(Point.Empty);
+			
+			SizeF maxLayoutSize = new SizeF(workingArea.Right - screenLocation.X - HorizontalBorder * 2,
+			                                workingArea.Bottom - screenLocation.Y - VerticalBorder * 2);
+			
+			if (maxLayoutSize.Width > 0 && maxLayoutSize.Height > 0) {
+				graphics.TextRenderingHint =
+				TextRenderingHint.AntiAliasGridFit;
+				
+				tipData.SetMaximumSize(maxLayoutSize);
+				tipSizeF = tipData.GetRequiredSize();
+				tipData.SetAllocatedSize(tipSizeF);
+				
+				tipSizeF += new SizeF(HorizontalBorder * 2,
+				                      VerticalBorder   * 2);
+				tipSize = Size.Ceiling(tipSizeF);
+			}
+			
+			if (control.ClientSize != tipSize) {
+				control.ClientSize = tipSize;
+			}
+			
+			return tipSize;
 		}
 		
 		public static Size DrawTip(Control control, Graphics graphics, Font font, string description)
@@ -33,16 +77,19 @@ namespace ICSharpCode.TextEditor.Util
 			Size tipSize = Size.Empty;
 			SizeF tipSizeF = SizeF.Empty;
 			
-			
-			Form ownerForm = control.FindForm();
-			if (ownerForm.Owner != null) ownerForm = ownerForm.Owner;
-			RectangleF workingArea = Screen.GetWorkingArea(ownerForm);
-			
 			PointF screenLocation = control.PointToScreen(Point.Empty);
 			
-			SizeF maxLayoutSize = new SizeF
-			(workingArea.Right - screenLocation.X - HorizontalBorder * 2,
-			 workingArea.Bottom - screenLocation.Y - VerticalBorder * 2);
+			if (workingArea == RectangleF.Empty) {
+				Form ownerForm = control.FindForm();
+				if (ownerForm.Owner != null) {
+					ownerForm = ownerForm.Owner;
+				}
+				
+				workingArea = Screen.GetWorkingArea(ownerForm);
+			}
+	
+			SizeF maxLayoutSize = new SizeF(workingArea.Right - screenLocation.X - HorizontalBorder * 2,
+			                                workingArea.Bottom - screenLocation.Y - VerticalBorder * 2);
 			
 			if (maxLayoutSize.Width > 0 && maxLayoutSize.Height > 0) {
 				graphics.TextRenderingHint =

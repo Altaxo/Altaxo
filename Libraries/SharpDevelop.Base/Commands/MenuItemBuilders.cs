@@ -190,7 +190,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 					
 					try {
 						ProcessStartInfo startinfo;
-						if (args == null || args.Length == 0) {
+						if (args == null || args.Length == 0 || args.Trim('"', ' ').Length == 0) {
 							startinfo = new ProcessStartInfo(command);
 						} else {
 							startinfo = new ProcessStartInfo(command, args);

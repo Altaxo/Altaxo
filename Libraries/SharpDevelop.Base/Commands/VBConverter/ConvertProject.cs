@@ -41,10 +41,13 @@ namespace ICSharpCode.SharpDevelop.Commands
 		
 		protected abstract string ConvertFile(string fileName);
 		
-		IProject CreateProject(string outputPath, IProject originalProject)
-		{
-			LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
-			ILanguageBinding binding = languageBindingService.GetBindingPerLanguageName(originalProject.ProjectType);
+		protected virtual IProject CreateProject(string outputPath, IProject originalProject) {
+			return CreateProject(outputPath, originalProject, originalProject.ProjectType);
+		}
+		
+		protected IProject CreateProject(string outputPath, IProject originalProject, string targetLanguage) {
+			LanguageBindingService languageBindingService = (LanguageBindingService)ServiceManager.Services.GetService(typeof(LanguageBindingService));
+			ILanguageBinding binding = languageBindingService.GetBindingPerLanguageName(targetLanguage);
 			
 			ProjectCreateInformation info = new ProjectCreateInformation();
 			info.CombinePath = outputPath;
@@ -155,6 +158,10 @@ namespace ICSharpCode.SharpDevelop.Commands
 			}
 		}
 		
+		protected override IProject CreateProject(string outputPath, IProject originalProject) {
+			return CreateProject(outputPath, originalProject, "C#");
+		}
+		
 		protected override string ConvertFile(string fileName)
 		{
 			ICSharpCode.SharpRefactory.Parser.VB.Parser p = new ICSharpCode.SharpRefactory.Parser.VB.Parser();
@@ -174,6 +181,10 @@ namespace ICSharpCode.SharpDevelop.Commands
 			get {
 				return ".vb";
 			}
+		}
+		
+		protected override IProject CreateProject(string outputPath, IProject originalProject) {
+			return CreateProject(outputPath, originalProject, "VBNET");
 		}
 		
 		protected override string ConvertFile(string fileName)

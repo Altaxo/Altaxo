@@ -90,17 +90,28 @@ namespace ICSharpCode.TextEditor.Document
 		public void SetSelection(ISelection selection)
 		{
 //			autoClearSelection = false;
-			ClearSelection();
-			
 			if (selection != null) {
+				if (SelectionCollection.Count == 1 && 
+				    selection.StartPosition == SelectionCollection[0].StartPosition &&
+				    selection.EndPosition == SelectionCollection[0].EndPosition ) {
+					return;
+				}
+				ClearWithoutUpdate();
 				selectionCollection.Add(selection);
 				document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, selection.StartPosition.Y, selection.EndPosition.Y));
 				document.CommitUpdate();
 				OnSelectionChanged(EventArgs.Empty);
+			} else {
+				ClearSelection();
 			}
 		}
 		
-		bool GreaterEqPos(Point p1, Point p2)
+		public void SetSelection(Point startPosition, Point endPosition)
+		{
+			SetSelection(new DefaultSelection(document, startPosition, endPosition));
+		}
+		
+		public bool GreaterEqPos(Point p1, Point p2)
 		{
 			return p1.Y > p2.Y || p1.Y == p2.Y && p1.X >= p2.X;
 		}
@@ -108,6 +119,7 @@ namespace ICSharpCode.TextEditor.Document
 		public void ExtendSelection(Point oldPosition, Point newPosition)
 		{
 			if (oldPosition == newPosition) {
+				Console.WriteLine("BLUB");
 				return;
 			}
 			Point min;
@@ -122,33 +134,58 @@ namespace ICSharpCode.TextEditor.Document
 			}
 			if (!HasSomethingSelected) {
 				SetSelection(new DefaultSelection(document, min, max));
+				Console.WriteLine("SET");
+
 				return;
 			}
 			ISelection selection = this.selectionCollection[0];
+			bool changed = false;
 			if (selection.ContainsPosition(newPosition)) {
 				if (oldIsGreater) {
-					selection.EndPosition = newPosition;
+					if (selection.EndPosition != newPosition) {
+						selection.EndPosition = newPosition;
+						changed = true;
+					}
 				} else {
-					selection.StartPosition = newPosition;
+					if (selection.StartPosition != newPosition) {
+						selection.StartPosition = newPosition;
+						changed = true;
+					}
 				}
 			} else {
 				if (oldPosition == selection.StartPosition) {
 					if (GreaterEqPos(newPosition, selection.EndPosition)) {
-						selection.StartPosition = selection.EndPosition;
-						selection.EndPosition   = newPosition;
+						if (selection.StartPosition != selection.EndPosition || 
+						    selection.EndPosition   != newPosition) {
+							selection.StartPosition = selection.EndPosition;
+							selection.EndPosition   = newPosition;
+							changed = true;
+						}
 					} else {
-						selection.StartPosition = newPosition;
+						if (selection.StartPosition != newPosition) {
+							selection.StartPosition = newPosition;
+							changed = true;
+						}
 					}
 				} else {
 					if (GreaterEqPos(selection.StartPosition, newPosition)) {
-						selection.EndPosition = selection.StartPosition;
+						if (selection.EndPosition != selection.StartPosition ||
+						    selection.StartPosition   != newPosition) {
+							changed = true;
+						}
+						selection.EndPosition     = selection.StartPosition;
 						selection.StartPosition   = newPosition;
+						changed = true;
 					} else {
-						selection.EndPosition = newPosition;
+						if (selection.EndPosition != newPosition) {
+							selection.EndPosition = newPosition;
+							changed = true;
+						}
 					}
 				} 
 			}
-			
+			Console.WriteLine("GGG" + changed);
+
 //			if (GreaterEqPos(selection.StartPosition, min) && GreaterEqPos(selection.EndPosition, max)) {
 //				if (oldIsGreater) {
 //					selection.StartPosition = min;
@@ -162,15 +199,13 @@ namespace ICSharpCode.TextEditor.Document
 //					selection.EndPosition = max;
 //				}
 //			}
-			document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, min.Y, max.Y));
-			document.CommitUpdate();
-			OnSelectionChanged(EventArgs.Empty);
+			if (changed) {
+				document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, min.Y, max.Y));
+				document.CommitUpdate();
+				OnSelectionChanged(EventArgs.Empty);
+			}
 		}
-		
-		/// <remarks>
-		/// Clears the selection.
-		/// </remarks>
-		public void ClearSelection()
+		void ClearWithoutUpdate()
 		{
 			while (selectionCollection.Count > 0) {
 				ISelection selection = selectionCollection[selectionCollection.Count - 1];
@@ -178,6 +213,13 @@ namespace ICSharpCode.TextEditor.Document
 				document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, selection.StartPosition.Y, selection.EndPosition.Y));
 				OnSelectionChanged(EventArgs.Empty);
 			}
+		}
+		/// <remarks>
+		/// Clears the selection.
+		/// </remarks>
+		public void ClearSelection()
+		{
+			 ClearWithoutUpdate();
 			document.CommitUpdate();
 		}
 		
@@ -324,6 +366,10 @@ namespace ICSharpCode.TextEditor.Document
 			return ColumnRange.NoColumn;
 		}
 		
+		public void FireSelectionChanged()
+		{
+			OnSelectionChanged(EventArgs.Empty);
+		}
 		protected virtual void OnSelectionChanged(EventArgs e)
 		{
 			if (SelectionChanged != null) {

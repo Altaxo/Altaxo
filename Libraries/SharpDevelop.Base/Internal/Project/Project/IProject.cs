@@ -148,7 +148,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		/// </param>
 		void CopyReferencesToOutputPath(bool force);
 		void CopyReferencesToPath(string destination, bool force);
-		
+		void CopyReferencesToPath(string destination, bool force, ArrayList alreadyCopiedReferences);
+			
 		/// <summary>
 		/// Returns true, if a specific file (given by it's name) 
 		/// is inside this project.
@@ -166,6 +167,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		/// Creates a IConfiguration object which is used by this project type.
 		/// </summary>
 		IConfiguration CreateConfiguration(string name);
+		IConfiguration CloneConfiguration(IConfiguration configuration);
 		
 		/// <summary>
 		/// Creates a IConfiguration object which is used by this project type.

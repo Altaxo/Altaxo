@@ -554,15 +554,19 @@ namespace CSharpBinding.Parser
 		/// </remarks>
 		public string SearchNamespace(string name, ICompilationUnit unit)
 		{
-#if ModifiedForAltaxo
-      string callspace = this.CallingClass.Namespace;
-      for(int split = callspace.Length; split>0; split=callspace.LastIndexOf('.',split-1))
-      {
-          string fullname = callspace.Substring(0,split) + "." + name;
-          if(parserService.NamespaceExists(fullname,true))
-            return fullname;
-      }
+#if !ModifiedForAltaxo
+			if (parserService.NamespaceExists(name,true)) {
+				return name;
 #endif
+			
+			string callspace = this.CallingClass.Namespace;
+			for (int split = callspace.Length; split > 0; split = callspace.LastIndexOf('.', split - 1)) {
+				string fullname = callspace.Substring(0, split) + "." + name;
+				if (parserService.NamespaceExists(fullname,true)) {
+					return fullname;
+				}
+			}
+			
 			return parserService.SearchNamespace(name, unit, caretLine, caretColumn);
 		}
 		

@@ -112,7 +112,16 @@ namespace ICSharpCode.SharpDevelop.Services
 			attachedProcess.Exited -= new EventHandler(AttachedProcessExited);
 			attachedProcess.Dispose();
 			attachedProcess = null;	
-			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
+			OnDebugStopped(EventArgs.Empty);
 		}
+		
+		protected virtual void OnDebugStopped(EventArgs e) 
+		{
+			if (DebugStopped != null) {
+				DebugStopped(this, e);
+			}
+		}
+		
+		public event EventHandler DebugStopped;
 	}
 }

@@ -56,7 +56,11 @@ namespace ICSharpCode.TextEditor
 				return textArea.VirtualTop.Y / fontHeight;
 			}
 		}
-		
+		public int LineHeightRemainder {
+			get {
+				return textArea.VirtualTop.Y % fontHeight;
+			}
+		}
 		/// <summary>Gets the first visible <b>logical</b> line.</summary>
 		public int FirstVisibleLine {
 			get {
@@ -221,8 +225,8 @@ namespace ICSharpCode.TextEditor
 					HighlightColor eolMarkerColor = textArea.Document.HighlightingStrategy.GetColorFor("EOLMarkers");
 					physicalXPos += DrawEOLMarker(g, eolMarkerColor.Color, selectionBeyondEOL ? bgColorBrush : backgroundBrush, physicalXPos, lineRectangle.Y);
 				} else {
-					if (selectionBeyondEOL && !TextEditorProperties.AllowCaretBeyondEOL) {
-						g.FillRectangle(bgColorBrush, new RectangleF(physicalXPos, lineRectangle.Y, spaceWidth, lineRectangle.Height));
+					if (selectionBeyondEOL) {
+						g.FillRectangle(BrushRegistry.GetBrush(selectionColor.BackgroundColor), new RectangleF(physicalXPos, lineRectangle.Y, spaceWidth, lineRectangle.Height));
 						physicalXPos += spaceWidth;
 					}
 				}
@@ -300,6 +304,24 @@ namespace ICSharpCode.TextEditor
 			}
 		}
 		
+		/// <summary>
+		/// Get the marker brush (for solid block markers) at a given position.
+		/// </summary>
+		/// <param name="offset">The offset.</param>
+		/// <param name="length">The length.</param>
+		/// <returns>The Brush or null when no marker was found.</returns>
+		Brush GetMarkerBrushAt(int offset, int length)
+		{
+			ArrayList markers = Document.MarkerStrategy.GetMarkers(offset,  length);
+			foreach (TextMarker marker in markers) {
+				if (marker.TextMarkerType == TextMarkerType.SolidBlock) {
+					return BrushRegistry.GetBrush(marker.Color);
+				}
+			}
+			return null;
+		}
+		                       
+		
 		float PaintLinePart(Graphics g, int lineNumber, int startColumn, int endColumn, Rectangle lineRectangle, float physicalXPos)
 		{
 			bool  drawLineMarker  = DrawLineMarkerAtLine(lineNumber);
@@ -356,7 +378,9 @@ namespace ICSharpCode.TextEditor
 							break;
 						}
 					}
-								
+					// Clear old marker arrary		
+					
+					
 					// TODO: cut the word if startColumn or endColimn is in the word;
 					// needed for foldings wich can start or end in the middle of a word
 					TextWord currentWord = ((TextWord)currentLine.Words[i]);
@@ -365,10 +389,14 @@ namespace ICSharpCode.TextEditor
 							RectangleF spaceRectangle = new RectangleF(physicalXPos, lineRectangle.Y, (float)Math.Ceiling(spaceWidth), lineRectangle.Height);
 							
 							Brush spaceBackgroundBrush;
+							
 							if (ColumnRange.WholeColumn.Equals(selectionRange) || logicalColumn >= selectionRange.StartColumn && logicalColumn < selectionRange.EndColumn) {
 								spaceBackgroundBrush = selectionBackgroundBrush;
 							} else {
-								if (!drawLineMarker && currentWord.SyntaxColor != null && currentWord.SyntaxColor.HasBackground) {
+								Brush markerBrush = GetMarkerBrushAt(currentLine.Offset + logicalColumn,  1);
+								if (!drawLineMarker && markerBrush != null) {
+									spaceBackgroundBrush = markerBrush;
+								} else if (!drawLineMarker && currentWord.SyntaxColor != null && currentWord.SyntaxColor.HasBackground) {
 									spaceBackgroundBrush = BrushRegistry.GetBrush(currentWord.SyntaxColor.BackgroundColor);
 								} else {
 									spaceBackgroundBrush = unselectedBackgroundBrush;
@@ -400,7 +428,10 @@ namespace ICSharpCode.TextEditor
 							if (ColumnRange.WholeColumn.Equals(selectionRange) || logicalColumn >= selectionRange.StartColumn && logicalColumn <= selectionRange.EndColumn - 1) {
 								spaceBackgroundBrush = selectionBackgroundBrush;
 							} else {
-								if (!drawLineMarker && currentWord.SyntaxColor != null && currentWord.SyntaxColor.HasBackground) {
+								Brush markerBrush = GetMarkerBrushAt(currentLine.Offset + logicalColumn, 1);
+								if (!drawLineMarker && markerBrush != null) {
+									spaceBackgroundBrush = markerBrush;
+								} else if (!drawLineMarker && currentWord.SyntaxColor != null && currentWord.SyntaxColor.HasBackground) {
 									spaceBackgroundBrush = BrushRegistry.GetBrush(currentWord.SyntaxColor.BackgroundColor);
 								} else {
 									spaceBackgroundBrush = unselectedBackgroundBrush;
@@ -425,20 +456,10 @@ namespace ICSharpCode.TextEditor
 							string word    = currentWord.Word;
 							float  lastPos = physicalXPos;
 							
-							
-							markers.Clear();
-							markers = Document.MarkerStrategy.GetMarkers(currentLine.Offset + logicalColumn,  word.Length);
-							Brush markerBrush = null;
-							foreach (TextMarker marker in markers) {
-								if (marker.TextMarkerType == TextMarkerType.SolidBlock) {
-									markerBrush = BrushRegistry.GetBrush(marker.Color);
-									break;
-								}
-							}
-							
+							Brush bgMarkerBrush = GetMarkerBrushAt(currentLine.Offset + logicalColumn,  word.Length);
 							Brush wordBackgroundBrush;
-							if (!drawLineMarker && markerBrush != null) {
-								wordBackgroundBrush = markerBrush;
+							if (!drawLineMarker && bgMarkerBrush != null) {
+								wordBackgroundBrush = bgMarkerBrush;
 							} else if (!drawLineMarker && currentWord.SyntaxColor.HasBackground) {
 								wordBackgroundBrush = BrushRegistry.GetBrush(currentWord.SyntaxColor.BackgroundColor);
 							} else {
@@ -471,7 +492,7 @@ namespace ICSharpCode.TextEditor
 									                                 new PointF(physicalXPos, lineRectangle.Y),
 									                                 currentWord.Font,
 									                                 currentWord.Color,
-									                                 markerBrush != null ? markerBrush : wordBackgroundBrush);
+									                                 wordBackgroundBrush);
 									
 									physicalXPos += DrawDocumentWord(g,
 									                                 word.Substring(offset1, offset2 - offset1),
@@ -613,7 +634,7 @@ namespace ICSharpCode.TextEditor
 		public Point GetLogicalPosition(int xPos, int yPos)
 		{
 			xPos += (int)(textArea.VirtualTop.X * GetWidth(' '));
-			int clickedVisualLine = (yPos + this.textArea.VirtualTop.Y) / fontHeight;
+			int clickedVisualLine = Math.Max(0, (yPos + this.textArea.VirtualTop.Y) / fontHeight);
 			int logicalLine       = Document.GetFirstLogicalLine(clickedVisualLine);
 			Point pos = GetLogicalColumn(logicalLine, xPos);
 			return pos;

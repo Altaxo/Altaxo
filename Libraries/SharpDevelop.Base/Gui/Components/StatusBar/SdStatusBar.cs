@@ -51,7 +51,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 			
 			statusProgressBar.Width  = 200;
 			statusProgressBar.Height = 14;
-			statusProgressBar.Location = new Point(160, 4);
+			statusProgressBar.Location = new Point(160, 6);
 			statusProgressBar.Minimum = 0;
 			statusProgressBar.Visible = false;
 			Controls.Add(statusProgressBar);
@@ -99,6 +99,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 			oldMessage = txtStatusBarPanel.Text;
 			SetMessage(name);
 			statusProgressBar.Maximum = totalWork;
+      statusProgressBar.Left = txtStatusBarPanel.Width - statusProgressBar.Width - 4; 
 			statusProgressBar.Visible = true;
 		}
 		

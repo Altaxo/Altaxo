@@ -33,11 +33,11 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		static ClassBrowserIconsService classBrowserIconService = (ClassBrowserIconsService)ServiceManager.Services.GetService(typeof(ClassBrowserIconsService));
 		
 		/// <summary>
-		/// Gets the add-in tree path for the context menu. 
+		/// Gets the add-in tree path for the context menu.
 		/// </summary>
 		/// <remarks>
-		/// I choosed to give back the add-in tree path instead of a popup menu 
-		/// or a menuitem collection, because I don't want to add a magic library 
+		/// I choosed to give back the add-in tree path instead of a popup menu
+		/// or a menuitem collection, because I don't want to add a magic library
 		/// or Windows.Forms dependency.
 		/// </remarks>
 		public virtual string ContextmenuAddinTreePath {
@@ -93,41 +93,46 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			
 			foreach (IMethod method in c.Methods) {
 				TreeNode methodNode = new AbstractClassScoutNode(languageConversion.Convert(method));
-				methodNode.Tag = new ClassScoutTag(method.Region.BeginLine, classScoutTag.FileName);
+				if (method.Region != null)
+					methodNode.Tag = new ClassScoutTag(method.Region.BeginLine, classScoutTag.FileName);
 				methodNode.SelectedImageIndex = methodNode.ImageIndex = classBrowserIconService.GetIcon(method);
 				classNode.Nodes.Add(methodNode);
 			}
 			
 			foreach (IProperty property in c.Properties) {
 				TreeNode propertyNode = new AbstractClassScoutNode(languageConversion.Convert(property));
-				propertyNode.Tag = new ClassScoutTag(property.Region.BeginLine, classScoutTag.FileName);
+				if (property.Region != null)
+					propertyNode.Tag = new ClassScoutTag(property.Region.BeginLine, classScoutTag.FileName);
 				propertyNode.SelectedImageIndex = propertyNode.ImageIndex = classBrowserIconService.GetIcon(property);
 				classNode.Nodes.Add(propertyNode);
 			}
 			
 			foreach (IIndexer indexer in c.Indexer) {
 				TreeNode indexerNode = new AbstractClassScoutNode(languageConversion.Convert(indexer));
-				indexerNode.Tag = new ClassScoutTag(indexer.Region.BeginLine, classScoutTag.FileName);
+				if (indexer.Region != null)
+					indexerNode.Tag = new ClassScoutTag(indexer.Region.BeginLine, classScoutTag.FileName);
 				indexerNode.SelectedImageIndex = indexerNode.ImageIndex = classBrowserIconService.GetIcon(indexer);
 				classNode.Nodes.Add(indexerNode);
 			}
 			
 			foreach (IField field in c.Fields) {
 				TreeNode fieldNode = new AbstractClassScoutNode(languageConversion.Convert(field));
-				fieldNode.Tag = new ClassScoutTag(field.Region.BeginLine, classScoutTag.FileName);
+				if (field.Region != null)
+					fieldNode.Tag = new ClassScoutTag(field.Region.BeginLine, classScoutTag.FileName);
 				fieldNode.SelectedImageIndex = fieldNode.ImageIndex = classBrowserIconService.GetIcon(field);
 				classNode.Nodes.Add(fieldNode);
 			}
 			
 			foreach (IEvent e in c.Events) {
 				TreeNode eventNode = new AbstractClassScoutNode(languageConversion.Convert(e));
-				eventNode.Tag = new ClassScoutTag(e.Region.BeginLine, classScoutTag.FileName);
+				if (e.Region != null)
+					eventNode.Tag = new ClassScoutTag(e.Region.BeginLine, classScoutTag.FileName);
 				eventNode.SelectedImageIndex = eventNode.ImageIndex = classBrowserIconService.GetIcon(e);
 				classNode.Nodes.Add(eventNode);
 			}
 			
 			SortUtility.QuickSort(classNode.Nodes, TreeNodeComparer.Default);
-		}		
+		}
 		
 	}
 }

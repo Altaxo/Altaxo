@@ -199,7 +199,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		public bool AddReferenceToProject(IProject prj, ProjectReference reference)
 		{
 			foreach (ProjectReference refproj in currentProject.ProjectReferences) {
-				if (reference.Equals(refproj.Reference)) {
+				if (reference.Equals(refproj)) {
 					return false;
 				}
 			}

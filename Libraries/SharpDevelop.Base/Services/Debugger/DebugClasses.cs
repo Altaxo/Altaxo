@@ -19,6 +19,41 @@ using ICSharpCode.Core.Properties;
 
 namespace ICSharpCode.SharpDevelop.Services
 {
+	public class Breakpoint
+	{
+		string fileName;
+		int    lineNumber;
+		
+		bool   isEnabled = true;
+		
+		public string FileName {
+			get {
+				return fileName;
+			}
+		}
+		
+		public int LineNumber {
+			get {
+				return lineNumber;
+			}
+		}
+		
+		public bool IsEnabled {
+			get {
+				return isEnabled;
+			}
+			set {
+				isEnabled = value;
+			}
+		}
+		
+		public Breakpoint(string fileName, int lineNumber)
+		{
+			this.fileName = fileName;
+			this.lineNumber = lineNumber;
+		}
+	}
+	
 	public class MethodCall
 	{
 		public static MethodCall NoDebugInformation = new MethodCall("<no debug information>", String.Empty);

@@ -9,6 +9,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 
+using ICSharpCode.SharpDevelop.Internal.Project;
 using ICSharpCode.SharpDevelop.Services;
 
 namespace SharpDevelop.Internal.Parser
@@ -124,6 +125,18 @@ namespace SharpDevelop.Internal.Parser
 		IExpressionFinder ExpressionFinder {
 			get;
 		}
+		
+		/// <summary>
+		/// Gets if the parser can parse the specified file.
+		/// This method is used to get the correct parser for a specific file and normally decides based on the file
+		/// extension.
+		/// </summary>
+		bool CanParse(string fileName);
+		/// <summary>
+		/// Gets if the parser can parse the specified project.
+		/// Only when no parser for a project is found, the assembly is loaded.
+		/// </summary>
+		bool CanParse(IProject project);
 		
 		ICompilationUnitBase Parse(string fileName);
 		ICompilationUnitBase Parse(string fileName, string fileContent);

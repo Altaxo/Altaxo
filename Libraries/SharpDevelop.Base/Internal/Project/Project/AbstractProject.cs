@@ -670,6 +670,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 				}
 				
 				string referencePath = Path.GetDirectoryName(referenceFileName).ToLower();
+				// We're not using LoadFile here because of ASSEMBLY >LOCKING< !!!
 				Assembly asm = null;
 				try {
 					AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(MyResolveEventHandler);
@@ -677,7 +678,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 					asm = Assembly.Load(GetBytes(referenceFileName));
 				} finally {
 					AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(MyResolveEventHandler);
-				}						
+				}
+//				Assembly asm = Assembly.LoadFile(referenceFileName);
 				if (asm != null) {
 					AssemblyName[] referenceNames = asm.GetReferencedAssemblies();
 					foreach (AssemblyName name in referenceNames) {
@@ -695,7 +697,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 		}
 		
-		public void CopyReferencesToPath(string destination, bool force)
+		public void CopyReferencesToPath(string destination, bool force, ArrayList alreadyCopiedReferences)
 		{
 			foreach (ProjectReference projectReference in ProjectReferences) {
 				if ((projectReference.LocalCopy || force) && projectReference.ReferenceType != ReferenceType.Gac) {
@@ -707,7 +709,17 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 						IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
 						IProject project = projectService.GetProject(projectReference.Reference);
 						if (project != null) {
-							project.CopyReferencesToPath(destination, force);
+							bool doCopyReferences = true;
+							foreach (IProject alreadyDoneProjects in alreadyCopiedReferences) {
+								if (alreadyDoneProjects == project) {
+									doCopyReferences = false;
+									break;
+								}
+							}
+							if (doCopyReferences) {
+								alreadyCopiedReferences.Add(project);
+								project.CopyReferencesToPath(destination, force, alreadyCopiedReferences);
+							}
 						}
 					}
 					
@@ -735,6 +747,10 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 				}
 			}
 		}
+		public void CopyReferencesToPath(string destination, bool force)
+		{
+			CopyReferencesToPath(destination, force, new ArrayList());
+		}
 		
 		public void CopyReferencesToOutputPath(bool force)
 		{
@@ -758,6 +774,18 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			
 			return config;
 		}
+		
+		public IConfiguration CloneConfiguration(IConfiguration configuration)
+		{
+			XmlDocument doc = new XmlDocument();
+			XmlElement newConfig = doc.CreateElement(configurationNodeName);
+			SetXmlAttributes(doc, newConfig, configuration);
+			
+			IConfiguration newConfiguration = CreateConfiguration();
+			GetXmlAttributes(doc, newConfig, newConfiguration);
+			return newConfiguration;
+		}
+
 		
 		protected virtual void OnNameChanged(EventArgs e)
 		{

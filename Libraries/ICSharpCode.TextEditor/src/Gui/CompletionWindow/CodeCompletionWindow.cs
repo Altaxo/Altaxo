@@ -81,6 +81,21 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			vScrollBar.Scroll += new ScrollEventHandler(DoScroll);
 		}
 		
+		public void HandleMouseWheel(MouseEventArgs e)
+		{
+			int MAX_DELTA  = 120; // basically it's constant now, but could be changed later by MS
+			int multiplier = Math.Abs(e.Delta) / MAX_DELTA;
+			
+			int newValue;
+			if (System.Windows.Forms.SystemInformation.MouseWheelScrollLines > 0) {
+				newValue = this.vScrollBar.Value - (control.TextEditorProperties.MouseWheelScrollDown ? 1 : -1) * Math.Sign(e.Delta) * System.Windows.Forms.SystemInformation.MouseWheelScrollLines * vScrollBar.SmallChange * multiplier;
+			} else {
+				newValue = this.vScrollBar.Value - (control.TextEditorProperties.MouseWheelScrollDown ? 1 : -1) * Math.Sign(e.Delta) * vScrollBar.LargeChange;
+			}
+			vScrollBar.Value = Math.Max(vScrollBar.Minimum, Math.Min(vScrollBar.Maximum, newValue));
+			DoScroll(this, null);
+		}
+		
 		void CodeCompletionListViewFirstItemChanged(object sender, EventArgs e)
 		{
 			vScrollBar.Value = Math.Min(vScrollBar.Maximum, codeCompletionListView.FirstItem);

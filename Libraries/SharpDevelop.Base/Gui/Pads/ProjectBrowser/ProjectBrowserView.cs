@@ -440,7 +440,6 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 		}
 
 		// Drag & Drop handling
-		
 		protected override void OnItemDrag(ItemDragEventArgs e)
 		{
 			base.OnItemDrag(e);

@@ -24,6 +24,10 @@ using System;
 using ICSharpCode.Core.Services;
 using ICSharpCode.Core.AddIns.Codons;
 
+using System.Collections;
+using System.Xml;
+using ICSharpCode.SharpDevelop.Internal.Project;
+
 namespace Altaxo.Main.Commands
 {
 
@@ -220,6 +224,10 @@ namespace Altaxo.Main.Commands
       {
         throw new NotImplementedException();
       }
+      public void CopyReferencesToPath(string destination, bool force, ArrayList alreadyCopiedReferences)
+      {
+        throw new NotImplementedException();
+      }
 
       public bool EnableViewState
       {
@@ -231,6 +239,11 @@ namespace Altaxo.Main.Commands
         {
           throw new NotImplementedException();
         }
+      }
+
+      public IConfiguration CloneConfiguration(IConfiguration configuration)
+      {
+        throw new NotImplementedException();
       }
 
       public ICSharpCode.SharpDevelop.Internal.Project.IConfiguration CreateConfiguration()

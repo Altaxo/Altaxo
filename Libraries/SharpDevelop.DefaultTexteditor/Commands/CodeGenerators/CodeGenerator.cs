@@ -94,7 +94,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			propertyService.SetProperty("VBBinding.TextEditor.EnableEndConstructs", false);
 			editActionHandler.TextEditorProperties.AutoInsertCurlyBracket = false;
 			editActionHandler.TextEditorProperties.IndentStyle            = IndentStyle.Smart;
-						
+			
 			string extension = Path.GetExtension(editActionHandler.MotherTextEditorControl.FileName).ToLower();
 			StartGeneration(items, extension);
 			

@@ -6,6 +6,7 @@
 // </file>
 
 using System;
+using System.Reflection;
 using System.CodeDom.Compiler;
 using System.Windows.Forms;
 

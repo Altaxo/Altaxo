@@ -41,44 +41,45 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				}
 			}
 			
+			public IRegion ItemRegion {
+				get {
+					IClass classItem = item as IClass;
+					if (item is IClass)
+						return ((IClass)item).Region;
+					else if (item is IMember)
+						return ((IMember)item).Region;
+					else
+						return null;
+				}
+			}
+			
 			public int Line {
 				get {
-					if (item is IClass) {
-						return ((IClass)item).Region.BeginLine - 1;
-					}
-					
-					// also exception on delegate invoke
-					try {
-						return (item as IMember).Region.BeginLine - 1;
-					}
-					catch {
+					IRegion r = this.ItemRegion;
+					if (r == null)
 						return 0;
-					}
+					else
+						return r.BeginLine - 1;
 				}
 			}
 			
 			public int Column {
 				get {
-					if (item is IClass) {
-						return ((IClass)item).Region.BeginColumn - 1;
-					}
-					
-					// causes exception when delegate is selected in class windows - Invoke is visible in methods and when selected causes exception
-					try {
-						return (item as IMember).Region.BeginColumn - 1;
-					}
-					catch {
+					IRegion r = this.ItemRegion;
+					if (r == null)
 						return 0;
-					}
+					else
+						return r.BeginColumn - 1;
 				}
 			}
 			
 			public int EndLine {
 				get {
-					if (item is IClass) {
-						return ((IClass)item).Region.EndLine - 1;
-					}
-					return (item as IMember).Region.EndLine - 1;
+					IRegion r = this.ItemRegion;
+					if (r == null)
+						return 0;
+					else
+						return r.EndLine - 1;
 				}
 			}
 			
@@ -91,13 +92,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			
 			public bool IsInside(int lineNumber)
 			{
-				if (item is IClass) {
-					return ((IClass)item).Region.BeginLine - 1 <= lineNumber &&
-					       ((IClass)item).Region.EndLine - 1 >= lineNumber;
+				IClass classItem = item as IClass;
+				if (classItem != null) {
+					if (classItem.Region == null)
+						return false;
+					return classItem.Region.BeginLine - 1 <= lineNumber &&
+						classItem.Region.EndLine - 1 >= lineNumber;
 				}
 				
 				IMember member = item as IMember;
-				if (member == null) {
+				if (member == null || member.Region == null) {
 					return false;
 				}
 				bool isInside = member.Region.BeginLine - 1 <= lineNumber;
@@ -248,8 +252,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			autoselect = false;
 			try {
 				if (currentCompilationUnit != null) {
-//// Alex: when changing between files in different compilation units whole process must be restarted
-//// happens usually when files are opened from different project(s)
+					//// Alex: when changing between files in different compilation units whole process must be restarted
+					//// happens usually when files are opened from different project(s)
 					if (classComboBox.Items == null || classComboBox.Items.Count == 0) {
 						FillClassComboBox(false);
 					}
@@ -379,7 +383,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					classComboBox.EndUpdate();
 				}
 				UpdateClassComboBox();
-			} 
+			}
 		}
 		
 		
@@ -392,8 +396,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			// 
 			// membersComboBox
 			// 
-			this.membersComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.membersComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			                                                                    | System.Windows.Forms.AnchorStyles.Right)));
 			this.membersComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
 			this.membersComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.membersComboBox.Location = new System.Drawing.Point(200, 4);

@@ -535,10 +535,16 @@ namespace ICSharpCode.SharpRefactory.Parser
 		}
 		public virtual object Visit(InvocationExpression invocationExpression, object data)
 		{
+			object result = data;
 			if (invocationExpression.TargetObject != null) {
-				return invocationExpression.TargetObject.AcceptVisitor(this, data);
+				result = invocationExpression.TargetObject.AcceptVisitor(this, data);
 			}
-			return data;
+			if (invocationExpression.Parameters != null) {
+				foreach (INode n in invocationExpression.Parameters) {
+					n.AcceptVisitor(this, data);
+				}
+			}
+			return result;
 		}
 		public virtual object Visit(IdentifierExpression identifierExpression, object data)
 		{
@@ -587,7 +593,11 @@ namespace ICSharpCode.SharpRefactory.Parser
 		}
 		public virtual object Visit(IndexerExpression indexerExpression, object data)
 		{
-			return indexerExpression.TargetObject.AcceptVisitor(this, data);
+			object res = indexerExpression.TargetObject.AcceptVisitor(this, data);
+			foreach (INode n in indexerExpression.Indices) {
+				n.AcceptVisitor(this, data);
+			}
+			return res;
 		}
 		public virtual object Visit(ThisReferenceExpression thisReferenceExpression, object data)
 		{

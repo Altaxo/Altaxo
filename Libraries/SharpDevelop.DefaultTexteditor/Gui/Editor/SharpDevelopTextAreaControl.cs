@@ -73,8 +73,33 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			newControl.Caret.PositionChanged += new EventHandler(CaretPositionChanged);
 			newControl.TextArea.ClipboardHandler.CopyText += new CopyTextEventHandler(ClipboardHandlerCopyText);
 			
-//			newControl.TextArea.IconBarMargin.Painted   += new MarginPaintEventHandler(PaintIconBarBreakPoints);
-//			newControl.TextArea.IconBarMargin.MouseDown += new MarginMouseEventHandler(IconBarMouseDown);
+			newControl.TextArea.IconBarMargin.Painted   += new MarginPaintEventHandler(PaintIconBarBreakPoints);
+			newControl.TextArea.IconBarMargin.MouseDown += new MarginMouseEventHandler(IconBarMouseDown);
+			newControl.MouseWheel                       += new MouseEventHandler(TextAreaMouseWheel);
+			newControl.DoHandleMousewheel = false;
+		}
+		void CloseCodeCompletionWindow(object sender, EventArgs e)
+		{
+			codeCompletionWindow.Closed -= new EventHandler(CloseCodeCompletionWindow);
+			codeCompletionWindow.Dispose();
+			codeCompletionWindow = null;
+		}
+		void CloseInsightWindow(object sender, EventArgs e)
+		{
+			insightWindow.Closed -= new EventHandler(CloseInsightWindow);
+			insightWindow.Dispose();
+			insightWindow = null;
+		}
+		void TextAreaMouseWheel(object sender, MouseEventArgs e)
+		{
+			TextAreaControl textAreaControl = (TextAreaControl)sender;
+			if (insightWindow != null && !insightWindow.IsDisposed && insightWindow.Visible) {
+				insightWindow.HandleMouseWheel(e);
+			} else if (codeCompletionWindow != null && !codeCompletionWindow.IsDisposed && codeCompletionWindow.Visible) {
+				codeCompletionWindow.HandleMouseWheel(e);
+			} else {
+				textAreaControl.HandleMouseWheel(e);
+			}
 		}
 		
 		void ClipboardHandlerCopyText(object sender, CopyTextEventArgs e)
@@ -95,34 +120,35 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 		}
 
-// DISABLED (TAKEN OUT DEBUGGER)!		
-//		void IconBarMouseDown(AbstractMargin iconBar, Point mousepos, MouseButtons mouseButtons)
-//		{
-//			int realline = iconBar.TextArea.TextView.GetLogicalLine(mousepos);
-//			if (realline >= 0 && realline < iconBar.TextArea.Document.TotalNumberOfLines) {
-//				DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
-//				debuggerService.ToggleBreakpointAt(FileName, realline + 1, 0);
-//				iconBar.TextArea.Refresh(iconBar);
-//			}
-//		}
-//		
-//		void PaintIconBarBreakPoints(AbstractMargin iconBar, Graphics g, Rectangle rect)
-//		{
-//			DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
-//			lock (debuggerService.Breakpoints) {
-//				foreach (THSBreakpoint breakpoint in debuggerService.Breakpoints) {
-//					try {
-//						if (Path.GetFullPath(breakpoint.FileName) == Path.GetFullPath(FileName)) {
-//							int lineNumber = iconBar.TextArea.Document.GetVisibleLine(breakpoint.Line - 1);
-//							int yPos = (int)(lineNumber * iconBar.TextArea.TextView.FontHeight) - iconBar.TextArea.VirtualTop.Y;
-//							if (yPos >= rect.Y && yPos <= rect.Bottom) {
-//								((IconBarMargin)iconBar).DrawBreakpoint(g, yPos, breakpoint.IsEnabled);
-//							}
-//						}
-//					} catch (Exception) {}
-//				}
-//			}
-//		}
+		void IconBarMouseDown(AbstractMargin iconBar, Point mousepos, MouseButtons mouseButtons)
+		{
+			int realline = iconBar.TextArea.TextView.GetLogicalLine(mousepos);
+			if (realline >= 0 && realline < iconBar.TextArea.Document.TotalNumberOfLines) {
+				DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
+				if (debuggerService.CurrentDebugger.SupportsExecutionControl) {
+					debuggerService.ToggleBreakpointAt(FileName, realline + 1, 0);
+					iconBar.TextArea.Refresh(iconBar);
+				}
+			}
+		}
+		
+		void PaintIconBarBreakPoints(AbstractMargin iconBar, Graphics g, Rectangle rect)
+		{
+			DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
+			lock (debuggerService.Breakpoints) {
+				foreach (Breakpoint breakpoint in debuggerService.Breakpoints) {
+					try {
+						if (Path.GetFullPath(breakpoint.FileName) == Path.GetFullPath(FileName)) {
+							int lineNumber = iconBar.TextArea.Document.GetVisibleLine(breakpoint.LineNumber - 1);
+							int yPos = (int)(lineNumber * iconBar.TextArea.TextView.FontHeight) - iconBar.TextArea.VirtualTop.Y;
+							if (yPos >= rect.Y && yPos <= rect.Bottom) {
+								((IconBarMargin)iconBar).DrawBreakpoint(g, yPos, breakpoint.IsEnabled);
+							}
+						}
+					} catch (Exception) {}
+				}
+			}
+		}
 		
 		void CaretPositionChanged(object sender, EventArgs e)
 		{
@@ -233,7 +259,9 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			if (codeCompletionWindow != null && !codeCompletionWindow.IsDisposed) {
 				codeCompletionWindow.ProcessKeyEvent(ch);
 			}
-			bool isCSharpOrVBNet = Path.GetExtension(fileName) == ".cs" || Path.GetExtension(fileName) == ".vb";
+			string ext = Path.GetExtension(fileName).ToLower();
+			bool isCSharpOrVBNet = ext == ".cs" || ext == ".vb";
+			bool isBoo = ext == ".boo"; // HACK: Boo wants CC, too...
 			
 			switch (ch) {
 				case ' ':
@@ -244,6 +272,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 							if (((SharpDevelopTextEditorProperties)Document.TextEditorProperties).EnableCodeCompletion) {
 								IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
 								codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(((Form)WorkbenchSingleton.Workbench), this, this.FileName, new CodeCompletionDataProvider(true, true), ch);
+								codeCompletionWindow.Closed += new EventHandler(CloseCodeCompletionWindow);
 								return false;
 							}
 						} else {
@@ -271,6 +300,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					try {
 						if (((SharpDevelopTextEditorProperties)Document.TextEditorProperties).EnableCodeCompletion) {
 							codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(((Form)WorkbenchSingleton.Workbench), this, fileName, new CommentCompletionDataProvider(), '<');
+							codeCompletionWindow.Closed += new EventHandler(CloseCodeCompletionWindow);
 						}
 					} catch (Exception e) {
 						Console.WriteLine("EXCEPTION: " + e);
@@ -281,6 +311,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 						if (((SharpDevelopTextEditorProperties)Document.TextEditorProperties).EnableCodeCompletion) {
 							if (insightWindow == null || insightWindow.IsDisposed) {
 								insightWindow = new InsightWindow(((Form)WorkbenchSingleton.Workbench), this, fileName);
+								insightWindow.Closed += new EventHandler(CloseInsightWindow);
 							}
 							insightWindow.AddInsightDataProvider(new MethodInsightDataProvider());
 							insightWindow.ShowInsightWindow();
@@ -294,6 +325,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 						if (((SharpDevelopTextEditorProperties)Document.TextEditorProperties).EnableCodeCompletion) {
 							if (insightWindow == null || insightWindow.IsDisposed) {
 								insightWindow = new InsightWindow(((Form)WorkbenchSingleton.Workbench), this, fileName);
+								insightWindow.Closed += new EventHandler(CloseInsightWindow);
 							}
 							
 							insightWindow.AddInsightDataProvider(new IndexerInsightDataProvider());
@@ -307,8 +339,9 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				case '.':
 					try {
 //						TextAreaPainter.IHaveTheFocusLock = true;
-						if (((SharpDevelopTextEditorProperties)Document.TextEditorProperties).EnableCodeCompletion && (isCSharpOrVBNet||SupportsDot)) {
+						if (((SharpDevelopTextEditorProperties)Document.TextEditorProperties).EnableCodeCompletion && (isCSharpOrVBNet||isBoo||SupportsDot)) {
 							codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(((Form)WorkbenchSingleton.Workbench), this, fileName, CreateCodeCompletionDataProvider(false), ch);
+							codeCompletionWindow.Closed += new EventHandler(CloseCodeCompletionWindow);
 						}
 //						TextAreaPainter.IHaveTheFocusLock = false;
 					} catch (Exception e) {

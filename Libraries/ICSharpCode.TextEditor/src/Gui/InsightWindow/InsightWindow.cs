@@ -94,6 +94,29 @@ namespace ICSharpCode.TextEditor.Gui.InsightWindow
 		
 		#endregion
 		
+		public void HandleMouseWheel(MouseEventArgs e)
+		{
+			if (DataProvider != null && DataProvider.InsightDataCount > 0) {
+				if (e.Delta > 0) {
+					if (control.TextEditorProperties.MouseWheelScrollDown) {
+						CurrentData = (CurrentData + 1) % DataProvider.InsightDataCount;
+					} else {
+						CurrentData = (CurrentData + DataProvider.InsightDataCount - 1) % DataProvider.InsightDataCount;
+					}
+				} if (e.Delta < 0) {
+					if (control.TextEditorProperties.MouseWheelScrollDown) {
+						CurrentData = (CurrentData + DataProvider.InsightDataCount - 1) % DataProvider.InsightDataCount;
+					} else {
+						CurrentData = (CurrentData + 1) % DataProvider.InsightDataCount;
+					}
+				}
+				Refresh();
+			}
+			
+		}
+		
+		
+		
 		#region Insight Window Drawing routines
 		protected override void OnPaint(PaintEventArgs pe)
 		{
@@ -107,12 +130,16 @@ namespace ICSharpCode.TextEditor.Gui.InsightWindow
 				description = DataProvider.GetInsightData(CurrentData);
 			}
 			
-			drawingSize = TipPainterTools.DrawHelpTipFromCombinedDescription(this,
-			                                                   pe.Graphics,
-			                                                   Font, 
-			                                                   methodCountMessage, 
-			                                                   description);
-			SetLocation();
+			drawingSize = TipPainterTools.GetDrawingSizeHelpTipFromCombinedDescription(this,
+			                                                                 pe.Graphics,
+			                                                                 Font,
+			                                                                 methodCountMessage,
+			                                                                 description);
+			if (drawingSize != Size) {
+				SetLocation();
+			} else {
+				TipPainterTools.DrawHelpTipFromCombinedDescription(this, pe.Graphics, Font, methodCountMessage, description);
+			}
 		}
 		
 		protected override void OnPaintBackground(PaintEventArgs pe)

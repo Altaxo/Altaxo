@@ -86,13 +86,18 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs {
 			} while (duplicateNumber);
 			
 			TreeNode newNode = new TreeNode(newName);
-			IConfiguration newConfig = (IConfiguration)project.ActiveConfiguration.Clone();
+			IConfiguration newConfig = project.CloneConfiguration(project.ActiveConfiguration);
 			newConfig.Name = newName;
+			
 			newNode.Tag  = newConfig;
 			newNode.NodeFont = plainFont;
 			project.Configurations.Add(newConfig);
-			properties.SetProperty("Config", newConfig);
-			AddNodes(properties, newNode.Nodes, configurationNode.BuildChildItems(newConfig));
+			
+			DefaultProperties newProperties = new DefaultProperties();
+			newProperties.SetProperty("Project", project);
+			newProperties.SetProperty("Config", newConfig);
+			AddNodes(newProperties, newNode.Nodes, configurationNode.BuildChildItems(newConfig));
+			
 			configurationTreeNode.Nodes.Add(newNode);
 			((TreeView)ControlDictionary["optionsTreeView"]).SelectedNode = newNode;
 			((TreeView)ControlDictionary["optionsTreeView"]).LabelEdit    = true;

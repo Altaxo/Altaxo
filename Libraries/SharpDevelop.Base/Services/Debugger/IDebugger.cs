@@ -1,4 +1,4 @@
-
+using System;
 using ICSharpCode.SharpDevelop.Internal.Project;
 
 namespace ICSharpCode.SharpDevelop.Services 
@@ -24,10 +24,16 @@ namespace ICSharpCode.SharpDevelop.Services
 			get;
 		}
 		
+		/// <summary>
+		/// Break/Continue
+		/// </summary>
 		bool SupportsExecutionControl {
 			get;
 		}
 		
+		/// <summary>
+		/// Step/Step into/Step over
+		/// </summary>
 		bool SupportsStepping {
 			get;
 		}
@@ -58,6 +64,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		void StepOver();
 
 		void StepOut();
-
+		
+		event EventHandler DebugStopped;
 	}
 }

@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -158,7 +158,10 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			AbstractClassScoutNode classNode = new AbstractClassScoutNode(c.Name);
 			classNode.SelectedImageIndex = classNode.ImageIndex = classBrowserIconService.GetIcon(c);
 			classNode.ContextmenuAddinTreePath = "/SharpDevelop/Views/ClassScout/ContextMenu/ClassNode";
-			classNode.Tag = new ClassScoutTag(c.Region.BeginLine, filename, c);
+			if (c.Region == null)
+				classNode.Tag = new ClassScoutTag(0, filename, c);
+			else
+				classNode.Tag = new ClassScoutTag(c.Region.BeginLine, filename, c);
 			
 			// don't insert delegate 'members'
 			if (c.ClassType == ClassType.Delegate) {

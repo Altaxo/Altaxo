@@ -121,7 +121,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 					++numOps;
 				}
 				
-				if (fileExtension == ".vb") {
+				if (fileExtension != ".vb") {
 					editActionHandler.InsertString("override " + returnType + " " + property.Name);
 					if (StartCodeBlockInSameLine) {
 						editActionHandler.InsertString(" {");++numOps;

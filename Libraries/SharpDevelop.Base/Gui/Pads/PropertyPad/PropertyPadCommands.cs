@@ -25,10 +25,15 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 	{
 		public override void Run()
 		{
-			PropertyPad.Grid.ResetSelectedProperty();
+			try {
+				PropertyPad.Grid.ResetSelectedProperty();
+			} catch (Exception e) {
+				IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+				messageService.ShowError(e, "${res:ICSharpCode.SharpDevelop.Gui.Pads.PropertyPadResetCommand}");
+			}
 		}
 	}
-	
+		
 	public class PropertyPadShowDescriptionCommand : AbstractCheckableMenuCommand
 	{
 		public override bool IsChecked {

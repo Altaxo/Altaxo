@@ -10,7 +10,7 @@ using System.Collections;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-
+using System.Drawing;
 using ICSharpCode.Core.AddIns;
 using ICSharpCode.Core.Services;
 using ICSharpCode.SharpDevelop.Services;
@@ -72,6 +72,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 				return content;
 			}
 		}
+		
+		protected override Size DefaultSize {
+			get {
+				return Size.Empty;
+			}
+		}
+		
 		
 		public void SwitchView(int viewNumber)
 		{
@@ -299,8 +306,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			newPage.Controls.Add(content.Control);
 			viewTabControl.TabPages.Add(newPage);
 		}
-
-
+		
 		public void AttachSecondaryViewContent(ISecondaryViewContent subViewContent)
 		{
 			if (subViewContents == null) {
@@ -337,6 +343,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 			oldIndex = viewTabControl.SelectedIndex;
 			WorkbenchSingleton.Workbench.WorkbenchLayout.OnActiveWorkbenchWindowChanged(EventArgs.Empty);
+			ActiveViewContent.Control.Focus();
 		}
 		
 		public virtual void RedrawContent()

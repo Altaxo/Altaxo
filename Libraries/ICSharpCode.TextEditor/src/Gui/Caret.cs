@@ -132,6 +132,18 @@ namespace ICSharpCode.TextEditor
 			textArea.LostFocus += new EventHandler(LostFocus);
 		}
 		
+		public Point ValidatePosition(Point pos)
+		{
+			int line   = Math.Max(0, Math.Min(textArea.Document.TotalNumberOfLines - 1, pos.Y));
+			int column = Math.Max(0, pos.X);
+			
+			if (!textArea.TextEditorProperties.AllowCaretBeyondEOL) {
+				LineSegment lineSegment = textArea.Document.GetLineSegment(line);
+				column = Math.Min(column, lineSegment.Length);
+			}
+			return new Point(column, line);
+		}
+		
 		/// <remarks>
 		/// If the caret position is outside the document text bounds
 		/// it is set to the correct position by calling ValidateCaretPos.
@@ -184,9 +196,9 @@ namespace ICSharpCode.TextEditor
 		void GotFocus(object sender, EventArgs e)
 		{
 			hidden = false;
-			Console.WriteLine("GOT FOCUS");
 			if (!textArea.MotherTextEditorControl.IsUpdating) {
 				CreateCaret();
+				UpdateCaretPosition();
 			}
 		}
 		

@@ -23,6 +23,13 @@ namespace ICSharpCode.SharpDevelop.Services
 		bool                       isRunning       = false;
 		IDebugger                  defaultDebugger = null;
 		ArrayList                  debugger        = null;
+		ArrayList                  breakpoints     = new ArrayList();
+		
+		public ArrayList Breakpoints {
+			get {
+				return breakpoints;
+			}
+		}
 		
 		public IDebugger CurrentDebugger {
 			get {
@@ -51,8 +58,23 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public DebuggerService()
 		{
-			
-//			DebugStopped += new EventHandler(HandleDebugStopped);
+		}
+		
+		
+		public void ToggleBreakpointAt(string fileName, int line, int column)
+		{
+			try {
+				for (int i = 0; i < breakpoints.Count; ++i) {
+					Breakpoint bp = (Breakpoint)breakpoints[i];
+					if (bp.FileName == fileName && bp.LineNumber == line) {
+						breakpoints.RemoveAt(i);
+						return;
+					}
+				}
+				breakpoints.Add(new Breakpoint(fileName, line));
+			} finally {
+				OnBreakPointChanged(EventArgs.Empty);
+			}
 		}
 		MessageViewCategory debugCategory = null;
 		
@@ -87,6 +109,9 @@ namespace ICSharpCode.SharpDevelop.Services
 			if (debugger != null) {
 				debugger.Stop();
 			}
+						
+			debugger.DebugStopped -= new EventHandler(HandleDebugStopped);
+
 			isRunning = false;
 			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 		}
@@ -106,7 +131,6 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
 			projectService.CombineOpened += new CombineEventHandler(ClearOnCombineEvent);
-//			CurrentDebugger.Start(@"C:\bla.exe", @"C:\", "");
 		}
 		
 		void DebuggerServiceStarted(object sender, EventArgs e)
@@ -176,7 +200,8 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 			IDebugger debugger = CurrentDebugger;
 			if (debugger != null) {
-				debugger.Start(fileName, arguments, workingDirectory);
+				debugger.Start(fileName, workingDirectory, arguments);
+				debugger.DebugStopped += new EventHandler(HandleDebugStopped);
 			}
 			
 //			lock (breakpoints) {
@@ -279,5 +304,14 @@ namespace ICSharpCode.SharpDevelop.Services
 //			                                                 "Unknown",Environment.NewLine)));
 //			base.OnModuleLoaded(e);
 //		}
+		
+		protected virtual void OnBreakPointChanged(EventArgs e) 
+		{
+			if (BreakPointChanged != null) {
+				BreakPointChanged(this, e);
+			}
+		}
+		
+		public event EventHandler BreakPointChanged;
 	}
 }

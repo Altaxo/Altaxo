@@ -39,8 +39,10 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 			buttons = new Button[buttontexts.Length];
 			for (int i = 0; i < buttontexts.Length; ++i) {
 				buttons[i] = new Button();
+				buttons[i].FlatStyle = FlatStyle.System;
 			}
 			Label label1  = new Label();
+			label1.FlatStyle = FlatStyle.System;
 			
 			this.SuspendLayout();
 			Text = header;

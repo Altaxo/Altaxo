@@ -263,6 +263,10 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\StringResources.fi.resources"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\StringResources.fr.resources"
                     BuildAction = "Content"
                 />
@@ -448,6 +452,10 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\languages\Arabic.png"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\languages\badgoisern.png"
                     BuildAction = "Content"
                 />
@@ -476,6 +484,10 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\languages\finnish.png"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\languages\france.png"
                     BuildAction = "Content"
                 />
@@ -500,6 +512,14 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\languages\lithuania.png"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\languages\mexico.png"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\languages\netherlands.png"
                     BuildAction = "Content"
                 />
@@ -517,6 +537,14 @@
                 />
                 <File
                     RelPath = "data\resources\languages\russia.png"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\languages\Serbia.png"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\languages\slovenia.png"
                     BuildAction = "Content"
                 />
                 <File

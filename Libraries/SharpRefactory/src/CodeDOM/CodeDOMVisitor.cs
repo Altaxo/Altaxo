@@ -795,6 +795,10 @@ namespace ICSharpCode.SharpRefactory.Parser
 				case UnaryOperatorType.Minus:
 					if (unaryOperatorExpression.Expression is PrimitiveExpression) {
 						PrimitiveExpression expression = (PrimitiveExpression)unaryOperatorExpression.Expression;
+						if (expression.Value is System.UInt32 || expression.Value is System.UInt16) {
+							return new CodePrimitiveExpression(Int32.Parse("-" + expression.StringValue));
+						}
+						
 						if (expression.Value is int) {
 							return new CodePrimitiveExpression(- (int)expression.Value);
 						}

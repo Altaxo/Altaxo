@@ -38,6 +38,7 @@ namespace ICSharpCode.TextEditor
 		VScrollBar vScrollBar = new VScrollBar();
 		HScrollBar hScrollBar = new HScrollBar();
 		TextArea   textArea;
+		bool       doHandleMousewheel = true;
 		
 		public TextArea TextArea {
 			get {
@@ -79,6 +80,15 @@ namespace ICSharpCode.TextEditor
 		public HScrollBar HScrollBar {
 			get {
 				return hScrollBar;
+			}
+		}
+		
+		public bool DoHandleMousewheel {
+			get {
+				return doHandleMousewheel;
+			}
+			set {
+				doHandleMousewheel = value;
 			}
 		}
 		
@@ -189,19 +199,17 @@ namespace ICSharpCode.TextEditor
 			textArea.Invalidate();
 		}
 		
-		protected override void OnMouseWheel(MouseEventArgs e)
+		public void HandleMouseWheel(MouseEventArgs e)
 		{
-			base.OnMouseWheel(e);
-			
 			if ((Control.ModifierKeys & Keys.Control) != 0 && TextEditorProperties.MouseWheelTextZoom) {
 				if (e.Delta > 0) {
 					motherTextEditorControl.Font = new Font(motherTextEditorControl.Font.Name,
 					                                        motherTextEditorControl.Font.Size + 1);
-					                                        
+					
 				} else {
 					motherTextEditorControl.Font = new Font(motherTextEditorControl.Font.Name,
 					                                        Math.Max(6, motherTextEditorControl.Font.Size - 1));
-					                                        
+					
 					
 				}
 			} else {
@@ -210,11 +218,19 @@ namespace ICSharpCode.TextEditor
 				
 				int newValue;
 				if (System.Windows.Forms.SystemInformation.MouseWheelScrollLines > 0) {
-					newValue = this.vScrollBar.Value - (TextEditorProperties.MouseWheelScrollDown ? 1 : -1) * Math.Sign(e.Delta) * System.Windows.Forms.SystemInformation.MouseWheelScrollLines * vScrollBar.SmallChange * multiplier ;
+					newValue = this.vScrollBar.Value - (TextEditorProperties.MouseWheelScrollDown ? 1 : -1) * Math.Sign(e.Delta) * System.Windows.Forms.SystemInformation.MouseWheelScrollLines * vScrollBar.SmallChange * multiplier;
 				} else {
 					newValue = this.vScrollBar.Value - (TextEditorProperties.MouseWheelScrollDown ? 1 : -1) * Math.Sign(e.Delta) * vScrollBar.LargeChange;
 				}
 				vScrollBar.Value = Math.Max(vScrollBar.Minimum, Math.Min(vScrollBar.Maximum, newValue));
+			}
+		}
+		
+		protected override void OnMouseWheel(MouseEventArgs e)
+		{
+			base.OnMouseWheel(e);
+			if (DoHandleMousewheel) {
+				HandleMouseWheel(e);
 			}
 		}
 		
@@ -246,17 +262,21 @@ namespace ICSharpCode.TextEditor
 			line = Math.Max(0, Math.Min(Document.TotalNumberOfLines - 1, line));
 			line = Document.GetVisibleLine(line);
 			int curLineMin = textArea.TextView.FirstPhysicalLine;
-			if (line - scrollMarginHeight < curLineMin) {
-				this.vScrollBar.Value =  Math.Max(0, Math.Min(this.vScrollBar.Maximum, (line - scrollMarginHeight) * textArea.TextView.FontHeight)) ;
+			if (textArea.TextView.LineHeightRemainder > 0) {
+				curLineMin ++;
+			}
+			
+			if (line - scrollMarginHeight + 3 < curLineMin) {
+				this.vScrollBar.Value =  Math.Max(0, Math.Min(this.vScrollBar.Maximum, (line - scrollMarginHeight + 3) * textArea.TextView.FontHeight)) ;
 				VScrollBarValueChanged(this, EventArgs.Empty);
 			} else {
 				int curLineMax = curLineMin + this.textArea.TextView.VisibleLineCount;
-				if (line + scrollMarginHeight > curLineMax) {
+				if (line + scrollMarginHeight - 1 > curLineMax) {
 					if (this.textArea.TextView.VisibleLineCount == 1) {
-						this.vScrollBar.Value =  Math.Max(0, Math.Min(this.vScrollBar.Maximum, (line - scrollMarginHeight) * textArea.TextView.FontHeight)) ;
+						this.vScrollBar.Value =  Math.Max(0, Math.Min(this.vScrollBar.Maximum, (line - scrollMarginHeight - 1) * textArea.TextView.FontHeight)) ;
 					} else {
 						this.vScrollBar.Value = Math.Min(this.vScrollBar.Maximum,
-						                                 (line - this.textArea.TextView.VisibleLineCount + scrollMarginHeight)* textArea.TextView.FontHeight) ;
+						                                 (line - this.textArea.TextView.VisibleLineCount + scrollMarginHeight - 1)* textArea.TextView.FontHeight) ;
 					}
 					VScrollBarValueChanged(this, EventArgs.Empty);
 				}

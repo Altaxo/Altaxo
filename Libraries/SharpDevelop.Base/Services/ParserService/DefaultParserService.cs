@@ -239,11 +239,13 @@ namespace ICSharpCode.SharpDevelop.Services
 			if (reference.ReferenceType == ReferenceType.Project) {
 				IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
 				IProject refProject = projectService.GetProject(reference.Reference);
-				// hack : don't load C# or VBNET project assemblies (parser does this.)
-				if (refProject.ProjectType == "C#" || refProject.ProjectType == "VBNET") {
+				// don't load project assemblies when a parser for them exists
+				if (refProject == null)
 					return;
+				foreach (IParser possibleParser in parser) {
+					if (possibleParser.CanParse(refProject))
+						return;
 				}
-				
 			}
 			
 			string fileName = reference.GetReferencedFileName(project);
@@ -309,6 +311,7 @@ namespace ICSharpCode.SharpDevelop.Services
 #else
 #endif
 					foreach (IClass newClass in assemblyInformation.Classes) {
+						Console.WriteLine(newClass);
 						parserService.AddClassToNamespaceList(newClass);
 						lock (parserService.classes) {
 							parserService.caseInsensitiveClasses[newClass.FullyQualifiedName.ToLower()] = parserService.classes[newClass.FullyQualifiedName] = new ClasstableEntry(null, null, newClass);
@@ -1304,12 +1307,11 @@ namespace ICSharpCode.SharpDevelop.Services
 		public virtual IParser GetParser(string fileName)
 		{
 			IParser curParser = null;
-			
-			if (Path.GetExtension(fileName).ToUpper() == ".CS") {
-				curParser = parser[0];
-			}
-			if (Path.GetExtension(fileName).ToUpper() == ".VB") {
-				curParser = parser[1];
+			foreach (IParser p in parser) {
+				if (p.CanParse(fileName)) {
+					curParser = p;
+					break;
+				}
 			}
 			
 			if (curParser != null) {

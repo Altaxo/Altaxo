@@ -171,10 +171,10 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 			int index = activeTab.Items.IndexOf(item);
 			if (index != -1) {
 				if (index < scrollBar.Value) {
-					scrollBar.Value = index;
+					scrollBar.Value = Math.Max(scrollBar.Minimum, Math.Min(scrollBar.Maximum, index));
 					ScrollBarScrolled(null, null);
 				} else if (index > scrollBar.Value + (sideTabContent.Height - 15) / 20) {
-					scrollBar.Value = index - (sideTabContent.Height - 15) / 20;
+					scrollBar.Value = Math.Max(scrollBar.Minimum, Math.Min(scrollBar.Maximum, index - (sideTabContent.Height - 15) / 20));
 					ScrollBarScrolled(null, null);
 				}
 			}

@@ -40,7 +40,7 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			StartPosition   = FormStartPosition.Manual;
 			FormBorderStyle = FormBorderStyle.None;
 			ShowInTaskbar   = false;
-			Size            = new Size(0, 0);
+			Size            = new Size(1, 1);
 			Owner           = parentForm;
 		}
 		
@@ -78,6 +78,7 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			}
 			Bounds = bounds;
 		}
+		
 		public readonly static int SW_SHOWNA = 8;
 		
 		[DllImport("user32")]

@@ -8,6 +8,7 @@ using System;
 using System.Drawing;
 using System.Collections;
 using ICSharpCode.SharpDevelop.Services;
+using ICSharpCode.SharpDevelop.Internal.Project;
 using SharpDevelop.Internal.Parser;
 using CSharpBinding.Parser.SharpDevelopTree;
 using ICSharpCode.SharpRefactory.Parser;
@@ -31,6 +32,14 @@ namespace CSharpBinding.Parser
 			get {
 				return new ExpressionFinder();
 			}
+		}
+		public bool CanParse(string fileName)
+		{
+			return System.IO.Path.GetExtension(fileName).ToUpper() == ".CS";
+		}
+		public bool CanParse(IProject project)
+		{
+			return project.ProjectType == "C#";
 		}
 		
 		void RetrieveRegions(CompilationUnit cu, SpecialTracker tracker)
