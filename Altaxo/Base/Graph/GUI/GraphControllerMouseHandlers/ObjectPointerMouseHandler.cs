@@ -45,6 +45,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       public IGrippableObject Object;
     }
     #endregion
+
+    #region Members
     /// <summary>
     /// If true, the selected objects where moved when a MouseMove event is fired
     /// </summary>
@@ -57,12 +59,17 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>The graph controller this mouse handler belongs to.</summary>
     protected GraphController _grac;
 
+    /// <summary>
+    /// This is the structure to store information about an object that currently has its grip shown.
+    /// </summary>
     protected Grip _grip;
     /// <summary>
     /// The hashtable of the selected objects. The key is the selected object itself,
     /// the data is a int object, which stores the layer number the object belongs to.
     /// </summary>
     protected System.Collections.Hashtable m_SelectedObjects = new System.Collections.Hashtable();
+
+    #endregion
 
     public ObjectPointerMouseHandler(GraphController grac)
     {
@@ -75,6 +82,43 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public int NumberOfSelectedObjects
     {
       get { return this.m_SelectedObjects.Count; }
+    }
+
+
+    /// <summary>
+    /// Returns the hit test object belonging to the selected object if and only if one single object is selected, else null is returned.
+    /// </summary>
+    public IHitTestObject SingleSelectedHitTestObject
+    {
+      get
+      {
+        if(m_SelectedObjects.Count!=1)
+          return null;
+
+        foreach(IHitTestObject graphObject in m_SelectedObjects.Keys) // foreach is here only for one object!
+        {
+          return graphObject;
+        }
+        return null;
+      }
+    }
+
+    /// <summary>
+    /// Returns the selected object if and only if one single object is selected, else null is returned.
+    /// </summary>
+    public object SingleSelectedObject
+    {
+      get
+      {
+        if(m_SelectedObjects.Count!=1)
+          return null;
+
+        foreach(IHitTestObject graphObject in m_SelectedObjects.Keys) // foreach is here only for one object!
+        {
+          return graphObject.HittedObject;
+        }
+        return null;
+      }
     }
 
     /// <summary>
@@ -94,6 +138,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(new Point(e.X,e.Y));
         PointF newPosition = grac.Layers[_grip.Layer].GraphToLayerCoordinates(printAreaCoord);
         _grip.Handle.MoveGrip(newPosition);
+        grac.RepaintGraphArea();
         return this;
       }
 
@@ -121,7 +166,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           //int nLayer = (int)grac.m_SelectedObjects[graphObject];
           //PointF layerDiff = grac.Layers[nLayer].GraphToLayerDifferences(graphDiff); // calculate the moving distance in layer units
           graphObject.ShiftPosition(graphDiff.X,graphDiff.Y);
-          // Console.WriteLine("Moving mdiff={0}, gdiff={1}, ldiff={2}", mouseDiff,graphDiff,layerDiff);
+          //System.Diagnostics.Trace.WriteLine(string.Format("Moving mdiff={0}, gdiff={1}", mouseDiff,graphDiff));
         }
         // now paint the objects on the new position
           
@@ -156,46 +201,36 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       if(e.Button != MouseButtons.Left)
         return this; // then there is nothing to do here
 
-     
-
-
-
       // first, if we have a mousedown without shift key and the
       // position has changed with respect to the last mousedown
       // we have to deselect all objects
-      PointF mouseXY = new PointF(e.X,e.Y);
       bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
       bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
+
+      PointF mouseXY = new PointF(e.X,e.Y);                           // Mouse pixel coordinates
       PointF graphXY = grac.PixelToPrintableAreaCoordinates(mouseXY); // Graph area coordinates
 
 
       // if we have exacly one object selected, and the one object is grippable,
       // we hit test for the grip areas
-      if(m_SelectedObjects.Count==1)
+      if(SingleSelectedObject is IGrippableObject)
       {
-        foreach(IHitTestObject graphObject in m_SelectedObjects.Keys) // foreach is here only for one object!
+        IGrippableObject gripObject = (IGrippableObject)SingleSelectedObject;
+        // first switch to the layer graphics context (from printable context)
+        int nLayer = (int)m_SelectedObjects[SingleSelectedHitTestObject];
+
+        PointF layerCoord = grac.Doc.Layers[nLayer].GraphToLayerCoordinates(graphXY);
+
+        _grip.Handle = gripObject.GripHitTest(layerCoord);
+
+        if(_grip.Handle!=null)
         {
-          IGrippableObject gripObject = graphObject.HittedObject as IGrippableObject;
-          if(null!=gripObject)
-          {
-            // first switch to the layer graphics context (from printable context)
-            int nLayer = (int)m_SelectedObjects[graphObject];
-
-            PointF layerCoord = grac.Doc.Layers[nLayer].GraphToLayerCoordinates(mouseXY);
-
-            _grip.Handle = gripObject.GripHitTest(layerCoord);
-
-            if(_grip.Handle!=null)
-            {
-              _grip.Layer = nLayer;
-              _grip.Object = gripObject;
-              return this;
-            }
-          }
+          _grip.Layer = nLayer;
+          _grip.Object = gripObject;
+          return this;
         }
       }
-
-
+     
 
   
       // have we clicked on one of the already selected objects
@@ -226,8 +261,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           if(null!=clickedObject)
           {
             m_SelectedObjects.Add(clickedObject,clickedLayerNumber);
-            grac.DrawSelectionRectangleImmediately(clickedObject,clickedLayerNumber);
+            //grac.DrawSelectionRectangleImmediately(clickedObject,clickedLayerNumber);
             StartMovingObjects(grac,mouseXY);
+            grac.RepaintGraphArea();
           }
         }
         else // no shift or control key pressed
@@ -236,8 +272,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           {
             ClearSelections(grac);
             m_SelectedObjects.Add(clickedObject,clickedLayerNumber);
-            grac.DrawSelectionRectangleImmediately(clickedObject,clickedLayerNumber);
+            //grac.DrawSelectionRectangleImmediately(clickedObject,clickedLayerNumber);
             StartMovingObjects(grac,mouseXY);
+            grac.RepaintGraphArea();
           }
           else // if clicked to nothing 
           {
@@ -384,7 +421,22 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     {
       g.TranslateTransform(grac.Doc.PrintableBounds.X,grac.Doc.PrintableBounds.Y);
       // finally, mark the selected objects
-      if(m_SelectedObjects.Count>0)
+      
+      if(SingleSelectedObject is IGrippableObject)
+      {
+        IGrippableObject gripObject = (IGrippableObject)SingleSelectedObject;
+        if(null!=gripObject)
+        {
+          // first switch to the layer graphics context (from printable context)
+          int nLayer = (int)m_SelectedObjects[SingleSelectedHitTestObject];
+
+          grac.Doc.Layers[nLayer].GraphToLayerCoordinates(g);
+
+          gripObject.ShowGrips(g);
+        }
+
+      }
+      else if(m_SelectedObjects.Count>0)
       {
         foreach(IHitTestObject graphObject in m_SelectedObjects.Keys)
         {
@@ -393,25 +445,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         }
       }
 
-      // show grips if there is a single selected objecct
-      if(m_SelectedObjects.Count==1)
-      {
-        foreach(IHitTestObject graphObject in m_SelectedObjects.Keys) // foreach is here only for one object!
-        {
-          IGrippableObject gripObject = graphObject.HittedObject as IGrippableObject;
-          if(null!=gripObject)
-          {
-            // first switch to the layer graphics context (from printable context)
-            int nLayer = (int)m_SelectedObjects[graphObject];
 
-            grac.Doc.Layers[nLayer].GraphToLayerCoordinates(g);
-
-            gripObject.ShowGrips(g);
-          }
-        }
-
-
-      }
       base.AfterPaint (grac,g);
     }
 
@@ -459,7 +493,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       {
         int nLayer = (int)m_SelectedObjects[graphObject];
         // if(null!=graphObject.HitTest(Layers[nLayer].GraphToLayerCoordinates(graphXY)))
-        if(graphObject.SelectionPath.IsVisible(pixelPos))
+        if(graphObject.SelectionPath.IsVisible(graphXY))
         {
           foundObject = graphObject;
           return true;

@@ -426,15 +426,66 @@ namespace Altaxo.Graph
     {
       g.DrawRectangle(Pens.Blue,X-6,Y-6,12,12);
       g.DrawRectangle(Pens.Blue,X+Width-6,Y+Height-6,12,12);
+      g.DrawLine(Pens.Blue,X,Y,X+Width,Y+Height);
     }
 
     public IGripManipulationHandle GripHitTest(PointF point)
     {
-      // TODO:  Add LineGraphic.GripHitTest implementation
+      double dx,dy;
+      dx = point.X-this.X;
+      dy = point.Y-this.Y;
+
+      if((dx*dx+dy*dy)<36)
+        return new GripHandle(this,true);
+
+      dx = point.X-this.X-this.Width;
+      dy = point.Y-this.Y-this.Height;
+
+      if((dx*dx+dy*dy)<36)
+        return new GripHandle(this,false);
+
       return null;
     }
 
     #endregion
+
+
+    #region GripHandle
+
+    private class GripHandle : IGripManipulationHandle
+    {
+      LineGraphic _parent;
+      bool _isFirstPoint;
+
+      public GripHandle(LineGraphic parent, bool isFirstPoint)
+      {
+        _parent = parent;
+        _isFirstPoint = isFirstPoint;
+      }
+
+      #region IGripManipulationHandle Members
+
+      public void MoveGrip(PointF newPosition)
+      {
+        if(_isFirstPoint)
+        {
+          PointF endPoint = _parent.GetEndPosition();
+          _parent.SetStartPosition(newPosition);
+          _parent.SetEndPosition(endPoint);
+        }
+        else // second point
+        {
+          _parent.SetEndPosition(newPosition);
+        }
+      }
+
+      #endregion
+
+    }
+
+    #endregion
+
+
   } // End Class
 
 

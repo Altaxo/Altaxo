@@ -292,9 +292,11 @@ namespace ICSharpCode.SharpDevelop.Services
 					AssemblyInformation assemblyInformation = new AssemblyInformation();
 					assemblyInformation.Load(assemblyFileName, nonLocking);
 					
+#if !ModifiedForAltaxo
 					parserService.classes.Clear();
 					parserService.caseInsensitiveClasses.Clear();
-					
+#else
+#endif
 					foreach (IClass newClass in assemblyInformation.Classes) {
 						parserService.AddClassToNamespaceList(newClass);
 						lock (parserService.classes) {
