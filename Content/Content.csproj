@@ -879,31 +879,7 @@
                     RelPath = "data\resources\xslt\type.xslt"
                     BuildAction = "Content"
                 />
-                <File
-                    RelPath = "data\SharpUnit\GenerateMessages.xsl"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\SharpUnit\GenerateOverview.xsl"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\SharpUnit\GenerateReport.xsl"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\SharpUnit\SharpUnitOutput.css"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\SharpUnit\dialogs\CommonAboutDialog.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\SharpUnit\dialogs\ExceptionScoutPanel.xfrm"
-                    BuildAction = "Content"
-                />
-                <File
+                 <File
                     RelPath = "data\templates\file\EmptyHTMLFile.xft"
                     BuildAction = "Content"
                 />

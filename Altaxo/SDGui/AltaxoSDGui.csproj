@@ -185,7 +185,7 @@
                 />
                 <File
                     RelPath = "Main\GUI\Workbench1.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
