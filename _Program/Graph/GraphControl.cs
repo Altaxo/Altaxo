@@ -31,7 +31,7 @@ namespace Altaxo.Graph
 		private BrushHolder m_PageGroundBrush = new BrushHolder(Color.LightGray);
 		private BrushHolder m_PrintableAreaBrush = new BrushHolder(Color.Snow);
 
-		protected LayerList graphLayers = new LayerList();
+		protected Layer.LayerCollection graphLayers = new Layer.LayerCollection();
 		protected int m_ActualLayer = 0;
 
 		/// <summary> 
@@ -105,11 +105,10 @@ namespace Altaxo.Graph
 		#endregion
 
 
-		public LayerList Layer
+		public Layer.LayerCollection Layer
 		{
 			get { return this.graphLayers; }
 		}
-
 
 		public int ActualLayer
 		{
@@ -124,7 +123,7 @@ namespace Altaxo.Graph
 		}
 
 
-			public RectangleF PageBounds
+		public RectangleF PageBounds
 		{
 			get
 			{
@@ -260,8 +259,8 @@ namespace Altaxo.Graph
 
 		public void OnPrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs ppea)
 		{
-				Graphics g = ppea.Graphics;
-				DoPaint(g,true);
+			Graphics g = ppea.Graphics;
+			DoPaint(g,true);
 		}
 
 
@@ -348,6 +347,7 @@ namespace Altaxo.Graph
 			}
 		}
 
+		/*
 		public class LayerList : System.Collections.ArrayList
 		{
 			public new  Layer this[int i]
@@ -356,6 +356,8 @@ namespace Altaxo.Graph
 				set { base[i]=value; }
 			}
 		}
+		*/
+
 
 	} // end of class
 } // end of namespace

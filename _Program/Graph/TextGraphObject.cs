@@ -87,7 +87,7 @@ namespace Altaxo
 				m_Color = value;
 			}
 		}
-		public override void Paint(Graphics g)
+		public override void Paint(Graphics g, object obj)
 		{
 
 			System.Drawing.Drawing2D.GraphicsState gs = g.Save();
@@ -137,9 +137,19 @@ namespace Altaxo
 		protected internal bool m_bGreek; // true if greek charset should be used
 		protected internal int  m_SubIndex;
 
+		protected internal int m_LayerNumber=-1;
+		protected internal int m_PlotNumber=-1;
+
 		public TextItem()
 		{
 			m_Text="";
+		}
+
+		public TextItem(int nPlotNumber)
+		{
+			m_Text=null;
+			m_LayerNumber=0;
+			m_PlotNumber=nPlotNumber;
 		}
 
 		public TextItem(TextItem from)
@@ -154,12 +164,17 @@ namespace Altaxo
 
 		public bool IsEmpty
 		{
-			get { return m_Text==null || m_Text.Length==0; }
+			get { return (m_Text==null || m_Text.Length==0) && m_LayerNumber<0 && m_PlotNumber<0; }
 		}
 
 		public bool IsText
 		{
 			get { return m_Text!=null && m_Text.Length>0; }
+		}
+
+		public bool IsSymbol
+		{
+			get { return m_PlotNumber>=0; }
 		}
 	}
 
@@ -443,7 +458,7 @@ namespace Altaxo
 		}
 
 	
-		public override void Paint(Graphics g)
+		public override void Paint(Graphics g, object obj)
 		{
 			if(!this.m_bStructureInSync)
 				this.Interpret();
@@ -468,6 +483,12 @@ namespace Altaxo
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 
 
+			// get some properties of the font
+			float cyLineSpace = m_Font.GetHeight(g); // space between two lines
+			int   iCellSpace  = m_Font.FontFamily.GetLineSpacing(FontStyle.Regular);
+			int   iCellAscent = m_Font.FontFamily.GetCellAscent(FontStyle.Regular);
+			float cyAscent = cyLineSpace*iCellAscent/iCellSpace;
+
 			/*
 				if(this.AutoSize)
 				{
@@ -487,6 +508,7 @@ namespace Altaxo
 			float currPosX=0;
 			float currPosY=0;
 			float currLinePosY=0;
+			float yshift=0;
 			SizeF currSize;
 			bool bBold=false, bItalic=false, bUnderlined=false, bGreek=false;
 			int nSubIndex=0;
@@ -540,24 +562,62 @@ namespace Altaxo
 							if(bItalic) style |= FontStyle.Italic;
 							if(bUnderlined) style |= FontStyle.Underline;
 							
-							float emSize = (float)(m_Font.Size*Math.Pow(0.5,Math.Abs(nSubIndex)));
+							
+							// I measured the proprortions of sub and sup indices from word
+							// there it is so the char size is 65% of normal size
+							// the subindex is 15% of ascent height of normal char lower than ground line
+							// the supindex is 35% of ascent height of normal char higher than ground line
+							
+							float emSize = m_Font.Size;
+							float ascent = cyAscent;
+							yshift = 0;
+
+							for(int k=0;k<Math.Abs(nSubIndex);k++)
+							{
+								emSize *= 0.65f; // scale the new font size
+
+								if(nSubIndex<0) 
+									yshift += 0.15f*ascent; // Carefull: plus (+) means shift down
+								else
+									yshift -= 0.35f*ascent; // be carefull: minus (-) means shift up
+
+								ascent *= 0.65f; // scale also the ascent
+							}
+
+
 							if(bGreek)
-								currFont = new Font("Greek",emSize,style,GraphicsUnit.Point);
+								currFont = new Font("Symbol",emSize,style,GraphicsUnit.World);
 							else
 								currFont = new Font(m_Font.FontFamily,emSize,style,GraphicsUnit.World);
 
 						}
 
 						// now measure the string
-						currSize = g.MeasureString(ti.m_Text, m_Font);
+						PointF currPosPoint = new PointF(currPosX,currLinePosY + currPosY + yshift);
+
+						currSize = g.MeasureString(ti.m_Text, m_Font, currPosPoint, strfmt);
 						
-						g.DrawString(ti.m_Text, currFont, new SolidBrush(m_Color), currPosX, currLinePosY + currPosY, strfmt);
+						g.DrawString(ti.m_Text, currFont, new SolidBrush(m_Color), currPosPoint, strfmt);
 
 						// update positions
 						currPosX += currSize.Width;
 
 					} // end of if ti.IsText
 
+					else if(ti.IsSymbol && obj is Altaxo.Graph.Layer)
+					{
+						Graph.Layer layer = (Graph.Layer)obj;
+						if(ti.m_LayerNumber>=0 && ti.m_LayerNumber<layer.ParentLayerList.Count)
+							layer = layer.ParentLayerList[ti.m_LayerNumber];
+
+						if(ti.m_PlotNumber<layer.PlotAssociations.Count)
+						{
+							Graph.PlotAssociation pa = layer.PlotAssociations[ti.m_PlotNumber];
+							
+							pa.PlotStyle.PaintSymbol(g);
+					}
+
+					} // end if ti.IsSymbol
 
 				} // for all items in a textline
 			} // for all textlines

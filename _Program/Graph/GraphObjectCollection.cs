@@ -33,12 +33,12 @@ namespace Altaxo
 			this.AddRange(g);
 		}
 
-		public void DrawObjects(Graphics g, float Scale)
+		public void DrawObjects(Graphics g, float Scale, object container)
 		{
 			int len = this.InnerList.Count;
 			for(int i=0;i<len;i++)
 			{
-				((GraphObject)this.InnerList[i]).Paint(g);
+				((GraphObject)this.InnerList[i]).Paint(g, container);
 			}
 		}
 

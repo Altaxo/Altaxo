@@ -45,13 +45,14 @@ namespace Altaxo.Graph
 		protected PlotGroup.Collection m_PlotGroups = new PlotGroup.Collection();
 		protected int m_ActualPlotAssociation = 0;
 
+		protected LayerCollection m_ParentLayerCollection=null;
 
 		public Layer(SizeF prtSize)
 		{
 			m_LayerPosition = new PointF(prtSize.Width*0.14f,prtSize.Height*0.14f);
 			m_LayerSize = new SizeF(prtSize.Width*0.76f,prtSize.Height*0.7f);
 
-			ExtendedTextGraphObject tgo = new ExtendedTextGraphObject(129,90,@"\g(Das) \i(ist) \u(ein) \b(Test)",new Font(FontFamily.GenericSansSerif,36,GraphicsUnit.World),Color.Black);
+			ExtendedTextGraphObject tgo = new ExtendedTextGraphObject(129,90,@"\g(Das) \i(ist) \u(ein) Text\+(2)",new Font(FontFamily.GenericSansSerif,36,GraphicsUnit.World),Color.Black);
 			tgo.Rotation = 0;
 			coll.Add(tgo);
 			CalculateMatrix();
@@ -116,7 +117,7 @@ namespace Altaxo.Graph
 
 
 
-			public Axis XAxis
+		public Axis XAxis
 		{
 			get { return m_xAxis; }
 			set
@@ -253,8 +254,20 @@ namespace Altaxo.Graph
 			}
 		}
 
+		public LayerCollection ParentLayerList
+		{
+			get { return m_ParentLayerCollection; }
+		}
+
 
 #endregion // Layer Properties
+
+
+		protected void SetParentLayerCollection(LayerCollection lc)
+		{
+			m_ParentLayerCollection = lc;
+		}
+
 
 
 		protected void CalculateMatrix()
@@ -309,7 +322,7 @@ namespace Altaxo.Graph
 				if(m_ActualPlotAssociation>=plotAssociations.Count)
 					m_ActualPlotAssociation = 0;
 					
-					return m_ActualPlotAssociation;
+				return m_ActualPlotAssociation;
 			}
 			set
 			{
@@ -334,7 +347,7 @@ namespace Altaxo.Graph
 			if(m_bFillLayerArea)
 				g.FillRectangle(m_LayerAreaFillBrush,0,0,m_LayerSize.Width,m_LayerSize.Height);
 
-			coll.DrawObjects(g,1);
+			coll.DrawObjects(g,1,this);
 
 			RectangleF layerBounds = new RectangleF(m_LayerPosition,m_LayerSize);
 
@@ -447,6 +460,27 @@ namespace Altaxo.Graph
 
 		
 		#endregion
+
+
+
+		public class LayerCollection : System.Collections.CollectionBase
+		{
+			public Layer this[int i]
+			{
+				get { return (Layer)base.InnerList[i]; }
+				set
+				{
+					value.SetParentLayerCollection(this);
+					base.InnerList[i] = value;
+				}
+			}
+
+			public void Add(Layer l)
+			{
+				l.SetParentLayerCollection(this);
+				base.InnerList.Add(l);
+			}
+		}
 
 	}
 

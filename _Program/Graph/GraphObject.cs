@@ -233,7 +233,7 @@ namespace Altaxo
 			}
 		}
 
-		public abstract void Paint(Graphics g);
+		public abstract void Paint(Graphics g, object obj);
 
 
 	}

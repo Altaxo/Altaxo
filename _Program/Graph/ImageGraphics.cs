@@ -124,7 +124,7 @@ namespace Altaxo
 			}
 		}
 
-		public override  void Paint( Graphics g)
+		public override  void Paint( Graphics g, object obj)
 		{
 			GraphicsState gs = g.Save();
 			g.TranslateTransform(X,Y);
@@ -248,7 +248,7 @@ namespace Altaxo
 			return this.Image;
 		}
 
-		public override void Paint( Graphics g)
+		public override void Paint( Graphics g, object obj)
 		{
 			GraphicsState gs = g.Save();
 			g.TranslateTransform(X,Y);
