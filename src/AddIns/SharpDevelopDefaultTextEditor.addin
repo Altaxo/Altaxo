@@ -34,12 +34,12 @@
 	<Extension path="/SharpDevelop/ViewContent/DefaultTextEditor/ContextMenu">
 		<MenuItem id="Cut" label="${res:XML.TextAreaContextMenu.Cut}" icon="Icons.16x16.CutIcon" shortcut="Control|X" class="Altaxo.Main.Commands.ScriptEditorCommands.Cut"/>
 		<MenuItem id="Copy" label="${res:XML.TextAreaContextMenu.Copy}" icon="Icons.16x16.CopyIcon" shortcut="Control|C" class="Altaxo.Main.Commands.ScriptEditorCommands.Copy"/>
-		<MenuItem id="Paste" label="${res:XML.TextAreaContextMenu.Paste}" icon="Icons.16x16.PasteIcon" shortcut="Control|V" class="ICSharpCode.SharpDevelop.Commands.Paste"/>
+		<MenuItem id="Paste" label="${res:XML.TextAreaContextMenu.Paste}" icon="Icons.16x16.PasteIcon" shortcut="Control|V" class="Altaxo.Main.Commands.ScriptEditorCommands.Paste"/>
 		<MenuItem id="Delete" label="${res:XML.MainMenu.EditMenu.Delete}" icon="Icons.16x16.DeleteIcon" class="Altaxo.Main.Commands.ScriptEditorCommands.Delete"/>
 		<MenuItem id="Separator1" label="-"/>
-		<MenuItem id="Save" label="${res:XML.MainMenu.FileMenu.Save}" icon="Icons.16x16.SaveIcon" shortcut="Control|S" class="ICSharpCode.SharpDevelop.Commands.SaveFile"/>
-		<MenuItem id="SaveAs" label="${res:XML.MainMenu.FileMenu.SaveAs}" class="ICSharpCode.SharpDevelop.Commands.SaveFileAs"/>
-		<MenuItem id="File" label="${res:XML.MainMenu.FileMenu.Close}" class="ICSharpCode.SharpDevelop.Commands.CloseFile"/>
+		<MenuItem id="Save" label="${res:XML.MainMenu.FileMenu.Save}" icon="Icons.16x16.SaveIcon" shortcut="Control|S" class="Altaxo.Main.Commands.ScriptEditorCommands.SaveFile"/>
+		<MenuItem id="SaveAs" label="${res:XML.MainMenu.FileMenu.SaveAs}" class="Altaxo.Main.Commands.ScriptEditorCommands.SaveFileAs"/>
+		<MenuItem id="File" label="${res:XML.MainMenu.FileMenu.Close}" class="Altaxo.Main.Commands.ScriptEditorCommands.CloseFile"/>
 		<MenuItem id="Separator2" label="-"/>
 		<MenuItem id="Comment" icon="Icons.16x16.CommentRegion" label="${res:XML.TextAreaContextMenu.CommentUncommentSelection}" class="ICSharpCode.SharpDevelop.DefaultEditor.Commands.CommentRegion"/>
 		<!--		<MenuItem id = "Uncomment"
