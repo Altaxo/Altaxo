@@ -36,15 +36,15 @@ namespace Altaxo.Calc
 		/// <summary>
 		/// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
 		/// </summary>
-		public const double DBL_EPSILON = 2.2204460492503131e-016;
+		const double DBL_EPSILON = 2.2204460492503131e-016;
 		/// <summary>
 		/// The smallest positive double number.
 		/// </summary>
-		public const double DBL_MIN     = double.Epsilon;
+		const double DBL_MIN     = double.Epsilon;
 		/// <summary>
 		/// The biggest positive double number.
 		/// </summary>
-		public const double DBL_MAX     = double.MaxValue;
+		const double DBL_MAX     = double.MaxValue;
 
 		#endregion
 
@@ -149,7 +149,7 @@ namespace Altaxo.Calc
 		/// CATEGORY C3A2, REVISION  920501, originally written by Fullerton W., (LANL) 
 		/// to C++.
 		/// </remarks>
-		public static double dcsevl (double x, double[] cs, int n)
+		static double dcsevl (double x, double[] cs, int n)
 		{
 #if DEBUG
 			if (n < 1)   
@@ -702,7 +702,7 @@ namespace Altaxo.Calc
 
 		#region d9aimp
 
-		public static void d9aimp(double x, out double ampl, out double theta)
+		static void d9aimp(double x, out double ampl, out double theta)
 		{
 			_d9aimp.d9aimp(x, out ampl, out theta);
 		}
@@ -1649,12 +1649,13 @@ namespace Altaxo.Calc
 		
 
 		/// <summary>
-		// BesselY(n,x) calculates the double precision Bessel function of the 
-		// second kind of order n for double precision argument x. 
+		/// BesselY(n,x) calculates the double precision Bessel function of the 
+		/// second kind of order n for double precision argument x. 
 		/// </summary>
+		/// <param name="n">The order of the Bessel function.</param>
 		/// <param name="x">The function argument.</param>
 		/// <returns>Bessel function of the 
-		// second kind of order n for argument x.</returns>
+		/// second kind of order n for argument x.</returns>
 		/// <remarks><code>
 		/// Implemented by B. M. Gammel, last revision 13.03.1996
 		/// </code></remarks>
@@ -3042,8 +3043,8 @@ namespace Altaxo.Calc
 		/// AiryExpAi(x) calculates the Airy function or the exponentially scaled 
 		/// Airy function depending on the value of the argument.  The function 
 		/// and argument are both double precision. Returns
-		///	Ai(x)                       for x <= 0.0 
-		///	Ai(x) * exp(2/3 * x^(3/2))  for x >= 0.0.
+		///	Ai(x)                       for x &lt;= 0.0 
+		///	Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <returns>Airy function or the exponentially scaled 
@@ -3207,8 +3208,8 @@ namespace Altaxo.Calc
 			/// AiryExpAi(x) calculates the Airy function or the exponentially scaled 
 			/// Airy function depending on the value of the argument.  The function 
 			/// and argument are both double precision. Returns
-			///	Ai(x)                       for x <= 0.0 
-			///	Ai(x) * exp(2/3 * x^(3/2))  for x >= 0.0.
+			///	Ai(x)                       for x &lt;= 0.0 
+			///	Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <returns>Airy function or the exponentially scaled 
@@ -3451,8 +3452,8 @@ namespace Altaxo.Calc
 		/// second kind or the double precision exponentially scaled Airy 
 		/// function of the second kind, depending on the value of the 
 		/// double precision argument x. Returns 
-		///     Bi(x)                      for x <= 0.0
-		///     Bi(x)*exp( -2/3 * x^(3/2)) for x >= 0.0 
+		///     Bi(x)                      for x &lt;= 0.0
+		///     Bi(x)*exp( -2/3 * x^(3/2)) for x &gt;= 0.0 
 		/// </summary>
 		/// <param name="x">The function argument.</param>
 		/// <returns>Airy function of the 
@@ -3703,8 +3704,8 @@ namespace Altaxo.Calc
 			/// second kind or the double precision exponentially scaled Airy 
 			/// function of the second kind, depending on the value of the 
 			/// double precision argument x. Returns 
-			///     Bi(x)                      for x <= 0.0
-			///     Bi(x)*exp( -2/3 * x^(3/2)) for x >= 0.0 
+			///     Bi(x)                      for x &lt;= 0.0
+			///     Bi(x)*exp( -2/3 * x^(3/2)) for x &gt;= 0.0 
 			/// </summary>
 			/// <param name="x">The function argument.</param>
 			/// <returns>Airy function of the 

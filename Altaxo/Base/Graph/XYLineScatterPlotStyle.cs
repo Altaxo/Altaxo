@@ -573,8 +573,8 @@ namespace Altaxo.Graph
 		/// </summary>
 		/// <param name="g">Graphic context</param>
 		/// <param name="pos">Position of the starting of the line</param>
- 
-		public override SizeF PaintSymbol(Graphics g, PointF pos, float width)
+		/// <param name="width">The width (overall size) of the symbol.</param>
+ 		public override SizeF PaintSymbol(Graphics g, PointF pos, float width)
 		{
 			GraphicsState gs = g.Save();
 			

@@ -296,6 +296,7 @@ namespace Altaxo.Data
 			/// <param name="selectedDataColumns">The selected data columns.</param>
 			/// <param name="selectedDataRows">The selected data rows.</param>
 			/// <param name="selectedPropertyColumns">The selected property columns.</param>
+			/// <param name="selectedPropertyRows">The selected property rows.</param>
 			public ClipboardMemento(DataTable table, IAscendingIntegerCollection selectedDataColumns, 
 				IAscendingIntegerCollection selectedDataRows,
 				IAscendingIntegerCollection selectedPropertyColumns,
@@ -668,6 +669,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="idx">The index of the column where to copy to, or replace.</param>
 		/// <param name="datac">The column to copy.</param>
+		/// <param name="name">The name of the column in the case the column is added or replaced.</param>
 		public virtual void CopyOrReplaceOrAdd(int idx, Altaxo.Data.DataColumn datac, string name)
 		{
 			Suspend();

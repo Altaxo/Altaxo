@@ -22,7 +22,7 @@ namespace Altaxo.Graph.Commands
 		public override void Run()
 		{
 			Altaxo.Graph.GUI.GraphController ctrl 
-				= Current.Workbench.ActiveWorkbenchWindow.ActiveViewContent 
+				= Current.Workbench.ActiveViewContent 
 				as Altaxo.Graph.GUI.GraphController;
 			
 			if(null!=ctrl)
@@ -271,8 +271,8 @@ namespace Altaxo.Graph.Commands
 		{
 			get 
 			{
-				if(null!=Current.Workbench && null!=Current.Workbench.ActiveWorkbenchWindow)
-					return Current.Workbench.ActiveWorkbenchWindow.ActiveViewContent as Altaxo.Graph.GUI.GraphController;
+				if(null!=Current.Workbench && null!=Current.Workbench.ActiveViewContent)
+					return Current.Workbench.ActiveViewContent as Altaxo.Graph.GUI.GraphController;
 				else
 					return null;
 			}

@@ -3,12 +3,12 @@ using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Main.GUI
 {
-	
+#if FormerGuiState
 	public class WindowsMdiWorkbenchLayout : ICSharpCode.SharpDevelop.Gui.IWorkbenchLayout
 	{
 
 		protected IWorkbenchWindow m_ActiveWorkbenchWindow;
-		protected IExtendedWorkbench       m_Workbench;
+		protected IWorkbench       m_Workbench;
 		protected System.Windows.Forms.Form m_WorkbenchForm;
 
 		/// <summary>
@@ -25,9 +25,9 @@ namespace Altaxo.Main.GUI
 		/// <summary>
 		/// Attaches this layout manager to a workbench object.
 		/// </summary>
-		public void Attach(IWorkbench workbench)
+		public void Attach(ICSharpCode.SharpDevelop.Gui.IWorkbench workbench)
 		{
-			m_Workbench = (IExtendedWorkbench)workbench;
+			m_Workbench = (Altaxo.Main.GUI.IWorkbench)workbench;
 
 			// 
 			if(m_Workbench.ViewObject!=null)
@@ -166,4 +166,6 @@ namespace Altaxo.Main.GUI
 		/// </summary>
 		public event EventHandler ActiveWorkbenchWindowChanged;
 	}
+
+#endif
 }

@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = ""
+                PostBuildEvent = "copy AltaxoGui.??? ..\..\..\..\rtd\bin"
                 RootNamespace = "AltaxoGUI"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -124,6 +124,21 @@
                     Project = "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "System.Drawing"
+                    AssemblyName = "System.Drawing"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
+                />
+                <Reference
+                    Name = "System.Windows.Forms"
+                    AssemblyName = "System.Windows.Forms"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
+                />
+                <Reference
+                    Name = "AltaxoCore"
+                    Project = "{7045C197-9DA8-4FA4-886C-992ACADD838F}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
@@ -134,7 +149,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\GUI\SDGraphControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\ProjectService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\ZippedStreamWrapper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -145,7 +170,7 @@
                 />
                 <File
                     RelPath = "Main\GUI\ProjectScout.cs"
-                    SubType = "Code"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
@@ -159,7 +184,72 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\GUI\Workbench1.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\WorkbenchForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\WorkbenchForm.resx"
+                    DependentUpon = "WorkbenchForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\GUI\WorkbenchViewController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\AddReferenceToOwnAssemblies.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\AltaxoToolbarService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\AutostartCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\FileCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\GraphCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\OpenScriptDialog.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\SelectedColumnCondition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\WorksheetCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Root\MainController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\SDWorksheetController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -1,7 +1,9 @@
 <AddIn name="SharpDevelop Core" author="Mike Krueger" copyright="GPL" url="http://www.icsharpcode.net" description="SharpDevelop core module" version="1.0.0">
 	<Runtime>
 		<Import assembly="../bin/SharpDevelop.Base.dll"/>
-		<Import assembly="../bin/AltaxoBase.dll"/>
+	  <Import assembly="../bin/AltaxoCore.dll"/>
+		<Import assembly="../bin/AltaxoBase.dll"/>		
+		<Import assembly="../bin/AltaxoGUI.dll"/>
 	</Runtime>
 	<Extension path="/SharpDevelop/Workbench/Ambiences">
 		<Class id=".NET" class="ICSharpCode.SharpDevelop.Services.NetAmbience"/>
@@ -248,7 +250,7 @@
 				<ToolbarItem id="Run" icon="Icons.16x16.RunProgramIcon" tooltip="${res:XML.MainMenu.RunMenu.Run.Description}" class="ICSharpCode.SharpDevelop.Commands.RunCommand"/>
 			</Conditional>
 		</ToolbarItem>
-		<Conditional activewindow="Altaxo.Graph.GUI.GraphController" action="Disable">
+		<Conditional activewindow="Altaxo.Graph.GUI.SDGraphController" action="Disable">
 			<ToolbarItem id="Graph">
 				<ToolbarItem id="New" icon="Icons.16x16.GraphPointerTool" tooltip="${res:XML.MainMenu.FileMenu.New.File.Description}" class="Altaxo.Graph.Commands.SelectPointerTool"/>
 				<ToolbarItem id="Open" icon="Icons.16x16.TextTool" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}" class="Altaxo.Graph.Commands.SelectTextTool"/>
@@ -274,21 +276,21 @@
 			<MenuItem id="SaveProject" label="${res:XML.MainMenu.FileMenu.SaveProject}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.SaveProject.Description}" shortcut="Control|S" class="Altaxo.Main.Commands.FileSave"/>
 			<MenuItem id="SaveProjectAs" label="${res:XML.MainMenu.FileMenu.SaveProjectAs}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.SaveProjectAs.Description}" class="Altaxo.Main.Commands.FileSaveAs"/>
 			<MenuItem id="SaveProjectSeparator" label="-"/>
-			<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
+			<Conditional activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
 				<MenuItem id="SaveWorksheetAs" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAs}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.SaveWorksheetAs.Description}" class="Altaxo.Worksheet.Commands.SaveAs"/>
 				<MenuItem id="SaveWorksheetAsTemplate" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate.Description}" class="Altaxo.Worksheet.Commands.SaveAsTemplate"/>
 			</Conditional>
-			<Conditional activewindow="Altaxo.Graph.GUI.GraphController" action="Exclude">
+			<Conditional activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
 				<MenuItem id="SaveGraphAsTemplate" label="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.SaveGraphAsTemplate.Description}" class="Altaxo.Graph.Commands.SaveGraphAsTemplate"/>
 			</Conditional>
 			<MenuItem id="SaveWindowSeparator" label="-"/>
 			<MenuItem id="PrintSeparator" label="-"/>
-			<Conditional activewindow="Altaxo.Graph.GUI.GraphController" action="Exclude">
+			<Conditional activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
 				<MenuItem id="GraphPageSetup" label="${res:XML.MainMenu.FileMenu.PageSetup}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.PageSetup.Description}" class="Altaxo.Graph.Commands.PageSetup"/>
 				<MenuItem id="GraphPrintPreview" label="${res:XML.MainMenu.FileMenu.PrintPreview}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.PrintPreview.Description}" class="Altaxo.Graph.Commands.PrintPreview"/>
 				<MenuItem id="GraphPrint" label="${res:XML.MainMenu.FileMenu.Print}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Print.Description}" class="Altaxo.Graph.Commands.Print"/>
 			</Conditional>
-			<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
+			<Conditional activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
 				<MenuItem id="ImportExportSeparator" label="-"/>
 				<MenuItem id="Import" label="${res:XML.MainMenu.FileMenu.Import}">
 					<MenuItem id="WorksheetImportAscii" label="${res:XML.MainMenu.FileMenu.Import.Ascii}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.Ascii.Description}" class="Altaxo.Worksheet.Commands.ImportAscii"/>
@@ -315,7 +317,7 @@
 			<MenuItem id="ViewItemsSeparator" label="-"/>
 			<MenuItem id="FullScreen" label="${res:XML.MainMenu.ViewMenu.FullScreen}" icon="Icons.16x16.FullScreen" description="${res:XML.MainMenu.ViewMenu.FullScreen.Description}" class="ICSharpCode.SharpDevelop.Commands.ToggleFullscreenCommand"/>
 		</MenuItem>
-		<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
+		<Conditional activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
 			<MenuItem id="Plot" label="${res:XML.MainMenu.PlotMenu}">
 				<Conditional selecteddatacolumns="*" action="Disable">
 					<MenuItem id="PlotLine" label="${res:XML.MainMenu.PlotMenu.PlotLine}" description="${res:XML.MainMenu.PlotMenu.PlotLine.Description}" class="Altaxo.Worksheet.Commands.PlotLine"/>
@@ -325,7 +327,7 @@
 				</Conditional>
 			</MenuItem>
 		</Conditional>
-		<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
+		<Conditional activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
 			<MenuItem id="Worksheet" label="${res:XML.MainMenu.WorksheetMenu}">
 				<MenuItem id="AddDataColumns" label="${res:XML.MainMenu.WorksheetMenu.AddDataColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddDataColumns.Description}" class="Altaxo.Worksheet.Commands.AddDataColumns"/>
 				<MenuItem id="AddPropertyColumns" label="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.AddPropertyColumns"/>
@@ -336,7 +338,7 @@
 				<MenuItem id="ExperimentalScriptWindow" label="${res:XML.MainMenu.WorksheetMenu.Transpose}" description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}" class="Altaxo.Worksheet.Commands.OpenScriptDialog"/>
 			</MenuItem>
 		</Conditional>
-		<Conditional activewindow="Altaxo.Graph.GUI.GraphController" action="Exclude">
+		<Conditional activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
 			<MenuItem id="Graph" label="${res:XML.MainMenu.GraphMenu}">
 				<MenuItem id="NewLayer" label="${res:XML.MainMenu.NewLayerMenu}">
 					<MenuItem id="NormalBottomXLeftY" label="${res:XML.MainMenu.NewLayerMenu.NormalBottomXLeftY}" description="${res:XML.MainMenu.NewLayerMenu.NormalBottomXLeftY.Description}" class="Altaxo.Graph.Commands.NewLayerNormalBottomXLeftY"/>
@@ -351,7 +353,7 @@
 				<MenuItem id="Duplicate" label="${res:XML.MainMenu.GraphMenu.Duplicate}" description="${res:XML.MainMenu.GraphMenu.Duplicate.Description}" class="Altaxo.Graph.Commands.DuplicateGraph"/>
 			</MenuItem>
 		</Conditional>
-		<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
+		<Conditional activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
 			<MenuItem id="Column" label="${res:XML.MainMenu.ColumnMenu}">
 				<MenuItem id="SetColumnAsX" label="${res:XML.MainMenu.ColumnMenu.SetColumnAsX}" description="${res:XML.MainMenu.ColumnMenu.SetColumnAsX.Description}" class="Altaxo.Worksheet.Commands.SetColumnAsX"/>
 				<MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}" class="Altaxo.Worksheet.Commands.RenameColumn"/>
@@ -360,7 +362,7 @@
 				<MenuItem id="SetColumnValues" label="${res:XML.MainMenu.ColumnMenu.SetColumnValues}" description="${res:XML.MainMenu.ColumnMenu.SetColumnValues.Description}" class="Altaxo.Worksheet.Commands.SetColumnValues"/>
 			</MenuItem>
 		</Conditional>
-		<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
+		<Conditional activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
 			<MenuItem id="WorksheetAnalysis" label="${res:XML.MainMenu.AnalysisMenu}">
 				<MenuItem id="1DFFT" label="${res:XML.MainMenu.AnalysisMenu.FFT}" description="${res:XML.MainMenu.AnalysisMenu.FFT.Description}" class="Altaxo.Worksheet.Commands.AnalysisFFT"/>
 				<MenuItem id="2DFFT" label="${res:XML.MainMenu.AnalysisMenu.2DFFT}" description="${res:XML.MainMenu.AnalysisMenu.2DFFT.Description}" class="Altaxo.Worksheet.Commands.Analysis2DFFT"/>

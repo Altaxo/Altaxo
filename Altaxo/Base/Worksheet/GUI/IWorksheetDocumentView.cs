@@ -121,7 +121,9 @@ namespace Altaxo.Worksheet.GUI
 	/// </summary>
 	public interface IWorksheetController : 
 		Altaxo.Main.GUI.IMVCController
-		/* Altaxo.Main.GUI.IWorkbenchContentController */
+		// Altaxo.Main.GUI.IWorkbenchContentController,
+		//ICSharpCode.SharpDevelop.Gui.IEditable,
+		//ICSharpCode.SharpDevelop.Gui.IClipboardHandler
 	
 	{
 		/// <summary>

@@ -726,7 +726,7 @@ namespace Altaxo.Calc.Random
 
 	
 	/// <summary>
-	/// Ran055: Knuth's shift & add random generator.
+	/// Ran055: Knuth's shift and add random generator.
 	/// Returns integer random numbers uniformly distributed within [0,2147483647]	
 	/// DON'T USE THIS GENERATOR IN SERIOUS APPLICATIONS BECAUSE IT HAS SERIOUS CORRELATIONS.
 	/// </summary>
@@ -1276,7 +1276,7 @@ namespace Altaxo.Calc.Random
 	///
 	///    NOTE: 
 	///                When you use it in your program, please let Matsumoto
-	///                <matumoto@math.keio.ac.jp> know it.
+	///                (matumoto@math.keio.ac.jp) know it.
 	///
 	/// </code></remarks>
 	public class Ran19937: RandomGenerator 
@@ -1559,7 +1559,7 @@ namespace Altaxo.Calc.Random
 	/// <summary>
 	/// Generates log-normal distributed random numbers.
 	/// </summary>
-	/// <remarks><code>					       	      //
+	/// <remarks><code>					       	      
 	/// Return log-normal distributed random deviates			      
 	/// with given mean and standard deviation stdev				      
 	/// according to the density function:					      
@@ -1790,7 +1790,7 @@ namespace Altaxo.Calc.Random
 	///	For parameter a >= 1 corresponds to algorithm GD in:	       	      
 	///	J. H. Ahrens and U. Dieter, Generating Gamma Variates by a	      
 	///	Modified Rejection Technique, Comm. ACM, 25, 1, 47-54 (1982).	      
-	///	For parameter 0 < a < 1 corresponds to algorithm GS in:	       	      
+	///	For parameter 0 &lt; a &lt; 1 corresponds to algorithm GS in:	       	      
 	///	J. H. Ahrens and U. Dieter, Computer Methods for Sampling 	     
 	///	from Gamma, Beta, Poisson and Binomial Distributions,		      
 	///	Computing, 12, 223-246 (1974).					      
@@ -2022,8 +2022,8 @@ namespace Altaxo.Calc.Random
 	/// Return Beta distributed random deviates according to the density	  
 	///								       	      
 	///                 a-1       b-1					    
-	///                x 	(1-x)						     
-	///  p   (x) dx = --------------- dx   for 0 < x < 1			    
+	///                x     (1-x)						     
+	///  p   (x) dx = --------------- dx   for 0 &lt; x &lt; 1			    
 	///   a,b              B(a,b)						     
 	///				   					     
 	///             =  0                   otherwise				     
@@ -2278,7 +2278,7 @@ namespace Altaxo.Calc.Random
 	/// The Poisson distribution gives the probability of a certain integer	     
 	/// number m of unit rate Poisson random events occurring in a given	     
 	/// interval of time x.							      
-	///				     j	-x			       	      
+	///                                   j  -x			       	      
 	///              j+eps               x  e				     
 	///      integral       p (m) dm  = -------	 	      	      	      
 	///              j-eps   x            j !		     	      	      
@@ -2498,7 +2498,7 @@ namespace Altaxo.Calc.Random
 	/// Upto now this generator passes all statistical tests on randomness.
 	/// Ranmar generates a sequence of random numbers uniformly distributed in the
 	/// interval (0,1), the end points excluded. 
-	/// The seed value must be in the range 0 <= ijkl <= 900 000 000.
+	/// The seed value must be in the range 0 &lt;= ijkl &lt;= 900 000 000.
 	///
 	/// References:
 	///      

@@ -391,6 +391,7 @@ namespace Altaxo.Worksheet
 		/// <param name="srctable">The table where the data come from.</param>
 		/// <param name="selectedColumns">The selected columns.</param>
 		/// <param name="selectedRows">The selected rows.</param>
+		/// <param name="selectedPropertyColumns">The selected property column(s).</param>
 		/// <param name="bHorizontalOrientedSpectrum">True if a spectrum is a single row, False if a spectrum is a single column.</param>
 		/// <returns></returns>
 		public static string PartialLeastSquaresAnalysis(

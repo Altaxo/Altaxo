@@ -145,8 +145,8 @@ namespace Altaxo.Main.Commands
 					{
 						Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
 						ZipOutputStream zippedStream = new ZipOutputStream(myStream);
-						Current.Project.SaveToZippedFile(zippedStream, info);
-						Current.ProjectService.SaveWindowStateToZippedFile(zippedStream, info);
+						Current.Project.SaveToZippedFile(new ZipOutputStreamWrapper(zippedStream), info);
+						Current.ProjectService.SaveWindowStateToZippedFile(new ZipOutputStreamWrapper(zippedStream), info);
 						zippedStream.Close();
 						Current.Project.IsDirty=false;
 

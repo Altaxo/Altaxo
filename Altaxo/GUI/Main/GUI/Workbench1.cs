@@ -29,7 +29,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 	/// <summary>
 	/// This is the a Workspace with a multiple document interface.
 	/// </summary>
-	public class Workbench1 : DefaultWorkbench
+	public class Workbench1 : DefaultWorkbench, Altaxo.Main.GUI.IWorkbench
 	{
 		readonly static string mainMenuPath    = "/SharpDevelop/Workbench/MainMenu";
 		readonly static string viewContentPath = "/SharpDevelop/Workbench/Views";
@@ -189,7 +189,48 @@ namespace ICSharpCode.SharpDevelop.Gui
 			{
 				base.OnClosing(e);
 			}
-		}
+    }
+    #region IWorkbench Members
 
-	}
+    ICollection Altaxo.Main.GUI.IWorkbench.ViewContentCollection
+    {
+      get
+      {
+        return this.ViewContentCollection;
+      }
+    }
+
+    public object ViewObject
+    {
+      get
+      {
+       return this;
+      }
+    }
+
+    object Altaxo.Main.GUI.IWorkbench.ActiveViewContent
+    {
+      get
+      {
+        return null!=this.ActiveWorkbenchWindow ? this.ActiveWorkbenchWindow.ActiveViewContent : null;
+      }
+    }
+
+    void Altaxo.Main.GUI.IWorkbench.ShowView(object o)
+    {
+      base.ShowView((IViewContent)o);
+    }
+
+    void Altaxo.Main.GUI.IWorkbench.CloseContent(object o)
+    {
+      base.CloseContent((IViewContent)o);
+    }
+
+    void Altaxo.Main.GUI.IWorkbench.CloseAllViews()
+    {
+      base.CloseAllViews();
+    }
+
+    #endregion
+  }
 }

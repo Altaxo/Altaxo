@@ -118,9 +118,9 @@ namespace Altaxo.Worksheet.GUI
 		private bool m_DragColumnWidth_InCapture;
 	
 
-		private bool                         m_CellEdit_IsArmed;
+		protected bool                         m_CellEdit_IsArmed;
 		private ClickedCellInfo							 m_CellEdit_EditedCell;
-		private System.Windows.Forms.TextBox m_CellEditControl; 
+		protected System.Windows.Forms.TextBox m_CellEditControl; 
 
 
 		/// <summary>

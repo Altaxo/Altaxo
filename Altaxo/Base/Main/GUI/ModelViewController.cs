@@ -16,8 +16,21 @@ namespace Altaxo.Main.GUI
 		/// Returns the model (document) that this controller controls
 		/// </summary>
 		object ModelObject { get; }
+
+	
 	}
 
+	/// <summary>
+	/// Extends IMVCController by the possibility to create a default view for it.
+	/// </summary>
+	public interface IMVCControllerEx : IMVCController
+	{
+		/// <summary>
+		/// Creates a default view object.
+		/// </summary>
+		/// <returns>The default view object, or null if there is no default view object.</returns>
+		object CreateDefaultViewObject();
+	}
 	/// <summary>
 	/// The interface that a view of the MVC (Model-View-Controller) model must implement.
 	/// </summary>

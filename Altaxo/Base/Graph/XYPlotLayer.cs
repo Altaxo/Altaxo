@@ -1053,6 +1053,7 @@ namespace Altaxo.Graph
 		///  Only intended to use by XYPlotLayerCollection! Sets the parent layer collection for this layer.
 		/// </summary>
 		/// <param name="lc">The layer collection this layer belongs to.</param>
+		/// <param name="number">The layer number assigned to this layer.</param>
 		protected internal void SetParentAndNumber(XYPlotLayerCollection lc, int number)
 		{
 			m_ParentLayerCollection = lc;

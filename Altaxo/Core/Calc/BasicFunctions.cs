@@ -5,15 +5,6 @@
 //                               dcbrt.cc
 
 
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns></returns>
-			/// <remarks><code>
-			/// 
-			/// </code></remarks>
-
 
 using System;
 

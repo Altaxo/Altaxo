@@ -34,13 +34,13 @@
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
                     NoStdLib = "false"
-                    NoWarn = ""
+                    NoWarn = "1591"
                     Optimize = "false"
                     OutputPath = "bin\Debug\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
-                    WarningLevel = "3"
+                    WarningLevel = "4"
                 />
                 <Config
                     Name = "Release"

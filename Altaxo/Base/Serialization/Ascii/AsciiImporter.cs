@@ -38,6 +38,8 @@ namespace Altaxo.Serialization.Ascii
 		/// calculates the priority of the result
 		/// </summary>
 		/// <param name="result"></param>
+		/// <param name="bestLine"></param>
+		/// <param name="sep"></param>
 		/// <returns></returns>
 		public static int GetPriorityOf(System.Collections.ArrayList result, AsciiLineAnalyzer.Separation sep, ref AsciiLineStructure bestLine)
 		{

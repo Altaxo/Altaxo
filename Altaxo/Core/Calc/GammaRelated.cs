@@ -247,7 +247,7 @@ namespace Altaxo.Calc
 
 		/// <summary>
 		/// Compute the log complementary incomplete Gamma function
-		/// for large x and for a<=x.
+		/// for large x and for a&lt;=x.
 		/// </summary>
 		/// <param name="a"></param>
 		/// <param name="x"></param>
@@ -987,7 +987,7 @@ namespace Altaxo.Calc
 		/// 
 		///   GammaIT = x**(-a)/Gamma(a) * integral from 0 to x of exp(-t) * t**(a-1.0)
 		/// 
-		/// for a > 0.0 and by analytic continuation for a <= 0.0.
+		/// for a > 0.0 and by analytic continuation for a &lt;= 0.0.
 		/// Gamma(x) is the complete gamma function of x.
 		/// </summary>
 		/// <param name="x">The function argument x.</param>
@@ -995,8 +995,8 @@ namespace Altaxo.Calc
 		/// <returns>Tricomi's incomplete gamma function of x and a.</returns>
 		/// <remarks>
 		/// GammaIT(x,a) is evaluated for arbitrary real values of a and for
-		/// non-negative values of x (even though GammaIT is defined for x < 0.0), 
-		/// except that for x = 0 and a <= 0.0, GammaIT is infinite,
+		/// non-negative values of x (even though GammaIT is defined for x &lt; 0.0), 
+		/// except that for x = 0 and a &lt;= 0.0, GammaIT is infinite,
 		/// which is a fatal error.
 		/// 
 		/// The function and both arguments are double.
@@ -1108,8 +1108,8 @@ namespace Altaxo.Calc
 		///   GammaIC(x,a) = integral from x to infinity of exp(-t) * t**(a-1)
 		///
 		/// GammaIC(x,a) is evaluated for arbitrary real values of A and for
-		/// non-negative values of x (even though GammaIC is defined for x < 0.0), 
-		/// except that for x = 0 and a <= 0.0, GammaIC is undefined.
+		/// non-negative values of x (even though GammaIC is defined for x &lt; 0.0), 
+		/// except that for x = 0 and a &lt;= 0.0, GammaIC is undefined.
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="a"></param>
@@ -1508,8 +1508,8 @@ namespace Altaxo.Calc
 
 
 		/// <summary>
-		/// Compute the log gamma correction term for large abs(z) when real(z) &gr 0.0 
-		/// and for large abs(imag(y)) when real(z) &le 0.0.  
+		/// Compute the log gamma correction term for large abs(z) when real(z) &gt; 0.0 
+		/// and for large abs(imag(y)) when real(z) &lt; 0.0.  
 		/// Matpack special functions - c9lgmc() log gamma correction term 
 		/// </summary>
 		/// <param name="zin">The complex parameter z.</param>

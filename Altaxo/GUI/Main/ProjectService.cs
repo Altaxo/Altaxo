@@ -17,91 +17,7 @@ using ICSharpCode.SharpDevelop.Services;
 namespace Altaxo.Main
 {
 	
-	/// <summary>
-	/// The event handler to indicate the changing of an Altaxo project.
-	/// </summary>
-	public delegate void ProjectEventHandler(object sender, ProjectEventArgs e);
 	
-
-	/// <summary>
-	/// Usefull to indicate the change of an Altaxo project.
-	/// </summary>
-	public class ProjectEventArgs : EventArgs
-	{
-		private Altaxo.AltaxoDocument project;
-		
-		/// <summary>
-		/// Returns the project which was changed.
-		/// </summary>
-		public Altaxo.AltaxoDocument Project
-		{
-			get 
-			{
-				return project;
-			}
-		}
-		
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="renamedProject">The project which was changed.</param>
-		public ProjectEventArgs(Altaxo.AltaxoDocument renamedProject)
-		{
-			this.project = renamedProject;
-		}
-	}
-
-
-	/// <summary>
-	/// The event handler to indicate the renaming of a project.
-	/// </summary>
-	public delegate void ProjectRenameEventHandler(object sender, ProjectRenameEventArgs e);
-	
-	/// <summary>
-	/// Usefull to indicate the renaming of an Altaxo project.
-	/// </summary>
-	public class ProjectRenameEventArgs : ProjectEventArgs
-	{ 
-	
-		string   oldName;
-		string   newName;
-		
-		/// <summary>
-		/// The name of the project before renaming.
-		/// </summary>
-	
-		public string OldName 
-		{
-			get 
-			{
-				return oldName;
-			}
-		}
-		
-		/// <summary>
-		/// The name of the project after renaming.
-		/// </summary>
-		public string NewName 
-		{
-			get 
-			{
-				return newName;
-			}
-		}
-		
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="renamedProject">The project renamed.</param>
-		/// <param name="oldName">The old name of the project.</param>
-		/// <param name="newName">The new name of the project.</param>
-		public ProjectRenameEventArgs(Altaxo.AltaxoDocument renamedProject, string oldName, string newName)
-			: base(renamedProject)
-		{
-			this.oldName = oldName;
-			this.newName = newName;
-		}
-	}
 
 	/// <summary>
 	/// Handles administrative tasks concerning an Altaxo project.
@@ -174,18 +90,16 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="zippedStream">The file stream of the zip file.</param>
 		/// <param name="info">The serialization info used to serialize the state of the main window.</param>
-		public void SaveWindowStateToZippedFile(ZipOutputStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
+		public void SaveWindowStateToZippedFile(ICompressedFileContainerStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info)
 		{
 			System.Text.StringBuilder errorText = new System.Text.StringBuilder();
 		
 		{
 			// first, we save our own state 
-			ZipEntry ZipEntry = new ZipEntry("Workbench/MainWindow.xml");
-			zippedStream.PutNextEntry(ZipEntry);
-			zippedStream.SetLevel(0);
-			try
+      zippedStream.StartFile("Workbench/MainWindow.xml",0);
+		try
 			{
-				info.BeginWriting(zippedStream);
+				info.BeginWriting(zippedStream.Stream);
 				info.AddValue("MainWindow",Current.Workbench);
 				info.EndWriting();
 			}
@@ -202,12 +116,10 @@ namespace Altaxo.Main
 				if(info.IsSerializable(ctrl))
 				{
 					i++;
-					ZipEntry ZipEntry = new ZipEntry("Workbench/Views/View"+i.ToString()+".xml");
-					zippedStream.PutNextEntry(ZipEntry);
-					zippedStream.SetLevel(0);
+					zippedStream.StartFile("Workbench/Views/View"+i.ToString()+".xml",0);
 					try
 					{
-						info.BeginWriting(zippedStream);
+						info.BeginWriting(zippedStream.Stream);
 						info.AddValue("WorkbenchViewContent",ctrl);
 						info.EndWriting();
 					}
@@ -239,7 +151,7 @@ namespace Altaxo.Main
 					System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
 					info.BeginReading(zipinpstream);
 					object readedobject = info.GetValue("Table",this);
-					if(readedobject is Main.GUI.IWorkbenchContentController)
+					if(readedobject is ICSharpCode.SharpDevelop.Gui.IViewContent)
 						restoredControllers.Add(readedobject);
 					info.EndReading();
 				}
@@ -252,9 +164,9 @@ namespace Altaxo.Main
 
 			foreach(IViewContent viewcontent in restoredControllers)
 			{
-				Main.GUI.IWorkbenchContentController ctrl = viewcontent as Main.GUI.IWorkbenchContentController;
+				Main.GUI.IMVCControllerEx ctrl = viewcontent as Main.GUI.IMVCControllerEx;
 				if(ctrl!=null)
-					ctrl.CreateView();
+					ctrl.CreateDefaultViewObject();
 				
 				if(viewcontent.Control != null)
 				{
@@ -342,10 +254,11 @@ namespace Altaxo.Main
 			ZipFile zipFile = new ZipFile(myStream);
 			Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
 			AltaxoDocument newdocument = new AltaxoDocument();
-			
+			ZipFileWrapper zipFileWrapper = new ZipFileWrapper(zipFile);
+
 			try
 			{
-				newdocument.RestoreFromZippedFile(zipFile,info);
+				newdocument.RestoreFromZippedFile(zipFileWrapper,info);
 			}
 			catch(Exception exc)
 			{
@@ -379,12 +292,13 @@ namespace Altaxo.Main
 			Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
 			System.IO.Stream myStream = new System.IO.FileStream(filename,System.IO.FileMode.OpenOrCreate);
 			ZipOutputStream zippedStream = new ZipOutputStream(myStream);
-		
+			ZipOutputStreamWrapper zippedStreamWrapper = new ZipOutputStreamWrapper(zippedStream);
+
 			Exception savingException = null;
 			try
 			{
-				this.openProject.SaveToZippedFile(zippedStream, info);
-				SaveWindowStateToZippedFile(zippedStream, info);
+				this.openProject.SaveToZippedFile(zippedStreamWrapper, info);
+				SaveWindowStateToZippedFile(zippedStreamWrapper, info);
 			}
 			catch(Exception exc)
 			{
@@ -582,7 +496,7 @@ namespace Altaxo.Main
 			//Altaxo.Main.GUI.WorkbenchForm wbvform = new Altaxo.Main.GUI.WorkbenchForm(this.View.Form);
 			//wbv_controller.View = wbvform;
 
-			Altaxo.Worksheet.GUI.WorksheetController ctrl = new Altaxo.Worksheet.GUI.WorksheetController(this.CurrentOpenProject.CreateNewTableLayout(table));
+			Altaxo.Worksheet.GUI.SDWorksheetController ctrl = new Altaxo.Worksheet.GUI.SDWorksheetController(this.CurrentOpenProject.CreateNewTableLayout(table));
 			Altaxo.Worksheet.GUI.WorksheetView view = new Altaxo.Worksheet.GUI.WorksheetView();
 			ctrl.View = view;
 
@@ -603,7 +517,7 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="table">The table for which a view must be found.</param>
 		/// <returns>The view content for the provided table.</returns>
-		public IViewContent OpenOrCreateWorksheetForTable(Altaxo.Data.DataTable table)
+		public object  OpenOrCreateWorksheetForTable(Altaxo.Data.DataTable table)
 		{
 	
 			// if a content exist that show that table, activate that content
@@ -667,7 +581,7 @@ namespace Altaxo.Main
 			if(graph==null)
 				graph = this.CurrentOpenProject.CreateNewGraphDocument();
 
-			Altaxo.Graph.GUI.GraphController ctrl = new Altaxo.Graph.GUI.GraphController(graph);
+			Altaxo.Graph.GUI.GraphController ctrl = new Altaxo.Graph.GUI.SDGraphController(graph);
 			Altaxo.Graph.GUI.GraphView view = new Altaxo.Graph.GUI.GraphView();
 			ctrl.View = view;
 
@@ -688,7 +602,7 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="graph">The graph for which a view must be found.</param>
 		/// <returns>The view content for the provided graph.</returns>
-		public IViewContent OpenOrCreateViewForGraph(Altaxo.Graph.GraphDocument graph)
+		public object  OpenOrCreateViewForGraph(Altaxo.Graph.GraphDocument graph)
 		{
 	
 			// if a content exist that show that graph, activate that content

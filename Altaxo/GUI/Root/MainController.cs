@@ -28,6 +28,7 @@ using System.Data;
 using System.Reflection;
 
 using Altaxo.Serialization;
+using Altaxo.Main;
 using Altaxo.Main.GUI;
 
 using ICSharpCode.SharpZipLib.Zip;
@@ -408,7 +409,7 @@ namespace Altaxo
 					}
 					else if(openFileDialog1.FilterIndex==2)
 					{
-						ZipFile zipFile = new ZipFile(myStream);
+						ZipFileWrapper zipFile = new ZipFileWrapper(new ZipFile(myStream));
 						Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
 						AltaxoDocument newdocument = new AltaxoDocument();
 						newdocument.RestoreFromZippedFile(zipFile,info);
@@ -539,7 +540,8 @@ namespace Altaxo
 						{
 							Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
 							ZipOutputStream zippedStream = new ZipOutputStream(myStream);
-							Current.Project.SaveToZippedFile(zippedStream, info);
+              ZipOutputStreamWrapper zippedWrapper = new ZipOutputStreamWrapper(zippedStream);
+							Current.Project.SaveToZippedFile(zippedWrapper, info);
 							this.SaveWindowStateToZippedFile(zippedStream, info);
 							zippedStream.Close();
 						}

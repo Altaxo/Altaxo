@@ -32,3 +32,7 @@ after restoring a document, the rows in a table seems to have line breaks -> fix
 					Bei Link von Layer0 -> Layer1 -> Layer2 wird die Achse von Layer2 nicht aktualisiert, wenn sie in Layer0 geändert wird -> fixed ->checked
 					
 					Breite des Symbols in der Legende hängt im Momemt vom TextFont ab, sollte aber besser von dem größten verwendeten Symbol abhängen.
+					
+					
+29.01.04
+					Versuch der Fouriertransformation mit 5? (oder 6) Punkten endete in unhandelt Exception

@@ -21,16 +21,10 @@ namespace Altaxo.Main
 		bool IsDirectory { get; }
 		string Name { get; }
 	}
+	
 
-	public interface IFileContainerItemEnumerator 
+	public interface ICompressedFileContainer : System.Collections.IEnumerable
 	{
-		IFileContainerItem Current { get; }
-		bool MoveNext();
-	}
-
-	public interface ICompressedFileContainer : System.Collections.IEnumerator	
-	{
-		System.IO.Stream GetInputStream(IFileContainerItem item);
-		IFileContainerItemEnumerator GetEnumerator();
+		System.IO.Stream GetInputStream(IFileContainerItem item);		
 	}
 }

@@ -22,7 +22,7 @@ namespace Altaxo.Worksheet.Commands
 		public override void Run()
 		{
 			Altaxo.Worksheet.GUI.WorksheetController ctrl 
-				= Current.Workbench.ActiveWorkbenchWindow.ActiveViewContent 
+				= Current.Workbench.ActiveViewContent 
 				as Altaxo.Worksheet.GUI.WorksheetController;
 			
 			if(null!=ctrl)

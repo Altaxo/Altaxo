@@ -553,7 +553,7 @@ namespace Altaxo.Data
 				IAscendingIntegerCollection selectedRows,
 				bool useOnlySelections)
 			{
-				this._collection										= collection;
+				this._collection					= collection;
 				this._selectedColumns			= selectedColumns;
 				this._selectedRows				= selectedRows;
 				this._useOnlySelections   = useOnlySelections;
@@ -811,6 +811,7 @@ namespace Altaxo.Data
 		/// </summary>
 		/// <param name="index">The column position where to replace or add.</param>
 		/// <param name="datac">The column from which the data should be copied or which should replace the existing column or which should be added.</param>
+		/// <param name="name">The name under which the column should be stored.</param>
 		public void CopyOrReplaceOrAdd(int index, DataColumn datac, string name)
 		{
 			if(index<ColumnCount)
@@ -1306,6 +1307,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// Removes the <code>selectedRows</code> from the table.
 		/// </summary>
+		/// <param name="selectedColumns">Collection of indices to the columns that should be removed.</param>
 		/// <param name="selectedRows">Collection of indizes to the rows that should be removed.</param>
 		public void RemoveRowsInColumns(IAscendingIntegerCollection selectedColumns, IAscendingIntegerCollection selectedRows)
 		{

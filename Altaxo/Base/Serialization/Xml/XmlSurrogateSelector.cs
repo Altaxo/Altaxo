@@ -50,6 +50,7 @@ namespace Altaxo.Serialization.Xml
 		/// Adds a surrogate for the type <code>type</code>.
 		/// </summary>
 		/// <param name="type">The type for which the surrogate is added.</param>
+		/// <param name="version">The version of the surrogate (higher version numbers mean more recent versions).</param>
 		/// <param name="surrogate">The surrogate used to serialize/deserialize the type.</param>
 		public void AddSurrogate(System.Type type, int version, IXmlSerializationSurrogate surrogate)
 		{

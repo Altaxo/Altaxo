@@ -112,24 +112,7 @@ namespace Altaxo.Main.GUI
 		
 		void FileSelected(object sender, EventArgs e)
 		{
-			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-			IFileService    fileService    = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-			FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
 			
-			foreach (FileList.FileListItem item in filelister.SelectedItems) 
-			{
-				
-				switch (Path.GetExtension(item.FullName)) 
-				{
-					case ".cmbx":
-					case ".prjx":
-						projectService.OpenCombine(item.FullName);
-						break;
-					default:
-						fileService.OpenFile(item.FullName);
-						break;
-				}
-			}
 		}
 		protected virtual void OnTitleChanged(EventArgs e)
 		{

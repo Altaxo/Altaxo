@@ -256,7 +256,7 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
 					} 
 					else 
 					{
-						IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+						ICSharpCode.SharpDevelop.Services.IProjectService projectService = (ICSharpCode.SharpDevelop.Services.IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.IProjectService));
 						FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
 						projectService.MarkFileDirty(window.ViewContent.ContentName);
 						fileUtilityService.ObservedSave(new FileOperationDelegate(window.ViewContent.Save), window.ViewContent.ContentName);
