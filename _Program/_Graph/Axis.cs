@@ -753,7 +753,7 @@ namespace Altaxo.Graph
 				// note: we normalized so that the "lesser values" are on the left
 				double org = Math.Pow(10,log10org);
 				double firstmajor = majorticks[0];
-				for(i=1;firstmajor*(10-i*minorincrement)>org;i++) {}
+				for(i=1;firstmajor*(10-i*minorincrement)>10*org;i++) {}
 				int leftminorticks = i-1;
 
 				// count the ticks on the right of the axis
@@ -768,9 +768,9 @@ namespace Altaxo.Graph
 
 				// now fill the array
 				for(j=0,i=leftminorticks;i>0;j++,i--)
-					minors[j] = firstmajor*(10-i*minorincrement); 
+					minors[j] = firstmajor*(1-i*minorincrement/10); 
 
-				for(k=0;k<majorcount;k++)
+				for(k=0;k<(majorcount-1);k++)
 				{
 					for(i=1;i<minorsperdecade;j++,i++)
 						minors[j] = majorticks[k]*(1+i*minorincrement);
