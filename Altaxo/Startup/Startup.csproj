@@ -114,10 +114,6 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "AltaxoBitmap.resources"
-                    BuildAction = "None"
-                />
-                <File
                     RelPath = "AltaxoCore.addin"
                     BuildAction = "Content"
                 />
@@ -131,12 +127,8 @@
                     BuildAction = "None"
                 />
                 <File
-                    RelPath = "AltaxoString.resources"
-                    BuildAction = "None"
-                />
-                <File
                     RelPath = "App.ico"
-                    BuildAction = "Content"
+                    BuildAction = "None"
                 />
                 <File
                     RelPath = "AssemblyInfo.cs"
@@ -153,7 +145,7 @@
                 />
                 <File
                     RelPath = "ForNextVersionOfSharpDev.txt"
-                    BuildAction = "Content"
+                    BuildAction = "None"
                 />
                 <File
                     RelPath = "SplashScreen.png"
@@ -165,7 +157,7 @@
                 />
                 <File
                     RelPath = "UsingSharpDevelopForAltaxo.txt"
-                    BuildAction = "Content"
+                    BuildAction = "None"
                 />
                 <File
                     RelPath = "Dialogs\AddInTreeSettingsHandler.cs"
