@@ -294,6 +294,9 @@ namespace Altaxo.Graph
 	/// </summary>
 	public class ExtendedTextGraphObject : GraphObject
 	{
+		public enum XAnchorPositionType { Left, Center, Right }
+		public enum YAnchorPositionType { Top, Center, Bottom }
+
 		protected string m_Text = ""; // the text, which contains the formatting symbols
 		protected Font m_Font;
 		protected BrushHolder m_BrushHolder = new BrushHolder(Color.Black);
@@ -301,6 +304,8 @@ namespace Altaxo.Graph
 		protected float m_LineSpacingFactor=1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
 		protected float m_ShadowLength=5.0f; // length of the background shadow in 1/72 inch
 
+		protected XAnchorPositionType m_XAnchorType = XAnchorPositionType.Left;
+		protected YAnchorPositionType m_YAnchorType = YAnchorPositionType.Top;
 
 		protected TextLine.TextLineCollection m_TextLines;
 		protected bool m_bStructureInSync=false; // true when the text was interpretet and the structure created
@@ -818,6 +823,18 @@ namespace Altaxo.Graph
 			}
 		}
 
+		public XAnchorPositionType XAnchor
+		{
+			get { return m_XAnchorType; }
+			set { m_XAnchorType=value; }
+		}
+
+		public YAnchorPositionType YAnchor
+		{
+			get { return m_YAnchorType; }
+			set { m_YAnchorType=value; }
+		}
+
 
 	
 		public static void MeasureFont(Graphics g, Font ft, out float cyLineSpace, out float cyAscent, out float cyDescent)
@@ -889,7 +906,23 @@ namespace Altaxo.Graph
 			System.Drawing.Drawing2D.GraphicsState gs = g.Save();
 			
 			g.TranslateTransform(X,Y);
+
 			g.RotateTransform(m_Rotation);
+
+			float xanchor=0;
+			float yanchor=0;
+			if(m_XAnchorType==XAnchorPositionType.Center)
+				xanchor = this.m_Size.Width/2.0f;
+			else if(m_XAnchorType==XAnchorPositionType.Right)
+				xanchor = this.m_Size.Width;
+
+			if(m_YAnchorType==YAnchorPositionType.Center)
+				yanchor = this.m_Size.Height/2.0f;
+			else if(m_YAnchorType==YAnchorPositionType.Bottom)
+				yanchor = this.m_Size.Height;
+			g.TranslateTransform(-xanchor,-yanchor);
+
+
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 
 			// first of all paint the background

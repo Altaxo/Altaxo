@@ -891,6 +891,13 @@ namespace Altaxo.Graph
 		
 		}
 
+		public void menuNewLayer_LinkedTopXRightY_XAxisStraight_Click(object sender, System.EventArgs e)
+		{
+			m_Graph.CreateNewLayerLinkedTopXRightY_XAxisStraight(CurrentLayerNumber);
+			InvalidateGraph();
+		}
+
+
 		#endregion
 
 		#region Mouse Handler Classes

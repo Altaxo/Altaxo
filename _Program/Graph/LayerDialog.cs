@@ -135,6 +135,34 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.TextBox m_Layer_edScale;
 		private System.Windows.Forms.Label label21;
 		private System.Windows.Forms.ComboBox m_Layer_cbLinkedLayer;
+		private System.Windows.Forms.ComboBox m_Layer_cbLeftType;
+		private System.Windows.Forms.ComboBox m_Layer_cbHeightType;
+		private System.Windows.Forms.GroupBox m_Layer_gbXAxis;
+		private System.Windows.Forms.GroupBox m_Layer_gbYAxis;
+		private System.Windows.Forms.RadioButton m_Layer_rbLinkXAxisNone;
+		private System.Windows.Forms.RadioButton m_Layer_rbLinkXAxisStraight;
+		private System.Windows.Forms.RadioButton m_Layer_rbLinkXAxisCustom;
+		private System.Windows.Forms.Label label23;
+		private System.Windows.Forms.Label label24;
+		private System.Windows.Forms.Label label25;
+		private System.Windows.Forms.Label label26;
+		private System.Windows.Forms.RadioButton m_Layer_rbLinkYAxisNone;
+		private System.Windows.Forms.RadioButton m_Layer_rbLinkYAxisStraight;
+		private System.Windows.Forms.RadioButton m_Layer_rbLinkYAxisCustom;
+		private System.Windows.Forms.Label label27;
+		private System.Windows.Forms.Label label28;
+		private System.Windows.Forms.Label label29;
+		private System.Windows.Forms.Label label30;
+		private System.Windows.Forms.TextBox m_Layer_edLinkYAxisEndB;
+		private System.Windows.Forms.TextBox m_Layer_edLinkYAxisEndA;
+		private System.Windows.Forms.TextBox m_Layer_edLinkYAxisOrgB;
+		private System.Windows.Forms.TextBox m_Layer_edLinkYAxisOrgA;
+		private System.Windows.Forms.TextBox m_Layer_edLinkXAxisEndB;
+		private System.Windows.Forms.TextBox m_Layer_edLinkXAxisEndA;
+		private System.Windows.Forms.TextBox m_Layer_edLinkXAxisOrgB;
+		private System.Windows.Forms.TextBox m_Layer_edLinkXAxisOrgA;
+		private System.Windows.Forms.ComboBox m_Layer_cbTopType;
+		private System.Windows.Forms.ComboBox m_Layer_cbWidthType;
 
 
 
@@ -267,6 +295,36 @@ namespace Altaxo.Graph
 			this.m_Content_tvDataAvail = new System.Windows.Forms.TreeView();
 			this.label13 = new System.Windows.Forms.Label();
 			this.m_Tab_Layer = new System.Windows.Forms.TabPage();
+			this.m_Layer_gbYAxis = new System.Windows.Forms.GroupBox();
+			this.m_Layer_edLinkYAxisEndB = new System.Windows.Forms.TextBox();
+			this.m_Layer_edLinkYAxisEndA = new System.Windows.Forms.TextBox();
+			this.m_Layer_edLinkYAxisOrgB = new System.Windows.Forms.TextBox();
+			this.m_Layer_edLinkYAxisOrgA = new System.Windows.Forms.TextBox();
+			this.label30 = new System.Windows.Forms.Label();
+			this.label29 = new System.Windows.Forms.Label();
+			this.label28 = new System.Windows.Forms.Label();
+			this.label27 = new System.Windows.Forms.Label();
+			this.m_Layer_rbLinkYAxisCustom = new System.Windows.Forms.RadioButton();
+			this.m_Layer_rbLinkYAxisStraight = new System.Windows.Forms.RadioButton();
+			this.m_Layer_rbLinkYAxisNone = new System.Windows.Forms.RadioButton();
+			this.m_Layer_gbXAxis = new System.Windows.Forms.GroupBox();
+			this.label26 = new System.Windows.Forms.Label();
+			this.label25 = new System.Windows.Forms.Label();
+			this.label24 = new System.Windows.Forms.Label();
+			this.m_Layer_edLinkXAxisEndB = new System.Windows.Forms.TextBox();
+			this.m_Layer_edLinkXAxisEndA = new System.Windows.Forms.TextBox();
+			this.m_Layer_edLinkXAxisOrgB = new System.Windows.Forms.TextBox();
+			this.m_Layer_edLinkXAxisOrgA = new System.Windows.Forms.TextBox();
+			this.label23 = new System.Windows.Forms.Label();
+			this.m_Layer_rbLinkXAxisCustom = new System.Windows.Forms.RadioButton();
+			this.m_Layer_rbLinkXAxisStraight = new System.Windows.Forms.RadioButton();
+			this.m_Layer_rbLinkXAxisNone = new System.Windows.Forms.RadioButton();
+			this.m_Layer_cbHeightType = new System.Windows.Forms.ComboBox();
+			this.m_Layer_cbWidthType = new System.Windows.Forms.ComboBox();
+			this.m_Layer_cbTopType = new System.Windows.Forms.ComboBox();
+			this.m_Layer_cbLeftType = new System.Windows.Forms.ComboBox();
+			this.m_Layer_cbLinkedLayer = new System.Windows.Forms.ComboBox();
+			this.label21 = new System.Windows.Forms.Label();
 			this.m_Layer_edScale = new System.Windows.Forms.TextBox();
 			this.label20 = new System.Windows.Forms.Label();
 			this.m_Layer_edRotation = new System.Windows.Forms.TextBox();
@@ -286,13 +344,13 @@ namespace Altaxo.Graph
 			this.m_Main_btOK = new System.Windows.Forms.Button();
 			this.m_Main_btCancel = new System.Windows.Forms.Button();
 			this.m_Main_btApply = new System.Windows.Forms.Button();
-			this.label21 = new System.Windows.Forms.Label();
-			this.m_Layer_cbLinkedLayer = new System.Windows.Forms.ComboBox();
 			this.m_PropTabCtrl.SuspendLayout();
 			this.m_Tab_Scale.SuspendLayout();
 			this.m_Tab_TitleAndFormat.SuspendLayout();
 			this.m_Tab_Contents.SuspendLayout();
 			this.m_Tab_Layer.SuspendLayout();
+			this.m_Layer_gbYAxis.SuspendLayout();
+			this.m_Layer_gbXAxis.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_PropTabCtrl
@@ -308,7 +366,7 @@ namespace Altaxo.Graph
 			this.m_PropTabCtrl.Location = new System.Drawing.Point(88, 32);
 			this.m_PropTabCtrl.Name = "m_PropTabCtrl";
 			this.m_PropTabCtrl.SelectedIndex = 0;
-			this.m_PropTabCtrl.Size = new System.Drawing.Size(464, 296);
+			this.m_PropTabCtrl.Size = new System.Drawing.Size(464, 320);
 			this.m_PropTabCtrl.TabIndex = 0;
 			this.m_PropTabCtrl.SelectedIndexChanged += new System.EventHandler(this.m_PropTabCtrl_SelectedIndexChanged);
 			// 
@@ -325,7 +383,7 @@ namespace Altaxo.Graph
 																																							this.label2});
 			this.m_Tab_Scale.Location = new System.Drawing.Point(4, 22);
 			this.m_Tab_Scale.Name = "m_Tab_Scale";
-			this.m_Tab_Scale.Size = new System.Drawing.Size(456, 270);
+			this.m_Tab_Scale.Size = new System.Drawing.Size(456, 294);
 			this.m_Tab_Scale.TabIndex = 0;
 			this.m_Tab_Scale.Text = "Scale";
 			// 
@@ -419,7 +477,7 @@ namespace Altaxo.Graph
 																																											 this.m_Format_chkShowAxis});
 			this.m_Tab_TitleAndFormat.Location = new System.Drawing.Point(4, 22);
 			this.m_Tab_TitleAndFormat.Name = "m_Tab_TitleAndFormat";
-			this.m_Tab_TitleAndFormat.Size = new System.Drawing.Size(456, 270);
+			this.m_Tab_TitleAndFormat.Size = new System.Drawing.Size(456, 294);
 			this.m_Tab_TitleAndFormat.TabIndex = 1;
 			this.m_Tab_TitleAndFormat.Text = "Title & Format";
 			// 
@@ -586,7 +644,7 @@ namespace Altaxo.Graph
 																																								 this.label13});
 			this.m_Tab_Contents.Location = new System.Drawing.Point(4, 22);
 			this.m_Tab_Contents.Name = "m_Tab_Contents";
-			this.m_Tab_Contents.Size = new System.Drawing.Size(456, 270);
+			this.m_Tab_Contents.Size = new System.Drawing.Size(456, 294);
 			this.m_Tab_Contents.TabIndex = 2;
 			this.m_Tab_Contents.Text = "Contents";
 			// 
@@ -714,6 +772,12 @@ namespace Altaxo.Graph
 			// m_Tab_Layer
 			// 
 			this.m_Tab_Layer.Controls.AddRange(new System.Windows.Forms.Control[] {
+																																							this.m_Layer_gbYAxis,
+																																							this.m_Layer_gbXAxis,
+																																							this.m_Layer_cbHeightType,
+																																							this.m_Layer_cbWidthType,
+																																							this.m_Layer_cbTopType,
+																																							this.m_Layer_cbLeftType,
 																																							this.m_Layer_cbLinkedLayer,
 																																							this.label21,
 																																							this.m_Layer_edScale,
@@ -730,13 +794,289 @@ namespace Altaxo.Graph
 																																							this.label15});
 			this.m_Tab_Layer.Location = new System.Drawing.Point(4, 22);
 			this.m_Tab_Layer.Name = "m_Tab_Layer";
-			this.m_Tab_Layer.Size = new System.Drawing.Size(456, 270);
+			this.m_Tab_Layer.Size = new System.Drawing.Size(456, 294);
 			this.m_Tab_Layer.TabIndex = 3;
 			this.m_Tab_Layer.Text = "Layer";
 			// 
+			// m_Layer_gbYAxis
+			// 
+			this.m_Layer_gbYAxis.Controls.AddRange(new System.Windows.Forms.Control[] {
+																																									this.m_Layer_edLinkYAxisEndB,
+																																									this.m_Layer_edLinkYAxisEndA,
+																																									this.m_Layer_edLinkYAxisOrgB,
+																																									this.m_Layer_edLinkYAxisOrgA,
+																																									this.label30,
+																																									this.label29,
+																																									this.label28,
+																																									this.label27,
+																																									this.m_Layer_rbLinkYAxisCustom,
+																																									this.m_Layer_rbLinkYAxisStraight,
+																																									this.m_Layer_rbLinkYAxisNone});
+			this.m_Layer_gbYAxis.Location = new System.Drawing.Point(296, 144);
+			this.m_Layer_gbYAxis.Name = "m_Layer_gbYAxis";
+			this.m_Layer_gbYAxis.Size = new System.Drawing.Size(152, 136);
+			this.m_Layer_gbYAxis.TabIndex = 20;
+			this.m_Layer_gbYAxis.TabStop = false;
+			this.m_Layer_gbYAxis.Text = "Link Y Axis:";
+			// 
+			// m_Layer_edLinkYAxisEndB
+			// 
+			this.m_Layer_edLinkYAxisEndB.Location = new System.Drawing.Point(96, 112);
+			this.m_Layer_edLinkYAxisEndB.Name = "m_Layer_edLinkYAxisEndB";
+			this.m_Layer_edLinkYAxisEndB.Size = new System.Drawing.Size(40, 20);
+			this.m_Layer_edLinkYAxisEndB.TabIndex = 17;
+			this.m_Layer_edLinkYAxisEndB.Text = "";
+			// 
+			// m_Layer_edLinkYAxisEndA
+			// 
+			this.m_Layer_edLinkYAxisEndA.Location = new System.Drawing.Point(40, 112);
+			this.m_Layer_edLinkYAxisEndA.Name = "m_Layer_edLinkYAxisEndA";
+			this.m_Layer_edLinkYAxisEndA.Size = new System.Drawing.Size(40, 20);
+			this.m_Layer_edLinkYAxisEndA.TabIndex = 16;
+			this.m_Layer_edLinkYAxisEndA.Text = "";
+			// 
+			// m_Layer_edLinkYAxisOrgB
+			// 
+			this.m_Layer_edLinkYAxisOrgB.Location = new System.Drawing.Point(96, 88);
+			this.m_Layer_edLinkYAxisOrgB.Name = "m_Layer_edLinkYAxisOrgB";
+			this.m_Layer_edLinkYAxisOrgB.Size = new System.Drawing.Size(40, 20);
+			this.m_Layer_edLinkYAxisOrgB.TabIndex = 15;
+			this.m_Layer_edLinkYAxisOrgB.Text = "";
+			// 
+			// m_Layer_edLinkYAxisOrgA
+			// 
+			this.m_Layer_edLinkYAxisOrgA.Location = new System.Drawing.Point(40, 88);
+			this.m_Layer_edLinkYAxisOrgA.Name = "m_Layer_edLinkYAxisOrgA";
+			this.m_Layer_edLinkYAxisOrgA.Size = new System.Drawing.Size(40, 20);
+			this.m_Layer_edLinkYAxisOrgA.TabIndex = 14;
+			this.m_Layer_edLinkYAxisOrgA.Text = "";
+			// 
+			// label30
+			// 
+			this.label30.Location = new System.Drawing.Point(8, 112);
+			this.label30.Name = "label30";
+			this.label30.Size = new System.Drawing.Size(24, 16);
+			this.label30.TabIndex = 13;
+			this.label30.Text = "End";
+			this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// label29
+			// 
+			this.label29.Location = new System.Drawing.Point(8, 88);
+			this.label29.Name = "label29";
+			this.label29.Size = new System.Drawing.Size(24, 16);
+			this.label29.TabIndex = 12;
+			this.label29.Text = "Org";
+			this.label29.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// label28
+			// 
+			this.label28.Location = new System.Drawing.Point(96, 72);
+			this.label28.Name = "label28";
+			this.label28.Size = new System.Drawing.Size(16, 8);
+			this.label28.TabIndex = 11;
+			this.label28.Text = "b";
+			this.label28.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// label27
+			// 
+			this.label27.Location = new System.Drawing.Point(48, 72);
+			this.label27.Name = "label27";
+			this.label27.Size = new System.Drawing.Size(16, 8);
+			this.label27.TabIndex = 10;
+			this.label27.Text = "a";
+			this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// m_Layer_rbLinkYAxisCustom
+			// 
+			this.m_Layer_rbLinkYAxisCustom.Location = new System.Drawing.Point(8, 48);
+			this.m_Layer_rbLinkYAxisCustom.Name = "m_Layer_rbLinkYAxisCustom";
+			this.m_Layer_rbLinkYAxisCustom.TabIndex = 3;
+			this.m_Layer_rbLinkYAxisCustom.Text = "Custom (a+bx)";
+			this.m_Layer_rbLinkYAxisCustom.CheckedChanged += new System.EventHandler(this.OnLayer_LinkYAxisCheckedChanged);
+			// 
+			// m_Layer_rbLinkYAxisStraight
+			// 
+			this.m_Layer_rbLinkYAxisStraight.Location = new System.Drawing.Point(8, 32);
+			this.m_Layer_rbLinkYAxisStraight.Name = "m_Layer_rbLinkYAxisStraight";
+			this.m_Layer_rbLinkYAxisStraight.TabIndex = 2;
+			this.m_Layer_rbLinkYAxisStraight.Text = "Straight (1:1)";
+			this.m_Layer_rbLinkYAxisStraight.CheckedChanged += new System.EventHandler(this.OnLayer_LinkYAxisCheckedChanged);
+			// 
+			// m_Layer_rbLinkYAxisNone
+			// 
+			this.m_Layer_rbLinkYAxisNone.Location = new System.Drawing.Point(8, 16);
+			this.m_Layer_rbLinkYAxisNone.Name = "m_Layer_rbLinkYAxisNone";
+			this.m_Layer_rbLinkYAxisNone.TabIndex = 1;
+			this.m_Layer_rbLinkYAxisNone.Text = "None";
+			this.m_Layer_rbLinkYAxisNone.CheckedChanged += new System.EventHandler(this.OnLayer_LinkYAxisCheckedChanged);
+			// 
+			// m_Layer_gbXAxis
+			// 
+			this.m_Layer_gbXAxis.Controls.AddRange(new System.Windows.Forms.Control[] {
+																																									this.label26,
+																																									this.label25,
+																																									this.label24,
+																																									this.m_Layer_edLinkXAxisEndB,
+																																									this.m_Layer_edLinkXAxisEndA,
+																																									this.m_Layer_edLinkXAxisOrgB,
+																																									this.m_Layer_edLinkXAxisOrgA,
+																																									this.label23,
+																																									this.m_Layer_rbLinkXAxisCustom,
+																																									this.m_Layer_rbLinkXAxisStraight,
+																																									this.m_Layer_rbLinkXAxisNone});
+			this.m_Layer_gbXAxis.Location = new System.Drawing.Point(296, 0);
+			this.m_Layer_gbXAxis.Name = "m_Layer_gbXAxis";
+			this.m_Layer_gbXAxis.Size = new System.Drawing.Size(152, 136);
+			this.m_Layer_gbXAxis.TabIndex = 19;
+			this.m_Layer_gbXAxis.TabStop = false;
+			this.m_Layer_gbXAxis.Text = "Link X Axis:";
+			// 
+			// label26
+			// 
+			this.label26.Location = new System.Drawing.Point(96, 72);
+			this.label26.Name = "label26";
+			this.label26.Size = new System.Drawing.Size(16, 8);
+			this.label26.TabIndex = 10;
+			this.label26.Text = "b";
+			this.label26.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// label25
+			// 
+			this.label25.Location = new System.Drawing.Point(48, 72);
+			this.label25.Name = "label25";
+			this.label25.Size = new System.Drawing.Size(16, 8);
+			this.label25.TabIndex = 9;
+			this.label25.Text = "a";
+			this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// label24
+			// 
+			this.label24.Location = new System.Drawing.Point(8, 112);
+			this.label24.Name = "label24";
+			this.label24.Size = new System.Drawing.Size(24, 16);
+			this.label24.TabIndex = 8;
+			this.label24.Text = "End";
+			this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// m_Layer_edLinkXAxisEndB
+			// 
+			this.m_Layer_edLinkXAxisEndB.Location = new System.Drawing.Point(88, 112);
+			this.m_Layer_edLinkXAxisEndB.Name = "m_Layer_edLinkXAxisEndB";
+			this.m_Layer_edLinkXAxisEndB.Size = new System.Drawing.Size(40, 20);
+			this.m_Layer_edLinkXAxisEndB.TabIndex = 7;
+			this.m_Layer_edLinkXAxisEndB.Text = "";
+			// 
+			// m_Layer_edLinkXAxisEndA
+			// 
+			this.m_Layer_edLinkXAxisEndA.Location = new System.Drawing.Point(40, 112);
+			this.m_Layer_edLinkXAxisEndA.Name = "m_Layer_edLinkXAxisEndA";
+			this.m_Layer_edLinkXAxisEndA.Size = new System.Drawing.Size(40, 20);
+			this.m_Layer_edLinkXAxisEndA.TabIndex = 6;
+			this.m_Layer_edLinkXAxisEndA.Text = "";
+			// 
+			// m_Layer_edLinkXAxisOrgB
+			// 
+			this.m_Layer_edLinkXAxisOrgB.Location = new System.Drawing.Point(88, 88);
+			this.m_Layer_edLinkXAxisOrgB.Name = "m_Layer_edLinkXAxisOrgB";
+			this.m_Layer_edLinkXAxisOrgB.Size = new System.Drawing.Size(40, 20);
+			this.m_Layer_edLinkXAxisOrgB.TabIndex = 5;
+			this.m_Layer_edLinkXAxisOrgB.Text = "";
+			// 
+			// m_Layer_edLinkXAxisOrgA
+			// 
+			this.m_Layer_edLinkXAxisOrgA.Location = new System.Drawing.Point(40, 88);
+			this.m_Layer_edLinkXAxisOrgA.Name = "m_Layer_edLinkXAxisOrgA";
+			this.m_Layer_edLinkXAxisOrgA.Size = new System.Drawing.Size(40, 20);
+			this.m_Layer_edLinkXAxisOrgA.TabIndex = 4;
+			this.m_Layer_edLinkXAxisOrgA.Text = "";
+			// 
+			// label23
+			// 
+			this.label23.Location = new System.Drawing.Point(8, 88);
+			this.label23.Name = "label23";
+			this.label23.Size = new System.Drawing.Size(24, 16);
+			this.label23.TabIndex = 3;
+			this.label23.Text = "Org";
+			this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// m_Layer_rbLinkXAxisCustom
+			// 
+			this.m_Layer_rbLinkXAxisCustom.Location = new System.Drawing.Point(8, 48);
+			this.m_Layer_rbLinkXAxisCustom.Name = "m_Layer_rbLinkXAxisCustom";
+			this.m_Layer_rbLinkXAxisCustom.TabIndex = 2;
+			this.m_Layer_rbLinkXAxisCustom.Text = "Custom (a+bx)";
+			this.m_Layer_rbLinkXAxisCustom.CheckedChanged += new System.EventHandler(this.OnLayer_LinkXAxisCheckedChanged);
+			// 
+			// m_Layer_rbLinkXAxisStraight
+			// 
+			this.m_Layer_rbLinkXAxisStraight.Location = new System.Drawing.Point(8, 32);
+			this.m_Layer_rbLinkXAxisStraight.Name = "m_Layer_rbLinkXAxisStraight";
+			this.m_Layer_rbLinkXAxisStraight.TabIndex = 1;
+			this.m_Layer_rbLinkXAxisStraight.Text = "Straight (1:1)";
+			this.m_Layer_rbLinkXAxisStraight.CheckedChanged += new System.EventHandler(this.OnLayer_LinkXAxisCheckedChanged);
+			// 
+			// m_Layer_rbLinkXAxisNone
+			// 
+			this.m_Layer_rbLinkXAxisNone.Location = new System.Drawing.Point(8, 16);
+			this.m_Layer_rbLinkXAxisNone.Name = "m_Layer_rbLinkXAxisNone";
+			this.m_Layer_rbLinkXAxisNone.TabIndex = 0;
+			this.m_Layer_rbLinkXAxisNone.Text = "None";
+			this.m_Layer_rbLinkXAxisNone.CheckedChanged += new System.EventHandler(this.OnLayer_LinkXAxisCheckedChanged);
+			// 
+			// m_Layer_cbHeightType
+			// 
+			this.m_Layer_cbHeightType.Location = new System.Drawing.Point(96, 128);
+			this.m_Layer_cbHeightType.Name = "m_Layer_cbHeightType";
+			this.m_Layer_cbHeightType.Size = new System.Drawing.Size(168, 21);
+			this.m_Layer_cbHeightType.TabIndex = 17;
+			this.m_Layer_cbHeightType.Text = "comboBox1";
+			// 
+			// m_Layer_cbWidthType
+			// 
+			this.m_Layer_cbWidthType.Location = new System.Drawing.Point(96, 104);
+			this.m_Layer_cbWidthType.Name = "m_Layer_cbWidthType";
+			this.m_Layer_cbWidthType.Size = new System.Drawing.Size(168, 21);
+			this.m_Layer_cbWidthType.TabIndex = 16;
+			this.m_Layer_cbWidthType.Text = "comboBox1";
+			// 
+			// m_Layer_cbTopType
+			// 
+			this.m_Layer_cbTopType.Location = new System.Drawing.Point(96, 72);
+			this.m_Layer_cbTopType.Name = "m_Layer_cbTopType";
+			this.m_Layer_cbTopType.Size = new System.Drawing.Size(168, 21);
+			this.m_Layer_cbTopType.TabIndex = 15;
+			this.m_Layer_cbTopType.Text = "comboBox1";
+			// 
+			// m_Layer_cbLeftType
+			// 
+			this.m_Layer_cbLeftType.Location = new System.Drawing.Point(96, 48);
+			this.m_Layer_cbLeftType.Name = "m_Layer_cbLeftType";
+			this.m_Layer_cbLeftType.Size = new System.Drawing.Size(168, 21);
+			this.m_Layer_cbLeftType.TabIndex = 14;
+			this.m_Layer_cbLeftType.Text = "comboBox1";
+			this.m_Layer_cbLeftType.SelectionChangeCommitted += new System.EventHandler(this.OnLayer_cbLeftType_SelectionChangeCommitted);
+			// 
+			// m_Layer_cbLinkedLayer
+			// 
+			this.m_Layer_cbLinkedLayer.Location = new System.Drawing.Point(96, 8);
+			this.m_Layer_cbLinkedLayer.Name = "m_Layer_cbLinkedLayer";
+			this.m_Layer_cbLinkedLayer.Size = new System.Drawing.Size(168, 21);
+			this.m_Layer_cbLinkedLayer.TabIndex = 13;
+			this.m_Layer_cbLinkedLayer.Text = "None";
+			this.m_Layer_cbLinkedLayer.SelectedValueChanged += new System.EventHandler(this.OnLayer_cbLinkedLayer_SelectedValueChanged);
+			// 
+			// label21
+			// 
+			this.label21.Location = new System.Drawing.Point(8, 8);
+			this.label21.Name = "label21";
+			this.label21.Size = new System.Drawing.Size(88, 16);
+			this.label21.TabIndex = 12;
+			this.label21.Text = "Linked to layer:";
+			// 
 			// m_Layer_edScale
 			// 
-			this.m_Layer_edScale.Location = new System.Drawing.Point(56, 96);
+			this.m_Layer_edScale.Location = new System.Drawing.Point(56, 192);
 			this.m_Layer_edScale.Name = "m_Layer_edScale";
 			this.m_Layer_edScale.Size = new System.Drawing.Size(40, 20);
 			this.m_Layer_edScale.TabIndex = 11;
@@ -745,7 +1085,7 @@ namespace Altaxo.Graph
 			// 
 			// label20
 			// 
-			this.label20.Location = new System.Drawing.Point(8, 96);
+			this.label20.Location = new System.Drawing.Point(8, 192);
 			this.label20.Name = "label20";
 			this.label20.Size = new System.Drawing.Size(48, 16);
 			this.label20.TabIndex = 10;
@@ -754,7 +1094,7 @@ namespace Altaxo.Graph
 			// 
 			// m_Layer_edRotation
 			// 
-			this.m_Layer_edRotation.Location = new System.Drawing.Point(56, 72);
+			this.m_Layer_edRotation.Location = new System.Drawing.Point(56, 168);
 			this.m_Layer_edRotation.Name = "m_Layer_edRotation";
 			this.m_Layer_edRotation.Size = new System.Drawing.Size(40, 20);
 			this.m_Layer_edRotation.TabIndex = 9;
@@ -763,7 +1103,7 @@ namespace Altaxo.Graph
 			// 
 			// label19
 			// 
-			this.label19.Location = new System.Drawing.Point(8, 72);
+			this.label19.Location = new System.Drawing.Point(8, 168);
 			this.label19.Name = "label19";
 			this.label19.Size = new System.Drawing.Size(48, 16);
 			this.label19.TabIndex = 8;
@@ -772,7 +1112,7 @@ namespace Altaxo.Graph
 			// 
 			// m_Layer_edHeight
 			// 
-			this.m_Layer_edHeight.Location = new System.Drawing.Point(112, 32);
+			this.m_Layer_edHeight.Location = new System.Drawing.Point(40, 128);
 			this.m_Layer_edHeight.Name = "m_Layer_edHeight";
 			this.m_Layer_edHeight.Size = new System.Drawing.Size(40, 20);
 			this.m_Layer_edHeight.TabIndex = 7;
@@ -781,16 +1121,16 @@ namespace Altaxo.Graph
 			// 
 			// label18
 			// 
-			this.label18.Location = new System.Drawing.Point(72, 32);
+			this.label18.Location = new System.Drawing.Point(0, 128);
 			this.label18.Name = "label18";
 			this.label18.Size = new System.Drawing.Size(40, 16);
 			this.label18.TabIndex = 6;
 			this.label18.Text = "Height";
-			this.label18.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.label18.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// m_Layer_edWidth
 			// 
-			this.m_Layer_edWidth.Location = new System.Drawing.Point(112, 8);
+			this.m_Layer_edWidth.Location = new System.Drawing.Point(40, 104);
 			this.m_Layer_edWidth.Name = "m_Layer_edWidth";
 			this.m_Layer_edWidth.Size = new System.Drawing.Size(40, 20);
 			this.m_Layer_edWidth.TabIndex = 5;
@@ -799,16 +1139,16 @@ namespace Altaxo.Graph
 			// 
 			// label17
 			// 
-			this.label17.Location = new System.Drawing.Point(72, 8);
+			this.label17.Location = new System.Drawing.Point(0, 104);
 			this.label17.Name = "label17";
 			this.label17.Size = new System.Drawing.Size(40, 16);
 			this.label17.TabIndex = 4;
 			this.label17.Text = "Width";
-			this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// m_Layer_edTopPosition
 			// 
-			this.m_Layer_edTopPosition.Location = new System.Drawing.Point(32, 32);
+			this.m_Layer_edTopPosition.Location = new System.Drawing.Point(40, 72);
 			this.m_Layer_edTopPosition.Name = "m_Layer_edTopPosition";
 			this.m_Layer_edTopPosition.Size = new System.Drawing.Size(40, 20);
 			this.m_Layer_edTopPosition.TabIndex = 3;
@@ -817,7 +1157,7 @@ namespace Altaxo.Graph
 			// 
 			// label16
 			// 
-			this.label16.Location = new System.Drawing.Point(8, 32);
+			this.label16.Location = new System.Drawing.Point(16, 72);
 			this.label16.Name = "label16";
 			this.label16.Size = new System.Drawing.Size(24, 16);
 			this.label16.TabIndex = 2;
@@ -826,7 +1166,7 @@ namespace Altaxo.Graph
 			// 
 			// m_Layer_edLeftPosition
 			// 
-			this.m_Layer_edLeftPosition.Location = new System.Drawing.Point(32, 8);
+			this.m_Layer_edLeftPosition.Location = new System.Drawing.Point(40, 48);
 			this.m_Layer_edLeftPosition.Name = "m_Layer_edLeftPosition";
 			this.m_Layer_edLeftPosition.Size = new System.Drawing.Size(40, 20);
 			this.m_Layer_edLeftPosition.TabIndex = 1;
@@ -835,7 +1175,7 @@ namespace Altaxo.Graph
 			// 
 			// label15
 			// 
-			this.label15.Location = new System.Drawing.Point(8, 8);
+			this.label15.Location = new System.Drawing.Point(16, 48);
 			this.label15.Name = "label15";
 			this.label15.Size = new System.Drawing.Size(24, 16);
 			this.label15.TabIndex = 0;
@@ -846,7 +1186,7 @@ namespace Altaxo.Graph
 			// 
 			this.m_Tab_MajorLabels.Location = new System.Drawing.Point(4, 22);
 			this.m_Tab_MajorLabels.Name = "m_Tab_MajorLabels";
-			this.m_Tab_MajorLabels.Size = new System.Drawing.Size(456, 270);
+			this.m_Tab_MajorLabels.Size = new System.Drawing.Size(456, 294);
 			this.m_Tab_MajorLabels.TabIndex = 4;
 			this.m_Tab_MajorLabels.Text = "Major Labels";
 			// 
@@ -854,7 +1194,7 @@ namespace Altaxo.Graph
 			// 
 			this.m_Tab_MinorLabels.Location = new System.Drawing.Point(4, 22);
 			this.m_Tab_MinorLabels.Name = "m_Tab_MinorLabels";
-			this.m_Tab_MinorLabels.Size = new System.Drawing.Size(456, 270);
+			this.m_Tab_MinorLabels.Size = new System.Drawing.Size(456, 294);
 			this.m_Tab_MinorLabels.TabIndex = 5;
 			this.m_Tab_MinorLabels.Text = "Minor Labels";
 			// 
@@ -862,7 +1202,7 @@ namespace Altaxo.Graph
 			// 
 			this.m_Tab_Grid.Location = new System.Drawing.Point(4, 22);
 			this.m_Tab_Grid.Name = "m_Tab_Grid";
-			this.m_Tab_Grid.Size = new System.Drawing.Size(456, 270);
+			this.m_Tab_Grid.Size = new System.Drawing.Size(456, 294);
 			this.m_Tab_Grid.TabIndex = 6;
 			this.m_Tab_Grid.Text = "Grid";
 			// 
@@ -876,7 +1216,7 @@ namespace Altaxo.Graph
 			// 
 			// m_Main_btOK
 			// 
-			this.m_Main_btOK.Location = new System.Drawing.Point(88, 336);
+			this.m_Main_btOK.Location = new System.Drawing.Point(88, 360);
 			this.m_Main_btOK.Name = "m_Main_btOK";
 			this.m_Main_btOK.Size = new System.Drawing.Size(56, 24);
 			this.m_Main_btOK.TabIndex = 2;
@@ -885,7 +1225,7 @@ namespace Altaxo.Graph
 			// 
 			// m_Main_btCancel
 			// 
-			this.m_Main_btCancel.Location = new System.Drawing.Point(192, 336);
+			this.m_Main_btCancel.Location = new System.Drawing.Point(192, 360);
 			this.m_Main_btCancel.Name = "m_Main_btCancel";
 			this.m_Main_btCancel.Size = new System.Drawing.Size(48, 24);
 			this.m_Main_btCancel.TabIndex = 3;
@@ -894,34 +1234,17 @@ namespace Altaxo.Graph
 			// 
 			// m_Main_btApply
 			// 
-			this.m_Main_btApply.Location = new System.Drawing.Point(280, 336);
+			this.m_Main_btApply.Location = new System.Drawing.Point(280, 360);
 			this.m_Main_btApply.Name = "m_Main_btApply";
 			this.m_Main_btApply.Size = new System.Drawing.Size(48, 24);
 			this.m_Main_btApply.TabIndex = 4;
 			this.m_Main_btApply.Text = "Apply";
 			this.m_Main_btApply.Click += new System.EventHandler(this.OnMain_btApply_Click);
 			// 
-			// label21
-			// 
-			this.label21.Location = new System.Drawing.Point(192, 16);
-			this.label21.Name = "label21";
-			this.label21.Size = new System.Drawing.Size(80, 16);
-			this.label21.TabIndex = 12;
-			this.label21.Text = "Linked to layer";
-			// 
-			// m_Layer_cbLinkedLayer
-			// 
-			this.m_Layer_cbLinkedLayer.Location = new System.Drawing.Point(296, 8);
-			this.m_Layer_cbLinkedLayer.Name = "m_Layer_cbLinkedLayer";
-			this.m_Layer_cbLinkedLayer.Size = new System.Drawing.Size(128, 21);
-			this.m_Layer_cbLinkedLayer.TabIndex = 13;
-			this.m_Layer_cbLinkedLayer.Text = "None";
-			this.m_Layer_cbLinkedLayer.SelectedValueChanged += new System.EventHandler(this.OnLayer_cbLinkedLayer_SelectedValueChanged);
-			// 
 			// LayerDialog
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(560, 366);
+			this.ClientSize = new System.Drawing.Size(560, 386);
 			this.Controls.AddRange(new System.Windows.Forms.Control[] {
 																																	this.m_Main_btApply,
 																																	this.m_Main_btCancel,
@@ -935,6 +1258,8 @@ namespace Altaxo.Graph
 			this.m_Tab_TitleAndFormat.ResumeLayout(false);
 			this.m_Tab_Contents.ResumeLayout(false);
 			this.m_Tab_Layer.ResumeLayout(false);
+			this.m_Layer_gbYAxis.ResumeLayout(false);
+			this.m_Layer_gbXAxis.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -2094,21 +2419,42 @@ namespace Altaxo.Graph
 
 		#endregion
 
-
-
-
-	#region "Tab_Layer_Methods"
+		#region Tab_Layer_Methods
 		private void InitTabLayer()
 		{
 
-			this.m_Layer_edHeight.Text = m_Layer.Size.Height.ToString();
-			this.m_Layer_edWidth.Text  = m_Layer.Size.Width.ToString();
+			this.m_Layer_edHeight.Text = m_Layer.UserHeight.ToString();
+			this.m_Layer_edWidth.Text  = m_Layer.UserWidth.ToString();
 
-			this.m_Layer_edLeftPosition.Text = m_Layer.Position.X.ToString();
-			this.m_Layer_edTopPosition.Text = m_Layer.Position.Y.ToString();
+			this.m_Layer_edLeftPosition.Text = m_Layer.UserXPosition.ToString();
+			this.m_Layer_edTopPosition.Text = m_Layer.UserYPosition.ToString();
 
 			this.m_Layer_edRotation.Text = m_Layer.Rotation.ToString();
 			this.m_Layer_edScale.Text = m_Layer.Scale.ToString();
+
+
+			// Fill the comboboxes of the x and y position with possible values
+			this.m_Layer_cbLeftType.Items.Clear();
+			this.m_Layer_cbTopType.Items.Clear();
+			foreach(string name in Enum.GetNames(typeof(Layer.PositionType)))
+			{
+				this.m_Layer_cbLeftType.Items.Add(name);
+				this.m_Layer_cbTopType.Items.Add(name);
+			}
+			this.m_Layer_cbLeftType.SelectedItem =Enum.GetName(typeof(Layer.PositionType),m_Layer.UserXPositionType);
+			this.m_Layer_cbTopType.SelectedItem =Enum.GetName(typeof(Layer.PositionType),m_Layer.UserYPositionType);
+
+
+			// Fill the comboboxes of the width  and height with possible values
+			this.m_Layer_cbWidthType.Items.Clear();
+			this.m_Layer_cbHeightType.Items.Clear();
+			foreach(string name in Enum.GetNames(typeof(Layer.SizeType)))
+			{
+				this.m_Layer_cbWidthType.Items.Add(name);
+				this.m_Layer_cbHeightType.Items.Add(name);
+			}
+			this.m_Layer_cbWidthType.SelectedItem =Enum.GetName(typeof(Layer.SizeType),m_Layer.UserWidthType);
+			this.m_Layer_cbHeightType.SelectedItem =Enum.GetName(typeof(Layer.SizeType),m_Layer.UserHeightType);
 
 
 			// Fill the combobox of linked layer with possible values
@@ -2129,22 +2475,56 @@ namespace Altaxo.Graph
 			else
 				this.m_Layer_cbLinkedLayer.SelectedItem = "Layer " + m_Layer.LinkedLayer.Number;
 
-					// indicate this tab is now initialized
-					m_PProp[pgLayer].SetInitialized();
+
+			// initialize the axis link properties
+			if(m_Layer.XAxisLinkType==Layer.AxisLinkType.None)
+				this.m_Layer_rbLinkXAxisNone.Checked=true;
+			else if(m_Layer.XAxisLinkType==Layer.AxisLinkType.Straight)
+				this.m_Layer_rbLinkXAxisStraight.Checked=true;
+			else
+				this.m_Layer_rbLinkXAxisCustom.Checked=true;
+
+
+			if(m_Layer.YAxisLinkType==Layer.AxisLinkType.None)
+				this.m_Layer_rbLinkYAxisNone.Checked=true;
+			else if(m_Layer.YAxisLinkType==Layer.AxisLinkType.Straight)
+				this.m_Layer_rbLinkYAxisStraight.Checked=true;
+			else
+				this.m_Layer_rbLinkYAxisCustom.Checked=true;
+
+			this.m_Layer_edLinkXAxisOrgA.Text = m_Layer.LinkXAxisOrgA.ToString();
+			this.m_Layer_edLinkXAxisEndA.Text = m_Layer.LinkXAxisEndA.ToString();
+			this.m_Layer_edLinkXAxisOrgB.Text = m_Layer.LinkXAxisOrgB.ToString();
+			this.m_Layer_edLinkXAxisEndB.Text = m_Layer.LinkXAxisEndB.ToString();
+
+
+			bool bEnab= m_Layer.IsLinked==true && m_Layer.XAxisLinkType!=Layer.AxisLinkType.None;
+			this.m_Layer_edLinkXAxisOrgA.Enabled=bEnab;
+			this.m_Layer_edLinkXAxisEndA.Enabled=bEnab;
+			this.m_Layer_edLinkXAxisOrgB.Enabled=bEnab;
+			this.m_Layer_edLinkXAxisEndB.Enabled=bEnab;
+
+
+			this.m_Layer_edLinkYAxisOrgA.Text = m_Layer.LinkYAxisOrgA.ToString();
+			this.m_Layer_edLinkYAxisEndA.Text = m_Layer.LinkYAxisEndA.ToString();
+			this.m_Layer_edLinkYAxisOrgB.Text = m_Layer.LinkYAxisOrgB.ToString();
+			this.m_Layer_edLinkYAxisEndB.Text = m_Layer.LinkYAxisEndB.ToString();
+
+			bEnab= m_Layer.IsLinked==true && m_Layer.YAxisLinkType!=Layer.AxisLinkType.None;
+			this.m_Layer_edLinkYAxisOrgA.Enabled=bEnab;
+			this.m_Layer_edLinkYAxisEndA.Enabled=bEnab;
+			this.m_Layer_edLinkYAxisOrgB.Enabled=bEnab;
+			this.m_Layer_edLinkYAxisEndB.Enabled=bEnab;
+
+
+			// indicate this tab is now initialized
+			m_PProp[pgLayer].SetInitialized();
 		}
 
 		protected int ApplyTabLayer()
 		{
 			try
 			{
-				float height = System.Convert.ToSingle(this.m_Layer_edHeight.Text);
-				float width  = System.Convert.ToSingle(this.m_Layer_edWidth.Text);
-
-				float leftpos = System.Convert.ToSingle(this.m_Layer_edLeftPosition.Text);
-				float toppos  = System.Convert.ToSingle(this.m_Layer_edTopPosition.Text);
-
-				float angle  = System.Convert.ToSingle(this.m_Layer_edRotation.Text);
-				float scale  = System.Convert.ToSingle(this.m_Layer_edScale.Text);
 
 				int linkedlayernumber=-1;
 
@@ -2153,12 +2533,48 @@ namespace Altaxo.Graph
 					linkedlayernumber= System.Convert.ToInt32(selitem.Substring(6));
 
 
+				m_Layer.LinkedLayer = linkedlayernumber<0 ? null : m_Layer.ParentLayerList[linkedlayernumber];
+
+			
 				// now update the layer
-				m_Layer.Position = new PointF(leftpos,toppos);
-				m_Layer.Size = new SizeF(width,height);
+				float angle  = System.Convert.ToSingle(this.m_Layer_edRotation.Text);
+				float scale  = System.Convert.ToSingle(this.m_Layer_edScale.Text);
 				m_Layer.Rotation = angle;
 				m_Layer.Scale    = scale;
-				m_Layer.LinkedLayer = linkedlayernumber<0 ? null : m_Layer.ParentLayerList[linkedlayernumber];
+
+
+				double width  = System.Convert.ToSingle(this.m_Layer_edWidth.Text);
+				Layer.SizeType widthtype = (Layer.SizeType)Enum.Parse(typeof(Layer.SizeType),this.m_Layer_cbWidthType.Text);
+				double height = System.Convert.ToSingle(this.m_Layer_edHeight.Text);
+				Layer.SizeType heighttype = (Layer.SizeType)Enum.Parse(typeof(Layer.SizeType),this.m_Layer_cbHeightType.Text);
+				m_Layer.SetSize(width,widthtype,height,heighttype);
+
+
+				double leftpos = System.Convert.ToSingle(this.m_Layer_edLeftPosition.Text);
+				Layer.PositionType leftpostype = (Layer.PositionType)Enum.Parse(typeof(Layer.PositionType),this.m_Layer_cbLeftType.Text);
+				double toppos  = System.Convert.ToSingle(this.m_Layer_edTopPosition.Text);
+				Layer.PositionType toppostype = (Layer.PositionType)Enum.Parse(typeof(Layer.PositionType),this.m_Layer_cbTopType.Text);
+				m_Layer.SetPosition(leftpos,leftpostype,toppos,toppostype);
+
+			
+				// update the x axis link properties
+				if(m_Layer.LinkedLayer!=null && false==this.m_Layer_rbLinkXAxisNone.Checked)
+				{
+					double orgA = System.Convert.ToDouble(this.m_Layer_edLinkXAxisOrgA.Text);
+					double orgB = System.Convert.ToDouble(this.m_Layer_edLinkXAxisOrgB.Text);
+					double endA = System.Convert.ToDouble(this.m_Layer_edLinkXAxisEndA.Text);
+					double endB = System.Convert.ToDouble(this.m_Layer_edLinkXAxisEndB.Text);
+					m_Layer.SetXAxisLinkParameter(orgA,orgB,endA,endB);
+				}
+				// update the y axis link properties
+				if(m_Layer.LinkedLayer!=null && false==this.m_Layer_rbLinkYAxisNone.Checked)
+				{
+					double orgA = System.Convert.ToDouble(this.m_Layer_edLinkYAxisOrgA.Text);
+					double orgB = System.Convert.ToDouble(this.m_Layer_edLinkYAxisOrgB.Text);
+					double endA = System.Convert.ToDouble(this.m_Layer_edLinkYAxisEndA.Text);
+					double endB = System.Convert.ToDouble(this.m_Layer_edLinkYAxisEndB.Text);
+					m_Layer.SetYAxisLinkParameter(orgA,orgB,endA,endB);
+				}
 			}
 			catch(Exception)
 			{
@@ -2202,10 +2618,50 @@ namespace Altaxo.Graph
 			m_PProp[pgLayer].SetDirty();
 		}
 
+		private void OnLayer_LinkXAxisCheckedChanged(object sender, System.EventArgs e)
+		{
+			m_PProp[pgLayer].SetDirty();
+
+			bool bEnab = m_Layer_rbLinkXAxisCustom.Checked;
+			this.m_Layer_edLinkXAxisOrgA.Enabled=bEnab;
+			this.m_Layer_edLinkXAxisEndA.Enabled=bEnab;
+			this.m_Layer_edLinkXAxisOrgB.Enabled=bEnab;
+			this.m_Layer_edLinkXAxisEndB.Enabled=bEnab;
+			
+			if(m_Layer_rbLinkXAxisStraight.Checked)
+			{
+				this.m_Layer_edLinkXAxisOrgA.Text = "0";
+				this.m_Layer_edLinkXAxisEndA.Text = "0";
+				this.m_Layer_edLinkXAxisOrgB.Text = "1";
+				this.m_Layer_edLinkXAxisEndB.Text = "1";
+			}
+		}
+
+		private void OnLayer_LinkYAxisCheckedChanged(object sender, System.EventArgs e)
+		{
+			m_PProp[pgLayer].SetDirty();
+
+			bool bEnab = m_Layer_rbLinkYAxisCustom.Checked;
+			this.m_Layer_edLinkYAxisOrgA.Enabled=bEnab;
+			this.m_Layer_edLinkYAxisEndA.Enabled=bEnab;
+			this.m_Layer_edLinkYAxisOrgB.Enabled=bEnab;
+			this.m_Layer_edLinkYAxisEndB.Enabled=bEnab;
+
+			if(m_Layer_rbLinkYAxisStraight.Checked)
+			{
+				this.m_Layer_edLinkYAxisOrgA.Text = "0";
+				this.m_Layer_edLinkYAxisEndA.Text = "0";
+				this.m_Layer_edLinkYAxisOrgB.Text = "1";
+				this.m_Layer_edLinkYAxisEndB.Text = "1";
+			}
+		}
+
+		private void OnLayer_cbLeftType_SelectionChangeCommitted(object sender, System.EventArgs e)
+		{
+			m_PProp[pgLayer].SetDirty();
+		}
+
 
 		#endregion // Tab_Layer_Methods
-
-
-
 	}
 }

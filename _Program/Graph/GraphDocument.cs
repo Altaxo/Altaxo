@@ -154,7 +154,7 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
-		/// Creates a new layer with bottom x axis and left y axis, which is not linked.
+		/// Creates a new layer with bottom x axis and left y axis, which is linked to the same position with top x axis and right y axis.
 		/// </summary>
 		public void CreateNewLayerLinkedTopXRightY(int linklayernumber)
 		{
@@ -169,6 +169,27 @@ namespace Altaxo.Graph
 			newlayer.BottomAxisEnabled=false;
 			newlayer.LeftAxisEnabled=false;
 		}
+
+
+		/// <summary>
+		/// Creates a new layer with bottom x axis and left y axis, which is linked to the same position with top x axis and right y axis. The x axis is linked straight to the x axis of the linked layer.
+		/// </summary>
+		public void CreateNewLayerLinkedTopXRightY_XAxisStraight(int linklayernumber)
+		{
+			Layer newlayer= new Layer(DefaultLayerPosition,DefaultLayerSize);
+			Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
+			// link the new layer to the last old layer
+			newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
+			newlayer.SetPosition(0,Layer.PositionType.RelativeThisNearToLinkedLayerNear,0,Layer.PositionType.RelativeThisNearToLinkedLayerNear);
+			newlayer.SetSize(1,Layer.SizeType.RelativeToLinkedLayer,1,Layer.SizeType.RelativeToLinkedLayer);
+
+			// set enabling of axis
+			newlayer.BottomAxisEnabled=false;
+			newlayer.LeftAxisEnabled=false;
+
+			newlayer.XAxisLinkType = Layer.AxisLinkType.Straight;
+		}
+
 
 
 		#endregion

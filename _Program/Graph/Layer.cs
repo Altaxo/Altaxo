@@ -30,6 +30,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	public class Layer
 	{
+		#region Enumerations
 
 		/// <summary>
 		/// The type of the size (i.e. width and height values.
@@ -125,8 +126,17 @@ namespace Altaxo.Graph
 			/// <summary>
 			/// The axis is linked straight, i.e. it has the same origin and end value as the corresponding axis of the linked layer.
 			/// </summary>
-			Straight
+			Straight,
+			/// <summary>
+			/// The axis is linked custom, i.e. origin and end of axis are translated linearly using formulas org'=a1+b1*org, end'=a2+b2*end.
+			/// </summary>
+			Custom
 		}
+
+
+		#endregion
+
+		#region Member variables
 
 		/// <summary>
 		/// The cached layer position in points (1/72 inch) relative to the upper left corner
@@ -138,6 +148,7 @@ namespace Altaxo.Graph
 		/// The layers x position value, either absolute or relative, as determined by <see cref="m_LayerXPositionType"/>.
 		/// </summary>
 		protected double m_LayerXPosition = 119;
+
 		/// <summary>
 		/// The type of the x position value, see <see cref="PositionType"/>.
 		/// </summary>
@@ -147,21 +158,11 @@ namespace Altaxo.Graph
 		/// The layers y position value, either absolute or relative, as determined by <see cref="m_LayerYPositionType"/>.
 		/// </summary>
 		protected double m_LayerYPosition = 80;
+
 		/// <summary>
 		/// The type of the y position value, see <see cref="PositionType"/>.
 		/// </summary>
 		protected PositionType m_LayerYPositionType=PositionType.AbsoluteValue;
-
-
-		/// <summary>
-		/// The type of the link of the x axis to the x axis of the linked layer.
-		/// </summary>
-		protected AxisLinkType m_XAxisLinkType=AxisLinkType.None;
-
-		/// <summary>
-		/// The type of the link of the y axis to the y axis of the linked layer.
-		/// </summary>
-		protected AxisLinkType m_YAxisLinkType=AxisLinkType.None;
 
 		/// <summary>
 		/// The size of the layer in points (1/72 inch).
@@ -177,6 +178,7 @@ namespace Altaxo.Graph
 		/// relative value as pointed out by <see cref="m_LayerWidthType"/>.
 		/// </summary>
 		protected double m_LayerWidth=626;
+
 		/// <summary>
 		/// The type of the value for the layer width, see <see cref="SizeType"/>.
 		/// </summary>
@@ -187,11 +189,11 @@ namespace Altaxo.Graph
 		/// relative value as pointed out by <see cref="m_LayerHeightType"/>.
 		/// </summary>
 		protected double m_LayerHeight= 407;
+
 		/// <summary>
 		/// The type of the value for the layer height, see <see cref="SizeType"/>.
 		/// </summary>
 		protected SizeType m_LayerHeightType=SizeType.AbsoluteValue;
-
 
 		/// <summary>
 		/// The rotation angle (in degrees) of the layer.
@@ -223,6 +225,11 @@ namespace Altaxo.Graph
 		protected SimpleLabelStyle m_RightLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Right);
 		protected SimpleLabelStyle m_TopLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Top);
 
+		protected ExtendedTextGraphObject m_LeftAxisTitle = null;
+		protected ExtendedTextGraphObject m_BottomAxisTitle = null;
+		protected ExtendedTextGraphObject m_RightAxisTitle = null;
+		protected ExtendedTextGraphObject m_TopAxisTitle = null;
+
 		protected GraphObjectCollection m_GraphObjects = new GraphObjectCollection();
 
 		protected PlotAssociationList m_PlotAssociations;
@@ -232,41 +239,63 @@ namespace Altaxo.Graph
 		/// The parent layer collection wich contains this layer (or null if not member of such collection).
 		/// </summary>
 		protected LayerCollection m_ParentLayerCollection=null;
+	
 		/// <summary>
 		/// The index inside the parent collection of this layer (or 0 if not member of such collection).
 		/// </summary>
 		protected int             m_LayerNumber=0;
-
 
 		/// <summary>
 		/// The layer to which this layer is linked to, or null if this layer is not linked.
 		/// </summary>
 		protected Layer						m_LinkedLayer;
 
+		/// <summary>Indicate if x-axis is linked to the linked layer x axis.</summary>
+		protected bool						m_LinkXAxis;
+	
+		/// <summary>The value a of x-axis link for link of origin: org' = a + b*org.</summary>
+		protected double					m_LinkXAxisOrgA;
+	
+		/// <summary>The value b of x-axis link for link of origin: org' = a + b*org.</summary>
+		protected double					m_LinkXAxisOrgB;
 
+		/// <summary>The value a of x-axis link for link of end: end' = a + b*end.</summary>
+		protected double					m_LinkXAxisEndA;
+	
+		/// <summary>The value b of x-axis link for link of end: end' = a + b*end.</summary>
+		protected double					m_LinkXAxisEndB;
+
+		/// <summary>Indicate if y-axis is linked to the linked layer y axis.</summary>
+		protected bool						m_LinkYAxis;
+
+		/// <summary>The value a of y-axis link for link of origin: org' = a + b*org.</summary>
+		protected double					m_LinkYAxisOrgA;
+	
+		/// <summary>The value b of y-axis link for link of origin: org' = a + b*org.</summary>
+		protected double					m_LinkYAxisOrgB;
+	
+		/// <summary>The value a of y-axis link for link of end: end' = a + b*end.</summary>
+		protected double					m_LinkYAxisEndA;
+	
+		/// <summary>The value b of y-axis link for link of end: end' = a + b*end.</summary>
+		protected double					m_LinkYAxisEndB;
+
+		#endregion
+
+		#region Event definitions
+
+		/// <summary>Fired when the size of the layer changed.</summary>
 		public event System.EventHandler SizeChanged;
-		protected void OnSizeChanged()
-		{
-			if(null!=SizeChanged)
-				SizeChanged(this,new System.EventArgs());
-		}
-
+	
+		/// <summary>Fired when the position of the layer changed.</summary>
 		public event System.EventHandler PositionChanged;
-		protected void OnPositionChanged()
-		{
-			if(null!=PositionChanged)
-				PositionChanged(this,new System.EventArgs());
-		}
-
+	
+		/// <summary>Fired when one of the axis changed its origin or its end.</summary>
 		public event System.EventHandler AxesChanged;
-		protected virtual void OnAxesChanged()
-		{
-			if(null!=AxesChanged)
-				AxesChanged(this,new System.EventArgs());
-		}
+
+		#endregion
 
 		#region Constructors
-
 
 		/// <summary>
 		/// Creates a layer with standard position and size using the size of the printable area.
@@ -277,6 +306,7 @@ namespace Altaxo.Graph
 		{
 		}
 
+	
 		/// <summary>
 		/// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
 		/// </summary>
@@ -297,190 +327,30 @@ namespace Altaxo.Graph
 
 			m_xAxis.AxisChanged += new System.EventHandler(this.OnXAxisChanged);
 			m_yAxis.AxisChanged += new System.EventHandler(this.OnYAxisChanged);
+		
+		
+			m_LeftAxisTitle = new ExtendedTextGraphObject();
+			m_LeftAxisTitle.Rotation=-90;
+			m_LeftAxisTitle.XAnchor = ExtendedTextGraphObject.XAnchorPositionType.Center;
+			m_LeftAxisTitle.YAnchor = ExtendedTextGraphObject.YAnchorPositionType.Bottom;
+			m_LeftAxisTitle.Text = "Y axis";
+			m_LeftAxisTitle.Position = new PointF(-0.125f*size.Width,0.5f*size.Height);
+
+			m_BottomAxisTitle = new ExtendedTextGraphObject();
+			m_BottomAxisTitle.Rotation=0;
+			m_BottomAxisTitle.XAnchor = ExtendedTextGraphObject.XAnchorPositionType.Center;
+			m_BottomAxisTitle.YAnchor = ExtendedTextGraphObject.YAnchorPositionType.Top;
+			m_BottomAxisTitle.Text = "X axis";
+			m_BottomAxisTitle.Position = new PointF(0.5f*size.Width,1.125f*size.Height);
+
+
+
 		}
 
+	
 		#endregion
 
-		#region "Layer Properties"
-
-		public PointF Position
-		{
-			get { return this.m_LayerPosition; }
-			set
-			{
-				SetPosition(value.X,PositionType.AbsoluteValue,value.Y,PositionType.AbsoluteValue);
-			}
-		}
-
-		public SizeF Size
-		{
-			get { return this.m_LayerSize; }
-			set
-			{
-				SetSize(value.Width,SizeType.AbsoluteValue, value.Height,SizeType.AbsoluteValue);
-			}
-		}
-
-		public float Rotation
-		{
-			get { return this.m_LayerAngle; }
-			set
-			{
-				this.m_LayerAngle = value;
-				this.CalculateMatrix();
-				this.OnInvalidate();
-			}
-		}
-
-		public float Scale
-		{
-			get { return this.m_LayerScale; }
-			set
-			{
-				this.m_LayerScale = value;
-				this.CalculateMatrix();
-				this.OnInvalidate();
-			}
-		}
-
-
-
-
-		public Axis XAxis
-		{
-			get { return m_xAxis; }
-			set
-			{
-				if(null!=m_xAxis)
-					m_xAxis.AxisChanged -= new System.EventHandler(this.OnXAxisChanged);
-				
-				m_xAxis = value;
-
-				if(null!=m_xAxis)
-					m_xAxis.AxisChanged += new System.EventHandler(this.OnXAxisChanged);
-
-
-				// now we have to inform all the PlotAssociations that a new axis was loaded
-				foreach(PlotAssociation pa in this.PlotAssociations)
-				{
-					// first ensure the right data bound object is set on the PlotAssociation
-					pa.SetXBoundsFromTemplate(m_xAxis.DataBounds); // ensure that data bound object is of the right type
-					// now merge the bounds with x and yAxis
-					pa.MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
-				}
-			}
-		}
-
-		public Axis YAxis
-		{
-			get { return m_yAxis; }
-			set
-			{
-				if(null!=m_yAxis)
-					m_yAxis.AxisChanged -= new System.EventHandler(this.OnYAxisChanged);
-				
-				m_yAxis = value;
-
-				if(null!=m_yAxis)
-					m_yAxis.AxisChanged += new System.EventHandler(this.OnYAxisChanged);
-
-
-				// now we have to inform all the PlotAssociations that a new axis was loaded
-				foreach(PlotAssociation pa in this.PlotAssociations)
-				{
-					// first ensure the right data bound object is set on the PlotAssociation
-					pa.SetYBoundsFromTemplate(m_yAxis.DataBounds); // ensure that data bound object is of the right type
-					// now merge the bounds with x and yAxis
-					pa.MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
-				}
-			}
-		}
-
-
-		public XYLayerAxisStyle LeftAxisStyle
-		{
-			get { return m_LeftAxisStyle; }
-		}
-		public XYLayerAxisStyle BottomAxisStyle
-		{
-			get { return m_BottomAxisStyle; }
-		}
-		public XYLayerAxisStyle RightAxisStyle
-		{
-			get { return m_RightAxisStyle; }
-		}
-		public XYLayerAxisStyle TopAxisStyle
-		{
-			get { return m_TopAxisStyle; }
-		}
-
-
-		public LabelStyle LeftLabelStyle
-		{
-			get { return m_LeftLabelStyle; }
-		}
-		public LabelStyle RightLabelStyle
-		{
-			get { return m_RightLabelStyle; }
-		}
-		public LabelStyle BottomLabelStyle
-		{
-			get { return m_BottomLabelStyle; }
-		}
-		public LabelStyle TopLabelStyle
-		{
-			get { return m_TopLabelStyle; }
-		}
-		
-		public bool LeftAxisEnabled
-		{
-			get { return this.m_ShowLeftAxis; }
-			set
-			{
-				if(value!=this.m_ShowLeftAxis)
-				{
-					m_ShowLeftAxis = value;
-					this.OnInvalidate();
-				}
-			}
-		}
-
-		public bool BottomAxisEnabled
-		{
-			get { return this.m_ShowBottomAxis; }
-			set
-			{
-				if(value!=this.m_ShowBottomAxis)
-				{
-					m_ShowBottomAxis = value;
-					this.OnInvalidate();
-				}
-			}
-		}
-		public bool RightAxisEnabled
-		{
-			get { return this.m_ShowRightAxis; }
-			set
-			{
-				if(value!=this.m_ShowRightAxis)
-				{
-					m_ShowRightAxis = value;
-					this.OnInvalidate();
-				}
-			}
-		}
-		public bool TopAxisEnabled
-		{
-			get { return this.m_ShowTopAxis; }
-			set
-			{
-				if(value!=this.m_ShowTopAxis)
-				{
-					m_ShowTopAxis = value;
-					this.OnInvalidate();
-				}
-			}
-		}
+		#region Layer properties and methods
 
 		/// <summary>
 		/// The layer number.
@@ -573,7 +443,125 @@ namespace Altaxo.Graph
 			return false; // no dependency detected
 		}
 
-#endregion // Layer Properties
+		/// <summary>
+		///  Only intended to use by LayerCollection! Sets the parent layer collection for this layer.
+		/// </summary>
+		/// <param name="lc">The layer collection this layer belongs to.</param>
+		private void SetParentAndNumber(LayerCollection lc, int number)
+		{
+			m_ParentLayerCollection = lc;
+			m_LayerNumber = number;
+			
+			if(m_ParentLayerCollection==null)
+				m_LinkedLayer=null;
+		}
+
+
+		public PlotAssociationList PlotAssociations
+		{
+			get { return m_PlotAssociations; }
+		}
+
+		public PlotGroup.Collection PlotGroups
+		{
+			get { return m_PlotGroups; }
+		}
+
+		public void AddPlotAssociation(PlotAssociation[] pal)
+		{
+			foreach(PlotAssociation pa in pal)
+				this.m_PlotAssociations.Add(pa);
+		}
+	
+
+
+		#endregion // Layer Properties and Methods
+
+		#region Position and Size
+		public PointF Position
+		{
+			get { return this.m_LayerPosition; }
+			set
+			{
+				SetPosition(value.X,PositionType.AbsoluteValue,value.Y,PositionType.AbsoluteValue);
+			}
+		}
+
+		public SizeF Size
+		{
+			get { return this.m_LayerSize; }
+			set
+			{
+				SetSize(value.Width,SizeType.AbsoluteValue, value.Height,SizeType.AbsoluteValue);
+			}
+		}
+
+		public float Rotation
+		{
+			get { return this.m_LayerAngle; }
+			set
+			{
+				this.m_LayerAngle = value;
+				this.CalculateMatrix();
+				this.OnInvalidate();
+			}
+		}
+
+		public float Scale
+		{
+			get { return this.m_LayerScale; }
+			set
+			{
+				this.m_LayerScale = value;
+				this.CalculateMatrix();
+				this.OnInvalidate();
+			}
+		}
+
+		protected void CalculateMatrix()
+		{
+			matrix.Reset();
+			matrix.Translate(m_LayerPosition.X,m_LayerPosition.Y);
+			matrix.Scale(m_LayerScale,m_LayerScale);
+			matrix.Rotate(m_LayerAngle);
+			matrixi=matrix.Clone();
+			matrixi.Invert();
+		}
+
+
+		public PointF GraphToLayerCoordinates(PointF pagecoordinates)
+		{
+			PointF[] pf = { pagecoordinates };
+			matrixi.TransformPoints(pf);
+			return pf[0];
+		}
+
+		/// <summary>
+		/// Converts X,Y differences in page units to X,Y differences in layer units
+		/// </summary>
+		/// <param name="pagediff">X,Y coordinate differences in graph units</param>
+		/// <returns>the convertes X,Y coordinate differences in layer units</returns>
+		public PointF GraphToLayerDifferences(PointF pagediff)
+		{
+			// not very intelligent, maybe there is a simpler way to transform without
+			// taking the translation into account
+			PointF[] pf = { new PointF(pagediff.X + this.Position.X, pagediff.Y + this.Position.Y) };
+			matrixi.TransformPoints(pf);
+			return pf[0];
+		}
+
+
+
+		/// <summary>
+		/// Transforms a graphics path from layer coordinates to graph (page) coordinates
+		/// </summary>
+		/// <param name="gp">the graphics path to convert</param>
+		/// <returns>graphics path now in graph coordinates</returns>
+		public GraphicsPath LayerToGraphCoordinates(GraphicsPath gp)
+		{
+			gp.Transform(matrix);
+			return gp;
+		}
 
 
 
@@ -673,8 +661,6 @@ namespace Altaxo.Graph
 		}
 
 
-
-
 		/// <summary>
 		/// Calculates from the x position value in points (1/72 inch), the corresponding value in user units.
 		/// </summary>
@@ -763,8 +749,6 @@ namespace Altaxo.Graph
 		}
 
 
-
-
 		/// <summary>
 		/// Sets the cached position value in <see cref="m_LayerPosition"/> by calculating it
 		/// from the position values (<see cref="m_LayerXPosition"/> and <see cref="m_LayerYPosition"/>) 
@@ -782,7 +766,6 @@ namespace Altaxo.Graph
 				OnPositionChanged();
 			}
 		}
-
 
 
 		public void SetSize(double width, SizeType widthtype, double height, SizeType heighttype)
@@ -901,6 +884,64 @@ namespace Altaxo.Graph
 		}
 
 
+		/// <summary>Returns the user x position value of the layer.</summary>
+		/// <value>User x position value of the layer.</value>
+		public double UserXPosition
+		{
+			get { return this.m_LayerXPosition; }
+		}
+
+		/// <summary>Returns the user y position value of the layer.</summary>
+		/// <value>User y position value of the layer.</value>
+		public double UserYPosition
+		{
+			get { return this.m_LayerYPosition; }
+		}
+
+		/// <summary>Returns the user width value of the layer.</summary>
+		/// <value>User width value of the layer.</value>
+		public double UserWidth
+		{
+			get { return this.m_LayerWidth; }
+		}
+
+		/// <summary>Returns the user height value of the layer.</summary>
+		/// <value>User height value of the layer.</value>
+		public double UserHeight
+		{
+			get { return this.m_LayerHeight; }
+		}
+
+		/// <summary>Returns the type of the user x position value of the layer.</summary>
+		/// <value>Type of the user x position value of the layer.</value>
+		public PositionType UserXPositionType
+		{
+			get { return this.m_LayerXPositionType; }
+		}
+
+		/// <summary>Returns the type of the user y position value of the layer.</summary>
+		/// <value>Type of the User y position value of the layer.</value>
+		public PositionType UserYPositionType
+		{
+			get { return this.m_LayerYPositionType; }
+		}
+
+		/// <summary>Returns the type of the the user width value of the layer.</summary>
+		/// <value>Type of the User width value of the layer.</value>
+		public SizeType UserWidthType
+		{
+			get { return this.m_LayerWidthType; }
+		}
+
+		/// <summary>Returns the the type of the user height value of the layer.</summary>
+		/// <value>Type of the User height value of the layer.</value>
+		public SizeType UserHeightType
+		{
+			get { return this.m_LayerHeightType; }
+		}
+
+
+
 		/// <summary>
 		/// Measures to do when the position of the linked layer changed.
 		/// </summary>
@@ -922,6 +963,362 @@ namespace Altaxo.Graph
 			CalculateCachedPosition();
 		}
 
+
+		#endregion // Position and Size
+
+		#region Axis related
+
+		/// <summary>Gets or sets the x axis of this layer.</summary>
+		/// <value>The x axis of the layer.</value>
+		public Axis XAxis
+		{
+			get { return m_xAxis; }
+			set
+			{
+				if(null!=m_xAxis)
+					m_xAxis.AxisChanged -= new System.EventHandler(this.OnXAxisChanged);
+				
+				m_xAxis = value;
+
+				if(null!=m_xAxis)
+					m_xAxis.AxisChanged += new System.EventHandler(this.OnXAxisChanged);
+
+
+				// now we have to inform all the PlotAssociations that a new axis was loaded
+				foreach(PlotAssociation pa in this.PlotAssociations)
+				{
+					// first ensure the right data bound object is set on the PlotAssociation
+					pa.SetXBoundsFromTemplate(m_xAxis.DataBounds); // ensure that data bound object is of the right type
+					// now merge the bounds with x and yAxis
+					pa.MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+				}
+			}
+		}
+
+	
+		/// <summary>Gets or sets the y axis of this layer.</summary>
+		/// <value>The y axis of the layer.</value>
+		public Axis YAxis
+		{
+			get { return m_yAxis; }
+			set
+			{
+				if(null!=m_yAxis)
+					m_yAxis.AxisChanged -= new System.EventHandler(this.OnYAxisChanged);
+				
+				m_yAxis = value;
+
+				if(null!=m_yAxis)
+					m_yAxis.AxisChanged += new System.EventHandler(this.OnYAxisChanged);
+
+
+				// now we have to inform all the PlotAssociations that a new axis was loaded
+				foreach(PlotAssociation pa in this.PlotAssociations)
+				{
+					// first ensure the right data bound object is set on the PlotAssociation
+					pa.SetYBoundsFromTemplate(m_yAxis.DataBounds); // ensure that data bound object is of the right type
+					// now merge the bounds with x and yAxis
+					pa.MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+				}
+			}
+		}
+
+
+		/// <summary>Indicates if x axis is linked to the linked layer x axis.</summary>
+		/// <value>True if x axis is linked to the linked layer x axis.</value>
+		public bool IsXAxisLinked
+		{
+			get { return this.m_LinkXAxis; }
+			set
+			{
+				bool oldValue = this.m_LinkXAxis;
+				m_LinkXAxis = value;
+				if(value!=oldValue && value==true)
+				{
+					if(null!=LinkedLayer)
+						OnLinkedLayerAxesChanged(LinkedLayer, new System.EventArgs());
+				}
+			}
+		}
+
+	
+		/// <summary>Indicates if y axis is linked to the linked layer y axis.</summary>
+		/// <value>True if y axis is linked to the linked layer y axis.</value>
+		public bool IsYAxisLinked
+		{
+			get { return this.m_LinkXAxis; }
+			set
+			{
+				bool oldValue = this.m_LinkYAxis;
+				m_LinkYAxis = value;
+				if(value!=oldValue && value==true)
+				{
+					if(null!=LinkedLayer)
+						OnLinkedLayerAxesChanged(LinkedLayer, new System.EventArgs());
+				}
+			}
+		}
+
+
+		/// <summary>The type of x axis link.</summary>
+		/// <value>Can be either None, Straight or Custom link.</value>
+		public AxisLinkType XAxisLinkType
+		{
+			get 
+			{
+				if(!this.m_LinkXAxis)
+					return AxisLinkType.None;
+				else if(this.m_LinkXAxisOrgA==0 && this.m_LinkXAxisOrgB==1 && this.m_LinkXAxisEndA==0 && this.m_LinkXAxisEndB==1)
+					return AxisLinkType.Straight;
+				else return AxisLinkType.Custom;
+			}
+			set 
+			{
+				if(value==AxisLinkType.None)
+					this.m_LinkXAxis = false;
+				else
+				{
+					this.m_LinkXAxis = true;
+					if(value==AxisLinkType.Straight)
+					{
+						this.m_LinkXAxisOrgA=0;
+						this.m_LinkXAxisOrgB=1;
+						this.m_LinkXAxisEndA=0;
+						this.m_LinkXAxisEndB=1;
+					}
+					if(null!=LinkedLayer)
+						OnLinkedLayerAxesChanged(LinkedLayer, new System.EventArgs());
+				}
+			}
+		}
+
+		
+		/// <summary>The type of y axis link.</summary>
+		/// <value>Can be either None, Straight or Custom link.</value>
+		public AxisLinkType YAxisLinkType
+		{
+			get 
+			{
+				if(!this.m_LinkYAxis)
+					return AxisLinkType.None;
+				else if(this.m_LinkYAxisOrgA==0 && this.m_LinkYAxisOrgB==1 && this.m_LinkYAxisEndA==0 && this.m_LinkYAxisEndB==1)
+					return AxisLinkType.Straight;
+				else return AxisLinkType.Custom;
+			}
+			set 
+			{
+				if(value==AxisLinkType.None)
+				{
+					this.m_LinkYAxis = false;
+				}
+				else
+				{
+					this.m_LinkYAxis = true;
+					if(value==AxisLinkType.Straight)
+					{
+						this.m_LinkYAxisOrgA=0;
+						this.m_LinkYAxisOrgB=1;
+						this.m_LinkYAxisEndA=0;
+						this.m_LinkYAxisEndB=1;
+					}
+					if(null!=LinkedLayer)
+						OnLinkedLayerAxesChanged(LinkedLayer, new System.EventArgs());
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Set all parameters of the x axis link by once.
+		/// </summary>
+		/// <param name="orgA">The value a of x-axis link for link of axis origin: org' = a + b*org.</param>
+		/// <param name="orgB">The value b of x-axis link for link of axis origin: org' = a + b*org.</param>
+		/// <param name="endA">The value a of x-axis link for link of axis end: end' = a + b*end.</param>
+		/// <param name="endB">The value b of x-axis link for link of axis end: end' = a + b*end.</param>
+		public void SetXAxisLinkParameter(double orgA, double orgB, double endA, double endB)
+		{
+			if(
+				(orgA!=m_LinkXAxisOrgA) ||
+				(orgB!=m_LinkXAxisOrgB) ||
+				(endA!=m_LinkXAxisEndA) ||
+				(endB!=m_LinkXAxisEndB) )
+			{
+				m_LinkXAxisOrgA = orgA;
+				m_LinkXAxisOrgB = orgB;
+				m_LinkXAxisEndA = endA;
+				m_LinkXAxisEndB = endB;
+					
+				if(IsLinked)
+					OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
+			}
+		}
+
+		/// <summary>The value a of x-axis link for link of origin: org' = a + b*org.</summary>
+		/// <value>The value a of x-axis link for link of origin: org' = a + b*org.</value>
+		public double LinkXAxisOrgA
+		{
+			get { return m_LinkXAxisOrgA; }
+			set
+			{
+				if(m_LinkXAxisOrgA!=value)
+				{
+					m_LinkXAxisOrgA = value;
+					
+					if(IsLinked)
+						OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
+				}
+			}
+		}
+
+		/// <summary>The value b of x-axis link for link of origin: org' = a + b*org.</summary>
+		/// <value>The value b of x-axis link for link of origin: org' = a + b*org.</value>
+		public double LinkXAxisOrgB
+		{
+			get { return m_LinkXAxisOrgB; }
+			set
+			{
+				if(m_LinkXAxisOrgB!=value)
+				{
+					m_LinkXAxisOrgB = value;
+					
+					if(IsLinked)
+						OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
+				}
+			}
+		}
+
+		/// <summary>The value a of x-axis link for link of axis end: end' = a + b*end.</summary>
+		/// <value>The value a of x-axis link for link of axis end: end' = a + b*end.</value>
+		public double LinkXAxisEndA
+		{
+			get { return m_LinkXAxisEndA; }
+			set
+			{
+				if(m_LinkXAxisEndA!=value)
+				{
+					m_LinkXAxisEndA = value;
+					
+					if(IsLinked)
+						OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
+				}
+			}
+		}
+
+
+		/// <summary>The value b of x-axis link for link of axis end: end' = a + b*end.</summary>
+		/// <value>The value b of x-axis link for link of axis end: end' = a + b*end.</value>
+		public double LinkXAxisEndB
+		{
+			get { return m_LinkXAxisEndB; }
+			set
+			{
+				if(m_LinkXAxisEndB!=value)
+				{
+					m_LinkXAxisEndB = value;
+					
+					if(IsLinked)
+						OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Set all parameters of the y axis link by once.
+		/// </summary>
+		/// <param name="orgA">The value a of y-axis link for link of axis origin: org' = a + b*org.</param>
+		/// <param name="orgB">The value b of y-axis link for link of axis origin: org' = a + b*org.</param>
+		/// <param name="endA">The value a of y-axis link for link of axis end: end' = a + b*end.</param>
+		/// <param name="endB">The value b of y-axis link for link of axis end: end' = a + b*end.</param>
+		public void SetYAxisLinkParameter(double orgA, double orgB, double endA, double endB)
+		{
+			if(
+				(orgA!=m_LinkYAxisOrgA) ||
+				(orgB!=m_LinkYAxisOrgB) ||
+				(endA!=m_LinkYAxisEndA) ||
+				(endB!=m_LinkYAxisEndB) )
+			{
+				m_LinkYAxisOrgA = orgA;
+				m_LinkYAxisOrgB = orgB;
+				m_LinkYAxisEndA = endA;
+				m_LinkYAxisEndB = endB;
+					
+				if(IsLinked)
+					OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
+			}
+		}
+
+
+		/// <summary>The value a of y-axis link for link of origin: org' = a + b*org.</summary>
+		/// <value>The value a of y-axis link for link of origin: org' = a + b*org.</value>
+		public double LinkYAxisOrgA
+		{
+			get { return m_LinkYAxisOrgA; }
+			set
+			{
+				if(m_LinkYAxisOrgA!=value)
+				{
+					m_LinkYAxisOrgA = value;
+					
+					if(IsLinked)
+						OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
+				}
+			}
+		}
+
+		/// <summary>The value b of y-axis link for link of origin: org' = a + b*org.</summary>
+		/// <value>The value b of y-axis link for link of origin: org' = a + b*org.</value>
+		public double LinkYAxisOrgB
+		{
+			get { return m_LinkYAxisOrgB; }
+			set
+			{
+				if(m_LinkYAxisOrgB!=value)
+				{
+					m_LinkYAxisOrgB = value;
+					
+					if(IsLinked)
+						OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
+				}
+			}
+		}
+
+		/// <summary>The value a of y-axis link for link of axis end: end' = a + b*end.</summary>
+		/// <value>The value a of y-axis link for link of axis end: end' = a + b*end.</value>
+		public double LinkYAxisEndA
+		{
+			get { return m_LinkYAxisEndA; }
+			set
+			{
+				if(m_LinkYAxisEndA!=value)
+				{
+					m_LinkYAxisEndA = value;
+					
+					if(IsLinked)
+						OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
+				}
+			}
+		}
+
+
+		/// <summary>The value b of y-axis link for link of axis end: end' = a + b*end.</summary>
+		/// <value>The value b of y-axis link for link of axis end: end' = a + b*end.</value>
+		public double LinkYAxisEndB
+		{
+			get { return m_LinkYAxisEndB; }
+			set
+			{
+				if(m_LinkYAxisEndB!=value)
+				{
+					m_LinkYAxisEndB = value;
+					
+					if(IsLinked)
+						OnLinkedLayerAxesChanged(LinkedLayer,new EventArgs());
+				}
+			}
+		}
+
+
 		/// <summary>
 		/// Measures to do when one of the axis of the linked layer changed.
 		/// </summary>
@@ -932,132 +1329,114 @@ namespace Altaxo.Graph
 			if(null==LinkedLayer)
 				return; // this should not happen, since what is sender then?
 
-			if(this.m_XAxisLinkType==AxisLinkType.Straight)
+			if(IsXAxisLinked && null!=LinkedLayer)
 			{
-				this.m_xAxis.ProcessDataBounds(LinkedLayer.XAxis.Org,true,LinkedLayer.XAxis.End,true);
+				this.m_xAxis.ProcessDataBounds(	
+					m_LinkXAxisOrgA+m_LinkXAxisOrgB*LinkedLayer.XAxis.Org,true,
+					m_LinkXAxisEndA+m_LinkXAxisEndB*LinkedLayer.XAxis.End,true);
 			}
 
-			if(this.m_YAxisLinkType==AxisLinkType.Straight)
+			if(IsYAxisLinked && null!=LinkedLayer)
 			{
-				this.m_yAxis.ProcessDataBounds(LinkedLayer.YAxis.Org,true,LinkedLayer.YAxis.End,true);
+				this.m_yAxis.ProcessDataBounds(	
+					m_LinkYAxisOrgA+m_LinkYAxisOrgB*LinkedLayer.YAxis.Org,true,
+					m_LinkYAxisEndA+m_LinkYAxisEndB*LinkedLayer.YAxis.End,true);
 			}
 
 		}
 
 
-		public AxisLinkType XAxisLinkType
+		#endregion // Axis related
+
+		#region Style properties
+		public XYLayerAxisStyle LeftAxisStyle
 		{
-			get { return this.m_XAxisLinkType; }
-			set 
+			get { return m_LeftAxisStyle; }
+		}
+		public XYLayerAxisStyle BottomAxisStyle
+		{
+			get { return m_BottomAxisStyle; }
+		}
+		public XYLayerAxisStyle RightAxisStyle
+		{
+			get { return m_RightAxisStyle; }
+		}
+		public XYLayerAxisStyle TopAxisStyle
+		{
+			get { return m_TopAxisStyle; }
+		}
+
+
+		public LabelStyle LeftLabelStyle
+		{
+			get { return m_LeftLabelStyle; }
+		}
+		public LabelStyle RightLabelStyle
+		{
+			get { return m_RightLabelStyle; }
+		}
+		public LabelStyle BottomLabelStyle
+		{
+			get { return m_BottomLabelStyle; }
+		}
+		public LabelStyle TopLabelStyle
+		{
+			get { return m_TopLabelStyle; }
+		}
+		
+		public bool LeftAxisEnabled
+		{
+			get { return this.m_ShowLeftAxis; }
+			set
 			{
-				this.m_XAxisLinkType = value;
-				if(null!=LinkedLayer && value!=AxisLinkType.None)
-					OnLinkedLayerAxesChanged(LinkedLayer, new System.EventArgs());
-			}
-		}
-		public AxisLinkType YAxisLinkType
-		{
-			get { return this.m_XAxisLinkType; }
-			set 
-			{
-				this.m_YAxisLinkType = value;
-				if(null!=LinkedLayer && value!=AxisLinkType.None)
-					OnLinkedLayerAxesChanged(LinkedLayer, new System.EventArgs());
-			}
-		}
-
-
-		/// <summary>
-		///  Only intended to use by LayerCollection! Sets the parent layer collection for this layer.
-		/// </summary>
-		/// <param name="lc">The layer collection this layer belongs to.</param>
-		private void SetParentAndNumber(LayerCollection lc, int number)
-		{
-			m_ParentLayerCollection = lc;
-			m_LayerNumber = number;
-			
-			if(m_ParentLayerCollection==null)
-				m_LinkedLayer=null;
-		}
-
-
-
-		protected void CalculateMatrix()
-		{
-			matrix.Reset();
-			matrix.Translate(m_LayerPosition.X,m_LayerPosition.Y);
-			matrix.Scale(m_LayerScale,m_LayerScale);
-			matrix.Rotate(m_LayerAngle);
-			matrixi=matrix.Clone();
-			matrixi.Invert();
-		}
-
-
-		public PointF GraphToLayerCoordinates(PointF pagecoordinates)
-		{
-			PointF[] pf = { pagecoordinates };
-			matrixi.TransformPoints(pf);
-			return pf[0];
-		}
-
-		/// <summary>
-		/// Converts X,Y differences in page units to X,Y differences in layer units
-		/// </summary>
-		/// <param name="pagediff">X,Y coordinate differences in graph units</param>
-		/// <returns>the convertes X,Y coordinate differences in layer units</returns>
-		public PointF GraphToLayerDifferences(PointF pagediff)
-		{
-			// not very intelligent, maybe there is a simpler way to transform without
-			// taking the translation into account
-			PointF[] pf = { new PointF(pagediff.X + this.Position.X, pagediff.Y + this.Position.Y) };
-			matrixi.TransformPoints(pf);
-			return pf[0];
-		}
-
-
-
-		/// <summary>
-		/// Transforms a graphics path from layer coordinates to graph (page) coordinates
-		/// </summary>
-		/// <param name="gp">the graphics path to convert</param>
-		/// <returns>graphics path now in graph coordinates</returns>
-		public GraphicsPath LayerToGraphCoordinates(GraphicsPath gp)
-		{
-			gp.Transform(matrix);
-			return gp;
-		}
-
-
-
-		public GraphObject HitTest(PointF pageC, out GraphicsPath gp)
-		{
-			PointF layerC = GraphToLayerCoordinates(pageC);
-
-			foreach(GraphObject go in m_GraphObjects)
-			{
-				gp = go.HitTest(layerC);
-				if(null!=gp)
+				if(value!=this.m_ShowLeftAxis)
 				{
-					gp.Transform(matrix);
-					return go;
+					m_ShowLeftAxis = value;
+					this.OnInvalidate();
 				}
 			}
-			gp=null;
-			return null;
 		}
 
-		public PlotAssociationList PlotAssociations
+		public bool BottomAxisEnabled
 		{
-			get { return m_PlotAssociations; }
+			get { return this.m_ShowBottomAxis; }
+			set
+			{
+				if(value!=this.m_ShowBottomAxis)
+				{
+					m_ShowBottomAxis = value;
+					this.OnInvalidate();
+				}
+			}
 		}
-
-		public PlotGroup.Collection PlotGroups
+		public bool RightAxisEnabled
 		{
-			get { return m_PlotGroups; }
+			get { return this.m_ShowRightAxis; }
+			set
+			{
+				if(value!=this.m_ShowRightAxis)
+				{
+					m_ShowRightAxis = value;
+					this.OnInvalidate();
+				}
+			}
+		}
+		public bool TopAxisEnabled
+		{
+			get { return this.m_ShowTopAxis; }
+			set
+			{
+				if(value!=this.m_ShowTopAxis)
+				{
+					m_ShowTopAxis = value;
+					this.OnInvalidate();
+				}
+			}
 		}
 
+		#endregion // Style properties
 
-
+		#region Painting and Hit testing
 		public virtual void Paint(Graphics g)
 		{
 			GraphicsState savedgstate = g.Save();
@@ -1075,8 +1454,10 @@ namespace Altaxo.Graph
 
 			if(m_ShowLeftAxis) m_LeftAxisStyle.Paint(g,this,this.m_yAxis);
 			if(m_ShowLeftAxis) m_LeftLabelStyle.Paint(g,this,this.m_yAxis,m_LeftAxisStyle);
+			if(m_ShowLeftAxis && null!=m_LeftAxisTitle) m_LeftAxisTitle.Paint(g,this);
 			if(m_ShowBottomAxis) m_BottomAxisStyle.Paint(g,this,this.m_xAxis);
 			if(m_ShowBottomAxis) m_BottomLabelStyle.Paint(g,this,this.m_xAxis,m_BottomAxisStyle);
+			if(m_ShowBottomAxis && null!=m_BottomAxisTitle) m_BottomAxisTitle.Paint(g,this);
 			if(m_ShowRightAxis) m_RightAxisStyle.Paint(g,this,this.m_yAxis);
 			if(m_ShowRightAxis) m_RightLabelStyle.Paint(g,this,this.m_yAxis,m_RightAxisStyle);
 			if(m_ShowTopAxis) m_TopAxisStyle.Paint(g,this,this.m_xAxis);
@@ -1091,19 +1472,85 @@ namespace Altaxo.Graph
 
 			g.Restore(savedgstate);
 		}
-
-	
-		public void AddPlotAssociation(PlotAssociation[] pal)
+		public GraphObject HitTest(PointF pageC, out GraphicsPath gp)
 		{
-			foreach(PlotAssociation pa in pal)
-				this.m_PlotAssociations.Add(pa);
+			PointF layerC = GraphToLayerCoordinates(pageC);
+
+			foreach(GraphObject go in m_GraphObjects)
+			{
+				gp = go.HitTest(layerC);
+				if(null!=gp)
+				{
+					gp.Transform(matrix);
+					return go;
+				}
+			}
+			gp=null;
+			return null;
 		}
-	
+
+
+		#endregion // Painting and Hit testing
+
+		#region Event firing
+
+
+		protected void OnSizeChanged()
+		{
+			if(null!=SizeChanged)
+				SizeChanged(this,new System.EventArgs());
+		}
+
+
+		protected void OnPositionChanged()
+		{
+			if(null!=PositionChanged)
+				PositionChanged(this,new System.EventArgs());
+		}
 
 
 
+		protected virtual void OnAxesChanged()
+		{
+			if(null!=AxesChanged)
+				AxesChanged(this,new System.EventArgs());
+		}
 
 
+		protected void OnInvalidate()
+		{
+			if(null!=this.m_ParentLayerCollection)
+				this.m_ParentLayerCollection.OnInvalidate(this);
+		}
+
+		#endregion
+
+		#region Handler of child events
+
+		protected void OnPlotAssociationXBoundariesChanged(object sender, BoundariesChangedEventArgs e)
+		{
+			((PlotAssociation)sender).MergeXBoundsInto(m_xAxis.DataBounds);
+		}
+
+		protected void OnPlotAssociationYBoundariesChanged(object sender, BoundariesChangedEventArgs e)
+		{
+			((PlotAssociation)sender).MergeYBoundsInto(m_yAxis.DataBounds);
+		}
+		
+		protected void OnXAxisChanged(object sender, System.EventArgs e)
+		{
+			OnInvalidate();
+		}
+
+		protected void OnYAxisChanged(object sender, System.EventArgs e)
+		{
+			OnInvalidate();
+		}
+
+		
+		#endregion
+
+		#region Inner classes
 
 		public class PlotAssociationList : System.Collections.ArrayList
 		{
@@ -1150,39 +1597,6 @@ namespace Altaxo.Graph
 				}
 			}
 		}
-
-
-		protected void OnInvalidate()
-		{
-			if(null!=this.m_ParentLayerCollection)
-				this.m_ParentLayerCollection.OnInvalidate(this);
-		}
-
-
-		#region "Layer Event Handlers"
-
-		protected void OnPlotAssociationXBoundariesChanged(object sender, BoundariesChangedEventArgs e)
-		{
-			((PlotAssociation)sender).MergeXBoundsInto(m_xAxis.DataBounds);
-		}
-
-		protected void OnPlotAssociationYBoundariesChanged(object sender, BoundariesChangedEventArgs e)
-		{
-			((PlotAssociation)sender).MergeYBoundsInto(m_yAxis.DataBounds);
-		}
-		
-		protected void OnXAxisChanged(object sender, System.EventArgs e)
-		{
-			OnInvalidate();
-		}
-
-		protected void OnYAxisChanged(object sender, System.EventArgs e)
-		{
-			OnInvalidate();
-		}
-
-		
-		#endregion
 
 
 
@@ -1351,5 +1765,8 @@ namespace Altaxo.Graph
 					Invalidate(this, new EventArgs());
 			}
 		}
+	
+	
+		#endregion // Inner classes
 	}
 }
