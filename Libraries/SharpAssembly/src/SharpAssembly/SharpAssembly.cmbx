@@ -1,0 +1,16 @@
+<Combine fileversion="1.0" name="ICSharpCode.SharpAssembly" description="">
+  <StartMode startupentry="ICSharpCode.SharpAssembly" single="True">
+    <Execute entry="ICSharpCode.SharpAssembly" type="None" />
+  </StartMode>
+  <Entries>
+    <Entry filename=".\SharpAssembly.prjx" />
+  </Entries>
+  <Configurations active="Debug">
+    <Configuration name="Release">
+      <Entry name="ICSharpCode.SharpAssembly" configurationname="Release" build="False" />
+    </Configuration>
+    <Configuration name="Debug">
+      <Entry name="ICSharpCode.SharpAssembly" configurationname="Release" build="False" />
+    </Configuration>
+  </Configurations>
+</Combine>
