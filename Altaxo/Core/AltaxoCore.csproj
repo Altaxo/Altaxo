@@ -89,6 +89,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\ArrayMath.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\BasicFunctions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -204,12 +209,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\FFT\FourierDirection.cs"
+                    RelPath = "Calc\FFT\FastHartleyTransform.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\FFT\FourierTransform.cs"
+                    RelPath = "Calc\FFT\FourierDirection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

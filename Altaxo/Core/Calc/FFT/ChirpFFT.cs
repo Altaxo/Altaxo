@@ -86,10 +86,10 @@ namespace Altaxo.Calc.FFT
       CopyFromComplexToSplittedArrays(fht2real,fht2imag,arr2,arrsize);
 
       // do a convolution by fourier transform both parts, multiply and inverse fft
-      FastHartleyTransform.fht_fft(arrsize, fht1real, fht1imag);
-      FastHartleyTransform.fht_fft(arrsize, fht2real, fht2imag);
+      FastHartleyTransform.FFT(fht1real, fht1imag, arrsize);
+      FastHartleyTransform.FFT(fht2real, fht2imag, arrsize);
       MultiplySplittedComplexArrays(fht1real, fht1imag, fht1real, fht1imag, fht2real, fht2imag, arrsize);
-      FastHartleyTransform.fht_ifft(arrsize, fht1real,fht1imag);
+      FastHartleyTransform.IFFT( fht1real,fht1imag, arrsize);
       NormalizeArrays(fht1real, fht1imag, 1.0/arrsize, arrsize);
       CopyFromSplittedArraysToComplex(resarray,fht1real,fht1imag,arrsize);
     }
@@ -108,10 +108,10 @@ namespace Altaxo.Calc.FFT
     /// <param name="arrsize">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
     static void fhtconvolution(double[] resultreal, double[] resultimag, double[] arr1real, double[] arr1imag, double[] arr2real, double[] arr2imag, int arrsize)
     {
-      FastHartleyTransform.fht_fft(arrsize, arr1real, arr1imag);
-      FastHartleyTransform.fht_fft(arrsize, arr2real, arr2imag);
+      FastHartleyTransform.FFT( arr1real, arr1imag,arrsize);
+      FastHartleyTransform.FFT( arr2real, arr2imag,arrsize);
       MultiplySplittedComplexArrays(resultreal, resultimag, arr1real, arr1imag, arr2real, arr2imag, arrsize);
-      FastHartleyTransform.fht_ifft(arrsize, resultreal,resultimag);
+      FastHartleyTransform.IFFT( resultreal,resultimag,arrsize);
       NormalizeArrays(resultreal, resultimag, 1.0/arrsize, arrsize);
     }
    
@@ -452,8 +452,8 @@ namespace Altaxo.Calc.FFT
       // const int is = 1;
       int n = (1<<(int)ldn);
 
-      FastHartleyTransform.fht_fft(n,fr,fi); //FFT(fr, fi, ldn, is);
-      FastHartleyTransform.fht_fft(n,gr,gi); //FFT(gr, gi, ldn, is);
+      FastHartleyTransform.FFT(fr,fi,n); //FFT(fr, fi, ldn, is);
+      FastHartleyTransform.FFT(gr,gi,n); //FFT(gr, gi, ldn, is);
 
       if ( v==0.0 )  v = 1.0/n;
       for (uint k=0; k<n; ++k)
@@ -467,7 +467,7 @@ namespace Altaxo.Calc.FFT
         cmult(fr[k], fi[k], ref gr[k], ref gi[k]);
       }
 
-      FastHartleyTransform.fht_ifft(n,gr,gi); // FFT(gr, gi, ldn, -is);
+      FastHartleyTransform.IFFT(gr,gi,n); // FFT(gr, gi, ldn, -is);
     }
 
 

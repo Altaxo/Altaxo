@@ -747,6 +747,16 @@ namespace Altaxo.Calc.FFT
     private const double SQRT2_2=0.70710678118654752440084436210484;
     private const double SQRT2  =2*SQRT2_2;
 
+
+    /// <summary>
+    /// Return true if number is 0 (!) or a power of two
+    /// </summary>
+    /// <param name="x">Argument to test.</param>
+    /// <returns>Return true if number is 0 (!) or a power of two.</returns>
+    private static bool IsPowerOfTwo(int x)
+    {
+      return  ((x & -x) == x);
+    }
     //----------------------------------------------------------------------------//
 
     /// <summary>
@@ -754,8 +764,13 @@ namespace Altaxo.Calc.FFT
     /// </summary>
     /// <param name="fz">The array of points.</param>
     /// <param name="n">The number of points, must be a power of two. This precondition is not checked!</param>
-    public static void fht (double[] fz, int n)
+    public static void FHT (double[] fz, int n)
     {
+      if(n<4)
+        throw new ArgumentException("Invalid n, n is less than 4!");
+      if(!IsPowerOfTwo(n))
+        throw new ArgumentException("Invalid n, n is not a power of two!");
+
       int i,k,k1,k2,k3,k4,kx;
       //double *fi,*fn,*gi;
       int fi,fn,gi;
@@ -954,13 +969,13 @@ namespace Altaxo.Calc.FFT
     ///      Does a fourier transform of 'n' points of the 'real' and
     ///      'imag' arrays.
     /// </summary>
-    /// <param name="n">Number of points to transform. Have to be a power of 2 (unchecked!)</param>
     /// <param name="real">The array holding the real part of the values.</param>
     /// <param name="imag">The array holding the imaginary part of the values.</param>
-    public static void fht_fft (int n, double[] real, double[] imag)
+    /// <param name="n">Number of points to transform. Have to be a power of 2 (unchecked!)</param>
+    public static void FFT (double[] real, double[] imag, int n )
     {
-      fht(real,n);
-      fht(imag,n);
+      FHT(real,n);
+      FHT(imag,n);
 
       for (int i=1,j=n-1,k=n/2;i<k;i++,j--) 
       {
@@ -980,7 +995,7 @@ namespace Altaxo.Calc.FFT
     /// <param name="n">Number of points to transform. Have to be a power of 2 (unchecked!)</param>
     /// <param name="real">The array holding the real part of the values.</param>
     /// <param name="imag">The array holding the imaginary part of the values.</param>
-    public static void fht_ifft (int n, double[] real, double[] imag)
+    public static void IFFT (double[] real, double[] imag, int n )
     {
       for (int i=1,j=n-1,k=n/2;i<k;i++,j--) 
       {
@@ -991,8 +1006,8 @@ namespace Altaxo.Calc.FFT
         imag[i] = (s-r)*.5; imag[j] = (s+r)*.5;
       }
 
-      fht(real,n);
-      fht(imag,n);
+      FHT(real,n);
+      FHT(imag,n);
     }
 
 
@@ -1001,7 +1016,7 @@ namespace Altaxo.Calc.FFT
     /// </summary>
     /// <param name="n">Number of points to transform. Has to be a power of 2 (unchecked).</param>
     /// <param name="real">The array holding the fourier transform values, which will be transformed back.</param>
-    public static void fht_realifft (int n, double[] real)
+    public static void RealIFFT (double[] real, int n )
     {
       for (int i=1,j=n-1,k=n/2;i<k;i++,j--) 
       {
@@ -1012,7 +1027,7 @@ namespace Altaxo.Calc.FFT
         real[i] = (a+b);
       }
 
-      fht(real,n);
+      FHT(real,n);
     }
 
     /// <summary>
@@ -1023,9 +1038,9 @@ namespace Altaxo.Calc.FFT
     /// </summary>
     /// <param name="n">The number of points to transform. Has to be a power of 2 (unchecked!).</param>
     /// <param name="real">The array holding the real values to transform.</param>
-    public static void fht_realfft (int n, double[] real)
+    public static void RealFFT ( double[] real, int n)
     {
-      fht(real,n);
+      FHT(real,n);
 
       for (int i=1,j=n-1,k=n/2;i<k;i++,j--) 
       {
@@ -1062,9 +1077,9 @@ namespace Altaxo.Calc.FFT
     public static void FFT(double[] real, double[] imag, int n, FourierDirection direction)
     {
       if(direction==FourierDirection.Forward)
-        fht_fft(n,real,imag);
+        FFT(real,imag,n);
       else
-        fht_ifft(n,real,imag);
+        IFFT(real,imag,n);
     }
 
     /// <summary>
@@ -1079,7 +1094,7 @@ namespace Altaxo.Calc.FFT
     /// <param name="direction">The direction of the Fourier transform.</param>
     public static void RealFFT(double[] real, int n, FourierDirection direction)
     {
-      fht(real,n);
+      FHT(real,n);
 
       for (int i=1,j=n-1,k=n/2;i<k;i++,j--) 
       {
@@ -1089,6 +1104,31 @@ namespace Altaxo.Calc.FFT
         real[j] = (a-b)*0.5;
         real[i] = (a+b)*0.5;
       }
+    }
+
+
+    /// <summary>
+    /// Performs a convolution of two comlex arrays which are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the values of the
+    /// input arrays will be destroyed!
+    /// </summary>
+    /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
+    /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
+    /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
+    /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
+    /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+    /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+    /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+    public static void CyclicConvolution(
+      double[] src1real, double[] src1imag, 
+      double[] src2real, double[] src2imag,
+      double[] resultreal, double[] resultimag,
+      int n)
+    {
+      FFT( src1real, src1imag, n);
+      FFT( src2real, src2imag, n);
+      ArrayMath.MultiplySplittedComplexArrays(src1real, src1imag, src2real, src2imag, resultreal, resultimag, n);
+      FastHartleyTransform.IFFT( resultreal,resultimag, n);
+      ArrayMath.NormalizeArrays(resultreal, resultimag, 1.0/n, n);
     }
   }
 }

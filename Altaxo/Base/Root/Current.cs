@@ -49,6 +49,8 @@ namespace Altaxo
 
     private static Altaxo.Main.IPrintingService sm_thePrintingService;
 
+    private static Altaxo.Main.Services.IOutputService sm_theOutputService;
+
     private static bool sm_theApplicationIsClosing;
 
     public static IWorkbench Workbench
@@ -69,6 +71,11 @@ namespace Altaxo
     public static Altaxo.Main.IPrintingService PrintingService
     {
       get { return sm_thePrintingService; }
+    }
+
+    public static Altaxo.Main.Services.IOutputService OutputService
+    {
+      get { return sm_theOutputService; }
     }
 
     public static bool ApplicationIsClosing
@@ -116,6 +123,15 @@ namespace Altaxo
         sm_thePrintingService = printingservice; 
       else
         throw new ApplicationException("The printing service can not be re-set to another value, only initialized for the first time!");
+
+    }
+
+    public static void SetOutputService(Altaxo.Main.Services.IOutputService outputservice)
+    {
+      if(null==sm_theOutputService)
+        sm_theOutputService = outputservice; 
+      else
+        throw new ApplicationException("The output service can not be re-set to another value, only initialized for the first time!");
 
     }
 

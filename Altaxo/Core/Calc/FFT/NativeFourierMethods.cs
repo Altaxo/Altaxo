@@ -66,11 +66,11 @@ namespace Altaxo.Calc.FFT
     /// Performes a cyclic convolution between array arr1 and arr2 and stores the result in resultarr. Resultarr must be
     /// different from the other two arrays. 
     /// </summary>
-    /// <param name="resultarr">The array that stores the correleation result.</param>
     /// <param name="arr1">First array.</param>
     /// <param name="arr2">Second array.</param>
+    /// <param name="resultarr">The array that stores the correleation result.</param>
     /// <param name="count">Number of points to correlate.</param>
-    public static void CyclicConvolution(double[] resultarr, double[] arr1, double[] arr2, int count)
+    public static void CyclicConvolution( double[] arr1, double[] arr2, double[] resultarr, int count)
     {
       if(object.ReferenceEquals(resultarr,arr1) || object.ReferenceEquals(resultarr,arr2))
         throw new ArgumentException("resultarr must not be identical to arr1 or arr2!");
@@ -82,6 +82,49 @@ namespace Altaxo.Calc.FFT
         for(i=0;i<count;i++)
         {
           resultarr[k] += arr1[i]*arr2[(count+k-i)%count];
+        }
+      }
+    }
+
+
+    /// <summary>
+    /// Performes a cyclic convolution between splitted complex arrays and stores the result in resultarr. Resultarr must be
+    /// different from the input arrays. 
+    /// </summary>
+    /// <param name="src1real">First array (real part values).</param>
+    /// <param name="src1imag">First array (imaginary part values).</param>
+    /// <param name="src2real">Second array (real part values).</param>
+    /// <param name="src2imag">Second array (imaginary part values).</param>
+    /// <param name="resultreal">The array that stores the correlation result (real part values.</param>
+    /// <param name="resultimag">The array that stores the correlation result (imaginary part values.</param>
+    /// <param name="n">Number of points to correlate.</param>
+    public static void CyclicConvolution( 
+      double[] src1real, double[]src1imag,
+      double[] src2real, double[] src2imag,
+      double[] resultreal, double[] resultimag,
+      int n)
+    {
+      if(object.ReferenceEquals(resultreal,src1real) || 
+        object.ReferenceEquals(resultreal,src1imag) ||
+        object.ReferenceEquals(resultreal,src2real) ||
+        object.ReferenceEquals(resultreal,src2imag))
+        throw new ArgumentException("resultreal must not be identical to one of the input arrays!");
+      if(object.ReferenceEquals(resultimag,src1real) || 
+        object.ReferenceEquals(resultimag,src1imag) ||
+        object.ReferenceEquals(resultimag,src2real) ||
+        object.ReferenceEquals(resultimag,src2imag))
+        throw new ArgumentException("resultimag must not be identical to one of the input arrays!");
+      
+      int i,k,s;
+      for(k=0;k<n;k++)
+      {
+        resultreal[k]=0;
+        resultimag[k]=0;
+        for(i=0;i<n;i++)
+        { 
+          s = (n+k-i)%n;
+          resultreal[k] += src1real[i]*src2real[s] - src1imag[i]*src2imag[s];
+          resultimag[k] += src1real[i]*src2imag[s] + src1imag[i]*src2real[s];
         }
       }
     }

@@ -215,6 +215,7 @@
 		<Class id="SideBar" class="ICSharpCode.SharpDevelop.Gui.Pads.SideBarView" />
 		<Class id="HelpBrowser" class="ICSharpCode.SharpDevelop.Gui.Pads.HelpBrowser" />
 		<Class id="AltaxoProjectScout" class="Altaxo.Main.GUI.ProjectScout" />
+		<Class id="AltaxoOutputWindow" class="Altaxo.Main.GUI.OutputWindowController" />
 	</Extension>
 	<Extension path="/SharpDevelop/Dialogs/OptionsDialog">
 		<DialogPanel id="UIOptions" label="${res:Dialog.Options.TreeViewOptions.SharpDevelopOptionsText}">

@@ -969,7 +969,7 @@ namespace Altaxo.Worksheet
 
 
       double[] arr=col.Array;
-      Altaxo.Calc.FFT.FastHartleyTransform.fht_realfft(arr.Length,arr);
+      Altaxo.Calc.FFT.FastHartleyTransform.RealFFT(arr,arr.Length);
 
       col.Array = arr;
 
@@ -1010,7 +1010,7 @@ namespace Altaxo.Worksheet
 
       // fourier transform
       Altaxo.Calc.FFT.Pfa235FFT fft = new Altaxo.Calc.FFT.Pfa235FFT(cols,rows);
-      fft.FFT(rePart,imPart,Altaxo.Calc.FFT.Pfa235FFT.Direction.Forward);
+      fft.FFT(rePart,imPart,Altaxo.Calc.FFT.FourierDirection.Forward);
 
       // replace the real part by the amplitude
       for(int i=0;i<rePart.Length;i++)

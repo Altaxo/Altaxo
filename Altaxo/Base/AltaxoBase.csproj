@@ -818,7 +818,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <Folder RelPath = "Main\MenuCommands\" />
-                <Folder RelPath = "Main\Services\" />
+                <File
+                    RelPath = "Main\Services\IOutputService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
                 <File
                     RelPath = "Root\Current.cs"
                     SubType = "Code"

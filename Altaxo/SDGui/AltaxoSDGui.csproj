@@ -18,7 +18,7 @@
                 OutputType = "Library"
                 PreBuildEvent = ""
                 PostBuildEvent = "copy AltaxoSDGui.??? ..\..\..\..\rt$(ConfigurationName)\bin"
-                RootNamespace = "AltaxoGUI"
+                RootNamespace = "Altaxo"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
@@ -166,6 +166,11 @@
                 <File
                     RelPath = "Main\GUI\FileScout.cs"
                     SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\OutputWindowController.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
