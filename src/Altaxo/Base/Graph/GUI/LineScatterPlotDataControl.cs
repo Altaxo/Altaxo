@@ -261,7 +261,8 @@ namespace Altaxo.Graph.GUI
 		{
 			this.m_lbColumns.Items.Clear();
 			this.m_lbColumns.Items.AddRange(colnames);
-			this.m_lbColumns.SelectedIndex = selectedColumn;
+			if(selectedColumn < colnames.Length)
+				this.m_lbColumns.SelectedIndex = selectedColumn;
 		}
 
 		public void XColumn_Initialize(string colname)

@@ -207,7 +207,11 @@
                     RelPath = "StringResources.resources"
                     BuildAction = "EmbeddedResource"
                 />
-                <Folder RelPath = "Base\Gui\Workbench\Layouts\" />
+                <File
+                    RelPath = "Workbench1.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
                 <File
                     RelPath = "Commands\FileCommands.cs"
                     SubType = "Code"

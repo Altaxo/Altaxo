@@ -284,7 +284,7 @@ namespace Altaxo.Worksheet.GUI
 			set
 			{
 				m_Menu = value;
-				if(null!=this.ParentForm && null!=m_Menu)
+				if(this.ParentForm is Altaxo.Main.GUI.WorkbenchForm && null!=m_Menu)
 				{
 					if(null!=this.ParentForm.Menu)
 						this.ParentForm.Menu.MergeMenu( m_Menu ); // do not clone the menu

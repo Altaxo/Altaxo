@@ -1622,10 +1622,10 @@ namespace Altaxo.Graph.GUI
 			}
 		}
 
-		protected	Main.GUI.IWorkbenchWindowController m_ParentWorkbenchWindowController;
+		protected	ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow m_ParentWorkbenchWindowController;
 		public Main.GUI.IWorkbenchWindowController ParentWorkbenchWindowController 
 		{ 
-			get { return m_ParentWorkbenchWindowController; }
+			get { return m_ParentWorkbenchWindowController as Main.GUI.IWorkbenchWindowController; }
 			set 
 			{
 				if(null!=m_ParentWorkbenchWindowController)
@@ -1667,11 +1667,11 @@ namespace Altaxo.Graph.GUI
 		{
 			get 
 			{
-				return (ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow)this.ParentWorkbenchWindowController; 
+				return this.m_ParentWorkbenchWindowController; 
 			}
 			set
 			{
-				this.ParentWorkbenchWindowController = (Main.GUI.IWorkbenchWindowController)value; 
+				this.m_ParentWorkbenchWindowController = value; 
 			}
 		}
 		

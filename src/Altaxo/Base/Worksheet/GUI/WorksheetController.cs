@@ -3079,10 +3079,10 @@ namespace Altaxo.Worksheet.GUI
 			}
 		}
 
-		protected	Main.GUI.IWorkbenchWindowController m_ParentWorkbenchWindowController;
+		protected	ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow m_ParentWorkbenchWindowController;
 		public Main.GUI.IWorkbenchWindowController ParentWorkbenchWindowController 
 		{ 
-			get { return m_ParentWorkbenchWindowController; }
+			get { return m_ParentWorkbenchWindowController as Main.GUI.IWorkbenchWindowController; }
 			set { m_ParentWorkbenchWindowController = value; }
 		}
 
@@ -3117,8 +3117,14 @@ namespace Altaxo.Worksheet.GUI
 		/// </summary>
 		public ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow  WorkbenchWindow 
 		{
-			get { return (ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow)this.ParentWorkbenchWindowController; }
-			set { this.ParentWorkbenchWindowController = (Main.GUI.IWorkbenchWindowController)value; }
+			get
+			{
+				return this.m_ParentWorkbenchWindowController;
+			}
+			set 
+			{ 
+				this.m_ParentWorkbenchWindowController = value; 
+			}
 		}
 		
 		/// <summary>

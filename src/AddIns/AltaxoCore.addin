@@ -5,8 +5,8 @@
 		<Import assembly="../bin/BeautyGui.exe"/>
 	</Runtime>
 	<Extension path="/Workspace/Autostart">
-		<Class id="InitializeWorkbenchCommand" class="Altaxo.Main.Commands.InitializeWorkbenchCommand"/>
-		<Class id="StartWorkbenchCommand" class="Altaxo.Main.Commands.StartWorkbenchCommand"/>
+		<Class id="InitializeWorkbenchCommand" class="Altaxo.Main.Commands.InitializeWorkbench1Command"/>
+		<Class id="StartWorkbenchCommand" class="Altaxo.Main.Commands.StartWorkbench1Command"/>
 	</Extension>
 	<Extension path="/Workspace/Icons">
 		<!-- C# -->
