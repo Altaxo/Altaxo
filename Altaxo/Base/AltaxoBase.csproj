@@ -490,6 +490,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\XYScatterPointInformation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\XYZEquidistantMeshColumnPlotData.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -206,7 +206,7 @@ namespace Altaxo.Graph
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
     /// <returns>Null if no hit, or a <see>IHitTestObject</see> if there was a hit.</returns>
-    public virtual IHitTestObject HitTest(XYPlotLayer layer, PointF hitpoint)
+    public virtual IHitTestObject HitTest(IPlotArea layer, PointF hitpoint)
     {
       return null;
     }

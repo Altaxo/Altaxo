@@ -244,7 +244,7 @@ namespace Altaxo.Graph
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
     /// <returns>Null if no hit, or a <see>IHitTestObject</see> if there was a hit.</returns>
-    public override IHitTestObject HitTest(XYPlotLayer layer, PointF hitpoint)
+    public override IHitTestObject HitTest(IPlotArea layer, PointF hitpoint)
     {
       if(null!=this.m_PlotStyle)
       {
@@ -263,14 +263,14 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
-    /// <returns>The index of the scatter point that is nearest to the location, or -1 if it can not be determined.</returns>
-    public int GetNearestPointIndex(XYPlotLayer layer, PointF hitpoint)
+    /// <returns>The information about the point that is nearest to the location, or null if it can not be determined.</returns>
+    public XYScatterPointInformation GetNearestPlotPoint(IPlotArea layer, PointF hitpoint)
     {
       if(this.m_PlotStyle is XYLineScatterPlotStyle)
       {
-        return ((XYLineScatterPlotStyle)m_PlotStyle).GetNearestPointIndex(layer,m_PlotAssociation,hitpoint);
+        return ((XYLineScatterPlotStyle)m_PlotStyle).GetNearestPlotPoint(layer,m_PlotAssociation,hitpoint);
       }
-      return -1;
+      return null;
     }
 
   }

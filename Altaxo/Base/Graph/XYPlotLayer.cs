@@ -1344,6 +1344,19 @@ namespace Altaxo.Graph
       return gp;
     }
 
+    
+    /// <summary>
+    /// Transforms a <see>PointF</see> from layer coordinates to graph (=printable area) coordinates
+    /// </summary>
+    /// <param name="gp">the graphics path to convert</param>
+    /// <returns>graphics path now in graph coordinates</returns>
+    public PointF LayerToGraphCoordinates(PointF layerCoordinates)
+    {
+      PointF[]result = new PointF[]{layerCoordinates}; 
+      m_ForwardMatrix.TransformPoints(result);
+      return result[0];
+    }
+
 
 
     public void SetPosition(double x, PositionType xpostype, double y, PositionType ypostype)

@@ -1592,6 +1592,17 @@ namespace Altaxo.Graph.GUI
     }
 
     /// <summary>
+    /// Converts page coordinates (in points=1/72 inch) to pixel coordinates . Uses the resolutions <see cref="m_HorizRes"/>
+    /// and <see cref="m_VertRes"/> for calculation-
+    /// </summary>
+    /// <param name="pagec">The page coordinates to convert (points=1/72 inch).</param>
+    /// <returns>The coordinates as pixel coordinates.</returns>
+    public PointF PageToPixelCoordinates(PointF pagec)
+    {
+      return new PointF(pagec.X*HorizFactorPageToPixel(),pagec.Y*VertFactorPageToPixel());
+    }
+
+    /// <summary>
     /// Converts x,y differences in pixels to the corresponding
     /// differences in page coordinates
     /// </summary>
@@ -1613,6 +1624,20 @@ namespace Altaxo.Graph.GUI
       r.X -= m_Graph.PrintableBounds.X;
       r.Y -= m_Graph.PrintableBounds.Y;
       return r;
+    }
+
+    /// <summary>
+    /// converts printable area  to pixel coordinates
+    /// </summary>
+    /// <param name="printc">Printable area coordinates.</param>
+    /// <returns>Pixel coordinates as returned by MouseEvents</returns>
+    public PointF PrintableAreaToPixelCoordinates(PointF printc)
+    {
+      printc.X += m_Graph.PrintableBounds.X;
+      printc.Y += m_Graph.PrintableBounds.Y;
+      return PageToPixelCoordinates(printc);
+     
+      
     }
 
     /// <summary>
@@ -2266,9 +2291,32 @@ namespace Altaxo.Graph.GUI
           Matrix inv = clickedObject.Transformation.Clone();
           inv.Invert();
           inv.TransformPoints(transXY);
-          int index = m_PlotItem.GetNearestPointIndex(clickedObject.ParentLayer,transXY[0]);
+          XYScatterPointInformation scatterPoint = m_PlotItem.GetNearestPlotPoint(clickedObject.ParentLayer,transXY[0]);
+
+
+
+          if(null!=scatterPoint)
+          {
+            // convert this layer coordinates first to PrintableAreaCoordinates
+            PointF printableCoord = clickedObject.ParentLayer.LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
+            PointF newPixelCoord = grac.PrintableAreaToPixelCoordinates(printableCoord);
+            Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
+
           
-          Current.Console.WriteLine("The nearest index was : {0}",index);
+            
+            Current.Console.WriteLine("{0}[{1}] X={2}, Y={3}",
+              m_PlotItem.ToString(),
+              scatterPoint.RowIndex,
+ //             scatterPoint.PlotIndex,
+              m_PlotItem.XYColumnPlotData.XColumn[scatterPoint.RowIndex],
+              m_PlotItem.XYColumnPlotData.YColumn[scatterPoint.RowIndex]);
+
+          
+          
+            // here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
+            // of the grac
+          
+          }
         }
        
          

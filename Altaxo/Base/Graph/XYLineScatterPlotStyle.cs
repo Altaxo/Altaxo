@@ -412,11 +412,11 @@ namespace Altaxo.Graph
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
     /// <returns>The index of the scatter point that is nearest to the location, or -1 if it can not be determined.</returns>
-    public int GetNearestPointIndex(IPlotArea layer, object plotData, PointF hitpoint)
+    public XYScatterPointInformation GetNearestPlotPoint(IPlotArea layer, object plotData, PointF hitpoint)
     {
       XYColumnPlotData myPlotAssociation = plotData as XYColumnPlotData;
       if(null==myPlotAssociation)
-        return -1;
+        return null;
 
       PlotRangeList rangeList;
       PointF[] ptArray;
@@ -433,11 +433,15 @@ namespace Altaxo.Graph
             minindex = i;
           }
         }
-      return minindex;
+        // ok, minindex is the point we are looking for
+        // so we have a look in the rangeList, what row it belongs to
+        int rowindex = rangeList.GetRowIndexForPlotIndex(minindex);
+
+        return new XYScatterPointInformation(ptArray[minindex],rowindex,minindex);
       }
 
 
-      return -1;
+      return null;
     }
   
 
@@ -530,10 +534,10 @@ namespace Altaxo.Graph
     public void Paint(Graphics g, IPlotArea layer, XYColumnPlotData myPlotAssociation, PlotRangeList rangeList, PointF[] ptArray)
     {
       
-        // now plot the point array
-        PaintLine(g,layer,rangeList,ptArray);
-        PaintScatter(g,layer,rangeList,ptArray);
-        PaintLabel(g,layer,rangeList,ptArray,myPlotAssociation.LabelColumn);
+      // now plot the point array
+      PaintLine(g,layer,rangeList,ptArray);
+      PaintScatter(g,layer,rangeList,ptArray);
+      PaintLabel(g,layer,rangeList,ptArray,myPlotAssociation.LabelColumn);
     }
 
    
@@ -547,8 +551,8 @@ namespace Altaxo.Graph
       // allocate an array PointF to hold the line points
       PointF[] ptArray = new PointF[functionPoints];
 
-     // double xorg = layer.XAxis.Org;
-     // double xend = layer.XAxis.End;
+      // double xorg = layer.XAxis.Org;
+      // double xend = layer.XAxis.End;
       // Fill the array with values
       // only the points where x and y are not NaNs are plotted!
 
@@ -592,7 +596,7 @@ namespace Altaxo.Graph
         double xcoord,ycoord;
         if(logicalToArea.Convert(x_rel,y_rel, out xcoord, out ycoord))
         {
-            if(bInPlotSpace)
+          if(bInPlotSpace)
           {
             bInPlotSpace=false;
             rangeStart = j;
@@ -643,8 +647,8 @@ namespace Altaxo.Graph
         PenHolder ph = m_ScatterStyle.Pen;
         ph.Cached=true;
         Pen pen = ph.Pen; // do not dispose this pen, since it is cached
- //       float xe=layer.Size.Width;
- //       float ye=layer.Size.Height;
+        //       float xe=layer.Size.Width;
+        //       float ye=layer.Size.Height;
 
         double xleft,xright,ytop,ybottom;
         layer.LogicalToAreaConversion.Convert(0,0,out xleft,out ybottom);

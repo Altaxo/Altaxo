@@ -31,14 +31,16 @@ namespace Altaxo.Graph
   /// PlotRange represents a range of plotting points from index 
   /// lowerBound to (upperBound-1)
   /// I use a class instead of a struct because it is intended to use with
-  /// arraylist
+  /// <see>System.Collections.ArrayList</see>.
   /// </summary>
+  /// <remarks>For use in a list, the UpperBound property is somewhat useless, since it should be equal
+  /// to the LowerBound property of the next item.</remarks>
   [Serializable]
   public class PlotRange
   {
-    public int m_LowerBound;
-    public int m_UpperBound;
-    public int m_OffsetToOriginal;
+    int m_LowerBound;
+    int m_UpperBound;
+    int m_OffsetToOriginal;
 
     #region Serialization
 
@@ -65,6 +67,7 @@ namespace Altaxo.Graph
     #endregion
 
 
+
     public PlotRange(int lower, int upper)
     {
       m_LowerBound = lower;
@@ -86,23 +89,39 @@ namespace Altaxo.Graph
       m_OffsetToOriginal = a.m_OffsetToOriginal;
     }
 
+    /// <summary>
+    /// Number of points in this plot range.
+    /// </summary>
     public int Length
     {
       get { return m_UpperBound - m_LowerBound; }
     }
 
+    /// <summary>
+    /// First index in the plot point array, that appears as a plot range.
+    /// </summary>
     public int LowerBound
     {
       get { return m_LowerBound; }
       set { m_LowerBound = value; }
     }
 
+    /// <summary>
+    /// One more than the last index in the plot poin array, that appeas as a plot range.
+    /// </summary>
     public int UpperBound
     {
       get { return m_UpperBound; }
       set { m_UpperBound = value; }
     }
 
+    /// <summary>
+    /// This gives the offset to the original row index.
+    /// </summary>
+    /// <example>If the LowerBound=4 and UpperBound==6, this means points 4 to 6 in the array of plot point locations (!)
+    /// will be a contiguous range of plot points, and for this, they are connected by a line etc.
+    /// If OffsetToOriginal is 5, this means the point at index 4 in the plot point location array was created
+    /// from row index 4+5=9, i.e. from row index 9 in the DataColumn.</example>
     public int OffsetToOriginal
     {
       get { return m_OffsetToOriginal; }
@@ -112,17 +131,44 @@ namespace Altaxo.Graph
 
   }
 
+  /// <summary>
+  /// Holds a list of plot ranges. The list is not sorted automatically, but is assumed to be sorted.
+  /// </summary>
   [Serializable]
   public class PlotRangeList : Altaxo.Data.CollectionBase
   {
+    /// <summary>
+    /// Getter to a plot range at index i.
+    /// </summary>
     public PlotRange this[int i]
     {
       get { return (PlotRange)InnerList[i]; }
     }
 
+    /// <summary>
+    /// Adds a plot range. This plot range should be above the previous added plot range.
+    /// </summary>
+    /// <param name="a"></param>
     public void Add(PlotRange a)
     {
       InnerList.Add(a);
+    }
+
+
+    /// <summary>
+    /// This will get the row index into the data row belonging to a given plot index.
+    /// </summary>
+    /// <param name="idx">Index of point in the plot array.</param>
+    /// <returns>Index into the original data.</returns>
+    /// <remarks>Returns -1 if the point is not found.</remarks>
+    public int GetRowIndexForPlotIndex(int idx)
+    {
+      for(int i=0;i<Count;i++)
+      {
+        if(this[i].LowerBound<=idx && idx<this[i].UpperBound)
+          return idx+this[i].OffsetToOriginal;
+      }
+      return -1;
     }
   }
 
