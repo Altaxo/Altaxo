@@ -30,9 +30,9 @@ namespace Altaxo.Graph
 	public abstract class GraphObject
 	{
 		protected PointF m_Position = new PointF(0, 0);
-		protected SizeF m_Size = new SizeF(0, 0);
-		protected float m_Rotation = 0;
-		protected bool m_AutoSize = true;
+		protected SizeF  m_Size = new SizeF(0, 0);
+		protected float  m_Rotation = 0;
+		protected bool   m_AutoSize = true;
 		protected GraphObjectCollection m_Container=null;
 
 
@@ -109,6 +109,13 @@ namespace Altaxo.Graph
 
 		public virtual GraphicsPath HitTest(PointF pt)
 		{
+			GraphicsPath gp = GetSelectionPath();
+			return gp.IsVisible(pt) ? gp : null;
+		}
+
+
+		public virtual GraphicsPath GetSelectionPath()
+		{
 			GraphicsPath gp = new GraphicsPath();
 			Matrix myMatrix = new Matrix();
 
@@ -119,7 +126,7 @@ namespace Altaxo.Graph
 			}
 
 			gp.Transform(myMatrix);
-			return gp.IsVisible(pt) ? gp : null;
+			return gp;
 		}
 
 		public virtual bool HitTest(RectangleF rect)

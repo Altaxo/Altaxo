@@ -300,6 +300,7 @@ namespace Altaxo.Graph
 		protected BrushHolder m_BrushHolder = new BrushHolder(Color.Black);
 		protected BackgroundStyle m_BackgroundStyle = BackgroundStyle.None;
 		protected float m_LineSpacingFactor=1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
+		protected float m_ShadowLength=5.0f; // length of the background shadow in 1/72 inch
 
 
 		protected TextLine.TextLineCollection m_TextLines;
@@ -307,7 +308,12 @@ namespace Altaxo.Graph
 		protected bool m_bMeasureInSync=false; // true when all items are measured
 		protected float m_TextWidth=0; // the total width of the item
 		protected float m_TextHeight=0; /// the total heigth of the item
-		
+		protected float m_cyBaseLineSpace=0; // line space of the base font
+		protected float m_cyBaseAscent=0; // ascent of the base font
+		protected float m_cyBaseDescent=0; // descent of the base font
+		protected float m_WidthOfOne_n = 0; // Width of the lower letter n
+		protected float m_WidthOfThree_M = 0; // Width of three upper letters M
+	
 		protected RectangleF m_Bounds; // outer dimensions of the rectangle (without shadow or 3D-effect)
 		protected PointF m_TextOffset; // offset of text to left upper corner of outer rectangle
 
@@ -387,9 +393,7 @@ namespace Altaxo.Graph
 			// leads to "steps" during scaling
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 
-			float baseLineSpace, baseAscent, baseDescent;
-			MeasureFont(g, m_Font, out baseLineSpace, out baseAscent, out baseDescent);
-
+			MeasureFont(g, m_Font, out m_cyBaseLineSpace, out m_cyBaseAscent, out m_cyBaseDescent);
 
 			System.Collections.Stack itemstack = new System.Collections.Stack();
 
@@ -630,6 +634,15 @@ namespace Altaxo.Graph
 			strfmt.LineAlignment = StringAlignment.Far;
 			strfmt.Alignment = StringAlignment.Near;
 
+			// next statement is necessary to have a consistent string length both
+			// on 0 degree rotated text and rotated text
+			// without this statement, the text is fitted to the pixel grid, which
+			// leads to "steps" during scaling
+			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+			MeasureFont(g, m_Font, out m_cyBaseLineSpace, out m_cyBaseAscent, out m_cyBaseDescent);
+			m_WidthOfOne_n = g.MeasureString("n",m_Font).Width;
+			m_WidthOfThree_M = g.MeasureString("MMM",m_Font).Width;
+
 			
 			for(int nLine=0;nLine<m_TextLines.Count;nLine++)
 			{
@@ -668,7 +681,7 @@ namespace Altaxo.Graph
 							{
 								Graph.PlotAssociation pa = layer.PlotAssociations[ti.m_PlotNumber];
 								MeasureFont(g,ti.Font,out ti.m_cyLineSpace, out ti.m_cyAscent, out ti.m_cyDescent);
-								ti.m_Width = g.MeasureString(ti.m_Text, ti.Font, 0, strfmt).Width;
+								ti.m_Width = g.MeasureString("MMM", ti.Font, 0, strfmt).Width;
 
 								maxLineAscent = Math.Max(ti.m_cyAscent-ti.m_yShift,maxLineAscent);
 								maxLineDescent = Math.Max(ti.m_cyDescent+ti.m_yShift,maxLineDescent);
@@ -687,31 +700,58 @@ namespace Altaxo.Graph
 				maxLineWidth = Math.Max(sumItemWidth,maxLineWidth);
 			} // for all lines
 
-
-			// now store the outer dimensions of the object
-			float cyBaseLineSpace, cyBaseAscent, cyBaseDescent;
-			MeasureFont(g,m_Font,out cyBaseLineSpace, out cyBaseAscent, out cyBaseDescent);
-			
 			m_TextWidth = maxLineWidth; // total width of the object
-			this.m_TextHeight = m_LineSpacingFactor * cyBaseLineSpace * m_TextLines.Count;
+			this.m_TextHeight = m_LineSpacingFactor * m_cyBaseLineSpace * m_TextLines.Count;
 			// add to the height the ascent difference of the first line and the descent difference of the last line
 			if(m_TextLines.Count>0)
 			{
-				m_TextHeight += Math.Max(0,m_TextLines[0].m_cyAscent - cyBaseAscent);
-				m_TextHeight += Math.Max(0,m_TextLines[m_TextLines.Count-1].m_cyDescent - cyBaseDescent);
+				m_TextHeight += Math.Max(0,m_TextLines[0].m_cyAscent - m_cyBaseAscent);
+				m_TextHeight += Math.Max(0,m_TextLines[m_TextLines.Count-1].m_cyDescent - m_cyBaseDescent);
 			}
 
-			// the distance to the sides should be like the character n
-			float distanceX = 0.5f*g.MeasureString("n",m_Font).Width;
-			float distanceYU = cyBaseDescent;   // upper y distance bounding rectangle-string
-			float distanceYL = cyBaseDescent/2; // lower y distance
-			this.m_Bounds = new RectangleF(0,0,m_TextWidth+2*distanceX,m_TextHeight+distanceYU+distanceYL);
-			this.m_TextOffset = new PointF(distanceX,distanceYU);
+			// now measure the Background and the distance from outer rectangle to text
+			MeasureBackground();
 
 			m_bMeasureInSync = true;
 		} // end of function MeasureStructure
 
 
+		protected void MeasureBackground()
+		{
+
+			float distanceXL = 0; // left distance bounds-text
+			float distanceXR = 0; // right distance text-bounds
+			float distanceYU = 0;   // upper y distance bounding rectangle-string
+			float distanceYL = 0; // lower y distance
+
+			if(this.m_BackgroundStyle!=BackgroundStyle.None)
+			{
+				// the distance to the sides should be like the character n
+				distanceXL = 0.5f*m_WidthOfOne_n; // left distance bounds-text
+				distanceXR = distanceXL; // right distance text-bounds
+				distanceYU = m_cyBaseDescent;   // upper y distance bounding rectangle-string
+				distanceYL = 0; // lower y distance
+
+				// add some additional distance in case of special backgrounds
+				switch(this.m_BackgroundStyle)
+				{
+					case BackgroundStyle.Shadow:
+						distanceXR += this.m_ShadowLength; // the shadow extends to the right
+						distanceYL += this.m_ShadowLength; // and to the lower bound
+						break;
+					case BackgroundStyle.DarkMarbel:
+						distanceXL += this.m_ShadowLength; // darkmarbel has a rim of a Shadowlen
+						distanceXR += this.m_ShadowLength; // to all sides
+						distanceYU += this.m_ShadowLength;
+						distanceYL += this.m_ShadowLength;
+						break;
+				}
+			}
+
+			this.m_Size = new SizeF(m_TextWidth+distanceXL+distanceXR,m_TextHeight+distanceYU+distanceYL);
+			this.m_Bounds = new RectangleF(new PointF(0,0),m_Size);
+			this.m_TextOffset = new PointF(distanceXL,distanceYU);
+		}
 
 		public BackgroundStyle BackgroundStyle
 		{
@@ -721,6 +761,7 @@ namespace Altaxo.Graph
 				if(m_BackgroundStyle != value)
 				{
 					m_BackgroundStyle = value;
+					MeasureBackground(); // measure the background again
 				}
 			}
 		}
@@ -791,7 +832,6 @@ namespace Altaxo.Graph
 			if(!this.m_bMeasureInSync)
 				return;
 		
-			float shadowLen=5.0f;
 
 			switch(this.m_BackgroundStyle)
 			{
@@ -808,23 +848,23 @@ namespace Altaxo.Graph
 					g.FillRectangle(Brushes.White,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
 					break;
 				case BackgroundStyle.Shadow:
-					g.FillRectangle(Brushes.Black,m_Bounds.X+shadowLen,m_Bounds.Y+shadowLen,m_Bounds.Width,m_Bounds.Height);
-					g.FillRectangle(Brushes.White,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
-					g.DrawRectangle(Pens.Black,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
+					// please note: m_Bounds is already extended to the shadow
+					g.FillRectangle(Brushes.Black,m_Bounds.X+m_ShadowLength,m_Bounds.Y+m_ShadowLength,m_Bounds.Width-m_ShadowLength,m_Bounds.Height-m_ShadowLength);
+					g.FillRectangle(Brushes.White,m_Bounds.X,m_Bounds.Y,m_Bounds.Width-m_ShadowLength,m_Bounds.Height-m_ShadowLength);
+					g.DrawRectangle(Pens.Black,m_Bounds.X,m_Bounds.Y,m_Bounds.Width-m_ShadowLength,m_Bounds.Height-m_ShadowLength);
 					break;
 				case BackgroundStyle.DarkMarbel:
-					g.FillRectangle(Brushes.Black,m_Bounds.X-shadowLen,m_Bounds.Y-shadowLen,m_Bounds.Width+2*shadowLen,m_Bounds.Height+2*shadowLen);
+					g.FillRectangle(Brushes.Black,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
 					g.FillPolygon(Brushes.LightGray,new PointF[] {
-						new PointF(m_Bounds.X-shadowLen,m_Bounds.Y-shadowLen), // upper left point
-						new PointF(m_Bounds.X+m_Bounds.Width+shadowLen,m_Bounds.Y-shadowLen), // go to the right
-						new PointF(m_Bounds.X+m_Bounds.Width,m_Bounds.Y), // go 45 deg left down in the upper right corner
-						new PointF(m_Bounds.X,m_Bounds.Y), // upper left corner of the inner rectangle
-						new PointF(m_Bounds.X,m_Bounds.Y+m_Bounds.Height), // lower left corner of the inner rectangle
-						new PointF(m_Bounds.X-shadowLen,m_Bounds.Y+m_Bounds.Height+shadowLen) // lower left corner
+						new PointF(m_Bounds.X,m_Bounds.Y), // upper left point
+						new PointF(m_Bounds.X+m_Bounds.Width,m_Bounds.Y), // go to the right
+						new PointF(m_Bounds.X+m_Bounds.Width-m_ShadowLength,m_Bounds.Y+m_ShadowLength), // go 45 deg left down in the upper right corner
+						new PointF(m_Bounds.X+m_ShadowLength,m_Bounds.Y+m_ShadowLength), // upper left corner of the inner rectangle
+						new PointF(m_Bounds.X+m_ShadowLength,m_Bounds.Y+m_Bounds.Height-m_ShadowLength), // lower left corner of the inner rectangle
+						new PointF(m_Bounds.X,m_Bounds.Y+m_Bounds.Height) // lower left corner
 					});
 
-
-						g.FillRectangle(Brushes.DimGray,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
+						g.FillRectangle(Brushes.DimGray,m_Bounds.X+m_ShadowLength,m_Bounds.Y+m_ShadowLength,m_Bounds.Width-2*m_ShadowLength,m_Bounds.Height-2*m_ShadowLength);
 					break;
 			} // end of switch BackgroundStyle
 		}

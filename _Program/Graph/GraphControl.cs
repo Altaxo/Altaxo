@@ -45,8 +45,21 @@ namespace Altaxo.Graph
 		private const float UnitPerInch = 72;
 
 		// following default unit is point (1/72 inch)
+		
+		/// <summary>
+		/// overall size of the page (usually the size of the sheet of paper that is selected as printing document)
+		/// </summary>
 		private RectangleF m_PageBounds = new RectangleF(0, 0, 842, 595);
+
+		
+		/// <summary>
+		/// the printable area of the document, i.e. the page size minus the margins at each side
+		/// </summary>
 		private RectangleF m_PrintableBounds = new RectangleF(14, 14, 814 , 567 );
+
+
+
+
 		private float m_HorizRes  = 300;
 		private float m_VertRes = 300;
 		private Color m_NonPrintingAreaColor = Color.Gray;
@@ -136,7 +149,10 @@ namespace Altaxo.Graph
 			this.m_GraphPanel.Size = new System.Drawing.Size(150, 150);
 			this.m_GraphPanel.TabIndex = 0;
 			this.m_GraphPanel.Click += new System.EventHandler(this.OnGraphPanel_Click);
+			this.m_GraphPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.OnGraphPanel_MouseUp);
 			this.m_GraphPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.AltaxoGraphControl_Paint);
+			this.m_GraphPanel.DoubleClick += new System.EventHandler(this.OnGraphPanel_DoubleClick);
+			this.m_GraphPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.OnGraphPanel_MouseMove);
 			this.m_GraphPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnGraphPanel_MouseDown);
 			// 
 			// GraphControl
@@ -279,6 +295,18 @@ namespace Altaxo.Graph
 			return new PointF(pixelc.X/HorizFactorPageToPixel(),pixelc.Y/VertFactorPageToPixel());
 		}
 
+		/// <summary>
+		/// converts from pixel to printable area coordinates
+		/// </summary>
+		/// <param name="pixelc">pixel coordinates as returned by MouseEvents</param>
+		/// <returns>coordinates of the printable area in 1/72 inch</returns>
+		public PointF PixelToPrintableAreaCoordinates(PointF pixelc)
+		{
+			PointF r = PixelToPageCoordinates(pixelc);
+			r.X -= this.m_PrintableBounds.X;
+			r.Y -= this.m_PrintableBounds.Y;
+			return r;
+		}
 		protected virtual void DrawMargins(Graphics g)
 		{
 			//Rectangle margins = ZoomRectangle(ConvertToPixels(this.m_PrintableBounds));
@@ -399,7 +427,7 @@ namespace Altaxo.Graph
 
 		private void AltaxoGraphControl_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			PointF mousePT = PixelToPageCoordinates(new PointF(e.X,e.Y));
+			PointF mousePT = PixelToPrintableAreaCoordinates(new PointF(e.X,e.Y));
 			GraphicsPath gp;
 
 			foreach(Altaxo.Graph.Layer gl in graphLayers)
@@ -426,13 +454,14 @@ namespace Altaxo.Graph
 		
 		private void OnGraphPanel_Click(object sender, System.EventArgs e)
 		{
-		
+		System.Console.WriteLine("Click");
+
 			if(this.m_CurrentGraphTool==GraphTools.Text)
 			{
 				// get the page coordinates (in Point (1/72") units)
-				PointF pageCoord = PixelToPageCoordinates(m_LastMouseDownPoint);
+				PointF printAreaCoord = PixelToPrintableAreaCoordinates(m_LastMouseDownPoint);
 				// with knowledge of the current active layer, calculate the layer coordinates from them
-				PointF layerCoord = Layer[ActualLayer].ToLayerCoordinates(pageCoord);
+				PointF layerCoord = Layer[ActualLayer].ToLayerCoordinates(printAreaCoord);
 
 				ExtendedTextGraphObject tgo = new ExtendedTextGraphObject();
 				tgo.Position = layerCoord;
@@ -449,20 +478,88 @@ namespace Altaxo.Graph
 
 		private void OnGraphPanel_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-		m_LastMouseDownPoint = new PointF(e.X,e.Y);
+		System.Console.WriteLine("MouseDown {0},{1}",e.X,e.Y);
+
+			switch(this.m_CurrentGraphTool)
+			{
+				case GraphTools.ObjectPointer:
+					OnGraphPanel_ObjectPointerMouseDown(sender, e);
+					break;
+			} // end of switch
+
+			m_LastMouseDownPoint = new PointF(e.X,e.Y); // store the position of the mouse down
 		}
 
-		/*
-		public class LayerList : System.Collections.ArrayList
+
+
+		/// <summary>
+		/// The hashtable of the selected objects. The key is the selected object itself,
+		/// the data is a ... object, which stores the data especially for selection, 
+		/// i.e. the layer the object belongs to, and the graphics path of the selection marker.
+		/// </summary>
+		protected System.Collections.Hashtable m_SelectedObjects = new System.Collections.Hashtable();
+		private void OnGraphPanel_ObjectPointerMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			public new  Layer this[int i]
+			// first, if we have a mousedown without shift key and the
+			// position has changed with respect to the last mousedown
+			// we have to deselect all objects
+			PointF mouseXY = new PointF(e.X,e.Y);
+			bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
+			bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
+
+			// first, if we have a mousedown without shift key and the
+			// position has changed with respect to the last mousedown
+			// we have to deselect all objects
+			if(mouseXY!=m_LastMouseDownPoint && !bControlKey && !bShiftKey)
 			{
-				get { return (Layer)base[i]; }
-				set { base[i]=value; }
+				// deselect all selected objects by deleting them
+				m_SelectedObjects.Clear();
+			}
+
+
+			// now look which object has been pointed to
+			PointF mousePT = PixelToPrintableAreaCoordinates(new PointF(e.X,e.Y));
+			GraphicsPath gp;
+
+			foreach(Altaxo.Graph.Layer gl in graphLayers)
+			{
+				gp = gl.HitTest(mousePT);
+
+				if(gp!=null)
+				{
+					Graphics g = this.m_GraphPanel.CreateGraphics();
+					g.PageUnit = GraphicsUnit.Point;
+					g.PageScale = this.m_Zoom;
+
+					// the graphics path was returned in printable area ("graph") coordinates
+					// thats why we have to shift our coordinate system to printable area coordinates also
+					float pointsh = UnitPerInch*this.AutoScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
+					float pointsv = UnitPerInch*this.AutoScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
+					pointsh += this.m_PrintableBounds.X;
+					pointsv += this.m_PrintableBounds.Y; 
+
+					// shift the coordinates to page coordinates
+					g.TranslateTransform(pointsh,pointsv);
+
+					g.DrawPath(Pens.Blue,gp);
+					break;
+				}
 			}
 		}
-		*/
+		private void OnGraphPanel_DoubleClick(object sender, System.EventArgs e)
+		{
+			System.Console.WriteLine("DoubleClick!");
+		}
 
+		private void OnGraphPanel_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+			System.Console.WriteLine("MouseUp {0},{1}",e.X,e.Y);
+		}
+
+		private void OnGraphPanel_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+			System.Console.WriteLine("MouseMove {0},{1}",e.X,e.Y);
+		}
 
 	} // end of class
 } // end of namespace
