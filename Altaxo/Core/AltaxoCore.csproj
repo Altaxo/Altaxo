@@ -278,6 +278,16 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <File
+                    RelPath = "Calc\Regression\QuickQuadraticRegression.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\SavitzkyGolay.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
                 <Folder RelPath = "Calc\Regression\PCR\" />
                 <File
                     RelPath = "Calc\Regression\PLS\CrossPRESSCalculationType.cs"

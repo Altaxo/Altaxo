@@ -52,7 +52,7 @@ namespace Altaxo.Calc.Regression.PLS
     /// </summary>
     /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
     /// <param name="xMean">Output: On return, contains the ensemble mean of the spectra.</param>
-    /// <param name="xScale">Output: On return, contains the scale of the spectral slots.</param>
+    /// <param name="xScale">Not used.</param>
     public void Process(IMatrix xMatrix, IVector xMean, IVector xScale)
     {
       // 1.) Get the mean spectrum
@@ -65,8 +65,8 @@ namespace Altaxo.Calc.Regression.PLS
         for(int i=0;i<xMatrix.Columns;i++)
           regression.Add(xMean[i],xMatrix[n,i]);
 
-        double intercept = regression.GetIntercept();
-        double slope = regression.GetSlope();
+        double intercept = regression.GetA0();
+        double slope = regression.GetA1();
 
         // 3.) Subtract intercept and divide by slope
         for(int i=0;i<xMatrix.Columns;i++)
@@ -89,11 +89,10 @@ namespace Altaxo.Calc.Regression.PLS
     /// Processes the spectra in matrix xMatrix.
     /// </summary>
     /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
-    /// <param name="xMean">Output: On return, contains the ensemble mean of the spectra.</param>
-    /// <param name="xScale">Output: On return, contains the scale of the spectral slots.</param>
+    /// <param name="xMean">Not used, since this processing sets xMean by itself (to zero).</param>
+    /// <param name="xScale">Not used, since the processing sets xScale by itself.</param>
     public void Process(IMatrix xMatrix, IVector xMean, IVector xScale)
     {
-
       for(int n=0;n<xMatrix.Rows;n++)
       {
         // 1.) Get the mean response of a spectrum
@@ -106,21 +105,97 @@ namespace Altaxo.Calc.Regression.PLS
         for(int i=0;i<xMatrix.Columns;i++)
           xMatrix[n,i] -= mean;
 
-
-        QuickLinearRegression regression = new QuickLinearRegression();
+        // 3.) Get the standard deviation
+        double dev = 0;
         for(int i=0;i<xMatrix.Columns;i++)
-          regression.Add(xMean[i],xMatrix[n,i]);
+          dev += xMatrix[n,i]*xMatrix[n,i];
+        dev = Math.Sqrt(dev/(xMatrix.Columns-1));
 
-        double intercept = regression.GetIntercept();
-        double slope = regression.GetSlope();
-
-        // 3.) Subtract intercept and divide by slope
+        // 4. Divide by standard deviation
         for(int i=0;i<xMatrix.Columns;i++)
-          xMatrix[n,i] = (xMatrix[n,i]-intercept)/slope;
+          xMatrix[n,i] /= dev;
       }
     }
   }
   #endregion  
 
+
+  #region Detrending
+  /// <summary>
+  /// This class detrends all spectra. This is done by fitting a polynomial to the spectrum (x value is simply the index of data point), and then
+  /// subtracting the fit curve from the spectrum.
+  /// The degree of the polynomial can be choosen between 0 (the mean is subtracted), 1 (a fitted straight line is subtracted).
+  /// </summary>
+  public class DetrendingCorrection
+  {
+    int _order=0;
+  
+    public DetrendingCorrection(int order)
+    {
+      if(order<0)
+        throw new ArgumentOutOfRangeException("Order must be 0 or positive");
+      if(order>2)
+        throw new ArgumentOutOfRangeException("Order must be in the range between 0 and 2");
+      _order = order;
+    }
+    /// <summary>
+    /// Processes the spectra in matrix xMatrix.
+    /// </summary>
+    /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
+    /// <param name="xMean">Not used, since this processing sets xMean by itself (to zero).</param>
+    /// <param name="xScale">Not used, since the processing sets xScale by itself.</param>
+    public void Process(IMatrix xMatrix, IVector xMean, IVector xScale)
+    {
+      switch(_order)
+      {
+        case 0: // Detrending of order 0 - subtract mean
+          for(int n=0;n<xMatrix.Rows;n++)
+          {
+            // 1.) Get the mean response of a spectrum
+            double mean = 0;
+            for(int i=0;i<xMatrix.Columns;i++)
+              mean += xMatrix[n,i];
+            mean /= xMatrix.Columns;
+
+            for(int i=0;i<xMatrix.Columns;i++)
+              xMatrix[n,i] -= mean;
+          }
+          break;
+        case 1: // Detrending of order 1 - subtract linear regression line
+          for(int n=0;n<xMatrix.Rows;n++)
+          {
+            QuickLinearRegression regression = new QuickLinearRegression();
+            for(int i=0;i<xMatrix.Columns;i++)
+              regression.Add(i,xMatrix[n,i]);
+
+            double a0 = regression.GetA0();
+            double a1 = regression.GetA1();
+
+            for(int i=0;i<xMatrix.Columns;i++)
+              xMatrix[n,i] -= (a1*i+a0);
+          }
+          break;
+        case 2: // Detrending of order 2 - subtract quadratic regression line
+          for(int n=0;n<xMatrix.Rows;n++)
+          {
+            QuickQuadraticRegression regression = new QuickQuadraticRegression();
+            for(int i=0;i<xMatrix.Columns;i++)
+              regression.Add(i,xMatrix[n,i]);
+
+            double a0 = regression.GetA0();
+            double a1 = regression.GetA1();
+            double a2 = regression.GetA2();
+
+            for(int i=0;i<xMatrix.Columns;i++)
+              xMatrix[n,i] -= (((a2*i)+a1)*i+a0);
+          }
+          break;
+
+        default:
+          throw new NotImplementedException(string.Format("Detrending of order {0} is not implemented yet",_order));
+      }
+    }
+  }
+  #endregion  
 
 }

@@ -1359,6 +1359,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #endregion
 
+    /*
     /// <summary>
     /// This will center the matrix so that the mean of each column is null.
     /// </summary>
@@ -1382,6 +1383,32 @@ namespace Altaxo.Calc.LinearAlgebra
         
         if(null!=mean)
           mean[0,col] = sum;
+      }
+    }
+*/
+    /// <summary>
+    /// This will center the matrix so that the mean of each column is null.
+    /// </summary>
+    /// <param name="a">The matrix where the columns should be centered.</param>
+    /// <param name="mean">You can provide a matrix of dimension(1,a.Cols) where the mean row vector is stored, or null if not interested in this vector.</param>
+    /// <remarks>Calling this function will change the matrix a to a column
+    /// centered matrix. The original matrix data are lost.</remarks>
+    public static void ColumnsToZeroMean(IMatrix a, IVector mean)
+    {
+      if(null!=mean && mean.Length != a.Columns)
+        throw new ArithmeticException(string.Format("The provided resultant vector (actual length({0}) has not the expected dimension ({1})",mean.Length,a.Columns));
+
+      for(int col = 0; col<a.Columns; col++)
+      {
+        double sum = 0;
+        for(int row=0;row<a.Rows;row++)
+          sum += a[row,col];
+        sum /= a.Rows; // calculate the mean
+        for(int row=0;row<a.Rows;row++)
+          a[row,col] -= sum; // subtract the mean from every element in the column
+        
+        if(null!=mean)
+          mean[col] = sum;
       }
     }
 
