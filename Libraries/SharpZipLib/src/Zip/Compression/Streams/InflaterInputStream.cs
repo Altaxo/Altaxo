@@ -85,6 +85,21 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// </summary>
 		protected long csize;
 		
+		bool isStreamOwner = true;
+		
+		/// <summary>
+		/// Get/set flag indicating ownership of underlying stream.
+		/// When the flag is true <see cref="Close"/> will close the underlying stream also.
+		/// </summary>
+		/// <remarks>
+		/// The default value is true.
+		/// </remarks>
+		public bool IsStreamOwner
+		{
+			get { return isStreamOwner; }
+			set { isStreamOwner = value; }
+		}
+		
 		/// <summary>
 		/// Gets a value indicating whether the current stream supports reading
 		/// </summary>
@@ -95,8 +110,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		}
 		
 		/// <summary>
-		/// Value of false indicating seeking is not supported for this stream
-		/// This property always returns false
+		/// Gets a value of false indicating seeking is not supported for this stream.
 		/// </summary>
 		public override bool CanSeek {
 			get {
@@ -105,8 +119,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		}
 		
 		/// <summary>
-		/// Get true if stream is writeable
-		/// This property always returns false
+		/// Gets a value of false indicating that this stream is not writeable.
 		/// </summary>
 		public override bool CanWrite {
 			get {
@@ -124,7 +137,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		}
 		
 		/// <summary>
-		/// The current position within the stream
+		/// The current position within the stream.
 		/// Throws a NotSupportedException when attempting to set the position
 		/// </summary>
 		/// <exception cref="NotSupportedException">Attempting to set the position</exception>
@@ -256,28 +269,17 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			this.inf = inflater;
 			buf = new byte[bufferSize];
 			
-			// TODO rework this!!  The original code will mask real exceptions.
-/*			Is this valid in all cases?
 			if (baseInputStream.CanSeek) {
-				this.len = baseInputStream.Length;
+				this.len = (int)baseInputStream.Length;
 			} else {
 				this.len = 0;
 			}
-*/			
-			try {
-				this.len = (int)baseInputStream.Length;
-			} catch (Exception) {
-				// the stream may not support Length property
-				this.len = 0;
-			}
-			
 		}
 		
 		/// <summary>
 		/// Returns 0 once the end of the stream (EOF) has been reached.
 		/// Otherwise returns 1.
 		/// </summary>
-		/// TODO make this a bool property?
 		public virtual int Available {
 			get {
 				return inf.IsFinished ? 0 : 1;
@@ -285,18 +287,18 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		}
 		
 		/// <summary>
-		/// Closes the input stream
+		/// Closes the input stream.  When <see cref="IsStreamOwner"></see>
+		/// is true the underlying stream is also closed.
 		/// </summary>
 		public override void Close()
 		{
-			baseInputStream.Close();
+			if ( isStreamOwner ) {
+				baseInputStream.Close();
+			}
 		}
 
 		int readChunkSize = 0;
 
-		// TODO  this is an ineficient way of handling this situation
-		// revamp this to operate better...
-		
 		/// <summary>
 		/// Sets the size of chunks to read from the input stream
 		/// 0 means as larger as possible.

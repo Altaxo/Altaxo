@@ -1,4 +1,4 @@
-// TarInputStream.cs
+// TarArchive.cs
 //
 // Copyright (C) 2001 Mike Krueger
 //
@@ -38,12 +38,11 @@ using System.IO;
 using System.Text;
 
 namespace ICSharpCode.SharpZipLib.Tar {
-	
 	/// <summary>
 	/// Used to advise clients of 'events' while processing archives
 	/// </summary>
 	public delegate void ProgressMessageHandler(TarArchive archive, TarEntry entry, string message);
-	
+
 	/// <summary>
 	/// The TarArchive class implements the concept of a
 	/// 'Tape Archive'. A tar archive is a series of entries, each of
@@ -67,8 +66,6 @@ namespace ICSharpCode.SharpZipLib.Tar {
 	/// </summary>
 	public class TarArchive
 	{
-		bool verbose;
-		bool debug;
 		bool keepOldFiles;
 		bool asciiTranslate;
 		
@@ -138,7 +135,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		}
 		
 		/// <summary>
-		/// Create a TarArchive for writing to, using the default block factor
+		/// Create a TarArchive for writing to, using the default blocking factor
 		/// </summary>
 		/// <param name="outputStream">Stream to write to</param>
 		public static TarArchive CreateOutputTarArchive(Stream outputStream)
@@ -149,8 +146,8 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// <summary>
 		/// Create a TarArchive for writing to
 		/// </summary>
-		/// <param name="outputStream">Stream to write to</param>
-		/// <param name="blockFactor">Block factor to use for buffering</param>
+		/// <param name="outputStream">The stream to write to</param>
+		/// <param name="blockFactor">The blocking factor to use for buffering.</param>
 		public static TarArchive CreateOutputTarArchive(Stream outputStream, int blockFactor)
 		{
 			TarArchive archive = new TarArchive();
@@ -168,46 +165,14 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			this.rootPath   = null;
 			this.pathPrefix = null;
 			
-//			this.tempPath   = System.getProperty( "user.dir" );
-			
 			this.userId    = 0;
 			this.userName  = String.Empty;
 			this.groupId   = 0;
 			this.groupName = String.Empty;
 			
-			this.debug           = false;
-			this.verbose         = false;
 			this.keepOldFiles    = false;
 			
 			this.recordBuf = new byte[RecordSize];
-		}
-		
-		/// <summary>
-		/// Set the debugging flag
-		/// </summary>
-		/// <param name="debugFlag"> The new debug setting.</param>
-		
-		public void SetDebug(bool debugFlag)
-		{
-			this.debug = debugFlag;
-			if (this.tarIn != null) {
-				this.tarIn.SetDebug(debugFlag);
-			} 
-			if (this.tarOut != null) {
-				this.tarOut.SetDebug(debugFlag);
-			}
-		}
-		
-		/// <summary>
-		/// Get/Set the verbosity setting.
-		/// </summary>
-		public bool IsVerbose {
-			get {
-				return verbose;
-			}
-			set {
-				verbose = value;
-			}
 		}
 		
 		/// <summary>
@@ -224,10 +189,8 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		
 		/// <summary>
 		/// Set the ascii file translation flag. If ascii file translation
-		/// is true, then the MIME file type will be consulted to determine
-		/// if the file is of type 'text/*'. If the MIME type is not found,
-		/// then the TransFileTyper is consulted if it is not null. If
-		/// either of these two checks indicates the file is an ascii text
+		/// is true, then the file is checked to see if it a binary file or not. 
+		/// If the flag is true and the test indicates it is ascii text 
 		/// file, it will be translated. The translation converts the local
 		/// operating system's concept of line ends into the UNIX line end,
 		/// '\n', which is the defacto standard for a TAR archive. This makes
@@ -240,16 +203,37 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		{
 			this.asciiTranslate = asciiTranslate;
 		}
+
+		/// <summary>
+		/// PathPrefix is added to entry names as they are written if the value is not null.
+		/// A slash character is appended after PathPrefix 
+		/// </summary>
+		public string PathPrefix
+		{
+			get { return pathPrefix; }
+			set { pathPrefix = value; }
+		
+		}
+		
+		/// <summary>
+		/// RootPath is removed from entry names if it is found at the
+		/// beginning of the name.
+		/// </summary>
+		public string RootPath
+		{
+			get { return rootPath; }
+			set { rootPath = value; }
+		}
 		
 		/// <summary>
 		/// Set user and group information that will be used to fill in the
-		/// tar archive's entry headers. Since Java currently provides no means
-		/// of determining a user name, user id, group name, or group id for
-		/// a given File, TarArchive allows the programmer to specify values
+		/// tar archive's entry headers. This information based on that available 
+		/// for the linux operating system, which is not always available on other
+		/// operating systems.  TarArchive allows the programmer to specify values
 		/// to be used in their place.
 		/// </summary>
 		/// <param name="userId">
-		/// The user Id to use in the headers.
+		/// The user id to use in the headers.
 		/// </param>
 		/// <param name="userName">
 		/// The user name to use in the headers.
@@ -266,10 +250,25 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			this.userName  = userName;
 			this.groupId   = groupId;
 			this.groupName = groupName;
+			applyUserInfoOverrides = true;
 		}
 		
+		bool applyUserInfoOverrides = false;
+
 		/// <summary>
-		/// Get the user id being used for archive entry headers.
+		/// Get or set a value indicating if overrides defined by <see cref="SetUserInfo">SetUserInfo</see> should be applied.
+		/// </summary>
+		/// <remarks>If overrides are not applied then the values as set in each header will be used.</remarks>
+		public bool ApplyUserInfoOverrides
+		{
+			get { return applyUserInfoOverrides; }
+			set { applyUserInfoOverrides = value; }
+		}
+
+		/// <summary>
+		/// Get the archive user id.
+		/// See <see cref="ApplyUserInfoOverrides">ApplyUserInfoOverrides</see> for detail
+		/// on how to allow setting values on a per entry basis.
 		/// </summary>
 		/// <returns>
 		/// The current user id.
@@ -281,7 +280,9 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		}
 		
 		/// <summary>
-		/// Get the user name being used for archive entry headers.
+		/// Get the archive user name.
+		/// See <see cref="ApplyUserInfoOverrides">ApplyUserInfoOverrides</see> for detail
+		/// on how to allow setting values on a per entry basis.
 		/// </summary>
 		/// <returns>
 		/// The current user name.
@@ -293,7 +294,9 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		}
 		
 		/// <summary>
-		/// Get the group id being used for archive entry headers.
+		/// Get the archive group id.
+		/// See <see cref="ApplyUserInfoOverrides">ApplyUserInfoOverrides</see> for detail
+		/// on how to allow setting values on a per entry basis.
 		/// </summary>
 		/// <returns>
 		/// The current group id.
@@ -305,7 +308,9 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		}
 		
 		/// <summary>
-		/// Get the group name being used for archive entry headers.
+		/// Get the archive group name.
+		/// See <see cref="ApplyUserInfoOverrides">ApplyUserInfoOverrides</see> for detail
+		/// on how to allow setting values on a per entry basis.
 		/// </summary>
 		/// <returns>
 		/// The current group name.
@@ -354,11 +359,10 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		}
 		
 		/// <summary>
-		/// Perform the "list" command and list the contents of the archive.
+		/// Perform the "list" command for the archive contents.
 		/// 
-		/// NOTE That this method uses the progress display to actually list
-		/// the contents. If the progress display is not set, nothing will be
-		/// listed!
+		/// NOTE That this method uses the <see cref="ProgressMessageEvent"> progress event</see> to actually list
+		/// the contents. If the progress display event is not set, nothing will be listed!
 		/// </summary>
 		public void ListContents()
 		{
@@ -366,9 +370,6 @@ namespace ICSharpCode.SharpZipLib.Tar {
 				TarEntry entry = this.tarIn.GetNextEntry();
 				
 				if (entry == null) {
-					if (this.debug) {
-						Console.Error.WriteLine("READ EOF BLOCK");
-					}
 					break;
 				}
 				OnProgressMessageEvent(entry, null);
@@ -387,9 +388,6 @@ namespace ICSharpCode.SharpZipLib.Tar {
 				TarEntry entry = this.tarIn.GetNextEntry();
 				
 				if (entry == null) {
-					if (this.debug) {
-						Console.Error.WriteLine("READ EOF BLOCK");
-					}
 					break;
 				}
 				
@@ -409,26 +407,26 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			}
 		}
 		
-		// TODO  Assess how valid this test really is.
-		// No longer reads entire file into memory but is still a weak test!
+		// TODO: Is there a better way to test for a text file?
+		// It no longer reads entire files into memory but is still a weak test!
 		// assumes that ascii 0-7, 14-31 or 255 are binary
 		// and that all non text files contain one of these values
 		bool IsBinary(string filename)
 		{
-			FileStream fs = File.OpenRead(filename);
+			using (FileStream fs = File.OpenRead(filename))
+			{
+				int sampleSize = System.Math.Min(4096, (int)fs.Length);
+				byte[] content = new byte[sampleSize];
 			
-			int sampleSize = System.Math.Min(4096, (int)fs.Length);
-			byte[] content = new byte[sampleSize];
+				int bytesRead = fs.Read(content, 0, sampleSize);
 			
-			fs.Read(content, 0, sampleSize);
-			fs.Close();
-			
-			foreach (byte b in content) {
-				if (b < 8 || (b > 13 && b < 32) || b == 255) {
-					return true;
+				for (int i = 0; i < bytesRead; ++i) {
+					byte b = content[i];
+					if (b < 8 || (b > 13 && b < 32) || b == 255) {
+						return true;
+					}
 				}
 			}
-			
 			return false;
 		}		
 		
@@ -444,9 +442,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// </param>
 		void ExtractEntry(string destDir, TarEntry entry)
 		{
-			if (this.verbose) {
-				OnProgressMessageEvent(entry, null);
-			}
+			OnProgressMessageEvent(entry, null);
 			
 			string name = entry.Name;
 			
@@ -480,32 +476,10 @@ namespace ICSharpCode.SharpZipLib.Tar {
 				
 				if (process) {
 					bool asciiTrans = false;
-					// TODO file may exist and be read-only at this point!
+					
 					Stream outputStream = File.Create(destFile);
 					if (this.asciiTranslate) {
 						asciiTrans = !IsBinary(destFile);
-// TODO  do we need this stuff below? 						
-// original java sourcecode : 
-//						MimeType mime      = null;
-//						string contentType = null;
-//						try {
-//							contentType = FileTypeMap.getDefaultFileTypeMap().getContentType( destFile );
-//							
-//							mime = new MimeType(contentType);
-//							
-//							if (mime.getPrimaryType().equalsIgnoreCase( "text" )) {
-//								asciiTrans = true;
-//							} else if ( this.transTyper != null ) {
-//								if ( this.transTyper.isAsciiFile( entry.getName() ) ) {
-//									asciiTrans = true;
-//								}
-//							}
-//						} catch (MimeTypeParseException ex) {
-//						}
-//						
-//						if (this.debug) {
-//							Console.Error.WriteLine(("EXTRACT TRANS? '" + asciiTrans + "'  ContentType='" + contentType + "'  PrimaryType='" + mime.getPrimaryType() + "'" );
-//						}
 					}
 					
 					StreamWriter outw = null;
@@ -543,6 +517,37 @@ namespace ICSharpCode.SharpZipLib.Tar {
 				}
 			}
 		}
+
+		/// <summary>
+		/// Write an entry to the archive. This method will call the putNextEntry
+		/// and then write the contents of the entry, and finally call closeEntry()
+		/// for entries that are files. For directories, it will call putNextEntry(),
+		/// and then, if the recurse flag is true, process each entry that is a
+		/// child of the directory.
+		/// </summary>
+		/// <param name="sourceEntry">
+		/// The TarEntry representing the entry to write to the archive.
+		/// </param>
+		/// <param name="recurse">
+		/// If true, process the children of directory entries.
+		/// </param>
+		public void WriteEntry(TarEntry sourceEntry, bool recurse)
+		{
+			try
+			{
+				if ( recurse ) {
+					TarHeader.SetValueDefaults(sourceEntry.UserId, sourceEntry.UserName,
+					                           sourceEntry.GroupId, sourceEntry.GroupName);
+				}
+				InternalWriteEntry(sourceEntry, recurse);
+			}
+			finally
+			{
+				if ( recurse ) {
+					TarHeader.RestoreSetValues();
+				}
+			}
+		}
 		
 		/// <summary>
 		/// Write an entry to the archive. This method will call the putNextEntry
@@ -551,78 +556,37 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// and then, if the recurse flag is true, process each entry that is a
 		/// child of the directory.
 		/// </summary>
-		/// <param name="entry">
+		/// <param name="sourceEntry">
 		/// The TarEntry representing the entry to write to the archive.
 		/// </param>
 		/// <param name="recurse">
 		/// If true, process the children of directory entries.
 		/// </param>
-		public void WriteEntry(TarEntry entry, bool recurse)
+		void InternalWriteEntry(TarEntry sourceEntry, bool recurse)
 		{
 			bool asciiTrans = false;
 			
 			string tempFileName = null;
-			string eFile        = entry.File;
+			string entryFilename   = sourceEntry.File;
 			
-			// Work on a copy of the entry so we can manipulate it.
-			// Note that we must distinguish how the entry was constructed.
-			//
-			if (eFile == null || eFile.Length == 0) {
-				entry = TarEntry.CreateTarEntry(entry.Name);
-			} else {
-				//
-				// The user may have explicitly set the entry's name to
-				// something other than the file's path, so we must save
-				// and restore it. This should work even when the name
-				// was set from the File's name.
-				//
-				string saveName = entry.Name;
-				entry = TarEntry.CreateEntryFromFile(eFile);
-				entry.Name = saveName;
+			TarEntry entry = (TarEntry)sourceEntry.Clone();
+
+			if ( applyUserInfoOverrides ) {
+				entry.GroupId = groupId;
+				entry.GroupName = groupName;
+				entry.UserId = userId;
+				entry.UserName = userName;
 			}
 			
-			if (this.verbose) {
-				OnProgressMessageEvent(entry, null);
-			}
+			OnProgressMessageEvent(entry, null);
 			
 			if (this.asciiTranslate && !entry.IsDirectory) {
-				asciiTrans = !IsBinary(eFile);
+				asciiTrans = !IsBinary(entryFilename);
 
-// original java source :
-//					MimeType mime = null;
-//					string contentType = null;
-//
-//					try {
-//						contentType = FileTypeMap.getDefaultFileTypeMap(). getContentType( eFile );
-//
-//						mime = new MimeType( contentType );
-//
-//						if ( mime.getPrimaryType().equalsIgnoreCase( "text" ) )
-//						{
-//							asciiTrans = true;
-//						}
-//						else if ( this.transTyper != null )
-//						{
-//							if ( this.transTyper.isAsciiFile( eFile ) )
-//							{
-//								asciiTrans = true;
-//							}
-//						}
-//				} catch ( MimeTypeParseException ex )
-//				{
-//	//				 IGNORE THIS ERROR...
-//				}
-//			
-//			if (this.debug) {
-//				Console.Error.WriteLine("CREATE TRANS? '" + asciiTrans + "'  ContentType='" + contentType + "'  PrimaryType='" + mime.getPrimaryType()+ "'" );
-//			}
-				
 				if (asciiTrans) {
 					tempFileName = Path.GetTempFileName();
 					
-					StreamReader inStream  = File.OpenText(eFile);
-// -jr- 22-Jun-2004 Was using BufferedStream but this is not available for compact framework
-//					Stream       outStream = new BufferedStream(File.Create(tempFileName));
+					StreamReader inStream  = File.OpenText(entryFilename);
 					Stream       outStream = File.Create(tempFileName);
 					
 					while (true) {
@@ -642,7 +606,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 					
 					entry.Size = new FileInfo(tempFileName).Length;
 					
-					eFile = tempFileName;
+					entryFilename = tempFileName;
 				}
 			}
 			
@@ -668,11 +632,11 @@ namespace ICSharpCode.SharpZipLib.Tar {
 				if (recurse) {
 					TarEntry[] list = entry.GetDirectoryEntries();
 					for (int i = 0; i < list.Length; ++i) {
-						this.WriteEntry(list[i], recurse);
+						InternalWriteEntry(list[i], recurse);
 					}
 				}
 			} else {
-				Stream inputStream = File.OpenRead(eFile);
+				Stream inputStream = File.OpenRead(entryFilename);
 				int numWritten = 0;
 				byte[] eBuf = new byte[32 * 1024];
 				while (true) {
@@ -697,6 +661,8 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		}
 	}
 }
+
+
 /* The original Java file had this header:
 	** Authored by Timothy Gerard Endres
 	** <mailto:time@gjt.org>  <http://www.trustice.com>

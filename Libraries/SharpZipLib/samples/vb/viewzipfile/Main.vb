@@ -40,6 +40,7 @@ Public Class Form1
 			'
 			'btnView
 			'
+			Me.btnView.Enabled = false
 			Me.btnView.Location = New System.Drawing.Point(360, 16)
 			Me.btnView.Name = "btnView"
 			Me.btnView.TabIndex = 2
@@ -73,13 +74,14 @@ Public Class Form1
 			'
 			Me.txtFileName.Location = New System.Drawing.Point(144, 16)
 			Me.txtFileName.Name = "txtFileName"
-			Me.txtFileName.Size = New System.Drawing.Size(200, 22)
+			Me.txtFileName.Size = New System.Drawing.Size(200, 20)
 			Me.txtFileName.TabIndex = 0
 			Me.txtFileName.Text = ""
+			AddHandler Me.txtFileName.TextChanged, AddressOf Me.TxtFileNameTextChanged
 			'
 			'Form1
 			'
-			Me.AutoScaleBaseSize = New System.Drawing.Size(6, 15)
+			Me.AutoScaleBaseSize = New System.Drawing.Size(5, 13)
 			Me.ClientSize = New System.Drawing.Size(448, 296)
 			Me.Controls.Add(Me.txtContent)
 			Me.Controls.Add(Me.chkShowEntry)
@@ -127,6 +129,10 @@ Private Sub BtnViewClick(sender As System.Object, e As System.EventArgs)
 
 		txtContent.Text = strBuilder.ToString
 		strmZipInputStream.Close()
+End Sub
+
+Private Sub TxtFileNameTextChanged(sender As System.Object, e As System.EventArgs)
+	btnView.Enabled = txtFileName.Text.Trim().Length > 0 and File.Exists(txtFileName.Text)
 End Sub
 
 End Class

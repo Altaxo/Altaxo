@@ -39,9 +39,9 @@ Public Class Form1
 			'
 			'txtSourceDir
 			'
-			Me.txtSourceDir.Location = New System.Drawing.Point(200, 16)
+			Me.txtSourceDir.Location = New System.Drawing.Point(176, 16)
 			Me.txtSourceDir.Name = "txtSourceDir"
-			Me.txtSourceDir.Size = New System.Drawing.Size(216, 22)
+			Me.txtSourceDir.Size = New System.Drawing.Size(240, 21)
 			Me.txtSourceDir.TabIndex = 0
 			Me.txtSourceDir.Text = ""
 			'
@@ -73,15 +73,15 @@ Public Class Form1
 			'
 			'txtZipFileName
 			'
-			Me.txtZipFileName.Location = New System.Drawing.Point(200, 40)
+			Me.txtZipFileName.Location = New System.Drawing.Point(176, 40)
 			Me.txtZipFileName.Name = "txtZipFileName"
-			Me.txtZipFileName.Size = New System.Drawing.Size(216, 22)
+			Me.txtZipFileName.Size = New System.Drawing.Size(240, 21)
 			Me.txtZipFileName.TabIndex = 1
 			Me.txtZipFileName.Text = ""
 			'
 			'Form1
 			'
-			Me.AutoScaleBaseSize = New System.Drawing.Size(6, 15)
+			Me.AutoScaleBaseSize = New System.Drawing.Size(5, 14)
 			Me.ClientSize = New System.Drawing.Size(528, 104)
 			Me.Controls.Add(Me.Label2)
 			Me.Controls.Add(Me.txtZipFileName)

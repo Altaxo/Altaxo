@@ -1,7 +1,7 @@
 <VisualStudioProject>
-    <VisualBasic>
+    <CSHARP LastOpenVersion = "7.10.3077" >
         <Build>
-            <Settings ReferencePath = "D:\_0035\Development\VS.NET\SharpZipLib.VB\;D:\Daten\SharpDevelop\SharpZipLib\050\vb\zipfiletest\bin\" >
+            <Settings ReferencePath = "G:\Common\User\John\Development\cSharp\SharpZipLib\SharpZipDev\trunk\SharpZipLib\samples\HttpCompressionModule\src\refs\" >
                 <Config
                     Name = "Debug"
                     EnableASPDebugging = "false"
@@ -43,6 +43,6 @@
             ProjectView = "ProjectFiles"
             ProjectTrust = "0"
         />
-    </VisualBasic>
+    </CSHARP>
 </VisualStudioProject>
 

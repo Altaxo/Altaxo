@@ -47,6 +47,7 @@ Public Class Form1
 			'
 			Me.rdDecompress.Location = New System.Drawing.Point(8, 64)
 			Me.rdDecompress.Name = "rdDecompress"
+			Me.rdDecompress.Size = New System.Drawing.Size(144, 24)
 			Me.rdDecompress.TabIndex = 1
 			Me.rdDecompress.Text = "decompress"
 			'
@@ -75,6 +76,7 @@ Public Class Form1
 			Me.rdCompress.Checked = true
 			Me.rdCompress.Location = New System.Drawing.Point(8, 32)
 			Me.rdCompress.Name = "rdCompress"
+			Me.rdCompress.Size = New System.Drawing.Size(144, 24)
 			Me.rdCompress.TabIndex = 0
 			Me.rdCompress.TabStop = true
 			Me.rdCompress.Text = "compress"
@@ -100,13 +102,13 @@ Public Class Form1
 			'
 			Me.txtFileName.Location = New System.Drawing.Point(96, 16)
 			Me.txtFileName.Name = "txtFileName"
-			Me.txtFileName.Size = New System.Drawing.Size(200, 23)
+			Me.txtFileName.Size = New System.Drawing.Size(200, 20)
 			Me.txtFileName.TabIndex = 0
 			Me.txtFileName.Text = ""
 			'
 			'Form1
 			'
-			Me.AutoScaleBaseSize = New System.Drawing.Size(7, 16)
+			Me.AutoScaleBaseSize = New System.Drawing.Size(5, 13)
 			Me.ClientSize = New System.Drawing.Size(344, 152)
 			Me.Controls.Add(Me.btnBrowseForBZ)
 			Me.Controls.Add(Me.Label1)
