@@ -53,7 +53,7 @@ namespace Altaxo.Calc.Fitting
     /// <summary>
     /// Vector of residuals.
     /// </summary>
-    double[] _residuals;
+    double[] _residual;
 
     /// <summary>
     /// The reduced variance of prediction at each index. Is calculated from x' (X'X)^(-1) x.
@@ -119,7 +119,7 @@ namespace Altaxo.Calc.Fitting
       // ChopSingularValues makes only sense if all columns of the x matrix have the same variance
       //decomposition.ChopSingularValues(1E-5);
       // recalculate the parameters with the chopped singular values
-      decomposition.Backsubstitution(scaledY,_parameter);
+      _decomposition.Backsubstitution(scaledY,_parameter);
 
       _chiSquare = 0;
       for(int i=0;i<numberOfData;i++)
@@ -133,18 +133,18 @@ namespace Altaxo.Calc.Fitting
         _chiSquare += deviation*deviation;
       }
     
-      _covarianceMatrix = decomposition.GetCovariances();
+      _covarianceMatrix = _decomposition.GetCovariances();
 
 
       //calculate the reduced prediction variance x'(X'X)^(-1)x
       for(int i=0;i<numberOfData;i++)
       {
         double total = 0;
-        for(j=0;j<numberOfParameter;j++)
+        for(int j=0;j<numberOfParameter;j++)
         {
           double sum=0;
-          for(k=0;k<numberOfParameter;j++)
-            sum += _covarianceMatrix[j,k]*u[i,k];
+          for(int k=0;k<numberOfParameter;j++)
+            sum += _covarianceMatrix[j][k]*u[i,k];
 
           total += u[i,j]*sum;
         }
@@ -271,7 +271,7 @@ namespace Altaxo.Calc.Fitting
     /// <remarks>The PRESS residual is the prediction error of the ith value, if the ith value itself
     /// is not used in the prediction model.
     /// <para>Ref: Introduction to linear regression analysis, 3rd ed., Wiley, p.135</para></remarks>
-    ///</remarks>
+    
     public double PRESSResidual(int i)
     {
       return _residual[i]/(1-_decomposition.HatDiagonal[i]);
@@ -345,6 +345,9 @@ namespace Altaxo.Calc.Fitting
     /// <summary>Get the standard error of regression, defined as <c>Sqrt(SigmaSquare)</c>.</summary>
     public double Sigma  {  get  { return Math.Sqrt(ResidualSumOfSquares); }}
 
+    #region Helper
+    double square(double x) { return x*x; }
+    #endregion
 
   }
 }

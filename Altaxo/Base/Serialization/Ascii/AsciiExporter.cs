@@ -122,6 +122,8 @@ namespace Altaxo.Serialization.Ascii
       ExportPropertyColumns(strwr,table.PropCols,table.DataColumns.ColumnCount,separator);
 
       ExportDataColumns(strwr,table.DataColumns,separator);
+
+      strwr.Flush();
     }
 
 

@@ -633,6 +633,21 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       table.DataColumns.Add(xColumnOfX,"XOfX",Altaxo.Data.ColumnKind.X,0);
 
+
+      // Store X-Mean and X-Scale
+      Altaxo.Data.DoubleColumn colXMean = new Altaxo.Data.DoubleColumn();
+      Altaxo.Data.DoubleColumn colXScale = new Altaxo.Data.DoubleColumn();
+
+      for(int i=0;i<matrixX.Columns;i++)
+      {
+        colXMean[i] = meanX[i];
+        colXScale[i] = 1;
+      }
+
+      table.DataColumns.Add(colXMean,"XMean",Altaxo.Data.ColumnKind.V,0);
+      table.DataColumns.Add(colXScale,"XScale",Altaxo.Data.ColumnKind.V,0);
+
+
       // store the x-loads - careful - they are horizontal in the matrix
       for(int i=0;i<xLoads.Rows;i++)
       {
@@ -644,7 +659,23 @@ namespace Altaxo.Worksheet.Commands.Analysis
         table.DataColumns.Add(col,"XLoad"+i.ToString(),Altaxo.Data.ColumnKind.V,0);
       }
 
-      // now store the loads - careful - they are horizontal in the matrix
+
+      // store the y-mean and y-scale
+      Altaxo.Data.DoubleColumn colYMean = new Altaxo.Data.DoubleColumn();
+      Altaxo.Data.DoubleColumn colYScale = new Altaxo.Data.DoubleColumn();
+
+      for(int i=0;i<yLoads.Columns;i++)
+      {
+        colYMean[i] = meanY[i];
+        colYScale[i] = 1;
+      }
+
+      table.DataColumns.Add(colYMean, "YMean",Altaxo.Data.ColumnKind.V,1);
+      table.DataColumns.Add(colYScale,"YScale",Altaxo.Data.ColumnKind.V,1);
+
+
+
+      // now store the y-loads - careful - they are horizontal in the matrix
       for(int i=0;i<yLoads.Rows;i++)
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
@@ -663,7 +694,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         for(int j=0;j<W.Columns;j++)
           col[j] = W[i,j];
         
-        table.DataColumns.Add(col,"Weight"+i.ToString(),Altaxo.Data.ColumnKind.V,0);
+        table.DataColumns.Add(col,"XWeight"+i.ToString(),Altaxo.Data.ColumnKind.V,0);
       }
 
       // now store the cross product vector - it is a horizontal vector
@@ -745,6 +776,239 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
 
+    public static void ExportPLSCalibration(Altaxo.Data.DataTable table)
+    {
+      // quest the number of factors to export
+          Main.GUI.IntegerValueInputController ivictrl = new Main.GUI.IntegerValueInputController(
+          1,
+          new Main.GUI.SingleValueDialog("Number of factors","Please choose number of factors to export (>0):")
+          );
+
+      ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      if(!ivictrl.ShowDialog(Current.MainWindow))
+        return;
+
+    
+      // quest the filename
+      System.Windows.Forms.SaveFileDialog dlg = new System.Windows.Forms.SaveFileDialog();
+      dlg.DefaultExt="xml";
+      if(System.Windows.Forms.DialogResult.OK!=dlg.ShowDialog(Current.MainWindow))
+        return;
+
+      PLSCalibrationModelExporter exporter = new PLSCalibrationModelExporter(table,ivictrl.EnteredContents);
+      exporter.Export(dlg.FileName);
+    }
+
+    class PLSCalibrationModelExporter
+    {
+      
+      Altaxo.Data.DataTable _table;
+      System.Xml.XmlWriter _writer;
+
+      int _numberOfFactors;
+      int _numberOfX;
+      int _numberOfY;
+
+
+      public PLSCalibrationModelExporter(Altaxo.Data.DataTable table, int numberOfFactors)
+      {
+        _table = table;
+        _numberOfFactors = numberOfFactors;
+      }
+
+
+      public void Export(string filename)
+      {
+        _writer = new System.Xml.XmlTextWriter(filename,System.Text.Encoding.UTF8);
+        _writer.WriteStartDocument();
+        _writer.WriteStartElement("PLSCalibrationModel");
+
+        WriteProperties();
+        WriteData();
+
+        _writer.WriteEndElement(); // PLSCalibrationModel
+        _writer.WriteEndDocument();
+
+        _writer.Close();
+      }
+
+      void WriteProperties()
+      {
+        _writer.WriteStartElement("Properties");
+
+
+        _numberOfX = GetNumberOfX(_table);
+        _numberOfY = GetNumberOfY(_table);
+        _numberOfFactors = Math.Min(_numberOfFactors,GetNumberOfFactors(_table));
+
+        _writer.WriteElementString("NumberOfX",System.Xml.XmlConvert.ToString(_numberOfX));
+        _writer.WriteElementString("NumberOfY",System.Xml.XmlConvert.ToString(_numberOfY));
+        _writer.WriteElementString("NumberOfFactors",System.Xml.XmlConvert.ToString(_numberOfFactors));
+
+        _writer.WriteEndElement(); // Properties
+      }
+
+
+      static int GetNumberOfX(Altaxo.Data.DataTable table)
+      {
+        Altaxo.Data.DataColumn col = table.DataColumns["XLoad0"];
+        if(col==null) NotFound("XLoad0");
+        return col.Count;
+      }
+
+      static int GetNumberOfY(Altaxo.Data.DataTable table)
+      {
+        Altaxo.Data.DataColumn col = table.DataColumns["YLoad0"];
+        if(col==null) NotFound("YLoad0");
+        return col.Count;
+      }
+
+      static int GetNumberOfFactors(Altaxo.Data.DataTable table)
+      {
+        Altaxo.Data.DataColumn col = table.DataColumns["CrossP"];
+        if(col==null) NotFound("CrossP");
+        return col.Count;
+      }
+
+
+
+      void WriteData()
+      {
+        _writer.WriteStartElement("Data");
+
+        WriteXData();
+        WriteYData();
+        WriteCrossProductData();
+
+        _writer.WriteEndElement(); // Data
+      }
+
+
+      void WriteXData()
+      {
+        Altaxo.Data.DoubleColumn col=null;
+
+        _writer.WriteStartElement("XData");
+
+        col = _table.DataColumns["XOfX"] as Altaxo.Data.DoubleColumn;
+        if(null==col) NotFound("XOfX");
+        WriteVector("XOfX",col, _numberOfX);
+
+        col = _table.DataColumns["XMean"] as Altaxo.Data.DoubleColumn;
+        if(null==col) NotFound("XMean");
+        WriteVector("XMean",col, _numberOfX);
+
+        col = _table.DataColumns["XScale"] as Altaxo.Data.DoubleColumn;
+        if(null==col) NotFound("XScale");
+        WriteVector("XScale",col, _numberOfX);
+
+        WriteXLoads();
+
+        WriteXWeights();
+
+
+
+        _writer.WriteEndElement(); // XData
+      }
+
+      void WriteXLoads()
+      {
+        Altaxo.Data.DoubleColumn col=null;
+
+        _writer.WriteStartElement("XLoads");
+        // Loads
+        for(int i=0;i<_numberOfFactors;i++)
+        {
+          string colname = "XLoad"+i.ToString();
+          col = _table.DataColumns[colname] as Altaxo.Data.DoubleColumn;
+          if(null==col) NotFound(colname);
+          WriteVector(colname,col, _numberOfX);
+        }
+        _writer.WriteEndElement();
+      }
+
+
+      void WriteXWeights()
+      {
+        Altaxo.Data.DoubleColumn col=null;
+
+        _writer.WriteStartElement("XWeights");
+        // Loads
+        for(int i=0;i<_numberOfFactors;i++)
+        {
+          string colname = "XWeight"+i.ToString();
+          col = _table.DataColumns[colname] as Altaxo.Data.DoubleColumn;
+          if(null==col) NotFound(colname);
+          WriteVector(colname,col, _numberOfX);
+        }
+        _writer.WriteEndElement();
+      }
+
+      void WriteYData()
+      {
+        Altaxo.Data.DoubleColumn col=null;
+
+        _writer.WriteStartElement("YData");
+
+        col = _table.DataColumns["YMean"] as Altaxo.Data.DoubleColumn;
+        if(null==col) NotFound("YMean");
+        WriteVector("YMean",col, _numberOfY);
+
+        col = _table.DataColumns["YScale"] as Altaxo.Data.DoubleColumn;
+        if(null==col) NotFound("YScale");
+        WriteVector("YScale",col, _numberOfY);
+
+        WriteYLoads();
+
+        _writer.WriteEndElement(); // YData
+      }
+
+      void WriteYLoads()
+      {
+        Altaxo.Data.DoubleColumn col=null;
+
+        _writer.WriteStartElement("YLoads");
+        // Loads
+        for(int i=0;i<_numberOfFactors;i++)
+        {
+          string colname = "YLoad"+i.ToString();
+          col = _table.DataColumns[colname] as Altaxo.Data.DoubleColumn;
+          if(null==col) NotFound(colname);
+          WriteVector(colname,col, _numberOfY);
+        }
+        _writer.WriteEndElement();
+      }
+
+      void WriteCrossProductData()
+      {
+        Altaxo.Data.DoubleColumn col=null;
+
+        col = _table.DataColumns["CrossP"] as Altaxo.Data.DoubleColumn;
+        if(null==col) NotFound("CrossP");
+        WriteVector("CrossProductData", col, _numberOfFactors);
+
+      }
+
+
+      void WriteVector(string name, Altaxo.Data.DoubleColumn col, int numberOfData)
+      {
+        _writer.WriteStartElement(name);
+
+        for(int i=0;i<numberOfData;i++)
+        {
+          _writer.WriteElementString("e",System.Xml.XmlConvert.ToString(col[i]));
+        }
+
+
+        _writer.WriteEndElement(); // name
+      }
+
+      static void NotFound(string name)
+      {
+        throw new ArgumentException("Column " + name + " not found in the table.");
+      }
+
+    }
 
     #endregion
 

@@ -409,5 +409,14 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class AnalysisExportPLSCalibration : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.ExportPLSCalibration(ctrl.DataTable);
+    }
+  }
+
+
   #endregion
 }

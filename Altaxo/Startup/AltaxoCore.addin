@@ -493,6 +493,8 @@
 					class="Altaxo.Worksheet.Commands.AnalysisPLSOnCols" />
 				<MenuItem id="PLSOnRows" label="${res:XML.MainMenu.AnalysisMenu.PLSOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PLSOnRows.Description}"
 					class="Altaxo.Worksheet.Commands.AnalysisPLSOnRows" />
+				<MenuItem id="ExportPLSCalibration" label="${res:XML.MainMenu.AnalysisMenu.ExportPLSCalibration}" description="${res:XML.MainMenu.AnalysisMenu.ExportPLSCalibration.Description}"
+					class="Altaxo.Worksheet.Commands.AnalysisExportPLSCalibration" />
 				<MenuItem id="MultColsToMatrix" label="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix}"
 					description="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix.Description}" class="Altaxo.Worksheet.Commands.AnalysisMultiplyColumnsToMatrix" />
 			</MenuItem>

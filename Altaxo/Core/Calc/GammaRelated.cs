@@ -2352,8 +2352,8 @@ namespace Altaxo.Calc
     /// InverseBeta gives the inverse of the incomplete beta function ratio <see>BetaIR</see>.
     /// </summary>
     /// <param name="p">Probability (0..1)</param>
-    /// <param name="a">Parameter a.</param>
-    /// <param name="b">Parameter b.</param>
+    /// <param name="p">Parameter p.</param>
+    /// <param name="q">Parameter q.</param>
     public static double InverseBeta(double alpha, double p, double q)
     {
       double log_beta = LnGamma(p, true) + LnGamma(q, true) - LnGamma(p+q, true);

@@ -158,6 +158,8 @@ namespace Altaxo.Graph
 
   #endregion
 
+  #region PolynomialFunction
+
   /// <summary>
   /// <para>Evaluates a polynomial a0 + a1*x + a2*x^2 ...</para>
   /// <para>Special serializable version for plotting purposes.</para>
@@ -313,5 +315,579 @@ namespace Altaxo.Graph
 
     #endregion
   }
+
+
+  #endregion
+
+  #region SquareRootFunction
+
+  /// <summary>
+  /// <para>Evaluates the square root of another function</para>
+  /// <para>Special serializable version for plotting purposes.</para>
+  /// </summary>
+  public class SquareRootFunction : Altaxo.Calc.IScalarFunctionDD, ICloneable, Main.IChangedEventSource
+  {
+    /// <summary>
+    /// Function from which to evaluate the square root.
+    /// </summary>
+    Altaxo.Calc.IScalarFunctionDD _baseFunction;
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SquareRootFunction),0)]
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        SquareRootFunction s = (SquareRootFunction)obj;
+        
+        info.AddValue("BaseFunction",s._baseFunction);
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        SquareRootFunction s = null!=o ? (SquareRootFunction)o : new SquareRootFunction();
+       
+        s._baseFunction = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("BaseFunction");
+      
+        
+        return s;
+      }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Only for deserialization purposes.
+    /// </summary>
+    protected SquareRootFunction()
+    {
+    }
+
+    
+
+    /// <summary>
+    /// Constructor by providing the array of coefficients (a0 is the first element of the array).
+    /// </summary>
+    /// <param name="baseFunction">The function whose square root is evaluated.</param>
+    public SquareRootFunction(Altaxo.Calc.IScalarFunctionDD baseFunction)
+    {
+      if(baseFunction is ICloneable)
+        _baseFunction  = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)baseFunction).Clone();
+      else
+        _baseFunction = baseFunction;
+    }
+
+    /// <summary>
+    /// Copy constructor.
+    /// </summary>
+    /// <param name="from">Another polynomial function to clone from.</param>
+    public SquareRootFunction(SquareRootFunction from)
+    {
+      if(from._baseFunction is ICloneable)
+        this._baseFunction = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._baseFunction).Clone();
+      else
+        this._baseFunction = from._baseFunction;
+    }
+
+    /// <summary>
+    /// Get / set the base function.
+    /// </summary>
+    /// <value>The base function, from which the square root is evaluated.</value>
+    public Altaxo.Calc.IScalarFunctionDD BaseFunction
+    {
+      get 
+      {
+        if(_baseFunction is ICloneable)
+          return (Altaxo.Calc.IScalarFunctionDD)((ICloneable)_baseFunction).Clone();
+        else
+          return _baseFunction;
+      }
+      set
+      {
+        if(value!=null)
+        {
+          if(value is ICloneable)
+            _baseFunction = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)value).Clone();
+          else 
+            _baseFunction = value;
+
+          OnChanged();
+        }
+      }
+    }
+
+    
+
+    public override string ToString()
+    {
+      if(_baseFunction!=null)
+        return "Sqrt(" + _baseFunction.ToString() +  ")";
+      else
+        return "Sqrt(InvalidFunction)";
+    }
+
+
+    #region IScalarFunctionDD Members
+
+    /// <summary>
+    /// Evaluates the polynomial.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>The value of the polynomial, a0+a1*x+a2*x^2+...</returns>
+    public double Evaluate(double x)
+    {
+      
+      return Math.Sqrt(_baseFunction.Evaluate(x));
+    }
+
+    #endregion
+
+    #region ICloneable Members
+
+    /// <summary>
+    /// Clones this instance.
+    /// </summary>
+    /// <returns>A new, cloned instance of this object.</returns>
+    public object Clone()
+    {
+      return new SquareRootFunction(this);
+    }
+
+    #endregion
+
+    #region IChangedEventSource Members
+
+    /// <summary>
+    /// Fires the Changed event.
+    /// </summary>
+    protected virtual void OnChanged()
+    {
+      if(Changed!=null)
+      {
+        Changed(this,EventArgs.Empty);
+      }
+    }
+
+    /// <summary>
+    /// Event fired when the coefficients of the polynomial changed.
+    /// </summary>
+    public event System.EventHandler Changed;
+
+    #endregion
+  }
+
+
+  #endregion
+
+  #region ScaledSumFunction
+
+  /// <summary>
+  /// <para>Evaluates a scaled sum of other functions f(x) = a1*f1(x)+ a2*f2(x)+...</para>
+  /// <para>Special serializable version for plotting purposes.</para>
+  /// </summary>
+  public class ScaledSumFunction : Altaxo.Calc.IScalarFunctionDD, ICloneable, Main.IChangedEventSource
+  {
+    /// <summary>
+    /// Coefficient array used to evaluate the polynomial.
+    /// </summary>
+    double[] _coefficients;
+    Altaxo.Calc.IScalarFunctionDD[] _functions;
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScaledSumFunction),0)]
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        ScaledSumFunction s = (ScaledSumFunction)obj;
+        
+        info.AddArray("Coefficients",s._coefficients,s._coefficients.Length);
+        info.CreateArray("Functions",s._functions.Length);
+        for(int i=0;i<s._functions.Length;i++)
+          info.AddValue("e",s._functions[i]);
+        info.CommitArray();
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        ScaledSumFunction s = null!=o ? (ScaledSumFunction)o : new ScaledSumFunction();
+       
+        info.GetArray("Coefficients", out s._coefficients);
+      
+        int cnt = info.OpenArray();
+        s._functions = new Altaxo.Calc.IScalarFunctionDD[cnt];
+        for(int i=0;i<cnt;i++)
+          s._functions[i] = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("e",parent);
+
+        info.CloseArray(cnt);
+        
+        return s;
+      }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Only for deserialization purposes.
+    /// </summary>
+    protected ScaledSumFunction()
+    {
+    }
+
+    
+
+    /// <summary>
+    /// Constructor by providing the array of coefficients (a0 is the first element of the array).
+    /// </summary>
+    /// <param name="coefficients">The coefficient array, starting with coefficient a0.</param>
+    /// <param name="functions">The array of functions to sum up.</param>
+    public ScaledSumFunction(double[] coefficients, Altaxo.Calc.IScalarFunctionDD[] functions)
+    {
+      if(coefficients!=null)
+        _coefficients = (double[])coefficients.Clone();
+
+      if(functions!=null)
+      {
+        _functions = new Altaxo.Calc.IScalarFunctionDD[functions.Length];
+        for(int i=0;i<functions.Length;i++)
+        {
+          if(functions[i] is ICloneable)
+            _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)functions[i]).Clone();
+          else
+            _functions[i] = functions[i];
+        }
+      }
+
+     
+    }
+
+    /// <summary>
+    /// Copy constructor.
+    /// </summary>
+    /// <param name="from">Another polynomial function to clone from.</param>
+    public ScaledSumFunction(ScaledSumFunction from)
+    {
+      if(from._coefficients!=null)  
+        _coefficients = (double[])from._coefficients.Clone();
+      else
+        _coefficients=null;
+
+      if(from._functions!=null)
+      {
+        _functions = new Altaxo.Calc.IScalarFunctionDD[from._functions.Length];
+        for(int i=0;i<from._functions.Length;i++)
+        {
+          if(from._functions[i] is ICloneable)
+            _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._functions[i]).Clone();
+          else
+            _functions[i] = from._functions[i];
+        }
+      }
+      else
+      {
+        _functions=null;
+      }
+
+    }
+
+    /// <summary>
+    /// Get / set the coefficients of the polynomial.
+    /// </summary>
+    /// <value>The coefficient array of the polynomial, starting with a0.</value>
+    public double[] Coefficients
+    {
+      get 
+      {
+        return (double[])_coefficients.Clone();
+      }
+      set
+      {
+        if(value!=null)
+        {
+          _coefficients = (double[])value.Clone();
+          OnChanged();
+        }
+      }
+    }
+   
+
+    public override string ToString()
+    {
+      return "SumOfScaledFunctions";
+    }
+
+
+    #region IScalarFunctionDD Members
+
+    /// <summary>
+    /// Evaluates the polynomial.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>The value of the polynomial, a0+a1*x+a2*x^2+...</returns>
+    public double Evaluate(double x)
+    {
+      if(null==_coefficients)
+        return 0;
+    
+      double result=0;
+      double end = Math.Min(_coefficients.Length,_functions.Length);
+      for(int i= 0; i<end;i++)
+      {
+        result += _coefficients[i]*_functions[i].Evaluate(x);
+      }
+      return result;
+    }
+
+    #endregion
+
+    #region ICloneable Members
+
+    /// <summary>
+    /// Clones this instance.
+    /// </summary>
+    /// <returns>A new, cloned instance of this object.</returns>
+    public object Clone()
+    {
+      return new ScaledSumFunction(this);
+    }
+
+    #endregion
+
+    #region IChangedEventSource Members
+
+    /// <summary>
+    /// Fires the Changed event.
+    /// </summary>
+    protected virtual void OnChanged()
+    {
+      if(Changed!=null)
+      {
+        Changed(this,EventArgs.Empty);
+      }
+    }
+
+    /// <summary>
+    /// Event fired when the coefficients of the polynomial changed.
+    /// </summary>
+    public event System.EventHandler Changed;
+
+    #endregion
+  }
+
+
+  #endregion
+
+  #region ProductFunction
+
+  /// <summary>
+  /// <para>Evaluates the product of other functions f(x) = f1(x)^a1*f2(x)^a2*...</para>
+  /// <para>Special serializable version for plotting purposes.</para>
+  /// </summary>
+  public class ProductFunction : Altaxo.Calc.IScalarFunctionDD, ICloneable, Main.IChangedEventSource
+  {
+    /// <summary>
+    /// Coefficient array (the power).
+    /// </summary>
+    double[] _coefficients;
+    Altaxo.Calc.IScalarFunctionDD[] _functions;
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ProductFunction),0)]
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        ProductFunction s = (ProductFunction)obj;
+        
+        info.AddArray("Coefficients",s._coefficients,s._coefficients.Length);
+        info.CreateArray("Functions",s._functions.Length);
+        for(int i=0;i<s._functions.Length;i++)
+          info.AddValue("e",s._functions[i]);
+        info.CommitArray();
+      }
+
+      public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        ProductFunction s = null!=o ? (ProductFunction)o : new ProductFunction();
+       
+        info.GetArray("Coefficients", out s._coefficients);
+      
+        int cnt = info.OpenArray();
+        s._functions = new Altaxo.Calc.IScalarFunctionDD[cnt];
+        for(int i=0;i<cnt;i++)
+          s._functions[i] = (Altaxo.Calc.IScalarFunctionDD)info.GetValue("e",parent);
+
+        info.CloseArray(cnt);
+        
+        return s;
+      }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Only for deserialization purposes.
+    /// </summary>
+    protected ProductFunction()
+    {
+    }
+
+    
+
+    /// <summary>
+    /// Constructor by providing the array of coefficients (a0 is the first element of the array).
+    /// </summary>
+    /// <param name="coefficients">The coefficient array, starting with coefficient a0.</param>
+    /// <param name="functions">The array of functions to sum up.</param>
+    public ProductFunction(double[] coefficients, Altaxo.Calc.IScalarFunctionDD[] functions)
+    {
+      if(coefficients!=null)
+        _coefficients = (double[])coefficients.Clone();
+
+      if(functions!=null)
+      {
+        _functions = new Altaxo.Calc.IScalarFunctionDD[functions.Length];
+        for(int i=0;i<functions.Length;i++)
+        {
+          if(functions[i] is ICloneable)
+            _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)functions[i]).Clone();
+          else
+            _functions[i] = functions[i];
+        }
+      }
+
+     
+    }
+
+    /// <summary>
+    /// Copy constructor.
+    /// </summary>
+    /// <param name="from">Another polynomial function to clone from.</param>
+    public ProductFunction(ProductFunction from)
+    {
+      if(from._coefficients!=null)  
+        _coefficients = (double[])from._coefficients.Clone();
+      else
+        _coefficients=null;
+
+      if(from._functions!=null)
+      {
+        _functions = new Altaxo.Calc.IScalarFunctionDD[from._functions.Length];
+        for(int i=0;i<from._functions.Length;i++)
+        {
+          if(from._functions[i] is ICloneable)
+            _functions[i] = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)from._functions[i]).Clone();
+          else
+            _functions[i] = from._functions[i];
+        }
+      }
+      else
+      {
+        _functions=null;
+      }
+
+    }
+
+    /// <summary>
+    /// Get / set the coefficients of the polynomial.
+    /// </summary>
+    /// <value>The coefficient array of the polynomial, starting with a0.</value>
+    public double[] Coefficients
+    {
+      get 
+      {
+        return (double[])_coefficients.Clone();
+      }
+      set
+      {
+        if(value!=null)
+        {
+          _coefficients = (double[])value.Clone();
+          OnChanged();
+        }
+      }
+    }
+   
+
+    public override string ToString()
+    {
+      return "ProductOfFunctions";
+    }
+
+
+    #region IScalarFunctionDD Members
+
+    /// <summary>
+    /// Evaluates the polynomial.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>The value of the polynomial, a0+a1*x+a2*x^2+...</returns>
+    public double Evaluate(double x)
+    {
+      if(null==_coefficients)
+        return 0;
+    
+      double result=1;
+      double term;
+      double coeff;
+      double end = Math.Min(_coefficients.Length,_functions.Length);
+      for(int i= 0; i<end;i++)
+      {
+        coeff = _coefficients[i];
+        if(coeff==1)
+          term=_functions[i].Evaluate(x);
+        else if(coeff==0)
+          term=1;
+        else if(coeff==0.5)
+          term = Math.Sqrt(_functions[i].Evaluate(x));
+        else
+          term = Math.Pow(_functions[i].Evaluate(x),coeff);
+        
+        result *= term;
+      }
+      return result;
+    }
+
+    #endregion
+
+    #region ICloneable Members
+
+    /// <summary>
+    /// Clones this instance.
+    /// </summary>
+    /// <returns>A new, cloned instance of this object.</returns>
+    public object Clone()
+    {
+      return new ProductFunction(this);
+    }
+
+    #endregion
+
+    #region IChangedEventSource Members
+
+    /// <summary>
+    /// Fires the Changed event.
+    /// </summary>
+    protected virtual void OnChanged()
+    {
+      if(Changed!=null)
+      {
+        Changed(this,EventArgs.Empty);
+      }
+    }
+
+    /// <summary>
+    /// Event fired when the coefficients of the polynomial changed.
+    /// </summary>
+    public event System.EventHandler Changed;
+
+    #endregion
+  }
+
+
+  #endregion
 
 }
