@@ -304,6 +304,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\Regression\Multivariate\PCRCalibrationModel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Multivariate\PCRRegression.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\Regression\Multivariate\PLS1CalibrationModel.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

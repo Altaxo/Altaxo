@@ -159,6 +159,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\Regression\Multivariate\PCRWorksheetAnalysis.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\Regression\Multivariate\PLS1WorksheetAnalysis.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -45,6 +45,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     const string _XLoad_ColumnName = "XLoad";
     const string _XWeight_ColumnName = "XWeight";
+    const string _XScore_ColumnName = "XScore";
     const string _YLoad_ColumnName = "YLoad";
     const string _CrossProduct_ColumnName = "CrossP";
 
@@ -105,6 +106,10 @@ namespace Altaxo.Calc.Regression.Multivariate
       return string.Format("{0}{1}.{2}",_XLoad_ColumnName,nConstituent,numberOfFactors);
     }
 
+    public static string GetXScore_ColumnName(int numberOfFactors)
+    {
+      return string.Format("{0}{1}",_XScore_ColumnName,numberOfFactors);
+    }
     public static string GetXWeight_ColumnName(int numberOfFactors)
     {
       return string.Format("{0}{1}",_XWeight_ColumnName,numberOfFactors);
