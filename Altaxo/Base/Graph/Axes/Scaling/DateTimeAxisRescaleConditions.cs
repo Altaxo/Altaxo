@@ -132,6 +132,18 @@ namespace Altaxo.Graph.Axes.Scaling
     }
    
 
+    public virtual void SetOrgEndSpan(BoundaryRescaling orgRescaling, DateTime org, BoundaryRescaling endRescaling, DateTime end, BoundaryRescaling spanRescaling, TimeSpan span)
+    {
+      _orgRescaling = orgRescaling;
+      _org = org;
+      _endRescaling = endRescaling;
+      _end = end;
+      _spanRescaling = spanRescaling;
+      _span = span;
+      Normalize(ref _orgRescaling, ref _endRescaling, ref _spanRescaling);
+      OnChanged();
+    }
+
     /// <summary>
     /// Sets the scaling behaviour of the axis by providing org and end values.
     /// </summary>
@@ -178,6 +190,22 @@ namespace Altaxo.Graph.Axes.Scaling
 
       OnChanged();
     }
+
+    /// <summary>
+    /// Restricts the values of orgRescaling, endRescaling and spanRescaling to allowed combinations.
+    /// </summary>
+    /// <param name="orgRes">Org rescaling.</param>
+    /// <param name="endRes">End rescaling.</param>
+    /// <param name="spanRes">Span Rescaling.</param>
+    public static void Normalize(
+      ref BoundaryRescaling orgRes,
+      ref BoundaryRescaling endRes,
+      ref BoundaryRescaling spanRes)
+    {
+      NumericAxisRescaleConditions.Normalize(ref orgRes, ref endRes, ref spanRes);
+    }
+
+
 
     /// <summary>
     /// This will process the temporary values for the axis origin and axis end. Depending on the rescaling conditions,

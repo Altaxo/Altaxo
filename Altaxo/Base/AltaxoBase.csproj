@@ -615,6 +615,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\Axes\Scaling\DateTimeAxisRescaleController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\Axes\Scaling\LogarithmicAxisRescaleConditions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1159,6 +1164,11 @@
                 />
                 <File
                     RelPath = "Serialization\EnumParsing.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\GUIConversion.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -5,22 +5,22 @@ using Altaxo.Main.GUI;
 
 namespace Altaxo.Graph.Axes.Scaling
 {
-	/// <summary>
-	/// Summary description for NumericAxisRescaleController.
-	/// </summary>
-	[UserControllerForObject(typeof(NumericAxisRescaleConditions))]
-	public class NumericAxisRescaleController 
+  /// <summary>
+  /// Summary description for DateTimeAxisRescaleController.
+  /// </summary>
+  [UserControllerForObject(typeof(DateTimeAxisRescaleConditions))]
+  public class DateTimeAxisRescaleController 
     :
     IOrgEndSpanViewEventReceiver,
     IMVCAController
-	{
+  {
     protected IOrgEndSpanView _view;
-    protected NumericAxisRescaleConditions _doc;
-    protected NumericalAxis _axis;
+    protected DateTimeAxisRescaleConditions _doc;
+    protected DateTimeAxis _axis;
     
-    protected double _org;
-    protected double _end;
-    protected double _span;
+    protected DateTime _org;
+    protected DateTime _end;
+    protected TimeSpan _span;
 
     protected BoundaryRescaling _orgRescaling;
     protected BoundaryRescaling _endRescaling;
@@ -33,7 +33,7 @@ namespace Altaxo.Graph.Axes.Scaling
   
 
 
-    public NumericAxisRescaleController(NumericAxisRescaleConditions doc, NumericalAxis ax)
+    public DateTimeAxisRescaleController(DateTimeAxisRescaleConditions doc, DateTimeAxis ax)
     {
       _doc = doc;
       _axis = ax;
@@ -73,7 +73,7 @@ namespace Altaxo.Graph.Axes.Scaling
     /// <summary>
     /// Has to match the indices of BoundaryRescaling
     /// </summary>
-    static readonly string[] _choices = { "Auto", "Fixed", "<=", ">=" };
+    static readonly string[] _choices = { "Auto", "Fixed", "<=", ">=", "Use Span" };
 
     protected virtual void InitView()
     {
@@ -86,9 +86,9 @@ namespace Altaxo.Graph.Axes.Scaling
       _view.SetChoice3(_choices, (int)_spanRescaling);
 
 
-      _view.SetValue1(NumberConversion.ToString(_org));
-      _view.SetValue2(NumberConversion.ToString(_end));
-      _view.SetValue3(NumberConversion.ToString(_span));
+      _view.SetValue1(GUIConversion.ToString(_org));
+      _view.SetValue2(GUIConversion.ToString(_end));
+      _view.SetValue3(GUIConversion.ToString(_span));
 
       SetEnableState();
     }
@@ -125,30 +125,30 @@ namespace Altaxo.Graph.Axes.Scaling
 
     public virtual bool EhValue1Changed(string txt)
     {
-      if(!NumberConversion.IsNumeric(txt))
+      if(!GUIConversion.IsDateTime(txt))
         return true;
 
-      NumberConversion.IsDouble(txt,out _org);
+      GUIConversion.IsDateTime(txt, out _org);
       _orgChanged = true;
       return false;
     }
 
     public virtual bool EhValue2Changed(string txt)
     {
-      if(!NumberConversion.IsNumeric(txt))
+      if(!GUIConversion.IsDateTime(txt))
         return true;
 
-      NumberConversion.IsDouble(txt,out _end);
+      GUIConversion.IsDateTime(txt,out _end);
       _endChanged = true;
       return false;   
     }
 
     public virtual bool EhValue3Changed(string txt)
     {
-      if(!NumberConversion.IsNumeric(txt))
+      if(!GUIConversion.IsTimeSpan(txt))
         return true;
 
-      NumberConversion.IsDouble(txt,out _span);
+      GUIConversion.IsTimeSpan(txt,out _span);
       return false;  
     }
 

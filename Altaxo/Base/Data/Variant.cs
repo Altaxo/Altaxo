@@ -220,7 +220,7 @@ namespace Altaxo.Data
       if(m_Content==Content.VDouble)
         return m_Double;
       else if(m_Content==Content.VDateTime)
-        return System.Convert.ToDouble((DateTime)m_Object);
+        return ((DateTime)m_Object).Ticks/10000000.0;
       else if(m_Content==Content.VString)
         return System.Convert.ToDouble((string)m_Object);
       else if(m_Object!=null)
@@ -259,12 +259,24 @@ namespace Altaxo.Data
         return m_Object.GetHashCode();
     }
 
+    /*
+    public static explicit operator double(AltaxoVariant f) 
+    {
+      if(f.m_Content==Content.VDouble)
+        return f.m_Double;
+      else 
+        return f.ToDouble();
+    }
+    */
+
     public static implicit operator double(AltaxoVariant f) 
     {
       if(f.m_Content==Content.VDouble)
         return f.m_Double;
       throw new ApplicationException("Variant contains " + f.m_Content.ToString() + ", but expecting type Double");
     }
+  
+
   
     public static implicit operator AltaxoVariant(double f) 
     {

@@ -106,7 +106,7 @@ namespace Altaxo
     /// <summary>
     /// Sets the current output service.
     /// </summary>
-    /// <param name="outputservice">The instance of the output service to use in this application.</param>
+    /// <param name="service">The instance of the output service to use in this application.</param>
     public static void SetGUIFactoryService(Altaxo.Main.Services.GUIFactoryService service)
     {
       if(null==sm_theGUIFactoryService)

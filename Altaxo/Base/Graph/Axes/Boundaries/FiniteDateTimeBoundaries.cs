@@ -207,7 +207,8 @@ namespace Altaxo.Graph.Axes.Boundaries
 
     public override void Add(IPhysicalBoundaries b)
     {
-      Add((FiniteDateTimeBoundaries)b);
+      if(b is FiniteDateTimeBoundaries)
+        Add((FiniteDateTimeBoundaries)b);
     }
 
 

@@ -131,6 +131,17 @@ namespace Altaxo.Graph.Axes.Scaling
     this._span == b._span;
     }
    
+    public virtual void SetOrgEndSpan(BoundaryRescaling orgRescaling, double org, BoundaryRescaling endRescaling, double end, BoundaryRescaling spanRescaling, double span)
+    {
+      _orgRescaling = orgRescaling;
+      _org = org;
+      _endRescaling = endRescaling;
+      _end = end;
+      _spanRescaling = spanRescaling;
+      _span = span;
+      Normalize(ref _orgRescaling, ref _endRescaling, ref _spanRescaling);
+      OnChanged();
+    }
 
     /// <summary>
     /// Sets the scaling behaviour of the axis by providing org and end values.
@@ -148,6 +159,8 @@ namespace Altaxo.Graph.Axes.Scaling
 
       _spanRescaling = BoundaryRescaling.Auto;
 
+      Normalize(ref _orgRescaling, ref _endRescaling, ref _spanRescaling);
+
       OnChanged();
     }
 
@@ -163,6 +176,8 @@ namespace Altaxo.Graph.Axes.Scaling
 
       _orgRescaling = BoundaryRescaling.Auto;
       _endRescaling = BoundaryRescaling.Auto;
+
+      Normalize(ref _orgRescaling,ref _endRescaling, ref _spanRescaling);
 
       OnChanged();
     }
@@ -180,6 +195,157 @@ namespace Altaxo.Graph.Axes.Scaling
     }
 
     /// <summary>
+    /// Restricts the values of orgRescaling, endRescaling and spanRescaling to allowed combinations.
+    /// </summary>
+    /// <param name="orgRes">Org rescaling.</param>
+    /// <param name="endRes">End rescaling.</param>
+    /// <param name="spanRes">Span Rescaling.</param>
+    public static void Normalize(
+      ref BoundaryRescaling orgRes,
+      ref BoundaryRescaling endRes,
+      ref BoundaryRescaling spanRes)
+    {
+      if(spanRes==BoundaryRescaling.UseSpan)
+        spanRes=BoundaryRescaling.Fixed;
+
+      if(orgRes==BoundaryRescaling.UseSpan && endRes==BoundaryRescaling.UseSpan)
+      {
+        orgRes=BoundaryRescaling.Auto;
+        endRes=BoundaryRescaling.Auto;
+      }
+
+
+      if(orgRes==BoundaryRescaling.UseSpan && spanRes==BoundaryRescaling.Auto)
+        orgRes=BoundaryRescaling.Auto;
+
+      if(endRes==BoundaryRescaling.UseSpan && spanRes==BoundaryRescaling.Auto)
+        endRes=BoundaryRescaling.Auto;
+    }
+
+
+    protected virtual bool ProcessOrg(ref double org)
+    {
+      bool isAutoOrg=true;
+      double oorg = org;
+      
+      switch(_orgRescaling)
+      {
+        case BoundaryRescaling.Fixed:
+          org = _org;
+          isAutoOrg = false;
+          break;
+        case BoundaryRescaling.GreaterOrEqual:
+          if(oorg<_org)
+            goto case BoundaryRescaling.Fixed;
+          break;
+        case BoundaryRescaling.LessOrEqual:
+          if(oorg>_org)
+            goto case BoundaryRescaling.Fixed;
+          break;
+      }
+      return isAutoOrg;
+    }
+
+    protected virtual bool ProcessOrgFromEndAndSpan(double end, ref double org)
+    {
+      bool isAutoOrg=true;
+      double prp_org = end - _span;
+      
+      switch(_spanRescaling)
+      {
+        case BoundaryRescaling.Fixed:
+          org = prp_org;
+          isAutoOrg = false;
+          break;
+        case BoundaryRescaling.GreaterOrEqual:
+          if(org>prp_org)
+            goto case BoundaryRescaling.Fixed;
+          break;
+        case BoundaryRescaling.LessOrEqual:
+          if(org<prp_org)
+            goto case BoundaryRescaling.Fixed;
+          break;
+      }
+      return isAutoOrg;
+    }
+
+    protected virtual bool ProcessEnd(ref double end)
+    {
+      bool isAutoEnd=true;
+      double oend = end;
+      
+      switch(_endRescaling)
+      {
+        case BoundaryRescaling.Fixed:
+          end = _end;
+          isAutoEnd = false;
+          break;
+        case BoundaryRescaling.GreaterOrEqual:
+          if(oend<_end)
+            goto case BoundaryRescaling.Fixed;
+          break;
+        case BoundaryRescaling.LessOrEqual:
+          if(oend>_end)
+            goto case BoundaryRescaling.Fixed;
+          break;
+      }
+
+      return isAutoEnd;
+    }
+
+
+    protected virtual bool ProcessEndFromOrgAndSpan(double org, ref double end)
+    {
+      bool isAutoEnd=true;
+      double prp_end = org + _span;
+
+      switch(_spanRescaling)
+      {
+        case BoundaryRescaling.Fixed:
+          end = prp_end;
+          isAutoEnd = false;
+          break;
+        case BoundaryRescaling.GreaterOrEqual:
+          if(end<prp_end)
+            goto case BoundaryRescaling.Fixed;
+          break;
+        case BoundaryRescaling.LessOrEqual:
+          if(end>prp_end)
+            goto case BoundaryRescaling.Fixed;
+          break;
+      }
+
+      return isAutoEnd;
+    }
+
+
+    protected virtual void ProcessSpanOnly(ref double org, ref bool isAutoOrg, ref double end, ref bool isAutoEnd)
+    {
+      double oorg = org;
+      double oend = end;
+      isAutoOrg = true;
+      isAutoEnd = true;
+
+      switch(_spanRescaling)
+      {
+        case BoundaryRescaling.Fixed:
+        case BoundaryRescaling.UseSpan:
+          org = ((oorg+oend)-_span)*0.5;
+          end = ((oorg+oend)+_span)*0.5;
+          isAutoOrg = false;
+          isAutoEnd = false;
+          break;
+        case BoundaryRescaling.GreaterOrEqual:
+          if(Math.Abs(oorg-oend)<_span)
+            goto case BoundaryRescaling.Fixed;
+          break;
+        case BoundaryRescaling.LessOrEqual:
+          if(Math.Abs(oorg-oend)>_span)
+            goto case BoundaryRescaling.Fixed;
+          break;
+      } // switch
+    }
+    /// <summary>
     /// This will process the temporary values for the axis origin and axis end. Depending on the rescaling conditions,
     /// the values of org and end are changed.
     /// </summary>
@@ -194,58 +360,26 @@ namespace Altaxo.Graph.Axes.Scaling
       isAutoOrg = true;
       isAutoEnd = true;
 
-      if(_spanRescaling!=BoundaryRescaling.Auto)
+
+      if(_orgRescaling==BoundaryRescaling.UseSpan)
       {
-        switch(_spanRescaling)
-        {
-          case BoundaryRescaling.Fixed:
-            org = ((oorg+oend)-_span)*0.5;
-            end = ((oorg+oend)+_span)*0.5;
-            isAutoOrg = false;
-            isAutoEnd = false;
-            break;
-          case BoundaryRescaling.GreaterOrEqual:
-            if(Math.Abs(oorg-oend)<_span)
-              goto case BoundaryRescaling.Fixed;
-            break;
-          case BoundaryRescaling.LessOrEqual:
-            if(Math.Abs(oorg-oend)>_span)
-              goto case BoundaryRescaling.Fixed;
-            break;
-        } // switch
+        isAutoEnd = ProcessEnd(ref end);
+        isAutoOrg = ProcessOrgFromEndAndSpan(end, ref org);
       }
-      else // spanRescaling is Auto
+      else if(_endRescaling==BoundaryRescaling.UseSpan)
       {
-        switch(_orgRescaling)
-        {
-          case BoundaryRescaling.Fixed:
-            org = _org;
-            isAutoOrg = false;
-            break;
-          case BoundaryRescaling.GreaterOrEqual:
-            if(oorg<_org)
-              goto case BoundaryRescaling.Fixed;
-            break;
-          case BoundaryRescaling.LessOrEqual:
-            if(oorg>_org)
-              goto case BoundaryRescaling.Fixed;
-            break;
-        }
-        switch(_endRescaling)
-        {
-          case BoundaryRescaling.Fixed:
-            end = _end;
-            isAutoEnd = false;
-            break;
-          case BoundaryRescaling.GreaterOrEqual:
-            if(oend<_end)
-              goto case BoundaryRescaling.Fixed;
-            break;
-          case BoundaryRescaling.LessOrEqual:
-            if(oend>_end)
-              goto case BoundaryRescaling.Fixed;
-            break;
-        }
+        isAutoOrg = ProcessOrg(ref end);
+        isAutoEnd = ProcessEndFromOrgAndSpan(org, ref end);
+        return;
+      }
+      else if(_spanRescaling!=BoundaryRescaling.Auto)
+      {
+        ProcessSpanOnly(ref org, ref isAutoOrg, ref end, ref isAutoEnd);
+      }
+      else
+      {
+        isAutoOrg = ProcessOrg(ref org);
+        isAutoEnd = ProcessEnd(ref end);
       }
     }
     #region ICloneable Members

@@ -164,8 +164,10 @@ namespace Altaxo.Graph.Axes
     /// </summary>
     public override void ProcessDataBounds(AltaxoVariant org, bool orgfixed, AltaxoVariant end, bool endfixed)
     {
-      double dorg = (double)org;
-      double dend = (double)end;
+      double dorg = org.ToDouble();
+      double dend = end.ToDouble();
+
+      
       ProcessDataBounds(dorg,orgfixed,dend,endfixed);
     }
   

@@ -19,22 +19,29 @@ namespace Altaxo.Graph.Axes
     protected DateTime m_AxisEnd=DateTime.MaxValue;
 
     /// <summary>Holds the <see cref="NumericalBoundaries"/> for that axis.</summary>
-    protected FiniteDateTimeBoundaries m_DataBounds = new FiniteDateTimeBoundaries();
+    protected FiniteDateTimeBoundaries m_DataBounds;
 
-    protected DateTimeAxisRescaleConditions _rescaling = new DateTimeAxisRescaleConditions();
+    protected DateTimeAxisRescaleConditions _rescaling;
 
     #region ICloneable Members
     public void CopyFrom(DateTimeAxis from)
     {
       this.m_AxisOrg = from.m_AxisOrg;
       this.m_AxisEnd = from.m_AxisEnd;
-      this.m_DataBounds = (FiniteDateTimeBoundaries)from.m_DataBounds.Clone();
-      this._rescaling = (DateTimeAxisRescaleConditions)from._rescaling.Clone();
+ 
+      this.InternalSetDataBounds((FiniteDateTimeBoundaries)from.m_DataBounds.Clone());
+      this.InternalSetRescaling((DateTimeAxisRescaleConditions)from._rescaling.Clone());
     }
 
     public DateTimeAxis(DateTimeAxis from)
     {
       CopyFrom(from);
+    }
+
+    public DateTimeAxis()
+    {
+      this.InternalSetDataBounds(new FiniteDateTimeBoundaries());
+      this.InternalSetRescaling(new DateTimeAxisRescaleConditions());
     }
 
     /// <summary>
@@ -49,6 +56,22 @@ namespace Altaxo.Graph.Axes
    
     #endregion
     
+
+    protected void InternalSetDataBounds(FiniteDateTimeBoundaries bounds)
+    {
+      if(this.m_DataBounds!=null)
+      {
+        this.m_DataBounds.BoundaryChanged -= new BoundaryChangedHandler(this.EhBoundariesChanged);
+        this.m_DataBounds = null;
+      }
+      this.m_DataBounds = bounds;
+      this.m_DataBounds.BoundaryChanged += new BoundaryChangedHandler(this.EhBoundariesChanged);
+    }
+
+    protected void InternalSetRescaling(DateTimeAxisRescaleConditions rescaling)
+    {
+      this._rescaling = rescaling;
+    }
   
     /// <summary>
     /// PhysicalToNormal translates physical values into a normal value linear along the axis
@@ -88,7 +111,11 @@ namespace Altaxo.Graph.Axes
     /// 0 for axis origin, 1 for axis end</returns>
     public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
     {
-      return PhysicalToNormal((DateTime)x);
+      if(x.IsType(AltaxoVariant.Content.VDateTime))
+        return PhysicalToNormal((DateTime)x);
+      else if(x.CanConvertedToDouble)
+        return PhysicalToNormal(new DateTime((long)(x.ToDouble()*10000000)));
+      else throw new ArgumentException("Variant x is neither DateTime nor numeric");
     }
     /// <summary>
     /// NormalToPhysicalVariant is the inverse function to PhysicalToNormal
@@ -249,6 +276,8 @@ namespace Altaxo.Graph.Axes
     /// </summary>
     public  void ProcessDataBounds(DateTime org, bool orgfixed, DateTime end, bool endfixed)
     {
+      this.m_AxisOrg = org;
+      this.m_AxisEnd = end;
     }
 
     public override void ProcessDataBounds()
@@ -274,11 +303,35 @@ namespace Altaxo.Graph.Axes
     /// </summary>
     public override void ProcessDataBounds(AltaxoVariant org, bool orgfixed, AltaxoVariant end, bool endfixed)
     {
-      DateTime dorg = (DateTime)org;
-      DateTime dend = (DateTime)end;
+      DateTime dorg;  
+      DateTime dend; 
+      if(org.IsType(AltaxoVariant.Content.VDateTime))
+        dorg = (DateTime)org;
+      else if(org.CanConvertedToDouble)
+        dorg = new DateTime((long)(org.ToDouble()*1E7));
+      else 
+        throw new ArgumentException("Variant org is not a DateTime nor a numeric value");
+
+      if(end.IsType(AltaxoVariant.Content.VDateTime))
+        dend = (DateTime)end;
+      else if(end.CanConvertedToDouble)
+        dend = new DateTime((long)(end.ToDouble()*1E7));
+      else 
+        throw new ArgumentException("Variant end is not a DateTime nor a numeric value");
+
+
       ProcessDataBounds(dorg,orgfixed,dend,endfixed);
     }
 
+    protected void EhBoundariesChanged(object sender, BoundariesChangedEventArgs e)
+    {
+      bool bIsRelevant=true;
+
+      if(bIsRelevant) // if something really relevant changed
+      {
+        ProcessDataBounds(); // calculate new bounds and fire AxisChanged event
+      }
+    }
   
   } // end of class Axis
 }

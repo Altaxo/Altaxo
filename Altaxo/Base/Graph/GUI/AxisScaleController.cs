@@ -173,8 +173,7 @@ namespace Altaxo.Graph.GUI
       }
       if(null!=View)
       {
-        if(null!=m_BoundaryController)
-          View.SetBoundaryGUIObject(m_BoundaryController.ViewObject);
+        View.SetBoundaryGUIObject(null!=m_BoundaryController ? m_BoundaryController.ViewObject : null);
       }
     }
 

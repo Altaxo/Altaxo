@@ -148,14 +148,17 @@ namespace Altaxo.Graph.GUI
       if(null!=_boundaryControl)
         this.Controls.Remove(_boundaryControl);
 
-      _boundaryControl = (UserControl)guiobject;
+      _boundaryControl = guiobject as UserControl;
       
-      // find a good place for this object
-      // right below the type
-      this.Controls.Add(_boundaryControl);
-      _boundaryControl.Location = new Point(0,this.m_Scale_cbType.Bounds.Bottom + this.m_Scale_cbType.Bounds.Height);
-      this.Size = new Size(Math.Max(this.m_Scale_cbType.Bounds.Right,_boundaryControl.Bounds.Right),
-        _boundaryControl.Bounds.Bottom);
+      if(_boundaryControl!=null)
+      {
+        // find a good place for this object
+        // right below the type
+        this.Controls.Add(_boundaryControl);
+        _boundaryControl.Location = new Point(0,this.m_Scale_cbType.Bounds.Bottom + this.m_Scale_cbType.Bounds.Height);
+        this.Size = new Size(Math.Max(this.m_Scale_cbType.Bounds.Right,_boundaryControl.Bounds.Right),
+          _boundaryControl.Bounds.Bottom);
+      }
     }
 
     #endregion

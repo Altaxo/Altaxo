@@ -40,5 +40,9 @@ namespace Altaxo.Graph.Axes.Scaling
     /// </summary>
     NotLess = 3,
 
+    /// <summary>
+    /// The axis boundary is set to use the span from the other axis boundary.
+    /// </summary>
+    UseSpan=4
   }
 }
