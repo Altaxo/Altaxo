@@ -523,4 +523,37 @@ namespace Altaxo.Graph.Commands
       }
     }
   }
+
+
+    /// <summary>
+    /// Test class for a selected item
+    /// </summary>
+  public class ReadPlotItemDataTool : AbstractGraphToolsCommand
+  {
+    public override bool IsChecked 
+    {
+      get 
+      {
+        if(null!=Controller)
+        {
+          base.IsChecked = (Controller.CurrentGraphTool==GraphTools.ReadPlotItemData);
+        }
+
+        return base.IsChecked;
+      }
+      set 
+      {
+        base.IsChecked = value;
+        if(true==value && null!=Controller)
+        {
+          Controller.CurrentGraphTool=GraphTools.ReadPlotItemData;
+        }
+
+        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+
+      }
+    }
+  }
+
+  
 }

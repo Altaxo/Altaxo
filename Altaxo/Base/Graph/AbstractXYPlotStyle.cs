@@ -79,7 +79,7 @@ namespace Altaxo.Graph
     }
 
     public abstract object Clone();
-    public abstract void Paint(Graphics g, Graph.XYPlotLayer gl, object plotObject); // plots the curve with the choosen style
+    public abstract void Paint(Graphics g, IPlotArea gl, object plotObject); // plots the curve with the choosen style
     public abstract SizeF PaintSymbol(Graphics g, PointF atPosition, float width); // draws a symbol that represents the style at position (0,0)
 
     // public abstract XYColumnPlotData XYColumnPlotData  { get; set; } 
@@ -103,7 +103,7 @@ namespace Altaxo.Graph
       get { return false; }
       set { }
     }
-    public virtual IHitTestObject HitTest(XYPlotLayer layer, object plotObject, PointF hitpoint)
+    public virtual IHitTestObject HitTest(IPlotArea layer, object plotObject, PointF hitpoint)
     {
       return null;
     }

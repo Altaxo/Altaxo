@@ -288,6 +288,8 @@
 					class="Altaxo.Graph.Commands.SelectPointerTool" />
 				<ToolbarItem id="TextPointer" icon="Icons.16x16.TextTool" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}"
 					class="Altaxo.Graph.Commands.SelectTextTool" />
+				<ToolbarItem id="ReadPlotItemData" icon="Icons.16x16.ReadData" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}"
+					class="Altaxo.Graph.Commands.ReadPlotItemDataTool" />
 				<ToolbarItem id="GraphCmdsSeparator" tooltip="-" />
 				<ToolbarItem id="NewLayerLegend" icon="Icons.16x16.NewLegend" tooltip="${res:XML.MainMenu.GraphMenu.NewLayerLegend.Description}"
 					class="Altaxo.Graph.Commands.NewLayerLegend" />

@@ -330,6 +330,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\Drawing2DRelated.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\Edge.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -355,12 +360,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\I2DTo2DConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\IHitTestObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Graph\ImageGraphics.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\IPlotArea.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

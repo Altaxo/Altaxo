@@ -1345,6 +1345,11 @@ namespace Altaxo.Graph.GUI
             if(!(m_MouseState is TextToolMouseHandler))
               m_MouseState = new TextToolMouseHandler();
             break;
+          case GraphTools.ReadPlotItemData:
+            if(!(m_MouseState is ReadPlotItemDataMouseHandler))
+              m_MouseState = new ReadPlotItemDataMouseHandler();
+            break;
+
         }
 
 
@@ -2194,6 +2199,132 @@ namespace Altaxo.Graph.GUI
     }
 
     #endregion // Text Tool Mouse Handler
+
+    #region Read plot item data Mouse Handler
+    /// <summary>
+    /// Handles the mouse events when the <see cref="GraphTools.ObjectPointer"/> tools is selected.
+    /// </summary>
+    public class ReadPlotItemDataMouseHandler : MouseStateHandler
+    {
+      /// <summary>
+      /// If true, the selected objects where moved when a MouseMove event is fired
+      /// </summary>
+      protected bool m_bMoveObjectsOnMouseMove=false;
+      /// <summary>Stores the mouse position of the last point to where the selected objects where moved</summary>
+      protected PointF m_MoveObjectsLastMovePoint;
+      /// <summary>If objects where really moved during the moving mode, this value become true</summary>
+      protected bool m_bObjectsWereMoved=false;
+
+      /// <summary>
+      /// The plot item where the mouse snaps in
+      /// </summary>
+      protected XYColumnPlotItem m_PlotItem;
+
+      /// <summary>
+      /// Handles the mouse move event.
+      /// </summary>
+      /// <param name="grac">The GraphController that sends this event.</param>
+      /// <param name="e">MouseEventArgs as provided by the view.</param>
+      /// <returns>The next mouse state handler that should handle mouse events.</returns>
+      public override MouseStateHandler OnMouseMove(GraphController grac, System.Windows.Forms.MouseEventArgs e)
+      {
+        base.OnMouseMove(grac,e);
+        
+        return this;
+      }
+
+      /// <summary>
+      /// Handles the MouseDown event when the plot point tool is selected
+      /// </summary>
+      /// <param name="grac">The sender of the event.</param>
+      /// <param name="e">The mouse event args</param>
+      /// <remarks>
+      /// The strategy to handle the mousedown event is as following:
+      /// 
+      /// Have we clicked on already selected objects?
+      ///   if yes (we have clicked on already selected objects) and the shift or control key was pressed -> deselect the object and repaint
+      ///   if yes (we have clicked on already selected objects) and none shift nor control key was pressed-> activate the object moving  mode
+      ///   if no (we have not clicked on already selected objects) and shift or control key was pressed -> search for the object and add it to the selected objects, then aktivate moving mode
+      ///   if no (we have not clicked on already selected objects) and no shift or control key pressed -> if a object was found add it to the selected objects and activate moving mode
+      ///                                                                                                  if no object was found clear the selection list, deactivate moving mode
+      /// </remarks>
+      public override MouseStateHandler OnMouseDown(GraphController grac, System.Windows.Forms.MouseEventArgs e)
+      {
+        base.OnMouseDown(grac, e);
+
+        PointF mouseXY = new PointF(e.X,e.Y);
+        PointF graphXY = grac.PixelToPrintableAreaCoordinates(mouseXY);
+       
+        // search for a object first
+        IHitTestObject clickedObject;
+        int clickedLayerNumber=0;
+        grac.FindGraphObjectAtPixelPosition(mouseXY, out clickedObject, out clickedLayerNumber);
+        if(null!=clickedObject && clickedObject.HittedObject is XYColumnPlotItem)
+        {
+          m_PlotItem = (XYColumnPlotItem)clickedObject.HittedObject;
+          PointF[] transXY = new PointF[]{graphXY};
+          Matrix inv = clickedObject.Transformation.Clone();
+          inv.Invert();
+          inv.TransformPoints(transXY);
+          int index = m_PlotItem.GetNearestPointIndex(clickedObject.ParentLayer,transXY[0]);
+          
+          Current.Console.WriteLine("The nearest index was : {0}",index);
+        }
+       
+         
+        return this;
+      } // end of function
+
+      /// <summary>
+      /// Handles the mouse up event.
+      /// </summary>
+      /// <param name="grac">The GraphController that sends this event.</param>
+      /// <param name="e">MouseEventArgs as provided by the view.</param>
+      /// <returns>The next mouse state handler that should handle mouse events.</returns>
+      public override MouseStateHandler OnMouseUp(GraphController grac, System.Windows.Forms.MouseEventArgs e)
+      {
+        base.OnMouseUp(grac,e);
+
+        return this;
+      }
+
+      /// <summary>
+      /// Handles the mouse doubleclick event.
+      /// </summary>
+      /// <param name="grac">The GraphController that sends this event.</param>
+      /// <param name="e">EventArgs as provided by the view.</param>
+      /// <returns>The next mouse state handler that should handle mouse events.</returns>
+      public override MouseStateHandler OnDoubleClick(GraphController grac, System.EventArgs e)
+      {
+        base.OnDoubleClick(grac,e);
+
+      
+        return this;
+      }
+
+
+      /// <summary>
+      /// Handles the mouse click event.
+      /// </summary>
+      /// <param name="grac">The GraphController that sends this event.</param>
+      /// <param name="e">EventArgs as provided by the view.</param>
+      /// <returns>The next mouse state handler that should handle mouse events.</returns>
+      public override MouseStateHandler OnClick(GraphController grac, System.EventArgs e)
+      {
+        base.OnClick(grac,e);
+
+      
+
+        return this;
+      }
+
+
+     
+
+
+    } // end of class
+
+    #endregion // plot item mouse handler
 
     #endregion // Mouse Handlers
 

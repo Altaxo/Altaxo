@@ -31,6 +31,9 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
+
+  
+
   /// <summary>
   /// XYPlotLayer represents a rectangular area on the graph, which holds plot curves, axes and graphical elements.
   /// </summary>
@@ -40,7 +43,8 @@ namespace Altaxo.Graph
     :
     System.Runtime.Serialization.IDeserializationCallback, 
     System.ICloneable, 
-    Altaxo.Main.IDocumentNode
+    Altaxo.Main.IDocumentNode,
+    IPlotArea
   {
     #region Enumerations
 
@@ -787,6 +791,9 @@ namespace Altaxo.Graph
       this.m_LayerHeight = from.m_LayerHeight ;
       this.m_LayerSize   = from.m_LayerSize;
 
+      this._LogicalToAreaConverter = new LogicalToAreaConverter(this);
+      this._AreaToLogicalConverter = new AreaToLogicalConverter(this);
+
       this.m_LayerXPositionType = from.m_LayerXPositionType;
       this.m_LayerYPositionType = from.m_LayerYPositionType;
       this.m_LayerXPosition = from.m_LayerXPosition ;
@@ -874,6 +881,8 @@ namespace Altaxo.Graph
     /// </summary>
     protected XYPlotLayer()
     {
+      this._LogicalToAreaConverter = new LogicalToAreaConverter(this);
+      this._AreaToLogicalConverter = new AreaToLogicalConverter(this);
     }
     /// <summary>
     /// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
@@ -884,6 +893,8 @@ namespace Altaxo.Graph
     {
       this.Size     = size;
       this.Position = position;
+      this._LogicalToAreaConverter = new LogicalToAreaConverter(this);
+      this._AreaToLogicalConverter = new AreaToLogicalConverter(this);
 
       CalculateMatrix();
 
@@ -2791,6 +2802,121 @@ namespace Altaxo.Graph
     {
       return "L"+i.ToString(); // do not change it, since the name is used in serialization
     }
+
+    #endregion
+
+    #region Inner types
+
+    public bool IsLinear { get { return XAxis is LinearAxis && YAxis is LinearAxis; }}
+    public bool IsOrthogonal { get { return true; }}
+    public bool IsAffine { get { return true; }}
+
+    LogicalToAreaConverter _LogicalToAreaConverter;
+    public I2DTo2DConverter LogicalToAreaConversion
+    {
+        get
+      {
+        _LogicalToAreaConverter.Update();
+        return _LogicalToAreaConverter;
+      }
+    }
+
+    AreaToLogicalConverter _AreaToLogicalConverter;
+    public I2DTo2DConverter AreaToLogicalConversion 
+    {
+      get 
+      {
+        _AreaToLogicalConverter.Update();
+        return _AreaToLogicalConverter; 
+      }
+    }
+
+    public Region GetRegion()
+    {
+      return new Region(new RectangleF(new PointF(0,0),this.Size));
+    }
+
+    protected class LogicalToAreaConverter : I2DTo2DConverter
+    {
+      XYPlotLayer _layer;
+      double _layerWidth;
+      double _layerHeight;
+
+      public LogicalToAreaConverter(XYPlotLayer layer)
+      {
+        _layer = layer;
+        _layer.SizeChanged += new EventHandler(EhChanged);
+
+        _layerWidth =  _layer.Size.Width;
+        _layerHeight = _layer.Size.Height;
+      }
+      
+      public void Update()
+      {
+        _layerWidth =  _layer.Size.Width;
+        _layerHeight = _layer.Size.Height;
+      }
+
+      public void EhChanged(object sender, EventArgs e)
+      {
+        _layerWidth =  _layer.Size.Width;
+        _layerHeight = _layer.Size.Height;
+
+        if(null!=Changed)
+          Changed(this,e);
+      }
+ 
+      public bool Convert(double x_rel, double y_rel, out double xlocation, out double ylocation)
+      {
+          xlocation = _layerWidth * x_rel;
+          ylocation = _layerHeight * (1-y_rel);
+          return true;
+        
+      }
+      public event System.EventHandler Changed;
+
+    }
+
+
+    protected class AreaToLogicalConverter : I2DTo2DConverter
+    {
+      XYPlotLayer _layer;
+      double _layerWidth;
+      double _layerHeight;
+
+      public AreaToLogicalConverter(XYPlotLayer layer)
+      {
+        _layer = layer;
+        _layer.SizeChanged += new EventHandler(EhChanged);
+
+        _layerWidth =  _layer.Size.Width;
+        _layerHeight = _layer.Size.Height;
+      }
+      public void Update()
+      {
+        _layerWidth =  _layer.Size.Width;
+        _layerHeight = _layer.Size.Height;
+      }
+      public void EhChanged(object sender, EventArgs e)
+      {
+        _layerWidth =  _layer.Size.Width;
+        _layerHeight = _layer.Size.Height;
+
+        if(null!=Changed)
+          Changed(this,e);
+      }
+ 
+      public bool Convert(double xlocation, double ylocation, out double x_rel, out double y_rel)
+      {
+        x_rel = xlocation/_layerWidth;
+        y_rel = 1-ylocation/_layerHeight;
+        return true;
+        
+      }
+      public event System.EventHandler Changed;
+
+    }
+
 
     #endregion
   

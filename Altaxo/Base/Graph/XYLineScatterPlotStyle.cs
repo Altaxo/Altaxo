@@ -362,10 +362,16 @@ namespace Altaxo.Graph
       }
     }
 
-    public override void Paint(Graphics g, Graph.XYPlotLayer layer, object plotObject)
+    public override void Paint(Graphics g, IPlotArea layer, object plotObject)
     {
       if(plotObject is XYColumnPlotData)
-        Paint(g,layer,(XYColumnPlotData)plotObject);
+      {
+        XYColumnPlotData pd = (XYColumnPlotData)plotObject;
+        PlotRangeList rangeList;
+        PointF[] plotPoints;
+        pd.GetRangesAndPoints(layer,out rangeList, out plotPoints);
+        Paint(g,layer,pd,rangeList,plotPoints);
+      }
       else if(plotObject is Altaxo.Calc.IScalarFunctionDD)
         Paint(g,layer,(Altaxo.Calc.IScalarFunctionDD)plotObject);
     }
@@ -378,7 +384,7 @@ namespace Altaxo.Graph
     /// <param name="myPlotAssociation">The data that are plotted.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
     /// <returns>Null if no hit, or a <see>IHitTestObject</see> if there was a hit.</returns>
-    public override IHitTestObject HitTest(XYPlotLayer layer, object plotData, PointF hitpoint)
+    public override IHitTestObject HitTest(IPlotArea layer, object plotData, PointF hitpoint)
     {
       XYColumnPlotData myPlotAssociation = plotData as XYColumnPlotData;
       if(null==myPlotAssociation)
@@ -386,7 +392,7 @@ namespace Altaxo.Graph
 
       PlotRangeList rangeList;
       PointF[] ptArray;
-      if(GetRangesAndPoints(layer,myPlotAssociation,out rangeList,out ptArray))
+      if(myPlotAssociation.GetRangesAndPoints(layer,out rangeList,out ptArray))
       {
         GraphicsPath gp = new GraphicsPath();
         gp.AddLines(ptArray);
@@ -400,6 +406,39 @@ namespace Altaxo.Graph
       return null;
     }
 
+    /// <summary>
+    /// Returns the index of a scatter point that is nearest to the location <c>hitpoint</c>
+    /// </summary>
+    /// <param name="layer">The layer in which this plot item is drawn into.</param>
+    /// <param name="hitpoint">The point where the mouse is pressed.</param>
+    /// <returns>The index of the scatter point that is nearest to the location, or -1 if it can not be determined.</returns>
+    public int GetNearestPointIndex(IPlotArea layer, object plotData, PointF hitpoint)
+    {
+      XYColumnPlotData myPlotAssociation = plotData as XYColumnPlotData;
+      if(null==myPlotAssociation)
+        return -1;
+
+      PlotRangeList rangeList;
+      PointF[] ptArray;
+      if(myPlotAssociation.GetRangesAndPoints(layer,out rangeList,out ptArray))
+      {
+        double mindistance = double.MaxValue;
+        int minindex = -1;
+        for(int i=0;i<ptArray.Length;i++)
+        {
+          double distance = Drawing2DRelated.Distance(hitpoint,ptArray[i]);
+          if(distance<mindistance)
+          {
+            mindistance = distance;
+            minindex = i;
+          }
+        }
+      return minindex;
+      }
+
+
+      return -1;
+    }
   
 
     public bool GetRangesAndPoints(
@@ -488,33 +527,28 @@ namespace Altaxo.Graph
       return true;
     }
     
-    public void Paint(Graphics g, Graph.XYPlotLayer layer, XYColumnPlotData myPlotAssociation)
+    public void Paint(Graphics g, IPlotArea layer, XYColumnPlotData myPlotAssociation, PlotRangeList rangeList, PointF[] ptArray)
     {
-      PlotRangeList rangeList;
-      PointF[] ptArray;
       
-      if(GetRangesAndPoints(layer,myPlotAssociation,out rangeList,out ptArray))
-      {
         // now plot the point array
         PaintLine(g,layer,rangeList,ptArray);
         PaintScatter(g,layer,rangeList,ptArray);
         PaintLabel(g,layer,rangeList,ptArray,myPlotAssociation.LabelColumn);
-      }
     }
 
    
 
-    public void Paint(Graphics g, Graph.XYPlotLayer layer, Altaxo.Calc.IScalarFunctionDD plotFunction)
+    public void Paint(Graphics g, IPlotArea layer, Altaxo.Calc.IScalarFunctionDD plotFunction)
     {
       const int functionPoints=1000;
-      double layerWidth = layer.Size.Width;
-      double layerHeight = layer.Size.Height;
+      const double MaxRelativeValue=1E6;
+      
 
       // allocate an array PointF to hold the line points
       PointF[] ptArray = new PointF[functionPoints];
 
-      double xorg = layer.XAxis.Org;
-      double xend = layer.XAxis.End;
+     // double xorg = layer.XAxis.Org;
+     // double xend = layer.XAxis.End;
       // Fill the array with values
       // only the points where x and y are not NaNs are plotted!
 
@@ -523,10 +557,12 @@ namespace Altaxo.Graph
       bool bInPlotSpace = true;
       int  rangeStart=0;
       PlotRangeList rangeList = new PlotRangeList();
-    
+      I2DTo2DConverter logicalToArea = layer.LogicalToAreaConversion;
+
       for(i=0,j=0;i<functionPoints;i++)
       {
-        double x = layer.XAxis.NormalToPhysical(((double)i)/(functionPoints-1));
+        double x_rel = ((double)i)/(functionPoints-1);
+        double x = layer.XAxis.NormalToPhysical(x_rel);
         double y = plotFunction.Evaluate(x);
         
         if(Double.IsNaN(x) || Double.IsNaN(y))
@@ -540,23 +576,29 @@ namespace Altaxo.Graph
         }
           
 
-        double x_rel = layer.XAxis.PhysicalToNormal(x);
+        // double x_rel = layer.XAxis.PhysicalToNormal(x);
         double y_rel = layer.YAxis.PhysicalToNormal(y);
           
+        // chop relative values to an range of about -+ 10^6
+        if(y_rel>MaxRelativeValue)
+          y_rel = MaxRelativeValue;
+        if(y_rel<-MaxRelativeValue)
+          y_rel=-MaxRelativeValue;
+
         // after the conversion to relative coordinates it is possible
         // that with the choosen axis the point is undefined 
         // (for instance negative values on a logarithmic axis)
         // in this case the returned value is NaN
-        if(!Double.IsNaN(x_rel) && !Double.IsNaN(y_rel))
+        double xcoord,ycoord;
+        if(logicalToArea.Convert(x_rel,y_rel, out xcoord, out ycoord))
         {
-          if(bInPlotSpace)
+            if(bInPlotSpace)
           {
             bInPlotSpace=false;
             rangeStart = j;
           }
-
-          ptArray[j].X = (float)(layerWidth * x_rel);
-          ptArray[j].Y = (float)(layerHeight * (1-y_rel));
+          ptArray[j].X = (float)xcoord;
+          ptArray[j].Y = (float)ycoord;
           j++;
         }
         else
@@ -584,16 +626,16 @@ namespace Altaxo.Graph
     }
 
 
-    public void PaintLine(Graphics g, Graph.XYPlotLayer layer, PlotRangeList rangeList, PointF[] ptArray)
+    public void PaintLine(Graphics g, IPlotArea layer, PlotRangeList rangeList, PointF[] ptArray)
     {
       // paint the line style
       if(null!=m_LineStyle)
       {
-        m_LineStyle.Paint(g,ptArray,rangeList,layer.Size, (m_LineSymbolGap && m_ScatterStyle.Shape!=XYPlotScatterStyles.Shape.NoSymbol)?SymbolSize:0);
+        m_LineStyle.Paint(g,ptArray,rangeList,layer, (m_LineSymbolGap && m_ScatterStyle.Shape!=XYPlotScatterStyles.Shape.NoSymbol)?SymbolSize:0);
       }
     }
 
-    public void PaintScatter(Graphics g, Graph.XYPlotLayer layer, PlotRangeList rangeList, PointF[] ptArray)
+    public void PaintScatter(Graphics g, IPlotArea layer, PlotRangeList rangeList, PointF[] ptArray)
     {
       // paint the drop style
       if(null!=m_ScatterStyle && m_ScatterStyle.DropLine!=XYPlotScatterStyles.DropLine.NoDrop)
@@ -601,8 +643,15 @@ namespace Altaxo.Graph
         PenHolder ph = m_ScatterStyle.Pen;
         ph.Cached=true;
         Pen pen = ph.Pen; // do not dispose this pen, since it is cached
-        float xe=layer.Size.Width;
-        float ye=layer.Size.Height;
+ //       float xe=layer.Size.Width;
+ //       float ye=layer.Size.Height;
+
+        double xleft,xright,ytop,ybottom;
+        layer.LogicalToAreaConversion.Convert(0,0,out xleft,out ybottom);
+        layer.LogicalToAreaConversion.Convert(1,1,out xright,out ytop);
+        float xe = (float)xright;
+        float ye = (float)ybottom;
+
         if( (0!=(m_ScatterStyle.DropLine&XYPlotScatterStyles.DropLine.Top)) && (0!=(m_ScatterStyle.DropLine&XYPlotScatterStyles.DropLine.Bottom)))
         {
           for(int j=0;j<ptArray.Length;j++)
@@ -683,7 +732,7 @@ namespace Altaxo.Graph
       }
     }
 
-    public void PaintLabel(Graphics g, Graph.XYPlotLayer layer, PlotRangeList rangeList, PointF[] ptArray, Altaxo.Data.IReadableColumn labelColumn)
+    public void PaintLabel(Graphics g, IPlotArea layer, PlotRangeList rangeList, PointF[] ptArray, Altaxo.Data.IReadableColumn labelColumn)
     {
       if(labelColumn==null)
         return;

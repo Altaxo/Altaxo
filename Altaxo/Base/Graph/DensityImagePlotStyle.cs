@@ -375,7 +375,7 @@ namespace Altaxo.Graph
     /// <param name="gfrx">The graphics context painting in.</param>
     /// <param name="gl">The layer painting in.</param>
     /// <param name="plotObject">The data to plot.</param>
-    public void Paint(Graphics gfrx, Graph.XYPlotLayer gl, object plotObject) // plots the curve with the choosen style
+    public void Paint(Graphics gfrx, IPlotArea gl, object plotObject) // plots the curve with the choosen style
     {
       if(!(plotObject is XYZEquidistantMeshColumnPlotData))
         return; // we cannot plot any other than a TwoDimMeshDataAssociation now
@@ -390,8 +390,8 @@ namespace Altaxo.Graph
 
 
 
-      double layerWidth = gl.Size.Width;
-      double layerHeight = gl.Size.Height;
+      //double layerWidth = gl.Size.Width;
+      //double layerHeight = gl.Size.Height;
 
       int cols = myPlotAssociation.ColumnCount;
       int rows = myPlotAssociation.RowCount;
@@ -497,14 +497,20 @@ namespace Altaxo.Graph
       double y_rel_bottom = gl.YAxis.PhysicalToNormal(yColumn.GetDoubleAt(0));
       double y_rel_top = gl.YAxis.PhysicalToNormal(yColumn.GetDoubleAt(cols-1));
 
-      GraphicsState savedGraphicsState = gfrx.Save();
+      double xleft, xright, ytop, ybottom;
+      if( gl.LogicalToAreaConversion.Convert(x_rel_left,y_rel_top, out xleft, out ytop) &&
+          gl.LogicalToAreaConversion.Convert(x_rel_right, y_rel_bottom, out xright, out ybottom))
+      {
 
-      if(this.m_ClipToLayer)
-        gfrx.Clip = new Region(new RectangleF(new PointF(0,0),gl.Size));
+        GraphicsState savedGraphicsState = gfrx.Save();
 
-      gfrx.DrawImage(m_Image,(float)(layerWidth*x_rel_left),(float)(layerHeight*(1-y_rel_top)),(float)(layerWidth*(x_rel_right-x_rel_left)),(float)(layerHeight*(y_rel_top-y_rel_bottom)));
+        if(this.m_ClipToLayer)
+          gfrx.Clip = gl.GetRegion();
+
+        gfrx.DrawImage(m_Image,(float)xleft,(float)ytop,(float)(xright-xleft),(float)(ybottom-ytop));
       
-      gfrx.Restore(savedGraphicsState);
+        gfrx.Restore(savedGraphicsState);
+      }
     }
 
     

@@ -719,6 +719,115 @@ namespace Altaxo.Graph
     }
 
     
-    
+    /// <summary>
+    /// This will create a point list out of the data, which can be used to plot the data. In order to create this list,
+    /// the function must have knowledge how to calculate the points out of the data. This will be done
+    /// by a function provided by the calling function.
+    /// </summary>
+    /// <param name="getCoordinates">Provides the class, which converts the physical values to layer coordinates.</param>
+    /// <param name="rangeList">On return, this gives the list of plot ranges.</param>
+    /// <param name="ptArray">On return, this is an array of plot points in layer coordinates.</param>
+    /// <returns>True if the function is successfull, otherwise false.</returns>
+    public bool GetRangesAndPoints(
+      IPlotArea layer,
+      out PlotRangeList rangeList,
+      out PointF[] ptArray)
+    {
+      const double MaxRelativeValue = 1E6;
+
+      rangeList=null;
+      ptArray=null;
+
+
+      Altaxo.Data.INumericColumn xColumn = this.XColumn as Altaxo.Data.INumericColumn;
+      Altaxo.Data.INumericColumn yColumn = this.YColumn as Altaxo.Data.INumericColumn;
+
+      if(null==xColumn || null==yColumn)
+        return false; // this plotstyle is only for x and y double columns
+
+      if(this.PlottablePoints<=0)
+        return false;
+
+      // allocate an array PointF to hold the line points
+      ptArray = new PointF[this.PlottablePoints];
+
+      // Fill the array with values
+      // only the points where x and y are not NaNs are plotted!
+
+      int i,j;
+
+      bool bInPlotSpace = true;
+      int  rangeStart=0;
+      int  rangeOffset=0;
+      rangeList = new PlotRangeList();
+
+      Axis xAxis = layer.XAxis;
+      Axis yAxis = layer.YAxis;
+      I2DTo2DConverter logicalToArea = layer.LogicalToAreaConversion;
+
+
+      int len = this.PlotRangeEnd;
+      for(i=this.PlotRangeStart,j=0;i<len;i++)
+      {
+        if(Double.IsNaN(xColumn.GetDoubleAt(i)) || Double.IsNaN(yColumn.GetDoubleAt(i)))
+        {
+          if(!bInPlotSpace)
+          {
+            bInPlotSpace=true;
+            rangeList.Add(new PlotRange(rangeStart,j,rangeOffset));
+          }
+          continue;
+        }
+          
+
+        double x_rel,y_rel;
+        double xcoord, ycoord;
+
+        x_rel = xAxis.PhysicalToNormal(xColumn.GetDoubleAt(i));
+        y_rel = yAxis.PhysicalToNormal(yColumn.GetDoubleAt(i));
+
+        // chop relative values to an range of about -+ 10^6
+        if(x_rel>MaxRelativeValue)
+          x_rel = MaxRelativeValue;
+        if(x_rel<-MaxRelativeValue)
+          x_rel=-MaxRelativeValue;
+        if(y_rel>MaxRelativeValue)
+          y_rel = MaxRelativeValue;
+        if(y_rel<-MaxRelativeValue)
+          y_rel=-MaxRelativeValue;
+
+          
+        // after the conversion to relative coordinates it is possible
+        // that with the choosen axis the point is undefined 
+        // (for instance negative values on a logarithmic axis)
+        // in this case the returned value is NaN
+        if(logicalToArea.Convert(x_rel,y_rel, out xcoord, out ycoord))
+        {
+          if(bInPlotSpace)
+          {
+            bInPlotSpace=false;
+            rangeStart = j;
+            rangeOffset = i-j;
+          }
+          ptArray[j].X = (float)xcoord;
+          ptArray[j].Y = (float)ycoord;
+          j++;
+        }
+        else
+        {
+          if(!bInPlotSpace)
+          {
+            bInPlotSpace=true;
+            rangeList.Add(new PlotRange(rangeStart,j,rangeOffset));
+          }
+        }
+      } // end for
+      if(!bInPlotSpace)
+      {
+        bInPlotSpace=true;
+        rangeList.Add(new PlotRange(rangeStart,j,rangeOffset)); // add the last range
+      }
+      return true;
+    }
   }
 }

@@ -40,7 +40,13 @@ namespace Altaxo.Graph.GUI
     /// <summary>The tool to click to the objects, dragging them, and open the object dialogs by doubleclicking on them</summary>
     ObjectPointer=0,
     /// <summary>The tool to write text, i.e. to create ExtendedTextGraphObjects</summary>
-    Text=1
+    Text=1,
+
+    /// <summary>
+    /// Tool to snap in to a plot items points and read out the data
+    /// </summary>
+    ReadPlotItemData
+
   }
 
 

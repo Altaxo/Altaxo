@@ -218,7 +218,7 @@ namespace Altaxo.Graph
       return GetName(int.MaxValue);
     }
 
-    public override void Paint(Graphics g, Graph.XYPlotLayer layer)
+    public override void Paint(Graphics g, IPlotArea layer)
     {
       if(null!=this.m_PlotStyle)
       {

@@ -28,6 +28,9 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
+  
+ 
+
 
   /// <summary>
   /// PlotItem holds the pair of data and style neccessary to plot a curve, function,
@@ -68,7 +71,7 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="g">The graphics context.</param>
     /// <param name="layer">The plot layer.</param>
-    public abstract void Paint(Graphics g, Graph.XYPlotLayer layer);
+    public abstract void Paint(Graphics g, IPlotArea layer);
 
 
     /// <summary>

@@ -229,7 +229,7 @@ namespace Altaxo.Graph
       return GetName(int.MaxValue);
     }
 
-    public override void Paint(Graphics g, Graph.XYPlotLayer layer)
+    public override void Paint(Graphics g, IPlotArea layer)
     {
       if(null!=this.m_PlotStyle)
       {
@@ -256,6 +256,21 @@ namespace Altaxo.Graph
       }
 
       return null;
+    }
+
+    /// <summary>
+    /// Returns the index of a scatter point that is nearest to the location <c>hitpoint</c>
+    /// </summary>
+    /// <param name="layer">The layer in which this plot item is drawn into.</param>
+    /// <param name="hitpoint">The point where the mouse is pressed.</param>
+    /// <returns>The index of the scatter point that is nearest to the location, or -1 if it can not be determined.</returns>
+    public int GetNearestPointIndex(XYPlotLayer layer, PointF hitpoint)
+    {
+      if(this.m_PlotStyle is XYLineScatterPlotStyle)
+      {
+        return ((XYLineScatterPlotStyle)m_PlotStyle).GetNearestPointIndex(layer,m_PlotAssociation,hitpoint);
+      }
+      return -1;
     }
 
   }

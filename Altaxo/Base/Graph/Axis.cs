@@ -82,6 +82,27 @@ namespace Altaxo.Graph
     /// <returns>the corresponding physical value</returns>
     public abstract double NormalToPhysical(double x);
 
+
+    /// <summary>
+    /// PhysicalVariantToNormal translates physical values into a normal value linear along the axis
+    /// a physical value of the axis origin must return a value of zero
+    /// a physical value of the axis end must return a value of one
+    /// the function physicalToNormal must be provided by any derived class
+    /// </summary>
+    /// <param name="x">the physical value</param>
+    /// <returns>
+    /// the normalized value linear along the axis,
+    /// 0 for axis origin, 1 for axis end</returns>
+    public abstract double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x);
+    /// <summary>
+    /// NormalToPhysicalVariant is the inverse function to PhysicalToNormal
+    /// It translates a normalized value (0 for the axis origin, 1 for the axis end)
+    /// into the physical value
+    /// </summary>
+    /// <param name="x">the normal value (0 for axis origin, 1 for axis end</param>
+    /// <returns>the corresponding physical value</returns>
+    public abstract Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x);
+
     /// <summary>
     /// GetMajorTicks returns the physical values
     /// at which major ticks should occur
@@ -417,6 +438,33 @@ namespace Altaxo.Graph
     public override double NormalToPhysical(double x)
     {
       return m_AxisOrg + x * m_AxisSpan;
+    }
+
+    /// <summary>
+    /// PhysicalVariantToNormal translates physical values into a normal value linear along the axis
+    /// a physical value of the axis origin must return a value of zero
+    /// a physical value of the axis end must return a value of one
+    /// the function physicalToNormal must be provided by any derived class
+    /// </summary>
+    /// <param name="x">the physical value</param>
+    /// <returns>
+    /// the normalized value linear along the axis,
+    /// 0 for axis origin, 1 for axis end</returns>
+    public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
+    {
+      return PhysicalToNormal(x.ToDouble());
+    }
+
+    /// <summary>
+    /// NormalToPhysicalVariant is the inverse function to PhysicalToNormal
+    /// It translates a normalized value (0 for the axis origin, 1 for the axis end)
+    /// into the physical value
+    /// </summary>
+    /// <param name="x">the normal value (0 for axis origin, 1 for axis end</param>
+    /// <returns>the corresponding physical value</returns>
+    public override Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x)
+    {
+      return new Altaxo.Data.AltaxoVariant(NormalToPhysical(x));
     }
 
     public override double[] GetMajorTicks()
@@ -837,6 +885,33 @@ namespace Altaxo.Graph
     {
       double log10x = m_Log10Org + (m_Log10End-m_Log10Org)*x;
       return Math.Pow(10,log10x);
+    }
+
+    /// <summary>
+    /// PhysicalVariantToNormal translates physical values into a normal value linear along the axis
+    /// a physical value of the axis origin must return a value of zero
+    /// a physical value of the axis end must return a value of one
+    /// the function physicalToNormal must be provided by any derived class
+    /// </summary>
+    /// <param name="x">the physical value</param>
+    /// <returns>
+    /// the normalized value linear along the axis,
+    /// 0 for axis origin, 1 for axis end</returns>
+    public override double PhysicalVariantToNormal(Altaxo.Data.AltaxoVariant x)
+    {
+      return PhysicalToNormal(x.ToDouble());
+    }
+
+    /// <summary>
+    /// NormalToPhysicalVariant is the inverse function to PhysicalToNormal
+    /// It translates a normalized value (0 for the axis origin, 1 for the axis end)
+    /// into the physical value
+    /// </summary>
+    /// <param name="x">the normal value (0 for axis origin, 1 for axis end</param>
+    /// <returns>the corresponding physical value</returns>
+    public override Altaxo.Data.AltaxoVariant NormalToPhysicalVariant(double x)
+    {
+      return new Altaxo.Data.AltaxoVariant(NormalToPhysical(x));
     }
 
     /// <summary>

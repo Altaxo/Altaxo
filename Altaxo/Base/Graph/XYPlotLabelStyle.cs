@@ -414,7 +414,7 @@ namespace Altaxo.Graph
     }
 
     public void Paint(Graphics g,
-      Graph.XYPlotLayer layer,
+      IPlotArea layer,
       Graph.AbstractXYPlotStyle parentStyle,
       PlotRangeList rangeList,
       PointF[] ptArray,
@@ -428,10 +428,16 @@ namespace Altaxo.Graph
       // save the graphics stat since we have to translate the origin
       System.Drawing.Drawing2D.GraphicsState gs = g.Save();
 
-      double bottomPosition = layer.Size.Height;
+      double bottomPosition= 0; 
       double topPosition   = 0;
       double leftPosition  = 0;
-      double rightPosition = layer.Size.Width;
+      double rightPosition = 0;
+
+      if(layer.IsAffine && layer.IsOrthogonal)
+      {
+        layer.LogicalToAreaConversion.Convert(0,0, out leftPosition, out bottomPosition);
+        layer.LogicalToAreaConversion.Convert(1,1, out rightPosition, out topPosition);
+      }
 
       double xpos=0, ypos=0;
       double xpre,ypre;

@@ -458,7 +458,7 @@ namespace Altaxo.Graph
       Graphics g, 
       PointF[] linePoints,
       PlotRangeList rangeList,
-      SizeF layerSize, // Size of layer in Points (1/72 inch), the upper left corner of layer is assumed to have coordinates (0,0)
+      IPlotArea layer, // Size of layer in Points (1/72 inch), the upper left corner of layer is assumed to have coordinates (0,0)
       float symbolGap // symbol gap in worlds coordinates, i.e. in Points (1/72 inch)
       )
     {
@@ -468,6 +468,11 @@ namespace Altaxo.Graph
       if(null!=m_FillBrush) m_FillBrush.Cached = true;
 
       int rangelistlen = rangeList.Count;
+
+      double xleft,xright,ytop,ybottom;
+      layer.LogicalToAreaConversion.Convert(0,0,out xleft, out ybottom);
+      layer.LogicalToAreaConversion.Convert(1,1,out xright, out ytop);
+      SizeF layerSize = new SizeF((float)Math.Abs(xright-xleft),(float)Math.Abs(ybottom-ytop));
 
       if(this.m_bIgnoreMissingPoints)
       {
@@ -510,6 +515,12 @@ namespace Altaxo.Graph
 
       if(m_bFillArea)
       {
+        /*
+        double xleft,xright,ytop,ybottom;
+        layer.LogicalToAreaConversion.Convert(0,0,out xleft, out ybottom);
+        layer.LogicalToAreaConversion.Convert(1,1,out xright, out ytop);
+        SizeF layerSize = new SizeF(Math.Abs(xright-xleft),Math.Abs(ybottom-ytop));
+        */
         switch(this.m_FillDirection)
         {
           case XYPlotLineStyles.FillDirection.Bottom:
