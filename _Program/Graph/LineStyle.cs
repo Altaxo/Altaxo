@@ -228,7 +228,15 @@ namespace Altaxo.Graph
 		{
 			return new LineStyle(this);
 		}
-		
+
+		public virtual void PaintLine(Graphics g, PointF beg, PointF end)
+		{
+			if(null!=m_PenHolder)
+			{
+				g.DrawLine(m_PenHolder,beg,end);
+			}
+		}
+
 		public virtual void Paint(
 			Graphics g, 
 			PointF[] linePoints,

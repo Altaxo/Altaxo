@@ -54,7 +54,7 @@ namespace Altaxo.Graph
 
 		public abstract object Clone();
 		public abstract void Paint(Graphics g, Graph.Layer gl, object plotObject); // plots the curve with the choosen style
-		public abstract void PaintSymbol(Graphics g); // draws a symbol that represents the style at position (0,0)
+		public abstract SizeF PaintSymbol(Graphics g, PointF atPosition, float width); // draws a symbol that represents the style at position (0,0)
 
 		// public abstract PlotAssociation PlotAssociation	{	get; set; } 
 
@@ -391,10 +391,41 @@ namespace Altaxo.Graph
 			}
 		}
 
-
-		public override void PaintSymbol(Graphics g)
+	/// <summary>
+	/// PaintSymbol paints the symbol including the line so
+	/// that the centre of the symbol is at place PointF 
+	/// </summary>
+	/// <param name="g">Graphic context</param>
+	/// <param name="pos">Position of the starting of the line</param>
+ 
+		public override SizeF PaintSymbol(Graphics g, PointF pos, float width)
 		{
-		}
+			GraphicsState gs = g.Save();
+			
+			float symsize = this.SymbolSize;
+			float linelen = width/2; // distance from start to symbol centre
+
+			g.TranslateTransform(pos.X+linelen,pos.Y);
+			if(null!=this.LineStyle && this.LineStyle.Connection != LineStyles.ConnectionStyle.NoLine)
+			{
+				if(LineSymbolGap==true)
+				{
+					// plot a line with the length of symbolsize from 
+					this.LineStyle.PaintLine(g,new PointF(-linelen,0),new PointF(-symsize,0));
+					this.LineStyle.PaintLine(g, new PointF(symsize,0),new PointF(linelen,0));
+				}
+				else // no gap
+				{
+					this.LineStyle.PaintLine(g,new PointF(-linelen,0),new PointF(linelen,0));
+				}
+			}
+			// now Paint the symbol
+			if(null!=this.ScatterStyle && this.ScatterStyle.Shape != ScatterStyles.Shape.NoSymbol)
+				this.ScatterStyle.Paint(g);
+
+			g.Restore(gs);
 	
+			return new SizeF(2*linelen,symsize);
+		}
 	} // end of class LineScatterPlotStyle
 }

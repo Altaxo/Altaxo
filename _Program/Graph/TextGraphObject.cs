@@ -137,19 +137,35 @@ namespace Altaxo
 		protected internal bool m_bGreek; // true if greek charset should be used
 		protected internal int  m_SubIndex;
 
-		protected internal int m_LayerNumber=-1;
-		protected internal int m_PlotNumber=-1;
-
+		protected internal int m_LayerNumber=-1; // number of the layer or -1 for the current layer
+		protected internal int m_PlotNumber=-1; // number of the plot curve or -1 in case this is disabled
+		protected internal int m_PlotPointNumber=-1; // number of the plot point or -1 for the whole curve
 		public TextItem()
 		{
 			m_Text="";
 		}
 
-		public TextItem(int nPlotNumber)
+		public void SetAsSymbol(int args, int[] arg)
 		{
 			m_Text=null;
-			m_LayerNumber=0;
-			m_PlotNumber=nPlotNumber;
+			switch(args)
+			{
+				case 1:
+					m_LayerNumber=-1;
+					m_PlotNumber=arg[0];
+					m_PlotPointNumber=-1;
+					break;
+				case 2:
+					m_LayerNumber = arg[0];
+					m_PlotNumber = arg[1];
+					m_PlotPointNumber = -1;
+					break;
+				case 3:
+					m_LayerNumber = arg[0];
+					m_PlotNumber = arg[1];
+					m_PlotPointNumber = arg[2];
+					break;
+			}
 		}
 
 		public TextItem(TextItem from)
@@ -348,6 +364,7 @@ namespace Altaxo
 									currTextItem = new TextItem(currTextItem);
 									currTextLine.Add(currTextItem);
 									currTextItem.m_bBold = true;
+									currTxtIdx = bi+3;
 								}
 									break; // bold
 								case 'i':
@@ -357,6 +374,7 @@ namespace Altaxo
 									currTextItem = new TextItem(currTextItem);
 									currTextLine.Add(currTextItem);
 									currTextItem.m_bItalic = true;
+									currTxtIdx = bi+3;
 								}
 									break; // italic
 								case 'u':
@@ -366,6 +384,7 @@ namespace Altaxo
 									currTextItem = new TextItem(currTextItem);
 									currTextLine.Add(currTextItem);
 									currTextItem.m_bUnderlined = true;
+									currTxtIdx = bi+3;
 								}
 									break; // underlined
 								case 'g':
@@ -375,6 +394,7 @@ namespace Altaxo
 									currTextItem = new TextItem(currTextItem);
 									currTextLine.Add(currTextItem);
 									currTextItem.m_bGreek = true;
+									currTxtIdx = bi+3;
 								}
 									break; // underlined
 								case '+':
@@ -384,14 +404,63 @@ namespace Altaxo
 									currTextItem = new TextItem(currTextItem);
 									currTextLine.Add(currTextItem);
 									currTextItem.m_SubIndex += ('+'==m_Text[bi+1] ? 1 : -1);
+									currTxtIdx = bi+3;
 								}
 									break; // underlined
+								case 'l': // Plot Curve Symbol
+								case 'L':
+								{
+									// parse the arguments
+									// either in the Form 
+									// \L(PlotCurveNumber) or
+									// \L(LayerNumber, PlotCurveNumber) or
+									// \L(LayerNumber, PlotCurveNumber, DataPointNumber)
+
+
+									// find the corresponding closing brace
+									int closingbracepos = m_Text.IndexOf(")",bi+1);
+									if(closingbracepos<0) // no brace found, so threat this as normal text
+									{
+										currTextItem.m_Text += m_Text.Substring(bi,3);
+										currTxtIdx += 3;
+										continue;
+									}
+									// count the commas between here and the closing brace to get
+									// the number of arguments
+									int parsepos=bi+3;
+									int[] arg = new int[3];
+									int args;
+									for(args=0;args<3 && parsepos<closingbracepos;args++)
+									{
+										int commapos = m_Text.IndexOf(",",parsepos,closingbracepos-parsepos);
+										int endpos = commapos>0 ? commapos : closingbracepos; // the end of this argument
+										try { arg[args]=System.Convert.ToInt32(m_Text.Substring(parsepos,endpos-parsepos)); }
+										catch(Exception) { break; }
+										parsepos = endpos+1;
+									}
+									if(args==0) // if not successfully parsed at least one number
+									{
+										currTextItem.m_Text += m_Text.Substring(bi,3);
+										currTxtIdx += 3;
+										continue;   // handle it as if it where normal text
+									}
+
+									previousTextItem = currTextItem;
+									currTextItem = new TextItem(currTextItem);
+									currTextLine.Add(currTextItem);
+									currTextItem.SetAsSymbol(args,arg);
+
+									currTextItem = new TextItem(previousTextItem); // create a normal text item behind the symbol item
+									currTextLine.Add(currTextItem); // to have room for the following text
+									currTxtIdx = closingbracepos+1;
+								}
+									break; // curve symbol
 								default:
 									// take the sequence as it is
 									currTextItem.m_Text += m_Text.Substring(bi,3);
+									currTxtIdx = bi+3;
 									break;
 							} // end of switch
-							currTxtIdx = bi+3;
 						}
 						else // if no formatting and also no closing brace or backslash, take it as it is
 						{
@@ -487,8 +556,12 @@ namespace Altaxo
 			float cyLineSpace = m_Font.GetHeight(g); // space between two lines
 			int   iCellSpace  = m_Font.FontFamily.GetLineSpacing(FontStyle.Regular);
 			int   iCellAscent = m_Font.FontFamily.GetCellAscent(FontStyle.Regular);
-			float cyAscent = cyLineSpace*iCellAscent/iCellSpace;
-
+			int   iCellDescent = m_Font.FontFamily.GetCellDescent(FontStyle.Regular);
+			float cyAscent  = cyLineSpace*iCellAscent/iCellSpace;
+			float cyDescent = cyLineSpace*iCellDescent/iCellSpace; 
+			float PlotSymbolWidth = g.MeasureString("MMM",m_Font,new PointF(0,0),strfmt).Width;
+		
+			
 			/*
 				if(this.AutoSize)
 				{
@@ -614,8 +687,9 @@ namespace Altaxo
 						{
 							Graph.PlotAssociation pa = layer.PlotAssociations[ti.m_PlotNumber];
 							
-							pa.PlotStyle.PaintSymbol(g);
-					}
+							SizeF symsize = pa.PlotStyle.PaintSymbol(g, new PointF(currPosX,currPosY-cyDescent-cyAscent/2+cyDescent/4), PlotSymbolWidth);
+							currPosX += symsize.Width;
+						}
 
 					} // end if ti.IsSymbol
 

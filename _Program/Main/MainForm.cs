@@ -64,6 +64,14 @@ namespace Altaxo
 
 
 
+		
+		protected override void OnMdiChildActivate(EventArgs e)
+		{
+			base.OnMdiChildActivate(e);
+			Console.WriteLine("GraphForm activated");
+		}
+
+
 		public App()
 			{
 				sm_theApplication = this;
