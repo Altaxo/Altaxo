@@ -1,0 +1,49 @@
+<Components version="1.0">
+  <System.Windows.Forms.UserControl>
+    <Name value="MyUserControl" />
+    <GridSize value="{Width=8, Height=8}" />
+    <DockPadding value="" />
+    <DrawGrid value="True" />
+    <Size value="{Width=360, Height=288}" />
+    <SnapToGrid value="True" />
+    <Controls>
+      <System.Windows.Forms.Button>
+        <Name value="removeButton" />
+        <Location value="{X=136,Y=256}" />
+        <Size value="{Width=120, Height=23}" />
+        <Text value="Remove Assembly" />
+        <Anchor value="Bottom, Left" />
+        <TabIndex value="3" />
+      </System.Windows.Forms.Button>
+      <System.Windows.Forms.Button>
+        <Name value="addButton" />
+        <Location value="{X=8,Y=256}" />
+        <Size value="{Width=120, Height=23}" />
+        <Text value="Add Assembly" />
+        <Anchor value="Bottom, Left" />
+        <TabIndex value="2" />
+      </System.Windows.Forms.Button>
+      <System.Windows.Forms.ComboBox>
+        <Name value="comboBox" />
+        <Anchor value="Top, Left, Right" />
+        <TabIndex value="1" />
+        <Location value="{X=8,Y=8}" />
+        <Size value="{Width=344, Height=21}" />
+        <DropDownStyle value="DropDownList" />
+      </System.Windows.Forms.ComboBox>
+      <System.Windows.Forms.PropertyGrid>
+        <Name value="propertyGrid" />
+        <ViewForeColor value="Color [WindowText]" />
+        <CommandsVisibleIfAvailable value="True" />
+        <LineColor value="Color [ScrollBar]" />
+        <TabIndex value="0" />
+        <Anchor value="Top, Bottom, Left, Right" />
+        <Location value="{X=8,Y=32}" />
+        <ViewBackColor value="Color [Window]" />
+        <Size value="{Width=344, Height=216}" />
+        <Text value="propertyGrid" />
+        <LargeButtons value="False" />
+      </System.Windows.Forms.PropertyGrid>
+    </Controls>
+  </System.Windows.Forms.UserControl>
+</Components>

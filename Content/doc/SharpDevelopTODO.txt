@@ -1,0 +1,9 @@
+General:
++ Solve assembly locking problem ... with SharpAssembly
+  - SharpAssembly needs some testing therefore it isn't included in 0.96 we 
+    simply hadn't the time ...
+ 
++ Include source control system (Subversion :) )
+
++ VB.NET parser ... we've one but we need to do some more work.
+

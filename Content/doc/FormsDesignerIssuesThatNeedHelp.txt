@@ -1,0 +1,5 @@
++ Component Tray doesn't pop up (it did in former versions but I did break something and I can't figure out what)
++ Tab Order isn't shown
++ I can need help with undo/redo (I think that a manager class must be implemented that listens to the component change events
+  and build the undo/redo commands alone but I may be wrong with that)
++ Anything you think that the forms designer needs.

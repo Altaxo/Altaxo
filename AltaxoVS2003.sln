@@ -46,6 +46,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zCSharpBinding", "Libraries
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Content", "Content\Content.csproj", "{012F4935-9036-4F02-8C03-060EC9514A1D}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -117,6 +121,12 @@ Global
 		{2AECC87C-9EB2-4A95-8997-A8ECFD8A707F}.DesignTimeDebugging.Build.0 = Debug|.NET
 		{2AECC87C-9EB2-4A95-8997-A8ECFD8A707F}.Release.ActiveCfg = Release|.NET
 		{2AECC87C-9EB2-4A95-8997-A8ECFD8A707F}.Release.Build.0 = Release|.NET
+		{012F4935-9036-4F02-8C03-060EC9514A1D}.Debug.ActiveCfg = Debug|.NET
+		{012F4935-9036-4F02-8C03-060EC9514A1D}.Debug.Build.0 = Debug|.NET
+		{012F4935-9036-4F02-8C03-060EC9514A1D}.DesignTimeDebugging.ActiveCfg = Debug|.NET
+		{012F4935-9036-4F02-8C03-060EC9514A1D}.DesignTimeDebugging.Build.0 = Debug|.NET
+		{012F4935-9036-4F02-8C03-060EC9514A1D}.Release.ActiveCfg = Release|.NET
+		{012F4935-9036-4F02-8C03-060EC9514A1D}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Icon1.ico = Icon1.ico

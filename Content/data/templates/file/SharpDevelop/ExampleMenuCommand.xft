@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<Template Originator="Mike Krueger" Language="C#" Created="09/04/2003" LastModified="09/04/2003">
+	
+	<TemplateConfiguration>
+		<Name>Simple #Develop menu command</Name>
+		<Icon>C#.File.FullFile</Icon>
+		<Category>SharpDevelop</Category>
+		<LanguageName>C#</LanguageName>
+		<Description>Creates a menu command which is usable for main and context menus</Description>
+	</TemplateConfiguration>
+	
+	<TemplateFiles>
+		<File DefaultExtension=".cs" DefaultName="EmptyC#file">
+			<![CDATA[using System;
+using System.Windows.Forms;
+
+using ICSharpCode.Core.AddIns.Codons;
+
+namespace MyMenuCommand
+{
+	/// <summary>
+	/// Description of SimpleMenuCommand
+	/// </summary>
+	public class SimpleMenuCommand : AbstractMenuCommand
+	{
+		/// <summary>
+		/// Creates a new SimpleMenuCommand
+		/// </summary>
+		public SimpleMenuCommand()
+		{
+			// You can enable/disable the menu command using the
+			// IsEnabled property of the AbstractMenuCommand class
+		}
+	
+		/// <summary>
+		/// Starts the command
+		/// </summary>
+		public override void Run()
+		{
+			// TODO: Add your code here !!!
+		}
+	}
+}
+]]>
+		</File>
+	</TemplateFiles>
+	
+	<FileOptions/>
+	
+</Template>

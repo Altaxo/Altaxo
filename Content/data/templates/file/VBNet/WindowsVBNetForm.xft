@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<Template Originator="Shinsaku Nakagawa" 
+          Language="VBNET" Created="10/20/2002" LastModified="9/21/2003">
+	
+	<TemplateConfiguration>
+		<Name>VB.NET Form</Name>
+		<Icon>VB.File.Form</Icon>
+		<Category>VB</Category>
+		<LanguageName>VBNET</LanguageName>
+		<Description>creates a designable VB.NET form</Description>
+	</TemplateConfiguration>
+	
+	<TemplateFiles>
+		<File DefaultExtension=".vb" DefaultName="VBNetForm">
+<![CDATA[REM created on ${Date} at ${Time}
+Imports System
+Imports System.Windows.Forms
+
+Namespace MyForm
+
+	Public Class CreatedForm
+		Inherits System.Windows.Forms.Form
+
+   		Public Sub New
+      		MyBase.New()
+      		
+			InitializeComponent()
+		End Sub
+		
+		// THIS METHOD IS MAINTAINED BY THE FORM DESIGNER
+		// DO NOT EDIT IT MANUALLY! YOUR CHANGES ARE LIKELY TO BE LOST!
+		Sub InitializeComponent
+			// 
+			// CreatedForm
+			// 
+			Me.AutoScaleBaseSize = New System.Drawing.Size(5, 13)
+			Me.ClientSize = New System.Drawing.Size(292, 266)
+			Me.Name = "CreatedForm"
+		End Sub
+		
+	End Class
+	
+End Namespace
+]]></File>
+	</TemplateFiles>
+	
+	<FileOptions/>
+	
+</Template>

@@ -1,0 +1,8 @@
+<SideBarConfig>
+  <SideBar activetab="Clipboard Ring">
+    <SideTab text="General" />
+    <SideTab text="Clipboard Ring">
+      <SideTabItem text="Text:NamespaceMemberDecl" value="NamespaceMemberDecl" />
+    </SideTab>
+  </SideBar>
+</SideBarConfig>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<Template Originator="Don Kackman" Language="C#" Created="2/09/2002" LastModified="2/09/2002">
+	
+	<TemplateConfiguration>
+		<Name>${res:Templates.File.C#.NewClassWizard.Name}</Name>
+		<Icon>C#.File.NewClass</Icon>
+		<Category>C#</Category>
+		<LanguageName>C#</LanguageName>
+		<Description>${res:Templates.File.C#.NewClassWizard.Description}</Description>
+		<Wizard path = "/SharpDevelop/Templates/File/NewClassWizard"/>
+	</TemplateConfiguration>
+	
+	<TemplateFiles/>
+	
+	<FileOptions/>
+</Template>

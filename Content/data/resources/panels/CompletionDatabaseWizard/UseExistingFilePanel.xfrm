@@ -1,0 +1,56 @@
+<System.Windows.Forms.UserControl>
+  <Tag value="" />
+  <DataBindings value="System.Windows.Forms.ControlBindingsCollection" />
+  <SnapToGrid value="True" />
+  <Size value="{Width=408, Height=368}" />
+  <DrawGrid value="True" />
+  <DockPadding value="" />
+  <GridSize value="{Width=8, Height=8}" />
+  <Name value="UseExistingFilePanel" />
+  <Controls>
+    <System.Windows.Forms.TextBox>
+      <Text value="${res:Dialog.Wizards.CodeCompletionDatabaseWizard.UseExistingFilePanel.PanelDescription}" />
+      <Multiline value="True" />
+      <DataBindings value="System.Windows.Forms.ControlBindingsCollection" />
+      <Size value="{Width=392, Height=232}" />
+      <Location value="{X=8,Y=8}" />
+      <ScrollBars value="Vertical" />
+      <TabIndex value="5" />
+      <ReadOnly value="True" />
+      <Name value="textBox" />
+      <Controls />
+    </System.Windows.Forms.TextBox>
+    <System.Windows.Forms.TextBox>
+      <Text value="" />
+      <Name value="locationTextBox" />
+      <DataBindings value="System.Windows.Forms.ControlBindingsCollection" />
+      <Size value="{Width=336, Height=22}" />
+      <Location value="{X=24,Y=328}" />
+      <TabIndex value="4" />
+      <Anchor value="Bottom, Left, Right" />
+      <Controls />
+    </System.Windows.Forms.TextBox>
+    <System.Windows.Forms.Button>
+      <TabIndex value="3" />
+      <Name value="browseButton" />
+      <Anchor value="Bottom, Right" />
+      <Text value="..." />
+      <Size value="{Width=32, Height=23}" />
+      <Location value="{X=368,Y=328}" />
+      <DataBindings value="System.Windows.Forms.ControlBindingsCollection" />
+      <Controls />
+    </System.Windows.Forms.Button>
+    <System.Windows.Forms.RadioButton>
+      <Name value="specifyLocationRadioButton" />
+      <TabIndex value="1" />
+      <Anchor value="Bottom, Left, Right" />
+      <TabStop value="True" />
+      <Text value="${res:Dialog.Wizards.CodeCompletionDatabaseWizard.UseExistingFilePanel.SpecifyLocationRadioButton}" />
+      <Size value="{Width=392, Height=24}" />
+      <Checked value="True" />
+      <Location value="{X=8,Y=296}" />
+      <DataBindings value="System.Windows.Forms.ControlBindingsCollection" />
+      <Controls />
+    </System.Windows.Forms.RadioButton>
+  </Controls>
+</System.Windows.Forms.UserControl>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<Template Originator="Mike Krueger" Language="C#" Created="3/09/2001" LastModified="3/09/2001">
+	
+	<TemplateConfiguration>
+		<Name>${res:Templates.File.C#.TypedC#Collection.Name}</Name>
+		<Icon>C#.File.FullFile</Icon>
+		<Category>C#</Category>
+		<LanguageName>C#</LanguageName>
+		<Description>${res:Templates.File.C#.TypedC#Collection.Description}</Description>
+		<Wizard path = "/SharpDevelop/Templates/File/TypedCollection"/>
+	</TemplateConfiguration>
+	
+	<TemplateFiles/>
+	
+	<FileOptions/>
+	
+</Template>

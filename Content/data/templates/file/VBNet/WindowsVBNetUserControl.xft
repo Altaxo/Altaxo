@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<Template Originator="Shinsaku Nakagawa" 
+          Language="VBNET" Created="10/20/2002" LastModified="10/20/2002">
+	
+	<TemplateConfiguration>
+		<Name>VB.NET UserControl</Name>
+		<Icon>VB.File.Form</Icon>
+		<Category>VB</Category>
+		<LanguageName>VBNET</LanguageName>
+		<Description>creates a designable VB.NET user control</Description>
+	</TemplateConfiguration>
+	
+	<TemplateFiles>
+		<File DefaultExtension=".vb" DefaultName="VBNetUserControl">
+<![CDATA[REM created on ${Date} at ${Time}
+Imports System
+Imports System.Windows.Forms
+Module MyUserControl
+
+	Public Class CreatedUserControl
+		Inherits System.Windows.Forms.UserControl
+
+		Public Sub New
+			MyBase.New()
+			Me.InitializeComponents()
+		End Sub
+		
+		Public Sub InitializeComponents
+
+		End Sub
+
+	End Class
+
+End Module
+]]></File>
+	</TemplateFiles>
+	
+	<FileOptions/>
+	
+</Template>

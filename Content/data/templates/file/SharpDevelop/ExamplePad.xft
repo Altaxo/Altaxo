@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<Template Originator="Mike Krueger" Language="C#" Created="09/04/2003" LastModified="09/04/2003">
+	
+	<TemplateConfiguration>
+		<Name>Simple #Develop pad</Name>
+		<Icon>C#.File.FullFile</Icon>
+		<Category>SharpDevelop</Category>
+		<LanguageName>C#</LanguageName>
+		<Description>Creates a #D pad content (for example the #D scouts)</Description>
+	</TemplateConfiguration>
+	
+	<TemplateFiles>
+		<File DefaultExtension=".cs" DefaultName="EmptyC#file">
+			<![CDATA[using System;
+using System.Windows.Forms;
+using ICSharpCode.SharpDevelop.Gui;
+
+namespace MyPad
+{
+	/// <summary>
+	/// Description of the pad content
+	/// </summary>
+	public class MyPad : AbstractPadContent
+	{
+#region AbstractPadContent requirements
+		/// <summary>
+		/// The <see cref="System.Windows.Forms.Control"/> representing the pad
+		/// </summary>
+		public override Control Control {
+			get {
+				//
+				// TODO : Give back a working Windows.Forms Control
+				//
+				return null;
+			}
+		}
+		
+		/// <summary>
+		/// Creates a new MyPad object
+		/// </summary>
+		public MyPad() : base("The Title of MyPad")
+		{
+			// TODO: Optionally set the icon resource name with Icon = "YourIconResourceName";
+		}
+		
+		/// <summary>
+		/// Refreshes the pad
+		/// </summary>
+		public override void RedrawContent()
+		{
+			// TODO: Refresh the whole pad control here, renew all resource strings whatever
+			//       Note that you do not need to recreate the control.
+		}
+		
+		/// <summary>
+		/// Cleans up all used resources
+		/// </summary>
+		public override void Dispose()
+		{
+			// TODO: Clean up resources in this method
+			// Control.Dispose();
+		}
+#endregion
+	}
+	
+}
+]]>
+		</File>
+	</TemplateFiles>
+	
+	<FileOptions/>
+	
+</Template>

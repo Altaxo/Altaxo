@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<Template Originator="Mike Krueger" Language="Default" Created="6/10/2001" LastModified="6/10/2001">
+	
+	<TemplateConfiguration>
+		<Name>${res:Templates.File.Text.EmptyText.Name}</Name>
+		<Icon>Icons.32x32.TextFileIcon</Icon>
+		<Category>Misc</Category>
+		<LanguageName>Default</LanguageName>
+		<Description>${res:Templates.File.Text.EmptyTextFile.Description}</Description>
+	</TemplateConfiguration>
+	
+	<TemplateFiles>
+		<File DefaultExtension=".txt" DefaultName="EmptyTextfile"/>
+	</TemplateFiles>
+	
+	<FileOptions/>
+	
+</Template>

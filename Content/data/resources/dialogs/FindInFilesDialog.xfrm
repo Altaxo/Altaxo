@@ -1,0 +1,140 @@
+<Components version="1.0">
+  <System.Windows.Forms.Form>
+    <Name value="CreatedObject0" />
+    <ShowInTaskbar value="False" />
+    <FormBorderStyle value="FixedDialog" />
+    <StartPosition value="CenterParent" />
+    <ClientSize value="{Width=546, Height=216}" />
+    <MinimizeBox value="False" />
+    <DockPadding value="" />
+    <Text value="${res:NewProject.SearchReplace.FindInFilesDialogName}" />
+    <MaximizeBox value="False" />
+    <Controls>
+      <System.Windows.Forms.Button>
+        <Name value="browseButton" />
+        <Location value="{X=376,Y=72}" />
+        <ClientSize value="{Width=32, Height=22}" />
+        <Text value="..." />
+        <TabIndex value="7" />
+      </System.Windows.Forms.Button>
+      <System.Windows.Forms.TextBox>
+        <Name value="directoryTextBox" />
+        <TabIndex value="6" />
+        <Location value="{X=104,Y=72}" />
+        <ClientSize value="{Width=260, Height=17}" />
+        <Text value="" />
+      </System.Windows.Forms.TextBox>
+      <System.Windows.Forms.Label>
+        <Name value="label1" />
+        <Text value="${res:NewProject.SearchReplace.Directory}" />
+        <TextAlign value="MiddleRight" />
+        <TabIndex value="5" />
+        <ClientSize value="{Width=96, Height=23}" />
+        <Location value="{X=0,Y=72}" />
+      </System.Windows.Forms.Label>
+      <System.Windows.Forms.TextBox>
+        <Name value="fileMaskTextBox" />
+        <TabIndex value="4" />
+        <Location value="{X=104,Y=40}" />
+        <ClientSize value="{Width=268, Height=17}" />
+        <Text value="" />
+      </System.Windows.Forms.TextBox>
+      <System.Windows.Forms.Label>
+        <Name value="label" />
+        <Text value="${res:NewProject.SearchReplace.FileMask}" />
+        <TextAlign value="MiddleRight" />
+        <TabIndex value="3" />
+        <ClientSize value="{Width=96, Height=23}" />
+        <Location value="{X=0,Y=40}" />
+      </System.Windows.Forms.Label>
+      <System.Windows.Forms.CheckBox>
+        <Name value="includeSubdirectoriesCheckBox" />
+        <Location value="{X=8,Y=104}" />
+        <ClientSize value="{Width=208, Height=24}" />
+        <Text value="${res:NewProject.SearchReplace.IncludeSubdirectories}" />
+        <TabIndex value="8" />
+      </System.Windows.Forms.CheckBox>
+      <System.Windows.Forms.Label>
+        <Name value="CreatedObject2" />
+        <Text value="${res:Dialog.NewProject.SearchReplace.FindWhat}" />
+        <TextAlign value="MiddleRight" />
+        <TabIndex value="0" />
+        <ClientSize value="{Width=96, Height=20}" />
+        <Location value="{X=0,Y=8}" />
+      </System.Windows.Forms.Label>
+      <System.Windows.Forms.ComboBox>
+        <Name value="searchPatternComboBox" />
+        <TabIndex value="1" />
+        <Location value="{X=104,Y=8}" />
+        <ClientSize value="{Width=276, Height=21}" />
+      </System.Windows.Forms.ComboBox>
+      <System.Windows.Forms.Button>
+        <Name value="findHelpButton" />
+        <Location value="{X=384,Y=8}" />
+        <ClientSize value="{Width=24, Height=21}" />
+        <Text value="&gt;" />
+        <TabIndex value="2" />
+      </System.Windows.Forms.Button>
+      <System.Windows.Forms.Button>
+        <Name value="findButton" />
+        <Location value="{X=424,Y=8}" />
+        <ClientSize value="{Width=112, Height=24}" />
+        <Text value="${res:NewProject.SearchReplace.FindInFilesButton}" />
+        <TabIndex value="15" />
+      </System.Windows.Forms.Button>
+      <System.Windows.Forms.Button>
+        <Name value="closeButton" />
+        <Location value="{X=424,Y=184}" />
+        <ClientSize value="{Width=112, Height=24}" />
+        <Text value="${res:Global.CloseButtonText}" />
+        <TabIndex value="16" />
+        <DialogResult value="Cancel" />
+      </System.Windows.Forms.Button>
+      <System.Windows.Forms.CheckBox>
+        <Name value="ignoreCaseCheckBox" />
+        <Location value="{X=8,Y=128}" />
+        <ClientSize value="{Width=208, Height=24}" />
+        <Text value="${res:Dialog.NewProject.SearchReplace.CaseSensitive}" />
+        <TabIndex value="9" />
+      </System.Windows.Forms.CheckBox>
+      <System.Windows.Forms.CheckBox>
+        <Name value="searchWholeWordOnlyCheckBox" />
+        <Location value="{X=8,Y=160}" />
+        <ClientSize value="{Width=216, Height=24}" />
+        <Text value="${res:Dialog.NewProject.SearchReplace.WholeWord}" />
+        <TabIndex value="10" />
+      </System.Windows.Forms.CheckBox>
+      <System.Windows.Forms.CheckBox>
+        <Name value="useSpecialSearchStrategyCheckBox" />
+        <Location value="{X=8,Y=184}" />
+        <ClientSize value="{Width=140, Height=24}" />
+        <Text value="${res:Dialog.NewProject.SearchReplace.UseMethodLabel}" />
+        <TabIndex value="11" />
+      </System.Windows.Forms.CheckBox>
+      <System.Windows.Forms.ComboBox>
+        <Name value="specialSearchStrategyComboBox" />
+        <DropDownWidth value="128" />
+        <TabIndex value="12" />
+        <Location value="{X=152,Y=184}" />
+        <ClientSize value="{Width=256, Height=21}" />
+        <DropDownStyle value="DropDownList" />
+      </System.Windows.Forms.ComboBox>
+      <System.Windows.Forms.Label>
+        <Name value="CreatedObject43" />
+        <Text value="${res:Dialog.NewProject.SearchReplace.SearchIn}" />
+        <TextAlign value="BottomLeft" />
+        <TabIndex value="13" />
+        <ClientSize value="{Width=188, Height=24}" />
+        <Location value="{X=216,Y=104}" />
+      </System.Windows.Forms.Label>
+      <System.Windows.Forms.ComboBox>
+        <Name value="searchLocationComboBox" />
+        <DropDownWidth value="128" />
+        <TabIndex value="14" />
+        <Location value="{X=216,Y=128}" />
+        <ClientSize value="{Width=192, Height=21}" />
+        <DropDownStyle value="DropDownList" />
+      </System.Windows.Forms.ComboBox>
+    </Controls>
+  </System.Windows.Forms.Form>
+</Components>

@@ -3,13 +3,13 @@
         ProjectType = "Local"
         ProductVersion = "7.10.3077"
         SchemaVersion = "2.0"
-        ProjectGuid = "{95A2BF58-8568-4512-BD82-F0240FFC7558}"
+        ProjectGuid = "{012F4935-9036-4F02-8C03-060EC9514A1D}"
     >
         <Build>
             <Settings
                 ApplicationIcon = ""
                 AssemblyKeyContainerName = ""
-                AssemblyName = "AltaxoTest"
+                AssemblyName = "ContentProject"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
@@ -17,8 +17,8 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "copy AltaxoTest.??? ..\..\..\..\rtd\bin"
-                RootNamespace = ""
+                PostBuildEvent = "xcopy ..\..\data\*.* ..\..\..\rtd\data /E /I /Y&#xd;&#xa;xcopy ..\..\doc\*.* ..\..\..\rtd\doc /E /I /Y"
+                RootNamespace = "ContentProject"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
@@ -29,7 +29,7 @@
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
                     DefineConstants = "DEBUG;TRACE"
-                    DocumentationFile = "bin\Debug\AltaxoTest.xml"
+                    DocumentationFile = ""
                     DebugSymbols = "true"
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
@@ -79,56 +79,10 @@
                     AssemblyName = "System.Xml"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
-                <Reference
-                    Name = "Base"
-                    Project = "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "ICSharpCode.SharpZipLib"
-                    AssemblyName = "ICSharpCode.SharpZipLib"
-                    HintPath = "..\..\Libraries\bin\ICSharpCode.SharpZipLib.dll"
-                />
-                <Reference
-                    Name = "nunit.framework"
-                    AssemblyName = "nunit.framework"
-                    HintPath = "..\..\Libraries\bin\nunit.framework.dll"
-                />
             </References>
         </Build>
         <Files>
-            <Include>
-                <File
-                    RelPath = "AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\NonLinearFit_Tests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\PFA235FFT_Tests.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Data\DataColumnCollection_Test.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Data\DoubleColumn_Test.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Serialization\Xml\XmlStreamSerializationTest.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-            </Include>
+            <Include/>
         </Files>
     </CSHARP>
 </VisualStudioProject>

@@ -1,0 +1,118 @@
+<Components version="1.0">
+  <System.Windows.Forms.UserControl>
+    <Name value="CreatedObject01" />
+    <GridSize value="{Width=6, Height=6}" />
+    <DockPadding value="" />
+    <AccessibleDescription value="" />
+    <Font value="[Font: Name=Tahoma, Size=8, Units=3, GdiCharSet=1, GdiVerticalFont=False]" />
+    <AccessibleName value="" />
+    <Size value="{Width=360, Height=296}" />
+    <Tag value="" />
+    <Controls>
+      <System.Windows.Forms.GroupBox>
+        <Name value="runtimeGroupBox" />
+        <AccessibleName value="" />
+        <ForeColor value="Color [ControlText]" />
+        <TabIndex value="0" />
+        <AccessibleDescription value="" />
+        <Location value="{X=8,Y=8}" />
+        <ImeMode value="NoControl" />
+        <BackColor value="Color [Control]" />
+        <Anchor value="Top, Left, Right" />
+        <Tag value="" />
+        <RightToLeft value="No" />
+        <Size value="{Width=344, Height=100}" />
+        <Text value="${res:Dialog.Options.PrjOptions.ChooseRuntimePanel.RuntimeGroupBox}" />
+        <Controls>
+          <System.Windows.Forms.RadioButton>
+            <Name value="mintRadioButton" />
+            <Location value="{X=8,Y=66}" />
+            <Size value="{Width=328, Height=24}" />
+            <Text value="Mono Runtime Interpeter" />
+            <Anchor value="Top, Left, Right" />
+            <RightToLeft value="No" />
+            <TabIndex value="2" />
+            <Tag value="" />
+            <AccessibleName value="" />
+            <ForeColor value="Color [ControlText]" />
+            <BackColor value="Color [Control]" />
+            <AccessibleDescription value="" />
+          </System.Windows.Forms.RadioButton>
+          <System.Windows.Forms.RadioButton>
+            <Name value="msnetRadioButton" />
+            <Location value="{X=8,Y=18}" />
+            <Size value="{Width=328, Height=24}" />
+            <Text value="Microsoft .NET" />
+            <Anchor value="Top, Left, Right" />
+            <RightToLeft value="No" />
+            <TabIndex value="0" />
+            <Tag value="" />
+            <AccessibleName value="" />
+            <ForeColor value="Color [ControlText]" />
+            <BackColor value="Color [Control]" />
+            <AccessibleDescription value="" />
+          </System.Windows.Forms.RadioButton>
+          <System.Windows.Forms.RadioButton>
+            <Name value="monoRadioButton" />
+            <Location value="{X=8,Y=42}" />
+            <Size value="{Width=328, Height=24}" />
+            <Text value="Mono" />
+            <Anchor value="Top, Left, Right" />
+            <RightToLeft value="No" />
+            <TabIndex value="1" />
+            <Tag value="" />
+            <AccessibleName value="" />
+            <ForeColor value="Color [ControlText]" />
+            <BackColor value="Color [Control]" />
+            <AccessibleDescription value="" />
+          </System.Windows.Forms.RadioButton>
+        </Controls>
+      </System.Windows.Forms.GroupBox>
+      <System.Windows.Forms.GroupBox>
+        <Name value="compilerGroupBox" />
+        <AccessibleName value="" />
+        <ForeColor value="Color [ControlText]" />
+        <TabIndex value="1" />
+        <AccessibleDescription value="" />
+        <Location value="{X=8,Y=120}" />
+        <ImeMode value="NoControl" />
+        <BackColor value="Color [Control]" />
+        <Anchor value="Top, Left, Right" />
+        <Tag value="" />
+        <RightToLeft value="No" />
+        <Size value="{Width=344, Height=78}" />
+        <Text value="${res:Dialog.Options.PrjOptions.ChooseRuntimePanel.CompilerGroupBox}" />
+        <Controls>
+          <System.Windows.Forms.RadioButton>
+            <Name value="mcsRadioButton" />
+            <Location value="{X=8,Y=42}" />
+            <Size value="{Width=328, Height=24}" />
+            <Text value="Mono mcs" />
+            <Anchor value="Top, Left, Right" />
+            <RightToLeft value="No" />
+            <TabIndex value="1" />
+            <Tag value="" />
+            <AccessibleName value="" />
+            <ForeColor value="Color [ControlText]" />
+            <BackColor value="Color [Control]" />
+            <AccessibleDescription value="" />
+          </System.Windows.Forms.RadioButton>
+          <System.Windows.Forms.RadioButton>
+            <Name value="cscRadioButton" />
+            <Location value="{X=8,Y=18}" />
+            <Size value="{Width=328, Height=24}" />
+            <Text value="Microsoft csc" />
+            <Anchor value="Top, Left, Right" />
+            <RightToLeft value="No" />
+            <TabIndex value="0" />
+            <Tag value="" />
+            <AccessibleName value="" />
+            <ForeColor value="Color [ControlText]" />
+            <BackColor value="Color [Control]" />
+            <AccessibleDescription value="" />
+          </System.Windows.Forms.RadioButton>
+        </Controls>
+      </System.Windows.Forms.GroupBox>
+    </Controls>
+  </System.Windows.Forms.UserControl>
+</Components>

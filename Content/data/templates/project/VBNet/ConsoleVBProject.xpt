@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<Template originator   = "Shinsaku Nakagawa"
+          created      = "11/28/2002"
+          lastModified = "02/01/2003">
+
+	<!-- Template Header -->
+	<TemplateConfiguration>
+		<Name>Console Project</Name>
+		<Category>VBNET</Category>
+		<Icon>VB.Project.DOSProject</Icon>
+		<LanguageName>VBNET</LanguageName>
+		<Description>Create a console VB.NET project</Description>
+	</TemplateConfiguration>
+	
+	<!-- Actions -->
+	<Actions>
+		<Open filename = "Main.vb"/>
+	</Actions>
+	
+	<!-- Template Content -->
+	<Combine name = "${ProjectName}" directory = ".">
+		<Options>
+			<StartupProject>${ProjectName}</StartupProject>
+		</Options>
+		
+		<Project name = "${ProjectName}" directory = ".">
+			
+			<Options Target = "Exe" PauseConsoleOutput = "True"/>
+			
+			<References>
+				<Reference type="Gac" refto="System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+			</References>
+			
+			<Files>
+		<File name="Main.vb">
+			<![CDATA[' project created on ${Date} at ${Time}
+Imports System
+Module Main
+    Sub Main()
+        Console.WriteLine("Hello World!")
+    End Sub
+End Module
+]]></File>
+			</Files>
+		</Project>
+	</Combine>
+</Template>

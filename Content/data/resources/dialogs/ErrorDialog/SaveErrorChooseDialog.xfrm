@@ -1,0 +1,75 @@
+<Components version="1.0">
+  <System.Windows.Forms.Form>
+    <Name value="SaveErrorChooseDialog" />
+    <ShowInTaskbar value="False" />
+    <FormBorderStyle value="FixedDialog" />
+    <ClientSize value="{Width=522, Height=240}" />
+    <Font value="[Font: Name=Tahoma, Size=14, Units=3, GdiCharSet=1, GdiVerticalFont=False]" />
+    <MinimizeBox value="False" />
+    <DockPadding value="" />
+    <Text value="Error while saving" />
+    <MaximizeBox value="False" />
+    <Controls>
+      <System.Windows.Forms.Button>
+        <Name value="retryButton" />
+        <Location value="{X=8,Y=208}" />
+        <ClientSize value="{Width=120, Height=23}" />
+        <Text value="Retry" />
+        <Anchor value="Bottom, Right" />
+        <TabIndex value="5" />
+        <DialogResult value="Retry" />
+        <Font value="[Font: Name=Tahoma, Size=8, Units=3, GdiCharSet=1, GdiVerticalFont=False]" />
+      </System.Windows.Forms.Button>
+      <System.Windows.Forms.Button>
+        <Name value="ignoreButton" />
+        <Location value="{X=136,Y=208}" />
+        <ClientSize value="{Width=120, Height=23}" />
+        <Text value="Ignore" />
+        <Anchor value="Bottom, Right" />
+        <TabIndex value="4" />
+        <DialogResult value="Ignore" />
+        <Font value="[Font: Name=Tahoma, Size=8, Units=3, GdiCharSet=1, GdiVerticalFont=False]" />
+      </System.Windows.Forms.Button>
+      <System.Windows.Forms.Label>
+        <Name value="descriptionLabel" />
+        <Text value="Description" />
+        <Font value="[Font: Name=Tahoma, Size=8, Units=3, GdiCharSet=1, GdiVerticalFont=False]" />
+        <TextAlign value="BottomLeft" />
+        <Anchor value="Top, Left, Right" />
+        <TabIndex value="3" />
+        <ClientSize value="{Width=520, Height=24}" />
+        <Location value="{X=8,Y=0}" />
+      </System.Windows.Forms.Label>
+      <System.Windows.Forms.TextBox>
+        <Name value="descriptionTextBox" />
+        <ReadOnly value="True" />
+        <Anchor value="Top, Bottom, Left, Right" />
+        <TabIndex value="2" />
+        <Location value="{X=8,Y=32}" />
+        <ClientSize value="{Width=500, Height=168}" />
+        <Multiline value="True" />
+        <Font value="[Font: Name=Tahoma, Size=8, Units=3, GdiCharSet=1, GdiVerticalFont=False]" />
+        <Text value="" />
+      </System.Windows.Forms.TextBox>
+      <System.Windows.Forms.Button>
+        <Name value="exceptionButton" />
+        <Location value="{X=392,Y=208}" />
+        <ClientSize value="{Width=120, Height=23}" />
+        <Text value="Show Exception" />
+        <Anchor value="Bottom, Right" />
+        <TabIndex value="1" />
+        <Font value="[Font: Name=Tahoma, Size=8, Units=3, GdiCharSet=1, GdiVerticalFont=False]" />
+      </System.Windows.Forms.Button>
+      <System.Windows.Forms.Button>
+        <Name value="chooseLocationButton" />
+        <Location value="{X=264,Y=208}" />
+        <ClientSize value="{Width=120, Height=23}" />
+        <Text value="Choose Location" />
+        <Anchor value="Bottom, Right" />
+        <TabIndex value="0" />
+        <DialogResult value="OK" />
+        <Font value="[Font: Name=Tahoma, Size=8, Units=3, GdiCharSet=1, GdiVerticalFont=False]" />
+      </System.Windows.Forms.Button>
+    </Controls>
+  </System.Windows.Forms.Form>
+</Components>

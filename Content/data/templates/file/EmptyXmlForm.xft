@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<Template Originator="Mike Krueger" Language="XmlForm" Created="07/15/2002" LastModified="07/15/2002">
+	
+	<TemplateConfiguration>
+		<Name>Xml Form</Name>
+		<Icon>Icons.32x32.XMLFileIcon</Icon>
+		<Category>Misc</Category>
+		<LanguageName>XmlForm</LanguageName>
+		<Description>Create an empty xml form</Description>
+	</TemplateConfiguration>
+	
+	<TemplateFiles>
+		<File DefaultExtension=".xfrm" DefaultName="EmptyXmlForm">
+			<![CDATA[<Components version="1.0">
+  <System.Windows.Forms.Form>
+    <Name value="MyForm" />
+  </System.Windows.Forms.Form>
+</Components>]]>
+		</File>
+	</TemplateFiles>
+	
+	<FileOptions/>
+	
+</Template>

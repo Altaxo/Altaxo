@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<Template Originator="Mike Krueger" Language="HTML" Created="6/10/2001" LastModified="6/10/2001">
+	
+	<TemplateConfiguration>
+		<Name>${res:Templates.File.Html.EmptyHtml.Name}</Name>
+		<Icon>Icons.32x32.HTMLFileIcon</Icon>
+		<Category>Misc</Category>
+		<LanguageName>HTML</LanguageName>
+		<Description>${res:Templates.File.Html.EmptyHtmlFile.Description}</Description>
+	</TemplateConfiguration>
+	
+	<TemplateFiles>
+		<File DefaultExtension=".html" DefaultName="EmptyHtmlfile"><![CDATA[
+<Html>
+	<Head>
+		<Title></Title>
+	</Head>
+	<Body>
+	</Body>
+</Html>]]>
+		</File>
+	</TemplateFiles>
+	
+	<FileOptions/>
+	
+</Template>

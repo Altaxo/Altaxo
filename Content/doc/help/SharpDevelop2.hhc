@@ -1,0 +1,584 @@
+<HTML>
+<HEAD>
+</HEAD>
+  <BODY>
+<OBJECT type="text/site properties">
+	<param name="ImageType" value="Folder">
+</OBJECT>
+<UL>
+<LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="SharpDevelop">
+      <param name="Local" value="index.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="Welcome to SharpDevelop!">
+      <param name="Local" value="pr01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="1. Getting Started with SharpDevelop">
+      <param name="Local" value="ch01.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="1. Introduction">
+      <param name="Local" value="ch01s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2. SharpDevelop IDE">
+      <param name="Local" value="ch01s02.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.1. #develop Scouts">
+      <param name="Local" value="ch01s02s01.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.1.1. Projects Scout">
+      <param name="Local" value="ch01s02s01s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.1.2. Classes Scout">
+      <param name="Local" value="ch01s02s01s02.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.1.3. Files Scout">
+      <param name="Local" value="ch01s02s01s03.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.1.4. Tools Scout">
+      <param name="Local" value="ch01s02s01s04.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.1.5. Help Scout">
+      <param name="Local" value="ch01s02s01s05.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.1.6. Properties Scout">
+      <param name="Local" value="ch01s02s01s06.html">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.2. Code Window">
+      <param name="Local" value="ch01s02s02.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.3. Task List">
+      <param name="Local" value="ch01s02s03.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4. Output">
+      <param name="Local" value="ch01s02s04.html">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3. C# and SharpDevelop">
+      <param name="Local" value="ch01s03.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.1. Your First C# Project: Hello, World">
+      <param name="Local" value="ch01s03s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.2. Fixing Errors (C#)">
+      <param name="Local" value="ch01s03s02.html">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="4. VB.NET and SharpDevelop">
+      <param name="Local" value="ch01s04.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="4.1. Your First VB.NET Project: Hello, World">
+      <param name="Local" value="ch01s04s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="4.2. Fixing Errors (VB.NET)">
+      <param name="Local" value="ch01s04s02.html">
+    </OBJECT></UL></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2. Working with SharpDevelop">
+      <param name="Local" value="ch02.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="1. Introduction">
+      <param name="Local" value="ch02s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2. Projects">
+      <param name="Local" value="ch02s02.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.1. Projects">
+      <param name="Local" value="ch02s02s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.2. Creating new projects">
+      <param name="Local" value="ch02s02s02.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.3. Project Templates">
+      <param name="Local" value="ch02s02s03.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4. Project options">
+      <param name="Local" value="ch02s02s04.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.1. General, Project Options">
+      <param name="Local" value="ch02s02s04s01.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.1.1. Name">
+      <param name="Local" value="ch02s02s04s01.html#d0e831">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.1.2. Description">
+      <param name="Local" value="ch02s02s04s01.html#d0e836">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.1.3. Project Documentation">
+      <param name="Local" value="ch02s02s04s01.html#d0e841">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.1.4. Auto-Find Files">
+      <param name="Local" value="ch02s02s04s01.html#auto_find_files">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.1.5. Enable Viewstate">
+      <param name="Local" value="ch02s02s04s01.html#d0e856">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.2. Deploy, Compile">
+      <param name="Local" value="ch02s02s04s02.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.2.1. Include files in compile run">
+      <param name="Local" value="ch02s02s04s02.html#d0e867">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.3. Deploy, Deploy">
+      <param name="Local" value="ch02s02s04s03.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.3.1. Deploy">
+      <param name="Local" value="ch02s02s04s03.html#d0e882">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.3.1.1. Project files">
+      <param name="Local" value="ch02s02s04s03.html#d0e885">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.3.1.2. Compilation target">
+      <param name="Local" value="ch02s02s04s03.html#d0e890">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.3.1.3. With scriptfile">
+      <param name="Local" value="ch02s02s04s03.html#d0e895">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.3.2. Deploy target">
+      <param name="Local" value="ch02s02s04s03.html#d0e900">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4. Configurations, Settings (C#)">
+      <param name="Local" value="ch02s02s04s04.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.1. Code Generation and Warnings">
+      <param name="Local" value="ch02s02s04s04.html#d0e911">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.1.1. Compile Target">
+      <param name="Local" value="ch02s02s04s04.html#d0e914">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.1.2. Define Symbols">
+      <param name="Local" value="ch02s02s04s04.html#d0e919">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.1.3. Main class">
+      <param name="Local" value="ch02s02s04s04.html#d0e924">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.1.4. Win32Icon">
+      <param name="Local" value="ch02s02s04s04.html#d0e929">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.1.5. Generate overflow checks">
+      <param name="Local" value="ch02s02s04s04.html#d0e936">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.1.6. Allow 'unsafe' code">
+      <param name="Local" value="ch02s02s04s04.html#d0e941">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.1.7. Treat warnings as errors">
+      <param name="Local" value="ch02s02s04s04.html#d0e946">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.1.8. Enable optimizations">
+      <param name="Local" value="ch02s02s04s04.html#d0e951">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.1.9. Emit debugging information">
+      <param name="Local" value="ch02s02s04s04.html#d0e956">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.1.10. Generate xml documentation">
+      <param name="Local" value="ch02s02s04s04.html#d0e961">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.1.11. Warning level">
+      <param name="Local" value="ch02s02s04s04.html#d0e966">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.2. Output">
+      <param name="Local" value="ch02s02s04s04.html#d0e971">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.2.1. Assembly name">
+      <param name="Local" value="ch02s02s04s04.html#d0e974">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.4.2.2. Output path">
+      <param name="Local" value="ch02s02s04s04.html#d0e979">
+    </OBJECT></UL></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.5. Configurations, Settings (VB.NET)">
+      <param name="Local" value="ch02s02s04s05.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.5.1. Imports">
+      <param name="Local" value="ch02s02s04s05.html#d0e999">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.6. Configurations, Runtime/Compiler">
+      <param name="Local" value="ch02s02s04s06.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.6.1. Runtime">
+      <param name="Local" value="ch02s02s04s06.html#d0e1010">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.6.1.1. Microsoft .NET">
+      <param name="Local" value="ch02s02s04s06.html#d0e1013">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.6.1.2. Mono">
+      <param name="Local" value="ch02s02s04s06.html#d0e1017">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.6.1.3. Mono Runtime Interpreter">
+      <param name="Local" value="ch02s02s04s06.html#d0e1021">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.6.2. Compiler">
+      <param name="Local" value="ch02s02s04s06.html#d0e1025">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.6.2.1. Microsoft csc">
+      <param name="Local" value="ch02s02s04s06.html#d0e1028">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.4.6.2.2. Mono mcs">
+      <param name="Local" value="ch02s02s04s06.html#d0e1031">
+    </OBJECT></UL></UL></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.5. Building projects">
+      <param name="Local" value="ch02s02s05.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.6. Running projects">
+      <param name="Local" value="ch02s02s06.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.7. Deploying projects">
+      <param name="Local" value="ch02s02s07.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.8. Generating Documentation">
+      <param name="Local" value="ch02s02s08.html">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3. Files">
+      <param name="Local" value="ch02s03.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.1. Introduction">
+      <param name="Local" value="ch02s03s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.2. Creating new files">
+      <param name="Local" value="ch02s03s02.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.3. File Templates">
+      <param name="Local" value="ch02s03s03.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.4. File Wizards">
+      <param name="Local" value="ch02s03s04.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.5. Adding Existing Files">
+      <param name="Local" value="ch02s03s05.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.6. Editing Files">
+      <param name="Local" value="ch02s03s06.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.6.1. Opening Files for Editing">
+      <param name="Local" value="ch02s03s06s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.6.2. Code Editor">
+      <param name="Local" value="ch02s03s06s02.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.6.2.1. File Mode">
+      <param name="Local" value="ch02s03s06s02.html#code_file_mode">
+    </OBJECT></UL></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.7. Including/Excluding Files from Compilation/Deployment">
+      <param name="Local" value="ch02s03s07.html">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="4. Folders">
+      <param name="Local" value="ch02s04.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="4.1. Creating a Folder">
+      <param name="Local" value="ch02s04s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="4.2. Moving items between Folders">
+      <param name="Local" value="ch02s04s02.html">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="5. References">
+      <param name="Local" value="ch02s05.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="5.1. Adding a Reference">
+      <param name="Local" value="ch02s05s01.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="5.1.1. Adding a Global Assembly Cache (GAC) reference">
+      <param name="Local" value="ch02s05s01s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="5.1.2. Adding a Project reference">
+      <param name="Local" value="ch02s05s01s02.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="5.1.3. Adding a .NET Assembly reference">
+      <param name="Local" value="ch02s05s01s03.html">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="5.2. Removing a Reference">
+      <param name="Local" value="ch02s05s02.html">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="6. Combines">
+      <param name="Local" value="ch02s06.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="6.1. Combine">
+      <param name="Local" value="ch02s06s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="6.2. Combine Options">
+      <param name="Local" value="ch02s06s02.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="6.2.1. Common, Startup Properties">
+      <param name="Local" value="ch02s06s02s01.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="6.2.1.1. Startup Project(s)">
+      <param name="Local" value="ch02s06s02s01.html#d0e1728">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="6.2.2. Common, Dependencies">
+      <param name="Local" value="ch02s06s02s02.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="6.2.2.1. Setting Project Dependencies">
+      <param name="Local" value="ch02s06s02s02.html#d0e1741">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="6.2.3. Configuration, Configurations">
+      <param name="Local" value="ch02s06s02s03.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="6.2.3.1. Combine configuration">
+      <param name="Local" value="ch02s06s02s03.html#d0e1764">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="6.2.3.2. Configuration Manager">
+      <param name="Local" value="ch02s06s02s03.html#d0e1769">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="6.2.3.3. Configuration Entries">
+      <param name="Local" value="ch02s06s02s03.html#d0e1774">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="6.2.3.4. Entry configuration">
+      <param name="Local" value="ch02s06s02s03.html#d0e1779">
+    </OBJECT></UL></UL></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7. IDE Options">
+      <param name="Local" value="ch02s07.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.1. SharpDevelop Options">
+      <param name="Local" value="ch02s07s01.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.1.1. UI Language">
+      <param name="Local" value="ch02s07s01s01.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.1.1.1. Installing Language Packs">
+      <param name="Local" value="ch02s07s01s01.html#d0e1829">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.1.2. Visual Style">
+      <param name="Local" value="ch02s07s01s02.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.1.3. Load/Save Options">
+      <param name="Local" value="ch02s07s01s03.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.1.3.1. Load">
+      <param name="Local" value="ch02s07s01s03.html#d0e1883">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.1.3.1.1. Load user-specific settings with the document">
+      <param name="Local" value="ch02s07s01s03.html#d0e1886">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.1.3.2. Save">
+      <param name="Local" value="ch02s07s01s03.html#d0e1891">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.1.3.2.1. Always create backup copy">
+      <param name="Local" value="ch02s07s01s03.html#d0e1894">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.1.3.2.2. Line terminator style">
+      <param name="Local" value="ch02s07s01s03.html#d0e1899">
+    </OBJECT></UL></UL></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.2. Coding">
+      <param name="Local" value="ch02s07s02.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.2.1. Code Templates">
+      <param name="Local" value="ch02s07s02s01.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.2.1.1. Adding a Code Template">
+      <param name="Local" value="ch02s07s02s01.html#d0e1945">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.2.1.2. Editing a Code Template">
+      <param name="Local" value="ch02s07s02s01.html#d0e1978">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.2.1.3. Deleting a Code Template">
+      <param name="Local" value="ch02s07s02s01.html#d0e2014">
+    </OBJECT></UL></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3. Text Editor">
+      <param name="Local" value="ch02s07s03.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.1. General">
+      <param name="Local" value="ch02s07s03s01.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.1.1. General Options">
+      <param name="Local" value="ch02s07s03s01.html#d0e2035">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.1.1.1. Enable code completion">
+      <param name="Local" value="ch02s07s03s01.html#d0e2038">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.1.1.2. Enable doublebuffering">
+      <param name="Local" value="ch02s07s03s01.html#d0e2041">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.1.1.3. Enable folding">
+      <param name="Local" value="ch02s07s03s01.html#d0e2044">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.1.2. Font">
+      <param name="Local" value="ch02s07s03s01.html#d0e2047">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.1.2.1. Textfont">
+      <param name="Local" value="ch02s07s03s01.html#d0e2050">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.1.2.2. Render font antialiased">
+      <param name="Local" value="ch02s07s03s01.html#d0e2055">
+    </OBJECT></UL></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.2. Markers and Rulers">
+      <param name="Local" value="ch02s07s03s02.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.2.1. Show horizontal ruler">
+      <param name="Local" value="ch02s07s03s02.html#d0e2061">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.2.2. Show vertical ruler">
+      <param name="Local" value="ch02s07s03s02.html#d0e2066">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.2.3. Line marker style">
+      <param name="Local" value="ch02s07s03s02.html#d0e2069">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.2.4. Show line numbers">
+      <param name="Local" value="ch02s07s03s02.html#d0e2074">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.2.5. Underline errors">
+      <param name="Local" value="ch02s07s03s02.html#d0e2077">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.2.6. Highlight matching bracket">
+      <param name="Local" value="ch02s07s03s02.html#d0e2080">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.2.7. Show invalid lines">
+      <param name="Local" value="ch02s07s03s02.html#d0e2083">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.2.8. Show EOL markers">
+      <param name="Local" value="ch02s07s03s02.html#d0e2086">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.2.9. Show spaces">
+      <param name="Local" value="ch02s07s03s02.html#d0e2089">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.2.10. Show tabs">
+      <param name="Local" value="ch02s07s03s02.html#d0e2092">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.3. Behaviour">
+      <param name="Local" value="ch02s07s03s03.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.3.1. Tabs">
+      <param name="Local" value="ch02s07s03s03.html#d0e2098">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.3.1.1. Tab size">
+      <param name="Local" value="ch02s07s03s03.html#d0e2101">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.3.1.2. Indentation">
+      <param name="Local" value="ch02s07s03s03.html#d0e2104">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.3.1.3. Indentation size">
+      <param name="Local" value="ch02s07s03s03.html#d0e2107">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.3.1.4. Insert spaces/Keep tabs">
+      <param name="Local" value="ch02s07s03s03.html#d0e2110">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.3.2. Behaviour">
+      <param name="Local" value="ch02s07s03s03.html#d0e2113">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.3.2.1. Can move caret behind EOL">
+      <param name="Local" value="ch02s07s03s03.html#d0e2116">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.3.2.2. Automatic template insertion">
+      <param name="Local" value="ch02s07s03s03.html#d0e2119">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.3.2.3. Auto insert curly braces">
+      <param name="Local" value="ch02s07s03s03.html#d0e2122">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.3.2.4. Hide mouse cursor while typing">
+      <param name="Local" value="ch02s07s03s03.html#d0e2125">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.3.3.2.5. Mousewheel direction">
+      <param name="Local" value="ch02s07s03s03.html#d0e2128">
+    </OBJECT></UL></UL></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.4. Tools">
+      <param name="Local" value="ch02s07s04.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.4.1. External Tools">
+      <param name="Local" value="ch02s07s04s01.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.4.1.1. Adding an External Tool">
+      <param name="Local" value="ch02s07s04s01.html#d0e2141">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7.4.1.2. Deleting an External Tool">
+      <param name="Local" value="ch02s07s04s01.html#d0e2207">
+    </OBJECT></UL></UL></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="8. Text Libraries">
+      <param name="Local" value="ch02s08.html">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3. Unit Testing">
+      <param name="Local" value="ch03.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="1. #Unit Introduction">
+      <param name="Local" value="ch03s01.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="1.1. Using #Unit">
+      <param name="Local" value="ch03s01s01.html">
+    </OBJECT></UL></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="4. Extending SharpDevelop">
+      <param name="Local" value="ch04.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="1. Introduction">
+      <param name="Local" value="ch04s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2. Creating a File Wizard">
+      <param name="Local" value="ch04s02.html">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="5. Walkthroughs">
+      <param name="Local" value="ch05.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="1. Introduction">
+      <param name="Local" value="ch05s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2. Walkthrough: Creating a File Wizard">
+      <param name="Local" value="ch05s02.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.1. Interfaces you should know">
+      <param name="Local" value="ch05s02s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.2. The File Wizard definition Xml">
+      <param name="Local" value="ch05s02s02.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2.3. Example File Wizard">
+      <param name="Local" value="ch05s02s03.html">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3. Walkthrough: Creating a Project Wizard">
+      <param name="Local" value="ch05s03.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.1. Interfaces you should know">
+      <param name="Local" value="ch05s03s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.2. The Project Wizard definition Xml">
+      <param name="Local" value="ch05s03s02.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3.3. Example Project Wizard">
+      <param name="Local" value="ch05s03s03.html">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="4. Walkthrough: Unit Testing">
+      <param name="Local" value="ch05s04.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="4.1. Writing Unit Tests">
+      <param name="Local" value="ch05s04s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="4.2. How to Start the Test">
+      <param name="Local" value="ch05s04s02.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="4.3. Compatibility">
+      <param name="Local" value="ch05s04s03.html">
+    </OBJECT></UL></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="6. Samples">
+      <param name="Local" value="ch06.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="1. Introduction">
+      <param name="Local" value="ch06s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="2. Codon Creation">
+      <param name="Local" value="ch06s02.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="3. Custom IView Content">
+      <param name="Local" value="ch06s03.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="4. Display Bindings Sample">
+      <param name="Local" value="ch06s04.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="5. Language Bindings">
+      <param name="Local" value="ch06s05.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="6. Pad Content Sample">
+      <param name="Local" value="ch06s06.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7. SharpPad">
+      <param name="Local" value="ch06s07.html">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="7. References">
+      <param name="Local" value="ch07.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="1. Shortcut Keys">
+      <param name="Local" value="ch07s01.html">
+    </OBJECT></UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="A. Appendix">
+      <param name="Local" value="apa.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="1. HOWTO: Build the Help">
+      <param name="Local" value="apas01.html">
+    </OBJECT><UL><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="1.1. About the Technologies">
+      <param name="Local" value="apas01s01.html">
+    </OBJECT><LI> <OBJECT type="text/sitemap">
+      <param name="Name" value="1.2. Help Shopping List">
+      <param name="Local" value="apas01s02.html">
+    </OBJECT></UL></UL></UL></UL>
+</BODY>
+</HTML>

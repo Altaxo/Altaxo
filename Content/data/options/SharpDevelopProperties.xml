@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<SharpDevelopProperties fileversion="1.1">
+  <Properties>
+    <Property key="Workspace.ViewMementos.Mdi.BottomTabControlHeight" value="177" />
+    <XmlConvertableProperty key="SharpDevelop.Gui.MainWindow.DockingWindows.OpenFileView">
+      <DockState Floating="False" Visible="True" DockedIn="TopContainer">273|68|300|300</DockState>
+    </XmlConvertableProperty>
+    <XmlConvertableProperty key="SharpDevelop.Gui.MainWindow.DockingWindows.CompilerMessageView">
+      <DockState Floating="False" Visible="False" DockedIn="BottomContainer">582|917|300|300</DockState>
+    </XmlConvertableProperty>
+    <XmlConvertableProperty key="Workspace.ViewMementos">
+      <Properties>
+        <Property key="SharpDevelop.Gui.Navigation.FileScout" value="Left" />
+        <Property key="SharpDevelop.Gui.Navigation.OpenTaskView" value="Bottom" />
+        <Property key="SharpDevelop.Gui.Navigation.ProjectBrowser.ProjectBrowserView" value="Left" />
+        <Property key="SharpDevelop.Gui.Navigation.SideBarView" value="Left" />
+        <Property key="SharpDevelop.Gui.Navigation.CompilerMessageView" value="Bottom" />
+      </Properties>
+    </XmlConvertableProperty>
+    <XmlConvertableProperty key="SharpDevelop.Gui.MainWindow.DockingWindows.Toolbar">
+      <DockState Floating="False" Visible="True" DockedIn="LeftContainer">10|304|300|300</DockState>
+    </XmlConvertableProperty>
+    <XmlConvertableProperty key="SharpDevelop.Gui.MainWindow.DockingWindows.CompilerResultView">
+      <DockState Floating="False" Visible="False" DockedIn="BottomContainer">420|967|300|300</DockState>
+    </XmlConvertableProperty>
+    <Property key="SharpDevelop.Gui.Dialog.TipOfTheDayView.ShowTipsAtStartup" value="False" />
+    <XmlConvertableProperty key="SharpDevelop.Gui.MainWindow.DockingWindows.DockManager">
+      <DockManagerState>
+        <LeftBounds>0|25|286|909</LeftBounds>
+        <RightBounds>0|0|150|150</RightBounds>
+        <TopBounds>289|25|991|25</TopBounds>
+        <BottomBounds>0|271|632|182</BottomBounds>
+      </DockManagerState>
+    </XmlConvertableProperty>
+    <Property key="IconMenuItem.IconMenuStyle" value="VSNet" />
+    <Property key="SharpDevelop.Workbench.WorkbenchLayout" value="MDI" />
+    <XmlConvertableProperty key="SharpDevelop.Gui.MainWindow.DockingWindows.FileBrowser">
+      <DockState Floating="False" Visible="True" DockedIn="LeftContainer">10|304|300|300</DockState>
+    </XmlConvertableProperty>
+    <XmlConvertableProperty key="SharpDevelop.Gui.MainWindow.DockingWindows.ProjectBrowser">
+      <DockState Floating="False" Visible="True" DockedIn="LeftContainer">14|131|300|300</DockState>
+    </XmlConvertableProperty>
+    <Property key="Workspace.ViewMementos.Mdi.LeftTabControlWidth" value="179" />
+    <Property key="SharpDevelop.Gui.MainWindow.Standardtoolbar" value="True" />
+    <XmlConvertableProperty key="SharpDevelop.Gui.MainWindow.RecentOpen">
+      <RECENT>
+        <FILES>
+        </FILES>
+        <PROJECTS>
+        </PROJECTS>
+      </RECENT>
+    </XmlConvertableProperty>
+    <XmlConvertableProperty key="SharpDevelop.Gui.MainWindow.WindowState">
+      <WINDOWSTATE FULLSCREEN="False" STATE="Maximized">523|21|640|480</WINDOWSTATE>
+    </XmlConvertableProperty>
+    <Property key="SharpDevelop.Gui.HelpFileGenerator.HtmlHelpCompilerFilename" value="C:\Program Files\HTML Help Workshop\hhc.exe" />
+    <XmlConvertableProperty key="SharpDevelop.Workbench.WorkbenchMemento">
+      <WindowState bounds="433,17,640,480" formwindowstate="Normal" defaultformwindowstate="Normal" fullscreen="False" />
+    </XmlConvertableProperty>
+    <XmlConvertableProperty key="SharpDevelop.Gui.MainWindow.DockingWindows.ToolBar">
+      <DockState Floating="False" Visible="True" DockedIn="LeftContainer">10|304|300|300</DockState>
+    </XmlConvertableProperty>
+  </Properties>
+</SharpDevelopProperties>

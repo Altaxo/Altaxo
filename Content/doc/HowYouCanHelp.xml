@@ -1,0 +1,11 @@
+<HelpWanted>
+	<Topic name="Forms Designer">Implement the Show tab order feature</Topic>
+	<Topic name="Backend Bindings">Maintain the Java backend binding</Topic>
+	<Topic name="Backend Bindings">Write AND support a GCC(C/C++) backend binding</Topic>
+	<Topic name="Project Converter">Write a C# Builder project converter</Topic>
+	<Topic name="New Class Wizard">Maintain or write a new New Class wizard (see new file dialog)</Topic>
+	<Topic name="#Unit">Implement the non-locking load of assemblies (AppDomains)</Topic>
+	<Topic name="Pretty Printer">Finish the pretty printer (see SharpRefactory in src\SharpRefactory)</Topic>
+	<Topic name="Translation">Help to translate #D contact <a href="mailto:christophw@alphasierrapapa.com">Christoph Wille, christophw@alphasierrapapa.com</a> regarding this issue (even report spelling errors)</Topic>
+	<Topic name="ReportBugs">If you find bugs report them to <a href="mailto:mike@icsharpcode.net">Mike Krueger, mike@icsharpcode.net</a> try to report the same bug again and again this increases the chance that it gets done sooner</Topic>
+</HelpWanted>

@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<Template originator   = "Mike Krueger"
+          created      = "06/10/2001"
+          lastModified = "02/01/2003">
+	
+	<!-- Template Header -->
+	<TemplateConfiguration>
+		<Name>${res:Templates.Project.C#.WinFormsProject.Name}</Name>
+		<Category>C#</Category>
+		<Icon>C#.Project.Form</Icon>
+		<LanguageName>C#</LanguageName>
+		<Description>${res:Templates.Project.C#.WinFormsProject.Description}</Description>
+	</TemplateConfiguration>
+	
+	<!-- Actions -->
+	<Actions>
+		<Open filename = "MainForm.cs"/>
+	</Actions>
+	
+	<Combine name = "${ProjectName}" directory = ".">
+		<Options>
+			<StartupProject>${ProjectName}</StartupProject>
+		</Options>
+		
+		<Project name = "${ProjectName}" directory = ".">
+			
+			<Options Target = "WinExe" PauseConsoleOutput = "False" />
+
+			<Files>
+				<File name="MainForm.cs"><![CDATA[// project created on ${Date} at ${Time}
+using System;
+using System.Windows.Forms;
+
+namespace MyFormProject 
+{
+	class MainForm : System.Windows.Forms.Form
+	{
+		public MainForm()
+		{
+			InitializeComponent();
+		}
+	
+		// THIS METHOD IS MAINTAINED BY THE FORM DESIGNER
+		// DO NOT EDIT IT MANUALLY! YOUR CHANGES ARE LIKELY TO BE LOST
+		void InitializeComponent()
+		{
+			// 
+			//  Set up generated class MainForm
+			// 
+			this.SuspendLayout();
+			this.Name = "MainForm";
+			this.Text = "This is my form";
+			this.Size = new System.Drawing.Size(300, 300);
+			this.ResumeLayout(false);
+		}
+			
+		[STAThread]
+		public static void Main(string[] args)
+		{
+			Application.Run(new MainForm());
+		}
+	}			
+}]]></File>
+		<File name="AssemblyInfo.cs">
+			<![CDATA[using System.Reflection;
+using System.Runtime.CompilerServices;
+
+// Information about this assembly is defined by the following
+// attributes.
+//
+// change them to the information which is associated with the assembly
+// you compile.
+
+[assembly: AssemblyTitle("")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("")]
+[assembly: AssemblyCopyright("")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
+
+// The assembly version has following format :
+//
+// Major.Minor.Build.Revision
+//
+// You can specify all values by your own or you can build default build and revision
+// numbers with the '*' character (the default):
+
+[assembly: AssemblyVersion("1.0.*")]
+
+// The following attributes specify the key for the sign of your assembly. See the
+// .NET Framework documentation for more information about signing.
+// This is not required, if you don't want signing let these attributes like they're.
+[assembly: AssemblyDelaySign(false)]
+[assembly: AssemblyKeyFile("")]
+]]></File>
+			</Files>
+		</Project>
+	</Combine>
+</Template>

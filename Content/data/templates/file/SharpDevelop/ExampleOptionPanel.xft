@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<Template Originator="Mike Krueger" Language="C#" Created="09/04/2003" LastModified="09/04/2003">
+	
+	<TemplateConfiguration>
+		<Name>Simple #Develop option panel</Name>
+		<Icon>C#.File.FullFile</Icon>
+		<Category>SharpDevelop</Category>
+		<LanguageName>C#</LanguageName>
+		<Description>Creates a #D option panel (for example the project option panels)</Description>
+	</TemplateConfiguration>
+	
+	<TemplateFiles>
+		<File DefaultExtension=".cs" DefaultName="EmptyC#file">
+			<![CDATA[using System;
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Windows.Forms;
+
+using ICSharpCode.Core.AddIns.Codons;
+using ICSharpCode.Core.Properties;
+using ICSharpCode.Core.Services;
+using ICSharpCode.SharpDevelop.Internal.Project;
+using ICSharpCode.SharpDevelop.Gui.Dialogs;
+
+namespace MyOptionPanel
+{
+	/// <summary>
+	/// Summary of SampleOptionPanel
+	/// </summary>
+	public class SampleOptionPanel : AbstractOptionPanel
+	{
+		public override void LoadPanelContents()
+		{
+			// TODO initialize the panel here
+		}
+
+		public override bool StorePanelContents()
+		{
+			// TODO save your options here
+			return true;
+		}
+	}
+}]]>
+		</File>
+	</TemplateFiles>
+	
+	<FileOptions/>
+	
+</Template>

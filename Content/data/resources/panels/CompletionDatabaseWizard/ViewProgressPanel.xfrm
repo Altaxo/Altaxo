@@ -1,0 +1,65 @@
+<System.Windows.Forms.UserControl>
+  <DataBindings value="System.Windows.Forms.ControlBindingsCollection" />
+  <SnapToGrid value="True" />
+  <Size value="{Width=408, Height=368}" />
+  <DrawGrid value="True" />
+  <Name value="CreatedObject01" />
+  <DockPadding value="" />
+  <GridSize value="{Width=8, Height=8}" />
+  <Controls>
+    <System.Windows.Forms.TextBox>
+      <Text value="" />
+      <Multiline value="True" />
+      <DataBindings value="System.Windows.Forms.ControlBindingsCollection" />
+      <Size value="{Width=392, Height=216}" />
+      <Location value="{X=8,Y=8}" />
+      <Name value="textBox" />
+      <ScrollBars value="Vertical" />
+      <TabIndex value="5" />
+      <Anchor value="Top, Left, Right" />
+      <ReadOnly value="True" />
+      <Controls />
+    </System.Windows.Forms.TextBox>
+    <System.Windows.Forms.CheckBox>
+      <TabIndex value="1" />
+      <Anchor value="Bottom, Left, Right" />
+      <CheckState value="Checked" />
+      <Text value="${res:Dialog.Wizards.CodeCompletionDatabaseWizard.CreateDatabasePanel.FastCreationCheckBox}" />
+      <Size value="{Width=392, Height=24}" />
+      <Checked value="True" />
+      <Name value="fastCreationCheckBox" />
+      <Location value="{X=8,Y=240}" />
+      <DataBindings value="System.Windows.Forms.ControlBindingsCollection" />
+      <Controls />
+    </System.Windows.Forms.CheckBox>
+    <System.Windows.Forms.Button>
+      <TabIndex value="2" />
+      <Anchor value="Bottom, Left" />
+      <Name value="createButton" />
+      <Text value="${res:Dialog.Wizards.CodeCompletionDatabaseWizard.CreateDatabasePanel.StartCreationButton}" />
+      <Size value="{Width=208, Height=24}" />
+      <Location value="{X=8,Y=272}" />
+      <DataBindings value="System.Windows.Forms.ControlBindingsCollection" />
+      <Controls />
+    </System.Windows.Forms.Button>
+    <System.Windows.Forms.ProgressBar>
+      <Name value="progressBar" />
+      <Location value="{X=8,Y=304}" />
+      <TabIndex value="3" />
+      <DataBindings value="System.Windows.Forms.ControlBindingsCollection" />
+      <Anchor value="Bottom, Left, Right" />
+      <Size value="{Width=392, Height=23}" />
+      <Controls />
+    </System.Windows.Forms.ProgressBar>
+    <System.Windows.Forms.Label>
+      <Location value="{X=8,Y=336}" />
+      <Size value="{Width=392, Height=23}" />
+      <TabIndex value="4" />
+      <DataBindings value="System.Windows.Forms.ControlBindingsCollection" />
+      <Anchor value="Bottom, Left, Right" />
+      <Name value="creationProgressLabel" />
+      <Text value="${res:Dialog.Wizards.CodeCompletionDatabaseWizard.CreateDatabasePanel.CreationProgressLabel}" />
+      <Controls />
+    </System.Windows.Forms.Label>
+  </Controls>
+</System.Windows.Forms.UserControl>

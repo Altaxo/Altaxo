@@ -1,0 +1,165 @@
+<Components version="1.0">
+  <System.Windows.Forms.UserControl>
+    <Name value="CreatedObject0" />
+    <DockPadding value="" />
+    <Size value="{Width=504, Height=264}" />
+    <Controls>
+      <System.Windows.Forms.GroupBox>
+        <Name value="groupBox2" />
+        <TabIndex value="1" />
+        <Location value="{X=8,Y=152}" />
+        <Anchor value="Top, Left, Right" />
+        <Size value="{Width=488, Height=96}" />
+        <Text value="${res:Dialog.Options.PrjOptions.Configuration.ExecuteScriptGroupBox}" />
+        <Controls>
+          <System.Windows.Forms.Label>
+            <Name value="label" />
+            <Text value="${res:MysticDrawDialog.Options.PrjOptions.Configuration.ExecuteScriptGroupBox.ExecuteCommandLabel}" />
+            <TextAlign value="MiddleRight" />
+            <TabIndex value="0" />
+            <Size value="{Width=120, Height=23}" />
+            <Location value="{X=8,Y=16}" />
+          </System.Windows.Forms.Label>
+          <System.Windows.Forms.TextBox>
+            <Name value="executeScriptTextBox" />
+            <Anchor value="Top, Left, Right" />
+            <TabIndex value="1" />
+            <Location value="{X=136,Y=17}" />
+            <Size value="{Width=304, Height=21}" />
+            <Text value="" />
+          </System.Windows.Forms.TextBox>
+          <System.Windows.Forms.Button>
+            <Name value="browseButton4" />
+            <Location value="{X=448,Y=17}" />
+            <Size value="{Width=32, Height=21}" />
+            <Text value="..." />
+            <Anchor value="Top, Right" />
+            <TabIndex value="2" />
+          </System.Windows.Forms.Button>
+          <System.Windows.Forms.Label>
+            <Name value="label" />
+            <Text value="${res:Dialog.Options.PrjOptions.Configuration.ExecuteScriptGroupBox.BeforeBuildButton}" />
+            <TextAlign value="MiddleRight" />
+            <TabIndex value="6" />
+            <Size value="{Width=120, Height=23}" />
+            <Location value="{X=8,Y=64}" />
+          </System.Windows.Forms.Label>
+          <System.Windows.Forms.Button>
+            <Name value="browseButton3" />
+            <Location value="{X=448,Y=65}" />
+            <Size value="{Width=32, Height=21}" />
+            <Text value="..." />
+            <Anchor value="Top, Right" />
+            <TabIndex value="8" />
+          </System.Windows.Forms.Button>
+          <System.Windows.Forms.TextBox>
+            <Name value="executeAfterTextBox" />
+            <Anchor value="Top, Left, Right" />
+            <TabIndex value="7" />
+            <Location value="{X=136,Y=65}" />
+            <Size value="{Width=304, Height=21}" />
+            <Text value="" />
+          </System.Windows.Forms.TextBox>
+          <System.Windows.Forms.TextBox>
+            <Name value="executeBeforeTextBox" />
+            <Anchor value="Top, Left, Right" />
+            <TabIndex value="4" />
+            <Location value="{X=136,Y=41}" />
+            <Size value="{Width=304, Height=21}" />
+            <Text value="" />
+          </System.Windows.Forms.TextBox>
+          <System.Windows.Forms.Button>
+            <Name value="browseButton2" />
+            <Location value="{X=448,Y=41}" />
+            <Size value="{Width=32, Height=21}" />
+            <Text value="..." />
+            <Anchor value="Top, Right" />
+            <TabIndex value="5" />
+          </System.Windows.Forms.Button>
+          <System.Windows.Forms.Label>
+            <Name value="label" />
+            <Text value="${res:Dialog.Options.PrjOptions.Configuration.ExecuteScriptGroupBox.AfterBuildButton}" />
+            <TextAlign value="MiddleRight" />
+            <TabIndex value="3" />
+            <Size value="{Width=120, Height=23}" />
+            <Location value="{X=8,Y=40}" />
+          </System.Windows.Forms.Label>
+        </Controls>
+      </System.Windows.Forms.GroupBox>
+      <System.Windows.Forms.GroupBox>
+        <Name value="groupBox" />
+        <TabIndex value="0" />
+        <Location value="{X=8,Y=8}" />
+        <Anchor value="Top, Left, Right" />
+        <Size value="{Width=488, Height=136}" />
+        <Text value="${res:Dialog.Options.PrjOptions.Configuration.OutputGroupBox}" />
+        <Controls>
+          <System.Windows.Forms.CheckBox>
+            <Name value="pauseConsoleOutputCheckBox" />
+            <Location value="{X=120,Y=96}" />
+            <Size value="{Width=360, Height=32}" />
+            <Text value="${res:Dialog.Options.PrjOptions.Configuration.PauseConsoleOutputCheckBox}" />
+            <Anchor value="Top, Left, Right" />
+            <TabIndex value="7" />
+          </System.Windows.Forms.CheckBox>
+          <System.Windows.Forms.Button>
+            <Name value="browseButton" />
+            <Location value="{X=448,Y=49}" />
+            <Size value="{Width=32, Height=21}" />
+            <Text value="..." />
+            <Anchor value="Top, Right" />
+            <TabIndex value="4" />
+          </System.Windows.Forms.Button>
+          <System.Windows.Forms.TextBox>
+            <Name value="parametersTextBox" />
+            <Anchor value="Top, Left, Right" />
+            <TabIndex value="6" />
+            <Location value="{X=136,Y=73}" />
+            <Size value="{Width=344, Height=21}" />
+            <Text value="" />
+          </System.Windows.Forms.TextBox>
+          <System.Windows.Forms.Label>
+            <Name value="label3" />
+            <Text value="${res:Dialog.Options.PrjOptions.Configuration.CmdLineParametersLabel}" />
+            <TextAlign value="MiddleRight" />
+            <TabIndex value="5" />
+            <Size value="{Width=120, Height=23}" />
+            <Location value="{X=8,Y=72}" />
+          </System.Windows.Forms.Label>
+          <System.Windows.Forms.TextBox>
+            <Name value="outputDirectoryTextBox" />
+            <Anchor value="Top, Left, Right" />
+            <TabIndex value="3" />
+            <Location value="{X=136,Y=49}" />
+            <Size value="{Width=304, Height=21}" />
+            <Text value="" />
+          </System.Windows.Forms.TextBox>
+          <System.Windows.Forms.Label>
+            <Name value="label2" />
+            <Text value="${res:Dialog.Options.PrjOptions.Configuration.OutputPathLabel}" />
+            <TextAlign value="MiddleRight" />
+            <TabIndex value="2" />
+            <Size value="{Width=120, Height=23}" />
+            <Location value="{X=8,Y=48}" />
+          </System.Windows.Forms.Label>
+          <System.Windows.Forms.TextBox>
+            <Name value="assemblyNameTextBox" />
+            <Anchor value="Top, Left, Right" />
+            <TabIndex value="1" />
+            <Location value="{X=136,Y=25}" />
+            <Size value="{Width=344, Height=21}" />
+            <Text value="" />
+          </System.Windows.Forms.TextBox>
+          <System.Windows.Forms.Label>
+            <Name value="label1" />
+            <Text value="${res:Dialog.Options.PrjOptions.Configuration.AssemblyNameLabel}" />
+            <TextAlign value="MiddleRight" />
+            <TabIndex value="0" />
+            <Size value="{Width=120, Height=23}" />
+            <Location value="{X=8,Y=24}" />
+          </System.Windows.Forms.Label>
+        </Controls>
+      </System.Windows.Forms.GroupBox>
+    </Controls>
+  </System.Windows.Forms.UserControl>
+</Components>

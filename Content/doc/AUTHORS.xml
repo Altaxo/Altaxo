@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AuthorData>
+	<Authors>
+		<Category name = "Coding">
+			<Author name = "Mike Krueger" 
+			        mail = "mike@icsharpcode.net"
+			        achievements = "Main SD coder"/>
+			<Author name = "Andrea Paatz" 
+			        mail = "andrea@icsharpcode.net"
+			        achievements = "C# Parser and much work in Code Completion, Code Review"/>
+			<Author name = "Markus Palme"
+			        mail = "MarkusPalme@gmx.de"
+			        achievements = "VB.NET backend binding, Assembly Scout, Regular Expression workbench"/>
+			<Author name = "Georg Brandl"
+			        mail = "g.brandl@gmx.net"
+				achievements = "Start Page, File type register, Assembly Scout and bugfixes"/>
+			<Author name = "Roman Taranchenko"
+			        mail = "rnt@smtp.ru"
+				achievements = "Encoding Support and many Bugfixes"/>
+			<Author name = "Shinsaku Nakagawa"
+			        mail = "shinsaku@users.sourceforge.jp"
+			        achievements = "IME support for the editor and Bugfixes"/>
+			<Author name = "Eddie Sheffield"
+			        mail = "eddie_sheffield@YAHOO.COM"
+			        achievements = "Initial implementation of the Forms designer"/>
+			<Author name = "Niv Lederer"
+			        mail = "niv_led@hotmail.com"
+			        achievements = "Helped with the forms designer: roundtrip, events tab, helpservice and general stuff"/>
+			<Author name = "Denis Erchoff"
+			        mail = "d_erchoff@hotmail.com"
+			        achievements = "Customizing formsdesigner toolbar"/>
+			<Author name = "Jeffrey Huntsman"
+			        mail = "jhuntsman@oakwoodsys.com"
+			        achievements = "Web References"/>
+		</Category>
+		
+		<Category name = "Help File">
+			<Author name = "Gavin McKay"
+			        mail = "gavin@dropbears.net"
+			        achievements = "Help file so far"/>
+		</Category>
+	
+		<Category name = "Translation">
+			<Author name = "Bernhard Spuida"
+			        mail = "bspuida@yahoo.com"
+			        achievements = "initial translation for Spanish, Portuguese and Italian"/>
+			<Author name = "Lubos Bruha"
+			        mail = "lubos.bruha@centrum.cz"
+			        achievements = "Czech"/>
+			<Author name = "Juan T. Llibre"
+			        mail = "j.llibre@codetel.net.do"
+			        achievements = "Spanish"/>
+			<Author name = "Magnus Lindberg"
+			        mail = "magnus.lindberg@csharpsweden.com"
+			        achievements = "Swedish"/>
+			<Author name = "Fredric William-Olsson"
+			        mail = ""
+			        achievements = "Swedish"/>
+			<Author name = "Stefano Del Furia"
+			        mail = "delfo@tech-center.com"
+			        achievements = "Italian"/>
+			<Author name = "Fabiano Santos"
+			        mail = "flsantos@iname.com"
+			        achievements = "Portuguese"/>
+			<Author name = "Christophe Lauer"
+			        mail = "clauer@free.fr"
+			        achievements = "French"/>
+			<Author name = "JL Ardoin"
+			        mail = "jlardoin01@noos.fr"
+			        achievements = "French"/>
+			<Author name = "Bernard Vander Beken"
+			        mail = "bvb@iname.com"
+			        achievements = "Dutch"/>
+			<Author name = "Tomasz Krol"
+			        mail = "tkrol@intellinet.pl"
+			        achievements = "Polish"/>
+			<Author name = "Shinsaku Nakagawa"
+			        mail = "shinsaku@users.sourceforge.jp"
+			        achievements = "Japanese"/>
+			<Author name = "Roman Taranchenko"
+			        mail = "rnt@smtp.ru"
+				achievements = "Russian"/>
+			<Author name = "Sin Jeong-hun"
+			        mail = "museofwind@yahoo.co.jp"
+			        achievements = "Korean"/>
+			<Author name = "Li Jian-fei"
+			        mail = "pcafei2001@163.com"
+			        achievements = "KunMing,China"/>
+		</Category>
+		
+		<Category name = "Misc Contributions">
+			<Author name = "Lutz Roeder"
+			        mail = "roeder@aisto.com"
+			        text = "XSLT for XML documentation transformation"/>
+			<Author name = "Christian Holm"
+			        mail = "office@holmcs.com"
+			        achievements = "Syntax Highlighting schemes for various languages"/>
+			<Author name = "Jonathan Pierce"
+			        mail = "jpierce@nyc.rr.com"
+			        achievements = "Java syntax definition"/>
+			<Author name = "Brent R. Matzelle"
+			        mail = "bmatzelle@yahoo.com"
+			        achievements = "NSIS installer script"/>
+			<Author name = "Jaroslav Suchacek"
+			        mail = "jaroslav.suchacek@quick.cz"
+			        achievements = "VB Syntax highlighting"/>
+			<Author name = "Marshall Elfstrand"
+			        mail = "elfstrand@technologist.com"
+			        achievements = "cool application icon, about image and enhanced splash screen"/>
+		</Category>
+		
+		<Category name = "Beta Testing">
+			<Author name = "Christian Holm"
+			        mail = "office@holmcs.com"
+			        achievements = "Finds many bugs..."/>
+			<Author name = "Christoph Wille"
+			        mail = "christophw@alphasierrapapa.com"
+			        achievements = "sponsored SD, and suggested many improvements and helped me a lot :)"/>
+		</Category>
+		
+		<Category name = "Bugfixes">
+			<Author name = "Alexandre Semenov"
+			        mail = "salexru2000@sympatico.ca"/>
+			<Author name = "Timothy Paul Johnson"
+			        mail = "timothyp@cae.com"/>
+			<Author name = "Jeppe Cramon"
+			        mail = "jeppe@cramon.dk"/>
+			<Author name = "Tyson S. Maxwell"
+			        mail = "tyson_maxwell@yahoo.com"/>
+			<Author name = "David Murray"
+				mail = "david.murray@techie.com"/>
+			<Author name = "Merlyn"
+				mail = "merlyn@352media.com"/>
+			<Author name = "Shankara Narayanan"
+			        mail = "J.Shankar@commerzbank.com"/>
+			<Author name = "Kenrick Rawlings"
+			        mail = "krawling@bluemarble.net"/>
+			<Author name = "Roger Rubin"
+			        mail = "roger.rubin@syngenta.com"/>
+			<Author name = "Pierre S. de SACY"
+			        mail = "pdesacy@keeboo.com"/>
+			<Author name = "Patrick Steele"
+				mail = "pj_steele@yahoo.com"/>
+			<Author name = "Lawrence E. Smithmier, Jr."
+				mail = "Larry@Smithmier.com"/>
+			<Author name = "Brandon Hunt"
+				mail = "brandonh6k@yahoo.com"/>
+		</Category>
+		
+		<Category name = "Former Contributions">
+			<Author name = "Svante Lidman"
+			        mail = "svante_lidman@hotmail.com"
+			        achievements = "overworked Highlighting engine, tons of good bugfixes and some nice features"/>
+			<Author name = "Mark Heath"
+			        mail = "mark@wordandspirit.co.uk"
+			        achievements = "Some edit actions and many editor improvements"/>
+			<Author name = "Gary Gray"
+			        mail = "gary@ceit.co.za"
+			        achievements = "Java, JScript backend binding"/>
+			<Author name = "Donald Kackman"
+			        mail = "don@itsEngineering.com"
+			        achievements = "New Class Wizard"/>
+		</Category>
+	</Authors>
+	
+	<IncludedProjects>
+		<Project name = "Magic Library"
+		         url = "http://www.dotnetmagic.com"
+			 description = "The GUI library which is used for the tab control and docking inside SharpDevelop"/>
+		<Project name = "VBDoc"
+		         url = "http://vb-doc.sourceforge.net"
+		         description="VB.NET documentation system"/>
+		<Project name = "NAnt"
+		         url = "http://nant.sourceforge.net"
+		         description=".NET building tool"/>
+		<Project name = "NDoc"
+		         url = "http://ndoc.sourceforge.net"
+		         description="C# documentation generator"/>
+		<Project name = "NUnit"
+		         url = "http://nunit.sourceforge.net"
+			 description="Widely used .NET testing tools"/>
+		 <Project name = "CommandBar"
+			 url = "http://www.aisto.com/roeder/DotNet"
+			 description = "One of the best .NET GUI libraries around. Contains an advanced toolbar and menu system"/>
+	</IncludedProjects>
+	
+	<Greetings>
+		<Person name = "Miguel de Icaza"
+		        mail = "miguel@ximian.com"
+		        text = "He works on the mono project (free .NET implementation) visit http://www.go-mono.com for more information"/>
+		<Person name =  "Phil Wright"
+		        mail = "feedback@dotnetmagic.com"
+		        text = "For his Magic library, this is the user interface library which is used in sharpdevelop and makes that sharpdevelop looks cool check out http://www.dotnetmagic.com for more about Magic"/>
+		<Person name = "Lutz Roeder"
+		        mail = "roeder@aisto.com"
+			text = "Suggested many user interface changes. He is the one who build the reflector object browser (and created the nice CommandBar GUI library #Develop uses for menus and toolbars). He is a well known guy in the .NET scene check out his page at http://www.aisto.com/roeder/DotNet"/>
+		<Person name = "Gerald Friedland"
+		        mail = "fland@inf.fu-berlin.de"
+		        text = "For his ongoing struggle to prove the platform independence of java"/>
+	</Greetings>
+</AuthorData>
