@@ -102,7 +102,7 @@ namespace Altaxo.Graph.GUI
       // 
       // m_Scale_cbType
       // 
-      this.m_Scale_cbType.Location = new System.Drawing.Point(80, 80);
+      this.m_Scale_cbType.Location = new System.Drawing.Point(80, 8);
       this.m_Scale_cbType.Name = "m_Scale_cbType";
       this.m_Scale_cbType.Size = new System.Drawing.Size(121, 21);
       this.m_Scale_cbType.TabIndex = 16;
@@ -120,7 +120,7 @@ namespace Altaxo.Graph.GUI
       // 
       // m_Scale_edFrom
       // 
-      this.m_Scale_edFrom.Location = new System.Drawing.Point(80, 16);
+      this.m_Scale_edFrom.Location = new System.Drawing.Point(80, 80);
       this.m_Scale_edFrom.Name = "m_Scale_edFrom";
       this.m_Scale_edFrom.Size = new System.Drawing.Size(120, 20);
       this.m_Scale_edFrom.TabIndex = 14;
@@ -137,7 +137,7 @@ namespace Altaxo.Graph.GUI
       // 
       // label4
       // 
-      this.label4.Location = new System.Drawing.Point(16, 80);
+      this.label4.Location = new System.Drawing.Point(16, 8);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(32, 16);
       this.label4.TabIndex = 12;
@@ -153,7 +153,7 @@ namespace Altaxo.Graph.GUI
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(16, 16);
+      this.label2.Location = new System.Drawing.Point(16, 80);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(40, 16);
       this.label2.TabIndex = 10;
@@ -222,6 +222,15 @@ namespace Altaxo.Graph.GUI
       InitComboBox(this.m_Scale_cbRescale,arr,sel);
     }
 
+    public void SetBoundaryGUIObject(object guiobject)
+    {
+      UserControl ctrl = (UserControl)guiobject;
+      
+      // find a good place for this object
+      // right below the type
+      this.Controls.Add(ctrl);
+      ctrl.Location = new Point(0,this.m_Scale_cbType.Bounds.Bottom);
+    }
 
     #endregion
 

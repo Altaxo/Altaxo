@@ -22,6 +22,7 @@
 
 using System;
 using Altaxo.Serialization;
+using Altaxo.Graph.Axes.Scaling;
 
 
 namespace Altaxo.Graph
@@ -109,6 +110,12 @@ namespace Altaxo.Graph
     /// </summary>
     /// <returns>physical values for the major ticks</returns>
     public abstract double[] GetMajorTicks();
+
+
+    /// <summary>
+    /// Returns the rescaling conditions for this axis
+    /// </summary>
+    public abstract NumericAxisRescaleConditions Rescaling { get; }
 
   
     /// <summary>
@@ -209,6 +216,8 @@ namespace Altaxo.Graph
     protected bool   m_AxisEndFixed = false;
     /// <summary>Holds the <see cref="PhysicalBoundaries"/> for that axis.</summary>
     protected PhysicalBoundaries m_DataBounds = new FinitePhysicalBoundaries();
+
+    protected NumericAxisRescaleConditions _rescaling = new NumericAxisRescaleConditions();
 
     // cached values
     /// <summary>Current axis origin (cached value).</summary>
@@ -416,6 +425,18 @@ namespace Altaxo.Graph
       set { m_AxisEndFixed = value; }
     }
 
+
+    /// <summary>
+    /// Returns the rescaling conditions for this axis
+    /// </summary>
+    public override NumericAxisRescaleConditions Rescaling 
+    {
+      get 
+      {
+        return _rescaling; 
+
+      }
+    }
 
     /// <summary>
     /// Get the internal DataBound object (mostly for merging).
@@ -725,6 +746,7 @@ namespace Altaxo.Graph
     /// <summary>The boundary object. It collectes only positive values for the axis is logarithmic.</summary>
     protected PhysicalBoundaries m_DataBounds = null;
 
+    protected LogarithmicAxisRescaleConditions _rescaling = new LogarithmicAxisRescaleConditions();
 
     #region Serialization
     /// <summary>Used to serialize the Log10Axis Version 0.</summary>
@@ -854,6 +876,18 @@ namespace Altaxo.Graph
     public override object Clone()
     {
       return new Log10Axis(this);
+    }
+
+    /// <summary>
+    /// Returns the rescaling conditions for this axis
+    /// </summary>
+    public override NumericAxisRescaleConditions Rescaling 
+    {
+      get 
+      {
+        return _rescaling; 
+
+      }
     }
 
     /// <summary>

@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using Altaxo.Main.GUI;
 
 namespace Altaxo.Graph.GUI
 {
@@ -47,6 +48,8 @@ namespace Altaxo.Graph.GUI
     void InitializeAxisType(string[] arr, string sel);
 
     void InitializeAxisRescale(string[] arr, string sel);
+
+    void SetBoundaryGUIObject(object guiobject);
   }
   #endregion
 
@@ -75,7 +78,7 @@ namespace Altaxo.Graph.GUI
     protected string  m_AxisRescale;
     protected string  m_Original_AxisRescale;
 
-
+    protected IMVCAController m_BoundaryController;
 
 
     public AxisScaleController(XYPlotLayer layer, AxisDirection dir)
@@ -83,6 +86,7 @@ namespace Altaxo.Graph.GUI
       m_Layer = layer;
       m_Direction = dir;
       m_Axis = dir==AxisDirection.Horizontal ? m_Layer.XAxis : m_Layer.YAxis;
+
 
       SetElements();
     }
@@ -122,6 +126,7 @@ namespace Altaxo.Graph.GUI
       SetAxisEnd(true);
       SetAxisType(true);
       SetAxisRescale(true);
+      SetBoundaryController(true);
     }
 
     public void SetViewElements()
@@ -130,6 +135,7 @@ namespace Altaxo.Graph.GUI
       SetAxisEnd(false);
       SetAxisType(false);
       SetAxisRescale(false);
+      SetBoundaryController(false);
     }
 
 
@@ -193,9 +199,27 @@ namespace Altaxo.Graph.GUI
         View.InitializeAxisRescale(names,m_AxisRescale);
     }
 
+    public void SetBoundaryController(bool bInit)
+    {
+      if(bInit)
+      {
+        m_BoundaryController = (IMVCAController)Current.GUIFactoryService.GetControllerAndControl(new object[]{m_Axis.Rescaling,m_Axis},typeof(IMVCAController));
+      }
+      if(null!=View)
+      {
+        if(null!=m_BoundaryController)
+          View.SetBoundaryGUIObject(m_BoundaryController.ViewObject);
+      }
+    }
 
     public bool Apply()
     {
+      if(null!=m_BoundaryController)
+      {
+        if(false==m_BoundaryController.Apply())
+          return false;
+      }
+
       if(
         (m_AxisOrg == m_Original_AxisOrg) &&
         (m_AxisEnd == m_Original_AxisEnd) &&

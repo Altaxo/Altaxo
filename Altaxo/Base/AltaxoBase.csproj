@@ -545,6 +545,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\Axes\Scaling\NumericAxisRescaleController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\GUI\AxisLinkControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -708,6 +713,16 @@
                     RelPath = "Graph\GUI\LineScatterPlotStyleController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\OrgEndSpanControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\OrgEndSpanControl.resx"
+                    DependentUpon = "OrgEndSpanControl.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Graph\GUI\TextControlDialog.cs"

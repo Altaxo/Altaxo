@@ -14,6 +14,74 @@ namespace Altaxo.Graph.Axes.Scaling
     protected double _end;
     protected double _span;
 
+
+
+    /// <summary>
+    /// Copies the data from another object.
+    /// </summary>
+    /// <param name="from">The object to copy the data from.</param>
+    void CopyFrom(NumericAxisRescaleConditions from)
+    {
+      this._orgRescaling = from._orgRescaling;
+      this._endRescaling = from._endRescaling;
+      this._spanRescaling = from._spanRescaling;
+      this._org = from._org;
+      this._end = from._end;
+      this._span = from._span;
+    }
+
+    #region Accessors
+
+    public double Org
+    {
+      get
+      {
+        return _org;
+      }
+    }
+
+    public double End
+    {
+      get
+      {
+        return _end;
+      }
+    }
+    public double Span
+    {
+      get
+      {
+        return _span;
+      }
+    }
+
+    public BoundaryRescaling OrgRescaling
+    {
+      get
+      {
+        return _orgRescaling;
+      }
+    }
+
+    public BoundaryRescaling EndRescaling
+    {
+      get
+      {
+        return _endRescaling;
+      }
+    }
+
+    public BoundaryRescaling SpanRescaling
+    {
+      get
+      {
+        return _spanRescaling;
+      }
+    }
+
+
+    #endregion
+
     /// <summary>
     /// Sets the scaling behaviour of the axis by providing org and end values.
     /// </summary>

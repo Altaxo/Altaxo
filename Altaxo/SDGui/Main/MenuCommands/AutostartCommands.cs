@@ -61,7 +61,7 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
       Altaxo.Main.IPrintingService printingService = (Altaxo.Main.IPrintingService)ServiceManager.Services.GetService(typeof(Altaxo.Main.IPrintingService));
       Altaxo.Current.SetPrintingService( printingService );
 
-
+      Altaxo.Current.SetGUIFactoryService( new Altaxo.Main.Services.GUIFactoryService() );
 
       //Altaxo.MainController ctrl = new Altaxo.MainController(new Altaxo.AltaxoDocument());
 

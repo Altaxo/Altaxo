@@ -51,6 +51,8 @@ namespace Altaxo
 
     private static Altaxo.Main.Services.IDataDisplayService sm_theDataDisplayService;
 
+    private static Altaxo.Main.Services.GUIFactoryService sm_theGUIFactoryService;
+
     private static bool sm_theApplicationIsClosing;
 
     /// <summary>
@@ -91,6 +93,27 @@ namespace Altaxo
     public static Altaxo.Main.Services.IOutputService Console
     {
       get { return sm_theOutputService; }
+    }
+
+    /// <summary>
+    /// Returns the console window, which can be used by your scripts for textual output.
+    /// </summary>
+    public static Altaxo.Main.Services.GUIFactoryService GUIFactoryService
+    {
+      get { return sm_theGUIFactoryService; }
+    }
+
+    /// <summary>
+    /// Sets the current output service.
+    /// </summary>
+    /// <param name="outputservice">The instance of the output service to use in this application.</param>
+    public static void SetGUIFactoryService(Altaxo.Main.Services.GUIFactoryService service)
+    {
+      if(null==sm_theGUIFactoryService)
+        sm_theGUIFactoryService = service; 
+      else
+        throw new ApplicationException("The  service can not be re-set to another value, only initialized for the first time!");
+
     }
 
     /// <summary>

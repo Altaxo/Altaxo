@@ -38,8 +38,14 @@ namespace Altaxo.Main.GUI
     /// Returns the model (document) that this controller controls
     /// </summary>
     object ModelObject { get; }
-
   
+  }
+
+  /// <summary>
+  /// Concatenation of a <see>IMVCController</see> and a <see>IApplyController</see>.
+  /// </summary>
+  public interface IMVCAController : IMVCController, IApplyController
+  {
   }
 
   /// <summary>

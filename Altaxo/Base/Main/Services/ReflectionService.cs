@@ -27,6 +27,24 @@ namespace Altaxo.Main.Services
 
     }
 
+    /// <summary>
+    /// Retrieves if a given subtype is derived from a basetype or implements the interface basetype.
+    /// </summary>
+    /// <param name="subtype">The subtype.</param>
+    /// <param name="basetype">The basetype.</param>
+    /// <returns>If basetype is a class type, the return value is true if subtype derives from basetype. If basetype is an interface, the return value is true if subtype implements the interface basetype. In all other cases the return value is false.</returns>
+    public static bool IsSubClassOfOrImplements(System.Type subtype, System.Type basetype)
+    {
+      if(basetype.IsInterface)
+      {
+        return Array.IndexOf(subtype.GetInterfaces(),basetype)>=0;
+      }
+      else
+      {
+        return subtype.IsSubclassOf(basetype);
+      }
+
+    }
 
     /// <summary>
     /// For a given type of attribute, attributeType, this function returns the attribute instances and the class
@@ -57,7 +75,7 @@ namespace Altaxo.Main.Services
         } // end foreach type
       } // end foreach assembly 
 
-      if(list.Count>1 && attributeType.IsSubclassOf(typeof(IComparable)))
+      if(list.Count>1 && IsSubClassOfOrImplements(attributeType,typeof(IComparable)))
         list.Sort(new DictEntryKeyComparer());
 
       return (DictionaryEntry[])list.ToArray(typeof(DictionaryEntry));
@@ -77,7 +95,7 @@ namespace Altaxo.Main.Services
       System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
       foreach(Assembly assembly in assemblies)
       {
-        if(Array.IndexOf(assembly.GetReferencedAssemblies(),attributeAssembly)<0)
+        if(assembly!=attributeAssembly && Array.IndexOf(assembly.GetReferencedAssemblies(),attributeAssembly)<0)
           continue; // this is not depended on this assembly the attribute is defined in, so we can ignore this
         
         Type[] definedtypes = assembly.GetTypes();
@@ -94,7 +112,7 @@ namespace Altaxo.Main.Services
         } // end foreach type
       } // end foreach assembly 
 
-      if(list.Count>1 && attributeType.IsSubclassOf(typeof(IComparable)))
+      if(list.Count>1 && IsSubClassOfOrImplements(attributeType,typeof(IComparable)))
         list.Sort(new DictEntryKeyComparer());
 
       return (DictionaryEntry[])list.ToArray(typeof(DictionaryEntry));
@@ -116,7 +134,7 @@ namespace Altaxo.Main.Services
 
       for(int i=list.Length-1;i>=0;i--)
       {
-        if(((System.Type)list[i].Value).IsSubclassOf(expectedType))
+        if(IsSubClassOfOrImplements( ((System.Type)list[i].Value),expectedType))
         {
           // try to create the class
           try
@@ -132,6 +150,7 @@ namespace Altaxo.Main.Services
       return result;
     }
 
+   
 
     /// <summary>
     /// Tries to get a class instance for a given attribute type. All loaded assemblies are searched for classes that attributeType applies to,
@@ -149,7 +168,7 @@ namespace Altaxo.Main.Services
 
       for(int i=list.Length-1;i>=0;i--)
       {
-        if(((System.Type)list[i].Value).IsSubclassOf(expectedType))
+        if(IsSubClassOfOrImplements( (System.Type)list[i].Value,expectedType))
         {
           // try to create the class
           try
@@ -157,9 +176,23 @@ namespace Altaxo.Main.Services
             result = Activator.CreateInstance((System.Type)list[i].Value,creationArgs);
             break;
           }
-          catch(Exception)
+          catch(Exception ex)
           {
+            System.Diagnostics.Debug.WriteLine(ex.ToString());
           }
+
+          // try to create the class finally without args
+          try
+          {
+            result = Activator.CreateInstance((System.Type)list[i].Value);
+            break;
+          }
+          catch(Exception ex)
+          {
+            System.Diagnostics.Debug.WriteLine(ex.ToString());
+          }
+
+        
         }
       }
       return result;
