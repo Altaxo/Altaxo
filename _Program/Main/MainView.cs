@@ -118,7 +118,22 @@ namespace Altaxo
 		}
 		#endregion
 
-	
+
+		protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+		{
+			if(null!=m_Ctrl)
+				m_Ctrl.EhView_Closing(e);
+
+			base.OnClosing(e);
+		}
+
+		protected override void OnClosed(System.EventArgs e)
+		{
+			if(null!=m_Ctrl)
+				m_Ctrl.EhView_Closed(e);
+		}
+
+
 		#region IMainView Members
 
 		/// <summary>

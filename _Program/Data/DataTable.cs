@@ -119,27 +119,34 @@ namespace Altaxo.Data
 
 		#endregion
 
+		public DataTable()
+			: base(null)
+		{
+			base.Parent = this;
+			this.m_TableName = null;
+			m_PropertyColumns = new DataColumnCollection(this);
+		}
 
 		public DataTable(string name)
 			: base(null)
 		{
-			this.m_TableName = name;
 			base.Parent = this;
+			this.m_TableName = name;
 			m_PropertyColumns = new DataColumnCollection(this);
 		}
 
 		public DataTable(Altaxo.Data.DataSet parent) : base(null)
 		{
-			this.m_ParentDataSet = parent;
 			base.Parent = this;
+			this.m_ParentDataSet = parent;
 			m_PropertyColumns = new DataColumnCollection(this);
 		}
 
 		public DataTable(Altaxo.Data.DataSet parent, string name) : base(null)
 		{
+			base.Parent = this;
 			this.m_ParentDataSet = parent;
 			this.m_TableName = name;
-			base.Parent = this;
 			m_PropertyColumns = new DataColumnCollection(this);
 		}
   

@@ -520,43 +520,46 @@ namespace Altaxo.Data
 		/// then the data changed event is fired at all.</remarks>
 		protected void NotifyDataChanged(int minRow, int maxRow, bool rowCountDecreased)
 		{
-			if(null!=m_Parent)
+			bool bWasDirtyBefore = this.IsDirty;
+
+			if(null!=m_Parent || null!=DataChanged)
 			{
-				bool bWasDirtyBefore = this.IsDirty;
-
-				if(minRow < m_MinRowChanged) m_MinRowChanged = minRow;
-				if(maxRow > m_MaxRowChanged) m_MaxRowChanged = maxRow;
+				if(minRow < m_MinRowChanged)
+					m_MinRowChanged = minRow;
+				if(maxRow > m_MaxRowChanged) 
+					m_MaxRowChanged = maxRow;
+				
 				m_bRowCountDecreased |= rowCountDecreased;
+			}
 
-				if(m_DataEventsSuspendCount==0)
-				{
-					// always inform the parent first,
-					// because the parent can change our bDataEventEnabled to false)
-					this.m_Parent.OnColumnDataChanged(this,m_MinRowChanged,m_MaxRowChanged,m_bRowCountDecreased);
-				}
-				if(m_DataEventsSuspendCount==0) // look again for this variable, because the parent can change it during OnDataChanged
-				{	
-					if(null!=DataChanged)
-						DataChanged(this, m_MinRowChanged,m_MaxRowChanged,m_bRowCountDecreased);
+			if(null!=m_Parent && 0==m_DataEventsSuspendCount)
+			{
+				// always inform the parent first,
+				// because the parent can change our bDataEventEnabled to false)
+				this.m_Parent.OnColumnDataChanged(this,m_MinRowChanged,m_MaxRowChanged,m_bRowCountDecreased);
+			}
 			
-					ResetDirty();
-				}
-				else // Data events disabled
-				{
-					// if the row is not dirty up to now, add it to the DataTables dirty column collection
-					if(!bWasDirtyBefore && null!=DirtySet)
-						DirtySet(this);
-				}
-
+			if(0==m_DataEventsSuspendCount) // look again for this variable, because the parent can change it during OnDataChanged
+			{	
+				if(null!=DataChanged)
+					DataChanged(this, m_MinRowChanged,m_MaxRowChanged,m_bRowCountDecreased);
+			
+				ResetDirty();
+			}
+			else // Data events disabled
+			{
+				// if the row is not dirty up to now, add it to the DataTables dirty column collection
+				if(!bWasDirtyBefore && null!=DirtySet)
+					DirtySet(this);
 			}
 		}
 
-/// <summary>
-/// Returns the type of the associated ColumnStyle for use in a worksheet view.</summary>
+		/// <summary>
+		/// Returns the type of the associated ColumnStyle for use in a worksheet view.</summary>
 		/// <returns>The type of the associated <see cref="Worksheet.ColumnStyle"/> class.</returns>
 		/// <remarks>
-/// If this type of data column is not used in a datagrid, you can return null for this type.
-/// </remarks>
+		/// If this type of data column is not used in a datagrid, you can return null for this type.
+		/// </remarks>
 		public abstract System.Type GetColumnStyleType();
 
 		/// <summary>
@@ -651,10 +654,10 @@ namespace Altaxo.Data
 			{
 				if(m_ColumnName!=value)
 				{
-				if(this.m_Parent==null)
-					m_ColumnName = value; // set value directly if no parent table
-				else // parent table is not null, so lets check the name by the parent
-					m_ColumnName = m_Parent.FindUniqueColumnName(value);
+					if(this.m_Parent==null)
+						m_ColumnName = value; // set value directly if no parent table
+					else // parent table is not null, so lets check the name by the parent
+						m_ColumnName = m_Parent.FindUniqueColumnName(value);
 				}
 			}
 		}
@@ -669,7 +672,7 @@ namespace Altaxo.Data
 			{
 				return null==m_Parent ? m_ColumnName : String.Format("{0}\\{1}",m_Parent.TableName,m_ColumnName);
 			}
-			}
+		}
 
 
 		/// <summary>

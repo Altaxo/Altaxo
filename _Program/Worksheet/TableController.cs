@@ -575,6 +575,11 @@ namespace Altaxo.Worksheet
 			//mi.Shortcut = ShortCuts.
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 
+			// Analysis - StatisticsOnRows
+			mi = new MenuItem("Statistics on rows");
+			mi.Click += new EventHandler(EhMenuAnalysisStatisticsOnRows_OnClick);
+			//mi.Shortcut = ShortCuts.
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 	
 		}
 
@@ -806,10 +811,13 @@ namespace Altaxo.Worksheet
 		}
 		protected void EhMenuAnalysisStatisticsOnColumns_OnClick(object sender, System.EventArgs e)
 		{
-			DataGridOperations.StatisticsOnColumns(this);
-	
+			DataGridOperations.StatisticsOnColumns(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows);
 		}
 
+		protected void EhMenuAnalysisStatisticsOnRows_OnClick(object sender, System.EventArgs e)
+		{
+			DataGridOperations.StatisticsOnRows(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows);
+		}
 
 		#endregion
 	

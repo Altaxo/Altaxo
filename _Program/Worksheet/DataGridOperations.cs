@@ -54,31 +54,41 @@ namespace Altaxo.Worksheet
 		
 		}
 
-		public static void StatisticsOnColumns(TableController dg)
+		
+		public static void StatisticsOnColumns(
+			Altaxo.AltaxoDocument mainDocument,
+			Altaxo.Data.DataTable srctable,
+			Altaxo.Worksheet.IndexSelection selectedColumns,
+			Altaxo.Worksheet.IndexSelection selectedRows
+			)
 		{
-			int len = dg.SelectedColumns.Count;
-			if(len==0)
+			bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
+			int numcols = bUseSelectedColumns ? selectedColumns.Count : srctable.ColumnCount;
+
+			bool bUseSelectedRows = (null!=selectedRows && 0!=selectedRows.Count);
+
+			if(numcols==0)
 				return; // nothing selected
 
-			bool bWorksheetCreated = false;
-			Altaxo.Worksheet.ITableView wks=null; // the created worksheet
-			Data.DataTable table=null; // the created table
+			bool bTableCreated = false;
+			Data.DataTable table = null; // the created table
 			int currRow=0;
-			for(int si=0;si<dg.SelectedColumns.Count;si++)
+			for(int si=0;si<numcols;si++)
 			{
-				Altaxo.Data.DataColumn col = dg.DataTable[dg.SelectedColumns[si]];
+				Altaxo.Data.DataColumn col = bUseSelectedColumns ? srctable[selectedColumns[si]] : srctable[si];
 				if(!(col is Altaxo.Data.INumericColumn))
 					continue;
-				int rows = ((Data.IDefinedCount)col).Count;
+
+				int rows = bUseSelectedRows ? selectedRows.Count : srctable.RowCount;
 				if(rows==0)
 					continue;
 				
-				if(!bWorksheetCreated)
+				if(!bTableCreated)
 				{
-					bWorksheetCreated=true;
+					bTableCreated=true;
 
-					// create a new worksheet without any columns
-					wks = App.Current.CreateNewWorksheet(false);
+					table = new Altaxo.Data.DataTable();
+
 
 					// add a text column and some double columns
 					// note: statistics is only possible for numeric columns since
@@ -102,16 +112,14 @@ namespace Altaxo.Worksheet
 
 					// 6th column is the number of items for statistics
 					Data.DoubleColumn c5 = new Data.DoubleColumn("N");
-
-					table = wks.TableController.Doc;
-				
+			
 					table.Add(c0);
 					table.Add(c1);
 					table.Add(c2);
 					table.Add(c3);
 					table.Add(c4);
 					table.Add(c5);
-				} // if !WorksheetCreated
+				} // if !TableCreated
 
 				// now do the statistics 
 				Data.INumericColumn ncol = (Data.INumericColumn)col;
@@ -120,8 +128,8 @@ namespace Altaxo.Worksheet
 				int NN=0;
 				for(int i=0;i<rows;i++)
 				{
-					double val = ncol.GetDoubleAt(i);
-					if(Double.IsNaN(val) || Double.IsInfinity(val))
+					double val = bUseSelectedRows ? ncol.GetDoubleAt(selectedRows[i]) : ncol.GetDoubleAt(i);
+					if(Double.IsNaN(val))
 						continue;
 
 					NN++;
@@ -132,23 +140,148 @@ namespace Altaxo.Worksheet
 
 				if(NN>0)
 				{
-				double mean = sum/NN;
-				double ymy0sqr = sumsqr - sum*sum/NN;
-				if(ymy0sqr<0) ymy0sqr=0; // if this is lesser zero, it is a rounding error, so set it to zero
-				double sd = NN>1 ? Math.Sqrt(ymy0sqr/(NN-1)) : 0;
-				double se = sd/Math.Sqrt(NN);
+					double mean = sum/NN;
+					double ymy0sqr = sumsqr - sum*sum/NN;
+					if(ymy0sqr<0) ymy0sqr=0; // if this is lesser zero, it is a rounding error, so set it to zero
+					double sd = NN>1 ? Math.Sqrt(ymy0sqr/(NN-1)) : 0;
+					double se = sd/Math.Sqrt(NN);
 
-				table[0][currRow] = col.ColumnName;
-				table[1][currRow] = mean; // mean
-				table[2][currRow] = sd;
-				table[3][currRow] = se;
-				table[4][currRow] = sum;
-				table[5][currRow] = NN;
-				currRow++; // for the next column
+					table[0][currRow] = col.ColumnName;
+					table[1][currRow] = mean; // mean
+					table[2][currRow] = sd;
+					table[3][currRow] = se;
+					table[4][currRow] = sum;
+					table[5][currRow] = NN;
+					currRow++; // for the next column
 				}
-					} // for all selected columns				
+			} // for all selected columns
+			
+	
+			// if a table was created, we add the table to the data set and
+			// create a worksheet
+			if(bTableCreated)
+			{
+				mainDocument.DataSet.Add(table);
+				// create a new worksheet without any columns
+				App.Current.CreateNewWorksheet(table);
 
 			}
+		}
+
+
+
+
+		public static void StatisticsOnRows(
+			Altaxo.AltaxoDocument mainDocument,
+			Altaxo.Data.DataTable srctable,
+			Altaxo.Worksheet.IndexSelection selectedColumns,
+			Altaxo.Worksheet.IndexSelection selectedRows
+			)
+		{
+			bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
+			int numcols = bUseSelectedColumns ? selectedColumns.Count : srctable.ColumnCount;
+			if(numcols==0)
+				return; // nothing selected
+
+			bool bUseSelectedRows = (null!=selectedRows && 0!=selectedRows.Count);
+			int numrows = bUseSelectedRows ? selectedRows.Count : srctable.RowCount;
+			if(numrows==0)
+				return;
+
+				Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
+				// add a text column and some double columns
+				// note: statistics is only possible for numeric columns since
+				// otherwise in one column doubles and i.e. dates are mixed, which is not possible
+
+				// 1st column is the mean, and holds the sum during the calculation
+				Data.DoubleColumn c1 = new Data.DoubleColumn("Mean");
+
+				// 2rd column is the standard deviation, and holds the square sum during calculation
+				Data.DoubleColumn c2 = new Data.DoubleColumn("sd");
+
+				// 3th column is the standard e (N)
+				Data.DoubleColumn c3 = new Data.DoubleColumn("se");
+
+				// 4th column is the sum
+				Data.DoubleColumn c4 = new Data.DoubleColumn("Sum");
+
+				// 5th column is the number of items for statistics
+				Data.DoubleColumn c5 = new Data.DoubleColumn("N");
+			
+				table.Add(c1);
+				table.Add(c2);
+				table.Add(c3);
+				table.Add(c4);
+				table.Add(c5);
+
+				table.SuspendDataChangedNotifications();
+
+			
+			// first fill the cols c1, c2, c5 with zeros because we want to sum up 
+			for(int i=0;i<numrows;i++)
+			{
+				c1[i]=0;
+				c2[i]=0;
+				c5[i]=0;
+			}
+	
+			
+			for(int si=0;si<numcols;si++)
+			{
+				Altaxo.Data.DataColumn col = bUseSelectedColumns ? srctable[selectedColumns[si]] : srctable[si];
+				if(!(col is Altaxo.Data.INumericColumn))
+					continue;
+
+				// now do the statistics 
+				Data.INumericColumn ncol = (Data.INumericColumn)col;
+				for(int i=0;i<numrows;i++)
+				{
+					double val = bUseSelectedRows ? ncol.GetDoubleAt(selectedRows[i]) : ncol.GetDoubleAt(i);
+					if(Double.IsNaN(val))
+						continue;
+
+					c1[i] += val;
+					c2[i] += val*val;
+					c5[i] += 1;
+				}
+			} // for all selected columns
+
+			
+			// now calculate the statistics
+			for(int i=0;i<numrows;i++)
+			{
+				// now fill a new row in the worksheet
+				double NN=c5[i];
+				double sum=c1[i];
+				double sumsqr=c2[i];
+				if(NN>0)
+				{
+					double mean = c1[i]/NN;
+					double ymy0sqr = sumsqr - sum*sum/NN;
+					if(ymy0sqr<0) ymy0sqr=0; // if this is lesser zero, it is a rounding error, so set it to zero
+					double sd = NN>1 ? Math.Sqrt(ymy0sqr/(NN-1)) : 0;
+					double se = sd/Math.Sqrt(NN);
+
+					c1[i] = mean; // mean
+					c2[i] = sd;
+					c3[i] = se;
+					c4[i] = sum;
+					c5[i] = NN;
+				}
+			} // for all rows
+	
+			// if a table was created, we add the table to the data set and
+			// create a worksheet
+			if(null!=table)
+			{
+				table.ResumeDataChangedNotifications();
+				mainDocument.DataSet.Add(table);
+				// create a new worksheet without any columns
+				App.Current.CreateNewWorksheet(table);
+
+			}
+		}
+
 
 
 		public static void FFT(TableController dg)

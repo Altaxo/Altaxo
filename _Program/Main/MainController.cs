@@ -106,6 +106,19 @@ namespace Altaxo
 		/// </summary>
 		IMainView View { get; }
 
+
+		/// <summary>
+		/// Called if the view is about to be closed.
+		/// </summary>
+		/// <param name="e">CancelEventArgs</param>
+		void EhView_Closing(System.ComponentModel.CancelEventArgs e);
+
+		/// <summary>
+		/// Called if the view is closed now.
+		/// </summary>
+		/// <param name="e">EventArgs</param>
+		void EhView_Closed(System.EventArgs e);
+
 	}
 
 	/// <summary>
@@ -562,11 +575,26 @@ namespace Altaxo
 			get { return m_View; }
 		}
 
+
+		public void EhView_Closing(System.ComponentModel.CancelEventArgs e)
+		{
+		}
+
+		public void EhView_Closed(System.EventArgs e)
+		{
+			View.Controller=null; // we are no longer the controller
+		}
+
+
 		#endregion
 
 		public Altaxo.Worksheet.ITableView CreateNewWorksheet(bool bCreateDefault)
 		{
 			return Doc.CreateNewWorksheet(View.Form, bCreateDefault);
+		}
+		public Altaxo.Worksheet.ITableView CreateNewWorksheet(Altaxo.Data.DataTable table)
+		{
+			return Doc.CreateNewWorksheet(View.Form, table);
 		}
 
 		public Altaxo.Graph.IGraphView CreateNewGraph()

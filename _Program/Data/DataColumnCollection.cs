@@ -146,8 +146,6 @@ namespace Altaxo.Data
 			this.m_Parent = parent;
 		}
 
-	
-
 
 		#region Column Addition / Access / Removal 
 
@@ -510,70 +508,74 @@ namespace Altaxo.Data
 
 		public void OnColumnDataChanged(Altaxo.Data.DataColumn sender, int nMinRow, int nMaxRow, bool rowCountDecreased)
 		{
-			if(null!=m_Parent)
-			{
-				bool bWasDirtyBefore = this.IsDirty;
+			bool bWasDirtyBefore = this.IsDirty;
 
+			if(null!=sender)
+			{
+				int nCol = sender.ColumnNumber;
+				if(nCol<m_MinColChanged)
+					m_MinColChanged=nCol;
+				if(nCol>m_MaxColChanged)
+					m_MaxColChanged=nCol;
+				if(nMinRow<m_MinRowChanged)
+					m_MinRowChanged=nMinRow;
+				if(nMaxRow>m_MaxRowChanged)
+					m_MaxRowChanged=nMaxRow;
+				if(rowCountDecreased && sender.Count>m_MaxDecreasedToRow)
+					m_MaxDecreasedToRow = sender.Count;
+
+				// update the row count in case the nMaxRow+1 is greater than the chached row count
+				if(nMaxRow+1>m_NumberOfRows)
+					m_NumberOfRows=nMaxRow+1;
+					
+				m_IsDirty = true;
+		
+				if(m_ResumeDataEventsInProgress)
+					return; // only update the data if resume is in progress
+			}
+			else // null==sender, so probably from myself
+			{
+				m_IsDirty=true;
+				if(nMinRow<m_MinRowChanged)
+					m_MinRowChanged=nMinRow;
+				if(nMaxRow>m_MaxRowChanged)
+					m_MaxRowChanged=nMaxRow;
+				if(rowCountDecreased) 
+					m_MaxDecreasedToRow = nMinRow;
+			}
+
+			if(null!=m_Parent && m_DataEventsSuspendCount==0)
+			{
+				// inform the parent first
+				this.m_Parent.OnColumnCollectionDataChanged(this);
+			}
+				
+			if(m_DataEventsSuspendCount==0) // reevaluate this variable because parent can change it during notification
+			{
+				if(m_MaxDecreasedToRow>=0) // if some row count decreased to this value 
+				{
+					RefreshRowCount(true);
+				}
+		
+				if(null!=FireDataChanged)
+					FireDataChanged(this, m_MinColChanged,m_MaxColChanged,m_MinRowChanged,m_MaxRowChanged);
+			
+				ResetDirty();
+			}
+			else // Data events disabled
+			{
+				// if Data events are Disabled, Disable it also in the column
 				if(null!=sender)
 				{
-					int nCol = sender.ColumnNumber;
-					if(nCol<m_MinColChanged) m_MinColChanged=nCol;
-					if(nCol>m_MaxColChanged) m_MaxColChanged=nCol;
-					if(nMinRow<m_MinRowChanged) m_MinRowChanged=nMinRow;
-					if(nMaxRow>m_MaxRowChanged) m_MaxRowChanged=nMaxRow;
-					if(rowCountDecreased && sender.Count>m_MaxDecreasedToRow) m_MaxDecreasedToRow = sender.Count;
+					this.dirtyColumns.Push(sender);
+					sender.SuspendDataChangedNotifications();
+				}
 
-					// update the row count in case the nMaxRow+1 is greater than the chached row count
-					if(nMaxRow+1>m_NumberOfRows)
-						m_NumberOfRows=nMaxRow+1;
+				if(!bWasDirtyBefore && null!=FireDirtySet)
+					FireDirtySet(this);
 					
-					m_IsDirty = true;
-		
-					if(m_ResumeDataEventsInProgress)
-						return; // only update the data if resume is in progress
-				}
-				else // null==sender, so probably from myself
-				{
-					m_IsDirty=true;
-					if(nMinRow<m_MinRowChanged) m_MinRowChanged=nMinRow;
-					if(nMaxRow>m_MaxRowChanged) m_MaxRowChanged=nMaxRow;
-					if(rowCountDecreased) 
-						m_MaxDecreasedToRow = nMinRow;
-				}
-
-
-				if(m_DataEventsSuspendCount==0)
-				{
-					// inform the parent first
-					this.m_Parent.OnColumnCollectionDataChanged(this);
-				}
-				
-				if(m_DataEventsSuspendCount==0) // reevaluate this variable because parent can change it during notification
-				{
-					if(m_MaxDecreasedToRow>=0) // if some row count decreased to this value 
-					{
-						RefreshRowCount(true);
-					}
-		
-					if(null!=FireDataChanged)
-						FireDataChanged(this, m_MinColChanged,m_MaxColChanged,m_MinRowChanged,m_MaxRowChanged);
-			
-					ResetDirty();
-				}
-				else // Data events disabled
-				{
-					// if Data events are Disabled, Disable it also in the column
-					if(null!=sender)
-					{
-						this.dirtyColumns.Push(sender);
-						sender.SuspendDataChangedNotifications();
-					}
-
-					if(!bWasDirtyBefore && null!=FireDirtySet)
-						FireDirtySet(this);
-					
-				}
 			}
+			
 		}
 
 

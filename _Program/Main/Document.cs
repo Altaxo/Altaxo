@@ -35,7 +35,7 @@ namespace Altaxo
 		protected System.Collections.ArrayList m_Worksheets;
 		/// <summary>The list of GraphForms for the document.</summary>
 		protected System.Collections.ArrayList m_GraphForms;
-	
+
 		[NonSerialized]
 		protected bool m_IsDirty=false;
 		[NonSerialized]
@@ -158,7 +158,16 @@ namespace Altaxo
 
 		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parent)
 		{
-			return CreateNewWorksheet(parent, this.DataSet.FindNewTableName(),true);
+			return CreateNewWorksheet(parent, this.DataSet.FindNewTableName(),false);
+		}
+
+
+		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parentForm, Altaxo.Data.DataTable table)
+		{
+			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(new Altaxo.Worksheet.TableView(parentForm,null),table);
+			ctrl.View.TableViewForm.Text = table.TableName;
+			m_Worksheets.Add(ctrl.View.TableViewForm);
+			return ctrl.View;
 		}
 
 

@@ -228,7 +228,7 @@ namespace Altaxo.Data
 
 		public void Add(Altaxo.Data.DataTable theTable)
 		{
-			if(null==theTable.TableName)
+			if(null==theTable.TableName || 0==theTable.TableName.Length)
 			{
 				theTable.TableName = FindNewTableName();
 			}
