@@ -130,6 +130,33 @@ namespace Altaxo.Data
       }
 
       /// <summary>
+      /// Creates a change state that reflects the move of some columns.
+      /// </summary>
+      /// <param name="firstColumnNumber">The first column number that was removed.</param>
+      /// <param name="maxColumnNumber">One more than the last affected column.</param>
+      /// <returns>The change state that reflects the move.</returns>
+      public static ChangeEventArgs CreateColumnMoveArgs(int firstColumnNumber, int maxColumnNumber)
+      {
+        ChangeEventArgs args = new ChangeEventArgs(firstColumnNumber,0,0,false);
+         args.m_MaxColChanged = maxColumnNumber;
+        return args;
+      }
+
+      /// <summary>
+      /// Creates a change state that reflects the move of some rows (in all columns).
+      /// </summary>
+       /// <param name="numberOfColumns">The number of columns in the table.</param>
+      /// <param name="firstRowNumber">The first row number that was affected.</param>
+      /// <param name="maxRowNumber">One more than the last affected row number.</param>
+      /// <returns>The change state that reflects the move.</returns>
+      public static ChangeEventArgs CreateRowMoveArgs(int numberOfColumns, int firstRowNumber, int maxRowNumber)
+      {
+        ChangeEventArgs args = new ChangeEventArgs(0,firstRowNumber,maxRowNumber,false);
+        args.m_MaxColChanged = numberOfColumns;
+        return args;
+      }
+
+      /// <summary>
       /// Create the change state that reflects the addition of one column.
       /// </summary>
       /// <param name="columnIndex">The index of the added column.</param>
@@ -207,7 +234,7 @@ namespace Altaxo.Data
 
     #region ColumnInfo
     [Serializable]
-      private class DataColumnInfo : ICloneable
+      protected class DataColumnInfo : ICloneable
     {
       /// <summary>
       /// The column number, i.e. it's position in the array
@@ -325,7 +352,7 @@ namespace Altaxo.Data
     protected System.Collections.Hashtable m_ColumnsByName=new System.Collections.Hashtable();
 
     /// <summary>
-    /// This hashtable has the columns as keys and DataColumnInfo objects as values. 
+    /// This hashtable has the <see>DataColumn</see> as keys and <see>DataColumnInfo</see> objects as values. 
     /// It stores information like the position of the column, the kind of the column.
     /// </summary>
     protected System.Collections.Hashtable m_ColumnInfo = new System.Collections.Hashtable();
@@ -884,9 +911,33 @@ namespace Altaxo.Data
       }
     }
 
+    /// <summary>
+    /// Inserts multiple DataColumns into the collection at index <c>nDestinationIndex</c>
+    /// </summary>
+    /// <param name="columns">The array of data columns to insert.</param>
+    /// <param name="info">The corresponding column information for the columns to insert.</param>
+    /// <param name="nDestinationIndex">The index into the collection where the columns are inserted.</param>
+    protected void Insert(DataColumn[] columns, DataColumnInfo[] info, int nDestinationIndex)
+    {
+      this.Suspend();
+      
+      int indexOfAddedColumns = this.ColumnCount;
+      int numberToAdd = columns.Length;
+     
+      // first add the columns to the collection
+      for(int i=0;i<numberToAdd;i++)
+        this.Add(columns[i],info[i]);
+
+      // then move the columns to the desired position
+      this.ChangeColumnPosition(new Altaxo.Collections.IntegerRangeAsCollection(indexOfAddedColumns,numberToAdd),nDestinationIndex);
+      
+      this.Resume();
+    }
+
+
     #endregion
 
-    #region Column removal
+    #region Column removal and move to another collection
 
     /// <summary>
     /// Removes a number of columns of the collection.
@@ -918,6 +969,11 @@ namespace Altaxo.Data
 
     public void RemoveColumns(IAscendingIntegerCollection selectedColumns)
     {
+      RemoveColumns(selectedColumns,true);
+    }
+
+    public void RemoveColumns(IAscendingIntegerCollection selectedColumns, bool disposeColumns)
+    {
       int nOriginalColumnCount = ColumnCount;
 
       int currentPosition = selectedColumns.Count-1;
@@ -932,7 +988,8 @@ namespace Altaxo.Data
           this.m_ColumnInfo.Remove(m_ColumnsByNumber[i]);
           this.m_ColumnsByName.Remove(columnName);
           this[i].ParentObject=null;
-          this[i].Dispose();
+          if(disposeColumns)
+            this[i].Dispose();
         }
         this.m_ColumnsByNumber.RemoveRange(nFirstColumn, nDelCount);
       }
@@ -943,6 +1000,33 @@ namespace Altaxo.Data
 
       // raise datachange event that some columns have changed
       this.OnChildChanged(null, ChangeEventArgs.CreateColumnRemoveArgs(nFirstColumn, nOriginalColumnCount, this.m_NumberOfRows));
+    }
+
+ 
+    /// <summary>
+    /// Moves some columns of this collection to another collection-
+    /// </summary>
+    /// <param name="destination">The destination collection where the columns are moved to.</param>
+    /// <param name="destindex">The index in the destination collection where the columns are moved to.</param>
+    /// <param name="selectedColumns">The indices of the column of the source collection that are moved.</param>
+    public void MoveColumnsTo(DataColumnCollection destination, int destindex, IAscendingIntegerCollection selectedColumns)
+    {
+      int nOriginalColumnCount = ColumnCount;
+      
+      int numberMoved = selectedColumns.Count;
+
+      DataColumn[] tmpColumn = new DataColumn[numberMoved];
+      DataColumnInfo[] tmpInfo = new DataColumnInfo[numberMoved];
+
+      for(int i=0;i<numberMoved;i++)
+      {
+        tmpColumn[i] = this[selectedColumns[i]];
+        tmpInfo[i] = (DataColumnInfo)this.m_ColumnInfo[m_ColumnsByNumber[i]];
+      }
+
+      this.RemoveColumns(selectedColumns,false);
+
+      destination.Insert(tmpColumn,tmpInfo,0);
     }
 
     #endregion
@@ -1344,6 +1428,164 @@ namespace Altaxo.Data
       RemoveRows(nFirstRow,1);
     }
 
+
+    #endregion
+
+    #region Column and row position manipulation
+
+    /// <summary>
+    /// Moves one or more columns to a new position.
+    /// </summary>
+    /// <param name="selectedColumns">The indices of the columns to move to the new position.</param>
+    /// <param name="newPosition">The new position where the columns are moved to.</param>
+    /// <remarks>An exception is thrown if newPosition is negative or higher than possible.</remarks>
+    public void ChangeColumnPosition(Altaxo.Collections.IAscendingIntegerCollection selectedColumns, int newPosition)
+    {
+      int numberSelected = selectedColumns.Count;
+      if(numberSelected==0)
+        return;
+
+      int oldPosition = selectedColumns[0];
+      if(oldPosition==newPosition)
+        return;
+
+      // check that the newPosition is ok
+      if(newPosition<0)
+        throw new ArgumentException("New column position is negative!");
+      if(newPosition+numberSelected>ColumnCount)
+        throw new ArgumentException(string.Format("New column position too high: ColsToMove({0})+NewPosition({1})>ColumnCount({2})",numberSelected,newPosition,ColumnCount));
+
+      // Allocated tempory storage for the datacolumns
+      Altaxo.Data.DataColumn[] columnsMoved = new Altaxo.Data.DataColumn[selectedColumns.Count];
+      // fill temporary storage
+      for(int i=0;i<selectedColumns.Count;i++)
+        columnsMoved[i]=this[selectedColumns[i]];
+
+      int firstAffectedColumn=0;
+      int maxAffectedColumn = ColumnCount;
+      if(newPosition<oldPosition) // move down to lower indices
+      {
+        firstAffectedColumn = newPosition;
+        maxAffectedColumn  = Math.Max(newPosition+numberSelected,selectedColumns[numberSelected-1]+1);
+
+        for(int i=selectedColumns[numberSelected-1],offset=0;i>=firstAffectedColumn;i--)
+        {
+          if(numberSelected>offset && i==selectedColumns[numberSelected-1-offset])
+            offset++;
+          else
+            m_ColumnsByNumber[i+offset] = m_ColumnsByNumber[i];
+
+        }
+      }
+      else // move up to higher
+      {
+        firstAffectedColumn = selectedColumns[0];
+        maxAffectedColumn = newPosition+numberSelected;
+        for(int i=selectedColumns[0],offset=0;i<maxAffectedColumn;i++)
+        {
+          if(offset<numberSelected && i==selectedColumns[offset])
+            offset++;
+          else
+            m_ColumnsByNumber[i-offset] = m_ColumnsByNumber[i];
+
+        }
+      }
+
+      // Fill in temporary stored columns on new position
+      for(int i=0;i<numberSelected;i++)
+        m_ColumnsByNumber[newPosition+i] = columnsMoved[i];
+      
+      RefreshColumnIndices();
+      this.OnChildChanged(null,ChangeEventArgs.CreateColumnMoveArgs(firstAffectedColumn,maxAffectedColumn));
+    }
+
+    /// <summary>
+    /// Moves on or more rows in to a new position.
+    /// </summary>
+    /// <param name="selectedIndices">The indices of the rows to move.</param>
+    /// <param name="newPosition">The new position of the rows.</param>
+    public void ChangeRowPosition(Altaxo.Collections.IAscendingIntegerCollection selectedIndices, int newPosition)
+    {
+      int numberSelected = selectedIndices.Count;
+      if(numberSelected==0)
+        return;
+
+      int oldPosition = selectedIndices[0];
+      if(oldPosition==newPosition)
+        return;
+
+      // check that the newPosition is ok
+      if(newPosition<0)
+        throw new ArgumentException("New row position is negative!");
+
+      
+
+      // Allocated tempory storage for the datacolumns
+      Altaxo.Data.AltaxoVariant[] tempMoved = new Altaxo.Data.AltaxoVariant[numberSelected];
+     
+      int firstAffected;
+      int maxAffected;
+
+      if(newPosition<oldPosition) // move down to lower indices
+      {
+        firstAffected = newPosition;
+        maxAffected  = Math.Max(newPosition+numberSelected,selectedIndices[numberSelected-1]+1);
+      }
+      else
+      {
+        firstAffected = selectedIndices[0];
+        maxAffected = newPosition+numberSelected;
+      }
+
+      for(int nColumn=ColumnCount-1;nColumn>=0;nColumn--)
+      {
+        Altaxo.Data.DataColumn thiscolumn = this[nColumn];
+        // fill temporary storage
+        for(int i=0;i<numberSelected;i++)
+          tempMoved[i]=thiscolumn[selectedIndices[i]];
+  
+        if(newPosition<oldPosition) // move down to lower indices
+        {
+          for(int i=selectedIndices[numberSelected-1],offset=0;i>=firstAffected;i--)
+          {
+            if(numberSelected>offset && i==selectedIndices[numberSelected-1-offset])
+              offset++;
+            else
+              thiscolumn[i+offset] = thiscolumn[i];
+
+          }
+        }
+        else // move up to higher
+        {
+          for(int i=selectedIndices[0],offset=0;i<maxAffected;i++)
+          {
+            if(offset<numberSelected && i==selectedIndices[offset])
+              offset++;
+            else
+              thiscolumn[i-offset] = thiscolumn[i];
+
+          }
+        }
+
+        // Fill in temporary stored columns on new position
+        for(int i=0;i<numberSelected;i++)
+          thiscolumn[newPosition+i] = tempMoved[i];
+
+      }
+      this.OnChildChanged(null,ChangeEventArgs.CreateRowMoveArgs(ColumnCount,firstAffected,maxAffected));
+    }
+
+    /// <summary>
+    /// This will refresh the column number information in the m_ColumnInfo collection of <see>DataColumnInfo</see>.
+    /// </summary>
+    protected void RefreshColumnIndices()
+    {
+      for(int i=ColumnCount-1;i>=0;i--)
+      {
+        ((DataColumnInfo)m_ColumnInfo[m_ColumnsByNumber[i]]).Number = i;
+      }
+    }
+    
 
     #endregion
 

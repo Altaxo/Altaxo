@@ -754,6 +754,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\GUI\MinMaxIntegerControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\MinMaxIntegerControl.resx"
+                    DependentUpon = "MinMaxIntegerControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Main\GUI\ModelViewController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1049,6 +1059,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Worksheet\Commands\RowCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Worksheet\Commands\WorksheetCommands.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1097,6 +1112,21 @@
                     RelPath = "Worksheet\GUI\SetColumnValuesDialog.resx"
                     DependentUpon = "SetColumnValuesDialog.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\TransposeWorksheetControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\TransposeWorksheetControl.resx"
+                    DependentUpon = "TransposeWorksheetControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\TransposeWorksheetController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Worksheet\GUI\WorksheetController.cs"

@@ -426,6 +426,8 @@
 					class="Altaxo.Worksheet.Commands.WorksheetTranspose" />
 				<MenuItem id="TableScript" label="${res:XML.MainMenu.WorksheetMenu.TableScript}" description="${res:XML.MainMenu.WorksheetMenu.TableScript.Description}"
 					class="Altaxo.Worksheet.Commands.OpenTableScriptDialog" />
+				<MenuItem id="MoveRows" label="${res:XML.MainMenu.WorksheetMenu.MoveSelectedRows}" description="${res:XML.MainMenu.WorksheetMenu.MoveSelectedRows.Description}"
+					class="Altaxo.Worksheet.Commands.SetRowPosition" />
 				<MenuItem id="ExperimentalScriptWindow" label="${res:XML.MainMenu.WorksheetMenu.Transpose}"
 					description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}" class="Altaxo.Worksheet.Commands.OpenScriptDialog" />
 			</MenuItem>
@@ -467,6 +469,8 @@
 					class="Altaxo.Worksheet.Commands.RenameColumn" />
 				<MenuItem id="SetGroupNumber" label="${res:XML.MainMenu.ColumnMenu.SetGroupNumber}" description="${res:XML.MainMenu.ColumnMenu.SetGroupNumber.Description}"
 					class="Altaxo.Worksheet.Commands.SetColumnGroupNumber" />
+				<MenuItem id="MoveColumns" label="${res:XML.MainMenu.ColumnMenu.MoveColumns}" description="${res:XML.MainMenu.ColumnMenu.MoveColumns.Description}"
+					class="Altaxo.Worksheet.Commands.SetColumnPosition" />
 				<MenuItem id="ExtractPropertyValues" label="${res:XML.MainMenu.ColumnMenu.ExtractPropertyValues}"
 					description="${res:XML.MainMenu.ColumnMenu.ExtractPropertyValues.Description}" class="Altaxo.Worksheet.Commands.ExtractPropertyValues" />
 				<MenuItem id="SetColumnValues" label="${res:XML.MainMenu.ColumnMenu.SetColumnValues}" description="${res:XML.MainMenu.ColumnMenu.SetColumnValues.Description}"

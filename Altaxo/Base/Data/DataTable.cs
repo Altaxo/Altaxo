@@ -671,6 +671,37 @@ namespace Altaxo.Data
       get { return m_PropertyColumns; }
     }
 
+
+    /// <summary>Return the number of data columns.</summary>
+    /// <value>The number of data columns in the table.</value>
+    public int DataColumnCount
+    {
+      get { return this.m_DataColumns.ColumnCount; }
+    }
+    /// <summary>Returns the number of property rows. This is the same as <see>DataColumnCount</see> and is only provided for completness.</summary>
+    /// <value>The number of property rows = number of data columns in the table.</value>
+    public int PropertyRowCount
+    {
+      get { return this.m_DataColumns.ColumnCount; }
+    }
+
+    /// <summary>Returns the number of property columns.</summary>
+    /// <value>The number of property columns in the table.</value>
+    public int PropertyColumnCount
+    {
+      get { return this.m_PropertyColumns.ColumnCount; }
+    }
+
+    /// <summary>Returns the number of data rows.</summary>
+    /// <value>The number of data rows in the table.</value>
+    public int DataRowCount
+    {
+      get { return this.m_DataColumns.RowCount; }
+    }
+
+
+
+
     public TableScript TableScript
     {
       get { return m_TableScript; }
@@ -734,9 +765,16 @@ namespace Altaxo.Data
 
     
 
-
-  
-
+    /// <summary>
+    /// Moves the selected columns along with their corresponding property values to a new position.
+    /// </summary>
+    /// <param name="selectedIndices">The indices of the columns to move.</param>
+    /// <param name="newPosition">The index of the new position where the columns are moved to.</param>
+    public void ChangeColumnPosition(Altaxo.Collections.IAscendingIntegerCollection selectedIndices, int newPosition)
+    {
+      this.m_DataColumns.ChangeColumnPosition(selectedIndices,newPosition);
+      this.m_PropertyColumns.ChangeRowPosition(selectedIndices,newPosition);
+    }
 
     /// <summary>
     /// Transpose transpose the table, i.e. exchange columns and rows
@@ -747,6 +785,43 @@ namespace Altaxo.Data
     {
       // TODO: do also look at the property columns for transposing
       m_DataColumns.Transpose();
+
+      return null; // no error message
+    }
+
+    /// <summary>
+    /// Transpose transpose the table, i.e. exchange columns and rows
+    /// this can only work if all columns in the table are of the same type
+    /// </summary>
+    /// <param name="numberOfDataColumnsChangeToPropertyColumns">Number of data columns that are changed to property columns before transposing the table.</param>
+    /// <param name="numberOfPropertyColumnsChangeToDataColumns">Number of property columns that are changed to data columns before transposing the table.</param>
+    /// <returns>null if succeeded, error string otherwise</returns>
+    public virtual string Transpose(int numberOfDataColumnsChangeToPropertyColumns, int numberOfPropertyColumnsChangeToDataColumns)
+    {
+    
+      numberOfDataColumnsChangeToPropertyColumns = Math.Max(numberOfDataColumnsChangeToPropertyColumns,0);
+      numberOfDataColumnsChangeToPropertyColumns = Math.Min(numberOfDataColumnsChangeToPropertyColumns,this.DataColumnCount);
+
+      numberOfPropertyColumnsChangeToDataColumns = Math.Max( numberOfPropertyColumnsChangeToDataColumns, 0);
+      numberOfPropertyColumnsChangeToDataColumns = Math.Min(  numberOfPropertyColumnsChangeToDataColumns, this.PropertyColumnCount);
+
+      // first, save the first data columns that are changed to property columns
+      Altaxo.Data.DataColumnCollection savedDataColumns = new DataColumnCollection();
+      Altaxo.Data.DataColumnCollection savedPropColumns = new DataColumnCollection();
+
+      Altaxo.Collections.IAscendingIntegerCollection savedDataColIndices = new Altaxo.Collections.IntegerRangeAsCollection(0,numberOfDataColumnsChangeToPropertyColumns);
+      Altaxo.Collections.IAscendingIntegerCollection savedPropColIndices = new Altaxo.Collections.IntegerRangeAsCollection(0,numberOfPropertyColumnsChangeToDataColumns);
+      // store the columns temporarily in another collection and remove them from the original collections
+      DataColumns.MoveColumnsTo(savedDataColumns, 0, savedDataColIndices);
+      this.PropertyColumns.MoveColumnsTo(savedPropColumns, 0, savedPropColIndices);
+
+      // now transpose the data columns
+      m_DataColumns.Transpose();
+
+      savedDataColumns.MoveColumnsTo(this.PropertyColumns,0, savedDataColIndices);
+      savedPropColumns.MoveColumnsTo(this.DataColumns,0,savedPropColIndices);
+
+      // now insert both the temporary stored DataColumnCollections at the beginning
 
       return null; // no error message
     }

@@ -86,10 +86,21 @@ namespace Altaxo.Worksheet.Commands
 
     public static void Transpose(WorksheetController ctrl)
     {
+      /*
       string msg = ctrl.DataTable.Transpose();
 
       if(null!=msg)
         System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,msg);
+        */
+
+
+      Worksheet.GUI.TransposeWorksheetControl transposeview = new Worksheet.GUI.TransposeWorksheetControl();
+      Worksheet.GUI.TransposeWorksheetController transposectrl = new Worksheet.GUI.TransposeWorksheetController(ctrl.DataTable,transposeview);
+      
+      Altaxo.Main.GUI.DialogShellController dsc = new Altaxo.Main.GUI.DialogShellController(
+        new Altaxo.Main.GUI.DialogShellView(transposeview),transposectrl,"Transpose worksheet",false);
+
+      dsc.ShowDialog(Current.MainWindow);
     }
     
 

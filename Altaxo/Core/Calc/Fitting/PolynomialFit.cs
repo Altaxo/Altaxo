@@ -299,7 +299,7 @@ namespace Altaxo.Calc.Fitting
     /// As with the studentized residual, the expected variance of this residual is 1. Since the ith
     /// observation is excluded from the model, the externally studentized residual is better suited
     /// for outlier detection than the (normal) studentized residual.
-    /// <para>Ref: Introduction to linear regression analysis, 3rd ed., Wiley, p.136</para></remarks>
+    /// <para>Ref: Introduction to linear regression analysis, 3rd ed., Wiley, p.136</para>
     /// </remarks>
     public double ExternallyStudentizedResidual(int i)
     {

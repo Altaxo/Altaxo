@@ -1641,6 +1641,7 @@ namespace Altaxo.Calc
           MatrixMath.Submatrix(xLoads,xl,i,0);
           MatrixMath.SelfSubtractProduct(xl,(double)si,xu);
         }
+        // xu now contains the spectral residual,
         // Cu now contains the predicted y values
         MatrixMath.SetRow(Cu,0,predictedY,nSpectrum);
       } // for each spectrum in XU

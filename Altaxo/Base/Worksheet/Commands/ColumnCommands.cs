@@ -20,6 +20,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #endregion
 
+using System;
 using System.Text.RegularExpressions;
 using Altaxo.Worksheet.GUI;
 
@@ -176,6 +177,70 @@ namespace Altaxo.Worksheet.Commands
       for(int i=0;i<ctrl.SelectedPropertyColumns.Count;i++)
       {
         ctrl.DataTable.PropertyColumns.SetColumnGroup(ctrl.SelectedPropertyColumns[i], nGroup);
+      }
+
+      ctrl.ClearAllSelections();
+
+      ctrl.UpdateTableView();
+    }
+    #endregion
+
+    #region Set column position
+    /// <summary>
+    /// Moves the selected column to a new position. The new position must be entered by the user.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller for the table.</param>
+    public static string SetSelectedColumnPosition(WorksheetController ctrl)
+    {
+      // check condition - either DataColumns or propertycolumns can be selected - but not both
+      if(ctrl.SelectedColumns.Count>0 && ctrl.SelectedPropertyColumns.Count>0)
+        return "Don't know what to do - both data and property columns are selected";
+
+      if(ctrl.SelectedColumns.Count==0 && ctrl.SelectedPropertyColumns.Count==0)
+        return null; // nothing to do
+
+      int newposition = int.MinValue;
+        
+      Main.GUI.IntegerValueInputController ivictrl = new Main.GUI.IntegerValueInputController(
+        0,
+        new Main.GUI.SingleValueDialog("New column position","Please enter the new position (>=0):")
+        );
+
+      ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+      if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
+      {
+        newposition = ivictrl.EnteredContents;
+      }
+      else
+        return null;
+
+     SetSelectedColumnPosition(ctrl,newposition);
+
+      return null;
+    }
+
+
+    /// <summary>
+    /// Moves the selected columns to a new position <code>nPosition</code>.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    /// <param name="nPosition">The new position for the selected columns.</param>
+    public static void SetSelectedColumnPosition(WorksheetController ctrl, int nPosition)
+    {
+      if(ctrl.SelectedColumns.Count>0)
+      {
+        if(ctrl.SelectedColumns.Count+nPosition>ctrl.DataTable.DataColumnCount)
+          nPosition = Math.Max(0,ctrl.DataTable.DataColumnCount-ctrl.SelectedColumns.Count);
+
+        ctrl.DataTable.ChangeColumnPosition(ctrl.SelectedColumns, nPosition);
+      }
+      
+      if(ctrl.SelectedPropertyColumns.Count>0)
+      {
+        if(ctrl.SelectedPropertyColumns.Count+nPosition>ctrl.DataTable.PropertyColumnCount)
+          nPosition = Math.Max(0,ctrl.DataTable.PropertyColumnCount-ctrl.SelectedColumns.Count);
+
+        ctrl.DataTable.PropertyColumns.ChangeColumnPosition(ctrl.SelectedPropertyColumns, nPosition);
       }
 
       ctrl.ClearAllSelections();

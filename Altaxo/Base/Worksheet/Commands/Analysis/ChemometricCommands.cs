@@ -554,9 +554,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
         }
 
         // store the corresponding X-Column of the spectra
+        Altaxo.Collections.AscendingIntegerCollection group1Cols = new AscendingIntegerCollection();
+        for(int i=0;i<numericDataCols.Count;i++)
+          if(srctable.DataColumns.GetColumnGroup(numericDataCols[i]) == group1) group1Cols.Add(i);
         xColumnOfX = Altaxo.Data.DataColumn.CreateColumnOfSelectedRows(
           srctable.PropertyColumns.FindXColumnOfGroup(group1),
-          numericDataCols);
+          group1Cols);
 
       }
       else // vertically oriented spectrum -> one spectrum is one data column

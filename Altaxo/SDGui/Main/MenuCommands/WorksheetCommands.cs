@@ -317,6 +317,25 @@ namespace Altaxo.Worksheet.Commands
        Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnGroupNumber(ctrl);
     }
   }
+  
+
+  public class SetColumnPosition : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnPosition(ctrl);
+    }
+  }
+
+  
+
+  public class SetRowPosition : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.RowCommands.SetSelectedRowPosition(ctrl);
+    }
+  }
 
 
   public class ExtractPropertyValues : AbstractWorksheetControllerCommand
