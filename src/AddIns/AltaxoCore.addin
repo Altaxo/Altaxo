@@ -1,5 +1,5 @@
 <!-- edited with XMLSPY v5 rel. 3 U (http://www.xmlspy.com) by DKI (DKI) -->
-<AddIn name="SharpDevelop Core" author="Mike Krueger" copyright="GPL" url="http://www.icsharpcode.net" description="SharpDevelop core module" version="1.0.0">
+<AddIn name="SharpDevelop Core" author="Mike Krueger" copyright="GPL" url="http://www.icsharpcode.net" description="SharpDevelop core module" version="1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Runtime>
 		<Import assembly="../bin/SharpDevelop.Base.dll"/>
 		<Import assembly="../bin/BeautyGui.exe"/>
@@ -95,22 +95,44 @@
 	<Extension path="/SharpDevelop/Workbench/MainMenu">
 		<MenuItem id="File" label="${res:XML.MainMenu.FileMenu}">
 			<MenuItem id="New" label="${res:XML.MainMenu.FileMenu.New}">
-				<MenuItem id="File" label="${res:XML.MainMenu.FileMenu.New.File}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.File.Description}" shortcut="Control|N" class="ICSharpCode.SharpDevelop.Commands.CreateNewFile"/>
 				<MenuItem id="Worksheet" label="${res:XML.MainMenu.FileMenu.New.Worksheet}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.Worksheet.Description}" shortcut="Control|W" class="Altaxo.Main.Commands.CreateNewWorksheet"/>
 				<MenuItem id="Graph" label="${res:XML.MainMenu.FileMenu.New.Graph}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.Graph.Description}" shortcut="Control|G" class="Altaxo.Main.Commands.CreateNewGraph"/>
+				<MenuItem id="WksGraphFromFile" label="${res:XML.MainMenu.FileMenu.New.WksGraphFromFile}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.New.WksGraphFromFile.Description}" shortcut="Control|N" class="Altaxo.Main.Commands.CreateNewWorksheetOrGraphFromFile"/>
 			</MenuItem>
-			<MenuItem id="Open" label="${res:XML.MainMenu.FileMenu.Open}">
-				<MenuItem id="File" label="${res:XML.MainMenu.FileMenu.Open.File}" icon="Icons.16x16.OpenFileIcon" description="${res:XML.MainMenu.FileMenu.Open.File.Description}" shortcut="Control|O" class="ICSharpCode.SharpDevelop.Commands.OpenFile"/>
+			<MenuItem id="Open" label="${res:XML.MainMenu.FileMenu.Open}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Open.Description}" shortcut="Control|O" class="Altaxo.Main.Commands.FileOpen"/>
+			<MenuItem id="Close" label="${res:XML.MainMenu.FileMenu.Close}" description="${res:XML.MainMenu.FileMenu.Close.Desription}" class="Altaxo.Main.Commands.CloseProject"/>
+			<MenuItem id="CloseSeparator" label="-"/>
+			<MenuItem id="SaveProject" label="${res:XML.MainMenu.FileMenu.SaveProject}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.SaveProject.Description}" shortcut="Control|S" class="Altaxo.Main.Commands.FileSave"/>
+			<MenuItem id="SaveProjectAs" label="${res:XML.MainMenu.FileMenu.SaveProjectAs}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.SaveProjectAs.Description}" class="Altaxo.Main.Commands.FileSaveAs"/>
+			<MenuItem id="SaveProjectSeparator" label="-"/>
+			<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
+				<MenuItem id="SaveWorksheetAs" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAs}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.SaveWorksheetAs.Description}" class="Altaxo.Worksheet.Commands.SaveAs"/>
+				<MenuItem id="SaveWorksheetAsTemplate" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.SaveWorksheetAsTemplate.Description}" class="Altaxo.Worksheet.Commands.SaveAsTemplate"/>
+			</Conditional>
+			<MenuItem id="SaveWindowSeparator" label="-"/>
+			<MenuItem id="PrintSeparator" label="-"/>
+			<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
+			<MenuItem id="ImportExportSeparator" label="-"/>
+			<MenuItem id="Import" label="${res:XML.MainMenu.FileMenu.Import}">			
+				<MenuItem id="WorksheetImportAscii" label="${res:XML.MainMenu.FileMenu.Import.Ascii}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.Ascii.Description}" class="Altaxo.Worksheet.Commands.ImportAscii"/>
+				<MenuItem id="WorksheetImportGalacticSPC" label="${res:XML.MainMenu.FileMenu.Import.GalacticSPC}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.GalacticSPC.Description}" class="Altaxo.Worksheet.Commands.ImportGalacticSPC"/>
+				<MenuItem id="WorksheetImportImage" label="${res:XML.MainMenu.FileMenu.Import.ImageData}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.ImageData.Description}" class="Altaxo.Worksheet.Commands.ImportImage"/>
 			</MenuItem>
-			<MenuItem id="ReloadSeparator" label="-"/>
-			<MenuItem id="SaveSeparator" label="-"/>
+			<MenuItem id="Export" label="${res:XML.MainMenu.FileMenu.Export}">			
+				<MenuItem id="WorksheetExportAscii" label="${res:XML.MainMenu.FileMenu.Export.Ascii}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Export.Ascii.Description}" class="Altaxo.Worksheet.Commands.ExportAscii"/>
+				<MenuItem id="WorksheetExportGalacticSPC" label="${res:XML.MainMenu.FileMenu.Export.GalacticSPC}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Export.GalacticSPC.Description}" class="Altaxo.Worksheet.Commands.ExportGalacticSPC"/>
+			</MenuItem>
+
+			</Conditional>
+			<MenuItem id="ExitSeparator" label="-"/>
+			<MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.Exit}" description="${res:XML.MainMenu.FileMenu.Exit.Desription}" class="Altaxo.Main.Commands.FileExit"/>
 		</MenuItem>
 		<MenuItem id="Edit" label="${res:XML.MainMenu.EditMenu}">
 			<MenuItem id="Separator1" label="-"/>
 		</MenuItem>
 		<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
 			<MenuItem id="Plot" label="${res:XML.MainMenu.PlotMenu}">
-				<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Disable">
+				<Conditional selecteddatacolumns="*" action="Disable">
 					<MenuItem id="PlotLine" label="${res:XML.MainMenu.PlotMenu.PlotLine}" description="${res:XML.MainMenu.PlotMenu.PlotLine.Description}" class="Altaxo.Worksheet.Commands.PlotLine"/>
 					<MenuItem id="Separator1" label="-"/>
 					<!--			        <MenuItem id = "ViewDocumentation"

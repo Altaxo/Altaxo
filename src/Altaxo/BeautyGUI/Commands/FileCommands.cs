@@ -126,6 +126,8 @@ namespace Altaxo.Main.Commands
 							App.Current.Doc.SaveToZippedFile(zippedStream, info);
 							App.Current.SaveWindowStateToZippedFile(zippedStream, info);
 							zippedStream.Close();
+						App.Current.Doc.IsDirty=false;
+
 						bRet = false;; // now saving was successfull, we can close the form
 					}
 					catch(Exception exc)
@@ -138,7 +140,6 @@ namespace Altaxo.Main.Commands
 					}
 				}
 			}
-			
 		}
 
 		protected SaveFileDialog GetSaveAsDialog()
@@ -150,6 +151,23 @@ namespace Altaxo.Main.Commands
 			saveFileDialog1.RestoreDirectory = true ;
  	
 			return saveFileDialog1;
+		}
+	}
+
+	public class FileSave : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			new FileSaveAs().Run();
+		}
+	}
+
+
+	public class CloseProject : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			// TODO  implement this command here
 		}
 	}
 

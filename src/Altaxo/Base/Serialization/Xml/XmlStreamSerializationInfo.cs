@@ -18,6 +18,8 @@ namespace Altaxo.Serialization.Xml
 
 		XmlArrayEncoding m_DefaultArrayEncoding = XmlArrayEncoding.Xml;
 
+		private System.Collections.Specialized.StringDictionary m_Properties = new System.Collections.Specialized.StringDictionary();
+
 		private const int _size_of_double=8;
 		private const int _size_of_DateTime=8;
 
@@ -42,6 +44,19 @@ namespace Altaxo.Serialization.Xml
 				m_Writer.WriteEndDocument();
 				m_Writer.Flush();				
 				m_Writer=null;
+		}
+
+		public void SetProperty(string propertyname, string propertyvalue)
+		{
+			if(m_Properties.ContainsKey(propertyname))
+				m_Properties[propertyname] = propertyvalue;
+			else
+				m_Properties.Add(propertyname,propertyvalue);
+		}
+
+		public string GetProperty(string propertyname)
+		{
+			return m_Properties[propertyname];
 		}
 
 		#region IXmlSerializationInfo Members

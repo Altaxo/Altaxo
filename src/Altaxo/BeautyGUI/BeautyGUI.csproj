@@ -199,6 +199,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Commands\GraphCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\SelectedColumnCondition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Commands\WorksheetCommands.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

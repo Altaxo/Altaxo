@@ -129,7 +129,11 @@ namespace Altaxo.Data
 				Altaxo.Data.DateTimeColumn s = (Altaxo.Data.DateTimeColumn)obj;
 				// serialize the base class
 				info.AddBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn));
-				info.AddArray("Data",s.m_Array,s.m_Count);
+				
+				if(null==info.GetProperty("Altaxo.Data.DataColumn.SaveAsTemplate"))
+					info.AddArray("Data",s.m_Array,s.m_Count);
+				else
+					info.AddArray("Data",s.m_Array,0);
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{

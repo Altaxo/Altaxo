@@ -687,15 +687,20 @@ namespace Altaxo.Worksheet.GUI
 		#region Menu functions
 
 
-		public void SaveTable(System.IO.Stream myStream)
+		public void SaveTable(System.IO.Stream myStream, bool saveAsTemplate)
 		{
 			Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+			if(saveAsTemplate)
+			{
+				info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate","true");
+			}
 			info.BeginWriting(myStream);
 			info.AddValue("Table",this.DataTable);
+			info.AddValue("Layout",this.m_TableLayout);
 			info.EndWriting();		
 		}
 
-		public void SaveTableAs()
+		public void SaveTableAs(bool saveAsTemplate)
 		{
 			System.IO.Stream myStream ;
 			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
@@ -708,7 +713,7 @@ namespace Altaxo.Worksheet.GUI
 			{
 				if((myStream = saveFileDialog1.OpenFile()) != null)
 				{
-					this.SaveTable(myStream);
+					this.SaveTable(myStream, saveAsTemplate);
 					myStream.Close();
 				}
 			}
@@ -796,7 +801,7 @@ namespace Altaxo.Worksheet.GUI
 
 		protected void EhMenuFileSaveTableAs_OnClick(object sender, System.EventArgs e)
 		{
-			SaveTableAs();
+			SaveTableAs(false);
 		}
 
 		// ------------------------------------------------------------------
@@ -810,7 +815,7 @@ namespace Altaxo.Worksheet.GUI
 
 		protected void EhMenuFileImportPicture_OnClick(object sender, System.EventArgs e)
 		{
-			DataGridOperations.ImportPicture(this.DataTable);
+			DataGridOperations.ImportImage(this.DataTable);
 
 		}
 

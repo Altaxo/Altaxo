@@ -7,6 +7,9 @@ namespace Altaxo.Serialization.Xml
 	/// </summary>
 	public interface IXmlSerializationInfo
 	{
+		void SetProperty(string propertyname, string propertyvalue);
+		string GetProperty(string propertyname);
+
 		void AddAttributeValue(string name, int val);
 		
 		void AddValue(string name, bool val);

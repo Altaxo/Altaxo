@@ -342,6 +342,42 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
+		/// Creates a new layer with top x axis, which is linked to the same position with top x axis and right y axis.
+		/// </summary>
+		public void CreateNewLayerLinkedTopX(int linklayernumber)
+		{
+			XYPlotLayer newlayer= new XYPlotLayer(DefaultLayerPosition,DefaultLayerSize);
+			Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
+			// link the new layer to the last old layer
+			newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
+			newlayer.SetPosition(0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear);
+			newlayer.SetSize(1,XYPlotLayer.SizeType.RelativeToLinkedLayer,1,XYPlotLayer.SizeType.RelativeToLinkedLayer);
+
+			// set enabling of axis
+			newlayer.BottomAxisEnabled=false;
+			newlayer.LeftAxisEnabled=false;
+			newlayer.RightAxisEnabled=false;
+		}
+
+		/// <summary>
+		/// Creates a new layer with right y axis, which is linked to the same position with top x axis and right y axis.
+		/// </summary>
+		public void CreateNewLayerLinkedRightY(int linklayernumber)
+		{
+			XYPlotLayer newlayer= new XYPlotLayer(DefaultLayerPosition,DefaultLayerSize);
+			Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
+			// link the new layer to the last old layer
+			newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
+			newlayer.SetPosition(0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear);
+			newlayer.SetSize(1,XYPlotLayer.SizeType.RelativeToLinkedLayer,1,XYPlotLayer.SizeType.RelativeToLinkedLayer);
+
+			// set enabling of axis
+			newlayer.BottomAxisEnabled=false;
+			newlayer.TopAxisEnabled=false;
+			newlayer.LeftAxisEnabled=false;
+		}
+
+		/// <summary>
 		/// Creates a new layer with bottom x axis and left y axis, which is linked to the same position with top x axis and right y axis.
 		/// </summary>
 		public void CreateNewLayerLinkedTopXRightY(int linklayernumber)
@@ -381,7 +417,6 @@ namespace Altaxo.Graph
 
 
 		#endregion
-
 
 		#region inherited from XYPlotLayer.Collection
 

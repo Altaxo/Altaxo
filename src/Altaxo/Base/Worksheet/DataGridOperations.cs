@@ -1029,7 +1029,7 @@ namespace Altaxo.Worksheet
 		}
 
 
-		public static void ImportPicture(Altaxo.Data.DataTable table)
+		public static void ImportImage(Altaxo.Data.DataTable table)
 		{
 			ColorAmplitudeFunction colorfunc;
 			System.IO.Stream myStream;
