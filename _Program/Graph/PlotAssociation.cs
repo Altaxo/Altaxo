@@ -175,7 +175,7 @@ namespace Altaxo.Graph
 			{
 				PlotAssociation s = (PlotAssociation)obj;
 				
-				if(s.m_xColumn is Main.IDocumentNode)
+				if(s.m_xColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_xColumn).ParentObject))
 				{
 					info.AddValue("XColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_xColumn));
 				}
@@ -185,7 +185,7 @@ namespace Altaxo.Graph
 				}
 				
 				
-				if(s.m_yColumn is Main.IDocumentNode)
+				if(s.m_yColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_yColumn).ParentObject))
 				{
 					info.AddValue("YColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_yColumn));
 				}

@@ -460,7 +460,7 @@ namespace Altaxo.Graph
 				info.AddValue("Legend",s.m_Legend);
 			
 				// Layer specific
-				info.AddValue("LinkedLayer",s.m_LinkedLayer);
+				info.AddValue("LinkedLayer",s.LinkedLayer);
 			
 				info.AddValue("GraphObjects",s.m_GraphObjects);
 				info.AddValue("Plots",s.m_PlotItems);
@@ -625,13 +625,17 @@ namespace Altaxo.Graph
 				info.AddValue("Legend",s.m_Legend);
 			
 				// Layer specific
-				info.AddValue("LinkedLayer",s.m_LinkedLayer);
+				info.AddValue("LinkedLayer",Main.DocumentPath.GetRelativePathFromTo(s,s.m_LinkedLayer));
 			
 				info.AddValue("GraphObjectCollection",s.m_GraphObjects);
 				info.AddValue("Plots",s.m_PlotItems);
 
 
 			}
+
+			protected Layer _Layer;
+			protected Main.DocumentPath _LinkedLayerPath;
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
@@ -702,8 +706,15 @@ namespace Altaxo.Graph
 				s.m_Legend = (Graph.ExtendedTextGraphObject)info.GetValue("Legend",typeof(Graph.ExtendedTextGraphObject));
 			
 				// Layer specific
-				s.m_LinkedLayer = (Layer)info.GetValue("LinkedLayer",typeof(Layer));
-			
+				Main.DocumentPath linkedLayer = (Main.DocumentPath)info.GetValue("LinkedLayer",typeof(Layer));
+				if(linkedLayer!=null)
+				{
+					XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
+					surr._Layer = s;
+					surr._LinkedLayerPath = linkedLayer;
+					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+				}
+
 				s.m_GraphObjects = (Graph.GraphObjectCollection)info.GetValue("GraphObjects",typeof(Graph.GraphObjectCollection));
 
 				s.m_PlotItems = (Altaxo.Graph.PlotList)info.GetValue("Plots",typeof(Altaxo.Graph.PlotList));
@@ -712,6 +723,27 @@ namespace Altaxo.Graph
 				s.CreateEventLinks();
 
 				return s;
+			}
+
+			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+			{
+				bool bAllResolved = true;
+
+				object linkedLayer = Main.DocumentPath.GetObject(this._LinkedLayerPath,this._Layer,documentRoot);
+
+				if(linkedLayer is Layer)
+				{
+					this._Layer.LinkedLayer = (Layer)linkedLayer;
+					this._LinkedLayerPath=null;
+				}
+				else
+				{
+					bAllResolved = false;
+				}
+
+				if(bAllResolved)
+					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+
 			}
 		}
 

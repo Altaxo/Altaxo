@@ -269,7 +269,7 @@ namespace Altaxo.Serialization.Xml
 				else
 				{
 					bool bNotEmpty = !m_Reader.IsEmptyElement;
-					System.Diagnostics.Trace.WriteLine(string.Format("Xml val {0}, type {1}, empty:{2}",m_Reader.Name,type,bNotEmpty));
+					// System.Diagnostics.Trace.WriteLine(string.Format("Xml val {0}, type {1}, empty:{2}",m_Reader.Name,type,bNotEmpty));
 
 					
 					if(bNotEmpty)

@@ -118,6 +118,7 @@ namespace Altaxo.Worksheet
 				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
 				surr.m_ColStyles = new System.Collections.Hashtable();
 				surr.m_TableLayout = s;
+				info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
 
 				s.m_Guid = System.Xml.XmlConvert.ToGuid(info.GetString("Guid"));
@@ -136,9 +137,7 @@ namespace Altaxo.Worksheet
 					s.DefaultColumnStyles.Add(defstyle.GetType(), defstyle);
 				}
 				info.CloseArray(count);
-
-
-				
+			
 
 				// deserialize the columnstyles
 				// this must be deserialized in a new instance of this surrogate, since we can not resolve it immediately
@@ -153,7 +152,6 @@ namespace Altaxo.Worksheet
 						surr.m_ColStyles.Add(key,val);
 						info.CloseElement();
 					}
-					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 				}
 				info.CloseArray(count);
 

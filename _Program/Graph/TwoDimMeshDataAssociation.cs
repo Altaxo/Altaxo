@@ -124,32 +124,177 @@ namespace Altaxo.Graph
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				D2EquidistantMeshDataAssociation s = (D2EquidistantMeshDataAssociation)obj;
-				info.AddValue("XColumn",s.m_XColumn);
-				info.AddValue("YColumn",s.m_YColumn);
-				info.AddValue("DataColumns",s.m_DataColumns);
+		
+				if(s.m_XColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_XColumn).ParentObject))
+				{
+					info.AddValue("XColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_XColumn));
+				}
+				else
+				{
+					info.AddValue("XColumn",s.m_XColumn);
+				}
 
+				if(s.m_YColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_YColumn).ParentObject))
+				{
+					info.AddValue("YColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_YColumn));
+				}
+				else
+				{
+					info.AddValue("YColumn",s.m_YColumn);
+				}
+
+				info.CreateArray("DataColumns",s.m_DataColumns.Length);
+				for(int i=0;i<s.m_DataColumns.Length;i++)
+				{
+					Altaxo.Data.IReadableColumn col = s.m_DataColumns[i];
+					if(col is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)col).ParentObject))
+					{
+						info.AddValue("e",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)col));
+					}
+					else
+					{
+						info.AddValue("e",col);
+					}
+				}
 				info.AddValue("XBoundaries",s.m_xBoundaries);
 				info.AddValue("YBoundaries",s.m_yBoundaries);
 				info.AddValue("VBoundaries",s.m_vBoundaries);
 			}
+
+			Main.DocumentPath _xColumn = null;
+			Main.DocumentPath _yColumn = null;
+			Main.DocumentPath[] _vColumns=null;
+			D2EquidistantMeshDataAssociation _plotAssociation = null;
+
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
+				bool bSurrogateUsed = false;
 				
 				D2EquidistantMeshDataAssociation s = null!=o ? (D2EquidistantMeshDataAssociation)o : new D2EquidistantMeshDataAssociation();
 
-				s.m_XColumn = (Altaxo.Data.INumericColumn)info.GetValue("XColumn",typeof(Altaxo.Data.INumericColumn));
-				s.m_YColumn = (Altaxo.Data.INumericColumn)info.GetValue("YColumn",typeof(Altaxo.Data.INumericColumn));
-				s.m_DataColumns = (Altaxo.Data.IReadableColumn[])info.GetValue("DataColumns",typeof(Altaxo.Data.IReadableColumn[]));
-		
+				XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
+
+				object deserobj;
+				deserobj = info.GetValue("XColumn",s);
+				if(deserobj is Main.DocumentPath)
+				{
+					surr._xColumn = (Main.DocumentPath)deserobj;
+					bSurrogateUsed=true;
+				}
+				else
+				{
+					s.m_XColumn = (Altaxo.Data.INumericColumn)deserobj;
+					if(deserobj is Altaxo.Data.DataColumn)
+						((Altaxo.Data.DataColumn)deserobj).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(s.OnColumnDataChangedEventHandler);
+				}
+
+
+				deserobj = info.GetValue("YColumn",s);
+				if(deserobj is Main.DocumentPath)
+				{
+					surr._yColumn = (Main.DocumentPath)deserobj;
+					bSurrogateUsed=true;
+				}
+				else
+				{
+					s.m_YColumn = (Altaxo.Data.INumericColumn)deserobj;
+					if(deserobj is Altaxo.Data.DataColumn)
+						((Altaxo.Data.DataColumn)deserobj).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(s.OnColumnDataChangedEventHandler);
+				}
+
+				int count = info.OpenArray();
+				surr._vColumns = new Main.DocumentPath[count];
+				s.m_DataColumns = new Altaxo.Data.IReadableColumn[count];
+				for(int i=0;i<count;i++)
+				{
+					deserobj = info.GetValue("YColumn",s);
+					if(deserobj is Main.DocumentPath)
+					{
+						surr._vColumns[i] = (Main.DocumentPath)deserobj;
+						bSurrogateUsed=true;
+					}
+					else
+					{
+						s.m_DataColumns[i] = (Altaxo.Data.IReadableColumn)deserobj;
+						if(deserobj is Altaxo.Data.DataColumn)
+							((Altaxo.Data.DataColumn)deserobj).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(s.OnColumnDataChangedEventHandler);
+					}
+				}
+				info.CloseArray(count);
+				
+				
 				s.m_xBoundaries = (PhysicalBoundaries)info.GetValue("XBoundaries",typeof(PhysicalBoundaries));
 				s.m_yBoundaries = (PhysicalBoundaries)info.GetValue("YBoundaries",typeof(PhysicalBoundaries));
 				s.m_vBoundaries = (PhysicalBoundaries)info.GetValue("VBoundaries",typeof(PhysicalBoundaries));
 
-				s.OnDeserialization(null);
+				s.m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
+				s.m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
+				s.m_vBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnVBoundariesChangedEventHandler);
+
+
+				if(bSurrogateUsed)
+				{
+					surr._plotAssociation = s;
+					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+				}
 
 				return s;
 			}
+
+			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+			{
+				bool bAllResolved = true;
+
+				if(this._xColumn != null)
+				{
+					object xColumn = Main.DocumentPath.GetObject(this._xColumn, this._plotAssociation, documentRoot);
+					bAllResolved &= (null!=xColumn);
+					if(xColumn is Altaxo.Data.INumericColumn)
+					{
+						this._xColumn = null;
+						_plotAssociation.m_XColumn = (Altaxo.Data.INumericColumn)xColumn;
+						if(xColumn is Altaxo.Data.DataColumn)
+							((Altaxo.Data.DataColumn)xColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(_plotAssociation.OnColumnDataChangedEventHandler);
+					}
+				}
+
+				if(this._yColumn != null)
+				{
+					object yColumn = Main.DocumentPath.GetObject(this._yColumn, this._plotAssociation, documentRoot);
+					bAllResolved &= (null!=yColumn);
+					if(yColumn is Altaxo.Data.INumericColumn)
+					{
+						this._yColumn = null;
+						_plotAssociation.m_YColumn = (Altaxo.Data.INumericColumn)yColumn;
+						if(yColumn is Altaxo.Data.DataColumn)
+							((Altaxo.Data.DataColumn)yColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(_plotAssociation.OnColumnDataChangedEventHandler);
+					}
+				}
+
+				for(int i=0;i<this._vColumns.Length;i++)
+				{
+					if(this._vColumns[i]!=null)
+					{
+					object vColumn = Main.DocumentPath.GetObject(this._vColumns[i], this._plotAssociation, documentRoot);
+					bAllResolved &= (null!=vColumn);
+					if(vColumn is Altaxo.Data.IReadableColumn)
+					{
+						this._vColumns[i] = null;
+						_plotAssociation.m_DataColumns[i] = (Altaxo.Data.IReadableColumn)vColumn;
+						if(vColumn is Altaxo.Data.DataColumn)
+							((Altaxo.Data.DataColumn)vColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(_plotAssociation.OnColumnDataChangedEventHandler);
+
+					}
+					}
+				}
+
+				if(bAllResolved)
+					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+			}
 		}
+
+
+
 
 		/// <summary>
 		/// Finale measures after deserialization.
