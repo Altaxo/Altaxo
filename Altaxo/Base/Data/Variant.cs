@@ -259,7 +259,7 @@ namespace Altaxo.Data
         return m_Object.GetHashCode();
     }
 
-    public static explicit operator double(AltaxoVariant f) 
+    public static implicit operator double(AltaxoVariant f) 
     {
       if(f.m_Content==Content.VDouble)
         return f.m_Double;
@@ -271,7 +271,7 @@ namespace Altaxo.Data
       return new AltaxoVariant(f);
     }
       
-    public static explicit operator DateTime(AltaxoVariant f) 
+    public static implicit operator DateTime(AltaxoVariant f) 
     {
       if(f.m_Content==Content.VDateTime)
         return (DateTime)f.m_Object;
@@ -283,7 +283,7 @@ namespace Altaxo.Data
       return new AltaxoVariant(f);
     }
     
-    public static explicit operator string(AltaxoVariant f) 
+    public static implicit operator string(AltaxoVariant f) 
     {
       if(f.m_Content==Content.VString)
         return (string)f.m_Object;

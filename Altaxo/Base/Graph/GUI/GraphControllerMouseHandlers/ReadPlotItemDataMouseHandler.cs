@@ -32,7 +32,6 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 {
-  #region Read plot item data Mouse Handler
   /// <summary>
   /// Handles the mouse events when the <see cref="GraphTools.ObjectPointer"/> tools is selected.
   /// </summary>
@@ -394,6 +393,5 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
   } // end of class
 
-  #endregion // plot item mouse handler
-
+  
 }

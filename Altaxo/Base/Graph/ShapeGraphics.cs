@@ -32,77 +32,13 @@ namespace Altaxo.Graph
   [SerializationVersion(0)]
   public abstract class ShapeGraphic : GraphicsObject
   {
-
-    protected Color m_fillColor  = Color.White;
-    protected Color m_lineColor  = Color.Black;
-    protected float m_lineWidth = 1;
+    protected BrushHolder m_fillBrush; 
+    protected PenHolder m_linePen; 
+  //  protected float m_lineWidth = 1;
     protected bool m_fill  = false;
 
     #region Serialization
-    /// <summary>Used to serialize the ShapeGraphic Version 0.</summary>
-    public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-    {
-      /// <summary>
-      /// Serializes ShapeGraphic Version 0.
-      /// </summary>
-      /// <param name="obj">The ShapeGraphic to serialize.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
-      {
-        ShapeGraphic s = (ShapeGraphic)obj;
-        // get the surrogate selector of the base class
-        System.Runtime.Serialization.ISurrogateSelector ss= AltaxoStreamingContext.GetSurrogateSelector(context);
-        if(null!=ss)
-        {
-          System.Runtime.Serialization.ISerializationSurrogate surr =
-            ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
-  
-          // serialize the base class
-          surr.GetObjectData(obj,info,context); // stream the data of the base object
-        }
-        else 
-        {
-          throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
-        }
-        info.AddValue("LineColor",s.m_lineColor);
-        info.AddValue("LineWidth",s.m_lineWidth);
-
-        info.AddValue("Fill",s.m_fill);
-        info.AddValue("FillColor",s.m_fillColor);
-      }
-      /// <summary>
-      /// Deserializes the ShapeGraphic Version 0.
-      /// </summary>
-      /// <param name="obj">The empty ShapeGraphic object to deserialize into.</param>
-      /// <param name="info">The serialization info.</param>
-      /// <param name="context">The streaming context.</param>
-      /// <param name="selector">The deserialization surrogate selector.</param>
-      /// <returns>The deserialized ShapeGraphic.</returns>
-      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-      {
-        ShapeGraphic s = (ShapeGraphic)obj;
-        // get the surrogate selector of the base class
-        System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-        if(null!=ss)
-        {
-          System.Runtime.Serialization.ISerializationSurrogate surr =
-            ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
-          // deserialize the base class
-          surr.SetObjectData(obj,info,context,selector);
-        }
-        else 
-        {
-          throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
-        }
-        s.m_lineColor = (Color)info.GetValue("LineColor",typeof(Color));
-        s.m_lineWidth = info.GetSingle("LineWidth");
-
-        s.m_fill = info.GetBoolean("Fill");
-        s.m_fillColor = (Color)info.GetValue("FillColor",typeof(Color));
-        return s;
-      }
-    }
+ 
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ShapeGraphic),0)]
       public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -112,11 +48,11 @@ namespace Altaxo.Graph
         ShapeGraphic s = (ShapeGraphic)obj;
         info.AddBaseValueEmbedded(s,typeof(ShapeGraphic).BaseType);
 
-        info.AddValue("LineColor",s.m_lineColor);
-        info.AddValue("LineWidth",s.m_lineWidth);
+        info.AddValue("LinePen",s.m_linePen);
+        //info.AddValue("LineWidth",s.m_lineWidth);
 
         info.AddValue("Fill",s.m_fill);
-        info.AddValue("FillColor",s.m_fillColor);
+        info.AddValue("FillBrush",s.m_fillBrush);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
@@ -125,11 +61,11 @@ namespace Altaxo.Graph
         info.GetBaseValueEmbedded(s,typeof(ShapeGraphic).BaseType,parent);
 
 
-        s.m_lineColor = (Color)info.GetValue("LineColor",s);
-        s.m_lineWidth = info.GetSingle("LineWidth");
+        s.m_linePen = (PenHolder)info.GetValue("LinePen",s);
+        //s.m_lineWidth = info.GetSingle("LineWidth");
 
         s.m_fill = info.GetBoolean("Fill");
-        s.m_fillColor = (Color)info.GetValue("FillColor",s);
+        s.m_fillBrush = (BrushHolder)info.GetValue("FillBrush",s);
         return s;
       }
     }
@@ -145,9 +81,9 @@ namespace Altaxo.Graph
 
     public ShapeGraphic()
     {
-      m_fillColor  = Color.White;
-      m_lineColor  = Color.Black;
-      m_lineWidth = 1;
+      m_fillBrush  = new BrushHolder(Color.White);
+      m_linePen  = new PenHolder(Color.Black);
+      //m_lineWidth = 1;
       m_fill  = false;
     }
 
@@ -155,9 +91,9 @@ namespace Altaxo.Graph
       :
       base(from)
     {
-      this.m_fillColor = from.m_fillColor;
-      this.m_lineColor = from.m_lineColor;
-      this.m_lineWidth = from.m_lineWidth;
+      this.m_fillBrush = (BrushHolder)from.m_fillBrush.Clone();
+      this.m_linePen = (PenHolder)from.m_linePen.Clone();
+      //this.m_lineWidth = from.m_lineWidth;
       this.m_fill       = from.m_fill;
     }
 
@@ -165,14 +101,29 @@ namespace Altaxo.Graph
     { 
       get
       {
-        return m_lineWidth;
+        return m_linePen.Width;
       }
       set
       {
         if(value > 0)
-          m_lineWidth = value;
+           m_linePen.Width = value;
         else
           throw new ArgumentOutOfRangeException("LineWidth", "Line Width must be > 0");
+      }
+    }
+
+    public virtual PenHolder Pen
+    {
+      get 
+      {
+        return m_linePen;
+      }
+      set
+      {
+        if(value!=null)
+          m_linePen = (PenHolder)value.Clone();
+        else
+          throw new ArgumentNullException("The line pen must not be null");
       }
     }
 
@@ -180,11 +131,11 @@ namespace Altaxo.Graph
     {
       get
       {
-        return m_lineColor;
+        return m_linePen.Color;
       }
       set
       {
-        m_lineColor = value;
+        m_linePen.Color = value;
       }
     }
 
@@ -203,11 +154,11 @@ namespace Altaxo.Graph
     {
       get
       {
-        return m_fillColor;
+        return m_fillBrush.Color;
       }
       set
       {
-        m_fillColor = value;
+        m_fillBrush = new BrushHolder(value);
       }
     }
   } //  End Class
@@ -375,12 +326,19 @@ namespace Altaxo.Graph
     {
       GraphicsPath gp = new GraphicsPath();
       Matrix myMatrix = new Matrix();
-      Pen myPen = new Pen(this.LineColor, this.LineWidth);
-      gp.AddLine(0, 0, Width, Height);
+      gp.AddLine(0, 0, Width, Height);      
       myMatrix.Translate(X, Y);
       myMatrix.Rotate(this.Rotation);
       gp.Transform(myMatrix);
-      return gp.IsOutlineVisible(pt, myPen) ? new HitTestObject(gp,this) : null;
+      using(Pen myPen = new Pen(Color.Black, 5))
+      {
+        if(gp.IsOutlineVisible(pt,myPen))
+        {
+          gp.Widen(myPen);
+          return new HitTestObject(gp,this);
+        }
+      }
+      return null;
     }
 
 
@@ -653,6 +611,22 @@ namespace Altaxo.Graph
       :
       this(new PointF(posX, posY), new SizeF(width, height), Rotation)
     {
+    }
+
+    static void Exchange(ref float x, ref float y)
+    {
+      float h = x;
+      x=y;
+      y=h;
+    }
+    public static RectangleGraphic FromLTRB(float left, float top, float right, float bottom)
+    {
+      if(left>right)
+        Exchange(ref left, ref right);
+      if(top>bottom)
+        Exchange(ref top, ref bottom);
+
+      return new RectangleGraphic(left,top,right-left,bottom-top);
     }
 
     public RectangleGraphic(RectangleGraphic from)

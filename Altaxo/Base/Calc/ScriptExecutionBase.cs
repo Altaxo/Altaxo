@@ -371,6 +371,18 @@ namespace Altaxo.Calc
       else throw new ArgumentException("Error: Try to apply Tanh() to " + x.TypeAndName,"x");
     }
 
+    #region Non standard functions
+
+    public static Altaxo.Data.DoubleColumn Square(Altaxo.Data.DataColumn x)
+    { 
+      if(typeof(Altaxo.Data.DoubleColumn)==x.GetType())
+        return ((Altaxo.Data.DoubleColumn)x)*((Altaxo.Data.DoubleColumn)x);
+     
+      else throw new ArgumentException("Error: Try to apply Square() to " + x.TypeAndName,"x");
+    }
+
+    #endregion
+
     #endregion
 
 

@@ -725,12 +725,27 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\GUI\GraphControllerMouseHandlers\ArrowLineDrawingMouseHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\GUI\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Graph\GUI\GraphControllerMouseHandlers\ReadPlotItemDataMouseHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\GraphControllerMouseHandlers\ReadXYCoordinatesMouseHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\GraphControllerMouseHandlers\RectangularToolMouseHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

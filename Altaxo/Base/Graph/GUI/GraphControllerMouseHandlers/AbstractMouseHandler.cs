@@ -101,6 +101,14 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       return this;
     }
 
+
+    /// <summary>
+    /// Is called when the mouse state handler is deselected.
+    /// </summary>
+    public virtual void OnDeselection()
+    {
+    }
+
     /// <summary>
     /// This function is called just after the paint event.
     /// </summary>
