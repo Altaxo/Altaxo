@@ -143,7 +143,7 @@ namespace Altaxo.Calc.Fitting
         for(int j=0;j<numberOfParameter;j++)
         {
           double sum=0;
-          for(int k=0;k<numberOfParameter;j++)
+          for(int k=0;k<numberOfParameter;k++)
             sum += _covarianceMatrix[j][k]*u[i,k];
 
           total += u[i,j]*sum;
@@ -254,7 +254,7 @@ namespace Altaxo.Calc.Fitting
 
     public double TofParameter(int i)
     {
-      return Parameter[i]/StandardErrorOfParameter(i);
+      return Math.Abs(Parameter[i])/StandardErrorOfParameter(i);
     }
 
     public double[] Residual

@@ -143,13 +143,14 @@ namespace Altaxo.Graph.Procedures
       Current.Console.WriteLine("---- " + DateTime.Now.ToString() + " -----------------------");
       Current.Console.WriteLine("Polynomial regression of order {0} of {1} over {2}",order,plotNames[1],plotNames[0]);
 
-      Current.Console.WriteLine("Name   Value   Error    F-Value     Prob>F");
+      Current.Console.WriteLine(
+"Name           Value               Error               F-Value             Prob>F");
 
       for(int i=0;i<fit.Parameter.Length;i++)
-        Current.Console.WriteLine("A{0}: {1} ± {2} {3} {4}",
+        Current.Console.WriteLine("A{0,-3} {1,20} {2,20} {3,20} {4,20}",
           i,
           fit.Parameter[i],
-          fit.EstimatedVariance*fit.Covariances[i][i],
+          fit.StandardErrorOfParameter(i),
           fit.TofParameter(i),
           1-Calc.Random.FDistribution.CDF(fit.TofParameter(i),numberOfParameter,numberOfDataPoints-1)
           );
@@ -159,13 +160,13 @@ namespace Altaxo.Graph.Procedures
       fit.AdjustedRSquared);
 
       Current.Console.WriteLine("------------------------------------------------------------");
-      Current.Console.WriteLine("Source of     Degrees of");
-      Current.Console.WriteLine("variation     freedom          Mean Square   F0      P value");
+      Current.Console.WriteLine("Source of  Degrees of");
+      Current.Console.WriteLine("variation  freedom          Sum of Squares          Mean Square          F0                   P value");
 
       double regressionmeansquare = fit.RegressionCorrectedSumOfSquares/numberOfParameter;
       double residualmeansquare = fit.ResidualSumOfSquares/(numberOfDataPoints-numberOfParameter-1);
      
-      Current.Console.WriteLine("Regression    {0} {1} {2} {3} {4}",
+      Current.Console.WriteLine("Regression {0,10} {1,20} {2,20} {3,20} {4,20}",
          numberOfParameter,
         fit.RegressionCorrectedSumOfSquares,
         fit.RegressionCorrectedSumOfSquares/numberOfParameter,
@@ -173,14 +174,14 @@ namespace Altaxo.Graph.Procedures
         1-Calc.Random.FDistribution.CDF(regressionmeansquare/residualmeansquare,numberOfParameter,numberOfDataPoints-1)
       );
 
-      Current.Console.WriteLine("Residual      {0} {1} {2}",
+      Current.Console.WriteLine("Residual   {0,10} {1,20} {2,20}",
         numberOfDataPoints-1-numberOfParameter,
         fit.ResidualSumOfSquares,
         residualmeansquare
         );
 
 
-      Current.Console.WriteLine("Total         {0} {1}",
+      Current.Console.WriteLine("Total      {0,10} {1,20}",
         numberOfDataPoints-1,
         fit.TotalCorrectedSumOfSquares
        
