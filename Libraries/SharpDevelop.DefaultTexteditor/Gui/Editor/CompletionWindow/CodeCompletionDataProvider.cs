@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃƒÂ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -60,12 +60,15 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			string expression    = TextUtilities.GetExpressionBeforeOffset(textArea, textArea.Caret.Offset);
 			ResolveResult results;
 			
-			if (expression.Length == 0) {
-				return null;
-			}
-			IParserService           parserService           = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
-			if (charTyped == ' ') {
-				if (expression == "using" || expression.EndsWith(" using") || expression.EndsWith("\tusing")|| expression.EndsWith("\nusing")|| expression.EndsWith("\rusing")) {
+//			if (expression.Length == 0) {
+//				return null;
+//			}
+			//// do not instantiate service here as some checks might fail
+			//IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
+			if (charTyped == ' ' && (expression.LastIndexOf("using")>=0 || expression.ToUpper().LastIndexOf("IMPORTS")>=0)) {
+				if (expression == "using" || expression.EndsWith(" using") || expression.EndsWith("\tusing")|| expression.EndsWith("\nusing")|| expression.EndsWith("\rusing") ||
+				    expression.ToUpper() == "IMPORTS" || expression.ToUpper().EndsWith(" IMPORTS") || expression.ToUpper().EndsWith("\tIMPORTS")|| expression.ToUpper().EndsWith("\nIMPORTS")|| expression.ToUpper().EndsWith("\rIMPORTS")) {
+					IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
 					string[] namespaces = parserService.GetNamespaceList("");
 //					AddResolveResults(new ResolveResult(namespaces, ShowMembers.Public));
 					AddResolveResults(new ResolveResult(namespaces));
@@ -87,7 +90,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 //					}
 				}
 			} else {
-				results = parserService.Resolve(expression, 
+				//// we don't need to run parser on blank char here
+				if (charTyped==' ') {
+					return null;
+				}
+				IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
+				results = parserService.Resolve(expression,
 				                                caretLineNumber,
 				                                caretColumn,
 				                                fileName,

@@ -28,5 +28,9 @@ namespace ICSharpCode.Core.Services
 	{
 		string GetString(string name);
 		
+		/// <summary>
+		/// Take string/bitmap resources from an assembly and merge them in the resource service
+		/// </summary>
+		void RegisterAssembly(Assembly assembly);
 	}
 }

@@ -19,8 +19,8 @@ namespace ICSharpCode.SharpDevelop.Services
 	[Serializable()]
 	public class ClassProxyCollection : CollectionBase 
 	{
-		Hashtable nameHashtable = new Hashtable();
-		
+		Hashtable nameHashtable                = new Hashtable();
+		Hashtable caseInsensitiveNameHashtable = new Hashtable();
 		/// <summary>
 		///     <para>
 		///       Initializes a new instance of <see cref='.ClassProxyCollection'/>.
@@ -81,7 +81,9 @@ namespace ICSharpCode.SharpDevelop.Services
 		/// <seealso cref='.ClassProxyCollection.AddRange'/>
 		public int Add(ClassProxy value) 
 		{
-			nameHashtable[value.FullyQualifiedName] = Count;
+			nameHashtable[value.FullyQualifiedName]                          = Count;
+			caseInsensitiveNameHashtable[value.FullyQualifiedName.ToLower()] = Count;
+			
 			return List.Add(value);
 		}
 		
@@ -167,15 +169,14 @@ namespace ICSharpCode.SharpDevelop.Services
 			return List.IndexOf(value);
 		}
 		
-		public int IndexOf(string fullyQualifiedName)
+		public int IndexOf(string fullyQualifiedName, bool caseSensitive)
 		{
-			object o = nameHashtable[fullyQualifiedName];
+			object o = caseSensitive ? nameHashtable[fullyQualifiedName] : caseInsensitiveNameHashtable[fullyQualifiedName.ToLower()];
 			if (o != null) {
 				return (int)o;
 			}
 			return -1;
 		}
-		
 		
 		/// <summary>
 		///    <para>Returns an enumerator that can iterate through

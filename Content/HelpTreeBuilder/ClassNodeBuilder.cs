@@ -122,12 +122,16 @@ namespace ICSharpCode.HelpConverter.HelpTreeBuilder
 			RegistryKey helpKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\MSDN\7.0\Help");
 			
 			RegistryKey k = helpKey.OpenSubKey(localHelp);
+			bool found = false;
 			if (k != null) {
 				string v = ScanSubKeys(k);
 				if (v != null) {
 					prefix = v;
+					found = true;
 				}
-			} else {
+			}
+			
+			if(! found) {
 				// use default english subkey
 				string v = ScanSubKeys(helpKey.OpenSubKey("0x0409"));
 				if (v != null) {

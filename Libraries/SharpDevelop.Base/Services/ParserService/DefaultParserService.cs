@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -32,12 +32,23 @@ namespace ICSharpCode.SharpDevelop.Services
 {
 	public class DefaultParserService : AbstractService, IParserService
 	{
-		Hashtable classes    = new Hashtable();
-		Hashtable parsings   = new Hashtable();
+		Hashtable classes                = new Hashtable();
+		Hashtable caseInsensitiveClasses = new Hashtable();
+		
+		// used to map 'real' namespace hashtable inside case insensitive hashtable
+		const string CaseInsensitiveKey = "__CASE_INSENSITIVE_HASH";
 		Hashtable namespaces = new Hashtable();
+		Hashtable caseInsensitiveNamespaces = new Hashtable();
+		
+		Hashtable parsings   = new Hashtable();
 		
 		ParseInformation addedParseInformation = new ParseInformation();
 		ParseInformation removedParseInformation = new ParseInformation();
+
+//// Alex: this one keeps requests for parsing and is used to start parser (pulsed)
+//// otherwise continuous reparsing of files is causing leaks
+		public static Queue ParserPulse=new Queue();	// required for monitoring when to restart thread		
+//// Alex: end of mod
 
 		/// <remarks>
 		/// The keys are the assemblies loaded. This hash table ensures that no
@@ -46,11 +57,9 @@ namespace ICSharpCode.SharpDevelop.Services
 		/// the same assembly.
 		/// </remarks>
 		Hashtable loadedAssemblies = new Hashtable();
-
+		
 		ClassProxyCollection classProxies = new ClassProxyCollection();
-
 		IParser[] parser;
-
 		readonly static string[] assemblyList = {
 			"Microsoft.VisualBasic",
 			"Microsoft.JScript",
@@ -334,7 +343,7 @@ namespace ICSharpCode.SharpDevelop.Services
 					foreach (IClass newClass in assemblyInformation.Classes) {
 						parserService.AddClassToNamespaceList(newClass);
 						lock (parserService.classes) {
-							parserService.classes[newClass.FullyQualifiedName] = new ClasstableEntry(null, null, newClass);
+							parserService.caseInsensitiveClasses[newClass.FullyQualifiedName.ToLower()] = parserService.classes[newClass.FullyQualifiedName] = new ClasstableEntry(null, null, newClass);
 						}
 					}
 				} catch (Exception e) {
@@ -354,7 +363,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				}
 			}
 		}
-
+		
 		public void StartParserThread()
 		{
 			Thread t = new Thread(new ThreadStart(ParserUpdateThread));
@@ -363,92 +372,51 @@ namespace ICSharpCode.SharpDevelop.Services
 			t.Start();
 		}
 
-#if OriginalSharpDevelopCode
-#else
-		object _activeModalContent;
-
-		/// <summary>
-		/// Registers a parseable content contained into a modal dialog box. This function must be
-		/// called immediately before the call to form.ShowDialog(..).
-		/// </summary>
-		/// <param name="content">The content of the dialog box. Must be IParseable and IEditable.</param>
-		public void RegisterModalContent(object content)
-		{
-			_activeModalContent = content; 
-		}
-
-		/// <summary>
-		/// Unregisters the parseable content of a modal dialog box. Must be immediatly called after return
-		/// from form.ShowDialog().
-		/// </summary>
-		public void UnregisterModalContent()
-		{
-			_activeModalContent = null; 
-		}
-	
-#endif
-
 		void ParserUpdateThread()
 		{
+//// Alex: file name to parse holder field
+			string fn=null;
 			while (true) {
-				Thread.Sleep(1000);
+				Thread.Sleep(1000); // not required
+//// Alex: if some file was pulsed - during editor load and after - get file to reparse
+				fn = null; // set to null for each repetition
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//	Mike: Doesn't work with folding marker update --> look at the folding markers
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+//				lock(DefaultParserService.ParserPulse) {
+//					Monitor.Wait(DefaultParserService.ParserPulse);
+//					if (DefaultParserService.ParserPulse.Count>0) {
+//						fn = (string)DefaultParserService.ParserPulse.Dequeue();
+//					}
+//				}
+////// Alex: end of mod
 				try {
-#if OriginalSharpDevelopCode
-#else
-					if(_activeModalContent!=null)
-					{
-						IEditable editable = _activeModalContent as IEditable;
-						if (editable != null) 
-						{
-							string fileName = null;
-							
-							IParseableContent parseableContent = _activeModalContent as IParseableContent;
-							if (parseableContent != null) 
-							{
-								fileName = parseableContent.ParseableContentName;
-							} 
-							else if(_activeModalContent is ICSharpCode.SharpDevelop.Gui.IViewContent)
-							{
-								fileName = ((ICSharpCode.SharpDevelop.Gui.IViewContent)_activeModalContent).ContentName;
-							}
-							if (!(fileName == null || fileName.Length == 0)) 
-							{
-								Thread.Sleep(300);
-								IParseInformation parseInformation = null;
-								lock (parsings) 
-								{
-									parseInformation = ParseFile(fileName, editable.Text);
-								}
-								if (parseInformation != null && editable is IParseInformationListener) 
-								{
-									((IParseInformationListener)editable).ParseInformationUpdated(parseInformation);
-								}
-							}
-						}
-
-						continue;
-					}
-#endif
-
-					if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null && WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent != null) {
-						IEditable editable = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent as IEditable;
+					if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null && WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent != null) {
+						IEditable editable = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent as IEditable;
 						if (editable != null) {
 							string fileName = null;
 							
-							IParseableContent parseableContent = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent as IParseableContent;
+							IParseableContent parseableContent = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent as IParseableContent;
+							
 							if (parseableContent != null) {
 								fileName = parseableContent.ParseableContentName;
 							} else {
 								fileName = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName;
 							}
 							if (!(fileName == null || fileName.Length == 0)) {
-								Thread.Sleep(300);
+								Thread.Sleep(300); // not required 
 								IParseInformation parseInformation = null;
 								lock (parsings) {
 									parseInformation = ParseFile(fileName, editable.Text);
 								}
 								if (parseInformation != null && editable is IParseInformationListener) {
 									((IParseInformationListener)editable).ParseInformationUpdated(parseInformation);
+								}
+//// Alex: reparsing was requested for file in fn
+								if (fn != null) {
+									ParseFile(fn); // TODO: this one should update file parsings requested through queue
 								}
 							}
 						}
@@ -458,89 +426,91 @@ namespace ICSharpCode.SharpDevelop.Services
 						Console.WriteLine(e.ToString());
 					} catch {}
 				}
-				Thread.Sleep(500);
+				Thread.Sleep(500); // not required
 			}
 		}
-
+		
 		Hashtable AddClassToNamespaceList(IClass addClass)
 		{
 			string nSpace = addClass.Namespace;
 			if (nSpace == null) {
 				nSpace = String.Empty;
 			}
+			
 			string[] path = nSpace.Split('.');
 			
 			lock (namespaces) {
-				Hashtable cur = namespaces;
+				Hashtable cur                = namespaces;
+				Hashtable caseInsensitiveCur = caseInsensitiveNamespaces;
 				
 				for (int i = 0; i < path.Length; ++i) {
 					if (cur[path[i]] == null) {
-						cur[path[i]] = new Hashtable();
+						Hashtable hashTable                = new Hashtable();
+						Hashtable caseInsensitivehashTable = new Hashtable();
+						cur[path[i]] = hashTable;
+						caseInsensitiveCur[path[i].ToLower()] = caseInsensitivehashTable;
+						caseInsensitivehashTable[CaseInsensitiveKey] = hashTable;
 					} else {
 						if (!(cur[path[i]] is Hashtable)) {
 							return null;
 						}
 					}
 					cur = (Hashtable)cur[path[i]];
+					caseInsensitiveCur = (Hashtable)caseInsensitiveCur[path[i].ToLower()];
 				}
-				
-				cur[addClass.Name] = new ClassProxy(addClass);
-				
+				caseInsensitiveCur[addClass.Name.ToLower()] = cur[addClass.Name] = new ClassProxy(addClass);
 				return cur;
 			}
 		}
-
-		public ArrayList GetNamespaceContents(string subNameSpace)
+		
+#region Default Parser Layer dependent functions
+		public IClass GetClass(string typeName)
 		{
-			ArrayList namespaceList = new ArrayList();
-			if (subNameSpace == null) {
-				return namespaceList;
-			}
-			string[] path = subNameSpace.Split('.');
-			Hashtable cur = namespaces;
-
-			for (int i = 0; i < path.Length; ++i) {
-				if (!(cur[path[i]] is Hashtable)) {
-					return namespaceList;
-				}
-				cur = (Hashtable)cur[path[i]];
-			}
-
-			foreach (DictionaryEntry entry in cur)  {
-				if (entry.Value is Hashtable) {
-					namespaceList.Add(entry.Key);
-				} else {
-					namespaceList.Add(entry.Value);
-				}
-			}
-
-			return namespaceList;
+			return GetClass(typeName, true);
 		}
-
-		public bool NamespaceExists(string name)
+		public IClass GetClass(string typeName, bool caseSensitive)
 		{
-			if (name == null) {
-				return false;
+//			Console.WriteLine("Get class >{0}<", typeName);
+			if (!caseSensitive) {
+				typeName = typeName.ToLower();
 			}
-			string[] path = name.Split('.');
-			Hashtable cur = namespaces;
-
-			for (int i = 0; i < path.Length; ++i) {
-				if (!(cur[path[i]] is Hashtable)) {
-					return false;
+			
+			ClasstableEntry entry = (caseSensitive ? classes[typeName] : caseInsensitiveClasses[typeName]) as ClasstableEntry;
+			if (entry != null) {
+				return entry.Class;
+			}
+			
+			// try to load the class from our data file
+			int idx = classProxies.IndexOf(typeName, caseSensitive);
+			if (idx > 0) {
+				BinaryReader reader = new BinaryReader(new BufferedStream(new FileStream(codeCompletionMainFile, FileMode.Open, FileAccess.Read, FileShare.Read)));
+				reader.BaseStream.Seek(classProxies[idx].Offset, SeekOrigin.Begin);
+				IClass c = new PersistentClass(reader, classProxies);
+				reader.Close();
+				lock (classes) {
+					caseInsensitiveClasses[typeName.ToLower()] = classes[typeName] = new ClasstableEntry(null, null, c);
 				}
-				cur = (Hashtable)cur[path[i]];
+				return c;
 			}
-			return true;
+			return null;
 		}
-
-		public string[]  GetNamespaceList(string subNameSpace)
+		
+		public string[] GetNamespaceList(string subNameSpace)
 		{
+			return GetNamespaceList(subNameSpace, true);
+		}
+		public string[] GetNamespaceList(string subNameSpace, bool caseSensitive)
+		{
+//			Console.WriteLine("GetNamespaceList >{0}<", subNameSpace);
+			
 			Debug.Assert(subNameSpace != null);
-
+			if (!caseSensitive) {
+				subNameSpace = subNameSpace.ToLower();
+			}
+			
 			string[] path = subNameSpace.Split('.');
-			Hashtable cur = namespaces;
-
+			Hashtable cur = caseSensitive ? namespaces : caseInsensitiveNamespaces;
+			
 			if (subNameSpace.Length > 0) {
 				for (int i = 0; i < path.Length; ++i) {
 					if (!(cur[path[i]] is Hashtable)) {
@@ -549,17 +519,87 @@ namespace ICSharpCode.SharpDevelop.Services
 					cur = (Hashtable)cur[path[i]];
 				}
 			}
-
+			
+			if (!caseSensitive) {
+				cur = (Hashtable)cur[CaseInsensitiveKey];
+			}
+			
 			ArrayList namespaceList = new ArrayList();
 			foreach (DictionaryEntry entry in cur) {
 				if (entry.Value is Hashtable && entry.Key.ToString().Length > 0) {
 					namespaceList.Add(entry.Key);
 				}
 			}
-
+			
 			return (string[])namespaceList.ToArray(typeof(string));
 		}
-
+		
+		public ArrayList GetNamespaceContents(string subNameSpace)
+		{
+			return GetNamespaceContents(subNameSpace, true);
+		}
+		public ArrayList GetNamespaceContents(string subNameSpace, bool caseSensitive)
+		{
+//			Console.WriteLine("GetNamespaceContents >{0}<", subNameSpace);
+			
+			ArrayList namespaceList = new ArrayList();
+			if (subNameSpace == null) {
+				return namespaceList;
+			}
+			if (!caseSensitive) {
+				subNameSpace = subNameSpace.ToLower();
+			}
+			
+			string[] path = subNameSpace.Split('.');
+			Hashtable cur = caseSensitive ? namespaces : caseInsensitiveNamespaces;
+			
+			for (int i = 0; i < path.Length; ++i) {
+				if (!(cur[path[i]] is Hashtable)) {
+					return namespaceList;
+				}
+				cur = (Hashtable)cur[path[i]];
+			}
+			
+			if (!caseSensitive) {
+				cur = (Hashtable)cur[CaseInsensitiveKey];
+			}
+			
+			foreach (DictionaryEntry entry in cur)  {
+				if (entry.Value is Hashtable) {
+					namespaceList.Add(entry.Key);
+				} else {
+					namespaceList.Add(entry.Value);
+				}
+			}
+			return namespaceList;
+		}
+		
+		public bool NamespaceExists(string name)
+		{
+			return NamespaceExists(name, true);
+		}
+		public bool NamespaceExists(string name, bool caseSensitive)
+		{
+//			Console.WriteLine("NamespaceExists >{0}<", name);
+			if (name == null) {
+				return false;
+			}
+			if (!caseSensitive) {
+				name = name.ToLower();
+			}
+			string[] path = name.Split('.');
+			Hashtable cur = caseSensitive ? namespaces : caseInsensitiveNamespaces;
+			
+			for (int i = 0; i < path.Length; ++i) {
+				if (!(cur[path[i]] is Hashtable)) {
+					return false;
+				}
+				cur = (Hashtable)cur[path[i]];
+			}
+			return true;
+		}
+#endregion
+		
 		public IParseInformation ParseFile(string fileName)
 		{
 			return ParseFile(fileName, null);
@@ -629,7 +669,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				foreach (IClass c in cu.Classes) {
 					AddClassToNamespaceList(c);
 					lock (classes) {
-						classes[c.FullyQualifiedName] = new ClasstableEntry(fileName, cu, c);
+						caseInsensitiveClasses[c.FullyQualifiedName.ToLower()] = classes[c.FullyQualifiedName] = new ClasstableEntry(fileName, cu, c);
 					}
 				}
 			} else {
@@ -651,6 +691,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				foreach (IClass c in cu.Classes) {
 					lock (classes) {
 						classes.Remove(c.FullyQualifiedName);
+						caseInsensitiveClasses.Remove(c.FullyQualifiedName.ToLower());
 					}
 				}
 			}
@@ -670,32 +711,13 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public virtual IParser GetParser(string fileName)
 		{
+			// HACK: I'm too lazy to do it 'right'
 			if (Path.GetExtension(fileName).ToUpper() == ".CS") {
 				return parser[0];
 			}
-			return null;
-		}
-		
-		public IClass GetClass(string typeName)
-		{
-			ClasstableEntry entry = classes[typeName] as ClasstableEntry;
-			if (entry != null) {
-				return entry.Class;
+			if (Path.GetExtension(fileName).ToUpper() == ".VB") {
+				return parser[1];
 			}
-
-			// try to load the class from our data file
-			int idx = classProxies.IndexOf(typeName);
-			if (idx > 0) {
-				BinaryReader reader = new BinaryReader(new BufferedStream(new FileStream(codeCompletionMainFile, FileMode.Open, FileAccess.Read, FileShare.Read)));
-				reader.BaseStream.Seek(classProxies[idx].Offset, SeekOrigin.Begin);
-				IClass c = new PersistentClass(reader, classProxies);
-				reader.Close();
-				lock (classes) {
-					classes[typeName] = new ClasstableEntry(null, null, c);
-				}
-				return c;
-			}
-
 			return null;
 		}
 		
@@ -736,6 +758,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			// being thrown and corrupting the textarea control
 			//try {
 				IParser parser = GetParser(fileName);
+				Console.WriteLine("Parse info : " + GetParseInformation(fileName).MostRecentCompilationUnit.Tag);
 				if (parser != null) {
 					return parser.Resolve(this, expression, caretLineNumber, caretColumn, fileName, fileContent);
 				}

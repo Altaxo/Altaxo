@@ -15,6 +15,7 @@ using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor.Actions;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Gui.CompletionWindow;
+using ICSharpCode.SharpDevelop.Services;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Actions
 {
@@ -24,6 +25,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Actions
 		{
 			CompletionWindow completionWindow = new CompletionWindow(services.MotherTextEditorControl, "a.cs", new TemplateCompletionDataProvider());
 			completionWindow.ShowCompletionWindow('\0');
+		}
+	}
+	
+	public class CodeCompletionPopup : AbstractEditAction
+	{
+		public override void Execute(TextArea services)
+		{
+			IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
+			
+			Console.WriteLine("DDDSGFDS");
 		}
 	}
 }

@@ -1,0 +1,83 @@
+<Components version="1.0">
+  <System.Windows.Forms.Form>
+    <Name value="SQLParameterInput" />
+    <FormBorderStyle value="FixedToolWindow" />
+    <ClientSize value="{Width=406, Height=339}" />
+    <DockPadding value="" />
+    <AcceptButton value="OkBtn [System.Windows.Forms.Button], Text: " />
+    <CancelButton value="CancelBtn [System.Windows.Forms.Button], Text: " />
+    <Cursor value="[Cursor: Default]" />
+    <StartPosition value="[System.Windows.Forms.FormStartPosition: CenterParent]" />
+    <ShowInTaskbar value="False" />
+    <TopMost value="True" />
+    <Text value="${res:SharpQuery.XMLForm.SQLParameterInputTitle}"/>
+    <Controls>
+      <System.Windows.Forms.DataGrid>
+        <Name value="dataGrid" />
+        <HeaderForeColor value="Color [ControlText]" />
+        <AccessibleRole value="Table" />
+        <PreferredRowHeight value="1" />
+        <TabIndex value="5" />
+        <Dock value="Top" />
+        <Location value="{X=0,Y=0}" />
+        <Size value="{Width=406, Height=304}" />
+        <AccessibleName value="DataGrid" />
+        <DataMember value="" />
+        <TableStyles>
+          <System.Windows.Forms.DataGridTableStyle>
+            <MappingName value="SharpQueryParameterCollection" />
+            <Name value="dataGridTableStyle" />
+            <HeaderForeColor value="Color [ControlText]" />
+            <GridColumnStyles>
+              <System.Windows.Forms.DataGridTextBoxColumn>
+                <ReadOnly value="True" />
+                <Width value="75" />
+                <Format value="" />
+                <MappingName value="Name" />
+                <Name value="NameColumn" />
+                <HeaderText value="${res:SharpQuery.XMLForm.SQLParameterName}" />
+              </System.Windows.Forms.DataGridTextBoxColumn>
+              <System.Windows.Forms.DataGridTextBoxColumn>
+                <ReadOnly value="True" />
+                <Width value="75" />
+                <Format value="" />
+                <MappingName value="Type" />
+                <Name value="TypeColumn" />
+                <HeaderText value="${res:SharpQuery.XMLForm.SQLParameterType}" />
+              </System.Windows.Forms.DataGridTextBoxColumn>
+              <System.Windows.Forms.DataGridTextBoxColumn>
+                <ReadOnly value="True" />
+                <Width value="75" />
+                <Format value="" />
+                <MappingName value="DatType" />
+                <Name value="DataTypeColumn" />
+                <HeaderText value="${res:SharpQuery.XMLForm.SQLParameterDataType}" />
+              </System.Windows.Forms.DataGridTextBoxColumn>
+              <System.Windows.Forms.DataGridTextBoxColumn>
+                <Width value="75" />
+                <Format value="" />
+                <MappingName value="Value" />
+                <Name value="ValueColumn" />
+                <HeaderText value="${res:SharpQuery.XMLForm.SQLParameterValue}" />
+              </System.Windows.Forms.DataGridTextBoxColumn>
+            </GridColumnStyles>
+          </System.Windows.Forms.DataGridTableStyle>
+        </TableStyles>
+      </System.Windows.Forms.DataGrid>
+      <System.Windows.Forms.Button>
+        <Name value="OkBtn" />
+        <Location value="{X=240,Y=312}" />
+        <TabIndex value="3" />
+	  <Text value="${res:Global.OKButtonText}"/>
+        <DialogResult value="OK" />
+      </System.Windows.Forms.Button>
+      <System.Windows.Forms.Button>
+        <Name value="CancelBtn" />
+        <Location value="{X=328,Y=312}" />
+        <TabIndex value="2" />
+	  <Text value="${res:Global.CancelButtonText}"/>
+        <DialogResult value="Cancel" />
+      </System.Windows.Forms.Button>
+    </Controls>
+  </System.Windows.Forms.Form>
+</Components>

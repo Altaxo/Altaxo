@@ -14,19 +14,19 @@ namespace Reflector.UserInterface
 	public abstract class CommandBarButtonBase : CommandBarControl
 	{
 		private Keys shortcut = Keys.None;
-
+                  
 		protected CommandBarButtonBase(string text) : base(text)
 		{
 		}
-
-		protected CommandBarButtonBase(Image image) : base(image)
+                
+                protected CommandBarButtonBase(Image image) : base(image)
 		{
 		}
-
+                
 		protected CommandBarButtonBase(Image image, string text) : base(image, text)
 		{
 		}
-
+                
 		public Keys Shortcut
 		{
 			set
@@ -37,8 +37,9 @@ namespace Reflector.UserInterface
 					this.OnPropertyChanged(new PropertyChangedEventArgs("Shortcut")); 
 				}
 			}
-
-			get { return this.shortcut; }
-		  }
+			get { 
+                          return this.shortcut; 
+                        }
+                }
 	}
 }

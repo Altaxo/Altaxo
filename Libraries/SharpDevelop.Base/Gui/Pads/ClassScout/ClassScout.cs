@@ -251,7 +251,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 
 		void ParseProject(IProject p)
 		{
-			if (p.ProjectType == "C#") {
+			if (p.ProjectType == "C#" || p.ProjectType == "VBNET") {
 	 			foreach (ProjectFile finfo in p.ProjectFiles) {
 					if (finfo.BuildAction == BuildAction.Compile) {
 						IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));

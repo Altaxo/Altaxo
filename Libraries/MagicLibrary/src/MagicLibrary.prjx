@@ -1,0 +1,110 @@
+<Project name="MagicLibrary" description="" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
+  <Contents>
+    <File name=".\AssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Collections\CollectionWithEvents.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Collections\ContentCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Collections\HotZoneCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Collections\ManagerContentCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Collections\MenuCommandCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Collections\StringCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Collections\TabGroupBaseCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Collections\TabPageCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Collections\TargetCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Collections\WindowCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Collections\WindowDetailCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Collections\WizardPageCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Collections\ZoneCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Common\ColorHelper.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Common\ControlHelper.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Common\ConversionHelper.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Common\DebugHelper.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Common\DrawHelper.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Common\Enums.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Common\ResourceHelper.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\BorderForControl\BorderForControl.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\InertButton\InertButton.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\ResizeBar\ResizeBar.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\TabbedGroups\TabbedGroupEventArgs.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\TabbedGroups\TabbedGroups.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\TabbedGroups\TabGroupBase.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\TabbedGroups\TabGroupLeaf.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\TabbedGroups\TabGroupSequence.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\TabbedGroups\Target.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\TabControl\TabControl.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\TabControl\TabControlDesigner.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\TabControl\TabPage.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\WizardControl\WizardControl.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\WizardControl\WizardControlDesigner.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Controls\WizardControl\WizardPage.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\AutoHidePanel.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\Content.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\Definitions.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\DockingManager.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\FloatinglForm.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\HotZone.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\HotZoneFloating.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\HotZoneNull.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\HotZoneReposition.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\HotZoneSequence.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\HotZoneTabbed.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\Redocker.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\RedockerContent.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\Restore.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\TabStub.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\Window.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\WindowContent.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\WindowContentTabbed.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\WindowDetail.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\WindowDetailCaption.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\Zone.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\ZoneHelper.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Docking\ZoneSequence.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Forms\WizardDialog.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Menus\DrawCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Menus\MenuCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Menus\MenuControl.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Menus\MenuControlDesigner.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Menus\PopupMenu.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Win32\Enums.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Win32\Gdi32.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Win32\Structs.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Win32\User32.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\\..\Resources\LibraryIcon.ico" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Controls.InertButton.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Controls.TabbedGroups.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Controls.TabControl.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Controls.WizardControl.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Controls.WizardControl.resources" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Forms.WizardDialog.resources" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Menus.MenuControl.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Resources.ImagesCaptionIDE.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Resources.ImagesCaptionPlain.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Resources.ImagesMenuControl.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Resources.ImagesPopupMenu.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Resources.ImagesTabbedGroups.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Resources.ImagesTabControl.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Resources.TabbedInvalid.cur" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Resources.TabbedValid.cur" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\..\Resources\Crownwood.Magic.Resources.WizardPicture.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\MagicLibrary.prjx~" subtype="Code" buildaction="Exclude" dependson="" data="" />
+  </Contents>
+  <References />
+  <DeploymentInformation target="" script="" strategy="File" />
+  <Configuration runwithwarnings="False" name="Debug">
+    <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <Execution commandlineparameters="" consolepause="False" />
+    <Output directory="..\..\..\..\bin" assembly="MagicLibrary" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+  </Configuration>
+  <Configurations active="Debug">
+    <Configuration runwithwarnings="False" name="Debug">
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="False" />
+      <Output directory="..\..\..\..\bin" assembly="MagicLibrary" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+    </Configuration>
+    <Configuration runwithwarnings="False" name="Release">
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="False" />
+      <Output directory="..\..\..\..\bin" assembly="MagicLibrary" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+    </Configuration>
+  </Configurations>
+</Project>

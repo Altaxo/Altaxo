@@ -1,4 +1,4 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
@@ -44,7 +44,7 @@ namespace ICSharpCode.SharpDevelop.Commands.ProjectBrowser
 					StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
 					fdiag.Filter = stringParserService.Parse("${res:SharpDevelop.FileFilter.ResourceFiles}|*.resources;*.resx|${res:SharpDevelop.FileFilter.AllFiles}|*.*");
 					fdiag.Multiselect     = true;
-					fdiag.CheckFileExists = true;
+					fdiag.CheckFileExists = false; //// Alex: allows creation of new file
 					
 					if (fdiag.ShowDialog() == DialogResult.OK) {
 						IProject project = ((ProjectBrowserNode)node.Parent).Project;
@@ -52,6 +52,11 @@ namespace ICSharpCode.SharpDevelop.Commands.ProjectBrowser
 						ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 						
 						foreach (string fileName in fdiag.FileNames) {
+//// Alex: allows creation of new resource file when it doesn't exist
+							if (!File.Exists(fileName)) {
+								FileStream fs=File.Create(fileName);
+								fs.Close();
+							}
 							ProjectFile fileInformation = projectService.AddFileToProject(project, fileName, BuildAction.EmbedAsResource);
 							
 							AbstractBrowserNode newResNode = new FileNode(fileInformation);

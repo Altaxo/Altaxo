@@ -492,7 +492,7 @@ namespace ICSharpCode.TextEditor.Document
 		public int GetNextVisibleLineAbove(int lineNumber, int lineCount)
 		{
 			int curLineNumber = lineNumber;
-			for (int i = 0; i < lineCount; ++i) {
+			for (int i = 0; i < lineCount && curLineNumber < TotalNumberOfLines; ++i) {
 				++curLineNumber;
 				while (curLineNumber < TotalNumberOfLines && (curLineNumber >= lineCollection.Count || !document.FoldingManager.IsLineVisible(curLineNumber))) {
 					++curLineNumber;

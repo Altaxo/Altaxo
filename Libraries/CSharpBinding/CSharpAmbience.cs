@@ -512,7 +512,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				}
 			}
 			
-			if (typeConversionTable[returnType.FullyQualifiedName] != null) {
+			if (returnType.FullyQualifiedName != null && typeConversionTable[returnType.FullyQualifiedName] != null) {
 				builder.Append(typeConversionTable[returnType.FullyQualifiedName].ToString());
 			} else {
 				if (UseFullyQualifiedNames) {

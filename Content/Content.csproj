@@ -283,6 +283,10 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\StringResources.hu.resources"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\StringResources.it.resources"
                     BuildAction = "Content"
                 />
@@ -414,6 +418,10 @@
                     RelPath = "data\resources\dialogs\ErrorDialog\SaveErrorInformDialog.xfrm"
                     BuildAction = "Content"
                 />
+                <File
+                    RelPath = "data\resources\dialogs\SharpQuery\SqlParametersInput.xfrm"
+                    BuildAction = "Content"
+                />
                 <Folder RelPath = "data\resources\dialogs\UML Designer\" />
                 <File
                     RelPath = "data\resources\filetypes\cmbx.ico"
@@ -485,6 +493,10 @@
                 />
                 <File
                     RelPath = "data\resources\languages\germany.png"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\languages\hungary.png"
                     BuildAction = "Content"
                 />
                 <File
@@ -1313,14 +1325,6 @@
                 />
                 <File
                     RelPath = "doc\help\HelpDescription.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\help\ICSharpCode.SharpUnit.1.2.chm"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\help\ICSharpCode.SharpUnit.1.2.hhc"
                     BuildAction = "Content"
                 />
                 <File

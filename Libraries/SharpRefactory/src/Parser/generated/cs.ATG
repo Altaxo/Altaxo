@@ -1183,7 +1183,7 @@ InterfaceMemberDecl
 	(
 		/*--- interface void method (procedure) declaration: */
 		IF (NotVoidPointer()) "void" ident (. name = t.val; .)
-		"(" [ FormalParameterList<out p> ] ")" ";" (. MethodDeclaration md = new MethodDeclaration(name, mod, new TypeReference("void"), parameters, attributes);
+		"(" [ FormalParameterList<out parameters> ] ")" ";" (. MethodDeclaration md = new MethodDeclaration(name, mod, new TypeReference("void"), parameters, attributes);
 		                                              md.EndLocation = t.EndLocation;
 		                                              compilationUnit.AddChild(md);
 		                                           .)
@@ -1521,9 +1521,11 @@ EmbeddedStatement<out Statement statement>
 	  [ Expr<out expr> ] ";"
 	  [ ForIterator<out iterator> ] ")"
 	  EmbeddedStatement<out embeddedStatement> (. statement = new ForStatement(initializer, expr, iterator, embeddedStatement); .)
-	| "foreach" "(" Type<out type> ident     (. string varName = t.val; .)
+	| "foreach" "(" Type<out type> ident     (. string varName = t.val; Point start = t.Location;.)
 	"in" Expr<out expr> ")"
-	EmbeddedStatement<out embeddedStatement> (.  statement = new ForeachStatement(type, varName , expr, embeddedStatement); .)
+	EmbeddedStatement<out embeddedStatement> (.  statement = new ForeachStatement(type, varName , expr, embeddedStatement); 
+	                                             statement.EndLocation = t.EndLocation;
+	                                         .)
 	/*--- jump statements (break, contine, goto, return, throw): */
 	| "break" ";"               (. statement = new BreakStatement(); .)
 	| "continue" ";"            (. statement = new ContinueStatement(); .)

@@ -23,7 +23,7 @@ namespace ICSharpCode.TextEditor
 	/// </summary>
 	public class GutterMargin : AbstractMargin
 	{
-		StringFormat numberStringFormat = StringFormat.GenericTypographic;
+		StringFormat numberStringFormat = (StringFormat)StringFormat.GenericTypographic.Clone();
 		
 		public static Cursor RightLeftCursor;
 		
@@ -58,6 +58,9 @@ namespace ICSharpCode.TextEditor
 		
 		public GutterMargin(TextArea textArea) : base(textArea)
 		{
+			numberStringFormat.LineAlignment = StringAlignment.Near;
+			numberStringFormat.FormatFlags   = StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.FitBlackBox |
+			                                    StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
 		}
 		
 		public override void Paint(Graphics g, Rectangle rect)

@@ -269,7 +269,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			newPage = new TabPage(stringParserService.Parse(subViewContent.TabPageText));
 			newPage.Tag = subViewContent;
-			subViewContent.Control.Dock = DockStyle.Fill;
+			try {
+				subViewContent.Control.Dock = DockStyle.Fill;
+			} catch (Exception) {}
 			newPage.Controls.Add(subViewContent.Control);
 			viewTabControl.TabPages.Add(newPage);
 		}

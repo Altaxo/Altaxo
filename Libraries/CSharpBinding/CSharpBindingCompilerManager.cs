@@ -111,13 +111,8 @@ namespace CSharpBinding
 			
 			writer.Close();
 			
-			// add " to the responseFileName when they aren't there
-			if (!responseFileName.StartsWith("\"") && !responseFileName.EndsWith("\"")) {
-				responseFileName = String.Concat("\"", responseFileName, "\"");
-			}
-			
 			string compilerName = compilerparameters.CsharpCompiler == CsharpCompiler.Csc ? GetCompilerName() : "mcs";
-			string outstr =  compilerName + " @" +responseFileName;
+			string outstr =  compilerName + " \"@" + responseFileName + "\"";
 			Executor.ExecWaitWithCapture(outstr, tf, ref output, ref error);
 			
 			ICompilerResult result = ParseOutput(tf, output);

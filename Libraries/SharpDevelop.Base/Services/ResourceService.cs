@@ -1,7 +1,7 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Kr�ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -42,8 +42,8 @@ namespace ICSharpCode.Core.Services
 		Hashtable userStrings = null;
 		Hashtable userIcons   = null;
 		
-		ResourceManager strings = null;
-		ResourceManager icon    = null;
+		ArrayList strings = new ArrayList();
+		ArrayList icon    = new ArrayList();
 		
 		Hashtable localStrings = null;
 		Hashtable localIcons   = null;
@@ -72,6 +72,8 @@ namespace ICSharpCode.Core.Services
 		
 		public override void InitializeService()
 		{
+			RegisterAssembly(Assembly.GetEntryAssembly());
+			
 			base.InitializeService();
 			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 			propertyService.PropertyChanged += new PropertyEventHandler(ChangeProperty);
@@ -82,9 +84,6 @@ namespace ICSharpCode.Core.Services
 		// core service : Can't use Initialize, because all other stuff needs this service before initialize is called.
 		public ResourceService()
 		{
-			strings = new ResourceManager(stringResources, Assembly.GetCallingAssembly());
-			icon    = new ResourceManager(imageResources,  Assembly.GetCallingAssembly());
-			
 			if (System.Configuration.ConfigurationSettings.AppSettings["UserStrings"] != null) {
 				userStrings = Load(resourceDirctory +  Path.DirectorySeparatorChar + System.Configuration.ConfigurationSettings.AppSettings["UserStrings"]);
 			}
@@ -198,13 +197,51 @@ namespace ICSharpCode.Core.Services
 				return localStrings[name].ToString();
 			}
 			
-			string s = strings.GetString(name);
+			string s = null;
+			foreach (ResourceManager resourceManger in strings) {
+				s = resourceManger.GetString(name);
+				if (s != null) {
+					break;
+				}
+			}
 			
 			if (s == null) {
 				throw new ResourceNotFoundException("string >" + name + "<");
 			}
 			
 			return s;
+		}
+		
+		/// <summary>
+		/// Take string/bitmap resources from an assembly and merge them in the resource service
+		/// </summary>
+		public void RegisterAssembly(Assembly assembly)
+		{
+			if (assembly.GetManifestResourceInfo(String.Concat(stringResources, ".resources")) != null) {
+				strings.Add(new ResourceManager(stringResources, assembly));
+			}
+			
+			if (assembly.GetManifestResourceInfo(String.Concat(imageResources, ".resources")) != null) {
+				icon.Add(new ResourceManager(imageResources, assembly));
+			}
+		}
+		
+		object GetImageResource(string name)
+		{
+			object iconobj = null;
+			if (this.userIcons != null && this.userIcons[name] != null) {
+				iconobj = userIcons[name];
+			} else  if (localIcons != null && localIcons[name] != null) {
+				iconobj = localIcons[name];
+			} else {
+				foreach (ResourceManager resourceManger in icon) {
+					iconobj = resourceManger.GetObject(name);
+					if (iconobj != null) {
+						break;
+					}
+				}
+			}
+			return iconobj;
 		}
 		
 		/// <summary>
@@ -223,20 +260,11 @@ namespace ICSharpCode.Core.Services
 		/// </exception>
 		public Icon GetIcon(string name)
 		{
-			object iconobj = null;
-			
-			if (this.userIcons != null && this.userIcons[name] != null) {
-				iconobj = userIcons[name];
-			} else  if (localIcons != null && localIcons[name] != null) {
-				iconobj = localIcons[name];
-			} else {
-				iconobj = icon.GetObject(name);
-			}
+			object iconobj = GetImageResource(name);
 			
 			if (iconobj == null) {
 				return null;
 			}
-			
 			if (iconobj is Icon) {
 				return (Icon)iconobj;
 			} else {
@@ -259,15 +287,8 @@ namespace ICSharpCode.Core.Services
 		/// </exception>
 		public Bitmap GetBitmap(string name)
 		{
-			if (this.userIcons != null && this.userIcons[name] != null) {
-				return (Bitmap)userIcons[name];
-			}
-			if (localIcons != null && localIcons[name] != null) {
-				return (Bitmap)localIcons[name];
-			}
-			Bitmap b = (Bitmap)icon.GetObject(name);
+			Bitmap b = (Bitmap)GetImageResource(name);
 			Debug.Assert(b != null, "Resource " + name);
-			
 			return b;
 		}
 	}

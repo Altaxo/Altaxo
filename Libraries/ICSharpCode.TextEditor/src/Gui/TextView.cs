@@ -32,7 +32,7 @@ namespace ICSharpCode.TextEditor
 	{
 		int          fontHeight;
 		Hashtable    charWitdh           = new Hashtable();
-		StringFormat measureStringFormat = StringFormat.GenericTypographic;
+		StringFormat measureStringFormat = (StringFormat)System.Drawing.StringFormat.GenericTypographic.Clone();
 		Highlight    highlight;
 		
 		public Highlight Highlight {
@@ -88,8 +88,9 @@ namespace ICSharpCode.TextEditor
 		
 		public TextView(TextArea textArea) : base(textArea)
 		{
-			measureStringFormat.FormatFlags = StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.FitBlackBox |
-			                                  StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
+			measureStringFormat.LineAlignment = StringAlignment.Near;
+			measureStringFormat.FormatFlags   = StringFormatFlags.MeasureTrailingSpaces | StringFormatFlags.FitBlackBox |
+			                                    StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
 			
 			OptionsChanged();
 		}
@@ -103,6 +104,13 @@ namespace ICSharpCode.TextEditor
 #region Paint functions
 		public override void Paint(Graphics g, Rectangle rect)
 		{
+			// Just to ensure that fontHeight and char widths are always correct...
+			if (fontHeight != TextEditorProperties.Font.Height) {
+				OptionsChanged();
+				base.TextArea.Refresh();
+				return;
+			}
+			
 			int horizontalDelta = (int)(textArea.VirtualTop.X * GetWidth(g, ' '));
 			if (horizontalDelta > 0) {
 				g.SetClip(this.DrawingPosition);

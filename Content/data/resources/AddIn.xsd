@@ -37,6 +37,7 @@
 			<xs:element ref="LanguageBinding"/>
 			<xs:element ref="Class"/>
 			<xs:element ref="MenuItem"/>
+			<xs:element ref="SharpQueryConnection"/>
 		</xs:choice>
 		<xs:attribute name="path" type="xs:string" use="required"/>
 	</xs:complexType>
@@ -195,6 +196,16 @@
 		</xs:complexContent>
 	</xs:complexType>
 	<xs:element name="MenuItem" type="MenuItem"/>
+	<xs:complexType name="SharpQueryConnection">
+		<xs:complexContent>
+			<xs:extension base="AbstractCodon">
+				<xs:attribute name="schema" type="xs:string" use="required"/>
+				<xs:attribute name="node" type="xs:string" use="required"/>
+				<xs:attribute name="showUnsuported" type="xs:string" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="SharpQueryConnection" type="SharpQueryConnection"/>
 	<xs:complexType name="ToolbarItem">
 		<xs:complexContent>
 			<xs:extension base="AbstractCodon">
@@ -218,3 +229,4 @@
 	</xs:complexType>
 	<xs:element name="EditAction" type="EditAction"/>
 </xs:schema>
+

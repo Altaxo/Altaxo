@@ -41,7 +41,13 @@ namespace SharpDevelop.Internal.Parser
 		static IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
 		public string SearchNamespace(string partitialNamespaceName)
 		{
-			if (parserService.NamespaceExists(partitialNamespaceName)) {
+			return SearchNamespace(partitialNamespaceName, true);
+		}
+		
+		public string SearchNamespace(string partitialNamespaceName, bool caseSensitive)
+		{
+//			Console.WriteLine("SearchNamespace : >{0}<", partitialNamespaceName);
+			if (parserService.NamespaceExists(partitialNamespaceName, caseSensitive)) {
 				return partitialNamespaceName;
 			}
 			
@@ -49,7 +55,7 @@ namespace SharpDevelop.Internal.Parser
 			string declaringNamespace = (string)aliases[""];
 			if (declaringNamespace != null) {
 				while (declaringNamespace.Length > 0) {
-					if (declaringNamespace.EndsWith(partitialNamespaceName) && parserService.NamespaceExists(declaringNamespace)) {
+					if ((caseSensitive ? declaringNamespace.EndsWith(partitialNamespaceName) : declaringNamespace.ToLower().EndsWith(partitialNamespaceName.ToLower()) ) && parserService.NamespaceExists(declaringNamespace, caseSensitive)) {
 						return declaringNamespace;
 					}
 					int index = declaringNamespace.IndexOf('.');
@@ -66,22 +72,27 @@ namespace SharpDevelop.Internal.Parser
 			//     The namespace name is an alias which has the key ""
 			foreach (DictionaryEntry entry in aliases) {
 				string aliasString = entry.Key.ToString();
-				if (partitialNamespaceName.StartsWith(aliasString)) {
+				if (caseSensitive ? partitialNamespaceName.StartsWith(aliasString) : partitialNamespaceName.ToLower().StartsWith(aliasString.ToLower())) {
 					if (aliasString.Length >= 0) {
 						string nsName = nsName = String.Concat(entry.Value.ToString(), partitialNamespaceName.Remove(0, aliasString.Length));
-						if (parserService.NamespaceExists(nsName)) {
+						if (parserService.NamespaceExists(nsName, caseSensitive)) {
 							return nsName;
 						}
 					}
 				}
 			}
-			
 			return null;
 		}
 
 		public IClass SearchType(string partitialTypeName)
 		{
-			IClass c = parserService.GetClass(partitialTypeName);
+			return SearchType(partitialTypeName, true);
+		}
+		
+		public IClass SearchType(string partitialTypeName, bool caseSensitive)
+		{
+//			Console.WriteLine("Search type : >{0}<", partitialTypeName);
+			IClass c = parserService.GetClass(partitialTypeName, caseSensitive);
 			if (c != null) {
 				return c;
 			}
@@ -89,7 +100,7 @@ namespace SharpDevelop.Internal.Parser
 			foreach (string str in usings) {
 				string possibleType = String.Concat(str, ".", partitialTypeName);
 //				Console.WriteLine("looking for " + possibleType);
-				c = parserService.GetClass(possibleType);
+				c = parserService.GetClass(possibleType, caseSensitive);
 				if (c != null) {
 //					Console.WriteLine("Found!");
 					return c;
@@ -102,7 +113,7 @@ namespace SharpDevelop.Internal.Parser
 				while (declaringNamespace.Length > 0) {
 					string className = String.Concat(declaringNamespace, ".", partitialTypeName);
 //					Console.WriteLine("looking for " + className);
-					c = parserService.GetClass(className);
+					c = parserService.GetClass(className, caseSensitive);
 					if (c != null) {
 //						Console.WriteLine("Found!");
 						return c;
@@ -118,12 +129,12 @@ namespace SharpDevelop.Internal.Parser
 			
 			foreach (DictionaryEntry entry in aliases) {
 				string aliasString = entry.Key.ToString();
-				if (partitialTypeName.StartsWith(aliasString)) {
+				if (caseSensitive ? partitialTypeName.StartsWith(aliasString) : partitialTypeName.ToLower().StartsWith(aliasString.ToLower())) {
 					string className = null;
 					if (aliasString.Length > 0) {
 						className = String.Concat(entry.Value.ToString(), partitialTypeName.Remove(0, aliasString.Length));
 //						Console.WriteLine("looking for " + className);
-						c = parserService.GetClass(className);
+						c = parserService.GetClass(className, caseSensitive);
 						if (c != null) {
 //							Console.WriteLine("Found!");
 							return c;

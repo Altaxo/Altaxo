@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -79,6 +79,8 @@ namespace ICSharpCode.TextEditor.Document
 			
 			while (offset - 1 > 0) {
 				switch (document.GetCharAt(offset - 1)) {
+					case '\n':
+					case '\r':
 					case '}':
 						goto done;
 //						offset = SearchBracketBackward(document, offset - 2, '{','}');
@@ -139,6 +141,17 @@ namespace ICSharpCode.TextEditor.Document
 			done:
 //			Console.WriteLine("ofs : {0} cart:{1}", offset, document.Caret.Offset);
 //			Console.WriteLine("return:" + document.GetText(offset, document.Caret.Offset - offset).Trim());
+			//// simple exit fails when : is inside comment line or any other character
+			//// we have to check if we got several ids in resulting line, which usually happens when
+			//// id. is typed on next line after comment one
+			//// Would be better if lexer would parse properly such expressions. However this will cause
+			//// modifications in this area too - to get full comment line and remove it afterwards
+			string resText=document.GetText(offset, textArea.Caret.Offset - offset ).Trim();
+			int pos=resText.LastIndexOf('\n');
+			if (pos>=0) {
+				offset+=pos+1;
+				//// whitespaces and tabs, which might be inside, will be skipped by trim below
+			}							
 			return document.GetText(offset, textArea.Caret.Offset - offset ).Trim();
 		}
 		

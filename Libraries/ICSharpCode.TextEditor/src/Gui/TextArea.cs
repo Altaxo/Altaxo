@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -101,6 +101,7 @@ namespace ICSharpCode.TextEditor
 				return motherTextEditorControl.Encoding;
 			}
 		}
+		
 		public Point VirtualTop {
 			get {
 				return virtualTop;
@@ -292,6 +293,7 @@ namespace ICSharpCode.TextEditor
 				return;
 			}
 			if (this.motherTextEditorControl.IsInUpdate) {
+				Invalidate(e.ClipRectangle);
 				return;
 			}
 			int currentXPos = 0;
@@ -431,6 +433,8 @@ namespace ICSharpCode.TextEditor
 				} finally {
 					motherTextEditorControl.EndUpdate();
 					Caret.UpdateCaretPosition();
+					//// update desired column otherwise backspace and some other keys cause invalid whitespace inserts
+					Caret.DesiredColumn=Caret.Column;
 				}
 				return true;
 			} 
@@ -490,8 +494,10 @@ namespace ICSharpCode.TextEditor
 			}
 			LineSegment caretLine = Document.GetLineSegment(Caret.Line);
 			int offset = Caret.Offset;
-			if (caretLine.Length < Caret.Column && ch != '\n') {
-				Document.Insert(offset, GenerateWhitespaceString(Caret.Column - caretLine.Length) + ch);
+			// use desired column for generated whitespaces
+			int dc=Math.Min(Caret.Column,Caret.DesiredColumn);
+			if (caretLine.Length < dc && ch != '\n') {
+				Document.Insert(offset, GenerateWhitespaceString(dc - caretLine.Length) + ch);
 			} else {
 				Document.Insert(offset, ch.ToString());
 			}

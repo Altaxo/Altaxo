@@ -248,7 +248,7 @@
                 />
                 <File
                     RelPath = "Gui\Editor\SharpDevelopTextAreaControl.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File

@@ -71,10 +71,9 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				methodName   = methodObject.Substring(idx + 1);
 				methodObject = methodObject.Substring(0, idx);
 			} else {
-				methodObject = "this";
+				methodObject = fileName.EndsWith("vb") ? "Me" : "this";
 				methodName   = word;
 			}
-			
 			if (methodName.Length == 0 || methodObject.Length == 0) {
 				return;
 			}
@@ -93,6 +92,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 			IParserService parserService = (IParserService)ServiceManager.Services.GetService(typeof(IParserService));
 			ResolveResult results = parserService.Resolve(methodObject, caretLineNumber, caretColumn, fileName, document.TextContent);
+			Console.WriteLine("results: method obj{0} " + results, methodObject);
 			
 			if (results != null && results.Type != null) {
 				if (contructorInsight) {

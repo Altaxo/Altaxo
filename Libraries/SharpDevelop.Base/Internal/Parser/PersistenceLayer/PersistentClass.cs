@@ -162,7 +162,7 @@ namespace SharpDevelop.Internal.Parser
 		public PersistentClass(ClassProxyCollection classProxyCollection, IClass c)
 		{
 			this.classProxyCollection = classProxyCollection;
-			classProxyIndex           = classProxyCollection.IndexOf(c.FullyQualifiedName);
+			classProxyIndex           = classProxyCollection.IndexOf(c.FullyQualifiedName, true);
 			if (classProxyIndex < 0) {
 				fullyQualifiedName = c.FullyQualifiedName;
 				documentation      = c.Documentation;
@@ -171,7 +171,7 @@ namespace SharpDevelop.Internal.Parser
 			}
 
 			foreach (string baseType in c.BaseTypes) {
-				int idx = classProxyCollection.IndexOf(baseType);
+				int idx = classProxyCollection.IndexOf(baseType, true);
 				if (idx < 0) {
 					notFoundBaseTypes.Add(baseType);
 				} else {

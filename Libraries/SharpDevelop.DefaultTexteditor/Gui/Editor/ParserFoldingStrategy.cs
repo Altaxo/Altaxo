@@ -13,8 +13,7 @@ using SharpDevelop.Internal.Parser;
 using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
-{
-	/// <summary>
+{/// <summary>
 	/// A simple folding strategy which calculates the folding level
 	/// using the indent level of the line.
 	/// </summary>

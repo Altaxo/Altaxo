@@ -41,16 +41,21 @@ namespace ICSharpCode.SharpDevelop.Services
 	{
 		IParseInformation ParseFile(string fileName);
 		IParseInformation ParseFile(string fileName, string fileContent);
-
+		
 		IParseInformation GetParseInformation(string fileName);
-
+		
 		IParser GetParser(string fileName);
-
+		
 		// Default Parser Layer dependent functions
 		IClass    GetClass(string typeName);
 		string[]  GetNamespaceList(string subNameSpace);
 		ArrayList GetNamespaceContents(string subNameSpace);
 		bool      NamespaceExists(string name);
+		
+		IClass    GetClass(string typeName, bool caseSensitive);
+		string[]  GetNamespaceList(string subNameSpace, bool caseSensitive);
+		ArrayList GetNamespaceContents(string subNameSpace, bool caseSensitive);
+		bool      NamespaceExists(string name, bool caseSensitive);
 		////////////////////////////////////////////
 
 		/// <summary>

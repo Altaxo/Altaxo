@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -25,6 +25,8 @@ using ICSharpCode.SharpDevelop.Services;
 using ICSharpCode.SharpDevelop.Gui.Components;
 using ICSharpCode.TextEditor.Gui.InsightWindow;
 using ICSharpCode.TextEditor.Gui.CompletionWindow;
+
+using System.Threading;
 
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
@@ -80,6 +82,14 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 		}
 		
+		
+//// Alex: routine for pulsing parser thread
+		protected void PulseParser() {
+			lock(DefaultParserService.ParserPulse) {
+				Monitor.Pulse(DefaultParserService.ParserPulse);
+			}
+		}
+//// ALex: end of mod
 		
 		InsightWindow insightWindow = null;
 		bool HandleKeyPress(char ch)
@@ -149,6 +159,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 						Console.WriteLine("EXCEPTION: " + e);
 					}
 					return false;
+//// Alex: reparse file on ; - end of statement
+				case ';':
+				case ')':	// reparse on closing bracket for foreach and for definitions
+					PulseParser();
+					return false;
+//// Alex: end of mod
 			}
 			return false;
 		}
@@ -176,6 +192,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			string word = GetWordBeforeCaret().Trim();
 			if (word.Length > 0) {
 				newCaretOffset = DeleteWordBeforeCaret();
+				//// set new position in text area
+				ActiveTextAreaControl.TextArea.Caret.Position = Document.OffsetToPosition(newCaretOffset);
 			}
 			int finalCaretOffset = newCaretOffset;
 			int firstLine        = Document.GetLineNumberForOffset(newCaretOffset);

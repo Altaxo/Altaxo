@@ -1,0 +1,16 @@
+<Combine fileversion="1.0" name="CSharpBinding" description="">
+  <StartMode startupentry="CSharpBinding" single="True">
+    <Execute entry="CSharpBinding" type="None" />
+  </StartMode>
+  <Entries>
+    <Entry filename=".\CSharpBinding.prjx" />
+  </Entries>
+  <Configurations active="Debug">
+    <Configuration name="Release">
+      <Entry name="CSharpBinding" configurationname="Debug" build="False" />
+    </Configuration>
+    <Configuration name="Debug">
+      <Entry name="CSharpBinding" configurationname="Debug" build="False" />
+    </Configuration>
+  </Configurations>
+</Combine>

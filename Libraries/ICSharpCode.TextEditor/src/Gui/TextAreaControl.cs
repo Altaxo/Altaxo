@@ -52,7 +52,12 @@ namespace ICSharpCode.TextEditor
 				return textArea.Caret;
 			}
 		}
-
+		
+		public int FirstVisibleRow {
+			get {
+				return this.hScrollBar.Value - this.hScrollBar.Minimum;
+			}
+		}
 		
 		[Browsable(false)]
 		public IDocument Document {
@@ -202,6 +207,5 @@ namespace ICSharpCode.TextEditor
 			ScrollToCaret();
 			textArea.Focus();
 		}
-		
 	}
 }

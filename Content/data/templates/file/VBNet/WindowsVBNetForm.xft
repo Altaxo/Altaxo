@@ -12,34 +12,34 @@
 	
 	<TemplateFiles>
 		<File DefaultExtension=".vb" DefaultName="VBNetForm">
-<![CDATA[REM created on ${Date} at ${Time}
+			<![CDATA[' created on ${Date} at ${Time}
 Imports System
+Imports System.Drawing
 Imports System.Windows.Forms
 
-Namespace MyForm
-
-	Public Class CreatedForm
+Namespace GeneratedForm
+	
+	Public Class MyForm
 		Inherits System.Windows.Forms.Form
-
-   		Public Sub New
-      		MyBase.New()
-      		
-			InitializeComponent()
+		
+		Public Sub New()
+			MyBase.New
+			' Must be called for initialization
+			Me.InitializeComponent
+			'
+			' TODO : Add constructor code after InitializeComponents
+			'
 		End Sub
 		
-		// THIS METHOD IS MAINTAINED BY THE FORM DESIGNER
-		// DO NOT EDIT IT MANUALLY! YOUR CHANGES ARE LIKELY TO BE LOST!
-		Sub InitializeComponent
-			// 
-			// CreatedForm
-			// 
+		Private Sub InitializeComponent()
+			'
+			'MyForm
+			'
 			Me.AutoScaleBaseSize = New System.Drawing.Size(5, 13)
 			Me.ClientSize = New System.Drawing.Size(292, 266)
-			Me.Name = "CreatedForm"
+			Me.Name = "MyForm"
 		End Sub
-		
 	End Class
-	
 End Namespace
 ]]></File>
 	</TemplateFiles>

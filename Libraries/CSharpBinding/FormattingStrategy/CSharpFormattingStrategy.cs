@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -233,6 +233,9 @@ namespace CSharpBinding.FormattingStrategy
 		{
 			LineSegment curLine   = textArea.Document.GetLineSegment(lineNr);
 			LineSegment lineAbove = lineNr > 0 ? textArea.Document.GetLineSegment(lineNr - 1) : null;
+
+			//// local string for curLine segment
+			string curLineText="";
 			
 			if (ch != '\n' && ch != '>') {
 				if (IsInsideStringOrComment(textArea, curLine, cursorOffset)) {
@@ -243,39 +246,27 @@ namespace CSharpBinding.FormattingStrategy
 			switch (ch) {
 				case '>':
 					if (IsInsideDocumentationComment(textArea, curLine, cursorOffset)) {
-						string curLineText  = textArea.Document.GetText(curLine.Offset, curLine.Length);
+						curLineText  = textArea.Document.GetText(curLine.Offset, curLine.Length);
 						int column = textArea.Caret.Offset - curLine.Offset;
 						int index = Math.Min(column - 1, curLineText.Length - 1);
-						if (curLineText[index] == '/') {
-							break;
-						}
+						
 						while (index >= 0 && curLineText[index] != '<') {
 							--index;
+							if(curLineText[index] == '/')
+								return 0; // the tag was an end tag or already 
 						}
 						
 						if (index > 0) {
-							bool skipInsert = false;
-							for (int i = index; i < curLineText.Length && i < column; ++i) {
-								if (i < curLineText.Length && curLineText[i] == '/' && curLineText[i + 1] == '>') {
-									skipInsert = true;
-								}
-								if (curLineText[i] == '>') {
-									break;
-								}
+							StringBuilder commentBuilder = new StringBuilder("");
+							for (int i = index; i < curLineText.Length && i < column && !Char.IsWhiteSpace(curLineText[ i]); ++i) {
+								commentBuilder.Append(curLineText[ i]);
 							}
-							
-							if (!skipInsert) {
-								StringBuilder commentBuilder = new StringBuilder("");
-								for (int i = index; i < curLineText.Length && i < column && !Char.IsWhiteSpace(curLineText[i]); ++i) {
-									commentBuilder.Append(curLineText[i]);
-								}
-								string tag = commentBuilder.ToString().Trim();
-								if (!tag.EndsWith(">")) {
-									tag += ">";
-								}
-								if (!tag.StartsWith("/")) {
-									textArea.Document.Insert(textArea.Caret.Offset, "</" + tag.Substring(1));
-								}
+							string tag = commentBuilder.ToString().Trim();
+							if (!tag.EndsWith(">")) {
+								tag += ">";
+							}
+							if (!tag.StartsWith("/")) {
+								textArea.Document.Insert(textArea.Caret.Offset, "</" + tag.Substring(1));
 							}
 						}
 					}
@@ -299,11 +290,16 @@ namespace CSharpBinding.FormattingStrategy
 					}
 					
 					string  lineAboveText = textArea.Document.GetText(lineAbove.Offset, lineAbove.Length);
+					//// curLine might have some text which should be added to indentation
+					curLineText = "";
+					if (curLine.Length > 0) {
+						curLineText = textArea.Document.GetText(curLine.Offset,curLine.Length);
+					}
 					
-					LineSegment    nextLine      = lineNr + 1 < textArea.Document.TotalNumberOfLines ? textArea.Document.GetLineSegment(lineNr + 1) : null;
-					string  nextLineText  = lineNr + 1 < textArea.Document.TotalNumberOfLines ? textArea.Document.GetText(nextLine.Offset, nextLine.Length) : "";
+					LineSegment nextLine      = lineNr + 1 < textArea.Document.TotalNumberOfLines ? textArea.Document.GetLineSegment(lineNr + 1) : null;
+					string      nextLineText  = lineNr + 1 < textArea.Document.TotalNumberOfLines ? textArea.Document.GetText(nextLine.Offset, nextLine.Length) : "";
 					
-					if (lineAbove.HighlightSpanStack != null && lineAbove.HighlightSpanStack.Count > 0) {				
+					if (lineAbove.HighlightSpanStack != null && lineAbove.HighlightSpanStack.Count > 0) {			
 						if (!((Span)lineAbove.HighlightSpanStack.Peek()).StopEOL) {	// case for /* style comments
 							int index = lineAboveText.IndexOf("/*");
 							
@@ -312,8 +308,9 @@ namespace CSharpBinding.FormattingStrategy
 								for (int i = indentation.Length; i < index; ++ i) {
 									indentation += ' ';
 								}
-								textArea.Document.Replace(curLine.Offset, cursorOffset - curLine.Offset, indentation + " * ");
-								return indentation.Length + 3;
+								//// adding curline text
+								textArea.Document.Replace(curLine.Offset, cursorOffset - curLine.Offset, indentation + " * "+curLineText);
+								return indentation.Length + 3+curLineText.Length;
 							}
 							
 							index = lineAboveText.IndexOf("*");
@@ -322,20 +319,21 @@ namespace CSharpBinding.FormattingStrategy
 								for (int i = indentation.Length; i < index; ++ i) {
 									indentation += ' ';
 								}
-								textArea.Document.Replace(curLine.Offset, cursorOffset - curLine.Offset, indentation + "* ");
-								return indentation.Length + 2;
+								//// adding curline if present
+								textArea.Document.Replace(curLine.Offset, cursorOffset - curLine.Offset, indentation + "* "+curLineText);
+								return indentation.Length + 2 + curLineText.Length;
 							}
 						} else { // don't handle // lines, because they're only one lined comments
 							int indexAbove = lineAboveText.IndexOf("///");
 							int indexNext  = nextLineText.IndexOf("///");
-							
 							if (indexAbove > 0 && (indexNext != -1 || indexAbove + 4 < lineAbove.Length)) {
 								string indentation = GetIndentation(textArea, lineNr - 1);
 								for (int i = indentation.Length; i < indexAbove; ++ i) {
 									indentation += ' ';
 								}
-								textArea.Document.Replace(curLine.Offset, cursorOffset - curLine.Offset, indentation + "/// ");
-								return indentation.Length + 4;
+								//// adding curline text if present
+								textArea.Document.Replace(curLine.Offset, cursorOffset - curLine.Offset, indentation + "/// " + curLineText);
+								return indentation.Length + 4 /*+ curLineText.Length*/;
 							}
 						}
 					}

@@ -1,0 +1,92 @@
+<Project name="TextEditor" description="creates an empty C# project" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
+  <Contents>
+    <File name=".\Search\DefaultFind.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\IFind.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\DocumentIterator\AllOpenDocumentIterator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\DocumentIterator\CurrentDocumentIterator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\DocumentIterator\IDocumentIterator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\DocumentIterator\ProvidedDocumentInformation.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\DocumentIterator\WholeProjectDocumentIterator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\SearchResult\DefaultSearchResult.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\SearchResult\ISearchResult.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\SearchStrategy\BruteForceSearchStrategy.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\SearchStrategy\ISearchStrategy.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\SearchOptions.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\OptionPanels\GeneralTextEditorPanel.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\OptionPanels\MarkersTextEditorPanel.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\OptionPanels\BehaviorTextEditorPanel.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\TextEditorDisplayBinding.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\ErrorDrawer.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Dialogs\ReplaceDialog.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Dialogs\GotoLineNumberDialog.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Dialogs\ExportProjectToHtmlDialog.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Codons\EditActionCodon.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\FormatCommands.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\BookmarkCommands.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\SearchCommands.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\ToolCommands.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\ProjectCommands.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\TextAreaContextmenuCommands.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Conditions\TextContentCondition.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\AssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\SearchStrategy\RegExSearchStrategy.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\SearchReplaceManager.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Actions.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\SharpDevelopTextAreaControl.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Pads\CompilerMessageView.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\OptionPanels\CodeTemplatePanel.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\CompletionWindow" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\CompletionWindow\TemplateCompletionDataProvider.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\XmlFormattingStrategy.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\CompletionWindow\CodeCompletionDataProvider.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\CompletionWindow\CommentCompletionDataProvider.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\InsightWindow" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\InsightWindow\MethodInsightDataProvider.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CommentRegionCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\InsightWindow\IndexerInsightDataProvider.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\TextIterator" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\TextIterator\ITextIterator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\TextIterator\ForwardTextIterator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\DocumentIterator\ReverseDocumentIterator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\TextIterator\ITextIteratorBuilder.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\TextIterator\ForwardTextIteratorBuilder.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Dialogs\ReplaceInFilesDialog.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\SearchReplaceInFilesManager.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\SearchReplaceUtilities.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\DocumentIterator\DirectoryDocumentIterator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\SearchStrategy\WildcardSearchStrategy.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Search\SearchStrategy\KMPSearchStrategy.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\ITextAreaControlProvider.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\CompletionWindow\CodeCompletionData.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeActions.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\FoldingCommands.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Dialogs\SortOptionsDialog.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\SharpDevelopTextEditorProperties.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\ParserFoldingStrategy.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+  </Contents>
+  <References>
+    <Reference type="Assembly" refto="..\..\..\..\bin\ICSharpCode.Core.dll" localcopy="False" />
+    <Reference type="Assembly" refto="..\..\..\..\bin\ICSharpCode.TextEditor.dll" localcopy="False" />
+    <Reference type="Assembly" refto="..\..\..\..\bin\ICSharpCode.XmlForms.dll" localcopy="False" />
+    <Reference type="Assembly" refto="..\..\..\..\bin\SharpDevelop.Base.dll" localcopy="False" />
+    <Reference type="Assembly" refto="..\..\..\..\bin\CommandBar.dll" localcopy="True" />
+  </References>
+  <DeploymentInformation target="" script="" strategy="File" />
+  <Configuration runwithwarnings="False" name="Debug">
+    <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <Execution commandlineparameters="" consolepause="True" />
+    <Output directory="..\..\..\..\bin" assembly="SharpDevelop.DefaultTexteditor" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+  </Configuration>
+  <Configurations active="Debug">
+    <Configuration runwithwarnings="False" name="Debug">
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="True" />
+      <Output directory="..\..\..\..\bin" assembly="SharpDevelop.DefaultTexteditor" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+    </Configuration>
+    <Configuration runwithwarnings="False" name="Release">
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="True" />
+      <Output directory="..\..\..\..\bin" assembly="SharpDevelop.DefaultTexteditor" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+    </Configuration>
+  </Configurations>
+</Project>

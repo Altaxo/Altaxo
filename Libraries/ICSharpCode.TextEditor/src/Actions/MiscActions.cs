@@ -393,7 +393,7 @@ namespace ICSharpCode.TextEditor.Actions
 						textArea.Caret.Position = textArea.Document.OffsetToPosition(caretOffset);
 						textArea.Document.Remove(caretOffset, 1);
 						
-//						textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToLineEnd, new Point(textArea.Caret.Offset - textArea.Document.GetLineSegment(curLineNr).Offset, curLineNr)));
+						textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.PositionToLineEnd, new Point(textArea.Caret.Offset - textArea.Document.GetLineSegment(curLineNr).Offset, curLineNr)));
 						textArea.EndUpdate();
 					}
 				}

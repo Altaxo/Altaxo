@@ -129,6 +129,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			comboBox.DrawItem += new DrawItemEventHandler(ComboBoxDrawItem);
 			comboBox.MeasureItem += new MeasureItemEventHandler(ComboBoxMeasureItem);
 			comboBox.SelectedIndexChanged += new EventHandler(ComboBoxSelectedIndexChanged);
+			comboBox.Sorted = true;
 			
 			grid = new PropertyGrid();
 			grid.PropertyValueChanged += new PropertyValueChangedEventHandler(PropertyChanged);

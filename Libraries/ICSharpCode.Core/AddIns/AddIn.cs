@@ -162,14 +162,15 @@ namespace ICSharpCode.Core.AddIns
 		{
 			this.fileName = fileName;
 			
-			Stream shemaStream = Assembly.GetCallingAssembly().GetManifestResourceStream("AddIn.xsd");
-			XmlValidatingReader validatingReader = new XmlValidatingReader(new XmlTextReader(fileName));
-			validatingReader.Schemas.Add("", new XmlTextReader(shemaStream));
-			validatingReader.ValidationType = ValidationType.Schema;
-			validatingReader.ValidationEventHandler += new ValidationEventHandler (ValidationHandler);
+//			Stream shemaStream = Assembly.GetCallingAssembly().GetManifestResourceStream("AddIn.xsd");
+//			XmlValidatingReader validatingReader = new XmlValidatingReader(new XmlTextReader(fileName));
+//			validatingReader.Schemas.Add("", new XmlTextReader(shemaStream));
+//			validatingReader.ValidationType = ValidationType.Schema;
+//			validatingReader.ValidationEventHandler += new ValidationEventHandler (ValidationHandler);
 			
 			XmlDocument doc = new XmlDocument();
-			doc.Load(validatingReader);
+//			doc.Load(validatingReader);
+			doc.Load(new XmlTextReader(fileName));
 			
 			if (errors != null) {
 				ReportErrors(fileName);

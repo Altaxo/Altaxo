@@ -34,7 +34,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		public void Run(ProjectCreateInformation projectCreateInformation)
 		{
 			IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-			fileService.OpenFile(projectCreateInformation.ProjectBasePath + Path.DirectorySeparatorChar + fileName);
+			string path = projectCreateInformation.ProjectBasePath + Path.DirectorySeparatorChar + "." + Path.DirectorySeparatorChar + fileName;
+			fileService.OpenFile(path);
 		}
 	}
 	

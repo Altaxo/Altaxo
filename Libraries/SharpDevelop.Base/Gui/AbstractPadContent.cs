@@ -79,6 +79,5 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 			WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this);
 		}
-
 	}
 }

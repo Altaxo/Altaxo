@@ -162,7 +162,7 @@ namespace CSharpBinding.Parser
 		
 		ArrayList ListMembers(ArrayList members, IClass curType)
 		{
-			Console.WriteLine("LIST MEMBERS!!!");
+//			Console.WriteLine("LIST MEMBERS!!!");
 //			Console.WriteLine("showStatic = " + showStatic);
 //			Console.WriteLine(curType.InnerClasses.Count + " classes");
 //			Console.WriteLine(curType.Properties.Count + " properties");
@@ -181,6 +181,15 @@ namespace CSharpBinding.Parser
 				if (MustBeShowen(curType, p)) {
 					members.Add(p);
 //					Console.WriteLine("Member added");
+				} else {
+					//// for some public static properties msutbeshowen is false, so additional check
+					//// this is lame fix because curType doesn't allow to find out if to show only
+					//// static public or simply public properties
+					if (((AbstractMember)p).ReturnType!=null) {
+						// if public add it to completion window
+						if (((AbstractDecoration)p).IsPublic) members.Add(p);
+//						Console.WriteLine("Property {0} added", p.FullyQualifiedName);
+					}
 				}
 			}
 //			Console.WriteLine("ADDING METHODS!!!");
@@ -201,6 +210,12 @@ namespace CSharpBinding.Parser
 				if (MustBeShowen(curType, f)) {
 					members.Add(f);
 //					Console.WriteLine("Member added");
+				} else {
+					//// enum fields must be shown here if present
+					if (curType.ClassType == ClassType.Enum) {
+						if (IsAccessible(curType,f)) members.Add(f);
+//						Console.WriteLine("Member {0} added", f.FullyQualifiedName);
+					}
 				}
 			}
 //			Console.WriteLine("ClassType = " + curType.ClassType);
@@ -268,6 +283,7 @@ namespace CSharpBinding.Parser
 //			Console.WriteLine("member:" + member.Modifiers);
 			if ((!showStatic &&  ((member.Modifiers & ModifierEnum.Static) == ModifierEnum.Static)) ||
 			    ( showStatic && !((member.Modifiers & ModifierEnum.Static) == ModifierEnum.Static))) {
+				//// enum type fields are not shown here - there is no info in member about enum field
 				return false;
 			}
 //			Console.WriteLine("Testing Accessibility");
@@ -433,7 +449,7 @@ namespace CSharpBinding.Parser
 //			
 //			Console.WriteLine("LookUpTable has {0} entries", lookupTableVisitor.variables.Count);
 //			Console.WriteLine("Listing Variables:");
-			IDictionaryEnumerator enumerator = lookupTableVisitor.variables.GetEnumerator();
+//			IDictionaryEnumerator enumerator = lookupTableVisitor.variables.GetEnumerator();
 //			while (enumerator.MoveNext()) {
 //				Console.WriteLine(enumerator.Key);
 //			}
@@ -453,10 +469,10 @@ namespace CSharpBinding.Parser
 					break;
 				}
 			}
-			if (found == null) {
+//			if (found == null) {
 //				Console.WriteLine("No Variable found");
-				return null;
-			}
+//				return null;
+//			}
 			return found;
 		}
 		
@@ -479,7 +495,15 @@ namespace CSharpBinding.Parser
 			if (callingClass == null) {
 				return null;
 			}
-			
+			//// somehow search in callingClass fields is not returning anything, so I am searching here once again
+			foreach (IField f in callingClass.Fields) {
+				if (f.Name == typeName) {
+//					Console.WriteLine("Field found " + f.Name);
+					return f.ReturnType;
+				}
+			}
+			//// end of mod for search in Fields
+		
 			// try if typeName is a method parameter
 			IReturnType p = SearchMethodParameter(typeName);
 			if (p != null) {
@@ -736,6 +760,53 @@ namespace CSharpBinding.Parser
 					}
 				}
 			}
+		}
+		
+		public ArrayList CtrlSpace(IParserService parserService, int caretLine, int caretColumn, string fileName)
+		{
+			ArrayList result = new ArrayList();
+			this.parserService = parserService;
+			IParseInformation parseInfo = parserService.GetParseInformation(fileName);
+			ICSharpCode.SharpRefactory.Parser.AST.CompilationUnit fileCompilationUnit = parseInfo.MostRecentCompilationUnit.Tag as ICSharpCode.SharpRefactory.Parser.AST.CompilationUnit;
+			if (fileCompilationUnit == null) {
+				Console.WriteLine("!Warning: no parseinformation!");
+				return null;
+			}
+			lookupTableVisitor = new LookupTableVisitor();
+			lookupTableVisitor.Visit(fileCompilationUnit, null);
+			CSharpVisitor cSharpVisitor = new CSharpVisitor();
+			cu = (ICompilationUnit)cSharpVisitor.Visit(fileCompilationUnit, null);
+			if (cu != null) {
+				callingClass = GetInnermostClass();
+//				Console.WriteLine("CallingClass is " + callingClass == null ? "null" : callingClass.Name);
+			}
+			foreach (string name in lookupTableVisitor.variables.Keys) {
+				ArrayList variables = (ArrayList)lookupTableVisitor.variables[name];
+				if (variables != null && variables.Count > 0) {
+					foreach (LocalLookupVariable v in variables) {
+						if (IsInside(new Point(caretColumn, caretLine), v.StartPos, v.EndPos)) {
+							result.Add(v);
+							break;
+						}
+					}
+				}
+			}
+			if (callingClass != null) {
+				result = ListMembers(result, callingClass);
+			}
+			string n = "";
+			result.AddRange(parserService.GetNamespaceContents(n));
+			foreach (IUsing u in cu.Usings) {
+				if (u != null && (u.Region == null || u.Region.IsInside(caretLine, caretColumn))) {
+					foreach (string name in u.Usings) {
+						result.AddRange(parserService.GetNamespaceContents(name));
+					}
+					foreach (string alias in u.Aliases.Keys) {
+						result.Add(alias);
+					}
+				}
+			}
+			return result;
 		}
 	}
 }

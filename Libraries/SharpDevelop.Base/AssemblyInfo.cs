@@ -16,7 +16,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.98.1.1")]
+[assembly: AssemblyVersion("0.99.1.1")]
 
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")] // ..\\src\\SharpDevelop\\sharpdevelop.key

@@ -64,7 +64,7 @@ namespace SharpDevelop.Internal.Parser
 				this.classProxyCollection = classProxyCollection;
 				this.pointerNestingLevel  = returnType.PointerNestingLevel;
 				this.arrayDimensions      = returnType.ArrayDimensions;
-				classProxyIndex           = classProxyCollection.IndexOf(returnType.FullyQualifiedName);
+				classProxyIndex           = classProxyCollection.IndexOf(returnType.FullyQualifiedName, true);
 				fullyQualifiedName        = returnType.FullyQualifiedName;
 			}
 		}

@@ -29,8 +29,11 @@ namespace ICSharpCode.SharpRefactory.Parser
 	{
 		Stack namespaceDeclarations = new Stack();
 		Stack typeDeclarations     = new Stack();
-		CodeMemberMethod currentMethod = null;
+		Stack codeStack  = new Stack();
 		TypeDeclaration currentTypeDeclaration;
+
+		// dummy collection used to swallow statements
+		System.CodeDom.CodeStatementCollection NullStmtCollection = new CodeStatementCollection();
 		
 		public CodeCompileUnit codeCompileUnit = new CodeCompileUnit();
 		public ArrayList namespaces = new ArrayList();
@@ -63,12 +66,104 @@ namespace ICSharpCode.SharpRefactory.Parser
 				typeConversionTable[typeConversionList[i, 1]] = typeConversionList[i, 0];
 			}
 		}
+
 		string ConvType(string type) 
 		{
 			if (typeConversionTable[type] != null) {
 				return typeConversionTable[type].ToString();
 			}
 			return type;
+		}
+
+		void AddStmt(System.CodeDom.CodeStatement stmt)
+		{
+			System.CodeDom.CodeStatementCollection stmtCollection = codeStack.Peek() as System.CodeDom.CodeStatementCollection;
+			if (stmtCollection != null) {
+				stmtCollection.Add(stmt);
+			}
+		}
+
+		void AddStmt(System.CodeDom.CodeExpression expr)
+		{
+			System.CodeDom.CodeStatementCollection stmtCollection = codeStack.Peek() as System.CodeDom.CodeStatementCollection;
+			if (stmtCollection != null) {
+				stmtCollection.Add(expr);
+			}
+		}
+
+		// FIXME: map all modifiers correctly
+		MemberAttributes ConvMemberAttributes(Modifier modifier) 
+		{
+			MemberAttributes attr = (MemberAttributes)0;
+
+			if ((modifier & Modifier.Abstract) != 0)
+				attr |=  MemberAttributes.Abstract;
+			if ((modifier & Modifier.None) != 0)
+				attr |=  MemberAttributes.AccessMask;
+			if ((modifier & Modifier.None) != 0)
+				attr |=  MemberAttributes.Assembly;
+			if ((modifier & Modifier.Const) != 0)
+				attr |=  MemberAttributes.Const;
+			if ((modifier & Modifier.None) != 0)
+				attr |=  MemberAttributes.Family;
+			if ((modifier & Modifier.None) != 0)
+				attr |=  MemberAttributes.FamilyAndAssembly;
+			if ((modifier & Modifier.None) != 0)
+				attr |=  MemberAttributes.FamilyOrAssembly;
+			if ((modifier & Modifier.Sealed) != 0)
+				attr |=  MemberAttributes.Final;
+			if ((modifier & Modifier.New) != 0)
+				attr |=  MemberAttributes.New;
+			if ((modifier & Modifier.Virtual) != 0)
+				attr |=  MemberAttributes.Overloaded;
+			if ((modifier & Modifier.Override) != 0)
+				attr |=  MemberAttributes.Override;
+			if ((modifier & Modifier.Private) != 0)
+				attr |=  MemberAttributes.Private;
+			if ((modifier & Modifier.Public) != 0)
+				attr |=  MemberAttributes.Public;
+			if ((modifier & Modifier.None) != 0)
+				attr |=  MemberAttributes.ScopeMask;
+			if ((modifier & Modifier.Static) != 0)
+				attr |=  MemberAttributes.Static;
+			if ((modifier & Modifier.None) != 0)
+				attr |=  MemberAttributes.VTableMask;
+
+			return attr;
+		}
+
+		void ProcessSpecials(Hashtable specials)
+		{
+			if (specials == null)
+				return;
+
+			foreach (object special in specials) 
+			{
+				if (special is BlankLine) 
+				{
+					AddStmt(new CodeSnippetStatement());
+				} 
+				else if (special is PreProcessingDirective) 
+				{
+					// TODO
+				} 
+				else if (special is Comment) 
+				{
+					Comment comment = (Comment)special;
+					switch (comment.CommentType) 
+					{
+						case CommentType.SingleLine:
+							AddStmt(new CodeCommentStatement(comment.CommentText, false));
+							break;
+						case CommentType.Documentation:
+							AddStmt(new CodeCommentStatement(comment.CommentText, true));
+							break;
+						case CommentType.Block:
+							AddStmt(new CodeCommentStatement(comment.CommentText, false));
+							break;
+					}
+				}
+			}
 		}
 
 #region ICSharpCode.SharpRefactory.Parser.IASTVisitor interface implementation
@@ -89,6 +184,8 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		public object Visit(NamespaceDeclaration namespaceDeclaration, object data)
 		{
+			ProcessSpecials(namespaceDeclaration.Specials);
+
 			CodeNamespace currentNamespace = new CodeNamespace(namespaceDeclaration.NameSpace);
 			namespaces.Add(currentNamespace);
 			// add imports from mother namespace
@@ -106,6 +203,8 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		public object Visit(UsingDeclaration usingDeclaration, object data)
 		{
+			ProcessSpecials(usingDeclaration.Specials);
+
 			((CodeNamespace)namespaceDeclarations.Peek()).Imports.Add(new CodeNamespaceImport(usingDeclaration.Namespace));
 			return null;
 		}
@@ -122,6 +221,8 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		public object Visit(TypeDeclaration typeDeclaration, object data)
 		{
+			ProcessSpecials(typeDeclaration.Specials);
+
 			this.currentTypeDeclaration = typeDeclaration;
 			CodeTypeDeclaration codeTypeDeclaration = new CodeTypeDeclaration(typeDeclaration.Name);
 			codeTypeDeclaration.IsClass     = typeDeclaration.Type == Types.Class;
@@ -162,7 +263,10 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		public object Visit(FieldDeclaration fieldDeclaration, object data)
 		{
-			for (int i = 0; i < fieldDeclaration.Fields.Count; ++i) {
+			ProcessSpecials(fieldDeclaration.Specials);
+
+			for (int i = 0; i < fieldDeclaration.Fields.Count; ++i) 
+			{
 				VariableDeclaration field = (VariableDeclaration)fieldDeclaration.Fields[i];
 				
 				CodeMemberField memberField = new CodeMemberField(new CodeTypeReference(ConvType(fieldDeclaration.TypeReference.Type)), field.Name);
@@ -178,14 +282,26 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		public object Visit(MethodDeclaration methodDeclaration, object data)
 		{
+			ProcessSpecials(methodDeclaration.Specials);
+
 			CodeMemberMethod memberMethod = new CodeMemberMethod();
 			memberMethod.Name = methodDeclaration.Name;
-			currentMethod = memberMethod;
+			memberMethod.Attributes = ConvMemberAttributes(methodDeclaration.Modifier);
+
+			codeStack.Push(memberMethod.Statements);
+
 			((CodeTypeDeclaration)typeDeclarations.Peek()).Members.Add(memberMethod);
-//			if (memberMethod.Name == "InitializeComponent") {
-				methodDeclaration.Body.AcceptChildren(this, data);
-//			}
-			currentMethod = null;
+
+			// Add Method Parameters
+			foreach (ParameterDeclarationExpression parameter in methodDeclaration.Parameters)
+			{
+				memberMethod.Parameters.Add((CodeParameterDeclarationExpression)Visit(parameter, data));
+			}
+
+			methodDeclaration.Body.AcceptChildren(this, data);
+
+			codeStack.Pop();
+
 			return null;
 		}
 		
@@ -221,11 +337,15 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		public object Visit(ConstructorDeclaration constructorDeclaration, object data)
 		{
+			ProcessSpecials(constructorDeclaration.Specials);
+
 			CodeMemberMethod memberMethod = new CodeConstructor();
-			currentMethod = memberMethod;
+
+			codeStack.Push(memberMethod.Statements);
 			((CodeTypeDeclaration)typeDeclarations.Peek()).Members.Add(memberMethod);
 //			constructorDeclaration.AcceptChildren(this, data);
-			currentMethod = null;
+			codeStack.Pop();
+
 			return null;
 		}
 		
@@ -233,7 +353,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 		{
 			return null;
 		}
-		
+
 		public object Visit(OperatorDeclaration operatorDeclaration, object data)
 		{
 			return null;
@@ -246,22 +366,19 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		public object Visit(BlockStatement blockStatement, object data)
 		{
+			ProcessSpecials(blockStatement.Specials);
+
 			blockStatement.AcceptChildren(this, data);
 			return null;
 		}
 		
 		public object Visit(StatementExpression statementExpression, object data)
 		{
-			CodeExpression expr = (CodeExpression)statementExpression.Expression.AcceptVisitor(this, data);
-			if (expr == null) {
-				if (!(statementExpression.Expression is AssignmentExpression)) {
-					Console.WriteLine("NULL EXPRESSION : " + statementExpression.Expression);
-				}
-			} else {
-				currentMethod.Statements.Add(new CodeExpressionStatement(expr));
+			object exp = statementExpression.Expression.AcceptVisitor(this, data);
+			if (exp is CodeExpression) {
+				AddStmt(new CodeExpressionStatement((CodeExpression)exp));
 			}
-			
-			return null;
+			return exp;
 		}
 		
 		public string Convert(TypeReference typeRef)
@@ -287,39 +404,82 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		public object Visit(LocalVariableDeclaration localVariableDeclaration, object data)
 		{
+			CodeVariableDeclarationStatement declStmt = null;
+
 			CodeTypeReference type = new CodeTypeReference(Convert(localVariableDeclaration.Type));
 			
 			foreach (VariableDeclaration var in localVariableDeclaration.Variables) {
 				if (var.Initializer != null) {
-					currentMethod.Statements.Add(new CodeVariableDeclarationStatement(type,
-					                                                                  var.Name,
-					                                                                  (CodeExpression)((INode)var.Initializer).AcceptVisitor(this, data)));
+					declStmt = new CodeVariableDeclarationStatement(type,
+					                                             var.Name,
+					                                             (CodeExpression)((INode)var.Initializer).AcceptVisitor(this, data));
 				} else {
-					currentMethod.Statements.Add(new CodeVariableDeclarationStatement(type,
-					                                                                  var.Name));
+					declStmt = new CodeVariableDeclarationStatement(type,
+					                                             var.Name);
 				}
 			}
-			return null;
+
+			AddStmt(declStmt);
+
+			return declStmt;
 		}
 		
 		public object Visit(EmptyStatement emptyStatement, object data)
 		{
-			return null;
+			CodeSnippetStatement emptyStmt = new CodeSnippetStatement();
+
+			AddStmt(emptyStmt);
+
+			return emptyStmt;
 		}
 		
 		public object Visit(ReturnStatement returnStatement, object data)
 		{
-			return null;
+			ProcessSpecials(returnStatement.Specials);
+
+			CodeMethodReturnStatement returnStmt = new CodeMethodReturnStatement((CodeExpression)returnStatement.ReturnExpression.AcceptVisitor(this,data));
+
+			AddStmt(returnStmt);
+
+			return returnStmt;
 		}
 		
 		public object Visit(IfStatement ifStatement, object data)
 		{
-			return null;
+			ProcessSpecials(ifStatement.Specials);
+
+			CodeConditionStatement ifStmt = new CodeConditionStatement();
+			
+			ifStmt.Condition = (CodeExpression)ifStatement.Condition.AcceptVisitor(this, data);
+
+			codeStack.Push(ifStmt.TrueStatements);
+			ifStatement.EmbeddedStatement.AcceptChildren(this, data);
+			codeStack.Pop();
+
+			AddStmt(ifStmt);
+
+			return ifStmt;
 		}
 		
 		public object Visit(IfElseStatement ifElseStatement, object data)
 		{
-			return null;
+			ProcessSpecials(ifElseStatement.Specials);
+
+			CodeConditionStatement ifStmt = new CodeConditionStatement();
+
+			ifStmt.Condition = (CodeExpression)ifElseStatement.Condition.AcceptVisitor(this, data);
+
+			codeStack.Push(ifStmt.TrueStatements);
+			ifElseStatement.EmbeddedStatement.AcceptChildren(this, data);
+			codeStack.Pop();
+
+			codeStack.Push(ifStmt.FalseStatements);
+			ifElseStatement.EmbeddedElseStatement.AcceptChildren(this, data);
+			codeStack.Pop();
+
+			AddStmt(ifStmt);
+
+			return ifStmt;
 		}
 		
 		public object Visit(WhileStatement whileStatement, object data)
@@ -334,22 +494,88 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		public object Visit(ForStatement forStatement, object data)
 		{
-			return null;
+			CodeIterationStatement forLoop = new CodeIterationStatement();
+
+			if (forStatement.Initializers != null) 
+			{
+				if (forStatement.Initializers.Count > 1)
+				{
+					throw new NotSupportedException("CodeDom does not support Multiple For-Loop Initializer Statements");
+				}
+
+				foreach (object o in forStatement.Initializers)
+				{
+					if (o is Expression) 
+					{
+						forLoop.InitStatement = new CodeExpressionStatement((CodeExpression)((Expression)o).AcceptVisitor(this,data));
+					}
+					if (o is Statement) 
+					{
+						codeStack.Push(NullStmtCollection);
+						forLoop.InitStatement = (CodeStatement)((Statement)o).AcceptVisitor(this, data);
+						codeStack.Pop();
+					}
+				}
+			}
+
+			if (forStatement.Condition == null) 
+			{
+				forLoop.TestExpression = new CodePrimitiveExpression(true);
+			} 
+			else 
+			{
+				forLoop.TestExpression = (CodeExpression)forStatement.Condition.AcceptVisitor(this, data);
+			}
+
+			codeStack.Push(forLoop.Statements);
+			forStatement.EmbeddedStatement.AcceptVisitor(this, data);
+			codeStack.Pop();
+
+			if (forStatement.Iterator != null) 
+			{
+				if (forStatement.Initializers.Count > 1)
+				{
+					throw new NotSupportedException("CodeDom does not support Multiple For-Loop Iterator Statements");
+				}
+
+				foreach (Statement stmt in forStatement.Iterator) 
+				{
+					forLoop.IncrementStatement = (CodeStatement)stmt.AcceptVisitor(this, data);
+				}
+			}
+
+			AddStmt(forLoop);
+
+			return forLoop;
 		}
 		
 		public object Visit(LabelStatement labelStatement, object data)
 		{
-			return null;
+			ProcessSpecials(labelStatement.Specials);
+
+			System.CodeDom.CodeLabeledStatement labelStmt = new CodeLabeledStatement(labelStatement.Label,(CodeStatement)labelStatement.AcceptVisitor(this, data));
+
+			// Add Statement to Current Statement Collection
+			AddStmt(labelStmt);
+
+			return labelStmt;
 		}
 		
 		public object Visit(GotoStatement gotoStatement, object data)
 		{
-			return null;
+			ProcessSpecials(gotoStatement.Specials);
+
+			System.CodeDom.CodeGotoStatement gotoStmt = new CodeGotoStatement(gotoStatement.Label);
+
+			// Add Statement to Current Statement Collection
+			AddStmt(gotoStmt);
+
+			return gotoStmt;
 		}
 		
 		public object Visit(SwitchStatement switchStatement, object data)
 		{
-			return null;
+			throw new NotSupportedException("CodeDom does not support Switch Statement");
 		}
 		
 		public object Visit(BreakStatement breakStatement, object data)
@@ -384,28 +610,64 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		public object Visit(TryCatchStatement tryCatchStatement, object data)
 		{
-			return null;
+			ProcessSpecials(tryCatchStatement.Specials);
+
+			// add a try-catch-finally
+			CodeTryCatchFinallyStatement tryStmt = new CodeTryCatchFinallyStatement();
+
+			codeStack.Push(tryStmt.TryStatements);
+			ProcessSpecials(tryCatchStatement.StatementBlock.Specials);
+			tryCatchStatement.StatementBlock.AcceptChildren(this, data);
+			codeStack.Pop();
+
+			if (tryCatchStatement.FinallyBlock != null)
+			{
+				codeStack.Push(tryStmt.FinallyStatements);
+				ProcessSpecials(tryCatchStatement.FinallyBlock.Specials);
+				tryCatchStatement.FinallyBlock.AcceptChildren(this,data);
+				codeStack.Pop();
+			}
+
+			if (tryCatchStatement.CatchClauses != null) 
+			{
+				foreach (CatchClause clause in tryCatchStatement.CatchClauses) 
+				{
+					CodeCatchClause catchClause = new CodeCatchClause(clause.VariableName);
+					catchClause.CatchExceptionType = new CodeTypeReference(clause.Type);
+					tryStmt.CatchClauses.Add(catchClause);
+
+					codeStack.Push(catchClause.Statements);
+					ProcessSpecials(clause.StatementBlock.Specials);
+					clause.StatementBlock.AcceptChildren(this, data);
+					codeStack.Pop();
+				}
+			}
+
+			// Add Statement to Current Statement Collection
+			AddStmt(tryStmt);
+
+			return tryStmt;
 		}
 		
 		public object Visit(ThrowStatement throwStatement, object data)
 		{
-			return new CodeThrowExceptionStatement((CodeExpression)throwStatement.ThrowExpression.AcceptVisitor(this, data));
+			ProcessSpecials(throwStatement.Specials);
+
+			CodeThrowExceptionStatement throwStmt = new CodeThrowExceptionStatement((CodeExpression)throwStatement.ThrowExpression.AcceptVisitor(this, data));
+
+			// Add Statement to Current Statement Collection
+			AddStmt(throwStmt);
+
+			return throwStmt;
 		}
 		
 		public object Visit(FixedStatement fixedStatement, object data)
 		{
-			return null;
+			throw new NotSupportedException("CodeDom does not support Fixed Statement");
 		}
 		
 		public object Visit(PrimitiveExpression expression, object data)
 		{
-//			if (expression.Value is string) {
-//				return new CodePrimitiveExpression(expression.Value);
-//			} else if (expression.Value is char) {
-//				return new CodePrimitiveExpression((char)expression.Value);
-//			} else if (expression.Value == null) {
-//				return new CodePrimitiveExpression(null);
-//			}
 			return new CodePrimitiveExpression(expression.Value);
 		}
 		
@@ -500,6 +762,17 @@ namespace ICSharpCode.SharpRefactory.Parser
 			} else if (target is FieldReferenceExpression) {
 				FieldReferenceExpression fRef = (FieldReferenceExpression)target;
 				targetExpr = (CodeExpression)fRef.TargetObject.AcceptVisitor(this, data);
+				if (fRef.TargetObject is FieldReferenceExpression) {
+					FieldReferenceExpression fRef2 = (FieldReferenceExpression)fRef.TargetObject;
+					if (fRef2.FieldName != null && Char.IsUpper(fRef2.FieldName[0])) {
+						// an exception is thrown if it doesn't end in an indentifier exception
+						// for example for : this.MyObject.MyMethod() leads to an exception, which 
+						// is correct in this case ... I know this is really HACKY :)
+						try {
+							targetExpr = ConvertToIdentifier(fRef2);
+						} catch (Exception) {}
+					}
+				}
 				methodName = fRef.FieldName;
 			} else {
 				targetExpr = (CodeExpression)target.AcceptVisitor(this, data);
@@ -520,9 +793,11 @@ namespace ICSharpCode.SharpRefactory.Parser
 		{
 			return null;
 		}
-		
+
 		public object Visit(UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
+			CodeExpression var;
+
 			switch (unaryOperatorExpression.Op) {
 				case UnaryOperatorType.Minus:
 					if (unaryOperatorExpression.Expression is PrimitiveExpression) {
@@ -546,6 +821,43 @@ namespace ICSharpCode.SharpRefactory.Parser
 			                                        (CodeExpression)unaryOperatorExpression.Expression.AcceptVisitor(this, data));
 				case UnaryOperatorType.Plus:
 					return unaryOperatorExpression.Expression.AcceptVisitor(this, data);
+
+				case UnaryOperatorType.PostIncrement:
+					// emulate i++, with i = i + 1
+					var = (CodeExpression)unaryOperatorExpression.Expression.AcceptVisitor(this, data);
+
+					return new CodeAssignStatement(var,
+									new CodeBinaryOperatorExpression(var,
+																	 CodeBinaryOperatorType.Add,
+																	 new CodePrimitiveExpression(1)));
+
+				case UnaryOperatorType.PostDecrement:
+					// emulate i--, with i = i - 1
+					var = (CodeExpression)unaryOperatorExpression.Expression.AcceptVisitor(this, data);
+
+					return new CodeAssignStatement(var,
+						new CodeBinaryOperatorExpression(var,
+						CodeBinaryOperatorType.Subtract,
+						new CodePrimitiveExpression(1)));
+
+				case UnaryOperatorType.Decrement:
+					// emulate --i, with i = i - 1
+					var = (CodeExpression)unaryOperatorExpression.Expression.AcceptVisitor(this, data);
+
+					return new CodeAssignStatement(var,
+						new CodeBinaryOperatorExpression(var,
+						CodeBinaryOperatorType.Subtract,
+						new CodePrimitiveExpression(1)));
+
+				case UnaryOperatorType.Increment:
+					// emulate ++i, with i = i + 1
+					var = (CodeExpression)unaryOperatorExpression.Expression.AcceptVisitor(this, data);
+
+					return new CodeAssignStatement(var,
+						new CodeBinaryOperatorExpression(var,
+						CodeBinaryOperatorType.Add,
+						new CodePrimitiveExpression(1)));
+
 			}
 			return null;
 		}
@@ -558,29 +870,31 @@ namespace ICSharpCode.SharpRefactory.Parser
 				CodeExpression methodInvoker = (CodeExpression)assignmentExpression.Right.AcceptVisitor(this, null);
 				methodReference = false;
 					
-				if (assignmentExpression.Left is IdentifierExpression) {
-					currentMethod.Statements.Add(new CodeAttachEventStatement(new CodeEventReferenceExpression(new CodeThisReferenceExpression(), ((IdentifierExpression)assignmentExpression.Left).Identifier),
+				if (assignmentExpression.Left is IdentifierExpression) 
+				{
+					AddStmt(new CodeAttachEventStatement(new CodeEventReferenceExpression(new CodeThisReferenceExpression(), ((IdentifierExpression)assignmentExpression.Left).Identifier),
 					                                                          methodInvoker));
 				} else {
 					FieldReferenceExpression fr = (FieldReferenceExpression)assignmentExpression.Left;
 					
-					currentMethod.Statements.Add(new CodeAttachEventStatement(new CodeEventReferenceExpression((CodeExpression)fr.TargetObject.AcceptVisitor(this, data), fr.FieldName),
+					AddStmt(new CodeAttachEventStatement(new CodeEventReferenceExpression((CodeExpression)fr.TargetObject.AcceptVisitor(this, data), fr.FieldName),
 					                                                          methodInvoker));
 				}
 			} else {
 				if (assignmentExpression.Left is IdentifierExpression) {
-					currentMethod.Statements.Add(new CodeAssignStatement((CodeExpression)assignmentExpression.Left.AcceptVisitor(this, null), (CodeExpression)assignmentExpression.Right.AcceptVisitor(this, null)));
+					AddStmt(new CodeAssignStatement((CodeExpression)assignmentExpression.Left.AcceptVisitor(this, null), (CodeExpression)assignmentExpression.Right.AcceptVisitor(this, null)));
 				} else {
-					currentMethod.Statements.Add(new CodeAssignStatement((CodeExpression)assignmentExpression.Left.AcceptVisitor(this, null), (CodeExpression)assignmentExpression.Right.AcceptVisitor(this, null)));
-					
+					AddStmt(new CodeAssignStatement((CodeExpression)assignmentExpression.Left.AcceptVisitor(this, null), (CodeExpression)assignmentExpression.Right.AcceptVisitor(this, null)));
 				}
 			}
 			return null;
 		}
+		
 		public virtual object Visit(CheckedStatement checkedStatement, object data)
 		{
 			return null;
 		}
+		
 		public virtual object Visit(UncheckedStatement uncheckedStatement, object data)
 		{
 			return null;
@@ -614,9 +928,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 		public object Visit(CastExpression castExpression, object data)
 		{
 			string typeRef = castExpression.CastTo.Type;
-			
-			
-			return new CodeCastExpression(ConvType(typeRef), (CodeExpression)castExpression.Expression.AcceptVisitor(this, data));
+			return new CodeCastExpression(typeRef, (CodeExpression)castExpression.Expression.AcceptVisitor(this, data));
 		}
 		
 		public object Visit(StackAllocExpression stackAllocExpression, object data)
@@ -734,6 +1046,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 				                                           fieldReferenceExpression.FieldName);
 			}
 		}
+		
 		public object Visit(DirectionExpression directionExpression, object data)
 		{
 			return null;
@@ -826,6 +1139,5 @@ namespace ICSharpCode.SharpRefactory.Parser
 			}
 			return Type.GetType(typeName);
 		}
-
 	}
 }

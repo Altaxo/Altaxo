@@ -74,7 +74,7 @@
                   </System.Windows.Forms.TextBox>
                 </Controls>
               </System.Windows.Forms.GroupBox>
-              <System.Windows.Forms.RichTextBox>
+              <System.Windows.Forms.TextBox>
                 <Name value="RegularExpressionTextBox" />
                 <Anchor value="Top, Left, Right" />
                 <ClientSize value="{Width=380, Height=18}" />
@@ -82,7 +82,7 @@
                 <Location value="{X=8,Y=24}" />
                 <Text value="" />
                 <TabIndex value="2" />
-              </System.Windows.Forms.RichTextBox>
+              </System.Windows.Forms.TextBox>
               <System.Windows.Forms.Button>
                 <Name value="quickInsertButton" />
                 <Location value="{X=400,Y=24}" />

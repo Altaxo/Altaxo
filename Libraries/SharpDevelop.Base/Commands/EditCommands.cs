@@ -138,10 +138,9 @@ namespace ICSharpCode.SharpDevelop.Commands
 		public override void Run()
 		{
 			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
-			
-			if (window != null && window.ViewContent is IEditable) {
-				if (((IEditable)window.ViewContent).ClipboardHandler != null) {
-					((IEditable)window.ViewContent).ClipboardHandler.Delete(null, null);
+			if (window != null && window.ActiveViewContent is IEditable) {
+				if (((IEditable)window.ActiveViewContent).ClipboardHandler != null) {
+					((IEditable)window.ActiveViewContent).ClipboardHandler.Delete(null, null);
 				}
 			}
 		}

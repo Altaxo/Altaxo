@@ -1,91 +1,106 @@
-<Project name="ICSharpCode.SharpAssembly" description="" newfilesearch="OnLoad" enableviewstate="True" version="1.1" projecttype="C#">
+<Project name="ICSharpCode.SharpAssembly" description="" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
   <Contents>
     <File name=".\AssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\PE" subtype="Directory" buildaction="Compile" dependson="" data="" />
-    <File name=".\PE\SectionTable.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\PE\PEFileHeader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\PE\ImportTable.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\PE\DataDirectories.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\PE\StandardFields.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\PE\NTSpecificFields.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\PE\IAT.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\PE\NameTable.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\PE\CLIHeader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\MethodBody.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\AssemblyMetaData.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\PE\StreamHeader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\MetadataTable.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\Assembly.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\TypeRef.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\TypeDef.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\Module.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\Field.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\Method.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\Param.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\FieldLayout.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\Constant.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\CustomAttribute.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\MemberRef.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PE\StreamHeader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PE\CLIHeader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PE\DataDirectories.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PE\IAT.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PE\ImportTable.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PE\NameTable.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PE\NTSpecificFields.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PE\PEFileHeader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PE\SectionTable.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PE\StandardFields.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\TypeSpec.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\AbstractRow.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\Assembly.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\AssemblyOS.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\AssemblyProcessor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\AssemblyRef.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\AssemblyRefOS.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\AssemblyRefProcessor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\ClassLayout.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\CodedIndex.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\Constant.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\CustomAttribute.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\DeclSecurity.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\EventMap.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\ENCLog.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\ENCMap.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\Event.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\EventMap.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\EventPtr.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\ExportedType.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\Field.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\FieldLayout.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\FieldMarshal.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\FieldPtr.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\FieldRVA.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\File.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\ImplMap.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\InterfaceImpl.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\ManifestResource.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\MemberRef.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\Method.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\MethodImpl.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\MethodPtr.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\MethodSemantics.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\Module.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\ModuleRef.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\NestedClass.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\Param.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\ParamPtr.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\Property.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\PropertyMap.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\StandAloneSig.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\TypeSpec.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata" subtype="Directory" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows" subtype="Directory" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\CodedIndex.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Assembly.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\MethodBody.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\FieldPtr.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\MethodPtr.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\ParamPtr.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\EventPtr.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Rows\PropertyPtr.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\ENCLog.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Rows\ENCMap.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Signatures" subtype="Directory" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Signatures\CallingConventions.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Metadata\Signatures\DataTypes.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\ReflectionCompatibility" subtype="Directory" buildaction="Compile" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\MetadataTables.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\FusionNative.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\AssemblyComp.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\AssemblyNameComp.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\.svn\prop-base\Assembly.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\Metadata\Rows\StandAloneSig.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\TypeDef.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Rows\TypeRef.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\AssemblyMetadataTables.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\AssemblyNameNotFoundException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\AssemblyReader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\FusionNative.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\SharpAssembly.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\SharpAssembly.prjx~" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\SharpAssemblyName.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\.svn\prop-base\AssemblyInfo.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\prop-base\AssemblyMetadataTables.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\prop-base\AssemblyNameNotFoundException.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\prop-base\AssemblyReader.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\prop-base\FusionNative.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\.svn\prop-base\SharpAssembly.cmbx.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\prop-base\SharpAssembly.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\.svn\prop-base\SharpAssembly.prjx.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\props\Assembly.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\prop-base\SharpAssemblyName.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\.svn\props\AssemblyInfo.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\props\AssemblyMetadataTables.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\props\AssemblyNameNotFoundException.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\props\AssemblyReader.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\props\FusionNative.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\.svn\props\SharpAssembly.cmbx.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\props\SharpAssembly.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\.svn\props\SharpAssembly.prjx.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\text-base\Assembly.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\props\SharpAssemblyName.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\.svn\text-base\AssemblyInfo.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\text-base\AssemblyMetadataTables.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\text-base\AssemblyNameNotFoundException.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\text-base\AssemblyReader.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\text-base\FusionNative.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\.svn\text-base\SharpAssembly.cmbx.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\text-base\SharpAssembly.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\.svn\text-base\SharpAssembly.prjx.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\wcprops\Assembly.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\text-base\SharpAssemblyName.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\.svn\wcprops\AssemblyInfo.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\wcprops\AssemblyMetadataTables.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\wcprops\AssemblyNameNotFoundException.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\wcprops\AssemblyReader.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\wcprops\FusionNative.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\.svn\wcprops\SharpAssembly.cmbx.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\wcprops\SharpAssembly.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\.svn\wcprops\SharpAssembly.prjx.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\.svn\wcprops\SharpAssemblyName.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\Metadata\.svn\prop-base\AssemblyMetaData.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\Metadata\.svn\prop-base\MetadataTable.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\Metadata\.svn\prop-base\MethodBody.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
@@ -274,6 +289,8 @@
     <File name=".\Metadata\Rows\.svn\wcprops\TypeDef.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\Metadata\Rows\.svn\wcprops\TypeRef.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\Metadata\Rows\.svn\wcprops\TypeSpec.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\Metadata\Signatures\CallingConventions.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Metadata\Signatures\DataTypes.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Metadata\Signatures\.svn\prop-base\CallingConventions.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\Metadata\Signatures\.svn\prop-base\DataTypes.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\Metadata\Signatures\.svn\props\CallingConventions.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
@@ -322,57 +339,6 @@
     <File name=".\PE\.svn\wcprops\SectionTable.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\PE\.svn\wcprops\StandardFields.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\PE\.svn\wcprops\StreamHeader.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\AssemblyNameNotFoundException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\prop-base\AssemblyComp.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\prop-base\AssemblyNameComp.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\prop-base\AssemblyNameNotFoundException.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\prop-base\FusionNative.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\prop-base\MetadataTables.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\props\AssemblyComp.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\props\AssemblyNameComp.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\props\AssemblyNameNotFoundException.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\props\FusionNative.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\props\MetadataTables.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\text-base\AssemblyComp.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\text-base\AssemblyNameComp.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\text-base\AssemblyNameNotFoundException.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\text-base\FusionNative.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\text-base\MetadataTables.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\wcprops\AssemblyComp.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\wcprops\AssemblyNameComp.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\wcprops\AssemblyNameNotFoundException.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\wcprops\FusionNative.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\ReflectionCompatibility\.svn\wcprops\MetadataTables.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\AssemblyMetadataTables.cs" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\AssemblyNameNotFoundException.cs" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\AssemblyReader.cs" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\FusionNative.cs" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\SharpAssembly.cs" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\SharpAssemblyName.cs" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\prop-base\AssemblyMetadataTables.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\prop-base\AssemblyNameNotFoundException.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\prop-base\AssemblyReader.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\prop-base\FusionNative.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\prop-base\SharpAssembly.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\prop-base\SharpAssemblyName.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\props\AssemblyMetadataTables.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\props\AssemblyNameNotFoundException.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\props\AssemblyReader.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\props\FusionNative.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\props\SharpAssembly.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\props\SharpAssemblyName.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\text-base\AssemblyMetadataTables.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\text-base\AssemblyNameNotFoundException.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\text-base\AssemblyReader.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\text-base\FusionNative.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\text-base\SharpAssembly.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\text-base\SharpAssemblyName.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\wcprops\AssemblyMetadataTables.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\wcprops\AssemblyNameNotFoundException.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\wcprops\AssemblyReader.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\wcprops\FusionNative.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\wcprops\SharpAssembly.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\.svn\wcprops\SharpAssemblyName.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
   </Contents>
   <References />
   <DeploymentInformation target="" script="" strategy="File" />

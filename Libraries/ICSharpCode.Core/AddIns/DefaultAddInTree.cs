@@ -12,6 +12,7 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 
+using ICSharpCode.Core.Services;
 using ICSharpCode.Core.Properties;
 using ICSharpCode.Core.AddIns.Conditions;
 using ICSharpCode.Core.AddIns.Codons;
@@ -175,18 +176,23 @@ namespace ICSharpCode.Core.AddIns
 		
 		Hashtable registeredAssemblies = new Hashtable();
 			
-			
 		/// <summary>
 		/// This method loads an assembly and gets all 
 		/// it's defined codons and conditions
 		/// </summary>
 		public Assembly LoadAssembly(string fileName)
 		{
+			bool fileExists = false;
+			if (File.Exists(fileName)) {
+				fileExists = true;
+				fileName = Path.GetFullPath(fileName);
+			}
+
 			Assembly assembly = (Assembly)registeredAssemblies[fileName];
 			
 			if (assembly == null) {
 				Assembly asm = null;
-				if (File.Exists(fileName)) {
+				if (fileExists) {
 					asm = Assembly.LoadFrom(fileName);
 				}
 				if (asm == null) {
@@ -209,6 +215,9 @@ namespace ICSharpCode.Core.AddIns
 		/// </summary>
 		void LoadCodonsAndConditions(Assembly assembly)
 		{
+			IResourceService resourceService = (IResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
+			resourceService.RegisterAssembly(assembly);
+			
 			foreach(Type type in assembly.GetTypes()) {
 				if (!type.IsAbstract) {
 					if (type.IsSubclassOf(typeof(AbstractCodon)) && Attribute.GetCustomAttribute(type, typeof(CodonNameAttribute)) != null) {

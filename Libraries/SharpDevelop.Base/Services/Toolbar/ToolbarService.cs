@@ -65,6 +65,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				} else {
 					continue;
 				}
+				
 				if (childCodon.Class != null) {
 					((SdMenuCommand)item).Command = (ICommand)childCodon.AddIn.CreateObject(childCodon.Class);
 				}
