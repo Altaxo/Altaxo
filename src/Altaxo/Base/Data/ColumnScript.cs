@@ -480,7 +480,8 @@ namespace Altaxo.Data
 			// Add available assemblies including the application itself 
 			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) 
 			{
-				parameters.ReferencedAssemblies.Add(asm.Location);
+				if(!(asm is System.Reflection.Emit.AssemblyBuilder) && asm.Location!=null && asm.Location!=String.Empty)
+					parameters.ReferencedAssemblies.Add(asm.Location);
 			}
 			String code = CodeHeader + CodeStart + ScriptBody + CodeTail;
 			
