@@ -294,6 +294,26 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\Regression\Multivariate\IMultivariateCalibrationModel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Multivariate\MultivariateRelated.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Multivariate\PLS2CalibrationModel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Multivariate\PLSAnalysisOptions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\Regression\Multivariate\SpectralPreprocessing.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -304,16 +324,7 @@
                     BuildAction = "Compile"
                 />
                 <Folder RelPath = "Calc\Regression\PCR\" />
-                <File
-                    RelPath = "Calc\Regression\PLS\PLS2CalibrationModel.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\Regression\PLS\PLSAnalysisOptions.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
+                <Folder RelPath = "Calc\Regression\PLS\" />
             </Include>
         </Files>
     </CSHARP>

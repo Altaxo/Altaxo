@@ -25,12 +25,12 @@ using System;
 using Altaxo.Collections;
 using Altaxo.Calc.Regression.Multivariate;
 
-namespace Altaxo.Calc.Regression.PLS
+namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
   /// This class is for remembering the content of the PLS calibration and where to found the original data.
   /// </summary>
-  public class PLSContentMemento
+  public class MultivariateContentMemento
   {
     /// <summary>Represents that indices that build up one spectrum.</summary>
     public  Altaxo.Collections.IAscendingIntegerCollection SpectralIndices;
@@ -61,6 +61,11 @@ namespace Altaxo.Calc.Regression.PLS
     int _PreferredNumberOfFactors;
 
     /// <summary>
+    /// Number of factors calculated.
+    /// </summary>
+    int _CalculatedNumberOfFactors;
+
+    /// <summary>
     /// What to do with the spectra before processing them.
     /// </summary>
     SpectralPreprocessingOptions _spectralPreprocessing = new SpectralPreprocessingOptions();
@@ -68,12 +73,12 @@ namespace Altaxo.Calc.Regression.PLS
 
     #region Serialization
 
-      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PLSContentMemento),0)]
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Calc.Regression.PLS.PLSContentMemento",0)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
       {
-        PLSContentMemento s = (PLSContentMemento)obj;
+        MultivariateContentMemento s = (MultivariateContentMemento)obj;
         info.AddValue("TableName",s.TableName); // name of the Table
         info.AddValue("SpectrumIsRow",s.SpectrumIsRow);
         info.AddValue("SpectralIndices",s.SpectralIndices);
@@ -83,7 +88,7 @@ namespace Altaxo.Calc.Regression.PLS
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo  info, object parent)
       {
-        PLSContentMemento s = null!=o ? (PLSContentMemento)o : new PLSContentMemento();
+        MultivariateContentMemento s = null!=o ? (MultivariateContentMemento)o : new MultivariateContentMemento();
 
         s.TableName = info.GetString("Name");
         s.SpectrumIsRow = info.GetBoolean("SpectrumIsRow");
@@ -97,12 +102,13 @@ namespace Altaxo.Calc.Regression.PLS
     }
 
 
-      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PLSContentMemento),1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MultivariateContentMemento),1)]
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Calc.Regression.PLS.PLSContentMemento",1)]
       public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
       {
-        PLSContentMemento s = (PLSContentMemento)obj;
+        MultivariateContentMemento s = (MultivariateContentMemento)obj;
         info.AddValue("TableName",s.TableName); // name of the Table
         info.AddValue("SpectrumIsRow",s.SpectrumIsRow);
         info.AddValue("SpectralIndices",s.SpectralIndices);
@@ -119,7 +125,7 @@ namespace Altaxo.Calc.Regression.PLS
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo  info, object parent)
       {
-        PLSContentMemento s = null!=o ? (PLSContentMemento)o : new PLSContentMemento();
+        MultivariateContentMemento s = null!=o ? (MultivariateContentMemento)o : new MultivariateContentMemento();
 
         s.TableName = info.GetString("Name");
         s.SpectrumIsRow = info.GetBoolean("SpectrumIsRow");
@@ -168,6 +174,14 @@ namespace Altaxo.Calc.Regression.PLS
       get { return ConcentrationIndices.Count; }
     }
 
+    /// <summary>
+    /// Get/sets the number of factors that were calculated during the analysis.
+    /// </summary>
+    public int NumberOfFactors
+    {
+      get { return _CalculatedNumberOfFactors; }
+      set { _CalculatedNumberOfFactors = value; }
+    }
 
     /// <summary>
     /// Get/sets the number of factors used  for calculation residuals, plotting etc.
@@ -185,6 +199,14 @@ namespace Altaxo.Calc.Regression.PLS
     {
       get { return _spectralPreprocessing; }
       set { _spectralPreprocessing = value; }
+    }
+
+    /// <summary>
+    /// Returns the instance of analysis used to analyse the data
+    /// </summary>
+    public WorksheetAnalysis Analysis
+    {
+      get { return new PLS2WorksheetAnalysis(); }
     }
 
   }

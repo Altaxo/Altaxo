@@ -21,23 +21,17 @@
 #endregion
 
 using System;
-using Altaxo.Calc.Regression.Multivariate;
+using Altaxo.Calc;
+using Altaxo.Calc.LinearAlgebra;
+using System.Xml;
 
-namespace Altaxo.Calc.Regression.PLS
+namespace Altaxo.Calc.Regression.Multivariate
 {
-  /// <summary>
-  /// Determines how to do a Partial Least Squares Analysis.
-  /// </summary>
-  public struct PLSAnalysisOptions
-  {
-    /// <summary>
-    /// Get/sets the maximum number of factors to calculate
-    /// </summary>
-    public int MaxNumberOfFactors;
-
-    /// <summary>
-    /// How to do the calculation of Cross PRESS values.
-    /// </summary>
-    public CrossPRESSCalculationType CrossPRESSCalculation;
-  }
+	/// <summary>
+	/// Summary description for MultivariateRelated.
+	/// </summary>
+	public class MultivariateRelated
+	{
+		
+	}
 }

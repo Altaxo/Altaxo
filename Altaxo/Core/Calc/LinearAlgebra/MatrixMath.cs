@@ -690,7 +690,92 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Type conversion classes
 
-    #region MatrixRowVector
+    #region MatrixRowROVector
+
+    /// <summary>
+    /// Wrapper for a matrix row to a vector.
+    /// </summary>
+    public class MatrixRowROVector : IROVector
+    {
+      IROMatrix _m;
+      int     _row;
+      int     _coloffset;
+      int     _length;
+
+      /// <summary>
+      /// Constructor of a matrix row vector by providing the matrix and the row number of that matrix that is wrapped.
+      /// </summary>
+      /// <param name="m">The matrix.</param>
+      /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
+      public MatrixRowROVector(IROMatrix m, int row)
+        : this(m,row,0,m.Columns)
+      {
+      }
+      /// <summary>
+      /// Constructor of a matrix row vector by providing the matrix and the row number of that matrix that is wrapped.
+      /// </summary>
+      /// <param name="m">The matrix.</param>
+      /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
+      /// <param name="columnoffset">First number of column that is included in the vector.</param>
+      /// <param name="length">Length of the vector.</param>
+      public MatrixRowROVector(IROMatrix m, int row, int columnoffset, int length)
+      {
+        if(m==null)
+          throw new ArgumentNullException("IROMatrix m is null");
+        if(row<0 || row>=m.Rows)
+          throw new ArgumentOutOfRangeException("The parameter row is either <0 or greater than the rows of the matrix");
+        if(columnoffset+length>m.Columns)
+          throw new ArgumentException("Columnoffset+length exceed the number of columns of the matrix");
+
+        _m = m;
+        _row = row;
+        _coloffset = columnoffset;
+        _length = length;
+
+      }
+     
+
+      #region IROVector Members
+
+      /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
+      /// <value>The element at index i.</value>
+      double Altaxo.Calc.LinearAlgebra.IROVector.this[int i]
+      {
+        get
+        {
+          return _m[_row,i+_coloffset];
+        }
+      }
+
+      /// <summary>The smallest valid index of this vector</summary>
+      public int LowerBound
+      {
+        get
+        {
+          return 0;
+        }
+      }
+
+      /// <summary>The greates valid index of this vector. Is by definition LowerBound+Length-1.</summary>
+      public int UpperBound
+      {
+        get
+        {
+          return _length-1;
+        }
+      }
+
+      /// <summary>The number of elements of this vector.</summary>
+      public int Length
+      {
+        get
+        {
+          return _length;
+        }
+      }
+
+      #endregion
+    }
     /// <summary>
     /// Wrapper for a matrix row to a vector.
     /// </summary>
@@ -1144,6 +1229,27 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The matrix.</param>
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
+    public static IROVector RowToROVector(IROMatrix x, int row)
+    {
+      return new MatrixRowROVector(x,row);
+    }
+
+    /// <summary>
+    /// Returns a vector representing a matrix row by providing the matrix and the row number of that matrix that is wrapped.
+    /// </summary>
+    /// <param name="x">The matrix.</param>
+    /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
+    public static IROVector RowToROVector(IROMatrix x, int row, int columnoffset, int length)
+    {
+      return new MatrixRowROVector(x,row,columnoffset,length);
+    }
+
+
+    /// <summary>
+    /// Returns a vector representing a matrix row by providing the matrix and the row number of that matrix that is wrapped.
+    /// </summary>
+    /// <param name="x">The matrix.</param>
+    /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
     public static IVector RowToVector(IMatrix x, int row)
     {
       return new MatrixRowVector(x,row);
@@ -1491,6 +1597,34 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    /// <summary>
+    /// Add the vector <c>b</c>  to all rows of matrix a. 
+    /// </summary>
+    /// <param name="a">The source matrix.</param>
+    /// <param name="b">The vector to add.</param>
+    /// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to vector b).</param>
+    public static void AddRow(IROMatrix a, IROVector b, IMatrix c)
+    {
+      int arows = a.Rows;
+      int acols = a.Columns;
+
+      int bcols = b.Length;
+
+      int crows = c.Rows;
+      int ccols = c.Columns;
+
+      // Presumtion:
+      if(arows != crows || acols != ccols)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",crows,ccols,arows,acols));
+      if(bcols != acols)
+        throw new ArithmeticException(string.Format("Vector b[{0}] has not the same length than rows of matrix a[{1},{2}]!",bcols,arows,acols));
+      if(object.ReferenceEquals(b,c))
+        throw new ArithmeticException("Vector b and Matrix c are identical, which is not allowed here!");
+
+      for(int i=0;i<arows;i++)
+        for(int j=0;j<acols;j++)
+          c[i,j] = a[i,j]+b[j];
+    }
 
     /// <summary>
     /// Add the row <c>rowb</c> of matrix b to all rows of matrix a. 
@@ -2175,7 +2309,7 @@ namespace Altaxo.Calc.LinearAlgebra
       IBottomExtensibleMatrix yLoads, // out: the loads of the Y matrix
       IBottomExtensibleMatrix W, // matrix of weighting values
       IRightExtensibleMatrix V,  // matrix of cross products
-      IBottomExtensibleMatrix PRESS // matrix of Y PRESS values
+      IExtensibleVector PRESS //vector of Y PRESS values
       )
     {
       // used variables:
@@ -2214,7 +2348,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       if(PRESS!=null)
       {
-        PRESS.AppendBottom(new Scalar(MatrixMath.SumOfSquares(Y))); // Press value for not decomposed Y
+        PRESS.Append(new Scalar(MatrixMath.SumOfSquares(Y))); // Press value for not decomposed Y
       }
 
       for(int nFactor=0; nFactor<numFactors; nFactor++)
@@ -2292,7 +2426,7 @@ namespace Altaxo.Calc.LinearAlgebra
         if(PRESS!=null)
         {
           double pressValue=MatrixMath.SumOfSquares(Y);
-          PRESS.AppendBottom(new Scalar(pressValue));
+          PRESS.Append(new Scalar(pressValue));
         }
         // Calculate SEPcv. If SEPcv is greater than for the actual number of factors,
         // break since the optimal number of factors was found. If not, repeat the calculations
@@ -2424,7 +2558,7 @@ namespace Altaxo.Calc.LinearAlgebra
       IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
       int numFactors,
       bool bExcludeGroups,
-      out IMatrix crossPRESSMatrix, // vertical value of PRESS values for the cross validation
+      out IROVector crossPRESSMatrix, // vertical value of PRESS values for the cross validation
       out double meanNumberOfExcludedSpectra
       )
     {
@@ -2551,9 +2685,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
       // copy the resulting crossPRESS values into a matrix
-      crossPRESSMatrix = new MatrixMath.VerticalVector(numFactors+1);
-      for(int i=0;i<=numFactors;i++)
-        crossPRESSMatrix[i,0] = crossPRESS[i];
+      crossPRESSMatrix = VectorMath.ToROVector(crossPRESS,numFactors+1);
 
       // calculate the mean number of excluded spectras
       meanNumberOfExcludedSpectra = ((double)X.Rows)/groups.Count;

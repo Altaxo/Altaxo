@@ -154,15 +154,31 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\Regression\Multivariate\WorksheetMethods.cs"
+                    RelPath = "Calc\Regression\Multivariate\MultivariateContentMemento.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\Regression\PLS\PLSContentMemento.cs"
+                    RelPath = "Calc\Regression\Multivariate\PLS1WorksheetAnalysis.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <File
+                    RelPath = "Calc\Regression\Multivariate\PLS2WorksheetAnalysis.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Multivariate\PredictionModelExporter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Multivariate\WorksheetAnalysis.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <Folder RelPath = "Calc\Regression\PLS\" />
                 <File
                     RelPath = "Collections\AscendingIntegerCollection.cs"
                     SubType = "Code"

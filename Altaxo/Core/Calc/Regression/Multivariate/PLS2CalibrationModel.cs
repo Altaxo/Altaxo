@@ -24,15 +24,15 @@ using System;
 using Altaxo.Calc.LinearAlgebra;
 
 
-namespace Altaxo.Calc.Regression.PLS
+namespace Altaxo.Calc.Regression.Multivariate
 {
-  public class PLS2CalibrationModel
+  public class PLS2CalibrationModel : IMultivariateCalibrationModel
   {
     IROVector _xOfX;
     IROVector _xMean;
     IROVector _xScale;
-    IROMatrix _yMean;
-    IROMatrix _yScale;
+    IROVector _yMean;
+    IROVector _yScale;
 
     IROMatrix _xWeights;
     IROMatrix _xLoads;
@@ -62,13 +62,13 @@ namespace Altaxo.Calc.Regression.PLS
       set { _xScale = value; }
     }
 
-    public IROMatrix YMean
+    public IROVector YMean
     {
       get { return _yMean; }
       set { _yMean = value; }
     }
 
-    public IROMatrix YScale
+    public IROVector YScale
     {
       get { return _yScale; }
       set { _yScale = value; }
@@ -115,6 +115,20 @@ namespace Altaxo.Calc.Regression.PLS
       get { return _numberOfFactors; }
       set { _numberOfFactors = value; }
     }
+    #region IMultivariateCalibrationModel Members
+
+   
+    public int NumberOfMeasurements
+    {
+      get
+      {
+        return _xMean.Length;
+      }
+    }
+
+  
+
+    #endregion
   }
 
 

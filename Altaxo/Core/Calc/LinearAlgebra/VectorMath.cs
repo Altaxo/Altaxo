@@ -37,12 +37,31 @@ namespace Altaxo.Calc.LinearAlgebra
     private class RODoubleArrayWrapper : IROVector
     {
       protected double[] _x;
+      int _length;
       
       /// <summary>
       /// Constructor, takes a double array for wrapping.
       /// </summary>
       /// <param name="x"></param>
-      public RODoubleArrayWrapper(double[] x) { _x = x; }
+      public RODoubleArrayWrapper(double[] x)
+      {
+        _x = x;
+        _length = _x.Length;
+      }
+
+      /// <summary>
+      /// Constructor, takes a double array for wrapping.
+      /// </summary>
+      /// <param name="x"></param>
+      /// <param name="usedlength">The length used for the vector.</param>
+      public RODoubleArrayWrapper(double[] x, int usedlength)
+      {
+        if(usedlength>x.Length)
+          throw new ArgumentException("Length provided in argument usedlength is greater than length of array");
+
+        _x = x;
+        _length = usedlength;
+      }
 
       /// <summary>Gets the value at index i with LowerBound &lt;= i &lt;=UpperBound.</summary>
       /// <value>The element at index i.</value>
@@ -55,7 +74,7 @@ namespace Altaxo.Calc.LinearAlgebra
       public int UpperBound { get { return _x.GetUpperBound(0); }}
     
       /// <summary>The number of elements of this vector.</summary>
-      public int Length { get { return _x.Length; }}  // change this later to length property
+      public int Length { get { return _length; }}  // change this later to length property
     }
 
     private class RWDoubleArrayWrapper : RODoubleArrayWrapper, IVector
@@ -77,6 +96,102 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 
+    private class ExtensibleVector : IExtensibleVector  
+    {
+      double[] _arr;
+      int      _length;
+
+      public ExtensibleVector(int initiallength)
+      {
+        _arr = new double[initiallength];
+        _length = initiallength;
+      }
+
+
+      #region IVector Members
+
+      public double this[int i]
+      {
+        get
+        {
+          
+          return _arr[i];
+        }
+        set
+        {
+          _arr[i] = value;
+        }
+      }
+
+      #endregion
+
+      #region IROVector Members
+
+      double Altaxo.Calc.LinearAlgebra.IROVector.this[int i]
+      {
+        get
+        {
+         
+          return _arr[i];
+        }
+      }
+
+      public int LowerBound
+      {
+        get
+        {
+          
+          return 0;
+        }
+      }
+
+      public int UpperBound
+      {
+        get
+        {
+          
+          return _length-1;
+        }
+      }
+
+      public int Length
+      {
+        get
+        {
+         
+          return _length;
+        }
+      }
+
+      #endregion
+
+      #region IExtensibleVector Members
+      public void Append(IROVector a)
+      {
+        if(_length+a.Length>=_arr.Length)
+          Redim((int)(32+1.3*(_length+a.Length)));
+
+
+        for(int i=0;i<a.Length;i++)
+          _arr[i+_length] = a[i+a.LowerBound];
+        _length += a.Length;
+      }
+      #endregion
+
+  
+      private void Redim(int newsize)
+      {
+        if(newsize>_arr.Length)
+        {
+          double[] oldarr = _arr;
+          _arr = new double[newsize];
+          Array.Copy(oldarr,0,_arr,0,_length);
+        }
+      }
+    }
+
+
+
     #endregion
 
     #region Type conversion
@@ -91,6 +206,16 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
+    /// Wraps a double[] array till a given length to get a IROVector.
+    /// </summary>
+    /// <param name="x">The array to wrap.</param>
+    /// <returns>A wrapper objects with the <see>IROVector</see> interface that wraps the provided array.</returns>
+    public static IROVector ToROVector(double[] x, int usedlength)
+    {
+      return new RODoubleArrayWrapper(x,usedlength);
+    }
+
+    /// <summary>
     /// Wraps a double[] array to get a IVector.
     /// </summary>
     /// <param name="x">The array to wrap.</param>
@@ -98,6 +223,16 @@ namespace Altaxo.Calc.LinearAlgebra
     public static IVector ToVector(double[] x)
     {
       return new RWDoubleArrayWrapper(x);
+    }
+
+    /// <summary>
+    /// Creates a new extensible vector of length <c>length</c>
+    /// </summary>
+    /// <param name="length">The inital length of the vector.</param>
+    /// <returns>An instance of a extensible vector.</returns>
+    public static IExtensibleVector CreateExtensibleVector(int length)
+    {
+      return new ExtensibleVector(length);
     }
     #endregion
 

@@ -103,7 +103,6 @@ namespace Altaxo.Main.GUI
 
     public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
     {
-      XYColumnPlotData plotData = (XYColumnPlotData)pa.Data;
       
       // Plot Style
       LineScatterPlotStyleController  stylectrl = new LineScatterPlotStyleController((Graph.AbstractXYPlotStyle)pa.Style,plotGroup);
@@ -111,9 +110,15 @@ namespace Altaxo.Main.GUI
       stylectrl.View = styleview;
 
       // Plot Data
-      LineScatterPlotDataController datactrl = new LineScatterPlotDataController(plotData);
-      LineScatterPlotDataControl    dataview = new LineScatterPlotDataControl();
-      datactrl.View = dataview;
+      XYColumnPlotData plotData = pa.Data as XYColumnPlotData;
+      LineScatterPlotDataController datactrl=null;
+      LineScatterPlotDataControl    dataview=null;
+      if(plotData!=null)
+      {
+        datactrl = new LineScatterPlotDataController(plotData);
+        dataview = new LineScatterPlotDataControl();
+        datactrl.View = dataview;
+      }
 
       // Label Style
       Graph.GUI.XYPlotLabelStyleController labelctrl = null;
@@ -131,7 +136,10 @@ namespace Altaxo.Main.GUI
 
       GUI.TabbedDialogController tdcctrl = new GUI.TabbedDialogController("Line/Scatter Plot",true);
       tdcctrl.AddTab("Style",stylectrl,styleview);
-      tdcctrl.AddTab("Data",datactrl,dataview);
+      
+      if(datactrl!=null)
+        tdcctrl.AddTab("Data",datactrl,dataview);
+
       if(labelctrl!=null && labelview!=null)
         tdcctrl.AddTab("Label",labelctrl,labelview);
       GUI.TabbedDialogView  tdcview = new GUI.TabbedDialogView();

@@ -54,4 +54,18 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <value>The element at index i.</value>
     new double this[int i] { get; set; }
   }
+
+  /// <summary>
+  /// IRightExtensibleMatrix extends IMatrix in a way that another matrix of appropriate dimensions
+  /// can be appended to the right of the matrix. 
+  /// </summary>
+  public interface IExtensibleVector : IVector
+  {
+    /// <summary>
+    /// Append vector a to the right edge of this matrix.
+    /// </summary>
+    /// <param name="a">The vector to append.</param>
+    void Append(IROVector a);
+  }
+
 }

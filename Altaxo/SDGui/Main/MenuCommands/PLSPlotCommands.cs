@@ -51,7 +51,7 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Worksheet.GUI.WorksheetController ctrl 
         = Current.Workbench.ActiveViewContent as Altaxo.Worksheet.GUI.WorksheetController; 
 
-      return ctrl.DataTable.GetTableProperty("Content") is Altaxo.Calc.Regression.PLS.PLSContentMemento;
+      return ctrl.DataTable.GetTableProperty("Content") is Altaxo.Calc.Regression.Multivariate.MultivariateContentMemento;
     }
   }
   

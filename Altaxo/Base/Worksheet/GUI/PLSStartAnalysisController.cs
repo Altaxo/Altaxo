@@ -21,7 +21,6 @@
 #endregion
 
 using System;
-using Altaxo.Calc.Regression.PLS;
 using Altaxo.Calc.Regression.Multivariate;
 
 namespace Altaxo.Worksheet.GUI
@@ -31,10 +30,10 @@ namespace Altaxo.Worksheet.GUI
   /// </summary>
   public class PLSStartAnalysisController : Altaxo.Main.GUI.IApplyController
   {
-    PLSAnalysisOptions _doc;
+    MultivariateAnalysisOptions _doc;
     PLSStartAnalysisControl _view;
 
-    public PLSStartAnalysisController(PLSAnalysisOptions options)
+    public PLSStartAnalysisController(MultivariateAnalysisOptions options)
     {
       _doc = options;
     }
@@ -67,7 +66,7 @@ namespace Altaxo.Worksheet.GUI
       }
     }
 
-    public    PLSAnalysisOptions Doc
+    public    MultivariateAnalysisOptions Doc
     {
       get { return _doc; }
     }

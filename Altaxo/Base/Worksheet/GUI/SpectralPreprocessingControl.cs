@@ -27,7 +27,6 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
-using Altaxo.Calc.Regression.PLS;
 using Altaxo.Calc.Regression.Multivariate;
 
 namespace Altaxo.Worksheet.GUI
