@@ -28,7 +28,7 @@ namespace Altaxo.Graph
 {
 	[SerializationSurrogate(0,typeof(XYLineScatterPlotStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class XYLineScatterPlotStyle : AbstractXYPlotStyle, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, IChildChangedEventSink
+	public class XYLineScatterPlotStyle : AbstractXYPlotStyle, System.Runtime.Serialization.IDeserializationCallback, Main.IChangedEventSource, Main.IChildChangedEventSink
 	{
 
 		protected XYPlotLineStyle			m_LineStyle;
@@ -567,10 +567,12 @@ namespace Altaxo.Graph
 
 		#region IChildChangedEventSink Members
 
-		public void OnChildChanged(object child, EventArgs e)
+		public bool OnChildChanged(object child, EventArgs e)
 		{
 			if(null!=Changed)
 				Changed(this,e);
+		
+			return false;
 		}
 
 		#endregion

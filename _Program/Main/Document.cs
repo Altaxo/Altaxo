@@ -35,7 +35,7 @@ namespace Altaxo
 		IDeserializationCallback,
 		Main.INamedObjectCollection	
 	{
-		protected Altaxo.Data.TableCollection m_DataSet = null; // The root of all the data
+		protected Altaxo.Data.DataTableCollection m_DataSet = null; // The root of all the data
 
 		protected Altaxo.Graph.GraphDocumentCollection m_GraphSet = null; // all graphs are stored here
 
@@ -52,7 +52,7 @@ namespace Altaxo
 
 		public AltaxoDocument()
 		{
-			m_DataSet = new Altaxo.Data.TableCollection(this);
+			m_DataSet = new Altaxo.Data.DataTableCollection(this);
 			m_GraphSet = new Altaxo.Graph.GraphDocumentCollection(this);
 			m_TableLayoutList = new Altaxo.Worksheet.WorksheetLayoutCollection(this);
 			m_Worksheets = new System.Collections.ArrayList();
@@ -65,14 +65,14 @@ namespace Altaxo
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				AltaxoDocument s = (AltaxoDocument)obj;
-				info.AddValue("TableCollection",s.m_DataSet);
+				info.AddValue("DataTableCollection",s.m_DataSet);
 				info.AddValue("Worksheets",s.m_Worksheets);
 				info.AddValue("GraphForms",s.m_GraphForms);
 			}
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				AltaxoDocument s = (AltaxoDocument)obj;
-				s.m_DataSet = (Altaxo.Data.TableCollection)info.GetValue("TableCollection",typeof(Altaxo.Data.TableCollection));
+				s.m_DataSet = (Altaxo.Data.DataTableCollection)info.GetValue("DataTableCollection",typeof(Altaxo.Data.DataTableCollection));
 				// s.tstObj    = (AltaxoTestObject02)info.GetValue("TstObj",typeof(AltaxoTestObject02));
 				s.m_Worksheets = (System.Collections.ArrayList)info.GetValue("Worksheets",typeof(System.Collections.ArrayList));
 				s.m_GraphForms = (System.Collections.ArrayList)info.GetValue("GraphForms",typeof(System.Collections.ArrayList));
@@ -192,7 +192,7 @@ namespace Altaxo
 
 		public AltaxoDocument(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 		{
-			m_DataSet = (Altaxo.Data.TableCollection)(info.GetValue("TableCollection",typeof(Altaxo.Data.TableCollection)));
+			m_DataSet = (Altaxo.Data.DataTableCollection)(info.GetValue("DataTableCollection",typeof(Altaxo.Data.DataTableCollection)));
 		}
 
 		public void GetObjectData(
@@ -200,10 +200,10 @@ namespace Altaxo
 			System.Runtime.Serialization.StreamingContext context
 			)
 		{
-			info.AddValue("TableCollection",m_DataSet);
+			info.AddValue("DataTableCollection",m_DataSet);
 		}
 		
-		public Altaxo.Data.TableCollection TableCollection
+		public Altaxo.Data.DataTableCollection DataTableCollection
 		{
 			get { return m_DataSet; }
 		}
@@ -244,7 +244,7 @@ namespace Altaxo
 				dt1.DataColumns.Add(colB);
 			}
 
-			TableCollection.Add(dt1);
+			DataTableCollection.Add(dt1);
 
 			return dt1;
 		}

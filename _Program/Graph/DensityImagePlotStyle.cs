@@ -36,7 +36,7 @@ namespace Altaxo.Graph
 		:
 		System.ICloneable, 
 		System.Runtime.Serialization.IDeserializationCallback, 
-		IChangedEventSource,
+		Main.IChangedEventSource,
 		Main.IDocumentNode
 	{
 

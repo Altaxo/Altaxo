@@ -8,7 +8,7 @@ namespace Altaxo.Graph
 		System.Runtime.Serialization.IDeserializationCallback,
 		System.Collections.ICollection,
 		Altaxo.Main.IDocumentNode,
-		Altaxo.IChangedEventSource,
+		Altaxo.Main.IChangedEventSource,
 		Altaxo.Main.INamedObjectCollection
 	{
 		// Data

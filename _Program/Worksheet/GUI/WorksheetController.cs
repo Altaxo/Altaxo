@@ -910,7 +910,7 @@ namespace Altaxo.Worksheet.GUI
 		{
 			Altaxo.Data.DataTable clonedTable = (Altaxo.Data.DataTable)this.DataTable.Clone();
 
-			// find a new name for the cloned table and add it to the TableCollection
+			// find a new name for the cloned table and add it to the DataTableCollection
 			clonedTable.TableName = DataTable.ParentDataSet.FindNewTableName();
 			DataTable.ParentDataSet.Add(clonedTable);
 			App.Current.CreateNewWorksheet(clonedTable);
@@ -1191,17 +1191,17 @@ namespace Altaxo.Worksheet.GUI
 			
 				if(null!=oldTable)
 				{
-					oldTable.DataColumns.FireDataChanged -= new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnTableDataChanged);
-					oldTable.PropCols.FireDataChanged -= new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnPropertyDataChanged);
-					oldTable.TableNameChanged -= new EventHandler(this.OnTableNameChanged);
+					oldTable.DataColumns.Changed -= new EventHandler(this.EhTableDataChanged);
+					oldTable.PropCols.Changed -= new EventHandler(this.EhPropertyDataChanged);
+					oldTable.TableNameChanged -= new EventHandler(this.EhTableNameChanged);
 				}
 
 				m_Table = newTable;
 				if(null!=newTable)
 				{
-					newTable.DataColumns.FireDataChanged += new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnTableDataChanged);
-					newTable.PropCols.FireDataChanged += new Altaxo.Data.DataColumnCollection.OnDataChanged(this.OnPropertyDataChanged);
-					newTable.TableNameChanged += new EventHandler(this.OnTableNameChanged);
+					newTable.DataColumns.Changed += new EventHandler(this.EhTableDataChanged);
+					newTable.PropCols.Changed += new EventHandler(this.EhPropertyDataChanged);
+					newTable.TableNameChanged += new EventHandler(this.EhTableNameChanged);
 					this.SetCachedNumberOfDataColumns();
 					this.SetCachedNumberOfDataRows();
 					this.SetCachedNumberOfPropertyColumns();
@@ -1252,7 +1252,7 @@ namespace Altaxo.Worksheet.GUI
 
 		public void RemoveSelected()
 		{
-			this.DataTable.SuspendDataChangedNotifications();
+			this.DataTable.Suspend();
 
 
 			// delete the selected columns
@@ -1326,7 +1326,7 @@ namespace Altaxo.Worksheet.GUI
 
 
 			// end code for the selected rows
-			this.DataTable.ResumeDataChangedNotifications();
+			this.DataTable.Resume();
 			this.View.TableAreaInvalidate(); // necessary because we changed the selections
 
 
@@ -1423,13 +1423,14 @@ namespace Altaxo.Worksheet.GUI
 		#endregion
 
 		#region Data event handlers
-		public void OnTableDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow)
+
+		public void EhTableDataChanged(object sender, EventArgs e)
 		{
-			if(this.m_NumberOfTableRows!=DataTable.DataColumns.RowCount)
-				this.SetCachedNumberOfDataRows();
+				if(this.m_NumberOfTableRows!=DataTable.DataColumns.RowCount)
+					this.SetCachedNumberOfDataRows();
 			
-			if(this.m_NumberOfTableCols!=DataTable.DataColumns.ColumnCount)
-				this.SetCachedNumberOfDataColumns();
+				if(this.m_NumberOfTableCols!=DataTable.DataColumns.ColumnCount)
+					this.SetCachedNumberOfDataColumns();
 		}
 
 	
@@ -1510,13 +1511,13 @@ namespace Altaxo.Worksheet.GUI
 			}
 		}
 
-		public void OnPropertyDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow)
+		public void EhPropertyDataChanged(object sender, EventArgs e)
 		{
-			if(this.m_NumberOfPropertyCols != sender.ColumnCount)
+			if(this.m_NumberOfPropertyCols != DataTable.PropCols.ColumnCount)
 				SetCachedNumberOfPropertyColumns();
 		}
 
-		public void OnTableNameChanged(object sender, System.EventArgs e)
+		public void EhTableNameChanged(object sender, System.EventArgs e)
 		{
 			if(View!=null)
 				View.TableViewForm.Text = Doc.TableName;

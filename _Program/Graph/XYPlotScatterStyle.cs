@@ -121,7 +121,7 @@ namespace Altaxo.Graph
 
 	[SerializationSurrogate(0,typeof(XYPlotScatterStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class XYPlotScatterStyle : ICloneable, IChangedEventSource, System.Runtime.Serialization.IDeserializationCallback, IChildChangedEventSink
+	public class XYPlotScatterStyle : ICloneable, Main.IChangedEventSource, System.Runtime.Serialization.IDeserializationCallback, Main.IChildChangedEventSink
 	{
 		protected XYPlotScatterStyles.Shape			m_Shape;
 		protected XYPlotScatterStyles.Style			m_Style;
@@ -271,7 +271,7 @@ namespace Altaxo.Graph
 		protected void CreateEventChain()
 		{
 			if(null!=m_Pen)
-				m_Pen.Changed += new EventHandler(this.OnChildChanged);
+				m_Pen.Changed += new EventHandler(this.EhChildChanged);
 		}
 
 		public void SetToNextStyle(XYPlotScatterStyle template)
@@ -358,7 +358,7 @@ namespace Altaxo.Graph
 				if(value!=null || XYPlotScatterStyles.Shape.NoSymbol==this.m_Shape)
 				{
 					m_Pen = null==value?null:(PenHolder)value.Clone();
-					m_Pen.Changed += new EventHandler(this.OnChildChanged);
+					m_Pen.Changed += new EventHandler(this.EhChildChanged);
 					OnChanged(); // Fire Changed event
 				}
 			}
@@ -524,10 +524,17 @@ namespace Altaxo.Graph
 
 		#region IChildChangedEventSink Members
 
-		public void OnChildChanged(object child, EventArgs e)
+		public void EhChildChanged(object child, EventArgs e)
+		{
+			OnChildChanged(child, e);
+		}
+
+		public bool OnChildChanged(object child, EventArgs e)
 		{
 			if(null!=Changed)
 				Changed(this,e);
+
+			return false;
 		}
 
 		#endregion

@@ -27,7 +27,7 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
 	/// </summary>
-	public abstract class Axis : ICloneable, IChangedEventSource
+	public abstract class Axis : ICloneable, Main.IChangedEventSource
 	{
 		#region ICloneable Members
 		/// <summary>
@@ -49,7 +49,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		protected virtual void OnChanged()
 		{
-			OnChanged(new ChangedEventArgs(this,null));
+			OnChanged(new Main.ChangedEventArgs(this,null));
 		}
 
 		protected virtual void OnChanged(EventArgs e)

@@ -317,7 +317,7 @@ namespace Altaxo.Graph
 
 			[SerializationSurrogate(0,typeof(PlotGroup.Collection.SerializationSurrogate0))]
 			[SerializationVersion(0)]
-			public class Collection : Altaxo.Data.CollectionBase, IChangedEventSource
+			public class Collection : Altaxo.Data.CollectionBase, Main.IChangedEventSource
 		{
 				#region "Serialization"
 

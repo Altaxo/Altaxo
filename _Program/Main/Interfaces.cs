@@ -1,6 +1,6 @@
 using System;
 
-namespace Altaxo
+namespace Altaxo.Main
 {
 	/// <summary>Designates a object which supports the changed event.</summary>
 	interface IChangedEventSource
@@ -11,7 +11,31 @@ namespace Altaxo
 
 	interface IChildChangedEventSink
 	{
-		void OnChildChanged(object child, EventArgs e);
+		/// <summary>
+		/// This function is used by the childs of an object to signal an parent object that they have changed. If the function returns true, the child have to suspend it's
+		/// change notifications (if this is supported by the child).
+		/// </summary>
+		/// <param name="child">The child object.</param>
+		/// <param name="e">EventArgs, can be a derived class to provide details of the change.</param>
+		/// <returns>The parent returns false normally. If the parent is suspended, it returns true to signal the child
+		/// that it should also suspend its notification. </returns>
+		bool OnChildChanged(object child, EventArgs e);
+	}
+
+	/// <summary>
+	/// All objects that can be suspended and resumed should implement this interface
+	/// </summary>
+	public interface IResumable
+	{
+		/// <summary>
+		/// Suspend all change notifications.
+		/// </summary>
+		void Suspend();
+
+		/// <summary>
+		/// Resume all change notifications.
+		/// </summary>
+		void Resume();
 	}
 
 	/// <summary>ChangedEventArgs can be used by originators of a Changed event to preserve the originator of the Changed event, even if 
@@ -33,6 +57,9 @@ namespace Altaxo
 			Originator = originator;
 			Tag = tag;
 		}
+
+
+	
 	}
 
 

@@ -33,7 +33,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	public abstract class  PlotItem
 		:
-		IChangedEventSource,
+		Main.IChangedEventSource,
 		System.ICloneable,
 		Main.IDocumentNode,
 		Main.INamedObjectCollection
@@ -73,7 +73,7 @@ namespace Altaxo.Graph
 		/// Creates a cloned copy of this object.
 		/// </summary>
 		/// <returns>The cloned copy of this object.</returns>
-		/// <remarks>The data (DataColumns which belongs to a table in the document's TableCollection) are not cloned, only the reference to this columns is cloned.</remarks>
+		/// <remarks>The data (DataColumns which belongs to a table in the document's DataTableCollection) are not cloned, only the reference to this columns is cloned.</remarks>
 		public abstract object Clone();
 
 

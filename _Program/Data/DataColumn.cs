@@ -25,303 +25,8 @@ namespace Altaxo.Data
 {
 	
 
-	/// <summary>
-	/// The main purpose of the column.
-	/// </summary>
-	[Serializable]
-	public enum ColumnKind
-	{
-		/// <summary>
-		/// Column values are the dependent variable (usually y in 2D-Plots, z in 3D-plots) 
-		/// </summary>
-		V=0,
-		/// <summary>
-		/// Column values are the first independent variable.
-		/// </summary>
-		X=1,
-		/// <summary>
-		/// Column values are the second independent variable.
-		/// </summary>
-		Y=2,			
-		/// <summary>
-		/// Column values are the third independent variable.
-		/// </summary>
-		Z=3,								
-		/// <summary>
-		/// Column values are +- error values.
-		/// </summary>
-		Err=4,		
-		/// <summary>
-		/// Column values are + error values.
-		/// </summary>
-		pErr=5,
-		/// <summary>
-		/// Column values are - error values.
-		/// </summary>
-		mErr=6,
-		/// <summary>
-		/// Column values are labels.
-		/// </summary>
-		Label=7,
-		/// <summary>
-		/// Column values are the plot condition, i.e. if zero, the row is ignored during plotting.
-		/// </summary>
-		Condition=8
-	}
 
 
-
-	/// <summary>
-	/// This designates a vector structure, which holds elements. A single element at a given index can be read out
-	/// by returning a AltaxoVariant.
-	/// </summary>
-	public interface IReadableColumn : ICloneable
-	{
-
-		/// <summary>
-		/// The indexer property returns the element at index i as an AltaxoVariant.
-		/// </summary>
-		AltaxoVariant this[int i] 
-		{
-			get;
-		}
-
-		/// <summary>
-		/// Returns true, if the value at index i of the column
-		/// is null or invalid or in another state comparable to null or empty
-		/// </summary>
-		/// <param name="i">The index to the element.</param>
-		/// <returns>true if element is null/empty, false if the element is valid</returns>
-		bool IsElementEmpty(int i);
-
-		/// <summary>
-		/// FullName returns a descriptive name for a column
-		/// for columns which belongs to a table, the table name and the column
-		/// name, separated by a backslash, should be returned
-		/// for other columns, a descriptive name should be returned so that the
-		/// user knows the location of this column
-		/// </summary>
-		string FullName
-		{
-			get;
-		}
-	}
-
-	/// <summary>
-	/// A column, for which the elements can be set by assigning a AltaxoVariant to a element at index i.
-	/// </summary>
-	public interface IWriteableColumn : ICloneable
-	{
-		/// <summary>
-		/// Indexer property for setting the element at index i by a AltaxoVariant.
-		/// This function should throw an exeption, if the type of the variant do not match
-		/// the type of the column.
-		/// </summary>
-		AltaxoVariant this[int i] 
-		{
-			set;
-		}
-	}
-
-
-	/// <summary>
-	/// This is a column with elements, which can be treated as numeric values. This is truly the case
-	/// for columns which hold integer values or floating point values. Also true for DateTime columns, since they
-	/// can converted in seconds since a given reference date.
-	/// </summary>
-	public interface INumericColumn : IReadableColumn, ICloneable
-	{
-		/// <summary>
-		/// Returns the value of a column element at index i as numeric value (double).
-		/// </summary>
-		/// <param name="i">The index to the column element.</param>
-		/// <returns>The value of the column element as double value.</returns>
-		double GetDoubleAt(int i);
-	}
-
-	/// <summary>
-	/// The indexer column is a simple readable numeric column. The value of an element is 
-	/// it's index in the column, i.e. GetDoubleAt(i) simply returns the value i.
-	/// </summary>
-	[Serializable]
-	public class IndexerColumn : INumericColumn, IReadableColumn, ICloneable
-	{
-
-		#region Serialization
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IndexerColumn),0)]
-			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				IndexerColumn s = null!=o ? (IndexerColumn)o : new IndexerColumn();
-				return s;
-			}
-		}
-		#endregion
-		/// <summary>
-		/// Creates a cloned instance of this object.
-		/// </summary>
-		/// <returns>The cloned instance of this object.</returns>
-		public object Clone()
-		{
-			return new IndexerColumn();
-		}
-		/// <summary>
-		/// Simply returns the value i.
-		/// </summary>
-		/// <param name="i">The index i.</param>
-		/// <returns>The index i.</returns>
-		public double GetDoubleAt(int i)
-		{
-			return i;
-		}
-
-		/// <summary>
-		/// This returns always true.
-		/// </summary>
-		/// <param name="i">The index i.</param>
-		/// <returns>Always true.</returns>
-		public bool IsElementEmpty(int i)
-		{
-			return false;
-		}
-
-		/// <summary>
-		/// Returns the index i as AltaxoVariant.
-		/// </summary>
-		public AltaxoVariant this[int i] 
-		{
-			get 
-			{
-				return new AltaxoVariant((double)i);
-			}
-		} 
-
-		/// <summary>
-		/// The full name of a indexer column is "IndexerColumn".
-		/// </summary>
-		public string FullName
-		{
-			get { return "IndexerColumn"; }
-		}
-
-	}
-
-
-	/// <summary>
-	/// The EquallySpacedColumn is a simple readable numeric column. The value of an element is 
-	/// calculated from y = a+b*i. This means the value of the first element is a, the values are equally spaced by b.
-	/// </summary>
-	[Serializable]
-	public class EquallySpacedColumn : INumericColumn, IReadableColumn, ICloneable
-	{
-		/// <summary>The start value, i.e. the value at index 0.</summary>
-		protected double m_Start=0;
-		/// <summary>The spacing value between consecutive elements.</summary>
-		protected double m_Increment=1;
-
-
-		#region Serialization
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EquallySpacedColumn),0)]
-			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				EquallySpacedColumn s = (EquallySpacedColumn)obj;
-				info.AddValue("StartValue",s.m_Start);
-				info.AddValue("Increment",s.m_Increment);
-			}
-
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				EquallySpacedColumn s = null!=o ? (EquallySpacedColumn)o : new EquallySpacedColumn(0,1);
-				
-				s.m_Start = info.GetDouble("StartValue");
-				s.m_Increment = info.GetDouble("Increment");
-				return s;
-			}
-		}
-		#endregion
-
-		/// <summary>
-		/// Creates a EquallySpacedColumn with starting value start and spacing increment.
-		/// </summary>
-		/// <param name="start">The starting value.</param>
-		/// <param name="increment">The increment value (spacing value between consecutive elements).</param>
-		public EquallySpacedColumn(double start, double increment)
-		{
-			m_Start = start;
-			m_Increment = increment;
-		}
-
-		/// <summary>
-		/// Creates a cloned instance of this object.
-		/// </summary>
-		/// <returns>The cloned instance of this object.</returns>
-		public object Clone()
-		{
-			return new EquallySpacedColumn(m_Start, m_Increment);
-		}
-
-
-		/// <summary>
-		/// Simply returns the value i.
-		/// </summary>
-		/// <param name="i">The index i.</param>
-		/// <returns>The index i.</returns>
-		public double GetDoubleAt(int i)
-		{
-			return m_Start + i*m_Increment;
-		}
-
-		/// <summary>
-		/// This returns always true.
-		/// </summary>
-		/// <param name="i">The index i.</param>
-		/// <returns>Always true.</returns>
-		public bool IsElementEmpty(int i)
-		{
-			return false;
-		}
-
-		/// <summary>
-		/// Returns the index i as AltaxoVariant.
-		/// </summary>
-		public AltaxoVariant this[int i] 
-		{
-			get 
-			{
-				return new AltaxoVariant((double)(m_Start+i*m_Increment));
-			}
-		} 
-
-		/// <summary>
-		/// The full name of a indexer column is "EquallySpacedColumn(start,increment)".
-		/// </summary>
-		public string FullName
-		{
-			get { return "EquallySpacedColumn("+m_Start.ToString()+","+m_Increment.ToString()+")"; }
-		}
-
-	}
-
-
-	/// <summary>
-	/// The interface to a column which has a definite number of elements.
-	/// </summary>
-	public interface IDefinedCount
-	{
-		/// <summary>
-		/// Get the number of elements of the column.
-		/// </summary>
-		int Count
-		{
-			get;
-		}
-	}
 
 
 
@@ -341,7 +46,8 @@ namespace Altaxo.Data
 		IDefinedCount,
 		ICloneable,
 		Altaxo.Main.IDocumentNode,
-		Main.INameOwner
+		Main.INameOwner,
+		Main.IResumable
 	{
 		///<summary>The name of the column.</summary>
 		protected string m_ColumnName=null;
@@ -357,7 +63,7 @@ namespace Altaxo.Data
 		/// </summary>
 		
 		[NonSerialized]
-		protected Altaxo.Data.DataColumnCollection m_Parent=null;
+		protected object m_Parent=null;
 
 		/// <summary>The group number the column belongs to.</summary>
 		/// <remarks>Normal columns are organized in groups. Every group of colums has either no or
@@ -377,48 +83,93 @@ namespace Altaxo.Data
 		/// newSize = addSpace+increaseFactor*oldSize.</summary>
 		protected static int    addSpace=32; // array space is increased by multiplying with increasefactor + addspase
 
-		/// <summary>Lower bound of the area of rows, which changed during the data change event off period.</summary>
-		protected int m_MinRowChanged=int.MaxValue;
-		/// <summary>Upper bound of the area of rows, which changed during the data change event off period.</summary>
-		protected int m_MaxRowChanged=int.MinValue;
-		/// <summary>Indicates, if the row count decreased during the data change event off period. In this case it is neccessary
-		/// to recalculate the row count of the table, since it is possible that the table row count also decreased in this case.</summary>
-		protected bool m_bRowCountDecreased=false; // true if during event switch of period, the row m_Count  of this column decreases 
-		
+			
 		/// <summary>Counter of how many suspends to data change event notifications are pending.</summary>
 		/// <remarks>If this counter is zero, then every change to a element of this column fires a data change event. Applications doing a lot of changes at once can
-		/// suspend this events for a better performance by calling <see cref="SuspendDataChangedNotifications"/>. After finishing the application has to
-		/// call <see cref="ResumeDataChangedNotifications"/></remarks>
-		protected int  m_DataEventsSuspendCount=0;
+		/// suspend this events for a better performance by calling <see cref="Suspend"/>. After finishing the application has to
+		/// call <see cref="Resume"/></remarks>
+		protected int  m_SuspendCount=0;
 
-		/// <summary>
-		/// Handler of data change events. The area of changed rows is provided by nMinRow and nMaxRow. If the row count
-		/// has decreased this is indicated by bRowCountDecreased is true.
-		/// </summary>
-		public delegate void DataChangedHandler(Altaxo.Data.DataColumn sender, int nMinRow, int nMaxRow, bool bRowCountDecreased );   // delegate declaration
-		public delegate void DirtySetHandler(Altaxo.Data.DataColumn sender);
-		public delegate void DisposedHandler(Altaxo.Data.DataColumn sender);
+		protected ChangeEventArgs m_ChangeData;
 
-		/// <summary>
-		/// Data changed events are fired if any of the data of this column is changed. If the event is suspended by a call to
-		/// <see cref="SuspendDataChangedNotifications"/>, the changes are stored internally. If the event is resumed, then
-		/// the accumulated changes are returned by the <see cref="DataChangedHandler"/>.</summary>
-		public event DataChangedHandler						DataChanged;
+
 		
 		/// <summary>This element is fired when the column is to be disposed.</summary><remarks>All instances, which have a reference
 		/// to this column, should have a wire to this event. In case the event is fired, it indicates
 		/// that the column should be disposed, so they have to unreference this column by setting the
 		/// reference to null.
 		/// </remarks>
-		public event DisposedHandler							ColumnDisposed;
+		public event EventHandler	ColumnDisposed;
 
+	
 		/// <summary>
-		/// This event is fired once (and only once) when something in the column has changed,
-		/// and the column state switches from not dirty to dirty. Once the column state is dirty,
-		/// further changes to the column will _not_ fire the event.
+		/// This event is fired if the data of the column or anything else changed.
 		/// </summary>
-		protected internal event DirtySetHandler	DirtySet;
- 
+		public event System.EventHandler Changed;
+
+
+
+		public class ChangeEventArgs : System.EventArgs
+		{
+			/// <summary>Lower bound of the area of rows, which changed during the data change event off period.</summary>
+			protected int m_MinRowChanged;
+			/// <summary>Upper bound of the area of rows, which changed during the data change event off period.</summary>
+			protected int m_MaxRowChanged;
+			/// <summary>Indicates, if the row count decreased during the data change event off period. In this case it is neccessary
+			/// to recalculate the row count of the table, since it is possible that the table row count also decreased in this case.</summary>
+			protected bool m_RowCountDecreased; // true if during event switch of period, the row m_Count  of this column decreases 
+
+			#region ChangeEventArgs
+
+			public ChangeEventArgs(int minRow, int maxRow, bool rowCountDecreased)
+			{
+				m_MinRowChanged = minRow;
+				m_MaxRowChanged = maxRow;
+				m_RowCountDecreased = rowCountDecreased;
+			}
+
+			public void Accumulate(int minRow, int maxRow, bool rowCountDecreased)
+			{
+				if(minRow < m_MinRowChanged)
+					m_MinRowChanged = minRow;
+				if(maxRow > m_MaxRowChanged) 
+					m_MaxRowChanged = maxRow;
+				
+				m_RowCountDecreased |= rowCountDecreased;
+			}
+
+			public int MinRowChanged
+			{
+				get { return m_MinRowChanged; }
+			}
+			public int MaxRowChanged
+			{
+				get { return m_MaxRowChanged; }
+			}
+			public bool RowCountDecreased
+			{
+				get { return m_RowCountDecreased; }
+			}
+		}
+
+		public class NumberChangeEventArgs : System.EventArgs
+		{
+			int _numberOld;
+			int _numberNew;
+
+			public NumberChangeEventArgs(int numberOld, int numberNew)
+			{
+				_numberOld = numberOld;
+				_numberNew = numberNew;
+			}
+
+			public int NumberOld { get { return _numberOld; }}
+			public int NumberNew { get { return _numberNew; }}
+
+
+		}
+
+		#endregion
 
 		#region Serialization
 
@@ -468,8 +219,6 @@ namespace Altaxo.Data
 				s.m_Group = info.GetInt32("Group");
 
 				// set the helper data
-				s.m_MinRowChanged=int.MaxValue; // area of rows, which changed during event off period
-				s.m_MaxRowChanged=int.MinValue;
 				return s;
 			}
 		}
@@ -518,10 +267,6 @@ namespace Altaxo.Data
 				s.m_Group = info.GetInt32("Group");
 
 				
-				// s.m_Parent = parent as Altaxo.Data.DataColumnCollection; // remarks: this is done during parent deserialization!
-				// set the helper data
-				s.m_MinRowChanged=int.MaxValue; // area of rows, which changed during event off period
-				s.m_MaxRowChanged=int.MinValue;
 				return s;
 			}
 		}
@@ -552,15 +297,12 @@ namespace Altaxo.Data
 
 		public DataColumn(DataColumn from)
 		{
-			this.m_bRowCountDecreased			= false;
 			this.m_ColumnName							= from.m_ColumnName;
 			this.m_ColumnNumber						= from.m_ColumnNumber;
 			this.m_Count									= from.m_Count;
-			this.m_DataEventsSuspendCount = 0;
+			this.m_SuspendCount = 0;
 			this.m_Group									= from.m_Group;
 			this.m_Kind										= from.m_Kind;
-			this.m_MaxRowChanged					= int.MinValue;
-			this.m_MinRowChanged					= int.MaxValue;
 			this.m_Parent									= null;
 		}
 
@@ -572,33 +314,7 @@ namespace Altaxo.Data
 		public abstract object Clone();
 
 
-		/// <summary>
-		/// A call to this function suspends data changed event notifications
-		/// </summary>
-		/// <remarks>If an application has
-		/// to change a lot of data in a column at once, it should call this function to avoid the firing
-		/// of the event every time it changes a single element. After processing all items, the application
-		/// has to resume the data changed event notification by calling <see cref="ResumeDataChangedNotifications"/>
-		/// </remarks>
-		public void SuspendDataChangedNotifications()
-		{
-			m_DataEventsSuspendCount++;
-		}
-
-		/// <summary>
-		/// This resumes the data changed notifications if the suspend counter has reached zero.
-		/// </summary>
-		/// <remarks>The area of changed rows is updated even in the suspend period. The suspend counter is
-		/// decreased by a call to this function. If it reaches zero, the data changed event is fired,
-		/// and the arguments of the handler contain the changed area of rows during the suspend time.</remarks>
-		public void ResumeDataChangedNotifications()
-		{
-			m_DataEventsSuspendCount--;
-			if(m_DataEventsSuspendCount<0) m_DataEventsSuspendCount=0;
-
-			if(0==m_DataEventsSuspendCount && this.IsDirty)
-				NotifyDataChanged(m_MinRowChanged,m_MaxRowChanged,m_bRowCountDecreased);
-		}
+	
 
 		/// <summary>
 		/// Copies the head of the column, i.e. the column name from another column.
@@ -611,12 +327,7 @@ namespace Altaxo.Data
 		/// </remarks>
 		public void CopyHeaderFrom(DataColumn ano)
 		{
-			// throw an exception, if the destination column has a parent, that is not supported!
-			// because the m_Table has to set up the names and so on
-			if(this.m_Parent!=null)
-				throw new ApplicationException("The column " + this.ColumnName + " has the parent m_Table " + m_Parent.TableName);
-			
-			this.m_ColumnName = ano.m_ColumnName;
+			this.ColumnName = ano.m_ColumnName;
 		}
 
 		/// <value>The column group number this column belongs to.</value>
@@ -645,14 +356,16 @@ namespace Altaxo.Data
 			get { return m_Kind==ColumnKind.X; }
 			set
 			{
-				if(null!=this.m_Parent && true==value)
-				{
-					m_Parent.DeleteXProperty(m_Group);
-				}
+				ColumnKind oldValue = m_Kind;
 				if(true==value)
 					m_Kind = ColumnKind.X;
-				else
-					m_Kind = ColumnKind.V;
+			
+
+				if(oldValue!=m_Kind && m_Parent is Main.IChildChangedEventSink)
+				{
+					//m_Parent.DeleteXProperty(m_Group);
+					((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this,new ColumnKindChangeEventArgs(oldValue,m_Kind));
+				}
 			}
 		}
 
@@ -677,10 +390,12 @@ namespace Altaxo.Data
 		/// calling the function <see cref="DataColumnCollection.OnColumnDataChanged"/>, informing the parent table of this change. If the parent table
 		/// has a not-zero suspend counter, then it will suspend data changed notifications also for this column and the event is not fired.
 		/// If the suspend counter of the parent table is zero, it firstly informs its parent data set by calling the function
-		/// <see cref="TableCollection.OnTableDataChanged"/>. If the suspend counter of the TableCollection is not zero, then it will suspend the data changed events of the table. And the table will
+		/// <see cref="DataTableCollection.OnChildChanged"/>. If the suspend counter of the DataTableCollection is not zero, then it will suspend the data changed events of the table. And the table will
 		/// then suspend the data changed events of this column, so the event is not fired in this case<para/>
 		/// That means in the end: only if the suspend counter of this column, the parent data table, and the parent data set of this table are all zero,
 		/// then the data changed event is fired at all.</remarks>
+		 
+/*
 		protected void NotifyDataChanged(int minRow, int maxRow, bool rowCountDecreased)
 		{
 			bool bWasDirtyBefore = this.IsDirty;
@@ -695,14 +410,14 @@ namespace Altaxo.Data
 				m_bRowCountDecreased |= rowCountDecreased;
 			}
 
-			if(null!=m_Parent && 0==m_DataEventsSuspendCount)
+			if(null!=m_Parent && 0==m_SuspendCount)
 			{
 				// always inform the parent first,
 				// because the parent can change our bDataEventEnabled to false)
 				this.m_Parent.OnColumnDataChanged(this,m_MinRowChanged,m_MaxRowChanged,m_bRowCountDecreased);
 			}
 			
-			if(0==m_DataEventsSuspendCount) // look again for this variable, because the parent can change it during OnDataChanged
+			if(0==m_SuspendCount) // look again for this variable, because the parent can change it during OnDataChanged
 			{	
 				if(null!=DataChanged)
 					DataChanged(this, m_MinRowChanged,m_MaxRowChanged,m_bRowCountDecreased);
@@ -716,6 +431,79 @@ namespace Altaxo.Data
 					DirtySet(this);
 			}
 		}
+
+*/
+
+		/// <summary>
+		/// A call to this function suspends data changed event notifications
+		/// </summary>
+		/// <remarks>If an application has
+		/// to change a lot of data in a column at once, it should call this function to avoid the firing
+		/// of the event every time it changes a single element. After processing all items, the application
+		/// has to resume the data changed event notification by calling <see cref="Resume"/>
+		/// </remarks>
+		public void Suspend()
+		{
+			m_SuspendCount++;
+		}
+
+		/// <summary>
+		/// This resumes the data changed notifications if the suspend counter has reached zero.
+		/// </summary>
+		/// <remarks>The area of changed rows is updated even in the suspend period. The suspend counter is
+		/// decreased by a call to this function. If it reaches zero, the data changed event is fired,
+		/// and the arguments of the handler contain the changed area of rows during the suspend time.</remarks>
+		public void Resume()
+		{
+			if(m_SuspendCount>0 && (--m_SuspendCount)==0 && m_ChangeData!=null)
+			{
+				if(m_Parent is Main.IChildChangedEventSink && true==((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData))
+				{
+					this.Suspend();
+					// Note: AccumulateChangeData is not neccessary here, since we still have the ChangeData
+				}
+				else // parent is not suspended
+				{
+					OnChanged(m_ChangeData); // Fire the changed event
+					m_ChangeData=null; // dispose the change data
+				}		
+			}
+		}
+
+		protected void AccumulateChangeData(int minRow, int maxRow, bool rowCountDecreased)
+		{
+			if(m_ChangeData==null)
+				m_ChangeData = new DataColumn.ChangeEventArgs(minRow,maxRow,rowCountDecreased);
+			else
+				m_ChangeData.Accumulate(minRow,maxRow,rowCountDecreased);	// AccumulateNotificationData
+		}
+
+		protected void NotifyDataChanged(int minRow, int maxRow, bool rowCountDecreased)
+		{
+			if(this.m_SuspendCount>0) // IsSuspended
+			{
+				AccumulateChangeData(minRow, maxRow, rowCountDecreased);
+			}
+			else // not suspended
+			{
+				if(m_Parent is Main.IChildChangedEventSink && true==((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData))
+				{
+					this.Suspend();
+					AccumulateChangeData(minRow, maxRow, rowCountDecreased);
+				}
+				else // parent is not suspended
+				{
+					OnChanged(m_ChangeData); // Fire the changed event
+				}
+			}
+		}
+	
+		protected virtual void OnChanged(System.EventArgs e)
+		{
+			if(null!=Changed)
+				Changed(this, e!=null? e : EventArgs.Empty);
+		}
+
 
 		/// <summary>
 		/// Returns the type of the associated ColumnStyle for use in a worksheet view.</summary>
@@ -733,18 +521,8 @@ namespace Altaxo.Data
 		{
 			get
 			{
-				return (m_MinRowChanged<=m_MaxRowChanged);
+				return null!=m_ChangeData;
 			}
-		}
-
-		/// <summary>
-		/// Resets the dirty attribute.
-		/// </summary>
-		protected void ResetDirty()
-		{
-			m_MinRowChanged=int.MaxValue;
-			m_MaxRowChanged=int.MinValue;
-			m_bRowCountDecreased=false;
 		}
 
 		/// <value>
@@ -767,9 +545,6 @@ namespace Altaxo.Data
 		/// <param name="n">The position of the column in the parent data table.</param>
 		protected internal void SetColumnNumber(int n)
 		{
-			if(null!=m_Parent && m_Parent[n]!=this) // test if the column is really there
-				throw new ApplicationException("Try to set wrong column number to column " + this.ColumnName + ", m_Table " + m_Parent.TableName);
-
 			m_ColumnNumber=n;
 		}
 
@@ -815,12 +590,12 @@ namespace Altaxo.Data
 			}
 			set
 			{
-				if(m_ColumnName!=value)
+				string oldName = m_ColumnName;
+				m_ColumnName = value;
+				if(m_ColumnName!=oldName)
 				{
-					if(this.m_Parent==null)
-						m_ColumnName = value; // set value directly if no parent table
-					else // parent table is not null, so lets check the name by the parent
-						m_ColumnName = m_Parent.FindUniqueColumnName(value);
+					if(this.m_Parent is Main.IChildChangedEventSink)
+						((Main.IChildChangedEventSink)ParentObject).OnChildChanged(this,new Main.NameChangedEventArgs(oldName,m_ColumnName));
 				}
 			}
 		}
@@ -833,7 +608,8 @@ namespace Altaxo.Data
 		{
 			get 
 			{
-				return null==m_Parent ? m_ColumnName : String.Format("{0}\\{1}",m_Parent.TableName,m_ColumnName);
+				Altaxo.Data.DataTable table = this.ParentTable;
+				return null==m_Parent ? m_ColumnName : String.Format("{0}\\{1}",table.TableName,m_ColumnName);
 			}
 		}
 
@@ -867,14 +643,8 @@ namespace Altaxo.Data
 		{
 			get
 			{
-				return m_Parent.Parent;
+				return (DataTable)Main.DocumentPath.GetRootNodeImplementing(this,typeof(DataTable));
 			}
-		}
-
-		public Altaxo.Data.DataColumnCollection Parent
-		{
-			get { return m_Parent; }
-			set { m_Parent = value; }
 		}
 
 		public virtual object ParentObject
@@ -944,7 +714,7 @@ namespace Altaxo.Data
 			this.m_ColumnNumber = int.MinValue;
 			this.Clear();
 			if(null!=ColumnDisposed)
-				ColumnDisposed(this);
+				ColumnDisposed(this,EventArgs.Empty);
 		}
 
 		/// <summary>
@@ -985,6 +755,10 @@ namespace Altaxo.Data
 		/// <param name="nBeforeRow">The row number before the additional rows are inserted.</param>
 		/// <param name="nCount">Number of empty rows to insert.</param>
 		public abstract void InsertRows(int nBeforeRow, int nCount); // inserts additional empty rows
+		
+		
+	
+		
 		// -----------------------------------------------------------------------------
 		// 
 		//                      Operators

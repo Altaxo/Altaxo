@@ -34,7 +34,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[Altaxo.Serialization.SerializationSurrogate(0,typeof(PenHolder.PenHolderSurrogate0))]
 	[Altaxo.Serialization.SerializationVersion(0)]
-	public class PenHolder : ICloneable, IDisposable, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
+	public class PenHolder : ICloneable, IDisposable, System.Runtime.Serialization.IDeserializationCallback, Main.IChangedEventSource
 	{
 		protected PenHolder.Configured  m_ConfiguredProperties; // ORed collection of the configured properties (i.e. non-standard properties) 
 		protected PenType m_PenType; // the type of the pen

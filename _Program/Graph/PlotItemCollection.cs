@@ -33,8 +33,8 @@ namespace Altaxo.Graph
 		:
 		Altaxo.Data.CollectionBase,
 		System.Runtime.Serialization.IDeserializationCallback,
-		IChangedEventSource,
-		IChildChangedEventSink,
+		Main.IChangedEventSource,
+		Main.IChildChangedEventSink,
 		System.ICloneable,
 		Main.IDocumentNode,
 		Main.INamedObjectCollection
@@ -249,7 +249,7 @@ namespace Altaxo.Graph
 		{
 			plotitem.ParentObject = this;
 			SetItemBoundaries(plotitem);
-			plotitem.Changed += new EventHandler(this.OnChildChanged);
+			plotitem.Changed += new EventHandler(this.EhChildChanged);
 		}
 
 		/// <summary>
@@ -357,21 +357,26 @@ namespace Altaxo.Graph
 
 		public event System.EventHandler Changed;
 
+		public virtual void EhChildChanged(object child, EventArgs e)
+		{
+			OnChildChanged(child,e);
+		}
 
-		public virtual void OnChildChanged(object child, EventArgs e)
+		public virtual bool OnChildChanged(object child, EventArgs e)
 		{
 			if(null!=Changed)
 				Changed(this,e);
+
+			return false; // not suspended
 		}
 
 		protected virtual void OnChanged()
 		{
 			if(null!=Changed)
-				Changed(this,new ChangedEventArgs(this,null));
+				Changed(this,new Main.ChangedEventArgs(this,null));
 		}
 
 		#endregion
-
 
 		#region PlotGroup handling
 

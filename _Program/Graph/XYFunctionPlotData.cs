@@ -5,7 +5,7 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Summary description for XYFunctionPlotData.
 	/// </summary>
-	public class XYFunctionPlotData : ICloneable, Calc.IScalarFunctionDD, IChangedEventSource
+	public class XYFunctionPlotData : ICloneable, Calc.IScalarFunctionDD, Main.IChangedEventSource
 	{
 		public XYFunctionPlotData()
 		{

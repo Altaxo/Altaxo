@@ -32,7 +32,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(GraphicsObjectCollection.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class GraphicsObjectCollection : Altaxo.Data.CollectionBase, IChangedEventSource, IChildChangedEventSink
+	public class GraphicsObjectCollection : Altaxo.Data.CollectionBase, Main.IChangedEventSource, Main.IChildChangedEventSink
 	{
 
 		#region "Serialization"
@@ -109,7 +109,7 @@ namespace Altaxo.Graph
 		{
 			// restore the event chain
 			for(int i=0;i<Count;i++)
-				this[i].Changed += new EventHandler(this.OnChildChanged);
+				this[i].Changed += new EventHandler(this.EhChildChanged);
 		}
 		#endregion
 
@@ -227,16 +227,23 @@ namespace Altaxo.Graph
 
 		public event System.EventHandler Changed;
 
-		public virtual void OnChildChanged(object child, EventArgs e)
+		public void EhChildChanged(object child, EventArgs e)
+		{
+			OnChildChanged(child,e);
+		}
+
+		public virtual bool OnChildChanged(object child, EventArgs e)
 		{
 			if(null!=Changed)
 				Changed(this, e);
+		
+			return false;
 		}
 
 		protected virtual void OnChanged()
 		{
 			if(null!=Changed)
-				Changed(this, new ChangedEventArgs(this,null));
+				Changed(this, new Main.ChangedEventArgs(this,null));
 		}
 		#endregion
 	} // end class GraphicsObjectCollection

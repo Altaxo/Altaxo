@@ -32,7 +32,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(GraphicsObject.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public abstract class GraphicsObject : System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, System.ICloneable
+	public abstract class GraphicsObject : System.Runtime.Serialization.IDeserializationCallback, Main.IChangedEventSource, System.ICloneable
 	{
 		/// <summary>
 		/// If true, the graphical object sizes itself, for instance simple text objects.
@@ -395,10 +395,10 @@ namespace Altaxo.Graph
 		protected virtual void OnChanged()
 		{
 			if(null==this.m_Container )
-				m_Container.OnChildChanged(this,new ChangedEventArgs(this,null));
+				m_Container.OnChildChanged(this,new Main.ChangedEventArgs(this,null));
 
 			if(null!=Changed)
-				Changed(this,new ChangedEventArgs(this,null));
+				Changed(this,new Main.ChangedEventArgs(this,null));
 		}
 
 		#endregion

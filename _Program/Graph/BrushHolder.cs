@@ -50,7 +50,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[Altaxo.Serialization.SerializationSurrogate(0,typeof(BrushHolder.BrushHolderSurrogate0))]
 	[Altaxo.Serialization.SerializationVersion(0)]
-	public class BrushHolder : System.ICloneable, System.IDisposable, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
+	public class BrushHolder : System.ICloneable, System.IDisposable, System.Runtime.Serialization.IDeserializationCallback, Main.IChangedEventSource
 	{
 
 		protected BrushType m_BrushType; // Type of the brush

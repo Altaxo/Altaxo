@@ -33,20 +33,109 @@ namespace Altaxo.Data
 		Altaxo.Main.IDocumentNode,
 		IDisposable,
 		ICloneable,
-		Main.INamedObjectCollection
+		Main.INamedObjectCollection,
+		Main.IResumable,
+		Main.IChildChangedEventSink
 	{
 		// Types
 		public delegate void OnDataChanged(Altaxo.Data.DataColumnCollection sender, int nMinCol, int nMaxCol, int nMinRow, int nMaxRow);   // delegate declaration
 		public delegate void OnDirtySet(Altaxo.Data.DataColumnCollection sender);
 		
+		public class ChangeEventArgs : System.EventArgs
+		{
+			protected int m_MinColChanged;
+			protected int m_MaxColChanged;
+			protected int m_MinRowChanged;
+			protected int m_MaxRowChanged;
+			protected int m_MaxDecreasedToRow;
+
+			public ChangeEventArgs(int columnNumber, int minRow, int maxRow, bool rowCountDecreased, int columnCount)
+			{
+				m_MinColChanged = columnNumber;
+				m_MaxColChanged = columnNumber;
+				m_MinRowChanged = minRow;
+				m_MaxRowChanged = maxRow;
+				m_MaxDecreasedToRow = rowCountDecreased ?  columnCount : int.MaxValue;
+			}
+
+			public void Accumulate(int columnNumber, int minRow, int maxRow, bool rowCountDecreased, int columnCount)
+			{
+				if(columnNumber<m_MinColChanged)
+					m_MinColChanged=columnNumber;
+				if(columnNumber>m_MaxColChanged)
+					m_MaxColChanged=columnNumber;
+				if(minRow < m_MinRowChanged)
+					m_MinRowChanged=minRow;
+				if(maxRow > m_MaxRowChanged)
+					m_MaxRowChanged=maxRow;
+				if(rowCountDecreased && columnCount>m_MaxDecreasedToRow)
+					m_MaxDecreasedToRow = columnCount;
+			}
+
+			public void Accumulate(ChangeEventArgs args)
+			{
+				if(args.m_MinColChanged < this.m_MinColChanged)
+					this.m_MinColChanged  = args.m_MinColChanged;
+				
+				if(args.m_MaxColChanged > this.m_MaxColChanged)
+					this.m_MaxColChanged  = args.m_MaxColChanged;
+				
+				if(args.m_MinRowChanged < this.m_MinRowChanged)
+					this.m_MinRowChanged = args.m_MinRowChanged;
+				
+				if(args.MaxRowChanged  > this.m_MaxRowChanged)
+					this.m_MaxRowChanged = args.m_MaxRowChanged;
+				
+				if(args.m_MaxDecreasedToRow < this.m_MaxDecreasedToRow)
+					this.m_MaxDecreasedToRow = args.m_MaxDecreasedToRow;
+			}
+
+			public static ChangeEventArgs CreateColumnRemoveArgs(int firstColumnNumber, int originalNumberOfColumns, int maxRowCountOfRemovedColumns)
+			{
+				ChangeEventArgs args = new ChangeEventArgs(firstColumnNumber,0,maxRowCountOfRemovedColumns,true,0);
+				if(originalNumberOfColumns > args.m_MaxColChanged)
+					args.m_MaxColChanged = originalNumberOfColumns;
+				return args;
+			}
+
+			public int MinColChanged
+			{
+				get { return m_MinColChanged; }
+			}
+			public int MaxColChanged
+			{
+				get { return m_MaxColChanged; }
+			}
+			public int MinRowChanged
+			{
+				get { return m_MinRowChanged; }
+			}
+			public int MaxRowChanged
+			{
+				get { return m_MaxRowChanged; }
+			}
+			public int MaxDecreasedToRow
+			{
+				get { return m_MaxDecreasedToRow; }
+			}
+		}
+
 		// Data
 
 		/// <summary>
-		/// The data table this set is belonging to. In case this is a DataTable (by inheriting),
-		/// m_Parent points to itself. In case this is a PropertyCollection belonging to a DataTable, this points to the DataTable
+		/// The parent of this DataColumnCollection, normally a DataTable.
 		/// </summary>
-		protected DataTable m_Parent=null; // the DataTable this set is belonging to
+		protected object m_Parent=null; // the DataTable this set is belonging to
+		
+		/// <summary>
+		/// The collection of the columns (accessible by number).
+		/// </summary>
 		protected System.Collections.ArrayList m_ColumnsByNumber = new System.Collections.ArrayList();
+		
+		
+		/// <summary>
+		/// Cached number of rows. This is the maximum of the Count of all DataColumns contained in this collection.
+		/// </summary>
 		protected int m_NumberOfRows=0; // the max. Number of Rows of the columns of the table
 
 
@@ -56,27 +145,20 @@ namespace Altaxo.Data
 		protected ColumnScriptCollection m_ColumnScripts = new ColumnScriptCollection();
 
 		// Helper Data
-		public event OnDataChanged FireDataChanged;
-		protected internal event OnDirtySet FireDirtySet;
 		protected System.Collections.Hashtable m_ColumnsByName=new System.Collections.Hashtable();
-		protected System.Collections.Stack dirtyColumns = new System.Collections.Stack(); // the collection of dirty columns
 		
 		protected string m_LastColumnNameAdded=""; // name of the last column wich was added to the table
 		protected string m_LastColumnNameGenerated=""; // name of the last column name that was automatically generated
 
-		protected int m_DataEventsSuspendCount=0;
-		private  bool m_ResumeDataEventsInProgress=false;
-
-		protected int m_MinColChanged = int.MaxValue;
-		protected int m_MaxColChanged = int.MinValue;
-		protected int m_MinRowChanged = int.MaxValue;
-		protected int m_MaxRowChanged = int.MinValue;
-		protected int m_MaxDecreasedToRow = int.MinValue;
-		protected bool m_IsDirty    = false;
+		protected int m_SuspendCount=0;
+		private  bool m_ResumeInProgress=false;
+		protected System.Collections.ArrayList m_SuspendedChildCollection = new System.Collections.ArrayList(); // the collection of dirty columns
+		protected ChangeEventArgs m_ChangeData;
+		public event EventHandler Changed;
 
 		private bool m_DeserializationFinished=false;
 
- 
+
 
 		#region "Serialization"
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
@@ -99,14 +181,9 @@ namespace Altaxo.Data
 
 				// set up helper objects
 				s.m_ColumnsByName=new System.Collections.Hashtable();
-				s.dirtyColumns = new System.Collections.Stack();
+				s.m_SuspendedChildCollection = new System.Collections.ArrayList();
 				s.m_LastColumnNameAdded="";
 				s.m_LastColumnNameGenerated="";
-				s.m_MinColChanged = int.MaxValue;
-				s.m_MaxColChanged = int.MinValue;
-				s.m_MinRowChanged = int.MaxValue;
-				s.m_MaxRowChanged = int.MinValue;
-				s.m_MaxDecreasedToRow = int.MinValue;
 				return s;
 			}
 		}
@@ -343,7 +420,9 @@ namespace Altaxo.Data
 			m_ColumnsByName.Add(datac.ColumnName,datac);	
 
 			// raise data event to all listeners
-			OnColumnDataChanged(datac,0,datac.Count-1,bColumnWasReplaced);
+			//OnColumnDataChanged(datac,0,datac.Count-1,bColumnWasReplaced);
+			//this.OnChildChanged(datac,new DataColumn.ChangeEventArgs(0,datac.Count-1,bColumnWasReplaced));
+			this.OnChildChanged(null, new ChangeEventArgs(datac.ColumnNumber,0,datac.Count,bColumnWasReplaced,datac.Count));
 		}
 
 
@@ -354,12 +433,12 @@ namespace Altaxo.Data
 		/// <param name="nRowsToInsert">The number of rows to insert.</param>
 		public void InsertRows(int nBeforeRow, int nRowsToInsert)
 		{
-			SuspendDataChangedNotifications();
+			Suspend();
 
 			for(int i=0;i<ColumnCount;i++)
 				this[i].InsertRows(nBeforeRow,nRowsToInsert);
 		
-			ResumeDataChangedNotifications();
+			Resume();
 		}
 
 		/// <summary>
@@ -369,12 +448,12 @@ namespace Altaxo.Data
 		/// <param name="nCount">Number of rows to remove, starting from nFirstRow.</param>
 		public void RemoveRows(int nFirstRow, int nCount)
 		{
-			SuspendDataChangedNotifications();
+			Suspend();
 
 			for(int i=0;i<this.ColumnCount;i++)
 				this[i].RemoveRows(nFirstRow,nCount);
 		
-			ResumeDataChangedNotifications();
+			Resume();
 		}
 
 
@@ -396,7 +475,7 @@ namespace Altaxo.Data
 				}
 				else
 				{
-					throw new Exception("The column \"" + s + "\" in table \"" + this.TableName + "\" does not exist.");
+					throw new Exception("The column \"" + s + "\" in node \"" + Main.DocumentPath.GetAbsolutePath(this).ToString() + "\" does not exist.");
 				}
 			}
 		}
@@ -420,7 +499,7 @@ namespace Altaxo.Data
 				}
 				else
 				{
-					throw new Exception("The column[" + idx + "] in table \"" + this.TableName + "\" does not exist.");
+					throw new Exception("The column[" + idx + "] in table \"" + Main.DocumentPath.GetAbsolutePath(this).ToString() + "\" does not exist.");
 				}
 			}
 		}
@@ -442,12 +521,7 @@ namespace Altaxo.Data
 				this[i].SetColumnNumber(i);
 
 			// raise datachange event that some columns have changed
-			if(nFirstColumn<m_MinColChanged) m_MinColChanged=nFirstColumn;
-			if(nOriginalColumnCount>m_MaxColChanged) m_MaxColChanged=nOriginalColumnCount;
-			if(0<m_MinRowChanged) m_MinRowChanged=0;
-			if(RowCount>m_MaxRowChanged) m_MaxRowChanged=RowCount;
-			m_MaxDecreasedToRow = 0; // because in the worst case, the row count can now be null if all other columns are empty
-			OnColumnDataChanged(null,0,RowCount,true);
+			this.OnChildChanged(null, ChangeEventArgs.CreateColumnRemoveArgs(nFirstColumn, nOriginalColumnCount, RowCount));
 		}
 
 		public void RemoveColumn(int nFirstColumn)
@@ -457,14 +531,14 @@ namespace Altaxo.Data
 
 		public void DeleteRows(int nFirstRow, int nDelCount)
 		{
-			this.SuspendDataChangedNotifications();
+			this.Suspend();
 			
 			for(int i=this.ColumnCount-1;i>=0;i--)
 			{
 				this[i].RemoveRows(nFirstRow,nDelCount);
 			}
 
-			this.ResumeDataChangedNotifications();
+			this.Resume();
 		}
 
 		public void DeleteRow(int nFirstRow)
@@ -495,16 +569,12 @@ namespace Altaxo.Data
 				return this.m_ColumnsByNumber.Count;
 			}
 		}
-
-		public virtual Altaxo.Data.DataTable Parent
-		{
-			get { return m_Parent; }
-			set { m_Parent = value; }
-		}
+	
 
 		public virtual object ParentObject
 		{
 			get { return m_Parent; }
+			set { m_Parent=value; }
 		}
 
 		public virtual string Name
@@ -515,20 +585,6 @@ namespace Altaxo.Data
 				return noc==null ? null : noc.GetNameOfChildObject(this);
 			}
 		}
-
-
-		/// <summary>
-		/// get or sets the name of the Table
-		/// </summary>
-		public string TableName
-		{
-			get
-			{
-				return m_Parent.TableName;
-			}
-		}
-
-		
 
 		public ColumnScriptCollection ColumnScripts
 		{
@@ -542,13 +598,13 @@ namespace Altaxo.Data
 		/// removes the x-property from all columns in the group nGroup
 		/// </summary>
 		/// <param name="nGroup">the group number for the columns from which to remove the x-property</param>
-		public void DeleteXProperty(int nGroup)
+		public void DeleteXProperty(int nGroup, DataColumn exceptThisColumn)
 		{
 			int len = this.ColumnCount;
 			for(int i=len-1;i>=0;i--)
 			{
 				DataColumn dc = (DataColumn)m_ColumnsByNumber[i];
-				if(dc.Group==nGroup && dc.XColumn)
+				if(dc.Group==nGroup && dc.XColumn && !dc.Equals(exceptThisColumn))
 				{
 					dc.XColumn=false;
 				}
@@ -572,31 +628,123 @@ namespace Altaxo.Data
 
 		#region Event handling
 
-		public virtual void SuspendDataChangedNotifications()
+
+		public bool IsSuspended
 		{
-			m_DataEventsSuspendCount++;
+			get { return m_SuspendCount>0; }
 		}
 
-		public virtual void ResumeDataChangedNotifications()
+		public virtual void Suspend()
 		{
-			m_DataEventsSuspendCount--;
-			if(m_DataEventsSuspendCount<0) m_DataEventsSuspendCount=0;
+			m_SuspendCount++;
+		}
 
-			// first, Resume the data changed events for all child columns 
-			if(m_DataEventsSuspendCount==0)
+		public void Resume()
+		{
+			if(m_SuspendCount>0 && (--m_SuspendCount)==0)
 			{
-				m_ResumeDataEventsInProgress=true;
+				this.m_ResumeInProgress = true;
+				foreach(Main.IResumable obj in m_SuspendedChildCollection)
+					obj.Resume();
+				m_SuspendedChildCollection.Clear();
+				this.m_ResumeInProgress = false;
 
-				foreach(Altaxo.Data.DataColumn tc in dirtyColumns)
-					tc.ResumeDataChangedNotifications();
-				dirtyColumns.Clear();
-
-				m_ResumeDataEventsInProgress=false;
-				// then Resume it for the table itself
-				if(this.IsDirty)
-					OnColumnDataChanged(null,0,0,false); // simulate a data changed event
+				// send accumulated data if available and release it thereafter
+				if(null!=m_ChangeData)
+				{
+					if(m_Parent is Main.IChildChangedEventSink && true==((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData))
+					{
+						this.Suspend();
+						// Note: AccumulateChangeData is not neccessary here, since we still have the ChangeData
+					}
+					else // parent is not suspended
+					{
+						OnChanged(m_ChangeData); // Fire the changed event
+						m_ChangeData=null; // dispose the change data
+					}		
+				}
 			}
 		}
+
+
+
+		void AccumulateChildChangeData(object sender, EventArgs e)
+		{
+			DataColumn.ChangeEventArgs changed = e as DataColumn.ChangeEventArgs;
+			if(changed!=null && sender is DataColumn)
+			{
+				int columnNumber = ((DataColumn)sender).ColumnNumber;
+				int columnCount = ((DataColumn)sender).Count;
+
+				if(m_ChangeData==null)
+					m_ChangeData = new ChangeEventArgs(columnNumber,changed.MinRowChanged,changed.MaxRowChanged,changed.RowCountDecreased, columnCount);
+				else 
+					m_ChangeData.Accumulate(columnNumber,changed.MinRowChanged,changed.MaxRowChanged,changed.RowCountDecreased, columnCount);
+
+				// update the row count in case the nMaxRow+1 is greater than the chached row count
+				if(columnCount > m_NumberOfRows)
+					m_NumberOfRows = columnCount;
+			}
+			else if(e is ChangeEventArgs)
+			{
+				if(null==m_ChangeData)
+					m_ChangeData = (ChangeEventArgs)e;
+				else
+					m_ChangeData.Accumulate((ChangeEventArgs)e);
+			}
+		}
+
+		public void HandleImmediateChildChangeCases(object sender, System.EventArgs e)
+		{
+			ColumnKindChangeEventArgs ck = e as ColumnKindChangeEventArgs;
+			if(ck!=null)
+			{
+				if(ck.NewKind==ColumnKind.X)
+					this.DeleteXProperty(((DataColumn)sender).Group,(DataColumn)sender);
+			}
+		}
+
+		public bool OnChildChanged(object sender, System.EventArgs e)
+		{
+			HandleImmediateChildChangeCases(sender, e);
+			if(IsSuspended)
+			{
+				if(sender is Main.IResumable)
+					m_SuspendedChildCollection.Add(sender); // add sender to suspended child
+				else
+					AccumulateChildChangeData(sender,e);	// AccumulateNotificationData
+				return true; // signal the child that it should be suspend further notifications
+			}
+			else // not suspended
+			{
+				if(m_ResumeInProgress)
+				{
+					AccumulateChildChangeData(sender,e);// AccumulateNotificationData(...) -> not available here 
+					return false;  // signal not suspended to the parent
+				}
+				else // no resume in progress
+				{
+					if(m_Parent is Main.IChildChangedEventSink && true==((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData))
+					{
+						this.Suspend();
+						return this.OnChildChanged(sender, e); // we call the function recursively, but now we are suspended
+					}
+					else // parent is not suspended
+					{
+						OnChanged(m_ChangeData); // Fire the changed event
+						return false; // signal not suspended to the parent
+					}
+				}
+			}
+		}
+
+		protected virtual void OnChanged(ChangeEventArgs e)
+		{
+			if(null!=Changed)
+				Changed(this,e);
+		}
+
+
 
 
 		public void RefreshRowCount()
@@ -630,94 +778,6 @@ namespace Altaxo.Data
 		}
 
 
-		public void OnColumnDataChanged(Altaxo.Data.DataColumn sender, int nMinRow, int nMaxRow, bool rowCountDecreased)
-		{
-			bool bWasDirtyBefore = this.IsDirty;
-
-			if(null!=sender)
-			{
-				int nCol = sender.ColumnNumber;
-				if(nCol<m_MinColChanged)
-					m_MinColChanged=nCol;
-				if(nCol>m_MaxColChanged)
-					m_MaxColChanged=nCol;
-				if(nMinRow<m_MinRowChanged)
-					m_MinRowChanged=nMinRow;
-				if(nMaxRow>m_MaxRowChanged)
-					m_MaxRowChanged=nMaxRow;
-				if(rowCountDecreased && sender.Count>m_MaxDecreasedToRow)
-					m_MaxDecreasedToRow = sender.Count;
-
-				// update the row count in case the nMaxRow+1 is greater than the chached row count
-				if(nMaxRow+1>m_NumberOfRows)
-					m_NumberOfRows=nMaxRow+1;
-					
-				m_IsDirty = true;
-		
-				if(m_ResumeDataEventsInProgress)
-					return; // only update the data if resume is in progress
-			}
-			else // null==sender, so probably from myself
-			{
-				m_IsDirty=true;
-				if(nMinRow<m_MinRowChanged)
-					m_MinRowChanged=nMinRow;
-				if(nMaxRow>m_MaxRowChanged)
-					m_MaxRowChanged=nMaxRow;
-				if(rowCountDecreased) 
-					m_MaxDecreasedToRow = nMinRow;
-			}
-
-			if(null!=m_Parent && m_DataEventsSuspendCount==0)
-			{
-				// inform the parent first
-				this.m_Parent.OnColumnCollectionDataChanged(this);
-			}
-				
-			if(m_DataEventsSuspendCount==0) // reevaluate this variable because parent can change it during notification
-			{
-				if(m_MaxDecreasedToRow>=0) // if some row count decreased to this value 
-				{
-					RefreshRowCount(true);
-				}
-		
-				if(null!=FireDataChanged)
-					FireDataChanged(this, m_MinColChanged,m_MaxColChanged,m_MinRowChanged,m_MaxRowChanged);
-			
-				ResetDirty();
-			}
-			else // Data events disabled
-			{
-				// if Data events are Disabled, Disable it also in the column
-				if(null!=sender)
-				{
-					this.dirtyColumns.Push(sender);
-					sender.SuspendDataChangedNotifications();
-				}
-
-				if(!bWasDirtyBefore && null!=FireDirtySet)
-					FireDirtySet(this);
-					
-			}
-			
-		}
-
-
-		protected internal void AddDirtyColumn(Altaxo.Data.DataColumn s)
-		{
-			dirtyColumns.Push(s);
-		}
-
-		public void OnColumnDirtySet(Altaxo.Data.DataColumn sender)
-		{
-			AddDirtyColumn(sender);
-			bool bWasDirtyBefore = this.IsDirty;
-			m_IsDirty = true;
-			if(!bWasDirtyBefore)
-				FireDirtySet(this);
-		}
-
-
 		#endregion
 
 
@@ -735,23 +795,11 @@ namespace Altaxo.Data
 		{
 			get
 			{
-				return m_IsDirty;
-			}
-			set
-			{
-				m_IsDirty |= value;
+				return null!=m_ChangeData;
 			}
 		}
 
-		protected virtual void ResetDirty()
-		{
-			m_MinColChanged = int.MaxValue;
-			m_MaxColChanged = int.MinValue;
-			m_MinRowChanged = int.MaxValue;
-			m_MaxRowChanged = int.MinValue;
-			m_MaxDecreasedToRow = int.MinValue;
-			m_IsDirty = false;
-		}
+	
 
 
 
@@ -960,7 +1008,7 @@ namespace Altaxo.Data
 
 			// now we can start by adding additional columns of the row count is greater
 			// than the column count
-			this.SuspendDataChangedNotifications();
+			this.Suspend();
 			int originalrowcount = this.RowCount;
 			int originalcolcount = this.ColumnCount;
 			if(this.RowCount>this.ColumnCount)
@@ -1015,7 +1063,7 @@ namespace Altaxo.Data
 				this.RemoveColumns(originalrowcount,originalcolcount-originalrowcount);
 			}
 
-			this.ResumeDataChangedNotifications();
+			this.Resume();
 
 
 			return null; // no error message

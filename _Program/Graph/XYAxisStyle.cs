@@ -35,7 +35,7 @@ namespace Altaxo.Graph
 	public class XYAxisStyle
 		: 
 		System.Runtime.Serialization.IDeserializationCallback,
-		IChangedEventSource,
+		Main.IChangedEventSource,
 		ICloneable
 	{
 		/// <summary>Edge of the layer this axis is drawn on.</summary>

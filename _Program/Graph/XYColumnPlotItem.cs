@@ -114,9 +114,9 @@ namespace Altaxo.Graph
 				m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
 			}
 
-			if(null!=m_PlotStyle && m_PlotStyle is IChangedEventSource)
+			if(null!=m_PlotStyle && m_PlotStyle is Main.IChangedEventSource)
 			{
-				((IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
+				((Main.IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
 			}
 		}
 		#endregion
@@ -186,18 +186,18 @@ namespace Altaxo.Graph
 					if(!object.ReferenceEquals(m_PlotStyle,value))
 					{
 						// delete event wiring to old AbstractXYPlotStyle
-						if(null!=m_PlotStyle && m_PlotStyle is IChangedEventSource)
+						if(null!=m_PlotStyle && m_PlotStyle is Main.IChangedEventSource)
 						{
-							((IChangedEventSource)m_PlotStyle).Changed -= new EventHandler(OnStyleChangedEventHandler);
+							((Main.IChangedEventSource)m_PlotStyle).Changed -= new EventHandler(OnStyleChangedEventHandler);
 						}
 					
 						m_PlotStyle = (AbstractXYPlotStyle)value;
 
 						// create event wire to new Plotstyle
-						if(null!=m_PlotStyle && m_PlotStyle is IChangedEventSource)
+						if(null!=m_PlotStyle && m_PlotStyle is Main.IChangedEventSource)
 						{
 							m_PlotStyle.ParentObject = this;
-							((IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
+							((Main.IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
 						}
 
 						// indicate the style has changed

@@ -34,7 +34,7 @@ namespace Altaxo.Graph
 	public class XYZEquidistantMeshColumnPlotData 
 		:
 		IXYBoundsHolder, System.Runtime.Serialization.IDeserializationCallback,
-		IChangedEventSource,
+		Main.IChangedEventSource,
 		System.ICloneable,
 		Main.IDocumentNode
 	{
@@ -185,7 +185,7 @@ namespace Altaxo.Graph
 				{
 					s.m_XColumn = (Altaxo.Data.INumericColumn)deserobj;
 					if(deserobj is Altaxo.Data.DataColumn)
-						((Altaxo.Data.DataColumn)deserobj).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(s.OnColumnDataChangedEventHandler);
+						((Altaxo.Data.DataColumn)deserobj).Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
 				}
 
 
@@ -199,7 +199,7 @@ namespace Altaxo.Graph
 				{
 					s.m_YColumn = (Altaxo.Data.INumericColumn)deserobj;
 					if(deserobj is Altaxo.Data.DataColumn)
-						((Altaxo.Data.DataColumn)deserobj).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(s.OnColumnDataChangedEventHandler);
+						((Altaxo.Data.DataColumn)deserobj).Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
 				}
 
 				int count = info.OpenArray();
@@ -217,7 +217,7 @@ namespace Altaxo.Graph
 					{
 						s.m_DataColumns[i] = (Altaxo.Data.IReadableColumn)deserobj;
 						if(deserobj is Altaxo.Data.DataColumn)
-							((Altaxo.Data.DataColumn)deserobj).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(s.OnColumnDataChangedEventHandler);
+							((Altaxo.Data.DataColumn)deserobj).Changed += new EventHandler(s.EhColumnDataChangedEventHandler);
 					}
 				}
 				info.CloseArray(count);
@@ -254,7 +254,7 @@ namespace Altaxo.Graph
 						this._xColumn = null;
 						_plotAssociation.m_XColumn = (Altaxo.Data.INumericColumn)xColumn;
 						if(xColumn is Altaxo.Data.DataColumn)
-							((Altaxo.Data.DataColumn)xColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(_plotAssociation.OnColumnDataChangedEventHandler);
+							((Altaxo.Data.DataColumn)xColumn).Changed += new EventHandler(_plotAssociation.EhColumnDataChangedEventHandler);
 					}
 				}
 
@@ -267,7 +267,7 @@ namespace Altaxo.Graph
 						this._yColumn = null;
 						_plotAssociation.m_YColumn = (Altaxo.Data.INumericColumn)yColumn;
 						if(yColumn is Altaxo.Data.DataColumn)
-							((Altaxo.Data.DataColumn)yColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(_plotAssociation.OnColumnDataChangedEventHandler);
+							((Altaxo.Data.DataColumn)yColumn).Changed += new EventHandler(_plotAssociation.EhColumnDataChangedEventHandler);
 					}
 				}
 
@@ -282,7 +282,7 @@ namespace Altaxo.Graph
 						this._vColumns[i] = null;
 						_plotAssociation.m_DataColumns[i] = (Altaxo.Data.IReadableColumn)vColumn;
 						if(vColumn is Altaxo.Data.DataColumn)
-							((Altaxo.Data.DataColumn)vColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(_plotAssociation.OnColumnDataChangedEventHandler);
+							((Altaxo.Data.DataColumn)vColumn).Changed += new EventHandler(_plotAssociation.EhColumnDataChangedEventHandler);
 
 					}
 					}
@@ -305,15 +305,15 @@ namespace Altaxo.Graph
 			// restore the event chain
 
 			if(m_XColumn is Altaxo.Data.DataColumn)
-				((Altaxo.Data.DataColumn)m_XColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
+				((Altaxo.Data.DataColumn)m_XColumn).Changed += new EventHandler(EhColumnDataChangedEventHandler);
 
 			if(m_YColumn is Altaxo.Data.DataColumn)
-				((Altaxo.Data.DataColumn)m_YColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
+				((Altaxo.Data.DataColumn)m_YColumn).Changed += new EventHandler(EhColumnDataChangedEventHandler);
 
 			for(int i=0;i<m_DataColumns.Length;i++)
 			{
 				if(m_DataColumns[i] is Altaxo.Data.DataColumn)
-					((Altaxo.Data.DataColumn)m_DataColumns[i]).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
+					((Altaxo.Data.DataColumn)m_DataColumns[i]).Changed += new EventHandler(EhColumnDataChangedEventHandler);
 			}			
 		
 			m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
@@ -347,7 +347,7 @@ namespace Altaxo.Graph
 
 				// set the event chain
 				if(m_DataColumns[i] is Altaxo.Data.DataColumn)
-					((Altaxo.Data.DataColumn)m_DataColumns[i]).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
+					((Altaxo.Data.DataColumn)m_DataColumns[i]).Changed += new EventHandler(EhColumnDataChangedEventHandler);
 			}
 
 
@@ -365,12 +365,12 @@ namespace Altaxo.Graph
 		/// <remarks>Only clones the references to the data columns, not the columns itself.</remarks>
 		public XYZEquidistantMeshColumnPlotData(XYZEquidistantMeshColumnPlotData from)
 		{
-			if(from.m_XColumn is Altaxo.Data.DataColumn && ((Altaxo.Data.DataColumn)from.m_XColumn).Parent!=null)
+			if(from.m_XColumn is Altaxo.Data.DataColumn && ((Altaxo.Data.DataColumn)from.m_XColumn).ParentObject!=null)
 				m_XColumn = from.m_XColumn;
 			else
 				m_XColumn = (Altaxo.Data.INumericColumn)from.m_XColumn.Clone();
 
-			if(from.m_YColumn is Altaxo.Data.DataColumn && ((Altaxo.Data.DataColumn)from.m_YColumn).Parent!=null)
+			if(from.m_YColumn is Altaxo.Data.DataColumn && ((Altaxo.Data.DataColumn)from.m_YColumn).ParentObject!=null)
 				m_YColumn = from.m_YColumn;
 			else
 				m_YColumn = (Altaxo.Data.INumericColumn)from.m_YColumn.Clone();
@@ -384,7 +384,7 @@ namespace Altaxo.Graph
 
 				// set the event chain
 				if(m_DataColumns[i] is Altaxo.Data.DataColumn)
-					((Altaxo.Data.DataColumn)m_DataColumns[i]).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
+					((Altaxo.Data.DataColumn)m_DataColumns[i]).Changed += new EventHandler(EhColumnDataChangedEventHandler);
 			}
 
 
@@ -602,7 +602,7 @@ namespace Altaxo.Graph
 
 		}
 
-		void OnColumnDataChangedEventHandler(Altaxo.Data.DataColumn dc, int nMinRow, int nMaxRow, bool bRowCountDecreased)
+		void EhColumnDataChangedEventHandler(object sender, EventArgs e)
 		{
 			
 			m_bCachedDataValid = false;

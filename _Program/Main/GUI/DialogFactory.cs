@@ -43,7 +43,7 @@ namespace Altaxo.Main.GUI
 			{
 				System.Type columntype = (System.Type)ct.SelectedItem.Tag;
 
-				table.SuspendDataChangedNotifications();
+				table.Suspend();
 
 				if(bAddToPropertyColumns)
 				{
@@ -60,7 +60,7 @@ namespace Altaxo.Main.GUI
 					}
 				}
 
-				table.ResumeDataChangedNotifications();
+				table.Resume();
 			}
 
 		}

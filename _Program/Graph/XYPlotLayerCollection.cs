@@ -36,7 +36,7 @@ namespace Altaxo.Graph
 	/// all changes to the layers.</remarks>
 	[SerializationSurrogate(0,typeof(XYPlotLayerCollection.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class XYPlotLayerCollection : Altaxo.Data.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, System.ICloneable, Main.IDocumentNode
+	public class XYPlotLayerCollection : Altaxo.Data.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, Main.IChangedEventSource, System.ICloneable, Main.IDocumentNode
 	{
 		/// <summary>Fired when something in this collection changed, as for instance
 		/// adding or deleting layers, or exchanging layers.</summary>

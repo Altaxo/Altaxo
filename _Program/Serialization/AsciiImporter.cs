@@ -846,7 +846,7 @@ namespace Altaxo.Serialization
 			} // end of for all lines
 			
 			// insert the new columns or replace the old ones
-			table.SuspendDataChangedNotifications();
+			table.Suspend();
 			for(int i=0;i<newcols.Count;i++)
 			{
 				if(newcols[i] is Altaxo.Data.DBNullColumn)
@@ -859,7 +859,7 @@ namespace Altaxo.Serialization
 			{
 				table.PropCols.Add(i,(Altaxo.Data.DataColumn)newpropcols[i]);
 			}
-			table.ResumeDataChangedNotifications();
+			table.Resume();
 		} // end of function ImportAscii
 	} // end class 
 	public class AsciiImportOptions

@@ -179,6 +179,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Data\ColumnKind.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Data\ColumnScript.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -210,6 +215,35 @@
                 />
                 <File
                     RelPath = "Data\DoubleColumn.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Data\EquallySpacedColumn.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Data\IDefinedCount.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Data\IndexerColumn.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Data\INumericColumn.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Data\IReadableColumn.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Data\IWriteableColumn.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

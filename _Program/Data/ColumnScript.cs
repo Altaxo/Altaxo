@@ -320,7 +320,7 @@ namespace Altaxo.Data
 						codeheader =  "namespace Altaxo{\r\npublic class SetColVal : Altaxo.Calc.ColScriptExeBase{\r\n" +
 							"public override void Execute(Altaxo.Data.DataColumn myColumn) {\r\n" +
 							"Altaxo.Data.DataTable col = (null!=myColumn)? myColumn.ParentTable:null;\r\n" +
-							"Altaxo.Data.TableCollection   tab = (null!=col)? col.ParentDataSet:null;\r\n"+
+							"Altaxo.Data.DataTableCollection   tab = (null!=col)? col.ParentDataSet:null;\r\n"+
 							"for(int i=" + m_RowFrom + ";i" + m_RowCondition + m_RowTo + ";i" + m_RowInc + ") {\r\n";
 						//codestart  =  "cts[i]=";
 						//codetail = "} /*for*/ } /*Execute*/  } /*class*/  } /*namespace*/"; 
@@ -329,7 +329,7 @@ namespace Altaxo.Data
 						codeheader =  "namespace Altaxo {\r\npublic class SetColVal : Altaxo.Calc.ColScriptExeBase {\r\n" +
 							"public override void Execute(Altaxo.Data.DataColumn myColumn) {\r\n" +
 							"Altaxo.Data.DataTable col = (null!=myColumn)? myColumn.ParentTable:null;\r\n"+
-							"Altaxo.Data.TableCollection   tab = (null!=col)? col.ParentDataSet:null;\r\n";
+							"Altaxo.Data.DataTableCollection   tab = (null!=col)? col.ParentDataSet:null;\r\n";
 													
 						//codestart = "col[\"" + dataColumn.ColumnName + "\"]=";
 						//codetail = "} /*Execute*/ } /*class*/ } /*namespace*/";
@@ -338,7 +338,7 @@ namespace Altaxo.Data
 						codeheader =	"namespace Altaxo {\r\npublic class SetColVal : Altaxo.Calc.ColScriptExeBase {\r\n"+
 							"public override void Execute(Altaxo.Data.DataColumn myColumn) {\r\n" +
 							"Altaxo.Data.DataTable col = (null!=myColumn)? myColumn.ParentTable:null;\r\n"+
-							"Altaxo.Data.TableCollection   tab = (null!=col)? col.ParentDataSet:null;\r\n";
+							"Altaxo.Data.DataTableCollection   tab = (null!=col)? col.ParentDataSet:null;\r\n";
 						//codestart = "public override void Execute(Altaxo.Data.DataTable col) {\n";
 						//codetail = " } /*class*/ } /*namespace*/ \n// You have to provide the end brace of Execute(...), after this you can add own member functions";
 						break;				
@@ -561,7 +561,7 @@ namespace Altaxo.Data
 		{
 			bool bSucceeded=true;
 			Altaxo.Data.DataTable myTable=null;
-			Altaxo.Data.TableCollection   myDataSet=null;
+			Altaxo.Data.DataTableCollection   myDataSet=null;
 
 			// first, test some preconditions
 			if(null==m_ScriptObject)
@@ -570,16 +570,18 @@ namespace Altaxo.Data
 				return false;
 			}
 
-			if(null!=myColumn) myTable=myColumn.ParentTable;
-			if(null!=myTable)  myDataSet = myTable.ParentDataSet;
+			if(null!=myColumn) 
+				myTable= (Altaxo.Data.DataTable)Main.DocumentPath.GetRootNodeImplementing(myColumn,typeof(Altaxo.Data.DataTable));
+			if(null!=myTable) 
+				myDataSet = (Altaxo.Data.DataTableCollection)Main.DocumentPath.GetRootNodeImplementing(myTable,typeof(Altaxo.Data.DataTableCollection));
 
 
 			if(null!=myDataSet) 
-				myDataSet.SuspendDataChangedNotifications();
+				myDataSet.Suspend();
 			else if(null!=myTable)
-				myTable.SuspendDataChangedNotifications();
+				myTable.Suspend();
 			else if(null!=myColumn)
-				myColumn.SuspendDataChangedNotifications();
+				myColumn.Suspend();
 
 			try
 			{
@@ -594,11 +596,11 @@ namespace Altaxo.Data
 			finally
 			{
 				if(null!=myDataSet) 
-					myDataSet.ResumeDataChangedNotifications();
+					myDataSet.Resume();
 				else if(null!=myTable)
-					myTable.ResumeDataChangedNotifications();
+					myTable.Resume();
 				else if(null!=myColumn)
-					myColumn.ResumeDataChangedNotifications();
+					myColumn.Resume();
 			}
 
 			return bSucceeded; 

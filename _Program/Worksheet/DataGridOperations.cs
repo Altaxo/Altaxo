@@ -189,7 +189,7 @@ namespace Altaxo.Worksheet
 
 			// and store the result in a new worksheet 
 			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("ResultMatrix of " + srctable.TableName);
-			table.SuspendDataChangedNotifications();
+			table.Suspend();
 
 			// first store the factors
 			for(int i=0;i<resultMat.Cols;i++)
@@ -202,8 +202,8 @@ namespace Altaxo.Worksheet
 				table.DataColumns.Add(col);
 			}
 
-			table.ResumeDataChangedNotifications();
-			mainDocument.TableCollection.Add(table);
+			table.Resume();
+			mainDocument.DataTableCollection.Add(table);
 			// create a new worksheet without any columns
 			App.Current.CreateNewWorksheet(table);
 
@@ -322,7 +322,7 @@ namespace Altaxo.Worksheet
 			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("PCA of " + srctable.TableName);
 
 			// Fill the Table
-			table.SuspendDataChangedNotifications();
+			table.Suspend();
 
 			// first of all store the meanscore
 		{
@@ -376,8 +376,8 @@ namespace Altaxo.Worksheet
 			table.DataColumns.Add(col);
 		}
 
-			table.ResumeDataChangedNotifications();
-			mainDocument.TableCollection.Add(table);
+			table.Resume();
+			mainDocument.DataTableCollection.Add(table);
 			// create a new worksheet without any columns
 			App.Current.CreateNewWorksheet(table);
 
@@ -626,7 +626,7 @@ namespace Altaxo.Worksheet
 			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("PLS of " + srctable.TableName);
 
 			// Fill the Table
-			table.SuspendDataChangedNotifications();
+			table.Suspend();
 
 			// store the x-loads - careful - they are horizontal in the matrix
 			for(int i=0;i<xLoads.Rows;i++)
@@ -711,8 +711,8 @@ namespace Altaxo.Worksheet
 
 
 
-			table.ResumeDataChangedNotifications();
-			mainDocument.TableCollection.Add(table);
+			table.Resume();
+			mainDocument.DataTableCollection.Add(table);
 			// create a new worksheet without any columns
 			App.Current.CreateNewWorksheet(table);
 
@@ -827,7 +827,7 @@ namespace Altaxo.Worksheet
 			// create a worksheet
 			if(bTableCreated)
 			{
-				mainDocument.TableCollection.Add(table);
+				mainDocument.DataTableCollection.Add(table);
 				// create a new worksheet without any columns
 				App.Current.CreateNewWorksheet(table);
 
@@ -880,7 +880,7 @@ namespace Altaxo.Worksheet
 			table.DataColumns.Add(c4);
 			table.DataColumns.Add(c5);
 
-			table.SuspendDataChangedNotifications();
+			table.Suspend();
 
 			
 			// first fill the cols c1, c2, c5 with zeros because we want to sum up 
@@ -940,8 +940,8 @@ namespace Altaxo.Worksheet
 			// create a worksheet
 			if(null!=table)
 			{
-				table.ResumeDataChangedNotifications();
-				mainDocument.TableCollection.Add(table);
+				table.Resume();
+				mainDocument.DataTableCollection.Add(table);
 				// create a new worksheet without any columns
 				App.Current.CreateNewWorksheet(table);
 
@@ -1020,7 +1020,7 @@ namespace Altaxo.Worksheet
 			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("Fourieramplitude of " + dg.Doc.TableName);
 
 			// Fill the Table
-			table.SuspendDataChangedNotifications();
+			table.Suspend();
 			for(int i=0;i<cols;i++)
 			{
 				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
@@ -1029,8 +1029,8 @@ namespace Altaxo.Worksheet
 				
 				table.DataColumns.Add(col);
 			}
-			table.ResumeDataChangedNotifications();
-			mainDocument.TableCollection.Add(table);
+			table.Resume();
+			mainDocument.DataTableCollection.Add(table);
 			// create a new worksheet without any columns
 			App.Current.CreateNewWorksheet(table);
 
@@ -1073,7 +1073,7 @@ namespace Altaxo.Worksheet
 					// the name of the columns should preferabbly simply
 					// the index in x direction
 
-					table.SuspendDataChangedNotifications();
+					table.Suspend();
 					for(int i=0;i<sizex;i++)
 					{
 						string colname = table.DataColumns.FindUniqueColumnName(i.ToString());
@@ -1084,7 +1084,7 @@ namespace Altaxo.Worksheet
 						table.DataColumns.Add(dblcol); // Spalte hinzufügen
 					} // end for all x coordinaates
 
-					table.ResumeDataChangedNotifications();
+					table.Resume();
 
 					myStream.Close();
 					myStream=null;

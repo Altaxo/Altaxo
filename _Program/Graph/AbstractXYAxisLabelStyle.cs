@@ -27,7 +27,7 @@ namespace Altaxo.Graph
 {
 
 	/// <remarks>AbstractXYAxisLabelStyle is the abstract base class of all LabelStyles.</remarks>
-	public abstract class AbstractXYAxisLabelStyle : IChangedEventSource, System.ICloneable
+	public abstract class AbstractXYAxisLabelStyle : Main.IChangedEventSource, System.ICloneable
 	{
 		/*
 		/// <summary>

@@ -172,7 +172,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(XYPlotLineStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class XYPlotLineStyle : ICloneable, IChangedEventSource, IChildChangedEventSink, System.Runtime.Serialization.IDeserializationCallback
+	public class XYPlotLineStyle : ICloneable, Main.IChangedEventSource, Main.IChildChangedEventSink, System.Runtime.Serialization.IDeserializationCallback
 	{
 		public delegate void PaintOneRangeTemplate(
 			Graphics g, 
@@ -313,10 +313,10 @@ namespace Altaxo.Graph
 		protected virtual void CreateEventChain()
 		{
 			if(null!=m_PenHolder)
-				m_PenHolder.Changed += new EventHandler(this.OnChildChanged);
+				m_PenHolder.Changed += new EventHandler(this.EhChildChanged);
 			
 			if(null!=m_FillBrush)
-				m_FillBrush.Changed += new EventHandler(this.OnChildChanged);
+				m_FillBrush.Changed += new EventHandler(this.EhChildChanged);
 		}
 
 		public XYPlotLineStyles.ConnectionStyle Connection
@@ -414,7 +414,7 @@ namespace Altaxo.Graph
 				if(null!=value)
 				{
 					this.m_FillBrush = (BrushHolder)value.Clone();
-					this.m_FillBrush.Changed += new EventHandler(this.OnChildChanged);
+					this.m_FillBrush.Changed += new EventHandler(this.EhChildChanged);
 					OnChanged(); // Fire Changed event
 				}
 				else
@@ -1235,10 +1235,17 @@ namespace Altaxo.Graph
 				Changed(this,new EventArgs());
 		}
 		
-		public virtual void OnChildChanged(object child, EventArgs e)
+		public void EhChildChanged(object child, EventArgs e)
+		{
+			OnChildChanged(child,e);
+		}
+
+		public virtual bool OnChildChanged(object child, EventArgs e)
 		{
 			if(null!=Changed)
 				Changed(this,e);
+
+			return false;
 		}
 
 		#endregion

@@ -410,16 +410,16 @@ namespace Altaxo
 					info.EndReading();
 					myStream.Close();
 
-					// if it is a table, add it to the TableCollection
+					// if it is a table, add it to the DataTableCollection
 					if(deserObject is Altaxo.Data.DataTable)
 					{
 						Altaxo.Data.DataTable table = deserObject as Altaxo.Data.DataTable;
 						if(table.Name==null || table.Name==string.Empty)
-							table.TableName = this.Doc.TableCollection.FindNewTableName();
-						else if( this.Doc.TableCollection.ContainsTable(table.Name))
-							table.TableName = this.Doc.TableCollection.FindNewTableName(table.Name);
+							table.TableName = this.Doc.DataTableCollection.FindNewTableName();
+						else if( this.Doc.DataTableCollection.ContainsTable(table.Name))
+							table.TableName = this.Doc.DataTableCollection.FindNewTableName(table.Name);
 
-						this.Doc.TableCollection.Add(table);
+						this.Doc.DataTableCollection.Add(table);
 						info.AnnounceDeserializationEnd(this.Doc); // fire the event to resolve path references
 						
 						CreateNewWorksheet(table);
@@ -894,12 +894,12 @@ namespace Altaxo
 	
 		public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(bool bCreateDefaultColumns)
 		{
-			return CreateNewWorksheet(this.Doc.TableCollection.FindNewTableName(),bCreateDefaultColumns);
+			return CreateNewWorksheet(this.Doc.DataTableCollection.FindNewTableName(),bCreateDefaultColumns);
 		}
 
 		public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet()
 		{
-			return CreateNewWorksheet(this.Doc.TableCollection.FindNewTableName(),false);
+			return CreateNewWorksheet(this.Doc.DataTableCollection.FindNewTableName(),false);
 		}
 
 
