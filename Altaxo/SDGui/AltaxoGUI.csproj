@@ -165,7 +165,7 @@
                 />
                 <File
                     RelPath = "Main\GUI\FileScout.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File

@@ -94,7 +94,14 @@ namespace Altaxo.Main
 	/// </summary>
 	public interface IProjectService
 	{
+		/// <summary>
+		/// Getter / setter for the currently open project.
+		/// </summary>
 		Altaxo.AltaxoDocument CurrentOpenProject {	get; set; } 
+
+		/// <summary>
+		/// Gets the file name for the currently open project. Is null if the project has not got a file name for now.
+		/// </summary>
 		string CurrentProjectFileName	{	get; } 
 
     /// <summary>
@@ -102,22 +109,7 @@ namespace Altaxo.Main
     /// </summary>
     /// <param name="filename"></param>
     void OpenProject(string filename);
-
-    /// <summary>
-    /// This function will delete a data table and close the corresponding views.
-    /// </summary>
-    /// <param name="table">The data table to delete</param>
-    /// <param name="force">If true, the table is deleted without safety question,
-    /// if false, the user is ask before the table is deleted.</param>
-    void DeleteTable(Altaxo.Data.DataTable table, bool force);
-
-    /// <summary>
-    /// This function will delete a graph document and close all corresponding views.
-    /// </summary>
-    /// <param name="graph">The graph document to delete.</param>
-    /// <param name="force">If true, the graph document is deleted without safety question,
-    /// if false, the user is ask before the graph document is deleted.</param>
-    void DeleteGraphDocument(Altaxo.Graph.GraphDocument graph, bool force);
+    
 
     /// <summary>
     /// Asks the user whether or not the project should be saved, and saves it in case the user answers with yes.
@@ -149,14 +141,76 @@ namespace Altaxo.Main
     void SaveWindowStateToZippedFile(Altaxo.Main.ICompressedFileContainerStream zippedStream, Altaxo.Serialization.Xml.XmlStreamSerializationInfo info);
 
 
+		/// <summary>
+		/// This function will delete a data table and close the corresponding views.
+		/// </summary>
+		/// <param name="table">The data table to delete.</param>
+		/// <param name="force">If true, the table is deleted without safety question,
+		/// if false, the user is ask before the table is deleted.</param>
+		void DeleteTable(Altaxo.Data.DataTable table, bool force);
+
+		/// <summary>
+		/// This function will delete a graph document and close all corresponding views.
+		/// </summary>
+		/// <param name="graph">The graph document to delete.</param>
+		/// <param name="force">If true, the graph document is deleted without safety question,
+		/// if false, the user is ask before the graph document is deleted.</param>
+		void DeleteGraphDocument(Altaxo.Graph.GraphDocument graph, bool force);
+
+		/// <summary>
+		/// Creates a new table and the view content for the newly created table.
+		/// </summary>
+		/// <returns>The content controller for that table.</returns>
 		Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet();
+
+		/// <summary>
+		/// Creates a view content for a table.
+		/// </summary>
+		/// <param name="table">The table which should be viewed.</param>
+		/// <returns>The view content for the provided table.</returns>
 		Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table);
+
+		/// <summary>
+		/// Opens a view that shows the table <code>table</code>. If no view for the table can be found,
+		/// a new default view is created for the table.
+		/// </summary>
+		/// <param name="table">The table for which a view must be found.</param>
+		/// <returns>The view content for the provided table.</returns>
+		/// <remarks>The returned object is usually a MVC controller that is the controller for that table.</remarks>
 		object OpenOrCreateWorksheetForTable(Altaxo.Data.DataTable table);
+
+		/// <summary>This will remove the Worksheet <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
+		/// <param name="ctrl">The Worksheet to remove.</param>
+		/// <remarks>No exception is thrown if the Form frm is not a member of the worksheet forms collection.</remarks>
 		void RemoveWorksheet(Altaxo.Worksheet.GUI.WorksheetController ctrl);
 
+		/// <summary>
+		/// Creates a new graph document and the view for this newly created graph document.
+		/// </summary>
+		/// <returns>The view content for the newly created graph.</returns>
 		Altaxo.Graph.GUI.IGraphController CreateNewGraph();
+
+		/// <summary>
+		/// Creates a new view content for a graph document.
+		/// </summary>
+		/// <param name="graph">The graph document.</param>
+		/// <returns>The view content for the provided graph document.</returns>
 		Altaxo.Graph.GUI.IGraphController CreateNewGraph(Altaxo.Graph.GraphDocument graph);
+
+		/// <summary>
+		/// Opens a view that shows the graph <code>graph</code>. If no view for the graph can be found,
+		/// a new default view is created.
+		/// </summary>
+		/// <param name="graph">The graph for which a view must be found.</param>
+		/// <returns>The view content for the provided graph.</returns>
 		object OpenOrCreateViewForGraph(Altaxo.Graph.GraphDocument graph);
+
+		/// <summary>
+		/// This function will delete a graph document and close all corresponding views.
+		/// </summary>
+		/// <param name="graph">The graph document to delete.</param>
+		/// <param name="force">If true, the graph document is deleted without safety question,
+		/// if false, the user is ask before the graph document is deleted.</param>
 		void RemoveGraph(Altaxo.Graph.GUI.GraphController ctrl);
 
 
@@ -174,7 +228,8 @@ namespace Altaxo.Main
     /// Fired when the current open project is renamed.
     /// </summary>
     event ProjectRenameEventHandler ProjectRenamed;
-    /// <summary>
+    
+		/// <summary>
     /// Fired when the dirty state of the project changed.
     /// </summary>
     event ProjectEventHandler ProjectDirtyChanged;
