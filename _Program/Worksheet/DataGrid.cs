@@ -104,10 +104,10 @@ namespace Altaxo.Worksheet
 
 
 
-		private int                          m_CellEdit_nRow; // Row wich is edited by the control
-		private int                          m_CellEdit_nCol;
+//		private int                          m_CellEdit_nRow; // Row wich is edited by the control
+//		private int                          m_CellEdit_nCol;
 		private bool                         m_CellEdit_IsArmed=false;
-
+		private ClickedCellInfo							 m_CellEdit_EditedCell;
 
 
 		private System.Windows.Forms.HScrollBar m_HorzScrollBar;
@@ -932,7 +932,7 @@ namespace Altaxo.Worksheet
 				{
 					e.Handled=true;
 					// Navigate to the right
-					NavigateCellEdit(1,0);
+					NavigateTableCellEdit(1,0);
 				}
 			}
 
@@ -943,11 +943,11 @@ namespace Altaxo.Worksheet
 			if(e.KeyData==System.Windows.Forms.Keys.Left)
 			{
 				// Navigate to the left if the cursor is already left
-				if(m_CellEditControl.SelectionStart==0 && (m_CellEdit_nRow>0 || m_CellEdit_nCol>0) )
+				if(m_CellEditControl.SelectionStart==0 && (m_CellEdit_EditedCell.Row>0 || m_CellEdit_EditedCell.Column>0) )
 				{
 					e.Handled=true;
 					// Navigate to the left
-					NavigateCellEdit(-1,0);
+					NavigateTableCellEdit(-1,0);
 				}
 			}
 			else if(e.KeyData==System.Windows.Forms.Keys.Right)
@@ -956,20 +956,20 @@ namespace Altaxo.Worksheet
 				{
 					e.Handled=true;
 					// Navigate to the right
-					NavigateCellEdit(1,0);
+					NavigateTableCellEdit(1,0);
 				}
 			}
-			else if(e.KeyData==System.Windows.Forms.Keys.Up && m_CellEdit_nRow>0)
+			else if(e.KeyData==System.Windows.Forms.Keys.Up && m_CellEdit_EditedCell.Row>0)
 			{
 				e.Handled=true;
 				// Navigate up
-				NavigateCellEdit(0,-1);
+				NavigateTableCellEdit(0,-1);
 			}
 			else if(e.KeyData==System.Windows.Forms.Keys.Down)
 			{
 				e.Handled=true;
 				// Navigate down
-				NavigateCellEdit(0,1);
+				NavigateTableCellEdit(0,1);
 			}
 			else if(e.KeyData==System.Windows.Forms.Keys.Enter)
 			{
@@ -983,7 +983,7 @@ namespace Altaxo.Worksheet
 				}
 				else
 				{
-					NavigateCellEdit(0,1);
+					NavigateTableCellEdit(0,1);
 				}
 			}
 			else if(e.KeyData==System.Windows.Forms.Keys.Escape)
@@ -1047,7 +1047,7 @@ namespace Altaxo.Worksheet
 		{
 			if(this.m_CellEdit_IsArmed && this.m_CellEditControl.Modified)
 			{
-				GetColumnStyle(m_CellEdit_nCol).SetColumnValueAtRow(m_CellEditControl.Text,m_CellEdit_nRow,m_DataTable[m_CellEdit_nCol]);
+				GetColumnStyle(m_CellEdit_EditedCell.Column).SetColumnValueAtRow(m_CellEditControl.Text,m_CellEdit_EditedCell.Row,m_DataTable[m_CellEdit_EditedCell.Column]);
 				this.m_CellEdit_IsArmed=false;
 			}
 		}
@@ -1055,7 +1055,7 @@ namespace Altaxo.Worksheet
 		private void SetCellEditContent()
 		{
 			m_CellEditControl.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			m_CellEditControl.Text=GetColumnStyle(m_CellEdit_nCol).GetColumnValueAtRow(m_CellEdit_nRow,m_DataTable[m_CellEdit_nCol]);
+			m_CellEditControl.Text=GetColumnStyle(m_CellEdit_EditedCell.Column).GetColumnValueAtRow(m_CellEdit_EditedCell.Row,m_DataTable[m_CellEdit_EditedCell.Column]);
 			m_CellEditControl.SelectAll();
 			m_CellEditControl.Modified=false;
 			m_CellEditControl.Show();
@@ -1068,7 +1068,7 @@ namespace Altaxo.Worksheet
 		/// </summary>
 		/// <param name="dx">move dx cells to the right</param>
 		/// <param name="dy">move dy cells down</param>
-		protected void NavigateCellEdit(int dx, int dy)
+		protected void NavigateTableCellEdit(int dx, int dy)
 		{
 			bool bScrolled = false;
 
@@ -1077,7 +1077,7 @@ namespace Altaxo.Worksheet
 		
 			// 2. look whether the new cell coordinates lie inside the client area, if
 			// not scroll the worksheet appropriate
-			int newCellCol = this.m_CellEdit_nCol + dx;
+			int newCellCol = this.m_CellEdit_EditedCell.Column + dx;
 			if(newCellCol>=m_DataTable.ColumnCount)
 			{
 				newCellCol=0;
@@ -1085,7 +1085,7 @@ namespace Altaxo.Worksheet
 			}
 			else if(newCellCol<0)
 			{
-				if(m_CellEdit_nRow>0) // move to the last cell only if not on cell 0
+				if(this.m_CellEdit_EditedCell.Row>0) // move to the last cell only if not on cell 0
 				{
 					newCellCol=m_DataTable.ColumnCount-1;
 					dy-=1;
@@ -1096,7 +1096,7 @@ namespace Altaxo.Worksheet
 				}
 			}
 
-			int newCellRow = this.m_CellEdit_nRow + dy;
+			int newCellRow = m_CellEdit_EditedCell.Row + dy;
 			if(newCellRow<0)
 				newCellRow=0;
 			// note: we do not catch the condition newCellRow>rowCount since we want to add new rows
@@ -1124,10 +1124,10 @@ namespace Altaxo.Worksheet
 				bScrolled=true;
 			}
 			// 3. Fill the cell edit control with new content
-			m_CellEdit_nCol=newCellCol;
-			m_CellEdit_nRow=newCellRow;
+			m_CellEdit_EditedCell.Column=newCellCol;
+			m_CellEdit_EditedCell.Row=newCellRow;
 			m_CellEditControl.Parent = m_GridPanel;
-			Rectangle cellRect = this.GetCoordinatesOfDataCell(m_CellEdit_nCol,m_CellEdit_nRow);
+			Rectangle cellRect = this.GetCoordinatesOfDataCell(m_CellEdit_EditedCell.Column,m_CellEdit_EditedCell.Row);
 			m_CellEditControl.Location = cellRect.Location;
 			m_CellEditControl.Size = cellRect.Size;
 			SetCellEditContent();
@@ -1154,8 +1154,7 @@ namespace Altaxo.Worksheet
 				case ClickedAreaType.DataCell:
 				{
 					//m_CellEditControl = new TextBox();
-					m_CellEdit_nRow=clickedCell.Row;
-					m_CellEdit_nCol=clickedCell.Column;
+					m_CellEdit_EditedCell=clickedCell;
 					m_CellEditControl.Parent = m_GridPanel;
 					m_CellEditControl.Location = clickedCell.CellRectangle.Location;
 					m_CellEditControl.Size = clickedCell.CellRectangle.Size;
@@ -1200,6 +1199,7 @@ namespace Altaxo.Worksheet
 		{
 			// base.OnMouseDown(e);
 			this.m_MouseDownPosition = new Point(e.X, e.Y);
+			this.ReadCellEditContent();
 			m_CellEditControl.Hide();
 
 			if(this.m_DragColumnWidth_ColumnNumber>=-1)
@@ -1538,27 +1538,34 @@ namespace Altaxo.Worksheet
 		/// <remarks>
 		/// ClickedCellInfo retrieves (from mouse coordinates of a click), which cell has clicked onto. 
 		/// </remarks>
-		public class ClickedCellInfo
+		public struct ClickedCellInfo
 		{
 
 			/// <summary>The enclosing Rectangle of the clicked cell</summary>
-			protected Rectangle m_CellRectangle;
+			private Rectangle m_CellRectangle;
 
 			/// <summary>The data row clicked onto.</summary>
-			protected int m_Row;
+			private int m_Row;
 			/// <summary>The data column number clicked onto.</summary>
-			protected int m_Column;
+			private int m_Column;
 
 			/// <summary>What have been clicked onto.</summary>
-			protected ClickedAreaType m_ClickedArea;
+			private ClickedAreaType m_ClickedArea;
 
 
 			/// <value>The enclosing Rectangle of the clicked cell</value>
 			public Rectangle CellRectangle { get { return m_CellRectangle; }}
 			/// <value>The row number clicked onto.</value>
-			public int Row { get { return m_Row; }}
+			public int Row 
+			{
+				get { return m_Row; }
+				set { m_Row = value; }
+			}
 			/// <value>The column number clicked onto.</value>
-			public int Column { get { return m_Column; }}
+			public int Column {
+				get { return m_Column; }
+				set { m_Column = value; }
+			}
 			/// <value>The type of area clicked onto.</value>
 			public ClickedAreaType ClickedArea { get { return m_ClickedArea; }}
  
@@ -1569,7 +1576,7 @@ namespace Altaxo.Worksheet
 			/// <param name="mouseCoord">The coordinates of the mouse click.</param>
 			/// <param name="cellRect">The function sets the x-properties (X and Width) of the cell rectangle.</param>
 			/// <returns>Either -1 when clicked on the row header area, column number when clicked in the column range, or int.MinValue when clicked outside of all.</returns>
-			private int GetColumnNumber(DataGrid dg, Point mouseCoord, ref Rectangle cellRect)
+			public static int GetColumnNumber(DataGrid dg, Point mouseCoord, ref Rectangle cellRect)
 			{
 				int firstVisibleColumn = dg.FirstVisibleColumn;
 				int actualColumnRight = dg.m_RowHeaderStyle.Width;
@@ -1604,7 +1611,7 @@ namespace Altaxo.Worksheet
 			/// <param name="bPropertyCol">True if clicked on either the property column header or a property column, else false.</param>
 			/// <returns>The row number of the clicked cell, or -1 if clicked on the column header.</returns>
 			/// <remarks>If clicked onto a property cell, the function returns the property column number.</remarks>
-			private int GetRowNumber(DataGrid dg, Point mouseCoord, ref Rectangle cellRect, ref bool bPropertyCol)
+			public static int GetRowNumber(DataGrid dg, Point mouseCoord, ref Rectangle cellRect, out bool bPropertyCol)
 			{
 				int firstVisibleColumn = dg.FirstVisibleColumn;
 				int actualColumnRight = dg.m_RowHeaderStyle.Width;
@@ -1613,6 +1620,7 @@ namespace Altaxo.Worksheet
 				if(mouseCoord.Y<dg.m_ColumnHeaderStyle.Height)
 				{
 					cellRect.Y=0; cellRect.Height=dg.m_ColumnHeaderStyle.Height;
+					bPropertyCol=false;
 					return -1;
 				}
 
@@ -1646,8 +1654,9 @@ namespace Altaxo.Worksheet
 			{
 
 				bool bIsPropertyColumn=false;
-				m_Column = GetColumnNumber(dg,mouseCoord,ref m_CellRectangle);
-				m_Row    = GetRowNumber(dg,mouseCoord,ref m_CellRectangle, ref bIsPropertyColumn);
+				m_CellRectangle = new Rectangle(0,0,0,0);
+				m_Column = GetColumnNumber(dg,mouseCoord, ref m_CellRectangle);
+				m_Row    = GetRowNumber(dg,mouseCoord,ref m_CellRectangle, out bIsPropertyColumn);
 
 				if(bIsPropertyColumn)
 				{

@@ -371,11 +371,10 @@ namespace Altaxo.Graph
 					rangeList.Add(new PlotRange(rangeStart,j)); // add the last range
 				}
 
-
 				// paint the line style
 				if(null!=m_LineStyle)
 				{
-					m_LineStyle.Paint(g,ptArray,rangeList,layer.Size, m_LineSymbolGap?SymbolSize:0);
+					m_LineStyle.Paint(g,ptArray,rangeList,layer.Size, (m_LineSymbolGap && m_ScatterStyle.Shape!=ScatterStyles.Shape.NoSymbol)?SymbolSize:0);
 				}
 
 				// paint the drop style

@@ -379,6 +379,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\Interfaces.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\MainForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"

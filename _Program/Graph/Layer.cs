@@ -1278,6 +1278,8 @@ namespace Altaxo.Graph
 
 
 				// now we have to inform all the PlotItems that a new axis was loaded
+				m_xAxis.DataBounds.EventsEnabled=false;
+				m_xAxis.DataBounds.Reset();
 				foreach(PlotItem pa in this.PlotItems)
 				{
 					if(pa.Data is Graph.IXBoundsHolder)
@@ -1288,7 +1290,8 @@ namespace Altaxo.Graph
 						((IXBoundsHolder)pa.Data).MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
 				
 					}
-					}
+				}
+				m_xAxis.DataBounds.EventsEnabled=true;
 			}
 		}
 
@@ -1310,6 +1313,8 @@ namespace Altaxo.Graph
 
 
 				// now we have to inform all the PlotAssociations that a new axis was loaded
+				m_yAxis.DataBounds.EventsEnabled=false;
+				m_yAxis.DataBounds.Reset();
 				foreach(PlotItem pa in this.PlotItems)
 				{
 					if(pa.Data is Graph.IYBoundsHolder)
@@ -1321,6 +1326,7 @@ namespace Altaxo.Graph
 				
 					}
 					}
+				m_yAxis.DataBounds.EventsEnabled=true;
 			}
 		}
 
@@ -2009,14 +2015,57 @@ namespace Altaxo.Graph
 
 		#region Handler of child events
 
+		/// <summary>
+		/// This handler is called if a x-boundary from any of the plotassociations of this layer
+		/// has changed. We then have to recalculate the boundaries.
+		/// </summary>
+		/// <param name="sender">The plotassociation that has caused the boundary changed event.</param>
+		/// <param name="e">The boundary changed event args.</param>
+		/// <remarks>Unfortunately we do not know if the boundary is extended or shrinked, if is is extended
+		/// if would be possible to merge only the changed boundary into the x-axis boundary.
+		/// But since we don't know about that, we have to completely recalculate the boundary be using the boundaries of
+		/// all PlotAssociations of this layer.</remarks>
 		protected void OnPlotAssociationXBoundariesChanged(object sender, BoundariesChangedEventArgs e)
 		{
-			((PlotAssociation)sender).MergeXBoundsInto(m_xAxis.DataBounds);
+			// now we have to inform all the PlotAssociations that a new axis was loaded
+			m_xAxis.DataBounds.EventsEnabled=false;
+			m_xAxis.DataBounds.Reset();
+			foreach(PlotItem pa in this.PlotItems)
+			{
+				if(pa.Data is Graph.IXBoundsHolder)
+				{
+					// merge the bounds with x and yAxis
+					((IXBoundsHolder)pa.Data).MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+				}
+			}
+			m_xAxis.DataBounds.EventsEnabled=true;
 		}
 
+		/// <summary>
+		/// This handler is called if a y-boundary from any of the plotassociations of this layer
+		/// has changed. We then have to recalculate the boundaries.
+		/// </summary>
+		/// <param name="sender">The plotassociation that has caused the boundary changed event.</param>
+		/// <param name="e">The boundary changed event args.</param>
+		/// <remarks>Unfortunately we do not know if the boundary is extended or shrinked, if is is extended
+		/// if would be possible to merge only the changed boundary into the y-axis boundary.
+		/// But since we don't know about that, we have to completely recalculate the boundary be using the boundaries of
+		/// all PlotAssociations of this layer.</remarks>
 		protected void OnPlotAssociationYBoundariesChanged(object sender, BoundariesChangedEventArgs e)
 		{
-			((PlotAssociation)sender).MergeYBoundsInto(m_yAxis.DataBounds);
+			// now we have to inform all the PlotAssociations that a new axis was loaded
+			m_yAxis.DataBounds.EventsEnabled=false;
+			m_yAxis.DataBounds.Reset();
+			foreach(PlotItem pa in this.PlotItems)
+			{
+				if(pa.Data is Graph.IYBoundsHolder)
+				{
+					// merge the bounds with x and yAxis
+					((IYBoundsHolder)pa.Data).MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+				
+				}
+			}
+			m_yAxis.DataBounds.EventsEnabled=true;
 		}
 		
 		protected virtual void OnXAxisChangedEventHandler(object sender, System.EventArgs e)

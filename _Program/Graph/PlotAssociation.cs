@@ -357,7 +357,6 @@ namespace Altaxo.Graph
 			// now when the cached data are valid, we can reenable the events
 			this.m_xBoundaries.EventsEnabled = true; // enable events
 			this.m_yBoundaries.EventsEnabled = true; // enable events
-
 		}
 
 		void OnColumnDataChangedEventHandler(Altaxo.Data.DataColumn dc, int nMinRow, int nMaxRow, bool bRowCountDecreased)

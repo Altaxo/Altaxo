@@ -56,17 +56,7 @@ namespace Altaxo.Graph
 
 		// following default unit is point (1/72 inch)
 		
-		/// <summary>
-		/// overall size of the page (usually the size of the sheet of paper that is selected as printing document)
-		/// </summary>
-		private RectangleF m_PageBounds = new RectangleF(0, 0, 842, 595);
-
-		
-		/// <summary>
-		/// the printable area of the document, i.e. the page size minus the margins at each side
-		/// </summary>
-		private RectangleF m_PrintableBounds = new RectangleF(14, 14, 814 , 567 );
-
+	
 		/// <summary>
 		/// Brush to fill the page ground. Since the printable area is filled with another brush, in effect
 		/// this brush fills only the non printable margins of the page. 
@@ -225,8 +215,8 @@ namespace Altaxo.Graph
 				System.Drawing.Printing.Margins ma = doc.DefaultPageSettings.Margins;
 				printableBounds.X			= ma.Left * UnitPerInch/100;
 				printableBounds.Y			= ma.Top * UnitPerInch/100;
-				printableBounds.Width	= m_PageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
-				printableBounds.Height = m_PageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
+				printableBounds.Width	= pageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
+				printableBounds.Height = pageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
 			
 				m_Graph.Changed += new EventHandler(this.OnGraphDocument_Invalidate);
 				m_Graph.LayerCollectionChanged += new EventHandler(this.OnGraphDocument_LayerCollectionChanged);
@@ -662,7 +652,7 @@ namespace Altaxo.Graph
 		protected virtual void DrawMargins(Graphics g)
 		{
 			//Rectangle margins = ZoomRectangle(ConvertToPixels(this.m_PrintableBounds));
-			RectangleF margins = this.m_PrintableBounds;
+			RectangleF margins = m_Graph.PrintableBounds;
 			Pen marginPen = new Pen(m_MarginColor);
 			marginPen.DashStyle = DashStyle.Dash;
 			marginPen.Width = m_MarginLineWidth;
@@ -682,8 +672,8 @@ namespace Altaxo.Graph
 
 		protected virtual float CalculateAutoZoom()
 		{
-			float zoomh = (UnitPerInch*this.ClientSize.Width/this.m_HorizRes)/this.m_PageBounds.Width;
-			float zoomv = (UnitPerInch*this.ClientSize.Height/this.m_VertRes)/this.m_PageBounds.Height;
+			float zoomh = (UnitPerInch*this.ClientSize.Width/this.m_HorizRes)/m_Graph.PageBounds.Width;
+			float zoomv = (UnitPerInch*this.ClientSize.Height/this.m_VertRes)/m_Graph.PageBounds.Height;
 			return System.Math.Min(zoomh,zoomv);
 
 		}
@@ -701,8 +691,8 @@ namespace Altaxo.Graph
 			}
 			else
 			{
-				double pixelh = System.Math.Ceiling(this.m_PageBounds.Width*this.m_HorizRes*this.m_Zoom/(UnitPerInch));
-				double pixelv = System.Math.Ceiling(this.m_PageBounds.Height*this.m_VertRes*this.m_Zoom/(UnitPerInch));
+				double pixelh = System.Math.Ceiling(m_Graph.PageBounds.Width*this.m_HorizRes*this.m_Zoom/(UnitPerInch));
+				double pixelv = System.Math.Ceiling(m_Graph.PageBounds.Height*this.m_VertRes*this.m_Zoom/(UnitPerInch));
 				this.AutoScrollMinSize = new Size((int)pixelh,(int)pixelv);
 			}
 			base.OnSizeChanged(e);
@@ -767,8 +757,8 @@ namespace Altaxo.Graph
 				{
 					g.Clear(this.m_NonPrintingAreaColor);
 					// Fill the page with its own color
-					g.FillRectangle(m_PageGroundBrush,this.m_PageBounds);
-					g.FillRectangle(m_PrintableAreaBrush,this.m_PrintableBounds);
+					g.FillRectangle(m_PageGroundBrush,m_Graph.PageBounds);
+					g.FillRectangle(m_PrintableAreaBrush,m_Graph.PrintableBounds);
 					// DrawMargins(g);
 				}
 
@@ -815,8 +805,8 @@ namespace Altaxo.Graph
 			// thats why we have to shift our coordinate system to printable area coordinates also
 			float pointsh = UnitPerInch*this.AutoScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
 			float pointsv = UnitPerInch*this.AutoScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
-			pointsh += this.m_PrintableBounds.X;
-			pointsv += this.m_PrintableBounds.Y; 
+			pointsh += m_Graph.PrintableBounds.X;
+			pointsv += m_Graph.PrintableBounds.Y; 
 
 			// shift the coordinates to page coordinates
 			g.TranslateTransform(pointsh,pointsv);
