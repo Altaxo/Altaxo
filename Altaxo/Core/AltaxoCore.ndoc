@@ -157,7 +157,7 @@
             <property name="OutputDirectory" value="..\..\temp\doc\AltaxoCoreMSDN\" />
             <property name="HtmlHelpName" value="AltaxoCore class reference" />
             <property name="IncludeFavorites" value="False" />
-            <property name="Title" value="AltaxoCore class reference (0.50.0.238, 2004/03/15)" />
+            <property name="Title" value="AltaxoCore class reference (0.50.0.239, 2004/03/15)" />
             <property name="SplitTOCs" value="False" />
             <property name="DefaulTOC" value="" />
             <property name="IncludeHierarchy" value="True" />
