@@ -160,9 +160,15 @@ namespace Altaxo
 		protected internal int m_LayerNumber=-1; // number of the layer or -1 for the current layer
 		protected internal int m_PlotNumber=-1; // number of the plot curve or -1 in case this is disabled
 		protected internal int m_PlotPointNumber=-1; // number of the plot point or -1 for the whole curve
-		public TextItem()
+		
+		// help items
+		protected Font	m_Font;
+		public    float	m_yShift=0; 
+
+		public TextItem(Font ft)
 		{
 			m_Text="";
+			m_Font = (null==ft)? null: (Font)ft.Clone();
 		}
 
 		public void SetAsSymbol(int args, int[] arg)
@@ -188,7 +194,12 @@ namespace Altaxo
 			}
 		}
 
-		public TextItem(TextItem from)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="ft"></param>
+		public TextItem(TextItem from, Font ft)
 		{
 			m_Text="";
 			m_bUnderlined = from.m_bUnderlined;
@@ -196,7 +207,15 @@ namespace Altaxo
 			m_bBold       = from.m_bBold;
 			m_bGreek = from.m_bGreek;
 			m_SubIndex = from.m_SubIndex;
+			m_yShift   = from.m_yShift;
+			m_Font = null!=ft ? ft : from.m_Font;
 		}
+
+		public Font Font
+		{
+			get { return m_Font; }
+		}
+
 
 		public bool IsEmpty
 		{
@@ -316,10 +335,33 @@ namespace Altaxo
 #endregion
 
 
-		protected void Interpret()
+		protected void Interpret(Graphics g)
 		{
 			char[] searchchars = new Char[] { '\\', '\r', '\n', ')' };
-				
+
+			// Modification of StringFormat is necessary to avoid 
+			// too big spaces between successive words
+			StringFormat strfmt = StringFormat.GenericTypographic;
+			strfmt.FormatFlags |= StringFormatFlags.MeasureTrailingSpaces;
+
+			strfmt.LineAlignment = StringAlignment.Far;
+			strfmt.Alignment = StringAlignment.Near;
+
+			// next statement is necessary to have a consistent string length both
+			// on 0 degree rotated text and rotated text
+			// without this statement, the text is fitted to the pixel grid, which
+			// leads to "steps" during scaling
+			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+
+			float baseLineSpace, baseAscent, baseDescent;
+			MeasureFont(g, m_Font, out baseLineSpace, out baseAscent, out baseDescent);
+
+
+			System.Collections.Stack itemstack = new System.Collections.Stack();
+
+			Font currFont = (Font)m_Font.Clone();
+
+
 			if(null!=m_TextLines)
 				m_TextLines.Clear(); // delete old contents 
 			else
@@ -332,8 +374,11 @@ namespace Altaxo
 			m_TextLines.Add(currTextLine);
 			int currTxtIdx = 0;
 
-			TextItem currTextItem = new TextItem();
-			TextItem previousTextItem = currTextItem;
+			TextItem currTextItem = new TextItem(currFont);
+			TextItem firstItem = currTextItem; // preserve the first item
+			itemstack.Push(currTextItem);
+			
+
 
 			currTextLine.Add(currTextItem);
 
@@ -368,8 +413,7 @@ namespace Altaxo
 						currTextLine = new TextLine();
 						m_TextLines.Add(currTextLine);
 						// create also a new text item
-						previousTextItem = currTextItem;
-						currTextItem = new TextItem(currTextItem);
+						currTextItem = new TextItem(currTextItem,null);
 						currTextLine.Add(currTextItem);
 					}
 					else if('\\'==m_Text[bi])
@@ -387,50 +431,57 @@ namespace Altaxo
 								case 'b':
 								case 'B':
 								{
-									previousTextItem = currTextItem;
-									currTextItem = new TextItem(currTextItem);
+									itemstack.Push(currTextItem);
+									currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily,currTextItem.Font.Size,currTextItem.Font.Style | FontStyle.Bold, GraphicsUnit.World));
 									currTextLine.Add(currTextItem);
-									currTextItem.m_bBold = true;
 									currTxtIdx = bi+3;
 								}
 									break; // bold
 								case 'i':
 								case 'I':
 								{
-									previousTextItem = currTextItem;
-									currTextItem = new TextItem(currTextItem);
+									itemstack.Push(currTextItem);
+									currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily,currTextItem.Font.Size,currTextItem.Font.Style | FontStyle.Italic, GraphicsUnit.World));
 									currTextLine.Add(currTextItem);
-									currTextItem.m_bItalic = true;
 									currTxtIdx = bi+3;
 								}
 									break; // italic
 								case 'u':
 								case 'U':
 								{
-									previousTextItem = currTextItem;
-									currTextItem = new TextItem(currTextItem);
+									itemstack.Push(currTextItem);
+									currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily,currTextItem.Font.Size,currTextItem.Font.Style | FontStyle.Underline, GraphicsUnit.World));
 									currTextLine.Add(currTextItem);
-									currTextItem.m_bUnderlined = true;
 									currTxtIdx = bi+3;
 								}
 									break; // underlined
 								case 'g':
 								case 'G':
 								{
-									previousTextItem = currTextItem;
-									currTextItem = new TextItem(currTextItem);
+									itemstack.Push(currTextItem);
+									currTextItem = new TextItem(currTextItem, new Font("Symbol",currTextItem.Font.Size,currTextItem.Font.Style, GraphicsUnit.World));
 									currTextLine.Add(currTextItem);
-									currTextItem.m_bGreek = true;
 									currTxtIdx = bi+3;
 								}
 									break; // underlined
 								case '+':
 								case '-':
 								{
-									previousTextItem = currTextItem;
-									currTextItem = new TextItem(currTextItem);
+									itemstack.Push(currTextItem);
+									// measure the current font size
+									float cyLineSpace,cyAscent,cyDescent;
+									MeasureFont(g,currTextItem.Font,out cyLineSpace, out cyAscent, out cyDescent);
+									
+									currTextItem = new TextItem(currTextItem, new Font(currTextItem.Font.FontFamily,0.65f*currTextItem.Font.Size,currTextItem.Font.Style, GraphicsUnit.World));
 									currTextLine.Add(currTextItem);
 									currTextItem.m_SubIndex += ('+'==m_Text[bi+1] ? 1 : -1);
+
+
+									if('-'==m_Text[bi+1]) 
+										currTextItem.m_yShift += 0.15f*cyAscent; // Carefull: plus (+) means shift down
+									else
+										currTextItem.m_yShift -= 0.35f*cyAscent; // be carefull: minus (-) means shift up
+									
 									currTxtIdx = bi+3;
 								}
 									break; // underlined
@@ -472,12 +523,12 @@ namespace Altaxo
 										continue;   // handle it as if it where normal text
 									}
 
-									previousTextItem = currTextItem;
-									currTextItem = new TextItem(currTextItem);
+									itemstack.Push(currTextItem);
+									currTextItem = new TextItem(currTextItem,null);
 									currTextLine.Add(currTextItem);
 									currTextItem.SetAsSymbol(args,arg);
 
-									currTextItem = new TextItem(previousTextItem); // create a normal text item behind the symbol item
+									currTextItem = new TextItem(currTextItem,null); // create a normal text item behind the symbol item
 									currTextLine.Add(currTextItem); // to have room for the following text
 									currTxtIdx = closingbracepos+1;
 								}
@@ -495,12 +546,11 @@ namespace Altaxo
 							currTxtIdx = bi+1;
 						}
 					} // end if it was a backslash
-					else if(')'==m_Text[bi])
+					else if(')'==m_Text[bi]) // closing brace
 					{
 						// the formating is finished, we can return to the formating of the previous section
-						TextItem preservedprevious = previousTextItem;
-						previousTextItem = currTextItem;
-						currTextItem = new TextItem(preservedprevious);
+						TextItem preservedprevious = itemstack.Count >0 ? (TextItem)itemstack.Pop() : firstItem;
+						currTextItem = new TextItem(preservedprevious,null);
 						currTextLine.Add(currTextItem);
 						currTxtIdx = bi+1;
 					}
@@ -553,17 +603,29 @@ namespace Altaxo
 			}
 		}
 
+
 	
+		public void MeasureFont(Graphics g, Font ft, out float cyLineSpace, out float cyAscent, out float cyDescent)
+		{	
+			// get some properties of the font
+			cyLineSpace = m_Font.GetHeight(g); // space between two lines
+			int   iCellSpace  = m_Font.FontFamily.GetLineSpacing(FontStyle.Regular);
+			int   iCellAscent = m_Font.FontFamily.GetCellAscent(FontStyle.Regular);
+			int   iCellDescent = m_Font.FontFamily.GetCellDescent(FontStyle.Regular);
+			cyAscent  = cyLineSpace*iCellAscent/iCellSpace;
+			cyDescent = cyLineSpace*iCellDescent/iCellSpace; 
+		}
+
 		public override void Paint(Graphics g, object obj)
 		{
 			if(!this.m_bStructureInSync)
-				this.Interpret();
+				this.Interpret(g);
 
 
 			System.Drawing.Drawing2D.GraphicsState gs = g.Save();
-			g.TranslateTransform(X,Y);
-			g.RotateTransform(m_Rotation);
-			
+			//g.TranslateTransform(X,Y);
+			//g.RotateTransform(m_Rotation);
+
 			// Modification of StringFormat is necessary to avoid 
 			// too big spaces between successive words
 			StringFormat strfmt = StringFormat.GenericTypographic;
@@ -572,49 +634,18 @@ namespace Altaxo
 			strfmt.LineAlignment = StringAlignment.Far;
 			strfmt.Alignment = StringAlignment.Near;
 
-			// next statement is necessary to have a consistent string length both
-			// on 0 degree rotated text and rotated text
-			// without this statement, the text is fitted to the pixel grid, which
-			// leads to "steps" during scaling
-			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-
-
-			// get some properties of the font
-			float cyLineSpace = m_Font.GetHeight(g); // space between two lines
-			int   iCellSpace  = m_Font.FontFamily.GetLineSpacing(FontStyle.Regular);
-			int   iCellAscent = m_Font.FontFamily.GetCellAscent(FontStyle.Regular);
-			int   iCellDescent = m_Font.FontFamily.GetCellDescent(FontStyle.Regular);
-			float cyAscent  = cyLineSpace*iCellAscent/iCellSpace;
-			float cyDescent = cyLineSpace*iCellDescent/iCellSpace; 
 			float PlotSymbolWidth = g.MeasureString("MMM",m_Font,new PointF(0,0),strfmt).Width;
-		
-			
-			/*
-				if(this.AutoSize)
-				{
-					SizeF mySize = g.MeasureString(m_Text, m_Font);
-					this.Width = mySize.Width;
-					this.Height = mySize.Height;
-					g.DrawString(m_Text, m_Font, new SolidBrush(m_Color), 0, 0, strfmt);
-				}
-				else
-				{
-					System.Drawing.RectangleF rect = new RectangleF(0, 0, this.Width, this.Height);
-					g.DrawString(m_Text, m_Font, new SolidBrush(m_Color), rect, strfmt);
-				}
-				*/
 
+			float baseLineSpace, baseAscent, baseDescent;
+			MeasureFont(g, m_Font, out baseLineSpace, out baseAscent, out baseDescent);
+		
 
 			float currPosX=0;
 			float currPosY=0;
-			float currLinePosY=0;
-			float yshift=0;
 			SizeF currSize;
-			bool bBold=false, bItalic=false, bUnderlined=false, bGreek=false;
-			int nSubIndex=0;
-			Font currFont = (Font)m_Font.Clone();
 			for(int nLine=0;nLine<m_TextLines.Count;nLine++)
 			{
+				currPosX=0;
 				for(int nItem=0;nItem<m_TextLines[nLine].Count;nItem++)
 				{
 
@@ -625,83 +656,13 @@ namespace Altaxo
 
 					if(ti.IsText)
 					{
-						// set the font
-						bool bFontChange=false;
-
-						if(ti.m_bBold !=bBold)
-						{
-							bBold=ti.m_bBold;
-							bFontChange=true;
-						}
-						if(ti.m_bItalic != bItalic)
-						{
-							bItalic = ti.m_bItalic;
-							bFontChange=true;
-						}
-						if(ti.m_bUnderlined != bUnderlined)
-						{
-							bUnderlined = ti.m_bUnderlined;
-							bFontChange = true;
-						}
-						if(ti.m_bGreek != bGreek)
-						{
-							bGreek = ti.m_bGreek;
-							bFontChange = true;
-						}
-						if(ti.m_SubIndex != nSubIndex)
-						{
-							nSubIndex = ti.m_SubIndex;
-							bFontChange = true;
-						}
-
-						// Create the font based on the current values if it has changed
-						if(bFontChange)
-						{
-							FontStyle style = FontStyle.Regular;
-							if(bBold) style |= FontStyle.Bold;
-							if(bItalic) style |= FontStyle.Italic;
-							if(bUnderlined) style |= FontStyle.Underline;
-							
-							
-							// I measured the proprortions of sub and sup indices from word
-							// there it is so the char size is 65% of normal size
-							// the subindex is 15% of ascent height of normal char lower than ground line
-							// the supindex is 35% of ascent height of normal char higher than ground line
-							
-							float emSize = m_Font.Size;
-							float ascent = cyAscent;
-							yshift = 0;
-
-							for(int k=0;k<Math.Abs(nSubIndex);k++)
-							{
-								emSize *= 0.65f; // scale the new font size
-
-								if(nSubIndex<0) 
-									yshift += 0.15f*ascent; // Carefull: plus (+) means shift down
-								else
-									yshift -= 0.35f*ascent; // be carefull: minus (-) means shift up
-
-								ascent *= 0.65f; // scale also the ascent
-							}
-
-
-							if(bGreek)
-								currFont = new Font("Symbol",emSize,style,GraphicsUnit.World);
-							else
-								currFont = new Font(m_Font.FontFamily,emSize,style,GraphicsUnit.World);
-
-						}
-
 						// now measure the string
-						PointF currPosPoint = new PointF(currPosX,currLinePosY + currPosY + yshift);
-
-						currSize = g.MeasureString(ti.m_Text, currFont, currPosPoint, strfmt);
-						
-						g.DrawString(ti.m_Text, currFont, new SolidBrush(m_Color), currPosPoint, strfmt);
+						PointF currPosPoint = new PointF(currPosX, currPosY + ti.m_yShift);
+						currSize = g.MeasureString(ti.m_Text, ti.Font, currPosPoint, strfmt);
+						g.DrawString(ti.m_Text, ti.Font, new SolidBrush(m_Color), currPosPoint, strfmt);
 
 						// update positions
 						currPosX += currSize.Width;
-
 					} // end of if ti.IsText
 
 					else if(ti.IsSymbol && obj is Altaxo.Graph.Layer)
@@ -714,13 +675,17 @@ namespace Altaxo
 						{
 							Graph.PlotAssociation pa = layer.PlotAssociations[ti.m_PlotNumber];
 							
-							SizeF symsize = pa.PlotStyle.PaintSymbol(g, new PointF(currPosX,currPosY-cyDescent-cyAscent/2+cyDescent/4), PlotSymbolWidth);
+							float cyLineSpace, cyAscent, cyDescent;
+							MeasureFont(g,ti.Font,out cyLineSpace, out cyAscent, out cyDescent);
+							SizeF symsize = pa.PlotStyle.PaintSymbol(g, new PointF(currPosX,currPosY + ti.m_yShift -cyDescent-cyAscent/2+cyDescent/4), PlotSymbolWidth);
 							currPosX += symsize.Width;
 						}
 
 					} // end if ti.IsSymbol
 
 				} // for all items in a textline
+			
+			currPosY += baseLineSpace*1.25f;
 			} // for all textlines
 			
 
