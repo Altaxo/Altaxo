@@ -43,13 +43,22 @@ namespace Altaxo.Main.GUI
 		IWorkbenchWindowController Controller { get; set; }
 		void SetChild(IWorkbenchContentView content);
 		void Close();
+
+		/// <summary>
+		/// Sets the title of this window.
+		/// </summary>
+		/// <param name="title">The title of this window.</param>
+		void SetTitle(string title);
 	}
 
 	public class WorkbenchWindowController : IWorkbenchWindowController
 	{
 		protected Main.GUI.IWorkbenchWindowView m_View;
 		protected IWorkbenchContentController m_Content;
-
+		/// <summary>
+		/// The windows title.
+		/// </summary>
+		protected string m_Title;
 
 		public Main.GUI.IWorkbenchWindowView View
 		{
@@ -99,6 +108,78 @@ namespace Altaxo.Main.GUI
 			
 			this.View=null;
 		}
+
+
+		#region ICSharpCode.SharpDevelop.Gui
+
+		/// <summary>
+		/// The window title.
+		/// </summary>
+		public string Title 
+		{
+			get { return m_Title; }
+			set 
+			{
+				m_Title = value;
+				if(View!=null)
+					View.SetTitle(m_Title);
+			}
+		}
+		
+		/// <summary>
+		/// The current view content which is shown inside this window.
+		/// </summary>
+		public ICSharpCode.SharpDevelop.Gui.IViewContent ViewContent 
+		{
+			get { return this.Content as ICSharpCode.SharpDevelop.Gui.IViewContent; }
+		}
+		
+		/// <summary>
+		/// Closes the window, if force == true it closes the window
+		/// without ask, even the content is dirty.
+		/// </summary>
+		public void CloseWindow(bool force)
+		{
+			CloseView();
+		}
+		
+		/// <summary>
+		/// Brings this window to front and sets the user focus to this
+		/// window.
+		/// </summary>
+		public void SelectWindow()
+		{
+		}
+
+		
+		//		void OnWindowSelected(EventArgs e);
+		public void OnWindowDeselected(EventArgs e)
+		{
+		}
+		
+		/// <summary>
+		/// Is called when the window is selected.
+		/// </summary>
+		public event EventHandler WindowSelected;
+		
+		/// <summary>
+		/// Is called when the window is deselected.
+		/// </summary>
+		public event EventHandler WindowDeselected;
+		
+		/// <summary>
+		/// Is called when the title of this window has changed.
+		/// </summary>
+		public event EventHandler TitleChanged;
+		
+		/// <summary>
+		/// Is called after the window closes.
+		/// </summary>
+		public event EventHandler CloseEvent;
+
+
+		#endregion
+
 	}
 
 }

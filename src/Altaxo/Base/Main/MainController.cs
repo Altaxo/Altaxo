@@ -125,6 +125,61 @@ namespace Altaxo
 		void EhView_CloseMessage();
 
 
+		/// <summary>
+		/// Returns true when the application is about to be closed.
+		/// </summary>
+		bool IsClosing { get; }
+
+		/// <summary>
+		/// Returns the current print document for this instance of the application.
+		/// This contains settings that store the current printer, paper size, orientation and so on.
+		/// </summary>
+		System.Drawing.Printing.PrintDocument PrintDocument	{	get ; }
+		
+		
+		/// <summary>
+		/// Returns the current printing page setup dialog for this instance of the application.
+		/// </summary>
+		System.Windows.Forms.PageSetupDialog PageSetupDialog	{	get; }
+
+		/// <summary>
+		/// Returns the print dialog for the current instance of this application.
+		/// </summary>
+		System.Windows.Forms.PrintDialog PrintDialog { get; }
+
+		/// <summary>
+		/// Creates a new graph document and the view content..
+		/// </summary>
+		/// <returns>The view content for the newly created graph.</returns>
+		Altaxo.Graph.GUI.IGraphController CreateNewGraph();
+
+		/// <summary>
+		/// Creates a new view content for a graph document.
+		/// </summary>
+		/// <param name="graph">The graph document.</param>
+		/// <returns>The view content for the provided graph document.</returns>
+		Altaxo.Graph.GUI.IGraphController CreateNewGraph(Altaxo.Graph.GraphDocument graph);
+
+		/// <summary>
+		/// Creates a view content for a table.
+		/// </summary>
+		/// <param name="table">The table which should be viewed.</param>
+		/// <returns>The view content for the provided table.</returns>
+		Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table);
+
+		/// <summary>
+		/// Removes a view content (and the window) from the application. The related graph
+		/// document is also deleted from it's collection.
+		/// </summary>
+		/// <param name="ctrl">The view content to remove.</param>
+		void RemoveGraph(Altaxo.Graph.GUI.GraphController ctrl);
+
+		/// <summary>
+		/// Removes a view content for a table from the application window. The related
+		/// table is also removed from the document.
+		/// </summary>
+		/// <param name="ctrl">The view content to remove.</param>
+		void RemoveWorksheet(Altaxo.Worksheet.GUI.WorksheetController ctrl);
 	}
 
 	/// <summary>
@@ -996,26 +1051,49 @@ namespace Altaxo
 
 
 
+	/// <summary>
+	/// This class holds the application instance.
+	/// </summary>
 	public class App
 	{
-		// public static System.Runtime.Serialization.SurrogateSelector m_SurrogateSelector;
+	
+		/// <summary>
+		/// The application instance.
+		/// </summary>
+		private static IMainController sm_theApplication;
 
-
-		private static MainController sm_theApplication;
-
-		public static MainController Current
+		/// <summary>
+		/// Returns the application instance.
+		/// </summary>
+		public static IMainController Current
 		{
 			get { return sm_theApplication; }
 		}
 
+		/// <summary>
+		/// Sets the application instance to an initial value. This function must be called
+		/// before <see>App.Main</see>. If App.Main is called and the application instance was
+		/// not initialized before, a default application instance is created.
+		/// </summary>
+		/// <param name="ctrl">The main controller to be used as application instance.</param>
+		public static void InitializeMainController(Altaxo.IMainController ctrl)
+		{
+			if(null==sm_theApplication)
+				sm_theApplication = ctrl; 
+			else
+				throw new ApplicationException("The main controller can not be re-set to another value, only initialized for the first time!");
+		}
+
 
 		/// <summary>
-		/// The main entry point for the application.
+		/// The main entry point for the application. This function has to be called to
+		/// run the application.
 		/// </summary>
 		[STAThread]
 		public static void Main() 
 		{
-			sm_theApplication = new MainController(new MainView(), new AltaxoDocument());
+			if(null==sm_theApplication)
+				InitializeMainController(new MainController(new MainView(), new AltaxoDocument()));
 
 			try
 			{

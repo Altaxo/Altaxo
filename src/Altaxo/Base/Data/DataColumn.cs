@@ -261,7 +261,6 @@ namespace Altaxo.Data
 		}
 
 		/// <summary>Serializes the DataColumn given by object obj.</summary>
-		/// <param name="obj">The <see cref="DataColumn"/> instance which should be serialized.</param>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		/// <remarks>I decided _not_ to serialize the parent object, because there are situations were we

@@ -15,6 +15,10 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeautyGUI", "BeautyGUI\BeautyGUI.csproj", "{63420446-3D85-4D00-BA9E-9EA7680B87E0}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -46,6 +50,12 @@ Global
 		{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}.DesignTimeDebugging.Build.0 = Debug
 		{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}.Release.ActiveCfg = Release
 		{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}.Release.Build.0 = Release
+		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Debug.ActiveCfg = Debug|.NET
+		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Debug.Build.0 = Debug|.NET
+		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.DesignTimeDebugging.ActiveCfg = Debug|.NET
+		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.DesignTimeDebugging.Build.0 = Debug|.NET
+		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Release.ActiveCfg = Release|.NET
+		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Icon1.ico = Icon1.ico

@@ -161,6 +161,11 @@ namespace Altaxo.Main.GUI
 			fc.Dock = System.Windows.Forms.DockStyle.Fill;
 		}
 	
+		public void SetTitle(string title)
+		{
+			this.Text = title;
+		}
+
 		#endregion
 	}
 }

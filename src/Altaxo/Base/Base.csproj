@@ -704,6 +704,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\GUI\IViewContent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\IWorkbenchWindow.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\GUI\ListBoxEntry.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

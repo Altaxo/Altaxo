@@ -90,7 +90,7 @@ namespace Altaxo
 				m_DeserializationFinished=true;
 				DeserializationFinisher finisher = new DeserializationFinisher(this);
 			
-				m_DataSet.ParentDocument = this;
+				m_DataSet.ParentObject = this;
 				m_DataSet.OnDeserialization(finisher);
 
 			/*

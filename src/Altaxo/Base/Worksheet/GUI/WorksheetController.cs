@@ -16,7 +16,11 @@ namespace Altaxo.Worksheet.GUI
 	/// </summary>
 	[SerializationSurrogate(0,typeof(WorksheetController.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class WorksheetController : IWorksheetController,  System.Runtime.Serialization.IDeserializationCallback, Main.GUI.IWorkbenchContentController
+	public class WorksheetController :
+		IWorksheetController,  
+		System.Runtime.Serialization.IDeserializationCallback,
+		Main.GUI.IWorkbenchContentController,
+		ICSharpCode.SharpDevelop.Gui.IViewContent	
 	{
 		public enum SelectionType { Nothing, DataRowSelection, DataColumnSelection, PropertyColumnSelection }
 
@@ -3023,5 +3027,126 @@ namespace Altaxo.Worksheet.GUI
 		}
 
 		#endregion
+
+		#region ICSharpCode.SharpDevelop.Gui
+
+		public void Dispose()
+		{
+		}
+
+		/// <summary>
+		/// This is the Windows.Forms control for the view.
+		/// </summary>
+		public System.Windows.Forms.Control Control 
+		{
+			get { return this.View as System.Windows.Forms.Control; }
+		}
+
+		/// <summary>
+		/// The workbench window in which this view is displayed.
+		/// </summary>
+		public ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow  WorkbenchWindow 
+		{
+			get { return (ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow)this.ParentWorkbenchWindowController; }
+			set { this.ParentWorkbenchWindowController = (Main.GUI.IWorkbenchWindowController)value; }
+		}
+		
+		/// <summary>
+		/// A generic name for the file, when it does have no file name
+		/// (e.g. newly created files)
+		/// </summary>
+		public string UntitledName 
+		{
+			get { return "UntitledTable"; }
+			set {}
+		}
+		
+		/// <summary>
+		/// This is the whole name of the content, e.g. the file name or
+		/// the url depending on the type of the content.
+		/// </summary>
+		public string ContentName 
+		{
+			get { return this.Doc.Name; }
+			set {}
+		}
+		
+		/// <summary>
+		/// If this property returns true the view is untitled.
+		/// </summary>
+		public bool IsUntitled 
+		{
+			get { return false; }
+		}
+		
+		/// <summary>
+		/// If this property returns true the content has changed since
+		/// the last load/save operation.
+		/// </summary>
+		public bool IsDirty 
+		{
+			get { return false; }
+			set {}
+		}
+		
+		/// <summary>
+		/// If this property returns true the content could not be altered.
+		/// </summary>
+		public bool IsReadOnly 
+		{
+			get { return false; }
+		}
+		
+		/// <summary>
+		/// If this property returns true the content can't be written.
+		/// </summary>
+		public bool IsViewOnly 
+		{
+			get { return true; }
+		}
+		
+		/// <summary>
+		/// Reinitializes the content. (Re-initializes all add-in tree stuff)
+		/// and redraws the content. Call this not directly unless you know
+		/// what you do.
+		/// </summary>
+		public void RedrawContent()
+		{
+		}
+		
+		/// <summary>
+		/// Saves this content to the last load/save location.
+		/// </summary>
+		public void Save()
+		{
+		}
+
+		
+		/// <summary>
+		/// Saves the content to the location <code>fileName</code>
+		/// </summary>
+		public void Save(string fileName)
+		{
+		}
+		
+		/// <summary>
+		/// Loads the content from the location <code>fileName</code>
+		/// </summary>
+		public void Load(string fileName)
+		{
+		}
+		
+		/// <summary>
+		/// Is called each time the name for the content has changed.
+		/// </summary>
+		public event EventHandler ContentNameChanged;
+		
+		/// <summary>
+		/// Is called when the content is changed after a save/load operation
+		/// and this signals that changes could be saved.
+		/// </summary>
+		public event EventHandler DirtyChanged;
+		#endregion
+	
 	}
 }

@@ -41,7 +41,7 @@ namespace Altaxo.Data
 	{
 		// Data
 		protected System.Collections.Hashtable m_TablesByName = new System.Collections.Hashtable();
-		protected AltaxoDocument m_Parent=null;
+		protected object m_Parent=null;
 
 		// helper data
 		public event System.EventHandler Changed;
@@ -61,16 +61,12 @@ namespace Altaxo.Data
 		{
 			this.m_Parent = _parent;
 		}
-
-		public AltaxoDocument ParentDocument
-		{
-			get { return this.m_Parent; }
-			set { this.m_Parent=value; }
-		}
+	
 
 		public object ParentObject
 		{
 			get { return this.m_Parent; }
+			set { this.m_Parent = value; }
 		}
 
 		public string Name
@@ -239,14 +235,6 @@ namespace Altaxo.Data
 
 		#endregion
 
-
-		public AltaxoDocument Document
-		{
-			get 
-			{
-				return m_Parent;
-			}
-		}
 
 		public bool IsDirty
 		{
