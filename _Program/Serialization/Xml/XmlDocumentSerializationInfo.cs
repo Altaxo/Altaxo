@@ -6,7 +6,7 @@ namespace Altaxo.Serialization.Xml
 	/// <summary>
 	/// Summary description for XmlSerializationInfo.
 	/// </summary>
-	public class XmlDocumentSerializationInfo : IXmlSerializationInfo
+	public class XmlDocumentSerializationInfo : IXmlSerializationInfo, IXmlDeserializationInfo
 	{
 		XmlSurrogateSelector m_SurrogateSelector;
 		XmlDocument m_Doc;
@@ -233,8 +233,8 @@ namespace Altaxo.Serialization.Xml
 			}
 		}
 
-		public event System.EventHandler DeserializationFinished;
-		public event System.EventHandler AllDeserializationFinished;
+		public event XmlDeserializationCallbackEventHandler DeserializationFinished;
+		
 
 
 		#region not implemented yet

@@ -31,6 +31,9 @@ namespace Altaxo.Worksheet
 		/// <summary>Holds the data table.</summary>
 		protected Altaxo.Data.DataTable m_Table;
 
+
+		protected Altaxo.Worksheet.TableLayout m_TableLayout;
+
 		/// <summary>Holds the view (the window where the graph is visualized).</summary>
 		protected ITableView m_View;
 		
@@ -38,36 +41,6 @@ namespace Altaxo.Worksheet
 		/// <summary>Which selection was done last: selection (i) a data column, (ii) a data row, or (iii) a property column.</summary>
 		protected SelectionType m_LastSelectionType;
 
-		/// <summary>
-		/// defaultColumnsStyles stores the default column Styles in a Hashtable
-		/// the key for the hash table is the Type of the ColumnStyle
-		/// </summary>
-		protected System.Collections.Hashtable m_DefaultColumnStyles;
-
-		/// <summary>
-		/// m_ColumnStyles stores the column styles for each data column individually,
-		/// key is the data column itself.
-		/// There is no need to store a column style here if the column is styled as default,
-		/// instead the defaultColumnStyle is used in this case
-		/// </summary>
-		protected internal System.Collections.Hashtable m_ColumnStyles;
-
-
-		/// <summary>
-		/// The style of the row header. This is the leftmost column that shows usually the row number.
-		/// </summary>
-		protected RowHeaderStyle m_RowHeaderStyle; // holds the style of the row header (leftmost column of data grid)
-	
-		/// <summary>
-		/// The style of the column header. This is the upmost row that shows the name of the columns.
-		/// </summary>
-		protected ColumnHeaderStyle m_ColumnHeaderStyle; // the style of the column header (uppermost row of datagrid)
-	
-		/// <summary>
-		/// The style of the property column header. This is the leftmost column in the left of the property columns,
-		/// that shows the names of the property columns.
-		/// </summary>
-		protected ColumnHeaderStyle m_PropertyColumnHeaderStyle;
 		
 		/// <summary>
 		/// holds the positions (int) of the right boundarys of the __visible__ (!) columns
@@ -122,11 +95,7 @@ namespace Altaxo.Worksheet
 		/// </summary>
 		protected int m_NumberOfPropertyCols; // cached number of property  columnsof the table
 		
-		/// <summary>
-		/// The visibility of the property columns in the view. If true, the property columns are shown in the view.
-		/// </summary>
-		protected bool m_ShowPropertyColumns; // are the property columns visible?
-		
+	
 		
 
 		private Point m_MouseDownPosition; // holds the position of a double click
@@ -149,7 +118,7 @@ namespace Altaxo.Worksheet
 			m_DeserializationSurrogate=null;
 
 			m_Table=null;
-
+			m_TableLayout=null;
 			m_View = null;
 		
 			// The main menu of this controller.
@@ -160,21 +129,6 @@ namespace Altaxo.Worksheet
 			// Which selection was done last: selection (i) a data column, (ii) a data row, or (iii) a property column.</summary>
 			m_LastSelectionType = SelectionType.Nothing;
 
-			// defaultColumnsStyles stores the default column Styles in a Hashtable
-			m_DefaultColumnStyles = new System.Collections.Hashtable();
-
-			// m_ColumnStyles stores the column styles for each data column individually,
-			m_ColumnStyles = new System.Collections.Hashtable();
-
-
-			// The style of the row header. This is the leftmost column that shows usually the row number.
-			m_RowHeaderStyle = new RowHeaderStyle(); // holds the style of the row header (leftmost column of data grid)
-	
-			// The style of the column header. This is the upmost row that shows the name of the columns.
-			m_ColumnHeaderStyle = new ColumnHeaderStyle(); // the style of the column header (uppermost row of datagrid)
-	
-			// The style of the property column header. This is the leftmost column in the left of the property columns,
-			m_PropertyColumnHeaderStyle = new ColumnHeaderStyle();
 		
 			// holds the positions (int) of the right boundarys of the __visible__ (!) columns
 			m_ColumnStyleCache = new ColumnStyleCache();
@@ -211,10 +165,7 @@ namespace Altaxo.Worksheet
 			// Cached number of property columns.
 			m_NumberOfPropertyCols=0; // cached number of property  columnsof the table
 		
-			// The visibility of the property columns in the view. If true, the property columns are shown in the view.
-			m_ShowPropertyColumns=true; // are the property columns visible?
-		
-		
+				
 
 			m_MouseDownPosition = new Point(0,0); // holds the position of a double click
 			m_DragColumnWidth_ColumnNumber=int.MinValue; // stores the column number if mouse hovers over separator
@@ -260,11 +211,12 @@ namespace Altaxo.Worksheet
 				TableController s = (TableController)obj;
 
 				info.AddValue("DataTable",s.m_Table);
-				info.AddValue("DefColumnStyles",s.m_DefaultColumnStyles);
-				info.AddValue("ColumnStyles",s.m_ColumnStyles);
-				info.AddValue("RowHeaderStyle",s.m_RowHeaderStyle);
-				info.AddValue("ColumnHeaderStyle",s.m_ColumnHeaderStyle);
-				info.AddValue("PropertyColumnHeaderStyle",s.m_PropertyColumnHeaderStyle);
+				info.AddValue("TableLayout",s.m_TableLayout);
+				//info.AddValue("DefColumnStyles",s.m_TableLayout.DefaultColumnStyles);
+				//info.AddValue("ColumnStyles",s.m_TableLayout.ColumnStyles);
+				//info.AddValue("RowHeaderStyle",s.m_TableLayout.RowHeaderStyle);
+				//info.AddValue("ColumnHeaderStyle",s.m_TableLayout.ColumnHeaderStyle);
+				//info.AddValue("PropertyColumnHeaderStyle",s.m_TableLayout.PropertyColumnHeaderStyle);
 			}
 			/// <summary>
 			/// Deserializes the TableController (version 0).
@@ -280,11 +232,12 @@ namespace Altaxo.Worksheet
 				s.SetMemberVariablesToDefault();
 
 				s.m_Table = (Altaxo.Data.DataTable)info.GetValue("DataTable",typeof(Altaxo.Data.DataTable));
-				s.m_DefaultColumnStyles= (System.Collections.Hashtable)info.GetValue("DefColumnStyles",typeof(System.Collections.Hashtable));
-				s.m_ColumnStyles = (System.Collections.Hashtable)info.GetValue("ColumnStyles",typeof(System.Collections.Hashtable));
-				s.m_RowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle",typeof(RowHeaderStyle));
-				s.m_ColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("ColumnHeaderStyle",typeof(ColumnHeaderStyle));
-				s.m_PropertyColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("PropertyColumnHeaderStyle",typeof(ColumnHeaderStyle));
+				s.m_TableLayout = (Altaxo.Worksheet.TableLayout)info.GetValue("TableLayout",typeof(Altaxo.Worksheet.TableLayout)); 
+				//s.m_TableLayout.DefaultColumnStyles= (System.Collections.Hashtable)info.GetValue("DefColumnStyles",typeof(System.Collections.Hashtable));
+				//s.m_TableLayout.ColumnStyles = (System.Collections.Hashtable)info.GetValue("ColumnStyles",typeof(System.Collections.Hashtable));
+				//s.m_TableLayout.RowHeaderStyle = (RowHeaderStyle)info.GetValue("RowHeaderStyle",typeof(RowHeaderStyle));
+				//s.m_TableLayout.ColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("ColumnHeaderStyle",typeof(ColumnHeaderStyle));
+				//s.m_TableLayout.PropertyColumnHeaderStyle = (ColumnHeaderStyle)info.GetValue("PropertyColumnHeaderStyle",typeof(ColumnHeaderStyle));
 
 
 				s.m_DeserializationSurrogate = this;
@@ -334,7 +287,7 @@ namespace Altaxo.Worksheet
 		/// </summary>
 		/// <param name="view">The view to show the graph into.</param>
 		/// <param name="table">The data table.</param>
-		public TableController(ITableView view, Altaxo.Data.DataTable table)
+		public TableController(ITableView view, Altaxo.Data.DataTable table, Altaxo.Worksheet.TableLayout layout)
 		{
 			SetMemberVariablesToDefault();
 			m_View = view;
@@ -345,6 +298,11 @@ namespace Altaxo.Worksheet
 				this.DataTable = table; // Using DataTable here wires the event chain also
 			else
 				throw new ArgumentNullException("Leaving the table null in constructor is not supported here");
+
+			if(null!=layout)
+				this.m_TableLayout = layout; // Using DataTable here wires the event chain also
+			else
+				throw new ArgumentNullException("Leaving the layout null in constructor is not supported here");
 
 			this.InitializeMenu();
 
@@ -723,9 +681,10 @@ namespace Altaxo.Worksheet
 			{
 				if((myStream = saveFileDialog1.OpenFile()) != null)
 				{
-					Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo(myStream,true);
+					Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+					info.BeginWriting(myStream);
 					info.AddValue("Table",this.DataTable);
-					info.Finish();
+					info.EndWriting();
 					myStream.Close();
 				}
 			}
@@ -1361,7 +1320,7 @@ namespace Altaxo.Worksheet
 			Altaxo.Worksheet.ColumnStyle colstyle;
 
 			// first look at the column styles hash table, column itself is the key
-			colstyle = (Altaxo.Worksheet.ColumnStyle)m_ColumnStyles[dc];
+			colstyle = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.ColumnStyles[dc];
 			if(null!=colstyle)
 				return colstyle;
 			
@@ -1374,12 +1333,12 @@ namespace Altaxo.Worksheet
 			}
 			else
 			{
-				if(null!=(colstyle = (Altaxo.Worksheet.ColumnStyle)m_DefaultColumnStyles[searchstyletype]))
+				if(null!=(colstyle = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.DefaultColumnStyles[searchstyletype]))
 					return colstyle;
 
 				// if not successfull yet, we will create a new defaultColumnStyle
 				colstyle = (Altaxo.Worksheet.ColumnStyle)Activator.CreateInstance(searchstyletype);
-				m_DefaultColumnStyles.Add(searchstyletype,colstyle);
+				m_TableLayout.DefaultColumnStyles.Add(searchstyletype,colstyle);
 				return colstyle;
 			}
 		}
@@ -1394,7 +1353,7 @@ namespace Altaxo.Worksheet
 			Altaxo.Worksheet.ColumnStyle colstyle;
 
 			// first look at the column styles hash table, column itself is the key
-			colstyle = (Altaxo.Worksheet.ColumnStyle)m_ColumnStyles[dc];
+			colstyle = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.ColumnStyles[dc];
 			if(null!=colstyle)
 				return colstyle;
 			
@@ -1407,12 +1366,12 @@ namespace Altaxo.Worksheet
 			}
 			else
 			{
-				if(null!=(colstyle = (Altaxo.Worksheet.ColumnStyle)m_DefaultColumnStyles[searchstyletype]))
+				if(null!=(colstyle = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.DefaultColumnStyles[searchstyletype]))
 					return colstyle;
 
 				// if not successfull yet, we will create a new defaultColumnStyle
 				colstyle = (Altaxo.Worksheet.ColumnStyle)Activator.CreateInstance(searchstyletype);
-				m_DefaultColumnStyles.Add(searchstyletype,colstyle);
+				m_TableLayout.DefaultColumnStyles.Add(searchstyletype,colstyle);
 				return colstyle;
 			}
 		}
@@ -1927,7 +1886,7 @@ namespace Altaxo.Worksheet
 		{
 			get 
 			{
-				return this.m_ColumnHeaderStyle.Height + (VertScrollPos>=0 ? 0 : -VertScrollPos*this.m_PropertyColumnHeaderStyle.Height); 
+				return this.m_TableLayout.ColumnHeaderStyle.Height + (VertScrollPos>=0 ? 0 : -VertScrollPos*this.m_TableLayout.PropertyColumnHeaderStyle.Height); 
 			}
 		}
 		/// <summary>
@@ -1939,9 +1898,9 @@ namespace Altaxo.Worksheet
 		{
 			int posOfDataRow0 = this.VerticalPositionOfFirstVisibleDataRow;
 
-			//int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
+			//int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_TableLayout.ColumnHeaderStyle.Height)/(double)m_TableLayout.RowHeaderStyle.Height));
 			//return FirstVisibleTableRow + Math.Max(0,firstTotRow-RemainingEnabledPropertyColumns);
-			int firstVis = (int)Math.Floor((top-posOfDataRow0)/(double)m_RowHeaderStyle.Height);
+			int firstVis = (int)Math.Floor((top-posOfDataRow0)/(double)m_TableLayout.RowHeaderStyle.Height);
 			return (firstVis<0? 0 : firstVis ) + FirstVisibleTableRow;
 		}
 
@@ -1958,8 +1917,8 @@ namespace Altaxo.Worksheet
 			if(top<posOfDataRow0)
 				top = posOfDataRow0;
 
-			int firstRow = (int)Math.Floor((top-posOfDataRow0)/(double)m_RowHeaderStyle.Height);
-			int lastRow  = (int)Math.Ceiling((bottom-posOfDataRow0)/(double)m_RowHeaderStyle.Height)-1;
+			int firstRow = (int)Math.Floor((top-posOfDataRow0)/(double)m_TableLayout.RowHeaderStyle.Height);
+			int lastRow  = (int)Math.Ceiling((bottom-posOfDataRow0)/(double)m_TableLayout.RowHeaderStyle.Height)-1;
 			return Math.Max(0,1 + lastRow - firstRow);
 		}
 
@@ -1970,14 +1929,14 @@ namespace Altaxo.Worksheet
 			if(top<posOfDataRow0)
 				top = posOfDataRow0;
 
-			int firstRow = (int)Math.Floor((top-posOfDataRow0)/(double)m_RowHeaderStyle.Height);
-			int lastRow  = (int)Math.Floor((bottom-posOfDataRow0)/(double)m_RowHeaderStyle.Height)-1;
+			int firstRow = (int)Math.Floor((top-posOfDataRow0)/(double)m_TableLayout.RowHeaderStyle.Height);
+			int lastRow  = (int)Math.Floor((bottom-posOfDataRow0)/(double)m_TableLayout.RowHeaderStyle.Height)-1;
 			return Math.Max(0, 1+ lastRow - firstRow);
 		}
 
 		public int GetTopCoordinateOfTableRow(int nRow)
 		{
-			return	this.VerticalPositionOfFirstVisibleDataRow + (nRow- (VertScrollPos<0?0:VertScrollPos)) * m_RowHeaderStyle.Height;
+			return	this.VerticalPositionOfFirstVisibleDataRow + (nRow- (VertScrollPos<0?0:VertScrollPos)) * m_TableLayout.RowHeaderStyle.Height;
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -2022,7 +1981,7 @@ namespace Altaxo.Worksheet
 		{
 			get
 			{
-				return m_ShowPropertyColumns ? Math.Max(0,-VertScrollPos) : 0;
+				return m_TableLayout.ShowPropertyColumns ? Math.Max(0,-VertScrollPos) : 0;
 			}
 		}
 
@@ -2030,7 +1989,7 @@ namespace Altaxo.Worksheet
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int TotalEnabledPropertyColumns
 		{
-			get { return m_ShowPropertyColumns ? this.m_NumberOfPropertyCols : 0; }
+			get { return m_TableLayout.ShowPropertyColumns ? this.m_NumberOfPropertyCols : 0; }
 		}
 
 
@@ -2040,15 +1999,15 @@ namespace Altaxo.Worksheet
 		{
 			get
 			{
-				return (m_ShowPropertyColumns && VertScrollPos<0) ? TotalEnabledPropertyColumns+VertScrollPos : -1;
+				return (m_TableLayout.ShowPropertyColumns && VertScrollPos<0) ? TotalEnabledPropertyColumns+VertScrollPos : -1;
 			}
 		}
 
 
 		public int GetFirstVisiblePropertyColumn(int top)
 		{
-			int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height));
-			return m_ShowPropertyColumns ? firstTotRow+FirstVisiblePropertyColumn : 0;
+			int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_TableLayout.ColumnHeaderStyle.Height)/(double)m_TableLayout.PropertyColumnHeaderStyle.Height));
+			return m_TableLayout.ShowPropertyColumns ? firstTotRow+FirstVisiblePropertyColumn : 0;
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -2063,15 +2022,15 @@ namespace Altaxo.Worksheet
 
 		public int GetTopCoordinateOfPropertyColumn(int nCol)
 		{
-			return m_ColumnHeaderStyle.Height + (nCol-FirstVisiblePropertyColumn)*m_PropertyColumnHeaderStyle.Height;
+			return m_TableLayout.ColumnHeaderStyle.Height + (nCol-FirstVisiblePropertyColumn)*m_TableLayout.PropertyColumnHeaderStyle.Height;
 		}
 
 		public int GetVisiblePropertyColumns(int top, int bottom)
 		{
-			if(this.m_ShowPropertyColumns)
+			if(this.m_TableLayout.ShowPropertyColumns)
 			{
-				int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height));
-				int lastTotRow  = (int)Math.Ceiling((bottom-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height)-1;
+				int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_TableLayout.ColumnHeaderStyle.Height)/(double)m_TableLayout.PropertyColumnHeaderStyle.Height));
+				int lastTotRow  = (int)Math.Ceiling((bottom-m_TableLayout.ColumnHeaderStyle.Height)/(double)m_TableLayout.PropertyColumnHeaderStyle.Height)-1;
 				int maxPossRows = Math.Max(0,RemainingEnabledPropertyColumns-firstTotRow);
 				return Math.Min(maxPossRows,Math.Max(0,1 + lastTotRow - firstTotRow));
 			}
@@ -2081,10 +2040,10 @@ namespace Altaxo.Worksheet
 
 		public int GetFullyVisiblePropertyColumns(int top, int bottom)
 		{
-			if(m_ShowPropertyColumns)
+			if(m_TableLayout.ShowPropertyColumns)
 			{
-				int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height));
-				int lastTotRow  = (int)Math.Floor((bottom-m_ColumnHeaderStyle.Height)/(double)m_PropertyColumnHeaderStyle.Height)-1;
+				int firstTotRow = (int)Math.Max(0,Math.Floor((top-m_TableLayout.ColumnHeaderStyle.Height)/(double)m_TableLayout.PropertyColumnHeaderStyle.Height));
+				int lastTotRow  = (int)Math.Floor((bottom-m_TableLayout.ColumnHeaderStyle.Height)/(double)m_TableLayout.PropertyColumnHeaderStyle.Height)-1;
 				int maxPossRows = Math.Max(0,RemainingEnabledPropertyColumns-firstTotRow);
 				return Math.Min(maxPossRows,Math.Max(0,1 + lastTotRow - firstTotRow));
 			}
@@ -2247,7 +2206,7 @@ namespace Altaxo.Worksheet
 			Rectangle cellRect = GetXCoordinatesOfColumn(nCol);
 
 			cellRect.Y = this.GetTopCoordinateOfTableRow(nRow);
-			cellRect.Height = this.m_RowHeaderStyle.Height;
+			cellRect.Height = this.m_TableLayout.RowHeaderStyle.Height;
 			return cellRect;
 		}
 	
@@ -2256,7 +2215,7 @@ namespace Altaxo.Worksheet
 			Rectangle cellRect = GetXCoordinatesOfColumn(nRow);
 
 			cellRect.Y = this.GetTopCoordinateOfPropertyColumn(nCol);
-			cellRect.Height = this.m_RowHeaderStyle.Height;
+			cellRect.Height = this.m_TableLayout.RowHeaderStyle.Height;
 			return cellRect;
 		}
 
@@ -2271,7 +2230,7 @@ namespace Altaxo.Worksheet
 			
 			int i = nForLastCol;
 			int retv = nForLastCol;
-			int horzSize = this.TableAreaWidth-m_RowHeaderStyle.Width;
+			int horzSize = this.TableAreaWidth-m_TableLayout.RowHeaderStyle.Width;
 			while(i>=0)
 			{
 				horzSize -= GetColumnStyle(i).Width;
@@ -2376,16 +2335,16 @@ namespace Altaxo.Worksheet
 				Altaxo.Worksheet.ColumnStyle cs;
 				if(-1==m_DragColumnWidth_ColumnNumber)
 				{
-					cs = this.m_RowHeaderStyle;
+					cs = this.m_TableLayout.RowHeaderStyle;
 				}
 				else
 				{
-					cs = (Altaxo.Worksheet.ColumnStyle)m_ColumnStyles[DataTable[m_DragColumnWidth_ColumnNumber]];
+					cs = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.ColumnStyles[DataTable[m_DragColumnWidth_ColumnNumber]];
 					if(null==cs)
 					{
 						Altaxo.Worksheet.ColumnStyle template = GetColumnStyle(this.m_DragColumnWidth_ColumnNumber);
 						cs = (Altaxo.Worksheet.ColumnStyle)template.Clone();
-						m_ColumnStyles.Add(DataTable[m_DragColumnWidth_ColumnNumber],cs);
+						m_TableLayout.ColumnStyles.Add(DataTable[m_DragColumnWidth_ColumnNumber],cs);
 					}
 				}
 				int newWidth = this.m_DragColumnWidth_OriginalWidth + sizediff;
@@ -2429,16 +2388,16 @@ namespace Altaxo.Worksheet
 				
 				Altaxo.Worksheet.ColumnStyle cs;
 				if(-1==m_DragColumnWidth_ColumnNumber)
-					cs = this.m_RowHeaderStyle;
+					cs = this.m_TableLayout.RowHeaderStyle;
 				else
 				{
-					cs = (Altaxo.Worksheet.ColumnStyle)m_ColumnStyles[DataTable[m_DragColumnWidth_ColumnNumber]];
+					cs = (Altaxo.Worksheet.ColumnStyle)m_TableLayout.ColumnStyles[DataTable[m_DragColumnWidth_ColumnNumber]];
 				
 					if(null==cs)
 					{
 						Altaxo.Worksheet.ColumnStyle template = GetColumnStyle(this.m_DragColumnWidth_ColumnNumber);
 						cs = (Altaxo.Worksheet.ColumnStyle)template.Clone();
-						m_ColumnStyles.Add(DataTable[m_DragColumnWidth_ColumnNumber],cs);
+						m_TableLayout.ColumnStyles.Add(DataTable[m_DragColumnWidth_ColumnNumber],cs);
 					}
 				}
 
@@ -2451,7 +2410,7 @@ namespace Altaxo.Worksheet
 			}
 			else // not in Capture mode
 			{
-				if(Y<this.m_ColumnHeaderStyle.Height)
+				if(Y<this.m_TableLayout.ColumnHeaderStyle.Height)
 				{
 					for(int i=this.m_ColumnStyleCache.Count-1;i>=0;i--)
 					{
@@ -2466,11 +2425,11 @@ namespace Altaxo.Worksheet
 						}
 					} // end for
 
-					if(this.m_RowHeaderStyle.Width -5 < X && X < m_RowHeaderStyle.Width+5)
+					if(this.m_TableLayout.RowHeaderStyle.Width -5 < X && X < m_TableLayout.RowHeaderStyle.Width+5)
 					{
 						this.View.TableAreaCursor = System.Windows.Forms.Cursors.VSplit;
 						this.m_DragColumnWidth_ColumnNumber = -1;
-						this.m_DragColumnWidth_OriginalWidth = this.m_RowHeaderStyle.Width;
+						this.m_DragColumnWidth_OriginalWidth = this.m_TableLayout.RowHeaderStyle.Width;
 						return;
 					}
 				}
@@ -2585,41 +2544,41 @@ namespace Altaxo.Worksheet
 			Rectangle cellRectangle = new Rectangle();
 
 
-			if(e.ClipRectangle.Top<m_ColumnHeaderStyle.Height)
+			if(e.ClipRectangle.Top<m_TableLayout.ColumnHeaderStyle.Height)
 			{
 				bDrawColumnHeader = true;
 			}
 
 			// if neccessary, draw the row header (the most left column)
-			if(e.ClipRectangle.Left<m_RowHeaderStyle.Width)
+			if(e.ClipRectangle.Left<m_TableLayout.RowHeaderStyle.Width)
 			{
-				cellRectangle.Height = m_RowHeaderStyle.Height;
-				cellRectangle.Width = m_RowHeaderStyle.Width;
+				cellRectangle.Height = m_TableLayout.RowHeaderStyle.Height;
+				cellRectangle.Width = m_TableLayout.RowHeaderStyle.Width;
 				cellRectangle.X=0;
 				
 
 				// if visible, draw property column header items
 				yShift=this.GetTopCoordinateOfPropertyColumn(firstPropertyColumnToDraw);
-				cellRectangle.Height = m_PropertyColumnHeaderStyle.Height;
+				cellRectangle.Height = m_TableLayout.PropertyColumnHeaderStyle.Height;
 				for(int nPropCol=firstPropertyColumnToDraw, nInc=0;nInc<numberOfPropertyColumnsToDraw;nPropCol++,nInc++)
 				{
-					cellRectangle.Y = yShift+nInc*m_PropertyColumnHeaderStyle.Height;
+					cellRectangle.Y = yShift+nInc*m_TableLayout.PropertyColumnHeaderStyle.Height;
 					bool bPropColSelected = bArePropColsSelected && m_SelectedPropertyColumns.ContainsKey(nPropCol);
-					this.m_PropertyColumnHeaderStyle.Paint(dc,cellRectangle,nPropCol,this.DataTable.PropCols[nPropCol],bPropColSelected);
+					this.m_TableLayout.PropertyColumnHeaderStyle.Paint(dc,cellRectangle,nPropCol,this.DataTable.PropCols[nPropCol],bPropColSelected);
 				}
 			}
 
 			// draw the table row Header Items
 			yShift=this.GetTopCoordinateOfTableRow(firstTableRowToDraw);
-			cellRectangle.Height = m_RowHeaderStyle.Height;
+			cellRectangle.Height = m_TableLayout.RowHeaderStyle.Height;
 			for(int nRow = firstTableRowToDraw,nInc=0; nInc<numberOfTableRowsToDraw; nRow++,nInc++)
 			{
-				cellRectangle.Y = yShift+nInc*m_RowHeaderStyle.Height;
-				m_RowHeaderStyle.Paint(dc,cellRectangle,nRow,null, bAreRowsSelected && m_SelectedRows.ContainsKey(nRow));
+				cellRectangle.Y = yShift+nInc*m_TableLayout.RowHeaderStyle.Height;
+				m_TableLayout.RowHeaderStyle.Paint(dc,cellRectangle,nRow,null, bAreRowsSelected && m_SelectedRows.ContainsKey(nRow));
 			}
 			
 
-			if(e.ClipRectangle.Bottom>=m_ColumnHeaderStyle.Height || e.ClipRectangle.Right>=m_RowHeaderStyle.Width)		
+			if(e.ClipRectangle.Bottom>=m_TableLayout.ColumnHeaderStyle.Height || e.ClipRectangle.Right>=m_TableLayout.RowHeaderStyle.Width)		
 			{
 				int numberOfColumnsToDraw;
 				int firstColToDraw =this.GetFirstAndNumberOfVisibleColumn(e.ClipRectangle.Left,e.ClipRectangle.Right, out numberOfColumnsToDraw);
@@ -2630,7 +2589,7 @@ namespace Altaxo.Worksheet
 					Altaxo.Worksheet.ColumnStyle cs = GetPropertyColumnStyle(nPropCol);
 					bool bPropColSelected = bArePropColsSelected && m_SelectedPropertyColumns.ContainsKey(nPropCol);
 					cellRectangle.Y=this.GetTopCoordinateOfPropertyColumn(nPropCol);
-					cellRectangle.Height = m_PropertyColumnHeaderStyle.Height;
+					cellRectangle.Height = m_TableLayout.PropertyColumnHeaderStyle.Height;
 					
 					for(int nCol=firstColToDraw, nIncCol=0; nIncCol<numberOfColumnsToDraw; nCol++,nIncCol++)
 					{
@@ -2641,8 +2600,8 @@ namespace Altaxo.Worksheet
 
 
 				// draw the cells
-				//int firstColToDraw = firstVisibleColumn+(e.ClipRectangle.Left-m_RowHeaderStyle.Width)/columnWidth;
-				//int lastColToDraw  = firstVisibleColumn+(int)Math.Ceiling((e.ClipRectangle.Right-m_RowHeaderStyle.Width)/columnWidth);
+				//int firstColToDraw = firstVisibleColumn+(e.ClipRectangle.Left-m_TableLayout.RowHeaderStyle.Width)/columnWidth;
+				//int lastColToDraw  = firstVisibleColumn+(int)Math.Ceiling((e.ClipRectangle.Right-m_TableLayout.RowHeaderStyle.Width)/columnWidth);
 
 				for(int nCol=firstColToDraw, nIncCol=0; nIncCol<numberOfColumnsToDraw; nCol++,nIncCol++)
 				{
@@ -2655,19 +2614,19 @@ namespace Altaxo.Worksheet
 
 					if(bDrawColumnHeader) // must the column Header been drawn?
 					{
-						cellRectangle.Height = m_ColumnHeaderStyle.Height;
+						cellRectangle.Height = m_TableLayout.ColumnHeaderStyle.Height;
 						cellRectangle.Y=0;
-						m_ColumnHeaderStyle.Paint(dc,cellRectangle,0,DataTable[nCol],bColumnSelected);
+						m_TableLayout.ColumnHeaderStyle.Paint(dc,cellRectangle,0,DataTable[nCol],bColumnSelected);
 					}
 
 	
 					yShift=this.GetTopCoordinateOfTableRow(firstTableRowToDraw);
-					cellRectangle.Height = m_RowHeaderStyle.Height;
+					cellRectangle.Height = m_TableLayout.RowHeaderStyle.Height;
 					for(int nRow=firstTableRowToDraw, nIncRow=0;nIncRow<numberOfTableRowsToDraw;nRow++,nIncRow++)
 					{
 						bool bRowSelected = bAreRowsSelected && m_SelectedRows.ContainsKey(nRow);
 						bool bDataRowIncluded = bAreRowsSelected ? bRowSelected : true;
-						cellRectangle.Y= yShift+nIncRow*m_RowHeaderStyle.Height;
+						cellRectangle.Y= yShift+nIncRow*m_TableLayout.RowHeaderStyle.Height;
 						cs.Paint(dc,cellRectangle,nRow,DataTable[nCol],bAreCellsSelected && bDataColumnIncluded && bDataRowIncluded);
 					}
 				}
@@ -2762,7 +2721,7 @@ namespace Altaxo.Worksheet
 					return;
 		
 				int actualColumnLeft = 0; 
-				int actualColumnRight = dg.m_RowHeaderStyle.Width;
+				int actualColumnRight = dg.m_TableLayout.RowHeaderStyle.Width;
 			
 				this.m_CachedWidth = dg.TableAreaWidth;
 				dg.m_LastFullyVisibleColumn = dg.FirstVisibleColumn;
@@ -2854,7 +2813,7 @@ namespace Altaxo.Worksheet
 			public static int GetColumnNumber(TableController dg, Point mouseCoord, ref Rectangle cellRect)
 			{
 				int firstVisibleColumn = dg.FirstVisibleColumn;
-				int actualColumnRight = dg.m_RowHeaderStyle.Width;
+				int actualColumnRight = dg.m_TableLayout.RowHeaderStyle.Width;
 				int columnCount = dg.DataTable.DataColumns.ColumnCount;
 
 				if(mouseCoord.X<actualColumnRight)
@@ -2889,12 +2848,12 @@ namespace Altaxo.Worksheet
 			public static int GetRowNumber(TableController dg, Point mouseCoord, ref Rectangle cellRect, out bool bPropertyCol)
 			{
 				int firstVisibleColumn = dg.FirstVisibleColumn;
-				int actualColumnRight = dg.m_RowHeaderStyle.Width;
+				int actualColumnRight = dg.m_TableLayout.RowHeaderStyle.Width;
 				int columnCount = dg.DataTable.DataColumns.ColumnCount;
 
-				if(mouseCoord.Y<dg.m_ColumnHeaderStyle.Height)
+				if(mouseCoord.Y<dg.m_TableLayout.ColumnHeaderStyle.Height)
 				{
-					cellRect.Y=0; cellRect.Height=dg.m_ColumnHeaderStyle.Height;
+					cellRect.Y=0; cellRect.Height=dg.m_TableLayout.ColumnHeaderStyle.Height;
 					bPropertyCol=false;
 					return -1;
 				}
@@ -2902,20 +2861,20 @@ namespace Altaxo.Worksheet
 				if(mouseCoord.Y<dg.VerticalPositionOfFirstVisibleDataRow && dg.VisiblePropertyColumns>0)
 				{
 					// calculate the raw row number
-					int rawrow = (int)Math.Floor((mouseCoord.Y-dg.m_ColumnHeaderStyle.Height)/(double)dg.m_PropertyColumnHeaderStyle.Height);
+					int rawrow = (int)Math.Floor((mouseCoord.Y-dg.m_TableLayout.ColumnHeaderStyle.Height)/(double)dg.m_TableLayout.PropertyColumnHeaderStyle.Height);
 
-					cellRect.Y= dg.m_ColumnHeaderStyle.Height + rawrow * dg.m_PropertyColumnHeaderStyle.Height;
-					cellRect.Height = dg.m_PropertyColumnHeaderStyle.Height;
+					cellRect.Y= dg.m_TableLayout.ColumnHeaderStyle.Height + rawrow * dg.m_TableLayout.PropertyColumnHeaderStyle.Height;
+					cellRect.Height = dg.m_TableLayout.PropertyColumnHeaderStyle.Height;
 
 					bPropertyCol=true;
 					return dg.FirstVisiblePropertyColumn+rawrow;
 				}
 				else
 				{
-					int rawrow = (int)Math.Floor((mouseCoord.Y-dg.VerticalPositionOfFirstVisibleDataRow)/(double)dg.m_RowHeaderStyle.Height);
+					int rawrow = (int)Math.Floor((mouseCoord.Y-dg.VerticalPositionOfFirstVisibleDataRow)/(double)dg.m_TableLayout.RowHeaderStyle.Height);
 
-					cellRect.Y= dg.VerticalPositionOfFirstVisibleDataRow + rawrow * dg.m_RowHeaderStyle.Height;
-					cellRect.Height = dg.m_RowHeaderStyle.Height;
+					cellRect.Y= dg.VerticalPositionOfFirstVisibleDataRow + rawrow * dg.m_TableLayout.RowHeaderStyle.Height;
+					cellRect.Height = dg.m_TableLayout.RowHeaderStyle.Height;
 					bPropertyCol=false;
 					return dg.FirstVisibleTableRow + rawrow;
 				}

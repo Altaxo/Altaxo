@@ -778,6 +778,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Serialization\Xml\IXmlDeserializationInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Serialization\Xml\IXmlSerializationInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -793,12 +798,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Serialization\Xml\XmlDeserialiationCallbackHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Serialization\Xml\XmlDocumentSerializationInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Serialization\Xml\XmlSerializationSurrogateForAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Xml\XmlStreamDeserializationInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -849,6 +864,16 @@
                 />
                 <File
                     RelPath = "Worksheet\RowHeaderStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\TableLayout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\TableLayoutList.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

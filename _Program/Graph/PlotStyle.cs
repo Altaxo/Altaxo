@@ -183,7 +183,7 @@ namespace Altaxo.Graph
 				info.AddValue("ScatterStyle",s.m_ScatterStyle);
 				info.AddValue("LineSymbolGap",s.m_LineSymbolGap);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				LineScatterPlotStyle s = null!=o ? (LineScatterPlotStyle)o : new LineScatterPlotStyle();

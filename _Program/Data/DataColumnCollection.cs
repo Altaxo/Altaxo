@@ -118,7 +118,7 @@ namespace Altaxo.Data
 			{
 				Altaxo.Data.DataColumnCollection s = (Altaxo.Data.DataColumnCollection)obj;
 
-				info.CreateArray("Columns",s.m_ColumnsByNumber.Count);
+				info.CreateArray("ColumnArray",s.m_ColumnsByNumber.Count);
 				for(int i=0;i<s.m_ColumnsByNumber.Count;i++)
 					info.AddValue("Col",s.m_ColumnsByNumber[i]);
 				info.CommitArray();
@@ -135,7 +135,7 @@ namespace Altaxo.Data
 				info.CommitArray();
 			}
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				Altaxo.Data.DataColumnCollection s = null!=o ? (Altaxo.Data.DataColumnCollection)o : new Altaxo.Data.DataColumnCollection();
 	

@@ -24,7 +24,7 @@ namespace Altaxo.Main
 					info.AddValue("e",s[i]);
 				info.CommitArray();
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				DocumentPath s = null!=o ? (DocumentPath)o : new DocumentPath();
 				
@@ -213,12 +213,31 @@ namespace Altaxo.Main
 
 		}
 
-		public static object GetObject(DocumentPath path, IDocumentNode startnode)
+
+		/// <summary>
+		/// Resolves the path by first using startnode as starting point. If that failed, try using documentRoot as starting point.
+		/// </summary>
+		/// <param name="path">The path to resolve.</param>
+		/// <param name="startnode">The node object which is considered as the starting point of the path.</param>
+		/// <param name="documentRoot">An alternative node which is used as starting point of the path if the first try failed.</param>
+		/// <returns>The resolved object. If the resolving process failed, the return value is null.</returns>
+		public static object GetObject(DocumentPath path, object startnode, object documentRoot)
+		{
+			object retval = GetObject(path,startnode);
+			
+			if(null==retval && null!=documentRoot)
+				retval = GetObject(path,documentRoot);	
+
+			return retval;
+		}
+		
+
+		public static object GetObject(DocumentPath path, object startnode)
 		{
 			object node = startnode;
 
-			if(path.IsAbsolutePath)
-				node = GetRootNode(startnode);
+			if(path.IsAbsolutePath && node is IDocumentNode)
+				node = GetRootNode((IDocumentNode)node);
 
 			for(int i=0;i<path.Count;i++)
 			{

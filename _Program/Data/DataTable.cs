@@ -162,7 +162,7 @@ namespace Altaxo.Data
 				info.AddValue("PropCols", s.m_PropertyColumns); // the property columns of that table
 
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo	info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo	info, object parent)
 			{
 				Altaxo.Data.DataTable s = null!=o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
 	

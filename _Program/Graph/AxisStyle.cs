@@ -138,7 +138,7 @@ namespace Altaxo.Graph
 				info.AddValue("MinorInner",s.m_bInnerMinorTicks);
 				info.AddValue("AxisPosition",s.m_AxisPosition);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				XYLayerAxisStyle s = null!=o ? (XYLayerAxisStyle)o : new XYLayerAxisStyle();

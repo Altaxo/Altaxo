@@ -132,7 +132,7 @@ namespace Altaxo.Graph
 				info.AddValue("YBoundaries",s.m_yBoundaries);
 				info.AddValue("VBoundaries",s.m_vBoundaries);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				D2EquidistantMeshDataAssociation s = null!=o ? (D2EquidistantMeshDataAssociation)o : new D2EquidistantMeshDataAssociation();

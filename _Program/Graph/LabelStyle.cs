@@ -128,7 +128,7 @@ namespace Altaxo.Graph
 				info.AddValue("Edge",s.m_Edge);  
 				info.AddValue("Font",s.m_Font);  
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				SimpleLabelStyle s = null!=o ? (SimpleLabelStyle)o : new SimpleLabelStyle(EdgeType.Left);

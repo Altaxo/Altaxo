@@ -105,7 +105,7 @@ namespace Altaxo.Graph
 				}
 				info.CommitArray(); // PlotGroups
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				PlotList s = null!=o ? (PlotList)o : new PlotList();

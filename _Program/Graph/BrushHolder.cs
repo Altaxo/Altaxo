@@ -35,7 +35,7 @@ namespace Altaxo.Graph
 		{
 			info.AddValue("Value",System.Enum.GetName(typeof(BrushType),obj));  
 		}
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 		{
 			
 			string val = info.GetString("Value");
@@ -132,7 +132,7 @@ namespace Altaxo.Graph
 						break;
 				} // end of switch
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				BrushHolder s = null!=o ? (BrushHolder)o : new BrushHolder(Color.Black);

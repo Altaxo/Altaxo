@@ -48,7 +48,7 @@ namespace Altaxo.Graph
 				info.AddValue("LowerBound",s.m_LowerBound);  
 				info.AddValue("UpperBound",s.m_UpperBound);  
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				PlotRange s = null!=o ? (PlotRange)o : new PlotRange(0,0);
@@ -127,7 +127,7 @@ namespace Altaxo.Graph
 			{
 				info.AddValue("Value",System.Enum.GetName(typeof(FillDirection),obj));  
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				string val = info.GetString("Value");
@@ -156,7 +156,7 @@ namespace Altaxo.Graph
 			{
 				info.AddValue("Value",System.Enum.GetName(typeof(ConnectionStyle),obj));  
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				string val = info.GetString("Value");
@@ -252,7 +252,7 @@ namespace Altaxo.Graph
 				info.AddValue("FillBrush",s.m_FillBrush);
 				info.AddValue("FillDirection",s.m_FillDirection);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				LineStyle s = null!=o ? (LineStyle)o : new LineStyle();

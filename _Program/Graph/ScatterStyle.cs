@@ -52,7 +52,7 @@ namespace Altaxo.Graph
 			{
 				info.AddValue("Value",System.Enum.GetName(typeof(Shape),obj));  
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				string val = info.GetString("Value");
@@ -80,7 +80,7 @@ namespace Altaxo.Graph
 			{
 				info.AddValue("Value",System.Enum.GetName(typeof(Style),obj));  
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				string val = info.GetString("Value");
@@ -107,7 +107,7 @@ namespace Altaxo.Graph
 			{
 				info.AddValue("Value",System.Enum.GetName(typeof(DropLine),obj));  
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				string val = info.GetString("Value");
@@ -191,7 +191,7 @@ namespace Altaxo.Graph
 				info.AddValue("SymbolSize",s.m_SymbolSize);
 				info.AddValue("RelativePenWidth",s.m_RelativePenWidth);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				ScatterStyle s = null!=o ? (ScatterStyle)o : new ScatterStyle();

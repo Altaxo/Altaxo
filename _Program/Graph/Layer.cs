@@ -66,7 +66,7 @@ namespace Altaxo.Graph
 			{
 				info.AddValue("Value",System.Enum.GetName(typeof(SizeType),obj));  
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				string val = info.GetString("Value");
@@ -143,7 +143,7 @@ namespace Altaxo.Graph
 			{
 				info.AddValue("Value",System.Enum.GetName(typeof(PositionType),obj));  
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				string val = info.GetString("Value");
@@ -177,7 +177,7 @@ namespace Altaxo.Graph
 			{
 				info.AddValue("Value",System.Enum.GetName(typeof(AxisLinkType),obj));  
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				string val = info.GetString("Value");
@@ -632,7 +632,7 @@ namespace Altaxo.Graph
 
 
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				Layer s = null!=o ? (Layer)o : new Layer();
@@ -2540,13 +2540,13 @@ namespace Altaxo.Graph
 				{
 					LayerCollection s = (LayerCollection)obj;
 					
-					info.CreateArray("Layers",s.Count);
+					info.CreateArray("LayerArray",s.Count);
 					for(int i=0;i<s.Count;i++)
 						info.AddValue("Layer",s[i]);
 					info.CommitArray();
 
 				}
-				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 				{
 					LayerCollection s = null!=o ? (LayerCollection)o : new LayerCollection();
 					

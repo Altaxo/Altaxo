@@ -117,7 +117,7 @@ namespace Altaxo.Graph
 				info.AddValue("MinValue",s.minValue);
 				info.AddValue("MaxValue",s.maxValue);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				PhysicalBoundaries s = (PhysicalBoundaries)o;
@@ -343,7 +343,7 @@ namespace Altaxo.Graph
 				FinitePhysicalBoundaries s = (FinitePhysicalBoundaries)obj;
 				info.AddBaseValueEmbedded(s,typeof(FinitePhysicalBoundaries).BaseType);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				FinitePhysicalBoundaries s = null!=o ? (FinitePhysicalBoundaries)o : new FinitePhysicalBoundaries();
@@ -489,7 +489,7 @@ namespace Altaxo.Graph
 				PositiveFinitePhysicalBoundaries s = (PositiveFinitePhysicalBoundaries)obj;
 				info.AddBaseValueEmbedded(s,typeof(PositiveFinitePhysicalBoundaries).BaseType);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				PositiveFinitePhysicalBoundaries s = null!=o ? (PositiveFinitePhysicalBoundaries)o : new PositiveFinitePhysicalBoundaries();

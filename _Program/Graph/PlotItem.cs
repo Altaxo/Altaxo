@@ -252,7 +252,7 @@ namespace Altaxo.Graph
 				info.AddValue("Data",s.m_PlotAssociation);  
 				info.AddValue("Style",s.m_PlotStyle);  
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				PlotAssociation pa = (PlotAssociation)info.GetValue("Data",typeof(PlotAssociation));

@@ -46,7 +46,7 @@ namespace Altaxo.Graph
 				info.AddValue("Width",s.width);
 				info.AddValue("Height",s.height);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				RectangleD s = null!=o ? (RectangleD)o : new RectangleD();

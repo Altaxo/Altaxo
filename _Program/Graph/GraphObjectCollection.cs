@@ -84,7 +84,7 @@ namespace Altaxo.Graph
 					info.AddValue("GraphObject",s.myList[i]);
 				info.CommitArray();
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				GraphObjectCollection s = null!=o ? (GraphObjectCollection)o : new GraphObjectCollection();

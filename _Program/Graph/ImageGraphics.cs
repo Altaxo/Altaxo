@@ -97,7 +97,7 @@ namespace Altaxo.Graph
 				ImageGraphic s = (ImageGraphic)obj;
 				info.AddBaseValueEmbedded(s,typeof(ImageGraphic).BaseType);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				ImageGraphic s =  (ImageGraphic)o;
@@ -210,7 +210,7 @@ namespace Altaxo.Graph
 				info.AddBaseValueEmbedded(s,typeof(LinkedImageGraphic).BaseType);
 				info.AddValue("ImagePath",s.m_ImagePath);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				LinkedImageGraphic s = null!=o ? (LinkedImageGraphic)o : new LinkedImageGraphic();
@@ -453,7 +453,7 @@ namespace Altaxo.Graph
 				info.AddBaseValueEmbedded(s,typeof(EmbeddedImageGraphic).BaseType);
 				info.AddValue("Image",s.m_Image);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				EmbeddedImageGraphic s = null!=o ? (EmbeddedImageGraphic)o : new EmbeddedImageGraphic();

@@ -134,7 +134,7 @@ namespace Altaxo.Data
 				info.AddBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn));
 				info.AddArray("Data",s.m_Array,s.m_Count);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				Altaxo.Data.TextColumn s = null!=o ? (Altaxo.Data.TextColumn)o : new Altaxo.Data.TextColumn();
 

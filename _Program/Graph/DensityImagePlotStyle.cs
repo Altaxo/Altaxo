@@ -99,7 +99,7 @@ namespace Altaxo.Graph
 					
 				// nothing to save up to now
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				DensityImagePlotStyle s = null!=o ? (DensityImagePlotStyle)o : new DensityImagePlotStyle();

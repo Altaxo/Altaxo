@@ -146,10 +146,10 @@ namespace Altaxo.Graph
 				info.AddValue("Name",s.m_Name);
 				info.AddValue("PageBounds",s.m_PageBounds);
 				info.AddValue("PrintableBounds",s.m_PrintableBounds);
-				info.AddValue("LayerList",s.m_Layers);
+				info.AddValue("Layers",s.m_Layers);
 
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				GraphDocument s = null!=o ? (GraphDocument)o : new GraphDocument();

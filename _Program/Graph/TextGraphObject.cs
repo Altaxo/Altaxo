@@ -113,7 +113,7 @@ namespace Altaxo.Graph
 				info.AddValue("Color",s.m_Color);
 
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				TextGraphObject s = null!=o ? (TextGraphObject)o : new TextGraphObject(); 
@@ -473,7 +473,7 @@ namespace Altaxo.Graph
 		{
 			info.AddValue("Value",System.Enum.GetName(typeof(BackgroundStyle),obj));  
 		}
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 		{
 			
 			string val = info.GetString("Value");
@@ -500,7 +500,7 @@ namespace Altaxo.Graph
 			{
 				info.AddValue("Value",System.Enum.GetName(typeof(XAnchorPositionType),obj));  
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				string val = info.GetString("Value");
@@ -516,7 +516,7 @@ namespace Altaxo.Graph
 			{
 				info.AddValue("Value",System.Enum.GetName(typeof(YAnchorPositionType),obj));  
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				string val = info.GetString("Value");
@@ -639,7 +639,7 @@ namespace Altaxo.Graph
 				info.AddValue("YAnchor",s.m_YAnchorType);
 
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				ExtendedTextGraphObject s = null!=o ? (ExtendedTextGraphObject)o : new ExtendedTextGraphObject(); 

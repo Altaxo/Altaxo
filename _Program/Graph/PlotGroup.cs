@@ -46,7 +46,7 @@ namespace Altaxo.Graph
 			string styleval = System.Enum.GetName(typeof(PlotGroupStyle),(PlotGroupStyle)obj);
 			info.AddValue("Value",styleval);  
 		}
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 		{
 			
 			string val = info.GetString("Value");
@@ -145,7 +145,7 @@ namespace Altaxo.Graph
 					info.CommitArray();
 				}
 
-				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 				{
 					
 					PlotGroup.Memento s = null!=o ? (PlotGroup.Memento)o : new PlotGroup.Memento();
@@ -367,7 +367,7 @@ namespace Altaxo.Graph
 							info.AddValue("PlotGroup",s.myList[i]);
 						info.CommitArray();
 					}
-					public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+					public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 					{
 						
 						PlotGroup.Collection s = null!=o ? (PlotGroup.Collection)o : new PlotGroup.Collection();

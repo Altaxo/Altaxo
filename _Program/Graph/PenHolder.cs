@@ -351,7 +351,7 @@ namespace Altaxo.Graph
 				if(0!=(cp & PenHolder.Configured.Width))
 					info.AddValue("Width",s.Width);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				PenHolder s = null!=o ? (PenHolder)o : new PenHolder();

@@ -271,7 +271,7 @@ namespace Altaxo.Graph
 
 				info.AddValue("Bounds",s.m_DataBounds);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				LinearAxis s = null!=o ? (LinearAxis)o : new LinearAxis();
@@ -739,7 +739,7 @@ namespace Altaxo.Graph
 
 				info.AddValue("Bounds",s.m_DataBounds);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				Log10Axis s = null!=o ? (Log10Axis)o : new Log10Axis();

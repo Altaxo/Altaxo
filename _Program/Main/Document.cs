@@ -21,6 +21,7 @@
 using System;
 using System.Runtime.Serialization;
 using Altaxo.Serialization;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace Altaxo
 {
@@ -37,6 +38,9 @@ namespace Altaxo
 		protected Altaxo.Data.TableSet m_DataSet = null; // The root of all the data
 
 		protected Altaxo.Graph.GraphSet m_GraphSet = null; // all graphs are stored here
+
+		protected Altaxo.Worksheet.TableLayoutList m_TableLayoutList = null;
+
 		protected System.Collections.ArrayList m_Worksheets;
 		/// <summary>The list of GraphForms for the document.</summary>
 		protected System.Collections.ArrayList m_GraphForms;
@@ -50,10 +54,12 @@ namespace Altaxo
 		{
 			m_DataSet = new Altaxo.Data.TableSet(this);
 			m_GraphSet = new Altaxo.Graph.GraphSet(this);
+			m_TableLayoutList = new Altaxo.Worksheet.TableLayoutList(this);
 			m_Worksheets = new System.Collections.ArrayList();
 			m_GraphForms = new System.Collections.ArrayList();
 		}
 
+		#region Serialization
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
@@ -103,6 +109,49 @@ namespace Altaxo
 		{
 		}
 
+
+		public void SaveToZippedFile(ZipOutputStream zippedStream)
+		{
+			Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+
+			// first, we save all tables into the tables subdirectory
+			foreach(Altaxo.Data.DataTable table in this.m_DataSet)
+			{
+				ZipEntry ZipEntry = new ZipEntry("Tables/"+table.Name+".xml");
+				zippedStream.PutNextEntry(ZipEntry);
+				zippedStream.SetLevel(0);
+				info.BeginWriting(zippedStream);
+				info.AddValue("Table",table);
+				info.EndWriting();
+			}
+
+			// second, we save all graphs into the Graphs subdirectory
+			foreach(Altaxo.Graph.GraphDocument graph in this.m_GraphSet)
+			{
+				ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
+				zippedStream.PutNextEntry(ZipEntry);
+				zippedStream.SetLevel(0);
+				info.BeginWriting(zippedStream);
+				info.AddValue("Graph",graph);
+				info.EndWriting();
+			}
+
+			// third, we save all TableLayouts into the TableLayouts subdirectory
+			foreach(Altaxo.Worksheet.TableLayout layout in this.m_TableLayoutList)
+			{
+				ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
+				zippedStream.PutNextEntry(ZipEntry);
+				zippedStream.SetLevel(0);
+				info.BeginWriting(zippedStream);
+				info.AddValue("TableLayout",layout);
+				info.EndWriting();
+			}
+			
+		}
+
+
+		#endregion
+
 		public AltaxoDocument(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 		{
 			m_DataSet = (Altaxo.Data.TableSet)(info.GetValue("TableSet",typeof(Altaxo.Data.TableSet)));
@@ -123,6 +172,11 @@ namespace Altaxo
 		public Altaxo.Graph.GraphSet GraphSet
 		{
 			get { return m_GraphSet; }
+		}
+
+		public Altaxo.Worksheet.TableLayoutList TableLayouts
+		{
+			get { return this.m_TableLayoutList; }
 		}
 
 		public void OnDirtySet(object sender)
@@ -181,7 +235,7 @@ namespace Altaxo
 			Altaxo.Worksheet.TableView view = new Altaxo.Worksheet.TableView(form,null);
 			form.Controls.Add(view);
 			view.Dock = System.Windows.Forms.DockStyle.Fill;
-			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(view,table);
+			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(view,table,this.CreateNewTableLayout());
 			ctrl.View.TableViewForm.Text = table.TableName;
 			m_Worksheets.Add(ctrl.View.TableViewForm);
 			form.Show();
@@ -230,6 +284,13 @@ namespace Altaxo
 		{
 			if(m_Worksheets.Contains(frm))
 				m_Worksheets.Remove(frm);
+		}
+
+		public Altaxo.Worksheet.TableLayout CreateNewTableLayout()
+		{
+			Altaxo.Worksheet.TableLayout layout = new Altaxo.Worksheet.TableLayout();
+			this.m_TableLayoutList.Add(layout);
+			return layout;
 		}
 
 		public object GetChildObjectNamed(string name)

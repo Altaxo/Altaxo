@@ -154,7 +154,7 @@ namespace Altaxo.Data
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				IndexerColumn s = null!=o ? (IndexerColumn)o : new IndexerColumn();
 				return s;
@@ -235,7 +235,7 @@ namespace Altaxo.Data
 				info.AddValue("Increment",s.m_Increment);
 			}
 
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				EquallySpacedColumn s = null!=o ? (EquallySpacedColumn)o : new EquallySpacedColumn(0,1);
 				
@@ -507,7 +507,7 @@ namespace Altaxo.Data
 			/// <param name="context">The streaming context.</param>
 			/// <param name="selector">The surrogate selector.</param>
 			/// <returns>The deserialized object.</returns>
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)o;
 				// s.m_Table = (Altaxo.Data.DataTable)(info.GetValue("Parent",typeof(Altaxo.Data.DataTable)));

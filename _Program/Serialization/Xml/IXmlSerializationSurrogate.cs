@@ -27,14 +27,14 @@ namespace Altaxo.Serialization.Xml
 		/// be deserialized. If it is not null, the deserialization code of a super class has already created a instance. In this case the code had to 
 		/// use this instance! It is recommended to use always the following code (except abstract and sealed classes):
 		/// <code>
-		/// public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+		/// public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 		/// {
 		/// Foo s = null!=o ? (Foo)o : new Foo();
 		/// // (Deserialization code follows here) ...
 		/// }
 		///</code>
 		///</remarks>
-		object Deserialize(object o, IXmlSerializationInfo info, object parentobject);
+		object Deserialize(object o, IXmlDeserializationInfo info, object parentobject);
 		
 	}
 }

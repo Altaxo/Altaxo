@@ -180,7 +180,7 @@ namespace Altaxo.Data
 				info.AddValue("To",s.m_RowTo);
 				info.AddValue("Inc",s.m_RowInc);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				Altaxo.Data.ColumnScript s = null!=o ? (Altaxo.Data.ColumnScript)o : new Altaxo.Data.ColumnScript();
 				

@@ -39,7 +39,7 @@ namespace Altaxo.Graph
 		{
 			info.AddValue("Value",System.Enum.GetName(typeof(EdgeType),obj));  
 		}
-		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 		{
 			
 			string val = info.GetString("Value");
@@ -67,7 +67,7 @@ namespace Altaxo.Graph
 				Edge s = (Edge)obj;
 				info.AddValue("EdgeType",s.m_StyleType);  
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 
 				

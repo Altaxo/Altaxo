@@ -113,7 +113,7 @@ namespace Altaxo.Graph
 				info.AddValue("Rotation",s.m_Rotation);
 				info.AddValue("AutoSize",s.m_AutoSize);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				GraphObject s = (GraphObject)o;

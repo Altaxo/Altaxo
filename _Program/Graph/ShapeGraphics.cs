@@ -116,7 +116,7 @@ namespace Altaxo.Graph
 				info.AddValue("Fill",s.m_fill);
 				info.AddValue("FillColor",s.m_fillColor);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				ShapeGraphic s = (ShapeGraphic)o; 
@@ -281,7 +281,7 @@ namespace Altaxo.Graph
 				info.AddBaseValueEmbedded(s,typeof(LineGraphic).BaseType);
 
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				LineGraphic s = null!=o ? (LineGraphic)o : new LineGraphic(); 
@@ -493,7 +493,7 @@ namespace Altaxo.Graph
 				info.AddBaseValueEmbedded(s,typeof(RectangleGraphic).BaseType);
 
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				RectangleGraphic s = null!=o ? (RectangleGraphic)o : new RectangleGraphic(); 
@@ -693,7 +693,7 @@ namespace Altaxo.Graph
 				info.AddBaseValueEmbedded(s,typeof(EllipseGraphic).BaseType);
 
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
 				EllipseGraphic s = null!=o ? (EllipseGraphic)o : new EllipseGraphic(); 

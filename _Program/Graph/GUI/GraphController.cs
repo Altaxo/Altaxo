@@ -590,9 +590,10 @@ namespace Altaxo.Graph
 			{
 				if((myStream = saveFileDialog1.OpenFile()) != null)
 				{
-					Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo(myStream,true);
+					Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+					info.BeginWriting(myStream);
 					info.AddValue("Graph",this.Doc);
-					info.Finish();
+					info.EndWriting();
 					myStream.Close();
 				}
 			}

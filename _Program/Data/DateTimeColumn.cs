@@ -136,7 +136,7 @@ namespace Altaxo.Data
 				info.AddBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn));
 				info.AddArray("Data",s.m_Array,s.m_Count);
 			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				Altaxo.Data.DateTimeColumn s = null!=o ? (Altaxo.Data.DateTimeColumn)o : new Altaxo.Data.DateTimeColumn();
 				

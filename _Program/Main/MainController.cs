@@ -27,7 +27,7 @@ using System.Windows.Forms;
 using System.Data;
 using System.Reflection;
 using Altaxo.Serialization;
-
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace Altaxo
 {
@@ -374,9 +374,10 @@ namespace Altaxo
 			{
 				if((myStream = openFileDialog1.OpenFile()) != null)
 				{
-					Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo(myStream,false);
+					Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
+					info.BeginReading(myStream);
 					object deserObject = info.GetValue("Table",null);
-					info.Finish();
+					info.EndReading();
 					myStream.Close();
 
 					// if it is a table, add it to the TableSet
@@ -389,7 +390,7 @@ namespace Altaxo
 							table.TableName = this.Doc.TableSet.FindNewTableName(table.Name);
 
 						this.Doc.TableSet.Add(table);
-						info.AllFinished(); // fire the event to resolve path references
+						info.AnnounceDeserializationEnd(this.Doc); // fire the event to resolve path references
 						
 						this.Doc.CreateNewWorksheet(this.View.Form,table);
 					}
@@ -402,7 +403,7 @@ namespace Altaxo
 							graph.Name = this.Doc.GraphSet.FindNewName(graph.Name);
 
 						this.Doc.GraphSet.Add(graph);
-						info.AllFinished(); // fire the event to resolve path references in the graph
+						info.AnnounceDeserializationEnd(this.Doc); // fire the event to resolve path references in the graph
 
 						this.Doc.CreateNewGraph(this.View.Form, graph);
 					}
@@ -682,7 +683,14 @@ namespace Altaxo
 				{
 					try
 					{
-						this.SaveDocument(myStream);
+						if(dlg.FilterIndex==1)
+							this.SaveDocument(myStream);
+						else
+						{
+							ZipOutputStream zippedStream = new ZipOutputStream(myStream);
+							this.Doc.SaveToZippedFile(zippedStream);
+							zippedStream.Close();
+						}
 						bRet = false;; // now saving was successfull, we can close the form
 					}
 					catch(Exception exc)
@@ -702,7 +710,7 @@ namespace Altaxo
 		{
 			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
  
-			saveFileDialog1.Filter = "Altaxo files (*.axo)|*.axo|All files (*.*)|*.*"  ;
+			saveFileDialog1.Filter = "Altaxo files (*.axo)|*.axo|Altaxo zip files (*.axo.zip)|*.axo.zip|All files (*.*)|*.*"  ;
 			saveFileDialog1.FilterIndex = 2 ;
 			saveFileDialog1.RestoreDirectory = true ;
  	

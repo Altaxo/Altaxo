@@ -202,7 +202,7 @@ namespace Altaxo.Graph
 			Main.DocumentPath _xColumn = null;
 			Main.DocumentPath _yColumn = null;
 			PlotAssociation _plotAssociation = null;
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				bool bNeedsCallback = false;
 				PlotAssociation s = null!=o ? (PlotAssociation)o : new PlotAssociation();
@@ -235,27 +235,35 @@ namespace Altaxo.Graph
 					surr._yColumn = yColumn as Main.DocumentPath;
 					surr._plotAssociation = s;
 
-					info.AllDeserializationFinished += new EventHandler(surr.EhDeserializationFinished);
+					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
 
 				}
 				return s;
 			}
 
-			public void EhDeserializationFinished(object sender, System.EventArgs e)
+			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
 			{
+				bool bAllResolved = true;
+
 				if(this._xColumn != null)
 				{
-					object xColumn = Main.DocumentPath.GetObject(this._xColumn, this._plotAssociation);
+					object xColumn = Main.DocumentPath.GetObject(this._xColumn, this._plotAssociation, documentRoot);
+					bAllResolved &= (null!=xColumn);
 					if(xColumn is Altaxo.Data.IReadableColumn)
 						_plotAssociation.m_xColumn = (Altaxo.Data.IReadableColumn)xColumn;
+				
 				}
 
 				if(this._yColumn != null)
 				{
-					object yColumn = Main.DocumentPath.GetObject(this._yColumn, this._plotAssociation);
+					object yColumn = Main.DocumentPath.GetObject(this._yColumn, this._plotAssociation, documentRoot);
+					bAllResolved &= (null!=yColumn);
 					if(yColumn is Altaxo.Data.IReadableColumn)
 						_plotAssociation.m_yColumn = (Altaxo.Data.IReadableColumn)yColumn;
 				}
+
+				if(bAllResolved)
+					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
 			}
 		}
 
