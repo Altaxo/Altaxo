@@ -217,8 +217,8 @@ namespace Altaxo.Graph
 
 			PlotAssociation myPlotAssociation = (PlotAssociation)plotObject;
 
-			double layerWidth = layer.layerSize.Width;
-			double layerHeight = layer.layerSize.Height;
+			double layerWidth = layer.Size.Width;
+			double layerHeight = layer.Size.Height;
 
 
 			Altaxo.Data.DoubleColumn xColumn = myPlotAssociation.XColumn as Altaxo.Data.DoubleColumn;
@@ -298,7 +298,7 @@ namespace Altaxo.Graph
 				// paint the line style
 				if(null!=m_LineStyle)
 				{
-					m_LineStyle.Paint(g,ptArray,rangeList,layer.layerSize, m_LineSymbolGap?SymbolSize:0);
+					m_LineStyle.Paint(g,ptArray,rangeList,layer.Size, m_LineSymbolGap?SymbolSize:0);
 				}
 
 				// paint the drop style
@@ -307,8 +307,8 @@ namespace Altaxo.Graph
 					PenHolder ph = m_ScatterStyle.Pen;
 					ph.Cached=true;
 					Pen pen = ph.Pen; // do not dispose this pen, since it is cached
-					float xe=layer.layerSize.Width;
-					float ye=layer.layerSize.Height;
+					float xe=layer.Size.Width;
+					float ye=layer.Size.Height;
 					if( (0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Top)) && (0!=(m_ScatterStyle.DropLine&ScatterStyles.DropLine.Bottom)))
 					{
 						for(j=0;j<ptArray.Length;j++)

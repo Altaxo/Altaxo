@@ -20,6 +20,10 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.MainMenu mainMenu1;
 		private System.Windows.Forms.MenuItem menuDataPopup;
 		private System.Windows.Forms.MenuItem menuDataSeparator;
+		private System.Windows.Forms.MenuItem menuItem1;
+		private System.Windows.Forms.MenuItem menuFile_PageSetup;
+		private System.Windows.Forms.MenuItem menuFile_Print;
+		private System.Windows.Forms.MenuItem menuFile_PrintPreview;
 		private ToolBarButton m_PushedLayerBotton=null;
 
 		public GraphForm(System.Windows.Forms.Form parent, AltaxoDocument doc)
@@ -79,6 +83,10 @@ namespace Altaxo.Graph
 			this.mainMenu1 = new System.Windows.Forms.MainMenu();
 			this.menuDataPopup = new System.Windows.Forms.MenuItem();
 			this.menuDataSeparator = new System.Windows.Forms.MenuItem();
+			this.menuItem1 = new System.Windows.Forms.MenuItem();
+			this.menuFile_PageSetup = new System.Windows.Forms.MenuItem();
+			this.menuFile_Print = new System.Windows.Forms.MenuItem();
+			this.menuFile_PrintPreview = new System.Windows.Forms.MenuItem();
 			this.SuspendLayout();
 			// 
 			// m_GraphControl
@@ -102,11 +110,12 @@ namespace Altaxo.Graph
 			// mainMenu1
 			// 
 			this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																							this.menuItem1,
 																																							this.menuDataPopup});
 			// 
 			// menuDataPopup
 			// 
-			this.menuDataPopup.Index = 0;
+			this.menuDataPopup.Index = 1;
 			this.menuDataPopup.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																																									this.menuDataSeparator});
 			this.menuDataPopup.Text = "Data";
@@ -118,6 +127,33 @@ namespace Altaxo.Graph
 			// 
 			this.menuDataSeparator.Index = 0;
 			this.menuDataSeparator.Text = "-";
+			// 
+			// menuItem1
+			// 
+			this.menuItem1.Index = 0;
+			this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																							this.menuFile_PageSetup,
+																																							this.menuFile_Print,
+																																							this.menuFile_PrintPreview});
+			this.menuItem1.Text = "File";
+			// 
+			// menuFile_PageSetup
+			// 
+			this.menuFile_PageSetup.Index = 0;
+			this.menuFile_PageSetup.Text = "Page Setup...";
+			this.menuFile_PageSetup.Click += new System.EventHandler(this.menuFile_PageSetup_Click);
+			// 
+			// menuFile_Print
+			// 
+			this.menuFile_Print.Index = 1;
+			this.menuFile_Print.Text = "Print...";
+			this.menuFile_Print.Click += new System.EventHandler(this.menuFile_Print_Click);
+			// 
+			// menuFile_PrintPreview
+			// 
+			this.menuFile_PrintPreview.Index = 2;
+			this.menuFile_PrintPreview.Text = "Print Prewiew..";
+			this.menuFile_PrintPreview.Click += new System.EventHandler(this.menuFile_PrintPreview_Click);
 			// 
 			// GraphForm
 			// 
@@ -279,6 +315,31 @@ namespace Altaxo.Graph
 		private void menuDataPopup_Click(object sender, System.EventArgs e)
 		{
 		
+		}
+
+		private void menuFile_PageSetup_Click(object sender, System.EventArgs e)
+		{
+		App.CurrentApplication.PageSetupDialog.ShowDialog(this);
+		}
+
+		private void menuFile_Print_Click(object sender, System.EventArgs e)
+		{
+			if(DialogResult.OK==App.CurrentApplication.PrintDialog.ShowDialog(this))
+			{
+
+			}
+		}
+
+		private void menuFile_PrintPreview_Click(object sender, System.EventArgs e)
+		{
+			System.Windows.Forms.PrintPreviewDialog dlg = new System.Windows.Forms.PrintPreviewDialog();
+
+			App.CurrentApplication.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.m_GraphControl.OnPrintPage);
+
+			dlg.Document = App.CurrentApplication.PrintDocument;
+			dlg.ShowDialog(this);
+			
+			App.CurrentApplication.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.m_GraphControl.OnPrintPage);
 		}
 
 		public class DataMenuItem : MenuItem

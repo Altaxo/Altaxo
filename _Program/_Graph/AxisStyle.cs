@@ -123,7 +123,7 @@ namespace Altaxo.Graph
 
 		public void Paint(Graphics g, Layer layer, Axis axis)
 		{
-			SizeF layerSize = layer.layerSize;
+			SizeF layerSize = layer.Size;
 
 
 			PointF orgP = GetOrg(layerSize);

@@ -241,6 +241,75 @@ namespace Altaxo.Graph
 			Invalidate();
 		}
 
+
+		public void OnPrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs ppea)
+		{
+			try
+			{
+				Graphics g = ppea.Graphics;
+				// g.SmoothingMode = SmoothingMode.AntiAlias;
+				// get the dpi settings of the graphics context,
+				// for example; 96dpi on screen, 600dpi for the printer
+				// used to adjust grid and margin sizing.
+				this.m_HorizRes = g.DpiX;
+				this.m_VertRes = g.DpiY;
+
+				g.PageUnit = GraphicsUnit.Point;
+				//g.PageScale = this.m_Zoom;
+
+				float pointsh = UnitPerInch*this.AutoScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
+				float pointsv = UnitPerInch*this.AutoScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
+				g.TranslateTransform(pointsh,pointsv);
+
+				g.Clear(this.m_NonPrintingAreaColor);
+
+				System.Console.WriteLine("Paint with zoom {0}",this.m_Zoom);
+				// handle the possibility that the viewport is scrolled,
+				// adjust my origin coordintates to compensate
+				Point pt = this.AutoScrollPosition;
+				// g.TranslateTransform(pt.X, pt.Y);
+
+				int len = graphLayers.Count;
+				for(int i=0;i<len;i++)
+				{
+					((Altaxo.Graph.Layer)graphLayers[i]).Paint(g);
+				}
+
+				//DrawGrid(g);
+
+				// draw the actual objects onto the page, on top of the grid
+				/*
+								With Me.drawingObjects
+								//pass the graphics resolution onto the objects
+								//so that images and other objects can be sized
+								//correct taking the dpi into consideration.
+								.HorizontalResolution = g.DpiX
+								.VerticalResolution = g.DpiY
+								.DrawObjects(g, Me.Zoom)
+								//doesn't really draw the selected object, but instead the
+								//selection indicator, a dotted outline around the selected object
+								.DrawSelectedObject(g, m_SelectedObject, Me.Zoom)
+						End With
+						*/
+
+				//Draw dashed line margin indicators, over top of objects
+				DrawMargins(g);
+
+				/*
+						'draw selection rectangle (click and drag to select interface)
+						'on top of everything else, but transparent
+						If selectionDragging Then
+								DrawSelectionRectangle(g, selectionRect)
+						End If
+						*/
+			}
+			catch(System.Exception ex)
+			{
+				System.Windows.Forms.MessageBox.Show(this,ex.ToString());
+			}
+		}
+
+
 		private void AltaxoGraphControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
 			try

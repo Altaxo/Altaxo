@@ -10,10 +10,10 @@ namespace Altaxo.Graph
 	/// </summary>
 	public class Layer
 	{
-		public PointF layerPosition = new PointF(119,80);
-		public SizeF  layerSize = new SizeF(626,407);
-		public float  layerAngel=0; // Rotation
-		public float  layerZoom=1;  // Zoom
+		protected PointF m_LayerPosition = new PointF(119,80);
+		protected SizeF  m_LayerSize = new SizeF(626,407);
+		protected float  m_LayerAngle=0; // Rotation
+		protected float  m_LayerScale=1;  // Scale
 		protected Matrix matrix = new Matrix();  // forward transformation matrix
 		protected Matrix matrixi = new Matrix(); // inverse transformation matrix
 
@@ -63,7 +63,54 @@ namespace Altaxo.Graph
 
 		#region "Layer Properties"
 
-		public Axis XAxis
+		public PointF Position
+		{
+			get { return this.m_LayerPosition; }
+			set
+			{
+				this.m_LayerPosition = value;
+				this.CalculateMatrix();
+				this.OnInvalidate();
+			}
+		}
+
+		public SizeF Size
+		{
+			get { return this.m_LayerSize; }
+			set
+			{
+				this.m_LayerSize = value;
+				this.CalculateMatrix();
+				this.OnInvalidate();
+			}
+		}
+
+		public float Rotation
+		{
+			get { return this.m_LayerAngle; }
+			set
+			{
+				this.m_LayerAngle = value;
+				this.CalculateMatrix();
+				this.OnInvalidate();
+			}
+		}
+
+		public float Scale
+		{
+			get { return this.m_LayerScale; }
+			set
+			{
+				this.m_LayerScale = value;
+				this.CalculateMatrix();
+				this.OnInvalidate();
+			}
+		}
+
+
+
+
+			public Axis XAxis
 		{
 			get { return m_xAxis; }
 			set
@@ -207,9 +254,9 @@ namespace Altaxo.Graph
 		protected void CalculateMatrix()
 		{
 			matrix.Reset();
-			matrix.Translate(layerPosition.X,layerPosition.Y);
-			matrix.Scale(layerZoom,layerZoom);
-			matrix.Rotate(layerAngel);
+			matrix.Translate(m_LayerPosition.X,m_LayerPosition.Y);
+			matrix.Scale(m_LayerScale,m_LayerScale);
+			matrix.Rotate(m_LayerAngle);
 			matrixi=matrix.Clone();
 			matrixi.Invert();
 		}
@@ -273,15 +320,15 @@ namespace Altaxo.Graph
 		public virtual void Paint(Graphics g)
 		{
 			GraphicsState savedgstate = g.Save();
-			//g.TranslateTransform(layerPosition.X,layerPosition.Y);
-			//g.RotateTransform(layerAngel);
+			//g.TranslateTransform(m_LayerPosition.X,m_LayerPosition.Y);
+			//g.RotateTransform(m_LayerAngle);
 			
 			g.MultiplyTransform(matrix);
-			g.FillRectangle(Brushes.Aqua,0,0,layerSize.Width,layerSize.Height);
+			g.FillRectangle(Brushes.Aqua,0,0,m_LayerSize.Width,m_LayerSize.Height);
 
 			coll.DrawObjects(g,1);
 
-			RectangleF layerBounds = new RectangleF(layerPosition,layerSize);
+			RectangleF layerBounds = new RectangleF(m_LayerPosition,m_LayerSize);
 
 			if(m_ShowLeftAxis) m_LeftAxisStyle.Paint(g,this,this.m_yAxis);
 			if(m_ShowLeftAxis) m_LeftLabelStyle.Paint(g,this,this.m_yAxis,m_LeftAxisStyle);

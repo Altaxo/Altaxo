@@ -31,7 +31,7 @@ namespace Altaxo.Graph
 
 		public override void Paint(Graphics g, Layer layer, Axis axis, XYLayerAxisStyle axisstyle)
 		{
-			SizeF layerSize = layer.layerSize;
+			SizeF layerSize = layer.Size;
 			PointF orgP = GetOrg(layerSize);
 			PointF endP = GetEnd(layerSize);
 			PointF outVector = OuterVector;

@@ -39,6 +39,25 @@ namespace Altaxo
 		public static AltaxoDocument document=null; // das HauptDocument
 
 
+		private System.Windows.Forms.PageSetupDialog m_PageSetupDialog;
+		public  System.Windows.Forms.PageSetupDialog PageSetupDialog
+		{
+			get { return m_PageSetupDialog; }
+		}
+
+		private System.Drawing.Printing.PrintDocument m_PrintDocument;
+		public  System.Drawing.Printing.PrintDocument PrintDocument
+		{
+			get { return m_PrintDocument; }
+		}
+
+
+		private System.Windows.Forms.PrintDialog m_PrintDialog;
+		public System.Windows.Forms.PrintDialog PrintDialog
+		{
+			get { return m_PrintDialog; }
+		}
+
 		public static System.Runtime.Serialization.SurrogateSelector m_SurrogateSelector;
 
 
@@ -50,11 +69,22 @@ namespace Altaxo
 			//
 			InitializeComponent();
 
-			// wir konstruieren das HauptDocument
+			// we construct the main document
 			
 			if(null==document)
 				document = new AltaxoDocument();
 			
+
+			// we initialize the printer variables
+			m_PrintDocument = new System.Drawing.Printing.PrintDocument();
+			// we set the print document default orientation to landscape
+			m_PrintDocument.DefaultPageSettings.Landscape=true;
+			m_PageSetupDialog = new System.Windows.Forms.PageSetupDialog();
+			m_PageSetupDialog.Document = m_PrintDocument;
+			m_PrintDialog = new System.Windows.Forms.PrintDialog();
+			m_PrintDialog.Document = m_PrintDocument;
+
+
 			// wir konstruieren zu jeder Tabelle im Dokument ein GrafTabView
 			document.CreateNewWorksheet(this);
 
