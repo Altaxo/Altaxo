@@ -291,7 +291,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="X">Matrix of spectra (a spectra is a row of this matrix).</param>
     /// <param name="Y">Matrix of concentrations (one sample is one row of this matrix).</param>
     /// <param name="numFactors">Maximal number of factors to use for PLS.</param>
-    /// <param name="bExcludeGroups">If true, groups of samples with the same Y values are exluded. If false, every single sample is excluded to perform cross validation.</param>
+    /// <param name="groupingStrategy">Instance of a class that is used to group the measurements for cross validation.</param>
     /// <param name="crossPRESSMatrix">Output: This is a k*1 matrix of resulting PRESS values, k being the max. number of factors.</param>
     /// <param name="meanNumberOfExcludedSpectra">On return, this gives the mean number of spectra that where excluded during the cross validation.</param>
     public static void CrossValidation(

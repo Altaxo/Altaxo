@@ -1239,6 +1239,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The matrix.</param>
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
+    /// <param name="columnoffset">The column of the matrix that corresponds to the first element of the vector.</param>
+    /// <param name="length">The length of the resulting vector.</param>
     public static IROVector RowToROVector(IROMatrix x, int row, int columnoffset, int length)
     {
       return new MatrixRowROVector(x,row,columnoffset,length);
@@ -1260,6 +1262,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The matrix.</param>
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
+    /// <param name="columnoffset">The column of the matrix that corresponds to the first element of the vector.</param>
+    /// <param name="length">The length of the resulting vector.</param>
     public static IVector RowToVector(IMatrix x, int row, int columnoffset, int length)
     {
       return new MatrixRowVector(x,row,columnoffset,length);

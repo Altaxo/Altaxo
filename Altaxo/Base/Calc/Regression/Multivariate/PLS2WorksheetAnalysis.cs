@@ -30,7 +30,7 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// PLS2WorksheetAnalysis performs a PLS2 analysis and 
   /// stores the results in a given table
   /// </summary>
-   [System.ComponentModel.Description("PLS2")]
+  [System.ComponentModel.Description("PLS2")]
   public class PLS2WorksheetAnalysis : WorksheetAnalysis
   {
     public override string AnalysisName
@@ -197,90 +197,91 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Exports a table to a PLS2CalibrationSet
     /// </summary>
+    /// <param name="table">The table where the calibration model is stored.</param>
     /// <param name="calibrationSet"></param>
     public static void Export(
-      DataTable _table,
+      DataTable table,
       out PLS2CalibrationModel calibrationSet)
     {
-      int _numberOfX = GetNumberOfX(_table);
-      int _numberOfY = GetNumberOfY(_table);
-      int _numberOfFactors = GetNumberOfFactors(_table);
+      int numberOfX = GetNumberOfX(table);
+      int numberOfY = GetNumberOfY(table);
+      int numberOfFactors = GetNumberOfFactors(table);
 
       calibrationSet = new PLS2CalibrationModel();
         
-      calibrationSet.NumberOfX = _numberOfX;
-      calibrationSet.NumberOfY = _numberOfY;
-      calibrationSet.NumberOfFactors = _numberOfFactors;
+      calibrationSet.NumberOfX = numberOfX;
+      calibrationSet.NumberOfY = numberOfY;
+      calibrationSet.NumberOfFactors = numberOfFactors;
 
       Altaxo.Collections.AscendingIntegerCollection sel = new Altaxo.Collections.AscendingIntegerCollection();
       Altaxo.Data.DataColumn col;
 
-      col = _table[GetXOfX_ColumnName()];
+      col = table[GetXOfX_ColumnName()];
       if(col==null || !(col is INumericColumn)) NotFound(GetXOfX_ColumnName());
-      calibrationSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col,_numberOfX);
+      calibrationSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col,numberOfX);
 
 
-      col = _table[GetXMean_ColumnName()];
+      col = table[GetXMean_ColumnName()];
       if(col==null) NotFound(GetXMean_ColumnName());
-      calibrationSet.XMean = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,_numberOfX);
+      calibrationSet.XMean = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,numberOfX);
 
-      col = _table[GetXScale_ColumnName()];
+      col = table[GetXScale_ColumnName()];
       if(col==null) NotFound(GetXScale_ColumnName());
-      calibrationSet.XScale = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,_numberOfX);
+      calibrationSet.XScale = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,numberOfX);
 
 
         
       sel.Clear();
-      col = _table[GetYMean_ColumnName()];
+      col = table[GetYMean_ColumnName()];
       if(col==null) NotFound(GetYMean_ColumnName());
-      sel.Add(_table.DataColumns.GetColumnNumber(col));
-      calibrationSet.YMean = DataColumnWrapper.ToROVector(col,_numberOfY);
+      sel.Add(table.DataColumns.GetColumnNumber(col));
+      calibrationSet.YMean = DataColumnWrapper.ToROVector(col,numberOfY);
 
       sel.Clear();
-      col = _table[GetYScale_ColumnName()];
+      col = table[GetYScale_ColumnName()];
       if(col==null) NotFound(GetYScale_ColumnName());
-      sel.Add(_table.DataColumns.GetColumnNumber(col));
-      calibrationSet.YScale = DataColumnWrapper.ToROVector(col,_numberOfY);
+      sel.Add(table.DataColumns.GetColumnNumber(col));
+      calibrationSet.YScale = DataColumnWrapper.ToROVector(col,numberOfY);
 
 
       sel.Clear();
-      for(int i=0;i<_numberOfFactors;i++)
+      for(int i=0;i<numberOfFactors;i++)
       {
         string colname = GetXWeight_ColumnName(i);
-        col = _table[colname];
+        col = table[colname];
         if(col==null) NotFound(colname);
-        sel.Add(_table.DataColumns.GetColumnNumber(col));
+        sel.Add(table.DataColumns.GetColumnNumber(col));
       }
-      calibrationSet.XWeights = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfX);
+      calibrationSet.XWeights = new Altaxo.Calc.DataColumnToRowMatrixWrapper(table.DataColumns,sel,numberOfX);
 
 
       sel.Clear();
-      for(int i=0;i<_numberOfFactors;i++)
+      for(int i=0;i<numberOfFactors;i++)
       {
         string colname = GetXLoad_ColumnName(i);
-        col = _table[colname];
+        col = table[colname];
         if(col==null) NotFound(colname);
-        sel.Add(_table.DataColumns.GetColumnNumber(col));
+        sel.Add(table.DataColumns.GetColumnNumber(col));
       }
-      calibrationSet.XLoads = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfX);
+      calibrationSet.XLoads = new Altaxo.Calc.DataColumnToRowMatrixWrapper(table.DataColumns,sel,numberOfX);
 
 
       sel.Clear();
-      for(int i=0;i<_numberOfFactors;i++)
+      for(int i=0;i<numberOfFactors;i++)
       {
         string colname = GetYLoad_ColumnName(i);
-        col = _table[colname];
+        col = table[colname];
         if(col==null) NotFound(colname);
-        sel.Add(_table.DataColumns.GetColumnNumber(col));
+        sel.Add(table.DataColumns.GetColumnNumber(col));
       }
-      calibrationSet.YLoads = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfY);
+      calibrationSet.YLoads = new Altaxo.Calc.DataColumnToRowMatrixWrapper(table.DataColumns,sel,numberOfY);
 
         
       sel.Clear();
-      col = _table[GetCrossProduct_ColumnName()];
+      col = table[GetCrossProduct_ColumnName()];
       if(col==null) NotFound(GetCrossProduct_ColumnName());
-      sel.Add(_table.DataColumns.GetColumnNumber(col));
-      calibrationSet.CrossProduct = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfFactors);
+      sel.Add(table.DataColumns.GetColumnNumber(col));
+      calibrationSet.CrossProduct = new Altaxo.Calc.DataColumnToRowMatrixWrapper(table.DataColumns,sel,numberOfFactors);
 
 
         
@@ -314,74 +315,74 @@ namespace Altaxo.Calc.Regression.Multivariate
       MatrixMath.AddRow(predictedY,calib.YMean,predictedY);
     }  
 
-/*
-    public  override void CalculatePredictedAndResidual(
-      DataTable table,
-      int whichY,
-      int numberOfFactors,
-      bool saveYPredicted,
-      bool saveYResidual,
-      bool saveXResidual)
-    {
-      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-
-      if(plsMemo==null)
-        throw new ArgumentException("Table does not contain a PLSContentMemento");
-
-      PLS2CalibrationModel calib;
-      Export(table,out calib);
-
-
-      IMatrix matrixX = GetRawSpectra(plsMemo);
-
-      MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(matrixX.Rows,calib.NumberOfY);
-      MatrixMath.BEMatrix spectralResiduals = new MatrixMath.BEMatrix(matrixX.Rows,1);
-      CalculatePredictedY(calib,plsMemo.SpectralPreprocessing,matrixX,numberOfFactors,predictedY,spectralResiduals);
-
-      if(saveYPredicted)
-      {
-        // insert a column with the proper name into the table and fill it
-        string ycolname = GetYPredicted_ColumnName(whichY,numberOfFactors);
-        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
-
-        for(int i=0;i<predictedY.Rows;i++)
-          ycolumn[i] = predictedY[i,whichY];
-      
-        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,GetYPredicted_ColumnGroup());
-      }
-
-      // subract the original y data
-      IMatrix matrixY = GetOriginalY(plsMemo);
-      MatrixMath.SubtractColumn(predictedY,matrixY,whichY,predictedY);
-
-      if(saveYResidual)
-      {
-        // insert a column with the proper name into the table and fill it
-        string ycolname = GetYResidual_ColumnName(whichY,numberOfFactors);
-        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
-
-        for(int i=0;i<predictedY.Rows;i++)
-          ycolumn[i] = predictedY[i,whichY];
-      
-        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,GetYResidual_ColumnGroup());
-      }
-
-
-      if(saveXResidual)
-      {
-        // insert a column with the proper name into the table and fill it
-        string ycolname = GetXResidual_ColumnName(whichY,numberOfFactors);
-        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
-
-        for(int i=0;i<matrixX.Rows;i++)
+    /*
+        public  override void CalculatePredictedAndResidual(
+          DataTable table,
+          int whichY,
+          int numberOfFactors,
+          bool saveYPredicted,
+          bool saveYResidual,
+          bool saveXResidual)
         {
-          ycolumn[i] = spectralResiduals[i,0];
-        }
-        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,GetYResidual_ColumnGroup());
-      }
+          MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+
+          if(plsMemo==null)
+            throw new ArgumentException("Table does not contain a PLSContentMemento");
+
+          PLS2CalibrationModel calib;
+          Export(table,out calib);
+
+
+          IMatrix matrixX = GetRawSpectra(plsMemo);
+
+          MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(matrixX.Rows,calib.NumberOfY);
+          MatrixMath.BEMatrix spectralResiduals = new MatrixMath.BEMatrix(matrixX.Rows,1);
+          CalculatePredictedY(calib,plsMemo.SpectralPreprocessing,matrixX,numberOfFactors,predictedY,spectralResiduals);
+
+          if(saveYPredicted)
+          {
+            // insert a column with the proper name into the table and fill it
+            string ycolname = GetYPredicted_ColumnName(whichY,numberOfFactors);
+            Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
+
+            for(int i=0;i<predictedY.Rows;i++)
+              ycolumn[i] = predictedY[i,whichY];
       
-    }
- */
+            table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,GetYPredicted_ColumnGroup());
+          }
+
+          // subract the original y data
+          IMatrix matrixY = GetOriginalY(plsMemo);
+          MatrixMath.SubtractColumn(predictedY,matrixY,whichY,predictedY);
+
+          if(saveYResidual)
+          {
+            // insert a column with the proper name into the table and fill it
+            string ycolname = GetYResidual_ColumnName(whichY,numberOfFactors);
+            Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
+
+            for(int i=0;i<predictedY.Rows;i++)
+              ycolumn[i] = predictedY[i,whichY];
+      
+            table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,GetYResidual_ColumnGroup());
+          }
+
+
+          if(saveXResidual)
+          {
+            // insert a column with the proper name into the table and fill it
+            string ycolname = GetXResidual_ColumnName(whichY,numberOfFactors);
+            Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
+
+            for(int i=0;i<matrixX.Rows;i++)
+            {
+              ycolumn[i] = spectralResiduals[i,0];
+            }
+            table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,GetYResidual_ColumnGroup());
+          }
+      
+        }
+     */
 
     public override void CalculateXLeverage(
       DataTable table, int numberOfFactors)

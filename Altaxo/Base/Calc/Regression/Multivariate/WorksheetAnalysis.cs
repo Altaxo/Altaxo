@@ -251,9 +251,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     /// <param name="matrixX">The matrix of spectra (horizontal oriented).</param>
     /// <param name="matrixY">The matrix of concentrations.</param>
-    /// <param name="plsOptions"></param>
-    /// <param name="plsContent"></param>
+    /// <param name="plsOptions">Information how to perform the analysis.</param>
+    /// <param name="plsContent">A structure to store information about the results of the analysis.</param>
     /// <param name="table">The table where to store the results to.</param>
+    /// <param name="press">On return, gives a vector holding the PRESS values of the analysis.</param>
     public abstract void ExecuteAnalysis(
       IMatrix matrixX,
       IMatrix matrixY,
@@ -287,38 +288,39 @@ namespace Altaxo.Calc.Regression.Multivariate
       get;
     }
 
-/*
-    public  abstract void CalculatePredictedAndResidual(
-      DataTable table,
-      int whichY,
-      int numberOfFactors,
-      bool saveYPredicted,
-      bool saveYResidual,
-      bool saveXResidual);
-*/
-    /*
+
     /// <summary>
-    /// This predicts the selected columns/rows against a user choosen calibration model.
-    /// The orientation of spectra is given by the parameter <c>spectrumIsRow</c>.
+    /// Returns an instance of the calibration model specific for the multivariate analysis.
     /// </summary>
-    /// <param name="ctrl">The worksheet controller containing the selected data.</param>
-    /// <param name="spectrumIsRow">If true, the spectra is horizontally oriented, else it is vertically oriented.</param>
-    public abstract void PredictValues(
-      DataTable srctable,
-      IAscendingIntegerCollection selectedColumns,
-      IAscendingIntegerCollection selectedRows,
-      bool spectrumIsRow,
-      int numberOfFactors,
-      DataTable modelTable,
-      DataTable destTable);
-    */
-    
+    /// <param name="calibTable">The table where the calibration model is stored.</param>
+    /// <returns>Instance of the calibration model (in more handy format).</returns>
     public abstract IMultivariateCalibrationModel GetCalibrationModel(DataTable calibTable);
 
+    /// <summary>
+    /// Calculates the leverage of the spectral data.
+    /// </summary>
+    /// <param name="table">Table where the calibration model is stored.</param>
+    /// <param name="preferredNumberOfFactors">Number of factors used to calculate leverage.</param>
     public abstract void CalculateXLeverage(DataTable table, int preferredNumberOfFactors);
 
+    /// <summary>
+    /// Calculates the prediction scores. In case of a single y-variable, the prediction score is a vector of the same length than a spectrum.
+    /// Multiplying the prediction score (dot product) with a spectrum, it yields the predicted y-value (of cause mean-centered).
+    /// </summary>
+    /// <param name="table">The table where the calibration model is stored.</param>
+    /// <param name="preferredNumberOfFactors">Number of factors used to calculate the prediction scores.</param>
+    /// <returns>A matrix with the prediction scores. Each score (for one y-value) is a row in the matrix.</returns>
     public abstract IROMatrix CalculatePredictionScores(DataTable table, int preferredNumberOfFactors);
 
+    /// <summary>
+    /// For a given set of spectra, predicts the y-values and stores them in the matrix <c>predictedY</c>
+    /// </summary>
+    /// <param name="calib">The calibration model of the analysis.</param>
+    /// <param name="preprocessOptions">The information how to preprocess the spectra.</param>
+    /// <param name="matrixX">The matrix of spectra to predict. Each spectrum is a row in the matrix.</param>
+    /// <param name="numberOfFactors">The number of factors used for prediction.</param>
+    /// <param name="predictedY">On return, this matrix holds the predicted y-values. Each row in this matrix corresponds to the same row (spectrum) in matrixX.</param>
+    /// <param name="spectralResiduals">If you set this parameter to a appropriate matrix, the spectral residuals will be stored in this matrix. Set this parameter to null if you don't need the residuals.</param>
     public abstract void CalculatePredictedY(
       IMultivariateCalibrationModel calib,
       SpectralPreprocessingOptions preprocessOptions,
@@ -506,8 +508,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="selectedRows">The selected rows.</param>
     /// <param name="selectedPropertyColumns">The selected property column(s).</param>
     /// <param name="bHorizontalOrientedSpectrum">True if a spectrum is a single row, False if a spectrum is a single column.</param>
-    /// <param name="plsOptions">Provides information about the max number of factors and the calculation of cross PRESS value.</param>
-    /// <param name="preprocessOptions">Provides information about how to preprocess the spectra.</param>
+    /// <param name="matrixX">On return, gives the matrix of spectra (each spectra is a row in the matrix).</param>
+    /// <param name="matrixY">On return, gives the matrix of y-values (each measurement is a row in the matrix).</param>
+    /// <param name="plsContent">Holds information about the analysis results.</param>
+    /// <param name="xOfX">On return, this is the vector of values corresponding to each spectral bin, i.e. wavelength values, frequencies etc.</param>
     /// <returns></returns>
     public static string GetXYMatrices(
       Altaxo.Data.DataTable srctable,
@@ -780,13 +784,14 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Preprocesses the x and y matrices before usage in multivariate calibrations.
     /// </summary>
+    /// <param name="preprocessOptions">Information how to preprocess the data.</param>
     /// <param name="xOfX"></param>
     /// <param name="matrixX"></param>
     /// <param name="matrixY"></param>
     /// <param name="meanX"></param>
     /// <param name="scaleX"></param>
     /// <param name="meanY"></param>
-    /// <param name="meanY"></param>
+    /// <param name="scaleY"></param>
     public static void PreprocessMatrices(
       SpectralPreprocessingOptions preprocessOptions,
       IROVector xOfX,
@@ -1092,12 +1097,19 @@ namespace Altaxo.Calc.Regression.Multivariate
       CalculatePredictedAndResidual(table,whichY,numberOfFactors,true,false,false);
     }
 
+    /// <summary>
+    /// Calculates the y-residuals (concentration etc.).
+    /// </summary>
+    /// <param name="table">The table where the calibration model is stored.</param>
+    /// <param name="whichY">Number of the y-value.</param>
+    /// <param name="numberOfFactors">The number of factors used for prediction and then for the residual calculation.</param>
     public virtual void CalculateYResidual(Altaxo.Data.DataTable table, int whichY, int numberOfFactors)
     {
       CalculatePredictedAndResidual(table,whichY,numberOfFactors,false,true,false);
     }
 
    
+
 
     public virtual void CalculateXResidual(Altaxo.Data.DataTable table, int whichY, int numberOfFactors)
     {
@@ -1189,7 +1201,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// This predicts the selected columns/rows against a user choosen calibration model.
     /// The orientation of spectra is given by the parameter <c>spectrumIsRow</c>.
     /// </summary>
-    /// <param name="ctrl">The worksheet controller containing the selected data.</param>
+    /// <param name="srctable">Table holding the specta to predict values for.</param>
+    /// <param name="selectedColumns">Columns selected in the source table.</param>
+    /// <param name="selectedRows">Rows selected in the source table.</param>
+    /// <param name="destTable">The table to store the prediction result.</param>
+    /// <param name="modelTable">The table where the calibration model is stored.</param>
+    /// <param name="numberOfFactors">Number of factors used to predict the values.</param>
     /// <param name="spectrumIsRow">If true, the spectra is horizontally oriented, else it is vertically oriented.</param>
     public virtual void PredictValues(
       DataTable srctable,

@@ -247,6 +247,14 @@ namespace Altaxo.Calc.Regression
     ///                   the approximate solution x is possible. 
     /// </param>
     /// <param name="iwa">Integer working array of length n.</param>
+    /// <param name="diag"></param>
+    /// <param name="fjac"></param>
+    /// <param name="ipvt"></param>
+    /// <param name="qtf"></param>
+    /// <param name="wa1"></param>
+    /// <param name="wa2"></param>
+    /// <param name="wa3"></param>
+    /// <param name="wa4"></param>
     /// <remarks>
     /// This is the most easy-to-use interface with the smallest number of
     /// arguments. If you need more control over the minimization process and

@@ -209,6 +209,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Wraps a double[] array till a given length to get a IROVector.
     /// </summary>
     /// <param name="x">The array to wrap.</param>
+    /// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
     /// <returns>A wrapper objects with the <see>IROVector</see> interface that wraps the provided array.</returns>
     public static IROVector ToROVector(double[] x, int usedlength)
     {

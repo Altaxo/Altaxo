@@ -386,6 +386,12 @@ namespace Altaxo.Data
     protected string m_LastColumnNameGenerated=""; // name of the last column name that was automatically generated
 
     /// <summary>
+    /// If true, we recently have tested the column names A-ZZ and all column names were in use.
+    /// This flag should be resetted if a column deletion or renaming operation took place.
+    /// </summary>
+    protected bool _TriedOutRegularNaming=false; 
+    
+    /// <summary>
     /// Number of suspends to this object.
     /// </summary>
     protected int m_SuspendCount=0;
@@ -1000,6 +1006,9 @@ namespace Altaxo.Data
 
       // raise datachange event that some columns have changed
       this.OnChildChanged(null, ChangeEventArgs.CreateColumnRemoveArgs(nFirstColumn, nOriginalColumnCount, this.m_NumberOfRows));
+   
+      // reset the TriedOutRegularNaming flag, maybe one of the regular column names is now free again
+      this._TriedOutRegularNaming = false;
     }
 
  
@@ -1106,6 +1115,9 @@ namespace Altaxo.Data
           m_ColumnsByName.Add(newName,datac);
 
           this.OnChildChanged(null,ChangeEventArgs.CreateColumnRenameArgs(this.GetColumnNumber(datac)));
+
+          // reset the TriedOutRegularNames flag, maybe one of the regular columns has been renamed
+          this._TriedOutRegularNaming = false;
         }
       }
     }
@@ -1997,10 +2009,11 @@ namespace Altaxo.Data
     /// Calculates a new column name dependend on the last name. You have to check whether the returned name is already in use by yourself.
     /// </summary>
     /// <param name="lastName">The last name that was used to name a column.</param>
-    /// <returns>The logical next name of a column calculated from the previous name.</returns>
+    /// <returns>The logical next name of a column calculated from the previous name. This name is in the range "A" to "ZZ". If
+    /// no further name can be found, this function returns null.</returns>
     public static string GetNextColumnName(string lastName)
     {
-      int lastNameLength = lastName.Length;
+      int lastNameLength = null==lastName ? 0 : lastName.Length;
       
       if(0==lastNameLength)
         return "A";
@@ -2028,125 +2041,95 @@ namespace Altaxo.Data
         if(_1st>='A' && _1st<='Z')
           return _1st.ToString() + _2nd;
         else
-          return ((uint)System.Guid.NewGuid().GetHashCode()).ToString("X8");
+          return null;
       }
 
       else
       {
-        return ((uint)System.Guid.NewGuid().GetHashCode()).ToString("X8");
+        return null;
       }
 
+    }
+
+
+
+    /// <summary>
+    /// Get a unique column name based on regular naming from A to ZZ.
+    /// </summary>
+    /// <param name="_sbase">The base name.</param>
+    /// <returns>An unique column name based on the provided string.</returns>
+    protected string FindUniqueColumnNameWithoutBase()
+    {
+      string tryName;
+      if(_TriedOutRegularNaming)
+      {
+        for(;;)
+        {
+          tryName = ((uint)System.Guid.NewGuid().GetHashCode()).ToString("X8");
+          if(null==this[tryName])
+            return tryName;
+        }
+      }
+      else
+      {
+        // First try it with the next name after the last column
+        tryName = GetNextColumnName(m_ColumnsByNumber.Count>0 ? GetColumnName(ColumnCount-1) : "");
+        if(null!=tryName && null==this[tryName])
+          return tryName;
+
+        // then try it with all names from A-ZZ
+        for(tryName="A"; tryName!=null; tryName = GetNextColumnName(tryName))
+        {
+          if(null==this[tryName])
+            return tryName;
+        }
+        // if no success, set the _TriedOutRegularNaming
+        _TriedOutRegularNaming = true;
+        return FindUniqueColumnNameWithoutBase();
+      }
+    }
+
+
+    /// <summary>
+    /// Get a unique column name based on a provided string. If a column with the name of the provided string
+    /// already exists, a new name is created by appending a dot and then A-ZZ.
+    /// </summary>
+    /// <param name="sbase">A string which is the base of the new name. Must not be null!</param>
+    /// <returns>An unique column name based on the provided string.</returns>
+    protected string FindUniqueColumnNameWithBase(string sbase)
+    {
+      // try the name directly
+        if(null==this[sbase])
+          return sbase;
+
+        sbase = sbase+".";
+ 
+
+        // then try it with all names from A-ZZ
+        
+      for(string tryAppendix="A";tryAppendix!=null;tryAppendix=GetNextColumnName(tryAppendix))
+      {
+        if(null==this[sbase+tryAppendix])
+          return sbase+tryAppendix;
+      }
+
+        // if no success, append a hex string
+      for(;;)
+      {
+        string tryName = sbase+((uint)System.Guid.NewGuid().GetHashCode()).ToString("X8");
+        if(null==this[tryName])
+          return tryName;
+      }
     }
 
     /// <summary>
     /// Get a unique column name based on a provided string.
     /// </summary>
-    /// <param name="_sbase">The base name.</param>
+    /// <param name="sbase">The base name.</param>
     /// <returns>An unique column name based on the provided string.</returns>
-    public string FindUniqueColumnName(string _sbase)
+    public string FindUniqueColumnName(string sbase)
     {
-      // die ColumnNamen sollen hier wie folgt gehen
-      // - von A bis Z
-      // - AA ... AZ, BA ... BZ, ..... ZA...ZZ
-      
-      string sbase = _sbase==null ? "" : _sbase + ".";
-
-      int lastNameLength = m_LastColumnNameAdded.Length;
-
-
-      // for the very first try, if no base provided, try to use a name that follows the name of the last columns
-      if(null==_sbase )
-      {
-        string tryName = GetNextColumnName(m_ColumnsByNumber.Count>0 ? GetColumnName(ColumnCount-1) : "");
-        if(null==this[tryName])
-          return tryName;
-      }
-      else // a base is provided, so try to use this name
-      {
-        if(null==this[_sbase])
-          return _sbase;
-      }
-
-      // zuerst A bis Z probieren
-
-      if(lastNameLength==1)
-      {
-        char _1st = m_LastColumnNameAdded[0];
-        _1st++;
-        for(char i=_1st;i<='Z';i++)
-        {
-          if(null==this[sbase+i])
-            return sbase+i;
-        }
-      }
-      else if(lastNameLength==2)
-      {
-        char _1st = m_LastColumnNameAdded[0];
-        char _2nd = m_LastColumnNameAdded[1];
-        _2nd++;
-
-        // try it first with the unchanged 1st letter, but vary the second letter
-        for(char j=_2nd;j<='Z';j++)
-        {
-          if(null==this[sbase + _1st.ToString() + j])
-            return sbase + _1st.ToString() + j;
-        }
-
-        // Try it now also with variing first and second letter
-        _1st++;
-        for(char i=_1st;i<='Z';i++)
-        {
-          for(char j='A';j<='Z';j++)
-          {
-            if(null==this[sbase + i.ToString()+j])
-              return sbase + i.ToString()+j;
-          }
-        } 
-      }
-      else if(lastNameLength==8) // maybe we have used a hash code before, so we use it again
-      {
-        bool bIsHex=true;
-
-        try
-        {
-          System.Convert.ToUInt32(m_LastColumnNameAdded,16); // is it a hexadecimal hash code ?
-        }
-        catch(Exception)
-        {
-          bIsHex=false;
-        }
-
-        if(bIsHex) // if it was a hex code, then try immediatly another hash code
-        {
-          for(;;)
-          {
-            string hash = ((uint)System.Guid.NewGuid().GetHashCode()).ToString("X8");
-            if(null==this[sbase + hash])
-              return sbase + hash;
-          }
-        }
-      }
-
-      // if that all does not help, try it again with A to Z
-      for(char i='A';i<='Z';i++)
-      {
-        if(null==this[sbase + i.ToString()])
-          return sbase + i.ToString();
-      }
-
-      // Try it with the combination AA so that the next time the lastNameLength is 2 and the naming
-      // goes further with AB, AC ...
-      if(null==this[sbase + "AA"])
-        return sbase + "AA";
-
-
-      // if that also not helps, use the hash code of a guid
-      for(;;)
-      {
-        string hash = ((uint)System.Guid.NewGuid().GetHashCode()).ToString("X8");
-        if(null==this[sbase + hash])
-          return sbase + hash;
-      }
+       return sbase==null ? FindUniqueColumnNameWithoutBase() : FindUniqueColumnNameWithBase(sbase);
     }
 
 

@@ -212,90 +212,91 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Exports a table to a PLS2CalibrationSet
     /// </summary>
+    /// <param name="table">The table where the calibration model is stored.</param>
     /// <param name="calibrationSet"></param>
     public static void Export(
-      DataTable _table,
+      DataTable table,
       out PCRCalibrationModel calibrationSet)
     {
-      int _numberOfX = GetNumberOfX(_table);
-      int _numberOfY = GetNumberOfY(_table);
-      int _numberOfFactors = GetNumberOfFactors(_table);
-      int _numberOfMeasurements = GetNumberOfMeasurements(_table);
+      int numberOfX = GetNumberOfX(table);
+      int numberOfY = GetNumberOfY(table);
+      int numberOfFactors = GetNumberOfFactors(table);
+      int numberOfMeasurements = GetNumberOfMeasurements(table);
 
       calibrationSet = new PCRCalibrationModel();
         
-      calibrationSet.NumberOfX = _numberOfX;
-      calibrationSet.NumberOfY = _numberOfY;
-      calibrationSet.NumberOfFactors = _numberOfFactors;
+      calibrationSet.NumberOfX = numberOfX;
+      calibrationSet.NumberOfY = numberOfY;
+      calibrationSet.NumberOfFactors = numberOfFactors;
 
       Altaxo.Collections.AscendingIntegerCollection sel = new Altaxo.Collections.AscendingIntegerCollection();
       Altaxo.Data.DataColumn col;
 
-      col = _table[GetXOfX_ColumnName()];
+      col = table[GetXOfX_ColumnName()];
       if(col==null || !(col is INumericColumn)) NotFound(GetXOfX_ColumnName());
-      calibrationSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col,_numberOfX);
+      calibrationSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col,numberOfX);
 
 
-      col = _table[GetXMean_ColumnName()];
+      col = table[GetXMean_ColumnName()];
       if(col==null) NotFound(GetXMean_ColumnName());
-      calibrationSet.XMean = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,_numberOfX);
+      calibrationSet.XMean = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,numberOfX);
 
-      col = _table[GetXScale_ColumnName()];
+      col = table[GetXScale_ColumnName()];
       if(col==null) NotFound(GetXScale_ColumnName());
-      calibrationSet.XScale = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,_numberOfX);
+      calibrationSet.XScale = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,numberOfX);
 
 
         
       sel.Clear();
-      col = _table[GetYMean_ColumnName()];
+      col = table[GetYMean_ColumnName()];
       if(col==null) NotFound(GetYMean_ColumnName());
-      sel.Add(_table.DataColumns.GetColumnNumber(col));
-      calibrationSet.YMean = DataColumnWrapper.ToROVector(col,_numberOfY);
+      sel.Add(table.DataColumns.GetColumnNumber(col));
+      calibrationSet.YMean = DataColumnWrapper.ToROVector(col,numberOfY);
 
       sel.Clear();
-      col = _table[GetYScale_ColumnName()];
+      col = table[GetYScale_ColumnName()];
       if(col==null) NotFound(GetYScale_ColumnName());
-      sel.Add(_table.DataColumns.GetColumnNumber(col));
-      calibrationSet.YScale = DataColumnWrapper.ToROVector(col,_numberOfY);
+      sel.Add(table.DataColumns.GetColumnNumber(col));
+      calibrationSet.YScale = DataColumnWrapper.ToROVector(col,numberOfY);
 
 
       sel.Clear();
-      for(int i=0;i<_numberOfFactors;i++)
+      for(int i=0;i<numberOfFactors;i++)
       {
         string colname = GetXScore_ColumnName(i);
-        col = _table[colname];
+        col = table[colname];
         if(col==null) NotFound(colname);
-        sel.Add(_table.DataColumns.GetColumnNumber(col));
+        sel.Add(table.DataColumns.GetColumnNumber(col));
       }
-      calibrationSet.XScores = new Altaxo.Calc.DataColumnToColumnMatrixWrapper(_table.DataColumns,sel,_numberOfMeasurements);
+      calibrationSet.XScores = new Altaxo.Calc.DataColumnToColumnMatrixWrapper(table.DataColumns,sel,numberOfMeasurements);
 
 
       sel.Clear();
-      for(int i=0;i<_numberOfFactors;i++)
+      for(int i=0;i<numberOfFactors;i++)
       {
         string colname = GetXLoad_ColumnName(i);
-        col = _table[colname];
+        col = table[colname];
         if(col==null) NotFound(colname);
-        sel.Add(_table.DataColumns.GetColumnNumber(col));
+        sel.Add(table.DataColumns.GetColumnNumber(col));
       }
-      calibrationSet.XLoads = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfX);
+      calibrationSet.XLoads = new Altaxo.Calc.DataColumnToRowMatrixWrapper(table.DataColumns,sel,numberOfX);
 
 
       sel.Clear();
-      for(int i=0;i<_numberOfY;i++)
+      for(int i=0;i<numberOfY;i++)
       {
         string colname = GetYLoad_ColumnName(i);
-        col = _table[colname];
+        col = table[colname];
         if(col==null) NotFound(colname);
-        sel.Add(_table.DataColumns.GetColumnNumber(col));
+        sel.Add(table.DataColumns.GetColumnNumber(col));
       }
-      calibrationSet.YLoads = new Altaxo.Calc.DataColumnToColumnMatrixWrapper(_table.DataColumns,sel,_numberOfMeasurements);
+      calibrationSet.YLoads = new Altaxo.Calc.DataColumnToColumnMatrixWrapper(table.DataColumns,sel,numberOfMeasurements);
 
         
       sel.Clear();
-      col = _table[GetCrossProduct_ColumnName()];
+      col = table[GetCrossProduct_ColumnName()];
       if(col==null) NotFound(GetCrossProduct_ColumnName());
-      calibrationSet.CrossProduct = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,_numberOfFactors);
+      calibrationSet.CrossProduct = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,numberOfFactors);
    
 
     }
