@@ -1,3 +1,26 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+// The following code was translated using Matpack sources (http://www.matpack.de) (Author B.Gammel)
 // Original MatPack-1.7.3\Source\threejj.cc
 //                               threejm.cc
 //                               sixj.cc
@@ -9,1470 +32,1470 @@ using System;
 
 namespace Altaxo.Calc
 {
-	/// <summary>
-	/// Contains vector coupling functions.
-	/// </summary>
-	public class VectorCoupling
-	{
-		#region Common Constants
+  /// <summary>
+  /// Contains vector coupling functions.
+  /// </summary>
+  public class VectorCoupling
+  {
+    #region Common Constants
 
-		/// <summary>
-		/// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
-		/// </summary>
-		public const double DBL_EPSILON = 2.2204460492503131e-016;
-		/// <summary>
-		/// The smallest positive double number.
-		/// </summary>
-		public const double DBL_MIN     = double.Epsilon;
-		/// <summary>
-		/// The biggest positive double number.
-		/// </summary>
-		public const double DBL_MAX     = double.MaxValue;
+    /// <summary>
+    /// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
+    /// </summary>
+    public const double DBL_EPSILON = 2.2204460492503131e-016;
+    /// <summary>
+    /// The smallest positive double number.
+    /// </summary>
+    public const double DBL_MIN     = double.Epsilon;
+    /// <summary>
+    /// The biggest positive double number.
+    /// </summary>
+    public const double DBL_MAX     = double.MaxValue;
 
-		#endregion
+    #endregion
 
-		#region Helper functions
+    #region Helper functions
 
-		static bool odd(int x)
-		{
-			return (x%2)!=0;
-		}
+    static bool odd(int x)
+    {
+      return (x%2)!=0;
+    }
 
-		/// <summary>
-		/// Return first number with sign of second number
-		/// </summary>
-		/// <param name="x">The first number.</param>
-		/// <param name="y">The second number whose sign is used.</param>
-		/// <returns>The first number x with the sign of the second argument y.</returns>
-		private static double CopySign (double x, double y)
-		{
-			return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);
-		}
+    /// <summary>
+    /// Return first number with sign of second number
+    /// </summary>
+    /// <param name="x">The first number.</param>
+    /// <param name="y">The second number whose sign is used.</param>
+    /// <returns>The first number x with the sign of the second argument y.</returns>
+    private static double CopySign (double x, double y)
+    {
+      return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);
+    }
 
-		/// <summary>
-		/// Round to nearest integer.
-		/// </summary>
-		/// <param name="d">The argument.</param>
-		/// <returns>The nearest integer of the argument d.</returns>
-		private static int	Nint (double d)
-		{
-			return (d>0) ? (int)(d+0.5) : -(int)(-d+0.5);
-		}
+    /// <summary>
+    /// Round to nearest integer.
+    /// </summary>
+    /// <param name="d">The argument.</param>
+    /// <returns>The nearest integer of the argument d.</returns>
+    private static int	Nint (double d)
+    {
+      return (d>0) ? (int)(d+0.5) : -(int)(-d+0.5);
+    }
 
-		#endregion
+    #endregion
 
-		#region ThreeJSymbolJ
+    #region ThreeJSymbolJ
 		
-		//-----------------------------------------------------------------------------//
-		//
-		// void ThreeJSymbolJ (double l2, double l3, double m2, double m3, 
-		//                     double &l1min, double &l1max, double *thrcof, int ndim, 
-		//                     int &errflag)
-		//
-		// Evaluate the Wigner 3j symbol 
-		//
-		//       f(l1) = (   l1    l2   l3 )
-		//               ( -m2-m3  m2   m3 )
-		//
-		// for all allowed values of l1, the other parameters being held fixed.
-		//
-		// Input Arguments:
-		// ----------------
-		//
-		//   double l2 
-		//   double l3
-		//   double m2
-		//   double m3		Parameters in 3j symbol.
-		//
-		//   int  ndim 		Declared length of thrcof in calling program.
-		//
-		// Output Arguments:
-		// -----------------
-		//
-		//   double &l1min	Smallest allowable l1 in 3j symbol.
-		//   double &l1max	Largest allowable l1 in 3j symbol.
-		//   double *thrcof	Set of 3j coefficients generated by evaluating the
-		//			3j symbol for all allowed values of l1.  
-		//			thrcof(i) will contain f(l1min+i), 
-		//			for i = 0, 2, ... , l1max+l1min.
-		//
-		//   int &errflag	Error flag.
-		//                 	errflag=0  No errors.
-		//                 	errflag=1  Either l2 < abs(m2) or l3 < abs(m3).
-		//                 	errflag=2  Either l2+abs(m2) or l3+abs(m3) non-integer.
-		//                 	errflag=3  l1max-l1min not an integer.
-		//                 	errflag=4  l1max less than l1min.
-		//                 	errflag=5  ndim less than l1max-l1min+1.
-		// Description:
-		// ------------
-		//
-		// Although conventionally the parameters of the vector addition
-		// coefficients satisfy certain restrictions, such as being integers
-		// or integers plus 1/2, the restrictions imposed on input to this
-		// subroutine are somewhat weaker. See, for example, Section 27.9 of
-		// Abramowitz and Stegun or Appendix C of Volume II of A. Messiah.
-		//
-		// The restrictions imposed by this subroutine are
-		//
-		//       1. l2 >= abs(m2) and l3 >= abs(m3)
-		//       2. l2+abs(m2) and l3+abs(m3) must be integers
-		//       3. l1max-l1min must be a non-negative integer, where
-		//          l1max=l2+l3 and l1min=max(abs(l2-l3),abs(m2+m3))
-		//
-		// If the conventional restrictions are satisfied, then these
-		// restrictions are also met.
-		//
-		// The user should be cautious in using input parameters that do
-		// not satisfy the conventional restrictions. For example, the
-		// the subroutine produces values of
-		//       f(L1) = ( l1  2.5  5.8)
-		//               (-0.3 1.5 -1.2)
-		// for l1=3.3,4.3,...,8.3 but none of the symmetry properties of the 3j 
-		// symbol, set forth on page 1056 of Messiah, is satisfied.
-		//
-		// The subroutine generates f(l1min), f(l1min+1), ..., f(l1max)
-		// where l1min and l1max are defined above. The sequence f(l1) is
-		// generated by a three-term recurrence algorithm with scaling to
-		// control overflow. Both backward and forward recurrence are used to
-		// maintain numerical stability. The two recurrence sequences are
-		// matched at an interior point and are normalized from the unitary
-		// property of 3j coefficients and Wigner's phase convention.
-		//
-		// The algorithm is suited to applications in which large quantum
-		// numbers arise, such as in molecular dynamics.
-		//
-		// References:
-		// -----------
-		//  1. Abramowitz, M., and Stegun, I. A., Eds., Handbook
-		//     of Mathematical Functions with Formulas, Graphs
-		//     and Mathematical Tables, NBS Applied Mathematics
-		//     Series 55, June 1964 and subsequent printings.
-		//  2. Messiah, Albert., Quantum Mechanics, Volume II,
-		//     North-Holland Publishing Company, 1963.
-		//  3. Schulten, Klaus and Gordon, Roy G., Exact recursive
-		//     evaluation of 3j and 6j coefficients for quantum-
-		//     mechanical coupling of angular momenta, J Math
-		//     Phys, v 16, no. 10, October 1975, pp. 1961-1970.
-		//  4. Schulten, Klaus and Gordon, Roy G., Semiclassical
-		//     approximations to 3j  and 6j coefficients for
-		//     quantum-mechanical coupling of angular momenta,
-		//     J Math Phys, v 16, no. 10, October 1975, pp. 1971-1988.
-		//  5. Schulten, Klaus and Gordon, Roy G., Recursive
-		//     evaluation of 3j and 6j coefficients, Computer
-		//     Phys Comm, v 11, 1976, pp. 269-278.
-		//  6. SLATEC library, category  C19, 
-		//     double precision algorithm DRC3JJ.F
-		//     Keywords: 3j coefficients, 3j symbols, Clebsch-Gordan coefficients, 
-		//               Racah coefficients, vector addition coefficients,
-		//               Wigner coefficients
-		//     Author:   Gordon, R. G., Harvard University
-		//               Schulten, K., Max Planck Institute
-		//     Revision history  (YYMMDD)
-		//     750101  DATE WRITTEN
-		//     880515  SLATEC prologue added by G. C. Nielson, NBS; parameters
-		//             HUGE and TINY revised to depend on D1MACH.
-		//     891229  Prologue description rewritten; other prologue sections
-		//             revised; LMATCH (location of match point for recurrences)
-		//             removed from argument list; argument errflag changed to serve
-		//             only as an error flag (previously, in cases without error,
-		//             it returned the number of scalings); number of error codes
-		//             increased to provide more precise error information;
-		//             program comments revised; SLATEC error handler calls
-		//             introduced to enable printing of error messages to meet
-		//             SLATEC standards. These changes were done by D. W. Lozier,
-		//             M. A. McClain and J. M. Smith of the National Institute
-		//             of Standards and Technology, formerly NBS.
-		//     910415  Mixed type expressions eliminated; variable C1 initialized; 
-		//             description of THRCOF expanded. These changes were done by
-		//             D. W. Lozier.
-		//  7. Rewritting of the SLATEX algorithm in C++ and adaption to the
-		//     Matpack C++ Numerics and Graphics Library by Berndt M. Gammel
-		//     in June 1997.
-		//
-		//-----------------------------------------------------------------------------//
+    //-----------------------------------------------------------------------------//
+    //
+    // void ThreeJSymbolJ (double l2, double l3, double m2, double m3, 
+    //                     double &l1min, double &l1max, double *thrcof, int ndim, 
+    //                     int &errflag)
+    //
+    // Evaluate the Wigner 3j symbol 
+    //
+    //       f(l1) = (   l1    l2   l3 )
+    //               ( -m2-m3  m2   m3 )
+    //
+    // for all allowed values of l1, the other parameters being held fixed.
+    //
+    // Input Arguments:
+    // ----------------
+    //
+    //   double l2 
+    //   double l3
+    //   double m2
+    //   double m3		Parameters in 3j symbol.
+    //
+    //   int  ndim 		Declared length of thrcof in calling program.
+    //
+    // Output Arguments:
+    // -----------------
+    //
+    //   double &l1min	Smallest allowable l1 in 3j symbol.
+    //   double &l1max	Largest allowable l1 in 3j symbol.
+    //   double *thrcof	Set of 3j coefficients generated by evaluating the
+    //			3j symbol for all allowed values of l1.  
+    //			thrcof(i) will contain f(l1min+i), 
+    //			for i = 0, 2, ... , l1max+l1min.
+    //
+    //   int &errflag	Error flag.
+    //                 	errflag=0  No errors.
+    //                 	errflag=1  Either l2 < abs(m2) or l3 < abs(m3).
+    //                 	errflag=2  Either l2+abs(m2) or l3+abs(m3) non-integer.
+    //                 	errflag=3  l1max-l1min not an integer.
+    //                 	errflag=4  l1max less than l1min.
+    //                 	errflag=5  ndim less than l1max-l1min+1.
+    // Description:
+    // ------------
+    //
+    // Although conventionally the parameters of the vector addition
+    // coefficients satisfy certain restrictions, such as being integers
+    // or integers plus 1/2, the restrictions imposed on input to this
+    // subroutine are somewhat weaker. See, for example, Section 27.9 of
+    // Abramowitz and Stegun or Appendix C of Volume II of A. Messiah.
+    //
+    // The restrictions imposed by this subroutine are
+    //
+    //       1. l2 >= abs(m2) and l3 >= abs(m3)
+    //       2. l2+abs(m2) and l3+abs(m3) must be integers
+    //       3. l1max-l1min must be a non-negative integer, where
+    //          l1max=l2+l3 and l1min=max(abs(l2-l3),abs(m2+m3))
+    //
+    // If the conventional restrictions are satisfied, then these
+    // restrictions are also met.
+    //
+    // The user should be cautious in using input parameters that do
+    // not satisfy the conventional restrictions. For example, the
+    // the subroutine produces values of
+    //       f(L1) = ( l1  2.5  5.8)
+    //               (-0.3 1.5 -1.2)
+    // for l1=3.3,4.3,...,8.3 but none of the symmetry properties of the 3j 
+    // symbol, set forth on page 1056 of Messiah, is satisfied.
+    //
+    // The subroutine generates f(l1min), f(l1min+1), ..., f(l1max)
+    // where l1min and l1max are defined above. The sequence f(l1) is
+    // generated by a three-term recurrence algorithm with scaling to
+    // control overflow. Both backward and forward recurrence are used to
+    // maintain numerical stability. The two recurrence sequences are
+    // matched at an interior point and are normalized from the unitary
+    // property of 3j coefficients and Wigner's phase convention.
+    //
+    // The algorithm is suited to applications in which large quantum
+    // numbers arise, such as in molecular dynamics.
+    //
+    // References:
+    // -----------
+    //  1. Abramowitz, M., and Stegun, I. A., Eds., Handbook
+    //     of Mathematical Functions with Formulas, Graphs
+    //     and Mathematical Tables, NBS Applied Mathematics
+    //     Series 55, June 1964 and subsequent printings.
+    //  2. Messiah, Albert., Quantum Mechanics, Volume II,
+    //     North-Holland Publishing Company, 1963.
+    //  3. Schulten, Klaus and Gordon, Roy G., Exact recursive
+    //     evaluation of 3j and 6j coefficients for quantum-
+    //     mechanical coupling of angular momenta, J Math
+    //     Phys, v 16, no. 10, October 1975, pp. 1961-1970.
+    //  4. Schulten, Klaus and Gordon, Roy G., Semiclassical
+    //     approximations to 3j  and 6j coefficients for
+    //     quantum-mechanical coupling of angular momenta,
+    //     J Math Phys, v 16, no. 10, October 1975, pp. 1971-1988.
+    //  5. Schulten, Klaus and Gordon, Roy G., Recursive
+    //     evaluation of 3j and 6j coefficients, Computer
+    //     Phys Comm, v 11, 1976, pp. 269-278.
+    //  6. SLATEC library, category  C19, 
+    //     double precision algorithm DRC3JJ.F
+    //     Keywords: 3j coefficients, 3j symbols, Clebsch-Gordan coefficients, 
+    //               Racah coefficients, vector addition coefficients,
+    //               Wigner coefficients
+    //     Author:   Gordon, R. G., Harvard University
+    //               Schulten, K., Max Planck Institute
+    //     Revision history  (YYMMDD)
+    //     750101  DATE WRITTEN
+    //     880515  SLATEC prologue added by G. C. Nielson, NBS; parameters
+    //             HUGE and TINY revised to depend on D1MACH.
+    //     891229  Prologue description rewritten; other prologue sections
+    //             revised; LMATCH (location of match point for recurrences)
+    //             removed from argument list; argument errflag changed to serve
+    //             only as an error flag (previously, in cases without error,
+    //             it returned the number of scalings); number of error codes
+    //             increased to provide more precise error information;
+    //             program comments revised; SLATEC error handler calls
+    //             introduced to enable printing of error messages to meet
+    //             SLATEC standards. These changes were done by D. W. Lozier,
+    //             M. A. McClain and J. M. Smith of the National Institute
+    //             of Standards and Technology, formerly NBS.
+    //     910415  Mixed type expressions eliminated; variable C1 initialized; 
+    //             description of THRCOF expanded. These changes were done by
+    //             D. W. Lozier.
+    //  7. Rewritting of the SLATEX algorithm in C++ and adaption to the
+    //     Matpack C++ Numerics and Graphics Library by Berndt M. Gammel
+    //     in June 1997.
+    //
+    //-----------------------------------------------------------------------------//
 
 
-		public static void ThreeJSymbolJ (double l2, double l3, double m2, double m3, 
-			out double l1min, out double l1max, double[] thrcof, int ndim, 
-			out int errflag)
-		{
-			const double zero = 0.0, eps = 0.01, one = 1.0, two = 2.0, three = 3.0;
+    public static void ThreeJSymbolJ (double l2, double l3, double m2, double m3, 
+      out double l1min, out double l1max, double[] thrcof, int ndim, 
+      out int errflag)
+    {
+      const double zero = 0.0, eps = 0.01, one = 1.0, two = 2.0, three = 3.0;
 
-			int nfin, nlim, n, index, lstep, nfinp1, nfinp2, nfinp3, nstep2;
-			double x, y, denom = 0.0, cnorm, ratio, a1, a2, c1, c2, l1, m1, x1, x2, x3, 
-				y1, y2, y3, oldfac, dv, newfac, sumbac = 0.0, thresh, a1s, a2s, 
-				sumfor, sumuni, sum1, sum2, c1old = 0.0, sign1, sign2;
+      int nfin, nlim, n, index, lstep, nfinp1, nfinp2, nfinp3, nstep2;
+      double x, y, denom = 0.0, cnorm, ratio, a1, a2, c1, c2, l1, m1, x1, x2, x3, 
+        y1, y2, y3, oldfac, dv, newfac, sumbac = 0.0, thresh, a1s, a2s, 
+        sumfor, sumuni, sum1, sum2, c1old = 0.0, sign1, sign2;
 
 	
-			errflag = 0;
+      errflag = 0;
 
-			// "huge" is the square root of one twentieth of the largest floating
-			// point number, approximately.
-			double huge   = Math.Sqrt(DBL_MAX / 20.0),
-				srhuge = Math.Sqrt(huge),
-				tiny   = one / huge,
-				srtiny = one / srhuge;
+      // "huge" is the square root of one twentieth of the largest floating
+      // point number, approximately.
+      double huge   = Math.Sqrt(DBL_MAX / 20.0),
+        srhuge = Math.Sqrt(huge),
+        tiny   = one / huge,
+        srtiny = one / srhuge;
 
-			// lmatch = zero
-			m1 = -m2-m3;
+      // lmatch = zero
+      m1 = -m2-m3;
 
-			//  Check error conditions 1 and 2.
-			if (l2 - Math.Abs(m2) + eps < zero || l3 - Math.Abs(m3) + eps < zero) 
-			{
-				errflag = 1;
-				throw new ArgumentException("l2-abs(m2) or l3-abs(m3) less than zero.");
-			} 
-			else if (Math.IEEERemainder(l2 + Math.Abs(m2) + eps, one) >= eps + eps || 
-				Math.IEEERemainder(l3 + Math.Abs(m3) + eps, one) >= eps + eps) 
-			{
-				errflag = 2;
-				throw new ArgumentException("l2+abs(m2) or l3+abs(m3) not integer.");
-			}
+      //  Check error conditions 1 and 2.
+      if (l2 - Math.Abs(m2) + eps < zero || l3 - Math.Abs(m3) + eps < zero) 
+      {
+        errflag = 1;
+        throw new ArgumentException("l2-abs(m2) or l3-abs(m3) less than zero.");
+      } 
+      else if (Math.IEEERemainder(l2 + Math.Abs(m2) + eps, one) >= eps + eps || 
+        Math.IEEERemainder(l3 + Math.Abs(m3) + eps, one) >= eps + eps) 
+      {
+        errflag = 2;
+        throw new ArgumentException("l2+abs(m2) or l3+abs(m3) not integer.");
+      }
 
-			//  Limits for l1
-			l1min = Math.Max(Math.Abs(l2-l3),Math.Abs(m1));
-			l1max = l2 + l3;
+      //  Limits for l1
+      l1min = Math.Max(Math.Abs(l2-l3),Math.Abs(m1));
+      l1max = l2 + l3;
 
-			//  Check error condition 3.
-			if (Math.IEEERemainder(l1max - l1min + eps, one) >= eps + eps) 
-			{
-				errflag = 3;
-				throw new ArgumentException("l1max-l1min not integer.");
-			}
-			if (l1min < l1max - eps) goto L20;
-			if (l1min < l1max + eps) goto L10;
+      //  Check error condition 3.
+      if (Math.IEEERemainder(l1max - l1min + eps, one) >= eps + eps) 
+      {
+        errflag = 3;
+        throw new ArgumentException("l1max-l1min not integer.");
+      }
+      if (l1min < l1max - eps) goto L20;
+      if (l1min < l1max + eps) goto L10;
 
-			//  Check error condition 4.
-			errflag = 4;    
-			throw new ArgumentException("l1min greater than l1max.");
+      //  Check error condition 4.
+      errflag = 4;    
+      throw new ArgumentException("l1min greater than l1max.");
 
-			//  This is reached in case that l1 can take only one value,
-			//  i.e. l1min = l1max
+      //  This is reached in case that l1 can take only one value,
+      //  i.e. l1min = l1max
 
-			L10:
-				// lscale = 0
-				thrcof[0] = (odd((int)(Math.Abs(l2+m2-l3+m3)+eps)) ? -one : one) / Math.Sqrt(l1min+l2+l3+one);
-			return;
+      L10:
+        // lscale = 0
+        thrcof[0] = (odd((int)(Math.Abs(l2+m2-l3+m3)+eps)) ? -one : one) / Math.Sqrt(l1min+l2+l3+one);
+      return;
 
-			//  This is reached in case that l1 takes more than one value,
-			//  i.e. l1min < l1max.
+      //  This is reached in case that l1 takes more than one value,
+      //  i.e. l1min < l1max.
 
-			L20:
-				// lscale = 0
-				nfin = (int)(l1max - l1min + one + eps);
+      L20:
+        // lscale = 0
+        nfin = (int)(l1max - l1min + one + eps);
   
-			//  Check error condition 5.
-			if (ndim - nfin < 0) 
-			{  
-				errflag = 5;
-				throw new ArgumentException("Dimension of result array for 3j coefficients too small.");
-			}
+      //  Check error condition 5.
+      if (ndim - nfin < 0) 
+      {  
+        errflag = 5;
+        throw new ArgumentException("Dimension of result array for 3j coefficients too small.");
+      }
 
-			//  Starting forward recursion from l1min taking nstep1 steps
+      //  Starting forward recursion from l1min taking nstep1 steps
 
-			l1 = l1min;
-			newfac = 0.0;
-			c1 = 0.0;
-			thrcof[0] = srtiny;
-			sum1 = (l1 + l1 + one) * tiny;
+      l1 = l1min;
+      newfac = 0.0;
+      c1 = 0.0;
+      thrcof[0] = srtiny;
+      sum1 = (l1 + l1 + one) * tiny;
 
-			lstep = 1;
+      lstep = 1;
 
-			L30:
-				++lstep;
-			l1 += one;
+      L30:
+        ++lstep;
+      l1 += one;
 
-			oldfac = newfac;
-			a1 = (l1+l2+l3+one) * (l1-l2+l3) * (l1+l2-l3) * (-l1+l2+l3+one);
-			a2 = (l1 + m1) * (l1 - m1);
-			newfac = Math.Sqrt(a1 * a2);
-			if (l1 < one + eps)  goto L40;
+      oldfac = newfac;
+      a1 = (l1+l2+l3+one) * (l1-l2+l3) * (l1+l2-l3) * (-l1+l2+l3+one);
+      a2 = (l1 + m1) * (l1 - m1);
+      newfac = Math.Sqrt(a1 * a2);
+      if (l1 < one + eps)  goto L40;
 
-			dv = -l2 * (l2+one) * m1 + l3 * (l3+one) * m1 + l1 * (l1-one) * (m3-m2);
-			denom = (l1 - one) * newfac;
+      dv = -l2 * (l2+one) * m1 + l3 * (l3+one) * m1 + l1 * (l1-one) * (m3-m2);
+      denom = (l1 - one) * newfac;
   
-			if (lstep - 2 > 0) c1old = Math.Abs(c1);
-			c1 = -(l1 + l1 - one) * dv / denom;
-			goto L50;
+      if (lstep - 2 > 0) c1old = Math.Abs(c1);
+      c1 = -(l1 + l1 - one) * dv / denom;
+      goto L50;
 
-			//  If l1 = 1, (l1-1) has to be factored out of dv, hence
+      //  If l1 = 1, (l1-1) has to be factored out of dv, hence
 
-			L40:
-				c1 = -(l1 + l1 - one) * l1 * (m3 - m2) / newfac;
+      L40:
+        c1 = -(l1 + l1 - one) * l1 * (m3 - m2) / newfac;
 
-			L50:
-				if (lstep > 2) goto L60;
+      L50:
+        if (lstep > 2) goto L60;
 
-			//  if l1 = l1min + 1, the third term in the recursion equation vanishes, 
-			//  hence
-			x = srtiny * c1;
-			thrcof[1] = x;
-			sum1 += tiny * (l1 + l1 + one) * c1 * c1;
-			if (lstep == nfin) goto L220;
-			goto L30;
+      //  if l1 = l1min + 1, the third term in the recursion equation vanishes, 
+      //  hence
+      x = srtiny * c1;
+      thrcof[1] = x;
+      sum1 += tiny * (l1 + l1 + one) * c1 * c1;
+      if (lstep == nfin) goto L220;
+      goto L30;
 
-			L60:
-				c2 = -l1 * oldfac / denom;
+      L60:
+        c2 = -l1 * oldfac / denom;
 
-			//  Recursion to the next 3j coefficient X
+      //  Recursion to the next 3j coefficient X
 
-			x = c1 * thrcof[lstep - 2] + c2 * thrcof[lstep - 3];
-			thrcof[lstep-1] = x;
-			sumfor = sum1;
-			sum1 += (l1 + l1 + one) * x * x;
-			if (lstep == nfin) goto L100;
+      x = c1 * thrcof[lstep - 2] + c2 * thrcof[lstep - 3];
+      thrcof[lstep-1] = x;
+      sumfor = sum1;
+      sum1 += (l1 + l1 + one) * x * x;
+      if (lstep == nfin) goto L100;
 
-			//  See if last unnormalized 3j coefficient exceeds srhuge
+      //  See if last unnormalized 3j coefficient exceeds srhuge
 
-			if (Math.Abs(x) < srhuge) goto L80;
+      if (Math.Abs(x) < srhuge) goto L80;
 
-			//  This is reached if last 3j coefficient larger than srhuge,
-			//  so that the recursion series thrcof(1), ... , thrcof(lstep)
-			//  has to be rescaled to prevent overflow
+      //  This is reached if last 3j coefficient larger than srhuge,
+      //  so that the recursion series thrcof(1), ... , thrcof(lstep)
+      //  has to be rescaled to prevent overflow
 
-			// lscale = lscale + 1
-			for (int i = 0; i < lstep; ++i) 
-			{
-				if (Math.Abs(thrcof[i]) < srtiny) thrcof[i] = zero;
-				thrcof[i] /= srhuge;
-			}
-			sum1 /= huge;
-			sumfor /= huge;
-			x /= srhuge;
+      // lscale = lscale + 1
+      for (int i = 0; i < lstep; ++i) 
+      {
+        if (Math.Abs(thrcof[i]) < srtiny) thrcof[i] = zero;
+        thrcof[i] /= srhuge;
+      }
+      sum1 /= huge;
+      sumfor /= huge;
+      x /= srhuge;
 
-			//  As long as abs(c1) is decreasing, the recursion proceeds towards
-			//  increasing 3j values and, hence, is numerically stable.  once
-			//  an increase of abs(c1) is detected, the recursion direction is
-			//  reversed.
+      //  As long as abs(c1) is decreasing, the recursion proceeds towards
+      //  increasing 3j values and, hence, is numerically stable.  once
+      //  an increase of abs(c1) is detected, the recursion direction is
+      //  reversed.
 
-			L80:
-				if (c1old - Math.Abs(c1) <= 0.0) goto L100;
-				else  goto L30;
+      L80:
+        if (c1old - Math.Abs(c1) <= 0.0) goto L100;
+        else  goto L30;
 
-			//  Keep three 3j coefficients around lmatch for comparison with
-			//  backward recursion.
+      //  Keep three 3j coefficients around lmatch for comparison with
+      //  backward recursion.
 
-			L100:
-				// lmatch = l1 - 1
-				x1 = x;
-			x2 = thrcof[lstep - 2];
-			x3 = thrcof[lstep - 3];
-			nstep2 = nfin - lstep + 3;
+      L100:
+        // lmatch = l1 - 1
+        x1 = x;
+      x2 = thrcof[lstep - 2];
+      x3 = thrcof[lstep - 3];
+      nstep2 = nfin - lstep + 3;
 
-			//  Starting backward recursion from l1max taking nstep2 steps, so
-			//  that forward and backward recursion overlap at three points
-			//  l1 = lmatch+1, lmatch, lmatch-1.
+      //  Starting backward recursion from l1max taking nstep2 steps, so
+      //  that forward and backward recursion overlap at three points
+      //  l1 = lmatch+1, lmatch, lmatch-1.
 
-			nfinp1 = nfin + 1;
-			nfinp2 = nfin + 2;
-			nfinp3 = nfin + 3;
-			l1 = l1max;
-			thrcof[nfin-1] = srtiny;
-			sum2 = tiny * (l1 + l1 + one);
+      nfinp1 = nfin + 1;
+      nfinp2 = nfin + 2;
+      nfinp3 = nfin + 3;
+      l1 = l1max;
+      thrcof[nfin-1] = srtiny;
+      sum2 = tiny * (l1 + l1 + one);
 
-			l1 += two;
-			lstep = 1;
-			L110:
-				++lstep;
-			l1 -= one;
+      l1 += two;
+      lstep = 1;
+      L110:
+        ++lstep;
+      l1 -= one;
 
-			oldfac = newfac;
-			a1s = (l1+l2+l3) * (l1-l2+l3-one) * (l1+l2-l3-one) * (-l1+l2+l3+two);
-			a2s = (l1+m1-one) * (l1-m1-one);
-			newfac = Math.Sqrt(a1s * a2s);
+      oldfac = newfac;
+      a1s = (l1+l2+l3) * (l1-l2+l3-one) * (l1+l2-l3-one) * (-l1+l2+l3+two);
+      a2s = (l1+m1-one) * (l1-m1-one);
+      newfac = Math.Sqrt(a1s * a2s);
 
-			dv = -l2 * (l2+one) * m1 + l3 * (l3+one) * m1 + l1 * (l1-one) * (m3-m2);
+      dv = -l2 * (l2+one) * m1 + l3 * (l3+one) * m1 + l1 * (l1-one) * (m3-m2);
 
-			denom = l1 * newfac;
-			c1 = -(l1 + l1 - one) * dv / denom;
-			if (lstep > 2) goto L120;
+      denom = l1 * newfac;
+      c1 = -(l1 + l1 - one) * dv / denom;
+      if (lstep > 2) goto L120;
 
-			// If l1 = l1max + 1, the third term in the recursion formula vanishes
+      // If l1 = l1max + 1, the third term in the recursion formula vanishes
 
-			y = srtiny * c1;
-			thrcof[nfin - 2] = y;
-			sumbac = sum2;
-			sum2 += tiny * (l1 + l1 - three) * c1 * c1;
-			goto L110;
+      y = srtiny * c1;
+      thrcof[nfin - 2] = y;
+      sumbac = sum2;
+      sum2 += tiny * (l1 + l1 - three) * c1 * c1;
+      goto L110;
 
-			L120:
-				c2 = -(l1 - one) * oldfac / denom;
+      L120:
+        c2 = -(l1 - one) * oldfac / denom;
 
-			//  Recursion to the next 3j coefficient y
+      //  Recursion to the next 3j coefficient y
 
-			y = c1 * thrcof[nfinp2 - lstep-1] + c2 * thrcof[nfinp3 - lstep-1];
+      y = c1 * thrcof[nfinp2 - lstep-1] + c2 * thrcof[nfinp3 - lstep-1];
 
-			if (lstep == nstep2) goto L200;
+      if (lstep == nstep2) goto L200;
 
-			thrcof[nfinp1 - lstep-1] = y;
-			sumbac = sum2;
-			sum2 += (l1 + l1 - three) * y * y;
+      thrcof[nfinp1 - lstep-1] = y;
+      sumbac = sum2;
+      sum2 += (l1 + l1 - three) * y * y;
 
-			// See if last unnormalized 3j coefficient exceeds SRHUGE
+      // See if last unnormalized 3j coefficient exceeds SRHUGE
 
-			if (Math.Abs(y) < srhuge) goto L110;
+      if (Math.Abs(y) < srhuge) goto L110;
 
-			// This is reached if last 3j coefficient larger than srhuge,
-			// so that the recursion series thrcof(nfin), ... ,thrcof(nfin-lstep+1) 
-			// has to be rescaled to prevent overflow
+      // This is reached if last 3j coefficient larger than srhuge,
+      // so that the recursion series thrcof(nfin), ... ,thrcof(nfin-lstep+1) 
+      // has to be rescaled to prevent overflow
 
-			// lscale = lscale + 1
-			for (int i = 1; i <= lstep; ++i) 
-			{
-				index = nfin - i ;
-				if (Math.Abs(thrcof[index]) < srtiny) thrcof[index] = zero;
-				thrcof[index] /= srhuge;
-			}
-			sum2 /= huge;
-			sumbac /= huge;
+      // lscale = lscale + 1
+      for (int i = 1; i <= lstep; ++i) 
+      {
+        index = nfin - i ;
+        if (Math.Abs(thrcof[index]) < srtiny) thrcof[index] = zero;
+        thrcof[index] /= srhuge;
+      }
+      sum2 /= huge;
+      sumbac /= huge;
 
-			goto L110;
+      goto L110;
 
-			// The forward recursion 3j coefficients x1, x2, x3 are to be matched
-			// with the corresponding backward recursion values y1, y2, y3.
+      // The forward recursion 3j coefficients x1, x2, x3 are to be matched
+      // with the corresponding backward recursion values y1, y2, y3.
 
-			L200:
-				y3 = y;
-			y2 = thrcof[nfinp2 - lstep-1];
-			y1 = thrcof[nfinp3 - lstep-1];
+      L200:
+        y3 = y;
+      y2 = thrcof[nfinp2 - lstep-1];
+      y1 = thrcof[nfinp3 - lstep-1];
 
-			//  Determine now ratio such that yi = ratio * xi  (i=1,2,3) holds
-			//  with minimal error.
+      //  Determine now ratio such that yi = ratio * xi  (i=1,2,3) holds
+      //  with minimal error.
 
-			ratio = (x1*y1 + x2*y2 + x3*y3) / (x1*x1 + x2*x2 + x3*x3);
-			nlim = nfin - nstep2 + 1;
+      ratio = (x1*y1 + x2*y2 + x3*y3) / (x1*x1 + x2*x2 + x3*x3);
+      nlim = nfin - nstep2 + 1;
 
-			if (Math.Abs(ratio) < one) goto L211;
+      if (Math.Abs(ratio) < one) goto L211;
 
-			for (n = 0; n < nlim; ++n) 
-				thrcof[n] = ratio * thrcof[n];
-			sumuni = ratio * ratio * sumfor + sumbac;
-			goto L230;
+      for (n = 0; n < nlim; ++n) 
+        thrcof[n] = ratio * thrcof[n];
+      sumuni = ratio * ratio * sumfor + sumbac;
+      goto L230;
 
-			L211:
-				++nlim;
-			ratio = one / ratio;
-			for (n = nlim; n <= nfin; ++n)
-				thrcof[n-1] = ratio * thrcof[n-1];
-			sumuni = sumfor + ratio * ratio * sumbac;
-			goto L230;
+      L211:
+        ++nlim;
+      ratio = one / ratio;
+      for (n = nlim; n <= nfin; ++n)
+        thrcof[n-1] = ratio * thrcof[n-1];
+      sumuni = sumfor + ratio * ratio * sumbac;
+      goto L230;
 
-			L220:
-				sumuni = sum1;
+      L220:
+        sumuni = sum1;
 
-			//  Normalize 3j coefficients
+      //  Normalize 3j coefficients
 
-			L230:
-				cnorm = one / Math.Sqrt(sumuni);
+      L230:
+        cnorm = one / Math.Sqrt(sumuni);
 
-			//  Sign convention for last 3j coefficient determines overall phase
+      //  Sign convention for last 3j coefficient determines overall phase
 
-			sign1 = Math.Sign(thrcof[nfin-1]);
-			sign2 = odd((int)(Math.Abs(l2 + m2 - l3 + m3) + eps)) ? -one : one;
-			if (sign1 * sign2 <= 0.0) cnorm = -cnorm;
+      sign1 = Math.Sign(thrcof[nfin-1]);
+      sign2 = odd((int)(Math.Abs(l2 + m2 - l3 + m3) + eps)) ? -one : one;
+      if (sign1 * sign2 <= 0.0) cnorm = -cnorm;
 
-			if (Math.Abs(cnorm) < one) goto L250;
+      if (Math.Abs(cnorm) < one) goto L250;
 
-			for (n = 0; n < nfin; ++n) 
-				thrcof[n] = cnorm * thrcof[n];
+      for (n = 0; n < nfin; ++n) 
+        thrcof[n] = cnorm * thrcof[n];
 
-			return;
+      return;
 
-			L250:
-				thresh = tiny / Math.Abs(cnorm);
-			for (n = 0; n < nfin; ++n) 
-			{
-				if (Math.Abs(thrcof[n]) < thresh) thrcof[n] = zero;
-				thrcof[n] = cnorm * thrcof[n];
-			}
-		} 
-		#endregion
+      L250:
+        thresh = tiny / Math.Abs(cnorm);
+      for (n = 0; n < nfin; ++n) 
+      {
+        if (Math.Abs(thrcof[n]) < thresh) thrcof[n] = zero;
+        thrcof[n] = cnorm * thrcof[n];
+      }
+    } 
+    #endregion
 
-		#region ThreeJSymbolM
+    #region ThreeJSymbolM
 
-		//-----------------------------------------------------------------------------//
-		//
-		// void ThreeJSymbolM (double l1, double l2, double l3, double m1, 
-		//                     double &m2min, double &m2max, double *thrcof, int ndim, 
-		//                     int &errflag)
-		//
-		// Evaluate the Wigner 3j symbol 
-		//
-		//       g(m2) = ( l1  l2     l3  )
-		//               ( m1  m2  -m1-m2 )
-		// 
-		// for all allowed values of m2, the other parameters being held fixed.
-		//
-		// Input Arguments:
-		// ----------------
-		//
-		//   double l1 
-		//   double l2
-		//   double l3
-		//   double m1		Parameters in 3j symbol.
-		//
-		//   int  ndim 		Declared length of thrcof in calling program.
-		//
-		// Output Arguments:
-		// -----------------
-		//
-		//   double &m2min	Smallest allowable m2 in 3j symbol.
-		//   double &m2max	Largest allowable m2 in 3j symbol.
-		//   double *thrcof	Set of 3j coefficients generated by evaluating the
-		//                      3j symbol for all allowed values of m2.  thrcof(i)
-		//                      will contain g(m2min+i), i=0,2,...,m2max-m2min.
-		//
-		//   int &errflag	Error flag.
-		//                 	errflag=0  No errors.
-		//                 	errflag=1  Either l1 < abs(m1) or l1+abs(m1) non-integer.
-		//                 	errflag=2  abs(l1-l2)<= l3 <= l1+l2 not satisfied.
-		//                 	errflag=3  l1+l2+l3 not an integer.
-		//                 	errflag=4  m2max-m2min not an integer.
-		//                 	errflag=5  m2max less than m2min.
-		//                 	errflag=6  ndim less than m2max-m2min+1.
-		// Description:
-		// ------------
-		//
-		// Although conventionally the parameters of the vector addition
-		// coefficients satisfy certain restrictions, such as being integers
-		// or integers plus 1/2, the restrictions imposed on input to this
-		// subroutine are somewhat weaker. See, for example, Section 27.9 of
-		// Abramowitz and Stegun or Appendix C of Volume II of A. Messiah.
-		//
-		// The restrictions imposed by this subroutine are
-		//
-		//       1. l1 >= abs(m1) and l1+abs(m1) must be an integer
-		//       2. abs(l1-l2) <= l3 <= l1+l2
-		//       3. l1+l2+l3 must be an integer
-		//       4. m2max-m2min must be an integer, where
-		//          m2max=min(l2,l3-m1) and m2min=max(-l2,-l3-m1)
-		//
-		// If the conventional restrictions are satisfied, then these
-		// restrictions are also met.
-		//
-		// The user should be cautious in using input parameters that do
-		// not satisfy the conventional restrictions. For example, the
-		// the subroutine produces values of
-		//       g(m2) = (0.75 1.50   1.75  )
-		//               (0.25  m2  -0.25-m2)
-		// for m2=-1.5,-0.5,0.5,1.5 but none of the symmetry properties of the
-		// 3j symbol, set forth on page 1056 of Messiah, is satisfied.
-		//
-		// The subroutine generates g(m2min), g(m2min+1), ..., g(m2max) 
-		// where m2min and m2max are defined above. The sequence g(m2) is 
-		// generated by a three-term recurrence algorithm with scaling to 
-		// control overflow. Both backward and forward recurrence are used to 
-		// maintain numerical stability. The two recurrence sequences are 
-		// matched at an interior point and are normalized from the unitary 
-		// property of 3j coefficients and Wigner's phase convention. 
-		//
-		// The algorithm is suited to applications in which large quantum 
-		// numbers arise, such as in molecular dynamics. 
-		//
-		// References:
-		// -----------
-		//  1. Abramowitz, M., and Stegun, I. A., Eds., Handbook
-		//     of Mathematical Functions with Formulas, Graphs
-		//     and Mathematical Tables, NBS Applied Mathematics
-		//     Series 55, June 1964 and subsequent printings.
-		//  2. Messiah, Albert., Quantum Mechanics, Volume II,
-		//     North-Holland Publishing Company, 1963.
-		//  3. Schulten, Klaus and Gordon, Roy G., Exact recursive
-		//     evaluation of 3j and 6j coefficients for quantum-
-		//     mechanical coupling of angular momenta, J Math
-		//     Phys, v 16, no. 10, October 1975, pp. 1961-1970.
-		//  4. Schulten, Klaus and Gordon, Roy G., Semiclassical
-		//     approximations to 3j  and 6j coefficients for
-		//     quantum-mechanical coupling of angular momenta,
-		//     J Math Phys, v 16, no. 10, October 1975, pp. 1971-1988.
-		//  5. Schulten, Klaus and Gordon, Roy G., Recursive
-		//     evaluation of 3j and 6j coefficients, Computer
-		//     Phys Comm, v 11, 1976, pp. 269-278.
-		//  6. SLATEC library, category  C19, 
-		//     double precision algorithm DRC3JM.F
-		//     Keywords: 3j coefficients, 3j symbols, Clebsch-Gordan coefficients, 
-		//               Racah coefficients, vector addition coefficients,
-		//               Wigner coefficients
-		//     Author:   Gordon, R. G., Harvard University
-		//               Schulten, K., Max Planck Institute
-		//     Revision history  (YYMMDD)
-		//     750101  DATE WRITTEN 
-		//     880515  SLATEC prologue added by G. C. Nielson, NBS; parameters 
-		//             HUGE and TINY revised to depend on D1MACH. 
-		//     891229  Prologue description rewritten; other prologue sections 
-		//             revised; MMATCH (location of match point for recurrences) 
-		//             removed from argument list; argument IER changed to serve 
-		//             only as an error flag (previously, in cases without error, 
-		//             it returned the number of scalings); number of error codes 
-		//             increased to provide more precise error information; 
-		//             program comments revised; SLATEC error handler calls 
-		//             introduced to enable printing of error messages to meet 
-		//             SLATEC standards. These changes were done by D. W. Lozier, 
-		//             M. A. McClain and J. M. Smith of the National Institute 
-		//             of Standards and Technology, formerly NBS. 
-		//     910415  Mixed type expressions eliminated; variable C1 initialized; 
-		//             description of THRCOF expanded. These changes were done by 
-		//             D. W. Lozier.
-		//  7. Rewritting of the SLATEX algorithm in C++ and adaption to the
-		//     Matpack C++ Numerics and Graphics Library by Berndt M. Gammel
-		//     in June 1997.
-		//
-		//-----------------------------------------------------------------------------//
+    //-----------------------------------------------------------------------------//
+    //
+    // void ThreeJSymbolM (double l1, double l2, double l3, double m1, 
+    //                     double &m2min, double &m2max, double *thrcof, int ndim, 
+    //                     int &errflag)
+    //
+    // Evaluate the Wigner 3j symbol 
+    //
+    //       g(m2) = ( l1  l2     l3  )
+    //               ( m1  m2  -m1-m2 )
+    // 
+    // for all allowed values of m2, the other parameters being held fixed.
+    //
+    // Input Arguments:
+    // ----------------
+    //
+    //   double l1 
+    //   double l2
+    //   double l3
+    //   double m1		Parameters in 3j symbol.
+    //
+    //   int  ndim 		Declared length of thrcof in calling program.
+    //
+    // Output Arguments:
+    // -----------------
+    //
+    //   double &m2min	Smallest allowable m2 in 3j symbol.
+    //   double &m2max	Largest allowable m2 in 3j symbol.
+    //   double *thrcof	Set of 3j coefficients generated by evaluating the
+    //                      3j symbol for all allowed values of m2.  thrcof(i)
+    //                      will contain g(m2min+i), i=0,2,...,m2max-m2min.
+    //
+    //   int &errflag	Error flag.
+    //                 	errflag=0  No errors.
+    //                 	errflag=1  Either l1 < abs(m1) or l1+abs(m1) non-integer.
+    //                 	errflag=2  abs(l1-l2)<= l3 <= l1+l2 not satisfied.
+    //                 	errflag=3  l1+l2+l3 not an integer.
+    //                 	errflag=4  m2max-m2min not an integer.
+    //                 	errflag=5  m2max less than m2min.
+    //                 	errflag=6  ndim less than m2max-m2min+1.
+    // Description:
+    // ------------
+    //
+    // Although conventionally the parameters of the vector addition
+    // coefficients satisfy certain restrictions, such as being integers
+    // or integers plus 1/2, the restrictions imposed on input to this
+    // subroutine are somewhat weaker. See, for example, Section 27.9 of
+    // Abramowitz and Stegun or Appendix C of Volume II of A. Messiah.
+    //
+    // The restrictions imposed by this subroutine are
+    //
+    //       1. l1 >= abs(m1) and l1+abs(m1) must be an integer
+    //       2. abs(l1-l2) <= l3 <= l1+l2
+    //       3. l1+l2+l3 must be an integer
+    //       4. m2max-m2min must be an integer, where
+    //          m2max=min(l2,l3-m1) and m2min=max(-l2,-l3-m1)
+    //
+    // If the conventional restrictions are satisfied, then these
+    // restrictions are also met.
+    //
+    // The user should be cautious in using input parameters that do
+    // not satisfy the conventional restrictions. For example, the
+    // the subroutine produces values of
+    //       g(m2) = (0.75 1.50   1.75  )
+    //               (0.25  m2  -0.25-m2)
+    // for m2=-1.5,-0.5,0.5,1.5 but none of the symmetry properties of the
+    // 3j symbol, set forth on page 1056 of Messiah, is satisfied.
+    //
+    // The subroutine generates g(m2min), g(m2min+1), ..., g(m2max) 
+    // where m2min and m2max are defined above. The sequence g(m2) is 
+    // generated by a three-term recurrence algorithm with scaling to 
+    // control overflow. Both backward and forward recurrence are used to 
+    // maintain numerical stability. The two recurrence sequences are 
+    // matched at an interior point and are normalized from the unitary 
+    // property of 3j coefficients and Wigner's phase convention. 
+    //
+    // The algorithm is suited to applications in which large quantum 
+    // numbers arise, such as in molecular dynamics. 
+    //
+    // References:
+    // -----------
+    //  1. Abramowitz, M., and Stegun, I. A., Eds., Handbook
+    //     of Mathematical Functions with Formulas, Graphs
+    //     and Mathematical Tables, NBS Applied Mathematics
+    //     Series 55, June 1964 and subsequent printings.
+    //  2. Messiah, Albert., Quantum Mechanics, Volume II,
+    //     North-Holland Publishing Company, 1963.
+    //  3. Schulten, Klaus and Gordon, Roy G., Exact recursive
+    //     evaluation of 3j and 6j coefficients for quantum-
+    //     mechanical coupling of angular momenta, J Math
+    //     Phys, v 16, no. 10, October 1975, pp. 1961-1970.
+    //  4. Schulten, Klaus and Gordon, Roy G., Semiclassical
+    //     approximations to 3j  and 6j coefficients for
+    //     quantum-mechanical coupling of angular momenta,
+    //     J Math Phys, v 16, no. 10, October 1975, pp. 1971-1988.
+    //  5. Schulten, Klaus and Gordon, Roy G., Recursive
+    //     evaluation of 3j and 6j coefficients, Computer
+    //     Phys Comm, v 11, 1976, pp. 269-278.
+    //  6. SLATEC library, category  C19, 
+    //     double precision algorithm DRC3JM.F
+    //     Keywords: 3j coefficients, 3j symbols, Clebsch-Gordan coefficients, 
+    //               Racah coefficients, vector addition coefficients,
+    //               Wigner coefficients
+    //     Author:   Gordon, R. G., Harvard University
+    //               Schulten, K., Max Planck Institute
+    //     Revision history  (YYMMDD)
+    //     750101  DATE WRITTEN 
+    //     880515  SLATEC prologue added by G. C. Nielson, NBS; parameters 
+    //             HUGE and TINY revised to depend on D1MACH. 
+    //     891229  Prologue description rewritten; other prologue sections 
+    //             revised; MMATCH (location of match point for recurrences) 
+    //             removed from argument list; argument IER changed to serve 
+    //             only as an error flag (previously, in cases without error, 
+    //             it returned the number of scalings); number of error codes 
+    //             increased to provide more precise error information; 
+    //             program comments revised; SLATEC error handler calls 
+    //             introduced to enable printing of error messages to meet 
+    //             SLATEC standards. These changes were done by D. W. Lozier, 
+    //             M. A. McClain and J. M. Smith of the National Institute 
+    //             of Standards and Technology, formerly NBS. 
+    //     910415  Mixed type expressions eliminated; variable C1 initialized; 
+    //             description of THRCOF expanded. These changes were done by 
+    //             D. W. Lozier.
+    //  7. Rewritting of the SLATEX algorithm in C++ and adaption to the
+    //     Matpack C++ Numerics and Graphics Library by Berndt M. Gammel
+    //     in June 1997.
+    //
+    //-----------------------------------------------------------------------------//
 
 
-		public static void ThreeJSymbolM (double l1, double l2, double l3, double m1, 
-			out double m2min, out double m2max, double[] thrcof, int ndim, 
-			out int errflag)
-		{
-			const double zero = 0.0, eps = 0.01, one = 1.0, two = 2.0;
+    public static void ThreeJSymbolM (double l1, double l2, double l3, double m1, 
+      out double m2min, out double m2max, double[] thrcof, int ndim, 
+      out int errflag)
+    {
+      const double zero = 0.0, eps = 0.01, one = 1.0, two = 2.0;
 
-			int nfin, nlim, i, n, index, lstep, nfinp1, nfinp2, nfinp3, nstep2;
-			double oldfac, dv, newfac, sumbac = 0.0, thresh, a1s, sumfor, sumuni, 
-				sum1, sum2, x, y, m2, m3, x1, x2, x3, y1, y2, y3, cnorm, 
-				ratio, a1, c1, c2, c1old = 0.0, sign1, sign2;
+      int nfin, nlim, i, n, index, lstep, nfinp1, nfinp2, nfinp3, nstep2;
+      double oldfac, dv, newfac, sumbac = 0.0, thresh, a1s, sumfor, sumuni, 
+        sum1, sum2, x, y, m2, m3, x1, x2, x3, y1, y2, y3, cnorm, 
+        ratio, a1, c1, c2, c1old = 0.0, sign1, sign2;
 
 			
 
-			errflag = 0;
+      errflag = 0;
 
-			// "huge" is the square root of one twentieth of the largest floating
-			// point number, approximately.
-			double huge   = Math.Sqrt(DBL_MAX / 20.0),
-				srhuge = Math.Sqrt(huge),
-				tiny   = one / huge,
-				srtiny = one / srhuge;
+      // "huge" is the square root of one twentieth of the largest floating
+      // point number, approximately.
+      double huge   = Math.Sqrt(DBL_MAX / 20.0),
+        srhuge = Math.Sqrt(huge),
+        tiny   = one / huge,
+        srtiny = one / srhuge;
 
-			// lmatch = zero
+      // lmatch = zero
 
-			//  Check error conditions 1, 2, and 3. 
-			if (l1 - Math.Abs(m1) + eps < zero 
-				|| Math.IEEERemainder(l1 + Math.Abs(m1) + eps, one) >= eps + eps) 
-			{
-				errflag = 1;   
-				throw new ArgumentException("l1-abs(m1) less than zero or l1+abs(m1) not integer.");
-			} 
-			else if (l1+l2-l3 < -eps || l1-l2+l3 < -eps || -(l1) + l2+l3 < -eps) 
-			{
-				errflag = 2;
-				throw new ArgumentException("l1, l2, l3 do not satisfy triangular condition.");
-			} 
-			else if (Math.IEEERemainder(l1 + l2 + l3 + eps, one) >= eps + eps) 
-			{
-				errflag = 3;
-				throw new ArgumentException("l1+l2+l3 not integer.");
-			}
+      //  Check error conditions 1, 2, and 3. 
+      if (l1 - Math.Abs(m1) + eps < zero 
+        || Math.IEEERemainder(l1 + Math.Abs(m1) + eps, one) >= eps + eps) 
+      {
+        errflag = 1;   
+        throw new ArgumentException("l1-abs(m1) less than zero or l1+abs(m1) not integer.");
+      } 
+      else if (l1+l2-l3 < -eps || l1-l2+l3 < -eps || -(l1) + l2+l3 < -eps) 
+      {
+        errflag = 2;
+        throw new ArgumentException("l1, l2, l3 do not satisfy triangular condition.");
+      } 
+      else if (Math.IEEERemainder(l1 + l2 + l3 + eps, one) >= eps + eps) 
+      {
+        errflag = 3;
+        throw new ArgumentException("l1+l2+l3 not integer.");
+      }
 
-			// limits for m2 
-			m2min = Math.Max(-l2,-l3-m1);
-			m2max = Math.Min(l2,l3-m1);
+      // limits for m2 
+      m2min = Math.Max(-l2,-l3-m1);
+      m2max = Math.Min(l2,l3-m1);
 
-			// Check error condition 4. 
-			if (Math.IEEERemainder(m2max - m2min + eps, one) >= eps + eps) 
-			{
-				errflag = 4;
-				throw new ArgumentException("m2max-m2min not integer.");
-			}
-			if (m2min < m2max - eps) goto L20;
-			if (m2min < m2max + eps) goto L10;
+      // Check error condition 4. 
+      if (Math.IEEERemainder(m2max - m2min + eps, one) >= eps + eps) 
+      {
+        errflag = 4;
+        throw new ArgumentException("m2max-m2min not integer.");
+      }
+      if (m2min < m2max - eps) goto L20;
+      if (m2min < m2max + eps) goto L10;
 
-			//  Check error condition 5. 
-			errflag = 5;
-			throw new ArgumentException("m2min greater than m2max.");
+      //  Check error condition 5. 
+      errflag = 5;
+      throw new ArgumentException("m2min greater than m2max.");
 			
 
-			// This is reached in case that m2 and m3 can take only one value. 
-			L10:
-				// mscale = 0 
-				thrcof[0] = (odd((int)(Math.Abs(l2-l3-m1)+eps)) ? -one : one) / Math.Sqrt(l1+l2+l3+one);
-			return;
+      // This is reached in case that m2 and m3 can take only one value. 
+      L10:
+        // mscale = 0 
+        thrcof[0] = (odd((int)(Math.Abs(l2-l3-m1)+eps)) ? -one : one) / Math.Sqrt(l1+l2+l3+one);
+      return;
 
-			// This is reached in case that M1 and M2 take more than one value. 
-			L20:
-				// mscale = 0 
-				nfin = (int)(m2max - m2min + one + eps);
-			if (ndim - nfin >= 0) goto L23;
+      // This is reached in case that M1 and M2 take more than one value. 
+      L20:
+        // mscale = 0 
+        nfin = (int)(m2max - m2min + one + eps);
+      if (ndim - nfin >= 0) goto L23;
 
-			// Check error condition 6. 
+      // Check error condition 6. 
 
-			errflag = 6;
-			throw new ArgumentException("Dimension of result array for 3j coefficients too small.");
+      errflag = 6;
+      throw new ArgumentException("Dimension of result array for 3j coefficients too small.");
 			
 
-			//  Start of forward recursion from m2 = m2min 
+      //  Start of forward recursion from m2 = m2min 
 
-			L23:
-				m2 = m2min;
-			thrcof[0] = srtiny;
-			newfac = 0.0;
-			c1 = 0.0;
-			sum1 = tiny;
+      L23:
+        m2 = m2min;
+      thrcof[0] = srtiny;
+      newfac = 0.0;
+      c1 = 0.0;
+      sum1 = tiny;
 
-			lstep = 1;
-			L30:
-				++lstep;
-			m2 += one;
-			m3 = -m1 - m2;
+      lstep = 1;
+      L30:
+        ++lstep;
+      m2 += one;
+      m3 = -m1 - m2;
 
-			oldfac = newfac;
-			a1 = (l2 - m2 + one) * (l2 + m2) * (l3 + m3 + one) * (l3 - m3);
-			newfac = Math.Sqrt(a1);
+      oldfac = newfac;
+      a1 = (l2 - m2 + one) * (l2 + m2) * (l3 + m3 + one) * (l3 - m3);
+      newfac = Math.Sqrt(a1);
 
-			dv = (l1+l2+l3+one) * (l2+l3-l1) - (l2-m2+one) * (l3+m3+one) 
-				- (l2+m2-one) * (l3-m3-one);
+      dv = (l1+l2+l3+one) * (l2+l3-l1) - (l2-m2+one) * (l3+m3+one) 
+        - (l2+m2-one) * (l3-m3-one);
 
-			if (lstep - 2 > 0) c1old = Math.Abs(c1);
+      if (lstep - 2 > 0) c1old = Math.Abs(c1);
 
-			// L32:
-			c1 = -dv / newfac;
+      // L32:
+      c1 = -dv / newfac;
 
-			if (lstep > 2) goto L60;
+      if (lstep > 2) goto L60;
 
-			//  If m2 = m2min + 1, the third term in the recursion equation vanishes,    
-			//  hence 
+      //  If m2 = m2min + 1, the third term in the recursion equation vanishes,    
+      //  hence 
 
-			x = srtiny * c1;
-			thrcof[1] = x;
-			sum1 += tiny * c1 * c1;
-			if (lstep == nfin) goto L220;
-			goto L30;
+      x = srtiny * c1;
+      thrcof[1] = x;
+      sum1 += tiny * c1 * c1;
+      if (lstep == nfin) goto L220;
+      goto L30;
 
-			L60:
-				c2 = -oldfac / newfac;
+      L60:
+        c2 = -oldfac / newfac;
 
-			// Recursion to the next 3j coefficient 
-			x = c1 * thrcof[lstep-2] + c2 * thrcof[lstep-3];
-			thrcof[lstep-1] = x;
-			sumfor = sum1;
-			sum1 += x * x;
-			if (lstep == nfin) goto L100;
+      // Recursion to the next 3j coefficient 
+      x = c1 * thrcof[lstep-2] + c2 * thrcof[lstep-3];
+      thrcof[lstep-1] = x;
+      sumfor = sum1;
+      sum1 += x * x;
+      if (lstep == nfin) goto L100;
 
-			// See if last unnormalized 3j coefficient exceeds srhuge 
+      // See if last unnormalized 3j coefficient exceeds srhuge 
 
-			if (Math.Abs(x) < srhuge) goto L80;
+      if (Math.Abs(x) < srhuge) goto L80;
 
-			// This is reached if last 3j coefficient larger than srhuge, 
-			// so that the recursion series thrcof(1), ... , thrcof(lstep) 
-			// has to be rescaled to prevent overflow 
+      // This is reached if last 3j coefficient larger than srhuge, 
+      // so that the recursion series thrcof(1), ... , thrcof(lstep) 
+      // has to be rescaled to prevent overflow 
 
-			// mscale = mscale + 1 
-			for (i = 0; i < lstep; ++i) 
-			{
-				if (Math.Abs(thrcof[i]) < srtiny) thrcof[i] = zero;
-				thrcof[i] /= srhuge;
-			}
-			sum1 /= huge;
-			sumfor /= huge;
-			x /= srhuge;
+      // mscale = mscale + 1 
+      for (i = 0; i < lstep; ++i) 
+      {
+        if (Math.Abs(thrcof[i]) < srtiny) thrcof[i] = zero;
+        thrcof[i] /= srhuge;
+      }
+      sum1 /= huge;
+      sumfor /= huge;
+      x /= srhuge;
 
-			// As long as abs(c1) is decreasing, the recursion proceeds towards 
-			// increasing 3j values and, hence, is numerically stable.  Once 
-			// an increase of abs(c1) is detected, the recursion direction is 
-			// reversed. 
+      // As long as abs(c1) is decreasing, the recursion proceeds towards 
+      // increasing 3j values and, hence, is numerically stable.  Once 
+      // an increase of abs(c1) is detected, the recursion direction is 
+      // reversed. 
 
-			L80:
-				if (c1old - Math.Abs(c1) > 0.0) goto L30;
+      L80:
+        if (c1old - Math.Abs(c1) > 0.0) goto L30;
 
-			//  Keep three 3j coefficients around mmatch for comparison later 
-			//  with backward recursion values. 
+      //  Keep three 3j coefficients around mmatch for comparison later 
+      //  with backward recursion values. 
 
-			L100:
-				// mmatch = m2 - 1 
-				nstep2 = nfin - lstep + 3;
-			x1 = x;
-			x2 = thrcof[lstep-2];
-			x3 = thrcof[lstep-3];
+      L100:
+        // mmatch = m2 - 1 
+        nstep2 = nfin - lstep + 3;
+      x1 = x;
+      x2 = thrcof[lstep-2];
+      x3 = thrcof[lstep-3];
 
-			//  Starting backward recursion from m2max taking nstep2 steps, so 
-			//  that forwards and backwards recursion overlap at the three points 
-			//  m2 = mmatch+1, mmatch, mmatch-1. 
+      //  Starting backward recursion from m2max taking nstep2 steps, so 
+      //  that forwards and backwards recursion overlap at the three points 
+      //  m2 = mmatch+1, mmatch, mmatch-1. 
 
-			nfinp1 = nfin + 1;
-			nfinp2 = nfin + 2;
-			nfinp3 = nfin + 3;
-			thrcof[nfin-1] = srtiny;
-			sum2 = tiny;
+      nfinp1 = nfin + 1;
+      nfinp2 = nfin + 2;
+      nfinp3 = nfin + 3;
+      thrcof[nfin-1] = srtiny;
+      sum2 = tiny;
 
-			m2 = m2max + two;
-			lstep = 1;
-			L110:
-				++lstep;
-			m2 -= one;
-			m3 = -m1 - m2;
-			oldfac = newfac;
-			a1s = (l2-m2+two) * (l2+m2-one) * (l3+m3+two) * (l3-m3-one);
-			newfac = Math.Sqrt(a1s);
-			dv = (l1+l2+l3+one) * (l2+l3-l1) - (l2-m2+one) * (l3+m3+one)
-				- (l2+m2-one) * (l3-m3-one);
-			c1 = -dv / newfac;
-			if (lstep > 2) goto L120;
+      m2 = m2max + two;
+      lstep = 1;
+      L110:
+        ++lstep;
+      m2 -= one;
+      m3 = -m1 - m2;
+      oldfac = newfac;
+      a1s = (l2-m2+two) * (l2+m2-one) * (l3+m3+two) * (l3-m3-one);
+      newfac = Math.Sqrt(a1s);
+      dv = (l1+l2+l3+one) * (l2+l3-l1) - (l2-m2+one) * (l3+m3+one)
+        - (l2+m2-one) * (l3-m3-one);
+      c1 = -dv / newfac;
+      if (lstep > 2) goto L120;
 
-			// if m2 = m2max + 1 the third term in the recursion equation vanishes 
+      // if m2 = m2max + 1 the third term in the recursion equation vanishes 
 
-			y = srtiny * c1;
-			thrcof[nfin - 2] = y;
-			if (lstep == nstep2) goto L200;
-			sumbac = sum2;
-			sum2 += y * y;
-			goto L110;
+      y = srtiny * c1;
+      thrcof[nfin - 2] = y;
+      if (lstep == nstep2) goto L200;
+      sumbac = sum2;
+      sum2 += y * y;
+      goto L110;
 
-			L120:
-				c2 = -oldfac / newfac;
+      L120:
+        c2 = -oldfac / newfac;
 
-			// Recursion to the next 3j coefficient 
+      // Recursion to the next 3j coefficient 
 
-			y = c1 * thrcof[nfinp2 - lstep-1] + c2 * thrcof[nfinp3 - lstep-1];
+      y = c1 * thrcof[nfinp2 - lstep-1] + c2 * thrcof[nfinp3 - lstep-1];
 
-			if (lstep == nstep2) goto L200;
+      if (lstep == nstep2) goto L200;
 
-			thrcof[nfinp1 - lstep-1] = y;
-			sumbac = sum2;
-			sum2 += y * y;
+      thrcof[nfinp1 - lstep-1] = y;
+      sumbac = sum2;
+      sum2 += y * y;
 
-			// See if last 3j coefficient exceeds SRHUGE 
+      // See if last 3j coefficient exceeds SRHUGE 
 
-			if (Math.Abs(y) < srhuge) goto L110;
+      if (Math.Abs(y) < srhuge) goto L110;
 
-			// This is reached if last 3j coefficient larger than srhuge, 
-			// so that the recursion series thrcof(nfin), ... , thrcof(nfin-lstep+1)    
-			// has to be rescaled to prevent overflow. 
+      // This is reached if last 3j coefficient larger than srhuge, 
+      // so that the recursion series thrcof(nfin), ... , thrcof(nfin-lstep+1)    
+      // has to be rescaled to prevent overflow. 
 
-			// mscale = mscale + 1 
-			for (i = 1; i <= lstep; ++i) 
-			{
-				index = nfin - i ;
-				if (Math.Abs(thrcof[index]) < srtiny) thrcof[index] = zero;
-				thrcof[index] /= srhuge;
-			}
-			sum2 /= huge;
-			sumbac /= huge;
+      // mscale = mscale + 1 
+      for (i = 1; i <= lstep; ++i) 
+      {
+        index = nfin - i ;
+        if (Math.Abs(thrcof[index]) < srtiny) thrcof[index] = zero;
+        thrcof[index] /= srhuge;
+      }
+      sum2 /= huge;
+      sumbac /= huge;
 
-			goto L110;
+      goto L110;
 
-			//  The forward recursion 3j coefficients x1, x2, x3 are to be matched 
-			//  with the corresponding backward recursion values y1, y2, y3. 
+      //  The forward recursion 3j coefficients x1, x2, x3 are to be matched 
+      //  with the corresponding backward recursion values y1, y2, y3. 
 
-			L200:
-				y3 = y;
-			y2 = thrcof[nfinp2-lstep-1];
-			y1 = thrcof[nfinp3-lstep-1];
+      L200:
+        y3 = y;
+      y2 = thrcof[nfinp2-lstep-1];
+      y1 = thrcof[nfinp3-lstep-1];
 
-			//  Determine now ratio such that yi = ratio * xi  (i=1,2,3) holds 
-			//  with minimal error. 
+      //  Determine now ratio such that yi = ratio * xi  (i=1,2,3) holds 
+      //  with minimal error. 
 
-			ratio = (x1*y1 + x2*y2 + x3*y3) / (x1*x1 + x2*x2 + x3*x3);
-			nlim = nfin - nstep2 + 1;
+      ratio = (x1*y1 + x2*y2 + x3*y3) / (x1*x1 + x2*x2 + x3*x3);
+      nlim = nfin - nstep2 + 1;
 
-			if (Math.Abs(ratio) < one) goto L211;
-			for (n = 0; n < nlim; ++n)
-				thrcof[n] = ratio * thrcof[n];
-			sumuni = ratio * ratio * sumfor + sumbac;
-			goto L230;
+      if (Math.Abs(ratio) < one) goto L211;
+      for (n = 0; n < nlim; ++n)
+        thrcof[n] = ratio * thrcof[n];
+      sumuni = ratio * ratio * sumfor + sumbac;
+      goto L230;
 
-			L211:
-				++nlim;
-			ratio = one / ratio;
-			for (n = nlim; n <= nfin; ++n) 
-				thrcof[n-1] = ratio * thrcof[n-1];
-			sumuni = sumfor + ratio * ratio * sumbac;
-			goto L230;
+      L211:
+        ++nlim;
+      ratio = one / ratio;
+      for (n = nlim; n <= nfin; ++n) 
+        thrcof[n-1] = ratio * thrcof[n-1];
+      sumuni = sumfor + ratio * ratio * sumbac;
+      goto L230;
 
-			L220:
-				sumuni = sum1;
+      L220:
+        sumuni = sum1;
 
-			// Normalize 3j coefficients 
+      // Normalize 3j coefficients 
 
-			L230:
-				cnorm = one / Math.Sqrt((l1+l1+one) * sumuni);
+      L230:
+        cnorm = one / Math.Sqrt((l1+l1+one) * sumuni);
 
-			// Sign convention for last 3j coefficient determines overall phase 
+      // Sign convention for last 3j coefficient determines overall phase 
 
-			sign1 = Math.Sign(thrcof[nfin-1]);
-			sign2 = odd((int)(Math.Abs(l2-l3-m1)+eps)) ? -one : one;
-			if (sign1 * sign2 <= 0.0) goto L235;
-			else goto L236;
+      sign1 = Math.Sign(thrcof[nfin-1]);
+      sign2 = odd((int)(Math.Abs(l2-l3-m1)+eps)) ? -one : one;
+      if (sign1 * sign2 <= 0.0) goto L235;
+      else goto L236;
 
-			L235:
-				cnorm = -cnorm;
+      L235:
+        cnorm = -cnorm;
 
-			L236:
-				if (Math.Abs(cnorm) < one) goto L250;
+      L236:
+        if (Math.Abs(cnorm) < one) goto L250;
 
-			for (n = 0; n < nfin; ++n)
-				thrcof[n] = cnorm * thrcof[n];
-			return;
+      for (n = 0; n < nfin; ++n)
+        thrcof[n] = cnorm * thrcof[n];
+      return;
 
-			L250:
-				thresh = tiny / Math.Abs(cnorm);
-			for (n = 0; n < nfin; ++n) 
-			{
-				if (Math.Abs(thrcof[n]) < thresh) thrcof[n] = zero;
-				thrcof[n] = cnorm * thrcof[n];
-			}
-		} 
+      L250:
+        thresh = tiny / Math.Abs(cnorm);
+      for (n = 0; n < nfin; ++n) 
+      {
+        if (Math.Abs(thrcof[n]) < thresh) thrcof[n] = zero;
+        thrcof[n] = cnorm * thrcof[n];
+      }
+    } 
 
-		#endregion
+    #endregion
 
-		#region SixJSymbol
+    #region SixJSymbol
 
-		//-----------------------------------------------------------------------------//
-		//
-		// void SixJSymbol (double l2, double l3, double l4, 
-		//                  double l5, double l6, double &l1min, double &l1max, 
-		//                  double *sixcof, int ndim, int &errflag)
-		//
-		// Evaluate the 6j symbol 
-		//
-		//      h(l1) = { l1  l2  l3 }
-		//              { l4  l5  l6 } 
-		//
-		// for all allowed values of l1, the other parameters  being held fixed. 
-		//
-		// Input Arguments:
-		// ----------------
-		//
-		//   double l2
-		//   double l3
-		//   double l4
-		//   double l5
-		//   double l6     	Parameters in 6j symbol.
-		//
-		//   int  ndim 	   	Declared length of sixcof in calling program.
-		//
-		// Output Arguments:
-		// -----------------
-		//
-		//   double &l1min	Smallest allowable l1 in 6j symbol.
-		//   double &l1max 	Largest allowable l1 in 6j symbol. 
-		//   double *sixcof     Set of 6j coefficients generated by evaluating the 
-		//                      6j symbol for all allowed values of l1. sixcof(i) 
-		//                      will contain h(l1min+i), i=0,2,...,l1max-l1min. 
-		//
-		//   int &errflag	Error flag. 
-		//                      errflag=0  no errors. 
-		//                      errflag=1  l2+l3+l5+l6 or l4+l2+l6 not an integer. 
-		//                      errflag=2  l4, l2, l6 triangular condition not satisfied. 
-		//                      errflag=3  l4, l5, l3 triangular condition not satisfied. 
-		//                      errflag=4  l1max-l1min not an integer. 
-		//                      errflag=5  l1max less than l1min. 
-		//                      errflag=6  ndim less than l1max-l1min+1. 
-		//
-		// Description:
-		// ------------
-		//
-		//  The definition and properties of 6j symbols can be found, for 
-		//  example, in Appendix C of Volume II of A. Messiah. Although the 
-		//  parameters of the vector addition coefficients satisfy certain 
-		//  conventional restrictions, the restriction that they be non-negative 
-		//
-		//  integers or non-negative integers plus 1/2 is not imposed on input 
-		//  to this subroutine. The restrictions imposed are 
-		//
-		//       1. l2+l3+l5+l6 and l2+l4+l6 must be integers; 
-		//       2. abs(l2-l4) <= l6 <= l2+l4 must be satisfied; 
-		//       3. abs(l4-l5) <= l3 <= l4+l5 must be satisfied; 
-		//       4. l1max-l1min must be a non-negative integer, where 
-		//          l1max=min(l2+l3,l5+l6) and l1min=max(abs(l2-l3),abs(l5-l6)). 
-		//
-		//  If all the conventional restrictions are satisfied, then these 
-		//  restrictions are met. Conversely, if input to this subroutine meets 
-		//  all of these restrictions and the conventional restriction stated 
-		//  above, then all the conventional restrictions are satisfied. 
-		//
-		//  The user should be cautious in using input parameters that do 
-		//  not satisfy the conventional restrictions. For example, the 
-		//  the subroutine produces values of 
-		//
-		//       h(L1) = {  L1  2/3   1  } 
-		//               { 2/3  2/3  2/3 } 
-		//
-		//  for L1=1/3 and 4/3 but none of the symmetry properties of the 6j 
-		//  symbol, set forth on pages 1063 and 1064 of Messiah, is satisfied. 
-		//
-		//  The subroutine generates h(l1min), h(l1min+1), ..., h(l1max) 
-		//  where l1min and l1max are defined above. The sequence h(l1) is 
-		//  generated by a three-term recurrence algorithm with scaling to 
-		//  control overflow. Both backward and forward recurrence are used to 
-		//  maintain numerical stability. The two recurrence sequences are 
-		//  matched at an interior point and are normalized from the unitary 
-		//  property of 6j coefficients and Wigner's phase convention. 
-		//
-		//  The algorithm is suited to applications in which large quantum 
-		//  numbers arise, such as in molecular dynamics. 
-		//
-		// References:
-		// -----------
-		// 1. Messiah, Albert., Quantum Mechanics, Volume II, 
-		//    North-Holland Publishing Company, 1963. 
-		// 2. Schulten, Klaus and Gordon, Roy G., Exact recursive 
-		//    evaluation of 3j and 6j coefficients for quantum- 
-		//    mechanical coupling of angular momenta, J Math 
-		//    Phys, v 16, no. 10, October 1975, pp. 1961-1970. 
-		// 3. Schulten, Klaus and Gordon, Roy G., Semiclassical 
-		//    approximations to 3j and 6j coefficients for 
-		//    quantum-mechanical coupling of angular momenta, 
-		//    J Math Phys, v 16, no. 10, October 1975, 
-		//    pp. 1971-1988. 
-		// 4. Schulten, Klaus and Gordon, Roy G., Recursive 
-		//    evaluation of 3j and 6j coefficients, Computer 
-		//    Phys Comm, v 11, 1976, pp. 269-278. 
-		// 5. SLATEC  library, category  C19, 
-		//    double precision algorithm DRC6J.F
-		//    Keywords: 6j coefficients, 6j symbols, Clebsch-Gordan coefficients, 
-		//             Racah coefficients, vector addition coefficients, 
-		//             Wigner coefficients 
-		//     Author:   Gordon, R. G., Harvard University
-		//               Schulten, K., Max Planck Institute
-		//     Revision history  (YYMMDD)
-		//     750101  DATE WRITTEN 
-		//     880515  SLATEC prologue added by G. C. Nielson, NBS; parameters 
-		//             HUGE and TINY revised to depend on D1MACH. 
-		//     891229  Prologue description rewritten; other prologue sections 
-		//             revised; LMATCH (location of match point for recurrences) 
-		//             removed from argument list; argument IER changed to serve 
-		//             only as an error flag (previously, in cases without error, 
-		//             it returned the number of scalings); number of error codes 
-		//             increased to provide more precise error information; 
-		//             program comments revised; SLATEC error handler calls 
-		//             introduced to enable printing of error messages to meet 
-		//             SLATEC standards. These changes were done by D. W. Lozier, 
-		//             M. A. McClain and J. M. Smith of the National Institute 
-		//             of Standards and Technology, formerly NBS. 
-		//     910415  Mixed type expressions eliminated; variable C1 initialized; 
-		//             description of SIXCOF expanded. These changes were done by 
-		//             D. W. Lozier. 
-		//  6. Rewritting of the SLATEX algorithm in C++ and adaption to the
-		//     Matpack C++ Numerics and Graphics Library by Berndt M. Gammel
-		//     in June 1997.
-		//
-		//-----------------------------------------------------------------------------//
+    //-----------------------------------------------------------------------------//
+    //
+    // void SixJSymbol (double l2, double l3, double l4, 
+    //                  double l5, double l6, double &l1min, double &l1max, 
+    //                  double *sixcof, int ndim, int &errflag)
+    //
+    // Evaluate the 6j symbol 
+    //
+    //      h(l1) = { l1  l2  l3 }
+    //              { l4  l5  l6 } 
+    //
+    // for all allowed values of l1, the other parameters  being held fixed. 
+    //
+    // Input Arguments:
+    // ----------------
+    //
+    //   double l2
+    //   double l3
+    //   double l4
+    //   double l5
+    //   double l6     	Parameters in 6j symbol.
+    //
+    //   int  ndim 	   	Declared length of sixcof in calling program.
+    //
+    // Output Arguments:
+    // -----------------
+    //
+    //   double &l1min	Smallest allowable l1 in 6j symbol.
+    //   double &l1max 	Largest allowable l1 in 6j symbol. 
+    //   double *sixcof     Set of 6j coefficients generated by evaluating the 
+    //                      6j symbol for all allowed values of l1. sixcof(i) 
+    //                      will contain h(l1min+i), i=0,2,...,l1max-l1min. 
+    //
+    //   int &errflag	Error flag. 
+    //                      errflag=0  no errors. 
+    //                      errflag=1  l2+l3+l5+l6 or l4+l2+l6 not an integer. 
+    //                      errflag=2  l4, l2, l6 triangular condition not satisfied. 
+    //                      errflag=3  l4, l5, l3 triangular condition not satisfied. 
+    //                      errflag=4  l1max-l1min not an integer. 
+    //                      errflag=5  l1max less than l1min. 
+    //                      errflag=6  ndim less than l1max-l1min+1. 
+    //
+    // Description:
+    // ------------
+    //
+    //  The definition and properties of 6j symbols can be found, for 
+    //  example, in Appendix C of Volume II of A. Messiah. Although the 
+    //  parameters of the vector addition coefficients satisfy certain 
+    //  conventional restrictions, the restriction that they be non-negative 
+    //
+    //  integers or non-negative integers plus 1/2 is not imposed on input 
+    //  to this subroutine. The restrictions imposed are 
+    //
+    //       1. l2+l3+l5+l6 and l2+l4+l6 must be integers; 
+    //       2. abs(l2-l4) <= l6 <= l2+l4 must be satisfied; 
+    //       3. abs(l4-l5) <= l3 <= l4+l5 must be satisfied; 
+    //       4. l1max-l1min must be a non-negative integer, where 
+    //          l1max=min(l2+l3,l5+l6) and l1min=max(abs(l2-l3),abs(l5-l6)). 
+    //
+    //  If all the conventional restrictions are satisfied, then these 
+    //  restrictions are met. Conversely, if input to this subroutine meets 
+    //  all of these restrictions and the conventional restriction stated 
+    //  above, then all the conventional restrictions are satisfied. 
+    //
+    //  The user should be cautious in using input parameters that do 
+    //  not satisfy the conventional restrictions. For example, the 
+    //  the subroutine produces values of 
+    //
+    //       h(L1) = {  L1  2/3   1  } 
+    //               { 2/3  2/3  2/3 } 
+    //
+    //  for L1=1/3 and 4/3 but none of the symmetry properties of the 6j 
+    //  symbol, set forth on pages 1063 and 1064 of Messiah, is satisfied. 
+    //
+    //  The subroutine generates h(l1min), h(l1min+1), ..., h(l1max) 
+    //  where l1min and l1max are defined above. The sequence h(l1) is 
+    //  generated by a three-term recurrence algorithm with scaling to 
+    //  control overflow. Both backward and forward recurrence are used to 
+    //  maintain numerical stability. The two recurrence sequences are 
+    //  matched at an interior point and are normalized from the unitary 
+    //  property of 6j coefficients and Wigner's phase convention. 
+    //
+    //  The algorithm is suited to applications in which large quantum 
+    //  numbers arise, such as in molecular dynamics. 
+    //
+    // References:
+    // -----------
+    // 1. Messiah, Albert., Quantum Mechanics, Volume II, 
+    //    North-Holland Publishing Company, 1963. 
+    // 2. Schulten, Klaus and Gordon, Roy G., Exact recursive 
+    //    evaluation of 3j and 6j coefficients for quantum- 
+    //    mechanical coupling of angular momenta, J Math 
+    //    Phys, v 16, no. 10, October 1975, pp. 1961-1970. 
+    // 3. Schulten, Klaus and Gordon, Roy G., Semiclassical 
+    //    approximations to 3j and 6j coefficients for 
+    //    quantum-mechanical coupling of angular momenta, 
+    //    J Math Phys, v 16, no. 10, October 1975, 
+    //    pp. 1971-1988. 
+    // 4. Schulten, Klaus and Gordon, Roy G., Recursive 
+    //    evaluation of 3j and 6j coefficients, Computer 
+    //    Phys Comm, v 11, 1976, pp. 269-278. 
+    // 5. SLATEC  library, category  C19, 
+    //    double precision algorithm DRC6J.F
+    //    Keywords: 6j coefficients, 6j symbols, Clebsch-Gordan coefficients, 
+    //             Racah coefficients, vector addition coefficients, 
+    //             Wigner coefficients 
+    //     Author:   Gordon, R. G., Harvard University
+    //               Schulten, K., Max Planck Institute
+    //     Revision history  (YYMMDD)
+    //     750101  DATE WRITTEN 
+    //     880515  SLATEC prologue added by G. C. Nielson, NBS; parameters 
+    //             HUGE and TINY revised to depend on D1MACH. 
+    //     891229  Prologue description rewritten; other prologue sections 
+    //             revised; LMATCH (location of match point for recurrences) 
+    //             removed from argument list; argument IER changed to serve 
+    //             only as an error flag (previously, in cases without error, 
+    //             it returned the number of scalings); number of error codes 
+    //             increased to provide more precise error information; 
+    //             program comments revised; SLATEC error handler calls 
+    //             introduced to enable printing of error messages to meet 
+    //             SLATEC standards. These changes were done by D. W. Lozier, 
+    //             M. A. McClain and J. M. Smith of the National Institute 
+    //             of Standards and Technology, formerly NBS. 
+    //     910415  Mixed type expressions eliminated; variable C1 initialized; 
+    //             description of SIXCOF expanded. These changes were done by 
+    //             D. W. Lozier. 
+    //  6. Rewritting of the SLATEX algorithm in C++ and adaption to the
+    //     Matpack C++ Numerics and Graphics Library by Berndt M. Gammel
+    //     in June 1997.
+    //
+    //-----------------------------------------------------------------------------//
 
 
-		public static void SixJSymbol (double l2, double l3, double l4, 
-			double l5, double l6, out double l1min, out double l1max, 
-			double[] sixcof, int ndim, out int errflag)
-		{
-			const double zero = 0.0, eps = 0.01, one = 1.0, two = 2.0, three = 3.0;
+    public static void SixJSymbol (double l2, double l3, double l4, 
+      double l5, double l6, out double l1min, out double l1max, 
+      double[] sixcof, int ndim, out int errflag)
+    {
+      const double zero = 0.0, eps = 0.01, one = 1.0, two = 2.0, three = 3.0;
 
-			int nfin, nlim, i, n, index, lstep, nfinp1, nfinp2, nfinp3, nstep2;
-			double c1old = 0.0, sign1, sign2, x, y, denom = 0.0, cnorm, ratio, 
-				a1, a2, c1, c2, l1, x1, x2, x3, y1, y2, y3, oldfac, dv, newfac, 
-				sumbac = 0.0, thresh, a1s, a2s, sumfor, sumuni, sum1, sum2;
+      int nfin, nlim, i, n, index, lstep, nfinp1, nfinp2, nfinp3, nstep2;
+      double c1old = 0.0, sign1, sign2, x, y, denom = 0.0, cnorm, ratio, 
+        a1, a2, c1, c2, l1, x1, x2, x3, y1, y2, y3, oldfac, dv, newfac, 
+        sumbac = 0.0, thresh, a1s, a2s, sumfor, sumuni, sum1, sum2;
 
 			
 
-			errflag = 0;
+      errflag = 0;
   
-			// "huge" is the square root of one twentieth of the largest floating 
-			// point number, approximately. 
-			double huge   = Math.Sqrt(DBL_MAX / 20.0),
-				srhuge = Math.Sqrt(huge),
-				tiny   = one / huge,
-				srtiny = one / srhuge;
+      // "huge" is the square root of one twentieth of the largest floating 
+      // point number, approximately. 
+      double huge   = Math.Sqrt(DBL_MAX / 20.0),
+        srhuge = Math.Sqrt(huge),
+        tiny   = one / huge,
+        srtiny = one / srhuge;
 
-			// lmatch = zero 
+      // lmatch = zero 
 
-			// Check error conditions 1, 2, and 3. 
-			if (Math.IEEERemainder(l2+l3+l5+l6+eps,one) >= eps + eps 
-				|| Math.IEEERemainder(l4+l2+l6+eps, one) >= eps + eps) 
-			{
-				errflag = 1;
-				throw new ArgumentException("l2+l3+l5+l6 or l4+l2+l6 not integer.");
+      // Check error conditions 1, 2, and 3. 
+      if (Math.IEEERemainder(l2+l3+l5+l6+eps,one) >= eps + eps 
+        || Math.IEEERemainder(l4+l2+l6+eps, one) >= eps + eps) 
+      {
+        errflag = 1;
+        throw new ArgumentException("l2+l3+l5+l6 or l4+l2+l6 not integer.");
 				
-			} 
-			else if (l4+l2-l6 < zero || l4-l2+l6 < zero || -l4+l2+l6 < zero) 
-			{
-				errflag = 2;
-				throw new ArgumentException("L4, L2, L6 triangular condition not satisfied.");
+      } 
+      else if (l4+l2-l6 < zero || l4-l2+l6 < zero || -l4+l2+l6 < zero) 
+      {
+        errflag = 2;
+        throw new ArgumentException("L4, L2, L6 triangular condition not satisfied.");
 				
-			} 
-			else if (l4-l5+l3 < zero || l4+l5-l3 < zero || -l4+l5+l3 < zero) 
-			{
-				errflag = 3;
-				throw new ArgumentException("L4, L5, L3 triangular condition not satisfied.");
+      } 
+      else if (l4-l5+l3 < zero || l4+l5-l3 < zero || -l4+l5+l3 < zero) 
+      {
+        errflag = 3;
+        throw new ArgumentException("L4, L5, L3 triangular condition not satisfied.");
 				
-			}
+      }
 
-			// Limits for l1 
-			l1min = Math.Max(Math.Abs(l2-l3),Math.Abs(l5-l6));
-			l1max = Math.Min(l2+l3,l5+l6);
+      // Limits for l1 
+      l1min = Math.Max(Math.Abs(l2-l3),Math.Abs(l5-l6));
+      l1max = Math.Min(l2+l3,l5+l6);
 
-			// Check error condition 4. 
-			if (Math.IEEERemainder(l1max-l1min+eps,one) >= eps + eps) 
-			{
-				errflag = 4;
-				throw new ArgumentException("l1max-l1min not integer.");
+      // Check error condition 4. 
+      if (Math.IEEERemainder(l1max-l1min+eps,one) >= eps + eps) 
+      {
+        errflag = 4;
+        throw new ArgumentException("l1max-l1min not integer.");
 				
-			}
-			if (l1min < l1max - eps) goto L20;
-			if (l1min < l1max + eps) goto L10;
+      }
+      if (l1min < l1max - eps) goto L20;
+      if (l1min < l1max + eps) goto L10;
 
-			// Check error condition 5. 
-			errflag = 5;
-			throw new ArgumentException("l1min greater than l1max.");
+      // Check error condition 5. 
+      errflag = 5;
+      throw new ArgumentException("l1min greater than l1max.");
 			
 
-			// This is reached in case that l1 can take only one value 
+      // This is reached in case that l1 can take only one value 
 
-			L10:
-				// lscale = 0 
-				sixcof[0] = (odd((int)(l2+l3+l5+l6+eps)) ? -one : one)
-																														 / Math.Sqrt((l1min+l1min+one)*(l4+l4+one));
-			return;
+      L10:
+        // lscale = 0 
+        sixcof[0] = (odd((int)(l2+l3+l5+l6+eps)) ? -one : one)
+          / Math.Sqrt((l1min+l1min+one)*(l4+l4+one));
+      return;
 
-			// This is reached in case that l1 can take more than one value. 
+      // This is reached in case that l1 can take more than one value. 
 
-			L20:
-				// lscale = 0 
-				nfin = (int)(l1max-l1min+one+eps);
-			if (ndim - nfin >= 0) goto L23;
+      L20:
+        // lscale = 0 
+        nfin = (int)(l1max-l1min+one+eps);
+      if (ndim - nfin >= 0) goto L23;
 
-			// Check error condition 6. 
-			errflag = 6;
-			throw new ArgumentException("Dimension of result array for 6j coefficients too small.");
+      // Check error condition 6. 
+      errflag = 6;
+      throw new ArgumentException("Dimension of result array for 6j coefficients too small.");
 			
 
-			// Start of forward recursion 
+      // Start of forward recursion 
 
-			L23:
-				l1 = l1min;
-			newfac = 0.0;
-			c1 = 0.0;
-			sixcof[0] = srtiny;
-			sum1 = (l1 + l1 + one) * tiny;
+      L23:
+        l1 = l1min;
+      newfac = 0.0;
+      c1 = 0.0;
+      sixcof[0] = srtiny;
+      sum1 = (l1 + l1 + one) * tiny;
 
-			lstep = 1;
-			L30:
-				++lstep;
-			l1 += one;
+      lstep = 1;
+      L30:
+        ++lstep;
+      l1 += one;
 
-			oldfac = newfac;
-			a1 = (l1+l2+l3+one) * (l1-l2+l3) * (l1+l2-l3) * (-l1+l2+l3+one);
-			a2 = (l1+l5+l6+one) * (l1-l5+l6) * (l1+l5-l6) * (-l1+l5+l6+one);
-			newfac = Math.Sqrt(a1 * a2);
+      oldfac = newfac;
+      a1 = (l1+l2+l3+one) * (l1-l2+l3) * (l1+l2-l3) * (-l1+l2+l3+one);
+      a2 = (l1+l5+l6+one) * (l1-l5+l6) * (l1+l5-l6) * (-l1+l5+l6+one);
+      newfac = Math.Sqrt(a1 * a2);
 
-			if (l1 < one + eps) goto L40;
+      if (l1 < one + eps) goto L40;
 
-			dv = two * (l2 * (l2+one) * l5 * (l5+one) + l3 * (l3+one) * l6 * (l6+one) 
-				- l1 * (l1-one) * l4 * (l4+one)) 
-				- (l2 * (l2+one) + l3 * (l3+one) - l1 * (l1-one)) 
-				* (l5 * (l5+one) + l6 * (l6+one) - l1 * (l1-one));
+      dv = two * (l2 * (l2+one) * l5 * (l5+one) + l3 * (l3+one) * l6 * (l6+one) 
+        - l1 * (l1-one) * l4 * (l4+one)) 
+        - (l2 * (l2+one) + l3 * (l3+one) - l1 * (l1-one)) 
+        * (l5 * (l5+one) + l6 * (l6+one) - l1 * (l1-one));
 
-			denom = (l1-one) * newfac;
+      denom = (l1-one) * newfac;
 
-			if (lstep - 2 <= 0) goto L32;
-			c1old = Math.Abs(c1);
+      if (lstep - 2 <= 0) goto L32;
+      c1old = Math.Abs(c1);
 
-			L32:
-				c1 = -(l1+l1-one) * dv / denom;
-			goto L50;
+      L32:
+        c1 = -(l1+l1-one) * dv / denom;
+      goto L50;
 
-			// if l1 = 1, (l1 - 1) has to be factored out of dv, hence 
+      // if l1 = 1, (l1 - 1) has to be factored out of dv, hence 
 
-			L40:
-				c1 = -two * (l2 * (l2+one) + l5 * (l5+one) - l4 * (l4+one)) / newfac;
+      L40:
+        c1 = -two * (l2 * (l2+one) + l5 * (l5+one) - l4 * (l4+one)) / newfac;
 
-			L50:
-				if (lstep > 2) goto L60;
+      L50:
+        if (lstep > 2) goto L60;
 
-			// If l1 = l1min + 1, the third term in recursion equation vanishes 
+      // If l1 = l1min + 1, the third term in recursion equation vanishes 
 
-			x = srtiny * c1;
-			sixcof[1] = x;
-			sum1 += tiny * (l1+l1+one) * c1 * c1;
+      x = srtiny * c1;
+      sixcof[1] = x;
+      sum1 += tiny * (l1+l1+one) * c1 * c1;
 
-			if (lstep == nfin) goto L220;
-			goto L30;
+      if (lstep == nfin) goto L220;
+      goto L30;
 
 
-			L60:
-				c2 = -l1 * oldfac / denom;
+      L60:
+        c2 = -l1 * oldfac / denom;
 
-			// Recursion to the next 6j coefficient x 
+      // Recursion to the next 6j coefficient x 
 
-			x = c1 * sixcof[lstep-2] + c2 * sixcof[lstep-3];
-			sixcof[lstep-1] = x;
+      x = c1 * sixcof[lstep-2] + c2 * sixcof[lstep-3];
+      sixcof[lstep-1] = x;
 
-			sumfor = sum1;
-			sum1 += (l1+l1+one) * x * x;
-			if (lstep == nfin) goto L100;
+      sumfor = sum1;
+      sum1 += (l1+l1+one) * x * x;
+      if (lstep == nfin) goto L100;
 
-			// See if last unnormalized 6j coefficient exceeds srhuge 
+      // See if last unnormalized 6j coefficient exceeds srhuge 
 
-			if (Math.Abs(x) < srhuge) goto L80;
+      if (Math.Abs(x) < srhuge) goto L80;
 
-			// This is reached if last 6j coefficient larger than srhuge, 
-			// so that the recursion series sixcof(1), ... ,sixcof(lstep) 
-			// has to be rescaled to prevent overflow 
+      // This is reached if last 6j coefficient larger than srhuge, 
+      // so that the recursion series sixcof(1), ... ,sixcof(lstep) 
+      // has to be rescaled to prevent overflow 
 
-			// lscale = lscale + 1 
-			for (i = 0; i < lstep; ++i) 
-			{
-				if (Math.Abs(sixcof[i]) < srtiny) sixcof[i] = zero;
-				sixcof[i] /= srhuge;
-			}
-			sum1 /= huge;
-			sumfor /= huge;
-			x /= srhuge;
+      // lscale = lscale + 1 
+      for (i = 0; i < lstep; ++i) 
+      {
+        if (Math.Abs(sixcof[i]) < srtiny) sixcof[i] = zero;
+        sixcof[i] /= srhuge;
+      }
+      sum1 /= huge;
+      sumfor /= huge;
+      x /= srhuge;
 
-			// As long as the coefficient abs(c1) is decreasing, the recursion 
-			// proceeds towards increasing 6j values and, hence, is numerically 
-			// stable.  Once an increase of abs(c1) is detected, the recursion 
-			// direction is reversed. 
+      // As long as the coefficient abs(c1) is decreasing, the recursion 
+      // proceeds towards increasing 6j values and, hence, is numerically 
+      // stable.  Once an increase of abs(c1) is detected, the recursion 
+      // direction is reversed. 
 
-			L80:
-				if (c1old - Math.Abs(c1) <= 0.0) 
-					goto L100;
-				else
-					goto L30;
+      L80:
+        if (c1old - Math.Abs(c1) <= 0.0) 
+          goto L100;
+        else
+          goto L30;
 
-			// Keep three 6j coefficients around lmatch for comparison later 
-			// with backward recursion. 
+      // Keep three 6j coefficients around lmatch for comparison later 
+      // with backward recursion. 
 
-			L100:
-				// lmatch = l1 - 1 
-				x1 = x;
-			x2 = sixcof[lstep-2];
-			x3 = sixcof[lstep-3];
+      L100:
+        // lmatch = l1 - 1 
+        x1 = x;
+      x2 = sixcof[lstep-2];
+      x3 = sixcof[lstep-3];
 
-			// Starting backward recursion from l1max taking nstep2 steps, so 
-			// that forward and backward recursion overlap at the three points 
-			// l1 = lmatch+1, lmatch, lmatch-1. 
+      // Starting backward recursion from l1max taking nstep2 steps, so 
+      // that forward and backward recursion overlap at the three points 
+      // l1 = lmatch+1, lmatch, lmatch-1. 
 
-			nfinp1 = nfin + 1;
-			nfinp2 = nfin + 2;
-			nfinp3 = nfin + 3;
-			nstep2 = nfin - lstep + 3;
-			l1 = l1max;
+      nfinp1 = nfin + 1;
+      nfinp2 = nfin + 2;
+      nfinp3 = nfin + 3;
+      nstep2 = nfin - lstep + 3;
+      l1 = l1max;
 
-			sixcof[nfin-1] = srtiny;
-			sum2 = (l1 + l1 + one) * tiny;
+      sixcof[nfin-1] = srtiny;
+      sum2 = (l1 + l1 + one) * tiny;
 
-			l1 += two;
-			lstep = 1;
-			L110:
-				++lstep;
-			l1 -= one;
+      l1 += two;
+      lstep = 1;
+      L110:
+        ++lstep;
+      l1 -= one;
 
-			oldfac = newfac;
-			a1s = (l1+l2+l3) * (l1-l2+l3-one) * (l1+l2-l3-one) * (-l1+l2+l3+two);
-			a2s = (l1+l5+l6) * (l1-l5+l6-one) * (l1+l5-l6-one) * (-l1+l5+l6+two);
-			newfac = Math.Sqrt(a1s * a2s);
+      oldfac = newfac;
+      a1s = (l1+l2+l3) * (l1-l2+l3-one) * (l1+l2-l3-one) * (-l1+l2+l3+two);
+      a2s = (l1+l5+l6) * (l1-l5+l6-one) * (l1+l5-l6-one) * (-l1+l5+l6+two);
+      newfac = Math.Sqrt(a1s * a2s);
 
-			dv = two * (l2 * (l2+one) * l5 * (l5+one) + l3 * (l3+one) * l6 * (l6+one) 
-				- l1 * (l1-one) * l4 * (l4+one)) 
-				- (l2 * (l2+one) + l3 * (l3+one) - l1 * (l1-one)) 
-				* (l5 * (l5+one) + l6 * (l6+one) - l1 * (l1-one));
+      dv = two * (l2 * (l2+one) * l5 * (l5+one) + l3 * (l3+one) * l6 * (l6+one) 
+        - l1 * (l1-one) * l4 * (l4+one)) 
+        - (l2 * (l2+one) + l3 * (l3+one) - l1 * (l1-one)) 
+        * (l5 * (l5+one) + l6 * (l6+one) - l1 * (l1-one));
 
-			denom = l1 * newfac;
-			c1 = -(l1+l1-one) * dv / denom;
-			if (lstep > 2) goto L120;
+      denom = l1 * newfac;
+      c1 = -(l1+l1-one) * dv / denom;
+      if (lstep > 2) goto L120;
 
-			// If l1 = l1max + 1 the third term in the recursion equation vanishes 
+      // If l1 = l1max + 1 the third term in the recursion equation vanishes 
 
-			y = srtiny * c1;
-			sixcof[nfin - 2] = y;
-			if (lstep == nstep2) goto L200;
-			sumbac = sum2;
-			sum2 += (l1+l1-three) * c1 * c1 * tiny;
-			goto L110;
+      y = srtiny * c1;
+      sixcof[nfin - 2] = y;
+      if (lstep == nstep2) goto L200;
+      sumbac = sum2;
+      sum2 += (l1+l1-three) * c1 * c1 * tiny;
+      goto L110;
 
-			L120:
-				c2 = -(l1-one) * oldfac / denom;
+      L120:
+        c2 = -(l1-one) * oldfac / denom;
 
-			// Recursion to the next 6j coefficient y 
+      // Recursion to the next 6j coefficient y 
 
-			y = c1 * sixcof[nfinp2 - lstep-1] + c2 * sixcof[nfinp3 - lstep-1];
-			if (lstep == nstep2) goto L200;
+      y = c1 * sixcof[nfinp2 - lstep-1] + c2 * sixcof[nfinp3 - lstep-1];
+      if (lstep == nstep2) goto L200;
 
-			sixcof[nfinp1 - lstep-1] = y;
-			sumbac = sum2;
-			sum2 += (l1+l1-three) * y * y;
+      sixcof[nfinp1 - lstep-1] = y;
+      sumbac = sum2;
+      sum2 += (l1+l1-three) * y * y;
 
-			// See if last unnormalized 6j coefficient exceeds srhuge 
+      // See if last unnormalized 6j coefficient exceeds srhuge 
 
-			if (Math.Abs(y) < srhuge) goto L110;
+      if (Math.Abs(y) < srhuge) goto L110;
 
-			// This is reached if last 6j coefficient larger than srhuge, 
-			// so that the recursion series sixcof(nfin), ... ,sixcof(nfin-lstep+1) 
-			// has to be rescaled to prevent overflow 
+      // This is reached if last 6j coefficient larger than srhuge, 
+      // so that the recursion series sixcof(nfin), ... ,sixcof(nfin-lstep+1) 
+      // has to be rescaled to prevent overflow 
 
-			// lscale = lscale + 1 
-			for (i = 1; i <= lstep; ++i) 
-			{
-				index = nfin - i ;
-				if (Math.Abs(sixcof[index]) < srtiny) sixcof[index] = zero;
-				sixcof[index] /= srhuge;
-			}
-			sumbac /= huge;
-			sum2 /= huge;
+      // lscale = lscale + 1 
+      for (i = 1; i <= lstep; ++i) 
+      {
+        index = nfin - i ;
+        if (Math.Abs(sixcof[index]) < srtiny) sixcof[index] = zero;
+        sixcof[index] /= srhuge;
+      }
+      sumbac /= huge;
+      sum2 /= huge;
 
-			goto L110;
+      goto L110;
   
-			// The forward recursion 6j coefficients x1, x2, x3 are to be matched 
-			// with the corresponding backward recursion values y1, y2, y3. 
+      // The forward recursion 6j coefficients x1, x2, x3 are to be matched 
+      // with the corresponding backward recursion values y1, y2, y3. 
 
-			L200:
-				y3 = y;
-			y2 = sixcof[nfinp2 - lstep-1];
-			y1 = sixcof[nfinp3 - lstep-1];
+      L200:
+        y3 = y;
+      y2 = sixcof[nfinp2 - lstep-1];
+      y1 = sixcof[nfinp3 - lstep-1];
 
-			// Determine now ratio such that yi = ratio * xi  (i=1,2,3) holds 
-			// with minimal error. 
+      // Determine now ratio such that yi = ratio * xi  (i=1,2,3) holds 
+      // with minimal error. 
 
-			ratio = (x1*y1 + x2*y2 + x3*y3) / (x1*x1 + x2*x2 + x3*x3);
-			nlim = nfin - nstep2 + 1;
+      ratio = (x1*y1 + x2*y2 + x3*y3) / (x1*x1 + x2*x2 + x3*x3);
+      nlim = nfin - nstep2 + 1;
 
-			if (Math.Abs(ratio) < one) goto L211;
+      if (Math.Abs(ratio) < one) goto L211;
 
-			for (n = 0; n < nlim; ++n) 
-				sixcof[n] = ratio * sixcof[n];
-			sumuni = ratio * ratio * sumfor + sumbac;
-			goto L230;
+      for (n = 0; n < nlim; ++n) 
+        sixcof[n] = ratio * sixcof[n];
+      sumuni = ratio * ratio * sumfor + sumbac;
+      goto L230;
 
-			L211:
-				++nlim;
-			ratio = one / ratio;
-			for (n = nlim; n <= nfin; ++n)
-				sixcof[n-1] = ratio * sixcof[n-1];
-			sumuni = sumfor + ratio * ratio * sumbac;
-			goto L230;
+      L211:
+        ++nlim;
+      ratio = one / ratio;
+      for (n = nlim; n <= nfin; ++n)
+        sixcof[n-1] = ratio * sixcof[n-1];
+      sumuni = sumfor + ratio * ratio * sumbac;
+      goto L230;
   
-			L220:
-				sumuni = sum1;
+      L220:
+        sumuni = sum1;
 
-			// Normalize 6j coefficients 
+      // Normalize 6j coefficients 
 
-			L230:
-				cnorm = one / Math.Sqrt((l4+l4+one) * sumuni);
+      L230:
+        cnorm = one / Math.Sqrt((l4+l4+one) * sumuni);
 
-			// Sign convention for last 6j coefficient determines overall phase 
+      // Sign convention for last 6j coefficient determines overall phase 
 
-			sign1 = CopySign(one,sixcof[nfin-1]);
-			sign2 = odd((int)(l2+l3+l5+l6+eps)) ? -one : one;
-			if (sign1 * sign2 <= 0.0) goto L235;
-			else  goto L236;
+      sign1 = CopySign(one,sixcof[nfin-1]);
+      sign2 = odd((int)(l2+l3+l5+l6+eps)) ? -one : one;
+      if (sign1 * sign2 <= 0.0) goto L235;
+      else  goto L236;
 
-			L235:
-				cnorm = -cnorm;
+      L235:
+        cnorm = -cnorm;
 
-			L236:
-				if (Math.Abs(cnorm) < one) goto L250;
+      L236:
+        if (Math.Abs(cnorm) < one) goto L250;
 
-			for (n = 0; n < nfin; ++n) 
-				sixcof[n] = cnorm * sixcof[n];
-			return;
+      for (n = 0; n < nfin; ++n) 
+        sixcof[n] = cnorm * sixcof[n];
+      return;
 
-			L250:
-				thresh = tiny / Math.Abs(cnorm);
-			for (n = 0; n < nfin; ++n) 
-			{
-				if (Math.Abs(sixcof[n]) < thresh) sixcof[n] = zero;
-				sixcof[n] = cnorm * sixcof[n];
-			}
-		} 
+      L250:
+        thresh = tiny / Math.Abs(cnorm);
+      for (n = 0; n < nfin; ++n) 
+      {
+        if (Math.Abs(sixcof[n]) < thresh) sixcof[n] = zero;
+        sixcof[n] = cnorm * sixcof[n];
+      }
+    } 
 
-		#endregion
+    #endregion
 
-		#region ClebschGordan
+    #region ClebschGordan
 
-		//-----------------------------------------------------------------------------//
-		//
-		// double ClebschGordan (double l1, double m1, double l2, double m2, 
-		//                       double l3, double m3, int &errflag);
-		//
-		// Calculate Clebsch-Gordan coefficient using the relation to the
-		// Wigner 3-j symbol:
-		//
-		//                               l1-l2+m3         1/2   ( l1  l2  l3 )
-		//   (l1 m1 l2 m2 | l3 m3) = (-1)         (2*l3+1)      ( m1  m2 -m3 )  
-		//
-		//
-		// Input Arguments:
-		// ----------------
-		//
-		//   double l1
-		//   double m1	 
-		//   double l2
-		//   double m2	
-		//   double l3
-		//   double m3		Parameters in 3j symbol.
-		//
-		// Output Arguments:
-		// -----------------
-		//
-		//   int &errflag	Error flag.
-		//                 	errflag=0  No errors.
-		//                 	errflag=1  Either l1 < abs(m1) or l1+abs(m1) non-integer.
-		//                 	errflag=2  abs(l1-l2)<= l3 <= l1+l2 not satisfied.
-		//                 	errflag=3  l1+l2+l3 not an integer.
-		//                 	errflag=4  m2max-m2min not an integer.
-		//                 	errflag=5  m2max less than m2min.
-		//                 	errflag=6  ndim less than m2max-m2min+1.
-		//                 	errflag=7  m1+m2-m3 is not zero
-		//
-		// Returns:
-		// --------
-		//
-		//   The value of the Clebsch-Gordan coefficient.
-		//
-		// References:
-		// -----------
-		//  1. See routines in "threejj.cc" and "threejm.cc" for references about
-		//     the calculation of the Wigner 3-j symbols.
-		//  2. C++ Implementation for the Matpack C++ Numerics and Graphics Library 
-		//     by Berndt M. Gammel in June 1997.
-		//
-		// Note:
-		// -----
-		//  Whenever you have to calculate a series of Clebsch-Gordan coefficients for
-		//  a range of l-values or m-values you should probably use the 3-j symbol
-		//  routines. These calculate the 3-j symbols iteratively for a series of
-		//  l-values or m-values and are therefore much more efficient. Use the relation
-		//  between Clebsch-Gordan coefficients and Wigner 3-j symbols as given above.
-		//
-		//-----------------------------------------------------------------------------//
+    //-----------------------------------------------------------------------------//
+    //
+    // double ClebschGordan (double l1, double m1, double l2, double m2, 
+    //                       double l3, double m3, int &errflag);
+    //
+    // Calculate Clebsch-Gordan coefficient using the relation to the
+    // Wigner 3-j symbol:
+    //
+    //                               l1-l2+m3         1/2   ( l1  l2  l3 )
+    //   (l1 m1 l2 m2 | l3 m3) = (-1)         (2*l3+1)      ( m1  m2 -m3 )  
+    //
+    //
+    // Input Arguments:
+    // ----------------
+    //
+    //   double l1
+    //   double m1	 
+    //   double l2
+    //   double m2	
+    //   double l3
+    //   double m3		Parameters in 3j symbol.
+    //
+    // Output Arguments:
+    // -----------------
+    //
+    //   int &errflag	Error flag.
+    //                 	errflag=0  No errors.
+    //                 	errflag=1  Either l1 < abs(m1) or l1+abs(m1) non-integer.
+    //                 	errflag=2  abs(l1-l2)<= l3 <= l1+l2 not satisfied.
+    //                 	errflag=3  l1+l2+l3 not an integer.
+    //                 	errflag=4  m2max-m2min not an integer.
+    //                 	errflag=5  m2max less than m2min.
+    //                 	errflag=6  ndim less than m2max-m2min+1.
+    //                 	errflag=7  m1+m2-m3 is not zero
+    //
+    // Returns:
+    // --------
+    //
+    //   The value of the Clebsch-Gordan coefficient.
+    //
+    // References:
+    // -----------
+    //  1. See routines in "threejj.cc" and "threejm.cc" for references about
+    //     the calculation of the Wigner 3-j symbols.
+    //  2. C++ Implementation for the Matpack C++ Numerics and Graphics Library 
+    //     by Berndt M. Gammel in June 1997.
+    //
+    // Note:
+    // -----
+    //  Whenever you have to calculate a series of Clebsch-Gordan coefficients for
+    //  a range of l-values or m-values you should probably use the 3-j symbol
+    //  routines. These calculate the 3-j symbols iteratively for a series of
+    //  l-values or m-values and are therefore much more efficient. Use the relation
+    //  between Clebsch-Gordan coefficients and Wigner 3-j symbols as given above.
+    //
+    //-----------------------------------------------------------------------------//
 
 	
 
-		public static double ClebschGordan (double l1, double m1, double l2, double m2, 
-			double l3, double m3, out int errflag)
-	{
-		const double err = 0.01;
-		double CG = 0.0;
-		double m2min, m2max;
-		double [] cofp;
+    public static double ClebschGordan (double l1, double m1, double l2, double m2, 
+      double l3, double m3, out int errflag)
+    {
+      const double err = 0.01;
+      double CG = 0.0;
+      double m2min, m2max;
+      double [] cofp;
 
 		
-		// reset error flag
-		errflag = 0;
+      // reset error flag
+      errflag = 0;
   
-		// Check for physical restriction. 
-		// All other restrictions are checked by the 3-j symbol routine.
-		if ( Math.Abs(m1 + m2 - m3) > err) 
-	{
-		errflag = 7;
-		throw new ArgumentException("m1 + m2 - m3 is not zero.");
+      // Check for physical restriction. 
+      // All other restrictions are checked by the 3-j symbol routine.
+      if ( Math.Abs(m1 + m2 - m3) > err) 
+      {
+        errflag = 7;
+        throw new ArgumentException("m1 + m2 - m3 is not zero.");
 	
-	} 
+      } 
   
-	// calculate minimum storage size needed for ThreeJSymbolM()
-	// if the dimension becomes negative the 3-j routine will capture it
-	int njm = Nint(Math.Min(l2,l3-m1) - Math.Max(-l2,-l3-m1) + 1); 
+      // calculate minimum storage size needed for ThreeJSymbolM()
+      // if the dimension becomes negative the 3-j routine will capture it
+      int njm = Nint(Math.Min(l2,l3-m1) - Math.Max(-l2,-l3-m1) + 1); 
   
-	// allocate dynamic memory if necessary
-	cofp = new double[njm];
+      // allocate dynamic memory if necessary
+      cofp = new double[njm];
 
-	// calculate series of 3-j symbols
-	ThreeJSymbolM (l1,l2,l3,m1, out m2min, out m2max, cofp,njm, out errflag);
+      // calculate series of 3-j symbols
+      ThreeJSymbolM (l1,l2,l3,m1, out m2min, out m2max, cofp,njm, out errflag);
 
-	// calculated Clebsch-Gordan coefficient
-	if (errflag==0)
-	CG = cofp[Nint(m2-m2min)] * (odd(Nint(l1-l2+m3)) ? -1 : 1) * Math.Sqrt(2*l3+1); 
+      // calculated Clebsch-Gordan coefficient
+      if (errflag==0)
+        CG = cofp[Nint(m2-m2min)] * (odd(Nint(l1-l2+m3)) ? -1 : 1) * Math.Sqrt(2*l3+1); 
 
 
-	return CG;
-}
+      return CG;
+    }
 
-		#endregion
-	}
+    #endregion
+  }
 }

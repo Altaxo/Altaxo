@@ -1,6 +1,7 @@
+#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -17,6 +18,7 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
+#endregion
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -49,7 +51,7 @@ using Altaxo.Serialization;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("0.50.0.214")]
+[assembly: AssemblyVersion("0.50.0.215")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 

@@ -1,3 +1,27 @@
+#region Copyright
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+#endregion
+
+
+// The following code was translated using Matpack sources (http://www.matpack.de) (Author B.Gammel)
 // Original MatPack-1.7.3\Source\dbesj0.cc
 //                               d9b0mp.cc
 //                               dbesj1.cc
@@ -26,3772 +50,3772 @@ using System;
 
 namespace Altaxo.Calc
 {
-	/// <summary>
-	/// Bessel functions for integer order.
-	/// </summary>
-	public class BesselRelated
-	{
-		#region Common Constants
+  /// <summary>
+  /// Bessel functions for integer order.
+  /// </summary>
+  public class BesselRelated
+  {
+    #region Common Constants
 
-		/// <summary>
-		/// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
-		/// </summary>
-		const double DBL_EPSILON = 2.2204460492503131e-016;
-		/// <summary>
-		/// The smallest positive double number.
-		/// </summary>
-		const double DBL_MIN     = double.Epsilon;
-		/// <summary>
-		/// The biggest positive double number.
-		/// </summary>
-		const double DBL_MAX     = double.MaxValue;
+    /// <summary>
+    /// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
+    /// </summary>
+    const double DBL_EPSILON = 2.2204460492503131e-016;
+    /// <summary>
+    /// The smallest positive double number.
+    /// </summary>
+    const double DBL_MIN     = double.Epsilon;
+    /// <summary>
+    /// The biggest positive double number.
+    /// </summary>
+    const double DBL_MAX     = double.MaxValue;
 
-		#endregion
+    #endregion
 
-		#region Helper functions
+    #region Helper functions
 
-		/// <summary>
-		/// Returns -1 if argument negative, 0 if argument zero, or 1 if argument is positive.
-		/// </summary>
-		/// <param name="x">The number whose sign is returned.</param>
-		/// <returns>-1 if the argument is negative, 0 if the argument is zero, or 1 if argument is positive.</returns>
-		static int sign (double x)
-		{
-			return (x > 0) ? 1 : (x < 0) ? -1 : 0;
-		}
+    /// <summary>
+    /// Returns -1 if argument negative, 0 if argument zero, or 1 if argument is positive.
+    /// </summary>
+    /// <param name="x">The number whose sign is returned.</param>
+    /// <returns>-1 if the argument is negative, 0 if the argument is zero, or 1 if argument is positive.</returns>
+    static int sign (double x)
+    {
+      return (x > 0) ? 1 : (x < 0) ? -1 : 0;
+    }
 
-		/// <summary>
-		/// Return first number with sign of second number
-		/// </summary>
-		/// <param name="x">The first number.</param>
-		/// <param name="y">The second number whose sign is used.</param>
-		/// <returns>The first number x with the sign of the second argument y.</returns>
-		static double CopySign (double x, double y)
-		{
-			return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);
-		}
-
-
-		/// <summary>
-		/// Round to nearest integer.
-		/// </summary>
-		/// <param name="d">The argument.</param>
-		/// <returns>The nearest integer of the argument d.</returns>
-		static int	Nint (double d)
-		{
-			return (d>0) ? (int)(d+0.5) : -(int)(-d+0.5);
-		}
+    /// <summary>
+    /// Return first number with sign of second number
+    /// </summary>
+    /// <param name="x">The first number.</param>
+    /// <param name="y">The second number whose sign is used.</param>
+    /// <returns>The first number x with the sign of the second argument y.</returns>
+    static double CopySign (double x, double y)
+    {
+      return (y < 0) ? ((x < 0) ? x : -x) : ((x > 0) ? x : -x);
+    }
 
 
-		#endregion
+    /// <summary>
+    /// Round to nearest integer.
+    /// </summary>
+    /// <param name="d">The argument.</param>
+    /// <returns>The nearest integer of the argument d.</returns>
+    static int	Nint (double d)
+    {
+      return (d>0) ? (int)(d+0.5) : -(int)(-d+0.5);
+    }
 
-		#region initds
 
-		/// <summary>
-		/// Initialize the orthogonal series, represented by the array os, so 
-		/// that initds is the number of terms needed to insure the error is no 
-		/// larger than eta.  Ordinarily, eta will be chosen to be one-tenth 
-		/// machine precision. 
-		/// </summary>
-		/// <param name="os">Double precision array of NOS coefficients in an orthogonal	series.</param>
-		/// <param name="nos">Number of coefficients in OS.</param>
-		/// <param name="eta"> single precision scalar containing requested accuracy of  series. </param>
-		/// <returns>The number of terms neccessary to insure the error is not larger than eta.</returns>
-		/// <remarks>
-		/// This is a translation from the Fortran version of SLATEC, FNLIB,
-		/// CATEGORY C3A2, REVISION 900315, originally written by Fullerton W., (LANL)
-		/// to C++.
-		/// </remarks>
-		static int initds (double[] os, int nos, double eta)
-		{
-			if (nos < 1) 
-				throw new ArgumentException("Number of coefficients is less than 1");
+    #endregion
 
-			int i = 0;
-			double err = 0.0;
-			for (int ii = 1; ii <= nos; ii++) 
-			{
-				i = nos - ii;
-				err += Math.Abs(os[i]);
-				if (err > eta) break;
-			}
+    #region initds
+
+    /// <summary>
+    /// Initialize the orthogonal series, represented by the array os, so 
+    /// that initds is the number of terms needed to insure the error is no 
+    /// larger than eta.  Ordinarily, eta will be chosen to be one-tenth 
+    /// machine precision. 
+    /// </summary>
+    /// <param name="os">Double precision array of NOS coefficients in an orthogonal	series.</param>
+    /// <param name="nos">Number of coefficients in OS.</param>
+    /// <param name="eta"> single precision scalar containing requested accuracy of  series. </param>
+    /// <returns>The number of terms neccessary to insure the error is not larger than eta.</returns>
+    /// <remarks>
+    /// This is a translation from the Fortran version of SLATEC, FNLIB,
+    /// CATEGORY C3A2, REVISION 900315, originally written by Fullerton W., (LANL)
+    /// to C++.
+    /// </remarks>
+    static int initds (double[] os, int nos, double eta)
+    {
+      if (nos < 1) 
+        throw new ArgumentException("Number of coefficients is less than 1");
+
+      int i = 0;
+      double err = 0.0;
+      for (int ii = 1; ii <= nos; ii++) 
+      {
+        i = nos - ii;
+        err += Math.Abs(os[i]);
+        if (err > eta) break;
+      }
     
-			if (i == nos) 
-				throw new ArgumentException("Chebyshev series too short for specified accuracy");
+      if (i == nos) 
+        throw new ArgumentException("Chebyshev series too short for specified accuracy");
 
-			return i;
-		}
+      return i;
+    }
 
-		#endregion
+    #endregion
 
-		#region dcsevl
+    #region dcsevl
 
-		/// <summary>
-		/// Evaluate the n-term Chebyshev series cs at x.  Adapted from 
-		/// a method presented in the paper by Broucke referenced below. 
-		/// </summary>
-		/// <param name="x">Value at which the series is to be evaluated. </param>
-		/// <param name="cs">cs   array of n terms of a Chebyshev series. In evaluating 
-		/// cs, only half the first coefficient is summed. 
-		///	</param>
-		/// <param name="n">number of terms in array cs.</param>
-		/// <returns>The n-term Chebyshev series cs at x.</returns>
-		/// <remarks>
-		/// References:
-		///
-		///	R. Broucke, Ten subroutines for the manipulation of Chebyshev series, 
-		///	Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256. 
-		///
-		///	L. Fox and I. B. Parker, Chebyshev Polynomials in 
-		///      Numerical Analysis, Oxford University Press, 1968,  page 56. 
-		///
-		/// This is a translation from the Fortran version of SLATEC, FNLIB,
-		/// CATEGORY C3A2, REVISION  920501, originally written by Fullerton W., (LANL) 
-		/// to C++.
-		/// </remarks>
-		static double dcsevl (double x, double[] cs, int n)
-		{
+    /// <summary>
+    /// Evaluate the n-term Chebyshev series cs at x.  Adapted from 
+    /// a method presented in the paper by Broucke referenced below. 
+    /// </summary>
+    /// <param name="x">Value at which the series is to be evaluated. </param>
+    /// <param name="cs">cs   array of n terms of a Chebyshev series. In evaluating 
+    /// cs, only half the first coefficient is summed. 
+    ///	</param>
+    /// <param name="n">number of terms in array cs.</param>
+    /// <returns>The n-term Chebyshev series cs at x.</returns>
+    /// <remarks>
+    /// References:
+    ///
+    ///	R. Broucke, Ten subroutines for the manipulation of Chebyshev series, 
+    ///	Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256. 
+    ///
+    ///	L. Fox and I. B. Parker, Chebyshev Polynomials in 
+    ///      Numerical Analysis, Oxford University Press, 1968,  page 56. 
+    ///
+    /// This is a translation from the Fortran version of SLATEC, FNLIB,
+    /// CATEGORY C3A2, REVISION  920501, originally written by Fullerton W., (LANL) 
+    /// to C++.
+    /// </remarks>
+    static double dcsevl (double x, double[] cs, int n)
+    {
 #if DEBUG
-			if (n < 1)   
-				throw new ArgumentException("Number of terms <= 0");
-			if (n > 1000) 
-				throw new ArgumentException("Number of terms > 1000");
-			if (Math.Abs(x) > DBL_EPSILON + 1.0) 
-				throw new ArgumentException("X outside the interval (-1,+1)");
+      if (n < 1)   
+        throw new ArgumentException("Number of terms <= 0");
+      if (n > 1000) 
+        throw new ArgumentException("Number of terms > 1000");
+      if (Math.Abs(x) > DBL_EPSILON + 1.0) 
+        throw new ArgumentException("X outside the interval (-1,+1)");
 #endif
 
-			double b0 = 0.0, b1 = 0.0, b2 = 0.0, twox = x * 2;
-			for (int i = 1; i <= n; i++) 
-			{
-				b2 = b1;
-				b1 = b0;
-				b0 = twox * b1 - b2 + cs[n - i];
-			}
+      double b0 = 0.0, b1 = 0.0, b2 = 0.0, twox = x * 2;
+      for (int i = 1; i <= n; i++) 
+      {
+        b2 = b1;
+        b1 = b0;
+        b0 = twox * b1 - b2 + cs[n - i];
+      }
 
-			return (b0 - b2) * 0.5;
-		} 
+      return (b0 - b2) * 0.5;
+    } 
  
-		#endregion
+    #endregion
 
-		#region d9b0mp
+    #region d9b0mp
 
-		static void d9b0mp (double x, out double ampl, out double theta)
-		{
-			_d9b0mp.d9b0mp(x, out ampl, out theta);
-		}
+    static void d9b0mp (double x, out double ampl, out double theta)
+    {
+      _d9b0mp.d9b0mp(x, out ampl, out theta);
+    }
 
 
-		class _d9b0mp
-		{
+    class _d9b0mp
+    {
 
-			static readonly double[] _d9b0mp_bm0cs = 
-	{ 
-		0.09211656246827742712573767730182,
-		-0.001050590997271905102480716371755,
-		1.470159840768759754056392850952e-5,
-		-5.058557606038554223347929327702e-7,
-		2.787254538632444176630356137881e-8,
-		-2.062363611780914802618841018973e-9,
-		1.870214313138879675138172596261e-10,
-		-1.969330971135636200241730777825e-11,
-		2.325973793999275444012508818052e-12,
-		-3.009520344938250272851224734482e-13,
-		4.194521333850669181471206768646e-14,
-		-6.219449312188445825973267429564e-15,
-		9.718260411336068469601765885269e-16,
-		-1.588478585701075207366635966937e-16,
-		2.700072193671308890086217324458e-17,
-		-4.750092365234008992477504786773e-18,
-		8.61512816260437087319170374656e-19,
-		-1.605608686956144815745602703359e-19,
-		3.066513987314482975188539801599e-20,
-		-5.987764223193956430696505617066e-21,
-		1.192971253748248306489069841066e-21,
-		-2.420969142044805489484682581333e-22,
-		4.996751760510616453371002879999e-23,
-		-1.047493639351158510095040511999e-23,
-		2.227786843797468101048183466666e-24,
-		-4.801813239398162862370542933333e-25,
-		1.047962723470959956476996266666e-25,
-		-2.3138581656786153251012608e-26,
-		5.164823088462674211635199999999e-27,
-		-1.164691191850065389525401599999e-27,
-		2.651788486043319282958336e-28,
-		-6.092559503825728497691306666666e-29,
-		1.411804686144259308038826666666e-29,
-		-3.298094961231737245750613333333e-30,
-		7.763931143074065031714133333333e-31,
-		-1.841031343661458478421333333333e-31,
-		4.395880138594310737100799999999e-32 
-	};
+      static readonly double[] _d9b0mp_bm0cs = 
+  { 
+    0.09211656246827742712573767730182,
+    -0.001050590997271905102480716371755,
+    1.470159840768759754056392850952e-5,
+    -5.058557606038554223347929327702e-7,
+    2.787254538632444176630356137881e-8,
+    -2.062363611780914802618841018973e-9,
+    1.870214313138879675138172596261e-10,
+    -1.969330971135636200241730777825e-11,
+    2.325973793999275444012508818052e-12,
+    -3.009520344938250272851224734482e-13,
+    4.194521333850669181471206768646e-14,
+    -6.219449312188445825973267429564e-15,
+    9.718260411336068469601765885269e-16,
+    -1.588478585701075207366635966937e-16,
+    2.700072193671308890086217324458e-17,
+    -4.750092365234008992477504786773e-18,
+    8.61512816260437087319170374656e-19,
+    -1.605608686956144815745602703359e-19,
+    3.066513987314482975188539801599e-20,
+    -5.987764223193956430696505617066e-21,
+    1.192971253748248306489069841066e-21,
+    -2.420969142044805489484682581333e-22,
+    4.996751760510616453371002879999e-23,
+    -1.047493639351158510095040511999e-23,
+    2.227786843797468101048183466666e-24,
+    -4.801813239398162862370542933333e-25,
+    1.047962723470959956476996266666e-25,
+    -2.3138581656786153251012608e-26,
+    5.164823088462674211635199999999e-27,
+    -1.164691191850065389525401599999e-27,
+    2.651788486043319282958336e-28,
+    -6.092559503825728497691306666666e-29,
+    1.411804686144259308038826666666e-29,
+    -3.298094961231737245750613333333e-30,
+    7.763931143074065031714133333333e-31,
+    -1.841031343661458478421333333333e-31,
+    4.395880138594310737100799999999e-32 
+  };
 
-			static readonly double[] _d9b0mp_bth0cs = 
-	{
-		-0.24901780862128936717709793789967,
-		4.8550299609623749241048615535485e-4,
-		-5.4511837345017204950656273563505e-6,
-		1.3558673059405964054377445929903e-7,
-		-5.569139890222762622758321841492e-9,
-		3.2609031824994335304004205719468e-10,
-		-2.4918807862461341125237903877993e-11,
-		2.3449377420882520554352413564891e-12,
-		-2.6096534444310387762177574766136e-13,
-		3.3353140420097395105869955014923e-14,
-		-4.7890000440572684646750770557409e-15,
-		7.5956178436192215972642568545248e-16,
-		-1.3131556016891440382773397487633e-16,
-		2.4483618345240857495426820738355e-17,
-		-4.8805729810618777683256761918331e-18,
-		1.0327285029786316149223756361204e-18,
-		-2.3057633815057217157004744527025e-19,
-		5.4044443001892693993017108483765e-20,
-		-1.3240695194366572724155032882385e-20,
-		3.3780795621371970203424792124722e-21,
-		-8.9457629157111779003026926292299e-22,
-		2.4519906889219317090899908651405e-22,
-		-6.9388422876866318680139933157657e-23,
-		2.0228278714890138392946303337791e-23,
-		-6.0628500002335483105794195371764e-24,
-		1.864974896403763538182378839627e-24,
-		-5.8783732384849894560245036530867e-25,
-		1.8958591447999563485531179503513e-25,
-		-6.2481979372258858959291620728565e-26,
-		2.1017901684551024686638633529074e-26,
-		-7.2084300935209253690813933992446e-27,
-		2.5181363892474240867156405976746e-27,
-		-8.9518042258785778806143945953643e-28,
-		3.2357237479762298533256235868587e-28,
-		-1.1883010519855353657047144113796e-28,
-		4.4306286907358104820579231941731e-29,
-		-1.6761009648834829495792010135681e-29,
-		6.4292946921207466972532393966088e-30,
-		-2.4992261166978652421207213682763e-30,
-		9.8399794299521955672828260355318e-31,
-		-3.9220375242408016397989131626158e-31,
-		1.5818107030056522138590618845692e-31,
-		-6.4525506144890715944344098365426e-32,
-		2.6611111369199356137177018346367e-32 
-	};
+      static readonly double[] _d9b0mp_bth0cs = 
+  {
+    -0.24901780862128936717709793789967,
+    4.8550299609623749241048615535485e-4,
+    -5.4511837345017204950656273563505e-6,
+    1.3558673059405964054377445929903e-7,
+    -5.569139890222762622758321841492e-9,
+    3.2609031824994335304004205719468e-10,
+    -2.4918807862461341125237903877993e-11,
+    2.3449377420882520554352413564891e-12,
+    -2.6096534444310387762177574766136e-13,
+    3.3353140420097395105869955014923e-14,
+    -4.7890000440572684646750770557409e-15,
+    7.5956178436192215972642568545248e-16,
+    -1.3131556016891440382773397487633e-16,
+    2.4483618345240857495426820738355e-17,
+    -4.8805729810618777683256761918331e-18,
+    1.0327285029786316149223756361204e-18,
+    -2.3057633815057217157004744527025e-19,
+    5.4044443001892693993017108483765e-20,
+    -1.3240695194366572724155032882385e-20,
+    3.3780795621371970203424792124722e-21,
+    -8.9457629157111779003026926292299e-22,
+    2.4519906889219317090899908651405e-22,
+    -6.9388422876866318680139933157657e-23,
+    2.0228278714890138392946303337791e-23,
+    -6.0628500002335483105794195371764e-24,
+    1.864974896403763538182378839627e-24,
+    -5.8783732384849894560245036530867e-25,
+    1.8958591447999563485531179503513e-25,
+    -6.2481979372258858959291620728565e-26,
+    2.1017901684551024686638633529074e-26,
+    -7.2084300935209253690813933992446e-27,
+    2.5181363892474240867156405976746e-27,
+    -8.9518042258785778806143945953643e-28,
+    3.2357237479762298533256235868587e-28,
+    -1.1883010519855353657047144113796e-28,
+    4.4306286907358104820579231941731e-29,
+    -1.6761009648834829495792010135681e-29,
+    6.4292946921207466972532393966088e-30,
+    -2.4992261166978652421207213682763e-30,
+    9.8399794299521955672828260355318e-31,
+    -3.9220375242408016397989131626158e-31,
+    1.5818107030056522138590618845692e-31,
+    -6.4525506144890715944344098365426e-32,
+    2.6611111369199356137177018346367e-32 
+  };
 
-			static readonly double[] _d9b0mp_bm02cs = 
-	{ 
-		0.0950041514522838136933086133556,
-		-3.801864682365670991748081566851e-4,
-		2.258339301031481192951829927224e-6,
-		-3.895725802372228764730621412605e-8,
-		1.246886416512081697930990529725e-9,
-		-6.065949022102503779803835058387e-11,
-		4.008461651421746991015275971045e-12,
-		-3.350998183398094218467298794574e-13,
-		3.377119716517417367063264341996e-14,
-		-3.964585901635012700569356295823e-15,
-		5.286111503883857217387939744735e-16,
-		-7.852519083450852313654640243493e-17,
-		1.280300573386682201011634073449e-17,
-		-2.263996296391429776287099244884e-18,
-		4.300496929656790388646410290477e-19,
-		-8.705749805132587079747535451455e-20,
-		1.86586271396209514118144277205e-20,
-		-4.210482486093065457345086972301e-21,
-		9.956676964228400991581627417842e-22,
-		-2.457357442805313359605921478547e-22,
-		6.307692160762031568087353707059e-23,
-		-1.678773691440740142693331172388e-23,
-		4.620259064673904433770878136087e-24,
-		-1.311782266860308732237693402496e-24,
-		3.834087564116302827747922440276e-25,
-		-1.151459324077741271072613293576e-25,
-		3.547210007523338523076971345213e-26,
-		-1.119218385815004646264355942176e-26,
-		3.611879427629837831698404994257e-27,
-		-1.190687765913333150092641762463e-27,
-		4.005094059403968131802476449536e-28,
-		-1.373169422452212390595193916017e-28,
-		4.794199088742531585996491526437e-29,
-		-1.702965627624109584006994476452e-29,
-		6.149512428936330071503575161324e-30,
-		-2.255766896581828349944300237242e-30,
-		8.3997075092942994860616583532e-31,
-		-3.172997595562602355567423936152e-31,
-		1.215205298881298554583333026514e-31,
-		-4.715852749754438693013210568045e-32 
-	};
+      static readonly double[] _d9b0mp_bm02cs = 
+  { 
+    0.0950041514522838136933086133556,
+    -3.801864682365670991748081566851e-4,
+    2.258339301031481192951829927224e-6,
+    -3.895725802372228764730621412605e-8,
+    1.246886416512081697930990529725e-9,
+    -6.065949022102503779803835058387e-11,
+    4.008461651421746991015275971045e-12,
+    -3.350998183398094218467298794574e-13,
+    3.377119716517417367063264341996e-14,
+    -3.964585901635012700569356295823e-15,
+    5.286111503883857217387939744735e-16,
+    -7.852519083450852313654640243493e-17,
+    1.280300573386682201011634073449e-17,
+    -2.263996296391429776287099244884e-18,
+    4.300496929656790388646410290477e-19,
+    -8.705749805132587079747535451455e-20,
+    1.86586271396209514118144277205e-20,
+    -4.210482486093065457345086972301e-21,
+    9.956676964228400991581627417842e-22,
+    -2.457357442805313359605921478547e-22,
+    6.307692160762031568087353707059e-23,
+    -1.678773691440740142693331172388e-23,
+    4.620259064673904433770878136087e-24,
+    -1.311782266860308732237693402496e-24,
+    3.834087564116302827747922440276e-25,
+    -1.151459324077741271072613293576e-25,
+    3.547210007523338523076971345213e-26,
+    -1.119218385815004646264355942176e-26,
+    3.611879427629837831698404994257e-27,
+    -1.190687765913333150092641762463e-27,
+    4.005094059403968131802476449536e-28,
+    -1.373169422452212390595193916017e-28,
+    4.794199088742531585996491526437e-29,
+    -1.702965627624109584006994476452e-29,
+    6.149512428936330071503575161324e-30,
+    -2.255766896581828349944300237242e-30,
+    8.3997075092942994860616583532e-31,
+    -3.172997595562602355567423936152e-31,
+    1.215205298881298554583333026514e-31,
+    -4.715852749754438693013210568045e-32 
+  };
 
-			static readonly double[] _d9b0mp_bt02cs = 
-	{ 
-		-0.24548295213424597462050467249324,
-		0.0012544121039084615780785331778299,
-		-3.1253950414871522854973446709571e-5,
-		1.4709778249940831164453426969314e-6,
-		-9.9543488937950033643468850351158e-8,
-		8.5493166733203041247578711397751e-9,
-		-8.6989759526554334557985512179192e-10,
-		1.0052099533559791084540101082153e-10,
-		-1.2828230601708892903483623685544e-11,
-		1.7731700781805131705655750451023e-12,
-		-2.6174574569485577488636284180925e-13,
-		4.0828351389972059621966481221103e-14,
-		-6.6751668239742720054606749554261e-15,
-		1.1365761393071629448392469549951e-15,
-		-2.0051189620647160250559266412117e-16,
-		3.6497978794766269635720591464106e-17,
-		-6.83096375645823031693558437888e-18,
-		1.3107583145670756620057104267946e-18,
-		-2.5723363101850607778757130649599e-19,
-		5.1521657441863959925267780949333e-20,
-		-1.0513017563758802637940741461333e-20,
-		2.1820381991194813847301084501333e-21,
-		-4.6004701210362160577225905493333e-22,
-		9.8407006925466818520953651199999e-23,
-		-2.1334038035728375844735986346666e-23,
-		4.6831036423973365296066286933333e-24,
-		-1.0400213691985747236513382399999e-24,
-		2.33491056773015100517777408e-25,
-		-5.2956825323318615788049749333333e-26,
-		1.2126341952959756829196287999999e-26,
-		-2.8018897082289428760275626666666e-27,
-		6.5292678987012873342593706666666e-28,
-		-1.5337980061873346427835733333333e-28,
-		3.6305884306364536682359466666666e-29,
-		-8.6560755713629122479172266666666e-30,
-		2.0779909972536284571238399999999e-30,
-		-5.0211170221417221674325333333333e-31,
-		1.2208360279441714184191999999999e-31,
-		-2.9860056267039913454250666666666e-32 
-	};
-			static readonly double pi4 = 0.785398163397448309615660845819876;
-			static readonly double	eta = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double	xmax = 1.0 / DBL_EPSILON;
-			static readonly int _d9b0mp_nbm0  = initds(_d9b0mp_bm0cs,  37, eta);
-			static readonly int _d9b0mp_nbt02 = initds(_d9b0mp_bt02cs, 39, eta);
-			static readonly int _d9b0mp_nbm02 = initds(_d9b0mp_bm02cs, 40, eta);
-			static readonly int _d9b0mp_nbth0 = initds(_d9b0mp_bth0cs, 44, eta);
+      static readonly double[] _d9b0mp_bt02cs = 
+  { 
+    -0.24548295213424597462050467249324,
+    0.0012544121039084615780785331778299,
+    -3.1253950414871522854973446709571e-5,
+    1.4709778249940831164453426969314e-6,
+    -9.9543488937950033643468850351158e-8,
+    8.5493166733203041247578711397751e-9,
+    -8.6989759526554334557985512179192e-10,
+    1.0052099533559791084540101082153e-10,
+    -1.2828230601708892903483623685544e-11,
+    1.7731700781805131705655750451023e-12,
+    -2.6174574569485577488636284180925e-13,
+    4.0828351389972059621966481221103e-14,
+    -6.6751668239742720054606749554261e-15,
+    1.1365761393071629448392469549951e-15,
+    -2.0051189620647160250559266412117e-16,
+    3.6497978794766269635720591464106e-17,
+    -6.83096375645823031693558437888e-18,
+    1.3107583145670756620057104267946e-18,
+    -2.5723363101850607778757130649599e-19,
+    5.1521657441863959925267780949333e-20,
+    -1.0513017563758802637940741461333e-20,
+    2.1820381991194813847301084501333e-21,
+    -4.6004701210362160577225905493333e-22,
+    9.8407006925466818520953651199999e-23,
+    -2.1334038035728375844735986346666e-23,
+    4.6831036423973365296066286933333e-24,
+    -1.0400213691985747236513382399999e-24,
+    2.33491056773015100517777408e-25,
+    -5.2956825323318615788049749333333e-26,
+    1.2126341952959756829196287999999e-26,
+    -2.8018897082289428760275626666666e-27,
+    6.5292678987012873342593706666666e-28,
+    -1.5337980061873346427835733333333e-28,
+    3.6305884306364536682359466666666e-29,
+    -8.6560755713629122479172266666666e-30,
+    2.0779909972536284571238399999999e-30,
+    -5.0211170221417221674325333333333e-31,
+    1.2208360279441714184191999999999e-31,
+    -2.9860056267039913454250666666666e-32 
+  };
+      static readonly double pi4 = 0.785398163397448309615660845819876;
+      static readonly double	eta = 0.5 * DBL_EPSILON * 0.1;
+      static readonly double	xmax = 1.0 / DBL_EPSILON;
+      static readonly int _d9b0mp_nbm0  = initds(_d9b0mp_bm0cs,  37, eta);
+      static readonly int _d9b0mp_nbt02 = initds(_d9b0mp_bt02cs, 39, eta);
+      static readonly int _d9b0mp_nbm02 = initds(_d9b0mp_bm02cs, 40, eta);
+      static readonly int _d9b0mp_nbth0 = initds(_d9b0mp_bth0cs, 44, eta);
 	
 
-			//-----------------------------------------------------------------------------//
-			//
-			// void d9b0mp (double x, double& ampl, double& theta)
-			//
-			// Evaluate the modulus and phase for the Bessel J0 and Y0 functions. 
-			//
-			// This is a translation from the Fortran version of SLATEC, FNLIB,
-			// CATEGORY C10A1, REVISION 920618 originally written by Fullerton W.,(LANL)
-			// to C++.
-			//
-			// Series for BM0        on the interval  1.56250E-02 to  6.25000E-02 
-			//                                        with weighted error   4.40E-32 
-			//                                         log weighted error  31.36 
-			//                               significant figures required  30.02 
-			//                                    decimal places required  32.14 
-			//
-			// Series for BTH0       on the interval  0.          to  1.56250E-02 
-			//                                        with weighted error   2.66E-32 
-			//                                         log weighted error  31.57 
-			//                               significant figures required  30.67 
-			//                                    decimal places required  32.40 
-			//
-			// Series for BM02       on the interval  0.          to  1.56250E-02 
-			//                                        with weighted error   4.72E-32 
-			//                                         log weighted error  31.33 
-			//                               significant figures required  30.00 
-			//                                    decimal places required  32.13 
-			//
-			// Series for BT02       on the interval  1.56250E-02 to  6.25000E-02 
-			//                                        with weighted error   2.99E-32 
-			//                                         log weighted error  31.52 
-			//                               significant figures required  30.61 
-			//                                    decimal places required  32.32 
-			//
-			//-----------------------------------------------------------------------------//
+      //-----------------------------------------------------------------------------//
+      //
+      // void d9b0mp (double x, double& ampl, double& theta)
+      //
+      // Evaluate the modulus and phase for the Bessel J0 and Y0 functions. 
+      //
+      // This is a translation from the Fortran version of SLATEC, FNLIB,
+      // CATEGORY C10A1, REVISION 920618 originally written by Fullerton W.,(LANL)
+      // to C++.
+      //
+      // Series for BM0        on the interval  1.56250E-02 to  6.25000E-02 
+      //                                        with weighted error   4.40E-32 
+      //                                         log weighted error  31.36 
+      //                               significant figures required  30.02 
+      //                                    decimal places required  32.14 
+      //
+      // Series for BTH0       on the interval  0.          to  1.56250E-02 
+      //                                        with weighted error   2.66E-32 
+      //                                         log weighted error  31.57 
+      //                               significant figures required  30.67 
+      //                                    decimal places required  32.40 
+      //
+      // Series for BM02       on the interval  0.          to  1.56250E-02 
+      //                                        with weighted error   4.72E-32 
+      //                                         log weighted error  31.33 
+      //                               significant figures required  30.00 
+      //                                    decimal places required  32.13 
+      //
+      // Series for BT02       on the interval  1.56250E-02 to  6.25000E-02 
+      //                                        with weighted error   2.99E-32 
+      //                                         log weighted error  31.52 
+      //                               significant figures required  30.61 
+      //                                    decimal places required  32.32 
+      //
+      //-----------------------------------------------------------------------------//
 
-			public static void d9b0mp (double x, out double ampl, out double theta)
-			{
+      public static void d9b0mp (double x, out double ampl, out double theta)
+      {
 
 		
 
-				if (x < 4.0) 
-				{ 
-					ampl = theta = double.NaN;
-					throw new ArgumentException("x must be >= 4");
-				}
+        if (x < 4.0) 
+        { 
+          ampl = theta = double.NaN;
+          throw new ArgumentException("x must be >= 4");
+        }
 
-				if (x > 8.0) 
-				{
-					if (x > xmax) 
-					{
-						ampl = theta = double.NaN;
-						throw new ArgumentException("no precision because x is too big");
-					}
-					double z = 128.0 / (x * x) - 1.0;
-					ampl = (dcsevl(z, _d9b0mp_bm02cs, _d9b0mp_nbm02) + 0.75) / Math.Sqrt(x);
-					theta = x - pi4 + dcsevl(z, _d9b0mp_bth0cs, _d9b0mp_nbth0) / x;
-				} 
-				else 
-				{
-					double z = (128.0 / (x * x) - 5.0) / 3.0;
-					ampl = (dcsevl(z, _d9b0mp_bm0cs, _d9b0mp_nbm0) + 0.75) / Math.Sqrt(x);
-					theta = x - pi4 + dcsevl(z, _d9b0mp_bt02cs, _d9b0mp_nbt02) / x;
-				}
-			}
-		}
-		#endregion
+        if (x > 8.0) 
+        {
+          if (x > xmax) 
+          {
+            ampl = theta = double.NaN;
+            throw new ArgumentException("no precision because x is too big");
+          }
+          double z = 128.0 / (x * x) - 1.0;
+          ampl = (dcsevl(z, _d9b0mp_bm02cs, _d9b0mp_nbm02) + 0.75) / Math.Sqrt(x);
+          theta = x - pi4 + dcsevl(z, _d9b0mp_bth0cs, _d9b0mp_nbth0) / x;
+        } 
+        else 
+        {
+          double z = (128.0 / (x * x) - 5.0) / 3.0;
+          ampl = (dcsevl(z, _d9b0mp_bm0cs, _d9b0mp_nbm0) + 0.75) / Math.Sqrt(x);
+          theta = x - pi4 + dcsevl(z, _d9b0mp_bt02cs, _d9b0mp_nbt02) / x;
+        }
+      }
+    }
+    #endregion
 
-		#region d9b1mp
+    #region d9b1mp
 		
-		static void d9b1mp (double x, out double ampl, out double theta)
-		{
-			_d9b1mp.d9b1mp(x, out ampl, out theta);
-		}
+    static void d9b1mp (double x, out double ampl, out double theta)
+    {
+      _d9b1mp.d9b1mp(x, out ampl, out theta);
+    }
 
-		class _d9b1mp
-		{
+    class _d9b1mp
+    {
 
-			static readonly double[] _d9b1mp_bm1cs = 
-	{ 
-		0.1069845452618063014969985308538,
-		0.003274915039715964900729055143445,
-		-2.987783266831698592030445777938e-5,
-		8.331237177991974531393222669023e-7,
-		-4.112665690302007304896381725498e-8,
-		2.855344228789215220719757663161e-9,
-		-2.485408305415623878060026596055e-10,
-		2.543393338072582442742484397174e-11,
-		-2.941045772822967523489750827909e-12,
-		3.743392025493903309265056153626e-13,
-		-5.149118293821167218720548243527e-14,
-		7.552535949865143908034040764199e-15,
-		-1.169409706828846444166290622464e-15,
-		1.89656244943479157172182460506e-16,
-		-3.201955368693286420664775316394e-17,
-		5.599548399316204114484169905493e-18,
-		-1.010215894730432443119390444544e-18,
-		1.873844985727562983302042719573e-19,
-		-3.563537470328580219274301439999e-20,
-		6.931283819971238330422763519999e-21,
-		-1.376059453406500152251408930133e-21,
-		2.783430784107080220599779327999e-22,
-		-5.727595364320561689348669439999e-23,
-		1.197361445918892672535756799999e-23,
-		-2.539928509891871976641440426666e-24,
-		5.461378289657295973069619199999e-25,
-		-1.189211341773320288986289493333e-25,
-		2.620150977340081594957824e-26,
-		-5.836810774255685901920938666666e-27,
-		1.313743500080595773423615999999e-27,
-		-2.985814622510380355332778666666e-28,
-		6.848390471334604937625599999999e-29,
-		-1.58440156822247672119296e-29,
-		3.695641006570938054301013333333e-30,
-		-8.687115921144668243012266666666e-31,
-		2.057080846158763462929066666666e-31,
-		-4.905225761116225518523733333333e-32 
-	};
+      static readonly double[] _d9b1mp_bm1cs = 
+  { 
+    0.1069845452618063014969985308538,
+    0.003274915039715964900729055143445,
+    -2.987783266831698592030445777938e-5,
+    8.331237177991974531393222669023e-7,
+    -4.112665690302007304896381725498e-8,
+    2.855344228789215220719757663161e-9,
+    -2.485408305415623878060026596055e-10,
+    2.543393338072582442742484397174e-11,
+    -2.941045772822967523489750827909e-12,
+    3.743392025493903309265056153626e-13,
+    -5.149118293821167218720548243527e-14,
+    7.552535949865143908034040764199e-15,
+    -1.169409706828846444166290622464e-15,
+    1.89656244943479157172182460506e-16,
+    -3.201955368693286420664775316394e-17,
+    5.599548399316204114484169905493e-18,
+    -1.010215894730432443119390444544e-18,
+    1.873844985727562983302042719573e-19,
+    -3.563537470328580219274301439999e-20,
+    6.931283819971238330422763519999e-21,
+    -1.376059453406500152251408930133e-21,
+    2.783430784107080220599779327999e-22,
+    -5.727595364320561689348669439999e-23,
+    1.197361445918892672535756799999e-23,
+    -2.539928509891871976641440426666e-24,
+    5.461378289657295973069619199999e-25,
+    -1.189211341773320288986289493333e-25,
+    2.620150977340081594957824e-26,
+    -5.836810774255685901920938666666e-27,
+    1.313743500080595773423615999999e-27,
+    -2.985814622510380355332778666666e-28,
+    6.848390471334604937625599999999e-29,
+    -1.58440156822247672119296e-29,
+    3.695641006570938054301013333333e-30,
+    -8.687115921144668243012266666666e-31,
+    2.057080846158763462929066666666e-31,
+    -4.905225761116225518523733333333e-32 
+  };
     
-			static readonly double[] _d9b1mp_bt12cs = 
-	{ 
-		0.73823860128742974662620839792764,
-		-0.0033361113174483906384470147681189,
-		6.1463454888046964698514899420186e-5,
-		-2.4024585161602374264977635469568e-6,
-		1.4663555577509746153210591997204e-7,
-		-1.1841917305589180567005147504983e-8,
-		1.1574198963919197052125466303055e-9,
-		-1.3001161129439187449366007794571e-10,
-		1.6245391141361731937742166273667e-11,
-		-2.2089636821403188752155441770128e-12,
-		3.2180304258553177090474358653778e-13,
-		-4.9653147932768480785552021135381e-14,
-		8.0438900432847825985558882639317e-15,
-		-1.3589121310161291384694712682282e-15,
-		2.3810504397147214869676529605973e-16,
-		-4.3081466363849106724471241420799e-17,
-		8.02025440327710024349935125504e-18,
-		-1.5316310642462311864230027468799e-18,
-		2.9928606352715568924073040554666e-19,
-		-5.9709964658085443393815636650666e-20,
-		1.2140289669415185024160852650666e-20,
-		-2.5115114696612948901006977706666e-21,
-		5.2790567170328744850738380799999e-22,
-		-1.1260509227550498324361161386666e-22,
-		2.43482773595763266596634624e-23,
-		-5.3317261236931800130038442666666e-24,
-		1.1813615059707121039205990399999e-24,
-		-2.6465368283353523514856789333333e-25,
-		5.9903394041361503945577813333333e-26,
-		-1.3690854630829503109136383999999e-26,
-		3.1576790154380228326413653333333e-27,
-		-7.3457915082084356491400533333333e-28,
-		1.722808148072274793070592e-28,
-		-4.07169079612865079410688e-29,
-		9.6934745136779622700373333333333e-30,
-		-2.3237636337765716765354666666666e-30,
-		5.6074510673522029406890666666666e-31,
-		-1.3616465391539005860522666666666e-31,
-		3.3263109233894654388906666666666e-32 
-	};
+      static readonly double[] _d9b1mp_bt12cs = 
+  { 
+    0.73823860128742974662620839792764,
+    -0.0033361113174483906384470147681189,
+    6.1463454888046964698514899420186e-5,
+    -2.4024585161602374264977635469568e-6,
+    1.4663555577509746153210591997204e-7,
+    -1.1841917305589180567005147504983e-8,
+    1.1574198963919197052125466303055e-9,
+    -1.3001161129439187449366007794571e-10,
+    1.6245391141361731937742166273667e-11,
+    -2.2089636821403188752155441770128e-12,
+    3.2180304258553177090474358653778e-13,
+    -4.9653147932768480785552021135381e-14,
+    8.0438900432847825985558882639317e-15,
+    -1.3589121310161291384694712682282e-15,
+    2.3810504397147214869676529605973e-16,
+    -4.3081466363849106724471241420799e-17,
+    8.02025440327710024349935125504e-18,
+    -1.5316310642462311864230027468799e-18,
+    2.9928606352715568924073040554666e-19,
+    -5.9709964658085443393815636650666e-20,
+    1.2140289669415185024160852650666e-20,
+    -2.5115114696612948901006977706666e-21,
+    5.2790567170328744850738380799999e-22,
+    -1.1260509227550498324361161386666e-22,
+    2.43482773595763266596634624e-23,
+    -5.3317261236931800130038442666666e-24,
+    1.1813615059707121039205990399999e-24,
+    -2.6465368283353523514856789333333e-25,
+    5.9903394041361503945577813333333e-26,
+    -1.3690854630829503109136383999999e-26,
+    3.1576790154380228326413653333333e-27,
+    -7.3457915082084356491400533333333e-28,
+    1.722808148072274793070592e-28,
+    -4.07169079612865079410688e-29,
+    9.6934745136779622700373333333333e-30,
+    -2.3237636337765716765354666666666e-30,
+    5.6074510673522029406890666666666e-31,
+    -1.3616465391539005860522666666666e-31,
+    3.3263109233894654388906666666666e-32 
+  };
     
-			static readonly double[] _d9b1mp_bm12cs = 
-	{ 
-		0.09807979156233050027272093546937,
-		0.001150961189504685306175483484602,
-		-4.312482164338205409889358097732e-6,
-		5.951839610088816307813029801832e-8,
-		-1.704844019826909857400701586478e-9,
-		7.798265413611109508658173827401e-11,
-		-4.958986126766415809491754951865e-12,
-		4.038432416421141516838202265144e-13,
-		-3.993046163725175445765483846645e-14,
-		4.619886183118966494313342432775e-15,
-		-6.089208019095383301345472619333e-16,
-		8.960930916433876482157048041249e-17,
-		-1.449629423942023122916518918925e-17,
-		2.546463158537776056165149648068e-18,
-		-4.80947287464783644425926371862e-19,
-		9.687684668292599049087275839124e-20,
-		-2.067213372277966023245038117551e-20,
-		4.64665155915038473180276780959e-21,
-		-1.094966128848334138241351328339e-21,
-		2.693892797288682860905707612785e-22,
-		-6.894992910930374477818970026857e-23,
-		1.83026826275206290989066855474e-23,
-		-5.025064246351916428156113553224e-24,
-		1.423545194454806039631693634194e-24,
-		-4.152191203616450388068886769801e-25,
-		1.244609201503979325882330076547e-25,
-		-3.827336370569304299431918661286e-26,
-		1.205591357815617535374723981835e-26,
-		-3.884536246376488076431859361124e-27,
-		1.278689528720409721904895283461e-27,
-		-4.295146689447946272061936915912e-28,
-		1.470689117829070886456802707983e-28,
-		-5.128315665106073128180374017796e-29,
-		1.819509585471169385481437373286e-29,
-		-6.563031314841980867618635050373e-30,
-		2.404898976919960653198914875834e-30,
-		-8.945966744690612473234958242979e-31,
-		3.37608516065723102663714897824e-31,
-		-1.291791454620656360913099916966e-31,
-		5.008634462958810520684951501254e-32 
-	};
+      static readonly double[] _d9b1mp_bm12cs = 
+  { 
+    0.09807979156233050027272093546937,
+    0.001150961189504685306175483484602,
+    -4.312482164338205409889358097732e-6,
+    5.951839610088816307813029801832e-8,
+    -1.704844019826909857400701586478e-9,
+    7.798265413611109508658173827401e-11,
+    -4.958986126766415809491754951865e-12,
+    4.038432416421141516838202265144e-13,
+    -3.993046163725175445765483846645e-14,
+    4.619886183118966494313342432775e-15,
+    -6.089208019095383301345472619333e-16,
+    8.960930916433876482157048041249e-17,
+    -1.449629423942023122916518918925e-17,
+    2.546463158537776056165149648068e-18,
+    -4.80947287464783644425926371862e-19,
+    9.687684668292599049087275839124e-20,
+    -2.067213372277966023245038117551e-20,
+    4.64665155915038473180276780959e-21,
+    -1.094966128848334138241351328339e-21,
+    2.693892797288682860905707612785e-22,
+    -6.894992910930374477818970026857e-23,
+    1.83026826275206290989066855474e-23,
+    -5.025064246351916428156113553224e-24,
+    1.423545194454806039631693634194e-24,
+    -4.152191203616450388068886769801e-25,
+    1.244609201503979325882330076547e-25,
+    -3.827336370569304299431918661286e-26,
+    1.205591357815617535374723981835e-26,
+    -3.884536246376488076431859361124e-27,
+    1.278689528720409721904895283461e-27,
+    -4.295146689447946272061936915912e-28,
+    1.470689117829070886456802707983e-28,
+    -5.128315665106073128180374017796e-29,
+    1.819509585471169385481437373286e-29,
+    -6.563031314841980867618635050373e-30,
+    2.404898976919960653198914875834e-30,
+    -8.945966744690612473234958242979e-31,
+    3.37608516065723102663714897824e-31,
+    -1.291791454620656360913099916966e-31,
+    5.008634462958810520684951501254e-32 
+  };
     
-			static readonly double[] _d9b1mp_bth1cs = 
-	{ 
-		0.74749957203587276055443483969695,
-		-0.0012400777144651711252545777541384,
-		9.9252442404424527376641497689592e-6,
-		-2.0303690737159711052419375375608e-7,
-		7.5359617705690885712184017583629e-9,
-		-4.1661612715343550107630023856228e-10,
-		3.0701618070834890481245102091216e-11,
-		-2.8178499637605213992324008883924e-12,
-		3.0790696739040295476028146821647e-13,
-		-3.8803300262803434112787347554781e-14,
-		5.5096039608630904934561726208562e-15,
-		-8.6590060768383779940103398953994e-16,
-		1.4856049141536749003423689060683e-16,
-		-2.7519529815904085805371212125009e-17,
-		5.4550796090481089625036223640923e-18,
-		-1.1486534501983642749543631027177e-18,
-		2.5535213377973900223199052533522e-19,
-		-5.9621490197413450395768287907849e-20,
-		1.4556622902372718620288302005833e-20,
-		-3.7022185422450538201579776019593e-21,
-		9.7763074125345357664168434517924e-22,
-		-2.6726821639668488468723775393052e-22,
-		7.5453300384983271794038190655764e-23,
-		-2.1947899919802744897892383371647e-23,
-		6.5648394623955262178906999817493e-24,
-		-2.0155604298370207570784076869519e-24,
-		6.341776855677614349214466718567e-25,
-		-2.0419277885337895634813769955591e-25,
-		6.7191464220720567486658980018551e-26,
-		-2.2569079110207573595709003687336e-26,
-		7.7297719892989706370926959871929e-27,
-		-2.696744451229464091321142408092e-27,
-		9.5749344518502698072295521933627e-28,
-		-3.4569168448890113000175680827627e-28,
-		1.2681234817398436504211986238374e-28,
-		-4.7232536630722639860464993713445e-29,
-		1.7850008478186376177858619796417e-29,
-		-6.8404361004510395406215223566746e-30,
-		2.6566028671720419358293422672212e-30,
-		-1.045040252791445291771416148467e-30,
-		4.1618290825377144306861917197064e-31,
-		-1.6771639203643714856501347882887e-31,
-		6.8361997776664389173535928028528e-32,
-		-2.817224786123364116673957462281e-32 
-	};
+      static readonly double[] _d9b1mp_bth1cs = 
+  { 
+    0.74749957203587276055443483969695,
+    -0.0012400777144651711252545777541384,
+    9.9252442404424527376641497689592e-6,
+    -2.0303690737159711052419375375608e-7,
+    7.5359617705690885712184017583629e-9,
+    -4.1661612715343550107630023856228e-10,
+    3.0701618070834890481245102091216e-11,
+    -2.8178499637605213992324008883924e-12,
+    3.0790696739040295476028146821647e-13,
+    -3.8803300262803434112787347554781e-14,
+    5.5096039608630904934561726208562e-15,
+    -8.6590060768383779940103398953994e-16,
+    1.4856049141536749003423689060683e-16,
+    -2.7519529815904085805371212125009e-17,
+    5.4550796090481089625036223640923e-18,
+    -1.1486534501983642749543631027177e-18,
+    2.5535213377973900223199052533522e-19,
+    -5.9621490197413450395768287907849e-20,
+    1.4556622902372718620288302005833e-20,
+    -3.7022185422450538201579776019593e-21,
+    9.7763074125345357664168434517924e-22,
+    -2.6726821639668488468723775393052e-22,
+    7.5453300384983271794038190655764e-23,
+    -2.1947899919802744897892383371647e-23,
+    6.5648394623955262178906999817493e-24,
+    -2.0155604298370207570784076869519e-24,
+    6.341776855677614349214466718567e-25,
+    -2.0419277885337895634813769955591e-25,
+    6.7191464220720567486658980018551e-26,
+    -2.2569079110207573595709003687336e-26,
+    7.7297719892989706370926959871929e-27,
+    -2.696744451229464091321142408092e-27,
+    9.5749344518502698072295521933627e-28,
+    -3.4569168448890113000175680827627e-28,
+    1.2681234817398436504211986238374e-28,
+    -4.7232536630722639860464993713445e-29,
+    1.7850008478186376177858619796417e-29,
+    -6.8404361004510395406215223566746e-30,
+    2.6566028671720419358293422672212e-30,
+    -1.045040252791445291771416148467e-30,
+    4.1618290825377144306861917197064e-31,
+    -1.6771639203643714856501347882887e-31,
+    6.8361997776664389173535928028528e-32,
+    -2.817224786123364116673957462281e-32 
+  };
     
-			static readonly double pi4  = 0.785398163397448309615660845819876;
-			static readonly double 	eta  = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double 	xmax = 1.0 / DBL_EPSILON;
-			static readonly int _d9b1mp_nbm1  = initds(_d9b1mp_bm1cs,  37, eta);
-			static readonly int _d9b1mp_nbt12 = initds(_d9b1mp_bt12cs, 39, eta);
-			static readonly int _d9b1mp_nbm12 = initds(_d9b1mp_bm12cs, 40, eta);
-			static readonly int _d9b1mp_nbth1 = initds(_d9b1mp_bth1cs, 44, eta);
+      static readonly double pi4  = 0.785398163397448309615660845819876;
+      static readonly double 	eta  = 0.5 * DBL_EPSILON * 0.1;
+      static readonly double 	xmax = 1.0 / DBL_EPSILON;
+      static readonly int _d9b1mp_nbm1  = initds(_d9b1mp_bm1cs,  37, eta);
+      static readonly int _d9b1mp_nbt12 = initds(_d9b1mp_bt12cs, 39, eta);
+      static readonly int _d9b1mp_nbm12 = initds(_d9b1mp_bm12cs, 40, eta);
+      static readonly int _d9b1mp_nbth1 = initds(_d9b1mp_bth1cs, 44, eta);
 	
 
 
-			//-----------------------------------------------------------------------------//
-			//
-			// void d9b1mp (double x, double& ampl, double& theta)
-			//
-			// Evaluate the modulus and phase for the Bessel J1 and Y1 functions. 
-			//
-			// This is a translation from the Fortran version of SLATEC, FNLIB,
-			// CATEGORY C10A1, REVISION 920618 originally written by Fullerton W.,(LANL)
-			// to C++.
-			//
-			// Series for BM1        on the interval  1.56250E-02 to  6.25000E-02 
-			//                                        with weighted error   4.91E-32  
-			//                                         log weighted error  31.31 
-			//                               significant figures required  30.04 
-			//                                    decimal places required  32.09 
-			//
-			// Series for BT12       on the interval  1.56250E-02 to  6.25000E-02 
-			//                                        with weighted error   3.33E-32 
-			//                                         log weighted error  31.48 
-			//                               significant figures required  31.05 
-			//                                    decimal places required  32.27 
-			//
-			// Series for BM12       on the interval  0.          to  1.56250E-02 
-			//                                        with weighted error   5.01E-32 
-			//                                         log weighted error  31.30 
-			//                               significant figures required  29.99 
-			//                                    decimal places required  32.10 
-			//
-			// Series for BTH1       on the interval  0.          to  1.56250E-02 
-			//                                        with weighted error   2.82E-32 
-			//                                         log weighted error  31.55 
-			//                               significant figures required  31.12 
-			//                                    decimal places required  32.37 
-			//
-			//-----------------------------------------------------------------------------//
+      //-----------------------------------------------------------------------------//
+      //
+      // void d9b1mp (double x, double& ampl, double& theta)
+      //
+      // Evaluate the modulus and phase for the Bessel J1 and Y1 functions. 
+      //
+      // This is a translation from the Fortran version of SLATEC, FNLIB,
+      // CATEGORY C10A1, REVISION 920618 originally written by Fullerton W.,(LANL)
+      // to C++.
+      //
+      // Series for BM1        on the interval  1.56250E-02 to  6.25000E-02 
+      //                                        with weighted error   4.91E-32  
+      //                                         log weighted error  31.31 
+      //                               significant figures required  30.04 
+      //                                    decimal places required  32.09 
+      //
+      // Series for BT12       on the interval  1.56250E-02 to  6.25000E-02 
+      //                                        with weighted error   3.33E-32 
+      //                                         log weighted error  31.48 
+      //                               significant figures required  31.05 
+      //                                    decimal places required  32.27 
+      //
+      // Series for BM12       on the interval  0.          to  1.56250E-02 
+      //                                        with weighted error   5.01E-32 
+      //                                         log weighted error  31.30 
+      //                               significant figures required  29.99 
+      //                                    decimal places required  32.10 
+      //
+      // Series for BTH1       on the interval  0.          to  1.56250E-02 
+      //                                        with weighted error   2.82E-32 
+      //                                         log weighted error  31.55 
+      //                               significant figures required  31.12 
+      //                                    decimal places required  32.37 
+      //
+      //-----------------------------------------------------------------------------//
 
-			public static void d9b1mp (double x, out double ampl, out double theta)
-			{
+      public static void d9b1mp (double x, out double ampl, out double theta)
+      {
 			
 
-				if (x < 4.0) 
-				{
-					ampl = theta = double.NaN;
-					throw new ArgumentException("x must be >= 4");
-				} 
-				else if (x <= 8.0) 
-				{
-					double z = (128.0 / (x * x) - 5.0) / 3.0;
-					ampl = (dcsevl(z, _d9b1mp_bm1cs, _d9b1mp_nbm1) + 0.75) / Math.Sqrt(x);
-					theta = x - pi4 * 3.0 + dcsevl(z, _d9b1mp_bt12cs, _d9b1mp_nbt12) / x;
+        if (x < 4.0) 
+        {
+          ampl = theta = double.NaN;
+          throw new ArgumentException("x must be >= 4");
+        } 
+        else if (x <= 8.0) 
+        {
+          double z = (128.0 / (x * x) - 5.0) / 3.0;
+          ampl = (dcsevl(z, _d9b1mp_bm1cs, _d9b1mp_nbm1) + 0.75) / Math.Sqrt(x);
+          theta = x - pi4 * 3.0 + dcsevl(z, _d9b1mp_bt12cs, _d9b1mp_nbt12) / x;
 
-				} 
-				else 
-				{
-					if (x > xmax) 
-					{
-						ampl = theta = double.NaN;
-						throw new ArgumentException("no precision because x is too big");
-					}
+        } 
+        else 
+        {
+          if (x > xmax) 
+          {
+            ampl = theta = double.NaN;
+            throw new ArgumentException("no precision because x is too big");
+          }
 
-					double z = 128.0 / (x * x) - 1.0;
-					ampl = (dcsevl(z, _d9b1mp_bm12cs, _d9b1mp_nbm12) + 0.75) / Math.Sqrt(x);
-					theta = x - pi4 * 3.0 + dcsevl(z, _d9b1mp_bth1cs, _d9b1mp_nbth1) / x;
-				}
-			}
-		}
-		#endregion
+          double z = 128.0 / (x * x) - 1.0;
+          ampl = (dcsevl(z, _d9b1mp_bm12cs, _d9b1mp_nbm12) + 0.75) / Math.Sqrt(x);
+          theta = x - pi4 * 3.0 + dcsevl(z, _d9b1mp_bth1cs, _d9b1mp_nbth1) / x;
+        }
+      }
+    }
+    #endregion
 
-		#region d9aimp
+    #region d9aimp
 
-		static void d9aimp(double x, out double ampl, out double theta)
-		{
-			_d9aimp.d9aimp(x, out ampl, out theta);
-		}
+    static void d9aimp(double x, out double ampl, out double theta)
+    {
+      _d9aimp.d9aimp(x, out ampl, out theta);
+    }
 			
 
-		class _d9aimp
-		{
-			static readonly double[] am20cs = 
-		{ 
-			0.0108716749086561856615730588125,
-			3.69489228982663555091728665146e-4,
-			4.40680100484689563667507001327e-6,
-			1.43686762361911153929183952833e-7,
-			8.24275552390078308670628855353e-9,
-			6.8442675889366160617392727818e-10,
-			7.39566697282739287731004740213e-11,
-			9.74595633696825017638702600847e-12,
-			1.50076885829405775650973119497e-12,
-			2.62147910221527634206252854802e-13,
-			5.08354111376487180357278966914e-14,
-			1.0768475335881144049298599707e-14,
-			2.46091286618433429335914062617e-15,
-			6.0078638035865641843611037355e-16,
-			1.55449156102388071150651388384e-16,
-			4.23535125035576604426382780182e-17,
-			1.20862166289299840154401109189e-17,
-			3.59609651214658240861499706423e-18,
-			1.11134218386395638261774604677e-18,
-			3.55559532432366609893680289225e-19,
-			1.17433021600139309998766947387e-19,
-			3.99397454661077561389162200966e-20,
-			1.3957667152891631042560632564e-20,
-			5.00240055309236041393459280716e-21,
-			1.83552760958132679184834866457e-21,
-			6.88490998179202743197790112404e-22,
-			2.63631035611417012359996885105e-22,
-			1.02924890237338360287153563785e-22,
-			4.09246966671594885489762960571e-23,
-			1.65558573406734651039727903828e-23,
-			6.80797467063033356116599685727e-24,
-			2.84326559934079832419751134476e-24,
-			1.20507398348965255097287818819e-24,
-			5.17961243287505217976613610424e-25,
-			2.25622613427562816303268640887e-25,
-			9.95418801147745168832117078246e-26,
-			4.44551696397342424308280582053e-26,
-			2.00865195461501101425916097338e-26,
-			9.17786344151775165973885645402e-27,
-			4.23872958105589240661672197948e-27,
-			1.9778927200784609237084625149e-27,
-			9.32116351284620665680435253373e-28,
-			4.43482133249918099955611379722e-28,
-			2.12945672365573895594589552837e-28,
-			1.03158569651075977552209344907e-28,
-			5.04023773022591199157904590029e-29,
-			2.48301304570155945304046541005e-29,
-			1.2330178312856219605419823856e-29,
-			6.17033449920521746121976730507e-30,
-			3.11092617415918897233869792213e-30,
-			1.57983085201706173015269071503e-30,
-			8.07931987538283607678121339092e-31,
-			4.15997394138667562722951360052e-31,
-			2.15610934097716900471935862504e-31,
-			1.12468857265869178296752823613e-31,
-			5.90331560632838091123040811797e-32,
-			3.11735667692928562046280505333e-32 
-		};
+    class _d9aimp
+    {
+      static readonly double[] am20cs = 
+    { 
+      0.0108716749086561856615730588125,
+      3.69489228982663555091728665146e-4,
+      4.40680100484689563667507001327e-6,
+      1.43686762361911153929183952833e-7,
+      8.24275552390078308670628855353e-9,
+      6.8442675889366160617392727818e-10,
+      7.39566697282739287731004740213e-11,
+      9.74595633696825017638702600847e-12,
+      1.50076885829405775650973119497e-12,
+      2.62147910221527634206252854802e-13,
+      5.08354111376487180357278966914e-14,
+      1.0768475335881144049298599707e-14,
+      2.46091286618433429335914062617e-15,
+      6.0078638035865641843611037355e-16,
+      1.55449156102388071150651388384e-16,
+      4.23535125035576604426382780182e-17,
+      1.20862166289299840154401109189e-17,
+      3.59609651214658240861499706423e-18,
+      1.11134218386395638261774604677e-18,
+      3.55559532432366609893680289225e-19,
+      1.17433021600139309998766947387e-19,
+      3.99397454661077561389162200966e-20,
+      1.3957667152891631042560632564e-20,
+      5.00240055309236041393459280716e-21,
+      1.83552760958132679184834866457e-21,
+      6.88490998179202743197790112404e-22,
+      2.63631035611417012359996885105e-22,
+      1.02924890237338360287153563785e-22,
+      4.09246966671594885489762960571e-23,
+      1.65558573406734651039727903828e-23,
+      6.80797467063033356116599685727e-24,
+      2.84326559934079832419751134476e-24,
+      1.20507398348965255097287818819e-24,
+      5.17961243287505217976613610424e-25,
+      2.25622613427562816303268640887e-25,
+      9.95418801147745168832117078246e-26,
+      4.44551696397342424308280582053e-26,
+      2.00865195461501101425916097338e-26,
+      9.17786344151775165973885645402e-27,
+      4.23872958105589240661672197948e-27,
+      1.9778927200784609237084625149e-27,
+      9.32116351284620665680435253373e-28,
+      4.43482133249918099955611379722e-28,
+      2.12945672365573895594589552837e-28,
+      1.03158569651075977552209344907e-28,
+      5.04023773022591199157904590029e-29,
+      2.48301304570155945304046541005e-29,
+      1.2330178312856219605419823856e-29,
+      6.17033449920521746121976730507e-30,
+      3.11092617415918897233869792213e-30,
+      1.57983085201706173015269071503e-30,
+      8.07931987538283607678121339092e-31,
+      4.15997394138667562722951360052e-31,
+      2.15610934097716900471935862504e-31,
+      1.12468857265869178296752823613e-31,
+      5.90331560632838091123040811797e-32,
+      3.11735667692928562046280505333e-32 
+    };
 
-			static readonly double[] ath0cs = 
-		{ 
-			-0.08172601764161634499840208700543,
-			-8.004012824788273287596481113068e-4,
-			-3.186525268782113203795553628242e-6,
-			-6.688388266477509330741698865033e-8,
-			-2.931759284994564516506822463184e-9,
-			-2.011263760883621669049030307186e-10,
-			-1.877522678055973426074008166652e-11,
-			-2.199637137704601251899002199848e-12,
-			-3.071616682592272449025746605586e-13,
-			-4.936140553673418361025600985389e-14,
-			-8.902833722583660416935236969866e-15,
-			-1.768987764615272613656814199467e-15,
-			-3.8178686890322770146781996096e-16,
-			-8.851159014819947594156286509984e-17,
-			-2.184818181414365953149677679568e-17,
-			-5.700849046986452380599442295119e-18,
-			-1.563121122177875392516031795495e-18,
-			-4.481437996768995067906688776353e-19,
-			-1.337794883736188022044566044098e-19,
-			-4.143340036874114453776852445442e-20,
-			-1.327263385718805025080481164652e-20,
-			-4.385728589128440522215756835955e-21,
-			-1.491360695952818067686201743956e-21,
-			-5.208104738630711377154238188773e-22,
-			-1.864382222390498923872526604979e-22,
-			-6.830263751167969012975435381881e-23,
-			-2.557117058029329629296207591347e-23,
-			-9.770158640254300218246907254046e-24,
-			-3.805161433416679084068428254886e-24,
-			-1.509022750737054063493926482995e-24,
-			-6.087551341242424929005568014525e-25,
-			-2.495879513809711495425982124058e-25,
-			-1.039157654581920948909588084274e-25,
-			-4.390235913976846536974594969051e-26,
-			-1.880790678447990211675826820582e-26,
-			-8.165070764199462948863022205753e-27,
-			-3.589944503749750514266435585041e-27,
-			-1.597658126632132872981291608708e-27,
-			-7.193250175703823969113802835305e-28,
-			-3.274943012727856506209351132721e-28,
-			-1.507042445783690665816975047272e-28,
-			-7.00662419831990471784396794914e-29,
-			-3.289907402983718226528815678356e-29,
-			-1.559518084365146526445322711496e-29,
-			-7.460690508208254582833851119721e-30,
-			-3.600877034824662020563277249431e-30,
-			-1.752851437473772257350402219197e-30,
-			-8.603275775188512909623778628724e-31,
-			-4.256432603226946534668039480105e-31,
-			-2.122161865044262927723650698206e-31,
-			-1.065996156704879052472060798561e-31,
-			-5.393568608816949116410688086892e-32,
-			-2.74817485104395482227849651787e-32 
-		};
+      static readonly double[] ath0cs = 
+    { 
+      -0.08172601764161634499840208700543,
+      -8.004012824788273287596481113068e-4,
+      -3.186525268782113203795553628242e-6,
+      -6.688388266477509330741698865033e-8,
+      -2.931759284994564516506822463184e-9,
+      -2.011263760883621669049030307186e-10,
+      -1.877522678055973426074008166652e-11,
+      -2.199637137704601251899002199848e-12,
+      -3.071616682592272449025746605586e-13,
+      -4.936140553673418361025600985389e-14,
+      -8.902833722583660416935236969866e-15,
+      -1.768987764615272613656814199467e-15,
+      -3.8178686890322770146781996096e-16,
+      -8.851159014819947594156286509984e-17,
+      -2.184818181414365953149677679568e-17,
+      -5.700849046986452380599442295119e-18,
+      -1.563121122177875392516031795495e-18,
+      -4.481437996768995067906688776353e-19,
+      -1.337794883736188022044566044098e-19,
+      -4.143340036874114453776852445442e-20,
+      -1.327263385718805025080481164652e-20,
+      -4.385728589128440522215756835955e-21,
+      -1.491360695952818067686201743956e-21,
+      -5.208104738630711377154238188773e-22,
+      -1.864382222390498923872526604979e-22,
+      -6.830263751167969012975435381881e-23,
+      -2.557117058029329629296207591347e-23,
+      -9.770158640254300218246907254046e-24,
+      -3.805161433416679084068428254886e-24,
+      -1.509022750737054063493926482995e-24,
+      -6.087551341242424929005568014525e-25,
+      -2.495879513809711495425982124058e-25,
+      -1.039157654581920948909588084274e-25,
+      -4.390235913976846536974594969051e-26,
+      -1.880790678447990211675826820582e-26,
+      -8.165070764199462948863022205753e-27,
+      -3.589944503749750514266435585041e-27,
+      -1.597658126632132872981291608708e-27,
+      -7.193250175703823969113802835305e-28,
+      -3.274943012727856506209351132721e-28,
+      -1.507042445783690665816975047272e-28,
+      -7.00662419831990471784396794914e-29,
+      -3.289907402983718226528815678356e-29,
+      -1.559518084365146526445322711496e-29,
+      -7.460690508208254582833851119721e-30,
+      -3.600877034824662020563277249431e-30,
+      -1.752851437473772257350402219197e-30,
+      -8.603275775188512909623778628724e-31,
+      -4.256432603226946534668039480105e-31,
+      -2.122161865044262927723650698206e-31,
+      -1.065996156704879052472060798561e-31,
+      -5.393568608816949116410688086892e-32,
+      -2.74817485104395482227849651787e-32 
+    };
 
-			static readonly double[] am21cs = 
-		{ 
-			0.00592790266721309588375717482814,
-			0.0020056940539316518642869521769,
-			9.11081850262275893553072526291e-5,
-			8.49894306372047155633172107475e-6,
-			1.13297908976913076637929215494e-6,
-			1.87517946100666496180950627804e-7,
-			3.59306519018245832699035211192e-8,
-			7.6575771407168386403909351747e-9,
-			1.76999967168039173925953460744e-9,
-			4.36259555654598932720546585535e-10,
-			1.13291641337853230035520085219e-10,
-			3.07257690982419244137868398126e-11,
-			8.64482416482201075541200465766e-12,
-			2.51015250060924402115104562212e-12,
-			7.49102496764440371601802227751e-13,
-			2.28996928487994073089565214432e-13,
-			7.15113658927987694949327491175e-14,
-			2.27607924959566841946395165061e-14,
-			7.36942142760886513969953227782e-15,
-			2.42328675267827490463991742006e-15,
-			8.08153774548239869283406558403e-16,
-			2.73008079804356086659174563386e-16,
-			9.33236070891385318473519474326e-17,
-			3.22508099681084622213867546973e-17,
-			1.12581932346444541217757573416e-17,
-			3.9669946398693882166025945953e-18,
-			1.41006567944319504660865034527e-18,
-			5.05302086537851213375537393032e-19,
-			1.82461523215945141197999102789e-19,
-			6.63584568262130466928029121642e-20,
-			2.42963731631276179741747455826e-20,
-			8.95238915123687802013669922963e-21,
-			3.31845289350050791260229250755e-21,
-			1.23706196188658315384437905922e-21,
-			4.63636677012390840306767734243e-22,
-			1.74653135947764475469758765989e-22,
-			6.61116810234991176307910643111e-23,
-			2.51409918994072486176125666459e-23,
-			9.60274995571732568694034386998e-24,
-			3.68324952289296395686436898078e-24,
-			1.41843138269159136145535939553e-24,
-			5.4834267427693583010634580099e-25,
-			2.12761054623118806650372562616e-25,
-			8.28443700849418591487734760953e-26,
-			3.23670563926127001421028600927e-26,
-			1.26868882963286057355055062493e-26,
-			4.98843818992121626935068934362e-27,
-			1.9673458446764939096711938179e-27,
-			7.78135971020326957713212064836e-28,
-			3.08633941498911152919192968451e-28,
-			1.22744647045453119789338037234e-28,
-			4.89431279134292205885241216204e-29,
-			1.95646879802909821175925099724e-29,
-			7.83988952922426171166311492266e-30,
-			3.14896914002484223748298978099e-30,
-			1.26769763137250681307067842559e-30,
-			5.11470691906900141641632107724e-31,
-			2.06801709795538770250900316706e-31,
-			8.37891344768519001325996867583e-32,
-			3.40168991971489802052339079577e-32 
-		};
+      static readonly double[] am21cs = 
+    { 
+      0.00592790266721309588375717482814,
+      0.0020056940539316518642869521769,
+      9.11081850262275893553072526291e-5,
+      8.49894306372047155633172107475e-6,
+      1.13297908976913076637929215494e-6,
+      1.87517946100666496180950627804e-7,
+      3.59306519018245832699035211192e-8,
+      7.6575771407168386403909351747e-9,
+      1.76999967168039173925953460744e-9,
+      4.36259555654598932720546585535e-10,
+      1.13291641337853230035520085219e-10,
+      3.07257690982419244137868398126e-11,
+      8.64482416482201075541200465766e-12,
+      2.51015250060924402115104562212e-12,
+      7.49102496764440371601802227751e-13,
+      2.28996928487994073089565214432e-13,
+      7.15113658927987694949327491175e-14,
+      2.27607924959566841946395165061e-14,
+      7.36942142760886513969953227782e-15,
+      2.42328675267827490463991742006e-15,
+      8.08153774548239869283406558403e-16,
+      2.73008079804356086659174563386e-16,
+      9.33236070891385318473519474326e-17,
+      3.22508099681084622213867546973e-17,
+      1.12581932346444541217757573416e-17,
+      3.9669946398693882166025945953e-18,
+      1.41006567944319504660865034527e-18,
+      5.05302086537851213375537393032e-19,
+      1.82461523215945141197999102789e-19,
+      6.63584568262130466928029121642e-20,
+      2.42963731631276179741747455826e-20,
+      8.95238915123687802013669922963e-21,
+      3.31845289350050791260229250755e-21,
+      1.23706196188658315384437905922e-21,
+      4.63636677012390840306767734243e-22,
+      1.74653135947764475469758765989e-22,
+      6.61116810234991176307910643111e-23,
+      2.51409918994072486176125666459e-23,
+      9.60274995571732568694034386998e-24,
+      3.68324952289296395686436898078e-24,
+      1.41843138269159136145535939553e-24,
+      5.4834267427693583010634580099e-25,
+      2.12761054623118806650372562616e-25,
+      8.28443700849418591487734760953e-26,
+      3.23670563926127001421028600927e-26,
+      1.26868882963286057355055062493e-26,
+      4.98843818992121626935068934362e-27,
+      1.9673458446764939096711938179e-27,
+      7.78135971020326957713212064836e-28,
+      3.08633941498911152919192968451e-28,
+      1.22744647045453119789338037234e-28,
+      4.89431279134292205885241216204e-29,
+      1.95646879802909821175925099724e-29,
+      7.83988952922426171166311492266e-30,
+      3.14896914002484223748298978099e-30,
+      1.26769763137250681307067842559e-30,
+      5.11470691906900141641632107724e-31,
+      2.06801709795538770250900316706e-31,
+      8.37891344768519001325996867583e-32,
+      3.40168991971489802052339079577e-32 
+    };
 
-			static readonly double[] ath1cs = 
-		{ 
-			-0.06972849916208883845888148415037,
-			-0.005108722790650044987073448077961,
-			-8.644335996989755094525334749512e-5,
-			-5.604720044235263542188698916125e-6,
-			-6.045735125623897409156376640077e-7,
-			-8.639802632488334393219721138499e-8,
-			-1.48080948430992715714778248078e-8,
-			-2.885809334577236039999449908712e-9,
-			-6.1916319756656996093091912318e-10,
-			-1.431992808860957830931365259879e-10,
-			-3.518141102137214721504616874321e-11,
-			-9.084761919955078290070339808051e-12,
-			-2.446171672688598449343283664767e-12,
-			-6.826083203213446240828996710264e-13,
-			-1.964579931194940171278546257802e-13,
-			-5.808933227139693164009191265856e-14,
-			-1.759042249527441992795400959024e-14,
-			-5.440902932714896613632538945319e-15,
-			-1.715247407486806802622358519451e-15,
-			-5.500929233576991546871101847161e-16,
-			-1.791878287739317259495152638754e-16,
-			-5.920372520086694197778411062231e-17,
-			-1.98171302787648396247097220659e-17,
-			-6.71323234701635226204998434379e-18,
-			-2.299450243658281116122358619832e-18,
-			-7.957300928236376595304637145634e-19,
-			-2.779994027291784157172290233739e-19,
-			-9.798924361326985224406795480814e-20,
-			-3.482717006061574386702645565849e-20,
-			-1.247489122558599057173300058084e-20,
-			-4.501210041478228113487751824452e-21,
-			-1.635346244013352135596114164667e-21,
-			-5.980102897780336268098762265941e-22,
-			-2.200246286286123454028196295475e-22,
-			-8.142463073515085897408205291519e-23,
-			-3.029924773660042537432330709674e-23,
-			-1.133390098574623537722943969689e-23,
-			-4.260766024749295719283049889791e-24,
-			-1.609363396278189718797500634453e-24,
-			-6.106377190825026293045330444287e-25,
-			-2.326954318021694061836577887573e-25,
-			-8.903987877472252604474129558186e-26,
-			-3.420558530005675024117914752341e-26,
-			-1.319026715257272659017212100607e-26,
-			-5.104899493612043091316191177386e-27,
-			-1.982599478474547451242444663466e-27,
-			-7.725702356880830535636111851519e-28,
-			-3.020234733664680100815776863573e-28,
-			-1.1843797390741699937129463808e-28,
-			-4.658430227922308520573252840106e-29,
-			-1.837554188100384647157502006613e-29,
-			-7.2685668944279909533218766848e-30,
-			-2.882863120391468135527089875626e-30,
-			-1.146374629459906350417591664639e-30,
-			-4.570031437748533058179991688533e-31,
-			-1.826276602045346104809934028799e-31,
-			-7.315349993385250469111066350933e-32,
-			-2.936925599971429781637815773866e-32 
-		};
+      static readonly double[] ath1cs = 
+    { 
+      -0.06972849916208883845888148415037,
+      -0.005108722790650044987073448077961,
+      -8.644335996989755094525334749512e-5,
+      -5.604720044235263542188698916125e-6,
+      -6.045735125623897409156376640077e-7,
+      -8.639802632488334393219721138499e-8,
+      -1.48080948430992715714778248078e-8,
+      -2.885809334577236039999449908712e-9,
+      -6.1916319756656996093091912318e-10,
+      -1.431992808860957830931365259879e-10,
+      -3.518141102137214721504616874321e-11,
+      -9.084761919955078290070339808051e-12,
+      -2.446171672688598449343283664767e-12,
+      -6.826083203213446240828996710264e-13,
+      -1.964579931194940171278546257802e-13,
+      -5.808933227139693164009191265856e-14,
+      -1.759042249527441992795400959024e-14,
+      -5.440902932714896613632538945319e-15,
+      -1.715247407486806802622358519451e-15,
+      -5.500929233576991546871101847161e-16,
+      -1.791878287739317259495152638754e-16,
+      -5.920372520086694197778411062231e-17,
+      -1.98171302787648396247097220659e-17,
+      -6.71323234701635226204998434379e-18,
+      -2.299450243658281116122358619832e-18,
+      -7.957300928236376595304637145634e-19,
+      -2.779994027291784157172290233739e-19,
+      -9.798924361326985224406795480814e-20,
+      -3.482717006061574386702645565849e-20,
+      -1.247489122558599057173300058084e-20,
+      -4.501210041478228113487751824452e-21,
+      -1.635346244013352135596114164667e-21,
+      -5.980102897780336268098762265941e-22,
+      -2.200246286286123454028196295475e-22,
+      -8.142463073515085897408205291519e-23,
+      -3.029924773660042537432330709674e-23,
+      -1.133390098574623537722943969689e-23,
+      -4.260766024749295719283049889791e-24,
+      -1.609363396278189718797500634453e-24,
+      -6.106377190825026293045330444287e-25,
+      -2.326954318021694061836577887573e-25,
+      -8.903987877472252604474129558186e-26,
+      -3.420558530005675024117914752341e-26,
+      -1.319026715257272659017212100607e-26,
+      -5.104899493612043091316191177386e-27,
+      -1.982599478474547451242444663466e-27,
+      -7.725702356880830535636111851519e-28,
+      -3.020234733664680100815776863573e-28,
+      -1.1843797390741699937129463808e-28,
+      -4.658430227922308520573252840106e-29,
+      -1.837554188100384647157502006613e-29,
+      -7.2685668944279909533218766848e-30,
+      -2.882863120391468135527089875626e-30,
+      -1.146374629459906350417591664639e-30,
+      -4.570031437748533058179991688533e-31,
+      -1.826276602045346104809934028799e-31,
+      -7.315349993385250469111066350933e-32,
+      -2.936925599971429781637815773866e-32 
+    };
 
-			static readonly double[] am22cs = 
-		{ 
-			-0.0156284448062534112753545828583,
-			0.00778336445239681307018943100334,
-			8.6705777047718952840607281211e-4,
-			1.56966273156113719469953482266e-4,
-			3.56396257143286511324100666302e-5,
-			9.24598335425043154495080090994e-6,
-			2.62110161850422389523194982066e-6,
-			7.91882216516012561489469982263e-7,
-			2.51041527921011847803162690862e-7,
-			8.2652232066540773447299771294e-8,
-			2.80571166281305264396384290014e-8,
-			9.7682109048468078667463127389e-9,
-			3.47407923227710343287279035573e-9,
-			1.25828132169836914219092738164e-9,
-			4.62988260641895264497330784625e-10,
-			1.72728258813604072468143128696e-10,
-			6.5231920013115413514857412497e-11,
-			2.49047168520982056019881087112e-11,
-			9.60156820553765948078189890126e-12,
-			3.73448002067726856974776596757e-12,
-			1.46417565032053391722216189678e-12,
-			5.78265471168512825475827881553e-13,
-			2.29915407244706118560254184494e-13,
-			9.19780711231997257150883662365e-14,
-			3.70060068813090065807504045556e-14,
-			1.49675761698672987823326345205e-14,
-			6.08361194938461148720451399443e-15,
-			2.48404087115121397635425326873e-15,
-			1.01862476526769080727914465339e-15,
-			4.19383856352753989429640310957e-16,
-			1.73318901762930756149702493501e-16,
-			7.18821902388508517820445406811e-17,
-			2.99123633598403607712470896113e-17,
-			1.2486899043323862785571311088e-17,
-			5.22829344609483661928651193632e-18,
-			2.19532961724713396595998454359e-18,
-			9.24298325229777281154410024332e-19,
-			3.90157708236091407825543197309e-19,
-			1.65093892693863707213759030367e-19,
-			7.00221815715994367565716554487e-20,
-			2.97651833616786915573214963506e-20,
-			1.26796539086902072571134261229e-20,
-			5.41243400697077628687581725061e-21,
-			2.31487350218155252296382133283e-21,
-			9.91920288386566563462623851167e-22,
-			4.25803015323732357158897608174e-22,
-			1.83101842973024501678402003088e-22,
-			7.88678712311075375564526811022e-23,
-			3.40254607386229874956582997235e-23,
-			1.47020881405712530791860892535e-23,
-			6.36211018324916957733348071767e-24,
-			2.75707050680980721919395987768e-24,
-			1.19645858090104071356261780457e-24,
-			5.19912545729242147981768210567e-25,
-			2.2621767484710447526057528685e-25,
-			9.85526113754431819448565068283e-26,
-			4.29870630332508717223681286187e-26,
-			1.87723641661580639829657670189e-26,
-			8.20721941772842137268801052115e-27,
-			3.59214665604615507812767944463e-27,
-			1.57390594612773315611458940587e-27,
-			6.90329781039333834965319153586e-28,
-			3.03092079078968534607859331415e-28,
-			1.33204934160481219185689121944e-28,
-			5.85978836851523490117937981442e-29,
-			2.58016868489487806338425080457e-29,
-			1.13712433637283667223632182863e-29,
-			5.01592557226068509236430548549e-30,
-			2.21445829395509373322569708484e-30,
-			9.78470283886507289984691416411e-31,
-			4.32695414934180170112000952983e-31,
-			1.9149728819399457061292986044e-31,
-			8.48164622402392354171298331562e-32,
-			3.75947065173955919947455052934e-32 
-		};
+      static readonly double[] am22cs = 
+    { 
+      -0.0156284448062534112753545828583,
+      0.00778336445239681307018943100334,
+      8.6705777047718952840607281211e-4,
+      1.56966273156113719469953482266e-4,
+      3.56396257143286511324100666302e-5,
+      9.24598335425043154495080090994e-6,
+      2.62110161850422389523194982066e-6,
+      7.91882216516012561489469982263e-7,
+      2.51041527921011847803162690862e-7,
+      8.2652232066540773447299771294e-8,
+      2.80571166281305264396384290014e-8,
+      9.7682109048468078667463127389e-9,
+      3.47407923227710343287279035573e-9,
+      1.25828132169836914219092738164e-9,
+      4.62988260641895264497330784625e-10,
+      1.72728258813604072468143128696e-10,
+      6.5231920013115413514857412497e-11,
+      2.49047168520982056019881087112e-11,
+      9.60156820553765948078189890126e-12,
+      3.73448002067726856974776596757e-12,
+      1.46417565032053391722216189678e-12,
+      5.78265471168512825475827881553e-13,
+      2.29915407244706118560254184494e-13,
+      9.19780711231997257150883662365e-14,
+      3.70060068813090065807504045556e-14,
+      1.49675761698672987823326345205e-14,
+      6.08361194938461148720451399443e-15,
+      2.48404087115121397635425326873e-15,
+      1.01862476526769080727914465339e-15,
+      4.19383856352753989429640310957e-16,
+      1.73318901762930756149702493501e-16,
+      7.18821902388508517820445406811e-17,
+      2.99123633598403607712470896113e-17,
+      1.2486899043323862785571311088e-17,
+      5.22829344609483661928651193632e-18,
+      2.19532961724713396595998454359e-18,
+      9.24298325229777281154410024332e-19,
+      3.90157708236091407825543197309e-19,
+      1.65093892693863707213759030367e-19,
+      7.00221815715994367565716554487e-20,
+      2.97651833616786915573214963506e-20,
+      1.26796539086902072571134261229e-20,
+      5.41243400697077628687581725061e-21,
+      2.31487350218155252296382133283e-21,
+      9.91920288386566563462623851167e-22,
+      4.25803015323732357158897608174e-22,
+      1.83101842973024501678402003088e-22,
+      7.88678712311075375564526811022e-23,
+      3.40254607386229874956582997235e-23,
+      1.47020881405712530791860892535e-23,
+      6.36211018324916957733348071767e-24,
+      2.75707050680980721919395987768e-24,
+      1.19645858090104071356261780457e-24,
+      5.19912545729242147981768210567e-25,
+      2.2621767484710447526057528685e-25,
+      9.85526113754431819448565068283e-26,
+      4.29870630332508717223681286187e-26,
+      1.87723641661580639829657670189e-26,
+      8.20721941772842137268801052115e-27,
+      3.59214665604615507812767944463e-27,
+      1.57390594612773315611458940587e-27,
+      6.90329781039333834965319153586e-28,
+      3.03092079078968534607859331415e-28,
+      1.33204934160481219185689121944e-28,
+      5.85978836851523490117937981442e-29,
+      2.58016868489487806338425080457e-29,
+      1.13712433637283667223632182863e-29,
+      5.01592557226068509236430548549e-30,
+      2.21445829395509373322569708484e-30,
+      9.78470283886507289984691416411e-31,
+      4.32695414934180170112000952983e-31,
+      1.9149728819399457061292986044e-31,
+      8.48164622402392354171298331562e-32,
+      3.75947065173955919947455052934e-32 
+    };
 
-			static readonly double[] ath2cs = 
-		{ 
-			0.004405273458718778997061127057775,
-			-0.03042919452318454608483844239873,
-			-0.001385653283771793791602692842653,
-			-1.804443908954952302670486910952e-4,
-			-3.380847108327308671057465323618e-5,
-			-7.678183535229023055257676817765e-6,
-			-1.967839443716035324690935417077e-6,
-			-5.483727115877700361586143659281e-7,
-			-1.625461550532612452712696212258e-7,
-			-5.053049981268895015277637842078e-8,
-			-1.631580701124066881183851715617e-8,
-			-5.434204112348517507963436694817e-9,
-			-1.85739855640990032576385010963e-9,
-			-6.489512033326108816213513640676e-10,
-			-2.310594885800944720482995987079e-10,
-			-8.363282183204411682819329546745e-11,
-			-3.071196844890191462660661303891e-11,
-			-1.142367142432716819409514579892e-11,
-			-4.298116066345803065822470108971e-12,
-			-1.633898699596715440601646086632e-12,
-			-6.269328620016619432123443754076e-13,
-			-2.426052694816257357356159203991e-13,
-			-9.461198321624039090742527765052e-14,
-			-3.716060313411504806847798281269e-14,
-			-1.469155684097526763170138810309e-14,
-			-5.843694726140911944556401363094e-15,
-			-2.337502595591951298832675034934e-15,
-			-9.399231371171435401160167358411e-16,
-			-3.798014669372894500076335263715e-16,
-			-1.541731043984972524883443681775e-16,
-			-6.285287079535307162925662365202e-17,
-			-2.572731812811455424755383992774e-17,
-			-1.057098119354017809340974866555e-17,
-			-4.359080267402696966695992699964e-18,
-			-1.80363431595997801395317694554e-18,
-			-7.486838064380536821719431676914e-19,
-			-3.117261367347604656799597209985e-19,
-			-1.301687980927700734792871620696e-19,
-			-5.450527587519522468973883909909e-20,
-			-2.288293490114231872268635931903e-20,
-			-9.631059503829538655655060440088e-21,
-			-4.063281001524614089092195416434e-21,
-			-1.71820398090802676390041385851e-21,
-			-7.281574619892536367415322473328e-22,
-			-3.09235265268064312796068034579e-22,
-			-1.315917855965440490383417023254e-22,
-			-5.610606786087055512664907412668e-23,
-			-2.396621894086355206020304337895e-23,
-			-1.025574332390581200832954423924e-23,
-			-4.396264138143656476403607323663e-24,
-			-1.88765299837257737334250871945e-24,
-			-8.118140359576807603579433230445e-25,
-			-3.496734274366286856375952089214e-25,
-			-1.508402925156873215171751475867e-25,
-			-6.516268284778671059787773834341e-26,
-			-2.818945797529207424505942114583e-26,
-			-1.221127596512262744598094464505e-26,
-			-5.296674341169867168620011705073e-27,
-			-2.300359270773673431358870971744e-27,
-			-1.00027948235536749478122034893e-27,
-			-4.354760404180879394806893162179e-28,
-			-1.89805613474147752251548282703e-28,
-			-8.282111868712974697554009309315e-29,
-			-3.617815493066569006586213484374e-29,
-			-1.582018896178003654858941843636e-29,
-			-6.925068597802270011772820383247e-30,
-			-3.034390239778629128908629727335e-30,
-			-1.330889568166725224761977446509e-30,
-			-5.842848522173090120487606971706e-31,
-			-2.567488423238302631121274357678e-31,
-			-1.129232322268882185791505819151e-31,
-			-4.970947029753336916550570105023e-32 
-		};
+      static readonly double[] ath2cs = 
+    { 
+      0.004405273458718778997061127057775,
+      -0.03042919452318454608483844239873,
+      -0.001385653283771793791602692842653,
+      -1.804443908954952302670486910952e-4,
+      -3.380847108327308671057465323618e-5,
+      -7.678183535229023055257676817765e-6,
+      -1.967839443716035324690935417077e-6,
+      -5.483727115877700361586143659281e-7,
+      -1.625461550532612452712696212258e-7,
+      -5.053049981268895015277637842078e-8,
+      -1.631580701124066881183851715617e-8,
+      -5.434204112348517507963436694817e-9,
+      -1.85739855640990032576385010963e-9,
+      -6.489512033326108816213513640676e-10,
+      -2.310594885800944720482995987079e-10,
+      -8.363282183204411682819329546745e-11,
+      -3.071196844890191462660661303891e-11,
+      -1.142367142432716819409514579892e-11,
+      -4.298116066345803065822470108971e-12,
+      -1.633898699596715440601646086632e-12,
+      -6.269328620016619432123443754076e-13,
+      -2.426052694816257357356159203991e-13,
+      -9.461198321624039090742527765052e-14,
+      -3.716060313411504806847798281269e-14,
+      -1.469155684097526763170138810309e-14,
+      -5.843694726140911944556401363094e-15,
+      -2.337502595591951298832675034934e-15,
+      -9.399231371171435401160167358411e-16,
+      -3.798014669372894500076335263715e-16,
+      -1.541731043984972524883443681775e-16,
+      -6.285287079535307162925662365202e-17,
+      -2.572731812811455424755383992774e-17,
+      -1.057098119354017809340974866555e-17,
+      -4.359080267402696966695992699964e-18,
+      -1.80363431595997801395317694554e-18,
+      -7.486838064380536821719431676914e-19,
+      -3.117261367347604656799597209985e-19,
+      -1.301687980927700734792871620696e-19,
+      -5.450527587519522468973883909909e-20,
+      -2.288293490114231872268635931903e-20,
+      -9.631059503829538655655060440088e-21,
+      -4.063281001524614089092195416434e-21,
+      -1.71820398090802676390041385851e-21,
+      -7.281574619892536367415322473328e-22,
+      -3.09235265268064312796068034579e-22,
+      -1.315917855965440490383417023254e-22,
+      -5.610606786087055512664907412668e-23,
+      -2.396621894086355206020304337895e-23,
+      -1.025574332390581200832954423924e-23,
+      -4.396264138143656476403607323663e-24,
+      -1.88765299837257737334250871945e-24,
+      -8.118140359576807603579433230445e-25,
+      -3.496734274366286856375952089214e-25,
+      -1.508402925156873215171751475867e-25,
+      -6.516268284778671059787773834341e-26,
+      -2.818945797529207424505942114583e-26,
+      -1.221127596512262744598094464505e-26,
+      -5.296674341169867168620011705073e-27,
+      -2.300359270773673431358870971744e-27,
+      -1.00027948235536749478122034893e-27,
+      -4.354760404180879394806893162179e-28,
+      -1.89805613474147752251548282703e-28,
+      -8.282111868712974697554009309315e-29,
+      -3.617815493066569006586213484374e-29,
+      -1.582018896178003654858941843636e-29,
+      -6.925068597802270011772820383247e-30,
+      -3.034390239778629128908629727335e-30,
+      -1.330889568166725224761977446509e-30,
+      -5.842848522173090120487606971706e-31,
+      -2.567488423238302631121274357678e-31,
+      -1.129232322268882185791505819151e-31,
+      -4.970947029753336916550570105023e-32 
+    };
 
-			static readonly double pi4  = 0.78539816339744830961566084581988;
-			static readonly double eta  = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double xsml = -1.0 / Math.Pow(0.5 * DBL_EPSILON, 0.3333);
-			static readonly int nam20 = initds(am20cs, 57, eta);
-			static readonly int nath0 = initds(ath0cs, 53, eta);
-			static readonly int nam21 = initds(am21cs, 60, eta);
-			static readonly int nath1 = initds(ath1cs, 58, eta);
-			static readonly int nam22 = initds(am22cs, 74, eta);
-			static readonly int nath2 = initds(ath2cs, 72, eta);
+      static readonly double pi4  = 0.78539816339744830961566084581988;
+      static readonly double eta  = 0.5 * DBL_EPSILON * 0.1;
+      static readonly double xsml = -1.0 / Math.Pow(0.5 * DBL_EPSILON, 0.3333);
+      static readonly int nam20 = initds(am20cs, 57, eta);
+      static readonly int nath0 = initds(ath0cs, 53, eta);
+      static readonly int nam21 = initds(am21cs, 60, eta);
+      static readonly int nath1 = initds(ath1cs, 58, eta);
+      static readonly int nam22 = initds(am22cs, 74, eta);
+      static readonly int nath2 = initds(ath2cs, 72, eta);
 		
 
 
-			//-----------------------------------------------------------------------------//
-			//
-			// void d9aimp (double x, double& ampl, double& theta)
-			//
-			// Evaluate the Airy modulus and phase for x <= -1.0 
-			//
-			// This is a translation from the Fortran version of SLATEC, FNLIB,
-			// CATEGORY C10D,  REVISION 900720, originally written by Fullerton W.,(LANL)
-			// to C++.
-			//
-			//
-			// Series for AM20       on the interval -1.56250E-02 to  0. 
-			//                                        with weighted error   3.12E-32 
-			//                                         log weighted error  31.51 
-			//                               significant figures required  29.24 
-			//                                    decimal places required  32.38 
-			//
-			// Series for ATH0       on the interval -1.56250E-02 to  0. 
-			//                                        with weighted error   2.75E-32 
-			//                                         log weighted error  31.56 
-			//                               significant figures required  30.17 
-			//                                    decimal places required  32.42 
-			//
-			// Series for AM21       on the interval -1.25000E-01 to -1.56250E-02 
-			//                                        with weighted error   3.40E-32 
-			//                                         log weighted error  31.47 
-			//                               significant figures required  29.02 
-			//                                    decimal places required  32.36 
-			//
-			// Series for ATH1       on the interval -1.25000E-01 to -1.56250E-02 
-			//                                        with weighted error   2.94E-32 
-			//                                         log weighted error  31.53 
-			//                               significant figures required  30.08 
-			//                                    decimal places required  32.41 
-			//
-			// Series for AM22       on the interval -1.00000E+00 to -1.25000E-01 
-			//                                        with weighted error   3.76E-32 
-			//                                         log weighted error  31.42 
-			//                               significant figures required  29.47 
-			//                                    decimal places required  32.36 
-			//
-			// Series for ATH2       on the interval -1.00000E+00 to -1.25000E-01 
-			//                                        with weighted error   4.97E-32 
-			//                                         log weighted error  31.30 
-			//                               significant figures required  29.79 
-			//                                    decimal places required  32.23 
-			//
-			//-----------------------------------------------------------------------------//
+      //-----------------------------------------------------------------------------//
+      //
+      // void d9aimp (double x, double& ampl, double& theta)
+      //
+      // Evaluate the Airy modulus and phase for x <= -1.0 
+      //
+      // This is a translation from the Fortran version of SLATEC, FNLIB,
+      // CATEGORY C10D,  REVISION 900720, originally written by Fullerton W.,(LANL)
+      // to C++.
+      //
+      //
+      // Series for AM20       on the interval -1.56250E-02 to  0. 
+      //                                        with weighted error   3.12E-32 
+      //                                         log weighted error  31.51 
+      //                               significant figures required  29.24 
+      //                                    decimal places required  32.38 
+      //
+      // Series for ATH0       on the interval -1.56250E-02 to  0. 
+      //                                        with weighted error   2.75E-32 
+      //                                         log weighted error  31.56 
+      //                               significant figures required  30.17 
+      //                                    decimal places required  32.42 
+      //
+      // Series for AM21       on the interval -1.25000E-01 to -1.56250E-02 
+      //                                        with weighted error   3.40E-32 
+      //                                         log weighted error  31.47 
+      //                               significant figures required  29.02 
+      //                                    decimal places required  32.36 
+      //
+      // Series for ATH1       on the interval -1.25000E-01 to -1.56250E-02 
+      //                                        with weighted error   2.94E-32 
+      //                                         log weighted error  31.53 
+      //                               significant figures required  30.08 
+      //                                    decimal places required  32.41 
+      //
+      // Series for AM22       on the interval -1.00000E+00 to -1.25000E-01 
+      //                                        with weighted error   3.76E-32 
+      //                                         log weighted error  31.42 
+      //                               significant figures required  29.47 
+      //                                    decimal places required  32.36 
+      //
+      // Series for ATH2       on the interval -1.00000E+00 to -1.25000E-01 
+      //                                        with weighted error   4.97E-32 
+      //                                         log weighted error  31.30 
+      //                               significant figures required  29.79 
+      //                                    decimal places required  32.23 
+      //
+      //-----------------------------------------------------------------------------//
 
-			public static void d9aimp(double x, out double ampl, out double theta)
-			{
+      public static void d9aimp(double x, out double ampl, out double theta)
+      {
 		
 
-				double z, sqrtx;
+        double z, sqrtx;
 
-				if (x >= -4.0) goto L20;
-				z = 1.0;
-				if (x > xsml) z = 128.0 / (x * x * x) + 1.0;
-				ampl  = dcsevl(z, am20cs, nam20) + 0.3125;
-				theta = dcsevl(z, ath0cs, nath0) - 0.625;
-				goto L40;
+        if (x >= -4.0) goto L20;
+        z = 1.0;
+        if (x > xsml) z = 128.0 / (x * x * x) + 1.0;
+        ampl  = dcsevl(z, am20cs, nam20) + 0.3125;
+        theta = dcsevl(z, ath0cs, nath0) - 0.625;
+        goto L40;
 
-				L20:
-					if (x >= -2.0) goto L30;
-				z = (128.0 / (x * x * x) + 9.0) / 7.0;
-				ampl  = dcsevl(z, am21cs, nam21) + 0.3125;
-				theta = dcsevl(z, ath1cs, nath1) - 0.625;
-				goto L40;
+        L20:
+          if (x >= -2.0) goto L30;
+        z = (128.0 / (x * x * x) + 9.0) / 7.0;
+        ampl  = dcsevl(z, am21cs, nam21) + 0.3125;
+        theta = dcsevl(z, ath1cs, nath1) - 0.625;
+        goto L40;
 
-				L30:
-					if (x >= -1.0) 
-					{
-						ampl = theta = double.NaN;
-						throw new ArgumentException("x must be < -1.0");
-					}
-				z = (16.0 / (x * x * x) + 9.0) / 7.0;
-				ampl  = dcsevl(z, am22cs, nam22) + 0.3125;
-				theta = dcsevl(z, ath2cs, nath2) - 0.625;
+        L30:
+          if (x >= -1.0) 
+          {
+            ampl = theta = double.NaN;
+            throw new ArgumentException("x must be < -1.0");
+          }
+        z = (16.0 / (x * x * x) + 9.0) / 7.0;
+        ampl  = dcsevl(z, am22cs, nam22) + 0.3125;
+        theta = dcsevl(z, ath2cs, nath2) - 0.625;
 
-				L40:
-					sqrtx = Math.Sqrt(-x);
-				ampl = Math.Sqrt(ampl / sqrtx);
-				theta = pi4 - x * sqrtx * theta;
-			}
-		}
-		#endregion
+        L40:
+          sqrtx = Math.Sqrt(-x);
+        ampl = Math.Sqrt(ampl / sqrtx);
+        theta = pi4 - x * sqrtx * theta;
+      }
+    }
+    #endregion
 
-		#region BesselJ0
+    #region BesselJ0
 
-		/// <summary>
-		/// BesselJ0(x) calculates the double precision Bessel function of 
-		/// the first kind of order zero for double precision argument x. 
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Bessel function of the first kind of order zero for argument x.</returns>
-		public static double BesselJ0 (double x)
-		{
-			return _BesselJ0.BesselJ0(x);
-		}
+    /// <summary>
+    /// BesselJ0(x) calculates the double precision Bessel function of 
+    /// the first kind of order zero for double precision argument x. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Bessel function of the first kind of order zero for argument x.</returns>
+    public static double BesselJ0 (double x)
+    {
+      return _BesselJ0.BesselJ0(x);
+    }
 
 
-		class _BesselJ0
-		{
+    class _BesselJ0
+    {
 
-			static readonly double[] _BesselJ0_bj0cs = 
-	{ 
-		0.10025416196893913701073127264074,
-		-0.66522300776440513177678757831124,
-		0.2489837034982813137046046872668,
-		-0.033252723170035769653884341503854,
-		0.0023114179304694015462904924117729,
-		-9.9112774199508092339048519336549e-5,
-		2.8916708643998808884733903747078e-6,
-		-6.1210858663032635057818407481516e-8,
-		9.8386507938567841324768748636415e-10,
-		-1.2423551597301765145515897006836e-11,
-		1.2654336302559045797915827210363e-13,
-		-1.0619456495287244546914817512959e-15,
-		7.4706210758024567437098915584e-18,
-		-4.4697032274412780547627007999999e-20,
-		2.3024281584337436200523093333333e-22,
-		-1.0319144794166698148522666666666e-24,
-		4.06081782748733227008e-27,
-		-1.4143836005240913919999999999999e-29,
-		4.391090549669888e-32 
-	};
-			static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 8.0);
-			static readonly int _BesselJ0_ntj0 = initds(_BesselJ0_bj0cs, 19, 0.5 * DBL_EPSILON * 0.1);
+      static readonly double[] _BesselJ0_bj0cs = 
+  { 
+    0.10025416196893913701073127264074,
+    -0.66522300776440513177678757831124,
+    0.2489837034982813137046046872668,
+    -0.033252723170035769653884341503854,
+    0.0023114179304694015462904924117729,
+    -9.9112774199508092339048519336549e-5,
+    2.8916708643998808884733903747078e-6,
+    -6.1210858663032635057818407481516e-8,
+    9.8386507938567841324768748636415e-10,
+    -1.2423551597301765145515897006836e-11,
+    1.2654336302559045797915827210363e-13,
+    -1.0619456495287244546914817512959e-15,
+    7.4706210758024567437098915584e-18,
+    -4.4697032274412780547627007999999e-20,
+    2.3024281584337436200523093333333e-22,
+    -1.0319144794166698148522666666666e-24,
+    4.06081782748733227008e-27,
+    -1.4143836005240913919999999999999e-29,
+    4.391090549669888e-32 
+  };
+      static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 8.0);
+      static readonly int _BesselJ0_ntj0 = initds(_BesselJ0_bj0cs, 19, 0.5 * DBL_EPSILON * 0.1);
 		
 
 		
-			/// <summary>
-			/// BesselJ0(x) calculates the double precision Bessel function of 
-			/// the first kind of order zero for double precision argument x. 
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>Bessel function of the first kind of order zero for argument x</returns>
-			/// <remarks><code>
-			/// Series for BJ0        on the interval  0.          to  1.60000E+01 
-			///                                        with weighted error   4.39E-32 
-			///                                         log weighted error  31.36 
-			///                               significant figures required  31.21 
-			///                                    decimal places required  32.00 
-			///
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10A1, REVISION 891214 originally written by Fullerton W.,(LANL)
-			/// to C++.
-			/// </code></remarks>
-			public static double BesselJ0 (double x)
-			{
+      /// <summary>
+      /// BesselJ0(x) calculates the double precision Bessel function of 
+      /// the first kind of order zero for double precision argument x. 
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>Bessel function of the first kind of order zero for argument x</returns>
+      /// <remarks><code>
+      /// Series for BJ0        on the interval  0.          to  1.60000E+01 
+      ///                                        with weighted error   4.39E-32 
+      ///                                         log weighted error  31.36 
+      ///                               significant figures required  31.21 
+      ///                                    decimal places required  32.00 
+      ///
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10A1, REVISION 891214 originally written by Fullerton W.,(LANL)
+      /// to C++.
+      /// </code></remarks>
+      public static double BesselJ0 (double x)
+      {
 	
 			
 
-				double y = Math.Abs(x);
-				if (y > 4.0) goto L20;
+        double y = Math.Abs(x);
+        if (y > 4.0) goto L20;
 
-				if (y > xsml)
-					return dcsevl(y * 0.125 * y - 1.0, _BesselJ0_bj0cs, _BesselJ0_ntj0);
-				else
-					return 1.0;
+        if (y > xsml)
+          return dcsevl(y * 0.125 * y - 1.0, _BesselJ0_bj0cs, _BesselJ0_ntj0);
+        else
+          return 1.0;
     
-				L20:
-					double ampl, theta;
-				d9b0mp(y, out ampl, out theta);
-				return ampl * Math.Cos(theta);
-			}
+        L20:
+          double ampl, theta;
+        d9b0mp(y, out ampl, out theta);
+        return ampl * Math.Cos(theta);
+      }
 
-		}
-		#endregion
+    }
+    #endregion
 
-		#region BesselJ1
+    #region BesselJ1
 
-		/// <summary>
-		/// BesselJ1(x) calculates the double precision Bessel function of the 
-		/// first kind of order one for double precision argument x. 
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Bessel function of the 
-		/// first kind of order one for argument x.</returns>
-		public static double BesselJ1 (double x)
-		{
-			return _BesselJ1.BesselJ1(x);
-		}
+    /// <summary>
+    /// BesselJ1(x) calculates the double precision Bessel function of the 
+    /// first kind of order one for double precision argument x. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Bessel function of the 
+    /// first kind of order one for argument x.</returns>
+    public static double BesselJ1 (double x)
+    {
+      return _BesselJ1.BesselJ1(x);
+    }
 
-		class _BesselJ1
-		{
-			static readonly double[] _BesselJ1_bj1cs = 
-	{ 
-		-0.117261415133327865606240574524003,
-		-0.253615218307906395623030884554698,
-		0.0501270809844695685053656363203743,
-		-0.00463151480962508191842619728789772,
-		2.47996229415914024539124064592364e-4,
-		-8.67894868627882584521246435176416e-6,
-		2.14293917143793691502766250991292e-7,
-		-3.93609307918317979229322764073061e-9,
-		5.59118231794688004018248059864032e-11,
-		-6.3276164046613930247769527401488e-13,
-		5.84099161085724700326945563268266e-15,
-		-4.48253381870125819039135059199999e-17,
-		2.90538449262502466306018688e-19,
-		-1.61173219784144165412118186666666e-21,
-		7.73947881939274637298346666666666e-24,
-		-3.24869378211199841143466666666666e-26,
-		1.2022376772274102272e-28,
-		-3.95201221265134933333333333333333e-31,
-		1.16167808226645333333333333333333e-33 
-	};
+    class _BesselJ1
+    {
+      static readonly double[] _BesselJ1_bj1cs = 
+  { 
+    -0.117261415133327865606240574524003,
+    -0.253615218307906395623030884554698,
+    0.0501270809844695685053656363203743,
+    -0.00463151480962508191842619728789772,
+    2.47996229415914024539124064592364e-4,
+    -8.67894868627882584521246435176416e-6,
+    2.14293917143793691502766250991292e-7,
+    -3.93609307918317979229322764073061e-9,
+    5.59118231794688004018248059864032e-11,
+    -6.3276164046613930247769527401488e-13,
+    5.84099161085724700326945563268266e-15,
+    -4.48253381870125819039135059199999e-17,
+    2.90538449262502466306018688e-19,
+    -1.61173219784144165412118186666666e-21,
+    7.73947881939274637298346666666666e-24,
+    -3.24869378211199841143466666666666e-26,
+    1.2022376772274102272e-28,
+    -3.95201221265134933333333333333333e-31,
+    1.16167808226645333333333333333333e-33 
+  };
 
-			static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 8.0);
-			static readonly double xmin = DBL_MIN * 2.0;
-			static readonly int _BesselJ1_ntj1 = initds(_BesselJ1_bj1cs, 19, 0.5 * DBL_EPSILON * 0.1);
+      static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 8.0);
+      static readonly double xmin = DBL_MIN * 2.0;
+      static readonly int _BesselJ1_ntj1 = initds(_BesselJ1_bj1cs, 19, 0.5 * DBL_EPSILON * 0.1);
 	
-
-			
-
-			/// <summary>
-			/// BesselJ1(x) calculates the double precision Bessel function of the 
-			/// first kind of order one for double precision argument x. 
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>Bessel function of the 
-			/// first kind of order one for argument x.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10A1, REVISION 910401 originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for BJ1        on the interval  0.          to  1.60000E+01 
-			///                                        with weighted error   1.16E-33 
-			///                                         log weighted error  32.93 
-			///                               significant figures required  32.36 
-			///                                    decimal places required  33.57 
-			/// </code></remarks>
-			public static double BesselJ1 (double x)
-			{
-				double ret_val = 0.0;
-			
-
-				double y = Math.Abs(x);
-				if (y > 4.0) goto L20;
-    
-				if (y == 0.0) return 0.0;
-    
-				if (y <= xmin) 
-					System.Diagnostics.Trace.WriteLine("Warning (BesselJ1): abs(x) so small J1(x) underflows");
-    
-				if (y > xmin) 
-					ret_val = x * 0.5;
-    
-				if (y > xsml)
-					ret_val = x * (dcsevl(y * 0.125 * y - 1.0, _BesselJ1_bj1cs, _BesselJ1_ntj1) + 0.25);
-    
-				return ret_val;
-    
-				L20:
-					double ampl, theta;
-				d9b1mp(y, out ampl, out theta);
-				return CopySign(ampl, x) * Math.Cos(theta);
-			}
-		}
-		#endregion
-
-		#region BesselJn
-
-	
-
-		/// <summary>
-		/// BesselJ(n,x) calculates the double precision Bessel function of the 
-		/// first kind of order n for double precision argument x. 
-		/// </summary>
-		/// <param name="n">The order of the bessel function.</param>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Bessel function of the 
-		/// first kind of order n for argument x.</returns>
-		/// <remarks><code>
-		/// Miller's downward recurrence algorithm is used.
-		/// Implemented by B. M. Gammel, last revision 13.03.1996
-		/// </code></remarks>
-		public static double BesselJ (int n, double x)
-		{
-			const double accuracy  = 40.0,
-							bignum    = 1.0e10,
-							invbignum = 1.0e-10;
-
-			if (n < 0) 
-				throw new ArgumentException("index n less than 0");
-			else if (n == 0)
-				return BesselJ0(x);
-			else if (n == 1)
-				return BesselJ1(x);
-			else 
-			{    
-				double ret_val;
-				double ax = Math.Abs(x);
-				if (ax == 0.0)
-					return 0.0;
-				else if (ax > (double) n) 
-				{
-					double bj,bjm,bjp;
-					double tox = 2.0 / ax;
-					bjm = BesselJ0(ax);
-					bj  = BesselJ1(ax);
-					for (int j = 1; j < n; j++) 
-					{
-						bjp = j * tox * bj - bjm;
-						bjm = bj;
-						bj = bjp;
-					}
-					ret_val = bj;
-				} 
-				else 
-				{
-					double bj,bjm,bjp,sum;
-					double tox = 2.0 / ax;
-					int m = 2 * ((n + (int) Math.Sqrt(accuracy*n)) / 2);
-					bool jsum = false;
-					bjp = ret_val = sum = 0.0;
-					bj = 1.0;
-					for (int j = m; j > 0; j--) 
-					{
-						bjm = j * tox * bj - bjp;
-						bjp = bj;
-						bj = bjm;
-						if (Math.Abs(bj) > bignum) 
-						{
-							bj *= invbignum;
-							bjp *= invbignum;
-							ret_val *= invbignum;
-							sum *= invbignum;
-						}
-						if (jsum) sum += bj;
-						jsum = !jsum;
-						if (j == n) ret_val = bjp;
-					}
-					sum = 2.0 * sum - bj;
-					ret_val /= sum;
-				}
-				return  (x < 0.0 && n % 2 == 1) ? -ret_val : ret_val;
-			} 
-		}
-
-		#endregion
-
-		#region BesselY0
-
-		/// <summary>
-		/// BesselY0(x) calculates the double precision Bessel function of the 
-		/// second kind of order zero for double precision argument X. 
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Bessel function of the 
-		/// second kind of order zero for argument x.</returns>
-		public static double BesselY0 (double x)
-		{
-			return _BesselY0.BesselY0(x);
-		}
-
-		class _BesselY0
-		{
-
-			static readonly double[] _BesselY0_by0cs = 
-	{ 
-		-0.01127783939286557321793980546028,
-		-0.1283452375604203460480884531838,
-		-0.1043788479979424936581762276618,
-		0.02366274918396969540924159264613,
-		-0.002090391647700486239196223950342,
-		1.039754539390572520999246576381e-4,
-		-3.369747162423972096718775345037e-6,
-		7.729384267670667158521367216371e-8,
-		-1.324976772664259591443476068964e-9,
-		1.764823261540452792100389363158e-11,
-		-1.881055071580196200602823012069e-13,
-		1.641865485366149502792237185749e-15,
-		-1.19565943860460608574599100672e-17,
-		7.377296297440185842494112426666e-20,
-		-3.906843476710437330740906666666e-22,
-		1.79550366443615794982912e-24,
-		-7.229627125448010478933333333333e-27,
-		2.571727931635168597333333333333e-29,
-		-8.141268814163694933333333333333e-32 
-	};
-
-			static readonly double twodpi = 0.636619772367581343075535053490057;
-			static readonly double	xsml   = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
-			static readonly  int _BesselY0_nty0 = initds(_BesselY0_by0cs, 19, 0.5 * DBL_EPSILON * 0.1);
-	
-	
-			/// <summary>
-			/// BesselY0(x) calculates the double precision Bessel function of the 
-			/// second kind of order zero for double precision argument X. 
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>Bessel function of the 
-			/// second kind of order zero for argument x.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10A1, REVISION 900315, originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for BY0        on the interval  0.          to  1.60000E+01 
-			///                                        with weighted error   8.14E-32 
-			///                                         log weighted error  31.09 
-			///                               significant figures required  30.31 
-			///                                    decimal places required  31.73 
-			/// </code></remarks>
-			public static double BesselY0 (double x)
-			{
-				if (x <= 0.0) 
-					throw new ArgumentException("x is zero or negative");
-
-
-				if (x > 4.0) 
-				{
-					double ampl, theta;
-					d9b0mp(x, out ampl, out theta);
-					return ampl * Math.Sin(theta);
-				} 
-				else 
-				{
-					double y = 0.0;
-					if (x > xsml) y = x * x;
-					return twodpi * Math.Log(x*0.5) * BesselJ0(x) + 0.375 
-						+ dcsevl(y * 0.125-1.0, _BesselY0_by0cs, _BesselY0_nty0);
-				}
-			} 
-		}
-
-		#endregion
-
-		#region BesselY1
-
-		/// <summary>
-		/// BesselY1(x) calculates the double precision Bessel function of the 
-		/// second kind of order for double precision argument x.
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Bessel function of the 
-		/// second kind of order for argument x.</returns>
-		public static double BesselY1 (double x)
-		{
-			return _BesselY1.BesselY1(x);
-		}
-
-		class _BesselY1
-		{
-			static readonly double[] _BesselY1_by1cs = 
-	{ 
-		0.0320804710061190862932352018628015,
-		1.26270789743350044953431725999727,
-		0.00649996189992317500097490637314144,
-		-0.0893616452886050411653144160009712,
-		0.0132508812217570954512375510370043,
-		-8.97905911964835237753039508298105e-4,
-		3.64736148795830678242287368165349e-5,
-		-1.00137438166600055549075523845295e-6,
-		1.99453965739017397031159372421243e-8,
-		-3.02306560180338167284799332520743e-10,
-		3.60987815694781196116252914242474e-12,
-		-3.48748829728758242414552947409066e-14,
-		2.78387897155917665813507698517333e-16,
-		-1.86787096861948768766825352533333e-18,
-		1.06853153391168259757070336e-20,
-		-5.27472195668448228943872e-23,
-		2.27019940315566414370133333333333e-25,
-		-8.59539035394523108693333333333333e-28,
-		2.88540437983379456e-30,
-		-8.64754113893717333333333333333333e-33 
-	};
-
-			static readonly double twodpi = 0.636619772367581343075535053490057;
-			static readonly double xsml   = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
-			static readonly double xmin   = Math.Exp(Math.Max(Math.Log(DBL_MIN),-Math.Log(DBL_MAX)) + 0.01) * 1.571;
-			static readonly int _BesselY1_nty1 = initds(_BesselY1_by1cs, 20, 0.5 * DBL_EPSILON * 0.1);
-
-			
-			/// <summary>
-			/// BesselY1(x) calculates the double precision Bessel function of the 
-			/// second kind of order for double precision argument x.
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>Bessel function of the 
-			/// second kind of order for argument x.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10A1, REVISION 900315, originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for BY1        on the interval  0.          to  1.60000E+01 
-			///                                        with weighted error   8.65E-33 
-			///                                         log weighted error  32.06 
-			///                               significant figures required  32.17 
-			///                                    decimal places required  32.71 
-			/// </code></remarks>
-			public static double BesselY1 (double x)
-			{
-				double y;
-
-
-				if (x <= 0.0) 
-					throw new ArgumentException("x is zero or negative");
-
-
-				if (x > 4.0) goto L20;
-
-				if (x < xmin) 
-					throw new ArgumentException("x so small Y1(x) overflows");
-
-				y = 0.0;
-				if (x > xsml) y = x * x;
-				return twodpi * Math.Log(x * 0.5) * BesselJ1(x) 
-					+ (dcsevl(y * 0.125 - 1.0, _BesselY1_by1cs, _BesselY1_nty1) + 0.5) / x;
-
-				L20:
-					double theta, ampl;
-				d9b1mp(x, out ampl, out theta);
-				return ampl * Math.Sin(theta);
-			}
-
-		}
-		#endregion
-
-		#region BesselYn
-		
-
-		
-
-		/// <summary>
-		/// BesselY(n,x) calculates the double precision Bessel function of the 
-		/// second kind of order n for double precision argument x. 
-		/// </summary>
-		/// <param name="n">The order of the Bessel function.</param>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Bessel function of the 
-		/// second kind of order n for argument x.</returns>
-		/// <remarks><code>
-		/// Implemented by B. M. Gammel, last revision 13.03.1996
-		/// </code></remarks>
-		public static double BesselY (int n, double x)
-		{
-			if (n < 0) 
-				throw new ArgumentException("index n less than 0");
-			else if (n == 0)
-				return BesselY0(x);
-			else if (n == 1)
-				return BesselY1(x);
-			else 
-			{
-				double tox = 2.0/x,
-					by  = BesselY1(x),
-					bym = BesselY0(x);
-				for (int j = 1; j < n; j++) 
-				{
-					double byp = j * tox * by - bym;
-					bym = by;
-					by = byp;
-				}
-				return by;
-			}
-		} 
-
-		#endregion
-
-		#region BesselI0
-
-		/// <summary>
-		/// BesselI0(x) calculates the double precision modified (hyperbolic)
-		/// Bessel function of the first kind of order zero and double precision 
-		/// argument x.
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Modified (hyperbolic)
-		/// Bessel function of the first kind of order zero and double precision 
-		/// argument x.</returns>
-		public static double BesselI0 (double x)
-		{
-			return _BesselI0.BesselI0(x);
-		}
-		class _BesselI0
-		{
-			static readonly double[] _BesselI0_bi0cs = 
-	{ 
-		-0.07660547252839144951081894976243285,
-		1.927337953993808269952408750881196,
-		0.2282644586920301338937029292330415,
-		0.01304891466707290428079334210691888,
-		4.344270900816487451378682681026107e-4,
-		9.422657686001934663923171744118766e-6,
-		1.434006289510691079962091878179957e-7,
-		1.613849069661749069915419719994611e-9,
-		1.396650044535669699495092708142522e-11,
-		9.579451725505445344627523171893333e-14,
-		5.333981859862502131015107744e-16,
-		2.458716088437470774696785919999999e-18,
-		9.535680890248770026944341333333333e-21,
-		3.154382039721427336789333333333333e-23,
-		9.004564101094637431466666666666666e-26,
-		2.240647369123670016e-28,
-		4.903034603242837333333333333333333e-31,
-		9.508172606122666666666666666666666e-34 
-	};
-			static readonly double _BesselI0_xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.5);
-			static readonly double _BesselI0_xmax = Math.Log(DBL_MAX);
-			static readonly int _BesselI0_nti0 = initds(_BesselI0_bi0cs, 18, 0.5 * DBL_EPSILON * 0.1);
-	
-
-			//-----------------------------------------------------------------------------//
-			//
-			// double BesselI0 (double x)
-			//
-			// BesselI0(x) calculates the double precision modified (hyperbolic)
-			// Bessel function of the first kind of order zero and double precision 
-			// argument x.
-			//
-			// This is a translation from the Fortran version of SLATEC, FNLIB,
-			// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
-			// to C++.
-			//
-			// Series for BI0        on the interval  0.          to  9.00000E+00 
-			//                                        with weighted error   9.51E-34 
-			//                                         log weighted error  33.02 
-			//                               significant figures required  33.31 
-			//                                    decimal places required  33.65 
-			//
-			//-----------------------------------------------------------------------------//
-
-			/// <summary>
-			/// BesselI0(x) calculates the double precision modified (hyperbolic)
-			/// Bessel function of the first kind of order zero and double precision 
-			/// argument x.
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>Modified (hyperbolic)
-			/// Bessel function of the first kind of order zero and double precision 
-			/// argument x.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for BI0        on the interval  0.          to  9.00000E+00 
-			///                                        with weighted error   9.51E-34 
-			///                                         log weighted error  33.02 
-			///                               significant figures required  33.31 
-			///                                    decimal places required  33.65 
-			/// </code></remarks>
-			public static double BesselI0 (double x)
-			{
-
-				double ret_val;
-
-		
-		
-
-				double y = Math.Abs(x);
-				if (y > 3.0) goto L20;
-
-				ret_val = 1.0;
-				if (y > _BesselI0_xsml) ret_val = dcsevl(y * y / 4.5 - 1.0, _BesselI0_bi0cs, _BesselI0_nti0) + 2.75;
-				return ret_val;
-
-				L20:
-					if (y > _BesselI0_xmax) 
-						throw new ArgumentException("abs(x) so big I0(x) overflows");
-
-				return Math.Exp(y) * BesselExpI0(x);
-			}
-		}
-		#endregion
-
-		#region BesselExpI0
-
-		/// <summary>
-		/// BesselExpI0(x) calculates the double precision exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the first kind of order 
-		/// zero for double precision argument x.  The result is the Bessel 
-		/// function i0(X) multiplied by exp(-abs(x)). 
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>The exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the first kind of order 
-		/// zero for argument x.</returns>
-		public static double BesselExpI0 (double x)
-		{
-			return _BesselExpI0.BesselExpI0(x);
-		}
-		
-		class _BesselExpI0
-		{
-			static readonly double[] _BesselExpI0_bi0cs = 
-	{ 
-		-0.07660547252839144951081894976243285,
-		1.927337953993808269952408750881196,
-		0.2282644586920301338937029292330415,
-		0.01304891466707290428079334210691888,
-		4.344270900816487451378682681026107e-4,
-		9.422657686001934663923171744118766e-6,
-		1.434006289510691079962091878179957e-7,
-		1.613849069661749069915419719994611e-9,
-		1.396650044535669699495092708142522e-11,
-		9.579451725505445344627523171893333e-14,
-		5.333981859862502131015107744e-16,
-		2.458716088437470774696785919999999e-18,
-		9.535680890248770026944341333333333e-21,
-		3.154382039721427336789333333333333e-23,
-		9.004564101094637431466666666666666e-26,
-		2.240647369123670016e-28,
-		4.903034603242837333333333333333333e-31,
-		9.508172606122666666666666666666666e-34 
-	};
-
-			static readonly double[] _BesselExpI0_ai0cs = 
-	{ 
-		0.07575994494023795942729872037438,
-		0.007591380810823345507292978733204,
-		4.153131338923750501863197491382e-4,
-		1.07007646343907307358242970217e-5,
-		-7.90117997921289466075031948573e-6,
-		-7.826143501438752269788989806909e-7,
-		2.783849942948870806381185389857e-7,
-		8.252472600612027191966829133198e-9,
-		-1.204463945520199179054960891103e-8,
-		1.559648598506076443612287527928e-9,
-		2.292556367103316543477254802857e-10,
-		-1.191622884279064603677774234478e-10,
-		1.757854916032409830218331247743e-11,
-		1.128224463218900517144411356824e-12,
-		-1.146848625927298877729633876982e-12,
-		2.715592054803662872643651921606e-13,
-		-2.415874666562687838442475720281e-14,
-		-6.084469888255125064606099639224e-15,
-		3.145705077175477293708360267303e-15,
-		-7.172212924871187717962175059176e-16,
-		7.874493403454103396083909603327e-17,
-		1.004802753009462402345244571839e-17,
-		-7.56689536535053485342843588881e-18,
-		2.150380106876119887812051287845e-18,
-		-3.754858341830874429151584452608e-19,
-		2.354065842226992576900757105322e-20,
-		1.11466761204792853022637335511e-20,
-		-5.398891884396990378696779322709e-21,
-		1.439598792240752677042858404522e-21,
-		-2.591916360111093406460818401962e-22,
-		2.23813318399858390743409229824e-23,
-		5.250672575364771172772216831999e-24,
-		-3.249904138533230784173432285866e-24,
-		9.9242141032050379278572847104e-25,
-		-2.164992254244669523146554299733e-25,
-		3.233609471943594083973332991999e-26,
-		-1.184620207396742489824733866666e-27,
-		-1.281671853950498650548338687999e-27,
-		5.827015182279390511605568853333e-28,
-		-1.668222326026109719364501503999e-28,
-		3.6253095105415699757006848e-29,
-		-5.733627999055713589945958399999e-30,
-		3.736796722063098229642581333333e-31,
-		1.602073983156851963365512533333e-31,
-		-8.700424864057229884522495999999e-32,
-		2.741320937937481145603413333333e-32 
-	};
-
-			static readonly double[] _BesselExpI0_ai02cs = 
-	{
-		0.0544904110141088316078960962268,
-		0.003369116478255694089897856629799,
-		6.889758346916823984262639143011e-5,
-		2.891370520834756482966924023232e-6,
-		2.048918589469063741827605340931e-7,
-		2.266668990498178064593277431361e-8,
-		3.396232025708386345150843969523e-9,
-		4.940602388224969589104824497835e-10,
-		1.188914710784643834240845251963e-11,
-		-3.149916527963241364538648629619e-11,
-		-1.321581184044771311875407399267e-11,
-		-1.794178531506806117779435740269e-12,
-		7.180124451383666233671064293469e-13,
-		3.852778382742142701140898017776e-13,
-		1.540086217521409826913258233397e-14,
-		-4.150569347287222086626899720156e-14,
-		-9.554846698828307648702144943125e-15,
-		3.811680669352622420746055355118e-15,
-		1.772560133056526383604932666758e-15,
-		-3.425485619677219134619247903282e-16,
-		-2.827623980516583484942055937594e-16,
-		3.461222867697461093097062508134e-17,
-		4.465621420296759999010420542843e-17,
-		-4.830504485944182071255254037954e-18,
-		-7.233180487874753954562272409245e-18,
-		9.92147541217369859888046093981e-19,
-		1.193650890845982085504399499242e-18,
-		-2.488709837150807235720544916602e-19,
-		-1.938426454160905928984697811326e-19,
-		6.444656697373443868783019493949e-20,
-		2.886051596289224326481713830734e-20,
-		-1.601954907174971807061671562007e-20,
-		-3.270815010592314720891935674859e-21,
-		3.686932283826409181146007239393e-21,
-		1.268297648030950153013595297109e-23,
-		-7.549825019377273907696366644101e-22,
-		1.502133571377835349637127890534e-22,
-		1.265195883509648534932087992483e-22,
-		-6.100998370083680708629408916002e-23,
-		-1.268809629260128264368720959242e-23,
-		1.661016099890741457840384874905e-23,
-		-1.585194335765885579379705048814e-24,
-		-3.302645405968217800953817667556e-24,
-		1.313580902839239781740396231174e-24,
-		3.689040246671156793314256372804e-25,
-		-4.210141910461689149219782472499e-25,
-		4.79195459108286578063171401373e-26,
-		8.459470390221821795299717074124e-26,
-		-4.03980094087283249314607937181e-26,
-		-6.434714653650431347301008504695e-27,
-		1.225743398875665990344647369905e-26,
-		-2.934391316025708923198798211754e-27,
-		-1.961311309194982926203712057289e-27,
-		1.503520374822193424162299003098e-27,
-		-9.588720515744826552033863882069e-29,
-		-3.483339380817045486394411085114e-28,
-		1.690903610263043673062449607256e-28,
-		1.982866538735603043894001157188e-29,
-		-5.317498081491816214575830025284e-29,
-		1.803306629888392946235014503901e-29,
-		6.213093341454893175884053112422e-30,
-		-7.69218929277216186320072806673e-30,
-		1.858252826111702542625560165963e-30,
-		1.237585142281395724899271545541e-30,
-		-1.102259120409223803217794787792e-30,
-		1.886287118039704490077874479431e-31,
-		2.16019687224365891314903141406e-31,
-		-1.605454124919743200584465949655e-31,
-		1.965352984594290603938848073318e-32 
-	};
-
-			static readonly double _BesselExpI0_eta  = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double _BesselExpI0_xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.5);
-			static readonly int _BesselExpI0_nti0   = initds(_BesselExpI0_bi0cs,  18, _BesselExpI0_eta);
-			static readonly int _BesselExpI0_ntai0  = initds(_BesselExpI0_ai0cs,  46, _BesselExpI0_eta);
-			static readonly int _BesselExpI0_ntai02 = initds(_BesselExpI0_ai02cs, 69, _BesselExpI0_eta);
-		
-
 
 			
 
-			/// <summary>
-			/// BesselExpI0(x) calculates the double precision exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the first kind of order 
-			/// zero for double precision argument x.  The result is the Bessel 
-			/// function i0(X) multiplied by exp(-abs(x)). 
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>The exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the first kind of order 
-			/// zero for argument x.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10B1, REVISION 891214, originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for BI0        on the interval  0.          to  9.00000E+00 
-			///                                        with weighted error   9.51E-34  
-			///                                         log weighted error  33.02 
-			///                               significant figures required  33.31 
-			///                                    decimal places required  33.65 
-			///
-			/// Series for AI0        on the interval  1.25000E-01 to  3.33333E-01 
-			///                                        with weighted error   2.74E-32 
-			///                                         log weighted error  31.56 
-			///                               significant figures required  30.15 
-			///                                    decimal places required  32.39 
-			///
-			/// Series for AI02       on the interval  0.          to  1.25000E-01 
-			///                                        with weighted error   1.97E-32 
-			///                                         log weighted error  31.71 
-			///                               significant figures required  30.15 
-			///                                    decimal places required  32.63 
-			/// </code></remarks>
-			public static double BesselExpI0 (double x)
-			{
+      /// <summary>
+      /// BesselJ1(x) calculates the double precision Bessel function of the 
+      /// first kind of order one for double precision argument x. 
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>Bessel function of the 
+      /// first kind of order one for argument x.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10A1, REVISION 910401 originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for BJ1        on the interval  0.          to  1.60000E+01 
+      ///                                        with weighted error   1.16E-33 
+      ///                                         log weighted error  32.93 
+      ///                               significant figures required  32.36 
+      ///                                    decimal places required  33.57 
+      /// </code></remarks>
+      public static double BesselJ1 (double x)
+      {
+        double ret_val = 0.0;
+			
 
-				double ret_val;
-
-
-	
-
-				double y = Math.Abs(x);
-				if (y > 3.0) goto L20;
-
-				ret_val = 1.0 - x;
-				if (y > _BesselExpI0_xsml)
-					ret_val = Math.Exp(-y) * (dcsevl(y * y / 4.5 - 1.0 , _BesselExpI0_bi0cs, _BesselExpI0_nti0) + 2.75);
-				return ret_val;
-
-				L20:
-					if (y <= 8.0) 
-						return (dcsevl((48.0 / y - 11.0)/5.0, _BesselExpI0_ai0cs, _BesselExpI0_ntai0) + 0.375) / Math.Sqrt(y);
-					else // if (y > 8.0)
-						return (dcsevl(16.0 / y - 1.0, _BesselExpI0_ai02cs, _BesselExpI0_ntai02) + 0.375) / Math.Sqrt(y);
-			}
-		}
-		#endregion
-
-		#region BesselI1
-		
-		/// <summary>
-		/// BesselI1(x) calculates the double precision modified (hyperbolic) 
-		/// Bessel function of the first kind of order one and double precision 
-		/// argument x. 
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>The modified (hyperbolic) 
-		/// Bessel function of the first kind of order one and double precision 
-		/// argument x.</returns>
-		public static double BesselI1 (double x)
-		{
-			return _BesselI1.BesselI1( x );
-		}
-		
-		class _BesselI1
-		{
-			static readonly double[] _BesselI1_bi1cs = 
-	{ 
-		-0.0019717132610998597316138503218149,
-		0.40734887667546480608155393652014,
-		0.034838994299959455866245037783787,
-		0.0015453945563001236038598401058489,
-		4.188852109837778412945883200412e-5,
-		7.6490267648362114741959703966069e-7,
-		1.0042493924741178689179808037238e-8,
-		9.9322077919238106481371298054863e-11,
-		7.6638017918447637275200171681349e-13,
-		4.741418923816739498038809194816e-15,
-		2.4041144040745181799863172032e-17,
-		1.0171505007093713649121100799999e-19,
-		3.6450935657866949458491733333333e-22,
-		1.1205749502562039344810666666666e-24,
-		2.9875441934468088832e-27,
-		6.9732310939194709333333333333333e-30,
-		1.43679482206208e-32 
-	};
+        double y = Math.Abs(x);
+        if (y > 4.0) goto L20;
     
-			static readonly  double _BesselI1_xmin = DBL_MIN * 2.0;
-			static readonly  double _BesselI1_xsml = Math.Sqrt(0.5*DBL_EPSILON * 4.5);
-			static readonly  double _BesselI1_xmax = Math.Log(DBL_MAX);
-			static readonly int _BesselI1_nti1 = initds(_BesselI1_bi1cs, 17, 0.5 * DBL_EPSILON * 0.1 );
+        if (y == 0.0) return 0.0;
+    
+        if (y <= xmin) 
+          System.Diagnostics.Trace.WriteLine("Warning (BesselJ1): abs(x) so small J1(x) underflows");
+    
+        if (y > xmin) 
+          ret_val = x * 0.5;
+    
+        if (y > xsml)
+          ret_val = x * (dcsevl(y * 0.125 * y - 1.0, _BesselJ1_bj1cs, _BesselJ1_ntj1) + 0.25);
+    
+        return ret_val;
+    
+        L20:
+          double ampl, theta;
+        d9b1mp(y, out ampl, out theta);
+        return CopySign(ampl, x) * Math.Cos(theta);
+      }
+    }
+    #endregion
 
+    #region BesselJn
 
-			/// <summary>
-			/// BesselI1(x) calculates the double precision modified (hyperbolic) 
-			/// Bessel function of the first kind of order one and double precision 
-			/// argument x. 
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>The modified (hyperbolic) 
-			/// Bessel function of the first kind of order one and double precision 
-			/// argument x.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for BI1        on the interval  0.          to  9.00000E+00 
-			///                                        with weighted error   1.44E-32 
-			///                                         log weighted error  31.84 
-			///                               significant figures required  31.45 
-			///                                    decimal places required  32.46 
-			/// </code></remarks>
-			public static double BesselI1 (double x)
-			{
 	
 
-				double ret_val;
+    /// <summary>
+    /// BesselJ(n,x) calculates the double precision Bessel function of the 
+    /// first kind of order n for double precision argument x. 
+    /// </summary>
+    /// <param name="n">The order of the bessel function.</param>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Bessel function of the 
+    /// first kind of order n for argument x.</returns>
+    /// <remarks><code>
+    /// Miller's downward recurrence algorithm is used.
+    /// Implemented by B. M. Gammel, last revision 13.03.1996
+    /// </code></remarks>
+    public static double BesselJ (int n, double x)
+    {
+      const double accuracy  = 40.0,
+              bignum    = 1.0e10,
+              invbignum = 1.0e-10;
+
+      if (n < 0) 
+        throw new ArgumentException("index n less than 0");
+      else if (n == 0)
+        return BesselJ0(x);
+      else if (n == 1)
+        return BesselJ1(x);
+      else 
+      {    
+        double ret_val;
+        double ax = Math.Abs(x);
+        if (ax == 0.0)
+          return 0.0;
+        else if (ax > (double) n) 
+        {
+          double bj,bjm,bjp;
+          double tox = 2.0 / ax;
+          bjm = BesselJ0(ax);
+          bj  = BesselJ1(ax);
+          for (int j = 1; j < n; j++) 
+          {
+            bjp = j * tox * bj - bjm;
+            bjm = bj;
+            bj = bjp;
+          }
+          ret_val = bj;
+        } 
+        else 
+        {
+          double bj,bjm,bjp,sum;
+          double tox = 2.0 / ax;
+          int m = 2 * ((n + (int) Math.Sqrt(accuracy*n)) / 2);
+          bool jsum = false;
+          bjp = ret_val = sum = 0.0;
+          bj = 1.0;
+          for (int j = m; j > 0; j--) 
+          {
+            bjm = j * tox * bj - bjp;
+            bjp = bj;
+            bj = bjm;
+            if (Math.Abs(bj) > bignum) 
+            {
+              bj *= invbignum;
+              bjp *= invbignum;
+              ret_val *= invbignum;
+              sum *= invbignum;
+            }
+            if (jsum) sum += bj;
+            jsum = !jsum;
+            if (j == n) ret_val = bjp;
+          }
+          sum = 2.0 * sum - bj;
+          ret_val /= sum;
+        }
+        return  (x < 0.0 && n % 2 == 1) ? -ret_val : ret_val;
+      } 
+    }
+
+    #endregion
+
+    #region BesselY0
+
+    /// <summary>
+    /// BesselY0(x) calculates the double precision Bessel function of the 
+    /// second kind of order zero for double precision argument X. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Bessel function of the 
+    /// second kind of order zero for argument x.</returns>
+    public static double BesselY0 (double x)
+    {
+      return _BesselY0.BesselY0(x);
+    }
+
+    class _BesselY0
+    {
+
+      static readonly double[] _BesselY0_by0cs = 
+  { 
+    -0.01127783939286557321793980546028,
+    -0.1283452375604203460480884531838,
+    -0.1043788479979424936581762276618,
+    0.02366274918396969540924159264613,
+    -0.002090391647700486239196223950342,
+    1.039754539390572520999246576381e-4,
+    -3.369747162423972096718775345037e-6,
+    7.729384267670667158521367216371e-8,
+    -1.324976772664259591443476068964e-9,
+    1.764823261540452792100389363158e-11,
+    -1.881055071580196200602823012069e-13,
+    1.641865485366149502792237185749e-15,
+    -1.19565943860460608574599100672e-17,
+    7.377296297440185842494112426666e-20,
+    -3.906843476710437330740906666666e-22,
+    1.79550366443615794982912e-24,
+    -7.229627125448010478933333333333e-27,
+    2.571727931635168597333333333333e-29,
+    -8.141268814163694933333333333333e-32 
+  };
+
+      static readonly double twodpi = 0.636619772367581343075535053490057;
+      static readonly double	xsml   = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
+      static readonly  int _BesselY0_nty0 = initds(_BesselY0_by0cs, 19, 0.5 * DBL_EPSILON * 0.1);
+	
+	
+      /// <summary>
+      /// BesselY0(x) calculates the double precision Bessel function of the 
+      /// second kind of order zero for double precision argument X. 
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>Bessel function of the 
+      /// second kind of order zero for argument x.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10A1, REVISION 900315, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for BY0        on the interval  0.          to  1.60000E+01 
+      ///                                        with weighted error   8.14E-32 
+      ///                                         log weighted error  31.09 
+      ///                               significant figures required  30.31 
+      ///                                    decimal places required  31.73 
+      /// </code></remarks>
+      public static double BesselY0 (double x)
+      {
+        if (x <= 0.0) 
+          throw new ArgumentException("x is zero or negative");
+
+
+        if (x > 4.0) 
+        {
+          double ampl, theta;
+          d9b0mp(x, out ampl, out theta);
+          return ampl * Math.Sin(theta);
+        } 
+        else 
+        {
+          double y = 0.0;
+          if (x > xsml) y = x * x;
+          return twodpi * Math.Log(x*0.5) * BesselJ0(x) + 0.375 
+            + dcsevl(y * 0.125-1.0, _BesselY0_by0cs, _BesselY0_nty0);
+        }
+      } 
+    }
+
+    #endregion
+
+    #region BesselY1
+
+    /// <summary>
+    /// BesselY1(x) calculates the double precision Bessel function of the 
+    /// second kind of order for double precision argument x.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Bessel function of the 
+    /// second kind of order for argument x.</returns>
+    public static double BesselY1 (double x)
+    {
+      return _BesselY1.BesselY1(x);
+    }
+
+    class _BesselY1
+    {
+      static readonly double[] _BesselY1_by1cs = 
+  { 
+    0.0320804710061190862932352018628015,
+    1.26270789743350044953431725999727,
+    0.00649996189992317500097490637314144,
+    -0.0893616452886050411653144160009712,
+    0.0132508812217570954512375510370043,
+    -8.97905911964835237753039508298105e-4,
+    3.64736148795830678242287368165349e-5,
+    -1.00137438166600055549075523845295e-6,
+    1.99453965739017397031159372421243e-8,
+    -3.02306560180338167284799332520743e-10,
+    3.60987815694781196116252914242474e-12,
+    -3.48748829728758242414552947409066e-14,
+    2.78387897155917665813507698517333e-16,
+    -1.86787096861948768766825352533333e-18,
+    1.06853153391168259757070336e-20,
+    -5.27472195668448228943872e-23,
+    2.27019940315566414370133333333333e-25,
+    -8.59539035394523108693333333333333e-28,
+    2.88540437983379456e-30,
+    -8.64754113893717333333333333333333e-33 
+  };
+
+      static readonly double twodpi = 0.636619772367581343075535053490057;
+      static readonly double xsml   = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
+      static readonly double xmin   = Math.Exp(Math.Max(Math.Log(DBL_MIN),-Math.Log(DBL_MAX)) + 0.01) * 1.571;
+      static readonly int _BesselY1_nty1 = initds(_BesselY1_by1cs, 20, 0.5 * DBL_EPSILON * 0.1);
+
+			
+      /// <summary>
+      /// BesselY1(x) calculates the double precision Bessel function of the 
+      /// second kind of order for double precision argument x.
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>Bessel function of the 
+      /// second kind of order for argument x.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10A1, REVISION 900315, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for BY1        on the interval  0.          to  1.60000E+01 
+      ///                                        with weighted error   8.65E-33 
+      ///                                         log weighted error  32.06 
+      ///                               significant figures required  32.17 
+      ///                                    decimal places required  32.71 
+      /// </code></remarks>
+      public static double BesselY1 (double x)
+      {
+        double y;
+
+
+        if (x <= 0.0) 
+          throw new ArgumentException("x is zero or negative");
+
+
+        if (x > 4.0) goto L20;
+
+        if (x < xmin) 
+          throw new ArgumentException("x so small Y1(x) overflows");
+
+        y = 0.0;
+        if (x > xsml) y = x * x;
+        return twodpi * Math.Log(x * 0.5) * BesselJ1(x) 
+          + (dcsevl(y * 0.125 - 1.0, _BesselY1_by1cs, _BesselY1_nty1) + 0.5) / x;
+
+        L20:
+          double theta, ampl;
+        d9b1mp(x, out ampl, out theta);
+        return ampl * Math.Sin(theta);
+      }
+
+    }
+    #endregion
+
+    #region BesselYn
+		
+
+		
+
+    /// <summary>
+    /// BesselY(n,x) calculates the double precision Bessel function of the 
+    /// second kind of order n for double precision argument x. 
+    /// </summary>
+    /// <param name="n">The order of the Bessel function.</param>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Bessel function of the 
+    /// second kind of order n for argument x.</returns>
+    /// <remarks><code>
+    /// Implemented by B. M. Gammel, last revision 13.03.1996
+    /// </code></remarks>
+    public static double BesselY (int n, double x)
+    {
+      if (n < 0) 
+        throw new ArgumentException("index n less than 0");
+      else if (n == 0)
+        return BesselY0(x);
+      else if (n == 1)
+        return BesselY1(x);
+      else 
+      {
+        double tox = 2.0/x,
+          by  = BesselY1(x),
+          bym = BesselY0(x);
+        for (int j = 1; j < n; j++) 
+        {
+          double byp = j * tox * by - bym;
+          bym = by;
+          by = byp;
+        }
+        return by;
+      }
+    } 
+
+    #endregion
+
+    #region BesselI0
+
+    /// <summary>
+    /// BesselI0(x) calculates the double precision modified (hyperbolic)
+    /// Bessel function of the first kind of order zero and double precision 
+    /// argument x.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Modified (hyperbolic)
+    /// Bessel function of the first kind of order zero and double precision 
+    /// argument x.</returns>
+    public static double BesselI0 (double x)
+    {
+      return _BesselI0.BesselI0(x);
+    }
+    class _BesselI0
+    {
+      static readonly double[] _BesselI0_bi0cs = 
+  { 
+    -0.07660547252839144951081894976243285,
+    1.927337953993808269952408750881196,
+    0.2282644586920301338937029292330415,
+    0.01304891466707290428079334210691888,
+    4.344270900816487451378682681026107e-4,
+    9.422657686001934663923171744118766e-6,
+    1.434006289510691079962091878179957e-7,
+    1.613849069661749069915419719994611e-9,
+    1.396650044535669699495092708142522e-11,
+    9.579451725505445344627523171893333e-14,
+    5.333981859862502131015107744e-16,
+    2.458716088437470774696785919999999e-18,
+    9.535680890248770026944341333333333e-21,
+    3.154382039721427336789333333333333e-23,
+    9.004564101094637431466666666666666e-26,
+    2.240647369123670016e-28,
+    4.903034603242837333333333333333333e-31,
+    9.508172606122666666666666666666666e-34 
+  };
+      static readonly double _BesselI0_xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.5);
+      static readonly double _BesselI0_xmax = Math.Log(DBL_MAX);
+      static readonly int _BesselI0_nti0 = initds(_BesselI0_bi0cs, 18, 0.5 * DBL_EPSILON * 0.1);
+	
+
+      //-----------------------------------------------------------------------------//
+      //
+      // double BesselI0 (double x)
+      //
+      // BesselI0(x) calculates the double precision modified (hyperbolic)
+      // Bessel function of the first kind of order zero and double precision 
+      // argument x.
+      //
+      // This is a translation from the Fortran version of SLATEC, FNLIB,
+      // CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
+      // to C++.
+      //
+      // Series for BI0        on the interval  0.          to  9.00000E+00 
+      //                                        with weighted error   9.51E-34 
+      //                                         log weighted error  33.02 
+      //                               significant figures required  33.31 
+      //                                    decimal places required  33.65 
+      //
+      //-----------------------------------------------------------------------------//
+
+      /// <summary>
+      /// BesselI0(x) calculates the double precision modified (hyperbolic)
+      /// Bessel function of the first kind of order zero and double precision 
+      /// argument x.
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>Modified (hyperbolic)
+      /// Bessel function of the first kind of order zero and double precision 
+      /// argument x.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for BI0        on the interval  0.          to  9.00000E+00 
+      ///                                        with weighted error   9.51E-34 
+      ///                                         log weighted error  33.02 
+      ///                               significant figures required  33.31 
+      ///                                    decimal places required  33.65 
+      /// </code></remarks>
+      public static double BesselI0 (double x)
+      {
+
+        double ret_val;
+
+		
+		
+
+        double y = Math.Abs(x);
+        if (y > 3.0) goto L20;
+
+        ret_val = 1.0;
+        if (y > _BesselI0_xsml) ret_val = dcsevl(y * y / 4.5 - 1.0, _BesselI0_bi0cs, _BesselI0_nti0) + 2.75;
+        return ret_val;
+
+        L20:
+          if (y > _BesselI0_xmax) 
+            throw new ArgumentException("abs(x) so big I0(x) overflows");
+
+        return Math.Exp(y) * BesselExpI0(x);
+      }
+    }
+    #endregion
+
+    #region BesselExpI0
+
+    /// <summary>
+    /// BesselExpI0(x) calculates the double precision exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the first kind of order 
+    /// zero for double precision argument x.  The result is the Bessel 
+    /// function i0(X) multiplied by exp(-abs(x)). 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>The exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the first kind of order 
+    /// zero for argument x.</returns>
+    public static double BesselExpI0 (double x)
+    {
+      return _BesselExpI0.BesselExpI0(x);
+    }
+		
+    class _BesselExpI0
+    {
+      static readonly double[] _BesselExpI0_bi0cs = 
+  { 
+    -0.07660547252839144951081894976243285,
+    1.927337953993808269952408750881196,
+    0.2282644586920301338937029292330415,
+    0.01304891466707290428079334210691888,
+    4.344270900816487451378682681026107e-4,
+    9.422657686001934663923171744118766e-6,
+    1.434006289510691079962091878179957e-7,
+    1.613849069661749069915419719994611e-9,
+    1.396650044535669699495092708142522e-11,
+    9.579451725505445344627523171893333e-14,
+    5.333981859862502131015107744e-16,
+    2.458716088437470774696785919999999e-18,
+    9.535680890248770026944341333333333e-21,
+    3.154382039721427336789333333333333e-23,
+    9.004564101094637431466666666666666e-26,
+    2.240647369123670016e-28,
+    4.903034603242837333333333333333333e-31,
+    9.508172606122666666666666666666666e-34 
+  };
+
+      static readonly double[] _BesselExpI0_ai0cs = 
+  { 
+    0.07575994494023795942729872037438,
+    0.007591380810823345507292978733204,
+    4.153131338923750501863197491382e-4,
+    1.07007646343907307358242970217e-5,
+    -7.90117997921289466075031948573e-6,
+    -7.826143501438752269788989806909e-7,
+    2.783849942948870806381185389857e-7,
+    8.252472600612027191966829133198e-9,
+    -1.204463945520199179054960891103e-8,
+    1.559648598506076443612287527928e-9,
+    2.292556367103316543477254802857e-10,
+    -1.191622884279064603677774234478e-10,
+    1.757854916032409830218331247743e-11,
+    1.128224463218900517144411356824e-12,
+    -1.146848625927298877729633876982e-12,
+    2.715592054803662872643651921606e-13,
+    -2.415874666562687838442475720281e-14,
+    -6.084469888255125064606099639224e-15,
+    3.145705077175477293708360267303e-15,
+    -7.172212924871187717962175059176e-16,
+    7.874493403454103396083909603327e-17,
+    1.004802753009462402345244571839e-17,
+    -7.56689536535053485342843588881e-18,
+    2.150380106876119887812051287845e-18,
+    -3.754858341830874429151584452608e-19,
+    2.354065842226992576900757105322e-20,
+    1.11466761204792853022637335511e-20,
+    -5.398891884396990378696779322709e-21,
+    1.439598792240752677042858404522e-21,
+    -2.591916360111093406460818401962e-22,
+    2.23813318399858390743409229824e-23,
+    5.250672575364771172772216831999e-24,
+    -3.249904138533230784173432285866e-24,
+    9.9242141032050379278572847104e-25,
+    -2.164992254244669523146554299733e-25,
+    3.233609471943594083973332991999e-26,
+    -1.184620207396742489824733866666e-27,
+    -1.281671853950498650548338687999e-27,
+    5.827015182279390511605568853333e-28,
+    -1.668222326026109719364501503999e-28,
+    3.6253095105415699757006848e-29,
+    -5.733627999055713589945958399999e-30,
+    3.736796722063098229642581333333e-31,
+    1.602073983156851963365512533333e-31,
+    -8.700424864057229884522495999999e-32,
+    2.741320937937481145603413333333e-32 
+  };
+
+      static readonly double[] _BesselExpI0_ai02cs = 
+  {
+    0.0544904110141088316078960962268,
+    0.003369116478255694089897856629799,
+    6.889758346916823984262639143011e-5,
+    2.891370520834756482966924023232e-6,
+    2.048918589469063741827605340931e-7,
+    2.266668990498178064593277431361e-8,
+    3.396232025708386345150843969523e-9,
+    4.940602388224969589104824497835e-10,
+    1.188914710784643834240845251963e-11,
+    -3.149916527963241364538648629619e-11,
+    -1.321581184044771311875407399267e-11,
+    -1.794178531506806117779435740269e-12,
+    7.180124451383666233671064293469e-13,
+    3.852778382742142701140898017776e-13,
+    1.540086217521409826913258233397e-14,
+    -4.150569347287222086626899720156e-14,
+    -9.554846698828307648702144943125e-15,
+    3.811680669352622420746055355118e-15,
+    1.772560133056526383604932666758e-15,
+    -3.425485619677219134619247903282e-16,
+    -2.827623980516583484942055937594e-16,
+    3.461222867697461093097062508134e-17,
+    4.465621420296759999010420542843e-17,
+    -4.830504485944182071255254037954e-18,
+    -7.233180487874753954562272409245e-18,
+    9.92147541217369859888046093981e-19,
+    1.193650890845982085504399499242e-18,
+    -2.488709837150807235720544916602e-19,
+    -1.938426454160905928984697811326e-19,
+    6.444656697373443868783019493949e-20,
+    2.886051596289224326481713830734e-20,
+    -1.601954907174971807061671562007e-20,
+    -3.270815010592314720891935674859e-21,
+    3.686932283826409181146007239393e-21,
+    1.268297648030950153013595297109e-23,
+    -7.549825019377273907696366644101e-22,
+    1.502133571377835349637127890534e-22,
+    1.265195883509648534932087992483e-22,
+    -6.100998370083680708629408916002e-23,
+    -1.268809629260128264368720959242e-23,
+    1.661016099890741457840384874905e-23,
+    -1.585194335765885579379705048814e-24,
+    -3.302645405968217800953817667556e-24,
+    1.313580902839239781740396231174e-24,
+    3.689040246671156793314256372804e-25,
+    -4.210141910461689149219782472499e-25,
+    4.79195459108286578063171401373e-26,
+    8.459470390221821795299717074124e-26,
+    -4.03980094087283249314607937181e-26,
+    -6.434714653650431347301008504695e-27,
+    1.225743398875665990344647369905e-26,
+    -2.934391316025708923198798211754e-27,
+    -1.961311309194982926203712057289e-27,
+    1.503520374822193424162299003098e-27,
+    -9.588720515744826552033863882069e-29,
+    -3.483339380817045486394411085114e-28,
+    1.690903610263043673062449607256e-28,
+    1.982866538735603043894001157188e-29,
+    -5.317498081491816214575830025284e-29,
+    1.803306629888392946235014503901e-29,
+    6.213093341454893175884053112422e-30,
+    -7.69218929277216186320072806673e-30,
+    1.858252826111702542625560165963e-30,
+    1.237585142281395724899271545541e-30,
+    -1.102259120409223803217794787792e-30,
+    1.886287118039704490077874479431e-31,
+    2.16019687224365891314903141406e-31,
+    -1.605454124919743200584465949655e-31,
+    1.965352984594290603938848073318e-32 
+  };
+
+      static readonly double _BesselExpI0_eta  = 0.5 * DBL_EPSILON * 0.1;
+      static readonly double _BesselExpI0_xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.5);
+      static readonly int _BesselExpI0_nti0   = initds(_BesselExpI0_bi0cs,  18, _BesselExpI0_eta);
+      static readonly int _BesselExpI0_ntai0  = initds(_BesselExpI0_ai0cs,  46, _BesselExpI0_eta);
+      static readonly int _BesselExpI0_ntai02 = initds(_BesselExpI0_ai02cs, 69, _BesselExpI0_eta);
+		
+
+
+			
+
+      /// <summary>
+      /// BesselExpI0(x) calculates the double precision exponentially scaled 
+      /// modified (hyperbolic) Bessel function of the first kind of order 
+      /// zero for double precision argument x.  The result is the Bessel 
+      /// function i0(X) multiplied by exp(-abs(x)). 
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>The exponentially scaled 
+      /// modified (hyperbolic) Bessel function of the first kind of order 
+      /// zero for argument x.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10B1, REVISION 891214, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for BI0        on the interval  0.          to  9.00000E+00 
+      ///                                        with weighted error   9.51E-34  
+      ///                                         log weighted error  33.02 
+      ///                               significant figures required  33.31 
+      ///                                    decimal places required  33.65 
+      ///
+      /// Series for AI0        on the interval  1.25000E-01 to  3.33333E-01 
+      ///                                        with weighted error   2.74E-32 
+      ///                                         log weighted error  31.56 
+      ///                               significant figures required  30.15 
+      ///                                    decimal places required  32.39 
+      ///
+      /// Series for AI02       on the interval  0.          to  1.25000E-01 
+      ///                                        with weighted error   1.97E-32 
+      ///                                         log weighted error  31.71 
+      ///                               significant figures required  30.15 
+      ///                                    decimal places required  32.63 
+      /// </code></remarks>
+      public static double BesselExpI0 (double x)
+      {
+
+        double ret_val;
+
+
+	
+
+        double y = Math.Abs(x);
+        if (y > 3.0) goto L20;
+
+        ret_val = 1.0 - x;
+        if (y > _BesselExpI0_xsml)
+          ret_val = Math.Exp(-y) * (dcsevl(y * y / 4.5 - 1.0 , _BesselExpI0_bi0cs, _BesselExpI0_nti0) + 2.75);
+        return ret_val;
+
+        L20:
+          if (y <= 8.0) 
+            return (dcsevl((48.0 / y - 11.0)/5.0, _BesselExpI0_ai0cs, _BesselExpI0_ntai0) + 0.375) / Math.Sqrt(y);
+          else // if (y > 8.0)
+            return (dcsevl(16.0 / y - 1.0, _BesselExpI0_ai02cs, _BesselExpI0_ntai02) + 0.375) / Math.Sqrt(y);
+      }
+    }
+    #endregion
+
+    #region BesselI1
+		
+    /// <summary>
+    /// BesselI1(x) calculates the double precision modified (hyperbolic) 
+    /// Bessel function of the first kind of order one and double precision 
+    /// argument x. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>The modified (hyperbolic) 
+    /// Bessel function of the first kind of order one and double precision 
+    /// argument x.</returns>
+    public static double BesselI1 (double x)
+    {
+      return _BesselI1.BesselI1( x );
+    }
+		
+    class _BesselI1
+    {
+      static readonly double[] _BesselI1_bi1cs = 
+  { 
+    -0.0019717132610998597316138503218149,
+    0.40734887667546480608155393652014,
+    0.034838994299959455866245037783787,
+    0.0015453945563001236038598401058489,
+    4.188852109837778412945883200412e-5,
+    7.6490267648362114741959703966069e-7,
+    1.0042493924741178689179808037238e-8,
+    9.9322077919238106481371298054863e-11,
+    7.6638017918447637275200171681349e-13,
+    4.741418923816739498038809194816e-15,
+    2.4041144040745181799863172032e-17,
+    1.0171505007093713649121100799999e-19,
+    3.6450935657866949458491733333333e-22,
+    1.1205749502562039344810666666666e-24,
+    2.9875441934468088832e-27,
+    6.9732310939194709333333333333333e-30,
+    1.43679482206208e-32 
+  };
+    
+      static readonly  double _BesselI1_xmin = DBL_MIN * 2.0;
+      static readonly  double _BesselI1_xsml = Math.Sqrt(0.5*DBL_EPSILON * 4.5);
+      static readonly  double _BesselI1_xmax = Math.Log(DBL_MAX);
+      static readonly int _BesselI1_nti1 = initds(_BesselI1_bi1cs, 17, 0.5 * DBL_EPSILON * 0.1 );
+
+
+      /// <summary>
+      /// BesselI1(x) calculates the double precision modified (hyperbolic) 
+      /// Bessel function of the first kind of order one and double precision 
+      /// argument x. 
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>The modified (hyperbolic) 
+      /// Bessel function of the first kind of order one and double precision 
+      /// argument x.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for BI1        on the interval  0.          to  9.00000E+00 
+      ///                                        with weighted error   1.44E-32 
+      ///                                         log weighted error  31.84 
+      ///                               significant figures required  31.45 
+      ///                                    decimal places required  32.46 
+      /// </code></remarks>
+      public static double BesselI1 (double x)
+      {
+	
+
+        double ret_val;
 
 	
     
 			
     
-				double y = Math.Abs(x);
-				if (y > 3.0) goto L20;
+        double y = Math.Abs(x);
+        if (y > 3.0) goto L20;
     
-				ret_val = 0.0;
-				if (y == 0.0) return ret_val;
+        ret_val = 0.0;
+        if (y == 0.0) return ret_val;
     
-				if (y <= _BesselI1_xmin) 
-					System.Diagnostics.Trace.WriteLine("Warning (BesselI1): abs(x) so small I1(x) underflows");
+        if (y <= _BesselI1_xmin) 
+          System.Diagnostics.Trace.WriteLine("Warning (BesselI1): abs(x) so small I1(x) underflows");
     
-				if (y > _BesselI1_xmin) ret_val = x * 0.5;
-				if (y > _BesselI1_xsml) 
-					ret_val = x * (dcsevl(y * y / 4.5 - 1.0, _BesselI1_bi1cs, _BesselI1_nti1) + 0.875);
-				return ret_val;
+        if (y > _BesselI1_xmin) ret_val = x * 0.5;
+        if (y > _BesselI1_xsml) 
+          ret_val = x * (dcsevl(y * y / 4.5 - 1.0, _BesselI1_bi1cs, _BesselI1_nti1) + 0.875);
+        return ret_val;
     
-				L20:
-					if (y > _BesselI1_xmax) 
-						throw new ArgumentException("abs(x) so big I1(x) overflows");
+        L20:
+          if (y > _BesselI1_xmax) 
+            throw new ArgumentException("abs(x) so big I1(x) overflows");
 
-				ret_val = Math.Exp(y) * BesselExpI1(x);
+        ret_val = Math.Exp(y) * BesselExpI1(x);
 
-				return ret_val;
-			}
-		}
+        return ret_val;
+      }
+    }
 
-		#endregion
+    #endregion
 
-		#region BesselExpI1
+    #region BesselExpI1
 
-		/// <summary>
-		/// BesselExpI1(x) calculates the double precision exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the first kind of order 
-		/// one for double precision argument x.  The result is I1(x) 
-		/// multiplied by exp(-abs(x)). 
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>The exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the first kind of order 
-		/// one for argument x.</returns>
-		public static double BesselExpI1 (double x)
-		{
-			return _BesselExpI1.BesselExpI1( x );
-		}
+    /// <summary>
+    /// BesselExpI1(x) calculates the double precision exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the first kind of order 
+    /// one for double precision argument x.  The result is I1(x) 
+    /// multiplied by exp(-abs(x)). 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>The exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the first kind of order 
+    /// one for argument x.</returns>
+    public static double BesselExpI1 (double x)
+    {
+      return _BesselExpI1.BesselExpI1( x );
+    }
 
-		class _BesselExpI1
-		{
-			static readonly double[] bi1cs = 
-	{ 
-		-0.0019717132610998597316138503218149,
-		0.40734887667546480608155393652014,
-		0.034838994299959455866245037783787,
-		0.0015453945563001236038598401058489,
-		4.188852109837778412945883200412e-5,
-		7.6490267648362114741959703966069e-7,
-		1.0042493924741178689179808037238e-8,
-		9.9322077919238106481371298054863e-11,
-		7.6638017918447637275200171681349e-13,
-		4.741418923816739498038809194816e-15,
-		2.4041144040745181799863172032e-17,
-		1.0171505007093713649121100799999e-19,
-		3.6450935657866949458491733333333e-22,
-		1.1205749502562039344810666666666e-24,
-		2.9875441934468088832e-27,
-		6.9732310939194709333333333333333e-30,
-		1.43679482206208e-32 
-	};
+    class _BesselExpI1
+    {
+      static readonly double[] bi1cs = 
+  { 
+    -0.0019717132610998597316138503218149,
+    0.40734887667546480608155393652014,
+    0.034838994299959455866245037783787,
+    0.0015453945563001236038598401058489,
+    4.188852109837778412945883200412e-5,
+    7.6490267648362114741959703966069e-7,
+    1.0042493924741178689179808037238e-8,
+    9.9322077919238106481371298054863e-11,
+    7.6638017918447637275200171681349e-13,
+    4.741418923816739498038809194816e-15,
+    2.4041144040745181799863172032e-17,
+    1.0171505007093713649121100799999e-19,
+    3.6450935657866949458491733333333e-22,
+    1.1205749502562039344810666666666e-24,
+    2.9875441934468088832e-27,
+    6.9732310939194709333333333333333e-30,
+    1.43679482206208e-32 
+  };
 
-			static readonly double[] ai1cs = 
-	{ 
-		-0.02846744181881478674100372468307,
-		-0.01922953231443220651044448774979,
-		-6.115185857943788982256249917785e-4,
-		-2.069971253350227708882823777979e-5,
-		8.585619145810725565536944673138e-6,
-		1.04949824671159086251745399786e-6,
-		-2.918338918447902202093432326697e-7,
-		-1.559378146631739000160680969077e-8,
-		1.318012367144944705525302873909e-8,
-		-1.448423418183078317639134467815e-9,
-		-2.90851224399314209482504099301e-10,
-		1.266388917875382387311159690403e-10,
-		-1.66494777291922067062417839858e-11,
-		-1.666653644609432976095937154999e-12,
-		1.242602414290768265232168472017e-12,
-		-2.731549379672432397251461428633e-13,
-		2.023947881645803780700262688981e-14,
-		7.307950018116883636198698126123e-15,
-		-3.332905634404674943813778617133e-15,
-		7.17534655851295374354225466567e-16,
-		-6.982530324796256355850629223656e-17,
-		-1.299944201562760760060446080587e-17,
-		8.12094286424279889205467834286e-18,
-		-2.194016207410736898156266643783e-18,
-		3.630516170029654848279860932334e-19,
-		-1.695139772439104166306866790399e-20,
-		-1.288184829897907807116882538222e-20,
-		5.694428604967052780109991073109e-21,
-		-1.459597009090480056545509900287e-21,
-		2.514546010675717314084691334485e-22,
-		-1.844758883139124818160400029013e-23,
-		-6.339760596227948641928609791999e-24,
-		3.46144110203101111110814662656e-24,
-		-1.017062335371393547596541023573e-24,
-		2.149877147090431445962500778666e-25,
-		-3.045252425238676401746206173866e-26,
-		5.238082144721285982177634986666e-28,
-		1.443583107089382446416789503999e-27,
-		-6.121302074890042733200670719999e-28,
-		1.700011117467818418349189802666e-28,
-		-3.596589107984244158535215786666e-29,
-		5.448178578948418576650513066666e-30,
-		-2.731831789689084989162564266666e-31,
-		-1.858905021708600715771903999999e-31,
-		9.212682974513933441127765333333e-32,
-		-2.813835155653561106370833066666e-32 
-	};
+      static readonly double[] ai1cs = 
+  { 
+    -0.02846744181881478674100372468307,
+    -0.01922953231443220651044448774979,
+    -6.115185857943788982256249917785e-4,
+    -2.069971253350227708882823777979e-5,
+    8.585619145810725565536944673138e-6,
+    1.04949824671159086251745399786e-6,
+    -2.918338918447902202093432326697e-7,
+    -1.559378146631739000160680969077e-8,
+    1.318012367144944705525302873909e-8,
+    -1.448423418183078317639134467815e-9,
+    -2.90851224399314209482504099301e-10,
+    1.266388917875382387311159690403e-10,
+    -1.66494777291922067062417839858e-11,
+    -1.666653644609432976095937154999e-12,
+    1.242602414290768265232168472017e-12,
+    -2.731549379672432397251461428633e-13,
+    2.023947881645803780700262688981e-14,
+    7.307950018116883636198698126123e-15,
+    -3.332905634404674943813778617133e-15,
+    7.17534655851295374354225466567e-16,
+    -6.982530324796256355850629223656e-17,
+    -1.299944201562760760060446080587e-17,
+    8.12094286424279889205467834286e-18,
+    -2.194016207410736898156266643783e-18,
+    3.630516170029654848279860932334e-19,
+    -1.695139772439104166306866790399e-20,
+    -1.288184829897907807116882538222e-20,
+    5.694428604967052780109991073109e-21,
+    -1.459597009090480056545509900287e-21,
+    2.514546010675717314084691334485e-22,
+    -1.844758883139124818160400029013e-23,
+    -6.339760596227948641928609791999e-24,
+    3.46144110203101111110814662656e-24,
+    -1.017062335371393547596541023573e-24,
+    2.149877147090431445962500778666e-25,
+    -3.045252425238676401746206173866e-26,
+    5.238082144721285982177634986666e-28,
+    1.443583107089382446416789503999e-27,
+    -6.121302074890042733200670719999e-28,
+    1.700011117467818418349189802666e-28,
+    -3.596589107984244158535215786666e-29,
+    5.448178578948418576650513066666e-30,
+    -2.731831789689084989162564266666e-31,
+    -1.858905021708600715771903999999e-31,
+    9.212682974513933441127765333333e-32,
+    -2.813835155653561106370833066666e-32 
+  };
     
-			static readonly double[] ai12cs = 
-	{ 
-		0.02857623501828012047449845948469,
-		-0.009761097491361468407765164457302,
-		-1.105889387626237162912569212775e-4,
-		-3.882564808877690393456544776274e-6,
-		-2.512236237870208925294520022121e-7,
-		-2.631468846889519506837052365232e-8,
-		-3.835380385964237022045006787968e-9,
-		-5.589743462196583806868112522229e-10,
-		-1.897495812350541234498925033238e-11,
-		3.252603583015488238555080679949e-11,
-		1.412580743661378133163366332846e-11,
-		2.03562854414708950722452613684e-12,
-		-7.198551776245908512092589890446e-13,
-		-4.083551111092197318228499639691e-13,
-		-2.101541842772664313019845727462e-14,
-		4.272440016711951354297788336997e-14,
-		1.042027698412880276417414499948e-14,
-		-3.814403072437007804767072535396e-15,
-		-1.880354775510782448512734533963e-15,
-		3.308202310920928282731903352405e-16,
-		2.962628997645950139068546542052e-16,
-		-3.209525921993423958778373532887e-17,
-		-4.650305368489358325571282818979e-17,
-		4.414348323071707949946113759641e-18,
-		7.517296310842104805425458080295e-18,
-		-9.314178867326883375684847845157e-19,
-		-1.242193275194890956116784488697e-18,
-		2.414276719454848469005153902176e-19,
-		2.026944384053285178971922860692e-19,
-		-6.394267188269097787043919886811e-20,
-		-3.049812452373095896084884503571e-20,
-		1.612841851651480225134622307691e-20,
-		3.56091396430992505451027090462e-21,
-		-3.752017947936439079666828003246e-21,
-		-5.787037427074799345951982310741e-23,
-		7.759997511648161961982369632092e-22,
-		-1.452790897202233394064459874085e-22,
-		-1.318225286739036702121922753374e-22,
-		6.116654862903070701879991331717e-23,
-		1.376279762427126427730243383634e-23,
-		-1.690837689959347884919839382306e-23,
-		1.430596088595433153987201085385e-24,
-		3.409557828090594020405367729902e-24,
-		-1.309457666270760227845738726424e-24,
-		-3.940706411240257436093521417557e-25,
-		4.277137426980876580806166797352e-25,
-		-4.424634830982606881900283123029e-26,
-		-8.734113196230714972115309788747e-26,
-		4.045401335683533392143404142428e-26,
-		7.067100658094689465651607717806e-27,
-		-1.249463344565105223002864518605e-26,
-		2.867392244403437032979483391426e-27,
-		2.04429289250429267028177957421e-27,
-		-1.518636633820462568371346802911e-27,
-		8.110181098187575886132279107037e-29,
-		3.58037935477358609112717370327e-28,
-		-1.692929018927902509593057175448e-28,
-		-2.222902499702427639067758527774e-29,
-		5.424535127145969655048600401128e-29,
-		-1.787068401578018688764912993304e-29,
-		-6.56547906872281493882392943788e-30,
-		7.807013165061145280922067706839e-30,
-		-1.816595260668979717379333152221e-30,
-		-1.287704952660084820376875598959e-30,
-		1.114548172988164547413709273694e-30,
-		-1.808343145039336939159368876687e-31,
-		-2.231677718203771952232448228939e-31,
-		1.619029596080341510617909803614e-31,
-		-1.83407990880494141390130843921e-32 
-	};
+      static readonly double[] ai12cs = 
+  { 
+    0.02857623501828012047449845948469,
+    -0.009761097491361468407765164457302,
+    -1.105889387626237162912569212775e-4,
+    -3.882564808877690393456544776274e-6,
+    -2.512236237870208925294520022121e-7,
+    -2.631468846889519506837052365232e-8,
+    -3.835380385964237022045006787968e-9,
+    -5.589743462196583806868112522229e-10,
+    -1.897495812350541234498925033238e-11,
+    3.252603583015488238555080679949e-11,
+    1.412580743661378133163366332846e-11,
+    2.03562854414708950722452613684e-12,
+    -7.198551776245908512092589890446e-13,
+    -4.083551111092197318228499639691e-13,
+    -2.101541842772664313019845727462e-14,
+    4.272440016711951354297788336997e-14,
+    1.042027698412880276417414499948e-14,
+    -3.814403072437007804767072535396e-15,
+    -1.880354775510782448512734533963e-15,
+    3.308202310920928282731903352405e-16,
+    2.962628997645950139068546542052e-16,
+    -3.209525921993423958778373532887e-17,
+    -4.650305368489358325571282818979e-17,
+    4.414348323071707949946113759641e-18,
+    7.517296310842104805425458080295e-18,
+    -9.314178867326883375684847845157e-19,
+    -1.242193275194890956116784488697e-18,
+    2.414276719454848469005153902176e-19,
+    2.026944384053285178971922860692e-19,
+    -6.394267188269097787043919886811e-20,
+    -3.049812452373095896084884503571e-20,
+    1.612841851651480225134622307691e-20,
+    3.56091396430992505451027090462e-21,
+    -3.752017947936439079666828003246e-21,
+    -5.787037427074799345951982310741e-23,
+    7.759997511648161961982369632092e-22,
+    -1.452790897202233394064459874085e-22,
+    -1.318225286739036702121922753374e-22,
+    6.116654862903070701879991331717e-23,
+    1.376279762427126427730243383634e-23,
+    -1.690837689959347884919839382306e-23,
+    1.430596088595433153987201085385e-24,
+    3.409557828090594020405367729902e-24,
+    -1.309457666270760227845738726424e-24,
+    -3.940706411240257436093521417557e-25,
+    4.277137426980876580806166797352e-25,
+    -4.424634830982606881900283123029e-26,
+    -8.734113196230714972115309788747e-26,
+    4.045401335683533392143404142428e-26,
+    7.067100658094689465651607717806e-27,
+    -1.249463344565105223002864518605e-26,
+    2.867392244403437032979483391426e-27,
+    2.04429289250429267028177957421e-27,
+    -1.518636633820462568371346802911e-27,
+    8.110181098187575886132279107037e-29,
+    3.58037935477358609112717370327e-28,
+    -1.692929018927902509593057175448e-28,
+    -2.222902499702427639067758527774e-29,
+    5.424535127145969655048600401128e-29,
+    -1.787068401578018688764912993304e-29,
+    -6.56547906872281493882392943788e-30,
+    7.807013165061145280922067706839e-30,
+    -1.816595260668979717379333152221e-30,
+    -1.287704952660084820376875598959e-30,
+    1.114548172988164547413709273694e-30,
+    -1.808343145039336939159368876687e-31,
+    -2.231677718203771952232448228939e-31,
+    1.619029596080341510617909803614e-31,
+    -1.83407990880494141390130843921e-32 
+  };
 
-			static readonly double eta  = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double xmin = DBL_MIN * 2.0;
-			static readonly double xsml = Math.Sqrt(0.5*DBL_EPSILON * 4.5);
-			static readonly int nti1 = initds(bi1cs, 17, eta);
-			static readonly int ntai1 = initds(ai1cs, 46, eta);
-			static readonly int ntai12 = initds(ai12cs, 69, eta);
+      static readonly double eta  = 0.5 * DBL_EPSILON * 0.1;
+      static readonly double xmin = DBL_MIN * 2.0;
+      static readonly double xsml = Math.Sqrt(0.5*DBL_EPSILON * 4.5);
+      static readonly int nti1 = initds(bi1cs, 17, eta);
+      static readonly int ntai1 = initds(ai1cs, 46, eta);
+      static readonly int ntai12 = initds(ai12cs, 69, eta);
 	
 
 
 
-			/// <summary>
-			/// BesselExpI1(x) calculates the double precision exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the first kind of order 
-			/// one for double precision argument x.  The result is I1(x) 
-			/// multiplied by exp(-abs(x)). 
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>The exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the first kind of order 
-			/// one for argument x.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for BI1        on the interval  0.          to  9.00000E+00 
-			///                                        with weighted error   1.44E-32 
-			///                                         log weighted error  31.84 
-			///                               significant figures required  31.45 
-			///                                    decimal places required  32.46 
-			///
-			/// Series for AI1        on the interval  1.25000E-01 to  3.33333E-01 
-			///                                        with weighted error   2.81E-32 
-			///                                         log weighted error  31.55 
-			///                               significant figures required  29.93 
-			///                                    decimal places required  32.38 
-			///
-			/// Series for AI12       on the interval  0.          to  1.25000E-01 
-			///                                        with weighted error   1.83E-32 
-			///                                         log weighted error  31.74 
-			///                               significant figures required  29.97 
-			///                                    decimal places required  32.66 
-			/// </code></remarks>
-			public static double BesselExpI1 (double x)
-			{
+      /// <summary>
+      /// BesselExpI1(x) calculates the double precision exponentially scaled 
+      /// modified (hyperbolic) Bessel function of the first kind of order 
+      /// one for double precision argument x.  The result is I1(x) 
+      /// multiplied by exp(-abs(x)). 
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>The exponentially scaled 
+      /// modified (hyperbolic) Bessel function of the first kind of order 
+      /// one for argument x.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for BI1        on the interval  0.          to  9.00000E+00 
+      ///                                        with weighted error   1.44E-32 
+      ///                                         log weighted error  31.84 
+      ///                               significant figures required  31.45 
+      ///                                    decimal places required  32.46 
+      ///
+      /// Series for AI1        on the interval  1.25000E-01 to  3.33333E-01 
+      ///                                        with weighted error   2.81E-32 
+      ///                                         log weighted error  31.55 
+      ///                               significant figures required  29.93 
+      ///                                    decimal places required  32.38 
+      ///
+      /// Series for AI12       on the interval  0.          to  1.25000E-01 
+      ///                                        with weighted error   1.83E-32 
+      ///                                         log weighted error  31.74 
+      ///                               significant figures required  29.97 
+      ///                                    decimal places required  32.66 
+      /// </code></remarks>
+      public static double BesselExpI1 (double x)
+      {
 
-				double ret_val;
+        double ret_val;
 
 
     
-				double y = Math.Abs(x);
-				if (y > 3.0) goto L20;
+        double y = Math.Abs(x);
+        if (y > 3.0) goto L20;
 
-				ret_val = 0.0;
-				if (y == 0.0) return ret_val;
+        ret_val = 0.0;
+        if (y == 0.0) return ret_val;
 
-				if (y <= xmin) 
-					System.Diagnostics.Trace.WriteLine("Warning (BesselExpI1): abs(x) so small I1(x) underflows");
+        if (y <= xmin) 
+          System.Diagnostics.Trace.WriteLine("Warning (BesselExpI1): abs(x) so small I1(x) underflows");
    
-				if (y > xmin) ret_val = x * 0.5;
+        if (y > xmin) ret_val = x * 0.5;
 
-				if (y > xsml) 
-					ret_val = x * (dcsevl(y * y / 4.5 - 1.0, bi1cs, nti1) + 0.875);
+        if (y > xsml) 
+          ret_val = x * (dcsevl(y * y / 4.5 - 1.0, bi1cs, nti1) + 0.875);
 
-				return ret_val * Math.Exp(-y);
+        return ret_val * Math.Exp(-y);
     
-				L20:
-					if (y <= 8.0)
-						ret_val = (dcsevl((48.0 / y - 11.0)/5.0, ai1cs, ntai1) + 0.375) / Math.Sqrt(y);
-					else // if (y > 8.0) 
-						ret_val = (dcsevl(16.0 / y - 1.0, ai12cs, ntai12) + 0.375) / Math.Sqrt(y);
+        L20:
+          if (y <= 8.0)
+            ret_val = (dcsevl((48.0 / y - 11.0)/5.0, ai1cs, ntai1) + 0.375) / Math.Sqrt(y);
+          else // if (y > 8.0) 
+            ret_val = (dcsevl(16.0 / y - 1.0, ai12cs, ntai12) + 0.375) / Math.Sqrt(y);
 
-				return CopySign(ret_val, x);
-			}
+        return CopySign(ret_val, x);
+      }
 
-		}
-		#endregion
+    }
+    #endregion
 
-		#region BesselK0
+    #region BesselK0
 
-		/// <summary>
-		/// BesselK0(x) calculates the double precision modified (hyperbolic) 
-		/// Bessel function of the third kind of order zero for double 
-		/// precision argument x.  The argument must be greater than zero 
-		/// but not so large that the result underflows.
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Modified (hyperbolic) 
-		/// Bessel function of the third kind of order zero for double 
-		/// precision argument x.</returns>
-		public static double BesselK0 (double x)
-		{
-			return _BesselK0.BesselK0( x );
-		}
+    /// <summary>
+    /// BesselK0(x) calculates the double precision modified (hyperbolic) 
+    /// Bessel function of the third kind of order zero for double 
+    /// precision argument x.  The argument must be greater than zero 
+    /// but not so large that the result underflows.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Modified (hyperbolic) 
+    /// Bessel function of the third kind of order zero for double 
+    /// precision argument x.</returns>
+    public static double BesselK0 (double x)
+    {
+      return _BesselK0.BesselK0( x );
+    }
 
-		class _BesselK0
-		{
+    class _BesselK0
+    {
 
-			static readonly double[] bk0cs = 
-	{ 
-		-0.0353273932339027687201140060063153,
-		0.344289899924628486886344927529213,
-		0.0359799365153615016265721303687231,
-		0.00126461541144692592338479508673447,
-		2.28621210311945178608269830297585e-5,
-		2.53479107902614945730790013428354e-7,
-		1.90451637722020885897214059381366e-9,
-		1.03496952576336245851008317853089e-11,
-		4.25981614279108257652445327170133e-14,
-		1.3744654358807508969423832544e-16,
-		3.57089652850837359099688597333333e-19,
-		7.63164366011643737667498666666666e-22,
-		1.36542498844078185908053333333333e-24,
-		2.07527526690666808319999999999999e-27,
-		2.7128142180729856e-30,
-		3.08259388791466666666666666666666e-33 
-	};
+      static readonly double[] bk0cs = 
+  { 
+    -0.0353273932339027687201140060063153,
+    0.344289899924628486886344927529213,
+    0.0359799365153615016265721303687231,
+    0.00126461541144692592338479508673447,
+    2.28621210311945178608269830297585e-5,
+    2.53479107902614945730790013428354e-7,
+    1.90451637722020885897214059381366e-9,
+    1.03496952576336245851008317853089e-11,
+    4.25981614279108257652445327170133e-14,
+    1.3744654358807508969423832544e-16,
+    3.57089652850837359099688597333333e-19,
+    7.63164366011643737667498666666666e-22,
+    1.36542498844078185908053333333333e-24,
+    2.07527526690666808319999999999999e-27,
+    2.7128142180729856e-30,
+    3.08259388791466666666666666666666e-33 
+  };
 
-			static readonly double xsml  = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
-			static readonly double xmaxt = -Math.Log(DBL_MIN);
-			static readonly double xmax = xmaxt - xmaxt * 0.5 * Math.Log(xmaxt) / (xmaxt + 0.5);
-			static readonly int ntk0 = initds(bk0cs, 16, 0.5 * DBL_EPSILON * 0.1);
+      static readonly double xsml  = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
+      static readonly double xmaxt = -Math.Log(DBL_MIN);
+      static readonly double xmax = xmaxt - xmaxt * 0.5 * Math.Log(xmaxt) / (xmaxt + 0.5);
+      static readonly int ntk0 = initds(bk0cs, 16, 0.5 * DBL_EPSILON * 0.1);
 
 
 		
 
-			/// <summary>
-			/// BesselK0(x) calculates the double precision modified (hyperbolic) 
-			/// Bessel function of the third kind of order zero for double 
-			/// precision argument x.  The argument must be greater than zero 
-			/// but not so large that the result underflows.
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>Modified (hyperbolic) 
-			/// Bessel function of the third kind of order zero for double 
-			/// precision argument x.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for BK0        on the interval  0.          to  4.00000E+00 
-			///                                        with weighted error   3.08E-33 
-			///                                         log weighted error  32.51 
-			///                               significant figures required  32.05 
-			///                                    decimal places required  33.11 
-			/// </code></remarks>
-			public static double BesselK0 (double x)
-			{
+      /// <summary>
+      /// BesselK0(x) calculates the double precision modified (hyperbolic) 
+      /// Bessel function of the third kind of order zero for double 
+      /// precision argument x.  The argument must be greater than zero 
+      /// but not so large that the result underflows.
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>Modified (hyperbolic) 
+      /// Bessel function of the third kind of order zero for double 
+      /// precision argument x.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for BK0        on the interval  0.          to  4.00000E+00 
+      ///                                        with weighted error   3.08E-33 
+      ///                                         log weighted error  32.51 
+      ///                               significant figures required  32.05 
+      ///                                    decimal places required  33.11 
+      /// </code></remarks>
+      public static double BesselK0 (double x)
+      {
 	
-				double y;
+        double y;
 
-				if (x <= 0.0) 
-					throw new ArgumentException("x is zero or negative");
+        if (x <= 0.0) 
+          throw new ArgumentException("x is zero or negative");
 
-				if (x > 2.0) goto L20;
-				y = 0.0;
-				if (x > xsml) y = x * x;
-				return  -Math.Log(x*0.5) * BesselI0(x) - 0.25 + dcsevl(y*0.5-1.0, bk0cs, ntk0);
+        if (x > 2.0) goto L20;
+        y = 0.0;
+        if (x > xsml) y = x * x;
+        return  -Math.Log(x*0.5) * BesselI0(x) - 0.25 + dcsevl(y*0.5-1.0, bk0cs, ntk0);
     
-				L20:
-					if (x > xmax) 
-					{
-						System.Diagnostics.Trace.WriteLine("Warning (BesselK0): x so big K0(x) underflows");
-						return 0.0;
-					}
-				return Math.Exp(-x) * BesselExpK0(x);
-			}
-		}
-		#endregion
+        L20:
+          if (x > xmax) 
+          {
+            System.Diagnostics.Trace.WriteLine("Warning (BesselK0): x so big K0(x) underflows");
+            return 0.0;
+          }
+        return Math.Exp(-x) * BesselExpK0(x);
+      }
+    }
+    #endregion
 
-		#region BesselExpK0
+    #region BesselExpK0
 
 		
-		/// <summary>
-		/// BesselExpK0 (x)  computes the double precision exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the third kind of 
-		/// order zero for positive double precision argument X. 
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the third kind of 
-		/// order zero for positive double precision argument x.</returns>
-		public static double BesselExpK0 (double x)
-		{
-			return _BesselExpK0.BesselExpK0( x );
-		}
+    /// <summary>
+    /// BesselExpK0 (x)  computes the double precision exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the third kind of 
+    /// order zero for positive double precision argument X. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the third kind of 
+    /// order zero for positive double precision argument x.</returns>
+    public static double BesselExpK0 (double x)
+    {
+      return _BesselExpK0.BesselExpK0( x );
+    }
 
-		class _BesselExpK0
-		{
+    class _BesselExpK0
+    {
 
-			static readonly double[] bk0cs = 
-	{ 
-		-0.0353273932339027687201140060063153,
-		0.344289899924628486886344927529213,
-		0.0359799365153615016265721303687231,
-		0.00126461541144692592338479508673447,
-		2.28621210311945178608269830297585e-5,
-		2.53479107902614945730790013428354e-7,
-		1.90451637722020885897214059381366e-9,
-		1.03496952576336245851008317853089e-11,
-		4.25981614279108257652445327170133e-14,
-		1.3744654358807508969423832544e-16,
-		3.57089652850837359099688597333333e-19,
-		7.63164366011643737667498666666666e-22,
-		1.36542498844078185908053333333333e-24,
-		2.07527526690666808319999999999999e-27,
-		2.7128142180729856e-30,
-		3.08259388791466666666666666666666e-33 
-	};
+      static readonly double[] bk0cs = 
+  { 
+    -0.0353273932339027687201140060063153,
+    0.344289899924628486886344927529213,
+    0.0359799365153615016265721303687231,
+    0.00126461541144692592338479508673447,
+    2.28621210311945178608269830297585e-5,
+    2.53479107902614945730790013428354e-7,
+    1.90451637722020885897214059381366e-9,
+    1.03496952576336245851008317853089e-11,
+    4.25981614279108257652445327170133e-14,
+    1.3744654358807508969423832544e-16,
+    3.57089652850837359099688597333333e-19,
+    7.63164366011643737667498666666666e-22,
+    1.36542498844078185908053333333333e-24,
+    2.07527526690666808319999999999999e-27,
+    2.7128142180729856e-30,
+    3.08259388791466666666666666666666e-33 
+  };
 
-			static readonly double[] ak0cs = 
-	{ 
-		-0.07643947903327941424082978270088,
-		-0.02235652605699819052023095550791,
-		7.734181154693858235300618174047e-4,
-		-4.281006688886099464452146435416e-5,
-		3.08170017386297474365001482666e-6,
-		-2.639367222009664974067448892723e-7,
-		2.563713036403469206294088265742e-8,
-		-2.742705549900201263857211915244e-9,
-		3.169429658097499592080832873403e-10,
-		-3.902353286962184141601065717962e-11,
-		5.068040698188575402050092127286e-12,
-		-6.889574741007870679541713557984e-13,
-		9.744978497825917691388201336831e-14,
-		-1.427332841884548505389855340122e-14,
-		2.156412571021463039558062976527e-15,
-		-3.34965425514956277218878205853e-16,
-		5.335260216952911692145280392601e-17,
-		-8.693669980890753807639622378837e-18,
-		1.446404347862212227887763442346e-18,
-		-2.452889825500129682404678751573e-19,
-		4.2337545262321715728217063424e-20,
-		-7.427946526454464195695341294933e-21,
-		1.3231505293926668662779674624e-21,
-		-2.390587164739649451335981465599e-22,
-		4.376827585923226140165712554666e-23,
-		-8.113700607345118059339011413333e-24,
-		1.521819913832172958310378154666e-24,
-		-2.886041941483397770235958613333e-25,
-		5.530620667054717979992610133333e-26,
-		-1.070377329249898728591633066666e-26,
-		2.091086893142384300296328533333e-27,
-		-4.121713723646203827410261333333e-28,
-		8.19348397112130764013568e-29,
-		-1.642000275459297726780757333333e-29,
-		3.316143281480227195890346666666e-30,
-		-6.746863644145295941085866666666e-31,
-		1.382429146318424677635413333333e-31,
-		-2.851874167359832570811733333333e-32 
-	};
+      static readonly double[] ak0cs = 
+  { 
+    -0.07643947903327941424082978270088,
+    -0.02235652605699819052023095550791,
+    7.734181154693858235300618174047e-4,
+    -4.281006688886099464452146435416e-5,
+    3.08170017386297474365001482666e-6,
+    -2.639367222009664974067448892723e-7,
+    2.563713036403469206294088265742e-8,
+    -2.742705549900201263857211915244e-9,
+    3.169429658097499592080832873403e-10,
+    -3.902353286962184141601065717962e-11,
+    5.068040698188575402050092127286e-12,
+    -6.889574741007870679541713557984e-13,
+    9.744978497825917691388201336831e-14,
+    -1.427332841884548505389855340122e-14,
+    2.156412571021463039558062976527e-15,
+    -3.34965425514956277218878205853e-16,
+    5.335260216952911692145280392601e-17,
+    -8.693669980890753807639622378837e-18,
+    1.446404347862212227887763442346e-18,
+    -2.452889825500129682404678751573e-19,
+    4.2337545262321715728217063424e-20,
+    -7.427946526454464195695341294933e-21,
+    1.3231505293926668662779674624e-21,
+    -2.390587164739649451335981465599e-22,
+    4.376827585923226140165712554666e-23,
+    -8.113700607345118059339011413333e-24,
+    1.521819913832172958310378154666e-24,
+    -2.886041941483397770235958613333e-25,
+    5.530620667054717979992610133333e-26,
+    -1.070377329249898728591633066666e-26,
+    2.091086893142384300296328533333e-27,
+    -4.121713723646203827410261333333e-28,
+    8.19348397112130764013568e-29,
+    -1.642000275459297726780757333333e-29,
+    3.316143281480227195890346666666e-30,
+    -6.746863644145295941085866666666e-31,
+    1.382429146318424677635413333333e-31,
+    -2.851874167359832570811733333333e-32 
+  };
     
-			static readonly double[] ak02cs = 
-	{ 
-		-0.01201869826307592239839346212452,
-		-0.009174852691025695310652561075713,
-		1.444550931775005821048843878057e-4,
-		-4.013614175435709728671021077879e-6,
-		1.567831810852310672590348990333e-7,
-		-7.77011043852173771031579975446e-9,
-		4.611182576179717882533130529586e-10,
-		-3.158592997860565770526665803309e-11,
-		2.435018039365041127835887814329e-12,
-		-2.074331387398347897709853373506e-13,
-		1.925787280589917084742736504693e-14,
-		-1.927554805838956103600347182218e-15,
-		2.062198029197818278285237869644e-16,
-		-2.341685117579242402603640195071e-17,
-		2.805902810643042246815178828458e-18,
-		-3.530507631161807945815482463573e-19,
-		4.645295422935108267424216337066e-20,
-		-6.368625941344266473922053461333e-21,
-		9.0695213109865155676223488e-22,
-		-1.337974785423690739845005311999e-22,
-		2.03983602185995231552208896e-23,
-		-3.207027481367840500060869973333e-24,
-		5.189744413662309963626359466666e-25,
-		-8.629501497540572192964607999999e-26,
-		1.4721611831025598552080384e-26,
-		-2.573069023867011283812351999999e-27,
-		4.60177408664351658737664e-28,
-		-8.411555324201093737130666666666e-29,
-		1.569806306635368939301546666666e-29,
-		-2.988226453005757788979199999999e-30,
-		5.796831375216836520618666666666e-31,
-		-1.145035994347681332155733333333e-31,
-		2.301266594249682802005333333333e-32 
-	};
+      static readonly double[] ak02cs = 
+  { 
+    -0.01201869826307592239839346212452,
+    -0.009174852691025695310652561075713,
+    1.444550931775005821048843878057e-4,
+    -4.013614175435709728671021077879e-6,
+    1.567831810852310672590348990333e-7,
+    -7.77011043852173771031579975446e-9,
+    4.611182576179717882533130529586e-10,
+    -3.158592997860565770526665803309e-11,
+    2.435018039365041127835887814329e-12,
+    -2.074331387398347897709853373506e-13,
+    1.925787280589917084742736504693e-14,
+    -1.927554805838956103600347182218e-15,
+    2.062198029197818278285237869644e-16,
+    -2.341685117579242402603640195071e-17,
+    2.805902810643042246815178828458e-18,
+    -3.530507631161807945815482463573e-19,
+    4.645295422935108267424216337066e-20,
+    -6.368625941344266473922053461333e-21,
+    9.0695213109865155676223488e-22,
+    -1.337974785423690739845005311999e-22,
+    2.03983602185995231552208896e-23,
+    -3.207027481367840500060869973333e-24,
+    5.189744413662309963626359466666e-25,
+    -8.629501497540572192964607999999e-26,
+    1.4721611831025598552080384e-26,
+    -2.573069023867011283812351999999e-27,
+    4.60177408664351658737664e-28,
+    -8.411555324201093737130666666666e-29,
+    1.569806306635368939301546666666e-29,
+    -2.988226453005757788979199999999e-30,
+    5.796831375216836520618666666666e-31,
+    -1.145035994347681332155733333333e-31,
+    2.301266594249682802005333333333e-32 
+  };
 
-			static readonly double eta  = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
-			static readonly int ntk0 = initds(bk0cs, 16, eta);
-			static readonly int ntak0 = initds(ak0cs, 38, eta);
-			static readonly int ntak02 = initds(ak02cs, 33, eta);
+      static readonly double eta  = 0.5 * DBL_EPSILON * 0.1;
+      static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
+      static readonly int ntk0 = initds(bk0cs, 16, eta);
+      static readonly int ntak0 = initds(ak0cs, 38, eta);
+      static readonly int ntak02 = initds(ak02cs, 33, eta);
 		
 	
 		
 
-			/// <summary>
-			/// BesselExpK0 (x)  computes the double precision exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the third kind of 
-			/// order zero for positive double precision argument X. 
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>Exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the third kind of 
-			/// order zero for positive double precision argument x.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for BK0        on the interval  0.          to  4.00000E+00 
-			///                                        with weighted error   3.08E-33 
-			///                                         log weighted error  32.51 
-			///                               significant figures required  32.05 
-			///                                    decimal places required  33.11 
-			///
-			/// Series for AK0        on the interval  1.25000E-01 to  5.00000E-01 
-			///                                        with weighted error   2.85E-32 
-			///                                         log weighted error  31.54 
-			///                               significant figures required  30.19 
-			///                                    decimal places required  32.33 
-			///
-			/// Series for AK02       on the interval  0.          to  1.25000E-01 
-			///                                        with weighted error   2.30E-32 
-			///                                         log weighted error  31.64 
-			///                               significant figures required  29.68 
-			///                                    decimal places required  32.40 
-			/// </code></remarks>
-			public static double BesselExpK0 (double x)
-			{
+      /// <summary>
+      /// BesselExpK0 (x)  computes the double precision exponentially scaled 
+      /// modified (hyperbolic) Bessel function of the third kind of 
+      /// order zero for positive double precision argument X. 
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>Exponentially scaled 
+      /// modified (hyperbolic) Bessel function of the third kind of 
+      /// order zero for positive double precision argument x.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for BK0        on the interval  0.          to  4.00000E+00 
+      ///                                        with weighted error   3.08E-33 
+      ///                                         log weighted error  32.51 
+      ///                               significant figures required  32.05 
+      ///                                    decimal places required  33.11 
+      ///
+      /// Series for AK0        on the interval  1.25000E-01 to  5.00000E-01 
+      ///                                        with weighted error   2.85E-32 
+      ///                                         log weighted error  31.54 
+      ///                               significant figures required  30.19 
+      ///                                    decimal places required  32.33 
+      ///
+      /// Series for AK02       on the interval  0.          to  1.25000E-01 
+      ///                                        with weighted error   2.30E-32 
+      ///                                         log weighted error  31.64 
+      ///                               significant figures required  29.68 
+      ///                                    decimal places required  32.40 
+      /// </code></remarks>
+      public static double BesselExpK0 (double x)
+      {
 			
 
-				if (x <= 0.0) 
-					throw new ArgumentException("x is zero or negative");
+        if (x <= 0.0) 
+          throw new ArgumentException("x is zero or negative");
 
-				double y;
+        double y;
 
-				if (x > 2.0) goto L20;
+        if (x > 2.0) goto L20;
 
-				y = 0.0;
-				if (x > xsml) y = x * x;
+        y = 0.0;
+        if (x > xsml) y = x * x;
     
-				return Math.Exp(x) * (-Math.Log(x * 0.5) * BesselI0(x) - 0.25 
-					+ dcsevl(y * 0.5 - 1.0, bk0cs, ntk0));
+        return Math.Exp(x) * (-Math.Log(x * 0.5) * BesselI0(x) - 0.25 
+          + dcsevl(y * 0.5 - 1.0, bk0cs, ntk0));
     
-				L20:
-					if (x <= 8.0) 
-						return (dcsevl((16.0 / x - 5.0) / 3.0, ak0cs, ntak0) + 1.25) / Math.Sqrt(x);
-					else // if (x > 8.0) 
-						return (dcsevl(16.0 / x - 1.0, ak02cs, ntak02) + 1.25) / Math.Sqrt(x);
-			}
-		}
-		#endregion
+        L20:
+          if (x <= 8.0) 
+            return (dcsevl((16.0 / x - 5.0) / 3.0, ak0cs, ntak0) + 1.25) / Math.Sqrt(x);
+          else // if (x > 8.0) 
+            return (dcsevl(16.0 / x - 1.0, ak02cs, ntak02) + 1.25) / Math.Sqrt(x);
+      }
+    }
+    #endregion
 
-		#region BesselK1
+    #region BesselK1
 
-		/// <summary>
-		/// BesselK1(x) calculates the double precision modified (hyperbolic) 
-		/// Bessel function of the third kind of order one for double precision 
-		/// argument x.  The argument must be large enough that the result does 
-		/// not overflow and small enough that the result does not underflow. 
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Modified (hyperbolic) 
-		/// Bessel function of the third kind of order one for double precision 
-		/// argument x.</returns>
-		public static double BesselK1 (double x)
-		{
-			return _BesselK1.BesselK1( x );
-		}
+    /// <summary>
+    /// BesselK1(x) calculates the double precision modified (hyperbolic) 
+    /// Bessel function of the third kind of order one for double precision 
+    /// argument x.  The argument must be large enough that the result does 
+    /// not overflow and small enough that the result does not underflow. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Modified (hyperbolic) 
+    /// Bessel function of the third kind of order one for double precision 
+    /// argument x.</returns>
+    public static double BesselK1 (double x)
+    {
+      return _BesselK1.BesselK1( x );
+    }
 
-		class _BesselK1
-		{
-			static readonly double[] bk1cs = 
-	{ 
-		0.025300227338947770532531120868533,
-		-0.35315596077654487566723831691801,
-		-0.12261118082265714823479067930042,
-		-0.0069757238596398643501812920296083,
-		-1.7302889575130520630176507368979e-4,
-		-2.4334061415659682349600735030164e-6,
-		-2.2133876307347258558315252545126e-8,
-		-1.4114883926335277610958330212608e-10,
-		-6.6669016941993290060853751264373e-13,
-		-2.4274498505193659339263196864853e-15,
-		-7.023863479386287597178379712e-18,
-		-1.6543275155100994675491029333333e-20,
-		-3.2338347459944491991893333333333e-23,
-		-5.3312750529265274999466666666666e-26,
-		-7.5130407162157226666666666666666e-29,
-		-9.1550857176541866666666666666666e-32 
-	};
+    class _BesselK1
+    {
+      static readonly double[] bk1cs = 
+  { 
+    0.025300227338947770532531120868533,
+    -0.35315596077654487566723831691801,
+    -0.12261118082265714823479067930042,
+    -0.0069757238596398643501812920296083,
+    -1.7302889575130520630176507368979e-4,
+    -2.4334061415659682349600735030164e-6,
+    -2.2133876307347258558315252545126e-8,
+    -1.4114883926335277610958330212608e-10,
+    -6.6669016941993290060853751264373e-13,
+    -2.4274498505193659339263196864853e-15,
+    -7.023863479386287597178379712e-18,
+    -1.6543275155100994675491029333333e-20,
+    -3.2338347459944491991893333333333e-23,
+    -5.3312750529265274999466666666666e-26,
+    -7.5130407162157226666666666666666e-29,
+    -9.1550857176541866666666666666666e-32 
+  };
     
-			static readonly double xmin = Math.Exp(Math.Max(Math.Log(DBL_MIN), -Math.Log(DBL_MAX)) + 0.01);
-			static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
-			static readonly double xmaxt = -Math.Log(DBL_MIN);
-			static readonly double xmax = xmaxt - xmaxt * 0.5 * Math.Log(xmaxt) / (xmaxt + 0.5);
-			static readonly int ntk1	= initds(bk1cs, 16, 0.5 * DBL_EPSILON * 0.1);
+      static readonly double xmin = Math.Exp(Math.Max(Math.Log(DBL_MIN), -Math.Log(DBL_MAX)) + 0.01);
+      static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
+      static readonly double xmaxt = -Math.Log(DBL_MIN);
+      static readonly double xmax = xmaxt - xmaxt * 0.5 * Math.Log(xmaxt) / (xmaxt + 0.5);
+      static readonly int ntk1	= initds(bk1cs, 16, 0.5 * DBL_EPSILON * 0.1);
 				
 			
-			/// <summary>
-			/// BesselK1(x) calculates the double precision modified (hyperbolic) 
-			/// Bessel function of the third kind of order one for double precision 
-			/// argument x.  The argument must be large enough that the result does 
-			/// not overflow and small enough that the result does not underflow. 
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>Modified (hyperbolic) 
-			/// Bessel function of the third kind of order one for double precision 
-			/// argument x.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for BK1        on the interval  0.          to  4.00000E+00 
-			///                                        with weighted error   9.16E-32 
-			///                                         log weighted error  31.04 
-			///                               significant figures required  30.61 
-			///                                    decimal places required  31.64 
-			/// </code></remarks>
-			public static double BesselK1 (double x)
-			{
+      /// <summary>
+      /// BesselK1(x) calculates the double precision modified (hyperbolic) 
+      /// Bessel function of the third kind of order one for double precision 
+      /// argument x.  The argument must be large enough that the result does 
+      /// not overflow and small enough that the result does not underflow. 
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>Modified (hyperbolic) 
+      /// Bessel function of the third kind of order one for double precision 
+      /// argument x.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for BK1        on the interval  0.          to  4.00000E+00 
+      ///                                        with weighted error   9.16E-32 
+      ///                                         log weighted error  31.04 
+      ///                               significant figures required  30.61 
+      ///                                    decimal places required  31.64 
+      /// </code></remarks>
+      public static double BesselK1 (double x)
+      {
 
 	
-				double y;
+        double y;
 
-				if (x <= 0.0) 
-					throw new ArgumentException("x is zero or negative");
+        if (x <= 0.0) 
+          throw new ArgumentException("x is zero or negative");
 
-				if (x > 2.0) goto L20;
+        if (x > 2.0) goto L20;
 
-				if (x < xmin) 
-					throw new ArgumentException("x so small K1 overflows");
+        if (x < xmin) 
+          throw new ArgumentException("x so small K1 overflows");
     
-				y = 0.0;
-				if (x > xsml) y = x * x;
+        y = 0.0;
+        if (x > xsml) y = x * x;
 
-				return Math.Log(x * 0.5) * BesselI1(x) 
-					+ (dcsevl( y * 0.5 - 1.0, bk1cs, ntk1) + 0.75) / x;
+        return Math.Log(x * 0.5) * BesselI1(x) 
+          + (dcsevl( y * 0.5 - 1.0, bk1cs, ntk1) + 0.75) / x;
 
-				L20:
-					if (x > xmax) 
-					{
-						System.Diagnostics.Trace.WriteLine("Warning (BesselK1): x so big K1(x) underflows");
-						return 0.0;
-					}
-				return Math.Exp(-x) * BesselExpK1(x);
-			}
-		}
+        L20:
+          if (x > xmax) 
+          {
+            System.Diagnostics.Trace.WriteLine("Warning (BesselK1): x so big K1(x) underflows");
+            return 0.0;
+          }
+        return Math.Exp(-x) * BesselExpK1(x);
+      }
+    }
 
-		#endregion
+    #endregion
 
-		#region BesselExpK1
+    #region BesselExpK1
 
-		/// <summary>
-		/// BesselExpK1(x) computes the double precision exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the third kind of order 
-		/// one for positive double precision argument x. 
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Exponentially scaled 
-		/// modified (hyperbolic) Bessel function of the third kind of order 
-		/// one for positive double precision argument x.</returns>
-		public static double BesselExpK1( double x)
-		{
-			return _BesselExpK1.BesselExpK1( x );
-		}
+    /// <summary>
+    /// BesselExpK1(x) computes the double precision exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the third kind of order 
+    /// one for positive double precision argument x. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Exponentially scaled 
+    /// modified (hyperbolic) Bessel function of the third kind of order 
+    /// one for positive double precision argument x.</returns>
+    public static double BesselExpK1( double x)
+    {
+      return _BesselExpK1.BesselExpK1( x );
+    }
 
-		class _BesselExpK1
-		{
-			static readonly double[] bk1cs = 
-		{ 
-			0.025300227338947770532531120868533,
-			-0.35315596077654487566723831691801,
-			-0.12261118082265714823479067930042,
-			-0.0069757238596398643501812920296083,
-			-1.7302889575130520630176507368979e-4,
-			-2.4334061415659682349600735030164e-6,
-			-2.2133876307347258558315252545126e-8,
-			-1.4114883926335277610958330212608e-10,
-			-6.6669016941993290060853751264373e-13,
-			-2.4274498505193659339263196864853e-15,
-			-7.023863479386287597178379712e-18,
-			-1.6543275155100994675491029333333e-20,
-			-3.2338347459944491991893333333333e-23,
-			-5.3312750529265274999466666666666e-26,
-			-7.5130407162157226666666666666666e-29,
-			-9.1550857176541866666666666666666e-32 
-		};
+    class _BesselExpK1
+    {
+      static readonly double[] bk1cs = 
+    { 
+      0.025300227338947770532531120868533,
+      -0.35315596077654487566723831691801,
+      -0.12261118082265714823479067930042,
+      -0.0069757238596398643501812920296083,
+      -1.7302889575130520630176507368979e-4,
+      -2.4334061415659682349600735030164e-6,
+      -2.2133876307347258558315252545126e-8,
+      -1.4114883926335277610958330212608e-10,
+      -6.6669016941993290060853751264373e-13,
+      -2.4274498505193659339263196864853e-15,
+      -7.023863479386287597178379712e-18,
+      -1.6543275155100994675491029333333e-20,
+      -3.2338347459944491991893333333333e-23,
+      -5.3312750529265274999466666666666e-26,
+      -7.5130407162157226666666666666666e-29,
+      -9.1550857176541866666666666666666e-32 
+    };
     
-			static readonly double[] ak1cs = 
-		{ 
-			0.27443134069738829695257666227266,
-			0.07571989953199367817089237814929,
-			-0.0014410515564754061229853116175625,
-			6.6501169551257479394251385477036e-5,
-			-4.3699847095201407660580845089167e-6,
-			3.5402774997630526799417139008534e-7,
-			-3.3111637792932920208982688245704e-8,
-			3.4459775819010534532311499770992e-9,
-			-3.8989323474754271048981937492758e-10,
-			4.7208197504658356400947449339005e-11,
-			-6.047835662875356234537359156289e-12,
-			8.1284948748658747888193837985663e-13,
-			-1.1386945747147891428923915951042e-13,
-			1.654035840846228232597294820509e-14,
-			-2.4809025677068848221516010440533e-15,
-			3.8292378907024096948429227299157e-16,
-			-6.0647341040012418187768210377386e-17,
-			9.8324256232648616038194004650666e-18,
-			-1.6284168738284380035666620115626e-18,
-			2.7501536496752623718284120337066e-19,
-			-4.7289666463953250924281069568e-20,
-			8.2681500028109932722392050346666e-21,
-			-1.4681405136624956337193964885333e-21,
-			2.6447639269208245978085894826666e-22,
-			-4.82901575648563878979698688e-23,
-			8.9293020743610130180656332799999e-24,
-			-1.6708397168972517176997751466666e-24,
-			3.1616456034040694931368618666666e-25,
-			-6.0462055312274989106506410666666e-26,
-			1.1678798942042732700718421333333e-26,
-			-2.277374158265399623286784e-27,
-			4.4811097300773675795305813333333e-28,
-			-8.8932884769020194062336e-29,
-			1.7794680018850275131392e-29,
-			-3.5884555967329095821994666666666e-30,
-			7.2906290492694257991679999999999e-31,
-			-1.4918449845546227073024e-31,
-			3.0736573872934276300799999999999e-32 
-		};
+      static readonly double[] ak1cs = 
+    { 
+      0.27443134069738829695257666227266,
+      0.07571989953199367817089237814929,
+      -0.0014410515564754061229853116175625,
+      6.6501169551257479394251385477036e-5,
+      -4.3699847095201407660580845089167e-6,
+      3.5402774997630526799417139008534e-7,
+      -3.3111637792932920208982688245704e-8,
+      3.4459775819010534532311499770992e-9,
+      -3.8989323474754271048981937492758e-10,
+      4.7208197504658356400947449339005e-11,
+      -6.047835662875356234537359156289e-12,
+      8.1284948748658747888193837985663e-13,
+      -1.1386945747147891428923915951042e-13,
+      1.654035840846228232597294820509e-14,
+      -2.4809025677068848221516010440533e-15,
+      3.8292378907024096948429227299157e-16,
+      -6.0647341040012418187768210377386e-17,
+      9.8324256232648616038194004650666e-18,
+      -1.6284168738284380035666620115626e-18,
+      2.7501536496752623718284120337066e-19,
+      -4.7289666463953250924281069568e-20,
+      8.2681500028109932722392050346666e-21,
+      -1.4681405136624956337193964885333e-21,
+      2.6447639269208245978085894826666e-22,
+      -4.82901575648563878979698688e-23,
+      8.9293020743610130180656332799999e-24,
+      -1.6708397168972517176997751466666e-24,
+      3.1616456034040694931368618666666e-25,
+      -6.0462055312274989106506410666666e-26,
+      1.1678798942042732700718421333333e-26,
+      -2.277374158265399623286784e-27,
+      4.4811097300773675795305813333333e-28,
+      -8.8932884769020194062336e-29,
+      1.7794680018850275131392e-29,
+      -3.5884555967329095821994666666666e-30,
+      7.2906290492694257991679999999999e-31,
+      -1.4918449845546227073024e-31,
+      3.0736573872934276300799999999999e-32 
+    };
 
-			static readonly double[] ak12cs = 
-		{ 
-			0.06379308343739001036600488534102,
-			0.02832887813049720935835030284708,
-			-2.475370673905250345414545566732e-4,
-			5.771972451607248820470976625763e-6,
-			-2.068939219536548302745533196552e-7,
-			9.739983441381804180309213097887e-9,
-			-5.585336140380624984688895511129e-10,
-			3.732996634046185240221212854731e-11,
-			-2.825051961023225445135065754928e-12,
-			2.372019002484144173643496955486e-13,
-			-2.176677387991753979268301667938e-14,
-			2.157914161616032453939562689706e-15,
-			-2.290196930718269275991551338154e-16,
-			2.582885729823274961919939565226e-17,
-			-3.07675264126846318762109817344e-18,
-			3.851487721280491597094896844799e-19,
-			-5.0447948976415289771172825088e-20,
-			6.888673850418544237018292223999e-21,
-			-9.77504154195011830300213248e-22,
-			1.437416218523836461001659733333e-22,
-			-2.185059497344347373499733333333e-23,
-			3.4262456218092206316453888e-24,
-			-5.531064394246408232501248e-25,
-			9.176601505685995403782826666666e-26,
-			-1.562287203618024911448746666666e-26,
-			2.725419375484333132349439999999e-27,
-			-4.865674910074827992378026666666e-28,
-			8.879388552723502587357866666666e-29,
-			-1.654585918039257548936533333333e-29,
-			3.145111321357848674303999999999e-30,
-			-6.092998312193127612416e-31,
-			1.202021939369815834623999999999e-31,
-			-2.412930801459408841386666666666e-32 
-		};
+      static readonly double[] ak12cs = 
+    { 
+      0.06379308343739001036600488534102,
+      0.02832887813049720935835030284708,
+      -2.475370673905250345414545566732e-4,
+      5.771972451607248820470976625763e-6,
+      -2.068939219536548302745533196552e-7,
+      9.739983441381804180309213097887e-9,
+      -5.585336140380624984688895511129e-10,
+      3.732996634046185240221212854731e-11,
+      -2.825051961023225445135065754928e-12,
+      2.372019002484144173643496955486e-13,
+      -2.176677387991753979268301667938e-14,
+      2.157914161616032453939562689706e-15,
+      -2.290196930718269275991551338154e-16,
+      2.582885729823274961919939565226e-17,
+      -3.07675264126846318762109817344e-18,
+      3.851487721280491597094896844799e-19,
+      -5.0447948976415289771172825088e-20,
+      6.888673850418544237018292223999e-21,
+      -9.77504154195011830300213248e-22,
+      1.437416218523836461001659733333e-22,
+      -2.185059497344347373499733333333e-23,
+      3.4262456218092206316453888e-24,
+      -5.531064394246408232501248e-25,
+      9.176601505685995403782826666666e-26,
+      -1.562287203618024911448746666666e-26,
+      2.725419375484333132349439999999e-27,
+      -4.865674910074827992378026666666e-28,
+      8.879388552723502587357866666666e-29,
+      -1.654585918039257548936533333333e-29,
+      3.145111321357848674303999999999e-30,
+      -6.092998312193127612416e-31,
+      1.202021939369815834623999999999e-31,
+      -2.412930801459408841386666666666e-32 
+    };
 
-			static readonly double eta  = 0.5 * DBL_EPSILON * 0.1;
-			static readonly double xmin = Math.Exp(Math.Max(Math.Log(DBL_MIN),-Math.Log(DBL_MAX)) + 0.01);
-			static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
-			static readonly int ntk1   = initds(bk1cs, 16, eta);
-			static readonly int ntak1  = initds(ak1cs, 38, eta);
-			static readonly int ntak12 = initds(ak12cs,33, eta);
+      static readonly double eta  = 0.5 * DBL_EPSILON * 0.1;
+      static readonly double xmin = Math.Exp(Math.Max(Math.Log(DBL_MIN),-Math.Log(DBL_MAX)) + 0.01);
+      static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
+      static readonly int ntk1   = initds(bk1cs, 16, eta);
+      static readonly int ntak1  = initds(ak1cs, 38, eta);
+      static readonly int ntak12 = initds(ak12cs,33, eta);
 
 
 			
 
-			/// <summary>
-			/// BesselExpK1(x) computes the double precision exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the third kind of order 
-			/// one for positive double precision argument x. 
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>Exponentially scaled 
-			/// modified (hyperbolic) Bessel function of the third kind of order 
-			/// one for positive double precision argument x.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for BK1        on the interval  0.          to  4.00000E+00 
-			///                                        with weighted error   9.16E-32 
-			///                                         log weighted error  31.04 
-			///                               significant figures required  30.61 
-			///                                    decimal places required  31.64 
-			///
-			/// Series for AK1        on the interval  1.25000E-01 to  5.00000E-01 
-			///                                        with weighted error   3.07E-32 
-			///                                         log weighted error  31.51 
-			///                               significant figures required  30.71 
-			///                                    decimal places required  32.30 
-			///
-			/// Series for AK12       on the interval  0.          to  1.25000E-01 
-			///                                        with weighted error   2.41E-32 
-			///                                         log weighted error  31.62 
-			///                               significant figures required  30.25 
-			///                                    decimal places required  32.38 
-			/// </code></remarks>
-			public static double BesselExpK1 (double x)
-			{
+      /// <summary>
+      /// BesselExpK1(x) computes the double precision exponentially scaled 
+      /// modified (hyperbolic) Bessel function of the third kind of order 
+      /// one for positive double precision argument x. 
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>Exponentially scaled 
+      /// modified (hyperbolic) Bessel function of the third kind of order 
+      /// one for positive double precision argument x.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10B1, REVISION 900315, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for BK1        on the interval  0.          to  4.00000E+00 
+      ///                                        with weighted error   9.16E-32 
+      ///                                         log weighted error  31.04 
+      ///                               significant figures required  30.61 
+      ///                                    decimal places required  31.64 
+      ///
+      /// Series for AK1        on the interval  1.25000E-01 to  5.00000E-01 
+      ///                                        with weighted error   3.07E-32 
+      ///                                         log weighted error  31.51 
+      ///                               significant figures required  30.71 
+      ///                                    decimal places required  32.30 
+      ///
+      /// Series for AK12       on the interval  0.          to  1.25000E-01 
+      ///                                        with weighted error   2.41E-32 
+      ///                                         log weighted error  31.62 
+      ///                               significant figures required  30.25 
+      ///                                    decimal places required  32.38 
+      /// </code></remarks>
+      public static double BesselExpK1 (double x)
+      {
 	
 
-				double y;
+        double y;
 
-				if (x <= 0.0) 
-					throw new ArgumentException("x is zero or negative");
+        if (x <= 0.0) 
+          throw new ArgumentException("x is zero or negative");
 
-				if (x > 2.0) goto L20;
+        if (x > 2.0) goto L20;
 
-				if (x < xmin) 
-					throw new ArgumentException("x so small K1(x) overflows");
+        if (x < xmin) 
+          throw new ArgumentException("x so small K1(x) overflows");
 
-				y = 0.0;
-				if (x > xsml) y = x * x;
-				return Math.Exp(x) * (Math.Log(x * 0.5) * BesselI1(x) 
-					+ (dcsevl( y * 0.5 - 1.0, bk1cs, ntk1) + 0.75) / x);
+        y = 0.0;
+        if (x > xsml) y = x * x;
+        return Math.Exp(x) * (Math.Log(x * 0.5) * BesselI1(x) 
+          + (dcsevl( y * 0.5 - 1.0, bk1cs, ntk1) + 0.75) / x);
 
-				L20:
-					if (x <= 8.0) 
-						return (dcsevl((16.0 / x - 5.0)/3.0, ak1cs, ntak1) + 1.25) / Math.Sqrt(x);
-					else // if (x > 8.0) 
-						return (dcsevl(16.0 / x - 1.0, ak12cs, ntak12) + 1.25) / Math.Sqrt(x);
-			}
-		}
-		#endregion
+        L20:
+          if (x <= 8.0) 
+            return (dcsevl((16.0 / x - 5.0)/3.0, ak1cs, ntak1) + 1.25) / Math.Sqrt(x);
+          else // if (x > 8.0) 
+            return (dcsevl(16.0 / x - 1.0, ak12cs, ntak12) + 1.25) / Math.Sqrt(x);
+      }
+    }
+    #endregion
 
-		#region AiryAi
+    #region AiryAi
 
-		/// <summary>
-		/// AiryAi(x) calculates the double precision Airy function for double 
-		/// precision argument x. 
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Airy function for argument x.</returns>
-		public static double AiryAi (double x)
-		{
-			return _AiryAi.AiryAi(x);
-		}
-		class _AiryAi
-		{
+    /// <summary>
+    /// AiryAi(x) calculates the double precision Airy function for double 
+    /// precision argument x. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Airy function for argument x.</returns>
+    public static double AiryAi (double x)
+    {
+      return _AiryAi.AiryAi(x);
+    }
+    class _AiryAi
+    {
 				
 			
-			static readonly double[] aifcs = 
-		{ 
-			-0.037971358496669997496197089469414,
-			0.059191888537263638574319728013777,
-			9.862928057727997536560389104406e-4,
-			6.8488438190765667554854830182412e-6,
-			2.5942025962194713019489279081403e-8,
-			6.1766127740813750329445749697236e-11,
-			1.0092454172466117901429556224601e-13,
-			1.2014792511179938141288033225333e-16,
-			1.0882945588716991878525295466666e-19,
-			7.75137721966848870392384e-23,
-			4.4548112037175638391466666666666e-26,
-			2.1092845231692343466666666666666e-29,
-			8.3701735910741333333333333333333e-33 
-		};
+      static readonly double[] aifcs = 
+    { 
+      -0.037971358496669997496197089469414,
+      0.059191888537263638574319728013777,
+      9.862928057727997536560389104406e-4,
+      6.8488438190765667554854830182412e-6,
+      2.5942025962194713019489279081403e-8,
+      6.1766127740813750329445749697236e-11,
+      1.0092454172466117901429556224601e-13,
+      1.2014792511179938141288033225333e-16,
+      1.0882945588716991878525295466666e-19,
+      7.75137721966848870392384e-23,
+      4.4548112037175638391466666666666e-26,
+      2.1092845231692343466666666666666e-29,
+      8.3701735910741333333333333333333e-33 
+    };
 
-			static readonly double[] aigcs = 
-		{ 
-			0.018152365581161273011556209957864,
-			0.021572563166010755534030638819968,
-			2.5678356987483249659052428090133e-4,
-			1.4265214119792403898829496921721e-6,
-			4.5721149200180426070434097558191e-9,
-			9.5251708435647098607392278840592e-12,
-			1.392563460577139905115042068619e-14,
-			1.5070999142762379592306991138666e-17,
-			1.2559148312567778822703205333333e-20,
-			8.3063073770821340343829333333333e-24,
-			4.4657538493718567445333333333333e-27,
-			1.9900855034518869333333333333333e-30,
-			7.4702885256533333333333333333333e-34 
-		};
+      static readonly double[] aigcs = 
+    { 
+      0.018152365581161273011556209957864,
+      0.021572563166010755534030638819968,
+      2.5678356987483249659052428090133e-4,
+      1.4265214119792403898829496921721e-6,
+      4.5721149200180426070434097558191e-9,
+      9.5251708435647098607392278840592e-12,
+      1.392563460577139905115042068619e-14,
+      1.5070999142762379592306991138666e-17,
+      1.2559148312567778822703205333333e-20,
+      8.3063073770821340343829333333333e-24,
+      4.4657538493718567445333333333333e-27,
+      1.9900855034518869333333333333333e-30,
+      7.4702885256533333333333333333333e-34 
+    };
 
-			static readonly double x3sml = Math.Pow(0.5 * DBL_EPSILON, 0.3334),
-				xmaxt = Math.Pow(Math.Log(DBL_MIN) * -1.5, 0.6667),
-				xmax = xmaxt - xmaxt*Math.Log(xmaxt) / (Math.Sqrt(xmaxt)*4.0+1.0) - 0.01;
+      static readonly double x3sml = Math.Pow(0.5 * DBL_EPSILON, 0.3334),
+        xmaxt = Math.Pow(Math.Log(DBL_MIN) * -1.5, 0.6667),
+        xmax = xmaxt - xmaxt*Math.Log(xmaxt) / (Math.Sqrt(xmaxt)*4.0+1.0) - 0.01;
 
-			static readonly int naif = initds(aifcs, 13, 0.5 * DBL_EPSILON * 0.1);
-			static readonly int naig = initds(aigcs, 13, 0.5 * DBL_EPSILON * 0.1);
+      static readonly int naif = initds(aifcs, 13, 0.5 * DBL_EPSILON * 0.1);
+      static readonly int naig = initds(aigcs, 13, 0.5 * DBL_EPSILON * 0.1);
 		
 			
-			/// <summary>
-			/// AiryAi(x) calculates the double precision Airy function for double 
-			/// precision argument x. 
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>Airy function for argument x.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10D, REVISION 920618, originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for AIF        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   8.37E-33 
-			///                                         log weighted error  32.08 
-			///                               significant figures required  30.87 
-			///                                    decimal places required  32.63 
-			///
-			/// Series for AIG        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   7.47E-34 
-			///                                         log weighted error  33.13 
-			///                               significant figures required  31.50 
-			///                                    decimal places required  33.68 
-			/// </code></remarks>
-			public static double AiryAi (double x)
-			{
+      /// <summary>
+      /// AiryAi(x) calculates the double precision Airy function for double 
+      /// precision argument x. 
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>Airy function for argument x.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10D, REVISION 920618, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for AIF        on the interval -1.00000E+00 to  1.00000E+00 
+      ///                                        with weighted error   8.37E-33 
+      ///                                         log weighted error  32.08 
+      ///                               significant figures required  30.87 
+      ///                                    decimal places required  32.63 
+      ///
+      /// Series for AIG        on the interval -1.00000E+00 to  1.00000E+00 
+      ///                                        with weighted error   7.47E-34 
+      ///                                         log weighted error  33.13 
+      ///                               significant figures required  31.50 
+      ///                                    decimal places required  33.68 
+      /// </code></remarks>
+      public static double AiryAi (double x)
+      {
 
-				double z, theta, xm;
+        double z, theta, xm;
 
-				if (x >= -1.0) goto L20;
-				d9aimp(x, out xm, out theta);
-				return xm * Math.Cos(theta);
+        if (x >= -1.0) goto L20;
+        d9aimp(x, out xm, out theta);
+        return xm * Math.Cos(theta);
 
-				L20:
-					if (x > 1.0) goto L30;
-				z = 0.0;
-				if (Math.Abs(x) > x3sml) z = x * x * x;
-				return dcsevl(z, aifcs, naif) - x * (dcsevl(z, aigcs, naig) + 0.25) + 0.375;
+        L20:
+          if (x > 1.0) goto L30;
+        z = 0.0;
+        if (Math.Abs(x) > x3sml) z = x * x * x;
+        return dcsevl(z, aifcs, naif) - x * (dcsevl(z, aigcs, naig) + 0.25) + 0.375;
 
-				L30:
-					if (x > xmax) goto L40;
-				return AiryExpAi(x) * Math.Exp(x * -2.0 * Math.Sqrt(x) / 3.0);
+        L30:
+          if (x > xmax) goto L40;
+        return AiryExpAi(x) * Math.Exp(x * -2.0 * Math.Sqrt(x) / 3.0);
 
-				L40:	
-					System.Diagnostics.Trace.WriteLine("Warning (AiryAi): x so big Ai(x) underflows");
-				return 0.0;
-			}
-		}
-		#endregion
+        L40:	
+          System.Diagnostics.Trace.WriteLine("Warning (AiryAi): x so big Ai(x) underflows");
+        return 0.0;
+      }
+    }
+    #endregion
 
-		#region AiryExpAi
+    #region AiryExpAi
 
-		/// <summary>
-		/// AiryExpAi(x) calculates the Airy function or the exponentially scaled 
-		/// Airy function depending on the value of the argument.  The function 
-		/// and argument are both double precision. Returns
-		///	Ai(x)                       for x &lt;= 0.0 
-		///	Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Airy function or the exponentially scaled 
-		/// Airy function depending on the value of the argument.</returns>
-		public static double AiryExpAi (double x)
-		{
-			return _AiryExpAi.AiryExpAi(x);
-		}
+    /// <summary>
+    /// AiryExpAi(x) calculates the Airy function or the exponentially scaled 
+    /// Airy function depending on the value of the argument.  The function 
+    /// and argument are both double precision. Returns
+    ///	Ai(x)                       for x &lt;= 0.0 
+    ///	Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Airy function or the exponentially scaled 
+    /// Airy function depending on the value of the argument.</returns>
+    public static double AiryExpAi (double x)
+    {
+      return _AiryExpAi.AiryExpAi(x);
+    }
 
-		class _AiryExpAi
-		{
-			static readonly double[] aifcs = 
-		{ 
-			-0.037971358496669997496197089469414,
-			0.059191888537263638574319728013777,
-			9.862928057727997536560389104406e-4,
-			6.8488438190765667554854830182412e-6,
-			2.5942025962194713019489279081403e-8,
-			6.1766127740813750329445749697236e-11,
-			1.0092454172466117901429556224601e-13,
-			1.2014792511179938141288033225333e-16,
-			1.0882945588716991878525295466666e-19,
-			7.75137721966848870392384e-23,
-			4.4548112037175638391466666666666e-26,
-			2.1092845231692343466666666666666e-29,
-			8.3701735910741333333333333333333e-33 
-		};
+    class _AiryExpAi
+    {
+      static readonly double[] aifcs = 
+    { 
+      -0.037971358496669997496197089469414,
+      0.059191888537263638574319728013777,
+      9.862928057727997536560389104406e-4,
+      6.8488438190765667554854830182412e-6,
+      2.5942025962194713019489279081403e-8,
+      6.1766127740813750329445749697236e-11,
+      1.0092454172466117901429556224601e-13,
+      1.2014792511179938141288033225333e-16,
+      1.0882945588716991878525295466666e-19,
+      7.75137721966848870392384e-23,
+      4.4548112037175638391466666666666e-26,
+      2.1092845231692343466666666666666e-29,
+      8.3701735910741333333333333333333e-33 
+    };
 
-			static readonly double[] aigcs = 
-		{ 
-			0.018152365581161273011556209957864,
-			0.021572563166010755534030638819968,
-			2.5678356987483249659052428090133e-4,
-			1.4265214119792403898829496921721e-6,
-			4.5721149200180426070434097558191e-9,
-			9.5251708435647098607392278840592e-12,
-			1.392563460577139905115042068619e-14,
-			1.5070999142762379592306991138666e-17,
-			1.2559148312567778822703205333333e-20,
-			8.3063073770821340343829333333333e-24,
-			4.4657538493718567445333333333333e-27,
-			1.9900855034518869333333333333333e-30,
-			7.4702885256533333333333333333333e-34 
-		};
+      static readonly double[] aigcs = 
+    { 
+      0.018152365581161273011556209957864,
+      0.021572563166010755534030638819968,
+      2.5678356987483249659052428090133e-4,
+      1.4265214119792403898829496921721e-6,
+      4.5721149200180426070434097558191e-9,
+      9.5251708435647098607392278840592e-12,
+      1.392563460577139905115042068619e-14,
+      1.5070999142762379592306991138666e-17,
+      1.2559148312567778822703205333333e-20,
+      8.3063073770821340343829333333333e-24,
+      4.4657538493718567445333333333333e-27,
+      1.9900855034518869333333333333333e-30,
+      7.4702885256533333333333333333333e-34 
+    };
 
-			static readonly double[] aip1cs = 
-		{ 
-			-0.02146951858910538455460863467778,
-			-0.007535382535043301166219720865565,
-			5.971527949026380852035388881994e-4,
-			-7.283251254207610648502368291548e-5,
-			1.11029713073929966651738182114e-5,
-			-1.950386152284405710346930314033e-6,
-			3.786973885159515193885319670057e-7,
-			-7.929675297350978279039072879154e-8,
-			1.762247638674256075568420122202e-8,
-			-4.110767539667195045029896593893e-9,
-			9.984770057857892247183414107544e-10,
-			-2.510093251387122211349867730034e-10,
-			6.500501929860695409272038601725e-11,
-			-1.727818405393616515478877107366e-11,
-			4.699378842824512578362292872307e-12,
-			-1.304675656297743914491241246272e-12,
-			3.689698478462678810473948382282e-13,
-			-1.061087206646806173650359679035e-13,
-			3.09841438487818743866021007011e-14,
-			-9.174908079824139307833423547851e-15,
-			2.752049140347210895693579062271e-15,
-			-8.35375011592204655809139330188e-16,
-			2.563931129357934947568636168612e-16,
-			-7.950633762598854983273747289822e-17,
-			2.489283634603069977437281175644e-17,
-			-7.864326933928735569664626221296e-18,
-			2.505687311439975672324470645019e-18,
-			-8.047420364163909524537958682241e-19,
-			2.604097118952053964443401104392e-19,
-			-8.486954164056412259482488834184e-20,
-			2.784706882142337843359429186027e-20,
-			-9.195858953498612913687224151354e-21,
-			3.055304318374238742247668225583e-21,
-			-1.021035455479477875902177048439e-21,
-			3.431118190743757844000555680836e-22,
-			-1.159129341797749513376922463109e-22,
-			3.935772844200255610836268229154e-23,
-			-1.342880980296717611956718989038e-23,
-			4.603287883520002741659190305314e-24,
-			-1.585043927004064227810772499387e-24,
-			5.481275667729675908925523755008e-25,
-			-1.903349371855047259064017948945e-25,
-			6.635682302374008716777612115968e-26,
-			-2.322311650026314307975200986453e-26,
-			8.157640113429179313142743695359e-27,
-			-2.875824240632900490057489929557e-27,
-			1.017329450942901435079714319018e-27,
-			-3.610879108742216446575703490559e-28,
-			1.285788540363993421256640342698e-28,
-			-4.592901037378547425160693022719e-29,
-			1.645597033820713725812102485333e-29,
-			-5.91342129984350184208792027136e-30,
-			2.131057006604993303479369509546e-30,
-			-7.701158157787598216982761745066e-31,
-			2.79053330796893041758178377728e-31,
-			-1.013807715111284006452241367039e-31,
-			3.692580158719624093658286216533e-32 
-		};
+      static readonly double[] aip1cs = 
+    { 
+      -0.02146951858910538455460863467778,
+      -0.007535382535043301166219720865565,
+      5.971527949026380852035388881994e-4,
+      -7.283251254207610648502368291548e-5,
+      1.11029713073929966651738182114e-5,
+      -1.950386152284405710346930314033e-6,
+      3.786973885159515193885319670057e-7,
+      -7.929675297350978279039072879154e-8,
+      1.762247638674256075568420122202e-8,
+      -4.110767539667195045029896593893e-9,
+      9.984770057857892247183414107544e-10,
+      -2.510093251387122211349867730034e-10,
+      6.500501929860695409272038601725e-11,
+      -1.727818405393616515478877107366e-11,
+      4.699378842824512578362292872307e-12,
+      -1.304675656297743914491241246272e-12,
+      3.689698478462678810473948382282e-13,
+      -1.061087206646806173650359679035e-13,
+      3.09841438487818743866021007011e-14,
+      -9.174908079824139307833423547851e-15,
+      2.752049140347210895693579062271e-15,
+      -8.35375011592204655809139330188e-16,
+      2.563931129357934947568636168612e-16,
+      -7.950633762598854983273747289822e-17,
+      2.489283634603069977437281175644e-17,
+      -7.864326933928735569664626221296e-18,
+      2.505687311439975672324470645019e-18,
+      -8.047420364163909524537958682241e-19,
+      2.604097118952053964443401104392e-19,
+      -8.486954164056412259482488834184e-20,
+      2.784706882142337843359429186027e-20,
+      -9.195858953498612913687224151354e-21,
+      3.055304318374238742247668225583e-21,
+      -1.021035455479477875902177048439e-21,
+      3.431118190743757844000555680836e-22,
+      -1.159129341797749513376922463109e-22,
+      3.935772844200255610836268229154e-23,
+      -1.342880980296717611956718989038e-23,
+      4.603287883520002741659190305314e-24,
+      -1.585043927004064227810772499387e-24,
+      5.481275667729675908925523755008e-25,
+      -1.903349371855047259064017948945e-25,
+      6.635682302374008716777612115968e-26,
+      -2.322311650026314307975200986453e-26,
+      8.157640113429179313142743695359e-27,
+      -2.875824240632900490057489929557e-27,
+      1.017329450942901435079714319018e-27,
+      -3.610879108742216446575703490559e-28,
+      1.285788540363993421256640342698e-28,
+      -4.592901037378547425160693022719e-29,
+      1.645597033820713725812102485333e-29,
+      -5.91342129984350184208792027136e-30,
+      2.131057006604993303479369509546e-30,
+      -7.701158157787598216982761745066e-31,
+      2.79053330796893041758178377728e-31,
+      -1.013807715111284006452241367039e-31,
+      3.692580158719624093658286216533e-32 
+    };
 
-			static readonly double[] aip2cs = 
-		{ 
-			-0.00174314496929375513390355844011,
-			-0.0016789385432554167163219061348,
-			3.59653403352166035885983858114e-5,
-			-1.380818602739228354573993831e-6,
-			7.41122807731505298848699095233e-8,
-			-5.00238203900133013130422866325e-9,
-			4.00693917417184240675446866355e-10,
-			-3.67331242795905044199318496207e-11,
-			3.76034439592373852439592002918e-12,
-			-4.22321332718747538026564938968e-13,
-			5.1350945403365707091961875412e-14,
-			-6.69095850390477595651681356676e-15,
-			9.26667545641290648239550724382e-16,
-			-1.35514382416070576333397356591e-16,
-			2.08115496312830995299006549335e-17,
-			-3.34116499159176856871277570256e-18,
-			5.58578584585924316868032946585e-19,
-			-9.69219040152365247518658209109e-20,
-			1.74045700128893206465696557738e-20,
-			-3.22640979731130400247846333098e-21,
-			6.16074471106625258533259618986e-22,
-			-1.20936347982490059076420676266e-22,
-			2.43632763310138108261570095786e-23,
-			-5.02914221497457468943403144533e-24,
-			1.06224175543635689495470626133e-24,
-			-2.29284284895989241509856324266e-25,
-			5.05181733929503744986884778666e-26,
-			-1.1349812371441240497979392e-26,
-			2.59765565985606980698374144e-27,
-			-6.05124621542939506172231679999e-28,
-			1.43359777966772800720295253333e-28,
-			-3.45147757060899986280721066666e-29,
-			8.43875190213646740427025066666e-30,
-			-2.09396142298188169434453333333e-30,
-			5.27008873478945503182848e-31,
-			-1.34457433014553385789030399999e-31,
-			3.47570964526601147340117333333e-32 
-		};
+      static readonly double[] aip2cs = 
+    { 
+      -0.00174314496929375513390355844011,
+      -0.0016789385432554167163219061348,
+      3.59653403352166035885983858114e-5,
+      -1.380818602739228354573993831e-6,
+      7.41122807731505298848699095233e-8,
+      -5.00238203900133013130422866325e-9,
+      4.00693917417184240675446866355e-10,
+      -3.67331242795905044199318496207e-11,
+      3.76034439592373852439592002918e-12,
+      -4.22321332718747538026564938968e-13,
+      5.1350945403365707091961875412e-14,
+      -6.69095850390477595651681356676e-15,
+      9.26667545641290648239550724382e-16,
+      -1.35514382416070576333397356591e-16,
+      2.08115496312830995299006549335e-17,
+      -3.34116499159176856871277570256e-18,
+      5.58578584585924316868032946585e-19,
+      -9.69219040152365247518658209109e-20,
+      1.74045700128893206465696557738e-20,
+      -3.22640979731130400247846333098e-21,
+      6.16074471106625258533259618986e-22,
+      -1.20936347982490059076420676266e-22,
+      2.43632763310138108261570095786e-23,
+      -5.02914221497457468943403144533e-24,
+      1.06224175543635689495470626133e-24,
+      -2.29284284895989241509856324266e-25,
+      5.05181733929503744986884778666e-26,
+      -1.1349812371441240497979392e-26,
+      2.59765565985606980698374144e-27,
+      -6.05124621542939506172231679999e-28,
+      1.43359777966772800720295253333e-28,
+      -3.45147757060899986280721066666e-29,
+      8.43875190213646740427025066666e-30,
+      -2.09396142298188169434453333333e-30,
+      5.27008873478945503182848e-31,
+      -1.34457433014553385789030399999e-31,
+      3.47570964526601147340117333333e-32 
+    };
 
-			static readonly double eta    = 0.5 * DBL_EPSILON * 0.1,
-				x3sml  = Math.Pow(eta,0.3333),
-				x32sml = x3sml * x3sml * 1.3104,
-				xbig   = Math.Pow(DBL_MAX, 0.6666);
+      static readonly double eta    = 0.5 * DBL_EPSILON * 0.1,
+        x3sml  = Math.Pow(eta,0.3333),
+        x32sml = x3sml * x3sml * 1.3104,
+        xbig   = Math.Pow(DBL_MAX, 0.6666);
 
-			static readonly int naif  = initds(aifcs,  13, eta);
-			static readonly int naig  = initds(aigcs,  13, eta);
-			static readonly int naip1 = initds(aip1cs, 57, eta);
-			static readonly int naip2 = initds(aip2cs, 37, eta);
+      static readonly int naif  = initds(aifcs,  13, eta);
+      static readonly int naig  = initds(aigcs,  13, eta);
+      static readonly int naip1 = initds(aip1cs, 57, eta);
+      static readonly int naip2 = initds(aip2cs, 37, eta);
 		
 
 
-			/// <summary>
-			/// AiryExpAi(x) calculates the Airy function or the exponentially scaled 
-			/// Airy function depending on the value of the argument.  The function 
-			/// and argument are both double precision. Returns
-			///	Ai(x)                       for x &lt;= 0.0 
-			///	Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>Airy function or the exponentially scaled 
-			/// Airy function depending on the value of the argument.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10D, REVISION 920618, originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for AIF        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   8.37E-33 
-			///                                         log weighted error  32.08 
-			///                               significant figures required  30.87 
-			///                                    decimal places required  32.63 
-			///
-			/// Series for AIG        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   7.47E-34 
-			///                                         log weighted error  33.13 
-			///                               significant figures required  31.50 
-			///                                    decimal places required  33.68 
-			///
-			/// Series for AIP1       on the interval  1.25000E-01 to  1.00000E+00 
-			///                                        with weighted error   3.69E-32 
-			///                                         log weighted error  31.43 
-			///                               significant figures required  29.55 
-			///                                    decimal places required  32.31 
-			///
-			/// Series for AIP2       on the interval  0.          to  1.25000E-01 
-			///                                        with weighted error   3.48E-32 
-			///                                         log weighted error  31.46 
-			///                               significant figures required  28.74 
-			///                                    decimal places required  32.24 
-			/// </code></remarks>
-			public static double AiryExpAi (double x)
-			{
+      /// <summary>
+      /// AiryExpAi(x) calculates the Airy function or the exponentially scaled 
+      /// Airy function depending on the value of the argument.  The function 
+      /// and argument are both double precision. Returns
+      ///	Ai(x)                       for x &lt;= 0.0 
+      ///	Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>Airy function or the exponentially scaled 
+      /// Airy function depending on the value of the argument.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10D, REVISION 920618, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for AIF        on the interval -1.00000E+00 to  1.00000E+00 
+      ///                                        with weighted error   8.37E-33 
+      ///                                         log weighted error  32.08 
+      ///                               significant figures required  30.87 
+      ///                                    decimal places required  32.63 
+      ///
+      /// Series for AIG        on the interval -1.00000E+00 to  1.00000E+00 
+      ///                                        with weighted error   7.47E-34 
+      ///                                         log weighted error  33.13 
+      ///                               significant figures required  31.50 
+      ///                                    decimal places required  33.68 
+      ///
+      /// Series for AIP1       on the interval  1.25000E-01 to  1.00000E+00 
+      ///                                        with weighted error   3.69E-32 
+      ///                                         log weighted error  31.43 
+      ///                               significant figures required  29.55 
+      ///                                    decimal places required  32.31 
+      ///
+      /// Series for AIP2       on the interval  0.          to  1.25000E-01 
+      ///                                        with weighted error   3.48E-32 
+      ///                                         log weighted error  31.46 
+      ///                               significant figures required  28.74 
+      ///                                    decimal places required  32.24 
+      /// </code></remarks>
+      public static double AiryExpAi (double x)
+      {
 	
 			
 
-				double sqrtx, xm, z, theta, ret_val;
+        double sqrtx, xm, z, theta, ret_val;
 
-				if (x >= -1.0) goto L20;
-				d9aimp(x, out xm, out theta);
-				return xm * Math.Cos(theta);
+        if (x >= -1.0) goto L20;
+        d9aimp(x, out xm, out theta);
+        return xm * Math.Cos(theta);
 
-				L20:
-					if (x > 1.0) goto L30;
-				z = 0.0;
-				if (Math.Abs(x) > x3sml) z = x * x * x;
-				ret_val = dcsevl(z, aifcs, naif) - x * (dcsevl(z, aigcs, naig) + 0.25) + 0.375;
-				if (x > x32sml) ret_val *= Math.Exp(x * 2.0 * Math.Sqrt(x) / 3.0);
-				return ret_val;
+        L20:
+          if (x > 1.0) goto L30;
+        z = 0.0;
+        if (Math.Abs(x) > x3sml) z = x * x * x;
+        ret_val = dcsevl(z, aifcs, naif) - x * (dcsevl(z, aigcs, naig) + 0.25) + 0.375;
+        if (x > x32sml) ret_val *= Math.Exp(x * 2.0 * Math.Sqrt(x) / 3.0);
+        return ret_val;
 
-				L30:
-					if (x > 4.0) goto L40;
-				sqrtx = Math.Sqrt(x);
-				z = (16.0 / (x * sqrtx) - 9.0) / 7.0;
-				return (dcsevl(z, aip1cs, naip1) + 0.28125) / Math.Sqrt(sqrtx);
+        L30:
+          if (x > 4.0) goto L40;
+        sqrtx = Math.Sqrt(x);
+        z = (16.0 / (x * sqrtx) - 9.0) / 7.0;
+        return (dcsevl(z, aip1cs, naip1) + 0.28125) / Math.Sqrt(sqrtx);
 
-				L40:
-					sqrtx = Math.Sqrt(x);
-				z = -1.0;
-				if (x < xbig) z = 16.0 / (x * sqrtx) - 1.0;
-				return (dcsevl(z, aip2cs, naip2) + 0.28125) / Math.Sqrt(sqrtx);
-			}
-		}
-		#endregion
+        L40:
+          sqrtx = Math.Sqrt(x);
+        z = -1.0;
+        if (x < xbig) z = 16.0 / (x * sqrtx) - 1.0;
+        return (dcsevl(z, aip2cs, naip2) + 0.28125) / Math.Sqrt(sqrtx);
+      }
+    }
+    #endregion
 
-		#region AiryBi
+    #region AiryBi
 
-		/// <summary>
-		/// AiryBi(x) calculates the double precision Airy function of the 
-		/// second kind for double precision argument x. 
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Airy function of the 
-		/// second kind for double precision argument x.</returns>
-		public static double AiryBi (double x)
-		{
-			return _AiryBi.AiryBi(x);
-		}
+    /// <summary>
+    /// AiryBi(x) calculates the double precision Airy function of the 
+    /// second kind for double precision argument x. 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Airy function of the 
+    /// second kind for double precision argument x.</returns>
+    public static double AiryBi (double x)
+    {
+      return _AiryBi.AiryBi(x);
+    }
 
 
-		class _AiryBi
-		{
-			static readonly double[] bifcs = 
-		{ 
-			-0.016730216471986649483537423928176,
-			0.10252335834249445611426362777757,
-			0.0017083092507381516539429650242013,
-			1.186254546774468117921645921004e-5,
-			4.4932907017792133694531887927242e-8,
-			1.0698207143387889067567767663628e-10,
-			1.7480643399771824706010517628573e-13,
-			2.0810231071761711025881891834399e-16,
-			1.8849814695665416509927971733333e-19,
-			1.3425779173097804625882666666666e-22,
-			7.7159593429658887893333333333333e-26,
-			3.6533879617478566399999999999999e-29,
-			1.4497565927953066666666666666666e-32 
-		};
+    class _AiryBi
+    {
+      static readonly double[] bifcs = 
+    { 
+      -0.016730216471986649483537423928176,
+      0.10252335834249445611426362777757,
+      0.0017083092507381516539429650242013,
+      1.186254546774468117921645921004e-5,
+      4.4932907017792133694531887927242e-8,
+      1.0698207143387889067567767663628e-10,
+      1.7480643399771824706010517628573e-13,
+      2.0810231071761711025881891834399e-16,
+      1.8849814695665416509927971733333e-19,
+      1.3425779173097804625882666666666e-22,
+      7.7159593429658887893333333333333e-26,
+      3.6533879617478566399999999999999e-29,
+      1.4497565927953066666666666666666e-32 
+    };
     
-			static readonly double[] bigcs = 
-		{ 
-			0.022466223248574522283468220139024,
-			0.037364775453019545441727561666752,
-			4.4476218957212285696215294326639e-4,
-			2.4708075636329384245494591948882e-6,
-			7.9191353395149635134862426285596e-9,
-			1.6498079851827779880887872402706e-11,
-			2.4119906664835455909247501122841e-14,
-			2.6103736236091436985184781269333e-17,
-			2.1753082977160323853123792e-20,
-			1.4386946400390433219483733333333e-23,
-			7.7349125612083468629333333333333e-27,
-			3.4469292033849002666666666666666e-30,
-			1.2938919273216e-33 
-		};
+      static readonly double[] bigcs = 
+    { 
+      0.022466223248574522283468220139024,
+      0.037364775453019545441727561666752,
+      4.4476218957212285696215294326639e-4,
+      2.4708075636329384245494591948882e-6,
+      7.9191353395149635134862426285596e-9,
+      1.6498079851827779880887872402706e-11,
+      2.4119906664835455909247501122841e-14,
+      2.6103736236091436985184781269333e-17,
+      2.1753082977160323853123792e-20,
+      1.4386946400390433219483733333333e-23,
+      7.7349125612083468629333333333333e-27,
+      3.4469292033849002666666666666666e-30,
+      1.2938919273216e-33 
+    };
 
-			static readonly double[] bif2cs = 
-		{ 
-			0.0998457269381604104468284257993,
-			0.47862497786300553772211467318231,
-			0.025155211960433011771324415436675,
-			5.8206938852326456396515697872216e-4,
-			7.4997659644377865943861457378217e-6,
-			6.1346028703493836681403010356474e-8,
-			3.4627538851480632900434268733359e-10,
-			1.4288910080270254287770846748931e-12,
-			4.49627042983346418950564721792e-15,
-			1.1142323065833011708428300106666e-17,
-			2.2304791066175002081517866666666e-20,
-			3.6815778736393142842922666666666e-23,
-			5.0960868449338261333333333333333e-26,
-			6.0003386926288554666666666666666e-29,
-			6.0827497446570666666666666666666e-32 
-		};
+      static readonly double[] bif2cs = 
+    { 
+      0.0998457269381604104468284257993,
+      0.47862497786300553772211467318231,
+      0.025155211960433011771324415436675,
+      5.8206938852326456396515697872216e-4,
+      7.4997659644377865943861457378217e-6,
+      6.1346028703493836681403010356474e-8,
+      3.4627538851480632900434268733359e-10,
+      1.4288910080270254287770846748931e-12,
+      4.49627042983346418950564721792e-15,
+      1.1142323065833011708428300106666e-17,
+      2.2304791066175002081517866666666e-20,
+      3.6815778736393142842922666666666e-23,
+      5.0960868449338261333333333333333e-26,
+      6.0003386926288554666666666666666e-29,
+      6.0827497446570666666666666666666e-32 
+    };
     
-			static readonly double[] big2cs = 
-		{
-			0.033305662145514340465176188111647,
-			0.161309215123197067613287532084943,
-			0.00631900730961342869121615634921173,
-			1.18790456816251736389780192304567e-4,
-			1.30453458862002656147116485012843e-6,
-			9.37412599553521729546809615508936e-9,
-			4.74580188674725153788510169834595e-11,
-			1.78310726509481399800065667560946e-13,
-			5.1675919278495818037427635664e-16,
-			1.19004508386827125129496251733333e-18,
-			2.22982880666403517277063466666666e-21,
-			3.46551923027689419722666666666666e-24,
-			4.53926336320504514133333333333333e-27,
-			5.07884996513522346666666666666666e-30,
-			4.91020674696533333333333333333333e-33 
-		};
+      static readonly double[] big2cs = 
+    {
+      0.033305662145514340465176188111647,
+      0.161309215123197067613287532084943,
+      0.00631900730961342869121615634921173,
+      1.18790456816251736389780192304567e-4,
+      1.30453458862002656147116485012843e-6,
+      9.37412599553521729546809615508936e-9,
+      4.74580188674725153788510169834595e-11,
+      1.78310726509481399800065667560946e-13,
+      5.1675919278495818037427635664e-16,
+      1.19004508386827125129496251733333e-18,
+      2.22982880666403517277063466666666e-21,
+      3.46551923027689419722666666666666e-24,
+      4.53926336320504514133333333333333e-27,
+      5.07884996513522346666666666666666e-30,
+      4.91020674696533333333333333333333e-33 
+    };
     
-			static readonly double eta   = 0.5 * DBL_EPSILON * 0.1,
-				x3sml = Math.Pow(eta, 0.3333),
-				xmax  = Math.Pow(Math.Log(DBL_MAX) * 1.5, 0.6666);
+      static readonly double eta   = 0.5 * DBL_EPSILON * 0.1,
+        x3sml = Math.Pow(eta, 0.3333),
+        xmax  = Math.Pow(Math.Log(DBL_MAX) * 1.5, 0.6666);
 
-			static readonly int nbif  = initds(bifcs,  13, eta);
-			static readonly int nbig  = initds(bigcs,  13, eta);
-			static readonly int nbif2 = initds(bif2cs, 15, eta);
-			static readonly int nbig2 = initds(big2cs, 15, eta);
+      static readonly int nbif  = initds(bifcs,  13, eta);
+      static readonly int nbig  = initds(bigcs,  13, eta);
+      static readonly int nbif2 = initds(bif2cs, 15, eta);
+      static readonly int nbig2 = initds(big2cs, 15, eta);
 	
 
 
 			
 
-			/// <summary>
-			/// AiryBi(x) calculates the double precision Airy function of the 
-			/// second kind for double precision argument x. 
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>Airy function of the 
-			/// second kind for double precision argument x.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10D, REVISION 920618, originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for BIF        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   1.45E-32 
-			///                                         log weighted error  31.84 
-			///                               significant figures required  30.85 
-			///                                    decimal places required  32.40 
-			///
-			/// Series for BIG        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   1.29E-33 
-			///                                         log weighted error  32.89 
-			///                               significant figures required  31.48 
-			///                                    decimal places required  33.45 
-			///
-			/// Series for BIF2       on the interval  1.00000E+00 to  8.00000E+00 
-			///                                        with weighted error   6.08E-32 
-			///                                         log weighted error  31.22 
-			///                        approx significant figures required  30.8 
-			///                                    decimal places required  31.80 
-			///
-			/// Series for BIG2       on the interval  1.00000E+00 to  8.00000E+00 
-			///                                        with weighted error   4.91E-33 
-			///                                         log weighted error  32.31 
-			///                        approx significant figures required  31.6 
-			///                                    decimal places required  32.90 
-			/// </code></remarks>
-			public static double AiryBi (double x)
-			{
+      /// <summary>
+      /// AiryBi(x) calculates the double precision Airy function of the 
+      /// second kind for double precision argument x. 
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>Airy function of the 
+      /// second kind for double precision argument x.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10D, REVISION 920618, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for BIF        on the interval -1.00000E+00 to  1.00000E+00 
+      ///                                        with weighted error   1.45E-32 
+      ///                                         log weighted error  31.84 
+      ///                               significant figures required  30.85 
+      ///                                    decimal places required  32.40 
+      ///
+      /// Series for BIG        on the interval -1.00000E+00 to  1.00000E+00 
+      ///                                        with weighted error   1.29E-33 
+      ///                                         log weighted error  32.89 
+      ///                               significant figures required  31.48 
+      ///                                    decimal places required  33.45 
+      ///
+      /// Series for BIF2       on the interval  1.00000E+00 to  8.00000E+00 
+      ///                                        with weighted error   6.08E-32 
+      ///                                         log weighted error  31.22 
+      ///                        approx significant figures required  30.8 
+      ///                                    decimal places required  31.80 
+      ///
+      /// Series for BIG2       on the interval  1.00000E+00 to  8.00000E+00 
+      ///                                        with weighted error   4.91E-33 
+      ///                                         log weighted error  32.31 
+      ///                        approx significant figures required  31.6 
+      ///                                    decimal places required  32.90 
+      /// </code></remarks>
+      public static double AiryBi (double x)
+      {
 			
 
-				double z, theta, xm;
+        double z, theta, xm;
 
-				if (x >= -1.0) goto L20;
-				d9aimp(x, out xm, out theta);
-				return xm * Math.Sin(theta);
+        if (x >= -1.0) goto L20;
+        d9aimp(x, out xm, out theta);
+        return xm * Math.Sin(theta);
 
-				L20:
-					if (x > 1.0) goto L30;
-				z = 0.0;
-				if (Math.Abs(x) > x3sml) z = x * x * x;
-				return dcsevl(z, bifcs, nbif) + 0.625 + x * (dcsevl(z, bigcs, nbig) + 0.4375);
+        L20:
+          if (x > 1.0) goto L30;
+        z = 0.0;
+        if (Math.Abs(x) > x3sml) z = x * x * x;
+        return dcsevl(z, bifcs, nbif) + 0.625 + x * (dcsevl(z, bigcs, nbig) + 0.4375);
 
-				L30:
-					if (x > 2.0) goto L40;
-				z = (x * x * x * 2.0 - 9.0) / 7.0;
-				return dcsevl(z,bif2cs,nbif2) + 1.125 + x * (dcsevl(z,big2cs,nbig2) + 0.625);
+        L30:
+          if (x > 2.0) goto L40;
+        z = (x * x * x * 2.0 - 9.0) / 7.0;
+        return dcsevl(z,bif2cs,nbif2) + 1.125 + x * (dcsevl(z,big2cs,nbig2) + 0.625);
 
-				L40:
-					if (x > xmax) 
-						throw new ArgumentException("x so big that Bi(x) overflows");
+        L40:
+          if (x > xmax) 
+            throw new ArgumentException("x so big that Bi(x) overflows");
 
-				return AiryExpBi(x) * Math.Exp(x * 2.0 * Math.Sqrt(x) / 3.0);
-			}
-		}
-		#endregion
+        return AiryExpBi(x) * Math.Exp(x * 2.0 * Math.Sqrt(x) / 3.0);
+      }
+    }
+    #endregion
 
-		#region AiryExpBi
+    #region AiryExpBi
 
-		/// <summary>
-		/// AiryExpBi(x) calculates the double precision Airy function of the 
-		/// second kind or the double precision exponentially scaled Airy 
-		/// function of the second kind, depending on the value of the 
-		/// double precision argument x. Returns 
-		///     Bi(x)                      for x &lt;= 0.0
-		///     Bi(x)*exp( -2/3 * x^(3/2)) for x &gt;= 0.0 
-		/// </summary>
-		/// <param name="x">The function argument.</param>
-		/// <returns>Airy function of the 
-		/// second kind or the exponentially scaled Airy 
-		/// function of the second kind, depending on the value of the 
-		/// argument x.</returns>
-		public static double AiryExpBi (double x)
-		{
-			return _AiryExpBi.AiryExpBi(x);
-		}
+    /// <summary>
+    /// AiryExpBi(x) calculates the double precision Airy function of the 
+    /// second kind or the double precision exponentially scaled Airy 
+    /// function of the second kind, depending on the value of the 
+    /// double precision argument x. Returns 
+    ///     Bi(x)                      for x &lt;= 0.0
+    ///     Bi(x)*exp( -2/3 * x^(3/2)) for x &gt;= 0.0 
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>Airy function of the 
+    /// second kind or the exponentially scaled Airy 
+    /// function of the second kind, depending on the value of the 
+    /// argument x.</returns>
+    public static double AiryExpBi (double x)
+    {
+      return _AiryExpBi.AiryExpBi(x);
+    }
 
-		class _AiryExpBi
-		{
-			static readonly double[] bifcs = 
-		{
-			-0.016730216471986649483537423928176,
-			0.10252335834249445611426362777757,
-			0.0017083092507381516539429650242013,
-			1.186254546774468117921645921004e-5,
-			4.4932907017792133694531887927242e-8,
-			1.0698207143387889067567767663628e-10,
-			1.7480643399771824706010517628573e-13,
-			2.0810231071761711025881891834399e-16,
-			1.8849814695665416509927971733333e-19,
-			1.3425779173097804625882666666666e-22,
-			7.7159593429658887893333333333333e-26,
-			3.6533879617478566399999999999999e-29,
-			1.4497565927953066666666666666666e-32 
-		};
+    class _AiryExpBi
+    {
+      static readonly double[] bifcs = 
+    {
+      -0.016730216471986649483537423928176,
+      0.10252335834249445611426362777757,
+      0.0017083092507381516539429650242013,
+      1.186254546774468117921645921004e-5,
+      4.4932907017792133694531887927242e-8,
+      1.0698207143387889067567767663628e-10,
+      1.7480643399771824706010517628573e-13,
+      2.0810231071761711025881891834399e-16,
+      1.8849814695665416509927971733333e-19,
+      1.3425779173097804625882666666666e-22,
+      7.7159593429658887893333333333333e-26,
+      3.6533879617478566399999999999999e-29,
+      1.4497565927953066666666666666666e-32 
+    };
 
-			static readonly double[] bigcs = 
-		{ 
-			0.022466223248574522283468220139024,
-			0.037364775453019545441727561666752,
-			4.4476218957212285696215294326639e-4,
-			2.4708075636329384245494591948882e-6,
-			7.9191353395149635134862426285596e-9,
-			1.6498079851827779880887872402706e-11,
-			2.4119906664835455909247501122841e-14,
-			2.6103736236091436985184781269333e-17,
-			2.1753082977160323853123792e-20,
-			1.4386946400390433219483733333333e-23,
-			7.7349125612083468629333333333333e-27,
-			3.4469292033849002666666666666666e-30,
-			1.2938919273216e-33 
-		};
+      static readonly double[] bigcs = 
+    { 
+      0.022466223248574522283468220139024,
+      0.037364775453019545441727561666752,
+      4.4476218957212285696215294326639e-4,
+      2.4708075636329384245494591948882e-6,
+      7.9191353395149635134862426285596e-9,
+      1.6498079851827779880887872402706e-11,
+      2.4119906664835455909247501122841e-14,
+      2.6103736236091436985184781269333e-17,
+      2.1753082977160323853123792e-20,
+      1.4386946400390433219483733333333e-23,
+      7.7349125612083468629333333333333e-27,
+      3.4469292033849002666666666666666e-30,
+      1.2938919273216e-33 
+    };
 
-			static readonly double[] bif2cs = 
-		{
-			0.0998457269381604104468284257993,
-			0.47862497786300553772211467318231,
-			0.025155211960433011771324415436675,
-			5.8206938852326456396515697872216e-4,
-			7.4997659644377865943861457378217e-6,
-			6.1346028703493836681403010356474e-8,
-			3.4627538851480632900434268733359e-10,
-			1.4288910080270254287770846748931e-12,
-			4.49627042983346418950564721792e-15,
-			1.1142323065833011708428300106666e-17,
-			2.2304791066175002081517866666666e-20,
-			3.6815778736393142842922666666666e-23,
-			5.0960868449338261333333333333333e-26,
-			6.0003386926288554666666666666666e-29,
-			6.0827497446570666666666666666666e-32 
-		};
+      static readonly double[] bif2cs = 
+    {
+      0.0998457269381604104468284257993,
+      0.47862497786300553772211467318231,
+      0.025155211960433011771324415436675,
+      5.8206938852326456396515697872216e-4,
+      7.4997659644377865943861457378217e-6,
+      6.1346028703493836681403010356474e-8,
+      3.4627538851480632900434268733359e-10,
+      1.4288910080270254287770846748931e-12,
+      4.49627042983346418950564721792e-15,
+      1.1142323065833011708428300106666e-17,
+      2.2304791066175002081517866666666e-20,
+      3.6815778736393142842922666666666e-23,
+      5.0960868449338261333333333333333e-26,
+      6.0003386926288554666666666666666e-29,
+      6.0827497446570666666666666666666e-32 
+    };
 
-			static readonly double[] big2cs = 
-		{
-			0.033305662145514340465176188111647,
-			0.161309215123197067613287532084943,
-			0.00631900730961342869121615634921173,
-			1.18790456816251736389780192304567e-4,
-			1.30453458862002656147116485012843e-6,
-			9.37412599553521729546809615508936e-9,
-			4.74580188674725153788510169834595e-11,
-			1.78310726509481399800065667560946e-13,
-			5.1675919278495818037427635664e-16,
-			1.19004508386827125129496251733333e-18,
-			2.22982880666403517277063466666666e-21,
-			3.46551923027689419722666666666666e-24,
-			4.53926336320504514133333333333333e-27,
-			5.07884996513522346666666666666666e-30,
-			4.91020674696533333333333333333333e-33 
-		};
+      static readonly double[] big2cs = 
+    {
+      0.033305662145514340465176188111647,
+      0.161309215123197067613287532084943,
+      0.00631900730961342869121615634921173,
+      1.18790456816251736389780192304567e-4,
+      1.30453458862002656147116485012843e-6,
+      9.37412599553521729546809615508936e-9,
+      4.74580188674725153788510169834595e-11,
+      1.78310726509481399800065667560946e-13,
+      5.1675919278495818037427635664e-16,
+      1.19004508386827125129496251733333e-18,
+      2.22982880666403517277063466666666e-21,
+      3.46551923027689419722666666666666e-24,
+      4.53926336320504514133333333333333e-27,
+      5.07884996513522346666666666666666e-30,
+      4.91020674696533333333333333333333e-33 
+    };
 
-			static readonly double[] bip1cs = 
-		{
-			-0.083220474779434474687471864707973,
-			0.011461189273711742889920226128031,
-			4.2896440718911509494134472566635e-4,
-			-1.4906639379950514017847677732954e-4,
-			-1.3076597267876290663136340998881e-5,
-			6.3275983961030344754535716032494e-6,
-			-4.2226696982681924884778515889433e-7,
-			-1.9147186298654689632835494181277e-7,
-			6.4531062845583173611038157880934e-8,
-			-7.8448546771397719289748310448628e-9,
-			-9.6077216623785085879198533565432e-10,
-			7.0004713316443966339006074402068e-10,
-			-1.7731789132814932022083128056698e-10,
-			2.2720894783465236347282126389311e-11,
-			1.6540456313972049847032860681891e-12,
-			-1.8517125559292316390755369896693e-12,
-			5.9576312477117290165680715534277e-13,
-			-1.2194348147346564781055769498986e-13,
-			1.3347869253513048815386347813597e-14,
-			1.7278311524339746664384792889731e-15,
-			-1.4590732013016720735268871713166e-15,
-			4.9010319927115819978994989520104e-16,
-			-1.1556545519261548129262972762521e-16,
-			1.9098807367072411430671732441524e-17,
-			-1.1768966854492179886913995957862e-18,
-			-6.3271925149530064474537459677047e-19,
-			3.3861838880715361614130191322316e-19,
-			-1.0725825321758625254992162219622e-19,
-			2.5995709605617169284786933115562e-20,
-			-4.8477583571081193660962309494101e-21,
-			5.5298913982121625361505513198933e-22,
-			4.9421660826069471371748197444266e-23,
-			-5.5162121924145707458069720814933e-23,
-			2.1437560417632550086631884499626e-23,
-			-6.1910313387655605798785061137066e-24,
-			1.4629362707391245659830967336959e-24,
-			-2.7918484471059005576177866069333e-25,
-			3.6455703168570246150906795349333e-26,
-			5.8511821906188711839382459733333e-28,
-			-2.4946950487566510969745047551999e-27,
-			1.0979323980338380977919579477333e-27,
-			-3.4743388345961115015034088106666e-28,
-			9.137340263534969736317108224e-29,
-			-2.0510352728210629186247720959999e-29,
-			3.7976985698546461748651622399999e-30,
-			-4.8479458497755565887848448e-31,
-			-1.0558306941230714314205866666666e-32
-		};
+      static readonly double[] bip1cs = 
+    {
+      -0.083220474779434474687471864707973,
+      0.011461189273711742889920226128031,
+      4.2896440718911509494134472566635e-4,
+      -1.4906639379950514017847677732954e-4,
+      -1.3076597267876290663136340998881e-5,
+      6.3275983961030344754535716032494e-6,
+      -4.2226696982681924884778515889433e-7,
+      -1.9147186298654689632835494181277e-7,
+      6.4531062845583173611038157880934e-8,
+      -7.8448546771397719289748310448628e-9,
+      -9.6077216623785085879198533565432e-10,
+      7.0004713316443966339006074402068e-10,
+      -1.7731789132814932022083128056698e-10,
+      2.2720894783465236347282126389311e-11,
+      1.6540456313972049847032860681891e-12,
+      -1.8517125559292316390755369896693e-12,
+      5.9576312477117290165680715534277e-13,
+      -1.2194348147346564781055769498986e-13,
+      1.3347869253513048815386347813597e-14,
+      1.7278311524339746664384792889731e-15,
+      -1.4590732013016720735268871713166e-15,
+      4.9010319927115819978994989520104e-16,
+      -1.1556545519261548129262972762521e-16,
+      1.9098807367072411430671732441524e-17,
+      -1.1768966854492179886913995957862e-18,
+      -6.3271925149530064474537459677047e-19,
+      3.3861838880715361614130191322316e-19,
+      -1.0725825321758625254992162219622e-19,
+      2.5995709605617169284786933115562e-20,
+      -4.8477583571081193660962309494101e-21,
+      5.5298913982121625361505513198933e-22,
+      4.9421660826069471371748197444266e-23,
+      -5.5162121924145707458069720814933e-23,
+      2.1437560417632550086631884499626e-23,
+      -6.1910313387655605798785061137066e-24,
+      1.4629362707391245659830967336959e-24,
+      -2.7918484471059005576177866069333e-25,
+      3.6455703168570246150906795349333e-26,
+      5.8511821906188711839382459733333e-28,
+      -2.4946950487566510969745047551999e-27,
+      1.0979323980338380977919579477333e-27,
+      -3.4743388345961115015034088106666e-28,
+      9.137340263534969736317108224e-29,
+      -2.0510352728210629186247720959999e-29,
+      3.7976985698546461748651622399999e-30,
+      -4.8479458497755565887848448e-31,
+      -1.0558306941230714314205866666666e-32
+    };
 
-			static readonly double[] bip2cs = 
-		{
-			-0.11359673758598867913797310895527,
-			0.0041381473947881595760052081171444,
-			1.3534706221193329857696921727508e-4,
-			1.042731665301535340588718345678e-5,
-			1.3474954767849907889589911958925e-6,
-			1.6965374054383983356062511163756e-7,
-			-1.0096500865641624301366228396373e-8,
-			-1.6729119493778475127836973095943e-8,
-			-4.5815364485068383217152795613391e-9,
-			3.7366813665655477274064749384284e-10,
-			5.7669303201452448119584643502111e-10,
-			6.2181265087850324095393408792371e-11,
-			-6.3294120282743068241589177281354e-11,
-			-1.4915047908598767633999091989487e-11,
-			7.8896213942486771938172394294891e-12,
-			2.4960513721857797984888064000127e-12,
-			-1.2130075287291659477746664734814e-12,
-			-3.7404939108727277887343460402716e-13,
-			2.2377278140321476798783446931091e-13,
-			4.7490296312192466341986077472514e-14,
-			-4.5261607991821224810605655831294e-14,
-			-3.017227184198607264511224587602e-15,
-			9.1058603558754058327592683478908e-15,
-			-9.8149238033807062926643864207709e-16,
-			-1.6429400647889465253601245251589e-15,
-			5.5334834214274215451182114635164e-16,
-			2.1750479864482655984374381998156e-16,
-			-1.7379236200220656971287029558087e-16,
-			-1.0470023471443714959283909313604e-18,
-			3.9219145986056386925441403311462e-17,
-			-1.162129368634519692582400566591e-17,
-			-5.4027474491754245533735411307773e-18,
-			4.5441582123884610882675428553304e-18,
-			-2.8775599625221075729427585480086e-19,
-			-1.001734092722534124359616296044e-18,
-			4.4823931215068369856332561906313e-19,
-			7.6135968654908942328948982366775e-20,
-			-1.4448324094881347238956060145422e-19,
-			4.0460859449205362251624847392112e-20,
-			2.0321085700338446891325190707277e-20,
-			-1.9602795471446798718272758041962e-20,
-			3.4273038443944824263518958211738e-21,
-			3.7023705853905135480024651593154e-21,
-			-2.6879595172041591131400332966712e-21,
-			2.8121678463531712209714454683364e-22,
-			6.0933963636177797173271119680329e-22,
-			-3.8666621897150844994172977893413e-22,
-			2.5989331253566943450895651927228e-23,
-			9.7194393622938503767281175216084e-23,
-			-5.9392817834375098415630478204591e-23,
-			3.8864949977113015409591960439444e-24,
-			1.5334307393617272869721512868769e-23,
-			-9.7513555209762624036336521409724e-24,
-			9.6340644440489471424741339383726e-25,
-			2.3841999400208880109946748792454e-24,
-			-1.6896986315019706184848044205207e-24,
-			2.7352715888928361222578444801478e-25,
-			3.566001618540957896011168502573e-25,
-			-3.0234026608258827249534280666954e-25,
-			7.5002041605973930653144204823232e-26,
-			4.8403287575851388827455319838748e-26,
-			-5.4364137654447888432698010297766e-26,
-			1.9281214470820962653345978809756e-26,
-			5.0116355020532656659611814172172e-27,
-			-9.5040744582693253786034620869972e-27,
-			4.6372646157101975948696332245611e-27,
-			2.1177170704466954163768170577046e-29,
-			-1.5404850268168594303692204548726e-27,
-			1.0387944293201213662047889194441e-27,
-			-1.9890078156915416751316728235153e-28,
-			-2.1022173878658495471177044522532e-28,
-			2.1353099724525793150633356670491e-28,
-			-7.9040810747961342319023537632627e-29,
-			-1.6575359960435585049973741763592e-29,
-			3.8868342850124112587625586496537e-29,
-			-2.2309237330896866182621562424717e-29,
-			2.7777244420176260265625977404382e-30,
-			5.7078543472657725368712433782772e-30,
-			-5.174308444530385280017337155528e-30,
-			1.8413280751095837198450927071569e-30,
-			4.4422562390957094598544071068647e-31,
-			-9.8504142639629801547464958226943e-31,
-			5.8857201353585104884754198881995e-31,
-			-9.7636075440429787961402312628595e-32,
-			-1.3581011996074695047063597884122e-31,
-			1.3999743518492413270568048380345e-31,
-			-5.9754904545248477620884562981118e-32,
-			-4.0391653875428313641045327529856e-33 
-		};
+      static readonly double[] bip2cs = 
+    {
+      -0.11359673758598867913797310895527,
+      0.0041381473947881595760052081171444,
+      1.3534706221193329857696921727508e-4,
+      1.042731665301535340588718345678e-5,
+      1.3474954767849907889589911958925e-6,
+      1.6965374054383983356062511163756e-7,
+      -1.0096500865641624301366228396373e-8,
+      -1.6729119493778475127836973095943e-8,
+      -4.5815364485068383217152795613391e-9,
+      3.7366813665655477274064749384284e-10,
+      5.7669303201452448119584643502111e-10,
+      6.2181265087850324095393408792371e-11,
+      -6.3294120282743068241589177281354e-11,
+      -1.4915047908598767633999091989487e-11,
+      7.8896213942486771938172394294891e-12,
+      2.4960513721857797984888064000127e-12,
+      -1.2130075287291659477746664734814e-12,
+      -3.7404939108727277887343460402716e-13,
+      2.2377278140321476798783446931091e-13,
+      4.7490296312192466341986077472514e-14,
+      -4.5261607991821224810605655831294e-14,
+      -3.017227184198607264511224587602e-15,
+      9.1058603558754058327592683478908e-15,
+      -9.8149238033807062926643864207709e-16,
+      -1.6429400647889465253601245251589e-15,
+      5.5334834214274215451182114635164e-16,
+      2.1750479864482655984374381998156e-16,
+      -1.7379236200220656971287029558087e-16,
+      -1.0470023471443714959283909313604e-18,
+      3.9219145986056386925441403311462e-17,
+      -1.162129368634519692582400566591e-17,
+      -5.4027474491754245533735411307773e-18,
+      4.5441582123884610882675428553304e-18,
+      -2.8775599625221075729427585480086e-19,
+      -1.001734092722534124359616296044e-18,
+      4.4823931215068369856332561906313e-19,
+      7.6135968654908942328948982366775e-20,
+      -1.4448324094881347238956060145422e-19,
+      4.0460859449205362251624847392112e-20,
+      2.0321085700338446891325190707277e-20,
+      -1.9602795471446798718272758041962e-20,
+      3.4273038443944824263518958211738e-21,
+      3.7023705853905135480024651593154e-21,
+      -2.6879595172041591131400332966712e-21,
+      2.8121678463531712209714454683364e-22,
+      6.0933963636177797173271119680329e-22,
+      -3.8666621897150844994172977893413e-22,
+      2.5989331253566943450895651927228e-23,
+      9.7194393622938503767281175216084e-23,
+      -5.9392817834375098415630478204591e-23,
+      3.8864949977113015409591960439444e-24,
+      1.5334307393617272869721512868769e-23,
+      -9.7513555209762624036336521409724e-24,
+      9.6340644440489471424741339383726e-25,
+      2.3841999400208880109946748792454e-24,
+      -1.6896986315019706184848044205207e-24,
+      2.7352715888928361222578444801478e-25,
+      3.566001618540957896011168502573e-25,
+      -3.0234026608258827249534280666954e-25,
+      7.5002041605973930653144204823232e-26,
+      4.8403287575851388827455319838748e-26,
+      -5.4364137654447888432698010297766e-26,
+      1.9281214470820962653345978809756e-26,
+      5.0116355020532656659611814172172e-27,
+      -9.5040744582693253786034620869972e-27,
+      4.6372646157101975948696332245611e-27,
+      2.1177170704466954163768170577046e-29,
+      -1.5404850268168594303692204548726e-27,
+      1.0387944293201213662047889194441e-27,
+      -1.9890078156915416751316728235153e-28,
+      -2.1022173878658495471177044522532e-28,
+      2.1353099724525793150633356670491e-28,
+      -7.9040810747961342319023537632627e-29,
+      -1.6575359960435585049973741763592e-29,
+      3.8868342850124112587625586496537e-29,
+      -2.2309237330896866182621562424717e-29,
+      2.7777244420176260265625977404382e-30,
+      5.7078543472657725368712433782772e-30,
+      -5.174308444530385280017337155528e-30,
+      1.8413280751095837198450927071569e-30,
+      4.4422562390957094598544071068647e-31,
+      -9.8504142639629801547464958226943e-31,
+      5.8857201353585104884754198881995e-31,
+      -9.7636075440429787961402312628595e-32,
+      -1.3581011996074695047063597884122e-31,
+      1.3999743518492413270568048380345e-31,
+      -5.9754904545248477620884562981118e-32,
+      -4.0391653875428313641045327529856e-33 
+    };
 
-			static readonly double atr    =  8.75069057084843450880771988210148,
-				btr    = -2.09383632135605431360096498526268,
-				eta    = 0.5 * DBL_EPSILON * 0.1,
-				x3sml  = Math.Pow(eta, 0.3333),
-				x32sml = x3sml * x3sml * 1.3104,
-				xbig   = Math.Pow(DBL_MAX, 0.6666);
+      static readonly double atr    =  8.75069057084843450880771988210148,
+        btr    = -2.09383632135605431360096498526268,
+        eta    = 0.5 * DBL_EPSILON * 0.1,
+        x3sml  = Math.Pow(eta, 0.3333),
+        x32sml = x3sml * x3sml * 1.3104,
+        xbig   = Math.Pow(DBL_MAX, 0.6666);
 
-			static readonly int nbif  = initds(bifcs, 13, eta);
-			static readonly int nbig  = initds(bigcs, 13, eta);
-			static readonly int nbif2 = initds(bif2cs,15, eta);
-			static readonly int nbig2 = initds(big2cs,15, eta);
-			static readonly int nbip1 = initds(bip1cs,47, eta);
-			static readonly int nbip2 = initds(bip2cs,88, eta);
+      static readonly int nbif  = initds(bifcs, 13, eta);
+      static readonly int nbig  = initds(bigcs, 13, eta);
+      static readonly int nbif2 = initds(bif2cs,15, eta);
+      static readonly int nbig2 = initds(big2cs,15, eta);
+      static readonly int nbip1 = initds(bip1cs,47, eta);
+      static readonly int nbip2 = initds(bip2cs,88, eta);
 		
 
 
 			
-			/// <summary>
-			/// AiryExpBi(x) calculates the double precision Airy function of the 
-			/// second kind or the double precision exponentially scaled Airy 
-			/// function of the second kind, depending on the value of the 
-			/// double precision argument x. Returns 
-			///     Bi(x)                      for x &lt;= 0.0
-			///     Bi(x)*exp( -2/3 * x^(3/2)) for x &gt;= 0.0 
-			/// </summary>
-			/// <param name="x">The function argument.</param>
-			/// <returns>Airy function of the 
-			/// second kind or the exponentially scaled Airy 
-			/// function of the second kind, depending on the value of the 
-			/// argument x.</returns>
-			/// <remarks><code>
-			/// This is a translation from the Fortran version of SLATEC, FNLIB,
-			/// CATEGORY C10D, REVISION 891214, originally written by Fullerton W.,(LANL)
-			/// to C++.
-			///
-			/// Series for BIF        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   1.45E-32 
-			///                                         log weighted error  31.84 
-			///                               significant figures required  30.85 
-			///                                    decimal places required  32.40 
-			///
-			/// Series for BIG        on the interval -1.00000E+00 to  1.00000E+00 
-			///                                        with weighted error   1.29E-33 
-			///                                         log weighted error  32.89 
-			///                               significant figures required  31.48 
-			///                                    decimal places required  33.45 
-			///
-			/// Series for BIF2       on the interval  1.00000E+00 to  8.00000E+00 
-			///                                        with weighted error   6.08E-32 
-			///                                         log weighted error  31.22 
-			///                        approx significant figures required  30.8 
-			///                                    decimal places required  31.80 
-			///
-			/// Series for BIG2       on the interval  1.00000E+00 to  8.00000E+00 
-			///                                        with weighted error   4.91E-33 
-			///                                         log weighted error  32.31 
-			///                        approx significant figures required  31.6 
-			///                                    decimal places required  32.90 
-			///
-			/// Series for BIP1       on the interval  1.25000E-01 to  3.53553E-01 
-			///                                        with weighted error   1.06E-32 
-			///                                         log weighted error  31.98 
-			///                               significant figures required  30.61 
-			///                                    decimal places required  32.81 
-			///
-			/// Series for BIP2       on the interval  0.          to  1.25000E-01 
-			///                                        with weighted error   4.04E-33 
-			///                                         log weighted error  32.39 
-			///                               significant figures required  31.15 
-			///                                    decimal places required  33.37 
-			/// </code></remarks>
-			public static double AiryExpBi (double x)
-			{
+      /// <summary>
+      /// AiryExpBi(x) calculates the double precision Airy function of the 
+      /// second kind or the double precision exponentially scaled Airy 
+      /// function of the second kind, depending on the value of the 
+      /// double precision argument x. Returns 
+      ///     Bi(x)                      for x &lt;= 0.0
+      ///     Bi(x)*exp( -2/3 * x^(3/2)) for x &gt;= 0.0 
+      /// </summary>
+      /// <param name="x">The function argument.</param>
+      /// <returns>Airy function of the 
+      /// second kind or the exponentially scaled Airy 
+      /// function of the second kind, depending on the value of the 
+      /// argument x.</returns>
+      /// <remarks><code>
+      /// This is a translation from the Fortran version of SLATEC, FNLIB,
+      /// CATEGORY C10D, REVISION 891214, originally written by Fullerton W.,(LANL)
+      /// to C++.
+      ///
+      /// Series for BIF        on the interval -1.00000E+00 to  1.00000E+00 
+      ///                                        with weighted error   1.45E-32 
+      ///                                         log weighted error  31.84 
+      ///                               significant figures required  30.85 
+      ///                                    decimal places required  32.40 
+      ///
+      /// Series for BIG        on the interval -1.00000E+00 to  1.00000E+00 
+      ///                                        with weighted error   1.29E-33 
+      ///                                         log weighted error  32.89 
+      ///                               significant figures required  31.48 
+      ///                                    decimal places required  33.45 
+      ///
+      /// Series for BIF2       on the interval  1.00000E+00 to  8.00000E+00 
+      ///                                        with weighted error   6.08E-32 
+      ///                                         log weighted error  31.22 
+      ///                        approx significant figures required  30.8 
+      ///                                    decimal places required  31.80 
+      ///
+      /// Series for BIG2       on the interval  1.00000E+00 to  8.00000E+00 
+      ///                                        with weighted error   4.91E-33 
+      ///                                         log weighted error  32.31 
+      ///                        approx significant figures required  31.6 
+      ///                                    decimal places required  32.90 
+      ///
+      /// Series for BIP1       on the interval  1.25000E-01 to  3.53553E-01 
+      ///                                        with weighted error   1.06E-32 
+      ///                                         log weighted error  31.98 
+      ///                               significant figures required  30.61 
+      ///                                    decimal places required  32.81 
+      ///
+      /// Series for BIP2       on the interval  0.          to  1.25000E-01 
+      ///                                        with weighted error   4.04E-33 
+      ///                                         log weighted error  32.39 
+      ///                               significant figures required  31.15 
+      ///                                    decimal places required  33.37 
+      /// </code></remarks>
+      public static double AiryExpBi (double x)
+      {
 		
 
-				double ret_val, z, theta, sqrtx, xm;
+        double ret_val, z, theta, sqrtx, xm;
 
-				if (x >= -1.0) goto L20;
-				d9aimp(x, out xm, out theta);
-				return xm * Math.Sin(theta);
+        if (x >= -1.0) goto L20;
+        d9aimp(x, out xm, out theta);
+        return xm * Math.Sin(theta);
 
-				L20:
-					if (x > 1.0) goto L30;
-				z = 0.0;
-				if (Math.Abs(x) > x3sml) z = x * x * x;
-				ret_val = dcsevl(z,bifcs,nbif) + 0.625 + x * (dcsevl(z,bigcs,nbig) + 0.4375);
-				if (x > x32sml) ret_val *= Math.Exp(x * -2.0 * Math.Sqrt(x) / 3.0);
-				return ret_val;
+        L20:
+          if (x > 1.0) goto L30;
+        z = 0.0;
+        if (Math.Abs(x) > x3sml) z = x * x * x;
+        ret_val = dcsevl(z,bifcs,nbif) + 0.625 + x * (dcsevl(z,bigcs,nbig) + 0.4375);
+        if (x > x32sml) ret_val *= Math.Exp(x * -2.0 * Math.Sqrt(x) / 3.0);
+        return ret_val;
 
-				L30:
-					if (x > 2.0) goto L40;
-				z = (x * x * x * 2.0 - 9.0) / 7.0;
-				return Math.Exp(x * -2.0 * Math.Sqrt(x) / 3.0) 
-					* (dcsevl(z, bif2cs, nbif2) + 1.125 
-					+ x * (dcsevl(z, big2cs, nbig2) + 0.625));
+        L30:
+          if (x > 2.0) goto L40;
+        z = (x * x * x * 2.0 - 9.0) / 7.0;
+        return Math.Exp(x * -2.0 * Math.Sqrt(x) / 3.0) 
+          * (dcsevl(z, bif2cs, nbif2) + 1.125 
+          + x * (dcsevl(z, big2cs, nbig2) + 0.625));
 
-				L40:
-					if (x > 4.0) goto L50;
-				sqrtx = Math.Sqrt(x);
-				z = atr / (x * sqrtx) + btr;
-				return (dcsevl(z, bip1cs, nbip1) + 0.625) / Math.Sqrt(sqrtx);
+        L40:
+          if (x > 4.0) goto L50;
+        sqrtx = Math.Sqrt(x);
+        z = atr / (x * sqrtx) + btr;
+        return (dcsevl(z, bip1cs, nbip1) + 0.625) / Math.Sqrt(sqrtx);
 
-				L50:
-					sqrtx = Math.Sqrt(x);
-				z = -1.0;
-				if (x < xbig) z = 16.0 / (x * sqrtx) - 1.0;
-				return (dcsevl(z, bip2cs, nbip2) + 0.625) / Math.Sqrt(sqrtx);
-			}
-		}
-		#endregion
+        L50:
+          sqrtx = Math.Sqrt(x);
+        z = -1.0;
+        if (x < xbig) z = 16.0 / (x * sqrtx) - 1.0;
+        return (dcsevl(z, bip2cs, nbip2) + 0.625) / Math.Sqrt(sqrtx);
+      }
+    }
+    #endregion
 
-	}
+  }
 }
