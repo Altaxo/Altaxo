@@ -389,7 +389,7 @@ namespace Altaxo.Serialization.Ascii
             {
               Altaxo.Data.DoubleColumn newc = new Altaxo.Data.DoubleColumn();
               newc[i]=val;
-              newcols[k] = newc;
+              newcols.Replace(k,newc);
             }
             else
             {
@@ -406,12 +406,13 @@ namespace Altaxo.Serialization.Ascii
                 Altaxo.Data.DateTimeColumn newc = new Altaxo.Data.DateTimeColumn();
                 newc[i]=valDateTime;
                 
-                newcols[k] = newc;
+                newcols.Replace(k, newc);
               }
               else
               {
-                newcols[k] = new Altaxo.Data.TextColumn();
-                ((Altaxo.Data.TextColumn)newcols[k])[i]=substr[k];
+                Altaxo.Data.TextColumn newc = new Altaxo.Data.TextColumn();
+                newc[i]=substr[k];
+                newcols.Replace(k,newc);
               }
             } // end outer if null==newcol
           }
@@ -425,9 +426,10 @@ namespace Altaxo.Serialization.Ascii
       bool tableWasEmptyBefore = table.DataColumns.ColumnCount==0;
       for(int i=0;i<newcols.ColumnCount;i++)
       {
-        if(newcols[i] is Altaxo.Data.DBNullColumn)
-          continue;
-        table.DataColumns.CopyOrReplaceOrAdd(i,newcols[i], newcols.GetColumnName(i));
+        if(newcols[i] is Altaxo.Data.DBNullColumn) // if the type is undefined, use a new DoubleColumn
+          table.DataColumns.CopyOrReplaceOrAdd(i,new Altaxo.Data.DoubleColumn(), newcols.GetColumnName(i));
+        else
+          table.DataColumns.CopyOrReplaceOrAdd(i,newcols[i], newcols.GetColumnName(i));
 
         // set the first column as x-column if the table was empty before, and there are more than one column
         if(i==0 && tableWasEmptyBefore && newcols.ColumnCount>1)

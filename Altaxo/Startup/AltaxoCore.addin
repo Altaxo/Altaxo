@@ -409,6 +409,13 @@
 						class="Altaxo.Worksheet.Commands.PlotLineAndScatter" />
 					<MenuItem id="PlotDensityImage" label="${res:XML.MainMenu.PlotMenu.PlotDensityImage}" description="${res:XML.MainMenu.PlotMenu.PlotDensityImage.Description}"
 						class="Altaxo.Worksheet.Commands.PlotDensityImage" />
+
+      		<Conditional ContainsPLSModelData="*" action="Exclude">
+      		  <MenuItem id="PLS" label="${res:XML.MainMenu.PLSPlotMenu}">
+    					<MenuItem id="PlotYResiduals" label="${res:XML.MainMenu.PlotMenu.PLS.PlotYResiduals}" icon="Icons.16x16.PlotLine"
+		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotYResiduals.Description}" class="Altaxo.Worksheet.Commands.PLSPlotResidualsIndividually" />
+      		  </MenuItem>
+      		</Conditional>
 				</Conditional>
 			</MenuItem>
 		</Conditional>

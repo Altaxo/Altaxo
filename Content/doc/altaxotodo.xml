@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="windows-1252"?>
-<TODOLIST PROJECTNAME="Altaxo" FILEFORMAT="5" NEXTUNIQUEID="8" LASTSORTBY="0" FILEVERSION="4" LASTSORTDIR="-1" LASTMODIFIED="23.04.2004">
+<TODOLIST PROJECTNAME="Altaxo" FILEFORMAT="5" NEXTUNIQUEID="10" LASTSORTBY="0" FILEVERSION="5" LASTSORTDIR="-1" LASTMODIFIED="5/3/2004">
     <TASK PRIORITY="5" LASTMOD="0.00000000" TITLE="Bugfixing" ID="1" POS="1">
         <TASK PRIORITY="5" LASTMOD="0.00000000" TITLE="Fouriertransformation did crash when trying to do it with 5 or 6 points" ID="2" POS="1"/>
-        <TASK STARTDATESTRING="23.04.2004" PRIORITY="5" LASTMOD="38100.51812500" TITLE="Statistics on Rows: crashes if a DateTime column is in the Worksheet" ID="5" STARTDATE="38100.51756944" POS="2"/>
+        <TASK STARTDATESTRING="4/23/2004" PRIORITY="5" LASTMOD="38100.51812500" TITLE="Statistics on Rows: crashes if a DateTime column is in the Worksheet" ID="5" STARTDATE="38100.51756944" POS="2"/>
+        <TASK STARTDATESTRING="5/3/2004" PRIORITY="5" LASTMOD="38110.99964120" TITLE="If editing a property cell and then go to the next cell to the right, if the next cell is outside the view Altaxo shifts the worksheet vertically instead of horizontally" ID="9" STARTDATE="38110.99890046" POS="3"/>
     </TASK>
-    <TASK STARTDATESTRING="23.04.2004" PRIORITY="5" LASTMOD="38100.51719907" TITLE="TODO" ID="3" STARTDATE="38100.51708333" POS="2">
-        <TASK STARTDATESTRING="23.04.2004" PRIORITY="5" LASTMOD="38100.51939815" TITLE="Statistics on columns : property columns should be included in the resulting worksheet" ID="7" STARTDATE="38100.51899306" POS="1"/>
+    <TASK STARTDATESTRING="4/23/2004" PRIORITY="5" LASTMOD="38100.51719907" TITLE="TODO" ID="3" STARTDATE="38100.51708333" POS="2">
+        <TASK STARTDATESTRING="4/23/2004" PRIORITY="5" LASTMOD="38100.51939815" TITLE="Statistics on columns : property columns should be included in the resulting worksheet" ID="7" STARTDATE="38100.51899306" POS="1"/>
     </TASK>
 </TODOLIST>

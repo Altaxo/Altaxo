@@ -88,6 +88,10 @@ namespace Altaxo.Data
     /// </summary>
     protected TableScript m_TableScript;
 
+    /// <summary>
+    /// The table properties, key is a string, 
+    /// </summary>
+    protected System.Collections.Hashtable _TableProperties;
     // Helper Data
 
     /// <summary>
@@ -876,6 +880,22 @@ namespace Altaxo.Data
     }
 
     #endregion
+
+
+    public object GetTableProperty(string key)
+    {
+      return _TableProperties==null ? null : this._TableProperties[key]; 
+    }
+    public void   SetTableProperty(string key, object val)
+    {
+      if(_TableProperties ==null)
+        _TableProperties = new System.Collections.Hashtable();
+
+      if(_TableProperties[key]==null)
+        _TableProperties.Add(key,val);
+      else
+        _TableProperties[key]=val;
+    }
 
     /// <summary>
     /// retrieves the object with the name <code>name</code>.

@@ -134,6 +134,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\MatrixWrapper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\RelativeOrAbsoluteValue.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

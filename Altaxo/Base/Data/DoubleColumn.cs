@@ -228,7 +228,7 @@ namespace Altaxo.Data
         throw new ArgumentException("Try to copy " + v.GetType() + " to " + this.GetType(),"v"); // throw exception
       }
 
-      this.CopyDataFrom(((Altaxo.Data.DoubleColumn)v).m_Array);
+      this.CopyDataFrom(((Altaxo.Data.DoubleColumn)v).m_Array,v.Count);
     }       
 
     /// <summary>
@@ -247,10 +247,25 @@ namespace Altaxo.Data
       return 0;
     }
 
+
+    /// <summary>
+    /// Copies the data from an array into the column. All data in the source array is copied.
+    /// </summary>
+    /// <param name="srcarray">The source array.</param>
     public void CopyDataFrom(double[] srcarray)
     {
+      CopyDataFrom(srcarray,srcarray.Length);
+    }
+
+    /// <summary>
+    /// Copies the data from an array into the column. The data from index 0 until <c>count-1</c> is copied to the destination.
+    /// </summary>
+    /// <param name="srcarray">Array containing the source data.</param>
+    /// <param name="count">Length of the array (or length of the used range of the array, starting from index 0).</param>
+    public void CopyDataFrom(double[] srcarray, int count)
+    {
       int oldCount = this.m_Count;
-      int srcarraycount=GetUsedLength(srcarray,srcarray.Length);
+      int srcarraycount=GetUsedLength(srcarray,Math.Min(srcarray.Length,count));
 
       if(null==srcarray || 0==srcarraycount)
       {

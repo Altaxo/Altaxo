@@ -904,6 +904,37 @@ namespace Altaxo.Calc
       }
     }
 
+    /// <summary>
+    /// Multiplies the row <c>rowb</c> of matrix b element by element to all rows of matrix a. 
+    /// </summary>
+    /// <param name="a">The source matrix.</param>
+    /// <param name="b">The matrix which contains the row to multiply.</param>
+    /// <param name="brow">The row number of matrix b.</param>
+    /// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to matrix b).</param>
+    public static void MultiplyRow(IROMatrix a, IROMatrix b, int brow,  IMatrix c)
+    {
+      int arows = a.Rows;
+      int acols = a.Columns;
+
+      int brows = b.Rows;
+      int bcols = b.Columns;
+
+      int crows = c.Rows;
+      int ccols = c.Columns;
+
+      // Presumtion:
+      if(arows != crows || acols != ccols)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",crows,ccols,arows,acols));
+      if(bcols != acols)
+        throw new ArithmeticException(string.Format("Matrix b[{0},{1}] has not the same number of columns than matrix a[{2},{3}]!",brows,bcols,arows,acols));
+      if(object.ReferenceEquals(b,c))
+        throw new ArithmeticException("Matrix b and c are identical, which is not allowed here!");
+
+      for(int i=0;i<arows;i++)
+        for(int j=0;j<acols;j++)
+          c[i,j] = a[i,j]*b[brow,j];
+    }
+
 
     /// <summary>
     /// Calculates a+b and stores the result in matrix c.
@@ -1000,6 +1031,105 @@ namespace Altaxo.Calc
           c[i,j] -= b*a[i,j];
         }
       }
+    }
+
+
+    /// <summary>
+    /// Add the row <c>rowb</c> of matrix b to all rows of matrix a. 
+    /// </summary>
+    /// <param name="a">The source matrix.</param>
+    /// <param name="b">The matrix which contains the row to add.</param>
+    /// <param name="brow">The row number of matrix b.</param>
+    /// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to matrix b).</param>
+    public static void AddRow(IROMatrix a, IROMatrix b, int brow,  IMatrix c)
+    {
+      int arows = a.Rows;
+      int acols = a.Columns;
+
+      int brows = b.Rows;
+      int bcols = b.Columns;
+
+      int crows = c.Rows;
+      int ccols = c.Columns;
+
+      // Presumtion:
+      if(arows != crows || acols != ccols)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",crows,ccols,arows,acols));
+      if(bcols != acols)
+        throw new ArithmeticException(string.Format("Matrix b[{0},{1}] has not the same number of columns than matrix a[{2},{3}]!",brows,bcols,arows,acols));
+      if(object.ReferenceEquals(b,c))
+        throw new ArithmeticException("Matrix b and c are identical, which is not allowed here!");
+
+      for(int i=0;i<arows;i++)
+        for(int j=0;j<acols;j++)
+          c[i,j] = a[i,j]+b[brow,j];
+    }
+
+    /// <summary>
+    /// Subtracts the row <c>rowb</c> of matrix b from all rows of matrix a. 
+    /// </summary>
+    /// <param name="a">The source matrix.</param>
+    /// <param name="b">The matrix which contains the row to subtract.</param>
+    /// <param name="brow">The row number of matrix b.</param>
+    /// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to matrix b).</param>
+    public static void SubtractRow(IROMatrix a, IROMatrix b, int brow,  IMatrix c)
+    {
+      int arows = a.Rows;
+      int acols = a.Columns;
+
+      int brows = b.Rows;
+      int bcols = b.Columns;
+
+      int crows = c.Rows;
+      int ccols = c.Columns;
+
+      // Presumtion:
+      if(arows != crows || acols != ccols)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",crows,ccols,arows,acols));
+      if(bcols != acols)
+        throw new ArithmeticException(string.Format("Matrix b[{0},{1}] has not the same number of columns than matrix a[{2},{3}]!",brows,bcols,arows,acols));
+      if(object.ReferenceEquals(b,c))
+        throw new ArithmeticException("Matrix b and c are identical, which is not allowed here!");
+
+      for(int i=0;i<arows;i++)
+        for(int j=0;j<acols;j++)
+          c[i,j] = a[i,j]-b[brow,j];
+    }
+
+    
+    /// <summary>
+    /// Divides all rows of matrix a by the row <c>rowb</c> of matrix b (element by element). 
+    /// </summary>
+    /// <param name="a">The source matrix.</param>
+    /// <param name="b">The matrix which contains the denominator row.</param>
+    /// <param name="brow">The row number of matrix b which serves as denominator.</param>
+    /// <param name="resultIfNull">If the denominator is null, the result is set to this number.</param>
+    /// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to matrix b).</param>
+    public static void DivideRow(IROMatrix a, IROMatrix b, int brow, double resultIfNull, IMatrix c)
+    {
+      int arows = a.Rows;
+      int acols = a.Columns;
+
+      int brows = b.Rows;
+      int bcols = b.Columns;
+
+      int crows = c.Rows;
+      int ccols = c.Columns;
+
+      // Presumtion:
+      if(arows != crows || acols != ccols)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",crows,ccols,arows,acols));
+      if(bcols != acols)
+        throw new ArithmeticException(string.Format("Matrix b[{0},{1}] has not the same number of columns than matrix a[{2},{3}]!",brows,bcols,arows,acols));
+      if(object.ReferenceEquals(b,c))
+        throw new ArithmeticException("Matrix b and c are identical, which is not allowed here!");
+
+      for(int i=0;i<arows;i++)
+        for(int j=0;j<acols;j++)
+        {
+          double denom = b[brow,j];
+          c[i,j] = denom==0 ? resultIfNull : a[i,j]/denom;
+        }
     }
 
     #endregion
@@ -1601,7 +1731,7 @@ namespace Altaxo.Calc
       IROMatrix W, // weighting matrix
       IROMatrix V,  // Cross product vector
       int numFactors, // number of factors to use for prediction
-      ref IMatrix predictedY // Matrix of predicted y-values, must be same number of rows as spectra
+      IMatrix predictedY // Matrix of predicted y-values, must be same number of rows as spectra
       )
     {
       // now predicting a "unkown" spectra
@@ -1780,7 +1910,7 @@ namespace Altaxo.Calc
         crossPRESS[0] += MatrixMath.SumOfSquares(YU);
         for(int nFactor=1;nFactor<=numFactors;nFactor++)
         {
-          PartialLeastSquares_Predict_HO(XU,xLoads,yLoads,W,V,nFactor,ref predY);
+          PartialLeastSquares_Predict_HO(XU,xLoads,yLoads,W,V,nFactor,predY);
           crossPRESS[nFactor] += MatrixMath.SumOfSquaredDifferences(YU,predY);
         }
       } // for all groups

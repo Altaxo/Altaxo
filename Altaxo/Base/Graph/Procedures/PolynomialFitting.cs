@@ -112,6 +112,54 @@ namespace Altaxo.Graph.Procedures
       return result;
     }
 
+
+    /// <summary>
+    /// Fits data provided as xcolumn and ycolumn with a polynomial base.
+    /// </summary>
+    /// <param name="order">The order of the fit (1:linear, 2:quadratic, etc.)</param>
+    /// <param name="xcolumn">The column of x-values.</param>
+    /// <param name="ycolumn">The column of y-values.</param>
+    /// <returns>The fit.</returns>
+    public static Altaxo.Calc.Fitting.LinearFitBySvd Fit(int order, Altaxo.Data.DataColumn xcolumn, Altaxo.Data.DataColumn ycolumn)
+    {
+      if(!(xcolumn is Altaxo.Data.INumericColumn))
+        throw new ArgumentException("The x-column must be numeric","xcolumn");
+      if(!(ycolumn is Altaxo.Data.INumericColumn))
+        throw new ArgumentException("The y-column must be numeric","ycolumn");
+
+      int firstIndex = 0;
+      int count  = Math.Min(xcolumn.Count,ycolumn.Count);
+
+      double[] xarr = new double[count];
+      double[] yarr = new double[count];
+      double[] earr = new double[count];
+
+      Altaxo.Data.INumericColumn xcol = (Altaxo.Data.INumericColumn)xcolumn;
+      Altaxo.Data.INumericColumn ycol = (Altaxo.Data.INumericColumn)ycolumn;
+
+      int numberOfDataPoints=0;
+      int endIndex = firstIndex+count;
+      for(int i=firstIndex;i<endIndex;i++)
+      {
+        double x = xcol.GetDoubleAt(i);
+        double y = ycol.GetDoubleAt(i);
+        if(double.IsNaN(x) || double.IsNaN(y))
+          continue;
+
+        xarr[numberOfDataPoints] = x;
+        yarr[numberOfDataPoints] = y;
+        earr[numberOfDataPoints] = 1;
+        numberOfDataPoints++;
+      }
+
+      Altaxo.Calc.Fitting.LinearFitBySvd fit = 
+        new Altaxo.Calc.Fitting.LinearFitBySvd(
+        xarr,yarr,earr,numberOfDataPoints, order+1, new Altaxo.Calc.Fitting.FunctionBaseEvaluator(EvaluatePolynomialBase),1E-5);
+
+      return fit;
+
+    }
+
     public static string Fit(Altaxo.Graph.GUI.GraphController ctrl, int order, double fitCurveXmin, double fitCurveXmax, bool showFormulaOnGraph)
     {
       string error;

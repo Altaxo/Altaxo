@@ -27,10 +27,35 @@ namespace Altaxo.Collections
   /// <summary>
   /// Stores a number of arbitrary integer values in ascending order.
   /// </summary>
-  public class AscendingIntegerCollection : IAscendingIntegerCollection
+  public class AscendingIntegerCollection : IAscendingIntegerCollection, System.ICloneable
   {
     protected System.Collections.SortedList _list = new System.Collections.SortedList();
 
+    /// <summary>
+    /// Creates an empty collection.
+    /// </summary>
+    public AscendingIntegerCollection()
+    {
+    }
+
+    /// <summary>
+    /// Creates a collection cloned from another <see>AscendingIntegerCollection</see>.
+    /// </summary>
+    /// <param name="from"></param>
+    public AscendingIntegerCollection(AscendingIntegerCollection from)
+    {
+      _list = (System.Collections.SortedList)from._list.Clone();
+    }
+
+    /// <summary>
+    /// Creates the collection copied from another <see>IAscendingIntegerCollection</see>.
+    /// </summary>
+    /// <param name="from"></param>
+    public AscendingIntegerCollection(IAscendingIntegerCollection from)
+    {
+      for(int i=0;i<from.Count;i++)
+        this.Add(from[i]);
+    }
 
     /// <summary>
     /// Number of integer values stored in this collection
@@ -161,6 +186,17 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
+    /// Adds all values from another <see>IAscendingIntegerCollection</see>.
+    /// </summary>
+    /// <param name="from">The source collection.</param>
+    public void Add(IAscendingIntegerCollection from)
+    {
+      int end = from.Count;
+      for(int i=0;i<end;i++)
+        Add(from[i]);
+    }
+
+    /// <summary>
     /// Removes an integer value from the collection.
     /// </summary>
     /// <param name="nValue">The integer value to remove.</param>
@@ -176,5 +212,13 @@ namespace Altaxo.Collections
     {
       _list.Clear();
     }
+    #region ICloneable Members
+
+    public object Clone()
+    {
+      return new AscendingIntegerCollection(this);
+    }
+
+    #endregion
   }
 }

@@ -244,6 +244,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\MenuCommands\PLSPlotCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\MenuCommands\SelectedColumnCondition.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
