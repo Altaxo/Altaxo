@@ -46,13 +46,13 @@ namespace Altaxo.Calc
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         RelativeOrAbsoluteValue s = (RelativeOrAbsoluteValue)obj;
-					
+          
         info.AddValue("IsRelative",s.m_bIsRelative);
         info.AddValue("Value",s.m_Value);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-				
+        
         bool rel = info.GetBoolean("IsRelative");
         double val = info.GetDouble("Value");
         return new RelativeOrAbsoluteValue(val,rel);

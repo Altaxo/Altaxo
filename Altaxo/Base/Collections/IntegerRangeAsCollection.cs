@@ -93,9 +93,9 @@ namespace Altaxo.Collections
     /// int rangestart, rangecount;
     /// int currentPosition=0;
     /// while(GetNextRangeAscending(ref currentPosition, out rangestart, out rangecount))
-    ///		{
-    ///		// do your things here
-    ///		}
+    ///   {
+    ///   // do your things here
+    ///   }
     /// </code></remarks>
     public bool GetNextRangeAscending(ref int currentposition, ref int rangestart, ref int rangecount)
     {
@@ -124,9 +124,9 @@ namespace Altaxo.Collections
     /// int rangestart, rangecount;
     /// int currentPosition=selection.Count-1;
     /// while(selection.GetNextRangeAscending(currentPosition,out rangestart, out rangecount))
-    ///		{
-    ///		// do your things here
-    ///		}
+    ///   {
+    ///   // do your things here
+    ///   }
     /// </code></remarks>
     public bool GetNextRangeDescending(ref int currentposition, ref int rangestart, ref int rangecount)
     {

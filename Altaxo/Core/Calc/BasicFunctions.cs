@@ -23,7 +23,7 @@
 
 // The following code was translated using Matpack sources (http://www.matpack.de) (Author B.Gammel)
 // Original MatPack-1.7.3\Source\hypot3f.cc
-//					MatPack-1.7.3\Source\hypot3d.cc
+//          MatPack-1.7.3\Source\hypot3d.cc
 //          MatPack-1.7.3\Source\dlnrel.cc
 //          MatPack-1.7.3\Source\clnrel.cc
 //          MatPack-1.7.3\Source\dcbrt.cc
@@ -87,7 +87,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="d">The argument.</param>
     /// <returns>The nearest integer of the argument d.</returns>
-    public static int	Nint (double d)
+    public static int Nint (double d)
     {
       return (d>0) ? (int)(d+0.5) : -(int)(-d+0.5);
     }
@@ -196,7 +196,7 @@ namespace Altaxo.Calc
     }
 
     #endregion
-		
+    
 
 
     #region LogRel
@@ -317,7 +317,7 @@ namespace Altaxo.Calc
       double rho = ComplexMath.Abs(z);
       if (rho > 0.375)
         return ComplexMath.Log(1.0 + z);
-		
+    
       return new Complex(0.5*LogRel(2.0*z.Re+rho*rho), ComplexMath.Arg(1.0+z));
     }
 

@@ -34,126 +34,126 @@ using Altaxo.Main.GUI;
 
 namespace Altaxo
 {
-	/// <summary>
-	/// This class holds the application instance.
-	/// </summary>
-	public class Current
-	{
-	
-		
-		//private static object sm_theApplication;
+  /// <summary>
+  /// This class holds the application instance.
+  /// </summary>
+  public class Current
+  {
+  
+    
+    //private static object sm_theApplication;
 
-		private static IWorkbench sm_theWorkbench;
+    private static IWorkbench sm_theWorkbench;
 
-		private static Altaxo.Main.IProjectService sm_theProjectService;
+    private static Altaxo.Main.IProjectService sm_theProjectService;
 
-		private static Altaxo.Main.IPrintingService sm_thePrintingService;
+    private static Altaxo.Main.IPrintingService sm_thePrintingService;
 
-		private static bool sm_theApplicationIsClosing;
+    private static bool sm_theApplicationIsClosing;
 
-		public static IWorkbench Workbench
-		{
-			get { return sm_theWorkbench; }
-		}
+    public static IWorkbench Workbench
+    {
+      get { return sm_theWorkbench; }
+    }
 
-		public static Altaxo.Main.IProjectService ProjectService
-		{
-			get { return sm_theProjectService; }
-		}
+    public static Altaxo.Main.IProjectService ProjectService
+    {
+      get { return sm_theProjectService; }
+    }
 
-		public static Altaxo.AltaxoDocument Project
-		{
-			get { return sm_theProjectService.CurrentOpenProject; }
-		}
+    public static Altaxo.AltaxoDocument Project
+    {
+      get { return sm_theProjectService.CurrentOpenProject; }
+    }
 
-		public static Altaxo.Main.IPrintingService PrintingService
-		{
-			get { return sm_thePrintingService; }
-		}
+    public static Altaxo.Main.IPrintingService PrintingService
+    {
+      get { return sm_thePrintingService; }
+    }
 
-		public static bool ApplicationIsClosing
-		{
-			get { return sm_theApplicationIsClosing; }
-			set { sm_theApplicationIsClosing = value; }
-		}
+    public static bool ApplicationIsClosing
+    {
+      get { return sm_theApplicationIsClosing; }
+      set { sm_theApplicationIsClosing = value; }
+    }
 
-		/// <summary>
-		/// Returns the main windows form.
-		/// </summary>
-		public static Form MainWindow
-		{
-			get 
-			{
-				if(Current.Workbench is Form)
-					return (Form)Current.Workbench;
-				else
-					return (Form)Current.Workbench.ViewObject;				
-			}
-		}
-	
+    /// <summary>
+    /// Returns the main windows form.
+    /// </summary>
+    public static Form MainWindow
+    {
+      get 
+      {
+        if(Current.Workbench is Form)
+          return (Form)Current.Workbench;
+        else
+          return (Form)Current.Workbench.ViewObject;        
+      }
+    }
+  
 
-		public static void SetWorkbench(IWorkbench workbench)
-		{
-			if(null==sm_theWorkbench)
-				sm_theWorkbench = workbench; 
-			else
-				throw new ApplicationException("The workbench can not be re-set to another value, only initialized for the first time!");
+    public static void SetWorkbench(IWorkbench workbench)
+    {
+      if(null==sm_theWorkbench)
+        sm_theWorkbench = workbench; 
+      else
+        throw new ApplicationException("The workbench can not be re-set to another value, only initialized for the first time!");
 
-		}
+    }
 
-		public static void SetProjectService(Altaxo.Main.IProjectService projectservice)
-		{
-			if(null==sm_theProjectService)
-				sm_theProjectService = projectservice; 
-			else
-				throw new ApplicationException("The project service can not be re-set to another value, only initialized for the first time!");
+    public static void SetProjectService(Altaxo.Main.IProjectService projectservice)
+    {
+      if(null==sm_theProjectService)
+        sm_theProjectService = projectservice; 
+      else
+        throw new ApplicationException("The project service can not be re-set to another value, only initialized for the first time!");
 
-		}
+    }
 
-		public static void SetPrintingService(Altaxo.Main.IPrintingService printingservice)
-		{
-			if(null==sm_thePrintingService)
-				sm_thePrintingService = printingservice; 
-			else
-				throw new ApplicationException("The printing service can not be re-set to another value, only initialized for the first time!");
+    public static void SetPrintingService(Altaxo.Main.IPrintingService printingservice)
+    {
+      if(null==sm_thePrintingService)
+        sm_thePrintingService = printingservice; 
+      else
+        throw new ApplicationException("The printing service can not be re-set to another value, only initialized for the first time!");
 
-		}
+    }
 
 #if FormerGuiState
-		/// <summary>
-		/// The main entry point for the application. This function has to be called to
-		/// run the application.
-		/// </summary>
-		[STAThread]
-		public static void Main() 
-		{
-			if(null==sm_theProjectService)
-			{
-				sm_theProjectService  = new Altaxo.Main.ProjectService();
+    /// <summary>
+    /// The main entry point for the application. This function has to be called to
+    /// run the application.
+    /// </summary>
+    [STAThread]
+    public static void Main() 
+    {
+      if(null==sm_theProjectService)
+      {
+        sm_theProjectService  = new Altaxo.Main.ProjectService();
 
-				sm_thePrintingService = new Altaxo.Main.PrintingService();
+        sm_thePrintingService = new Altaxo.Main.PrintingService();
 
-				// we construct the main document
-				sm_theProjectService.CurrentOpenProject = new AltaxoDocument();
+        // we construct the main document
+        sm_theProjectService.CurrentOpenProject = new AltaxoDocument();
 
-				MainController ctrl = new MainController();
+        MainController ctrl = new MainController();
 
-				sm_theWorkbench = new AltaxoWorkbench(new MainView());
-				
-				ctrl.SetMenuToMainWindow();
+        sm_theWorkbench = new AltaxoWorkbench(new MainView());
+        
+        ctrl.SetMenuToMainWindow();
 
-				// InitializeMainController(ctrl);
+        // InitializeMainController(ctrl);
 
-			}
-			try
-			{
-				System.Windows.Forms.Application.Run(Current.MainWindow);
-			}
-			catch(Exception e)
-			{
-				System.Windows.Forms.MessageBox.Show(e.ToString());
-			}
-		}
+      }
+      try
+      {
+        System.Windows.Forms.Application.Run(Current.MainWindow);
+      }
+      catch(Exception e)
+      {
+        System.Windows.Forms.MessageBox.Show(e.ToString());
+      }
+    }
 #endif
-	}
+  }
 }

@@ -101,7 +101,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="d">The argument.</param>
     /// <returns>The nearest integer of the argument d.</returns>
-    static int	Nint (double d)
+    static int  Nint (double d)
     {
       return (d>0) ? (int)(d+0.5) : -(int)(-d+0.5);
     }
@@ -117,7 +117,7 @@ namespace Altaxo.Calc
     /// larger than eta.  Ordinarily, eta will be chosen to be one-tenth 
     /// machine precision. 
     /// </summary>
-    /// <param name="os">Double precision array of NOS coefficients in an orthogonal	series.</param>
+    /// <param name="os">Double precision array of NOS coefficients in an orthogonal  series.</param>
     /// <param name="nos">Number of coefficients in OS.</param>
     /// <param name="eta"> single precision scalar containing requested accuracy of  series. </param>
     /// <returns>The number of terms neccessary to insure the error is not larger than eta.</returns>
@@ -157,16 +157,16 @@ namespace Altaxo.Calc
     /// <param name="x">Value at which the series is to be evaluated. </param>
     /// <param name="cs">cs   array of n terms of a Chebyshev series. In evaluating 
     /// cs, only half the first coefficient is summed. 
-    ///	</param>
+    /// </param>
     /// <param name="n">number of terms in array cs.</param>
     /// <returns>The n-term Chebyshev series cs at x.</returns>
     /// <remarks>
     /// References:
     ///
-    ///	R. Broucke, Ten subroutines for the manipulation of Chebyshev series, 
-    ///	Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256. 
+    /// R. Broucke, Ten subroutines for the manipulation of Chebyshev series, 
+    /// Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256. 
     ///
-    ///	L. Fox and I. B. Parker, Chebyshev Polynomials in 
+    /// L. Fox and I. B. Parker, Chebyshev Polynomials in 
     ///      Numerical Analysis, Oxford University Press, 1968,  page 56. 
     ///
     /// This is a translation from the Fortran version of SLATEC, FNLIB,
@@ -384,13 +384,13 @@ namespace Altaxo.Calc
     -2.9860056267039913454250666666666e-32 
   };
       static readonly double pi4 = 0.785398163397448309615660845819876;
-      static readonly double	eta = 0.5 * DBL_EPSILON * 0.1;
-      static readonly double	xmax = 1.0 / DBL_EPSILON;
+      static readonly double  eta = 0.5 * DBL_EPSILON * 0.1;
+      static readonly double  xmax = 1.0 / DBL_EPSILON;
       static readonly int _d9b0mp_nbm0  = initds(_d9b0mp_bm0cs,  37, eta);
       static readonly int _d9b0mp_nbt02 = initds(_d9b0mp_bt02cs, 39, eta);
       static readonly int _d9b0mp_nbm02 = initds(_d9b0mp_bm02cs, 40, eta);
       static readonly int _d9b0mp_nbth0 = initds(_d9b0mp_bth0cs, 44, eta);
-	
+  
 
       //-----------------------------------------------------------------------------//
       //
@@ -431,7 +431,7 @@ namespace Altaxo.Calc
       public static void d9b0mp (double x, out double ampl, out double theta)
       {
 
-		
+    
 
         if (x < 4.0) 
         { 
@@ -461,7 +461,7 @@ namespace Altaxo.Calc
     #endregion
 
     #region d9b1mp
-		
+    
     static void d9b1mp (double x, out double ampl, out double theta)
     {
       _d9b1mp.d9b1mp(x, out ampl, out theta);
@@ -647,13 +647,13 @@ namespace Altaxo.Calc
   };
     
       static readonly double pi4  = 0.785398163397448309615660845819876;
-      static readonly double 	eta  = 0.5 * DBL_EPSILON * 0.1;
-      static readonly double 	xmax = 1.0 / DBL_EPSILON;
+      static readonly double  eta  = 0.5 * DBL_EPSILON * 0.1;
+      static readonly double  xmax = 1.0 / DBL_EPSILON;
       static readonly int _d9b1mp_nbm1  = initds(_d9b1mp_bm1cs,  37, eta);
       static readonly int _d9b1mp_nbt12 = initds(_d9b1mp_bt12cs, 39, eta);
       static readonly int _d9b1mp_nbm12 = initds(_d9b1mp_bm12cs, 40, eta);
       static readonly int _d9b1mp_nbth1 = initds(_d9b1mp_bth1cs, 44, eta);
-	
+  
 
 
       //-----------------------------------------------------------------------------//
@@ -694,7 +694,7 @@ namespace Altaxo.Calc
 
       public static void d9b1mp (double x, out double ampl, out double theta)
       {
-			
+      
 
         if (x < 4.0) 
         {
@@ -730,7 +730,7 @@ namespace Altaxo.Calc
     {
       _d9aimp.d9aimp(x, out ampl, out theta);
     }
-			
+      
 
     class _d9aimp
     {
@@ -1141,7 +1141,7 @@ namespace Altaxo.Calc
       static readonly int nath1 = initds(ath1cs, 58, eta);
       static readonly int nam22 = initds(am22cs, 74, eta);
       static readonly int nath2 = initds(ath2cs, 72, eta);
-		
+    
 
 
       //-----------------------------------------------------------------------------//
@@ -1195,7 +1195,7 @@ namespace Altaxo.Calc
 
       public static void d9aimp(double x, out double ampl, out double theta)
       {
-		
+    
 
         double z, sqrtx;
 
@@ -1272,9 +1272,9 @@ namespace Altaxo.Calc
   };
       static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 8.0);
       static readonly int _BesselJ0_ntj0 = initds(_BesselJ0_bj0cs, 19, 0.5 * DBL_EPSILON * 0.1);
-		
+    
 
-		
+    
       /// <summary>
       /// BesselJ0(x) calculates the double precision Bessel function of 
       /// the first kind of order zero for double precision argument x. 
@@ -1294,8 +1294,8 @@ namespace Altaxo.Calc
       /// </code></remarks>
       public static double BesselJ0 (double x)
       {
-	
-			
+  
+      
 
         double y = Math.Abs(x);
         if (y > 4.0) goto L20;
@@ -1356,9 +1356,9 @@ namespace Altaxo.Calc
       static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 8.0);
       static readonly double xmin = DBL_MIN * 2.0;
       static readonly int _BesselJ1_ntj1 = initds(_BesselJ1_bj1cs, 19, 0.5 * DBL_EPSILON * 0.1);
-	
+  
 
-			
+      
 
       /// <summary>
       /// BesselJ1(x) calculates the double precision Bessel function of the 
@@ -1381,7 +1381,7 @@ namespace Altaxo.Calc
       public static double BesselJ1 (double x)
       {
         double ret_val = 0.0;
-			
+      
 
         double y = Math.Abs(x);
         if (y > 4.0) goto L20;
@@ -1409,7 +1409,7 @@ namespace Altaxo.Calc
 
     #region BesselJn
 
-	
+  
 
     /// <summary>
     /// BesselJ(n,x) calculates the double precision Bessel function of the 
@@ -1529,10 +1529,10 @@ namespace Altaxo.Calc
   };
 
       static readonly double twodpi = 0.636619772367581343075535053490057;
-      static readonly double	xsml   = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
+      static readonly double  xsml   = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
       static readonly  int _BesselY0_nty0 = initds(_BesselY0_by0cs, 19, 0.5 * DBL_EPSILON * 0.1);
-	
-	
+  
+  
       /// <summary>
       /// BesselY0(x) calculates the double precision Bessel function of the 
       /// second kind of order zero for double precision argument X. 
@@ -1620,7 +1620,7 @@ namespace Altaxo.Calc
       static readonly double xmin   = Math.Exp(Math.Max(Math.Log(DBL_MIN),-Math.Log(DBL_MAX)) + 0.01) * 1.571;
       static readonly int _BesselY1_nty1 = initds(_BesselY1_by1cs, 20, 0.5 * DBL_EPSILON * 0.1);
 
-			
+      
       /// <summary>
       /// BesselY1(x) calculates the double precision Bessel function of the 
       /// second kind of order for double precision argument x.
@@ -1668,9 +1668,9 @@ namespace Altaxo.Calc
     #endregion
 
     #region BesselYn
-		
+    
 
-		
+    
 
     /// <summary>
     /// BesselY(n,x) calculates the double precision Bessel function of the 
@@ -1749,7 +1749,7 @@ namespace Altaxo.Calc
       static readonly double _BesselI0_xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.5);
       static readonly double _BesselI0_xmax = Math.Log(DBL_MAX);
       static readonly int _BesselI0_nti0 = initds(_BesselI0_bi0cs, 18, 0.5 * DBL_EPSILON * 0.1);
-	
+  
 
       //-----------------------------------------------------------------------------//
       //
@@ -1796,8 +1796,8 @@ namespace Altaxo.Calc
 
         double ret_val;
 
-		
-		
+    
+    
 
         double y = Math.Abs(x);
         if (y > 3.0) goto L20;
@@ -1831,7 +1831,7 @@ namespace Altaxo.Calc
     {
       return _BesselExpI0.BesselExpI0(x);
     }
-		
+    
     class _BesselExpI0
     {
       static readonly double[] _BesselExpI0_bi0cs = 
@@ -1984,10 +1984,10 @@ namespace Altaxo.Calc
       static readonly int _BesselExpI0_nti0   = initds(_BesselExpI0_bi0cs,  18, _BesselExpI0_eta);
       static readonly int _BesselExpI0_ntai0  = initds(_BesselExpI0_ai0cs,  46, _BesselExpI0_eta);
       static readonly int _BesselExpI0_ntai02 = initds(_BesselExpI0_ai02cs, 69, _BesselExpI0_eta);
-		
+    
 
 
-			
+      
 
       /// <summary>
       /// BesselExpI0(x) calculates the double precision exponentially scaled 
@@ -2028,7 +2028,7 @@ namespace Altaxo.Calc
         double ret_val;
 
 
-	
+  
 
         double y = Math.Abs(x);
         if (y > 3.0) goto L20;
@@ -2048,7 +2048,7 @@ namespace Altaxo.Calc
     #endregion
 
     #region BesselI1
-		
+    
     /// <summary>
     /// BesselI1(x) calculates the double precision modified (hyperbolic) 
     /// Bessel function of the first kind of order one and double precision 
@@ -2062,7 +2062,7 @@ namespace Altaxo.Calc
     {
       return _BesselI1.BesselI1( x );
     }
-		
+    
     class _BesselI1
     {
       static readonly double[] _BesselI1_bi1cs = 
@@ -2114,13 +2114,13 @@ namespace Altaxo.Calc
       /// </code></remarks>
       public static double BesselI1 (double x)
       {
-	
+  
 
         double ret_val;
 
-	
+  
     
-			
+      
     
         double y = Math.Abs(x);
         if (y > 3.0) goto L20;
@@ -2317,7 +2317,7 @@ namespace Altaxo.Calc
       static readonly int nti1 = initds(bi1cs, 17, eta);
       static readonly int ntai1 = initds(ai1cs, 46, eta);
       static readonly int ntai12 = initds(ai12cs, 69, eta);
-	
+  
 
 
 
@@ -2435,7 +2435,7 @@ namespace Altaxo.Calc
       static readonly int ntk0 = initds(bk0cs, 16, 0.5 * DBL_EPSILON * 0.1);
 
 
-		
+    
 
       /// <summary>
       /// BesselK0(x) calculates the double precision modified (hyperbolic) 
@@ -2460,7 +2460,7 @@ namespace Altaxo.Calc
       /// </code></remarks>
       public static double BesselK0 (double x)
       {
-	
+  
         double y;
 
         if (x <= 0.0) 
@@ -2484,7 +2484,7 @@ namespace Altaxo.Calc
 
     #region BesselExpK0
 
-		
+    
     /// <summary>
     /// BesselExpK0 (x)  computes the double precision exponentially scaled 
     /// modified (hyperbolic) Bessel function of the third kind of 
@@ -2606,9 +2606,9 @@ namespace Altaxo.Calc
       static readonly int ntk0 = initds(bk0cs, 16, eta);
       static readonly int ntak0 = initds(ak0cs, 38, eta);
       static readonly int ntak02 = initds(ak02cs, 33, eta);
-		
-	
-		
+    
+  
+    
 
       /// <summary>
       /// BesselExpK0 (x)  computes the double precision exponentially scaled 
@@ -2644,7 +2644,7 @@ namespace Altaxo.Calc
       /// </code></remarks>
       public static double BesselExpK0 (double x)
       {
-			
+      
 
         if (x <= 0.0) 
           throw new ArgumentException("x is zero or negative");
@@ -2711,9 +2711,9 @@ namespace Altaxo.Calc
       static readonly double xsml = Math.Sqrt(0.5 * DBL_EPSILON * 4.0);
       static readonly double xmaxt = -Math.Log(DBL_MIN);
       static readonly double xmax = xmaxt - xmaxt * 0.5 * Math.Log(xmaxt) / (xmaxt + 0.5);
-      static readonly int ntk1	= initds(bk1cs, 16, 0.5 * DBL_EPSILON * 0.1);
-				
-			
+      static readonly int ntk1  = initds(bk1cs, 16, 0.5 * DBL_EPSILON * 0.1);
+        
+      
       /// <summary>
       /// BesselK1(x) calculates the double precision modified (hyperbolic) 
       /// Bessel function of the third kind of order one for double precision 
@@ -2738,7 +2738,7 @@ namespace Altaxo.Calc
       public static double BesselK1 (double x)
       {
 
-	
+  
         double y;
 
         if (x <= 0.0) 
@@ -2892,7 +2892,7 @@ namespace Altaxo.Calc
       static readonly int ntak12 = initds(ak12cs,33, eta);
 
 
-			
+      
 
       /// <summary>
       /// BesselExpK1(x) computes the double precision exponentially scaled 
@@ -2928,7 +2928,7 @@ namespace Altaxo.Calc
       /// </code></remarks>
       public static double BesselExpK1 (double x)
       {
-	
+  
 
         double y;
 
@@ -2968,8 +2968,8 @@ namespace Altaxo.Calc
     }
     class _AiryAi
     {
-				
-			
+        
+      
       static readonly double[] aifcs = 
     { 
       -0.037971358496669997496197089469414,
@@ -3010,8 +3010,8 @@ namespace Altaxo.Calc
 
       static readonly int naif = initds(aifcs, 13, 0.5 * DBL_EPSILON * 0.1);
       static readonly int naig = initds(aigcs, 13, 0.5 * DBL_EPSILON * 0.1);
-		
-			
+    
+      
       /// <summary>
       /// AiryAi(x) calculates the double precision Airy function for double 
       /// precision argument x. 
@@ -3054,7 +3054,7 @@ namespace Altaxo.Calc
           if (x > xmax) goto L40;
         return AiryExpAi(x) * Math.Exp(x * -2.0 * Math.Sqrt(x) / 3.0);
 
-        L40:	
+        L40:  
           System.Diagnostics.Trace.WriteLine("Warning (AiryAi): x so big Ai(x) underflows");
         return 0.0;
       }
@@ -3067,8 +3067,8 @@ namespace Altaxo.Calc
     /// AiryExpAi(x) calculates the Airy function or the exponentially scaled 
     /// Airy function depending on the value of the argument.  The function 
     /// and argument are both double precision. Returns
-    ///	Ai(x)                       for x &lt;= 0.0 
-    ///	Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
+    /// Ai(x)                       for x &lt;= 0.0 
+    /// Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
     /// </summary>
     /// <param name="x">The function argument.</param>
     /// <returns>Airy function or the exponentially scaled 
@@ -3225,15 +3225,15 @@ namespace Altaxo.Calc
       static readonly int naig  = initds(aigcs,  13, eta);
       static readonly int naip1 = initds(aip1cs, 57, eta);
       static readonly int naip2 = initds(aip2cs, 37, eta);
-		
+    
 
 
       /// <summary>
       /// AiryExpAi(x) calculates the Airy function or the exponentially scaled 
       /// Airy function depending on the value of the argument.  The function 
       /// and argument are both double precision. Returns
-      ///	Ai(x)                       for x &lt;= 0.0 
-      ///	Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
+      /// Ai(x)                       for x &lt;= 0.0 
+      /// Ai(x) * exp(2/3 * x^(3/2))  for x &gt;= 0.0.
       /// </summary>
       /// <param name="x">The function argument.</param>
       /// <returns>Airy function or the exponentially scaled 
@@ -3269,8 +3269,8 @@ namespace Altaxo.Calc
       /// </code></remarks>
       public static double AiryExpAi (double x)
       {
-	
-			
+  
+      
 
         double sqrtx, xm, z, theta, ret_val;
 
@@ -3398,10 +3398,10 @@ namespace Altaxo.Calc
       static readonly int nbig  = initds(bigcs,  13, eta);
       static readonly int nbif2 = initds(bif2cs, 15, eta);
       static readonly int nbig2 = initds(big2cs, 15, eta);
-	
+  
 
 
-			
+      
 
       /// <summary>
       /// AiryBi(x) calculates the double precision Airy function of the 
@@ -3441,7 +3441,7 @@ namespace Altaxo.Calc
       /// </code></remarks>
       public static double AiryBi (double x)
       {
-			
+      
 
         double z, theta, xm;
 
@@ -3719,10 +3719,10 @@ namespace Altaxo.Calc
       static readonly int nbig2 = initds(big2cs,15, eta);
       static readonly int nbip1 = initds(bip1cs,47, eta);
       static readonly int nbip2 = initds(bip2cs,88, eta);
-		
+    
 
 
-			
+      
       /// <summary>
       /// AiryExpBi(x) calculates the double precision Airy function of the 
       /// second kind or the double precision exponentially scaled Airy 
@@ -3779,7 +3779,7 @@ namespace Altaxo.Calc
       /// </code></remarks>
       public static double AiryExpBi (double x)
       {
-		
+    
 
         double ret_val, z, theta, sqrtx, xm;
 

@@ -38,7 +38,7 @@ using Altaxo.Serialization;
 [assembly: AssemblyProduct("Altaxo")]
 [assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-2004")]
 [assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2004")]
-[assembly: AssemblyCulture("")]		
+[assembly: AssemblyCulture("")]   
 
 //
 // Version information for an assembly consists of the following four values:
@@ -51,7 +51,7 @@ using Altaxo.Serialization;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("0.50.0.215")]
+[assembly: AssemblyVersion("0.50.0.217")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 

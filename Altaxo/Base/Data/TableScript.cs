@@ -95,7 +95,7 @@ namespace Altaxo.Data
       /// <param name="obj">The table script to serialize.</param>
       /// <param name="info">Serialization info.</param>
       /// <param name="context">Streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         Altaxo.Data.TableScript s = (Altaxo.Data.TableScript)obj;
         info.AddValue("Text",s.m_ScriptText);
@@ -123,7 +123,7 @@ namespace Altaxo.Data
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         Altaxo.Data.TableScript s = (Altaxo.Data.TableScript)obj;
-		
+    
         info.AddValue("Text",s.m_ScriptText);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -184,7 +184,7 @@ namespace Altaxo.Data
       get { return m_IsDirty; }
       set { m_IsDirty = value; }
     }
-	
+  
     public static string GenerateScriptName()
     {
       return System.Guid.NewGuid().ToString();
@@ -233,7 +233,7 @@ namespace Altaxo.Data
       {
         if(null==m_ScriptText)
           return 0;
-				
+        
         int pos = m_ScriptText.IndexOf(this.CodeStart);
 
         return pos<0 ? 0 : pos+this.CodeStart.Length;
@@ -351,7 +351,7 @@ namespace Altaxo.Data
           m_Errors[i++] = err.ToString();
         }
       }
-      else	
+      else  
       {
         // try to execute application
         this.m_ScriptAssembly = results.CompiledAssembly;

@@ -1,0 +1,121 @@
+<HTML>
+<HEAD>
+</HEAD><BODY>
+<OBJECT type="text/site properties">
+	<param name="Auto Generated" value="Yes">
+</OBJECT>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="1. Welcome to Altaxo - the leading plotting and data analysis program!">
+		<param name="Local" value="index.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="2. Introduction into Altaxo">
+		<param name="Local" value="Introduction/Intro_Index.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Features in version 0.50">
+			<param name="Local" value="Introduction/Intro_Index.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="GUI">
+				<param name="Local" value="Introduction/Intro_Index.htm">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Plotting">
+					<param name="Local" value="Introduction/Intro_Index.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Input / output">
+					<param name="Local" value="Introduction/Intro_Index.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Data analysis">
+					<param name="Local" value="Introduction/Intro_Index.htm">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Scripting / programming">
+					<param name="Local" value="Introduction/Intro_Index.htm">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Planned features for the next version">
+				<param name="Local" value="Introduction/Intro_Index.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Developers Needed!">
+				<param name="Local" value="Introduction/Intro_Index.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Installation">
+				<param name="Local" value="Introduction/Intro_Index.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Using Altaxo">
+				<param name="Local" value="Introduction/Intro_Index.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Support">
+				<param name="Local" value="Introduction/Intro_Index.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Localization">
+				<param name="Local" value="Introduction/Intro_Index.htm">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="3. Worksheets">
+		<param name="Local" value="Worksheets/Index.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Main concept">
+			<param name="Local" value="Worksheets/Index.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Column selection">
+			<param name="Local" value="Worksheets/Index.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Copy, paste, delete from / to selected regions.">
+			<param name="Local" value="Worksheets/Index.htm">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="4. Graphs">
+		<param name="Local" value="Graphs/Index.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Composition">
+			<param name="Local" value="Graphs/Index.htm">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="5. Supplement">
+		<param name="Local" value="Supplement/OriginDifferences.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Main differences to Origin&amp;reg; (Microcal Corporation)">
+			<param name="Local" value="Supplement/OriginDifferences.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Gui">
+				<param name="Local" value="Supplement/OriginDifferences.htm">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Scripting">
+					<param name="Local" value="Supplement/OriginDifferences.htm">
+					</OBJECT>
+			</UL>
+		</UL>
+	</UL>
+</UL>
+</BODY></HTML>

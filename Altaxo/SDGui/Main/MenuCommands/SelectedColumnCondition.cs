@@ -34,35 +34,35 @@ using ICSharpCode.SharpDevelop.Internal.Project;
 
 namespace Altaxo.Worksheet.Commands
 {
-	[ConditionAttribute()]
-	public class SelectedDataCondition : AbstractCondition
-	{
-		[ICSharpCode.Core.AddIns.XmlMemberAttribute("selecteddatacolumns", IsRequired = true)]
-		string selectedData;
-		
-		public string SelectedData 
-		{
-			get 
-			{
-				return selectedData;
-			}
-			set 
-			{
-				selectedData = value;
-			}
-		}
-		
-		public override bool IsValid(object owner)
-		{
-			if(Current.Workbench.ActiveViewContent==null)
-				return false;
-			if(!(Current.Workbench.ActiveViewContent is Altaxo.Worksheet.GUI.WorksheetController))
-				return false;
+  [ConditionAttribute()]
+  public class SelectedDataCondition : AbstractCondition
+  {
+    [ICSharpCode.Core.AddIns.XmlMemberAttribute("selecteddatacolumns", IsRequired = true)]
+    string selectedData;
+    
+    public string SelectedData 
+    {
+      get 
+      {
+        return selectedData;
+      }
+      set 
+      {
+        selectedData = value;
+      }
+    }
+    
+    public override bool IsValid(object owner)
+    {
+      if(Current.Workbench.ActiveViewContent==null)
+        return false;
+      if(!(Current.Workbench.ActiveViewContent is Altaxo.Worksheet.GUI.WorksheetController))
+        return false;
 
-			Altaxo.Worksheet.GUI.WorksheetController ctrl 
-				= Current.Workbench.ActiveViewContent as Altaxo.Worksheet.GUI.WorksheetController; 
+      Altaxo.Worksheet.GUI.WorksheetController ctrl 
+        = Current.Workbench.ActiveViewContent as Altaxo.Worksheet.GUI.WorksheetController; 
 
-			return ctrl.SelectedColumns.Count>=1;
-		}
-	}
+      return ctrl.SelectedColumns.Count>=1;
+    }
+  }
 }

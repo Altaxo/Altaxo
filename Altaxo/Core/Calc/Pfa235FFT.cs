@@ -41,7 +41,7 @@ namespace Altaxo.Calc.FFT
   ///  stored either in column (Fortran convention) or row (C convention) order.
   ///  This makes about 40 different combinations (float - double, dimension,
   ///  order, complex - real) which can be easily accessed 
-  ///  by a simple class definition:	
+  ///  by a simple class definition:  
   /// </summary>
   public class Pfa235FFT 
   {
@@ -70,7 +70,7 @@ namespace Altaxo.Calc.FFT
 
 
     enum ROW_ORDER { def_row_order = 1 };  // set to true for the C convention
-		
+    
     protected int id, ndim, trisize;
     protected bool row_order=true;
     protected int[] dim = new int[3];
@@ -82,23 +82,23 @@ namespace Altaxo.Calc.FFT
     /// uninitialized setup
     /// </summary>
     /// <remarks>
-    ///	Setup fast Fourier transform / back-transform for one, two or three 
-    ///	dimensions. The dimensions n1,n2,and n3 must be of the form
-    ///	             n = (2**p) * (3**q) * (5**r)
-    ///	otherwise an error will be generated and the error handler function
-    ///	Matpack.Error() is called. On instantiation some trigonometric tables
-    ///	will be allocated and calculated. This approach avoids multiple
-    ///	twiddle factor recalculations if several FFTs are calculated for data 
-    ///	with the same dimensions. Sometimes it is convenient to define an
-    ///	"empty" setup (first constructor) and assign a setup later (see
-    ///	copying and assignment). As default the multi-dimensional data
-    ///	are expected in row order (C convention). If you want to transform
-    ///	data stored in column order (Fortran convention) use the member
-    ///	function SetOrder() to change the order - see below. For optimizations
-    ///	on vector machines with separate memory banks an extra leading dimension
-    ///	can be defined to avoid bank conflicts - also see SetOrder().	
-    ///	</remarks>
-		
+    /// Setup fast Fourier transform / back-transform for one, two or three 
+    /// dimensions. The dimensions n1,n2,and n3 must be of the form
+    ///              n = (2**p) * (3**q) * (5**r)
+    /// otherwise an error will be generated and the error handler function
+    /// Matpack.Error() is called. On instantiation some trigonometric tables
+    /// will be allocated and calculated. This approach avoids multiple
+    /// twiddle factor recalculations if several FFTs are calculated for data 
+    /// with the same dimensions. Sometimes it is convenient to define an
+    /// "empty" setup (first constructor) and assign a setup later (see
+    /// copying and assignment). As default the multi-dimensional data
+    /// are expected in row order (C convention). If you want to transform
+    /// data stored in column order (Fortran convention) use the member
+    /// function SetOrder() to change the order - see below. For optimizations
+    /// on vector machines with separate memory banks an extra leading dimension
+    /// can be defined to avoid bank conflicts - also see SetOrder(). 
+    /// </remarks>
+    
     public Pfa235FFT()
     {
     }
@@ -107,22 +107,22 @@ namespace Altaxo.Calc.FFT
     /// 1-dimensional setup
     /// </summary>
     /// <remarks>
-    ///	Setup fast Fourier transform / back-transform for one, two or three 
-    ///	dimensions. The dimensions n1,n2,and n3 must be of the form
-    ///	             n = (2**p) * (3**q) * (5**r)
-    ///	otherwise an error will be generated and the error handler function
-    ///	Matpack.Error() is called. On instantiation some trigonometric tables
-    ///	will be allocated and calculated. This approach avoids multiple
-    ///	twiddle factor recalculations if several FFTs are calculated for data 
-    ///	with the same dimensions. Sometimes it is convenient to define an
-    ///	"empty" setup (first constructor) and assign a setup later (see
-    ///	copying and assignment). As default the multi-dimensional data
-    ///	are expected in row order (C convention). If you want to transform
-    ///	data stored in column order (Fortran convention) use the member
-    ///	function SetOrder() to change the order - see below. For optimizations
-    ///	on vector machines with separate memory banks an extra leading dimension
-    ///	can be defined to avoid bank conflicts - also see SetOrder().	
-    ///	</remarks>
+    /// Setup fast Fourier transform / back-transform for one, two or three 
+    /// dimensions. The dimensions n1,n2,and n3 must be of the form
+    ///              n = (2**p) * (3**q) * (5**r)
+    /// otherwise an error will be generated and the error handler function
+    /// Matpack.Error() is called. On instantiation some trigonometric tables
+    /// will be allocated and calculated. This approach avoids multiple
+    /// twiddle factor recalculations if several FFTs are calculated for data 
+    /// with the same dimensions. Sometimes it is convenient to define an
+    /// "empty" setup (first constructor) and assign a setup later (see
+    /// copying and assignment). As default the multi-dimensional data
+    /// are expected in row order (C convention). If you want to transform
+    /// data stored in column order (Fortran convention) use the member
+    /// function SetOrder() to change the order - see below. For optimizations
+    /// on vector machines with separate memory banks an extra leading dimension
+    /// can be defined to avoid bank conflicts - also see SetOrder(). 
+    /// </remarks>
     public Pfa235FFT (int n1)
     {
       ndim = 1;
@@ -136,27 +136,27 @@ namespace Altaxo.Calc.FFT
       trigs = new double[trisize];
       gpfasetup(trigs,0,n1);
     }
-			
+      
     /// <summary>
     /// 2-dimensional setup
     /// </summary>
     /// <remarks>
-    ///	Setup fast Fourier transform / back-transform for one, two or three 
-    ///	dimensions. The dimensions n1,n2,and n3 must be of the form
-    ///	             n = (2**p) * (3**q) * (5**r)
-    ///	otherwise an error will be generated and the error handler function
-    ///	Matpack.Error() is called. On instantiation some trigonometric tables
-    ///	will be allocated and calculated. This approach avoids multiple
-    ///	twiddle factor recalculations if several FFTs are calculated for data 
-    ///	with the same dimensions. Sometimes it is convenient to define an
-    ///	"empty" setup (first constructor) and assign a setup later (see
-    ///	copying and assignment). As default the multi-dimensional data
-    ///	are expected in row order (C convention). If you want to transform
-    ///	data stored in column order (Fortran convention) use the member
-    ///	function SetOrder() to change the order - see below. For optimizations
-    ///	on vector machines with separate memory banks an extra leading dimension
-    ///	can be defined to avoid bank conflicts - also see SetOrder().	
-    ///	</remarks>	
+    /// Setup fast Fourier transform / back-transform for one, two or three 
+    /// dimensions. The dimensions n1,n2,and n3 must be of the form
+    ///              n = (2**p) * (3**q) * (5**r)
+    /// otherwise an error will be generated and the error handler function
+    /// Matpack.Error() is called. On instantiation some trigonometric tables
+    /// will be allocated and calculated. This approach avoids multiple
+    /// twiddle factor recalculations if several FFTs are calculated for data 
+    /// with the same dimensions. Sometimes it is convenient to define an
+    /// "empty" setup (first constructor) and assign a setup later (see
+    /// copying and assignment). As default the multi-dimensional data
+    /// are expected in row order (C convention). If you want to transform
+    /// data stored in column order (Fortran convention) use the member
+    /// function SetOrder() to change the order - see below. For optimizations
+    /// on vector machines with separate memory banks an extra leading dimension
+    /// can be defined to avoid bank conflicts - also see SetOrder(). 
+    /// </remarks>  
     public Pfa235FFT (int n1, int n2)
     {
       ndim = 2;
@@ -191,22 +191,22 @@ namespace Altaxo.Calc.FFT
     /// 3-dimensional setup
     /// </summary>
     /// <remarks>
-    ///	Setup fast Fourier transform / back-transform for one, two or three 
-    ///	dimensions. The dimensions n1,n2,and n3 must be of the form
-    ///	             n = (2**p) * (3**q) * (5**r)
-    ///	otherwise an error will be generated and the error handler function
-    ///	Matpack.Error() is called. On instantiation some trigonometric tables
-    ///	will be allocated and calculated. This approach avoids multiple
-    ///	twiddle factor recalculations if several FFTs are calculated for data 
-    ///	with the same dimensions. Sometimes it is convenient to define an
-    ///	"empty" setup (first constructor) and assign a setup later (see
-    ///	copying and assignment). As default the multi-dimensional data
-    ///	are expected in row order (C convention). If you want to transform
-    ///	data stored in column order (Fortran convention) use the member
-    ///	function SetOrder() to change the order - see below. For optimizations
-    ///	on vector machines with separate memory banks an extra leading dimension
-    ///	can be defined to avoid bank conflicts - also see SetOrder().	
-    ///	</remarks>
+    /// Setup fast Fourier transform / back-transform for one, two or three 
+    /// dimensions. The dimensions n1,n2,and n3 must be of the form
+    ///              n = (2**p) * (3**q) * (5**r)
+    /// otherwise an error will be generated and the error handler function
+    /// Matpack.Error() is called. On instantiation some trigonometric tables
+    /// will be allocated and calculated. This approach avoids multiple
+    /// twiddle factor recalculations if several FFTs are calculated for data 
+    /// with the same dimensions. Sometimes it is convenient to define an
+    /// "empty" setup (first constructor) and assign a setup later (see
+    /// copying and assignment). As default the multi-dimensional data
+    /// are expected in row order (C convention). If you want to transform
+    /// data stored in column order (Fortran convention) use the member
+    /// function SetOrder() to change the order - see below. For optimizations
+    /// on vector machines with separate memory banks an extra leading dimension
+    /// can be defined to avoid bank conflicts - also see SetOrder(). 
+    /// </remarks>
     public Pfa235FFT (int n1, int n2, int n3)
     {
       ndim = 3;
@@ -246,22 +246,22 @@ namespace Altaxo.Calc.FFT
     ///  Copy-Constructor
     /// </summary>
     /// <remarks>
-    ///	Setup fast Fourier transform / back-transform for one, two or three 
-    ///	dimensions. The dimensions n1,n2,and n3 must be of the form
-    ///	             n = (2**p) * (3**q) * (5**r)
-    ///	otherwise an error will be generated and the error handler function
-    ///	Matpack.Error() is called. On instantiation some trigonometric tables
-    ///	will be allocated and calculated. This approach avoids multiple
-    ///	twiddle factor recalculations if several FFTs are calculated for data 
-    ///	with the same dimensions. Sometimes it is convenient to define an
-    ///	"empty" setup (first constructor) and assign a setup later (see
-    ///	copying and assignment). As default the multi-dimensional data
-    ///	are expected in row order (C convention). If you want to transform
-    ///	data stored in column order (Fortran convention) use the member
-    ///	function SetOrder() to change the order - see below. For optimizations
-    ///	on vector machines with separate memory banks an extra leading dimension
-    ///	can be defined to avoid bank conflicts - also see SetOrder().	
-    ///	</remarks>	
+    /// Setup fast Fourier transform / back-transform for one, two or three 
+    /// dimensions. The dimensions n1,n2,and n3 must be of the form
+    ///              n = (2**p) * (3**q) * (5**r)
+    /// otherwise an error will be generated and the error handler function
+    /// Matpack.Error() is called. On instantiation some trigonometric tables
+    /// will be allocated and calculated. This approach avoids multiple
+    /// twiddle factor recalculations if several FFTs are calculated for data 
+    /// with the same dimensions. Sometimes it is convenient to define an
+    /// "empty" setup (first constructor) and assign a setup later (see
+    /// copying and assignment). As default the multi-dimensional data
+    /// are expected in row order (C convention). If you want to transform
+    /// data stored in column order (Fortran convention) use the member
+    /// function SetOrder() to change the order - see below. For optimizations
+    /// on vector machines with separate memory banks an extra leading dimension
+    /// can be defined to avoid bank conflicts - also see SetOrder(). 
+    /// </remarks>  
     public Pfa235FFT (Pfa235FFT fft)
     {
       // copy all elements
@@ -278,16 +278,16 @@ namespace Altaxo.Calc.FFT
       // allocate and copy trigs
       trigs = new double[trisize];
       Array.Copy(fft.trigs,0,this.trigs,0,fft.trigs.Length);
-				
+        
     }
-			
+      
     // FFT functions
-										
-										
+                    
+                    
     /// <summary>
     /// Factorize the number into powers of 2, 3, and 5
     /// </summary>
-    /// <param name="n">The dimension n to be factorized into the	valid factors n = (2**p) * (3**q) * (5**r)</param>
+    /// <param name="n">The dimension n to be factorized into the valid factors n = (2**p) * (3**q) * (5**r)</param>
     /// <param name="pqr">Return the powers of the basic prime factors 2, 3 and 5 for the given argument n. Must be at least int[3].</param>
     /// <returns>True if factorization is successful, False if n can not be factorized into powers of 2, 3, and 5.</returns>
     public static bool  Factorize (int n, int[] pqr)
@@ -320,7 +320,7 @@ namespace Altaxo.Calc.FFT
       return Factorize(n,pqr);
     }
 
-			
+      
     /// <summary>
     /// Set information about the row order and the leading dimension.
     /// If the row order argument is non-zero then the d-dimensional data
@@ -335,19 +335,19 @@ namespace Altaxo.Calc.FFT
     /// and will be padded!
     /// </summary>
     /// <param name="row">If the row order argument is non-zero then the 
-    ///				d-dimensional data are assumed to be stored in 
-    ///				row order (the C convention), otherwise if
-    /// 				zero then column order (the Fortran convention) 
-    ///				is assumed. Initially row order is assumed!</param>
+    ///       d-dimensional data are assumed to be stored in 
+    ///       row order (the C convention), otherwise if
+    ///         zero then column order (the Fortran convention) 
+    ///       is assumed. Initially row order is assumed!</param>
     /// <param name="lead">The leading dimension can be choosen different
-    ///				from the first/last dimension of the array. This
-    ///				can give a significant speed increase on some 
-    ///				vector machines avoiding memory-bank conflicts.
-    /// 				If the data are stored column-ordered (Fortran 
-    ///				style) then the leading dimension is the first 
-    ///				dimension, otherwise if the data are stored row-
-    /// 				ordered (C style) then the last dimension is the 
-    ///				leading dimension and will be padded!</param>	
+    ///       from the first/last dimension of the array. This
+    ///       can give a significant speed increase on some 
+    ///       vector machines avoiding memory-bank conflicts.
+    ///         If the data are stored column-ordered (Fortran 
+    ///       style) then the leading dimension is the first 
+    ///       dimension, otherwise if the data are stored row-
+    ///         ordered (C style) then the last dimension is the 
+    ///       leading dimension and will be padded!</param> 
     void SetOrder (int row, int lead)
     {
       if (ndim == 0) 
@@ -388,19 +388,19 @@ namespace Altaxo.Calc.FFT
     /// Get information about the row order and the leading dimension.
     /// </summary>
     /// <param name="row">If the row order argument is non-zero then the 
-    ///				d-dimensional data are assumed to be stored in 
-    ///				row order (the C convention), otherwise if
-    /// 				zero then column order (the Fortran convention) 
-    ///				is assumed. Initially row order is assumed!</param>
+    ///       d-dimensional data are assumed to be stored in 
+    ///       row order (the C convention), otherwise if
+    ///         zero then column order (the Fortran convention) 
+    ///       is assumed. Initially row order is assumed!</param>
     /// <param name="lead">The leading dimension can be choosen different
-    ///				from the first/last dimension of the array. This
-    ///				can give a significant speed increase on some 
-    ///				vector machines avoiding memory-bank conflicts.
-    /// 				If the data are stored column-ordered (Fortran 
-    ///				style) then the leading dimension is the first 
-    ///				dimension, otherwise if the data are stored row-
-    /// 				ordered (C style) then the last dimension is the 
-    ///				leading dimension and will be padded!</param>
+    ///       from the first/last dimension of the array. This
+    ///       can give a significant speed increase on some 
+    ///       vector machines avoiding memory-bank conflicts.
+    ///         If the data are stored column-ordered (Fortran 
+    ///       style) then the leading dimension is the first 
+    ///       dimension, otherwise if the data are stored row-
+    ///         ordered (C style) then the last dimension is the 
+    ///       leading dimension and will be padded!</param>
     void GetOrder (out int row, out int lead)
     {
       row  = row_order ? 1 : 0;
@@ -431,9 +431,9 @@ int FFT (complex<FLOAT> c[], int isign)
   } else if (ndim == 2) {
 
     int one,two;
-    if (row_order) {	// C style
+    if (row_order) {  // C style
       one = 0; two = 1; 
-    } else { 		// column order (Fortran style)
+    } else {    // column order (Fortran style)
       one = 1; two = 0; 
     }
 
@@ -449,9 +449,9 @@ int FFT (complex<FLOAT> c[], int isign)
   } else if (ndim == 3) {
 
     int one,two,three;
-    if (row_order) {	// C style
+    if (row_order) {  // C style
       one = 0; two = 1; three = 2;
-    } else { 		// column order (Fortran style)
+    } else {    // column order (Fortran style)
       one = 2; two = 1; three = 0; 
     }
 
@@ -508,11 +508,11 @@ int FFT (complex<FLOAT> c[], int isign)
 
         int one,two;
         if (row_order) 
-        {	// C style
+        { // C style
           one = 0; two = 1; 
         } 
         else 
-        { 		// column order (Fortran style)
+        {     // column order (Fortran style)
           one = 1; two = 0; 
         }
 
@@ -532,11 +532,11 @@ int FFT (complex<FLOAT> c[], int isign)
 
         int one,two,three;
         if (row_order) 
-        {	// C style
+        { // C style
           one = 0; two = 1; three = 2;
         } 
         else 
-        { 		// column order (Fortran style)
+        {     // column order (Fortran style)
           one = 2; two = 1; three = 0; 
         }
 
@@ -580,9 +580,9 @@ int FFT (complex<FLOAT> c[], int isign)
       iterate:
 
         if (0!=(n & 1)) 
-          g *= x;	// n is odd
+          g *= x; // n is odd
       if ( (n /= 2)!=0 ) 
-      {	
+      { 
         // n/2 is non zero
         x *= x;
         goto iterate;
@@ -590,7 +590,7 @@ int FFT (complex<FLOAT> c[], int isign)
 
       return g;
     }
-	
+  
     #region GPFA Algorithms
 
 
@@ -1877,7 +1877,7 @@ int FFT (complex<FLOAT> c[], int isign)
       // -----( end of loop on blocks of transforms )
     }
 
-    static void gpfa3f    (double[] a, int aOffs, double[] b, int bOffs, double[] trigs,	int trOffs, int inc, int jump, int n, int mm, int lot, int isign)
+    static void gpfa3f    (double[] a, int aOffs, double[] b, int bOffs, double[] trigs,  int trOffs, int inc, int jump, int n, int mm, int lot, int isign)
     {
       const double sin60 = 0.866025403784437;
 
@@ -3599,7 +3599,7 @@ int FFT (complex<FLOAT> c[], int isign)
       if (isign != 1 && isign != -1) 
       {
         throw new ArithmeticException(string.Format("gpfa: {0} is not a legal value of isign = +1/-1", isign)); 
-				
+        
       }
 
       int ip = nj[0], 

@@ -55,7 +55,7 @@ namespace Altaxo.Data
       /// <summary>
       /// With this style, you can write code outside the function <see cref="Altaxo.Calc.ColScriptExeBase.Execute"/>
       /// You can even define your own classes and functions for use by the column script.
-      ///	</summary>
+      /// </summary>
       FreeStyle };
 
     /// <summary>
@@ -77,12 +77,12 @@ namespace Altaxo.Data
     /// Holds the condition of the for-loop if ScriptStyle is SetColumnValues, otherwise not used.
     /// </summary>
     protected string m_RowCondition="<";
-		
+    
     /// <summary>
     /// Holds the end value of the for-loop if ScriptStyle is SetColumnValues, otherwise not used.
     /// </summary>
     protected string m_RowTo="10";
-		
+    
     /// <summary>
     /// The increment statement of the for-loop (can also be decrement or other) if ScriptStyle is SetColumnValues, otherwise not used.
     /// </summary>
@@ -136,7 +136,7 @@ namespace Altaxo.Data
       /// <param name="obj">The column script to serialize.</param>
       /// <param name="info">Serialization info.</param>
       /// <param name="context">Streaming context.</param>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         Altaxo.Data.ColumnScript s = (Altaxo.Data.ColumnScript)obj;
         info.AddValue("Style",(int)s.m_ScriptStyle);
@@ -175,7 +175,7 @@ namespace Altaxo.Data
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         Altaxo.Data.ColumnScript s = (Altaxo.Data.ColumnScript)obj;
-		
+    
         info.AddValue("Style",(int)s.m_ScriptStyle);
         info.AddValue("Text",s.m_ScriptText);
         info.AddValue("From",s.m_RowFrom);
@@ -186,8 +186,8 @@ namespace Altaxo.Data
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         Altaxo.Data.ColumnScript s = null!=o ? (Altaxo.Data.ColumnScript)o : new Altaxo.Data.ColumnScript();
-				
-				
+        
+        
 
         s.m_ScriptStyle = (ScriptStyle)info.GetInt32("Style");
         s.m_ScriptText = info.GetString("Text");
@@ -335,19 +335,19 @@ namespace Altaxo.Data
               "Altaxo.Data.DataColumnCollection col = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(myColumn);\r\n" +
               "Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf(myColumn);\r\n" +
               "Altaxo.Data.DataTableCollection tables = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myColumn);\r\n";
-													
+                          
             //codestart = "col[\"" + dataColumn.ColumnName + "\"]=";
             //codetail = "} /*Execute*/ } /*class*/ } /*namespace*/";
             break;
           case ScriptStyle.FreeStyle:
-            codeheader =	"namespace Altaxo {\r\npublic class SetColVal : Altaxo.Calc.ColScriptExeBase {\r\n"+
+            codeheader =  "namespace Altaxo {\r\npublic class SetColVal : Altaxo.Calc.ColScriptExeBase {\r\n"+
               "public override void Execute(Altaxo.Data.DataColumn myColumn) {\r\n" +
               "Altaxo.Data.DataColumnCollection col = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(myColumn);\r\n" +
               "Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf(myColumn);\r\n" +
               "Altaxo.Data.DataTableCollection tables = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myColumn);\r\n";
             //codestart = "public override void Execute(Altaxo.Data.DataTable col) {\n";
             //codetail = " } /*class*/ } /*namespace*/ \n// You have to provide the end brace of Execute(...), after this you can add own member functions";
-            break;				
+            break;        
           default:
             codeheader="";
             //codestart="";
@@ -371,7 +371,7 @@ namespace Altaxo.Data
         {
           case ScriptStyle.SetColumnValues:
             //codeheader =  "namespace Altaxo { public class SetColVal : ColScriptExeBase {\n";
-            //codeheader +=	"public override void Execute(Altaxo.Data.DataTable col) {\n";
+            //codeheader += "public override void Execute(Altaxo.Data.DataTable col) {\n";
             //codeheader += "Altaxo.Data.DataColumn cts = col[\"" + dataColumn.ColumnName + "\"];\n";
             //codeheader += "for(int i=" + m_RowFrom + ";i" + m_RowCondition + m_RowTo + ";i" + m_RowInc + ") {\n";
             codestart  =  "myColumn[i]=";
@@ -387,7 +387,7 @@ namespace Altaxo.Data
             //codeheader = "namespace Altaxo { public class SetColVal : ColScriptExeBase { ";
             codestart = "";
             //codetail = " } /*class*/ } /*namespace*/ \n// You have to provide the end brace of Execute(...), after this you can add own member functions";
-            break;				
+            break;        
           default:
             //codeheader="";
             codestart="";
@@ -411,7 +411,7 @@ namespace Altaxo.Data
         {
           case ScriptStyle.SetColumnValues:
             //codeheader =  "namespace Altaxo { public class SetColVal : ColScriptExeBase {\n";
-            //codeheader +=	"public override void Execute(Altaxo.Data.DataTable col) {\n";
+            //codeheader += "public override void Execute(Altaxo.Data.DataTable col) {\n";
             //codeheader += "Altaxo.Data.DataColumn cts = col[\"" + dataColumn.ColumnName + "\"];\n";
             //codeheader += "for(int i=" + m_RowFrom + ";i" + m_RowCondition + m_RowTo + ";i" + m_RowInc + ") {\n";
             //codestart  =  "cts[i]=";
@@ -427,7 +427,7 @@ namespace Altaxo.Data
             //codeheader = "namespace Altaxo { public class SetColVal : ColScriptExeBase { ";
             //codestart = "public override void Execute(Altaxo.Data.DataTable col) {\n";
             codetail = " } /*class*/ } /*namespace*/ \n// You have to provide the end brace of Execute(...), after this you can add own member functions";
-            break;				
+            break;        
           default:
             //codeheader="";
             //codestart="";
@@ -487,7 +487,7 @@ namespace Altaxo.Data
           parameters.ReferencedAssemblies.Add(asm.Location);
       }
       String code = CodeHeader + CodeStart + ScriptBody + CodeTail;
-			
+      
 
       CompilerResults results = compiler.CompileAssemblyFromSource(parameters, code);
 
@@ -504,7 +504,7 @@ namespace Altaxo.Data
           m_Errors[i++] = err.ToString();
         }
       }
-      else	
+      else  
       {
         // try to execute application
         this.m_ScriptAssembly = results.CompiledAssembly;
@@ -626,7 +626,7 @@ namespace Altaxo.Data
       : base()
     {
     }
-		
+    
     /// <summary>
     /// Special deserialization constructor.
     /// </summary>
@@ -642,7 +642,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="info">Serialization info.</param>
     /// <param name="context">Streaming context.</param>
-    public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+    public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
     {
       base.GetObjectData(info,context);
     }
@@ -653,7 +653,7 @@ namespace Altaxo.Data
     public ColumnScript this[DataColumn dc]
     {
       get { return base[dc] as ColumnScript; }
-      set {	base[dc]=value;	}
+      set { base[dc]=value; }
     }
   }
 

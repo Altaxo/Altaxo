@@ -45,7 +45,7 @@ namespace Altaxo.Data
   [SerializationSurrogate(1,typeof(Altaxo.Data.DataTable.SerializationSurrogate1))]
   [SerializationVersion(1)]
   public class DataTable 
-    :		
+    :   
     System.Runtime.Serialization.IDeserializationCallback, 
     ICloneable,
     Altaxo.Main.IDocumentNode,
@@ -56,7 +56,7 @@ namespace Altaxo.Data
     Main.ISuspendable
   {
     // Types
-		
+    
     // Data
     /// <summary>
     /// The parent data set this table is belonging to.
@@ -112,7 +112,7 @@ namespace Altaxo.Data
     /// </summary>
     [NonSerialized()]
     private System.Collections.ArrayList m_SuspendedChildCollection = new System.Collections.ArrayList();
-		
+    
     /// <summary>
     /// If not null, the table was changed and the table has not notified the parent and the listeners about that.
     /// </summary>
@@ -138,7 +138,7 @@ namespace Altaxo.Data
     #region "Serialization"
     public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
     {
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
         System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
@@ -181,10 +181,10 @@ namespace Altaxo.Data
 
     public class SerializationSurrogate1 : System.Runtime.Serialization.ISerializationSurrogate
     {
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
-	
+  
         info.AddValue("Name",s.m_TableName); // name of the Table
         info.AddValue("DataCols", s.DataColumns); // the data columns of that table
         info.AddValue("PropCols", s.m_PropertyColumns); // the property columns of that table
@@ -205,7 +205,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable),0)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo	info)
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
       {
         Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
         info.AddValue("Name",s.m_TableName); // name of the Table
@@ -213,7 +213,7 @@ namespace Altaxo.Data
         info.AddValue("PropCols", s.m_PropertyColumns); // the property columns of that table
 
       }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo	info, object parent)
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo  info, object parent)
       {
         Altaxo.Data.DataTable s = null!=o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
 
@@ -230,7 +230,7 @@ namespace Altaxo.Data
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable),1)]
       public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo	info)
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
       {
         Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
         info.AddValue("Name",s.m_TableName); // name of the Table
@@ -240,7 +240,7 @@ namespace Altaxo.Data
         // new in version 1
         info.AddValue("TableScript",s.m_TableScript);
       }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo	info, object parent)
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo  info, object parent)
       {
         Altaxo.Data.DataTable s = null!=o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
 
@@ -306,13 +306,13 @@ namespace Altaxo.Data
         IAscendingIntegerCollection selectedPropertyRows
         )
       {
-        this._table										= table;
-        this._selectedDataColumns			= selectedDataColumns;
-        this._selectedDataRows				= selectedDataRows;
+        this._table                   = table;
+        this._selectedDataColumns     = selectedDataColumns;
+        this._selectedDataRows        = selectedDataRows;
         this._selectedPropertyColumns = selectedPropertyColumns;
         this._selectedPropertyRows    = selectedPropertyRows;
       }
-			
+      
       /// <summary>
       /// Returns the (deserialized) table.
       /// </summary>
@@ -406,7 +406,7 @@ namespace Altaxo.Data
     public DataTable(DataTable from)
       : this((DataColumnCollection)from.m_DataColumns.Clone(),(DataColumnCollection)from.m_PropertyColumns.Clone())
     {
-			
+      
       this.m_Parent = null; // do not clone the parent
       this.m_TableName = from.m_TableName;
       this.m_TableScript = null==from.m_TableScript ? null : (TableScript)from.m_TableScript.Clone();
@@ -453,7 +453,7 @@ namespace Altaxo.Data
     /// </summary>
     public void Suspend()
     {
-      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");		
+      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");    
       ++m_SuspendCount; // suspend one step higher
     }
 
@@ -462,7 +462,7 @@ namespace Altaxo.Data
     /// </summary>
     public void Resume()
     {
-      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");		
+      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");    
       if(m_SuspendCount>0 && (--m_SuspendCount)==0)
       {
         this.m_ResumeInProgress = true;
@@ -481,7 +481,7 @@ namespace Altaxo.Data
           if(!IsSuspended)
           {
             OnDataChanged(); // Fire the changed event
-          }		
+          }   
         }
       }
     }
@@ -497,7 +497,7 @@ namespace Altaxo.Data
       if(sender!=null && m_ChangeData==null)
         this.m_ChangeData = new EventArgs();
     }
-	
+  
     /// <summary>
     /// Used by childrens of the table to inform the table of a change in their data.
     /// </summary>
@@ -512,8 +512,8 @@ namespace Altaxo.Data
         return;
       }
 
-      AccumulateChildChangeData(sender,e);	// AccumulateNotificationData
-			
+      AccumulateChildChangeData(sender,e);  // AccumulateNotificationData
+      
       if(m_ResumeInProgress || IsSuspended)
         return;
 
@@ -526,11 +526,11 @@ namespace Altaxo.Data
           return;
         }
       }
-			
+      
       OnDataChanged(); // Fire the changed event
     }
 
-		
+    
     /// <summary>
     /// Fires the change event with the EventArgs provided in the argument.
     /// </summary>
@@ -586,7 +586,7 @@ namespace Altaxo.Data
     }
 
 
-		
+    
 
     /// <summary>
     /// Get or sets the name of the Table.
@@ -655,7 +655,7 @@ namespace Altaxo.Data
     {
       get { return m_PropertyColumns; }
     }
-		
+    
 
     public TableScript TableScript
     {
@@ -663,10 +663,10 @@ namespace Altaxo.Data
       set
       {
         m_TableScript = value; 
-				
+        
       }
     }
-		
+    
     /// <summary>
     /// Copies data to the data column with the provided index if both columns are of the same type. If they are not of the same type, the column is replaced by the provided column. If the index is beyoind the limit, the provided column is added.
     /// </summary>
@@ -718,10 +718,10 @@ namespace Altaxo.Data
     }
 
 
-		
+    
 
 
-	
+  
 
 
     /// <summary>
@@ -766,9 +766,9 @@ namespace Altaxo.Data
     /// <param name="selectedColumns">A collection of the indizes to the columns that have to be removed.</param>
     public virtual void RemoveColumns(IAscendingIntegerCollection selectedColumns)
     {
-	
+  
       Suspend();
-						
+            
       m_DataColumns.RemoveColumns(selectedColumns); // remove the columns from the collection
       m_PropertyColumns.RemoveRows(selectedColumns); // remove also the corresponding rows from the Properties
 
@@ -858,7 +858,7 @@ namespace Altaxo.Data
     {
       return (DataTable)Main.DocumentPath.GetRootNodeImplementing(child,typeof(DataTable));
     }
-		
+    
   } // end class Altaxo.Data.DataTable
-	
+  
 }

@@ -62,11 +62,11 @@ namespace Altaxo.Calc
     public static double Tan(double s) { return System.Math.Tan(s); }
     public static double Tanh(double s) { return System.Math.Tanh(s); }
     #endregion
-		
+    
 
     #region AltaxoDoubleColumn_Mathematics
     // ---------------------- DoubleColumn mathematics -----------------------------
-		
+    
     public static Altaxo.Data.DoubleColumn Abs(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Abs(s); }
     public static Altaxo.Data.DoubleColumn Acos(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Acos(s); }
     public static Altaxo.Data.DoubleColumn Asin(Altaxo.Data.DoubleColumn s) { return Altaxo.Data.DoubleColumn.Asin(s); }
@@ -180,7 +180,7 @@ namespace Altaxo.Calc
         return Altaxo.Data.DoubleColumn.Cosh((Altaxo.Data.DoubleColumn)x);
       else throw new ArgumentException("Error: Try to apply Cosh() to " + x.TypeAndName,"x");
     }
-	
+  
     public static Altaxo.Data.DoubleColumn Exp(Altaxo.Data.DataColumn x)
     { 
       if(typeof(Altaxo.Data.DoubleColumn)==x.GetType())

@@ -48,14 +48,14 @@ namespace Altaxo.Calc.FFT
     | provided that this license information and copyright notice appear unmodified |
     | in all copies.  This software is provided 'as is'  without express or implied |
     | warranty.  In no event will the author be held liable for any damages arising |
-    | from the use of this software.						|
+    | from the use of this software.            |
     | Note that distributing Matpack 'bundled' in with any product is considered to |
-    | be a 'commercial purpose'.							|
+    | be a 'commercial purpose'.              |
     | The software may be modified for your own purposes, but modified versions may |
-    | not be distributed without prior consent of the author.			|
+    | not be distributed without prior consent of the author.     |
     |                                                                               |
-    | Read the  COPYRIGHT and  README files in this distribution about registration	|
-    | and installation of Matpack.							|
+    | Read the  COPYRIGHT and  README files in this distribution about registration |
+    | and installation of Matpack.              |
     |                                                                               |
     \*-----------------------------------------------------------------------------*/
 
@@ -440,7 +440,7 @@ namespace Altaxo.Calc.FFT
     /*-----------------------------------------------------------------------------*\
     | Fast Fourier Transform based on Fast Hartley Transform              fhtfft.cc |
     |                                                                               |
-    | Last change: Jun 22, 2001							|
+    | Last change: Jun 22, 2001             |
     |                                                                               |
     | Matpack Library Release 1.6.2                                                 |
     | Copyright (C) 1991-2001 by Berndt M. Gammel. All rights reserved.             |
@@ -450,14 +450,14 @@ namespace Altaxo.Calc.FFT
     | provided that this license information and copyright notice appear unmodified |
     | in all copies.  This software is provided 'as is'  without express or implied |
     | warranty.  In no event will the author be held liable for any damages arising |
-    | from the use of this software.						|
+    | from the use of this software.            |
     | Note that distributing Matpack 'bundled' in with any product is considered to |
-    | be a 'commercial purpose'.							|
+    | be a 'commercial purpose'.              |
     | The software may be modified for your own purposes, but modified versions may |
-    | not be distributed without prior consent of the author.			|
+    | not be distributed without prior consent of the author.     |
     |                                                                               |
-    | Read the  COPYRIGHT and  README files in this distribution about registration	|
-    | and installation of Matpack.							|
+    | Read the  COPYRIGHT and  README files in this distribution about registration |
+    | and installation of Matpack.              |
     |                                                                               |
     \*-----------------------------------------------------------------------------*/
 
@@ -750,7 +750,7 @@ namespace Altaxo.Calc.FFT
     //----------------------------------------------------------------------------//
 
     /// <summary>
-    ///	 Does a hartley transform of 'n' points in the array 'fz'.
+    ///  Does a hartley transform of 'n' points in the array 'fz'.
     /// </summary>
     /// <param name="fz">The array of points.</param>
     /// <param name="n">The number of points, must be a power of two. This precondition is not checked!</param>
@@ -787,9 +787,9 @@ namespace Altaxo.Calc.FFT
           f0     = fz[fi]+fz[fi+1];
           f3     = fz[fi+2]-fz[fi+3];
           f2     = fz[fi+2]+fz[fi+3];
-          fz[fi+2 ] = (f0-f2);	
+          fz[fi+2 ] = (f0-f2);  
           fz[fi ] = (f0+f2);
-          fz[fi+3 ] = (f1-f3);	
+          fz[fi+3 ] = (f1-f3);  
           fz[fi+1 ] = (f1+f3);
         }
 
@@ -808,13 +808,13 @@ namespace Altaxo.Calc.FFT
           s3     = fz[fi+4] + fz[gi+4];
           c4     = fz[fi+6] - fz[gi+6];
           s4     = fz[fi+6] + fz[gi+6];
-          f1     = (s1 - s2);	
+          f1     = (s1 - s2); 
           f0     = (s1 + s2);
-          g1     = (c1 - c2);	
+          g1     = (c1 - c2); 
           g0     = (c1 + c2);
-          f3     = (s3 - s4);	
+          f3     = (s3 - s4); 
           f2     = (s3 + s4);
-          g3     = SQRT2*c4;		
+          g3     = SQRT2*c4;    
           g2     = SQRT2*c3;
           fz[fi+4 ] = f0 - f2;
           fz[fi+0 ] = f0 + f2;
@@ -850,32 +850,32 @@ namespace Altaxo.Calc.FFT
           f0      = fz[fi+0 ] + fz[fi+k1];
           f3      = fz[fi+k2] - fz[fi+k3];
           f2      = fz[fi+k2] + fz[fi+k3];
-          fz[fi+k2]  = f0	  - f2;
-          fz[fi+0 ]  = f0	  + f2;
-          fz[fi+k3]  = f1	  - f3;
-          fz[fi+k1]  = f1	  + f3;
+          fz[fi+k2]  = f0   - f2;
+          fz[fi+0 ]  = f0   + f2;
+          fz[fi+k3]  = f1   - f3;
+          fz[fi+k1]  = f1   + f3;
           g1      = fz[gi+0 ] - fz[gi+k1];
           g0      = fz[gi+0 ] + fz[gi+k1];
           g3      = SQRT2  * fz[gi+k3];
           g2      = SQRT2  * fz[gi+k2];
-          fz[gi+k2]  = g0	  - g2;
-          fz[gi+0 ]  = g0	  + g2;
-          fz[gi+k3]  = g1	  - g3;
-          fz[gi+k1]  = g1	  + g3;
+          fz[gi+k2]  = g0   - g2;
+          fz[gi+0 ]  = g0   + g2;
+          fz[gi+k3]  = g1   - g3;
+          fz[gi+k1]  = g1   + g3;
           gi     += k4;
           fi     += k4;
         } while (fi<fn);
 
         // TRIG_INIT(k,c1,s1);
-      {								 
-        int i1;							 
-        for (i1=2 ; i1<=k ; i1++)					 
+      {                
+        int i1;              
+        for (i1=2 ; i1<=k ; i1++)          
         { 
           coswrk[i1]=costab[i1];
-          sinwrk[i1]=sintab[i1];}		 
-        t_lam = 0;					         
-        c1 = 1;							 
-        s1 = 0;							 
+          sinwrk[i1]=sintab[i1];}    
+        t_lam = 0;                   
+        c1 = 1;              
+        s1 = 0;              
       }
 
 
@@ -884,25 +884,25 @@ namespace Altaxo.Calc.FFT
           double c2,s2;
 
           // TRIG_NEXT(k,c1,s1);
-        {								 
-          int i2,j2;	                                         
-          (t_lam)++;	  					 
-          for (i2=0 ; 0==((1<<i2)&t_lam) ; i2++);			 
-          i2 = k-i2;						 
-          s1 = sinwrk[i2];						 
-          c1 = coswrk[i2];						 
-          if (i2>1)   						 
-          {	    						 
-            for (j2=k-i2+2 ; 0!=((1<<j2)&t_lam) ; j2++);		 
-            j2	       = k - j2;					 
+        {                
+          int i2,j2;                                           
+          (t_lam)++;               
+          for (i2=0 ; 0==((1<<i2)&t_lam) ; i2++);      
+          i2 = k-i2;             
+          s1 = sinwrk[i2];             
+          c1 = coswrk[i2];             
+          if (i2>1)                
+          {                  
+            for (j2=k-i2+2 ; 0!=((1<<j2)&t_lam) ; j2++);     
+            j2         = k - j2;           
             sinwrk[i2] = halsec[i2] * (sinwrk[i2-1] + sinwrk[j2]);  
             coswrk[i2] = halsec[i2] * (coswrk[i2-1] + coswrk[j2]);  
           }                                                    
         }
 
-					
-					
-					
+          
+          
+          
           c2 = c1*c1 - s1*s1;
           s2 = 2*(c1*s1);
           fn = n; // fn = fz + n;

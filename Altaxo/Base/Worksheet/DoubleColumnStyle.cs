@@ -29,122 +29,122 @@ namespace Altaxo.Worksheet
 {
 
 
-	[SerializationSurrogate(0,typeof(DoubleColumnStyle.SerializationSurrogate0))]
-	[SerializationVersion(0)]
-	public class DoubleColumnStyle : Altaxo.Worksheet.ColumnStyle
-	{
+  [SerializationSurrogate(0,typeof(DoubleColumnStyle.SerializationSurrogate0))]
+  [SerializationVersion(0)]
+  public class DoubleColumnStyle : Altaxo.Worksheet.ColumnStyle
+  {
 
-		#region Serialization
-		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
-			{
-				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
-				if(null!=ss)
-				{
-				System.Runtime.Serialization.ISerializationSurrogate surr =
-					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
-	
-				surr.GetObjectData(obj,info,context); // stream the data of the base object
-				}
-				else 
-				{
-					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
-				}		
-			}
-			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				System.Runtime.Serialization.ISurrogateSelector ss= AltaxoStreamingContext.GetSurrogateSelector(context);
-				if(null!=ss)
-				{
-				System.Runtime.Serialization.ISerializationSurrogate surr =
-					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
-				surr.SetObjectData(obj,info,context,selector);
-				}
-				else 
-				{
-					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
-				}		
-				return obj;
-			}
-		}
+    #region Serialization
+    public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+    {
+      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
+      {
+        System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+        if(null!=ss)
+        {
+          System.Runtime.Serialization.ISerializationSurrogate surr =
+            ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
+  
+          surr.GetObjectData(obj,info,context); // stream the data of the base object
+        }
+        else 
+        {
+          throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+        }   
+      }
+      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+      {
+        System.Runtime.Serialization.ISurrogateSelector ss= AltaxoStreamingContext.GetSurrogateSelector(context);
+        if(null!=ss)
+        {
+          System.Runtime.Serialization.ISerializationSurrogate surr =
+            ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
+          surr.SetObjectData(obj,info,context,selector);
+        }
+        else 
+        {
+          throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+        }   
+        return obj;
+      }
+    }
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DoubleColumnStyle),0)]
-			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				DoubleColumnStyle s = (DoubleColumnStyle)obj;
-				info.AddBaseValueEmbedded(s,typeof(DoubleColumnStyle).BaseType);
-			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				DoubleColumnStyle s = null!=o ? (DoubleColumnStyle)o : new DoubleColumnStyle();
-				info.GetBaseValueEmbedded(s,typeof(DoubleColumnStyle).BaseType,parent);
-				return s;
-			}
-		}
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DoubleColumnStyle),0)]
+      public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        DoubleColumnStyle s = (DoubleColumnStyle)obj;
+        info.AddBaseValueEmbedded(s,typeof(DoubleColumnStyle).BaseType);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        DoubleColumnStyle s = null!=o ? (DoubleColumnStyle)o : new DoubleColumnStyle();
+        info.GetBaseValueEmbedded(s,typeof(DoubleColumnStyle).BaseType,parent);
+        return s;
+      }
+    }
 
-		public override void OnDeserialization(object obj)
-		{
-			base.OnDeserialization(obj);
-			m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
-		}
+    public override void OnDeserialization(object obj)
+    {
+      base.OnDeserialization(obj);
+      m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
+    }
 
-		#endregion
+    #endregion
 
 
-		public DoubleColumnStyle()
-		{
-			m_TextFormat.Alignment=StringAlignment.Far;
-			m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
-		}
-		public DoubleColumnStyle(DoubleColumnStyle ds)
-			: base(ds)
-		{
-		}
+    public DoubleColumnStyle()
+    {
+      m_TextFormat.Alignment=StringAlignment.Far;
+      m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
+    }
+    public DoubleColumnStyle(DoubleColumnStyle ds)
+      : base(ds)
+    {
+    }
 
-		public override object Clone()
-		{
-			Altaxo.Worksheet.DoubleColumnStyle ns = new Altaxo.Worksheet.DoubleColumnStyle(this);
-			return ns;
-		}
+    public override object Clone()
+    {
+      Altaxo.Worksheet.DoubleColumnStyle ns = new Altaxo.Worksheet.DoubleColumnStyle(this);
+      return ns;
+    }
 
-		public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
-		{
-			double val = ((Altaxo.Data.DoubleColumn)data)[nRow];
-			return Double.IsNaN(val) ? "" : val.ToString();
-		}
-	
-		public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
-		{
-			double newval;
-			try
-			{ 
+    public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
+    {
+      double val = ((Altaxo.Data.DoubleColumn)data)[nRow];
+      return Double.IsNaN(val) ? "" : val.ToString();
+    }
+  
+    public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
+    {
+      double newval;
+      try
+      { 
 
-				newval = s.Length==0 ? Double.NaN : System.Convert.ToDouble(s);
-				((Altaxo.Data.DoubleColumn)data)[nRow] = newval;
-			}
-			catch(Exception) {}
-		}
+        newval = s.Length==0 ? Double.NaN : System.Convert.ToDouble(s);
+        ((Altaxo.Data.DoubleColumn)data)[nRow] = newval;
+      }
+      catch(Exception) {}
+    }
 
-		public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
-		{
-			m_CellPen.Cached = true;
-			dc.DrawRectangle(m_CellPen.Pen,cellRectangle);
-		
-			if(bSelected)
-				dc.FillRectangle(m_SelectedBackgroundBrush,cellRectangle);
-		
-			string myString = ((Altaxo.Data.DoubleColumn)data)[nRow].ToString();
-		
-			if(bSelected)
-				dc.DrawString(myString,m_TextFont,m_SelectedTextBrush,cellRectangle,m_TextFormat);
-			else
-				dc.DrawString(myString,m_TextFont,m_TextBrush,cellRectangle,m_TextFormat);
+    public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+    {
+      m_CellPen.Cached = true;
+      dc.DrawRectangle(m_CellPen.Pen,cellRectangle);
+    
+      if(bSelected)
+        dc.FillRectangle(m_SelectedBackgroundBrush,cellRectangle);
+    
+      string myString = ((Altaxo.Data.DoubleColumn)data)[nRow].ToString();
+    
+      if(bSelected)
+        dc.DrawString(myString,m_TextFont,m_SelectedTextBrush,cellRectangle,m_TextFormat);
+      else
+        dc.DrawString(myString,m_TextFont,m_TextBrush,cellRectangle,m_TextFormat);
 
-		}
-	} // end of class Altaxo.Worksheet.DoubleColumnStyle
+    }
+  } // end of class Altaxo.Worksheet.DoubleColumnStyle
 
 
 }

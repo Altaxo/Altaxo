@@ -42,23 +42,23 @@ namespace Altaxo.Data
     private int      m_Capacity; // shortcout to m_Array.Length;
     private int        m_Count;
     public static readonly string NullValue = null;
-		
+    
     public TextColumn()
     {
     }
-	
+  
     public TextColumn(int initialcapacity)
     {
       m_Count = 0;
       m_Array = new string[initialcapacity];
       m_Capacity = initialcapacity;
     }
-		
-    public TextColumn(TextColumn from)		
+    
+    public TextColumn(TextColumn from)    
     {
       this.m_Count    = from.m_Count;
       this.m_Capacity = from.m_Capacity;
-      this.m_Array		= null==from.m_Array ? null : (string[])from.m_Array.Clone();
+      this.m_Array    = null==from.m_Array ? null : (string[])from.m_Array.Clone();
     }
 
     public override object Clone()
@@ -69,7 +69,7 @@ namespace Altaxo.Data
     #region "Serialization"
     public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
     {
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         Altaxo.Data.TextColumn s = (Altaxo.Data.TextColumn)obj;
         System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
@@ -77,7 +77,7 @@ namespace Altaxo.Data
         {
           System.Runtime.Serialization.ISerializationSurrogate surr =
             ss.GetSurrogate(typeof(Altaxo.Data.DataColumn),context, out ss);
-	
+  
           surr.GetObjectData(obj,info,context); // stream the data of the base object
         }
         else
@@ -129,7 +129,7 @@ namespace Altaxo.Data
         Altaxo.Data.TextColumn s = (Altaxo.Data.TextColumn)obj;
         // serialize the base class
         info.AddBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn));
-				
+        
         if(null==info.GetProperty("Altaxo.Data.DataColumn.SaveAsTemplate"))
           info.AddArray("Data",s.m_Array,s.m_Count);
         else
@@ -139,7 +139,7 @@ namespace Altaxo.Data
       {
         Altaxo.Data.TextColumn s = null!=o ? (Altaxo.Data.TextColumn)o : new Altaxo.Data.TextColumn();
 
-				
+        
         // deserialize the base class
         info.GetBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn),parent);
 
@@ -209,7 +209,7 @@ namespace Altaxo.Data
       return typeof(Altaxo.Worksheet.TextColumnStyle);
     }
 
-			
+      
     public override void CopyDataFrom(Altaxo.Data.DataColumn v)
     {
       if(v.GetType()!=typeof(Altaxo.Data.TextColumn))
@@ -220,8 +220,8 @@ namespace Altaxo.Data
 
       // suggestion, but __not__ implemented:
       // if v is a standalone column, then simply take the dataarray
-      // otherwise: copy the data by value	
-      int oldCount = this.m_Count;			
+      // otherwise: copy the data by value  
+      int oldCount = this.m_Count;      
       if(null==vd.m_Array || vd.m_Count==0)
       {
         m_Array=null;
@@ -236,14 +236,14 @@ namespace Altaxo.Data
       }
       if(oldCount>0 || m_Count>0) // message only if really was a change
         NotifyDataChanged(0,oldCount>m_Count? (oldCount):(m_Count),m_Count<oldCount);
-    }				
+    }       
 
     protected void Realloc(int i)
     {
       int newcapacity1 = (int)(m_Capacity*increaseFactor+addSpace);
       int newcapacity2 = i+addSpace+1;
       int newcapacity = newcapacity1>newcapacity2 ? newcapacity1:newcapacity2;
-				
+        
       string[] newarray = new string[newcapacity];
       if(m_Count>0)
       {
@@ -280,7 +280,7 @@ namespace Altaxo.Data
       {
         if(i>=0 && i<m_Count)
           return m_Array[i];
-        return "";	
+        return "";  
       }
       set
       {
@@ -318,7 +318,7 @@ namespace Altaxo.Data
           {
             for(int k=m_Count;k<i;k++)
               m_Array[k]=null; // fill range between used range and new element with voids
-					
+          
             m_Array[i]=value;
             m_Count=i+1;
           }
@@ -328,13 +328,13 @@ namespace Altaxo.Data
 
             for(int k=m_Count;k<i;k++)
               m_Array[k]=null; // fill range between used range and new element with voids
-					
+          
             m_Array[i]=value;
             m_Count=i+1;
           }
         }
         NotifyDataChanged(i,i+1,bCountDecreased);
-      } // end set	
+      } // end set  
     } // end indexer
 
 
@@ -353,7 +353,7 @@ namespace Altaxo.Data
 
       for(int i=nInsBeforeColumn+nInsCount-1;i>=nInsBeforeColumn;i--)
         m_Array[i]=NullValue;
-		
+    
       this.m_Count=newlen;
       this.NotifyDataChanged(nInsBeforeColumn,m_Count,false);
     }
@@ -372,7 +372,7 @@ namespace Altaxo.Data
       int i,j;
       for(i=nDelFirstRow,j=nDelFirstRow+nDelCount;j<m_Count;i++,j++)
         m_Array[i]=m_Array[j];
-			
+      
       int prevCount = m_Count;
       m_Count= i<m_Count ? i : m_Count; // m_Count can only decrease
 
@@ -401,7 +401,7 @@ namespace Altaxo.Data
         c3.m_Array[i] = c1.m_Array[i]+c2.m_Array[i];
       }
       c3.m_Count=len;
-      return c3;	
+      return c3;  
     }
 
     public static Altaxo.Data.TextColumn operator +(Altaxo.Data.TextColumn c1, Altaxo.Data.DoubleColumn c2)
@@ -412,11 +412,11 @@ namespace Altaxo.Data
       {
         c3.m_Array[i] = c1.m_Array[i]+ c2.GetValueDirect(i).ToString();
       }
-			
-			
+      
+      
       c3.m_Count=len;
-			
-      return c3;	
+      
+      return c3;  
     }
 
     public static Altaxo.Data.TextColumn operator +(Altaxo.Data.TextColumn c1, Altaxo.Data.DateTimeColumn c2)
@@ -427,13 +427,13 @@ namespace Altaxo.Data
       {
         c3.m_Array[i] = c1.m_Array[i] + c2.GetValueDirect(i).ToString();
       }
-			
-			
+      
+      
       c3.m_Count=len;
-			
-      return c3;	
+      
+      return c3;  
     }
-				
+        
     #endregion
 
   } // end Altaxo.Data.TextColumn

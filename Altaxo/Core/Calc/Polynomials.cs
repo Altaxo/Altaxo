@@ -105,7 +105,7 @@ namespace Altaxo.Calc
     #endregion
 
     #region LaguerreL
-		
+    
     //-----------------------------------------------------------------------------//
     //
     // void LaguerreL (int n, double a, double x, 
@@ -469,7 +469,7 @@ namespace Altaxo.Calc
       // check parameters
       if (m > l) 
         throw new ArgumentException("m out of range -l <= m <= l");
-				
+        
       // normalization factor
       f = Math.Sqrt( (2*l+1)/M_4PI * GammaRelated.Fac(l-m) / GammaRelated.Fac(l+m) );
     

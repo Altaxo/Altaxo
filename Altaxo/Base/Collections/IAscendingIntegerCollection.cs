@@ -45,7 +45,7 @@ namespace Altaxo.Collections
     /// <param name="nValue">The integer value to test for membership.</param>
     /// <returns>True if the integer value is member of the collection.</returns>
     bool Contains(int nValue);
-		
+    
 
 
     /// <summary>
@@ -60,9 +60,9 @@ namespace Altaxo.Collections
     /// int rangestart, rangecount;
     /// int currentPosition=0;
     /// while(GetNextRangeAscending(ref currentPosition, out rangestart, out rangecount))
-    ///		{
-    ///		// do your things here
-    ///		}
+    ///   {
+    ///   // do your things here
+    ///   }
     /// </code></remarks>
     bool GetNextRangeAscending(ref int currentposition, ref int rangestart, ref int rangecount);
 
@@ -79,9 +79,9 @@ namespace Altaxo.Collections
     /// int rangestart, rangecount;
     /// int currentPosition=selection.Count-1;
     /// while(selection.GetNextRangeAscending(currentPosition,out rangestart, out rangecount))
-    ///		{
-    ///		// do your things here
-    ///		}
+    ///   {
+    ///   // do your things here
+    ///   }
     /// </code></remarks>
     bool GetNextRangeDescending(ref int currentposition, ref int rangestart, ref int rangecount);
   }

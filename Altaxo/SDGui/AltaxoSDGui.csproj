@@ -229,6 +229,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\MenuCommands\HelpCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\MenuCommands\OpenScriptDialog.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

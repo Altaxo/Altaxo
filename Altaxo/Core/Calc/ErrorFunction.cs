@@ -27,29 +27,29 @@
 //                                            mpspecfunp.h
 //                                            common.h
 
-	/*-----------------------------------------------------------------------------*\
-	| Matpack special functions - Erf(x) error function                     derf.cc |
-	|                                                                               |
-	| Last change: Feb 1, 2002							|
-	|                                                                               |
-	| Matpack Library Release 1.7.3                                                 |
-	| Copyright (C) 1991-2001 by Berndt M. Gammel. All rights reserved.             |
-	|                                                                               |
-	| Permission to  use, copy, and  distribute  Matpack  in  its entirety  and its |
-	| documentation  for non-commercial purpose and  without fee is hereby granted, |
-	| provided that this license information and copyright notice appear unmodified |
-	| in all copies.  This software is provided 'as is'  without express or implied |
-	| warranty.  In no event will the author be held liable for any damages arising |
-	| from the use of this software.						|
-	| Note that distributing Matpack 'bundled' in with any product is considered to |
-	| be a 'commercial purpose'.							|
-	| The software may be modified for your own purposes, but modified versions may |
-	| not be distributed without prior consent of the author.			|
-	|                                                                               |
-	| Read the  COPYRIGHT and  README files in this distribution about registration	|
-	| and installation of Matpack.							|
-	|                                                                               |
-	\*-----------------------------------------------------------------------------*/
+  /*-----------------------------------------------------------------------------*\
+  | Matpack special functions - Erf(x) error function                     derf.cc |
+  |                                                                               |
+  | Last change: Feb 1, 2002              |
+  |                                                                               |
+  | Matpack Library Release 1.7.3                                                 |
+  | Copyright (C) 1991-2001 by Berndt M. Gammel. All rights reserved.             |
+  |                                                                               |
+  | Permission to  use, copy, and  distribute  Matpack  in  its entirety  and its |
+  | documentation  for non-commercial purpose and  without fee is hereby granted, |
+  | provided that this license information and copyright notice appear unmodified |
+  | in all copies.  This software is provided 'as is'  without express or implied |
+  | warranty.  In no event will the author be held liable for any damages arising |
+  | from the use of this software.            |
+  | Note that distributing Matpack 'bundled' in with any product is considered to |
+  | be a 'commercial purpose'.              |
+  | The software may be modified for your own purposes, but modified versions may |
+  | not be distributed without prior consent of the author.     |
+  |                                                                               |
+  | Read the  COPYRIGHT and  README files in this distribution about registration |
+  | and installation of Matpack.              |
+  |                                                                               |
+  \*-----------------------------------------------------------------------------*/
 
 
 
@@ -101,7 +101,7 @@ namespace Altaxo.Calc
     // used for Erfc
     private static readonly double eta    = 0.5 * DBL_EPSILON * 0.1;
     private static readonly double xsml   = -Math.Sqrt(-Math.Log(sqrtpi * 0.5 * DBL_EPSILON));
-    private	static readonly double txmax  = Math.Sqrt(-Math.Log(sqrtpi * DBL_MIN));
+    private static readonly double txmax  = Math.Sqrt(-Math.Log(sqrtpi * DBL_MIN));
     private static readonly double xmax   = txmax - Math.Log(txmax) * 0.5 / txmax - 0.01;
 
 
@@ -136,7 +136,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="d">The argument.</param>
     /// <returns>The nearest integer of the argument d.</returns>
-    public static int	Nint (double d)
+    public static int Nint (double d)
     {
       return (d>0) ? (int)(d+0.5) : -(int)(-d+0.5);
     }
@@ -152,7 +152,7 @@ namespace Altaxo.Calc
     /// larger than eta.  Ordinarily, eta will be chosen to be one-tenth 
     /// machine precision. 
     /// </summary>
-    /// <param name="os">Double precision array of NOS coefficients in an orthogonal	series.</param>
+    /// <param name="os">Double precision array of NOS coefficients in an orthogonal  series.</param>
     /// <param name="nos">Number of coefficients in OS.</param>
     /// <param name="eta"> single precision scalar containing requested accuracy of  series. </param>
     /// <returns>The number of terms neccessary to insure the error is not larger than eta.</returns>
@@ -192,16 +192,16 @@ namespace Altaxo.Calc
     /// <param name="x">Value at which the series is to be evaluated. </param>
     /// <param name="cs">cs   array of n terms of a Chebyshev series. In evaluating 
     /// cs, only half the first coefficient is summed. 
-    ///	</param>
+    /// </param>
     /// <param name="n">number of terms in array cs.</param>
     /// <returns>The n-term Chebyshev series cs at x.</returns>
     /// <remarks>
     /// References:
     ///
-    ///	R. Broucke, Ten subroutines for the manipulation of Chebyshev series, 
-    ///	Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256. 
+    /// R. Broucke, Ten subroutines for the manipulation of Chebyshev series, 
+    /// Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256. 
     ///
-    ///	L. Fox and I. B. Parker, Chebyshev Polynomials in 
+    /// L. Fox and I. B. Parker, Chebyshev Polynomials in 
     ///      Numerical Analysis, Oxford University Press, 1968,  page 56. 
     ///
     /// This is a translation from the Fortran version of SLATEC, FNLIB,
@@ -285,7 +285,7 @@ namespace Altaxo.Calc
     ///
     /// Series for erf        on the interval  0.          to  1.00000E+00 
     ///                        with weighted error   1.28E-32 
-    ///		                     log weighted error  31.89 
+    ///                        log weighted error  31.89 
     ///                        significant figures required  31.05 
     ///                        decimal places required  32.55 
     /// </remarks>
@@ -479,7 +479,7 @@ namespace Altaxo.Calc
 
 
       if (first_Erfc) 
-      {	
+      { 
         nterf  = initds(erfcs, 21, eta);
         nterfc = initds(erfccs, 59, eta);
         nterc2 = initds(erc2cs, 49, eta);
@@ -706,7 +706,7 @@ namespace Altaxo.Calc
     ///
     /// These values are not neccessary in ANSI C++ because they are calculated
     /// at compile time from values given in the standard libraries! 
-    /// </remarks>		
+    /// </remarks>    
     public static double Dawson(double x)
     {
 
@@ -860,12 +860,12 @@ namespace Altaxo.Calc
 
       if (a) 
       {
-	
+  
         // If (qrho < 0.085264) then the Faddeeva-function is evaluated 
         // using a power-series (Abramowitz/Stegun, equation (7.1.5), p.297). 
         // n is the minimum number of terms needed to obtain the required 
         // accuracy.
-	
+  
         qrho = (1 - y * 0.85) * Math.Sqrt(qrho);
         n = Nint(qrho * 72 + 6);
         j = (n << 1) + 1;
@@ -883,14 +883,14 @@ namespace Altaxo.Calc
         daux = Math.Exp(-xquad);
         u2 = daux * Math.Cos(yquad);
         v2 = -daux * Math.Sin(yquad);
-	
+  
         u = u1 * u2 - v1 * v2;
         v = u1 * v2 + v1 * u2;
-	
+  
       } 
       else 
       {
-	
+  
         //  If (qrho > 1.0) then w(z) is evaluated using the Laplace continued 
         //  fraction.  nu is the minimum number of terms needed to obtain the
         //  required accuracy. 
@@ -901,7 +901,7 @@ namespace Altaxo.Calc
         //  to obtain the required accuracy. 
         //  nu is the minimum number of terms of the continued fraction needed
         //  to calculate the derivatives with the required accuracy. 
-	
+  
         if (qrho > 1.0) 
         {
           h = 0.0;
@@ -917,11 +917,11 @@ namespace Altaxo.Calc
           kapn = Nint(qrho * 34 + 7);
           nu   = Nint(qrho * 26 + 16);
         }
-	
+  
         b = h > 0.0;
-	
+  
         if (b) qlambda = Math.Pow(h2, (double) kapn);
-	
+  
         rx = ry = sx = sy = 0.0;
         for (n = nu; n >= 0; --n) 
         {
@@ -939,7 +939,7 @@ namespace Altaxo.Calc
             qlambda /= h2;
           }
         }
-	
+  
         if (h == 0.0) 
         {
           u = rx * M_2_SQRTPI;
@@ -950,7 +950,7 @@ namespace Altaxo.Calc
           u = sx * M_2_SQRTPI;
           v = sy * M_2_SQRTPI;
         }
-	
+  
         if (yabs == 0.0) 
           u = Math.Exp(-(xabs * xabs));
       }

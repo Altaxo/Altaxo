@@ -46,105 +46,105 @@ namespace Altaxo.Data
     // so we use here vopAddition and so on (the v from virtual)
 
     public virtual bool vop_Addition(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Addition_Rev(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Subtraction(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Subtraction_Rev(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_Multiplication(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Multiplication_Rev(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_Division(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Division_Rev(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_Modulo(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Modulo_Rev(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_And(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_And_Rev(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_Or(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Or_Rev(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_Xor(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Xor_Rev(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_ShiftLeft(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_ShiftLeft_Rev(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_ShiftRight(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_ShiftRight_Rev(object a, out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_Equal(object a, out bool b)
-    {	b=this.Equals(a); return true; }
+    { b=this.Equals(a); return true; }
     public virtual bool vop_Equal_Rev(object a, out bool b)
-    {	b=a.Equals(this); return true; }
+    { b=a.Equals(this); return true; }
 
     public virtual bool vop_NotEqual(object a, out bool b)
-    {	b = !this.Equals(a); return true; }
+    { b = !this.Equals(a); return true; }
     public virtual bool vop_NotEqual_Rev(object a, out bool b)
-    {	b = !a.Equals(this); return true; }
+    { b = !a.Equals(this); return true; }
 
     public virtual bool vop_Lesser(object a, out bool b)
-    {	b=false; return false; }
+    { b=false; return false; }
     public virtual bool vop_Lesser_Rev(object a, out bool b)
-    {	b=false; return false; }
+    { b=false; return false; }
 
     public virtual bool vop_Greater(object a, out bool b)
-    {	b=false; return false; }
+    { b=false; return false; }
     public virtual bool vop_Greater_Rev(object a, out bool b)
-    {	b=false; return false; }
+    { b=false; return false; }
 
     public virtual bool vop_LesserOrEqual(object a, out bool b)
-    {	b=false; return false; }
+    { b=false; return false; }
     public virtual bool vop_LesserOrEqual_Rev(object a, out bool b)
-    {	b=false; return false; }
+    { b=false; return false; }
 
     public virtual bool vop_GreaterOrEqual(object a, out bool b)
-    {	b=false; return false; }
+    { b=false; return false; }
     public virtual bool vop_GreaterOrEqual_Rev(object a, out bool b)
-    {	b=false; return false; }
+    { b=false; return false; }
 
     // Unary operators
 
     public virtual bool vop_Plus(out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Minus(out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Not(out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Complement(out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Increment(out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Decrement(out OperatableObject b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool        vop_True(out bool b)
-    {	b=false; return false; }
+    { b=false; return false; }
     public virtual bool        vop_False(out bool b)
-    {	b=false; return false; }
+    { b=false; return false; }
 
-	
-		
+  
+    
     public static OperatableObject operator +(OperatableObject c1, object c2)
     {
       OperatableObject c3;

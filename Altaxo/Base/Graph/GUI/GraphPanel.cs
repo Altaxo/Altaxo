@@ -24,15 +24,15 @@ using System;
 
 namespace Altaxo.Graph.GUI
 {
-	/// <summary>
-	/// GraphPanel is derived from <see cref="System.Windows.Forms.Panel"/>. It's only intention is to set
-	/// some protected properties.
-	/// </summary>
-	public class GraphPanel : System.Windows.Forms.Panel
-	{
-		/// <summary>
-		/// Creates the GraphPanel with ResizeRedraw=true.
-		/// </summary>
-		public GraphPanel() : base() { this.ResizeRedraw = true;}
-	}
+  /// <summary>
+  /// GraphPanel is derived from <see cref="System.Windows.Forms.Panel"/>. It's only intention is to set
+  /// some protected properties.
+  /// </summary>
+  public class GraphPanel : System.Windows.Forms.Panel
+  {
+    /// <summary>
+    /// Creates the GraphPanel with ResizeRedraw=true.
+    /// </summary>
+    public GraphPanel() : base() { this.ResizeRedraw = true;}
+  }
 }

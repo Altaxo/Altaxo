@@ -29,69 +29,69 @@ using System.Windows.Forms;
 
 namespace Altaxo.Graph.GUI
 {
-	/// <summary>
-	/// Graphical interface for adjusting the style of a XYPlotLabel.
-	/// </summary>
-	public class XYPlotLabelStyleControl : System.Windows.Forms.UserControl, IXYPlotLabelStyleView
-	{
-		private IXYPlotLabelStyleController m_Ctrl;
-		private System.Windows.Forms.Label label24;
-		private System.Windows.Forms.Label label23;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.ComboBox m_cbFont;
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.TextBox m_edYOffset;
-		private System.Windows.Forms.TextBox m_edXOffset;
-		private System.Windows.Forms.ComboBox m_cbColor;
-		private System.Windows.Forms.ComboBox m_cbFontSize;
-		private System.Windows.Forms.CheckBox m_chkAttachToAxis;
-		private System.Windows.Forms.ComboBox m_cbAttachedAxis;
-		private System.Windows.Forms.CheckBox m_chkWhiteOut;
-		private System.Windows.Forms.TextBox m_edRotation;
-		private System.Windows.Forms.ComboBox m_cbHorizontalAlignment;
-		private System.Windows.Forms.ComboBox m_cbVerticalAlignment;
+  /// <summary>
+  /// Graphical interface for adjusting the style of a XYPlotLabel.
+  /// </summary>
+  public class XYPlotLabelStyleControl : System.Windows.Forms.UserControl, IXYPlotLabelStyleView
+  {
+    private IXYPlotLabelStyleController m_Ctrl;
+    private System.Windows.Forms.Label label24;
+    private System.Windows.Forms.Label label23;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.ComboBox m_cbFont;
+    private System.Windows.Forms.GroupBox groupBox1;
+    private System.Windows.Forms.Label label5;
+    private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.TextBox m_edYOffset;
+    private System.Windows.Forms.TextBox m_edXOffset;
+    private System.Windows.Forms.ComboBox m_cbColor;
+    private System.Windows.Forms.ComboBox m_cbFontSize;
+    private System.Windows.Forms.CheckBox m_chkAttachToAxis;
+    private System.Windows.Forms.ComboBox m_cbAttachedAxis;
+    private System.Windows.Forms.CheckBox m_chkWhiteOut;
+    private System.Windows.Forms.TextBox m_edRotation;
+    private System.Windows.Forms.ComboBox m_cbHorizontalAlignment;
+    private System.Windows.Forms.ComboBox m_cbVerticalAlignment;
     private System.Windows.Forms.CheckBox m_chkIndependentColor;
     private System.Windows.Forms.ComboBox m_cbBackgroundColor;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public XYPlotLabelStyleControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public XYPlotLabelStyleControl()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
+      // TODO: Add any initialization after the InitializeComponent call
 
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.label24 = new System.Windows.Forms.Label();
       this.m_edYOffset = new System.Windows.Forms.TextBox();
       this.m_edXOffset = new System.Windows.Forms.TextBox();
@@ -337,57 +337,57 @@ namespace Altaxo.Graph.GUI
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-	
-		private void EhXOffset_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			if(null!=Controller)
-			{
-				bool bCancel = e.Cancel;
-				Controller.EhView_XOffsetValidating(((TextBox)sender).Text,ref bCancel);
-				e.Cancel = bCancel;
-			}
-		}
+  
+    private void EhXOffset_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      if(null!=Controller)
+      {
+        bool bCancel = e.Cancel;
+        Controller.EhView_XOffsetValidating(((TextBox)sender).Text,ref bCancel);
+        e.Cancel = bCancel;
+      }
+    }
 
-		private void EhYOffset_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			if(null!=Controller)
-			{
-				bool bCancel = e.Cancel;
-				Controller.EhView_YOffsetValidating(((TextBox)sender).Text,ref bCancel);
-				e.Cancel = bCancel;
-			}
-		}
+    private void EhYOffset_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      if(null!=Controller)
+      {
+        bool bCancel = e.Cancel;
+        Controller.EhView_YOffsetValidating(((TextBox)sender).Text,ref bCancel);
+        e.Cancel = bCancel;
+      }
+    }
 
-		private void EhRotation_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			if(null!=Controller)
-			{
-				bool bCancel = e.Cancel;
-				Controller.EhView_RotationValidating(((TextBox)sender).Text,ref bCancel);
-				e.Cancel = bCancel;
-			}
-		}
+    private void EhRotation_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      if(null!=Controller)
+      {
+        bool bCancel = e.Cancel;
+        Controller.EhView_RotationValidating(((TextBox)sender).Text,ref bCancel);
+        e.Cancel = bCancel;
+      }
+    }
 
 
-		private void EhFont_SelectionChangedCommitted(object sender, System.EventArgs e)
-		{
-			if(null!=Controller)
-				Controller.EhView_FontChanged((string)this.m_cbFont.SelectedItem);
-		}		
+    private void EhFont_SelectionChangedCommitted(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+        Controller.EhView_FontChanged((string)this.m_cbFont.SelectedItem);
+    }   
 
-		private void EhColor_SelectionChangeCommitted(object sender, System.EventArgs e)
-		{
-			if(null!=Controller)
-			{
-				string name = (string)this.m_cbColor.SelectedItem;
-				if(name!="Custom")
-				{
-					Controller.EhView_ColorChanged(System.Drawing.Color.FromName(name));
-				}
-			}
-		}
+    private void EhColor_SelectionChangeCommitted(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+      {
+        string name = (string)this.m_cbColor.SelectedItem;
+        if(name!="Custom")
+        {
+          Controller.EhView_ColorChanged(System.Drawing.Color.FromName(name));
+        }
+      }
+    }
 
     private void EhBackgroundColor_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
@@ -401,60 +401,60 @@ namespace Altaxo.Graph.GUI
       }
     }
 
-		private void EhFontSize_SelectionChangeCommitted(object sender, System.EventArgs e)
-		{
-			if(null!=Controller)
-			{
-				string name = (string)this.m_cbFontSize.SelectedItem;
-				Controller.EhView_FontSizeChanged(name);
-			}
-		}
+    private void EhFontSize_SelectionChangeCommitted(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+      {
+        string name = (string)this.m_cbFontSize.SelectedItem;
+        Controller.EhView_FontSizeChanged(name);
+      }
+    }
 
-		private void EhHorizontalAlignment_SelectionChangeCommitted(object sender, System.EventArgs e)
-		{
-			if(null!=Controller)
-			{
-				string name = (string)this.m_cbHorizontalAlignment.SelectedItem;
-					Controller.EhView_HorizontalAlignmentChanged(name);
-			}
-		}
+    private void EhHorizontalAlignment_SelectionChangeCommitted(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+      {
+        string name = (string)this.m_cbHorizontalAlignment.SelectedItem;
+        Controller.EhView_HorizontalAlignmentChanged(name);
+      }
+    }
 
-		private void EhVerticalAlignment_SelectionChangeCommitted(object sender, System.EventArgs e)
-		{
-			if(null!=Controller)
-			{
-				string name = (string)this.m_cbVerticalAlignment.SelectedItem;
-				Controller.EhView_VerticalAlignmentChanged(name);
-			}
-		
-		}
+    private void EhVerticalAlignment_SelectionChangeCommitted(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+      {
+        string name = (string)this.m_cbVerticalAlignment.SelectedItem;
+        Controller.EhView_VerticalAlignmentChanged(name);
+      }
+    
+    }
 
 
-		private void EhAttachToAxis_CheckedChanged(object sender, System.EventArgs e)
-		{
-			if(null!=Controller)
-			{
-				Controller.EhView_AttachToAxisChanged(this.m_chkAttachToAxis.Checked);
-				this.m_cbAttachedAxis.Enabled = this.m_chkAttachToAxis.Checked;
-			}
-		}
+    private void EhAttachToAxis_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+      {
+        Controller.EhView_AttachToAxisChanged(this.m_chkAttachToAxis.Checked);
+        this.m_cbAttachedAxis.Enabled = this.m_chkAttachToAxis.Checked;
+      }
+    }
 
-		private void EhAttachedAxis_SelectionChangeCommitted(object sender, System.EventArgs e)
-		{
-			if(null!=Controller)
-			{
-				string name = (string)this.m_cbAttachedAxis.SelectedItem;
-				Controller.EhView_AttachedAxisChanged(name);
-			}
-		}
+    private void EhAttachedAxis_SelectionChangeCommitted(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+      {
+        string name = (string)this.m_cbAttachedAxis.SelectedItem;
+        Controller.EhView_AttachedAxisChanged(name);
+      }
+    }
 
-		private void EhWhiteOut_CheckedChanged(object sender, System.EventArgs e)
-		{
-			if(null!=Controller)
-			{
-				Controller.EhView_WhiteOutChanged(this.m_chkWhiteOut.Checked);
-			}
-		}
+    private void EhWhiteOut_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+      {
+        Controller.EhView_WhiteOutChanged(this.m_chkWhiteOut.Checked);
+      }
+    }
 
     private void EhIndependentColor_CheckChanged(object sender, System.EventArgs e)
     {
@@ -467,70 +467,70 @@ namespace Altaxo.Graph.GUI
     }
 
 
-		#region ILinkAxisView Members
+    #region ILinkAxisView Members
 
-		public IXYPlotLabelStyleController Controller
-		{
-			get
-			{
-				return m_Ctrl;
-			}
-			set
-			{
-				m_Ctrl = value;
-			}
-		}
+    public IXYPlotLabelStyleController Controller
+    {
+      get
+      {
+        return m_Ctrl;
+      }
+      set
+      {
+        m_Ctrl = value;
+      }
+    }
 
-		public Form Form
-		{
-			get
-			{
-				return this.ParentForm;
-			}
-		}
+    public Form Form
+    {
+      get
+      {
+        return this.ParentForm;
+      }
+    }
 
-		public static void InitComboBox(System.Windows.Forms.ComboBox box, string[] names, string name)
-		{
-			box.Items.Clear();
-			box.Items.AddRange(names);
-			box.SelectedItem = name;
-		}
-
-
-		public static void InitColorComboBox(System.Windows.Forms.ComboBox box, System.Drawing.Color color)
-		{
-			box.Items.Clear();
-			string[] names = System.Enum.GetNames(typeof(System.Drawing.KnownColor));
-			box.Items.Add("Custom");
-			box.Items.AddRange(names);
-			box.SelectedItem = color.IsKnownColor ? color.Name : "Custom";
-		}
-
-		public static void InitFontComboBox(ComboBox box, string choosenfontfamily)
-		{
-			box.Items.Clear();
-			foreach(System.Drawing.FontFamily fontfamily in System.Drawing.FontFamily.Families)
-				box.Items.Add(fontfamily.Name);
-			box.SelectedItem = choosenfontfamily;
-		}
+    public static void InitComboBox(System.Windows.Forms.ComboBox box, string[] names, string name)
+    {
+      box.Items.Clear();
+      box.Items.AddRange(names);
+      box.SelectedItem = name;
+    }
 
 
-		public void Font_Initialize(string fontfamily)
-		{
-			InitFontComboBox(this.m_cbFont,fontfamily);
-		}
+    public static void InitColorComboBox(System.Windows.Forms.ComboBox box, System.Drawing.Color color)
+    {
+      box.Items.Clear();
+      string[] names = System.Enum.GetNames(typeof(System.Drawing.KnownColor));
+      box.Items.Add("Custom");
+      box.Items.AddRange(names);
+      box.SelectedItem = color.IsKnownColor ? color.Name : "Custom";
+    }
+
+    public static void InitFontComboBox(ComboBox box, string choosenfontfamily)
+    {
+      box.Items.Clear();
+      foreach(System.Drawing.FontFamily fontfamily in System.Drawing.FontFamily.Families)
+        box.Items.Add(fontfamily.Name);
+      box.SelectedItem = choosenfontfamily;
+    }
+
+
+    public void Font_Initialize(string fontfamily)
+    {
+      InitFontComboBox(this.m_cbFont,fontfamily);
+    }
 
 
     public void IndependentColor_Initialize(bool bIndependent)
     {
       this.m_chkIndependentColor.Checked = bIndependent;
-      this.m_cbColor.Enabled = bIndependent;			
+      this.m_cbColor.Enabled = bIndependent;      
     }
 
-		public void Color_Initialize(System.Drawing.Color color)
-		{
-			InitColorComboBox(this.m_cbColor,color);
-		}
+    public void Color_Initialize(System.Drawing.Color color)
+    {
+      InitColorComboBox(this.m_cbColor,color);
+    }
 
     public void BackgroundColor_Initialize(System.Drawing.Color color)
     {
@@ -538,78 +538,78 @@ namespace Altaxo.Graph.GUI
     }
 
 
-		public void FontSize_Initialize(string[] names, string name)
-		{
-			InitComboBox(this.m_cbFontSize,names,name);
-		}
-		
+    public void FontSize_Initialize(string[] names, string name)
+    {
+      InitComboBox(this.m_cbFontSize,names,name);
+    }
+    
 
-		public void HorizontalAlignment_Initialize(string[] names, string name)
-		{
-			InitComboBox(this.m_cbHorizontalAlignment,names,name);
-		}
+    public void HorizontalAlignment_Initialize(string[] names, string name)
+    {
+      InitComboBox(this.m_cbHorizontalAlignment,names,name);
+    }
 
-		public void VerticalAlignment_Initialize(string[] names, string name)
-		{
-			InitComboBox(this.m_cbVerticalAlignment,names,name);
-		}
-
-
-		public void AttachToAxis_Initialize(bool bAttach)
-		{
-			this.m_chkAttachToAxis.Checked = bAttach;
-			this.m_cbAttachedAxis.Enabled = !bAttach;			
-		}
-
-		public void AttachedAxis_Initialize(string[] names, string name)
-		{
-			InitComboBox(this.m_cbAttachedAxis,names,name);
-		}
-
-		public void Rotation_Initialize(string text)
-		{
-			this.m_edRotation.Text = text;
-		}
-
-		public void XOffset_Initialize(string text)
-		{
-			this.m_edXOffset.Text = text;
-		}
-
-		public void YOffset_Initialize(string text)
-		{
-			this.m_edYOffset.Text = text;
-		}
+    public void VerticalAlignment_Initialize(string[] names, string name)
+    {
+      InitComboBox(this.m_cbVerticalAlignment,names,name);
+    }
 
 
-		public void WhiteOut_Initialize(bool bWhiteOut)
-		{
-			this.m_chkWhiteOut.Checked = bWhiteOut;
-		}
+    public void AttachToAxis_Initialize(bool bAttach)
+    {
+      this.m_chkAttachToAxis.Checked = bAttach;
+      this.m_cbAttachedAxis.Enabled = !bAttach;     
+    }
 
-		#endregion
+    public void AttachedAxis_Initialize(string[] names, string name)
+    {
+      InitComboBox(this.m_cbAttachedAxis,names,name);
+    }
+
+    public void Rotation_Initialize(string text)
+    {
+      this.m_edRotation.Text = text;
+    }
+
+    public void XOffset_Initialize(string text)
+    {
+      this.m_edXOffset.Text = text;
+    }
+
+    public void YOffset_Initialize(string text)
+    {
+      this.m_edYOffset.Text = text;
+    }
+
+
+    public void WhiteOut_Initialize(bool bWhiteOut)
+    {
+      this.m_chkWhiteOut.Checked = bWhiteOut;
+    }
+
+    #endregion
 
    
 
   
 
 
-	
+  
 
-		#region IMVCView Members
+    #region IMVCView Members
 
-		public object ControllerObject
-		{
-			get
-			{
-				return Controller;
-			}
-			set
-			{
-				Controller = value as IXYPlotLabelStyleController;
-			}
-		}
+    public object ControllerObject
+    {
+      get
+      {
+        return Controller;
+      }
+      set
+      {
+        Controller = value as IXYPlotLabelStyleController;
+      }
+    }
 
-		#endregion
-	}
+    #endregion
+  }
 }

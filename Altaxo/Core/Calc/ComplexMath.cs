@@ -44,7 +44,7 @@ namespace Altaxo.Calc
   /// </summary>
   public class ComplexMath 
   {
-		
+    
     //---------------------------------------------------------------------------------------------------
 
     private ComplexMath() 
@@ -76,28 +76,28 @@ namespace Altaxo.Calc
       a = b;
       b = temp;
     }
-		
+    
     //---------------------------------------------------------------------------------------------------
 
-    static private double	_halfOfRoot2	= 0.5 * Math.Sqrt( 2 );
+    static private double _halfOfRoot2  = 0.5 * Math.Sqrt( 2 );
 
     /// <summary>
     /// Calculate the square root of a complex number
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>
-    static public ComplexF	Sqrt( ComplexF c ) 
+    static public ComplexF  Sqrt( ComplexF c ) 
     {
-      double	x	= c.Re;
-      double	y	= c.Im;
+      double  x = c.Re;
+      double  y = c.Im;
 
-      double	modulus	= Math.Sqrt( x*x + y*y );
-      int		sign	= ( y < 0 ) ? -1 : 1;
+      double  modulus = Math.Sqrt( x*x + y*y );
+      int   sign  = ( y < 0 ) ? -1 : 1;
 
-      c.Re		= (float)( _halfOfRoot2 * Math.Sqrt( modulus + x ) );
-      c.Im	= (float)( _halfOfRoot2 * sign * Math.Sqrt( modulus - x ) );
+      c.Re    = (float)( _halfOfRoot2 * Math.Sqrt( modulus + x ) );
+      c.Im  = (float)( _halfOfRoot2 * sign * Math.Sqrt( modulus - x ) );
 
-      return	c;
+      return  c;
     }
 
     /// <summary>
@@ -105,18 +105,18 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>
-    static public Complex	Sqrt( Complex c ) 
+    static public Complex Sqrt( Complex c ) 
     {
-      double	x	= c.Re;
-      double	y	= c.Im;
+      double  x = c.Re;
+      double  y = c.Im;
 
-      double	modulus	= Math.Sqrt( x*x + y*y );
-      int		sign	= ( y < 0 ) ? -1 : 1;
+      double  modulus = Math.Sqrt( x*x + y*y );
+      int   sign  = ( y < 0 ) ? -1 : 1;
 
-      c.Re		= (double)( _halfOfRoot2 * Math.Sqrt( modulus + x ) );
-      c.Im	= (double)( _halfOfRoot2 * sign * Math.Sqrt( modulus - x ) );
+      c.Re    = (double)( _halfOfRoot2 * Math.Sqrt( modulus + x ) );
+      c.Im  = (double)( _halfOfRoot2 * sign * Math.Sqrt( modulus - x ) );
 
-      return	c;
+      return  c;
     }
 
     //---------------------------------------------------------------------------------------------------
@@ -127,18 +127,18 @@ namespace Altaxo.Calc
     /// <param name="c"></param>
     /// <param name="exponent"></param>
     /// <returns></returns>
-    static public ComplexF	Pow( ComplexF c, double exponent ) 
+    static public ComplexF  Pow( ComplexF c, double exponent ) 
     {
-      double	x	= c.Re;
-      double	y	= c.Im;
-			
-      double	modulus		= Math.Pow( x*x + y*y, exponent * 0.5 );
-      double	argument	= Math.Atan2( y, x ) * exponent;
+      double  x = c.Re;
+      double  y = c.Im;
+      
+      double  modulus   = Math.Pow( x*x + y*y, exponent * 0.5 );
+      double  argument  = Math.Atan2( y, x ) * exponent;
 
-      c.Re		= (float)( modulus * System.Math.Cos( argument ) );
+      c.Re    = (float)( modulus * System.Math.Cos( argument ) );
       c.Im = (float)( modulus * System.Math.Sin( argument ) );
 
-      return	c;
+      return  c;
     }
 
     /// <summary>
@@ -147,20 +147,20 @@ namespace Altaxo.Calc
     /// <param name="c"></param>
     /// <param name="exponent"></param>
     /// <returns></returns>
-    static public Complex	Pow( Complex c, double exponent ) 
+    static public Complex Pow( Complex c, double exponent ) 
     {
-      double	x	= c.Re;
-      double	y	= c.Im;
-			
-      double	modulus		= Math.Pow( x*x + y*y, exponent * 0.5 );
-      double	argument	= Math.Atan2( y, x ) * exponent;
+      double  x = c.Re;
+      double  y = c.Im;
+      
+      double  modulus   = Math.Pow( x*x + y*y, exponent * 0.5 );
+      double  argument  = Math.Atan2( y, x ) * exponent;
 
-      c.Re		= (double)( modulus * System.Math.Cos( argument ) );
+      c.Re    = (double)( modulus * System.Math.Cos( argument ) );
       c.Im = (double)( modulus * System.Math.Sin( argument ) );
 
-      return	c;
+      return  c;
     }
-		
+    
     //---------------------------------------------------------------------------------------------------
 
     #region AltaxoModified
@@ -175,7 +175,7 @@ namespace Altaxo.Calc
       double abs = Math.Exp(c.Re);
       return new Complex(abs*Math.Cos(c.Im),abs*Math.Sin(c.Im));
     }
-	
+  
     /// <summary>
     /// Logarithm of complex number.
     /// </summary>

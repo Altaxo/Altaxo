@@ -33,7 +33,7 @@ namespace Altaxo.Worksheet.GUI
   /// Summary description for SDWorksheetController.
   /// </summary>
   public class SDWorksheetController : Altaxo.Worksheet.GUI.WorksheetController,
-    ICSharpCode.SharpDevelop.Gui.IViewContent,	
+    ICSharpCode.SharpDevelop.Gui.IViewContent,  
     ICSharpCode.SharpDevelop.Gui.IEditable,
     ICSharpCode.SharpDevelop.Gui.IClipboardHandler
   {
@@ -62,7 +62,7 @@ namespace Altaxo.Worksheet.GUI
       : this(layout,false)
     {
     }
-	
+  
     /// <summary>
     /// Creates a WorksheetController which shows the table data into the 
     /// View <paramref name="view"/>.
@@ -80,7 +80,7 @@ namespace Altaxo.Worksheet.GUI
     #region ICSharpCode.SharpDevelop.Gui
 
 
-    protected	ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow m_ParentWorkbenchWindowController;
+    protected ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow m_ParentWorkbenchWindowController;
   
 
     public void Dispose()
@@ -109,7 +109,7 @@ namespace Altaxo.Worksheet.GUI
         this.m_ParentWorkbenchWindowController = value; 
       }
     }
-		
+    
     /// <summary>
     /// A generic name for the file, when it does have no file name
     /// (e.g. newly created files)
@@ -119,11 +119,11 @@ namespace Altaxo.Worksheet.GUI
       get { return "UntitledTable"; }
       set {}
     }
-		
-		
+    
+    
 
-		
-		
+    
+    
     /// <summary>
     /// The text on the tab page when more than one view content
     /// is attached to a single window.
@@ -140,7 +140,7 @@ namespace Altaxo.Worksheet.GUI
     {
       get { return this.Doc.Name==null || this.Doc.Name==String.Empty; }
     }
-		
+    
     /// <summary>
     /// If this property returns true the content has changed since
     /// the last load/save operation.
@@ -150,7 +150,7 @@ namespace Altaxo.Worksheet.GUI
       get { return false; }
       set {}
     }
-		
+    
     /// <summary>
     /// If this property returns true the content could not be altered.
     /// </summary>
@@ -158,7 +158,7 @@ namespace Altaxo.Worksheet.GUI
     {
       get { return false; }
     }
-		
+    
     /// <summary>
     /// If this property returns true the content can't be written.
     /// </summary>
@@ -166,7 +166,7 @@ namespace Altaxo.Worksheet.GUI
     {
       get { return true; }
     }
-		
+    
     /// <summary>
     /// Reinitializes the content. (Re-initializes all add-in tree stuff)
     /// and redraws the content. Call this not directly unless you know
@@ -175,7 +175,7 @@ namespace Altaxo.Worksheet.GUI
     public void RedrawContent()
     {
     }
-		
+    
     /// <summary>
     /// Saves this content to the last load/save location.
     /// </summary>
@@ -183,14 +183,14 @@ namespace Altaxo.Worksheet.GUI
     {
     }
 
-		
+    
     /// <summary>
     /// Saves the content to the location <code>fileName</code>
     /// </summary>
     public void Save(string fileName)
     {
     }
-		
+    
     /// <summary>
     /// Loads the content from the location <code>fileName</code>
     /// </summary>
@@ -205,9 +205,9 @@ namespace Altaxo.Worksheet.GUI
         BeforeSave(this, e);
       }
     }
-		
-		
-		
+    
+    
+    
     /// <summary>
     /// Is called when the content is changed after a save/load operation
     /// and this signals that changes could be saved.
@@ -217,20 +217,20 @@ namespace Altaxo.Worksheet.GUI
     public event EventHandler BeforeSave;
 
     #endregion
-	
+  
     #region ICSharpCode.SharpDevelop.Gui.IEditable
-		
+    
     public ICSharpCode.SharpDevelop.Gui.IClipboardHandler ClipboardHandler 
     {
       get { return this; }
     }
-		
+    
     public string Text 
     {
       get { return null; }
       set {}
     }
-		
+    
     public void Undo()
     {
     }
@@ -240,7 +240,7 @@ namespace Altaxo.Worksheet.GUI
     #endregion
 
     #region ICSharpCode.SharpDevelop.Gui.IClipboardHandler
-		
+    
     public bool EnableCut 
     {
       get { return false; }
@@ -261,7 +261,7 @@ namespace Altaxo.Worksheet.GUI
     {
       get { return true; }
     }
-		
+    
     public void Cut(object sender, EventArgs e)
     {
       if(this.m_CellEdit_IsArmed)
@@ -286,7 +286,7 @@ namespace Altaxo.Worksheet.GUI
         // Copy the selected Columns to the clipboard
         DataGridOperations.CopyToClipboard(this);
       }
-		
+    
     }
     public void Paste(object sender, EventArgs e)
     {

@@ -29,64 +29,64 @@ using System.Windows.Forms;
 
 namespace Altaxo.Graph.GUI
 {
-	/// <summary>
-	/// Summary description for LineScatterPlotDataControl.
-	/// </summary>
-	public class LineScatterPlotDataControl : System.Windows.Forms.UserControl, ILineScatterPlotDataView
-	{
-		ILineScatterPlotDataController m_Controller;
-		private System.Windows.Forms.ComboBox m_cbTables;
-		private System.Windows.Forms.ListBox m_lbColumns;
-		private System.Windows.Forms.Button m_btToX;
-		private System.Windows.Forms.Button m_btToY;
-		private System.Windows.Forms.TextBox m_edXColumn;
-		private System.Windows.Forms.Button m_btEraseX;
-		private System.Windows.Forms.TextBox m_edYColumn;
-		private System.Windows.Forms.Button m_btEraseY;
-		private System.Windows.Forms.NumericUpDown m_nudPlotRangeFrom;
-		private System.Windows.Forms.NumericUpDown m_nudPlotRangeTo;
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
+  /// <summary>
+  /// Summary description for LineScatterPlotDataControl.
+  /// </summary>
+  public class LineScatterPlotDataControl : System.Windows.Forms.UserControl, ILineScatterPlotDataView
+  {
+    ILineScatterPlotDataController m_Controller;
+    private System.Windows.Forms.ComboBox m_cbTables;
+    private System.Windows.Forms.ListBox m_lbColumns;
+    private System.Windows.Forms.Button m_btToX;
+    private System.Windows.Forms.Button m_btToY;
+    private System.Windows.Forms.TextBox m_edXColumn;
+    private System.Windows.Forms.Button m_btEraseX;
+    private System.Windows.Forms.TextBox m_edYColumn;
+    private System.Windows.Forms.Button m_btEraseY;
+    private System.Windows.Forms.NumericUpDown m_nudPlotRangeFrom;
+    private System.Windows.Forms.NumericUpDown m_nudPlotRangeTo;
+    private System.Windows.Forms.GroupBox groupBox1;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Button m_btToLabel;
     private System.Windows.Forms.TextBox m_edLabelColumn;
     private System.Windows.Forms.Button m_btEraseLabel;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public LineScatterPlotDataControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public LineScatterPlotDataControl()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
+      // TODO: Add any initialization after the InitializeComponent call
 
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(LineScatterPlotDataControl));
       this.m_cbTables = new System.Windows.Forms.ComboBox();
       this.m_lbColumns = new System.Windows.Forms.ListBox();
@@ -289,88 +289,88 @@ namespace Altaxo.Graph.GUI
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		#region ILineScatterPlotDataView Members
+    #region ILineScatterPlotDataView Members
 
-		public ILineScatterPlotDataController Controller
-		{
-			get
-			{
-				return m_Controller;
-			}
-			set
-			{
-				m_Controller = value;
-			}
-		}
+    public ILineScatterPlotDataController Controller
+    {
+      get
+      {
+        return m_Controller;
+      }
+      set
+      {
+        m_Controller = value;
+      }
+    }
 
-		public Form Form
-		{
-			get
-			{
-				return this.ParentForm;
-			}
-		}
+    public Form Form
+    {
+      get
+      {
+        return this.ParentForm;
+      }
+    }
 
-		public void Tables_Initialize(string[] tables, int selectedTable)
-		{
-			this.m_cbTables.Items.Clear();
-			this.m_cbTables.Items.AddRange(tables);
-			this.m_cbTables.SelectedIndex = selectedTable;
-		}
+    public void Tables_Initialize(string[] tables, int selectedTable)
+    {
+      this.m_cbTables.Items.Clear();
+      this.m_cbTables.Items.AddRange(tables);
+      this.m_cbTables.SelectedIndex = selectedTable;
+    }
 
-		public void Columns_Initialize(string[] colnames, int selectedColumn)
-		{
-			this.m_lbColumns.Items.Clear();
-			this.m_lbColumns.Items.AddRange(colnames);
-			if(selectedColumn < colnames.Length)
-				this.m_lbColumns.SelectedIndex = selectedColumn;
-		}
+    public void Columns_Initialize(string[] colnames, int selectedColumn)
+    {
+      this.m_lbColumns.Items.Clear();
+      this.m_lbColumns.Items.AddRange(colnames);
+      if(selectedColumn < colnames.Length)
+        this.m_lbColumns.SelectedIndex = selectedColumn;
+    }
 
-		public void XColumn_Initialize(string colname)
-		{
-			this.m_edXColumn.Text = colname;
-		}
+    public void XColumn_Initialize(string colname)
+    {
+      this.m_edXColumn.Text = colname;
+    }
 
-		public void YColumn_Initialize(string colname)
-		{
-			this.m_edYColumn.Text = colname;
-		}
+    public void YColumn_Initialize(string colname)
+    {
+      this.m_edYColumn.Text = colname;
+    }
 
     public void LabelColumn_Initialize(string colname)
     {
       this.m_edLabelColumn.Text = colname;
     }
 
-		public void PlotRangeFrom_Initialize(int from)
-		{
-			this.m_nudPlotRangeFrom.Minimum=0;
-			this.m_nudPlotRangeFrom.Maximum = int.MaxValue;
-			this.m_nudPlotRangeFrom.Value = from;
-		}
+    public void PlotRangeFrom_Initialize(int from)
+    {
+      this.m_nudPlotRangeFrom.Minimum=0;
+      this.m_nudPlotRangeFrom.Maximum = int.MaxValue;
+      this.m_nudPlotRangeFrom.Value = from;
+    }
 
-		public void PlotRangeTo_Initialize(int to)
-		{
-			this.m_nudPlotRangeTo.Minimum=0;
-			this.m_nudPlotRangeTo.Maximum= int.MaxValue;
-			this.m_nudPlotRangeTo.Value = to;
-		}
+    public void PlotRangeTo_Initialize(int to)
+    {
+      this.m_nudPlotRangeTo.Minimum=0;
+      this.m_nudPlotRangeTo.Maximum= int.MaxValue;
+      this.m_nudPlotRangeTo.Value = to;
+    }
 
-		#endregion
+    #endregion
 
-		private void EhToX_Click(object sender, System.EventArgs e)
-		{
-		if(null!=Controller)
-			Controller.EhView_ToX(this.m_cbTables.SelectedIndex,(string)this.m_cbTables.SelectedItem,m_lbColumns.SelectedIndex,(string)this.m_lbColumns.SelectedItem);
-		}
+    private void EhToX_Click(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+        Controller.EhView_ToX(this.m_cbTables.SelectedIndex,(string)this.m_cbTables.SelectedItem,m_lbColumns.SelectedIndex,(string)this.m_lbColumns.SelectedItem);
+    }
 
-		private void EhToY_Click(object sender, System.EventArgs e)
-		{
-			if(null!=Controller)
-				Controller.EhView_ToY(this.m_cbTables.SelectedIndex,(string)this.m_cbTables.SelectedItem,m_lbColumns.SelectedIndex,(string)this.m_lbColumns.SelectedItem);
+    private void EhToY_Click(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+        Controller.EhView_ToY(this.m_cbTables.SelectedIndex,(string)this.m_cbTables.SelectedItem,m_lbColumns.SelectedIndex,(string)this.m_lbColumns.SelectedItem);
 
-		}
+    }
 
 
     private void EhToLabel_Click(object sender, System.EventArgs e)
@@ -381,17 +381,17 @@ namespace Altaxo.Graph.GUI
     }
 
 
-		private void EhEraseX_Click(object sender, System.EventArgs e)
-		{
-		if(null!=Controller)
-			Controller.EhView_EraseX();
-		}
+    private void EhEraseX_Click(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+        Controller.EhView_EraseX();
+    }
 
-		private void EhEraseY_Click(object sender, System.EventArgs e)
-		{
-		if(null!=Controller)
-			Controller.EhView_EraseY();
-		}
+    private void EhEraseY_Click(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+        Controller.EhView_EraseY();
+    }
 
     private void EhEraseLabel_Click(object sender, System.EventArgs e)
     {
@@ -399,41 +399,41 @@ namespace Altaxo.Graph.GUI
         Controller.EhView_EraseLabel();
     }
 
-		private void EhPlotRangeFrom_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-		if(null!=Controller)
-			e.Cancel |= Controller.EhView_RangeFrom((int)this.m_nudPlotRangeFrom.Value);
-		}
+    private void EhPlotRangeFrom_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      if(null!=Controller)
+        e.Cancel |= Controller.EhView_RangeFrom((int)this.m_nudPlotRangeFrom.Value);
+    }
 
-		private void EhPlotRangeTo_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			if(null!=Controller)
-				e.Cancel |= Controller.EhView_RangeTo((int)this.m_nudPlotRangeTo.Value);
-		}
+    private void EhPlotRangeTo_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      if(null!=Controller)
+        e.Cancel |= Controller.EhView_RangeTo((int)this.m_nudPlotRangeTo.Value);
+    }
 
-		private void EhTables_SelectionChangeCommit(object sender, System.EventArgs e)
-		{
-			if(null!=Controller)
-				Controller.EhView_TableSelectionChanged(this.m_cbTables.SelectedIndex,(string)this.m_cbTables.SelectedItem);
-		}
+    private void EhTables_SelectionChangeCommit(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+        Controller.EhView_TableSelectionChanged(this.m_cbTables.SelectedIndex,(string)this.m_cbTables.SelectedItem);
+    }
 
  
 
-		#region IMVCView Members
+    #region IMVCView Members
 
-		public object ControllerObject
-		{
-			get
-			{
-				// TODO:  Add LineScatterPlotDataControl.ControllerObject getter implementation
-				return null;
-			}
-			set
-			{
-				// TODO:  Add LineScatterPlotDataControl.ControllerObject setter implementation
-			}
-		}
+    public object ControllerObject
+    {
+      get
+      {
+        // TODO:  Add LineScatterPlotDataControl.ControllerObject getter implementation
+        return null;
+      }
+      set
+      {
+        // TODO:  Add LineScatterPlotDataControl.ControllerObject setter implementation
+      }
+    }
 
-		#endregion
-	}
+    #endregion
+  }
 }

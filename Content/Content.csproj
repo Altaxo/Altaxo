@@ -1296,11 +1296,19 @@
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "doc\help\AltaxoBase.chm"
+                    RelPath = "doc\help\AltaxoClassRef.chm"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "doc\help\AltaxoBase.hhc"
+                    RelPath = "doc\help\AltaxoClassRef.hhc"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "doc\help\AltaxoHelp.chm"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "doc\help\AltaxoHelp.hhc"
                     BuildAction = "Content"
                 />
                 <File

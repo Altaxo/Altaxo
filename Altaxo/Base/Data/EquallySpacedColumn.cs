@@ -51,7 +51,7 @@ namespace Altaxo.Data
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         EquallySpacedColumn s = null!=o ? (EquallySpacedColumn)o : new EquallySpacedColumn(0,1);
-				
+        
         s.m_Start = info.GetDouble("StartValue");
         s.m_Increment = info.GetDouble("Increment");
         return s;

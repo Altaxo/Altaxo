@@ -2,10 +2,12 @@
      inside the SharpDevelop help browser -->
 <HelpCollection>
 
-  <HelpFile hhc="SharpDevelop.hhc" chm="SharpDevelop.chm"/>
+  <HelpFile hhc="AltaxoHelp.hhc" chm="AltaxoHelp.chm"/>
 
+  <HelpFile hhc="SharpDevelop.hhc" chm="SharpDevelop.chm"/>
+  
   <HelpFolder name="Altaxo class reference">
-    <HelpFile hhc="AltaxoBase.hhc" chm="AltaxoBase.chm"/>
+    <HelpFile hhc="AltaxoClassRef.hhc" chm="AltaxoClassRef.chm"/>
   </HelpFolder>
 
   

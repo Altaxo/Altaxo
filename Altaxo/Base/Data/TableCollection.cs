@@ -139,7 +139,7 @@ namespace Altaxo.Data
         }
       }
 
-			
+      
       /// <summary>
       /// Merges information from another instance in this ChangedEventArg.
       /// </summary>
@@ -166,7 +166,7 @@ namespace Altaxo.Data
     {
       this.m_Parent = _parent;
     }
-	
+  
 
     public object ParentObject
     {
@@ -182,7 +182,7 @@ namespace Altaxo.Data
     #region Serialization
     public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
     {
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         Altaxo.Data.DataTableCollection s = (Altaxo.Data.DataTableCollection)obj;
         // info.AddValue("Parent",s.m_Parent);
@@ -257,14 +257,14 @@ namespace Altaxo.Data
 
     public void Suspend()
     {
-      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");		
+      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");    
 
       ++m_SuspendCount; // suspend one step higher
     }
 
     public void Resume()
     {
-      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");		
+      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");    
       if(m_SuspendCount>0 && (--m_SuspendCount)==0)
       {
         this.m_ResumeInProgress = true;
@@ -284,9 +284,9 @@ namespace Altaxo.Data
           {
             if(m_ChangeData.CollectionChanged)
               OnCollectionChanged();
-						
+            
             OnDataChanged(); // Fire the changed event
-          }		
+          }   
         }
       }
     }
@@ -301,7 +301,7 @@ namespace Altaxo.Data
       if(e is ChangedEventArgs)
         m_ChangeData.Merge((ChangedEventArgs)e);
     }
-	
+  
     public void OnChildChanged(object sender, System.EventArgs e)
     {
       if(this.IsSuspended &&  sender is Main.ISuspendable)
@@ -311,8 +311,8 @@ namespace Altaxo.Data
         return;
       }
 
-      AccumulateChildChangeData(sender,e);	// AccumulateNotificationData
-			
+      AccumulateChildChangeData(sender,e);  // AccumulateNotificationData
+      
       if(m_ResumeInProgress || IsSuspended)
         return;
 
@@ -325,7 +325,7 @@ namespace Altaxo.Data
           return;
         }
       }
-			
+      
       if(m_ChangeData.CollectionChanged)
         OnCollectionChanged();
 
@@ -354,7 +354,7 @@ namespace Altaxo.Data
     {
       if(null!=Changed)
         Changed(this,m_ChangeData);
-		
+    
       m_ChangeData=null;
     }
 
@@ -400,7 +400,7 @@ namespace Altaxo.Data
     public void Add(Altaxo.Data.DataTable theTable)
     {
       if(null==theTable.Name || 0==theTable.Name.Length) // if no table name provided
-        theTable.Name = FindNewTableName();									// find a new one
+        theTable.Name = FindNewTableName();                 // find a new one
       else if(m_TablesByName.ContainsKey(theTable.Name)) // else if this table name is already in use
         theTable.Name = FindNewTableName(theTable.Name); // find a new table name based on the original name
 
@@ -447,7 +447,7 @@ namespace Altaxo.Data
 
       if(!this.ContainsTable(nce.OldName))
         throw new ApplicationException("Error renaming table " + nce.OldName + " : this table name was not found in the collection!" );
-				
+        
       if(!object.ReferenceEquals(this[nce.OldName],sender))
         throw new ApplicationException("Names between DataTableCollection and Tables not in sync");
 
@@ -464,7 +464,7 @@ namespace Altaxo.Data
     public string FindNewTableName()
     {
       return FindNewTableName("WKS");
-    }	
+    } 
 
     /// <summary>
     /// Looks for the next unique table name base on a basic name.
@@ -477,7 +477,7 @@ namespace Altaxo.Data
         if(null==m_TablesByName[basicname+i.ToString()])
           return basicname+i; 
       }
-    }	
+    } 
 
     public object GetChildObjectNamed(string name)
     {

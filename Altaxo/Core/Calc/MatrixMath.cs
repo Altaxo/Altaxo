@@ -206,8 +206,8 @@ namespace Altaxo.Calc
         // we must reallocate the array if neccessary
         if(newRows>=m_Array.Length)
         {
-          double[][] newArray = new double[2*(newRows+32)][];	
-			
+          double[][] newArray = new double[2*(newRows+32)][]; 
+      
           for(int i=0;i<m_Rows;i++)
             newArray[i] = m_Array[i]; // copy the existing horizontal vectors.
 
@@ -221,7 +221,7 @@ namespace Altaxo.Calc
           for(int j=0;j<m_Cols;j++)
             m_Array[i][j] = a[i-m_Rows,j]; // copy the elements
         }
-				
+        
         m_Rows = newRows;
       }
 
@@ -343,12 +343,12 @@ namespace Altaxo.Calc
         }
 
         int newCols = a.Cols + this.Cols;
-				
+        
         // we must newly allocate the bone array, if neccessary
         if(newCols>=m_Array.Length)
         {
-          double[][] newArray = new double[2*(newCols+32)][];	
-			
+          double[][] newArray = new double[2*(newCols+32)][]; 
+      
           for(int i=0;i<m_Cols;i++)
             newArray[i] = m_Array[i]; // copy the existing horizontal vectors.
 
@@ -362,7 +362,7 @@ namespace Altaxo.Calc
           for(int j=0;j<m_Rows;j++)
             m_Array[i][j] = a[j,i-m_Cols]; // copy the elements
         }
-				
+        
         m_Cols = newCols;
       }
 
@@ -666,7 +666,7 @@ namespace Altaxo.Calc
           double sum=0;
           for(int k=0;k<numil;k++)
             sum += a[i,k]*b[k,j];
-				
+        
           c[i,j] = sum;
         }
       }
@@ -697,7 +697,7 @@ namespace Altaxo.Calc
           double sum=0;
           for(int k=0;k<numil;k++)
             sum += a[k,i]*b[k,j];
-				
+        
           c[i,j] = sum;
         }
       }
@@ -730,7 +730,7 @@ namespace Altaxo.Calc
           double sum=0;
           for(int k=0;k<numil;k++)
             sum += a[i,k]*b[j,k];
-				
+        
           c[i,j] = sum;
         }
       }
@@ -825,12 +825,12 @@ namespace Altaxo.Calc
           double sum=0;
           for(int k=0;k<numil;k++)
             sum += a[i,k]*b[k,j];
-				
+        
           c[i,j] -= sum;
         }
       }
     }
-	 
+   
     /// <summary>
     /// Calculates c = c - ab
     /// </summary>
@@ -877,7 +877,7 @@ namespace Altaxo.Calc
         sum /= a.Rows; // calculate the mean
         for(int row=0;row<a.Rows;row++)
           a[row,col] -= sum; // subtract the mean from every element in the column
-				
+        
         if(null!=mean)
           mean[0,col] = sum;
       }
@@ -913,7 +913,7 @@ namespace Altaxo.Calc
           scor = 1;
         for(int row=0;row<a.Rows;row++)
           a[row,col] = (a[row,col]-mean)*scor; // subtract the mean from every element in the column
-				
+        
         if(null!=meanvec)
           meanvec[0,col] = mean;
         if(null!=scorevec)
@@ -952,7 +952,7 @@ namespace Altaxo.Calc
           sum += Square(a[i,j]-b[i,j]);
       return sum;
     }
-		
+    
 
     /// <summary>
     /// Returns the square root of the sum of the squares of the matrix a.
@@ -1083,7 +1083,7 @@ namespace Altaxo.Calc
         throw new ArithmeticException(string.Format("Try to set column {0} with a matrix of more than one, namely {1} columns, is not allowed!",col,src.Cols));
       if(dest.Rows != src.Rows)
         throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({3})!",col,dest.Rows,src.Rows));
-		
+    
       for(int i=0;i<dest.Rows;i++)
         dest[i,col]=src[i,0];
     }
@@ -1103,7 +1103,7 @@ namespace Altaxo.Calc
         throw new ArithmeticException(string.Format("The source row number ({0}) exceeds the actual number of rows ({1})in the source matrix!",srcRow,src.Rows));
       if(dest.Cols != src.Cols)
         throw new ArithmeticException(string.Format("Number of columns of the matrix ({0}) not match number of colums of the vector ({1})!",dest.Cols,src.Cols));
-		
+    
       for(int j=0;j<dest.Cols;j++)
         dest[destRow,j]=src[srcRow,j];
     }
@@ -1157,11 +1157,11 @@ namespace Altaxo.Calc
     {
       if(col>=a.Cols)
         throw new ArithmeticException(string.Format("Matrix a is expected to have at least {0} columns, but has the actual dimensions({1},{2})",col+1,a.Rows,a.Cols));
-	
+  
       double sum=0;
       for(int i=0;i<a.Rows;i++)
         sum += Square(a[i,0]);
-		
+    
       sum = Math.Sqrt(sum);
       for(int i=0;i<a.Rows;i++)
         a[i,0] /= sum;
@@ -1183,7 +1183,7 @@ namespace Altaxo.Calc
 
       if(cols!=rows)
         throw new ArithmeticException(string.Format("A diagonal matrix has to be quadratic, but you provided a matrix of dimension({0},{1})!",rows,cols));
-		
+    
       for(int i=0;i<rows;i++)
         for(int j=0;j<cols;j++)
           a[i,j] = i==j ? 1/a[i,j] : 0;
@@ -1212,7 +1212,7 @@ namespace Altaxo.Calc
 
       return true;
     }
-		
+    
     /// <summary>
     /// Calculates eigenvectors (loads) and the corresponding eigenvalues (scores)
     /// by means of the NIPALS algorithm
@@ -1232,16 +1232,16 @@ namespace Altaxo.Calc
       IBottomExtensibleMatrix loads,
       IBottomExtensibleMatrix residualVarianceVector)
     {
-						
+            
       // first center the matrix
       //MatrixMath.ColumnsToZeroMean(X, null);
 
       double originalVariance = Math.Sqrt(MatrixMath.SumOfSquares(X));
-			
+      
       if(null!=residualVarianceVector)
         residualVarianceVector.AppendBottom(new MatrixMath.Scalar(originalVariance));
 
-	
+  
       IMatrix l = new HorizontalVector(X.Cols);
       IMatrix t_prev = null;
       IMatrix t = new VerticalVector(X.Rows);
@@ -1253,9 +1253,9 @@ namespace Altaxo.Calc
         //l has to be a horizontal vector
         // 1. Guess the transposed Vector l_transp, use first row of X matrix if it is not empty, otherwise the first non-empty row
         int rowoffset=0;
-        do	
+        do  
         {
-          Submatrix(X,l,rowoffset,0); 		// l is now a horizontal vector
+          Submatrix(X,l,rowoffset,0);     // l is now a horizontal vector
           rowoffset++;
         } while(IsZeroMatrix(l) && rowoffset<X.Rows);
 
@@ -1263,7 +1263,7 @@ namespace Altaxo.Calc
 
         for(int iter=0;iter<500;iter++)
         {
-			
+      
           // 2. Calculate the new vector t for the factor values
           MultiplySecondTransposed(X,l,t); // t = X*l_t (t is  a vertical vector)
 
@@ -1273,7 +1273,7 @@ namespace Altaxo.Calc
 
           // 3. Calculate the new loads 
           MultiplyFirstTransposed(t,X,l); // l = t_tr*X  (gives a horizontal vector of load (= eigenvalue spectrum)
-					
+          
           // normalize the (one) row
           NormalizeRows(l); // normalize the eigenvector spectrum
 
@@ -1332,7 +1332,7 @@ namespace Altaxo.Calc
       // n: number of spectra (number of tests, number of experiments)
       // p: number of slots (frequencies, ..) in each spectrum
       // m: number of constitutents (number of y values in each measurement)
-			
+      
       // X : n-p matrix of spectra (each spectra is a horizontal row)
       // Y : n-m matrix of concentrations
 
@@ -1344,7 +1344,7 @@ namespace Altaxo.Calc
 
       // use the mean spectrum as first row of the W matrix
       MatrixMath.HorizontalVector mean = new HorizontalVector(_X.Cols);
-      //	MatrixMath.ColumnsToZeroMean(X,mean);
+      //  MatrixMath.ColumnsToZeroMean(X,mean);
       //W.AppendBottom(mean);
 
       IMatrix X = new HOMatrix(_X.Rows,_X.Cols);
@@ -1368,7 +1368,7 @@ namespace Altaxo.Calc
         Console.WriteLine("X:"+X.ToString());
         Console.WriteLine("Y:"+Y.ToString());
 
-	
+  
         // 1. Use as start vector for the y score the first column of the 
         // y-matrix
         Submatrix(X,u); // u is now a vertical vector of concentrations of the first constituents
@@ -1411,7 +1411,7 @@ namespace Altaxo.Calc
         Scalar v = new Scalar(0);
         MatrixMath.MultiplyFirstTransposed(u,t,v);
         v = v/Square(length_of_t); 
-			
+      
         // 8. Calculate the new loads for the X (spectral) matrix
         MatrixMath.MultiplyFirstTransposed(t,X,p); // p is a horizontal vector of loads
         // Normalize p by the spectral scores
@@ -1428,7 +1428,7 @@ namespace Altaxo.Calc
         yLoads.AppendBottom(q);
         W.AppendBottom(w);
         V.AppendRight(v);
-		
+    
         // Calculate SEPcv. If SEPcv is greater than for the actual number of factors,
         // break since the optimal number of factors was found. If not, repeat the calculations
         // with the residual matrizes for the next factor.
@@ -1452,7 +1452,7 @@ namespace Altaxo.Calc
 
       MatrixMath.HorizontalVector wi = new MatrixMath.HorizontalVector(XU.Cols);
       MatrixMath.HorizontalVector cuadd = new MatrixMath.HorizontalVector(yLoads.Cols);
-			
+      
       // xu holds a single spectrum extracted out of XU
       MatrixMath.HorizontalVector xu = new MatrixMath.HorizontalVector(XU.Cols);
 
@@ -1461,7 +1461,7 @@ namespace Altaxo.Calc
 
 
       int maxFactors = Math.Min(yLoads.Rows,numFactors);
-			
+      
 
       for(int nSpectrum=0;nSpectrum<XU.Rows;nSpectrum++)
       {
@@ -1531,12 +1531,12 @@ namespace Altaxo.Calc
         // do a PLS with the builded matrices
         xLoads = new MatrixMath.HOMatrix(0,0); // clear xLoads
         yLoads = new MatrixMath.HOMatrix(0,0); // clear yLoads
-        W			 = new MatrixMath.HOMatrix(0,0); // clear W
+        W      = new MatrixMath.HOMatrix(0,0); // clear W
         V      = new MatrixMath.VOMatrix(0,0); // clear V
         int actnumfactors=numFactors;
         PartialLeastSquares_HO(XX, YY, ref actnumfactors, xLoads,yLoads,W,V); 
         numFactors = Math.Min(numFactors,actnumfactors); // if we have here a lesser number of factors, use it for all further calculations
-														
+                            
 
         // allocate the crossPRESS vector here, since now we know about the number of factors a bit more
         if(null==crossPRESS)

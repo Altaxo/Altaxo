@@ -35,18 +35,18 @@ namespace Altaxo.Data
   [SerializationVersion(0)]
   [Serializable()]
   public abstract class DataColumn :
-    IDisposable,		
+    IDisposable,    
     System.Runtime.Serialization.ISerializable,
     System.Runtime.Serialization.IDeserializationCallback, 
     IReadableColumn, 
     IWriteableColumn, 
     IDefinedCount,
     ICloneable,
-    Altaxo.Main.IDocumentNode,		
+    Altaxo.Main.IDocumentNode,    
     Main.ISuspendable
   {
-		
-	
+    
+  
 
     /// <summary>
     /// The parent table this column belongs to.
@@ -61,7 +61,7 @@ namespace Altaxo.Data
     /// newSize = addSpace+increaseFactor*oldSize.</summary>
     protected static int    addSpace=32; // array space is increased by multiplying with increasefactor + addspase
 
-			
+      
     /// <summary>Counter of how many suspends to data change event notifications are pending.</summary>
     /// <remarks>If this counter is zero, then every change to a element of this column fires a data change event. Applications doing a lot of changes at once can
     /// suspend this events for a better performance by calling <see cref="Suspend"/>. After finishing the application has to
@@ -74,15 +74,15 @@ namespace Altaxo.Data
     protected ChangeEventArgs m_ChangeData;
 
 
-		
+    
     /// <summary>This element is fired when the column is to be disposed.</summary><remarks>All instances, which have a reference
     /// to this column, should have a wire to this event. In case the event is fired, it indicates
     /// that the column should be disposed, so they have to unreference this column by setting the
     /// reference to null.
     /// </remarks>
-    public event EventHandler	ColumnDisposed;
+    public event EventHandler ColumnDisposed;
 
-	
+  
     /// <summary>
     /// This event is fired if the data of the column or anything else changed.
     /// </summary>
@@ -105,7 +105,7 @@ namespace Altaxo.Data
       /// to recalculate the row count of the table, since it is possible that the table row count also decreased in this case.</summary>
       protected bool m_RowCountDecreased; // true if during event switch of period, the row m_Count  of this column decreases 
 
-		
+    
 
       /// <summary>
       /// Constructor.
@@ -132,7 +132,7 @@ namespace Altaxo.Data
           m_MinRowChanged = minRow;
         if(maxRow > m_MaxRowChanged) 
           m_MaxRowChanged = maxRow;
-				
+        
         m_RowCountDecreased |= rowCountDecreased;
       }
 
@@ -141,14 +141,14 @@ namespace Altaxo.Data
       {
         get { return m_MinRowChanged; }
       }
-			
+      
       /// <summary>Upper bound (plus one) of the area of rows, which changed during the data change event off period. This in in the (plus one) convention,
       /// i.e. the value of this member is the maximum row number that changed plus one.</summary>
       public int MaxRowChanged
       {
         get { return m_MaxRowChanged; }
       }
-	
+  
       /// <summary>Indicates, if the row count decreased during the data change event off period. In this case it is neccessary
       /// to recalculate the row count of the table, since it is possible that the table row count also decreased in this case.</summary>
       public bool RowCountDecreased
@@ -156,7 +156,7 @@ namespace Altaxo.Data
         get { return m_RowCountDecreased; }
       }
     }
-		
+    
 
     #endregion
 
@@ -177,7 +177,7 @@ namespace Altaxo.Data
       /// <remarks>I decided _not_ to serialize the parent object, because there are situations were we
       /// only want to serialize this column. But if we also serialize the parent table, we end up serializing all the object graph.
       /// </remarks>
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)obj;
       }
@@ -214,7 +214,7 @@ namespace Altaxo.Data
       /// <remarks>I decided _not_ to serialize the parent object, because there are situations were we
       /// only want to serialize this column. But if we also serialize the parent table, we end up serializing all the object graph.
       /// </remarks>
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info	)
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info )
       {
         Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)obj;
       }
@@ -319,7 +319,7 @@ namespace Altaxo.Data
     /// </remarks>
     public void Suspend()
     {
-      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");		
+      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");    
       m_SuspendCount++;
     }
 
@@ -336,7 +336,7 @@ namespace Altaxo.Data
     /// and the arguments of the handler contain the changed area of rows during the suspend time.</remarks>
     public void Resume()
     {
-      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");		
+      System.Diagnostics.Debug.Assert(m_SuspendCount>=0,"SuspendCount must always be greater or equal to zero");    
 
       if(m_SuspendCount>0 && (--m_SuspendCount)==0 && m_ChangeData!=null)
       {
@@ -360,7 +360,7 @@ namespace Altaxo.Data
       if(m_ChangeData==null)
         m_ChangeData = new DataColumn.ChangeEventArgs(minRow,maxRow,rowCountDecreased);
       else
-        m_ChangeData.Accumulate(minRow,maxRow,rowCountDecreased);	// AccumulateNotificationData
+        m_ChangeData.Accumulate(minRow,maxRow,rowCountDecreased); // AccumulateNotificationData
     }
 
     /// <summary>
@@ -375,19 +375,19 @@ namespace Altaxo.Data
         return; // nobody is listening
 
       AccumulateChangeData(minRow, maxRow, rowCountDecreased);
-		
+    
       if(IsSuspended)
         return;
 
       if(m_Parent is Main.IChildChangedEventSink)
         ((Main.IChildChangedEventSink)m_Parent).OnChildChanged(this, m_ChangeData);
-	
+  
       if(!IsSuspended) // parent is not suspended
         OnDataChanged(); // Fire the changed event 
     }
-	
-		
-	
+  
+    
+  
     /// <summary>
     /// Fires the Changed event with the actual (accumulated) change data. After the firing of the event the change data are removed.
     /// </summary>
@@ -421,15 +421,15 @@ namespace Altaxo.Data
       }
     }
 
-	
+  
     /// <summary>
     /// Constructs a data column with no name associated.
     /// </summary>
     protected DataColumn()
     {
     }
-		
-	
+    
+  
     /// <summary>
     /// Returns either the column name if the column has no parent table, or the parent table name, followed by
     /// a backslash and the column name if the column has a table.
@@ -447,7 +447,7 @@ namespace Altaxo.Data
     /// Returns the row count, i.e. the one more than the index to the last valid data element in the column. 
     /// </summary>
     public abstract int Count { get; }
-		
+    
     /// <summary>
     /// Returns the column type followed by a backslash and the column name.
     /// </summary>
@@ -459,7 +459,7 @@ namespace Altaxo.Data
       }
     }
 
-	
+  
     /// <summary>
     /// Get / sets the parent object of this data column.
     /// </summary>
@@ -483,7 +483,7 @@ namespace Altaxo.Data
         }
       }
     }
-	
+  
 
     // indexers
     /// <summary>
@@ -494,15 +494,15 @@ namespace Altaxo.Data
     /// <remarks>The derived class should throw an exeption when the data type in the AltaxoVariant value val
     /// do not match the column type.</remarks>
     public abstract void SetValueAt(int i, AltaxoVariant val);
-		
-		
+    
+    
     /// <summary>
     /// This returns the value at a given index i as AltaxoVariant.
     /// </summary>
     /// <param name="i">The index (row number) to the element returned.</param>
     /// <returns>The element at index i.</returns>
     public abstract AltaxoVariant GetVariantAt(int i);
-		
+    
     /// <summary>
     /// This function is used to determine if the element at index i is valid or not. If it is valid,
     /// the derived class function has to return false. If it is empty or not valid, the function has
@@ -561,7 +561,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="v">The column the data will be copied from.</param>
     public abstract void CopyDataFrom(Altaxo.Data.DataColumn v);
-		
+    
     /// <summary>
     /// Removes a number of rows (given by <paramref name="nCount"/>) beginning from nFirstRow,
     /// i.e. remove rows number nFirstRow ... nFirstRow+nCount-1.
@@ -569,25 +569,25 @@ namespace Altaxo.Data
     /// <param name="nFirstRow">Number of first row to delete.</param>
     /// <param name="nCount">Number of rows to delete.</param>
     public abstract void RemoveRows(int nFirstRow, int nCount); // removes nCount rows starting from nFirstRow 
-		
-		
+    
+    
     /// <summary>
     /// Inserts <paramref name="nCount"/> empty rows before row number <paramref name="nBeforeRow"/>. 
     /// </summary>
     /// <param name="nBeforeRow">The row number before the additional rows are inserted.</param>
     /// <param name="nCount">Number of empty rows to insert.</param>
     public abstract void InsertRows(int nBeforeRow, int nCount); // inserts additional empty rows
-		
-		
-	
-		
+    
+    
+  
+    
     // -----------------------------------------------------------------------------
     // 
     //                      Operators
     //
     // -----------------------------------------------------------------------------
 
-		
+    
     // Note: unfortunately (and maybe also undocumented) we can not use
     // the names op_Addition, op_Subtraction and so one, because these
     // names seems to be used by the compiler for the operators itself
@@ -600,14 +600,14 @@ namespace Altaxo.Data
     /// <param name="b">The result of the addition (this+a).</param>
     /// <returns>True if successful, false if this operation is not supported.</returns>
     public virtual bool vop_Addition(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_Addition_Rev(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Addition(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Addition_Rev(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     /// <summary>
     /// Subtracts another data column from this data column (item by item). 
@@ -616,13 +616,13 @@ namespace Altaxo.Data
     /// <param name="b">The result of the subtraction (this-a).</param>
     /// <returns>True if successful, false if this operation is not supported.</returns>
     public virtual bool vop_Subtraction(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Subtraction_Rev(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Subtraction(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Subtraction_Rev(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     /// <summary>
     /// Multiplies another data column to this data column (item by item). 
@@ -631,13 +631,13 @@ namespace Altaxo.Data
     /// <param name="b">The result of the multiplication (this*a).</param>
     /// <returns>True if successful, false if this operation is not supported.</returns>
     public virtual bool vop_Multiplication(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Multiplication_Rev(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Multiplication(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Multiplication_Rev(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     /// <summary>
     /// Divides this data column by another data column(item by item). 
@@ -646,131 +646,131 @@ namespace Altaxo.Data
     /// <param name="b">The result of the division (this/a).</param>
     /// <returns>True if successful, false if this operation is not supported.</returns>
     public virtual bool vop_Division(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Division_Rev(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Division(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Division_Rev(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_Modulo(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Modulo_Rev(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Modulo(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Modulo_Rev(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_And(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_And_Rev(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_And(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_And_Rev(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_Or(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Or_Rev(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Or(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Or_Rev(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_Xor(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Xor_Rev(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Xor(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Xor_Rev(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_ShiftLeft(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_ShiftLeft_Rev(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_ShiftLeft(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_ShiftLeft_Rev(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_ShiftRight(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_ShiftRight_Rev(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_ShiftRight(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_ShiftRight_Rev(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_Lesser(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Lesser_Rev(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Lesser(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Lesser_Rev(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_Greater(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Greater_Rev(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Greater(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_Greater_Rev(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_LesserOrEqual(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_LesserOrEqual_Rev(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_LesserOrEqual(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_LesserOrEqual_Rev(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_GreaterOrEqual(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_GreaterOrEqual_Rev(DataColumn a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_GreaterOrEqual(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
     public virtual bool vop_GreaterOrEqual_Rev(AltaxoVariant a, out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     // Unary operators
     public virtual bool vop_Plus(out DataColumn b)
-    {	b=null; return false; }
+    { b=null; return false; }
 
     public virtual bool vop_Minus(out DataColumn b)
-    {	b=null; return false; }
-		
+    { b=null; return false; }
+    
     public virtual bool vop_Not(out DataColumn b)
-    {	b=null; return false; }
-		
+    { b=null; return false; }
+    
     public virtual bool vop_Complement(out DataColumn b)
-    {	b=null; return false; }
-		
+    { b=null; return false; }
+    
     public virtual bool vop_Increment(out DataColumn b)
-    {	b=null; return false; }
-		
+    { b=null; return false; }
+    
     public virtual bool vop_Decrement(out DataColumn b)
-    {	b=null; return false; }
-		
+    { b=null; return false; }
+    
     public virtual bool        vop_True(out bool b)
-    {	b=false; return false; }
-		
+    { b=false; return false; }
+    
     public virtual bool        vop_False(out bool b)
-    {	b=false; return false; }
+    { b=false; return false; }
 
-	
-		
+  
+    
     public static DataColumn operator +(DataColumn c1, DataColumn c2)
     {
       DataColumn c3;
@@ -834,8 +834,8 @@ namespace Altaxo.Data
     }
 
 
-		
-		
+    
+    
     public static DataColumn operator *(DataColumn c1, DataColumn c2)
     {
       DataColumn c3;
@@ -1244,8 +1244,8 @@ namespace Altaxo.Data
     }
 
   } // end of class Altaxo.Data.DataColumn
-	
+  
 
-	
+  
 
 }

@@ -29,7 +29,7 @@
 | general multi-dimensional non-linear least-squares fit                        |
 | using the Levenberg-Marquardt algorithm                                       |
 |                                                                               |
-| Last change: Jun 22, 2001							|
+| Last change: Jun 22, 2001             |
 |                                                                               |
 | Matpack Library Release 1.7.2                                                 |
 | Copyright (C) 1991-2001 by Berndt M. Gammel. All rights reserved.             |
@@ -39,14 +39,14 @@
 | provided that this license information and copyright notice appear unmodified |
 | in all copies.  This software is provided 'as is'  without express or implied |
 | warranty.  In no event will the author be held liable for any damages arising |
-| from the use of this software.						|
+| from the use of this software.            |
 | Note that distributing Matpack 'bundled' in with any product is considered to |
-| be a 'commercial purpose'.							|
+| be a 'commercial purpose'.              |
 | The software may be modified for your own purposes, but modified versions may |
-| not be distributed without prior consent of the author.			|
+| not be distributed without prior consent of the author.     |
 |                                                                               |
-| Read the  COPYRIGHT and  README files in this distribution about registration	|
-| and installation of Matpack.							|
+| Read the  COPYRIGHT and  README files in this distribution about registration |
+| and installation of Matpack.              |
 |                                                                               |
 \*-----------------------------------------------------------------------------*/
 
@@ -189,8 +189,8 @@ namespace Altaxo.Calc
 
 
     //void LevenbergMarquardtFit (LMFunction fcn, Vector& xvec, Vector& fvec, 
-    //			    double tol, int& info, int *iwa, double *wa, int lwa)
-    public static	void LevenbergMarquardtFit (LMFunction fcn, double[] xvec, double[] fvec, 
+    //          double tol, int& info, int *iwa, double *wa, int lwa)
+    public static void LevenbergMarquardtFit (LMFunction fcn, double[] xvec, double[] fvec, 
       double tol, ref int info, int[] iwa, double[] diag, double[] fjac, int[] ipvt, double[] qtf, double[] wa1, double[] wa2, double[] wa3,
       double[] wa4)
       //
@@ -305,7 +305,7 @@ namespace Altaxo.Calc
     
       if (info == 8) 
         info = 4;
-    }	
+    } 
 
 
     public static void  LevenbergMarquardtFit (LMFunction fcn, double[] xvec, double[] fvec, 
@@ -475,7 +475,7 @@ namespace Altaxo.Calc
       const double p25 = 0.25;
       const double p75 = 0.75;
       const double p0001 = 1e-4;
-		
+    
       int fjac_dim1, fjac_offset;
 
       int iter;
@@ -496,8 +496,8 @@ namespace Altaxo.Calc
 
       double[] x = xvec;
       double[] f = fvec;
-      //		x = &xvec[ xvec.Lo()-1 ];   // 1-offset solution variables vector
-      //		f = &fvec[ fvec.Lo()-1 ];   // 1-offset functions vector
+      //    x = &xvec[ xvec.Lo()-1 ];   // 1-offset solution variables vector
+      //    f = &fvec[ fvec.Lo()-1 ];   // 1-offset functions vector
 
       //--wa4;
       //--wa3;
@@ -593,7 +593,7 @@ namespace Altaxo.Calc
         // form (q transpose)*f and store the first n components in qtf
         for (i = 0; i < m; ++i) wa4[i] = f[i]; // LELLID!!
    
-      for (j = 0; j < n; ++j)	
+      for (j = 0; j < n; ++j) 
       { // LELLID!!
         if (fjac[j + j * fjac_dim1] != 0.0) 
         {
@@ -615,7 +615,7 @@ namespace Altaxo.Calc
         { // LELLID!!
           l = ipvt[j];
           if (wa2[l] != 0.0) 
-          {	
+          { 
             sum = 0.0;
             for (i = 0; i <= j; ++i) // LELLID!!
               sum += fjac[i + j * fjac_dim1] * (qtf[i] / fnorm);
@@ -695,7 +695,7 @@ namespace Altaxo.Calc
       if (ratio > p25) goto L240;
 
       if (actred >= 0.0) temp = p5;
-      if (actred < 0.0) 	temp = p5 * dirder / (dirder + p5 * actred);
+      if (actred < 0.0)   temp = p5 * dirder / (dirder + p5 * actred);
       if (p1 * fnorm1 >= fnorm || temp < p1) temp = p1;
 
       delta = temp * Math.Min(delta, pnorm / p1);
@@ -1025,11 +1025,11 @@ namespace Altaxo.Calc
     
         // termination
         if (iter == 0) par = 0.0;
-    }	
+    } 
 
 
     //static void qrslov (int n, double *r, int ldr, int *ipvt, 
-    //		    double *diag, double *qtb, double *x, double *sdiag, double *wa)
+    //        double *diag, double *qtb, double *x, double *sdiag, double *wa)
     public static void qrslov (int n, double[] r, int ldr, int[] ipvt, 
       double[] diag, double[] qtb, double[] x, double[] sdiag, double[] wa)
       //
@@ -1121,7 +1121,7 @@ namespace Altaxo.Calc
       for (j = 0; j < n; ++j) 
       { // LELLID!! 
         for (i = j; i < n; ++i) // LELLID!!
-          r[i + j * r_dim1] = r[j + i * r_dim1];	
+          r[i + j * r_dim1] = r[j + i * r_dim1];  
         x[j] = r[j + j * r_dim1];
         wa[j] = qtb[j];
       }
@@ -1157,7 +1157,7 @@ namespace Altaxo.Calc
           sin_ = p5 / Math.Sqrt(p25 + p25 * sqr(cotan));
           cos_ = sin_ * cotan;
           goto L50;
-	    
+      
         L40:
 
           tan_ = sdiag[k] / r[k + k * r_dim1];
@@ -1332,7 +1332,7 @@ namespace Altaxo.Calc
         // bring the column of largest norm into the pivot position
         kmax = j;
         for (k = j; k < n; ++k) // LELLID!!
-          if (rdiag[k] > rdiag[kmax])	kmax = k;
+          if (rdiag[k] > rdiag[kmax]) kmax = k;
        
         if (kmax == j) goto L40;
         for (i = 0; i < m; ++i) 
@@ -1372,11 +1372,11 @@ namespace Altaxo.Calc
           sum = 0.0;
           for (i = j; i < m; ++i) // LELLID!!
             sum += a[i + j * a_dim1] * a[i + k * a_dim1];
-	    
+      
           temp = sum / a[j + j * a_dim1];
           for (i = j; i < m; ++i) // LELLID!! 
             a[i + k * a_dim1] -= temp * a[i + j * a_dim1];
-	    
+      
           if ( ! pivot || rdiag[k] == 0.0 ) goto L80;
           temp = a[j + k * a_dim1] / rdiag[k];
 
@@ -1447,7 +1447,7 @@ namespace Altaxo.Calc
         s1 = 1.0 + s1 * sqr(x1max / xabs);
         x1max = xabs;
         goto L80;
-	
+  
       L10:
         s1 += sqr(xabs / x1max);
         goto L80;
@@ -1463,7 +1463,7 @@ namespace Altaxo.Calc
         if (xabs != 0.0)  s3 += sqr(xabs / x3max);
         goto L80;
 
-      L70:	
+      L70:  
         // sum for intermediate components
         s2 += sqr(xabs);
 
@@ -1492,7 +1492,7 @@ namespace Altaxo.Calc
 
 
     /// <summary>Given an n-vector x, this function calculates the
-    ///	euclidean norm of x. 
+    /// euclidean norm of x. 
     /// </summary>
     /// <param name="n">A positive integer input variable of the number of elements to process.</param>
     /// <param name="x">An input array of length n. </param>
@@ -1551,7 +1551,7 @@ namespace Altaxo.Calc
         s1 = 1.0 + s1 * sqr(x1max / xabs);
         x1max = xabs;
         goto L80;
-	
+  
       L10:
         s1 += sqr(xabs / x1max);
         goto L80;
@@ -1567,7 +1567,7 @@ namespace Altaxo.Calc
         if (xabs != 0.0)  s3 += sqr(xabs / x3max);
         goto L80;
 
-      L70:	
+      L70:  
         // sum for intermediate components
         s2 += sqr(xabs);
 
@@ -1598,7 +1598,7 @@ namespace Altaxo.Calc
 
 
     //static void fdjac2 (LMFunction fcn, int m, int n, double *x, double *fvec, double *fjac, 
-    //		    int ldfjac, int& iflag, double epsfcn, double *wa)
+    //        int ldfjac, int& iflag, double epsfcn, double *wa)
     public static void fdjac2 (LMFunction fcn, int m, int n, double[] x, double[] fvec, double[] fjac, 
       int ldfjac, ref int iflag, double epsfcn, double[] wa)
       //

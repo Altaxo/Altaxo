@@ -24,74 +24,74 @@ using System;
 
 namespace Altaxo.Graph
 {
-	/// <summary>
-	/// Summary description for RectangleD.
-	/// </summary>
-	[Serializable]
-	public struct RectangleD
-	{
-		private double x;
-		private double y;
-		private double width;
-		private double height;
+  /// <summary>
+  /// Summary description for RectangleD.
+  /// </summary>
+  [Serializable]
+  public struct RectangleD
+  {
+    private double x;
+    private double y;
+    private double width;
+    private double height;
 
 
-		#region Serialization
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleD),0)]
-			public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				RectangleD s = (RectangleD)obj;
-				info.AddValue("X",s.x);  
-				info.AddValue("Y",s.y);  
-				info.AddValue("Width",s.width);
-				info.AddValue("Height",s.height);
-			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				
-				RectangleD s = null!=o ? (RectangleD)o : new RectangleD();
-				s.x = info.GetDouble("X");
-				s.y = info.GetDouble("Y");
-				s.width = info.GetDouble("Width");
-				s.height = info.GetDouble("Height");
+    #region Serialization
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleD),0)]
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        RectangleD s = (RectangleD)obj;
+        info.AddValue("X",s.x);  
+        info.AddValue("Y",s.y);  
+        info.AddValue("Width",s.width);
+        info.AddValue("Height",s.height);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        
+        RectangleD s = null!=o ? (RectangleD)o : new RectangleD();
+        s.x = info.GetDouble("X");
+        s.y = info.GetDouble("Y");
+        s.width = info.GetDouble("Width");
+        s.height = info.GetDouble("Height");
 
-				return s;
-			}
-		}
-		#endregion
+        return s;
+      }
+    }
+    #endregion
 
-		public RectangleD(double x, double y, double width, double height)
-		{
-			this.x = x;
-			this.y = y;
-			this.width = width;
-			this.height = height;
-		}
+    public RectangleD(double x, double y, double width, double height)
+    {
+      this.x = x;
+      this.y = y;
+      this.width = width;
+      this.height = height;
+    }
 
-		public double X
-		{
-			get { return x; }
-			set { x = value; }
-		}
+    public double X
+    {
+      get { return x; }
+      set { x = value; }
+    }
 
-		public double Y
-		{
-			get { return y; }
-			set { y = value; }
-		}
+    public double Y
+    {
+      get { return y; }
+      set { y = value; }
+    }
 
-		public double Width
-		{
-			get { return width; }
-			set { width = value; }
-		}
+    public double Width
+    {
+      get { return width; }
+      set { width = value; }
+    }
 
-		public double Height
-		{
-			get { return height; }
-			set { height = value; }
-		}
-	}
+    public double Height
+    {
+      get { return height; }
+      set { height = value; }
+    }
+  }
 }

@@ -24,7 +24,7 @@ using System;
 
 namespace Altaxo.Data
 {
-	
+  
   /// <summary>
   /// A column, for which the elements can be set by assigning a AltaxoVariant to a element at index i.
   /// </summary>

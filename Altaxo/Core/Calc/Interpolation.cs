@@ -64,7 +64,7 @@ namespace Altaxo.Calc.Interpolation
     bool Empty();
     int LowerBound { get; }
     int UpperBound { get; }
-		
+    
     int Elements(); // change this later to length property
 
   }
@@ -171,7 +171,7 @@ namespace Altaxo.Calc.Interpolation
   }
 
 
-	
+  
 
   #region CurveBase
   //----------------------------------------------------------------------------//
@@ -199,19 +199,19 @@ namespace Altaxo.Calc.Interpolation
 
     public enum BoundaryConditions 
     { 
-      Natural = 0, 		// natural boundaries, zero 2nd deriv.
-      FiniteDifferences, 	// finite differences for 1st derivatives
-      Supply1stDerivative,	// user supplied f'(x_lo), f'(x_hi)
-      Supply2ndDerivative,	// user supplied f''(x_lo), f''(x_hi)
-      Periodic  		// periodic boundaries (NOT YET IMPLEMENTED)
+      Natural = 0,    // natural boundaries, zero 2nd deriv.
+      FiniteDifferences,  // finite differences for 1st derivatives
+      Supply1stDerivative,  // user supplied f'(x_lo), f'(x_hi)
+      Supply2ndDerivative,  // user supplied f''(x_lo), f''(x_hi)
+      Periodic      // periodic boundaries (NOT YET IMPLEMENTED)
     };
 
     public enum Parametrization 
-    {	// curve parametrization methods
-      No = 0,			// don't parametrize (default)
-      Norm2,			// use sqrt(dx^2+dy^2)
-      SqrNorm2,			// use (dx^2+dy^2)
-      Norm1 			// use |dx| + |dy|
+    { // curve parametrization methods
+      No = 0,     // don't parametrize (default)
+      Norm2,      // use sqrt(dx^2+dy^2)
+      SqrNorm2,     // use (dx^2+dy^2)
+      Norm1       // use |dx| + |dy|
     };
 
 
@@ -258,11 +258,11 @@ namespace Altaxo.Calc.Interpolation
       int hi = x.UpperBound;
       if (u < x[lo]) 
       {
-        i = lo - 1;	// attention: return index below smallest index
+        i = lo - 1; // attention: return index below smallest index
       } 
       else if (u >= x[hi]) 
       {
-        i = hi;	// attention: return highest index
+        i = hi; // attention: return highest index
       } 
       else 
       {
@@ -280,9 +280,9 @@ namespace Altaxo.Calc.Interpolation
 
 
     #endregion
-		
+    
 
-		
+    
 
 
 
@@ -291,8 +291,8 @@ namespace Altaxo.Calc.Interpolation
     //
     // double MpCurveBase::CubicSplineHorner (double u, 
     //                                        const Vector &x, const Vector &y, 
-    //			                  const Vector &y1, const Vector &y2, 
-    //			                  const Vector &y3) const
+    //                        const Vector &y1, const Vector &y2, 
+    //                        const Vector &y3) const
     //
     // Return the interpolation value P(u) for a piecewise cubic curve determined
     // by the abscissa vector x, the ordinate vector y, the 1st derivative
@@ -344,7 +344,7 @@ namespace Altaxo.Calc.Interpolation
 
       int i = FindIntervall(u,x);  
       if (i  < x.Lo()) i = x.Lo();  // extrapolate to the left
-      if (i == x.Hi()) i--; 	// extrapolate to the right
+      if (i == x.Hi()) i--;   // extrapolate to the right
       double dx = u - x[i];
       return (y[i] + dx * (y1[i] + dx * (y2[i] + dx * y3[i])));
     }
@@ -354,8 +354,8 @@ namespace Altaxo.Calc.Interpolation
     //
     // void MpCurveBase::CubicSplineCoefficients (const Vector &x, 
     //                                            const Vector &y, 
-    //				              const Vector &y1, 
-    //				              Vector &y2, Vector &y3) const
+    //                      const Vector &y1, 
+    //                      Vector &y2, Vector &y3) const
     //
     // Calculate the spline coefficients y2(i) and y3(i) for a natural cubic
     // spline, given the abscissa x(i), the ordinate y(i), and the 1st 
@@ -389,18 +389,18 @@ namespace Altaxo.Calc.Interpolation
       y2[hi] = y3[hi] = 0.0;
     }
 
-		
+    
     public abstract int Interpolate (IVector x, IVector y);
     public abstract double GetX (double x);
     public abstract double GetY (double x);
 
 
-	
+  
 
 
     //----------------------------------------------------------------------------//
     // void MpCurveBase::Parametrize (const Vector& x, const Vector& y, 
-    // 	  			  Vector& t, int parametrization) const
+    //            Vector& t, int parametrization) const
     //
     // Curve length parametrization. Returns the accumulated "distances"
     // between the points (x(i),y(i)) and (x(i+1),y(i+1)) in t(i+1) 
@@ -442,11 +442,11 @@ namespace Altaxo.Calc.Interpolation
 
         default: 
           throw new System.ArgumentException("illegal value for parametrization method");
-					
+          
       }
 
 
-		
+    
 
     }
 
@@ -454,103 +454,103 @@ namespace Altaxo.Calc.Interpolation
 #if IncludeScene
 
 
-		//----------------------------------------------------------------------------//
-		//
-		// int MpCurveBase::GetResolution (const Scene& scene, 
-		//			  	   double x1, double y1, 
-		//				   double x2, double y2) const
-		//
-		// Calculate the number of intermediate points neccessary to get a 
-		// smooth appearance when drawing a line segment between (x1,y1) and (x2,y2).
-		//
-		//----------------------------------------------------------------------------//
+    //----------------------------------------------------------------------------//
+    //
+    // int MpCurveBase::GetResolution (const Scene& scene, 
+    //             double x1, double y1, 
+    //           double x2, double y2) const
+    //
+    // Calculate the number of intermediate points neccessary to get a 
+    // smooth appearance when drawing a line segment between (x1,y1) and (x2,y2).
+    //
+    //----------------------------------------------------------------------------//
 
-		int GetResolution (IScene scene, 
-			double x1, double y1, double x2, double y2)
-	{
+    int GetResolution (IScene scene, 
+      double x1, double y1, double x2, double y2)
+  {
   int r = scene.curve.resolution + 2;
   Pixel2D p1( scene.Map(x1,y1)), p2(scene.Map(x2,y2) );
   return 1 + int( (r + abs(p2.px-p1.px) + abs(p2.py-p1.py)) / (2 * r) );
 }
 
-		//----------------------------------------------------------------------------//
-		//
-		// void MpCurveBase::DrawCurve (Scene &scene, double xlo, double xhi)
-		//
-		// Draws an interpolation curve between the abscissa values xlo and xhi.
-		// It calls the virtual methods MpCurveBase::GetX() and GetY() to obtain the
-		// interpolation values. Note, that before method DrawCurve() can be called
-		// the method Interpolate() must have been called. Otherwise, not interpolation
-		// is available.
-		//
-		//  Input arguments:
-		//  ----------------
-		//   
-		//    Scene  &scene  = the scene the drawing is directed to
-		//
-		//    double xlo
-		//    double xhi     = the drawing range of the curve is [xlo,xhi]
-		//
-		//----------------------------------------------------------------------------//
+    //----------------------------------------------------------------------------//
+    //
+    // void MpCurveBase::DrawCurve (Scene &scene, double xlo, double xhi)
+    //
+    // Draws an interpolation curve between the abscissa values xlo and xhi.
+    // It calls the virtual methods MpCurveBase::GetX() and GetY() to obtain the
+    // interpolation values. Note, that before method DrawCurve() can be called
+    // the method Interpolate() must have been called. Otherwise, not interpolation
+    // is available.
+    //
+    //  Input arguments:
+    //  ----------------
+    //   
+    //    Scene  &scene  = the scene the drawing is directed to
+    //
+    //    double xlo
+    //    double xhi     = the drawing range of the curve is [xlo,xhi]
+    //
+    //----------------------------------------------------------------------------//
 
-		public void DrawCurve (IScene scene, double x_lo, double x_hi)
-		{
-			if (! scene.IsOpen()) 
-				Matpack.Error("MpCurveBase::DrawCurve: scene is not open for drawing");
+    public void DrawCurve (IScene scene, double x_lo, double x_hi)
+    {
+      if (! scene.IsOpen()) 
+        Matpack.Error("MpCurveBase::DrawCurve: scene is not open for drawing");
 
-			// nothing to draw if zero or one element
-			if (x->Elements() < 2) return;
+      // nothing to draw if zero or one element
+      if (x->Elements() < 2) return;
 
-			// Find index of the element in the abscissa vector x, that is smaller
-			// than the lower (upper) value xlo (xhi) of the drawing range. If xlo is
-			// smaller than the lowest abscissa value the lowest index minus one is
-			// returned.
-			int i_lo = FindIntervall(xlo,*x),
-				i_hi = FindIntervall(xhi,*x);
+      // Find index of the element in the abscissa vector x, that is smaller
+      // than the lower (upper) value xlo (xhi) of the drawing range. If xlo is
+      // smaller than the lowest abscissa value the lowest index minus one is
+      // returned.
+      int i_lo = FindIntervall(xlo,*x),
+        i_hi = FindIntervall(xhi,*x);
 
-			// Interpolation values for the boundaries of the drawing range [xlo,xhi]
-			double ylo = GetY(xlo),
-				yhi = GetY(xhi);
+      // Interpolation values for the boundaries of the drawing range [xlo,xhi]
+      double ylo = GetY(xlo),
+        yhi = GetY(xhi);
 
-			int k;
-			double x0,t,delta;
+      int k;
+      double x0,t,delta;
 
-			scene.MoveTo(xlo,ylo);
-			k = GetResolution(scene,xlo,ylo, (*x)(i_lo+1),(*y)(i_lo+1));
-			delta = ((*x)(i_lo+1) - xlo) / k;
-			for (int j = 0; j < k; j++) 
-			{
-				t = xlo + j * delta;
-				scene.LineTo( GetX(t), GetY(t) );
-			}
+      scene.MoveTo(xlo,ylo);
+      k = GetResolution(scene,xlo,ylo, (*x)(i_lo+1),(*y)(i_lo+1));
+      delta = ((*x)(i_lo+1) - xlo) / k;
+      for (int j = 0; j < k; j++) 
+      {
+        t = xlo + j * delta;
+        scene.LineTo( GetX(t), GetY(t) );
+      }
 
-			for (int i = i_lo+1; i < i_hi; i++) 
-			{
-				x0 = (*x)(i);
-				k = GetResolution(scene,x0,(*y)(i),(*x)(i+1),(*y)(i+1));
-				delta = ((*x)(i+1)-x0) / k;
-				for (int j = 0; j < k; j++) 
-				{
-					t = x0 + j * delta;
-					scene.LineTo( GetX(t), GetY(t) );
-				}
-			}
+      for (int i = i_lo+1; i < i_hi; i++) 
+      {
+        x0 = (*x)(i);
+        k = GetResolution(scene,x0,(*y)(i),(*x)(i+1),(*y)(i+1));
+        delta = ((*x)(i+1)-x0) / k;
+        for (int j = 0; j < k; j++) 
+        {
+          t = x0 + j * delta;
+          scene.LineTo( GetX(t), GetY(t) );
+        }
+      }
 
-			x0 = (*x)(i_hi);
-			k = GetResolution(scene,x0,(*y)(i_hi),xhi,yhi);
-			delta = (xhi - x0) / k;
-			for (int j = 0; j < k; j++) 
-			{
-				t = x0 + j * delta;
-				scene.LineTo( GetX(t), GetY(t) );
-			}  
+      x0 = (*x)(i_hi);
+      k = GetResolution(scene,x0,(*y)(i_hi),xhi,yhi);
+      delta = (xhi - x0) / k;
+      for (int j = 0; j < k; j++) 
+      {
+        t = x0 + j * delta;
+        scene.LineTo( GetX(t), GetY(t) );
+      }  
 
-			// don't forget last point
-			scene.LineTo(xhi,yhi);
+      // don't forget last point
+      scene.LineTo(xhi,yhi);
 
-			// flush graphics buffer 
-			scene.Flush();  
-		}
+      // flush graphics buffer 
+      scene.Flush();  
+    }
 
 
 #endif
@@ -568,7 +568,7 @@ namespace Altaxo.Calc.Interpolation
   /// </summary>
   public class LinearInterpolation
   {
-	
+  
     public static int GetNextIndexOfValidPair(IVector xcol, IVector ycol, int sourceLength, int currentIndex)
     {
       for(int sourceIndex=currentIndex;sourceIndex<sourceLength;sourceIndex++)
@@ -595,7 +595,7 @@ namespace Altaxo.Calc.Interpolation
       out double[] resultCol)
     {
       resultCol = new double[numberOfValues];
-			
+      
       int currentIndex = GetNextIndexOfValidPair(xcol,ycol,sourceLength, 0);
       if(currentIndex<0)
         return "The two columns don't contain a valid pair of values";
@@ -603,13 +603,13 @@ namespace Altaxo.Calc.Interpolation
       int nextIndex = GetNextIndexOfValidPair(xcol,ycol,sourceLength,currentIndex+1);
       if(nextIndex<0)
         return "The two columns contain only one valid pair of values, but at least two valid pairs are neccessary!";
-	
+  
 
       double x_current = xcol[currentIndex];
       double x_next = xcol[nextIndex];
 
       int resultIndex=0;
-			
+      
       // handles values before interpolation range
       for(resultIndex=0;resultIndex<numberOfValues;resultIndex++)
       {
@@ -659,7 +659,7 @@ namespace Altaxo.Calc.Interpolation
 
   class FritschCarlsonCubicSpline : CurveBase
   {
-	
+  
     protected DoubleVector y1 = new DoubleVector();
     protected DoubleVector y2 = new DoubleVector();
     protected DoubleVector y3 = new DoubleVector();
@@ -768,7 +768,7 @@ namespace Altaxo.Calc.Interpolation
     {
       return u;
     }
-		
+    
     public override double GetY (double u) 
     {
       return CubicSplineHorner(u,x,y,y1,y2,y3);
@@ -798,7 +798,7 @@ namespace Altaxo.Calc.Interpolation
     }
     #endregion
 
-		
+    
     //-----------------------------------------------------------------------------//
     // 
     // Initial derivatives within data set using
@@ -876,10 +876,10 @@ namespace Altaxo.Calc.Interpolation
   #region AkimaCubicSpline
   class AkimaCubicSpline : CurveBase
   {
-    protected	DoubleVector y1 = new DoubleVector();
-    protected	DoubleVector  y2 = new DoubleVector();
-    protected	DoubleVector y3 = new DoubleVector();
-		
+    protected DoubleVector y1 = new DoubleVector();
+    protected DoubleVector  y2 = new DoubleVector();
+    protected DoubleVector y3 = new DoubleVector();
+    
 
     private double m(int i)
     {
@@ -971,7 +971,7 @@ namespace Altaxo.Calc.Interpolation
     
         // i = 0
         num = Math.Abs(m(lo1) - m(lo)) * m_m1 + Math.Abs(m_m1 - m_m2) * m(lo);
-        den = Math.Abs(m(lo1) - m(lo)) + Math.Abs(m_m1 - m_m2);  	
+        den = Math.Abs(m(lo1) - m(lo)) + Math.Abs(m_m1 - m_m2);   
         y1[lo] = (den != 0.0) ? num / den : 0.0;
     
         // i = 1 
@@ -1171,14 +1171,14 @@ namespace Altaxo.Calc.Interpolation
     #region Scene drawing
 #if IncludeScene
 
-		//----------------------------------------------------------------------------//
+    //----------------------------------------------------------------------------//
 //
 //  compute a cubic Bezier polynomial for the points
 //  (x[0],y[0])...(x[3],y[3]) and plot it from (x[1],y[1]) to (x[2],y[2])
 //
 //----------------------------------------------------------------------------//
 
-		protected void Draw4 (Scene& scene, const double *x, const double *y, int &first)
+    protected void Draw4 (Scene& scene, const double *x, const double *y, int &first)
 {
   double u,u2,u3,u4,c1,c2,c3,c4,rx,ry;
   int n = GetResolution(scene,x[1],y[1],x[2],y[2]);
@@ -1216,7 +1216,7 @@ void DrawClosedCurve (Scene &scene)
 {
   if ( ! scene.IsOpen() ) 
     Matpack.Error("MpBezierCubicSpline::DrawClosedCurve: "
-		  "scene is not open for drawing");
+      "scene is not open for drawing");
 
   // get index range
   int lo = x->Lo(),
@@ -1256,7 +1256,7 @@ void DrawClosedCurve (Scene &scene)
   // flush graphics buffer
   scene.Flush();  
 }
-		
+    
 #endif
     #endregion
   };
@@ -1265,10 +1265,10 @@ void DrawClosedCurve (Scene &scene)
 
   #region CardinalCubicSpline
 
-	
+  
   public class CardinalCubicSpline : CurveBase
   {
-			
+      
     //----------------------------------------------------------------------------//
     //
     // int MpBezierCubicSpline::Interpolate (const Vector &x, const Vector &y)
@@ -1404,12 +1404,12 @@ void DrawClosedCurve (Scene &scene)
         return c1*y[i-1] + c2*y[i] + c3*y[i+1] + c4*y[i+2];
       }
     }
-	
+  
 
-	
+  
     #region Scene Drawing
 #if IncludeScene
-	//----------------------------------------------------------------------------//
+  //----------------------------------------------------------------------------//
 //
 //  compute a cubic Cardinal polynomial for the points
 //  (x[0],y[0])...(x[3],y[3]) and plot it from (x[1],y[1]) to (x[2],y[2])
@@ -1417,7 +1417,7 @@ void DrawClosedCurve (Scene &scene)
 //----------------------------------------------------------------------------//
 
 void MpCardinalCubicSpline::Draw4 (Scene& scene, 
-				   const double *x, const double *y, int &first)
+           const double *x, const double *y, int &first)
 {
   double u,u2,u3,u4,c1,c2,c3,c4,rx,ry;
   int n = GetResolution(scene,x[1],y[1],x[2],y[2]);
@@ -1449,7 +1449,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 {
   if ( ! scene.IsOpen() ) 
     Matpack.Error("MpCardinalCubicSpline::DrawClosedCurve: "
-		  "scene is not open for drawing");
+      "scene is not open for drawing");
 
   // get index range
   int lo = x->Lo(),
@@ -1499,18 +1499,18 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
   class RationalCubicSpline : CurveBase
   {
-    protected	BoundaryConditions boundary;	
-    protected	double p,r1,r2;
-    protected	DoubleVector dx = new DoubleVector();
-    protected	DoubleVector dy = new DoubleVector();
-    protected	DoubleVector a = new DoubleVector();
-    protected	DoubleVector b = new DoubleVector();
-    protected	DoubleVector c = new DoubleVector();
-    protected	DoubleVector d = new DoubleVector();
+    protected BoundaryConditions boundary;  
+    protected double p,r1,r2;
+    protected DoubleVector dx = new DoubleVector();
+    protected DoubleVector dy = new DoubleVector();
+    protected DoubleVector a = new DoubleVector();
+    protected DoubleVector b = new DoubleVector();
+    protected DoubleVector c = new DoubleVector();
+    protected DoubleVector d = new DoubleVector();
 
 
 
-		
+    
     //-----------------------------------------------------------------------------//
     //
     // static double deriv1 (const Vector &x, const Vector &y, int i, int sgn)
@@ -1541,7 +1541,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     }
 
 
-		
+    
     //----------------------------------------------------------------------------//
     //
     // void MpRationalCubicSpline::SetSmoothing (double smoothing) 
@@ -1571,12 +1571,12 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     }
 
 
-		
+    
     //----------------------------------------------------------------------------//
     //
     // void MpRationalCubicSpline::SetBoundaryConditions (int boundary, 
-    //						      double b1 = 0.0, 
-    // 					              double b2 = 0.0)
+    //                  double b1 = 0.0, 
+    //                        double b2 = 0.0)
     //
     // The following values are possible:
     //
@@ -1612,22 +1612,22 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       r1 = b1;
       r2 = b2;
     }
-	
+  
     public BoundaryConditions GetBoundaryConditions (out double b1, out double b2) 
     {
       b1 = r1; 
       b2 = r2;
       return boundary;
     }
-		
+    
     public BoundaryConditions GetBoundaryConditions()
     {
       return boundary;
     }
-	
-	
+  
+  
 
-		
+    
     //----------------------------------------------------------------------------//
     //
     // void MpRationalCubicSpline::Differences (const Vector& x, Vector& dx)
@@ -1666,7 +1666,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
 
 
-		
+    
     //----------------------------------------------------------------------------//
     //
     // void MpRationalCubicSpline::InverseDifferences (const Vector& x, Vector& dx)
@@ -1705,7 +1705,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
 
 
-		
+    
     //----------------------------------------------------------------------------//
     //
     // void MpRationalCubicSpline::SplineA (double p, 
@@ -1715,7 +1715,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //                     dx  inverse abscissa difference vector
     //
     // output parameters:  z  coefficient vector SplineB1 and SplineB2
-    // 			   
+    //         
     //----------------------------------------------------------------------------//
 
     protected void SplineA (double p, IVector dx, IVector z)
@@ -1738,13 +1738,13 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       }
     }
 
-		
+    
 
     //----------------------------------------------------------------------------//
     //
     // void MpRationalCubicSpline::SplineB1 (double p, 
-    //				         const Vector& dx, const Vector& y, 
-    //				         Vector& y1, Vector& f, const Vector& z)
+    //                 const Vector& dx, const Vector& y, 
+    //                 Vector& y1, Vector& f, const Vector& z)
     //
     //  input paramaters:    p  smoothing parameter
     //                      dx  inverse abscissa difference vector
@@ -1799,14 +1799,14 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         y1[k] = f[k]-z[k]*dx[k]*y1[k+1];
       }
     }
-	
+  
 
     //----------------------------------------------------------------------------//
     //
     // void MpRationalCubicSpline::SplineC1 (double p,
-    //				      const Vector& x, const Vector& dx, 
-    //				      const Vector& y, const Vector& y1,
-    //				      Vector &a, Vector &b, Vector &c, Vector &d)
+    //              const Vector& x, const Vector& dx, 
+    //              const Vector& y, const Vector& y1,
+    //              Vector &a, Vector &b, Vector &c, Vector &d)
     //
     // Calculates the spline coefficients a(i), b(i), c(i), d(i) for a spline
     // with given 1st derivative. It uses the coefficients calculated by 
@@ -1844,8 +1844,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //----------------------------------------------------------------------------//
     //
     // void MpRationalCubicSpline::SplineB2 (double p, 
-    //				         const Vector& dx, const Vector& y, 
-    //				         Vector& y2, Vector& f, const Vector& z)
+    //                 const Vector& dx, const Vector& y, 
+    //                 Vector& y2, Vector& f, const Vector& z)
     //
     //  input paramaters:    p  smoothing parameter
     //                      dx  abscissa difference vector
@@ -1905,9 +1905,9 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //----------------------------------------------------------------------------//
     //
     // void MpRationalCubicSpline::SplineC2 (double p, 
-    //				         const Vector& x, const Vector& dx, 
-    //				         const Vector& y, const Vector& y2,
-    //				         Vector &a, Vector &b, Vector &c, Vector &d)
+    //                 const Vector& x, const Vector& dx, 
+    //                 const Vector& y, const Vector& y2,
+    //                 Vector &a, Vector &b, Vector &c, Vector &d)
     //
     // Calculates the spline coefficients a(i), b(i), c(i), d(i) for a spline
     // with given 2nd derivative. It uses the coefficients calculated by 
@@ -1945,8 +1945,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       boundary=BoundaryConditions.Natural;
       p=0.0;
     }
-	
-		
+  
+    
     //----------------------------------------------------------------------------//
     //
     // int MpRationalCubicSpline::Interpolate (const Vector &x, const Vector &y)
@@ -1994,7 +1994,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     // Use the method 
     //
     //      void MpRationalCubicSpline::SetBoundaryConditions (int boundary, 
-    //						           double b1, double b2)
+    //                       double b1, double b2)
     //
     // to set the boundary conditions. The following values are possible:
     //
@@ -2080,25 +2080,25 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       
         if (boundary == BoundaryConditions.FiniteDifferences) 
         {
-	
+  
           // finite differences (quadratic Newton interpolation)
           dy[lo] = deriv1(x,y,lo+1,-1);
           dy[hi] = deriv1(x,y,hi-1,1);
-	
+  
         } 
         else 
         {  // the 1st derivatives are supplied by the user
-	
+  
           // user supplied data
           dy[lo] = r1;
           dy[hi] = r2;
         }
       
         // start the calculation
-        InverseDifferences(x,dx);     	// inverse difference vector
-        SplineA(p,dx,a);			// a used as working vector
-        SplineB1(p,dx,y,dy,b,a);		// a and b used as working vector
-        SplineC1(p,x,dx,y,dy,a,b,c,d);	// spline coeff. returned in a,b,c,d  
+        InverseDifferences(x,dx);       // inverse difference vector
+        SplineA(p,dx,a);      // a used as working vector
+        SplineB1(p,dx,y,dy,b,a);    // a and b used as working vector
+        SplineC1(p,x,dx,y,dy,a,b,c,d);  // spline coeff. returned in a,b,c,d  
       
       } 
       else if (boundary == BoundaryConditions.Natural || boundary == BoundaryConditions.Supply2ndDerivative) 
@@ -2106,7 +2106,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       
         if (boundary == BoundaryConditions.Natural) 
         { 
-	
+  
           // 2nd derivatives are zero
           dy[lo] = dy[hi] = 0.0;
 
@@ -2120,15 +2120,15 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         }
 
         // start the calculation
-        Differences(x,dx);            	// difference vector
-        SplineA(p,dx,a);			// a used as working vector
-        SplineB2(p,dx,y,dy,b,a);		// a and b used as working vector
-        SplineC2(p,x,dx,y,dy,a,b,c,d);	// spline coeff. returned in a,b,c,d
+        Differences(x,dx);              // difference vector
+        SplineA(p,dx,a);      // a used as working vector
+        SplineB2(p,dx,y,dy,b,a);    // a and b used as working vector
+        SplineC2(p,x,dx,y,dy,a,b,c,d);  // spline coeff. returned in a,b,c,d
 
       } 
       else if (boundary == BoundaryConditions.Periodic) 
       {
-        throw new NotImplementedException("PERIODIC BOUNDARIES NOT YET IMPLEMENTED");	    
+        throw new NotImplementedException("PERIODIC BOUNDARIES NOT YET IMPLEMENTED");     
       }
 
       return 0; // ok
@@ -2149,7 +2149,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       int i = FindIntervall(u,x);  
 
       if (i < x.Lo()) 
-      { 		// extrapolation
+      {     // extrapolation
 
         i++;
         double dx = u - x[i],
@@ -2161,7 +2161,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     
       } 
       else if (i == x.Hi()) 
-      {	// extrapolation
+      { // extrapolation
 
         i--;
         double dx = u - x[i+1],
@@ -2173,7 +2173,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
       } 
       else 
-      { 			// interpolation
+      {       // interpolation
 
         double t = (u - x[i]) / (x[i+1] - x[i]),
           v = 1.0 - t; 
@@ -2181,7 +2181,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
       }
     }
-		
+    
 
 
   }
@@ -2207,7 +2207,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
   //----------------------------------------------------------------------------//
   class ExponentialSpline : CurveBase
   {
-    protected	BoundaryConditions boundary;	
+    protected BoundaryConditions boundary;  
     protected double sigma,r1,r2;
     protected DoubleVector y1 = new DoubleVector();
     protected DoubleVector tmp = new DoubleVector();
@@ -2218,7 +2218,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       sigma= 1.0;
     }
 
-		
+    
     //----------------------------------------------------------------------------//
     //
     // int MpExponentialSpline::Interpolate (const Vector &x, const Vector &y)
@@ -2266,7 +2266,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       delx1 = x[lo + 1] - x[lo];
       dx1   = (y[lo + 1] - y[lo]) / delx1;
 
-      slpp1 = dx1;	// to get y1(lo) = 0 in unspecified cases
+      slpp1 = dx1;  // to get y1(lo) = 0 in unspecified cases
       if (boundary == BoundaryConditions.Supply1stDerivative)
         slpp1 = slp1;
       else if (n != 2) 
@@ -2379,7 +2379,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       return (y1[i] * sinhd1 + y1[i - 1] * sinhd2) / sinhs +
         ((y[i] - y1[i]) * del1 + (y[i - 1] - y1[i - 1]) * del2) / dels;
     }
-	
+  
     public double Smoothing
     {
       get
@@ -2398,7 +2398,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     public BoundaryConditions BoundaryCondition
     {
       get { return boundary; }
-      set {	SetBoundaryConditions(value,0,0); }
+      set { SetBoundaryConditions(value,0,0); }
     }
 
     public void SetBoundaryConditions (BoundaryConditions bnd, double b1, double b2)
@@ -2427,20 +2427,20 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
   #region PolynomialInterpolation
 
-	
+  
   class PolynomialInterpolation : CurveBase
   {
-    protected	DoubleVector C = new DoubleVector();
+    protected DoubleVector C = new DoubleVector();
     protected DoubleVector D = new DoubleVector();
 
-		
+    
     //----------------------------------------------------------------------------//
     //
     // int MpPolynomialInterpolation::Interpolate (const Vector &x, const Vector &y)
     //
     //
     //----------------------------------------------------------------------------//
-		
+    
     public override int Interpolate (IVector x, IVector y)
 
     {
@@ -2467,7 +2467,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       return u;
     }
 
-		
+    
     //----------------------------------------------------------------------------//
     //
     // double MpPolynomialInterpolation::GetY (double u)
@@ -2495,10 +2495,10 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       C.Resize(lo,hi); 
       D.Resize(lo,hi); 
 
-      C.CopyFrom(y);  			// initialize // TODO original was C = D = *y; check Vector if this is a copy operation 
+      C.CopyFrom(y);        // initialize // TODO original was C = D = *y; check Vector if this is a copy operation 
       D.CopyFrom(y);
 
-      int pos = lo;  		// find position of closest abscissa value
+      int pos = lo;     // find position of closest abscissa value
       double delta = Math.Abs( u - x[lo] ), delta2;
       for (int i = lo; i <= hi; i++)
         if ( (delta2 = Math.Abs(u - x[i])) < delta ) 
@@ -2507,7 +2507,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
           pos = i;
         }
  
-      double dy, yy = C[pos--]; 	// initial approximation
+      double dy, yy = C[pos--];   // initial approximation
 
       for (int m = lo; m < hi; m++) 
       {
@@ -2526,7 +2526,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         yy += (dy = (2*pos-lo+1 < (hi-m) ? C[pos+1] : D[pos--] ));
       }
 
-      return yy;			// return value
+      return yy;      // return value
     }
   }
 
@@ -2536,11 +2536,11 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
   public class RationalInterpolation : CurveBase
   {
-    protected	DoubleVector xr,yr;
-    protected	IntVector m;
-    protected	int num;
-    protected	double epsilon;
-	
+    protected DoubleVector xr,yr;
+    protected IntVector m;
+    protected int num;
+    protected double epsilon;
+  
     public RationalInterpolation ()
     {
       num = 0;
@@ -2556,18 +2556,18 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     // Description:
     // ------------
     //
-    //	Calculates a rational interpolation
-    //	polynomial with numerator degree N and denominator 
-    //	degree D which passes through the n given points
-    //	(x[i],y[i]). In the unique solution the denominator
-    //	degree D is determined by the relation
-    //	
-    //	      D = n - 1 - N
-    //	
-    //	for the given values of n and N.
+    //  Calculates a rational interpolation
+    //  polynomial with numerator degree N and denominator 
+    //  degree D which passes through the n given points
+    //  (x[i],y[i]). In the unique solution the denominator
+    //  degree D is determined by the relation
+    //  
+    //        D = n - 1 - N
+    //  
+    //  for the given values of n and N.
     //
-    //	The required precision "double epsilon" should be set before calling
-    //	this function.  Use function SetPrecision (double eps) for this purpose.
+    //  The required precision "double epsilon" should be set before calling
+    //  this function.  Use function SetPrecision (double eps) for this purpose.
     //
     // Arguments:
     // ----------
@@ -2575,9 +2575,9 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //    Vector& x
     //    Vector& y
     //
-    //	The x- and y- values (x[i],y[i]) which are to be
-    //	interpolated. The vectors must have the same index
-    //	range i = lo,...,hi. This means n = hi-lo+1 values.
+    //  The x- and y- values (x[i],y[i]) which are to be
+    //  interpolated. The vectors must have the same index
+    //  range i = lo,...,hi. This means n = hi-lo+1 values.
     //
     // Return values:
     // --------------
@@ -2789,7 +2789,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       set { num = value; }
       get { return num; }
     }
-	
+  
 
 
     //----------------------------------------------------------------------------//
@@ -2845,13 +2845,13 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       stddev_non_positive  = 3
     };
 
-    protected	double var;
+    protected double var;
     protected DoubleVector xstore;
     protected DoubleVector ystore;
     protected DoubleVector dy;
     protected DoubleVector y0, y1, y2, y3, se, wkr, wkt, wku, wkv;
 
-    public	CrossValidatedCubicSpline ()
+    public  CrossValidatedCubicSpline ()
     {
       var = -1.0;
       dy = null;
@@ -3194,31 +3194,31 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       c1[n-1] = c2[n-1] = c3[n-1] = 0.0; // LelliD
     } 
 
-		
+    
     //----------------------------------------------------------------------------//
     //
     // int MpCrossValidatedSpline (const Vector &X, 
     //                             const Vector &F, 
     //                             Vector &DF,
-    //			       Vector &Y, Vector &C1, Vector &C2, Vector &C3,
-    //			       double& var, Vector &SE, Vector &WK)
+    //             Vector &Y, Vector &C1, Vector &C2, Vector &C3,
+    //             double& var, Vector &SE, Vector &WK)
     //
     //  Arguments:
     //
     //              X   Vector of length n containing the abscissae of the
-    //		    n data points (x[i],f[i]).
-    //		    x must be ordered so that x[i] < x[i+1].
+    //        n data points (x[i],f[i]).
+    //        x must be ordered so that x[i] < x[i+1].
     //
-    //		F   Vector of length n containing the ordinates
-    //		    of the n data points (x[i],f[i]).
+    //    F   Vector of length n containing the ordinates
+    //        of the n data points (x[i],f[i]).
     //
     //             DF   Vector df[i] is the relative standard
-    //		    deviation of the error associated with data point i.
+    //        deviation of the error associated with data point i.
     //                  Each df[i] must be positive. The values in df are
-    //		    scaled by the subroutine so that their mean square
-    //		    value is 1, and unscaled again on normal exit.
+    //        scaled by the subroutine so that their mean square
+    //        value is 1, and unscaled again on normal exit.
     //                  The mean square value of the df[i] is returned in
-    //		    wk[6] on normal exit.
+    //        wk[6] on normal exit.
     //                  If the absolute standard deviations are known,
     //                  these should be provided in df and the error
     //                  variance parameter var (see below) should then be
@@ -3227,17 +3227,17 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //                  set each df[i]=1.
     //
     //     Y,C1,C2,C3   Spline coefficient arrays of length n. (output)
-    //		    The value of the spline approximation at t is
+    //        The value of the spline approximation at t is
     //
     //                    s(t) = ((c3[i]*d+c2[i])*d+c1[i])*d+y[i]
     //
     //                  where x[i] <= t < x[i+1] and d = t-x[i].
     //
-    //		    That means
-    //			 y[i]  contains the function value y(x[i])
-    //			 c1[i] contains the 1st derivative y'(x[i])
-    //			 c2[i] contains the 2nd derivative y''(x[i])
-    //		    of the smoothing spline.
+    //        That means
+    //       y[i]  contains the function value y(x[i])
+    //       c1[i] contains the 1st derivative y'(x[i])
+    //       c2[i] contains the 2nd derivative y''(x[i])
+    //        of the smoothing spline.
     //
     //            var   Error variance. (input/output)
     //                  If var is negative (i.e. unknown) then
@@ -3256,7 +3256,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //            SE    Vector se of length n returning Bayesian standard
     //                  error estimates of the fitted spline values in y.
     //                  If a NullVector is passed to the subroutine
-    //		    then no standard error estimates are computed.
+    //        then no standard error estimates are computed.
     //
     //            WK    Work vector of length 7*(n+2)+1, arbitrary offset. 
     //                  On normal exit the first 7 values of wk are assigned 
@@ -3265,34 +3265,34 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //                  ( here we arbitrarily start numbering from 0)
     //
     //                  wk[0] = smoothing parameter = rho/(rho+1)
-    //	      	            If w[1]=0 (rho=0) an interpolating natural
-    //			    cubic spline has been calculated.
+    //                      If w[1]=0 (rho=0) an interpolating natural
+    //          cubic spline has been calculated.
     //                          If wk[1]=1 (rho=infinite) a least squares
     //                           regression line has been calculated.
     //                  wk[1] = estimate of the number of degrees of
     //                          freedom of the residual sum of squares
     //                          which reduces to the usual value of n-2
-    //		            when a least squares regression line
-    //		            is calculated.
+    //                when a least squares regression line
+    //                is calculated.
     //                  wk[2] = generalized cross validation
     //                  wk[3] = mean square residual
     //                  wk[4] = estimate of the true mean square error
     //                          at the data points
     //                  wk[5] = estimate of the error variance
     //                          wk[6] coincides with the output value of
-    //			    var if var is negative on input. It is
-    //		            calculated with the unscaled values of the
-    //			    df[i] to facilitate comparisons with a
-    //			    priori variance estimates.
+    //          var if var is negative on input. It is
+    //                calculated with the unscaled values of the
+    //          df[i] to facilitate comparisons with a
+    //          priori variance estimates.
     //                  wk[6] = mean square value of the df[i]
     //
     //                  wk[2],wk[3],wk[4] are calculated with the df[i]
     //                  scaled to have mean square value 1. The unscaled
-    //		    values of wk[2],wk[3],wk[4] may be calculated by
-    //		    dividing by wk[6].
+    //        values of wk[2],wk[3],wk[4] may be calculated by
+    //        dividing by wk[6].
     //
     //  Return value:
-    //		    = 0  if no errors occured.
+    //        = 0  if no errors occured.
     //                  = 1  if number of data points n is less than 3.
     //                  = 2  if input abscissae are not ordered x[i] < x[i+1].
     //                  = 3  if standard deviation df[i] not positive for some i.
@@ -3371,7 +3371,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       // here we must use a copy of the original vectors
 
 
-	
+  
 
       // Empty data vectors - free auxilliary storage
       if (x.Empty()) 
@@ -3466,7 +3466,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
       // Parameter adjustments
       wk_dim1 = n + 2;
-		
+    
 
       spint(n,xx,out avh,f,df, out avdf,yy,c1,c2,c3,
         wwr, wwt, out error_flag); // Note wwr has 3*(N+2), wwt has 2*(N+2)
@@ -3578,7 +3578,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
             wwt, // [wk_dim1 * 4]
             wwu, // [wk_dim1 * 6]
             wwv //[wk_dim1 * 7]
-            );				}
+            );        }
 
         err = (r2-r1) / (r1+r2);
 
@@ -3635,32 +3635,32 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       dy.CopyFrom(dyy);
       var = errvar;
     }
-	
+  
     double GetErrorVariance()
     {
       return var;
     }
-	
+  
     //----------------------------------------------------------------------------//
     //
     // void MpCrossValidatedCubicSpline::GetFitResults (double &smpar, double &ndf, 
-    //						    double &gcv, double &msqred,
-    //						    double &msqerr, double &var, 
-    //						    double &msqdf)
+    //                double &gcv, double &msqred,
+    //                double &msqerr, double &var, 
+    //                double &msqdf)
     //
     // Returns results of the fit from the working vector
     //
     // double &smpar:   wk[0] = smoothing parameter = rho/(rho+1)
-    //	      	            If w[1]=0 (rho=0) an interpolating natural
-    //			    cubic spline has been calculated.
+    //                      If w[1]=0 (rho=0) an interpolating natural
+    //          cubic spline has been calculated.
     //                          If wk[1]=1 (rho=infinite) a least squares
     //                           regression line has been calculated.
     //
     // double &ndf:     wk[1] = estimate of the number of degrees of
     //                          freedom of the residual sum of squares
     //                          which reduces to the usual value of n-2
-    //		            when a least squares regression line
-    //		            is calculated.
+    //                when a least squares regression line
+    //                is calculated.
     //
     // double &gcv:     wk[2] = generalized cross validation
     //
@@ -3671,17 +3671,17 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //
     // double &var:     wk[5] = estimate of the error variance
     //                          wk[6] coincides with the output value of
-    //			    var if var is negative on input. It is
-    //		            calculated with the unscaled values of the
-    //			    df[i] to facilitate comparisons with a
-    //			    priori variance estimates.
+    //          var if var is negative on input. It is
+    //                calculated with the unscaled values of the
+    //          df[i] to facilitate comparisons with a
+    //          priori variance estimates.
     //
     // double &msqdf:   wk[6] = mean square value of the df[i]
     //
     //                  wk[2],wk[3],wk[4] are calculated with the df[i]
     //                  scaled to have mean square value 1. The unscaled
-    //		    values of wk[2],wk[3],wk[4] may be calculated by
-    //		    dividing by wk[6].
+    //        values of wk[2],wk[3],wk[4] may be calculated by
+    //        dividing by wk[6].
     //
     //----------------------------------------------------------------------------//
 
@@ -3711,7 +3711,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
   #region Shepard2d
 
-	
+  
   #endregion
 
 }

@@ -28,7 +28,7 @@
 //                               cgamma.cc
 //                               dgamma.cc
 //                               dgamlm.cc
-//																dfac.cc
+//                                dfac.cc
 //                               dgamr.cc
 //                               dgamic.cc
 //                               dgamit.cc
@@ -78,7 +78,7 @@ namespace Altaxo.Calc
     }
 
     // round towards zero (Fortran convention)
-    private static double	Dint(double d) 
+    private static double Dint(double d) 
     {
       return (d<0) ? Math.Ceiling(d) : Math.Floor(d);
     }
@@ -259,7 +259,7 @@ namespace Altaxo.Calc
       return ret_val;
     
       L20:
-        ret_val = 0.0;	
+        ret_val = 0.0;  
       throw new ArgumentException("x so big d9lgmc(x) underflows");
     }
 
@@ -556,7 +556,7 @@ namespace Altaxo.Calc
     #region dgamlm
 
     static readonly double alnsml = Math.Log(DBL_MIN);
-    static readonly double	alnbig = Math.Log(DBL_MAX);
+    static readonly double  alnbig = Math.Log(DBL_MAX);
 
     /// <summary>
     /// Calculate the minimum and maximum legal bounds for x in Gamma(x). 
@@ -568,8 +568,8 @@ namespace Altaxo.Calc
     /// smaller value of x might result in underflow. 
     /// </param>
     /// <param name="xmax">
-    /// 	xmax	double precision maximum legal value of x in gamma(x).  Any 
-    ///      	larger value of x might cause overflow. 
+    ///   xmax  double precision maximum legal value of x in gamma(x).  Any 
+    ///       larger value of x might cause overflow. 
     /// </param>
     /// <remarks>
     /// This is a translation from the Fortran version of SLATEC, FNLIB,
@@ -771,7 +771,7 @@ namespace Altaxo.Calc
     
       const double pi     = 3.1415926535897932384626433832795;
       const double sq2pil = 0.91893853320467274178032973640562;
-      double	dxrel  = Math.Sqrt(DBL_EPSILON);
+      double  dxrel  = Math.Sqrt(DBL_EPSILON);
 
       double ret_val;
 
@@ -827,7 +827,7 @@ namespace Altaxo.Calc
 
       L50:
         if (x > xmax_Gamma) 
-          throw new ArgumentException("x so big Gamma(x) overflows");	
+          throw new ArgumentException("x so big Gamma(x) overflows"); 
 
       ret_val = 0.0;
 
@@ -844,7 +844,7 @@ namespace Altaxo.Calc
 
       double sinpiy = Math.Sin(pi * y);
       if (sinpiy == 0.0) 
-        throw new ArgumentException("x is a negative integer");	
+        throw new ArgumentException("x is a negative integer"); 
 
       return -pi / (y * sinpiy * ret_val);
     }
@@ -1001,7 +1001,7 @@ namespace Altaxo.Calc
     #region GammaIT
 
     static readonly double  alneps_GammaIT = -Math.Log(0.5 * DBL_EPSILON);
-    static readonly double	sqeps_GammaIT  = Math.Sqrt(DBL_EPSILON);
+    static readonly double  sqeps_GammaIT  = Math.Sqrt(DBL_EPSILON);
 
 
     /// <summary>
@@ -1071,7 +1071,7 @@ namespace Altaxo.Calc
         {
           if (a < x) 
           {
-            alng = d9lgic(a, x, alx);	
+            alng = d9lgic(a, x, alx); 
             // evaluate dgamit in terms of log(dgamic(a, x))
             h = 1.0;
             if (aeps == 0.0 && ainta <= 0.0) goto L50;
@@ -1085,11 +1085,11 @@ namespace Altaxo.Calc
 
             if (t > -alneps_GammaIT)
               h = 1.0 - sga * sgngam * Math.Exp(t);
-	
+  
             if (Math.Abs(h) > sqeps_GammaIT) goto L50;
-	
+  
             System.Diagnostics.Trace.WriteLine("Warning (GammaIT function): answer less than half precision");
-	
+  
           L50:
             t = -a * alx + Math.Log(Math.Abs(h));
             return CopySign(Math.Exp(t), h);
@@ -1123,7 +1123,7 @@ namespace Altaxo.Calc
     const double eps_GammaIC = 0.25 * DBL_EPSILON;
     static readonly double sqeps_GammaIC = Math.Sqrt(DBL_EPSILON);
     static readonly double alneps_GammaIC = -Math.Log(0.5 * DBL_EPSILON);
-		
+    
     /// <summary>
     /// Evaluate the complementary incomplete Gamma function
     ///
@@ -1252,7 +1252,7 @@ namespace Altaxo.Calc
     #endregion
 
     #region LnBeta and Beta
-		
+    
     /// <summary>
     /// LnBeta(a,b) calculates the double precision natural logarithm of
     /// the complete beta function for double precision arguments a and b.
@@ -1501,7 +1501,7 @@ namespace Altaxo.Calc
       double rho = ComplexMath.Abs(z);
       if (rho > 0.375)
         return ComplexMath.Log(1.0 + z);
-		
+    
       return new Complex(0.5*LogRel(2.0*z.Re+rho*rho), ComplexMath.Arg(1.0+z));
     }
 
@@ -1525,8 +1525,8 @@ namespace Altaxo.Calc
 
     static int _c9lgmc_nterm = 0;
     static double _c9lgmc_bound = 0.0; 
-    static double 						 _c9lgmc_xbig  = 0.0;
-    static double 								 _c9lgmc_xmax  = 0.0;
+    static double              _c9lgmc_xbig  = 0.0;
+    static double                  _c9lgmc_xmax  = 0.0;
 
 
     /// <summary>
@@ -1560,10 +1560,10 @@ namespace Altaxo.Calc
         cabsz = ComplexMath.Abs(z);
 
       if (x < 0.0 && Math.Abs(y) < _c9lgmc_bound)
-        throw new ArgumentException("not valid for negative real(z) and small abs(imag(z))");	
+        throw new ArgumentException("not valid for negative real(z) and small abs(imag(z))"); 
 
       if (cabsz < _c9lgmc_bound) 
-        throw new ArgumentException("not valid for small cabs(z)");	
+        throw new ArgumentException("not valid for small cabs(z)"); 
 
       if (cabsz >= _c9lgmc_xmax)
       {
@@ -1611,10 +1611,10 @@ namespace Altaxo.Calc
     #region LnGamma(complex)
 
     static double _LnGamma_bound = 0.0;
-    static double						 _LnGamma_dxrel = 0.0; 
-    static double							 _LnGamma_rmax  = 0.0;
+    static double            _LnGamma_dxrel = 0.0; 
+    static double              _LnGamma_rmax  = 0.0;
 
-		
+    
     //-----------------------------------------------------------------------------//
     // August 1980 edition.  W. Fullerton c3, Los Alamos Scientific Lab.
     // Eventually clngam should make use of c8lgmc for all z except for
@@ -1644,7 +1644,7 @@ namespace Altaxo.Calc
       double cabsz = ComplexMath.Abs(z);
 
       if (cabsz > _LnGamma_rmax) 
-        throw new ArgumentException("z so big LnGamma(z) overflows");	 
+        throw new ArgumentException("z so big LnGamma(z) overflows");  
 
       int n;
       double argsum;
@@ -1652,7 +1652,7 @@ namespace Altaxo.Calc
 
       if (x >= 0.0 && cabsz  > _LnGamma_bound) goto L50;
       if (x <  0.0 && Math.Abs(y) > _LnGamma_bound) goto L50;
-				    
+            
       if (cabsz < _LnGamma_bound) goto L20;
 
       // use the reflection formula for real(z) negative, 

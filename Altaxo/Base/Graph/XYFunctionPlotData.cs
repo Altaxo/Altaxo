@@ -24,40 +24,40 @@ using System;
 
 namespace Altaxo.Graph
 {
-	/// <summary>
-	/// Summary description for XYFunctionPlotData.
-	/// </summary>
-	public class XYFunctionPlotData : ICloneable, Calc.IScalarFunctionDD, Main.IChangedEventSource
-	{
-		public XYFunctionPlotData()
-		{
-		}
-		public XYFunctionPlotData(XYFunctionPlotData from)
-		{
-		}
+  /// <summary>
+  /// Summary description for XYFunctionPlotData.
+  /// </summary>
+  public class XYFunctionPlotData : ICloneable, Calc.IScalarFunctionDD, Main.IChangedEventSource
+  {
+    public XYFunctionPlotData()
+    {
+    }
+    public XYFunctionPlotData(XYFunctionPlotData from)
+    {
+    }
 
-		#region ICloneable Members
+    #region ICloneable Members
 
-		public object Clone()
-		{
-			return new XYFunctionPlotData(this);
-		}
+    public object Clone()
+    {
+      return new XYFunctionPlotData(this);
+    }
 
-		#endregion
+    #endregion
 
-		#region IScalarFunctionDD Members
+    #region IScalarFunctionDD Members
 
-		public double Function(double x)
-		{
-			return x*x;
-		}
+    public double Function(double x)
+    {
+      return x*x;
+    }
 
-		#endregion
+    #endregion
 
-		#region IChangedEventSource Members
+    #region IChangedEventSource Members
 
-		public event System.EventHandler Changed;
+    public event System.EventHandler Changed;
 
-		#endregion
-	}
+    #endregion
+  }
 }

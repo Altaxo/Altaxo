@@ -49,10 +49,10 @@ namespace Altaxo.Data
 
     // private instance properties
     protected ArrayList myList;
-		
+    
     // public instance properties
     public int Count { get { return InnerList.Count; } }
-		
+    
     // Public Instance Methods
     public IEnumerator GetEnumerator() { return InnerList.GetEnumerator(); }
     public void Clear() 
@@ -70,21 +70,21 @@ namespace Altaxo.Data
       InnerList.RemoveAt(index);
       OnRemoveComplete(index, objectToRemove);
     }
-		
+    
     // Protected Instance Constructors
     protected CollectionBase() 
     { 
       this.myList = new ArrayList();
     }
-		
+    
     // Protected Instance Properties
     protected ArrayList InnerList {get { return this.myList; } }
     protected IList List {get { return this; } }
-		
+    
     // Protected Instance Methods
     protected virtual void OnClear() { }
     protected virtual void OnClearComplete() { }
-		
+    
     protected virtual void OnInsert(int index, object value) { }
     protected virtual void OnInsertComplete(int index, object value) { }
 
@@ -101,7 +101,7 @@ namespace Altaxo.Data
         throw new System.ArgumentNullException("CollectionBase.OnValidate: Invalid parameter value passed to method: null");
       }
     }
-		
+    
     // ICollection methods
     void ICollection.CopyTo(Array array, int index) 
     {
@@ -127,7 +127,7 @@ namespace Altaxo.Data
       OnInsertComplete(newPosition, value);
       return newPosition;
     }
-		
+    
     bool IList.Contains (object value) 
     {
       return InnerList.Contains(value);
@@ -177,7 +177,7 @@ namespace Altaxo.Data
         OnValidate(value);
         // save a reference to the object that is in the list now
         oldValue = InnerList[index];
-				
+        
         OnSet(index, oldValue, value);
         InnerList[index] = value;
         OnSetComplete(index, oldValue, value);

@@ -26,7 +26,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
-	
+  
 
   /// <summary>
   /// The main purpose of the column.
@@ -45,15 +45,15 @@ namespace Altaxo.Data
     /// <summary>
     /// Column values are the second independent variable.
     /// </summary>
-    Y=2,			
+    Y=2,      
     /// <summary>
     /// Column values are the third independent variable.
     /// </summary>
-    Z=3,								
+    Z=3,                
     /// <summary>
     /// Column values are +- error values.
     /// </summary>
-    Err=4,		
+    Err=4,    
     /// <summary>
     /// Column values are + error values.
     /// </summary>
@@ -77,7 +77,7 @@ namespace Altaxo.Data
   {
     ColumnKind _oldKind;
     ColumnKind _newKind;
-		
+    
     public ColumnKindChangeEventArgs(ColumnKind oldKind, ColumnKind newKind)
     {
       _oldKind = oldKind;
@@ -86,7 +86,7 @@ namespace Altaxo.Data
 
     public ColumnKind OldKind { get { return _oldKind; }}
     public ColumnKind NewKind { get { return _newKind; }}
-		
+    
 
   }
 

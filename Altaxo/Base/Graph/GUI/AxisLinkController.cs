@@ -25,241 +25,241 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.GUI
 {
-	#region Interfaces
-	public interface IAxisLinkController : Main.GUI.IApplyController, Main.GUI.IMVCController
-	{
-		/// <summary>
-		/// Get/sets the view this controller controls.
-		/// </summary>
-		IAxisLinkView View { get; set; }
+  #region Interfaces
+  public interface IAxisLinkController : Main.GUI.IApplyController, Main.GUI.IMVCController
+  {
+    /// <summary>
+    /// Get/sets the view this controller controls.
+    /// </summary>
+    IAxisLinkView View { get; set; }
 
-		/// <summary>
-		/// Called if the type of the link is changed.
-		/// </summary>
-		/// <param name="linktype">The linktype. Valid arguments are "None", "Straight" and "Custom".</param>
-		void EhView_LinkTypeChanged(XYPlotLayer.AxisLinkType linktype);
+    /// <summary>
+    /// Called if the type of the link is changed.
+    /// </summary>
+    /// <param name="linktype">The linktype. Valid arguments are "None", "Straight" and "Custom".</param>
+    void EhView_LinkTypeChanged(XYPlotLayer.AxisLinkType linktype);
 
-		/// <summary>
-		/// Called when the contents of OrgA is changed.
-		/// </summary>
-		/// <param name="orgA">Contents of OrgA.</param>
-		/// <param name="bCancel">Normally false, this can be set to true if OrgA is not a valid entry.</param>
-		void EhView_OrgAValidating(string orgA, ref bool bCancel);
-		/// <summary>
-		/// Called when the contents of OrgB is changed.
-		/// </summary>
-		/// <param name="orgB">Contents of OrgB.</param>
-		/// <param name="bCancel">Normally false, this can be set to true if OrgB is not a valid entry.</param>
-		void EhView_OrgBValidating(string orgB, ref bool bCancel);
-		/// <summary>
-		/// Called when the contents of EndA is changed.
-		/// </summary>
-		/// <param name="endA">Contents of EndA.</param>
-		/// <param name="bCancel">Normally false, this can be set to true if EndA is not a valid entry.</param>
-		void EhView_EndAValidating(string endA, ref bool bCancel);
-		/// <summary>
-		/// Called when the contents of EndB is changed.
-		/// </summary>
-		/// <param name="endB">Contents of EndB.</param>
-		/// <param name="bCancel">Normally false, this can be set to true if EndB is not a valid entry.</param>
-		void EhView_EndBValidating(string endB, ref bool bCancel);
-
-
-	}
-
-	public interface IAxisLinkView : Main.GUI.IMVCView
-	{
-
-		/// <summary>
-		/// Get/sets the controller of this view.
-		/// </summary>
-		IAxisLinkController Controller { get; set; }
-
-		/// <summary>
-		/// Gets the hosting parent form of this view.
-		/// </summary>
-		System.Windows.Forms.Form Form	{	get; }
-
-		/// <summary>
-		/// Initializes the type of the link.
-		/// </summary>
-		/// <param name="linktype"></param>
-		void LinkType_Initialize(XYPlotLayer.AxisLinkType linktype);
-
-		/// <summary>
-		/// Initializes the content of the OrgA edit box.
-		/// </summary>
-		void OrgA_Initialize(string text);
-
-		/// <summary>
-		/// Initializes the content of the OrgB edit box.
-		/// </summary>
-		void OrgB_Initialize(string text);
-
-		/// <summary>
-		/// Initializes the content of the EndA edit box.
-		/// </summary>
-		void EndA_Initialize(string text);
-
-		/// <summary>
-		/// Initializes the content of the EndB edit box.
-		/// </summary>
-		void EndB_Initialize(string text);
+    /// <summary>
+    /// Called when the contents of OrgA is changed.
+    /// </summary>
+    /// <param name="orgA">Contents of OrgA.</param>
+    /// <param name="bCancel">Normally false, this can be set to true if OrgA is not a valid entry.</param>
+    void EhView_OrgAValidating(string orgA, ref bool bCancel);
+    /// <summary>
+    /// Called when the contents of OrgB is changed.
+    /// </summary>
+    /// <param name="orgB">Contents of OrgB.</param>
+    /// <param name="bCancel">Normally false, this can be set to true if OrgB is not a valid entry.</param>
+    void EhView_OrgBValidating(string orgB, ref bool bCancel);
+    /// <summary>
+    /// Called when the contents of EndA is changed.
+    /// </summary>
+    /// <param name="endA">Contents of EndA.</param>
+    /// <param name="bCancel">Normally false, this can be set to true if EndA is not a valid entry.</param>
+    void EhView_EndAValidating(string endA, ref bool bCancel);
+    /// <summary>
+    /// Called when the contents of EndB is changed.
+    /// </summary>
+    /// <param name="endB">Contents of EndB.</param>
+    /// <param name="bCancel">Normally false, this can be set to true if EndB is not a valid entry.</param>
+    void EhView_EndBValidating(string endB, ref bool bCancel);
 
 
-		/// <summary>
-		/// Enables / Disables the edit boxes for the org and end values
-		/// </summary>
-		/// <param name="bEnable">True if the boxes are enabled for editing.</param>
-		void Enable_OrgAndEnd_Boxes(bool bEnable);
-	
-	}
-	#endregion
+  }
 
-	/// <summary>
-	/// Summary description for LinkAxisController.
-	/// </summary>
-	public class AxisLinkController : IAxisLinkController
-	{
-		IAxisLinkView m_View;
-		XYPlotLayer m_Layer;
-		bool  m_bXAxis;
+  public interface IAxisLinkView : Main.GUI.IMVCView
+  {
 
-		XYPlotLayer.AxisLinkType m_LinkType;
-		double m_OrgA;
-		double m_OrgB;
-		double m_EndA;
-		double m_EndB;
+    /// <summary>
+    /// Get/sets the controller of this view.
+    /// </summary>
+    IAxisLinkController Controller { get; set; }
+
+    /// <summary>
+    /// Gets the hosting parent form of this view.
+    /// </summary>
+    System.Windows.Forms.Form Form  { get; }
+
+    /// <summary>
+    /// Initializes the type of the link.
+    /// </summary>
+    /// <param name="linktype"></param>
+    void LinkType_Initialize(XYPlotLayer.AxisLinkType linktype);
+
+    /// <summary>
+    /// Initializes the content of the OrgA edit box.
+    /// </summary>
+    void OrgA_Initialize(string text);
+
+    /// <summary>
+    /// Initializes the content of the OrgB edit box.
+    /// </summary>
+    void OrgB_Initialize(string text);
+
+    /// <summary>
+    /// Initializes the content of the EndA edit box.
+    /// </summary>
+    void EndA_Initialize(string text);
+
+    /// <summary>
+    /// Initializes the content of the EndB edit box.
+    /// </summary>
+    void EndB_Initialize(string text);
 
 
-		public AxisLinkController(XYPlotLayer layer, bool bXAxis)
-		{
-			m_Layer = layer;
-			m_bXAxis = bXAxis;
-			SetElements(true);
-		}
+    /// <summary>
+    /// Enables / Disables the edit boxes for the org and end values
+    /// </summary>
+    /// <param name="bEnable">True if the boxes are enabled for editing.</param>
+    void Enable_OrgAndEnd_Boxes(bool bEnable);
+  
+  }
+  #endregion
+
+  /// <summary>
+  /// Summary description for LinkAxisController.
+  /// </summary>
+  public class AxisLinkController : IAxisLinkController
+  {
+    IAxisLinkView m_View;
+    XYPlotLayer m_Layer;
+    bool  m_bXAxis;
+
+    XYPlotLayer.AxisLinkType m_LinkType;
+    double m_OrgA;
+    double m_OrgB;
+    double m_EndA;
+    double m_EndB;
 
 
-		void SetElements(bool bInit)
-		{
-			if(bInit)
-			{
-				if(m_bXAxis)
-				{
-					m_LinkType	= m_Layer.XAxisLinkType;
-					m_OrgA			= m_Layer.LinkXAxisOrgA;
-					m_OrgB			= m_Layer.LinkXAxisOrgB;
-					m_EndA			= m_Layer.LinkXAxisEndA;
-					m_EndB			= m_Layer.LinkXAxisEndB;
-				}
-				else
-				{
-					m_LinkType	= m_Layer.YAxisLinkType;
-					m_OrgA			= m_Layer.LinkYAxisOrgA;
-					m_OrgB			= m_Layer.LinkYAxisOrgB;
-					m_EndA			= m_Layer.LinkYAxisEndA;
-					m_EndB			= m_Layer.LinkYAxisEndB;
-				}
-			}
+    public AxisLinkController(XYPlotLayer layer, bool bXAxis)
+    {
+      m_Layer = layer;
+      m_bXAxis = bXAxis;
+      SetElements(true);
+    }
 
-			if(null!=View)
-			{
-				View.LinkType_Initialize(m_LinkType);
-				View.OrgA_Initialize(m_OrgA.ToString());
-				View.OrgB_Initialize(m_OrgB.ToString());
-				View.EndA_Initialize(m_EndA.ToString());
-				View.EndB_Initialize(m_EndB.ToString());
-			}
-		}
-		#region ILinkAxisController Members
 
-		public IAxisLinkView View
-		{
-			get
-			{
-				return m_View;
-			}
-			set
-			{
-				if(null!=m_View)
-					m_View.Controller = null;
-				
-				m_View = value;
+    void SetElements(bool bInit)
+    {
+      if(bInit)
+      {
+        if(m_bXAxis)
+        {
+          m_LinkType  = m_Layer.XAxisLinkType;
+          m_OrgA      = m_Layer.LinkXAxisOrgA;
+          m_OrgB      = m_Layer.LinkXAxisOrgB;
+          m_EndA      = m_Layer.LinkXAxisEndA;
+          m_EndB      = m_Layer.LinkXAxisEndB;
+        }
+        else
+        {
+          m_LinkType  = m_Layer.YAxisLinkType;
+          m_OrgA      = m_Layer.LinkYAxisOrgA;
+          m_OrgB      = m_Layer.LinkYAxisOrgB;
+          m_EndA      = m_Layer.LinkYAxisEndA;
+          m_EndB      = m_Layer.LinkYAxisEndB;
+        }
+      }
 
-				if(null!=m_View)
-				{
-					m_View.Controller = this;
-					SetElements(false); // set only the view elements, dont't initialize the variables
-				}
-			}
-		}
+      if(null!=View)
+      {
+        View.LinkType_Initialize(m_LinkType);
+        View.OrgA_Initialize(m_OrgA.ToString());
+        View.OrgB_Initialize(m_OrgB.ToString());
+        View.EndA_Initialize(m_EndA.ToString());
+        View.EndB_Initialize(m_EndB.ToString());
+      }
+    }
+    #region ILinkAxisController Members
 
-		public void EhView_LinkTypeChanged(XYPlotLayer.AxisLinkType linktype)
-		{
-			m_LinkType = linktype;
+    public IAxisLinkView View
+    {
+      get
+      {
+        return m_View;
+      }
+      set
+      {
+        if(null!=m_View)
+          m_View.Controller = null;
+        
+        m_View = value;
 
-			if(null!=View)
-				View.Enable_OrgAndEnd_Boxes(linktype == XYPlotLayer.AxisLinkType.Custom);
-		}
+        if(null!=m_View)
+        {
+          m_View.Controller = this;
+          SetElements(false); // set only the view elements, dont't initialize the variables
+        }
+      }
+    }
 
-		public void EhView_OrgAValidating(string orgA, ref bool bCancel)
-		{
-			bCancel = !NumberConversion.IsDouble(orgA, out m_OrgA);
-		}
+    public void EhView_LinkTypeChanged(XYPlotLayer.AxisLinkType linktype)
+    {
+      m_LinkType = linktype;
 
-		public void EhView_OrgBValidating(string orgB, ref bool bCancel)
-		{
-			bCancel = !NumberConversion.IsDouble(orgB, out m_OrgB);
-		}
+      if(null!=View)
+        View.Enable_OrgAndEnd_Boxes(linktype == XYPlotLayer.AxisLinkType.Custom);
+    }
 
-		public void EhView_EndAValidating(string endA, ref bool bCancel)
-		{
-			bCancel = !NumberConversion.IsDouble(endA, out m_EndA);
-		}
+    public void EhView_OrgAValidating(string orgA, ref bool bCancel)
+    {
+      bCancel = !NumberConversion.IsDouble(orgA, out m_OrgA);
+    }
 
-		public void EhView_EndBValidating(string endB, ref bool bCancel)
-		{
-			bCancel = !NumberConversion.IsDouble(endB, out m_EndA);
-		}
+    public void EhView_OrgBValidating(string orgB, ref bool bCancel)
+    {
+      bCancel = !NumberConversion.IsDouble(orgB, out m_OrgB);
+    }
 
-		#endregion
+    public void EhView_EndAValidating(string endA, ref bool bCancel)
+    {
+      bCancel = !NumberConversion.IsDouble(endA, out m_EndA);
+    }
 
-		#region IApplyController Members
+    public void EhView_EndBValidating(string endB, ref bool bCancel)
+    {
+      bCancel = !NumberConversion.IsDouble(endB, out m_EndA);
+    }
 
-		public bool Apply()
-		{
-			if(this.m_bXAxis)
-			{
-				m_Layer.SetXAxisLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
-			}
-			else
-			{
-				m_Layer.SetYAxisLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
-			}
-			return true;
-		}
+    #endregion
 
-		#endregion
+    #region IApplyController Members
 
-		#region IMVCController Members
+    public bool Apply()
+    {
+      if(this.m_bXAxis)
+      {
+        m_Layer.SetXAxisLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
+      }
+      else
+      {
+        m_Layer.SetYAxisLinkParameter(m_LinkType, m_OrgA,m_OrgB,m_EndA,m_EndB);
+      }
+      return true;
+    }
 
-		public object ViewObject
-		{
-			get
-			{
-				return View;
-			}
-			set
-			{
-				View = value as IAxisLinkView;
-			}
-		}
+    #endregion
 
-		public object ModelObject
-		{
-			get { return this.m_Layer; }
-		}
+    #region IMVCController Members
 
-		#endregion
-	}
+    public object ViewObject
+    {
+      get
+      {
+        return View;
+      }
+      set
+      {
+        View = value as IAxisLinkView;
+      }
+    }
+
+    public object ModelObject
+    {
+      get { return this.m_Layer; }
+    }
+
+    #endregion
+  }
 }

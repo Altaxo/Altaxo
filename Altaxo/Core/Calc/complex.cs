@@ -70,8 +70,8 @@ namespace Altaxo.Calc
     /// <param name="imaginary"></param>
     public Complex( double real, double imaginary ) 
     {
-      this.Re		= (double) real;
-      this.Im	= (double) imaginary;
+      this.Re   = (double) real;
+      this.Im = (double) imaginary;
     }
 
     /// <summary>
@@ -80,8 +80,8 @@ namespace Altaxo.Calc
     /// <param name="c"></param>
     public Complex( Complex c ) 
     {
-      this.Re		= c.Re;
-      this.Im	= c.Im;
+      this.Re   = c.Re;
+      this.Im = c.Im;
     }
 
     /// <summary>
@@ -90,10 +90,10 @@ namespace Altaxo.Calc
     /// <param name="real"></param>
     /// <param name="imaginary"></param>
     /// <returns></returns>
-    static public Complex	FromRealImaginary( double real, double imaginary ) 
+    static public Complex FromRealImaginary( double real, double imaginary ) 
     {
       Complex c;
-      c.Re		= (double) real;
+      c.Re    = (double) real;
       c.Im = (double) imaginary;
       return c;
     }
@@ -104,30 +104,30 @@ namespace Altaxo.Calc
     /// <param name="modulus"></param>
     /// <param name="argument"></param>
     /// <returns></returns>
-    static public Complex	FromModulusArgument( double modulus, double argument ) 
+    static public Complex FromModulusArgument( double modulus, double argument ) 
     {
       Complex c;
-      c.Re		= (double)( modulus * System.Math.Cos( argument ) );
-      c.Im	= (double)( modulus * System.Math.Sin( argument ) );
+      c.Re    = (double)( modulus * System.Math.Cos( argument ) );
+      c.Im  = (double)( modulus * System.Math.Sin( argument ) );
       return c;
     }
-		
+    
     //-----------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------
 
-    object	ICloneable.Clone() 
+    object  ICloneable.Clone() 
     {
-      return	new Complex( this );
+      return  new Complex( this );
     }
     /// <summary>
     /// Clone the complex number
     /// </summary>
     /// <returns></returns>
-    public Complex	Clone() 
+    public Complex  Clone() 
     {
-      return	new Complex( this );
+      return  new Complex( this );
     }
-		
+    
     //-----------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------
 
@@ -135,29 +135,29 @@ namespace Altaxo.Calc
     /// The modulus (length) of the complex number
     /// </summary>
     /// <returns></returns>
-    public double	GetModulus() 
+    public double GetModulus() 
     {
-      double	x	= this.Re;
-      double	y	= this.Im;
-      return	(double) Math.Sqrt( x*x + y*y );
+      double  x = this.Re;
+      double  y = this.Im;
+      return  (double) Math.Sqrt( x*x + y*y );
     }
 
     /// <summary>
     /// The squared modulus (length^2) of the complex number
     /// </summary>
     /// <returns></returns>
-    public double	GetModulusSquared() 
+    public double GetModulusSquared() 
     {
-      double	x	= this.Re;
-      double	y	= this.Im;
-      return	(double) x*x + y*y;
+      double  x = this.Re;
+      double  y = this.Im;
+      return  (double) x*x + y*y;
     }
 
     /// <summary>
     /// The argument (radians) of the complex number
     /// </summary>
     /// <returns></returns>
-    public double	GetArgument() 
+    public double GetArgument() 
     {
       return (double) Math.Atan2( this.Im, this.Re );
     }
@@ -180,13 +180,13 @@ namespace Altaxo.Calc
     /// </summary>
     public void Normalize() 
     {
-      double	modulus = this.GetModulus();
+      double  modulus = this.GetModulus();
       if( modulus == 0 ) 
       {
         throw new DivideByZeroException( "Can not normalize a complex number that is zero." );
       }
-      this.Re	= (double)( this.Re / modulus );
-      this.Im	= (double)( this.Im / modulus );
+      this.Re = (double)( this.Re / modulus );
+      this.Im = (double)( this.Im / modulus );
     }
 
     //-----------------------------------------------------------------------------------
@@ -200,11 +200,11 @@ namespace Altaxo.Calc
     public static explicit operator Complex ( ComplexF cF ) 
     {
       Complex c;
-      c.Re	= (double) cF.Re;
-      c.Im	= (double) cF.Im;
+      c.Re  = (double) cF.Re;
+      c.Im  = (double) cF.Im;
       return c;
     }
-		
+    
     /// <summary>
     /// Convert from a single precision real number to a complex number
     /// </summary>
@@ -213,8 +213,8 @@ namespace Altaxo.Calc
     public static explicit operator Complex ( double d ) 
     {
       Complex c;
-      c.Re	= (double) d;
-      c.Im	= (double) 0;
+      c.Re  = (double) d;
+      c.Im  = (double) 0;
       return c;
     }
 
@@ -227,7 +227,7 @@ namespace Altaxo.Calc
     {
       return (double) c.Re;
     }
-		
+    
     //-----------------------------------------------------------------------------------
     //-----------------------------------------------------------------------------------
 
@@ -237,9 +237,9 @@ namespace Altaxo.Calc
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static bool	operator==( Complex a, Complex b ) 
+    public static bool  operator==( Complex a, Complex b ) 
     {
-      return	( a.Re == b.Re ) && ( a.Im == b.Im );
+      return  ( a.Re == b.Re ) && ( a.Im == b.Im );
     }
 
     /// <summary>
@@ -248,18 +248,18 @@ namespace Altaxo.Calc
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static bool	operator!=( Complex a, Complex b ) 
+    public static bool  operator!=( Complex a, Complex b ) 
     {
-      return	( a.Re != b.Re ) || ( a.Im != b.Im );
+      return  ( a.Re != b.Re ) || ( a.Im != b.Im );
     }
 
     /// <summary>
     /// Get the hash code of the complex number
     /// </summary>
     /// <returns></returns>
-    public override int		GetHashCode() 
+    public override int   GetHashCode() 
     {
-      return	( this.Re.GetHashCode() ^ this.Im.GetHashCode() );
+      return  ( this.Re.GetHashCode() ^ this.Im.GetHashCode() );
     }
 
     /// <summary>
@@ -267,14 +267,14 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    public override bool	Equals( object o ) 
+    public override bool  Equals( object o ) 
     {
       if( o is Complex ) 
       {
         Complex c = (Complex) o;
         return   ( this == c );
       }
-      return	false;
+      return  false;
     }
 
     //-----------------------------------------------------------------------------------
@@ -285,7 +285,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    public int	CompareTo( object o ) 
+    public int  CompareTo( object o ) 
     {
       if( o == null ) 
       {
@@ -293,19 +293,19 @@ namespace Altaxo.Calc
       }
       if( o is Complex ) 
       {
-        return	this.GetModulus().CompareTo( ((Complex)o).GetModulus() );
+        return  this.GetModulus().CompareTo( ((Complex)o).GetModulus() );
       }
       if( o is double ) 
       {
-        return	this.GetModulus().CompareTo( (double)o );
+        return  this.GetModulus().CompareTo( (double)o );
       }
       if( o is ComplexF ) 
       {
-        return	this.GetModulus().CompareTo( ((ComplexF)o).GetModulus() );
+        return  this.GetModulus().CompareTo( ((ComplexF)o).GetModulus() );
       }
       if( o is float ) 
       {
-        return	this.GetModulus().CompareTo( (float)o );
+        return  this.GetModulus().CompareTo( (float)o );
       }
       throw new ArgumentException();
     }
@@ -330,8 +330,8 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex operator-( Complex a ) 
     {
-      a.Re	= -a.Re;
-      a.Im	= -a.Im;
+      a.Re  = -a.Re;
+      a.Im  = -a.Im;
       return a;
     }
 
@@ -343,7 +343,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex operator+( Complex a, double f ) 
     {
-      a.Re	= (double)( a.Re + f );
+      a.Re  = (double)( a.Re + f );
       return a;
     }
 
@@ -355,7 +355,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex operator+( double f, Complex a ) 
     {
-      a.Re	= (double)( a.Re + f );
+      a.Re  = (double)( a.Re + f );
       return a;
     }
 
@@ -367,8 +367,8 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex operator+( Complex a, Complex b ) 
     {
-      a.Re	= a.Re + b.Re;
-      a.Im	= a.Im + b.Im;
+      a.Re  = a.Re + b.Re;
+      a.Im  = a.Im + b.Im;
       return a;
     }
 
@@ -380,7 +380,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex operator-( Complex a, double f ) 
     {
-      a.Re	= (double)( a.Re - f );
+      a.Re  = (double)( a.Re - f );
       return a;
     }
 
@@ -392,8 +392,8 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex operator-( double f, Complex a ) 
     {
-      a.Re	= (float)( f - a.Re );
-      a.Im	= (float)( 0 - a.Im );
+      a.Re  = (float)( f - a.Re );
+      a.Im  = (float)( 0 - a.Im );
       return a;
     }
 
@@ -405,8 +405,8 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex operator-( Complex a, Complex b ) 
     {
-      a.Re	= a.Re - b.Re;
-      a.Im	= a.Im - b.Im;
+      a.Re  = a.Re - b.Re;
+      a.Im  = a.Im - b.Im;
       return a;
     }
 
@@ -418,11 +418,11 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex operator*( Complex a, double f ) 
     {
-      a.Re	= (double)( a.Re * f );
-      a.Im	= (double)( a.Im * f );
+      a.Re  = (double)( a.Re * f );
+      a.Im  = (double)( a.Im * f );
       return a;
     }
-		
+    
     /// <summary>
     /// Multiply a real by a complex number
     /// </summary>
@@ -431,12 +431,12 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex operator*( double f, Complex a ) 
     {
-      a.Re	= (double)( a.Re * f );
-      a.Im	= (double)( a.Im * f );
-			
+      a.Re  = (double)( a.Re * f );
+      a.Im  = (double)( a.Im * f );
+      
       return a;
     }
-		
+    
     /// <summary>
     /// Multiply two complex numbers together
     /// </summary>
@@ -446,12 +446,12 @@ namespace Altaxo.Calc
     public static Complex operator*( Complex a, Complex b ) 
     {
       // (x + yi)(u + vi) = (xu – yv) + (xv + yu)i. 
-      double	x = a.Re, y = a.Im;
-      double	u = b.Re, v = b.Im;
-			
-      a.Re	= (double)( x*u - y*v );
-      a.Im	= (double)( x*v + y*u );
-			
+      double  x = a.Re, y = a.Im;
+      double  u = b.Re, v = b.Im;
+      
+      a.Re  = (double)( x*u - y*v );
+      a.Im  = (double)( x*v + y*u );
+      
       return a;
     }
 
@@ -467,13 +467,13 @@ namespace Altaxo.Calc
       {
         throw new DivideByZeroException();
       }
-			
-      a.Re	= (double)( a.Re / f );
-      a.Im	= (double)( a.Im / f );
-			
+      
+      a.Re  = (double)( a.Re / f );
+      a.Im  = (double)( a.Im / f );
+      
       return a;
     }
-		
+    
     /// <summary>
     /// Divide a complex number by a complex number
     /// </summary>
@@ -482,18 +482,18 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public static Complex operator/( Complex a, Complex b ) 
     {
-      double	x = a.Re,	y = a.Im;
-      double	u = b.Re,	v = b.Im;
-      double	denom = u*u + v*v;
+      double  x = a.Re, y = a.Im;
+      double  u = b.Re, v = b.Im;
+      double  denom = u*u + v*v;
 
       if( denom == 0 ) 
       {
         throw new DivideByZeroException();
       }
 
-      a.Re	= (double)( ( x*u + y*v ) / denom );
-      a.Im	= (double)( ( y*u - x*v ) / denom );
-			
+      a.Re  = (double)( ( x*u + y*v ) / denom );
+      a.Im  = (double)( ( y*u - x*v ) / denom );
+      
       return a;
     }
 
@@ -506,14 +506,14 @@ namespace Altaxo.Calc
     {
       throw new NotImplementedException( "Complex Complex.Parse( string s ) is not implemented." );
     }
-		
+    
     /// <summary>
     /// Get the string representation
     /// </summary>
     /// <returns></returns>
     public override string ToString() 
     {
-      return	String.Format( "( {0}, {1}i )", this.Re, this.Im );
+      return  String.Format( "( {0}, {1}i )", this.Re, this.Im );
     }
 
     //-----------------------------------------------------------------------------------
@@ -533,47 +533,47 @@ namespace Altaxo.Calc
         ( Math.Abs( a.Im - b.Im ) < tolerance );
 
     }
-		
+    
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
     /// <summary>
     /// Represents zero
     /// </summary>
-    static public Complex	Zero 
+    static public Complex Zero 
     {
-      get	{	return	new Complex( 0, 0 );	}
+      get { return  new Complex( 0, 0 );  }
     }
 
     /// <summary>
     /// Represents the result of sqrt( -1 )
     /// </summary>
-    static public Complex	I 
+    static public Complex I 
     {
-      get {	return	new Complex( 0, 1 );	}
+      get { return  new Complex( 0, 1 );  }
     }
 
     /// <summary>
     /// Represents the largest possible value of Complex.
     /// </summary>
-    static public Complex	MaxValue 
+    static public Complex MaxValue 
     {
-      get {	return	new Complex( double.MaxValue, double.MaxValue );	}
+      get { return  new Complex( double.MaxValue, double.MaxValue );  }
     }
 
     /// <summary>
     /// Represents the smallest possible value of Complex.
     /// </summary>
-    static public Complex	MinValue 
+    static public Complex MinValue 
     {
-      get {	return	new Complex( double.MinValue, double.MinValue );	}
+      get { return  new Complex( double.MinValue, double.MinValue );  }
     }
 
 
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
-	
-	
+  
+  
     #region AltaxoModified
 
     public static Complex operator /(double a, Complex z)

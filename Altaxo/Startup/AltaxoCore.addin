@@ -517,7 +517,7 @@
 		</MenuItem>
 		<MenuItem id="Help" label="${res:XML.MainMenu.HelpMenu}">
 			<MenuItem id="Help" label="${res:XML.MainMenu.HelpMenu.Topics}" icon="Icons.16x16.HelpIcon"
-				description="${res:XML.MainMenu.HelpMenu.Topics.Description}" shortcut="Alt|F1" class="ICSharpCode.SharpDevelop.Commands.ShowHelp" />
+				description="${res:XML.MainMenu.HelpMenu.Topics.Description}" shortcut="Alt|F1" class="Altaxo.Main.Commands.ShowAltaxoClassHelp" />
 			<MenuItem id="TipOfTheDay" label="${res:XML.MainMenu.HelpMenu.Tips}" icon="Icons.16x16.TipOfTheDay"
 				description="${res:XML.MainMenu.HelpMenu.Tips.Description}" class="ICSharpCode.SharpDevelop.Commands.ViewTipOfTheDay" />
 			<MenuItem id="Separator1" label="-" />
@@ -528,8 +528,9 @@
 
 				<MenuItem id="Altaxo" label="Altaxo">
 					<MenuItem id="Homepage" label="Homepage" icon="Icons.16x16.WebSearchIcon" link="http://altaxo.sourceforge.net" />
-					<MenuItem id="Downloads" label="Downloads" icon="Icons.16x16.WebSearchIcon" link="http://sourceforge.net/projects/altaxo" />
 					<MenuItem id="ProjectPage" label="Project page" icon="Icons.16x16.WebSearchIcon" link="http://sourceforge.net/projects/altaxo/" />
+					<MenuItem id="Downloads" label="Downloads" icon="Icons.16x16.WebSearchIcon" link="http://sourceforge.net/project/showfiles.php?group_id=73395" />
+					<MenuItem id="BugReport" label="BugReport" icon="Icons.16x16.WebSearchIcon" link="http://sourceforge.net/tracker/?group_id=73395&amp;atid=537651" />
 				</MenuItem>
 
 

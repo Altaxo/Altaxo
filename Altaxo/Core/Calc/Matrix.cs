@@ -47,7 +47,7 @@ namespace Altaxo.Calc
 
     public TransposableMatrix(double [][] arr)
     {
-      // get the max number of columns in the matrix	
+      // get the max number of columns in the matrix  
       int cols=0;
       for(int i=0;i<arr.Length;i++)
         cols = Math.Max(cols,arr[i].Length);
@@ -186,7 +186,7 @@ namespace Altaxo.Calc
     {
       m_bVerticalVectors = !m_bVerticalVectors;
     }
-		
+    
 
     public static TransposableMatrix operator*(TransposableMatrix a, TransposableMatrix b)
     {
@@ -207,7 +207,7 @@ namespace Altaxo.Calc
           double sum=0;
           for(int k=0;k<summands;k++)
             sum += a[i,k]*b[k,j];
-				
+        
           c[i,j] = sum;
         }
       }
@@ -257,7 +257,7 @@ namespace Altaxo.Calc
       for(int i=0;i<rows;i++)
         for(int j=0;j<cols;j++)
           c[i,j] = this[i+rowoffset,j+coloffset];
-		
+    
       return c;
     }
     public TransposableMatrix Submatrix(int rows, int cols)
@@ -273,7 +273,7 @@ namespace Altaxo.Calc
         throw new ArithmeticException(string.Format("Try to set column {0} with a matrix of more than one, namely {1} columns, is not allowed!",col,b.Cols));
       if(this.Rows != b.Rows)
         throw new ArithmeticException(string.Format("Try to set column {0}, but number of rows of the matrix ({1}) not match number of rows of the vector ({3})!",col,this.Rows,b.Rows));
-		
+    
       for(int i=0;i<this.Rows;i++)
         this[i,col]=b[i,0];
     }
@@ -286,7 +286,7 @@ namespace Altaxo.Calc
         throw new ArithmeticException(string.Format("Try to set row {0} with a matrix of more than one, namely {1} rows, is not allowed!",row,b.Rows));
       if(this.Cols != b.Cols)
         throw new ArithmeticException(string.Format("Try to set row {0}, but number of columns of the matrix ({1}) not match number of colums of the vector ({3})!",row,this.Cols,b.Cols));
-		
+    
       for(int j=0;j<this.Cols;j++)
         this[row,j]=b[0,row];
     }
@@ -337,7 +337,7 @@ namespace Altaxo.Calc
 
       double original_variance = Math.Sqrt(X.SumOfSquares());
 
-	
+  
       TransposableMatrix l = null;
       TransposableMatrix t_prev=null;
       TransposableMatrix t=null;
@@ -348,11 +348,11 @@ namespace Altaxo.Calc
       for(int nFactor=0; nFactor<numFactors; nFactor++)
       {
         // 1. Guess the transposed Vector lT, use first row of X matrix
-        l = X.Submatrix(1,X.Cols); 		// l is now a horizontal vector
+        l = X.Submatrix(1,X.Cols);    // l is now a horizontal vector
 
         for(int iter=0;iter<500;iter++)
         {
-			
+      
           // 2. Calculate the new vector t for the factor values
           l.Transpose(); // l is now a vertical vector
           t = X*l; // t is also a vertical vector

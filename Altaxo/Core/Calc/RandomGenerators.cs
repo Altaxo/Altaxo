@@ -63,14 +63,14 @@
 | provided that this license information and copyright notice appear unmodified | 
 | in all copies. This software is provided 'as is'  without  express or implied | 
 | warranty.  In no event will the author be held liable for any damages arising | 
-| from the use of this software.						|
+| from the use of this software.            |
 | Note that distributing Matpack 'bundled' in with any product is considered to | 
-| be a 'commercial purpose'.							|
+| be a 'commercial purpose'.              |
 | The software may be modified for your own purposes, but modified versions may | 
-| not be distributed without prior consent of the author.			|
+| not be distributed without prior consent of the author.     |
 |                                                                               |
-| Read the  COPYRIGHT and  README files in this distribution about registration	|
-| and installation of Matpack.							|
+| Read the  COPYRIGHT and  README files in this distribution about registration |
+| and installation of Matpack.              |
 |                                                                               |
 \*-----------------------------------------------------------------------------*/
 
@@ -84,20 +84,20 @@ namespace Altaxo.Calc.Random
   #region RandomGenerator
 
   /// <summary>
-  /// Base class for all random generators		
+  /// Base class for all random generators    
   /// </summary>
   public abstract class RandomGenerator 
   {
     /// <summary>The seed of the random generator.</summary>
-    protected	uint seed;	
+    protected uint seed;  
 
     /// <summary>Uniform long int values within [0...max_val].</summary>
-    protected	uint max_val;	// 
+    protected uint max_val; // 
 
     /// <summary>Used to generate seed values.</summary>
     protected static System.Security.Cryptography.RandomNumberGenerator seedGenerator =
       new System.Security.Cryptography.RNGCryptoServiceProvider();
-		
+    
     /// <summary>This is the default state of the art random genenerator to produce random numbers.</summary>
     protected static RandomGenerator defaultRandomGenerator = 
       new Ran002(UniqueSeed());
@@ -130,7 +130,7 @@ namespace Altaxo.Calc.Random
 
     #region UniqueSeed
 
-		
+    
     /// <summary>
     /// Generate an unique seed using the default seed generator, which is currently
     /// <see cref="System.Security.Cryptography.RNGCryptoServiceProvider"/>
@@ -140,19 +140,19 @@ namespace Altaxo.Calc.Random
     {
       byte[] bytes = new byte[4];
       uint result;
-			
+      
       do
       {
         seedGenerator.GetBytes(bytes);
 
         result = (uint)(0x7FFFFFFF & (bytes[0] & (bytes[1]<<8) & (bytes[2]<<16) & (bytes[3]<<24)));
       } while(result==0); // extremly seldom
-			
+      
       return result; 
-    }			
+    }     
 
-																																																																								
-		
+                                                                                                                                                
+    
     #endregion
 
     /// <summary>The default random generator used to produce random values.</summary>
@@ -203,7 +203,7 @@ namespace Altaxo.Calc.Random
   #region Ran000
 
 
-	
+  
   /// <summary>
   /// <para>Ran000: minimal congruential</para>
   /// <para>Returns integer random numbers uniformly distributed within [0,2147483646].</para> 
@@ -212,20 +212,20 @@ namespace Altaxo.Calc.Random
   /// <remarks>
   /// <code>
   /// Notes: - NOT RECOMENDED FOR SERIOUS APPLICATIONS.
-  ///	    Just use it for comparison purposes, etc.
+  ///     Just use it for comparison purposes, etc.
   ///
   ///        - This generator is fast
   ///
   ///        - "Minimal" random number generator of Park and Miller.
-  ///	        x(n) = 16807 * x(n-1) mod (2^31-1)
+  ///         x(n) = 16807 * x(n-1) mod (2^31-1)
   ///          also known as GGL.
   ///
-  ///	  - Set seed to any integer value (except the unlikely value mask) to
-  ///	    initialize the sequence.
+  ///   - Set seed to any integer value (except the unlikely value mask) to
+  ///     initialize the sequence.
   ///
   ///        - The period is 2^31-2 = 2.1*10^9. If your application needs 
-  ///	    more numbers in sequence than 1% of the random generators period, 
-  ///	    i.e. 10^7, then use a more elaborate random generator.
+  ///     more numbers in sequence than 1% of the random generators period, 
+  ///     i.e. 10^7, then use a more elaborate random generator.
   ///
   ///        - At least 32 bit long int is required.
   ///
@@ -241,15 +241,15 @@ namespace Altaxo.Calc.Random
   /// </code>
   /// </remarks>
   public class Ran000: RandomGenerator 
-  {	// minimal congruential
+  { // minimal congruential
 
     const int  IM = 2147483647;  // 2^31-1
-    const int 	IA = 16807;
-    const int 	IQ = 127773;
-    const int 	IR = 2836;
-    const int 	MASK	= 123459876;
+    const int   IA = 16807;
+    const int   IQ = 127773;
+    const int   IR = 2836;
+    const int   MASK  = 123459876;
 
-    private	int idum;
+    private int idum;
 
     public Ran000()
       : this(0)
@@ -262,21 +262,21 @@ namespace Altaxo.Calc.Random
       if (seed == (uint) MASK)
         throw new ArgumentException(string.Format("You selected the only illegal seed value ({0})",MASK));
 
-      max_val = IM - 1;	// initialize the maximum value max_val
+      max_val = IM - 1; // initialize the maximum value max_val
 
-      idum = (int)(seed^MASK);	// initialize idum using the seed: 
+      idum = (int)(seed^MASK);  // initialize idum using the seed: 
       // XORing with MASK allows use of zero
       // and other simple bit patterns for idum.
     }
 
     public override uint Long()
     {
-      int k = idum/IQ;		// Compute idum=mod(IA*idum,IM)
-      idum = IA*(idum-k*IQ)-IR*k;	// without overflows by  
+      int k = idum/IQ;    // Compute idum=mod(IA*idum,IM)
+      idum = IA*(idum-k*IQ)-IR*k; // without overflows by  
       if (idum < 0)
-        idum += IM;	// Schrage's method.
-			
-      return (uint)idum;		// return random number
+        idum += IM; // Schrage's method.
+      
+      return (uint)idum;    // return random number
     }
   }
 
@@ -285,7 +285,7 @@ namespace Altaxo.Calc.Random
   #region Ran001
 
 
-	
+  
 
   /// <summary>
   /// Ran001: combined congruential with shuffle.
@@ -296,11 +296,11 @@ namespace Altaxo.Calc.Random
   ///          Bays-Durham shuffle and added safeguards. 
   ///
   ///        - The period is 2^31-2 = 2.1*10^9. If your application needs 
-  ///	    more numbers in sequence than 1% of the random generators period, 
-  ///	    i.e. 10^7, then use a more elaborate random generator.
+  ///     more numbers in sequence than 1% of the random generators period, 
+  ///     i.e. 10^7, then use a more elaborate random generator.
   ///          There are no statistical tests known that it fails to pass, execpt 
   ///          when the number of calls starts to become on the order of the period.
-  ///	    When you need longer random sequences you should use
+  ///     When you need longer random sequences you should use
   ///          another random generator, for example Ran002 or Ran013.
   ///
   ///        - Reference:
@@ -309,12 +309,12 @@ namespace Altaxo.Calc.Random
   ///          Computers in Phyics, Vol. 6, No. 5, Sep/Oct 1992
   ///
   ///        - At least 32 bit long int is required, but works with any larger
-  ///	    word lengths
+  ///     word lengths
   /// </code></remarks>
   public class Ran001 : RandomGenerator 
-  {	// Press's MLCG "ran1"
+  { // Press's MLCG "ran1"
 
-		
+    
     const int NTAB = 32;
 
     const int IM = 2147483647,  // 2^31-1
@@ -325,12 +325,12 @@ namespace Altaxo.Calc.Random
 
     private int idum, iy;
     int[] iv = new int[32];
-		
+    
     public Ran001() : this(0) {}
     public Ran001 (uint the_seed)
       : base(the_seed)
     { 
-					
+          
       // initialize the maximum value: max_val
       max_val = IM - 1;
     
@@ -351,14 +351,14 @@ namespace Altaxo.Calc.Random
     {
       long j, k;
 
-      k = idum/IQ;			// Start here when not initializing
-      idum = (int)(IA*(idum-k*IQ)-IR*k);		// Compute idum=mod(IA1*idum,IM1) without
+      k = idum/IQ;      // Start here when not initializing
+      idum = (int)(IA*(idum-k*IQ)-IR*k);    // Compute idum=mod(IA1*idum,IM1) without
       if (idum < 0) 
-        idum += IM;		// overflows by Schrage's method 
+        idum += IM;   // overflows by Schrage's method 
       
-      j = iy/(1+(IM-1)/NTAB);		// Will be in the range 0..NTAB-1
-      iy = iv[j];				// Output previously stored value and 
-      iv[j] = idum;			// refill the shuffle table
+      j = iy/(1+(IM-1)/NTAB);   // Will be in the range 0..NTAB-1
+      iy = iv[j];       // Output previously stored value and 
+      iv[j] = idum;     // refill the shuffle table
     
       return (uint)iy;
     }
@@ -368,7 +368,7 @@ namespace Altaxo.Calc.Random
 
   #region Ran002
 
-	 
+   
 
   /// <summary>
   /// Ran002: combined congruential with shuffle.
@@ -394,9 +394,9 @@ namespace Altaxo.Calc.Random
   ///      them otherwise.
   /// </code></remarks>
   public class Ran002 : RandomGenerator 
-  {	// Press's combined MLCG "ran2"
+  { // Press's combined MLCG "ran2"
 
-		
+    
     const int NTAB = 32;
 
     const int IM1  = 2147483563,
@@ -410,10 +410,10 @@ namespace Altaxo.Calc.Random
       IMM1 = IM1-1;
 
 
-    private	int idum, idum2, iy;
+    private int idum, idum2, iy;
     private int[] iv = new int[32];
-    public	Ran002 () : this(0) {}
-    public	Ran002 (uint the_seed)
+    public  Ran002 () : this(0) {}
+    public  Ran002 (uint the_seed)
       : base(the_seed)
     { 
       // initialize the maximum value: max_val
@@ -421,7 +421,7 @@ namespace Altaxo.Calc.Random
     
       // initialize shuffle table using the seed: iv and idum,idum2,iy
       idum  = (int)((seed > 1) ? seed : 1);    // Be sure to prevent idum = 0 
-      idum2 = idum;			// was previously: idum2 = 123456789L;
+      idum2 = idum;     // was previously: idum2 = 123456789L;
 
       for (int j = NTAB+7; j >= 0; j--) 
       { // Load shuffle table (after 8 warm-ups)
@@ -439,19 +439,19 @@ namespace Altaxo.Calc.Random
     {
       long j, k;
 
-      k = idum/IQ1;			// Start here when not initializing
-      idum = (int)(IA1*(idum-k*IQ1)-IR1*k);	// Compute idum=mod(IA1*idum,IM1) without
+      k = idum/IQ1;     // Start here when not initializing
+      idum = (int)(IA1*(idum-k*IQ1)-IR1*k); // Compute idum=mod(IA1*idum,IM1) without
       // overflows by Schrage's method 
       if (idum < 0)
         idum += IM1;
     
-      k = idum2/IQ2;			// Compute idum2=mod(IA2*idum2,IM2) likewise
-      idum2 = (int)(IA2*(idum2-k*IQ2)-IR2*k);	// Compute idum=mod(IA1*idum,IM1) without
+      k = idum2/IQ2;      // Compute idum2=mod(IA2*idum2,IM2) likewise
+      idum2 = (int)(IA2*(idum2-k*IQ2)-IR2*k); // Compute idum=mod(IA1*idum,IM1) without
       // overflows by Schrage's method
       if (idum2 < 0) idum2 += IM2;
     
-      j = iy/(1L+IMM1/NTAB);		// Will be in the range 0..NTAB-1
-      iy = iv[j]-idum2;			// Output previously stored value and 
+      j = iy/(1L+IMM1/NTAB);    // Will be in the range 0..NTAB-1
+      iy = iv[j]-idum2;     // Output previously stored value and 
       // refill the shuffle table
       iv[j] = idum;
       if (iy < 1) iy += IMM1;
@@ -464,8 +464,8 @@ namespace Altaxo.Calc.Random
 
   #region Ran004
 
-	
-	
+  
+  
   /// <summary>
   /// Ran004: W.H. Press/S.A. Teukolsky: Numerical recipies pseudo-DES ran4. 
   /// Returns an integer random number uniformly distributed within [0,4294967295].
@@ -497,7 +497,7 @@ namespace Altaxo.Calc.Random
   /// </code></remarks>
   public class Ran004:  RandomGenerator 
   { // Press's pseudo-DES "ran4"
-    private	uint idums, idum; 
+    private uint idums, idum; 
     public Ran004() : this(0) {}
     public Ran004 (uint the_seed)
       : base(the_seed)
@@ -517,22 +517,22 @@ namespace Altaxo.Calc.Random
     public override uint Long()
     {
       uint irword, lword;
-      irword = idum;	// next idum
-      lword  = idums; 	// the seed
-      psdes(ref lword, ref irword);	// hash
+      irword = idum;  // next idum
+      lword  = idums;   // the seed
+      psdes(ref lword, ref irword); // hash
 
       if (idum == 0xffffffff) 
-      {	// this sequence is exhausted
-        idum = 0;			// reset to start 
+      { // this sequence is exhausted
+        idum = 0;     // reset to start 
         if (idums == 0xffffffff) 
           idums = 1; 
         else 
-          idums++;			// increment seed to get next sequence
+          idums++;      // increment seed to get next sequence
 #if DEBUG
         System.Diagnostics.Trace.WriteLine("skip to next sequence: " + idums.ToString());
 #endif
       }
-      idum++;			// increment idum
+      idum++;     // increment idum
       return irword;
     }
 
@@ -542,21 +542,21 @@ namespace Altaxo.Calc.Random
     public virtual uint Long (uint new_seed, uint nth)
     {
       uint irword, lword;
-      lword = idums = new_seed;	// the new seed
-      irword = idum = nth;		// reset idum to nth element od the sequence
-      psdes(ref lword, ref irword);		// hash
+      lword = idums = new_seed; // the new seed
+      irword = idum = nth;    // reset idum to nth element od the sequence
+      psdes(ref lword, ref irword);   // hash
       if (idum == 0xffffffff) 
-      {	// this sequence is exhausted
-        idum = 0;			// reset to start 
+      { // this sequence is exhausted
+        idum = 0;     // reset to start 
         if (idums == 0xffffffff) 
           idums = 1; 
         else 
-          idums++;			// increment seed to get next sequence
+          idums++;      // increment seed to get next sequence
 #if DEBUG
         System.Diagnostics.Trace.WriteLine("skip to next sequence: " + idums.ToString());
 #endif
       }
-      idum++;			// increment idum
+      idum++;     // increment idum
       return irword;
     }
 
@@ -569,7 +569,7 @@ namespace Altaxo.Calc.Random
     readonly static uint[] c2 = {0x4b0f3b58,0xe874f0c3,0x6955c5a6,0x55a7ca46};
     static void psdes (ref uint lword, ref uint irword)
     {
-	
+  
       uint ia, ib, iswap, itmph = 0, itmpl = 0;
 
 #if DEBUG
@@ -598,19 +598,19 @@ namespace Altaxo.Calc.Random
 
   #region Ran005
 
-	
-	
+  
+  
   /// <summary>
   /// Ran005: congruential with shuffle.
   /// Returns an integer random number uniformly distributed within [0,714024]. 
   /// <para>Notes: - NOT RECOMENDED FOR SERIOUS APPLICATIONS.</para>
   /// </summary>
   /// <remarks><code>
-  ///	    Just use it for comparison purposes, etc.
+  ///     Just use it for comparison purposes, etc.
   ///
   ///        - As you see the spacing of the numbers is very coarse.
   ///
-  ///	  - Low order correlations are present.
+  ///   - Low order correlations are present.
   ///
   ///        - The period is effectively infinite.
   ///
@@ -624,7 +624,7 @@ namespace Altaxo.Calc.Random
   ///          D. H. Knuth: The Art of Computer Programming, Vol.2, 2nd ed., 1981.
   /// </code></remarks>
   public class Ran005:RandomGenerator 
-  {	// Press's old congruential with shuffle
+  { // Press's old congruential with shuffle
 
     const int M = 714025, 
       A = 1366, 
@@ -636,7 +636,7 @@ namespace Altaxo.Calc.Random
     public Ran005 (uint the_seed)
       : base(the_seed)
     {
-					
+          
       // initialize the maximum value: max_val
       max_val = M - 1;
 
@@ -647,7 +647,7 @@ namespace Altaxo.Calc.Random
         r[j] = x = (A * x + C) % M;
       y = x = (A * x + C) % M;
     }
-		 
+     
 
     public override uint Long()
     {
@@ -661,7 +661,7 @@ namespace Altaxo.Calc.Random
 
   #region Ran013
 
-	
+  
   /// <summary>
   /// Ran013: congruential combined.
   /// Returns  integer random numbers uniformly distributed within [0,4294967295]
@@ -670,7 +670,7 @@ namespace Altaxo.Calc.Random
   /// <remarks><code>
   ///
   ///        - At least 32 bit long int is required, but works with any larger
-  ///	    word lengths
+  ///     word lengths
   ///
   ///        - Reference:
   ///          This is algorithm "mzran13" from
@@ -682,15 +682,15 @@ namespace Altaxo.Calc.Random
   ///          arithmetics with implicit modulo 2^32 on overflow. Since the
   ///          the size of unsigned longs may not always be 32 bit the 
   ///          modulo 2^32 is coded explicitly using masks. 
-  ///	    The performance loss is not very important.
+  ///     The performance loss is not very important.
   ///
   ///          The original code reads:
   ///
   ///              long s;
   ///              if (y > x+c) { 
-  ///	          s = y - (x+c); c = 0; 
+  ///           s = y - (x+c); c = 0; 
   ///              } else {
-  ///	          s = y - (x+c) - 18; c = 1;
+  ///           s = y - (x+c) - 18; c = 1;
   ///              }
   ///              x = y;
   ///              y = z;
@@ -700,11 +700,11 @@ namespace Altaxo.Calc.Random
   ///                                   Should really be a "=" !
   /// </code></remarks>
   public class Ran013 : RandomGenerator 
-  {	// Marsaglia's combined congruential
-    private	uint x, y, z, n; 
+  { // Marsaglia's combined congruential
+    private uint x, y, z, n; 
     private uint c;
-    public	Ran013 () : this(0) {}
-    public	Ran013 (uint the_seed)
+    public  Ran013 () : this(0) {}
+    public  Ran013 (uint the_seed)
       : base(the_seed)
     {
       // initialize the maximum value: 0xffffffff = 2^32-1 = 4294967295
@@ -746,17 +746,17 @@ namespace Altaxo.Calc.Random
   #region Ran055
 
 
-	
+  
   /// <summary>
   /// Ran055: Knuth's shift and add random generator.
-  /// Returns integer random numbers uniformly distributed within [0,2147483647]	
+  /// Returns integer random numbers uniformly distributed within [0,2147483647]  
   /// DON'T USE THIS GENERATOR IN SERIOUS APPLICATIONS BECAUSE IT HAS SERIOUS CORRELATIONS.
   /// </summary>
   /// <remarks><code>
   ///         - The period is 2^55 = 36 028 797 018 963 968 > 3.6*10^16.
   ///
   ///        - At least 32 bit long int is required, but works with any larger
-  ///	    word lengths
+  ///     word lengths
   ///        - This is a lagged Fibonacci generator:
   ///            x(n) =  ( x(n-55) - x(n-24) ) mod 2^31
   ///        - Reference:
@@ -768,11 +768,11 @@ namespace Altaxo.Calc.Random
   public class Ran055:  RandomGenerator 
   { // Knuth's lagged Fibonacci generator
 
-		
+    
     const uint MAX  = 2147483647,  // 2^31-1
       MASK = 123459876;
 
-    private	uint[] s55 = new uint[55];
+    private uint[] s55 = new uint[55];
     private int j55, k55; 
 
     public Ran055() : this(0) {}
@@ -784,13 +784,13 @@ namespace Altaxo.Calc.Random
       uint j;
       int k;
 
-					
+          
 
-      max_val = MAX;	// initialize the maximum value max_val
+      max_val = MAX;  // initialize the maximum value max_val
 
       // initialize table
 
-      s55[0] = j = seed^MASK ;	// XORing with MASK allows use of zero
+      s55[0] = j = seed^MASK ;  // XORing with MASK allows use of zero
       // and other simple bit patterns for idum.
       k = 1;  
       for (i = 1; i < 55; i++) 
@@ -801,7 +801,7 @@ namespace Altaxo.Calc.Random
         j = s55[ii] ;
       }
 
-      j55 = 0;			// invariance (b-a-24)%55 = 0
+      j55 = 0;      // invariance (b-a-24)%55 = 0
       k55 = 24;
 
       for (i = 0; i < 165; i++) Long();  // warm up table three times
@@ -812,15 +812,15 @@ namespace Altaxo.Calc.Random
       // is a positive 32 bit signed long.
       if(k55!=0) k55--; else k55 = 54;
       if(j55!=0) j55--; else j55 = 54;
-			
+      
       return ( s55[j55] -= s55[k55] ) & 0x7fffffff; 
     }
   }
   #endregion
 
   #region Ran056
-	
-	
+  
+  
 
   /// <summary>
   /// Ran056: Knuth's lagged Fibonacci random generator with 3-decimation.
@@ -830,7 +830,7 @@ namespace Altaxo.Calc.Random
   /// <remarks><code>
   ///
   ///        - At least 32 bit long int is required, but works with any larger
-  ///	    word lengths
+  ///     word lengths
   ///        - This is the same lagged Fibonacci generator as Ran055
   ///            x(n) =  ( x(n-55) - x(n-24) ) mod 2^31
   ///        - but a decimation strategy is applied to remove the known 
@@ -845,21 +845,21 @@ namespace Altaxo.Calc.Random
     const uint MAX  = 2147483647,  // 2^31-1
       MASK = 123459876;
 
-    private	uint[] s55 = new uint[55];
+    private uint[] s55 = new uint[55];
     private int j55, k55; 
-    public	Ran056() : this(0) {}
-    public	Ran056(uint the_seed)
+    public  Ran056() : this(0) {}
+    public  Ran056(uint the_seed)
       : base(the_seed)
     {
       int i, ii;
       uint j;
       int k;
 
-      max_val = MAX;	// initialize the maximum value max_val
+      max_val = MAX;  // initialize the maximum value max_val
 
       // initialize table
 
-      s55[0] = j = seed^MASK ;	// XORing with MASK allows use of zero
+      s55[0] = j = seed^MASK ;  // XORing with MASK allows use of zero
       // and other simple bit patterns for idum.
       k = 1;  
       for (i = 1; i < 55; i++) 
@@ -870,7 +870,7 @@ namespace Altaxo.Calc.Random
         j = s55[ii] ;
       }
 
-      j55 = 0;			// invariance (b-a-24)%55 = 0
+      j55 = 0;      // invariance (b-a-24)%55 = 0
       k55 = 24;
 
       for (i = 0; i < 55; i++) Long(); // warm up table three times
@@ -901,7 +901,7 @@ namespace Altaxo.Calc.Random
 
 
 
-	
+  
   /// <summary>
   /// Ran088: L'Ecuyer's 1996 three-component Tausworthe generator "taus88".
   /// Returns an integer random number uniformly distributed within [0,4294967295].
@@ -919,12 +919,12 @@ namespace Altaxo.Calc.Random
   /// </code></remarks>
   public class Ran088:  RandomGenerator 
   { // L'Ecuyer's 1996 Tausworthe "taus88"
-    private	uint s1,s2,s3;
-    public	Ran088 () : this(0) {}
-    public	Ran088 (uint the_seed)
+    private uint s1,s2,s3;
+    public  Ran088 () : this(0) {}
+    public  Ran088 (uint the_seed)
       : base(the_seed)
     { 
-				
+        
   
       // initialize the maximum value: max_val
       max_val = 4294967295U; // which is 2^32-1
@@ -952,7 +952,7 @@ namespace Altaxo.Calc.Random
   #endregion
 
   #region Ran205
-	
+  
 
   /// <summary>
   /// Ran205: L'Ecuyer's 1996 combined multiple recursive PRNG.
@@ -977,12 +977,12 @@ namespace Altaxo.Calc.Random
   public class Ran205: RandomGenerator 
   { // L'Ecuyer's 1996 MRG
 
-    private	int x10,x11,x12,x20,x21,x22;
+    private int x10,x11,x12,x20,x21,x22;
     public Ran205 () : this(0) {}
     public Ran205 (uint the_seed)
       : base(the_seed)
     { 
-						
+            
   
       // initialize the maximum value: max_val
       max_val = 2147483646; // which is 2^31-2
@@ -1009,9 +1009,9 @@ namespace Altaxo.Calc.Random
 
       long h, p12, p13, p21, p23;
       // component 1
-      h = x10 / q13;	
+      h = x10 / q13;  
       p13 = -a13 * (x10 - h * q13) - h * r13;
-      h = x11 / q12;	
+      h = x11 / q12;  
       p12 =  a12 * (x11 - h * q12) - h * r12;
       if (p13 < 0) p13 += m1;
       if (p12 < 0) p12 += m1;
@@ -1038,7 +1038,7 @@ namespace Altaxo.Calc.Random
   #endregion
 
   #region Ran250
-	
+  
 
   /// <summary>
   /// Ran250: the Kirkpatrick-Stoll generator "R250".
@@ -1047,7 +1047,7 @@ namespace Altaxo.Calc.Random
   /// </summary>
   /// <remarks><code>
   /// Notes: - SERIOUS DEFICIENCIES IN SOME PHYSICAL SIMULATIONS HAVE BEEN FOUND
-  ///	    (e.g. in the Ising model using the Wolff cluster update algorithm)
+  ///     (e.g. in the Ising model using the Wolff cluster update algorithm)
   ///
   ///        - The period is 2^250
   ///
@@ -1072,7 +1072,7 @@ namespace Altaxo.Calc.Random
     const uint HALF_RANGE =  0x40000000;
     const int  STEP  =  7;
 
-    private	uint[] r250_buffer = new uint[250];
+    private uint[] r250_buffer = new uint[250];
     private int r250_index;
     public Ran250(uint the_seed)
       : base(the_seed)
@@ -1087,23 +1087,23 @@ namespace Altaxo.Calc.Random
 
       // set seed for the auxilliary GGL generator
       int GGL_seed = (int)seed;
-	
+  
       r250_index = 0;
       for (j = 0; j < 250; j++)      // fill r250 buffer with N_BITS-1 bit values 
         r250_buffer[j] = (uint)GGL(ref GGL_seed);
 
-      for (j = 0; j < 250; j++)	// set some MSBs to 1
+      for (j = 0; j < 250; j++) // set some MSBs to 1
         if ( GGL(ref GGL_seed) > HALF_RANGE )
           r250_buffer[j] |= MSB;
 
-      msb = MSB;			// turn on diagonal bit
-      mask = ALL_BITS;		// turn off the leftmost bits
+      msb = MSB;      // turn on diagonal bit
+      mask = ALL_BITS;    // turn off the leftmost bits
 
       for (j = 0; j < N_BITS; j++) 
       {
-        k = STEP * j + 3;		// select a word to operate on
-        r250_buffer[k] &= mask;	// turn off bits left of the diagonal
-        r250_buffer[k] |= msb;	// turn on the diagonal bit
+        k = STEP * j + 3;   // select a word to operate on
+        r250_buffer[k] &= mask; // turn off bits left of the diagonal
+        r250_buffer[k] |= msb;  // turn on the diagonal bit
         mask >>= 1;
         msb  >>= 1;
       }
@@ -1115,19 +1115,19 @@ namespace Altaxo.Calc.Random
       uint new_rand;
 
       if ( r250_index >= 147 )
-        j = r250_index - 147;	// wrap pointer around 
+        j = r250_index - 147; // wrap pointer around 
       else
         j = r250_index + 103;
 
       new_rand = r250_buffer[r250_index] ^ r250_buffer[j];
       r250_buffer[r250_index] = new_rand;
 
-      if ( r250_index >= 249 )	// increment pointer for next time
+      if ( r250_index >= 249 )  // increment pointer for next time
         r250_index = 0;
       else
         r250_index++;
 
-      return new_rand; 		// return random number
+      return new_rand;    // return random number
     }
 
     static int GGL (ref int seed)
@@ -1149,7 +1149,7 @@ namespace Altaxo.Calc.Random
   #region Ran800
 
 
-	
+  
   /// <summary>
   /// Ran800: huge period generator TT800 of Matsumoto and Kurita.
   /// Returns  integer random numbers uniformly distributed within [0,4294967295]
@@ -1184,12 +1184,12 @@ namespace Altaxo.Calc.Random
   ///
   /// </code></remarks>
   public class Ran800 : RandomGenerator 
-  {	// Matsumoto's GFSR generator "TT800"
+  { // Matsumoto's GFSR generator "TT800"
 
     const int N = 25, M = 7;    
-    private	int k;
+    private int k;
     uint[] x = new uint[25];
-		
+    
     static uint[] x_data = 
    { 
      // initial 25 seeds, change as you wish 
@@ -1206,14 +1206,14 @@ namespace Altaxo.Calc.Random
     public Ran800 (uint the_seed)
       : base(the_seed)
     { 
-						 
+             
 
       // initialize the maximum value: max_val
       max_val = (uint) 0xffffffff;
 
       // initialize seeds
       k = 0;
-	
+  
       // combine table with given seed
       for (int i = 0; i < N; i++) x[i] = x_data[i] ^ seed;
     }
@@ -1239,14 +1239,14 @@ namespace Altaxo.Calc.Random
   
       uint y;
       y = x[k];
-      y ^= (y << 7) & 0x2b5b2500;	// s and b, magic vectors
-      y ^= (y << 15) & 0xdb8b0000;	// t and c, magic vectors 
-      y &= 0xffffffff; 		// you may delete this line if word size = 32
+      y ^= (y << 7) & 0x2b5b2500; // s and b, magic vectors
+      y ^= (y << 15) & 0xdb8b0000;  // t and c, magic vectors 
+      y &= 0xffffffff;    // you may delete this line if word size = 32
  
       // the following line was added by Makoto Matsumoto in the 1996 version
       // to improve lower bit's corellation.
       // Delete this line to use the code published in 1994.
-      y ^= (y >> 16); 		// added to the 1994 version
+      y ^= (y >> 16);     // added to the 1994 version
       k++;
 
       return y;
@@ -1256,8 +1256,8 @@ namespace Altaxo.Calc.Random
 
   #region Ran19937
 
-	
-		
+  
+    
   /// <summary>
   /// Ran19937: huge period generator MT19937B of Matsumoto and Nishimura
   /// Returns integer random numbers uniformly distributed within [0,4294967295]
@@ -1319,12 +1319,12 @@ namespace Altaxo.Calc.Random
     static uint  TEMPERING_SHIFT_T(uint y)  { return(y << 15); }
     static uint  TEMPERING_SHIFT_L(uint y)  { return(y >> 18); }
 
-    private	int k;
+    private int k;
     uint[] ptgfsr = new uint[624];
     public Ran19937(uint the_seed)
       : base(the_seed)
     { 
-					
+          
 
       // initialize the maximum value: max_val
       max_val = (uint) 0xffffffff;
@@ -1346,7 +1346,7 @@ namespace Altaxo.Calc.Random
 
     public override uint Long()
     {
-			
+      
       uint y;
       unchecked
       {
@@ -1367,7 +1367,7 @@ namespace Altaxo.Calc.Random
           }
           y = (ptgfsr[N-1]&UPPER_MASK)|(ptgfsr[0]&LOWER_MASK);
           ptgfsr[N-1] = ptgfsr[M-1] ^ (y >> 1) ^ mag01[y & 0x1];
-	
+  
           k = 0;
         }
   
@@ -1393,7 +1393,7 @@ namespace Altaxo.Calc.Random
   public abstract class ProbabilityDistribution : RandomGenerator
   {
     /// <summary>Pointer to generator.</summary>
-    protected	RandomGenerator gen; 
+    protected RandomGenerator gen; 
 
     /// <summary>Empty constructor. Use this only in inheritance hierarchies.</summary>
     protected ProbabilityDistribution()
@@ -1428,13 +1428,13 @@ namespace Altaxo.Calc.Random
 
   #region UniformDistribution
 
-	
+  
   /// <summary>
   /// Generates uniformly distributed random numbers over [a,b]
   /// </summary>
   class UniformDistribution : ProbabilityDistribution 
   {
-    protected	double scale, low, high;
+    protected double scale, low, high;
     protected UniformDistribution() {}
     public UniformDistribution(double lo, double hi)
       : this(lo,hi,DefaultGenerator)
@@ -1458,7 +1458,7 @@ namespace Altaxo.Calc.Random
     {
       return (scale * gen.Long() + low);
     }
-		
+    
     public override uint Long()
     {
       return gen.Long();
@@ -1476,7 +1476,7 @@ namespace Altaxo.Calc.Random
   #endregion
 
   #region U01_Distribution
-	
+  
 
   /// <summary>
   /// Uniformly distributed random numbers over [0,1].  
@@ -1485,7 +1485,7 @@ namespace Altaxo.Calc.Random
   /// <remarks>It is included just because of speed considerations.</remarks>
   public class U01_Distribution : ProbabilityDistribution 
   {
-    protected	double scale;
+    protected double scale;
     public U01_Distribution() : this(DefaultGenerator) {}
     public U01_Distribution(RandomGenerator ran)
       : base(ran)
@@ -1505,27 +1505,27 @@ namespace Altaxo.Calc.Random
 
   #region NormalDistribution
 
-	
+  
 
   /// <summary>
   /// Generates normal (Gaussian) distributed random numbers.
   /// </summary>
   /// <remarks><code>
-  /// Return normal (Gaussian) distributed random deviates			     
-  /// with mean "m" and standard deviation	"s" according to the density:	   
-  ///								       	    
-  ///                                           2			       	    
-  ///		                   1               (x-m)    			     
-  ///  p   (x) dx =  ------------  exp( - ------- ) dx   			    
-  ///   m,s          sqrt(2 pi) s          2 s*s				   
-  ///								       	   
+  /// Return normal (Gaussian) distributed random deviates           
+  /// with mean "m" and standard deviation  "s" according to the density:    
+  ///                           
+  ///                                           2                 
+  ///                      1               (x-m)               
+  ///  p   (x) dx =  ------------  exp( - ------- ) dx            
+  ///   m,s          sqrt(2 pi) s          2 s*s           
+  ///                          
   /// </code></remarks>
   public class NormalDistribution : ProbabilityDistribution 
   {
-    protected	double m, s, scale, cacheval;
+    protected double m, s, scale, cacheval;
     protected int cached;
-    protected	NormalDistribution() {}
-    public NormalDistribution (double mean, double stdev,	RandomGenerator ran)
+    protected NormalDistribution() {}
+    public NormalDistribution (double mean, double stdev, RandomGenerator ran)
       : base(ran)
     {
       cached = 0;
@@ -1581,39 +1581,39 @@ namespace Altaxo.Calc.Random
   /// <summary>
   /// Generates log-normal distributed random numbers.
   /// </summary>
-  /// <remarks><code>					       	      
-  /// Return log-normal distributed random deviates			      
-  /// with given mean and standard deviation stdev				      
-  /// according to the density function:					      
-  ///                                                2			      
-  ///                     1                (ln x - m)			      
-  /// p   (x) dx =  -------------- exp( - ------------ ) dx  for x > 0	     
-  ///  m,s          sqrt(2 pi x) s               2				      
-  ///                                         2 s				      
-  ///			 						      
-  ///            = 0   otherwise						      
-  ///									      
-  /// where  m  and  s  are related to the arguments mean and stdev by:	      
-  /// 								       	      
-  ///                        2						      
-  ///                    mean						      
-  /// m = ln ( --------------------- )					     
-  ///                     2      2						      
-  ///          sqrt( stdev + mean  )					      
-  /// 									      
-  ///                     2      2						      
-  ///                stdev + mean						      
-  /// s = sqrt( ln( -------------- ) )					      
-  ///                        2						      
-  ///                    mean 						     
-  ///								       	     
+  /// <remarks><code>                       
+  /// Return log-normal distributed random deviates           
+  /// with given mean and standard deviation stdev              
+  /// according to the density function:                
+  ///                                                2            
+  ///                     1                (ln x - m)           
+  /// p   (x) dx =  -------------- exp( - ------------ ) dx  for x > 0       
+  ///  m,s          sqrt(2 pi x) s               2              
+  ///                                         2 s             
+  ///                       
+  ///            = 0   otherwise                  
+  ///                       
+  /// where  m  and  s  are related to the arguments mean and stdev by:       
+  ///                               
+  ///                        2                  
+  ///                    mean                 
+  /// m = ln ( --------------------- )               
+  ///                     2      2                  
+  ///          sqrt( stdev + mean  )                
+  ///                         
+  ///                     2      2                  
+  ///                stdev + mean                 
+  /// s = sqrt( ln( -------------- ) )                
+  ///                        2                  
+  ///                    mean                  
+  ///                            
   /// 
   /// </code></remarks>
   public class LogNormalDistribution 
     : NormalDistribution 
   {
-    protected	double m_log, s_log;
-    protected	void Initialize (double mean, double stdev)
+    protected double m_log, s_log;
+    protected void Initialize (double mean, double stdev)
     {
       // set mean and standard deviation of the log-normal distribution
       m_log = mean; 
@@ -1655,21 +1655,21 @@ namespace Altaxo.Calc.Random
   /// Generates exponentially distributed random numbers.
   /// </summary>
   /// <remarks><code>
-  ///								       	     
-  /// Return exponentially distributed random deviates according to:	    
-  ///								       	     
-  /// p (x) = 1/m * exp(-x/m) dx   for x >= 0				      
-  ///  m								       	      
-  ///       = 0                    otherwise				     
-  ///								       	     
-  /// The probability density has mean = stdev = m.			     
-  ///								       	     
+  ///                            
+  /// Return exponentially distributed random deviates according to:      
+  ///                            
+  /// p (x) = 1/m * exp(-x/m) dx   for x >= 0             
+  ///  m                              
+  ///       = 0                    otherwise             
+  ///                            
+  /// The probability density has mean = stdev = m.          
+  ///                            
   /// </code></remarks>
   public class ExponentialDistribution :  ProbabilityDistribution 
   {
-    protected	double m, scale;
+    protected double m, scale;
     protected ExponentialDistribution() {}
-		
+    
     public ExponentialDistribution (double mean, RandomGenerator ran)
       : base(ran)
     {
@@ -1681,7 +1681,7 @@ namespace Altaxo.Calc.Random
     {
       return (-m * Math.Log( gen.Long() * scale)); 
     }
-		
+    
     public override uint Long()
     {
       return gen.Long();
@@ -1696,28 +1696,28 @@ namespace Altaxo.Calc.Random
   /// Generates Erlang distributed random numbers.
   /// </summary>
   /// <remarks><code>
-  ///								       	    
-  /// Return Erlang distributed random deviates according to:		     
-  ///								       	      
-  ///                      a-1  -bx					     
-  ///                b (bx)    e						      
-  ///  p   (x) dx = ---------------- dx   for x > 0			      
-  ///   a,b             Gamma(a)						     
-  ///				   					      
-  ///             =  0                    otherwise			     
-  ///								       	      
-  /// The Erlang distribution is a special case of the Gamma distribution 	      
-  /// with integer valued order a.					       	     
-  ///								       	     
-  /// References:								      
-  ///	see references in:					       	     
-  ///	W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,	      
-  ///	Numerical Recipies in C, Cambridge Univ. Press, 1988.		      
+  ///                           
+  /// Return Erlang distributed random deviates according to:        
+  ///                             
+  ///                      a-1  -bx              
+  ///                b (bx)    e                  
+  ///  p   (x) dx = ---------------- dx   for x > 0           
+  ///   a,b             Gamma(a)                 
+  ///                         
+  ///             =  0                    otherwise          
+  ///                             
+  /// The Erlang distribution is a special case of the Gamma distribution         
+  /// with integer valued order a.                       
+  ///                            
+  /// References:                     
+  /// see references in:                       
+  /// W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,       
+  /// Numerical Recipies in C, Cambridge Univ. Press, 1988.         
   /// </code></remarks>
 
   public class ErlangDistribution :  ProbabilityDistribution 
   {
-    protected	int A;
+    protected int A;
     protected double B, a1, sq, scale, scale2;
     protected void SetOrder (int order, double loc)
     {
@@ -1727,15 +1727,15 @@ namespace Altaxo.Calc.Random
         throw new ArgumentException("location parameter must be non-zero");
       else 
       {
-        scale  = 1.0 / max_val;		// scale long to [0,1]
-        scale2 = 2.0 / max_val;		// auxilliary
-        A = order;			// order of Erlang distribution
-        a1 = A-1.0;			// auxilliary
-        sq = Math.Sqrt( 2 * a1 + 1 );	// auxilliary
-        B = loc;			// location parmeter
+        scale  = 1.0 / max_val;   // scale long to [0,1]
+        scale2 = 2.0 / max_val;   // auxilliary
+        A = order;      // order of Erlang distribution
+        a1 = A-1.0;     // auxilliary
+        sq = Math.Sqrt( 2 * a1 + 1 ); // auxilliary
+        B = loc;      // location parmeter
       }
     }
-		
+    
     public ErlangDistribution (int order, double loc) : this(order,loc,DefaultGenerator) {}
     public ErlangDistribution (int order, double loc, 
       RandomGenerator ran): base(ran) 
@@ -1745,7 +1745,7 @@ namespace Altaxo.Calc.Random
     public  double val()
     {
       if (A < 6) 
-      {	// direct method
+      { // direct method
         double x;
         do 
         {
@@ -1756,7 +1756,7 @@ namespace Altaxo.Calc.Random
 
       } 
       else 
-      {		// rejection method
+      {   // rejection method
         double x, y, b;
         do 
         {
@@ -1794,37 +1794,37 @@ namespace Altaxo.Calc.Random
   /// Generates Gamma distributed random numbers.
   /// </summary>
   /// <remarks><code>
-  /// Return Gamma distributed random deviates according to:		    
-  ///								       	     
-  ///                      a-1  -bx					      
-  ///                b (bx)    e						      
-  ///  p   (x) dx = ---------------- dx   for x > 0			      
-  ///   a,b             Gamma(a)						      
-  ///				   					     
-  ///             =  0                    otherwise			      
-  ///								       	      //
-  /// The arguments must satisfy the conditions:			       	     
-  ///	a > 0   (positive)					       	     
-  ///	b != 0	(non-zero)					       	      
-  ///								       	      
-  /// References:								      
-  ///								       	     
-  ///	For parameter a >= 1 corresponds to algorithm GD in:	       	      
-  ///	J. H. Ahrens and U. Dieter, Generating Gamma Variates by a	      
-  ///	Modified Rejection Technique, Comm. ACM, 25, 1, 47-54 (1982).	      
-  ///	For parameter 0 &lt; a &lt; 1 corresponds to algorithm GS in:	       	      
-  ///	J. H. Ahrens and U. Dieter, Computer Methods for Sampling 	     
-  ///	from Gamma, Beta, Poisson and Binomial Distributions,		      
-  ///	Computing, 12, 223-246 (1974).					      
+  /// Return Gamma distributed random deviates according to:        
+  ///                            
+  ///                      a-1  -bx               
+  ///                b (bx)    e                  
+  ///  p   (x) dx = ---------------- dx   for x > 0           
+  ///   a,b             Gamma(a)                  
+  ///                        
+  ///             =  0                    otherwise           
+  ///                             //
+  /// The arguments must satisfy the conditions:                   
+  /// a > 0   (positive)                       
+  /// b != 0  (non-zero)                        
+  ///                             
+  /// References:                     
+  ///                            
+  /// For parameter a >= 1 corresponds to algorithm GD in:                
+  /// J. H. Ahrens and U. Dieter, Generating Gamma Variates by a        
+  /// Modified Rejection Technique, Comm. ACM, 25, 1, 47-54 (1982).       
+  /// For parameter 0 &lt; a &lt; 1 corresponds to algorithm GS in:               
+  /// J. H. Ahrens and U. Dieter, Computer Methods for Sampling        
+  /// from Gamma, Beta, Poisson and Binomial Distributions,         
+  /// Computing, 12, 223-246 (1974).                
   /// </code></remarks>
 
   public class GammaDistribution : ProbabilityDistribution // , public ExponentialDistribution 
   {
     protected NormalDistribution normalDistribution;
     protected ExponentialDistribution exponentialDistribution;
-    protected	double A, B, s, s2, d, r, q0, b, si, c, scale;
-    protected	bool algorithmGD;
-    protected	void Initialize (double order, double loc)
+    protected double A, B, s, s2, d, r, q0, b, si, c, scale;
+    protected bool algorithmGD;
+    protected void Initialize (double order, double loc)
     {
       // check parameters
       if (order <= 0)
@@ -1833,7 +1833,7 @@ namespace Altaxo.Calc.Random
         throw new ArgumentException("location parameter must be non-zero");
 
       // store parameters
-      A = order;	// a is the mean of the standard gamma distribution (b = 0)
+      A = order;  // a is the mean of the standard gamma distribution (b = 0)
       B = loc;
 
       // scale random long to (0,1) - boundaries are not allowed !
@@ -1859,7 +1859,7 @@ namespace Altaxo.Calc.Random
         // calculates s, s2, and d
         s2 = A - 0.5;
         s = Math.Sqrt(s2);
-        d = Math.Sqrt(32.0) - 12.0 * s;	
+        d = Math.Sqrt(32.0) - 12.0 * s; 
 
         // calculate q0, b, si, and c
         r = 1.0 / A;
@@ -1870,19 +1870,19 @@ namespace Altaxo.Calc.Random
         // c were established by numerical experiments.
 
         if (A <= 3.686) 
-        {		// case 1.0 <= A <= 3.686
+        {   // case 1.0 <= A <= 3.686
           b = 0.463 + s + 0.178 * s2;
           si = 1.235;
           c = 0.195 / s - 7.9e-2 + 1.6e-1 * s;
         } 
         else if (A <= 13.022) 
-        {	// case  3.686 < A <= 13.022
+        { // case  3.686 < A <= 13.022
           b = 1.654 + 7.6e-3 * s2;
           si = 1.68 / s + 0.275;
           c = 6.2e-2 / s + 2.4e-2;
         } 
         else 
-        {			// case A > 13.022
+        {     // case A > 13.022
           b = 1.77;
           si = 0.75;
           c = 0.1515 / s;
@@ -1903,10 +1903,10 @@ namespace Altaxo.Calc.Random
     {
       normalDistribution = new NormalDistribution(0.0,1.0,ran);
       exponentialDistribution = new ExponentialDistribution(1.0,ran); // std. exponential
-			
+      
       Initialize(order,loc);
     }
-	
+  
     public double val()
     {
       // algorithm GD for A >= 1
@@ -1914,7 +1914,7 @@ namespace Altaxo.Calc.Random
       {
 
         const double 
-                // coefficients a(k) for q = q0+(t*t/2)*sum(a(k)*v**k)	
+                // coefficients a(k) for q = q0+(t*t/2)*sum(a(k)*v**k)  
                 a1 = 0.3333333,
                 a2 = -0.250003,
                 a3 = 0.2000062,
@@ -1922,13 +1922,13 @@ namespace Altaxo.Calc.Random
                 a5 = 0.1423657,
                 a6 = -0.1367177,
                 a7 = 0.1233795,
-                // coefficients e(k) for exp(q)-1 = sum(e(k)*q**k)	
+                // coefficients e(k) for exp(q)-1 = sum(e(k)*q**k)  
                 e1 = 1.0,
                 e2 = 0.4999897,
                 e3 = 0.166829,
                 e4 = 4.07753E-2,
                 e5 = 1.0293E-2;
-	
+  
         double q, w, gamdis;
 
         // standard normal deviate
@@ -1936,7 +1936,7 @@ namespace Altaxo.Calc.Random
 
         // (s,1/2)-normal deviate
         double x = s + 0.5 * t;
-	
+  
         // immediate acceptance
         gamdis = x * x;
         if (t >= 0.0) return gamdis/B;
@@ -1955,7 +1955,7 @@ namespace Altaxo.Calc.Random
             q = q0 + 0.5*t*t * ((((((a7*vv+a6)*vv+a5)*vv+a4)*vv+a3)*vv+a2)*vv+a1)*vv;
           else 
             q = q0 - s * t + 0.25 * t * t + (s2+s2) * Math.Log(1.0+vv);
-	    
+      
           // quotient acceptance 
           if (Math.Log(1.0-u) <= q) return gamdis/B;
         }
@@ -1968,7 +1968,7 @@ namespace Altaxo.Calc.Random
         // (0,1) uniform deviate
         u =  normalDistribution.Long() * scale; // NormalDistribution::gen->Long() * scale;
 
-        u += (u-1.0);	
+        u += (u-1.0); 
 
         // (b,si) double exponential (Laplace)
         t = b + CopySign(si*e,u);
@@ -1982,7 +1982,7 @@ namespace Altaxo.Calc.Random
           q = q0 + 0.5*t*t * ((((((a7*v+a6)*v+a5)*v+a4)*v+a3)*v+a2)*v+a1)*v;
         else
           q = q0 - s * t + 0.25*t*t + (s2+s2) * Math.Log(1.0+v);
-	
+  
         // hat acceptance
         if (q <= 0.0) goto loop;
 
@@ -2003,7 +2003,7 @@ namespace Altaxo.Calc.Random
       } 
       else 
       {
-	
+  
         double gamdis;
         for (;;) 
         {
@@ -2011,13 +2011,13 @@ namespace Altaxo.Calc.Random
           if (p < 1.0) 
           {
             gamdis = Math.Exp( Math.Log(p) / A );
-            if (exponentialDistribution.val()	>= gamdis)
+            if (exponentialDistribution.val() >= gamdis)
               return gamdis/B;
           } 
           else 
           {
             gamdis = -Math.Log( (b-p) / A );
-            if (exponentialDistribution.val()	>= (1.0-A)*Math.Log(gamdis)) return gamdis/B;
+            if (exponentialDistribution.val() >= (1.0-A)*Math.Log(gamdis)) return gamdis/B;
           }
         } // for
 
@@ -2040,29 +2040,29 @@ namespace Altaxo.Calc.Random
   /// Generates Beta distributed random numbers.
   /// </summary>
   /// <remarks><code>
-  ///								       	     
-  /// Return Beta distributed random deviates according to the density	  
-  ///								       	      
-  ///                 a-1       b-1					    
-  ///                x     (1-x)						     
-  ///  p   (x) dx = --------------- dx   for 0 &lt; x &lt; 1			    
-  ///   a,b              B(a,b)						     
-  ///				   					     
-  ///             =  0                   otherwise				     
-  ///								       	      
-  /// References:								      
-  ///								       	     
-  ///	R. C. H. Cheng, Generating Beta Variatew with Non-integral Shape      
-  ///	Parameters, Comm. ACM, 21, 317-322 (1978). (Algorithms BB and BC).   
-  ///								       	      
+  ///                            
+  /// Return Beta distributed random deviates according to the density    
+  ///                             
+  ///                 a-1       b-1             
+  ///                x     (1-x)                 
+  ///  p   (x) dx = --------------- dx   for 0 &lt; x &lt; 1          
+  ///   a,b              B(a,b)                
+  ///                        
+  ///             =  0                   otherwise             
+  ///                             
+  /// References:                     
+  ///                            
+  /// R. C. H. Cheng, Generating Beta Variatew with Non-integral Shape      
+  /// Parameters, Comm. ACM, 21, 317-322 (1978). (Algorithms BB and BC).   
+  ///                             
   /// </code></remarks>
 
   public class BetaDistribution : ProbabilityDistribution 
   {
-    protected	double aa, bb;
-    protected	double scale, a, alpha, b, beta, delta, gamma, k1, k2, maxexp;
-    protected	bool algorithmBB;
-    protected	void Initialize (double pa, double pb)
+    protected double aa, bb;
+    protected double scale, a, alpha, b, beta, delta, gamma, k1, k2, maxexp;
+    protected bool algorithmBB;
+    protected void Initialize (double pa, double pb)
     {
       // check parameters
       if (pa <= 0.0 || pb <= 0.0)
@@ -2126,13 +2126,13 @@ namespace Altaxo.Calc.Random
           double u1 = gen.Long() * scale;
           double u2 = gen.Long() * scale;
           double v = beta * Math.Log(u1/(1.0-u1));
-          w = (v > maxexp) ? infinity : a * Math.Exp(v);	
+          w = (v > maxexp) ? infinity : a * Math.Exp(v);  
           double z = u1 * u1 * u2;
           r = gamma * v - 1.3862944;
           double s = a + r - w;
           if (s + 2.609438 >= 5.0 * z) break;
           t = Math.Log(z);
-          if (s > t) break;	    
+          if (s > t) break;     
         } while (r + alpha * Math.Log(alpha/(b+w)) < t);
 
         // Algorithm BC
@@ -2214,7 +2214,7 @@ namespace Altaxo.Calc.Random
   /// </code></remarks>
   public class ChiSquareDistribution : GammaDistribution
   {
-    protected	double F;
+    protected double F;
     public ChiSquareDistribution (double f) : this(f,DefaultGenerator) {}
     public ChiSquareDistribution (double f, RandomGenerator ran) 
       : base(0.5*f,1.0,ran)
@@ -2235,20 +2235,20 @@ namespace Altaxo.Calc.Random
   /// Generates F-distributed random numbers.
   /// </summary>
   /// <remarks><code>
-  /// Return F-distributed (variance ratio distributed) random deviates	      
+  /// Return F-distributed (variance ratio distributed) random deviates       
   /// with n numerator degrees of freedom and d denominator degrees of freedom  
-  /// according to the density:						      
-  ///								       	     
-  ///   p   (x) dx =  ... dx						     
-  ///    n,d								      
-  ///									      
-  /// Both paramters n and d must be positive.				      
-  ///									      
-  /// Method: The random numbers are directly generated from ratios of    	     
-  ///         ChiSquare variates according to:				      
-  ///								       	     
-  ///  F = (ChiSquare(n)/n) / (ChiSquare(d)/d)				      
-  ///								       	     
+  /// according to the density:                 
+  ///                            
+  ///   p   (x) dx =  ... dx                 
+  ///    n,d                      
+  ///                       
+  /// Both paramters n and d must be positive.              
+  ///                       
+  /// Method: The random numbers are directly generated from ratios of           
+  ///         ChiSquare variates according to:              
+  ///                            
+  ///  F = (ChiSquare(n)/n) / (ChiSquare(d)/d)              
+  ///                            
   /// </code></remarks>
   public class FDistribution : ProbabilityDistribution
   {
@@ -2257,7 +2257,7 @@ namespace Altaxo.Calc.Random
 
     protected double NF, DF;
     protected ChiSquareDistribution NumChi2, DenomChi2; // uninitialized !
-    public	FDistribution (double numf, double denomf) : this(numf, denomf, RandomGenerator.DefaultGenerator) {}
+    public  FDistribution (double numf, double denomf) : this(numf, denomf, RandomGenerator.DefaultGenerator) {}
     FDistribution (double numf, double denomf, RandomGenerator ran)
       : base(ran)
     { 
@@ -2282,7 +2282,7 @@ namespace Altaxo.Calc.Random
       // return avoiding overflow
       return (denominator <= numerator*DBL_MIN) ? DBL_MAX : numerator/denominator;
     }
-			
+      
     public double NumF { get { return NF; }}
     public double DenomF { get { return DF; }}
   }
@@ -2296,18 +2296,18 @@ namespace Altaxo.Calc.Random
   /// </summary>
   /// <remarks><code>
   /// Returns a Poisson distributed deviate (integer returned in a double)    
-  /// from a distribution of mean m.					     
-  /// The Poisson distribution gives the probability of a certain integer	     
-  /// number m of unit rate Poisson random events occurring in a given	     
-  /// interval of time x.							      
-  ///                                   j  -x			       	      
-  ///              j+eps               x  e				     
-  ///      integral       p (m) dm  = -------	 	      	      	      
-  ///              j-eps   x            j !		     	      	      
-  ///								       	      
-  /// References:	The method follows the outlines of:		       	      
-  ///	W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,	      
-  ///	Numerical Recipies in C, Cambridge Univ. Press, 1988.		     
+  /// from a distribution of mean m.               
+  /// The Poisson distribution gives the probability of a certain integer      
+  /// number m of unit rate Poisson random events occurring in a given       
+  /// interval of time x.                   
+  ///                                   j  -x                   
+  ///              j+eps               x  e            
+  ///      integral       p (m) dm  = -------                         
+  ///              j-eps   x            j !                       
+  ///                             
+  /// References: The method follows the outlines of:                 
+  /// W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,       
+  /// Numerical Recipies in C, Cambridge Univ. Press, 1988.        
   /// </code></remarks>
   public class PoissonDistribution : ProbabilityDistribution 
   {
@@ -2318,12 +2318,12 @@ namespace Altaxo.Calc.Random
       scale  = 1.0 / max_val; 
     
       if (m < 12.0) 
-      {	// direct method
+      { // direct method
         g = Math.Exp(-m);
     
       } 
       else 
-      {		// rejection method
+      {   // rejection method
         scalepi = Math.PI / max_val; 
         sq = Math.Sqrt(2.0*m); 
         alm = Math.Log(m);
@@ -2383,25 +2383,25 @@ namespace Altaxo.Calc.Random
 
   /// <summary>
   /// Generates Binomial distributed random numbers.
-  /// </summary>	
-  /// <remarks><code>					       	     
+  /// </summary>  
+  /// <remarks><code>                      
   /// Returns a binomial distributed deviate (integer returned in a double)     
-  /// according to the distribution:				       	      
-  ///                        				       	      	      
-  ///              j+eps                 / n \    j      n-j		     
-  ///      integral       p   (m) dm  = |     |  q  (1-q)		      	      
-  ///              j-eps   n,q           \ j /			     	      
-  ///								       	      
-  /// References:								      
-  ///	D. E. Knuth: The Art of Computer Programming, Vol. 2, Seminumerical   
-  ///	Algorithms, pp. 120, 2nd edition, 1981.			       	      
-  ///								       	      //
-  ///	W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,	      
-  ///	Numerical Recipies in C, Cambridge Univ. Press, 1988.		      
+  /// according to the distribution:                      
+  ///                                                     
+  ///              j+eps                 / n \    j      n-j         
+  ///      integral       p   (m) dm  = |     |  q  (1-q)                 
+  ///              j-eps   n,q           \ j /                  
+  ///                             
+  /// References:                     
+  /// D. E. Knuth: The Art of Computer Programming, Vol. 2, Seminumerical   
+  /// Algorithms, pp. 120, 2nd edition, 1981.                   
+  ///                             //
+  /// W. H. Press, B. P. Flannery, S. A. Teukolsky, W. T. Vetterling,       
+  /// Numerical Recipies in C, Cambridge Univ. Press, 1988.         
   /// </code></remarks>
   public class BinomialDistribution : ProbabilityDistribution 
   {
-    protected	double scale, scalepi, p, pc, plog, pclog, np, npexp, en, en1, gamen1, sq;
+    protected double scale, scalepi, p, pc, plog, pclog, np, npexp, en, en1, gamen1, sq;
     protected int n;
     protected bool sym;
     protected void Initialize (double pp, int nn)
@@ -2413,7 +2413,7 @@ namespace Altaxo.Calc.Random
         scalepi = Math.PI / max_val;
 
         if (pp <= 0.5) 
-        {	// use invariance under  p  <==> 1-p 
+        { // use invariance under  p  <==> 1-p 
           p = pp; sym = false;
         } 
         else 
@@ -2450,15 +2450,15 @@ namespace Altaxo.Calc.Random
       double bnl;
 
       if (n < 25) 
-      {		// direct method for moderate n
+      {   // direct method for moderate n
 
         bnl = 0.0;
         for (int j = 0; j < n; j++)
           if (scale * gen.Long() < p) bnl++;
-	
+  
       } 
       else if (np < 1.0) 
-      {	// use direct Poisson method
+      { // use direct Poisson method
 
         int j;
         double t = 1.0;
@@ -2471,7 +2471,7 @@ namespace Altaxo.Calc.Random
 
       } 
       else 
-      {			// use rejection method
+      {     // use rejection method
 
         double em, y, t;
         do 
@@ -2529,9 +2529,9 @@ namespace Altaxo.Calc.Random
   ///  2. F. James, A Review of Pseudorandom Number Generators, Computer Phys.
   ///     Comm. 60, 329-344 (1990).    
   /// </code></remarks>
-  public class Ranmar		// James - Marsaglia - RANMAR
+  public class Ranmar   // James - Marsaglia - RANMAR
   {
-    private	double[] u = new double[97];
+    private double[] u = new double[97];
     private double c,cd,cm;
     private int i97, j97;
     public void Seed()
@@ -2680,17 +2680,17 @@ namespace Altaxo.Calc.Random
   ///                 32-bit integer seeds, to be used for restarting 
   ///      ISVEC must be dimensioned 25 in the calling program
   /// </code></remarks>
-	
-  class RanLux		// Luescher - James - Marsaglia - Zaman - RANLUX
+  
+  class RanLux    // Luescher - James - Marsaglia - Zaman - RANLUX
   {
-    private	int k1,k2;
+    private int k1,k2;
     public RanLux (int luxury, uint seed)
     {
       SetState(luxury,seed);
     }
     public void SetState (int luxury, uint seed)
     {
-			
+      
 
       // if the seed is zero then a unique seed will be determined automatically
       if (seed == 0) seed = RandomGenerator.UniqueSeed();
@@ -2707,9 +2707,9 @@ namespace Altaxo.Calc.Random
       ranlux(ref rdum);
       return rdum;
     }
-		
+    
     #region helper functions
-		
+    
     static bool notyet = true;
     static int luxlev = 3;
     static int in24 = 0;
@@ -2726,7 +2726,7 @@ namespace Altaxo.Calc.Random
     static double[] seeds = new double[24];
     static double twom12, twom24;
 
-		
+    
     static void ranlux_driver (int what, ref double rdum, 
       int[] isdext, ref int lout, ref int inout, 
       ref int k1, ref int k2, int lux, int ins)
@@ -2782,7 +2782,7 @@ namespace Altaxo.Calc.Random
 
 #if _RANLUX_DEBUG_
     cout << " RANLUX DEFAULT LUXURY LEVEL =  " 
-	 << luxlev << " " << "      p = " << lp << endl;
+   << luxlev << " " << "      p = " << lp << endl;
 #endif
 
         twom24 = 1.0;
@@ -2991,7 +2991,7 @@ namespace Altaxo.Calc.Random
 
 #if _RANLUX_DEBUG_
     cout << " RANLUX LUXURY LEVEL SET BY RLUXGO : " 
-	 << luxlev << "     P = " << i__1 << endl;
+   << luxlev << "     P = " << i__1 << endl;
 #endif
 
       } 
@@ -3019,7 +3019,7 @@ namespace Altaxo.Calc.Random
 
 #if _RANLUX_DEBUG_
     cout << " RANLUX INITIALIZED BY RLUXGO FROM SEEDS "
-	 << jseed << " " << *k1 << " " << *k2 << endl;
+   << jseed << " " << *k1 << " " << *k2 << endl;
 #endif
 
       } 
@@ -3101,8 +3101,8 @@ namespace Altaxo.Calc.Random
 
 #if _RANLUX_DEBUG_
       cout << "  Error in RESTARTING with RLUXGO: " << endl
-	   << "  The values " << ins << " " << *k1 << " " << *k2
-	   << " cannot occur at luxury level " << luxlev << endl;
+     << "  The values " << ins << " " << *k1 << " " << *k2
+     << " cannot occur at luxury level " << luxlev << endl;
 #endif
 
           in24 = 0;
@@ -3113,7 +3113,7 @@ namespace Altaxo.Calc.Random
     //-----------------------------------------------------------------------------//
 
     static void ranlux (ref double rdum)
-    {	
+    { 
       int b=0, c=0, d=0, e=0;
 
       ranlux_driver(0, ref rdum, null, ref b, ref c, 
@@ -3144,7 +3144,7 @@ namespace Altaxo.Calc.Random
 
     static void rluxat(ref int lout, ref int inout, ref int k1, ref int k2)
     {
-      double a=0;			
+      double a=0;     
       ranlux_driver(3, ref a, null, ref lout, 
         ref inout, ref k1, ref k2, 0,0);
     }
@@ -3201,9 +3201,9 @@ namespace Altaxo.Calc.Random
   ///   3. The time overhead for virtual vs. non-virtual operator () is 
   ///      about 1-2 percent and is therefore considered as neglegible.
   /// </code></remarks>
-  class Ran32k3a 		// L'Ecuyer's 1997 MRG
+  class Ran32k3a    // L'Ecuyer's 1997 MRG
   {
-    private	double s10,s11,s12,s20,s21,s22;
+    private double s10,s11,s12,s20,s21,s22;
 
     //----------------------------------------------------------------------------//
     // Seeding
@@ -3219,13 +3219,13 @@ namespace Altaxo.Calc.Random
         (u10 == 0 && u11 == 0 && u12 == 0) ||
         (u20 == 0 && u21 == 0 && u22 == 0) )
         throw new ArgumentException("Illegal seed values given");
-	
+  
       // set the new state
       s10 = u10; s11 = u11; s12 = u12; 
       s20 = u20; s21 = u21; s22 = u22;
     }
 
-		
+    
     //----------------------------------------------------------------------------//
     // Constructor
     //----------------------------------------------------------------------------//
@@ -3240,7 +3240,7 @@ namespace Altaxo.Calc.Random
       SetState(u10,u11,u12,u20,u21,u22);
     }
 
-		
+    
     //----------------------------------------------------------------------------//
     // The generator
     //----------------------------------------------------------------------------//
@@ -3285,21 +3285,21 @@ namespace Altaxo.Calc.Random
   /// On average requires 2.25 deviates per vector and a square root calculation 
   /// Vector of three random numbers (x,y,z) which are distributed uniformly     
   /// on the unit sphere.                                                        
-  ///								       	     
+  ///                            
   /// Uses the algorithm of Marsaglia, Ann. Math. Stat 43, 645 (1972).        
   /// On average requires 2.25 deviates per vector and a square root calculation 
-  /// </code></remarks>								       	    
-	
+  /// </code></remarks>                           
+  
   public class UnitSphereDistribution : ProbabilityDistribution 
   {
-    protected	double scale;
-    public	UnitSphereDistribution() : this(DefaultGenerator) {}
+    protected double scale;
+    public  UnitSphereDistribution() : this(DefaultGenerator) {}
     public UnitSphereDistribution(RandomGenerator ran) 
       : base(ran) 
     {
       scale = 2.0 / Maximum;
     }
-		
+    
     public void val( out double x, out double y, out double z)
     { 
       for (;;) 

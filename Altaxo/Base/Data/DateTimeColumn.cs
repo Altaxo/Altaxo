@@ -44,24 +44,24 @@ namespace Altaxo.Data
     private int        m_Capacity; // shortcut to m_Array.Length;
     private int        m_Count;
     public static readonly DateTime NullValue = DateTime.MinValue;
-	
+  
     public DateTimeColumn()
     {
     }
 
-	
+  
     public DateTimeColumn(int initialcapacity)
     {
       m_Count = 0;
       m_Array = new DateTime[initialcapacity];
       m_Capacity = initialcapacity;
     }
-				
+        
     public DateTimeColumn(DateTimeColumn from)
     {
       this.m_Count    = from.m_Count;
       this.m_Capacity = from.m_Capacity;
-      this.m_Array		= null==from.m_Array ? null : (DateTime[])from.m_Array.Clone();
+      this.m_Array    = null==from.m_Array ? null : (DateTime[])from.m_Array.Clone();
     }
 
     public override object Clone()
@@ -73,7 +73,7 @@ namespace Altaxo.Data
     #region "Serialization"
     public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
     {
-      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         Altaxo.Data.DateTimeColumn s = (Altaxo.Data.DateTimeColumn)obj;
         System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
@@ -81,7 +81,7 @@ namespace Altaxo.Data
         {
           System.Runtime.Serialization.ISerializationSurrogate surr =
             ss.GetSurrogate(typeof(Altaxo.Data.DataColumn),context, out ss);
-	
+  
           surr.GetObjectData(obj,info,context); // stream the data of the base object
         }
       {
@@ -132,7 +132,7 @@ namespace Altaxo.Data
         Altaxo.Data.DateTimeColumn s = (Altaxo.Data.DateTimeColumn)obj;
         // serialize the base class
         info.AddBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn));
-				
+        
         if(null==info.GetProperty("Altaxo.Data.DataColumn.SaveAsTemplate"))
           info.AddArray("Data",s.m_Array,s.m_Count);
         else
@@ -141,8 +141,8 @@ namespace Altaxo.Data
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         Altaxo.Data.DateTimeColumn s = null!=o ? (Altaxo.Data.DateTimeColumn)o : new Altaxo.Data.DateTimeColumn();
-				
-				
+        
+        
 
         // deserialize the base class
         info.GetBaseValueEmbedded(s,typeof(Altaxo.Data.DataColumn),parent);
@@ -215,7 +215,7 @@ namespace Altaxo.Data
       return typeof(Altaxo.Worksheet.DateTimeColumnStyle);
     }
 
-			
+      
     public override void CopyDataFrom(Altaxo.Data.DataColumn v)
     {
       if(v.GetType()!=typeof(Altaxo.Data.DateTimeColumn))
@@ -226,7 +226,7 @@ namespace Altaxo.Data
 
       // suggestion, but __not__ implemented:
       // if v is a standalone column, then simply take the dataarray
-      // otherwise: copy the data by value	
+      // otherwise: copy the data by value  
       int oldCount = this.m_Count;
       if(null==vd.m_Array || vd.m_Count==0)
       {
@@ -242,14 +242,14 @@ namespace Altaxo.Data
       }
       if(oldCount>0 || m_Count>0) // message only if really was a change
         NotifyDataChanged(0, oldCount>m_Count? (oldCount):(m_Count),m_Count<oldCount);
-    }				
+    }       
 
     protected void Realloc(int i)
     {
       int newcapacity1 = (int)(m_Capacity*increaseFactor+addSpace);
       int newcapacity2 = i+addSpace+1;
       int newcapacity = newcapacity1>newcapacity2 ? newcapacity1:newcapacity2;
-				
+        
       DateTime[] newarray = new DateTime[newcapacity];
       if(m_Count>0)
       {
@@ -290,7 +290,7 @@ namespace Altaxo.Data
       {
         if(i>=0 && i<m_Count)
           return m_Array[i];
-        return DateTime.MinValue;	
+        return DateTime.MinValue; 
       }
       set
       {
@@ -328,7 +328,7 @@ namespace Altaxo.Data
           {
             for(int k=m_Count;k<i;k++)
               m_Array[k]=DateTime.MinValue; // fill range between used range and new element with voids
-					
+          
             m_Array[i]=value;
             m_Count=i+1;
           }
@@ -338,13 +338,13 @@ namespace Altaxo.Data
 
             for(int k=m_Count;k<i;k++)
               m_Array[k]=DateTime.MinValue; // fill range between used range and new element with voids
-					
+          
             m_Array[i]=value;
             m_Count=i+1;
           }
         }
         NotifyDataChanged(i,i+1,bCountDecreased);
-      } // end set	
+      } // end set  
     } // end indexer
 
 
@@ -363,7 +363,7 @@ namespace Altaxo.Data
 
       for(int i=nInsBeforeColumn+nInsCount-1;i>=nInsBeforeColumn;i--)
         m_Array[i]=NullValue;
-		
+    
       this.m_Count=newlen;
       this.NotifyDataChanged(nInsBeforeColumn,m_Count,false);
     }
@@ -382,7 +382,7 @@ namespace Altaxo.Data
       int i,j;
       for(i=nDelFirstRow,j=nDelFirstRow+nDelCount;j<m_Count;i++,j++)
         m_Array[i]=m_Array[j];
-			
+      
       int prevCount = m_Count;
       m_Count= i<m_Count ? i : m_Count; // m_Count can only decrease
 
@@ -410,11 +410,11 @@ namespace Altaxo.Data
       {
         c3.m_Array[i] = c1.m_Array[i].AddSeconds(c2.GetValueDirect(i));
       }
-			
-			
+      
+      
       c3.m_Count=len;
-			
-      return c3;	
+      
+      return c3;  
     }
 
     public static Altaxo.Data.DateTimeColumn operator +(Altaxo.Data.DateTimeColumn c1, double c2)
@@ -426,11 +426,11 @@ namespace Altaxo.Data
         c3.m_Array[i] = c1.m_Array[i].AddSeconds(c2);
       }
 
-			
-			
+      
+      
       c3.m_Count=len;
 
-      return c3;	
+      return c3;  
     }
 
 
@@ -448,11 +448,11 @@ namespace Altaxo.Data
       {
         c3.m_Array[i] = c1.m_Array[i].AddSeconds(-c2.GetValueDirect(i));
       }
-			
-			
+      
+      
       c3.m_Count=len;
-			
-      return c3;	
+      
+      return c3;  
     }
 
     public static Altaxo.Data.DateTimeColumn operator -(Altaxo.Data.DateTimeColumn c1, double c2)
@@ -464,13 +464,13 @@ namespace Altaxo.Data
         c3.m_Array[i] = c1.m_Array[i].AddSeconds(-c2);
       }
 
-			
-			
+      
+      
       c3.m_Count=len;
 
-      return c3;	
+      return c3;  
     }
-				
+        
     #endregion
 
   } // end Altaxo.Data.DateTimeColumn

@@ -46,7 +46,7 @@ namespace Altaxo.Calc
     /// larger than eta.  Ordinarily, eta will be chosen to be one-tenth 
     /// machine precision. 
     /// </summary>
-    /// <param name="os">Double precision array of NOS coefficients in an orthogonal	series.</param>
+    /// <param name="os">Double precision array of NOS coefficients in an orthogonal  series.</param>
     /// <param name="nos">Number of coefficients in OS.</param>
     /// <param name="eta"> single precision scalar containing requested accuracy of  series. </param>
     /// <returns>The number of terms neccessary to insure the error is not larger than eta.</returns>
@@ -86,16 +86,16 @@ namespace Altaxo.Calc
     /// <param name="x">Value at which the series is to be evaluated. </param>
     /// <param name="cs">cs   array of n terms of a Chebyshev series. In evaluating 
     /// cs, only half the first coefficient is summed. 
-    ///	</param>
+    /// </param>
     /// <param name="n">number of terms in array cs.</param>
     /// <returns>The n-term Chebyshev series cs at x.</returns>
     /// <remarks>
     /// References:
     ///
-    ///	R. Broucke, Ten subroutines for the manipulation of Chebyshev series, 
-    ///	Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256. 
+    /// R. Broucke, Ten subroutines for the manipulation of Chebyshev series, 
+    /// Algorithm 446, Communications of the A.C.M. 16, (1973) pp. 254-256. 
     ///
-    ///	L. Fox and I. B. Parker, Chebyshev Polynomials in 
+    /// L. Fox and I. B. Parker, Chebyshev Polynomials in 
     ///      Numerical Analysis, Oxford University Press, 1968,  page 56. 
     ///
     /// This is a translation from the Fortran version of SLATEC, FNLIB,

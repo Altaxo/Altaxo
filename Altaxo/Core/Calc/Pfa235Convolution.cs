@@ -53,21 +53,21 @@ namespace Altaxo.Calc.FFT
   //   *--------------------------------------------------*
   //
   //      "FLOAT" is to be replaced by either "float" or "double".
-  //	Setup convolution/deconvolution for one, two or three 
-  //	dimensions. The dimensions n1,n2,and n3 must be of the form
-  //	             n = (2**p) * (3**q) * (5**r)
-  //	otherwise an error will be generated and the error handler function
-  //	Matpack.Error() is called. On instantiation the underlying class MpFFT
+  //  Setup convolution/deconvolution for one, two or three 
+  //  dimensions. The dimensions n1,n2,and n3 must be of the form
+  //               n = (2**p) * (3**q) * (5**r)
+  //  otherwise an error will be generated and the error handler function
+  //  Matpack.Error() is called. On instantiation the underlying class MpFFT
   //      will allocate and calculate some trigonometric tables (cf. MpFFT above).
-  //	
+  //  
   // Convolution Functions:
   // ----------------------
   //
   //   *-------------------------------------------------------------------------*
   //   | int MpConvolution<FLOAT>::operator () (FLOAT data[], FLOAT response[],  |
-  //   |     			              FLOAT result[],                  |
-  //   |     			              FLOAT scratch[] = 0,             |
-  //   |				              int isign = forward)             |
+  //   |                        FLOAT result[],                  |
+  //   |                        FLOAT scratch[] = 0,             |
+  //   |                      int isign = forward)             |
   //   *-------------------------------------------------------------------------*
   //
   //     Description
@@ -103,8 +103,8 @@ namespace Altaxo.Calc.FFT
   //     FLOAT result[]        The result array. It must have 
   //                           at least the size of the data array.
   //
-  //     FLOAT scratch[] 	     A work array. If a NULL pointer is passed the
-  //			     work array is allocated and freed auotomatically.
+  //     FLOAT scratch[]       A work array. If a NULL pointer is passed the
+  //           work array is allocated and freed auotomatically.
   //                           If the array is given by the user it must have 
   //                           at least the size of the data array.
   //
@@ -133,7 +133,7 @@ namespace Altaxo.Calc.FFT
   ///     two-dimensional, or three-dimensional, d = 1,2,3.  Each dimension must be 
   ///     of the form n = (2**p) * (3**q) * (5**r), because of the underlying FFT.
   ///     The d-dimensional data can be either single precision (FLOAT := float) 
-  ///     or double precision (FLOAT := double).	
+  ///     or double precision (FLOAT := double).  
   /// </summary>
   public class Pfa235Convolution: Pfa235FFT 
   {
@@ -142,7 +142,7 @@ namespace Altaxo.Calc.FFT
     /// Uninitialized setup.
     /// </summary>
     public Pfa235Convolution()
-      :	base()
+      : base()
     {
     }
 
@@ -150,10 +150,10 @@ namespace Altaxo.Calc.FFT
     /// 1-dimensional setup
     /// </summary>
     /// <remarks>
-    ///	Setup fast Fourier transform / back-transform for one 
-    ///	dimensions. The dimension n1 must be of the form
-    ///	             n = (2**p) * (3**q) * (5**r)
-    ///	</remarks>
+    /// Setup fast Fourier transform / back-transform for one 
+    /// dimensions. The dimension n1 must be of the form
+    ///              n = (2**p) * (3**q) * (5**r)
+    /// </remarks>
     public Pfa235Convolution (int n1) 
       : base(n1)
     {
@@ -163,11 +163,11 @@ namespace Altaxo.Calc.FFT
     /// 2-dimensional setup.
     /// </summary>
     /// <remarks>
-    ///	Setup fast Fourier transform / back-transform for two  
-    ///	dimensions. The dimensions n1 andn2 must be of the form
-    ///	             n = (2**p) * (3**q) * (5**r)
-    ///	</remarks>
-	
+    /// Setup fast Fourier transform / back-transform for two  
+    /// dimensions. The dimensions n1 andn2 must be of the form
+    ///              n = (2**p) * (3**q) * (5**r)
+    /// </remarks>
+  
     public Pfa235Convolution(int n1, int n2)
       : base(n1,n2)
     {
@@ -177,10 +177,10 @@ namespace Altaxo.Calc.FFT
     /// 3-dimensional setup
     /// </summary>
     /// <remarks>
-    ///	Setup fast Fourier transform / back-transform for three 
-    ///	dimensions. The dimensions n1,n2,and n3 must be of the form
-    ///	             n = (2**p) * (3**q) * (5**r)
-    ///	</remarks>
+    /// Setup fast Fourier transform / back-transform for three 
+    /// dimensions. The dimensions n1,n2,and n3 must be of the form
+    ///              n = (2**p) * (3**q) * (5**r)
+    /// </remarks>
     public Pfa235Convolution(int n1, int n2, int n3)
       : base(n1, n2, n3)
     {
@@ -195,14 +195,14 @@ namespace Altaxo.Calc.FFT
     /// two-dimensional, or three-dimensional, d = 1,2,3.  Each dimension must be 
     /// of the form n = (2**p) * (3**q) * (5**r), because of the underlying FFT.
     /// The d-dimensional data can be either single precision (FLOAT := float) 
-    /// or double precision (FLOAT := double).		/// </summary>
+    /// or double precision (FLOAT := double).    /// </summary>
     /// <param name="data">
     ///The real-valued data set. Note, that you have to
     ///                           care for end effects by zero padding. This means, 
     ///                           that you have to pad the data with a number of zeros
     ///                           on one end equal to the maximal positive duration
     ///                           or maximal negative duration of the response function,
-    ///                           whichever is larger!!		/// </param>
+    ///                           whichever is larger!!   /// </param>
     /// <param name="response">
     ///  The response function must be stored in wrap-around
     ///  order. This means that the first half of the array
@@ -219,7 +219,7 @@ namespace Altaxo.Calc.FFT
     /// </param>
     /// <param name="scratch">
     ///  A work array. If a NULL pointer is passed the
-    ///	work array is allocated and freed auotomatically.
+    /// work array is allocated and freed auotomatically.
     /// If the array is given by the user it must have 
     /// at least the size of the data array.
     /// </param>
@@ -251,7 +251,7 @@ namespace Altaxo.Calc.FFT
     ///
     /// * 2D and 3D versions are not yet available !!!
     ///</remarks>
-    public bool Convolute (double[] data, double[] response, double[] result, double[] scratch,	Direction isign)
+    public bool Convolute (double[] data, double[] response, double[] result, double[] scratch, Direction isign)
     {
       // return status
       bool status = true;
@@ -313,10 +313,10 @@ namespace Altaxo.Calc.FFT
               ri = result[i]  - result[n-i], 
               sr = scratch[i] + scratch[n-i],
               si = scratch[i] - scratch[n-i];
-            result[i]  = scale * (rr*sr + ri*si);		// real part
-            scratch[i] = scale * (si*sr - ri*rr);		// imaginary part 
-            result[n-i]  = result[i];			// symmetry
-            scratch[n-i] = -scratch[i]; 			// symmetry
+            result[i]  = scale * (rr*sr + ri*si);   // real part
+            scratch[i] = scale * (si*sr - ri*rr);   // imaginary part 
+            result[n-i]  = result[i];     // symmetry
+            scratch[n-i] = -scratch[i];       // symmetry
           }
       
         } 
@@ -325,7 +325,7 @@ namespace Altaxo.Calc.FFT
 
           double mag;
           if ((mag = Square(scratch[0])) == 0.0) 
-          {		// check for zero divide
+          {   // check for zero divide
             status = false;
             goto ErrorExit;
           }
@@ -338,14 +338,14 @@ namespace Altaxo.Calc.FFT
               sr = scratch[i] + scratch[n-i],
               si = scratch[i] - scratch[n-i];
             if ((mag = sr*sr + ri*ri) == 0.0)  
-            {		// check for zero divide
+            {   // check for zero divide
               status = false;
               goto ErrorExit;
             }
-            result[i]  =  (rr*sr - ri*si) / (n*mag);	// real part
-            scratch[i] =  (si*sr + ri*rr) / (n*mag);	// imaginary part 
-            result[n-i]  = result[i];			// symmetry
-            scratch[n-i] = -scratch[i]; 			// symmetry
+            result[i]  =  (rr*sr - ri*si) / (n*mag);  // real part
+            scratch[i] =  (si*sr + ri*rr) / (n*mag);  // imaginary part 
+            result[n-i]  = result[i];     // symmetry
+            scratch[n-i] = -scratch[i];       // symmetry
           }
         }
 
@@ -476,7 +476,7 @@ namespace Altaxo.Calc.FFT
 
       ErrorExit:
   
-				  
+          
         return status;
     }
 

@@ -24,30 +24,30 @@ using System;
 
 namespace Altaxo.Serialization.Ascii
 {
-	public class AsciiImportOptions
-	{
-		public bool bRenameColumns; /// rename the columns if 1st line contain  the column names
-		public bool bRenameWorksheet; // rename the worksheet to the data file name
+  public class AsciiImportOptions
+  {
+    public bool bRenameColumns; /// rename the columns if 1st line contain  the column names
+    public bool bRenameWorksheet; // rename the worksheet to the data file name
 
-		public int nMainHeaderLines; // lines to skip (the main header)
-		public bool bDelimited;      // true if delimited by a single char
-		public char cDelimiter;      // the delimiter char
+    public int nMainHeaderLines; // lines to skip (the main header)
+    public bool bDelimited;      // true if delimited by a single char
+    public char cDelimiter;      // the delimiter char
 
-		public int m_DecimalSeparatorDotCount=0;
-		public int m_DecimalSeparatorCommaCount=0;
-
-
-		public AsciiLineStructure recognizedStructure=null;
+    public int m_DecimalSeparatorDotCount=0;
+    public int m_DecimalSeparatorCommaCount=0;
 
 
+    public AsciiLineStructure recognizedStructure=null;
 
 
-		public AsciiImportOptions Clone()
-		{
-			return (AsciiImportOptions)MemberwiseClone();
-		}
 
-	}
+
+    public AsciiImportOptions Clone()
+    {
+      return (AsciiImportOptions)MemberwiseClone();
+    }
+
+  }
 
 
 }

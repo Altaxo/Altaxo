@@ -109,7 +109,7 @@ namespace Altaxo.Data
     public double m_Double;
     public object m_Object;
 
-		
+    
 
     public AltaxoVariant(AltaxoVariant a)
     {
@@ -117,7 +117,7 @@ namespace Altaxo.Data
       m_Double = a.m_Double;
       m_Object = a.m_Object;
     }
-		
+    
 
     public AltaxoVariant(double d)
     {
@@ -130,14 +130,14 @@ namespace Altaxo.Data
       m_Content = Content.VDateTime;
       m_Object = f;
       m_Double = 0;
-    }	
+    } 
     public AltaxoVariant(string s)
     {
       m_Content = Content.VString;
       m_Object=s;
       m_Double = 0;
     }
-		
+    
     public AltaxoVariant(object k)
     {
       if(k == null)
@@ -265,31 +265,31 @@ namespace Altaxo.Data
         return f.m_Double;
       throw new ApplicationException("Variant contains " + f.m_Content.ToString() + ", but expecting type Double");
     }
-	
+  
     public static implicit operator AltaxoVariant(double f) 
     {
       return new AltaxoVariant(f);
     }
-			
+      
     public static explicit operator DateTime(AltaxoVariant f) 
     {
       if(f.m_Content==Content.VDateTime)
         return (DateTime)f.m_Object;
       throw new ApplicationException("Variant contains " + f.m_Content.ToString() + ", but expecting type DateTime");
     }
-	
+  
     public static implicit operator AltaxoVariant(DateTime f) 
     {
       return new AltaxoVariant(f);
     }
-		
+    
     public static explicit operator string(AltaxoVariant f) 
     {
       if(f.m_Content==Content.VString)
         return (string)f.m_Object;
       throw new ApplicationException("Variant contains " + f.m_Content.ToString() + ", but expecting type string");
     }
-	
+  
     public static implicit operator AltaxoVariant(string f) 
     {
       return new AltaxoVariant(f);
@@ -316,7 +316,7 @@ namespace Altaxo.Data
       else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Addition_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to add types " + a.m_Content.ToString() + " and " + b.m_Content.GetType().ToString());	
+        throw new AltaxoOperatorException("Error: Try to add types " + a.m_Content.ToString() + " and " + b.m_Content.GetType().ToString());  
     }
 
     public static AltaxoVariant operator - (AltaxoVariant a, AltaxoVariant b)
@@ -336,9 +336,9 @@ namespace Altaxo.Data
       else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Subtraction_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to subtract types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());	
+        throw new AltaxoOperatorException("Error: Try to subtract types " + a.m_Content.ToString() + " and " + b.m_Content.ToString()); 
     }
-		
+    
     public static AltaxoVariant operator * (AltaxoVariant a, AltaxoVariant b)
     {
       object result;
@@ -352,7 +352,7 @@ namespace Altaxo.Data
       else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Multiplication_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to multiply types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());	
+        throw new AltaxoOperatorException("Error: Try to multiply types " + a.m_Content.ToString() + " and " + b.m_Content.ToString()); 
     }
 
     public static AltaxoVariant operator / (AltaxoVariant a, AltaxoVariant b)
@@ -367,7 +367,7 @@ namespace Altaxo.Data
       else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Division_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to divide types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());	
+        throw new AltaxoOperatorException("Error: Try to divide types " + a.m_Content.ToString() + " and " + b.m_Content.ToString()); 
     }
 
     public static AltaxoVariant operator % (AltaxoVariant a, AltaxoVariant b)
@@ -382,7 +382,7 @@ namespace Altaxo.Data
       else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Modulo_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to get remainder of types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());	
+        throw new AltaxoOperatorException("Error: Try to get remainder of types " + a.m_Content.ToString() + " and " + b.m_Content.ToString()); 
     }
 
     public static AltaxoVariant operator & (AltaxoVariant a, AltaxoVariant b)
@@ -397,7 +397,7 @@ namespace Altaxo.Data
       else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_And_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to apply operator and to types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());	
+        throw new AltaxoOperatorException("Error: Try to apply operator and to types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());  
     }
 
     public static AltaxoVariant operator | (AltaxoVariant a, AltaxoVariant b)
@@ -412,7 +412,7 @@ namespace Altaxo.Data
       else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Or_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to apply operator OR to types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());	
+        throw new AltaxoOperatorException("Error: Try to apply operator OR to types " + a.m_Content.ToString() + " and " + b.m_Content.ToString()); 
     }
 
     public static AltaxoVariant operator ^ (AltaxoVariant a, AltaxoVariant b)
@@ -427,7 +427,7 @@ namespace Altaxo.Data
       else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Xor_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to apply operator XOR to types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());	
+        throw new AltaxoOperatorException("Error: Try to apply operator XOR to types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());  
     }
 
     public static AltaxoVariant operator << (AltaxoVariant a, int b)
@@ -440,7 +440,7 @@ namespace Altaxo.Data
       else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_ShiftLeft(b, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to apply operator << to types " + a.m_Content.ToString() + " and " + b.ToString());	
+        throw new AltaxoOperatorException("Error: Try to apply operator << to types " + a.m_Content.ToString() + " and " + b.ToString()); 
     }
 
     public static AltaxoVariant operator >> (AltaxoVariant a, int b)
@@ -453,7 +453,7 @@ namespace Altaxo.Data
       else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_ShiftRight(b, out result))
         return new AltaxoVariant(result);
       else
-        throw new AltaxoOperatorException("Error: Try to apply operator >> to types " + a.m_Content.ToString() + " and " + b.ToString());	
+        throw new AltaxoOperatorException("Error: Try to apply operator >> to types " + a.m_Content.ToString() + " and " + b.ToString()); 
     }
 
 
@@ -477,7 +477,7 @@ namespace Altaxo.Data
         return result;
       else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Equal_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
         return result;
-      else return false;	
+      else return false;  
     }
 
     public static bool operator != (AltaxoVariant a, AltaxoVariant b)
@@ -493,7 +493,7 @@ namespace Altaxo.Data
         return false;
       else if(a.m_Content != b.m_Content)
         throw new AltaxoOperatorException("Error: Try to compare types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());
-			
+      
       if(a.m_Content == Content.VDouble)
         return (a.m_Double < b.m_Double);
       else if(a.m_Content == Content.VDateTime)
@@ -515,7 +515,7 @@ namespace Altaxo.Data
         return false;
       else if(a.m_Content != b.m_Content)
         throw new AltaxoOperatorException("Error: Try to compare types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());
-			
+      
       if(a.m_Content == Content.VDouble)
         return (a.m_Double > b.m_Double);
       else if(a.m_Content == Content.VDateTime)
@@ -538,7 +538,7 @@ namespace Altaxo.Data
         return false;
       else if(a.m_Content != b.m_Content)
         throw new AltaxoOperatorException("Error: Try to compare types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());
-			
+      
       if(a.m_Content == Content.VDouble)
         return (a.m_Double <= b.m_Double);
       else if(a.m_Content == Content.VDateTime)
@@ -560,7 +560,7 @@ namespace Altaxo.Data
         return false;
       else if(a.m_Content != b.m_Content)
         throw new AltaxoOperatorException("Error: Try to compare types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());
-			
+      
       if(a.m_Content == Content.VDouble)
         return (a.m_Double >= b.m_Double);
       else if(a.m_Content == Content.VDateTime)
@@ -586,7 +586,7 @@ namespace Altaxo.Data
         case Content.VDouble:
         case Content.VDateTime:
           return new AltaxoVariant(a);
-					
+          
         case Content.VOperatable:
           if(((IOperatable)a.m_Object).vop_Plus(out result))
             return new AltaxoVariant(result);

@@ -29,59 +29,59 @@ using System.Windows.Forms;
 
 namespace Altaxo.Main
 {
-	/// <summary>
-	/// Summary description for AboutDialog.
-	/// </summary>
-	public class AboutDialog : System.Windows.Forms.Form
-	{
-		private System.Windows.Forms.Button m_btOK;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox textBox1;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.LinkLabel m_LinkLabel;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+  /// <summary>
+  /// Summary description for AboutDialog.
+  /// </summary>
+  public class AboutDialog : System.Windows.Forms.Form
+  {
+    private System.Windows.Forms.Button m_btOK;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.TextBox textBox1;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.LinkLabel m_LinkLabel;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public AboutDialog()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public AboutDialog()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			// Create a new link using the Add method of the LinkCollection class.
-			int len = m_LinkLabel.Text.Length;
-			int pos = m_LinkLabel.Text.IndexOf("http://");
-			m_LinkLabel.Links.Add(pos,len-pos,"http://sourceforge.net/projects/altaxo");
+      // Create a new link using the Add method of the LinkCollection class.
+      int len = m_LinkLabel.Text.Length;
+      int pos = m_LinkLabel.Text.IndexOf("http://");
+      m_LinkLabel.Links.Add(pos,len-pos,"http://sourceforge.net/projects/altaxo");
 
 
-		}
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.m_btOK = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
@@ -425,15 +425,15 @@ namespace Altaxo.Main
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		private void m_LinkLabel_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
-		{
-			// Determine which link was clicked within the LinkLabel.
-			m_LinkLabel.Links[m_LinkLabel.Links.IndexOf(e.Link)].Visited = true;
-			// Display the appropriate link based on the value of the LinkData property of the Link object.
-			System.Diagnostics.Process.Start(e.Link.LinkData.ToString());
+    private void m_LinkLabel_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+    {
+      // Determine which link was clicked within the LinkLabel.
+      m_LinkLabel.Links[m_LinkLabel.Links.IndexOf(e.Link)].Visited = true;
+      // Display the appropriate link based on the value of the LinkData property of the Link object.
+      System.Diagnostics.Process.Start(e.Link.LinkData.ToString());
 
-		}
-	}
+    }
+  }
 }
