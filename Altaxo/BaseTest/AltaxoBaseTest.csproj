@@ -9,7 +9,7 @@
             <Settings
                 ApplicationIcon = ""
                 AssemblyKeyContainerName = ""
-                AssemblyName = "BaseTest"
+                AssemblyName = "AltaxoBaseTest"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = ""
+                PostBuildEvent = "copy AltaxoBaseTest.??? ..\..\..\..\rt$(ConfigurationName)\bin"
                 RootNamespace = "BaseTest"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -76,8 +76,28 @@
                 />
                 <Reference
                     Name = "System.XML"
-                    AssemblyName = "System.XML"
+                    AssemblyName = "System.Xml"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
+                />
+                <Reference
+                    Name = "AltaxoBase"
+                    Project = "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "AltaxoCore"
+                    Project = "{7045C197-9DA8-4FA4-886C-992ACADD838F}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "zICSharpCode.SharpZipLib"
+                    Project = "{62C31D94-812C-430E-AB9B-7DCF84D93BAE}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "nunit.framework"
+                    AssemblyName = "nunit.framework"
+                    HintPath = "..\..\Libraries\bin\nunit.framework.dll"
                 />
             </References>
         </Build>
@@ -89,7 +109,17 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Class1.cs"
+                    RelPath = "Data\DataColumnCollection_Test.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Data\DoubleColumn_Test.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Xml\XmlStreamSerializationTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

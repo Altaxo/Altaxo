@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoCore", "Altaxo\Core\AltaxoCore.csproj", "{7045C197-9DA8-4FA4-886C-992ACADD838F}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoCoreTest", "Altaxo\CoreTest\AltaxoCoreTest.csproj", "{95A2BF58-8568-4512-BD82-F0240FFC7558}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.Debug.ActiveCfg = Debug|.NET
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.Debug.Build.0 = Debug|.NET
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.Release.ActiveCfg = Release|.NET
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.Release.Build.0 = Release|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.Debug.ActiveCfg = Debug|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.Debug.Build.0 = Debug|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.Release.ActiveCfg = Release|.NET
+		{95A2BF58-8568-4512-BD82-F0240FFC7558}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

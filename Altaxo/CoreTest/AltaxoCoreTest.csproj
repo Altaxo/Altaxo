@@ -9,7 +9,7 @@
             <Settings
                 ApplicationIcon = ""
                 AssemblyKeyContainerName = ""
-                AssemblyName = "AltaxoTest"
+                AssemblyName = "AltaxoCoreTest"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "copy AltaxoTest.??? ..\..\..\..\rt$(ConfigurationName)\bin"
+                PostBuildEvent = "copy AltaxoCoreTest.??? ..\..\..\..\rt$(ConfigurationName)\bin"
                 RootNamespace = ""
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -80,24 +80,14 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
-                    Name = "Base"
-                    Project = "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
+                    Name = "AltaxoCore"
+                    Project = "{7045C197-9DA8-4FA4-886C-992ACADD838F}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
                     Name = "nunit.framework"
                     AssemblyName = "nunit.framework"
                     HintPath = "..\..\Libraries\bin\nunit.framework.dll"
-                />
-                <Reference
-                    Name = "AltaxoCore"
-                    Project = "{7045C197-9DA8-4FA4-886C-992ACADD838F}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "zICSharpCode.SharpZipLib"
-                    Project = "{62C31D94-812C-430E-AB9B-7DCF84D93BAE}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
