@@ -491,7 +491,14 @@ namespace Altaxo.Graph
 		/// <param name="e">Not used.</param>
 		private void EhMenuFilePageSetup_OnClick(object sender, System.EventArgs e)
 		{
-			App.CurrentApplication.PageSetupDialog.ShowDialog(this.m_View.Window);
+			try
+			{
+				App.CurrentApplication.PageSetupDialog.ShowDialog(this.m_View.Window);
+			}
+			catch(Exception exc)
+			{
+				MessageBox.Show(exc.ToString(),"Exception occured!");
+			}
 		}
 
 		/// <summary>
@@ -501,23 +508,24 @@ namespace Altaxo.Graph
 		/// <param name="e">Not used.</param>
 		private void EhMenuFilePrint_OnClick(object sender, System.EventArgs e)
 		{
-			if(DialogResult.OK==App.CurrentApplication.PrintDialog.ShowDialog(this.m_View.Window))
+			try
 			{
-				try
+				if(DialogResult.OK==App.CurrentApplication.PrintDialog.ShowDialog(this.m_View.Window))
 				{
 					App.CurrentApplication.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
 					App.CurrentApplication.PrintDocument.Print();
 				}
-				catch(Exception ex)
-				{
-					System.Windows.Forms.MessageBox.Show(this.m_View.Window,ex.ToString());
-				}
-				finally
-				{
-					App.CurrentApplication.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
-				}
+			}
+			catch(Exception ex)
+			{
+				System.Windows.Forms.MessageBox.Show(this.m_View.Window,ex.ToString());
+			}
+			finally
+			{
+				App.CurrentApplication.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
 			}
 		}
+	
 
 		/// <summary>
 		/// Handler for the menu item "File" - "Print Preview".
