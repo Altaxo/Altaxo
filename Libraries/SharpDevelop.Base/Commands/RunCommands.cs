@@ -76,11 +76,13 @@ namespace ICSharpCode.SharpDevelop.Commands
 									new SaveFile().Run();
 									ICompilerResult res = binding.CompileFile(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
 									taskService.Tasks.Clear();
-									foreach (CompilerError err in res.CompilerResults.Errors) {
-										taskService.Tasks.Add(new Task(null, err));
+									if (res != null) {
+										foreach (CompilerError err in res.CompilerResults.Errors) {
+											taskService.Tasks.Add(new Task(null, err));
+										}
+										taskService.CompilerOutput = res.CompilerOutput;
+										taskService.NotifyTaskChange();
 									}
-									taskService.CompilerOutput = res.CompilerOutput;
-									taskService.NotifyTaskChange();
 									ShowAfterCompileStatus();
 								}
 							} else {
@@ -153,12 +155,14 @@ namespace ICSharpCode.SharpDevelop.Commands
 									new SaveFile().Run();
 									ICompilerResult res = binding.CompileFile(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
 									taskService.Tasks.Clear();
-									foreach (CompilerError err in res.CompilerResults.Errors) {
-										taskService.Tasks.Add(new Task(null, err));
+									if (res != null) {
+										foreach (CompilerError err in res.CompilerResults.Errors) {
+											taskService.Tasks.Add(new Task(null, err));
+										}
+										taskService.CompilerOutput = res.CompilerOutput;
+										taskService.NotifyTaskChange();
+										Compile.ShowAfterCompileStatus();
 									}
-									taskService.CompilerOutput = res.CompilerOutput;
-									taskService.NotifyTaskChange();
-									Compile.ShowAfterCompileStatus();
 								}
 							} else {
 								// should never happen anymore
@@ -198,13 +202,16 @@ namespace ICSharpCode.SharpDevelop.Commands
 	public class RunHelper
 	{
 		bool debug;
+		
 		public RunHelper(bool debug)
 		{
 			this.debug = debug;
 		}
+		
 		void RunThread()
 		{
-			lock (Compile.CompileLockObject) {
+			lock (Compile.CompileLockObject) 
+			{
 				TaskService taskService = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
 				IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
 				IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
@@ -225,15 +232,18 @@ namespace ICSharpCode.SharpDevelop.Commands
 					} else {
 						if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null) {
 							new Compile().RunWithWait();
-							if (!taskService.SomethingWentWrong) {
-								LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
-								ILanguageBinding binding = languageBindingService.GetBindingPerFileName(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
-								if (binding != null) {
-									projectService.OnBeforeStartProject();
-									binding.Execute(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName, debug);
-								} else {
-									IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-									messageService.ShowError("No runnable executable found.");
+							lock (Compile.CompileLockObject) 
+							{
+								if (!taskService.SomethingWentWrong) {
+									LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
+									ILanguageBinding binding = languageBindingService.GetBindingPerFileName(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
+									if (binding != null) {
+										projectService.OnBeforeStartProject();
+										binding.Execute(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName, debug);
+									} else {
+										IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+										messageService.ShowError("No runnable executable found.");
+									}
 								}
 							}
 						}
@@ -247,27 +257,35 @@ namespace ICSharpCode.SharpDevelop.Commands
 		}
 		public void StartThread()
 		{
-			Thread t = new Thread(new ThreadStart(RunThread));
-			t.IsBackground  = true;
-			t.Start();
+//			if (debug) {
+//				RunThread();
+//			} else {
+				Thread t = new Thread(new ThreadStart(RunThread));
+				t.IsBackground  = true;
+				t.Start();
+//			}
 		}
 	}
 	
 	public class RunCommand : AbstractMenuCommand
 	{
+		RunHelper runHelper = new RunHelper(true);
+		
 		public override void Run()
 		{
 			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-			new RunHelper(true).StartThread();
+			runHelper.StartThread();
 		}
 	}
 	
 	public class RunWithoutDebuggingCommand : AbstractMenuCommand
 	{
+		RunHelper runHelper = new RunHelper(false);
+		
 		public override void Run()
 		{
 			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-			new RunHelper(false).StartThread();
+			runHelper.StartThread();
 		}
 	}
 	

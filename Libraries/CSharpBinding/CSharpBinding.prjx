@@ -134,6 +134,8 @@
     <File name=".\Parser\ExpressionFinder.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\FormattingStrategy\DocumentAccessor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\FormattingStrategy\Indentation.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\SharpDevelopTree\Destructor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\AssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto="..\..\..\..\bin\SharpDevelop.Base.dll" localcopy="False" />

@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -296,11 +296,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			TitleName = Path.GetFileName(fileName);
 			IsDirty   = false;
 			
-			// KSL, Start new lines
-			if (this.watcher != null) {
-				this.watcher.EnableRaisingEvents = true;
-			}
-			// KSL End
 			SetWatcher();
 			OnSaved(new SaveEventArgs(true));
 		}

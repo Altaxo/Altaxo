@@ -13,6 +13,7 @@ using ICSharpCode.Core.AddIns;
 using ICSharpCode.Core.Services;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Internal.Project;
+using ICSharpCode.SharpDevelop.Gui.Pads;
 
 namespace ICSharpCode.SharpDevelop.Services
 {
@@ -50,7 +51,28 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public DebuggerService()
 		{
+			
 //			DebugStopped += new EventHandler(HandleDebugStopped);
+		}
+		MessageViewCategory debugCategory = null;
+		
+		void EnsureDebugCategory()
+		{
+			if (debugCategory == null) {
+				debugCategory = new MessageViewCategory("Debug", "${res:MainWindow.Windows.OutputWindow.DebugCategory}");
+				CompilerMessageView compilerMessageView = (CompilerMessageView)WorkbenchSingleton.Workbench.GetPad(typeof(CompilerMessageView));
+				compilerMessageView.AddCategory(debugCategory);
+			}
+		}
+		public void ClearDebugMessages()
+		{
+			EnsureDebugCategory();
+			debugCategory.ClearText();
+		}
+		public void PrintDebugMessage(string msg)
+		{
+			EnsureDebugCategory();
+			debugCategory.AppendText(msg);
 		}
 		
 		void HandleDebugStopped(object sender, EventArgs e)
@@ -82,6 +104,23 @@ namespace ICSharpCode.SharpDevelop.Services
 			if (treeNode != null) {
 				debugger = treeNode.BuildChildItems(this);
 			}
+			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+			projectService.CombineOpened += new CombineEventHandler(ClearOnCombineEvent);
+//			CurrentDebugger.Start(@"C:\bla.exe", @"C:\", "");
+		}
+		
+		void DebuggerServiceStarted(object sender, EventArgs e)
+		{
+			EnsureDebugCategory();
+			debugCategory.ClearText();
+			CompilerMessageView compilerMessageView = (CompilerMessageView)WorkbenchSingleton.Workbench.GetPad(typeof(CompilerMessageView));
+			compilerMessageView.SelectCategory("Debug");
+		}
+		
+		void ClearOnCombineEvent(object sender, CombineEventArgs e)
+		{
+			EnsureDebugCategory();
+			debugCategory.ClearText();
 		}
 		
 		public void UnloadService()

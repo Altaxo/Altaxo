@@ -191,6 +191,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				properties.SetProperty("MouseWheelScrollDown", value);
 			}
 		}
+		
+		public bool MouseWheelTextZoom {
+			get {
+				return properties.GetProperty("MouseWheelTextZoom", true);
+			}
+			set {
+				properties.SetProperty("MouseWheelTextZoom", value);
+			}
+		}
+		
 		public bool HideMouseCursor {
 			get {
 				return properties.GetProperty("HideMouseCursor", false);
@@ -266,6 +276,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				properties.SetProperty("EnableCodeCompletion", value);
 			}
 		}
+		
+		public BracketMatchingStyle  BracketMatchingStyle {
+			get {
+				return (BracketMatchingStyle)properties.GetProperty("BracketMatchingStyle", BracketMatchingStyle.After);
+			}
+			set {
+				properties.SetProperty("BracketMatchingStyle", value);
+			}
+		}
+
 		/*
 		<Property key="DoubleBuffer" value="True" />
         <Property key="ShowErrors" value="True" />

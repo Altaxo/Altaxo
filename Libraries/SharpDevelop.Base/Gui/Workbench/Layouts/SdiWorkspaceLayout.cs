@@ -37,7 +37,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public IWorkbenchWindow ActiveWorkbenchwindow {
 			get {
-				if (dockPanel == null || dockPanel.ActiveDocument == null)  {
+				if (dockPanel == null || dockPanel.ActiveDocument == null || dockPanel.ActiveDocument.IsDisposed)  {
 					return null;
 				}
 				return dockPanel.ActiveDocument as IWorkbenchWindow;
@@ -242,6 +242,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			SdiWorkspaceWindow f = (SdiWorkspaceWindow)sender;
 			if (f.ViewContent != null) {
 				((IWorkbench)wbForm).CloseContent(f.ViewContent);
+				if (f == oldSelectedWindow)
+					oldSelectedWindow = null;
 				ActiveMdiChanged(this, null);
 			}
 		}
@@ -251,9 +253,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 			content.Control.Visible = true;
 			content.Control.Dock = DockStyle.Fill;
 			
+			
 			SdiWorkspaceWindow sdiWorkspaceWindow = new SdiWorkspaceWindow(content);
 			sdiWorkspaceWindow.CloseEvent += new EventHandler(CloseWindowEvent);
+			
 			sdiWorkspaceWindow.Show(dockPanel);
+			
 			return sdiWorkspaceWindow;
 		}
 		
@@ -272,7 +277,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				oldSelectedWindow.OnWindowDeselected(EventArgs.Empty);
 			}
 			oldSelectedWindow = ActiveWorkbenchwindow;
-			if (oldSelectedWindow != null) {
+			if (oldSelectedWindow != null && oldSelectedWindow.ActiveViewContent != null && oldSelectedWindow.ActiveViewContent.Control != null) {
 				oldSelectedWindow.OnWindowSelected(EventArgs.Empty);
 				oldSelectedWindow.ActiveViewContent.SwitchedTo();
 				oldSelectedWindow.ActiveViewContent.Control.Select();

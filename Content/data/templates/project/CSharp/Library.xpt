@@ -29,7 +29,7 @@
 			<Files>
 				<File name="MyClass.cs"><![CDATA[${StandardHeader.C#}
 using System;
-namespace ${ProjectName}
+namespace ${StandardNamespace}
 {
 	/// <summary>
 	/// Description of MyClass.

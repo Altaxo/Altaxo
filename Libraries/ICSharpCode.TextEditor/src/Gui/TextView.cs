@@ -264,16 +264,20 @@ namespace ICSharpCode.TextEditor
 			
 			g.FillRectangle(backgroundBrush, rect);
 			
-			g.DrawRectangle(BrushRegistry.GetPen(drawSelected ? Color.DarkGray : Color.Gray), rect.X, rect.Y, rect.Width, rect.Height);
-			
 			physicalColumn += text.Length;
 			g.DrawString(text,
 			             textArea.Font,
 			             BrushRegistry.GetBrush(drawSelected ? selectionColor.Color : Color.Gray),
 			             rect, 
 			             measureStringFormat);
+			g.DrawRectangle(BrushRegistry.GetPen(drawSelected ? Color.DarkGray : Color.Gray), rect.X, rect.Y, rect.Width, rect.Height);
 			
-			return (float)Math.Ceiling(rect.Right);
+			// Bugfix for the problem - of overdrawn right rectangle lines.
+			float ceiling = (float)Math.Ceiling(physicalXPos + wordWidth);
+			if (ceiling - (physicalXPos + wordWidth) < 0.5) {
+				++ceiling;
+			}
+			return ceiling;
 		}
 		
 		void DrawMarker(Graphics g, TextMarker marker, RectangleF drawingRect)
@@ -360,18 +364,24 @@ namespace ICSharpCode.TextEditor
 						case TextWordType.Space:
 							RectangleF spaceRectangle = new RectangleF(physicalXPos, lineRectangle.Y, (float)Math.Ceiling(spaceWidth), lineRectangle.Height);
 							
+							Brush spaceBackgroundBrush;
 							if (ColumnRange.WholeColumn.Equals(selectionRange) || logicalColumn >= selectionRange.StartColumn && logicalColumn < selectionRange.EndColumn) {
-								g.FillRectangle(selectionBackgroundBrush, spaceRectangle);
+								spaceBackgroundBrush = selectionBackgroundBrush;
 							} else {
-								g.FillRectangle(unselectedBackgroundBrush, spaceRectangle);
+								if (!drawLineMarker && currentWord.SyntaxColor != null && currentWord.SyntaxColor.HasBackground) {
+									spaceBackgroundBrush = BrushRegistry.GetBrush(currentWord.SyntaxColor.BackgroundColor);
+								} else {
+									spaceBackgroundBrush = unselectedBackgroundBrush;
+								}
 							}
+							g.FillRectangle(spaceBackgroundBrush, spaceRectangle);
+							
 							if (TextEditorProperties.ShowSpaces) {
 								DrawSpaceMarker(g, spaceMarkerColor.Color, physicalXPos, lineRectangle.Y);
 							}
 							foreach (TextMarker marker in markers) {
 								DrawMarker(g, marker, spaceRectangle);
 							}
-					
 							
 							physicalXPos += spaceWidth;
 							
@@ -388,10 +398,15 @@ namespace ICSharpCode.TextEditor
 							RectangleF tabRectangle = new RectangleF(physicalXPos, lineRectangle.Y, (float)Math.Ceiling(tabWidth), lineRectangle.Height);
 							
 							if (ColumnRange.WholeColumn.Equals(selectionRange) || logicalColumn >= selectionRange.StartColumn && logicalColumn <= selectionRange.EndColumn - 1) {
-								g.FillRectangle(selectionBackgroundBrush, tabRectangle);
+								spaceBackgroundBrush = selectionBackgroundBrush;
 							} else {
-								g.FillRectangle(unselectedBackgroundBrush, tabRectangle);
+								if (!drawLineMarker && currentWord.SyntaxColor != null && currentWord.SyntaxColor.HasBackground) {
+									spaceBackgroundBrush = BrushRegistry.GetBrush(currentWord.SyntaxColor.BackgroundColor);
+								} else {
+									spaceBackgroundBrush = unselectedBackgroundBrush;
+								}
 							}
+							g.FillRectangle(spaceBackgroundBrush, tabRectangle);
 							
 							if (TextEditorProperties.ShowTabs) {
 								DrawTabMarker(g, tabMarkerColor.Color, physicalXPos, lineRectangle.Y);
@@ -613,11 +628,13 @@ namespace ICSharpCode.TextEditor
 			return Document.GetFirstLogicalLine(physicalLine);
 		}
 		
-		Point GetLogicalColumn(int firstLogicalLine, int xPos)
+		public Point GetLogicalColumn(int firstLogicalLine, int xPos)
 		{
+//			Console.WriteLine("GetLogicalColumn: line = {0}, xPos = {1}", firstLogicalLine, xPos);
 			float spaceWidth = GetWidth(' ');
 			LineSegment line = firstLogicalLine < Document.TotalNumberOfLines ? Document.GetLineSegment(firstLogicalLine) : null;
 			if (line == null) {
+//				Console.WriteLine("LineSegment not found");
 				return new Point((int)(xPos / spaceWidth), firstLogicalLine);
 			}
 			
@@ -634,6 +651,7 @@ namespace ICSharpCode.TextEditor
 				
 				// search for folding
 				if (starts.Count > 0) {
+//					Console.WriteLine("Foldings found");
 					foreach (FoldMarker folding in starts) {
 						if (folding.IsFolded && logicalColumn >= folding.StartColumn && (logicalColumn < folding.EndColumn || lineNumber != folding.EndLine)) {
 							column       += folding.FoldText.Length;

@@ -153,6 +153,22 @@ namespace ICSharpCode.SharpZipLib.GZip
 		}
 		
 		/// <summary>
+		/// Sets the active compression level (1-9).  The new level will be activated
+		/// immediately.
+		/// </summary>
+		/// <exception cref="ArgumentOutOfRangeException">
+		/// Level specified is not supported.
+		/// </exception>
+		/// <see cref="Deflater"/>
+		public void SetLevel(int level)
+		{
+			if (level < Deflater.BEST_SPEED) {
+				throw new ArgumentOutOfRangeException("level");
+			}
+			def.SetLevel(level);
+		}
+		
+		/// <summary>
 		/// Finish compression and write any footer information required to stream
 		/// </summary>
 		public override void Finish()

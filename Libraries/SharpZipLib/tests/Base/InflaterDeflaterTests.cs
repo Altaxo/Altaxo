@@ -1,12 +1,13 @@
-#if TEST
 using System;
 using System.IO;
+
+using NUnit.Framework;
+
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using ICSharpCode.SharpZipLib.GZip;
-using NUnit.Framework;
 
-namespace ICSharpCode.SharpZipLib.Zip.Compression
+namespace ICSharpCode.SharpZipLib.Tests.Base
 {
 	/// <summary>
 	/// This class contains test cases for the Adler32 and Crc32 checksums
@@ -18,6 +19,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// Basic inflate/deflate test
 		/// </summary>
 		[Test]
+		[Category("Base")]
 		public void TestInflateDeflate()
 		{
 			MemoryStream ms = new MemoryStream();
@@ -46,9 +48,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			}
 			
 			for (int i = 0; i < buf.Length; ++i) {
-				Assertion.AssertEquals(buf2[i], buf[i]);
+				Assert.AreEqual(buf2[i], buf[i]);
 			}
 		}
 	}
 }
-#endif

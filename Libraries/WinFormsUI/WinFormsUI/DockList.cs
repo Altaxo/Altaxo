@@ -100,9 +100,6 @@ namespace WeifenLuo.WinFormsUI
 			statusPane.SetStatus(null, null, DockAlignment.Left, 0.5);
 			statusPane.SetDisplayingStatus(false, null, DockAlignment.Left, 0.5);
 			statusPane.SetDisplayingBounds(Rectangle.Empty, Rectangle.Empty, Rectangle.Empty);
-
-			if (InnerList.Count == 0 && this.Container is FloatWindow)
-				((FloatWindow)Container).Dispose();
 		}
 	}
 }

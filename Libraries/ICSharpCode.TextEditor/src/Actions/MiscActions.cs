@@ -685,9 +685,17 @@ namespace ICSharpCode.TextEditor.Actions
 				Point p1 = new Point(textArea.TextView.Highlight.CloseBrace.X + 1, textArea.TextView.Highlight.CloseBrace.Y);
 				Point p2 = new Point(textArea.TextView.Highlight.OpenBrace.X + 1, textArea.TextView.Highlight.OpenBrace.Y);
 				if (p1 == textArea.Caret.Position) {
-					textArea.Caret.Position = p2;
+					if (textArea.Document.TextEditorProperties.BracketMatchingStyle == BracketMatchingStyle.After) {
+						textArea.Caret.Position = p2;
+					} else {
+						textArea.Caret.Position = new Point(p2.X - 1, p2.Y);
+					}
 				} else {
-					textArea.Caret.Position = p1;
+					if (textArea.Document.TextEditorProperties.BracketMatchingStyle == BracketMatchingStyle.After) {
+						textArea.Caret.Position = p1;
+					} else {
+						textArea.Caret.Position = new Point(p1.X - 1, p1.Y);
+					}
 				}
 				textArea.SetDesiredColumn();
 			}

@@ -528,13 +528,15 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			} catch (CyclicBuildOrderException) {
 				IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
 				messageService.ShowError("Cyclic dependencies can not be build with this version.\nBut we are working on it.");
-//// Alex: at least try to build and run - it's impolite not to do this
-				////return;
 			}
 			TaskService taskService = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
 			foreach (ProjectCombineEntry entry in allProjects) {
 				entry.Build(doBuildAll);
-				if (taskService.SomethingWentWrong) {
+				bool treatWarningsAsErrors = false;
+				if(entry.Project.ActiveConfiguration is AbstractProjectConfiguration) {
+					treatWarningsAsErrors = ((AbstractProjectConfiguration)entry.Project.ActiveConfiguration).TreatWarningsAsErrors;
+				}
+				if(taskService.HasCriticalErrors(treatWarningsAsErrors)) {
 					break;
 				}
 			}
@@ -546,7 +548,6 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 				StartupPropertyChanged(this, e);
 			}
 		}
-			
 		
 		protected virtual void OnNameChanged(EventArgs e)
 		{

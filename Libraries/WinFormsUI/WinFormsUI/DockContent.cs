@@ -16,12 +16,18 @@ using System.Runtime.InteropServices;
 
 namespace WeifenLuo.WinFormsUI
 {
+	/// <summary>
+	/// Each DockContent instance represents a single dockable unit within the docking window framework.
+	/// </summary>
 	public class DockContent : Form
 	{
 		// Tab width and X position used by DockPane and DockPanel class
 		internal int TabWidth = 0;
 		internal int TabX = 0;
 
+		/// <summary>
+		/// Initialize a new DockContent instance.
+		/// </summary>
 		public DockContent()
 		{
 			RefreshMdiIntegration();
@@ -44,6 +50,9 @@ namespace WeifenLuo.WinFormsUI
 		}
 
 		private bool m_allowRedocking = true;
+		/// <summary>
+		/// This property determines if drag and drop re-docking is allowed.
+		/// </summary>
 		[LocalizedCategory("Category.Docking")]
 		[LocalizedDescription("DockContent.AllowRedocking.Description")]
 		[DefaultValue(true)]
@@ -54,6 +63,9 @@ namespace WeifenLuo.WinFormsUI
 		}
 
 		private DockAreas m_allowedAreas = DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.DockBottom | DockAreas.Document | DockAreas.Float;
+		/// <summary>
+		/// This property determines the areas this DockContent can be displayed.
+		/// </summary>
 		[LocalizedCategory("Category.Docking")]
 		[LocalizedDescription("DockContent.DockableAreas.Description")]
 		[DefaultValue(DockAreas.DockLeft|DockAreas.DockRight|DockAreas.DockTop|DockAreas.DockBottom|DockAreas.Document|DockAreas.Float)]
@@ -76,6 +88,9 @@ namespace WeifenLuo.WinFormsUI
 		}
 
 		private double m_autoHidePortion = 0.25;
+		/// <summary>
+		/// This property determines the portion of the screen size when showing in auto-hide mode.
+		/// </summary>
 		[LocalizedCategory("Category.Docking")]
 		[LocalizedDescription("DockContent.AutoHidePortion.Description")]
 		[DefaultValue(0.25)]
@@ -101,6 +116,9 @@ namespace WeifenLuo.WinFormsUI
 		}
 
 		private string m_tabText = null;
+		/// <summary>
+		/// This property determines the tab text displayed for the dock pane caption. By setting value to this property can display different text for dock pane tab and caption.
+		/// </summary>
 		[LocalizedCategory("Category.Docking")]
 		[LocalizedDescription("DockContent.TabText.Description")]
 		[DefaultValue(null)]
@@ -123,6 +141,9 @@ namespace WeifenLuo.WinFormsUI
 		}
 
 		private bool m_closeButton = true;
+		/// <summary>
+		/// This property determines whether this DockContent can be closed by clicking the close button of its dock pane.
+		/// </summary>
 		[LocalizedCategory("Category.Docking")]
 		[LocalizedDescription("DockContent.CloseButton.Description")]
 		[DefaultValue(true)]
@@ -142,6 +163,9 @@ namespace WeifenLuo.WinFormsUI
 		}
 		
 		private DockPane m_pane = null;
+		/// <summary>
+		/// This property determines the dock pane which contains this dock content.
+		/// </summary>
 		[Browsable(false)]
 		public DockPane Pane
 		{
@@ -165,6 +189,9 @@ namespace WeifenLuo.WinFormsUI
 		}
 
 		private DockPanel m_dockPanel = null;
+		/// <summary>
+		/// This property determines the dock panel which this dock content attached to.
+		/// </summary>
 		[Browsable(false)]
 		public DockPanel DockPanel
 		{
@@ -219,7 +246,7 @@ namespace WeifenLuo.WinFormsUI
 		}
 
 		/// <summary>
-		/// DockState Property
+		/// This property retrieves this content’s docking state. This value is identical to Pane.DockState property
 		/// </summary>
 		private DockState m_dockState = DockState.Unknown;
 		[Browsable(false)]
@@ -283,19 +310,16 @@ namespace WeifenLuo.WinFormsUI
 			return GetType().ToString();
 		}
 
-		/// <summary>
-		/// HiddenMdiChild Property
-		/// </summary>
 		private HiddenMdiChild m_hiddenMdiChild = null;
 		internal HiddenMdiChild HiddenMdiChild
 		{
 			get	{	return m_hiddenMdiChild;	}
 		}
 
+		private bool m_hideOnClose = false;
 		/// <summary>
 		/// HideOnClose Property
 		/// </summary>
-		private bool m_hideOnClose = false;
 		[LocalizedCategory("Category.Docking")]
 		[LocalizedDescription("DockContent.HideOnClose.Description")]
 		[DefaultValue(false)]

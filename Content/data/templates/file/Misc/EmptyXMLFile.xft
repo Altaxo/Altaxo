@@ -11,7 +11,11 @@
 	<Description>${res:Templates.File.Xml.EmptyXmlFile.Description}</Description>
 
 	<Files>
-		<File name="${FullName}" language="XML"/>
+		<File name="${FullName}" language="XML"><![CDATA[<?xml version="1.0"?>
+<${FileNameWithoutExtension}>
+	
+</${FileNameWithoutExtension}>]]>
+		</File>
 	</Files>
 	
 	<AdditionalOptions/>

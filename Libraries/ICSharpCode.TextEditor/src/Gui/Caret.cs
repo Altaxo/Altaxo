@@ -57,7 +57,7 @@ namespace ICSharpCode.TextEditor
 		Ime      ime          = null;
 		
 		/// <value>
-		/// The 'prefered' column in which the caret moves, when it is moved
+		/// The 'prefered' xPos in which the caret moves, when it is moved
 		/// up/down.
 		/// </value>
 		public int DesiredColumn {

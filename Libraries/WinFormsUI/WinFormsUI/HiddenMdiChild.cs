@@ -35,8 +35,7 @@ namespace WeifenLuo.WinFormsUI
 				throw(new InvalidOperationException());
 
 			m_content = content;
-			if (((Form)content).Menu != null)
-				Menu = ((Form)content).Menu.CloneMenu();
+			Menu = ((Form)content).Menu;
 			FormBorderStyle = FormBorderStyle.None;
 			Text = m_content.Text;
 			SetMdiParent(mdiParent);
@@ -47,9 +46,8 @@ namespace WeifenLuo.WinFormsUI
 			if (disposing)
 			{
 				if (Menu != null)
-					((Form)m_content).Menu = Menu.CloneMenu();
+				((Form)m_content).Menu = Menu;
 				m_content = null;
-				Menu = null;
 			}
 			base.Dispose(disposing);
 		}

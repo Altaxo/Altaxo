@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -21,12 +21,14 @@ namespace ICSharpCode.SharpDevelop.Services
 		ArrayList commentTasks   = new ArrayList();
 		string    compilerOutput = String.Empty;
 		
-		public ArrayList Tasks {
+		public ArrayList Tasks
+		{
 			get {
 				return tasks;
 			}
 		}
-		public ArrayList CommentTasks {
+		public ArrayList CommentTasks
+		{
 			get {
 				return commentTasks;
 			}
@@ -36,31 +38,45 @@ namespace ICSharpCode.SharpDevelop.Services
 		int errors   = 0;
 		int comments = 0;
 		
-		public int Warnings {
+		public int Warnings
+		{
 			get {
 				return warnings;
 			}
 		}
 		
-		public int Errors {
+		public int Errors
+		{
 			get {
 				return errors;
 			}
 		}
 		
-		public int Comments {
+		public int Comments
+		{
 			get {
 				return comments;
 			}
 		}
 		
-		public bool SomethingWentWrong {
+		public bool SomethingWentWrong
+		{
 			get {
 				return errors + warnings > 0;
 			}
 		}
 		
-		public string CompilerOutput {
+		public bool HasCriticalErrors(bool treatWarningsAsErrors)
+		{
+			if(treatWarningsAsErrors) {
+				return errors + warnings > 0;
+			} else {
+				return errors > 0;
+			}
+		}
+		
+		public string CompilerOutput
+		{
 			get {
 				return compilerOutput;
 			}

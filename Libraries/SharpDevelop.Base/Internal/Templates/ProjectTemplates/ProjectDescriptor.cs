@@ -122,6 +122,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 					}
 				}
 				project.StandardNamespace = standardNamespace.ToString();
+				stringParserService.Properties["StandardNamespace"] = project.StandardNamespace;
 				
 				// Add References
 				foreach (ProjectReference projectReference in references) {

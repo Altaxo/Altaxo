@@ -48,13 +48,13 @@ using System.Reflection;
 //  For bugfixes, don't mess with this.
 //
 //  Do this:
-//   [assembly: AssemblyVersion("0.82.0.1649")]
+//   [assembly: AssemblyVersion("0.82.0.1709")]
 //
 //  Don't do this:
-//   [assembly: AssemblyVersion("0.82.0.1649")]
+//   [assembly: AssemblyVersion("0.82.0.1709")]
 //  as it breaks all the other assemblies that reference this one every time 
 //  you build the project.  
-[assembly: AssemblyVersion("0.82.0.1649")]
+[assembly: AssemblyVersion("0.82.0.1709")]
 
 // Title is just for inspection utilities and isn't really used for much
 //  Generally just set this to the name of the file containing the 

@@ -37,7 +37,7 @@ using System.Diagnostics;
 using System.ServiceProcess;
 using System.Configuration.Install;
 
-namespace ${ProjectName}
+namespace ${StandardNamespace}
 {
 	/// <summary>
 	/// This is the class for my Service

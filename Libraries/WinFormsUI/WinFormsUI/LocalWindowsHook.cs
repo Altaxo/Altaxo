@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 
 namespace WeifenLuo.WinFormsUI
 {
-	public class HookEventArgs : EventArgs
+	internal class HookEventArgs : EventArgs
 	{
 		public int HookCode;    // Hook code
 		public IntPtr wParam;   // WPARAM argument
@@ -22,7 +22,7 @@ namespace WeifenLuo.WinFormsUI
 
 
 	// Hook Types  
-	public enum HookType : int
+	internal enum HookType : int
 	{
 		WH_JOURNALRECORD = 0,
 		WH_JOURNALPLAYBACK = 1,
@@ -41,7 +41,7 @@ namespace WeifenLuo.WinFormsUI
 		WH_MOUSE_LL = 14
 	}
 
-	public class LocalWindowsHook
+	internal class LocalWindowsHook
 	{
 		public delegate int HookProc(int code, IntPtr wParam, IntPtr lParam);
 

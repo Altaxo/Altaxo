@@ -1,4 +1,4 @@
-﻿// StandardFields.cs
+// StandardFields.cs
 // Copyright (C) 2003 Mike Krueger
 // 
 // This library is free software; you can redistribute it and/or
@@ -40,16 +40,16 @@ namespace ICSharpCode.SharpAssembly.PE {
 			if (magic != MAGIC) {
 				Console.WriteLine("Warning OptionalHeader.StandardFields != " + MAGIC + " was " + magic);
 			}
-			lMajor                = binaryReader.ReadByte();
-			Debug.Assert(lMajor == 6);
-			lMinor                = binaryReader.ReadByte();
-			Debug.Assert(lMinor == 0);
-			codeSize              = binaryReader.ReadUInt32();
-			initializedDataSize   = binaryReader.ReadUInt32();
+			lMajor = binaryReader.ReadByte();
+			Debug.Assert(lMajor == 6 || lMajor == 7);
+			lMinor = binaryReader.ReadByte();
+			Debug.Assert(lMinor == 0 || lMinor == 10);
+			codeSize = binaryReader.ReadUInt32();
+			initializedDataSize = binaryReader.ReadUInt32();
 			uninitializedDataSize = binaryReader.ReadUInt32();
-			entryPointRVA         = binaryReader.ReadUInt32();
-			baseOfCode            = binaryReader.ReadUInt32();
-			baseOfData            = binaryReader.ReadUInt32();
+			entryPointRVA = binaryReader.ReadUInt32();
+			baseOfCode = binaryReader.ReadUInt32();
+			baseOfData = binaryReader.ReadUInt32();
 		}
 	}
 	

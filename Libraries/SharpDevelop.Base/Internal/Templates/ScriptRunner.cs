@@ -28,7 +28,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		FileTemplate item;
 		FileDescriptionTemplate file;
 		
-		readonly static Regex scriptRegex  = new Regex("<%.*%>");
+		readonly static Regex scriptRegex  = new Regex("<%.*?%>");
 		readonly static Regex replaceRegex = new Regex("\"");
 		
 		public string CompileScript(FileTemplate item, FileDescriptionTemplate file)
@@ -43,7 +43,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			return file.Content;
 		}
 		
-		// TODO: AppDomain loading !!!
+		// TODO: AppDomain loading !!!5
 		byte[] GetBytes(string fileName)
 		{
 			using (FileStream fs = new FileStream(fileName, FileMode.Open)) {
@@ -143,4 +143,3 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 		}
 	}
 }
-

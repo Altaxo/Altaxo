@@ -6,6 +6,7 @@
 // </file>
 
 using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace ICSharpCode.SharpDevelop.Gui
@@ -113,6 +114,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		public abstract void Load(string fileName);
+		
+		/// <summary>
+		/// Sets the file name to <param name="fileName"/> and the title to the file name without path. Sets dirty == false too.
+		/// </summary>
+		/// <param name="fileName">The name of the file currently inside the content.</param>
+		protected void SetTitleAndFileName(string fileName)
+		{
+			TitleName = Path.GetFileName(fileName);
+			FileName  = fileName;
+			IsDirty   = false;
+		}
 		
 		protected virtual void OnDirtyChanged(EventArgs e)
 		{

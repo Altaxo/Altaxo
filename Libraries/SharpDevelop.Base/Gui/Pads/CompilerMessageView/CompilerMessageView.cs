@@ -15,7 +15,6 @@ using System.CodeDom.Compiler;
 using System.IO;
 using System.Diagnostics;
 using ICSharpCode.SharpDevelop.Services;
-
 using ICSharpCode.Core.Properties;
 using ICSharpCode.Core.Services;
 
@@ -43,7 +42,6 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		public CompilerMessageView() : base("${res:MainWindow.Windows.OutputWindow}", "Icons.16x16.OutputIcon")
 		{
 			AddCategory(new MessageViewCategory("Build", "${res:MainWindow.Windows.OutputWindow.BuildCategory}"));
-			AddCategory(new MessageViewCategory("Debug", "${res:MainWindow.Windows.OutputWindow.DebugCategory}"));
 			
 			messageCategory.Dock = DockStyle.Top;
 			messageCategory.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -67,9 +65,6 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			projectService.StartBuild    += new EventHandler(ProjectServiceStartBuild);
 			projectService.CombineOpened += new CombineEventHandler(ClearOnCombineEvent);
 			
-//			DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
-//			debuggerService.DebugStarted += new EventHandler(DebuggerServiceStarted);
-//			debuggerService.TextMessage  += new TextMessageEventHandler(DebuggerServiceMessage);
 			textEditorControl.CreateControl();
 		}
 		
@@ -123,20 +118,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		}
 		#endregion
 		
-		#region Message Event Handlers (Debug and Build)
-		void DebuggerServiceStarted(object sender, EventArgs e)
-		{
-			MessageViewCategory debugCategory = GetCategory("Debug");
-			debugCategory.ClearText();
-			SelectCategory("Debug");
-		}
-		
-//		void DebuggerServiceMessage(object sender, TextMessageEventArgs e)
-//		{
-//			MessageViewCategory debugCategory = GetCategory("Debug");
-//			debugCategory.AppendText(e.Message);
-//		}
-		
+		#region Message Event Handlers (Build)
 		void ProjectServiceStartBuild(object sender, EventArgs e)
 		{
 			MessageViewCategory buildCategory = GetCategory("Build");
@@ -146,8 +128,6 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		
 		void ClearOnCombineEvent(object sender, CombineEventArgs e)
 		{
-			MessageViewCategory debugCategory = GetCategory("Debug");
-			debugCategory.ClearText();
 			MessageViewCategory buildCategory = GetCategory("Build");
 			buildCategory.ClearText();
 		}

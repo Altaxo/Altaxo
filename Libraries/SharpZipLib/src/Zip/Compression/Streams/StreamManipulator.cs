@@ -183,7 +183,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		public int CopyBytes(byte[] output, int offset, int length)
 		{
 			if (length < 0) {
-				throw new ArgumentOutOfRangeException("length", "negative");
+				throw new ArgumentOutOfRangeException("length");
 			}
 			if ((bits_in_buffer & 7) != 0) {
 				/* bits_in_buffer may only be 0 or a multiple of 8 */

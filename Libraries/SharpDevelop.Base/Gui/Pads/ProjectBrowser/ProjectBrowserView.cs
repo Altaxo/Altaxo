@@ -486,21 +486,27 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 		protected override void OnDragDrop(DragEventArgs e)
 		{
 			base.OnDragDrop(e);
-
-			Point clientcoordinate   = PointToClient(new Point(e.X, e.Y));
-			AbstractBrowserNode node = (AbstractBrowserNode)GetNodeAt(clientcoordinate);
-
-			if (node == null) {
-				return;
+			// Exceptions created here are just ignored by WinForms, so catch them here.
+			try {
+				Point clientcoordinate   = PointToClient(new Point(e.X, e.Y));
+				AbstractBrowserNode node = (AbstractBrowserNode)GetNodeAt(clientcoordinate);
+	
+				if (node == null) {
+					return;
+				}
+				node.DoDragDrop(e.Data, e.Effect);
+				IProjectService projectService = (IProjectService)ServiceManager.Services.GetService(typeof(IProjectService));
+				
+				if(node.Parent != null) {
+					SortUtility.QuickSort(node.Parent.Nodes, TreeNodeComparer.ProjectNode);
+				}
+				
+				projectService.SaveCombine();
+			} catch (Exception ex) {
+				Console.WriteLine(ex.ToString());
+				IMessageService msg = (IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+				msg.ShowError(ex);
 			}
-			node.DoDragDrop(e.Data, e.Effect);
-			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-			
-			if(node.Parent != null) {
-				SortUtility.QuickSort(node.Parent.Nodes, TreeNodeComparer.ProjectNode);
-			}
-			
-			projectService.SaveCombine();
 		}
 		
 		static ProjectBrowserNode GetRootProjectNode(AbstractBrowserNode node)

@@ -31,7 +31,6 @@ using ICSharpCode.SharpDevelop.Services;
 using ICSharpCode.SharpRefactory.PrettyPrinter.VB;
 using ICSharpCode.SharpRefactory.Parser.VB;
 
-
 namespace ICSharpCode.SharpDevelop.Commands
 {
 	public class CSharpConvertBuffer : AbstractMenuCommand

@@ -181,22 +181,28 @@ namespace ICSharpCode.SharpDevelop.Commands
 				}
 				
 				if (content.FileName == null) {
-					using (SaveFileDialog fdiag = new SaveFileDialog()) {
-						fdiag.OverwritePrompt = true;
-						fdiag.AddExtension    = true;
+					if (content is ICustomizedCommands) {
+						if (((ICustomizedCommands)content).SaveAsCommand()) {
+							continue;
+						}
+					} else {
+						using (SaveFileDialog fdiag = new SaveFileDialog()) {
+							fdiag.OverwritePrompt = true;
+							fdiag.AddExtension    = true;
+							
+							fdiag.Filter          = String.Join("|", (string[])(AddInTreeSingleton.AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems(this)).ToArray(typeof(string)));
 						
-						fdiag.Filter          = String.Join("|", (string[])(AddInTreeSingleton.AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems(this)).ToArray(typeof(string)));
-						
-						if (fdiag.ShowDialog() == DialogResult.OK) {
-							string fileName = fdiag.FileName;
-							// currently useless, because the fdiag.FileName can't
-							// handle wildcard extensions :(
-							if (Path.GetExtension(fileName).StartsWith("?") || Path.GetExtension(fileName) == "*") {
-								fileName = Path.ChangeExtension(fileName, "");
-							}
-							if (fileUtilityService.ObservedSave(new NamedFileOperationDelegate(content.Save), fileName) == FileOperationResult.OK) {
-								IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-								messageService.ShowMessage(fileName, "${res:ICSharpCode.SharpDevelop.Commands.SaveFile.FileSaved}");
+							if (fdiag.ShowDialog() == DialogResult.OK) {
+								string fileName = fdiag.FileName;
+								// currently useless, because the fdiag.FileName can't
+								// handle wildcard extensions :(
+								if (Path.GetExtension(fileName).StartsWith("?") || Path.GetExtension(fileName) == "*") {
+									fileName = Path.ChangeExtension(fileName, "");
+								}
+								if (fileUtilityService.ObservedSave(new NamedFileOperationDelegate(content.Save), fileName) == FileOperationResult.OK) {
+									IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+									messageService.ShowMessage(fileName, "${res:ICSharpCode.SharpDevelop.Commands.SaveFile.FileSaved}");
+								}
 							}
 						}
 					}

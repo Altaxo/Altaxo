@@ -144,7 +144,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		{
 			byte[] commentBytes = ZipConstants.ConvertToArray(comment);
 			if (commentBytes.Length > 0xffff) {
-				throw new ArgumentOutOfRangeException("comment", "Comment too long.");
+				throw new ArgumentOutOfRangeException("comment");
 			}
 			zipComment = commentBytes;
 		}
@@ -177,8 +177,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// </summary>
 		private  void WriteLeShort(int value)
 		{
-			baseOutputStream.WriteByte((byte)value);
-			baseOutputStream.WriteByte((byte)(value >> 8));
+			baseOutputStream.WriteByte((byte)(value & 0xff));
+			baseOutputStream.WriteByte((byte)((value >> 8) & 0xff));
 		}
 		
 		/// <summary>

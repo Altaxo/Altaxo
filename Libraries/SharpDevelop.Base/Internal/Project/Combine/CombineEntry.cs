@@ -206,7 +206,12 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			TaskService taskService = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
 			
 			if (taskService.Errors == 0) {
-				if (taskService.Warnings == 0 || project.ActiveConfiguration != null && !((AbstractProjectConfiguration)project.ActiveConfiguration).TreatWarningsAsErrors) {
+				
+				bool treatWarningsAsErrors = false;
+				if(project.ActiveConfiguration is AbstractProjectConfiguration) {
+					treatWarningsAsErrors = ((AbstractProjectConfiguration)project.ActiveConfiguration).TreatWarningsAsErrors;
+				}
+				if(! taskService.HasCriticalErrors(treatWarningsAsErrors)) {
 					binding.Execute(project, debug);
 				}
 			}

@@ -449,12 +449,20 @@ namespace ICSharpCode.TextEditor.Document
 						break;
 					case ' ':
 						PushCurWord(document, ref markNext, words);
-						words.Add(TextWord.Space);
+						if (activeSpan != null && activeSpan.Color.HasBackground) {
+							words.Add(new TextWord.SpaceTextWord(activeSpan.Color));
+						} else {
+							words.Add(TextWord.Space);
+						}
 						++currentOffset;
 						break;
 					case '\t':
 						PushCurWord(document, ref markNext, words);
-						words.Add(TextWord.Tab);
+						if (activeSpan != null && activeSpan.Color.HasBackground) {
+							words.Add(new TextWord.TabTextWord(activeSpan.Color));
+						} else {
+							words.Add(TextWord.Tab);
+						}
 						++currentOffset;
 						break;
 					case '\\': // handle escape chars

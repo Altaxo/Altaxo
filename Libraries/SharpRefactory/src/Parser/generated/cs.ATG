@@ -729,7 +729,8 @@ TypeDecl<Modifiers m, ArrayList attributes>
 	[ ":" IntegralType<out name>     (. newType.BaseTypes = new StringCollection(); 
 	                                    newType.BaseTypes.Add(name);
 	                                 .)
-	]                                (. newType.StartLocation = t.EndLocation; .)
+	]                                (. newType.StartLocation = t.EndLocation; 
+	                                    .)
 	EnumBody 
 	[ ";" ]                          (. newType.EndLocation = t.Location; 
 	                                    compilationUnit.BlockEnd();

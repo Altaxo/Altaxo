@@ -51,6 +51,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.OptionPanels
 			((ComboBox)ControlDictionary["lineMarkerStyleComboBox"]).Items.Add(resourceService.GetString("Dialog.Options.IDEOptions.TextEditor.Markers.LineViewerStyle.None"));
 			((ComboBox)ControlDictionary["lineMarkerStyleComboBox"]).Items.Add(resourceService.GetString("Dialog.Options.IDEOptions.TextEditor.Markers.LineViewerStyle.FullRow"));
 			((ComboBox)ControlDictionary["lineMarkerStyleComboBox"]).SelectedIndex = (int)(LineViewerStyle)((IProperties)CustomizationObject).GetProperty("LineViewerStyle", LineViewerStyle.None);
+			
+			
+			
+			((ComboBox)ControlDictionary["bracketMatchingStyleComboBox"]).Items.Add(resourceService.GetString("Dialog.Options.IDEOptions.TextEditor.Markers.BracketMatchingStyle.BeforeCaret"));
+			((ComboBox)ControlDictionary["bracketMatchingStyleComboBox"]).Items.Add(resourceService.GetString("Dialog.Options.IDEOptions.TextEditor.Markers.BracketMatchingStyle.AfterCaret"));
+			((ComboBox)ControlDictionary["bracketMatchingStyleComboBox"]).SelectedIndex = (int)(BracketMatchingStyle)((IProperties)CustomizationObject).GetProperty("BracketMatchingStyle", BracketMatchingStyle.After);
 		}
 		
 		public override bool StorePanelContents()
@@ -71,6 +77,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.OptionPanels
 			}
 			
 			((IProperties)CustomizationObject).SetProperty("LineViewerStyle", (LineViewerStyle)((ComboBox)ControlDictionary["lineMarkerStyleComboBox"]).SelectedIndex);
+			((IProperties)CustomizationObject).SetProperty("BracketMatchingStyle", (BracketMatchingStyle)((ComboBox)ControlDictionary["bracketMatchingStyleComboBox"]).SelectedIndex);
 			
 			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 			

@@ -4,12 +4,18 @@ using System.Text;
 
 namespace ICSharpCode.TextEditor.Document
 {
+	public enum BracketMatchingStyle {
+		Before,
+		After
+	}
+	
 	public class DefaultTextEditorProperties : ITextEditorProperties
 	{
 		int                   tabIndent             = 4;
 		IndentStyle           indentStyle           = IndentStyle.Smart;
 		DocumentSelectionMode documentSelectionMode = DocumentSelectionMode.Normal;
 		Encoding              encoding              = System.Text.Encoding.UTF8;
+		BracketMatchingStyle  bracketMatchingStyle  = BracketMatchingStyle.After;
 		
 		bool        allowCaretBeyondEOL = false;
 		
@@ -30,6 +36,8 @@ namespace ICSharpCode.TextEditor.Document
 		bool        useAntiAliasedFont  = false;
 		bool        createBackupCopy    = false;
 		bool        mouseWheelScrollDown = true;
+		bool        mouseWheelTextZoom   = true;
+		
 		bool        hideMouseCursor      = false;
 		
 		int         verticalRulerRow    = 80;
@@ -183,6 +191,15 @@ namespace ICSharpCode.TextEditor.Document
 				mouseWheelScrollDown = value;
 			}
 		}
+		public bool MouseWheelTextZoom {
+			get {
+				return mouseWheelTextZoom;
+			}
+			set {
+				mouseWheelTextZoom = value;
+			}
+		}
+		
 		public bool HideMouseCursor {
 			get {
 				return hideMouseCursor;
@@ -240,6 +257,16 @@ namespace ICSharpCode.TextEditor.Document
 				FontContainer.DefaultFont = value;
 			}
 		}
+		
+		public BracketMatchingStyle  BracketMatchingStyle {
+			get {
+				return bracketMatchingStyle;
+			}
+			set {
+				bracketMatchingStyle = value;
+			}
+		}
+
 		
 	}
 }

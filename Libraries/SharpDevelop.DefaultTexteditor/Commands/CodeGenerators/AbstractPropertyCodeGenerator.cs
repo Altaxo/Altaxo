@@ -36,16 +36,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 					editActionHandler.InsertString("Public " + (fw.Field.IsStatic ? "Shared " : "") + "Property " + (Char.ToUpper(fw.Field.Name[0]) + fw.Field.Name.Substring(1)) + " As " + vba.Convert(fw.Field.ReturnType));
 				} else {
 					editActionHandler.InsertString("public " + (fw.Field.IsStatic ? "static " : "") + csa.Convert(fw.Field.ReturnType) + " " + Char.ToUpper(fw.Field.Name[0]) + fw.Field.Name.Substring(1));
+					if (StartCodeBlockInSameLine) {
+						editActionHandler.InsertString(" {");
+					} else {
+						Return();
+						editActionHandler.InsertString("{");
+					}
+					++numOps;
 				}
 				++numOps;
 				
-				if (StartCodeBlockInSameLine) {
-					editActionHandler.InsertString(" {");
-				} else {
-					Return();
-					editActionHandler.InsertString("{");
-				}
-				++numOps;
 				
 				Return();
 				

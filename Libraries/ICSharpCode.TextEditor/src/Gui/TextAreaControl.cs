@@ -192,16 +192,30 @@ namespace ICSharpCode.TextEditor
 		protected override void OnMouseWheel(MouseEventArgs e)
 		{
 			base.OnMouseWheel(e);
-			int MAX_DELTA  = 120; // basically it's constant now, but could be changed later by MS
-			int multiplier = Math.Abs(e.Delta) / MAX_DELTA;
 			
-			int newValue;
-			if (System.Windows.Forms.SystemInformation.MouseWheelScrollLines > 0) {
-				newValue = this.vScrollBar.Value - (TextEditorProperties.MouseWheelScrollDown ? 1 : -1) * Math.Sign(e.Delta) * System.Windows.Forms.SystemInformation.MouseWheelScrollLines * vScrollBar.SmallChange * multiplier ;
+			if ((Control.ModifierKeys & Keys.Control) != 0 && TextEditorProperties.MouseWheelTextZoom) {
+				if (e.Delta > 0) {
+					motherTextEditorControl.Font = new Font(motherTextEditorControl.Font.Name,
+					                                        motherTextEditorControl.Font.Size + 1);
+					                                        
+				} else {
+					motherTextEditorControl.Font = new Font(motherTextEditorControl.Font.Name,
+					                                        Math.Max(6, motherTextEditorControl.Font.Size - 1));
+					                                        
+					
+				}
 			} else {
-				newValue = this.vScrollBar.Value - (TextEditorProperties.MouseWheelScrollDown ? 1 : -1) * Math.Sign(e.Delta) * vScrollBar.LargeChange;
+				int MAX_DELTA  = 120; // basically it's constant now, but could be changed later by MS
+				int multiplier = Math.Abs(e.Delta) / MAX_DELTA;
+				
+				int newValue;
+				if (System.Windows.Forms.SystemInformation.MouseWheelScrollLines > 0) {
+					newValue = this.vScrollBar.Value - (TextEditorProperties.MouseWheelScrollDown ? 1 : -1) * Math.Sign(e.Delta) * System.Windows.Forms.SystemInformation.MouseWheelScrollLines * vScrollBar.SmallChange * multiplier ;
+				} else {
+					newValue = this.vScrollBar.Value - (TextEditorProperties.MouseWheelScrollDown ? 1 : -1) * Math.Sign(e.Delta) * vScrollBar.LargeChange;
+				}
+				vScrollBar.Value = Math.Max(vScrollBar.Minimum, Math.Min(vScrollBar.Maximum, newValue));
 			}
-			vScrollBar.Value = Math.Max(vScrollBar.Minimum, Math.Min(vScrollBar.Maximum, newValue));
 		}
 		
 		public void ScrollToCaret()

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Template originator   = "Markus Palme"
           created      = "07/03/2004"
-          lastModified = "07/03/2004">
+          lastModified = "20/10/2004">
 	
 	<!-- Template Header -->
 	<TemplateConfiguration>
@@ -27,8 +27,8 @@
 			<Options/>
 			
 			<References>
-				<Reference type="Gac" refto="Microsoft.DirectX, Version=1.0.900.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
-				<Reference type="Gac" refto="Microsoft.DirectX.Direct3D, Version=1.0.900.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+				<Reference type="Gac" refto="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+				<Reference type="Gac" refto="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
 			</References>
 			
 			<Files>
@@ -42,7 +42,7 @@ Imports System.Windows.Forms
 Imports Microsoft.DirectX
 Imports Microsoft.DirectX.Direct3D
 
-Namespace ${ProjectName}
+Namespace ${StandardNamespace}
 	
 	' This is the main class of my Direct3D application
 	Public Class MainClass

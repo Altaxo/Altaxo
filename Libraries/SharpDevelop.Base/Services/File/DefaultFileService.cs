@@ -72,6 +72,19 @@ namespace ICSharpCode.SharpDevelop.Services
 				} else if (content.FileName == fileName) {
 					return true;
 				}
+				if (content.WorkbenchWindow == null || content.WorkbenchWindow.SubViewContents == null)
+					continue;
+				foreach(object subViewContent in content.WorkbenchWindow.SubViewContents) {
+					IViewContent viewContent = subViewContent as IViewContent;
+					if (viewContent != null && viewContent.FileName != null) {
+						try {
+							if (Path.GetFullPath(viewContent.FileName.ToUpper()) == Path.GetFullPath(fileName.ToUpper())) {
+								return true;
+							}
+						} catch (Exception) {
+						}
+					}
+				}
 			}
 			return false;
 		}
@@ -104,6 +117,21 @@ namespace ICSharpCode.SharpDevelop.Services
 							return;
 						}
 					} catch (Exception) {
+					}
+				}
+				if (content.WorkbenchWindow == null || content.WorkbenchWindow.SubViewContents == null)
+					continue;
+				foreach(object subViewContent in content.WorkbenchWindow.SubViewContents) {
+					IViewContent viewContent = subViewContent as IViewContent;
+					if (viewContent != null && viewContent.FileName != null) {
+						try {
+							if (fileName.StartsWith("http://") ? viewContent.FileName == fileName :
+							    Path.GetFullPath(viewContent.FileName.ToUpper()) == Path.GetFullPath(fileName.ToUpper())) {
+								viewContent.WorkbenchWindow.SelectWindow();
+								return;
+							}
+						} catch (Exception) {
+						}
 					}
 				}
 			}
@@ -153,6 +181,20 @@ namespace ICSharpCode.SharpDevelop.Services
 
 					if (normalizedContentName == normalizedFileName) {
 						return content.WorkbenchWindow;
+					}
+					if (content.WorkbenchWindow == null || content.WorkbenchWindow.SubViewContents == null)
+						continue;
+					foreach(object subViewContent in content.WorkbenchWindow.SubViewContents) {
+						IViewContent viewContent = subViewContent as IViewContent;
+						if (viewContent != null && viewContent.FileName != null) {
+							string normalizedViewContentName = viewContent.IsUntitled ? viewContent.UntitledName : (viewContent.FileName == null ? "" : (viewContent.FileName.StartsWith("http://") ? viewContent.FileName : Path.GetFullPath(viewContent.FileName)));
+							normalizedViewContentName = normalizedViewContentName.ToLower();
+							Console.WriteLine(normalizedViewContentName + " -- " + normalizedFileName);
+
+							if (normalizedViewContentName == normalizedFileName) {
+								return content.WorkbenchWindow;
+							}
+						}
 					}
 				}
 			}
@@ -228,10 +270,32 @@ namespace ICSharpCode.SharpDevelop.Services
 				return;
 			}
 			IViewContent content = window.ViewContent;
-			if (content is IPositionable) {
-				window.SwitchView(0);
-				((IPositionable)content).JumpTo(Math.Max(0, line), Math.Max(0, column));
+			if (content.WorkbenchWindow.SubViewContents == null) {
+				if (content is IPositionable) {
+					window.SwitchView(0);
+					((IPositionable)content).JumpTo(Math.Max(0, line), Math.Max(0, column));
+				}
 			}
+			else
+			{
+				int i = 0;
+				foreach(object subViewContent in content.WorkbenchWindow.SubViewContents) {
+					IViewContent viewContent = subViewContent as IViewContent;
+					if (viewContent != null && viewContent.FileName != null) {
+						try {
+							if (Path.GetFullPath(viewContent.FileName.ToUpper()) == Path.GetFullPath(fileName.ToUpper())) {
+								if (viewContent is IPositionable) {
+									window.SwitchView(i);
+									((IPositionable)viewContent).JumpTo(Math.Max(0, line), Math.Max(0, column));
+								}
+							}
+						} catch (Exception) {
+						}
+					}
+					i++;
+				}
+			}
+
 		}
 		
 		protected virtual void OnFileRemoved(FileEventArgs e)

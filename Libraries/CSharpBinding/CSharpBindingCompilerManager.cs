@@ -25,7 +25,7 @@ namespace CSharpBinding
 	/// This class controls the compilation of C Sharp files and C Sharp projects
 	/// </summary>
 	public class CSharpBindingCompilerManager
-	{	
+	{
 		FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
 		
 		// we have 2 formats for the error output the csc gives :
@@ -156,6 +156,18 @@ namespace CSharpBinding
 			string responseFileName = Path.GetTempFileName();
 			string optionString = compilerparameters.CsharpCompiler == CsharpCompiler.Csc ? "/" : "-";
 			
+			foreach (ProjectFile finfo in project.ProjectFiles) {
+				if (Path.GetFileName(finfo.Name).ToLower() == "app.config") {
+					try {
+						File.Copy(finfo.Name, exe + ".config", true);
+					} catch (Exception ex) {
+						IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+						messageService.ShowError(ex);
+					}
+					break;
+				}
+			}
+			
 			StreamWriter writer = new StreamWriter(responseFileName);
 			if (compilerparameters.CsharpCompiler == CsharpCompiler.Csc) {
 				writer.WriteLine(GenerateOptions(compilerparameters, exe));
@@ -215,7 +227,7 @@ namespace CSharpBinding
 							case BuildAction.Compile:
 								writer.WriteLine(String.Concat('"', finfo.Name, '"'));
 								break;
-							
+								
 							case BuildAction.EmbedAsResource:
 								writer.WriteLine(String.Concat("--linkres \"", finfo.Name, "\""));
 								break;
@@ -226,10 +238,10 @@ namespace CSharpBinding
 			writer.Close();
 			
 			string output = String.Empty;
-			string error  = String.Empty; 
+			string error  = String.Empty;
 			
 			string compilerName = compilerparameters.CsharpCompiler == CsharpCompiler.Csc ? GetCompilerName(compilerparameters.CSharpCompilerVersion) : System.Environment.GetEnvironmentVariable("ComSpec") + " /c mcs";
-
+			
 			string outstr = String.Concat(compilerName, compilerparameters.NoConfig ? " /noconfig" : String.Empty, " \"@", responseFileName, "\"");
 			TempFileCollection tf = new TempFileCollection();
 			Executor.ExecWaitWithCapture(outstr,  tf, ref output, ref error);
@@ -312,7 +324,7 @@ namespace CSharpBinding
 					error.Column      = Int32.Parse(match.Result("${column}"));
 					error.Line        = Int32.Parse(match.Result("${line}"));
 					error.FileName    = Path.GetFullPath(match.Result("${file}"));
-					error.IsWarning   = match.Result("${error}") == "warning"; 
+					error.IsWarning   = match.Result("${error}") == "warning";
 					error.ErrorNumber = match.Result("${number}");
 					error.ErrorText   = match.Result("${message}");
 				} else {
@@ -321,19 +333,19 @@ namespace CSharpBinding
 						error.Column      = 0; // no column info :/
 						error.Line        = Int32.Parse(match.Result("${line}"));
 						error.FileName    = Path.GetFullPath(match.Result("${file}"));
-						error.IsWarning   = match.Result("${error}") == "warning"; 
+						error.IsWarning   = match.Result("${error}") == "warning";
 						error.ErrorNumber = match.Result("${number}");
 						error.ErrorText   = match.Result("${message}");
 					} else {
 						match = generalError.Match(curLine); // try to match general csc errors
 						if (match.Success) {
-							error.IsWarning   = match.Result("${error}") == "warning"; 
+							error.IsWarning   = match.Result("${error}") == "warning";
 							error.ErrorNumber = match.Result("${number}");
 							error.ErrorText   = match.Result("${message}");
 						} else { // give up and skip the line
 							continue;
-	//						error.IsWarning = false;
-	//						error.ErrorText = curLine;
+							//						error.IsWarning = false;
+							//						error.ErrorText = curLine;
 						}
 					}
 				}

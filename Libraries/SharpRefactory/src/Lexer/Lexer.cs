@@ -332,12 +332,12 @@ namespace ICSharpCode.SharpRefactory.Parser
 				reader.GetNext();
 				++col;
 				isfloat = true;
-			} else if (Char.ToUpper(reader.Peek()) == 'M') { // double type suffix (obsolete, double is default)
+			} else if (Char.ToUpper(reader.Peek()) == 'D') { // double type suffix (obsolete, double is default)
 				suffix.Append(reader.Peek());
 				reader.GetNext();
 				++col;
 				isdouble = true;
-			} else if (Char.ToUpper(reader.Peek()) == 'D') { // decimal value
+			} else if (Char.ToUpper(reader.Peek()) == 'M') { // decimal value
 				suffix.Append(reader.Peek());
 				reader.GetNext();
 				++col;
@@ -397,6 +397,22 @@ namespace ICSharpCode.SharpRefactory.Parser
 					errors.Error(y, x, String.Format("Can't parse double {0}", digit));
 					return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0d);
 				}
+			}
+			
+			double d = 0;
+			if (!Double.TryParse(digit, ishex ? NumberStyles.HexNumber : NumberStyles.Integer, null, out d)) {
+				errors.Error(y, x, String.Format("Can't parse integral constant {0}", digit));
+				return new Token(Tokens.Literal, x, y, stringValue.ToString(), 0);
+			}
+			if (d < long.MinValue || d > long.MaxValue) {
+				islong = true;
+				isunsigned = true;	
+			}
+			else if (d < uint.MinValue || d > uint.MaxValue) {
+				islong = true;	
+			}
+			else if (d < int.MinValue || d > int.MaxValue) {
+				isunsigned = true;	
 			}
 			if (islong) {
 				if (isunsigned) {

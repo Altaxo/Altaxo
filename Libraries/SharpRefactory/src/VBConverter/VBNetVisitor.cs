@@ -1048,6 +1048,14 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			if (primitiveExpression.Value is char) {
 				return ConvertCharLiteral((char)primitiveExpression.Value);
 			}
+
+			if (primitiveExpression.Value is decimal) {
+				return String.Concat(primitiveExpression.Value.ToString(), "D");
+			}
+
+			if (primitiveExpression.Value is float) {
+				return String.Concat(primitiveExpression.Value.ToString(), "F");
+			}
 			
 			return primitiveExpression.Value;
 		}

@@ -74,11 +74,18 @@ namespace ICSharpCode.TextEditor
 		
 		public Highlight GetHighlight(IDocument document, int offset)
 		{
-			char word = document.GetCharAt(Math.Max(0, Math.Min(document.TextLength - 1, offset)));
+			int searchOffset;
+			if (document.TextEditorProperties.BracketMatchingStyle == BracketMatchingStyle.After) {
+				searchOffset = offset;
+			} else {
+				searchOffset = offset + 1;
+			}
+			char word = document.GetCharAt(Math.Max(0, Math.Min(document.TextLength - 1, searchOffset)));
+			
 			Point endP = document.OffsetToPosition(offset);
 			if (word == opentag) {
 				if (offset < document.TextLength) {
-					int bracketOffset = TextUtilities.SearchBracketForward(document, offset + 1, opentag, closingtag);
+					int bracketOffset = TextUtilities.SearchBracketForward(document, searchOffset + 1, opentag, closingtag);
 					if (bracketOffset >= 0) {
 						Point p = document.OffsetToPosition(bracketOffset);
 						return new Highlight(p, endP);
@@ -86,7 +93,7 @@ namespace ICSharpCode.TextEditor
 				}
 			} else if (word == closingtag) {
 				if (offset > 0) {
-					int bracketOffset = TextUtilities.SearchBracketBackward(document, offset - 1, opentag, closingtag);
+					int bracketOffset = TextUtilities.SearchBracketBackward(document, searchOffset - 1, opentag, closingtag);
 					if (bracketOffset >= 0) {
 						Point p = document.OffsetToPosition(bracketOffset);
 						return new Highlight(p, endP);

@@ -1,5 +1,6 @@
 // created on 06.08.2003 at 12:37
 
+using System;
 using System.Diagnostics;
 
 using SharpDevelop.Internal.Parser;

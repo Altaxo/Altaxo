@@ -254,18 +254,22 @@ namespace ICSharpCode.TextEditor
 		
 		public void SetDesiredColumn()
 		{
-			Caret.DesiredColumn = Caret.Column;
+			Caret.DesiredColumn = TextView.GetDrawingXPos(Caret.Line, Caret.Column) + (int)(VirtualTop.X * textView.GetWidth(' '));
+//			Console.WriteLine("SetDesiredColumn : " + Caret.DesiredColumn);
 		}
 		
 		public void SetCaretToDesiredColumn(int caretLine)
 		{
-			Caret.Position = new Point(Caret.DesiredColumn, caretLine);
+//			Console.WriteLine("Calling GetLogicalColumn, DesiredColumn = " + Caret.DesiredColumn);
+			Caret.Position = textView.GetLogicalColumn(Caret.Line, Caret.DesiredColumn + (int)(VirtualTop.X * textView.GetWidth(' ')));
+//			Console.WriteLine("SetCaretToDesiredColumn : " + Caret.Position);
 		}
 		
 		public void OptionsChanged()
 		{
 			UpdateMatchingBracket();
 			textView.OptionsChanged();
+			caret.RecreateCaret();
 			caret.UpdateCaretPosition();
 			Refresh();
 		}
@@ -510,8 +514,6 @@ namespace ICSharpCode.TextEditor
 				} finally {
 					motherTextEditorControl.EndUpdate();
 					Caret.UpdateCaretPosition();
-					//// update desired column otherwise backspace and some other keys cause invalid whitespace inserts
-					Caret.DesiredColumn=Caret.Column;
 				}
 				return true;
 			} 

@@ -30,11 +30,17 @@ namespace ICSharpCode.TextEditor.Document
 		int          offset;
 		int          length;
 		
-		class SpaceTextWord : TextWord
+		public class SpaceTextWord : TextWord
 		{
 			public SpaceTextWord()
 			{
 				length = 1;
+			}
+			
+			public SpaceTextWord(HighlightColor  color)
+			{
+				length = 1;
+				base.color  = color;
 			}
 			public override TextWordType Type {
 				get {
@@ -48,12 +54,18 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
-		class TabTextWord : TextWord
+		public class TabTextWord : TextWord
 		{
 			public TabTextWord()
 			{
 				length = 1;
 			}
+			public TabTextWord(HighlightColor  color)
+			{
+				length = 1;
+				base.color  = color;
+			}
+			
 			
 			public override TextWordType Type {
 				get {

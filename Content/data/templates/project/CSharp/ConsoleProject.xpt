@@ -29,7 +29,7 @@
 				<File name="Main.cs"><![CDATA[${StandardHeader.C#}
 using System;
 
-namespace ${ProjectName}
+namespace ${StandardNamespace}
 {
 	class MainClass
 	{

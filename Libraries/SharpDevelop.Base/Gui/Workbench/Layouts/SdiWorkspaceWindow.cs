@@ -87,6 +87,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		protected override void Dispose(bool isDisposing)
 		{
+			base.Dispose(isDisposing);
+			
 			if (isDisposing) {
 				if (subViewContents != null) {
 					foreach (IDisposable disposeMe in subViewContents) {
@@ -94,7 +96,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 					}
 				}
 			}
-			base.Dispose(isDisposing);
 		}
 		
 		public SdiWorkspaceWindow(IViewContent content)
@@ -102,25 +103,32 @@ namespace ICSharpCode.SharpDevelop.Gui
 			this.content = content;
 			
 			content.WorkbenchWindow = this;
+			
 			content.TitleNameChanged += new EventHandler(SetTitleEvent);
-			content.DirtyChanged    += new EventHandler(SetTitleEvent);
-			content.Saving          += new EventHandler(BeforeSave);
-			content.Saved           += new SaveEventHandler(AfterSave);
+			content.DirtyChanged     += new EventHandler(SetTitleEvent);
+			content.Saving           += new EventHandler(BeforeSave);
+			content.Saved            += new SaveEventHandler(AfterSave);
 			
 			SetTitleEvent(null, null);
 			
 			this.DockableAreas = WeifenLuo.WinFormsUI.DockAreas.Document;
 			this.DockPadding.All = 2;
 
+			SetTitleEvent(this, EventArgs.Empty);
+			MenuService menuService = (MenuService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(MenuService));
+			this.TabPageContextMenu  = menuService.CreateContextMenu(this, contextMenuPath);
+			InitControls();
+		}
+		
+		internal void InitControls()
+		{
 			if (content.CreateAsSubViewContent == true) {
 				InitializeSubViewContents();
 			} else {
 				content.Control.Dock = DockStyle.Fill;
 				Controls.Add(content.Control);
 			}
-			SetTitleEvent(this, EventArgs.Empty);
-			MenuService menuService = (MenuService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(MenuService));
-			this.TabPageContextMenu  = menuService.CreateContextMenu(this, contextMenuPath);
+			
 		}
 		
 		void AfterSave(object sender, SaveEventArgs e)

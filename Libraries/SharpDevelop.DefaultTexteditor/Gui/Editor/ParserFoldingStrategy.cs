@@ -26,8 +26,11 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				return;
 			}
 			if (c.Region.EndLine  > 0) {
-				foldMarkers.Add(new FoldMarker(document, c.Region.BeginLine - 1, c.Region.BeginColumn - 1,
-				                               c.Region.EndLine - 1, c.Region.EndColumn, FoldType.TypeBody));
+				FoldMarker newFoldMarker = new FoldMarker(document, c.Region.BeginLine - 1, c.Region.BeginColumn - 1,
+				                               c.Region.EndLine - 1, c.Region.EndColumn, FoldType.TypeBody);
+				if (newFoldMarker.Length > 0) {
+					foldMarkers.Add(newFoldMarker);
+				}
 			}
 			foreach (IClass innerClass in c.InnerClasses) {
 				AddClassMembers(innerClass, foldMarkers, document);

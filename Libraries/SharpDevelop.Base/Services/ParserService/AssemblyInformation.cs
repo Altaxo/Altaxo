@@ -104,7 +104,6 @@ namespace ICSharpCode.SharpDevelop.Services {
 						}
 					}
 				}
-				
 				loadingPath = Path.GetDirectoryName(fileName) + Path.DirectorySeparatorChar;
 #if !ModifiedForAltaxo			
 				System.Reflection.Assembly asm = nonLocking ? Assembly.Load(GetBytes(fileName)) : Assembly.LoadFrom(fileName);

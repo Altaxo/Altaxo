@@ -1,14 +1,14 @@
-#if TEST
-
 using System;
 using System.IO;
+
 using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using ICSharpCode.SharpZipLib.BZip2;
+
 using NUnit.Framework;
 
-namespace ICSharpCode.SharpZipLib.BZip2
+namespace ICSharpCode.SharpZipLib.Tests.BZip2
 {
 	/// <summary>
 	/// This class contains test cases for Bzip2 compression
@@ -20,6 +20,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		/// Basic compress/decompress test BZip2
 		/// </summary>
 		[Test]
+		[Category("BZip2")]
 		public void BasicRoundTrip()
 		{
 			MemoryStream ms = new MemoryStream();
@@ -46,7 +47,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 			}
 			
 			for (int i = 0; i < buf.Length; ++i) {
-				Assertion.AssertEquals(buf2[i], buf[i]);
+				Assert.AreEqual(buf2[i], buf[i]);
 			}
 		}
 		
@@ -54,6 +55,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		/// Check that creating an empty archive is handled ok
 		/// </summary>
 		[Test]
+		[Category("BZip2")]
 		public void CreateEmptyArchive()
 		{
 			MemoryStream ms = new MemoryStream();
@@ -74,9 +76,8 @@ namespace ICSharpCode.SharpZipLib.BZip2
 				pos += numRead;
 			}
 			
-			Assertion.AssertEquals(pos, 0);
+			Assert.AreEqual(pos, 0);
 		}
 		
 	}
 }
-#endif

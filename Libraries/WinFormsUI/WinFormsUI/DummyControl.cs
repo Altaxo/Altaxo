@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace WeifenLuo.WinFormsUI
 {
-	public class DummyControl : Control
+	internal class DummyControl : Control
 	{
 		public DummyControl()
 		{

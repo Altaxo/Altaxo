@@ -1,11 +1,11 @@
-#if TEST
-
 using System;
 using System.IO;
 
 using NUnit.Framework;
 
-namespace ICSharpCode.SharpZipLib.Tar {
+using ICSharpCode.SharpZipLib.Tar;
+
+namespace ICSharpCode.SharpZipLib.Tests.Tar {
 	
 	/// <summary>
 	/// This class contains test cases for Tar archive handling
@@ -25,14 +25,15 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// Test that an empty archive can be created and when read has 0 entries in it
 		/// </summary>
 		[Test]
+		[Category("Tar")]
 		public void EmptyTar()
 		{
 			MemoryStream ms = new MemoryStream();
 			TarArchive tarOut = TarArchive.CreateOutputTarArchive(ms);
 			tarOut.CloseArchive();
 			
-			Assertion.Assert("Archive size must be > zero", ms.GetBuffer().Length > 0);
-			Assertion.AssertEquals("Archive size must be a multiple of record size", ms.GetBuffer().Length % tarOut.RecordSize, 0);
+			Assert.IsTrue(ms.GetBuffer().Length > 0, "Archive size must be > zero");
+			Assert.AreEqual(ms.GetBuffer().Length % tarOut.RecordSize, 0, "Archive size must be a multiple of record size");
 			
 			MemoryStream ms2 = new MemoryStream();
 			ms2.Write(ms.GetBuffer(), 0, ms.GetBuffer().Length);
@@ -42,9 +43,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			entryCount = 0;
 			tarIn.ProgressMessageEvent += new ProgressMessageHandler(EntryCounter);
 			tarIn.ListContents();
-			Assertion.AssertEquals("Expected 0 tar entries", 0, entryCount);
+			Assert.AreEqual(0, entryCount, "Expected 0 tar entries");
 		}
 	}
 }
-
-#endif

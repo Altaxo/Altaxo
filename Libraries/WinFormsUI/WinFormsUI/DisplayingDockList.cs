@@ -14,6 +14,9 @@ using System.Windows.Forms;
 
 namespace WeifenLuo.WinFormsUI
 {
+	/// <summary>
+	/// Implements a list of visible dock panes. Created by DockList object.
+	/// </summary>
 	public class DisplayingDockList : ReadOnlyCollectionBase
 	{
 		private DockList m_dockList;
@@ -23,36 +26,61 @@ namespace WeifenLuo.WinFormsUI
 			m_dockList = dockList;
 		}
 
+		/// <summary>
+		/// Returns the associated DockList object.
+		/// </summary>
 		public DockList DockList
 		{
 			get	{	return m_dockList;	}
 		}
 
+		/// <summary>
+		/// Returns the container which owns the associated DockList object.
+		/// </summary>
 		public IDockListContainer Container
 		{
 			get	{	return DockList.Container;	}
 		}
 
+		/// <summary>
+		/// Returns the docking state of the dock panes.
+		/// </summary>
 		public DockState DockState
 		{
 			get	{	return DockList.DockState;	}
 		}
 
+		/// <summary>
+		/// Determines if the docking state of the dock panes is floating.
+		/// </summary>
 		public bool IsFloat
 		{
 			get	{	return DockList.IsFloat;	}
 		}
 
+		/// <summary>
+		/// Determines if the specified dock pane is contained in the list.
+		/// </summary>
+		/// <param name="pane">Specified dock pane.</param>
+		/// <returns>True or False.</returns>
 		public bool Contains(DockPane pane)
 		{
 			return InnerList.Contains(pane);
 		}
 
+		/// <summary>
+		/// Returns the index of the specified dock pane in the list.
+		/// </summary>
+		/// <param name="pane">Specified dock pane.</param>
+		/// <returns>True of False.</returns>
 		public int IndexOf(DockPane pane)
 		{
 			return InnerList.IndexOf(pane);
 		}
 
+		/// <summary>
+		/// Indexer of the list. Returns DockPane object.
+		/// </summary>
 		public DockPane this[int index]
 		{
 			get	{	return InnerList[index] as DockPane;	}

@@ -41,6 +41,11 @@ namespace ICSharpCode.TextEditor.Document
 			set;
 		}
 		
+		bool MouseWheelTextZoom {
+			get;
+			set;
+		}
+		
 		string LineTerminator {
 			get;
 			set;
@@ -130,5 +135,11 @@ namespace ICSharpCode.TextEditor.Document
 			get;
 			set;
 		}
+		
+		BracketMatchingStyle  BracketMatchingStyle { // is wrapped in text editor control
+			get;
+			set;
+		}
+	
 	}
 }

@@ -30,7 +30,7 @@
 {
 }
 
-.namespace DefaultNamespace
+.namespace ${StandardNamespace}
 {
 	.class private auto ansi beforefieldinit MainClass
 	{

@@ -25,8 +25,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 	{
 		public VisualError(int offset, int length, string description, bool isError) : base(offset, length, TextMarkerType.WaveLine, isError ? Color.Red : Color.Orange)
 		{
-			
-			base.ToolTip = description;
+			base.ToolTip = description.Replace("&", "&&&");
 		}
 	}
 	
@@ -71,11 +70,13 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				if (Path.GetFullPath(task.FileName).ToLower() == Path.GetFullPath(textEditor.FileName).ToLower() && (task.TaskType == TaskType.Warning || task.TaskType == TaskType.Error)) {
 					if (task.Line >= 0 && task.Line < textEditor.Document.TotalNumberOfLines) {
 						LineSegment line = textEditor.Document.GetLineSegment(task.Line);
-						int offset = line.Offset + task.Column;
-						foreach (TextWord tw in line.Words) {
-							if (task.Column >= tw.Offset && task.Column < (tw.Offset + tw.Length)) {
-								textEditor.Document.MarkerStrategy.TextMarker.Add(new VisualError(offset, tw.Length, task.Description, task.TaskType == TaskType.Error));
-								break;
+						if (line.Words != null) {
+							int offset = line.Offset + task.Column;
+							foreach (TextWord tw in line.Words) {
+								if (task.Column >= tw.Offset && task.Column < (tw.Offset + tw.Length)) {
+									textEditor.Document.MarkerStrategy.TextMarker.Add(new VisualError(offset, tw.Length, task.Description, task.TaskType == TaskType.Error));
+									break;
+								}
 							}
 						}
 						/*

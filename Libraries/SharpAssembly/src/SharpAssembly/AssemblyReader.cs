@@ -186,7 +186,11 @@ namespace ICSharpCode.SharpAssembly.Assembly {
 		public void Load(string fileName)
 		{
 			Stream fs = System.IO.File.OpenRead(fileName);
-			fs.Seek(128, SeekOrigin.Begin);
+			fs.Seek(0x3c, SeekOrigin.Begin);
+			BinaryReader binaryReaderSO = new BinaryReader(fs);
+			long signature_offset = binaryReaderSO.ReadInt32();
+			
+			fs.Seek(signature_offset, SeekOrigin.Begin);
 			
 			filename = fileName;
 			
@@ -217,6 +221,7 @@ namespace ICSharpCode.SharpAssembly.Assembly {
 				curOffset += (int)sections[i].SizeOfRawData;
 			}
 			binaryReader.Close();
+			binaryReaderSO.Close();
 			fs.Close();
 			
 			fs           = new MemoryStream(rawSectionData);

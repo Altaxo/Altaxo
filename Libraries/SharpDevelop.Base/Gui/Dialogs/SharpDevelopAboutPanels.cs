@@ -36,6 +36,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		
 		Label      sponsorLabel   = new Label();
 		
+		Button     throwExceptionButton = new Button();
+		
 		public AboutSharpDevelopTabPage()
 		{
 			Version v = Assembly.GetEntryAssembly().GetName().Version;
@@ -68,10 +70,27 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			
 			sponsorLabel.Location = new System.Drawing.Point(8, 34);
 			sponsorLabel.Text = "Released under the GNU General Public license.";
-			sponsorLabel.Size = new System.Drawing.Size(362, 74);
+			sponsorLabel.Size = new System.Drawing.Size(362, 24);
 			sponsorLabel.TabIndex = 8;
 			Controls.Add(sponsorLabel);
 			Dock = DockStyle.Fill;
+			
+			throwExceptionButton.Location = new System.Drawing.Point(8, sponsorLabel.Bounds.Bottom + 1);
+			throwExceptionButton.Text = resourceService.GetString("Dialog.About.ThrowExceptionButton");
+			throwExceptionButton.Size = new System.Drawing.Size(96, 24);
+			throwExceptionButton.Click += new EventHandler(ThrowExceptionButtonClick);
+			throwExceptionButton.FlatStyle = FlatStyle.System;
+			Controls.Add(throwExceptionButton);
+			
+		}
+		
+		class ClownFishException : System.Exception
+		{
+		}
+		
+		void ThrowExceptionButtonClick(object sender, EventArgs e)
+		{
+			throw new ClownFishException();
 		}
 	}
 	

@@ -79,11 +79,26 @@ namespace CSharpBinding.FormattingStrategy
 				base.IndentLines(textArea, begin, end);
 				return;
 			}
+			int cursorPos = textArea.Caret.Position.Y;
+			int oldIndentLength = 0;
+			
+			if (cursorPos >= begin && cursorPos <= end)
+				oldIndentLength = GetIndentation(textArea, cursorPos).Length;
+			
 			IndentationSettings set = new IndentationSettings();
 			set.IndentString = Tab.GetIndentationString(textArea.Document);
 			IndentationReformatter r = new IndentationReformatter();
 			DocumentAccessor acc = new DocumentAccessor(textArea.Document, begin, end);
 			r.Reformat(acc, set);
+			
+			if (cursorPos >= begin && cursorPos <= end) {
+				int newIndentLength = GetIndentation(textArea, cursorPos).Length;
+				if (oldIndentLength != newIndentLength) {
+					// fix cursor position if indentation was changed
+					int newX = textArea.Caret.Position.X - oldIndentLength + newIndentLength;
+					textArea.Caret.Position = new Point(Math.Max(newX, 0), cursorPos);
+				}
+			}
 			
 			if (acc.ChangedLines > 0)
 				textArea.Document.UndoStack.UndoLast(acc.ChangedLines);

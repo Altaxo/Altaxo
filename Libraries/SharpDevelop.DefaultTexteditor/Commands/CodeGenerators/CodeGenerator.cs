@@ -4,6 +4,7 @@
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
+
 using System;
 using System.IO;
 using System.Collections;
@@ -94,7 +95,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			editActionHandler.TextEditorProperties.AutoInsertCurlyBracket = false;
 			editActionHandler.TextEditorProperties.IndentStyle            = IndentStyle.Smart;
 						
-			string extension = Path.GetExtension(editActionHandler.MotherTextEditorControl.FileName);
+			string extension = Path.GetExtension(editActionHandler.MotherTextEditorControl.FileName).ToLower();
 			StartGeneration(items, extension);
 			
 			if (numOps > 0) {

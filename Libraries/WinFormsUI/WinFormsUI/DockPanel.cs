@@ -112,15 +112,26 @@ namespace WeifenLuo.WinFormsUI
 				User32.PostMessage(this.Handle, WM_REFRESHACTIVEWINDOW, 0, 0);
 		}
 
+		private bool m_disposed = false;
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing)
+			if (!m_disposed)
 			{
-				m_localWindowsHook.Uninstall();
-				FloatWindows.Dispose();
-				Panes.Dispose();
+				try
+				{
+					if (disposing)
+					{
+						FloatWindows.Dispose();
+						Panes.Dispose();
+					}
+					m_localWindowsHook.Uninstall();
+					m_disposed = true;
+				}
+				finally
+				{
+					base.Dispose(disposing);
+				}
 			}
-			base.Dispose(disposing);
 		}
 
 		[Browsable(false)]

@@ -1,12 +1,13 @@
-#if TEST
 using System;
 using System.IO;
+
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using ICSharpCode.SharpZipLib.GZip;
+
 using NUnit.Framework;
 
-namespace ICSharpCode.SharpZipLib.GZip
+namespace ICSharpCode.SharpZipLib.Tests.GZip
 {
 	/// <summary>
 	/// This class contains test cases for GZip compression
@@ -18,6 +19,7 @@ namespace ICSharpCode.SharpZipLib.GZip
 		/// Basic compress/decompress test
 		/// </summary>
 		[Test]
+		[Category("GZip")]
 		public void TestGZip()
 		{
 			MemoryStream ms = new MemoryStream();
@@ -45,9 +47,8 @@ namespace ICSharpCode.SharpZipLib.GZip
 			}
 			
 			for (int i = 0; i < buf.Length; ++i) {
-				Assertion.AssertEquals(buf2[i], buf[i]);
+				Assert.AreEqual(buf2[i], buf[i]);
 			}
 		}
 	}
 }
-#endif

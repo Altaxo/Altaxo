@@ -46,24 +46,12 @@
     <File name=".\Tar" subtype="Directory" buildaction="Nothing" dependson="" data="" />
     <File name=".\Zip\Compression" subtype="Directory" buildaction="Nothing" dependson="" data="" />
     <File name=".\Zip\Compression\Streams" subtype="Directory" buildaction="Nothing" dependson="" data="" />
-    <File name=".\Zip\Tests" subtype="Directory" buildaction="Compile" dependson="" data="" />
-    <File name=".\Zip\Tests\ZipTests.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\GZip\Tests" subtype="Directory" buildaction="Compile" dependson="" data="" />
-    <File name=".\GZip\Tests\GZipTests.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\BZip2\Tests" subtype="Directory" buildaction="Compile" dependson="" data="" />
-    <File name=".\BZip2\Tests\Bzip2Tests.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Zip\Compression\Tests" subtype="Directory" buildaction="Compile" dependson="" data="" />
-    <File name=".\Zip\Compression\Tests\InflaterDeflaterTests.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Tar\Tests" subtype="Directory" buildaction="Compile" dependson="" data="" />
-    <File name=".\Tar\Tests\TarTests.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\SharpZipBaseException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Tar\TarException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\GZip\GZipException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\BZip2\BZip2Exception.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
-  <References>
-    <Reference type="Gac" refto="nunit.framework, Version=2.1.4.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" localcopy="True" />
-  </References>
+  <References />
   <DeploymentInformation target="" script="" strategy="File" />
   <Configuration runwithwarnings="True" name="Release">
     <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="Standard" warninglevel="4" nowarn="" includedebuginformation="False" optimize="True" unsafecodeallowed="False" generateoverflowchecks="False" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />

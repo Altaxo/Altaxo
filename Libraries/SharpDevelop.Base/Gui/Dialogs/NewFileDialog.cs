@@ -379,13 +379,24 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 				if (allowUntitledFiles) {
 					fileName = GenerateCurrentFileName();
 				} else {
-					IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-					if (projectService.CurrentSelectedProject != null) {
-						StringParserService.Properties["StandardNamespace"] = projectService.CurrentSelectedProject.StandardNamespace;
+					fileName = Path.Combine(basePath, ControlDictionary["fileNameTextBox"].Text);
+					fileName = Path.GetFullPath(fileName);
+					IProjectService projectService = (IProjectService)ServiceManager.Services.GetService(typeof(IProjectService));
+					IProject project = projectService.CurrentSelectedProject;
+					if (project != null) {
+						FileUtilityService fileService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+						string relPath = fileService.AbsoluteToRelativePath(project.BaseDirectory, Path.GetDirectoryName(fileName));
+						string[] subdirs = relPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+						StringBuilder standardNameSpace = new StringBuilder(project.StandardNamespace);
+						foreach(string subdir in subdirs) {
+							if (subdir == "." || subdir == ".." || subdir == "")
+								continue;
+							standardNameSpace.Append('.');
+							standardNameSpace.Append(GenerateValidClassName(subdir));
+						}
+						StringParserService.Properties["StandardNamespace"] = standardNameSpace.ToString();
 					}
-					fileName = ControlDictionary["fileNameTextBox"].Text;
 				}
-				
 				StringParserService.Properties["FullName"]                 = fileName;
 				StringParserService.Properties["FileName"]                 = Path.GetFileName(fileName);
 				StringParserService.Properties["FileNameWithoutExtension"] = Path.GetFileNameWithoutExtension(fileName);

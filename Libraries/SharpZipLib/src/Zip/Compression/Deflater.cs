@@ -138,7 +138,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// <summary>
 		/// If true no Zlib/RFC1950 headers or footers are generated
 		/// </summary>
-		private bool noHeaderOrFooter;
+		private bool noZlibHeaderOrFooter;
 		
 		/// <summary>
 		/// The current state.
@@ -188,13 +188,13 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// the compression level, a value between NO_COMPRESSION
 		/// and BEST_COMPRESSION.
 		/// </param>
-		/// <param name="noHeaderOrFooter">
+		/// <param name="noZlibHeaderOrFooter">
 		/// true, if we should suppress the Zlib/RFC1950 header at the
 		/// beginning and the adler checksum at the end of the output.  This is
 		/// useful for the GZIP/PKZIP formats.
 		/// </param>
 		/// <exception cref="System.ArgumentOutOfRangeException">if lvl is out of range.</exception>
-		public Deflater(int level, bool noHeaderOrFooter)
+		public Deflater(int level, bool noZlibHeaderOrFooter)
 		{
 			if (level == DEFAULT_COMPRESSION) {
 				level = 6;
@@ -204,7 +204,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			
 			pending = new DeflaterPending();
 			engine = new DeflaterEngine(pending);
-			this.noHeaderOrFooter = noHeaderOrFooter;
+			this.noZlibHeaderOrFooter = noZlibHeaderOrFooter;
 			SetStrategy(DeflateStrategy.Default);
 			SetLevel(level);
 			Reset();
@@ -218,7 +218,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// </summary>
 		public void Reset()
 		{
-			state = (noHeaderOrFooter ? BUSY_STATE : INIT_STATE);
+			state = (noZlibHeaderOrFooter ? BUSY_STATE : INIT_STATE);
 			totalOut = 0;
 			pending.Reset();
 			engine.Reset();
@@ -492,7 +492,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 						pending.AlignToByte();
 
 						// Compressed data is complete.  Write footer information if required.
-						if (!noHeaderOrFooter) {
+						if (!noZlibHeaderOrFooter) {
 							int adler = engine.Adler;
 							pending.WriteShortMSB(adler >> 16);
 							pending.WriteShortMSB(adler & 0xffff);

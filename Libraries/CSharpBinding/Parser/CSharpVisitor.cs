@@ -128,6 +128,7 @@ namespace CSharpBinding.Parser
 		{
 			DefaultRegion region = GetRegion(typeDeclaration.StartLocation, typeDeclaration.EndLocation);
 			Class c = new Class(cu, TranslateClassType(typeDeclaration.Type), typeDeclaration.Modifier, region);
+			
 			if (currentClass.Count > 0) {
 				Class cur = ((Class)currentClass.Peek());
 				cur.InnerClasses.Add(c);
@@ -203,7 +204,6 @@ namespace CSharpBinding.Parser
 		{
 			DefaultRegion region     = GetRegion(destructorDeclaration.StartLocation, destructorDeclaration.EndLocation);
 			DefaultRegion bodyRegion = GetRegion(destructorDeclaration.EndLocation, destructorDeclaration.Body != null ? destructorDeclaration.Body.EndLocation : new Point(-1, -1));
-			Console.WriteLine(region + " --- " + bodyRegion);
 			
 			Class c       = (Class)currentClass.Peek();
 			

@@ -1,5 +1,3 @@
-#if TEST
-
 using System;
 using System.IO;
 using System.Security;
@@ -7,10 +5,11 @@ using System.Security;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using ICSharpCode.SharpZipLib.GZip;
+using ICSharpCode.SharpZipLib.Zip;
 
 using NUnit.Framework;
 
-namespace ICSharpCode.SharpZipLib.Zip
+namespace ICSharpCode.SharpZipLib.Tests.Zip
 {
 	class MemStreamWithoutSeek : MemoryStream
 	{
@@ -109,7 +108,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			
 			if ((entry2.Flags & 8) == 0) {
 				// -jr- problem here!!
-				Assertion.AssertEquals("Entry size invalid", size, entry2.Size);
+				Assert.AreEqual(size, entry2.Size, "Entry size invalid");
 			}
 			
 			if (size > 0) {
@@ -122,11 +121,11 @@ namespace ICSharpCode.SharpZipLib.Zip
 				}
 			}
 		
-			Assertion.AssertEquals("Original and decompressed data different sizes", pos, size);
+			Assert.AreEqual(pos, size, "Original and decompressed data different sizes" );
 			
 			if (originalData != null) {
 				for (int i = 0; i < originalData.Length; ++i) {
-					Assertion.AssertEquals("Decompressed data doesnt match original, compression level: " + compressionLevel, decompressedData[i], originalData[i]);
+					Assert.AreEqual(decompressedData[i], originalData[i], "Decompressed data doesnt match original, compression level: " + compressionLevel);
 				}
 			}
 		}
@@ -135,6 +134,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Empty zip entries can be created and read?
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void EmptyZipEntries()
 		{
 			MemoryStream ms = new MemoryStream();
@@ -161,13 +161,14 @@ namespace ICSharpCode.SharpZipLib.Zip
 				}
 			}
 			inStream.Close();
-			Assertion.AssertEquals("No data should be read from empty entries", extractCount, 0);
+			Assert.AreEqual(extractCount, 0, "No data should be read from empty entries");
 		}
 
 		/// <summary>
 		/// Empty zips can be created and read?
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void EmptyZip()
 		{
 			MemoryStream ms = new MemoryStream();
@@ -179,7 +180,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			ZipInputStream inStream = new ZipInputStream(ms);
 			ZipEntry entry;
 			while ((entry = inStream.GetNextEntry()) != null) {
-				Assertion.Assert("No entries should be found in empty zip", entry == null);
+				Assert.IsNull(entry, "No entries should be found in empty zip");
 			}
 		}
 
@@ -187,6 +188,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Invalid passwords should be detected early if possible, seekable stream
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		[ExpectedException(typeof(ZipException))]
 		public void InvalidPasswordSeekable()
 		{
@@ -217,6 +219,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Invalid passwords should be detected early if possible, non seekable stream
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		[ExpectedException(typeof(ZipException))]
 		public void InvalidPasswordNonSeekable()
 		{
@@ -248,6 +251,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Setting entry comments to null should be allowed
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void NullEntryComment()
 		{
 			ZipEntry test = new ZipEntry("null");
@@ -258,6 +262,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Entries with null names arent allowed
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullEntryName()
 		{
@@ -269,6 +274,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Adding an entry after the stream has Finished should fail
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		[ExpectedException(typeof(InvalidOperationException))]
 		public void AddEntryAfterFinish()
 		{
@@ -282,6 +288,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Test setting file commment to a value that is too long
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
 		public void CommentTooLong()
 		{
@@ -294,6 +301,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Check that simply closing ZipOutputStream finishes the zip correctly
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void CloseOnlyHandled()
 		{
 			MemoryStream ms = new MemoryStream();
@@ -301,7 +309,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			s.PutNextEntry(new ZipEntry("dummyfile.tst"));
 			s.Close();
 			
-			Assertion.Assert("Output stream should be finished", s.IsFinished == true);
+			Assert.IsTrue(s.IsFinished, "Output stream should be finished" );
 		}
 
 		/// <summary>
@@ -309,6 +317,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// to force multiple write to output which was a problem...
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void BasicDeflated()
 		{
 			for (int i = 0; i <= 9; ++i) {
@@ -321,6 +330,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// to force multiple write to output which was a problem...
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void BasicDeflatedNonSeekable()
 		{
 			for (int i = 0; i <= 9; ++i) {
@@ -332,6 +342,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Basic stored file test, no encryption.
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void BasicStored()
 		{
 			ExerciseZip(CompressionMethod.Stored, 0, 50000, null, true);
@@ -342,6 +353,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// NOTE this gets converted to deflate level 0
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void BasicStoredNonSeekable()
 		{
 			ExerciseZip(CompressionMethod.Stored, 0, 50000, null, false);
@@ -353,6 +365,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// to force multiple write to output which was a problem...
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void BasicDeflatedEncrypted()
 		{
 			for (int i = 0; i <= 9; ++i) {
@@ -365,6 +378,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// to force multiple write to output which was a problem...
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void BasicDeflatedEncryptedNonSeekable()
 		{
 			for (int i = 0; i <= 9; ++i) {
@@ -377,6 +391,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Basic stored file test, with encryption.
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void BasicStoredEncrypted()
 		{
 			ExerciseZip(CompressionMethod.Stored, 0, 50000, "Rosebud", true);
@@ -387,6 +402,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// NOTE this gets converted deflate level 0
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void BasicStoredEncryptedNonSeekable()
 		{
 			ExerciseZip(CompressionMethod.Stored, 0, 50000, "Rosebud", false);
@@ -397,24 +413,25 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// are in fact converted to defalted level 0
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void StoredNonSeekableConvertToDeflate()
 		{
 			MemStreamWithoutSeek ms = new MemStreamWithoutSeek();
 			
 			ZipOutputStream outStream = new ZipOutputStream(ms);
 			outStream.SetLevel(8);
-			Assertion.AssertEquals("Compression level invalid", 8, outStream.GetLevel());
+			Assert.AreEqual(8, outStream.GetLevel(), "Compression level invalid");
 			
 			ZipEntry entry = new ZipEntry("1.tst");
 			entry.CompressionMethod = CompressionMethod.Stored;
 			outStream.PutNextEntry(entry);
-			Assertion.AssertEquals("Compression level invalid", 0, outStream.GetLevel());
+			Assert.AreEqual(0, outStream.GetLevel(), "Compression level invalid");
 			
 			AddRandomDataToEntry(outStream, 100);
 			entry = new ZipEntry("2.tst");
 			entry.CompressionMethod = CompressionMethod.Deflated;
 			outStream.PutNextEntry(entry);
-			Assertion.AssertEquals("Compression level invalid", 8, outStream.GetLevel());
+			Assert.AreEqual(8, outStream.GetLevel(), "Compression level invalid");
 			AddRandomDataToEntry(outStream, 100);
 			
 			outStream.Close();
@@ -424,6 +441,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Extra data for separate entries should be unique to that entry
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void ExtraDataUnique()
 		{
 			ZipEntry a = new ZipEntry("Basil");
@@ -433,13 +451,15 @@ namespace ICSharpCode.SharpZipLib.Zip
 			
 			ZipEntry b = new ZipEntry(a);
 			b.ExtraData[0] = 89;
-			Assertion.Assert("Extra data not unique" + b.ExtraData[0] + " " + a.ExtraData[0], b.ExtraData[0] != a.ExtraData[0]);
+			Assert.IsTrue(b.ExtraData[0] != a.ExtraData[0], "Extra data not unique" + b.ExtraData[0] + " " + a.ExtraData[0]);
 		}
 		
 		/// <summary>
 		/// Check that adding too many entries is detected and handled
 		/// </summary>
 		[Test]
+		[Category("Zip")]
+		[Category("LongRunning")]
 		[ExpectedException(typeof(ZipException))]
 		public void TooManyEntries()
 		{
@@ -452,7 +472,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			s.Finish();
 			ms.Seek(0, SeekOrigin.Begin);
 			ZipFile zipFile = new ZipFile(ms);
-			Assertion.AssertEquals("Incorrect number of entries stored", target, zipFile.Size);
+			Assert.AreEqual(target, zipFile.Size, "Incorrect number of entries stored");
 		}
 
 		void MakeZipFile(string name, string[] names, int size, string comment)
@@ -493,17 +513,19 @@ namespace ICSharpCode.SharpZipLib.Zip
 			while ((bytesRead = inStream.Read(buffer, 0, buffer.Length)) > 0) {
 				total += bytesRead;
 				for (int i = 0; i < bytesRead; ++i) {
-					Assertion.AssertEquals("Wrong value read from entry", nextValue, buffer[i]);
+					Assert.AreEqual(nextValue, buffer[i], "Wrong value read from entry");
 					nextValue = ScatterValue(nextValue);			
 				}
 			}
-			Assertion.AssertEquals("Wrong number of bytes read from entry", expectedCount, total);
+			Assert.AreEqual(expectedCount, total, "Wrong number of bytes read from entry");
 		}
 		
 		/// <summary>
 		/// Simple round trip test for ZipFile class
 		/// </summary>
 		[Test]
+		[Category("Zip")]
+		[Category("CreatesTempFile")]
 		public void ZipFileRoundTrip()
 		{
 			string tempFile = null;
@@ -512,7 +534,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			} catch (SecurityException) {
 			}
 			
-			Assertion.AssertNotNull("No permission to execute this test?", tempFile);
+			Assert.IsNotNull(tempFile, "No permission to execute this test?");
 			
 			if (tempFile != null) {
 				tempFile = Path.Combine(tempFile, "SharpZipTest.Zip");
@@ -534,6 +556,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Check that ZipFile finds entries when its got a long comment
 		/// </summary>
 		[Test]
+		[Category("Zip")]
+		[Category("CreatesTempFile")]
 		public void ZipFileFindEntriesLongComment()
 		{
 			string tempFile = null;
@@ -542,7 +566,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			} catch (SecurityException) {
 			}
 			
-			Assertion.AssertNotNull("No permission to execute this test?", tempFile);
+			Assert.IsNotNull(tempFile, "No permission to execute this test?");
 			
 			if (tempFile != null) {
 				tempFile = Path.Combine(tempFile, "SharpZipTest.Zip");
@@ -566,6 +590,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Check that ZipFile class handles no entries in zip file
 		/// </summary>
 		[Test]
+		[Category("Zip")]
+		[Category("CreatesTempFile")]
 		public void ZipFileHandlesNoEntries()
 		{
 			string tempFile = null;
@@ -574,7 +600,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			} catch (SecurityException) {
 			}
 			
-			Assertion.AssertNotNull("No permission to execute this test?", tempFile);
+			Assert.IsNotNull(tempFile, "No permission to execute this test?");
 			
 			if (tempFile != null) {
 				tempFile = Path.Combine(tempFile, "SharpZipTest.Zip");
@@ -591,6 +617,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Test ZipFile find method operation
 		/// </summary>
 		[Test]
+		[Category("Zip")]
+		[Category("CreatesTempFile")]
 		public void ZipFileFind()
 		{
 			string tempFile = null;
@@ -602,35 +630,35 @@ namespace ICSharpCode.SharpZipLib.Zip
 			{
 			}
 			
-			Assertion.AssertNotNull("No permission to execute this test?", tempFile);
+			Assert.IsNotNull(tempFile, "No permission to execute this test?");
 			
 			if (tempFile != null) {
 				tempFile = Path.Combine(tempFile, "SharpZipTest.Zip");
 				MakeZipFile(tempFile, new String[] {"Farriera", "Champagne", "Urban myth" }, 10, "Aha");
 				
 				ZipFile zipFile = new ZipFile(tempFile);
-				Assertion.AssertEquals("Expected 1 entry", 3, zipFile.Size);
+				Assert.AreEqual(3, zipFile.Size, "Expected 1 entry");
 				
 				int testIndex = zipFile.FindEntry("Farriera", false);
-				Assertion.AssertEquals("Case sensitive find failure", 0, testIndex);
-				Assertion.Assert(string.Compare(zipFile[testIndex].Name, "Farriera", false) == 0);
+				Assert.AreEqual(0, testIndex, "Case sensitive find failure");
+				Assert.IsTrue(string.Compare(zipFile[testIndex].Name, "Farriera", false) == 0);
 				
 				testIndex = zipFile.FindEntry("Farriera", true);
-				Assertion.AssertEquals("Case insensitive find failure", 0, testIndex);
-				Assertion.Assert(string.Compare(zipFile[testIndex].Name, "Farriera", true) == 0);
+				Assert.AreEqual(0, testIndex, "Case insensitive find failure");
+				Assert.IsTrue(string.Compare(zipFile[testIndex].Name, "Farriera", true) == 0);
 				
 				testIndex = zipFile.FindEntry("urban mYTH", false);
-				Assertion.AssertEquals("Case sensitive find failure", -1, testIndex);
+				Assert.AreEqual(-1, testIndex, "Case sensitive find failure");
 				
 				testIndex = zipFile.FindEntry("urban mYTH", true);
-				Assertion.AssertEquals("Case insensitive find failure", 2, testIndex);
-				Assertion.Assert(string.Compare(zipFile[testIndex].Name, "urban mYTH", true) == 0);
+				Assert.AreEqual(2, testIndex, "Case insensitive find failure");
+				Assert.IsTrue(string.Compare(zipFile[testIndex].Name, "urban mYTH", true) == 0);
 				
 				testIndex = zipFile.FindEntry("Champane.", false);
-				Assertion.AssertEquals("Case sensitive find failure", -1, testIndex);
+				Assert.AreEqual(-1, testIndex, "Case sensitive find failure");
 				
 				testIndex = zipFile.FindEntry("Champane.", true);
-				Assertion.AssertEquals("Case insensitive find failure", -1, testIndex);
+				Assert.AreEqual(-1, testIndex, "Case insensitive find failure");
 				
 				zipFile.Close();
 				File.Delete(tempFile);
@@ -642,17 +670,16 @@ namespace ICSharpCode.SharpZipLib.Zip
 		/// Test ZipEntry static file name cleaning methods
 		/// </summary>
 		[Test]
+		[Category("Zip")]
 		public void FilenameCleaning()
 		{
-			Assertion.Assert(string.Compare(ZipEntry.CleanName("hello"), "hello") == 0);
-			Assertion.Assert(string.Compare(ZipEntry.CleanName(@"z:\eccles"), "eccles") == 0);
-			Assertion.Assert(string.Compare(ZipEntry.CleanName(@"\\server\share\eccles"), "eccles") == 0);
-			Assertion.Assert(string.Compare(ZipEntry.CleanName(@"\\server\share\dir\eccles"), "dir/eccles") == 0);
-			Assertion.Assert(string.Compare(ZipEntry.CleanName(@"\\server\share\eccles", false), "/eccles") == 0);
-			Assertion.Assert(string.Compare(ZipEntry.CleanName(@"c:\a\b\c\deus.dat", false), "/a/b/c/deus.dat") == 0);
+			Assert.IsTrue(string.Compare(ZipEntry.CleanName("hello"), "hello") == 0);
+			Assert.IsTrue(string.Compare(ZipEntry.CleanName(@"z:\eccles"), "eccles") == 0);
+			Assert.IsTrue(string.Compare(ZipEntry.CleanName(@"\\server\share\eccles"), "eccles") == 0);
+			Assert.IsTrue(string.Compare(ZipEntry.CleanName(@"\\server\share\dir\eccles"), "dir/eccles") == 0);
+			Assert.IsTrue(string.Compare(ZipEntry.CleanName(@"\\server\share\eccles", false), "/eccles") == 0);
+			Assert.IsTrue(string.Compare(ZipEntry.CleanName(@"c:\a\b\c\deus.dat", false), "/a/b/c/deus.dat") == 0);
 		}
 		
 	}
 }
-
-#endif

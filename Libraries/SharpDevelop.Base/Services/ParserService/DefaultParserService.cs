@@ -236,27 +236,38 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public void AddReferenceToCompletionLookup(IProject project, ProjectReference reference)
 		{
-			if (reference.ReferenceType != ReferenceType.Project) {
-				string fileName = reference.GetReferencedFileName(project);
-				if (fileName == null || fileName.Length == 0) {
+			if (reference.ReferenceType == ReferenceType.Project) {
+				IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+				IProject refProject = projectService.GetProject(reference.Reference);
+				// hack : don't load C# or VBNET project assemblies (parser does this.)
+				if (refProject.ProjectType == "C#" || refProject.ProjectType == "VBNET") {
 					return;
 				}
-				foreach (string assemblyName in assemblyList) {
-					if (Path.GetFileNameWithoutExtension(fileName).ToUpper() == assemblyName.ToUpper()) {
-						return;
-					}
-				}
-				// HACK : Don't load references for non C# projects
-				if (project.ProjectType != "C#") {
+				
+			}
+			
+			string fileName = reference.GetReferencedFileName(project);
+			if (fileName == null || fileName.Length == 0) {
+				return;
+			}
+			foreach (string assemblyName in assemblyList) {
+				if (Path.GetFileNameWithoutExtension(fileName).ToUpper() == assemblyName.ToUpper()) {
 					return;
 				}
-				if (File.Exists(fileName)) {
+			}
+//				// HACK : Don't load references for non C# projects
+//				if (project.ProjectType != "C#") {
+//					return;
+//				}
+			
+			if (File.Exists(fileName)) {
+				try {
 					AssemblyLoader assemblyLoader = new AssemblyLoader(this, fileName);
 					assemblyLoader.NonLocking = reference.ReferenceType != ReferenceType.Gac;
 					Thread t = new Thread(new ThreadStart(assemblyLoader.LoadAssemblyParseInformations));
 					t.IsBackground = true;
 					t.Start();
-				}
+				} catch (Exception e) { Console.WriteLine(e); }
 			}
 		}
 		

@@ -457,6 +457,21 @@ namespace ICSharpCode.TextEditor
 				OptionsChanged();
 			}
 		}
+		/// <value>
+		/// if true spaces are converted to tabs
+		/// </value>
+		[Category("Behavior")]
+		[DefaultValue(BracketMatchingStyle.After)]
+		[Description("Specifies if the bracket matching should match the bracket before or after the caret.")]
+		public BracketMatchingStyle BracketMatchingStyle {
+			get {
+				return document.TextEditorProperties.BracketMatchingStyle;
+			}
+			set {
+				document.TextEditorProperties.BracketMatchingStyle = value;
+				OptionsChanged();
+			}
+		}
 		
 		/// <value>
 		/// The base font of the text area. No bold or italic fonts

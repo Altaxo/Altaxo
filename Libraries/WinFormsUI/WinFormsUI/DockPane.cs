@@ -755,7 +755,7 @@ namespace WeifenLuo.WinFormsUI
 					}
 				}
 				else
-					g.DrawString(content.Text, Font, SystemBrushes.FromSystemColor(SystemColors.GrayText), rectText, StringFormatDocumentWindowTab);
+					g.DrawString(content.Text, Font, SystemBrushes.FromSystemColor(SystemColors.ControlDarkDark), rectText, StringFormatDocumentWindowTab);
 			}
 			else
 			{
@@ -829,8 +829,8 @@ namespace WeifenLuo.WinFormsUI
 			m_buttonScrollLeft.Location = point;
 
 			m_buttonDocumentWindowClose.BackColor = m_buttonScrollRight.BackColor	= m_buttonScrollLeft.BackColor = Color.WhiteSmoke;
-			m_buttonDocumentWindowClose.ForeColor = m_buttonScrollRight.ForeColor	= m_buttonScrollLeft.ForeColor = SystemColors.GrayText;
-			m_buttonDocumentWindowClose.BorderColor = m_buttonScrollRight.BorderColor	= m_buttonScrollLeft.BorderColor = SystemColors.GrayText;
+			m_buttonDocumentWindowClose.ForeColor = m_buttonScrollRight.ForeColor	= m_buttonScrollLeft.ForeColor = SystemColors.ControlDarkDark;
+			m_buttonDocumentWindowClose.BorderColor = m_buttonScrollRight.BorderColor	= m_buttonScrollLeft.BorderColor = SystemColors.ControlDarkDark;
 
 			// Draw the tabs
 			Rectangle rectTabOnly = GetTabStripRectangle(true);
