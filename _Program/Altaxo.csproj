@@ -215,6 +215,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Graph\GraphDocument.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\GraphForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"

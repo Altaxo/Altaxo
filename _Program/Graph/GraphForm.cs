@@ -235,7 +235,7 @@ namespace Altaxo.Graph
 				if(this.m_PushedLayerBotton==e.Button)
 				{
 					int nLayer = System.Convert.ToInt32(e.Button.Text);
-					LayerDialog dlg = new LayerDialog(m_GraphControl.Layer[nLayer],LayerDialog.Tab.Scale,EdgeType.Bottom);
+					LayerDialog dlg = new LayerDialog(m_GraphControl.Layers[nLayer],LayerDialog.Tab.Scale,EdgeType.Bottom);
 					dlg.ShowDialog(this);
 				}
 					// if the clicked button is not already pushed, then unpush the old button
@@ -296,7 +296,7 @@ namespace Altaxo.Graph
 				// by making the plot association shown by the menu item
 				// the actual plot association
 				int actLayerNum = this.m_GraphControl.ActualLayer;
-				Layer actLayer = this.m_GraphControl.Layer[actLayerNum];
+				Layer actLayer = this.m_GraphControl.Layers[actLayerNum];
 				if(null!=actLayer && dmi.tagValue<actLayer.PlotAssociations.Count)
 				{
 					dmi.Checked=true;
@@ -308,7 +308,7 @@ namespace Altaxo.Graph
 				// if it was checked before, then bring up the plot style dialog
 				// of the plot association represented by this menu item
 				int actLayerNum = this.m_GraphControl.ActualLayer;
-				Layer actLayer = this.m_GraphControl.Layer[actLayerNum];
+				Layer actLayer = this.m_GraphControl.Layers[actLayerNum];
 				PlotAssociation pa = actLayer.PlotAssociations[actLayer.ActualPlotAssociation];
 
 
@@ -344,7 +344,7 @@ namespace Altaxo.Graph
 		private void menuDataPopup_Popup(object sender, System.EventArgs e)
 		{
 			int actLayerNum = this.m_GraphControl.ActualLayer;
-			Layer actLayer = this.m_GraphControl.Layer[actLayerNum];
+			Layer actLayer = this.m_GraphControl.Layers[actLayerNum];
 			if(null==actLayer)
 				return;
 

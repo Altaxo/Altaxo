@@ -64,8 +64,19 @@ namespace Altaxo.Graph
 		/// </summary>
 		private RectangleF m_PrintableBounds = new RectangleF(14, 14, 814 , 567 );
 
+		/// <summary>
+		/// Brush to fill the page ground. Since the printable area is filled with another brush, in effect
+		/// this brush fills only the non printable margins of the page. 
+		/// </summary>
+		private BrushHolder m_PageGroundBrush = new BrushHolder(Color.LightGray);
+
+		/// <summary>
+		/// Brush to fill the printable area of the graph.
+		/// </summary>
+		private BrushHolder m_PrintableAreaBrush = new BrushHolder(Color.Snow);
 
 
+		protected GraphDocument m_Graph=new GraphDocument();
 
 		private float m_HorizRes  = 300;
 		private float m_VertRes = 300;
@@ -74,10 +85,6 @@ namespace Altaxo.Graph
 		private Color m_MarginColor = Color.Green;
 		private float m_Zoom  = 0.4f;
 		private bool  m_AutoZoom = true; // if true, the sheet is zoomed as big as possible to fit into window
-		private BrushHolder m_PageGroundBrush = new BrushHolder(Color.LightGray);
-		private BrushHolder m_PrintableAreaBrush = new BrushHolder(Color.Snow);
-
-		protected Layer.LayerCollection graphLayers = new Layer.LayerCollection();
 		protected int m_ActualLayer = 0;
 		protected GraphTools m_CurrentGraphTool = GraphTools.ObjectPointer;
 		private GraphPanel m_GraphPanel;
@@ -118,22 +125,25 @@ namespace Altaxo.Graph
 			{
 				System.Drawing.Printing.PrintDocument doc = App.CurrentApplication.PrintDocument;
 			
-				m_PageBounds = doc.DefaultPageSettings.Bounds;
+				RectangleF pageBounds = doc.DefaultPageSettings.Bounds;
 				// since Bounds are in 100th inch, we have to adjust them to points (72th inch)
-				m_PageBounds.X *= UnitPerInch/100;
-				m_PageBounds.Y *= UnitPerInch/100;
-				m_PageBounds.Width *= UnitPerInch/100;
-				m_PageBounds.Height *= UnitPerInch/100;
+				pageBounds.X *= UnitPerInch/100;
+				pageBounds.Y *= UnitPerInch/100;
+				pageBounds.Width *= UnitPerInch/100;
+				pageBounds.Height *= UnitPerInch/100;
 
-
+				RectangleF printableBounds = new RectangleF();
 				System.Drawing.Printing.Margins ma = doc.DefaultPageSettings.Margins;
-				m_PrintableBounds.X			= ma.Left * UnitPerInch/100;
-				m_PrintableBounds.Y			= ma.Top * UnitPerInch/100;
-				m_PrintableBounds.Width	= m_PageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
-				m_PrintableBounds.Height = m_PageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
+				printableBounds.X			= ma.Left * UnitPerInch/100;
+				printableBounds.Y			= ma.Top * UnitPerInch/100;
+				printableBounds.Width	= m_PageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
+				printableBounds.Height = m_PageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
+			
+				m_Graph.PageBounds = pageBounds;
+				m_Graph.PrintableBounds = printableBounds;
 			}
 
-			graphLayers.Add(new Altaxo.Graph.Layer(PrintableSize));
+			m_Graph.Layers.Add(new Altaxo.Graph.Layer(PrintableSize));
 		}
 
 		/// <summary> 
@@ -288,10 +298,9 @@ namespace Altaxo.Graph
 		}
 
 
-
-		public Layer.LayerCollection Layer
+		public Layer.LayerCollection Layers
 		{
-			get { return this.graphLayers; }
+			get { return m_Graph.Layers; }
 		}
 
 		public int ActualLayer
@@ -299,7 +308,7 @@ namespace Altaxo.Graph
 			get { return m_ActualLayer; }
 			set
 			{
-				if(value<0 || value>=graphLayers.Count)
+				if(value<0 || value>=Layers.Count)
 					throw new ArgumentOutOfRangeException("ActualLayer",value,"Must between 0 and Layer.Count-1");
 
 				m_ActualLayer = value;
@@ -311,31 +320,39 @@ namespace Altaxo.Graph
 		{
 			get
 			{
-				return m_PageBounds;
+				return m_Graph.PageBounds;
 			}
 			set
 			{
-				m_PageBounds = value;
-				this.Invalidate();
+				m_Graph.PageBounds = value;
+				this.InvalidateGraph();
 			}
 		}
+
 		public virtual RectangleF PrintableBounds
 		{
 			get
 			{
-				return m_PrintableBounds;
+				return m_Graph.PrintableBounds;
 			}
 			set
 			{
-				m_PrintableBounds = value;
+				m_Graph.PrintableBounds = value;
+				this.InvalidateGraph();
 			}
 		}
 
+		/// <summary>
+		/// The size of the printable area in points (1/72 inch).
+		/// </summary>
 		public virtual SizeF PrintableSize
 		{
-			get { return new SizeF(m_PrintableBounds.Width,m_PrintableBounds.Height); }
+			get { return m_Graph.PrintableSize; }
 		}
 
+		/// <summary>
+		/// Zoom value of the graph view.
+		/// </summary>
 		public float Zoom
 		{
 			get
@@ -351,6 +368,11 @@ namespace Altaxo.Graph
 			} 
 		}
 
+		/// <summary>
+		/// Enables / disable the autozoom feature.
+		/// </summary>
+		/// <remarks>If autozoom is enables, the zoom factor is calculated depending on the size of the
+		/// graph view so that the graph fits best possible inside the view.</remarks>
 		public bool AutoZoom
 		{
 			get
@@ -408,8 +430,8 @@ namespace Altaxo.Graph
 		public PointF PixelToPrintableAreaCoordinates(PointF pixelc)
 		{
 			PointF r = PixelToPageCoordinates(pixelc);
-			r.X -= this.m_PrintableBounds.X;
-			r.Y -= this.m_PrintableBounds.Y;
+			r.X -= this.PrintableBounds.X;
+			r.Y -= this.PrintableBounds.Y;
 			return r;
 		}
 		protected virtual void DrawMargins(Graphics g)
@@ -513,15 +535,10 @@ namespace Altaxo.Graph
 				// adjust my origin coordintates to compensate
 				Point pt = this.AutoScrollPosition;
 				
-				// layers not deal with page margins, thats why translate coordinates
-				// so the printable area starts with (0,0)
-				g.TranslateTransform(this.m_PrintableBounds.X,this.m_PrintableBounds.Y);
 
-				int len = graphLayers.Count;
-				for(int i=0;i<len;i++)
-				{
-					((Altaxo.Graph.Layer)graphLayers[i]).Paint(g);
-				}
+				// Paint the graph now
+				g.TranslateTransform(PrintableBounds.X,PrintableBounds.Y); // translate the painting to the printable area
+				m_Graph.DoPaint(g,bForPrinting);
 
 				// finally, mark the selected objects
 				if(!bForPrinting && m_SelectedObjects.Count>0)
@@ -529,7 +546,7 @@ namespace Altaxo.Graph
 					foreach(GraphObject graphObject in m_SelectedObjects.Keys)
 					{
 						int nLayer = (int)m_SelectedObjects[graphObject];
-						g.DrawPath(Pens.Blue,Layer[nLayer].LayerToGraphCoordinates(graphObject.GetSelectionPath()));
+						g.DrawPath(Pens.Blue,Layers[nLayer].LayerToGraphCoordinates(graphObject.GetSelectionPath()));
 					}
 				}
 			}
@@ -601,7 +618,7 @@ namespace Altaxo.Graph
 			foreach(GraphObject graphObject in m_SelectedObjects.Keys)
 			{
 				int nLayer = (int)m_SelectedObjects[graphObject];
-				if(null!=graphObject.HitTest(Layer[nLayer].GraphToLayerCoordinates(graphXY)))
+				if(null!=graphObject.HitTest(Layers[nLayer].GraphToLayerCoordinates(graphXY)))
 				{
 					foundObject = graphObject;
 					return true;
@@ -626,9 +643,9 @@ namespace Altaxo.Graph
 			PointF mousePT = PixelToPrintableAreaCoordinates(pixelPos);
 			GraphicsPath gp;
 
-			for(int nLayer=0;nLayer<Layer.Count;nLayer++)
+			for(int nLayer=0;nLayer<Layers.Count;nLayer++)
 			{
-				Altaxo.Graph.Layer layer = Layer[nLayer];
+				Altaxo.Graph.Layer layer = Layers[nLayer];
 				foundObject = layer.HitTest(mousePT, out gp);
 				if(null!=foundObject)
 				{
@@ -652,7 +669,7 @@ namespace Altaxo.Graph
 			{
 				// now translate the graphics to graph units and paint all selection path
 				this.TranslateGraphicsToGraphUnits(g);
-				g.DrawPath(Pens.Blue,Layer[nLayer].LayerToGraphCoordinates(graphObject.GetSelectionPath())); // draw the selection path
+				g.DrawPath(Pens.Blue,Layers[nLayer].LayerToGraphCoordinates(graphObject.GetSelectionPath())); // draw the selection path
 			}		
 		}
 
@@ -764,7 +781,7 @@ namespace Altaxo.Graph
 					{
 						// get the layer number the graphObject belongs to
 						int nLayer = (int)grac.m_SelectedObjects[graphObject];
-						PointF layerDiff = grac.Layer[nLayer].GraphToLayerDifferences(graphDiff); // calculate the moving distance in layer units
+						PointF layerDiff = grac.Layers[nLayer].GraphToLayerDifferences(graphDiff); // calculate the moving distance in layer units
 						graphObject.X += layerDiff.X;
 						graphObject.Y += layerDiff.Y;
 						// Console.WriteLine("Moving mdiff={0}, gdiff={1}, ldiff={2}", mouseDiff,graphDiff,layerDiff);
@@ -781,7 +798,7 @@ namespace Altaxo.Graph
 						foreach(GraphObject graphObject in grac.m_SelectedObjects.Keys)
 						{
 							int nLayer = (int)grac.m_SelectedObjects[graphObject]; 						// get the layer number the graphObject belongs to
-							g.DrawPath(Pens.Blue,grac.Layer[nLayer].LayerToGraphCoordinates(graphObject.GetSelectionPath())); // draw the selection path
+							g.DrawPath(Pens.Blue,grac.Layers[nLayer].LayerToGraphCoordinates(graphObject.GetSelectionPath())); // draw the selection path
 						}
 					}
 					else  // if the graph was not frozen before - what reasons ever
@@ -901,7 +918,7 @@ namespace Altaxo.Graph
 					int nLayer = (int)grac.m_SelectedObjects[graphObject];
 					if(graphObject is Graph.ExtendedTextGraphObject)
 					{
-						TextControlDialog dlg = new TextControlDialog(grac.Layer[nLayer],(ExtendedTextGraphObject)graphObject);
+						TextControlDialog dlg = new TextControlDialog(grac.Layers[nLayer],(ExtendedTextGraphObject)graphObject);
 						if(DialogResult.OK==dlg.ShowDialog(grac))
 						{
 							if(!dlg.TextGraphObject.Empty)
@@ -911,7 +928,7 @@ namespace Altaxo.Graph
 							else // item is empty, so must be deleted in the layer and in the selectedObjects
 							{
 								grac.m_SelectedObjects.Remove(graphObject);
-								grac.Layer[nLayer].GraphObjects.Remove(graphObject);
+								grac.Layers[nLayer].GraphObjects.Remove(graphObject);
 							}
 
 							grac.InvalidateGraph(); // repaint the graph
@@ -1012,7 +1029,7 @@ namespace Altaxo.Graph
 			// get the page coordinates (in Point (1/72") units)
 			PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
 			// with knowledge of the current active layer, calculate the layer coordinates from them
-			PointF layerCoord = grac.Layer[grac.ActualLayer].GraphToLayerCoordinates(printAreaCoord);
+			PointF layerCoord = grac.Layers[grac.ActualLayer].GraphToLayerCoordinates(printAreaCoord);
 
 			ExtendedTextGraphObject tgo = new ExtendedTextGraphObject();
 			tgo.Position = layerCoord;
@@ -1020,13 +1037,13 @@ namespace Altaxo.Graph
 			// deselect the text tool
 			grac.CurrentGraphTool = GraphTools.ObjectPointer;
 
-			TextControlDialog dlg = new TextControlDialog(grac.Layer[grac.ActualLayer],tgo);
+			TextControlDialog dlg = new TextControlDialog(grac.Layers[grac.ActualLayer],tgo);
 			if(DialogResult.OK==dlg.ShowDialog(grac))
 			{
 				// add the resulting textgraphobject to the layer
 				if(!dlg.TextGraphObject.Empty)
 				{
-					grac.Layer[grac.ActualLayer].GraphObjects.Add(dlg.TextGraphObject);
+					grac.Layers[grac.ActualLayer].GraphObjects.Add(dlg.TextGraphObject);
 					grac.m_GraphPanel.Invalidate();
 				}
 			}

@@ -284,6 +284,10 @@ namespace Altaxo.Graph
 #endregion // Layer Properties
 
 
+		/// <summary>
+		///  Only indended to use by LayerCollection! Sets the parent layer collection for this layer.
+		/// </summary>
+		/// <param name="lc">The layer collection this layer belongs to.</param>
 		protected void SetParentLayerCollection(LayerCollection lc)
 		{
 			m_ParentLayerCollection = lc;
@@ -513,6 +517,45 @@ namespace Altaxo.Graph
 
 		public class LayerCollection : System.Collections.CollectionBase
 		{
+			/// <summary>
+			/// The parent object this LayerCollection belongs to.
+			/// </summary>
+			protected object m_Parent=null;
+
+			/// <summary>
+			/// Creates an empty LayerCollection without parent.
+			/// </summary>
+			public LayerCollection()
+			{
+			}
+
+			/// <summary>
+			/// Creates an empty LayerCollection with the parent <paramref name="parent"/>.
+			/// </summary>
+			/// <param name="parent">The parent of this LayerCollection.</param>
+			public LayerCollection(object parent)
+			{
+				m_Parent = parent;
+			}
+
+			/// <summary>
+			/// The parent of this LayerCollection.
+			/// </summary>
+			public object Parent
+			{
+				get { return m_Parent; }
+			}
+
+			/// <summary>
+			/// The parent of this LayerCollection as GraphDocument, or null if the parent is
+			/// null or not a GraphDocument.
+			/// </summary>
+			public GraphDocument ParentGraph
+			{
+				get { return m_Parent as GraphDocument; }
+			}
+
+
 			public Layer this[int i]
 			{
 				get { return (Layer)base.InnerList[i]; }
