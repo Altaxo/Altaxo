@@ -202,4 +202,13 @@ namespace Altaxo.Main.Commands
 		((Form)WorkbenchSingleton.Workbench).Close();		}
 	}
 
+  public class HelpAboutAltaxo : AbstractMenuCommand
+  {
+    public override void Run()
+    {
+      Altaxo.Main.AboutDialog dlg = new Altaxo.Main.AboutDialog();
+      dlg.ShowDialog(((Form)WorkbenchSingleton.Workbench));
+    }
+  }
+
 }

@@ -31,7 +31,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 	/// </summary>
 	public class Workbench1 : DefaultWorkbench, Altaxo.Main.GUI.IWorkbench
 	{
-		readonly static string mainMenuPath    = "/SharpDevelop/Workbench/MainMenu";
+		readonly static string mainMenuPath    = "/Altaxo/Workbench/MainMenu";
 		readonly static string viewContentPath = "/SharpDevelop/Workbench/Views";
 
 		#region "Serialization"
