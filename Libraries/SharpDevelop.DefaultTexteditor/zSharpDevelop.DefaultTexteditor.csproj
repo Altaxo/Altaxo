@@ -317,6 +317,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\Editor\QuickClassBrowserPanel.resx"
+                    DependentUpon = "QuickClassBrowserPanel.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Gui\Editor\SharpDevelopTextAreaControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

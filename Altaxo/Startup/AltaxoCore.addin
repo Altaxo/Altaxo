@@ -911,6 +911,11 @@
 				description="${res:XML.MainMenu.HelpMenu.About.Description}" class="ICSharpCode.SharpDevelop.Commands.AboutSharpDevelop" />
 		</MenuItem>
 	</Extension>
+		<Extension path="/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu">
+				<MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}"
+					class="Altaxo.Worksheet.Commands.RenameColumn" />
+	</Extension>
+
 	<Extension path="/SharpDevelop/Workbench/SharpDevelopSideBar/ContextMenu">
 		<Conditional ownerstate="TabCanBeDeleted" action="Disable">
 			<MenuItem id="DeleteTab" label="${res:SideBarComponent.ContextMenu.DeleteTab}" class="ICSharpCode.SharpDevelop.Commands.SideBarDeleteTabHeader" />

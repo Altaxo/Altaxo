@@ -21,11 +21,13 @@
 #endregion
 
 using System;
+using System.Windows.Forms;
 using Altaxo;
 using Altaxo.Main;
 using Altaxo.Main.GUI;
 using Altaxo.Worksheet;
 using Altaxo.Worksheet.GUI;
+
 
 namespace Altaxo.Worksheet.GUI
 {
@@ -76,6 +78,17 @@ namespace Altaxo.Worksheet.GUI
     }
 
     #endregion // Constructors
+
+
+    #region Context menu handlers
+    protected override void OnRightClickDataColumnHeader(ClickedCellInfo clickedCell)
+    {
+      ICSharpCode.SharpDevelop.Services.MenuService menuService = (ICSharpCode.SharpDevelop.Services.MenuService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.MenuService));
+      ContextMenu mnu = menuService.CreateContextMenu(this, "/Altaxo/Views/Worksheet/DataColumnHeader/ContextMenu");
+      mnu.Show(this.Control,clickedCell.MousePositionFirstDown);
+    }
+
+    #endregion
 
     #region ICSharpCode.SharpDevelop.Gui
 

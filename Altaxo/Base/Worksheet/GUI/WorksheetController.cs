@@ -131,7 +131,7 @@ namespace Altaxo.Worksheet.GUI
     protected int m_NumberOfPropertyCols; // cached number of property  columnsof the table
     
   
-    
+    private ClickedCellInfo m_MouseInfo = new ClickedCellInfo();
 
     private Point m_MouseDownPosition; // holds the position of a double click
     private int  m_DragColumnWidth_ColumnNumber; // stores the column number if mouse hovers over separator
@@ -2235,6 +2235,8 @@ namespace Altaxo.Worksheet.GUI
 
     public void EhView_TableAreaMouseUp(System.Windows.Forms.MouseEventArgs e)
     {
+      this.m_MouseInfo.MouseUp(e,Control.MouseButtons);
+      
       if(this.m_DragColumnWidth_InCapture)
       {
         int sizediff = e.X - this.m_DragColumnWidth_OriginalPos;
@@ -2270,6 +2272,8 @@ namespace Altaxo.Worksheet.GUI
 
     public void EhView_TableAreaMouseDown(System.Windows.Forms.MouseEventArgs e)
     {
+      this.m_MouseInfo.MouseDown(e);
+
       // base.OnMouseDown(e);
       this.m_MouseDownPosition = new Point(e.X, e.Y);
       this.ReadCellEditContent();
@@ -2359,49 +2363,124 @@ namespace Altaxo.Worksheet.GUI
       } // end else
     }
 
-    public void EhView_TableAreaMouseClick(EventArgs e)
+    #region MouseClick functions
+    protected virtual void OnLeftClickDataCell(ClickedCellInfo clickedCell)
     {
-      ClickedCellInfo clickedCell = new ClickedCellInfo(this,this.m_MouseDownPosition);
+      //m_CellEditControl = new TextBox();
+      m_CellEdit_EditedCell=clickedCell;
+      m_CellEditControl.Parent = View.TableViewWindow;
+      m_CellEditControl.Location = clickedCell.CellRectangle.Location;
+      m_CellEditControl.Size = clickedCell.CellRectangle.Size;
+      m_CellEditControl.LostFocus += new System.EventHandler(this.OnTextBoxLostControl);
+      this.SetCellEditContent();
+    }
 
-      switch(clickedCell.ClickedArea)
+    protected virtual void OnLeftClickPropertyCell(ClickedCellInfo clickedCell)
+    {
+      m_CellEdit_EditedCell=clickedCell;
+      m_CellEditControl.Parent = View.TableViewWindow;
+      m_CellEditControl.Location = clickedCell.CellRectangle.Location;
+      m_CellEditControl.Size = clickedCell.CellRectangle.Size;
+      m_CellEditControl.LostFocus += new System.EventHandler(this.OnTextBoxLostControl);
+      this.SetCellEditContent();
+    }
+
+    protected virtual void OnLeftClickDataColumnHeader(ClickedCellInfo clickedCell)
+    {
+      if(!this.m_DragColumnWidth_InCapture)
       {
-        case ClickedAreaType.DataCell:
+        bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
+        bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
+            
+        bool bWasSelectedBefore = this.SelectedDataColumns.IsSelected(clickedCell.Column);
+
+        /*
+            if(m_LastSelectionType==SelectionType.DataRowSelection && !bControlKey)
+              m_SelectedRows.Clear(); // if we click a column, we remove row selections
+            */
+
+        if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.DataColumnSelection && m_LastSelectionType!=SelectionType.PropertyRowSelection && !bControlKey))
         {
-          //m_CellEditControl = new TextBox();
-          m_CellEdit_EditedCell=clickedCell;
-          m_CellEditControl.Parent = View.TableViewWindow;
-          m_CellEditControl.Location = clickedCell.CellRectangle.Location;
-          m_CellEditControl.Size = clickedCell.CellRectangle.Size;
-          m_CellEditControl.LostFocus += new System.EventHandler(this.OnTextBoxLostControl);
-          this.SetCellEditContent();
+          m_SelectedDataColumns.Clear();
+          m_SelectedDataRows.Clear(); // if we click a column, we remove row selections
+          m_SelectedPropertyColumns.Clear();
+          m_SelectedPropertyRows.Clear();
         }
-          break;
-        case ClickedAreaType.PropertyCell:
+
+        if(m_LastSelectionType==SelectionType.PropertyRowSelection)
         {
-          m_CellEdit_EditedCell=clickedCell;
-          m_CellEditControl.Parent = View.TableViewWindow;
-          m_CellEditControl.Location = clickedCell.CellRectangle.Location;
-          m_CellEditControl.Size = clickedCell.CellRectangle.Size;
-          m_CellEditControl.LostFocus += new System.EventHandler(this.OnTextBoxLostControl);
-          this.SetCellEditContent();
+          m_SelectedPropertyRows.Select(clickedCell.Column,bShiftKey,bControlKey);
+          m_LastSelectionType=SelectionType.PropertyRowSelection;
         }
-          break;
-        case ClickedAreaType.PropertyColumnHeader:
+          // if the last selection has only selected any property cells then add the current selection to the property rows
+        else if(!this.AreDataCellsSelected && this.ArePropertyCellsSelected && bControlKey)
         {
-          bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
-          bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
+          m_SelectedPropertyRows.Select(clickedCell.Column,bShiftKey,bControlKey);
+          m_LastSelectionType = SelectionType.PropertyRowSelection;
+        }
+        else
+        {
+          if(this.SelectedDataColumns.Count!=0 || !bWasSelectedBefore)
+            m_SelectedDataColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
+          m_LastSelectionType = SelectionType.DataColumnSelection;
+        }
+
+        this.View.TableAreaInvalidate();
+      }
+    }
+
+    protected virtual void OnLeftClickDataRowHeader(ClickedCellInfo clickedCell)
+    {
+      bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
+      bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
+
+      bool bWasSelectedBefore = this.SelectedDataRows.IsSelected(clickedCell.Row);
+
+      /*
+          if(m_LastSelectionType==SelectionType.DataColumnSelection && !bControlKey)
+            m_SelectedColumns.Clear(); // if we click a column, we remove row selections
+          */
+      if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.DataRowSelection && !bControlKey))
+      {
+        m_SelectedDataColumns.Clear(); // if we click a column, we remove row selections
+        m_SelectedDataRows.Clear();
+        m_SelectedPropertyColumns.Clear();
+        m_SelectedPropertyRows.Clear();
+      }
+
+      // if we had formerly selected property rows, we clear them but add them before as column selection
+      if(m_SelectedPropertyRows.Count>0)
+      {
+        if(m_SelectedDataColumns.Count==0)
+        {
+          for(int kk=0;kk<m_SelectedPropertyRows.Count;kk++)
+            m_SelectedDataColumns.Add(m_SelectedPropertyRows[kk]);
+        }
+        m_SelectedPropertyRows.Clear();
+      }
           
-          bool bWasSelectedBefore = this.SelectedPropertyColumns.IsSelected(clickedCell.Column);
+      if(this.SelectedDataRows.Count!=0 || !bWasSelectedBefore)
+        m_SelectedDataRows.Select(clickedCell.Row,bShiftKey,bControlKey);
+      m_LastSelectionType = SelectionType.DataRowSelection;
+      this.View.TableAreaInvalidate();
+    }
 
-          if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.PropertyColumnSelection && !bControlKey))
-          {
-            m_SelectedDataColumns.Clear();
-            m_SelectedDataRows.Clear(); // if we click a column, we remove row selections
-            m_SelectedPropertyColumns.Clear();
-            m_SelectedPropertyRows.Clear();
-          }
+    protected virtual void OnLeftClickPropertyColumnHeader(ClickedCellInfo clickedCell)
+    {
+      bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
+      bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
+          
+      bool bWasSelectedBefore = this.SelectedPropertyColumns.IsSelected(clickedCell.Column);
 
-          /*
+      if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.PropertyColumnSelection && !bControlKey))
+      {
+        m_SelectedDataColumns.Clear();
+        m_SelectedDataRows.Clear(); // if we click a column, we remove row selections
+        m_SelectedPropertyColumns.Clear();
+        m_SelectedPropertyRows.Clear();
+      }
+
+      /*
           if(m_LastSelectionType==SelectionType.DataRowSelection && !bControlKey)
             m_SelectedRows.Clear(); // if we click a column, we remove row selections
           if(m_LastSelectionType==SelectionType.DataRowSelection && !bControlKey)
@@ -2410,93 +2489,108 @@ namespace Altaxo.Worksheet.GUI
             m_SelectedColumns.Clear(); // if we click a column, we remove row selections
           */
 
-          if(this.SelectedPropertyColumns.Count!=0 || !bWasSelectedBefore)
-            m_SelectedPropertyColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
+      if(this.SelectedPropertyColumns.Count!=0 || !bWasSelectedBefore)
+        m_SelectedPropertyColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
           
-          m_LastSelectionType = SelectionType.PropertyColumnSelection;
-          this.View.TableAreaInvalidate();
-        }
-          break;
-        case ClickedAreaType.DataColumnHeader:
+      m_LastSelectionType = SelectionType.PropertyColumnSelection;
+      this.View.TableAreaInvalidate();
+    }
+
+    protected virtual void OnLeftClickTableHeader(ClickedCellInfo clickedCell)
+    {
+    }
+
+    protected virtual void OnLeftClickOutsideAll(ClickedCellInfo clickedCell)
+    {
+    }
+
+    protected virtual void OnRightClickDataCell(ClickedCellInfo clickedCell)
+    {
+    }
+
+    protected virtual void OnRightClickPropertyCell(ClickedCellInfo clickedCell)
+    {
+    }
+
+    protected virtual void OnRightClickDataColumnHeader(ClickedCellInfo clickedCell)
+    {
+    }
+
+    protected virtual void OnRightClickDataRowHeader(ClickedCellInfo clickedCell)
+    {
+    }
+
+    protected virtual void OnRightClickPropertyColumnHeader(ClickedCellInfo clickedCell)
+    {
+    }
+    protected virtual void OnRightClickTableHeader(ClickedCellInfo clickedCell)
+    {
+    }
+
+    protected virtual void OnRightClickOutsideAll(ClickedCellInfo clickedCell)
+    {
+    }
+    #endregion
+
+    public void EhView_TableAreaMouseClick(EventArgs e)
+    {
+      m_MouseInfo.MouseClick(this, this.m_MouseDownPosition);
+
+      //ClickedCellInfo clickedCell = new ClickedCellInfo(this,this.m_MouseDownPosition);
+
+      if(m_MouseInfo.MouseButtonFirstDown==MouseButtons.Left)
+      {
+        switch(m_MouseInfo.ClickedArea)
         {
-          if(!this.m_DragColumnWidth_InCapture)
-          {
-            bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
-            bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
-            
-            bool bWasSelectedBefore = this.SelectedDataColumns.IsSelected(clickedCell.Column);
-
-            /*
-            if(m_LastSelectionType==SelectionType.DataRowSelection && !bControlKey)
-              m_SelectedRows.Clear(); // if we click a column, we remove row selections
-            */
-
-            if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.DataColumnSelection && m_LastSelectionType!=SelectionType.PropertyRowSelection && !bControlKey))
-            {
-              m_SelectedDataColumns.Clear();
-              m_SelectedDataRows.Clear(); // if we click a column, we remove row selections
-              m_SelectedPropertyColumns.Clear();
-              m_SelectedPropertyRows.Clear();
-            }
-
-            if(m_LastSelectionType==SelectionType.PropertyRowSelection)
-            {
-              m_SelectedPropertyRows.Select(clickedCell.Column,bShiftKey,bControlKey);
-              m_LastSelectionType=SelectionType.PropertyRowSelection;
-            }
-              // if the last selection has only selected any property cells then add the current selection to the property rows
-            else if(!this.AreDataCellsSelected && this.ArePropertyCellsSelected && bControlKey)
-            {
-              m_SelectedPropertyRows.Select(clickedCell.Column,bShiftKey,bControlKey);
-              m_LastSelectionType = SelectionType.PropertyRowSelection;
-            }
-            else
-            {
-              if(this.SelectedDataColumns.Count!=0 || !bWasSelectedBefore)
-                m_SelectedDataColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
-              m_LastSelectionType = SelectionType.DataColumnSelection;
-            }
-
-            this.View.TableAreaInvalidate();
-          }
+          case ClickedAreaType.DataCell:
+            OnLeftClickDataCell(m_MouseInfo);
+            break;
+          case ClickedAreaType.PropertyCell:
+            OnLeftClickPropertyCell(m_MouseInfo);
+            break;
+          case ClickedAreaType.PropertyColumnHeader:
+            OnLeftClickPropertyColumnHeader(m_MouseInfo);
+            break;
+          case ClickedAreaType.DataColumnHeader:
+            OnLeftClickDataColumnHeader(m_MouseInfo);
+            break;
+          case ClickedAreaType.DataRowHeader:
+            OnLeftClickDataRowHeader(m_MouseInfo);
+            break;
+          case ClickedAreaType.TableHeader:
+            OnLeftClickTableHeader(m_MouseInfo);
+            break;
+          case ClickedAreaType.OutsideAll:
+            OnLeftClickOutsideAll(m_MouseInfo);
+            break;
         }
-          break;
-        case ClickedAreaType.DataRowHeader:
+      }
+      else if(m_MouseInfo.MouseButtonFirstDown==MouseButtons.Right)
+      {
+        switch(m_MouseInfo.ClickedArea)
         {
-          bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
-          bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
-
-          bool bWasSelectedBefore = this.SelectedDataRows.IsSelected(clickedCell.Row);
-
-          /*
-          if(m_LastSelectionType==SelectionType.DataColumnSelection && !bControlKey)
-            m_SelectedColumns.Clear(); // if we click a column, we remove row selections
-          */
-          if((!bControlKey && !bShiftKey) || (m_LastSelectionType!=SelectionType.DataRowSelection && !bControlKey))
-          {
-            m_SelectedDataColumns.Clear(); // if we click a column, we remove row selections
-            m_SelectedDataRows.Clear();
-            m_SelectedPropertyColumns.Clear();
-            m_SelectedPropertyRows.Clear();
-          }
-
-          // if we had formerly selected property rows, we clear them but add them before as column selection
-          if(m_SelectedPropertyRows.Count>0)
-          {
-            if(m_SelectedDataColumns.Count==0)
-            {
-              for(int kk=0;kk<m_SelectedPropertyRows.Count;kk++)
-                m_SelectedDataColumns.Add(m_SelectedPropertyRows[kk]);
-            }
-            m_SelectedPropertyRows.Clear();
-          }
-          
-          if(this.SelectedDataRows.Count!=0 || !bWasSelectedBefore)
-            m_SelectedDataRows.Select(clickedCell.Row,bShiftKey,bControlKey);
-          m_LastSelectionType = SelectionType.DataRowSelection;
-          this.View.TableAreaInvalidate();
+          case ClickedAreaType.DataCell:
+            OnRightClickDataCell(m_MouseInfo);
+            break;
+          case ClickedAreaType.PropertyCell:
+            OnRightClickPropertyCell(m_MouseInfo);
+            break;
+          case ClickedAreaType.PropertyColumnHeader:
+            OnRightClickPropertyColumnHeader(m_MouseInfo);
+            break;
+          case ClickedAreaType.DataColumnHeader:
+            OnRightClickDataColumnHeader(m_MouseInfo);
+            break;
+          case ClickedAreaType.DataRowHeader:
+            OnRightClickDataRowHeader(m_MouseInfo);
+            break;
+          case ClickedAreaType.TableHeader:
+            OnRightClickTableHeader(m_MouseInfo);
+            break;
+          case ClickedAreaType.OutsideAll:
+            OnRightClickOutsideAll(m_MouseInfo);
+            break;
         }
-          break;
       }
     }
 
@@ -2778,187 +2872,6 @@ namespace Altaxo.Worksheet.GUI
     }
 
     #endregion
-
-    #region Class ClickedCellInfo
-
-
-
-    /// <summary>The type of area we have clicked into, used by ClickedCellInfo.</summary>
-    public enum ClickedAreaType 
-    { 
-      /// <summary>Outside of all relevant areas.</summary>
-      OutsideAll,
-      /// <summary>On the table header (top left corner of the data grid).</summary>
-      TableHeader,
-      /// <summary>Inside a data cell.</summary>
-      DataCell,
-      /// <summary>Inside a property cell.</summary>
-      PropertyCell,
-      /// <summary>On the column header.</summary>
-      DataColumnHeader,
-      /// <summary>On the row header.</summary>
-      DataRowHeader,
-      /// <summary>On the property column header.</summary>
-      PropertyColumnHeader
-    }
-
-
-    /// <remarks>
-    /// ClickedCellInfo retrieves (from mouse coordinates of a click), which cell has clicked onto. 
-    /// </remarks>
-    public struct ClickedCellInfo
-    {
-
-      /// <summary>The enclosing Rectangle of the clicked cell</summary>
-      private Rectangle m_CellRectangle;
-
-      /// <summary>The data row clicked onto.</summary>
-      private int m_Row;
-      /// <summary>The data column number clicked onto.</summary>
-      private int m_Column;
-
-      /// <summary>What have been clicked onto.</summary>
-      private ClickedAreaType m_ClickedArea;
-
-
-      /// <value>The enclosing Rectangle of the clicked cell</value>
-      public Rectangle CellRectangle { get { return m_CellRectangle; }}
-      /// <value>The row number clicked onto.</value>
-      public int Row 
-      {
-        get { return m_Row; }
-        set { m_Row = value; }
-      }
-      /// <value>The column number clicked onto.</value>
-      public int Column 
-      {
-        get { return m_Column; }
-        set { m_Column = value; }
-      }
-      /// <value>The type of area clicked onto.</value>
-      public ClickedAreaType ClickedArea { get { return m_ClickedArea; }}
- 
-      /// <summary>
-      /// Retrieves the column number clicked onto 
-      /// </summary>
-      /// <param name="dg">The parent data grid</param>
-      /// <param name="mouseCoord">The coordinates of the mouse click.</param>
-      /// <param name="cellRect">The function sets the x-properties (X and Width) of the cell rectangle.</param>
-      /// <returns>Either -1 when clicked on the row header area, column number when clicked in the column range, or int.MinValue when clicked outside of all.</returns>
-      public static int GetColumnNumber(WorksheetController dg, Point mouseCoord, ref Rectangle cellRect)
-      {
-        int firstVisibleColumn = dg.FirstVisibleColumn;
-        int actualColumnRight = dg.m_TableLayout.RowHeaderStyle.Width;
-        int columnCount = dg.DataTable.DataColumns.ColumnCount;
-
-        if(mouseCoord.X<actualColumnRight)
-        {
-          cellRect.X=0; cellRect.Width=actualColumnRight;
-          return -1;
-        }
-
-        for(int i=firstVisibleColumn;i<columnCount;i++)
-        {
-          cellRect.X=actualColumnRight;
-          Altaxo.Worksheet.ColumnStyle cs = dg.GetDataColumnStyle(i);
-          actualColumnRight += cs.Width;
-          if(actualColumnRight>mouseCoord.X)
-          {
-            cellRect.Width = cs.Width;
-            return i;
-          }
-        } // end for
-        return int.MinValue;
-      }
-
-      /// <summary>
-      /// Returns the row number of the clicked cell.
-      /// </summary>
-      /// <param name="dg">The parent WorksheetController.</param>
-      /// <param name="mouseCoord">The mouse coordinates of the click.</param>
-      /// <param name="cellRect">Returns the bounding rectangle of the clicked cell.</param>
-      /// <param name="bPropertyCol">True if clicked on either the property column header or a property column, else false.</param>
-      /// <returns>The row number of the clicked cell, or -1 if clicked on the column header.</returns>
-      /// <remarks>If clicked onto a property cell, the function returns the property column number.</remarks>
-      public static int GetRowNumber(WorksheetController dg, Point mouseCoord, ref Rectangle cellRect, out bool bPropertyCol)
-      {
-        int firstVisibleColumn = dg.FirstVisibleColumn;
-        int actualColumnRight = dg.m_TableLayout.RowHeaderStyle.Width;
-        int columnCount = dg.DataTable.DataColumns.ColumnCount;
-
-        if(mouseCoord.Y<dg.m_TableLayout.ColumnHeaderStyle.Height)
-        {
-          cellRect.Y=0; cellRect.Height=dg.m_TableLayout.ColumnHeaderStyle.Height;
-          bPropertyCol=false;
-          return -1;
-        }
-
-        if(mouseCoord.Y<dg.VerticalPositionOfFirstVisibleDataRow && dg.VisiblePropertyColumns>0)
-        {
-          // calculate the raw row number
-          int rawrow = (int)Math.Floor((mouseCoord.Y-dg.m_TableLayout.ColumnHeaderStyle.Height)/(double)dg.m_TableLayout.PropertyColumnHeaderStyle.Height);
-
-          cellRect.Y= dg.m_TableLayout.ColumnHeaderStyle.Height + rawrow * dg.m_TableLayout.PropertyColumnHeaderStyle.Height;
-          cellRect.Height = dg.m_TableLayout.PropertyColumnHeaderStyle.Height;
-
-          bPropertyCol=true;
-          return dg.FirstVisiblePropertyColumn+rawrow;
-        }
-        else
-        {
-          int rawrow = (int)Math.Floor((mouseCoord.Y-dg.VerticalPositionOfFirstVisibleDataRow)/(double)dg.m_TableLayout.RowHeaderStyle.Height);
-
-          cellRect.Y= dg.VerticalPositionOfFirstVisibleDataRow + rawrow * dg.m_TableLayout.RowHeaderStyle.Height;
-          cellRect.Height = dg.m_TableLayout.RowHeaderStyle.Height;
-          bPropertyCol=false;
-          return dg.FirstVisibleTableRow + rawrow;
-        }
-      }
-
-
-
-
-      /// <summary>
-      /// Creates the ClickedCellInfo from the data grid and the mouse coordinates of the click.
-      /// </summary>
-      /// <param name="dg">The data grid.</param>
-      /// <param name="mouseCoord">The mouse coordinates of the click.</param>
-      public ClickedCellInfo(WorksheetController dg, Point mouseCoord)
-      {
-
-        bool bIsPropertyColumn=false;
-        m_CellRectangle = new Rectangle(0,0,0,0);
-        m_Column = GetColumnNumber(dg,mouseCoord, ref m_CellRectangle);
-        m_Row    = GetRowNumber(dg,mouseCoord,ref m_CellRectangle, out bIsPropertyColumn);
-
-        if(bIsPropertyColumn)
-        {
-          if(m_Column==-1)
-            m_ClickedArea = ClickedAreaType.PropertyColumnHeader;
-          else if(m_Column>=0)
-            m_ClickedArea = ClickedAreaType.PropertyCell;
-          else
-            m_ClickedArea = ClickedAreaType.OutsideAll;
-
-          int h=m_Column; m_Column = m_Row; m_Row = h; // Swap columns and rows since it is a property column
-        }
-        else // it is not a property related cell
-        {
-          if(m_Row==-1 && m_Column==-1)
-            m_ClickedArea = ClickedAreaType.TableHeader;
-          else if(m_Row==-1 && m_Column>=0)
-            m_ClickedArea = ClickedAreaType.DataColumnHeader;
-          else if(m_Row>=0 && m_Column==-1)
-            m_ClickedArea = ClickedAreaType.DataRowHeader;
-          else if(m_Row>=0 && m_Column>=0)
-            m_ClickedArea = ClickedAreaType.DataCell;
-          else
-            m_ClickedArea = ClickedAreaType.OutsideAll;
-        }
-      }
-    } // end of class ClickedCellInfo
-
-    #endregion Class ClickedCellInfo
 
     #region IMVCController
     /// <summary>

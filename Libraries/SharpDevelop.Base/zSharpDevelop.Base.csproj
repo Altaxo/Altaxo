@@ -889,6 +889,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\Pads\ProjectBrowser\ProjectBrowserView.resx"
+                    DependentUpon = "ProjectBrowserView.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Gui\Pads\ProjectBrowser\BrowserNode\AbstractBrowserNode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
