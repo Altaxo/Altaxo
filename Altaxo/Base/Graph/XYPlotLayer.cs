@@ -1759,17 +1759,20 @@ namespace Altaxo.Graph
       get { return m_xAxis; }
       set
       {
-        if(null!=m_xAxis)
-          m_xAxis.Changed -= new System.EventHandler(this.OnXAxisChangedEventHandler);
+        if(!object.ReferenceEquals(m_xAxis,value))
+        {
+          if(null!=m_xAxis)
+            m_xAxis.Changed -= new System.EventHandler(this.OnXAxisChangedEventHandler);
         
-        m_xAxis = value;
+          m_xAxis = value;
 
-        if(null!=m_xAxis)
-          m_xAxis.Changed += new System.EventHandler(this.OnXAxisChangedEventHandler);
+          if(null!=m_xAxis)
+            m_xAxis.Changed += new System.EventHandler(this.OnXAxisChangedEventHandler);
 
 
-        // now we have to inform all the PlotItems that a new axis was loaded
-        RescaleXAxis();
+          // now we have to inform all the PlotItems that a new axis was loaded
+          RescaleXAxis();
+        }
       }
     }
 
@@ -1806,17 +1809,20 @@ namespace Altaxo.Graph
       get { return m_yAxis; }
       set
       {
-        if(null!=m_yAxis)
-          m_yAxis.Changed -= new System.EventHandler(this.OnYAxisChangedEventHandler);
+        if(!object.ReferenceEquals(m_yAxis,value))
+        {
+          if(null!=m_yAxis)
+            m_yAxis.Changed -= new System.EventHandler(this.OnYAxisChangedEventHandler);
         
-        m_yAxis = value;
+          m_yAxis = value;
 
-        if(null!=m_yAxis)
-          m_yAxis.Changed += new System.EventHandler(this.OnYAxisChangedEventHandler);
+          if(null!=m_yAxis)
+            m_yAxis.Changed += new System.EventHandler(this.OnYAxisChangedEventHandler);
 
 
-        // now we have to inform all the PlotAssociations that a new axis was loaded
-        RescaleYAxis();
+          // now we have to inform all the PlotAssociations that a new axis was loaded
+          RescaleYAxis();
+        }
       }
     }
 

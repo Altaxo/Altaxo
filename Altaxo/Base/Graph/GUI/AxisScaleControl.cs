@@ -94,14 +94,14 @@ namespace Altaxo.Graph.GUI
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(32, 16);
       this.label4.TabIndex = 12;
-      this.label4.Text = "Type";
+      this.label4.Text = "Type:";
       // 
       // AxisScaleControl
       // 
       this.Controls.Add(this.m_Scale_cbType);
       this.Controls.Add(this.label4);
       this.Name = "AxisScaleControl";
-      this.Size = new System.Drawing.Size(232, 184);
+      this.Size = new System.Drawing.Size(232, 48);
       this.ResumeLayout(false);
 
     }
@@ -153,7 +153,7 @@ namespace Altaxo.Graph.GUI
       // find a good place for this object
       // right below the type
       this.Controls.Add(_boundaryControl);
-      _boundaryControl.Location = new Point(0,this.m_Scale_cbType.Bounds.Bottom);
+      _boundaryControl.Location = new Point(0,this.m_Scale_cbType.Bounds.Bottom + this.m_Scale_cbType.Bounds.Height);
       this.Size = new Size(Math.Max(this.m_Scale_cbType.Bounds.Right,_boundaryControl.Bounds.Right),
         _boundaryControl.Bounds.Bottom);
     }

@@ -104,7 +104,7 @@ namespace Altaxo.Graph.Axes.Scaling
 
     #region ICloneable Members
 
-    public virtual object Clone()
+    public override  object Clone()
     {
       LogarithmicAxisRescaleConditions result = new LogarithmicAxisRescaleConditions();
       result.CopyFrom(this);

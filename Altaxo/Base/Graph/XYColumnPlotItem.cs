@@ -181,8 +181,8 @@ namespace Altaxo.Graph
             {
               m_PlotAssociation.ParentObject = this;
               m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
-              m_PlotAssociation.XBoundariesChanged -= new PhysicalBoundaries.BoundaryChangedHandler(EhXBoundariesChanged);
-              m_PlotAssociation.YBoundariesChanged -= new PhysicalBoundaries.BoundaryChangedHandler(EhYBoundariesChanged);
+              m_PlotAssociation.XBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(EhXBoundariesChanged);
+              m_PlotAssociation.YBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(EhYBoundariesChanged);
             }
 
             OnDataChanged();

@@ -80,7 +80,7 @@ namespace Altaxo.Graph.GUI
       // 
       // lblLabel1
       // 
-      this.lblLabel1.Location = new System.Drawing.Point(8, 8);
+      this.lblLabel1.Location = new System.Drawing.Point(8, 0);
       this.lblLabel1.Name = "lblLabel1";
       this.lblLabel1.Size = new System.Drawing.Size(64, 20);
       this.lblLabel1.TabIndex = 0;
@@ -88,7 +88,7 @@ namespace Altaxo.Graph.GUI
       // 
       // edText1
       // 
-      this.edText1.Location = new System.Drawing.Point(216, 8);
+      this.edText1.Location = new System.Drawing.Point(216, 0);
       this.edText1.Name = "edText1";
       this.edText1.TabIndex = 1;
       this.edText1.Text = "textBox1";
@@ -96,7 +96,7 @@ namespace Altaxo.Graph.GUI
       // 
       // cbCombo1
       // 
-      this.cbCombo1.Location = new System.Drawing.Point(80, 8);
+      this.cbCombo1.Location = new System.Drawing.Point(80, 0);
       this.cbCombo1.Name = "cbCombo1";
       this.cbCombo1.Size = new System.Drawing.Size(121, 21);
       this.cbCombo1.TabIndex = 2;
@@ -105,7 +105,7 @@ namespace Altaxo.Graph.GUI
       // 
       // cbCombo2
       // 
-      this.cbCombo2.Location = new System.Drawing.Point(80, 48);
+      this.cbCombo2.Location = new System.Drawing.Point(80, 40);
       this.cbCombo2.Name = "cbCombo2";
       this.cbCombo2.Size = new System.Drawing.Size(121, 21);
       this.cbCombo2.TabIndex = 5;
@@ -114,7 +114,7 @@ namespace Altaxo.Graph.GUI
       // 
       // edText2
       // 
-      this.edText2.Location = new System.Drawing.Point(216, 48);
+      this.edText2.Location = new System.Drawing.Point(216, 40);
       this.edText2.Name = "edText2";
       this.edText2.TabIndex = 4;
       this.edText2.Text = "textBox2";
@@ -122,7 +122,7 @@ namespace Altaxo.Graph.GUI
       // 
       // lblLabel2
       // 
-      this.lblLabel2.Location = new System.Drawing.Point(8, 48);
+      this.lblLabel2.Location = new System.Drawing.Point(8, 40);
       this.lblLabel2.Name = "lblLabel2";
       this.lblLabel2.Size = new System.Drawing.Size(64, 20);
       this.lblLabel2.TabIndex = 3;
@@ -130,7 +130,7 @@ namespace Altaxo.Graph.GUI
       // 
       // cbCombo3
       // 
-      this.cbCombo3.Location = new System.Drawing.Point(80, 88);
+      this.cbCombo3.Location = new System.Drawing.Point(80, 80);
       this.cbCombo3.Name = "cbCombo3";
       this.cbCombo3.Size = new System.Drawing.Size(121, 21);
       this.cbCombo3.TabIndex = 8;
@@ -139,7 +139,7 @@ namespace Altaxo.Graph.GUI
       // 
       // edText3
       // 
-      this.edText3.Location = new System.Drawing.Point(216, 88);
+      this.edText3.Location = new System.Drawing.Point(216, 80);
       this.edText3.Name = "edText3";
       this.edText3.TabIndex = 7;
       this.edText3.Text = "textBox3";
@@ -147,7 +147,7 @@ namespace Altaxo.Graph.GUI
       // 
       // lblLabel3
       // 
-      this.lblLabel3.Location = new System.Drawing.Point(8, 88);
+      this.lblLabel3.Location = new System.Drawing.Point(8, 80);
       this.lblLabel3.Name = "lblLabel3";
       this.lblLabel3.Size = new System.Drawing.Size(64, 20);
       this.lblLabel3.TabIndex = 6;
@@ -165,7 +165,7 @@ namespace Altaxo.Graph.GUI
       this.Controls.Add(this.edText1);
       this.Controls.Add(this.lblLabel1);
       this.Name = "OrgEndSpanControl";
-      this.Size = new System.Drawing.Size(328, 120);
+      this.Size = new System.Drawing.Size(328, 104);
       this.ResumeLayout(false);
 
     }

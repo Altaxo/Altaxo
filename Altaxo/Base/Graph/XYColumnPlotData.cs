@@ -241,11 +241,11 @@ namespace Altaxo.Graph
 
         s.m_xBoundaries = (PhysicalBoundaries)info.GetValue("XBoundaries",typeof(PhysicalBoundaries));
         if(null!=s.m_xBoundaries)
-          s.m_xBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
+          s.m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
 
         s.m_yBoundaries = (PhysicalBoundaries)info.GetValue("YBoundaries",typeof(PhysicalBoundaries));
         if(null!=s.m_yBoundaries)
-          s.m_yBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
+          s.m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
 
 
 
@@ -305,10 +305,10 @@ namespace Altaxo.Graph
         ((Altaxo.Data.DataColumn)m_yColumn).Changed += new EventHandler(EhColumnDataChangedEventHandler);
     
       if(null!=m_xBoundaries)
-        m_xBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
+        m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
 
       if(null!=m_yBoundaries)
-        m_yBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
+        m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
     }
 
 

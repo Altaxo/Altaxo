@@ -30,7 +30,10 @@ namespace Altaxo.Graph.Axes.Scaling
       double val;
       NumberConversion.IsDouble(txt,out val);
       if(val>0) 
+      {
         _org = val;
+        _orgChanged = true;
+      }
       return val<=0;
     }
 
@@ -41,8 +44,11 @@ namespace Altaxo.Graph.Axes.Scaling
 
       double val;
       NumberConversion.IsDouble(txt,out val);
-      if(val>0) 
+      if(val>0)
+      {
         _end = val;
+        _endChanged = true;
+      }
       return val<=0;
     }
 

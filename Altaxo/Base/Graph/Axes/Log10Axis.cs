@@ -216,6 +216,9 @@ namespace Altaxo.Graph.Axes
       this.m_DecadesPerMajorTick = from.m_DecadesPerMajorTick;
       this.m_Log10End = from.m_Log10End;
       this.m_Log10Org = from.m_Log10Org;
+
+      this._rescaling = null==from.Rescaling ? new LogarithmicAxisRescaleConditions() : (LogarithmicAxisRescaleConditions)from.Rescaling.Clone();
+
     }
 
     /// <summary>

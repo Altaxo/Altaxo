@@ -26,6 +26,10 @@ namespace Altaxo.Graph.Axes.Scaling
     protected BoundaryRescaling _endRescaling;
     protected BoundaryRescaling _spanRescaling;
 
+    protected bool _orgChanged;
+    protected bool _endChanged;
+    protected bool _spanChanged;
+
   
 
 
@@ -34,26 +38,37 @@ namespace Altaxo.Graph.Axes.Scaling
       _doc = doc;
       _axis = ax;
       
-      _orgRescaling =  _doc.OrgRescaling;
-      _endRescaling =  _doc.EndRescaling;
-      _spanRescaling = _doc.SpanRescaling;
-
-      _org =  _doc.Org;
-      _end =  _doc.End;
-      _span = _doc.Span;
-
-      if(ax!=null)
-      {
-        if(_orgRescaling==BoundaryRescaling.Auto)
-          _org = ax.Org;
-        if(_endRescaling==BoundaryRescaling.Auto)
-          _end = ax.End;
-        if(_spanRescaling==BoundaryRescaling.Auto)
-          _span = ax.End - ax.Org;
+      SetElements(true);
         
-      }
+      
     }
 
+    protected virtual void SetElements(bool bInit)
+    {
+      if(bInit)
+      {
+        _orgRescaling =  _doc.OrgRescaling;
+        _endRescaling =  _doc.EndRescaling;
+        _spanRescaling = _doc.SpanRescaling;
+
+        _org =  _doc.Org;
+        _end =  _doc.End;
+        _span = _doc.Span;
+
+        if(_axis!=null)
+        {
+          if(_orgRescaling==BoundaryRescaling.Auto)
+            _org = _axis.Org;
+          if(_endRescaling==BoundaryRescaling.Auto)
+            _end = _axis.End;
+          if(_spanRescaling==BoundaryRescaling.Auto)
+            _span = _axis.End - _axis.Org;
+        }
+      }
+
+      if(null!=_view)
+        InitView();
+    }
 
     /// <summary>
     /// Has to match the indices of BoundaryRescaling
@@ -114,6 +129,7 @@ namespace Altaxo.Graph.Axes.Scaling
         return true;
 
       NumberConversion.IsDouble(txt,out _org);
+      _orgChanged = true;
       return false;
     }
 
@@ -123,6 +139,7 @@ namespace Altaxo.Graph.Axes.Scaling
         return true;
 
       NumberConversion.IsDouble(txt,out _end);
+      _endChanged = true;
       return false;   
     }
 
@@ -177,7 +194,17 @@ namespace Altaxo.Graph.Axes.Scaling
         _doc.SetOrgAndEnd(_orgRescaling,_org,_endRescaling,_end);
 
       if(null!=_axis)
-      _axis.ProcessDataBounds();
+      {
+        // if the user changed org or end, he maybe want to set the scale temporarily to the chosen values
+        if(_orgRescaling==BoundaryRescaling.Auto && _endRescaling==BoundaryRescaling.Auto && (_orgChanged || _endChanged))
+          _axis.ProcessDataBounds(_org,true,_end,true);
+        else
+          _axis.ProcessDataBounds();
+      }
+
+      _orgChanged = _endChanged = false;
+
+      SetElements(true);
 
       return true;
     }

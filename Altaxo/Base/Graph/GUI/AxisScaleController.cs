@@ -146,7 +146,6 @@ namespace Altaxo.Graph.GUI
     public void SetAxisType(bool bInit)
     {
       string[] names = new string[Axis.AvailableAxes.Keys.Count];
-      
 
       int i=0;
       string curraxisname=null;
@@ -181,12 +180,8 @@ namespace Altaxo.Graph.GUI
 
     public bool Apply()
     {
-      if(null!=m_BoundaryController)
-      {
-        if(false==m_BoundaryController.Apply())
-          return false;
-      }
-
+      // note: the order is essential here
+      // first set the axis in the layer, _then_ apply the RescaleConditions
 
       if((m_Direction==AxisDirection.Horizontal))
         m_Layer.XAxis = _tempAxis;
@@ -194,6 +189,15 @@ namespace Altaxo.Graph.GUI
         m_Layer.YAxis = _tempAxis;
 
    
+
+      if(null!=m_BoundaryController)
+      {
+        if(false==m_BoundaryController.Apply())
+          return false;
+      }
+
+
+    
     
 
         SetElements();
@@ -215,7 +219,18 @@ namespace Altaxo.Graph.GUI
           if(axistype!=_tempAxis.GetType())
           {
             // replace the current axis by a new axis of the type axistype
+            Axis _oldAxis = _tempAxis;
             _tempAxis = (Axis)System.Activator.CreateInstance(axistype);
+
+            // Try to set the same org and end as the axis before
+            // this will fail for instance if we switch from linear to logarithmic with negative bounds
+            try
+            {
+              _tempAxis.ProcessDataBounds(_oldAxis.Org,true,_oldAxis.End,true);
+            }
+            catch(Exception)
+            {
+            }
 
             // now we have also to replace the controller and the control for the axis boundaries
             SetBoundaryController(true);
