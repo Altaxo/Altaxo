@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = ""
+                PostBuildEvent = "copy SharpDevelop.Base.* ..\..\..\..\rt$(ConfigurationName)\bin"
                 RootNamespace = "SharpDevelop.Base"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -100,11 +100,6 @@
                     HintPath = "..\..\Libraries\bin\Interop.SHDocVw.dll"
                 />
                 <Reference
-                    Name = "ICSharpCode.SharpZipLib"
-                    AssemblyName = "ICSharpCode.SharpZipLib"
-                    HintPath = "..\..\Libraries\bin\ICSharpCode.SharpZipLib.dll"
-                />
-                <Reference
                     Name = "System.Web.Services"
                     AssemblyName = "System.Web.Services"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.Services.dll"
@@ -115,21 +110,6 @@
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "ICSharpCode.SharpAssembly"
-                    AssemblyName = "ICSharpCode.SharpAssembly"
-                    HintPath = "..\bin\ICSharpCode.SharpAssembly.dll"
-                />
-                <Reference
-                    Name = "ICSharpCode.SharpRefactory"
-                    AssemblyName = "ICSharpCode.SharpRefactory"
-                    HintPath = "..\bin\ICSharpCode.SharpRefactory.dll"
-                />
-                <Reference
-                    Name = "ICSharpCode.XmlForms"
-                    AssemblyName = "ICSharpCode.XmlForms"
-                    HintPath = "..\bin\ICSharpCode.XmlForms.dll"
-                />
-                <Reference
                     Name = "zMagicLibrary"
                     Project = "{993E6ED0-F820-4264-9989-B6341C179CB4}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
@@ -137,6 +117,26 @@
                 <Reference
                     Name = "zICSharpCode.Core"
                     Project = "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "zICSharpCode.SharpAssembly"
+                    Project = "{C25BDC77-6277-4488-ADEF-2A16C60E2595}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "zICSharpCode.SharpRefactory"
+                    Project = "{CFB678A9-510C-4951-9023-541314265BA6}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "zICSharpCode.SharpZipLib"
+                    Project = "{62C31D94-812C-430E-AB9B-7DCF84D93BAE}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "zICSharpCode.XmlForms"
+                    Project = "{10C6C0B9-4EE3-416A-9D09-E1F34EF1DCEE}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
@@ -395,12 +395,12 @@
                 />
                 <File
                     RelPath = "Gui\Components\OpenFileTab.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Components\SdMenu.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -410,12 +410,12 @@
                 />
                 <File
                     RelPath = "Gui\Components\SdMenuCommand.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Components\SdMenuSeparator.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "copy SharpDevelop.DefaultTextEditor.??? ..\..\..\..\rtd\bin&#xd;&#xa;copy ICSharpCode.TextEditor.??? ..\..\..\..\rtd\bin&#xd;&#xa;if not exist ..\..\..\..\rtd\AddIns mkdir ..\..\..\..\rtd\AddIns&#xd;&#xa;copy ..\..\SharpDevelopDefaultTextEditor.addin ..\..\..\..\rtd\AddIns"
+                PostBuildEvent = "copy SharpDevelop.DefaultTextEditor.??? ..\..\..\..\rt$(ConfigurationName)\bin&#xd;&#xa;if not exist ..\..\..\..\rt$(ConfigurationName)\AddIns mkdir ..\..\..\..\rt$(ConfigurationName)\AddIns&#xd;&#xa;copy ..\..\SharpDevelopDefaultTextEditor.addin ..\..\..\..\rt$(ConfigurationName)\AddIns"
                 RootNamespace = "SharpDevelop.DefaultTexteditor"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -110,11 +110,6 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
                 />
                 <Reference
-                    Name = "ICSharpCode.XmlForms"
-                    AssemblyName = "ICSharpCode.XmlForms"
-                    HintPath = "..\bin\ICSharpCode.XmlForms.dll"
-                />
-                <Reference
                     Name = "System.DirectoryServices"
                     AssemblyName = "System.DirectoryServices"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.DirectoryServices.dll"
@@ -123,6 +118,11 @@
                     Name = "System.Design"
                     AssemblyName = "System.Design"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Design.dll"
+                />
+                <Reference
+                    Name = "zICSharpCode.XmlForms"
+                    Project = "{10C6C0B9-4EE3-416A-9D09-E1F34EF1DCEE}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
@@ -213,22 +213,22 @@
                 />
                 <File
                     RelPath = "Gui\Dialogs\GotoLineNumberDialog.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\ReplaceDialog.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\ReplaceInFilesDialog.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\SortOptionsDialog.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -248,7 +248,7 @@
                 />
                 <File
                     RelPath = "Gui\Editor\SharpDevelopTextAreaControl.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -293,17 +293,17 @@
                 />
                 <File
                     RelPath = "Gui\OptionPanels\BehaviorTextEditorPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\OptionPanels\CodeTemplatePanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\OptionPanels\GeneralTextEditorPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -312,7 +312,7 @@
                 />
                 <File
                     RelPath = "Gui\OptionPanels\MarkersTextEditorPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

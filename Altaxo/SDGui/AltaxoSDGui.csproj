@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "copy AltaxoSDGui.??? ..\..\..\..\rtd\bin"
+                PostBuildEvent = "copy AltaxoSDGui.??? ..\..\..\..\rt$(ConfigurationName)\bin"
                 RootNamespace = "AltaxoGUI"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -185,7 +185,7 @@
                 />
                 <File
                     RelPath = "Main\GUI\Workbench1.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

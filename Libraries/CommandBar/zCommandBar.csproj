@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = ""
+                PostBuildEvent = "copy CommandBar.* ..\..\..\..\rt$(ConfigurationName)\bin"
                 RootNamespace = "CommandBar"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""

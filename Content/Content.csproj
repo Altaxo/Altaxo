@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Exe"
                 PreBuildEvent = ""
-                PostBuildEvent = "if not exist ..\..\..\rtd\bin mkdir  ..\..\..\rtd\bin&#xd;&#xa;xcopy ..\..\AddIns\*.* ..\..\..\rtd\AddIns /E /I /Y&#xd;&#xa;xcopy ..\..\data\*.* ..\..\..\rtd\data /E /I /Y&#xd;&#xa;xcopy ..\..\doc\*.* ..\..\..\rtd\doc /E /I /Y&#xd;&#xa;"
+                PostBuildEvent = "if not exist ..\..\..\rt$(ConfigurationName)\bin mkdir  ..\..\..\rt$(ConfigurationName)\bin&#xd;&#xa;xcopy ..\..\AddIns\*.* ..\..\..\rt$(ConfigurationName)\AddIns /E /I /Y&#xd;&#xa;xcopy ..\..\data\*.* ..\..\..\rt$(ConfigurationName)\data /E /I /Y&#xd;&#xa;xcopy ..\..\doc\*.* ..\..\..\rt$(ConfigurationName)\doc /E /I /Y&#xd;&#xa;"
                 RootNamespace = ""
                 RunPostBuildEvent = "OnOutputUpdated"
                 StartupObject = ""
@@ -85,9 +85,9 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
                 />
                 <Reference
-                    Name = "ICSharpCode.SharpZipLib"
-                    AssemblyName = "ICSharpCode.SharpZipLib"
-                    HintPath = "..\Libraries\bin\ICSharpCode.SharpZipLib.dll"
+                    Name = "zICSharpCode.SharpZipLib"
+                    Project = "{62C31D94-812C-430E-AB9B-7DCF84D93BAE}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>

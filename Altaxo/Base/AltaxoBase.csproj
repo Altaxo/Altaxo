@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "copy AltaxoBase.??? ..\..\..\..\rtd\bin"
+                PostBuildEvent = "copy AltaxoBase.??? ..\..\..\..\rt$(ConfigurationName)\bin"
                 RootNamespace = "Altaxo"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""

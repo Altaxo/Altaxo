@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "if not exist ..\..\..\..\rtd\AddIns\AddIns\BackendBindings mkdir ..\..\..\..\rtd\AddIns\AddIns\BackendBindings&#xd;&#xa;copy CSharpBinding.??? ..\..\..\..\rtd\AddIns\AddIns\BackendBindings&#xd;&#xa;copy ..\..\BackendBindings.addin ..\..\..\..\rtd\AddIns\AddIns\BackendBindings"
+                PostBuildEvent = "if not exist ..\..\..\..\rt$(ConfigurationName)\AddIns\AddIns\BackendBindings mkdir ..\..\..\..\rt$(ConfigurationName)\AddIns\AddIns\BackendBindings&#xd;&#xa;copy CSharpBinding.??? ..\..\..\..\rt$(ConfigurationName)\AddIns\AddIns\BackendBindings&#xd;&#xa;copy ..\..\BackendBindings.addin ..\..\..\..\rt$(ConfigurationName)\AddIns\AddIns\BackendBindings"
                 RootNamespace = "CSharpBinding"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -105,19 +105,19 @@
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "ICSharpCode.SharpRefactory"
-                    AssemblyName = "ICSharpCode.SharpRefactory"
-                    HintPath = "..\bin\ICSharpCode.SharpRefactory.dll"
-                />
-                <Reference
-                    Name = "ICSharpCode.XmlForms"
-                    AssemblyName = "ICSharpCode.XmlForms"
-                    HintPath = "..\bin\ICSharpCode.XmlForms.dll"
-                />
-                <Reference
                     Name = "System.Design"
                     AssemblyName = "System.Design"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Design.dll"
+                />
+                <Reference
+                    Name = "zICSharpCode.SharpRefactory"
+                    Project = "{CFB678A9-510C-4951-9023-541314265BA6}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "zICSharpCode.XmlForms"
+                    Project = "{10C6C0B9-4EE3-416A-9D09-E1F34EF1DCEE}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
@@ -154,17 +154,17 @@
                 />
                 <File
                     RelPath = "Gui\ChooseRuntimePanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\CodeGenerationPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\OutputOptionsPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
