@@ -174,7 +174,7 @@ namespace Altaxo.Data
 			{
 				return new AltaxoVariant((double)i);
 			}
-		}
+		} 
 
 		/// <summary>
 		/// The full name of a indexer column is "IndexerColumn".
@@ -182,6 +182,70 @@ namespace Altaxo.Data
 		public string FullName
 		{
 			get { return "IndexerColumn"; }
+		}
+
+	}
+
+
+	/// <summary>
+	/// The EquallySpacedColumn is a simple readable numeric column. The value of an element is 
+	/// calculated from y = a+b*i. This means the value of the first element is a, the values are equally spaced by b.
+	/// </summary>
+	public class EquallySpacedColumn : INumericColumn, IReadableColumn
+	{
+		/// <summary>The start value, i.e. the value at index 0.</summary>
+		protected double m_Start=0;
+		/// <summary>The spacing value between consecutive elements.</summary>
+		protected double m_Increment=1;
+
+		/// <summary>
+		/// Creates a EquallySpacedColumn with starting value start and spacing increment.
+		/// </summary>
+		/// <param name="start">The starting value.</param>
+		/// <param name="increment">The increment value (spacing value between consecutive elements).</param>
+		public EquallySpacedColumn(double start, double increment)
+		{
+			m_Start = start;
+			m_Increment = increment;
+		}
+
+		/// <summary>
+		/// Simply returns the value i.
+		/// </summary>
+		/// <param name="i">The index i.</param>
+		/// <returns>The index i.</returns>
+		public double GetDoubleAt(int i)
+		{
+			return m_Start + i*m_Increment;
+		}
+
+		/// <summary>
+		/// This returns always true.
+		/// </summary>
+		/// <param name="i">The index i.</param>
+		/// <returns>Always true.</returns>
+		public bool IsElementEmpty(int i)
+		{
+			return false;
+		}
+
+		/// <summary>
+		/// Returns the index i as AltaxoVariant.
+		/// </summary>
+		public AltaxoVariant this[int i] 
+		{
+			get 
+			{
+				return new AltaxoVariant((double)(m_Start+i*m_Increment));
+			}
+		} 
+
+		/// <summary>
+		/// The full name of a indexer column is "EquallySpacedColumn(start,increment)".
+		/// </summary>
+		public string FullName
+		{
+			get { return "EquallySpacedColumn("+m_Start.ToString()+","+m_Increment.ToString()+")"; }
 		}
 
 	}

@@ -71,6 +71,10 @@ namespace Altaxo.Graph
 
 		protected GraphDocument m_Graph;
 
+		protected System.Windows.Forms.MainMenu m_MainMenu; // the Menu of this control to be merged
+		protected System.Windows.Forms.MenuItem m_MenuDataPopup;
+
+
 		private float m_HorizRes  = 300;
 		private float m_VertRes = 300;
 		private Color m_NonPrintingAreaColor = Color.Gray;
@@ -324,6 +328,105 @@ namespace Altaxo.Graph
 		#endregion
 
 
+		protected System.Windows.Forms.MainMenu MainMenu
+		{
+			get { return m_MainMenu; }
+			set { m_MainMenu = value; }
+		}
+
+
+		public System.Windows.Forms.MenuItem menuDataPopup
+		{
+			get { return m_MenuDataPopup; }
+			set { m_MenuDataPopup = value; }
+		}
+
+		public void UpdateDataPopup()
+		{
+			int actLayerNum = this.CurrentLayerNumber;
+			Layer actLayer = this.Layers[actLayerNum];
+			
+			if(null==menuDataPopup)
+				return;
+
+			// first delete old menuitems
+			menuDataPopup.MenuItems.Clear();
+
+			
+			if(null==actLayer)
+				return;
+
+
+			// then append the plot associations of the actual layer
+
+			int actPA = CurrentPlotNumber;
+			int len = actLayer.PlotItems.Count;
+			for(int i = 0; i<len; i++)
+			{
+				PlotItem pa = actLayer.PlotItems[i];
+				DataMenuItem mi = new DataMenuItem(pa.ToString(), new EventHandler(menuData_Data));
+				mi.Checked = (i==actPA);
+				mi.PlotItemNumber = i;
+				menuDataPopup.MenuItems.Add(mi);
+			}
+		}
+
+
+		private void menuData_Data(object sender, System.EventArgs e)
+		{
+			DataMenuItem dmi = (DataMenuItem)sender;
+
+			if(!dmi.Checked)
+			{
+				// if the menu item was not checked before, check it now
+				// by making the plot association shown by the menu item
+				// the actual plot association
+				int actLayerNum = this.CurrentLayerNumber;
+				Layer actLayer = this.Layers[actLayerNum];
+				if(null!=actLayer && dmi.PlotItemNumber<actLayer.PlotItems.Count)
+				{
+					dmi.Checked=true;
+					CurrentPlotNumber = dmi.PlotItemNumber;
+				}
+			}
+			else
+			{
+				// if it was checked before, then bring up the plot style dialog
+				// of the plot association represented by this menu item
+				int actLayerNum = this.CurrentLayerNumber;
+				Layer actLayer = this.Layers[actLayerNum];
+				PlotItem pa = actLayer.PlotItems[CurrentPlotNumber];
+
+
+				// get plot group
+				PlotGroup plotGroup = actLayer.PlotGroups.GetPlotGroupOf(pa);
+				PlotStyleDialog dlg = new PlotStyleDialog((PlotStyle)pa.Style,plotGroup);
+				DialogResult dr = dlg.ShowDialog(this);
+				if(dr==DialogResult.OK)
+				{
+					if(null!=plotGroup)
+					{
+						plotGroup.Style = dlg.PlotGroupStyle;
+						if(plotGroup.IsIndependent)
+							pa.Style = dlg.PlotStyle;
+						else
+						{
+							plotGroup.MasterItem.Style = dlg.PlotStyle;
+							plotGroup.UpdateMembers();
+						}
+					}
+					else // pa was not member of a plot group
+					{
+						pa.Style = dlg.PlotStyle;
+					}
+
+					this.InvalidateGraph(); // renew the picture
+				}
+			}
+
+		}
+
+
 		private void InitLayerToolbar()
 		{
 			this.m_LayerToolbar.Dock = DockStyle.Left;
@@ -486,11 +589,19 @@ namespace Altaxo.Graph
 		{
 			get
 			{
+				bool bChanged=false;
+
 				// check the validity of the CurrentLayerNumber
 				if(0==m_Graph.Layers.Count)
+				{
 					m_CurrentLayerNumber=-1;
+					bChanged = true;
+				}
 				else if(m_CurrentLayerNumber>=m_Graph.Layers.Count)
+				{
 					m_CurrentLayerNumber=0;
+					bChanged = true;
+				}
 
 				return m_CurrentLayerNumber;
 			}
@@ -507,6 +618,8 @@ namespace Altaxo.Graph
 
 				// reflect the change in layer number in the layer tool bar
 				this.PushCurrentlyActiveLayerToolbarButton();
+
+				this.UpdateDataPopup();
 			}
 		}
 
@@ -518,15 +631,15 @@ namespace Altaxo.Graph
 				// if Layer don't exist anymore, correct CurrentLayerNumber and ActualPlotAssocitation
 				if(CurrentLayerNumber<0)
 				{
-					m_CurrentPlotNumber=-1;
+					CurrentPlotNumber=-1;
 				}
 				else // if Layer exists
 				{
 					// if the PlotAssociation don't exist anymore, correct it
 					if(0==this.m_Graph[CurrentLayerNumber].PlotItems.Count)
-						m_CurrentPlotNumber = -1;
+						CurrentPlotNumber = -1;
 					if(m_CurrentPlotNumber>=this.m_Graph[CurrentLayerNumber].PlotItems.Count)
-						m_CurrentPlotNumber = 0;
+						CurrentPlotNumber = 0;
 				}	
 				return m_CurrentPlotNumber;
 			}
@@ -539,6 +652,8 @@ namespace Altaxo.Graph
 					throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"Must be lesser than actual count: " + m_Graph[CurrentLayerNumber].PlotItems.Count.ToString());
 
 				m_CurrentPlotNumber = value<0 ? -1 : value;
+
+				this.UpdateDataPopup();
 			}
 		}
 
@@ -853,6 +968,10 @@ namespace Altaxo.Graph
 		/// <param name="e">The event arguments.</param>
 		protected void OnGraphDocument_LayerCollectionChanged(object sender, System.EventArgs e)
 		{
+			
+			// Ensure that the current layer and current plot are valid anymore
+			EnsureValidityOfCurrentLayerNumber();
+			EnsureValidityOfCurrentPlotNumber();
 			// firstly, check if the CurrentLayerNumber or CurrentPlotNumber are valid
 			// anymore by using them
 			int nCurrLayerNum = this.CurrentLayerNumber;
@@ -1368,6 +1487,16 @@ namespace Altaxo.Graph
 		#endregion // Text Tool Mouse Handler
 
 		#endregion // Mouse Handlers
+
+
+		public class DataMenuItem : MenuItem
+		{
+			public int PlotItemNumber=0;
+
+			public DataMenuItem() {}
+			public DataMenuItem(string t, EventHandler e) : base(t,e) {}
+		}
+
 
 
 	} // end of class Graph

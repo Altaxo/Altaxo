@@ -166,6 +166,11 @@ namespace Altaxo.Graph
 				parent.MdiChildActivate += new EventHandler(this.OnAMdiChildDeactivate);
 			}
 
+
+			// store the menu item for the data popup in the graph control so that the graph control can manage it
+			this.m_GraphControl.menuDataPopup = this.menuDataPopup;
+			this.m_GraphControl.UpdateDataPopup();
+
 			this.Show();
 		}
 
@@ -371,9 +376,7 @@ namespace Altaxo.Graph
 																																									this.menuDataSeparator});
 			this.menuDataPopup.MergeOrder = 3;
 			this.menuDataPopup.Text = "Data";
-			this.menuDataPopup.Popup += new System.EventHandler(this.menuDataPopup_Popup);
-			this.menuDataPopup.Click += new System.EventHandler(this.menuDataPopup_Click);
-			this.menuDataPopup.Select += new System.EventHandler(this.menuDataPopup_Select);
+
 			// 
 			// menuDataSeparator
 			// 
@@ -396,97 +399,7 @@ namespace Altaxo.Graph
 		}
 		#endregion
 
-		private void menuData_Data(object sender, System.EventArgs e)
-		{
-			DataMenuItem dmi = (DataMenuItem)sender;
-
-			if(!dmi.Checked)
-			{
-				// if the menu item was not checked before, check it now
-				// by making the plot association shown by the menu item
-				// the actual plot association
-				int actLayerNum = this.m_GraphControl.CurrentLayerNumber;
-				Layer actLayer = this.m_GraphControl.Layers[actLayerNum];
-				if(null!=actLayer && dmi.tagValue<actLayer.PlotItems.Count)
-				{
-					dmi.Checked=true;
-					m_GraphControl.CurrentPlotNumber = dmi.tagValue;
-				}
-			}
-			else
-			{
-				// if it was checked before, then bring up the plot style dialog
-				// of the plot association represented by this menu item
-				int actLayerNum = this.m_GraphControl.CurrentLayerNumber;
-				Layer actLayer = this.m_GraphControl.Layers[actLayerNum];
-				PlotItem pa = actLayer.PlotItems[m_GraphControl.CurrentPlotNumber];
-
-
-				// get plot group
-				PlotGroup plotGroup = actLayer.PlotGroups.GetPlotGroupOf(pa);
-				PlotStyleDialog dlg = new PlotStyleDialog((PlotStyle)pa.Style,plotGroup);
-				DialogResult dr = dlg.ShowDialog(this);
-				if(dr==DialogResult.OK)
-				{
-					if(null!=plotGroup)
-					{
-						plotGroup.Style = dlg.PlotGroupStyle;
-						if(plotGroup.IsIndependent)
-							pa.Style = dlg.PlotStyle;
-						else
-						{
-							plotGroup.MasterItem.Style = dlg.PlotStyle;
-							plotGroup.UpdateMembers();
-						}
-					}
-					else // pa was not member of a plot group
-					{
-						pa.Style = dlg.PlotStyle;
-					}
-
-						this.m_GraphControl.Invalidate(); // renew the picture
-				}
-			}
-
-		}
-
-
-		private void menuDataPopup_Popup(object sender, System.EventArgs e)
-		{
-			int actLayerNum = this.m_GraphControl.CurrentLayerNumber;
-			Layer actLayer = this.m_GraphControl.Layers[actLayerNum];
-			if(null==actLayer)
-				return;
-
-
-			// first delete old menuitems
-			// then append the plot associations of the actual layer
-			menuDataPopup.MenuItems.Clear();
-
-
-			menuDataPopup.MenuItems.Add(this.menuDataSeparator);
-			int actPA = m_GraphControl.CurrentPlotNumber;
-			int len = actLayer.PlotItems.Count;
-			for(int i = 0; i<len; i++)
-			{
-				PlotItem pa = actLayer.PlotItems[i];
-				DataMenuItem mi = new DataMenuItem(pa.ToString(), new EventHandler(menuData_Data));
-				mi.Checked = (i==actPA);
-				mi.tagValue = i;
-				menuDataPopup.MenuItems.Add(mi);
-			}
-
-
-		}
-
-		private void menuDataPopup_Select(object sender, System.EventArgs e)
-		{
-		}
-
-		private void menuDataPopup_Click(object sender, System.EventArgs e)
-		{
-		
-		}
+	
 
 		private void menuFile_PageSetup_Click(object sender, System.EventArgs e)
 		{
@@ -598,12 +511,6 @@ namespace Altaxo.Graph
 			App.document.RemoveGraph(this);
 		}
 
-		public class DataMenuItem : MenuItem
-		{
-			public int tagValue=0;
-
-			public DataMenuItem() {}
-			public DataMenuItem(string t, EventHandler e) : base(t,e) {}
-		}
+	
 	}
 }

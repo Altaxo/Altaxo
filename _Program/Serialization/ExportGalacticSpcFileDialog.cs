@@ -33,6 +33,10 @@ namespace Altaxo.Serialization.Galactic
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
+
+		/// <summary>
+		/// Creates the export dialog for Galactic SPC file export.
+		/// </summary>
 		public ExportGalacticSpcFileDialog()
 		{
 			//
@@ -42,6 +46,12 @@ namespace Altaxo.Serialization.Galactic
 		}
 
 
+		/// <summary>
+		/// This is neccessary to use the dialog.
+		/// </summary>
+		/// <param name="table">The table which contains the data to export.</param>
+		/// <param name="selectedRows">The rows selected in the table.</param>
+		/// <param name="selectedColumns">The columns selected in the table.</param>
 		public void Initialize(Altaxo.Data.DataTable table, Altaxo.Worksheet.IndexSelection selectedRows, Altaxo.Worksheet.IndexSelection selectedColumns)
 		{
 			m_Controller = new ExportGalacticSpcFileDialogController(this,table,selectedRows,selectedColumns);
@@ -59,59 +69,119 @@ namespace Altaxo.Serialization.Galactic
 		}
 
 
+		/// <summary>
+		/// Selection state of the radio button "Create Spectrum from row."
+		/// </summary>
 		public bool CreateSpectrumFromRow
 		{
 			get { return this.m_rbCreateSpectrum_FromRow.Checked; }
 			set { this.m_rbCreateSpectrum_FromRow.Checked = value; }
 		}
 
+
+		/// <summary>
+		/// Selection state of the radio button "Create Spectrum from column."
+		/// </summary>
 		public bool CreateSpectrumFromColumn
 		{
 			get { return this.m_rbCreateSpectrum_FromColumn.Checked; }
 			set { this.m_rbCreateSpectrum_FromColumn.Checked = value; }
 		}
 
+		/// <summary>
+		/// Selection state of the radio button "X values from continuous number."
+		/// </summary>
 		public bool XValuesContinuousNumber
 		{
 			get { return this.m_rbXValuesContinuousNumber.Checked; }
 			set { this.m_rbXValuesContinuousNumber.Checked = value; }
 		}
 
+		/// <summary>
+		/// Selection state of the radio button "X values from column."
+		/// </summary>
 		public bool XValuesFromColumn
 		{
 			get { return this.m_rbXValues_FromColumn.Checked; }
 			set { this.m_rbXValues_FromColumn.Checked = value; }
 		}
 
+
+		/// <summary>
+		/// Selection state of the radio button "Extend file name by continuous number".
+		/// </summary>
 		public bool ExtendFileName_ContinuousNumber
 		{
 			get { return this.m_rbExtFileName_ContinuousNumber.Checked; }
 			set { this.m_rbExtFileName_ContinuousNumber.Checked = value; }
 		}
 
+		/// <summary>
+		/// Selection state of the radio button "Extend file name by column".
+		/// </summary>
 		public bool ExtendFileName_ByColumn
 		{
 			get { return this.m_rbFileName_FromColumn.Checked; }
 			set { this.m_rbFileName_FromColumn.Checked = value; }
 		}
 
+		/// <summary>
+		/// This fills the x values column combobox with column names and selects the first index in the column as default.
+		/// </summary>
+		/// <param name="colnames">The array of column names the combobox is filled with.</param>
 		public void FillXValuesColumnBox(string [] colnames)
 		{
 			this.m_cbXValues_Column.Items.Clear();
 			this.m_cbXValues_Column.Items.AddRange(colnames);
+
+			if(colnames.Length>0)
+				this.m_cbXValues_Column.SelectedIndex=0;
+			else
+				this.m_cbXValues_Column.SelectedIndex=-1;
 		}
 
+		/// <summary>
+		/// Returns the selected x values column name.
+		/// </summary>
+		public string XValuesColumnName
+		{
+			get { return (string)this.m_cbXValues_Column.SelectedItem; }
+		}
+
+		/// <summary>
+		/// Sets the enabled state of the x values column combobox.
+		/// </summary>
 		public bool EnableXValuesColumnBox
 		{
 			set { this.m_cbXValues_Column.Enabled=value; }
 		}
 
+		/// <summary>
+		/// Fills the "Extend file name by column" combobox with column names.
+		/// </summary>
+		/// <param name="colnames">The array of column names the combobox is filled with.</param>
 		public void FillExtFileNameColumnBox(string [] colnames)
 		{
 			this.m_cbExtFileName_Column.Items.Clear();
 			this.m_cbExtFileName_Column.Items.AddRange(colnames);
+
+			if(colnames.Length>0)
+				this.m_cbExtFileName_Column.SelectedIndex=0;
+			else
+				this.m_cbExtFileName_Column.SelectedIndex=-1;
 		}
 
+		/// <summary>
+		/// Returns the selected column name of the "Extend file name by column" combobox.
+		/// </summary>
+		public string ExtFileNameColumnName
+		{
+			get { return (string)this.m_cbExtFileName_Column.SelectedItem; }
+		}
+
+/// <summary>
+/// Sets the enabled / disabled state of the "Extend file name by column" combobox.
+/// </summary>
 		public bool EnableExtFileNameColumnBox
 		{
 			set { this.m_cbExtFileName_Column.Enabled=value; }
@@ -204,7 +274,7 @@ namespace Altaxo.Serialization.Galactic
 			this.m_cbXValues_Column.Name = "m_cbXValues_Column";
 			this.m_cbXValues_Column.Size = new System.Drawing.Size(272, 21);
 			this.m_cbXValues_Column.TabIndex = 2;
-			this.m_cbXValues_Column.Text = "comboBox1";
+			this.m_cbXValues_Column.Text = "";
 			// 
 			// m_rbXValues_FromColumn
 			// 
@@ -245,7 +315,7 @@ namespace Altaxo.Serialization.Galactic
 			this.m_cbExtFileName_Column.Name = "m_cbExtFileName_Column";
 			this.m_cbExtFileName_Column.Size = new System.Drawing.Size(272, 21);
 			this.m_cbExtFileName_Column.TabIndex = 2;
-			this.m_cbExtFileName_Column.Text = "comboBox1";
+			this.m_cbExtFileName_Column.Text = "";
 			// 
 			// m_rbFileName_FromColumn
 			// 
@@ -340,32 +410,38 @@ namespace Altaxo.Serialization.Galactic
 
 		private void EhChooseBasicFileNameAndPath_Click(object sender, System.EventArgs e)
 		{
+			if(null!=m_Controller)
 			m_Controller.ChooseBasicFileNameAndPath();		
 		}
 
 		private void EhCreateSpectrumFrom_CheckedChanged(object sender, System.EventArgs e)
 		{
-			m_Controller.EhChange_CreateSpectrumFrom();
+			if(null!=m_Controller)
+				m_Controller.EhChange_CreateSpectrumFrom();
 		}
 
 		private void EhXValuesChooseOptions_CheckedChanged(object sender, System.EventArgs e)
 		{
-			m_Controller.EhChange_XValuesFromOptions();
+			if(null!=m_Controller)
+				m_Controller.EhChange_XValuesFromOptions();
 		}
 
 		private void EhFileNameExtendOptions1_CheckedChanged(object sender, System.EventArgs e)
 		{
-			m_Controller.EhChange_ExtendFileNameOptions();
+			if(null!=m_Controller)
+				m_Controller.EhChange_ExtendFileNameOptions();
 		}
 
 		private void EhOkButton_Click(object sender, System.EventArgs e)
 		{
-			m_Controller.EhOk();
+			if(null!=m_Controller)
+				m_Controller.EhOk();
 		}
 
 		private void EhCancelButton_Click(object sender, System.EventArgs e)
 		{
-			m_Controller.EhCancel();
+			if(null!=m_Controller)
+				m_Controller.EhCancel();
 		}
 
 	} // end of class ExportGalacticSpcFileDialog
@@ -390,14 +466,34 @@ namespace Altaxo.Serialization.Galactic
 			Column 
 		};
 
-		public enum XValuesFrom { ContinuousNumber, Column };
+		/// <summary>Designates the source of the x data values.</summary>
+		public enum XValuesFrom 
+		{
+			/// <summary>The x data values are continuous numbers starting from 1.</summary>
+			ContinuousNumber,
+			/// <summary>The x data values are from a (numeric) column.</summary>
+			Column 
+		};
 
-		public enum ExtendFileNameWith { ContinuousNumber, Column };
+		/// <summary>The option for file name extension.</summary>
+		public enum ExtendFileNameWith 
+		{
+			/// <summary>The file name is extended with a continuously increasing number.</summary>
+			ContinuousNumber, 
+			/// <summary>The file name is extended by the contents of a data column.</summary>
+			Column
+		};
 	}
 
 
+	/// <summary>
+	/// The controller class which controls the <see cref="ExportGalacticSpcFileDialog"/> dialog.
+	/// </summary>
 	public class ExportGalacticSpcFileDialogController
 	{
+		/// <summary>
+		/// The dialog to control.
+		/// </summary>
 		private ExportGalacticSpcFileDialog m_Form;
 		/// <summary>The table where the data stems from.</summary>
 		protected Altaxo.Data.DataTable m_Table;
@@ -408,15 +504,22 @@ namespace Altaxo.Serialization.Galactic
 		/// <summary>The selected columns of the table (only this data are exported).</summary>
 		protected Altaxo.Worksheet.IndexSelection m_SelectedColumns;
 
-
-
-
+		/// <summary>Stores if one spectrum is created from one table row or from one table column (<see cref="Options.CreateSpectrumFrom"/>).</summary>
 		protected Options.CreateSpectrumFrom m_CreateSpectrumFrom;
 
+		/// <summary>Stores if the x values stem from continuous numbering or from a data column (<see cref="Options.XValuesFrom"/></summary>
 		protected Options.XValuesFrom m_XValuesFrom;
 
+		/// <summary>Stores if the filename is extended by a continuous number or by the contents of a data column (<see cref="Options.ExtendFileNameWith"/></summary>
 		protected Options.ExtendFileNameWith m_ExtendFileNameWith;
 
+		/// <summary>
+		/// Creates the controller for the Galactic SPC file export dialog.
+		/// </summary>
+		/// <param name="dlg">The dialog for which this controller is created.</param>
+		/// <param name="table">The data table which is about to be exported.</param>
+		/// <param name="selectedRows">The selected rows of the data table.</param>
+		/// <param name="selectedColumns">The selected columns of the data table.</param>
 		public ExportGalacticSpcFileDialogController(
 			ExportGalacticSpcFileDialog dlg,
 			Altaxo.Data.DataTable table,
@@ -432,6 +535,9 @@ namespace Altaxo.Serialization.Galactic
 		}
 
 
+		/// <summary>
+		/// Initialize the elements of the dialog.
+		/// </summary>
 		public void InitializeElements()
 		{
 			this.m_CreateSpectrumFrom = Options.CreateSpectrumFrom.Row;
@@ -446,6 +552,12 @@ namespace Altaxo.Serialization.Galactic
 		}
 
 
+		/// <summary>
+		/// Fills the "x values column combobox" with the appropriate column names.
+		/// </summary>
+		/// <remarks>The column names are either from property columns (if a spectrum is from a row) or from a table column
+		///  (if the spectrum is from a column).<para/>
+		/// In either case, only DataColumns that have the <see cref="Altaxo.Data.INumericColumn"/> interface are shown in the combobox.</remarks>
 		public void FillXValuesColumnBox()
 		{
 			Altaxo.Data.DataColumnCollection colcol;
@@ -471,6 +583,11 @@ namespace Altaxo.Serialization.Galactic
 			m_Form.EnableXValuesColumnBox=true;
 		}
 
+		/// <summary>
+		/// This fills the "Extend file name by column" combobox with appropriate column names.
+		/// </summary>
+		/// <remarks>The columns shown are either table columns (if a spectrum is a single row), or
+		/// a property column (if a spectrum is a single column).</remarks>
 		public void FillExtFileNameColumnBox()
 		{
 			Altaxo.Data.DataColumnCollection colcol;
@@ -490,6 +607,9 @@ namespace Altaxo.Serialization.Galactic
 		}
 
 
+		/// <summary>
+		/// This opens the "Save as" dialog box to choose a basic file name for exporting.
+		/// </summary>
 		public void ChooseBasicFileNameAndPath()
 		{
 			SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -504,6 +624,9 @@ namespace Altaxo.Serialization.Galactic
 			}
 		}
 
+		/// <summary>
+		/// Called if a change in the options "Create spectrum from" occurs.
+		/// </summary>
 		public void EhChange_CreateSpectrumFrom()
 		{
 			Options.CreateSpectrumFrom oldValue = m_CreateSpectrumFrom;
@@ -523,6 +646,9 @@ namespace Altaxo.Serialization.Galactic
 			}
 		}
 
+		/// <summary>
+		/// Called if a change in the options "X values from" occured.
+		/// </summary>
 		public void EhChange_XValuesFromOptions()
 		{
 			Options.XValuesFrom oldValue = m_XValuesFrom;
@@ -546,6 +672,9 @@ namespace Altaxo.Serialization.Galactic
 		}
 
 
+		/// <summary>
+		/// Called if a change in the options "Extend file name by" occured.
+		/// </summary>
 		public void EhChange_ExtendFileNameOptions()
 		{
 			Options.ExtendFileNameWith oldValue = this.m_ExtendFileNameWith;
@@ -570,12 +699,71 @@ namespace Altaxo.Serialization.Galactic
 			}
 		}
 
+		/// <summary>
+		/// Called if user presses the "Ok" button on the dialog box.
+		/// </summary>
 		public void EhOk()
 		{
+			if(this.m_CreateSpectrumFrom == Options.CreateSpectrumFrom.Row)
+			{
+				Altaxo.Data.INumericColumn xcol;
+
+				if(this.m_XValuesFrom == Options.XValuesFrom.Column)
+				{
+					string colname = m_Form.XValuesColumnName;
+					if(null==colname)
+					{
+						MessageBox.Show(m_Form, "No x-column selected", "Error");
+						return;
+					}
+
+					xcol = this.m_Table.PropCols[colname] as Altaxo.Data.INumericColumn;
+				}
+				else // xvalues are continuous number
+				{
+					xcol = new Altaxo.Data.IndexerColumn();
+				}
+
+				Altaxo.Data.DataColumn extFileNameCol=null;
+				if(this.m_ExtendFileNameWith == Options.ExtendFileNameWith.Column)
+					extFileNameCol = m_Table[m_Form.ExtFileNameColumnName];
+
+
+
+				int i,j;
+				bool bUseRowSel = (null!=m_SelectedRows && this.m_SelectedRows.Count>0);
+				int numOfSpectra = bUseRowSel ? m_SelectedRows.Count : m_Table.RowCount;
+
+				for(j=0;j<numOfSpectra;j++)
+				{
+					i = bUseRowSel ? m_SelectedRows[j] : j;
+
+					string filename = m_Form.BasicFileName;
+
+					if(null!=extFileNameCol)
+						filename += "_" + extFileNameCol[i].ToString();
+					else
+						filename += "_" + j.ToString();
+
+
+					string error = Export.FromRow(filename,this.m_Table,i,xcol,this.m_SelectedColumns);
+
+					if(null!=error)
+					{
+						MessageBox.Show(m_Form,error,"There were error(s) during export!");
+						return;
+					}
+				}
+				
+				MessageBox.Show(m_Form, string.Format("Export of {0} spectra successfull.",numOfSpectra)); 
+			}
 			m_Form.DialogResult = DialogResult.OK;
 			m_Form.Close();
 		}
 
+		/// <summary>
+		/// Called if the user pressed the "Cancel" button on the dialog box.
+		/// </summary>
 		public void EhCancel()
 		{
 			m_Form.DialogResult = DialogResult.Cancel;
@@ -583,4 +771,159 @@ namespace Altaxo.Serialization.Galactic
 		}
 
 	} // end of class ExportGalacticSpcFileDialogController
+
+
+
+	/// <summary>
+	/// This class hosts all routines neccessary to export Galactic SPC files
+	/// </summary>
+	public class Export
+	{
+
+
+		/// <summary>
+		/// Exports a couple of x and y values into a non-evenly spaced Galactic SPC file.
+		/// </summary>
+		/// <param name="xvalues">The x values of the spectrum.</param>
+		/// <param name="yvalues">The y values of the spectrum.</param>
+		/// <param name="filename">The filename where to export to.</param>
+		/// <returns>Null if successful, otherwise an error description.</returns>
+		public static string FromArrays(double [] xvalues, double [] yvalues, string filename)
+		{
+			int len = xvalues.Length<yvalues.Length ? xvalues.Length:yvalues.Length;
+
+			if(len==0)
+			{
+				return "Nothing to export - either x-value or y-value array is empty!";
+			}
+
+			System.IO.Stream stream=null;
+
+			try
+			{
+				stream = new System.IO.FileStream(filename,System.IO.FileMode.CreateNew);
+				System.IO.BinaryWriter binwriter = new System.IO.BinaryWriter(stream);
+
+
+				binwriter.Write((byte)0x80); // ftflgs : not-evenly spaced data
+				binwriter.Write((byte)0x4B); // fversn : new version
+				binwriter.Write((byte)0x00); // fexper : general experimental technique
+				binwriter.Write((byte)0x80); // fexp   : fractional scaling exponent (0x80 for floating point)
+
+				binwriter.Write((System.Int32)len); // fnpts  : number of points
+
+				binwriter.Write((double)xvalues[0]); // ffirst : first x-value
+				binwriter.Write((double)xvalues[len-1]); // flast : last x-value
+				binwriter.Write((System.Int32)1); // fnsub : 1 (one) subfile only
+			
+				binwriter.Write((byte)0); //  Type of X axis units (see definitions below) 
+				binwriter.Write((byte)0); //  Type of Y axis units (see definitions below) 
+				binwriter.Write((byte)0); // Type of Z axis units (see definitions below)
+				binwriter.Write((byte)0); // Posting disposition (see GRAMSDDE.H)
+
+				binwriter.Write(new byte[0x1E0]); // writing rest of SPC header
+
+
+				// ---------------------------------------------------------------------
+				//   following the x-values array
+				// ---------------------------------------------------------------------
+
+				for(int i=0;i<len;i++)
+					binwriter.Write((float)xvalues[i]);
+
+				// ---------------------------------------------------------------------
+				//   following the y SUBHEADER
+				// ---------------------------------------------------------------------
+
+				binwriter.Write((byte)0); // subflgs : always 0
+				binwriter.Write((byte)0x80); // subexp : y-values scaling exponent (set to 0x80 means floating point representation)
+				binwriter.Write((System.Int16)0); // subindx :  Integer index number of trace subfile (0=first)
+
+				binwriter.Write((float)0); // subtime;	 Floating time for trace (Z axis corrdinate) 
+				binwriter.Write((float)0); // subnext;	 Floating time for next trace (May be same as beg) 
+				binwriter.Write((float)0); // subnois;	 Floating peak pick noise level if high byte nonzero 
+
+				binwriter.Write((System.Int32)0); // subnpts;	 Integer number of subfile points for TXYXYS type 
+				binwriter.Write((System.Int32)0); // subscan;	Integer number of co-added scans or 0 (for collect) 
+				binwriter.Write((float)0);        // subwlevel;	 Floating W axis value (if fwplanes non-zero) 
+				binwriter.Write((System.Int32)0); // subresv[4];	 Reserved area (must be set to zero) 
+
+
+				// ---------------------------------------------------------------------
+				//   following the y-values array
+				// ---------------------------------------------------------------------
+
+				for(int i=0;i<len;i++)
+					binwriter.Write((float)yvalues[i]);
+			}
+			catch(Exception e)
+			{
+				return e.ToString();
+			}
+			finally
+			{
+				if(null!=stream)
+					stream.Close();
+			}
+			
+			return null;
+		}
+
+
+		/// <summary>
+		/// Exports to a single SPC spectrum from a single table row.
+		/// </summary>
+		/// <param name="filename">The name of the file where to export to.</param>
+		/// <param name="table">The table from which to export.</param>
+		/// <param name="rownumber">The number of the table row that contains the data to export.</param>
+		/// <param name="xcolumn">The x column that contains the x data.</param>
+		/// <param name="selectedColumns">The columns that where selected in the table, i.e. the columns which are exported. If this parameter is null
+		/// or no columns are selected, then all data of a row will be exported.</param>
+		/// <returns>Null if export was successfull, error description otherwise.</returns>
+		public static string FromRow(
+			string filename,
+			Altaxo.Data.DataTable table,
+			int rownumber, 
+			Altaxo.Data.INumericColumn xcolumn,
+			Altaxo.Worksheet.IndexSelection selectedColumns)
+		{
+
+			// test that all x and y cells have numeric values
+			bool bUseSel = null!=selectedColumns && selectedColumns.Count>0;
+			int spectrumlen = (bUseSel)? selectedColumns.Count : table.ColumnCount ;
+
+			int i,j;
+
+			for(j=0;j<spectrumlen;j++)
+			{
+				i = bUseSel ? selectedColumns[j] : j;
+
+				if(xcolumn.GetDoubleAt(i) == Double.NaN)
+					return string.Format("X column at index {i} has no numeric value!",i);
+
+				if(!(table[i] is Altaxo.Data.INumericColumn))
+					return string.Format("Table column[{0}] ({1}) is not a numeric column!",i,table[i].FullName);
+
+				if(((Altaxo.Data.INumericColumn)table[i]).GetDoubleAt(rownumber) == Double.NaN)
+					return string.Format("Table cell [{0},{1}] (column {2}) has no numeric value!",i,rownumber,table[i].FullName);
+			}
+
+
+		// this first test was successfull, so start exporting now
+	
+			double[] xvalues = new double[spectrumlen];
+			double[] yvalues = new double[spectrumlen];
+
+			for(j=0;j<spectrumlen;j++)
+			{
+				i = bUseSel ? selectedColumns[j] : j;
+				xvalues[j]= xcolumn.GetDoubleAt(i);
+				yvalues[j]= ((Altaxo.Data.INumericColumn)table[i]).GetDoubleAt(rownumber);
+
+			}
+			return FromArrays(xvalues,yvalues,filename);
+		}
+
+
+	} // end of class Export
 }
