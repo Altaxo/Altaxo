@@ -123,6 +123,11 @@
                     BuildAction = "None"
                 />
                 <File
+                    RelPath = "AltaxoOpenFileTab.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "App.ico"
                     BuildAction = "Content"
                 />
@@ -164,6 +169,11 @@
                     RelPath = "BeautyWorkbenchWindow.resx"
                     DependentUpon = "BeautyWorkbenchWindow.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "BeautyWorkspaceController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "BeautyWorkspaceWindow.cs"

@@ -1013,7 +1013,8 @@ namespace Altaxo.Graph.GUI
 		/// <param name="e">The paint event args.</param>
 		public virtual void EhView_GraphPanelPaint(System.Windows.Forms.PaintEventArgs e)
 		{
-			this.DoPaint(e.Graphics,false);
+			if(!e.ClipRectangle.IsEmpty)
+				this.DoPaint(e.Graphics,false);
 		}
 
 		#endregion // IGraphView interface definitions

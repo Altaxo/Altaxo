@@ -70,6 +70,9 @@ namespace Altaxo.Main.GUI
 
 			this.Controls.Add(fc);
 			fc.Dock = System.Windows.Forms.DockStyle.Fill;
+			
+			// the child wants to override my menu, so set it to null
+			this.Menu = null;
 		}
 	
 		public void SetTitle(string title)
@@ -113,6 +116,7 @@ namespace Altaxo.Main.GUI
 			}
 		}
 
+		/*
 		void ThreadSafeSelectWindow()
 		{
 			if (tabPage  != null) 
@@ -133,11 +137,22 @@ namespace Altaxo.Main.GUI
 				}
 			}
 			*/
+		/*
 			OnWindowSelected(EventArgs.Empty);
 		}
-		
+		*/
+
+
 		public void SelectWindow()
 		{
+			System.Console.WriteLine("BeautyWorkspaceWindow::SelectWindow called");
+
+			if(null!=Controller)
+				Controller.SelectWindow();
+
+			
+			/* LELLID temporarily removed 
+			
 			try 
 			{
 				MethodInvoker mi = new MethodInvoker(this.ThreadSafeSelectWindow);
@@ -151,6 +166,7 @@ namespace Altaxo.Main.GUI
 			catch (Exception) 
 			{
 			}
+			*/
 		}
 	}
 }

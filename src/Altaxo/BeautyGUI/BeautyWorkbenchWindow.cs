@@ -226,6 +226,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public void UpdateMenu(object sender, EventArgs e)
 		{
 			// update menu
+			TopMenu.SuspendLayout();
+			TopMenu.Visible = false;
 			foreach (object o in TopMenu.Items) 
 			{
 				if (o is IStatusUpdate) 
@@ -233,7 +235,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 					((IStatusUpdate)o).UpdateStatus();
 				}
 			}
-			
+			System.Console.WriteLine("TopMenu reactivated");
+			TopMenu.ResumeLayout();
+			//TopMenu.Visible = true;
+
 			UpdateToolbars();
 		}
 		

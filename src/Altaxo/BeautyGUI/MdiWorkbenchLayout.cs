@@ -39,7 +39,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 
 
 		DockingManager dockManager;
-		ICSharpCode.SharpDevelop.Gui.Components.OpenFileTab tabControl = new ICSharpCode.SharpDevelop.Gui.Components.OpenFileTab();
+		ICSharpCode.SharpDevelop.Gui.Components.AltaxoOpenFileTab tabControl = new ICSharpCode.SharpDevelop.Gui.Components.AltaxoOpenFileTab();
 		
 		protected IWorkbenchWindow m_ActiveWorkbenchWindow;
 
@@ -317,7 +317,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 #if LellidMod
 			
 
-			Altaxo.Main.GUI.IWorkbenchWindowController controller = new Altaxo.Main.GUI.WorkbenchWindowController();
+			Altaxo.Main.GUI.IWorkbenchWindowController controller = new Altaxo.Main.GUI.BeautyWorkspaceController();
 			Altaxo.Main.GUI.BeautyWorkspaceWindow window = new Altaxo.Main.GUI.BeautyWorkspaceWindow();
 			controller.View = window;
 
