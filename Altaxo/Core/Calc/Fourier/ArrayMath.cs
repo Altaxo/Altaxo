@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Calc
+namespace Altaxo.Calc.Fourier
 {
   /// <summary>
   /// ArrayMath provides some basic methods for manipulating numeric arrays.

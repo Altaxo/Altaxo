@@ -29,7 +29,7 @@
 // -------------------------------------------------------------------------
 
 
-namespace Altaxo.Calc
+namespace Altaxo.Calc.LinearAlgebra
 {
   using System;
   using System.Text;

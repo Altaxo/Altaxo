@@ -22,8 +22,10 @@
 
 using System;
 using Altaxo.Calc;
+using Altaxo.Calc.Regression;
+
 using NUnit.Framework;
-namespace AltaxoTest.Calc.NLFIT
+namespace AltaxoTest.Calc.Regression
 {
 
   [TestFixture]
@@ -108,7 +110,7 @@ namespace AltaxoTest.Calc.NLFIT
       double sum_se = 0;
       double x;
       for(x=-10;x<=10;x+=1)
-        sum_se += Altaxo.Calc.NLFit.sqr( (a+b*x) - (2 + 5*x));
+        sum_se += NLFit.sqr( (a+b*x) - (2 + 5*x));
 
       ys[0] = sum_se;
       ys[1] = sum_se;
@@ -130,7 +132,7 @@ namespace AltaxoTest.Calc.NLFIT
       double sum_se = 0;
       double x;
       for(x=-10;x<=10;x+=1)
-        sum_se += Altaxo.Calc.NLFit.sqr( (a+b*x) - (2 + 5*x));
+        sum_se += NLFit.sqr( (a+b*x) - (2 + 5*x));
 
       ys[0] = sum_se;   
     }
@@ -148,7 +150,7 @@ namespace AltaxoTest.Calc.NLFIT
       double[] ys = new double[2];
       int info = 0;
 
-      Altaxo.Calc.NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.FitFunction2plus5x),param,ys,1E-10,ref info);
+      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.FitFunction2plus5x),param,ys,1E-10,ref info);
       
       Assertion.AssertEquals("Fit parameter 0 should be 2 in this model",2,param[0],1E-5);
       Assertion.AssertEquals("Fit parameter 1 should be 5 in this model",5,param[1],1E-5);
@@ -164,7 +166,7 @@ namespace AltaxoTest.Calc.NLFIT
       double[] ys = new double[1];
       int info = 0;
 
-      Altaxo.Calc.NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.FitFunction2plus5xMod),param,ys,1E-10,ref info);
+      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.FitFunction2plus5xMod),param,ys,1E-10,ref info);
       
       Assertion.AssertEquals("Info should be 0 due to inappropriate length of ys in this model",0,info);
     }
@@ -185,7 +187,7 @@ namespace AltaxoTest.Calc.NLFIT
       double sum_se = 0;
       double x;
       for(x=-10;x<=10;x+=1)
-        sum_se += Altaxo.Calc.NLFit.sqr( (a*Math.Cos(b*x+c)) - (7*Math.Cos(3*x+1)));
+        sum_se += NLFit.sqr( (a*Math.Cos(b*x+c)) - (7*Math.Cos(3*x+1)));
 
       ys[0] = sum_se;
       ys[1] = 0;
@@ -203,7 +205,7 @@ namespace AltaxoTest.Calc.NLFIT
       double[] ys = new double[3];
       int info = 0;
 
-      Altaxo.Calc.NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.FitFunction7malCos3xplus1),param,ys,1E-10,ref info);
+      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.FitFunction7malCos3xplus1),param,ys,1E-10,ref info);
       
       Assertion.AssertEquals("Fit parameter 0 should be 7 in this model",7,param[0],1E-4);
       Assertion.AssertEquals("Fit parameter 1 should be 3 in this model",3,param[1],1E-4);
@@ -225,7 +227,7 @@ namespace AltaxoTest.Calc.NLFIT
       double c = parameter[2];
 
       for(int i=-10;i<=10;i++)
-        ys[i+10] = Altaxo.Calc.NLFit.sqr( (a*Math.Cos(b*i+c)) - (7*Math.Cos(3*i+1)));
+        ys[i+10] = NLFit.sqr( (a*Math.Cos(b*i+c)) - (7*Math.Cos(3*i+1)));
     }
   
     [Test]
@@ -241,7 +243,7 @@ namespace AltaxoTest.Calc.NLFIT
 
       do
       {
-        Altaxo.Calc.NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.FitFunction7malCos3xplus1Mod),param,ys,1E-10,ref info);
+        NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.FitFunction7malCos3xplus1Mod),param,ys,1E-10,ref info);
       } while(info==5);
 
       Assertion.AssertEquals("Fit parameter 0 should be 7 in this model",7,param[0],1E-4);
@@ -266,7 +268,7 @@ namespace AltaxoTest.Calc.NLFIT
     static void Main(string[] args)
     {
       double[] arr = { 1E20, 1, 1E-20 };
-      double result = Altaxo.Calc.NLFit.enorm(3,arr);
+      double result = NLFit.enorm(3,arr);
     }
   }
 }

@@ -76,7 +76,7 @@
 // ----------
 
 using System;
-namespace Altaxo.Calc
+namespace Altaxo.Calc.Regression
 {
   /// <summary>
   /// Functions for nonlinear minimization.

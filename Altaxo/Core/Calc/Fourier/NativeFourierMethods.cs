@@ -24,7 +24,7 @@
 
 using System;
 
-namespace Altaxo.Calc.FFT
+namespace Altaxo.Calc.Fourier
 {
 
   /// <summary>

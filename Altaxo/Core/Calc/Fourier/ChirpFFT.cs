@@ -24,7 +24,7 @@ using System;
 
 
 
-namespace Altaxo.Calc.FFT
+namespace Altaxo.Calc.Fourier
 {
   /// <summary>
   /// Provides a method to perform a Fourier transformation of arbirtrary length.

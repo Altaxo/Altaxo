@@ -21,7 +21,7 @@
 #endregion
 using System;
 
-namespace Altaxo.Calc
+namespace Altaxo.Calc.LinearAlgebra
 {
   /// <summary>
   /// VectorMath provides common static functions concerning vectors.

@@ -24,6 +24,8 @@ using System;
 
 using Altaxo.Collections;
 using Altaxo.Worksheet.GUI;
+using Altaxo.Calc.LinearAlgebra;
+
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
@@ -102,7 +104,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       // now create the matrices to multiply from the 
 
-      Altaxo.Calc.MatrixMath.REMatrix firstMat = new Altaxo.Calc.MatrixMath.REMatrix(rowsfirsthalf,halfselect);
+      MatrixMath.REMatrix firstMat = new MatrixMath.REMatrix(rowsfirsthalf,halfselect);
       for(int i=0;i<halfselect;i++)
       {
         Altaxo.Data.INumericColumn col = (Altaxo.Data.INumericColumn)srctable[selectedColumns[i]];
@@ -110,7 +112,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
           firstMat[j,i] = col.GetDoubleAt(j);
       }
       
-      Altaxo.Calc.MatrixMath.BEMatrix secondMat = new Altaxo.Calc.MatrixMath.BEMatrix(halfselect,rowssecondhalf);
+      MatrixMath.BEMatrix secondMat = new MatrixMath.BEMatrix(halfselect,rowssecondhalf);
       for(int i=0;i<halfselect;i++)
       {
         Altaxo.Data.INumericColumn col = (Altaxo.Data.INumericColumn)srctable[selectedColumns[i+halfselect]];
@@ -119,8 +121,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
 
       // now multiply the two matrices
-      Altaxo.Calc.MatrixMath.BEMatrix resultMat = new Altaxo.Calc.MatrixMath.BEMatrix(rowsfirsthalf,rowssecondhalf);
-      Altaxo.Calc.MatrixMath.Multiply(firstMat,secondMat,resultMat);
+      MatrixMath.BEMatrix resultMat = new MatrixMath.BEMatrix(rowsfirsthalf,rowssecondhalf);
+      MatrixMath.Multiply(firstMat,secondMat,resultMat);
 
 
       // and store the result in a new worksheet 
@@ -240,10 +242,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       // Create a matrix of appropriate dimensions and fill it
 
-      Altaxo.Calc.MatrixMath.BEMatrix matrixX;
+      MatrixMath.BEMatrix matrixX;
       if(bHorizontalOrientedSpectrum)
       {
-        matrixX = new Altaxo.Calc.MatrixMath.BEMatrix(numrows,numcols);
+        matrixX = new MatrixMath.BEMatrix(numrows,numcols);
         int ccol = 0; // current column in the matrix
         for(int i=0;i<prenumcols;i++)
         {
@@ -262,7 +264,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       } // end if it was a horizontal oriented spectrum
       else // if it is a vertical oriented spectrum
       {
-        matrixX = new Altaxo.Calc.MatrixMath.BEMatrix(numcols,numrows);
+        matrixX = new MatrixMath.BEMatrix(numcols,numrows);
         int ccol = 0; // current column in the matrix
         for(int i=0;i<prenumcols;i++)
         {
@@ -281,13 +283,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
       } // if it was a vertical oriented spectrum
 
       // now do PCA with the matrix
-      Altaxo.Calc.MatrixMath.REMatrix factors = new Altaxo.Calc.MatrixMath.REMatrix(0,0);
-      Altaxo.Calc.MatrixMath.BEMatrix loads = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
-      Altaxo.Calc.MatrixMath.BEMatrix residualVariances = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
-      Altaxo.Calc.MatrixMath.HorizontalVector meanX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Columns);
+      MatrixMath.REMatrix factors = new MatrixMath.REMatrix(0,0);
+      MatrixMath.BEMatrix loads = new MatrixMath.BEMatrix(0,0);
+      MatrixMath.BEMatrix residualVariances = new MatrixMath.BEMatrix(0,0);
+      MatrixMath.HorizontalVector meanX = new MatrixMath.HorizontalVector(matrixX.Columns);
       // first, center the matrix
-      Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixX,meanX);
-      Altaxo.Calc.MatrixMath.NIPALS_HO(matrixX,maxNumberOfFactors,1E-9,factors,loads,residualVariances);
+      MatrixMath.ColumnsToZeroMean(matrixX,meanX);
+      MatrixMath.NIPALS_HO(matrixX,maxNumberOfFactors,1E-9,factors,loads,residualVariances);
 
       // now we have to create a new table where to place the calculated factors and loads
       // we will do that in a vertical oriented manner, i.e. even if the loads are
@@ -299,8 +301,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       // first of all store the meanscore
     {
-      double meanScore = Altaxo.Calc.MatrixMath.LengthOf(meanX);
-      Altaxo.Calc.MatrixMath.NormalizeRows(meanX);
+      double meanScore = MatrixMath.LengthOf(meanX);
+      MatrixMath.NormalizeRows(meanX);
     
       Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
       for(int i=0;i<factors.Rows;i++)
@@ -466,63 +468,63 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public class PLS2CalibrationModel
     {
-      Altaxo.Calc.IROMatrix _xMean;
-      Altaxo.Calc.IROMatrix _xScale;
-      Altaxo.Calc.IROMatrix _yMean;
-      Altaxo.Calc.IROMatrix _yScale;
+      IROMatrix _xMean;
+      IROMatrix _xScale;
+      IROMatrix _yMean;
+      IROMatrix _yScale;
 
-      Altaxo.Calc.IROMatrix _xWeights;
-      Altaxo.Calc.IROMatrix _xLoads;
-      Altaxo.Calc.IROMatrix _yLoads;
-      Altaxo.Calc.IROMatrix _crossProduct;
+      IROMatrix _xWeights;
+      IROMatrix _xLoads;
+      IROMatrix _yLoads;
+      IROMatrix _crossProduct;
 
       int _numberOfX;
       int _numberOfY;
       int _numberOfFactors;
 
-      public Altaxo.Calc.IROMatrix XMean
+      public IROMatrix XMean
       {
         get { return _xMean; }
         set { _xMean = value; }
       }
 
-      public Altaxo.Calc.IROMatrix XScale
+      public IROMatrix XScale
       {
         get { return _xScale; }
         set { _xScale = value; }
       }
 
-      public Altaxo.Calc.IROMatrix YMean
+      public IROMatrix YMean
       {
         get { return _yMean; }
         set { _yMean = value; }
       }
 
-      public Altaxo.Calc.IROMatrix YScale
+      public IROMatrix YScale
       {
         get { return _yScale; }
         set { _yScale = value; }
       }
 
-      public Altaxo.Calc.IROMatrix XWeights
+      public IROMatrix XWeights
       {
         get { return _xWeights; }
         set { _xWeights = value; }
       }
 
-      public Altaxo.Calc.IROMatrix XLoads
+      public IROMatrix XLoads
       {
         get { return _xLoads; }
         set { _xLoads = value; }
       }
 
-      public Altaxo.Calc.IROMatrix YLoads
+      public IROMatrix YLoads
       {
         get { return _yLoads; }
         set { _yLoads = value; }
       }
 
-      public Altaxo.Calc.IROMatrix CrossProduct
+      public IROMatrix CrossProduct
       {
         get { return _crossProduct; }
         set { _crossProduct = value; }
@@ -770,9 +772,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
         measurementIndices = hlp;
       }
       
-      Altaxo.Calc.IMatrix matrixX = GetSpectra(ctrl.DataTable,spectrumIsRow,spectralIndices,measurementIndices);
+      IMatrix matrixX = GetSpectra(ctrl.DataTable,spectrumIsRow,spectralIndices,measurementIndices);
 
-      Altaxo.Calc.MatrixMath.BEMatrix predictedY = new Altaxo.Calc.MatrixMath.BEMatrix(measurementIndices.Count,calibModel.NumberOfY);
+      MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(measurementIndices.Count,calibModel.NumberOfY);
       CalculatePredictedY(calibModel,matrixX,numberOfFactors, predictedY);
 
       // now save the predicted y in the destination table
@@ -1062,12 +1064,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       
       // now check and fill in values
-      Altaxo.Calc.MatrixMath.BEMatrix matrixX;
-      Altaxo.Calc.MatrixMath.BEMatrix matrixY;
+      MatrixMath.BEMatrix matrixX;
+      MatrixMath.BEMatrix matrixY;
 
 
       // fill in the y-values
-      matrixY = new Altaxo.Calc.MatrixMath.BEMatrix(measurementIndices.Count,concentrationIndices.Count);
+      matrixY = new MatrixMath.BEMatrix(measurementIndices.Count,concentrationIndices.Count);
       for(int i=0;i<concentrationIndices.Count;i++)
       {
         Altaxo.Data.INumericColumn col = concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn;
@@ -1077,7 +1079,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         }
       } // end fill in yvalues
 
-      matrixX = new Altaxo.Calc.MatrixMath.BEMatrix(measurementIndices.Count,spectralIndices.Count);
+      matrixX = new MatrixMath.BEMatrix(measurementIndices.Count,spectralIndices.Count);
       if(bHorizontalOrientedSpectrum)
       {
         for(int i=0;i<spectralIndices.Count;i++)
@@ -1108,25 +1110,25 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 
       // now do a PLS with it
-      Altaxo.Calc.MatrixMath.BEMatrix xLoads   = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
-      Altaxo.Calc.MatrixMath.BEMatrix yLoads   = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
-      Altaxo.Calc.MatrixMath.BEMatrix W       = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
-      Altaxo.Calc.MatrixMath.REMatrix V       = new Altaxo.Calc.MatrixMath.REMatrix(0,0);
-      Altaxo.Calc.MatrixMath.BEMatrix PRESS   = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
+      MatrixMath.BEMatrix xLoads   = new MatrixMath.BEMatrix(0,0);
+      MatrixMath.BEMatrix yLoads   = new MatrixMath.BEMatrix(0,0);
+      MatrixMath.BEMatrix W       = new MatrixMath.BEMatrix(0,0);
+      MatrixMath.REMatrix V       = new MatrixMath.REMatrix(0,0);
+      MatrixMath.BEMatrix PRESS   = new MatrixMath.BEMatrix(0,0);
 
      
 
       // Before we can apply PLS, we have to center the x and y matrices
-      Altaxo.Calc.MatrixMath.HorizontalVector meanX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Columns);
-      //  Altaxo.Calc.MatrixMath.HorizontalVector scaleX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
-      Altaxo.Calc.MatrixMath.HorizontalVector meanY = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixY.Columns);
+      MatrixMath.HorizontalVector meanX = new MatrixMath.HorizontalVector(matrixX.Columns);
+      //  MatrixMath.HorizontalVector scaleX = new MatrixMath.HorizontalVector(matrixX.Cols);
+      MatrixMath.HorizontalVector meanY = new MatrixMath.HorizontalVector(matrixY.Columns);
 
 
-      Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixX, meanX);
-      Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixY, meanY);
+      MatrixMath.ColumnsToZeroMean(matrixX, meanX);
+      MatrixMath.ColumnsToZeroMean(matrixY, meanY);
 
       int numFactors = Math.Min(matrixX.Columns,plsOptions.MaxNumberOfFactors);
-      Altaxo.Calc.MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,ref numFactors,xLoads,yLoads,W,V,PRESS);
+      MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,ref numFactors,xLoads,yLoads,W,V,PRESS);
   
 
       // now we have to create a new table where to place the calculated factors and loads
@@ -1224,8 +1226,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if(plsOptions.CrossPRESSCalculation!=CrossPRESSCalculation.None)
       {
         // now a cross validation - this can take a long time for bigger matrices
-        Altaxo.Calc.IMatrix crossPRESSMatrix;
-        Altaxo.Calc.MatrixMath.PartialLeastSquares_CrossValidation_HO(matrixX,matrixY,numFactors, plsOptions.CrossPRESSCalculation==CrossPRESSCalculation.ExcludeGroupsOfSimilarMeasurements, out crossPRESSMatrix);
+        IMatrix crossPRESSMatrix;
+        MatrixMath.PartialLeastSquares_CrossValidation_HO(matrixX,matrixY,numFactors, plsOptions.CrossPRESSCalculation==CrossPRESSCalculation.ExcludeGroupsOfSimilarMeasurements, out crossPRESSMatrix);
 
         for(int i=0;i<crossPRESSMatrix.Rows;i++)
         { 
@@ -1236,7 +1238,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 
       // calculate the self predicted y values - for one factor and for two
-      Altaxo.Calc.IMatrix yPred = new Altaxo.Calc.MatrixMath.BEMatrix(matrixY.Rows,matrixY.Columns);
+      IMatrix yPred = new MatrixMath.BEMatrix(matrixY.Rows,matrixY.Columns);
       Altaxo.Data.DoubleColumn presscol = new Altaxo.Data.DoubleColumn();
       for(int i=0;i<PRESS.Rows;i++)
         presscol[i] = PRESS[i,0];
@@ -1263,10 +1265,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
       // and now the predicted Y 
       for(int nFactor=1;nFactor<=numFactors;nFactor++)
       {
-        Altaxo.Calc.MatrixMath.PartialLeastSquares_Predict_HO(matrixX,xLoads,yLoads,W,V,nFactor, yPred);
+        MatrixMath.PartialLeastSquares_Predict_HO(matrixX,xLoads,yLoads,W,V,nFactor, yPred);
 
         // Calculate the PRESS value
-        presscol[nFactor] = Altaxo.Calc.MatrixMath.SumOfSquaredDifferences(matrixY,yPred);
+        presscol[nFactor] = MatrixMath.SumOfSquaredDifferences(matrixY,yPred);
 
 
         // now store the predicted y - careful - they are horizontal in the matrix,
@@ -1661,7 +1663,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// </summary>
     /// <param name="plsMemo">The PLS memento containing the information about the location of the original data.</param>
     /// <returns>The matrix of the original spectra.</returns>
-    public static Altaxo.Calc.IMatrix GetOriginalSpectra(PLSContentMemento plsMemo)
+    public static IMatrix GetOriginalSpectra(PLSContentMemento plsMemo)
     {
       string tablename = plsMemo.TableName;
 
@@ -1674,8 +1676,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Collections.IAscendingIntegerCollection measurementIndices = plsMemo.MeasurementIndices;
 
       
-      Altaxo.Calc.MatrixMath.BEMatrix matrixX = 
-        new Altaxo.Calc.MatrixMath.BEMatrix(measurementIndices.Count,spectralIndices.Count);
+      MatrixMath.BEMatrix matrixX = 
+        new MatrixMath.BEMatrix(measurementIndices.Count,spectralIndices.Count);
       
  
       return GetSpectra(srctable,plsMemo.SpectrumIsRow,spectralIndices,measurementIndices);
@@ -1690,13 +1692,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="spectralIndices">The selected indices wich indicate all (wavelength, frequencies, etc.) that belong to one spectrum. If spectrumIsRow==true, this are the selected column indices, otherwise the selected row indices.</param>
     /// <param name="measurementIndices">The indices of all measurements (spectra) selected.</param>
     /// <returns>The matrix of spectra. In this matrix the spectra are horizonally organized (each row is one spectrum).</returns>
-    public static Altaxo.Calc.IMatrix GetSpectra(Altaxo.Data.DataTable srctable, bool spectrumIsRow, Altaxo.Collections.IAscendingIntegerCollection spectralIndices, Altaxo.Collections.IAscendingIntegerCollection measurementIndices)
+    public static IMatrix GetSpectra(Altaxo.Data.DataTable srctable, bool spectrumIsRow, Altaxo.Collections.IAscendingIntegerCollection spectralIndices, Altaxo.Collections.IAscendingIntegerCollection measurementIndices)
     {
       if(srctable==null)
         throw new ArgumentException("Argument srctable may not be null");
       
-      Altaxo.Calc.MatrixMath.BEMatrix matrixX = 
-        new Altaxo.Calc.MatrixMath.BEMatrix(measurementIndices.Count,spectralIndices.Count);
+      MatrixMath.BEMatrix matrixX = 
+        new MatrixMath.BEMatrix(measurementIndices.Count,spectralIndices.Count);
       
 
       if(spectrumIsRow)
@@ -1736,7 +1738,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// </summary>
     /// <param name="plsMemo">The PLS mememto containing the information where to find the original data.</param>
     /// <returns>Matrix of orignal Y (concentration) data.</returns>
-    public static Altaxo.Calc.IMatrix GetOriginalY(PLSContentMemento plsMemo)
+    public static IMatrix GetOriginalY(PLSContentMemento plsMemo)
     {
       string tablename = plsMemo.TableName;
 
@@ -1750,7 +1752,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Collections.IAscendingIntegerCollection measurementIndices = plsMemo.MeasurementIndices;
 
       // fill in the y-values
-      Altaxo.Calc.MatrixMath.BEMatrix matrixY = new Altaxo.Calc.MatrixMath.BEMatrix(measurementIndices.Count,concentrationIndices.Count);
+      MatrixMath.BEMatrix matrixY = new MatrixMath.BEMatrix(measurementIndices.Count,concentrationIndices.Count);
       for(int i=0;i<concentrationIndices.Count;i++)
       {
         Altaxo.Data.INumericColumn col = concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn;
@@ -1789,12 +1791,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
 
-    public static void CalculatePredictedY(PLS2CalibrationModel calib, Altaxo.Calc.IMatrix matrixX, int numberOfFactors, Altaxo.Calc.MatrixMath.BEMatrix  predictedY)
+    public static void CalculatePredictedY(PLS2CalibrationModel calib, IMatrix matrixX, int numberOfFactors, MatrixMath.BEMatrix  predictedY)
     {
-      Altaxo.Calc.MatrixMath.SubtractRow(matrixX,calib.XMean,0,matrixX);
-      Altaxo.Calc.MatrixMath.DivideRow(matrixX,calib.XScale,0,0,matrixX);
+      MatrixMath.SubtractRow(matrixX,calib.XMean,0,matrixX);
+      MatrixMath.DivideRow(matrixX,calib.XScale,0,0,matrixX);
 
-      Altaxo.Calc.MatrixMath.PartialLeastSquares_Predict_HO(
+      MatrixMath.PartialLeastSquares_Predict_HO(
         matrixX,
         calib.XLoads,
         calib.YLoads,
@@ -1804,8 +1806,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
         predictedY);
 
       // mean and scale prediced Y
-      Altaxo.Calc.MatrixMath.MultiplyRow(predictedY,calib.YScale,0,predictedY);
-      Altaxo.Calc.MatrixMath.AddRow(predictedY,calib.YMean,0,predictedY);
+      MatrixMath.MultiplyRow(predictedY,calib.YScale,0,predictedY);
+      MatrixMath.AddRow(predictedY,calib.YMean,0,predictedY);
     }  
 
     public static void CalculatePredictedAndResidual(Altaxo.Data.DataTable table, int whichY, int numberOfFactors, bool saveYPredicted, bool saveYResidual, bool saveXResidual)
@@ -1820,9 +1822,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
       exporter.Export(out calib);
 
 
-      Altaxo.Calc.IMatrix matrixX = GetOriginalSpectra(plsMemo);
+      IMatrix matrixX = GetOriginalSpectra(plsMemo);
 
-      Altaxo.Calc.MatrixMath.BEMatrix predictedY = new Altaxo.Calc.MatrixMath.BEMatrix(matrixX.Rows,calib.NumberOfY);
+      MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(matrixX.Rows,calib.NumberOfY);
       CalculatePredictedY(calib,matrixX,numberOfFactors,predictedY);
 
       if(saveYPredicted)
@@ -1838,8 +1840,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
 
       // subract the original y data
-      Altaxo.Calc.IMatrix matrixY = GetOriginalY(plsMemo);
-      Altaxo.Calc.MatrixMath.SubtractColumn(predictedY,matrixY,whichY,predictedY);
+      IMatrix matrixY = GetOriginalY(plsMemo);
+      MatrixMath.SubtractColumn(predictedY,matrixY,whichY,predictedY);
 
       if(saveYResidual)
       {

@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Calc
+namespace Altaxo.Calc.LinearAlgebra
 {
   /// <summary>
   /// IROMatrix represents a read-only matrix of double values.

@@ -22,6 +22,8 @@
 
 using System;
 using Altaxo.Calc;
+using Altaxo.Calc.LinearAlgebra;
+
 using NUnit.Framework;
 
 namespace AltaxoTest.Calc

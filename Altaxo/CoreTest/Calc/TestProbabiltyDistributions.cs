@@ -22,7 +22,7 @@
 
 using System;
 using Altaxo.Calc;
-using Altaxo.Calc.Random;
+using Altaxo.Calc.Probability;
 using NUnit.Framework;
 
 

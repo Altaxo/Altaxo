@@ -23,6 +23,8 @@
 using System;
 
 using Altaxo.Worksheet.GUI;
+using Altaxo.Calc;
+using Altaxo.Calc.Fourier;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
@@ -49,7 +51,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 
       double[] arr=col.Array;
-      Altaxo.Calc.FFT.FastHartleyTransform.RealFFT(arr,arr.Length);
+      FastHartleyTransform.RealFFT(arr,arr.Length);
 
       col.Array = arr;
 
@@ -90,14 +92,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
 
       // test it can be done
-      if(!Altaxo.Calc.FFT.Pfa235FFT.CanFactorized(cols))
+      if(!Pfa235FFT.CanFactorized(cols))
         return string.Format("Can't apply fourier transform, since the number of cols ({0}) are not appropriate for this kind of fourier transform.",cols);
-      if(!Altaxo.Calc.FFT.Pfa235FFT.CanFactorized(rows))
+      if(!Pfa235FFT.CanFactorized(rows))
         return string.Format("Can't apply fourier transform, since the number of rows ({0}) are not appropriate for this kind of fourier transform.",rows);
 
       // fourier transform
-      Altaxo.Calc.FFT.Pfa235FFT fft = new Altaxo.Calc.FFT.Pfa235FFT(cols,rows);
-      fft.FFT(rePart,imPart,Altaxo.Calc.FFT.FourierDirection.Forward);
+      Pfa235FFT fft = new Pfa235FFT(cols,rows);
+      fft.FFT(rePart,imPart,FourierDirection.Forward);
 
       // replace the real part by the amplitude
       for(int i=0;i<rePart.Length;i++)

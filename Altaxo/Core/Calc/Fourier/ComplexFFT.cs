@@ -35,7 +35,7 @@ using System.IO;
 using System.Text;
 
 
-namespace Altaxo.Calc.FFT 
+namespace Altaxo.Calc.Fourier
 {
 
   // Comments? Questions? Bugs? Tell Ben Houston at ben@exocortex.org

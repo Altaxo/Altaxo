@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc
 {
@@ -29,7 +30,7 @@ namespace Altaxo.Calc
   /// <summary>
   /// Wrapps a set of <see>DataColumns</see> into a matrix so that the matrix columns corresponds to the <see>DataColumns</see>.
   /// </summary>
-  class DataColumnToColumnMatrixWrapper : Altaxo.Calc.IROMatrix
+  class DataColumnToColumnMatrixWrapper : IROMatrix
   {
     Altaxo.Data.INumericColumn[] _columns;
     int _rows;
@@ -90,7 +91,7 @@ namespace Altaxo.Calc
   /// <summary>
   /// Wrapps a set of <see>DataColumns</see> into a matrix so that the matrix rows corresponds to the <see>DataColumns</see>.
   /// </summary>
-  class DataColumnToRowMatrixWrapper : Altaxo.Calc.IROMatrix
+  class DataColumnToRowMatrixWrapper : IROMatrix
   {
     Altaxo.Data.INumericColumn[] _columns;
     int _nColumns;

@@ -89,11 +89,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\ArrayMath.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Calc\BasicFunctions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -149,57 +144,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\IMatrix.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\Interpolation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Calc\IScalarFunction.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\IVector.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\MapackMatrix.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\Matrix.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\MatrixMath.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\NonLinearFit.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Calc\Polynomials.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\ProbabilityDistributions.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\RandomGenerators.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -218,51 +168,104 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <Folder RelPath = "Calc\FFT\" />
+                <Folder RelPath = "Calc\Fitting\" />
                 <File
-                    RelPath = "Calc\VectorMath.cs"
+                    RelPath = "Calc\Fourier\ArrayMath.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\FFT\ChirpFFT.cs"
+                    RelPath = "Calc\Fourier\ChirpFFT.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\FFT\ComplexFFT.cs"
+                    RelPath = "Calc\Fourier\ComplexFFT.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\FFT\FastHartleyTransform.cs"
+                    RelPath = "Calc\Fourier\FastHartleyTransform.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\FFT\FourierDirection.cs"
+                    RelPath = "Calc\Fourier\FourierDirection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\FFT\NativeFourierMethods.cs"
+                    RelPath = "Calc\Fourier\NativeFourierMethods.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\FFT\Pfa235Convolution.cs"
+                    RelPath = "Calc\Fourier\Pfa235Convolution.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\FFT\Pfa235FFT.cs"
+                    RelPath = "Calc\Fourier\Pfa235FFT.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\Fitting\PolynomialFit.cs"
+                    RelPath = "Calc\Interpolation\Interpolation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <File
+                    RelPath = "Calc\LinearAlgebra\IMatrix.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\LinearAlgebra\IVector.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\LinearAlgebra\MapackMatrix.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\LinearAlgebra\Matrix.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\LinearAlgebra\MatrixMath.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\LinearAlgebra\VectorMath.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Probability\ProbabilityDistributions.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Probability\RandomGenerators.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\LinearRegression.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\NonLinearFit.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <Folder RelPath = "Calc\Regression\PCR\" />
+                <Folder RelPath = "Calc\Regression\PLS\" />
             </Include>
         </Files>
     </CSHARP>

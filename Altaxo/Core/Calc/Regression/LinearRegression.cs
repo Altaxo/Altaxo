@@ -22,6 +22,8 @@
 
 using System;
 
+using Altaxo.Calc.LinearAlgebra;
+
 namespace Altaxo.Calc.Regression
 {
 

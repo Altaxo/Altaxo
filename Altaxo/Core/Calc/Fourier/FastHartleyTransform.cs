@@ -25,7 +25,7 @@
 
 using System;
 
-namespace Altaxo.Calc.FFT
+namespace Altaxo.Calc.Fourier
 {
   /// <summary>
   /// Fast Fourier Transform class based on the Fast Hartley Transform.

@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Calc
+namespace Altaxo.Calc.LinearAlgebra
 {
   /// <summary>
   /// Interface for a read-only vector of double values.

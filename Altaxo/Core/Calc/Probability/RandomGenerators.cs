@@ -78,7 +78,7 @@
 
 using System;
 
-namespace Altaxo.Calc.Random
+namespace Altaxo.Calc.Probability
 {
 
   #region RandomGenerator

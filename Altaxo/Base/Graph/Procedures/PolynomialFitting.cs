@@ -22,6 +22,8 @@
 
 using System;
 using Altaxo.Calc;
+using Altaxo.Calc.Regression;
+using Altaxo.Calc.Probability;
 using Altaxo.Graph;
 
 namespace Altaxo.Graph.Procedures
@@ -120,7 +122,7 @@ namespace Altaxo.Graph.Procedures
     /// <param name="xcolumn">The column of x-values.</param>
     /// <param name="ycolumn">The column of y-values.</param>
     /// <returns>The fit.</returns>
-    public static Altaxo.Calc.Fitting.LinearFitBySvd Fit(int order, Altaxo.Data.DataColumn xcolumn, Altaxo.Data.DataColumn ycolumn)
+    public static LinearFitBySvd Fit(int order, Altaxo.Data.DataColumn xcolumn, Altaxo.Data.DataColumn ycolumn)
     {
       if(!(xcolumn is Altaxo.Data.INumericColumn))
         throw new ArgumentException("The x-column must be numeric","xcolumn");
@@ -152,9 +154,9 @@ namespace Altaxo.Graph.Procedures
         numberOfDataPoints++;
       }
 
-      Altaxo.Calc.Fitting.LinearFitBySvd fit = 
-        new Altaxo.Calc.Fitting.LinearFitBySvd(
-        xarr,yarr,earr,numberOfDataPoints, order+1, new Altaxo.Calc.Fitting.FunctionBaseEvaluator(EvaluatePolynomialBase),1E-5);
+      LinearFitBySvd fit = 
+        new LinearFitBySvd(
+        xarr,yarr,earr,numberOfDataPoints, order+1, new FunctionBaseEvaluator(EvaluatePolynomialBase),1E-5);
 
       return fit;
 
@@ -181,9 +183,9 @@ namespace Altaxo.Graph.Procedures
 
       int numberOfParameter = order+1;
       double[] parameter= new double[numberOfParameter];
-      Altaxo.Calc.Fitting.LinearFitBySvd fit = 
-        new Altaxo.Calc.Fitting.LinearFitBySvd(
-        xarr,yarr,earr,numberOfDataPoints, order+1, new Altaxo.Calc.Fitting.FunctionBaseEvaluator(EvaluatePolynomialBase),1E-5);
+      LinearFitBySvd fit = 
+        new LinearFitBySvd(
+        xarr,yarr,earr,numberOfDataPoints, order+1, new FunctionBaseEvaluator(EvaluatePolynomialBase),1E-5);
 
       // Output of results
 
@@ -200,7 +202,7 @@ namespace Altaxo.Graph.Procedures
           fit.Parameter[i],
           fit.StandardErrorOfParameter(i),
           fit.TofParameter(i),
-          1-Calc.Random.FDistribution.CDF(fit.TofParameter(i),numberOfParameter,numberOfDataPoints-1)
+          1-FDistribution.CDF(fit.TofParameter(i),numberOfParameter,numberOfDataPoints-1)
           );
 
       Current.Console.WriteLine("R²: {0}, Adjusted R²: {1}",
@@ -219,7 +221,7 @@ namespace Altaxo.Graph.Procedures
         fit.RegressionCorrectedSumOfSquares,
         fit.RegressionCorrectedSumOfSquares/numberOfParameter,
         regressionmeansquare/residualmeansquare,
-        1-Calc.Random.FDistribution.CDF(regressionmeansquare/residualmeansquare,numberOfParameter,numberOfDataPoints-1)
+        1-FDistribution.CDF(regressionmeansquare/residualmeansquare,numberOfParameter,numberOfDataPoints-1)
         );
 
       Current.Console.WriteLine("Residual   {0,10} {1,20} {2,20}",

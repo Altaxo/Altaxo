@@ -22,9 +22,9 @@
 
 using System;
 using NUnit.Framework;
-using Altaxo.Calc.FFT;
+using Altaxo.Calc.Fourier;
 
-namespace AltaxoTest.Calc.FFT
+namespace AltaxoTest.Calc.Fourier
 {
 
 

@@ -50,6 +50,8 @@
 
 using System;
 using Altaxo.Calc;
+using Altaxo.Calc.LinearAlgebra;
+
 
 namespace Altaxo.Calc.Interpolation
 {
