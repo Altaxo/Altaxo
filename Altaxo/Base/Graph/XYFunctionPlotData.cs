@@ -75,6 +75,15 @@ namespace Altaxo.Graph
       this.Function = (Altaxo.Calc.IScalarFunctionDD)((ICloneable)_function).Clone();
     }
 
+    public override string ToString()
+    {
+      if(_function!=null)
+        return "Function: " + _function.ToString();
+      else
+        return base.ToString ();
+    }
+
+
     /// <summary>
     /// Get/sets the function used for evaluation. Must be serializable in order to store the graph to disk.
     /// </summary>
@@ -192,6 +201,7 @@ namespace Altaxo.Graph
     {
     }
 
+    
 
     /// <summary>
     /// Constructor by providing the array of coefficients (a0 is the first element of the array).
@@ -232,6 +242,20 @@ namespace Altaxo.Graph
         }
       }
     }
+
+    public int Order
+    {
+      get 
+      {
+        return _coefficients==null ? 0 : _coefficients.Length;
+      }
+    }
+
+    public override string ToString()
+    {
+      return "Polynomial (order " + Order.ToString() + ")";
+    }
+
 
     #region IScalarFunctionDD Members
 

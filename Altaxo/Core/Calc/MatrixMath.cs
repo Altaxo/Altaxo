@@ -2230,27 +2230,23 @@ namespace Altaxo.Calc
 
 
       /// <summary>
-      /// If singular value decomposition was used to make a linear fit,
-      /// this gives the variance-covariance matrix of the fitting parameters.
+      /// Calculates the covariance matrix Cov(i,j)=SUM_over_k( V[i,k]*V[j,k]/s[k]^2). If s[k] is zero, 1/s[k]^2 will be set to zero. If the singular value decomposition was used to make a linear fit,
+      /// this is the variance-covariance matrix of the fitting parameters.
       /// </summary>
-      /// <returns>The variance-covariance-matrix of the fitting parameters.</returns>
+      /// <returns>The variance-covariance-matrix.</returns>
       public double[][] GetCovariances()
       {
-        double[][] cvm = MatrixMath.GetMatrixArray(m,m);
-        double[] wti = new double[m];
-        for(int i=0;i<m;i++)
-        {
-          wti[i] = 0;
-          if(s[i]!=0 && i<n)
-            wti[i] = 1/(s[i]*s[i]);
-        }
+        double[][] cvm = MatrixMath.GetMatrixArray(n,n);
+        double[] wti = new double[n];
+        for(int i=0;i<n;i++)
+          wti[i] = (i<m && s[i]!=0) ? 1/(s[i]*s[i]) : 0;
 
-        for(int i=0;i<m;i++)
+        for(int i=0;i<n;i++)
         {
           for(int j=0;j<=i;j++)
           {
             double sum=0;
-            for(int k=0;k<m;k++)
+            for(int k=0;k<n;k++)
               sum += v[i][k]*v[j][k]*wti[k];
 
             cvm[j][i] = cvm[i][j] = sum;
@@ -2261,18 +2257,18 @@ namespace Altaxo.Calc
       }
 
       /// <summary>
-      /// Sets all singular values, that are lesser than accuracy*(maximum singular value), to zero.
+      /// Sets all singular values, that are lesser than relativeThreshold*(maximum singular value), to zero.
       /// </summary>
-      /// <param name="accuracy">The chop parameter, usually in the order 1E-5 or so.</param>
-      public void ChopSingularValues(double accuracy)
+      /// <param name="relativeThreshold">The chop parameter, usually in the order 1E-5 or so.</param>
+      public void ChopSingularValues(double relativeThreshold)
       {
-        accuracy = Math.Abs(accuracy);
+        relativeThreshold = Math.Abs(relativeThreshold);
 
-        double maxSingularValue=double.MinValue;
+        double maxSingularValue=0;
         for(int i=0;i<s.Length;i++)
           maxSingularValue = Math.Max(maxSingularValue,s[i]);
 
-        double thresholdLevel = accuracy*maxSingularValue;
+        double thresholdLevel = maxSingularValue*relativeThreshold;
 
         // set singular values < thresholdLevel to zero
         for(int i=0;i<s.Length;i++)

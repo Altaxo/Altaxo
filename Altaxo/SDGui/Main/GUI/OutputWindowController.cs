@@ -103,15 +103,42 @@ namespace Altaxo.Main.GUI
 
     #region IOutputService Members
 
-    public void WriteLine(string text)
+    public void WriteLine()
     {
-      _view.AppendText(text+System.Environment.NewLine);
+      _view.AppendText(System.Environment.NewLine);
     }
 
+    public void WriteLine(string text)
+    {
+      Write(text);
+      WriteLine();
+    }
+
+    public void WriteLine(string format, params object[] args)
+    {
+      Write(format,args);
+      WriteLine();
+    }
+
+    public void WriteLine(System.IFormatProvider provider, string format, params object[] args)
+    {
+      Write(string.Format(provider,format,args));
+      WriteLine();
+    }
     public void Write(string text)
     {
       _view.AppendText(text);
     }
+
+    public void Write(string format, params object[] args)
+    {
+      Write(string.Format(format,args));
+    }
+
+    public void Write(System.IFormatProvider provider, string format, params object[] args)
+  {
+    Write(string.Format(provider,format,args));
+  }
 
     #endregion
   }

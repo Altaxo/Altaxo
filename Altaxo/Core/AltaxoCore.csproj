@@ -16,7 +16,7 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "Library"
-                PreBuildEvent = "rem Update the build version of the main important assemblies&#xd;&#xa;..\..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\..\  ..\..\AssemblyInfo.cs"
+                PreBuildEvent = "rem Update the build version of the main important assemblies&#xd;&#xa;rem ..\..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\..\  ..\..\AssemblyInfo.cs"
                 PostBuildEvent = "copy AltaxoCore.??? ..\..\..\..\rt$(ConfigurationName)\bin"
                 RootNamespace = "Altaxo"
                 RunPostBuildEvent = "OnBuildSuccess"

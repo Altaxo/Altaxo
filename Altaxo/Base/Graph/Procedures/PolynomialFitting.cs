@@ -85,6 +85,33 @@ namespace Altaxo.Graph.Procedures
       return null;
     }
 
+    /// <summary>
+    /// Get the names of the x and y column of the active plot.
+    /// </summary>
+    /// <param name="ctrl">The current active graph controller.</param>
+    /// <returns>An array of two strings. The first string is the name of the x-column, the second
+    /// the name of the y-column.</returns>
+    public static string[] GetActivePlotName(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+      string[] result = new string[2]{String.Empty, String.Empty};
+
+      Altaxo.Graph.PlotItem plotItem = ctrl.ActiveLayer.PlotItems[ctrl.CurrentPlotNumber];
+
+      Altaxo.Graph.XYColumnPlotItem xyPlotItem = plotItem as Altaxo.Graph.XYColumnPlotItem;
+
+      if(xyPlotItem==null)
+        return result;
+      
+      Altaxo.Graph.XYColumnPlotData data = xyPlotItem.XYColumnPlotData;
+      if(data==null) 
+        return result;
+
+      result[0] = data.XColumn.FullName;
+      result[1] = data.YColumn.FullName;
+
+      return result;
+    }
+
     public static string Fit(Altaxo.Graph.GUI.GraphController ctrl, int order, double fitCurveXmin, double fitCurveXmax, bool showFormulaOnGraph)
     {
       string error;
@@ -95,6 +122,9 @@ namespace Altaxo.Graph.Procedures
 
       if(null!=error)
         return error;
+
+      string[] plotNames = GetActivePlotName(ctrl);
+
 
       // Error-Array
       earr = new double[numberOfDataPoints];
@@ -108,8 +138,12 @@ namespace Altaxo.Graph.Procedures
 
       // Output of results
 
-      // for(int i=0;i<fit.Parameter.Length;i++)
-      //   Current.OutputService.WriteLine(string.Format("A{0}: {1} +- {2}",i, fit.Parameter[i],fit.Covariances[i][i]));
+      Current.Console.WriteLine("");
+      Current.Console.WriteLine("---- " + DateTime.Now.ToLongDateString() + " -----------------------");
+      Current.Console.WriteLine("Polynomial regression of order {0} of {1} over {2}",order,plotNames[1],plotNames[0]);
+
+      for(int i=0;i<fit.Parameter.Length;i++)
+        Current.Console.WriteLine("A{0}: {1} ± {2}",i, fit.Parameter[i],fit.SigmaSquare*fit.Covariances[i][i]);
 
 
 

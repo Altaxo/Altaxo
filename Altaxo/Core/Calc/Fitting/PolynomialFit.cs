@@ -40,6 +40,9 @@ namespace Altaxo.Calc.Fitting
     double[] _parameter;
     double  _chiSquare;
     double[][] _covarianceMatrix;
+    int _numberOfParameter;
+    int _numberOfFreeParameter;
+    int _numberOfData;
 
     /// <summary>
     /// Fits a data set linear to a given function base.
@@ -60,6 +63,9 @@ namespace Altaxo.Calc.Fitting
       FunctionBaseEvaluator evaluateFunctionBase,
       double threshold)
     {
+      _numberOfParameter = numberOfParameter;
+      _numberOfFreeParameter = numberOfParameter;
+      _numberOfData      = numberOfData;
       _parameter = new double[numberOfParameter];
 
       double[] functionBase = new double[numberOfParameter];
@@ -83,7 +89,8 @@ namespace Altaxo.Calc.Fitting
       MatrixMath.SingularValueDecomposition decomposition = MatrixMath.GetSingularValueDecomposition(u);
 
       // set singular values < thresholdLevel to zero
-      decomposition.ChopSingularValues(1E-5);
+      // ChopSingularValues makes only sense if all columns of the x matrix have the same variance
+      //decomposition.ChopSingularValues(1E-5);
       // recalculate the parameters with the chopped singular values
       decomposition.Backsubstitution(scaledY,_parameter);
 
@@ -102,6 +109,12 @@ namespace Altaxo.Calc.Fitting
  
     }
 
+    /// <summary>
+    /// Returns the number of parameter (=Order+1) of the fit.
+    /// </summary>
+    public int NumberOfParameter { get { return _numberOfParameter; }}
+
+    public int NumberOfData { get { return _numberOfData; }}
 
     /// <summary>
     /// Get the resulting parameters, so that the model y = SUM(parameter[i]*functionbase[i])
@@ -115,5 +128,24 @@ namespace Altaxo.Calc.Fitting
     /// Get the variance-covariance-matrix for the fit.
     /// </summary>
     public double[][] Covariances { get { return _covarianceMatrix; }}
+
+
+    /// <summary>Get the estimated residual mean square.</summary>
+    /// <remarks>The estimated mean square is defined as SumChiSquare(n-p), where n is the number of data
+    /// points and p is the number of (free) parameters.</remarks>
+    public double SigmaSquare
+    {
+      get
+      {
+        if(_numberOfData>_numberOfFreeParameter)
+          return SumChiSquare/(_numberOfData-_numberOfFreeParameter);
+        else
+          return 0;
+      }
+    }
+
+    /// <summary>Get the standard error of regression, defined as <c>Sqrt(SigmaSquare)</c>.</summary>
+    public double Sigma  {  get  { return Math.Sqrt(SigmaSquare); }}
+
   }
 }

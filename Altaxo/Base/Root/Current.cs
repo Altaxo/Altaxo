@@ -73,7 +73,7 @@ namespace Altaxo
       get { return sm_thePrintingService; }
     }
 
-    public static Altaxo.Main.Services.IOutputService OutputService
+    public static Altaxo.Main.Services.IOutputService Console
     {
       get { return sm_theOutputService; }
     }

@@ -16,7 +16,7 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "Library"
-                PreBuildEvent = "..\..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\..\  ..\..\AssemblyInfo.cs"
+                PreBuildEvent = "rem ..\..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\..\  ..\..\AssemblyInfo.cs"
                 PostBuildEvent = "copy AltaxoBase.??? ..\..\..\..\rt$(ConfigurationName)\bin"
                 RootNamespace = "Altaxo"
                 RunPostBuildEvent = "OnBuildSuccess"
