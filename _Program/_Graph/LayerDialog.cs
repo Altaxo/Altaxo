@@ -498,6 +498,7 @@ namespace Altaxo.Graph
 			this.m_Format_chkShowAxis.TabIndex = 0;
 			this.m_Format_chkShowAxis.Text = "Show Axis && Ticks";
 			this.m_Format_chkShowAxis.TextChanged += new System.EventHandler(this.OnFormat_chkShowAxis_TextChanged);
+			this.m_Format_chkShowAxis.CheckedChanged += new System.EventHandler(this.OnFormat_chkShowAxis_CheckedChanged);
 			// 
 			// m_Tab_Contents
 			// 
@@ -962,21 +963,28 @@ namespace Altaxo.Graph
 			string [] names;
 
 			XYLayerAxisStyle axstyle=null;
+			bool bAxisEnabled=false;
 			switch(m_CurrentEdge)
 			{
 				case EdgeType.Left:
 					axstyle = m_Layer.LeftAxisStyle;
+					bAxisEnabled = m_Layer.LeftAxisEnabled;
 					break;
 				case EdgeType.Right:
 					axstyle = m_Layer.RightAxisStyle;
+					bAxisEnabled = m_Layer.RightAxisEnabled;
 					break;
 				case EdgeType.Bottom:
 					axstyle = m_Layer.BottomAxisStyle;
+					bAxisEnabled = m_Layer.BottomAxisEnabled;
 					break;
 				case EdgeType.Top:
 					axstyle = m_Layer.TopAxisStyle;
+					bAxisEnabled = m_Layer.TopAxisEnabled;
 					break;
 			}
+
+			this.m_Format_chkShowAxis.Checked = bAxisEnabled;
 
 			this.m_Common_lbEdges.Items.Clear();
 			names = System.Enum.GetNames(typeof(Graph.EdgeType));
@@ -1115,6 +1123,25 @@ namespace Altaxo.Graph
 						break;
 				}
 
+				// read axis enabled
+				bool bAxisEnabled = this.m_Format_chkShowAxis.Checked;
+				// set axis enabled on the layer
+				switch(m_CurrentEdge)
+				{
+					case EdgeType.Left:
+						m_Layer.LeftAxisEnabled = bAxisEnabled;
+						break;
+					case EdgeType.Right:
+						m_Layer.RightAxisEnabled = bAxisEnabled;
+						break;
+					case EdgeType.Bottom:
+						m_Layer.BottomAxisEnabled = bAxisEnabled;
+						break;
+					case EdgeType.Top:
+						m_Layer.TopAxisEnabled = bAxisEnabled;
+						break;
+				}
+
 			}
 			catch(Exception)
 			{
@@ -1179,6 +1206,10 @@ namespace Altaxo.Graph
 		}
 
 		private void OnFormat_chkShowAxis_TextChanged(object sender, System.EventArgs e)
+		{
+			m_PProp[pgFormat].SetDirty();
+		}
+		private void OnFormat_chkShowAxis_CheckedChanged(object sender, System.EventArgs e)
 		{
 			m_PProp[pgFormat].SetDirty();
 		}
@@ -1822,6 +1853,7 @@ namespace Altaxo.Graph
 
 
 		#endregion
+
 
 
 

@@ -753,13 +753,13 @@ namespace Altaxo.Graph
 				// note: we normalized so that the "lesser values" are on the left
 				double org = Math.Pow(10,log10org);
 				double firstmajor = majorticks[0];
-				for(i=1;firstmajor*(10-i*minorincrement)>10*org;i++) {}
+				for(i=1;firstmajor*(1-i*minorincrement/10)>=org;i++) {}
 				int leftminorticks = i-1;
 
 				// count the ticks on the right of the axis
 				double end = Math.Pow(10,log10end);
 				double lastmajor = majorticks[majorcount-1];
-				for(i=1;lastmajor*(1+i*minorincrement)<end;i++){}
+				for(i=1;lastmajor*(1+i*minorincrement)<=end;i++){}
 				int rightminorticks = i-1;
 
 

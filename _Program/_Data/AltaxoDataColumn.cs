@@ -5,16 +5,18 @@ namespace Altaxo.Data
 {
 	
 
+	[Serializable]
 	public enum ColumnKind
 	{
-		Y,
-		X,			
-		Z,								
-		Err,		
-		pErr,					
-		mErr,
-		Label,
-		Condition
+		V=0,
+		X=1,
+		Y=2,			
+		Z=3,								
+		Err=4,		
+		pErr=5,					
+		mErr=6,
+		Label=7,
+		Condition=8
 	}
 
 
@@ -117,8 +119,7 @@ namespace Altaxo.Data
 		protected int m_ColumnNumber=0; // number of the column in the data m_Table
 		protected Altaxo.Data.DataTable m_Table=null;
 		protected int m_Group=0; // number of group this column is belonging to
-		protected ColumnKind m_Kind; // kind of column
-		protected bool       m_bXColumn; // is this a X-Column
+		protected ColumnKind m_Kind = ColumnKind.Y; // kind of column
 
 		protected int m_Count=0; // Index of last valid data -1
 		protected static double increaseFactor=2; // array space is increased by this factor plus addSpace
@@ -151,6 +152,7 @@ namespace Altaxo.Data
 				info.AddValue("Name",s.m_ColumnName);
 				info.AddValue("Number",s.m_ColumnNumber);
 				info.AddValue("Count",s.m_Count);
+				info.AddValue("Kind",(int)s.m_Kind);
 			}
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
@@ -160,6 +162,7 @@ namespace Altaxo.Data
 				s.m_ColumnName = info.GetString("Name");
 				s.m_ColumnNumber = info.GetInt32("Number");
 				s.m_Count = info.GetInt32("Count");
+				s.m_Kind  = (ColumnKind)info.GetInt32("Kind");
 
 				// set the helper data
 				s.m_MinRowChanged=int.MaxValue; // area of rows, which changed during event off period
@@ -213,26 +216,26 @@ namespace Altaxo.Data
 
 		public ColumnKind Kind
 		{
-			get { return m_bXColumn? ColumnKind.X : m_Kind; }
+			get { return m_Kind; }
 			set 
 			{
-				if(ColumnKind.X==value)
-					this.XColumn = true;
-				else
-					m_Kind = value;
+				m_Kind = value;
 			}
 		}
 
 		public bool XColumn
 		{
-			get { return m_bXColumn; }
+			get { return m_Kind==ColumnKind.X; }
 			set
 			{
 				if(null!=this.m_Table && true==value)
 				{
 					m_Table.DeleteXProperty(m_Group);
 				}
-				m_bXColumn = value;
+				if(true==value)
+					m_Kind = ColumnKind.X;
+				else
+					m_Kind = ColumnKind.V;
 			}
 		}
 

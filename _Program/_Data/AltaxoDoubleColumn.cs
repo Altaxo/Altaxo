@@ -283,6 +283,8 @@ namespace Altaxo.Data
 
 
 
+		#region "Operators"
+
 		// -----------------------------------------------------------------------------
 		//
 		//                        Operators
@@ -2041,5 +2043,7 @@ namespace Altaxo.Data
 			return c3;
 		}	
 				
+		#endregion
+
 	} // end Altaxo.Data.DoubleColumn
 }

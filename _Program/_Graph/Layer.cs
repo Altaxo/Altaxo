@@ -20,6 +20,12 @@ namespace Altaxo.Graph
 		protected Axis m_xAxis; // the X-Axis
 		protected Axis m_yAxis; // the Y-Axis
 
+
+		protected bool m_ShowLeftAxis = true;
+		protected bool m_ShowBottomAxis = true;
+		protected bool m_ShowRightAxis = true;
+		protected bool m_ShowTopAxis = true;
+
 		protected XYLayerAxisStyle m_LeftAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Left);
 		protected XYLayerAxisStyle m_BottomAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Bottom);
 		protected XYLayerAxisStyle m_RightAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Right);
@@ -143,6 +149,57 @@ namespace Altaxo.Graph
 			get { return m_TopLabelStyle; }
 		}
 
+		
+		public bool LeftAxisEnabled
+		{
+			get { return this.m_ShowLeftAxis; }
+			set
+			{
+				if(value!=this.m_ShowLeftAxis)
+				{
+					m_ShowLeftAxis = value;
+					this.OnInvalidate();
+				}
+			}
+		}
+
+		public bool BottomAxisEnabled
+		{
+			get { return this.m_ShowBottomAxis; }
+			set
+			{
+				if(value!=this.m_ShowBottomAxis)
+				{
+					m_ShowBottomAxis = value;
+					this.OnInvalidate();
+				}
+			}
+		}
+		public bool RightAxisEnabled
+		{
+			get { return this.m_ShowRightAxis; }
+			set
+			{
+				if(value!=this.m_ShowRightAxis)
+				{
+					m_ShowRightAxis = value;
+					this.OnInvalidate();
+				}
+			}
+		}
+		public bool TopAxisEnabled
+		{
+			get { return this.m_ShowTopAxis; }
+			set
+			{
+				if(value!=this.m_ShowTopAxis)
+				{
+					m_ShowTopAxis = value;
+					this.OnInvalidate();
+				}
+			}
+		}
+
 
 #endregion // Layer Properties
 
@@ -226,14 +283,14 @@ namespace Altaxo.Graph
 
 			RectangleF layerBounds = new RectangleF(layerPosition,layerSize);
 
-			m_LeftAxisStyle.Paint(g,this,this.m_yAxis);
-			m_LeftLabelStyle.Paint(g,this,this.m_yAxis,m_LeftAxisStyle);
-			m_BottomAxisStyle.Paint(g,this,this.m_xAxis);
-			m_BottomLabelStyle.Paint(g,this,this.m_xAxis,m_BottomAxisStyle);
-			m_RightAxisStyle.Paint(g,this,this.m_yAxis);
-			m_RightLabelStyle.Paint(g,this,this.m_yAxis,m_RightAxisStyle);
-			m_TopAxisStyle.Paint(g,this,this.m_xAxis);
-			m_TopLabelStyle.Paint(g,this,this.m_xAxis,m_TopAxisStyle);
+			if(m_ShowLeftAxis) m_LeftAxisStyle.Paint(g,this,this.m_yAxis);
+			if(m_ShowLeftAxis) m_LeftLabelStyle.Paint(g,this,this.m_yAxis,m_LeftAxisStyle);
+			if(m_ShowBottomAxis) m_BottomAxisStyle.Paint(g,this,this.m_xAxis);
+			if(m_ShowBottomAxis) m_BottomLabelStyle.Paint(g,this,this.m_xAxis,m_BottomAxisStyle);
+			if(m_ShowRightAxis) m_RightAxisStyle.Paint(g,this,this.m_yAxis);
+			if(m_ShowRightAxis) m_RightLabelStyle.Paint(g,this,this.m_yAxis,m_RightAxisStyle);
+			if(m_ShowTopAxis) m_TopAxisStyle.Paint(g,this,this.m_xAxis);
+			if(m_ShowTopAxis) m_TopLabelStyle.Paint(g,this,this.m_xAxis,m_TopAxisStyle);
 
 
 			foreach(PlotAssociation pa in plotAssociations)
