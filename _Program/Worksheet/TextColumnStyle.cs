@@ -35,18 +35,33 @@ namespace Altaxo.Worksheet
 				{
 					public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 					{
-						System.Runtime.Serialization.ISurrogateSelector ss;
+						System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+						if(null!=ss)
+						{
 						System.Runtime.Serialization.ISerializationSurrogate surr =
-							App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+							ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 	
 						surr.GetObjectData(obj,info,context); // stream the data of the base object
+						}
+						else 
+						{
+							throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+						}		
 					}
 					public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 					{
-						System.Runtime.Serialization.ISurrogateSelector ss;
+						System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+						if(null!=ss)
+						{
 						System.Runtime.Serialization.ISerializationSurrogate surr =
-							App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
-						return surr.SetObjectData(obj,info,context,selector);
+							ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
+						surr.SetObjectData(obj,info,context,selector);
+						}
+						else 
+						{
+							throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+						}		
+						return obj;
 					}
 				}
 

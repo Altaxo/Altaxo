@@ -295,6 +295,7 @@ namespace Altaxo.Data
 	[Serializable()]
 	public abstract class DataColumn :
 		IDisposable,		
+		System.Runtime.Serialization.ISerializable,
 		System.Runtime.Serialization.IDeserializationCallback, 
 		IReadableColumn, 
 		IWriteableColumn, 
@@ -379,6 +380,10 @@ namespace Altaxo.Data
  
 
 		#region Serialization
+
+
+
+
 		/// <summary>
 		/// This class is responsible for the serialization of the DataColumn (version 0).
 		/// </summary>
@@ -435,6 +440,22 @@ namespace Altaxo.Data
 		public virtual void OnDeserialization(object obj)
 		{
 		}
+
+		protected DataColumn(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+		{
+			SetObjectData(this,info,context,null);
+		}
+
+		public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+		{
+			return new SerializationSurrogate0().SetObjectData(this,info,context,null);
+		}
+
+		public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+		{
+			new SerializationSurrogate0().GetObjectData(this,info,context);
+		}
+
 		#endregion
 
 		public DataColumn(DataColumn from)

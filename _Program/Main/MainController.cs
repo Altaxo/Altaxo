@@ -370,8 +370,14 @@ namespace Altaxo
 				{
 					//					System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Soap.SoapFormatter();
 					System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-					System.Collections.Hashtable versionList = (System.Collections.Hashtable)(formatter.Deserialize(myStream));
+
 					System.Runtime.Serialization.SurrogateSelector ss = new System.Runtime.Serialization.SurrogateSelector();
+					AltaxoStreamingContext additionalContext = new AltaxoStreamingContext();
+					additionalContext.m_SurrogateSelector = ss;
+					System.Runtime.Serialization.StreamingContext context = new System.Runtime.Serialization.StreamingContext(System.Runtime.Serialization.StreamingContextStates.All,additionalContext);
+					formatter.Context = context;
+
+					System.Collections.Hashtable versionList = (System.Collections.Hashtable)(formatter.Deserialize(myStream));
 
 					System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
 					foreach(Assembly assembly in assemblies)
@@ -402,7 +408,7 @@ namespace Altaxo
 							}
 							if(null!=bestattribute)
 							{
-								ss.AddSurrogate(definedtype,formatter.Context, bestattribute.Surrogate);
+								ss.AddSurrogate(definedtype, formatter.Context, bestattribute.Surrogate);
 							}
 						}
 					}
@@ -412,16 +418,12 @@ namespace Altaxo
 					AltaxoAdditionalContext additionalContext = new AltaxoAdditionalContext();
 					additionalContext.m_SurrogateSelector = ss;
 					additionalContext.m_FormatterType = formatter.GetType();
-			
-					System.Runtime.Serialization.StreamingContext context = new System.Runtime.Serialization.StreamingContext(System.Runtime.Serialization.StreamingContextStates.All,additionalContext);
-					formatter.Context = context;
-					*/
+			*/
+						
 					
 					formatter.SurrogateSelector=ss;
-
-					App.m_SurrogateSelector = ss;
+					
 					object obj = formatter.Deserialize(myStream);
-					App.m_SurrogateSelector = null;	
 					m_Doc = (AltaxoDocument)obj;
 					m_Doc.OnDeserialization(new DeserializationFinisher(this));
 					System.Diagnostics.Trace.WriteLine("Deserialization of AltaxoDocument now completely finished.");
@@ -658,6 +660,12 @@ namespace Altaxo
 					//					System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Soap.SoapFormatter();
 					System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 					System.Runtime.Serialization.SurrogateSelector ss = new System.Runtime.Serialization.SurrogateSelector();
+					AltaxoStreamingContext additionalContext = new AltaxoStreamingContext();
+					additionalContext.m_SurrogateSelector = ss;
+					System.Runtime.Serialization.StreamingContext context = new System.Runtime.Serialization.StreamingContext(System.Runtime.Serialization.StreamingContextStates.All,additionalContext);
+					formatter.Context = context;
+
+
 					System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
 					foreach(Assembly assembly in assemblies)
 					{
@@ -699,9 +707,7 @@ namespace Altaxo
 							
 					formatter.SurrogateSelector=ss;
 					formatter.Serialize(myStream,versionList);
-					App.m_SurrogateSelector = ss;
 					formatter.Serialize(myStream, m_Doc);
-					App.m_SurrogateSelector=null;
 					// Code to write the stream goes here.
 					myStream.Close();
 		} // end method
@@ -728,7 +734,7 @@ namespace Altaxo
 
 	class App
 	{
-		public static System.Runtime.Serialization.SurrogateSelector m_SurrogateSelector;
+		// public static System.Runtime.Serialization.SurrogateSelector m_SurrogateSelector;
 
 
 		private static MainController sm_theApplication;

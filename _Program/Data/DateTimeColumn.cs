@@ -29,7 +29,13 @@ namespace Altaxo.Data
 	/// </summary>
 	[SerializationSurrogate(0,typeof(Altaxo.Data.DateTimeColumn.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class DateTimeColumn : Altaxo.Data.DataColumn, System.Runtime.Serialization.IDeserializationCallback, INumericColumn
+	[Serializable]
+	public class DateTimeColumn 
+		:
+		Altaxo.Data.DataColumn, 
+		System.Runtime.Serialization.ISerializable,
+		System.Runtime.Serialization.IDeserializationCallback, 
+		INumericColumn
 	{
 		private DateTime[] m_Array;
 		private int        m_Capacity; // shortcut to m_Array.Length;
@@ -73,11 +79,17 @@ namespace Altaxo.Data
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				Altaxo.Data.DateTimeColumn s = (Altaxo.Data.DateTimeColumn)obj;
-				System.Runtime.Serialization.ISurrogateSelector ss;
-				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(typeof(Altaxo.Data.DataColumn),context, out ss);
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
+					System.Runtime.Serialization.ISerializationSurrogate surr =
+						ss.GetSurrogate(typeof(Altaxo.Data.DataColumn),context, out ss);
 	
-				surr.GetObjectData(obj,info,context); // stream the data of the base object
+					surr.GetObjectData(obj,info,context); // stream the data of the base object
+				}
+			{
+				((DataColumn)s).GetObjectData(info,context);
+			}
 
 				if(s.m_Count!=s.m_Capacity)
 				{
@@ -95,10 +107,17 @@ namespace Altaxo.Data
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				Altaxo.Data.DateTimeColumn s = (Altaxo.Data.DateTimeColumn)obj;
-				System.Runtime.Serialization.ISurrogateSelector ss;
-				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(typeof(Altaxo.Data.DataColumn),context, out ss);
-				surr.SetObjectData(obj,info,context,selector);
+				System.Runtime.Serialization.ISurrogateSelector ss  = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
+					System.Runtime.Serialization.ISerializationSurrogate surr =
+						ss.GetSurrogate(typeof(Altaxo.Data.DataColumn),context, out ss);
+					surr.SetObjectData(obj,info,context,selector);
+				}
+				else
+				{
+					((DataColumn)s).SetObjectData(obj,info,context,selector);
+				}
 
 				s.m_Array = (DateTime[])(info.GetValue("Data",typeof(DateTime[])));
 				s.m_Capacity = null==s.m_Array ? 0 : s.m_Array.Length;
@@ -111,6 +130,18 @@ namespace Altaxo.Data
 			base.OnDeserialization(obj);
 		}
 
+		protected DateTimeColumn(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+		{
+			SetObjectData(this,info,context,null);
+		}
+		public new object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+		{
+			return new SerializationSurrogate0().SetObjectData(this,info,context,null);
+		}
+		public new void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+		{
+			new SerializationSurrogate0().GetObjectData(this,info,context);
+		}
 		#endregion
 
 

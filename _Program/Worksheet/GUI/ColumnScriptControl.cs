@@ -37,6 +37,7 @@ namespace Altaxo.Worksheet.GUI
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
+		private System.Windows.Forms.Button btCompile;
 
 		private IColumnScriptController m_Controller;
 
@@ -90,6 +91,7 @@ namespace Altaxo.Worksheet.GUI
 			this.rbStyleSetCol = new System.Windows.Forms.RadioButton();
 			this.btDoIt = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
+			this.btCompile = new System.Windows.Forms.Button();
 			this.grpStyle.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -116,6 +118,7 @@ namespace Altaxo.Worksheet.GUI
 			this.edRowCondition.Size = new System.Drawing.Size(24, 20);
 			this.edRowCondition.TabIndex = 34;
 			this.edRowCondition.Text = "<";
+			this.edRowCondition.TextChanged += new System.EventHandler(this.EhTextChanged_RowCondition);
 			// 
 			// edRowInc
 			// 
@@ -124,6 +127,7 @@ namespace Altaxo.Worksheet.GUI
 			this.edRowInc.Size = new System.Drawing.Size(56, 20);
 			this.edRowInc.TabIndex = 33;
 			this.edRowInc.Text = "++";
+			this.edRowInc.TextChanged += new System.EventHandler(this.EhTextChanged_RowInc);
 			// 
 			// edFormula
 			// 
@@ -146,6 +150,7 @@ namespace Altaxo.Worksheet.GUI
 			this.edRowTo.TabIndex = 22;
 			this.edRowTo.Tag = "nRowTo";
 			this.edRowTo.Text = "0";
+			this.edRowTo.TextChanged += new System.EventHandler(this.EhTextChanged_RowTo);
 			// 
 			// edRowFrom
 			// 
@@ -154,6 +159,7 @@ namespace Altaxo.Worksheet.GUI
 			this.edRowFrom.Size = new System.Drawing.Size(64, 20);
 			this.edRowFrom.TabIndex = 20;
 			this.edRowFrom.Text = "0";
+			this.edRowFrom.TextChanged += new System.EventHandler(this.EhTextChanged_RowFrom);
 			// 
 			// label3
 			// 
@@ -194,20 +200,22 @@ namespace Altaxo.Worksheet.GUI
 			// btUpdate
 			// 
 			this.btUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btUpdate.Location = new System.Drawing.Point(536, 145);
+			this.btUpdate.Location = new System.Drawing.Point(536, 136);
 			this.btUpdate.Name = "btUpdate";
 			this.btUpdate.Size = new System.Drawing.Size(56, 32);
 			this.btUpdate.TabIndex = 28;
 			this.btUpdate.Text = "Update";
+			this.btUpdate.Click += new System.EventHandler(this.EhUpdate_Click);
 			// 
 			// btCancel
 			// 
 			this.btCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btCancel.Location = new System.Drawing.Point(536, 81);
+			this.btCancel.Location = new System.Drawing.Point(536, 240);
 			this.btCancel.Name = "btCancel";
 			this.btCancel.Size = new System.Drawing.Size(56, 32);
 			this.btCancel.TabIndex = 27;
 			this.btCancel.Text = "Cancel";
+			this.btCancel.Click += new System.EventHandler(this.EhCancel_Click);
 			// 
 			// label2
 			// 
@@ -237,6 +245,7 @@ namespace Altaxo.Worksheet.GUI
 			this.rbStyleFree.Size = new System.Drawing.Size(104, 16);
 			this.rbStyleFree.TabIndex = 2;
 			this.rbStyleFree.Text = "Free Style";
+			this.rbStyleFree.CheckedChanged += new System.EventHandler(this.EhStyleFree_CheckedChanged);
 			// 
 			// rbStyleSetColValues
 			// 
@@ -245,6 +254,7 @@ namespace Altaxo.Worksheet.GUI
 			this.rbStyleSetColValues.Size = new System.Drawing.Size(120, 16);
 			this.rbStyleSetColValues.TabIndex = 1;
 			this.rbStyleSetColValues.Text = "Set Column Values";
+			this.rbStyleSetColValues.CheckedChanged += new System.EventHandler(this.EhStyleSetColValues_CheckedChanged);
 			// 
 			// rbStyleSetCol
 			// 
@@ -253,6 +263,7 @@ namespace Altaxo.Worksheet.GUI
 			this.rbStyleSetCol.Size = new System.Drawing.Size(104, 16);
 			this.rbStyleSetCol.TabIndex = 0;
 			this.rbStyleSetCol.Text = "Set Column";
+			this.rbStyleSetCol.CheckedChanged += new System.EventHandler(this.EhStyleSetCol_CheckedChanged);
 			// 
 			// btDoIt
 			// 
@@ -262,6 +273,7 @@ namespace Altaxo.Worksheet.GUI
 			this.btDoIt.Size = new System.Drawing.Size(56, 32);
 			this.btDoIt.TabIndex = 24;
 			this.btDoIt.Text = "Do It!";
+			this.btDoIt.Click += new System.EventHandler(this.EhDoIt_Click);
 			// 
 			// label1
 			// 
@@ -272,8 +284,18 @@ namespace Altaxo.Worksheet.GUI
 			this.label1.Text = "; i";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.BottomRight;
 			// 
+			// btCompile
+			// 
+			this.btCompile.Location = new System.Drawing.Point(536, 80);
+			this.btCompile.Name = "btCompile";
+			this.btCompile.Size = new System.Drawing.Size(56, 32);
+			this.btCompile.TabIndex = 36;
+			this.btCompile.Text = "Compile";
+			this.btCompile.Click += new System.EventHandler(this.EhCompile_Click);
+			// 
 			// ColumnScriptControl
 			// 
+			this.Controls.Add(this.btCompile);
 			this.Controls.Add(this.edCodeHead);
 			this.Controls.Add(this.edRowCondition);
 			this.Controls.Add(this.edRowInc);
@@ -398,22 +420,54 @@ namespace Altaxo.Worksheet.GUI
 
 		private void EhTextChanged_RowFrom(object sender, System.EventArgs e)
 		{
+			if(null!=Controller)
 			Controller.EhView_TextChanged_RowFrom(this.edRowFrom.Text);
 		}
 
 		private void EhTextChanged_RowTo(object sender, System.EventArgs e)
 		{
-			Controller.EhView_TextChanged_RowTo(this.edRowTo.Text);
+			if(null!=Controller)
+				Controller.EhView_TextChanged_RowTo(this.edRowTo.Text);
 		}
 
 		private void EhTextChanged_RowInc(object sender, System.EventArgs e)
 		{
-			Controller.EhView_TextChanged_RowInc(this.edRowInc.Text);
+			if(null!=Controller)
+				Controller.EhView_TextChanged_RowInc(this.edRowInc.Text);
 		}
 
 		private void EhTextChanged_RowCondition(object sender, System.EventArgs e)
 		{
-			Controller.EhView_TextChanged_RowCondition(this.edRowCondition.Text);
+			if(null!=Controller)
+				Controller.EhView_TextChanged_RowCondition(this.edRowCondition.Text);
+		}
+
+		private void EhDoIt_Click(object sender, System.EventArgs e)
+		{
+			if(null!=Controller)
+				Controller.EhView_Execute();
+		
+		}
+
+		private void EhCompile_Click(object sender, System.EventArgs e)
+		{
+			if(null!=Controller)
+				Controller.EhView_Compile();
+		
+		}
+
+		private void EhUpdate_Click(object sender, System.EventArgs e)
+		{
+			if(null!=Controller)
+				Controller.EhView_Update();
+		
+		}
+
+		private void EhCancel_Click(object sender, System.EventArgs e)
+		{
+			if(null!=Controller)
+				Controller.EhView_Cancel();
+		
 		}
 	}
 }

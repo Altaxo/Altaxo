@@ -336,7 +336,7 @@ namespace Altaxo.Calc
         /// <param name="a"></param>
         /// <returns></returns>
         public static Complex operator-( double f, Complex a ) {
-            a.Re    = (double)( a.Re - f );
+            a.Re    = (double)( f - a.Re );
             return a;
         }
 

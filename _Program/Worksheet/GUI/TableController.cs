@@ -799,6 +799,7 @@ namespace Altaxo.Worksheet
 
 		protected void EhMenuEditPaste_OnClick(object sender, System.EventArgs e)
 		{
+			DataGridOperations.PasteFromClipboard(this);
 		}
 
 		// ******************************************************************
@@ -936,6 +937,9 @@ namespace Altaxo.Worksheet
 
 			Data.ColumnScript colScript = this.DataTable.ColumnScripts[dataCol];
 
+			Altaxo.Gui.DialogFactory.ShowColumnScriptDialog(this.View.TableViewForm,this.DataTable,dataCol,colScript);
+
+			/*
 			SetColumnValuesDialog dlg = new SetColumnValuesDialog(this.DataTable,dataCol,colScript);
 			DialogResult dres = dlg.ShowDialog(this.View.TableViewWindow);
 			if(dres==DialogResult.OK)
@@ -952,6 +956,7 @@ namespace Altaxo.Worksheet
 				}
 			}
 			dlg.Dispose();
+			*/
 		}
 		protected void EhMenuColumnSetColumnAsX_OnClick(object sender, System.EventArgs e)
 		{

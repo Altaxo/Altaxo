@@ -79,11 +79,18 @@ namespace Altaxo.Data
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
-				System.Runtime.Serialization.ISurrogateSelector ss;
-				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(typeof(Altaxo.Data.DataColumnCollection),context, out ss);
-				surr.GetObjectData(obj,info,context); // stream the data of the base object
-	
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
+					System.Runtime.Serialization.ISerializationSurrogate surr =
+						ss.GetSurrogate(typeof(Altaxo.Data.DataColumnCollection),context, out ss);
+					surr.GetObjectData(obj,info,context); // stream the data of the base object
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
+
 				info.AddValue("Name",s.m_TableName); // name of the Table
 				info.AddValue("PropCols", s.m_PropertyColumns); // the property columns of that table
 
@@ -91,10 +98,17 @@ namespace Altaxo.Data
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(typeof(Altaxo.Data.DataColumnCollection),context, out ss);
+					ss.GetSurrogate(typeof(Altaxo.Data.DataColumnCollection),context, out ss);
 				surr.SetObjectData(obj,info,context,selector);
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 
 				s.m_TableName = info.GetString("Name");
 				s.m_PropertyColumns = (DataColumnCollection)info.GetValue("PropCols",typeof(DataColumnCollection));

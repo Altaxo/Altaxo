@@ -151,9 +151,14 @@ namespace Altaxo
 		{
 			
 			Altaxo.Data.DataTable dt1 = CreateNewTable(worksheetName, bCreateDefaultColumns);
-			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(new Altaxo.Worksheet.TableView(parentForm,null),dt1);
+			Altaxo.Gui.WorkbenchForm form = new Altaxo.Gui.WorkbenchForm(parentForm);
+			Altaxo.Worksheet.TableView view = new Altaxo.Worksheet.TableView(form,null);
+			form.Controls.Add(view);
+			view.Dock = System.Windows.Forms.DockStyle.Fill;
+			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(view,dt1);
 			ctrl.View.TableViewForm.Text = dt1.TableName;
 			m_Worksheets.Add(ctrl.View.TableViewForm);
+			form.Show();
 			return ctrl.View;
 		}
 	

@@ -30,7 +30,12 @@ namespace Altaxo.Data
 	[SerializationSurrogate(0,typeof(Altaxo.Data.DoubleColumn.SerializationSurrogate0))]
 	[SerializationVersion(0)]
 	[Serializable()]
-	public class DoubleColumn : Altaxo.Data.DataColumn, System.Runtime.Serialization.IDeserializationCallback, INumericColumn
+	public class DoubleColumn 
+		:
+		Altaxo.Data.DataColumn,
+		System.Runtime.Serialization.ISerializable,
+		System.Runtime.Serialization.IDeserializationCallback,
+		INumericColumn
 	{
 		private double[] m_Array;
 		private int      m_Capacity; // shortcut to m_Array.Length;
@@ -71,16 +76,23 @@ namespace Altaxo.Data
 		#region "Serialization"
 		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
-			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			public void GetObjectData(object obj, System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context)
 			{
 				Altaxo.Data.DoubleColumn s = (Altaxo.Data.DoubleColumn)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
-				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+				System.Runtime.Serialization.ISurrogateSelector ss  = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
+					System.Runtime.Serialization.ISerializationSurrogate surr =
+						ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 	
-				// serialize the base class
-				surr.GetObjectData(obj,info,context); // stream the data of the base object
+					// serialize the base class
+					surr.GetObjectData(obj,info,context); // stream the data of the base object
+				}
+				else
+				{
+					((DataColumn)s).GetObjectData(info,context);
+				}
 
 				if(s.m_Count!=s.m_Capacity)
 				{
@@ -95,15 +107,23 @@ namespace Altaxo.Data
 					info.AddValue("Data",s.m_Array);
 				}
 			}
-			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				Altaxo.Data.DoubleColumn s = (Altaxo.Data.DoubleColumn)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
-				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
-				// deserialize the base class
-				surr.SetObjectData(obj,info,context,selector);
+
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
+					System.Runtime.Serialization.ISerializationSurrogate surr =
+						ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					// deserialize the base class
+					surr.SetObjectData(obj,info,context,selector);
+				}
+				else
+				{
+					((DataColumn)s).SetObjectData(obj,info,context,selector);
+				}
 
 				s.m_Array = (double[])(info.GetValue("Data",typeof(double[])));
 				s.m_Capacity = null==s.m_Array ? 0 : s.m_Array.Length;
@@ -116,6 +136,19 @@ namespace Altaxo.Data
 			base.OnDeserialization(obj);
 		}
 	
+		protected DoubleColumn(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+		{
+			SetObjectData(this,info,context,null);
+		}
+		public new object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+		{
+			return new SerializationSurrogate0().SetObjectData(this,info,context,null);
+		}
+		public new void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+		{
+			new SerializationSurrogate0().GetObjectData(this,info,context);
+		}
+
 		#endregion
 
 

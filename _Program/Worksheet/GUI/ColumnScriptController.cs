@@ -43,8 +43,6 @@ namespace Altaxo.Worksheet.GUI
 	{
 		
 	
-		void EhView_DoIt_Click();
-
 		void EhView_ScriptStyleChanged(Altaxo.Data.ColumnScript.ScriptStyle style);
 		void EhView_TextChanged_RowFrom(string text);
 
@@ -53,6 +51,12 @@ namespace Altaxo.Worksheet.GUI
 		void EhView_TextChanged_RowInc(string text);
 
 		void EhView_TextChanged_RowCondition(string text);
+
+		void EhView_Execute();
+		void EhView_Compile();
+		void EhView_Update();
+		void EhView_Cancel();
+
 	}
 	#endregion
 
@@ -61,40 +65,40 @@ namespace Altaxo.Worksheet.GUI
 	/// </summary>
 	public class ColumnScriptController : IColumnScriptController
 	{
-		private Altaxo.Data.DataTable dataTable;
-		private Altaxo.Data.DataColumn dataColumn;
-		public ColumnScript columnScript;
+		private Altaxo.Data.DataTable m_DataTable;
+		private Altaxo.Data.DataColumn m_DataColumn;
+		public ColumnScript m_ColumnScript;
 
 		private IColumnScriptView m_View;
 
-		public ColumnScriptController(Altaxo.Data.DataTable dataTable, Altaxo.Data.DataColumn dataColumn, ColumnScript _columnScript)
+		public ColumnScriptController(Altaxo.Data.DataTable dataTable, Altaxo.Data.DataColumn dataColumn, ColumnScript columnScript)
 		{
-			this.dataTable = dataTable;
-			this.dataColumn = dataColumn;
+			this.m_DataTable = dataTable;
+			this.m_DataColumn = dataColumn;
 
 
 
-			if(null!=_columnScript)
+			if(null!=columnScript)
 			{
-				this.columnScript = (ColumnScript)_columnScript.Clone();
+				this.m_ColumnScript = (ColumnScript)columnScript.Clone();
 			}
 			else
 			{
-				this.columnScript = new ColumnScript();
+				this.m_ColumnScript = new ColumnScript();
 			}
 
 
 
-			if(null==columnScript.ForFrom)
-				columnScript.ForFrom = "0";
-			if(null==columnScript.ForCondition)
-				columnScript.ForCondition = "<";
-			if(null==columnScript.ForEnd)
-				columnScript.ForEnd = "col.RowCount";
-			if(null==columnScript.ForInc)
-				columnScript.ForInc = "++";
-			if(null==columnScript.ScriptBody)
-				columnScript.ScriptBody="";
+			if(null==m_ColumnScript.ForFrom)
+				m_ColumnScript.ForFrom = "0";
+			if(null==m_ColumnScript.ForCondition)
+				m_ColumnScript.ForCondition = "<";
+			if(null==m_ColumnScript.ForEnd)
+				m_ColumnScript.ForEnd = "col.RowCount";
+			if(null==m_ColumnScript.ForInc)
+				m_ColumnScript.ForInc = "++";
+			if(null==m_ColumnScript.ScriptBody)
+				m_ColumnScript.ScriptBody="";
 
 	
 
@@ -112,18 +116,18 @@ namespace Altaxo.Worksheet.GUI
 			if(null!=View)
 			{
 
-				View.InitializeScriptStyle(columnScript.Style);
+				View.InitializeScriptStyle(m_ColumnScript.Style);
 
-				View.EnableRowFrom (  columnScript.Style==ColumnScript.ScriptStyle.SetColumnValues );
-				View.EnableRowTo   ( columnScript.Style==ColumnScript.ScriptStyle.SetColumnValues  );
-				View.EnableRowCondition (  columnScript.Style==ColumnScript.ScriptStyle.SetColumnValues );
-				View.EnableRowInc  ( columnScript.Style==ColumnScript.ScriptStyle.SetColumnValues );
+				View.EnableRowFrom (  m_ColumnScript.Style==ColumnScript.ScriptStyle.SetColumnValues );
+				View.EnableRowTo   ( m_ColumnScript.Style==ColumnScript.ScriptStyle.SetColumnValues  );
+				View.EnableRowCondition (  m_ColumnScript.Style==ColumnScript.ScriptStyle.SetColumnValues );
+				View.EnableRowInc  ( m_ColumnScript.Style==ColumnScript.ScriptStyle.SetColumnValues );
 
-				View.RowFromText = columnScript.ForFrom;
-				View.RowConditionText = columnScript.ForCondition;
-				View.RowToText = columnScript.ForEnd;
-				View.RowIncText = columnScript.ForInc;
-				View.FormulaText=columnScript.ScriptBody;
+				View.RowFromText = m_ColumnScript.ForFrom;
+				View.RowConditionText = m_ColumnScript.ForCondition;
+				View.RowToText = m_ColumnScript.ForEnd;
+				View.RowIncText = m_ColumnScript.ForInc;
+				View.FormulaText=m_ColumnScript.ScriptBody;
 
 				SetCodeParts();
 			}
@@ -131,9 +135,9 @@ namespace Altaxo.Worksheet.GUI
 
 		private void SetCodeParts()
 		{
-			View.CodeHeadText = columnScript.CodeHeader;
-			View.CodeStartText= columnScript.CodeStart;
-			View.CodeTailText = columnScript.CodeTail;
+			View.CodeHeadText = m_ColumnScript.CodeHeader;
+			View.CodeStartText= m_ColumnScript.CodeStart;
+			View.CodeTailText = m_ColumnScript.CodeTail;
 		}
 
 
@@ -164,48 +168,18 @@ namespace Altaxo.Worksheet.GUI
 			set { View = value as IColumnScriptView; }
 		}
 
-		public void EhView_DoIt_Click()
-		{
-			columnScript.ScriptBody = View.FormulaText;
-
-			View.ClearCompilerErrors();
-
-			bool bSucceeded = columnScript.Compile();
-
-			if(!bSucceeded)
-			{
-				foreach(string s in columnScript.Errors)
-					View.AddCompilerError(s);
-
-				System.Windows.Forms.MessageBox.Show(View.Form, "There were compilation errors","No success");
-				return;
-			}
-
-			bSucceeded = columnScript.ExecuteWithSuspendedNotifications(dataColumn);
-			if(!bSucceeded)
-			{
-				foreach(string s in columnScript.Errors)
-					View.AddCompilerError(s);
-
-				System.Windows.Forms.MessageBox.Show(View.Form, "There were execution errors","No success");
-				return;
-			}
-
-			View.Form.DialogResult = System.Windows.Forms.DialogResult.OK;
-			View.Form.Close();
-		}
-
+	
 
 		public void EhView_ScriptStyleChanged(Altaxo.Data.ColumnScript.ScriptStyle style)
 		{
-			columnScript.Style = style;
+			m_ColumnScript.Style = style;
 
 			if(null!=View)
 			{
-				View.EnableRowFrom (  columnScript.Style==ColumnScript.ScriptStyle.SetColumnValues );
-				View.EnableRowTo   ( columnScript.Style==ColumnScript.ScriptStyle.SetColumnValues  );
-				View.EnableRowCondition (  columnScript.Style==ColumnScript.ScriptStyle.SetColumnValues );
-				View.EnableRowInc  ( columnScript.Style==ColumnScript.ScriptStyle.SetColumnValues );
+				View.EnableRowFrom (  m_ColumnScript.Style==ColumnScript.ScriptStyle.SetColumnValues );
+				View.EnableRowTo   ( m_ColumnScript.Style==ColumnScript.ScriptStyle.SetColumnValues  );
+				View.EnableRowCondition (  m_ColumnScript.Style==ColumnScript.ScriptStyle.SetColumnValues );
+				View.EnableRowInc  ( m_ColumnScript.Style==ColumnScript.ScriptStyle.SetColumnValues );
 
 				SetCodeParts();
 			}
@@ -213,26 +187,91 @@ namespace Altaxo.Worksheet.GUI
 
 		public void EhView_TextChanged_RowFrom(string text)
 		{
-			columnScript.ForFrom = text;
+			m_ColumnScript.ForFrom = text;
 			SetCodeParts();
 		}
 
 		public void EhView_TextChanged_RowTo(string text)
 		{
-			columnScript.ForEnd = text;
+			m_ColumnScript.ForEnd = text;
 			SetCodeParts();
 		}
 
 		public void EhView_TextChanged_RowInc(string text)
 		{
-			columnScript.ForInc = text;
+			m_ColumnScript.ForInc = text;
 			SetCodeParts();
 		}
 
 		public void EhView_TextChanged_RowCondition(string text)
 		{
-			columnScript.ForCondition = text;
+			m_ColumnScript.ForCondition = text;
 			SetCodeParts();
+		}
+
+		public void EhView_Execute()
+		{
+			m_ColumnScript.ScriptBody = View.FormulaText;
+
+			View.ClearCompilerErrors();
+
+			bool bSucceeded = m_ColumnScript.Compile();
+
+			if(!bSucceeded)
+			{
+				foreach(string s in m_ColumnScript.Errors)
+					View.AddCompilerError(s);
+
+				System.Windows.Forms.MessageBox.Show(View.Form, "There were compilation errors","No success");
+				return;
+			}
+
+			bSucceeded = m_ColumnScript.ExecuteWithSuspendedNotifications(m_DataColumn);
+			if(!bSucceeded)
+			{
+				foreach(string s in m_ColumnScript.Errors)
+					View.AddCompilerError(s);
+
+				System.Windows.Forms.MessageBox.Show(View.Form, "There were execution errors","No success");
+				return;
+			}
+
+			m_DataTable.ColumnScripts[m_DataColumn] = m_ColumnScript;
+			View.Form.DialogResult = System.Windows.Forms.DialogResult.OK;
+			View.Form.Close();
+		}
+
+		public void EhView_Compile()
+		{
+			m_ColumnScript.ScriptBody = View.FormulaText;
+
+			View.ClearCompilerErrors();
+
+			bool bSucceeded = m_ColumnScript.Compile();
+
+			if(!bSucceeded)
+			{
+				foreach(string s in m_ColumnScript.Errors)
+					View.AddCompilerError(s);
+
+				System.Windows.Forms.MessageBox.Show(View.Form, "There were compilation errors","No success");
+				return;
+			}
+
+		}
+
+		public void EhView_Update()
+		{
+			m_ColumnScript.ScriptBody = View.FormulaText;
+			m_DataTable.ColumnScripts[m_DataColumn] = m_ColumnScript;
+			this.View.Form.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.View.Form.Close();
+		}
+
+		public void EhView_Cancel()
+		{
+			this.View.Form.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.View.Form.Close();
 		}
 	}
 }

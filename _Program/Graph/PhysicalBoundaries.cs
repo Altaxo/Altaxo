@@ -269,12 +269,19 @@ namespace Altaxo.Graph
 			{
 				FinitePhysicalBoundaries s = (FinitePhysicalBoundaries)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 
 				// serialize the base class
 				surr.GetObjectData(obj,info,context); // stream the data of the base object
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 			}
 			/// <summary>
 			/// Deserializes the FinitePhysicalBoundaries Version 0.
@@ -288,11 +295,18 @@ namespace Altaxo.Graph
 			{
 				FinitePhysicalBoundaries s = (FinitePhysicalBoundaries)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 				// deserialize the base class
 				surr.SetObjectData(obj,info,context,selector);
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 
 				return s;
 			}
@@ -384,13 +398,20 @@ namespace Altaxo.Graph
 			{
 				PositiveFinitePhysicalBoundaries s = (PositiveFinitePhysicalBoundaries)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 
 				// serialize the base class
 				surr.GetObjectData(obj,info,context); // stream the data of the base object
-			}
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
+				}
 			/// <summary>
 			/// Deserializes the PositiveFinitePhysicalBoundaries Version 0.
 			/// </summary>
@@ -403,12 +424,18 @@ namespace Altaxo.Graph
 			{
 				PositiveFinitePhysicalBoundaries s = (PositiveFinitePhysicalBoundaries)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 				// deserialize the base class
 				surr.SetObjectData(obj,info,context,selector);
-
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 				return s;
 			}
 		}

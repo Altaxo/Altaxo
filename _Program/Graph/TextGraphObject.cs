@@ -49,13 +49,19 @@ namespace Altaxo.Graph
 			{
 				TextGraphObject s = (TextGraphObject)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 	
 				// serialize the base class
 				surr.GetObjectData(obj,info,context); // stream the data of the base object
-
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 				info.AddValue("Text",s.m_Text);
 				info.AddValue("Font",s.m_Font);
 				info.AddValue("Color",s.m_Color);
@@ -73,12 +79,18 @@ namespace Altaxo.Graph
 			{
 				TextGraphObject s = (TextGraphObject)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 				// deserialize the base class
 				surr.SetObjectData(obj,info,context,selector);
-		
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 				s.m_Text = info.GetString("Text");
 				s.m_Font = (Font)info.GetValue("Font",typeof(Font));
 				s.m_Color = (Color)info.GetValue("Color",typeof(Color));
@@ -482,13 +494,19 @@ namespace Altaxo.Graph
 			{
 				ExtendedTextGraphObject s = (ExtendedTextGraphObject)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 	
 				// serialize the base class
 				surr.GetObjectData(obj,info,context); // stream the data of the base object
-
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 				info.AddValue("Text",s.m_Text);
 				info.AddValue("Font",s.m_Font);
 				info.AddValue("Brush",s.m_BrushHolder);
@@ -510,12 +528,18 @@ namespace Altaxo.Graph
 			{
 				ExtendedTextGraphObject s = (ExtendedTextGraphObject)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 				// deserialize the base class
 				surr.SetObjectData(obj,info,context,selector);
-		
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 				s.m_Text = info.GetString("Text");
 				s.m_Font = (Font)info.GetValue("Font",typeof(Font));
 				s.m_BrushHolder = (BrushHolder)info.GetValue("Brush",typeof(BrushHolder));

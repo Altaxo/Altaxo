@@ -12,7 +12,7 @@ namespace Altaxo.Worksheet
 	/// </summary>
 	[SerializationSurrogate(0,typeof(TableView.SerializationSurrogate0))]
 	[SerializationVersion(0,"Initial version.")]
-	public class TableView : System.Windows.Forms.Form, ITableView
+	public class TableView : System.Windows.Forms.UserControl, ITableView
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -87,8 +87,8 @@ namespace Altaxo.Worksheet
 		
 		public TableView(System.Windows.Forms.Form parent, ITableController ctrl)
 		{
-			if(null!=parent)
-				this.MdiParent = parent;
+			//if(null!=parent)
+				//this.MdiParent = parent;
 			//
 			// Required for Windows Form Designer support
 			//
@@ -179,7 +179,7 @@ namespace Altaxo.Worksheet
 			// 
 			// TableView
 			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			//this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(292, 266);
 			this.Controls.Add(this.m_GridPanel);
 			this.Controls.Add(this.m_HorzScrollBar);
@@ -249,6 +249,7 @@ namespace Altaxo.Worksheet
 				m_Ctrl.EhView_TableAreaSizeChanged(e);
 		}
 
+		/*
 		protected override void OnClosed(System.EventArgs e)
 		{
 			if(null!=m_Ctrl)
@@ -260,32 +261,36 @@ namespace Altaxo.Worksheet
 			if(null!=m_Ctrl)
 				m_Ctrl.EhView_Closing(e);
 		}
-
+*/
 	
 		protected void EhMdiChildActivate(object sender, EventArgs e)
 		{
+			/*
 			if(((System.Windows.Forms.Form)sender).ActiveMdiChild==this)
 			{
-				/*
+				
 				// if no toolbar present already, create a toolbar
 				if(null==m_GraphToolsToolBar)
 					m_GraphToolsToolBar = CreateGraphToolsToolbar();
 
 				// restore the parent - so the toolbar is shown
 				m_GraphToolsToolBar.Parent = (System.Windows.Forms.Form)(App.Current);
-			*/
+			
 				}
+				*/
 		}
 
 		protected void EhMdiChildDeactivate(object sender, EventArgs e)
 		{
+			/*
 			if(((System.Windows.Forms.Form)sender).ActiveMdiChild!=this)
 			{
-				/*
+				
 				if(null!=m_GraphToolsToolBar)
 					m_GraphToolsToolBar.Parent=null;
-			*/
+			
 				}
+		*/
 		}
 		#endregion
 
@@ -305,7 +310,7 @@ namespace Altaxo.Worksheet
 		{
 			get
 			{
-				return this;
+				return this.ParentForm;
 			}
 		}
 
@@ -327,7 +332,13 @@ namespace Altaxo.Worksheet
 		{
 			set
 			{
-				this.Menu = value; // do not clone the menu
+				if(null!=this.ParentForm)
+				{
+					if(null!=this.ParentForm.Menu)
+						this.ParentForm.Menu.MergeMenu( value ); // do not clone the menu
+					else
+						this.ParentForm.Menu = value; // do not clone the menu
+				}
 			}
 		}
 

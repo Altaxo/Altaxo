@@ -70,13 +70,20 @@ namespace Altaxo.Graph
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				GraphDocument s = (GraphDocument)obj;
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss= AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				// get the serialization surrogate of the base type
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
-	
-				// stream the data of the base class
-				surr.GetObjectData(obj,info,context);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					// stream the data of the base class
+					surr.GetObjectData(obj,info,context);
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
+			
 			
 				// now the data of our class
 				info.AddValue("PageBounds",s.m_PageBounds);
@@ -94,14 +101,20 @@ namespace Altaxo.Graph
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				GraphDocument s = (GraphDocument)obj;
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				// get the serialization surrogate of the base type
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType, context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType, context, out ss);
 				
 				// deserialize the base type
 				surr.SetObjectData(obj,info,context,selector);
-
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 				s.m_PageBounds			= (RectangleF)info.GetValue("PageBounds",typeof(RectangleF));
 				s.m_PrintableBounds = (RectangleF)info.GetValue("PrintableBounds",typeof(RectangleF));
 				return s;

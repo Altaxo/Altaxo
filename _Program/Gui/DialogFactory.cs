@@ -88,5 +88,21 @@ namespace Altaxo.Gui
 		}
 
 
+		public static bool ShowColumnScriptDialog(System.Windows.Forms.Form parentWindow, Altaxo.Data.DataTable dataTable, Altaxo.Data.DataColumn dataColumn, Altaxo.Data.ColumnScript columnScript)
+		{
+			Worksheet.GUI.ColumnScriptController controller = new Worksheet.GUI.ColumnScriptController(dataTable,dataColumn,columnScript);
+			Worksheet.GUI.ColumnScriptControl control = new Altaxo.Worksheet.GUI.ColumnScriptControl();
+
+      System.Windows.Forms.Form form = new System.Windows.Forms.Form(); // the parent form used as shell for the control
+			form.Controls.Add(control);
+			form.ClientSize = control.Size;
+			control.Dock = System.Windows.Forms.DockStyle.Fill;
+			controller.View = control;
+
+
+			return System.Windows.Forms.DialogResult.OK == form.ShowDialog(parentWindow);
+		}
+
+
 	}
 }

@@ -50,13 +50,19 @@ namespace Altaxo.Graph
 			{
 				ShapeGraphic s = (ShapeGraphic)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss= AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 	
 				// serialize the base class
 				surr.GetObjectData(obj,info,context); // stream the data of the base object
-
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 				info.AddValue("LineColor",s.m_lineColor);
 				info.AddValue("LineWidth",s.m_lineWidth);
 
@@ -75,12 +81,18 @@ namespace Altaxo.Graph
 			{
 				ShapeGraphic s = (ShapeGraphic)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 				// deserialize the base class
 				surr.SetObjectData(obj,info,context,selector);
-		
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 				s.m_lineColor = (Color)info.GetValue("LineColor",typeof(Color));
 				s.m_lineWidth = info.GetSingle("LineWidth");
 
@@ -187,12 +199,19 @@ namespace Altaxo.Graph
 			{
 				LineGraphic s = (LineGraphic)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 	
 				// serialize the base class
 				surr.GetObjectData(obj,info,context); // stream the data of the base object
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 			}
 			/// <summary>
 			/// Deserializes the LineGraphic Version 0.
@@ -206,12 +225,18 @@ namespace Altaxo.Graph
 			{
 				LineGraphic s = (LineGraphic)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 				// deserialize the base class
 				surr.SetObjectData(obj,info,context,selector);
-		
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 	
 				return s;
 			}
@@ -366,13 +391,19 @@ namespace Altaxo.Graph
 			{
 				RectangleGraphic s = (RectangleGraphic)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 	
 				// serialize the base class
 				surr.GetObjectData(obj,info,context); // stream the data of the base object
-
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 			
 			}
 			/// <summary>
@@ -387,12 +418,18 @@ namespace Altaxo.Graph
 			{
 				RectangleGraphic s = (RectangleGraphic)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 				// deserialize the base class
 				surr.SetObjectData(obj,info,context,selector);
-		
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 			
 				return s;
 			}
@@ -534,13 +571,19 @@ namespace Altaxo.Graph
 			{
 				EllipseGraphic s = (EllipseGraphic)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 	
 				// serialize the base class
 				surr.GetObjectData(obj,info,context); // stream the data of the base object
-
+				}
+				else 
+				{
+					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+				}
 				
 			}
 			/// <summary>
@@ -555,12 +598,18 @@ namespace Altaxo.Graph
 			{
 				EllipseGraphic s = (EllipseGraphic)obj;
 				// get the surrogate selector of the base class
-				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISurrogateSelector ss = AltaxoStreamingContext.GetSurrogateSelector(context);
+				if(null!=ss)
+				{
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+					ss.GetSurrogate(obj.GetType().BaseType,context, out ss);
 				// deserialize the base class
 				surr.SetObjectData(obj,info,context,selector);
-		
+			}
+			else 
+		{
+			throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
+		}
 				return s;
 			}
 		}

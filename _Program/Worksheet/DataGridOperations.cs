@@ -1151,6 +1151,26 @@ namespace Altaxo.Worksheet
 			}
 		}
 
+
+		public static void PasteFromClipboard(TableController dg)
+		{
+			Altaxo.Data.DataTable dt = dg.DataTable;
+			System.Windows.Forms.DataObject dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
+			int i,j;
+		
+			if(dg.SelectedColumns.Count>0)
+			{
+				// columns are selected
+			}
+
+
+			if(dao.GetDataPresent("Altaxo.Columns"))
+			{
+				System.Collections.ArrayList arl = (System.Collections.ArrayList)dao.GetData("Altaxo.Columns");
+				System.Console.WriteLine("DataGridOperations-PasteFromClipboard");
+			}
+		}
+
 		/// <summary>
 		/// This function searches for patterns like aaa=bbb in the items of the text column. If it finds such a item, it creates a column named aaa
 		/// and stores the value bbb at the same position in it as in the text column.

@@ -142,10 +142,16 @@ namespace Altaxo.Serialization
 
 
 	
-	public class AltaxoAdditionalContext
+	public class AltaxoStreamingContext
 	{
 		public System.Runtime.Serialization.SurrogateSelector m_SurrogateSelector;
 		public System.Type m_FormatterType;
+
+		public static System.Runtime.Serialization.ISurrogateSelector GetSurrogateSelector(System.Runtime.Serialization.StreamingContext context)
+		{
+				AltaxoStreamingContext sc = context.Context as AltaxoStreamingContext;
+				return null!=sc ? sc.m_SurrogateSelector : null;
+		}
 	}
 
 

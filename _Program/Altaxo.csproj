@@ -614,6 +614,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Gui\WorkbenchForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\MWControls\EventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -819,7 +824,7 @@
                 />
                 <File
                     RelPath = "Worksheet\GUI\TableView.cs"
-                    SubType = "Form"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
