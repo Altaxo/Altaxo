@@ -1,6 +1,7 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base", "Base\Base.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
 	ProjectSection(ProjectDependencies) = postProject
+		{AF2C9C35-FC89-4648-9D13-26538C00AFE1} = {AF2C9C35-FC89-4648-9D13-26538C00AFE1}
 		{A1006FEB-2FFC-4507-8D82-265130CDD08E} = {A1006FEB-2FFC-4507-8D82-265130CDD08E}
 	EndProjectSection
 EndProject
@@ -21,6 +22,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeautyGUI", "BeautyGUI\Beau
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Core", "ICSharpCode.Core\ICSharpCode.Core.csproj", "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpDevelop.Base", "SharpDevelop.Base\SharpDevelop.Base.csproj", "{AF2C9C35-FC89-4648-9D13-26538C00AFE1}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -65,6 +70,12 @@ Global
 		{A1006FEB-2FFC-4507-8D82-265130CDD08E}.DesignTimeDebugging.Build.0 = Debug|.NET
 		{A1006FEB-2FFC-4507-8D82-265130CDD08E}.Release.ActiveCfg = Release|.NET
 		{A1006FEB-2FFC-4507-8D82-265130CDD08E}.Release.Build.0 = Release|.NET
+		{AF2C9C35-FC89-4648-9D13-26538C00AFE1}.Debug.ActiveCfg = Debug|.NET
+		{AF2C9C35-FC89-4648-9D13-26538C00AFE1}.Debug.Build.0 = Debug|.NET
+		{AF2C9C35-FC89-4648-9D13-26538C00AFE1}.DesignTimeDebugging.ActiveCfg = Debug|.NET
+		{AF2C9C35-FC89-4648-9D13-26538C00AFE1}.DesignTimeDebugging.Build.0 = Debug|.NET
+		{AF2C9C35-FC89-4648-9D13-26538C00AFE1}.Release.ActiveCfg = Release|.NET
+		{AF2C9C35-FC89-4648-9D13-26538C00AFE1}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Icon1.ico = Icon1.ico

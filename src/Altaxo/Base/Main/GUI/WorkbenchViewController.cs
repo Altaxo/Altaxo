@@ -333,7 +333,15 @@ namespace Altaxo.Main.GUI
 		/// </summary>
 		public void CloseWindow(bool force)
 		{
-			CloseView();
+			if(force)
+			{
+				CloseView();
+			}
+			else
+			{
+				if(View!=null)
+					View.Close();
+			}
 		}
 		
 		/// <summary>

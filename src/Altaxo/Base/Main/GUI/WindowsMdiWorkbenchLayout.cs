@@ -8,7 +8,7 @@ namespace Altaxo.Main.GUI
 	{
 
 		protected IWorkbenchWindow m_ActiveWorkbenchWindow;
-		protected IWorkbench       m_Workbench;
+		protected IExtendedWorkbench       m_Workbench;
 		protected System.Windows.Forms.Form m_WorkbenchForm;
 
 		/// <summary>
@@ -27,13 +27,13 @@ namespace Altaxo.Main.GUI
 		/// </summary>
 		public void Attach(IWorkbench workbench)
 		{
-			m_Workbench = workbench;
+			m_Workbench = (IExtendedWorkbench)workbench;
 
 			// 
-			if(workbench.ViewObject!=null)
+			if(m_Workbench.ViewObject!=null)
 			{
-				System.Diagnostics.Debug.Assert(workbench.ViewObject is System.Windows.Forms.Form,"The workbench view must be a windows form in order to match the layout manager");
-				m_WorkbenchForm = (System.Windows.Forms.Form)workbench.ViewObject;
+				System.Diagnostics.Debug.Assert(m_Workbench.ViewObject is System.Windows.Forms.Form,"The workbench view must be a windows form in order to match the layout manager");
+				m_WorkbenchForm = (System.Windows.Forms.Form)m_Workbench.ViewObject;
 				m_WorkbenchForm.IsMdiContainer = true;
 				m_WorkbenchForm.MdiChildActivate += new EventHandler(this.EhView_MdiChildActivate);				
 			}

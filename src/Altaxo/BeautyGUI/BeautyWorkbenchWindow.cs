@@ -15,28 +15,25 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Xml;
 
-using Crownwood.Magic.Menus;
-
 //using ICSharpCode.SharpDevelop.Internal.Project;
 using ICSharpCode.Core.AddIns;
 using ICSharpCode.Core.Properties;
-
+using ICSharpCode.SharpDevelop.Gui.Components;
 using ICSharpCode.Core.Services;
 
-//using ICSharpCode.SharpDevelop.Services;
 
-//using UtilityLibrary.CommandBars;
-//using UtilityLibrary.WinControls;
-//using UtilityLibrary.General;
-//using UtilityLibrary.Win32;
-//using UtilityLibrary.Collections;
+using Reflector.UserInterface;
+
+using ICSharpCode.SharpDevelop.Services;
+
+
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
 	/// <summary>
 	/// This is the a Workspace with a multiple document interface.
 	/// </summary>
-	public class DefaultWorkbenchWindow : Form, Altaxo.IMainView
+	public class BeautyWorkbenchWindow : Form, Altaxo.IMainView
 	{
 		readonly static string mainMenuPath    = "/SharpDevelop/Workbench/MainMenu";
 		readonly static string viewContentPath = "/SharpDevelop/Workbench/Views";
@@ -50,13 +47,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 		FormWindowState defaultWindowState = FormWindowState.Normal;
 		Rectangle       normalBounds       = new Rectangle(0, 0, 640, 480);
 		
-		DefaultWorkbench m_Controller;
+		BeautyWorkbench m_Controller;
 		//IWorkbenchLayout layout = null;
 		
 		protected static PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 		
 
-		public DefaultWorkbench Controller
+		public BeautyWorkbench Controller
 		{
 			get { return m_Controller; }
 			set 
@@ -113,7 +110,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 	
 		
-		public DefaultWorkbenchWindow()
+		public BeautyWorkbenchWindow()
 		{
 #if LellidMod
 #else
@@ -127,40 +124,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			StartPosition = FormStartPosition.Manual;
 			
 			AllowDrop      = true;
-		}
-		
-		public void InitializeWorkspace()
-		{
-			Menu = null;
-			
-			//			statusBarManager.Control.Dock = DockStyle.Bottom;
-			
-			ActiveWorkbenchWindowChanged += new EventHandler(UpdateMenu);
-			
-			MenuComplete += new EventHandler(SetStandardStatusBar);
-			SetStandardStatusBar(null, null);
-			
-#if LellidMod
-#else
-			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-			IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-			
-			projectService.CurrentProjectChanged += new ProjectEventHandler(SetProjectTitle);
-			projectService.CombineOpened         += new CombineEventHandler(CombineOpened);
-
-			fileService.FileRemoved += new FileEventHandler(CheckRemovedFile);
-			fileService.FileRenamed += new FileEventHandler(CheckRenamedFile);
-			
-			fileService.RecentOpen.RecentFileChanged    += new EventHandler(UpdateMenu);
-			fileService.RecentOpen.RecentProjectChanged += new EventHandler(UpdateMenu);
-			
-			fileService.FileRemoved += new FileEventHandler(fileService.RecentOpen.FileRemoved);
-			fileService.FileRenamed += new FileEventHandler(fileService.RecentOpen.FileRenamed);
-#endif
-	
-			TopMenu.Selected += new CommandHandler(OnTopMenuSelected);
-			TopMenu.Deselected += new CommandHandler(OnTopMenuDeselected);
-			CreateToolBars();
 		}
 		
 		
@@ -191,21 +154,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		
-		protected void OnTopMenuSelected(MenuCommand mc)
-		{
-#if LellidMod
-#else
-			IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
-			
-			statusBarService.SetMessage(mc.Description);
-#endif
-		}
-		
-		protected void OnTopMenuDeselected(MenuCommand mc)
-		{
-			SetStandardStatusBar(null, null);
-		}
 		
 		protected override void OnClosing(CancelEventArgs e)
 		{
@@ -260,44 +208,61 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public MenuControl TopMenu = new MenuControl();
+	
 		
-		// public ToolBarEx[]   ToolBars;
-		
+		public CommandBarManager commandBarManager = new CommandBarManager();
+		public CommandBar   TopMenu  = null;
+		public CommandBar[] ToolBars = null;
 
 		
-		void UpdateMenu(object sender, EventArgs e)
+		public void CreateMainMenu()
 		{
-			TopMenu.Style = (Crownwood.Magic.Common.VisualStyle)propertyService.GetProperty("ICSharpCode.SharpDevelop.Gui.VisualStyle", Crownwood.Magic.Common.VisualStyle.IDE);
-			MenuCommand[] items = (MenuCommand[])(AddInTreeSingleton.AddInTree.GetTreeNode(mainMenuPath).BuildChildItems(this)).ToArray(typeof(MenuCommand));
-			TopMenu.MenuCommands.Clear();
-			TopMenu.MenuCommands.AddRange(items);
-			CreateToolBars();
+			TopMenu = new CommandBar(CommandBarStyle.Menu);
+			CommandBarItem[] items = (CommandBarItem[])(AddInTreeSingleton.AddInTree.GetTreeNode(mainMenuPath).BuildChildItems(this)).ToArray(typeof(CommandBarItem));
+			TopMenu.Items.Clear();
+			TopMenu.Items.AddRange(items);
 		}
-		
+
+		public void UpdateMenu(object sender, EventArgs e)
+		{
+			// update menu
+			foreach (object o in TopMenu.Items) 
+			{
+				if (o is IStatusUpdate) 
+				{
+					((IStatusUpdate)o).UpdateStatus();
+				}
+			}
+			
+			UpdateToolbars();
+		}
 		
 		// this method simply copies over the enabled state of the toolbar,
 		// this assumes that no item is inserted or removed.
 		// TODO : make this method more add-in tree like, currently with Windows.Forms
 		//        toolbars this is not possible. (drawing fragments, slow etc.)
-		void CreateToolBars()
+		public void CreateToolBars()
 		{
-#if LellidMod
-#else
-			ToolbarService toolBarService = (ToolbarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ToolbarService));
-			ToolBarEx[] toolBars = toolBarService.CreateToolbars();
-			
-			if (ToolBars == null) {
+			if (ToolBars == null) 
+			{
+				ToolbarService toolBarService = (ToolbarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ToolbarService));
+				CommandBar[] toolBars = toolBarService.CreateToolbars();
 				ToolBars = toolBars;
-			} else {
-				for (int i = 0; i < toolBars.Length;++i) {					
-					for (int j = 0; j < toolBars[i].Items.Count; ++j) {
-						ToolBars[i].Items[j].Enabled = toolBars[i].Items[j].Enabled;
-						ToolBars[i].Items[j].ToolTip = toolBars[i].Items[j].ToolTip;
+			}
+		}
+
+		public void UpdateToolbars()
+		{
+			foreach (CommandBar commandBar in ToolBars) 
+			{
+				foreach (object item in commandBar.Items) 
+				{
+					if (item is IStatusUpdate) 
+					{
+						((IStatusUpdate)item).UpdateStatus();
 					}
 				}
 			}
-#endif
 		}
 		
 		
@@ -320,6 +285,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 			e.Effect = DragDropEffects.None;
 		}
 		
+		// Handle keyboard shortcuts
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+		{
+			if (this.commandBarManager.PreProcessMessage(ref msg)) 
+			{
+				return true;
+			}
+
+			return base.ProcessCmdKey(ref msg, keyData);
+		}
+
 		protected override void OnDragDrop(DragEventArgs e)
 		{
 			base.OnDragDrop(e);
@@ -345,7 +321,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			set
 			{
-				m_Controller = (DefaultWorkbench)value;
+				m_Controller = (BeautyWorkbench)value;
 			}
 		}
 

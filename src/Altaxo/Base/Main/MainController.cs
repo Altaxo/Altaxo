@@ -33,6 +33,19 @@ using Altaxo.Main.GUI;
 using ICSharpCode.SharpZipLib.Zip;
 using ICSharpCode.SharpDevelop.Gui;
 
+namespace ICSharpCode.SharpDevelop.Gui
+{
+	public interface IExtendedWorkbench : IWorkbench
+	{
+		/// <summary>
+		/// Returns the GUI component (a Windows Form for Windows) that is associated with that workbench.
+		/// </summary>
+		object ViewObject { get; }
+	}
+
+}
+
+
 namespace Altaxo
 {
 	#region MVC Interface definitions
@@ -98,7 +111,7 @@ namespace Altaxo
 	/// <summary>
 	/// This interface has to be implemented by all Controllers that are able to controll a IMainView.
 	/// </summary>
-	public interface IMainController : ICSharpCode.SharpDevelop.Gui.IWorkbench
+	public interface IMainController : ICSharpCode.SharpDevelop.Gui.IExtendedWorkbench
 	{
 		/// <summary>
 		/// The document visualized by the controller.

@@ -6,7 +6,7 @@
 // </file>
 
 // <originalsource>SharpDevelop 0.96</originalsource>
-// <originalfile>Base/Gui/Workbench/DefaultWorkbench</originalfile>
+// <originalfile>Base/Gui/Workbench/BeautyWorkbench</originalfile>
 using System;
 using System.IO;
 using System.Collections;
@@ -17,30 +17,27 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Xml;
 
-using Crownwood.Magic.Menus;
 
 //using ICSharpCode.SharpDevelop.Internal.Project;
 using ICSharpCode.Core.AddIns;
 using ICSharpCode.Core.Properties;
-
+using ICSharpCode.SharpDevelop.Gui.Components;
 using ICSharpCode.Core.Services;
+
+using Reflector.UserInterface;
 
 using Altaxo;
 
-//using ICSharpCode.SharpDevelop.Services;
+using ICSharpCode.SharpDevelop.Services;
 
-//using UtilityLibrary.CommandBars;
-//using UtilityLibrary.WinControls;
-//using UtilityLibrary.General;
-//using UtilityLibrary.Win32;
-//using UtilityLibrary.Collections;
+
 
 namespace ICSharpCode.SharpDevelop.Gui
 {
 	/// <summary>
 	/// This is the a Workspace with a multiple document interface.
 	/// </summary>
-	public class DefaultWorkbench : IWorkbench, Altaxo.IMainController
+	public class BeautyWorkbench : IWorkbench, Altaxo.IMainController
 	{
 		readonly static string mainMenuPath    = "/SharpDevelop/Workbench/MainMenu";
 		readonly static string viewContentPath = "/SharpDevelop/Workbench/Views";
@@ -59,11 +56,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 		protected static PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 		
 
-		DefaultWorkbenchWindow m_View;
+		BeautyWorkbenchWindow m_View;
 		string m_Title;
 
 
-		public DefaultWorkbenchWindow View
+		public BeautyWorkbenchWindow View
 		{
 			get { return m_View; }
 			set { m_View = value; }
@@ -148,7 +145,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public DefaultWorkbench(DefaultWorkbenchWindow window, Altaxo.AltaxoDocument doc)
+		public BeautyWorkbench(BeautyWorkbenchWindow window, Altaxo.AltaxoDocument doc)
 		{
 			
 			m_View = window;
@@ -205,7 +202,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			//			statusBarManager.Control.Dock = DockStyle.Bottom;
 			
-			ActiveWorkbenchWindowChanged += new EventHandler(UpdateMenu);
+			ActiveWorkbenchWindowChanged += new EventHandler(View.UpdateMenu);
 			
 			View.MenuComplete += new EventHandler(SetStandardStatusBar);
 			SetStandardStatusBar(null, null);
@@ -228,9 +225,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 			fileService.FileRenamed += new FileEventHandler(fileService.RecentOpen.FileRenamed);
 #endif
 	
-			TopMenu.Selected += new CommandHandler(OnTopMenuSelected);
-			TopMenu.Deselected += new CommandHandler(OnTopMenuDeselected);
-			CreateToolBars();
+			//TopMenu.Selected += new CommandHandler(OnTopMenuSelected);
+			//TopMenu.Deselected += new CommandHandler(OnTopMenuDeselected);
+			View.CreateMainMenu();
+			View.CreateToolBars();
 		}
 		
 		
@@ -240,8 +238,11 @@ namespace ICSharpCode.SharpDevelop.Gui
 			if (propertyService.GetProperty("SharpDevelop.LoadDocumentProperties", true) && content is IMementoCapable) {
 				StoreMemento(content);
 			}
+			if (workbenchContentCollection.Contains(content)) 
+			{
+				workbenchContentCollection.Remove(content);
+			}
 			content.Dispose();
-			workbenchContentCollection.Remove(content);
 		}
 		
 		public void CloseAllViews()
@@ -281,9 +282,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public virtual void ShowPad(IPadContent content)
 		{
 			PadContentCollection.Add(content);
-			// force the creation of a win32 handle
-			Console.WriteLine(content.Control.Handle);
-			
+						
 			if (layout != null) {
 				layout.ShowPad(content);
 			}
@@ -291,7 +290,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public void RedrawAllComponents()
 		{
-			UpdateMenu(null, null);
+			View.UpdateMenu(null, null);
 			
 			foreach (IViewContent content in workbenchContentCollection) {
 				content.RedrawContent();
@@ -385,20 +384,16 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		
 		
-		protected void OnTopMenuSelected(MenuCommand mc)
-		{
-#if LellidMod
-#else
-			IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
-			
-			statusBarService.SetMessage(mc.Description);
-#endif
-		}
+//		protected void OnTopMenuSelected(MenuCommand mc)
+//		{
+//			IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
+//			statusBarService.SetMessage(mc.Description);
+//		}
 		
-		protected void OnTopMenuDeselected(MenuCommand mc)
-		{
-			SetStandardStatusBar(null, null);
-		}
+//		protected void OnTopMenuDeselected(MenuCommand mc)
+//		{
+//			SetStandardStatusBar(null, null);
+//		}
 		
 		
 		
@@ -420,10 +415,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public MenuControl TopMenu = new MenuControl();
 		
-		// public ToolBarEx[]   ToolBars;
 		
+		
+
 		public IPadContent GetPad(Type type)
 		{
 			foreach (IPadContent pad in PadContentCollection) {
@@ -433,40 +428,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 			return null;
 		}
-		
-		void UpdateMenu(object sender, EventArgs e)
-		{
-			TopMenu.Style = (Crownwood.Magic.Common.VisualStyle)propertyService.GetProperty("ICSharpCode.SharpDevelop.Gui.VisualStyle", Crownwood.Magic.Common.VisualStyle.IDE);
-			MenuCommand[] items = (MenuCommand[])(AddInTreeSingleton.AddInTree.GetTreeNode(mainMenuPath).BuildChildItems(this)).ToArray(typeof(MenuCommand));
-			TopMenu.MenuCommands.Clear();
-			TopMenu.MenuCommands.AddRange(items);
-			CreateToolBars();
-		}
+
 		
 		
-		// this method simply copies over the enabled state of the toolbar,
-		// this assumes that no item is inserted or removed.
-		// TODO : make this method more add-in tree like, currently with Windows.Forms
-		//        toolbars this is not possible. (drawing fragments, slow etc.)
-		void CreateToolBars()
-		{
-#if LellidMod
-#else
-			ToolbarService toolBarService = (ToolbarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ToolbarService));
-			ToolBarEx[] toolBars = toolBarService.CreateToolbars();
-			
-			if (ToolBars == null) {
-				ToolBars = toolBars;
-			} else {
-				for (int i = 0; i < toolBars.Length;++i) {					
-					for (int j = 0; j < toolBars[i].Items.Count; ++j) {
-						ToolBars[i].Items[j].Enabled = toolBars[i].Items[j].Enabled;
-						ToolBars[i].Items[j].ToolTip = toolBars[i].Items[j].ToolTip;
-					}
-				}
-			}
-#endif
-		}
+		
 		
 		public void UpdateViews(object sender, EventArgs e)
 		{
@@ -476,7 +441,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-	
+		
 		
 			
 		public event EventHandler ActiveWorkbenchWindowChanged;
@@ -566,7 +531,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			get
 			{
-				// TODO:  Add DefaultWorkbench.Altaxo.IMainController.View getter implementation
+				// TODO:  Add BeautyWorkbench.Altaxo.IMainController.View getter implementation
 				return (Altaxo.IMainView) this.m_View;
 			}
 		}
@@ -595,12 +560,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 
 		public void EhView_Closing(CancelEventArgs e)
 		{
-			// TODO:  Add DefaultWorkbench.EhView_Closing implementation
+			// TODO:  Add BeautyWorkbench.EhView_Closing implementation
 		}
 
 		public void EhView_Closed(EventArgs e)
 		{
-			// TODO:  Add DefaultWorkbench.EhView_Closed implementation
+			// TODO:  Add BeautyWorkbench.EhView_Closed implementation
 		}
 
 		/// <summary>This will remove the GraphController <paramref>ctrl</paramref> from the graph forms collection.</summary>
@@ -630,7 +595,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 
 		public void EhView_CloseMessage()
 		{
-			// TODO:  Add DefaultWorkbench.EhView_CloseMessage implementation
+			// TODO:  Add BeautyWorkbench.EhView_CloseMessage implementation
 		}
 
 		/// <summary>

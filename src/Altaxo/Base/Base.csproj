@@ -124,6 +124,11 @@
                     Project = "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "SharpDevelop.Base"
+                    Project = "{AF2C9C35-FC89-4648-9D13-26538C00AFE1}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
@@ -604,56 +609,6 @@
                     BuildAction = "Compile"
                 />
                 <Folder RelPath = "GUI\" />
-                <File
-                    RelPath = "ICSharpCode\SharpDevelop\Base\Gui\IBaseViewContent.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpDevelop\Base\Gui\IMementoCapable.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpDevelop\Base\Gui\IPadContent.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpDevelop\Base\Gui\ISecondaryViewContent.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpDevelop\Base\Gui\IViewContent.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpDevelop\Base\Gui\IWorkbench.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpDevelop\Base\Gui\IWorkbenchLayout.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpDevelop\Base\Gui\IWorkbenchWindow.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpDevelop\Base\Gui\PadContentCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpDevelop\Base\Gui\ViewContentCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
                 <File
                     RelPath = "Main\AboutDialog.cs"
                     SubType = "Form"

@@ -1,0 +1,1442 @@
+<VisualStudioProject>
+    <CSHARP
+        ProjectType = "Local"
+        ProductVersion = "7.10.3077"
+        SchemaVersion = "2.0"
+        ProjectGuid = "{AF2C9C35-FC89-4648-9D13-26538C00AFE1}"
+    >
+        <Build>
+            <Settings
+                ApplicationIcon = ""
+                AssemblyKeyContainerName = ""
+                AssemblyName = "SharpDevelop.Base"
+                AssemblyOriginatorKeyFile = ""
+                DefaultClientScript = "JScript"
+                DefaultHTMLPageLayout = "Grid"
+                DefaultTargetSchema = "IE50"
+                DelaySign = "false"
+                OutputType = "Library"
+                PreBuildEvent = ""
+                PostBuildEvent = ""
+                RootNamespace = "SharpDevelop.Base"
+                RunPostBuildEvent = "OnBuildSuccess"
+                StartupObject = ""
+            >
+                <Config
+                    Name = "Debug"
+                    AllowUnsafeBlocks = "false"
+                    BaseAddress = "285212672"
+                    CheckForOverflowUnderflow = "false"
+                    ConfigurationOverrideFile = ""
+                    DefineConstants = "DEBUG;TRACE"
+                    DocumentationFile = ""
+                    DebugSymbols = "true"
+                    FileAlignment = "4096"
+                    IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
+                    Optimize = "false"
+                    OutputPath = "bin\Debug\"
+                    RegisterForComInterop = "false"
+                    RemoveIntegerChecks = "false"
+                    TreatWarningsAsErrors = "false"
+                    WarningLevel = "4"
+                />
+                <Config
+                    Name = "Release"
+                    AllowUnsafeBlocks = "false"
+                    BaseAddress = "285212672"
+                    CheckForOverflowUnderflow = "false"
+                    ConfigurationOverrideFile = ""
+                    DefineConstants = "TRACE"
+                    DocumentationFile = ""
+                    DebugSymbols = "false"
+                    FileAlignment = "4096"
+                    IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
+                    Optimize = "true"
+                    OutputPath = "bin\Release\"
+                    RegisterForComInterop = "false"
+                    RemoveIntegerChecks = "false"
+                    TreatWarningsAsErrors = "false"
+                    WarningLevel = "4"
+                />
+            </Settings>
+            <References>
+                <Reference
+                    Name = "System"
+                    AssemblyName = "System"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
+                />
+                <Reference
+                    Name = "System.Data"
+                    AssemblyName = "System.Data"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
+                />
+                <Reference
+                    Name = "System.XML"
+                    AssemblyName = "System.XML"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
+                />
+                <Reference
+                    Name = "ICSharpCode.Core"
+                    Project = "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "System.Design"
+                    AssemblyName = "System.Design"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Design.dll"
+                />
+                <Reference
+                    Name = "System.Drawing"
+                    AssemblyName = "System.Drawing"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
+                />
+                <Reference
+                    Name = "System.Windows.Forms"
+                    AssemblyName = "System.Windows.Forms"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
+                />
+                <Reference
+                    Name = "Interop.SHDocVw"
+                    AssemblyName = "Interop.SHDocVw"
+                    HintPath = "..\..\Libraries\bin\Interop.SHDocVw.dll"
+                />
+                <Reference
+                    Name = "MagicLibrary"
+                    AssemblyName = "MagicLibrary"
+                    HintPath = "..\..\Libraries\bin\MagicLibrary.DLL"
+                />
+                <Reference
+                    Name = "ICSharpCode.SharpZipLib"
+                    AssemblyName = "ICSharpCode.SharpZipLib"
+                    HintPath = "..\..\Libraries\bin\ICSharpCode.SharpZipLib.dll"
+                />
+                <Reference
+                    Name = "System.Web.Services"
+                    AssemblyName = "System.Web.Services"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.Services.dll"
+                />
+            </References>
+        </Build>
+        <Files>
+            <Include>
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBar.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBar.resx"
+                    DependentUpon = "CommandBar.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarButton.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarButtonBase.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarCheckBox.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarComboBox.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarContextMenu.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarControl.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarItem.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarItem.resx"
+                    DependentUpon = "CommandBarItem.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarItemCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarManager.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarMenu.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarMenu.resx"
+                    DependentUpon = "CommandBarMenu.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarSeparator.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\CommandBarStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\NativeMethods.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\CommandBar\TextGraphics.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\XmlForms\ControlDictionary.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\XmlForms\DefaultObjectCreator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\XmlForms\IObjectCreator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\XmlForms\IPropertyValueCreator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\XmlForms\IStringValueFilter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\XmlForms\StringWrapper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\XmlForms\XmlForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\XmlForms\XmlLoader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IncludedLibraries\XmlForms\XmlUserControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\AssemblyInfo.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Commands\EditCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Commands\FileCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Commands\FileTabStripCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Commands\HelpCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Commands\MenuItemBuilders.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Commands\ProjectCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Commands\ProjectOptionsCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Commands\RunCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Commands\SideBarCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Commands\ToolsCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Commands\WindowCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\AbstractBaseViewContent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\AbstractPadContent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\AbstractSecondaryViewContent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\AbstractViewContent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\IBaseViewContent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\IMementoCapable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\IPadContent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\IProgressMonitor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\ISecondaryViewContent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\IViewContent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\IWorkbench.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\IWorkbenchLayout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\IWorkbenchWindow.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\PadContentCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\ViewContentCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\WorkbenchSingleton.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\WorkbenchWindowCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\BrowserDisplayBinding\AxSHDocVw.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\BrowserDisplayBinding\BrowserDisplayBinding.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\BrowserDisplayBinding\HTMLInterfaces.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\BrowserDisplayBinding\HtmlViewPane.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\BrowserDisplayBinding\SHDocVw.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\CompletionDatabaseWizard\ChooseLocationPanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\CompletionDatabaseWizard\CreationFinishedPanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\CompletionDatabaseWizard\SetupPanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\CompletionDatabaseWizard\UseExistingFilePanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\OpenFileTab.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\SdMenu.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\SdMenuCheckBox.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\SdMenuCommand.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\SdMenuSeparator.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\SharpMessageBox.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\LocalizedPropertyGrid\LocalizedObject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\LocalizedPropertyGrid\LocalizedPropertyAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\LocalizedPropertyGrid\LocalizedPropertyDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\SideBar\AxSideBar.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\SideBar\AxSideTab.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\SideBar\AxSideTabItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\SideBar\SharpDevelopSideBar.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\SideBar\SharpDevelopSideTabItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\StatusBar\AxStatusBar.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\StatusBar\AxStatusBarPanel.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Components\StatusBar\SdStatusBar.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\ContentInterfaces\IClipboardHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\ContentInterfaces\ICustomizedCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\ContentInterfaces\IEditable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\ContentInterfaces\IParsableContent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\ContentInterfaces\IPositionable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\ContentInterfaces\IPrintable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\AbstractOptionPanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\CommonAboutDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\DirtyFilesDialog.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\FolderDialog.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\FusionNative.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\NewFileDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\NewProjectDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\ProjectOptionsDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\SharpDevelopAboutPanels.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\SplashScreen.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\TabbedOptions.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\TipOfTheDay.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\TreeViewOptions.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\ViewGPLDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\WordCountDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\OptionPanels\EditTemplateDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\OptionPanels\ExternalToolPanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\OptionPanels\PropertyGridPanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\OptionPanels\IDEOptions\CodeGenerationPanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\OptionPanels\IDEOptions\LoadSavePanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\OptionPanels\IDEOptions\ProjectAndCombinePanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\OptionPanels\IDEOptions\SelectCulturePanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\OptionPanels\IDEOptions\SelectStylePanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\OptionPanels\ProjectOptions\CompileFileProjectOptions.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\OptionPanels\ProjectOptions\DeployFileOptions.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\OptionPanels\ProjectOptions\GeneralProjectOptions.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\ReferenceDialog\AddWebReferenceDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\ReferenceDialog\AssemblyReferencePanel.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\ReferenceDialog\COMReferencePanel.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\ReferenceDialog\GacReferencePanel.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\ReferenceDialog\ProjectReferencePanel.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\ReferenceDialog\SelectReferenceDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\ReferenceDialog\WebReference.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\Wizard\AbstractWizardPanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\Wizard\CurrentPanelPanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\Wizard\IWizardPanel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\Wizard\StatusPanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Dialogs\Wizard\WizardDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\ErrorDialogs\LoadingError.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\ErrorHandlers\CombineLoadError.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\ErrorHandlers\GenericError.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\HtmlControl\BrowserNavigateEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\HtmlControl\HtmlControl.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\HtmlControl\IHTMLDocument2.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\HtmlControl\IHTMLElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\HtmlControl\IWebBrowser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\HtmlControl\IWebBrowserEvents.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\FileScout.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\OpenTaskView.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\SideBarView.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\TreeViewMemento.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\ClassScout\BrowserNode\AbstractClassScoutNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\HelpBrowser\HelpBrowser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\ProjectBrowser\ProjectBrowserView.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\ProjectBrowser\BrowserNode\AbstractBrowserNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\ProjectBrowser\BrowserNode\CombineBrowserNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\ProjectBrowser\BrowserNode\DirectoryNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\ProjectBrowser\BrowserNode\DragDropUtil.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\ProjectBrowser\BrowserNode\FileNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\ProjectBrowser\BrowserNode\FolderNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\ProjectBrowser\BrowserNode\NamedFolderNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\ProjectBrowser\BrowserNode\ProjectBrowserNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\ProjectBrowser\BrowserNode\ReferenceNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\ProjectBrowser\NodeBuilder\DefaultDotNetNodeBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\ProjectBrowser\NodeBuilder\IProjectNodeBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\PropertyPad\PropertyPad.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Pads\PropertyPad\PropertyPadCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\SolutionImporter\ImportSolutionCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\SolutionImporter\SolutionConverterTool.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Workbench\DefaultWorkbench.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Workbench\DefaultWorkbench.resx"
+                    DependentUpon = "DefaultWorkbench.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Workbench\WorkbenchMemento.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Workbench\Layouts\SdiWorkspaceLayout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\Workbench\Layouts\SdiWorkspaceWindow.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\XmlForms\SharpDevelopObjectCreator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\XmlForms\SharpDevelopPropertyValueCreator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Gui\XmlForms\SharpDevelopStringValueFilter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\DefaultDialogPanelDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\DialogPanelCodon.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\IDialogPanel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\IDialogPanelDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\DisplayBinding\DisplayBindingCodon.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\DisplayBinding\IDisplayBinding.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\DisplayBinding\ISubDisplayBinding.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\LanguageBinding\DefaultCompilerResult.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\LanguageBinding\FileFilterCodon.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\LanguageBinding\ICompilerResult.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\LanguageBinding\ILanguageBinding.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\LanguageBinding\LanguageBindingCodon.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\MenuItems\AbstractCheckableMenuCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\MenuItems\AbstractMenuCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\MenuItems\ICheckableMenuCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\MenuItems\IMenuCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\MenuItems\ISubmenuBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\MenuItems\MenuItemCodon.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Codons\Toolbars\ToolbarItemCodon.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\CollectionUtilities\Comparers.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\CollectionUtilities\DiffUtility.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\CollectionUtilities\SortUtility.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\CollectionUtilities\SortUtilityBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Conditions\CombineOpenCondition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Conditions\OwnerStateCondition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Conditions\ProjectActiveCondition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Conditions\ProjectOpenCondition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Conditions\WindowActiveCondition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Conditions\WindowOpenCondition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\DataStructures\PriorityQueue.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\ExternalTool\ExternalTool.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\ExternalTool\ToolLoader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Attributes\ConvertToRelativePathAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Attributes\XmlAttributeAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Attributes\XmlNodeNameAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Attributes\XmlSetAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Combine\Combine.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Combine\CombineConfiguration.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Combine\CombineEntry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Combine\CombineExecuteDefinition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Combine\CyclicBuildOrderException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Combine\NoStartupCombineDefinedException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\AbstractConfiguration.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\AbstractProject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\AbstractProjectConfiguration.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\ConvertXml.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\IConfiguration.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\IncludeFilesDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\IProject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\ProjectFile.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\ProjectReference.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\TypelibImporter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\UnknownProjectVersionException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\Collections\ProjectFileCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\Collections\ProjectReferenceCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\Deployment\AssemblyDeploy.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\Deployment\DeployInformation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\Deployment\FileDeploy.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\Deployment\IDeploymentStrategy.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Project\Project\Deployment\ScriptDeploy.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Templates\CodeTemplate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Templates\CodeTemplateLoader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Templates\FileDescriptionTemplate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Templates\FileTemplate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Templates\INewFileCreator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Templates\TextTemplate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Templates\ProjectTemplates\CombineDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Templates\ProjectTemplates\ProjectCreateInformation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Templates\ProjectTemplates\ProjectDescriptor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Templates\ProjectTemplates\ProjectTemplate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Undo\IUndoableOperation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Undo\UndoQueue.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Internal\Undo\UndoStack.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\IconService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\MessageService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\ResourceNotFoundException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\ResourceService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <Folder RelPath = "OriginalBase\Services\ClassBrowserIcons\" />
+                <File
+                    RelPath = "OriginalBase\Services\DisplayBinding\DisplayBindingService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\File\DefaultFileService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\File\FileEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\File\IFileService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\File\RecentOpen.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\File\RingBuffer.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\Language\Language.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\Language\LanguageService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\LanguageBinding\LanguageBindingService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\MenuService\MenuService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\Project\CombineEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\Project\DefaultProjectService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\Project\IProjectService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\Project\ProjectEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\Project\ProjectRenameEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\StatusBar\DefaultStatusBarService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\StatusBar\IStatusBarService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\Tasks\Task.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\Tasks\TaskService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OriginalBase\Services\Toolbar\ToolbarService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+            </Include>
+        </Files>
+    </CSHARP>
+</VisualStudioProject>
+

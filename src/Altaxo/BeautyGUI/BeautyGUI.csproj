@@ -109,6 +109,11 @@
                     Project = "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "SharpDevelop.Base"
+                    Project = "{AF2C9C35-FC89-4648-9D13-26538C00AFE1}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
             </References>
         </Build>
         <Files>
@@ -128,55 +133,41 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Base\Gui\Components\OpenFileTab.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Base\Gui\Workbench\DefaultWorkbench.cs"
+                    RelPath = "BeautyWorkbench.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Base\Gui\Workbench\DefaultWorkbench.resx"
-                    DependentUpon = "DefaultWorkbench.cs"
+                    RelPath = "BeautyWorkbench.resx"
+                    DependentUpon = "BeautyWorkbench.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Base\Gui\Workbench\DefaultWorkbenchWindow.cs"
+                    RelPath = "BeautyWorkbenchWindow.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Base\Gui\Workbench\DefaultWorkbenchWindow.resx"
-                    DependentUpon = "DefaultWorkbenchWindow.cs"
+                    RelPath = "BeautyWorkbenchWindow.resx"
+                    DependentUpon = "BeautyWorkbenchWindow.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Base\Gui\Workbench\WorkbenchMemento.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Base\Gui\Workbench\Layouts\BeautyWorkspaceWindow.cs"
+                    RelPath = "BeautyWorkspaceWindow.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Base\Gui\Workbench\Layouts\BeautyWorkspaceWindow.resx"
+                    RelPath = "BeautyWorkspaceWindow.resx"
                     DependentUpon = "BeautyWorkspaceWindow.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Base\Gui\Workbench\Layouts\MdiWorkbenchLayout.cs"
+                    RelPath = "MdiWorkbenchLayout.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
-                <File
-                    RelPath = "Base\Internal\Conditions\OwnerStateCondition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
+                <Folder RelPath = "Base\Gui\Workbench\Layouts\" />
             </Include>
         </Files>
     </CSHARP>
