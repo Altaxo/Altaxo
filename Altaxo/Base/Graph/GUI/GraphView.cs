@@ -501,7 +501,14 @@ namespace Altaxo.Graph.GUI
     }
 
    
-
+    /// <summary>
+    /// Sets the Cursor of the graph panel.
+    /// </summary>
+    /// <param name="cursor">The cursor showing in the graph panel.</param>
+    public void SetPanelCursor(Cursor cursor)
+    {
+      this.m_GraphPanel.Cursor = cursor;
+    }
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {

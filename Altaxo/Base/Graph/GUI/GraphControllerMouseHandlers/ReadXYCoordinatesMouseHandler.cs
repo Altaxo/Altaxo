@@ -57,26 +57,18 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public ReadXYCoordinatesMouseHandler(GraphController grac)
     {
       _grac = grac;
+
+      if(_grac.View!=null)
+        _grac.View.SetPanelCursor(Cursors.Cross);
     }
 
-    /// <summary>
-    /// Handles the mouse move event.
-    /// </summary>
-    /// <param name="e">MouseEventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnMouseMove(System.Windows.Forms.MouseEventArgs e)
-    {
-      base.OnMouseMove(e);
-        
-      return this;
-    }
-
+  
     /// <summary>
     /// Handles the MouseDown event when the plot point tool is selected
     /// </summary>
     /// <param name="e">The mouse event args</param>
      
-    public override MouseStateHandler OnMouseDown(System.Windows.Forms.MouseEventArgs e)
+    public override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
     {
       base.OnMouseDown(e);
 
@@ -87,7 +79,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       
       _grac.RepaintGraphArea(); // no refresh necessary, only invalidate to show the cross
          
-      return this;
+     
     } // end of function
 
 
@@ -153,45 +145,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     }
 
 
-    /// <summary>
-    /// Handles the mouse up event.
-    /// </summary>
-    /// <param name="e">MouseEventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnMouseUp(System.Windows.Forms.MouseEventArgs e)
-    {
-      base.OnMouseUp(e);
-
-      return this;
-    }
-
-    /// <summary>
-    /// Handles the mouse doubleclick event.
-    /// </summary>
-    /// <param name="e">EventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnDoubleClick( System.EventArgs e)
-    {
-      base.OnDoubleClick(e);
-
-      
-      return this;
-    }
 
 
-    /// <summary>
-    /// Handles the mouse click event.
-    /// </summary>
-    /// <param name="e">EventArgs as provided by the view.</param>
-    /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnClick(System.EventArgs e)
-    {
-      base.OnClick(e);
-
-      
-
-      return this;
-    }
 
 
     public override void AfterPaint( Graphics g)

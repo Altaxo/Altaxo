@@ -31,6 +31,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using ICSharpCode.Core.Services;
 
 namespace Altaxo.Graph.Commands
 {
@@ -370,6 +371,17 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  /// <summary>
+  /// Handler for the toolbar item Rescale axes.
+  /// </summary>
+  public class RescaleAxes : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+      ctrl.Doc.Layers[ctrl.CurrentLayerNumber].RescaleXAxis();
+      ctrl.Doc.Layers[ctrl.CurrentLayerNumber].RescaleYAxis();
+    }
+  }
 
   /// <summary>
   /// Handler for the menu item "Graph" - "New layer legend.
@@ -609,6 +621,9 @@ namespace Altaxo.Graph.Commands
         if(true==value && null!=Controller)
         {
           Controller.CurrentGraphToolType=typeof(Altaxo.Graph.GUI.GraphControllerMouseHandlers.ZoomAxesMouseHandler);
+          ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
+          Cursor cursor = resourceService.GetCursor("Cursors.32x32.ZoomAxes");
+          this.Controller.View.SetPanelCursor(cursor);
         }
 
         ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();

@@ -73,6 +73,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public ObjectPointerMouseHandler(GraphController grac)
     {
       _grac = grac;
+      if(_grac.View!=null)
+        _grac.View.SetPanelCursor(Cursors.Arrow);
     }
 
     /// <summary>
@@ -125,7 +127,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnMouseMove(System.Windows.Forms.MouseEventArgs e)
+    public override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
     {
       base.OnMouseMove(e);
         
@@ -137,7 +139,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         PointF newPosition = _grac.Layers[_grip.Layer].GraphToLayerCoordinates(printAreaCoord);
         _grip.Handle.MoveGrip(newPosition);
         _grac.RepaintGraphArea();
-        return this;
+        
       }
 
       
@@ -174,7 +176,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           
 
       }
-      return this;
+      
     }
 
     /// <summary>
@@ -191,12 +193,12 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     ///   if no (we have not clicked on already selected objects) and no shift or control key pressed -> if a object was found add it to the selected objects and activate moving mode
     ///                                                                                                  if no object was found clear the selection list, deactivate moving mode
     /// </remarks>
-    public override MouseStateHandler OnMouseDown(System.Windows.Forms.MouseEventArgs e)
+    public override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
     {
       base.OnMouseDown( e);
 
       if(e.Button != MouseButtons.Left)
-        return this; // then there is nothing to do here
+        return ; // then there is nothing to do here
 
       // first, if we have a mousedown without shift key and the
       // position has changed with respect to the last mousedown
@@ -224,7 +226,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         {
           _grip.Layer = nLayer;
           _grip.Object = gripObject;
-          return this;
+          
         }
       }
      
@@ -280,7 +282,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         } // end else no shift or control
 
       } // end else (not cklicked on already selected object)
-      return this;
+      
     } // end of function
 
     /// <summary>
@@ -288,7 +290,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnMouseUp(System.Windows.Forms.MouseEventArgs e)
+    public override void OnMouseUp(System.Windows.Forms.MouseEventArgs e)
     {
       base.OnMouseUp(e);
 
@@ -296,12 +298,12 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       if(_grip.Handle!=null)
       {
         _grip.Handle=null;
-        return this;
+       return;
       }
 
       System.Console.WriteLine("MouseUp {0},{1}",e.X,e.Y);
       EndMovingObjects();
-      return this;
+      
     }
 
     /// <summary>
@@ -309,7 +311,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="e">EventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnDoubleClick(System.EventArgs e)
+    public override void OnDoubleClick(System.EventArgs e)
     {
       base.OnDoubleClick(e);
 
@@ -327,7 +329,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           ClearSelections();
         }
       }
-      return this;
+      
     }
 
 
@@ -336,13 +338,13 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="e">EventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnClick(System.EventArgs e)
+    public override void OnClick(System.EventArgs e)
     {
       base.OnClick(e);
 
       System.Console.WriteLine("Click");
 
-      return this;
+     
     }
 
 

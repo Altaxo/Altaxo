@@ -167,6 +167,13 @@ namespace Altaxo.Graph.GUI
     /// The view should set the focus to itself or to a control which can receive the focus.
     /// </summary>
     void TakeFocus();
+
+
+    /// <summary>
+    /// Sets the Cursor of the graph panel.
+    /// </summary>
+    /// <param name="cursor"></param>
+    void SetPanelCursor(Cursor cursor);
   }
 
 

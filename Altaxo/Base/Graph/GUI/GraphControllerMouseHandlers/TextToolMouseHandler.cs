@@ -42,13 +42,15 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public TextToolMouseHandler(GraphController grac)
     {
       _grac = grac;
+      if(_grac.View!=null)
+        _grac.View.SetPanelCursor(Cursors.Arrow);
     }
     /// <summary>
     /// Handles the click event by opening the text tool dialog.
     /// </summary>
     /// <param name="e">EventArgs.</param>
     /// <returns>The mouse state handler for handling the next mouse events.</returns>
-    public override MouseStateHandler OnClick(System.EventArgs e)
+    public override void OnClick(System.EventArgs e)
     {
       base.OnClick(e);
 
@@ -73,7 +75,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           _grac.RefreshGraph();
         }
       }
-      return new ObjectPointerMouseHandler(_grac);
+      _grac.CurrentGraphToolType = typeof(ObjectPointerMouseHandler);
     }
   }
 }

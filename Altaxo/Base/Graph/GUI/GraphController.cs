@@ -986,7 +986,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">MouseEventArgs.</param>
     public virtual void EhView_GraphPanelMouseUp(System.Windows.Forms.MouseEventArgs e)
     {
-      m_MouseState = m_MouseState.OnMouseUp(e);
+      m_MouseState.OnMouseUp(e);
     }
 
     /// <summary>
@@ -995,7 +995,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">MouseEventArgs.</param>
     public virtual void EhView_GraphPanelMouseDown(System.Windows.Forms.MouseEventArgs e)
     {
-      m_MouseState = m_MouseState.OnMouseDown(e);
+      m_MouseState.OnMouseDown(e);
     }
 
     /// <summary>
@@ -1004,7 +1004,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">MouseEventArgs.</param>
     public virtual void EhView_GraphPanelMouseMove(System.Windows.Forms.MouseEventArgs e)
     {
-      m_MouseState = this.m_MouseState.OnMouseMove(e);
+      m_MouseState.OnMouseMove(e);
     }
 
     /// <summary>
@@ -1013,7 +1013,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">EventArgs.</param>
     public virtual void EhView_GraphPanelMouseClick(System.EventArgs e)
     {
-      m_MouseState = m_MouseState.OnClick(e);
+     m_MouseState.OnClick(e);
     }
 
     /// <summary>
@@ -1022,7 +1022,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e"></param>
     public virtual void EhView_GraphPanelMouseDoubleClick(System.EventArgs e)
     {
-      m_MouseState = m_MouseState.OnDoubleClick(e);
+     m_MouseState.OnDoubleClick(e);
     }
 
     /// <summary>

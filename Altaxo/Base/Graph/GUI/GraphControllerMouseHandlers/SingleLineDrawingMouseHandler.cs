@@ -42,6 +42,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
     protected PointF _currentMousePrintAreaCoord;
 
+    protected System.Type NextMouseHandlerType = typeof(ObjectPointerMouseHandler);
+
     
 
     protected struct POINT
@@ -59,6 +61,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public SingleLineDrawingMouseHandler(GraphController grac)
     {
       this._grac = grac;
+
+      if(_grac.View!=null)
+        _grac.View.SetPanelCursor(Cursors.Arrow);
     }
    
 
@@ -67,7 +72,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="e">EventArgs.</param>
     /// <returns>The mouse state handler for handling the next mouse events.</returns>
-    public override MouseStateHandler OnClick( System.EventArgs e)
+    public override void OnClick( System.EventArgs e)
     {
       base.OnClick(e);
 
@@ -85,16 +90,13 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       {
         FinishDrawing();
         _currentPoint=0;
-        return new ObjectPointerMouseHandler(_grac);
+        _grac.CurrentGraphToolType = NextMouseHandlerType;
       }
-      else
-      {
-        return this;
-      }
+     
     }
 
 
-    public override MouseStateHandler OnMouseMove( MouseEventArgs e)
+    public override void OnMouseMove( MouseEventArgs e)
     {
       base.OnMouseMove ( e);
      
@@ -105,7 +107,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       _grac.RepaintGraphArea();
    
 
-    return this;
+   
   }
 
     protected virtual void ModifyCurrentMousePrintAreaCoordinate()

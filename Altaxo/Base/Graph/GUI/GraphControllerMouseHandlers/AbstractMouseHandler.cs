@@ -49,9 +49,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public virtual MouseStateHandler OnMouseMove(System.Windows.Forms.MouseEventArgs e)
+    public virtual void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
     {
-      return this;
+      
     }
 
     /// <summary>
@@ -59,10 +59,10 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public virtual MouseStateHandler OnMouseUp(System.Windows.Forms.MouseEventArgs e)
+    public virtual void OnMouseUp(System.Windows.Forms.MouseEventArgs e)
     {
       m_LastMouseUp = new Point(e.X,e.Y);
-      return this;
+      
     }
 
     /// <summary>
@@ -70,10 +70,10 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public virtual MouseStateHandler OnMouseDown(System.Windows.Forms.MouseEventArgs e)
+    public virtual void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
     {
       m_LastMouseDown = new Point(e.X,e.Y);
-      return this;
+      
     }
       
     /// <summary>
@@ -81,9 +81,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="e">EventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public virtual MouseStateHandler OnClick(System.EventArgs e)
+    public virtual void OnClick(System.EventArgs e)
     {
-      return this;
+      
     }
       
     /// <summary>
@@ -91,9 +91,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// </summary>
     /// <param name="e">EventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public virtual MouseStateHandler OnDoubleClick(System.EventArgs e)
+    public virtual void OnDoubleClick(System.EventArgs e)
     {
-      return this;
+      
     }
 
 

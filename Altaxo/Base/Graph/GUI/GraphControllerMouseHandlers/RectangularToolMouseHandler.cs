@@ -41,6 +41,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public RectangularToolMouseHandler(GraphController grac)
       : base(grac)
     {
+      if(_grac.View!=null)
+        _grac.View.SetPanelCursor(Cursors.Arrow);
     }
    
 

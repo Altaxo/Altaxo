@@ -358,5 +358,25 @@ namespace ICSharpCode.Core.Services
 			Debug.Assert(b != null, "Resource " + name);
 			return b;
 		}
+
+#if ModifiedForAltaxo
+    public Cursor GetCursor(string name)
+    {
+      object iconobj = GetImageResource(name);
+			
+      if (iconobj == null) 
+      {
+        return null;
+      }
+      if (iconobj is Cursor) 
+      {
+        return (Cursor)iconobj;
+      } 
+      else 
+      {
+        return new Cursor(((Bitmap)iconobj).GetHicon());
+      }
+    }
+#endif
 	}
 }

@@ -30,29 +30,60 @@ using Altaxo.Graph;
 using Altaxo.Serialization;
 namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 {
-	/// <summary>
-	/// Summary description for ArrowLineDrawingMouseHandler.
-	/// </summary>
-	public class ArrowLineDrawingMouseHandler : SingleLineDrawingMouseHandler
-	{
-		public ArrowLineDrawingMouseHandler(GraphController grac)
+
+  /// <summary>
+  /// Handles the zooming into the axes of a plot, i.e changing the axis boundaries.
+  /// </summary>
+  public class ZoomAxesMouseHandler : RectangularToolMouseHandler
+  {
+    public ZoomAxesMouseHandler(GraphController grac)
       : base(grac)
-		{
+    {
+      NextMouseHandlerType = this.GetType();
+
       if(_grac.View!=null)
         _grac.View.SetPanelCursor(Cursors.Arrow);
-		}
+    }
+   
 
+
+    void Swap(ref double a, ref double b)
+    {
+      double h = a;
+      a = b;
+      b = h;
+    }
     protected override void FinishDrawing()
     {
-      Graph.LineGraphic go = new LineGraphic(_Points[0].layerCoord,_Points[1].layerCoord);
-      //go.Pen.EndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(2,1,true);
-      
+
+      // we must deduce from layer coordinates back to physical coordinates
+      double xr0,yr0,xr1,yr1;
+      XYPlotLayer layer = this._grac.ActiveLayer;
+      layer.AreaToLogicalConversion.Convert(_Points[0].layerCoord.X,_Points[0].layerCoord.Y, out xr0, out yr0);
+      layer.AreaToLogicalConversion.Convert(_Points[1].layerCoord.X,_Points[1].layerCoord.Y, out xr1, out yr1);
+
+
+      if(xr0>xr1)
+        Swap(ref xr0, ref xr1);
+      if(yr0>yr1)
+        Swap(ref yr0, ref yr1);
+
+      // now with the help of the axes, calculate the new boundaries
+      double xo = layer.XAxis.NormalToPhysical(xr0);
+      double xe = layer.XAxis.NormalToPhysical(xr1);
+      double yo = layer.YAxis.NormalToPhysical(yr0);
+      double ye = layer.YAxis.NormalToPhysical(yr1);
+
+     
+
+      layer.XAxis.ProcessDataBounds(xo,true,xe,true);
+      layer.YAxis.ProcessDataBounds(yo,true,ye,true);
 
       // deselect the text tool
-      this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
-      _grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(go);
+      // this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
       _grac.RefreshGraph();
       
     }
-	}
+
+  }
 }

@@ -1768,30 +1768,34 @@ namespace Altaxo.Graph
 
 
         // now we have to inform all the PlotItems that a new axis was loaded
-        
-        // we have to disable our own Handler since if we change one DataBound of a association,
-        //it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary, 
-        //but (alas!) not all boundaries are now of the new type!
-        m_PlotAssociationXBoundariesChanged_EventSuspendCount++; 
-        
-        m_xAxis.DataBounds.BeginUpdate(); // Suppress events from the y-axis now
-        m_xAxis.DataBounds.Reset();
-        foreach(PlotItem pa in this.PlotItems)
-        {
-          if(pa.Data is Graph.IXBoundsHolder)
-          {
-            // first ensure the right data bound object is set on the XYColumnPlotData
-            ((IXBoundsHolder)pa.Data).SetXBoundsFromTemplate(m_xAxis.DataBounds); // ensure that data bound object is of the right type
-            // now merge the bounds with x and yAxis
-            ((IXBoundsHolder)pa.Data).MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
-        
-          }
-        }
-        m_PlotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0,m_PlotAssociationXBoundariesChanged_EventSuspendCount-1);
-        m_xAxis.DataBounds.EndUpdate();
+        RescaleXAxis();
       }
     }
 
+    public void RescaleXAxis()
+    {
+      // we have to disable our own Handler since if we change one DataBound of a association,
+      //it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary, 
+      //but (alas!) not all boundaries are now of the new type!
+      m_PlotAssociationXBoundariesChanged_EventSuspendCount++; 
+        
+      m_xAxis.DataBounds.BeginUpdate(); // Suppress events from the y-axis now
+      m_xAxis.DataBounds.Reset();
+      foreach(PlotItem pa in this.PlotItems)
+      {
+        if(pa.Data is Graph.IXBoundsHolder)
+        {
+          // first ensure the right data bound object is set on the XYColumnPlotData
+          ((IXBoundsHolder)pa.Data).SetXBoundsFromTemplate(m_xAxis.DataBounds); // ensure that data bound object is of the right type
+          // now merge the bounds with x and yAxis
+          ((IXBoundsHolder)pa.Data).MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+        
+        }
+      }
+      m_PlotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0,m_PlotAssociationXBoundariesChanged_EventSuspendCount-1);
+      m_xAxis.DataBounds.EndUpdate();
+    }
+   
   
     /// <summary>Gets or sets the y axis of this layer.</summary>
     /// <value>The y axis of the layer.</value>
@@ -1810,30 +1814,35 @@ namespace Altaxo.Graph
 
 
         // now we have to inform all the PlotAssociations that a new axis was loaded
-        
-        // we have to disable our own Handler since if we change one DataBound of a association,
-        //it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary, 
-        //but (alas!) not all boundaries are now of the new type!
-        m_PlotAssociationYBoundariesChanged_EventSuspendCount++; 
-
-        m_yAxis.DataBounds.BeginUpdate();
-        m_yAxis.DataBounds.Reset();
-        foreach(PlotItem pa in this.PlotItems)
-        {
-          if(pa.Data is Graph.IYBoundsHolder)
-          {
-            // first ensure the right data bound object is set on the XYColumnPlotData
-            ((IYBoundsHolder)pa.Data).SetYBoundsFromTemplate(m_yAxis.DataBounds); // ensure that data bound object is of the right type
-            // now merge the bounds with x and yAxis
-            ((IYBoundsHolder)pa.Data).MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
-        
-          }
-        }
-        m_PlotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0,m_PlotAssociationYBoundariesChanged_EventSuspendCount-1);
-        m_yAxis.DataBounds.EndUpdate();
+        RescaleYAxis();
       }
     }
 
+
+    public void RescaleYAxis()
+    {
+      // we have to disable our own Handler since if we change one DataBound of a association,
+      //it generates a OnBoundaryChanged, and then all boundaries are merges into the axis boundary, 
+      //but (alas!) not all boundaries are now of the new type!
+      m_PlotAssociationYBoundariesChanged_EventSuspendCount++; 
+
+      m_yAxis.DataBounds.BeginUpdate();
+      m_yAxis.DataBounds.Reset();
+      foreach(PlotItem pa in this.PlotItems)
+      {
+        if(pa.Data is Graph.IYBoundsHolder)
+        {
+          // first ensure the right data bound object is set on the XYColumnPlotData
+          ((IYBoundsHolder)pa.Data).SetYBoundsFromTemplate(m_yAxis.DataBounds); // ensure that data bound object is of the right type
+          // now merge the bounds with x and yAxis
+          ((IYBoundsHolder)pa.Data).MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+        
+        }
+      }
+      m_PlotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0,m_PlotAssociationYBoundariesChanged_EventSuspendCount-1);
+      m_yAxis.DataBounds.EndUpdate();
+    }
+    
 
     /// <summary>Indicates if x axis is linked to the linked layer x axis.</summary>
     /// <value>True if x axis is linked to the linked layer x axis.</value>

@@ -293,11 +293,13 @@
 					class="Altaxo.Graph.Commands.ReadPlotItemDataTool" />
 				<ToolbarItem id="LineDrawingTool" icon="Icons.16x16.LineTool" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}"
 					class="Altaxo.Graph.Commands.SingleLineDrawingTool" />
+				<ToolbarItem id="ZoomAxes" icon="Icons.16x16.ZoomAxes" tooltip="${res:XML.MainMenu.GraphMenu.ZoomAxes.Description}"
+					class="Altaxo.Graph.Commands.ZoomAxesTool" />
 				<ToolbarItem id="GraphCmdsSeparator" tooltip="-" />
 				<ToolbarItem id="NewLayerLegend" icon="Icons.16x16.NewLegend" tooltip="${res:XML.MainMenu.GraphMenu.NewLayerLegend.Description}"
 					class="Altaxo.Graph.Commands.NewLayerLegend" />
-				<ToolbarItem id="ZoomAxes" icon="Icons.16x16.ZoomAxes" tooltip="${res:XML.MainMenu.GraphMenu.ZoomAxes.Description}"
-					class="Altaxo.Graph.Commands.ZoomAxesTool" />
+				<ToolbarItem id="RescaleAxes" icon="Icons.16x16.RescaleAxes" tooltip="${res:XML.MainMenu.GraphMenu.RescaleAxes.Description}"
+					class="Altaxo.Graph.Commands.RescaleAxes" />
 			</Conditional>
 			<ToolbarItem id="PlotSeparator" tooltip="-" />
 			<Conditional activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Disable">
