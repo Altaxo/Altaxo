@@ -222,7 +222,7 @@ namespace Altaxo.Graph.GUI
       this.m_btToLabel.Name = "m_btToLabel";
       this.m_btToLabel.Size = new System.Drawing.Size(40, 24);
       this.m_btToLabel.TabIndex = 11;
-      this.m_btToLabel.Text = "Y";
+      this.m_btToLabel.Text = "L";
       this.m_btToLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.m_btToLabel.Click += new System.EventHandler(this.EhToLabel_Click);
       // 

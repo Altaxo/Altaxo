@@ -173,7 +173,7 @@ namespace Altaxo.Graph.GUI
     public void EhView_ToLabel(int tableindex, string tablename, int columnindex, string columnname)
     {
       SetDirty();
-      m_yCol = Current.Project.DataTableCollection[tablename][columnname];
+      m_labelCol = Current.Project.DataTableCollection[tablename][columnname];
       if(null!=View)
         View.LabelColumn_Initialize(m_labelCol==null ? String.Empty : m_labelCol.FullName);
     }

@@ -100,8 +100,8 @@ namespace Altaxo.Calc.Interpolation
 
 		public double this[int i]
 		{
-			get { return x[i]; }
-			set { x[i] = value; }
+			get { return x[i-lo]; }
+			set { x[i-lo] = value; }
 		}
 
 		public int Lo() { return lo; }
@@ -118,9 +118,9 @@ namespace Altaxo.Calc.Interpolation
 		}
 		public void Resize(int lo, int hi)
 		{
-			if(x==null || hi>=x.Length)
+			if(x==null || (hi-lo)>=x.Length)
 			{
-				x = new double[hi+1];
+				x = new double[hi-lo+1];
 			}
 			this.lo = lo;
 			this.hi = hi;
@@ -133,9 +133,14 @@ namespace Altaxo.Calc.Interpolation
 		public void CopyFrom(IVector a)
 		{
 			Resize(a.Lo(),a.Hi());
-			for(int i=a.Lo();i<a.Hi();i++)
-				x[i] = a[i];
+			for(int i=lo;i<hi;i++)
+				x[i-lo] = a[i];
 		}
+
+    public double[] Store()
+    {
+      return x;
+    }
 	}
 
 	public interface IScene
@@ -2792,8 +2797,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 	#endregion
 
 	#region CrossValidatedCubicSpline
-#if false
-	public class CrossValidatedCubicSpline : MpCurveBase
+#if true
+	public class CrossValidatedCubicSpline : CurveBase
 																			{
 
 		//----------------------------------------------------------------------------//
@@ -2818,28 +2823,140 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		};
 
 		protected	double var;
-		protected IVector dy;
-		protected DoubleVector y0, y1, y2, y3, se, wk;
+    protected DoubleVector xstore;
+    protected DoubleVector ystore;
+		protected DoubleVector dy;
+		protected DoubleVector y0, y1, y2, y3, se, wkr, wkt, wku, wkv;
 
-		public	MpCrossValidatedCubicSpline ()
+		public	CrossValidatedCubicSpline ()
 		{
 			var = -1.0;
 			dy = null;
 		}
 
+//----------------------------------------------------------------------------//
+
+    // LelliD spint is now fully zero based
+    static void spint (int n, 
+      double[] x, // Original 1..N , now 0..N-1
+      out double avh, 
+      double [] y, // Original 1..N, now 0..N-1
+      double [] dy, // Original 1..N, now 0..N-1
+      out double avdy,
+      double []a,
+      double [] c1, // Original 1..IC, now 0..N+1
+      double[] c2, // Original 1..IC, now 0..N+1
+      double[] c3, // Original 1..IC, now 0..N+1
+      double[] r, // Original 0..N+1, 3 , now length=3*(N+2)
+      double[] t, // Original 0..N+1, 2, now zero based with length=3*(N+2)
+      out ErrorFlag error_flag)
+    {
+      int i, r_dim1, t_dim1;
+      double e, f, g, h;
+
+      // Initializes the arrays c1,c2,c3,r and t for one dimensional cubic
+      // smoothing spline fitting by subroutine spfit. The values
+      // df[i] are scaled so that the sum of their squares is n
+      // and the average of the differences x[i+1]-x[i] is calculated
+      // in avh in order to avoid underflow and overflow problems in
+      // spfit. Subroutine sets error_flag if elements of x are non-increasing,
+      // if n is less than 3 or if dy[i] is not positive for some i.
+
+      // Parameter adjustments
+      t_dim1 = n + 2;
+      r_dim1 = n + 2;
+
+      // initialization and input checking
+      error_flag = ErrorFlag.no_error;
+      if (n < 3) 
+      {
+        avh=avdy=0;
+        error_flag = ErrorFlag.too_few_datapoints; 
+        return;
+      }
+
+      // get average x spacing in avh
+      g = zero;
+      for (i = 1; i < n; ++i) 
+      {
+        h = x[i] - x[i-1];
+        // check if abscissae are not increasing
+        if (h <= zero) 
+        {
+          avh=avdy=0;
+          error_flag = ErrorFlag.abscissa_not_ordered;
+          return;
+        }
+        g += h;
+      }
+      avh = g / (n - 1); // average spacing
+
+      // scale relative weights
+      g = zero;
+      for (i = 0; i < n; ++i) // LelliD modified
+      {
+        // check for non positive df
+        if (dy[i] <= zero) 
+        {
+          avdy=0;
+          error_flag = ErrorFlag.stddev_non_positive; return; 
+        }
+        g += dy[i] * dy[i];
+      }
+      avdy = Math.Sqrt(g / n);
+
+      for (i = 0; i < n; ++i) // Lellid modified
+        dy[i] /= avdy;
+
+
+      // initialize h,f
+      h = (x[1] - x[0]) / avh; // LelliD
+      f = (y[1] - y[0]) / h; // LelliD
+
+      // calculate a,t,r
+      for (i = 2; i < n ; ++i)
+      {
+        g = h;
+        h = (x[i] - x[i-1]) / avh; // LelliD
+        e = f;
+        f = (y[i] - y[i-1]) / h; // LelliD
+        a[i-1] = f - e;   // LelliD
+        t[i] = (g + h) * 2.0 / 3.0; // LelliD
+        t[i + t_dim1] = h / 3.0; // LelliD
+        r[i + r_dim1 * 2] = dy[i-2] / g; // LelliD
+        r[i ] = dy[i] / h; // LelliD
+        r[i + r_dim1] = -dy[i-1] / g - dy[i-1] / h; // LelliD
+      }
+
+      // calculate c = r'*r
+      r[n + r_dim1] = 0;// LelliD
+      r[n+r_dim1*2] = 0; // LelliD
+      r[n+1+r_dim1*2] = 0; // LelliD
+
+      for (i = 2; i < n; ++i) 
+      {
+        c1[i-1] = r[i]*r[i]+r[i+r_dim1]* // LelliD
+          r[i+r_dim1]+r[i+r_dim1*2]*r[i+r_dim1*2]; // lelliD
+        c2[i-1] = r[i]*r[i+1+r_dim1]+r[i+r_dim1]*r[i+1+r_dim1*2]; // LelliD
+        c3[i-1] = r[i]*r[i+2+r_dim1*2]; // LelliD
+      }
+    } 
+
+
 
 		// TODO : this routine has to be rebased to zero and the pointer arithmetic
 		// must be removed
 
+    // now all arrays zero based by LelliD
 		static void spfit (int n, 
 			double[] x, // const double *x,
-			out double avh, // double *avh, 
+			double avh, // double *avh, 
 			double[] dy, // const double *dy,
 			double rho, 
 			out double p, // double *p,
 			out double q, // double *q,
 			out double fun, // double *fun,
-			out double var, // double *var,
+			double var, // double *var,
 			double[] stat, // double *stat,
 			double[] a, // double *a,
 			double[] c1, // double *c1, 
@@ -2872,17 +2989,12 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			// when var is negative.
 			//
 		{
-			int i, r_dim1, r_offset, t_dim1, t_offset;
+			int i, r_dim1, t_dim1;
 			double e, f, g, h, rho1, d1;
 
 			// Parameter adjustments
 			t_dim1 = n + 2;
-			t_offset = t_dim1;
-			t -= t_offset;
 			r_dim1 = n + 2;
-			r_offset = r_dim1;
-			r -= r_offset;
-			--stat;
 
 			// use p and q instead of rho to prevent overflow or underflow
 			rho1 = one + rho;
@@ -2895,82 +3007,169 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			f = g = h = zero;
 
 			for (i = 0; i <= 1; ++i)
-				r[i] = zero; // r[i + r_dim1] = zero;
+				r[i] = zero; // LelliD
 
 			for (i = 2; i < n; ++i) 
 			{
-				r[i-2+r_dim1*2] = g * r[i-2]; // DL
-				r[i-1+r_dim1] = f * r[i-1]; // DL
-				r[i] = one / (p * c1[i]+q*t[i+t_dim1]-f*r[i-1+(r_dim1<<1)]
-					-g*r[i-2+r_dim1*3]);
-				f = p * c2[i] + q * t[i+(t_dim1<<1)] - h*r[i-1+(r_dim1<<1)];
+				r[i-2+r_dim1*2] = g * r[i-2]; // LelliD
+				r[i-1+r_dim1] = f * r[i-1]; // LelliD
+				r[i] = one / (p * c1[i-1]+q*t[i]-f*r[i-1+r_dim1]-g*r[i-2+r_dim1*2]); // LelliD
+				f = p * c2[i-1] + q * t[i+t_dim1] - h*r[i-1+r_dim1]; // LelliD
 				g = h;
-				h = p * c3[i];
+				h = p * c3[i-1]; // LelliD
 			}
 
 			// solve for u
-			u[0] = u[1] = zero;
+			u[0] = u[1] = zero; // OK
 			for (i = 2; i < n; ++i)
-				u[i] = a[i]-r[i-1+(r_dim1<<1)]*u[i-1]-r[i-2+r_dim1*3]*u[i-2];
-			u[n] = u[n+1] = zero;
+				u[i] = a[i-1]-r[i-1+r_dim1]*u[i-1]-r[i-2+r_dim1*2]*u[i-2]; // LelliD
+			u[n] = u[n+1] = zero; // Ok
 			for (i = n-1; i >= 2; --i)
-				u[i] = r[i+r_dim1]*u[i]-r[i+(r_dim1<<1)]*u[i+1]-r[i+r_dim1*3]*u[i+2];
+				u[i] = r[i]*u[i]-r[i+r_dim1]*u[i+1]-r[i+r_dim1*2]*u[i+2]; // LelliD
 
 			// calculate residual vector v
 			e = h = zero;
 			for (i = 1; i < n; ++i) 
 			{
 				g = h;
-				h = (u[i+1] - u[i]) / ((x[i+1] - x[i]) / avh);
-				v[i] = dy[i] * (h - g);
+				h = (u[i+1] - u[i]) / ((x[i] - x[i-1]) / avh); // LelliD
+				v[i] = dy[i-1] * (h - g); // LelliD
 				e += v[i] * v[i];
 			}
-			v[n] = dy[n] * (-h);
+			v[n] = dy[n-1] * (-h); // LelliD
 			e += v[n] * v[n];
 
 			// calculate upper three bands of inverse matrix
-			r[n+r_dim1] =
-				r[n+(r_dim1<<1)] =
-				r[n+1+r_dim1] = zero;
+			r[n] = 0; // LelliD
+			r[n+r_dim1] = 0; // LelliD
+			r[n+1] = 0; // LelliD
 			for (i = n - 1; i >= 2; --i) 
 			{
-				g = r[i+(r_dim1<<1)];
-				h = r[i+r_dim1*3];
-				r[i+(r_dim1<<1)] = -g * r[i+1+r_dim1] - h*r[i+1+(r_dim1<<1)];
-				r[i+r_dim1*3] = -g * r[i+1+(r_dim1<<1)] - h*r[i+2+r_dim1];
-				r[i+r_dim1] = r[i+r_dim1] - g*r[i+(r_dim1<<1)] - h*r[i+r_dim1*3];
+				g = r[i+r_dim1]; // LelliD
+				h = r[i+r_dim1*2]; // LelliD
+				r[i+r_dim1] = -g * r[i+1] - h*r[i+1+r_dim1]; // LelliD
+				r[i+r_dim1*2] = -g * r[i+1+r_dim1] - h*r[i+2]; // LelliD
+				r[i] = r[i] - g*r[i+r_dim1] - h*r[i+r_dim1*2]; // LelliD
 			}
 
 			// calculate trace
 			f = g = h = zero;
 			for (i = 2; i < n; ++i) 
 			{
-				f += r[i+r_dim1] * c1[i];
-				g += r[i+(r_dim1<<1)] * c2[i];
-				h += r[i+r_dim1*3] * c3[i];
+				f += r[i] * c1[i-1]; // LelliD
+				g += r[i+r_dim1] * c2[i-1]; // LelliD
+				h += r[i+r_dim1*2] * c3[i-1]; // LelliD
 			}
 			f += two * (g + h);
 
 			// calculate statistics
-			stat[1] = p;
-			stat[2] = f * p;
-			stat[3] = n * e / (f * f);
-			stat[4] = e * p * p / n;
-			stat[6] = e * p / f;
+			stat[0] = p; // LelliD
+			stat[1] = f * p; // LelliD
+			stat[2] = n * e / (f * f); // LelliD
+			stat[3] = e * p * p / n; // LelliD
+			stat[5] = e * p / f; // LelliD
 
 			if (var >= zero) 
 			{
-				d1 = stat[4] - two * var * stat[2] / n + var;
-				stat[5] = Math.Max(d1,zero);
-				fun = stat[5];
+				d1 = stat[3] - two * var * stat[1] / n + var; // LelliD
+				stat[4] = Math.Max(d1,zero); // LelliD
+				fun = stat[4]; // LelliD
 			} 
 			else 
 			{
-				stat[5] = stat[6] - stat[4];
-				fun = stat[3];
+				stat[4] = stat[5] - stat[3]; // LelliD
+				fun = stat[2]; // LelliD
 			}
 		}
 
+
+    //----------------------------------------------------------------------------//
+
+    static void sperr ( // converted to zero based arrays by LelliD
+      int n,
+      double []x,
+      double avh,
+      double []dy,
+      double []r,
+      double p,
+      double var,
+      double [] se)
+    {
+      int i, r_dim1;
+      double f, g, h, f1, g1, h1, d1;
+
+      // calculates bayesian estimates of the standard errors of the fitted 
+      // values of a cubic smoothing spline by calculating the diagonal elements
+      // of the influence matrix. 
+
+      r_dim1 = n + 2;
+
+      // initialize
+      h = avh / (x[1] - x[0]); // LelliD
+      se[0] = one - p * dy[0] * dy[0] * h * h * r[2]; // LelliD
+      r[1] = zero; // LelliD
+      r[1+r_dim1] = zero; // LelliD
+      r[1+r_dim1*2] = zero; // LelliD
+
+      // calculate diagonal elements
+      for (i = 2; i < n; ++i) 
+      {
+        f = h;
+        h = avh / (x[i] - x[i-1]); // LelliD
+        g = -f - h;
+        f1 = f*r[i-1] + g*r[i-1+r_dim1] + h*r[i-1+r_dim1*2]; // LelliD
+        g1 = f*r[i-1+r_dim1] + g*r[i] + h*r[i+r_dim1]; // LelliD
+        h1 = f*r[i-1+r_dim1*2] + g*r[i+r_dim1] + h*r[i+1]; // LelliD
+        se[i-1] = one - p * dy[i-1] * dy[i-1] * (f*f1 + g*g1 + h*h1); // LelliD
+      }
+      se[n-1] = one - p * dy[n-1] * dy[n-1] * h * h * r[n-1]; // LelliD
+
+      // calculate standard error estimates
+      for (i = 0; i < n; ++i) // LelliD
+      {
+        d1 = se[i] * var;
+        se[i] = Math.Sqrt((Math.Max(d1,0))) * dy[i];
+      }
+    } 
+
+
+    static void spcof ( // converted to zero based by LelliD
+      int n,
+      double[] x, 
+      double avh,
+      double[] y,
+      double[] dy, 
+      double p, 
+      double q, 
+      double[] a,
+      double[] c1, 
+      double[] c2,
+      double[] c3,
+      double[] u, 
+      double[] v)
+    {
+      // calculates coefficients of a cubic smoothing spline from 
+      // parameters calculated by subroutine spfit.
+
+      // calculate a
+      double qh = q / (avh * avh);
+      for (int i = 0; i < n; ++i) // LelliD
+      {
+        a[i] = y[i] - p * dy[i] * v[i];
+        u[i+1] *= qh; // LelliD
+      }
+
+      // calculate c
+      for (int i = 1; i < n; ++i) 
+      {
+        double h = x[i] - x[i-1]; // LelliD
+        c3[i-1] = (u[i+1] - u[i]) / (h*3.0); // LelliD
+        c1[i-1] = (a[i]-a[i-1])/h - (h*c3[i-1] + u[i]) * h; // LelliD
+        c2[i-1] = u[i]; // LelliD
+      }
+
+      c1[n-1] = c2[n-1] = c3[n-1] = 0.0; // LelliD
+    } 
 
 		
 		//----------------------------------------------------------------------------//
@@ -3146,25 +3345,39 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			if ( ! MatchingIndexRange(x,y) )
 				throw new ArgumentException("index range mismatch of vectors");
  
-			// link original data vectors into base class
-			base.x = x;
-			base.y = y;
+      // here we must use a copy of the original vectors
+
+
+	
 
 			// Empty data vectors - free auxilliary storage
 			if (x.Empty()) 
 			{
+        xstore.Remove();
+        ystore.Remove();
 				y0.Remove();
 				y1.Remove();
 				y2.Remove();
 				y3.Remove();
 				se.Remove();
-				wk.Remove();
-				return 0;
+				wkr.Remove();
+        wkt.Remove();
+        wku.Remove();
+        wkv.Remove();
+        return 0;
 			}
+      
+      xstore.CopyFrom(x);
+      ystore.CopyFrom(y);
+
+      // link original data vectors into base class
+      base.x = xstore;
+      base.y = ystore;
 
 			int lo = x.Lo(),
 				hi = x.Hi(),
 				n  = x.Elements();
+
 
 			// Resize the auxilliary vectors. Note, that there is no reallocation if the
 			// vector already has the appropriate dimension.
@@ -3173,7 +3386,10 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			y2.Resize(lo,hi);
 			y3.Resize(lo,hi);
 			// se.Resize(lo,hi); // currently zero
-			wk.Resize(0,7*(n+2));
+			wkr.Resize(0,3*(n+2));
+      wkt.Resize(0,2*(n+2));
+      wku.Resize(0,1*(n+2));
+      wkv.Resize(0,1*(n+2));
 
 			// set derivatives for a single point
 			if (x.Elements() == 1) 
@@ -3198,38 +3414,42 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			const double ratio = 2.0;
 			double tau   = (Math.Sqrt(5.0)+1.0) / 2.0;
 
-			int error_flag, i, wk_dim1, wk_offset;
+			ErrorFlag error_flag;
+      int i, wk_dim1, wk_offset;
 
 			double avdf, avar,  gf1, gf2, gf3, gf4,
 				avh, err, p, q, delta, r1, r2, r3, r4;
 			double [] stat = new double[6];
 
 			// adjust pointers to vectors so that indexing starts from 1
-			const double *xx  = x.Store() - 1;
-			const double *f   = y.Store() - 1;
+			double[] xx = xstore.Store();
+			double[] f  = ystore.Store();
 
-			double  *yy = y0.Store() - 1; // coefficients calculated
-			double	*c1 = y1.Store() - 1;
-			double	*c2 = y2.Store() - 1;
-			double	*c3 = y3.Store() - 1;
-			double  *df = dy->Store() - 1;
+			double[] yy = y0.Store(); // coefficients calculated
+			double[] c1 = y1.Store();
+			double[] c2 = y2.Store();
+			double[] c3 = y3.Store();
+			double[] df = dy.Store();
 
 			// index starts from 0
-			double *ww = wk.Store();
+			double[] wwr = wkr.Store();
+      double[] wwt = wkt.Store();
+      double[] wwu = wku.Store();
+      double[] wwv = wkv.Store();
 
 			// set ss to (double*)0 if a NullVector is given
-			double *ss = 0;
-			if (! se.Empty()) ss = se.Store() - 1;
+			double[] ss = null;
+			if (! se.Empty()) ss = se.Store();
 
 			// Parameter adjustments
 			wk_dim1 = n + 2;
-			wk_offset = wk_dim1;
-			ww -= wk_offset;
+		
 
-			spint(n,xx,&avh,f,df,&avdf,yy,c1,c2,c3,
-				&ww[wk_offset], &ww[wk_dim1 * 4], error_flag);
+			spint(n,xx,out avh,f,df, out avdf,yy,c1,c2,c3,
+				wwr, wwt, out error_flag); // Note wwr has 3*(N+2), wwt has 2*(N+2)
 
-			if (error_flag) return error_flag;
+			if (ErrorFlag.no_error!=error_flag) 
+        return (int)error_flag;
 
 			avar = var;
 			if (var > zero) avar = var * avdf * avdf;
@@ -3244,15 +3464,20 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			// find local minimum of gcv or the expected mean square error
 			r1 = one;
 			r2 = ratio * r1;
-			spfit(n, xx, &avh, df, r2, &p, &q, &gf2, &avar, stat, yy, c1, c2, c3,
-				&ww[wk_offset], &ww[wk_dim1 * 4],
-				&ww[wk_dim1 * 6], &ww[wk_dim1 * 7]);
+			spfit(n, xx, avh, df, r2, out p, out q, out gf2, avar, stat, yy, c1, c2, c3,
+				wwr, wwt,
+				wwu, // [wk_dim1 * 6],
+        wwv //[wk_dim1 * 7]
+        );
 
 			for (;;) 
 			{
-				spfit(n, xx, &avh, df, r1, &p, &q, &gf1, &avar, stat, yy, c1, c2, c3,
-					&ww[wk_offset], &ww[wk_dim1 * 4],
-					&ww[wk_dim1 * 6], &ww[wk_dim1 * 7]);
+				spfit(n, xx, avh, df, r1, out p, out q, out gf1, avar, stat, yy, c1, c2, c3,
+					wwr, //[wk_offset]
+          wwt, //[wk_dim1 * 4],
+					wwu, //[wk_dim1 * 6]
+          wwv  //[wk_dim1 * 7]
+          );
 				if (gf1 > gf2) break;
 				// exit if p is zero
 				if (p <= zero) goto spline_coefficients;
@@ -3265,9 +3490,12 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
 			for (;;) 
 			{
-				spfit(n, xx, &avh, df, r3, &p, &q, &gf3, &avar, stat, yy, c1, c2, c3,
-					&ww[wk_offset], &ww[wk_dim1 * 4],
-					&ww[wk_dim1 * 6], &ww[wk_dim1 * 7]);
+				spfit(n, xx, avh, df, r3, out p, out q, out gf3, avar, stat, yy, c1, c2, c3,
+					wwr, // [wk_offset]
+          wwt, // [wk_dim1 * 4]
+					wwu, // [wk_dim1 * 6]
+          wwv //[wk_dim1 * 7]
+          );
 
 				if (gf3 > gf2) break;
 				// exit if q is zero
@@ -3282,13 +3510,19 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 			delta = (r2 - r1) / tau;
 			r4 = r1 + delta;
 			r3 = r2 - delta;
-			spfit(n, xx, &avh, df, r3, &p, &q, &gf3, &avar, stat, yy, c1, c2, c3,
-				&ww[wk_offset], &ww[wk_dim1 * 4],
-				&ww[wk_dim1 * 6], &ww[wk_dim1 * 7]);
+			spfit(n, xx, avh, df, r3, out p, out q, out gf3, avar, stat, yy, c1, c2, c3,
+        wwr, // [wk_offset]
+        wwt, // [wk_dim1 * 4]
+        wwu, // [wk_dim1 * 6]
+        wwv //[wk_dim1 * 7]
+        );
 
-			spfit(n, xx, &avh, df, r4, &p, &q, &gf4, &avar, stat, yy, c1, c2, c3,
-				&ww[wk_offset], &ww[wk_dim1 * 4],
-				&ww[wk_dim1 * 6], &ww[wk_dim1 * 7]);
+			spfit(n, xx, avh, df, r4, out p, out q, out gf4, avar, stat, yy, c1, c2, c3,
+        wwr, // [wk_offset]
+        wwt, // [wk_dim1 * 4]
+        wwu, // [wk_dim1 * 6]
+        wwv //[wk_dim1 * 7]
+        );
 
 			do 
 			{  // golden section search for local minimum
@@ -3301,11 +3535,13 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 					gf3 = gf4;
 					delta /= tau;
 					r4 = r1 + delta;
-					spfit(n, xx, &avh, df, r4, &p, &q, &gf4,
-						&avar, stat, yy, c1, c2, c3,
-						&ww[wk_offset], &ww[wk_dim1 * 4],
-						&ww[wk_dim1 * 6], &ww[wk_dim1 * 7]);
-				} 
+					spfit(n, xx, avh, df, r4, out p, out q, out gf4, avar, stat, yy, c1, c2, c3,
+            wwr, // [wk_offset]
+            wwt, // [wk_dim1 * 4]
+            wwu, // [wk_dim1 * 6]
+            wwv //[wk_dim1 * 7]
+            );
+        } 
 				else 
 				{
 					r2 = r4;
@@ -3314,11 +3550,12 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 					gf4 = gf3;
 					delta /= tau;
 					r3 = r2 - delta;
-					spfit(n, xx, &avh, df, r3, &p, &q, &gf3,
-						&avar, stat, yy, c1, c2, c3,
-						&ww[wk_offset], &ww[wk_dim1 * 4],
-						&ww[wk_dim1 * 6], &ww[wk_dim1 * 7]);
-				}
+					spfit(n, xx, avh, df, r3, out p, out q, out gf3, avar, stat, yy, c1, c2, c3,
+            wwr, // [wk_offset]
+            wwt, // [wk_dim1 * 4]
+            wwu, // [wk_dim1 * 6]
+            wwv //[wk_dim1 * 7]
+            );				}
 
 				err = (r2-r1) / (r1+r2);
 
@@ -3328,14 +3565,19 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
 			natural_spline:
 
-				spfit(n, xx, &avh, df, r1, &p, &q, &gf1, &avar, stat, yy, c1, c2, c3,
-					&ww[wk_offset], &ww[wk_dim1 * 4],
-					&ww[wk_dim1 * 6], &ww[wk_dim1 * 7]);
+				spfit(n, xx, avh, df, r1, out p, out q, out gf1, avar, stat, yy, c1, c2, c3,
+          wwr, // [wk_offset]
+          wwt, // [wk_dim1 * 4]
+          wwu, // [wk_dim1 * 6]
+          wwv //[wk_dim1 * 7]
+          );
 
 			spline_coefficients:
 
 				spcof(n, xx, avh, f, df, p, q, yy, c1, c2, c3,
-					&ww[wk_dim1 * 6], &ww[wk_dim1 * 7]);
+					wwu, //[wk_dim1 * 6]
+          wwv  //[wk_dim1 * 7]
+          );
 
 			// optionally calculate standard error estimates
 			if (var < zero) 
@@ -3344,19 +3586,21 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 				var = avar / (avdf * avdf);
 			}
 
-			if (ss != 0)
-				sperr(n, xx, &avh, df, &ww[wk_offset], &p, &avar, ss);
+			if (ss != null)
+				sperr(n, xx, avh, df, 
+          wwr, //[wk_offset]
+          p, avar, ss);
 
 			// unscale df
 			for (i = 1; i <= n; ++i) df[i] *= avdf;
 
 			// put statistics in wk
 			for (i = 0; i <= 5; ++i)
-				ww[i + wk_dim1] = stat[i];
-			ww[wk_dim1 + 5] = stat[5] / (avdf * avdf);
-			ww[wk_dim1 + 6] = avdf * avdf;
+				wwr[i] = stat[i];
+			wwr[5] = stat[5] / (avdf * avdf);
+			wwr[6] = avdf * avdf;
 
-			return error_flag;
+			return (int)error_flag;
 		}
 
 		public override double GetX (double u) { return u; }
@@ -3421,16 +3665,18 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 		void   GetFitResults (out double smpar, out double ndf, out double gcv, out double msqred,
 	out double msqerr, out double var, out double msqdf)
 		{
-			if (! wk.Empty() ) 
+			if (! wkr.Empty() ) 
 			{
-				smpar   = wk[0]; 
-				ndf     = wk[1]; 
-				gcv     = wk[2]; 
-				msqred  = wk[3];
-				msqerr  = wk[4]; 
-				var     = wk[5]; 
-				msqdf   = wk[6];
+				smpar   = wkr[0]; 
+				ndf     = wkr[1]; 
+				gcv     = wkr[2]; 
+				msqred  = wkr[3];
+				msqerr  = wkr[4]; 
+				var     = wkr[5]; 
+				msqdf   = wkr[6];
 			}
+      else
+        throw new ApplicationException("Can't get fit results before interpolating");
 		}
 
 		//----------------------------------------------------------------------------//
