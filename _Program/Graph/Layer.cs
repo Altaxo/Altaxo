@@ -30,8 +30,146 @@ namespace Altaxo.Graph
 	/// </summary>
 	public class Layer
 	{
+
+		/// <summary>
+		/// The type of the size (i.e. width and height values.
+		/// </summary>
+		public enum SizeType {
+			/// <summary>
+			///  the value is a absolute value (not relative) in points (1/72 inch).
+			/// </summary>
+			AbsoluteValue,
+			/// <summary>
+			/// The value is relative to the graph document. This means that for instance the width of the layer
+			/// is relative to the width of the graph document.
+			/// </summary>
+			RelativeToGraphDocument,
+			/// <summary>
+			/// The value is relative to the linked layer. This means that for instance the width of the layer
+			/// is relative to the width of the linked layer.
+			/// </summary>
+			RelativeToLinkedLayer
+		}
+
+
+		/// <summary>
+		/// The type of the position values  (i.e. x and y position of the layer).
+		/// </summary>
+		public enum PositionType 
+		{
+			/// <summary>
+			/// The value is a absolute value (not relative) in points (1/72 inch).
+			/// </summary>
+			AbsoluteValue,
+
+
+			/// <summary>
+			/// The value is relative to the graph document. This means that for instance the x position of the layer
+			/// is relative to the width of the graph document. A x value of 0 would position the layer at the left edge of the
+			/// graph document, a value of 1 on the right edge of the graph.
+			/// </summary>
+			RelativeToGraphDocument,
+
+			/// <summary>
+			/// The value relates the near edge (either upper or left) of this layer to the near edge of the linked layer.
+			/// </summary>
+			/// <remarks> The values are relative to the size of the linked layer.
+			/// This means that for instance for a x position value of 0 the left edges of both layers are on the same position, for a value of 1
+			/// this means that the left edge of this layer is on the right edge of the linked layer.
+			/// </remarks>
+			RelativeThisNearToLinkedLayerNear,
+			
+			
+			/// <summary>
+			/// The value relates the near edge (either upper or left) of this layer to the far edge (either right or bottom) of the linked layer.
+			/// </summary>
+			/// <remarks> The values are relative to the size of the linked layer.
+			/// This means that for instance for a x position value of 0 the left edges of this layer is on the right edge of the linked layer,
+			/// for a value of 1
+			/// this means that the left edge of this layer is one width away from the right edge of the linked layer.
+			/// </remarks>
+			RelativeThisNearToLinkedLayerFar,
+			/// <summary>
+			/// The value relates the far edge (either right or bottom) of this layer to the near edge (either left or top) of the linked layer.
+			/// </summary>
+			/// <remarks> The values are relative to the size of the linked layer.
+			/// This means that for instance for a x position value of 0 the right edge of this layer is on the left edge of the linked layer,
+			/// for a value of 1
+			/// this means that the right edge of this layer is one width away (to the right) from the leftt edge of the linked layer.
+			/// </remarks>
+			RelativeThisFarToLinkedLayerNear,
+			/// <summary>
+			/// The value relates the far edge (either right or bottom) of this layer to the far edge (either right or bottom) of the linked layer.
+			/// </summary>
+			/// <remarks> The values are relative to the size of the linked layer.
+			/// This means that for instance for a x position value of 0 the right edge of this layer is on the right edge of the linked layer,
+			/// for a value of 1
+			/// this means that the right edge of this layer is one width away from the right edge of the linked layer, for a x value of -1 this
+			/// means that the right edge of this layer is one width away to the left from the right edge of the linked layer and this falls together
+			/// with the left edge of the linked layer.
+			/// </remarks>
+			RelativeThisFarToLinkedLayerFar
+		}
+
+
+		/// <summary>
+		/// The cached layer position in points (1/72 inch) relative to the upper left corner
+		/// of the graph document (upper left corner of the printable area).
+		/// </summary>
 		protected PointF m_LayerPosition = new PointF(119,80);
+
+		/// <summary>
+		/// The layers x position value, either absolute or relative, as determined by <see cref="m_LayerXPositionType"/>.
+		/// </summary>
+		protected double m_LayerXPosition = 119;
+		/// <summary>
+		/// The type of the x position value, see <see cref="PositionType"/>.
+		/// </summary>
+		protected PositionType m_LayerXPositionType=PositionType.AbsoluteValue;
+
+		/// <summary>
+		/// The layers y position value, either absolute or relative, as determined by <see cref="m_LayerYPositionType"/>.
+		/// </summary>
+		protected double m_LayerYPosition = 80;
+		/// <summary>
+		/// The type of the y position value, see <see cref="PositionType"/>.
+		/// </summary>
+		protected PositionType m_LayerYPositionType=PositionType.AbsoluteValue;
+
+
+		/// <summary>
+		/// The size of the layer in points (1/72 inch).
+		/// </summary>
+		/// <remarks>
+		/// In case the size is absolute (see <see cref="SizeType"/>), this is the size of the layer. Otherwise
+		/// it is only the cached value for the size, since the size is calculated then.
+		/// </remarks>
 		protected SizeF  m_LayerSize = new SizeF(626,407);
+
+		/// <summary>
+		/// The width of the layer, either as absolute value in point (1/72 inch), or as 
+		/// relative value as pointed out by <see cref="m_LayerWidthType"/>.
+		/// </summary>
+		protected double m_LayerWidth=626;
+		/// <summary>
+		/// The type of the value for the layer width, see <see cref="SizeType"/>.
+		/// </summary>
+		protected SizeType m_LayerWidthType=SizeType.AbsoluteValue;
+
+		/// <summary>
+		/// The height of the layer, either as absolute value in point (1/72 inch), or as 
+		/// relative value as pointed out by <see cref="m_LayerHeigthType"/>.
+		/// </summary>
+		protected double m_LayerHeight= 407;
+		/// <summary>
+		/// The type of the value for the layer height, see <see cref="SizeType"/>.
+		/// </summary>
+		protected SizeType m_LayerHeightType=SizeType.AbsoluteValue;
+
+
+		/// <summary>
+		/// The rotation angle (in degrees) of the layer.
+		/// </summary>
 		protected float  m_LayerAngle=0; // Rotation
 		protected float  m_LayerScale=1;  // Scale
 		protected Matrix matrix = new Matrix();  // forward transformation matrix
@@ -358,6 +496,75 @@ namespace Altaxo.Graph
 
 #endregion // Layer Properties
 
+
+
+		/// <summary>
+		/// Calculates from the position values, which can be absolute or relative, the
+		/// cached position in points.
+		/// </summary>
+		protected void CalculateCachedPosition()
+		{
+			double x = this.m_LayerPosition.X;
+			double y = this.m_LayerPosition.Y;
+
+			GraphDocument graph = this.ParentLayerList as GraphDocument;
+
+			switch(this.m_LayerXPositionType)
+			{
+				case PositionType.AbsoluteValue:
+					x = this.m_LayerXPosition;
+					break;
+				case PositionType.RelativeToGraphDocument:
+					if(graph!=null)
+						x = this.m_LayerXPosition*graph.PrintableSize.Width;
+					break;
+				case PositionType.RelativeThisNearToLinkedLayerNear:
+					if(LinkedLayer!=null)
+						x = LinkedLayer.Position.X + this.m_LayerXPosition*LinkedLayer.Size.Width;
+					break;
+				case PositionType.RelativeThisNearToLinkedLayerFar:
+					if(LinkedLayer!=null)
+						x = LinkedLayer.Position.X + (1+this.m_LayerXPosition)*LinkedLayer.Size.Width;
+					break;
+				case PositionType.RelativeThisFarToLinkedLayerNear:
+					if(LinkedLayer!=null)
+						x = LinkedLayer.Position.X - this.Size.Width + this.m_LayerXPosition*LinkedLayer.Size.Width;
+					break;
+				case PositionType.RelativeThisFarToLinkedLayerFar:
+					if(LinkedLayer!=null)
+						x = LinkedLayer.Position.X - this.Size.Width + (1+this.m_LayerXPosition)*LinkedLayer.Size.Width;
+					break;
+			}
+
+			switch(this.m_LayerYPositionType)
+			{
+				case PositionType.AbsoluteValue:
+					y = this.m_LayerYPosition;
+					break;
+				case PositionType.RelativeToGraphDocument:
+					if(graph!=null)
+						y = this.m_LayerYPosition*graph.PrintableSize.Height;
+					break;
+				case PositionType.RelativeThisNearToLinkedLayerNear:
+					if(LinkedLayer!=null)
+						y = LinkedLayer.Position.Y + this.m_LayerYPosition*LinkedLayer.Size.Height;
+					break;
+				case PositionType.RelativeThisNearToLinkedLayerFar:
+					if(LinkedLayer!=null)
+						y = LinkedLayer.Position.Y + (1+this.m_LayerYPosition)*LinkedLayer.Size.Height;
+					break;
+				case PositionType.RelativeThisFarToLinkedLayerNear:
+					if(LinkedLayer!=null)
+						y = LinkedLayer.Position.Y - this.Size.Height + this.m_LayerYPosition*LinkedLayer.Size.Height;
+					break;
+				case PositionType.RelativeThisFarToLinkedLayerFar:
+					if(LinkedLayer!=null)
+						y = LinkedLayer.Position.Y - this.Size.Height + (1+this.m_LayerYPosition)*LinkedLayer.Size.Height;
+					break;
+			}
+
+			m_LayerPosition = new PointF((float)x,(float)y);
+		}
 
 		/// <summary>
 		///  Only indended to use by LayerCollection! Sets the parent layer collection for this layer.
