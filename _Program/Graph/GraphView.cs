@@ -3,13 +3,16 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
 	/// <summary>
 	/// Summary description for GraphView.
 	/// </summary>
-	public class GraphView : System.Windows.Forms.Form
+	[SerializationSurrogate(0,typeof(GraphView.SerializationSurrogate0))]
+	[SerializationVersion(0,"Initial version.")]
+	public class GraphView : System.Windows.Forms.Form, IGraphView
 	{
 		private System.Windows.Forms.ImageList m_GraphToolsImages;
 		private System.Windows.Forms.ImageList m_LayerButtonImages;
@@ -18,16 +21,103 @@ namespace Altaxo.Graph
 		private System.ComponentModel.IContainer components;
 		private IGraphController m_Ctrl;
 
+		[Browsable(false)]
+		private ToolBar m_GraphToolsToolBar=null;
+
+		[Browsable(false)]
+		private GraphTools m_CachedCurrentGraphTool = GraphTools.ObjectPointer;
+
+		[Browsable(false)]
+		private int        m_CachedCurrentLayer = -1;
+
 		public GraphView()
+			: this(null,null)
 		{
+		}
+
+
+		#region Serialization
+		public class SerializationSurrogate0 : IDeserializationSubstitute, System.Runtime.Serialization.ISerializationSurrogate, System.Runtime.Serialization.ISerializable, System.Runtime.Serialization.IDeserializationCallback
+		{
+			protected Point		m_Location;
+			protected Size		m_Size;
+			protected object	m_Controller=null;
+
+			// we need a empty constructor
+			public SerializationSurrogate0() {}
+
+			// not used for deserialization, since the ISerializable constructor is used for that
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector){return obj;}
+			// not used for serialization, instead the ISerializationSurrogate is used for that
+			public void GetObjectData(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)	{}
+
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				info.SetType(this.GetType());
+				GraphView s = (GraphView)obj;
+				info.AddValue("Location",s.Location);
+				info.AddValue("Size",s.Size);
+				info.AddValue("Controller",s.m_Ctrl);
+			}
+
+			public SerializationSurrogate0(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context)
+			{
+				m_Location = (Point)info.GetValue("Location",typeof(Point));
+				m_Size     = (Size)info.GetValue("Size",typeof(Size));
+				m_Controller = info.GetValue("GraphControl",typeof(object));
+			}
+
+			public void OnDeserialization(object o)
+			{
+			}
+
+			public object GetRealObject(object parent)
+			{
+				// Create a new worksheet, parent window is the application window
+				GraphView frm = new GraphView(App.CurrentApplication,null);
+				frm.Location = m_Location;
+				frm.Size = m_Size;
+				frm.m_Ctrl = m_Controller as IGraphController;
+				return frm;
+			}
+		}
+		#endregion
+
+
+		public GraphView(System.Windows.Forms.Form parent, IGraphController ctrl)
+		{
+			if(null!=parent)
+				this.MdiParent = parent;
+
 			//
 			// Required for Windows Form Designer support
 			//
 			InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
+
+			// register event so to be informed when activated
+			if(parent is Altaxo.App)
+			{
+				((Altaxo.App)parent).MdiChildDeactivateBefore += new EventHandler(this.EhMdiChildDeactivate);
+				((Altaxo.App)parent).MdiChildActivateAfter += new EventHandler(this.EhMdiChildActivate);
+			}
+			else if(parent!=null)
+			{
+				parent.MdiChildActivate += new EventHandler(this.EhMdiChildActivate);
+				parent.MdiChildActivate += new EventHandler(this.EhMdiChildDeactivate);
+			}
+
+
+
+			// the creation of a new graph controller should be left out until the end, since it calls back some functions of
+			// the view so that the view should be initialized before
+			if(null==ctrl)
+				m_Ctrl = new GraphController(this);
+			else
+				m_Ctrl = ctrl;
+
+			// now show our window
+			this.Show();
 		}
 
 		/// <summary>
@@ -83,6 +173,7 @@ namespace Altaxo.Graph
 			this.m_LayerToolbar.Size = new System.Drawing.Size(22, 266);
 			this.m_LayerToolbar.TabIndex = 1;
 			this.m_LayerToolbar.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.EhLayerToolbar_ButtonClick);
+			this.m_LayerToolbar.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EhLayerToolbar_MouseDown);
 			// 
 			// m_GraphPanel
 			// 
@@ -114,57 +205,272 @@ namespace Altaxo.Graph
 		}
 		#endregion
 
+
+		
+		public IGraphController Controller
+		{
+			get { return m_Ctrl; }
+		}
+		
 		private void EhLayerToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
 		{
 			int pushedLayerNumber = System.Convert.ToInt32(e.Button.Text);
 		
-			m_Ctrl.EhView_CurrentLayerChanged(pushedLayerNumber);
+			m_Ctrl.EhView_CurrentLayerChoosen(pushedLayerNumber, false);
 		}
+
+		private void EhLayerToolbar_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+			if(e.Button == MouseButtons.Right)
+			{
+				Point pt = new Point(e.X,e.Y);
+				for(int i=0;i<m_LayerToolbar.Buttons.Count;i++)
+				{
+					if(m_LayerToolbar.Buttons[i].Rectangle.Contains(pt))
+					{
+						m_Ctrl.EhView_ShowDataContextMenu(i,this,pt);
+						return;
+					}
+				}
+			}
+		}
+
 
 		private void EhGraphPanel_Click(object sender, System.EventArgs e)
 		{
-		m_Ctrl.EhView_GraphPanelMouseClick(e);
+			m_Ctrl.EhView_GraphPanelMouseClick(e);
 		}
 
 		private void EhGraphPanel_DoubleClick(object sender, System.EventArgs e)
 		{
-		m_Ctrl.EhView_GraphPanelMouseDoubleClick(e);
+			m_Ctrl.EhView_GraphPanelMouseDoubleClick(e);
 		}
 
 		private void EhGraphPanel_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
-		m_Ctrl.EhView_GraphPanelPaint(e);
+			m_Ctrl.EhView_GraphPanelPaint(e);
 		}
 
 		private void EhGraphPanel_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-		m_Ctrl.EhView_GraphPanelMouseDown(e);
+			m_Ctrl.EhView_GraphPanelMouseDown(e);
 		}
 
 		private void EhGraphPanel_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-		m_Ctrl.EhView_GraphPanelMouseMove(e);
+			m_Ctrl.EhView_GraphPanelMouseMove(e);
 		}
 
 		private void EhGraphPanel_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-		m_Ctrl.EhView_GraphPanelMouseUp(e);
+			m_Ctrl.EhView_GraphPanelMouseUp(e);
 		}
 
 		private void EhGraphPanel_SizeChanged(object sender, System.EventArgs e)
 		{
-		m_Ctrl.EhView_GraphPanelSizeChanged(e);
+			m_Ctrl.EhView_GraphPanelSizeChanged(e);
 		}
 
 		private void EhGraphView_Closed(object sender, System.EventArgs e)
 		{
-		m_Ctrl.EhView_Closed(e);
+			m_Ctrl.EhView_Closed(e);
 		}
 
 		private void EhGraphView_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-		m_Ctrl.EhView_Closing(e);
+			m_Ctrl.EhView_Closing(e);
 		}
 
+		private void EhGraphToolsToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
+		{
+			m_Ctrl.EhView_CurrentGraphToolChoosen((GraphTools)e.Button.Tag);
+		}
+
+		protected void EhMdiChildActivate(object sender, EventArgs e)
+		{
+			if(((System.Windows.Forms.Form)sender).ActiveMdiChild==this)
+			{
+				// if no toolbar present already, create a toolbar
+				if(null==m_GraphToolsToolBar)
+					m_GraphToolsToolBar = CreateGraphToolsToolbar();
+
+				// restore the parent - so the toolbar is shown
+				m_GraphToolsToolBar.Parent = (System.Windows.Forms.Form)(App.CurrentApplication);
+			}
+		}
+
+		protected void EhMdiChildDeactivate(object sender, EventArgs e)
+		{
+			if(((System.Windows.Forms.Form)sender).ActiveMdiChild!=this)
+			{
+				if(null!=m_GraphToolsToolBar)
+					m_GraphToolsToolBar.Parent=null;
+			}
+		}
+
+		#region IGraphView Members
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Control Window
+		{
+			get
+			{
+				return this;
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Form Form
+		{
+			get
+			{
+				return this;
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public MainMenu GraphMenu
+		{
+			set
+			{
+				this.Menu = value; // do not clone the menu
+			}
+		}
+
+		/// <summary>
+		/// This creates a graphics context for the graph.
+		/// </summary>
+		/// <returns>The graphics context.</returns>
+		public Graphics CreateGraphGraphics()
+		{
+			return this.m_GraphPanel.CreateGraphics();
+		}
+
+
+		public void InvalidateGraph()
+		{
+			this.m_GraphPanel.Invalidate();
+		}
+
+
+
+		/// <summary>
+		/// Get / sets the AutoScroll size property 
+		/// </summary>
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Size GraphScrollSize 
+		{
+			get
+			{
+				return this.m_GraphPanel.AutoScrollMinSize;
+			}
+			set
+			{
+				this.m_GraphPanel.AutoScrollMinSize = value;
+			}
+		}
+
+		/// <summary>
+		/// Get /sets the scroll position of the graph
+		/// </summary>
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Point GraphScrollPosition 
+		{ 
+			get
+			{
+				return this.m_GraphPanel.AutoScrollPosition;
+			}
+			set
+			{
+				this.m_GraphPanel.AutoScrollPosition = value;
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Size GraphSize
+		{
+			get
+			{
+				return this.m_GraphPanel.Size;
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public Altaxo.Graph.GraphTools CurrentGraphTool
+		{
+			set
+			{
+				m_CachedCurrentGraphTool = value;
+				
+				if(null!=this.m_GraphToolsToolBar)
+				{
+					for(int i=0;i<m_GraphToolsToolBar.Buttons.Count;i++)
+						m_GraphToolsToolBar.Buttons[i].Pushed = (i==(int)value);
+				}
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int CurrentLayer
+		{
+			set
+			{
+				m_CachedCurrentLayer = value;
+				for(int i=0;i<m_LayerToolbar.Buttons.Count;i++)
+					m_LayerToolbar.Buttons[i].Pushed = (i==m_CachedCurrentLayer);
+			}
+		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int NumberOfLayers
+		{
+			set
+			{
+				int nNumButtons = m_LayerToolbar.Buttons.Count;
+
+				if(value > nNumButtons)
+				{
+					for(int i=nNumButtons;i<value;i++)
+						m_LayerToolbar.Buttons.Add(new ToolBarButton(i.ToString()));
+				}
+				else if(nNumButtons > value)
+				{
+					for(int i=nNumButtons-1;i>=value;i--)
+						m_LayerToolbar.Buttons.RemoveAt(i);
+				}
+
+				// now press the currently active layer button
+				for(int i=0;i<m_LayerToolbar.Buttons.Count;i++)
+					m_LayerToolbar.Buttons[i].Pushed = (i==m_CachedCurrentLayer);
+			}
+		}
+
+		#endregion
+
+
+		public ToolBar CreateGraphToolsToolbar()
+		{
+			ToolBar tb = new ToolBar();
+			tb.ImageList = this.m_GraphToolsImages;
+			tb.ButtonSize = new System.Drawing.Size(16, 24);
+			tb.AutoSize = true;
+			tb.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.EhGraphToolsToolbar_ButtonClick);
+
+			for(int i=0;i<2;i++)
+			{
+				ToolBarButton tbb = new ToolBarButton();
+				tbb.ImageIndex=i;
+				tbb.Tag = (GraphControl.GraphTools)i; 
+				tb.Buttons.Add(tbb);
+			}
+			tb.Dock = DockStyle.Bottom;
+	
+				
+			foreach(ToolBarButton bt in tb.Buttons)
+				bt.Pushed = (((GraphTools)bt.Tag) == m_CachedCurrentGraphTool);
+		
+			return tb;
+		}
 	}
 }
+	
+

@@ -279,6 +279,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Graph\IGraphDocumentView.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\ImageGraphics.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -30,207 +30,75 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph
 {
 	/// <summary>
-	/// This enumeration declares the current choosen tool for the GraphControl
-	/// The numeric values have to match the icon positions in the corresponding toolbar
+	/// GraphController is our default implementation to control a graph view.
 	/// </summary>
-	public enum GraphTools 
-	{
-		/// <summary>The tool to click to the objects, dragging them, and open the object dialogs by doubleclicking on them</summary>
-		ObjectPointer=0,
-		/// <summary>The tool to write text, i.e. to create ExtendedTextGraphObjects</summary>
-		Text=1
-	}
-
-
-
-	/// <summary>
-	/// Interface to be implemented by a form or a control to be able to show a graph. This can either be a control or a form.
-	/// </summary>
-	public interface IGraphView
-	{
-		/// <summary>Returns the windows of this view. In case the view is a Form, it returns the form. But if the view is only a control
-		/// on a form, it returns the control window.
-		/// </summary>
-		System.Windows.Forms.Control Window { get; }
-		/// <summary>
-		/// Returns the form of this view. In case the view is a Form, it returns that form itself. In case the view is a control on a form,
-		/// it returns not the control but the hosting form of this control.
-		/// </summary>
-		System.Windows.Forms.Form    Form   { get; }
-
-
-		/// <summary>
-		/// Get / sets the AutoScroll size property 
-		/// </summary>
-		Size AutoScrollMinSize { get; set; }
-
-
-		/// <summary>
-		/// Get /sets the scroll position of the graph
-		/// </summary>
-		Point AutoScrollPosition { get; set; }
-
-
-		/// <summary>
-		/// This creates a graphics context for the graph.
-		/// </summary>
-		/// <returns>The graphics context.</returns>
-		Graphics CreateGraphics();
-
-
-		/// <summary>
-		/// This forces redrawing of the entire graph window.
-		/// </summary>
-		void InvalidateGraph();
-
-		/// <summary>
-		/// Returns the size (in pixel) of the area, wherein the graph is painted.
-		/// </summary>
-		Size GraphSize { get; }
-
-
-		/// <summary>
-		/// Sets the currently selected GraphTool. The View has to show a toolbar or
-		/// so to provide a possibility for choosing tools. If the value is set by this
-		/// property, the toolbar has to reflect the state of this property.
-		/// </summary>
-		/// <remarks>The view must not send back a event, if the current tool is changed by this property.
-		/// It should only send the CurrentGraphToolChanged event to the controller, if the _user_ changed the current graph tool.</remarks>
-		GraphTools CurrentGraphTool { set; }
-
-		/// <summary>
-		/// Sets the currently active layer. If the view has some means to show the
-		/// currently active layer (like a toolbar or so), it has to indicate the current
-		/// active layer by setting the state of this indicator.
-		/// </summary>
-		/// <remarks>The view must not send back a event, if the current layer is changed by this property.
-		/// It should only send the CurrentLayerChanged event to the controller, if the _user_ changed the current layer.</remarks>
-		int       CurrentLayer { set; }
-
-	}
-
-
-	interface IGraphController
-	{
-		/// <summary>
-		/// This function is called if the user changed the active layer (by a toolbar or similar).
-		/// </summary>
-		/// <param name="currentLayer">The number of the currently active layer (choosen by the user).</param>
-		void EhView_CurrentLayerChanged(int currentLayer);
-	
-		/// <summary>
-		/// This function is called if the user changed the GraphTool.
-		/// </summary>
-		/// <param name="graphTool">The new selected GraphTool.</param>
-		void EhView_CurrentGraphToolChanged(GraphTools graphTool);
-	
-
-		/// <summary>
-		/// Handles the mouse up event onto the graph in the controller class.
-		/// </summary>
-		/// <param name="e">MouseEventArgs.</param>
-		void EhView_GraphPanelMouseUp(System.Windows.Forms.MouseEventArgs e);
-
-		/// <summary>
-		/// Handles the mouse down event onto the graph in the controller class.
-		/// </summary>
-		/// <param name="e">MouseEventArgs.</param>
-		void EhView_GraphPanelMouseDown(System.Windows.Forms.MouseEventArgs e);
-
-		/// <summary>
-		/// Handles the mouse move event onto the graph in the controller class.
-		/// </summary>
-		/// <param name="e">MouseEventArgs.</param>
-		void EhView_GraphPanelMouseMove(System.Windows.Forms.MouseEventArgs e);
-
-		/// <summary>
-		/// Handles the click onto the graph event in the controller class.
-		/// </summary>
-		/// <param name="e">EventArgs.</param>
-		void EhView_GraphPanelMouseClick(System.EventArgs e);
-
-		/// <summary>
-		/// Handles the double click onto the graph event in the controller class.
-		/// </summary>
-		/// <param name="e"></param>
-		void EhView_GraphPanelMouseDoubleClick(System.EventArgs e);
-	
-	
-		/// <summary>
-		/// Handles the paint event of that area, where the graph is shown.
-		/// </summary>
-		/// <param name="e">The paint event args.</param>
-		void EhView_GraphPanelPaint(System.Windows.Forms.PaintEventArgs e);
-
-	
-		/// <summary>
-		/// Handles the event when the size of the graph area is changed.
-		/// </summary>
-		/// <param name="e">EventArgs.</param>
-		void EhView_GraphPanelSizeChanged(System.EventArgs e);
-
-		/// <summary>
-		/// Handles the event when the graph view is closed.
-		/// </summary>
-		/// <param name="e">EventArgs.</param>
-		void EhView_Closed(System.EventArgs e);
-
-		/// <summary>
-		/// Handles the event when the graph view is about to be closed.
-		/// </summary>
-		/// <param name="e">CancelEventArgs.</param>
-		void EhView_Closing(System.ComponentModel.CancelEventArgs e);
-
-
-	}
-
-
-	/// <summary>
-	/// Summary description for GraphController.
-	/// </summary>
-	public class GraphController : IGraphController
+	[SerializationSurrogate(0,typeof(GraphController.SerializationSurrogate0))]
+	[SerializationVersion(0)]
+	public class GraphController : IGraphController,  System.Runtime.Serialization.IDeserializationCallback
 	{
 
-		protected System.Windows.Forms.MainMenu m_MainMenu; // the Menu of this control to be merged
-		protected System.Windows.Forms.MenuItem m_MenuDataPopup;
+		#region Member variables
 
+
+		/// <summary>Holds the Graph document (the place were the layers, plots, graph elements... are stored).</summary>
 		protected Altaxo.Graph.GraphDocument m_Graph;
+
+		/// <summary>Holds the view (the window where the graph is visualized).</summary>
 		protected IGraphView m_View;
 
 		
-
-
-		private const double MinimumGridSize = 20;
-		private const float UnitPerInch = 72;
+		/// <summary>The main menu of this controller.</summary>
+		protected System.Windows.Forms.MainMenu m_MainMenu; 
+		
+		/// <summary>Special menu item to show the currently available plots.</summary>
+		protected System.Windows.Forms.MenuItem m_MenuDataPopup;
 
 		// following default unit is point (1/72 inch)
+		/// <summary>For the graph elements all the units are in points. One point is 1/72 inch.</summary>
+		protected const float UnitPerInch = 72;
+
 		
 	
+
+		/// <summary>
+		/// Color for the area of the view, where there is no page.
+		/// </summary>
+		protected Color m_NonPageAreaColor = Color.Gray;
+
 		/// <summary>
 		/// Brush to fill the page ground. Since the printable area is filled with another brush, in effect
 		/// this brush fills only the non printable margins of the page. 
 		/// </summary>
-		private BrushHolder m_PageGroundBrush = new BrushHolder(Color.LightGray);
+		protected BrushHolder m_PageGroundBrush = new BrushHolder(Color.LightGray);
 
 		/// <summary>
 		/// Brush to fill the printable area of the graph.
 		/// </summary>
-		private BrushHolder m_PrintableAreaBrush = new BrushHolder(Color.Snow);
+		protected BrushHolder m_PrintableAreaBrush = new BrushHolder(Color.Snow);
 
 		/// <summary>Current horizontal resolution of the paint method.</summary>
-		private float m_HorizRes  = 300;
-		private float m_VertRes = 300;
-		private Color m_NonPrintingAreaColor = Color.Gray;
-		private int m_MarginLineWidth = 1;
-		private Color m_MarginColor = Color.Green;
-		private float m_Zoom  = 0.4f;
-		private bool  m_AutoZoom = true; // if true, the sheet is zoomed as big as possible to fit into window
-		/// <summary>Number of the currently selected layer.</summary>
-		protected int m_CurrentLayerNumber = 0;
-		/// <summary>Number of the currently selected plot.</summary>
-		protected int m_CurrentPlotNumber=0;
+		protected float m_HorizRes  = 300;
+		
+		/// <summary>Current vertical resolution of the paint method.</summary>
+		protected float m_VertRes = 300;
+
+		/// <summary>Current zoom factor. If AutoZoom is on, this factor is calculated automatically.</summary>
+		protected float m_Zoom  = 0.4f;
+		
+		/// <summary>If true, the view is zoomed so that the page fits exactly into the viewing area.</summary>
+		protected bool  m_AutoZoom = true; // if true, the sheet is zoomed as big as possible to fit into window
+		
+		
+		/// <summary>Number of the currently selected layer (or -1 if no layer is present).</summary>
+		protected int m_CurrentLayerNumber = -1;
+		/// <summary>Number of the currently selected plot (or -1 if no plot is present on the layer).</summary>
+		protected int m_CurrentPlotNumber = -1;
+		
+		/// <summary>Currently selected GraphTool.</summary>
 		protected GraphTools m_CurrentGraphTool = GraphTools.ObjectPointer;
-		private MouseStateHandler m_MouseState= new ObjectPointerMouseHandler();
+		
+		/// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
+		protected MouseStateHandler m_MouseState= new ObjectPointerMouseHandler();
 
 		/// <summary>
 		/// The hashtable of the selected objects. The key is the selected object itself,
@@ -244,13 +112,128 @@ namespace Altaxo.Graph
 		protected Bitmap m_FrozenGraph=null;
 
 
+		#endregion Member variables
 
-		public GraphController()
+		#region Serialization
+		/// <summary>Used to serialize the GraphController Version 0.</summary>
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
-			//
-			// TODO: Add constructor logic here
-			//
+			/// <summary>
+			/// Serializes the GraphController (version 0).
+			/// </summary>
+			/// <param name="obj">The GraphController to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				GraphController s = (GraphController)obj;
+				info.AddValue("Graph",s.m_Graph);
+				info.AddValue("AutoZoom",s.m_AutoZoom);
+				info.AddValue("Zoom",s.m_Zoom);
+			}
+			/// <summary>
+			/// Deserializes the GraphController (version 0).
+			/// </summary>
+			/// <param name="obj">The empty GraphController object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized GraphController.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				GraphController s = (GraphController)obj;
+
+				s.m_Graph = (GraphDocument)info.GetValue("Graph",typeof(GraphDocument));
+				s.m_AutoZoom = info.GetBoolean("AutoZoom");
+				s.m_Zoom = info.GetSingle("Zoom");
+				return s;
+			}
 		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+			
+		}
+		#endregion
+
+
+		#region Constructors
+	
+		public GraphController(IGraphView view)
+			: this(view, null)
+		{
+		}
+
+		public GraphController(IGraphView view, GraphDocument graphdoc)
+		{
+			m_View = view;
+
+			if(null!=graphdoc)
+				this.m_Graph = graphdoc;
+			else
+				this.m_Graph = new GraphDocument();
+
+			this.InitializeMenu();
+
+			
+			// Adjust the zoom level just so, that area fits into control
+			Graphics grfx = m_View.CreateGraphGraphics();
+			this.m_HorizRes = grfx.DpiX;
+			this.m_VertRes = grfx.DpiY;
+			grfx.Dispose();
+
+			if(null!=App.CurrentApplication) // if we are at design time, this is null and we use the default values above
+			{
+				System.Drawing.Printing.PrintDocument doc = App.CurrentApplication.PrintDocument;
+			
+				// Test whether or not a printer is installed
+				System.Drawing.Printing.PrinterSettings prnset = new System.Drawing.Printing.PrinterSettings();
+				RectangleF pageBounds;
+				System.Drawing.Printing.Margins ma;
+				if(prnset.IsValid)
+				{
+
+					pageBounds = doc.DefaultPageSettings.Bounds;
+					ma = doc.DefaultPageSettings.Margins;
+				}
+				else // obviously no printer installed, use A4 size (sorry, this is european size)
+				{
+					pageBounds = new RectangleF(0,0,1169,826);
+					ma = new System.Drawing.Printing.Margins(50,50,50,50);
+				}
+				// since Bounds are in 100th inch, we have to adjust them to points (72th inch)
+				pageBounds.X *= UnitPerInch/100;
+				pageBounds.Y *= UnitPerInch/100;
+				pageBounds.Width *= UnitPerInch/100;
+				pageBounds.Height *= UnitPerInch/100;
+
+				RectangleF printableBounds = new RectangleF();
+				printableBounds.X			= ma.Left * UnitPerInch/100;
+				printableBounds.Y			= ma.Top * UnitPerInch/100;
+				printableBounds.Width	= pageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
+				printableBounds.Height = pageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
+			
+				m_Graph.Changed += new EventHandler(this.EhGraph_Changed);
+				m_Graph.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
+				m_Graph.PageBounds = pageBounds;
+				m_Graph.PrintableBounds = printableBounds;
+			}
+
+			m_Graph.CreateNewLayerNormalBottomXLeftY();
+
+
+			// Calculate the zoom if Autozoom is on - simulate a SizeChanged event of the view to force calculation of new zoom factor
+			this.EhView_GraphPanelSizeChanged(new EventArgs());
+
+			// set the menu of this class
+			m_View.GraphMenu = this.m_MainMenu;
+		}
+
+		#endregion // Constructors
 
 		#region Menu Definition
 
@@ -347,6 +330,7 @@ namespace Altaxo.Graph
 			mi.Index=3;
 			mi.MergeOrder=3;
 			mi.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
+			m_MenuDataPopup = mi; // store this for later manimpulation
 			m_MainMenu.MenuItems.Add(mi);
 			index = m_MainMenu.MenuItems.Count-1;
 
@@ -371,19 +355,20 @@ namespace Altaxo.Graph
 
 		public void UpdateDataPopup()
 		{
-			int actLayerNum = this.CurrentLayerNumber;
-			Layer actLayer = this.Layers[actLayerNum];
-			
 			if(null==this.m_MenuDataPopup)
-				return;
+				return; // as long there is no menu, we cannot do it
 
 			// first delete old menuitems
 			this.m_MenuDataPopup.MenuItems.Clear();
 
-			
-			if(null==actLayer)
-				return;
 
+			// check there is at least one layer
+			if(m_Graph.Layers.Count==0)
+				return; // there is no layer, we can not have items in the data menu
+
+			// now it is save to get the active layer
+			int actLayerNum = this.CurrentLayerNumber;
+			Layer actLayer = this.Layers[actLayerNum];
 
 			// then append the plot associations of the actual layer
 
@@ -560,22 +545,72 @@ namespace Altaxo.Graph
 		
 		#endregion // Menu event handlers
 
+		#region IGraphController interface definitions
 
-		#region Other event handlers
+		public GraphDocument Doc
+		{
+			get { return m_Graph; }
+		}
 
+		public IGraphView View
+		{
+			get { return m_View; }
+		}
 
 		/// <summary>
 		/// Handles the selection of the current layer by the <b>user</b>.
 		/// </summary>
 		/// <param name="currLayer">The current layer number as selected by the user.</param>
-		public virtual void EhView_CurrentLayerChanged(int currLayer)
+		/// <param name="bAlternative">Normally false, can be set to true if the user clicked for instance with the right mouse button on the layer button.</param>
+		public virtual void EhView_CurrentLayerChoosen(int currLayer, bool bAlternative)
 		{
+			int oldCurrLayer = this.CurrentLayerNumber;
 			this.CurrentLayerNumber = currLayer;
+
+
+			// if we have clicked the button already down then open the layer dialog
+			if(null!=ActiveLayer && currLayer==oldCurrLayer && false==bAlternative)
+			{
+				LayerDialog dlg = new LayerDialog(ActiveLayer,LayerDialog.Tab.Scale,EdgeType.Bottom);
+				dlg.ShowDialog(this.m_View.Window);
+			}
 		}
 
-		public virtual void EhView_CurrentGraphToolChanged(GraphTools currGraphTool)
+		/// <summary>
+		/// The controller should show a data context menu (contains all plots of the currentLayer).
+		/// </summary>
+		/// <param name="currLayer">The layer number. The controller has to make this number the CurrentLayerNumber.</param>
+		/// <param name="parent">The parent control which is the parent of the context menu.</param>
+		/// <param name="pt">The location where the context menu should be shown.</param>
+		public virtual void EhView_ShowDataContextMenu(int currLayer, System.Windows.Forms.Form parent, Point pt)
 		{
-			this.m_CurrentGraphTool = currGraphTool;
+			int oldCurrLayer = this.CurrentLayerNumber;
+			this.CurrentLayerNumber = currLayer;
+
+
+			if(null!=this.ActiveLayer)
+			{
+				// then append the plot associations of the actual layer
+				ContextMenu contextMenu = new ContextMenu();
+
+				int actPA = CurrentPlotNumber;
+				int len = ActiveLayer.PlotItems.Count;
+				for(int i = 0; i<len; i++)
+				{
+					PlotItem pa = ActiveLayer.PlotItems[i];
+					DataMenuItem mi = new DataMenuItem(pa.ToString(), new EventHandler(EhMenuData_Data));
+					mi.Checked = (i==actPA);
+					mi.PlotItemNumber = i;
+					contextMenu.MenuItems.Add(mi);
+						
+				}
+				contextMenu.Show(parent,pt);
+			}
+		}
+
+		public virtual void EhView_CurrentGraphToolChoosen(GraphTools currGraphTool)
+		{
+			this.CurrentGraphTool = currGraphTool;
 		}
 
 		public virtual void EhView_Closing(System.ComponentModel.CancelEventArgs e)
@@ -594,12 +629,6 @@ namespace Altaxo.Graph
 		}
 
 
-		public void EhPrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs ppea)
-		{
-			Graphics g = ppea.Graphics;
-			DoPaint(g,true);
-		}
-
 		public virtual void EhView_GraphPanelSizeChanged(EventArgs e)
 		{
 			if(m_AutoZoom)
@@ -609,34 +638,14 @@ namespace Altaxo.Graph
 				// System.Console.WriteLine("h={0}, v={1} {3} {4} {5}",zoomh,zoomv,UnitPerInch,this.ClientSize.Width,this.m_HorizRes, this.m_PageBounds.Width);
 				// System.Console.WriteLine("SizeX = {0}, zoom = {1}, dpix={2},in={3}",this.ClientSize.Width,this.m_Zoom,this.m_HorizRes,this.ClientSize.Width/(this.m_HorizRes*this.m_Zoom));
 			
-				m_View.AutoScrollMinSize= new Size(0,0);
+				m_View.GraphScrollSize= new Size(0,0);
 			}
 			else
 			{
 				double pixelh = System.Math.Ceiling(m_Graph.PageBounds.Width*this.m_HorizRes*this.m_Zoom/(UnitPerInch));
 				double pixelv = System.Math.Ceiling(m_Graph.PageBounds.Height*this.m_VertRes*this.m_Zoom/(UnitPerInch));
-				m_View.AutoScrollMinSize = new Size((int)pixelh,(int)pixelv);
+				m_View.GraphScrollSize = new Size((int)pixelh,(int)pixelv);
 			}
-
-		}
-
-
-		/// <summary>
-		/// Handler of the event LayerCollectionChanged of the graph document. Forces to
-		/// check the LayerButtonBar to keep track that the number of buttons match the number of layers.</summary>
-		/// <param name="sender">The sender of the event (the GraphDocument).</param>
-		/// <param name="e">The event arguments.</param>
-		protected void EhGraphDocument_LayerCollectionChanged(object sender, System.EventArgs e)
-		{
-			int oldActiveLayer = this.m_CurrentLayerNumber;
-
-			// Ensure that the current layer and current plot are valid anymore
-			EnsureValidityOfCurrentLayerNumber();
-			EnsureValidityOfCurrentPlotNumber();
-
-
-			if(oldActiveLayer!=this.m_CurrentLayerNumber)
-				m_View.CurrentLayer = this.m_CurrentLayerNumber;
 
 		}
 
@@ -671,13 +680,61 @@ namespace Altaxo.Graph
 			this.DoPaint(e.Graphics,false);
 		}
 
-		#endregion // Other event handlers
+		#endregion // IGraphView interface definitions
 
+		#region GraphDocument event handlers
+
+		/// <summary>
+		/// Handler of the event LayerCollectionChanged of the graph document. Forces to
+		/// check the LayerButtonBar to keep track that the number of buttons match the number of layers.</summary>
+		/// <param name="sender">The sender of the event (the GraphDocument).</param>
+		/// <param name="e">The event arguments.</param>
+		protected void EhGraph_LayerCollectionChanged(object sender, System.EventArgs e)
+		{
+			int oldActiveLayer = this.m_CurrentLayerNumber;
+
+			// Ensure that the current layer and current plot are valid anymore
+			EnsureValidityOfCurrentLayerNumber();
+
+			if(oldActiveLayer!=this.m_CurrentLayerNumber)
+				m_View.CurrentLayer = this.m_CurrentLayerNumber;
+
+			// even if the active layer number not changed, it can be that the layer itself has changed from
+			// one to another, so make sure that the current plot number is valid also
+			EnsureValidityOfCurrentPlotNumber();
+
+			// make sure the view knows about when the number of layers changed
+			m_View.NumberOfLayers = m_Graph.Layers.Count;
+		}
+
+
+		protected void EhGraph_Changed(object sender, System.EventArgs e)
+		{
+			// if something changed on the graph, make sure that the layer and plot number reflect this changed
+			this.EnsureValidityOfCurrentLayerNumber();
+			this.EnsureValidityOfCurrentPlotNumber();
+			this.m_View.InvalidateGraph();
+		}
+
+		#endregion // GraphDocument event handlers
+
+
+		#region Other event handlers
+		
+		public void EhPrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs ppea)
+		{
+			Graphics g = ppea.Graphics;
+			DoPaint(g,true);
+		}
+		
+		#endregion
+
+		#region Methods
 
 		public string SaveAsMetafile(System.IO.Stream stream)
 		{
 			// Code to write the stream goes here.
-			Graphics grfx = m_View.CreateGraphics();
+			Graphics grfx = m_View.CreateGraphGraphics();
 			IntPtr ipHdc = grfx.GetHdc();
 			System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream,ipHdc);
 			grfx.ReleaseHdc(ipHdc);
@@ -709,13 +766,13 @@ namespace Altaxo.Graph
 				else
 					g.PageScale = this.m_Zoom;
 
-				float pointsh = UnitPerInch*m_View.AutoScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
-				float pointsv = UnitPerInch*m_View.AutoScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
+				float pointsh = UnitPerInch*m_View.GraphScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
+				float pointsv = UnitPerInch*m_View.GraphScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
 				g.TranslateTransform(pointsh,pointsv);
 
 				if(!bForPrinting)
 				{
-					g.Clear(this.m_NonPrintingAreaColor);
+					g.Clear(this.m_NonPageAreaColor);
 					// Fill the page with its own color
 					g.FillRectangle(m_PageGroundBrush,m_Graph.PageBounds);
 					g.FillRectangle(m_PrintableAreaBrush,m_Graph.PrintableBounds);
@@ -725,7 +782,7 @@ namespace Altaxo.Graph
 				System.Console.WriteLine("Paint with zoom {0}",this.m_Zoom);
 				// handle the possibility that the viewport is scrolled,
 				// adjust my origin coordintates to compensate
-				Point pt = m_View.AutoScrollPosition;
+				Point pt = m_View.GraphScrollPosition;
 				
 
 				// Paint the graph now
@@ -750,22 +807,17 @@ namespace Altaxo.Graph
 		}
 
 
+		#endregion // Methods
 
 		public GraphTools CurrentGraphTool
 		{
-			get { return m_CurrentGraphTool; }
+			get
+			{
+				return m_CurrentGraphTool; 
+			}
 			set 
 			{
 				m_CurrentGraphTool = value;
-				m_View.CurrentGraphTool = value;
-
-				/*
-				if(null!=this.m_GraphToolsToolBar)
-				{
-					for(int i=0;i<m_GraphToolsToolBar.Buttons.Count;i++)
-						m_GraphToolsToolBar.Buttons[i].Pushed = (i==(int)value);
-				}
-	*/
 
 				// select the appropriate mouse handler
 				switch(m_CurrentGraphTool)
@@ -780,6 +832,9 @@ namespace Altaxo.Graph
 						break;
 				}
 
+				// we set the current graph tool at the view at the very end, since in the meantime (by the mousehandler)
+				// the tool can have changed and is no longer <value>
+				m_View.CurrentGraphTool = m_CurrentGraphTool;
 			}
 		}
 
@@ -789,17 +844,30 @@ namespace Altaxo.Graph
 		}
 
 
+		public Layer ActiveLayer
+		{
+			get
+			{
+				return this.m_CurrentLayerNumber<0 ? null : m_Graph.Layers[this.m_CurrentLayerNumber]; 
+			}			
+		}
+
+		/// <summary>
+		/// check the validity of the CurrentLayerNumber and correct it
+		/// </summary>
 		public void EnsureValidityOfCurrentLayerNumber()
 		{
-
-			// check the validity of the CurrentLayerNumber
-			if(0==m_Graph.Layers.Count)
+			if(m_Graph.Layers.Count>0) // if at least one layer is present
 			{
-				CurrentLayerNumber=-1;
+				if(m_CurrentLayerNumber<0)
+					CurrentLayerNumber=0;
+				else if(m_CurrentLayerNumber>=m_Graph.Layers.Count)
+					CurrentLayerNumber=m_Graph.Layers.Count-1;
 			}
-			else if(m_CurrentLayerNumber>=m_Graph.Layers.Count)
+			else // no layers present
 			{
-				CurrentLayerNumber=0;
+				if(-1!=m_CurrentLayerNumber)
+					CurrentLayerNumber=-1;
 			}
 		}
 
@@ -843,18 +911,27 @@ namespace Altaxo.Graph
 			EnsureValidityOfCurrentLayerNumber();
 
 			// if Layer don't exist anymore, correct CurrentLayerNumber and ActualPlotAssocitation
-			if(m_CurrentLayerNumber<0)
-			{
-				CurrentPlotNumber=-1;
-			}
-			else // if at least one Layer exists
+			if(null!=ActiveLayer) // if the ActiveLayer exists
 			{
 				// if the PlotAssociation don't exist anymore, correct it
-				if(0==this.m_Graph[CurrentLayerNumber].PlotItems.Count)
-					CurrentPlotNumber = -1;
-				if(m_CurrentPlotNumber>=this.m_Graph[CurrentLayerNumber].PlotItems.Count)
-					CurrentPlotNumber = 0;
-			}	
+				if(ActiveLayer.PlotItems.Count>0) // if at least one plotitem exists
+				{
+					if(m_CurrentPlotNumber<0)
+						CurrentPlotNumber=0;
+					else if(m_CurrentPlotNumber>ActiveLayer.PlotItems.Count)
+						CurrentPlotNumber = 0;
+				}
+				else
+				{
+					if(-1!=m_CurrentPlotNumber)
+						CurrentPlotNumber=-1;
+				}
+			}
+			else // if no layer anymore
+			{
+				if(-1!=m_CurrentPlotNumber)
+					CurrentPlotNumber=-1;
+			}
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -878,6 +955,8 @@ namespace Altaxo.Graph
 			}
 		}
 
+
+		#region Scaling and Positioning
 
 		/// <summary>
 		/// Zoom value of the graph view.
@@ -914,7 +993,7 @@ namespace Altaxo.Graph
 				if(this.m_AutoZoom)
 				{
 					this.m_Zoom = CalculateAutoZoom();
-					m_View.AutoScrollMinSize = new Size(0,0);
+					m_View.GraphScrollSize = new Size(0,0);
 					m_View.InvalidateGraph();
 				}
 			}
@@ -964,28 +1043,6 @@ namespace Altaxo.Graph
 			return r;
 		}
 
-
-		protected virtual void DrawMargins(Graphics g)
-		{
-			//Rectangle margins = ZoomRectangle(ConvertToPixels(this.m_PrintableBounds));
-			RectangleF margins = m_Graph.PrintableBounds;
-			Pen marginPen = new Pen(m_MarginColor);
-			marginPen.DashStyle = DashStyle.Dash;
-			marginPen.Width = m_MarginLineWidth;
-			g.DrawRectangle(marginPen, margins.X,margins.Y,margins.Width,margins.Height);
-				
-			float infx = -margins.Width/20;
-			float infy = -margins.Height/20;
-			for(int i=0;i<8;i++)
-			{
-				margins.Inflate(infx,infy);
-				g.DrawRectangle(marginPen, margins.X,margins.Y,margins.Width,margins.Height);
-			}	
-
-
-			System.Console.WriteLine("margins {0},{1}",margins.Width,margins.Height);
-		}
-
 		protected virtual float CalculateAutoZoom()
 		{
 			float zoomh = (UnitPerInch*m_View.GraphSize.Width/this.m_HorizRes)/m_Graph.PageBounds.Width;
@@ -1004,14 +1061,16 @@ namespace Altaxo.Graph
 
 			// the graphics path was returned in printable area ("graph") coordinates
 			// thats why we have to shift our coordinate system to printable area coordinates also
-			float pointsh = UnitPerInch*m_View.AutoScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
-			float pointsv = UnitPerInch*m_View.AutoScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
+			float pointsh = UnitPerInch*m_View.GraphScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
+			float pointsv = UnitPerInch*m_View.GraphScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
 			pointsh += m_Graph.PrintableBounds.X;
 			pointsv += m_Graph.PrintableBounds.Y; 
 
 			// shift the coordinates to page coordinates
 			g.TranslateTransform(pointsh,pointsv);
 		}
+
+		#endregion // Scaling, Converting
 
 
 		/// <summary>
@@ -1090,7 +1149,7 @@ namespace Altaxo.Graph
 		/// <param name="nLayer">The layer number the <paramref name="graphObject"/> belongs to.</param>
 		public void DrawSelectionRectangleImmediately(GraphObject graphObject, int nLayer)
 		{
-			using(Graphics g = m_View.CreateGraphics())
+			using(Graphics g = m_View.CreateGraphGraphics())
 			{
 				// now translate the graphics to graph units and paint all selection path
 				this.TranslateGraphicsToGraphUnits(g);
@@ -1099,7 +1158,7 @@ namespace Altaxo.Graph
 		}
 
 
-
+		#region Inner Classes
 
 		#region Mouse Handler Classes
 
@@ -1189,7 +1248,7 @@ namespace Altaxo.Graph
 					// now paint the objects on the new position
 					if(null!=grac.m_FrozenGraph)
 					{
-						Graphics g = grac.m_View.CreateGraphics();
+						Graphics g = grac.m_View.CreateGraphGraphics();
 						// first paint the frozen graph, and upon that, paint all selection rectangles
 						g.DrawImageUnscaled(grac.m_FrozenGraph,0,0,grac.m_View.GraphSize.Width,grac.m_View.GraphSize.Height);
 
@@ -1357,7 +1416,7 @@ namespace Altaxo.Graph
 					m_MoveObjectsLastMovePoint = currentMousePosition;
 
 					// create a frozen bitmap of the graph
-					Graphics g = grac.m_View.CreateGraphics(); // do not translate the graphics here!
+					Graphics g = grac.m_View.CreateGraphGraphics(); // do not translate the graphics here!
 					grac.m_FrozenGraph = new Bitmap(grac.m_View.GraphSize.Width,grac.m_View.GraphSize.Height,g);
 					Graphics gbmp = Graphics.FromImage(grac.m_FrozenGraph);
 					grac.DoPaint(gbmp,false);
@@ -1458,7 +1517,7 @@ namespace Altaxo.Graph
 			public DataMenuItem(string t, EventHandler e) : base(t,e) {}
 		}
 
-
+		#endregion // Inner Classes
 
 	}
 }

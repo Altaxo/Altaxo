@@ -144,9 +144,12 @@ namespace Altaxo
 			return form1;
 		}
 
-		public Altaxo.Graph.GraphForm CreateNewGraph(System.Windows.Forms.Form parent)
+		public Altaxo.Graph.IGraphView CreateNewGraph(System.Windows.Forms.Form parent)
 		{
-			Altaxo.Graph.GraphForm frm = new Altaxo.Graph.GraphForm(parent,this);
+		//	Altaxo.Graph.GraphForm frm = new Altaxo.Graph.GraphForm(parent,this);
+		//	m_GraphForms.Add(frm);
+			
+			Altaxo.Graph.GraphView frm = new Altaxo.Graph.GraphView(parent,null);
 			m_GraphForms.Add(frm);
 			return frm;
 		}
