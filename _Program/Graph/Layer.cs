@@ -34,7 +34,8 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// The type of the size (i.e. width and height values.
 		/// </summary>
-		public enum SizeType {
+		public enum SizeType 
+		{
 			/// <summary>
 			///  the value is a absolute value (not relative) in points (1/72 inch).
 			/// </summary>
@@ -113,6 +114,21 @@ namespace Altaxo.Graph
 
 
 		/// <summary>
+		/// Provides how the axis is linked to the corresponding axis on the linked layer.
+		/// </summary>
+		public enum AxisLinkType
+		{
+			/// <summary>
+			/// The axis is not linked, i.e. independent.
+			/// </summary>
+			None,
+			/// <summary>
+			/// The axis is linked straight, i.e. it has the same origin and end value as the corresponding axis of the linked layer.
+			/// </summary>
+			Straight
+		}
+
+		/// <summary>
 		/// The cached layer position in points (1/72 inch) relative to the upper left corner
 		/// of the graph document (upper left corner of the printable area).
 		/// </summary>
@@ -138,6 +154,16 @@ namespace Altaxo.Graph
 
 
 		/// <summary>
+		/// The type of the link of the x axis to the x axis of the linked layer.
+		/// </summary>
+		protected AxisLinkType m_XAxisLinkType=AxisLinkType.None;
+
+		/// <summary>
+		/// The type of the link of the y axis to the y axis of the linked layer.
+		/// </summary>
+		protected AxisLinkType m_YAxisLinkType=AxisLinkType.None;
+
+		/// <summary>
 		/// The size of the layer in points (1/72 inch).
 		/// </summary>
 		/// <remarks>
@@ -158,7 +184,7 @@ namespace Altaxo.Graph
 
 		/// <summary>
 		/// The height of the layer, either as absolute value in point (1/72 inch), or as 
-		/// relative value as pointed out by <see cref="m_LayerHeigthType"/>.
+		/// relative value as pointed out by <see cref="m_LayerHeightType"/>.
 		/// </summary>
 		protected double m_LayerHeight= 407;
 		/// <summary>
@@ -207,9 +233,9 @@ namespace Altaxo.Graph
 		/// The parent layer collection wich contains this layer (or null if not member of such collection).
 		/// </summary>
 		protected LayerCollection m_ParentLayerCollection=null;
-	/// <summary>
-	/// The index inside the parent collection of this layer (or 0 if not member of such collection).
-	/// </summary>
+		/// <summary>
+		/// The index inside the parent collection of this layer (or 0 if not member of such collection).
+		/// </summary>
 		protected int             m_LayerNumber=0;
 
 
@@ -219,6 +245,27 @@ namespace Altaxo.Graph
 		protected Layer						m_LinkedLayer;
 
 
+		public event System.EventHandler SizeChanged;
+		protected void OnSizeChanged()
+		{
+			if(null!=SizeChanged)
+				SizeChanged(this,new System.EventArgs());
+		}
+
+		public event System.EventHandler PositionChanged;
+		protected void OnPositionChanged()
+		{
+			if(null!=PositionChanged)
+				PositionChanged(this,new System.EventArgs());
+		}
+
+		public event System.EventHandler AxesChanged;
+		protected virtual void OnAxesChanged()
+		{
+			if(null!=AxesChanged)
+				AxesChanged(this,new System.EventArgs());
+		}
+
 		#region Constructors
 
 
@@ -227,7 +274,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		/// <param name="prtSize">Size of the printable area in points (1/72 inch).</param>
 		public Layer(SizeF prtSize)
-		: this(new PointF(prtSize.Width*0.14f,prtSize.Height*0.14f),new SizeF(prtSize.Width*0.76f,prtSize.Height*0.7f))
+			: this(new PointF(prtSize.Width*0.14f,prtSize.Height*0.14f),new SizeF(prtSize.Width*0.76f,prtSize.Height*0.7f))
 		{
 		}
 
@@ -262,9 +309,7 @@ namespace Altaxo.Graph
 			get { return this.m_LayerPosition; }
 			set
 			{
-				this.m_LayerPosition = value;
-				this.CalculateMatrix();
-				this.OnInvalidate();
+				SetLayerPosition(value.X,PositionType.AbsoluteValue,value.Y,PositionType.AbsoluteValue);
 			}
 		}
 
@@ -273,9 +318,7 @@ namespace Altaxo.Graph
 			get { return this.m_LayerSize; }
 			set
 			{
-				this.m_LayerSize = value;
-				this.CalculateMatrix();
-				this.OnInvalidate();
+				SetLayerSize(value.Width,SizeType.AbsoluteValue, value.Height,SizeType.AbsoluteValue);
 			}
 		}
 
@@ -389,7 +432,6 @@ namespace Altaxo.Graph
 		{
 			get { return m_TopLabelStyle; }
 		}
-
 		
 		public bool LeftAxisEnabled
 		{
@@ -462,24 +504,35 @@ namespace Altaxo.Graph
 			set
 			{
 
+				// ignore the value if it would create a circular dependency
+				if(IsLayerDependentOnMe(value))
+					return;
+
+
 				Layer oldValue = value;
 				m_LinkedLayer = this;
 
-				// make sure there is no circular dependency, if there is any, set
-				// the LinkedLayer to null
-				// note we trust the program is this way that we believe there is no
-				// circular dependency already created
-				Layer searchLayer = m_LinkedLayer;
-				while(null!=searchLayer)
+				if(!ReferenceEquals(oldValue,m_LinkedLayer))
 				{
-					if(Layer.ReferenceEquals(searchLayer,this))
+					// close the event handlers to the old layer
+					if(null!=oldValue)
 					{
-						// this means a circular dependency, so set the linked layer to null
-						m_LinkedLayer=null;
-						break;
+						oldValue.SizeChanged -= new System.EventHandler(OnLinkedLayerSizeChanged);
+						oldValue.PositionChanged -= new System.EventHandler(OnLinkedLayerPositionChanged);
+						oldValue.AxesChanged -= new System.EventHandler(OnLinkedLayerAxesChanged);
 					}
-					searchLayer = searchLayer.LinkedLayer;
+
+					// link the events to the new layer
+					if(null!=m_LinkedLayer)
+					{
+						m_LinkedLayer.SizeChanged     += new System.EventHandler(OnLinkedLayerSizeChanged);
+						m_LinkedLayer.PositionChanged += new System.EventHandler(OnLinkedLayerPositionChanged);
+						m_LinkedLayer.AxesChanged			+= new System.EventHandler(OnLinkedLayerAxesChanged);
+					}
+
 				}
+
+
 			}
 		}
 
@@ -493,84 +546,424 @@ namespace Altaxo.Graph
 			get { return null!=m_LinkedLayer; }
 		}
 
+		/// <summary>
+		/// Checks if the provided layer or a linked layer of it is dependent on this layer.
+		/// </summary>
+		/// <param name="layer">The layer to check.</param>
+		/// <returns>True if the provided layer or one of its linked layers is dependend on this layer.</returns>
+		public bool IsLayerDependentOnMe(Layer layer)
+		{
+			while(null!=layer)
+			{
+				if(Layer.ReferenceEquals(layer,this))
+				{
+					// this means a circular dependency, so return true
+					return true;
+				}
+				layer = layer.LinkedLayer;
+			}
+			return false; // no dependency detected
+		}
 
 #endregion // Layer Properties
 
 
 
-		/// <summary>
-		/// Calculates from the position values, which can be absolute or relative, the
-		/// cached position in points.
-		/// </summary>
-		protected void CalculateCachedPosition()
+		public void SetLayerPosition(double x, PositionType xpostype, double y, PositionType ypostype)
 		{
-			double x = this.m_LayerPosition.X;
-			double y = this.m_LayerPosition.Y;
+			this.m_LayerXPosition = x;
+			this.m_LayerXPositionType = xpostype;
+			this.m_LayerYPosition = y;
+			this.m_LayerYPositionType = ypostype;
 
-			GraphDocument graph = this.ParentLayerList as GraphDocument;
-
-			switch(this.m_LayerXPositionType)
-			{
-				case PositionType.AbsoluteValue:
-					x = this.m_LayerXPosition;
-					break;
-				case PositionType.RelativeToGraphDocument:
-					if(graph!=null)
-						x = this.m_LayerXPosition*graph.PrintableSize.Width;
-					break;
-				case PositionType.RelativeThisNearToLinkedLayerNear:
-					if(LinkedLayer!=null)
-						x = LinkedLayer.Position.X + this.m_LayerXPosition*LinkedLayer.Size.Width;
-					break;
-				case PositionType.RelativeThisNearToLinkedLayerFar:
-					if(LinkedLayer!=null)
-						x = LinkedLayer.Position.X + (1+this.m_LayerXPosition)*LinkedLayer.Size.Width;
-					break;
-				case PositionType.RelativeThisFarToLinkedLayerNear:
-					if(LinkedLayer!=null)
-						x = LinkedLayer.Position.X - this.Size.Width + this.m_LayerXPosition*LinkedLayer.Size.Width;
-					break;
-				case PositionType.RelativeThisFarToLinkedLayerFar:
-					if(LinkedLayer!=null)
-						x = LinkedLayer.Position.X - this.Size.Width + (1+this.m_LayerXPosition)*LinkedLayer.Size.Width;
-					break;
-			}
-
-			switch(this.m_LayerYPositionType)
-			{
-				case PositionType.AbsoluteValue:
-					y = this.m_LayerYPosition;
-					break;
-				case PositionType.RelativeToGraphDocument:
-					if(graph!=null)
-						y = this.m_LayerYPosition*graph.PrintableSize.Height;
-					break;
-				case PositionType.RelativeThisNearToLinkedLayerNear:
-					if(LinkedLayer!=null)
-						y = LinkedLayer.Position.Y + this.m_LayerYPosition*LinkedLayer.Size.Height;
-					break;
-				case PositionType.RelativeThisNearToLinkedLayerFar:
-					if(LinkedLayer!=null)
-						y = LinkedLayer.Position.Y + (1+this.m_LayerYPosition)*LinkedLayer.Size.Height;
-					break;
-				case PositionType.RelativeThisFarToLinkedLayerNear:
-					if(LinkedLayer!=null)
-						y = LinkedLayer.Position.Y - this.Size.Height + this.m_LayerYPosition*LinkedLayer.Size.Height;
-					break;
-				case PositionType.RelativeThisFarToLinkedLayerFar:
-					if(LinkedLayer!=null)
-						y = LinkedLayer.Position.Y - this.Size.Height + (1+this.m_LayerYPosition)*LinkedLayer.Size.Height;
-					break;
-			}
-
-			m_LayerPosition = new PointF((float)x,(float)y);
+			CalculateCachedPosition();
 		}
 
 		/// <summary>
-		///  Only indended to use by LayerCollection! Sets the parent layer collection for this layer.
+		/// Calculates from the x position value, which can be absolute or relative, the
+		/// x position in points.
+		/// </summary>
+		/// <param name="x">The horizontal position value of type xpostype.</param>
+		/// <param name="xpostype">The type of the horizontal position value, see <see cref="PositionType"/>.</param>
+		/// <returns>Calculated absolute position of the layer in units of points (1/72 inch).</returns>
+		/// <remarks>The function does not change the member variables of the layer and can therefore used
+		/// for position calculations without changing the layer. The function is not static because it has to use either the parent
+		/// graph or the linked layer for the calculations.</remarks>
+		public double XPositionToPointUnits(double x, PositionType xpostype)
+		{
+			GraphDocument graph = this.ParentLayerList as GraphDocument;
+
+			switch(xpostype)
+			{
+				case PositionType.AbsoluteValue:
+					break;
+				case PositionType.RelativeToGraphDocument:
+					if(graph!=null)
+						x = x*graph.PrintableSize.Width;
+					break;
+				case PositionType.RelativeThisNearToLinkedLayerNear:
+					if(LinkedLayer!=null)
+						x = LinkedLayer.Position.X + x*LinkedLayer.Size.Width;
+					break;
+				case PositionType.RelativeThisNearToLinkedLayerFar:
+					if(LinkedLayer!=null)
+						x = LinkedLayer.Position.X + (1+x)*LinkedLayer.Size.Width;
+					break;
+				case PositionType.RelativeThisFarToLinkedLayerNear:
+					if(LinkedLayer!=null)
+						x = LinkedLayer.Position.X - this.Size.Width + x*LinkedLayer.Size.Width;
+					break;
+				case PositionType.RelativeThisFarToLinkedLayerFar:
+					if(LinkedLayer!=null)
+						x = LinkedLayer.Position.X - this.Size.Width + (1+x)*LinkedLayer.Size.Width;
+					break;
+			}
+			return x;
+		}
+
+		/// <summary>
+		/// Calculates from the y position value, which can be absolute or relative, the
+		///  y position in points.
+		/// </summary>
+		/// <param name="y">The vertical position value of type xpostype.</param>
+		/// <param name="ypostype">The type of the vertical position value, see <see cref="PositionType"/>.</param>
+		/// <returns>Calculated absolute position of the layer in units of points (1/72 inch).</returns>
+		/// <remarks>The function does not change the member variables of the layer and can therefore used
+		/// for position calculations without changing the layer. The function is not static because it has to use either the parent
+		/// graph or the linked layer for the calculations.</remarks>
+		public double YPositionToPointUnits(double y, PositionType ypostype)
+		{
+			GraphDocument graph = this.ParentLayerList as GraphDocument;
+
+			switch(ypostype)
+			{
+				case PositionType.AbsoluteValue:
+					break;
+				case PositionType.RelativeToGraphDocument:
+					if(graph!=null)
+						y = y*graph.PrintableSize.Height;
+					break;
+				case PositionType.RelativeThisNearToLinkedLayerNear:
+					if(LinkedLayer!=null)
+						y = LinkedLayer.Position.Y + y*LinkedLayer.Size.Height;
+					break;
+				case PositionType.RelativeThisNearToLinkedLayerFar:
+					if(LinkedLayer!=null)
+						y = LinkedLayer.Position.Y + (1+y)*LinkedLayer.Size.Height;
+					break;
+				case PositionType.RelativeThisFarToLinkedLayerNear:
+					if(LinkedLayer!=null)
+						y = LinkedLayer.Position.Y - this.Size.Height + y*LinkedLayer.Size.Height;
+					break;
+				case PositionType.RelativeThisFarToLinkedLayerFar:
+					if(LinkedLayer!=null)
+						y = LinkedLayer.Position.Y - this.Size.Height + (1+y)*LinkedLayer.Size.Height;
+					break;
+			}
+
+			return y;
+		}
+
+
+
+
+		/// <summary>
+		/// Calculates from the x position value in points (1/72 inch), the corresponding value in user units.
+		/// </summary>
+		/// <param name="x">The vertical position value in points.</param>
+		/// <param name="xpostype_to_convert_to">The type of the vertical position value to convert to, see <see cref="PositionType"/>.</param>
+		/// <returns>Calculated value of x in user units.</returns>
+		/// <remarks>The function does not change the member variables of the layer and can therefore used
+		/// for position calculations without changing the layer. The function is not static because it has to use either the parent
+		/// graph or the linked layer for the calculations.</remarks>
+		public double XPositionToUserUnits(double x, PositionType xpostype_to_convert_to)
+		{
+
+			GraphDocument graph = this.ParentLayerList as GraphDocument;
+
+			switch(xpostype_to_convert_to)
+			{
+				case PositionType.AbsoluteValue:
+					break;
+				case PositionType.RelativeToGraphDocument:
+					if(graph!=null)
+						x = x/graph.PrintableSize.Width;
+					break;
+				case PositionType.RelativeThisNearToLinkedLayerNear:
+					if(LinkedLayer!=null)
+						x = (x-LinkedLayer.Position.X)/LinkedLayer.Size.Height;
+					break;
+				case PositionType.RelativeThisNearToLinkedLayerFar:
+					if(LinkedLayer!=null)
+						x = (x-LinkedLayer.Position.X)/LinkedLayer.Size.Width - 1;
+					break;
+				case PositionType.RelativeThisFarToLinkedLayerNear:
+					if(LinkedLayer!=null)
+						x = (x-LinkedLayer.Position.X + this.Size.Width)/LinkedLayer.Size.Width;
+					break;
+				case PositionType.RelativeThisFarToLinkedLayerFar:
+					if(LinkedLayer!=null)
+						x = (x-LinkedLayer.Position.X + this.Size.Width)/LinkedLayer.Size.Width - 1;
+					break;
+			}
+
+			return x;
+		}
+
+
+		/// <summary>
+		/// Calculates from the y position value in points (1/72 inch), the corresponding value in user units.
+		/// </summary>
+		/// <param name="y">The vertical position value in points.</param>
+		/// <param name="ypostype_to_convert_to">The type of the vertical position value to convert to, see <see cref="PositionType"/>.</param>
+		/// <returns>Calculated value of y in user units.</returns>
+		/// <remarks>The function does not change the member variables of the layer and can therefore used
+		/// for position calculations without changing the layer. The function is not static because it has to use either the parent
+		/// graph or the linked layer for the calculations.</remarks>
+		public double YPositionToUserUnits(double y, PositionType ypostype_to_convert_to)
+		{
+
+			GraphDocument graph = this.ParentLayerList as GraphDocument;
+
+			switch(ypostype_to_convert_to)
+			{
+				case PositionType.AbsoluteValue:
+					break;
+				case PositionType.RelativeToGraphDocument:
+					if(graph!=null)
+						y = y/graph.PrintableSize.Height;
+					break;
+				case PositionType.RelativeThisNearToLinkedLayerNear:
+					if(LinkedLayer!=null)
+						y = (y-LinkedLayer.Position.Y)/LinkedLayer.Size.Height;
+					break;
+				case PositionType.RelativeThisNearToLinkedLayerFar:
+					if(LinkedLayer!=null)
+						y = (y-LinkedLayer.Position.Y)/LinkedLayer.Size.Height - 1;
+					break;
+				case PositionType.RelativeThisFarToLinkedLayerNear:
+					if(LinkedLayer!=null)
+						y = (y-LinkedLayer.Position.Y + this.Size.Height)/LinkedLayer.Size.Height;
+					break;
+				case PositionType.RelativeThisFarToLinkedLayerFar:
+					if(LinkedLayer!=null)
+						y = (y-LinkedLayer.Position.Y + this.Size.Height)/LinkedLayer.Size.Height - 1;
+					break;
+			}
+
+			return y;
+		}
+
+
+
+
+		/// <summary>
+		/// Sets the cached position value in <see cref="m_LayerPosition"/> by calculating it
+		/// from the position values (<see cref="m_LayerXPosition"/> and <see cref="m_LayerYPosition"/>) 
+		/// and the position types (<see cref="m_LayerXPositionType"/> and <see cref="m_LayerYPositionType"/>).
+		/// </summary>
+		protected void CalculateCachedPosition()
+		{
+			PointF newPos = new PointF(
+				(float)XPositionToPointUnits(this.m_LayerXPosition,this.m_LayerXPositionType),
+				(float)YPositionToPointUnits(this.m_LayerYPosition, this.m_LayerYPositionType));
+			if(newPos != this.m_LayerPosition)
+			{
+				this.m_LayerPosition=newPos;
+				this.CalculateMatrix();
+				OnPositionChanged();
+			}
+		}
+
+
+
+		public void SetLayerSize(double width, SizeType widthtype, double height, SizeType heighttype)
+		{
+			this.m_LayerWidth = width;
+			this.m_LayerWidthType = widthtype;
+			this.m_LayerHeight = height;
+			this.m_LayerHeightType = heighttype;
+
+			CalculateCachedSize();
+		}
+
+
+		protected double WidthToPointUnits(double width, SizeType widthtype)
+		{
+			GraphDocument graph = this.ParentLayerList as GraphDocument;
+
+			switch(widthtype)
+			{
+				case SizeType.RelativeToGraphDocument:
+					if(null!=graph)
+						width *= graph.PrintableSize.Width;
+					break;
+				case SizeType.RelativeToLinkedLayer:
+					if(null!=LinkedLayer)
+						width *= LinkedLayer.Size.Width;
+					break;
+			}
+			return width;
+		}
+
+		protected double HeightToPointUnits(double height, SizeType heighttype)
+		{
+			GraphDocument graph = this.ParentLayerList as GraphDocument;
+			switch(heighttype)
+			{
+				case SizeType.RelativeToGraphDocument:
+					if(null!=graph)
+						height *= graph.PrintableSize.Height;
+					break;
+				case SizeType.RelativeToLinkedLayer:
+					if(null!=LinkedLayer)
+						height *= LinkedLayer.Size.Height;
+					break;
+			}
+			return height;
+		}
+
+
+		/// <summary>
+		/// Convert the width in points (1/72 inch) to user units of the type <paramref name="widthtype_to_convert_to"/>.
+		/// </summary>
+		/// <param name="width">The height value to convert (in point units).</param>
+		/// <param name="widthtype_to_convert_to">The user unit type to convert to.</param>
+		/// <returns>The value of the width in user units.</returns>
+		protected double WidthToUserUnits(double width, SizeType widthtype_to_convert_to)
+		{
+	
+			switch(widthtype_to_convert_to)
+			{
+				case SizeType.RelativeToGraphDocument:
+					GraphDocument graph = this.ParentLayerList as GraphDocument;
+					if(null!=graph)
+						width /= graph.PrintableSize.Width;
+					break;
+				case SizeType.RelativeToLinkedLayer:
+					if(null!=LinkedLayer)
+						width /= LinkedLayer.Size.Width;
+					break;
+			}
+			return width;
+		}
+
+
+		/// <summary>
+		/// Convert the heigth in points (1/72 inch) to user units of the type <paramref name="heighttype_to_convert_to"/>.
+		/// </summary>
+		/// <param name="height">The height value to convert (in point units).</param>
+		/// <param name="heighttype_to_convert_to">The user unit type to convert to.</param>
+		/// <returns>The value of the height in user units.</returns>
+		protected double HeightToUserUnits(double height, SizeType heighttype_to_convert_to)
+		{
+
+			switch(heighttype_to_convert_to)
+			{
+				case SizeType.RelativeToGraphDocument:
+					GraphDocument graph = this.ParentLayerList as GraphDocument;
+					if(null!=graph)
+						height /= graph.PrintableSize.Height;
+					break;
+				case SizeType.RelativeToLinkedLayer:
+					if(null!=LinkedLayer)
+						height /= LinkedLayer.Size.Height;
+					break;
+			}
+			return height;
+		}
+
+
+		/// <summary>
+		/// Sets the cached size value in <see cref="m_LayerSize"/> by calculating it
+		/// from the position values (<see cref="m_LayerWidth"/> and <see cref="m_LayerHeight"/>) 
+		/// and the size types (<see cref="m_LayerWidthType"/> and <see cref="m_LayerHeightType"/>).
+		/// </summary>
+		protected void CalculateCachedSize()
+		{
+			SizeF newSize = new SizeF(
+				(float)WidthToPointUnits(this.m_LayerWidth,this.m_LayerWidthType),
+				(float)HeightToPointUnits(this.m_LayerHeight, this.m_LayerHeightType));
+			if(newSize != this.m_LayerSize)
+			{
+				this.m_LayerSize=newSize;
+				this.CalculateMatrix();
+				OnSizeChanged();
+			}
+		}
+
+
+		/// <summary>
+		/// Measures to do when the position of the linked layer changed.
+		/// </summary>
+		/// <param name="sender">The sender of the event.</param>
+		/// <param name="e">The event args.</param>
+		protected void OnLinkedLayerPositionChanged(object sender, System.EventArgs e)
+		{
+			CalculateCachedPosition();
+		}
+
+		/// <summary>
+		/// Measures to do when the size of the linked layer changed.
+		/// </summary>
+		/// <param name="sender">The sender of the event.</param>
+		/// <param name="e">The event args.</param>
+		protected void OnLinkedLayerSizeChanged(object sender, System.EventArgs e)
+		{
+			CalculateCachedSize();
+			CalculateCachedPosition();
+		}
+
+		/// <summary>
+		/// Measures to do when one of the axis of the linked layer changed.
+		/// </summary>
+		/// <param name="sender">The sender of the event.</param>
+		/// <param name="e">The event args.</param>
+		protected void OnLinkedLayerAxesChanged(object sender, System.EventArgs e)
+		{
+			if(null==LinkedLayer)
+				return; // this should not happen, since what is sender then?
+
+			if(this.m_XAxisLinkType==AxisLinkType.Straight)
+			{
+				this.m_xAxis.ProcessDataBounds(LinkedLayer.XAxis.Org,true,LinkedLayer.XAxis.End,true);
+			}
+
+			if(this.m_YAxisLinkType==AxisLinkType.Straight)
+			{
+				this.m_yAxis.ProcessDataBounds(LinkedLayer.YAxis.Org,true,LinkedLayer.YAxis.End,true);
+			}
+
+		}
+
+
+		public AxisLinkType XAxisLinkType
+		{
+			get { return this.m_XAxisLinkType; }
+			set 
+			{
+				this.m_XAxisLinkType = value;
+				if(null!=LinkedLayer && value!=AxisLinkType.None)
+					OnLinkedLayerAxesChanged(LinkedLayer, new System.EventArgs());
+			}
+		}
+		public AxisLinkType YAxisLinkType
+		{
+			get { return this.m_XAxisLinkType; }
+			set 
+			{
+				this.m_YAxisLinkType = value;
+				if(null!=LinkedLayer && value!=AxisLinkType.None)
+					OnLinkedLayerAxesChanged(LinkedLayer, new System.EventArgs());
+			}
+		}
+
+
+		/// <summary>
+		///  Only intended to use by LayerCollection! Sets the parent layer collection for this layer.
 		/// </summary>
 		/// <param name="lc">The layer collection this layer belongs to.</param>
-		protected void SetParentAndNumber(LayerCollection lc, int number)
+		private void SetParentAndNumber(LayerCollection lc, int number)
 		{
 			m_ParentLayerCollection = lc;
 			m_LayerNumber = number;
@@ -625,6 +1018,8 @@ namespace Altaxo.Graph
 			gp.Transform(matrix);
 			return gp;
 		}
+
+
 
 		public GraphObject HitTest(PointF pageC, out GraphicsPath gp)
 		{
