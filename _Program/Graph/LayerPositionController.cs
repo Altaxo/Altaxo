@@ -5,7 +5,7 @@ namespace Altaxo.Graph
 {
 
 	#region Interfaces
-	public interface ILayerPositionController : Main.IApplyController, Main.IMVCController
+	public interface ILayerPositionController : Gui.IApplyController, Main.IMVCController
 	{
 		/// <summary>
 		/// Get/sets the view this controller controls.

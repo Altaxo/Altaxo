@@ -3,7 +3,7 @@ using System;
 namespace Altaxo.Gui
 {
 	#region Interfaces
-	public interface IIntegerAndComboBoxController : Main.IMVCController, Main.IApplyController
+	public interface IIntegerAndComboBoxController : Main.IMVCController, Gui.IApplyController
 	{
 		/// <summary>
 		/// Get/sets the view this controller controls.

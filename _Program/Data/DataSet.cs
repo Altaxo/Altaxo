@@ -211,6 +211,14 @@ namespace Altaxo.Data
 			}
 		}
 
+		public string[] GetSortedTableNames()
+		{
+			string[] arr = new string[tablesByName.Count];
+			this.tablesByName.Keys.CopyTo(arr,0);
+			System.Array.Sort(arr);
+			return arr;
+		}
+
 		protected internal void ResetDirty()
 		{
 			this.dirtyTables.Clear();

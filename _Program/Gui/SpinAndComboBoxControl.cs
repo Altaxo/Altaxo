@@ -79,6 +79,7 @@ namespace Altaxo.Gui
 																																	0,
 																																	0});
 			this.m_IntegerUpDown.Validating += new System.ComponentModel.CancelEventHandler(this.EhInteger_Validating);
+			this.m_IntegerUpDown.Enter += new System.EventHandler(this.EhIntegerUpDown_Enter);
 			// 
 			// m_ComboBox
 			// 
@@ -190,6 +191,12 @@ namespace Altaxo.Gui
 		{
 		if(null!=Controller)
 			Controller.EhView_ComboBoxSelectionChanged((ListBoxEntry)this.m_ComboBox.SelectedItem);
+		}
+
+		private void EhIntegerUpDown_Enter(object sender, System.EventArgs e)
+		{
+			this.m_IntegerUpDown.Select(0, m_IntegerUpDown.Text.Length);
+
 		}
 
 		#region IMVCView Members

@@ -4,7 +4,7 @@ using System.Drawing;
 namespace Altaxo.Graph
 {
 	#region Interfaces
-	public interface ITitleFormatLayerController : Main.IApplyController, Main.IMVCController
+	public interface ITitleFormatLayerController : Gui.IApplyController, Main.IMVCController
 	{
 		ITitleFormatLayerView View { get; set; }
 		void EhView_ShowAxisChanged(bool bShow);

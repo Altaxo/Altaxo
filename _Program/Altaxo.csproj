@@ -389,6 +389,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\LineScatterPlotDataControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\LineScatterPlotDataControl.resx"
+                    DependentUpon = "LineScatterPlotDataControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\LineScatterPlotDataController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\LineScatterPlotStyleControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -499,12 +514,62 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\DialogShellController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\DialogShellView.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\DialogShellView.resx"
+                    DependentUpon = "DialogShellView.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\IApplyController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\IntegerAndComboBoxController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\ListBoxEntry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\ModelViewController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\RenameColumnDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\RenameColumnDialog.resx"
+                    DependentUpon = "RenameColumnDialog.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\SingleValueDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\SingleValueDialog.resx"
+                    DependentUpon = "SingleValueDialog.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\SingleValueFormController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -516,6 +581,21 @@
                 <File
                     RelPath = "Gui\SpinAndComboBoxControl.resx"
                     DependentUpon = "SpinAndComboBoxControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\TabbedDialogController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\TabbedDialogView.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\TabbedDialogView.resx"
+                    DependentUpon = "TabbedDialogView.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
@@ -568,21 +648,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\DialogShellController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\DialogShellView.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\DialogShellView.resx"
-                    DependentUpon = "DialogShellView.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "Main\Document.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -611,36 +676,6 @@
                     RelPath = "Main\MainView.resx"
                     DependentUpon = "MainView.cs"
                     BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Main\ModelViewController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\RenameColumnDialog.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\RenameColumnDialog.resx"
-                    DependentUpon = "RenameColumnDialog.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Main\SingleValueDialog.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\SingleValueDialog.resx"
-                    DependentUpon = "SingleValueDialog.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Main\SingleValueFormController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Serialization\AsciiExporter.cs"

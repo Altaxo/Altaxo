@@ -715,7 +715,8 @@ namespace Altaxo.Graph
 				PlotGroup plotGroup = actLayer.PlotItems.GetPlotGroupOf(pa);
 				
 				
-				LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);
+				//LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);
+				Gui.DialogFactory.ShowLineScatterPlotStyleAndDataDialog(this.m_View.Form,pa,plotGroup);
 			}
 			
 				

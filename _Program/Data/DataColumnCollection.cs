@@ -842,6 +842,15 @@ namespace Altaxo.Data
 		#endregion
 
 
+		public string[] GetColumnNames()
+		{
+			string[] arr = new string[this.ColumnCount];
+			for(int i=0;i<arr.Length;i++)
+				arr[i] = this[i].ColumnName;
+
+			return arr;
+		}
+
 		public bool AreAllColumnsOfTheSameType(out int firstdifferentcolumnindex)
 		{
 			firstdifferentcolumnindex=0;

@@ -6,7 +6,7 @@ using System.Drawing;
 namespace Altaxo.Graph
 {
 	#region Interfaces
-	public interface ILineScatterLayerContentsController : Main.IApplyController, Main.IMVCController
+	public interface ILineScatterLayerContentsController : Gui.IApplyController, Main.IMVCController
 	{
 		ILineScatterLayerContentsView View { get; set; }
 
@@ -300,7 +300,8 @@ namespace Altaxo.Graph
 			if(null!=pa)
 			{
 				PlotGroup plotGroup = m_Layer.PlotItems.GetPlotGroupOf(pa);
-				LineScatterPlotStyleController.ShowPlotStyleDialog(View.Form,pa,plotGroup);
+				//LineScatterPlotStyleController.ShowPlotStyleDialog(View.Form,pa,plotGroup);
+				Gui.DialogFactory.ShowLineScatterPlotStyleAndDataDialog(View.Form,pa,plotGroup);
 			}
 		}
 

@@ -1,13 +1,13 @@
 using System;
 
-namespace Altaxo.Main
+namespace Altaxo.Gui
 {
 	#region Interfaces
 
 	/// <summary>
-	/// This interface is intended to provide a "shell" as a dialog which can host a user control.
+	/// This interface is intended to provide a "shell" as a dialog which can host a couple of user controls in tab pages.
 	/// </summary>
-	public interface IDialogShellView
+	public interface ITabbedDialogView
 	{
 		/// <summary>
 		/// Returns either the view itself if the view is a form, or the form where this view is contained into, if it is a control or so.
@@ -17,7 +17,7 @@ namespace Altaxo.Main
 		/// <summary>
 		/// Get / sets the controler of this view.
 		/// </summary>
-		IDialogShellController Controller { get; set; }
+		ITabbedDialogController Controller { get; set; }
 
 		/// <summary>
 		/// Sets if the Apply button should be visible.
@@ -28,26 +28,32 @@ namespace Altaxo.Main
 		/// Sets the title
 		/// </summary>
 		string Title { set; }
-	}
 
-	/// <summary>
-	/// This interface can be used by all controllers where the user input needs to
-	/// be applied to the document being controlled.
-	/// </summary>
-	public interface IApplyController
-	{
 		/// <summary>
-		/// Called when the user input has to be applied to the document being controlled.
+		/// Removes all Tab pages from the dialog.
 		/// </summary>
-		/// <returns>True if the apply was successfull, otherwise false.</returns>
-		/// <remarks>This function is called in two cases: Either the user pressed OK or the user pressed Apply.</remarks>
-		bool Apply();
-	}
+		void ClearTabs();
 
 	/// <summary>
-	/// Interface to the DialogShellController.
+	/// Adds a Tab page to the dialog
 	/// </summary>
-	public interface IDialogShellController
+	/// <param name="title">The title of the tab page.</param>
+	/// <param name="view">The view (must be currently of type Control.</param>
+		void AddTab(string title, object view);
+
+		/// <summary>
+		/// Activates the tab page with the title <code>title</code>.
+		/// </summary>
+		/// <param name="index">The index of the tab page to focus.</param>
+		void FocusTab(int index);
+	}
+
+	
+
+	/// <summary>
+	/// Interface to the TabbedDialogController.
+	/// </summary>
+	public interface ITabbedDialogController
 	{
 		/// <summary>
 		/// Called when the user presses the OK button. 
@@ -68,60 +74,77 @@ namespace Altaxo.Main
 	#endregion
 
 	/// <summary>
-	/// Controls the <see cref="DialogShellView"/>.
+	/// Controls the <see cref="TabbedDialogView"/>.
 	/// </summary>
-	public class DialogShellController : IDialogShellController
+	public class TabbedDialogController : ITabbedDialogController
 	{
-		private IDialogShellView m_View;
-		private IApplyController m_HostedController;
+		private ITabbedDialogView m_View;
 
 		private string m_Title = String.Empty;
 		private bool   m_ApplyVisible = true;
 
+		public struct TabEntry
+		{
+			public string Title;
+			public IApplyController Controller;
+			public object View;
+
+
+			public TabEntry(string title, IApplyController controller, object view)
+			{
+				this.Title = title;
+				this.Controller = controller;
+				this.View = view;
+			}
+		}
+
+		private System.Collections.ArrayList m_Tabs = new System.Collections.ArrayList();
+
+
 		/// <summary>
 		/// Creates the controller.
 		/// </summary>
-		/// <param name="view">The view this controller is controlling.</param>
-		/// <param name="hostedController">The controller that controls the UserControl shown in the client area of the form.</param>
-		public DialogShellController(IDialogShellView view, IApplyController hostedController)
+		public TabbedDialogController()
 		{
-			View = view;
-			m_HostedController = hostedController;
 			SetElements(true);
 		}
 
 		/// <summary>
 		/// Creates the controller.
 		/// </summary>
-		/// <param name="view">The view this controller is controlling.</param>
-		/// <param name="hostedController">The controller that controls the UserControl shown in the client area of the form.</param>
 		/// <param name="title">Title of the dialog.</param>
 		/// <param name="applyvisible">Indicates if the Apply button is visible or not.</param>
-		public DialogShellController(
-			IDialogShellView view, 
-			IApplyController hostedController,
+		public TabbedDialogController(		
 			string title,
 			bool   applyvisible)
 		{
-			View = view;
-			m_HostedController = hostedController;
 			m_Title = title;
 			m_ApplyVisible = applyvisible;
 
 			SetElements(true);
 		}
+
+
+		public void AddTab(string title, IApplyController controller, object view)
+		{
+			m_Tabs.Add(new TabEntry(title,controller,view));
+		}
+
 		/// <summary>
 		/// Get / sets the view of this controller.
 		/// </summary>
-		IDialogShellView View
+		public ITabbedDialogView View
 		{
 			get { return m_View; }
 			set
 			{
-				if(null!=m_View)
-					m_View.Controller = null;
-
+				ITabbedDialogView oldView = m_View;
 				m_View = value;
+
+				if(null!=oldView)
+				{
+					oldView.Controller = null;
+				}
 				
 				if(null!=m_View)
 				{
@@ -138,7 +161,15 @@ namespace Altaxo.Main
 			{
 				View.Title = m_Title;
 				View.ApplyVisible = m_ApplyVisible;
-			}
+
+
+				View.ClearTabs();
+				for(int i=0;i<m_Tabs.Count;i++)
+				{
+					TabEntry tab = (TabEntry)m_Tabs[i];
+					View.AddTab(tab.Title,tab.View);
+				}
+			}			
 		}
 
 		/// <summary>
@@ -152,7 +183,7 @@ namespace Altaxo.Main
 		}
 
 
-		#region IDialogShellController Members
+		#region ITabbedDialogController Members
 
 		/// <summary>
 		/// Called when the user presses the OK button. Calls the Apply method of the
@@ -161,10 +192,21 @@ namespace Altaxo.Main
 		public void EhOK()
 		{
 			bool bSuccess = true;
-			if(null!=m_HostedController)
-				bSuccess = m_HostedController.Apply();
 
-			if(bSuccess) // if successfull applied, close the form
+			for(int i=0;i<m_Tabs.Count;i++)
+			{
+				TabEntry tab = (TabEntry)m_Tabs[i];
+				if(null!=tab.Controller)
+					bSuccess = tab.Controller.Apply();
+			
+				if(!bSuccess) // if not successfull applied, open the tab again
+				{
+					View.FocusTab(i);
+					break;
+				}
+			}
+
+			if(bSuccess)
 			{
 				View.Form.DialogResult = System.Windows.Forms.DialogResult.OK;
 				View.Form.Close();
@@ -187,8 +229,18 @@ namespace Altaxo.Main
 		public void EhApply()
 		{
 			bool bSuccess = true;
-			if(null!=m_HostedController)
-				bSuccess = m_HostedController.Apply();
+			for(int i=0;i<m_Tabs.Count;i++)
+			{
+				TabEntry tab = (TabEntry)m_Tabs[i];
+				if(null!=tab.Controller)
+					bSuccess = tab.Controller.Apply();
+			
+				if(!bSuccess) // if not successfull applied, open the tab again
+				{
+					View.FocusTab(i);
+					break;
+				}
+			}
 		}
 
 		#endregion

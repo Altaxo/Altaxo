@@ -1,5 +1,7 @@
 using System;
 
+using Altaxo.Graph;
+
 namespace Altaxo.Gui
 {
 	/// <summary>
@@ -31,8 +33,8 @@ namespace Altaxo.Gui
 			SpinAndComboBoxControl panel = new SpinAndComboBoxControl();
 			ct.View = panel;
 
-			Main.DialogShellController dsc = new Main.DialogShellController(
-				new Main.DialogShellView(panel),ct,"Add new column(s)",false);
+			Gui.DialogShellController dsc = new Gui.DialogShellController(
+				new Gui.DialogShellView(panel),ct,"Add new column(s)",false);
 
 			
 			if(true==dsc.ShowDialog(owner))
@@ -59,6 +61,30 @@ namespace Altaxo.Gui
 				table.ResumeDataChangedNotifications();
 			}
 
+		}
+
+
+
+
+		public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
+		{
+			// Plot Style
+			Graph.LineScatterPlotStyleController	stylectrl = new Graph.LineScatterPlotStyleController((Graph.PlotStyle)pa.Style,plotGroup);
+			Graph.LineScatterPlotStyleControl			styleview = new Graph.LineScatterPlotStyleControl();
+			stylectrl.View = styleview;
+
+			// Plot Data
+			Graph.LineScatterPlotDataController datactrl = new Graph.LineScatterPlotDataController((PlotAssociation)pa.Data);
+			Graph.LineScatterPlotDataControl    dataview = new Graph.LineScatterPlotDataControl();
+			datactrl.View = dataview;
+
+			Gui.TabbedDialogController tdcctrl = new Gui.TabbedDialogController("Line/Scatter Plot",true);
+			tdcctrl.AddTab("Style",stylectrl,styleview);
+			tdcctrl.AddTab("Data",datactrl,dataview);
+			Gui.TabbedDialogView  tdcview = new Gui.TabbedDialogView();
+			tdcctrl.View = tdcview;
+
+			return tdcctrl.ShowDialog(parentWindow);
 		}
 
 

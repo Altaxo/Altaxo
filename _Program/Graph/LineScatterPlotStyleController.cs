@@ -194,7 +194,7 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Summary description for LineScatterPlotStyleController.
 	/// </summary>
-	public class LineScatterPlotStyleController : ILineScatterPlotStyleController, Main.IApplyController
+	public class LineScatterPlotStyleController : ILineScatterPlotStyleController, Gui.IApplyController
 	{
 		protected PlotStyle m_MasterItemPlotStyle;
 		protected PlotStyle m_PlotItemPlotStyle;
@@ -224,14 +224,14 @@ namespace Altaxo.Graph
 		}
 
 
-		public static bool ShowPlotStyleDialog(System.Windows.Forms.Form parentWindow, PlotItem pa, PlotGroup plotGroup)
+		public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, PlotItem pa, PlotGroup plotGroup)
 		{
 			Graph.LineScatterPlotStyleController	ctrl = new Graph.LineScatterPlotStyleController((PlotStyle)pa.Style,plotGroup);
 			Graph.LineScatterPlotStyleControl view = new Graph.LineScatterPlotStyleControl();
 			ctrl.View = view;
 
-			Main.DialogShellController dsc = new Main.DialogShellController(
-				new Main.DialogShellView(view), ctrl);
+			Gui.DialogShellController dsc = new Gui.DialogShellController(
+				new Gui.DialogShellView(view), ctrl);
 
 			return dsc.ShowDialog(parentWindow);
 		}

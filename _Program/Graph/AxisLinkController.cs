@@ -4,7 +4,7 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph
 {
 	#region Interfaces
-	public interface IAxisLinkController : Main.IApplyController, Main.IMVCController
+	public interface IAxisLinkController : Gui.IApplyController, Main.IMVCController
 	{
 		/// <summary>
 		/// Get/sets the view this controller controls.

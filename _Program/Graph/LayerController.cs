@@ -3,7 +3,7 @@ using System;
 namespace Altaxo.Graph
 {
 	#region Interfaces
-	public interface ILayerController: Main.IApplyController
+	public interface ILayerController: Gui.IApplyController
 	{
 		void EhView_PageChanged(string firstChoice);
 		void EhView_SecondChoiceChanged(int index, string item);
@@ -245,8 +245,8 @@ namespace Altaxo.Graph
 			LayerControl view = new LayerControl();
 			ctrl.View = view;
 
-			Main.DialogShellController dsc = new Main.DialogShellController(
-				new Main.DialogShellView(view), ctrl);
+			Gui.DialogShellController dsc = new Gui.DialogShellController(
+				new Gui.DialogShellView(view), ctrl);
 
 			return dsc.ShowDialog(parentWindow);
 		}

@@ -3,7 +3,7 @@ using System;
 namespace Altaxo.Graph
 {
 	#region Interfaces
-	public interface IAxisScaleController : Main.IApplyController, Main.IMVCController
+	public interface IAxisScaleController : Gui.IApplyController, Main.IMVCController
 	{
 		void EhView_AxisOrgChanged(string text);
 		void EhView_AxisEndChanged(string text);
