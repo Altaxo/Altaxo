@@ -7,24 +7,24 @@ using System.Windows.Forms;
 
 namespace Altaxo.Worksheet.GUI
 {
-	/// <summary>
-	/// Summary description for TransposeWorksheetControl.
-	/// </summary>
-	public class TransposeWorksheetControl : System.Windows.Forms.UserControl
-	{
+  /// <summary>
+  /// Summary description for TransposeWorksheetControl.
+  /// </summary>
+  public class TransposeWorksheetControl : System.Windows.Forms.UserControl
+  {
     private Altaxo.Main.GUI.MinMaxIntegerControl ctrlNumMovedDataCols;
     private Altaxo.Main.GUI.MinMaxIntegerControl ctrlNumMovedPropCols;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.GroupBox groupBox2;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public TransposeWorksheetControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public TransposeWorksheetControl()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
       ctrlNumMovedDataCols.MinLabel = "None";
       ctrlNumMovedPropCols.MinLabel = "None";
@@ -38,22 +38,22 @@ namespace Altaxo.Worksheet.GUI
       ctrlNumMovedDataCols.Maximum = int.MaxValue;
       ctrlNumMovedPropCols.Maximum = int.MaxValue;
       
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
     /// <summary>
     /// Get/sets the number of data columns that are moved to the property columns before transposing the data columns.
@@ -81,13 +81,13 @@ namespace Altaxo.Worksheet.GUI
 
 
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.ctrlNumMovedDataCols = new Altaxo.Main.GUI.MinMaxIntegerControl();
       this.ctrlNumMovedPropCols = new Altaxo.Main.GUI.MinMaxIntegerControl();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -141,6 +141,6 @@ namespace Altaxo.Worksheet.GUI
       this.ResumeLayout(false);
 
     }
-		#endregion
-	}
+    #endregion
+  }
 }

@@ -35,10 +35,10 @@ using System.Diagnostics;
 
 namespace Altaxo.Calc 
 {
-	
+  
   // Comments? Questions? Bugs? Tell Ben Houston at ben@exocortex.org
   // Version: May 4, 2002
-	
+  
   /// <summary>
   /// <p>A set of array utilities for complex number arrays</p>
   /// </summary>
@@ -77,8 +77,8 @@ namespace Altaxo.Calc
     {
       for( int i = 0; i < array.Length; i ++ ) 
       {
-        array[i].Re	= Math.Min( Math.Max( array[ i ].Re, minimum.Re ), maximum.Re );
-        array[i].Im	= Math.Min( Math.Max( array[ i ].Re, minimum.Im ), maximum.Im );
+        array[i].Re = Math.Min( Math.Max( array[ i ].Re, minimum.Re ), maximum.Re );
+        array[i].Im = Math.Min( Math.Max( array[ i ].Re, minimum.Im ), maximum.Im );
       }
     }
 
@@ -94,23 +94,23 @@ namespace Altaxo.Calc
         array[i].Im = 0;
       }
     }
-		
+    
     //---------------------------------------------------------------------------------------------
 
-    static private bool			_workspaceFLocked	= false;
-    static private ComplexF[]	_workspaceF			= new ComplexF[ 0 ];
+    static private bool     _workspaceFLocked = false;
+    static private ComplexF[] _workspaceF     = new ComplexF[ 0 ];
 
-    static private void		LockWorkspaceF( int length, ref ComplexF[] workspace ) 
+    static private void   LockWorkspaceF( int length, ref ComplexF[] workspace ) 
     {
       Debug.Assert( _workspaceFLocked == false );
       _workspaceFLocked = true;
       if( length >= _workspaceF.Length ) 
       {
-        _workspaceF	= new ComplexF[ length ];
+        _workspaceF = new ComplexF[ length ];
       }
-      workspace =	_workspaceF;
+      workspace = _workspaceF;
     }
-    static private void		UnlockWorkspaceF( ref ComplexF[] workspace ) 
+    static private void   UnlockWorkspaceF( ref ComplexF[] workspace ) 
     {
       Debug.Assert( _workspaceF == workspace );
       Debug.Assert( _workspaceFLocked == true );
@@ -136,8 +136,8 @@ namespace Altaxo.Calc
         return;
       }
 
-      int			length	= array.Length;
-      Complex[]	temp	= new Complex[ length ];
+      int     length  = array.Length;
+      Complex[] temp  = new Complex[ length ];
 
       for( int i = 0; i < length; i ++ ) 
       {
@@ -165,8 +165,8 @@ namespace Altaxo.Calc
         return;
       }
 
-      int			length		= array.Length;
-      ComplexF[]	workspace	= null;
+      int     length    = array.Length;
+      ComplexF[]  workspace = null;
       ComplexArray.LockWorkspaceF( length, ref workspace );
 
       for( int i = 0; i < length; i ++ ) 
@@ -224,7 +224,7 @@ namespace Altaxo.Calc
     // // <param name="array"></param>
     // // <param name="style"></param>
     // // <returns></returns>
-    /* static public double[]	ConvertToDoubleArray( Complex[] array, ConversionStyle style ) {
+    /* static public double[] ConvertToDoubleArray( Complex[] array, ConversionStyle style ) {
       double[] newArray = new double[ array.Length ];
       switch( style ) {
       case ConversionStyle.Length:
@@ -246,8 +246,8 @@ namespace Altaxo.Calc
         Debug.Assert( false );
         break;
       }
-      return	newArray;
-    }	 */
+      return  newArray;
+    }  */
 
     //---------------------------------------------------------------------------------------------
 
@@ -258,7 +258,7 @@ namespace Altaxo.Calc
     /// <param name="array2"></param>
     /// <param name="tolerance"></param>
     /// <returns></returns>
-    static public bool		IsEqual( Complex[] array1, Complex[] array2, double tolerance ) 
+    static public bool    IsEqual( Complex[] array1, Complex[] array2, double tolerance ) 
     {
       if ( array1.Length != array2.Length ) 
       {
@@ -281,7 +281,7 @@ namespace Altaxo.Calc
     /// <param name="array2"></param>
     /// <param name="tolerance"></param>
     /// <returns></returns>
-    static public bool		IsEqual( ComplexF[] array1, ComplexF[] array2, float tolerance ) 
+    static public bool    IsEqual( ComplexF[] array1, ComplexF[] array2, float tolerance ) 
     {
       if ( array1.Length != array2.Length ) 
       {
@@ -298,7 +298,7 @@ namespace Altaxo.Calc
     }
 
     //---------------------------------------------------------------------------------------------
-		
+    
     /// <summary>
     /// Add a specific value to each element in the array
     /// </summary>
@@ -356,7 +356,7 @@ namespace Altaxo.Calc
     }
 
     //---------------------------------------------------------------------------------------------
-		
+    
     /// <summary>
     /// Multiply each element in the array by a specific value
     /// </summary>
@@ -638,9 +638,9 @@ namespace Altaxo.Calc
     /*static public void Flip( ComplexF[] array, Size3 size ) {
       Debug.Assert( array != null );
 
-      ComplexF[]	workspace	= null;
+      ComplexF[]  workspace = null;
       ComplexArray.LockWorkspaceF( size.GetTotalLength(), ref workspace );
-			
+      
       for( int z = 0; z < size.Depth; z ++ ) {
         for( int y = 0; y < size.Height; y ++ ) {
           int xyzOffset = 0 + y * size.Width + z * size.Width * size.Height;
@@ -657,7 +657,7 @@ namespace Altaxo.Calc
 
       ComplexArray.UnlockWorkspaceF( ref workspace );
     }  */
-		
+    
 
     /// <summary>
     /// Copy an array

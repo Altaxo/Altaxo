@@ -25,33 +25,46 @@ using System;
 namespace Altaxo.Worksheet.GUI
 {
   /// <summary>
-  /// Summary description for PLSStartAnalysisController.
+  /// Summary description for PLSPredictValueController.
   /// </summary>
-  public class PLSStartAnalysisController : Altaxo.Main.GUI.IApplyController
-  {
-    Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSAnalysisOptions _doc;
-    PLSStartAnalysisControl _view;
+  public class PLSPredictValueController : Altaxo.Main.GUI.IApplyController
 
-    public PLSStartAnalysisController(Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSAnalysisOptions options)
-    {
-      _doc = options;
-    }
+  {
+    PLSPredictValueControl _view;
+    string[] _calibrationTables;
+    string[] _destinationTables;
+
+    public string SelectedDestinationTableName;
+    public string SelectedCalibrationTableName;
 
     void SetElements(bool bInit)
     {
+      _calibrationTables = Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.GetAvailablePLSCalibrationTables();
+      _destinationTables = GetAvailableDestinationTables();
+
       if(null!=_view)
       {
-        _view.InitializeNumberOfFactors(_doc.MaxNumberOfFactors);
-        _view.InitializeCrossPressCalculation(_doc.CrossPRESSCalculation);
+        _view.InitializeCalibrationModelTables(_calibrationTables);
+        _view.InitializeDestinationTables(_destinationTables);
       }
     }
 
-    public PLSStartAnalysisControl View
+
+    string[] GetAvailableDestinationTables()
+    {
+      System.Collections.ArrayList result = new System.Collections.ArrayList();
+      result.Add("New table");
+      foreach(Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
+        result.Add(table.Name);
+
+      return (string[])result.ToArray(typeof(string));
+    }
+   
+    public PLSPredictValueControl View
     {
       get { return _view; }
-      set 
+      set
       {
-        
         if(null!=_view)
           _view.Controller = null;
         
@@ -65,28 +78,29 @@ namespace Altaxo.Worksheet.GUI
       }
     }
 
-    public    Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSAnalysisOptions Doc
-    {
-      get { return _doc; }
-    }
-
-
-    public void EhView_MaxNumberOfFactorsChanged(int numFactors)
-    {
-      _doc.MaxNumberOfFactors = numFactors;
-    }
-    public void EhView_CrossValidationSelected(Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation val)
-    {
-      _doc.CrossPRESSCalculation = val; 
-    }
     #region IApplyController Members
 
     public bool Apply()
     {
-      // nothing to do here, since the hosted doc is a struct
+      int sel;
+      sel = _view.GetCalibrationTableChoice();
+      if(sel<0)
+        this.SelectedCalibrationTableName = null;
+      else
+        this.SelectedCalibrationTableName = this._calibrationTables[sel];
+
+      sel = _view.GetDestinationTableChoice();
+      if(sel==0)
+        this.SelectedDestinationTableName = null;
+      else
+        this.SelectedDestinationTableName = this._destinationTables[sel];
+
+
       return true;
     }
 
     #endregion
+
+
   }
 }

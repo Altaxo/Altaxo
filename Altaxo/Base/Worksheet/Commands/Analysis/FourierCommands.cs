@@ -201,6 +201,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
       return null;
     }
 
-	
+  
   }
 }

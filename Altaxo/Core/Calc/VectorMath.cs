@@ -23,12 +23,12 @@ using System;
 
 namespace Altaxo.Calc
 {
-	/// <summary>
-	/// VectorMath provides common static functions concerning vectors.
-	/// </summary>
-	public class VectorMath
-	{
-	
+  /// <summary>
+  /// VectorMath provides common static functions concerning vectors.
+  /// </summary>
+  public class VectorMath
+  {
+  
     #region Inner types
 
     /// <summary>
@@ -135,5 +135,5 @@ namespace Altaxo.Calc
       return max;
     }
 
-	}
+  }
 }

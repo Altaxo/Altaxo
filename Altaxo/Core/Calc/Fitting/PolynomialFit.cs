@@ -231,7 +231,8 @@ namespace Altaxo.Calc.Fitting
   
     /// <summary>Gives the adjusted coefficient of determination.</summary>
     /// <remarks>Ref. "Introduction to linear regression analysis", Wiley, p.90.</remarks>
-    public double AdjustedRSquared {
+    public double AdjustedRSquared 
+    {
       get
       {
         if(_numberOfFreeParameter>=_numberOfData)

@@ -82,5 +82,5 @@ namespace Altaxo.Worksheet.Commands
     #endregion
 
 
-	}
+  }
 }

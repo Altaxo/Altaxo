@@ -1634,6 +1634,7 @@ namespace Altaxo.Calc
     /// <param name="yLoads">Returns the matrix of eigenvectors of Y. Should be initially empty. </param>
     /// <param name="W">Returns the matrix of weighting values. Should be initially empty.</param>
     /// <param name="V">Returns the vector of cross products. Should be initially empty.</param>
+    /// <param name="PRESS">If not null, the PRESS value of each factor is stored (vertically) here. </param>
     public static void PartialLeastSquares_HO(
       IROMatrix _X, // matrix of spectra (a spectra is a row of this matrix)
       IROMatrix _Y, // matrix of concentrations (a mixture is a row of this matrix)

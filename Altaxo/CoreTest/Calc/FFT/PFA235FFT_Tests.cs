@@ -49,7 +49,7 @@ namespace AltaxoTest.Calc.FFT
     [Test]
     public void Test01Zero()
     {
-     foreach(int i in _testLengths)
+      foreach(int i in _testLengths)
         _test.TestZero(i);
     }
 
@@ -382,7 +382,7 @@ namespace AltaxoTest.Calc.FFT
     int[] _testLengths = { 2,3,4,5,6,8,9,10,12,15,16,18,25 };
 
     RealFFTTests _test;
-     RealFFTTests _test2;
+    RealFFTTests _test2;
 
     public TestPfa235FFTRealFFT()
     {

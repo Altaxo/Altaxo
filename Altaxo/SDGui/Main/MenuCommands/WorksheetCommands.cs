@@ -120,7 +120,7 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
-#endregion
+  #endregion
 
   #region Edit commands
 
@@ -314,7 +314,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnGroupNumber(ctrl);
+      Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnGroupNumber(ctrl);
     }
   }
   
@@ -427,6 +427,21 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSOnColumns(ctrl);
     }
   }
+  public class AnalysisPLSPredictOnRows : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PredictOnRows(ctrl);
+    }
+  }
+  public class AnalysisPLSPredictOnCols : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PredictOnColumns(ctrl);
+    }
+  }
+
 
   public class AnalysisExportPLSCalibration : AbstractWorksheetControllerCommand
   {

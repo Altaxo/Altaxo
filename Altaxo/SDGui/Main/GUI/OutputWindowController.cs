@@ -139,9 +139,9 @@ namespace Altaxo.Main.GUI
     }
 
     public void Write(System.IFormatProvider provider, string format, params object[] args)
-  {
-    Write(string.Format(provider,format,args));
-  }
+    {
+      Write(string.Format(provider,format,args));
+    }
 
     #endregion
   }

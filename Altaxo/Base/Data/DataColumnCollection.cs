@@ -138,14 +138,14 @@ namespace Altaxo.Data
       public static ChangeEventArgs CreateColumnMoveArgs(int firstColumnNumber, int maxColumnNumber)
       {
         ChangeEventArgs args = new ChangeEventArgs(firstColumnNumber,0,0,false);
-         args.m_MaxColChanged = maxColumnNumber;
+        args.m_MaxColChanged = maxColumnNumber;
         return args;
       }
 
       /// <summary>
       /// Creates a change state that reflects the move of some rows (in all columns).
       /// </summary>
-       /// <param name="numberOfColumns">The number of columns in the table.</param>
+      /// <param name="numberOfColumns">The number of columns in the table.</param>
       /// <param name="firstRowNumber">The first row number that was affected.</param>
       /// <param name="maxRowNumber">One more than the last affected row number.</param>
       /// <returns>The change state that reflects the move.</returns>

@@ -91,7 +91,7 @@ namespace Altaxo.Main.Commands
             
             Current.ProjectService.CreateNewWorksheet(table);
           }
-          // if it is a table, add it to the DataTableCollection
+            // if it is a table, add it to the DataTableCollection
           else if(deserObject is Altaxo.Worksheet.TablePlusLayout)
           {
             Altaxo.Worksheet.TablePlusLayout tableAndLayout = deserObject as Altaxo.Worksheet.TablePlusLayout;
@@ -103,7 +103,7 @@ namespace Altaxo.Main.Commands
             Current.Project.DataTableCollection.Add(table);
 
             if(tableAndLayout.Layout!=null)
-                Current.Project.TableLayouts.Add(tableAndLayout.Layout);
+              Current.Project.TableLayouts.Add(tableAndLayout.Layout);
 
             info.AnnounceDeserializationEnd(Current.Project); // fire the event to resolve path references
 

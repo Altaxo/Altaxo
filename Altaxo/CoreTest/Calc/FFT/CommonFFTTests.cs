@@ -523,9 +523,9 @@ namespace AltaxoTest.Calc.FFT
             Math.Cos((2*Math.PI*i*(double)repos)/n),
             re[i],max_fft_error(n));
           if(i<j)
-          Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos(re={1}) arb im[{2}]",n,repos,i), 
-            Math.Sin((2*Math.PI*i*(double)repos)/n), 
-            re[n-i],max_fft_error(n));
+            Assertion.AssertEquals(string.Format("FFT({0}) of im 1 at pos(re={1}) arb im[{2}]",n,repos,i), 
+              Math.Sin((2*Math.PI*i*(double)repos)/n), 
+              re[n-i],max_fft_error(n));
         }
 
         _fft(re,FourierDirection.Inverse);
@@ -537,7 +537,7 @@ namespace AltaxoTest.Calc.FFT
             Assertion.AssertEquals("IFFT at pos==repos should give re=n", n, re[i],max_ifft_error(n));
           else
             Assertion.AssertEquals("IFFT at all pos!=repos should give re=0", 0, re[i],max_ifft_error(n));
-         }
+        }
         
       }
     }

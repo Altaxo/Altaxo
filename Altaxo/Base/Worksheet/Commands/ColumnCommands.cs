@@ -214,7 +214,7 @@ namespace Altaxo.Worksheet.Commands
       else
         return null;
 
-     SetSelectedColumnPosition(ctrl,newposition);
+      SetSelectedColumnPosition(ctrl,newposition);
 
       return null;
     }

@@ -27,7 +27,7 @@ namespace Altaxo.Calc
   class FDistribution
   {
 
-    #region ipmpar
+  #region ipmpar
 
     /*
 -----------------------------------------------------------------------
@@ -122,9 +122,9 @@ namespace Altaxo.Calc
     }
 
 
-    #endregion
+  #endregion
 
-    #region spmpar
+  #region spmpar
 
     static double spmpar(int i)
     {
@@ -203,9 +203,9 @@ namespace Altaxo.Calc
         return spmpar;
       }
     }
-    #endregion
+  #endregion
 
-    #region CUMF
+  #region CUMF
 
     static double dsum,prod,xx,yy;
     static int ierr;
@@ -306,9 +306,9 @@ namespace Altaxo.Calc
     }
 
 
-    #endregion
+  #endregion
 
-    #region E000
+  #region E000
 
     class _E0000
     {
@@ -545,9 +545,9 @@ namespace Altaxo.Calc
       }
     }
 
-    #endregion
+  #endregion
 
-    #region E0001
+  #region E0001
 
     class _E0001
     {

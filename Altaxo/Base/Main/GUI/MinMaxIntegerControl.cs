@@ -175,7 +175,7 @@ namespace Altaxo.Main.GUI
     /// </summary>
     public int Value 
     {
-    get { return _Value; }
+      get { return _Value; }
       set 
       {
         _Value =  _StartValue = value;

@@ -2308,7 +2308,7 @@ namespace Altaxo.Calc.Random
     /// <returns>The probability density of the distribution at value x.</returns>
     public static double PDF(double x, double p, double q)
     {
-     return (Math.Pow(p,p/2)*Math.Pow(q,q/2)*Math.Pow(x,(-2 + p)/2)*Math.Pow(q + p*x,(-p - q)/2))/GammaRelated.Beta(p/2,q/2);
+      return (Math.Pow(p,p/2)*Math.Pow(q,q/2)*Math.Pow(x,(-2 + p)/2)*Math.Pow(q + p*x,(-p - q)/2))/GammaRelated.Beta(p/2,q/2);
     }
 
     /// <summary>
@@ -2320,8 +2320,8 @@ namespace Altaxo.Calc.Random
     /// <returns>The quantile of the F-Distribution.</returns>
     public static double Quantile(double alpha, double p, double q)
     {
-    double inverse_beta = GammaRelated.InverseBeta(1-alpha, q/2, p/2);
-    return (q/p) * (1.0 / inverse_beta - 1.0);
+      double inverse_beta = GammaRelated.InverseBeta(1-alpha, q/2, p/2);
+      return (q/p) * (1.0 / inverse_beta - 1.0);
     }
   }
 

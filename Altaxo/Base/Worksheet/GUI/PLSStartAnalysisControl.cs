@@ -29,59 +29,61 @@ using System.Windows.Forms;
 
 namespace Altaxo.Worksheet.GUI
 {
-	/// <summary>
-	/// Summary description for PLSStartAnalysisControl.
-	/// </summary>
-	public class PLSStartAnalysisControl : System.Windows.Forms.UserControl
-	{
+  /// <summary>
+  /// Summary description for PLSStartAnalysisControl.
+  /// </summary>
+  public class PLSStartAnalysisControl : System.Windows.Forms.UserControl
+  {
+    PLSStartAnalysisController _controller;
+
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.NumericUpDown edMaxNumFactors;
     private System.Windows.Forms.RadioButton rbCrossValidationNone;
     private System.Windows.Forms.RadioButton rbCrossValidationEvery;
     private System.Windows.Forms.RadioButton rbCrossValidationGroups;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public PLSStartAnalysisControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public PLSStartAnalysisControl()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
+      // TODO: Add any initialization after the InitializeComponent call
 
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.label1 = new System.Windows.Forms.Label();
       this.edMaxNumFactors = new System.Windows.Forms.NumericUpDown();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.rbCrossValidationNone = new System.Windows.Forms.RadioButton();
-      this.rbCrossValidationEvery = new System.Windows.Forms.RadioButton();
       this.rbCrossValidationGroups = new System.Windows.Forms.RadioButton();
+      this.rbCrossValidationEvery = new System.Windows.Forms.RadioButton();
+      this.rbCrossValidationNone = new System.Windows.Forms.RadioButton();
       ((System.ComponentModel.ISupportInitialize)(this.edMaxNumFactors)).BeginInit();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -100,6 +102,7 @@ namespace Altaxo.Worksheet.GUI
       this.edMaxNumFactors.Name = "edMaxNumFactors";
       this.edMaxNumFactors.Size = new System.Drawing.Size(168, 20);
       this.edMaxNumFactors.TabIndex = 1;
+      this.edMaxNumFactors.ValueChanged += new System.EventHandler(this.edMaxNumFactors_ValueChanged);
       // 
       // groupBox1
       // 
@@ -113,12 +116,14 @@ namespace Altaxo.Worksheet.GUI
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Cross validation calculation:";
       // 
-      // rbCrossValidationNone
+      // rbCrossValidationGroups
       // 
-      this.rbCrossValidationNone.Location = new System.Drawing.Point(8, 16);
-      this.rbCrossValidationNone.Name = "rbCrossValidationNone";
-      this.rbCrossValidationNone.TabIndex = 0;
-      this.rbCrossValidationNone.Text = "None";
+      this.rbCrossValidationGroups.Location = new System.Drawing.Point(8, 72);
+      this.rbCrossValidationGroups.Name = "rbCrossValidationGroups";
+      this.rbCrossValidationGroups.Size = new System.Drawing.Size(136, 32);
+      this.rbCrossValidationGroups.TabIndex = 2;
+      this.rbCrossValidationGroups.Text = "Exclude groups of similar measurements";
+      this.rbCrossValidationGroups.CheckedChanged += new System.EventHandler(this.rbCrossValidationGroups_CheckedChanged);
       // 
       // rbCrossValidationEvery
       // 
@@ -127,14 +132,15 @@ namespace Altaxo.Worksheet.GUI
       this.rbCrossValidationEvery.Size = new System.Drawing.Size(144, 32);
       this.rbCrossValidationEvery.TabIndex = 1;
       this.rbCrossValidationEvery.Text = "Exclude every measurement";
+      this.rbCrossValidationEvery.CheckedChanged += new System.EventHandler(this.rbCrossValidationEvery_CheckedChanged);
       // 
-      // rbCrossValidationGroups
+      // rbCrossValidationNone
       // 
-      this.rbCrossValidationGroups.Location = new System.Drawing.Point(8, 72);
-      this.rbCrossValidationGroups.Name = "rbCrossValidationGroups";
-      this.rbCrossValidationGroups.Size = new System.Drawing.Size(136, 32);
-      this.rbCrossValidationGroups.TabIndex = 2;
-      this.rbCrossValidationGroups.Text = "Exclude groups of similar measurements";
+      this.rbCrossValidationNone.Location = new System.Drawing.Point(8, 16);
+      this.rbCrossValidationNone.Name = "rbCrossValidationNone";
+      this.rbCrossValidationNone.TabIndex = 0;
+      this.rbCrossValidationNone.Text = "None";
+      this.rbCrossValidationNone.CheckedChanged += new System.EventHandler(this.rbCrossValidationNone_CheckedChanged);
       // 
       // PLSStartAnalysisControl
       // 
@@ -143,17 +149,67 @@ namespace Altaxo.Worksheet.GUI
       this.Controls.Add(this.label1);
       this.Name = "PLSStartAnalysisControl";
       this.Size = new System.Drawing.Size(192, 192);
-      this.Load += new System.EventHandler(this.PLSStartAnalysisControl_Load);
       ((System.ComponentModel.ISupportInitialize)(this.edMaxNumFactors)).EndInit();
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-    private void PLSStartAnalysisControl_Load(object sender, System.EventArgs e)
+
+    public PLSStartAnalysisController Controller
     {
+      set { _controller = value; }
+    }
+
+
+    public void InitializeNumberOfFactors(int numFactors)
+    {
+      edMaxNumFactors.Minimum = 1;
+      edMaxNumFactors.Value = numFactors;
+    }
+
+    public void InitializeCrossPressCalculation(Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation val)
+    {
+      switch(val)
+      {
+        case Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation.None:
+          rbCrossValidationNone.Checked = true;
+          break;
+        case Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation.ExcludeEveryMeasurement:
+          rbCrossValidationEvery.Checked = true;
+          break;
+        case Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation.ExcludeGroupsOfSimilarMeasurements:
+          rbCrossValidationGroups.Checked = true;
+          break;
+      }
+    }
+
+
+    private void edMaxNumFactors_ValueChanged(object sender, System.EventArgs e)
+    {
+      if(_controller!=null)
+        _controller.EhView_MaxNumberOfFactorsChanged((int)this.edMaxNumFactors.Value);
+    }
+
+    private void rbCrossValidationNone_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(_controller!=null)
+        _controller.EhView_CrossValidationSelected(Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation.None);
+    }
+
+    private void rbCrossValidationEvery_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(_controller!=null)
+        _controller.EhView_CrossValidationSelected(Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation.ExcludeEveryMeasurement);
     
     }
-	}
+
+    private void rbCrossValidationGroups_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(_controller!=null)
+        _controller.EhView_CrossValidationSelected(Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation.ExcludeGroupsOfSimilarMeasurements);
+
+    }
+  }
 }

@@ -24,7 +24,7 @@ using System;
 
 namespace Altaxo.Calc
 {
-	
+  
 
   /// <summary>
   /// Wrapps a set of <see>DataColumns</see> into a matrix so that the matrix columns corresponds to the <see>DataColumns</see>.

@@ -32,7 +32,7 @@ namespace Altaxo.Worksheet.Commands
   /// </summary>
   public class EditCommands
   {
-	
+  
 
     /// <summary>
     /// Remove the selected columns, rows or property columns.

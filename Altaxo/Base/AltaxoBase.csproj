@@ -1109,6 +1109,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Worksheet\GUI\PLSPredictValueControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\PLSPredictValueControl.resx"
+                    DependentUpon = "PLSPredictValueControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\PLSPredictValueController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Worksheet\GUI\PLSStartAnalysisControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

@@ -294,7 +294,7 @@ namespace Altaxo.Graph.Commands
       Altaxo.Graph.GUI.IFitPolynomialDialogController dlg = new Altaxo.Graph.GUI.FitPolynomialDialogController(2,double.NegativeInfinity,double.PositiveInfinity,false);
       if(Main.GUI.DialogFactory.ShowPolynomialFitDialog(Current.MainWindow,dlg))
       {
-       Altaxo.Graph.Procedures.PolynomialFitting.Fit(ctrl,dlg.Order,dlg.FitCurveXmin,dlg.FitCurveXmax,dlg.ShowFormulaOnGraph);
+        Altaxo.Graph.Procedures.PolynomialFitting.Fit(ctrl,dlg.Order,dlg.FitCurveXmin,dlg.FitCurveXmax,dlg.ShowFormulaOnGraph);
       }
     }
   }

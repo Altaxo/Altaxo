@@ -36,7 +36,7 @@ namespace Altaxo.Calc
 {
   // Comments? Questions? Bugs? Tell Ben Houston at ben@exocortex.org
   // Version: May 4, 2002
-	
+  
   /// <summary>
   /// <p>A set of statistical utilities for complex number arrays</p>
   /// </summary>
@@ -56,12 +56,12 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public  ComplexF		Sum( ComplexF[] data ) 
+    static public  ComplexF   Sum( ComplexF[] data ) 
     {
       Debug.Assert( data != null );
-      return	SumRecursion( data, 0, data.Length );
+      return  SumRecursion( data, 0, data.Length );
     }
-    static private ComplexF		SumRecursion( ComplexF[] data, int start, int end ) 
+    static private ComplexF   SumRecursion( ComplexF[] data, int start, int end ) 
     {
       Debug.Assert( 0 <= start, "start = " + start );
       Debug.Assert( start < end, "start = " + start + " and end = " + end );
@@ -72,14 +72,14 @@ namespace Altaxo.Calc
         for( int i = start; i < end; i ++ ) 
         {
           sum += data[ i ];
-				
+        
         }
-        return	sum;
+        return  sum;
       }
       else 
       {
         int middle = ( start + end ) >> 1;
-        return	SumRecursion( data, start, middle ) + SumRecursion( data, middle, end );
+        return  SumRecursion( data, start, middle ) + SumRecursion( data, middle, end );
       }
     }
 
@@ -88,12 +88,12 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public  Complex		Sum( Complex[] data ) 
+    static public  Complex    Sum( Complex[] data ) 
     {
       Debug.Assert( data != null );
-      return	SumRecursion( data, 0, data.Length );
+      return  SumRecursion( data, 0, data.Length );
     }
-    static private Complex		SumRecursion( Complex[] data, int start, int end ) 
+    static private Complex    SumRecursion( Complex[] data, int start, int end ) 
     {
       Debug.Assert( 0 <= start, "start = " + start );
       Debug.Assert( start < end, "start = " + start + " and end = " + end );
@@ -104,14 +104,14 @@ namespace Altaxo.Calc
         for( int i = start; i < end; i ++ ) 
         {
           sum += data[ i ];
-				
+        
         }
-        return	sum;
+        return  sum;
       }
       else 
       {
         int middle = ( start + end ) >> 1;
-        return	SumRecursion( data, start, middle ) + SumRecursion( data, middle, end );
+        return  SumRecursion( data, start, middle ) + SumRecursion( data, middle, end );
       }
     }
 
@@ -123,12 +123,12 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public ComplexF		SumOfSquares( ComplexF[] data ) 
+    static public ComplexF    SumOfSquares( ComplexF[] data ) 
     {
       Debug.Assert( data != null );
-      return	SumOfSquaresRecursion( data, 0, data.Length );
+      return  SumOfSquaresRecursion( data, 0, data.Length );
     }
-    static private ComplexF		SumOfSquaresRecursion( ComplexF[] data, int start, int end ) 
+    static private ComplexF   SumOfSquaresRecursion( ComplexF[] data, int start, int end ) 
     {
       Debug.Assert( 0 <= start, "start = " + start );
       Debug.Assert( start < end, "start = " + start + " and end = " + end );
@@ -139,14 +139,14 @@ namespace Altaxo.Calc
         for( int i = start; i < end; i ++ ) 
         {
           sumOfSquares += data[ i ] * data[ i ];
-				
+        
         }
-        return	sumOfSquares;
+        return  sumOfSquares;
       }
       else 
       {
         int middle = ( start + end ) >> 1;
-        return	SumOfSquaresRecursion( data, start, middle ) + SumOfSquaresRecursion( data, middle, end );
+        return  SumOfSquaresRecursion( data, start, middle ) + SumOfSquaresRecursion( data, middle, end );
       }
     }
 
@@ -155,12 +155,12 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public Complex		SumOfSquares( Complex[] data ) 
+    static public Complex   SumOfSquares( Complex[] data ) 
     {
       Debug.Assert( data != null );
-      return	SumOfSquaresRecursion( data, 0, data.Length );
+      return  SumOfSquaresRecursion( data, 0, data.Length );
     }
-    static private Complex		SumOfSquaresRecursion( Complex[] data, int start, int end ) 
+    static private Complex    SumOfSquaresRecursion( Complex[] data, int start, int end ) 
     {
       Debug.Assert( 0 <= start, "start = " + start );
       Debug.Assert( start < end, "start = " + start + " and end = " + end );
@@ -171,14 +171,14 @@ namespace Altaxo.Calc
         for( int i = start; i < end; i ++ ) 
         {
           sumOfSquares += data[ i ] * data[ i ];
-				
+        
         }
-        return	sumOfSquares;
+        return  sumOfSquares;
       }
       else 
       {
         int middle = ( start + end ) >> 1;
-        return	SumOfSquaresRecursion( data, start, middle ) + SumOfSquaresRecursion( data, middle, end );
+        return  SumOfSquaresRecursion( data, start, middle ) + SumOfSquaresRecursion( data, middle, end );
       }
     }
 
@@ -190,9 +190,9 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public ComplexF		Mean( ComplexF[] data ) 
+    static public ComplexF    Mean( ComplexF[] data ) 
     {
-      return	ComplexStats.Sum( data ) / data.Length;
+      return  ComplexStats.Sum( data ) / data.Length;
     }
 
     /// <summary>
@@ -200,9 +200,9 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public Complex		Mean( Complex[] data ) 
+    static public Complex   Mean( Complex[] data ) 
     {
-      return	ComplexStats.Sum( data ) / data.Length;
+      return  ComplexStats.Sum( data ) / data.Length;
     }
 
     /// <summary>
@@ -210,28 +210,28 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public ComplexF	Variance( ComplexF[] data ) 
+    static public ComplexF  Variance( ComplexF[] data ) 
     {
       Debug.Assert( data != null );
       if( data.Length == 0 ) 
       {
         throw new DivideByZeroException( "length of data is zero" );
       }
-      return	ComplexStats.SumOfSquares( data ) / data.Length - ComplexStats.Sum( data );
+      return  ComplexStats.SumOfSquares( data ) / data.Length - ComplexStats.Sum( data );
     }
     /// <summary>
     /// Calculate the variance 
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public Complex	Variance( Complex[] data ) 
+    static public Complex Variance( Complex[] data ) 
     {
       Debug.Assert( data != null );
       if( data.Length == 0 ) 
       {
         throw new DivideByZeroException( "length of data is zero" );
       }
-      return	ComplexStats.SumOfSquares( data ) / data.Length - ComplexStats.Sum( data );
+      return  ComplexStats.SumOfSquares( data ) / data.Length - ComplexStats.Sum( data );
     }
 
     /// <summary>
@@ -239,28 +239,28 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public ComplexF	StdDev( ComplexF[] data ) 
+    static public ComplexF  StdDev( ComplexF[] data ) 
     {
       Debug.Assert( data != null );
       if( data.Length == 0 ) 
       {
         throw new DivideByZeroException( "length of data is zero" );
       }
-      return	ComplexMath.Sqrt( ComplexStats.Variance( data ) );
+      return  ComplexMath.Sqrt( ComplexStats.Variance( data ) );
     }
     /// <summary>
     /// Calculate the standard deviation 
     /// </summary>
     /// <param name="data"></param>
     /// <returns></returns>
-    static public Complex	StdDev( Complex[] data ) 
+    static public Complex StdDev( Complex[] data ) 
     {
       Debug.Assert( data != null );
       if( data.Length == 0 ) 
       {
         throw new DivideByZeroException( "length of data is zero" );
       }
-      return	ComplexMath.Sqrt( ComplexStats.Variance( data ) );
+      return  ComplexMath.Sqrt( ComplexStats.Variance( data ) );
     }
 
     //--------------------------------------------------------------------------------------------
@@ -272,7 +272,7 @@ namespace Altaxo.Calc
     /// <param name="alpha"></param>
     /// <param name="beta"></param>
     /// <returns></returns>
-    static public float	RMSError( ComplexF[] alpha, ComplexF[] beta ) 
+    static public float RMSError( ComplexF[] alpha, ComplexF[] beta ) 
     {
       Debug.Assert( alpha != null );
       Debug.Assert( beta != null );
@@ -280,7 +280,7 @@ namespace Altaxo.Calc
 
       return (float) Math.Sqrt( SumOfSquaredErrorRecursion( alpha, beta, 0, alpha.Length ) );
     }
-    static private float	SumOfSquaredErrorRecursion( ComplexF[] alpha, ComplexF[] beta, int start, int end ) 
+    static private float  SumOfSquaredErrorRecursion( ComplexF[] alpha, ComplexF[] beta, int start, int end ) 
     {
       Debug.Assert( 0 <= start, "start = " + start );
       Debug.Assert( start < end, "start = " + start + " and end = " + end );
@@ -293,14 +293,14 @@ namespace Altaxo.Calc
         {
           ComplexF delta = beta[ i ] - alpha[ i ];
           sumOfSquaredError += ( delta.Re * delta.Re ) + ( delta.Im * delta.Im );
-				
+        
         }
-        return	sumOfSquaredError;
+        return  sumOfSquaredError;
       }
       else 
       {
         int middle = ( start + end ) >> 1;
-        return	SumOfSquaredErrorRecursion( alpha, beta, start, middle ) + SumOfSquaredErrorRecursion( alpha, beta, middle, end );
+        return  SumOfSquaredErrorRecursion( alpha, beta, start, middle ) + SumOfSquaredErrorRecursion( alpha, beta, middle, end );
       }
     }
 
@@ -310,7 +310,7 @@ namespace Altaxo.Calc
     /// <param name="alpha"></param>
     /// <param name="beta"></param>
     /// <returns></returns>
-    static public double	RMSError( Complex[] alpha, Complex[] beta ) 
+    static public double  RMSError( Complex[] alpha, Complex[] beta ) 
     {
       Debug.Assert( alpha != null );
       Debug.Assert( beta != null );
@@ -318,7 +318,7 @@ namespace Altaxo.Calc
 
       return Math.Sqrt( SumOfSquaredErrorRecursion( alpha, beta, 0, alpha.Length ) );
     }
-    static private double	SumOfSquaredErrorRecursion( Complex[] alpha, Complex[] beta, int start, int end ) 
+    static private double SumOfSquaredErrorRecursion( Complex[] alpha, Complex[] beta, int start, int end ) 
     {
       Debug.Assert( 0 <= start, "start = " + start );
       Debug.Assert( start < end, "start = " + start + " and end = " + end );
@@ -331,14 +331,14 @@ namespace Altaxo.Calc
         {
           Complex delta = beta[ i ] - alpha[ i ];
           sumOfSquaredError += ( delta.Re * delta.Re ) + ( delta.Im * delta.Im );
-				
+        
         }
-        return	sumOfSquaredError;
+        return  sumOfSquaredError;
       }
       else 
       {
         int middle = ( start + end ) >> 1;
-        return	SumOfSquaredErrorRecursion( alpha, beta, start, middle ) + SumOfSquaredErrorRecursion( alpha, beta, middle, end );
+        return  SumOfSquaredErrorRecursion( alpha, beta, start, middle ) + SumOfSquaredErrorRecursion( alpha, beta, middle, end );
       }
     }
 

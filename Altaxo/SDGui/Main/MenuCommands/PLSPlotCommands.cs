@@ -30,7 +30,7 @@ using Altaxo.Worksheet.GUI;
 using ICSharpCode.SharpZipLib.Zip;
 
 namespace Altaxo.Worksheet.Commands
-{	
+{ 
 
   /// <summary>
   /// This condition is true if the active view content is a worksheet which contains PLS model data.

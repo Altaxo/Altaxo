@@ -2,19 +2,19 @@ using System;
 
 namespace Altaxo.Worksheet.GUI
 {
-	/// <summary>
-	/// Summary description for TransposeWorksheetController.
-	/// </summary>
-	public class TransposeWorksheetController : Altaxo.Main.GUI.IApplyController
-	{
+  /// <summary>
+  /// Summary description for TransposeWorksheetController.
+  /// </summary>
+  public class TransposeWorksheetController : Altaxo.Main.GUI.IApplyController
+  {
     Altaxo.Data.DataTable _table;
     TransposeWorksheetControl _view;
 
-		public TransposeWorksheetController(Altaxo.Data.DataTable table, TransposeWorksheetControl view)
-		{
+    public TransposeWorksheetController(Altaxo.Data.DataTable table, TransposeWorksheetControl view)
+    {
       _table = table;
       _view = view;
-			
+      
     }
     #region IApplyController Members
 
@@ -33,7 +33,7 @@ namespace Altaxo.Worksheet.GUI
           return false;
         }
       }
-    return true;
+      return true;
     }
 
     public bool Apply()
@@ -55,8 +55,8 @@ namespace Altaxo.Worksheet.GUI
         System.Windows.Forms.DialogResult result = System.Windows.Forms.MessageBox.Show(Current.MainWindow,message,"Attention",
           System.Windows.Forms.MessageBoxButtons.YesNo,System.Windows.Forms.MessageBoxIcon.Exclamation);
       
-      if(result==System.Windows.Forms.DialogResult.No)
-        return false;
+        if(result==System.Windows.Forms.DialogResult.No)
+          return false;
       }
 
       

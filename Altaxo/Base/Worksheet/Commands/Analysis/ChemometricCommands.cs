@@ -545,9 +545,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
         get { return _numberOfFactors; }
         set { _numberOfFactors = value; }
       }
-
-
-
     }
 
 
@@ -571,7 +568,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     }
 
-    public class PLSAnalysisOptions
+    public struct PLSAnalysisOptions
     {
       /// <summary>
       /// Get/sets the maximum number of factors to calculate
@@ -611,6 +608,19 @@ namespace Altaxo.Worksheet.Commands.Analysis
     const string _YResidual_ColumnName   = "YResidual";
     const string _SpectralResidual_ColumnName = "SpectralResidual";
 
+    public static string GetXLoad_ColumnName(int numberOfFactors)
+    {
+      return string.Format("{0}{1}",_XLoad_ColumnName,numberOfFactors);
+    }
+    public static string GetXWeight_ColumnName(int numberOfFactors)
+    {
+      return string.Format("{0}{1}",_XWeight_ColumnName,numberOfFactors);
+    }
+    public static string GetYLoad_ColumnName(int numberOfFactors)
+    {
+      return string.Format("{0}{1}",_YLoad_ColumnName,numberOfFactors);
+    }
+
     /// <summary>
     /// Gets the column name of a Y-Residual column
     /// </summary>
@@ -627,7 +637,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// Gets the column name of a Y-Original column
     /// </summary>
     /// <param name="whichY">Number of y-value.</param>
-    /// <param name="numberOfFactors">Number of factors for which the redidual is calculated.</param>
     /// <returns>The name of the column.</returns>
     public static string GetYOriginal_ColumnName(int whichY)
     {
@@ -667,15 +676,184 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static void PLSOnRows(WorksheetController ctrl)
     {
-      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,true);
+      PLSAnalysisOptions options;
+      if(!QuestPLSAnalysisOptions(out options))
+        return;
+
+      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,true,options);
       if(null!=err)
         System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
     }
     public static void PLSOnColumns(WorksheetController ctrl)
     {
-      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,false);
+      PLSAnalysisOptions options;
+      if(!QuestPLSAnalysisOptions(out options))
+        return;
+
+      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,false,options);
       if(null!=err)
         System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+    }
+
+
+    /// <summary>
+    /// This predicts the selected columns/rows against a user choosen calibration model.
+    /// The spectra are presumed to be horizontally oriented, i.e. each spectrum is in one row.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller containing the selected data.</param>
+    public static void PredictOnRows(WorksheetController ctrl)
+    {
+      PredictValues(ctrl,true);
+    }
+    /// <summary>
+    /// This predicts the selected columns/rows against a user choosen calibration model.
+    /// The spectra are presumed to be vertically oriented, i.e. each spectrum is in one column.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller containing the selected data.</param>
+    public static void PredictOnColumns(WorksheetController ctrl)
+    {
+      PredictValues(ctrl,false);
+    }
+
+    
+    /// <summary>
+    /// This predicts the selected columns/rows against a user choosen calibration model.
+    /// The orientation of spectra is given by the parameter <c>spectrumIsRow</c>.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller containing the selected data.</param>
+    /// <param name="spectrumIsRow">If true, the spectra is horizontally oriented, else it is vertically oriented.</param>
+    public static void PredictValues(WorksheetController ctrl, bool spectrumIsRow)
+    {
+      string modelName, destName;
+      if(false==QuestCalibrationModelAndDestinationTable(out modelName, out destName) || null==modelName)
+        return; // Cancelled by user
+
+      Altaxo.Data.DataTable modelTable = Current.Project.DataTableCollection[modelName];
+      Altaxo.Data.DataTable destTable  = (null==destName ? new Altaxo.Data.DataTable() : Current.Project.DataTableCollection[destName]);
+
+      if(modelTable==null || destTable==null)
+        throw new ApplicationException("Unexpected: modelTable or destTable is null");
+
+      int numberOfFactors = 0;
+
+      PLSContentMemento memento = modelTable.GetTableProperty("Content") as PLSContentMemento;
+
+      if(memento!=null)
+        numberOfFactors = memento.PreferredNumberOfFactors;
+
+      if(numberOfFactors==0)
+      {
+        QuestPreferredNumberOfFactors(modelTable);
+        memento = modelTable.GetTableProperty("Content") as PLSContentMemento;
+        if(memento!=null) numberOfFactors = memento.PreferredNumberOfFactors;
+      }
+
+      PLSCalibrationModelExporter exporter = new PLSCalibrationModelExporter(modelTable,numberOfFactors);
+      PLS2CalibrationModel calibModel;
+      exporter.Export(out calibModel);
+
+      // Fill matrixX with spectra
+      Altaxo.Collections.AscendingIntegerCollection spectralIndices;
+      Altaxo.Collections.AscendingIntegerCollection measurementIndices;
+      
+      
+      spectralIndices = new Altaxo.Collections.AscendingIntegerCollection(ctrl.SelectedColumns);
+      measurementIndices = new Altaxo.Collections.AscendingIntegerCollection(ctrl.SelectedRows);
+      RemoveNonNumericCells(ctrl.DataTable,measurementIndices,spectralIndices);
+
+      // exchange selection if spectrum is column
+      if(!spectrumIsRow)
+      {
+        Altaxo.Collections.AscendingIntegerCollection hlp;
+        hlp = spectralIndices;
+        spectralIndices = measurementIndices;
+        measurementIndices = hlp;
+      }
+      
+      Altaxo.Calc.IMatrix matrixX = GetSpectra(ctrl.DataTable,spectrumIsRow,spectralIndices,measurementIndices);
+
+      Altaxo.Calc.MatrixMath.BEMatrix predictedY = new Altaxo.Calc.MatrixMath.BEMatrix(measurementIndices.Count,calibModel.NumberOfY);
+      CalculatePredictedY(calibModel,matrixX,numberOfFactors, predictedY);
+
+      // now save the predicted y in the destination table
+
+      Altaxo.Data.DoubleColumn labelCol = new Altaxo.Data.DoubleColumn();
+      for(int i=0;i<measurementIndices.Count;i++)
+      {
+        labelCol[i] = measurementIndices[i];
+      }
+      destTable.DataColumns.Add(labelCol,"MeasurementLabel",Altaxo.Data.ColumnKind.Label,0);
+
+      for(int k=0;k<predictedY.Columns;k++)
+      {
+        Altaxo.Data.DoubleColumn predictedYcol = new Altaxo.Data.DoubleColumn();
+
+        for(int i=0;i<measurementIndices.Count;i++)
+        {
+          predictedYcol[i] = predictedY[i,k];
+        }
+        destTable.DataColumns.Add(predictedYcol,"Predicted Y" + k.ToString(), Altaxo.Data.ColumnKind.V,0);
+      }
+
+      // if destTable is new, show it
+      if(destTable.ParentObject==null)
+      {
+        Current.Project.DataTableCollection.Add(destTable);
+        Current.ProjectService.OpenOrCreateWorksheetForTable(destTable);
+      }
+
+    }
+
+
+    /// <summary>
+    /// For given selected columns and selected rows, the procedure removes all nonnumeric cells. Furthermore, if either selectedColumns or selectedRows
+    /// is empty, the collection is filled by the really used rows/columns.
+    /// </summary>
+    /// <param name="srctable">The source table.</param>
+    /// <param name="selectedRows">On entry, contains the selectedRows (or empty if now rows selected). On output, is the row collection.</param>
+    /// <param name="selectedColumns">On entry, conains the selected columns (or emtpy if only rows selected). On output, contains all numeric columns.</param>
+    public static void RemoveNonNumericCells(Altaxo.Data.DataTable srctable, Altaxo.Collections.AscendingIntegerCollection selectedRows, Altaxo.Collections.AscendingIntegerCollection selectedColumns)
+    {
+
+      // first the columns
+      if(0!=selectedColumns.Count)
+      {
+        for(int i=0;i<selectedColumns.Count;i++)
+        {
+          int idx = selectedColumns[i];
+          if(!(srctable[idx] is Altaxo.Data.INumericColumn))
+          {
+            selectedColumns.Remove(idx);
+          }
+        }
+      }
+      else // if no columns where selected, select all that are numeric
+      {
+        int end = srctable.DataColumnCount;
+        for(int i=0;i<end;i++)
+        {
+          if(srctable[i] is Altaxo.Data.INumericColumn)
+            selectedColumns.Add(i);
+        }
+      }
+
+
+      // if now rows selected, then test the max row count of the selected columns
+      // and add it
+
+      // check the number of rows
+
+      if(0==selectedRows.Count)
+      {
+        int numrows = 0;
+        int end = selectedColumns.Count;
+        for(int i=0;i<end;i++)
+        {
+          int idx = selectedColumns[i];
+          numrows = Math.Max(numrows,srctable[idx].Count);
+        }     
+        selectedRows.Add(new IntegerRangeAsCollection(0,numrows));
+      }
     }
 
     /// <summary>
@@ -687,6 +865,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="selectedRows">The selected rows.</param>
     /// <param name="selectedPropertyColumns">The selected property column(s).</param>
     /// <param name="bHorizontalOrientedSpectrum">True if a spectrum is a single row, False if a spectrum is a single column.</param>
+    /// <param name="plsOptions">Provides information about the max number of factors and the calculation of cross PRESS value.</param>
     /// <returns></returns>
     public static string PartialLeastSquaresAnalysis(
       Altaxo.AltaxoDocument mainDocument,
@@ -694,7 +873,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       IAscendingIntegerCollection selectedColumns,
       IAscendingIntegerCollection selectedRows,
       IAscendingIntegerCollection selectedPropertyColumns,
-      bool bHorizontalOrientedSpectrum
+      bool bHorizontalOrientedSpectrum,
+      PLSAnalysisOptions plsOptions
       )
     {
       PLSContentMemento plsContent = new PLSContentMemento();
@@ -872,7 +1052,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     
         // fill the corresponding X-Column of the spectra
         xColumnOfX = Altaxo.Data.DataColumn.CreateColumnOfSelectedRows(
-          srctable.DataColumns.FindXColumnOf(srctable[spectralIndices[0]]),spectralIndices);
+          srctable.DataColumns.FindXColumnOf(srctable[measurementIndices[0]]),spectralIndices);
 
       } // else vertically oriented spectrum
 
@@ -945,7 +1125,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixX, meanX);
       Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixY, meanY);
 
-      int numFactors = matrixX.Columns;
+      int numFactors = Math.Min(matrixX.Columns,plsOptions.MaxNumberOfFactors);
       Altaxo.Calc.MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,ref numFactors,xLoads,yLoads,W,V,PRESS);
   
 
@@ -1031,24 +1211,29 @@ namespace Altaxo.Worksheet.Commands.Analysis
       table.DataColumns.Add(col,_CrossProduct_ColumnName,Altaxo.Data.ColumnKind.V,3);
     }
 
-    {
-      // now a cross validation - this can take a long time for bigger matrices
-      Altaxo.Calc.IMatrix crossPRESSMatrix;
-      Altaxo.Calc.MatrixMath.PartialLeastSquares_CrossValidation_HO(matrixX,matrixY,numFactors, true, out crossPRESSMatrix);
-
-      
+      // add a NumberOfFactors columm
       Altaxo.Data.DoubleColumn xNumFactor= new Altaxo.Data.DoubleColumn();
-
-      
-      Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
-      for(int i=0;i<crossPRESSMatrix.Rows;i++)
+      for(int i=0;i<PRESS.Rows;i++)
       { 
         xNumFactor[i]=i;
-        col[i] = crossPRESSMatrix[i,0];
       }
       table.DataColumns.Add(xNumFactor,"NumberOfFactors",Altaxo.Data.ColumnKind.X,4);
-      table.DataColumns.Add(col,_CrossPRESSValue_ColumnName,Altaxo.Data.ColumnKind.V,4);
-    }
+
+      Altaxo.Data.DoubleColumn crosspresscol = new Altaxo.Data.DoubleColumn();
+
+      if(plsOptions.CrossPRESSCalculation!=CrossPRESSCalculation.None)
+      {
+        // now a cross validation - this can take a long time for bigger matrices
+        Altaxo.Calc.IMatrix crossPRESSMatrix;
+        Altaxo.Calc.MatrixMath.PartialLeastSquares_CrossValidation_HO(matrixX,matrixY,numFactors, plsOptions.CrossPRESSCalculation==CrossPRESSCalculation.ExcludeGroupsOfSimilarMeasurements, out crossPRESSMatrix);
+
+        for(int i=0;i<crossPRESSMatrix.Rows;i++)
+        { 
+          crosspresscol[i] = crossPRESSMatrix[i,0];
+        }
+      }
+      table.DataColumns.Add(crosspresscol,_CrossPRESSValue_ColumnName,Altaxo.Data.ColumnKind.V,4);
+
 
       // calculate the self predicted y values - for one factor and for two
       Altaxo.Calc.IMatrix yPred = new Altaxo.Calc.MatrixMath.BEMatrix(matrixY.Rows,matrixY.Columns);
@@ -1145,6 +1330,22 @@ namespace Altaxo.Worksheet.Commands.Analysis
       int _numberOfX;
       int _numberOfY;
 
+
+      public static bool IsPLSCalibrationModel(Altaxo.Data.DataTable table)
+      {
+        if(null==table.DataColumns[_XOfX_ColumnName]) return false;
+        if(null==table.DataColumns[_XMean_ColumnName]) return false;
+        if(null==table.DataColumns[_XScale_ColumnName]) return false;
+        if(null==table.DataColumns[_YMean_ColumnName]) return false;
+        if(null==table.DataColumns[_YScale_ColumnName]) return false;
+
+        if(null==table.DataColumns[GetXLoad_ColumnName(0)]) return false;
+        if(null==table.DataColumns[GetXWeight_ColumnName(0)]) return false;
+        if(null==table.DataColumns[GetYLoad_ColumnName(0)]) return false;
+        if(null==table.DataColumns[_CrossProduct_ColumnName]) return false;
+
+        return true;
+      }
 
       public PLSCalibrationModelExporter(Altaxo.Data.DataTable table, int numberOfFactors)
       {
@@ -1442,7 +1643,18 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region PLS Retrieving original data
 
-    
+    public static string[] GetAvailablePLSCalibrationTables()
+    {
+      System.Collections.ArrayList result=new System.Collections.ArrayList();
+      foreach(Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
+      {
+        if(PLSCalibrationModelExporter.IsPLSCalibrationModel(table))
+          result.Add(table.Name);
+      }
+
+      return (string[])result.ToArray(typeof(string));
+    }
+
 
     /// <summary>
     /// Using the information in the plsMemo, gets the matrix of original spectra. The spectra are horizontal in the matrix, i.e. each spectra is a matrix row.
@@ -1466,8 +1678,28 @@ namespace Altaxo.Worksheet.Commands.Analysis
         new Altaxo.Calc.MatrixMath.BEMatrix(measurementIndices.Count,spectralIndices.Count);
       
  
+      return GetSpectra(srctable,plsMemo.SpectrumIsRow,spectralIndices,measurementIndices);
+    }
 
-      if(plsMemo.SpectrumIsRow)
+
+    /// <summary>
+    /// Fills a matrix with the selected data of a table.
+    /// </summary>
+    /// <param name="srctable">The source table where the data for the spectra are located.</param>
+    /// <param name="spectrumIsRow">True if the spectra in the table are organized horizontally, false if spectra are vertically oriented.</param>
+    /// <param name="spectralIndices">The selected indices wich indicate all (wavelength, frequencies, etc.) that belong to one spectrum. If spectrumIsRow==true, this are the selected column indices, otherwise the selected row indices.</param>
+    /// <param name="measurementIndices">The indices of all measurements (spectra) selected.</param>
+    /// <returns>The matrix of spectra. In this matrix the spectra are horizonally organized (each row is one spectrum).</returns>
+    public static Altaxo.Calc.IMatrix GetSpectra(Altaxo.Data.DataTable srctable, bool spectrumIsRow, Altaxo.Collections.IAscendingIntegerCollection spectralIndices, Altaxo.Collections.IAscendingIntegerCollection measurementIndices)
+    {
+      if(srctable==null)
+        throw new ArgumentException("Argument srctable may not be null");
+      
+      Altaxo.Calc.MatrixMath.BEMatrix matrixX = 
+        new Altaxo.Calc.MatrixMath.BEMatrix(measurementIndices.Count,spectralIndices.Count);
+      
+
+      if(spectrumIsRow)
       {
         for(int i=0;i<spectralIndices.Count;i++)
         {
@@ -1497,6 +1729,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       return matrixX;
     }
+
 
     /// <summary>
     /// Using the information in the plsMemo, gets the matrix of original Y (concentration) data.
@@ -1555,6 +1788,26 @@ namespace Altaxo.Worksheet.Commands.Analysis
       CalculatePredictedAndResidual(table,whichY,numberOfFactors,false,false,true);
     }
 
+
+    public static void CalculatePredictedY(PLS2CalibrationModel calib, Altaxo.Calc.IMatrix matrixX, int numberOfFactors, Altaxo.Calc.MatrixMath.BEMatrix  predictedY)
+    {
+      Altaxo.Calc.MatrixMath.SubtractRow(matrixX,calib.XMean,0,matrixX);
+      Altaxo.Calc.MatrixMath.DivideRow(matrixX,calib.XScale,0,0,matrixX);
+
+      Altaxo.Calc.MatrixMath.PartialLeastSquares_Predict_HO(
+        matrixX,
+        calib.XLoads,
+        calib.YLoads,
+        calib.XWeights,
+        calib.CrossProduct,
+        numberOfFactors,
+        predictedY);
+
+      // mean and scale prediced Y
+      Altaxo.Calc.MatrixMath.MultiplyRow(predictedY,calib.YScale,0,predictedY);
+      Altaxo.Calc.MatrixMath.AddRow(predictedY,calib.YMean,0,predictedY);
+    }  
+
     public static void CalculatePredictedAndResidual(Altaxo.Data.DataTable table, int whichY, int numberOfFactors, bool saveYPredicted, bool saveYResidual, bool saveXResidual)
     {
       PLSContentMemento plsMemo = table.GetTableProperty("Content") as PLSContentMemento;
@@ -1568,25 +1821,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
 
       Altaxo.Calc.IMatrix matrixX = GetOriginalSpectra(plsMemo);
-      Altaxo.Calc.MatrixMath.SubtractRow(matrixX,calib.XMean,0,matrixX);
-      Altaxo.Calc.MatrixMath.DivideRow(matrixX,calib.XScale,0,0,matrixX);
-
-      Altaxo.Calc.IMatrix matrixY = GetOriginalY(plsMemo);
-
 
       Altaxo.Calc.MatrixMath.BEMatrix predictedY = new Altaxo.Calc.MatrixMath.BEMatrix(matrixX.Rows,calib.NumberOfY);
-      Altaxo.Calc.MatrixMath.PartialLeastSquares_Predict_HO(
-        matrixX,
-        calib.XLoads,
-        calib.YLoads,
-        calib.XWeights,
-        calib.CrossProduct,
-        numberOfFactors,
-        predictedY);
-
-      // mean and scale prediced Y
-      Altaxo.Calc.MatrixMath.MultiplyRow(predictedY,calib.YScale,0,predictedY);
-      Altaxo.Calc.MatrixMath.AddRow(predictedY,calib.YMean,0,predictedY);
+      CalculatePredictedY(calib,matrixX,numberOfFactors,predictedY);
 
       if(saveYPredicted)
       {
@@ -1601,6 +1838,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
 
       // subract the original y data
+      Altaxo.Calc.IMatrix matrixY = GetOriginalY(plsMemo);
       Altaxo.Calc.MatrixMath.SubtractColumn(predictedY,matrixY,whichY,predictedY);
 
       if(saveYResidual)
@@ -1640,7 +1878,62 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region PLS Plot Commands
 
- 
+    /// <summary>
+    /// Asks the user for the maximum number of factors and the cross validation calculation.
+    /// </summary>
+    /// <param name="options">The PLS options to ask for. On return, this is the user's choice.</param>
+    /// <returns>True if the user has made his choice, false if the user pressed the Cancel button.</returns>
+    public static bool QuestPLSAnalysisOptions(out PLSAnalysisOptions options)
+    {
+      options = new PLSAnalysisOptions();
+      options.MaxNumberOfFactors =20;
+      options.CrossPRESSCalculation = CrossPRESSCalculation.ExcludeGroupsOfSimilarMeasurements;
+
+      Altaxo.Worksheet.GUI.PLSStartAnalysisController ctrl = new Altaxo.Worksheet.GUI.PLSStartAnalysisController(options);
+      Altaxo.Worksheet.GUI.PLSStartAnalysisControl viewctrl = new PLSStartAnalysisControl();
+      ctrl.View = viewctrl;
+
+      Altaxo.Main.GUI.DialogShellController dlgctrl = new Altaxo.Main.GUI.DialogShellController(
+        new Altaxo.Main.GUI.DialogShellView(viewctrl),ctrl);
+
+      if(dlgctrl.ShowDialog(Current.MainWindow))
+      {
+        options = ctrl.Doc;
+        return true;
+      }
+      return false;
+    }
+
+
+    /// <summary>
+    /// Ask the user (before a prediction is made) for the name of the calibration model table and the destination table.
+    /// </summary>
+    /// <param name="modelTableName">On return, contains the name of the table containing the calibration model.</param>
+    /// <param name="destinationTableName">On return, contains the name of the destination table, or null if a new table should be used as destination.</param>
+    /// <returns>True if OK, false if the users pressed Cancel.</returns>
+    public static bool QuestCalibrationModelAndDestinationTable(out string modelTableName, out string destinationTableName)
+    {
+      Altaxo.Worksheet.GUI.PLSPredictValueController ctrl = new Altaxo.Worksheet.GUI.PLSPredictValueController();
+      Altaxo.Worksheet.GUI.PLSPredictValueControl viewctrl = new PLSPredictValueControl();
+      ctrl.View = viewctrl;
+
+      Altaxo.Main.GUI.DialogShellController dlgctrl = new Altaxo.Main.GUI.DialogShellController(
+        new Altaxo.Main.GUI.DialogShellView(viewctrl),ctrl);
+
+      if(dlgctrl.ShowDialog(Current.MainWindow))
+      {
+        modelTableName = ctrl.SelectedCalibrationTableName;
+        destinationTableName = ctrl.SelectedDestinationTableName;
+        return true;
+      }
+      else
+      {
+        modelTableName = null;
+        destinationTableName = null;
+        return false;
+      }
+    }
+
 
     /// <summary>
     /// This plots a label plot into the provided layer.
@@ -1878,6 +2171,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
     #endregion
-	
+  
   }
 }

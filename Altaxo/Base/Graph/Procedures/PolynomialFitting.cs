@@ -192,7 +192,7 @@ namespace Altaxo.Graph.Procedures
       Current.Console.WriteLine("Polynomial regression of order {0} of {1} over {2}",order,plotNames[1],plotNames[0]);
 
       Current.Console.WriteLine(
-"Name           Value               Error               F-Value             Prob>F");
+        "Name           Value               Error               F-Value             Prob>F");
 
       for(int i=0;i<fit.Parameter.Length;i++)
         Current.Console.WriteLine("A{0,-3} {1,20} {2,20} {3,20} {4,20}",
@@ -204,8 +204,8 @@ namespace Altaxo.Graph.Procedures
           );
 
       Current.Console.WriteLine("R²: {0}, Adjusted R²: {1}",
-      fit.RSquared,
-      fit.AdjustedRSquared);
+        fit.RSquared,
+        fit.AdjustedRSquared);
 
       Current.Console.WriteLine("------------------------------------------------------------");
       Current.Console.WriteLine("Source of  Degrees of");
@@ -215,12 +215,12 @@ namespace Altaxo.Graph.Procedures
       double residualmeansquare = fit.ResidualSumOfSquares/(numberOfDataPoints-numberOfParameter-1);
      
       Current.Console.WriteLine("Regression {0,10} {1,20} {2,20} {3,20} {4,20}",
-         numberOfParameter,
+        numberOfParameter,
         fit.RegressionCorrectedSumOfSquares,
         fit.RegressionCorrectedSumOfSquares/numberOfParameter,
         regressionmeansquare/residualmeansquare,
         1-Calc.Random.FDistribution.CDF(regressionmeansquare/residualmeansquare,numberOfParameter,numberOfDataPoints-1)
-      );
+        );
 
       Current.Console.WriteLine("Residual   {0,10} {1,20} {2,20}",
         numberOfDataPoints-1-numberOfParameter,
