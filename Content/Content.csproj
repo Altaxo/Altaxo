@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Exe"
                 PreBuildEvent = ""
-                PostBuildEvent = "if not exist ..\..\..\rt$(ConfigurationName)\bin mkdir  ..\..\..\rt$(ConfigurationName)\bin&#xd;&#xa;xcopy ..\..\AddIns\*.* ..\..\..\rt$(ConfigurationName)\AddIns /E /I /Y&#xd;&#xa;xcopy ..\..\data\*.* ..\..\..\rt$(ConfigurationName)\data /E /I /Y&#xd;&#xa;xcopy ..\..\doc\*.* ..\..\..\rt$(ConfigurationName)\doc /E /I /Y&#xd;&#xa;"
+                PostBuildEvent = "if not exist ..\..\..\rt$(ConfigurationName)\bin mkdir  ..\..\..\rt$(ConfigurationName)\bin&#xd;&#xa;xcopy ..\..\AddIns\*.* ..\..\..\rt$(ConfigurationName)\AddIns /E /I /Y&#xd;&#xa;xcopy ..\..\data\*.* ..\..\..\rt$(ConfigurationName)\data /E /I /Y&#xd;&#xa;xcopy ..\..\doc\*.* ..\..\..\rt$(ConfigurationName)\doc /E /I /Y&#xd;&#xa;rem Dont forget to copy the &#xd;&#xa;copy ..\..\..\Libraries\bin\Interop.SHDocVw.dll ..\..\..\rt$(ConfigurationName)\bin&#xd;&#xa;"
                 RootNamespace = ""
                 RunPostBuildEvent = "OnOutputUpdated"
                 StartupObject = ""
