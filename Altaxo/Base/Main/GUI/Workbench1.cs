@@ -32,6 +32,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 	public class Workbench1 : DefaultWorkbench
 	{
 		readonly static string mainMenuPath    = "/SharpDevelop/Workbench/MainMenu";
+		readonly static string viewContentPath = "/SharpDevelop/Workbench/Views";
 
 		#region "Serialization"
 	
@@ -134,6 +135,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 #endif
 				CommandBar[] toolBars = toolBarService.CreateToolbars();
 				ToolBars = toolBars;
+			}
+		}
+
+		public new void UpdateViews(object sender, EventArgs e)
+		{
+			IPadContent[] contents = (IPadContent[])(AddInTreeSingleton.AddInTree.GetTreeNode(viewContentPath).BuildChildItems(this)).ToArray(typeof(IPadContent));
+			foreach (IPadContent content in contents) 
+			{
+				ShowPad(content);
 			}
 		}
 

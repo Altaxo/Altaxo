@@ -1646,6 +1646,25 @@ namespace Altaxo.Graph.GUI
 
 		#endregion
 
+		#region IMVCController
+		/// <summary>
+		/// Returns the view that shows the model.
+		/// </summary>
+		public object ViewObject
+		{
+			get { return View; }
+			set { View = value as IGraphView; }
+		}
+		/// <summary>
+		/// Returns the model (document) that this controller controls
+		/// </summary>
+		public object ModelObject 
+		{
+			get { return this.Doc; }
+		}
+
+		#endregion
+
 		#region ICSharpCode.SharpDevelop.Gui
 
 		public void Dispose()

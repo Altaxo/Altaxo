@@ -274,6 +274,10 @@ namespace Altaxo.Graph.GUI
 			get { return View; }
 			set { View = value as ITitleFormatLayerView; }
 		}
+		public object ModelObject
+		{
+			get { return this.m_Layer; }
+		}
 
 		public void EhView_ShowAxisChanged(bool bShow)
 		{

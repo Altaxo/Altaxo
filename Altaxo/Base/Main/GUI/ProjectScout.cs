@@ -36,7 +36,7 @@ namespace Altaxo.Main.GUI
 		{
 			get 
 			{
-				return resourceService.GetString("MainWindow.Windows.ProjectScoutLabel");
+				return resourceService.GetString("MainWindow.Windows.AltaxoProjectScoutLabel");
 			}
 		}
 		
@@ -155,6 +155,8 @@ namespace Altaxo.Main.GUI
 	public class ProjectTree : TreeView
 	{
 		protected TreeNode tablesNode;
+		protected TreeNode graphsNode;
+
 
 		public string NodePath 
 		{
@@ -187,7 +189,7 @@ namespace Altaxo.Main.GUI
 			tablesNode.SelectedImageIndex = 7;
 			tablesNode.Tag = "Tables";
 			
-			TreeNode graphsNode = rootNode.Nodes.Add("Graphs");
+			graphsNode = rootNode.Nodes.Add("Graphs");
 			graphsNode.ImageIndex = 8;
 			graphsNode.SelectedImageIndex = 8;
 			graphsNode.Tag = "Graphs";
@@ -215,6 +217,7 @@ namespace Altaxo.Main.GUI
 			viewNodes.Expand();
 
 			Current.Project.DataTableCollection.CollectionChanged += new EventHandler(DataTableCollection_Changed);
+			Current.Project.GraphDocumentCollection.CollectionChanged += new EventHandler(GraphDocumentCollection_Changed);
 			
 			InitializeComponent();
 		}
@@ -382,6 +385,18 @@ namespace Altaxo.Main.GUI
 
 		}
 
+		private void GraphDocumentCollection_Changed(object sender, EventArgs e)
+		{
+			this.graphsNode.Nodes.Clear();
+			foreach(Altaxo.Graph.GraphDocument item in Current.Project.GraphDocumentCollection)
+			{
+				TreeNode node = graphsNode.Nodes.Add(item.Name);
+				node.Tag = item.Name;
+			}
+
+		}
+
+
 		TreeNode nodeClickedNow;
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
@@ -404,13 +419,27 @@ namespace Altaxo.Main.GUI
 			if(nodeClickedNow != null)
 			{
 				string tag = (string)nodeClickedNow.Tag;
+				
+				// table nodes
 				if(	nodeClickedNow.Parent!=null
 						&& ((string)nodeClickedNow.Parent.Tag)=="Tables"
 					&& Current.Project.DataTableCollection.ContainsTable(tag))
 				{
-					
-					Current.ProjectService.CreateNewWorksheet(Current.Project.DataTableCollection[tag]);
+					// tag is the name of the table clicked, so look for a view that has the table or
+					// create a new one
+					Current.ProjectService.OpenOrCreateWorksheetForTable(Current.Project.DataTableCollection[tag]);
 				}
+
+				// graph nodes
+				if(	nodeClickedNow.Parent!=null
+					&& ((string)nodeClickedNow.Parent.Tag)=="Graphs"
+					&& Current.Project.GraphDocumentCollection.Contains(tag))
+				{
+					// tag is the name of the table clicked, so look for a view that has the table or
+					// create a new one
+					Current.ProjectService.OpenOrCreateViewForGraph(Current.Project.GraphDocumentCollection[tag]);
+				}
+
 			}
 		}
 

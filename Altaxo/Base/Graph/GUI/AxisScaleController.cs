@@ -89,6 +89,11 @@ namespace Altaxo.Graph.GUI
 			set { View = value as IAxisScaleView; }
 		}
 
+		public object ModelObject
+		{
+			get { return this.m_Axis; }
+		}
+
 		public void SetElements()
 		{
 			SetAxisOrg(true);

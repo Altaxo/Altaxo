@@ -583,6 +583,11 @@ namespace Altaxo.Graph.GUI
 			}
 		}
 
+		public object ModelObject
+		{
+			get { return this.m_Layer; }
+		}
+
 		#endregion
 
 		#region Item class

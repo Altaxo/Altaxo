@@ -226,6 +226,11 @@ namespace Altaxo.Graph.GUI
 			}
 		}
 
+		public object ModelObject
+		{
+			get { return this.m_PlotAssociation; }
+		}
+
 		#endregion
 	}
 }

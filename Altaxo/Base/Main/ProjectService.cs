@@ -440,6 +440,31 @@ namespace Altaxo.Main
 
 
 		/// <summary>
+		/// Returns all currently open views that show the given document object <code>document</code>.
+		/// The IViewContent must implement <see>Altaxo.Main.GUI.IMVCController</see> in order to be found by this routine.
+		/// </summary>
+		/// <param name="document">The document for which views must be found.</param>
+		/// <returns>An array containing all views that show the document table. If no view is found, an empty array is returned.</returns>
+		public IViewContent[] SearchContentForDocument(object document)
+		{
+			System.Collections.ArrayList contentList = new System.Collections.ArrayList();
+			// first step : look in all views
+
+			foreach(IViewContent content in Current.Workbench.ViewContentCollection)
+			{
+				if(content is Altaxo.Main.GUI.IMVCController)
+				{
+					if(object.ReferenceEquals(((Altaxo.Main.GUI.IMVCController)content).ModelObject,document))
+						contentList.Add(content);
+				}
+			}
+
+			return (IViewContent[])contentList.ToArray(typeof(IViewContent));
+		}
+
+
+
+		/// <summary>
 		/// Creates a table and the view content for that table.
 		/// </summary>
 		/// <param name="worksheetName">The name of the table to create.</param>
@@ -497,7 +522,28 @@ namespace Altaxo.Main
 			return ctrl;
 		}
 
+		/// <summary>
+		/// Opens a view that shows the table <code>table</code>. If no view for the table can be found,
+		/// a new default view is created for the table.
+		/// </summary>
+		/// <param name="table">The table for which a view must be found.</param>
+		/// <returns>The view content for the provided table.</returns>
+		public IViewContent OpenOrCreateWorksheetForTable(Altaxo.Data.DataTable table)
+		{
 	
+			// if a content exist that show that table, activate that content
+			IViewContent[] foundContent = SearchContentForDocument(table);
+			if(foundContent.Length>0)
+			{
+				foundContent[0].WorkbenchWindow.SelectWindow();
+				return foundContent[0];
+			}
+	
+
+			// otherwise create a new Worksheet
+			return CreateNewWorksheet(table);
+		}
+
 
 		/// <summary>
 		/// Creates a new graph document and the view content..
@@ -539,6 +585,27 @@ namespace Altaxo.Main
 			return ctrl;
 		}
 
+		/// <summary>
+		/// Opens a view that shows the graph <code>graph</code>. If no view for the graph can be found,
+		/// a new default view is created.
+		/// </summary>
+		/// <param name="graph">The graph for which a view must be found.</param>
+		/// <returns>The view content for the provided graph.</returns>
+		public IViewContent OpenOrCreateViewForGraph(Altaxo.Graph.GraphDocument graph)
+		{
+	
+			// if a content exist that show that graph, activate that content
+			IViewContent[] foundContent = SearchContentForDocument(graph);
+			if(foundContent.Length>0)
+			{
+				foundContent[0].WorkbenchWindow.SelectWindow();
+				return foundContent[0];
+			}
+	
+
+			// otherwise create a new graph view
+			return CreateNewGraph(graph);
+		}
 
 	
 

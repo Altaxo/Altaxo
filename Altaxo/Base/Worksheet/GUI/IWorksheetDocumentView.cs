@@ -119,7 +119,9 @@ namespace Altaxo.Worksheet.GUI
 	/// <summary>
 	/// Interface for all classes that can control a IWorksheetView to show data from a DataTable. 
 	/// </summary>
-	public interface IWorksheetController : Altaxo.Main.GUI.IWorkbenchContentController
+	public interface IWorksheetController : 
+		Altaxo.Main.GUI.IMVCController,
+		Altaxo.Main.GUI.IWorkbenchContentController
 	
 	{
 		/// <summary>

@@ -137,6 +137,11 @@ namespace Altaxo.Main.GUI
 			}
 		}
 
+		public object ModelObject
+		{
+			get { return this.m_IntegerValue; }
+		}
+
 		#endregion
 
 		#region IIntegerAndComboBoxController Members

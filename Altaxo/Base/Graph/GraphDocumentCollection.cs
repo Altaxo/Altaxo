@@ -12,10 +12,121 @@ namespace Altaxo.Graph
 		Altaxo.Main.IChildChangedEventSink,
 		Altaxo.Main.INamedObjectCollection
 	{
+		#region ChangedEventArgs
+		/// <summary>
+		/// Holds information about what has changed in the table.
+		/// </summary>
+		protected class ChangedEventArgs : System.EventArgs
+		{
+			/// <summary>
+			/// If true, one or more tables where added.
+			/// </summary>
+			public bool ItemAdded;
+			/// <summary>
+			/// If true, one or more table where removed.
+			/// </summary>
+			public bool ItemRemoved;
+			/// <summary>
+			/// If true, one or more tables where renamed.
+			/// </summary>
+			public bool ItemRenamed;
+
+			/// <summary>
+			/// Empty constructor.
+			/// </summary>
+			public ChangedEventArgs()
+			{
+			}
+
+			/// <summary>
+			/// Returns an empty instance.
+			/// </summary>
+			public static new ChangedEventArgs Empty
+			{
+				get { return new ChangedEventArgs(); }
+			}
+
+			/// <summary>
+			/// Returns an instance with TableAdded set to true;.
+			/// </summary>
+			public static ChangedEventArgs IfItemAdded
+			{
+				get
+				{ 
+					ChangedEventArgs e =  new ChangedEventArgs();
+					e.ItemAdded=true;
+					return e;
+				}
+			}
+			/// <summary>
+			/// Returns an instance with TableRemoved set to true.
+			/// </summary>
+			public static ChangedEventArgs IfItemRemoved
+			{
+				get
+				{ 
+					ChangedEventArgs e =  new ChangedEventArgs();
+					e.ItemRemoved=true;
+					return e;
+				}
+			}
+			/// <summary>
+			/// Returns an  instance with TableRenamed set to true.
+			/// </summary>
+			public static ChangedEventArgs IfItemRenamed
+			{
+				get
+				{ 
+					ChangedEventArgs e =  new ChangedEventArgs();
+					e.ItemRenamed=true;
+					return e;
+				}
+			}
+
+			
+			/// <summary>
+			/// Merges information from another instance in this ChangedEventArg.
+			/// </summary>
+			/// <param name="from"></param>
+			public void Merge(ChangedEventArgs from)
+			{
+				this.ItemAdded |= from.ItemAdded;
+				this.ItemRemoved |= from.ItemRemoved;
+				this.ItemRenamed |= from.ItemRenamed;
+			}
+
+			/// <summary>
+			/// Returns true when the collection has changed (addition, removal or renaming of tables).
+			/// </summary>
+			public bool CollectionChanged
+			{
+				get { return ItemAdded | ItemRemoved | ItemRenamed; }
+			}
+		}
+
+		#endregion
+
 		// Data
-		protected System.Collections.Hashtable m_GraphsByName = new System.Collections.Hashtable();
+		protected System.Collections.SortedList m_GraphsByName = new System.Collections.SortedList();
 		protected object m_Parent=null;
 		protected bool bIsDirty=false;
+
+		[NonSerialized()]
+		protected ChangedEventArgs m_ChangeData=null;
+
+		// Events
+
+		/// <summary>
+		/// Fired when one or more graphs are added, deleted or renamed. Not fired when content in the graph has changed.
+		/// </summary>
+		public event System.EventHandler CollectionChanged;
+
+		#region IChangedEventSource Members
+
+		public event System.EventHandler Changed;
+
+		#endregion
+
 
 		public GraphDocumentCollection(AltaxoDocument parent)
 		{
@@ -51,7 +162,7 @@ namespace Altaxo.Graph
 			{
 				Altaxo.Graph.GraphDocumentCollection s = (Altaxo.Graph.GraphDocumentCollection)obj;
 				// s.parent = (AltaxoDocument)(info.GetValue("Parent",typeof(AltaxoDocument)));
-				s.m_GraphsByName = (System.Collections.Hashtable)(info.GetValue("Graphs",typeof(System.Collections.Hashtable)));
+				s.m_GraphsByName = (System.Collections.SortedList)(info.GetValue("Graphs",typeof(System.Collections.SortedList)));
 			
 				return s;
 			}
@@ -138,7 +249,7 @@ namespace Altaxo.Graph
 			m_GraphsByName.Add(theGraph.Name,theGraph);
 			theGraph.ParentObject = this; 
 			theGraph.NameChanged += new NameChangedEventHandler(this.EhChild_NameChanged);
-			this.OnSelfChanged();
+			this.OnSelfChanged(ChangedEventArgs.IfItemAdded);
 		}
 
 		public void Remove(Altaxo.Graph.GraphDocument theGraph)
@@ -151,7 +262,7 @@ namespace Altaxo.Graph
 					m_GraphsByName.Remove(theGraph.Name);
 					theGraph.ParentObject = null;
 					theGraph.NameChanged -= new NameChangedEventHandler(this.EhChild_NameChanged);
-					this.OnSelfChanged();
+					this.OnSelfChanged(ChangedEventArgs.IfItemRemoved);
 				}
 			}
 		}
@@ -166,7 +277,7 @@ namespace Altaxo.Graph
 					throw new ApplicationException(string.Format("The GraphDocumentCollection contains already a Graph named {0}, renaming the old graph {1} fails.",e.NewName,e.OldName));
 				m_GraphsByName.Remove(e.OldName);
 				m_GraphsByName[e.NewName] = graph;
-				this.OnChanged();
+				this.OnSelfChanged(ChangedEventArgs.IfItemRenamed);
 			}
 		}
 		/// <summary>
@@ -209,8 +320,9 @@ namespace Altaxo.Graph
 
 		#region Change event handling
 
-		protected System.EventArgs m_ChangeData=null;
+		[NonSerialized()]
 		protected bool             m_ResumeInProgress=false;
+		[NonSerialized()]
 		protected System.Collections.ArrayList m_SuspendedChildCollection=new System.Collections.ArrayList();
 
 		
@@ -270,8 +382,11 @@ namespace Altaxo.Graph
 
 		void AccumulateChildChangeData(object sender, EventArgs e)
 		{
-			if(sender!=null && m_ChangeData==null)
-				this.m_ChangeData=new EventArgs();
+			if(m_ChangeData==null)
+				this.m_ChangeData=ChangedEventArgs.Empty;
+
+			if(e is ChangedEventArgs)
+				m_ChangeData.Merge((ChangedEventArgs)e);
 		}		
 
 		protected bool HandleImmediateChildChangeCases(object sender, EventArgs e)
@@ -280,9 +395,9 @@ namespace Altaxo.Graph
 		}
 
 
-		protected virtual void OnSelfChanged()
+		protected virtual void OnSelfChanged(EventArgs e)
 		{
-			OnChildChanged(null,EventArgs.Empty);
+			OnChildChanged(null,e);
 		}
 
 
@@ -318,6 +433,9 @@ namespace Altaxo.Graph
 				}
 			}
 			
+			if(m_ChangeData.CollectionChanged)
+				OnCollectionChanged();
+
 			OnChanged(); // Fire the changed event
 		}
 
@@ -329,14 +447,16 @@ namespace Altaxo.Graph
 			m_ChangeData=null;
 		}
 
-		#endregion
-
-
-
-		#region IChangedEventSource Members
-
-		public event System.EventHandler Changed;
+		protected virtual void OnCollectionChanged()
+		{
+			if(this.CollectionChanged!=null)
+				CollectionChanged(this,m_ChangeData);
+		}
 
 		#endregion
+
+
+
+	
 	}
 }

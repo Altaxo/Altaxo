@@ -107,11 +107,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "HelpSetup.resx"
-                    DependentUpon = "HelpSetup.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "HhcFileParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -65,6 +65,7 @@ namespace Altaxo.Data
 		[NonSerialized()]
 		private bool m_DeserializationFinished=false;
 
+		#region ChangedEventArgs
 
 		/// <summary>
 		/// Holds information about what has changed in the table.
@@ -119,7 +120,7 @@ namespace Altaxo.Data
 				get
 				{ 
 					ChangedEventArgs e =  new ChangedEventArgs();
-					e.TableAdded=true;
+					e.TableRemoved=true;
 					return e;
 				}
 			}
@@ -131,7 +132,7 @@ namespace Altaxo.Data
 				get
 				{ 
 					ChangedEventArgs e =  new ChangedEventArgs();
-					e.TableAdded=true;
+					e.TableRenamed=true;
 					return e;
 				}
 			}
@@ -157,6 +158,7 @@ namespace Altaxo.Data
 			}
 		}
 
+		#endregion
 
 		public DataTableCollection(AltaxoDocument _parent)
 		{

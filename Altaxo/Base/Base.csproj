@@ -779,6 +779,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\GUI\ProjectScout.resx"
+                    DependentUpon = "ProjectScout.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Main\GUI\RenameColumnDialog.cs"
                     SubType = "Form"
                     BuildAction = "Compile"

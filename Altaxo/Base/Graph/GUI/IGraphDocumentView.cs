@@ -174,7 +174,7 @@ namespace Altaxo.Graph.GUI
 /// <summary>
 /// This interface has to be implemented by any controller that wants to control a GraphView
 /// </summary>
-	public interface IGraphController : Main.GUI.IWorkbenchContentController
+	public interface IGraphController : Main.GUI.IWorkbenchContentController, Main.GUI.IMVCController
 	{
 
 		/// <summary>
