@@ -2056,8 +2056,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Get a unique column name based on regular naming from A to ZZ.
     /// </summary>
-    /// <param name="_sbase">The base name.</param>
-    /// <returns>An unique column name based on the provided string.</returns>
+    /// <returns>An unique column name based on regular naming.</returns>
     protected string FindUniqueColumnNameWithoutBase()
     {
       string tryName;

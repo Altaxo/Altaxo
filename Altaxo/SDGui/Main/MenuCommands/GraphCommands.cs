@@ -72,7 +72,10 @@ namespace Altaxo.Graph.Commands
     {
       try
       {
-        Current.PrintingService.PageSetupDialog.ShowDialog(ctrl.View.Form);
+        if(System.Windows.Forms.DialogResult.OK==Current.PrintingService.PageSetupDialog.ShowDialog(ctrl.View.Form))
+        {
+          ctrl.SetGraphPageBoundsToPrinterSettings();
+        }
       }
       catch(Exception exc)
       {

@@ -239,6 +239,21 @@ namespace Altaxo.Graph
         m_Parent = value;
       }
     }
+
+    /// <summary>
+    /// Event fired if either the PageBounds or the PrintableBounds changed
+    /// </summary>
+    public event EventHandler BoundsChanged;
+
+    /// <summary>
+    /// Fires the <see>BoundsChanged</see> event.
+    /// </summary>
+    protected void OnBoundsChanged()
+    {
+      if(BoundsChanged!=null)
+        BoundsChanged(this,EventArgs.Empty);
+    }
+
     /// <summary>
     /// The boundaries of the page in points (1/72 inch).
     /// </summary>
@@ -248,7 +263,13 @@ namespace Altaxo.Graph
     public RectangleF PageBounds
     {
       get { return m_PageBounds; }
-      set { m_PageBounds=value; }
+      set 
+      {
+        RectangleF oldValue = m_PageBounds;
+        m_PageBounds=value;
+        if(value!=oldValue)
+          OnBoundsChanged();
+      }
     }
 
     /// <summary>
@@ -265,6 +286,7 @@ namespace Altaxo.Graph
         if(m_PrintableBounds!=oldBounds)
         {
           Layers.SetPrintableGraphBounds( value, true);
+          OnBoundsChanged();
         }
       }
     }
@@ -425,7 +447,6 @@ namespace Altaxo.Graph
 
     
     #endregion
-
 
     #region Change event handling
 

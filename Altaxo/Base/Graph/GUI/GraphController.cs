@@ -307,42 +307,7 @@ namespace Altaxo.Graph.GUI
 
       this.InitializeMenu();
   
-      if(null!=Current.PrintingService) // if we are at design time, this is null and we use the default values above
-      {
-        System.Drawing.Printing.PrintDocument doc = Current.PrintingService.PrintDocument;
-      
-        // Test whether or not a printer is installed
-        System.Drawing.Printing.PrinterSettings prnset = new System.Drawing.Printing.PrinterSettings();
-        RectangleF pageBounds;
-        System.Drawing.Printing.Margins ma;
-        if(prnset.IsValid)
-        {
-          pageBounds = doc.DefaultPageSettings.Bounds;
-          ma = doc.DefaultPageSettings.Margins;
-        }
-        else // obviously no printer installed, use A4 size (sorry, this is european size)
-        {
-          pageBounds = new RectangleF(0,0,1169,826);
-          ma = new System.Drawing.Printing.Margins(50,50,50,50);
-        }
-        // since Bounds are in 100th inch, we have to adjust them to points (72th inch)
-        pageBounds.X *= UnitPerInch/100;
-        pageBounds.Y *= UnitPerInch/100;
-        pageBounds.Width *= UnitPerInch/100;
-        pageBounds.Height *= UnitPerInch/100;
-
-        RectangleF printableBounds = new RectangleF();
-        printableBounds.X     = ma.Left * UnitPerInch/100;
-        printableBounds.Y     = ma.Top * UnitPerInch/100;
-        printableBounds.Width = pageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
-        printableBounds.Height = pageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
-      
-        if(null!=Doc)
-        {
-          Doc.PageBounds = pageBounds;
-          Doc.PrintableBounds = printableBounds;
-        }
-      }
+      SetGraphPageBoundsToPrinterSettings();
 
       if(null!=Doc && 0==Doc.Layers.Count)
         Doc.CreateNewLayerNormalBottomXLeftY();
@@ -810,11 +775,13 @@ namespace Altaxo.Graph.GUI
           {
             oldDoc.Changed -= new EventHandler(this.EhGraph_Changed);
             oldDoc.Layers.LayerCollectionChanged -= new EventHandler(this.EhGraph_LayerCollectionChanged);
+            m_Graph.BoundsChanged -= new EventHandler(this.EhGraph_BoundsChanged);
           }
           if(m_Graph!=null)
           {
             m_Graph.Changed += new EventHandler(this.EhGraph_Changed);
             m_Graph.Layers.LayerCollectionChanged += new EventHandler(this.EhGraph_LayerCollectionChanged);
+            m_Graph.BoundsChanged += new EventHandler(this.EhGraph_BoundsChanged);
 
             // Ensure the current layer and plot numbers are valid
             this.EnsureValidityOfCurrentLayerNumber();
@@ -1097,6 +1064,21 @@ namespace Altaxo.Graph.GUI
         View.InvalidateGraph();
     }
 
+    /// <summary>
+    /// Handler of the event LayerCollectionChanged of the graph document. Forces to
+    /// check the LayerButtonBar to keep track that the number of buttons match the number of layers.</summary>
+    /// <param name="sender">The sender of the event (the GraphDocument).</param>
+    /// <param name="e">The event arguments.</param>
+    protected void EhGraph_BoundsChanged(object sender, System.EventArgs e)
+    {
+      if(View!=null)
+      {
+        if(this.AutoZoom)
+          this.RefreshAutoZoom();
+        View.InvalidateGraph();
+      }    
+    }
+
     #endregion // GraphDocument event handlers
 
     #region Other event handlers
@@ -1142,6 +1124,49 @@ namespace Altaxo.Graph.GUI
 
     #region Methods
 
+
+    /// <summary>
+    /// Sets the page bounds of the graph document according to the current printer settings
+    /// </summary>
+    public void SetGraphPageBoundsToPrinterSettings()
+    {
+      if(null!=Current.PrintingService) // if we are at design time, this is null and we use the default values above
+      {
+        System.Drawing.Printing.PrintDocument doc = Current.PrintingService.PrintDocument;
+      
+        // Test whether or not a printer is installed
+        System.Drawing.Printing.PrinterSettings prnset = new System.Drawing.Printing.PrinterSettings();
+        RectangleF pageBounds;
+        System.Drawing.Printing.Margins ma;
+        if(prnset.IsValid)
+        {
+          pageBounds = doc.DefaultPageSettings.Bounds;
+          ma = doc.DefaultPageSettings.Margins;
+        }
+        else // obviously no printer installed, use A4 size (sorry, this is european size)
+        {
+          pageBounds = new RectangleF(0,0,1169,826);
+          ma = new System.Drawing.Printing.Margins(50,50,50,50);
+        }
+        // since Bounds are in 100th inch, we have to adjust them to points (72th inch)
+        pageBounds.X *= UnitPerInch/100;
+        pageBounds.Y *= UnitPerInch/100;
+        pageBounds.Width *= UnitPerInch/100;
+        pageBounds.Height *= UnitPerInch/100;
+
+        RectangleF printableBounds = new RectangleF();
+        printableBounds.X     = ma.Left * UnitPerInch/100;
+        printableBounds.Y     = ma.Top * UnitPerInch/100;
+        printableBounds.Width = pageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
+        printableBounds.Height = pageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
+      
+        if(null!=Doc)
+        {
+          Doc.PageBounds = pageBounds;
+          Doc.PrintableBounds = printableBounds;
+        }
+      }
+    }
     /// <summary>
     /// Saves the graph as an enhanced windows metafile into the stream <paramref name="stream"/>.
     /// </summary>
@@ -1444,11 +1469,19 @@ namespace Altaxo.Graph.GUI
         this.m_AutoZoom = value;
         if(this.m_AutoZoom)
         {
-          this.m_Zoom = CalculateAutoZoom();
-          m_View.GraphScrollSize = new Size(0,0);
-          m_View.InvalidateGraph();
+          RefreshAutoZoom();
         }
       }
+    }
+
+    /// <summary>
+    /// Recalculates and sets the value of m_Zoom so the whole page is visible
+    /// </summary>
+    protected void RefreshAutoZoom()
+    {
+      this.m_Zoom = CalculateAutoZoom();
+      m_View.GraphScrollSize = new Size(0,0);
+      m_View.InvalidateGraph();
     }
 
     /// <summary>

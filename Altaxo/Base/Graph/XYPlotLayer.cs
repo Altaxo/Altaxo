@@ -903,6 +903,7 @@ namespace Altaxo.Graph
     }
 
   
+  
     #endregion
 
     #region XYPlotLayer properties and methods
@@ -1147,6 +1148,18 @@ namespace Altaxo.Graph
 
     #region Position and Size
 
+
+    /// <summary>
+    /// Set this layer to the default size and position.
+    /// </summary>
+    /// <param name="prtSize">The size of the printable area of the page.</param>
+    public void SizeToDefault(SizeF prtSize)
+    {
+      this.Size = new SizeF(prtSize.Width*0.76f,prtSize.Height*0.7f);
+      this.Position = new PointF(prtSize.Width*0.14f,prtSize.Height*0.14f);
+      this.CalculateMatrix();
+    }
+
     /// <summary>
     /// The boundaries of the printable area of the page in points (1/72 inch).
     /// </summary>
@@ -1166,6 +1179,14 @@ namespace Altaxo.Graph
       if(m_PrintableGraphBounds!=oldBounds)
       {
         // TODO resize the layer properly to reflect the new dimensions
+      if(this.m_LayerWidthType==SizeType.AbsoluteValue)
+        this.m_LayerWidth *= m_PrintableGraphBounds.Width/oldBounds.Width;
+
+        if(this.m_LayerHeightType == SizeType.AbsoluteValue)
+          this.m_LayerHeight *= m_PrintableGraphBounds.Height/oldBounds.Height;
+
+        CalculateMatrix();
+        this.CalculateCachedSize();
       }
     }
 
