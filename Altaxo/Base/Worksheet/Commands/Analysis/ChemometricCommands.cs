@@ -385,7 +385,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     const string _YPredicted_ColumnName = "YPredicted";
     const string _YResidual_ColumnName   = "YResidual";
     const string _SpectralResidual_ColumnName = "SpectralResidual";
-    const string _XLeverage_ColumnName        = "XLeverage";
+    const string _XLeverage_ColumnName        = "ScoreLeverage";
 
 
     const int _NumberOfFactors_ColumnGroup = 4;
@@ -455,6 +455,16 @@ namespace Altaxo.Worksheet.Commands.Analysis
       return string.Format("{0}{1}.{2}",_SpectralResidual_ColumnName, whichY, numberOfFactors);
     }
 
+
+    /// <summary>
+    /// Gets the column name of a X-Leverage column
+    /// </summary>
+    /// <param name="numberOfFactors">Number of factors for which the redidual is calculated.</param>
+    /// <returns>The name of the column.</returns>
+    public static string GetXLeverage_ColumnName(int numberOfFactors)
+    {
+      return string.Format("{0}{1}",_XLeverage_ColumnName, numberOfFactors);
+    }
  
 
 
@@ -558,10 +568,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
         measurementIndices = hlp;
       }
       
-      IMatrix matrixX = GetSpectra(ctrl.DataTable,spectrumIsRow,spectralIndices,measurementIndices);
+      IMatrix matrixX = GetRawSpectra(ctrl.DataTable,spectrumIsRow,spectralIndices,measurementIndices);
 
       MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(measurementIndices.Count,calibModel.NumberOfY);
-      CalculatePredictedY(calibModel,matrixX,numberOfFactors, predictedY);
+      CalculatePredictedY(calibModel,matrixX,numberOfFactors, predictedY,null);
 
       // now save the predicted y in the destination table
 
@@ -1449,7 +1459,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// </summary>
     /// <param name="plsMemo">The PLS memento containing the information about the location of the original data.</param>
     /// <returns>The matrix of the original spectra.</returns>
-    public static IMatrix GetOriginalSpectra(PLSContentMemento plsMemo)
+    public static IMatrix GetRawSpectra(PLSContentMemento plsMemo)
     {
       string tablename = plsMemo.TableName;
 
@@ -1466,7 +1476,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         new MatrixMath.BEMatrix(measurementIndices.Count,spectralIndices.Count);
       
  
-      return GetSpectra(srctable,plsMemo.SpectrumIsRow,spectralIndices,measurementIndices);
+      return GetRawSpectra(srctable,plsMemo.SpectrumIsRow,spectralIndices,measurementIndices);
     }
 
 
@@ -1478,7 +1488,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="spectralIndices">The selected indices wich indicate all (wavelength, frequencies, etc.) that belong to one spectrum. If spectrumIsRow==true, this are the selected column indices, otherwise the selected row indices.</param>
     /// <param name="measurementIndices">The indices of all measurements (spectra) selected.</param>
     /// <returns>The matrix of spectra. In this matrix the spectra are horizonally organized (each row is one spectrum).</returns>
-    public static IMatrix GetSpectra(Altaxo.Data.DataTable srctable, bool spectrumIsRow, Altaxo.Collections.IAscendingIntegerCollection spectralIndices, Altaxo.Collections.IAscendingIntegerCollection measurementIndices)
+    public static IMatrix GetRawSpectra(Altaxo.Data.DataTable srctable, bool spectrumIsRow, Altaxo.Collections.IAscendingIntegerCollection spectralIndices, Altaxo.Collections.IAscendingIntegerCollection measurementIndices)
     {
       if(srctable==null)
         throw new ArgumentException("Argument srctable may not be null");
@@ -1576,11 +1586,20 @@ namespace Altaxo.Worksheet.Commands.Analysis
       CalculatePredictedAndResidual(table,whichY,numberOfFactors,false,false,true);
     }
 
-
-    public static void CalculatePredictedY(PLS2CalibrationModel calib, IMatrix matrixX, int numberOfFactors, MatrixMath.BEMatrix  predictedY)
+    /// <summary>
+    /// This will convert the raw spectra (horizontally in matrixX) to preprocessed spectra according to the calibration model.
+    /// </summary>
+    /// <param name="calib">The calibration model containing the instructions to process the spectra.</param>
+    /// <param name="matrixX">The matrix of spectra. Each spectrum is a row of the matrix.</param>
+    public static void PreProcessSpectra(PLS2CalibrationModel calib, IMatrix matrixX)
     {
       MatrixMath.SubtractRow(matrixX,calib.XMean,0,matrixX);
       MatrixMath.DivideRow(matrixX,calib.XScale,0,0,matrixX);
+    }
+
+    public static void CalculatePredictedY(PLS2CalibrationModel calib, IMatrix matrixX, int numberOfFactors, MatrixMath.BEMatrix  predictedY, IMatrix spectralResiduals)
+    {
+      PreProcessSpectra(calib,matrixX);
 
       MatrixMath.PartialLeastSquares_Predict_HO(
         matrixX,
@@ -1589,7 +1608,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
         calib.XWeights,
         calib.CrossProduct,
         numberOfFactors,
-        predictedY);
+        predictedY,
+        spectralResiduals);
 
       // mean and scale prediced Y
       MatrixMath.MultiplyRow(predictedY,calib.YScale,0,predictedY);
@@ -1608,10 +1628,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
       exporter.Export(out calib);
 
 
-      IMatrix matrixX = GetOriginalSpectra(plsMemo);
+      IMatrix matrixX = GetRawSpectra(plsMemo);
 
       MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(matrixX.Rows,calib.NumberOfY);
-      CalculatePredictedY(calib,matrixX,numberOfFactors,predictedY);
+      MatrixMath.BEMatrix spectralResiduals = new MatrixMath.BEMatrix(matrixX.Rows,1);
+      CalculatePredictedY(calib,matrixX,numberOfFactors,predictedY,spectralResiduals);
 
       if(saveYPredicted)
       {
@@ -1650,33 +1671,41 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
         for(int i=0;i<matrixX.Rows;i++)
         {
-          double sum=0;
-          for(int j=matrixX.Columns-1;j>=0;j--)
-          {
-            sum += matrixX[i,j]*matrixX[i,j];
-          }
-          ycolumn[i] = sum;
+          ycolumn[i] = spectralResiduals[i,0];
         }
         table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,_YResidual_ColumnGroup);
       }
       
     }
 
-    public static void CalculateXLeverage(Altaxo.Data.DataTable table)
+    public static void CalculateXLeverage(Altaxo.Data.DataTable table, int numberOfFactors)
     {
       PLSContentMemento plsMemo = table.GetTableProperty("Content") as PLSContentMemento;
 
       if(plsMemo==null)
         throw new ArgumentException("Table does not contain a PLSContentMemento");
 
-      IMatrix matrixX = GetOriginalSpectra(plsMemo);
+
+      PLS2CalibrationModel calib;
+      PLSCalibrationModelExporter exporter = new PLSCalibrationModelExporter(table,numberOfFactors);
+      exporter.Export(out calib);
+
+
+      IMatrix matrixX = GetRawSpectra(plsMemo);
+      PreProcessSpectra(calib,matrixX);
+
+      // get the score matrix
+      MatrixMath.BEMatrix weights = new MatrixMath.BEMatrix(numberOfFactors,calib.XWeights.Columns);
+      MatrixMath.Submatrix(calib.XWeights,weights,0,0);
+      MatrixMath.BEMatrix scoresMatrix = new MatrixMath.BEMatrix(matrixX.Rows,weights.Rows);
+      MatrixMath.MultiplySecondTransposed(matrixX,weights,scoresMatrix);
     
-      MatrixMath.SingularValueDecomposition decomposition = MatrixMath.GetSingularValueDecomposition(matrixX);
+      MatrixMath.SingularValueDecomposition decomposition = MatrixMath.GetSingularValueDecomposition(scoresMatrix);
 
       Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
       col.CopyDataFrom(decomposition.HatDiagonal);
 
-      table.DataColumns.Add(col,_XLeverage_ColumnName,Altaxo.Data.ColumnKind.V,_XLeverage_ColumnGroup);
+      table.DataColumns.Add(col,GetXLeverage_ColumnName(numberOfFactors),Altaxo.Data.ColumnKind.V,_XLeverage_ColumnGroup);
     }
 
     #endregion
@@ -1981,20 +2010,20 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// </summary>
     /// <param name="table">The table of PLS output data.</param>
     /// <param name="layer">The layer to plot into.</param>
-    public static void PlotXLeverage(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer)
+    public static void PlotXLeverage(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int preferredNumberOfFactors)
     {
       string xcolname = _MeasurementLabel_ColumnName;
-      string ycolname = _XLeverage_ColumnName;
+      string ycolname = GetXLeverage_ColumnName(preferredNumberOfFactors);
       
       if(table[ycolname]==null)
       {
-        CalculateXLeverage(table);
+        CalculateXLeverage(table,preferredNumberOfFactors);
       }
 
       PlotOnlyLabel(layer,table[xcolname],table[ycolname],table[_MeasurementLabel_ColumnName]);
 
       layer.BottomAxisTitleString = string.Format("Measurement");
-      layer.LeftAxisTitleString   = string.Format("X leverage");
+      layer.LeftAxisTitleString   = string.Format("Score leverage (#factors:{0})",preferredNumberOfFactors);
     }
 
     /// <summary>
@@ -2003,8 +2032,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotXLeverage(Altaxo.Data.DataTable table)
     {
+      PLSContentMemento plsMemo = table.GetTableProperty("Content") as PLSContentMemento;
+      if(plsMemo==null)
+        return;
+      if(plsMemo.PreferredNumberOfFactors<=0)
+        QuestPreferredNumberOfFactors(plsMemo);
+
       Altaxo.Graph.GUI.IGraphController graphctrl = Current.ProjectService.CreateNewGraph();
-      PlotXLeverage(table,graphctrl.Doc.Layers[0]);
+      PlotXLeverage(table,graphctrl.Doc.Layers[0],plsMemo.PreferredNumberOfFactors);
     }
 
 

@@ -983,7 +983,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="a">First multiplicant.</param>
     /// <param name="b">Second multiplicant.</param>
     /// <param name="c">The matrix where to subtract the result of the multipication from. Has to be of dimension (a.Rows, b.Columns).</param>
-    public static void SelfSubtractProduct(IROMatrix a, IROMatrix b, IMatrix c)
+    public static void SubtractProductFromSelf(IROMatrix a, IROMatrix b, IMatrix c)
     {
       int crows = a.Rows; // the rows of resultant matrix
       int ccols = b.Columns; // the cols of resultant matrix
@@ -1015,7 +1015,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="a">First multiplicant.</param>
     /// <param name="b">Second multiplicant.</param>
     /// <param name="c">The matrix where to subtract the result of the multipication from. Has to be of dimension (a.Rows, b.Columns).</param>
-    public static void SelfSubtractProduct(IROMatrix a, double b, IMatrix c)
+    public static void SubtractProductFromSelf(IROMatrix a, double b, IMatrix c)
     {
       int crows = a.Rows; // the rows of resultant matrix
       int ccols = a.Columns; // the cols of resultant matrix
@@ -1605,7 +1605,7 @@ namespace Altaxo.Calc.LinearAlgebra
         loads.AppendBottom(l);
 
         // 5. Calculate the residual matrix X = X - t*l 
-        SelfSubtractProduct(t,l,X); // X is now the residual matrix
+        SubtractProductFromSelf(t,l,X); // X is now the residual matrix
 
         // if the number of factors to calculate is not provided,
         // calculate the norm of the residual matrix and compare with the original
@@ -1746,10 +1746,10 @@ namespace Altaxo.Calc.LinearAlgebra
         // 9. Calculate the new residua for the X (spectral) and Y (concentration) matrix
         //MatrixMath.MultiplyScalar(t,length_of_t*v,t); // original t times the cross product
 
-        MatrixMath.SelfSubtractProduct(t,p,X);
+        MatrixMath.SubtractProductFromSelf(t,p,X);
         
         MatrixMath.MultiplyScalar(t,v,t); // original t times the cross product
-        MatrixMath.SelfSubtractProduct(t,q,Y); // to calculate residual Y
+        MatrixMath.SubtractProductFromSelf(t,q,Y); // to calculate residual Y
 
         // Store the loads of X and Y in the output result matrix
         xLoads.AppendBottom(p);
@@ -1776,7 +1776,8 @@ namespace Altaxo.Calc.LinearAlgebra
       IROMatrix W, // weighting matrix
       IROMatrix V,  // Cross product vector
       int numFactors, // number of factors to use for prediction
-      IMatrix predictedY // Matrix of predicted y-values, must be same number of rows as spectra
+      IMatrix predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
+      IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
       )
     {
       // now predicting a "unkown" spectra
@@ -1814,11 +1815,17 @@ namespace Altaxo.Calc.LinearAlgebra
           // remove the spectral contribution of the factor from the spectrum
           // TODO this is quite ineffective: in every loop we extract the xl vector, we have to find a shortcut for this!
           MatrixMath.Submatrix(xLoads,xl,i,0);
-          MatrixMath.SelfSubtractProduct(xl,(double)si,xu);
+          MatrixMath.SubtractProductFromSelf(xl,(double)si,xu);
         }
         // xu now contains the spectral residual,
         // Cu now contains the predicted y values
         MatrixMath.SetRow(Cu,0,predictedY,nSpectrum);
+
+        if(null!=spectralResiduals)
+        {
+          spectralResiduals[nSpectrum,0] = MatrixMath.SumOfSquares(xu);
+        }
+
       } // for each spectrum in XU
     } // end partial-least-squares-predict
 
@@ -1955,7 +1962,7 @@ namespace Altaxo.Calc.LinearAlgebra
         crossPRESS[0] += MatrixMath.SumOfSquares(YU);
         for(int nFactor=1;nFactor<=numFactors;nFactor++)
         {
-          PartialLeastSquares_Predict_HO(XU,xLoads,yLoads,W,V,nFactor,predY);
+          PartialLeastSquares_Predict_HO(XU,xLoads,yLoads,W,V,nFactor,predY,null);
           crossPRESS[nFactor] += MatrixMath.SumOfSquaredDifferences(YU,predY);
         }
       } // for all groups
