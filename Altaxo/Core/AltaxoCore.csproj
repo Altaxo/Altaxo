@@ -18,7 +18,7 @@
                 OutputType = "Library"
                 PreBuildEvent = ""
                 PostBuildEvent = "copy AltaxoCore.??? ..\..\..\..\rt$(ConfigurationName)\bin"
-                RootNamespace = "AltaxoCore"
+                RootNamespace = "Altaxo"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
@@ -214,6 +214,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\VectorMath.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\FFT\ChirpFFT.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -245,6 +250,11 @@
                 />
                 <File
                     RelPath = "Calc\FFT\Pfa235FFT.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Fitting\PolynomialFit.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

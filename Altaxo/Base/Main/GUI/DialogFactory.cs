@@ -183,7 +183,7 @@ namespace Altaxo.Main.GUI
     /// <summary>
     /// Shows the polynomial fit dialog.
     /// </summary>
-    /// <param name="parentWindows">The window in whose context the dialog is shown.</param>
+    /// <param name="parentWindow">The window in whose context the dialog is shown.</param>
     /// <param name="controller">The polynomial fit controller. Contains the user choices at the end of this routine.</param>
     /// <returns>True if the user has pressed OK.</returns>
     public static bool ShowPolynomialFitDialog(System.Windows.Forms.Form parentWindow, Graph.GUI.IFitPolynomialDialogController controller)
