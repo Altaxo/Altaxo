@@ -4,6 +4,7 @@ using ICSharpCode.Core.AddIns.Codons;
 using Altaxo;
 using Altaxo.Main;
 using ICSharpCode.SharpZipLib.Zip;
+using ICSharpCode.SharpDevelop.Gui;
 
 namespace Altaxo.Main.Commands
 {
@@ -191,8 +192,7 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			System.Windows.Forms.Application.Exit();
-		}
+		((Form)WorkbenchSingleton.Workbench).Close();		}
 	}
 
 }

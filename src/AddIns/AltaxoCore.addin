@@ -1,4 +1,3 @@
-<!-- edited with XMLSPY v5 rel. 3 U (http://www.xmlspy.com) by DKI (DKI) -->
 <AddIn name="SharpDevelop Core" author="Mike Krueger" copyright="GPL" url="http://www.icsharpcode.net" description="SharpDevelop core module" version="1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Runtime>
 		<Import assembly="../bin/SharpDevelop.Base.dll"/>
@@ -39,6 +38,7 @@
 		<Class id="TaskService" class="ICSharpCode.SharpDevelop.Services.TaskService"/>
 		<Class id="StatusBarService" class="ICSharpCode.SharpDevelop.Services.DefaultStatusBarService"/>
 		<Class id="ToolbarService" class="ICSharpCode.SharpDevelop.Services.ToolbarService"/>
+		<Class id="MenuService" class="ICSharpCode.SharpDevelop.Services.MenuService"/>
 		<Class id="AltaxoToolbarService" class="ICSharpCode.SharpDevelop.Services.AltaxoToolbarService"/>
 		<Class id="DisplayBindingService" class="ICSharpCode.SharpDevelop.Services.DisplayBindingService"/>
 		<Class id="AltaxoProjectService" class="Altaxo.Main.ProjectService"/>

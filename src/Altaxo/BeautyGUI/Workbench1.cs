@@ -155,5 +155,21 @@ namespace ICSharpCode.SharpDevelop.Gui
 			this.Title = title.ToString();
 		}
 
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			base.OnClosing(e);
+			Altaxo.Main.ProjectService projectService = (Altaxo.Main.ProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(Altaxo.Main.ProjectService));
+			
+			if (projectService != null)
+			{
+				// projectService.SaveCombinePreferences();
+			
+				if(projectService.CurrentOpenProject != null && projectService.CurrentOpenProject.IsDirty)
+				{
+					projectService.AskForSavingOfProject(e);
+				}
+			}
+		}
+
 	}
 }

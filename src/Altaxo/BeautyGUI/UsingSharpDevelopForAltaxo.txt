@@ -21,6 +21,9 @@ Habe deshalb meine Workbench von DefaultWorkbench abgeleitet, und InitializeWork
 geändert. Musste einige Methoden 1:1 kopieren, weil sie in DefaultWorkbench als privat
 markiert waren, sie aber in "InitializeWorkspace()" gebraucht werden.
 
+Vorschlag: die meisten Methoden als protected virtual zu deklarieren, nur mit den hartkodierten Strings wird das natürlich schwierig, die müsste man dann auch als
+protected virtual durch einen Methoden oder Property-Aufruf deklarieren.
+
 
 
 27.10.03
@@ -30,9 +33,58 @@ das der Toolbar-Service keine Toggle-ToolbarButtons erstellt.
 Musste eigenen Toolbar-Service erstellen, der bei Vorliegen eines 
 ICheckableMenuCommands ein Item vom Typ SdMenuCheckBox erstellt (statt eines
 Items vom Typ SdMenuCommand. Jetzt werden in der Toolbar also "gecheckte"
-Items eingedrückt dargestellt. Musste auch in meiner Workbench1-Klasse die 
+Buttons eingedrückt dargestellt. Musste auch in meiner eigenen Workbench-Klasse die 
 Methode CreateToolbars ändern, damit der neue AltaxoToolbarService benutzt wird.
 
+nachfolgend die geänderte Methode CreateToolBarFromCodon aus AltaxoToolbarService.cs, die bei Vorliegen eines ICheckableMenuCommand
+ein Item vom Typ SdMenuCheckBox erstellt (sonst ist alles wie gehabt).
+---------------------------------- Begin Code -----------------------------------------------------------
+
+		public CommandBar CreateToolBarFromCodon(object owner, ToolbarItemCodon codon)
+		{
+			CommandBar bar = new CommandBar(CommandBarStyle.ToolBar);
+			
+			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
+			foreach (ToolbarItemCodon childCodon in codon.SubItems) 
+			{
+				CommandBarItem item;
+				
+				if (childCodon.ToolTip != null) 
+				{
+					if (childCodon.ToolTip == "-") 
+					{
+						item = new CommandBarSeparator();
+					} 
+					else 
+					{
+						ICommand command = null;
+						
+						if (childCodon.Class != null) 
+						{
+						command = 	(ICommand)childCodon.AddIn.CreateObject(childCodon.Class);
+						}
+
+						if(command is ICheckableMenuCommand)
+						{
+							item = new SdMenuCheckBox(childCodon.Conditions, owner, childCodon.ToolTip, (ICheckableMenuCommand)command);
+						}
+						else
+						{
+							item = new SdMenuCommand(childCodon.Conditions, owner, childCodon.ToolTip);
+							((SdMenuCommand)item).Command = command;
+						}
+						item.Image = resourceService.GetBitmap(childCodon.Icon);
+					}
+				} 
+				else 
+				{
+					continue;
+				}
+					bar.Items.Add(item);
+			}
+			return bar;
+		}
+---------------------------------- End Code -------------------------------------------------------------
 
 28.10.03
 
@@ -43,3 +95,79 @@ nicht Bestandteil des IWorkbench Interfaces, so dass man diesen hässlichen Cast 
 
 ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
  
+
+06.10.03
+
+:( Der PropertyService entwickelt sich zur harten Nuss: hier ist insbesondere der Pfad zur XML Datei hartkodiert. Altaxo soll aber sicherlich nicht die Eigenschaften von SharpDevelop
+laden bzw. diese überschreiben. Das angedachte Austauschen durch den eigenen PropertyService wird nichts, da der Sharpdevelop-PropertyService
+hartkodiert im Konstruktor von ServiceManager geladen wird. Ich kann den einmal geladenen Propertyservice auch nicht wieder rausschmeissen.
+Vorschlag: Im Konstruktor von PropertyService alle Strings aus der Applications- .config Datei abfragen, wie ja schon mit dataDirectory geschehen. Das betrifft insbesondere
+die vier Strings propertyFileName, propertyFileVersion, propertyXmlRootNodeName und configDirectory
+
+nachfolgend das Stückchen Code aus PropertyServices.cs (die StringDefinitionen und den Konstruktor), das ich ausgetauscht habe
+-----------------------  Begin --------------------------------------------------
+	  static string propertyFileName    = "SharpDevelopProperties.xml";
+		
+		static string propertyFileVersion = "1.1";
+		
+		static string propertyXmlRootNodeName  = "SharpDevelopProperties";
+		
+		static string dataDirectory;
+		
+		static string configDirectory;
+
+		static PropertyService()
+		{
+
+			// Data Directory
+			string confDataDirectory = System.Configuration.ConfigurationSettings.AppSettings["DataDirectory"];
+			
+			if (confDataDirectory != null) 
+			{
+				dataDirectory = confDataDirectory;
+			} 
+			else 
+			{
+				dataDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + 
+					Path.DirectorySeparatorChar + ".." +
+					Path.DirectorySeparatorChar + "data";
+			}
+
+			
+			// Config Directory
+			string confConfigDirectory = System.Configuration.ConfigurationSettings.AppSettings["ApplicationUserDataDirectory"];
+			if(confConfigDirectory==null)
+				confConfigDirectory = ".ICSharpCode" + Path.DirectorySeparatorChar + "SharpDevelop";
+
+
+#if !LINUX
+			configDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + confConfigDirectory +	Path.DirectorySeparatorChar;
+#else
+			configDirectory = "~" +	Path.DirectorySeparatorChar + confConfigDirectory +	Path.DirectorySeparatorChar;
+#endif
+
+			// Property file name
+			string confPropertyFileName = System.Configuration.ConfigurationSettings.AppSettings["PropertyFileName"];
+			if(confPropertyFileName!=null)
+				propertyFileName = confPropertyFileName;
+
+			// Property file version
+			string confPropertyFileVersion = System.Configuration.ConfigurationSettings.AppSettings["PropertyFileVersion"];
+			if(confPropertyFileVersion!=null)
+				propertyFileVersion = confPropertyFileVersion;
+		
+
+			// Xml Root node name
+			string confPropertyXmlRootNodeName = System.Configuration.ConfigurationSettings.AppSettings["PropertyXmlRootNodeName"];
+			if(confPropertyXmlRootNodeName!=null)
+				propertyXmlRootNodeName = confPropertyXmlRootNodeName;
+
+
+		}
+		
+-----------------------  End   --------------------------------------------------
+
+
+
+**************************** bis hierhin hatte ich sie abgeschickt *******************************************************
+SdiLayout verwendet die Datei MdiLayoutConfig.xml, soll das so sein ??

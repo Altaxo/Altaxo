@@ -193,9 +193,16 @@ namespace Altaxo.Main
 
 		public void OpenProject(string filename)
 		{
-			if (openProject != null) 
+			if (CurrentOpenProject != null) 
 			{
-				SaveProject();
+				System.ComponentModel.CancelEventArgs e = new System.ComponentModel.CancelEventArgs();
+				if(this.CurrentOpenProject.IsDirty)
+					AskForSavingOfProject(e);
+
+				if(e.Cancel==true)
+					return;
+
+
 				CloseProject();
 			}
 				
@@ -314,6 +321,33 @@ namespace Altaxo.Main
 			}
 		}
 
+		public virtual void AskForSavingOfProject(System.ComponentModel.CancelEventArgs e)
+		{
+			string text = resourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Text");
+			string caption = resourceService.GetString("Altaxo.Project.AskForSavingOfProjectDialog.Caption");
+			System.Windows.Forms.DialogResult dlgresult = System.Windows.Forms.MessageBox.Show(Current.MainWindow,text,caption,System.Windows.Forms.MessageBoxButtons.YesNoCancel);
+		
+			switch(dlgresult)
+			{
+				case System.Windows.Forms.DialogResult.Yes:
+					if(this.CurrentProjectFileName!=null)
+						this.SaveProject();
+					else
+						this.SaveProjectAs();
+
+					if(this.CurrentOpenProject.IsDirty)
+						e.Cancel = true; // Cancel if the saving was not successfull
+					break;
+
+				case System.Windows.Forms.DialogResult.No:
+					break;
+				case System.Windows.Forms.DialogResult.Cancel:
+					e.Cancel = true; // Cancel if the user pressed cancel
+					break;
+			}
+		
+		}
+
 		public void CloseProject()
 		{
 			CloseProject(true);
@@ -321,19 +355,27 @@ namespace Altaxo.Main
 
 		public void CloseProject(bool saveCombinePreferencies)
 		{
+
 			if (CurrentOpenProject != null) 
 			{
-				//if (saveCombinePreferencies)
-				//	SaveCombinePreferences(CurrentOpenCombine, openCombineFileName);
+				System.ComponentModel.CancelEventArgs e = new System.ComponentModel.CancelEventArgs();
+				if(this.CurrentOpenProject.IsDirty)
+					AskForSavingOfProject(e);
+
+				if(e.Cancel==false)
+				{
+					//if (saveCombinePreferencies)
+					//	SaveCombinePreferences(CurrentOpenCombine, openCombineFileName);
 				
-				Altaxo.AltaxoDocument closedProject = CurrentOpenProject;
-				//CurrentSelectedProject = null;
-				//CurrentOpenCombine = CurrentSelectedCombine = null;
-				openProjectFileName = null;
-				CurrentOpenProject = new Altaxo.AltaxoDocument();
-				WorkbenchSingleton.Workbench.CloseAllViews();
-				OnProjectClosed(new ProjectEventArgs(closedProject));
-				//closedProject.Dispose();
+					Altaxo.AltaxoDocument closedProject = CurrentOpenProject;
+					//CurrentSelectedProject = null;
+					//CurrentOpenCombine = CurrentSelectedCombine = null;
+					openProjectFileName = null;
+					CurrentOpenProject = new Altaxo.AltaxoDocument();
+					WorkbenchSingleton.Workbench.CloseAllViews();
+					OnProjectClosed(new ProjectEventArgs(closedProject));
+					//closedProject.Dispose();
+				}
 			}
 		}
 

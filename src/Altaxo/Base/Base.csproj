@@ -837,6 +837,7 @@
                     DependentUpon = "MWTreeView.cs"
                     BuildAction = "EmbeddedResource"
                 />
+                <Folder RelPath = "Main\Services\" />
                 <File
                     RelPath = "Root\Current.cs"
                     SubType = "Code"
