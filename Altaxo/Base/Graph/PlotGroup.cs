@@ -71,7 +71,7 @@ namespace Altaxo.Graph
     
     private PlotGroup.Collection m_Parent;
 
-
+    private int _suppressStyleChangedEvents=0;
 
     #region Serialization
     /// <summary>Used to serialize the PlotGroup Version 0.</summary>
@@ -247,7 +247,8 @@ namespace Altaxo.Graph
         }
         if(cnt>0)
         {
-          ((AbstractXYPlotStyle)assoc.Style).SetToNextStyle((AbstractXYPlotStyle)((PlotItem)m_PlotItems[cnt-1]).Style,m_Style);
+          if(assoc is I2DPlotStyle && m_PlotItems[0] is I2DPlotStyle)
+          ((I2DPlotStyle)assoc).SetIncrementalStyle((I2DPlotStyle)m_PlotItems[0],m_Style, cnt);
         }
         m_PlotItems.Add(assoc);
 
@@ -282,7 +283,7 @@ namespace Altaxo.Graph
       get { return this.m_Style; }
       set 
       {
-        bool changed = (this.m_Style==value);
+        bool changed = (this.m_Style!=value);
         this.m_Style = value;
         
         // update the styles beginning from the master item
@@ -294,19 +295,62 @@ namespace Altaxo.Graph
       }
     }
 
+
+    public void UpdateMembers(PlotGroupStyle groupstyle, object plotstyle)
+    {
+      bool changed = (this.m_Style!=groupstyle);
+      m_Style = groupstyle;
+
+      UpdateMembers(plotstyle);
+      if(changed)
+        OnChanged();
+
+    }
+
+    public void UpdateMembers(object plotitem)
+    {
+      
+      for(int i=0;i<Count;i++)
+      {
+        if(object.ReferenceEquals(this[i],plotitem))
+        {
+          UpdateMembers(i);
+          return;
+        }
+      }
+      
+    }
+
+    public void UpdateMembers(int masteritem)
+    {
+      ++_suppressStyleChangedEvents;
+      // update the styles beginning from the master item
+      if(!IsIndependent && Count>masteritem)
+      {
+        I2DPlotStyle masterstyle = this[masteritem] as I2DPlotStyle;
+        if(masterstyle!=null)
+        {
+          for(int i=0;i<Count;i++)
+          {
+            if(i==masteritem)
+              continue;
+            if(this[i] is I2DPlotStyle)
+              ((I2DPlotStyle)this[i]).SetIncrementalStyle(masterstyle,this.m_Style,i-masteritem);
+          }
+        }
+        // no changed event here since we track only the members structure and the grouping style
+      }
+      --_suppressStyleChangedEvents;
+    }
+
     public void UpdateMembers()
     {
-      // update the styles beginning from the master item
-      if(!IsIndependent && Count>0)
-      {
-        for(int i=1;i<Count;i++)
-          ((AbstractXYPlotStyle)this[i].Style).SetToNextStyle((AbstractXYPlotStyle)this[i-1].Style,this.m_Style);
-      }
-      // no changed event here since we track only the members structure and the grouping style
+      UpdateMembers(0);
     }
 
     protected void OnMasterStyleChangedEventHandler(object sender, EventArgs e)
     {
+      if(this._suppressStyleChangedEvents<=0)
       UpdateMembers();
     }
 

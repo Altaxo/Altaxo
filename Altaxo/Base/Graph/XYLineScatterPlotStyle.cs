@@ -45,7 +45,11 @@ namespace Altaxo.Graph
 
   [SerializationSurrogate(0,typeof(XYLineScatterPlotStyle.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class XYLineScatterPlotStyle : AbstractXYPlotStyle, System.Runtime.Serialization.IDeserializationCallback, Main.IChangedEventSource, Main.IChildChangedEventSink
+  public class XYLineScatterPlotStyle
+    : AbstractXYPlotStyle,
+    System.Runtime.Serialization.IDeserializationCallback,
+    Main.IChangedEventSource, Main.IChildChangedEventSink,
+    I2DPlotStyle
   {
 
     protected XYPlotLineStyle     m_LineStyle;
@@ -254,26 +258,7 @@ namespace Altaxo.Graph
         this.Color =GetNextPlotColor(pstemplate.Color);
     }
 
-    public void SetIncrementalStyle(I2DPlotStyle pstemplate, PlotGroupStyle style, int step)
-    {
-      XYLineScatterPlotStyle from = pstemplate as XYLineScatterPlotStyle;
-      if(null!=from)
-
-      {
-        this.m_LineSymbolGap = from.m_LineSymbolGap;
-      }
-      
-     
-      if((0!= (style & PlotGroupStyle.Line)) && pstemplate.IsXYLineStyleSupported)
-        this.XYPlotLineStyle.SetToNextLineStyle(pstemplate.XYLineStyle,step);
-      if((0!= (style & PlotGroupStyle.Symbol)) && pstemplate.IsXYScatterStyleSupported)
-        this.XYPlotScatterStyle.SetToNextStyle(pstemplate.XYScatterStyle,step);
-      
-      // Color has to be the last, since during the previous operations the styles are cloned, 
-      // inclusive the color
-      if((0!= (style & PlotGroupStyle.Color)) && pstemplate.IsColorSupported)
-        this.Color = GetNextPlotColor(pstemplate.Color,step);
-    }
+ 
 
     public override System.Drawing.Color Color
     {
@@ -877,6 +862,79 @@ namespace Altaxo.Graph
       if(null!=Changed)
         Changed(this,e);
 
+    }
+
+    #endregion
+
+    #region I2DPlotStyle Members
+
+    public bool IsColorSupported
+    {
+      get
+      {
+       return true;
+      }
+    }
+
+    Color Altaxo.Graph.I2DPlotStyle.Color
+    {
+      get
+      {
+        return this.Color;
+      }
+    }
+
+    public bool IsXYLineStyleSupported
+    {
+      get
+      {
+       return true;
+      }
+    }
+
+    public XYPlotLineStyle XYLineStyle
+    {
+      get
+      {
+        return this.m_LineStyle;
+      }
+    }
+
+    public bool IsXYScatterStyleSupported
+    {
+      get
+      {
+        return true;
+      }
+    }
+
+    public XYPlotScatterStyle XYScatterStyle
+    {
+      get
+      {
+        return this.m_ScatterStyle;
+      }
+    }
+
+    public void SetIncrementalStyle(I2DPlotStyle pstemplate, PlotGroupStyle style, int step)
+    {
+      XYLineScatterPlotStyle from = pstemplate as XYLineScatterPlotStyle;
+      if(null!=from)
+
+      {
+        this.m_LineSymbolGap = from.m_LineSymbolGap;
+      }
+      
+     
+      if((0!= (style & PlotGroupStyle.Line)) && pstemplate.IsXYLineStyleSupported)
+        this.XYPlotLineStyle.SetToNextLineStyle(pstemplate.XYLineStyle,step);
+      if((0!= (style & PlotGroupStyle.Symbol)) && pstemplate.IsXYScatterStyleSupported)
+        this.XYPlotScatterStyle.SetToNextStyle(pstemplate.XYScatterStyle,step);
+      
+      // Color has to be the last, since during the previous operations the styles are cloned, 
+      // inclusive the color
+      if((0!= (style & PlotGroupStyle.Color)) && pstemplate.IsColorSupported)
+        this.Color = GetNextPlotColor(pstemplate.Color,step);
     }
 
     #endregion

@@ -475,6 +475,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\XYColumnPlotItemLabelTextStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\XYFunctionPlotData.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -355,6 +355,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Calculate the cross PRESS values and stores the results in the provided table.
     /// </summary>
+    /// <param name="xOfX">Vector of spectral wavelengths. Necessary to divide the spectras in different regions.</param>
     /// <param name="matrixX">Matrix of spectra (horizontal oriented).</param>
     /// <param name="matrixY">Matrix of concentrations.</param>
     /// <param name="plsOptions">Analysis options.</param>
@@ -403,8 +404,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// 
     /// </summary>
     /// <param name="mcalib"></param>
-    /// <param name="crossValidationType"></param>
+    /// <param name="groupingStrategy"></param>
     /// <param name="preprocessOptions"></param>
+    /// <param name="xOfX"></param>
     /// <param name="matrixX">Matrix of horizontal spectra, centered and preprocessed.</param>
     /// <param name="matrixY">Matrix of concentrations, centered.</param>
     /// <param name="numberOfFactors"></param>

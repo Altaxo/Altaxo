@@ -33,10 +33,7 @@ namespace Altaxo.Graph
   /// </summary>
   [SerializationSurrogate(0,typeof(DensityImagePlotItem.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class DensityImagePlotItem 
-    :
-    PlotItem, 
-    System.Runtime.Serialization.IDeserializationCallback
+  public class DensityImagePlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, Graph.IXBoundsHolder, Graph.IYBoundsHolder
   {
     protected XYZEquidistantMeshColumnPlotData m_PlotAssociation;
     protected DensityImagePlotStyle       m_PlotStyle;
@@ -147,7 +144,7 @@ namespace Altaxo.Graph
     }
 
 
-    public override object Data
+    public object Data
     {
       get { return m_PlotAssociation; }
       set
@@ -163,6 +160,9 @@ namespace Altaxo.Graph
             if(null!=m_PlotAssociation)
             {
               m_PlotAssociation.Changed -= new EventHandler(OnDataChangedEventHandler);
+              m_PlotAssociation.XBoundariesChanged -= new PhysicalBoundaries.BoundaryChangedHandler(EhXBoundariesChanged);
+              m_PlotAssociation.YBoundariesChanged -= new PhysicalBoundaries.BoundaryChangedHandler(EhYBoundariesChanged);
+
             }
 
             m_PlotAssociation = (XYZEquidistantMeshColumnPlotData)value;
@@ -170,6 +170,9 @@ namespace Altaxo.Graph
             if(null!=m_PlotAssociation )
             {
               m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
+              m_PlotAssociation.XBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(EhXBoundariesChanged);
+              m_PlotAssociation.YBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(EhYBoundariesChanged);
+
             }
 
             OnDataChanged();
@@ -177,7 +180,7 @@ namespace Altaxo.Graph
         }
       }
     }
-    public override object Style
+    public DensityImagePlotStyle Style
     {
       get { return m_PlotStyle; }
       set
@@ -258,7 +261,48 @@ namespace Altaxo.Graph
 
       base.OnDataChanged();
     }
+    #region IXBoundsHolder Members
 
+    void EhXBoundariesChanged(object sender, BoundariesChangedEventArgs args)
+    {
+      if(null!=XBoundariesChanged)
+        XBoundariesChanged(this,args);
+    }
 
+    public event Altaxo.Graph.PhysicalBoundaries.BoundaryChangedHandler XBoundariesChanged;
+
+    public void SetXBoundsFromTemplate(PhysicalBoundaries val)
+    {
+      this.m_PlotAssociation.SetXBoundsFromTemplate(val);
+    }
+
+    public void MergeXBoundsInto(PhysicalBoundaries pb)
+    {
+      this.m_PlotAssociation.MergeXBoundsInto(pb);
+    }
+
+    #endregion
+
+    #region IYBoundsHolder Members
+
+    void EhYBoundariesChanged(object sender, BoundariesChangedEventArgs args)
+    {
+      if(null!=YBoundariesChanged)
+        YBoundariesChanged(this,args);
+    }
+
+    public event Altaxo.Graph.PhysicalBoundaries.BoundaryChangedHandler YBoundariesChanged;
+
+    public void SetYBoundsFromTemplate(PhysicalBoundaries val)
+    {
+      this.m_PlotAssociation.SetYBoundsFromTemplate(val);
+    }
+
+    public void MergeYBoundsInto(PhysicalBoundaries pb)
+    {
+      this.m_PlotAssociation.MergeYBoundsInto(pb);
+    }
+
+    #endregion
   }
 }

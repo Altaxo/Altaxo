@@ -33,10 +33,10 @@ namespace Altaxo.Graph
   /// </summary>
   [SerializationSurrogate(0,typeof(XYFunctionPlotItem.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class XYFunctionPlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback
+  public class XYFunctionPlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, Graph.I2DPlotStyle
   {
     protected XYFunctionPlotData m_PlotData;
-    protected AbstractXYPlotStyle       m_PlotStyle;
+    protected XYLineScatterPlotStyle  m_PlotStyle;
 
     #region Serialization
     /// <summary>Used to serialize theXYDataPlot Version 0.</summary>
@@ -67,7 +67,7 @@ namespace Altaxo.Graph
         XYFunctionPlotItem s = (XYFunctionPlotItem)obj;
 
         s.m_PlotData = (XYFunctionPlotData)info.GetValue("Data",typeof(XYColumnPlotData));
-        s.m_PlotStyle = (AbstractXYPlotStyle)info.GetValue("Style",typeof(AbstractXYPlotStyle));
+        s.m_PlotStyle = (XYLineScatterPlotStyle)info.GetValue("Style",typeof(XYLineScatterPlotStyle));
     
         return s;
       }
@@ -86,7 +86,7 @@ namespace Altaxo.Graph
       {
         
         XYFunctionPlotData pa  = (XYFunctionPlotData)info.GetValue("Data",typeof(XYColumnPlotData));
-        AbstractXYPlotStyle ps = (AbstractXYPlotStyle)info.GetValue("Style",typeof(AbstractXYPlotStyle));
+        XYLineScatterPlotStyle ps = (XYLineScatterPlotStyle)info.GetValue("Style",typeof(XYLineScatterPlotStyle));
     
         if(null==o)
         {
@@ -125,7 +125,7 @@ namespace Altaxo.Graph
 
 
 
-    public XYFunctionPlotItem(XYFunctionPlotData pa, AbstractXYPlotStyle ps)
+    public XYFunctionPlotItem(XYFunctionPlotData pa, XYLineScatterPlotStyle ps)
     {
       this.Data = pa;
       this.Style = ps;
@@ -143,7 +143,7 @@ namespace Altaxo.Graph
     }
 
 
-    public override object Data
+    public XYFunctionPlotData Data
     {
       get { return m_PlotData; }
       set
@@ -173,7 +173,7 @@ namespace Altaxo.Graph
         }
       }
     }
-    public override object Style
+    public XYLineScatterPlotStyle Style
     {
       get { return m_PlotStyle; }
       set
@@ -192,7 +192,7 @@ namespace Altaxo.Graph
               ((Main.IChangedEventSource)m_PlotStyle).Changed -= new EventHandler(OnStyleChangedEventHandler);
             }
           
-            m_PlotStyle = (AbstractXYPlotStyle)value;
+            m_PlotStyle = (XYLineScatterPlotStyle)value;
 
             // create event wire to new Plotstyle
             if(null!=m_PlotStyle && m_PlotStyle is Main.IChangedEventSource)
@@ -239,7 +239,65 @@ namespace Altaxo.Graph
     {
       // nothing really to do here
     }
+    #region I2DPlotStyle Members
 
+    public bool IsColorSupported
+    {
+      get
+      {
+        return true;
+      }
+    }
 
+    public Color Color
+    {
+      get
+      {
+        return this.m_PlotStyle.Color;
+      }
+    }
+
+    public bool IsXYLineStyleSupported
+    {
+      get
+      {
+        return true;
+      }
+    }
+
+    public XYPlotLineStyle XYLineStyle
+    {
+      get
+      {
+       return this.m_PlotStyle.XYPlotLineStyle;
+      }
+    }
+
+    public bool IsXYScatterStyleSupported
+    {
+      get
+      {
+        return false;
+      }
+    }
+
+    public XYPlotScatterStyle XYScatterStyle
+    {
+      get
+      {
+        
+        return null;
+      }
+    }
+
+    public void SetIncrementalStyle(I2DPlotStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, int step)
+    {
+      if(m_PlotStyle is XYLineScatterPlotStyle)
+        ((XYLineScatterPlotStyle)m_PlotStyle).SetIncrementalStyle(pstemplate,style,step);
+     // else if(m_PlotStyle is XYPlotLineStyle)
+     //   ((XYPlotLineStyle)m_PlotStyle).SetIncrementalStyle(pstemplate,style,step);
+    }
+
+    #endregion
   }
 }

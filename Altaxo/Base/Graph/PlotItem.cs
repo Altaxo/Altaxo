@@ -52,11 +52,11 @@ namespace Altaxo.Graph
     /// <summary>
     /// Get/sets the data object of this plot.
     /// </summary>
-    public abstract object Data { get; set; }
+   // public abstract object Data { get; set; }
     /// <summary>
     /// Get/sets the style object of this plot.
     /// </summary>
-    public abstract object Style { get; set; }
+    //public abstract object Style { get; set; }
     /// <summary>
     /// The name of the plot. It can be of different length. An argument of zero or less
     /// returns the shortest possible name, higher values return more verbose names.
@@ -187,13 +187,7 @@ namespace Altaxo.Graph
     /// <returns>The object with the specified name.</returns>
     public virtual object GetChildObjectNamed(string name)
     {
-      switch(name)
-      {
-        case "Data":
-          return this.Data;
-        case "Style":
-          return this.Style;
-      }
+     
       return null;
     }
 
@@ -206,10 +200,7 @@ namespace Altaxo.Graph
     {
       if(o==null)
         return null;
-      else if(o.Equals(this.Data))
-        return "Data";
-      else if(o.Equals(this.Style))
-        return "Style";
+      
       else
         return null;
     }

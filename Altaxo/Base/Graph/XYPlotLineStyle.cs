@@ -238,7 +238,7 @@ namespace Altaxo.Graph
   /// </summary>
   [SerializationSurrogate(0,typeof(XYPlotLineStyle.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class XYPlotLineStyle : ICloneable, Main.IChangedEventSource, Main.IChildChangedEventSink, System.Runtime.Serialization.IDeserializationCallback
+  public class XYPlotLineStyle : ICloneable, Main.IChangedEventSource, Main.IChildChangedEventSink, System.Runtime.Serialization.IDeserializationCallback, Graph.I2DPlotStyle
   {
     public delegate void PaintOneRangeTemplate(
       Graphics g, 
@@ -437,6 +437,8 @@ namespace Altaxo.Graph
         OnChanged(); // Fire Changed event
       }
     }
+
+
 
     public void SetToNextLineStyle(XYPlotLineStyle template)
     {
@@ -1341,6 +1343,74 @@ namespace Altaxo.Graph
     {
       if(null!=Changed)
         Changed(this,e);
+    }
+
+    #endregion
+
+    #region I2DPlotStyle Members
+
+    public bool IsColorSupported
+    {
+      get
+      {
+        return true;
+      }
+    }
+
+    public Color Color
+    {
+      get
+      {
+        return this.m_PenHolder.Color;
+      }
+    }
+
+    public bool IsXYLineStyleSupported
+    {
+      get
+      {
+        return true;
+      }
+    }
+
+    public Altaxo.Graph.XYPlotLineStyle XYLineStyle
+    {
+      get
+      {
+        return this;
+      }
+    }
+
+    public bool IsXYScatterStyleSupported
+    {
+      get
+      {
+        
+        return false;
+      }
+    }
+
+    public XYPlotScatterStyle XYScatterStyle
+    {
+      get
+      {
+        
+        return null;
+      }
+    }
+
+    public void SetIncrementalStyle(I2DPlotStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, int step)
+    {
+      
+        
+      if((0!= (style & PlotGroupStyle.Line)) && pstemplate.IsXYLineStyleSupported)
+        this.SetToNextLineStyle(pstemplate.XYLineStyle,step);
+     
+      
+      // Color has to be the last, since during the previous operations the styles are cloned, 
+      // inclusive the color
+      if((0!= (style & PlotGroupStyle.Color)) && pstemplate.IsColorSupported)
+        this.m_PenHolder.Color = AbstractXYPlotStyle.GetNextPlotColor(pstemplate.Color,step);
     }
 
     #endregion

@@ -214,11 +214,10 @@ namespace Altaxo.Graph.GUI
       // use the master plot style instead of the plotstyle itself
       m_PlotGroup=plotGroup;
       m_PlotItemPlotStyle = ps;
-      m_MasterItemPlotStyle = null!=plotGroup ? (AbstractXYPlotStyle)plotGroup.MasterItem.Style : null;
   
       if(null!=m_PlotGroup)
       {
-        m_PlotStyle = (AbstractXYPlotStyle)m_PlotGroup.MasterItem.Style;
+        m_PlotStyle = ps; // (AbstractXYPlotStyle)m_PlotGroup.MasterItem.Style;
         m_PlotGroupStyle = m_PlotGroup.Style;
       }
       else // not member of a plotgroup
@@ -231,7 +230,13 @@ namespace Altaxo.Graph.GUI
 
     public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, PlotItem pa, PlotGroup plotGroup)
     {
-      LineScatterPlotStyleController  ctrl = new LineScatterPlotStyleController((AbstractXYPlotStyle)pa.Style,plotGroup);
+      AbstractXYPlotStyle style=null;
+      if(pa is XYColumnPlotItem)
+        style = ((XYColumnPlotItem)pa).Style;
+      else if(pa is XYFunctionPlotItem)
+        style = ((XYFunctionPlotItem)pa).Style;
+
+      LineScatterPlotStyleController  ctrl = new LineScatterPlotStyleController(style,plotGroup);
       LineScatterPlotStyleControl view = new LineScatterPlotStyleControl();
       ctrl.View = view;
 
@@ -529,7 +534,7 @@ namespace Altaxo.Graph.GUI
           if(View.PlotGroupLineType) m_PlotGroupStyle |= PlotGroupStyle.Line;
           if(View.PlotGroupSymbol)   m_PlotGroupStyle |= PlotGroupStyle.Symbol;
   
-          m_PlotStyle = m_MasterItemPlotStyle!=null ? m_MasterItemPlotStyle : m_PlotStyle;
+          // m_PlotStyle = m_MasterItemPlotStyle!=null ? m_MasterItemPlotStyle : m_PlotStyle;
         }
         else // independent
         {
@@ -608,9 +613,7 @@ namespace Altaxo.Graph.GUI
 
         if(null!=m_PlotGroup)
         {
-          m_PlotGroup.Style = m_PlotGroupStyle;
-          if(!m_PlotGroup.IsIndependent)
-            m_PlotGroup.UpdateMembers();
+            m_PlotGroup.UpdateMembers(m_PlotGroupStyle,m_PlotStyle);
         }
 
       }

@@ -105,12 +105,19 @@ namespace Altaxo.Main.GUI
     {
       
       // Plot Style
-      LineScatterPlotStyleController  stylectrl = new LineScatterPlotStyleController((Graph.AbstractXYPlotStyle)pa.Style,plotGroup);
+      AbstractXYPlotStyle style = null;
+
+      if(pa is XYColumnPlotItem)
+        style = ((XYColumnPlotItem)pa).Style;
+      else if(pa is XYFunctionPlotItem)
+        style = ((XYFunctionPlotItem)pa).Style;
+
+      LineScatterPlotStyleController  stylectrl = new LineScatterPlotStyleController(style,plotGroup);
       LineScatterPlotStyleControl     styleview = new LineScatterPlotStyleControl();
       stylectrl.View = styleview;
 
       // Plot Data
-      XYColumnPlotData plotData = pa.Data as XYColumnPlotData;
+      XYColumnPlotData plotData = ((XYColumnPlotItem)pa).Data as XYColumnPlotData;
       LineScatterPlotDataController datactrl=null;
       LineScatterPlotDataControl    dataview=null;
       if(plotData!=null)
@@ -123,9 +130,9 @@ namespace Altaxo.Main.GUI
       // Label Style
       Graph.GUI.XYPlotLabelStyleController labelctrl = null;
       Graph.GUI.XYPlotLabelStyleControl    labelview = null;
-      if(pa.Style is XYLineScatterPlotStyle)
+      if(style is XYLineScatterPlotStyle)
       {
-        XYLineScatterPlotStyle plotStyle = (XYLineScatterPlotStyle)pa.Style;
+        XYLineScatterPlotStyle plotStyle = style as XYLineScatterPlotStyle;
         if(plotStyle.XYPlotLabelStyle!=null)
         {
           labelctrl = new XYPlotLabelStyleController(plotStyle.XYPlotLabelStyle);
@@ -147,9 +154,9 @@ namespace Altaxo.Main.GUI
 
       bool result = tdcctrl.ShowDialog(parentWindow);
 
-      if(plotData.LabelColumn==null && pa.Style is XYLineScatterPlotStyle)
+      if(plotData.LabelColumn==null && style is XYLineScatterPlotStyle)
       {
-        ((XYLineScatterPlotStyle)pa.Style).XYPlotLabelStyle = null;
+        ((XYLineScatterPlotStyle)style).XYPlotLabelStyle = null;
       }
 
 
@@ -159,7 +166,7 @@ namespace Altaxo.Main.GUI
     public static bool ShowDensityImagePlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
     {
       // Plot Style
-      DensityImagePlotStyleController stylectrl = new DensityImagePlotStyleController((Graph.DensityImagePlotStyle)pa.Style);
+      DensityImagePlotStyleController stylectrl = new DensityImagePlotStyleController(((Graph.DensityImagePlotItem)pa).Style);
       DensityImagePlotStyleControl      styleview = new DensityImagePlotStyleControl();
       stylectrl.View = styleview;
 

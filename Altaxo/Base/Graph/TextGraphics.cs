@@ -934,9 +934,9 @@ namespace Altaxo.Graph
                   ti.PlotCurveName = ((XYColumnPlotItem)pa).GetName(style);
                 }
 
-                if(ti.m_PlotLabelStyleIsPropColName && ti.m_PlotLabelStyle!=null && pa.Data is XYColumnPlotData)
+                if(ti.m_PlotLabelStyleIsPropColName && ti.m_PlotLabelStyle!=null && pa is XYColumnPlotItem)
                 {
-                  XYColumnPlotData pb = (XYColumnPlotData)pa.Data;
+                  XYColumnPlotData pb = ((XYColumnPlotItem)pa).Data;
                   Data.DataTable tbl = null;
                   if(pb.YColumn is Data.DataColumn)
                     tbl = Data.DataTable.GetParentDataTableOf((Data.DataColumn)pb.YColumn);
@@ -1275,7 +1275,11 @@ namespace Altaxo.Graph
               Graph.PlotItem pa = layer.PlotItems[ti.m_PlotNumber];
             
               PointF symbolpos = new PointF(currPosX,currPosY + ti.m_yShift  + 0.5f*ti.m_cyDescent - 0.5f*ti.m_cyAscent);
-              ((AbstractXYPlotStyle)pa.Style).PaintSymbol(g, symbolpos, ti.m_Width);
+              
+              if(pa is XYColumnPlotItem)
+                ((XYColumnPlotItem)pa).Style.PaintSymbol(g, symbolpos, ti.m_Width);
+              else if(pa is XYFunctionPlotItem)
+                ((XYFunctionPlotItem)pa).Style.PaintSymbol(g, symbolpos, ti.m_Width);
               currPosX += ti.m_Width;
             
               if(!bForPreview)

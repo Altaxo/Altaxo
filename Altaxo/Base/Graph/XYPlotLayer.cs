@@ -1783,12 +1783,12 @@ namespace Altaxo.Graph
       m_xAxis.DataBounds.Reset();
       foreach(PlotItem pa in this.PlotItems)
       {
-        if(pa.Data is Graph.IXBoundsHolder)
+        if(pa is Graph.IXBoundsHolder)
         {
           // first ensure the right data bound object is set on the XYColumnPlotData
-          ((IXBoundsHolder)pa.Data).SetXBoundsFromTemplate(m_xAxis.DataBounds); // ensure that data bound object is of the right type
+          ((IXBoundsHolder)pa).SetXBoundsFromTemplate(m_xAxis.DataBounds); // ensure that data bound object is of the right type
           // now merge the bounds with x and yAxis
-          ((IXBoundsHolder)pa.Data).MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+          ((IXBoundsHolder)pa).MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
         
         }
       }
@@ -1831,12 +1831,12 @@ namespace Altaxo.Graph
       m_yAxis.DataBounds.Reset();
       foreach(PlotItem pa in this.PlotItems)
       {
-        if(pa.Data is Graph.IYBoundsHolder)
+        if(pa is Graph.IYBoundsHolder)
         {
           // first ensure the right data bound object is set on the XYColumnPlotData
-          ((IYBoundsHolder)pa.Data).SetYBoundsFromTemplate(m_yAxis.DataBounds); // ensure that data bound object is of the right type
+          ((IYBoundsHolder)pa).SetYBoundsFromTemplate(m_yAxis.DataBounds); // ensure that data bound object is of the right type
           // now merge the bounds with x and yAxis
-          ((IYBoundsHolder)pa.Data).MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+          ((IYBoundsHolder)pa).MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
         
         }
       }
@@ -2748,10 +2748,10 @@ namespace Altaxo.Graph
         m_xAxis.DataBounds.Reset();
         foreach(PlotItem pa in this.PlotItems)
         {
-          if(pa.Data is Graph.IXBoundsHolder)
+          if(pa is Graph.IXBoundsHolder)
           {
             // merge the bounds with x and yAxis
-            ((IXBoundsHolder)pa.Data).MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+            ((IXBoundsHolder)pa).MergeXBoundsInto(m_xAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
           }
         }
         m_xAxis.DataBounds.EndUpdate();
@@ -2777,10 +2777,10 @@ namespace Altaxo.Graph
         m_yAxis.DataBounds.Reset();
         foreach(PlotItem pa in this.PlotItems)
         {
-          if(pa.Data is Graph.IYBoundsHolder)
+          if(pa is Graph.IYBoundsHolder)
           {
             // merge the bounds with x and yAxis
-            ((IYBoundsHolder)pa.Data).MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+            ((IYBoundsHolder)pa).MergeYBoundsInto(m_yAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
         
           }
         }

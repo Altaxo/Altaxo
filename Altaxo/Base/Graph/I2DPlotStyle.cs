@@ -66,5 +66,13 @@ namespace Altaxo.Graph
     XYPlotScatterStyle XYScatterStyle { get; }
 
 
+    /// <summary>
+    /// Sets this style according to a template with step times increment.
+    /// </summary>
+    /// <param name="pstemplate">The template style.</param>
+    /// <param name="style">Information of what in particular to vary (color, line style, symbol style).</param>
+    /// <param name="step">The number of steps distance to the template style. For instance, if step==1 the next color is used, if step==-1 the previous color is used.</param>
+    void SetIncrementalStyle(I2DPlotStyle pstemplate, PlotGroupStyle style, int step);
+
 	}
 }

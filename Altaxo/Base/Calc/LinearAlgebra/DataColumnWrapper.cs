@@ -456,10 +456,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>An horizontal oriented <see>IROMatrix</see> wrapping the <see>DoubleColumn</see>.</returns>
     public static IROMatrix ToHorzROMatrix(INumericColumn col, int nRows)
     {
-      if(!(col is INumericColumn))
-        throw new ArgumentException("Argument col can not be wrapped to a IROMatrix because it is not numeric.");
-
-      return new NumericColumnToROHorzMatrixWrapper((INumericColumn)col,nRows);
+       return new NumericColumnToROHorzMatrixWrapper((INumericColumn)col,nRows);
     }
 
     /// <summary>
@@ -470,10 +467,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <returns>An vertical oriented <see>IROMatrix</see> wrapping the <see>DoubleColumn</see>.</returns>
     public static IROMatrix ToVertROMatrix(INumericColumn col, int nRows)
     {
-      if(!(col is INumericColumn))
-        throw new ArgumentException("Argument col can not be wrapped to a IROMatrix because it is not numeric.");
-
-      return new NumericColumnToROVertMatrixWrapper((INumericColumn)col,nRows);
+       return new NumericColumnToROVertMatrixWrapper((INumericColumn)col,nRows);
     }
 
 

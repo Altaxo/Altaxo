@@ -269,18 +269,18 @@ namespace Altaxo.Graph
     /// <param name="plotitem">The plot item for which the boundary type should be set.</param>
     public void SetItemBoundaries(Graph.PlotItem plotitem)
     {
-      if(plotitem.Data is Graph.IXBoundsHolder)
+      if(plotitem is Graph.IXBoundsHolder)
       {
-        IXBoundsHolder pa = (IXBoundsHolder)plotitem.Data;
+        IXBoundsHolder pa = (IXBoundsHolder)plotitem;
         if(null!=m_Owner)
           pa.SetXBoundsFromTemplate(m_Owner.XAxis.DataBounds); // ensure that data bound object is of the right type
         pa.XBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.EhXBoundaryChanged);
         if(null!=m_Owner)
           pa.MergeXBoundsInto(m_Owner.XAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
       }
-      if(plotitem.Data is Graph.IYBoundsHolder)
+      if(plotitem is Graph.IYBoundsHolder)
       {
-        IYBoundsHolder pa = (IYBoundsHolder)plotitem.Data;
+        IYBoundsHolder pa = (IYBoundsHolder)plotitem;
         if(null!=m_Owner)
           pa.SetYBoundsFromTemplate(m_Owner.YAxis.DataBounds); // ensure that data bound object is of the right type
         pa.YBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.EhYBoundaryChanged);

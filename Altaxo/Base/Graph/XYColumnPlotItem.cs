@@ -29,52 +29,17 @@ using Altaxo.Data;
 
 namespace Altaxo.Graph
 {
-  /// <summary>
-  /// Enumerates the style how a <see>XYColumnPlotItem</see> is labeled into the <see>TextGraphics</see>. 
-  /// </summary>
-  public enum XYColumnPlotItemLabelTextStyle
-  {
-    /// <summary>Y column name is shown.</summary>
-    YS = 0x10,
-    /// <summary>Y column name and table name is shown.</summary>
-    YM = 0x20,
-    /// <summary>Y column name, collection name and table name is shown.</summary>
-    YL = 0x30,
-    /// <summary>X column name is shown.</summary>
-    XS = 0x01,
-    /// <summary>X column name and Y column name is shown.</summary>
-    XSYS=0x11,
-    /// <summary>X column name and Y column name and table name is shown.</summary>
-    XSYM=0x21,
-    /// <summary>X column name and Y column name, collection name and table name is shown.</summary>
-    XSYL=0x31,
-    /// <summary>X column name and table name is shown.</summary>
-    XM=0x02,
-    /// <summary>X column name and table name and Y column name is shown.</summary>
-    XMYS=0x12,
-    /// <summary>X column name and table name and Y column name and table name is shown.</summary>
-    XMYM=0x22,
-    /// <summary>X column name and table name and Y column name, collection name and table name is shown.</summary>
-    XMYL=0x32,
-    /// <summary>X column name, collection name and table name is shown.</summary>
-    XL = 0x03,
-    /// <summary>X column name, collection name and table name and Y column name is shown.</summary>
-    XLXS=0x13,
-    /// <summary>X column name, collection name and table name and Y column name and table name is shown.</summary>
-    XLYM=0x23,
-    /// <summary>X column name, collection name and table name and Y column name, collection name and table name is shown.</summary>
-    XLYL=0x33
-  }
-
+ 
   /// <summary>
   /// Association of data and style specialized for x-y-plots of column data.
   /// </summary>
   [SerializationSurrogate(0,typeof(XYColumnPlotItem.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class XYColumnPlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback
+  public class XYColumnPlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, Graph.IXBoundsHolder, Graph.IYBoundsHolder, Graph.I2DPlotStyle
   {
+
     protected XYColumnPlotData m_PlotAssociation;
-    protected AbstractXYPlotStyle       m_PlotStyle;
+    protected XYLineScatterPlotStyle m_PlotStyle;
 
     // TODO : here should be a collection of PlotData, which can be accessed
     // by name, for instance "LabelData"
@@ -110,7 +75,7 @@ namespace Altaxo.Graph
         XYColumnPlotItem s = (XYColumnPlotItem)obj;
 
         s.Data = (XYColumnPlotData)info.GetValue("Data",typeof(XYColumnPlotData));
-        s.Style = (AbstractXYPlotStyle)info.GetValue("Style",typeof(AbstractXYPlotStyle));
+        s.Style = (XYLineScatterPlotStyle)info.GetValue("Style",typeof(XYLineScatterPlotStyle));
     
         return s;
       }
@@ -129,7 +94,7 @@ namespace Altaxo.Graph
       {
         
         XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data",typeof(XYColumnPlotData));
-        AbstractXYPlotStyle ps  = (AbstractXYPlotStyle)info.GetValue("Style",typeof(AbstractXYPlotStyle));
+        XYLineScatterPlotStyle ps  = (XYLineScatterPlotStyle)info.GetValue("Style",typeof(XYLineScatterPlotStyle));
 
         if(null==o)
         {
@@ -168,7 +133,7 @@ namespace Altaxo.Graph
 
 
 
-    public XYColumnPlotItem(XYColumnPlotData pa, AbstractXYPlotStyle ps)
+    public XYColumnPlotItem(XYColumnPlotData pa, XYLineScatterPlotStyle ps)
     {
       this.Data = pa;
       this.Style = ps;
@@ -190,7 +155,7 @@ namespace Altaxo.Graph
       get { return m_PlotAssociation; }
     }
 
-    public override object Data
+    public  XYColumnPlotData Data
     {
       get { return m_PlotAssociation; }
       set
@@ -206,6 +171,8 @@ namespace Altaxo.Graph
             if(null!=m_PlotAssociation)
             {
               m_PlotAssociation.Changed -= new EventHandler(OnDataChangedEventHandler);
+              m_PlotAssociation.XBoundariesChanged -= new PhysicalBoundaries.BoundaryChangedHandler(EhXBoundariesChanged);
+              m_PlotAssociation.YBoundariesChanged -= new PhysicalBoundaries.BoundaryChangedHandler(EhYBoundariesChanged);
             }
 
             m_PlotAssociation = (XYColumnPlotData)value;
@@ -214,6 +181,8 @@ namespace Altaxo.Graph
             {
               m_PlotAssociation.ParentObject = this;
               m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
+              m_PlotAssociation.XBoundariesChanged -= new PhysicalBoundaries.BoundaryChangedHandler(EhXBoundariesChanged);
+              m_PlotAssociation.YBoundariesChanged -= new PhysicalBoundaries.BoundaryChangedHandler(EhYBoundariesChanged);
             }
 
             OnDataChanged();
@@ -221,14 +190,14 @@ namespace Altaxo.Graph
         }
       }
     }
-    public override object Style
+    public XYLineScatterPlotStyle Style
     {
       get { return m_PlotStyle; }
       set
       {
         if(null==value)
           throw new System.ArgumentNullException();
-        else if(!(value is AbstractXYPlotStyle))
+        else if(!(value is XYLineScatterPlotStyle))
           throw new System.ArgumentException("The provided data object is not of the type " + m_PlotAssociation.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
         else
         {
@@ -240,7 +209,7 @@ namespace Altaxo.Graph
               ((Main.IChangedEventSource)m_PlotStyle).Changed -= new EventHandler(OnStyleChangedEventHandler);
             }
           
-            m_PlotStyle = (AbstractXYPlotStyle)value;
+            m_PlotStyle = (XYLineScatterPlotStyle)value;
 
             // create event wire to new Plotstyle
             if(null!=m_PlotStyle && m_PlotStyle is Main.IChangedEventSource)
@@ -407,6 +376,105 @@ namespace Altaxo.Graph
       }
       return null;
     }
+    #region IXBoundsHolder Members
 
+    void EhXBoundariesChanged(object sender, BoundariesChangedEventArgs args)
+    {
+      if(null!=XBoundariesChanged)
+        XBoundariesChanged(this,args);
+    }
+
+    public event Altaxo.Graph.PhysicalBoundaries.BoundaryChangedHandler XBoundariesChanged;
+
+    public void SetXBoundsFromTemplate(PhysicalBoundaries val)
+    {
+      this.m_PlotAssociation.SetXBoundsFromTemplate(val);
+    }
+
+    public void MergeXBoundsInto(PhysicalBoundaries pb)
+    {
+      this.m_PlotAssociation.MergeXBoundsInto(pb);
+    }
+
+    #endregion
+
+    #region IYBoundsHolder Members
+
+    void EhYBoundariesChanged(object sender, BoundariesChangedEventArgs args)
+    {
+      if(null!=YBoundariesChanged)
+        YBoundariesChanged(this,args);
+    }
+
+    public event Altaxo.Graph.PhysicalBoundaries.BoundaryChangedHandler YBoundariesChanged;
+
+    public void SetYBoundsFromTemplate(PhysicalBoundaries val)
+    {
+      this.m_PlotAssociation.SetYBoundsFromTemplate(val);
+    }
+
+    public void MergeYBoundsInto(PhysicalBoundaries pb)
+    {
+      this.m_PlotAssociation.MergeYBoundsInto(pb);
+    }
+
+    #endregion
+
+    #region I2DPlotStyle Members
+
+    public bool IsColorSupported
+    {
+      get
+      {
+        return this.m_PlotStyle.IsColorSupported;
+      }
+    }
+
+    public Color Color
+    {
+      get
+      {
+        return this.m_PlotStyle.Color;
+      }
+    }
+
+    public bool IsXYLineStyleSupported
+    {
+      get
+      {
+       return this.m_PlotStyle.IsXYLineStyleSupported;
+      }
+    }
+
+    public XYPlotLineStyle XYLineStyle
+    {
+      get
+      {
+        return this.m_PlotStyle.XYLineStyle;
+      }
+    }
+
+    public bool IsXYScatterStyleSupported
+    {
+      get
+      {
+        return this.m_PlotStyle.IsXYScatterStyleSupported;
+      }
+    }
+
+    public XYPlotScatterStyle XYScatterStyle
+    {
+      get
+      {
+        return this.m_PlotStyle.XYScatterStyle;
+      }
+    }
+
+    public void SetIncrementalStyle(I2DPlotStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, int step)
+    {
+      this.m_PlotStyle.SetIncrementalStyle(pstemplate,style,step);
+    }
+
+    #endregion
   }
 }
