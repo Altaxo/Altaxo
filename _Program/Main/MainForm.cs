@@ -53,6 +53,8 @@ namespace Altaxo
 
 
 		private System.Windows.Forms.PrintDialog m_PrintDialog;
+		private System.Windows.Forms.MenuItem menuWindowPopup;
+	
 		public System.Windows.Forms.PrintDialog PrintDialog
 		{
 			get { return m_PrintDialog; }
@@ -121,11 +123,13 @@ namespace Altaxo
 			this.menuNewWorksheet = new System.Windows.Forms.MenuItem();
 			this.menuFileOpen = new System.Windows.Forms.MenuItem();
 			this.menuFileSaveAs = new System.Windows.Forms.MenuItem();
+			this.menuWindowPopup = new System.Windows.Forms.MenuItem();
 			// 
 			// mainMenu1
 			// 
 			this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																																							this.menuItem1});
+																																							this.menuItem1,
+																																							this.menuWindowPopup});
 			// 
 			// menuItem1
 			// 
@@ -161,6 +165,13 @@ namespace Altaxo
 			this.menuFileSaveAs.Index = 2;
 			this.menuFileSaveAs.Text = "Save As";
 			this.menuFileSaveAs.Click += new System.EventHandler(this.menuFileSaveAs_Click);
+			// 
+			// menuWindowPopup
+			// 
+			this.menuWindowPopup.Index = 1;
+			this.menuWindowPopup.MdiList = true;
+			this.menuWindowPopup.MergeOrder = 10;
+			this.menuWindowPopup.Text = "Window";
 			// 
 			// App
 			// 
