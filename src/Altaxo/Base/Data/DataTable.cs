@@ -78,6 +78,12 @@ namespace Altaxo.Data
 		/// </summary>
 		protected DataColumnCollection m_DataColumns;
 
+
+		/// <summary>
+		/// The table script that belongs to this table.
+		/// </summary>
+		protected TableScript m_TableScript;
+
 		// Helper Data
 
 		/// <summary>
@@ -193,7 +199,7 @@ namespace Altaxo.Data
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable),0)]
-		public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo	info)
 			{
@@ -206,8 +212,6 @@ namespace Altaxo.Data
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo	info, object parent)
 			{
 				Altaxo.Data.DataTable s = null!=o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
-	
-				
 
 				s.m_TableName = info.GetString("Name");
 				s.m_DataColumns = (DataColumnCollection)info.GetValue("DataCols",s);
@@ -218,6 +222,36 @@ namespace Altaxo.Data
 				return s;
 			}
 		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable),1)]
+			public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo	info)
+			{
+				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
+				info.AddValue("Name",s.m_TableName); // name of the Table
+				info.AddValue("DataCols",s.m_DataColumns);
+				info.AddValue("PropCols", s.m_PropertyColumns); // the property columns of that table
+
+				// new in version 1
+				info.AddValue("TableScript",s.m_TableScript);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo	info, object parent)
+			{
+				Altaxo.Data.DataTable s = null!=o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
+
+				s.m_TableName = info.GetString("Name");
+				s.m_DataColumns = (DataColumnCollection)info.GetValue("DataCols",s);
+				s.m_DataColumns.ParentObject = s;
+				s.m_PropertyColumns = (DataColumnCollection)info.GetValue("PropCols",s);
+				s.m_PropertyColumns.ParentObject = s;
+
+				// new in version 1
+				s.m_TableScript = (TableScript)info.GetValue("TableScript",s);
+				return s;
+			}
+		}
+
 
 		public virtual void OnDeserialization(object obj)
 		{
@@ -289,6 +323,7 @@ namespace Altaxo.Data
 			
 			this.m_Parent = null; // do not clone the parent
 			this.m_TableName = from.m_TableName;
+			this.m_TableScript = null==from.m_TableScript ? null : (TableScript)from.m_TableScript.Clone();
 		}
 
 		/// <summary>
@@ -535,6 +570,16 @@ namespace Altaxo.Data
 			get { return m_PropertyColumns; }
 		}
 		
+
+		public TableScript TableScript
+		{
+			get { return m_TableScript; }
+			set
+			{
+				m_TableScript = value; 
+				
+			}
+		}
 		
 		/// <summary>
 		/// Copies data to the data column with the provided index if both columns are of the same type. If they are not of the same type, the column is replaced by the provided column. If the index is beyoind the limit, the provided column is added.

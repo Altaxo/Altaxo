@@ -294,6 +294,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Data\TableScript.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Data\TextColumn.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1097,6 +1102,21 @@
                     RelPath = "Worksheet\GUI\SetColumnValuesDialog.resx"
                     DependentUpon = "SetColumnValuesDialog.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\TableScriptControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\TableScriptControl.resx"
+                    DependentUpon = "TableScriptControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\TableScriptController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Worksheet\GUI\WorksheetController.cs"

@@ -104,6 +104,7 @@ namespace Altaxo.Main.GUI
 			return System.Windows.Forms.DialogResult.OK == form.ShowDialog(parentWindow);
 		}
 
+	
 
 	}
 }

@@ -386,11 +386,34 @@ namespace Altaxo.Calc
 	public class ColScriptExeBase : ScriptExecutionBase
 	{
 		/// <summary>
-		/// The method the column script has to overwrite in order to be able to execute the script.
+		/// This method must be overriden by the column script in order to be able to execute the script.
 		/// This method is the entry point of the column script
 		/// </summary>
 		/// <param name="myColumn">The column on which the column script is executed.</param>
 		public virtual void Execute(Altaxo.Data.DataColumn myColumn)
+		{
+		}
+	}
+
+
+	/// <summary>
+	/// TableScriptExeBase is the base class of all table scripts.
+	/// </summary>
+	/// <remarks>
+	/// Every table script defines his own class, which is derived from here.
+	/// There is only one method in TableScriptExeBase, Execute, which has
+	/// to be overwritten by the table script in order to execute the script.
+	/// The method provided here is not defined as abstract, but instead does nothing.
+	/// </remarks>
+
+	public class TableScriptExeBase : ScriptExecutionBase
+	{
+		/// <summary>
+		/// This method which must be overriden by the table script in order to be able to execute the script.
+		/// This method is the entry point of the table script
+		/// </summary>
+		/// <param name="myTable">The table on which the table script is executed.</param>
+		public virtual void Execute(Altaxo.Data.DataTable myTable)
 		{
 		}
 	}

@@ -250,6 +250,38 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
+	public class OpenTableScriptDialog : AbstractWorksheetControllerCommand
+	{
+		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+		{
+			Data.DataTable dataTable = ctrl.DataTable;
+			Data.TableScript tableScript = ctrl.DataTable.TableScript;
+
+			Worksheet.GUI.TableScriptController controller = new Worksheet.GUI.TableScriptController(dataTable,tableScript);
+			Worksheet.GUI.TableScriptControl control = new Altaxo.Worksheet.GUI.TableScriptControl();
+
+			System.Windows.Forms.Form form = new System.Windows.Forms.Form(); // the parent form used as shell for the control
+			form.Controls.Add(control);
+			form.ClientSize = control.Size;
+			control.Dock = System.Windows.Forms.DockStyle.Fill;
+			controller.View = control;
+
+			ICSharpCode.SharpDevelop.Services.DefaultParserService parserService = (ICSharpCode.SharpDevelop.Services.DefaultParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.DefaultParserService));
+
+			if(parserService!=null)
+			{
+				parserService.ShowDialog(form,Altaxo.Current.MainWindow,control.EditableContent);
+			}
+			else
+			{
+				form.ShowDialog(Altaxo.Current.MainWindow);
+			}
+
+			form.Dispose();
+		}
+	}
+
+
 	#endregion
 
 	#region Column commands
