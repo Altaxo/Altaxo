@@ -544,6 +544,28 @@ namespace Altaxo.Main
 			return CreateNewWorksheet(table);
 		}
 
+		/// <summary>
+		/// This function will delete a data table and close the corresponding views.
+		/// </summary>
+		/// <param name="table">The data table to delete</param>
+		/// <param name="force">If true, the table is deleted without safety question,
+		/// if false, the user is ask before the table is deleted.</param>
+		public void DeleteTable(Altaxo.Data.DataTable table, bool force)
+		{
+			if(!force && 
+				System.Windows.Forms.DialogResult.No == System.Windows.Forms.MessageBox.Show(Current.MainWindow,"Are you sure to remove the table and the corresponding views?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo,System.Windows.Forms.MessageBoxIcon.Warning))
+					return;
+
+		// close all windows
+			IViewContent[] foundContent = SearchContentForDocument(table);
+			foreach(IViewContent content in foundContent)
+			{
+				content.WorkbenchWindow.CloseWindow(true);
+			}
+
+			Current.Project.DataTableCollection.Remove(table);
+
+		}
 
 		/// <summary>
 		/// Creates a new graph document and the view content..

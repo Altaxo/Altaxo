@@ -3336,8 +3336,13 @@ namespace Altaxo.Worksheet.GUI
 		}
 		public void Delete(object sender, EventArgs e)
 		{
-			this.RemoveSelected();
-
+			if(this.SelectedColumns.Count>0 && this.SelectedRows.Count>0 && this.SelectedPropertyColumns.Count>0)
+				this.RemoveSelected();
+			else
+			{
+				// nothing is selected, we assume that the user wants to delete the worksheet itself
+				Current.ProjectService.DeleteTable(this.DataTable,false);
+			}
 		}
 		public void SelectAll(object sender, EventArgs e)
 		{
