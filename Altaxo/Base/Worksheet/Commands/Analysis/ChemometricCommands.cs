@@ -25,6 +25,7 @@ using System;
 using Altaxo.Collections;
 using Altaxo.Worksheet.GUI;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Calc.Regression.PLS;
 
 
 namespace Altaxo.Worksheet.Commands.Analysis
@@ -357,231 +358,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
       return null;
     }
     
-    #endregion
-
-    #region PLS Content Memento and Calibration Model
-
-    
-
-    /// <summary>
-    /// This class is for remembering the content of the PLS calibration and where to found the original data.
-    /// </summary>
-    public class PLSContentMemento
-    {
-      /// <summary>Represents that indices that build up one spectrum.</summary>
-      public  Altaxo.Collections.IAscendingIntegerCollection SpectralIndices;
-
-      /// <summary>
-      /// Represents the indices of the measurements.
-      /// </summary>
-      public Altaxo.Collections.IAscendingIntegerCollection MeasurementIndices;
-
-      /// <summary>
-      /// Represents the indices of the concentrations.
-      /// </summary>
-      public Altaxo.Collections.IAscendingIntegerCollection ConcentrationIndices;
-
-      /// <summary>
-      /// True if the spectrum is horizontal oriented, i.e. is in one row. False if the spectrum is one column.
-      /// </summary>
-      public bool SpectrumIsRow;
-    
-      /// <summary>
-      /// Get/sets the name of the table containing the original data.
-      /// </summary>
-      public string TableName;
-
-      /// <summary>
-      /// Number of factors for calculation and plotting.
-      /// </summary>
-      int _PreferredNumberOfFactors;
-
-
-      #region Serialization
-
-      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PLSContentMemento),0)]
-        public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-      {
-        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
-        {
-          PLSContentMemento s = (PLSContentMemento)obj;
-          info.AddValue("TableName",s.TableName); // name of the Table
-          info.AddValue("SpectrumIsRow",s.SpectrumIsRow);
-          info.AddValue("SpectralIndices",s.SpectralIndices);
-          info.AddValue("ConcentrationIndices",s.ConcentrationIndices);
-          info.AddValue("MeasurementIndices",s.MeasurementIndices);
-          info.AddValue("PreferredNumberOfFactors", s._PreferredNumberOfFactors); // the property columns of that table
-
-        }
-        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo  info, object parent)
-        {
-          PLSContentMemento s = null!=o ? (PLSContentMemento)o : new PLSContentMemento();
-
-          s.TableName = info.GetString("Name");
-          s.SpectrumIsRow = info.GetBoolean("SpectrumIsRow");
-          s.SpectralIndices = (IAscendingIntegerCollection)info.GetValue("SpectralIndices",s);
-          s.ConcentrationIndices = (IAscendingIntegerCollection)info.GetValue("ConcentrationIndices",s);
-          s.MeasurementIndices = (IAscendingIntegerCollection)info.GetValue("MeasurementIndices",s);
-          s._PreferredNumberOfFactors = info.GetInt32("PreferredNumberOfFactors");
-
-          return s;
-        }
-      }
-      #endregion
-
-      /// <summary>
-      /// Gets the number of measurement = number of spectra
-      /// </summary>
-      public int NumberOfMeasurements
-      {
-        get { return MeasurementIndices.Count; }
-      }
-
-      /// <summary>
-      /// Gets the number of spectral data per specta, i.e. number of wavelengths, frequencies etc.
-      /// </summary>
-      public int NumberOfSpectralData
-      {
-        get { return SpectralIndices.Count; }
-      }
-
-      /// <summary>
-      /// Gets the number of concentration data, i.e. number of output variables.
-      /// </summary>
-      public int NumberOfConcentrationData
-      {
-        get { return ConcentrationIndices.Count; }
-      }
-
-
-      /// <summary>
-      /// Get/sets the number of factors used  for calculation residuals, plotting etc.
-      /// </summary>
-      public int PreferredNumberOfFactors
-      {
-        get { return _PreferredNumberOfFactors; }
-        set { _PreferredNumberOfFactors = value; }
-      }
-    }
-
-
-
-    public class PLS2CalibrationModel
-    {
-      IROMatrix _xMean;
-      IROMatrix _xScale;
-      IROMatrix _yMean;
-      IROMatrix _yScale;
-
-      IROMatrix _xWeights;
-      IROMatrix _xLoads;
-      IROMatrix _yLoads;
-      IROMatrix _crossProduct;
-
-      int _numberOfX;
-      int _numberOfY;
-      int _numberOfFactors;
-
-      public IROMatrix XMean
-      {
-        get { return _xMean; }
-        set { _xMean = value; }
-      }
-
-      public IROMatrix XScale
-      {
-        get { return _xScale; }
-        set { _xScale = value; }
-      }
-
-      public IROMatrix YMean
-      {
-        get { return _yMean; }
-        set { _yMean = value; }
-      }
-
-      public IROMatrix YScale
-      {
-        get { return _yScale; }
-        set { _yScale = value; }
-      }
-
-      public IROMatrix XWeights
-      {
-        get { return _xWeights; }
-        set { _xWeights = value; }
-      }
-
-      public IROMatrix XLoads
-      {
-        get { return _xLoads; }
-        set { _xLoads = value; }
-      }
-
-      public IROMatrix YLoads
-      {
-        get { return _yLoads; }
-        set { _yLoads = value; }
-      }
-
-      public IROMatrix CrossProduct
-      {
-        get { return _crossProduct; }
-        set { _crossProduct = value; }
-      }
-
-      public int NumberOfX
-      {
-        get { return _numberOfX; }
-        set { _numberOfX = value; }
-      }
-
-      public int NumberOfY
-      {
-        get { return _numberOfY; }
-        set { _numberOfY = value; }
-      }
-
-      public int NumberOfFactors
-      {
-        get { return _numberOfFactors; }
-        set { _numberOfFactors = value; }
-      }
-    }
-
-
-    public enum CrossPRESSCalculation
-    {
-      /// <summary>
-      /// No cross PRESS calculation.
-      /// </summary>
-      None,
-
-      /// <summary>
-      /// Every measurement is excluded to calculate Cross PRESS.
-      /// </summary>
-      ExcludeEveryMeasurement,
-
-      /// <summary>
-      /// Measurements (which have the same concentration values) are excluded as groups to calculate Cross PRESS.
-      /// </summary>
-      ExcludeGroupsOfSimilarMeasurements,
-
-
-    }
-
-    public struct PLSAnalysisOptions
-    {
-      /// <summary>
-      /// Get/sets the maximum number of factors to calculate
-      /// </summary>
-      public int MaxNumberOfFactors;
-
-      /// <summary>
-      /// How to do the calculation of Cross PRESS values.
-      /// </summary>
-      public CrossPRESSCalculation CrossPRESSCalculation;
-    }
     #endregion
 
     #region PLS Table Column Names and Groups
@@ -1223,11 +999,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       Altaxo.Data.DoubleColumn crosspresscol = new Altaxo.Data.DoubleColumn();
 
-      if(plsOptions.CrossPRESSCalculation!=CrossPRESSCalculation.None)
+      if(plsOptions.CrossPRESSCalculation!=CrossPRESSCalculationType.None)
       {
         // now a cross validation - this can take a long time for bigger matrices
         IMatrix crossPRESSMatrix;
-        MatrixMath.PartialLeastSquares_CrossValidation_HO(matrixX,matrixY,numFactors, plsOptions.CrossPRESSCalculation==CrossPRESSCalculation.ExcludeGroupsOfSimilarMeasurements, out crossPRESSMatrix);
+        MatrixMath.PartialLeastSquares_CrossValidation_HO(matrixX,matrixY,numFactors, plsOptions.CrossPRESSCalculation==CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements, out crossPRESSMatrix);
 
         for(int i=0;i<crossPRESSMatrix.Rows;i++)
         { 
@@ -1889,7 +1665,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       options = new PLSAnalysisOptions();
       options.MaxNumberOfFactors =20;
-      options.CrossPRESSCalculation = CrossPRESSCalculation.ExcludeGroupsOfSimilarMeasurements;
+      options.CrossPRESSCalculation = CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements;
 
       Altaxo.Worksheet.GUI.PLSStartAnalysisController ctrl = new Altaxo.Worksheet.GUI.PLSStartAnalysisController(options);
       Altaxo.Worksheet.GUI.PLSStartAnalysisControl viewctrl = new PLSStartAnalysisControl();

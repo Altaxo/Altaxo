@@ -51,7 +51,7 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Worksheet.GUI.WorksheetController ctrl 
         = Current.Workbench.ActiveViewContent as Altaxo.Worksheet.GUI.WorksheetController; 
 
-      return ctrl.DataTable.GetTableProperty("Content") is Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSContentMemento;
+      return ctrl.DataTable.GetTableProperty("Content") is Altaxo.Calc.Regression.PLS.PLSContentMemento;
     }
   }
   

@@ -148,6 +148,12 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <Folder RelPath = "Calc\LinearAlgebra\" />
+                <File
+                    RelPath = "Calc\Regression\PLS\PLSContentMemento.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
                 <File
                     RelPath = "Collections\AscendingIntegerCollection.cs"
                     SubType = "Code"

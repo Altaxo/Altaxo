@@ -27,6 +27,8 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
+using Altaxo.Calc.Regression.PLS;
+
 namespace Altaxo.Worksheet.GUI
 {
   /// <summary>
@@ -169,17 +171,17 @@ namespace Altaxo.Worksheet.GUI
       edMaxNumFactors.Value = numFactors;
     }
 
-    public void InitializeCrossPressCalculation(Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation val)
+    public void InitializeCrossPressCalculation(CrossPRESSCalculationType val)
     {
       switch(val)
       {
-        case Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation.None:
+        case CrossPRESSCalculationType.None:
           rbCrossValidationNone.Checked = true;
           break;
-        case Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation.ExcludeEveryMeasurement:
+        case CrossPRESSCalculationType.ExcludeEveryMeasurement:
           rbCrossValidationEvery.Checked = true;
           break;
-        case Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation.ExcludeGroupsOfSimilarMeasurements:
+        case CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements:
           rbCrossValidationGroups.Checked = true;
           break;
       }
@@ -195,20 +197,20 @@ namespace Altaxo.Worksheet.GUI
     private void rbCrossValidationNone_CheckedChanged(object sender, System.EventArgs e)
     {
       if(_controller!=null)
-        _controller.EhView_CrossValidationSelected(Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation.None);
+        _controller.EhView_CrossValidationSelected(CrossPRESSCalculationType.None);
     }
 
     private void rbCrossValidationEvery_CheckedChanged(object sender, System.EventArgs e)
     {
       if(_controller!=null)
-        _controller.EhView_CrossValidationSelected(Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation.ExcludeEveryMeasurement);
+        _controller.EhView_CrossValidationSelected(CrossPRESSCalculationType.ExcludeEveryMeasurement);
     
     }
 
     private void rbCrossValidationGroups_CheckedChanged(object sender, System.EventArgs e)
     {
       if(_controller!=null)
-        _controller.EhView_CrossValidationSelected(Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation.ExcludeGroupsOfSimilarMeasurements);
+        _controller.EhView_CrossValidationSelected(CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements);
 
     }
   }

@@ -265,7 +265,21 @@
                     BuildAction = "Compile"
                 />
                 <Folder RelPath = "Calc\Regression\PCR\" />
-                <Folder RelPath = "Calc\Regression\PLS\" />
+                <File
+                    RelPath = "Calc\Regression\PLS\CrossPRESSCalculationType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\PLS\PLS2CalibrationModel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\PLS\PLSAnalysisOptions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
             </Include>
         </Files>
     </CSHARP>

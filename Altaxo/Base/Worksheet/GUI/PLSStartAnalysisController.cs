@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using Altaxo.Calc.Regression.PLS;
 
 namespace Altaxo.Worksheet.GUI
 {
@@ -29,10 +30,10 @@ namespace Altaxo.Worksheet.GUI
   /// </summary>
   public class PLSStartAnalysisController : Altaxo.Main.GUI.IApplyController
   {
-    Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSAnalysisOptions _doc;
+    PLSAnalysisOptions _doc;
     PLSStartAnalysisControl _view;
 
-    public PLSStartAnalysisController(Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSAnalysisOptions options)
+    public PLSStartAnalysisController(PLSAnalysisOptions options)
     {
       _doc = options;
     }
@@ -65,7 +66,7 @@ namespace Altaxo.Worksheet.GUI
       }
     }
 
-    public    Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSAnalysisOptions Doc
+    public    PLSAnalysisOptions Doc
     {
       get { return _doc; }
     }
@@ -75,7 +76,7 @@ namespace Altaxo.Worksheet.GUI
     {
       _doc.MaxNumberOfFactors = numFactors;
     }
-    public void EhView_CrossValidationSelected(Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.CrossPRESSCalculation val)
+    public void EhView_CrossValidationSelected(CrossPRESSCalculationType val)
     {
       _doc.CrossPRESSCalculation = val; 
     }
