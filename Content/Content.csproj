@@ -19,7 +19,7 @@
                 PreBuildEvent = ""
                 PostBuildEvent = "if not exist ..\..\..\rtd\bin mkdir  ..\..\..\rtd\bin&#xd;&#xa;xcopy ..\..\AddIns\*.* ..\..\..\rtd\AddIns /E /I /Y&#xd;&#xa;xcopy ..\..\data\*.* ..\..\..\rtd\data /E /I /Y&#xd;&#xa;xcopy ..\..\doc\*.* ..\..\..\rtd\doc /E /I /Y&#xd;&#xa;"
                 RootNamespace = "ContentProject"
-                RunPostBuildEvent = "OnBuildSuccess"
+                RunPostBuildEvent = "OnOutputUpdated"
                 StartupObject = ""
             >
                 <Config
@@ -70,19 +70,53 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
                 />
                 <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
+                    Name = "System.Configuration.Install"
+                    AssemblyName = "System.Configuration.Install"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Configuration.Install.dll"
                 />
                 <Reference
                     Name = "System.XML"
-                    AssemblyName = "System.Xml"
+                    AssemblyName = "System.XML"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
+                />
+                <Reference
+                    Name = "System.Windows.Forms"
+                    AssemblyName = "System.Windows.Forms"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
+                />
+                <Reference
+                    Name = "ICSharpCode.SharpZipLib"
+                    AssemblyName = "ICSharpCode.SharpZipLib"
+                    HintPath = "..\Libraries\bin\ICSharpCode.SharpZipLib.dll"
                 />
             </References>
         </Build>
         <Files>
             <Include>
+                <File
+                    RelPath = "AssemblyInfo.cs"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HelpSetup.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HelpSetup.resx"
+                    DependentUpon = "HelpSetup.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "HhcFileParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
                 <File
                     RelPath = "data\optionsMdiLayoutConfig.xml"
                     BuildAction = "Content"
@@ -1291,6 +1325,51 @@
                 <File
                     RelPath = "doc\help\SharpDevelopHelp.zip"
                     BuildAction = "Content"
+                />
+                <File
+                    RelPath = "HelpTreeBuilder\AssemblyLoader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HelpTreeBuilder\ClassNodeBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HelpTreeBuilder\DelegateNodeBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HelpTreeBuilder\EnumNodeBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HelpTreeBuilder\Generator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HelpTreeBuilder\InterfaceNodeBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HelpTreeBuilder\ITypeNodeBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HelpTreeBuilder\StructNodeBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HelpTreeBuilder\TypeNodeFactory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
             </Include>
         </Files>
