@@ -51,6 +51,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Content", "Content\Content.
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoCore", "Altaxo\Core\AltaxoCore.csproj", "{7045C197-9DA8-4FA4-886C-992ACADD838F}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoGUI", "Altaxo\GUI\AltaxoGUI.csproj", "{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -128,6 +136,18 @@ Global
 		{012F4935-9036-4F02-8C03-060EC9514A1D}.DesignTimeDebugging.Build.0 = Debug|.NET
 		{012F4935-9036-4F02-8C03-060EC9514A1D}.Release.ActiveCfg = Release|.NET
 		{012F4935-9036-4F02-8C03-060EC9514A1D}.Release.Build.0 = Release|.NET
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.Debug.ActiveCfg = Debug|.NET
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.Debug.Build.0 = Debug|.NET
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.DesignTimeDebugging.ActiveCfg = Debug|.NET
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.DesignTimeDebugging.Build.0 = Debug|.NET
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.Release.ActiveCfg = Release|.NET
+		{7045C197-9DA8-4FA4-886C-992ACADD838F}.Release.Build.0 = Release|.NET
+		{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}.Debug.ActiveCfg = Debug|.NET
+		{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}.Debug.Build.0 = Debug|.NET
+		{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}.DesignTimeDebugging.ActiveCfg = Debug|.NET
+		{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}.DesignTimeDebugging.Build.0 = Debug|.NET
+		{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}.Release.ActiveCfg = Release|.NET
+		{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Icon1.ico = Icon1.ico
