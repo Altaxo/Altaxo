@@ -296,6 +296,17 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
+		/// Converts x,y differences in pixels to the corresponding
+		/// differences in page coordinates
+		/// </summary>
+		/// <param name="pixeldiff">X,Y differences in pixel units</param>
+		/// <returns>X,Y differences in page coordinates</returns>
+		public PointF PixelToPageDifferences(PointF pixeldiff)
+		{
+			return new PointF(pixeldiff.X/HorizFactorPageToPixel(),pixeldiff.Y/VertFactorPageToPixel());
+		}
+
+		/// <summary>
 		/// converts from pixel to printable area coordinates
 		/// </summary>
 		/// <param name="pixelc">pixel coordinates as returned by MouseEvents</param>
@@ -429,12 +440,13 @@ namespace Altaxo.Graph
 		{
 			PointF mousePT = PixelToPrintableAreaCoordinates(new PointF(e.X,e.Y));
 			GraphicsPath gp;
+			GraphObject go;
 
 			foreach(Altaxo.Graph.Layer gl in graphLayers)
 			{
-				gp = gl.HitTest(mousePT);
+				go = gl.HitTest(mousePT, out gp);
 
-				if(gp!=null)
+				if(go!=null)
 				{
 					Graphics g = this.CreateGraphics();
 					g.PageUnit = GraphicsUnit.Point;
@@ -494,10 +506,15 @@ namespace Altaxo.Graph
 
 		/// <summary>
 		/// The hashtable of the selected objects. The key is the selected object itself,
-		/// the data is a ... object, which stores the data especially for selection, 
-		/// i.e. the layer the object belongs to, and the graphics path of the selection marker.
+		/// the data is a int object, which stores the layer number the object belongs to.
 		/// </summary>
 		protected System.Collections.Hashtable m_SelectedObjects = new System.Collections.Hashtable();
+		/// <summary>
+		/// If true, the selected objects where moved when a MouseMove event is fired
+		/// </summary>
+		protected bool m_bMoveObjectsOnMouseMove=false;
+		/// <summary>Stores the mouse position of the last point to where the selected objects where moved</summary>
+		protected PointF m_MoveObjectsLastMovePoint;
 		private void OnGraphPanel_ObjectPointerMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
 			// first, if we have a mousedown without shift key and the
@@ -520,28 +537,43 @@ namespace Altaxo.Graph
 			// now look which object has been pointed to
 			PointF mousePT = PixelToPrintableAreaCoordinates(new PointF(e.X,e.Y));
 			GraphicsPath gp;
+			GraphObject go;
 
-			foreach(Altaxo.Graph.Layer gl in graphLayers)
+			for(int nLayer=0;nLayer<Layer.Count;nLayer++)
 			{
-				gp = gl.HitTest(mousePT);
+			Altaxo.Graph.Layer layer = Layer[nLayer];
+			go = layer.HitTest(mousePT, out gp);
 
-				if(gp!=null)
+			if(go!=null)
 				{
-					Graphics g = this.m_GraphPanel.CreateGraphics();
-					g.PageUnit = GraphicsUnit.Point;
-					g.PageScale = this.m_Zoom;
+				Graphics g = this.m_GraphPanel.CreateGraphics();
+				g.PageUnit = GraphicsUnit.Point;
+				g.PageScale = this.m_Zoom;
 
-					// the graphics path was returned in printable area ("graph") coordinates
-					// thats why we have to shift our coordinate system to printable area coordinates also
-					float pointsh = UnitPerInch*this.AutoScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
-					float pointsv = UnitPerInch*this.AutoScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
-					pointsh += this.m_PrintableBounds.X;
-					pointsv += this.m_PrintableBounds.Y; 
+				// the graphics path was returned in printable area ("graph") coordinates
+				// thats why we have to shift our coordinate system to printable area coordinates also
+				float pointsh = UnitPerInch*this.AutoScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
+				float pointsv = UnitPerInch*this.AutoScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
+				pointsh += this.m_PrintableBounds.X;
+				pointsv += this.m_PrintableBounds.Y; 
 
-					// shift the coordinates to page coordinates
-					g.TranslateTransform(pointsh,pointsv);
+				// shift the coordinates to page coordinates
+				g.TranslateTransform(pointsh,pointsv);
 
-					g.DrawPath(Pens.Blue,gp);
+				g.DrawPath(Pens.Blue,layer.ConvertToGraphCoordinates(go.GetSelectionPath()));
+
+				// add the selected object to the hashtable
+				if(null==m_SelectedObjects[go]) // if the clicked object is not already selected
+				{
+					m_SelectedObjects.Add(go,nLayer); // select it by adding them to the table
+					this.m_bMoveObjectsOnMouseMove = true;
+					this.m_MoveObjectsLastMovePoint = new PointF(e.X,e.Y);
+					}
+					else if(bControlKey)
+					{
+						m_SelectedObjects.Remove(go);
+						this.m_bMoveObjectsOnMouseMove = false;
+				}
 					break;
 				}
 			}
@@ -554,11 +586,39 @@ namespace Altaxo.Graph
 		private void OnGraphPanel_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
 			System.Console.WriteLine("MouseUp {0},{1}",e.X,e.Y);
+			m_bMoveObjectsOnMouseMove=false; // now don't move the objects any more
 		}
 
 		private void OnGraphPanel_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
 			System.Console.WriteLine("MouseMove {0},{1}",e.X,e.Y);
+
+			if(m_bMoveObjectsOnMouseMove && 0!= m_SelectedObjects.Count)
+			{
+				// move all the selected objects to the new position
+				// first update the position of the selected objects to reflect the new position
+				PointF mouseDiff = new PointF(e.X - m_MoveObjectsLastMovePoint.X, e.Y - this.m_MoveObjectsLastMovePoint.Y);
+				this.m_MoveObjectsLastMovePoint.X = e.X;
+				this.m_MoveObjectsLastMovePoint.Y = e.Y;
+
+				// this difference, which is in mouse coordinates, must first be 
+				// converted to Graph coordinates (1/72"), and then transformed for
+				// each object to the layer coordinate differences of the layer
+			
+				PointF graphDiff = this.PixelToPageDifferences(mouseDiff);
+
+				foreach(GraphObject graphObject in m_SelectedObjects.Keys)
+				{
+					// get the layer number the graphObject belongs to
+					int nLayer = (int)m_SelectedObjects[graphObject];
+					PointF layerDiff = Layer[nLayer].GraphToLayerDifferences(graphDiff);
+					graphObject.X += layerDiff.X;
+					graphObject.Y += layerDiff.Y;
+					Console.WriteLine("Moving mdiff={0}, gdiff={1}, ldiff={2}", mouseDiff,graphDiff,layerDiff);
+				}
+				// now paint the objects on the new position
+				this.m_GraphPanel.Invalidate();
+			}
 		}
 
 	} // end of class

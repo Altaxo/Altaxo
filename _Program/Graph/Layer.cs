@@ -309,10 +309,36 @@ namespace Altaxo.Graph
 			return pf[0];
 		}
 
-		public GraphicsPath HitTest(PointF pageC)
+		/// <summary>
+		/// Converts X,Y differences in page units to X,Y differences in layer units
+		/// </summary>
+		/// <param name="pagediff">X,Y coordinate differences in graph units</param>
+		/// <returns>the convertes X,Y coordinate differences in layer units</returns>
+		public PointF GraphToLayerDifferences(PointF pagediff)
+		{
+			// not very intelligent, maybe there is a simpler way to transform without
+			// taking the translation into account
+			PointF[] pf = { new PointF(pagediff.X + this.Position.X, pagediff.Y + this.Position.Y) };
+			matrixi.TransformPoints(pf);
+			return pf[0];
+		}
+
+
+
+		/// <summary>
+		/// Transforms a graphics path from layer coordinates to graph (page) coordinates
+		/// </summary>
+		/// <param name="gp">the graphics path to convert</param>
+		/// <returns>graphics path now in graph coordinates</returns>
+		public GraphicsPath ConvertToGraphCoordinates(GraphicsPath gp)
+		{
+			gp.Transform(matrix);
+			return gp;
+		}
+
+		public GraphObject HitTest(PointF pageC, out GraphicsPath gp)
 		{
 			PointF layerC = ToLayerCoordinates(pageC);
-			GraphicsPath gp;
 
 			foreach(GraphObject go in m_GraphObjects)
 			{
@@ -320,9 +346,10 @@ namespace Altaxo.Graph
 				if(null!=gp)
 				{
 					gp.Transform(matrix);
-					return gp;
+					return go;
 				}
 			}
+			gp=null;
 			return null;
 		}
 
