@@ -723,122 +723,7 @@ namespace Altaxo.Worksheet.GUI
     #region Menu functions
 
 
-    public void SaveTable(System.IO.Stream myStream, bool saveAsTemplate)
-    {
-      Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-      if(saveAsTemplate)
-      {
-        info.SetProperty("Altaxo.Data.DataColumn.SaveAsTemplate","true");
-      }
-      info.BeginWriting(myStream);
-
-      // TODO there is an issue with TableLayout that prevents a nice deserialization 
-      // this is because TableLayout stores the name of its table during serialization
-      // onto deserialization this works well if the entire document is restored, but
-      // doesn't work if only a table and its layout is to be restored. In this case, the layout
-      // references the already present table with the same name in the document instead of the table
-      // deserialized. Also, the GUID isn't unique if the template is deserialized more than one time.
-
-      Altaxo.Worksheet.TablePlusLayout tableAndLayout = 
-        new Altaxo.Worksheet.TablePlusLayout(this.DataTable, this.m_TableLayout);
-      info.AddValue("TablePlusLayout",tableAndLayout);
-      info.EndWriting();    
-    }
-
-    public void SaveTableAs(bool saveAsTemplate)
-    {
-      System.IO.Stream myStream ;
-      SaveFileDialog saveFileDialog1 = new SaveFileDialog();
- 
-      saveFileDialog1.Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*"  ;
-      saveFileDialog1.FilterIndex = 1 ;
-      saveFileDialog1.RestoreDirectory = true ;
- 
-      if(saveFileDialog1.ShowDialog() == DialogResult.OK)
-      {
-        if((myStream = saveFileDialog1.OpenFile()) != null)
-        {
-          this.SaveTable(myStream, saveAsTemplate);
-          myStream.Close();
-        }
-      }
-    }
-
-    public void ImportAscii(System.IO.Stream myStream)
-    {
-      AsciiImporter importer = new AsciiImporter(myStream);
-      AsciiImportOptions recognizedOptions = importer.Analyze(30, new AsciiImportOptions());
-      importer.ImportAscii(recognizedOptions,this.DataTable);
-    }
-
-
-    public void ImportAscii()
-    {
-      using(OpenFileDialog openFileDialog1 = new OpenFileDialog())
-      {
-
-        openFileDialog1.InitialDirectory = "c:\\" ;
-        openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*" ;
-        openFileDialog1.FilterIndex = 2 ;
-        openFileDialog1.RestoreDirectory = true ;
-        openFileDialog1.Multiselect = true;
-
-        if(openFileDialog1.ShowDialog() == DialogResult.OK && openFileDialog1.FileNames.Length>0)
-        {
-          // if user has clicked ok, import all selected files into Altaxo
-          string [] filenames = openFileDialog1.FileNames;
-          Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-          
-          System.IO.Stream myStream = new System.IO.FileStream(filenames[0],System.IO.FileMode.Open,System.IO.FileAccess.Read);
-          if((myStream = openFileDialog1.OpenFile())!= null)
-          {
-            this.ImportAscii(myStream);
-            myStream.Close();
-          }
-
-          // import also the other files, but this time we create new tables
-          for(int i=1;i<filenames.Length;i++)
-          {
-            myStream = new System.IO.FileStream(filenames[0],System.IO.FileMode.Open,System.IO.FileAccess.Read);
-            Altaxo.Worksheet.GUI.IWorksheetController wkscontroller = Current.ProjectService.CreateNewWorksheet();
-            ((Altaxo.Worksheet.GUI.WorksheetController)wkscontroller).ImportAscii(myStream);
-            myStream.Close();
-          } // for all files
-
-        }
-      }
-    }
-
-
-    public void ExportAscii()
-    {
-      System.IO.Stream myStream ;
-      SaveFileDialog saveFileDialog1 = new SaveFileDialog();
- 
-      saveFileDialog1.Filter = "Ascii files (*.txt)|*.txt|All files (*.*)|*.*"  ;
-      saveFileDialog1.FilterIndex = 2 ;
-      saveFileDialog1.RestoreDirectory = true ;
- 
-      if(saveFileDialog1.ShowDialog() == DialogResult.OK)
-      {
-        if((myStream = saveFileDialog1.OpenFile()) != null)
-        {
-          try
-          {
-            Altaxo.Serialization.Ascii.AsciiExporter.ExportAscii(myStream, this.DataTable,'\t');
-          }
-          catch(Exception ex)
-          {
-            System.Windows.Forms.MessageBox.Show(this.View.TableViewWindow,"There was an error during ascii export, details follow:\n" + ex.ToString());
-          }
-          finally
-          {
-            myStream.Close();
-          }
-        }
-      }
-    }
-
+  
     #endregion
 
     #region Menu Handler
@@ -863,7 +748,7 @@ namespace Altaxo.Worksheet.GUI
 
     protected void EhMenuFileSaveTableAs_OnClick(object sender, System.EventArgs e)
     {
-      SaveTableAs(false);
+      Commands.FileCommands.SaveAs(this,false);
     }
 
     // ------------------------------------------------------------------
@@ -872,12 +757,12 @@ namespace Altaxo.Worksheet.GUI
 
     protected void EhMenuFileImportAscii_OnClick(object sender, System.EventArgs e)
     {
-      this.ImportAscii();
+      Commands.FileCommands.ImportAscii(this);
     }
 
     protected void EhMenuFileImportPicture_OnClick(object sender, System.EventArgs e)
     {
-      DataGridOperations.ImportImage(this.DataTable);
+      Commands.FileCommands.ImportImage(this);
 
     }
 
@@ -893,17 +778,12 @@ namespace Altaxo.Worksheet.GUI
 
     protected void EhMenuFileExportAscii_OnClick(object sender, System.EventArgs e)
     {
-      this.ExportAscii();
+      Commands.FileCommands.ExportAscii(this);
     }
 
     protected void EhMenuFileExportGalacticSPC_OnClick(object sender, System.EventArgs e)
     {
-      Altaxo.Serialization.Galactic.ExportGalacticSpcFileDialog dlg =
-        new Altaxo.Serialization.Galactic.ExportGalacticSpcFileDialog();
-
-      dlg.Initialize(this.DataTable,this.SelectedRows,this.SelectedColumns);
-
-      dlg.ShowDialog(this.View.TableViewWindow);
+      Commands.FileCommands.ExportGalacticSPC(this);
     }
 
     // ******************************************************************
@@ -918,18 +798,17 @@ namespace Altaxo.Worksheet.GUI
 
     protected void EhMenuEditRemove_OnClick(object sender, System.EventArgs e)
     {
-      this.RemoveSelected();
-
+      Commands.EditCommands.RemoveSelected(this);
     }
+
     protected void EhMenuEditCopy_OnClick(object sender, System.EventArgs e)
     {     // Copy the selected Columns to the clipboard
-      DataGridOperations.CopyToClipboard(this);
-
+      Commands.EditCommands.CopyToClipboard(this);
     }
 
     protected void EhMenuEditPaste_OnClick(object sender, System.EventArgs e)
     {
-      DataGridOperations.PasteFromClipboard(this);
+      Commands.EditCommands.PasteFromClipboard(this);
     }
 
     // ******************************************************************
@@ -939,22 +818,22 @@ namespace Altaxo.Worksheet.GUI
     // ******************************************************************
     protected void EhMenuPlotLine_OnClick(object sender, System.EventArgs e)
     {
-      DataGridOperations.PlotLine(this, true, false);
+      Commands.PlotCommands.PlotLine(this, true, false);
     }
 
     protected void EhMenuPlotScatter_OnClick(object sender, System.EventArgs e)
     {
-      DataGridOperations.PlotLine(this, false, true);
+      Commands.PlotCommands.PlotLine(this, false, true);
     }
 
     protected void EhMenuPlotLineAndScatter_OnClick(object sender, System.EventArgs e)
     {
-      DataGridOperations.PlotLine(this, true, true);
+      Commands.PlotCommands.PlotLine(this, true, true);
     }
 
     protected void EhMenuPlotDensityImage_OnClick(object sender, System.EventArgs e)
     {
-      DataGridOperations.PlotDensityImage(this, true, true);
+      Commands.PlotCommands.PlotDensityImage(this, true, true);
     }
 
 
@@ -964,82 +843,30 @@ namespace Altaxo.Worksheet.GUI
     // ******************************************************************
     // ******************************************************************
 
-    protected class WorksheetRenameValidator : Main.GUI.TextValueInputController.NonEmptyStringValidator
-    {
-      Altaxo.Data.DataTable m_Table;
-      WorksheetController m_Ctrl;
-      
-      public WorksheetRenameValidator(Altaxo.Data.DataTable tab, WorksheetController ctrl)
-        : base("The worksheet name must not be empty! Please enter a valid name.")
-      {
-        m_Table = tab;
-        m_Ctrl = ctrl;
-      }
-
-      public override string Validate(string wksname)
-      {
-        string err = base.Validate(wksname);
-        if(null!=err)
-          return err;
-
-        if(m_Table.Name==wksname)
-          return null;
-        else if(Data.DataTableCollection.GetParentDataTableCollectionOf(m_Ctrl.Doc)==null)
-          return null; // if there is no parent data set we can enter anything
-        else if(Data.DataTableCollection.GetParentDataTableCollectionOf(m_Ctrl.Doc).ContainsTable(wksname))
-          return "This worksheet name already exists, please choose another name!";
-        else
-          return null;
-      }
-    }
-
     protected void EhMenuWorksheetRename_OnClick(object sender, System.EventArgs e)
     {
-      Main.GUI.TextValueInputController ctrl = new Main.GUI.TextValueInputController(
-        Doc.Name,
-        new Main.GUI.SingleValueDialog("Rename Worksheet","Enter a name for the worksheet:")
-        );
-
-      ctrl.Validator = new WorksheetRenameValidator(Doc,this);
-      if(ctrl.ShowDialog(View.TableViewForm))
-        Doc.Name = ctrl.InputText.Trim();
+      Commands.WorksheetCommands.Rename(this);
     }
 
 
     protected void EhMenuWorksheetDuplicate_OnClick(object sender, System.EventArgs e)
     {
-      Altaxo.Data.DataTable clonedTable = (Altaxo.Data.DataTable)this.DataTable.Clone();
-
-      // find a new name for the cloned table and add it to the DataTableCollection
-      clonedTable.Name = Data.DataTableCollection.GetParentDataTableCollectionOf(DataTable).FindNewTableName();
-      Data.DataTableCollection.GetParentDataTableCollectionOf(DataTable).Add(clonedTable);
-      Current.ProjectService.CreateNewWorksheet(clonedTable);
+      Commands.WorksheetCommands.Duplicate(this);
     }
 
     protected void EhMenuWorksheetTranspose_OnClick(object sender, System.EventArgs e)
     {
-      string msg = this.DataTable.Transpose();
-
-      if(null!=msg)
-        System.Windows.Forms.MessageBox.Show(this.View.TableViewWindow,msg);
+      Commands.WorksheetCommands.Transpose(this);
     }
+    
     protected void EhMenuWorksheetAddColumns_OnClick(object sender, System.EventArgs e)
-    {/*
-      Altaxo.Data.DoubleColumn nc = new Altaxo.Data.DoubleColumn(this.DataTable.FindNewColumnName());
-      this.DataTable.Add(nc);
-      this.View.TableAreaInvalidate();
-      */
-
-      Altaxo.Main.GUI.DialogFactory.ShowAddColumnsDialog(this.View.TableViewForm,this.DataTable,false);
+    {
+      Commands.WorksheetCommands.AddDataColumns(this);
     }
+
     protected void EhMenuWorksheetAddPropertyColumns_OnClick(object sender, System.EventArgs e)
     {
-      /*
-            Altaxo.Data.TextColumn nc = new Altaxo.Data.TextColumn(this.DataTable.PropCols.FindNewColumnName());
-            this.DataTable.PropCols.Add(nc);
-            this.View.TableAreaInvalidate();
-      */
-      Altaxo.Main.GUI.DialogFactory.ShowAddColumnsDialog(this.View.TableViewForm,this.DataTable,true);
+      Commands.WorksheetCommands.AddPropertyColumns(this);
     }
 
     // ******************************************************************
@@ -1056,38 +883,9 @@ namespace Altaxo.Worksheet.GUI
 
     protected void EhMenuColumnSetColumnValues_OnClick(object sender, System.EventArgs e)
     {
-      if(this.SelectedColumns.Count<=0)
-        return; // no column selected
-
-      Altaxo.Data.DataColumn dataCol = this.DataTable[this.SelectedColumns[0]];
-      if(null==dataCol)
-        return;
-
-      //Data.ColumnScript colScript = (Data.ColumnScript)altaxoDataGrid1.columnScripts[dataCol];
-
-      Data.ColumnScript colScript = this.DataTable.DataColumns.ColumnScripts[dataCol];
-
-      Altaxo.Main.GUI.DialogFactory.ShowColumnScriptDialog(this.View.TableViewForm,this.DataTable,dataCol,colScript);
-
-      /*
-      SetColumnValuesDialog dlg = new SetColumnValuesDialog(this.DataTable,dataCol,colScript);
-      DialogResult dres = dlg.ShowDialog(this.View.TableViewWindow);
-      if(dres==DialogResult.OK)
-      {
-        if(colScript==null) // store the column script in the hash table if not already there
-        {
-          //altaxoDataGrid1.columnScripts.Add(dataCol,dlg.columnScript);
-          this.DataTable.ColumnScripts[dataCol]=dlg.columnScript;
-        }
-        else
-        {
-          //altaxoDataGrid1.columnScripts[dataCol] = (Data.ColumnScript)dlg.columnScript.Clone(); // if in the hash table already, simply copy the data
-          this.DataTable.ColumnScripts[dataCol] = (Data.ColumnScript)dlg.columnScript.Clone(); // if in the hash table already, simply copy the data
-        }
-      }
-      dlg.Dispose();
-      */
+      Commands.ColumnCommands.SetColumnValues(this);
     }
+
     protected void EhMenuColumnSetColumnAsX_OnClick(object sender, System.EventArgs e)
     {
       Commands.ColumnCommands.SetSelectedColumnAsX(this);
@@ -1120,84 +918,53 @@ namespace Altaxo.Worksheet.GUI
     }
     protected void EhMenuAnalysisFFT_OnClick(object sender, System.EventArgs e)
     {
-      DataGridOperations.FFT(this);
+      Commands.Analysis.FourierCommands.FFT(this);
     }
 
     // Analysis - 2 Dimensional FFT
     protected void EhMenuAnalysis2DFFT_OnClick(object sender, System.EventArgs e)
     {
-      string err = DataGridOperations.TwoDimFFT(Current.Project, this);
-      if(null!=err)
-        System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+      Commands.Analysis.FourierCommands.TwoDimensionalFFT(this);
     }
 
 
     protected void EhMenuAnalysisStatisticsOnColumns_OnClick(object sender, System.EventArgs e)
     {
-      DataGridOperations.StatisticsOnColumns(Current.Project,this.Doc,this.SelectedColumns,SelectedRows);
+      Commands.Analysis.StatisticCommands.StatisticsOnColumns(this);
     }
 
     protected void EhMenuAnalysisStatisticsOnRows_OnClick(object sender, System.EventArgs e)
     {
-      DataGridOperations.StatisticsOnRows(Current.Project,this.Doc,this.SelectedColumns,SelectedRows);
+      Commands.Analysis.StatisticCommands.StatisticsOnRows(this);
     }
 
     // Analysis - Multiply Columns to Matrix
     protected void EhMenuAnalysisMultiplyColumnsToMatrix_OnClick(object sender, System.EventArgs e)
     {
-      string err=DataGridOperations.MultiplyColumnsToMatrix(Current.Project,this.Doc,this.SelectedColumns);
-      if(null!=err)
-        System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+      Commands.Analysis.ChemometricCommands.MultiplyColumnsToMatrix(this);
     }
 
     // Analysis - PCA on rows
     protected void EhMenuAnalysisPCAOnRows_OnClick(object sender, System.EventArgs e)
     {
-      int maxFactors = 3;
-      Main.GUI.IntegerValueInputController ctrl = new Main.GUI.IntegerValueInputController(
-        maxFactors,
-        new Main.GUI.SingleValueDialog("Set maximum number of factors","Please enter the maximum number of factors to calculate:")
-        );
-
-      ctrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
-      if(ctrl.ShowDialog(View.TableViewForm))
-      {
-        string err=DataGridOperations.PrincipalComponentAnalysis(Current.Project,this.Doc,this.SelectedColumns,SelectedRows,true,ctrl.EnteredContents);
-        if(null!=err)
-          System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
-      }
+      Commands.Analysis.ChemometricCommands.PCAOnRows(this);
     }
+
     // Analysis - PCA on cols
     protected void EhMenuAnalysisPCAOnCols_OnClick(object sender, System.EventArgs e)
     {
-      int maxFactors = 3;
-      Main.GUI.IntegerValueInputController ctrl = new Main.GUI.IntegerValueInputController(
-        maxFactors,
-        new Main.GUI.SingleValueDialog("Set maximum number of factors","Please enter the maximum number of factors to calculate:")
-        );
-
-      ctrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
-      if(ctrl.ShowDialog(View.TableViewForm))
-      {
-        string err=DataGridOperations.PrincipalComponentAnalysis(Current.Project,this.Doc,this.SelectedColumns,SelectedRows,false,ctrl.EnteredContents);
-        if(null!=err)
-          System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
-      }
+      Commands.Analysis.ChemometricCommands.PCAOnColumns(this);
     }
 
     // Analysis - PLS on rows
     protected void EhMenuAnalysisPLSOnRows_OnClick(object sender, System.EventArgs e)
     {
-      string err=DataGridOperations.PartialLeastSquaresAnalysis(Current.Project,this.Doc,this.SelectedColumns,SelectedRows,this.SelectedPropertyColumns,true);
-      if(null!=err)
-        System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+      Commands.Analysis.ChemometricCommands.PLSOnRows(this);
     }
     // Analysis - PLS on cols
     protected void EhMenuAnalysisPLSOnCols_OnClick(object sender, System.EventArgs e)
     {
-      string err=DataGridOperations.PartialLeastSquaresAnalysis(Current.Project,this.Doc,this.SelectedColumns,SelectedRows,this.SelectedPropertyColumns,false);
-      if(null!=err)
-        System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+      Commands.Analysis.ChemometricCommands.PLSOnColumns(this);
     }
 
     #endregion
@@ -1354,48 +1121,9 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     public void RemoveSelected()
     {
-      this.DataTable.Suspend();
-
-
-      // Property columns are only deleted, if selected alone or in conjunction with data row selection
-      if(this.m_SelectedPropertyColumns.Count>0 && this.m_SelectedPropertyRows.Count==0 && this.m_SelectedColumns.Count==0)
-      {
-        this.DataTable.PropCols.RemoveColumns(m_SelectedPropertyColumns);
-        m_SelectedPropertyColumns.Clear();
-        m_SelectedPropertyRows.Clear();
-      }
-      // note here: Property rows are only removed indirect by removing data columns
-
-
-      // delete the selected columns if there are _only selected columns
-      if(this.m_SelectedColumns.Count>0 && this.m_SelectedRows.Count==0)
-      {
-        this.DataTable.RemoveColumns(m_SelectedColumns);
-        this.m_SelectedColumns.Clear(); // now the columns are deleted, so they cannot be selected
-      }
-
-      // if rows are selected, remove them in all selected columns or in all columns (if no column selection=
-      if(this.m_SelectedRows.Count>0)
-      {
-        this.DataTable.DataColumns.RemoveRowsInColumns(
-          m_SelectedColumns.Count>0 ? (IAscendingIntegerCollection)m_SelectedColumns : new IntegerRangeAsCollection(0,this.DataTable.DataColumns.ColumnCount),
-          m_SelectedRows);
-
-        m_SelectedColumns.Clear();
-        m_SelectedRows.Clear();
-      }
-
-
-      // end code for the selected rows
-      this.DataTable.Resume();
-      this.View.TableAreaInvalidate(); // necessary because we changed the selections
-
-
-
+      Commands.EditCommands.RemoveSelected(this);
     }
- 
 
-   
 
     #endregion
 

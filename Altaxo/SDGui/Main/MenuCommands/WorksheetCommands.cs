@@ -31,6 +31,7 @@ using ICSharpCode.SharpZipLib.Zip;
 
 namespace Altaxo.Worksheet.Commands
 {
+  #region Abstract command
 
   /// <summary>
   /// Provides a abstract class for issuing commands that apply to worksheet controllers.
@@ -59,13 +60,15 @@ namespace Altaxo.Worksheet.Commands
     public abstract void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl);
   }
 
+  #endregion
 
+  #region File commands
 
   public class SaveAs : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      ctrl.SaveTableAs(false);
+      Altaxo.Worksheet.Commands.FileCommands.SaveAs(ctrl,false);
     }
   }
 
@@ -73,7 +76,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      ctrl.SaveTableAs(true);
+      Altaxo.Worksheet.Commands.FileCommands.SaveAs(ctrl,true);
     }
   }
 
@@ -81,7 +84,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      ctrl.ImportAscii();
+      Altaxo.Worksheet.Commands.FileCommands.ImportAscii(ctrl);
     }
   }
 
@@ -89,7 +92,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      DataGridOperations.ImportImage(ctrl.DataTable);
+      Altaxo.Worksheet.Commands.FileCommands.ImportImage(ctrl);
     }
   }
 
@@ -97,7 +100,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      Altaxo.Serialization.Galactic.Import.ShowDialog(ctrl.View.TableViewForm, ctrl.DataTable);
+      Altaxo.Worksheet.Commands.FileCommands.ImportGalacticSPC(ctrl);
     }
   }
 
@@ -105,7 +108,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      ctrl.ExportAscii();
+      Altaxo.Worksheet.Commands.FileCommands.ExportAscii(ctrl);
     }
   }
 
@@ -113,15 +116,11 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      Altaxo.Serialization.Galactic.ExportGalacticSpcFileDialog dlg =
-        new Altaxo.Serialization.Galactic.ExportGalacticSpcFileDialog();
-
-      dlg.Initialize(ctrl.DataTable,ctrl.SelectedRows,ctrl.SelectedColumns);
-
-      dlg.ShowDialog(ctrl.View.TableViewWindow);
+      Altaxo.Worksheet.Commands.FileCommands.ExportGalacticSPC(ctrl);
     }
   }
 
+#endregion
 
   #region Edit commands
 
@@ -129,21 +128,21 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      ctrl.RemoveSelected();
+      Altaxo.Worksheet.Commands.EditCommands.RemoveSelected(ctrl);
     }
   }
   public class EditCopy : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      DataGridOperations.CopyToClipboard(ctrl);
+      Altaxo.Worksheet.Commands.EditCommands.CopyToClipboard(ctrl);
     }
   }
   public class EditPaste : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      DataGridOperations.PasteFromClipboard(ctrl);
+      Altaxo.Worksheet.Commands.EditCommands.PasteFromClipboard(ctrl);
     }
   }
   #endregion
@@ -154,7 +153,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      DataGridOperations.PlotLine(ctrl, true, false);
+      Altaxo.Worksheet.Commands.PlotCommands.PlotLine(ctrl, true, false);
     }
   }
 
@@ -162,7 +161,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      DataGridOperations.PlotLine(ctrl, false, true);
+      Altaxo.Worksheet.Commands.PlotCommands.PlotLine(ctrl, false, true);
     }
   }
 
@@ -170,7 +169,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      DataGridOperations.PlotLine(ctrl, true, true);
+      Altaxo.Worksheet.Commands.PlotCommands.PlotLine(ctrl, true, true);
     }
   }
 
@@ -178,7 +177,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      DataGridOperations.PlotDensityImage(ctrl, true, true);
+      Altaxo.Worksheet.Commands.PlotCommands.PlotDensityImage(ctrl, true, true);
     }
   }
 
@@ -191,43 +190,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      Main.GUI.TextValueInputController tvctrl = new Main.GUI.TextValueInputController(
-        ctrl.Doc.Name,
-        new Main.GUI.SingleValueDialog("Rename Worksheet","Enter a name for the worksheet:")
-        );
-
-      tvctrl.Validator = new WorksheetRenameValidator(ctrl.Doc,ctrl);
-      if(tvctrl.ShowDialog(ctrl.View.TableViewForm))
-        ctrl.Doc.Name = tvctrl.InputText.Trim();
-    }
-
-    protected class WorksheetRenameValidator : Main.GUI.TextValueInputController.NonEmptyStringValidator
-    {
-      Altaxo.Data.DataTable m_Table;
-      WorksheetController m_Ctrl;
-      
-      public WorksheetRenameValidator(Altaxo.Data.DataTable tab, WorksheetController ctrl)
-        : base("The worksheet name must not be empty! Please enter a valid name.")
-      {
-        m_Table = tab;
-        m_Ctrl = ctrl;
-      }
-
-      public override string Validate(string wksname)
-      {
-        string err = base.Validate(wksname);
-        if(null!=err)
-          return err;
-
-        if(m_Table.Name==wksname)
-          return null;
-        else if(Data.DataTableCollection.GetParentDataTableCollectionOf(m_Ctrl.Doc)==null)
-          return null; // if there is no parent data set we can enter anything
-        else if(Data.DataTableCollection.GetParentDataTableCollectionOf(m_Ctrl.Doc).ContainsTable(wksname))
-          return "This worksheet name already exists, please choose another name!";
-        else
-          return null;
-      }
+      Altaxo.Worksheet.Commands.WorksheetCommands.Rename(ctrl);
     }
   }
 
@@ -236,13 +199,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      Altaxo.Data.DataTable clonedTable = (Altaxo.Data.DataTable)ctrl.DataTable.Clone();
-     
-
-      // find a new name for the cloned table and add it to the DataTableCollection
-      clonedTable.Name = Data.DataTableCollection.GetParentDataTableCollectionOf(ctrl.DataTable).FindNewTableName();
-      Data.DataTableCollection.GetParentDataTableCollectionOf(ctrl.DataTable).Add(clonedTable);
-      Current.ProjectService.CreateNewWorksheet(clonedTable);
+      Altaxo.Worksheet.Commands.WorksheetCommands.Duplicate(ctrl);
     }
   }
 
@@ -250,10 +207,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      string msg = ctrl.DataTable.Transpose();
-
-      if(null!=msg)
-        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,msg);
+      Altaxo.Worksheet.Commands.WorksheetCommands.Transpose(ctrl);
     }
   }
 
@@ -261,7 +215,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      Altaxo.Main.GUI.DialogFactory.ShowAddColumnsDialog(ctrl.View.TableViewForm,ctrl.DataTable,false);
+      Altaxo.Worksheet.Commands.WorksheetCommands.AddDataColumns(ctrl);
     }
   }
 
@@ -269,7 +223,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      Altaxo.Main.GUI.DialogFactory.ShowAddColumnsDialog(ctrl.View.TableViewForm,ctrl.DataTable,true);
+      Altaxo.Worksheet.Commands.WorksheetCommands.AddPropertyColumns(ctrl);
     }
   }
 
@@ -317,18 +271,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      if(ctrl.SelectedColumns.Count<=0)
-        return; // no column selected
-
-      Altaxo.Data.DataColumn dataCol = ctrl.DataTable[ctrl.SelectedColumns[0]];
-      if(null==dataCol)
-        return;
-
-      //Data.ColumnScript colScript = (Data.ColumnScript)altaxoDataGrid1.columnScripts[dataCol];
-
-      Data.ColumnScript colScript = ctrl.DataTable.DataColumns.ColumnScripts[dataCol];
-
-      Altaxo.Main.GUI.DialogFactory.ShowColumnScriptDialog(ctrl.View.TableViewForm,ctrl.DataTable,dataCol,colScript);
+      Altaxo.Worksheet.Commands.ColumnCommands.SetColumnValues(ctrl);
     }
   }
 
@@ -392,7 +335,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      DataGridOperations.FFT(ctrl);
+      Altaxo.Worksheet.Commands.Analysis.FourierCommands.FFT(ctrl);
     }
   }
 
@@ -400,9 +343,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      string err = DataGridOperations.TwoDimFFT(Current.Project, ctrl);
-      if(null!=err)
-        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+      Altaxo.Worksheet.Commands.Analysis.FourierCommands.TwoDimensionalFFT(ctrl);
     }
   }
 
@@ -410,9 +351,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      string err = DataGridOperations.TwoDimCenteredFFT(Current.Project, ctrl);
-      if(null!=err)
-        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+      Altaxo.Worksheet.Commands.Analysis.FourierCommands.TwoDimensionalCenteredFFT(ctrl);
     }
   }
 
@@ -420,7 +359,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      DataGridOperations.StatisticsOnColumns(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows);
+      Altaxo.Worksheet.Commands.Analysis.StatisticCommands.StatisticsOnColumns(ctrl);
     }
   }
 
@@ -429,7 +368,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      DataGridOperations.StatisticsOnRows(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows);
+      Altaxo.Worksheet.Commands.Analysis.StatisticCommands.StatisticsOnRows(ctrl);
     }
   }
 
@@ -437,9 +376,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      string err=DataGridOperations.MultiplyColumnsToMatrix(Current.Project,ctrl.Doc,ctrl.SelectedColumns);
-      if(null!=err)
-        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.MultiplyColumnsToMatrix(ctrl);
     }
   }
 
@@ -447,57 +384,28 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      int maxFactors = 3;
-      Main.GUI.IntegerValueInputController ivictrl = new Main.GUI.IntegerValueInputController(
-        maxFactors,
-        new Main.GUI.SingleValueDialog("Set maximum number of factors","Please enter the maximum number of factors to calculate:")
-        );
-
-      ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
-      if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
-      {
-        string err=DataGridOperations.PrincipalComponentAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,true,ivictrl.EnteredContents);
-        if(null!=err)
-          System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
-      }
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PCAOnRows(ctrl);
     }
   }
-
   public class AnalysisPCAOnCols : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      int maxFactors = 3;
-      Main.GUI.IntegerValueInputController ivictrl = new Main.GUI.IntegerValueInputController(
-        maxFactors,
-        new Main.GUI.SingleValueDialog("Set maximum number of factors","Please enter the maximum number of factors to calculate:")
-        );
-
-      ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
-      if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
-      {
-        string err=DataGridOperations.PrincipalComponentAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,false,ivictrl.EnteredContents);
-        if(null!=err)
-          System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
-      }
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSOnColumns(ctrl);
     }
   }
   public class AnalysisPLSOnRows : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      string err=DataGridOperations.PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,true);
-      if(null!=err)
-        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSOnRows(ctrl);
     }
   }
   public class AnalysisPLSOnCols : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      string err=DataGridOperations.PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,false);
-      if(null!=err)
-        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSOnColumns(ctrl);
     }
   }
 

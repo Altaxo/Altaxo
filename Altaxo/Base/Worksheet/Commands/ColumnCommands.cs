@@ -20,18 +20,16 @@
 /////////////////////////////////////////////////////////////////////////////
 #endregion
 
-using System;
-using Altaxo.Worksheet;
-using Altaxo.Worksheet.GUI;
 using System.Text.RegularExpressions;
+using Altaxo.Worksheet.GUI;
 
 namespace Altaxo.Worksheet.Commands
 {
-	/// <summary>
-	/// Contains static functions for handling column commands.
-	/// </summary>
-	public class ColumnCommands
-	{
+  /// <summary>
+  /// Contains static functions for handling column commands.
+  /// </summary>
+  public class ColumnCommands
+  {
     #region Rename column
 
     /// <summary>
@@ -99,9 +97,9 @@ namespace Altaxo.Worksheet.Commands
     }
 
 
-  /// <summary>
-  /// Helper class to make sure that user choosen property column name does not already exists.
-  /// </summary>
+    /// <summary>
+    /// Helper class to make sure that user choosen property column name does not already exists.
+    /// </summary>
     public class PropertyColumnRenameValidator : Main.GUI.TextValueInputController.NonEmptyStringValidator
     {
       Altaxo.Data.DataColumn m_Col;
@@ -166,6 +164,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Sets the group number of the currently selected columns to <code>nGroup</code>.
     /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
     /// <param name="nGroup">The group number to set for the selected columns.</param>
     public static void SetSelectedColumnGroupNumber(WorksheetController ctrl, int nGroup)
     {
@@ -181,7 +180,7 @@ namespace Altaxo.Worksheet.Commands
 
       ctrl.ClearAllSelections();
 
-     ctrl.UpdateTableView();
+      ctrl.UpdateTableView();
     }
     #endregion
 
@@ -203,7 +202,7 @@ namespace Altaxo.Worksheet.Commands
         bChanged = true;
       }
       if(bChanged)
-      ctrl.UpdateTableView(); // draw new because 
+        ctrl.UpdateTableView(); // draw new because 
 
     }
 
@@ -227,7 +226,7 @@ namespace Altaxo.Worksheet.Commands
       }
 
       if(bChanged)
-         ctrl.UpdateTableView(); // draw new because 
+        ctrl.UpdateTableView(); // draw new because 
 
     }
 
@@ -250,7 +249,7 @@ namespace Altaxo.Worksheet.Commands
         bChanged = true;
       }
       if(bChanged)
-         ctrl.UpdateTableView(); // draw new because 
+        ctrl.UpdateTableView(); // draw new because 
 
     }
     #endregion
@@ -326,7 +325,27 @@ namespace Altaxo.Worksheet.Commands
 
     #endregion
 
+    #region Set column values
+
+    public static void SetColumnValues(WorksheetController ctrl)
+    {
+      if(ctrl.SelectedColumns.Count<=0)
+        return; // no column selected
+
+      Altaxo.Data.DataColumn dataCol = ctrl.DataTable[ctrl.SelectedColumns[0]];
+      if(null==dataCol)
+        return;
+
+      //Data.ColumnScript colScript = (Data.ColumnScript)altaxoDataGrid1.columnScripts[dataCol];
+
+      Data.ColumnScript colScript = ctrl.DataTable.DataColumns.ColumnScripts[dataCol];
+
+      Altaxo.Main.GUI.DialogFactory.ShowColumnScriptDialog(ctrl.View.TableViewForm,ctrl.DataTable,dataCol,colScript);
+    }
+
+    #endregion
+
   }
 
-	
+  
 }

@@ -26,9 +26,9 @@ using Altaxo.Graph;
 
 namespace Altaxo.Graph.Procedures
 {
-	/// <summary>
-	/// This class handels the procedure of polynomial fitting to the active curve.
-	/// </summary>
+  /// <summary>
+  /// This class handels the procedure of polynomial fitting to the active curve.
+  /// </summary>
   public class PolynomialFitting
   {
     /// <summary>
@@ -104,12 +104,12 @@ namespace Altaxo.Graph.Procedures
       double[] parameter= new double[order+1];
       Altaxo.Calc.Fitting.LinearFitBySvd fit = 
         new Altaxo.Calc.Fitting.LinearFitBySvd(
-          xarr,yarr,earr,numberOfDataPoints, order+1, new Altaxo.Calc.Fitting.FunctionBaseEvaluator(EvaluatePolynomialBase),1E-5);
+        xarr,yarr,earr,numberOfDataPoints, order+1, new Altaxo.Calc.Fitting.FunctionBaseEvaluator(EvaluatePolynomialBase),1E-5);
 
       // Output of results
 
-     // for(int i=0;i<fit.Parameter.Length;i++)
-     //   Current.OutputService.WriteLine(string.Format("A{0}: {1} +- {2}",i, fit.Parameter[i],fit.Covariances[i][i]));
+      // for(int i=0;i<fit.Parameter.Length;i++)
+      //   Current.OutputService.WriteLine(string.Format("A{0}: {1} +- {2}",i, fit.Parameter[i],fit.Covariances[i][i]));
 
 
 

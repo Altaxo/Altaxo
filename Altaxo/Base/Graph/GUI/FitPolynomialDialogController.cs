@@ -54,11 +54,11 @@ namespace Altaxo.Graph.GUI
   }
 
 
-	/// <summary>
-	/// Controls the polynomial fit view.
-	/// </summary>
-	public class FitPolynomialDialogController : IFitPolynomialDialogController
-	{
+  /// <summary>
+  /// Controls the polynomial fit view.
+  /// </summary>
+  public class FitPolynomialDialogController : IFitPolynomialDialogController
+  {
     int _Order;
     double _FitCurveXmin;
     double _FitCurveXmax;
@@ -75,15 +75,15 @@ namespace Altaxo.Graph.GUI
     public bool ShowFormulaOnGraph { get { return _ShowFormulaOnGraph; }}
 
 
-		public FitPolynomialDialogController(int order, double xmin, double xmax, bool bShowFormulaOnGraph)
-		{
+    public FitPolynomialDialogController(int order, double xmin, double xmax, bool bShowFormulaOnGraph)
+    {
       _Order = order;
       _FitCurveXmin = xmin;
       _FitCurveXmax = xmax;
       _ShowFormulaOnGraph = bShowFormulaOnGraph;
 
       SetElements(true);
-		}
+    }
 
 
 
@@ -164,5 +164,5 @@ namespace Altaxo.Graph.GUI
     }
 
     #endregion
-	}
+  }
 }

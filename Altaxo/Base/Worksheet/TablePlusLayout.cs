@@ -84,9 +84,9 @@ namespace Altaxo.Worksheet
     /// </summary>
     public Altaxo.Data.DataTable Table { get { return _table; }}
     
-   /// <summary>
-   /// Gets the layout.
-   /// </summary>
+    /// <summary>
+    /// Gets the layout.
+    /// </summary>
     public Altaxo.Worksheet.WorksheetLayout Layout { get { return _layout; }}
-	}
+  }
 }

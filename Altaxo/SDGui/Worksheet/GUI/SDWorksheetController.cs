@@ -271,7 +271,7 @@ namespace Altaxo.Worksheet.GUI
       else if(this.AreColumnsOrRowsSelected)
       {
         // Copy the selected Columns to the clipboard
-        DataGridOperations.CopyToClipboard(this);
+        Commands.EditCommands.CopyToClipboard(this);
       }
     }
 
@@ -284,7 +284,7 @@ namespace Altaxo.Worksheet.GUI
       else if(this.AreColumnsOrRowsSelected)
       {
         // Copy the selected Columns to the clipboard
-        DataGridOperations.CopyToClipboard(this);
+        Commands.EditCommands.CopyToClipboard(this);
       }
     
     }
@@ -296,7 +296,7 @@ namespace Altaxo.Worksheet.GUI
       }
       else
       {
-        DataGridOperations.PasteFromClipboard(this);
+        Commands.EditCommands.PasteFromClipboard(this);
       }
     }
     public void Delete(object sender, EventArgs e)
