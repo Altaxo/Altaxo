@@ -27,10 +27,10 @@ using Altaxo.Collections;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// PLS2WorksheetAnalysis performs a PLS2 analysis and 
+  /// PCRWorksheetAnalysis performs a principal component analysis and subsequent regression and 
   /// stores the results in a given table
   /// </summary>
-  [System.ComponentModel.Description("PCR (don't use it)")]
+  [System.ComponentModel.Description("PCR")]
   public class PCRWorksheetAnalysis : WorksheetAnalysis
   {
     public override string AnalysisName
@@ -51,15 +51,6 @@ namespace Altaxo.Calc.Regression.Multivariate
       )
     {
 
-      MatrixMath.SingularValueDecomposition decompose = new MatrixMath.SingularValueDecomposition(matrixX);
-
-
-      // now do a PLS with it
-      MatrixMath.BEMatrix xLoads   = new MatrixMath.BEMatrix(0,0);
-      MatrixMath.BEMatrix yLoads   = new MatrixMath.BEMatrix(0,0);
-      MatrixMath.BEMatrix W       = new MatrixMath.BEMatrix(0,0);
-      MatrixMath.REMatrix V       = new MatrixMath.REMatrix(0,0);
-
       int numFactors = plsOptions.MaxNumberOfFactors;
       numFactors = Math.Min(numFactors,matrixX.Columns);
       numFactors = Math.Min(numFactors,matrixX.Rows);
@@ -67,31 +58,33 @@ namespace Altaxo.Calc.Regression.Multivariate
       //MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,ref numFactors,xLoads,yLoads,W,V,PRESS);
       plsContent.NumberOfFactors = numFactors;
 
-      IExtensibleVector PRESS   = VectorMath.CreateExtensibleVector(numFactors+1);
-      press = PRESS;
+
+      IROMatrix xLoads, xScores;
+      IROVector V;
+      PCRRegression.ExecuteAnalysis(matrixX,matrixY, ref numFactors,out xLoads, out xScores, out V);
 
 
-      // store the x-loads - careful - they are vertical(!) in the decomposition
+     
+
+
+      // store the x-loads - careful - they are horizontal
       for(int i=0;i<numFactors;i++)
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
 
-        int end = decompose.V.Length;
-        for(int j=0;j<end;j++)
-          col[j] = decompose.V[j][i];
+        for(int j=0;j<xLoads.Columns;j++)
+          col[j] = xLoads[i,j];
           
         table.DataColumns.Add(col,GetXLoad_ColumnName(i),Altaxo.Data.ColumnKind.V,0);
       }
-   
-      
+     
       // now store the scores - careful - they are vertical in the matrix
       for(int i=0;i<numFactors;i++)
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
       
-        int end = decompose.U.Length;
-        for(int j=0;j<end;j++)
-          col[j] = decompose.U[j][i];
+        for(int j=0;j<xScores.Rows;j++)
+          col[j] = xScores[j,i];
         
         table.DataColumns.Add(col,GetXScore_ColumnName(i),Altaxo.Data.ColumnKind.V,0);
       }
@@ -112,36 +105,15 @@ namespace Altaxo.Calc.Regression.Multivariate
       Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
       
       for(int j=0;j<numFactors;j++)
-        col[j] = decompose.Diagonal[j];
+        col[j] = V[j];
       table.DataColumns.Add(col,GetCrossProduct_ColumnName(),Altaxo.Data.ColumnKind.V,3);
     }
 
 
-      IMatrix U = JaggedArrayMath.ToMatrix(decompose.U,plsContent.NumberOfMeasurements,plsContent.NumberOfMeasurements);
-     MatrixMath.BEMatrix UtY  = new MatrixMath.BEMatrix(plsContent.NumberOfMeasurements,plsContent.NumberOfConcentrationData);
-     MatrixMath.MultiplyFirstTransposed(U,matrixY,UtY);
 
-     MatrixMath.BEMatrix predictedY  = new MatrixMath.BEMatrix(plsContent.NumberOfMeasurements,plsContent.NumberOfConcentrationData);
-      MatrixMath.BEMatrix subU  = new MatrixMath.BEMatrix(plsContent.NumberOfMeasurements,1);
-      MatrixMath.BEMatrix subY  = new MatrixMath.BEMatrix(plsContent.NumberOfMeasurements,plsContent.NumberOfConcentrationData);
+      PCRRegression.CalculatePRESS(matrixY,xScores,numFactors, out press);
 
-      PRESS[0] = MatrixMath.SumOfSquares(matrixY);
-
-      // now calculate PRESS by predicting the y
-      // using yp = U (w*(1/w)) U' y
-      // of course w*1/w is the identity matrix, but we use only the first factors, so using a cutted identity matrix
-      // we precalculate the last term U'y = UtY
-      // and multiplying with one row of U in every factor step, summing up the predictedY 
-      for(int nf=0;nf<numFactors;nf++)
-      {
-        for(int cn=0;cn<plsContent.NumberOfConcentrationData;cn++)
-        {
-          for(int k=0;k<plsContent.NumberOfMeasurements;k++)
-            subY[k,cn] = U[k,nf]*UtY[nf,cn];
-        }
-        MatrixMath.Add(predictedY,subY,predictedY);
-        PRESS[nf+1] = MatrixMath.SumOfSquaredDifferences(matrixY,predictedY);
-      }
+     
     }
 
     public override void CalculateCrossPRESS(
@@ -164,7 +136,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           matrixX,
           matrixY,
           plsOptions.MaxNumberOfFactors,
-          plsOptions.CrossPRESSCalculation==CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements,
+          GetGroupingStrategy(plsOptions),
           out crossPRESSMatrix,
           out meanNumberOfExcludedSpectra);
 
@@ -392,9 +364,11 @@ namespace Altaxo.Calc.Regression.Multivariate
       PCRCalibrationModel calib;
       Export(table,out calib);
 
-      Matrix predictionScores = new Matrix(memento.NumberOfConcentrationData,memento.NumberOfSpectralData);
+      Matrix predictionScores = new Matrix(memento.NumberOfSpectralData,memento.NumberOfConcentrationData);
       PCRRegression.GetPredictionScoreMatrix(calib.XLoads,calib.YLoads,calib.XScores,calib.CrossProduct,preferredNumberOfFactors,predictionScores);
-      return predictionScores;
+     
+      
+      return predictionScores.Transpose();
     }
 
 

@@ -47,10 +47,11 @@ namespace Altaxo.Calc.Regression.Multivariate
     const string _XWeight_ColumnName = "XWeight";
     const string _XScore_ColumnName = "XScore";
     const string _YLoad_ColumnName = "YLoad";
-    const string _CrossProduct_ColumnName = "CrossP";
+    const string _CrossProduct_ColumnName = "CrossProduct";
 
     const string _PRESSValue_ColumnName = "PRESS";
     const string _CrossPRESSValue_ColumnName = "CrossPRESS";
+    const string _PredictionScore_ColumnName = "PredictionScore";
 
     const string _NumberOfFactors_ColumnName = "NumberOfFactors";
     const string _MeasurementLabel_ColumnName = "MeasurementLabel";
@@ -105,7 +106,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       return string.Format("{0}{1}.{2}",_XLoad_ColumnName,nConstituent,numberOfFactors);
     }
-
+    public static string GetPredictionScore_ColumnName(int nConstituent, int numberOfFactors)
+    {
+      return string.Format("{0}{1}.{2}",_PredictionScore_ColumnName,nConstituent,numberOfFactors);
+    }
     public static string GetXScore_ColumnName(int numberOfFactors)
     {
       return string.Format("{0}{1}",_XScore_ColumnName,numberOfFactors);
@@ -215,6 +219,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     const int _YPredicted_ColumnGroup = 5;
     const int _YResidual_ColumnGroup = 5;
     const int _XLeverage_ColumnGroup = 5;
+    const int _PredictionScore_ColumnGroup =0;
 
 
     public static int GetNumberOfFactors_ColumnGroup()
@@ -224,6 +229,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     public static int GetYPredicted_ColumnGroup()
     {
       return _YPredicted_ColumnGroup;
+    }
+    public static int GetPredictionScore_ColumnGroup()
+    {
+      return _PredictionScore_ColumnGroup;
     }
     public static int GetYResidual_ColumnGroup()
     {
@@ -321,6 +330,26 @@ namespace Altaxo.Calc.Regression.Multivariate
     #endregion
 
     #region static Helper methods
+
+    /// <summary>
+    /// Creates the corresponding grouping strategy out of the CrossPRESSCalculation enumeration in plsOptions.
+    /// </summary>
+    /// <param name="plsOptions">The options for PLS analysis</param>
+    /// <returns>The used grouping strategy. Returns null if no cross validation is choosen.</returns>
+    public static ICrossValidationGroupingStrategy GetGroupingStrategy(MultivariateAnalysisOptions plsOptions)
+    {
+      switch(plsOptions.CrossPRESSCalculation)
+      {
+        case CrossPRESSCalculationType.ExcludeEveryMeasurement:
+          return new ExcludeSingleMeasurementsGroupingStrategy();
+        case CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements:
+          return new ExcludeGroupsGroupingStrategy();
+        case CrossPRESSCalculationType.ExcludeHalfEnsemblyOfMeasurements:
+          return new ExcludeHalfObservationsGroupingStrategy();
+      }
+      return null;
+    }
+
 
     /// <summary>
     /// Using the information in the plsMemo, gets the matrix of original spectra. The spectra are horizontal in the matrix, i.e. each spectra is a matrix row.
@@ -1141,6 +1170,19 @@ namespace Altaxo.Calc.Regression.Multivariate
         table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,GetYResidual_ColumnGroup());
       }
       
+    }
+
+    public void CalculateAndStorePredictionScores(DataTable table, int preferredNumberOfFactors)
+    {
+      IROMatrix predictionScores = this.CalculatePredictionScores(table,preferredNumberOfFactors);
+      for(int i=0;i<predictionScores.Rows;i++)
+      {
+        DoubleColumn col = new DoubleColumn();
+        for(int j=0;j<predictionScores.Columns;j++)
+          col[j] = predictionScores[i,j];
+
+        table.DataColumns.Add(col,GetPredictionScore_ColumnName(i,preferredNumberOfFactors),Altaxo.Data.ColumnKind.V,GetPredictionScore_ColumnGroup());
+      }
     }
 
     /// <summary>

@@ -49,6 +49,82 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #endregion
 
+    #region Inner types
+
+    class TransposedROMatrix : IROMatrix
+    {
+      protected double[][] _arr;
+      protected int _rows;
+      protected int _cols;
+
+      public TransposedROMatrix(double[][] arr, int rows, int cols)
+    {
+        if(arr==null)
+          throw new ArgumentNullException("arr");
+        if(arr.Length<cols)
+          throw new ArgumentException("Number of columns bigger than length of array");
+        for(int i=0;i<arr.Length;i++)
+          if(arr[i]==null || arr[i].Length<rows)
+            throw new ArgumentException("Number of rows bigger than subarray at index " + i.ToString());
+
+        _arr = arr;
+        _rows = rows;
+        _cols = cols;
+    }
+      #region IROMatrix Members
+
+      public double this[int row, int col]
+      {
+        get
+        {
+          return _arr[col][row];
+        }
+      }
+
+      public int Rows
+      {
+        get
+        {
+          return _rows;
+        }
+      }
+
+      public int Columns
+      {
+        get
+        {
+          return _cols;
+        }
+      }
+
+      #endregion
+    }
+
+    class TransposedMatrix : TransposedROMatrix, IMatrix
+    {
+      public TransposedMatrix(double[][] arr, int rows, int cols)
+      : base(arr,rows,cols)
+      {
+      }
+      #region IMatrix Members
+
+      public new double this[int row, int col]
+      {
+        get
+        {
+          return _arr[col][row];
+        }
+        set
+        {
+          _arr[col][row] = value;
+        }
+      }
+      #endregion
+    }
+
+
+    #endregion
+
     #region Type conversion
 
     /// <summary>
@@ -62,6 +138,31 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       return new JaggedArrayMatrix(x,rows,cols);
     }
+
+    /// <summary>
+    /// This wraps a jagged double array to the <see>IROMatrix</see> interface so that the array appears to be transposed. The data is not copied!
+    /// </summary>
+    /// <param name="x">The jagged array. Each double[] vector is a column of the matrix (because of transpose).</param>
+    /// <param name="rows">The number of (used) rows of the resulting matrix.</param>
+    /// <param name="cols">The number of (used) columns of the resulting matrix = length of the first level of the jagged array.</param>
+    /// <returns>A IROMatrix wrapping the provided array so that it seems to be transposed.</returns>
+    public static IROMatrix ToTransposedROMatrix(double[][] x, int rows, int cols)
+    {
+      return new TransposedROMatrix(x,rows,cols);
+    }
+
+    /// <summary>
+    /// This wraps a jagged double array to the <see>IROMatrix</see> interface so that the array appears to be transposed. The data is not copied!
+    /// </summary>
+    /// <param name="x">The jagged array. Each double[] vector is a column of the matrix (because of transpose).</param>
+    /// <param name="rows">The number of (used) rows of the resulting matrix.</param>
+    /// <param name="cols">The number of (used) columns of the resulting matrix = length of the first level of the jagged array.</param>
+    /// <returns>A IROMatrix wrapping the provided array so that it seems to be transposed.</returns>
+    public static IMatrix ToTransposedMatrix(double[][] x, int rows, int cols)
+    {
+      return new TransposedMatrix(x,rows,cols);
+    }
+
 
     #endregion
 

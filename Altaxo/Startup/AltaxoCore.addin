@@ -442,6 +442,8 @@
 		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotXLeverage.Description}" class="Altaxo.Worksheet.Commands.PLSPlotXLeverage" />
     					<MenuItem id="PlotPreprocessedSpectra" label="${res:XML.MainMenu.PlotMenu.PLS.PlotPreprocessedSpectra}" icon="Icons.16x16.PlotLine"
 		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotPreprocessedSpectra.Description}" class="Altaxo.Worksheet.Commands.PLSPlotPreprocessedSpectra" />
+    					<MenuItem id="PlotPredictionScores" label="${res:XML.MainMenu.PlotMenu.PLS.PlotPredictionScores}" icon="Icons.16x16.PlotLine"
+		            				description="${res:XML.MainMenu.PlotMenu.PLS.PlotPredictionScores.Description}" class="Altaxo.Worksheet.Commands.PLSPlotPredictionScores" />
       		  </MenuItem>
       		</Conditional>
 			</MenuItem>

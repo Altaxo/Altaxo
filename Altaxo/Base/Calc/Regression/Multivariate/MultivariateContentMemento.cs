@@ -78,7 +78,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// The instance of the class used to analyse the data.
     /// </summary>
-     WorksheetAnalysis _InstanceOfAnalysisClass;
+    WorksheetAnalysis _InstanceOfAnalysisClass;
 
 
     /// <summary>
@@ -89,7 +89,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     #region Serialization
 
-      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Calc.Regression.PLS.PLSContentMemento",0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Calc.Regression.PLS.PLSContentMemento",0)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
@@ -113,6 +113,9 @@ namespace Altaxo.Calc.Regression.Multivariate
         s.MeasurementIndices = (IAscendingIntegerCollection)info.GetValue("MeasurementIndices",s);
         s._PreferredNumberOfFactors = info.GetInt32("PreferredNumberOfFactors");
        
+        // neccessary since version 2
+        s.Analysis = new PLS2WorksheetAnalysis();
+
         return s;
       }
     }
@@ -160,6 +163,58 @@ namespace Altaxo.Calc.Regression.Multivariate
           s._spectralPreprocessing.DetrendingOrder = info.GetInt32("SpectralPreprocessingDetrending");
           s._spectralPreprocessing.EnsembleScale = info.GetBoolean("SpectralPreprocessingEnsembleScale");
         }
+
+        // neccessary since version 2
+        s.Analysis = new PLS2WorksheetAnalysis();
+
+        return s;
+      }
+    }
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MultivariateContentMemento),2)]
+      public class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
+      {
+        MultivariateContentMemento s = (MultivariateContentMemento)obj;
+        info.AddValue("TableName",s.TableName); // name of the Table
+        info.AddValue("SpectrumIsRow",s.SpectrumIsRow);
+        info.AddValue("SpectralIndices",s.SpectralIndices);
+        info.AddValue("ConcentrationIndices",s.ConcentrationIndices);
+        info.AddValue("MeasurementIndices",s.MeasurementIndices);
+        info.AddValue("PreferredNumberOfFactors", s._PreferredNumberOfFactors); // the property columns of that table
+
+        // new in version 1
+        info.AddArray("SpectralPreprocessingRegions",s._spectralPreprocessing.Regions,s._spectralPreprocessing.Regions.Length);
+        info.AddEnum("SpectralPreprocessingMethod", s._spectralPreprocessing.Method);
+        info.AddValue("SpectralPreprocessingDetrending", s._spectralPreprocessing.DetrendingOrder);
+        info.AddValue("SpectralPreprocessingEnsembleScale",s._spectralPreprocessing.EnsembleScale);
+
+        // new in version 2
+        info.AddValue("ClassNameOfAnalysisClass",s._ClassNameOfAnalysisClass);
+
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo  info, object parent)
+      {
+        MultivariateContentMemento s = null!=o ? (MultivariateContentMemento)o : new MultivariateContentMemento();
+
+        s.TableName = info.GetString("Name");
+        s.SpectrumIsRow = info.GetBoolean("SpectrumIsRow");
+        s.SpectralIndices = (IAscendingIntegerCollection)info.GetValue("SpectralIndices",s);
+        s.ConcentrationIndices = (IAscendingIntegerCollection)info.GetValue("ConcentrationIndices",s);
+        s.MeasurementIndices = (IAscendingIntegerCollection)info.GetValue("MeasurementIndices",s);
+        s._PreferredNumberOfFactors = info.GetInt32("PreferredNumberOfFactors");
+
+        // new in version 1
+        int[] regions;
+        info.GetArray("SpectralPreprocessingRegions", out regions);
+        s._spectralPreprocessing.Regions = regions;
+        s._spectralPreprocessing.Method  = (SpectralPreprocessingMethod)info.GetEnum("SpectralPreprocessingMethod",typeof(SpectralPreprocessingMethod));
+        s._spectralPreprocessing.DetrendingOrder = info.GetInt32("SpectralPreprocessingDetrending");
+        s._spectralPreprocessing.EnsembleScale = info.GetBoolean("SpectralPreprocessingEnsembleScale");
+
+        // new in version 2
+        s._ClassNameOfAnalysisClass = info.GetString("ClassNameOfAnalysisClass");
 
         return s;
       }

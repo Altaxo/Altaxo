@@ -25,75 +25,6 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-
-  public interface ICrossValidationGroupingStrategy
-  {
-    int[][] Group(IROMatrix matrixY);
-  }
-
-  public class ExcludeGroupsGroupingStrategy : ICrossValidationGroupingStrategy
-  {
-    public int[][] Group(IROMatrix Y)
-    {
-      System.Collections.ArrayList groups = new System.Collections.ArrayList();
-
-      // add the first y-row to the first group
-      System.Collections.ArrayList newcoll = new System.Collections.ArrayList();
-      newcoll.Add(0);
-      groups.Add(newcoll);
-      // now test all other rows of the y-matrix against the existing groups
-      for(int i=1;i<Y.Rows;i++)
-      {
-        bool bNewGroup=true;
-        for(int gr=0;gr<groups.Count;gr++)
-        {
-          int refrow = (int)(((System.Collections.ArrayList)groups[gr])[0]);
-          bool match = true;
-          for(int j=0;j<Y.Columns;j++)
-          {
-            if(Y[i,j]!= Y[refrow,j])
-            {
-              match=false;
-              break;
-            }
-          }
-            
-          if(match)
-          {
-            bNewGroup=false;
-            ((System.Collections.ArrayList)groups[gr]).Add(i);
-            break;
-          }
-        }
-        if(bNewGroup)
-        {
-          newcoll = new System.Collections.ArrayList();
-          newcoll.Add(i);
-          groups.Add(newcoll);
-        }
-      }
-      return null;
-    }
-  }
-
-  public class ExcludeSingleMeasurementsGroupingStrategy : ICrossValidationGroupingStrategy
-  {
-    public int[][] Group(IROMatrix Y)
-    {
-      int[][] groups = new int[Y.Rows][];
-
-      for(int i=0;i<Y.Rows;i++)
-      {
-        int[] newcoll = new int[1];
-        newcoll[0]=i;
-        groups[i]=newcoll;
-      }
-
-      return groups;
-    }
-  }
-
-
 	/// <summary>
 	/// PCRRegression contains static methods for doing principal component regression analysis and prediction of the data.
 	/// </summary>
@@ -117,7 +48,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       numFactors = Math.Min(numFactors,matrixX.Rows);
 
 
-      xLoads = JaggedArrayMath.ToMatrix(decompose.V,Y.Rows,X.Columns);
+      xLoads = JaggedArrayMath.ToTransposedROMatrix(decompose.V,Y.Rows,X.Columns);
       xScores = JaggedArrayMath.ToMatrix(decompose.U,Y.Rows,Y.Rows);
       V       = VectorMath.ToROVector(decompose.Diagonal,numFactors);
     }
@@ -179,7 +110,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       GetPredictionScoreMatrix(xLoads,yLoads,xScores,crossProduct,numberOfFactors,predictionScores);
       MatrixMath.Multiply(matrixX,predictionScores,predictedY);
 
-      GetSpectralResiduals(matrixX,xLoads,yLoads,xScores,crossProduct,numberOfFactors,spectralResiduals);
+      if(null!=spectralResiduals)
+        GetSpectralResiduals(matrixX,xLoads,yLoads,xScores,crossProduct,numberOfFactors,spectralResiduals);
     }
 
     public static void GetPredictionScoreMatrix(
@@ -209,6 +141,64 @@ namespace Altaxo.Calc.Regression.Multivariate
         }
       }
     }
+
+    public static void CalculatePRESS(
+      IROMatrix yLoads,
+      IROMatrix xScores,
+      int numberOfFactors,
+      out IROVector press)
+    {
+      int numMeasurements = yLoads.Rows;
+
+       IExtensibleVector PRESS   = VectorMath.CreateExtensibleVector(numberOfFactors+1);
+       MatrixMath.BEMatrix UtY  = new MatrixMath.BEMatrix(yLoads.Rows,yLoads.Columns);
+      MatrixMath.BEMatrix predictedY  = new MatrixMath.BEMatrix(yLoads.Rows,yLoads.Columns);
+      press = PRESS;
+
+      
+      MatrixMath.MultiplyFirstTransposed(xScores,yLoads,UtY);
+
+
+
+        // now calculate PRESS by predicting the y
+        // using yp = U (w*(1/w)) U' y
+        // of course w*1/w is the identity matrix, but we use only the first factors, so using a cutted identity matrix
+        // we precalculate the last term U'y = UtY
+        // and multiplying with one row of U in every factor step, summing up the predictedY 
+      PRESS[0] = MatrixMath.SumOfSquares(yLoads);
+      for(int nf=0;nf<numberOfFactors;nf++)
+        {
+          for(int cn=0;cn<yLoads.Columns;cn++)
+          {
+            for(int k=0;k<yLoads.Rows;k++)
+              predictedY[k,cn] += xScores[k,nf]*UtY[nf,cn];
+          }
+          PRESS[nf+1] = MatrixMath.SumOfSquaredDifferences(yLoads,predictedY);
+        }
+     
+    }
+
+    public static void CalculatePRESS(
+      IROMatrix matrixX,
+      IROMatrix xLoads,
+      IROMatrix yLoads,
+      IROMatrix xScores,
+      IROVector crossProduct,
+      int numberOfFactors,
+      out IROVector PRESS)
+    {
+      IMatrix predictedY = new JaggedArrayMatrix(yLoads.Rows,yLoads.Columns);
+      IVector press = VectorMath.CreateExtensibleVector(numberOfFactors+1);
+      PRESS = press;
+
+      press[0] = MatrixMath.SumOfSquares(yLoads);
+      for(int nf=0;nf<numberOfFactors;nf++)
+      {
+        Predict(matrixX,xLoads,yLoads,xScores,crossProduct,nf,predictedY,null);
+        press[nf+1] = MatrixMath.SumOfSquaredDifferences(yLoads,predictedY);
+      }
+    }
+
 
     public static void GetSpectralResiduals(
       IROMatrix matrixX,
@@ -259,7 +249,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
       IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
       int numFactors,
-      bool bExcludeGroups,
+      ICrossValidationGroupingStrategy groupingStrategy,
       out IROVector crossPRESSMatrix, // vertical value of PRESS values for the cross validation
       out double meanNumberOfExcludedSpectra
       )
@@ -276,7 +266,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix YU=null; 
       IMatrix predY=null; 
 
-      int[][] groups = bExcludeGroups ? new ExcludeGroupsGroupingStrategy().Group(Y) : new ExcludeSingleMeasurementsGroupingStrategy().Group(Y);
+      int[][] groups = groupingStrategy.Group(Y);
 
       for(int nGroup=0 ,prevNumExcludedSpectra = int.MinValue ;nGroup < groups.Length;nGroup++)
       {
@@ -298,7 +288,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         // fill XX and YY with values
         for(int i=0,j=0;i<X.Rows;i++)
         {
-          if(Array.IndexOf(spectralGroup,i)>=0)
+          if(Array.IndexOf(spectralGroup,i)>=0)  // if spectral group contains i
             continue; // Exclude this row from the spectra
           MatrixMath.SetRow(X,i,XX,j);
           MatrixMath.SetRow(Y,i,YY,j);
@@ -307,7 +297,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         // fill XU (unknown spectra) with values
         for(int i=0;i<spectralGroup.Length;i++)
         {
-          int j = (int)(spectralGroup[i]);
+          int j = spectralGroup[i];
           MatrixMath.SetRow(X,j,XU,i); // x-unkown (unknown spectra)
           MatrixMath.SetRow(Y,j,YU,i); // y-unkown (unknown concentration)
         }
@@ -331,7 +321,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         crossPRESS[0] += MatrixMath.SumOfSquares(YU);
         for(int nFactor=1;nFactor<=numFactors;nFactor++)
         {
-          Predict(XU,xLoads,Y,xScores,V,nFactor,predY,null);
+          Predict(XU,xLoads,YY,xScores,V,nFactor,predY,null);
           crossPRESS[nFactor] += MatrixMath.SumOfSquaredDifferences(YU,predY);
         }
       } // for all groups

@@ -676,6 +676,31 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Worksheet.Commands.PlotCommands.PlotLine(desttable,new IntegerRangeAsCollection(1,desttable.DataColumnCount-1),true,false);
     }
 
+    /// <summary>
+    /// Plots all preprocessed spectra into a newly created graph.
+    /// </summary>
+    /// <param name="table">The table of PLS output data.</param>
+    public static void PlotPredictionScores(Altaxo.Data.DataTable table)
+    {
+      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      if(plsMemo==null)
+        return;
+      if(plsMemo.PreferredNumberOfFactors<=0)
+        QuestPreferredNumberOfFactors(plsMemo);
+
+      GetAnalysis(table).CalculateAndStorePredictionScores(table, plsMemo.PreferredNumberOfFactors);
+      
+      AscendingIntegerCollection sel = new AscendingIntegerCollection();
+
+      for(int i=0;i<plsMemo.NumberOfConcentrationData;i++)
+      {
+        string name = WorksheetAnalysis.GetPredictionScore_ColumnName(i,plsMemo.PreferredNumberOfFactors);
+        if(null!=table[name])
+          sel.Add(table.DataColumns.GetColumnNumber(table[name]));
+      }
+
+      Worksheet.Commands.PlotCommands.PlotLine(table,sel,true,false);
+    }
 
     /// <summary>
     /// Plots the x (spectral) residuals into a provided layer.

@@ -61,7 +61,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       press = PRESS;
 
       int numFactors = Math.Min(matrixX.Columns,plsOptions.MaxNumberOfFactors);
-      MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,ref numFactors,xLoads,yLoads,W,V,PRESS);
+      PLSRegression.ExecuteAnalysis(matrixX,matrixY,ref numFactors,xLoads,yLoads,W,V,PRESS);
       plsContent.NumberOfFactors = numFactors;
 
       // store the x-loads - careful - they are horizontal in the matrix
@@ -127,11 +127,11 @@ namespace Altaxo.Calc.Regression.Multivariate
       {
         // now a cross validation - this can take a long time for bigger matrices
         
-        MatrixMath.PartialLeastSquares_CrossValidation_HO(
+        PLSRegression.CrossValidation(
           matrixX,
           matrixY,
           plsOptions.MaxNumberOfFactors,
-          plsOptions.CrossPRESSCalculation==CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements,
+          GetGroupingStrategy(plsOptions),
           out crossPRESSMatrix,
           out meanNumberOfExcludedSpectra);
 
@@ -299,7 +299,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       PreProcessSpectra(calib,preprocessOptions,matrixX);
 
-      MatrixMath.PartialLeastSquares_Predict_HO(
+      PLSRegression.Predict(
         matrixX,
         calib.XLoads,
         calib.YLoads,
@@ -425,7 +425,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       Export(table,out model);
 
       Matrix predictionScores = new Matrix(memento.NumberOfConcentrationData,memento.NumberOfSpectralData);
-      MatrixMath.PartialLeastSquares_GetPredictionScoreMatrix(model.XLoads,model.YLoads,model.XWeights,model.CrossProduct,preferredNumberOfFactors,predictionScores);
+      PLSRegression.GetPredictionScoreMatrix(model.XLoads,model.YLoads,model.XWeights,model.CrossProduct,preferredNumberOfFactors,predictionScores);
       return predictionScores;
     }
 

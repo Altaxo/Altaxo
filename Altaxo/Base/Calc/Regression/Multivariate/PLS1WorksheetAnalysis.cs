@@ -73,7 +73,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
         int numFactors = Math.Min(matrixX.Columns,plsOptions.MaxNumberOfFactors);
-        MatrixMath.PartialLeastSquares_HO(matrixX,matrixYpls1,ref numFactors,xLoads,yLoads,W,V,localPRESS);
+        PLSRegression.ExecuteAnalysis(matrixX,matrixYpls1,ref numFactors,xLoads,yLoads,W,V,localPRESS);
         plsContent.NumberOfFactors = Math.Min(plsContent.NumberOfFactors,numFactors);
   
         // store the x-loads - careful - they are horizontal in the matrix
@@ -155,11 +155,11 @@ namespace Altaxo.Calc.Regression.Multivariate
           // now a cross validation - this can take a long time for bigger matrices
           IROVector crossPRESSMatrix;
         
-          MatrixMath.PartialLeastSquares_CrossValidation_HO(
+          PLSRegression.CrossValidation(
             matrixX,
             matrixYpls1,
             plsOptions.MaxNumberOfFactors,
-            plsOptions.CrossPRESSCalculation==CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements,
+            GetGroupingStrategy(plsOptions),
             out crossPRESSMatrix,
             out meanNumberOfExcludedSpectra);
 
@@ -334,7 +334,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       for(int yn=0;yn<calib.NumberOfY;yn++)
       {
 
-        MatrixMath.PartialLeastSquares_Predict_HO(
+        PLSRegression.Predict(
           matrixX,
           calib.XLoads[yn],
           calib.YLoads[yn],
@@ -399,7 +399,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       Matrix predictionScores = new Matrix(memento.NumberOfConcentrationData,memento.NumberOfSpectralData);
       for(int yn=0;yn<calib.NumberOfY;yn++)
       {
-        MatrixMath.PartialLeastSquares_GetPredictionScoreMatrix(
+        PLSRegression.GetPredictionScoreMatrix(
           calib.XLoads[yn],
           calib.YLoads[yn],
           calib.XWeights[yn],

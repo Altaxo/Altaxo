@@ -46,6 +46,7 @@ namespace Altaxo.Worksheet.GUI
     private System.Windows.Forms.RadioButton rbCrossValidationGroups;
     private System.Windows.Forms.ComboBox cbAnalysisMethod;
     private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.RadioButton rbCrossValidationHalfEnsemble;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -90,6 +91,7 @@ namespace Altaxo.Worksheet.GUI
       this.rbCrossValidationNone = new System.Windows.Forms.RadioButton();
       this.cbAnalysisMethod = new System.Windows.Forms.ComboBox();
       this.label2 = new System.Windows.Forms.Label();
+      this.rbCrossValidationHalfEnsemble = new System.Windows.Forms.RadioButton();
       ((System.ComponentModel.ISupportInitialize)(this.edMaxNumFactors)).BeginInit();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -113,12 +115,13 @@ namespace Altaxo.Worksheet.GUI
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.rbCrossValidationHalfEnsemble);
       this.groupBox1.Controls.Add(this.rbCrossValidationGroups);
       this.groupBox1.Controls.Add(this.rbCrossValidationEvery);
       this.groupBox1.Controls.Add(this.rbCrossValidationNone);
       this.groupBox1.Location = new System.Drawing.Point(16, 128);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(168, 112);
+      this.groupBox1.Size = new System.Drawing.Size(168, 144);
       this.groupBox1.TabIndex = 2;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Cross validation calculation:";
@@ -166,6 +169,15 @@ namespace Altaxo.Worksheet.GUI
       this.label2.TabIndex = 4;
       this.label2.Text = "Method:";
       // 
+      // rbCrossValidationHalfEnsemble
+      // 
+      this.rbCrossValidationHalfEnsemble.Location = new System.Drawing.Point(8, 104);
+      this.rbCrossValidationHalfEnsemble.Name = "rbCrossValidationHalfEnsemble";
+      this.rbCrossValidationHalfEnsemble.Size = new System.Drawing.Size(136, 32);
+      this.rbCrossValidationHalfEnsemble.TabIndex = 3;
+      this.rbCrossValidationHalfEnsemble.Text = "Exclude half ensembly of measurements";
+      this.rbCrossValidationHalfEnsemble.CheckedChanged += new System.EventHandler(this.rbCrossValidationHalfEnsemble_CheckedChanged);
+      // 
       // PLSStartAnalysisControl
       // 
       this.Controls.Add(this.label2);
@@ -174,7 +186,7 @@ namespace Altaxo.Worksheet.GUI
       this.Controls.Add(this.edMaxNumFactors);
       this.Controls.Add(this.label1);
       this.Name = "PLSStartAnalysisControl";
-      this.Size = new System.Drawing.Size(192, 248);
+      this.Size = new System.Drawing.Size(192, 280);
       ((System.ComponentModel.ISupportInitialize)(this.edMaxNumFactors)).EndInit();
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
@@ -215,6 +227,9 @@ namespace Altaxo.Worksheet.GUI
         case CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements:
           rbCrossValidationGroups.Checked = true;
           break;
+        case CrossPRESSCalculationType.ExcludeHalfEnsemblyOfMeasurements:
+          this.rbCrossValidationHalfEnsemble.Checked = true;
+          break;
       }
     }
 
@@ -250,11 +265,20 @@ namespace Altaxo.Worksheet.GUI
 
     }
 
+    private void rbCrossValidationHalfEnsemble_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if(_controller!=null)
+        _controller.EhView_CrossValidationSelected(CrossPRESSCalculationType.ExcludeHalfEnsemblyOfMeasurements);
+    
+    }
+
+
     private void cbAnalysisMethod_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
       if(_controller!=null)
         _controller.EhView_AnalysisMethodChanged(cbAnalysisMethod.SelectedIndex);
     }
+
 
  
   }

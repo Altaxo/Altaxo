@@ -45,6 +45,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     ExcludeGroupsOfSimilarMeasurements,
 
-
+    /// <summary>
+    /// Measurements are divided into two groups, so that measurements with similar y-values should be equally distributed
+    /// into one group and the other.
+    /// </summary>
+    ExcludeHalfEnsemblyOfMeasurements
   }
 }

@@ -294,6 +294,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\Regression\Multivariate\CrossValidationGroupingStrategies.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\Regression\Multivariate\IMultivariateCalibrationModel.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -325,6 +330,11 @@
                 />
                 <File
                     RelPath = "Calc\Regression\Multivariate\PLSAnalysisOptions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Multivariate\PLSRegression.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
