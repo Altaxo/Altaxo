@@ -845,7 +845,7 @@ namespace Altaxo.Calc.FFT
         for (int i = 1; i <= n2; i++) 
         {
           double rr = result[i]  + result[n-i], 
-             ri = scratch[i] - scratch[n-i],
+            ri = scratch[i] - scratch[n-i],
             sr = scratch[i] + scratch[n-i],
             si = result[n-i]  - result[i]; 
           result[i]  = scale * (rr*sr + ri*si);   // real part

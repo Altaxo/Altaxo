@@ -39,7 +39,7 @@ namespace AltaxoTest.Calc.FFT
   
 
     [Test]
-    public void TestZero()
+    public void Test01Zero()
     {
       
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
@@ -47,35 +47,35 @@ namespace AltaxoTest.Calc.FFT
     }
 
     [Test]
-    public void TestReOne_ZeroPos()
+    public void Test02ReOne_ZeroPos()
     {
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
         _test.TestReOne_ZeroPos(i);
     }
 
     [Test]
-    public void TestImOne_ZeroPos()
+    public void Test03ImOne_ZeroPos()
     {
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
         _test.TestImOne_ZeroPos(i);
     }
 
     [Test]
-    public void TestReOne_OnePos()
+    public void Test04ReOne_OnePos()
     {
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
         _test.TestReOne_OnePos(i);
     }
     
     [Test]
-    public void TestImOne_OnePos()
+    public void Test05ImOne_OnePos()
     {
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
         _test.TestImOne_OnePos(i);
     }
 
     [Test]
-    public void TestReImOne_RandomPos()
+    public void Test06ReImOne_RandomPos()
     {
       double oldTolerance = _test.SetTolerance(1E-14);
 
@@ -86,7 +86,7 @@ namespace AltaxoTest.Calc.FFT
     }
 
     [Test]
-    public void TestReImRandomValues()
+    public void Test07ReImRandomValues()
     {
       double oldTolerance = _test.SetTolerance(1E-14);
 

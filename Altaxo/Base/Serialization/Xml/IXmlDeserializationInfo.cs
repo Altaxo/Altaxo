@@ -51,6 +51,19 @@ namespace Altaxo.Serialization.Xml
     void CloseArray(int count);
 
     void GetArray(out float[] val);
+    
+    /// <summary>
+    /// Deserializes an array of double values. The array is allocated automatically.
+    /// </summary>
+    /// <param name="name">Name of the array.</param>
+    /// <param name="val">The resulting deserialized array.</param>
+    void GetArray(string name, out double[] val);
+
+    /// <summary>
+    /// Deserializes an array of double value. The xml node must be opened before with <see>OpenArray</see>
+    /// </summary>
+    /// <param name="val">The array, must be at least of length <c>count</c>.</param>
+    /// <param name="count">The number of elements to deserialize. If this is less than the number of elements in the xml stream, the other elements are safely ignored.</param>
     void GetArray(double[] val, int count);
     void GetArray(DateTime[] val, int count);
     void GetArray(string[] val, int count);

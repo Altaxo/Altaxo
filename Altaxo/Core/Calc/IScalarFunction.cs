@@ -35,6 +35,6 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The argument of the function.</param>
     /// <returns>The resulting value that the function evaluates.</returns>
-    double Function(double x);
+    double Evaluate(double x);
   }
 }

@@ -224,6 +224,13 @@ namespace Altaxo.Serialization.Xml
     }
 
 
+    public void GetArray(string name, out double[] val)
+    {
+      int count = GetInt32Attribute("Count");
+      val = new double[count];
+      GetArray(val,count);
+    }
+
     public void GetArray(double[] val, int count)
     {
       // Attribute must be readed before ReadStartElement

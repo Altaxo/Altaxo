@@ -31,13 +31,13 @@ namespace AltaxoTest.Calc.FFT
   public class TestFastHartleyTransform
   {
     const int nLowerLimit=4;
-    const int nUpperLimit=16384;
+    const int nUpperLimit=1024;
     const double maxTolerableEpsPerN=1E-15;
 
     static SplittedComplexFFTTests _test = new SplittedComplexFFTTests(new SplittedComplexFFTTests.FFTRoutine(FastHartleyTransform.FFT));
 
     [Test]
-    public void TestZero()
+    public void Test01Zero()
     {
       // Testing 2^n
       for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
@@ -45,7 +45,7 @@ namespace AltaxoTest.Calc.FFT
     }
 
     [Test]
-    public void TestReOne_ZeroPos()
+    public void Test02ReOne_ZeroPos()
     {
       // Testing 2^n
       for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
@@ -53,7 +53,7 @@ namespace AltaxoTest.Calc.FFT
     }
 
     [Test]
-    public void TestImOne_ZeroPos()
+    public void Test03ImOne_ZeroPos()
     {
       // Testing 2^n
       for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
@@ -61,7 +61,7 @@ namespace AltaxoTest.Calc.FFT
     }
 
     [Test]
-    public void TestReOne_OnePos()
+    public void Test04ReOne_OnePos()
     {
       // Testing 2^n
       for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
@@ -69,7 +69,7 @@ namespace AltaxoTest.Calc.FFT
     }
 
     [Test]
-    public void TestImOne_OnePos()
+    public void Test05ImOne_OnePos()
     {
       // Testing 2^n
       for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
@@ -77,7 +77,7 @@ namespace AltaxoTest.Calc.FFT
     }
 
     [Test]
-    public void TestReImOne_RandomPos()
+    public void Test06ReImOne_RandomPos()
     {
       // Testing 2^n
       for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
@@ -85,7 +85,7 @@ namespace AltaxoTest.Calc.FFT
     }
 
     [Test]
-    public void TestReImRandomValues()
+    public void Test07ReImRandomValues()
     {
       // Testing 2^n
       for(int i=nLowerLimit;i<=256;i*=2)

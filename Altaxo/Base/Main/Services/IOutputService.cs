@@ -23,11 +23,11 @@ using System;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// IOutputService provides methods for outputting text for the user (for instance results of operations, warning and error messages).
-	/// </summary>
-	public interface IOutputService
-	{
+  /// <summary>
+  /// IOutputService provides methods for outputting text for the user (for instance results of operations, warning and error messages).
+  /// </summary>
+  public interface IOutputService
+  {
     /// <summary>Writes a string to the output.</summary>
     /// <param name="text">The text to write to the output.</param>
     void Write(string text);
@@ -37,5 +37,5 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="text">The string to write to the output.</param>
     void WriteLine(string text);
-	}
+  }
 }

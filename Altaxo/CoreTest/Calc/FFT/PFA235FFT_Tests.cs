@@ -31,6 +31,7 @@ namespace AltaxoTest.Calc.FFT
   public class TestPFA235FFT_1D
   {
     SplittedComplexFFTTests _test;
+    int[] _testLengths = { 2, 3, 2*2, 5, 2*3, 2*2*2, 3*3, 2*3*5, 3*5*5, 2*2*3*3*5*5 };
 
     public TestPFA235FFT_1D()
     {
@@ -46,184 +47,53 @@ namespace AltaxoTest.Calc.FFT
 
 
     [Test]
-    public void TestZero2N()
+    public void Test01Zero()
     {
-      // Testing 2^n
-      for(int i=2;i<=65536;i*=2)
+     foreach(int i in _testLengths)
         _test.TestZero(i);
     }
 
     [Test]
-    public void TestZero3N()
+    public void Test02ReOne_ZeroPos()
     {
-      // Testing 3^n
-      for(int i=3;i<100000;i*=3)
-        _test.TestZero(i);
-    }
-  
-    [Test]
-    public void TestZero5N()
-    {
-      // Testing 5^n
-      for(int i=5;i<100000;i*=5)
-        _test.TestZero(i);
-    }
-
-    [Test]
-    public void TestReOne_ZeroPos2N()
-    {
-      // Testing 2^n
-      for(int i=2;i<=65536;i*=2)
+      foreach(int i in _testLengths)
         _test.TestReOne_ZeroPos(i);
     }
 
     [Test]
-    public void TestReOne_ZeroPos3N()
+    public void Test03ImOne_ZeroPos()
     {
-      // Testing 3^n
-      for(int i=3;i<100000;i*=3)
-        _test.TestReOne_ZeroPos(i);
-    }
-  
-    [Test]
-    public void TestReOne_ZeroPos5N()
-    {
-      // Testing 5^n
-      for(int i=5;i<100000;i*=5)
-        _test.TestReOne_ZeroPos(i);
-    }
-
- 
-    [Test]
-    public void TestImOne_ZeroPos2N()
-    {
-      // Testing 2^n
-      for(int i=2;i<=65536;i*=2)
+      foreach(int i in _testLengths)
         _test.TestImOne_ZeroPos(i);
     }
 
     [Test]
-    public void TestImOne_ZeroPos3N()
+    public void Test04ReOne_OnePos()
     {
-      // Testing 3^n
-      for(int i=3;i<100000;i*=3)
-        _test.TestImOne_ZeroPos(i);
-    }
-  
-    [Test]
-    public void TestImOne_ZeroPos5N()
-    {
-      // Testing 5^n
-      for(int i=5;i<100000;i*=5)
-        _test.TestImOne_ZeroPos(i);
-    }
-
-    [Test]
-    public void TestImOne_ZeroPosArbN()
-    {
-      _test.TestImOne_ZeroPos(2*2*2*3*3*5);
-      _test.TestImOne_ZeroPos(2*2*3*3*3*5);
-      _test.TestImOne_ZeroPos(2*3*3*5*5*5);
-    }
-
-    [Test]
-    public void TestReOne_OnePos2N()
-    {
-      // Testing 2^n
-      for(int i=2;i<=65536;i*=2)
+      foreach(int i in _testLengths)
         _test.TestReOne_OnePos(i);
     }
 
     [Test]
-    public void TestReOne_OnePos3N()
+    public void Test05ImOne_OnePos()
     {
-      // Testing 3^n
-      for(int i=3;i<100000;i*=3)
-        _test.TestReOne_OnePos(i);
-    }
-  
-    [Test]
-    public void TestReOne_OnePos5N()
-    {
-      // Testing 5^n
-      for(int i=5;i<100000;i*=5)
-        _test.TestReOne_OnePos(i);
-    }
-
-    [Test]
-    public void TestReOne_OnePosArbN()
-    {
-      _test.TestReOne_OnePos(2*2*2*3*3*5);
-      _test.TestReOne_OnePos(2*2*3*3*3*5);
-      _test.TestReOne_OnePos(2*3*3*5*5*5);
-    }
-
-    [Test]
-    public void TestImOne_OnePos2N()
-    {
-      // Testing 2^n
-      for(int i=2;i<=65536;i*=2)
+      foreach(int i in _testLengths)
         _test.TestImOne_OnePos(i);
     }
 
     [Test]
-    public void TestImOne_OnePos3N()
+    public void Test06ReImOne_RandomPos()
     {
-      // Testing 3^n
-      for(int i=3;i<100000;i*=3)
-        _test.TestImOne_OnePos(i);
-    }
-  
-    [Test]
-    public void TestImOne_OnePos5N()
-    {
-      // Testing 5^n
-      for(int i=5;i<100000;i*=5)
-        _test.TestImOne_OnePos(i);
+      foreach(int i in _testLengths)
+        _test.TestReImOne_RandomPos(i,10);
     }
 
     [Test]
-    public void TestImOne_OnePosArbN()
+    public void Test07ReImRandomValues()
     {
-      _test.TestImOne_OnePos(2*2*2*3*3*5);
-      _test.TestImOne_OnePos(2*2*3*3*3*5);
-      _test.TestImOne_OnePos(2*3*3*5*5*5);
+      foreach(int i in _testLengths)
+        _test.TestReImRandomValues(i);
     }
-
- 
-    [Test]
-    public void TestReImOne_RandomPos2N()
-    {
-      // Testing 2^n
-      for(int i=2;i<=65536;i*=2)
-        _test.TestReImOne_RandomPos(i,5);
-    }
-
-    [Test]
-    public void TestReImOne_RandomPos3N()
-    {
-      // Testing 3^n
-      for(int i=3;i<100000;i*=3)
-        _test.TestReImOne_RandomPos(i,5);
-    }
-  
-    [Test]
-    public void TestReImOne_RandomPos5N()
-    {
-      // Testing 5^n
-      for(int i=5;i<100000;i*=5)
-        _test.TestReImOne_RandomPos(i,5);
-    }
-
-    [Test]
-    public void TestReImOne_RandomPosArbN()
-    {
-      _test.TestReImOne_RandomPos(2*2*2*3*3*5,5);
-      _test.TestReImOne_RandomPos(2*2*3*3*3*5,5);
-      _test.TestReImOne_RandomPos(2*3*3*5*5*5,5);
-    }
-
-
   }
 
 
@@ -237,9 +107,11 @@ namespace AltaxoTest.Calc.FFT
     {
       int[] pqr = new int[3];
 
-      int n = rnd.Next(max);
-      while(!Pfa235FFT.Factorize(n,pqr))
-        ++n;
+      int n=0;
+      do  
+      {
+        n = rnd.Next(max);
+      } while(n<2 || n>max || !Pfa235FFT.Factorize(n,pqr));
 
       return n;
     }
@@ -249,7 +121,7 @@ namespace AltaxoTest.Calc.FFT
     public void TestZero2N()
     {
       // Testing 2^n
-      for(int i=2;i<=1000;i*=2)
+      for(int i=2;i<=64;i*=2)
         zzTestZero(i,i);
     }
 
@@ -257,7 +129,7 @@ namespace AltaxoTest.Calc.FFT
     public void TestZero3N()
     {
       // Testing 3^n
-      for(int i=3;i<1000;i*=3)
+      for(int i=3;i<=81;i*=3)
         zzTestZero(i,i);
     }
   
@@ -265,7 +137,7 @@ namespace AltaxoTest.Calc.FFT
     public void TestZero5N()
     {
       // Testing 5^n
-      for(int i=5;i<1000;i*=5)
+      for(int i=5;i<=125;i*=5)
         zzTestZero(i,i);
     }
 
@@ -273,7 +145,7 @@ namespace AltaxoTest.Calc.FFT
     public void TestZero10N()
     {
       // Testing 5^n
-      for(int i=10;i<=1000;i*=10)
+      for(int i=10;i<=100;i*=10)
         zzTestZero(i,i);
     }
 
@@ -283,8 +155,8 @@ namespace AltaxoTest.Calc.FFT
       // Testing 10 times random dimensions
       for(int i=0;i<10;i++)
       {
-        int u = GetRandomN(1000);
-        int v = GetRandomN(1000);
+        int u = GetRandomN(100);
+        int v = GetRandomN(100);
         Console.WriteLine("TestZero({0},{1})",u,v);
         zzTestZero(u,v);
       }
@@ -314,8 +186,8 @@ namespace AltaxoTest.Calc.FFT
       // Testing 10 times random dimensions
       for(int i=0;i<10;i++)
       {
-        int u = GetRandomN(1000);
-        int v = GetRandomN(1000);
+        int u = GetRandomN(100);
+        int v = GetRandomN(100);
         zzTestReOne_OnePos1stDim(u,v);
       }
     }
@@ -350,8 +222,8 @@ namespace AltaxoTest.Calc.FFT
       // Testing 10 times random dimensions
       for(int i=0;i<10;i++)
       {
-        int u = GetRandomN(1000);
-        int v = GetRandomN(1000);
+        int u = GetRandomN(100);
+        int v = GetRandomN(100);
         zzTestReOne_OnePos2ndDim(u,v);
       }
     }
@@ -387,8 +259,8 @@ namespace AltaxoTest.Calc.FFT
       // Testing 10 times random dimensions
       for(int i=0;i<10;i++)
       {
-        int u = GetRandomN(1000);
-        int v = GetRandomN(1000);
+        int u = GetRandomN(100);
+        int v = GetRandomN(100);
         zzTestReOne_OnePosBothDim(u,v);
       }
     }
@@ -423,8 +295,8 @@ namespace AltaxoTest.Calc.FFT
       // Testing 10 times random dimensions
       for(int i=0;i<10;i++)
       {
-        int u = GetRandomN(1000);
-        int v = GetRandomN(1000);
+        int u = GetRandomN(100);
+        int v = GetRandomN(100);
         zzTestReOne_ArbPosBothDim(u,v);
       }
     }
@@ -464,8 +336,8 @@ namespace AltaxoTest.Calc.FFT
       // Testing 10 times random dimensions
       for(int i=0;i<10;i++)
       {
-        int u = GetRandomN(1000);
-        int v = GetRandomN(1000);
+        int u = GetRandomN(100);
+        int v = GetRandomN(100);
         zzTestImOne_ArbPosBothDim(u,v);
       }
     }

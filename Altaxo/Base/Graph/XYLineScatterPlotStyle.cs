@@ -28,6 +28,21 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
+  /// <summary>
+  /// Used for constructor of <see>XYLineScatterPlotStyle</see> to choose between Line, Scatter and both.
+  /// </summary>
+  [Flags]
+  public enum LineScatterPlotStyleKind
+  {
+    /// <summary>Line only. No symbol plotted, no line-symbol-gap.</summary>
+    Line=1,
+    /// <summary>Scatter only. No line is plotted, no line-symbol gap.</summary>
+    Scatter=2,
+    /// <summary>Both line and symbol are plotted, line symbol gap is on by default.</summary>
+    LineAndScatter=3
+  }
+
+
   [SerializationSurrogate(0,typeof(XYLineScatterPlotStyle.SerializationSurrogate0))]
   [SerializationVersion(0)]
   public class XYLineScatterPlotStyle : AbstractXYPlotStyle, System.Runtime.Serialization.IDeserializationCallback, Main.IChangedEventSource, Main.IChildChangedEventSink
@@ -194,11 +209,19 @@ namespace Altaxo.Graph
     }
 
     public XYLineScatterPlotStyle()
+      : this(LineScatterPlotStyleKind.LineAndScatter)
     {
-      this.XYPlotLineStyle = new XYPlotLineStyle();
-      this.XYPlotScatterStyle = new XYPlotScatterStyle();
-      // this.m_PlotAssociation = null;
-      this.LineSymbolGap = true;
+    }
+
+    public XYLineScatterPlotStyle(LineScatterPlotStyleKind kind)
+    {
+      if(0!=(kind&LineScatterPlotStyleKind.Line))
+        this.XYPlotLineStyle = new XYPlotLineStyle();
+      
+      if(0!=(kind&LineScatterPlotStyleKind.Scatter))
+        this.XYPlotScatterStyle = new XYPlotScatterStyle();
+
+      this.LineSymbolGap = kind==LineScatterPlotStyleKind.LineAndScatter;
     }
 
     public XYLineScatterPlotStyle(XYColumnPlotData pa)
@@ -233,12 +256,19 @@ namespace Altaxo.Graph
     {
       get
       {
-        return this.m_LineStyle.PenHolder.Color;
+        if(m_LineStyle!=null)
+          return this.m_LineStyle.PenHolder.Color;
+        if(m_ScatterStyle!=null)
+          return this.m_ScatterStyle.Color;
+        else
+          return Color.Black;
       }
       set
       {
-        this.m_LineStyle.PenHolder.Color = value;
-        this.m_ScatterStyle.Color = value;
+        if(m_LineStyle!=null)
+          this.m_LineStyle.PenHolder.Color = value;
+        if(m_ScatterStyle!=null)
+          this.m_ScatterStyle.Color = value;
       }
     }
 
@@ -247,13 +277,10 @@ namespace Altaxo.Graph
       get { return m_LineStyle; }
       set 
       {
-        if(null==value)
-          throw new ArgumentNullException("XYPlotLineStyle","XYPlotLineStyle may not be set to null in AbstractXYPlotStyle");
-
         if(null!=m_LineStyle)
           m_LineStyle.Changed -= new EventHandler(OnLineStyleChanged);
   
-        m_LineStyle = (XYPlotLineStyle)value.Clone();
+        m_LineStyle = null==value ? null : (XYPlotLineStyle)value.Clone();
 
         if(null!=m_LineStyle)
           m_LineStyle.Changed += new EventHandler(OnLineStyleChanged);
@@ -267,13 +294,10 @@ namespace Altaxo.Graph
       get { return m_ScatterStyle; }
       set 
       {
-        if(null==value)
-          throw new ArgumentNullException("XYPlotScatterStyle","XYPlotScatterStyle may not be set to null in AbstractXYPlotStyle");
-
         if(null!=m_ScatterStyle)
           m_ScatterStyle.Changed -= new EventHandler(OnScatterStyleChanged);
-
-        m_ScatterStyle = (XYPlotScatterStyle)value.Clone();
+        
+        m_ScatterStyle = null==value ? null : (XYPlotScatterStyle)value.Clone();
 
         if(null!=m_ScatterStyle)
           m_ScatterStyle.Changed += new EventHandler(OnScatterStyleChanged);
@@ -304,11 +328,26 @@ namespace Altaxo.Graph
     {
       get 
       {
-        return m_ScatterStyle.SymbolSize;
+        return null==m_ScatterStyle ? 0 : m_ScatterStyle.SymbolSize;
       }
       set 
       {
-        m_ScatterStyle.SymbolSize = value;
+        bool bChanged = false;
+
+        if(null==m_ScatterStyle && value!=0)
+        {
+          m_ScatterStyle = new XYPlotScatterStyle();
+          bChanged = true;
+        }
+
+        if(null!=m_ScatterStyle)
+        {
+          m_ScatterStyle.SymbolSize = value;
+          bChanged = true;
+        }
+
+        if(bChanged)
+          OnChanged();
       }
     }
 
@@ -440,7 +479,7 @@ namespace Altaxo.Graph
       for(i=0,j=0;i<functionPoints;i++)
       {
         double x = layer.XAxis.NormalToPhysical(((double)i)/(functionPoints-1));
-        double y = plotFunction.Function(x);
+        double y = plotFunction.Evaluate(x);
         
         if(Double.IsNaN(x) || Double.IsNaN(y))
         {

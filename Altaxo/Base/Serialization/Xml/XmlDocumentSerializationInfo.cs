@@ -336,6 +336,7 @@ namespace Altaxo.Serialization.Xml
     public void GetArray(string[] val, int count) {}
     public void GetArray(DateTime[] val, int count) {}
     public void GetArray(out float[] val) { val=null; }
+    public void GetArray(string name, out double[] val) { val=null; }
     
     public void AddValue(string name, bool val) {}
     public bool GetBoolean() { return false; }

@@ -268,7 +268,7 @@ namespace Altaxo.Graph.Commands
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
       ctrl.EnsureValidityOfCurrentLayerNumber();
-      ctrl.Doc.Layers[ctrl.CurrentLayerNumber].PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(),new XYLineScatterPlotStyle()));
+      ctrl.Doc.Layers[ctrl.CurrentLayerNumber].PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(new Graph.PolynomialFunction(new double[]{0,0,1})),new XYLineScatterPlotStyle(LineScatterPlotStyleKind.Line)));
     }
   }
 
