@@ -1128,7 +1128,7 @@ namespace Altaxo.Worksheet
 			{
 				// copy the data as table with the selected columns
 				Altaxo.Data.DataTable.ClipboardMemento tablememento = new Altaxo.Data.DataTable.ClipboardMemento(
-					dg.DataTable,dg.SelectedColumns,dg.SelectedRows,dg.SelectedPropertyColumns);
+					dg.DataTable,dg.SelectedColumns,dg.SelectedRows,dg.SelectedPropertyColumns,dg.SelectedPropertyRows);
 				dao.SetData("Altaxo.Data.DataTable.ClipboardMemento",tablememento);
 
 				// now copy the data object to the clipboard
@@ -1244,8 +1244,6 @@ namespace Altaxo.Worksheet
 		/// are pasted into the destination table.</remarks>
 		protected static void PasteFromTableColumnsToSelectedColumns(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
 		{
-			System.Diagnostics.Debug.Assert(dg.SelectedColumns.Count==sourcetable.DataColumns.ColumnCount);
-			
 			Altaxo.Data.DataTable desttable = dg.DataTable;
 
 			Altaxo.Data.DataColumn[] propertycolumnmap = MapOrCreatePropertyColumns(desttable,sourcetable);

@@ -284,6 +284,7 @@ namespace Altaxo.Data
 			Altaxo.Worksheet.IndexSelection _selectedDataColumns;
 			Altaxo.Worksheet.IndexSelection _selectedDataRows;
 			Altaxo.Worksheet.IndexSelection _selectedPropertyColumns;
+			Altaxo.Worksheet.IndexSelection _selectedPropertyRows;
 
 			/// <summary>
 			/// Constructor. Besides the table, the current selections must be provided. Only the areas that corresponds to the selections are
@@ -296,12 +297,15 @@ namespace Altaxo.Data
 			/// <param name="selectedPropertyColumns">The selected property columns.</param>
 			public ClipboardMemento(DataTable table, Altaxo.Worksheet.IndexSelection selectedDataColumns, 
 				Altaxo.Worksheet.IndexSelection selectedDataRows,
-				Altaxo.Worksheet.IndexSelection selectedPropertyColumns)
+				Altaxo.Worksheet.IndexSelection selectedPropertyColumns,
+				Altaxo.Worksheet.IndexSelection selectedPropertyRows
+					)
 			{
 				this._table										= table;
 				this._selectedDataColumns			= selectedDataColumns;
 				this._selectedDataRows				= selectedDataRows;
 				this._selectedPropertyColumns = selectedPropertyColumns;
+				this._selectedPropertyRows    = selectedPropertyRows;
 			}
 			
 			/// <summary>
@@ -318,8 +322,19 @@ namespace Altaxo.Data
 			{
 
 				info.AddValue("Name",_table.Name);
-				info.AddValue("DataColumns",new DataColumnCollection.ClipboardMemento(_table.DataColumns,_selectedDataColumns,_selectedDataRows));
-				info.AddValue("PropertyColumns",new DataColumnCollection.ClipboardMemento(_table.PropCols,_selectedPropertyColumns,_selectedDataColumns));
+
+				// special case: if no data cell is selected, then serialize the property data as when they where data columns
+				if(_selectedDataColumns.Count==0 && _selectedDataRows.Count==0)
+				{
+					// exchange data and properties
+					info.AddValue("DataColumns",new DataColumnCollection.ClipboardMemento(_table.PropCols,_selectedPropertyColumns,_selectedPropertyRows,true));
+					info.AddValue("PropertyColumns",new DataColumnCollection.ClipboardMemento(_table.DataColumns,_selectedDataColumns,_selectedDataRows,true));
+				}
+				else
+				{ // normal serialization of data and properties
+					info.AddValue("DataColumns",new DataColumnCollection.ClipboardMemento(_table.DataColumns,_selectedDataColumns,_selectedDataRows,true));
+					info.AddValue("PropertyColumns",new DataColumnCollection.ClipboardMemento(_table.PropCols,_selectedPropertyColumns,_selectedDataColumns,true));
+				}
 			}
 
 			public ClipboardMemento(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
@@ -729,17 +744,27 @@ namespace Altaxo.Data
 			}
 
 		/// <summary>
-		/// Remove the columns beginning at index nFirstColumn.
+		/// Remove the data columns <b>and the corresponding property rows</b> beginning at index nFirstColumn.
 		/// </summary>
 		/// <param name="nFirstColumn">The index of the first column to remove.</param>
 		/// <param name="nDelCount">The number of columns to remove.</param>
 		public virtual void RemoveColumns(int nFirstColumn, int nDelCount)
 		{
+			RemoveColumns(new Altaxo.Worksheet.IntegerRange(nFirstColumn,nDelCount));
+		}
+
+
+		/// <summary>
+		/// Remove the selected data columns <b>and the corresponding property rows</b>.
+		/// </summary>
+		/// <param name="selectedColumns">A collection of the indizes to the columns that have to be removed.</param>
+		public virtual void RemoveColumns(Altaxo.Worksheet.IAscendingIntegerCollection selectedColumns)
+		{
 	
 			Suspend();
-			
-			m_DataColumns.RemoveColumns(nFirstColumn, nDelCount); // remove the columns from the collection
-			m_PropertyColumns.RemoveRows(nFirstColumn, nDelCount); // remove also the corresponding rows from the Properties
+						
+			m_DataColumns.RemoveColumns(selectedColumns); // remove the columns from the collection
+			m_PropertyColumns.RemoveRows(selectedColumns); // remove also the corresponding rows from the Properties
 
 			Resume();
 		}

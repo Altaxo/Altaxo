@@ -523,6 +523,7 @@ namespace Altaxo.Data
 			DataColumnCollection _collection;
 			Altaxo.Worksheet.IndexSelection _selectedColumns;
 			Altaxo.Worksheet.IndexSelection _selectedRows;
+			bool                            _useOnlySelections;
 
 			/// <summary>
 			/// Constructor. Besides the table, the current selections must be provided. Only the areas that corresponds to the selections are
@@ -532,14 +533,17 @@ namespace Altaxo.Data
 			/// <param name="collection">The collection to serialize.</param>
 			/// <param name="selectedColumns">The selected data columns.</param>
 			/// <param name="selectedRows">The selected data rows.</param>
+			/// <param name="useOnlySelections">If true, only the selections are serialized. If false and there is no selection, the whole collection is serialized.</param>
 			public ClipboardMemento(
 				DataColumnCollection collection,
 				Altaxo.Worksheet.IndexSelection selectedColumns, 
-				Altaxo.Worksheet.IndexSelection selectedRows)
+				Altaxo.Worksheet.IndexSelection selectedRows,
+				bool useOnlySelections)
 			{
 				this._collection										= collection;
 				this._selectedColumns			= selectedColumns;
 				this._selectedRows				= selectedRows;
+				this._useOnlySelections   = useOnlySelections;
 			}
 
 			/// <summary>
@@ -556,7 +560,14 @@ namespace Altaxo.Data
 			{
 				int numberOfColumns;
 				bool useColumnSelection;
-				if(_selectedColumns.Count==0)
+
+				// special case - no selection
+				if(_selectedColumns.Count==0 && _selectedRows.Count==0 && _useOnlySelections)
+				{
+					numberOfColumns = 0;
+					useColumnSelection = false;
+				}
+				else if(_selectedColumns.Count==0)
 				{
 					numberOfColumns = _collection.ColumnCount;
 					useColumnSelection = false;
@@ -867,24 +878,7 @@ namespace Altaxo.Data
 		/// <param name="nDelCount">The number of columns to remove.</param>
 		public virtual void RemoveColumns(int nFirstColumn, int nDelCount)
 		{
-			int nOriginalColumnCount = ColumnCount;
-			// first, Dispose the columns and set the places to null
-			for(int i=nFirstColumn+nDelCount-1;i>=nFirstColumn;i--)
-			{
-				string columnName = GetColumnName(this[i]);
-				this.m_ColumnInfo.Remove(m_ColumnsByNumber[i]);
-				this.m_ColumnsByName.Remove(columnName);
-				this[i].ParentObject=null;
-				this[i].Dispose();
-			}
-			this.m_ColumnsByNumber.RemoveRange(nFirstColumn, nDelCount);
-			
-			// renumber the remaining columns
-			for(int i=m_ColumnsByNumber.Count-1;i>=nFirstColumn;i--)
-				((DataColumnInfo)m_ColumnInfo[m_ColumnsByNumber[i]]).Number = i; 
-
-			// raise datachange event that some columns have changed
-			this.OnChildChanged(null, ChangeEventArgs.CreateColumnRemoveArgs(nFirstColumn, nOriginalColumnCount, this.m_NumberOfRows));
+			RemoveColumns(new Altaxo.Worksheet.IntegerRange(nFirstColumn,nDelCount));
 		}
 
 		/// <summary>
@@ -903,6 +897,37 @@ namespace Altaxo.Data
 		public void RemoveColumn(DataColumn datac)
 		{
 			RemoveColumns(this.GetColumnNumber(datac),1);
+		}
+
+		public void RemoveColumns(Altaxo.Worksheet.IAscendingIntegerCollection selectedColumns)
+		{
+			int nOriginalColumnCount = ColumnCount;
+
+			int currentPosition = selectedColumns.Count-1;
+			int nVeryFirstColumn=0;
+			int nFirstColumn;
+			int nDelCount;
+			while(selectedColumns.GetNextRangeDescending(ref currentPosition, out nFirstColumn, out nDelCount))
+			{
+				nVeryFirstColumn = nFirstColumn;
+				// first, Dispose the columns and set the places to null
+				for(int i=nFirstColumn+nDelCount-1;i>=nFirstColumn;i--)
+				{
+					string columnName = GetColumnName(this[i]);
+					this.m_ColumnInfo.Remove(m_ColumnsByNumber[i]);
+					this.m_ColumnsByName.Remove(columnName);
+					this[i].ParentObject=null;
+					this[i].Dispose();
+				}
+				this.m_ColumnsByNumber.RemoveRange(nFirstColumn, nDelCount);
+			}
+
+			// renumber the remaining columns
+			for(int i=m_ColumnsByNumber.Count-1;i>=nVeryFirstColumn;i--)
+				((DataColumnInfo)m_ColumnInfo[m_ColumnsByNumber[i]]).Number = i; 
+
+			// raise datachange event that some columns have changed
+			this.OnChildChanged(null, ChangeEventArgs.CreateColumnRemoveArgs(nFirstColumn, nOriginalColumnCount, this.m_NumberOfRows));
 		}
 
 		#endregion
@@ -1231,14 +1256,43 @@ namespace Altaxo.Data
 		/// <param name="nCount">Number of rows to remove, starting from nFirstRow.</param>
 		public void RemoveRows(int nFirstRow, int nCount)
 		{
-			Suspend();
-
-			for(int i=0;i<this.ColumnCount;i++)
-				this[i].RemoveRows(nFirstRow,nCount);
-		
-			Resume();
+			RemoveRows(new Altaxo.Worksheet.IntegerRange(nFirstRow,nCount));
 		}
 
+		/// <summary>
+		/// Removes the <code>selectedRows</code> from the table.
+		/// </summary>
+		/// <param name="selectedRows">Collection of indizes to the rows that should be removed.</param>
+		public void RemoveRows(Altaxo.Worksheet.IAscendingIntegerCollection selectedRows)
+		{
+			RemoveRowsInColumns(new Altaxo.Worksheet.IntegerRange(0,ColumnCount),selectedRows);
+		}
+
+		/// <summary>
+		/// Removes the <code>selectedRows</code> from the table.
+		/// </summary>
+		/// <param name="selectedRows">Collection of indizes to the rows that should be removed.</param>
+		public void RemoveRowsInColumns(Altaxo.Worksheet.IAscendingIntegerCollection selectedColumns, Altaxo.Worksheet.IAscendingIntegerCollection selectedRows)
+		{
+			// if we remove rows, we have to do that in reverse order
+			Suspend();
+
+			for(int selcol=0;selcol<selectedColumns.Count;selcol++)
+			{
+				int colidx = selectedColumns[selcol];
+
+				int rangestart, rangecount;
+				int i = selectedRows.Count-1;
+
+				while(selectedRows.GetNextRangeDescending(ref i, out rangestart, out rangecount))
+				{
+					this[colidx].RemoveRows(rangestart,rangecount);
+				}
+			}
+
+			Resume();
+		}
+		
 	
 
 		/// <summary>

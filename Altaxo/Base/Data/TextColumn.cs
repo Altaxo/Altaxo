@@ -258,7 +258,8 @@ namespace Altaxo.Data
 			if(val.IsTypeOrNull(AltaxoVariant.Content.VString))
 				this[i] = (string)val;
 			else
-				throw new ApplicationException("Error: Try to set " + this.TypeAndName + "[" + i + "] with " + val.ToString());
+				this[i] = val.ToString();
+				// throw new ApplicationException("Error: Try to set " + this.TypeAndName + "[" + i + "] with " + val.ToString());
 		}
 
 		public override AltaxoVariant GetVariantAt(int i)

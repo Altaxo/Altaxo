@@ -5,6 +5,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph;
+using Altaxo.Data;
 using Altaxo.Serialization;
 using Altaxo.Serialization.Ascii;
 using ICSharpCode.SharpDevelop.Gui;
@@ -1348,7 +1349,10 @@ namespace Altaxo.Worksheet.GUI
 		/// </summary>
 		public bool ArePropertyCellsSelected
 		{
-			get { return this.DataTable.PropCols.ColumnCount>0 && SelectedPropertyColumns.Count>0 || SelectedPropertyRows.Count>0; }
+			get
+			{
+				return this.DataTable.PropCols.ColumnCount>0 && (SelectedPropertyColumns.Count>0 || m_SelectedPropertyRows.Count>0); 
+			}
 		}
 
 
@@ -1385,6 +1389,8 @@ namespace Altaxo.Worksheet.GUI
 
 		
 
+	
+
 		/// <summary>
 		/// Remove the selected columns, rows or property columns.
 		/// </summary>
@@ -1393,73 +1399,32 @@ namespace Altaxo.Worksheet.GUI
 			this.DataTable.Suspend();
 
 
-			// delete the selected columns
-			if(this.m_SelectedColumns.Count>0)
+			// Property columns are only deleted, if selected alone or in conjunction with data row selection
+			if(this.m_SelectedPropertyColumns.Count>0 && this.m_SelectedPropertyRows.Count==0 && this.m_SelectedColumns.Count==0)
 			{
-
-				int len = m_SelectedColumns.Count;
-				int begin=-1;
-				int end=-1; // note this _after_ the end of deleted columns
-				int i;
-				for(i=len-1;i>=0;i--)
-				{
-					int idx = m_SelectedColumns[i];
-					if(begin<0)
-					{
-						begin=idx;
-						end=idx+1;
-					}
-					else if(begin>=0 && idx==(begin-1))
-					{
-						begin=idx;
-					}
-					else
-					{
-						this.DataTable.RemoveColumns(begin,end-begin);
-						begin=idx;
-						end=idx+1;
-					}
-				} // end for
-				// the last index must also be deleted, if not done already
-				if(begin>=0 && end>=0)
-					this.DataTable.RemoveColumns(begin,end-begin);
+				this.DataTable.PropCols.RemoveColumns(m_SelectedPropertyColumns);
+				m_SelectedPropertyColumns.Clear();
+				m_SelectedPropertyRows.Clear();
+			}
+			// note here: Property rows are only removed indirect by removing data columns
 
 
+			// delete the selected columns if there are _only selected columns
+			if(this.m_SelectedColumns.Count>0 && this.m_SelectedRows.Count==0)
+			{
+				this.DataTable.RemoveColumns(m_SelectedColumns);
 				this.m_SelectedColumns.Clear(); // now the columns are deleted, so they cannot be selected
 			}
 
-
-			// place here the code for selected rows
+			// if rows are selected, remove them in all selected columns or in all columns (if no column selection=
 			if(this.m_SelectedRows.Count>0)
 			{
-				int begin=-1;
-				int end=-1; // note this _after_ the end of deleted columns
-				int i;
-				for(i=m_SelectedRows.Count-1;i>=0;i--)
-				{
-					int idx = m_SelectedRows[i];
-					if(begin<0)
-					{
-						begin=idx;
-						end=idx+1;
-					}
-					else if(begin>=0 && idx==(begin-1))
-					{
-						begin=idx;
-					}
-					else
-					{
-						this.DataTable.DataColumns.RemoveRows(begin,end-begin);
-						begin=idx;
-						end=idx+1;
-					}
-				} // end for
-				// the last index must also be deleted, if not done already
-				if(begin>=0 && end>=0)
-					this.DataTable.DataColumns.RemoveRows(begin,end-begin);
+				this.DataTable.DataColumns.RemoveRowsInColumns(
+					m_SelectedColumns.Count>0 ? (Altaxo.Worksheet.IAscendingIntegerCollection)m_SelectedColumns : new IntegerRange(0,this.DataTable.DataColumns.ColumnCount),
+					m_SelectedRows);
 
-
-				this.m_SelectedRows.Clear(); // now the columns are deleted, so they cannot be selected
+				m_SelectedColumns.Clear();
+				m_SelectedRows.Clear();
 			}
 
 
@@ -1590,6 +1555,9 @@ namespace Altaxo.Worksheet.GUI
 			
 			if(this.m_NumberOfTableCols!=DataTable.DataColumns.ColumnCount)
 				this.SetCachedNumberOfDataColumns();
+
+			if(View!=null)
+				View.TableAreaInvalidate();
 		}
 
 	
@@ -1675,6 +1643,9 @@ namespace Altaxo.Worksheet.GUI
 		{
 			if(this.m_NumberOfPropertyCols != DataTable.PropCols.ColumnCount)
 				SetCachedNumberOfPropertyColumns();
+
+			if(View!=null)
+				View.TableAreaInvalidate();
 		}
 
 		public void EhTableNameChanged(object sender, Main.NameChangedEventArgs e)
@@ -2701,12 +2672,22 @@ namespace Altaxo.Worksheet.GUI
 					bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
 					bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
 					
+					if(m_LastSelectionType!=SelectionType.PropertyColumnSelection && !bControlKey)
+					{
+						m_SelectedColumns.Clear();
+						m_SelectedRows.Clear(); // if we click a column, we remove row selections
+						m_SelectedPropertyColumns.Clear();
+						m_SelectedPropertyRows.Clear();
+					}
+
+					/*
 					if(m_LastSelectionType==SelectionType.DataRowSelection && !bControlKey)
 						m_SelectedRows.Clear(); // if we click a column, we remove row selections
 					if(m_LastSelectionType==SelectionType.DataRowSelection && !bControlKey)
 						m_SelectedPropertyRows.Clear();
 					if(m_LastSelectionType==SelectionType.DataColumnSelection && !bControlKey)
 						m_SelectedColumns.Clear(); // if we click a column, we remove row selections
+					*/
 
 					m_SelectedPropertyColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
 					m_LastSelectionType = SelectionType.PropertyColumnSelection;
@@ -2719,12 +2700,24 @@ namespace Altaxo.Worksheet.GUI
 					{
 						bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
 						bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
+						
+						/*
 						if(m_LastSelectionType==SelectionType.DataRowSelection && !bControlKey)
 							m_SelectedRows.Clear(); // if we click a column, we remove row selections
-						
+						*/
+
+						if(m_LastSelectionType!=SelectionType.DataColumnSelection && m_LastSelectionType!=SelectionType.PropertyRowSelection&& !bControlKey)
+						{
+							m_SelectedColumns.Clear();
+							m_SelectedRows.Clear(); // if we click a column, we remove row selections
+							m_SelectedPropertyColumns.Clear();
+							m_SelectedPropertyRows.Clear();
+						}
+
 						if(m_LastSelectionType==SelectionType.PropertyRowSelection)
 						{
 							m_SelectedPropertyRows.Select(clickedCell.Column,bShiftKey,bControlKey);
+							m_LastSelectionType=SelectionType.PropertyRowSelection;
 						}
 							// if the last selection has only selected any property cells then add the current selection to the property rows
 						else if(!this.AreDataCellsSelected && this.ArePropertyCellsSelected && bControlKey)
@@ -2737,6 +2730,7 @@ namespace Altaxo.Worksheet.GUI
 							m_SelectedColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
 							m_LastSelectionType = SelectionType.DataColumnSelection;
 						}
+
 						this.View.TableAreaInvalidate();
 					}
 				}
@@ -2745,9 +2739,19 @@ namespace Altaxo.Worksheet.GUI
 				{
 					bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
 					bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
+
+					/*
 					if(m_LastSelectionType==SelectionType.DataColumnSelection && !bControlKey)
 						m_SelectedColumns.Clear(); // if we click a column, we remove row selections
-					
+					*/
+					if(m_LastSelectionType!=SelectionType.DataRowSelection && !bControlKey)
+					{
+						m_SelectedColumns.Clear(); // if we click a column, we remove row selections
+						m_SelectedRows.Clear();
+						m_SelectedPropertyColumns.Clear();
+						m_SelectedPropertyRows.Clear();
+					}
+
 					// if we had formerly selected property rows, we clear them but add them before as column selection
 					if(m_SelectedPropertyRows.Count>0)
 					{
@@ -2852,7 +2856,7 @@ namespace Altaxo.Worksheet.GUI
 				{
 					Altaxo.Worksheet.ColumnStyle cs = GetPropertyColumnStyle(nPropCol);
 					bool bPropColSelected = bArePropertyColsSelected && m_SelectedPropertyColumns.ContainsKey(nPropCol);
-					bool bPropColIncluded = bArePropertyColsSelected  ? bPropColSelected : true;
+					bool bPropColIncluded = bArePropertyColsSelected  ? bPropColSelected : true; // Property cells are only included if the column is explicite selected
 
 					cellRectangle.Y=this.GetTopCoordinateOfPropertyColumn(nPropCol);
 					cellRectangle.Height = m_TableLayout.PropertyColumnHeaderStyle.Height;
