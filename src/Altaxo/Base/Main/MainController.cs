@@ -152,6 +152,11 @@ namespace Altaxo
 			get;
 		}
 		
+		Altaxo.Main.ProjectService ProjectService
+		{
+			get;
+		}
+
 		/// <summary>
 		/// Shows the project save as dialog to save the project
 		/// </summary>
@@ -248,7 +253,7 @@ namespace Altaxo
 		/// <summary>
 		/// The document - storing place for tables, graphs and other data
 		/// </summary>
-		public    AltaxoDocument m_Doc=null;
+		//public    AltaxoDocument m_Doc=null;
 
 		private System.Windows.Forms.PageSetupDialog m_PageSetupDialog;
 
@@ -259,6 +264,8 @@ namespace Altaxo
 		MainMenu m_MainMenu;
 
 		private IWorkbench m_Workbench;
+
+		private Altaxo.Main.ProjectService m_ProjectService;
 
 		/// <summary>
 		/// Flag that indicates that the Application is about to be closed.
@@ -302,11 +309,13 @@ namespace Altaxo
 			*/
 
 
+			m_ProjectService  = new Altaxo.Main.ProjectService();
+
 			// we construct the main document
-			if(null==m_Doc)
-				m_Doc = new AltaxoDocument();
+			if(null==Doc)
+				m_ProjectService.CurrentOpenProject = new AltaxoDocument();
 			else
-				m_Doc = doc;
+				m_ProjectService.CurrentOpenProject = doc;
 
 
 
@@ -326,11 +335,17 @@ namespace Altaxo
 		}
 
 
+		public Altaxo.Main.ProjectService ProjectService
+		{
+			get { return m_ProjectService; }
+		}
+
+
 		public void SetDocumentFromFile(ZipFile zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info, AltaxoDocument restoredDoc)
 		{
-			this.m_Doc = restoredDoc;
+			ProjectService.CurrentOpenProject = restoredDoc;
 			m_Workbench.CloseAllViews();
-			this.RestoreWindowStateFromZippedFile(zipFile,info,m_Doc);
+			this.RestoreWindowStateFromZippedFile(zipFile,info,Doc);
 		}
 
 	
@@ -633,8 +648,8 @@ namespace Altaxo
 						formatter.SurrogateSelector=ss;
 					
 						object obj = formatter.Deserialize(myStream);
-						m_Doc = (AltaxoDocument)obj;
-						m_Doc.OnDeserialization(new DeserializationFinisher(this));
+						ProjectService.CurrentOpenProject = (AltaxoDocument)obj;
+						Doc.OnDeserialization(new DeserializationFinisher(this));
 						System.Diagnostics.Trace.WriteLine("Deserialization of AltaxoDocument now completely finished.");
 						// document.RestoreWindowsAfterDeserialization();
 						// Code to write the stream goes here.
@@ -648,9 +663,9 @@ namespace Altaxo
 						AltaxoDocument newdocument = new AltaxoDocument();
 						newdocument.RestoreFromZippedFile(zipFile,info);
 
-						m_Doc = newdocument;
+						ProjectService.CurrentOpenProject = newdocument;
 						m_Workbench.CloseAllViews();
-						this.RestoreWindowStateFromZippedFile(zipFile,info,m_Doc);
+						this.RestoreWindowStateFromZippedFile(zipFile,info,Doc);
 						
 						myStream.Close();
 					} // Filterindex=2
@@ -796,7 +811,7 @@ namespace Altaxo
 		/// </summary>
 		public AltaxoDocument Doc
 		{
-			get	{	return m_Doc; }
+			get	{	return ProjectService.CurrentOpenProject; }
 		}
 
 		public Form MainWindow
@@ -976,7 +991,7 @@ namespace Altaxo
 							
 			formatter.SurrogateSelector=ss;
 			formatter.Serialize(myStream,versionList);
-			formatter.Serialize(myStream, m_Doc);
+			formatter.Serialize(myStream, Doc);
 			// Code to write the stream goes here.
 			myStream.Close();
 		} // end method

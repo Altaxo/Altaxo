@@ -625,6 +625,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Main\AltaxoProjectService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\App.ico"
                     BuildAction = "Content"
                 />
