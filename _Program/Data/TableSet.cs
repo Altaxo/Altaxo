@@ -29,7 +29,11 @@ namespace Altaxo.Data
 	/// </summary>
 	[SerializationSurrogate(0,typeof(Altaxo.Data.TableSet.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class TableSet : System.Runtime.Serialization.IDeserializationCallback, System.Collections.ICollection, Altaxo.Main.IDocumentNode
+	public class TableSet 
+		:
+		System.Runtime.Serialization.IDeserializationCallback, 
+		System.Collections.ICollection, Altaxo.Main.IDocumentNode,
+		Main.INamedObjectCollection	
 	{
 		// Types
 		public delegate void OnDataChanged(Altaxo.Data.TableSet sender);   // delegate declaration
@@ -294,5 +298,21 @@ namespace Altaxo.Data
 					return basicname+i; 
 			}
 		}	
+
+		public object GetChildObjectNamed(string name)
+		{
+			return tablesByName[name];
+		}
+
+		public string GetNameOfChildObject(object o)
+		{
+			if(o is DataTable)
+			{
+				DataTable gr = (DataTable)o;
+				if(tablesByName.ContainsKey(gr.Name))
+					return gr.Name;
+			}
+			return null;
+		}
 	}
 }

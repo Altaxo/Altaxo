@@ -27,11 +27,15 @@ namespace Altaxo.Graph
 	[Serializable]
 	public enum PlotGroupStyle
 	{
+		// Note: we must provide every (!) combination a name, because of xml serialization
 		None  = 0x00,
 		Color = 0x01,
 		Line  = 0x02,
+		LineAndColor = Line | Color,
 		Symbol = 0x04,
-		All = Color | Line | Symbol
+		SymbolAndColor= Symbol | Color,
+		SymbolAndLine = Symbol | Line,
+		All						= Symbol | Line | Color
 	}
 
 	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyle),0)]
@@ -39,7 +43,8 @@ namespace Altaxo.Graph
 	{
 		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 		{
-			info.AddValue("Value",System.Enum.GetName(typeof(PlotGroupStyle),obj));  
+			string styleval = System.Enum.GetName(typeof(PlotGroupStyle),(PlotGroupStyle)obj);
+			info.AddValue("Value",styleval);  
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 		{

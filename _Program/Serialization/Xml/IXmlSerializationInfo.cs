@@ -7,9 +7,6 @@ namespace Altaxo.Serialization.Xml
 	/// </summary>
 	public interface IXmlSerializationInfo
 	{
-
-
-	
 		void AddAttributeValue(string name, int val);
 		
 		bool GetBoolean();
@@ -73,5 +70,22 @@ namespace Altaxo.Serialization.Xml
 		/// Returns the object instance that is currently in deserialization process
 		/// </summary>
 		object DeserializationInstance { get; }
+
+
+		/// <summary>
+		/// This event is called if the deserialization of the root object is finished,
+		/// i.e. if the application calls <see>Finished</see>.
+		/// </summary>
+		event System.EventHandler DeserializationFinished;
+
+		/// <summary>
+		/// This event is called if the deserialization process of all objects is finished and
+		/// the deserialized objects are sorted into the document. Then the application should
+		/// call AllFinished, which fires this event. The purpose of this event is to 
+		/// resolve the references in the deserialized objects. This resolving process can be successfully
+		/// done only if the objects are put in the right places in the document, so that
+		/// the document paths can be resolved to the right objects.
+		/// </summary>
+		event System.EventHandler AllDeserializationFinished;
 	}
 }

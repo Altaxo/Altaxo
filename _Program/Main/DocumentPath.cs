@@ -220,16 +220,21 @@ namespace Altaxo.Main
 			if(path.IsAbsolutePath)
 				node = GetRootNode(startnode);
 
-			for(int i=0;i<path.Count && (node is Main.IDocumentNode);i++)
+			for(int i=0;i<path.Count;i++)
 			{
 				if(path[i]=="..")
-					node = ((Main.IDocumentNode)node).ParentObject;
+				{
+					if(node is Main.IDocumentNode)
+						node = ((Main.IDocumentNode)node).ParentObject;
+					else
+						return null;
+				}
 				else
 				{
 					if(node is Main.INamedObjectCollection)
 						node = ((Main.INamedObjectCollection)node).GetChildObjectNamed(path[i]);
 					else
-						return 0;
+						return null;
 				}
 			} // end for
 			return node;

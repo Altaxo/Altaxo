@@ -29,9 +29,14 @@ namespace Altaxo
 	/// </summary>
 	[SerializationSurrogate(0,typeof(AltaxoDocument.SerializationSurrogate0))]
 	[SerializationVersion(0,"Initial version of the main document only contains m_DataSet")]
-	public class AltaxoDocument : IDeserializationCallback
+	public class AltaxoDocument 
+		: 
+		IDeserializationCallback,
+		Main.INamedObjectCollection	
 	{
 		protected Altaxo.Data.TableSet m_DataSet = null; // The root of all the data
+
+		protected Altaxo.Graph.GraphSet m_GraphSet = null; // all graphs are stored here
 		protected System.Collections.ArrayList m_Worksheets;
 		/// <summary>The list of GraphForms for the document.</summary>
 		protected System.Collections.ArrayList m_GraphForms;
@@ -44,6 +49,7 @@ namespace Altaxo
 		public AltaxoDocument()
 		{
 			m_DataSet = new Altaxo.Data.TableSet(this);
+			m_GraphSet = new Altaxo.Graph.GraphSet(this);
 			m_Worksheets = new System.Collections.ArrayList();
 			m_GraphForms = new System.Collections.ArrayList();
 		}
@@ -114,6 +120,10 @@ namespace Altaxo
 		{
 			get { return m_DataSet; }
 		}
+		public Altaxo.Graph.GraphSet GraphSet
+		{
+			get { return m_GraphSet; }
+		}
 
 		public void OnDirtySet(object sender)
 		{
@@ -179,13 +189,19 @@ namespace Altaxo
 		}
 
 
-		public Altaxo.Graph.IGraphView CreateNewGraph(System.Windows.Forms.Form parentForm)
+		public Altaxo.Graph.IGraphView CreateNewGraph(System.Windows.Forms.Form parentForm, Altaxo.Graph.GraphDocument graph)
 		{
 			Altaxo.Gui.WorkbenchForm form = new Altaxo.Gui.WorkbenchForm(parentForm);
 			Altaxo.Graph.GraphView view = new Altaxo.Graph.GraphView(form,null);
 			form.Controls.Add(view);
 			view.Dock = System.Windows.Forms.DockStyle.Fill;
-			Altaxo.Graph.GraphController ctrl = new Altaxo.Graph.GraphController(view);
+			
+			if(graph==null)
+				graph = new Altaxo.Graph.GraphDocument();
+
+			this.m_GraphSet.Add(graph);
+
+			Altaxo.Graph.GraphController ctrl = new Altaxo.Graph.GraphController(view,graph);
 			m_GraphForms.Add(ctrl.View.Form);
 			form.Show();
 			return ctrl.View;
@@ -216,6 +232,29 @@ namespace Altaxo
 				m_Worksheets.Remove(frm);
 		}
 
+		public object GetChildObjectNamed(string name)
+		{
+			switch(name)
+			{
+				case "Tables":
+					return this.m_DataSet;
+				case "Graphs":
+					return this.m_GraphSet;
+			}
+			return null;
+		}
+
+		public string GetNameOfChildObject(object o)
+		{
+			if(null==o)
+				return null;
+			else if(o.Equals(this.m_DataSet))
+				return "Tables";
+			else if(o.Equals(this.m_GraphSet))
+				return "Graphs";
+			else
+				return null;
+		}
 	
 	}
 }

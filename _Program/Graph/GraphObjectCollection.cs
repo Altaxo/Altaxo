@@ -95,6 +95,7 @@ namespace Altaxo.Graph
 					GraphObject go = (GraphObject)info.GetValue(s);
 					s.Add(go);
 				}
+				info.CloseArray(count);
 				
 				return s;
 			}

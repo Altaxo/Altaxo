@@ -627,7 +627,7 @@ namespace Altaxo.Graph
 				// Layer specific
 				info.AddValue("LinkedLayer",s.m_LinkedLayer);
 			
-				info.AddValue("GraphObjects",s.m_GraphObjects);
+				info.AddValue("GraphObjectCollection",s.m_GraphObjects);
 				info.AddValue("Plots",s.m_PlotItems);
 
 
@@ -707,6 +707,9 @@ namespace Altaxo.Graph
 				s.m_GraphObjects = (Graph.GraphObjectCollection)info.GetValue("GraphObjects",typeof(Graph.GraphObjectCollection));
 
 				s.m_PlotItems = (Altaxo.Graph.PlotList)info.GetValue("Plots",typeof(Altaxo.Graph.PlotList));
+		
+				s.CalculateMatrix();
+				s.CreateEventLinks();
 
 				return s;
 			}

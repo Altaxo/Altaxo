@@ -233,6 +233,10 @@ namespace Altaxo.Serialization.Xml
 			}
 		}
 
+		public event System.EventHandler DeserializationFinished;
+		public event System.EventHandler AllDeserializationFinished;
+
+
 		#region not implemented yet
 
 		public void CreateArray(string name, int count)

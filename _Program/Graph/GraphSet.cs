@@ -126,7 +126,9 @@ namespace Altaxo.Graph
 
 		public void Add(Altaxo.Graph.GraphDocument theGraph)
 		{
-			if(null==theGraph.Name || 0==theGraph.Name.Length) // if no table name provided
+			if(null!=theGraph.Name && string.Empty!=theGraph.Name && theGraph.Equals(m_GraphsByName[theGraph.Name]))
+				return; // do silently nothing if the graph (the same!) is already registered
+			if(null==theGraph.Name || string.Empty==theGraph.Name) // if no table name provided
 				theGraph.Name = FindNewName();									// find a new one
 			else if(m_GraphsByName.ContainsKey(theGraph.Name)) // else if this table name is already in use
 				theGraph.Name = FindNewName(theGraph.Name); // find a new table name based on the original name

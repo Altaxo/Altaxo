@@ -236,8 +236,8 @@ namespace Altaxo.Graph
 			{
 				XYDataPlot s = (XYDataPlot)obj;
 
-				s.m_PlotAssociation = (PlotAssociation)info.GetValue("Data",typeof(PlotAssociation));
-				s.m_PlotStyle = (PlotStyle)info.GetValue("Style",typeof(PlotStyle));
+				s.Data = (PlotAssociation)info.GetValue("Data",typeof(PlotAssociation));
+				s.Style = (PlotStyle)info.GetValue("Style",typeof(PlotStyle));
 		
 				return s;
 			}

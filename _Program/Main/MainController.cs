@@ -183,7 +183,7 @@ namespace Altaxo
 			Doc.CreateNewWorksheet(View.Form);
 
 			// we construct a empty graph by default
-			Doc.CreateNewGraph(View.Form);
+			Doc.CreateNewGraph(View.Form,null);
 		}
 
 		#region Menu Definition
@@ -228,8 +228,8 @@ namespace Altaxo
 			m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
 
 			// File - New -WorksheetFromFile 
-			mi = new MenuItem("Worksheet from file");
-			mi.Click += new EventHandler(EhMenuFileNewWorksheetFromFile_OnClick);
+			mi = new MenuItem("Worksheet/Graph from file");
+			mi.Click += new EventHandler(EhMenuFileNewObjectFromFile_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems[index2].MenuItems.Add(mi);
 
 			// ------------------------------------------------------------------
@@ -356,10 +356,12 @@ namespace Altaxo
 
 		private void EhMenuFileNewGraph_OnClick(object sender, System.EventArgs e)
 		{
-			m_Doc.CreateNewGraph(View.Form);
+			m_Doc.CreateNewGraph(View.Form,null);
 		}
 
-		protected void EhMenuFileNewWorksheetFromFile_OnClick(object sender, System.EventArgs e)
+	
+
+		protected void EhMenuFileNewObjectFromFile_OnClick(object sender, System.EventArgs e)
 		{
 			System.IO.Stream myStream ;
 			OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -387,7 +389,22 @@ namespace Altaxo
 							table.TableName = this.Doc.TableSet.FindNewTableName(table.Name);
 
 						this.Doc.TableSet.Add(table);
+						info.AllFinished(); // fire the event to resolve path references
+						
 						this.Doc.CreateNewWorksheet(this.View.Form,table);
+					}
+					else if(deserObject is Altaxo.Graph.GraphDocument)
+					{
+						Altaxo.Graph.GraphDocument graph = deserObject as Altaxo.Graph.GraphDocument;
+						if(graph.Name==null || graph.Name==string.Empty)
+							graph.Name = this.Doc.GraphSet.FindNewName();
+						else if( this.Doc.GraphSet.Contains(graph.Name))
+							graph.Name = this.Doc.GraphSet.FindNewName(graph.Name);
+
+						this.Doc.GraphSet.Add(graph);
+						info.AllFinished(); // fire the event to resolve path references in the graph
+
+						this.Doc.CreateNewGraph(this.View.Form, graph);
 					}
 
 				}
@@ -765,7 +782,7 @@ namespace Altaxo
 
 		public Altaxo.Graph.IGraphView CreateNewGraph()
 		{
-			return Doc.CreateNewGraph(View.Form);
+			return Doc.CreateNewGraph(View.Form,null);
 		}
 
 

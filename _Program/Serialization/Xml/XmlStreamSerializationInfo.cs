@@ -59,12 +59,29 @@ namespace Altaxo.Serialization.Xml
 			{
 				m_Reader.Close();
 				m_Reader=null;
+
+				if(null!= DeserializationFinished)
+					DeserializationFinished(this,System.EventArgs.Empty);
+
+				DeserializationFinished=null;
 			}
 		}
 
+		public void AllFinished()
+		{
+			
+			if(!m_bWriting && null != AllDeserializationFinished)
+				AllDeserializationFinished(this,System.EventArgs.Empty);
+
+			AllDeserializationFinished=null;
+		}
+
+
+
 		#region IXmlSerializationInfo Members
 
-
+		public event System.EventHandler DeserializationFinished;
+		public event System.EventHandler AllDeserializationFinished;
 
 		public XmlArrayEncoding DefaultArrayEncoding
 		{
@@ -469,18 +486,37 @@ namespace Altaxo.Serialization.Xml
 		{
 			string type = m_Reader.GetAttribute("Type");
 			
+
+
 			if(null!=type)
 			{
-				
+				if("UndefinedValue"==type)
+				{
+					m_Reader.Read();
+					return null;
+				}
+
 				// Get the surrogate for this type
 				IXmlSerializationSurrogate surr = m_SurrogateSelector.GetSurrogate(type);
 				if(null==surr)
 					throw new ApplicationException(string.Format("Unable to find XmlSurrogate for type {0}!",type));
 				else
 				{
-					m_Reader.ReadStartElement();  // note: this must now be done by  in the deserialization code
+					bool bNotEmpty = !m_Reader.IsEmptyElement;
+					System.Diagnostics.Trace.WriteLine(string.Format("Xml val {0}, type {1}, empty:{2}",m_Reader.Name,type,bNotEmpty));
+
+					
+					if(bNotEmpty)
+						m_Reader.ReadStartElement();  // note: this must now be done by  in the deserialization code
+					
 					object retvalue =  surr.Deserialize(null,this,parentobject);
-					m_Reader.ReadEndElement();
+					
+					if(bNotEmpty)
+						m_Reader.ReadEndElement();
+					else
+						m_Reader.Read();
+
+					
 					return retvalue;
 				}
 			}

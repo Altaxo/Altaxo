@@ -210,14 +210,14 @@ namespace Altaxo.Graph
 				object xColumn = info.GetValue("XColumn",typeof(Altaxo.Data.IReadableColumn));
 				object yColumn = info.GetValue("YColumn",typeof(Altaxo.Data.IReadableColumn));
 
-				if(xColumn is Altaxo.Data.DataColumn)
-					s.m_xColumn = (Altaxo.Data.DataColumn)xColumn;
+				if(xColumn is Altaxo.Data.IReadableColumn)
+					s.m_xColumn = (Altaxo.Data.IReadableColumn)xColumn;
 				else if (xColumn is Main.DocumentPath)
 					bNeedsCallback = true;
 
 
-				if(yColumn is Altaxo.Data.DataColumn)
-					s.m_yColumn = (Altaxo.Data.DataColumn)yColumn;
+				if(yColumn is Altaxo.Data.IReadableColumn)
+					s.m_yColumn = (Altaxo.Data.IReadableColumn)yColumn;
 				else if (yColumn is Main.DocumentPath)
 					bNeedsCallback = true;
 
@@ -235,7 +235,7 @@ namespace Altaxo.Graph
 					surr._yColumn = yColumn as Main.DocumentPath;
 					surr._plotAssociation = s;
 
-					info.DeserializationAndHierarchyFinished += new EventHandler(surr.EhDeserializationFinished());
+					info.AllDeserializationFinished += new EventHandler(surr.EhDeserializationFinished);
 
 				}
 				return s;
@@ -328,7 +328,7 @@ namespace Altaxo.Graph
 		public object ParentObject
 		{
 			get { return m_Parent; }
-			set { m_Parent = null; }
+			set { m_Parent = value; }
 		}
 
 		public string Name

@@ -113,11 +113,12 @@ namespace Altaxo.Graph
 				int count = info.OpenArray();
 				for(int i=0;i<count;i++)
 				{
-					PlotGroup gr = (PlotGroup)info.GetValue("PlotItem",s);
-					s.Add(gr);
+					PlotItem plotitem = (PlotItem)info.GetValue("PlotItem",s);
+					s.Add(plotitem);
 				}
 				info.CloseArray(count);
 				
+
 				count = info.OpenArray(); // PlotGroups
 				for(int i=0;i<count;i++)
 				{
@@ -160,6 +161,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		protected PlotList()
 		{
+			m_PlotGroups = new PlotGroup.Collection();
 		}
 
 		/// <summary>
@@ -259,16 +261,20 @@ namespace Altaxo.Graph
 			if(plotitem.Data is Graph.IXBoundsHolder)
 			{
 				IXBoundsHolder pa = (IXBoundsHolder)plotitem.Data;
-				pa.SetXBoundsFromTemplate(m_Owner.XAxis.DataBounds); // ensure that data bound object is of the right type
+				if(null!=m_Owner)
+					pa.SetXBoundsFromTemplate(m_Owner.XAxis.DataBounds); // ensure that data bound object is of the right type
 				pa.XBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.EhXBoundaryChanged);
-				pa.MergeXBoundsInto(m_Owner.XAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
+				if(null!=m_Owner)
+					pa.MergeXBoundsInto(m_Owner.XAxis.DataBounds); // merge all x-boundaries in the x-axis boundary object
 			}
 			if(plotitem.Data is Graph.IYBoundsHolder)
 			{
 				IYBoundsHolder pa = (IYBoundsHolder)plotitem.Data;
-				pa.SetYBoundsFromTemplate(m_Owner.YAxis.DataBounds); // ensure that data bound object is of the right type
+				if(null!=m_Owner)
+					pa.SetYBoundsFromTemplate(m_Owner.YAxis.DataBounds); // ensure that data bound object is of the right type
 				pa.YBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.EhYBoundaryChanged);
-				pa.MergeYBoundsInto(m_Owner.YAxis.DataBounds); // merge the y-boundaries in the y-Axis data boundaries
+				if(null!=m_Owner)
+					pa.MergeYBoundsInto(m_Owner.YAxis.DataBounds); // merge the y-boundaries in the y-Axis data boundaries
 			}
 		}
 
