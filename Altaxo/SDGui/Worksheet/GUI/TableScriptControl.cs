@@ -62,6 +62,7 @@ namespace Altaxo.Worksheet.GUI
       this.ScriptName = System.Guid.NewGuid().ToString() + ".cs";
       this.edFormula.Document.TextEditorProperties.TabIndent=2;
       this.edFormulaWrapper.textAreaControl.InitializeFormatter();
+      this.edFormulaWrapper.textAreaControl.TextEditorProperties.MouseWheelScrollDown=true;
     }
 
     /// <summary> 
@@ -118,6 +119,7 @@ namespace Altaxo.Worksheet.GUI
       this.lbCompilerErrors.Name = "lbCompilerErrors";
       this.lbCompilerErrors.Size = new System.Drawing.Size(592, 82);
       this.lbCompilerErrors.TabIndex = 29;
+      this.lbCompilerErrors.DoubleClick += new System.EventHandler(this.EhCompilerErrors_DoubleClick);
       // 
       // btUpdate
       // 
@@ -214,6 +216,16 @@ namespace Altaxo.Worksheet.GUI
 
     }
 
+    public void SetScriptCursorLocation(int line, int column)
+    {
+        this.edFormulaWrapper.JumpTo(line,column);
+    }
+
+    public void MarkText(int pos1, int pos2)
+    {
+
+    }
+
     public object EditableContent
     {
       get
@@ -269,6 +281,14 @@ namespace Altaxo.Worksheet.GUI
       if(null!=Controller)
         Controller.EhView_Cancel();
     
+    }
+
+    private void EhCompilerErrors_DoubleClick(object sender, System.EventArgs e)
+    {
+       string msg = lbCompilerErrors.SelectedItem as string;
+
+      if(null!=Controller && null!=msg)
+        Controller.EhView_GotoCompilerError(msg);
     }
   }
 }

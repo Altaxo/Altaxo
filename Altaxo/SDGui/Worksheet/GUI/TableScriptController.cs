@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using System.Text.RegularExpressions;
 using Altaxo.Data;
 
 namespace Altaxo.Worksheet.GUI
@@ -33,6 +34,8 @@ namespace Altaxo.Worksheet.GUI
     string ScriptText { get; set; }
 
     int ScriptCursorLocation { set; }
+    void SetScriptCursorLocation(int line, int column);
+    void MarkText(int pos1, int pos2);
 
     /// <summary>
     /// Sets the working name of the script. Should be set to a unique name
@@ -53,6 +56,7 @@ namespace Altaxo.Worksheet.GUI
     void EhView_Compile();
     void EhView_Update();
     void EhView_Cancel();
+    void EhView_GotoCompilerError(string message);
   }
 
 
@@ -167,6 +171,10 @@ namespace Altaxo.Worksheet.GUI
         System.Windows.Forms.MessageBox.Show(View.Form, "There were compilation errors","No success");
         return;
       }
+      else
+      {
+        View.AddCompilerError(DateTime.Now.ToLongTimeString() + " : Compilation successful.");
+      }
 
       if(m_DataTable!=null)
         bSucceeded = ((TableScript)m_TableScript).ExecuteWithSuspendedNotifications(m_DataTable);
@@ -187,6 +195,8 @@ namespace Altaxo.Worksheet.GUI
       View.Form.Close();
     }
 
+
+    private Regex compilerErrorRegex = new Regex(@".*\((?<line>\d+),(?<column>\d+)\) : (?<msg>.+)",RegexOptions.Compiled);
     public void EhView_Compile()
     {
       m_TableScript.ScriptText = View.ScriptText;
@@ -198,12 +208,40 @@ namespace Altaxo.Worksheet.GUI
       if(!bSucceeded)
       {
         foreach(string s in m_TableScript.Errors)
-          View.AddCompilerError(s);
+        {
+          string news = compilerErrorRegex.Match(s).Result("(${line},${column}) : ${msg}");
+          View.AddCompilerError(news);
+        }
+  
 
         System.Windows.Forms.MessageBox.Show(View.Form, "There were compilation errors","No success");
         return;
       }
+      else
+      {
+        View.AddCompilerError(DateTime.Now.ToLongTimeString() + " : Compilation successful.");
+      }
 
+
+   }
+
+    public void EhView_GotoCompilerError(string msg)
+    {
+      try
+      {
+        Match match = compilerErrorRegex.Match(msg);
+        string sline = match.Result("${line}");
+        string scol = match.Result("${column}");
+        int line = int.Parse(sline);
+        int col  = int.Parse(scol);
+
+        if(View!=null)
+          View.SetScriptCursorLocation(line-1,col-1);
+
+      }
+      catch(Exception ex)
+      {
+      }
     }
 
     public void EhView_Update()
