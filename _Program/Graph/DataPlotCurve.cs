@@ -31,7 +31,7 @@ namespace Altaxo.Graph
 	/// PlotItem holds the pair of data and style neccessary to plot a curve, function,
 	/// surface and so on.  
 	/// </summary>
-	public abstract class  PlotItem : IChangedEventSource
+	public abstract class  PlotItem : IChangedEventSource, System.ICloneable
 	{
 		/// <summary>
 		/// Get/sets the data object of this plot.
@@ -57,6 +57,13 @@ namespace Altaxo.Graph
 		/// <param name="layer">The plot layer.</param>
 		public abstract void Paint(Graphics g, Graph.Layer layer);
 
+
+		/// <summary>
+		/// Creates a cloned copy of this object.
+		/// </summary>
+		/// <returns>The cloned copy of this object.</returns>
+		/// <remarks>The data (DataColumns which belongs to a table in the document's TableSet) are not cloned, only the reference to this columns is cloned.</remarks>
+		public abstract object Clone();
 
 		/// <summary>
 		/// Fired if the data object changed or something inside the data object changed
@@ -202,6 +209,18 @@ namespace Altaxo.Graph
 			this.Style = ps;
 		}
 
+		public XYDataPlot(XYDataPlot from)
+		{
+			this.Data = from.Data;   // also wires the event
+			this.Style = from.Style; // also wires the event
+		}
+
+		public override object Clone()
+		{
+			return new XYDataPlot(this);
+		}
+
+
 		public override object Data
 		{
 			get { return m_PlotAssociation; }
@@ -270,6 +289,11 @@ namespace Altaxo.Graph
 		public override string GetName(int level)
 		{
 			return m_PlotAssociation.ToString();
+		}
+
+		public override string ToString()
+		{
+			return GetName(int.MaxValue);
 		}
 
 		public override void Paint(Graphics g, Graph.Layer layer)

@@ -1808,7 +1808,7 @@ namespace Altaxo.Graph
 			public PlotItem plotassociation;   // or the plot association itself in case of existing PlotAssociations
 			
 			// m_Group holds (in PLCon items) information about the group members
-			public System.Collections.ArrayList m_Group; 
+			public PLCon.Collection m_Group; 
 			//  m_OriginalGroup is set to the original plot group in case it exists before
 			public PlotGroup m_OriginalGroup=null;
 
@@ -1833,7 +1833,7 @@ namespace Altaxo.Graph
 				this.column=null;
 				this.plotassociation=null;
 				this.m_OriginalGroup = null;
-				this.m_Group = new System.Collections.ArrayList();
+				this.m_Group = new PLCon.Collection();
 				this.m_Group.AddRange(array);
 			}
 
@@ -1844,9 +1844,9 @@ namespace Altaxo.Graph
 				this.plotassociation=null;
 
 				this.m_OriginalGroup = grp;
-				this.m_Group = new System.Collections.ArrayList(grp.Count);
+				this.m_Group = new PLCon.Collection();
 				for(int i=0;i<grp.Count;i++)
-					m_Group.Add(grp[i]);
+					m_Group.Add(new PLCon(grp[i]));
 			}
 
 
@@ -1885,7 +1885,7 @@ namespace Altaxo.Graph
 					// the m_Group Collection
 					for(int i=0;i<m_OriginalGroup.Count;i++)
 					{
-						if(!object.ReferenceEquals(m_OriginalGroup[i],((PLCon)m_Group[i]).plotassociation))
+						if(!object.ReferenceEquals(m_OriginalGroup[i],m_Group[i].plotassociation))
 							return false;
 					}
 					
@@ -1914,6 +1914,25 @@ namespace Altaxo.Graph
 				else
 					return "<no more available>";
 					
+			}
+
+			public class Collection : Altaxo.Data.CollectionBase
+			{
+				public void Add(PLCon item)
+				{
+					base.InnerList.Add(item);
+				}
+
+				public void AddRange(PLCon[] array)
+				{
+					base.InnerList.AddRange(array);
+				}
+
+				public PLCon this[int i]
+				{
+					get { return (PLCon)base.InnerList[i]; }
+				}
+
 			}
 		} // end class PLCon
 

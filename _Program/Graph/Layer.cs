@@ -31,7 +31,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(Layer.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class Layer : System.Runtime.Serialization.IDeserializationCallback
+	public class Layer : System.Runtime.Serialization.IDeserializationCallback, System.ICloneable
 	{
 		#region Enumerations
 
@@ -323,7 +323,7 @@ namespace Altaxo.Graph
 		#region Serialization
 
 		/// <summary>Used to serialize the GraphDocument Version 0.</summary>
-		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 			/// <summary>
 			/// Serializes Layer Version 0.
@@ -512,6 +512,96 @@ namespace Altaxo.Graph
 		#endregion
 
 		#region Constructors
+
+		/// <summary>
+		/// The copy constructor.
+		/// </summary>
+		/// <param name="from"></param>
+		public Layer(Layer from)
+		{
+			// Layer style
+			this.m_bFillLayerArea = from.m_bFillLayerArea;
+			this.m_LayerAreaFillBrush = null==from.m_LayerAreaFillBrush ? null : (BrushHolder)from.m_LayerAreaFillBrush.Clone();
+
+			// size, position, rotation and scale
+			this.m_LayerWidthType  = from.m_LayerWidthType;
+			this.m_LayerHeightType = from.m_LayerHeightType;
+			this.m_LayerWidth  = from.m_LayerWidth;
+			this.m_LayerHeight = from.m_LayerHeight ;
+			this.m_LayerSize   = from.m_LayerSize;
+
+			this.m_LayerXPositionType = from.m_LayerXPositionType;
+			this.m_LayerYPositionType = from.m_LayerYPositionType;
+			this.m_LayerXPosition = from.m_LayerXPosition ;
+			this.m_LayerYPosition = from.m_LayerYPosition;
+			this.m_LayerPosition = from.m_LayerPosition;
+
+			this.m_LayerAngle  =from.m_LayerAngle;
+			this.m_LayerScale = from.m_LayerScale;
+
+			// axis related
+
+			this.m_xAxis = null==from.m_xAxis ? null : (Axis)from.m_yAxis.Clone() ;
+			this.m_yAxis = null==from.m_yAxis ? null : (Axis)from.m_yAxis.Clone() ;
+			this.m_LinkXAxis = from.m_LinkXAxis;
+			this.m_LinkYAxis = from.m_LinkYAxis;
+			this.m_LinkXAxisOrgA = from.m_LinkXAxisOrgA;
+			this.m_LinkXAxisOrgB = 	from.m_LinkXAxisOrgB;
+			this.m_LinkXAxisEndA = from.m_LinkXAxisEndA;
+			this.m_LinkXAxisEndB =from.m_LinkXAxisEndB;
+			this.m_LinkYAxisOrgA = from.m_LinkYAxisOrgA;
+			this.m_LinkYAxisOrgB = from.m_LinkYAxisOrgB;
+			this.m_LinkYAxisEndA = from.m_LinkYAxisEndA ;
+			this.m_LinkYAxisEndB = from.m_LinkYAxisEndB;
+
+
+			// Styles
+			this.m_ShowLeftAxis = from.m_ShowLeftAxis;
+			this.m_ShowBottomAxis = from.m_ShowBottomAxis;
+			this.m_ShowRightAxis = from.m_ShowRightAxis;
+			this.m_ShowTopAxis = from.m_ShowTopAxis;
+
+			this.m_LeftAxisStyle = null==from.m_LeftAxisStyle ? null : (Graph.XYLayerAxisStyle)from.m_LeftAxisStyle.Clone();
+			this.m_BottomAxisStyle = null==from.m_BottomAxisStyle ? null : (Graph.XYLayerAxisStyle)from.m_BottomAxisStyle.Clone();
+			this.m_RightAxisStyle = null==from.m_RightAxisStyle ? null : (Graph.XYLayerAxisStyle)from.m_RightAxisStyle.Clone();
+			this.m_TopAxisStyle = null==from.m_TopAxisStyle ? null : (Graph.XYLayerAxisStyle)from.m_TopAxisStyle.Clone();
+			
+			
+			this.m_LeftLabelStyle = null==from.m_LeftLabelStyle ? null : (Graph.LabelStyle)from.m_LeftLabelStyle.Clone();
+			this.m_BottomLabelStyle = null==from.m_BottomLabelStyle ? null : (Graph.LabelStyle)from.m_BottomLabelStyle.Clone();
+			this.m_RightLabelStyle = null==from.m_RightLabelStyle ? null : (Graph.LabelStyle)from.m_RightLabelStyle.Clone();
+			this.m_TopLabelStyle = null==from.m_TopLabelStyle ? null : (Graph.LabelStyle)from.m_TopLabelStyle.Clone();
+			
+			
+			// Titles and legend
+			this.m_LeftAxisTitle = null==from.m_LeftAxisTitle ? null : (Graph.ExtendedTextGraphObject)from.m_LeftAxisTitle.Clone();
+			this.m_BottomAxisTitle = null==from.m_BottomAxisTitle ? null : (Graph.ExtendedTextGraphObject)from.m_BottomAxisTitle.Clone();
+			this.m_RightAxisTitle = null==from.m_RightAxisTitle ? null : (Graph.ExtendedTextGraphObject)from.m_RightAxisTitle.Clone();
+			this.m_TopAxisTitle = null==from.m_TopAxisTitle ? null : (Graph.ExtendedTextGraphObject)from.m_TopAxisTitle.Clone();
+			this.m_Legend = null==from.m_Legend ? null : (Graph.ExtendedTextGraphObject)from.m_Legend.Clone();
+			
+			// Layer specific
+			this.m_LinkedLayer = from.m_LinkedLayer; // do not clone here, parent collection's duty to fix this!
+			
+			this.m_GraphObjects = null==from.m_GraphObjects ? null : new GraphObjectCollection(from.m_GraphObjects);
+
+			this.m_PlotItems = null==from.m_PlotItems ? null : new PlotList(this,from.m_PlotItems);
+
+			// special way neccessary to handle plot groups
+			this.m_PlotGroups = null==from.m_PlotGroups ? null : from.m_PlotGroups.Clone(this.m_PlotItems,from.m_PlotItems);
+
+			m_ForwardMatrix = new Matrix();
+			m_ReverseMatrix = new Matrix();
+			CalculateMatrix();
+
+			CreateEventLinks();
+		}
+
+
+		public virtual object Clone()
+		{
+			return new Layer(this);
+		}
 
 		/// <summary>
 		/// Creates a layer with standard position and size using the size of the printable area.
@@ -2105,7 +2195,7 @@ namespace Altaxo.Graph
 
 		[SerializationSurrogate(0,typeof(PlotList.SerializationSurrogate0))]
 			[SerializationVersion(0)]
-			public class PlotList : Altaxo.Data.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, IChildChangedEventSink
+			public class PlotList : Altaxo.Data.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, IChildChangedEventSink, System.ICloneable
 		{
 			/// <summary>The parent layer of this list.</summary>
 			private Layer m_Owner; 
@@ -2166,6 +2256,35 @@ namespace Altaxo.Graph
 				m_Owner = owner;
 			}
 
+			/// <summary>
+			/// Copy constructor. Clones (!) all items. The parent owner is set to null and has to be set afterwards.
+			/// </summary>
+			/// <param name="from">The PlotList to clone this list from.</param>
+			public PlotList(PlotList from)
+				:
+				this(null,from)
+			{
+			}
+
+			/// <summary>
+			/// Copy constructor. Clones (!) all the items in the list.
+			/// </summary>
+			/// <param name="owner">The new owner of the cloned list.</param>
+			/// <param name="from">The list to clone all items from.</param>
+			public PlotList(Layer owner, PlotList from)
+			{
+				m_Owner = owner;
+
+				// Clone all the items in the list.
+				for(int i=0;i<from.Count;i++)
+					Add((PlotItem)from[i].Clone()); // clone the items
+			}
+
+			public object Clone()
+			{
+				return new PlotList(this);
+			}
+
 			public Layer ParentLayer
 			{
 				get { return m_Owner; }
@@ -2217,7 +2336,7 @@ namespace Altaxo.Graph
 				}
 			}
 
-			public new void Add(Graph.PlotItem plotitem)
+			public void Add(Graph.PlotItem plotitem)
 			{
 				if(plotitem==null)
 					throw new ArgumentNullException();
@@ -2227,11 +2346,15 @@ namespace Altaxo.Graph
 				OnChanged();
 			}
 
-			public new PlotItem this[int i]
+			public PlotItem this[int i]
 			{
 				get { return (PlotItem)base.InnerList[i]; }
 			}
 			
+			public int IndexOf(PlotItem it)
+			{
+				return base.InnerList.IndexOf(it,0,Count);
+			}
 				
 			#region IChangedEventSource Members
 
@@ -2263,7 +2386,7 @@ namespace Altaxo.Graph
 		/// all changes to the layers.</remarks>
 		[SerializationSurrogate(0,typeof(LayerCollection.SerializationSurrogate0))]
 			[SerializationVersion(0)]
-			public class LayerCollection : Altaxo.Data.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
+			public class LayerCollection : Altaxo.Data.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, System.ICloneable
 		{
 			/// <summary>Fired when something in this collection changed, as for instance
 			/// adding or deleting layers, or exchanging layers.</summary>
@@ -2278,7 +2401,7 @@ namespace Altaxo.Graph
 			#region "Serialization"
 
 			/// <summary>Used to serialize the LayerCollection Version 0.</summary>
-			public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+			public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 			{
 				/// <summary>
 				/// Serializes LayerCollection Version 0.
@@ -2330,6 +2453,30 @@ namespace Altaxo.Graph
 			{
 			}
 
+			/// <summary>
+			/// Copy constructor. Clones all objects in this collection.
+			/// </summary>
+			/// <param name="from">The collection to clone from.</param>
+			public LayerCollection(LayerCollection from)
+			{
+				for(int i=0;i<from.Count;i++)
+					this.Add((Layer)from[i].Clone());
+	
+				// now we have to fix the linked layer list, since the LinkedLayer property of the Layers point to the original layers
+				// and not to the cloned layers!
+				for(int i=0;i<Count;i++)
+				{
+					if(null!=from[i].LinkedLayer)
+					{
+						this[i].LinkedLayer = this[from[i].LinkedLayer.Number];
+					}
+				}
+			}
+		
+			public virtual object Clone()
+			{
+				return new LayerCollection(this);
+			}
 
 			/// <summary>
 			/// References the layer at index i.

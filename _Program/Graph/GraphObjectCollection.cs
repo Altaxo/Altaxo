@@ -38,7 +38,7 @@ namespace Altaxo.Graph
 		#region "Serialization"
 
 		/// <summary>Used to serialize the GraphObjectCollection Version 0.</summary>
-		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 
 			/// <summary>
@@ -86,15 +86,18 @@ namespace Altaxo.Graph
 
 
 		public GraphObjectCollection()
-		: base()
 		{
 		}
 
 
-		public GraphObjectCollection(GraphObjectCollection coll)
-			: base()
+		/// <summary>
+		/// Copy constructor. Clones (!) all the graph items from the other collection
+		/// </summary>
+		/// <param name="from">The collection to clone the items from.</param>
+		public GraphObjectCollection(GraphObjectCollection from)
 		{
-			this.AddRange(coll);
+			for(int i=0;i<from.Count;i++)
+				this.Add((GraphObject)from[i].Clone());
 		}
 
 		public GraphObjectCollection(GraphObject[] g)

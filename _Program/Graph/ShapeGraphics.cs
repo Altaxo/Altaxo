@@ -31,9 +31,9 @@ namespace Altaxo.Graph
 	public abstract class ShapeGraphic : GraphObject
 	{
 
-		protected float m_lineWidth = 1;
-		protected Color m_lineColor  = Color.Black;
 		protected Color m_fillColor  = Color.White;
+		protected Color m_lineColor  = Color.Black;
+		protected float m_lineWidth = 1;
 		protected bool m_fill  = false;
 
 		#region Serialization
@@ -99,6 +99,23 @@ namespace Altaxo.Graph
 		}
 		#endregion
 
+		public ShapeGraphic()
+		{
+		m_fillColor  = Color.White;
+		m_lineColor  = Color.Black;
+		m_lineWidth = 1;
+		m_fill  = false;
+		}
+
+		public ShapeGraphic(ShapeGraphic from)
+			:
+			base(from)
+		{
+			this.m_fillColor = from.m_fillColor;
+			this.m_lineColor = from.m_lineColor;
+			this.m_lineWidth = from.m_lineWidth;
+			this.m_fill				= from.m_fill;
+		}
 
 		public virtual float LineWidth
 		{ 
@@ -265,8 +282,17 @@ namespace Altaxo.Graph
 			this.AutoSize = false;
 		}
 
+		public LineGraphic(LineGraphic from)
+			: base(from)
+		{
+		}
+
 		#endregion
 
+		public override object Clone()
+		{
+			return new LineGraphic(this);
+		}
 
 
 		public override GraphicsPath HitTest(PointF pt)
@@ -456,7 +482,18 @@ namespace Altaxo.Graph
 		{
 		}
 
+		public RectangleGraphic(RectangleGraphic from)
+			:
+			base(from)
+		{
+		}
+
 		#endregion
+
+		public override object Clone()
+		{
+			return new RectangleGraphic(this);
+		}
 
 
 		public override void Paint( Graphics g, object obj)
@@ -611,7 +648,19 @@ namespace Altaxo.Graph
 		{
 		}
 
+		public EllipseGraphic(EllipseGraphic from)
+			:
+			base(from)
+		{
+		}
+
 		#endregion
+
+		public override object Clone()
+		{
+			return new EllipseGraphic(this);
+		}
+
 
 		public override void Paint( Graphics g, object obj )
 		{

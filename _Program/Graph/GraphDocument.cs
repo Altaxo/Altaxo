@@ -39,7 +39,7 @@ namespace Altaxo.Graph
 	/// bounds is stored inside the class only to know what the original page size of the document was.</remarks>
 	[SerializationSurrogate(0,typeof(GraphDocument.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class GraphDocument : Layer.LayerCollection, System.Runtime.Serialization.IDeserializationCallback
+	public class GraphDocument : Layer.LayerCollection, System.Runtime.Serialization.IDeserializationCallback, System.ICloneable
 	{
 
 		/// <summary>
@@ -124,6 +124,18 @@ namespace Altaxo.Graph
 		/// </summary>
 		public GraphDocument()
 		{
+		}
+
+		public GraphDocument(GraphDocument from)
+			: base(from)
+		{
+			this.m_PageBounds = from.m_PageBounds;
+			this.m_PrintableBounds = from.m_PrintableBounds;
+		}
+
+		public override object Clone()
+		{
+			return new GraphDocument(this);
 		}
 		
 		/// <summary>

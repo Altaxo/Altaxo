@@ -98,11 +98,21 @@ namespace Altaxo.Graph
 
 
 
-#region "Constructors"
+		#region Constructors
 
 		public TextGraphObject()
 		{
 		}
+
+		public TextGraphObject(TextGraphObject from)
+			:
+			base(from)
+		{
+			this.m_Font = null==from.m_Font ? null : (Font)from.m_Font.Clone();
+			this.m_Text = from.m_Text;
+			this.m_Color = from.m_Color;
+		}
+
 		public TextGraphObject(PointF graphicPosition, string text, 
 			Font textFont, Color textColor)
 		{
@@ -136,6 +146,11 @@ namespace Altaxo.Graph
 		}
 
 #endregion
+
+		public override object Clone()
+		{
+			return new TextGraphObject(this);
+		}
 
 
 		public Font Font
@@ -528,6 +543,8 @@ namespace Altaxo.Graph
 #region Constructors
 
 		public ExtendedTextGraphObject(ExtendedTextGraphObject from)
+			:
+			base(from)
 		{
 			m_Font = null==from.Font ? null : (Font)from.Font.Clone();
 			m_BrushHolder = null==m_BrushHolder ? new BrushHolder(Color.Black):(BrushHolder)from.m_BrushHolder.Clone();
@@ -1280,6 +1297,12 @@ namespace Altaxo.Graph
 
 			g.Restore(gs);
 		}
+
+		public override object Clone()
+		{
+			return new ExtendedTextGraphObject(this);
+		}
+
 	}
 }
 

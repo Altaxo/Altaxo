@@ -181,6 +181,14 @@ namespace Altaxo
 			return ctrl.View;
 		}
 
+
+		public void AddGraph(Altaxo.Graph.IGraphView view)
+		{
+			m_GraphForms.Add(view.Form);
+		}
+
+
+
 		/// <summary>This will remove the GraphForm <paramref>frm</paramref> from the graph forms collection.</summary>
 		/// <param name="frm">The GraphForm to remove.</param>
 		/// <remarks>No exception is thrown if the Form frm is not a member of the graph forms collection.</remarks>

@@ -482,6 +482,16 @@ namespace Altaxo.Worksheet
 			index = m_MainMenu.MenuItems.Count-1;
 
 			// Plot - Line&Scatter
+			mi = new MenuItem("Line");
+			mi.Click += new EventHandler(EhMenuPlotLine_OnClick);
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+
+			// Plot - Line&Scatter
+			mi = new MenuItem("Scatter");
+			mi.Click += new EventHandler(EhMenuPlotScatter_OnClick);
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+
+			// Plot - Line&Scatter
 			mi = new MenuItem("Line+Scatter");
 			mi.Click += new EventHandler(EhMenuPlotLineAndScatter_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
@@ -715,9 +725,19 @@ namespace Altaxo.Worksheet
 		// Plot (Popup)
 		// ******************************************************************
 		// ******************************************************************
+		protected void EhMenuPlotLine_OnClick(object sender, System.EventArgs e)
+		{
+			DataGridOperations.PlotLine(this, true, false);
+		}
+
+		protected void EhMenuPlotScatter_OnClick(object sender, System.EventArgs e)
+		{
+			DataGridOperations.PlotLine(this, false, true);
+		}
+
 		protected void EhMenuPlotLineAndScatter_OnClick(object sender, System.EventArgs e)
 		{
-			DataGridOperations.PlotLine(this);
+			DataGridOperations.PlotLine(this, true, true);
 		}
 
 		// ******************************************************************

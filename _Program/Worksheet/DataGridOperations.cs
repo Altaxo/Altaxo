@@ -26,8 +26,22 @@ namespace Altaxo.Worksheet
 {
 	public class DataGridOperations
 	{
-		public static void PlotLine(TableController dg)
+		public static void PlotLine(TableController dg, bool bLine, bool bScatter)
 		{
+			Altaxo.Graph.LineScatterPlotStyle templatePlotStyle = new Altaxo.Graph.LineScatterPlotStyle();
+			Altaxo.Graph.PlotGroupStyle templatePlotGroupStyle = Altaxo.Graph.PlotGroupStyle.All;
+			if(!bLine)
+			{
+				templatePlotStyle.LineStyle.Connection = Altaxo.Graph.LineStyles.ConnectionStyle.NoLine;
+				templatePlotGroupStyle &= (Altaxo.Graph.PlotGroupStyle.All ^ Altaxo.Graph.PlotGroupStyle.Line);
+			}
+			if(!bScatter)
+			{
+				templatePlotStyle.ScatterStyle.Shape = Altaxo.Graph.ScatterStyles.Shape.NoSymbol;
+				templatePlotGroupStyle &= (Altaxo.Graph.PlotGroupStyle.All ^ Altaxo.Graph.PlotGroupStyle.Symbol);
+			}
+
+
 			// first, create a plot association for every selected column in
 			// the data grid
 
@@ -50,8 +64,17 @@ namespace Altaxo.Worksheet
 			// now create a new Graph with this plot associations
 
 			Altaxo.Graph.IGraphView gv = App.Current.CreateNewGraph();
-			gv.Controller.Doc.Layers[0].AddPlotAssociation(pa);
-		
+
+
+			Altaxo.Graph.PlotGroup newPlotGroup = new Altaxo.Graph.PlotGroup(templatePlotGroupStyle);
+
+			for(int i=0;i<pa.Length;i++)
+			{
+				Altaxo.Graph.PlotItem pi = new Altaxo.Graph.XYDataPlot(pa[i],(Altaxo.Graph.LineScatterPlotStyle)templatePlotStyle.Clone());
+				gv.Controller.Doc.Layers[0].PlotItems.Add(pi);
+				newPlotGroup.Add(pi);
+			}
+			gv.Controller.Doc.Layers[0].PlotGroups.Add(newPlotGroup);
 		}
 
 		

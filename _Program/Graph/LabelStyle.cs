@@ -27,7 +27,7 @@ namespace Altaxo.Graph
 {
 
 	/// <remarks>LabelStyle is the abstract base class of all LabelStyles.</remarks>
-	public abstract class LabelStyle : IChangedEventSource
+	public abstract class LabelStyle : IChangedEventSource, System.ICloneable
 	{
 		/*
 		/// <summary>
@@ -60,6 +60,12 @@ namespace Altaxo.Graph
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Creates a cloned copy of this object.
+		/// </summary>
+		/// <returns>The cloned copy of this object.</returns>
+		public abstract object Clone();
 	}
 
 
@@ -128,6 +134,18 @@ namespace Altaxo.Graph
 		{
 			m_Edge = new Edge(st);
 		}
+
+		public SimpleLabelStyle(SimpleLabelStyle from)
+		{
+			m_Edge = from.m_Edge;
+			m_Font = null==m_Font ? null : (Font)m_Font.Clone();
+		}
+
+		public override object Clone()
+		{
+			return new SimpleLabelStyle(this);
+		}
+
 
 		public override void Paint(Graphics g, Layer layer, Axis axis, XYLayerAxisStyle axisstyle)
 		{

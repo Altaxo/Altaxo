@@ -119,6 +119,12 @@ namespace Altaxo
 		/// <param name="e">EventArgs</param>
 		void EhView_Closed(System.EventArgs e);
 
+		/// <summary>
+		/// This is called if the Close message is captured from the view
+		/// </summary>
+		void EhView_CloseMessage();
+
+
 	}
 
 	/// <summary>
@@ -235,7 +241,11 @@ namespace Altaxo
 			mi.Click += new EventHandler(EhMenuFileSaveAs_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 
-
+			// File - Exit
+			mi = new MenuItem("Exit");
+			mi.MergeOrder = 100; // Exit should be the most last item in the menu
+			mi.Click += new EventHandler(EhMenuFileExit_OnClick);
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 
 			// ******************************************************************
 			// ******************************************************************
@@ -323,6 +333,12 @@ namespace Altaxo
 		#endregion // Menu definition
 
 		#region Menu handlers
+
+		// ******************************************************************
+		// ******************************************************************
+		// File Menu
+		// ******************************************************************
+		// ******************************************************************
 
 		private void EhMenuFileNewWorksheet_OnClick(object sender, System.EventArgs e)
 		{
@@ -487,7 +503,25 @@ namespace Altaxo
 			} // end dlgresult ok
 		} // end method
 
+
+		private void EhMenuFileExit_OnClick(object sender, System.EventArgs e)
+		{
+			System.Windows.Forms.Application.Exit();
+		}
 	
+		// ******************************************************************
+		// ******************************************************************
+		// Edit (Popup)
+		// ******************************************************************
+		// ****************************************************************** 
+
+
+		// ******************************************************************
+		// ******************************************************************
+		// Window (Popup)
+		// ******************************************************************
+		// ******************************************************************
+
 		private void EhMenuWindowCascade_OnClick(object sender, System.EventArgs e)
 		{
 			View.Form.LayoutMdi(MdiLayout.Cascade);
@@ -529,6 +563,12 @@ namespace Altaxo
 			foreach (Form chform in charr) 
 				chform.WindowState=FormWindowState.Maximized;
 		}
+
+		// ******************************************************************
+		// ******************************************************************
+		// Help (Popup)
+		// ******************************************************************
+		// ******************************************************************
 
 		private void EhMenuHelpAboutAltaxo_OnClick(object sender, System.EventArgs e)
 		{
@@ -584,6 +624,11 @@ namespace Altaxo
 		public void EhView_Closed(System.EventArgs e)
 		{
 			View.Controller=null; // we are no longer the controller
+		}
+
+		public void EhView_CloseMessage()
+		{
+			System.Windows.Forms.Application.Exit();
 		}
 
 

@@ -228,14 +228,13 @@ namespace Altaxo.Data
 
 		public void Add(Altaxo.Data.DataTable theTable)
 		{
-			if(null==theTable.TableName || 0==theTable.TableName.Length)
-			{
-				theTable.TableName = FindNewTableName();
-			}
-			else
-			{
-				tablesByName.Add(theTable.TableName,theTable);
-			}
+			if(null==theTable.TableName || 0==theTable.TableName.Length) // if no table name provided
+				theTable.TableName = FindNewTableName();									// find a new one
+			else if(tablesByName.ContainsKey(theTable.TableName)) // else if this table name is already in use
+				theTable.TableName = FindNewTableName(theTable.TableName); // find a new table name based on the original name
+
+			// now the table has a unique name in any case
+			tablesByName.Add(theTable.TableName,theTable);
 			theTable.ParentDataSet = this; 
 
 			// raise data event to all listeners
@@ -253,17 +252,25 @@ namespace Altaxo.Data
 
 
 		/// <summary>
-		/// sucht nach dem nächsten freien Standard-Tabellennamen
+		/// Looks for the next free standard table name.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>A new table name unique for this data set.</returns>
 		public string FindNewTableName()
+		{
+			return FindNewTableName("WKS");
+		}	
+
+		/// <summary>
+		/// Looks for the next unique table name base on a basic name.
+		/// </summary>
+		/// <returns>A new table name unique for this data set.</returns>
+		public string FindNewTableName(string basicname)
 		{
 			for(int i=0;;i++)
 			{
-				if(null==tablesByName["WKS"+i])
-					return "WKS"+i; 
+				if(null==tablesByName[basicname+i.ToString()])
+					return basicname+i; 
 			}
 		}	
-
 	}
 }

@@ -111,6 +111,39 @@ namespace Altaxo.Graph
 			m_PlotItems = new System.Collections.ArrayList();
 		}
 
+
+		/// <summary>
+		/// This is !!! not !!! cloneable, since the PlotGroup itself stores only references to PlotItems! Since the only use
+		/// is to clone a Layer, and the PlotItems of the layer are cloned into new objects, it is not usefull here.
+		/// </summary>
+		/// <returns>Null!</returns>
+		private object Clone()
+		{
+			return null; // see above for explanation
+		}
+
+		/// <summary>
+		/// Clones the PlotGroup into a new collection and fixed the references to the PlotItems. It presumes, that the PlotList, from which the PlotItems are referred in the PlotGroup items,
+		/// are cloned before so that the PlotList <paramref name="newList"/> is an exact copy of the PlotList <paramref name="oldList"/>.
+		/// </summary>
+		/// <param name="newList">The new PlotList, which was cloned from oldList before.</param>
+		/// <param name="oldList">The old PlotList, to which the items in these PlotGroupList refers to.</param>
+		/// <returns></returns>
+		public PlotGroup Clone(Layer.PlotList newList, Layer.PlotList oldList)
+		{
+			PlotGroup newGroup = new PlotGroup(this.Style);
+
+			for(int i=0;i<this.Count;i++)
+			{
+				// look for the position of the PlotItem in the old list
+				int position = oldList.IndexOf(this[i]);
+
+				if(position>=0)
+					newGroup.Add(newList[position]);
+			}
+			return newGroup;
+		}
+
 		public int Count
 		{
 			get { return null!=m_PlotItems ? m_PlotItems.Count : 0; }
@@ -208,7 +241,7 @@ namespace Altaxo.Graph
 				#region "Serialization"
 
 				/// <summary>Used to serialize the Collection Version 0.</summary>
-				public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+				public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 				{
 
 					/// <summary>
@@ -251,7 +284,23 @@ namespace Altaxo.Graph
 				#endregion
 
 
-			public new void Add(PlotGroup g)
+				/// <summary>
+				/// Clones the collection into a new collection and fixed the references. It presumes, that the PlotList, from which the PlotItems are referred in the PlotGroup items,
+				/// are cloned before so that the PlotList <paramref name="newList"/> is an exact copy of the PlotList <paramref name="oldList"/>.
+				/// </summary>
+				/// <param name="newList">The new PlotList, which was cloned from oldList before.</param>
+				/// <param name="oldList">The old PlotList, to which the items in these PlotGroupList refers to.</param>
+				/// <returns></returns>
+				public PlotGroup.Collection Clone(Layer.PlotList newList, Layer.PlotList oldList)
+				{
+					PlotGroup.Collection coto = new PlotGroup.Collection();
+					for(int i=0;i<this.Count;i++)
+						coto.Add(((PlotGroup)base.InnerList[i]).Clone(newList,oldList));
+				
+					return coto;
+				}
+
+			public void Add(PlotGroup g)
 			{
 				g.m_Parent=this;
 				base.InnerList.Add(g);

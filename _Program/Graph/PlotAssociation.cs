@@ -87,7 +87,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(PlotAssociation.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class PlotAssociation : IXYBoundsHolder, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
+	public class PlotAssociation : IXYBoundsHolder, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, System.ICloneable
 	{
 		protected Altaxo.Data.IReadableColumn m_xColumn; // the X-Column
 		protected Altaxo.Data.IReadableColumn m_yColumn; // the Y-Column
@@ -158,6 +158,7 @@ namespace Altaxo.Graph
 			
 			if(m_yColumn is Altaxo.Data.DataColumn)
 				((Altaxo.Data.DataColumn)m_yColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
+		
 		}
 		#endregion
 
@@ -171,8 +172,34 @@ namespace Altaxo.Graph
 
 			this.SetXBoundsFromTemplate( new FinitePhysicalBoundaries() );
 			this.SetYBoundsFromTemplate( new FinitePhysicalBoundaries() );
+
 		}
 	
+
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="from">The object to copy from.</param>
+		/// <remarks>Only clones the references to the data columns, not the columns itself.</remarks>
+		public PlotAssociation(PlotAssociation from)
+		{
+			XColumn = from.XColumn; // also wires event, do not clone the column data here!!!
+			YColumn = from.YColumn; // wires event, do not clone the column data here!!!
+
+			this.SetXBoundsFromTemplate( new FinitePhysicalBoundaries() );
+			this.SetYBoundsFromTemplate( new FinitePhysicalBoundaries() );
+				
+		}
+
+		/// <summary>
+		/// Creates a cloned copy of this object.
+		/// </summary>
+		/// <returns>The cloned copy of this object.</returns>
+		/// <remarks>The data columns refered by this object are <b>not</b> cloned, only the reference is cloned here.</remarks>
+		public object Clone()
+		{
+			return new PlotAssociation(this);
+		}
 
 		public void MergeXBoundsInto(PhysicalBoundaries pb)
 		{

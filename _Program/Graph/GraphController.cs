@@ -307,7 +307,8 @@ namespace Altaxo.Graph
 				m_Graph.PrintableBounds = printableBounds;
 			}
 
-			m_Graph.CreateNewLayerNormalBottomXLeftY();
+			if(0==m_Graph.Layers.Count)
+				m_Graph.CreateNewLayerNormalBottomXLeftY();
 
 
 			// Calculate the zoom if Autozoom is on - simulate a SizeChanged event of the view to force calculation of new zoom factor
@@ -315,6 +316,7 @@ namespace Altaxo.Graph
 
 			// set the menu of this class
 			m_View.GraphMenu = this.m_MainMenu;
+			m_View.NumberOfLayers = m_Graph.Layers.Count; // tell the view how many layers we have
 		}
 
 		#endregion // Constructors
@@ -433,6 +435,11 @@ namespace Altaxo.Graph
 			m_MainMenu.MenuItems.Add(mi);
 			index = m_MainMenu.MenuItems.Count-1;
 
+			// Graph - Duplicate
+			mi = new MenuItem("Duplicate Graph");
+			mi.Click += new EventHandler(EhMenuGraphDuplicate_OnClick);
+			//mi.Shortcut = ShortCuts.
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 
 			// Graph - NewLayerLegend
 			mi = new MenuItem("New layer legend");
@@ -619,6 +626,8 @@ namespace Altaxo.Graph
 		
 		}
 
+
+
 		/// <summary>
 		/// Handler for the menu item "Edit" - "New layer(axes)" - "Linked: Top X Right Y, X axis straight ".
 		/// </summary>
@@ -628,6 +637,21 @@ namespace Altaxo.Graph
 		{
 			m_Graph.CreateNewLayerLinkedTopXRightY_XAxisStraight(CurrentLayerNumber);
 		}
+
+
+		/// <summary>
+		/// Duplicates the Graph and the Graph view to a new one.
+		/// </summary>
+		/// <param name="sender">Not used.</param>
+		/// <param name="e">Not used.</param>
+		private void EhMenuGraphDuplicate_OnClick(object sender, System.EventArgs e)
+		{
+			GraphView newView = new GraphView(View.Form.ParentForm,null);
+			GraphDocument newDoc = new GraphDocument(this.Doc);
+			GraphController newCtrl = new GraphController(newView,newDoc);
+			App.Current.Doc.AddGraph(newView);
+		}
+
 
 
 		/// <summary>

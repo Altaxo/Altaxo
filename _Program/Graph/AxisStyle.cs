@@ -32,7 +32,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(XYLayerAxisStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class XYLayerAxisStyle : System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
+	public class XYLayerAxisStyle : System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, ICloneable
 	{
 		/// <summary>Edge of the layer this axis is drawn on.</summary>
 		protected Edge m_Edge = new Edge(EdgeType.Left);
@@ -56,8 +56,6 @@ namespace Altaxo.Graph
 		protected bool  m_bInnerMinorTicks=true; // true if inner minor ticks should be visible
 		/// <summary>Axis shift position, either provide as absolute values in point units, or as relative value relative to the layer size.</summary>
 		protected Calc.RelativeOrAbsoluteValue m_AxisPosition; // if relative, then relative to layer size, if absolute then in points
-
-	
 
 		/// <summary>Fired if anything on this style changed</summary>
 		public event System.EventHandler Changed;
@@ -124,13 +122,20 @@ namespace Altaxo.Graph
 		/// <param name="obj">Not used.</param>
 		public virtual void OnDeserialization(object obj)
 		{
-			m_AxisPen.Changed += new EventHandler(OnPenChangedEventHandler);
-			m_MajorTickPen.Changed += new EventHandler(OnPenChangedEventHandler);
-			m_MinorTickPen.Changed += new EventHandler(OnPenChangedEventHandler);
+			WireEventChain();
 		}
 		#endregion
 
 
+		/// <summary>
+		/// Wires the neccessary child events with event handlers in this class.
+		/// </summary>
+		protected virtual void WireEventChain()
+		{
+			m_AxisPen.Changed += new EventHandler(OnPenChangedEventHandler);
+			m_MajorTickPen.Changed += new EventHandler(OnPenChangedEventHandler);
+			m_MinorTickPen.Changed += new EventHandler(OnPenChangedEventHandler);
+		}
 
 		/// <summary>
 		/// Creates a default axis style.
@@ -140,10 +145,39 @@ namespace Altaxo.Graph
 		{
 			m_Edge = new Edge(st);
 
-			m_AxisPen.Changed += new EventHandler(OnPenChangedEventHandler);
-			m_MajorTickPen.Changed += new EventHandler(OnPenChangedEventHandler);
-			m_MinorTickPen.Changed += new EventHandler(OnPenChangedEventHandler);
+		WireEventChain();
 
+		}
+
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="from">The AxisStyle to copy from</param>
+		public XYLayerAxisStyle(XYLayerAxisStyle from)
+		{
+			this.m_AxisPen = null==from.m_AxisPen ? null : (PenHolder)from.m_AxisPen.Clone();
+			this.m_AxisPosition = from.m_AxisPosition;
+			this.m_bInnerMajorTicks = from.m_bInnerMajorTicks;
+			this.m_bInnerMinorTicks = from.m_bInnerMinorTicks;
+			this.m_bOuterMajorTicks = from.m_bOuterMajorTicks;
+			this.m_bOuterMinorTicks = from.m_bOuterMinorTicks;
+			this.m_Edge             = from.m_Edge;
+			this.m_MajorTickLength  = from.m_MajorTickLength;
+			this.m_MajorTickPen     = null==from.m_MajorTickPen ? null : (PenHolder)from.m_MajorTickPen;
+			this.m_MinorTickLength  = from.m_MinorTickLength;
+			this.m_MinorTickPen     = (null==from.m_MinorTickPen) ? null : (PenHolder)from.m_MinorTickPen;
+
+			// Rewire the event chain
+			WireEventChain();
+		}
+
+		/// <summary>
+		/// Creates a clone of this object.
+		/// </summary>
+		/// <returns>The cloned object.</returns>
+		public  object Clone()
+		{
+			return new XYLayerAxisStyle(this);
 		}
 
 		/// <summary>

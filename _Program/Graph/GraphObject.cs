@@ -27,32 +27,38 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph
 {
 	/// <summary>
-	/// GraphObject is the abstract base class for graphical objects on the layer,
+	/// GraphObject is the abstract base class for general graphical objects on the layer,
 	/// for instance text elements, lines, pictures, rectangles and so on.
 	/// </summary>
 	[SerializationSurrogate(0,typeof(GraphObject.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public abstract class GraphObject : System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
+	public abstract class GraphObject : System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, System.ICloneable
 	{
+		/// <summary>
+		/// If true, the graphical object sizes itself, for instance simple text objects.
+		/// </summary>
+		protected bool   m_AutoSize = true;
+
+		/// <summary>
+		/// The bounds of this object.
+		/// </summary>
+		protected RectangleF m_Bounds = new RectangleF(0,0,0,0);
+
+		/// <summary>
+		/// The parent collection this graphical object belongs to.
+		/// </summary>
+		protected GraphObjectCollection m_Container=null;
+
 		/// <summary>
 		/// The position of the graphical object, normally the upper left corner. Strictly spoken,
 		/// this is the position of the anchor point of the object.
 		/// </summary>
 		protected PointF m_Position = new PointF(0, 0);
-//		protected SizeF  m_Size = new SizeF(0, 0);
-		protected RectangleF m_Bounds = new RectangleF(0,0,0,0);
 		/// <summary>
 		/// The rotation angle of the graphical object in reference to the layer.
 		/// </summary>
 		protected float  m_Rotation = 0;
-	/// <summary>
-	/// If true, the graphical object sizes itself, for instance simple text objects.
-	/// </summary>
-		protected bool   m_AutoSize = true;
-	/// <summary>
-	/// The parent collection this graphical object belongs to.
-	/// </summary>
-		protected GraphObjectCollection m_Container=null;
+
 
 
 
@@ -104,6 +110,19 @@ namespace Altaxo.Graph
 		}
 		#endregion
 
+
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="from">The object to copy the data from.</param>
+		protected GraphObject(GraphObject from)
+		{
+			this.m_AutoSize = from.m_AutoSize;
+			this.m_Bounds  = from.m_Bounds;
+			this.m_Container = null;
+			this.m_Position  = from.m_Position;
+			this.m_Rotation  = from.m_Rotation;
+		}
 
 		/// <summary>
 		/// Initializes with default values.
@@ -357,5 +376,11 @@ namespace Altaxo.Graph
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Creates a cloned copy of this object.
+		/// </summary>
+		/// <returns>The cloned copy of this object.</returns>
+		public abstract object Clone();
 	}
 }

@@ -134,6 +134,25 @@ namespace Altaxo
 		}
 
 
+		/// <summary>
+		/// Catch WndProc is neccessary here to capture the close event, since the MDI childs should not receive it.
+		/// </summary>
+		/// <param name="m">The windows message.</param>
+		protected override void WndProc(ref System.Windows.Forms.Message m)
+				 
+		{
+		const int SC_CLOSE = 0xF060;
+		const int WM_SYSCOMMAND = 0x0112;
+	
+			if    ( m.Msg == WM_SYSCOMMAND && (int)m.WParam == SC_CLOSE && null!=m_Ctrl)
+			{
+					m_Ctrl.EhView_CloseMessage();
+			}
+			else
+				base.WndProc(ref m);
+		}
+
+
 		#region IMainView Members
 
 		/// <summary>

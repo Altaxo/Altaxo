@@ -84,7 +84,13 @@ namespace Altaxo.Graph
 		#endregion
 
 		protected ImageGraphic()
-			:	base()
+			:
+			base()
+		{
+		}
+		protected ImageGraphic(ImageGraphic from)
+			:
+			base(from)
 		{
 		}
 
@@ -234,7 +240,21 @@ namespace Altaxo.Graph
 		{
 		}
 
+		public LinkedImageGraphic(LinkedImageGraphic from)
+		:
+			base(from)
+		{
+			this.m_ImagePath = from.m_ImagePath;
+			this.m_Image     = null==from.m_Image ? null : (Image)from.m_Image.Clone();
+		}
+
 		#endregion
+
+			public override object Clone()
+			{
+				return new LinkedImageGraphic(this);
+			}
+
 
 		public override Image GetImage()
 		{
@@ -428,7 +448,19 @@ namespace Altaxo.Graph
 		{
 		} 
 
+		public EmbeddedImageGraphic(EmbeddedImageGraphic from)
+		:
+			base(from)
+		{
+			this.m_Image = null==from.m_Image ? null : (Image)from.m_Image.Clone();
+		}
+
 		#endregion
+
+		public override object Clone()
+		{
+			return new EmbeddedImageGraphic(this);
+		}
 
 
 		public Image Image
