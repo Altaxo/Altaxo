@@ -54,6 +54,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       // the difference between Pls2 and Pls1 is that in Pls1 only one y value is
       // handled
       plsContent.NumberOfFactors = plsContent.NumberOfMeasurements;
+      plsContent.CrossValidationType = plsOptions.CrossPRESSCalculation;
       IExtensibleVector PRESS     = null;
 
       for(int yn=0;yn<matrixY.Columns;yn++)
@@ -154,6 +155,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
           // now a cross validation - this can take a long time for bigger matrices
           IROVector crossPRESSMatrix;
+          
         
           PLSRegression.CrossValidation(
             matrixX,
@@ -161,7 +163,8 @@ namespace Altaxo.Calc.Regression.Multivariate
             plsOptions.MaxNumberOfFactors,
             GetGroupingStrategy(plsOptions),
             out crossPRESSMatrix,
-            out meanNumberOfExcludedSpectra);
+            out meanNumberOfExcludedSpectra,
+            0, null,null);
 
           if(totalCrossPress==null)
             totalCrossPress = VectorMath.CreateExtensibleVector(crossPRESSMatrix.Length);
@@ -351,7 +354,30 @@ namespace Altaxo.Calc.Regression.Multivariate
     }  
 
 
-  
+    /// <summary>
+    /// For a given set of calibration (!) spectra, cross predicts the y-values and stores them in the matrix <c>predictedY</c>. Cross prediction means that the prediction is
+    /// done with exclusion of the spectra to predict from the calibration model.
+    /// </summary>
+    /// <param name="calib">The calibration model of the analysis.</param>
+    /// <param name="preprocessOptions">The information how to preprocess the spectra.</param>
+    /// <param name="matrixX">The matrix of calibration spectra. Each spectrum is a row in the matrix.</param>
+    /// <param name="numberOfFactors">The number of factors used for prediction.</param>
+    /// <param name="predictedY">On return, this matrix holds the cross predicted y-values. Each row in this matrix corresponds to the same row (spectrum) in matrixX.</param>
+    /// <param name="spectralResiduals">If you set this parameter to a appropriate matrix, the spectral residuals will be stored in this matrix. Set this parameter to null if you don't need the residuals.</param>
+    public override void CalculateCrossPredictedY(
+      IMultivariateCalibrationModel mcalib,
+      CrossPRESSCalculationType crossValidationType,
+      SpectralPreprocessingOptions preprocessOptions,
+      IMatrix matrixX,
+      IMatrix matrixY,
+      int numberOfFactors, 
+      IMatrix predictedY, 
+      IMatrix spectralResiduals)
+
+    {
+      // TODO implement this!
+     throw new NotImplementedException("Sorry, not implemented yet");
+    }
 
     
     public override void CalculateXLeverage(

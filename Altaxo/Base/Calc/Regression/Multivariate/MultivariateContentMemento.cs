@@ -71,6 +71,11 @@ namespace Altaxo.Calc.Regression.Multivariate
     double _MeanNumberOfMeasurementsInCrossPRESSCalculation;
 
     /// <summary>
+    /// Denotes how the cross validation is made (the exact method how the spectra are grouped and mutually excluded).
+    /// </summary>
+    CrossPRESSCalculationType _crossPRESSCalculationType;
+
+    /// <summary>
     /// The name of the class used to analyse the data.
     /// </summary>
     string _ClassNameOfAnalysisClass;
@@ -270,6 +275,13 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       get { return _MeanNumberOfMeasurementsInCrossPRESSCalculation; }
       set { _MeanNumberOfMeasurementsInCrossPRESSCalculation = value; }
+    }
+
+
+    public CrossPRESSCalculationType CrossValidationType
+    {
+      get { return this._crossPRESSCalculationType; }
+      set { this._crossPRESSCalculationType = value; }
     }
 
     /// <summary>

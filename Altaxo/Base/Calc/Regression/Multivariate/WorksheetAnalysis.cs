@@ -60,8 +60,11 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     const string _YOriginal_ColumnName   = "YOriginal";
     const string _YPredicted_ColumnName = "YPredicted";
+    const string _YCrossPredicted_ColumnName = "YCrossPredicted";
     const string _YResidual_ColumnName   = "YResidual";
+    const string _YCrossResidual_ColumnName   = "YCrossResidual";
     const string _SpectralResidual_ColumnName = "SpectralResidual";
+    const string _SpectralCrossResidual_ColumnName = "SpectralCrossResidual";
     const string _XLeverage_ColumnName        = "ScoreLeverage";
     const string _FRatio_ColumnName = "F-Ratio";
     const string _FProbability_ColumnName = "F-Probability";
@@ -157,7 +160,16 @@ namespace Altaxo.Calc.Regression.Multivariate
       return string.Format("{0}{1}.{2}",_YResidual_ColumnName, whichY, numberOfFactors);
     }
 
-
+    /// <summary>
+    /// Gets the column name of a Y-Cross-Residual column
+    /// </summary>
+    /// <param name="whichY">Number of y-value.</param>
+    /// <param name="numberOfFactors">Number of factors for which the redidual is calculated.</param>
+    /// <returns>The name of the column.</returns>
+    public static string GetYCrossResidual_ColumnName(int whichY, int numberOfFactors)
+    {
+      return string.Format("{0}{1}.{2}",_YCrossResidual_ColumnName, whichY, numberOfFactors);
+    }
     /// <summary>
     /// Gets the column name of a Y-Original column
     /// </summary>
@@ -179,6 +191,16 @@ namespace Altaxo.Calc.Regression.Multivariate
       return string.Format("{0}{1}.{2}",_YPredicted_ColumnName, whichY, numberOfFactors);
     }
 
+    /// <summary>
+    /// Gets the column name of a Y-Cross-Predicted column
+    /// </summary>
+    /// <param name="whichY">Number of y-value.</param>
+    /// <param name="numberOfFactors">Number of factors for which the redidual is calculated.</param>
+    /// <returns>The name of the column.</returns>
+    public static string GetYCrossPredicted_ColumnName(int whichY, int numberOfFactors)
+    {
+      return string.Format("{0}{1}.{2}",_YCrossPredicted_ColumnName, whichY, numberOfFactors);
+    }
     
     /// <summary>
     /// Gets the column name of a X-Residual column
@@ -189,6 +211,18 @@ namespace Altaxo.Calc.Regression.Multivariate
     public static string GetXResidual_ColumnName(int whichY, int numberOfFactors)
     {
       return string.Format("{0}{1}.{2}",_SpectralResidual_ColumnName, whichY, numberOfFactors);
+    }
+
+  
+    /// <summary>
+    /// Gets the column name of a X-Crossvalidated spectral Residual column
+    /// </summary>
+    /// <param name="whichY">Number of y-value.</param>
+    /// <param name="numberOfFactors">Number of factors for which the redidual is calculated.</param>
+    /// <returns>The name of the column.</returns>
+    public static string GetXCrossResidual_ColumnName(int whichY, int numberOfFactors)
+    {
+      return string.Format("{0}{1}.{2}",_SpectralCrossResidual_ColumnName, whichY, numberOfFactors);
     }
 
 
@@ -227,6 +261,22 @@ namespace Altaxo.Calc.Regression.Multivariate
       return _NumberOfFactors_ColumnGroup;
     }
     public static int GetYPredicted_ColumnGroup()
+    {
+      return _YPredicted_ColumnGroup;
+    }
+    public static int GetYCrossPredicted_ColumnGroup()
+    {
+      return _YPredicted_ColumnGroup;
+    }
+    public static int GetYCrossResidual_ColumnGroup()
+    {
+      return _YPredicted_ColumnGroup;
+    }
+    public static int GetXResidual_ColumnGroup()
+    {
+      return _YPredicted_ColumnGroup;
+    }
+    public static int GetXCrossResidual_ColumnGroup()
     {
       return _YPredicted_ColumnGroup;
     }
@@ -329,6 +379,27 @@ namespace Altaxo.Calc.Regression.Multivariate
       MatrixMath.BEMatrix  predictedY, 
       IMatrix spectralResiduals);
 
+
+    /// <summary>
+    /// For a given set of calibration (!) spectra, cross predicts the y-values and stores them in the matrix <c>predictedY</c>. Cross prediction means that the prediction is
+    /// done with exclusion of the spectra to predict from the calibration model.
+    /// </summary>
+    /// <param name="calib">The calibration model of the analysis.</param>
+    /// <param name="preprocessOptions">The information how to preprocess the spectra.</param>
+    /// <param name="matrixX">The matrix of calibration spectra. Each spectrum is a row in the matrix.</param>
+    /// <param name="numberOfFactors">The number of factors used for prediction.</param>
+    /// <param name="predictedY">On return, this matrix holds the cross predicted y-values. Each row in this matrix corresponds to the same row (spectrum) in matrixX.</param>
+    /// <param name="spectralResiduals">If you set this parameter to a appropriate matrix, the spectral residuals will be stored in this matrix. Set this parameter to null if you don't need the residuals.</param>
+    public abstract void CalculateCrossPredictedY(
+      IMultivariateCalibrationModel mcalib,
+      CrossPRESSCalculationType crossValidationType,
+      SpectralPreprocessingOptions preprocessOptions,
+      IMatrix matrixX,
+      IMatrix matrixY,
+      int numberOfFactors, 
+      IMatrix predictedY, 
+      IMatrix spectralResiduals);
+
     #endregion
 
     #region static Helper methods
@@ -340,7 +411,17 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>The used grouping strategy. Returns null if no cross validation is choosen.</returns>
     public static ICrossValidationGroupingStrategy GetGroupingStrategy(MultivariateAnalysisOptions plsOptions)
     {
-      switch(plsOptions.CrossPRESSCalculation)
+      return GetGroupingStrategy(plsOptions.CrossPRESSCalculation);
+    }
+
+    /// <summary>
+    /// Creates the corresponding grouping strategy out of the CrossPRESSCalculation enumeration in plsOptions.
+    /// </summary>
+    /// <param name="crossValidation">Type of cross validation.</param>
+    /// <returns>The used grouping strategy. Returns null if no cross validation is choosen.</returns>
+    public static ICrossValidationGroupingStrategy GetGroupingStrategy(CrossPRESSCalculationType crossValidationType)
+    {
+      switch(crossValidationType)
       {
         case CrossPRESSCalculationType.ExcludeEveryMeasurement:
           return new ExcludeSingleMeasurementsGroupingStrategy();
@@ -1117,6 +1198,74 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
+    public  virtual void CalculateCrossPredictedAndResidual(
+      DataTable table,
+      int whichY,
+      int numberOfFactors,
+      bool saveYPredicted,
+      bool saveYResidual,
+      bool saveXResidual)
+    {
+      MultivariateContentMemento plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+
+      if(plsMemo==null)
+        throw new ArgumentException("Table does not contain a PLSContentMemento");
+
+      IMultivariateCalibrationModel calib = GetCalibrationModel(table);
+      //      Export(table,out calib);
+
+
+      IMatrix matrixX = GetRawSpectra(plsMemo);
+      IMatrix matrixY = GetOriginalY(plsMemo);
+
+      MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(matrixX.Rows,calib.NumberOfY);
+      MatrixMath.BEMatrix spectralResiduals = new MatrixMath.BEMatrix(matrixX.Rows,1);
+      CalculateCrossPredictedY(calib,plsMemo.CrossValidationType,plsMemo.SpectralPreprocessing,matrixX,matrixY,numberOfFactors,predictedY,spectralResiduals);
+
+      if(saveYPredicted)
+      {
+        // insert a column with the proper name into the table and fill it
+        string ycolname = GetYCrossPredicted_ColumnName(whichY,numberOfFactors);
+        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
+
+        for(int i=0;i<predictedY.Rows;i++)
+          ycolumn[i] = predictedY[i,whichY];
+      
+        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,GetYCrossPredicted_ColumnGroup());
+      }
+
+      // subract the original y data
+      matrixY = GetOriginalY(plsMemo);
+      MatrixMath.SubtractColumn(predictedY,matrixY,whichY,predictedY);
+
+      if(saveYResidual)
+      {
+        // insert a column with the proper name into the table and fill it
+        string ycolname = GetYCrossResidual_ColumnName(whichY,numberOfFactors);
+        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
+
+        for(int i=0;i<predictedY.Rows;i++)
+          ycolumn[i] = predictedY[i,whichY];
+      
+        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,GetYCrossResidual_ColumnGroup());
+      }
+
+
+      if(saveXResidual)
+      {
+        // insert a column with the proper name into the table and fill it
+        string ycolname = GetXCrossResidual_ColumnName(whichY,numberOfFactors);
+        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
+
+        for(int i=0;i<matrixX.Rows;i++)
+        {
+          ycolumn[i] = spectralResiduals[i,0];
+        }
+        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,GetXCrossResidual_ColumnGroup());
+      }
+      
+    }
+
     public  virtual void CalculatePredictedAndResidual(
       DataTable table,
       int whichY,
@@ -1179,7 +1328,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         {
           ycolumn[i] = spectralResiduals[i,0];
         }
-        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,GetYResidual_ColumnGroup());
+        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,GetXResidual_ColumnGroup());
       }
       
     }

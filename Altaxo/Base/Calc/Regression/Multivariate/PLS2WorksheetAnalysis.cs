@@ -63,6 +63,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       int numFactors = Math.Min(matrixX.Columns,plsOptions.MaxNumberOfFactors);
       PLSRegression.ExecuteAnalysis(matrixX,matrixY,ref numFactors,xLoads,yLoads,W,V,PRESS);
       plsContent.NumberOfFactors = numFactors;
+      plsContent.CrossValidationType = plsOptions.CrossPRESSCalculation;
 
       // store the x-loads - careful - they are horizontal in the matrix
       for(int i=0;i<xLoads.Rows;i++)
@@ -120,6 +121,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       )
     {
       IROVector crossPRESSMatrix;
+      
       Altaxo.Data.DoubleColumn crosspresscol = new Altaxo.Data.DoubleColumn();
 
       double meanNumberOfExcludedSpectra = 0;
@@ -133,7 +135,8 @@ namespace Altaxo.Calc.Regression.Multivariate
           plsOptions.MaxNumberOfFactors,
           GetGroupingStrategy(plsOptions),
           out crossPRESSMatrix,
-          out meanNumberOfExcludedSpectra);
+          out meanNumberOfExcludedSpectra,
+          0,null,null);
 
         VectorMath.Copy(crossPRESSMatrix,DataColumnWrapper.ToVector(crosspresscol,crossPRESSMatrix.Length));
        
@@ -314,6 +317,41 @@ namespace Altaxo.Calc.Regression.Multivariate
       MatrixMath.MultiplyRow(predictedY,calib.YScale,predictedY);
       MatrixMath.AddRow(predictedY,calib.YMean,predictedY);
     }  
+
+
+    public override void CalculateCrossPredictedY(
+      IMultivariateCalibrationModel mcalib,
+      CrossPRESSCalculationType crossValidationType,
+      SpectralPreprocessingOptions preprocessOptions,
+      IMatrix matrixX,
+      IMatrix matrixY,
+      int numberOfFactors, 
+      IMatrix  predictedY, 
+      IMatrix spectralResiduals)
+    {
+      PLS2CalibrationModel calib = (PLS2CalibrationModel)mcalib;
+
+      PreProcessSpectra(calib,preprocessOptions,matrixX);
+
+      IROVector crossPressMatrix=null;
+      double meanNumberOfExcludedSpectra;
+
+      PLSRegression.CrossValidation(
+        matrixX,
+        matrixY,
+        numberOfFactors,
+        GetGroupingStrategy(crossValidationType),
+        out crossPressMatrix,
+        out meanNumberOfExcludedSpectra,
+        numberOfFactors,
+        predictedY,
+        spectralResiduals);
+
+      // mean and scale prediced Y
+      MatrixMath.MultiplyRow(predictedY,calib.YScale,predictedY);
+      MatrixMath.AddRow(predictedY,calib.YMean,predictedY);
+    }  
+
 
     /*
         public  override void CalculatePredictedAndResidual(

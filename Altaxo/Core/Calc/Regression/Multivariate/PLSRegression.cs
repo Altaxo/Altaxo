@@ -294,13 +294,21 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="groupingStrategy">Instance of a class that is used to group the measurements for cross validation.</param>
     /// <param name="crossPRESSMatrix">Output: This is a k*1 matrix of resulting PRESS values, k being the max. number of factors.</param>
     /// <param name="meanNumberOfExcludedSpectra">On return, this gives the mean number of spectra that where excluded during the cross validation.</param>
+    /// <param name="numFactorsForCrossValidationPrediction">If greater than zero, this number of factors is used to calculated the predicted concentrations.</param>
+    /// <param name="YCrossValidationPrediction">If numFactorsForCrossValidationPrediction is greater than zero, on return this matrix will contain the predicted y values. Can be set to null.
+    /// for exactly that number of factors. The prediction is done exacly the same way that crossvalidation is done (exclude a given set of spectra, built a calibration, predict the excluded set of spectra).</param>
+     /// <param name="XCrossValidationSpectralResiduals">If numFactorsForCrossValidationPrediction is greater than zero, the spectral residuals from cross validation
+     /// are calculated and stored in this matrix.</param>
     public static void CrossValidation(
       IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
       IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
       out IROVector crossPRESSMatrix, // vertical value of PRESS values for the cross validation
-      out double meanNumberOfExcludedSpectra
+      out double meanNumberOfExcludedSpectra,
+      int numFactorsForCrossValidationPrediction,
+      IMatrix YCrossValidationPrediction,
+      IMatrix XCrossValidationSpectralResiduals
       )
     {
 
@@ -320,6 +328,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix XU=null; 
       IMatrix YU=null; 
       IMatrix predY=null; 
+      IMatrix predXRes=null;
+      YCrossValidationPrediction=null;
 
       for(int nGroup=0 ,prevNumExcludedSpectra = int.MinValue ;nGroup < groups.Length;nGroup++)
       {
@@ -333,6 +343,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           XU = new MatrixMath.BEMatrix(numberOfExcludedSpectraOfGroup,X.Columns);
           YU = new MatrixMath.BEMatrix(numberOfExcludedSpectraOfGroup,Y.Columns);
           predY = new MatrixMath.BEMatrix(numberOfExcludedSpectraOfGroup,Y.Columns);
+          predXRes = XCrossValidationSpectralResiduals == null ? null : new MatrixMath.BEMatrix(numberOfExcludedSpectraOfGroup,1);
           prevNumExcludedSpectra = numberOfExcludedSpectraOfGroup;
         }
 
@@ -373,8 +384,20 @@ namespace Altaxo.Calc.Regression.Multivariate
         crossPRESS[0] += MatrixMath.SumOfSquares(YU);
         for(int nFactor=1;nFactor<=numFactors;nFactor++)
         {
-          Predict(XU,xLoads,yLoads,W,V,nFactor,predY,null);
+          Predict(XU,xLoads,yLoads,W,V,nFactor,predY,predXRes);
           crossPRESS[nFactor] += MatrixMath.SumOfSquaredDifferences(YU,predY);
+
+          if(nFactor==numFactorsForCrossValidationPrediction)
+          {
+            for(int i=0;i<spectralGroup.Length;i++)
+            {
+              if(YCrossValidationPrediction!=null)
+                MatrixMath.SetRow(predY,i,YCrossValidationPrediction,spectralGroup[i]); 
+              if(XCrossValidationSpectralResiduals!=null)
+                XCrossValidationSpectralResiduals[spectralGroup[i],0] = predXRes[i,0]; 
+
+            }
+          }
         }
       } // for all groups
 
