@@ -29,7 +29,7 @@ namespace Altaxo.Data
 	/// </summary>
 	[SerializationSurrogate(0,typeof(Altaxo.Data.TextColumn.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class TextColumn : Altaxo.Data.DataColumn, System.Runtime.Serialization.IDeserializationCallback, INumericColumn
+	public class TextColumn : Altaxo.Data.DataColumn, System.Runtime.Serialization.IDeserializationCallback
 	{
 		private string[] m_Array;
 		private int      m_Capacity; // shortcout to m_Array.Length;
@@ -198,16 +198,6 @@ namespace Altaxo.Data
 		public override AltaxoVariant GetVariantAt(int i)
 		{
 			return new AltaxoVariant(this[i]);
-		}
-
-		public double GetDoubleAt(int i)
-		{
-			if(i<m_Count) 
-			{
-				try { return System.Convert.ToDouble(this[i]); }
-				catch( Exception) {}
-			}
-			return Double.NaN;
 		}
 
 		public override bool IsElementEmpty(int i)

@@ -157,7 +157,7 @@ namespace Altaxo.Data
 		public DataTable(DataTable from)
 			: base(from)
 		{
-			base.Parent = null;
+			base.Parent = this;
 			this.m_ParentDataSet = null; 
 			this.m_TableName = from.m_TableName;
 			this.m_PropertyColumns = (DataColumnCollection)from.m_PropertyColumns.Clone();

@@ -2011,8 +2011,9 @@ namespace Altaxo.Graph
 				{
 					Data.DataColumn xcol = tab.FindXColumnOfGroup(ycol.Group);
 					if(null==xcol)
-						xcol=ycol;
-					return  new Graph.XYDataPlot(new PlotAssociation(xcol,ycol),new LineScatterPlotStyle());
+						return  new Graph.XYDataPlot(new PlotAssociation(new Altaxo.Data.IndexerColumn(),ycol),new LineScatterPlotStyle());
+					else
+						return  new Graph.XYDataPlot(new PlotAssociation(xcol,ycol),new LineScatterPlotStyle());
 					// now enter the plotassociation back into the layer's plot association list
 				}
 			}

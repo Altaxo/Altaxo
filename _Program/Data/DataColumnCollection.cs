@@ -287,7 +287,7 @@ namespace Altaxo.Data
 			m_ColumnsByName.Add(datac.ColumnName,datac);	
 
 			// raise data event to all listeners
-			OnColumnDataChanged(datac,0,datac.Count,bColumnWasReplaced);
+			OnColumnDataChanged(datac,0,datac.Count-1,bColumnWasReplaced);
 		}
 
 

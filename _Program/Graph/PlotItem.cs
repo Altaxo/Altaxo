@@ -132,7 +132,7 @@ namespace Altaxo.Graph
 		{
 			OnStyleChanged();
 		}
-	}
+	} // end of class PlotItem
 
 
 

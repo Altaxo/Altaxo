@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Exe"
                 PreBuildEvent = ""
-                PostBuildEvent = ""
+                PostBuildEvent = "copy Altaxo.exe Altaxo.dll"
                 RootNamespace = "Altaxo"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -29,7 +29,7 @@
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
                     DefineConstants = "DEBUG;TRACE"
-                    DocumentationFile = "bin\ClassDoc.xml"
+                    DocumentationFile = "bin\Altaxo.xml"
                     DebugSymbols = "true"
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
@@ -129,6 +129,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\Pfa235Convolution.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Pfa235FFT.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\RelativeOrAbsoluteValue.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -214,7 +224,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\DataPlotCurve.cs"
+                    RelPath = "Graph\DensityImagePlotItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\DensityImagePlotStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -319,6 +334,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\PlotItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\PlotStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -360,6 +380,11 @@
                 />
                 <File
                     RelPath = "Graph\TextGraphObject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\TwoDimMeshDataAssociation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -1,11 +1,11 @@
 using System;
 
-namespace Altaxo.Calc
+namespace Altaxo.Calc.FFT
 {
 	/// <summary>
 	/// Summary description for FFT.
 	/// </summary>
-	public class FFT
+	public class FastHartleyTransform
 	{
 
 		/*-----------------------------------------------------------------------------*\

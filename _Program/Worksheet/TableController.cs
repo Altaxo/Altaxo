@@ -496,6 +496,11 @@ namespace Altaxo.Worksheet
 			mi.Click += new EventHandler(EhMenuPlotLineAndScatter_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 
+			// Plot - Density Image
+			mi = new MenuItem("Density Image");
+			mi.Click += new EventHandler(EhMenuPlotDensityImage_OnClick);
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+
 
 			// ******************************************************************
 			// ******************************************************************
@@ -581,6 +586,13 @@ namespace Altaxo.Worksheet
 			// Analysis - FFT
 			mi = new MenuItem("FFT");
 			mi.Click += new EventHandler(EhMenuAnalysisFFT_OnClick);
+			//mi.Shortcut = ShortCuts.
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+
+
+			// Analysis - 2 Dimensional FFT
+			mi = new MenuItem("2-dimensional FFT");
+			mi.Click += new EventHandler(EhMenuAnalysis2DFFT_OnClick);
 			//mi.Shortcut = ShortCuts.
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 
@@ -740,6 +752,12 @@ namespace Altaxo.Worksheet
 			DataGridOperations.PlotLine(this, true, true);
 		}
 
+		protected void EhMenuPlotDensityImage_OnClick(object sender, System.EventArgs e)
+		{
+			DataGridOperations.PlotDensityImage(this, true, true);
+		}
+
+
 		// ******************************************************************
 		// ******************************************************************
 		// Worksheet (Popup)
@@ -842,8 +860,17 @@ namespace Altaxo.Worksheet
 		protected void EhMenuAnalysisFFT_OnClick(object sender, System.EventArgs e)
 		{
 			DataGridOperations.FFT(this);
-
 		}
+
+		// Analysis - 2 Dimensional FFT
+		protected void EhMenuAnalysis2DFFT_OnClick(object sender, System.EventArgs e)
+		{
+			string err = DataGridOperations.TwoDimFFT(App.Current.Doc, this);
+			if(null!=err)
+				System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+		}
+
+
 		protected void EhMenuAnalysisStatisticsOnColumns_OnClick(object sender, System.EventArgs e)
 		{
 			DataGridOperations.StatisticsOnColumns(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows);

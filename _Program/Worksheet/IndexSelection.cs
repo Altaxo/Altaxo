@@ -53,6 +53,19 @@ namespace Altaxo.Worksheet
 			return this.ContainsKey(nIndex);
 		}
 
+		/// <summary>
+		/// Returns the selected indizes as an integer array.
+		/// </summary>
+		/// <returns>An array of integers containing the selected indizes. If nothing is selected, an array of length 0 is returned.</returns>
+		public int[] GetSelectedIndizes()
+		{
+			int[] arr = new int[this.Count];
+			for(int i=0;i<this.Count;i++)
+				arr[i] = (int)base.GetKey(i);
+
+			return arr;
+		}
+
 		public void Select(int nIndex, bool bShiftKey, bool bControlKey)
 		{
 			if(bControlKey) // Control pressed

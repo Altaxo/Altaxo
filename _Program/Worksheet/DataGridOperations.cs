@@ -77,6 +77,38 @@ namespace Altaxo.Worksheet
 			gv.Controller.Doc.Layers[0].PlotGroups.Add(newPlotGroup);
 		}
 
+
+
+
+
+		/// <summary>
+		/// Plots a density image of the selected columns.
+		/// </summary>
+		/// <param name="dg"></param>
+		/// <param name="bLine"></param>
+		/// <param name="bScatter"></param>
+		public static void PlotDensityImage(TableController dg, bool bLine, bool bScatter)
+		{
+			Altaxo.Graph.DensityImagePlotStyle plotStyle = new Altaxo.Graph.DensityImagePlotStyle();
+
+			// if nothing is selected, assume that the whole table should be plotted
+			int len = dg.SelectedColumns.Count;
+
+			Graph.TwoDimMeshDataAssociation assoc = new Graph.TwoDimMeshDataAssociation(dg.Doc,len==0 ? null : dg.SelectedColumns.GetSelectedIndizes());
+
+			
+			// now create a new Graph with this plot associations
+
+			Altaxo.Graph.IGraphView gv = App.Current.CreateNewGraph();
+
+				Altaxo.Graph.PlotItem pi = new Altaxo.Graph.DensityImagePlotItem(assoc,plotStyle);
+				gv.Controller.Doc.Layers[0].PlotItems.Add(pi);
+
+		}
+
+
+
+
 		
 		public static void StatisticsOnColumns(
 			Altaxo.AltaxoDocument mainDocument,
@@ -324,13 +356,75 @@ namespace Altaxo.Worksheet
 
 
 			double[] arr=col.Array;
-			Altaxo.Calc.FFT.fht_realfft(arr.Length,arr);
+			Altaxo.Calc.FFT.FastHartleyTransform.fht_realfft(arr.Length,arr);
 
 			col.Array = arr;
 
 		}
 
+		public static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, TableController dg)
+		{
+			int rows = dg.Doc.RowCount;
+			int cols = dg.Doc.ColumnCount;
 
+			// reserve two arrays (one for real part, which is filled with the table contents)
+			// and the imaginary part - which is left zero here)
+
+			double[] rePart = new double[rows*cols];
+			double[] imPart = new double[rows*cols];
+
+			// fill the real part with the table contents
+			for(int i=0;i<cols;i++)
+			{
+				Altaxo.Data.INumericColumn col = dg.Doc[i] as Altaxo.Data.INumericColumn;
+				if(null==col)
+				{
+					return string.Format("Can't apply fourier transform, since column number {0}, name:{1} is not numeric",i,dg.Doc[i].FullName); 
+				}
+
+				for(int j=0;j<rows;j++)
+				{
+					rePart[i*rows+j] = col.GetDoubleAt(j);
+				}
+			}
+
+			// test it can be done
+			if(!Altaxo.Calc.FFT.Pfa235FFT.CanFactorized(cols))
+				return string.Format("Can't apply fourier transform, since the number of cols ({0}) are not appropriate for this kind of fourier transform.",cols);
+			if(!Altaxo.Calc.FFT.Pfa235FFT.CanFactorized(rows))
+				return string.Format("Can't apply fourier transform, since the number of rows ({0}) are not appropriate for this kind of fourier transform.",rows);
+
+			// fourier transform
+			Altaxo.Calc.FFT.Pfa235FFT fft = new Altaxo.Calc.FFT.Pfa235FFT(cols,rows);
+			fft.FFT(rePart,imPart,Altaxo.Calc.FFT.Pfa235FFT.Direction.Forward);
+
+			// replace the real part by the amplitude
+			for(int i=0;i<rePart.Length;i++)
+			{
+				rePart[i] = Math.Sqrt(rePart[i]*rePart[i]+imPart[i]*imPart[i]);
+			}
+
+
+
+			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("Fourieramplitude of " + dg.Doc.TableName);
+
+			// Fill the Table
+			table.SuspendDataChangedNotifications();
+			for(int i=0;i<cols;i++)
+			{
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+				for(int j=0;j<rows;j++)
+					col[j] = rePart[i*rows+j];
+				
+				table.Add(col);
+			}
+			table.ResumeDataChangedNotifications();
+			mainDocument.DataSet.Add(table);
+			// create a new worksheet without any columns
+			App.Current.CreateNewWorksheet(table);
+
+			return null;
+		}
 
 		public delegate double ColorAmplitudeFunction(System.Drawing.Color c);
 
