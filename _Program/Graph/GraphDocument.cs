@@ -35,7 +35,7 @@ namespace Altaxo.Graph
 	/// <remarks>The coordinate system of the graph is in units of points (1/72 inch). The origin (0,0) of the graph
 	/// is the top left corner of the printable area (and therefore _not_ the page bounds). The value of the page
 	/// bounds is stored inside the class only to know what the original page size of the document was.</remarks>
-	public class GraphDocument
+	public class GraphDocument : Layer.LayerCollection
 	{
 
 		/// <summary>
@@ -48,23 +48,15 @@ namespace Altaxo.Graph
 
 		
 		/// <summary>
-		/// The printable area of the document, i.e. the page size minus the margins at each side in points (1/72 inch)
+		/// The printable area of the document, i.e. the page size minus the margins at each sC:\Users\LelliD\C\CALC\Altaxo\Altaxo\Graph\GraphDocument.cside in points (1/72 inch)
 		/// </summary>
 		private RectangleF m_PrintableBounds = new RectangleF(14, 14, 814 , 567 );
-
-
-		/// <summary>
-		/// The collection of layers the graph is composed of.
-		/// </summary>
-		protected Layer.LayerCollection m_GraphLayers;
-
 
 		/// <summary>
 		/// Creates a empty GraphDocument with no layers and a standard size of A4 landscape.
 		/// </summary>
 		public GraphDocument()
 		{
-			m_GraphLayers =  new Layer.LayerCollection(this);
 		}
 		
 		/// <summary>
@@ -112,7 +104,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		public Layer.LayerCollection Layers
 		{
-			get { return m_GraphLayers; } 
+			get { return this; } 
 		}
 
 

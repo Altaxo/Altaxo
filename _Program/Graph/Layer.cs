@@ -65,12 +65,43 @@ namespace Altaxo.Graph
 		protected PlotGroup.Collection m_PlotGroups = new PlotGroup.Collection();
 		protected int m_ActualPlotAssociation = 0;
 
+		/// <summary>
+		/// The parent layer collection wich contains this layer (or null if not member of such collection).
+		/// </summary>
 		protected LayerCollection m_ParentLayerCollection=null;
+	/// <summary>
+	/// The index inside the parent collection of this layer (or 0 if not member of such collection).
+	/// </summary>
+		protected int             m_LayerNumber=0;
 
+
+		/// <summary>
+		/// The layer to which this layer is linked to, or null if this layer is not linked.
+		/// </summary>
+		protected Layer						m_LinkedLayer;
+
+
+		#region Constructors
+
+
+		/// <summary>
+		/// Creates a layer with standard position and size using the size of the printable area.
+		/// </summary>
+		/// <param name="prtSize">Size of the printable area in points (1/72 inch).</param>
 		public Layer(SizeF prtSize)
+		: this(new PointF(prtSize.Width*0.14f,prtSize.Height*0.14f),new SizeF(prtSize.Width*0.76f,prtSize.Height*0.7f))
 		{
-			m_LayerPosition = new PointF(prtSize.Width*0.14f,prtSize.Height*0.14f);
-			m_LayerSize = new SizeF(prtSize.Width*0.76f,prtSize.Height*0.7f);
+		}
+
+		/// <summary>
+		/// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
+		/// </summary>
+		/// <param name="position">The position of the layer on the printable area in points (1/72 inch).</param>
+		/// <param name="size">The size of the layer in points (1/72 inch).</param>
+		public Layer(PointF position, SizeF size)
+		{
+			m_LayerPosition = position;
+			m_LayerSize = size;
 
 			CalculateMatrix();
 
@@ -82,8 +113,9 @@ namespace Altaxo.Graph
 
 			m_xAxis.AxisChanged += new System.EventHandler(this.OnXAxisChanged);
 			m_yAxis.AxisChanged += new System.EventHandler(this.OnYAxisChanged);
-
 		}
+
+		#endregion
 
 		#region "Layer Properties"
 
@@ -281,6 +313,49 @@ namespace Altaxo.Graph
 			get { return m_GraphObjects; }
 		}
 
+
+		/// <summary>
+		/// Get / sets the layer this layer is linked to.
+		/// </summary>
+		/// <value>The layer this layer is linked to, or null if not linked.</value>
+		public Layer LinkedLayer
+		{
+			get { return m_LinkedLayer; }
+			set
+			{
+
+				Layer oldValue = value;
+				m_LinkedLayer = this;
+
+				// make sure there is no circular dependency, if there is any, set
+				// the LinkedLayer to null
+				// note we trust the program is this way that we believe there is no
+				// circular dependency already created
+				Layer searchLayer = m_LinkedLayer;
+				while(null!=searchLayer)
+				{
+					if(Layer.ReferenceEquals(searchLayer,this))
+					{
+						// this means a circular dependency, so set the linked layer to null
+						m_LinkedLayer=null;
+						break;
+					}
+					searchLayer = searchLayer.LinkedLayer;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Is this layer linked to another layer?
+		/// </summary>
+		/// <value>True if this layer is linked to another layer. See <see cref="LinkedLayer"/> to
+		/// find out to which layer this layer is linked to.</value>
+		public bool IsLinked
+		{
+			get { return null!=m_LinkedLayer; }
+		}
+
+
 #endregion // Layer Properties
 
 
@@ -288,9 +363,13 @@ namespace Altaxo.Graph
 		///  Only indended to use by LayerCollection! Sets the parent layer collection for this layer.
 		/// </summary>
 		/// <param name="lc">The layer collection this layer belongs to.</param>
-		protected void SetParentLayerCollection(LayerCollection lc)
+		protected void SetParentAndNumber(LayerCollection lc, int number)
 		{
 			m_ParentLayerCollection = lc;
+			m_LayerNumber = number;
+			
+			if(m_ParentLayerCollection==null)
+				m_LinkedLayer=null;
 		}
 
 
@@ -484,7 +563,8 @@ namespace Altaxo.Graph
 
 		protected void OnInvalidate()
 		{
-			// !!!todo!!! inform the parent to invalidate the plot 
+			if(null!=this.m_ParentLayerCollection)
+				this.m_ParentLayerCollection.OnInvalidate(this);
 		}
 
 
@@ -515,12 +595,14 @@ namespace Altaxo.Graph
 
 
 
+		/// <summary>
+		/// Holds a bunch of layers by it's index.
+		/// </summary>
+		/// <remarks>The <see cref="GraphDocument"/> inherits from this class, but implements
+		/// its own function for adding the layers and moving them, since it has to track
+		/// all changes to the layers.</remarks>
 		public class LayerCollection : System.Collections.CollectionBase
 		{
-			/// <summary>
-			/// The parent object this LayerCollection belongs to.
-			/// </summary>
-			protected object m_Parent=null;
 
 			/// <summary>
 			/// Creates an empty LayerCollection without parent.
@@ -529,50 +611,126 @@ namespace Altaxo.Graph
 			{
 			}
 
-			/// <summary>
-			/// Creates an empty LayerCollection with the parent <paramref name="parent"/>.
-			/// </summary>
-			/// <param name="parent">The parent of this LayerCollection.</param>
-			public LayerCollection(object parent)
-			{
-				m_Parent = parent;
-			}
 
 			/// <summary>
-			/// The parent of this LayerCollection.
+			/// References the layer at index i.
 			/// </summary>
-			public object Parent
-			{
-				get { return m_Parent; }
-			}
-
-			/// <summary>
-			/// The parent of this LayerCollection as GraphDocument, or null if the parent is
-			/// null or not a GraphDocument.
-			/// </summary>
-			public GraphDocument ParentGraph
-			{
-				get { return m_Parent as GraphDocument; }
-			}
-
-
+			/// <value>The layer at index <paramref name="i"/>.</value>
 			public Layer this[int i]
 			{
-				get { return (Layer)base.InnerList[i]; }
+				get 
+				{
+					// for the getter, we can use the innerlist, since no actions are defined for that
+					return (Layer)base.InnerList[i];
+				}
 				set
 				{
-					value.SetParentLayerCollection(this);
-					base.InnerList[i] = value;
+					// we use List here since we want to have custom actions defined below
+					List[i] = value;
 				}
 			}
 
+			/// <summary>
+			/// This will exchange layer i and layer j.
+			/// </summary>
+			/// <param name="i">Index of the one element to exchange.</param>
+			/// <param name="j">Index of the other element to exchange.</param>
+			/// <remarks>To avoid the destruction of the linked layer connections, we avoid
+			/// firing the custom list actions here by using the InnerList property and
+			/// correct the layer numbers of the two exchanged elements directly.</remarks>
+			public void ExchangeElements(int i, int j)
+			{
+				// we use the inner list to do that because we do not want
+				// to have custom actions (this is mainly because otherwise we have
+				// a remove action that will destoy the linked layer connections
+
+				object o = base.InnerList[i];
+				base.InnerList[i] = base.InnerList[j];
+				base.InnerList[j] = o;
+
+				// correct the Layer numbers for the two exchanged layers
+				this[i].SetParentAndNumber(this,i);
+				this[j].SetParentAndNumber(this,j);
+			}
+
+
+			/// <summary>
+			/// Adds a layer to this layer collection.
+			/// </summary>
+			/// <param name="l"></param>
 			public void Add(Layer l)
 			{
-				l.SetParentLayerCollection(this);
-				base.InnerList.Add(l);
+				// we use List for adding since we want to have custom actions below
+				List.Add(l);
+			}
+
+			/// <summary>
+			/// Perform custom action on clearing: remove the parent attribute and the layer number from all the layers.
+			/// </summary>
+			protected override void OnClear()
+			{
+				foreach(Layer l in InnerList)
+					l.SetParentAndNumber(null,0);
+			}
+
+			/// <summary>
+			/// Perform custom action if one element removed: renumber the remaining elements.
+			/// </summary>
+			/// <param name="idx">The index where the element was removed. </param>
+			/// <param name="oldValue">The removed element.</param>
+			protected override void OnRemoveComplete(int idx, object oldValue)
+			{
+				((Layer)oldValue).SetParentAndNumber(null,0);
+
+				// renumber the layers from i to count
+				for(int i=idx;i<Count;i++)
+				{
+					this[i].SetParentAndNumber(this,i);
+
+					// fix linked layer connections if neccessary
+					if(Layer.ReferenceEquals(oldValue,this[i]))
+						this[i].LinkedLayer=null;
+				}
+			}
+
+			/// <summary>
+			/// Perform custom action if one element is set: set parent and number of the newly
+			/// set element.
+			/// </summary>
+			/// <param name="index">The index where the element is set.</param>
+			/// <param name="oldValue">The old value of the list element.</param>
+			/// <param name="newValue">The new value this list element is set to.</param>
+			protected override void OnSetComplete(int index, object oldValue,	object newValue	)
+			{
+				((Layer)oldValue).SetParentAndNumber(null,0);
+				((Layer)newValue).SetParentAndNumber(this,index);
+
+
+				for(int i=0;i<Count;i++)
+				{
+					// fix linked layer connections if neccessary
+					if(Layer.ReferenceEquals(oldValue,this[i]))
+						this[i].LinkedLayer=null;
+				}
+			}
+
+			/// <summary>
+			/// Perform custom action if an element is inserted: set parent and number
+			/// of the inserted element and renumber the other elements.
+			/// </summary>
+			/// <param name="index"></param>
+			/// <param name="newValue"></param>
+			protected override void OnInsertComplete(int index,object newValue)
+			{
+				// renumber the inserted and the following layers
+				for(int i=index;i<Count;i++)
+					this[i].SetParentAndNumber(this,i);
+			}
+
+
+			protected internal virtual void OnInvalidate(Layer sender)
+			{
 			}
 		}
-
 	}
-
 }
