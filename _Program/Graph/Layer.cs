@@ -19,6 +19,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 using System;
+using System.ComponentModel;        
+using System.Reflection;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
@@ -67,6 +69,7 @@ namespace Altaxo.Graph
 			/// <summary>
 			/// The value is a absolute value (not relative) in points (1/72 inch).
 			/// </summary>
+			[Description("Absolute value (points)")]
 			AbsoluteValue,
 
 
@@ -75,6 +78,7 @@ namespace Altaxo.Graph
 			/// is relative to the width of the graph document. A x value of 0 would position the layer at the left edge of the
 			/// graph document, a value of 1 on the right edge of the graph.
 			/// </summary>
+			[Description("Relative to graph size (0..1)")]
 			RelativeToGraphDocument,
 
 			/// <summary>
@@ -871,6 +875,20 @@ namespace Altaxo.Graph
 			m_Legend = tgo;
 
 			OnInvalidate();
+		}
+
+		/// <summary>
+		/// Retrieves the description of the enumeration value <b>value</b>.
+		/// </summary>
+		/// <param name="value">The enumeration value.</param>
+		/// <returns>The description of this value. If no description is available, the ToString() method is used
+		/// to return the name of the value.</returns>
+		public static string GetDescription(Enum value)
+		{
+			FieldInfo fi= value.GetType().GetField(value.ToString()); 
+			DescriptionAttribute[] attributes = 
+				(DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
+			return (attributes.Length>0)?attributes[0].Description:value.ToString();
 		}
 
 		#endregion // Layer Properties and Methods

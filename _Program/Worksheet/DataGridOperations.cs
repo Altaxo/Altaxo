@@ -476,7 +476,7 @@ namespace Altaxo.Worksheet
 				Altaxo.Calc.MatrixMath.HOMatrix W       = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
 				Altaxo.Calc.MatrixMath.VOMatrix V       = new Altaxo.Calc.MatrixMath.VOMatrix(0,0);
 
-				Altaxo.Calc.MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,2,xLoads,yLoads,W,V);
+				Altaxo.Calc.MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,5,xLoads,yLoads,W,V);
 	
 
 				// now we have to create a new table where to place the calculated factors and loads
@@ -529,13 +529,35 @@ namespace Altaxo.Worksheet
 			table.Add(col);
 		}
 
-				table.ResumeDataChangedNotifications();
-				mainDocument.DataSet.Add(table);
-				// create a new worksheet without any columns
-				App.Current.CreateNewWorksheet(table);
 
-				return null;
-			}
+			// calculate the self predicted y values - for one factor and for two
+			Altaxo.Calc.IMatrix yPred = new Altaxo.Calc.MatrixMath.HOMatrix(matrixY.Rows,matrixY.Cols);
+			for(int numFactors=1;numFactors<=5;numFactors++)
+			{
+				Altaxo.Calc.MatrixMath.PartialLeastSquares_Predict_HO(matrixX,xLoads,yLoads,W,V,numFactors, ref yPred);
+
+				// now store the loads - careful - they are horizontal in the matrix
+				for(int i=0;i<yPred.Rows;i++)
+				{
+					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("YPred"+numFactors.ToString()+ "_" + i.ToString());
+					col.Group=3+numFactors;
+					for(int j=0;j<yPred.Cols;j++)
+						col[j] = yPred[i,j];
+				
+					table.Add(col);
+				}
+
+			
+			} // for numFactors...
+
+
+				table.ResumeDataChangedNotifications();
+			mainDocument.DataSet.Add(table);
+			// create a new worksheet without any columns
+			App.Current.CreateNewWorksheet(table);
+
+			return null;
+		}
 
 
 

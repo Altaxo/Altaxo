@@ -204,6 +204,15 @@ namespace Altaxo
 				m_GraphForms.Remove(frm);
 		}
 
+		/// <summary>This will remove the Worksheet <paramref>frm</paramref> from the corresponding forms collection.</summary>
+		/// <param name="frm">The Worksheet to remove.</param>
+		/// <remarks>No exception is thrown if the Form frm is not a member of the worksheet forms collection.</remarks>
+		public void RemoveWorksheet(System.Windows.Forms.Form frm)
+		{
+			if(m_Worksheets.Contains(frm))
+				m_Worksheets.Remove(frm);
+		}
+
 	
 	}
 }

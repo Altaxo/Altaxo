@@ -854,6 +854,30 @@ namespace Altaxo.Calc
 			return true;
 		}
 
+
+		/// <summary>
+		/// Set all matrix elements to the provided value <paramref name="scalar"/>.
+		/// </summary>
+		/// <param name="a">The matrix where to set the elements.</param>
+		/// <param name="scalar">The value which is used to set each element with.</param>
+		public static void SetMatrixElements(IMatrix a, double scalar)
+		{
+			for(int i=0;i<a.Rows;i++)
+				for(int j=0;j<a.Cols;j++)
+					a[i,j]=scalar;
+		}
+
+
+		/// <summary>
+		/// Set all elements in the matrix to 0 (zero)
+		/// </summary>
+		/// <param name="a">The matrix to zero.</param>
+		public static void ZeroMatrix(IMatrix a)
+		{
+			SetMatrixElements(a,0);
+		}
+
+
 		/// <summary>
 		/// Gets a submatrix out of the source matrix a. The dimensions of the submatrix are given by the provided matrix dest.
 		/// </summary>
@@ -952,7 +976,7 @@ namespace Altaxo.Calc
 				throw new ArithmeticException(string.Format("Try to set row {0}, but number of columns of the matrix ({1}) not match number of colums of the vector ({3})!",row,dest.Cols,src.Cols));
 		
 			for(int j=0;j<dest.Cols;j++)
-				dest[row,j]=src[0,row];
+				dest[row,j]=src[0,j];
 		}
 
 
@@ -1159,8 +1183,8 @@ namespace Altaxo.Calc
 		/// <param name="W">Returns the matrix of weighting values. Should be initially empty.</param>
 		/// <param name="V">Returns the vector of cross products. Should be initially empty.</param>
 		public static void PartialLeastSquares_HO(
-			IMatrix X, // matrix of spectra (a spectra is a row of this matrix)
-			IMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
+			IMatrix _X, // matrix of spectra (a spectra is a row of this matrix)
+			IMatrix _Y, // matrix of concentrations (a mixture is a row of this matrix)
 			int numFactors,
 			IBottomExtensibleMatrix xLoads, // out: the loads of the X matrix
 			IBottomExtensibleMatrix yLoads, // out: the loads of the Y matrix
@@ -1183,10 +1207,14 @@ namespace Altaxo.Calc
 
 
 			// use the mean spectrum as first row of the W matrix
-			MatrixMath.HorizontalVector mean = new HorizontalVector(X.Cols);
+			MatrixMath.HorizontalVector mean = new HorizontalVector(_X.Cols);
 			//	MatrixMath.ColumnsToZeroMean(X,mean);
 			//W.AppendBottom(mean);
 
+			IMatrix X = new HOMatrix(_X.Rows,_X.Cols);
+			MatrixMath.Copy(_X,X);
+			IMatrix Y = new HOMatrix(_Y.Rows,_Y.Cols);
+			MatrixMath.Copy(_Y,Y);
 
 			IMatrix u_prev = null;
 			IMatrix w = new HorizontalVector(X.Cols); // horizontal vector of X (spectral) weighting
@@ -1269,6 +1297,56 @@ namespace Altaxo.Calc
 				// with the residual matrizes for the next factor.
 			} // for all factors
 		}
+
+
+		public static void PartialLeastSquares_Predict_HO(
+			IMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+			IMatrix xLoads, // x-loads matrix
+			IMatrix yLoads, // y-loads matrix
+			IMatrix W, // weighting matrix
+			IMatrix V,  // Cross product vector
+			int numFactors, // number of factors to use for prediction
+			ref IMatrix predictedY // Matrix of predicted y-values, must be same number of rows as spectra
+			)
+		{
+			// now predicting a "unkown" spectra
+			MatrixMath.Scalar si = new MatrixMath.Scalar(0);
+			MatrixMath.HorizontalVector Cu = new MatrixMath.HorizontalVector(yLoads.Cols);
+
+			MatrixMath.HorizontalVector wi = new MatrixMath.HorizontalVector(XU.Cols);
+			MatrixMath.HorizontalVector cuadd = new MatrixMath.HorizontalVector(yLoads.Cols);
+			
+			// xu holds a single spectrum extracted out of XU
+			MatrixMath.HorizontalVector xu = new MatrixMath.HorizontalVector(XU.Cols);
+
+
+			int maxFactors = Math.Min(yLoads.Rows,numFactors);
+			
+
+			for(int nSpectrum=0;nSpectrum<XU.Rows;nSpectrum++)
+			{
+				MatrixMath.Submatrix(XU,xu,nSpectrum,0); // extract one spectrum to predict
+				MatrixMath.ZeroMatrix(Cu); // Set Cu=0
+				for(int i=0;i<maxFactors;i++)
+				{
+					//1. Calculate the unknown spectral score for a weighting vector
+					MatrixMath.Submatrix(W,wi,i,0);
+					MatrixMath.MultiplySecondTransposed(wi,xu,si);
+					// take the y loading vector
+					MatrixMath.Submatrix(yLoads,cuadd,i,0);
+					// and multiply it with the cross product and the score
+					MatrixMath.MultiplyScalar(cuadd,si*V[0,i],cuadd);
+					// Add it to the predicted y-values
+					MatrixMath.Add(Cu,cuadd,Cu);
+					// remove the contribution of the factor to the spectrum
+					// not implemented now!
+				}
+				// Cu now contains the predicted y values
+				MatrixMath.SetRow(Cu,predictedY,nSpectrum);
+			} // for each spectrum in XU
+		}
+
+
 	} // end class MatrixMath
 
 

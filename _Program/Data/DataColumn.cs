@@ -399,6 +399,7 @@ namespace Altaxo.Data
 				info.AddValue("Number",s.m_ColumnNumber);
 				info.AddValue("Count",s.m_Count);
 				info.AddValue("Kind",(int)s.m_Kind);
+				info.AddValue("Group",s.m_Group);
 			}
 
 			/// <summary>
@@ -418,6 +419,7 @@ namespace Altaxo.Data
 				s.m_ColumnNumber = info.GetInt32("Number");
 				s.m_Count = info.GetInt32("Count");
 				s.m_Kind  = (ColumnKind)info.GetInt32("Kind");
+				s.m_Group = info.GetInt32("Group");
 
 				// set the helper data
 				s.m_MinRowChanged=int.MaxValue; // area of rows, which changed during event off period

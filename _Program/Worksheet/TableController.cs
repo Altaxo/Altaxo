@@ -313,6 +313,7 @@ namespace Altaxo.Worksheet
 
 				// set the menu of this class
 				m_View.TableViewMenu = this.m_MainMenu;
+				m_View.TableViewTitle = this.m_Table.TableName;
 
 
 				// restore the event chain to the Table
@@ -2590,8 +2591,12 @@ namespace Altaxo.Worksheet
 		public void EhView_Closed(EventArgs e)
 		{
 			// if the view is closed, we delete the corresponding table
-			DataTable.ParentDataSet.Remove(DataTable);
+			if(null!=DataTable.ParentDataSet)
+				DataTable.ParentDataSet.Remove(DataTable);
 			DataTable.Dispose();
+
+			// we then remove the view from the list of windows
+			App.Current.Doc.RemoveWorksheet(this.View.TableViewForm);
 		}
 
 		public void EhView_Closing(System.ComponentModel.CancelEventArgs e)

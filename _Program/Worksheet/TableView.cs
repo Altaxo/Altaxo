@@ -344,6 +344,14 @@ namespace Altaxo.Worksheet
 			}
 		}
 
+		/// <summary>
+		/// Sets the title of this view.
+		/// </summary>
+		public string TableViewTitle
+		{
+			set { this.Text = value; }
+		}
+
 		public int TableViewVertScrollMaximum
 		{
 			get

@@ -50,6 +50,10 @@ namespace Altaxo.Worksheet
 		/// </remarks>
 		MainMenu	TableViewMenu { set; }
 
+		/// <summary>
+		/// This sets the title of this table view.
+		/// </summary>
+		string TableViewTitle { set; }
 
 		/// <summary>
 		/// Get / sets the maximum value of the horizontal scroll bar 
