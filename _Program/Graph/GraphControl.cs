@@ -584,25 +584,27 @@ namespace Altaxo.Graph
 			get { return m_Graph.Layers; }
 		}
 
+
+		public void EnsureValidityOfCurrentLayerNumber()
+		{
+
+			// check the validity of the CurrentLayerNumber
+			if(0==m_Graph.Layers.Count)
+			{
+				CurrentLayerNumber=-1;
+			}
+			else if(m_CurrentLayerNumber>=m_Graph.Layers.Count)
+			{
+				CurrentLayerNumber=0;
+			}
+		}
+
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int CurrentLayerNumber
 		{
 			get
 			{
-				bool bChanged=false;
-
-				// check the validity of the CurrentLayerNumber
-				if(0==m_Graph.Layers.Count)
-				{
-					m_CurrentLayerNumber=-1;
-					bChanged = true;
-				}
-				else if(m_CurrentLayerNumber>=m_Graph.Layers.Count)
-				{
-					m_CurrentLayerNumber=0;
-					bChanged = true;
-				}
-
+				EnsureValidityOfCurrentLayerNumber();
 				return m_CurrentLayerNumber;
 			}
 			set
@@ -623,33 +625,40 @@ namespace Altaxo.Graph
 			}
 		}
 
+
+		public void EnsureValidityOfCurrentPlotNumber()
+		{
+			EnsureValidityOfCurrentLayerNumber();
+
+			// if Layer don't exist anymore, correct CurrentLayerNumber and ActualPlotAssocitation
+			if(m_CurrentLayerNumber<0)
+			{
+				CurrentPlotNumber=-1;
+			}
+			else // if at least one Layer exists
+			{
+				// if the PlotAssociation don't exist anymore, correct it
+				if(0==this.m_Graph[CurrentLayerNumber].PlotItems.Count)
+					CurrentPlotNumber = -1;
+				if(m_CurrentPlotNumber>=this.m_Graph[CurrentLayerNumber].PlotItems.Count)
+					CurrentPlotNumber = 0;
+			}	
+		}
+
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int CurrentPlotNumber 
 		{
 			get 
 			{
-				// if Layer don't exist anymore, correct CurrentLayerNumber and ActualPlotAssocitation
-				if(CurrentLayerNumber<0)
-				{
-					CurrentPlotNumber=-1;
-				}
-				else // if Layer exists
-				{
-					// if the PlotAssociation don't exist anymore, correct it
-					if(0==this.m_Graph[CurrentLayerNumber].PlotItems.Count)
-						CurrentPlotNumber = -1;
-					if(m_CurrentPlotNumber>=this.m_Graph[CurrentLayerNumber].PlotItems.Count)
-						CurrentPlotNumber = 0;
-				}	
 				return m_CurrentPlotNumber;
 			}
 			set
 			{
-				if(CurrentLayerNumber>=0 && value<0)
-					throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"Must be greater or equal than zero");
+				if(CurrentLayerNumber>=0 && 0!=this.m_Graph[CurrentLayerNumber].PlotItems.Count && value<0)
+					throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"CurrentPlotNumber has to be greater or equal than zero");
 
 				if(CurrentLayerNumber>=0 && value>=m_Graph[CurrentLayerNumber].PlotItems.Count)
-					throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"Must be lesser than actual count: " + m_Graph[CurrentLayerNumber].PlotItems.Count.ToString());
+					throw new ArgumentOutOfRangeException("CurrentPlotNumber",value,"CurrentPlotNumber has to  be lesser than actual count: " + m_Graph[CurrentLayerNumber].PlotItems.Count.ToString());
 
 				m_CurrentPlotNumber = value<0 ? -1 : value;
 
@@ -958,6 +967,7 @@ namespace Altaxo.Graph
 		/// <param name="e">The event arguments.</param>
 		protected void OnGraphDocument_Invalidate(object sender, System.EventArgs e)
 		{
+			this.EnsureValidityOfCurrentPlotNumber();
 			InvalidateGraph();
 		}
 

@@ -229,6 +229,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Graph\GraphController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\GraphDocument.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -421,6 +426,11 @@
                     RelPath = "Serialization\ExportGalacticSpcFileDialog.resx"
                     DependentUpon = "ExportGalacticSpcFileDialog.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Serialization\ExportGalacticSpcFiles.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Serialization\SerializationAttributes.cs"
