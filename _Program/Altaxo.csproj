@@ -230,6 +230,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\GraphPanel.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\ImageGraphics.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

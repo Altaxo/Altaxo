@@ -9,7 +9,6 @@ using System.Diagnostics;
 
 namespace Altaxo.Graph
 {
-
 	/// <summary>
 	/// Summary description for AltaxoGraphControl.
 	/// </summary>
@@ -41,6 +40,7 @@ namespace Altaxo.Graph
 		protected Layer.LayerCollection graphLayers = new Layer.LayerCollection();
 		protected int m_ActualLayer = 0;
 		protected GraphTools m_CurrentGraphTool = GraphTools.ObjectPointer;
+		private GraphPanel m_GraphPanel;
 
 		/// <summary> 
 		/// Required designer variable
@@ -51,6 +51,8 @@ namespace Altaxo.Graph
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
+
+			this.ResizeRedraw=true;
 
 			// Adjust the zoom level just so, that area fits into control
 			Graphics grfx = this.CreateGraphics();
@@ -102,12 +104,24 @@ namespace Altaxo.Graph
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.m_GraphPanel = new Altaxo.Graph.GraphPanel();
+			this.SuspendLayout();
 			// 
-			// AltaxoGraphControl
+			// m_GraphPanel
 			// 
-			this.Name = "AltaxoGraphControl";
-			this.Paint += new System.Windows.Forms.PaintEventHandler(this.AltaxoGraphControl_Paint);
+			this.m_GraphPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.m_GraphPanel.Name = "m_GraphPanel";
+			this.m_GraphPanel.Size = new System.Drawing.Size(150, 150);
+			this.m_GraphPanel.TabIndex = 0;
+			this.m_GraphPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.AltaxoGraphControl_Paint);
+			// 
+			// GraphControl
+			// 
+			this.Controls.AddRange(new System.Windows.Forms.Control[] {
+																																	this.m_GraphPanel});
+			this.Name = "GraphControl";
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.AltaxoGraphControl_MouseDown);
+			this.ResumeLayout(false);
 
 		}
 		#endregion
