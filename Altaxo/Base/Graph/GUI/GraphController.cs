@@ -162,7 +162,7 @@ namespace Altaxo.Graph.GUI
 
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphController),0)]
-			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			Main.DocumentPath _PathToGraph;
 			GraphController   _GraphController;

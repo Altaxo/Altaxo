@@ -140,7 +140,7 @@ namespace Altaxo
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AltaxoWorkbenchMemento),0)]
-			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{

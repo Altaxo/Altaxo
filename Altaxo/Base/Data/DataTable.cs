@@ -41,7 +41,7 @@ namespace Altaxo.Data
 	[SerializationSurrogate(1,typeof(Altaxo.Data.DataTable.SerializationSurrogate1))]
 	[SerializationVersion(1)]
 	public class DataTable 
-		:
+		:		
 		System.Runtime.Serialization.IDeserializationCallback, 
 		ICloneable,
 		Altaxo.Main.IDocumentNode,
@@ -132,7 +132,7 @@ namespace Altaxo.Data
 
 
 		#region "Serialization"
-		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
@@ -175,7 +175,7 @@ namespace Altaxo.Data
 			}
 		}
 
-		public new class SerializationSurrogate1 : System.Runtime.Serialization.ISerializationSurrogate
+		public class SerializationSurrogate1 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
@@ -277,7 +277,8 @@ namespace Altaxo.Data
 		/// This class is responsible for the special purpose to serialize a data table for clipboard. Do not use
 		/// it for permanent serialization purposes, since it does not contain version handling.
 		/// </summary>
-		public class ClipboardSurrogate : System.Runtime.Serialization.ISerializable
+		[Serializable]
+		public class ClipboardMemento : System.Runtime.Serialization.ISerializable
 		{
 			DataTable _table;
 			Altaxo.Worksheet.IndexSelection _selectedDataColumns;
@@ -293,7 +294,7 @@ namespace Altaxo.Data
 			/// <param name="selectedDataColumns">The selected data columns.</param>
 			/// <param name="selectedDataRows">The selected data rows.</param>
 			/// <param name="selectedPropertyColumns">The selected property columns.</param>
-			public ClipboardSurrogate(DataTable table, Altaxo.Worksheet.IndexSelection selectedDataColumns, 
+			public ClipboardMemento(DataTable table, Altaxo.Worksheet.IndexSelection selectedDataColumns, 
 				Altaxo.Worksheet.IndexSelection selectedDataRows,
 				Altaxo.Worksheet.IndexSelection selectedPropertyColumns)
 			{
@@ -302,13 +303,35 @@ namespace Altaxo.Data
 				this._selectedDataRows				= selectedDataRows;
 				this._selectedPropertyColumns = selectedPropertyColumns;
 			}
+			
+			/// <summary>
+			/// Returns the (deserialized) table.
+			/// </summary>
+			public DataTable DataTable
+			{
+				get { return _table; }
+			}
 
 			#region ISerializable Members
 
 			public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 			{
-				// TODO:  Add ClipboardSurrogate.GetObjectData implementation
+
+				info.AddValue("Name",_table.Name);
+				info.AddValue("DataColumns",new DataColumnCollection.ClipboardMemento(_table.DataColumns,_selectedDataColumns,_selectedDataRows));
+				info.AddValue("PropertyColumns",new DataColumnCollection.ClipboardMemento(_table.PropCols,_selectedPropertyColumns,_selectedDataColumns));
 			}
+
+			public ClipboardMemento(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+			{
+				_table = new DataTable();
+				_table.Name = info.GetString("Name");
+				DataColumnCollection.ClipboardMemento datacolMemento = (DataColumnCollection.ClipboardMemento)info.GetValue("DataColumns",typeof(DataColumnCollection.ClipboardMemento));
+				_table.m_DataColumns = datacolMemento.Collection;
+				DataColumnCollection.ClipboardMemento propcolMemento = (DataColumnCollection.ClipboardMemento)info.GetValue("PropertyColumns",typeof(DataColumnCollection.ClipboardMemento));
+				_table.m_PropertyColumns = propcolMemento.Collection;
+			}
+
 
 			#endregion
 

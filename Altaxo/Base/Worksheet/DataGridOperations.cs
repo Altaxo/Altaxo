@@ -21,6 +21,7 @@
 using System;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using Altaxo.Data;
 
 namespace Altaxo.Worksheet
 {
@@ -1129,19 +1130,92 @@ namespace Altaxo.Worksheet
 
 				dao.SetData("Altaxo.Columns",arl);
 
+	
+			}
+
+			if(dg.AreColumnsOrRowsSelected)
+			{
+				// copy the data as table with the selected columns
+				Altaxo.Data.DataTable.ClipboardMemento tablememento = new Altaxo.Data.DataTable.ClipboardMemento(
+					dg.DataTable,dg.SelectedColumns,dg.SelectedRows,dg.SelectedPropertyColumns);
+				dao.SetData("Altaxo.Data.DataTable.ClipboardMemento",tablememento);
 
 				// now copy the data object to the clipboard
 				System.Windows.Forms.Clipboard.SetDataObject(dao,true);
 			}
 		}
 
+		/// <summary>
+		/// Pastes data from a table (usually deserialized table from the clipboard) into a worksheet.
+		/// The paste operation depends on the current selection of columns, rows, or property columns.
+		/// </summary>
+		/// <param name="dg">The worksheet to paste into.</param>
+		/// <param name="sourcetable">The table which contains the data to paste into the worksheet.</param>
+		/// <remarks>The paste operation is defined in the following way:
+		/// If nothing is currently selected, the columns are appended to the end of the worksheet and the property data
+		/// are set for that columns.
+		/// If only columns are currently selected, the data is pasted in that columns (column by column). If number of
+		/// selected columns not match the number of columns in the paste table, but match the number of rows in the paste table,
+		/// the paste is done column by row.
+		/// 
+		/// </remarks>
+		public static void PasteFromTable(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
+		{
+			Altaxo.Data.DataTable desttable = dg.DataTable;
+			if(!dg.AreColumnsOrRowsSelected)
+			{
+				int firstDataColumnIndex = int.MinValue;
+
+				// add first the data columns to the end of the table
+				for(int nCol=0;nCol<sourcetable.DataColumns.ColumnCount;nCol++)
+				{
+					string name = sourcetable.DataColumns.GetColumnName(nCol);
+					int    group = sourcetable.DataColumns.GetColumnGroup(nCol);
+					Altaxo.Data.ColumnKind kind = sourcetable.DataColumns.GetColumnKind(nCol);
+					Altaxo.Data.DataColumn col = (Altaxo.Data.DataColumn)sourcetable.DataColumns[nCol].Clone();
+					desttable.DataColumns.Add(col, name, kind, group);
+					if(firstDataColumnIndex<0)
+						firstDataColumnIndex = desttable.DataColumns.GetColumnNumber(col);
+				} // for all data columns
+
+				// now add also the property columns
+				for(int nCol=0;nCol<sourcetable.PropCols.ColumnCount;nCol++)
+				{
+					string name = sourcetable.PropCols.GetColumnName(nCol);
+					int    group = sourcetable.PropCols.GetColumnGroup(nCol);
+					Altaxo.Data.ColumnKind kind = sourcetable.PropCols.GetColumnKind(nCol);
+					Altaxo.Data.DataColumn col;
+
+					// if a property column with the same name and kind exist - use that one - else create a new one
+					if(desttable.PropCols.ContainsColumn(name) && desttable.PropCols[name].GetType() == sourcetable.PropCols[nCol].GetType())
+					{
+						col = desttable.PropCols[name];
+					}
+					else
+					{
+						// the prop col must be empty - we will add the data later
+						col = (DataColumn)Activator.CreateInstance(sourcetable.PropCols[nCol].GetType());
+						desttable.PropCols.Add(col, name, kind, group);
+					}
+					// now set the values of the freshly created or the already existing property column
+					for(int nDataCol=0;nDataCol<sourcetable.DataColumns.ColumnCount;nDataCol++)
+						col[firstDataColumnIndex + nDataCol] = sourcetable.PropCols[nCol][nDataCol];
+				} // for all contained property columns
+			} // if now columns or rows where selected
+		}
 
 		public static void PasteFromClipboard(GUI.WorksheetController dg)
 		{
 			Altaxo.Data.DataTable dt = dg.DataTable;
 			System.Windows.Forms.DataObject dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
 
-			if(dao.GetDataPresent("Altaxo.Columns"))
+			if(dao.GetDataPresent("Altaxo.Data.DataTable.ClipboardMemento"))
+			{
+				Altaxo.Data.DataTable.ClipboardMemento tablememento = (Altaxo.Data.DataTable.ClipboardMemento)dao.GetData("Altaxo.Data.DataTable.ClipboardMemento");
+				PasteFromTable(dg,tablememento.DataTable);
+			}
+
+			else if(dao.GetDataPresent("Altaxo.Columns"))
 			{
 				System.Collections.ArrayList arl = (System.Collections.ArrayList)dao.GetData("Altaxo.Columns");
 

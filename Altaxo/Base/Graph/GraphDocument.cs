@@ -73,7 +73,7 @@ namespace Altaxo.Graph
 		#region "Serialization"
 
 		/// <summary>Used to serialize the GraphDocument Version 0.</summary>
-		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 			/// <summary>
 			/// Serializes GraphDocument Version 0.
@@ -136,7 +136,7 @@ namespace Altaxo.Graph
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument),0)]
-			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{

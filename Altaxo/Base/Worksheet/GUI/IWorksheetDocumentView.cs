@@ -134,7 +134,7 @@ namespace Altaxo.Worksheet.GUI
 		/// </summary>
 		/// <remarks>Setting the view is only neccessary on deserialization, so the controller
 		/// can restrict setting the view only if the own view variable is still null.</remarks>
-		new IWorksheetView View { get; set; }
+		IWorksheetView View { get; set; }
 
 		/// <summary>
 		/// Handles the scroll event of the vertical scroll bar.

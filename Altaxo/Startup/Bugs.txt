@@ -4,3 +4,10 @@
 Plotting a column containing only one value,
 i.e. 1, will result in a plot from 1 to 1, and not all plot points are
 shown on that, since the Y -linearAxis then returns NaN
+
+09.12.2003
+In Layerdialog, Axis, %from bottom and position= does not work
+Layerdialog -> Button Plotassociations and EditRange does not work
+TextDialog -> die Eingabe von Schriftgrößen, die nicht vorgesehen sind, funktioniert nicht
+
+after restoring a document, the rows in a table seems to have line breaks

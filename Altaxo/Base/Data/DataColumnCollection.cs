@@ -190,6 +190,7 @@ namespace Altaxo.Data
 		#endregion
 
 		#region ColumnInfo
+		[Serializable]
 		private class DataColumnInfo : ICloneable
 		{
 			/// <summary>
@@ -509,6 +510,121 @@ namespace Altaxo.Data
 				}
 
 			}
+		}
+
+
+		/// <summary>
+		/// This class is responsible for the special purpose to serialize a data table for clipboard. Do not use
+		/// it for permanent serialization purposes, since it does not contain version handling.
+		/// </summary>
+		[Serializable]
+		public class ClipboardMemento : System.Runtime.Serialization.ISerializable
+		{
+			DataColumnCollection _collection;
+			Altaxo.Worksheet.IndexSelection _selectedColumns;
+			Altaxo.Worksheet.IndexSelection _selectedRows;
+
+			/// <summary>
+			/// Constructor. Besides the table, the current selections must be provided. Only the areas that corresponds to the selections are
+			/// serialized. The serialization process has to occur immediately after this constructor, because only a reference
+			/// to the table is hold by this object.
+			/// </summary>
+			/// <param name="collection">The collection to serialize.</param>
+			/// <param name="selectedColumns">The selected data columns.</param>
+			/// <param name="selectedRows">The selected data rows.</param>
+			public ClipboardMemento(
+				DataColumnCollection collection,
+				Altaxo.Worksheet.IndexSelection selectedColumns, 
+				Altaxo.Worksheet.IndexSelection selectedRows)
+			{
+				this._collection										= collection;
+				this._selectedColumns			= selectedColumns;
+				this._selectedRows				= selectedRows;
+			}
+
+			/// <summary>
+			/// Returns the (deserialized) DataColumnCollection.
+			/// </summary>
+			public DataColumnCollection Collection
+			{
+				get { return _collection; }
+			}
+
+			#region ISerializable Members
+
+			public void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+			{
+				int numberOfColumns;
+				bool useColumnSelection;
+				if(_selectedColumns.Count==0)
+				{
+					numberOfColumns = _collection.ColumnCount;
+					useColumnSelection = false;
+				}
+				else
+				{
+					numberOfColumns = _selectedColumns.Count;
+					useColumnSelection = true;
+				}
+
+				int numberOfRows=0;
+				bool useRowSelection;
+				if(_selectedRows.Count==0)
+				{
+					numberOfRows = _collection.RowCount;
+					useRowSelection = false;
+				}
+				else
+				{
+					numberOfRows = _selectedRows.Count;
+					useRowSelection = true;
+				}
+
+
+				info.AddValue("ColumnCount",numberOfColumns);
+
+
+				for(int nCol=0;nCol<numberOfColumns;nCol++)
+				{
+					int colidx = useColumnSelection ? _selectedColumns[nCol] : nCol;
+					DataColumnInfo columninfo = _collection.GetColumnInfo(colidx);
+					info.AddValue("ColumnName_"+nCol.ToString(),columninfo.Name);
+					info.AddValue("ColumnGroup_"+nCol.ToString(),columninfo.Group);
+					info.AddValue("ColumnKind_"+nCol.ToString(),columninfo.Kind);
+
+					// now create an instance of this column and copy the data
+					DataColumn column = _collection[colidx];
+					DataColumn newcolumn = (DataColumn)Activator.CreateInstance(_collection[colidx].GetType());
+					for(int nRow=0;nRow<numberOfRows;nRow++)
+					{
+						int rowidx = useRowSelection ? _selectedRows[nRow] : nRow;
+						newcolumn[nRow] = column[rowidx];
+					} // for all rows
+					info.AddValue("Column_"+nCol.ToString(),newcolumn);
+				} // for all columns
+			} // end serialization
+
+			public ClipboardMemento(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+			{
+				_collection = new DataColumnCollection();
+
+				int numberOfColumns = info.GetInt32("ColumnCount");
+				for(int nCol=0;nCol<numberOfColumns;nCol++)
+				{
+					string name = info.GetString("ColumnName_"+nCol.ToString());
+					int    group = info.GetInt32("ColumnGroup_"+nCol.ToString());
+					ColumnKind kind = (ColumnKind)info.GetValue("ColumnKind_"+nCol.ToString(),typeof(ColumnKind));
+
+					DataColumn column = (DataColumn)info.GetValue("Column_"+nCol.ToString(),typeof(DataColumn));
+				
+				
+				_collection.Add(column,name,kind,group);
+				}
+			}
+
+
+			#endregion
+
 		}
 
 		#endregion
@@ -926,6 +1042,16 @@ namespace Altaxo.Data
 		public ColumnKind GetColumnKind(DataColumn datac)
 		{
 			return GetColumnInfo(datac).Kind;
+		}
+
+		/// <summary>
+		/// Returns the column kind of the column at index <code>idx</code>
+		/// </summary>
+		/// <param name="idx">The column number of the column.</param>
+		/// <returns>The kind of this column.</returns>
+		public ColumnKind GetColumnKind(int idx)
+		{
+			return GetColumnInfo(idx).Kind;
 		}
 
 		/// <summary>
