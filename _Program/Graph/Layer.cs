@@ -59,7 +59,7 @@ namespace Altaxo.Graph
 		protected SimpleLabelStyle m_RightLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Right);
 		protected SimpleLabelStyle m_TopLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Top);
 
-		protected GraphObjectCollection coll = new GraphObjectCollection();
+		protected GraphObjectCollection m_GraphObjects = new GraphObjectCollection();
 
 		protected PlotAssociationList plotAssociations;
 		protected PlotGroup.Collection m_PlotGroups = new PlotGroup.Collection();
@@ -72,9 +72,6 @@ namespace Altaxo.Graph
 			m_LayerPosition = new PointF(prtSize.Width*0.14f,prtSize.Height*0.14f);
 			m_LayerSize = new SizeF(prtSize.Width*0.76f,prtSize.Height*0.7f);
 
-			ExtendedTextGraphObject tgo = new ExtendedTextGraphObject(129,90,@"\L(0)\b(bbbbbb)aaaaaa",new Font(FontFamily.GenericSansSerif,12,GraphicsUnit.World),Color.Black);
-			tgo.Rotation = 0;
-			coll.Add(tgo);
 			CalculateMatrix();
 
 			plotAssociations = new PlotAssociationList(this);
@@ -279,6 +276,10 @@ namespace Altaxo.Graph
 			get { return m_ParentLayerCollection; }
 		}
 
+		public GraphObjectCollection GraphObjects
+		{
+			get { return m_GraphObjects; }
+		}
 
 #endregion // Layer Properties
 
@@ -313,7 +314,7 @@ namespace Altaxo.Graph
 			PointF layerC = ToLayerCoordinates(pageC);
 			GraphicsPath gp;
 
-			foreach(GraphObject go in coll)
+			foreach(GraphObject go in m_GraphObjects)
 			{
 				gp = go.HitTest(layerC);
 				if(null!=gp)
@@ -367,7 +368,7 @@ namespace Altaxo.Graph
 			if(m_bFillLayerArea)
 				g.FillRectangle(m_LayerAreaFillBrush,0,0,m_LayerSize.Width,m_LayerSize.Height);
 
-			coll.DrawObjects(g,1,this);
+			m_GraphObjects.DrawObjects(g,1,this);
 
 			RectangleF layerBounds = new RectangleF(m_LayerPosition,m_LayerSize);
 

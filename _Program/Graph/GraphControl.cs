@@ -438,7 +438,12 @@ namespace Altaxo.Graph
 				tgo.Position = layerCoord;
 
 				TextControlDialog dlg = new TextControlDialog(Layer[ActualLayer],tgo);
-				dlg.ShowDialog(this);
+				if(DialogResult.OK==dlg.ShowDialog(this))
+				{
+					// add the resulting textgraphobject to the layer
+					if(!dlg.TextGraphObject.Empty)
+						Layer[ActualLayer].GraphObjects.Add(dlg.TextGraphObject);
+				}
 			}
 		}
 

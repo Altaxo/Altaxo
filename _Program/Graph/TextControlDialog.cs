@@ -54,11 +54,12 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.Panel m_pnPreview;
 		private Altaxo.Graph.Layer m_Layer; // parent layer
 		private ExtendedTextGraphObject m_TextObject;
-		private PointF m_OriginalPosition; // original position of textobject
-		private float  m_OriginalRotation; // original rotation of textobject
+		private float  m_PositionX; // original x position of textobject
+		private float  m_PositionY; // original y position of textobject
+		private float  m_Rotation; // original rotation of textobject
 		private System.Windows.Forms.Button m_btNormal;
 		private System.Windows.Forms.Button m_btStrikeout;
-
+		private bool   m_bDialogInitialized=false; // true if all dialog elements are initialized
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -79,21 +80,32 @@ namespace Altaxo.Graph
 			else
 				m_TextObject = tgo;
 
+
 			FillDialogElements();
 		}
 
 
+		public ExtendedTextGraphObject TextGraphObject
+		{
+			get { return m_TextObject; }
+		}
 
 		public void FillDialogElements()
 		{
-			this.m_edText.Text = m_TextObject.Text;
-			
-			
-			this.m_OriginalPosition = m_TextObject.Position;
-			this.m_OriginalRotation = m_TextObject.Rotation;
+			string name=null;
 
-			this.m_edPosX.Text = m_TextObject.Position.X.ToString();
-			this.m_edPosY.Text = m_TextObject.Position.Y.ToString();
+			this.m_edText.Text = m_TextObject.Text;
+
+			
+			// set some help values (rotation and position), since we have to change
+			// them during painting of the TextGraphObject
+			m_PositionX = m_TextObject.Position.X;
+			m_PositionY = m_TextObject.Position.Y;
+			m_Rotation  = m_TextObject.Rotation;
+
+
+			this.m_edPosX.Text = m_PositionX.ToString();
+			this.m_edPosY.Text = m_PositionY.ToString();
 		
 		
 			// fill the rotation combobox with some reasonable values
@@ -108,16 +120,32 @@ namespace Altaxo.Graph
 
 			// fill the font size combobox with reasonable values
 			this.m_cbFontSize.Items.AddRange(new string[]{"8","9","10","11","12","14","16","18","20","22","24","26","28","36","48","72"});
-			this.m_cbFontSize.SelectedText = m_TextObject.Font.Size.ToString();
+			this.m_cbFontSize.SelectedItem = m_TextObject.Font.Size.ToString();
 
 
 			// fill the color dialog box
-			foreach(Color c in Altaxo.Graph.PlotStyle.PlotColors)
+			this.m_cbFontColor.Items.Add("Custom");
+
+			foreach(Color c in PlotStyle.PlotColors)
 			{
-				this.m_cbFontColor.Items.Add(c);
+				name = c.ToString();
+				this.m_cbFontColor.Items.Add(name.Substring(7,name.Length-8));
 			}
+			name = PlotStyle.GetPlotColorName(this.m_TextObject.Color);
+			if(null==name)
+				name = "Custom";
+			this.m_cbFontColor.SelectedItem = name;
 
 
+			// fill the background dialog box
+			foreach(BackgroundStyle bgs in Enum.GetValues(typeof(BackgroundStyle)) )
+        this.m_cbBackground.Items.Add(bgs.ToString());
+			this.m_cbBackground.SelectedItem = this.m_TextObject.BackgroundStyle.ToString();
+		
+		
+			// indicate that all elements are now filled -
+			// the following changed are due to the user
+			this.m_bDialogInitialized = true;
 		}
 
 
@@ -212,6 +240,7 @@ namespace Altaxo.Graph
 			this.m_cbFontColor.Size = new System.Drawing.Size(88, 21);
 			this.m_cbFontColor.TabIndex = 4;
 			this.m_cbFontColor.Text = "comboBox1";
+			this.m_cbFontColor.SelectedIndexChanged += new System.EventHandler(this.OncbFontColor_SelectedIndexChanged);
 			// 
 			// m_lblBackground
 			// 
@@ -228,6 +257,7 @@ namespace Altaxo.Graph
 			this.m_cbBackground.Size = new System.Drawing.Size(88, 21);
 			this.m_cbBackground.TabIndex = 6;
 			this.m_cbBackground.Text = "comboBox1";
+			this.m_cbBackground.SelectedIndexChanged += new System.EventHandler(this.OncbBackground_SelectedIndexChanged);
 			// 
 			// m_lblPosX
 			// 
@@ -245,6 +275,7 @@ namespace Altaxo.Graph
 			this.m_edPosX.Size = new System.Drawing.Size(72, 20);
 			this.m_edPosX.TabIndex = 8;
 			this.m_edPosX.Text = "textBox1";
+			this.m_edPosX.TextChanged += new System.EventHandler(this.OnedPosX_TextChanged);
 			// 
 			// m_lblPosY
 			// 
@@ -262,6 +293,7 @@ namespace Altaxo.Graph
 			this.m_edPosY.Size = new System.Drawing.Size(80, 20);
 			this.m_edPosY.TabIndex = 10;
 			this.m_edPosY.Text = "textBox1";
+			this.m_edPosY.TextChanged += new System.EventHandler(this.OnedPosY_TextChanged);
 			// 
 			// m_lblRotation
 			// 
@@ -279,6 +311,7 @@ namespace Altaxo.Graph
 			this.m_cbRotation.Size = new System.Drawing.Size(56, 21);
 			this.m_cbRotation.TabIndex = 12;
 			this.m_cbRotation.Text = "comboBox1";
+			this.m_cbRotation.TextChanged += new System.EventHandler(this.On_cbRotation_TextChanged);
 			// 
 			// m_btBold
 			// 
@@ -419,9 +452,15 @@ namespace Altaxo.Graph
 		Graphics g = e.Graphics;
 		g.PageUnit = GraphicsUnit.Point;
 
+			// set position and rotation to zero
 		m_TextObject.Position=new PointF(0,0);
 		m_TextObject.Rotation = 0;
-			m_TextObject.Paint(g,m_Layer);
+		m_TextObject.Paint(g,m_Layer);
+		
+			// restore the original position and rotation values
+			m_TextObject.Position = new PointF(m_PositionX,m_PositionY);
+			m_TextObject.Rotation = m_Rotation;
+		
 		}
 
 		private void OnEditText_TextChanged(object sender, System.EventArgs e)
@@ -517,13 +556,110 @@ namespace Altaxo.Graph
 
 		private void OncbFonts_TextChanged(object sender, System.EventArgs e)
 		{
-			this.m_TextObject.Font = new Font(this.m_cbFonts.Text,this.m_TextObject.Font.Size,GraphicsUnit.World);
-			this.m_pnPreview.Invalidate();
+			if(m_bDialogInitialized)
+			{
+				FontFamily ff = new FontFamily(this.m_cbFonts.Text);
+				// make sure that regular style is available
+				if(ff.IsStyleAvailable(FontStyle.Regular))
+					this.m_TextObject.Font = new Font(ff,this.m_TextObject.Font.Size,FontStyle.Regular,GraphicsUnit.World);
+				else if(ff.IsStyleAvailable(FontStyle.Bold))
+					this.m_TextObject.Font = new Font(ff,this.m_TextObject.Font.Size,FontStyle.Bold,GraphicsUnit.World);
+				else if(ff.IsStyleAvailable(FontStyle.Italic))
+					this.m_TextObject.Font = new Font(ff,this.m_TextObject.Font.Size,FontStyle.Italic,GraphicsUnit.World);
+
+				this.m_pnPreview.Invalidate();
+			}		
 		}
 
 		private void OncbFontSize_TextChanged(object sender, System.EventArgs e)
 		{
+			if(m_bDialogInitialized)
+			{
+
+				try
+				{
+					string str = (string)this.m_cbFontSize.SelectedItem;
+					float newSize = System.Convert.ToSingle(str);
+					Font oldFont = this.m_TextObject.Font;
+					this.m_TextObject.Font = new Font(oldFont.FontFamily,newSize,oldFont.Style,GraphicsUnit.World);
+					this.m_pnPreview.Invalidate();
+				}
+				catch(Exception)
+				{
+				}
+			}		
+		}
+
+		private void OncbFontColor_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			if(m_bDialogInitialized)
+			{
+
+				string str = (string)this.m_cbFontColor.SelectedItem;
+				if(str!="Custom")
+				{
+					this.m_TextObject.Color = Color.FromName(str);
+					this.m_pnPreview.Invalidate();
+				}
+			}		
+		}
+
+		private void OncbBackground_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			if(m_bDialogInitialized)
+			{
+				string str = (string)this.m_cbBackground.SelectedItem;
+				this.m_TextObject.BackgroundStyle = (BackgroundStyle)Enum.Parse(typeof(BackgroundStyle),str,true);
+				this.m_pnPreview.Invalidate();
+			}		
+		}
+
+		private void On_cbRotation_TextChanged(object sender, System.EventArgs e)
+		{
+			if(this.m_bDialogInitialized)
+			{
+				try 
+				{ 
+					m_Rotation = System.Convert.ToSingle(this.m_cbRotation.Text);
+					m_TextObject.Rotation = m_Rotation;
+				}
+				catch(Exception)
+				{
+				}
+			}
 		
+		}
+
+		private void OnedPosX_TextChanged(object sender, System.EventArgs e)
+		{
+			if(this.m_bDialogInitialized)
+			{
+				try 
+				{ 
+					m_PositionX = System.Convert.ToSingle(this.m_edPosX.Text);
+					m_TextObject.Position = new PointF(m_PositionX, m_PositionY);
+				}
+				catch(Exception)
+				{
+				}
+			}
+		
+		
+		}
+
+		private void OnedPosY_TextChanged(object sender, System.EventArgs e)
+		{
+			if(this.m_bDialogInitialized)
+			{
+				try 
+				{ 
+					m_PositionY = System.Convert.ToSingle(this.m_edPosY.Text);
+					m_TextObject.Position = new PointF(m_PositionX, m_PositionY);
+				}
+				catch(Exception)
+				{
+				}
+			}
 		}
 
 

@@ -21,7 +21,7 @@
 using System;
 using System.Drawing;
 
-namespace Altaxo
+namespace Altaxo.Graph
 {
 	/// <summary>
 	/// Summary description for TextGraphObject.
@@ -285,6 +285,7 @@ namespace Altaxo
 	} // end of class TextLine
 	
 
+	public enum BackgroundStyle { None, BlackLine, Shadow, DarkMarbel, WhiteOut, BlackOut }
 
 
 	/// <summary>
@@ -294,16 +295,36 @@ namespace Altaxo
 	/// </summary>
 	public class ExtendedTextGraphObject : GraphObject
 	{
-		protected Font m_Font;
 		protected string m_Text = ""; // the text, which contains the formatting symbols
-		protected Color m_Color = Color.Black;
+		protected Font m_Font;
+		protected BrushHolder m_BrushHolder = new BrushHolder(Color.Black);
+		protected BackgroundStyle m_BackgroundStyle = BackgroundStyle.None;
+		protected float m_LineSpacingFactor=1.25f; // multiplicator for the line space, i.e. 1, 1.5 or 2
+
 
 		protected TextLine.TextLineCollection m_TextLines;
 		protected bool m_bStructureInSync=false; // true when the text was interpretet and the structure created
 		protected bool m_bMeasureInSync=false; // true when all items are measured
+		protected float m_TextWidth=0; // the total width of the item
+		protected float m_TextHeight=0; /// the total heigth of the item
 		
+		protected RectangleF m_Bounds; // outer dimensions of the rectangle (without shadow or 3D-effect)
+		protected PointF m_TextOffset; // offset of text to left upper corner of outer rectangle
 
 #region "Constructors"
+
+		public ExtendedTextGraphObject(ExtendedTextGraphObject from)
+		{
+			m_Font = null==from.Font ? null : (Font)from.Font.Clone();
+			m_BrushHolder = null==m_BrushHolder ? new BrushHolder(Color.Black):(BrushHolder)from.m_BrushHolder.Clone();
+			m_Text = from.m_Text;
+			m_BackgroundStyle = from.BackgroundStyle;
+	
+			// don't clone the cached items
+			m_TextLines=null;
+			m_bStructureInSync=false;
+			m_bMeasureInSync=false;
+		}
 
 		public ExtendedTextGraphObject()
 		{
@@ -594,8 +615,6 @@ namespace Altaxo
 
 		protected void MeasureStructure(Graphics g, object obj)
 		{
-			float currPosX=0;
-			float currPosY=0;
 			PointF zeroPoint = new PointF(0,0);
 			SizeF currSize;
 	
@@ -664,16 +683,49 @@ namespace Altaxo
 				m_TextLines[nLine].m_cyDescent = maxLineDescent;
 				m_TextLines[nLine].m_cyLineSpace = maxLineAscent + maxLineDescent;
 				m_TextLines[nLine].m_Width = sumItemWidth;
+			
+				maxLineWidth = Math.Max(sumItemWidth,maxLineWidth);
 			} // for all lines
+
+
+			// now store the outer dimensions of the object
+			float cyBaseLineSpace, cyBaseAscent, cyBaseDescent;
+			MeasureFont(g,m_Font,out cyBaseLineSpace, out cyBaseAscent, out cyBaseDescent);
+			
+			m_TextWidth = maxLineWidth; // total width of the object
+			this.m_TextHeight = m_LineSpacingFactor * cyBaseLineSpace * m_TextLines.Count;
+			// add to the height the ascent difference of the first line and the descent difference of the last line
+			if(m_TextLines.Count>0)
+			{
+				m_TextHeight += Math.Max(0,m_TextLines[0].m_cyAscent - cyBaseAscent);
+				m_TextHeight += Math.Max(0,m_TextLines[m_TextLines.Count-1].m_cyDescent - cyBaseDescent);
+			}
+
+			// the distance to the sides should be like the character n
+			float distanceX = 0.5f*g.MeasureString("n",m_Font).Width;
+			float distanceYU = cyBaseDescent;   // upper y distance bounding rectangle-string
+			float distanceYL = cyBaseDescent/2; // lower y distance
+			this.m_Bounds = new RectangleF(0,0,m_TextWidth+2*distanceX,m_TextHeight+distanceYU+distanceYL);
+			this.m_TextOffset = new PointF(distanceX,distanceYU);
 
 			m_bMeasureInSync = true;
 		} // end of function MeasureStructure
 
 
 
+		public BackgroundStyle BackgroundStyle
+		{
+			get { return m_BackgroundStyle; }
+			set
+			{
+				if(m_BackgroundStyle != value)
+				{
+					m_BackgroundStyle = value;
+				}
+			}
+		}
 
-
-		public Font Font
+			public Font Font
 		{
 			get
 			{
@@ -685,6 +737,11 @@ namespace Altaxo
 				this.m_bStructureInSync=false; // since the font is cached in the structure, it must be renewed
 				this.m_bMeasureInSync=false;
 			}
+		}
+
+		public bool Empty
+		{
+			get { return m_Text==null || m_Text.Length==0; }
 		}
 
 		public string Text
@@ -703,11 +760,11 @@ namespace Altaxo
 		{
 			get
 			{
-				return m_Color;
+				return m_BrushHolder.Color;
 			}
 			set
 			{
-				m_Color = value;
+				m_BrushHolder = new BrushHolder(value);
 			}
 		}
 
@@ -724,6 +781,54 @@ namespace Altaxo
 			cyDescent = cyLineSpace*iCellDescent/iCellSpace; 
 		}
 
+
+		protected virtual void PaintBackground(Graphics g)
+		{
+			// Assumptions: 
+			// 1. the overall size of the structure must be measured before, i.e. bMeasureInSync is true
+			// 2. the graphics object was translated and rotated before, so that the paining starts at (0,0)
+
+			if(!this.m_bMeasureInSync)
+				return;
+		
+			float shadowLen=5.0f;
+
+			switch(this.m_BackgroundStyle)
+			{
+				default:
+				case BackgroundStyle.None:
+					break; // do nothing
+				case BackgroundStyle.BlackLine:
+					g.DrawRectangle(Pens.Black,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
+					break;
+				case BackgroundStyle.BlackOut:
+					g.FillRectangle(Brushes.Black,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
+					break;
+				case BackgroundStyle.WhiteOut:
+					g.FillRectangle(Brushes.White,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
+					break;
+				case BackgroundStyle.Shadow:
+					g.FillRectangle(Brushes.Black,m_Bounds.X+shadowLen,m_Bounds.Y+shadowLen,m_Bounds.Width,m_Bounds.Height);
+					g.FillRectangle(Brushes.White,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
+					g.DrawRectangle(Pens.Black,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
+					break;
+				case BackgroundStyle.DarkMarbel:
+					g.FillRectangle(Brushes.Black,m_Bounds.X-shadowLen,m_Bounds.Y-shadowLen,m_Bounds.Width+2*shadowLen,m_Bounds.Height+2*shadowLen);
+					g.FillPolygon(Brushes.LightGray,new PointF[] {
+						new PointF(m_Bounds.X-shadowLen,m_Bounds.Y-shadowLen), // upper left point
+						new PointF(m_Bounds.X+m_Bounds.Width+shadowLen,m_Bounds.Y-shadowLen), // go to the right
+						new PointF(m_Bounds.X+m_Bounds.Width,m_Bounds.Y), // go 45 deg left down in the upper right corner
+						new PointF(m_Bounds.X,m_Bounds.Y), // upper left corner of the inner rectangle
+						new PointF(m_Bounds.X,m_Bounds.Y+m_Bounds.Height), // lower left corner of the inner rectangle
+						new PointF(m_Bounds.X-shadowLen,m_Bounds.Y+m_Bounds.Height+shadowLen) // lower left corner
+					});
+
+
+						g.FillRectangle(Brushes.DimGray,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
+					break;
+			} // end of switch BackgroundStyle
+		}
+
 		public override void Paint(Graphics g, object obj)
 		{
 			if(!this.m_bStructureInSync)
@@ -736,6 +841,10 @@ namespace Altaxo
 			
 			g.TranslateTransform(X,Y);
 			g.RotateTransform(m_Rotation);
+			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+
+			// first of all paint the background
+			PaintBackground(g);
 
 			// Modification of StringFormat is necessary to avoid 
 			// too big spaces between successive words
@@ -751,17 +860,11 @@ namespace Altaxo
 			MeasureFont(g, m_Font, out baseLineSpace, out baseAscent, out baseDescent);
 		
 
-			float currPosX=0;
-			float currPosY=0;
-			if(m_TextLines.Count>0)
-			{
-				currPosY = m_TextLines[0].m_cyAscent; 
-			}
+			float currPosY=m_TextOffset.Y + baseAscent;
 
-			SizeF currSize;
 			for(int nLine=0;nLine<m_TextLines.Count;nLine++)
 			{
-				currPosX=0;
+				float currPosX=m_TextOffset.X;
 				for(int nItem=0;nItem<m_TextLines[nLine].Count;nItem++)
 				{
 
@@ -772,7 +875,7 @@ namespace Altaxo
 
 					if(ti.IsText)
 					{
-						g.DrawString(ti.m_Text, ti.Font, new SolidBrush(m_Color), new PointF(currPosX, currPosY + ti.m_yShift - ti.m_cyAscent), strfmt);
+						g.DrawString(ti.m_Text, ti.Font, m_BrushHolder, new PointF(currPosX, currPosY + ti.m_yShift - ti.m_cyAscent), strfmt);
 						Console.WriteLine("{0} {1} {2}",ti.m_Text,ti.m_yShift,ti.m_cyAscent);
 						// update positions
 						currPosX += ti.m_Width;
@@ -796,7 +899,7 @@ namespace Altaxo
 
 				} // for all items in a textline
 			
-			currPosY += baseLineSpace*1.25f;
+			currPosY += baseLineSpace*this.m_LineSpacingFactor;
 			} // for all textlines
 			
 

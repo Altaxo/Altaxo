@@ -22,7 +22,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace Altaxo
+namespace Altaxo.Graph
 {
 	/// <summary>
 	/// Summary description for GraphObject.
