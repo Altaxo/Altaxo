@@ -67,6 +67,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			//			statusBarManager.Control.Dock = DockStyle.Bottom;
 			
 			ActiveWorkbenchWindowChanged += new EventHandler(UpdateMenu);
+
+      ActiveWorkbenchWindowChanged += new EventHandler(EhAltaxoFireContentChanged);
 			
 			MenuComplete += new EventHandler(SetStandardStatusBar);
 			SetStandardStatusBar(null, null);
@@ -190,7 +192,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 				base.OnClosing(e);
 			}
     }
-    #region IWorkbench Members
+    #region Altaxo.Main.Gui.IWorkbench Members
 
     ICollection Altaxo.Main.GUI.IWorkbench.ViewContentCollection
     {
@@ -229,6 +231,15 @@ namespace ICSharpCode.SharpDevelop.Gui
     void Altaxo.Main.GUI.IWorkbench.CloseAllViews()
     {
       base.CloseAllViews();
+    }
+
+    /// <summary>Fired if the current view (and so the view content) changed.</summary>
+    public event EventHandler ActiveViewContentChanged;
+
+    protected void EhAltaxoFireContentChanged(object o, EventArgs e)
+    {
+      if(null!=ActiveViewContentChanged)
+        ActiveViewContentChanged(this,e);
     }
 
     #endregion

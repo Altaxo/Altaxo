@@ -356,6 +356,8 @@
 		<Conditional activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
 			<MenuItem id="Column" label="${res:XML.MainMenu.ColumnMenu}">
 				<MenuItem id="SetColumnAsX" label="${res:XML.MainMenu.ColumnMenu.SetColumnAsX}" description="${res:XML.MainMenu.ColumnMenu.SetColumnAsX.Description}" class="Altaxo.Worksheet.Commands.SetColumnAsX"/>
+				<MenuItem id="SetColumnAsV" label="${res:XML.MainMenu.ColumnMenu.SetColumnAsValue}" description="${res:XML.MainMenu.ColumnMenu.SetColumnAsValue.Description}" class="Altaxo.Worksheet.Commands.SetColumnAsValue"/>
+				<MenuItem id="SetColumnAsLabel" label="${res:XML.MainMenu.ColumnMenu.SetColumnAsLabel}" description="${res:XML.MainMenu.ColumnMenu.SetColumnAsLabel.Description}" class="Altaxo.Worksheet.Commands.SetColumnAsLabel"/>
 				<MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}" class="Altaxo.Worksheet.Commands.RenameColumn"/>
 				<MenuItem id="SetGroupNumber" label="${res:XML.MainMenu.ColumnMenu.SetGroupNumber}" description="${res:XML.MainMenu.ColumnMenu.SetGroupNumber.Description}" class="Altaxo.Worksheet.Commands.SetColumnGroupNumber"/>
 				<MenuItem id="ExtractPropertyValues" label="${res:XML.MainMenu.ColumnMenu.ExtractPropertyValues}" description="${res:XML.MainMenu.ColumnMenu.ExtractPropertyValues.Description}" class="Altaxo.Worksheet.Commands.ExtractPropertyValues"/>

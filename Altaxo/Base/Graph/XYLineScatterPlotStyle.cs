@@ -317,6 +317,7 @@ namespace Altaxo.Graph
 
 				bool bInPlotSpace = true;
 				int  rangeStart=0;
+        int  rangeOffset=0;
 				PlotRangeList rangeList = new PlotRangeList();
 
 				int len = myPlotAssociation.PointCount;
@@ -327,7 +328,7 @@ namespace Altaxo.Graph
 						if(!bInPlotSpace)
 						{
 							bInPlotSpace=true;
-							rangeList.Add(new PlotRange(rangeStart,j,i-rangeStart));
+							rangeList.Add(new PlotRange(rangeStart,j,rangeOffset));
 						}
 						continue;
 					}
@@ -346,6 +347,7 @@ namespace Altaxo.Graph
 						{
 							bInPlotSpace=false;
 							rangeStart = j;
+              rangeOffset = i-j;
 						}
 
 						ptArray[j].X = (float)(layerWidth * x_rel);
@@ -357,14 +359,14 @@ namespace Altaxo.Graph
 						if(!bInPlotSpace)
 						{
 							bInPlotSpace=true;
-							rangeList.Add(new PlotRange(rangeStart,j,i-rangeStart));
+							rangeList.Add(new PlotRange(rangeStart,j,rangeOffset));
 						}
 					}
 				} // end for
 				if(!bInPlotSpace)
 				{
 					bInPlotSpace=true;
-					rangeList.Add(new PlotRange(rangeStart,j,i-rangeStart)); // add the last range
+					rangeList.Add(new PlotRange(rangeStart,j,rangeOffset)); // add the last range
 				}
 
 

@@ -341,6 +341,33 @@ namespace Altaxo.Graph
 			PointF[] ptArray,
 			Altaxo.Data.IReadableColumn labelColumn)
 		{
+      // save the graphics stat since we have to translate the origin
+      System.Drawing.Drawing2D.GraphicsState gs = g.Save();
+
+
+      float xpos=0, ypos=0;
+      float xdiff,ydiff;
+      for(int r=0;r<rangeList.Count;r++)
+      {
+        int lower = rangeList[r].LowerBound;
+        int upper = rangeList[r].UpperBound;
+        int offset = rangeList[r].OffsetToOriginal;
+        for(int j=lower;j<upper;j++)
+        {
+          string label = labelColumn[j+offset].ToString();
+          if(label==null || label==string.Empty)
+            continue;
+          
+          xdiff = ptArray[j].X - xpos;
+          ydiff = ptArray[j].Y - ypos;
+          xpos = ptArray[j].X;
+          ypos = ptArray[j].Y;
+          g.TranslateTransform(xdiff,ydiff);
+          this.Paint(g,label);
+          } // end for
+      }
+
+      g.Restore(gs); // Restore the graphics state
 		}
 
 

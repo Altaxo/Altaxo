@@ -1231,6 +1231,8 @@ namespace Altaxo.Graph.GUI
 		#endregion // Methods
 
 		#region Properties
+    public event EventHandler CurrentGraphToolChanged;
+
 		/// <summary>
 		/// Get / sets the currently active GraphTool.
 		/// </summary>
@@ -1242,6 +1244,7 @@ namespace Altaxo.Graph.GUI
 			}
 			set 
 			{
+        GraphTools oldValue = CurrentGraphTool;
 				m_CurrentGraphTool = value;
 
 				// select the appropriate mouse handler
@@ -1257,9 +1260,13 @@ namespace Altaxo.Graph.GUI
 						break;
 				}
 
+
 				// we set the current graph tool at the view at the very end, since in the meantime (by the mousehandler)
 				// the tool can have changed and is no longer <value>
 				m_View.CurrentGraphTool = m_CurrentGraphTool;
+
+        if(value!=oldValue && CurrentGraphToolChanged!=null)
+          CurrentGraphToolChanged(this,EventArgs.Empty);
 			}
 		}
 

@@ -317,6 +317,23 @@ namespace Altaxo.Worksheet.Commands
 		}
 	}
 
+  public class SetColumnAsLabel : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      ctrl.SetSelectedColumnAsLabel();	
+    }
+  }
+
+  public class SetColumnAsValue : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      ctrl.SetSelectedColumnAsValue();	
+    }
+  }
+
+
 	public class RenameColumn : AbstractWorksheetControllerCommand
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)

@@ -36,6 +36,11 @@ namespace Altaxo.Graph
 		protected XYColumnPlotData m_PlotAssociation;
 		protected AbstractXYPlotStyle       m_PlotStyle;
 
+    // TODO : here should be a collection of PlotData, which can be accessed
+    // by name, for instance "LabelData"
+
+    // TODO : here should be a collection of PlotStyles
+
 		#region Serialization
 		/// <summary>Used to serialize theXYDataPlot Version 0.</summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate

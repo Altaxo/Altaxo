@@ -51,6 +51,7 @@ namespace Altaxo.Worksheet
 
 			Graph.XYColumnPlotData[] pa = new Graph.XYColumnPlotData[len];
 
+      int nNumberOfPlotData=0;
 			for(int i=0;i<len;i++)
 			{
 				Altaxo.Data.DataColumn ycol = dg.DataTable[dg.SelectedColumns[i]];
@@ -61,6 +62,17 @@ namespace Altaxo.Worksheet
 					pa[i] = new Graph.XYColumnPlotData(xcol,ycol);
 				else
 					pa[i] = new Graph.XYColumnPlotData( new Altaxo.Data.IndexerColumn(), ycol);
+
+        nNumberOfPlotData++;
+
+        // if the next column is a label column, add it also
+        if((i+1)<len && ColumnKind.Label==dg.DataTable.DataColumns.GetColumnKind(dg.SelectedColumns[i+1]))
+        {
+          pa[i].LabelColumn = dg.DataTable.DataColumns[dg.SelectedColumns[i+1]];
+          i++;
+        }
+
+
 			}
 			
 			// now create a new Graph with this plot associations
@@ -70,7 +82,7 @@ namespace Altaxo.Worksheet
 
 			Altaxo.Graph.PlotGroup newPlotGroup = new Altaxo.Graph.PlotGroup(templatePlotGroupStyle);
 
-			for(int i=0;i<pa.Length;i++)
+			for(int i=0;i<nNumberOfPlotData;i++)
 			{
 				Altaxo.Graph.PlotItem pi = new Altaxo.Graph.XYColumnPlotItem(pa[i],(Altaxo.Graph.XYLineScatterPlotStyle)templatePlotStyle.Clone());
 				newPlotGroup.Add(pi);

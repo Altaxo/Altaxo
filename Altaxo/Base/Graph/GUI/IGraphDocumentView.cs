@@ -190,6 +190,13 @@ namespace Altaxo.Graph.GUI
 		IGraphView View { get; set; }
 
 
+    /// <summary>
+    /// This event will be fired if the current graph tool has changed, either by the user
+    /// or by the program.
+    /// </summary>
+    event EventHandler CurrentGraphToolChanged;
+
+
 		/// <summary>
 		/// This function is called if the user changed the active layer (by a toolbar or similar).
 		/// </summary>

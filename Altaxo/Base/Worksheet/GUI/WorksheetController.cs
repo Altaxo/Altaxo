@@ -1451,6 +1451,32 @@ namespace Altaxo.Worksheet.GUI
 			}
 		}
 
+    /// <summary>
+    /// Sets the column kind of the first selected column to a label column.
+    /// </summary>
+    public void SetSelectedColumnAsLabel()
+    {
+      if(SelectedColumns.Count>0)
+      {
+        this.DataTable.DataColumns.SetColumnKind(SelectedColumns[0],Altaxo.Data.ColumnKind.Label);
+        SelectedColumns.Clear();
+        this.View.TableAreaInvalidate(); // draw new because 
+      }
+    }
+
+    /// <summary>
+    /// Sets the column kind of the first selected column to a value column.
+    /// </summary>
+    public void SetSelectedColumnAsValue()
+    {
+      if(SelectedColumns.Count>0)
+      {
+        this.DataTable.DataColumns.SetColumnKind(SelectedColumns[0],Altaxo.Data.ColumnKind.V);
+        SelectedColumns.Clear();
+        this.View.TableAreaInvalidate(); // draw new because 
+      }
+    }
+
 		/// <summary>
 		/// Sets the group number of the currently selected columns to <code>nGroup</code>.
 		/// </summary>

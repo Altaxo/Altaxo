@@ -286,11 +286,64 @@ namespace Altaxo.Graph.Commands
 		}
 	}
 
+  /// <summary>
+  /// This class is intented to be used for commands into the graph tools toolbar. Commands derived
+  /// from it will update the toolbar whenever its state changed.
+  /// </summary>
+  public abstract class AbstractGraphToolsCommand : AbstractCheckableGraphControllerCommand
+  {
+     Altaxo.Graph.GUI.GraphController myCurrentGraphController;
+
+    protected AbstractGraphToolsCommand()
+    {
+      if(null!=Current.Workbench)
+      {
+        Current.Workbench.ActiveViewContentChanged += new EventHandler(this.EhWorkbenchContentChanged);
+        this.EhWorkbenchContentChanged(this,EventArgs.Empty);
+      }
+    }
+
+    protected void EhWorkbenchContentChanged(object o, System.EventArgs e)
+    {
+      if(!object.ReferenceEquals(Controller,myCurrentGraphController))
+      {
+        if(null!=myCurrentGraphController)
+        {
+          lock(this)
+          {
+            this.myCurrentGraphController.CurrentGraphToolChanged -= new EventHandler(this.EhGraphToolChanged);
+            this.myCurrentGraphController = null;
+          }
+        }
+        if(Controller!=null)
+        {
+          lock(this)
+          {
+            this.myCurrentGraphController = this.Controller;
+            this.myCurrentGraphController.CurrentGraphToolChanged += new EventHandler(this.EhGraphToolChanged);
+          }
+        }
+      }
+    }
+
+    protected void EhGraphToolChanged(object o, EventArgs e)
+    {
+      bool bBaseChecked = base.IsChecked;
+      bool bThisChecked = this.IsChecked; // only to retrieve the checked state
+      if(bBaseChecked!=bThisChecked) // to prevent that every button "updates" the toolbar
+      {
+        ICSharpCode.SharpDevelop.Gui.Workbench1 wb = Current.Workbench as ICSharpCode.SharpDevelop.Gui.Workbench1;
+        wb.UpdateToolbars();      
+      }
+    }
+
+  }
+
 	/// <summary>
 	/// Test class for a selected item
 	/// </summary>
-	public class SelectPointerTool : AbstractCheckableGraphControllerCommand
-	{
+  public class SelectPointerTool : AbstractGraphToolsCommand
+  {
 		public override bool IsChecked 
 		{
 			get 
@@ -319,7 +372,7 @@ namespace Altaxo.Graph.Commands
 	/// <summary>
 	/// Test class for a selected item
 	/// </summary>
-	public class SelectTextTool : AbstractCheckableGraphControllerCommand
+	public class SelectTextTool : AbstractGraphToolsCommand
 	{
 		public override bool IsChecked 
 		{
