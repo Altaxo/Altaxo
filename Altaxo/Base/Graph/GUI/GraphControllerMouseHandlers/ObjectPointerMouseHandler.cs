@@ -123,21 +123,20 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the mouse move event.
     /// </summary>
-    /// <param name="grac">The GraphController that sends this event.</param>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnMouseMove(GraphController grac, System.Windows.Forms.MouseEventArgs e)
+    public override MouseStateHandler OnMouseMove(System.Windows.Forms.MouseEventArgs e)
     {
-      base.OnMouseMove(grac,e);
+      base.OnMouseMove(e);
         
       PointF mouseDiff = new PointF(e.X - m_MoveObjectsLastMovePoint.X, e.Y - m_MoveObjectsLastMovePoint.Y);
       
       if(null!=_grip.Handle)
       {
-        PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(new Point(e.X,e.Y));
-        PointF newPosition = grac.Layers[_grip.Layer].GraphToLayerCoordinates(printAreaCoord);
+        PointF printAreaCoord = _grac.PixelToPrintableAreaCoordinates(new Point(e.X,e.Y));
+        PointF newPosition = _grac.Layers[_grip.Layer].GraphToLayerCoordinates(printAreaCoord);
         _grip.Handle.MoveGrip(newPosition);
-        grac.RepaintGraphArea();
+        _grac.RepaintGraphArea();
         return this;
       }
 
@@ -157,7 +156,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         // converted to Graph coordinates (1/72"), and then transformed for
         // each object to the layer coordinate differences of the layer
     
-        PointF graphDiff = grac.PixelToPageDifferences(mouseDiff); // calulate the moving distance in page units = graph units
+        PointF graphDiff = _grac.PixelToPageDifferences(mouseDiff); // calulate the moving distance in page units = graph units
 
         foreach(IHitTestObject graphObject in m_SelectedObjects.Keys)
         {
@@ -171,7 +170,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           
          
    
-          grac.RepaintGraphArea(); // rise a normal paint event
+          _grac.RepaintGraphArea(); // rise a normal paint event
           
 
       }
@@ -181,7 +180,6 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the MouseDown event when the object pointer tool is selected
     /// </summary>
-    /// <param name="grac">The sender of the event.</param>
     /// <param name="e">The mouse event args</param>
     /// <remarks>
     /// The strategy to handle the mousedown event is as following:
@@ -193,9 +191,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     ///   if no (we have not clicked on already selected objects) and no shift or control key pressed -> if a object was found add it to the selected objects and activate moving mode
     ///                                                                                                  if no object was found clear the selection list, deactivate moving mode
     /// </remarks>
-    public override MouseStateHandler OnMouseDown(GraphController grac, System.Windows.Forms.MouseEventArgs e)
+    public override MouseStateHandler OnMouseDown(System.Windows.Forms.MouseEventArgs e)
     {
-      base.OnMouseDown(grac, e);
+      base.OnMouseDown( e);
 
       if(e.Button != MouseButtons.Left)
         return this; // then there is nothing to do here
@@ -207,7 +205,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
 
       PointF mouseXY = new PointF(e.X,e.Y);                           // Mouse pixel coordinates
-      PointF graphXY = grac.PixelToPrintableAreaCoordinates(mouseXY); // Graph area coordinates
+      PointF graphXY = _grac.PixelToPrintableAreaCoordinates(mouseXY); // Graph area coordinates
 
 
       // if we have exacly one object selected, and the one object is grippable,
@@ -218,7 +216,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         // first switch to the layer graphics context (from printable context)
         int nLayer = (int)m_SelectedObjects[SingleSelectedHitTestObject];
 
-        PointF layerCoord = grac.Doc.Layers[nLayer].GraphToLayerCoordinates(graphXY);
+        PointF layerCoord = _grac.Doc.Layers[nLayer].GraphToLayerCoordinates(graphXY);
 
         _grip.Handle = gripObject.GripHitTest(layerCoord);
 
@@ -241,11 +239,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         if(bShiftKey || bControlKey) // if shift or control is pressed, remove the selection
         {
           m_SelectedObjects.Remove(clickedSelectedObject);
-          grac.RefreshGraph(); // repaint the graph
+          _grac.RefreshGraph(); // repaint the graph
         }
         else // not shift or control pressed -> so activate the object moving mode
         {
-          StartMovingObjects(grac,mouseXY);
+          StartMovingObjects(mouseXY);
         }
       } // end if bClickedOnAlreadySelectedObjects
       else // not clicked on a already selected object
@@ -253,7 +251,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
         // search for a object first
         IHitTestObject clickedObject;
         int clickedLayerNumber=0;
-        grac.FindGraphObjectAtPixelPosition(mouseXY, out clickedObject, out clickedLayerNumber);
+        _grac.FindGraphObjectAtPixelPosition(mouseXY, out clickedObject, out clickedLayerNumber);
 
         if(bShiftKey || bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
         {
@@ -261,23 +259,23 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           {
             m_SelectedObjects.Add(clickedObject,clickedLayerNumber);
             //grac.DrawSelectionRectangleImmediately(clickedObject,clickedLayerNumber);
-            StartMovingObjects(grac,mouseXY);
-            grac.RepaintGraphArea();
+            StartMovingObjects(mouseXY);
+            _grac.RepaintGraphArea();
           }
         }
         else // no shift or control key pressed
         {
           if(null!=clickedObject)
           {
-            ClearSelections(grac);
+            ClearSelections();
             m_SelectedObjects.Add(clickedObject,clickedLayerNumber);
             //grac.DrawSelectionRectangleImmediately(clickedObject,clickedLayerNumber);
-            StartMovingObjects(grac,mouseXY);
-            grac.RepaintGraphArea();
+            StartMovingObjects(mouseXY);
+            _grac.RepaintGraphArea();
           }
           else // if clicked to nothing 
           {
-            ClearSelections(grac); // clear the selection list
+            ClearSelections(); // clear the selection list
           }
         } // end else no shift or control
 
@@ -288,12 +286,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the mouse up event.
     /// </summary>
-    /// <param name="grac">The GraphController that sends this event.</param>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnMouseUp(GraphController grac, System.Windows.Forms.MouseEventArgs e)
+    public override MouseStateHandler OnMouseUp(System.Windows.Forms.MouseEventArgs e)
     {
-      base.OnMouseUp(grac,e);
+      base.OnMouseUp(e);
 
 
       if(_grip.Handle!=null)
@@ -303,19 +300,18 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       }
 
       System.Console.WriteLine("MouseUp {0},{1}",e.X,e.Y);
-      EndMovingObjects(grac);
+      EndMovingObjects();
       return this;
     }
 
     /// <summary>
     /// Handles the mouse doubleclick event.
     /// </summary>
-    /// <param name="grac">The GraphController that sends this event.</param>
     /// <param name="e">EventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnDoubleClick(GraphController grac, System.EventArgs e)
+    public override MouseStateHandler OnDoubleClick(System.EventArgs e)
     {
-      base.OnDoubleClick(grac,e);
+      base.OnDoubleClick(e);
 
       // if there is exactly one object selected, try to open the corresponding configuration dialog
       if(m_SelectedObjects.Count==1)
@@ -338,12 +334,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the mouse click event.
     /// </summary>
-    /// <param name="grac">The GraphController that sends this event.</param>
     /// <param name="e">EventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnClick(GraphController grac, System.EventArgs e)
+    public override MouseStateHandler OnClick(System.EventArgs e)
     {
-      base.OnClick(grac,e);
+      base.OnClick(e);
 
       System.Console.WriteLine("Click");
 
@@ -354,9 +349,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Actions neccessary to start the dragging of graph objects
     /// </summary>
-    /// <param name="grac">The GraphController for which these actions should apply.</param>
     /// <param name="currentMousePosition">the current mouse position in pixel</param>
-    protected void StartMovingObjects(GraphController grac, PointF currentMousePosition)
+    protected void StartMovingObjects(PointF currentMousePosition)
     {
       if(!m_bMoveObjectsOnMouseMove)
       {
@@ -378,7 +372,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Actions neccessary to end the dragging of graph objects
     /// </summary>
-    protected void EndMovingObjects(GraphController grac)
+    protected void EndMovingObjects()
     {
       bool bRepaint = m_bObjectsWereMoved; // repaint the graph when objects were really moved
 
@@ -397,26 +391,14 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       if(bRepaint)
       {
         //grac.m_FrozenGraphIsDirty = true;
-        grac.RefreshGraph(); // redraw the contents
+        _grac.RefreshGraph(); // redraw the contents
       }
     }
 
-    /// <summary>
-    /// Clears the selection list and repaints the graph if neccessary
-    /// </summary>
-    public void ClearSelections(GraphController grac)
-    {
-      bool bRepaint = (m_SelectedObjects.Count>0); // is a repaint neccessary
-      m_SelectedObjects.Clear();
-      EndMovingObjects(grac);
 
-      if(bRepaint)
-        grac.RefreshGraph(); 
-    }
-
-    public override void AfterPaint(GraphController grac, Graphics g)
+    public override void AfterPaint(Graphics g)
     {
-      g.TranslateTransform(grac.Doc.PrintableBounds.X,grac.Doc.PrintableBounds.Y);
+      g.TranslateTransform(_grac.Doc.PrintableBounds.X,_grac.Doc.PrintableBounds.Y);
       // finally, mark the selected objects
       
       if(SingleSelectedObject is IGrippableObject)
@@ -427,7 +409,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
           // first switch to the layer graphics context (from printable context)
           int nLayer = (int)m_SelectedObjects[SingleSelectedHitTestObject];
 
-          grac.Doc.Layers[nLayer].GraphToLayerCoordinates(g);
+          _grac.Doc.Layers[nLayer].GraphToLayerCoordinates(g);
 
           gripObject.ShowGrips(g);
         }
@@ -443,7 +425,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       }
 
 
-      base.AfterPaint (grac,g);
+      base.AfterPaint (g);
     }
 
 
@@ -508,6 +490,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       bool bRepaint = (m_SelectedObjects.Count>0); // is a repaint neccessary
       m_SelectedObjects.Clear();
       
+      EndMovingObjects();
       
       // this.m_MouseState = new ObjectPointerMouseHandler();
 

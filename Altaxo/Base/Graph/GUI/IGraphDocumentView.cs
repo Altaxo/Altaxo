@@ -31,6 +31,7 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph.GUI
 {
+  /*
   /// <summary>
   /// This enumeration declares the current choosen tool for the GraphControl
   /// The numeric values have to match the icon positions in the corresponding toolbar
@@ -50,10 +51,15 @@ namespace Altaxo.Graph.GUI
     /// <summary>
     /// Tool to draw a single line.
     /// </summary>
-    SingleLine
+    SingleLine,
+
+    /// <summary>
+    /// Tool to zoom the axes, i.e. to change the values of the axes boundaries.
+    /// </summary>
+    ZoomAxes
 
   }
-
+*/
 
 
 
@@ -128,16 +134,6 @@ namespace Altaxo.Graph.GUI
     /// Returns the size (in pixel) of the area, wherein the graph is painted.
     /// </summary>
     Size GraphSize { get; }
-
-
-    /// <summary>
-    /// Sets the currently selected GraphTool. The View has to show a toolbar or
-    /// so to provide a possibility for choosing tools. If the value is set by this
-    /// property, the toolbar has to reflect the state of this property.
-    /// </summary>
-    /// <remarks>The view must not send back a event, if the current tool is changed by this property.
-    /// It should only send the CurrentGraphToolChanged event to the controller, if the _user_ changed the current graph tool.</remarks>
-    GraphTools CurrentGraphTool { set; }
 
     /// <summary>
     /// Sets the currently active layer. If the view has some means to show the
@@ -233,11 +229,11 @@ namespace Altaxo.Graph.GUI
     /// <summary>
     /// This function is called if the user changed the GraphTool.
     /// </summary>
-    /// <param name="graphTool">The new selected GraphTool.</param>
+    /// <param name="graphToolType">The type of the new selected GraphTool.</param>
     /// <remarks>The view should not reflect the newly selected graph tool. This should only be done if the view
     /// receives the currently selected graphtool by setting its <see cref="IGraphView.CurrentGraphTool"/> property.
     /// In case radio buttons are used, they should not push itself (autopush or similar should be disabled).</remarks>
-    void EhView_CurrentGraphToolChoosen(GraphTools graphTool);
+    void EhView_CurrentGraphToolChoosen(System.Type graphToolType);
   
 
     /// <summary>

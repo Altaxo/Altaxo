@@ -172,6 +172,18 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
             
             break;
 #endif
+          case ".AXOPRJ":
+          case ".AXOPRZ":
+            try
+            {
+              Current.ProjectService.OpenProject(file);
+            }
+            catch(Exception ex)
+            {
+              Current.Console.WriteLine("Unable to open project <<{0}>>, the following exception was thrown:",file);
+              Current.Console.WriteLine(ex.ToString());
+            }
+            break;
           default:
             try 
             {

@@ -47,10 +47,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the mouse move event.
     /// </summary>
-    /// <param name="sender">The GraphController that sends this event.</param>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public virtual MouseStateHandler OnMouseMove(GraphController sender, System.Windows.Forms.MouseEventArgs e)
+    public virtual MouseStateHandler OnMouseMove(System.Windows.Forms.MouseEventArgs e)
     {
       return this;
     }
@@ -58,10 +57,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the mouse up event. Stores the position of the mouse into <see cref="m_LastMouseUp"/>.
     /// </summary>
-    /// <param name="sender">The GraphController that sends this event.</param>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public virtual MouseStateHandler OnMouseUp(GraphController sender, System.Windows.Forms.MouseEventArgs e)
+    public virtual MouseStateHandler OnMouseUp(System.Windows.Forms.MouseEventArgs e)
     {
       m_LastMouseUp = new Point(e.X,e.Y);
       return this;
@@ -70,10 +68,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the mouse down event. Stores the position of the mouse into <see cref="m_LastMouseDown"/>.
     /// </summary>
-    /// <param name="sender">The GraphController that sends this event.</param>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public virtual MouseStateHandler OnMouseDown(GraphController sender, System.Windows.Forms.MouseEventArgs e)
+    public virtual MouseStateHandler OnMouseDown(System.Windows.Forms.MouseEventArgs e)
     {
       m_LastMouseDown = new Point(e.X,e.Y);
       return this;
@@ -82,10 +79,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the mouse click event.
     /// </summary>
-    /// <param name="sender">The GraphController that sends this event.</param>
     /// <param name="e">EventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public virtual MouseStateHandler OnClick(GraphController sender, System.EventArgs e)
+    public virtual MouseStateHandler OnClick(System.EventArgs e)
     {
       return this;
     }
@@ -93,10 +89,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the mouse doubleclick event.
     /// </summary>
-    /// <param name="sender">The GraphController that sends this event.</param>
     /// <param name="e">EventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public virtual MouseStateHandler OnDoubleClick(GraphController sender, System.EventArgs e)
+    public virtual MouseStateHandler OnDoubleClick(System.EventArgs e)
     {
       return this;
     }
@@ -112,9 +107,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// This function is called just after the paint event.
     /// </summary>
-    /// <param name="grac"></param>
     /// <param name="g"></param>
-    public virtual void AfterPaint(GraphController grac, Graphics g)
+    public virtual void AfterPaint(Graphics g)
     {
     }
 

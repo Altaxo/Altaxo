@@ -296,6 +296,8 @@
 				<ToolbarItem id="GraphCmdsSeparator" tooltip="-" />
 				<ToolbarItem id="NewLayerLegend" icon="Icons.16x16.NewLegend" tooltip="${res:XML.MainMenu.GraphMenu.NewLayerLegend.Description}"
 					class="Altaxo.Graph.Commands.NewLayerLegend" />
+				<ToolbarItem id="ZoomAxes" icon="Icons.16x16.ZoomAxes" tooltip="${res:XML.MainMenu.GraphMenu.ZoomAxes.Description}"
+					class="Altaxo.Graph.Commands.ZoomAxesTool" />
 			</Conditional>
 			<ToolbarItem id="PlotSeparator" tooltip="-" />
 			<Conditional activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Disable">

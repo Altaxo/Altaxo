@@ -65,18 +65,17 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the drawing of a straight single line.
     /// </summary>
-    /// <param name="grac">The graph control.</param>
     /// <param name="e">EventArgs.</param>
     /// <returns>The mouse state handler for handling the next mouse events.</returns>
-    public override MouseStateHandler OnClick(GraphController grac, System.EventArgs e)
+    public override MouseStateHandler OnClick( System.EventArgs e)
     {
-      base.OnClick(grac,e);
+      base.OnClick(e);
 
       // get the page coordinates (in Point (1/72") units)
       //PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
       PointF printAreaCoord = _currentMousePrintAreaCoord;
       // with knowledge of the current active layer, calculate the layer coordinates from them
-      PointF layerCoord = grac.Layers[grac.CurrentLayerNumber].GraphToLayerCoordinates(printAreaCoord);
+      PointF layerCoord = _grac.Layers[_grac.CurrentLayerNumber].GraphToLayerCoordinates(printAreaCoord);
 
       _Points[_currentPoint].layerCoord = layerCoord;
       _Points[_currentPoint].printAreaCoord = printAreaCoord;
@@ -86,7 +85,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       {
         FinishDrawing();
         _currentPoint=0;
-        return new ObjectPointerMouseHandler(grac);
+        return new ObjectPointerMouseHandler(_grac);
       }
       else
       {
@@ -95,9 +94,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     }
 
 
-    public override MouseStateHandler OnMouseMove(GraphController sender, MouseEventArgs e)
+    public override MouseStateHandler OnMouseMove( MouseEventArgs e)
     {
-      base.OnMouseMove (sender, e);
+      base.OnMouseMove ( e);
      
       _currentMousePrintAreaCoord = _grac.PixelToPrintableAreaCoordinates(new Point(e.X,e.Y));
 
@@ -141,11 +140,10 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Draws the temporary line(s) from the first point to the mouse.
     /// </summary>
-    /// <param name="grac"></param>
     /// <param name="g"></param>
-    public override void AfterPaint(GraphController grac, Graphics g)
+    public override void AfterPaint(Graphics g)
     {
-      base.AfterPaint (grac, g);
+      base.AfterPaint ( g);
 
       g.TranslateTransform(_grac.Doc.PrintableBounds.X,_grac.Doc.PrintableBounds.Y);
 
@@ -163,7 +161,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       Graph.LineGraphic go = new LineGraphic(_Points[0].layerCoord,_Points[1].layerCoord);
 
       // deselect the text tool
-      this._grac.CurrentGraphTool = GraphTools.ObjectPointer;
+      this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
       _grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(go);
       _grac.RefreshGraph();
       

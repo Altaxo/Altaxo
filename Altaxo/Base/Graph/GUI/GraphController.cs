@@ -98,9 +98,6 @@ namespace Altaxo.Graph.GUI
     /// <summary>Number of the currently selected plot (or -1 if no plot is present on the layer).</summary>
     protected int m_CurrentPlotNumber;
     
-    /// <summary>Currently selected GraphTool.</summary>
-    protected GraphTools m_CurrentGraphTool;
-    
     /// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
     protected MouseStateHandler m_MouseState;
 
@@ -267,7 +264,7 @@ namespace Altaxo.Graph.GUI
       m_CurrentPlotNumber = -1;
     
       // Currently selected GraphTool.</summary>
-      m_CurrentGraphTool = GraphTools.ObjectPointer;
+      // m_CurrentGraphTool = GraphTools.ObjectPointer;
     
       // A instance of a mouse handler class that currently handles the mouse events..</summary>
       m_MouseState= new ObjectPointerMouseHandler(this);
@@ -822,7 +819,7 @@ namespace Altaxo.Graph.GUI
           m_View.GraphMenu = m_MainMenu;
           m_View.NumberOfLayers = m_Graph.Layers.Count;
           m_View.CurrentLayer = this.CurrentLayerNumber;
-          m_View.CurrentGraphTool = this.CurrentGraphTool;
+          //m_View.CurrentGraphTool = this.CurrentGraphTool;
         
           // Adjust the zoom level just so, that area fits into control
           Graphics grfx = m_View.CreateGraphGraphics();
@@ -910,9 +907,9 @@ namespace Altaxo.Graph.GUI
     /// <remarks>The view should not reflect the newly selected graph tool. This should only be done if the view
     /// receives the currently selected graphtool by setting its <see cref="IGraphView.CurrentGraphTool"/> property.
     /// In case radio buttons are used, they should not push itself (autopush or similar should be disabled).</remarks>
-    public virtual void EhView_CurrentGraphToolChoosen(GraphTools currGraphTool)
+    public virtual void EhView_CurrentGraphToolChoosen(System.Type currGraphToolType)
     {
-      this.CurrentGraphTool = currGraphTool;
+      this.CurrentGraphToolType = currGraphToolType;
     }
 
     /// <summary>
@@ -989,7 +986,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">MouseEventArgs.</param>
     public virtual void EhView_GraphPanelMouseUp(System.Windows.Forms.MouseEventArgs e)
     {
-      m_MouseState = m_MouseState.OnMouseUp(this,e);
+      m_MouseState = m_MouseState.OnMouseUp(e);
     }
 
     /// <summary>
@@ -998,7 +995,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">MouseEventArgs.</param>
     public virtual void EhView_GraphPanelMouseDown(System.Windows.Forms.MouseEventArgs e)
     {
-      m_MouseState = m_MouseState.OnMouseDown(this,e);
+      m_MouseState = m_MouseState.OnMouseDown(e);
     }
 
     /// <summary>
@@ -1007,7 +1004,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">MouseEventArgs.</param>
     public virtual void EhView_GraphPanelMouseMove(System.Windows.Forms.MouseEventArgs e)
     {
-      m_MouseState = this.m_MouseState.OnMouseMove(this,e);
+      m_MouseState = this.m_MouseState.OnMouseMove(e);
     }
 
     /// <summary>
@@ -1016,7 +1013,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e">EventArgs.</param>
     public virtual void EhView_GraphPanelMouseClick(System.EventArgs e)
     {
-      m_MouseState = m_MouseState.OnClick(this,e);
+      m_MouseState = m_MouseState.OnClick(e);
     }
 
     /// <summary>
@@ -1025,7 +1022,7 @@ namespace Altaxo.Graph.GUI
     /// <param name="e"></param>
     public virtual void EhView_GraphPanelMouseDoubleClick(System.EventArgs e)
     {
-      m_MouseState = m_MouseState.OnDoubleClick(this,e);
+      m_MouseState = m_MouseState.OnDoubleClick(e);
     }
 
     /// <summary>
@@ -1310,7 +1307,7 @@ namespace Altaxo.Graph.GUI
         }
          
         // special painting depending on current selected tool
-       this.m_MouseState.AfterPaint(this,g);
+       this.m_MouseState.AfterPaint(g);
       }
     }
 
@@ -1400,51 +1397,30 @@ namespace Altaxo.Graph.GUI
     #region Properties
     public event EventHandler CurrentGraphToolChanged;
 
+
     /// <summary>
-    /// Get / sets the currently active GraphTool.
+    /// Get/sets the currently active GraphTool.
     /// </summary>
-    public GraphTools CurrentGraphTool
+    public System.Type CurrentGraphToolType
     {
-      get
+      get 
       {
-        return m_CurrentGraphTool; 
+          return m_MouseState.GetType();
       }
-      set 
+      set
       {
-        GraphTools oldValue = CurrentGraphTool;
-        m_CurrentGraphTool = value;
-
-        // select the appropriate mouse handler
-        switch(m_CurrentGraphTool)
+        
+        if(m_MouseState==null || m_MouseState.GetType() != value)
         {
-          case GraphTools.ObjectPointer:
-            if(!(m_MouseState is ObjectPointerMouseHandler))
-              m_MouseState = new ObjectPointerMouseHandler(this);
-            break;
-          case GraphTools.Text:
-            if(!(m_MouseState is TextToolMouseHandler))
-              m_MouseState = new TextToolMouseHandler();
-            break;
-          case GraphTools.ReadPlotItemData:
-            if(!(m_MouseState is ReadPlotItemDataMouseHandler))
-              m_MouseState = new ReadPlotItemDataMouseHandler(this);
-            break;
-          case GraphTools.SingleLine:
-            if(!(m_MouseState is SingleLineDrawingMouseHandler))
-              m_MouseState = new SingleLineDrawingMouseHandler(this);
-            break;
-
+          m_MouseState = (MouseStateHandler)System.Activator.CreateInstance(value,new object[]{this});
+        
+          if(CurrentGraphToolChanged!=null)
+            CurrentGraphToolChanged(this,EventArgs.Empty);
         }
-
-
-        // we set the current graph tool at the view at the very end, since in the meantime (by the mousehandler)
-        // the tool can have changed and is no longer <value>
-        m_View.CurrentGraphTool = m_CurrentGraphTool;
-
-        if(value!=oldValue && CurrentGraphToolChanged!=null)
-          CurrentGraphToolChanged(this,EventArgs.Empty);
       }
     }
+
+   
 
     /// <summary>
     /// Returns the layer collection. Is the same as m_GraphDocument.XYPlotLayer.

@@ -37,38 +37,43 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
   /// </summary>
   public class TextToolMouseHandler : MouseStateHandler
   {
+    GraphController _grac;
+
+    public TextToolMouseHandler(GraphController grac)
+    {
+      _grac = grac;
+    }
     /// <summary>
     /// Handles the click event by opening the text tool dialog.
     /// </summary>
-    /// <param name="grac">The graph control.</param>
     /// <param name="e">EventArgs.</param>
     /// <returns>The mouse state handler for handling the next mouse events.</returns>
-    public override MouseStateHandler OnClick(GraphController grac, System.EventArgs e)
+    public override MouseStateHandler OnClick(System.EventArgs e)
     {
-      base.OnClick(grac,e);
+      base.OnClick(e);
 
       // get the page coordinates (in Point (1/72") units)
-      PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
+      PointF printAreaCoord = _grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
       // with knowledge of the current active layer, calculate the layer coordinates from them
-      PointF layerCoord = grac.Layers[grac.CurrentLayerNumber].GraphToLayerCoordinates(printAreaCoord);
+      PointF layerCoord = _grac.Layers[_grac.CurrentLayerNumber].GraphToLayerCoordinates(printAreaCoord);
 
       TextGraphics tgo = new TextGraphics();
       tgo.Position = layerCoord;
 
       // deselect the text tool
-      grac.CurrentGraphTool = GraphTools.ObjectPointer;
+      _grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
 
-      TextControlDialog dlg = new TextControlDialog(grac.Layers[grac.CurrentLayerNumber],tgo);
-      if(DialogResult.OK==dlg.ShowDialog(grac.View.Window))
+      TextControlDialog dlg = new TextControlDialog(_grac.Layers[_grac.CurrentLayerNumber],tgo);
+      if(DialogResult.OK==dlg.ShowDialog(_grac.View.Window))
       {
         // add the resulting textgraphobject to the layer
         if(!dlg.SimpleTextGraphics.Empty)
         {
-          grac.Layers[grac.CurrentLayerNumber].GraphObjects.Add(dlg.SimpleTextGraphics);
-          grac.RefreshGraph();
+          _grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(dlg.SimpleTextGraphics);
+          _grac.RefreshGraph();
         }
       }
-      return new ObjectPointerMouseHandler(grac);
+      return new ObjectPointerMouseHandler(_grac);
     }
   }
 }

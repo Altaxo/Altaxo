@@ -47,7 +47,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       
 
       // deselect the text tool
-      this._grac.CurrentGraphTool = GraphTools.ObjectPointer;
+      this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
       _grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(go);
       _grac.RefreshGraph();
       

@@ -62,12 +62,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the mouse move event.
     /// </summary>
-    /// <param name="grac">The GraphController that sends this event.</param>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnMouseMove(GraphController grac, System.Windows.Forms.MouseEventArgs e)
+    public override MouseStateHandler OnMouseMove(System.Windows.Forms.MouseEventArgs e)
     {
-      base.OnMouseMove(grac,e);
+      base.OnMouseMove(e);
         
       return this;
     }
@@ -75,15 +74,14 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the MouseDown event when the plot point tool is selected
     /// </summary>
-    /// <param name="grac">The sender of the event.</param>
     /// <param name="e">The mouse event args</param>
      
-    public override MouseStateHandler OnMouseDown(GraphController grac, System.Windows.Forms.MouseEventArgs e)
+    public override MouseStateHandler OnMouseDown(System.Windows.Forms.MouseEventArgs e)
     {
-      base.OnMouseDown(grac, e);
+      base.OnMouseDown(e);
 
       PointF mouseXY = new PointF(e.X,e.Y);
-      m_Cross = grac.PixelToPrintableAreaCoordinates(mouseXY);
+      m_Cross = _grac.PixelToPrintableAreaCoordinates(mouseXY);
 
       DisplayCrossCoordinates();
       
@@ -158,12 +156,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the mouse up event.
     /// </summary>
-    /// <param name="grac">The GraphController that sends this event.</param>
     /// <param name="e">MouseEventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnMouseUp(GraphController grac, System.Windows.Forms.MouseEventArgs e)
+    public override MouseStateHandler OnMouseUp(System.Windows.Forms.MouseEventArgs e)
     {
-      base.OnMouseUp(grac,e);
+      base.OnMouseUp(e);
 
       return this;
     }
@@ -171,12 +168,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the mouse doubleclick event.
     /// </summary>
-    /// <param name="grac">The GraphController that sends this event.</param>
     /// <param name="e">EventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnDoubleClick(GraphController grac, System.EventArgs e)
+    public override MouseStateHandler OnDoubleClick( System.EventArgs e)
     {
-      base.OnDoubleClick(grac,e);
+      base.OnDoubleClick(e);
 
       
       return this;
@@ -186,12 +182,11 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Handles the mouse click event.
     /// </summary>
-    /// <param name="grac">The GraphController that sends this event.</param>
     /// <param name="e">EventArgs as provided by the view.</param>
     /// <returns>The next mouse state handler that should handle mouse events.</returns>
-    public override MouseStateHandler OnClick(GraphController grac, System.EventArgs e)
+    public override MouseStateHandler OnClick(System.EventArgs e)
     {
-      base.OnClick(grac,e);
+      base.OnClick(e);
 
       
 
@@ -199,9 +194,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     }
 
 
-    public override void AfterPaint(GraphController grac, Graphics g)
+    public override void AfterPaint( Graphics g)
     {
-      base.AfterPaint (grac, g);
+      base.AfterPaint (g);
       g.TranslateTransform(_grac.Doc.PrintableBounds.X,_grac.Doc.PrintableBounds.Y);
 
       // draw a red cross onto the selected data point

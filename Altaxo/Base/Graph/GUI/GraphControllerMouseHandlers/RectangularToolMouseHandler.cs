@@ -71,12 +71,9 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     /// <summary>
     /// Draws the temporary line(s) from the first point to the mouse.
     /// </summary>
-    /// <param name="grac"></param>
     /// <param name="g"></param>
-    public override void AfterPaint(GraphController grac, Graphics g)
+    public override void AfterPaint(Graphics g)
     {
-      base.AfterPaint (grac, g);
-
       g.TranslateTransform(_grac.Doc.PrintableBounds.X,_grac.Doc.PrintableBounds.Y);
 
       if(_currentPoint>=1)
@@ -87,7 +84,12 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     void DrawRectangleFromLTRB(Graphics g,PointF a, PointF b)
     {
       RectangleF rect = RectangleF.FromLTRB(a.X,a.Y,b.X,b.Y);
-      g.DrawRectangle(Pens.Blue,rect.X,rect.Y,rect.Width,rect.Height);      
+      Pen pen = Pens.Blue;
+      g.DrawLine(pen,a.X,a.Y,b.X,a.Y);
+      g.DrawLine(pen,b.X,a.Y,b.X,b.Y);
+      g.DrawLine(pen,b.X,b.Y,a.X,b.Y);
+      g.DrawLine(pen,a.X,b.Y,a.X,a.Y);
+//      g.DrawRectangle(Pens.Blue,rect.X,rect.Y,rect.Width,rect.Height);      
     }
 
 
@@ -96,7 +98,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       Graph.RectangleGraphic go =  Graph.RectangleGraphic.FromLTRB(_Points[0].layerCoord.X,_Points[0].layerCoord.Y,_Points[1].layerCoord.X,_Points[1].layerCoord.Y);
 
       // deselect the text tool
-      this._grac.CurrentGraphTool = GraphTools.ObjectPointer;
+      this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
       _grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(go);
       _grac.RefreshGraph();
       

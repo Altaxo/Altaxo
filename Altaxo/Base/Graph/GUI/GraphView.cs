@@ -50,8 +50,7 @@ namespace Altaxo.Graph.GUI
     [Browsable(false)]
     private ToolBar m_GraphToolsToolBar=null;
 
-    [Browsable(false)]
-    private GraphTools m_CachedCurrentGraphTool = GraphTools.ObjectPointer;
+   
 
     [Browsable(false)]
     private int        m_CachedCurrentLayer = -1;
@@ -300,7 +299,7 @@ namespace Altaxo.Graph.GUI
     private void EhGraphToolsToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
     {
       if(null!=m_Ctrl)
-        m_Ctrl.EhView_CurrentGraphToolChoosen((GraphTools)e.Button.Tag);
+        throw new NotImplementedException("This is not implemented any longer");
     }
 
 
@@ -424,22 +423,7 @@ namespace Altaxo.Graph.GUI
         return this.m_GraphPanel.Size;
       }
     }
-
-    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public GraphTools CurrentGraphTool
-    {
-      set
-      {
-        m_CachedCurrentGraphTool = value;
-        
-        if(null!=this.m_GraphToolsToolBar)
-        {
-          for(int i=0;i<m_GraphToolsToolBar.Buttons.Count;i++)
-            m_GraphToolsToolBar.Buttons[i].Pushed = (i==(int)value);
-        }
-      }
-    }
-
+   
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int CurrentLayer
     {
@@ -477,7 +461,7 @@ namespace Altaxo.Graph.GUI
 
     #endregion
 
-
+/*
     public ToolBar CreateGraphToolsToolbar()
     {
       ToolBar tb = new ToolBar();
@@ -501,7 +485,7 @@ namespace Altaxo.Graph.GUI
     
       return tb;
     }
-
+*/
     /// <summary>
     /// This function is to solve the problem, that after selection of the graph window by
     /// clicking in the tab, the View did not receive KeyPressed messages. 

@@ -765,6 +765,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\GUI\GraphControllerMouseHandlers\ZoomAxesMouseHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\Procedures\PolynomialFitting.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -475,7 +475,7 @@ namespace Altaxo.Graph.Commands
       {
         if(null!=Controller)
         {
-          base.IsChecked = (Controller.CurrentGraphTool==GraphTools.ObjectPointer);
+          base.IsChecked = (Controller.CurrentGraphToolType==typeof(GUI.GraphControllerMouseHandlers.ObjectPointerMouseHandler));
         }
 
         return base.IsChecked;
@@ -485,7 +485,7 @@ namespace Altaxo.Graph.Commands
         base.IsChecked = value;
         if(true==value && null!=Controller)
         {
-          Controller.CurrentGraphTool=GraphTools.ObjectPointer;
+          Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.ObjectPointerMouseHandler);
         }
 
         ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
@@ -505,7 +505,7 @@ namespace Altaxo.Graph.Commands
       {
         if(null!=Controller)
         {
-          base.IsChecked = (Controller.CurrentGraphTool==GraphTools.Text);
+          base.IsChecked = (Controller.CurrentGraphToolType==typeof(GUI.GraphControllerMouseHandlers.TextToolMouseHandler));
         }
 
         return base.IsChecked;
@@ -515,7 +515,7 @@ namespace Altaxo.Graph.Commands
         base.IsChecked = value;
         if(true==value && null!=Controller)
         {
-          Controller.CurrentGraphTool=GraphTools.Text;
+          Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.TextToolMouseHandler);
         }
 
         ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
@@ -536,7 +536,7 @@ namespace Altaxo.Graph.Commands
       {
         if(null!=Controller)
         {
-          base.IsChecked = (Controller.CurrentGraphTool==GraphTools.ReadPlotItemData);
+          base.IsChecked = (Controller.CurrentGraphToolType==typeof(GUI.GraphControllerMouseHandlers.ReadPlotItemDataMouseHandler));
         }
 
         return base.IsChecked;
@@ -546,7 +546,7 @@ namespace Altaxo.Graph.Commands
         base.IsChecked = value;
         if(true==value && null!=Controller)
         {
-          Controller.CurrentGraphTool=GraphTools.ReadPlotItemData;
+          Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.ReadPlotItemDataMouseHandler);
         }
 
         ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
@@ -557,7 +557,7 @@ namespace Altaxo.Graph.Commands
 
 
   /// <summary>
-  /// Test class for a selected item
+  /// Drawing a simple line with two points.
   /// </summary>
   public class SingleLineDrawingTool : AbstractGraphToolsCommand
   {
@@ -567,7 +567,7 @@ namespace Altaxo.Graph.Commands
       {
         if(null!=Controller)
         {
-          base.IsChecked = (Controller.CurrentGraphTool==GraphTools.SingleLine);
+          base.IsChecked = (Controller.CurrentGraphToolType==typeof(GUI.GraphControllerMouseHandlers.SingleLineDrawingMouseHandler));
         }
 
         return base.IsChecked;
@@ -577,7 +577,7 @@ namespace Altaxo.Graph.Commands
         base.IsChecked = value;
         if(true==value && null!=Controller)
         {
-          Controller.CurrentGraphTool=GraphTools.SingleLine;
+          Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.SingleLineDrawingMouseHandler);
         }
 
         ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
@@ -585,5 +585,38 @@ namespace Altaxo.Graph.Commands
       }
     }
   }
+
   
+  /// <summary>
+  /// Magnifies the axes according to the selected area.
+  /// </summary>
+  public class ZoomAxesTool : AbstractGraphToolsCommand
+  {
+    public override bool IsChecked 
+    {
+      get 
+      {
+        if(null!=Controller)
+        {
+          base.IsChecked = (Controller.CurrentGraphToolType==typeof(Altaxo.Graph.GUI.GraphControllerMouseHandlers.ZoomAxesMouseHandler));
+        }
+
+        return base.IsChecked;
+      }
+      set 
+      {
+        base.IsChecked = value;
+        if(true==value && null!=Controller)
+        {
+          Controller.CurrentGraphToolType=typeof(Altaxo.Graph.GUI.GraphControllerMouseHandlers.ZoomAxesMouseHandler);
+        }
+
+        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+
+      }
+    }
+  }
+
+
+
 }
