@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoBase", "Altaxo\Base\A
 		{A1006FEB-2FFC-4507-8D82-265130CDD08E} = {A1006FEB-2FFC-4507-8D82-265130CDD08E}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Altaxo\Test\Test.csproj", "{95A2BF58-8568-4512-BD82-F0240FFC7558}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoCoreTest", "Altaxo\CoreTest\CoreTest.csproj", "{95A2BF58-8568-4512-BD82-F0240FFC7558}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
