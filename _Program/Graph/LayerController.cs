@@ -40,6 +40,7 @@ namespace Altaxo.Graph
 		enum ElementType { Unique, HorzVert, Edge };
 
 		protected AxisScaleController[] m_AxisScaleController;
+		protected TitleFormatLayerController[] m_TitleFormatLayerController;
 
 		
 		public int CurrHorzVertIdx
@@ -69,6 +70,14 @@ namespace Altaxo.Graph
 																													new AxisScaleController(m_Layer,AxisScaleController.AxisDirection.Vertical)
 																												};
 
+			m_TitleFormatLayerController = new TitleFormatLayerController[4]{
+																																				new TitleFormatLayerController(m_Layer,EdgeType.Left),
+																																				new TitleFormatLayerController(m_Layer,EdgeType.Bottom),
+																																				new TitleFormatLayerController(m_Layer,EdgeType.Right),
+																																				new TitleFormatLayerController(m_Layer,EdgeType.Top)
+																																			};
+
+
 
 			if(null!=View)
 				SetViewElements();
@@ -79,9 +88,18 @@ namespace Altaxo.Graph
 			get { return m_View; }
 			set 
 			{
+				if(null!=m_View)
+				{
+					m_View.Controller = null;
+				}
+
 				m_View = value;
-				if(View!=null)
+				
+				if(null!=m_View)
+				{
+					m_View.Controller = this;
 					SetViewElements();
+				}
 			}
 		}
 
@@ -92,6 +110,7 @@ namespace Altaxo.Graph
 
 			// add all necessary Tabs
 			View.AddTab(new AxisScaleControl(),"Scale");
+			View.AddTab(new TitleFormatLayerControl(),"Title&&Format");
 
 			// Set the controller of the current visible Tab
 			SetCurrentTabController();
@@ -105,6 +124,11 @@ namespace Altaxo.Graph
 			{
 				SetHorzVertSecondaryChoice();
 				m_AxisScaleController[CurrHorzVertIdx].View = (IAxisScaleView)View.CurrentTabContent; 
+			}
+			else 			if(View.CurrentTabContent is ITitleFormatLayerView)
+			{
+				SetHorzVertSecondaryChoice();
+				m_TitleFormatLayerController[CurrEdgeIdx].View = (ITitleFormatLayerView)View.CurrentTabContent; 
 			}
 		}
 

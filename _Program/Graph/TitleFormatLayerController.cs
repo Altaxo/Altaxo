@@ -58,7 +58,7 @@ namespace Altaxo.Graph
 	{
 		protected ITitleFormatLayerView m_View;
 		protected Layer                 m_Layer;
-		protected EdgeType              m_CurrentEdge;
+		protected EdgeType              m_Edge;
  
 		protected bool		m_bShowAxis;
 		protected string	m_Title;
@@ -87,7 +87,7 @@ namespace Altaxo.Graph
 			XYLayerAxisStyle axstyle=null;
 			string title=null;
 			bool bAxisEnabled=false;
-			switch(m_CurrentEdge)
+			switch(m_Edge)
 			{
 				case EdgeType.Left:
 					axstyle = m_Layer.LeftAxisStyle;
@@ -153,6 +153,9 @@ namespace Altaxo.Graph
 
 		void SetViewElements()
 		{
+			if(null==View)
+				return;
+
 			int i;
 			System.Collections.ArrayList arr = new System.Collections.ArrayList();
 
@@ -166,7 +169,8 @@ namespace Altaxo.Graph
 				string name = c.ToString();
 				arr.Add(name.Substring(7,name.Length-8));
 			}
-			View.InitializeColor((string[])arr.ToArray(typeof(string[])),this.m_Color);
+			object sarr = arr.ToArray(typeof(string));
+			View.InitializeColor((string[])sarr,this.m_Color);
 
 			// fill axis thickness combo box
 			double[] thicknesses = new double[]{0.0,0.2,0.5,1.0,1.5,2.0,3.0,4.0,5.0};
@@ -191,8 +195,8 @@ namespace Altaxo.Graph
 
 			// fill the position combo box
 			View.InitializeAxisPosition(new string[] {
-																								 m_CurrentEdge.ToString(),
-																								 "% from " + m_CurrentEdge.ToString(),
+																								 m_Edge.ToString(),
+																								 "% from " + m_Edge.ToString(),
 																								 "At position ="
 																							 }, this.m_AxisPosition);
 
@@ -273,8 +277,91 @@ namespace Altaxo.Graph
 
 		public bool Apply()
 		{
-			// TODO:  Add TitleFormatLayerController.Apply implementation
-			return false;
+			XYLayerAxisStyle axstyle=null;
+			switch(m_Edge)
+			{
+				case EdgeType.Left:
+					axstyle = m_Layer.LeftAxisStyle;
+					break;
+				case EdgeType.Right:
+					axstyle = m_Layer.RightAxisStyle;
+					break;
+				case EdgeType.Bottom:
+					axstyle = m_Layer.BottomAxisStyle;
+					break;
+				case EdgeType.Top:
+					axstyle = m_Layer.TopAxisStyle;
+					break;
+			}
+
+			try
+			{
+
+				// read axis title
+				if(m_Title.Length==0)
+					m_Title=null;
+
+
+				// read axis thickness
+				axstyle.Thickness = System.Convert.ToSingle(m_Thickness);
+
+				// read major thick length
+				axstyle.MajorTickLength = System.Convert.ToSingle(m_MajorTickLength);
+
+				// read major ticks
+				axstyle.InnerMajorTicks = 0!=(1&m_MajorTicks);
+				axstyle.OuterMajorTicks = 0!=(2&m_MajorTicks);
+ 
+				// read minor ticks
+				axstyle.InnerMinorTicks = 0!=(1&m_MinorTicks);
+				axstyle.OuterMinorTicks = 0!=(2&m_MinorTicks);
+			
+				// read axis position
+				double posval;
+				switch(m_AxisPosition)
+				{
+					case 0:
+						axstyle.Position = new Calc.RelativeOrAbsoluteValue(0,false);
+						break;
+					case 1:
+						posval = System.Convert.ToDouble(m_AxisPositionValue);
+						axstyle.Position = new Calc.RelativeOrAbsoluteValue(posval/100,true);
+						break;
+					case 2:
+						posval = System.Convert.ToDouble(this.m_AxisPositionValue);
+						axstyle.Position = new Calc.RelativeOrAbsoluteValue(posval,false);
+						break;
+				}
+
+				// set axis enabled on the layer
+				switch(m_Edge)
+				{
+					case EdgeType.Left:
+						m_Layer.LeftAxisEnabled = m_bShowAxis;
+						m_Layer.LeftAxisTitleString = m_Title;
+						break;
+					case EdgeType.Right:
+						m_Layer.RightAxisEnabled = m_bShowAxis;
+						m_Layer.RightAxisTitleString = m_Title;
+						break;
+					case EdgeType.Bottom:
+						m_Layer.BottomAxisEnabled = m_bShowAxis;
+						m_Layer.BottomAxisTitleString = m_Title;
+						break;
+					case EdgeType.Top:
+						m_Layer.TopAxisEnabled = m_bShowAxis;
+						m_Layer.TopAxisTitleString = m_Title;
+						break;
+				}
+
+			}
+			catch(Exception)
+			{
+				return false; // failed
+			}
+
+
+			return true; // all ok
 		}
 
 		#endregion
