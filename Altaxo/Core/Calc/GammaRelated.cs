@@ -1106,6 +1106,30 @@ namespace Altaxo.Calc
     }
     #endregion
 
+    #region Binomial
+    /// <summary>
+    /// Gives the binomial coefficient ( n over m).
+    /// </summary>
+    /// <param name="n">First argument.</param>
+    /// <param name="m">Second argument.</param>
+    /// <returns>The binomial coefficient ( n over m).</returns>
+    public static double Binomial(double n, double m)
+    {
+      return Math.Exp(LogBinomial(n,m));
+    }
+
+    /// <summary>
+    /// Gives the natural logarithm of the binomial coefficient ( n over m).
+    /// </summary>
+    /// <param name="n">First argument.</param>
+    /// <param name="m">Second argument.</param>
+    /// <returns>The natural logarithm of the binomial coefficient ( n over m).</returns>
+    public static double LogBinomial(double n, double m)
+    {
+      return GammaRelated.LnGamma(n+1)-GammaRelated.LnGamma(m+1)-GammaRelated.LnGamma(n-m+1);
+    }
+    #endregion
+
     #region RcpGamma
 
     /// <summary>
@@ -1185,7 +1209,7 @@ namespace Altaxo.Calc
     ///   LnGamma(x)      - logarithm of the Gamma function
     ///   GammaIT(x,a)    - Tricomi's incomplete gamma function
     /// </code></remarks>
-    static double GammaI (double x, double a)
+    public static double GammaI (double x, double a)
     {  
       return GammaI(x, a, false);
     }
@@ -1554,6 +1578,131 @@ namespace Altaxo.Calc
     }
 
 
+    /// <summary>
+    /// Evaluate the complementary incomplete Gamma function
+    ///
+    ///   Gamma(a,z0) = integral from z0 to infinity of exp(-t) * t**(a-1)
+    ///
+    /// The order of parameters is the same as the Mathematica function Gamma[a,z0].
+    /// Gamma(a,z0) is evaluated for arbitrary real values of A and for
+    /// non-negative values of x (even though Gamma is defined for z0 &lt; 0.0), 
+    /// except that for z0 = 0 and a &lt;= 0.0, Gamma is undefined.
+    /// </summary>
+    /// <param name="a">The function argument.</param>
+    /// <param name="z0">The lower boundary of integration.</param>
+    /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
+    /// <returns>Complementary incomplete Gamma function of arguments a and z0.</returns>
+    /// <remarks><code>
+    /// A slight deterioration of 2 or 3 digits accuracy will occur when
+    /// GammaIC is very large or very small in absolute value, because log-
+    /// arithmic variables are used.  Also, if the parameter A is very close
+    /// to a negative integer (but not a negative integer), there is a loss 
+    /// of accuracy, which is reported if the result is less than half
+    /// machine precision.
+    ///
+    /// This is a translation from the Fortran version of DGAMIC, SLATEC, FNLIB,
+    /// CATEGORY C7E, REVISION 920528, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    ///
+    /// References:
+    ///
+    /// (1) W. Gautschi, A computational procedure for incomplete
+    ///     gamma functions, ACM Transactions on Mathematical
+    ///     Software 5, 4 (December 1979), pp. 466-481.
+    /// (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
+    ///     ACM Transactions on Mathematical Software 5, 4 
+    ///     (December 1979), pp. 482-489.
+    ///
+    /// Routines called: d9gmit, d9gmic, d9lgic, d9lgit, LnGamma(x), LnGamma(x,a)
+    /// </code></remarks>
+    public static double Gamma(double a, double z0, bool bDebug)
+    {
+      return _GammaIC.GammaIC(z0, a, bDebug);
+    }
+
+    /// <summary>
+    /// Evaluate the complementary incomplete Gamma function
+    ///
+    ///   Gamma(a,z0) = integral from z0 to infinity of exp(-t) * t**(a-1)
+    ///
+    /// The order of parameters is the same as the Mathematica function Gamma[a,z0].
+    /// Gamma(a,z0) is evaluated for arbitrary real values of A and for
+    /// non-negative values of x (even though Gamma is defined for z0 &lt; 0.0), 
+    /// except that for z0 = 0 and a &lt;= 0.0, Gamma is undefined.
+    /// </summary>
+    /// <param name="a">The function argument.</param>
+    /// <param name="z0">The lower boundary of integration.</param>
+    /// <returns>Complementary incomplete Gamma function of arguments a and z0.</returns>
+    /// <remarks><code>
+    /// A slight deterioration of 2 or 3 digits accuracy will occur when
+    /// GammaIC is very large or very small in absolute value, because log-
+    /// arithmic variables are used.  Also, if the parameter A is very close
+    /// to a negative integer (but not a negative integer), there is a loss 
+    /// of accuracy, which is reported if the result is less than half
+    /// machine precision.
+    ///
+    /// This is a translation from the Fortran version of DGAMIC, SLATEC, FNLIB,
+    /// CATEGORY C7E, REVISION 920528, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    ///
+    /// References:
+    ///
+    /// (1) W. Gautschi, A computational procedure for incomplete
+    ///     gamma functions, ACM Transactions on Mathematical
+    ///     Software 5, 4 (December 1979), pp. 466-481.
+    /// (2) W. Gautschi, Incomplete gamma functions, Algorithm 542,
+    ///     ACM Transactions on Mathematical Software 5, 4 
+    ///     (December 1979), pp. 482-489.
+    ///
+    /// Routines called: d9gmit, d9gmic, d9lgic, d9lgit, LnGamma(x), LnGamma(x,a)
+    /// </code></remarks>
+    public static double Gamma(double a, double z0)
+    {
+      return _GammaIC.GammaIC(z0, a, false);
+    }
+
+    /// <summary>
+    /// Evaluate the incomplete regularized Gamma function
+    ///
+    ///   GammaRegularized(a,z) = { integral from z to infinity of exp(-t) * t**(a-1) } / Gamma(a)
+    ///
+    /// The order of parameters is the same as the Mathematica function GammaRegularized[a,z].
+    /// </summary>
+    /// <param name="a">The function argument.</param>
+    /// <param name="z">The lower boundary of integration.</param>
+    /// <returns>Incomplete regularized Gamma function of arguments a, z0 and z1.</returns>
+    public static double GammaRegularized(double a, double z)
+    {
+      return _GammaIC.GammaIC(z, a, false)/_Gamma.Gamma(a,false);
+    }
+
+    /// <summary>
+    /// Evaluate the incomplete regularized Gamma function
+    ///
+    ///   Gamma(a,z0,z1) = { integral from z0 to z1 of exp(-t) * t**(a-1) }/Gamma(a)
+    ///
+    /// The order of parameters is the same as the Mathematica function GammaRegularized[a,z0,z1].
+    /// </summary>
+    /// <param name="a">The function argument.</param>
+    /// <param name="z0">The lower boundary of integration.</param>
+    /// <param name="z1">The upper boundary of integration.</param>
+    /// <returns>Incomplete regularized Gamma function of arguments a, z0 and z1.</returns>
+    public static double GammaRegularized(double a, double z0, double z1)
+    {
+      double gamma_a = Gamma(a);
+
+      if(z0==0)
+      {
+        return GammaI(z1,a,false)/gamma_a;
+      }
+      else
+      {
+        double g0 = _GammaIC.GammaIC(z0,a,false);
+        double g1 = _GammaIC.GammaIC(z1,a,false);
+        return (g0-g1)/gamma_a;
+      }
+    }
+
 
     class _GammaIC
     {
@@ -1863,6 +2012,35 @@ namespace Altaxo.Calc
     /// Calls   LnBeta(a,b)
     /// </code></remarks>
     public static double BetaIR(double x, double a, double b)
+    {
+      return _BetaIR.BetaIR(x,a,b,false);
+    }
+
+    /// <summary>
+    /// BetaRegularized(x,a,b) calculates the double precision incomplete beta function ratio.
+    /// <code>
+    ///                 B_x(a,b)    Integral(0,x) t**(a-1) (1-t)**(b-1) dt
+    ///     I_x(a,b) = --------- = ---------------------------------------
+    ///                 B(a,b)                   B(a,b)
+    /// </code></summary>
+    /// <param name="x">upper limit of integration.  x must be in (0,1) inclusive.</param>
+    /// <param name="a">first beta distribution parameter. a must be > 0.</param>
+    /// <param name="b">second beta distribution parameter.  b must be > 0.</param>
+    /// <returns>The incomplete beta function ratio.</returns>
+    /// <remarks><code>
+    /// The incomplete beta function ratio is the probability that a
+    /// random variable from a beta distribution having parameters a and b
+    /// will be less than or equal to x.
+    /// This is a translation from the Fortran version of DBETAI(X,PIN,QIN), SLATEC,
+    /// FNLIB, CATEGORY C7F, REVISION 920528, originally written by Fullerton W.,(LANL)
+    /// to C++.
+    /// 
+    /// References: Nancy E. Bosten and E. L. Battiste, Remark on Algorithm 179, 
+    ///             Communications of the ACM 17, 3 (March 1974), pp. 156.
+    /// 
+    /// Calls   LnBeta(a,b)
+    /// </code></remarks>
+    public static double BetaRegularized(double x, double a, double b)
     {
       return _BetaIR.BetaIR(x,a,b,false);
     }
@@ -2349,12 +2527,12 @@ namespace Altaxo.Calc
     #region InverseBeta
 
     /// <summary>
-    /// InverseBeta gives the inverse of the incomplete beta function ratio <see>BetaIR</see>.
+    /// InverseBetaRegularized gives the inverse of the incomplete beta function ratio (<see>BetaIR</see> or <see>BetaRegularized</see>).
     /// </summary>
     /// <param name="alpha">Probability (0..1)</param>
     /// <param name="p">Parameter p.</param>
     /// <param name="q">Parameter q.</param>
-    public static double InverseBeta(double alpha, double p, double q)
+    public static double InverseBetaRegularized(double alpha, double p, double q)
     {
       double log_beta = LnGamma(p, true) + LnGamma(q, true) - LnGamma(p+q, true);
       int _ifault = 0;
@@ -2757,9 +2935,9 @@ namespace Altaxo.Calc
     class _Cephes
     {
 
-      /*							igam.c
+      /*              igam.c
        *
-       *	Incomplete gamma integral
+       *  Incomplete gamma integral
        *
        *
        *
@@ -2794,9 +2972,9 @@ namespace Altaxo.Calc
        *    IEEE      0,30       200000       3.6e-14     2.9e-15
        *    IEEE      0,100      300000       9.9e-14     1.5e-14
        */
-      /*							igamc()
+      /*              igamc()
       *
-      *	Complemented incomplete gamma integral
+      * Complemented incomplete gamma integral
       *
       *
       *
@@ -2973,7 +3151,7 @@ namespace Altaxo.Calc
 
 
 
-      /*							igami()
+      /*              igami()
    *
    *      Inverse of complemented imcomplete gamma integral
    *

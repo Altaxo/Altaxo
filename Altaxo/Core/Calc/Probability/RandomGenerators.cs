@@ -77,6 +77,7 @@
 
 
 using System;
+using Altaxo.Calc;
 
 namespace Altaxo.Calc.Probability
 {
@@ -1430,6 +1431,28 @@ namespace Altaxo.Calc.Probability
     {
       return gen.Long();
     }
+
+
+    /// <summary>
+    /// Gives the probability density at x.
+    /// </summary>
+    /// <param name="x">Location.</param>
+    /// <returns>Probability density at x.</returns>
+    public abstract double PDF(double x);
+    
+    /// <summary>
+    /// Gives the cumulative probability at x.
+    /// </summary>
+    /// <param name="x">Location.</param>
+    /// <returns>Cumulative probability at x.</returns>
+    public abstract double CDF(double x);
+    /// <summary>
+    /// Gives the pth quantile of the distribution.
+    /// </summary>
+    /// <param name="p">The probability.</param>
+    /// <returns>The pth quantile, that is the value x for with holds: p==CDF(x)</returns>
+    public abstract double Quantile(double p);
+
   }
   #endregion
 
@@ -1480,7 +1503,7 @@ namespace Altaxo.Calc.Probability
     }
 
   
-    public double PDF(double z)
+    public override double PDF(double z)
     {
       if(z<low)
         return 0;
@@ -1490,7 +1513,7 @@ namespace Altaxo.Calc.Probability
         return 1.0/(high-low);
     }
 
-    public double CDF(double z)
+    public override double CDF(double z)
     {
       if(z<low)
         return 0;
@@ -1500,10 +1523,10 @@ namespace Altaxo.Calc.Probability
         return (z-low)/(high-low);
     }
 
-    public double Quantile(double p)
+    public override double Quantile(double p)
     {
       if(p<0 || p>1)
-        throw new ArgumentException("Probability must be between 0 and 1");
+        throw new ArgumentException("Probability p must be between 0 and 1");
       return low + p*(high-low);
     }
 
@@ -1536,6 +1559,33 @@ namespace Altaxo.Calc.Probability
     public override uint Long()
     {
       return gen.Long();
+    }
+
+    public override double PDF(double z)
+    {
+      if(z<0)
+        return 0;
+      else if(z>=1)
+        return 0;
+      else
+        return 1;
+    }
+
+    public override double CDF(double z)
+    {
+      if(z<0)
+        return 0;
+      else if(z>=1)
+        return 1;
+      else
+        return z;
+    }
+
+    public override double Quantile(double p)
+    {
+      if(p<0 || p>1)
+        throw new ArgumentException("Probability p must be between 0 and 1");
+      return p;
     }
   }
   #endregion
@@ -1610,9 +1660,22 @@ namespace Altaxo.Calc.Probability
     public virtual double Stdev {get { return s; }}
 
 
-    public double Quantile(double y)
+    static readonly double _OneBySqrt2Pi = 1/Math.Sqrt(2*Math.PI);
+    static double Sqr(double x) { return x*x; }
+    public override double PDF(double z)
     {
-      return m+s*ErrorFunction.QuantileOfNormalDistribution01(y);
+      return _OneBySqrt2Pi*Math.Exp(-0.5*Sqr((z-m)/s))/s;
+    }
+
+    static readonly double _OneBySqrt2 = 1/Math.Sqrt(2);
+    public override double CDF(double z)
+    {
+      return 0.5*(1+Altaxo.Calc.ErrorFunction.Erf(_OneBySqrt2*(z-m)/s));
+    }
+
+    public override double Quantile(double p)
+    {
+      return m+s*ErrorFunction.QuantileOfNormalDistribution01(p);
     }
   }
 
@@ -1689,6 +1752,28 @@ namespace Altaxo.Calc.Probability
     }
     public override double Mean { get { return m_log; }}
     public override double Stdev { get { return s_log; }}
+
+
+    static double Sqr(double x) { return x*x; }
+    static readonly double _OneBySqrt2Pi = 1/Math.Sqrt(2*Math.PI);
+    public override double PDF(double z)
+    {
+      if(z<=0)
+        return 0;
+      else
+        return _OneBySqrt2Pi*Math.Exp(-0.5*Sqr((Math.Log(z)-m)/s))/(s*z);
+    }
+
+    static readonly double _OneBySqrt2 = 1/Math.Sqrt(2);
+    public override double CDF(double z)
+    {
+      return 0.5*(1+Altaxo.Calc.ErrorFunction.Erf(_OneBySqrt2*(Math.Log(z)-m)/s));
+    }
+
+    public override double Quantile(double p)
+    {
+      return Math.Exp(m+s*ErrorFunction.QuantileOfNormalDistribution01(p));
+    }
   }
 
   #endregion
@@ -1729,8 +1814,30 @@ namespace Altaxo.Calc.Probability
     {
       return gen.Long();
     }
-    double Mean { get {return m; }}
+    public double Mean { get {return m; }}
+  
+  
+    public override double PDF(double z)
+    {
+      if(z<0)
+        return 0;
+      else
+        return Math.Exp(-z/m)/m;
+    }
+    public override double CDF(double z)
+    {
+      if(z<0)
+        return 0;
+      else
+        return 1-Math.Exp(-z/m);
+    }
+    public override double Quantile(double p)
+    {
+      return -m*Math.Log(1-p);
+    }
   }
+
+  
   #endregion
 
   #region ErlangDistribution
@@ -1827,7 +1934,25 @@ namespace Altaxo.Calc.Probability
     }
     public int Order { get {return A; }}
     public double Location { get { return B; }}
-  };
+  
+  
+    public override double PDF(double x)
+    {
+      return Math.Exp(-B*x)*Math.Pow(B*x,A-1)*B/Calc.GammaRelated.Gamma(A);
+    }
+
+    public override double CDF(double x)
+    {
+      return GammaRelated.GammaRegularized(A,0,B*x);
+    }
+
+    public override double Quantile(double p)
+    {
+      return GammaRelated.InverseGammaRegularized(A,1-p)/B;
+    }
+
+  
+  }
 
   #endregion
 
@@ -2073,6 +2198,25 @@ namespace Altaxo.Calc.Probability
     }
     public double Order { get { return A; }}
     public double Location { get { return B; }}
+
+
+
+    public override double PDF(double x)
+    {
+      return Math.Exp(-B*x)*Math.Pow(B*x,A-1)*B/Calc.GammaRelated.Gamma(A);
+    }
+
+    public override double CDF(double x)
+    {
+      return GammaRelated.GammaRegularized(A,0,B*x);
+    }
+
+    public override double Quantile(double p)
+    {
+      return GammaRelated.InverseGammaRegularized(A,1-p)/B;
+    }
+
+
   }
 
   #endregion
@@ -2224,7 +2368,39 @@ namespace Altaxo.Calc.Probability
     }
     public double A {  get{ return aa; }}
     public double B { get { return bb; }}
+
+
+    public override double PDF(double x)
+    {
+      if (x < 0 || x > 1)
+      {
+        return 0 ;
+      }
+      else 
+      {
+        double p;
+
+        double gab = Calc.GammaRelated.LnGamma(a + b);
+        double ga = Calc.GammaRelated.LnGamma(a);
+        double gb = Calc.GammaRelated.LnGamma(b);
+
+        p = Math.Exp (gab - ga - gb) * Math.Pow (x, A - 1) * Math.Pow(1 - x, B - 1);
+
+        return p;
+      }
+    } 
+  
+
+    public override double CDF(double x)
+    {
+      return Calc.GammaRelated.BetaRegularized(x,A,B);
+    }
+    public override double Quantile(double p)
+    {
+      return Calc.GammaRelated.InverseBetaRegularized(p,A,B);
+    }
   }
+
 
   #endregion
 
@@ -2270,9 +2446,19 @@ namespace Altaxo.Calc.Probability
     }
     public double Freedom  { get { return F; }}
 
-    public double Quantile(double y)
+    public override double PDF(double x)
     {
-      return 2*GammaRelated.InverseGammaRegularized(0.5*F,1-y);
+      return Math.Pow(x,-1 + 0.5*F)/(Math.Pow(2,0.5*F)*Math.Exp(0.5*x)*Calc.GammaRelated.Gamma(0.5*F));
+    }
+
+    public override double CDF(double x)
+    {
+      return Calc.GammaRelated.GammaRegularized(0.5*F, 0, 0.5*x);
+    }
+
+    public override double Quantile(double p)
+    {
+      return 2*GammaRelated.InverseGammaRegularized(0.5*F,1-p);
     }
   }
   #endregion
@@ -2334,6 +2520,39 @@ namespace Altaxo.Calc.Probability
     public double NumF { get { return NF; }}
     public double DenomF { get { return DF; }}
 
+
+    /// <summary>
+    /// Returns the probability density function for value x with the distribution parameters p and q.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>The probability density of the distribution at value x.</returns>
+    public override double PDF(double x)
+    {
+      return (Math.Pow(NF,NF/2)*Math.Pow(DF,DF/2)*Math.Pow(x,(-2 + NF)/2)*Math.Pow(DF + NF*x,(-NF - DF)/2))/GammaRelated.Beta(NF/2,DF/2);
+    }
+
+    /// <summary>
+    /// Returns the cumulated distribution function for value x with the distribution parameters numf and denomf.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>The cumulated distribution (probability) of the distribution at value x.</returns>
+    public override double CDF(double x)
+    {
+      double n1x = NF * x;
+      return GammaRelated.BetaIR(n1x/(DF+n1x),0.5*NF,0.5*DF);
+    }
+
+    /// <summary>
+    /// Quantile of the F-distribution.
+    /// </summary>
+    /// <param name="alpha">Probability (0..1).</param>
+    /// <returns>The quantile of the F-Distribution.</returns>
+    public override double Quantile(double alpha)
+    {
+      double inverse_beta = GammaRelated.InverseBetaRegularized(1-alpha, DF/2, NF/2);
+      return (DF/NF) * (1.0 / inverse_beta - 1.0);
+    }
+
     /// <summary>
     /// Returns the cumulated distribution function for value x with the distribution parameters numf and denomf.
     /// </summary>
@@ -2368,14 +2587,14 @@ namespace Altaxo.Calc.Probability
     /// <returns>The quantile of the F-Distribution.</returns>
     public static double Quantile(double alpha, double p, double q)
     {
-      double inverse_beta = GammaRelated.InverseBeta(1-alpha, q/2, p/2);
+      double inverse_beta = GammaRelated.InverseBetaRegularized(1-alpha, q/2, p/2);
       return (q/p) * (1.0 / inverse_beta - 1.0);
     }
   }
 
   #endregion
 
-  #region PoissonDistribution
+  #region PoissonDistribution (Discrete)
 
   /// <summary>
   /// Generates Poisson distributed random numbers.
@@ -2462,6 +2681,23 @@ namespace Altaxo.Calc.Probability
       return gen.Long();
     }
     double Mean { get { return m; }}
+
+
+    public override double PDF(double x)
+    {
+      return Math.Exp(-m +x*Math.Log(m) - Calc.GammaRelated.LnGamma(x+1));
+    }
+
+    public override double CDF(double x)
+    {
+      return Calc.GammaRelated.GammaRegularized(1 + Math.Floor(x),m);
+    }
+
+    public override double Quantile(double x)
+    {
+      throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");
+    }
+
   }
   #endregion
 
@@ -2587,6 +2823,22 @@ namespace Altaxo.Calc.Probability
     }
     public double Prob { get { return p; }}
     public int Num { get { return n; }}
+
+    public override double PDF(double x)
+    {
+      return Math.Pow(1 - p,n - x)*Math.Pow(p,x)*Calc.GammaRelated.Binomial(n,x);
+    }
+
+
+    public override double CDF(double x)
+    {
+      return Calc.GammaRelated.BetaRegularized(1 - p,n - Math.Floor(x),1 + Math.Floor(x));
+    }
+
+    public override double Quantile(double x)
+    {
+      throw new NotSupportedException("Sorry, Quantile is not supported here since it is a discrete distribution");
+    }
   }
 
   #endregion
@@ -2598,6 +2850,29 @@ namespace Altaxo.Calc.Probability
   /// </summary>
   public class StudentTDistribution
   {
+    int n;
+ 
+    public StudentTDistribution(int N)
+    {
+      this.n = N;
+    }
+    public int N { get { return n; }}
+
+    public double PDF(double x)
+    {
+      return PDF(x,n);
+    }
+
+    public double CDF(double x)
+    {
+      return CDF(x,n);
+    }
+
+    public double Quantile(double p)
+    {
+      return Quantile(p,n);
+    }
+
     public static double PDF(double x, int n)
     {
       return Math.Pow(n/(n + (x*x)),(1 + n)/2.0)/(Math.Sqrt(n)*GammaRelated.Beta(n/2.0,0.5));
@@ -2610,7 +2885,7 @@ namespace Altaxo.Calc.Probability
 
     public static double Quantile(double alpha, int n)
     {
-      return Math.Sqrt(n)*Math.Sqrt(-1 + 1/GammaRelated.InverseBeta(1-Math.Abs(1 - 2*alpha),n*0.5,0.5))*Math.Sign(-1 + 2*alpha);
+      return Math.Sqrt(n)*Math.Sqrt(-1 + 1/GammaRelated.InverseBetaRegularized(1-Math.Abs(1 - 2*alpha),n*0.5,0.5))*Math.Sign(-1 + 2*alpha);
     }
   }
   #endregion
@@ -3436,6 +3711,24 @@ namespace Altaxo.Calc.Probability
     {
       return gen.Long();
     }
+
+    public override double PDF(double x)
+    {
+      throw new NotSupportedException();
+    }
+
+    public override double CDF(double x)
+    {
+      throw new NotSupportedException();
+    }
+
+    public override double Quantile(double x)
+    {
+      throw new NotSupportedException();
+    }
+
+
+
   }
 
   #endregion
