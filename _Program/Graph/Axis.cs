@@ -25,10 +25,13 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph
 {
 	/// <summary>
-	/// Summary description for Axis.
+	/// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
 	/// </summary>
 	public abstract class Axis
 	{
+		/// <summary>
+		/// Fired when the data of the axis has changed, for instance end point, org point, or tick spacing.
+		/// </summary>
 		public event System.EventHandler AxisChanged;
 
 		/// <summary>
@@ -70,11 +73,18 @@ namespace Altaxo.Graph
 		}
 
 
+		/// <summary>
+		/// Returns the <see cref="PhysicalBoundaries"/> object that is associated with that axis.
+		/// </summary>
 		public abstract PhysicalBoundaries DataBounds { get; } // return a PhysicalBoundarie object that is associated with that axis
 
+		/// <summary>The axis origin, i.e. the first point in physical units.</summary>
 		public abstract double Org { get; set;}
+		/// <summary>The axis end point in physical units.</summary>
 		public abstract double End { get; set;}
+		/// <summary>Indicates that the axis origin is fixed to a certain value.</summary>
 		public abstract bool   OrgFixed { get; set; }
+		/// <summary>Indicates that the axis end is fixed to a certain value.</summary>
 		public abstract bool   EndFixed { get; set; }
 
 		/// <summary>
@@ -86,6 +96,9 @@ namespace Altaxo.Graph
 		public abstract void ProcessDataBounds();
 
 
+		/// <summary>
+		/// Used to fire the axis changed event, can be overriden in child classes.
+		/// </summary>
 		protected virtual void OnAxisChanged()
 		{
 			if(null!=AxisChanged)
@@ -93,8 +106,14 @@ namespace Altaxo.Graph
 		}
 
 
+		/// <summary>
+		/// Static collection that holds all available axis types.
+		/// </summary>
 		protected static System.Collections.Hashtable sm_AvailableAxes;
 		
+		/// <summary>
+		/// Static constructor that initializes the collection of available axis types by searching in the current assembly for child classes of axis.
+		/// </summary>
 		static Axis()
 		{
 			sm_AvailableAxes = new System.Collections.Hashtable();
@@ -114,33 +133,50 @@ namespace Altaxo.Graph
 		}
 
 
-		
+		/// <summary>Returns the collection of available axes.</summary>
 		public static System.Collections.Hashtable AvailableAxes 
 		{
 			get { return sm_AvailableAxes; }
 		}
-
 	} // end of class Axis
 
+
+
+	/// <summary>
+	/// A linear axis, i.e a axis where physical values v can be translated to logical values l by v=a+b*l.
+	/// </summary>
 	[SerializationSurrogate(0,typeof(Altaxo.Data.DataColumn.SerializationSurrogate0))]
 	[SerializationVersion(0)]
 	public class LinearAxis : Axis, System.Runtime.Serialization.IDeserializationCallback
 	{
 		// primary values
+		/// <summary>Proposed value of axis origin, proposed either by the lower physical boundary or by the user (if axis org is fixed).</summary>
 		protected double m_BaseOrg=0; // proposed value of org
+		/// <summary>Proposed value of axis end, proposed either by the upper physical boundary or by the user (if axis end is fixed).</summary>
 		protected double m_BaseEnd=1; // proposed value of end
+		/// <summary>Current axis origin divided by the major tick span value.</summary>
 		protected double m_AxisOrgByMajor=0;
+		/// <summary>Current axis end divided by the major tick span value.</summary>
 		protected double m_AxisEndByMajor=5;
+		/// <summary>Physical span value between two major ticks.</summary>
 		protected double m_MajorSpan=0.2; // physical span value between two major ticks
-		protected int    m_MinorTicks=2; // Minor ticks per Major tick ( if there is one minor tick between two major ticks m_minorticks is 2!
+		/// <summary>Minor ticks per Major tick ( if there is one minor tick between two major ticks m_minorticks is 2!</summary>
+		protected int    m_MinorTicks=2;
+		/// <summary>True if the axis org is fixed to m_BaseOrg.</summary>
 		protected bool   m_AxisOrgFixed = false;
+		/// <summary>True if the axis end is fixed to m_BaseEnd.</summary>
 		protected bool   m_AxisEndFixed = false;
+		/// <summary>Holds the <see cref="PhysicalBoundaries"/> for that axis.</summary>
 		protected FinitePhysicalBoundaries m_DataBounds = new FinitePhysicalBoundaries();
 
 		// cached values
+		/// <summary>Current axis origin (cached value).</summary>
 		protected double m_AxisOrg=0;
+		/// <summary>Current axis end (cached value).</summary>
 		protected double m_AxisEnd=1;
+		/// <summary>Current axis span (i.e. end-org) (cached value).</summary>
 		protected double m_AxisSpan=1;
+		/// <summary>Current inverse of axis span (cached value).</summary>
 		protected double m_OneByAxisSpan=1;
 
 

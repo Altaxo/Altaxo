@@ -1186,18 +1186,7 @@ namespace Altaxo.Data
 			throw new AltaxoOperatorException("Error: Try to apply operator XOR to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
 
-		public static DataColumn operator <<(DataColumn c1, DataColumn c2)
-		{
-			DataColumn c3;
-
-			if(c1.vop_ShiftLeft(c2, out c3))
-				return c3;
-			if(c2.vop_ShiftLeft_Rev(c1, out c3))
-				return c3;
-
-			throw new AltaxoOperatorException("Error: Try to shift left " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
-		}
-		public static DataColumn operator <<(DataColumn c1, AltaxoVariant c2)
+		public static DataColumn operator <<(DataColumn c1, int c2)
 		{
 			DataColumn c3;
 
@@ -1206,28 +1195,9 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator << to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
-		public static DataColumn operator <<(AltaxoVariant c1, DataColumn c2)
-		{
-			DataColumn c3;
 
-			if(c2.vop_ShiftLeft_Rev(c1, out c3))
-				return c3;
 
-			throw new AltaxoOperatorException("Error: Try to apply operator << to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
-		}
-
-		public static DataColumn operator >>(DataColumn c1, DataColumn c2)
-		{
-			DataColumn c3;
-
-			if(c1.vop_ShiftRight(c2, out c3))
-				return c3;
-			if(c2.vop_ShiftRight_Rev(c1, out c3))
-				return c3;
-
-			throw new AltaxoOperatorException("Error: Try to shift right " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
-		}
-		public static DataColumn operator >>(DataColumn c1, AltaxoVariant c2)
+		public static DataColumn operator >>(DataColumn c1, int c2)
 		{
 			DataColumn c3;
 
@@ -1236,17 +1206,6 @@ namespace Altaxo.Data
 
 			throw new AltaxoOperatorException("Error: Try to apply operator >> to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
 		}
-		public static DataColumn operator >>(AltaxoVariant c1, DataColumn c2)
-		{
-			DataColumn c3;
-
-			if(c2.vop_ShiftRight_Rev(c1, out c3))
-				return c3;
-
-			throw new AltaxoOperatorException("Error: Try to apply operator >> to " + c1.ToString() + " (" + c1.GetType() + ")" + " and " + c2.ToString() + " (" + c2.GetType() + ")");
-		}
-
-
 
 		public static DataColumn operator <(DataColumn c1, DataColumn c2)
 		{

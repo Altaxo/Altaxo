@@ -1,0 +1,27 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoVS2003", "AltaxoVS2003.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		DesignTimeDebugging = DesignTimeDebugging
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Debug.ActiveCfg = Debug|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Debug.Build.0 = Debug|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.DesignTimeDebugging.ActiveCfg = DesignTimeDebugging|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.DesignTimeDebugging.Build.0 = DesignTimeDebugging|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Release.ActiveCfg = Release|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(SolutionItems) = postSolution
+		LayerButtons.bmp = LayerButtons.bmp
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

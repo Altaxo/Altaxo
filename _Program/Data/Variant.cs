@@ -392,34 +392,30 @@ namespace Altaxo.Data
 				throw new AltaxoOperatorException("Error: Try to apply operator XOR to types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());	
 		}
 
-		public static AltaxoVariant operator << (AltaxoVariant a, AltaxoVariant b)
+		public static AltaxoVariant operator << (AltaxoVariant a, int b)
 		{
 			object result;
-			if(a.m_Content==Content.VDouble && b.m_Content==Content.VDouble)
-				return new AltaxoVariant((double)((long)a.m_Double << (int)b.m_Double));
-			else if(a.m_Content==Content.VNull && b.m_Content==Content.VNull)
+			if(a.m_Content==Content.VDouble)
+				return new AltaxoVariant((double)((long)a.m_Double << b));
+			else if(a.m_Content==Content.VNull)
 				return new AltaxoVariant();
-			else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_ShiftLeft(b.m_Content==Content.VDouble ? b.m_Double : b.m_Object, out result))
-				return new AltaxoVariant(result);
-			else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_ShiftLeft_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+			else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_ShiftLeft(b, out result))
 				return new AltaxoVariant(result);
 			else
-				throw new AltaxoOperatorException("Error: Try to apply operator << to types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());	
+				throw new AltaxoOperatorException("Error: Try to apply operator << to types " + a.m_Content.ToString() + " and " + b.ToString());	
 		}
 
-		public static AltaxoVariant operator >> (AltaxoVariant a, AltaxoVariant b)
+		public static AltaxoVariant operator >> (AltaxoVariant a, int b)
 		{
 			object result;
-			if(a.m_Content==Content.VDouble && b.m_Content==Content.VDouble)
-				return new AltaxoVariant((double)((long)a.m_Double >> (int)b.m_Double));
-			else if(a.m_Content==Content.VNull && b.m_Content==Content.VNull)
+			if(a.m_Content==Content.VDouble)
+				return new AltaxoVariant((double)((long)a.m_Double >> b));
+			else if(a.m_Content==Content.VNull)
 				return new AltaxoVariant();
-			else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_ShiftRight(b.m_Content==Content.VDouble ? b.m_Double : b.m_Object, out result))
-				return new AltaxoVariant(result);
-			else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_ShiftRight_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
+			else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_ShiftRight(b, out result))
 				return new AltaxoVariant(result);
 			else
-				throw new AltaxoOperatorException("Error: Try to apply operator >> to types " + a.m_Content.ToString() + " and " + b.m_Content.ToString());	
+				throw new AltaxoOperatorException("Error: Try to apply operator >> to types " + a.m_Content.ToString() + " and " + b.ToString());	
 		}
 
 

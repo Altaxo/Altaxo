@@ -962,46 +962,33 @@ namespace Altaxo.Data
 		}
 
 		// ----------------------- ShiftLeft operator -----------------------------------
-		public static Altaxo.Data.DoubleColumn operator <<(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
-		{
-			int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
-			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
-			for(int i=0;i<len;i++)
-			{
-				c3.m_Array[i] = ((long)c1.m_Array[i]) << ((int)c2.m_Array[i]);
-			}
-			c3.m_Count=len;
-			return c3;	
-		}
-
-		public static Altaxo.Data.DoubleColumn operator <<(Altaxo.Data.DoubleColumn c1, double c2)
+	
+		public static Altaxo.Data.DoubleColumn operator <<(Altaxo.Data.DoubleColumn c1, int c2)
 		{
 			int len = c1.m_Count;
 			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
-			int c22 = (int)c2;
 			for(int i=0;i<len;i++)
-				c3.m_Array[i] = ((long)c1.m_Array[i]) << c22;
+				c3.m_Array[i] = ((long)c1.m_Array[i]) << c2;
 			c3.m_Count = len;
 			return c3;
 		}
 
-		public static Altaxo.Data.DoubleColumn operator <<(double c2, Altaxo.Data.DoubleColumn c1)
-		{
-			int len = c1.m_Count;
-			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
-			long c22 = (long)c2;
-			for(int i=0;i<len;i++)
-				c3.m_Array[i] = c22 << ((int)c1.m_Array[i]);
-			c3.m_Count = len;
-			return c3;
-		}
 
 
 		public override bool vop_ShiftLeft(DataColumn c2, out DataColumn c3)
 		{
 			if(c2 is Altaxo.Data.DoubleColumn)
 			{
-				c3 = this << (Altaxo.Data.DoubleColumn)c2;
+				Altaxo.Data.DoubleColumn c1=this;
+				Altaxo.Data.DoubleColumn c22 = (DoubleColumn)c2;
+				int len = c1.Count<c2.Count ? c1.Count : c2.Count;
+				Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
+				for(int i=0;i<len;i++)
+				{
+					c33.m_Array[i] = ((long)c1.m_Array[i]) << ((int)c22.m_Array[i]);
+				}
+				c33.m_Count=len;
+				c3=c33;
 				return true;
 			}
 			c3=null;
@@ -1012,7 +999,17 @@ namespace Altaxo.Data
 		{
 			if(c2 is Altaxo.Data.DoubleColumn)
 			{
-				c3 = (Altaxo.Data.DoubleColumn)c2 << this;
+				Altaxo.Data.DoubleColumn c1=this;
+				Altaxo.Data.DoubleColumn c22= (DoubleColumn)c2;
+
+				int len = c1.Count<c2.Count ? c1.Count : c2.Count;
+				Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
+				for(int i=0;i<len;i++)
+				{
+					c33.m_Array[i] = ((long)c22.m_Array[i]) << ((int)c1.m_Array[i]);
+				}
+				c33.m_Count=len;
+				c3=c33;
 				return true;
 			}
 			c3=null;
@@ -1023,7 +1020,7 @@ namespace Altaxo.Data
 		{
 			if(((AltaxoVariant)c2).IsType(AltaxoVariant.Content.VDouble))
 			{
-				double c22 = (double)c2;
+				int c22 = (int)(double)c2;
 				c3 = this << c22;
 				return true;
 			}
@@ -1035,8 +1032,14 @@ namespace Altaxo.Data
 		{
 			if(((AltaxoVariant)c2).IsType(AltaxoVariant.Content.VDouble))
 			{
-				double c22 = (double)c2;
-				c3 = c22 << this;
+				DoubleColumn c1=this;
+				int len = c1.m_Count;
+				Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
+				long c22 = (long)(double)c2;
+				for(int i=0;i<len;i++)
+					c33.m_Array[i] = c22 << ((int)c1.m_Array[i]);
+				c33.m_Count = len;
+				c3=c33;
 				return true;
 			}
 			c3=null;
@@ -1045,46 +1048,33 @@ namespace Altaxo.Data
 
 
 		// ----------------------- ShiftRight operator -----------------------------------
-		public static Altaxo.Data.DoubleColumn operator >>(Altaxo.Data.DoubleColumn c1, Altaxo.Data.DoubleColumn c2)
-		{
-			int len = c1.m_Count<c2.m_Count ? c1.m_Count : c2.m_Count;
-			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
-			for(int i=0;i<len;i++)
-			{
-				c3.m_Array[i] = ((long)c1.m_Array[i]) >> ((int)c2.m_Array[i]);
-			}
-			c3.m_Count=len;
-			return c3;	
-		}
 
-		public static Altaxo.Data.DoubleColumn operator >>(Altaxo.Data.DoubleColumn c1, double c2)
+		public static Altaxo.Data.DoubleColumn operator >>(Altaxo.Data.DoubleColumn c1, int c2)
 		{
 			int len = c1.m_Count;
 			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
-			int c22 = (int)c2;
 			for(int i=0;i<len;i++)
-				c3.m_Array[i] = ((long)c1.m_Array[i]) >> c22;
+				c3.m_Array[i] = ((long)c1.m_Array[i]) >> c2;
 			c3.m_Count = len;
 			return c3;
 		}
 
-		public static Altaxo.Data.DoubleColumn operator >>(double c2, Altaxo.Data.DoubleColumn c1)
-		{
-			int len = c1.m_Count;
-			Altaxo.Data.DoubleColumn c3 = new Altaxo.Data.DoubleColumn(len);
-			long c22 = (long)c2;
-			for(int i=0;i<len;i++)
-				c3.m_Array[i] = c22 >> ((int)c1.m_Array[i]);
-			c3.m_Count = len;
-			return c3;
-		}
 
 
 		public override bool vop_ShiftRight(DataColumn c2, out DataColumn c3)
 		{
 			if(c2 is Altaxo.Data.DoubleColumn)
 			{
-				c3 = this >> (Altaxo.Data.DoubleColumn)c2;
+				DoubleColumn c1=this;
+				DoubleColumn c22 = (DoubleColumn)c2;
+				int len = c1.Count<c2.Count ? c1.Count : c2.Count;
+				Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
+				for(int i=0;i<len;i++)
+				{
+					c33.m_Array[i] = ((long)c1.m_Array[i]) >> ((int)c22.m_Array[i]);
+				}
+				c33.m_Count=len;
+				c3=c33;
 				return true;
 			}
 			c3=null;
@@ -1095,7 +1085,16 @@ namespace Altaxo.Data
 		{
 			if(c2 is Altaxo.Data.DoubleColumn)
 			{
-				c3 = (Altaxo.Data.DoubleColumn)c2 >> this;
+				Altaxo.Data.DoubleColumn c1=this;
+				DoubleColumn c22 = (DoubleColumn)c2;
+				int len = c1.Count<c2.Count ? c1.Count : c2.Count;
+				Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
+				for(int i=0;i<len;i++)
+				{
+					c33.m_Array[i] = ((long)c22.m_Array[i]) >> ((int)c1.m_Array[i]);
+				}
+				c33.m_Count=len;
+				c3=c33;
 				return true;
 			}
 			c3=null;
@@ -1106,8 +1105,14 @@ namespace Altaxo.Data
 		{
 			if(((AltaxoVariant)c2).IsType(AltaxoVariant.Content.VDouble))
 			{
-				double c22 = (double)c2;
-				c3 = this >> c22;
+				DoubleColumn c1=this;
+				int len = c1.m_Count;
+				Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
+				int c22 = (int)(double)c2;
+				for(int i=0;i<len;i++)
+					c33.m_Array[i] = ((long)c1.m_Array[i]) >> c22;
+				c33.m_Count = len;
+				c3=c33;
 				return true;
 			}
 			c3=null;
@@ -1118,8 +1123,14 @@ namespace Altaxo.Data
 		{
 			if(((AltaxoVariant)c2).IsType(AltaxoVariant.Content.VDouble))
 			{
-				double c22 = (double)c2;
-				c3 = c22 >> this;
+				DoubleColumn c1=this;
+				int len = c1.m_Count;
+				Altaxo.Data.DoubleColumn c33 = new Altaxo.Data.DoubleColumn(len);
+				long c22 = (long)(double)c2;
+				for(int i=0;i<len;i++)
+					c33.m_Array[i] = c22 >> ((int)c1.m_Array[i]);
+				c33.m_Count = len;
+				c3=c33;
 				return true;
 			}
 			c3=null;

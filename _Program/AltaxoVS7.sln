@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 7.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altaxo", "Altaxo.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altaxo", "AltaxoVS7.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
