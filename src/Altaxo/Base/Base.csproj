@@ -744,6 +744,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\Commands\CVS\Entries"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Main\Commands\CVS\Entries.Extra"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Main\Commands\CVS\Repository"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Main\Commands\CVS\Root"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "Main\GUI\DialogFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

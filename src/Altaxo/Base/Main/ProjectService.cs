@@ -381,9 +381,9 @@ namespace Altaxo.Main
 
 
 		/// <summary>
-		/// Creates a view content for a table.
+		/// Creates a table and the view content for that table.
 		/// </summary>
-		/// <param name="table">The table which should be viewed.</param>
+		/// <param name="worksheetName">The name of the table to create.</param>
 		/// <returns>The view content for the provided table.</returns>
 		public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(string worksheetName, bool bCreateDefaultColumns)
 		{

@@ -52,7 +52,7 @@ namespace Altaxo
 	
 
 	/// <summary>
-	/// This interface has to be implemented by all forms that are controlled by a <see cref="IMainController"/>.
+	/// This interface has to be implemented by all forms that are controlled by a <see cref="Altaxo.IMainViewEventSink"/>.
 	/// </summary>
 	public interface IMainView
 	{

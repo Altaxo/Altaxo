@@ -165,7 +165,6 @@
                     RelPath = "UsingSharpDevelopForAltaxo.txt"
                     BuildAction = "Content"
                 />
-                <Folder RelPath = "Commands\" />
                 <File
                     RelPath = "Dialogs\AddInTreeSettingsHandler.cs"
                     SubType = "Code"

@@ -83,7 +83,6 @@ namespace Altaxo.Main.Commands
 		public override void Run()
 		{
 			
-			System.IO.Stream myStream;
 			OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
 			openFileDialog1.InitialDirectory = "c:\\temp\\" ;
@@ -123,7 +122,6 @@ namespace Altaxo.Main.Commands
 
 		public  void RunOld1()
 		{
-			bool bRet = true;
 			SaveFileDialog dlg = this.GetSaveAsDialog();
 			if(dlg.ShowDialog(Current.MainWindow) == DialogResult.OK)
 			{
@@ -139,7 +137,6 @@ namespace Altaxo.Main.Commands
 						zippedStream.Close();
 						Current.Project.IsDirty=false;
 
-						bRet = false;; // now saving was successfull, we can close the form
 					}
 					catch(Exception exc)
 					{
