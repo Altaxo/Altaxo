@@ -63,7 +63,7 @@ namespace Altaxo.Worksheet
 			
 			// now create a new Graph with this plot associations
 
-			Altaxo.Graph.GUI.IGraphController gc = App.Current.CreateNewGraph();
+			Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph();
 
 
 			Altaxo.Graph.PlotGroup newPlotGroup = new Altaxo.Graph.PlotGroup(templatePlotGroupStyle);
@@ -98,7 +98,7 @@ namespace Altaxo.Worksheet
 			
 			// now create a new Graph with this plot associations
 
-			Altaxo.Graph.GUI.IGraphController gc = App.Current.CreateNewGraph();
+			Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph();
 
 			Altaxo.Graph.PlotItem pi = new Altaxo.Graph.DensityImagePlotItem(assoc,plotStyle);
 			gc.Doc.Layers[0].PlotItems.Add(pi);
@@ -204,7 +204,7 @@ namespace Altaxo.Worksheet
 			table.Resume();
 			mainDocument.DataTableCollection.Add(table);
 			// create a new worksheet without any columns
-			App.Current.CreateNewWorksheet(table);
+			Current.ProjectService.CreateNewWorksheet(table);
 
 			return null;
 		}
@@ -376,7 +376,7 @@ namespace Altaxo.Worksheet
 			table.Resume();
 			mainDocument.DataTableCollection.Add(table);
 			// create a new worksheet without any columns
-			App.Current.CreateNewWorksheet(table);
+			Current.ProjectService.CreateNewWorksheet(table);
 
 			return null;
 		}
@@ -606,7 +606,7 @@ namespace Altaxo.Worksheet
 
 			// Before we can apply PLS, we have to center the x and y matrices
 			Altaxo.Calc.MatrixMath.HorizontalVector meanX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
-		//	Altaxo.Calc.MatrixMath.HorizontalVector scaleX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
+			//	Altaxo.Calc.MatrixMath.HorizontalVector scaleX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
 			Altaxo.Calc.MatrixMath.HorizontalVector meanY = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixY.Cols);
 
 
@@ -709,7 +709,7 @@ namespace Altaxo.Worksheet
 			table.Resume();
 			mainDocument.DataTableCollection.Add(table);
 			// create a new worksheet without any columns
-			App.Current.CreateNewWorksheet(table);
+			Current.ProjectService.CreateNewWorksheet(table);
 
 			return null;
 		}
@@ -814,7 +814,7 @@ namespace Altaxo.Worksheet
 
 				mainDocument.DataTableCollection.Add(table);
 				// create a new worksheet without any columns
-				App.Current.CreateNewWorksheet(table);
+				Current.ProjectService.CreateNewWorksheet(table);
 			}
 		}
 
@@ -927,7 +927,7 @@ namespace Altaxo.Worksheet
 				table.Resume();
 				mainDocument.DataTableCollection.Add(table);
 				// create a new worksheet without any columns
-				App.Current.CreateNewWorksheet(table);
+				Current.ProjectService.CreateNewWorksheet(table);
 
 			}
 		}
@@ -1016,7 +1016,7 @@ namespace Altaxo.Worksheet
 			table.Resume();
 			mainDocument.DataTableCollection.Add(table);
 			// create a new worksheet without any columns
-			App.Current.CreateNewWorksheet(table);
+			Current.ProjectService.CreateNewWorksheet(table);
 
 			return null;
 		}

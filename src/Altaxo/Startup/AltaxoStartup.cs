@@ -13,7 +13,7 @@ namespace AltaxoStartup
 		[STAThread]
 		static void Main() 
 		{
-			App.Main();
+			Current.Main();
 		}
 	}
 }

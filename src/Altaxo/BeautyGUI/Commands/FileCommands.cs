@@ -11,7 +11,7 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			App.Current.CreateNewWorksheet();
+			Current.ProjectService.CreateNewWorksheet();
 		}
 	}
 	
@@ -19,7 +19,7 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			App.Current.CreateNewGraph();
+			Current.ProjectService.CreateNewGraph();
 		}
 	}
 
@@ -49,27 +49,27 @@ namespace Altaxo.Main.Commands
 					{
 						Altaxo.Data.DataTable table = deserObject as Altaxo.Data.DataTable;
 						if(table.Name==null || table.Name==string.Empty)
-							table.Name = App.Current.Doc.DataTableCollection.FindNewTableName();
-						else if( App.Current.Doc.DataTableCollection.ContainsTable(table.Name))
-							table.Name = App.Current.Doc.DataTableCollection.FindNewTableName(table.Name);
+							table.Name = Current.Project.DataTableCollection.FindNewTableName();
+						else if( Current.Project.DataTableCollection.ContainsTable(table.Name))
+							table.Name = Current.Project.DataTableCollection.FindNewTableName(table.Name);
 
-						App.Current.Doc.DataTableCollection.Add(table);
-						info.AnnounceDeserializationEnd(App.Current.Doc); // fire the event to resolve path references
+						Current.Project.DataTableCollection.Add(table);
+						info.AnnounceDeserializationEnd(Current.Project); // fire the event to resolve path references
 						
-						App.Current.CreateNewWorksheet(table);
+						Current.ProjectService.CreateNewWorksheet(table);
 					}
 					else if(deserObject is Altaxo.Graph.GraphDocument)
 					{
 						Altaxo.Graph.GraphDocument graph = deserObject as Altaxo.Graph.GraphDocument;
 						if(graph.Name==null || graph.Name==string.Empty)
-							graph.Name = App.Current.Doc.GraphDocumentCollection.FindNewName();
-						else if( App.Current.Doc.GraphDocumentCollection.Contains(graph.Name))
-							graph.Name = App.Current.Doc.GraphDocumentCollection.FindNewName(graph.Name);
+							graph.Name = Current.Project.GraphDocumentCollection.FindNewName();
+						else if( Current.Project.GraphDocumentCollection.Contains(graph.Name))
+							graph.Name = Current.Project.GraphDocumentCollection.FindNewName(graph.Name);
 
-						App.Current.Doc.GraphDocumentCollection.Add(graph);
-						info.AnnounceDeserializationEnd(App.Current.Doc); // fire the event to resolve path references in the graph
+						Current.Project.GraphDocumentCollection.Add(graph);
+						info.AnnounceDeserializationEnd(Current.Project); // fire the event to resolve path references in the graph
 
-						App.Current.CreateNewGraph(graph);
+						Current.ProjectService.CreateNewGraph(graph);
 					}
 				}
 			}
@@ -81,6 +81,7 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
+			
 			System.IO.Stream myStream;
 			OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
@@ -91,6 +92,9 @@ namespace Altaxo.Main.Commands
 
 			if(openFileDialog1.ShowDialog() == DialogResult.OK)
 			{
+				Current.ProjectService.OpenProject(openFileDialog1.FileName);
+				
+				/*
 				if((myStream = openFileDialog1.OpenFile())!= null)
 				{
 		
@@ -99,10 +103,11 @@ namespace Altaxo.Main.Commands
 					AltaxoDocument newdocument = new AltaxoDocument();
 					newdocument.RestoreFromZippedFile(zipFile,info);
 
-					App.Current.SetDocumentFromFile(zipFile,info,newdocument);
+					Current.ProjectService.SetDocumentFromFile(zipFile,info,newdocument);
 						
 					myStream.Close();
 				}
+				*/
 			}
 		}
 	}
@@ -114,25 +119,25 @@ namespace Altaxo.Main.Commands
 		{
 			bool bRet = true;
 			SaveFileDialog dlg = this.GetSaveAsDialog();
-			if(dlg.ShowDialog(App.Current.MainWindow) == DialogResult.OK)
+			if(dlg.ShowDialog(Current.MainWindow) == DialogResult.OK)
 			{
 				System.IO.Stream myStream;
 				if((myStream = dlg.OpenFile()) != null)
 				{
 					try
 					{
-							Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-							ZipOutputStream zippedStream = new ZipOutputStream(myStream);
-							App.Current.Doc.SaveToZippedFile(zippedStream, info);
-							App.Current.SaveWindowStateToZippedFile(zippedStream, info);
-							zippedStream.Close();
-						App.Current.Doc.IsDirty=false;
+						Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+						ZipOutputStream zippedStream = new ZipOutputStream(myStream);
+						Current.Project.SaveToZippedFile(zippedStream, info);
+						Current.ProjectService.SaveWindowStateToZippedFile(zippedStream, info);
+						zippedStream.Close();
+						Current.Project.IsDirty=false;
 
 						bRet = false;; // now saving was successfull, we can close the form
 					}
 					catch(Exception exc)
 					{
-						System.Windows.Forms.MessageBox.Show(App.Current.MainWindow,"An error occured saving the document, details see below:\n" + exc.ToString(),"Error",System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+						System.Windows.Forms.MessageBox.Show(Current.MainWindow,"An error occured saving the document, details see below:\n" + exc.ToString(),"Error",System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
 					}
 					finally
 					{

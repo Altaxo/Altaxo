@@ -22,7 +22,7 @@ namespace Altaxo.Worksheet.Commands
 		public override void Run()
 		{
 			Altaxo.Worksheet.GUI.WorksheetController ctrl 
-				= App.Current.Workbench.ActiveWorkbenchWindow.ActiveViewContent 
+				= Current.Workbench.ActiveWorkbenchWindow.ActiveViewContent 
 				as Altaxo.Worksheet.GUI.WorksheetController;
 			
 			if(null!=ctrl)
@@ -219,7 +219,7 @@ namespace Altaxo.Worksheet.Commands
 			// find a new name for the cloned table and add it to the DataTableCollection
 			clonedTable.Name = Data.DataTableCollection.GetParentDataTableCollectionOf(ctrl.DataTable).FindNewTableName();
 			Data.DataTableCollection.GetParentDataTableCollectionOf(ctrl.DataTable).Add(clonedTable);
-			App.Current.CreateNewWorksheet(clonedTable);
+			Current.ProjectService.CreateNewWorksheet(clonedTable);
 		}
 	}
 
@@ -384,7 +384,7 @@ namespace Altaxo.Worksheet.Commands
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
-		DataGridOperations.FFT(ctrl);
+			DataGridOperations.FFT(ctrl);
 		}
 	}
 
@@ -392,7 +392,7 @@ namespace Altaxo.Worksheet.Commands
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
-			string err = DataGridOperations.TwoDimFFT(App.Current.Doc, ctrl);
+			string err = DataGridOperations.TwoDimFFT(Current.Project, ctrl);
 			if(null!=err)
 				System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
 		}
@@ -402,7 +402,7 @@ namespace Altaxo.Worksheet.Commands
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
-		DataGridOperations.StatisticsOnColumns(App.Current.Doc,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows);
+			DataGridOperations.StatisticsOnColumns(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows);
 		}
 	}
 
@@ -411,7 +411,7 @@ namespace Altaxo.Worksheet.Commands
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
-			DataGridOperations.StatisticsOnRows(App.Current.Doc,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows);
+			DataGridOperations.StatisticsOnRows(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows);
 		}
 	}
 
@@ -419,7 +419,7 @@ namespace Altaxo.Worksheet.Commands
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
-			string err=DataGridOperations.MultiplyColumnsToMatrix(App.Current.Doc,ctrl.Doc,ctrl.SelectedColumns);
+			string err=DataGridOperations.MultiplyColumnsToMatrix(Current.Project,ctrl.Doc,ctrl.SelectedColumns);
 			if(null!=err)
 				System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
 		}
@@ -438,7 +438,7 @@ namespace Altaxo.Worksheet.Commands
 			ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
 			if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
 			{
-				string err=DataGridOperations.PrincipalComponentAnalysis(App.Current.Doc,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,true,ivictrl.EnteredContents);
+				string err=DataGridOperations.PrincipalComponentAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,true,ivictrl.EnteredContents);
 				if(null!=err)
 					System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
 			}
@@ -458,7 +458,7 @@ namespace Altaxo.Worksheet.Commands
 			ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
 			if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
 			{
-				string err=DataGridOperations.PrincipalComponentAnalysis(App.Current.Doc,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,false,ivictrl.EnteredContents);
+				string err=DataGridOperations.PrincipalComponentAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,false,ivictrl.EnteredContents);
 				if(null!=err)
 					System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
 			}
@@ -468,7 +468,7 @@ namespace Altaxo.Worksheet.Commands
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
-			string err=DataGridOperations.PartialLeastSquaresAnalysis(App.Current.Doc,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,true);
+			string err=DataGridOperations.PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,true);
 			if(null!=err)
 				System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
 		}
@@ -477,7 +477,7 @@ namespace Altaxo.Worksheet.Commands
 	{
 		public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
-			string err=DataGridOperations.PartialLeastSquaresAnalysis(App.Current.Doc,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,false);
+			string err=DataGridOperations.PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,false);
 			if(null!=err)
 				System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
 		}

@@ -33,7 +33,7 @@ namespace BeautyGUI
 		{
 			//App.InitializeMainController(new ICSharpCode.SharpDevelop.Gui.BeautyWorkbench(new ICSharpCode.SharpDevelop.Gui.BeautyWorkbenchWindow(), new AltaxoDocument()));
 
-			App.Main();
+			Current.Main();
 		}
 	}
 }

@@ -328,7 +328,7 @@ namespace Altaxo.Worksheet.GUI
 
 
 		public WorksheetController(Altaxo.Worksheet.WorksheetLayout layout)
-		: this(layout, false)
+			: this(layout, false)
 		{
 		}
 	
@@ -787,7 +787,7 @@ namespace Altaxo.Worksheet.GUI
 		// ******************************************************************
 		// ******************************************************************
 	
-	protected void EhMenuFilePageSetup_OnClick(object sender, System.EventArgs e)
+		protected void EhMenuFilePageSetup_OnClick(object sender, System.EventArgs e)
 		{
 		}
 
@@ -951,7 +951,7 @@ namespace Altaxo.Worksheet.GUI
 			// find a new name for the cloned table and add it to the DataTableCollection
 			clonedTable.Name = Data.DataTableCollection.GetParentDataTableCollectionOf(DataTable).FindNewTableName();
 			Data.DataTableCollection.GetParentDataTableCollectionOf(DataTable).Add(clonedTable);
-			App.Current.CreateNewWorksheet(clonedTable);
+			Current.ProjectService.CreateNewWorksheet(clonedTable);
 		}
 
 		protected void EhMenuWorksheetTranspose_OnClick(object sender, System.EventArgs e)
@@ -972,11 +972,11 @@ namespace Altaxo.Worksheet.GUI
 		}
 		protected void EhMenuWorksheetAddPropertyColumns_OnClick(object sender, System.EventArgs e)
 		{
-/*
- 			Altaxo.Data.TextColumn nc = new Altaxo.Data.TextColumn(this.DataTable.PropCols.FindNewColumnName());
-			this.DataTable.PropCols.Add(nc);
-			this.View.TableAreaInvalidate();
-*/
+			/*
+						Altaxo.Data.TextColumn nc = new Altaxo.Data.TextColumn(this.DataTable.PropCols.FindNewColumnName());
+						this.DataTable.PropCols.Add(nc);
+						this.View.TableAreaInvalidate();
+			*/
 			Altaxo.Main.GUI.DialogFactory.ShowAddColumnsDialog(this.View.TableViewForm,this.DataTable,true);
 		}
 
@@ -1134,7 +1134,7 @@ namespace Altaxo.Worksheet.GUI
 		// Analysis - 2 Dimensional FFT
 		protected void EhMenuAnalysis2DFFT_OnClick(object sender, System.EventArgs e)
 		{
-			string err = DataGridOperations.TwoDimFFT(App.Current.Doc, this);
+			string err = DataGridOperations.TwoDimFFT(Current.Project, this);
 			if(null!=err)
 				System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
 		}
@@ -1142,20 +1142,20 @@ namespace Altaxo.Worksheet.GUI
 
 		protected void EhMenuAnalysisStatisticsOnColumns_OnClick(object sender, System.EventArgs e)
 		{
-			DataGridOperations.StatisticsOnColumns(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows);
+			DataGridOperations.StatisticsOnColumns(Current.Project,this.Doc,this.SelectedColumns,SelectedRows);
 		}
 
 		protected void EhMenuAnalysisStatisticsOnRows_OnClick(object sender, System.EventArgs e)
 		{
-			DataGridOperations.StatisticsOnRows(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows);
+			DataGridOperations.StatisticsOnRows(Current.Project,this.Doc,this.SelectedColumns,SelectedRows);
 		}
 
 		// Analysis - Multiply Columns to Matrix
 		protected void EhMenuAnalysisMultiplyColumnsToMatrix_OnClick(object sender, System.EventArgs e)
 		{
-		string err=DataGridOperations.MultiplyColumnsToMatrix(App.Current.Doc,this.Doc,this.SelectedColumns);
-		if(null!=err)
-			System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+			string err=DataGridOperations.MultiplyColumnsToMatrix(Current.Project,this.Doc,this.SelectedColumns);
+			if(null!=err)
+				System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
 		}
 
 		// Analysis - PCA on rows
@@ -1170,7 +1170,7 @@ namespace Altaxo.Worksheet.GUI
 			ctrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
 			if(ctrl.ShowDialog(View.TableViewForm))
 			{
-				string err=DataGridOperations.PrincipalComponentAnalysis(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows,true,ctrl.EnteredContents);
+				string err=DataGridOperations.PrincipalComponentAnalysis(Current.Project,this.Doc,this.SelectedColumns,SelectedRows,true,ctrl.EnteredContents);
 				if(null!=err)
 					System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
 			}
@@ -1187,7 +1187,7 @@ namespace Altaxo.Worksheet.GUI
 			ctrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
 			if(ctrl.ShowDialog(View.TableViewForm))
 			{
-				string err=DataGridOperations.PrincipalComponentAnalysis(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows,false,ctrl.EnteredContents);
+				string err=DataGridOperations.PrincipalComponentAnalysis(Current.Project,this.Doc,this.SelectedColumns,SelectedRows,false,ctrl.EnteredContents);
 				if(null!=err)
 					System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
 			}
@@ -1196,14 +1196,14 @@ namespace Altaxo.Worksheet.GUI
 		// Analysis - PLS on rows
 		protected void EhMenuAnalysisPLSOnRows_OnClick(object sender, System.EventArgs e)
 		{
-			string err=DataGridOperations.PartialLeastSquaresAnalysis(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows,this.SelectedPropertyColumns,true);
+			string err=DataGridOperations.PartialLeastSquaresAnalysis(Current.Project,this.Doc,this.SelectedColumns,SelectedRows,this.SelectedPropertyColumns,true);
 			if(null!=err)
 				System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
 		}
 		// Analysis - PLS on cols
 		protected void EhMenuAnalysisPLSOnCols_OnClick(object sender, System.EventArgs e)
 		{
-			string err=DataGridOperations.PartialLeastSquaresAnalysis(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows,this.SelectedPropertyColumns,false);
+			string err=DataGridOperations.PartialLeastSquaresAnalysis(Current.Project,this.Doc,this.SelectedColumns,SelectedRows,this.SelectedPropertyColumns,false);
 			if(null!=err)
 				System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
 		}
@@ -1469,11 +1469,11 @@ namespace Altaxo.Worksheet.GUI
 
 		public void EhTableDataChanged(object sender, EventArgs e)
 		{
-				if(this.m_NumberOfTableRows!=DataTable.DataColumns.RowCount)
-					this.SetCachedNumberOfDataRows();
+			if(this.m_NumberOfTableRows!=DataTable.DataColumns.RowCount)
+				this.SetCachedNumberOfDataRows();
 			
-				if(this.m_NumberOfTableCols!=DataTable.DataColumns.ColumnCount)
-					this.SetCachedNumberOfDataColumns();
+			if(this.m_NumberOfTableCols!=DataTable.DataColumns.ColumnCount)
+				this.SetCachedNumberOfDataColumns();
 		}
 
 	
@@ -2196,7 +2196,7 @@ namespace Altaxo.Worksheet.GUI
 					this.m_ColumnStyleCache.ForceUpdate(this);
 					
 					if(View!=null)
-					View.TableAreaInvalidate();
+						View.TableAreaInvalidate();
 				}
 			}
 		}
@@ -2753,7 +2753,7 @@ namespace Altaxo.Worksheet.GUI
 			DataTable.Dispose();
 
 			// we then remove the view from the list of windows
-			App.Current.RemoveWorksheet(this);
+			Current.ProjectService.RemoveWorksheet(this);
 		}
 
 		/// <summary>
@@ -2762,7 +2762,7 @@ namespace Altaxo.Worksheet.GUI
 		/// <returns>True if the closing should be canceled, false otherwise.</returns>
 		public bool HostWindowClosing()
 		{
-			if(!App.Current.IsClosingAll)
+			if(!Current.ApplicationIsClosing)
 			{
 				System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,"Do you really want to close this worksheet and delete the corresponding table?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
 
@@ -2786,12 +2786,12 @@ namespace Altaxo.Worksheet.GUI
 
 			
 			// we then remove the view from the list of windows
-			App.Current.RemoveWorksheet(this);
+			Current.ProjectService.RemoveWorksheet(this);
 		}
 
 		public void EhView_Closing(System.ComponentModel.CancelEventArgs e)
 		{
-			if(!App.Current.IsClosingAll)
+			if(!Current.ApplicationIsClosing)
 			{
 				System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,"Do you really want to close this worksheet and delete the corresponding table?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
 

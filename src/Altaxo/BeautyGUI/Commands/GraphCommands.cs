@@ -22,7 +22,7 @@ namespace Altaxo.Graph.Commands
 		public override void Run()
 		{
 			Altaxo.Graph.GUI.GraphController ctrl 
-				= App.Current.Workbench.ActiveWorkbenchWindow.ActiveViewContent 
+				= Current.Workbench.ActiveWorkbenchWindow.ActiveViewContent 
 				as Altaxo.Graph.GUI.GraphController;
 			
 			if(null!=ctrl)
@@ -47,7 +47,7 @@ namespace Altaxo.Graph.Commands
 		{
 			try
 			{
-				App.Current.PageSetupDialog.ShowDialog(ctrl.View.Form);
+				Current.PrintingService.PageSetupDialog.ShowDialog(ctrl.View.Form);
 			}
 			catch(Exception exc)
 			{
@@ -66,10 +66,10 @@ namespace Altaxo.Graph.Commands
 		{
 			try
 			{
-				if(DialogResult.OK==App.Current.PrintDialog.ShowDialog(ctrl.View.Form))
+				if(DialogResult.OK==Current.PrintingService.PrintDialog.ShowDialog(ctrl.View.Form))
 				{
-					App.Current.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
-					App.Current.PrintDocument.Print();
+					Current.PrintingService.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
+					Current.PrintingService.PrintDocument.Print();
 				}
 			}
 			catch(Exception ex)
@@ -78,7 +78,7 @@ namespace Altaxo.Graph.Commands
 			}
 			finally
 			{
-				App.Current.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
+				Current.PrintingService.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
 			}
 		}
 	}
@@ -93,8 +93,8 @@ namespace Altaxo.Graph.Commands
 			try
 			{
 				System.Windows.Forms.PrintPreviewDialog dlg = new System.Windows.Forms.PrintPreviewDialog();
-				App.Current.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
-				dlg.Document = App.Current.PrintDocument;
+				Current.PrintingService.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
+				dlg.Document = Current.PrintingService.PrintDocument;
 				dlg.ShowDialog(ctrl.View.Form);
 				dlg.Dispose();
 			}
@@ -104,7 +104,7 @@ namespace Altaxo.Graph.Commands
 			}
 			finally
 			{
-				App.Current.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
+				Current.PrintingService.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(ctrl.EhPrintPage);
 			}
 		}
 	}
@@ -226,7 +226,7 @@ namespace Altaxo.Graph.Commands
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{
 			GraphDocument newDoc = new GraphDocument(ctrl.Doc);
-			App.Current.CreateNewGraph(newDoc);
+			Current.ProjectService.CreateNewGraph(newDoc);
 		}
 	}
 
@@ -270,8 +270,8 @@ namespace Altaxo.Graph.Commands
 		{
 			get 
 			{
-				if(null!=App.Current && null!=App.Current.Workbench && null!=App.Current.Workbench.ActiveWorkbenchWindow)
-					return App.Current.Workbench.ActiveWorkbenchWindow.ActiveViewContent as Altaxo.Graph.GUI.GraphController;
+				if(null!=Current.Workbench && null!=Current.Workbench.ActiveWorkbenchWindow)
+					return Current.Workbench.ActiveWorkbenchWindow.ActiveViewContent as Altaxo.Graph.GUI.GraphController;
 				else
 					return null;
 			}
@@ -306,7 +306,7 @@ namespace Altaxo.Graph.Commands
 				base.IsChecked = value;
 				if(true==value && null!=Controller)
 				{
-						Controller.CurrentGraphTool=GraphTools.ObjectPointer;
+					Controller.CurrentGraphTool=GraphTools.ObjectPointer;
 				}
 
 				((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
@@ -336,7 +336,7 @@ namespace Altaxo.Graph.Commands
 				base.IsChecked = value;
 				if(true==value && null!=Controller)
 				{
-						Controller.CurrentGraphTool=GraphTools.Text;
+					Controller.CurrentGraphTool=GraphTools.Text;
 				}
 
 				((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();

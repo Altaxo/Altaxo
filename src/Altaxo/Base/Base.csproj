@@ -625,11 +625,6 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Main\AltaxoProjectService.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Main\App.ico"
                     BuildAction = "Content"
                 />
@@ -690,6 +685,16 @@
                 />
                 <File
                     RelPath = "Main\ParentChangedEvent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\PrintingService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\ProjectService.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -831,6 +836,16 @@
                     RelPath = "Main\GUI\MWControls\MWTreeView.resx"
                     DependentUpon = "MWTreeView.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Root\Current.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Root\MainController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Serialization\AsciiExporter.cs"

@@ -100,10 +100,10 @@ namespace Altaxo.Graph.GUI
 			// Available Items
 			if(null!=View)
 			{
-				int nTables = App.Current.Doc.DataTableCollection.Count;
+				int nTables = Current.Project.DataTableCollection.Count;
 				TreeNode[] nodes = new TreeNode[nTables];
 				int i=0;
-				foreach(Data.DataTable dt in App.Current.Doc.DataTableCollection)
+				foreach(Data.DataTable dt in Current.Project.DataTableCollection)
 				{
 					nodes[i++] = new TreeNode(dt.Name,new TreeNode[1]{new TreeNode()});
 				}
@@ -163,7 +163,7 @@ namespace Altaxo.Graph.GUI
 
 			// create a new plotassociation from the column
 			// first, get the y column from table and name
-			Data.DataTable tab = App.Current.Doc.DataTableCollection[item.table];
+			Data.DataTable tab = Current.Project.DataTableCollection[item.table];
 			if(null!=tab)
 			{
 				Data.DataColumn ycol = tab[item.column];
@@ -212,7 +212,7 @@ namespace Altaxo.Graph.GUI
 
 		public void EhView_DataAvailableBeforeExpand(TreeNode node)
 		{
-			Data.DataTable dt = App.Current.Doc.DataTableCollection[node.Text];
+			Data.DataTable dt = Current.Project.DataTableCollection[node.Text];
 			if(null!=dt)
 			{
 				node.Nodes.Clear();
@@ -334,7 +334,7 @@ namespace Altaxo.Graph.GUI
 					return;
 				}
 
-			for(i=0;i<selidxs.Length;i++)
+				for(i=0;i<selidxs.Length;i++)
 				{
 					object helpSeg;
 					int iSeg=selidxs[i];

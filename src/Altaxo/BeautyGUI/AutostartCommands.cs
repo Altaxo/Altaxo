@@ -38,14 +38,23 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 		public override void Run()
 		{
 
-			Altaxo.MainController ctrl = new Altaxo.MainController(new Altaxo.AltaxoDocument());
+			Altaxo.Current.SetProjectService( new Altaxo.Main.ProjectService() );
+
+			Altaxo.Current.SetPrintingService( new Altaxo.Main.PrintingService() );
+
+			// we construct the main document
+			Altaxo.Current.ProjectService.CurrentOpenProject = new AltaxoDocument();
+
+			Altaxo.MainController ctrl = new Altaxo.MainController();
 			// HACK the new WorkbenchWindow object is by this time completely ignored by the 
 			// workbench constructor
 			BeautyWorkbench w = new ICSharpCode.SharpDevelop.Gui.BeautyWorkbench(new ICSharpCode.SharpDevelop.Gui.BeautyWorkbenchWindow(), new Altaxo.AltaxoDocument());
-			ctrl.Workbench = w;
-			Altaxo.App.InitializeMainController(ctrl);
+			Altaxo.Current.SetWorkbench ( w );
+			// Altaxo.Current.InitializeMainController(ctrl);
 			WorkbenchSingleton.Workbench = w;
 			
+			ctrl.SetMenuToMainWindow();
+
 			w.InitializeWorkspace();
 			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 			w.SetMemento((IXmlConvertable)propertyService.GetProperty(workbenchMemento, new WorkbenchMemento()));
@@ -66,11 +75,20 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 		
 		public override void Run()
 		{
-			Altaxo.MainController ctrl = new Altaxo.MainController(new Altaxo.AltaxoDocument());
+
+			Altaxo.Current.SetProjectService( new Altaxo.Main.ProjectService() );
+
+			Altaxo.Current.SetPrintingService( new Altaxo.Main.PrintingService() );
+
+			// we construct the main document
+			Altaxo.Current.ProjectService.CurrentOpenProject = new AltaxoDocument();
+
+
+			//Altaxo.MainController ctrl = new Altaxo.MainController(new Altaxo.AltaxoDocument());
 
 			Workbench1 w = new Workbench1();
-			ctrl.Workbench = w;
-			Altaxo.App.InitializeMainController(ctrl);
+			Altaxo.Current.SetWorkbench ( w );
+			//Altaxo.Current.InitializeMainController(ctrl);
 			WorkbenchSingleton.Workbench = w;
 			
 			w.InitializeWorkspace();
@@ -204,14 +222,16 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 		/// </remarks>
 		void ShowTipOfTheDay(object sender, EventArgs e)
 		{
-			if (isCalled) {
+			if (isCalled) 
+			{
 				Application.Idle -= idleEventHandler;
 				return;
 			}
 			isCalled = true;
 			// show tip of the day
 			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
-			if (propertyService.GetProperty("ICSharpCode.SharpDevelop.Gui.Dialog.TipOfTheDayView.ShowTipsAtStartup", true)) {
+			if (propertyService.GetProperty("ICSharpCode.SharpDevelop.Gui.Dialog.TipOfTheDayView.ShowTipsAtStartup", true)) 
+			{
 				ViewTipOfTheDay dview = new ViewTipOfTheDay();
 				dview.Run();
 			}
@@ -281,6 +301,6 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 			propertyService.SetProperty(workbenchMemento, WorkbenchSingleton.Workbench.CreateMemento());
 #endif
 
-			}
+		}
 	}
 }

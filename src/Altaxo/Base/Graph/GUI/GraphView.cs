@@ -281,15 +281,15 @@ namespace Altaxo.Graph.GUI
 
 		public void OnViewSelection()
 		{
-			if(App.Current is Altaxo.MainController)
+			if(Current.Workbench is Altaxo.AltaxoWorkbench)
 			{
 				if(null==m_GraphToolsToolBar)
 					m_GraphToolsToolBar = CreateGraphToolsToolbar();
 
 				// restore the parent - so the toolbar is shown
 				// TODO replace this by a service
-				if(App.Current!=null && App.Current.MainWindow != null)
-					m_GraphToolsToolBar.Parent = (Form)App.Current.MainWindow;
+				if(Current.MainWindow as Form != null)
+					m_GraphToolsToolBar.Parent = (Form)Current.MainWindow;
 			}
 		}
 

@@ -283,7 +283,7 @@ namespace Altaxo.Graph.GUI
 		/// </summary>
 		/// <param name="graphdoc">The graph which holds the graphical elements.</param>
 		public GraphController(GraphDocument graphdoc)
-		: this(graphdoc,false)
+			: this(graphdoc,false)
 		{
 		}
 
@@ -303,9 +303,9 @@ namespace Altaxo.Graph.GUI
 
 			this.InitializeMenu();
 	
-			if(null!=App.Current) // if we are at design time, this is null and we use the default values above
+			if(null!=Current.PrintingService) // if we are at design time, this is null and we use the default values above
 			{
-				System.Drawing.Printing.PrintDocument doc = App.Current.PrintDocument;
+				System.Drawing.Printing.PrintDocument doc = Current.PrintingService.PrintDocument;
 			
 				// Test whether or not a printer is installed
 				System.Drawing.Printing.PrinterSettings prnset = new System.Drawing.Printing.PrinterSettings();
@@ -544,7 +544,7 @@ namespace Altaxo.Graph.GUI
 		{
 			try
 			{
-				App.Current.PageSetupDialog.ShowDialog(this.m_View.Window);
+				Current.PrintingService.PageSetupDialog.ShowDialog(this.m_View.Window);
 			}
 			catch(Exception exc)
 			{
@@ -561,10 +561,10 @@ namespace Altaxo.Graph.GUI
 		{
 			try
 			{
-				if(DialogResult.OK==App.Current.PrintDialog.ShowDialog(this.m_View.Window))
+				if(DialogResult.OK==Current.PrintingService.PrintDialog.ShowDialog(this.m_View.Window))
 				{
-					App.Current.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
-					App.Current.PrintDocument.Print();
+					Current.PrintingService.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
+					Current.PrintingService.PrintDocument.Print();
 				}
 			}
 			catch(Exception ex)
@@ -573,7 +573,7 @@ namespace Altaxo.Graph.GUI
 			}
 			finally
 			{
-				App.Current.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
+				Current.PrintingService.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
 			}
 		}
 	
@@ -588,8 +588,8 @@ namespace Altaxo.Graph.GUI
 			try
 			{
 				System.Windows.Forms.PrintPreviewDialog dlg = new System.Windows.Forms.PrintPreviewDialog();
-				App.Current.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
-				dlg.Document = App.Current.PrintDocument;
+				Current.PrintingService.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
+				dlg.Document = Current.PrintingService.PrintDocument;
 				dlg.ShowDialog(this.m_View.Window);
 				dlg.Dispose();
 			}
@@ -599,7 +599,7 @@ namespace Altaxo.Graph.GUI
 			}
 			finally
 			{
-				App.Current.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
+				Current.PrintingService.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.EhPrintPage);
 			}
 		}
 
@@ -713,7 +713,7 @@ namespace Altaxo.Graph.GUI
 		private void EhMenuGraphDuplicate_OnClick(object sender, System.EventArgs e)
 		{
 			GraphDocument newDoc = new GraphDocument(this.Doc);
-			App.Current.CreateNewGraph(newDoc);
+			Current.ProjectService.CreateNewGraph(newDoc);
 		}
 
 		private void EhMenuGraphLayer_OnClick(object sender, System.EventArgs e)
@@ -915,7 +915,7 @@ namespace Altaxo.Graph.GUI
 		/// <returns>True if the closing should be canceled, false otherwise.</returns>
 		public bool HostWindowClosing()
 		{
-			if(!App.Current.IsClosingAll)
+			if(!Current.ApplicationIsClosing)
 			{
 
 				System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.m_View.Window,"Do you really want to close this graph?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
@@ -933,7 +933,7 @@ namespace Altaxo.Graph.GUI
 		/// </summary>
 		public void HostWindowClosed()
 		{
-			App.Current.RemoveGraph(this);
+			Current.ProjectService.RemoveGraph(this);
 		}
 
 
@@ -1091,11 +1091,11 @@ namespace Altaxo.Graph.GUI
 				View.OnViewSelection();
 		}
 
-/// <summary>
-/// This is called if the host window is deselected.
-/// </summary>
-/// <param name="sender"></param>
-/// <param name="e"></param>
+		/// <summary>
+		/// This is called if the host window is deselected.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		protected void EhParentWindowDeselected(object sender, EventArgs e)
 		{
 			if(View!=null)
