@@ -100,7 +100,7 @@ namespace ICSharpCode.TextEditor.Document
 			taskService.NotifyTaskChange();
 			
 			OpenTaskView taskView = WorkbenchSingleton.Workbench.GetPad(typeof(OpenTaskView)) as OpenTaskView;
-			if (taskView != null) taskView.BringToFront();
+			if (taskView != null) taskView.BringPadToFront();
 		}
 		
 		public static void ReplaceAll()

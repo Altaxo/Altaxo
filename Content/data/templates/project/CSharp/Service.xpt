@@ -5,11 +5,11 @@
 	
 	<!-- Template Header -->
 	<TemplateConfiguration>
-		<Name>C# Service</Name>
+		<Name>${res:Templates.Project.WindowsService.Name}</Name>
 		<Category>C#</Category>
 		<Icon>C#.Project.ServiceProject</Icon>
 		<LanguageName>C#</LanguageName>
-		<Description>Creates an empty C# service</Description>
+		<Description>${res:Templates.Project.WindowsService.Description}</Description>
 	</TemplateConfiguration>
 	
 	<!-- Actions -->
@@ -28,7 +28,8 @@
 			<Options Target = "Library" PauseConsoleOutput = "False" />
 	
 			<Files>
-				<File name="MyService.cs"><![CDATA[using System;
+				<File name="MyService.cs"><![CDATA[${StandardHeader.C#}
+using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;

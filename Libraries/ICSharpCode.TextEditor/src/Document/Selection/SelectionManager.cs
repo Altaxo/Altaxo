@@ -107,7 +107,6 @@ namespace ICSharpCode.TextEditor.Document
 		
 		public void ExtendSelection(Point oldPosition, Point newPosition)
 		{
-			//TODO: Andrea darf basteln
 			if (oldPosition == newPosition) {
 				return;
 			}

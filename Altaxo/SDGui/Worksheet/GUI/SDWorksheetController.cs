@@ -121,16 +121,46 @@ namespace Altaxo.Worksheet.GUI
     }
     
     
+    /// <summary>
+    /// Returns the file name (if any) assigned to this view.
+    /// </summary>
+    public string FileName 
+    {
+      get 
+      { 
+        return this.Doc.Name; 
+      }
+      set 
+      {
+      }
+    }
+    
+       
+    /// <summary>
+    /// This is the whole name of the content, e.g. the file name or
+    /// the url depending on the type of the content.
+    /// </summary>
+    /// <returns>
+    /// Title Name, if not set it returns UntitledName
+    /// </returns>
+    public string TitleName 
+    {
+      get 
+      { 
+        return this.Doc.Name; 
+      }
+      set 
+      {
+      }
+    }
 
-    
-    
     /// <summary>
     /// The text on the tab page when more than one view content
     /// is attached to a single window.
     /// </summary>
     public string TabPageText 
     {
-      get { return ContentName; }
+      get { return TitleName; }
     }
 
     /// <summary>
@@ -167,6 +197,22 @@ namespace Altaxo.Worksheet.GUI
       get { return true; }
     }
     
+    /// <summary>
+    /// Is called when the view content is selected inside the window
+    /// tab. NOT when the windows is selected.
+    /// </summary>
+    public void Selected()
+    {
+    }
+		
+    /// <summary>
+    /// Is called when the view content is deselected inside the window
+    /// tab before the other window is selected. NOT when the windows is deselected.
+    /// </summary>
+    public void Deselected()
+    {
+    }
+
     /// <summary>
     /// Reinitializes the content. (Re-initializes all add-in tree stuff)
     /// and redraws the content. Call this not directly unless you know
@@ -206,6 +252,10 @@ namespace Altaxo.Worksheet.GUI
       }
     }
     
+    /// <summary>
+    /// Is called each time the name for the content has changed.
+    /// </summary>
+    public event EventHandler TitleNameChanged;
     
     
     /// <summary>
@@ -231,6 +281,17 @@ namespace Altaxo.Worksheet.GUI
       set {}
     }
     
+    public bool EnableUndo 
+    {
+      get { return false; }
+    }
+		
+    public bool EnableRedo 
+    {
+      get{ return false; }
+    }
+
+
     public void Undo()
     {
     }

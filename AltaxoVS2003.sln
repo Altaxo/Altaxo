@@ -24,10 +24,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zCommandBar", "Libraries\Co
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zMagicLibrary", "Libraries\MagicLibrary\src\zMagicLibrary.csproj", "{993E6ED0-F820-4264-9989-B6341C179CB4}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Startup", "Altaxo\Startup\Startup.csproj", "{63420446-3D85-4D00-BA9E-9EA7680B87E0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{012F4935-9036-4F02-8C03-060EC9514A1D} = {012F4935-9036-4F02-8C03-060EC9514A1D}
@@ -80,6 +76,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoBaseTest", "Altaxo\Ba
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zWinFormsUI", "Libraries\WinFormsUI\WinFormsUI\zWinFormsUI.csproj", "{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -118,11 +118,6 @@ Global
 		{397ADB5E-E608-4304-A3F7-F97E62B33932}.DesignTimeDebugging.Build.0 = Debug|.NET
 		{397ADB5E-E608-4304-A3F7-F97E62B33932}.Release.ActiveCfg = Release|.NET
 		{397ADB5E-E608-4304-A3F7-F97E62B33932}.Release.Build.0 = Release|.NET
-		{993E6ED0-F820-4264-9989-B6341C179CB4}.Debug.ActiveCfg = Debug|.NET
-		{993E6ED0-F820-4264-9989-B6341C179CB4}.DesignTimeDebugging.ActiveCfg = Debug|.NET
-		{993E6ED0-F820-4264-9989-B6341C179CB4}.DesignTimeDebugging.Build.0 = Debug|.NET
-		{993E6ED0-F820-4264-9989-B6341C179CB4}.Release.ActiveCfg = Release|.NET
-		{993E6ED0-F820-4264-9989-B6341C179CB4}.Release.Build.0 = Release|.NET
 		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Debug.ActiveCfg = Debug|.NET
 		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Debug.Build.0 = Debug|.NET
 		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.DesignTimeDebugging.ActiveCfg = Debug|.NET
@@ -187,6 +182,12 @@ Global
 		{3B2A9A3B-5EBC-4C38-8B73-B4DCA6BFB1C3}.DesignTimeDebugging.Build.0 = Debug|.NET
 		{3B2A9A3B-5EBC-4C38-8B73-B4DCA6BFB1C3}.Release.ActiveCfg = Release|.NET
 		{3B2A9A3B-5EBC-4C38-8B73-B4DCA6BFB1C3}.Release.Build.0 = Release|.NET
+		{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}.Debug.ActiveCfg = Debug|.NET
+		{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}.Debug.Build.0 = Debug|.NET
+		{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}.DesignTimeDebugging.ActiveCfg = Debug|.NET
+		{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}.DesignTimeDebugging.Build.0 = Debug|.NET
+		{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}.Release.ActiveCfg = Release|.NET
+		{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Icon1.ico = Icon1.ico

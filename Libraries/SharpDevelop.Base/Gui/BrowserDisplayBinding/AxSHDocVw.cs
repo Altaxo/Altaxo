@@ -1428,3 +1428,4 @@ namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding
 		}
 	}
 }
+

@@ -2,24 +2,6 @@
 <!-- syntaxdefinition for C# 2000 by Mike Krueger -->
 
 <SyntaxDefinition name = "C#" extensions = ".cs">
-
-	<Environment> 
-		<Default      color = "SystemColors.WindowText"    bgcolor = "SystemColors.Window"/>
-		<Selection    color = "SystemColors.HighlightText" bgcolor = "SystemColors.Highlight"/>
-<!--		<Selection    bgcolor = "LightBlue"/> -->
-		<VRuler       color = "SystemColors.ControlLight"/>
-		<InvalidLines color = "Red"/>
-		<CaretMarker  color = "Yellow"/>
-		
-		<LineNumbers  color = "SystemColors.ControlDark" bgcolor = "SystemColors.Window"/>
-		
-		<FoldLine     color = "#808080" bgcolor="Black"/>
-		<FoldMarker   color = "#808080" bgcolor="White"/>
-		
-		<EOLMarkers   color = "#E0E0E5"/>
-		<SpaceMarkers color = "#E0E0E5"/>
-		<TabMarkers   color = "#E0E0E5"/>
-	</Environment>
 	
 	<Properties>
 		<Property name="LineComment" value="//"/>
@@ -30,19 +12,20 @@
 	<RuleSets>
 		<RuleSet ignorecase="false">
 			<Delimiters>&amp;&lt;&gt;~!@%^*()-+=|\#/{}[]:;"' ,	.?</Delimiters>
-		  <Span name = "PreprocessorDirectives" bold="false" italic="false" color="Green" stopateol = "true">
-		  	<Begin>#</Begin>
-		  </Span>
+			
+			<Span name = "PreprocessorDirectives" bold="false" italic="false" color="Green" stopateol = "true">
+				<Begin>#</Begin>
+			</Span>
+			
+			<Span name = "DocLineComment" rule = "DocCommentSet" bold = "false" italic = "false" color = "Green" stopateol = "true">
+				<Begin bold = "false" italic = "false" color = "Gray">///</Begin>
+			</Span>
 		  
-		  <Span name = "DocLineComment" rule = "DocCommentSet" bold = "false" italic = "true" color = "Green" stopateol = "true">
-			   <Begin bold = "false" italic = "true" color = "Gray">///</Begin>
-		  </Span>
-		  
-		  	<Span name = "LineComment" rule = "CommentMarkerSet" bold = "false" italic = "true" color = "Green" stopateol = "true">
+		  	<Span name = "LineComment" rule = "CommentMarkerSet" bold = "false" italic = "false" color = "Green" stopateol = "true">
 			   	<Begin>//@!/@</Begin>
 		  	</Span>
 		  
-			<Span name = "BlockComment" rule = "CommentMarkerSet" bold = "false" italic = "true" color = "Green" stopateol = "false">
+			<Span name = "BlockComment" rule = "CommentMarkerSet" bold = "false" italic = "false" color = "Green" stopateol = "false">
 				<Begin>/*</Begin>
 				<End>*/</End>
 			</Span>
@@ -112,6 +95,7 @@
 				<Key word = "if" />
 				<Key word = "switch" />
 				<Key word = "case" />
+				<Key word = "default" />
 			</KeyWords>
 		
 			<KeyWords name = "IterationStatements" bold="true" italic="false" color="Blue">
@@ -125,7 +109,6 @@
 			<KeyWords name = "JumpStatements" bold="false" italic="false" color="Navy">
 				<Key word = "break" />
 				<Key word = "continue" />
-				<Key word = "default" />
 				<Key word = "goto" />
 				<Key word = "return" />
 			</KeyWords>
@@ -246,11 +229,11 @@
 		
 		<RuleSet name = "CommentMarkerSet" ignorecase = "true">
 		  	<Delimiters>&lt;&gt;~!@%^*()-+=|\#/{}[]:;"' ,	.?</Delimiters>
-			<KeyWords name = "ErrorWords" bold="true" italic="true" color="Red">
+			<KeyWords name = "ErrorWords" bold="true" italic="false" color="Red">
 				<Key word = "TODO" />
 				<Key word = "FIXME" />
 	 	 	</KeyWords>
-			<KeyWords name = "WarningWords" bold="true" italic="true" color="#EEE0E000">
+			<KeyWords name = "WarningWords" bold="true" italic="false" color="#EEE0E000">
 				<Key word = "HACK" />
 				<Key word = "UNDONE" />
 	 	 	</KeyWords>
@@ -259,17 +242,17 @@
 		<RuleSet name = "DocCommentSet" ignorecase = "false">
 		  	<Delimiters>&lt;&gt;~!@%^*()-+=|\#/{}[]:;"' ,	.?</Delimiters>
 			
-			<Span name = "XmlTag" rule = "XmlDocSet" bold = "false" italic = "true" color = "Gray" stopateol = "true">
+			<Span name = "XmlTag" rule = "XmlDocSet" bold = "false" italic = "false" color = "Gray" stopateol = "true">
 				<Begin>&lt;</Begin>
 				<End>&gt;</End>
 			</Span>
 			
-			<KeyWords name = "ErrorWords" bold="true" italic="true" color="Red">
+			<KeyWords name = "ErrorWords" bold="true" italic="false" color="Red">
 				    <Key word = "TODO" />
 				    <Key word = "FIXME" />
 			</KeyWords>
 			
-			<KeyWords name = "WarningWords" bold="true" italic="true" color="#EEE0E000">
+			<KeyWords name = "WarningWords" bold="true" italic="false" color="#EEE0E000">
 				    <Key word = "HACK" />
 				    <Key word = "UNDONE" />
 			</KeyWords>
@@ -278,19 +261,19 @@
 		<RuleSet name = "XmlDocSet" ignorecase = "false">
 		  	<Delimiters>&lt;&gt;~!@%^*()-+=|\#/{}[]:;"' ,	.?</Delimiters>
 	  	    
-			<Span name = "String" bold = "true" italic = "true" color = "Silver" stopateol = "true">
+			<Span name = "String" bold = "true" italic = "false" color = "Silver" stopateol = "true">
 				<Begin>"</Begin>
 				<End>"</End>
 			</Span>
 	  	   
 			
-			<KeyWords name = "Punctuation" bold = "true" italic = "true" color = "Gray">
+			<KeyWords name = "Punctuation" bold = "true" italic = "false" color = "Gray">
 				<Key word = "/" />
 				<Key word = "|" />
 				<Key word = "=" />
 		  	</KeyWords>
 		  	
-		 	<KeyWords name = "SpecialComment" bold="true" italic="true" color="Gray">
+		 	<KeyWords name = "SpecialComment" bold="true" italic="false" color="Gray">
 				    <Key word = "c" />
 				    <Key word = "code" />
 				    <Key word = "example" />

@@ -6,62 +6,69 @@
 // </file>
 
 using System;
+using System.Collections;
 
 namespace SharpDevelop.Internal.Parser
 {
 	[Serializable]
-	public abstract class AbstractNamedEntity: AbstractDecoration
+	public abstract class AbstractNamedEntity : AbstractDecoration
 	{
-		private string fullyQualifiedName;
-		private string className;
-		private string namespaceName;
+//		public static Hashtable fullyQualifiedNames = new Hashtable();
+		string fullyQualifiedName = null;
+//		int nameHashCode = -1;
 		
 		public virtual string FullyQualifiedName {
 			get {
+				if (fullyQualifiedName == null) {
+					return String.Empty;
+				}
+				
 				return fullyQualifiedName;
+//				return (string)fullyQualifiedNames[nameHashCode];
 			}
 			set {
 				fullyQualifiedName = value;
-				className = null; namespaceName = null;
+//				nameHashCode = value.GetHashCode();
+//				if (fullyQualifiedNames[nameHashCode] == null) {
+//					fullyQualifiedNames[nameHashCode] = value;
+//				}
 			}
 		}
 
 		public virtual string Name {
 			get {
-				if (className == null && fullyQualifiedName != null) {
+				if (FullyQualifiedName != null) {
 					int lastIndex;
 					
 					if (CanBeSubclass) {
-						lastIndex = fullyQualifiedName.LastIndexOfAny
+						lastIndex = FullyQualifiedName.LastIndexOfAny
 							(new char[] { '.', '+' });
 					} else {
-						lastIndex = fullyQualifiedName.LastIndexOf('.');
+						lastIndex = FullyQualifiedName.LastIndexOf('.');
 					}
 					
 					if (lastIndex < 0) {
-						className = fullyQualifiedName;
+						return FullyQualifiedName;
 					} else {
-						className = fullyQualifiedName.Substring(lastIndex + 1);
+						return FullyQualifiedName.Substring(lastIndex + 1);
 					}
 				}
-				
-				return className;
+				return null;
 			}
 		}
 
 		public virtual string Namespace {
 			get {
-				if (namespaceName == null && fullyQualifiedName != null) {
-					int lastIndex = fullyQualifiedName.LastIndexOf('.');
+				if (FullyQualifiedName != null) {
+					int lastIndex = FullyQualifiedName.LastIndexOf('.');
 					
 					if (lastIndex < 0) {
-						namespaceName = string.Empty;
+						return String.Empty;
 					} else {
-						namespaceName = fullyQualifiedName.Substring(0, lastIndex);
+						return FullyQualifiedName.Substring(0, lastIndex);
 					}
 				}
-				
-				return namespaceName;
+				return null;
 			}
 		}
 		

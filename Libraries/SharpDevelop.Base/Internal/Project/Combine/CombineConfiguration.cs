@@ -37,7 +37,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			if (number < configurations.Count) {
 				return (Config)configurations[number];
 			} 
-			Debug.Assert(false, "Configuration number " + number + " not found.\n" + configurations.Count + " configurations avaiable.");
+			System.Diagnostics.Debug.Assert(false, "Configuration number " + number + " not found.\n" + configurations.Count + " configurations avaiable.");
 			return null;
 		}
 		
@@ -97,7 +97,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 				}
 			}
 			
-			Debug.Assert(removeConfig != null);
+			System.Diagnostics.Debug.Assert(removeConfig != null);
 			configurations.Remove(removeConfig);
 		}
 		

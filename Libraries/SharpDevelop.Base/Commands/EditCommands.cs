@@ -27,6 +27,17 @@ namespace ICSharpCode.SharpDevelop.Commands
 {
 	public class Undo : AbstractMenuCommand
 	{
+		public override bool IsEnabled {
+			get {
+				IWorkbenchWindow window   = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+				IEditable        editable = window != null ? window.ActiveViewContent as IEditable : null;
+				if (editable != null) {
+					return editable.EnableUndo;
+				}
+				return false;
+			}
+		}
+		
 		public override void Run()
 		{
 			IWorkbenchWindow window   = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
@@ -39,6 +50,17 @@ namespace ICSharpCode.SharpDevelop.Commands
 	
 	public class Redo : AbstractMenuCommand
 	{
+		public override bool IsEnabled {
+			get {
+				IWorkbenchWindow window   = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+				IEditable        editable = window != null ? window.ActiveViewContent as IEditable : null;
+				if (editable != null) {
+					return editable.EnableRedo;
+				}
+				return false;
+			}
+		}
+		
 		public override void Run()
 		{
 			IWorkbenchWindow window   = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;

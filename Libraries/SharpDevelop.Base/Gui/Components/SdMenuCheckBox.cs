@@ -26,7 +26,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 		object caller;
 		ConditionCollection conditionCollection;
 		string description   = String.Empty;
-		string localizedText = String.Empty;
+		protected string localizedText = String.Empty;
 		ICheckableMenuCommand menuCommand;
 		
 		public string Description {

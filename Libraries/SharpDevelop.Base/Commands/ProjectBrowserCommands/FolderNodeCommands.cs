@@ -1,4 +1,4 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
@@ -45,48 +45,65 @@ namespace ICSharpCode.SharpDevelop.Commands.ProjectBrowser
 			using (OpenFileDialog fdiag  = new OpenFileDialog()) {
 				fdiag.AddExtension    = true;
 				string[] fileFilters  = (string[])(AddInTreeSingleton.AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems(this)).ToArray(typeof(string));
-
-//	TODO : Set the file filters to the current project
-//				for (int i = 0; i < fileFilters.Length; ++i) {
-//					if (fileFilters[i].IndexOf(Path.GetExtension(window.ViewContent.ContentName == null ? window.ViewContent.UntitledName : window.ViewContent.ContentName)) >= 0) {
-//						fdiag.FilterIndex = i + 1;
-//						break;
-//					}
-//				}
+				bool foundFilter      = false;
+				// search filter like in the current selected project
+				// TODO: remove duplicate code (FileCommands has the same)
+				IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+				IProject project = projectService.CurrentSelectedProject;
+				if (project == null && projectService.CurrentOpenCombine != null) {
+					ArrayList projects = Combine.GetAllProjects(projectService.CurrentOpenCombine);
+					if (projects.Count > 0) {
+						project = ((ProjectCombineEntry)projects[0]).Project;
+					}
+				}
+				if (project != null) {
+					LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
+					LanguageBindingCodon languageCodon = languageBindingService.GetCodonPerLanguageName(project.ProjectType);
+					
+					for (int i = 0; !foundFilter && i < fileFilters.Length; ++i) {
+						for (int j = 0; !foundFilter && j < languageCodon.Supportedextensions.Length; ++j) {
+							if (fileFilters[i].IndexOf(languageCodon.Supportedextensions[j]) >= 0) {
+								fdiag.FilterIndex = i + 1;
+								foundFilter       = true;
+								break;
+							}
+						}
+					}
+				}
 				
 				fdiag.Filter          = String.Join("|", fileFilters);
 				fdiag.Multiselect     = true;
 				fdiag.CheckFileExists = true;
 				
 				if (fdiag.ShowDialog() == DialogResult.OK) {
-					bool alreadyInPlace = true;
-					foreach (string file in fdiag.FileNames) {
-						if (!file.StartsWith(node.Project.BaseDirectory)) {
-							alreadyInPlace = false;
-							break;
-						}
-					}
-					
-					if (alreadyInPlace) {
-						foreach (string file in fdiag.FileNames) {
-							ProjectBrowserView.MoveCopyFile(file, node, true, alreadyInPlace);
-						}
-					} else {
+//					bool alreadyInPlace = true;
+//					foreach (string file in fdiag.FileNames) {
+//						if (!Path.GetFullPath(file).StartsWith(Path.GetFullPath(node.Project.BaseDirectory))) {
+//							alreadyInPlace = false;
+//							break;
+//						}
+//					}
+//					
+//					if (alreadyInPlace) {
+//						foreach (string file in fdiag.FileNames) {
+//							ProjectBrowserView.MoveCopyFile(file, node, true, alreadyInPlace);
+//						}
+//					} else {
 						ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 						
-						int ret = new SharpMessageBox("Move or copy",
-													  "Move or copy file ?", 
-													  "&Move", 
-													  "&Copy", 
-													  resourceService.GetString("Global.CancelButtonText")
+						int ret = new SharpMessageBox("${res:ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddFilesToProject.MoveOrCopyMessageBox.Name}",
+													  "${res:ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddFilesToProject.MoveOrCopyMessageBox.Question}", 
+													  "${res:ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddFilesToProject.MoveOrCopyMessageBox.MoveButton}", 
+													  "${res:ICSharpCode.SharpDevelop.Commands.ProjectBrowser.AddFilesToProject.MoveOrCopyMessageBox.CopyButton}", 
+													  "${res:Global.CancelButtonText}"
 													  ).ShowMessageBox();
 						if (ret == 2 || ret == -1) {
 							return;
 						}
 						foreach (string file in fdiag.FileNames) {
-							ProjectBrowserView.MoveCopyFile(file, node, ret == 0, alreadyInPlace);
+							ProjectBrowserView.MoveCopyFile(file, node, ret == 0, false);
 						}
-					}
+//					}
 				}
 			}
 		}
@@ -108,22 +125,21 @@ namespace ICSharpCode.SharpDevelop.Commands.ProjectBrowser
 			if (baseFolderPath == null || baseFolderPath.Length == 0) {
 				return;
 			}
-			
-			using (NewFileDialog nfd = new NewFileDialog()) {
+			string path = baseFolderPath;
+			using (NewFileDialog nfd = new NewFileDialog(path )) {
 				if (nfd.ShowDialog() == DialogResult.OK) {
 					IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 					
 					int count = 1;
-					
-					string baseName  = Path.GetFileNameWithoutExtension(window.ViewContent.UntitledName);
-					string extension = Path.GetExtension(window.ViewContent.UntitledName);
+					string newFileName = window.ViewContent.UntitledName;
+					string baseName  = Path.GetFileNameWithoutExtension(newFileName);
+					string extension = Path.GetExtension(newFileName);
 					
 					// first try the default untitled name of the viewcontent filename
 					FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
 					string fileName = fileUtilityService.GetDirectoryNameWithSeparator(baseFolderPath) + baseName +  extension;
 					
 					// if it is already in the project, or it does exists we try to get a name that is
-					// untitledName + Numer + extension
 					while (node.Project.IsFileInProject(fileName) || File.Exists(fileName)) {
 						fileName = fileUtilityService.GetDirectoryNameWithSeparator(baseFolderPath) + baseName + count.ToString() + extension;
 						++count;
@@ -149,7 +165,7 @@ namespace ICSharpCode.SharpDevelop.Commands.ProjectBrowser
 					
 					newNode.EnsureVisible();
 					browser.SelectedNode = newNode;
-					browser.StartLabelEdit();
+//					browser.StartLabelEdit();
 					
 					IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
 					projectService.SaveCombine();

@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -40,7 +40,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				return currentProject;
 			}
 			set {
-				Debug.Assert(openCombine != null);
+				System.Diagnostics.Debug.Assert(openCombine != null);
 				currentProject = value;
 				OnCurrentProjectChanged(new ProjectEventArgs(currentProject));
 			}
@@ -51,7 +51,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				return currentCombine;
 			}
 			set {
-				Debug.Assert(openCombine != null);
+				System.Diagnostics.Debug.Assert(openCombine != null);
 				currentCombine = value;
 				OnCurrentSelectedCombineChanged(new CombineEventArgs(currentCombine));
 			}
@@ -73,7 +73,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				foreach (ProjectCombineEntry projectEntry in projects) {
 					foreach (ProjectFile fInfo in projectEntry.Project.ProjectFiles) {
 						foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
-							if (content.IsDirty && content.ContentName == fInfo.Name) {
+							if (content.IsDirty && content.FileName == fInfo.Name) {
 								return true;
 							}
 						}
@@ -181,7 +181,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			openCombine.SaveAllProjects();
 		}
 		
-		public ProjectReference AddReferenceToProject(IProject prj, string filename)
+		public ProjectReference GetReferenceFromProject(IProject prj, string filename)
 		{
 			foreach (ProjectReference rInfo in prj.ProjectReferences) {
 				if (rInfo.Reference == filename) {
@@ -191,6 +191,20 @@ namespace ICSharpCode.SharpDevelop.Services
 			ProjectReference newReferenceInformation = new ProjectReference(ReferenceType.Assembly, filename);
 			prj.ProjectReferences.Add(newReferenceInformation);
 			return newReferenceInformation;
+		}
+		
+		public bool AddReferenceToProject(IProject prj, ProjectReference reference)
+		{
+			foreach (ProjectReference refproj in currentProject.ProjectReferences) {
+				if (reference.Equals(refproj.Reference)) {
+					return false;
+				}
+			}
+			prj.ProjectReferences.Add(reference);
+			ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser.ProjectBrowserView pbv = (ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser.ProjectBrowserView)WorkbenchSingleton.Workbench.GetPad(typeof(ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser.ProjectBrowserView));
+			pbv.UpdateCombineTree();
+			SaveCombine();
+			return true;
 		}
 		
 		public ProjectFile AddFileToProject(IProject prj, string filename, BuildAction action)
@@ -329,7 +343,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				case BeforeCompileAction.PromptForSave:
 					bool save = false;
 					foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
-						if (content.ContentName != null && content.IsDirty) {
+						if (content.FileName != null && content.IsDirty) {
 							if (!save) {
 								IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
 								if (messageService.AskQuestion("Save changed files?")) {
@@ -338,21 +352,21 @@ namespace ICSharpCode.SharpDevelop.Services
 									break;
 								}
 							}
-							MarkFileDirty(content.ContentName);
+							MarkFileDirty(content.FileName);
 							content.Save();
 						}
 					}
 					break;
 				case BeforeCompileAction.SaveAllFiles:
 					foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
-						if (content.ContentName != null && content.IsDirty) {
-							MarkFileDirty(content.ContentName);
+						if (content.FileName != null && content.IsDirty) {
+							MarkFileDirty(content.FileName);
 							content.Save();
 						}
 					}
 					break;
 				default:
-					Debug.Assert(false);
+					System.Diagnostics.Debug.Assert(false);
 					break;
 			}
 		}
@@ -446,7 +460,7 @@ namespace ICSharpCode.SharpDevelop.Services
 
 		void CheckFileRename(object sender, FileEventArgs e)
 		{
-			Debug.Assert(e.SourceFile != e.TargetFile);
+			System.Diagnostics.Debug.Assert(e.SourceFile != e.TargetFile);
 			if (openCombine != null) {
 				if (e.IsDirectory) {
 					RenameDirectoryInAllProjects(e.SourceFile, e.TargetFile);
@@ -464,15 +478,6 @@ namespace ICSharpCode.SharpDevelop.Services
 			FileRemovedFromProject += new FileEventHandler(CheckFileRemove);
 			fileService.FileRemoved += new FileEventHandler(CheckFileRemove);
 			fileService.FileRenamed += new FileEventHandler(CheckFileRename);
-		}
-		
-		string MakeValidName(string str)
-		{
-			string tmp = "";
-			foreach (char ch in str) {
-				tmp += ((byte)ch).ToString();
-			}
-			return tmp;
 		}
 		
 		void RestoreCombinePreferences(Combine combine, string combinefilename)
@@ -516,8 +521,8 @@ namespace ICSharpCode.SharpDevelop.Services
 					string name = properties.GetProperty("ActiveWindow", "");
 					foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
 						// WINDOWS DEPENDENCY : ToUpper
-						if (content.ContentName != null &&
-							content.ContentName.ToUpper() == name.ToUpper()) {
+						if (content.FileName != null &&
+							Path.GetFullPath(content.FileName).ToUpper() == Path.GetFullPath(name).ToUpper()) {
 							content.WorkbenchWindow.SelectWindow();
 							break;
 						}
@@ -545,11 +550,11 @@ namespace ICSharpCode.SharpDevelop.Services
 			doc.DocumentElement.AppendChild(filesnode);
 			
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
-				if (content.ContentName != null) {
+				if (content.FileName != null) {
 					XmlElement el = doc.CreateElement("File");
 					
 					XmlAttribute attr = doc.CreateAttribute("filename");
-					attr.InnerText = fileUtilityService.AbsoluteToRelativePath(combinepath, content.ContentName);
+					attr.InnerText = fileUtilityService.AbsoluteToRelativePath(combinepath, content.FileName);
 					el.Attributes.Append(attr);
 					
 					filesnode.AppendChild(el);
@@ -574,7 +579,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 			
 			IProperties properties = new DefaultProperties();
-			string name = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow == null ? String.Empty : WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName;
+			string name = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow == null ? String.Empty : WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName;
 			properties.SetProperty("ActiveWindow", name == null ? String.Empty : name);
 			
 			XmlElement propertynode = doc.CreateElement("Properties");
@@ -583,6 +588,20 @@ namespace ICSharpCode.SharpDevelop.Services
 			propertynode.AppendChild(properties.ToXmlElement(doc));
 			
 			fileUtilityService.ObservedSave(new NamedFileOperationDelegate(doc.Save), directory + Path.DirectorySeparatorChar + combine.Name + ".xml", FileErrorPolicy.ProvideAlternative);
+		}
+		
+		public IProject GetProject(string projectName)
+		{
+			if (CurrentOpenCombine == null) {
+				return null;
+			}
+			ArrayList list = Combine.GetAllProjects(this.CurrentOpenCombine);
+			foreach (ProjectCombineEntry projectEntry in list) {
+				if (projectEntry.Project.Name == projectName) {
+					return projectEntry.Project;
+				}
+			}
+			return null;
 		}
 		
 		//********* own events

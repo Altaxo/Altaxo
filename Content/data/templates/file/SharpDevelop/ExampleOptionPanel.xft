@@ -1,17 +1,27 @@
 <?xml version="1.0"?>
-<Template Originator="Mike Krueger" Language="C#" Created="09/04/2003" LastModified="09/04/2003">
+<Template author="Mike Krueger" version="1.0">
 	
-	<TemplateConfiguration>
-		<Name>Simple #Develop option panel</Name>
-		<Icon>C#.File.FullFile</Icon>
-		<Category>SharpDevelop</Category>
-		<LanguageName>C#</LanguageName>
-		<Description>Creates a #D option panel (for example the project option panels)</Description>
-	</TemplateConfiguration>
+	<Config
+		name        = "${res:Templates.File.#Develop.OptionPanel.Name}"
+		icon        = "C#.File.FullFile"
+		category    = "#Develop"
+		defaultname = "NewOptionPanel${Number}.cs"
+		language    = "C#"/>
+	 
+	<Description>${res:Templates.File.#Develop.OptionPanel.Description}</Description>
 	
-	<TemplateFiles>
-		<File DefaultExtension=".cs" DefaultName="EmptyC#file">
-			<![CDATA[using System;
+	<!-- 
+	Special new file templates:
+		${StandardNamespace}        -> Standardnamespace of the current project or FileNameWithoutExtension
+		${FullName}                 -> Full generated path name
+		${FileName}                 -> File name with extension
+		${FileNameWithoutExtension} -> File name without extension
+		${Extension}                -> Extension in the form ".cs"
+		${Path}                     -> Full path of the file
+	 -->
+	<Files>
+		<File name="${FullName}" language="C#"><![CDATA[${StandardHeader.C#}
+using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
@@ -23,12 +33,12 @@ using ICSharpCode.Core.Services;
 using ICSharpCode.SharpDevelop.Internal.Project;
 using ICSharpCode.SharpDevelop.Gui.Dialogs;
 
-namespace MyOptionPanel
+namespace ${StandardNamespace}
 {
 	/// <summary>
-	/// Summary of SampleOptionPanel
+	/// Summary of ${FileNameWithoutExtension}
 	/// </summary>
-	public class SampleOptionPanel : AbstractOptionPanel
+	public class ${FileNameWithoutExtension} : AbstractOptionPanel
 	{
 		public override void LoadPanelContents()
 		{
@@ -43,8 +53,8 @@ namespace MyOptionPanel
 	}
 }]]>
 		</File>
-	</TemplateFiles>
+	</Files>
 	
-	<FileOptions/>
+	<AdditionalOptions/>
 	
 </Template>

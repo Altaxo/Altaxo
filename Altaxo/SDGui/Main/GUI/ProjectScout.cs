@@ -37,7 +37,7 @@ using ICSharpCode.Core.Properties;
 using ICSharpCode.Core.Services;
 
 using ICSharpCode.SharpDevelop.Services;
-
+using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Gui.Pads;
 
 namespace Altaxo.Main.GUI
@@ -68,6 +68,39 @@ namespace Altaxo.Main.GUI
       {
         return "Icons.16x16.OpenFolderBitmap";
       }
+    }
+
+    string category;
+    public string Category 
+    {
+      get 
+      {
+        return category;
+      }
+      set
+      {
+        category = value;
+      }
+    }
+    string[] shortcut; // TODO: Inherit from AbstractPadContent
+    public string[] Shortcut 
+    {
+      get 
+      {
+        return shortcut;
+      }
+      set 
+      {
+        shortcut = value;
+      }
+    }
+    public void BringPadToFront()
+    {
+      if (!WorkbenchSingleton.Workbench.WorkbenchLayout.IsVisible(this)) 
+      {
+        WorkbenchSingleton.Workbench.WorkbenchLayout.ShowPad(this);
+      }
+      WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this);
     }
     
     public void RedrawContent()
@@ -214,8 +247,8 @@ namespace Altaxo.Main.GUI
       
       foreach(ICSharpCode.SharpDevelop.Gui.IViewContent content in Current.Workbench.ViewContentCollection)
       {
-        TreeNode node = viewNodes.Nodes.Add(content.ContentName);
-        node.Tag = content.ContentName;
+        TreeNode node = viewNodes.Nodes.Add(content.TitleName);
+        node.Tag = content.TitleName;
       }
 
       rootNode.Expand();

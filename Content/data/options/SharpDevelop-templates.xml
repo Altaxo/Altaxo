@@ -2,53 +2,59 @@
   <CodeTemplateGroup extensions=".cs">
     <CodeTemplate template="classp" description="class declaration (public)">public class |
 {
-	
+	${Selection}
 }</CodeTemplate>
     <CodeTemplate template="forb" description="for block">for (|; ; ) {
-
+${Selection}
 }</CodeTemplate>
-    <CodeTemplate template="fors" description="for (no braces)">for (|; ; )</CodeTemplate>
+    <CodeTemplate template="fors" description="for (no braces)">for (|; ; )
+${Selection}</CodeTemplate>
     <CodeTemplate template="ifb" description="if statement">if (|) {
-	
+	${Selection}
 }</CodeTemplate>
     <CodeTemplate template="ife" description="if else">if (|) {
-	
+	${Selection}
 } else {
 	
 }</CodeTemplate>
-    <CodeTemplate template="ifs" description="if statement (no braces)">if (|)</CodeTemplate>
+    <CodeTemplate template="ifs" description="if statement (no braces)">if (|)
+${Selection}</CodeTemplate>
     <CodeTemplate template="switchd" description="switch statement (with default)">switch (|) {
 case:
-case:
+break;
 default:
+${Selection}
+break;
 }</CodeTemplate>
     <CodeTemplate template="switchs" description="switch statement">switch (|) {
 case :
-case :
+${Selection}
+break;
 }</CodeTemplate>
     <CodeTemplate template="tryc" description="try / catch">try {
-|
+${Selection}|
 } catch (Exception) {
 	
 }</CodeTemplate>
     <CodeTemplate template="trycf" description="try / catch / finally">try {
-|
+${Selection}|
 } catch (Exception) {
 
 } finally {
 
 }</CodeTemplate>
     <CodeTemplate template="tryf" description="try / finally">try {
-|
+${Selection}|
 } finally {
 
 }</CodeTemplate>
     <CodeTemplate template="whileb" description="while">while (|) {
-
+${Selection}
 }</CodeTemplate>
-    <CodeTemplate template="whiles" description="while (no braces)">while (|)</CodeTemplate>
-    <CodeTemplate template="scwl" description="System.Console.WriteLine">System.Console.WriteLine(|);</CodeTemplate>
-    <CodeTemplate template="scw" description="System.Console.Write">System.Console.Write(|);</CodeTemplate>
+    <CodeTemplate template="whiles" description="while (no braces)">while (|)
+${Selection}</CodeTemplate>
+    <CodeTemplate template="scwl" description="System.Console.WriteLine">System.Console.WriteLine(${Selection}|);</CodeTemplate>
+    <CodeTemplate template="scw" description="System.Console.Write">System.Console.Write(${Selection}|);</CodeTemplate>
   </CodeTemplateGroup>
   <CodeTemplateGroup extensions=".html;.htm">
     <CodeTemplate template="boldb" description="bold block">&lt;b&gt;|${Selection}&lt;/b&gt;</CodeTemplate>

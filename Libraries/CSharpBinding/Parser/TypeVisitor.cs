@@ -75,7 +75,7 @@ namespace CSharpBinding.Parser
 			if (t == null) {
 				return null;
 			}
-			IClass c = resolver.SearchType(t.FullyQualifiedName, resolver.CompilationUnit);
+			IClass c = resolver.SearchType(t.FullyQualifiedName, resolver.CallingClass, resolver.CompilationUnit);
 			if (c.ClassType == ClassType.Delegate) {
 				ArrayList methods = resolver.SearchMethod(t, "invoke");
 				if (methods.Count <= 0) {
@@ -100,7 +100,7 @@ namespace CSharpBinding.Parser
 					if (n != null) {
 						return new ReturnType(n);
 					}
-					IClass c = resolver.SearchType(string.Concat(name, ".", fieldReferenceExpression.FieldName), resolver.CompilationUnit);
+					IClass c = resolver.SearchType(string.Concat(name, ".", fieldReferenceExpression.FieldName), resolver.CallingClass, resolver.CompilationUnit);
 					if (c != null) {
 						resolver.ShowStatic = true;
 						return new ReturnType(c.FullyQualifiedName);
@@ -129,7 +129,7 @@ namespace CSharpBinding.Parser
 		
 		public override object Visit(IdentifierExpression identifierExpression, object data)
 		{
-			Console.WriteLine("visiting IdentifierExpression");
+//			Console.WriteLine("visiting IdentifierExpression");
 			if (identifierExpression == null) {
 				return null;
 			}
@@ -137,7 +137,7 @@ namespace CSharpBinding.Parser
 			if (name != null) {
 				return new ReturnType(name);
 			}
-			IClass c = resolver.SearchType(identifierExpression.Identifier, resolver.CompilationUnit);
+			IClass c = resolver.SearchType(identifierExpression.Identifier, resolver.CallingClass, resolver.CompilationUnit);
 			if (c != null) {
 				resolver.ShowStatic = true;
 				return new ReturnType(c.FullyQualifiedName);
@@ -267,7 +267,7 @@ namespace CSharpBinding.Parser
 			if (resolver.CallingClass == null) {
 				return null;
 			}
-			IClass baseClass = resolver.BaseClass(resolver.CallingClass);
+			IClass baseClass = resolver.ParserService.BaseClass(resolver.CallingClass);
 			if (baseClass == null) {
 //				Console.WriteLine("Base Class not found");
 				return null;
@@ -278,7 +278,7 @@ namespace CSharpBinding.Parser
 		
 		public override object Visit(ObjectCreateExpression objectCreateExpression, object data)
 		{
-			string name = resolver.SearchType(objectCreateExpression.CreateType.Type, resolver.CompilationUnit).FullyQualifiedName;
+			string name = resolver.SearchType(objectCreateExpression.CreateType.Type, resolver.CallingClass, resolver.CompilationUnit).FullyQualifiedName;
 			return new ReturnType(name, objectCreateExpression.CreateType.RankSpecifier, objectCreateExpression.CreateType.PointerNestingLevel);
 		}
 		

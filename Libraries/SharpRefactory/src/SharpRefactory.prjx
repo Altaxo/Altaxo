@@ -1,4 +1,4 @@
-<Project name="SharpRefactory" description="rfewewrwerewrwe" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
+<Project name="SharpRefactory" standardNamespace="NewProject" description="rfewewrwerewrwe" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
   <Contents>
     <File name=".\Main.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\AssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -123,35 +123,40 @@
     <File name=".\Lexer\Specials\CommentType.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Parser\AST\LookupTableVisitor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\PrettyPrinter\OutputFormatter.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Lexer\Tokens.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\generated\keywordlist\Tokens.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\generated\keywordlist" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\Parser\generated\keywordlist\CSharpKeywordList.txt" subtype="Code" buildaction="Nothing" dependson="" data="" />
+    <File name=".\Parser\generated\keywordlist\Keywords.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\PrettyPrinter\PrettyPrintOptions.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Lexer\Specials\TagComment.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References />
   <DeploymentInformation target="" script="" strategy="File" />
   <Configuration runwithwarnings="False" name="Release">
-    <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="0" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="0" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
     <Execution commandlineparameters="" consolepause="True" />
-    <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+    <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild=".\Parser\generated\gen.bat" executeAfterBuild="" />
   </Configuration>
   <Configurations active="Release">
     <Configuration runwithwarnings="False" name="Debug">
-      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Module" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="" executeBeforeBuild=".\Parser\generated\gen.bat" executeAfterBuild="" />
+      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild=".\Parser\generated\gen.bat" executeAfterBuild="" />
     </Configuration>
     <Configuration runwithwarnings="False" name="Release">
-      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="0" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="0" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild=".\Parser\generated\gen.bat" executeAfterBuild="" />
     </Configuration>
-    <Configuration runwithwarnings="False" name="Debug2">
-      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <Configuration runwithwarnings="False" name="Executable">
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\..\..\..\bin" assembly="SharpRefactory" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
     </Configuration>
-    <Configuration runwithwarnings="False" name="New Configuration">
-      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <Configuration runwithwarnings="False" name="Executable/withoutATGGen">
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\..\..\..\bin" assembly="SharpRefactory" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory="..\..\..\..\bin" assembly="ICSharpCode.SharpRefactory" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
     </Configuration>
   </Configurations>
 </Project>

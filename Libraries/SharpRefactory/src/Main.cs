@@ -1,5 +1,6 @@
 // project created on 09.08.2003 at 10:16
 using System;
+using System.Collections.Specialized;
 using System.IO;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -8,78 +9,92 @@ using Microsoft.CSharp;
 using ICSharpCode.SharpRefactory.PrettyPrinter;
 using ICSharpCode.SharpRefactory.Parser;
 
-
 class MainClass
 {
-//	static void A()
-//	{
-//		Lexer lexer = new Lexer(new ICSharpCode.SharpRefactory.Lexer.StringReader("(int)i"));
-//		for (int i = 0; i < 10; ++i) {
-//			Console.WriteLine(i + " ----> " + lexer.Peek(i).kind);
-//		}
-//		lexer.NextToken();
-//		Console.WriteLine("1." + lexer.LookAhead.kind + " -- " + Tokens.OpenParenthesis);
-//		lexer.NextToken();
-//		Console.WriteLine("2." + lexer.LookAhead.kind + " -- " + Tokens.Int);
-//		lexer.NextToken();
-//		Console.WriteLine("3." + lexer.LookAhead.kind + " -- " + Tokens.CloseParenthesis);
-//		lexer.NextToken();
-//		Console.WriteLine("4." + lexer.LookAhead.kind + " -- " + Tokens.Identifier);
-//		lexer.NextToken();
-//		Console.WriteLine("5." + lexer.LookAhead.kind + " -- " + Tokens.EOF);
-//	}
+	public static StringCollection SearchDirectory(string directory, string filemask)
+	{
+		return SearchDirectory(directory, filemask, true);
+	}
 	
+	public static StringCollection SearchDirectory(string directory, string filemask, bool searchSubdirectories)
+	{
+		StringCollection collection = new StringCollection();
+		SearchDirectory(directory, filemask, collection, searchSubdirectories);
+		return collection;
+	}
+	
+	/// <summary>
+	/// Finds all files which are valid to the mask <code>filemask</code> in the path
+	/// <code>directory</code> and all subdirectories (if searchSubdirectories
+	/// is true. The found files are added to the StringCollection 
+	/// <code>collection</code>.
+	/// </summary>
+	static void SearchDirectory(string directory, string filemask, StringCollection collection, bool searchSubdirectories)
+	{
+		try {
+			string[] file = Directory.GetFiles(directory, filemask);
+			foreach (string f in file) {
+				collection.Add(f);
+			}
+			
+			if (searchSubdirectories) {
+				string[] dir = Directory.GetDirectories(directory);
+				foreach (string d in dir) {
+					SearchDirectory(d, filemask, collection, searchSubdirectories);
+				}
+			}
+		} catch (Exception) {
+		}
+	}
+	
+	static void PrettyPrintDirectories()
+	{
+		StringCollection files = SearchDirectory("C:\\b", "*.cs");
+		foreach (string fileName in files) {
+			Parser p = new Parser();
+			Console.Write("Converting : " + fileName);
+			p.Parse(new Lexer(new FileReader(fileName)));
+			if (p.Errors.count == 0) {
+				StreamReader sr = File.OpenText(fileName);
+				string content = sr.ReadToEnd();
+				sr.Close();
+				PrettyPrintVisitor ppv = new PrettyPrintVisitor(content);
+				ppv.Visit(p.compilationUnit, null);
+				
+				StreamWriter sw = new StreamWriter(fileName);
+				sw.Write(ppv.Text);
+				sw.Close();
+				
+				Console.WriteLine(" done.");
+			} else {
+				Console.Write(" Source code errors:");
+				Console.WriteLine(p.Errors.ErrorOutput);
+			}
+		}
+		Console.ReadLine();
+	}
+
 	public static void Main (string[] args)
 	{
-//		Lexer lexer = new Lexer(new FileReader("C:\\test.cs"));
-//		Token t = lexer.NextToken();
-//		while (t != null && t.kind != Tokens.EOF) {
-//			Console.WriteLine("Token : {0}, value={1}, literalValue={2}", t.kind, t.val, t.literalValue);
-//			t = lexer.NextToken();
-//		}
-//		if (t != null) {
-//			Console.WriteLine("Token : {0}, value={1}, literalValue={2}", t.kind, t.val, t.literalValue);
-//		} else {
-//			Console.WriteLine("NULL");
-//		}
-		
+//		PrettyPrintDirectories();
 		Parser p = new Parser();
-		p.Parse(new Lexer(new FileReader("C:\\Main.cs")));
+		string fileName = "C:\\a.cs";
+		Console.Write("Converting : " + fileName);
+		p.Parse(new Lexer(new FileReader(fileName)));
 		if (p.Errors.count == 0) {
-			LookupTableVisitor lookupTableVisitor = new LookupTableVisitor();
-			lookupTableVisitor.Visit(p.compilationUnit, null);
+			StreamReader sr = File.OpenText(fileName);
+			string content = sr.ReadToEnd();
+			sr.Close();
+			PrettyPrintVisitor ppv = new PrettyPrintVisitor(content);
+			ppv.PrettyPrintOptions.IndentSize = 6;
+			ppv.Visit(p.compilationUnit, null);
 			
-//			new DebugASTVisitor().Visit(p.compilationUnit, null);
-//			PrettyPrintVisitor ppv = new PrettyPrintVisitor();
-//			ppv.Visit(p.compilationUnit, null);
-//			Console.WriteLine(ppv.Text.ToString());
+			Console.WriteLine(ppv.Text);
+			
+			Console.WriteLine(" done.");
 		} else {
-			Console.WriteLine("Source code errors:");
+			Console.Write(" Source code errors:");
 			Console.WriteLine(p.Errors.ErrorOutput);
 		}
-			
-//		
-//		Scanner.Init(fileName);
-//		Console.WriteLine("Parsing source file {0}", fileName);
-//		Parser.Parse();
-//		
-		
-//			
-//			CodeDOMVisitor cdom = new CodeDOMVisitor();
-//			
-//			cdom.Visit(Parser.compilationUnit, null);
-//			
-//			Microsoft.CSharp.CSharpCodeProvider provider = new CSharpCodeProvider();
-//			// Call the CodeDomProvider.CreateGenerator() method to obtain an ICodeGenerator from the provider.
-//			System.CodeDom.Compiler.ICodeGenerator generator = provider.CreateGenerator();
-//			generator.GenerateCodeFromCompileUnit(cdom.codeCompileUnit, Console.Out, null);
-//			
-//			VBNetVisitor vbv = new VBNetVisitor();
-//			
-//			vbv.Visit(Parser.compilationUnit, null);
-//			StreamWriter sw = new StreamWriter(@"C:\testform.vb");
-//			sw.Write(vbv.SourceText.ToString());
-//			sw.Close();
-//			Console.WriteLine("converted.");
 	}
 }

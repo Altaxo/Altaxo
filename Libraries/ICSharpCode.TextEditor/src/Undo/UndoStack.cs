@@ -6,6 +6,7 @@
 // </file>
 
 using System;
+using System.Drawing;
 using System.Diagnostics;
 using System.Collections;
 
@@ -18,6 +19,8 @@ namespace ICSharpCode.TextEditor.Undo
 	{
 		Stack undostack = new Stack();
 		Stack redostack = new Stack();
+		
+		public TextEditorControlBase TextEditorControl = null;
 		
 		/// <summary>
 		/// </summary>
@@ -102,6 +105,10 @@ namespace ICSharpCode.TextEditor.Undo
 			
 			if (AcceptChanges) {
 				undostack.Push(operation);
+				if (TextEditorControl != null) {
+					undostack.Push(new UndoableSetCaretPosition(this, TextEditorControl.ActiveTextAreaControl.Caret.Position));
+					UndoLast(2);
+				}
 				ClearRedoStack();
 			}
 		}
@@ -137,6 +144,30 @@ namespace ICSharpCode.TextEditor.Undo
 		{
 			if (ActionRedone != null) {
 				ActionRedone(null, null);
+			}
+		}
+		
+		class UndoableSetCaretPosition : IUndoableOperation
+		{
+			UndoStack stack;
+			Point pos;
+			Point redoPos;
+			
+			public UndoableSetCaretPosition(UndoStack stack, Point pos)
+			{
+				this.stack = stack;
+				this.pos = pos;
+			}
+			
+			public void Undo()
+			{
+				redoPos = stack.TextEditorControl.ActiveTextAreaControl.Caret.Position;
+				stack.TextEditorControl.ActiveTextAreaControl.Caret.Position = pos;
+			}
+			
+			public void Redo()
+			{
+				stack.TextEditorControl.ActiveTextAreaControl.Caret.Position = redoPos;
 			}
 		}
 	}

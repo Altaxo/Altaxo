@@ -67,7 +67,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				}
 				
 				builder.Append(')');
-				if (c.Methods.Count > 0) {
+				if (c.Methods.Count > 0 && ShowReturnType) {
 					builder.Append(" : ");
 					builder.Append(Convert(c.Methods[0].ReturnType));
 				}
@@ -109,7 +109,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				builder.Append(field.Name);
 			}
 			
-			if (field.ReturnType != null) {
+			if (field.ReturnType != null && ShowReturnType) {
 				builder.Append(" : ");
 				builder.Append(Convert(field.ReturnType));
 			}
@@ -143,7 +143,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			if (property.Parameters.Count > 0) builder.Append(')');
 			
 			
-			if (property.ReturnType != null) {
+			if (property.ReturnType != null  && ShowReturnType) {
 				builder.Append(" : ");
 				builder.Append(Convert(property.ReturnType));
 			}
@@ -162,7 +162,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			} else {
 				builder.Append(e.Name);
 			}
-			if (e.ReturnType != null) {
+			if (e.ReturnType != null && ShowReturnType) {
 				builder.Append(" : ");
 				builder.Append(Convert(e.ReturnType));
 			}
@@ -176,12 +176,9 @@ namespace ICSharpCode.SharpDevelop.Services
 				builder.Append("Indexer ");
 			}
 			
-			if (UseFullyQualifiedNames) {
-				builder.Append(m.FullyQualifiedName);
-			} else {
-				builder.Append(m.Name);
-			}
-			builder.Append('[');
+			builder.Append("Item");
+			
+			builder.Append('(');
 			for (int i = 0; i < m.Parameters.Count; ++i) {
 				builder.Append(Convert(m.Parameters[i]));
 				if (i + 1 < m.Parameters.Count) {
@@ -189,8 +186,8 @@ namespace ICSharpCode.SharpDevelop.Services
 				}
 			}
 			
-			builder.Append("]");
-			if (m.ReturnType != null) {
+			builder.Append(")");
+			if (m.ReturnType != null && ShowReturnType) {
 				builder.Append(" : ");
 				builder.Append(Convert(m.ReturnType));
 			}
@@ -218,7 +215,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 			
 			builder.Append(")");
-			if (m.ReturnType != null) {
+			if (m.ReturnType != null && ShowReturnType) {
 				builder.Append(" : ");
 				builder.Append(Convert(m.ReturnType));
 			}

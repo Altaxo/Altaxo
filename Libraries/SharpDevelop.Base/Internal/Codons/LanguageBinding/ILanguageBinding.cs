@@ -31,13 +31,13 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		/// This function executes a file, the filename is given by filename,
 		/// the file was compiled by the compiler object before.
 		/// </summary>
-		void Execute(string fileName);
+		void Execute(string fileName, bool debug);
 		
 		/// <summary>
 		/// This function executes a project, the project is given as a parameter,
 		/// the project was compiled by the compiler object before.
 		/// </summary>
-		void Execute(IProject project);
+		void Execute(IProject project, bool debug);
 		
 		string GetCompiledOutputName(string fileName);
 		

@@ -12,7 +12,6 @@ namespace SharpDevelop.Internal.Parser {
 	[Serializable]
 	public abstract class AbstractProperty : AbstractMember, IProperty
 	{
-		protected IRegion     region;
 		protected IRegion bodyRegion;
 		
 		protected IRegion     getterRegion;
@@ -21,12 +20,6 @@ namespace SharpDevelop.Internal.Parser {
 		protected IMethod     getterMethod;
 		protected IMethod     setterMethod;
 		protected ParameterCollection parameters = new ParameterCollection();
-
-		public virtual IRegion Region {
-			get {
-				return region;
-			}
-		}
 		
 		public virtual IRegion BodyRegion {
 			get {

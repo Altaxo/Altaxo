@@ -26,10 +26,10 @@ namespace ICSharpCode.TextEditor.Document
 			DefaultDocument doc = new DefaultDocument();
 			doc.TextBufferStrategy    = new GapTextBufferStrategy();
 			doc.FormattingStrategy    = new DefaultFormattingStrategy();
-			doc.FoldingManager        = new FoldingManager(doc);
-			doc.FoldingManager.FoldingStrategy       = new ParserFoldingStrategy();
-			
 			doc.LineManager          = new DefaultLineManager(doc, null);
+			doc.FoldingManager        = new FoldingManager(doc, doc.LineManager);
+			doc.FoldingManager.FoldingStrategy       = new ParserFoldingStrategy();
+			doc.MarkerStrategy       = new MarkerStrategy(doc);
 			doc.BookmarkManager      = new BookmarkManager(doc.LineManager);
 			return doc;
 		}

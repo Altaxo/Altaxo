@@ -11,7 +11,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Xml;
-
+using ICSharpCode.SharpDevelop.Gui.Components;
 using ICSharpCode.SharpDevelop.Internal.Project;
 
 namespace ICSharpCode.SharpDevelop.Internal.Project
@@ -51,6 +51,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		
 		protected OutputConfiguration outputConfiguration = new OutputConfiguration();
 		
+		[Browsable(false)]
 		public virtual string OutputDirectory {
 			get {
 				return outputConfiguration.Directory;
@@ -60,6 +61,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 		}
 		
+		[Browsable(false)]
 		public virtual string OutputAssembly {
 			get {
 				return outputConfiguration.Assembly;
@@ -69,6 +71,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 		}
 		
+		[Browsable(false)]
 		public virtual string ExecuteScript {
 			get {
 				return outputConfiguration.ExecuteScript;
@@ -78,6 +81,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 		}
 		
+		[Browsable(false)]
 		public virtual string ExecuteBeforeBuild {
 			get {
 				return outputConfiguration.ExecuteBeforeBuild;
@@ -87,6 +91,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 		}
 		
+		[Browsable(false)]
 		public virtual string ExecuteAfterBuild {
 			get {
 				return outputConfiguration.ExecuteAfterBuild;
@@ -96,12 +101,16 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 		}
 		
-		public virtual bool RunWithWarnings {
+		[DefaultValue(false)]
+		[LocalizedProperty("${res:BackendBindings.CompilerOptions.WarningAndErrorCategory.RunWithWarnings}",
+		                   Category    = "${res:BackendBindings.CompilerOptions.WarningAndErrorCategory}",
+		                   Description = "${res:BackendBindings.CompilerOptions.WarningAndErrorCategory.RunWithWarnings.Description}")]
+		public virtual bool TreatWarningsAsErrors {
 			get {
-				return runWithWarnings;
+				return !runWithWarnings;
 			}
 			set {
-				runWithWarnings = value;
+				runWithWarnings = !value;
 			}
 		}
 		

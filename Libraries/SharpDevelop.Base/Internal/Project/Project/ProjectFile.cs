@@ -64,7 +64,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 			set {
 				filename = value;
-				Debug.Assert(filename != null && filename.Length > 0, "name == null || name.Length == 0");
+				System.Diagnostics.Debug.Assert(filename != null && filename.Length > 0, "name == null || name.Length == 0");
 			}
 		}
 		

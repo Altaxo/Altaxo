@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using ICSharpCode.Core.AddIns.Conditions;
 using ICSharpCode.Core.AddIns.Codons;
 using ICSharpCode.Core.Services;
+using ICSharpCode.SharpDevelop.Services;
 
 using Reflector.UserInterface;
 
@@ -54,6 +55,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 			this.conditionCollection = conditionCollection;
 			this.localizedText       = label;
 			UpdateStatus();
+			
 		}
 		
 		public SdMenuCommand(ConditionCollection conditionCollection, object caller, string label, ICommand menuCommand) : base(stringParserService.Parse(label))
@@ -88,15 +90,53 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 			}
 		}
 		
+		public override bool IsVisible {
+			get {
+				bool isVisible = base.IsVisible;
+				if (conditionCollection != null) {
+					ConditionFailedAction failedAction = conditionCollection.GetCurrentConditionFailedAction(caller);
+					isVisible &= failedAction != ConditionFailedAction.Exclude;
+				}
+				return isVisible;
+			}
+			set {
+				base.IsVisible = value;
+			}
+		}
+		
+		public override bool IsEnabled {
+			get {
+				bool isEnabled = true; //base.IsEnabled;
+				if (conditionCollection != null) {
+					ConditionFailedAction failedAction = conditionCollection.GetCurrentConditionFailedAction(caller);
+					isEnabled &= failedAction != ConditionFailedAction.Disable;
+				}
+				if (menuCommand != null && menuCommand is IMenuCommand) {
+					isEnabled &= ((IMenuCommand)menuCommand).IsEnabled;
+				}
+				return isEnabled;
+			}
+			set {
+				base.IsEnabled = value;
+			}
+		}
+		
+//		protected override void OnSelect(System.EventArgs e)
+//		{
+//			base.OnSelect(e);
+//			IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
+//			statusBarService.SetMessage(description);
+//		}
+		
 		public virtual void UpdateStatus()
 		{
 			if (conditionCollection != null) {
 				ConditionFailedAction failedAction = conditionCollection.GetCurrentConditionFailedAction(caller);
-				this.IsEnabled = failedAction != ConditionFailedAction.Disable;
-				this.IsVisible = failedAction != ConditionFailedAction.Exclude;
+				base.IsVisible = failedAction != ConditionFailedAction.Exclude;
+				base.IsEnabled = failedAction != ConditionFailedAction.Disable;
 			}
 			if (menuCommand != null && menuCommand is IMenuCommand) {
-				IsEnabled &= ((IMenuCommand)menuCommand).IsEnabled;
+				base.IsEnabled &= ((IMenuCommand)menuCommand).IsEnabled;
 			}
 			Text = stringParserService.Parse(localizedText);
 		}

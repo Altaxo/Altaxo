@@ -138,6 +138,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "ILAsm-Mode.xshd"
+                    Link = "..\data\syntaxmodes\ILAsm-Mode.xshd"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Java-Mode.xshd"
                     Link = "..\data\syntaxmodes\Java-Mode.xshd"
                     BuildAction = "EmbeddedResource"
@@ -438,6 +443,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Document\MarkerStrategy\MarkerStrategy.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Document\MarkerStrategy\TextMarker.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Document\Selection\ColumnRange.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -573,7 +588,17 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Gui\CompletionWindow\CompletionWindow.cs"
+                    RelPath = "Gui\CompletionWindow\AbstractCompletionWindow.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\CompletionWindow\CodeCompletionListView.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\CompletionWindow\CodeCompletionWindow.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />

@@ -39,9 +39,25 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		}
 		
 		/// <summary>
+		/// Marks a project for needing recompilation.
+		/// </summary>
+		bool IsDirty {
+			get;
+			set;
+		}
+		
+		/// <summary>
 		/// The name of the project.
 		/// </summary>
 		string Name {
+			get;
+			set;
+		}
+		
+		/// <summary>
+		/// The standad namespace new classes will be assigned to.
+		/// </summary>
+		string StandardNamespace {
 			get;
 			set;
 		}
@@ -131,6 +147,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		/// the reference.
 		/// </param>
 		void CopyReferencesToOutputPath(bool force);
+		void CopyReferencesToPath(string destination, bool force);
 		
 		/// <summary>
 		/// Returns true, if a specific file (given by it's name) 

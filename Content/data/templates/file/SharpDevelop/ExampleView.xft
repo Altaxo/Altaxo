@@ -1,26 +1,36 @@
 <?xml version="1.0"?>
-<Template Originator="Mike Krueger" Language="C#" Created="09/04/2003" LastModified="09/04/2003">
+<Template author="Mike Krueger" version="1.0">
 	
-	<TemplateConfiguration>
-		<Name>Simple #Develop view</Name>
-		<Icon>C#.File.FullFile</Icon>
-		<Category>SharpDevelop</Category>
-		<LanguageName>C#</LanguageName>
-		<Description>Creates a #Develop view content (for example text editor or resource editor)</Description>
-	</TemplateConfiguration>
+	<Config
+		name        = "${res:Templates.File.#Develop.View.Name}"
+		icon        = "C#.File.FullFile"
+		category    = "#Develop"
+		defaultname = "View${Number}.cs"
+		language    = "C#"/>
+	 
+	<Description>${res:Templates.File.#Develop.View.Description}</Description>
 	
-	<TemplateFiles>
-		<File DefaultExtension=".cs" DefaultName="EmptyC#file">
-			<![CDATA[using System;
+	<!-- 
+	Special new file templates:
+		${StandardNamespace}        -> Standardnamespace of the current project or FileNameWithoutExtension
+		${FullName}                 -> Full generated path name
+		${FileName}                 -> File name with extension
+		${FileNameWithoutExtension} -> File name without extension
+		${Extension}                -> Extension in the form ".cs"
+		${Path}                     -> Full path of the file
+	 -->
+	<Files>
+		<File name="${FullName}" language="C#"><![CDATA[${StandardHeader.C#}
+using System;
 using System.Windows.Forms;
 using ICSharpCode.SharpDevelop.Gui;
 
-namespace MyView
+namespace ${StandardNamespace}
 {
 	/// <summary>
 	/// Description of the view content
 	/// </summary>
-	public class MyView : AbstractViewContent
+	public class ${FileNameWithoutExtension} : AbstractViewContent
 	{
 #region AbstractViewContent requirements
 		/// <summary>
@@ -36,11 +46,11 @@ namespace MyView
 		}
 		
 		/// <summary>
-		/// Creates a new MyView object
+		/// Creates a new ${FileNameWithoutExtension} object
 		/// </summary>
-		public MyView()
+		public ${FileNameWithoutExtension}()
 		{
-			ContentName = "MyViewContent";
+			ContentName = "${FileNameWithoutExtension}";
 		}
 		
 		/// <summary>
@@ -75,8 +85,8 @@ namespace MyView
 }
 ]]>
 		</File>
-	</TemplateFiles>
+	</Files>
 	
-	<FileOptions/>
+	<AdditionalOptions/>
 	
 </Template>

@@ -14,6 +14,13 @@ namespace SharpDevelop.Internal.Parser
 	{
 		protected IClass declaringType;
 		protected IReturnType returnType;
+		protected IRegion          region;
+		
+		public virtual IRegion Region {
+			get {
+				return region;
+			}
+		}
 		
 		public IClass DeclaringType {
 			get {

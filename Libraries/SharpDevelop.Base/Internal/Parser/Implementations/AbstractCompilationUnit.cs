@@ -5,10 +5,36 @@
 //     <version value="$version"/>
 // </file>
 using System;
+using System.Collections;
+using System.Diagnostics;
 using System.Collections.Specialized;
 
 namespace SharpDevelop.Internal.Parser
 {
+	public class FoldingRegion
+	{
+		string  name;
+		IRegion region;
+		
+		public string Name {
+			get {
+				return name;
+			}
+		}
+		
+		public IRegion Region {
+			get {
+				return region;
+			}
+		}
+		
+		public FoldingRegion(string name, IRegion region)
+		{
+			this.name = name;
+			this.region = region;
+		}
+	}
+	
 	[Serializable]
 	public abstract class AbstractCompilationUnit : ICompilationUnit
 	{
@@ -17,6 +43,19 @@ namespace SharpDevelop.Internal.Parser
 		protected AttributeSectionCollection attributes = new AttributeSectionCollection();
 		protected bool errorsDuringCompile = false;
 		protected object tag               = null;
+		protected ArrayList foldingRegions = new ArrayList();
+		protected string fileName          = "";
+		protected TagCollection tagComments = new TagCollection();
+		
+		public string FileName {
+			get {
+				return fileName;
+			}
+			set {
+				Debug.Assert(value != null);
+				fileName = value;
+			}
+		}
 		
 		public bool ErrorsDuringCompile {
 			get {
@@ -53,6 +92,12 @@ namespace SharpDevelop.Internal.Parser
 				return classes;
 			}
 		}
+		
+		public ArrayList FoldingRegions {
+			get {
+				return foldingRegions;
+			}
+		}
 
 		public abstract CommentCollection MiscComments {
 			get;
@@ -62,8 +107,10 @@ namespace SharpDevelop.Internal.Parser
 			get;
 		}
 
-		public abstract TagCollection TagComments {
-			get;
+		public virtual TagCollection TagComments {
+			get {
+				return tagComments;
+			}
 		}
 	}
 }

@@ -27,6 +27,12 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 		}		
 		
+		public bool ShowReturnType {
+			get {
+				return (conversionFlags & ConversionFlags.ShowReturnType) == ConversionFlags.ShowReturnType;
+			}
+		}
+		
 		public bool ShowAccessibility {
 			get {
 				return (conversionFlags & ConversionFlags.ShowAccessibility) == ConversionFlags.ShowAccessibility;

@@ -5,11 +5,11 @@
 	
 	<!-- Template Header -->
 	<TemplateConfiguration>
-		<Name>Direct3D Project</Name>
+		<Name>${res:Templates.Project.Direct3DApplication.Name}</Name>
 		<Category>C#</Category>
 		<Icon>C#.Project.FullProject</Icon>
 		<LanguageName>C#</LanguageName>
-		<Description>Creates a simple Direct3D Project</Description>
+		<Description>${res:Templates.Project.Direct3DApplication.Description}</Description>
 	</TemplateConfiguration>
 	
 	<!-- Actions -->

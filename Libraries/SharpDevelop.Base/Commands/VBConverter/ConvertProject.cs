@@ -36,16 +36,9 @@ namespace ICSharpCode.SharpDevelop.Commands
 	{
 		void ConvertFile(string fileName, string outFile)
 		{
-//			Errors.count = 0;
-//			Scanner.Init(fileName);
-//			Parser.Parse();
+//			Parser p = new Parser();
+//			p.Parse(new Lexer(new ICSharpCode.SharpRefactory.Parser.FileReader(fileName));
 //			
-//			if (Errors.count > 0) {
-//				MessageBox.Show("Correct source code errors in " + fileName + " first (only compileable C# source code would convert).", "Information", MessageBoxButtons.OK, MessageBoxIcon.Asterisk, MessageBoxDefaultButton.Button1);
-//				return;
-//			}
-//			VBNetVisitor vbv = new VBNetVisitor();
-//			vbv.Visit(Parser.compilationUnit, null);
 //			StreamWriter sw = new StreamWriter(outFile);
 //			sw.Write(vbv.SourceText.ToString());
 //			sw.Close();
@@ -57,7 +50,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 			
 			if (projectService.CurrentSelectedProject != null) {
 				foreach (ProjectFile file in projectService.CurrentSelectedProject.ProjectFiles) {
-					ConvertFile(file.Name, @"C:\\vbout\\" + Path.GetFileName(file.Name));
+					ConvertFile(file.Name, "C:\\vbout\\" + Path.GetFileName(file.Name));
 				}
 			}
 		}

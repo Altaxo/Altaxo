@@ -99,7 +99,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 						
 						IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
 						FileUtilityService fileUtilityService = (FileUtilityService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(FileUtilityService));
-						if (fileUtilityService.IsValidFileName(newFoldername)) {
+						if (fileUtilityService.IsValidFileName(newFoldername) && !Directory.Exists(newFoldername) && !File.Exists(newFoldername)) {
 							fileService.RenameFile(oldFoldername, newFoldername);
 							Text       = newName;
 							folderName = newFoldername;

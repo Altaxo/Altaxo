@@ -30,7 +30,7 @@ namespace ICSharpCode.SharpDevelop.Internal.ExternalTool
 			}
 			set {
 				menuCommand = value;
-				Debug.Assert(menuCommand != null, "ICSharpCode.SharpDevelop.Internal.ExternalTool.ExternalTool : string MenuCommand == null");
+				System.Diagnostics.Debug.Assert(menuCommand != null, "ICSharpCode.SharpDevelop.Internal.ExternalTool.ExternalTool : string MenuCommand == null");
 			}
 		}
 		
@@ -40,7 +40,7 @@ namespace ICSharpCode.SharpDevelop.Internal.ExternalTool
 			}
 			set {
 				command = value;
-				Debug.Assert(command != null, "ICSharpCode.SharpDevelop.Internal.ExternalTool.ExternalTool : string Command == null");
+				System.Diagnostics.Debug.Assert(command != null, "ICSharpCode.SharpDevelop.Internal.ExternalTool.ExternalTool : string Command == null");
 			}
 		}
 		
@@ -50,7 +50,7 @@ namespace ICSharpCode.SharpDevelop.Internal.ExternalTool
 			}
 			set {
 				arguments = value;
-				Debug.Assert(arguments != null, "ICSharpCode.SharpDevelop.Internal.ExternalTool.ExternalTool : string Arguments == null");
+				System.Diagnostics.Debug.Assert(arguments != null, "ICSharpCode.SharpDevelop.Internal.ExternalTool.ExternalTool : string Arguments == null");
 			}
 		}
 		
@@ -60,7 +60,7 @@ namespace ICSharpCode.SharpDevelop.Internal.ExternalTool
 			}
 			set {
 				initialDirectory = value;
-				Debug.Assert(initialDirectory != null, "ICSharpCode.SharpDevelop.Internal.ExternalTool.ExternalTool : string InitialDirectory == null");
+				System.Diagnostics.Debug.Assert(initialDirectory != null, "ICSharpCode.SharpDevelop.Internal.ExternalTool.ExternalTool : string InitialDirectory == null");
 			}
 		}
 		

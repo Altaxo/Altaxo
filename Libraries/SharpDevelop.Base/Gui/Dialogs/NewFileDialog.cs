@@ -10,13 +10,18 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
+using System.Diagnostics;
 using System.Resources;
 using System.Windows.Forms;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.IO;
+using System.CodeDom.Compiler;
 
 using ICSharpCode.Core.Services;
 using ICSharpCode.SharpDevelop.Services;
+using ICSharpCode.SharpDevelop.Internal.Project;
 
 using ICSharpCode.SharpDevelop.Gui.Components;
 using ICSharpCode.SharpDevelop.Gui;
@@ -30,15 +35,19 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 {
 	/// <summary>
 	///  This class is for creating a new "empty" file
-	/// </summary>
+	/// </summar
 	public class NewFileDialog : BaseSharpDevelopForm, INewFileCreator
 	{
 		ArrayList alltemplates = new ArrayList();
 		ArrayList categories   = new ArrayList();
 		Hashtable icons        = new Hashtable();
-		
-		public NewFileDialog()
+		bool allowUntitledFiles;
+		string basePath;
+		public NewFileDialog(string basePath)
 		{
+			StandardHeader.SetHeaders();
+			this.basePath = basePath;
+			this.allowUntitledFiles = basePath == null;
 			try {
 				InitializeComponents();
 				InitializeTemplates();
@@ -115,7 +124,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		Category GetCategory(string categoryname)
 		{
 			foreach (Category category in categories) {
-				if (category.Text == categoryname) {
+				if (category.Name == categoryname) {
 					return category;
 				}
 			}
@@ -137,8 +146,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 				if (cat.Selected == false && template.WizardPath == null) {
 					cat.Selected = true;
 				}
-				if (!cat.HasSelectedTemplate && titem.Template.Files.Count == 1) {
-					if (((FileDescriptionTemplate)titem.Template.Files[0]).Name.StartsWith("Empty")) {
+				if (!cat.HasSelectedTemplate && titem.Template.FileDescriptionTemplates.Count == 1) {
+					if (((FileDescriptionTemplate)titem.Template.FileDescriptionTemplates[0]).Name.StartsWith("Empty")) {
 						titem.Selected = true;
 						cat.HasSelectedTemplate = true;
 					}
@@ -168,15 +177,134 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			e.Node.ImageIndex = 0;
 		}
 		
+		const int GridWidth = 256;
+		const int GridMargin = 8;
+		PropertyGrid propertyGrid = new PropertyGrid();
+		LocalizedTypeDescriptor localizedTypeDescriptor = null;
+		
+		bool AllPropertiesHaveAValue {
+			get {
+				foreach (TemplateProperty property in SelectedTemplate.Properties) {
+					string val = StringParserService.Properties["Properties." + property.Name];
+					if (val == null || val.Length == 0) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		
+		void ShowPropertyGrid()
+		{
+			if (localizedTypeDescriptor == null) {
+				localizedTypeDescriptor = new LocalizedTypeDescriptor();
+			}
+				
+			if (!Controls.Contains(propertyGrid)) {
+				this.SuspendLayout();
+				propertyGrid.Location = new Point(Width - GridMargin, GridMargin);
+				localizedTypeDescriptor.Properties.Clear();
+				foreach (TemplateProperty property in SelectedTemplate.Properties) {
+					LocalizedProperty localizedProperty;
+					if (property.Type.StartsWith("Types:")) {
+						localizedProperty = new LocalizedProperty(property.Name, "System.Enum", property.Category, property.Description);
+						TemplateType type = null;
+						foreach (TemplateType templateType in SelectedTemplate.CustomTypes) {
+							if (templateType.Name == property.Type.Substring("Types:".Length)) {
+								type = templateType;
+								break;
+							}
+						}
+						if (type == null) {
+							throw new Exception("type : " + property.Type + " not found.");
+						}
+						localizedProperty.TypeConverterObject = new CustomTypeConverter(type);
+						StringParserService.Properties["Properties." + localizedProperty.Name] = property.DefaultValue;
+						localizedProperty.DefaultValue = property.DefaultValue; // localizedProperty.TypeConverterObject.ConvertFrom();
+					} else {
+						localizedProperty = new LocalizedProperty(property.Name, property.Type, property.Category, property.Description);
+						if (property.Type == "System.Boolean") {
+							localizedProperty.TypeConverterObject = new BooleanTypeConverter();
+							string defVal = property.DefaultValue == null ? null : property.DefaultValue.ToString();
+							if (defVal == null || defVal.Length == 0) {
+								defVal = "True";
+							}
+							StringParserService.Properties["Properties." + localizedProperty.Name] = defVal;
+							localizedProperty.DefaultValue = Boolean.Parse(defVal);
+						}
+					}
+					localizedProperty.LocalizedName = property.LocalizedName;
+					localizedTypeDescriptor.Properties.Add(localizedProperty);
+				}
+				propertyGrid.ToolbarVisible = false;
+				propertyGrid.SelectedObject = localizedTypeDescriptor;
+				propertyGrid.Size     = new Size(GridWidth, Height - GridMargin * 4);
+				
+				Width = Width + GridWidth;
+				Controls.Add(propertyGrid);
+				this.ResumeLayout(false);
+			}
+		}
+		
+		void HidePropertyGrid()
+		{
+			if (Controls.Contains(propertyGrid)) {
+				this.SuspendLayout();
+				Controls.Remove(propertyGrid);
+				Width = Width - GridWidth;
+				this.ResumeLayout(false);
+			}
+		}
+		
+		FileTemplate SelectedTemplate {
+			get {
+				if (((ListView)ControlDictionary["templateListView"]).SelectedItems.Count == 1) {
+					return ((TemplateItem)((ListView)ControlDictionary["templateListView"]).SelectedItems[0]).Template;
+				}
+				return null;
+			}
+		}
+		string GenerateCurrentFileName()
+		{
+			if (SelectedTemplate.DefaultName.IndexOf("${Number}") >= 0) {
+				try {
+					int curNumber = 1;
+					IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
+					while (true) {
+						StringParserService.Properties["Number"] = curNumber.ToString();
+						string fileName = StringParserService.Parse(SelectedTemplate.DefaultName);
+						if (allowUntitledFiles) {
+							if (!fileService.IsOpen(fileName)) {
+								break;
+							}
+						} else if (!File.Exists(Path.Combine(basePath, StringParserService.Parse(SelectedTemplate.DefaultName)))) {
+							break;
+						}
+						++curNumber;
+					}
+				} catch (Exception e) {
+					Console.WriteLine(e);
+				}
+			}
+			return StringParserService.Parse(SelectedTemplate.DefaultName);
+		}
+		
 		// list view event handlers
 		void SelectedIndexChange(object sender, EventArgs e)
 		{
 			if (((ListView)ControlDictionary["templateListView"]).SelectedItems.Count == 1) {
-				ControlDictionary["descriptionLabel"].Text = StringParserService.Parse(((TemplateItem)((ListView)ControlDictionary["templateListView"]).SelectedItems[0]).Template.Description);
+				ControlDictionary["descriptionLabel"].Text = StringParserService.Parse(SelectedTemplate.Description);
 				ControlDictionary["openButton"].Enabled = true;
+				if (SelectedTemplate.HasProperties) {
+					ShowPropertyGrid();
+				}
+				if (!this.allowUntitledFiles) {
+					ControlDictionary["fileNameTextBox"].Text = GenerateCurrentFileName();
+				}
 			} else {
 				ControlDictionary["descriptionLabel"].Text = String.Empty;
 				ControlDictionary["openButton"].Enabled = false;
+				HidePropertyGrid();
 			}
 		}
 		
@@ -195,7 +323,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		public void SaveFile(string filename, string content, string languageName, bool showFile)
 		{
 			IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-			fileService.NewFile(filename, languageName, content);
+			fileService.NewFile(StringParserService.Parse(filename), StringParserService.Parse(languageName), StringParserService.Parse(content));
 			DialogResult = DialogResult.OK;
 		}
 		
@@ -208,8 +336,29 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			}
 			
 			if (((ListView)ControlDictionary["templateListView"]).SelectedItems.Count == 1) {
+				if (!AllPropertiesHaveAValue) {
+					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+					messageService.ShowMessage("${res:Dialog.NewFile.FillOutFirstMessage}", "${res:Dialog.NewFile.FillOutFirstCaption}");
+					return;
+				}
 				TemplateItem item = (TemplateItem)((ListView)ControlDictionary["templateListView"]).SelectedItems[0];
+				string fileName;
+				StringParserService.Properties["StandardNamespace"] = "DefaultNamespace";
+				if (allowUntitledFiles) {
+					fileName = GenerateCurrentFileName();
+				} else {
+					IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+					if (projectService.CurrentSelectedProject != null) {
+						StringParserService.Properties["StandardNamespace"] = projectService.CurrentSelectedProject.StandardNamespace;
+					}
+					fileName = ControlDictionary["fileNameTextBox"].Text;
+				}
 				
+				StringParserService.Properties["FullName"] = fileName;
+				StringParserService.Properties["FileName"] = Path.GetFileName(fileName);
+				StringParserService.Properties["FileNameWithoutExtension"] = Path.GetFileNameWithoutExtension(fileName);
+				StringParserService.Properties["Extension"] = Path.GetExtension(fileName);
+				StringParserService.Properties["Path"] = Path.GetDirectoryName(fileName);
 				if (item.Template.WizardPath != null) {
 					IProperties customizer = new DefaultProperties();
 					customizer.SetProperty("Template", item.Template);
@@ -219,8 +368,9 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 						DialogResult = DialogResult.OK;
 					}
 				} else {
-					foreach (FileDescriptionTemplate newfile in item.Template.Files) {
-						SaveFile(newfile.Name, newfile.Content, item.Template.LanguageName, true);
+					ScriptRunner scriptRunner = new ScriptRunner();
+					foreach (FileDescriptionTemplate newfile in item.Template.FileDescriptionTemplates) {
+						SaveFile(newfile.Name, scriptRunner.CompileScript(item.Template, newfile), newfile.Language, true);
 					}
 					DialogResult = DialogResult.OK;
 				}
@@ -237,7 +387,9 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			string name;
 			public bool Selected = false;
 			public bool HasSelectedTemplate = false;
-			public Category(string name) : base(name)
+			static StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+			
+			public Category(string name) : base(stringParserService.Parse(name))
 			{
 				this.name = name;
 				ImageIndex = 1;
@@ -282,7 +434,11 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		
 		void InitializeComponents()
 		{
-			base.SetupFromXml(Path.Combine(PropertyService.DataDirectory, @"resources\dialogs\NewFileDialog.xfrm"));
+			if (allowUntitledFiles) {
+				base.SetupFromXml(Path.Combine(PropertyService.DataDirectory, @"resources\dialogs\NewFileDialog.xfrm"));
+			} else {
+				base.SetupFromXml(Path.Combine(PropertyService.DataDirectory, @"resources\dialogs\NewFileWithNameDialog.xfrm"));
+			}
 			
 			ImageList imglist = new ImageList();
 			imglist.ColorDepth = ColorDepth.Depth32Bit;
@@ -311,7 +467,6 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			((RadioButton)ControlDictionary["smallIconsRadioButton"]).FlatStyle = FlatStyle.Standard;
 			((RadioButton)ControlDictionary["smallIconsRadioButton"]).Image  = IconService.GetBitmap("Icons.16x16.SmallIconsIcon");
 			
-		
 			ToolTip tooltip = new ToolTip();
 			tooltip.SetToolTip(ControlDictionary["largeIconsRadioButton"], StringParserService.Parse("${res:Global.LargeIconToolTip}"));
 			tooltip.SetToolTip(ControlDictionary["smallIconsRadioButton"], StringParserService.Parse("${res:Global.SmallIconToolTip}"));

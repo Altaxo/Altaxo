@@ -198,7 +198,8 @@ namespace Altaxo.Worksheet.GUI
       set
       {
         edFormulaWrapper.TextEditorControl.FileName = value;
-        edFormulaWrapper.ContentName = value;
+        edFormulaWrapper.TitleName = value;
+        edFormulaWrapper.FileName = value;
       }
     }
 

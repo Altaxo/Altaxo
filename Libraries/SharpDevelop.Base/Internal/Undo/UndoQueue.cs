@@ -1,4 +1,4 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
@@ -25,7 +25,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Undo
 				throw new ArgumentNullException("stack");
 			}
 			
-			Debug.Assert(numops > 0 , "ICSharpCode.SharpDevelop.Internal.Undo.UndoQueue : numops should be > 0");
+			System.Diagnostics.Debug.Assert(numops > 0 , "ICSharpCode.SharpDevelop.Internal.Undo.UndoQueue : numops should be > 0");
 			
 			for (int i = 0; i < numops; ++i) {
 				if (stack._UndoStack.Count > 0) {

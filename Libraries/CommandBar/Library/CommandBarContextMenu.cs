@@ -25,7 +25,7 @@ namespace Reflector.UserInterface
 		{
 			get { return this.items; }
 		}
-
+		
 		protected override void OnPopup(EventArgs e)
 		{
 			base.OnPopup(e);
@@ -123,13 +123,13 @@ namespace Reflector.UserInterface
 
 				this.UpdateItems();
 			}
-
+			
 			protected override void OnPopup(EventArgs e)
 			{
 				CommandBarMenu menu = this.item as CommandBarMenu;
 				if (menu != null)
 				{
-					menu.PerformDropDown(EventArgs.Empty);					
+					menu.PerformDropDown(EventArgs.Empty);
 				}				
 
 				base.OnPopup(e);	
@@ -184,9 +184,10 @@ namespace Reflector.UserInterface
 					control.PerformClick(EventArgs.Empty);
 				}
 			}
-
+			
 			protected override void OnSelect(EventArgs e)
 			{
+				item.NotifySelect(e);
 				CommandBarContextMenu contextMenu = this.GetContextMenu() as CommandBarContextMenu;
 				if (contextMenu == null)
 				{

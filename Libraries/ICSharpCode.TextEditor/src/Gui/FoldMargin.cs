@@ -21,16 +21,12 @@ namespace ICSharpCode.TextEditor
 	/// </summary>
 	public class FoldMargin : AbstractMargin
 	{
+		int selectedFoldLine = -1;
+		
 		public override Size Size {
 			get {
 				return new Size((int)(textArea.TextView.FontHeight),
 				                -1);
-			}
-		}
-		
-		public override Cursor Cursor {
-			get {
-				return GutterMargin.RightLeftCursor;
 			}
 		}
 		
@@ -46,6 +42,9 @@ namespace ICSharpCode.TextEditor
 		
 		public override void Paint(Graphics g, Rectangle rect)
 		{
+			if (rect.Width <= 0 || rect.Height <= 0) {
+				return;
+			}
 			HighlightColor lineNumberPainterColor = textArea.Document.HighlightingStrategy.GetColorFor("LineNumbers");
 			HighlightColor foldLineColor          = textArea.Document.HighlightingStrategy.GetColorFor("FoldLine");
 			
@@ -72,21 +71,43 @@ namespace ICSharpCode.TextEditor
 						g.FillRectangle(textArea.Enabled ? new SolidBrush(lineNumberPainterColor.BackgroundColor) : SystemBrushes.InactiveBorder, markerRectangle);
 					}
 					
-					int currentLine = textArea.TextView.FirstVisibleLine + y;
+					int currentLine = textArea.Document.GetFirstLogicalLine(textArea.Document.GetVisibleLine(textArea.TextView.FirstVisibleLine) + y);
+//					int currentLine = textArea.TextView.FirstVisibleLine + y;
 					PaintFoldMarker(g, currentLine, markerRectangle);
 				}
 			}
 		}
 		
+		bool SelectedFoldingFrom(ArrayList list)
+		{
+			if (list != null) {
+				for (int i = 0; i < list.Count; ++i) {
+					if (this.selectedFoldLine == ((FoldMarker)list[i]).StartLine) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 		
 		void PaintFoldMarker(Graphics g, int lineNumber, Rectangle drawingRectangle)
 		{
-			HighlightColor foldLineColor = textArea.Document.HighlightingStrategy.GetColorFor("FoldLine");
+			HighlightColor foldLineColor    = textArea.Document.HighlightingStrategy.GetColorFor("FoldLine");
+			HighlightColor selectedFoldLine = textArea.Document.HighlightingStrategy.GetColorFor("SelectedFoldLine");
 			
-			bool isFoldStart = textArea.Document.FoldingManager.IsFoldStart(lineNumber);
-			bool isBetween   = textArea.Document.FoldingManager.IsBetweenFolding(lineNumber);
-			bool isFoldEnd   = textArea.Document.FoldingManager.IsFoldEnd(lineNumber);
-							
+			ArrayList foldingsWithStart = textArea.Document.FoldingManager.GetFoldingsWithStart(lineNumber);
+			ArrayList foldingsBetween   = textArea.Document.FoldingManager.GetFoldingsContainsLineNumber(lineNumber);
+			ArrayList foldingsWithEnd   = textArea.Document.FoldingManager.GetFoldingsWithEnd(lineNumber);
+			
+			bool isFoldStart = foldingsWithStart.Count > 0; 
+			bool isBetween   = foldingsBetween.Count > 0;
+			bool isFoldEnd   = foldingsWithEnd.Count > 0;
+			
+			bool isStartSelected   = SelectedFoldingFrom(foldingsWithStart);
+			bool isBetweenSelected = SelectedFoldingFrom(foldingsBetween);
+			bool isEndSelected     = SelectedFoldingFrom(foldingsWithEnd);
+			
+			
 			int foldMarkerSize = (int)Math.Round(textArea.TextView.FontHeight * 0.57f);
 			foldMarkerSize -= (foldMarkerSize) % 2;
 			int foldMarkerYPos = drawingRectangle.Y + (int)((drawingRectangle.Height - foldMarkerSize) / 2);
@@ -94,10 +115,9 @@ namespace ICSharpCode.TextEditor
 			
 			
 			if (isFoldStart) {
-				ArrayList startFoldings = textArea.Document.FoldingManager.GetFoldingsWithStart(lineNumber);
 				bool isVisible = true;
 				bool moreLinedOpenFold = false;
-				foreach (FoldMarker foldMarker in startFoldings) {
+				foreach (FoldMarker foldMarker in foldingsWithStart) {
 					if (foldMarker.IsFolded) {
 						isVisible = false;
 					} else {
@@ -105,9 +125,8 @@ namespace ICSharpCode.TextEditor
 					}
 				}
 				
-				ArrayList endFoldings = textArea.Document.FoldingManager.GetFoldingsWithEnd(lineNumber);
 				bool isFoldEndFromUpperFold = false;
-				foreach (FoldMarker foldMarker in endFoldings) {
+				foreach (FoldMarker foldMarker in foldingsWithEnd) {
 					if (foldMarker.EndLine > foldMarker.StartLine && !foldMarker.IsFolded) {
 						isFoldEndFromUpperFold = true;
 					} 
@@ -117,38 +136,55 @@ namespace ICSharpCode.TextEditor
 				                                 foldMarkerYPos,
 				                                 foldMarkerSize,
 				                                 foldMarkerSize),
-				                  isVisible);
+				                  isVisible,
+				                  isStartSelected
+				                  );
+				
+				// draw line above fold marker
 				if (isBetween || isFoldEndFromUpperFold) {
-					g.DrawLine(new Pen(foldLineColor.Color),
+					g.DrawLine(new Pen(isBetweenSelected ? selectedFoldLine.Color : foldLineColor.Color),
 					           xPos,
 					           drawingRectangle.Top,
 					           xPos,
-					           foldMarkerYPos);
+					           foldMarkerYPos - 1);
 					
 				}
 				
+				// draw line below fold marker
 				if (isBetween || moreLinedOpenFold) {
-					g.DrawLine(new Pen(foldLineColor.Color),
+					g.DrawLine(new Pen(isEndSelected  || (isStartSelected && isVisible) || isBetweenSelected ? selectedFoldLine.Color : foldLineColor.Color),
 					           xPos,
-					           foldMarkerYPos + foldMarkerSize,
+					           foldMarkerYPos + foldMarkerSize + 1,
 					           xPos,
 					           drawingRectangle.Bottom);
 				}
 			} else {
 				if (isFoldEnd) {
 					int midy = drawingRectangle.Top + drawingRectangle.Height / 2;
-					g.DrawLine(new Pen(foldLineColor.Color),
+					// draw line above fold end marker
+					g.DrawLine(new Pen(isBetweenSelected || isEndSelected   ? selectedFoldLine.Color : foldLineColor.Color),
 					                xPos,
 					                drawingRectangle.Top,
 					                xPos,
-					                isBetween ? drawingRectangle.Bottom : midy);
-					g.DrawLine(new Pen(foldLineColor.Color),
+					                midy);
+					
+					// draw fold end marker
+					g.DrawLine(new Pen(isBetweenSelected || isEndSelected  ? selectedFoldLine.Color : foldLineColor.Color),
 									xPos,
 									midy,
 									xPos + foldMarkerSize / 2,
 									midy);
+					// draw line below fold end marker
+					if (isBetween) {
+						g.DrawLine(new Pen(isBetweenSelected ? selectedFoldLine.Color : foldLineColor.Color),
+						                xPos,
+						                midy + 1,
+						                xPos,
+						                drawingRectangle.Bottom);
+					}
 				} else if (isBetween) {
-					g.DrawLine(new Pen(foldLineColor.Color),
+					// just draw the line :)
+					g.DrawLine(new Pen(isBetweenSelected ? selectedFoldLine.Color : foldLineColor.Color),
 					                xPos,
 					                drawingRectangle.Top,
 					                xPos,
@@ -157,38 +193,71 @@ namespace ICSharpCode.TextEditor
 			}
 		}
 		
-//		protected override void OnClick(EventArgs e)
-//		{
-//			base.OnClick(e);
-//			bool  showFolding = textarea.Document.TextEditorProperties.EnableFolding;
-//			Point mousepos    = PointToClient(Control.MousePosition);
-//			int   realline    = textarea.Document.GetVisibleLine((int)((mousepos.Y + virtualTop) / textarea.FontHeight));
-//			
-//			// focus the textarea if the user clicks on the line number view
-//			textarea.Focus();
-//			
-//			if (!showFolding || mousepos.X < Width - 15 || realline < 0 || realline + 1 >= textarea.Document.TotalNumberOfLines) {
-//				return;
-//			}
-//			
-//			ArrayList foldMarkers = textarea.Document.FoldingManager.GetFoldingsWithStart(realline);
-//			foreach (FoldMarker fm in foldMarkers) {
-//				fm.IsFolded = !fm.IsFolded;
-//			}
-//			Refresh();
-//			textarea.Refresh();
-//			TextEditorControl.IconBar.Refresh();
-//		}
+		public override void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
+		{
+			bool  showFolding  = textArea.Document.TextEditorProperties.EnableFolding;
+			int   physicalLine = + (int)((mousepos.Y + textArea.VirtualTop.Y) / textArea.TextView.FontHeight);
+			int   realline     = textArea.Document.GetFirstLogicalLine(physicalLine);
+			
+			// focus the textarea if the user clicks on the line number view
+			textArea.Focus();
+			
+			if (!showFolding || realline < 0 || realline + 1 >= textArea.Document.TotalNumberOfLines) {
+				return;
+			}
+			
+			ArrayList foldMarkers = textArea.Document.FoldingManager.GetFoldingsWithStart(realline);
+			int oldSelection = selectedFoldLine;
+			if (foldMarkers.Count > 0) {
+				selectedFoldLine = realline;
+			} else {
+				selectedFoldLine = -1;
+			}
+			if (oldSelection != selectedFoldLine) {
+				textArea.Refresh(this);
+			}
+		}
+		
+		public override void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
+		{
+			bool  showFolding  = textArea.Document.TextEditorProperties.EnableFolding;
+			int   physicalLine = + (int)((mousepos.Y + textArea.VirtualTop.Y) / textArea.TextView.FontHeight);
+			int   realline     = textArea.Document.GetFirstLogicalLine(physicalLine);
+			
+			// focus the textarea if the user clicks on the line number view
+			textArea.Focus();
+			
+			if (!showFolding || realline < 0 || realline + 1 >= textArea.Document.TotalNumberOfLines) {
+				return;
+			}
+			
+			ArrayList foldMarkers = textArea.Document.FoldingManager.GetFoldingsWithStart(realline);
+			foreach (FoldMarker fm in foldMarkers) {
+				fm.IsFolded = !fm.IsFolded;
+			}
+			textArea.MotherTextAreaControl.AdjustScrollBars(null, null);
+			textArea.Refresh();
+		}
+		
+		public override void HandleMouseLeave(EventArgs e)
+		{
+			if (selectedFoldLine != -1) {
+				selectedFoldLine = -1;
+				textArea.Refresh(this);
+			}
+		}
+		
 		
 #region Drawing functions
-		void DrawFoldMarker(Graphics g, RectangleF rectangle, bool isOpened)
+		void DrawFoldMarker(Graphics g, RectangleF rectangle, bool isOpened, bool isSelected)
 		{
 			HighlightColor foldMarkerColor = textArea.Document.HighlightingStrategy.GetColorFor("FoldMarker");
 			HighlightColor foldLineColor   = textArea.Document.HighlightingStrategy.GetColorFor("FoldLine");
+			HighlightColor selectedFoldLine = textArea.Document.HighlightingStrategy.GetColorFor("SelectedFoldLine");
 			
 			Rectangle intRect = new Rectangle((int)rectangle.X, (int)rectangle.Y, (int)rectangle.Width, (int)rectangle.Height);
 			g.FillRectangle(new SolidBrush(foldMarkerColor.BackgroundColor), intRect);
-			g.DrawRectangle(new Pen(foldMarkerColor.Color), intRect);
+			g.DrawRectangle(new Pen(isSelected ? selectedFoldLine.Color : foldMarkerColor.Color), intRect);
 			
 			int space  = (int)Math.Round(((double)rectangle.Height) / 8d) + 1;
 			int mid    = intRect.Height / 2 + intRect.Height % 2;			

@@ -13,6 +13,8 @@ using System.Collections;
 
 using ICSharpCode.Core.Properties;
 using ICSharpCode.SharpDevelop.Internal.Templates;
+using ICSharpCode.Core.Services;
+using ICSharpCode.SharpDevelop.Services;
 using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Gui.CompletionWindow;
@@ -21,7 +23,15 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {
 	public class TemplateCompletionDataProvider : ICompletionDataProvider
 	{
+		ImageList imageList = new ImageList();
+	
 		public ImageList ImageList {
+			get {
+				return imageList;
+			}
+		}
+		
+		public string PreSelection {
 			get {
 				return null;
 			}
@@ -29,6 +39,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		public ICompletionData[] GenerateCompletionData(string fileName, TextArea textArea, char charTyped)
 		{
+			IconService iconService = (IconService)ServiceManager.Services.GetService(typeof(IconService));
+			imageList.Images.Add(iconService.GetBitmap("Icons.16x16.TextFileIcon"));
 			CodeTemplateGroup templateGroup = CodeTemplateLoader.GetTemplateGroupPerFilename(fileName);
 			if (templateGroup == null) {
 				return null;
@@ -41,7 +53,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			return (ICompletionData[])completionData.ToArray(typeof(ICompletionData));
 		}
 		
-		class TemplateCompletionData : ICompletionData
+		class TemplateCompletionData : ICompletionData, IComparable
 		{
 			CodeTemplate template;
 			
@@ -53,7 +65,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			
 			public string[] Text {
 				get {
-					return new string[] { template.Shortcut, template.Description };
+					return new string[] { template.Shortcut + "\t" + template.Description };
 				}
 			}
 			
@@ -72,6 +84,20 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			{
 				this.template = template;
 			}
+			
+			
+			
+			#region System.IComparable interface implementation
+			public int CompareTo(object obj)
+			{
+				if (obj == null || !(obj is TemplateCompletionData)) {
+					return -1;
+				}
+				return template.Shortcut.CompareTo(((TemplateCompletionData)obj).template.Shortcut);
+			}
+			#endregion
+			
+			
 		}
 	}
 }

@@ -435,6 +435,31 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 				return "Icons.16x16.OpenFolderBitmap";
 			}
 		}
+		string category;
+		public string Category {
+			get {
+				return category;
+			}
+			set{
+				category = value;
+			}
+		}
+		string[] shortcut; // TODO: Inherit from AbstractPadContent
+		public string[] Shortcut {
+			get {
+				return shortcut;
+			}
+			set {
+				shortcut = value;
+			}
+		}
+		public void BringPadToFront()
+		{
+			if (!WorkbenchSingleton.Workbench.WorkbenchLayout.IsVisible(this)) {
+				WorkbenchSingleton.Workbench.WorkbenchLayout.ShowPad(this);
+			}
+			WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this);
+		}
 		
 		public void RedrawContent()
 		{
@@ -555,13 +580,22 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			TreeNode myFilesNode = rootNode.Nodes.Add("My Documents");
 			myFilesNode.ImageIndex = 7;
 			myFilesNode.SelectedImageIndex = 7;
-			myFilesNode.Tag = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+			try {
+				myFilesNode.Tag = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+			} catch (Exception) {
+				myFilesNode.Tag = "C:\\";
+			}
+			
 			myFilesNode.Nodes.Add("");
 			
 			TreeNode computerNode = rootNode.Nodes.Add("My Computer");
 			computerNode.ImageIndex = 8;
 			computerNode.SelectedImageIndex = 8;
-			computerNode.Tag = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+			try {
+				computerNode.Tag = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+			} catch (Exception) {
+				computerNode.Tag = "C:\\";
+			}
 			
 			foreach (string driveName in Environment.GetLogicalDrives()) {
 				DriveObject drive = new DriveObject(driveName);

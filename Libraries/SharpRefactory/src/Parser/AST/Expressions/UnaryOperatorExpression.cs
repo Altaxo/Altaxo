@@ -25,6 +25,11 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 			}
 		}
 		
+		public UnaryOperatorExpression(UnaryOperatorType op)
+		{
+			this.op    = op;
+		}
+		
 		public UnaryOperatorExpression(Expression expression, UnaryOperatorType op)
 		{
 			this.expression  = expression;

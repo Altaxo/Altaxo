@@ -31,14 +31,30 @@ namespace ICSharpCode.SharpDevelop.Gui
 		string Icon {
 			get;
 		}
-#if !LINUX
+		
+		/// <summary>
+		/// Returns the category (this is used for defining where the menu item to
+		/// this pad goes)
+		/// </summary>
+		string Category {
+			get;
+			set;
+		}
+		
+		/// <summary>
+		/// Returns the menu shortcut for the view menu item.
+		/// </summary>
+		string[] Shortcut {
+			get;
+			set;
+		}
+		
 		/// <summary>
 		/// Returns the Windows.Control for this pad.
 		/// </summary>
 		Control Control {
 			get;
 		}
-#endif
 		
 		/// <summary>
 		/// Re-initializes all components of the pad. Don't call unless
@@ -59,6 +75,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <summary>
 		/// Tries to make the pad visible to the user.
 		/// </summary>
-		void BringToFront();
+		void BringPadToFront();
 	}
 }

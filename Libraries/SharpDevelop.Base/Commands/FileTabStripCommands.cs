@@ -32,18 +32,9 @@ namespace ICSharpCode.SharpDevelop.Commands.TabStrip
 	{
 		public override void Run()
 		{
-			OpenFileTab tab  = (OpenFileTab)Owner;
-			if (tab != null && tab.TabPages != null && tab.SelectedIndex >= 0 && tab.SelectedIndex < tab.TabPages.Count) {
-				OpenFileTab.MyTabPage selected = (OpenFileTab.MyTabPage)tab.TabPages[tab.SelectedIndex];
-				
-				IWorkbenchWindow window = tab.ClickedWindow;
-				
-				if (window != null) {
-					window.CloseWindow(false);
-					if (window != selected.Window) {
-						selected.SelectPage();
-					}
-				}
+			IWorkbenchWindow window = Owner as IWorkbenchWindow;
+			if (window != null) {
+				window.CloseWindow(false);
 			}
 		}
 	}
@@ -52,25 +43,19 @@ namespace ICSharpCode.SharpDevelop.Commands.TabStrip
 	{
 		public override void Run()
 		{
-			OpenFileTab tab = (OpenFileTab)Owner;
-			if (tab != null && tab.TabPages != null && tab.SelectedIndex >= 0 && tab.SelectedIndex < tab.TabPages.Count) {
-				OpenFileTab.MyTabPage selected = (OpenFileTab.MyTabPage)tab.TabPages[tab.SelectedIndex];
-				
-				IWorkbenchWindow window = tab.ClickedWindow;
-				
-				if (window != null) {
-					if (window.ViewContent.IsViewOnly) {
-						return;
-					}
-					if (window.ViewContent.IsUntitled) {
-						SaveFileAsTab.SaveFileAs(window);
-					} else {
-						IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-						projectService.MarkFileDirty(window.ViewContent.ContentName);
-						
-						FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-						fileUtilityService.ObservedSave(new FileOperationDelegate(window.ViewContent.Save), window.ViewContent.ContentName);
-					}
+			IWorkbenchWindow window = Owner as IWorkbenchWindow;
+			if (window != null) {
+				if (window.ViewContent.IsViewOnly) {
+					return;
+				}
+				if (window.ViewContent.IsUntitled) {
+					SaveFileAsTab.SaveFileAs(window);
+				} else {
+					IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+					projectService.MarkFileDirty(window.ViewContent.FileName);
+					
+					FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+					fileUtilityService.ObservedSave(new FileOperationDelegate(window.ViewContent.Save), window.ViewContent.FileName);
 				}
 			}
 		}
@@ -89,7 +74,7 @@ namespace ICSharpCode.SharpDevelop.Commands.TabStrip
 				string[] fileFilters  = (string[])(AddInTreeSingleton.AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems(null)).ToArray(typeof(string));
 				fdiag.Filter          = String.Join("|", fileFilters);
 				for (int i = 0; i < fileFilters.Length; ++i) {
-					if (fileFilters[i].IndexOf(Path.GetExtension(window.ViewContent.ContentName == null ? window.ViewContent.UntitledName : window.ViewContent.ContentName)) >= 0) {
+					if (fileFilters[i].IndexOf(Path.GetExtension(window.ViewContent.FileName == null ? window.ViewContent.UntitledName : window.ViewContent.FileName)) >= 0) {
 						fdiag.FilterIndex = i + 1;
 						break;
 					}
@@ -112,18 +97,13 @@ namespace ICSharpCode.SharpDevelop.Commands.TabStrip
 		
 		public override void Run()
 		{
-			OpenFileTab tab = (OpenFileTab)Owner;
-			if (tab != null && tab.TabPages != null && tab.SelectedIndex >= 0 && tab.SelectedIndex < tab.TabPages.Count) {
-				OpenFileTab.MyTabPage selected = (OpenFileTab.MyTabPage)tab.TabPages[tab.SelectedIndex];
-				
-				IWorkbenchWindow window = tab.ClickedWindow;
-				
-				if (window != null) {
-					if (window.ViewContent.IsViewOnly) {
-						return;
-					}
-					SaveFileAs(window);
+			IWorkbenchWindow window = Owner as IWorkbenchWindow;
+			
+			if (window != null) {
+				if (window.ViewContent.IsViewOnly) {
+					return;
 				}
+				SaveFileAs(window);
 			}
 		}
 	}
@@ -133,12 +113,9 @@ namespace ICSharpCode.SharpDevelop.Commands.TabStrip
 	{
 		public override void Run()
 		{
-			OpenFileTab tab = (OpenFileTab)Owner;
-			
-			IWorkbenchWindow window = tab.ClickedWindow;
-			
-			if (window != null && window.ViewContent.ContentName != null) {
-				Clipboard.SetDataObject(new DataObject(DataFormats.Text, window.ViewContent.ContentName));
+			IWorkbenchWindow window = Owner as IWorkbenchWindow;
+			if (window != null && window.ViewContent.FileName != null) {
+				Clipboard.SetDataObject(new DataObject(DataFormats.Text, window.ViewContent.FileName));
 			}
 		}
 	}

@@ -64,7 +64,27 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 				return "Icons.16x16.CombineIcon";
 			}
 		}
-
+		
+		string category;
+		public string Category {
+			get {
+				return category;
+			}
+			set{
+				category = value;
+			}
+		}
+		string[] shortcut; // TODO: Inherit from AbstractPadContent
+		public string[] Shortcut {
+			get {
+				return shortcut;
+			}
+			set {
+				shortcut = value;
+			}
+		}
+		
+		
 		public void RedrawContent()
 		{
 			BeginUpdate();
@@ -130,6 +150,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 			try {
 				DisposeProjectNodes();
 				Nodes.Clear();
+				ContextMenu = null;
 			} catch (InvalidOperationException) {
 				this.Invoke(new CombineEventHandler(CloseCombine), new object[] {sender, e});
 			}
@@ -188,7 +209,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 		AbstractBrowserNode GetNodeFromCollectionTreeByFileName(TreeNodeCollection collection, string fileName)
 		{
 			foreach (AbstractBrowserNode node in collection) {
-				if (node.UserData is ProjectFile && ((ProjectFile)node.UserData).Name == fileName) {
+				string nodePath = (node.UserData as ProjectFile) == null ? null : ((ProjectFile)node.UserData).Name;
+				if (node.UserData is ProjectFile && nodePath != null && fileName != null && Path.GetFullPath(nodePath).ToUpper() == Path.GetFullPath(fileName).ToUpper()) {
 					return node;
 				}
 				if (node.UserData is ProjectReference && ((ProjectReference)node.UserData).GetReferencedFileName(node.Project) == fileName) {
@@ -202,8 +224,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 			}
 			return null;
 		}
-
-
+		
 		/// <summary>
 		/// Selectes the current active workbench window in the Project Browser Tree and ensures
 		/// the visibility of this node.
@@ -211,8 +232,21 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 		void ActiveWindowChanged(object sender, EventArgs e)
 		{
 			if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null) {
-				string fileName = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName;
-
+				string fileName = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName;
+				if (fileName == null) {
+					fileName = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.UntitledName;
+				}
+				FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+				if (!fileUtilityService.IsValidFileName(fileName)) {
+					return;
+				}
+				try {
+					if (fileName.StartsWith("http:") || !Path.IsPathRooted(fileName)) {
+						return;
+					}
+				} catch (Exception) {
+					return;
+				}
 				AbstractBrowserNode node = GetNodeFromCollectionTreeByFileName(Nodes, fileName);
 				if (node != null) {
 					node.EnsureVisible();
@@ -430,12 +464,12 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 		protected override void OnDragOver(DragEventArgs e)
 		{
 			base.OnDragOver(e);
-
+			
 			Point clientcoordinate   = PointToClient(new Point(e.X, e.Y));
 			AbstractBrowserNode node = (AbstractBrowserNode)GetNodeAt(clientcoordinate);
-
+			
 			DragDropEffects effect = DragDropEffects.None;
-
+			
 			if ((e.KeyState & 8) > 0) { // CTRL key pressed.
 				effect = DragDropEffects.Copy;
 			} else {
@@ -444,8 +478,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 			e.Effect = node.GetDragDropEffect(e.Data, effect);
 
 			if (e.Effect != DragDropEffects.None) {
-				((Form)WorkbenchSingleton.Workbench).Activate();
-				Select();
+//				((Form)WorkbenchSingleton.Workbench).Activate();
+//				Select();
 				SelectedNode = node;
 			}
 		}
@@ -483,7 +517,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 
 		public static void MoveCopyFile(string filename, AbstractBrowserNode node, bool move, bool alreadyInPlace)
 		{
-			//			FileType type      = FileUtility.GetFileType(filename);
+//			FileType type      = FileUtility.GetFileType(filename);
 			bool     directory = fileUtilityService.IsDirectory(filename);
 			if (
 //			    type == FileType.Dll ||
@@ -491,24 +525,25 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 			    directory) { // insert reference
 			    return;
 			    }
-
-			    Debug.Assert(directory || File.Exists(filename), "ProjectBrowserEventHandler.MoveCopyFile : source file doesn't exist");
-
+			System.Diagnostics.Debug.Assert(directory || File.Exists(filename), "ProjectBrowserEventHandler.MoveCopyFile : source file doesn't exist");
+			
 			// search "folder" in which the node contains
 			while (!(node is DirectoryNode || node is ProjectBrowserNode))  {
 				node = (AbstractBrowserNode)node.Parent;
-		       	if (node == null) {
-		       		return;
-		       	}
+				if (node == null) {
+					return;
+				}
 			}
 
-			string name        = Path.GetFileName(filename);
+			string name          = Path.GetFileName(filename);
 			string baseDirectory = node is DirectoryNode ? ((DirectoryNode)node).FolderName : node.Project.BaseDirectory;
-			string newfilename = alreadyInPlace ? filename : fileUtilityService.GetDirectoryNameWithSeparator(baseDirectory) + name;
-
-			string oldrelativename = fileUtilityService.AbsoluteToRelativePath(baseDirectory, filename);
-			string newrelativename = fileUtilityService.AbsoluteToRelativePath(baseDirectory, newfilename);
-
+			string newfilename   = alreadyInPlace ? filename : Path.Combine(baseDirectory, name);
+			Console.WriteLine(filename + " --- " + newfilename);
+			
+			string oldrelativename = fileUtilityService.AbsoluteToRelativePath(node.Project.BaseDirectory, filename);
+			string newrelativename = fileUtilityService.AbsoluteToRelativePath(node.Project.BaseDirectory, newfilename);
+			
+			Console.WriteLine(oldrelativename + " --- " + newrelativename);
 			AbstractBrowserNode oldparent = DefaultDotNetNodeBuilder.GetPath(oldrelativename, GetRootProjectNode(node), false);          // TODO : change this for more projects
 			AbstractBrowserNode newparent = DefaultDotNetNodeBuilder.GetPath(newrelativename, GetRootProjectNode(node), alreadyInPlace);
 
@@ -523,17 +558,24 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 				}
 			}
 
-			if (oldnode != null && oldnode is DirectoryNode) { // TODO can't move folders yet :(
-			                                                                                                             return;
-			}
-
-			if (oldparent == newparent && oldnode != null) { // move/copy to the same location
+			if (oldnode != null && oldnode is DirectoryNode) {
+				// TODO can't move folders yet :(
 				return;
 			}
 
+			if (oldparent == newparent && oldnode != null) {
+				Console.WriteLine("same loc!!!");
+				// move/copy to the same location
+				return;
+			}
+			
+			if (!Directory.Exists(Path.GetDirectoryName(newfilename))) {
+				Directory.CreateDirectory(Path.GetDirectoryName(newfilename));
+			}
+			
 			if (move) {
-				if (filename != newfilename) {
-					File.Copy(filename, newfilename);
+				if (Path.GetFullPath(filename) != Path.GetFullPath(newfilename)) {
+					File.Copy(filename, newfilename, true);
 					IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
 					fileService.RemoveFile(filename);
 				}
@@ -541,24 +583,26 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 					oldparent.Nodes.Remove(oldnode);
 				}
 			} else {
-				if (filename != newfilename) {
-					File.Copy(filename, newfilename);
+				if (Path.GetFullPath(filename) != Path.GetFullPath(newfilename)) {
+					File.Copy(filename, newfilename, true);
 				}
 			}
-
-			ProjectFile fInfo;
-			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-
-			if (newparent.Project.IsCompileable(newfilename)) {
-				fInfo = projectService.AddFileToProject(newparent.Project, newfilename, BuildAction.Compile);
-			} else {
-				fInfo = projectService.AddFileToProject(newparent.Project, newfilename, BuildAction.Nothing);
+			
+			if (!newparent.Project.IsFileInProject(newfilename)) {
+				ProjectFile fInfo;
+				IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+				
+				if (newparent.Project.IsCompileable(newfilename)) {
+					fInfo = projectService.AddFileToProject(newparent.Project, newfilename, BuildAction.Compile);
+				} else {
+					fInfo = projectService.AddFileToProject(newparent.Project, newfilename, BuildAction.Nothing);
+				}
+				
+				AbstractBrowserNode pbn = new FileNode(fInfo);
+				SortUtility.SortedInsert(pbn, newparent.Nodes, TreeNodeComparer.ProjectNode);
+				pbn.EnsureVisible();
+				projectService.SaveCombine();
 			}
-
-			AbstractBrowserNode pbn = new FileNode(fInfo);
-			SortUtility.SortedInsert(pbn, newparent.Nodes, TreeNodeComparer.ProjectNode);
-			pbn.EnsureVisible();
-			projectService.SaveCombine();
 		}
 
 
@@ -579,5 +623,13 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 
 		public event EventHandler TitleChanged;
 		public event EventHandler IconChanged;
+		
+		public void BringPadToFront()
+		{
+			if (!WorkbenchSingleton.Workbench.WorkbenchLayout.IsVisible(this)) {
+				WorkbenchSingleton.Workbench.WorkbenchLayout.ShowPad(this);
+			}
+			WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this);
+		}		
 	}
 }

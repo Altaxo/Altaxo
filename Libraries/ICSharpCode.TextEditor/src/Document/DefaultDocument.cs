@@ -101,7 +101,17 @@ namespace ICSharpCode.TextEditor.Document
 		IFormattingStrategy   formattingStrategy   = null;
 		FoldingManager        foldingManager       = null;
 		UndoStack             undoStack            = new UndoStack();
-		ITextEditorProperties  textEditorProperties = new DefaultTextEditorProperties();
+		ITextEditorProperties textEditorProperties = new DefaultTextEditorProperties();
+		MarkerStrategy        markerStrategy = null;
+		
+		public MarkerStrategy MarkerStrategy {
+			get {
+				return markerStrategy;
+			}
+			set {
+				markerStrategy = value;
+			}
+		}
 		
 		public ITextEditorProperties TextEditorProperties {
 			get {
@@ -111,7 +121,6 @@ namespace ICSharpCode.TextEditor.Document
 				textEditorProperties = value;
 			}
 		}
-		
 		
 		public UndoStack UndoStack {
 			get {
@@ -268,6 +277,10 @@ namespace ICSharpCode.TextEditor.Document
 		{
 			return textBufferStrategy.GetText(offset, length);
 		}
+		public string GetText(ISegment segment)
+		{
+			return GetText(segment.Offset, segment.Length);
+		}
 		
 		public int TotalNumberOfLines {
 			get {
@@ -290,16 +303,26 @@ namespace ICSharpCode.TextEditor.Document
 			return lineTrackingStrategy.GetLineSegment(line);
 		}
 		
-		public int GetLogicalLine(int lineNumber)
+		public int GetFirstLogicalLine(int lineNumber)
 		{
-			return lineTrackingStrategy.GetLogicalLine(lineNumber);
+			return lineTrackingStrategy.GetFirstLogicalLine(lineNumber);
 		}
-
+		
+		public int GetLastLogicalLine(int lineNumber)
+		{
+			return lineTrackingStrategy.GetLastLogicalLine(lineNumber);
+		}
+		
 		public int GetVisibleLine(int lineNumber)
 		{
 			return lineTrackingStrategy.GetVisibleLine(lineNumber);
 		}
 		
+//		public int GetVisibleColumn(int logicalLine, int logicalColumn)
+//		{
+//			return lineTrackingStrategy.GetVisibleColumn(logicalLine, logicalColumn);
+//		}
+//		
 		public int GetNextVisibleLineAbove(int lineNumber, int lineCount)
 		{
 			return lineTrackingStrategy.GetNextVisibleLineAbove(lineNumber, lineCount);
@@ -324,6 +347,39 @@ namespace ICSharpCode.TextEditor.Document
 			}
 			LineSegment line = GetLineSegment(p.Y);
 			return Math.Min(this.TextLength, line.Offset + Math.Min(line.Length, p.X));
+		}
+		
+		public void UpdateSegmentListOnDocumentChange(ArrayList list, DocumentEventArgs e)
+		{
+			for (int i = 0; i < list.Count; ++i) {
+				ISegment fm = (ISegment)list[i];
+			
+				if (e.Offset <= fm.Offset && fm.Offset <= e.Offset + e.Length ||
+				    e.Offset <= fm.Offset + fm.Length && fm.Offset + fm.Length <= e.Offset + e.Length) {
+					list.RemoveAt(i);
+					--i;
+					continue;
+				}
+				
+				if (fm.Offset  <= e.Offset && e.Offset <= fm.Offset + fm.Length) {
+					if (e.Text != null) {
+						fm.Length += e.Text.Length;
+					}
+					if (e.Length > 0) {
+						fm.Length -= e.Length;
+					}
+					continue;
+				}
+				
+				if (fm.Offset >= e.Offset) {
+					if (e.Text != null) {
+						fm.Offset += e.Text.Length;
+					}
+					if (e.Length > 0) {
+						fm.Offset -= e.Length;
+					}
+				}
+			}
 		}
 		
 		protected void OnDocumentAboutToBeChanged(DocumentEventArgs e)

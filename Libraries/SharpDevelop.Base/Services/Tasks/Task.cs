@@ -79,15 +79,17 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 		}
 		
-		public Task(string fileName, string description, int column, int line)
+		public Task(string fileName, string description, int column, int line) : this(fileName, description, column, line, TaskType.SearchResult)
 		{
-			type = TaskType.SearchResult;
+		}
+		public Task(string fileName, string description, int column, int line, TaskType type)
+		{
+			this.type        = type;
 			this.fileName    = fileName;
 			this.description = description.Trim();
 			this.column      = column;
 			this.line        = line;
 		}
-		
 		public Task(IProject project, CompilerError error)
 		{
 			this.project = project;
@@ -100,24 +102,8 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public void JumpToPosition()
 		{
-			if (fileName != null && fileName.Length > 0) {
-				IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-				fileService.OpenFile(fileName);
-				IWorkbenchWindow window = fileService.GetOpenFile(fileName);
-				if (window == null) {
-					return;
-				}
-				IViewContent content = window.ViewContent;
-				if (content is IPositionable) {
-					((IPositionable)content).JumpTo(Math.Max(0, line), Math.Max(0, column));
-#if !LINUX
-					// Begin Svante Lidman (by mike : May be workaround for .NET bug ... ?)
-					content.Control.Focus();
-					// End Svante Lidman
-#endif					
-				}
-			}
-			
+			IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
+			fileService.JumpToFilePosition(fileName, line, column);
 //			CompilerResultListItem li = (CompilerResultListItem)OpenTaskView.FocusedItem;
 //			
 //			string filename   = li.FileName;

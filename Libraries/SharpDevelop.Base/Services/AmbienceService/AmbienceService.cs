@@ -47,7 +47,13 @@ namespace ICSharpCode.SharpDevelop.Services
 			get {
 				PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 				string language = propertyService.GetProperty(ambienceProperty, "CSharp");
-				return new AmbienceReflectionDecorator((IAmbience)AddInTreeSingleton.AddInTree.GetTreeNode("/SharpDevelop/Workbench/Ambiences").BuildChildItem(language, this));
+				IAmbience ambience = (IAmbience)AddInTreeSingleton.AddInTree.GetTreeNode("/SharpDevelop/Workbench/Ambiences").BuildChildItem(language, this);
+				if (ambience == null) {
+					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+					messageService.ShowError("Current ambience not found.\nGoto 'Options->Visual Style' and change the current language ambience.");
+					return null;
+				}
+				return new AmbienceReflectionDecorator(ambience);
 			}
 		}
 		

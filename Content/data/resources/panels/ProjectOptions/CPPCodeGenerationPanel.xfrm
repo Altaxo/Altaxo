@@ -1,0 +1,83 @@
+<Components version="1.0">
+  <System.Windows.Forms.UserControl>
+    <Name value="CPPCodeGenerationPanel" />
+    <GridSize value="{Width=8, Height=8}" />
+    <DockPadding value="" />
+    <DrawGrid value="True" />
+    <Size value="{Width=408, Height=176}" />
+    <SnapToGrid value="True" />
+    <Controls>
+      <System.Windows.Forms.ComboBox>
+        <Name value="UseManagedExtensionsComboBox" />
+        <TabIndex value="4" />
+        <Location value="{X=184,Y=128}" />
+        <Size value="{Width=208, Height=21}" />
+        <DropDownStyle value="DropDownList" />
+        <Items>
+          <System.String value="Yes" />
+          <System.String value="No" />
+        </Items>
+      </System.Windows.Forms.ComboBox>
+      <System.Windows.Forms.ComboBox>
+        <Name value="ConfigurationTypeComboBox" />
+        <TabIndex value="3" />
+        <Location value="{X=184,Y=96}" />
+        <Size value="{Width=208, Height=21}" />
+        <DropDownStyle value="DropDownList" />
+        <Items>
+          <System.String value="Application (.exe)" />
+          <System.String value="Dynamic Library (.dll)" />
+        </Items>
+      </System.Windows.Forms.ComboBox>
+      <System.Windows.Forms.TextBox>
+        <Name value="IntermediateDirectoryTextBox" />
+        <TabIndex value="2" />
+        <Location value="{X=184,Y=64}" />
+        <Size value="{Width=208, Height=20}" />
+        <Text value="" />
+      </System.Windows.Forms.TextBox>
+      <System.Windows.Forms.TextBox>
+        <Name value="OutputDirectoryTextBox" />
+        <TabIndex value="1" />
+        <Location value="{X=184,Y=32}" />
+        <Size value="{Width=208, Height=20}" />
+        <Text value="" />
+      </System.Windows.Forms.TextBox>
+      <System.Windows.Forms.Label>
+        <Name value="label4" />
+        <Text value="Use Managed Extensions" />
+        <TextAlign value="MiddleRight" />
+        <TabIndex value="3" />
+        <Size value="{Width=168, Height=16}" />
+        <Location value="{X=16,Y=128}" />
+      </System.Windows.Forms.Label>
+      <System.Windows.Forms.Label>
+        <Name value="label3" />
+        <Text value="Configuration Type" />
+        <TextAlign value="MiddleRight" />
+        <TabIndex value="2" />
+        <Size value="{Width=168, Height=16}" />
+        <Location value="{X=16,Y=96}" />
+      </System.Windows.Forms.Label>
+      <System.Windows.Forms.Label>
+        <Name value="label2" />
+        <Text value="Intermediate Directory" />
+        <TextAlign value="MiddleRight" />
+        <TabIndex value="1" />
+        <Size value="{Width=168, Height=16}" />
+        <Location value="{X=16,Y=64}" />
+      </System.Windows.Forms.Label>
+      <System.Windows.Forms.Label>
+        <Name value="label" />
+        <Text value="Output Directory" />
+        <TextAlign value="MiddleRight" />
+        <TabIndex value="0" />
+        <Size value="{Width=168, Height=16}" />
+        <Location value="{X=16,Y=32}" />
+      </System.Windows.Forms.Label>
+    </Controls>
+  </System.Windows.Forms.UserControl>
+  <System.Windows.Forms.FolderBrowserDialog>
+    <Name value="folderBrowserDialog" />
+  </System.Windows.Forms.FolderBrowserDialog>
+</Components>

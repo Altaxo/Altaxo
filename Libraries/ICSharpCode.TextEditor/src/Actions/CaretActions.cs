@@ -5,6 +5,7 @@
 //     <version value="$version"/>
 // </file>
 
+using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
 using System;
@@ -17,12 +18,38 @@ namespace ICSharpCode.TextEditor.Actions
 	{
 		public override void Execute(TextArea textArea)
 		{
-			if (textArea.Caret.Column > 0) {
-				--textArea.Caret.Column;
-			} else if (textArea.Caret.Line  > 0) {
-				LineSegment lineAbove = textArea.Document.GetLineSegment(textArea.Document.GetNextVisibleLineBelow(textArea.Caret.Line, 1));
-				textArea.Caret.Position = new Point(lineAbove.Length, textArea.Caret.Line - 1);
+			Point position = textArea.Caret.Position;
+			ArrayList foldings = textArea.Document.FoldingManager.GetFoldedFoldingsWithEnd(position.Y);
+			FoldMarker justBeforeCaret = null;
+			foreach (FoldMarker fm in foldings) {
+				if (fm.EndColumn == position.X) {
+					justBeforeCaret = fm;
+					break; // the first folding found is the folding with the smallest Startposition
+				}
 			}
+			
+			if (justBeforeCaret != null) {
+				position.Y = justBeforeCaret.StartLine;
+				position.X = justBeforeCaret.StartColumn;
+//				Console.WriteLine("position set to " + position);
+			} else {
+				if (position.X > 0) {
+					--position.X;
+				} else if (position.Y  > 0) {
+					LineSegment lineAbove = textArea.Document.GetLineSegment(position.Y - 1);
+					position = new Point(lineAbove.Length, position.Y - 1);
+				}
+			}
+//			Console.WriteLine(position);
+//			ArrayList foldings = textArea.Document.FoldingManager.GetFoldingsFromPosition(position.Y, position.X);
+//			foreach (FoldMarker foldMarker in foldings) {
+//				if (foldMarker.IsFolded) {
+//					if (foldMarker.StartLine < position.Y || foldMarker.StartLine == position.Y && foldMarker.StartColumn < position.X) {
+//						position = new Point(foldMarker.StartColumn, foldMarker.StartLine);
+//					}
+//				}
+//			}
+			textArea.Caret.Position = position;
 			textArea.SetDesiredColumn();
 		}
 	}
@@ -32,11 +59,27 @@ namespace ICSharpCode.TextEditor.Actions
 		public override void Execute(TextArea textArea)
 		{
 			LineSegment curLine = textArea.Document.GetLineSegment(textArea.Caret.Line);
-			if (textArea.Caret.Column < curLine.Length || textArea.TextEditorProperties.AllowCaretBeyondEOL) {
-				++textArea.Caret.Column;
-			} else if (textArea.Caret.Line + 1 < textArea.Document.TotalNumberOfLines) {
-				textArea.Caret.Position = new Point(0, textArea.Caret.Line + 1);
+			Point position = textArea.Caret.Position;
+			ArrayList foldings = textArea.Document.FoldingManager.GetFoldedFoldingsWithStart(position.Y);
+			FoldMarker justBehindCaret = null;
+			foreach (FoldMarker fm in foldings) {
+				if (fm.StartColumn == position.X) {
+					justBehindCaret = fm;
+					break;
+				}
 			}
+			if (justBehindCaret != null) {
+				position.Y = justBehindCaret.EndLine;
+				position.X = justBehindCaret.EndColumn;
+			} else { // no folding is interesting
+				if (position.X < curLine.Length || textArea.TextEditorProperties.AllowCaretBeyondEOL) {
+					++position.X;
+				} else if (position.Y + 1 < textArea.Document.TotalNumberOfLines) {
+					++position.Y;
+					position.X = 0;
+				}
+			}
+			textArea.Caret.Position = position;
 			textArea.SetDesiredColumn();
 		}
 	}
@@ -45,9 +88,18 @@ namespace ICSharpCode.TextEditor.Actions
 	{
 		public override void Execute(TextArea textArea)
 		{
-			if (textArea.Caret.Line  > 0) {
-				textArea.SetCaretToDesiredColumn(textArea.Caret.Line - 1);
+			Point position = textArea.Caret.Position;
+			int lineNr = position.Y;
+			int visualLine = textArea.Document.GetVisibleLine(lineNr);
+			if (visualLine > 0) {
+				int xpos = textArea.TextView.GetDrawingXPos(lineNr, position.X);
+				Point pos = new Point(xpos,
+				                      textArea.TextView.DrawingPosition.Y + (visualLine - 1) * textArea.TextView.FontHeight - textArea.TextView.TextArea.VirtualTop.Y);
+				textArea.Caret.Position = textArea.TextView.GetLogicalPosition(pos.X, pos.Y);
 			}
+//			if (textArea.Caret.Line  > 0) {
+//				textArea.SetCaretToDesiredColumn(textArea.Caret.Line - 1);
+//			}
 		}
 	}
 	
@@ -55,9 +107,18 @@ namespace ICSharpCode.TextEditor.Actions
 	{
 		public override void Execute(TextArea textArea)
 		{
-			if (textArea.Caret.Line + 1 < textArea.Document.TotalNumberOfLines) {
-				textArea.SetCaretToDesiredColumn(textArea.Caret.Line + 1);
+			Point position = textArea.Caret.Position;
+			int lineNr = position.Y;
+			int visualLine = textArea.Document.GetVisibleLine(lineNr);
+			if (visualLine < textArea.Document.GetVisibleLine(textArea.Document.TotalNumberOfLines)) {
+				int xpos = textArea.TextView.GetDrawingXPos(lineNr, position.X);
+				Point pos = new Point(xpos,
+				                      textArea.TextView.DrawingPosition.Y + (visualLine + 1) * textArea.TextView.FontHeight - textArea.TextView.TextArea.VirtualTop.Y);
+				textArea.Caret.Position = textArea.TextView.GetLogicalPosition(pos.X, pos.Y);
 			}
+//			if (textArea.Caret.Line + 1 < textArea.Document.TotalNumberOfLines) {
+//				textArea.SetCaretToDesiredColumn(textArea.Caret.Line + 1);
+//			}
 		}
 	}
 	
@@ -66,15 +127,30 @@ namespace ICSharpCode.TextEditor.Actions
 		public override void Execute(TextArea textArea)
 		{
 			LineSegment line   = textArea.Document.GetLineSegment(textArea.Caret.Position.Y);
+			Point oldPos = textArea.Caret.Position;
+			Point newPos;
 			if (textArea.Caret.Column >= line.Length) {
-				textArea.Caret.Position = new Point(0, textArea.Caret.Line + 1);
+				newPos = new Point(0, textArea.Caret.Line + 1);
 			} else {
-				
 				int nextWordStart = TextUtilities.FindNextWordStart(textArea.Document, textArea.Caret.Offset);
-				textArea.Caret.Position = textArea.Document.OffsetToPosition(nextWordStart);
-				textArea.SetDesiredColumn();
+				newPos = textArea.Document.OffsetToPosition(nextWordStart);
 			}
 			
+			// handle fold markers
+			ArrayList foldings = textArea.Document.FoldingManager.GetFoldingsFromPosition(newPos.Y, newPos.X);
+			foreach (FoldMarker marker in foldings) {
+				if (marker.IsFolded) {
+					if (oldPos.X == marker.StartColumn && oldPos.Y == marker.StartLine) {
+						newPos = new Point(marker.EndColumn, marker.EndLine);
+					} else {
+						newPos = new Point(marker.StartColumn, marker.StartLine);
+					}
+					break;
+				}
+			}
+			
+			textArea.Caret.Position = newPos;
+			textArea.SetDesiredColumn();
 		}
 	}
 	
@@ -82,15 +158,33 @@ namespace ICSharpCode.TextEditor.Actions
 	{
 		public override void Execute(TextArea textArea)
 		{
+			Point oldPos = textArea.Caret.Position;
 			if (textArea.Caret.Column == 0) {
 				base.Execute(textArea);
 			} else {
 				LineSegment line   = textArea.Document.GetLineSegment(textArea.Caret.Position.Y);
+				
 				int prevWordStart = TextUtilities.FindPrevWordStart(textArea.Document, textArea.Caret.Offset);
-				textArea.Caret.Position = textArea.Document.OffsetToPosition(prevWordStart);
+				
+				Point newPos = textArea.Document.OffsetToPosition(prevWordStart);
+				
+				// handle fold markers
+				ArrayList foldings = textArea.Document.FoldingManager.GetFoldingsFromPosition(newPos.Y, newPos.X);
+				foreach (FoldMarker marker in foldings) {
+					if (marker.IsFolded) {
+						if (oldPos.X == marker.EndColumn && oldPos.Y == marker.EndLine) {
+							newPos = new Point(marker.StartColumn, marker.StartLine);
+						} else {
+							newPos = new Point(marker.EndColumn, marker.EndLine);
+						}
+						break;
+					}
+				}
+				textArea.Caret.Position = newPos;
 				textArea.SetDesiredColumn();
-
 			}
+			
+			
 		}
 	}
 	
@@ -99,7 +193,8 @@ namespace ICSharpCode.TextEditor.Actions
 		public override void Execute(TextArea textArea)
 		{
 			textArea.AutoClearSelection = false;
-			textArea.TextView.FirstVisibleLine = Math.Max(0, textArea.TextView.FirstVisibleLine - 1);
+			
+			textArea.MotherTextAreaControl.VScrollBar.Value = Math.Max(textArea.MotherTextAreaControl.VScrollBar.Minimum, textArea.VirtualTop.Y - textArea.TextView.FontHeight);
 		}
 	}
 	
@@ -108,7 +203,7 @@ namespace ICSharpCode.TextEditor.Actions
 		public override void Execute(TextArea textArea)
 		{
 			textArea.AutoClearSelection = false;
-			textArea.TextView.FirstVisibleLine = Math.Max(0, Math.Min(textArea.Document.TotalNumberOfLines - 3, textArea.TextView.FirstVisibleLine + 1));
+			textArea.MotherTextAreaControl.VScrollBar.Value = Math.Min(textArea.MotherTextAreaControl.VScrollBar.Maximum, textArea.VirtualTop.Y + textArea.TextView.FontHeight);
 		}
 	}
 }

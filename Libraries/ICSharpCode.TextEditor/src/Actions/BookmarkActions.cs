@@ -20,6 +20,7 @@ namespace ICSharpCode.TextEditor.Actions
 			textArea.Document.BookmarkManager.ToggleMarkAt(textArea.Caret.Line);
 			textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.SingleLine, textArea.Caret.Line));
 			textArea.Document.CommitUpdate();
+			
 		}
 	}
 	
@@ -31,6 +32,7 @@ namespace ICSharpCode.TextEditor.Actions
 			if (lineNumber >= 0 && lineNumber < textArea.Document.TotalNumberOfLines) {
 				textArea.Caret.Line = lineNumber;
 			}
+			textArea.SelectionManager.ClearSelection();
 		}
 	}
 	
@@ -42,6 +44,7 @@ namespace ICSharpCode.TextEditor.Actions
 			if (lineNumber >= 0 && lineNumber < textArea.Document.TotalNumberOfLines) {
 				textArea.Caret.Line = lineNumber;
 			}
+			textArea.SelectionManager.ClearSelection();
 		}
 	}
 	

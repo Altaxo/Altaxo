@@ -25,7 +25,6 @@ using ICSharpCode.SharpDevelop.Services;
 using ICSharpCode.SharpDevelop.Internal.Project;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Gui.Dialogs;
-using ICSharpCode.SharpDevelop.Gui.ErrorHandlers;
 
 namespace ICSharpCode.SharpDevelop.Commands
 {
@@ -46,7 +45,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 	{
 		public override void Run()
 		{
-			using (NewFileDialog nfd = new NewFileDialog()) {
+			using (NewFileDialog nfd = new NewFileDialog(null)) {
 				nfd.Owner = (Form)WorkbenchSingleton.Workbench;
 				nfd.ShowDialog();
 			}
@@ -76,39 +75,39 @@ namespace ICSharpCode.SharpDevelop.Commands
 					return;
 				}
 				
-				if (window.ViewContent.ContentName == null) {
+				if (window.ViewContent.FileName == null) {
 					SaveFileAs sfa = new SaveFileAs();
 					sfa.Run();
 				} else {
 					FileAttributes attr = FileAttributes.ReadOnly | FileAttributes.Directory | FileAttributes.Offline | FileAttributes.System;
-					if ((File.GetAttributes(window.ViewContent.ContentName) & attr) != 0) {
+					if (File.Exists(window.ViewContent.FileName) && (File.GetAttributes(window.ViewContent.FileName) & attr) != 0) {
 						SaveFileAs sfa = new SaveFileAs();
 						sfa.Run();
 					} else {
 						IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
 						FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-						projectService.MarkFileDirty(window.ViewContent.ContentName);
-						fileUtilityService.ObservedSave(new FileOperationDelegate(window.ViewContent.Save), window.ViewContent.ContentName);
+						projectService.MarkFileDirty(window.ViewContent.FileName);
+						fileUtilityService.ObservedSave(new FileOperationDelegate(window.ViewContent.Save), window.ViewContent.FileName);
 					}
 				}
 			}
 		}
-	} 
-
+	}
+	
 	public class ReloadFile : AbstractMenuCommand
 	{
 		public override void Run()
 		{
 			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 			
-			if (window != null && window.ViewContent.ContentName != null && !window.ViewContent.IsViewOnly) {
+			if (window != null && window.ViewContent.FileName != null && !window.ViewContent.IsViewOnly) {
 				IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
 				if (messageService.AskQuestion("${res:ICSharpCode.SharpDevelop.Commands.ReloadFile.ReloadFileQuestion}")) {
 					IXmlConvertable memento = null;
 					if (window.ViewContent is IMementoCapable) {
 						memento = ((IMementoCapable)window.ViewContent).CreateMemento();
 					}
-					window.ViewContent.Load(window.ViewContent.ContentName);
+					window.ViewContent.Load(window.ViewContent.FileName);
 					if (memento != null) {
 						((IMementoCapable)window.ViewContent).SetMemento(memento);
 					}
@@ -139,7 +138,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 					string[] fileFilters  = (string[])(AddInTreeSingleton.AddInTree.GetTreeNode("/SharpDevelop/Workbench/FileFilter").BuildChildItems(this)).ToArray(typeof(string));
 					fdiag.Filter          = String.Join("|", fileFilters);
 					for (int i = 0; i < fileFilters.Length; ++i) {
-						if (fileFilters[i].IndexOf(Path.GetExtension(window.ViewContent.ContentName == null ? window.ViewContent.UntitledName : window.ViewContent.ContentName)) >= 0) {
+						if (fileFilters[i].IndexOf(Path.GetExtension(window.ViewContent.FileName == null ? window.ViewContent.UntitledName : window.ViewContent.FileName)) >= 0) {
 							fdiag.FilterIndex = i + 1;
 							break;
 						}
@@ -152,14 +151,17 @@ namespace ICSharpCode.SharpDevelop.Commands
 						FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
 						if (!fileUtilityService.IsValidFileName(fileName)) {
 							IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-							messageService.ShowMessage("File name " + fileName +" is invalid");
+							StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+							messageService.ShowMessage(stringParserService.Parse("${res:ICSharpCode.SharpDevelop.Commands.SaveFile.InvalidFileNameError}", new string[,] {{"FileName", fileName}}));
+							
 							return;
 						}
 						
 						if (fileUtilityService.ObservedSave(new NamedFileOperationDelegate(window.ViewContent.Save), fileName) == FileOperationResult.OK) {
 							fileService.RecentOpen.AddLastFile(fileName);
 							IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-							messageService.ShowMessage(fileName, "File saved");
+							messageService.ShowMessage(fileName, "${res:ICSharpCode.SharpDevelop.Commands.SaveFile.FileSaved}");
+							((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 						}
 					}
 				}
@@ -178,7 +180,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 					continue;
 				}
 				
-				if (content.ContentName == null) {
+				if (content.FileName == null) {
 					using (SaveFileDialog fdiag = new SaveFileDialog()) {
 						fdiag.OverwritePrompt = true;
 						fdiag.AddExtension    = true;
@@ -194,12 +196,12 @@ namespace ICSharpCode.SharpDevelop.Commands
 							}
 							if (fileUtilityService.ObservedSave(new NamedFileOperationDelegate(content.Save), fileName) == FileOperationResult.OK) {
 								IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-								messageService.ShowMessage(fileName, "File saved");
+								messageService.ShowMessage(fileName, "${res:ICSharpCode.SharpDevelop.Commands.SaveFile.FileSaved}");
 							}
 						}
 					}
 				} else {
-					fileUtilityService.ObservedSave(new FileOperationDelegate(content.Save), content.ContentName);
+					fileUtilityService.ObservedSave(new FileOperationDelegate(content.Save), content.FileName);
 				}
 			}
 		}
@@ -219,16 +221,13 @@ namespace ICSharpCode.SharpDevelop.Commands
 						case ".CMBX": // Don't forget the 'recent' projects if you chance something here
 						case ".PRJX":
 							IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-													
-							try {
-								projectService.OpenCombine(fdiag.FileName);
-							} catch (Exception ex) {
-								CombineLoadError.HandleError(ex, fdiag.FileName);
-							}
+							FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+							fileUtilityService.ObservedLoad(new NamedFileOperationDelegate(projectService.OpenCombine), fdiag.FileName);
 							break;
 						default:
 							IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-							messageService.ShowError("Can't open file " + fdiag.FileName + "as project");
+							StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+							messageService.ShowError(stringParserService.Parse("${res:ICSharpCode.SharpDevelop.Commands.OpenCombine.InvalidProjectOrCombine}", new string[,] {{"FileName", fdiag.FileName}}));
 							break;
 					}
 				}
@@ -247,13 +246,18 @@ namespace ICSharpCode.SharpDevelop.Commands
 				fdiag.Filter          = String.Join("|", fileFilters);
 				bool foundFilter      = false;
 				// search filter like in the current selected project
-				
+				// TODO: remove duplicate code (FolderNodeCommands has the same)
 				IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-				
-				if (projectService.CurrentSelectedProject != null) {
+				IProject project = projectService.CurrentSelectedProject;
+				if (project == null && projectService.CurrentOpenCombine != null) {
+					ArrayList projects = Combine.GetAllProjects(projectService.CurrentOpenCombine);
+					if (projects.Count > 0) {
+						project = ((ProjectCombineEntry)projects[0]).Project;
+					}
+				}
+				if (project != null) {
 					LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
-					
-					LanguageBindingCodon languageCodon = languageBindingService.GetCodonPerLanguageName(projectService.CurrentSelectedProject.ProjectType);
+					LanguageBindingCodon languageCodon = languageBindingService.GetCodonPerLanguageName(project.ProjectType);
 					
 					for (int i = 0; !foundFilter && i < fileFilters.Length; ++i) {
 						for (int j = 0; !foundFilter && j < languageCodon.Supportedextensions.Length; ++j) {
@@ -271,7 +275,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 					IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 					if (window != null) {
 						for (int i = 0; i < fileFilters.Length; ++i) {
-							if (fileFilters[i].IndexOf(Path.GetExtension(window.ViewContent.ContentName == null ? window.ViewContent.UntitledName : window.ViewContent.ContentName)) >= 0) {
+							if (fileFilters[i].IndexOf(Path.GetExtension(window.ViewContent.FileName == null ? window.ViewContent.UntitledName : window.ViewContent.FileName)) >= 0) {
 								fdiag.FilterIndex = i + 1;
 								break;
 							}
@@ -329,7 +333,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 						}
 					} else {
 						IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-						messageService.ShowError("Couldn't create PrintDocument");
+						messageService.ShowError("${res:ICSharpCode.SharpDevelop.Commands.Print.CreatePrintDocumentError}");
 					}
 				} else {
 					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
@@ -357,7 +361,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 								ppd.Show();
 							} else {
 								IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-								messageService.ShowError("Couldn't create PrintDocument");
+								messageService.ShowError("${res:ICSharpCode.SharpDevelop.Commands.Print.CreatePrintDocumentError}");
 							}
 						}
 					}
@@ -373,7 +377,6 @@ namespace ICSharpCode.SharpDevelop.Commands
 		{			
 			try {
 				IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-				
 				fileService.RecentOpen.ClearRecentFiles();
 			} catch {}
 		}
@@ -385,7 +388,6 @@ namespace ICSharpCode.SharpDevelop.Commands
 		{			
 			try {
 				IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-				
 				fileService.RecentOpen.ClearRecentProjects();
 			} catch {}
 		}

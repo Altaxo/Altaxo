@@ -36,6 +36,7 @@ namespace CSharpBinding.Parser
 		
 		public override object Visit(AST.UsingDeclaration usingDeclaration, object data)
 		{
+//			Console.WriteLine("UsingDeclaration visited: " + usingDeclaration.Namespace);
 			Using u = new Using();
 			u.Usings.Add(usingDeclaration.Namespace);
 			cu.Usings.Add(u);
@@ -44,6 +45,7 @@ namespace CSharpBinding.Parser
 		
 		public override object Visit(AST.UsingAliasDeclaration usingAliasDeclaration, object data)
 		{
+//			Console.WriteLine("UsingAliasDeclaration visited: " + usingAliasDeclaration.Namespace);
 			Using u = new Using();
 			u.Aliases[usingAliasDeclaration.Alias] = usingAliasDeclaration.Namespace;
 			cu.Usings.Add(u);
@@ -100,6 +102,27 @@ namespace CSharpBinding.Parser
 			}
 			return ClassType.Class;
 		}
+		public override object Visit(AST.DelegateDeclaration delegateDeclaration, object data)
+		{
+			DefaultRegion region = GetRegion(delegateDeclaration.StartLocation, delegateDeclaration.EndLocation);
+			Class c = new Class(cu, ClassType.Delegate, delegateDeclaration.Modifier, region);
+			c.BaseTypes.Add("System.Delegate");
+			if (currentClass.Count > 0) {
+				Class cur = ((Class)currentClass.Peek());
+				cur.InnerClasses.Add(c);
+				c.FullyQualifiedName = String.Concat(cur.FullyQualifiedName, '.', delegateDeclaration.Name);
+			} else {
+				if (currentNamespace.Count == 0) {
+					c.FullyQualifiedName = delegateDeclaration.Name;
+				} else {
+					c.FullyQualifiedName = String.Concat(currentNamespace.Peek(), '.', delegateDeclaration.Name);
+				}
+				cu.Classes.Add(c);
+			}
+			Method invokeMethod = new Method("Invoke", new ReturnType(delegateDeclaration.ReturnType), delegateDeclaration.Modifier, null, null);
+			c.Methods.Add(invokeMethod);
+			return c;
+		}
 		
 		public override object Visit(AST.TypeDeclaration typeDeclaration, object data)
 		{
@@ -138,7 +161,7 @@ namespace CSharpBinding.Parser
 		{
 			DefaultRegion region     = GetRegion(methodDeclaration.StartLocation, methodDeclaration.EndLocation);
 			DefaultRegion bodyRegion = GetRegion(methodDeclaration.EndLocation, methodDeclaration.Body != null ? methodDeclaration.Body.EndLocation : new Point(-1, -1));
-			
+//			Console.WriteLine(region + " --- " + bodyRegion);
 			ReturnType type = new ReturnType(methodDeclaration.TypeReference);
 			Class c       = (Class)currentClass.Peek();
 			
@@ -180,7 +203,7 @@ namespace CSharpBinding.Parser
 		
 		public override object Visit(AST.FieldDeclaration fieldDeclaration, object data)
 		{
-			DefaultRegion region     = GetRegion(fieldDeclaration.StartLocation, fieldDeclaration.EndLocation);
+			DefaultRegion region = GetRegion(fieldDeclaration.StartLocation, fieldDeclaration.EndLocation);
 			Class c = (Class)currentClass.Peek();
 			ReturnType type = null;
 			if (fieldDeclaration.TypeReference == null) {
@@ -191,6 +214,9 @@ namespace CSharpBinding.Parser
 			if (currentClass.Count > 0) {
 				foreach (AST.VariableDeclaration field in fieldDeclaration.Fields) {
 					Field f = new Field(type, field.Name, fieldDeclaration.Modifier, region);
+					if (c.ClassType == ClassType.Enum) {
+						f.SetModifiers(ModifierEnum.Const | ModifierEnum.SpecialName);
+					}
 					
 					c.Fields.Add(f);
 				}
@@ -215,11 +241,19 @@ namespace CSharpBinding.Parser
 		{
 			DefaultRegion region     = GetRegion(eventDeclaration.StartLocation, eventDeclaration.EndLocation);
 			DefaultRegion bodyRegion = GetRegion(eventDeclaration.BodyStart,     eventDeclaration.BodyEnd);
-			
 			ReturnType type = new ReturnType(eventDeclaration.TypeReference);
 			Class c = (Class)currentClass.Peek();
-			Event e = new Event(eventDeclaration.Name, type, eventDeclaration.Modifier, region, bodyRegion);
-			c.Events.Add(e);
+			Event e = null;
+			
+			if (eventDeclaration.VariableDeclarators != null) {
+				foreach (ICSharpCode.SharpRefactory.Parser.AST.VariableDeclaration varDecl in eventDeclaration.VariableDeclarators) {
+					e = new Event(varDecl.Name, type, eventDeclaration.Modifier, region, bodyRegion);
+					c.Events.Add(e);
+				}
+			} else {
+				e = new Event(eventDeclaration.Name, type, eventDeclaration.Modifier, region, bodyRegion);
+				c.Events.Add(e);
+			}
 			return null;
 		}
 		

@@ -6,6 +6,7 @@
 // </file>
 
 using System;
+using System.Drawing;
 using System.Diagnostics;
 
 namespace SharpDevelop.Internal.Parser {
@@ -56,6 +57,10 @@ namespace SharpDevelop.Internal.Parser {
 			}
 		}
 
+		public DefaultRegion(Point start, Point end) : this(start.Y, start.X, end.Y, end.X)
+		{
+		}
+		
 		public DefaultRegion(int beginLine, int beginColumn)
 		{
 			this.beginLine   = beginLine;

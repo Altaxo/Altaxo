@@ -60,6 +60,10 @@ namespace ICSharpCode.SharpDevelop.Services
 		/// </remarks>
 		void RenameFile(string oldName, string newName);
 		
+		void JumpToFilePosition(string fileName, int line, int column);
+		
+		bool IsOpen(string fileName);
+		
 		/// <remarks>
 		/// Is called, when a file is renamed.
 		/// </remarks>

@@ -14,7 +14,7 @@ using ICSharpCode.TextEditor;
 
 namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 {
-	public interface ICompletionData
+	public interface ICompletionData : IComparable
 	{
 		int ImageIndex {
 			get;

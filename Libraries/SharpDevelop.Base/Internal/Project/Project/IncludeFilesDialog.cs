@@ -4,7 +4,7 @@
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
-#if !LINUX
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -253,4 +253,3 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		}
 	}
 }
-#endif

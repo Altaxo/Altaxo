@@ -1,4 +1,4 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
@@ -397,29 +397,29 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			return null;
 		}
 		
-		void StartProject(int  nr) 
+		void StartProject(bool debug, int  nr) 
 		{
 			CombineEntry entry = (CombineEntry)entries[nr];
-			entry.Execute();
+			entry.Execute(debug);
 		}
 		
-		void StartProject(string name) 
+		void StartProject(bool debug, string name) 
 		{
 			int entrynum = GetEntryNumber(name);
 			if (entrynum == -1) {
 				throw new NoStartupCombineDefinedException();
 			}
-			StartProject(entrynum);
+			StartProject(debug, entrynum);
 		}
 
-		public void Execute()
+		public void Execute(bool debug)
 		{
 			if (singleStartup) {
-				StartProject(startProject);
+				StartProject(debug, startProject);
 			} else {
 				foreach (CombineExecuteDefinition ced in combineExecuteDefinitions) {
 					if (ced.Type == EntryExecuteType.Execute) {
-						StartProject(Entries.IndexOf(ced.Entry));
+						StartProject(debug, Entries.IndexOf(ced.Entry));
 					}
 				}
 			}
@@ -510,7 +510,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			} catch (CyclicBuildOrderException) {
 				IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
 				messageService.ShowError("Cyclic dependencies can not be build with this version.\nBut we are working on it.");
-				return;
+//// Alex: at least try to build and run - it's impolite not to do this
+				////return;
 			}
 			TaskService taskService = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
 			foreach (ProjectCombineEntry entry in allProjects) {
@@ -566,7 +567,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
 			IConfiguration config = value as IConfiguration;
-			Debug.Assert(config != null, String.Format("Tried to convert {0} to IConfiguration", config));
+			System.Diagnostics.Debug.Assert(config != null, String.Format("Tried to convert {0} to IConfiguration", config));
 			if (config != null) {
 				return config.Name;
 			}

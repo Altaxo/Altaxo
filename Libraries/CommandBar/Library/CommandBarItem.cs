@@ -15,13 +15,14 @@ namespace Reflector.UserInterface
 	public class CommandBarItem : Component
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
+		public event EventHandler Select;
 		
 		private Image image = null;
 		private string text = null;
 		private bool isEnabled = true;
 		private bool isVisible = true;
-		private object tag = null;
-			
+		private object tag;
+
 		private CommandBarItem()
 		{
 		}
@@ -41,7 +42,19 @@ namespace Reflector.UserInterface
 			this.text = text;
 			this.image = image;
 		}
-
+		
+		internal void NotifySelect(EventArgs e)
+		{
+			OnSelect(e);
+		}
+		
+		protected virtual void OnSelect(EventArgs e)
+		{
+			if (Select != null) {
+				Select(this, e);
+			}
+		}
+		
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -55,8 +68,15 @@ namespace Reflector.UserInterface
 
 		public virtual object Tag
 		{
-			set { this.tag = value; }
-			get { return this.tag; }
+		    set 
+		    { 
+		    	this.tag = value; 
+		    }
+		    
+		    get 
+		    { 
+		    	return this.tag; 
+		    }
 		}
 
 		public virtual bool IsVisible
@@ -70,21 +90,27 @@ namespace Reflector.UserInterface
 				}
 			}
 
-			get { return this.isVisible; }
+			get 
+			{ 
+				return this.isVisible; 
+			}
 		}
 
 		public virtual bool IsEnabled
 		{
-			  set
-			  { 
-				  if (this.isEnabled != value)
-				  { 
-					  this.isEnabled = value; 
-					  this.OnPropertyChanged(new PropertyChangedEventArgs("IsEnabled")); 
-				  }
-			  }
+			set
+			{ 
+				if (this.isEnabled != value)
+				{ 
+				  this.isEnabled = value; 
+				  this.OnPropertyChanged(new PropertyChangedEventArgs("IsEnabled")); 
+				}
+			}
 	
-			get { return this.isEnabled; }
+			get 
+			{ 
+				return this.isEnabled; 
+			}
 		}
 
 		public Image Image
@@ -98,7 +124,10 @@ namespace Reflector.UserInterface
 				}
 			}
 		
-			get { return this.image; }
+			get 
+			{ 
+				return this.image; 
+			}
 		}
 	
 		public string Text

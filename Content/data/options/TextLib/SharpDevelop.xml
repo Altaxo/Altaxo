@@ -36,6 +36,8 @@
 
       <Text display = "Get ParserService"
 	      value = "IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));"/>
+      <Text display = "Get DebuggerService"
+	      value = "DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));"/>
 
 
 </TextLibrary>

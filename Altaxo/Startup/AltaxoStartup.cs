@@ -83,7 +83,9 @@ namespace ICSharpCode.SharpDevelop
 
       DataObject dataObject = new DataObject();
       dataObject.SetData(DataFormats.Text, eargs.Exception.ToString());
-      Clipboard.SetDataObject(dataObject, true);
+			try {
+				Clipboard.SetDataObject(dataObject, true);
+			} catch (Exception) {}
       
       switch (result) 
       {

@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -46,14 +46,18 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels
 			FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
 			for (int i = 0; i < ((CheckedListBox)ControlDictionary["IncludeFilesCheckedListBox"]).Items.Count; ++i) {
 				string name = fileUtilityService.RelativeToAbsolutePath(project.BaseDirectory, "." + Path.DirectorySeparatorChar + ((CheckedListBox)ControlDictionary["IncludeFilesCheckedListBox"]).Items[i].ToString());
+
 				int j = 0;
-				while (j < project.ProjectFiles.Count && project.ProjectFiles[j].Name != name) {
+				while (j < project.ProjectFiles.Count && Path.GetFullPath(project.ProjectFiles[j].Name).ToLower() != Path.GetFullPath(name).ToLower()) {
 					++j;
 				}
+				
 				if (j < project.ProjectFiles.Count) {
 					project.ProjectFiles[j].BuildAction = ((CheckedListBox)ControlDictionary["IncludeFilesCheckedListBox"]).GetItemChecked(i) ? BuildAction.Compile : BuildAction.Nothing;
 				} else {
-					MessageService.ShowError("File " + name + " not found in " + project.Name);
+					//// if file not found - we have to remove it from compiled ones for future
+					MessageService.ShowError("File " + name + " not found in " + project.Name+ Environment.NewLine + "File will be ignored");
+					project.ProjectFiles[i].BuildAction = BuildAction.Nothing;
 				}
 			}
 			

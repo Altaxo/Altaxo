@@ -21,6 +21,8 @@ namespace ICSharpCode.SharpRefactory.Parser
 		public virtual object Visit(INode node, object data)
 		{
 			Console.WriteLine("Warning: INode visited");
+			Console.WriteLine("Visitor was: " + this.GetType());
+			Console.WriteLine("Node was : " + node.GetType());
 			return node.AcceptChildren(this, data);
 		}
 		
@@ -72,8 +74,8 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return data;
 		}
 #endregion
-		
-#region Global Scope
+
+#region Type level
 		public virtual object Visit(VariableDeclaration variableDeclaration, object data)
 		{
 			if (variableDeclaration.Initializer != null) {
@@ -340,14 +342,18 @@ namespace ICSharpCode.SharpRefactory.Parser
 		public virtual object Visit(ForStatement forStatement, object data)
 		{
 			object ret = data;
-			foreach(INode n in forStatement.Initializers) {
-				n.AcceptVisitor(this, data);
+			if (forStatement.Initializers != null) {
+				foreach(INode n in forStatement.Initializers) {
+					n.AcceptVisitor(this, data);
+				}
 			}
 			if (forStatement.Condition != null) {
 				ret = forStatement.Condition.AcceptVisitor(this, data);
 			}
-			foreach(INode n in forStatement.Iterator) {
-				n.AcceptVisitor(this, data);
+			if (forStatement.Iterator != null) {
+				foreach(INode n in forStatement.Iterator) {
+					n.AcceptVisitor(this, data);
+				}
 			}
 			if (forStatement.EmbeddedStatement == null) {
 				return ret;
@@ -442,11 +448,18 @@ namespace ICSharpCode.SharpRefactory.Parser
 		}
 		public virtual object Visit(TryCatchStatement tryCatchStatement, object data)
 		{
+			if (tryCatchStatement == null) {
+				return data;
+			}
 			if (tryCatchStatement.StatementBlock != null) {
 				tryCatchStatement.StatementBlock.AcceptVisitor(this, data);
 			}
-			foreach (CatchClause catchClause in tryCatchStatement.CatchClauses) {
-				catchClause.StatementBlock.AcceptVisitor(this, data);
+			if (tryCatchStatement.CatchClauses != null) {
+				foreach (CatchClause catchClause in tryCatchStatement.CatchClauses) {
+					if (catchClause != null) {
+						catchClause.StatementBlock.AcceptVisitor(this, data);
+					}
+				}
 			}
 			if (tryCatchStatement.FinallyBlock != null) {
 				return tryCatchStatement.FinallyBlock.AcceptVisitor(this, data);
@@ -485,6 +498,14 @@ namespace ICSharpCode.SharpRefactory.Parser
 				return null;
 			}
 			return statementExpression.Expression.AcceptVisitor(this, data);
+		}
+		
+		public virtual object Visit(UnsafeStatement unsafeStatement, object data)
+		{
+			if (unsafeStatement.Block == null) {
+				return null;
+			}
+			return unsafeStatement.Block.AcceptVisitor(this, data);
 		}
 #endregion
 		
@@ -580,6 +601,17 @@ namespace ICSharpCode.SharpRefactory.Parser
 			}
 			return data;
 		}
+		
+		public virtual object Visit(ArrayCreationParameter arrayCreationParameter, object data)
+		{
+			if (arrayCreationParameter.Expressions != null) {
+				foreach (Expression e in arrayCreationParameter.Expressions) {
+					e.AcceptVisitor(this, data);
+				}
+			}
+			return data;
+		}
+		
 		public virtual object Visit(ArrayCreateExpression arrayCreateExpression, object data)
 		{
 			if (arrayCreateExpression.Parameters != null) {

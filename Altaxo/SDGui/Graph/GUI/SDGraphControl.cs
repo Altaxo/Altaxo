@@ -152,7 +152,24 @@ namespace Altaxo.Graph.GUI
     /// This is the whole name of the content, e.g. the file name or
     /// the url depending on the type of the content.
     /// </summary>
-    public string ContentName 
+    /// <returns>
+    /// Title Name, if not set it returns UntitledName
+    /// </returns>
+    public string TitleName 
+    {
+      get 
+      { 
+        return this.Doc.Name; 
+      }
+      set 
+      {
+      }
+    }
+
+    /// <summary>
+    /// Returns the file name (if any) assigned to this view.
+    /// </summary>
+    public string FileName 
     {
       get 
       { 
@@ -169,7 +186,7 @@ namespace Altaxo.Graph.GUI
     /// </summary>
     public string TabPageText 
     {
-      get { return ContentName; }
+      get { return TitleName; }
     }
     
     /// <summary>
@@ -206,6 +223,22 @@ namespace Altaxo.Graph.GUI
       get { return true; }
     }
     
+    /// <summary>
+    /// Is called when the view content is selected inside the window
+    /// tab. NOT when the windows is selected.
+    /// </summary>
+    public void Selected()
+    {
+    }
+		
+    /// <summary>
+    /// Is called when the view content is deselected inside the window
+    /// tab before the other window is selected. NOT when the windows is deselected.
+    /// </summary>
+    public void Deselected()
+    {
+    }
+
     /// <summary>
     /// Reinitializes the content. (Re-initializes all add-in tree stuff)
     /// and redraws the content. Call this not directly unless you know
@@ -245,11 +278,13 @@ namespace Altaxo.Graph.GUI
         BeforeSave(this, e);
       }
     }
+	
     /// <summary>
     /// Is called each time the name for the content has changed.
     /// </summary>
-    public event EventHandler ContentNameChanged;
+    public event EventHandler TitleNameChanged;
     
+
     /// <summary>
     /// Is called when the content is changed after a save/load operation
     /// and this signals that changes could be saved.
@@ -272,6 +307,16 @@ namespace Altaxo.Graph.GUI
       set {}
     }
     
+    public bool EnableUndo 
+    {
+      get { return false; }
+    }
+		
+    public bool EnableRedo 
+    {
+      get{ return false; }
+    }
+
     public void Undo()
     {
     }

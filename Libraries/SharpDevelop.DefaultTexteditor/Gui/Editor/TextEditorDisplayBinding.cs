@@ -11,18 +11,21 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Printing;
 
+using SharpDevelop.Internal.Parser;
+
 using ICSharpCode.SharpDevelop.Gui;
+using ICSharpCode.SharpDevelop.Gui.Pads;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Document;
 using ICSharpCode.SharpDevelop.Internal.Project;
 using ICSharpCode.SharpDevelop.Internal.Undo;
-
 
 using ICSharpCode.Core.Properties;
 using ICSharpCode.Core.AddIns;
 using ICSharpCode.Core.Services;
 using ICSharpCode.SharpDevelop.Services;
 using ICSharpCode.Core.AddIns.Codons;
+
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {
@@ -36,9 +39,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 			
 			string modeDir = Path.Combine(propertyService.ConfigDirectory, "modes");
-			if (!Directory.Exists(modeDir)) Directory.CreateDirectory(modeDir);
+			if (!Directory.Exists(modeDir)) {
+				Directory.CreateDirectory(modeDir);
+			}
 			
 			HighlightingManager.Manager.AddSyntaxModeFileProvider(new FileSyntaxModeProvider(modeDir));
+			HighlightingManager.Manager.AddSyntaxModeFileProvider(new FileSyntaxModeProvider(Path.Combine(propertyService.DataDirectory, "modes")));
 		}
 		
 		public virtual bool CanCreateContentForFile(string fileName)
@@ -57,8 +63,10 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			
 			b2.textAreaControl.Dock = DockStyle.Fill;
 			b2.Load(fileName);
-			b2.textAreaControl.Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategyForFile(fileName);
+//			b2.textAreaControl.Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategyForFile(fileName);
 			b2.textAreaControl.InitializeFormatter();
+			b2.ForceFoldingUpdate(null);
+			b2.textAreaControl.ActivateQuickClassBrowserOnDemand();
 			return b2;
 		}
 		
@@ -69,11 +77,13 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			b2.textAreaControl.Document.TextContent = stringParserService.Parse(content);
 			b2.textAreaControl.Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy(language);
 			b2.textAreaControl.InitializeFormatter();
+			b2.ForceFoldingUpdate(language);
+			b2.textAreaControl.ActivateQuickClassBrowserOnDemand();
 			return b2;
 		}		
 	}
 	
-	public class TextEditorDisplayBindingWrapper : AbstractViewContent, IMementoCapable, IPrintable, IEditable, IPositionable, ITextEditorControlProvider, IParseInformationListener, IClipboardHandler 
+	public class TextEditorDisplayBindingWrapper : AbstractViewContent, IMementoCapable, IPrintable, IEditable, IPositionable, ITextEditorControlProvider, IParseInformationListener, IClipboardHandler, IHelpProvider
 	{
 		public SharpDevelopTextAreaControl textAreaControl = new SharpDevelopTextAreaControl();
 
@@ -88,7 +98,17 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		bool wasChangedExternally = false;
 		// KSL End 
 		
-		
+		public bool EnableUndo {
+			get {
+				return textAreaControl.EnableUndo;
+			}
+		}
+		public bool EnableRedo {
+			get {
+				return textAreaControl.EnableRedo;
+			}
+		}
+
 		public string Text {
 			get {
 				return textAreaControl.Document.TextContent;
@@ -122,6 +142,23 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 		}
 		
+		public override string UntitledName {
+			get {
+				return base.UntitledName;
+			}
+			set {
+				base.UntitledName = value;
+				textAreaControl.FileName = value;
+			}
+		}
+		
+		
+		protected override void OnFileNameChanged(System.EventArgs e)
+		{
+			base.OnFileNameChanged(e);
+			textAreaControl.FileName = base.FileName;
+		}
+		
 		public void Undo()
 		{
 			this.textAreaControl.Undo();
@@ -139,14 +176,32 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			textAreaControl.ActiveTextAreaControl.Enter += new EventHandler(CaretUpdate);
 			
 			// KSL Start, New lines
-			textAreaControl.FileNameChanged += new EventHandler(FileNameChangedEvent);
-			textAreaControl.GotFocus += new EventHandler(GotFocusEvent);
+//			textAreaControl.FileNameChanged += new EventHandler(FileNameChangedEvent);
+			((Form)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).Activated += new EventHandler(GotFocusEvent);
 			// KSL End 
 			
 			
 		}
 		// KSL Start, new event handlers
-
+		
+		
+		#region ICSharpCode.SharpDevelop.Gui.IHelpProvider interface implementation
+		public void ShowHelp()
+		{
+			string word = TextUtilities.GetWordAt(textAreaControl.Document, textAreaControl.ActiveTextAreaControl.Caret.Offset);
+			HelpBrowser helpBrowser = (HelpBrowser)WorkbenchSingleton.Workbench.GetPad(typeof(HelpBrowser));
+			IClass c = textAreaControl.QuickClassBrowserPanel != null ? textAreaControl.QuickClassBrowserPanel.GetCurrentSelectedClass() : null;
+			IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
+			
+			if (c != null) {
+				IClass cl = parserService.SearchType(word, c, textAreaControl.ActiveTextAreaControl.Caret.Line, textAreaControl.ActiveTextAreaControl.Caret.Column);
+				if (cl != null) {
+					helpBrowser.ShowHelpFromType(cl.FullyQualifiedName);
+					return;
+				}
+			}
+		}
+		#endregion
 		
 		void SetWatcher()
 		{
@@ -154,8 +209,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				if (this.watcher == null) {
 					this.watcher = new FileSystemWatcher();
 					this.watcher.Changed += new FileSystemEventHandler(this.OnFileChangedEvent);
-				}
-				else {
+				} else {
 					this.watcher.EnableRaisingEvents = false;
 				}
 				this.watcher.Path = Path.GetDirectoryName(textAreaControl.FileName);
@@ -166,26 +220,20 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				watcher = null;
 			}
 		}
-		
-		void FileNameChangedEvent(object sender, EventArgs e)
-		{
-			if (textAreaControl.FileName != null) {
-				SetWatcher();
-			} else {
-				this.watcher = null;
-			}
-		}
-
 		void GotFocusEvent(object sender, EventArgs e)
 		{
 			lock (this) {
 				if (wasChangedExternally) {
 					wasChangedExternally = false;
-					if (MessageBox.Show("The file " + textAreaControl.FileName + " has been changed externally to SharpDevelop.\nDo you want to reload it?",
-					                    "SharpDevelop",
+					StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+					string message = stringParserService.Parse("${res:ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBinding.FileAlteredMessage}", new string[,] {{"File", Path.GetFullPath(textAreaControl.FileName)}});
+					if (MessageBox.Show(message,
+					                    stringParserService.Parse("${res:MainWindow.DialogName}"),
 					                    MessageBoxButtons.YesNo,
 					                    MessageBoxIcon.Question) == DialogResult.Yes) {
 					                    	Load(textAreaControl.FileName);
+					} else {
+						IsDirty = true;
 					}
 				}
 			}
@@ -194,7 +242,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		void OnFileChangedEvent(object sender, FileSystemEventArgs e)
 		{
 			lock (this) {
-				wasChangedExternally = true;
+				if(e.ChangeType != WatcherChangeTypes.Deleted) {
+					wasChangedExternally = true;
+					if (((Form)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).Focused) {
+						GotFocusEvent(this, EventArgs.Empty);
+					}
+				}
 			}
 		}
 
@@ -208,10 +261,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public override void RedrawContent()
 		{
 			textAreaControl.OptionsChanged();
+			textAreaControl.Refresh();
 		}
 		
 		public override void Dispose()
 		{
+			((Form)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).Activated -= new EventHandler(GotFocusEvent);
 			textAreaControl.Dispose();
 		}
 		
@@ -231,14 +286,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			// KSL End
 			
 			textAreaControl.SaveFile(fileName);
-			ContentName = fileName;
-			IsDirty     = false;
+			FileName  = fileName;
+			TitleName = Path.GetFileName(fileName);
+			IsDirty   = false;
 			
 			// KSL, Start new lines
 			if (this.watcher != null) {
 				this.watcher.EnableRaisingEvents = true;
 			}
 			// KSL End
+			SetWatcher();
 		}
 		
 		public override void Load(string fileName)
@@ -246,39 +303,49 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			textAreaControl.IsReadOnly = (File.GetAttributes(fileName) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly;
 			    
 			textAreaControl.LoadFile(fileName);
-			ContentName = fileName;
+			FileName  = fileName;
+			TitleName = Path.GetFileName(fileName);
 			IsDirty     = false;
+			SetWatcher();
 		}
 		
 		public IXmlConvertable CreateMemento()
 		{
 			DefaultProperties properties = new DefaultProperties();
-//			properties.SetProperty("Bookmarks",   textAreaControl.Document.BookmarkManager.CreateMemento());
-//			properties.SetProperty("CaretOffset", textAreaControl.Document.Caret.Offset);
-//			properties.SetProperty("VisibleLine",   textAreaControl.FirstVisibleColumn);
-//			properties.SetProperty("VisibleColumn", textAreaControl.FirstVisibleRow);
-////			properties.SetProperty("Properties",    textAreaControl.Properties);
-//			properties.SetProperty("HighlightingLanguage", textAreaControl.Document.HighlightingStrategy.Name);
+			string[] bookMarks = new string[textAreaControl.Document.BookmarkManager.Marks.Count];
+			for (int i = 0; i < bookMarks.Length; ++i) {
+				bookMarks[i] = textAreaControl.Document.BookmarkManager.Marks[i].ToString();
+			}
+			properties.SetProperty("Bookmarks",   String.Join(",", bookMarks));
+			properties.SetProperty("CaretOffset", textAreaControl.ActiveTextAreaControl.Caret.Offset);
+			properties.SetProperty("VisibleLine", textAreaControl.ActiveTextAreaControl.TextArea.TextView.FirstVisibleLine);
+			properties.SetProperty("HighlightingLanguage", textAreaControl.Document.HighlightingStrategy.Name);
+			properties.SetProperty("Foldings", textAreaControl.Document.FoldingManager.SerializeToString());
 			return properties;
 		}
 		
 		public void SetMemento(IXmlConvertable memento)
 		{
-//			IProperties properties = (IProperties)memento;
-//			BookmarkManagerMemento bookmarkMemento = (BookmarkManagerMemento)properties.GetProperty("Bookmarks", textAreaControl.Document.BookmarkManager.CreateMemento());
-//			bookmarkMemento.CheckMemento(textAreaControl.Document);
-//			textAreaControl.Document.BookmarkManager.SetMemento(bookmarkMemento);
-//			textAreaControl.Document.Caret.Offset = Math.Min(textAreaControl.Document.TextLength, Math.Max(0, properties.GetProperty("CaretOffset", textAreaControl.Document.Caret.Offset)));
-//			textAreaControl.Document.SetDesiredColumn();
-//			textAreaControl.FirstVisibleColumn    = Math.Min(textAreaControl.Document.TotalNumberOfLines, Math.Max(0, properties.GetProperty("VisibleLine", textAreaControl.FirstVisibleColumn)));
-//			textAreaControl.FirstVisibleRow       = Math.Max(0, properties.GetProperty("VisibleColumn", textAreaControl.FirstVisibleRow));
-////			textAreaControl.Document.Properties   = (IProperties)properties.GetProperty("Properties",    textAreaControl.Properties);
-//			IHighlightingStrategy highlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy(properties.GetProperty("HighlightingLanguage", textAreaControl.Document.HighlightingStrategy.Name));
-//			
-//			if (highlightingStrategy != null) {
-//				textAreaControl.Document.HighlightingStrategy = highlightingStrategy;
-//			}
-//			
+			IProperties properties = (IProperties)memento;
+			string[] bookMarks = properties.GetProperty("Bookmarks").ToString().Split(',');
+			foreach (string mark in bookMarks) {
+				if (mark != null && mark.Length > 0) {
+					textAreaControl.Document.BookmarkManager.Marks.Add(Int32.Parse(mark));
+				}
+			}
+			
+			textAreaControl.ActiveTextAreaControl.Caret.Position =  textAreaControl.Document.OffsetToPosition(Math.Min(textAreaControl.Document.TextLength, Math.Max(0, properties.GetProperty("CaretOffset", textAreaControl.ActiveTextAreaControl.Caret.Offset))));
+//			textAreaControl.SetDesiredColumn();
+
+			if (textAreaControl.Document.HighlightingStrategy.Name != properties.GetProperty("HighlightingLanguage", textAreaControl.Document.HighlightingStrategy.Name)) {
+				IHighlightingStrategy highlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy(properties.GetProperty("HighlightingLanguage", textAreaControl.Document.HighlightingStrategy.Name));
+				if (highlightingStrategy != null) {
+					textAreaControl.Document.HighlightingStrategy = highlightingStrategy;
+				}
+			}
+			textAreaControl.ActiveTextAreaControl.TextArea.TextView.FirstVisibleLine = properties.GetProperty("VisibleLine", 0);
+			
+			textAreaControl.Document.FoldingManager.DeserializeFromString(properties.GetProperty("Foldings", ""));
 //			// insane check for cursor position, may be required for document reload.
 //			int lineNr = textAreaControl.Document.GetLineNumberForOffset(textAreaControl.Document.Caret.Offset);
 //			LineSegment lineSegment = textAreaControl.Document.GetLineSegment(lineNr);
@@ -308,29 +375,48 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			statusBarService.SetInsertMode(textAreaControl.ActiveTextAreaControl.Caret.CaretMode == CaretMode.InsertMode);
 		}
 				
-		public override string ContentName {
+		public override string FileName {
 			set {
-				if (Path.GetExtension(ContentName) != Path.GetExtension(value)) {
+				if (Path.GetExtension(FileName) != Path.GetExtension(value)) {
 					if (textAreaControl.Document.HighlightingStrategy != null) {
 						textAreaControl.Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategyForFile(value);
 						textAreaControl.Refresh();
 					}
 				}
-				base.ContentName = value;
+				base.FileName  = value;
+				base.TitleName = Path.GetFileName(value);
 			}
 		}
-				
 		public void JumpTo(int line, int column)
 		{
 			textAreaControl.ActiveTextAreaControl.JumpTo(line, column);
 		}
 		delegate void VoidDelegate(AbstractMargin margin);
 		
+		public void ForceFoldingUpdate(string language)
+		{
+			if (textAreaControl.TextEditorProperties.EnableFolding) {
+				IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
+				string fileName = IsUntitled ? UntitledName : TitleName;
+				IParseInformation parseInfo;
+				if (fileName == null || fileName.Length == 0) {
+					if (language == "C#") {
+						parseInfo = parserService.ParseFile("a.cs", textAreaControl.Document.TextContent, false);
+					} else {
+						parseInfo = parserService.ParseFile("a.vb", textAreaControl.Document.TextContent, false);
+					}
+				} else {
+					parseInfo = parserService.GetParseInformation(fileName);
+				}
+				textAreaControl.Document.FoldingManager.UpdateFoldings(fileName, parseInfo);
+			}
+		}
+		
 		public void ParseInformationUpdated(IParseInformation parseInfo)
 		{
 			if (textAreaControl.TextEditorProperties.EnableFolding) {
-				textAreaControl.Document.FoldingManager.UpdateFoldings(ContentName, parseInfo);
-					textAreaControl.ActiveTextAreaControl.TextArea.Invoke(new VoidDelegate(textAreaControl.ActiveTextAreaControl.TextArea.Refresh), new object[] { textAreaControl.ActiveTextAreaControl.TextArea.FoldMargin});
+				textAreaControl.Document.FoldingManager.UpdateFoldings(TitleName, parseInfo);
+				textAreaControl.ActiveTextAreaControl.TextArea.Invoke(new VoidDelegate(textAreaControl.ActiveTextAreaControl.TextArea.Refresh), new object[] { textAreaControl.ActiveTextAreaControl.TextArea.FoldMargin});
 			}
 		}
 		

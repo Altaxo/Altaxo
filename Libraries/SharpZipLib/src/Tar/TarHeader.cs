@@ -111,10 +111,10 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </summary>
 		public readonly static int MAGICLEN = 6;
 		
-      /// <summary>
-      /// The length of the version field in a header buffer.
-      /// </summary>
-      public readonly static int VERSIONLEN = 2;
+		/// <summary>
+		/// The length of the version field in a header buffer.
+		/// </summary>
+		public readonly static int VERSIONLEN = 2;
 
 		/// <summary>
 		/// The length of the modification time field in a header buffer.
@@ -136,15 +136,14 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </summary>
 		public readonly static int DEVLEN = 8;
 		
-		/// <summary>
-		/// LF_ constants represents the "type" of an entry
-		/// </summary>
-		/// 
+		//
+		// LF_ constants represent the "type" of an entry
+		// 
 
-      /// <summary>
-      ///  This is the "old way" of indicating a normal file.
-      /// </summary>
-      public const byte	LF_OLDNORM	= 0;
+		/// <summary>
+		///  This is the "old way" of indicating a normal file.
+		/// </summary>
+		public const byte	LF_OLDNORM	= 0;
 		
 		/// <summary>
 		/// Normal file type.
@@ -520,7 +519,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </returns>
 		public static int GetOctalBytes(long val, byte[] buf, int offset, int length)
 		{
-         // TODO check for values too large...
+			// TODO check for values too large...
 
 			int idx = length - 1;
 
@@ -528,7 +527,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			buf[offset + idx] = 0;
 			--idx;
 
-         if (val > 0)
+			if (val > 0)
 			{
 				for (long v = val; idx >= 0 && v > 0; --idx) 
 				{
@@ -539,7 +538,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 				
 			for (; idx >= 0; --idx) 
 			{
-            buf[offset + idx] = (byte)'0';
+				buf[offset + idx] = (byte)'0';
 			}
 			
 			return offset + length;
@@ -564,7 +563,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </returns>
 		public static int GetLongOctalBytes(long val, byte[] buf, int offset, int length)
 		{
-         return GetOctalBytes(val, buf, offset, length);
+			return GetOctalBytes(val, buf, offset, length);
 		}
 		
 		/// <summary>
@@ -580,10 +579,9 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </param>
 		/// <param name = "length">
 		/// The number of header bytes to update.
-      /// It's formatted differently from the other fields: it has 6 digits, a
-      /// null, then a space -- rather than digits, a space, then a null.
-      /// The final space is already there, from checksumming
-
+		/// It's formatted differently from the other fields: it has 6 digits, a
+		/// null, then a space -- rather than digits, a space, then a null.
+		/// The final space is already there, from checksumming
 		/// </param>
 		/// <returns>
 		/// The modified buffer offset

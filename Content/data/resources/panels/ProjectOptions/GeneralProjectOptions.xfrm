@@ -1,0 +1,35 @@
+<Components version="1.0">
+  <System.Windows.Forms.UserControl>
+    <Name value="MyUserControl" />
+    <DockPadding value="" />
+    <ClientSize value="{Width=376, Height=328}" />
+    <Controls>
+      <System.Windows.Forms.GroupBox>
+        <Name value="groupBox" />
+        <TabIndex value="0" />
+        <Location value="{X=8,Y=8}" />
+        <Anchor value="Top, Bottom, Left, Right" />
+        <Size value="{Width=360, Height=144}" />
+        <Text value="General" />
+        <Controls>
+          <System.Windows.Forms.ComboBox>
+            <Name value="comboBox" />
+            <Anchor value="Top, Left, Right" />
+            <TabIndex value="3" />
+            <Location value="{X=128,Y=24}" />
+            <Size value="{Width=116, Height=21}" />
+            <DropDownStyle value="DropDownList" />
+          </System.Windows.Forms.ComboBox>
+          <System.Windows.Forms.Label>
+            <Name value="label" />
+            <Text value="${res:Dialog.Options.PrjOptions.Configuration.CompileTargetLabel}" />
+            <TextAlign value="MiddleRight" />
+            <TabIndex value="2" />
+            <Size value="{Width=112, Height=23}" />
+            <Location value="{X=8,Y=24}" />
+          </System.Windows.Forms.Label>
+        </Controls>
+      </System.Windows.Forms.GroupBox>
+    </Controls>
+  </System.Windows.Forms.UserControl>
+</Components>

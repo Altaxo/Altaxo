@@ -47,6 +47,11 @@ namespace ICSharpCode.Core.Services
 		
 		Hashtable localStrings = null;
 		Hashtable localIcons   = null;
+
+		ArrayList localStringsResMgrs = new ArrayList();
+		ArrayList localIconsResMgrs   = new ArrayList();
+
+		ArrayList assemblies = new ArrayList();
 		
 		void ChangeProperty(object sender, PropertyEventArgs e)
 		{
@@ -59,14 +64,37 @@ namespace ICSharpCode.Core.Services
 			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 			string language = propertyService.GetProperty(uiLanguageProperty, Thread.CurrentThread.CurrentUICulture.Name);
 			
+			try {
+				Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(language);
+			} catch (Exception) {
+				try {
+					Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(language.Split('-')[0]);
+				} catch (Exception) {}
+			}
+
 			localStrings = Load(stringResources, language);
 			if (localStrings == null && language.IndexOf('-') > 0) {
-				localStrings = Load(stringResources, language.Split(new char[] {'-'})[0]);
+				localStrings = Load(stringResources, language.Split('-')[0]);
 			}
 			
 			localIcons = Load(imageResources, language);
 			if (localIcons == null && language.IndexOf('-') > 0) {
-				localIcons = Load(imageResources, language.Split(new char[] {'-'})[0]);
+				localIcons = Load(imageResources, language.Split('-')[0]);
+			}
+
+			localStringsResMgrs.Clear();
+			localIconsResMgrs.Clear();
+
+			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+				if (assemblies.Contains(assembly.FullName)) {
+					if (assembly.GetManifestResourceInfo(stringResources+".resources") != null) {
+						localStringsResMgrs.Add(new ResourceManager(stringResources, assembly));
+					}
+			
+					if (assembly.GetManifestResourceInfo(imageResources+".resources") != null) {
+						localIconsResMgrs.Add(new ResourceManager(imageResources, assembly));
+					}
+				}
 			}
 		}
 		
@@ -196,15 +224,23 @@ namespace ICSharpCode.Core.Services
 			if (localStrings != null && localStrings[name] != null) {
 				return localStrings[name].ToString();
 			}
-			
+	
 			string s = null;
-			foreach (ResourceManager resourceManger in strings) {
+			foreach (ResourceManager resourceManger in localStringsResMgrs) {
 				s = resourceManger.GetString(name);
 				if (s != null) {
 					break;
 				}
 			}
-			
+
+			if (s == null) {
+				foreach (ResourceManager resourceManger in strings) {
+					s = resourceManger.GetString(name);
+					if (s != null) {
+						break;
+					}
+				}
+			}
 			if (s == null) {
 				throw new ResourceNotFoundException("string >" + name + "<");
 			}
@@ -217,11 +253,13 @@ namespace ICSharpCode.Core.Services
 		/// </summary>
 		public void RegisterAssembly(Assembly assembly)
 		{
-			if (assembly.GetManifestResourceInfo(String.Concat(stringResources, ".resources")) != null) {
+			assemblies.Add(assembly.FullName);
+
+			if (assembly.GetManifestResourceInfo(stringResources+".resources") != null) {
 				strings.Add(new ResourceManager(stringResources, assembly));
 			}
 			
-			if (assembly.GetManifestResourceInfo(String.Concat(imageResources, ".resources")) != null) {
+			if (assembly.GetManifestResourceInfo(imageResources+".resources") != null) {
 				icon.Add(new ResourceManager(imageResources, assembly));
 			}
 		}
@@ -234,10 +272,19 @@ namespace ICSharpCode.Core.Services
 			} else  if (localIcons != null && localIcons[name] != null) {
 				iconobj = localIcons[name];
 			} else {
-				foreach (ResourceManager resourceManger in icon) {
+				foreach (ResourceManager resourceManger in localIconsResMgrs) {
 					iconobj = resourceManger.GetObject(name);
 					if (iconobj != null) {
 						break;
+					}
+				}
+
+				if (iconobj == null) {
+					foreach (ResourceManager resourceManger in icon) {
+						iconobj = resourceManger.GetObject(name);
+						if (iconobj != null) {
+							break;
+						}
 					}
 				}
 			}

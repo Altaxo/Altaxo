@@ -33,7 +33,7 @@ namespace SharpDevelop.Internal.Parser {
 		public void GetDataType(SharpAssembly asm, ref uint offset)
 		{
 			AssemblyReader assembly = asm.Reader;
-			
+			string fullyQualifiedName = "";
 			DataType dt = (DataType)assembly.LoadBlob(ref offset);
 			switch (dt) {
 				case DataType.Void:
@@ -123,7 +123,6 @@ namespace SharpDevelop.Internal.Parser {
 				
 				case DataType.TypeReference:
 					fullyQualifiedName = "typedref";
-					Console.WriteLine("got typedref");
 					break;
 				
 				case DataType.Pinned:
@@ -137,10 +136,11 @@ namespace SharpDevelop.Internal.Parser {
 					break;
 				
 				default:
-					Console.WriteLine("NOT supported: " + dt.ToString());
+					//Console.WriteLine("NOT supported: " + dt.ToString());
 					fullyQualifiedName += " NOT_SUPPORTED [" + dt.ToString() + "]";
 					break;
 			}
+			base.FullyQualifiedName = fullyQualifiedName;
 		}
 		
 		/// <remarks>
@@ -148,7 +148,7 @@ namespace SharpDevelop.Internal.Parser {
 		/// </remarks>
 		public SharpAssemblyReturnType(string name)
 		{
-			fullyQualifiedName = name;
+			FullyQualifiedName = name;
 			declaredin = null;
 		}
 		
@@ -156,9 +156,9 @@ namespace SharpDevelop.Internal.Parser {
 		{
 			underlyingClass = SharpAssemblyClass.FromTypeDef(assembly, index);
 			if (underlyingClass != null) {
-				fullyQualifiedName = underlyingClass.FullyQualifiedName;
+				FullyQualifiedName = underlyingClass.FullyQualifiedName;
 			} else {
-				fullyQualifiedName = assembly.Reader.GetStringFromHeap(typeDefTable[index].NSpace) + "." + 
+				FullyQualifiedName = assembly.Reader.GetStringFromHeap(typeDefTable[index].NSpace) + "." + 
 														assembly.Reader.GetStringFromHeap(typeDefTable[index].Name);
 			}
 			declaredin = assembly;
@@ -168,9 +168,9 @@ namespace SharpDevelop.Internal.Parser {
 		{
 			underlyingClass = SharpAssemblyClass.FromTypeRef(assembly, index);
 			if (underlyingClass != null) {
-				fullyQualifiedName = underlyingClass.FullyQualifiedName;
+				FullyQualifiedName = underlyingClass.FullyQualifiedName;
 			} else {
-				fullyQualifiedName = assembly.Reader.GetStringFromHeap(typeRefTable[index].Nspace) + "." + 
+				FullyQualifiedName = assembly.Reader.GetStringFromHeap(typeRefTable[index].Nspace) + "." + 
 			                                                assembly.Reader.GetStringFromHeap(typeRefTable[index].Name);
 			    Console.WriteLine("SharpAssemblyReturnType from TypeRef: TypeRef not resolved!");
 			}
@@ -184,7 +184,7 @@ namespace SharpDevelop.Internal.Parser {
 				GetDataType(assembly, ref blobSignatureIndex);
 			} catch (Exception e) {
 				Console.WriteLine("Got exception in ReturnType creation: " + e.ToString());
-				fullyQualifiedName = "GOT_EXCEPTION";
+				FullyQualifiedName = "GOT_EXCEPTION";
 			}
 			
 			if (arrayRanks.Count > 0) {

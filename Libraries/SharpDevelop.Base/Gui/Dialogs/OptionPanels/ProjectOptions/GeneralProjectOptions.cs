@@ -35,6 +35,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels
 			this.project = (IProject)((IProperties)CustomizationObject).GetProperty("Project");
 			
 			ControlDictionary["ProjectNameTextBox"].Text        = project.Name;
+			ControlDictionary["ProjectNamespaceTextBox"].Text   = project.StandardNamespace;
 			ControlDictionary["ProjectDescriptionTextBox"].Text = project.Description;
 			
 			((CheckBox)ControlDictionary["EnableViewStateCheckBox"]).Checked = project.EnableViewState;
@@ -56,8 +57,9 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels
 		
 		public override bool StorePanelContents()
 		{
-			project.Name                 = ControlDictionary["ProjectNameTextBox"].Text;
-			project.Description          = ControlDictionary["ProjectDescriptionTextBox"].Text;
+			project.Name              = ControlDictionary["ProjectNameTextBox"].Text;
+			project.StandardNamespace = ControlDictionary["ProjectNamespaceTextBox"].Text;
+			project.Description       = ControlDictionary["ProjectDescriptionTextBox"].Text;
 			
 			project.EnableViewState = ((CheckBox)ControlDictionary["EnableViewStateCheckBox"]).Checked;
 			

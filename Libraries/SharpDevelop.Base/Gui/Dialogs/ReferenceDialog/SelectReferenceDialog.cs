@@ -54,7 +54,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			get {
 				ArrayList referenceInformations = new ArrayList();
 				foreach (ListViewItem item in referencesListView.Items) {
-					Debug.Assert(item.Tag != null);
+					System.Diagnostics.Debug.Assert(item.Tag != null);
 					referenceInformations.Add(item.Tag);
 				}
 				return referenceInformations;
@@ -98,7 +98,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 							}
 							break;
 						default:
-							Debug.Assert(false, "Unknown reference type" + referenceType);
+							System.Diagnostics.Debug.Assert(false, "Unknown reference type" + referenceType);
 							break;
 					}
 				}

@@ -53,6 +53,20 @@ namespace ICSharpCode.TextEditor.Document
 					extensionsToName[extension.ToUpper()] = syntaxMode.Name;
 				}
 			}
+			if (!syntaxModeFileProviders.Contains(syntaxModeFileProvider)) {
+				syntaxModeFileProviders.Add(syntaxModeFileProvider);
+			}
+		}
+		
+		public void ReloadSyntaxModes()
+		{
+			highlightingDefs.Clear();
+			extensionsToName.Clear();
+			CreateDefaultHighlightingStrategy();
+			foreach (ISyntaxModeFileProvider provider in syntaxModeFileProviders) {
+				AddSyntaxModeFileProvider(provider);
+			}
+			OnReloadSyntaxHighlighting(EventArgs.Empty);
 		}
 		
 		void CreateDefaultHighlightingStrategy()
@@ -97,5 +111,14 @@ namespace ICSharpCode.TextEditor.Document
 				return (IHighlightingStrategy)highlightingDefs["Default"];
 			}
 		}
+		
+		protected virtual void OnReloadSyntaxHighlighting(EventArgs e)
+		{
+			if (ReloadSyntaxHighlighting != null) {
+				ReloadSyntaxHighlighting(this, e);
+			}
+		}
+		
+		public event EventHandler ReloadSyntaxHighlighting;
 	}
 }

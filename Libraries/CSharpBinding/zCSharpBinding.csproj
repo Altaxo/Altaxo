@@ -154,21 +154,26 @@
                 />
                 <File
                     RelPath = "Gui\ChooseRuntimePanel.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\CodeGenerationPanel.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\OutputOptionsPanel.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Parser\CSharpVisitor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Parser\ExpressionFinder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

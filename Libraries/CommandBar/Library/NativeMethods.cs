@@ -190,6 +190,7 @@ namespace Reflector.UserInterface
 
 		public const int TB_PRESSBUTTON = WM_USER + 3;	
 		public const int TB_INSERTBUTTON = WM_USER + 21;
+		public const int TB_DELETEBUTTON = WM_USER + 22;
 		public const int TB_BUTTONCOUNT = WM_USER + 24;
 		public const int TB_GETITEMRECT = WM_USER + 29;
 		public const int TB_BUTTONSTRUCTSIZE = WM_USER + 30;	
@@ -307,6 +308,7 @@ namespace Reflector.UserInterface
 		public const int RBN_AUTOSIZE = RBN_FIRST - 3;
 		public const int RBN_CHEVRONPUSHED = RBN_FIRST - 10;
 	
+		public const int RB_GETBANDINFO = WM_USER + 5;
 		public const int RB_SETBANDINFO = WM_USER + 6;
 		public const int RB_GETRECT = WM_USER + 9;
 		public const int RB_INSERTBAND = WM_USER + 10;
@@ -421,8 +423,12 @@ namespace Reflector.UserInterface
 
 		[DllImport("user32.dll", ExactSpelling=true, CharSet=CharSet.Auto)]
 		public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, int flags);
-
-
+		
+		public const int VK_RMENU = 0xA5; // right alt key
+		
+		[DllImport("user32.dll", ExactSpelling=true, CharSet=CharSet.Auto)]
+		public static extern short GetAsyncKeyState(int vKey);
+		
 		public static void DrawImage(Graphics graphics, Image image, Point point, bool disabled)
 		{
 			if (!disabled)

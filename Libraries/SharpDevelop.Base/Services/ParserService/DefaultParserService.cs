@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -37,7 +37,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		// used to map 'real' namespace hashtable inside case insensitive hashtable
 		const string CaseInsensitiveKey = "__CASE_INSENSITIVE_HASH";
-		Hashtable namespaces = new Hashtable();
+		Hashtable namespaces                = new Hashtable();
 		Hashtable caseInsensitiveNamespaces = new Hashtable();
 		
 		Hashtable parsings   = new Hashtable();
@@ -47,7 +47,7 @@ namespace ICSharpCode.SharpDevelop.Services
 
 //// Alex: this one keeps requests for parsing and is used to start parser (pulsed)
 //// otherwise continuous reparsing of files is causing leaks
-		public static Queue ParserPulse=new Queue();	// required for monitoring when to restart thread		
+//		public static Queue ParserPulse=new Queue();	// required for monitoring when to restart thread
 //// Alex: end of mod
 
 		/// <remarks>
@@ -135,7 +135,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 		}
 		
-		public void GenerateCodeCompletionDatabaseFast(string createPath, IProgressMonitor progressMonitor)
+		public void GenerateCodeCompletionDatabase(string createPath, IProgressMonitor progressMonitor)
 		{
 			SetCodeCompletionFileLocation(createPath);
 
@@ -151,7 +151,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				try {
 					FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
 					string path = fileUtilityService.GetDirectoryNameWithSeparator(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory());
-
+					
 					AssemblyInformation frameworkAssemblyInformation = new AssemblyInformation();
 					frameworkAssemblyInformation.Load(String.Concat(path, assemblyList[i], ".dll"), false);
 					// create all class proxies
@@ -169,67 +169,7 @@ namespace ICSharpCode.SharpDevelop.Services
 					if (progressMonitor != null) {
 						progressMonitor.Worked(i);
 					}
-				} catch (Exception e) {
-					Console.WriteLine(e.ToString());
-				}
-				System.GC.Collect();
-			}
-
-			classWriter.Close();
-			proxyWriter.Close();
-			if (progressMonitor != null) {
-				progressMonitor.Done();
-			}
-		}
-
-		public void GenerateEfficientCodeCompletionDatabase(string createPath, IProgressMonitor progressMonitor)
-		{
-			SetCodeCompletionFileLocation(createPath);
-			AssemblyInformation frameworkAssemblyInformation = new AssemblyInformation();
-
-			if (progressMonitor != null) {
-				progressMonitor.BeginTask("generate code completion database", assemblyList.Length * 3);
-			}
-
-			// convert all assemblies
-			for (int i = 0; i < assemblyList.Length; ++i) {
-				try {
-					FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-					string path = fileUtilityService.GetDirectoryNameWithSeparator(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory());
-					frameworkAssemblyInformation.Load(String.Concat(path, assemblyList[i], ".dll"), false);
-					
-					if (progressMonitor != null) {
-						progressMonitor.Worked(i);
-					}
-				} catch (Exception e) {
-					Console.WriteLine(e.ToString());
-				}
-				System.GC.Collect();
-			}
-					
-			// create all class proxies
-			for (int i = 0; i < frameworkAssemblyInformation.Classes.Count; ++i) {
-				ClassProxy newProxy = new ClassProxy(frameworkAssemblyInformation.Classes[i]);
-				classProxies.Add(newProxy);
-				AddClassToNamespaceList(newProxy);
-
-				if (progressMonitor != null) {
-					progressMonitor.Worked(assemblyList.Length + (i * assemblyList.Length) / frameworkAssemblyInformation.Classes.Count);
-				}
-			}
-
-			// write all classes and proxies to the disc
-			BinaryWriter classWriter = new BinaryWriter(new BufferedStream(new FileStream(codeCompletionMainFile, FileMode.Create, FileAccess.Write, FileShare.None)));
-			BinaryWriter proxyWriter = new BinaryWriter(new BufferedStream(new FileStream(codeCompletionProxyFile, FileMode.Create, FileAccess.Write, FileShare.None)));
-			
-			for (int i  = 0; i < frameworkAssemblyInformation.Classes.Count; ++i) {
-				PersistentClass pc = new PersistentClass(classProxies, frameworkAssemblyInformation.Classes[i]);
-				ClassProxy proxy = classProxies[i];
-				proxy.Offset = (uint)classWriter.BaseStream.Position;
-				proxy.WriteTo(proxyWriter);
-				pc.WriteTo(classWriter);
-				if (progressMonitor != null) {
-					progressMonitor.Worked(2 * assemblyList.Length + (i * assemblyList.Length) / frameworkAssemblyInformation.Classes.Count);
+				} catch (Exception) {
 				}
 			}
 
@@ -239,7 +179,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				progressMonitor.Done();
 			}
 		}
-
+		
 		void SetCodeCompletionFileLocation(string path)
 		{
 			FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
@@ -314,7 +254,9 @@ namespace ICSharpCode.SharpDevelop.Services
 					return;
 				}
 				if (File.Exists(fileName)) {
-					Thread t = new Thread(new ThreadStart(new AssemblyLoader(this, fileName).LoadAssemblyParseInformations));
+					AssemblyLoader assemblyLoader = new AssemblyLoader(this, fileName);
+					assemblyLoader.NonLocking = reference.ReferenceType != ReferenceType.Gac;
+					Thread t = new Thread(new ThreadStart(assemblyLoader.LoadAssemblyParseInformations));
 					t.Start();
 				}
 			}
@@ -324,6 +266,17 @@ namespace ICSharpCode.SharpDevelop.Services
 		{
 			DefaultParserService parserService;
 			string assemblyFileName;
+			bool nonLocking = false;
+			
+			public bool NonLocking {
+				get {
+					return nonLocking;
+				}
+				set {
+					nonLocking = value;
+				}
+			}
+			
 			
 			public AssemblyLoader(DefaultParserService parserService, string assemblyFileName)
 			{
@@ -339,20 +292,17 @@ namespace ICSharpCode.SharpDevelop.Services
 				parserService.loadedAssemblies[assemblyFileName] = true;
 				try {
 					AssemblyInformation assemblyInformation = new AssemblyInformation();
-					assemblyInformation.Load(assemblyFileName, true);
+					assemblyInformation.Load(assemblyFileName, nonLocking);
 					foreach (IClass newClass in assemblyInformation.Classes) {
 						parserService.AddClassToNamespaceList(newClass);
 						lock (parserService.classes) {
 							parserService.caseInsensitiveClasses[newClass.FullyQualifiedName.ToLower()] = parserService.classes[newClass.FullyQualifiedName] = new ClasstableEntry(null, null, newClass);
 						}
 					}
-				} catch (Exception e) {
-					Console.WriteLine("Can't add reference : " + e.ToString());
+				} catch (Exception) {
 				}
 			}
-		
 		}
-
 		
 		public void OpenCombine(object sender, CombineEventArgs e)
 		{
@@ -366,12 +316,12 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public void StartParserThread()
 		{
-			Thread t = new Thread(new ThreadStart(ParserUpdateThread));
-			t.IsBackground  = true;
-			t.Priority  = ThreadPriority.Lowest;
-			t.Start();
+			Thread parserThread = new Thread(new ThreadStart(ParserUpdateThread));
+			parserThread.IsBackground  = true;
+			parserThread.Start();
 		}
-#if ModifiedForAltaxo
+		
+		#if ModifiedForAltaxo
     object _activeModalContent;
 
     /// <summary>
@@ -393,27 +343,37 @@ namespace ICSharpCode.SharpDevelop.Services
       _activeModalContent = null; 
     }
 #endif
-
+		
+		public override void UnloadService()
+		{
+			doneParserThread = true;
+		}
+		
+		bool doneParserThread = false;
+		Hashtable lastUpdateSize = new Hashtable();
+		
 		void ParserUpdateThread()
 		{
-//// Alex: file name to parse holder field
-			string fn=null;
-			while (true) {
-				Thread.Sleep(1000); // not required
+// 			string fn=null;
+			while (!doneParserThread) {
+				////Thread.Sleep(1000); // not required
 //// Alex: if some file was pulsed - during editor load and after - get file to reparse
-				fn = null; // set to null for each repetition
-
+//				fn = null; // set to null for each repetition
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //	Mike: Doesn't work with folding marker update --> look at the folding markers
+//  Mike: You can't simply BREAK a feature and say I should fix it ... either bring the folding
+//        markers in a working state or leave this change ... I don't see that your change is a good
+//        alternative ... the current parserthread looks at the text and if it changed it reparses ...
+//        it is better than the old version you fixed 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 //				lock(DefaultParserService.ParserPulse) {
+//					//Console.WriteLine("Pulse got: {0} entries",DefaultParserService.ParserPulse.Count);
 //					Monitor.Wait(DefaultParserService.ParserPulse);
 //					if (DefaultParserService.ParserPulse.Count>0) {
 //						fn = (string)DefaultParserService.ParserPulse.Dequeue();
 //					}
 //				}
-////// Alex: end of mod
 				try {
 #if ModifiedForAltaxo
           if(_activeModalContent!=null)
@@ -430,7 +390,7 @@ namespace ICSharpCode.SharpDevelop.Services
               } 
               else if(_activeModalContent is ICSharpCode.SharpDevelop.Gui.IViewContent)
               {
-                fileName = ((ICSharpCode.SharpDevelop.Gui.IViewContent)_activeModalContent).ContentName;
+                fileName = ((ICSharpCode.SharpDevelop.Gui.IViewContent)_activeModalContent).FileName;
               }
               if (!(fileName == null || fileName.Length == 0)) 
               {
@@ -450,40 +410,47 @@ namespace ICSharpCode.SharpDevelop.Services
             continue;
           }
 #endif
-          if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null && WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent != null) {
+					if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null && WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent != null) {
 						IEditable editable = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent as IEditable;
 						if (editable != null) {
 							string fileName = null;
 							
+							IViewContent viewContent = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent;
 							IParseableContent parseableContent = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent as IParseableContent;
 							
 							if (parseableContent != null) {
 								fileName = parseableContent.ParseableContentName;
 							} else {
-								fileName = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName;
+								fileName = viewContent.IsUntitled ? viewContent.UntitledName : viewContent.FileName;
 							}
+							
 							if (!(fileName == null || fileName.Length == 0)) {
-								Thread.Sleep(300); // not required 
+//								Thread.Sleep(300); // not required 
 								IParseInformation parseInformation = null;
+								bool updated = false;
 								lock (parsings) {
-									parseInformation = ParseFile(fileName, editable.Text);
+									string text = editable.Text;
+									
+									if (lastUpdateSize[fileName] == null || (int)lastUpdateSize[fileName] != text.GetHashCode()) {
+										parseInformation = ParseFile(fileName, text, !viewContent.IsUntitled);
+										lastUpdateSize[fileName] = text.GetHashCode();
+										updated = true;
+									} 
 								}
-								if (parseInformation != null && editable is IParseInformationListener) {
-									((IParseInformationListener)editable).ParseInformationUpdated(parseInformation);
+								if (updated) {
+									if (parseInformation != null && editable is IParseInformationListener) {
+										((IParseInformationListener)editable).ParseInformationUpdated(parseInformation);
+									}
 								}
-//// Alex: reparsing was requested for file in fn
-								if (fn != null) {
-									ParseFile(fn); // TODO: this one should update file parsings requested through queue
-								}
+//								if (fn != null) {
+//									ParseFile(fn); // TODO: this one should update file parsings requested through queue
+//								}
 							}
 						}
 					}
-				} catch (Exception e) {
-					try {
-						Console.WriteLine(e.ToString());
-					} catch {}
+				} catch (Exception) {
 				}
-				Thread.Sleep(500); // not required
+				Thread.Sleep(2000);
 			}
 		}
 		
@@ -515,7 +482,7 @@ namespace ICSharpCode.SharpDevelop.Services
 					cur = (Hashtable)cur[path[i]];
 					caseInsensitiveCur = (Hashtable)caseInsensitiveCur[path[i].ToLower()];
 				}
-				caseInsensitiveCur[addClass.Name.ToLower()] = cur[addClass.Name] = new ClassProxy(addClass);
+				caseInsensitiveCur[addClass.Name.ToLower()] = cur[addClass.Name] = addClass;
 				return cur;
 			}
 		}
@@ -527,7 +494,6 @@ namespace ICSharpCode.SharpDevelop.Services
 		}
 		public IClass GetClass(string typeName, bool caseSensitive)
 		{
-//			Console.WriteLine("Get class >{0}<", typeName);
 			if (!caseSensitive) {
 				typeName = typeName.ToLower();
 			}
@@ -549,6 +515,22 @@ namespace ICSharpCode.SharpDevelop.Services
 				}
 				return c;
 			}
+			
+			// not found -> maybe nested type -> trying to find class that contains this one.
+			int lastIndex = typeName.LastIndexOf('.');
+			if (lastIndex > 0) {
+				string innerName = typeName.Substring(lastIndex + 1);
+				string outerName = typeName.Substring(0, lastIndex);
+				IClass upperClass = GetClass(outerName, caseSensitive);
+				if (upperClass != null && upperClass.InnerClasses != null) {
+					foreach (IClass c in upperClass.InnerClasses) {
+						if (c.Name == innerName) {
+							return c;
+						}
+					}
+				}
+			}
+			
 			return null;
 		}
 		
@@ -560,7 +542,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		{
 //			Console.WriteLine("GetNamespaceList >{0}<", subNameSpace);
 			
-			Debug.Assert(subNameSpace != null);
+			System.Diagnostics.Debug.Assert(subNameSpace != null);
 			if (!caseSensitive) {
 				subNameSpace = subNameSpace.ToLower();
 			}
@@ -655,22 +637,429 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 			return true;
 		}
+		
+		/// <remarks>
+		/// Returns the innerst class in which the carret currently is, returns null
+		/// if the carret is outside any class boundaries.
+		/// </remarks>
+		public IClass GetInnermostClass(ICompilationUnit cu, int caretLine, int caretColumn)
+		{
+			if (cu != null) {
+				foreach (IClass c in cu.Classes) {
+					if (c != null && c.Region != null && c.Region.IsInside(caretLine, caretColumn)) {
+						return GetInnermostClass(c, caretLine, caretColumn);
+					}
+				}
+			}
+			return null;
+		}
+		IClass GetInnermostClass(IClass curClass, int caretLine, int caretColumn)
+		{
+			if (curClass == null) {
+				return null;
+			}
+			if (curClass.InnerClasses == null) {
+				return curClass;
+			}
+			foreach (IClass c in curClass.InnerClasses) {
+				if (c != null && c.Region != null && c.Region.IsInside(caretLine, caretColumn)) {
+					return GetInnermostClass(c, caretLine, caretColumn);
+				}
+			}
+			return curClass;
+		}
+		
+		/// <remarks>
+		/// Returns all (nestet) classes in which the carret currently is exept
+		/// the innermost class, returns an empty collection if the carret is in 
+		/// no class or only in the innermost class.
+		/// the most outer class is the last in the collection.
+		/// </remarks>
+		public ClassCollection GetOuterClasses(ICompilationUnit cu, int caretLine, int caretColumn)
+		{
+			ClassCollection classes = new ClassCollection();
+			if (cu != null) {
+				foreach (IClass c in cu.Classes) {
+					if (c != null && c.Region != null && c.Region.IsInside(caretLine, caretColumn)) {
+						if (c != GetInnermostClass(cu, caretLine, caretColumn)) {
+							GetOuterClasses(classes, c, cu, caretLine, caretColumn);
+							classes.Add(c);
+						}
+						break;
+					}
+				}
+			}
+			
+			return classes;
+		}
+		void GetOuterClasses(ClassCollection classes, IClass curClass, ICompilationUnit cu, int caretLine, int caretColumn)
+		{
+			if (curClass != null) {
+				foreach (IClass c in curClass.InnerClasses) {
+					if (c != null && c.Region != null && c.Region.IsInside(caretLine, caretColumn)) {
+						if (c != GetInnermostClass(cu, caretLine, caretColumn)) {
+							GetOuterClasses(classes, c, cu, caretLine, caretColumn);
+							classes.Add(c);	
+						}
+						break;
+					}
+				}
+			}
+		}
+		public string SearchNamespace(string name, ICompilationUnit unit, int caretLine, int caretColumn)
+		{
+			return SearchNamespace(name, unit, caretLine, caretColumn, true);
+		}
+		
+		/// <remarks>
+		/// use the usings to find the correct name of a namespace
+		/// </remarks>
+		public string SearchNamespace(string name, ICompilationUnit unit, int caretLine, int caretColumn, bool caseSensitive)
+		{
+			if (NamespaceExists(name, caseSensitive)) {
+				return name;
+			}
+			if (unit == null) {
+//				Console.WriteLine("done, resultless");
+				return null;
+			}
+			
+			foreach (IUsing u in unit.Usings) {
+				if (u != null && (u.Region == null || u.Region.IsInside(caretLine, caretColumn))) {
+					string nameSpace = u.SearchNamespace(name, caseSensitive);
+					if (nameSpace != null) {
+						return nameSpace;
+					}
+				}
+			}
+//			Console.WriteLine("done, resultless");
+			return null;
+		}
+		
+		/// <remarks>
+		/// use the usings and the name of the namespace to find a class
+		/// </remarks>
+		public IClass SearchType(string name, IClass curType, int caretLine, int caretColumn)
+		{
+			return SearchType(name, curType, caretLine, caretColumn, true);
+		}
+		public IClass SearchType(string name, IClass curType, int caretLine, int caretColumn, bool caseSensitive)
+		{
+			if (curType == null) {
+				return SearchType(name, null, null, caretLine, caretColumn, caseSensitive);
+			}
+			return SearchType(name, curType, curType.CompilationUnit, caretLine, caretColumn, caseSensitive);
+		}
+		
+		public IClass SearchType(string name, IClass curType, ICompilationUnit unit, int caretLine, int caretColumn)
+		{
+			return SearchType(name, curType, unit, caretLine, caretColumn, true);
+		}
+		/// <remarks>
+		/// use the usings and the name of the namespace to find a class
+		/// </remarks>
+		public IClass SearchType(string name, IClass curType, ICompilationUnit unit, int caretLine, int caretColumn, bool caseSensitive)
+		{
+//			Console.WriteLine("Searching Type " + name);
+			if (name == null || name == String.Empty) {
+//				Console.WriteLine("No Name!");
+				return null;
+			}
+			IClass c  = GetClass(name, caseSensitive);
+			if (c != null) {
+//				Console.WriteLine("Found!");
+				return c;
+			}
+//			Console.WriteLine("No FullName");
+			if (unit != null) {
+//				Console.WriteLine(unit.Usings.Count + " Usings");
+				foreach (IUsing u in unit.Usings) {
+					if (u != null && (u.Region == null || u.Region.IsInside(caretLine, caretColumn))) {
+//						Console.WriteLine("In UsingRegion");
+						c = u.SearchType(name, caseSensitive);
+						if (c != null) {
+//							Console.WriteLine("SearchType Successfull!!!");
+							return c;
+						}
+					}
+				}
+			}
+			if (curType == null) {
+//				Console.WriteLine("curType == null");
+				return null;
+			}
+			string fullname = curType.FullyQualifiedName;
+//			Console.WriteLine("Fullname of class is: " + fullname);
+			string[] namespaces = fullname.Split(new char[] {'.'});
+			string curnamespace = "";
+			for (int i = 0; i < namespaces.Length; ++i) {
+				curnamespace += namespaces[i] + '.';
+//				Console.WriteLine(curnamespace);
+				c = GetClass(curnamespace + name, caseSensitive);
+				if (c != null) {
+//					Console.WriteLine("found in Namespace " + curnamespace + name);
+					return c;
+				}
+			}
+			return null;
+		}
+		
+		/// <remarks>
+		/// Returns true, if class possibleBaseClass is in the inheritance tree from c
+		/// </remarks>
+		public bool IsClassInInheritanceTree(IClass possibleBaseClass, IClass c)
+		{
+			return IsClassInInheritanceTree(possibleBaseClass, c, true);
+		}
+		
+		public bool IsClassInInheritanceTree(IClass possibleBaseClass, IClass c, bool caseSensitive)
+		{
+			if (possibleBaseClass == null || c == null) {
+				return false;
+			}
+			if (caseSensitive && possibleBaseClass.FullyQualifiedName == c.FullyQualifiedName ||
+			    !caseSensitive && possibleBaseClass.FullyQualifiedName.ToLower() == c.FullyQualifiedName.ToLower()) {
+				return true;
+			}
+			foreach (string baseClass in c.BaseTypes) {
+				if (IsClassInInheritanceTree(possibleBaseClass, SearchType(baseClass, c, c.CompilationUnit, c.Region != null ? c.Region.BeginLine : -1, c.Region != null ? c.Region.BeginColumn : -1))) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public IClass BaseClass(IClass curClass)
+		{
+			return BaseClass(curClass, true);
+		}
+		public IClass BaseClass(IClass curClass, bool caseSensitive)
+		{
+			foreach (string s in curClass.BaseTypes) {
+//				Console.WriteLine("BaseType = " + s + "?");
+				IClass baseClass = SearchType(s, curClass, curClass.Region != null ? curClass.Region.BeginLine : 0, curClass.Region != null ? curClass.Region.BeginColumn : 0, caseSensitive);
+				if (baseClass == null) {
+//					Console.WriteLine("Not found!");
+				}
+				if (baseClass != null && baseClass.ClassType != ClassType.Interface) {
+//					if (baseClass != null) {
+//						Console.WriteLine("Interface");
+//					}
+					return baseClass;
+				}
+			}
+			return null;
+		}
+		
+		public bool IsAccessible(IClass c, IDecoration member, IClass callingClass, bool isClassInInheritanceTree)
+		{
+			if ((member.Modifiers & ModifierEnum.Internal) == ModifierEnum.Internal) {
+				return true;
+			}
+			if ((member.Modifiers & ModifierEnum.Public) == ModifierEnum.Public) {
+				return true;
+			}
+			if ((member.Modifiers & ModifierEnum.Protected) == ModifierEnum.Protected && isClassInInheritanceTree) {
+				return true;
+			}
+			return c != null && callingClass != null && c.FullyQualifiedName == callingClass.FullyQualifiedName;
+		}
+		
+		public bool MustBeShown(IClass c, IDecoration member, IClass callingClass, bool showStatic, bool isClassInInheritanceTree)
+		{
+//			Console.WriteLine("MustBeShown, Class: " + c == null ? "null": c.FullyQualifiedName);
+			if (c != null && c.ClassType == ClassType.Enum) {
+				return true;
+			}
+//			Console.WriteLine("showStatic = " + showStatic);
+			if ((!showStatic &&  ((member.Modifiers & ModifierEnum.Static) == ModifierEnum.Static)) ||
+			    ( showStatic && !((member.Modifiers & ModifierEnum.Static) == ModifierEnum.Static))) {
+				return false;
+			}
+			return IsAccessible(c, member, callingClass, isClassInInheritanceTree);
+		}
+		
+		public ArrayList ListMembers(ArrayList members, IClass curType, IClass callingClass, bool showStatic)
+		{
+			DateTime now = DateTime.Now;
+			
+			// enums must be handled specially, because there are several things defined we don't want to show
+			// and enum members have neither the modifier static nor the modifier public
+			if (curType.ClassType == ClassType.Enum) {
+//				Console.WriteLine("listing enum members");
+				foreach (IField f in curType.Fields) {
+//					Console.WriteLine("testing " + f.Name);
+					if (f.IsLiteral) {
+//						Console.WriteLine("SpecialName found");
+						members.Add(f);
+					}
+				}
+				return members;
+			}
+			
+			bool isClassInInheritanceTree = IsClassInInheritanceTree(curType, callingClass);
+			
+			if (showStatic) {
+				foreach (IClass c in curType.InnerClasses) {
+					if (IsAccessible(curType, c, callingClass, isClassInInheritanceTree)) {
+						members.Add(c);
+					}
+				}
+			}
+			
+			foreach (IProperty p in curType.Properties) {
+				if (MustBeShown(curType, p, callingClass, showStatic, isClassInInheritanceTree)) {
+					members.Add(p);
+				}
+			}
+			
+			foreach (IMethod m in curType.Methods) {
+				if (MustBeShown(curType, m, callingClass, showStatic, isClassInInheritanceTree)) {
+					members.Add(m);
+				}
+			}
+			
+			foreach (IEvent e in curType.Events) {
+				if (MustBeShown(curType, e, callingClass, showStatic, isClassInInheritanceTree)) {
+					members.Add(e);
+				}
+			}
+			
+			foreach (IField f in curType.Fields) {
+//				Console.WriteLine("testing field " + f.Name);
+				if (MustBeShown(curType, f, callingClass, showStatic, isClassInInheritanceTree)) {
+					members.Add(f);
+				}
+			}
+			
+			if (curType.ClassType == ClassType.Interface && !showStatic) {
+				foreach (string s in curType.BaseTypes) {
+					IClass baseClass = SearchType(s, curType, curType.Region != null ? curType.Region.BeginLine : -1, curType.Region != null ? curType.Region.BeginColumn : -1);
+					if (baseClass != null && baseClass.ClassType == ClassType.Interface) {
+						ListMembers(members, baseClass, callingClass, showStatic);
+					}
+				}
+			} else {
+				IClass baseClass = BaseClass(curType);
+				if (baseClass != null) {
+					ListMembers(members, baseClass, callingClass, showStatic);
+				}
+			}
+			
+			return members;
+		}
+		
+		public IMember SearchMember(IClass declaringType, string memberName)
+		{
+			if (declaringType == null || memberName == null || memberName.Length == 0) {
+				return null;
+			}
+			foreach (IField f in declaringType.Fields) {
+				if (f.Name == memberName) {
+					return f;
+				}
+			}
+			foreach (IProperty p in declaringType.Properties) {
+				if (p.Name == memberName) {
+					return p;
+				}
+			}
+			foreach (IIndexer i in declaringType.Indexer) {
+				if (i.Name == memberName) {
+					return i;
+				}
+			}
+			foreach (IEvent e in declaringType.Events) {
+				if (e.Name == memberName) {
+					return e;
+				}
+			}
+			foreach (IMethod m in declaringType.Methods) {
+				if (m.Name == memberName) {
+					return m;
+				}
+			}
+			if (declaringType.ClassType == ClassType.Interface) {
+				foreach (string baseType in declaringType.BaseTypes) {
+					int line = -1;
+					int col = -1;
+					if (declaringType.Region != null) {
+						line = declaringType.Region.BeginLine;
+						col = declaringType.Region.BeginColumn;
+					}
+					IClass c = SearchType(baseType, declaringType, line, col);
+					if (c != null) {
+						return SearchMember(c, memberName);
+					}
+				}
+			} else {
+				IClass c = BaseClass(declaringType);
+				return SearchMember(c, memberName);
+			}
+			return null;
+		}
+		
+		public Position GetPosition(string fullMemberName)
+		{
+			string[] name = fullMemberName.Split(new char[] {'.'});
+			string curName = name[0];
+			int i = 1;
+			while (i < name.Length && NamespaceExists(curName)) {
+				curName += '.' + name[i];
+				++i;
+			}
+			Debug.Assert(i <= name.Length);
+			IClass curClass = GetClass(curName);
+			if (curClass == null) {
+				//Console.WriteLine("Class not found: " + curName);
+				return new Position(null, -1, -1);
+			}
+			ICompilationUnit cu = curClass.CompilationUnit;
+			while (i < name.Length) {
+				ClassCollection innerClasses = curClass.InnerClasses;
+				foreach (IClass c in innerClasses) {
+					if (c.Name == name[i]) {
+						curClass = c;
+						break;
+					}
+				}
+				if (curClass.Name != name[i]) {
+					break;
+				}
+				++i;
+			}
+			
+			if (i == name.Length) {
+				return new Position(cu, curClass.Region != null ? curClass.Region.BeginLine : -1, curClass.Region != null ? curClass.Region.BeginColumn : -1);
+			}
+			Debug.Assert(i == name.Length - 1);
+			IMember member = SearchMember(curClass, name[i]);
+			if (member == null || member.Region == null) {
+				return new Position(cu, -1, -1);
+			}
+			return new Position(cu, member.Region.BeginLine, member.Region.BeginColumn);
+		}
+		
 #endregion
 		
 		public IParseInformation ParseFile(string fileName)
 		{
 			return ParseFile(fileName, null);
 		}
-
+		
 		public IParseInformation ParseFile(string fileName, string fileContent)
 		{
+			return ParseFile(fileName, fileContent, true);
+		}
+		
+		public IParseInformation ParseFile(string fileName, string fileContent, bool updateCommentTags)
+		{
+			//Console.WriteLine("PARSE : " + fileName);
 			IParser parser = GetParser(fileName);
 			
 			if (parser == null) {
 				return null;
 			}
-			
-			parser.LexerTags = new string[] { "HACK", "TODO", "UNDONE", "FIXME" };
 			
 			ICompilationUnitBase parserOutput = null;
 			
@@ -689,9 +1078,22 @@ namespace ICSharpCode.SharpDevelop.Services
 			if (fileContent != null) {
 				parserOutput = parser.Parse(fileName, fileContent);
 			} else {
+				if (!File.Exists(fileName)) {
+					return null;
+				}
 				parserOutput = parser.Parse(fileName);
 			}
-			
+			if (updateCommentTags && parserOutput is ICompilationUnit) {
+				ICompilationUnit cu = (ICompilationUnit)parserOutput;
+				TaskService taskService = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
+				taskService.RemoveCommentTasks(fileName);
+				if (cu.TagComments.Count > 0) {
+					foreach (Tag tag in cu.TagComments) {
+						taskService.CommentTasks.Add(new Task(fileName, tag.Key + tag.CommentString, tag.Region.BeginColumn, tag.Region.BeginLine, TaskType.Comment));
+					}
+					taskService.NotifyTaskChange();
+				}
+			}
 			ParseInformation parseInformation = parsings[fileName] as ParseInformation;
 			
 			int itemsAdded = 0;
@@ -720,7 +1122,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 			
 			parsings[fileName] = parseInformation;
-									
+			
 			if (parseInformation.BestCompilationUnit is ICompilationUnit) {
 				ICompilationUnit cu = (ICompilationUnit)parseInformation.BestCompilationUnit;
 				foreach (IClass c in cu.Classes) {
@@ -730,14 +1132,17 @@ namespace ICSharpCode.SharpDevelop.Services
 					}
 				}
 			} else {
-				Console.WriteLine("SKIP!");
+//				Console.WriteLine("SKIP!");
+			}
+			
+			OnParseInformationChanged(new ParseInformationEventArgs(fileName, parseInformation));
+			
+			if(itemsRemoved > 0) {
+				OnParseInformationRemoved(new ParseInformationEventArgs(fileName, removedParseInformation));
 			}
 			
 			if(itemsAdded > 0) {
 				OnParseInformationAdded(new ParseInformationEventArgs(fileName, addedParseInformation));
-			}
-			if(itemsRemoved > 0) {
-				OnParseInformationRemoved(new ParseInformationEventArgs(fileName, removedParseInformation));
 			}
 			return parseInformation;
 		}
@@ -745,10 +1150,10 @@ namespace ICSharpCode.SharpDevelop.Services
 		void RemoveClasses(ICompilationUnit cu)
 		{
 			if (cu != null) {
-				foreach (IClass c in cu.Classes) {
-					lock (classes) {
-						classes.Remove(c.FullyQualifiedName);
-						caseInsensitiveClasses.Remove(c.FullyQualifiedName.ToLower());
+				lock (classes) {
+					foreach (IClass c in cu.Classes) {
+							classes.Remove(c.FullyQualifiedName);
+							caseInsensitiveClasses.Remove(c.FullyQualifiedName.ToLower());
 					}
 				}
 			}
@@ -766,16 +1171,32 @@ namespace ICSharpCode.SharpDevelop.Services
 			return (IParseInformation)cu;
 		}
 		
-		public virtual IParser GetParser(string fileName)
+		public IExpressionFinder GetExpressionFinder(string fileName)
 		{
-			// HACK: I'm too lazy to do it 'right'
-			if (Path.GetExtension(fileName).ToUpper() == ".CS") {
-				return parser[0];
-			}
-			if (Path.GetExtension(fileName).ToUpper() == ".VB") {
-				return parser[1];
+			IParser parser = GetParser(fileName);
+			if (parser != null) {
+				return parser.ExpressionFinder;
 			}
 			return null;
+		}
+		public virtual IParser GetParser(string fileName)
+		{
+			IParser curParser = null;
+			
+			if (Path.GetExtension(fileName).ToUpper() == ".CS") {
+				curParser = parser[0];
+			}
+			if (Path.GetExtension(fileName).ToUpper() == ".VB") {
+				curParser = parser[1];
+			}
+			
+			if (curParser != null) {
+				PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
+				string tasklisttokens = propertyService.GetProperty("SharpDevelop.TaskListTokens", "HACK;TODO;UNDONE;FIXME");
+				curParser.LexerTags = tasklisttokens.Split(';');
+			}
+			
+			return curParser;
 		}
 		
 		int GetAddedItems(ICompilationUnit original, ICompilationUnit changed, ICompilationUnit result)
@@ -805,6 +1226,15 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		////////////////////////////////////
 		
+		public ArrayList CtrlSpace(IParserService parserService, int caretLine, int caretColumn, string fileName)
+		{
+			IParser parser = GetParser(fileName);
+			if (parser != null) {
+				return parser.CtrlSpace(parserService, caretLine, caretColumn, fileName);
+			}
+			return null;
+		}
+		
 		public ResolveResult Resolve(string expression,
 		                             int caretLineNumber,
 		                             int caretColumn,
@@ -815,7 +1245,6 @@ namespace ICSharpCode.SharpDevelop.Services
 			// being thrown and corrupting the textarea control
 			//try {
 				IParser parser = GetParser(fileName);
-				Console.WriteLine("Parse info : " + GetParseInformation(fileName).MostRecentCompilationUnit.Tag);
 				if (parser != null) {
 					return parser.Resolve(this, expression, caretLineNumber, caretColumn, fileName, fileContent);
 				}
@@ -855,7 +1284,6 @@ namespace ICSharpCode.SharpDevelop.Services
 	{
 		CommentCollection miscComments = new CommentCollection();
 		CommentCollection dokuComments = new CommentCollection();
-		TagCollection     tagComments  = new TagCollection();
 		
 		public override CommentCollection MiscComments {
 			get {
@@ -866,12 +1294,6 @@ namespace ICSharpCode.SharpDevelop.Services
 		public override CommentCollection DokuComments {
 			get {
 				return dokuComments;
-			}
-		}
-		
-		public override TagCollection TagComments {
-			get {
-				return tagComments;
 			}
 		}
 	}

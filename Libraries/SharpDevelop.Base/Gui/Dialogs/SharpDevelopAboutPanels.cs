@@ -40,7 +40,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		{
 			Version v = Assembly.GetEntryAssembly().GetName().Version;
 			versionTextBox.Text = v.Major + "." + v.Minor;
-			buildTextBox.Text   = v.Revision + "." + v.Build;
+			buildTextBox.Text   = v.Build + "." + v.Revision;
 			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 			versionLabel.Location = new System.Drawing.Point(8, 8);
 			versionLabel.Text = resourceService.GetString("Dialog.About.label1Text");
@@ -67,9 +67,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			Controls.Add(buildTextBox);
 			
 			sponsorLabel.Location = new System.Drawing.Point(8, 34);
-			sponsorLabel.Text = "Released under the GNU General Public license.\n\n" + 
-				                "Sponsored by AlphaSierraPapa\n" +
-			                    "                   http://www.AlphaSierraPapa.com";
+			sponsorLabel.Text = "Released under the GNU General Public license.";
 			sponsorLabel.Size = new System.Drawing.Size(362, 74);
 			sponsorLabel.TabIndex = 8;
 			Controls.Add(sponsorLabel);

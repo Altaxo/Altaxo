@@ -62,7 +62,6 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		static int TOO_FAR = 4096;
 		
 		int ins_h;
-		//		private byte[] buffer;
 		short[] head;
 		short[] prev;
 		

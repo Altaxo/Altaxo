@@ -26,7 +26,7 @@ namespace ICSharpCode.TextEditor.Document
 				return lineCollection;
 			}
 		}
-			
+		
 		public int TotalNumberOfLines {
 			get {
 				if (lineCollection.Count == 0) {
@@ -83,6 +83,7 @@ namespace ICSharpCode.TextEditor.Document
 			
 			if (offset == textLength) {
 				if (lineCollection.Count == 0) {
+//					Console.WriteLine("Set line after textend to line of length 0");
 					return new LineSegment(0, 0);
 				}
 				LineSegment lastLine = (LineSegment)lineCollection[lineCollection.Count - 1];
@@ -100,6 +101,7 @@ namespace ICSharpCode.TextEditor.Document
 			
 			if (lineNr == lineCollection.Count) {
 				if (lineCollection.Count == 0) {
+//					Console.WriteLine("Set line after textend to line of length 0");
 					return new LineSegment(0, 0);
 				}
 				LineSegment lastLine = (LineSegment)lineCollection[lineCollection.Count - 1];
@@ -126,13 +128,16 @@ namespace ICSharpCode.TextEditor.Document
 			ISegment nextDelimiter = NextDelimiter(text, 0);
 			if (nextDelimiter == null || nextDelimiter.Offset < 0) {
 				line.TotalLength += text.Length;
+//				Console.WriteLine("1:Line length of line {0} set to {1}", lineNumber, line.TotalLength - line.DelimiterLength);
 				markLines.Add(line);
+				OnLineLengthChanged(new LineLengthEventArgs(document, lineNumber, offset -line.Offset, text.Length));
 				return 0;
 			}
 			
 			int restLength = line.Offset + line.TotalLength - offset;
 			
 			if (restLength > 0) {
+//				Console.WriteLine("Insert: Set restline in line {0} to length {1}", lineNumber, restLength);
 				LineSegment lineRest = new LineSegment(offset, restLength);
 				lineRest.DelimiterLength = line.DelimiterLength;
 				
@@ -150,6 +155,7 @@ namespace ICSharpCode.TextEditor.Document
 			line.DelimiterLength = nextDelimiter.Length;
 			int nextStart = offset + nextDelimiter.Offset + nextDelimiter.Length;
 			line.TotalLength = nextStart - line.Offset;
+//			Console.WriteLine("2:Line length of line {0} set to {1}", lineNumber, line.TotalLength - line.DelimiterLength);
 			
 			markLines.Add(line);
 			text = text.Substring(nextDelimiter.Offset + nextDelimiter.Length);
@@ -157,55 +163,7 @@ namespace ICSharpCode.TextEditor.Document
 			return CreateLines(text, lineNumber + 1, nextStart) + 1;
 		}
 		
-// OLD SAFE & TESTED REmove
-//		bool Remove(int lineNumber, int offset, int length)
-//		{
-//			if (length == 0) {
-//				return false;
-//			}
-//			
-//			int removedLineEnds = GetNumberOfLines(lineNumber, offset, length) - 1;
-//			
-//			LineSegment line = (LineSegment)lineCollection[lineNumber];
-//			if ((lineNumber == lineCollection.Count - 1) && removedLineEnds > 0) {
-//				line.TotalLength -= length;
-//				line.DelimiterLength = 0;
-//			} else {
-//				++lineNumber;
-//				for (int i = 1; i <= removedLineEnds; ++i) {
-//					
-//					if (lineNumber == lineCollection.Count) {
-//						line.DelimiterLength = 0;
-//						break;
-//					}
-//					
-//					LineSegment line2 = (LineSegment)lineCollection[lineNumber];
-//					
-//					line.TotalLength += line2.TotalLength;
-//					line.DelimiterLength = line2.DelimiterLength;
-//					lineCollection.RemoveAt(lineNumber);
-//				}
-//				line.TotalLength -= length;
-//				
-//				if (lineNumber < lineCollection.Count && removedLineEnds > 0) {
-//					markLines.Add(lineCollection[lineNumber]);
-//				}
-//			}
-//			
-//			textLength -= length;
-//			
-//			if (line.TotalLength == 0) {
-//				lineCollection.Remove(line);
-//				OnLineCountChanged(new LineManagerEventArgs(document, lineNumber, -removedLineEnds));
-//				return true;
-//			}
-//			
-//			markLines.Add(line);
-//			OnLineCountChanged(new LineManagerEventArgs(document, lineNumber, -removedLineEnds));
-//			return false;
-//		}
-	
-		bool Remove(int lineNumber, int offset, int length) 
+		bool Remove(int lineNumber, int offset, int length)
 		{
 			if (length == 0) {
 				return false;
@@ -216,30 +174,27 @@ namespace ICSharpCode.TextEditor.Document
 			LineSegment line = (LineSegment)lineCollection[lineNumber];
 			if ((lineNumber == lineCollection.Count - 1) && removedLineEnds > 0) {
 				line.TotalLength -= length;
+//				Console.WriteLine("3:Line length of line {0} set to {1}", lineNumber, line.TotalLength - line.DelimiterLength);
 				line.DelimiterLength = 0;
 			} else {
 				++lineNumber;
-				LineSegment line2 = null;
-				
-				// todo: take out this unneccessary loop...
-				for (int i = 0; i < removedLineEnds && lineNumber + i < lineCollection.Count; ++i) {
-					line2 = (LineSegment)lineCollection[lineNumber + i];
+				for (int i = 1; i <= removedLineEnds; ++i) {
+					
+					if (lineNumber == lineCollection.Count) {
+						line.DelimiterLength = 0;
+						break;
+					}
+					
+					LineSegment line2 = (LineSegment)lineCollection[lineNumber];
 					
 					line.TotalLength += line2.TotalLength;
+//					Console.WriteLine("4:Line length of line {0} set to {1}", lineNumber, line.TotalLength - line.DelimiterLength);
 					line.DelimiterLength = line2.DelimiterLength;
+					lineCollection.RemoveAt(lineNumber);
 				}
-
-				if (lineNumber + removedLineEnds >= lineCollection.Count) {
-					line.DelimiterLength = 0;
-				} else {
-					if (line2 != null) {
-						line.DelimiterLength = line2.DelimiterLength;
-					}
-				}
-					
-				lineCollection.RemoveRange(lineNumber, Math.Max(0, Math.Min(lineCollection.Count - lineNumber, removedLineEnds)));
-				
 				line.TotalLength -= length;
+//				Console.WriteLine("5:Line length of line {0} set to {1}", lineNumber, line.TotalLength - line.DelimiterLength);
+				
 				if (lineNumber < lineCollection.Count && removedLineEnds > 0) {
 					markLines.Add(lineCollection[lineNumber]);
 				}
@@ -269,7 +224,6 @@ namespace ICSharpCode.TextEditor.Document
 		{
 			Replace(offset, length, String.Empty);
 		}
-		
 		
 		public void Replace(int offset, int length, string text) 
 		{
@@ -375,115 +329,101 @@ namespace ICSharpCode.TextEditor.Document
 		
 		
 // OLD 'SAFE & TESTED' CreateLines
-//		int CreateLines(string text, int insertPosition, int offset) 
-//		{
-//			int count = 0;
-//			int start = 0;
-//			ISegment nextDelimiter = NextDelimiter(text, 0);
-//			while (nextDelimiter != null && nextDelimiter.Offset >= 0) {
-//				int index = nextDelimiter.Offset + (nextDelimiter.Length - 1);
-//				
-//				LineSegment newLine = new LineSegment(offset + start, offset + index, nextDelimiter.Length);
-//				
-//				markLines.Add(newLine);
-//				
-//				if (insertPosition + count >= lineCollection.Count) {
-//					lineCollection.Add(newLine);
-//				} else {
-//					lineCollection.Insert(insertPosition + count, newLine);
-//				}
-//				
-//				++count;
-//				start = index + 1;
-//				nextDelimiter = NextDelimiter(text, start);
-//			}
-//			
-//			if (start < text.Length) {
-//				if (insertPosition + count < lineCollection.Count) {
-//					LineSegment l = (LineSegment)lineCollection[insertPosition + count];
-//					
-//					int delta = text.Length - start;
-//					
-//					l.Offset -= delta;
-//					l.TotalLength += delta;
-//				} else {
-//					LineSegment newLine = new LineSegment(offset + start, text.Length - start);
-//					
-//					markLines.Add(newLine);
-//					lineCollection.Add(newLine);
-//					++count;
-//				}
-//			}
-//			OnLineCountChanged(new LineManagerEventArgs(document, insertPosition, count));
-//			return count;
-//		}
-		
-		int CreateLines(string text, int insertPosition, int offset)
+		int CreateLines(string text, int insertPosition, int offset) 
 		{
+			int count = 0;
 			int start = 0;
 			ISegment nextDelimiter = NextDelimiter(text, 0);
-			
-			ArrayList newLines = new ArrayList();
 			while (nextDelimiter != null && nextDelimiter.Offset >= 0) {
 				int index = nextDelimiter.Offset + (nextDelimiter.Length - 1);
 				
 				LineSegment newLine = new LineSegment(offset + start, offset + index, nextDelimiter.Length);
-				newLines.Add(newLine);
 				
+				markLines.Add(newLine);
+				
+				if (insertPosition + count >= lineCollection.Count) {
+					lineCollection.Add(newLine);
+				} else {
+					lineCollection.Insert(insertPosition + count, newLine);
+				}
+				
+				++count;
 				start = index + 1;
 				nextDelimiter = NextDelimiter(text, start);
 			}
 			
 			if (start < text.Length) {
-				if (insertPosition + newLines.Count < lineCollection.Count) {
-					LineSegment l = (LineSegment)lineCollection[insertPosition];
+				if (insertPosition + count < lineCollection.Count) {
+					LineSegment l = (LineSegment)lineCollection[insertPosition + count];
 					
 					int delta = text.Length - start;
-					l.Offset      -= delta;
+					
+					l.Offset -= delta;
 					l.TotalLength += delta;
 				} else {
 					LineSegment newLine = new LineSegment(offset + start, text.Length - start);
-					newLines.Add(newLine);
+					
+					markLines.Add(newLine);
+					lineCollection.Add(newLine);
+					++count;
 				}
 			}
-			
-			if (insertPosition >= lineCollection.Count) {
-				lineCollection.AddRange(newLines);
-			} else {
-				lineCollection.InsertRange(insertPosition, newLines);
-			}
-			markLines.AddRange(newLines);
-			
-			OnLineCountChanged(new LineManagerEventArgs(document, insertPosition, newLines.Count));
-			return newLines.Count;
+			OnLineCountChanged(new LineManagerEventArgs(document, insertPosition, count));
+			return count;
 		}
 		
-		public int GetLogicalLine(int lineNumber)
+		public int GetVisibleLine(int logicalLineNumber)
 		{
-			int invisibleLines = 0;
-			for (int i = 0; i < lineCollection.Count; ++i) {
-				if (!document.FoldingManager.IsLineVisible(i)) {
-					++invisibleLines;
+			if (!document.TextEditorProperties.EnableFolding) {
+				return logicalLineNumber;
+			}
+			
+			int visibleLine = 0;
+			int foldEnd = 0;
+			ArrayList foldings = document.FoldingManager.GetTopLevelFoldedFoldings();
+			foreach (FoldMarker fm in foldings) {
+				if (fm.StartLine >= logicalLineNumber) {
+					break;
 				}
-				if (i >= lineNumber) {
-					return i - invisibleLines;
+				if (fm.StartLine >= foldEnd) {
+					visibleLine += fm.StartLine - foldEnd;
+					if (fm.EndLine > logicalLineNumber) {
+						return visibleLine;
+					}
+					foldEnd = fm.EndLine;
 				}
 			}
-			return lineCollection.Count - invisibleLines;
+//			Debug.Assert(logicalLineNumber >= foldEnd);
+			visibleLine += logicalLineNumber - foldEnd;
+			return visibleLine;
 		}
-
-		public int GetVisibleLine(int lineNumber)
+		
+		public int GetFirstLogicalLine(int visibleLineNumber)
 		{
-			int visibleLines = 0;
-			for (int i = 0; i < lineCollection.Count; ++i) {
-				if (document.FoldingManager.IsLineVisible(i)) {
-					++visibleLines;
-				}
-				if (visibleLines > lineNumber) {
-					return i;
+			if (!document.TextEditorProperties.EnableFolding) {
+				return visibleLineNumber;
+			}
+			int v = 0;
+			int foldEnd = 0;
+			ArrayList foldings = document.FoldingManager.GetTopLevelFoldedFoldings();
+			foreach (FoldMarker fm in foldings) {
+				if (fm.StartLine >= foldEnd) {
+					if (v + fm.StartLine - foldEnd >= visibleLineNumber) {
+						break;
+					}
+					v += fm.StartLine - foldEnd;
+					foldEnd = fm.EndLine;
 				}
 			}
-			return lineCollection.Count;
+			return foldEnd + visibleLineNumber - v;
+		}
+		
+		public int GetLastLogicalLine(int visibleLineNumber)
+		{
+			if (!document.TextEditorProperties.EnableFolding) {
+				return visibleLineNumber;
+			}
+			return GetFirstLogicalLine(visibleLineNumber + 1) - 1;
 		}
 		
 		// TODO : speedup the next/prev visible line search
@@ -492,11 +432,15 @@ namespace ICSharpCode.TextEditor.Document
 		public int GetNextVisibleLineAbove(int lineNumber, int lineCount)
 		{
 			int curLineNumber = lineNumber;
-			for (int i = 0; i < lineCount && curLineNumber < TotalNumberOfLines; ++i) {
-				++curLineNumber;
-				while (curLineNumber < TotalNumberOfLines && (curLineNumber >= lineCollection.Count || !document.FoldingManager.IsLineVisible(curLineNumber))) {
+			if (document.TextEditorProperties.EnableFolding) {
+				for (int i = 0; i < lineCount && curLineNumber < TotalNumberOfLines; ++i) {
 					++curLineNumber;
+					while (curLineNumber < TotalNumberOfLines && (curLineNumber >= lineCollection.Count || !document.FoldingManager.IsLineVisible(curLineNumber))) {
+						++curLineNumber;
+					}
 				}
+			} else {
+				curLineNumber += lineCount;
 			}
 			return Math.Min(TotalNumberOfLines - 1, curLineNumber);
 		}
@@ -504,11 +448,15 @@ namespace ICSharpCode.TextEditor.Document
 		public int GetNextVisibleLineBelow(int lineNumber, int lineCount)
 		{
 			int curLineNumber = lineNumber;
-			for (int i = 0; i < lineCount; ++i) {
-				--curLineNumber;
-				while (curLineNumber >= 0 && !document.FoldingManager.IsLineVisible(curLineNumber)) {
+			if (document.TextEditorProperties.EnableFolding) {
+				for (int i = 0; i < lineCount; ++i) {
 					--curLineNumber;
+					while (curLineNumber >= 0 && !document.FoldingManager.IsLineVisible(curLineNumber)) {
+						--curLineNumber;
+					}
 				}
+			} else {
+				curLineNumber -= lineCount;
 			}
 			return Math.Max(0, curLineNumber);
 		}
@@ -544,6 +492,14 @@ namespace ICSharpCode.TextEditor.Document
 			return null;
 		}
 		
+		protected virtual void OnLineLengthChanged(LineLengthEventArgs e)
+		{
+			if (LineLengthChanged != null) {
+				LineLengthChanged(this, e);
+			}
+		}
+		
+		public event LineLengthEventHandler LineLengthChanged;
 		public event LineManagerEventHandler LineCountChanged;
 		
 		public class DelimiterSegment : ISegment

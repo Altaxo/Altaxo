@@ -25,22 +25,26 @@ namespace ICSharpCode.SharpDevelop.Services
 		IncludeHTMLMarkup      = 32,
 		UseLinkArrayList       = 64,
 		QualifiedNamesOnlyForReturnTypes = 128,
-		IncludeBodies          = 256,
+		IncludeBodies                    = 256,
+		ShowReturnType                   = 512,
 		
 		StandardConversionFlags = ShowParameterNames | 
 		                          UseFullyQualifiedNames | 
+		                          ShowReturnType |
 		                          ShowModifiers,
 		                          
 		All = ShowParameterNames | 
 		      ShowAccessibility | 
 		      UseFullyQualifiedNames |
 		      ShowModifiers | 
+		      ShowReturnType |
 		      ShowInheritanceList,
 		      
 		AssemblyScoutDefaults = StandardConversionFlags |
 		                        ShowAccessibility |	
 		                        QualifiedNamesOnlyForReturnTypes |
 		                        IncludeHTMLMarkup |
+		                        ShowReturnType|
 		                        UseLinkArrayList,
 	}
 	

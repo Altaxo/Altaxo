@@ -1,7 +1,7 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Kr�ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -21,7 +21,7 @@ namespace CSharpBinding
 	/// This class describes a C Sharp project and it compilation options.
 	/// </summary>
 	public class CSharpProject : AbstractProject
-	{		
+	{
 		public override string ProjectType {
 			get {
 				return CSharpLanguageBinding.LanguageName;
@@ -41,8 +41,17 @@ namespace CSharpBinding
 		{
 			if (info != null) {
 				Name = info.ProjectName;
-				Configurations.Add(CreateConfiguration("Debug"));
-				Configurations.Add(CreateConfiguration("Release"));
+				
+				CSharpCompilerParameters debug = (CSharpCompilerParameters)CreateConfiguration("Debug");
+				debug.Optimize = false;
+				Configurations.Add(debug);
+				
+				CSharpCompilerParameters release = (CSharpCompilerParameters)CreateConfiguration("Release");
+				release.Optimize = true;
+				release.Debugmode = false;
+				release.GenerateOverflowChecks = false;
+				release.TreatWarningsAsErrors = false;
+				Configurations.Add(release);
 				
 				foreach (CSharpCompilerParameters parameter in Configurations) {
 					parameter.OutputDirectory = info.BinPath + Path.DirectorySeparatorChar + parameter.Name;
@@ -57,6 +66,10 @@ namespace CSharpBinding
 						}
 						if (projectOptions.Attributes["PauseConsoleOutput"] != null) {
 							parameter.PauseConsoleOutput = Boolean.Parse(projectOptions.Attributes["PauseConsoleOutput"].InnerText);
+						}
+						
+						if (projectOptions.Attributes["generatexmldocumentation"] != null) {
+							parameter.GenerateXmlDocumentation = Boolean.Parse(projectOptions.Attributes["generatexmldocumentation"].InnerText);
 						}
 					}
 				}

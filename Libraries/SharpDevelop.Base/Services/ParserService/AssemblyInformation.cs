@@ -75,7 +75,6 @@ namespace ICSharpCode.SharpDevelop.Services {
 			if (System.IO.File.Exists(localizedXmlDocFile)) {
 				xmlDocFile = localizedXmlDocFile;
 			}
-			
 			if (System.IO.File.Exists(xmlDocFile)) {
 				doc = new XmlDocument();
 				doc.Load(xmlDocFile);
@@ -110,8 +109,8 @@ namespace ICSharpCode.SharpDevelop.Services {
         asm = nonLocking ? Assembly.Load(GetBytes(fileName)) : Assembly.LoadFrom(fileName);
       }
 #endif
-      foreach (Type type in asm.GetTypes()) {
-				if (!type.FullName.StartsWith("<")) {
+			foreach (Type type in asm.GetTypes()) {
+				if (!type.FullName.StartsWith("<") && type.IsPublic) {
 					classes.Add(new ReflectionClass(type, docuNodes));
 				}
 			}

@@ -22,7 +22,7 @@ namespace ICSharpCode.Core.AddIns.Codons
 		/// </summary>
 		public override object BuildItem(object owner, ArrayList subItems, ConditionCollection conditions)
 		{
-			Debug.Assert(Class != null && Class.Length > 0);
+			System.Diagnostics.Debug.Assert(Class != null && Class.Length > 0);
 			return AddIn.CreateObject(Class);
 		}
 		

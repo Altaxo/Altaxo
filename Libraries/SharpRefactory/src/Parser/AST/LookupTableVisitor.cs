@@ -71,7 +71,13 @@ namespace ICSharpCode.SharpRefactory.Parser
 			            foreachStatement.VariableName,
 			            foreachStatement.StartLocation,
 			            foreachStatement.EndLocation);
-			return data;
+			if (foreachStatement.Expression != null) {
+				foreachStatement.Expression.AcceptVisitor(this, data);
+			}
+			if (foreachStatement.EmbeddedStatement == null) {
+				return data;
+			}
+			return foreachStatement.EmbeddedStatement.AcceptVisitor(this, data);
 		}
 	}
 }

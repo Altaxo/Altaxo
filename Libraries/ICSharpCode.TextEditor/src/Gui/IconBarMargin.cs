@@ -41,25 +41,38 @@ namespace ICSharpCode.TextEditor
 		
 		public override void Paint(Graphics g, Rectangle rect)
 		{
+			if (rect.Width <= 0 || rect.Height <= 0) {
+				return;
+			}
 			// paint background
 			g.FillRectangle(SystemBrushes.Control, new Rectangle(drawingPosition.X, rect.Top, drawingPosition.Width - 1, rect.Height));
 			g.DrawLine(SystemPens.ControlDark, base.drawingPosition.Right - 1, rect.Top, base.drawingPosition.Right - 1, rect.Bottom);
 			
 			// paint icons
 			foreach (int mark in textArea.Document.BookmarkManager.Marks) {
-				int lineNumber = textArea.Document.GetLogicalLine(mark);
+				int lineNumber = textArea.Document.GetVisibleLine(mark);
 				int yPos = (int)(lineNumber * textArea.TextView.FontHeight) - textArea.VirtualTop.Y;
-//				if (yPos >= rect.Y && yPos <= rect.Bottom) {
+				if (yPos >= rect.Y && yPos <= rect.Bottom) {
 					DrawBookmark(g, yPos);
-//				}
+				}
 			}
+			base.Paint(g, rect);
 		}
 		
 #region Drawing functions
-		void DrawBookmark(Graphics g, int y)
+		public void DrawBreakpoint(Graphics g, int y, bool isEnabled)
 		{
 			int delta = textArea.TextView.FontHeight / 8;
-			Rectangle rect = new Rectangle( 1, y + delta, base.drawingPosition.Width - 4, textArea.TextView.FontHeight - delta * 2);
+			Rectangle rect = new Rectangle( 1 + delta, y+ delta, textArea.TextView.FontHeight - 2 * delta, textArea.TextView.FontHeight - 2 * delta);
+			
+			g.FillEllipse(isEnabled ? Brushes.Firebrick : Brushes.Beige, rect);
+			g.DrawEllipse(isEnabled ? Pens.Black        : Pens.DarkGray, rect);
+		}
+		
+		public void DrawBookmark(Graphics g, int y)
+		{
+			int delta = textArea.TextView.FontHeight / 8;
+			Rectangle rect = new Rectangle(1, y + delta, base.drawingPosition.Width - 4, textArea.TextView.FontHeight - delta * 2);
 			FillRoundRect(g, Brushes.Cyan, rect);
 			DrawRoundRect(g, Pens.Black, rect);
 		}
@@ -90,7 +103,7 @@ namespace ICSharpCode.TextEditor
 			g.DrawPath(p, gp);
 			gp.Dispose();
 		}
-
+		
 		void FillRoundRect(Graphics g, Brush b , Rectangle r)
 		{
 			GraphicsPath gp = CreateRoundRectGraphicsPath(r);

@@ -93,14 +93,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public PadContentCollection PadContentCollection {
 			get {
-				Debug.Assert(viewContentCollection != null);
+				System.Diagnostics.Debug.Assert(viewContentCollection != null);
 				return viewContentCollection;
 			}
 		}
 		
 		public ViewContentCollection ViewContentCollection {
 			get {
-				Debug.Assert(workbenchContentCollection != null);
+				System.Diagnostics.Debug.Assert(workbenchContentCollection != null);
 				return workbenchContentCollection;
 			}
 		}
@@ -156,52 +156,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 			CreateToolBars();
 		}
 		
-		//		public void OpenCombine(string filename)
-		//		{
-		//			Debug.Assert(projectManager != null);
-		//			projectManager.ClearCombine();
-		//			CloseAllFiles();
-		//			projectManager.OpenCombine(filename);
-		//			UpdateMenu(null, null);
-		//		}
-		//
-		//		public void SaveCombine()
-		//		{
-		//			Debug.Assert(projectManager != null);
-		//			projectManager.SaveCombine();
-		//		}
-		//
-		//		public void ClearCombine()
-		//		{
-		//			Debug.Assert(projectManager != null);
-		//			projectManager.ClearCombine();
-		//		}
-		//
-		//		public void MarkFileDirty(string filename)
-		//		{
-		//			Debug.Assert(projectManager != null);
-		//			projectManager.MarkFileDirty(filename);
-		//		}
-		//
-		//		public void OpenFile(string fileName)
-		//		{
-		//			Debug.Assert(fileManager != null);
-		//			fileManager.OpenFile(fileName);
-		//		}
-		//
-		//		public void NewFile(string defaultName, string language, string content)
-		//		{
-		//			Debug.Assert(fileManager != null);
-		//			fileManager.NewFile(defaultName, language, content);
-		//		}
-		
 		public void CloseContent(IViewContent content)
 		{
 			if (propertyService.GetProperty("SharpDevelop.LoadDocumentProperties", true) && content is IMementoCapable) {
 				StoreMemento(content);
 			}
-			if (workbenchContentCollection.Contains(content)) {
-				workbenchContentCollection.Remove(content);
+			if (ViewContentCollection.Contains(content)) {
+				ViewContentCollection.Remove(content);
 			}
 			content.Dispose();
 		}
@@ -223,7 +184,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public virtual void ShowView(IViewContent content)
 		{
-			Debug.Assert(layout != null);
+			System.Diagnostics.Debug.Assert(layout != null);
 			ViewContentCollection.Add(content);
 			if (propertyService.GetProperty("SharpDevelop.LoadDocumentProperties", true) && content is IMementoCapable) {
 				try {
@@ -255,6 +216,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			foreach (IViewContent content in workbenchContentCollection) {
 				content.RedrawContent();
+				if (content.WorkbenchWindow != null) {
+					content.WorkbenchWindow.RedrawContent();
+				}
 			}
 			foreach (IPadContent content in viewContentCollection) {
 				content.RedrawContent();
@@ -265,14 +229,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public IXmlConvertable GetStoredMemento(IViewContent content)
 		{
-			if (content != null && content.ContentName != null) {
+			if (content != null && content.FileName != null) {
 				PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 				
 				string directory = propertyService.ConfigDirectory + "temp";
 				if (!Directory.Exists(directory)) {
 					Directory.CreateDirectory(directory);
 				}
-				string fileName = content.ContentName.Substring(3).Replace('/', '.').Replace('\\', '.').Replace(Path.DirectorySeparatorChar, '.');
+				string fileName = content.FileName.Substring(3).Replace('/', '.').Replace('\\', '.').Replace(Path.DirectorySeparatorChar, '.');
 				string fullFileName = directory + Path.DirectorySeparatorChar + fileName;
 				// check the file name length because it could be more than the maximum length of a file name
 				FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
@@ -289,7 +253,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public void StoreMemento(IViewContent content)
 		{
-			if (content.ContentName == null) {
+			if (content.FileName == null) {
 				return;
 			}
 			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
@@ -302,7 +266,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			doc.LoadXml("<?xml version=\"1.0\"?>\n<Mementoable/>");
 			
 			XmlAttribute fileAttribute = doc.CreateAttribute("file");
-			fileAttribute.InnerText = content.ContentName;
+			fileAttribute.InnerText = content.FileName;
 			doc.DocumentElement.Attributes.Append(fileAttribute);
 			
 			
@@ -310,7 +274,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			doc.DocumentElement.AppendChild(memento.ToXmlElement(doc));
 			
-			string fileName = content.ContentName.Substring(3).Replace('/', '.').Replace('\\', '.').Replace(Path.DirectorySeparatorChar, '.');
+			string fileName = content.FileName.Substring(3).Replace('/', '.').Replace('\\', '.').Replace(Path.DirectorySeparatorChar, '.');
 			FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
 			// check the file name length because it could be more than the maximum length of a file name
 			string fullFileName = directory + Path.DirectorySeparatorChar + fileName;
@@ -363,15 +327,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			if (e.IsDirectory) {
 				foreach (IViewContent content in ViewContentCollection) {
-					if (content.ContentName.StartsWith(e.FileName)) {
+					if (content.FileName.StartsWith(e.FileName)) {
 						content.WorkbenchWindow.CloseWindow(true);
 					}
 				}
 			} else {
 				foreach (IViewContent content in ViewContentCollection) {
 					// WINDOWS DEPENDENCY : ToUpper
-					if (content.ContentName != null &&
-					    content.ContentName.ToUpper() == e.FileName.ToUpper()) {
+					if (content.FileName != null &&
+					    content.FileName.ToUpper() == e.FileName.ToUpper()) {
 						content.WorkbenchWindow.CloseWindow(true);
 						return;
 					}
@@ -383,16 +347,17 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			if (e.IsDirectory) {
 				foreach (IViewContent content in ViewContentCollection) {
-					if (content.ContentName.StartsWith(e.SourceFile)) {
-						content.ContentName = e.TargetFile + content.ContentName.Substring(e.SourceFile.Length);
+					if (content.FileName.StartsWith(e.SourceFile)) {
+						content.FileName = e.TargetFile + content.FileName.Substring(e.SourceFile.Length);
 					}
 				}
 			} else {
 				foreach (IViewContent content in ViewContentCollection) {
 					// WINDOWS DEPENDENCY : ToUpper
-					if (content.ContentName != null &&
-					    content.ContentName.ToUpper() == e.SourceFile.ToUpper()) {
-						content.ContentName = e.TargetFile;
+					if (content.FileName != null &&
+					    content.FileName.ToUpper() == e.SourceFile.ToUpper()) {
+						content.FileName  = e.TargetFile;
+						content.TitleName = Path.GetFileName(e.TargetFile);
 						return;
 					}
 				}
@@ -416,15 +381,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 			base.OnClosing(e);
 			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
 			
-			if (projectService != null)
-			{
+			if (projectService != null) {
 				projectService.SaveCombinePreferences();
-				while (WorkbenchSingleton.Workbench.ViewContentCollection.Count > 0) 
-				{
+				while (WorkbenchSingleton.Workbench.ViewContentCollection.Count > 0) {
 					IViewContent content = WorkbenchSingleton.Workbench.ViewContentCollection[0];
 					content.WorkbenchWindow.CloseWindow(false);
-					if (WorkbenchSingleton.Workbench.ViewContentCollection.IndexOf(content) >= 0) 
-					{
+					if (WorkbenchSingleton.Workbench.ViewContentCollection.IndexOf(content) >= 0) {
 						e.Cancel = true;
 						return;
 					}

@@ -5,8 +5,6 @@
 //     <version value="$version"/>
 // </file>
 
-#if !LINUX
-
 using System;
 using System.IO;
 using System.Windows.Forms;
@@ -29,11 +27,11 @@ namespace ICSharpCode.Core.Services
 		
 		public SaveErrorInformDialog(string fileName, string message, string dialogName, Exception exceptionGot) 
 		{
-			this.Text = dialogName;
+			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+			this.Text = stringParserService.Parse(dialogName);
 			//  Must be called for initialization
 			this.InitializeComponent2();
 			
-			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
 			displayMessage = stringParserService.Parse(message, new string[,] {
 				{"FileName", fileName},
 				{"Path",     Path.GetDirectoryName(fileName)},
@@ -57,7 +55,7 @@ namespace ICSharpCode.Core.Services
 		/// </summary>
 		private void InitializeComponent2() 
 		{
-			
+			IResourceService resourceService = (IResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 			//
 			//  Set up generated class SaveErrorInformDialog
 			// 
@@ -73,7 +71,7 @@ namespace ICSharpCode.Core.Services
 			this.descriptionLabel.Anchor = (System.Windows.Forms.AnchorStyles.Top 
 						| (System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right));
 			this.descriptionLabel.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			this.descriptionLabel.Text = "Description";
+			this.descriptionLabel.Text = resourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel");
 			this.descriptionLabel.Name = "descriptionLabel";
 			this.Controls.Add(descriptionLabel);
 			
@@ -99,7 +97,7 @@ namespace ICSharpCode.Core.Services
 			this.exceptionButton.TabIndex = 1;
 			this.exceptionButton.Name = "exceptionButton";
 			this.exceptionButton.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right);
-			this.exceptionButton.Text = "Show Exception";
+			this.exceptionButton.Text = resourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton");
 			this.exceptionButton.Size = new System.Drawing.Size(120, 27);
 			this.exceptionButton.Location = new System.Drawing.Point(372, 285);
 			this.exceptionButton.Click += new EventHandler(ShowException);
@@ -112,7 +110,7 @@ namespace ICSharpCode.Core.Services
 			this.okButton.Name = "okButton";
 			this.okButton.TabIndex = 0;
 			this.okButton.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right);
-			this.okButton.Text = "OK";//resourceService.GetString("Global.OKButtonText");
+			this.okButton.Text = resourceService.GetString("Global.OKButtonText");
 			this.okButton.Size = new System.Drawing.Size(120, 27);
 			this.okButton.Location = new System.Drawing.Point(244, 285);
 			this.okButton.DialogResult = DialogResult.OK;
@@ -131,4 +129,3 @@ namespace ICSharpCode.Core.Services
 		}
 	}
 }
-#endif

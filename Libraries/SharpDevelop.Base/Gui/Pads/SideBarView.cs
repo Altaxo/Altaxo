@@ -40,6 +40,27 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			}
 		}
 		
+		string category;
+		public string Category {
+			get {
+				return category;
+			}
+			set{
+				category = value;
+			}
+		}
+		string[] shortcut; // TODO: Inherit from AbstractPadContent
+		public string[] Shortcut {
+			get {
+				return shortcut;
+			}
+			set {
+				shortcut = value;
+			}
+		}
+		
+
+
 		public void RedrawContent()
 		{
 			OnTitleChanged(null);
@@ -123,14 +144,13 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		public event EventHandler TitleChanged;
 		public event EventHandler IconChanged;
 
-		public void BringToFront()
+		public void BringPadToFront()
 		{
 			if (!WorkbenchSingleton.Workbench.WorkbenchLayout.IsVisible(this)) {
 				WorkbenchSingleton.Workbench.WorkbenchLayout.ShowPad(this);
 			}
 			WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this);
 		}
-
 	}
 }
 

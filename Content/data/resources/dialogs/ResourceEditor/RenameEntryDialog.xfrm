@@ -1,0 +1,45 @@
+<Components version="1.0">
+  <System.Windows.Forms.Form>
+    <Name value="MyForm" />
+    <ShowInTaskbar value="False" />
+    <FormBorderStyle value="FixedDialog" />
+    <StartPosition value="CenterScreen" />
+    <ClientSize value="{Width=288, Height=103}" />
+    <MinimizeBox value="False" />
+    <DockPadding value="" />
+    <AcceptButton value="OkButton [System.Windows.Forms.Button], Text: ${res:Global.OKButtonText}" />
+    <CancelButton value="CancelButton [System.Windows.Forms.Button], Text: ${res:Global.CancelButtonText}" />
+    <MaximizeBox value="False" />
+    <Controls>
+      <System.Windows.Forms.Button>
+        <Name value="CancelButton" />
+        <Location value="{X=112,Y=64}" />
+        <Text value="${res:Global.CancelButtonText}" />
+        <TabIndex value="2" />
+        <DialogResult value="Cancel" />
+      </System.Windows.Forms.Button>
+      <System.Windows.Forms.Button>
+        <Name value="OkButton" />
+        <Location value="{X=200,Y=64}" />
+        <Size value="{Width=80, Height=24}" />
+        <Text value="${res:Global.OKButtonText}" />
+        <TabIndex value="3" />
+        <DialogResult value="OK" />
+      </System.Windows.Forms.Button>
+      <System.Windows.Forms.TextBox>
+        <Name value="ResourceNameTextBox" />
+        <TabIndex value="1" />
+        <Location value="{X=8,Y=24}" />
+        <Size value="{Width=272, Height=21}" />
+        <Text value="" />
+      </System.Windows.Forms.TextBox>
+      <System.Windows.Forms.Label>
+        <Name value="label" />
+        <Text value="${res:ResourceEditor.RenameEntry.NameLabel}" />
+        <TabIndex value="0" />
+        <Size value="{Width=248, Height=16}" />
+        <Location value="{X=8,Y=8}" />
+      </System.Windows.Forms.Label>
+    </Controls>
+  </System.Windows.Forms.Form>
+</Components>

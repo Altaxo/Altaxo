@@ -55,7 +55,7 @@ namespace Reflector.UserInterface
 			if (!this.Contains(commandBar))
 			{
 				int index = this.bands.Add(commandBar);
-				this.commandBarManager.AddCommandBar();
+				this.commandBarManager.UpdateBands();
 				return index;
 			}
 			
@@ -83,13 +83,13 @@ namespace Reflector.UserInterface
 		public void Remove(CommandBar commandBar)
 		{
 			this.bands.Remove(commandBar);
-			this.commandBarManager.RemoveCommandBar();
+			this.commandBarManager.UpdateBands();
 		}
 
 		public void RemoveAt(int index)
 		{
 			this.bands.RemoveAt(index);
-			this.commandBarManager.RemoveCommandBar();
+			this.commandBarManager.UpdateBands();
 		}
 
 		public CommandBar this[int index]

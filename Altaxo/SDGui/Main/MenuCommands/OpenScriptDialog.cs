@@ -263,7 +263,7 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
           return;
         }
         
-        if (window.ViewContent.ContentName == null) 
+        if (window.ViewContent.TitleName == null) 
         {
           SaveFileAs sfa = new SaveFileAs();
           sfa.Run();
@@ -271,7 +271,7 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
         else 
         {
           FileAttributes attr = FileAttributes.ReadOnly | FileAttributes.Directory | FileAttributes.Offline | FileAttributes.System;
-          if ((File.GetAttributes(window.ViewContent.ContentName) & attr) != 0) 
+          if ((File.GetAttributes(window.ViewContent.TitleName) & attr) != 0) 
           {
             SaveFileAs sfa = new SaveFileAs();
             sfa.Run();
@@ -280,8 +280,8 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
           {
             ICSharpCode.SharpDevelop.Services.IProjectService projectService = (ICSharpCode.SharpDevelop.Services.IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.IProjectService));
             FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-            projectService.MarkFileDirty(window.ViewContent.ContentName);
-            fileUtilityService.ObservedSave(new FileOperationDelegate(window.ViewContent.Save), window.ViewContent.ContentName);
+            projectService.MarkFileDirty(window.ViewContent.TitleName);
+            fileUtilityService.ObservedSave(new FileOperationDelegate(window.ViewContent.Save), window.ViewContent.TitleName);
           }
         }
       }
@@ -322,7 +322,7 @@ namespace Altaxo.Main.Commands.ScriptEditorCommands
           fdiag.Filter          = String.Join("|", fileFilters);
           for (int i = 0; i < fileFilters.Length; ++i) 
           {
-            if (fileFilters[i].IndexOf(Path.GetExtension(window.ViewContent.ContentName == null ? window.ViewContent.UntitledName : window.ViewContent.ContentName)) >= 0) 
+            if (fileFilters[i].IndexOf(Path.GetExtension(window.ViewContent.TitleName == null ? window.ViewContent.UntitledName : window.ViewContent.TitleName)) >= 0) 
             {
               fdiag.FilterIndex = i + 1;
               break;

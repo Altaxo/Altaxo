@@ -20,6 +20,9 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		ImageList ImageList {
 			get;
 		}
+		string PreSelection {
+			get;
+		}
 		
 		ICompletionData[] GenerateCompletionData(string fileName, TextArea textArea, char charTyped);
 	}

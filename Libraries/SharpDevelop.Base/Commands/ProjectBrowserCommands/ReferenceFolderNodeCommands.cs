@@ -80,56 +80,56 @@ namespace ICSharpCode.SharpDevelop.Commands.ProjectBrowser
 	{
 		public override void Run()
 		{
-			ProjectBrowserView browser = (ProjectBrowserView)Owner;
-			AbstractBrowserNode node   = browser.SelectedNode as AbstractBrowserNode;
-			AbstractBrowserNode projectNode = DefaultDotNetNodeBuilder.GetProjectNode(node);
-			bool bInitReferences = false;
-			
-			if (node != null) {
-				IProject project = ((ProjectBrowserNode)node.Parent).Project;
-				FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-				IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-				IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));					
-			
-				using (AddWebReferenceDialog refDialog = new AddWebReferenceDialog(project)) {
-					if (refDialog.ShowDialog() == DialogResult.OK) {						
-						foreach(object objReference in refDialog.ReferenceInformations) {
-							if(objReference is ProjectReference) {
-								ProjectReference refInfo = (ProjectReference)objReference;
-								project.ProjectReferences.Add(refInfo);
-								if(refInfo.ReferenceType == ReferenceType.Assembly) {
-									parserService.AddReferenceToCompletionLookup(project, refInfo);
-									bInitReferences = true;
-								}
-							} else if(objReference is ProjectFile) {
-								ProjectFile projectFile = (ProjectFile) objReference;
-								//HACK: fix later
-								if(projectFile.Subtype == Subtype.WebReferences || projectFile.Subtype == Subtype.Directory) {																		
-									AbstractBrowserNode checkNode = DefaultDotNetNodeBuilder.GetPath(fileUtilityService.AbsoluteToRelativePath(project.BaseDirectory,projectFile.Name + Path.DirectorySeparatorChar), projectNode, false);
-									if(checkNode != null) {
-										continue;
-									}
-								}																																	
-								// add to the project browser
-								DefaultDotNetNodeBuilder.AddProjectFileNode(project, projectNode, projectFile);
-									
-								// add to the project
-								projectService.AddFileToProject(project, projectFile);
-								
-								// add to code completion
-								if(projectFile.Subtype == Subtype.Code ) {
-									parserService.ParseFile(projectFile.Name);
-								}
-								
-							}							
-						}
-						if(bInitReferences) {
-							DefaultDotNetNodeBuilder.InitializeReferences(node, project);						
-						}
-						projectService.SaveCombine();						
-					}
-				}				
-			}
+//			ProjectBrowserView browser = (ProjectBrowserView)Owner;
+//			AbstractBrowserNode node   = browser.SelectedNode as AbstractBrowserNode;
+//			AbstractBrowserNode projectNode = DefaultDotNetNodeBuilder.GetProjectNode(node);
+//			bool bInitReferences = false;
+//			
+//			if (node != null) {
+//				IProject project = ((ProjectBrowserNode)node.Parent).Project;
+//				FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+//				IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+//				IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));					
+//			
+//				using (AddWebReferenceDialog refDialog = new AddWebReferenceDialog(project)) {
+//					if (refDialog.ShowDialog() == DialogResult.OK) {						
+//						foreach(object objReference in refDialog.ReferenceInformations) {
+//							if(objReference is ProjectReference) {
+//								ProjectReference refInfo = (ProjectReference)objReference;
+//								project.ProjectReferences.Add(refInfo);
+//								if(refInfo.ReferenceType == ReferenceType.Assembly) {
+//									parserService.AddReferenceToCompletionLookup(project, refInfo);
+//									bInitReferences = true;
+//								}
+//							} else if(objReference is ProjectFile) {
+//								ProjectFile projectFile = (ProjectFile) objReference;
+//								//HACK: fix later
+//								if(projectFile.Subtype == Subtype.WebReferences || projectFile.Subtype == Subtype.Directory) {																		
+//									AbstractBrowserNode checkNode = DefaultDotNetNodeBuilder.GetPath(fileUtilityService.AbsoluteToRelativePath(project.BaseDirectory,projectFile.Name + Path.DirectorySeparatorChar), projectNode, false);
+//									if(checkNode != null) {
+//										continue;
+//									}
+//								}																																	
+//								// add to the project browser
+//								DefaultDotNetNodeBuilder.AddProjectFileNode(project, projectNode, projectFile);
+//									
+//								// add to the project
+//								projectService.AddFileToProject(project, projectFile);
+//								
+//								// add to code completion
+//								if(projectFile.Subtype == Subtype.Code ) {
+//									parserService.ParseFile(projectFile.Name);
+//								}
+//								
+//							}							
+//						}
+//						if(bInitReferences) {
+//							DefaultDotNetNodeBuilder.InitializeReferences(node, project);						
+//						}
+//						projectService.SaveCombine();						
+//					}
+//				}				
+//			}
 		}
 	}
 }

@@ -23,8 +23,9 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 	{
 		static ClassBrowserIconsService classBrowserIconService = (ClassBrowserIconsService)ServiceManager.Services.GetService(typeof(ClassBrowserIconsService));
 		static IParserService           parserService           = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
-		static AmbienceService          ambienceService = (AmbienceService)ServiceManager.Services.GetService(typeof(AmbienceService));
 		
+		
+		IAmbience ambience;
 		int      imageIndex;
 		int      overloads;
 		string   text;
@@ -33,6 +34,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		string   completionString;
 		IClass   c;
 		bool     convertedDocumentation = false;
+		
 		
 		public int Overloads {
 			get {
@@ -60,6 +62,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				text = value[0];
 			}
 		}
+		
 		public string Description {
 			get {
 				// get correct delegate description (when description is requested)
@@ -68,7 +71,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				//
 				// Mike
 				if (c is ClassProxy && c.ClassType == ClassType.Delegate) {
-					description = ambienceService.CurrentAmbience.Convert(parserService.GetClass(c.FullyQualifiedName));
+					description = ambience.Convert(parserService.GetClass(c.FullyQualifiedName));
 					c = null;
 				}
 				
@@ -90,7 +93,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 						Console.WriteLine(e.ToString());
 					}
 				}
-				return description + (overloads > 0 ? " (+" + overloads + " overloads)" : String.Empty) + "\n" + documentation;
+				StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+				return description + (overloads > 0 ? " " + stringParserService.Parse("${res:ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.CodeCompletionData.OverloadsCounter}", new string[,] {{"NumOverloads", overloads.ToString()}}) : String.Empty) + "\n" + documentation;
 			}
 			set {
 				description = value;
@@ -99,6 +103,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		public CodeCompletionData(string s, int imageIndex)
 		{
+			AmbienceService ambienceService = (AmbienceService)ServiceManager.Services.GetService(typeof(AmbienceService));			
+			ambience = ambienceService.CurrentAmbience;
 			description = documentation = String.Empty;
 			text = s;
 			completionString = s;
@@ -107,47 +113,62 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		public CodeCompletionData(IClass c)
 		{
+			AmbienceService ambienceService = (AmbienceService)ServiceManager.Services.GetService(typeof(AmbienceService));			
+			ambience = ambienceService.CurrentAmbience;
 			// save class (for the delegate description shortcut
 			this.c = c;
 			imageIndex = classBrowserIconService.GetIcon(c);
 			text = c.Name;
 			completionString = c.Name;
-			description = ambienceService.CurrentAmbience.Convert(c);
+			ambience.ConversionFlags = ConversionFlags.UseFullyQualifiedNames | ConversionFlags.ShowReturnType | ConversionFlags.ShowModifiers;
+			description = ambience.Convert(c);
 			documentation = c.Documentation;
 		}
 		
 		public CodeCompletionData(IMethod method)
 		{
+			AmbienceService ambienceService = (AmbienceService)ServiceManager.Services.GetService(typeof(AmbienceService));			
+			ambience = ambienceService.CurrentAmbience;
+			ambience.ConversionFlags |= ConversionFlags.ShowReturnType;
 			imageIndex  = classBrowserIconService.GetIcon(method);
 			text        = method.Name;
-			description = ambienceService.CurrentAmbience.Convert(method);
+			description = ambience.Convert(method);
 			completionString = method.Name;
 			documentation = method.Documentation;
 		}
 		
 		public CodeCompletionData(IField field)
 		{
+			AmbienceService ambienceService = (AmbienceService)ServiceManager.Services.GetService(typeof(AmbienceService));			
+			ambience = ambienceService.CurrentAmbience;
+			ambience.ConversionFlags |= ConversionFlags.ShowReturnType;
 			imageIndex  = classBrowserIconService.GetIcon(field);
 			text        = field.Name;
-			description = ambienceService.CurrentAmbience.Convert(field);
+			description = ambience.Convert(field);
 			completionString = field.Name;
 			documentation = field.Documentation;
 		}
 		
 		public CodeCompletionData(IProperty property)
 		{
+			AmbienceService ambienceService = (AmbienceService)ServiceManager.Services.GetService(typeof(AmbienceService));			
+			ambience = ambienceService.CurrentAmbience;
+			ambience.ConversionFlags |= ConversionFlags.ShowReturnType;
 			imageIndex  = classBrowserIconService.GetIcon(property);
 			text        = property.Name;
-			description = ambienceService.CurrentAmbience.Convert(property);
+			description = ambience.Convert(property);
 			completionString = property.Name;
 			documentation = property.Documentation;
 		}
 		
 		public CodeCompletionData(IEvent e)
 		{
+			AmbienceService ambienceService = (AmbienceService)ServiceManager.Services.GetService(typeof(AmbienceService));			
+			ambience = ambienceService.CurrentAmbience;
+			ambience.ConversionFlags |= ConversionFlags.ShowReturnType;
 			imageIndex  = classBrowserIconService.GetIcon(e);
 			text        = e.Name;
-			description = ambienceService.CurrentAmbience.Convert(e);
+			description = ambience.Convert(e);
 			completionString = e.Name;
 			documentation = e.Documentation;
 		}
@@ -166,35 +187,48 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			
 			try {
 				xml.Read();
+				bool appendText = true;
 				do {
 					if (xml.NodeType == XmlNodeType.Element) {
 						string elname = xml.Name.ToLower();
 						if (elname == "remarks") {
-							ret.Append("Remarks:\n");
+							appendText = false;
+//							ret.Append("Remarks:\n");
 						} else if (elname == "example") {
-							ret.Append("Example:\n");
+							appendText = false;
+//							ret.Append("\nExample:");
 						} else if (elname == "exception") {
-							ret.Append("Exception: " + GetCref(xml["cref"]) + ":\n");
+							appendText = false;
+//							ret.Append("\nException: " + GetCref(xml["cref"]) + ":\n");
 						} else if (elname == "returns") {
-							ret.Append("Returns: ");
+							appendText = false;
+//							ret.Append("\nReturns: ");
 						} else if (elname == "see") {
-							ret.Append(GetCref(xml["cref"]) + xml["langword"]);
+							appendText = false;
+//							ret.Append(GetCref(xml["cref"]) + xml["langword"]);
 						} else if (elname == "seealso") {
-							ret.Append("See also: " + GetCref(xml["cref"]) + xml["langword"]);
+							appendText = false;
+//							ret.Append("See also: " + GetCref(xml["cref"]) + xml["langword"]);
 						} else if (elname == "paramref") {
-							ret.Append(xml["name"]);
+//							ret.Append(xml["name"]);
+							appendText = false;
 						} else if (elname == "param") {
-							ret.Append(xml["name"].Trim() + ": ");
+//							ret.Append(xml["name"].Trim() + ": ");
+							appendText = false;
 						} else if (elname == "value") {
-							ret.Append("Value: ");
+							appendText = false;
+//							ret.Append("Value: ");
 						}
 					} else if (xml.NodeType == XmlNodeType.EndElement) {
 						string elname = xml.Name.ToLower();
-						if (elname == "para" || elname == "param") {
-							ret.Append("\n");
-						}
+//						if (elname == "para" || elname == "param") {
+//							ret.Append("\n");
+//						}
 					} else if (xml.NodeType == XmlNodeType.Text) {
-						ret.Append(whitespace.Replace(xml.Value, " "));
+						if (appendText) {
+							ret.Append(whitespace.Replace(xml.Value, " "));
+						}
+						appendText = true;
 					}
 				} while(xml.Read());
 			} catch {
@@ -210,6 +244,15 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			if (cref.Substring(1, 1) == ":") return cref.Substring(2, cref.Length - 2);
 			return cref;
 		}
-	
+		
+		#region System.IComparable interface implementation
+		public int CompareTo(object obj)
+		{
+			if (obj == null || !(obj is CodeCompletionData)) {
+				return -1;
+			}
+			return text.CompareTo(((CodeCompletionData)obj).text);
+		}
+		#endregion
 	}
 }

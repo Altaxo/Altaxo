@@ -12,7 +12,7 @@
 	      extensions = ".atg"/>
 	
 	<Mode file       = "CPP-Mode.xshd"
-	      name       = "C++"
+	      name       = "C++.NET"
 	      extensions = ".c;.h;.cc;.C;.cpp;.hpp"/>
 	
 	<Mode file       = "CSharp-Mode.xshd"
@@ -45,5 +45,9 @@
 	
 	<Mode file       = "XML-Mode.xshd"
 	      name       = "XML"
-	      extensions = ".xml;.xsl;.xslt;.xsd;.manifest;.config;.addin;.xshd"/>
+	      extensions = ".xml;.xsl;.xslt;.xsd;.manifest;.config;.addin;.xshd;.wxs"/>
+      
+	<Mode file       = "ILAsm-Mode.xshd"
+	      name       = "ILAsm"
+	      extensions = ".il"/>
 </SyntaxModes>

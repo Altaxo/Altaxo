@@ -40,6 +40,13 @@ using System.Text;
 namespace ICSharpCode.SharpZipLib.Zip 
 {
 	
+	public enum CompressionMethod
+	{
+		Stored     = 0,
+		Deflated   = 8,
+		Deflate64  = 9
+	}
+	
 	/// <summary>
 	/// This class contains constants used for zip.
 	/// </summary>
@@ -111,6 +118,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		public const int ENDOFF = 16;
 		public const int ENDCOM = 20;
 		
+		public const int CRYPTO_HEADER_SIZE = 12;
 		
 		static int defaultCodePage = 0;  // 0 gives default code page, set it to whatever you like or alternatively alter it via property at runtime for more flexibility
 		                                 // Some care for compatability purposes is required as you can specify unicode code pages here.... if this way of working seems ok
@@ -125,18 +133,23 @@ namespace ICSharpCode.SharpZipLib.Zip
 			}
 		}
 		
+		public static string ConvertToString(byte[] data, int length)
+		{
+#if COMPACT_FRAMEWORK
+			return Encoding.ASCII.GetString(data,0, length);
+#else
+			return Encoding.GetEncoding(DefaultCodePage).GetString(data, 0, length);
+#endif
+		}
+		
 		public static string ConvertToString(byte[] data)
 		{
-#if COMACT_FRAMEWORK			
-			return Encoding.ASCII.GetString(data,0, data.Length);
-#else
-			return Encoding.GetEncoding(DefaultCodePage).GetString(data, 0, data.Length);
-#endif
+			return ConvertToString(data, data.Length);
 		}
 		
 		public static byte[] ConvertToArray(string str)
 		{
-#if COMACT_FRAMEWORK			
+#if COMPACT_FRAMEWORK
 			return Encoding.ASCII.GetBytes(str);
 #else
 			return Encoding.GetEncoding(DefaultCodePage).GetBytes(str);

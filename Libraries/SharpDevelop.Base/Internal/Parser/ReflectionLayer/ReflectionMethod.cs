@@ -46,7 +46,7 @@ namespace SharpDevelop.Internal.Parser
 			if (xmlComments != null) {
 				node = xmlComments["M:" + FullyQualifiedName + GetParamList(methodBase)] as XmlNode;
 				if (node != null) {
-					documentation = node.InnerXml;
+					Documentation = node.InnerXml;
 				}
 			}
 			

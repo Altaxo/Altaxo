@@ -24,6 +24,7 @@ namespace Reflector.UserInterface
 
 		protected virtual void OnDropDown(EventArgs e)
 		{
+			NotifySelect(e);
 			if (this.DropDown != null)
 			{
 				this.DropDown(this, e);

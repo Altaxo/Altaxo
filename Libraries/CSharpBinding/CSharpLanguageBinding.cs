@@ -35,16 +35,16 @@ namespace CSharpBinding
 			}
 		}
 		
-		public void Execute(string filename)
+		public void Execute(string filename, bool debug)
 		{
 			Debug.Assert(executionManager != null);
-			executionManager.Execute(filename);
+			executionManager.Execute(filename, debug);
 		}
 		
-		public void Execute(IProject project)
+		public void Execute(IProject project, bool debug)
 		{
 			Debug.Assert(executionManager != null);
-			executionManager.Execute(project);
+			executionManager.Execute(project, debug);
 		}
 		
 		public string GetCompiledOutputName(string fileName)

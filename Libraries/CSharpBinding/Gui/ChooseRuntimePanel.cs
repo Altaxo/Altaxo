@@ -38,6 +38,23 @@ namespace CSharpBinding
 			
 			((RadioButton)ControlDictionary["cscRadioButton"]).Checked = config.CsharpCompiler == CsharpCompiler.Csc;
 			((RadioButton)ControlDictionary["mcsRadioButton"]).Checked = config.CsharpCompiler == CsharpCompiler.Mcs;
+		
+			((RadioButton)ControlDictionary["cscRadioButton"]).CheckedChanged += new EventHandler(CompilerRadioButtonCheckedChanged);
+			
+			FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+			((ComboBox)ControlDictionary["compilerVersionComboBox"]).Items.Add("Standard");
+			foreach (string runtime in fileUtilityService.GetAvaiableRuntimeVersions()) {
+				((ComboBox)ControlDictionary["compilerVersionComboBox"]).Items.Add(runtime);
+			}
+			
+			((ComboBox)ControlDictionary["compilerVersionComboBox"]).Text = config.CSharpCompilerVersion.Length == 0 ? "Standard" : config.CSharpCompilerVersion;
+			CompilerRadioButtonCheckedChanged(this, EventArgs.Empty);
+		}
+		
+		void CompilerRadioButtonCheckedChanged(object sender, EventArgs e)
+		{
+			ControlDictionary["compilerVersionLabel"].Enabled    = ((RadioButton)ControlDictionary["cscRadioButton"]).Checked;
+			ControlDictionary["compilerVersionComboBox"].Enabled = ((RadioButton)ControlDictionary["cscRadioButton"]).Checked;
 		}
 		
 		public override bool StorePanelContents()
@@ -50,6 +67,7 @@ namespace CSharpBinding
 				config.NetRuntime =  NetRuntime.MonoInterpreter;
 			}
 			config.CsharpCompiler = ((RadioButton)ControlDictionary["cscRadioButton"]).Checked ? CsharpCompiler.Csc : CsharpCompiler.Mcs;
+			config.CSharpCompilerVersion = ControlDictionary["compilerVersionComboBox"].Text;
 			
 			return true;
 		}

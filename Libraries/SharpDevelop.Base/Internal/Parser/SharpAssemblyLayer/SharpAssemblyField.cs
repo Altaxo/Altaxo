@@ -51,6 +51,7 @@ namespace SharpDevelop.Internal.Parser {
 				sect.Attributes.Add(new SharpAssemblyAttribute(assembly, customattribute));
 			}
 			
+			if (attributes == null) attributes = new AttributeSectionCollection();
 			attributes.Add(sect);
 		
 		noatt:

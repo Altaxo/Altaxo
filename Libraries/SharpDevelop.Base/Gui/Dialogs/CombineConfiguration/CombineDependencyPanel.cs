@@ -97,7 +97,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels
 		/// </summary>
 		private void InitializeComponent()
 		{
-			bool flat = Crownwood.Magic.Common.VisualStyle.IDE == (Crownwood.Magic.Common.VisualStyle)propertyService.GetProperty("ICSharpCode.SharpDevelop.Gui.VisualStyle", Crownwood.Magic.Common.VisualStyle.IDE);
+			bool flat = true;
 			this.label1 = new System.Windows.Forms.Label();
 			
 			this.comboBox1 = new System.Windows.Forms.ComboBox();

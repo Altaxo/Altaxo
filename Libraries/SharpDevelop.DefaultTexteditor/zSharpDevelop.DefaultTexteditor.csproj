@@ -158,11 +158,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Commands\CodeActions.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Commands\CommentRegionCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -175,6 +170,11 @@
                 <File
                     RelPath = "Commands\FormatCommands.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\GenerateCodeCommand.cs"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -202,6 +202,71 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Commands\CodeGenerators\AbstractClassImplementorCodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\CodeGenerators\AbstractFieldCodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\CodeGenerators\AbstractPropertyCodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\CodeGenerators\CodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\CodeGenerators\ConstructorCodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\CodeGenerators\EqualsCodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\CodeGenerators\GetterAndSetterCodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\CodeGenerators\GetterCodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\CodeGenerators\InterfaceImplementorCodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\CodeGenerators\OnXXXMethodsCodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\CodeGenerators\OverrideMethodsCodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\CodeGenerators\SetterCodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\CodeGenerators\ToStringCodeGenerator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Conditions\TextContentCondition.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -213,22 +278,22 @@
                 />
                 <File
                     RelPath = "Gui\Dialogs\GotoLineNumberDialog.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\ReplaceDialog.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\ReplaceInFilesDialog.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\SortOptionsDialog.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -247,8 +312,13 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\Editor\QuickClassBrowserPanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\Editor\SharpDevelopTextAreaControl.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
@@ -277,6 +347,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\Editor\CompletionWindow\HtmlDeclarationViewWindow.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\Editor\CompletionWindow\TemplateCompletionDataProvider.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -293,17 +368,17 @@
                 />
                 <File
                     RelPath = "Gui\OptionPanels\BehaviorTextEditorPanel.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\OptionPanels\CodeTemplatePanel.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\OptionPanels\GeneralTextEditorPanel.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
@@ -312,12 +387,7 @@
                 />
                 <File
                     RelPath = "Gui\OptionPanels\MarkersTextEditorPanel.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\Pads\CompilerMessageView.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File

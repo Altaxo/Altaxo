@@ -101,6 +101,24 @@ namespace Altaxo.Main.Commands
         }
       }
 
+      /// <summary>
+      /// Marks a project for needing recompilation.
+      /// </summary>
+      public bool IsDirty 
+      {
+        get { return false; }
+        set {}
+      }
+
+      /// <summary>
+      /// The standad namespace new classes will be assigned to.
+      /// </summary>
+      public string StandardNamespace 
+      {
+        get { return "Altaxo"; }
+        set {}
+      }
+
       public ICSharpCode.SharpDevelop.Internal.Project.DeployInformation DeployInformation
       {
         get
@@ -192,6 +210,11 @@ namespace Altaxo.Main.Commands
       }
 
       public void CopyReferencesToOutputPath(bool force)
+      {
+        throw new NotImplementedException();
+      }
+
+      public void CopyReferencesToPath(string destination, bool force)
       {
         throw new NotImplementedException();
       }

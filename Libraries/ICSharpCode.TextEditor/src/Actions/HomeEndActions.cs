@@ -6,6 +6,7 @@
 // </file>
 
 using System;
+using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -17,26 +18,44 @@ namespace ICSharpCode.TextEditor.Actions
 	{
 		public override void Execute(TextArea textArea)
 		{
-			LineSegment curLine = textArea.Document.GetLineSegment(textArea.Caret.Line);
-			
-			if (TextUtilities.IsEmptyLine(textArea.Document, curLine)) {
-				if (textArea.Caret.Column != 0) {
-					textArea.Caret.Column = 0;
-				} else  {
-					textArea.Caret.Column = curLine.Length;
-				}
-			} else {
-				int firstCharOffset = TextUtilities.GetFirstNonWSChar(textArea.Document, curLine.Offset);
-				int firstCharColumn = firstCharOffset - curLine.Offset;
-				
-				if (textArea.Caret.Column == firstCharColumn) {
-					textArea.Caret.Column  = 0;
+			LineSegment curLine;
+			Point       newPos = textArea.Caret.Position;
+			bool        jumpedIntoFolding = false;
+			do {
+				curLine = textArea.Document.GetLineSegment(newPos.Y);
+						
+				if (TextUtilities.IsEmptyLine(textArea.Document, newPos.Y)) {
+					if (newPos.X != 0) {
+						newPos.X = 0;
+					} else  {
+						newPos.X = curLine.Length;
+					}
 				} else {
-					textArea.Caret.Column  = firstCharColumn;
+					int firstCharOffset = TextUtilities.GetFirstNonWSChar(textArea.Document, curLine.Offset);
+					int firstCharColumn = firstCharOffset - curLine.Offset;
+					
+					if (newPos.X == firstCharColumn) {
+						newPos.X = 0;
+					} else {
+						newPos.X = firstCharColumn;
+					}
 				}
-			}
+				ArrayList foldings = textArea.Document.FoldingManager.GetFoldingsFromPosition(newPos.Y, newPos.X);
+				jumpedIntoFolding = false;
+				foreach (FoldMarker foldMarker in foldings) {
+					if (foldMarker.IsFolded) {
+						newPos = new Point(foldMarker.StartColumn, foldMarker.StartLine);
+						jumpedIntoFolding = true;
+						break;
+					}
+				}
+				
+			} while (jumpedIntoFolding);
 			
-			textArea.SetDesiredColumn();
+			if (newPos != textArea.Caret.Position) {
+				textArea.Caret.Position = newPos;
+				textArea.SetDesiredColumn();
+			}
 		}
 	}
 	
@@ -44,9 +63,26 @@ namespace ICSharpCode.TextEditor.Actions
 	{
 		public override void Execute(TextArea textArea)
 		{
-			LineSegment curLine = textArea.Document.GetLineSegment(textArea.Caret.Line);
-			if (textArea.Caret.Column != curLine.Length) {
-				textArea.Caret.Column = curLine.Length;
+			LineSegment curLine;
+			Point       newPos = textArea.Caret.Position;
+			bool        jumpedIntoFolding = false;
+			do {
+				curLine  = textArea.Document.GetLineSegment(newPos.Y);
+				newPos.X = curLine.Length;
+				
+				ArrayList foldings = textArea.Document.FoldingManager.GetFoldingsFromPosition(newPos.Y, newPos.X);
+				jumpedIntoFolding = false;
+				foreach (FoldMarker foldMarker in foldings) {
+					if (foldMarker.IsFolded) {
+						newPos = new Point(foldMarker.EndColumn, foldMarker.EndLine);
+						jumpedIntoFolding = true;
+						break;
+					}
+				}
+			} while (jumpedIntoFolding);
+			
+			if (newPos != textArea.Caret.Position) {
+				textArea.Caret.Position = newPos;
 				textArea.SetDesiredColumn();
 			}
 		}

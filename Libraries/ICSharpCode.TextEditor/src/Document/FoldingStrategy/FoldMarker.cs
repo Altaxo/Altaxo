@@ -18,24 +18,12 @@ namespace ICSharpCode.TextEditor.Document
 		TypeBody
 	}
 	
-	public class FoldMarker
+	public class FoldMarker : AbstractSegment, IComparable
 	{
-		int startLine;
-		int startColumn;
-		
-		int endLine;
-		int endColumn;
-		
-		bool isFolded = false;
-		string   foldText = "...";
-		FoldType foldType = FoldType.Unspecified;
-		
-		
-		public override string ToString()
-		{
-			return String.Format("[FoldMarker: StartLine={0}, StartColumn={1}, EndLine={2}, EndColumn={3}, IsFolded={4}, FoldText=\"{5}\", FoldType={6}]", 
-			                     startLine, startColumn, endLine, endColumn, isFolded, foldText, foldType);
-		}
+		bool      isFolded = false;
+		string    foldText = "...";
+		FoldType  foldType = FoldType.Unspecified;
+		IDocument document = null;
 		
 		public FoldType FoldType {
 			get {
@@ -46,39 +34,38 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
-		
 		public int StartLine {
 			get {
-				return startLine;
-			}
-			set {
-				startLine = value;
+				if (offset > document.TextLength) {
+					return -1;
+				}
+				return document.GetLineNumberForOffset(offset);
 			}
 		}
 		
 		public int StartColumn {
 			get {
-				return startColumn;
-			}
-			set {
-				startColumn = value;
+				if (offset > document.TextLength) {
+					return -1;
+				}
+				return offset - document.GetLineSegmentForOffset(offset).Offset ;
 			}
 		}
 		
 		public int EndLine {
 			get {
-				return endLine;
-			}
-			set {
-				endLine = value;
+				if (offset + length > document.TextLength) {
+					return document.TotalNumberOfLines + 1;
+				}
+				return document.GetLineNumberForOffset(offset + length);
 			}
 		}
 		public int EndColumn {
 			get {
-				return endColumn;
-			}
-			set {
-				endColumn = value;
+				if (offset + length > document.TextLength) {
+					return -1;
+				}
+				return offset + length - document.GetLineSegmentForOffset(offset + length).Offset;
 			}
 		}
 		
@@ -95,26 +82,63 @@ namespace ICSharpCode.TextEditor.Document
 			get {
 				return foldText;
 			}
-			set {
-				foldText = value;
+		}
+		
+		public string InnerText {
+			get {
+				return document.GetText(offset, length);
 			}
 		}
 		
-		public FoldMarker(int startLine, int startColumn, int endLine, int endColumn)
+		public FoldMarker(IDocument document, int offset, int length, string foldText, bool isFolded)
 		{
-			this.startLine = startLine;
-			this.startColumn = startColumn;
-			this.endLine = endLine;
-			this.endColumn = endColumn;
+			this.document = document;
+			this.offset   = offset;
+			this.length   = length;
+			this.foldText = foldText;
+			this.isFolded = isFolded;
 		}
 		
-		public FoldMarker(int startLine, int startColumn, int endLine, int endColumn, FoldType foldType)
+		public FoldMarker(IDocument document, int startLine, int startColumn, int endLine, int endColumn) : this(document, startLine, startColumn, endLine, endColumn, FoldType.Unspecified)
 		{
-			this.startLine = startLine;
-			this.startColumn = startColumn;
-			this.endLine = endLine;
-			this.endColumn = endColumn;
-			this.foldType = foldType;
+		}
+		
+		public FoldMarker(IDocument document, int startLine, int startColumn, int endLine, int endColumn, FoldType foldType)  : this(document, startLine, startColumn, endLine, endColumn, foldType, "...")
+		{
+		}
+		
+		public FoldMarker(IDocument document, int startLine, int startColumn, int endLine, int endColumn, FoldType foldType, string foldText) : this(document, startLine, startColumn, endLine, endColumn, foldType, foldText, false)
+		{
+		}
+		
+		public FoldMarker(IDocument document, int startLine, int startColumn, int endLine, int endColumn, FoldType foldType, string foldText, bool isFolded)
+		{
+			this.document = document;
+			
+			startLine = Math.Min(document.TotalNumberOfLines - 1, Math.Max(startLine, 0));
+			ISegment startLineSegment = document.GetLineSegment(startLine);
+			
+			endLine = Math.Min(document.TotalNumberOfLines - 1, Math.Max(endLine, 0));
+			ISegment endLineSegment   = document.GetLineSegment(endLine);
+			
+			this.FoldType = foldType;
+			this.foldText = foldText;
+			this.offset = startLineSegment.Offset + startColumn;
+			this.length = (endLineSegment.Offset + endColumn) - this.offset;
+			this.isFolded = isFolded;
+		}
+		
+		public int CompareTo(object o)
+		{
+			if (!(o is FoldMarker)) {
+				throw new ArgumentException();
+			}
+			FoldMarker f = (FoldMarker)o;
+			if (offset != f.offset) {
+				return offset.CompareTo(f.offset);
+			}
+			
+			return length.CompareTo(f.length);
 		}
 	}
 }

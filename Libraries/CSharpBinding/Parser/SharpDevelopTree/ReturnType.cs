@@ -26,25 +26,25 @@ namespace CSharpBinding.Parser.SharpDevelopTree
 		
 		public ReturnType(string fullyQualifiedName)
 		{
-			base.fullyQualifiedName = fullyQualifiedName;
+			base.FullyQualifiedName = fullyQualifiedName;
 		}
 		
 		public ReturnType(string fullyQualifiedName, int[] arrayDimensions, int pointerNestingLevel)
 		{
-			this.fullyQualifiedName  = fullyQualifiedName;
+			this.FullyQualifiedName  = fullyQualifiedName;
 			this.arrayDimensions     = arrayDimensions;
 			this.pointerNestingLevel = pointerNestingLevel;
 		}
 		
 		public ReturnType(ICSharpCode.SharpRefactory.Parser.AST.TypeReference type)
 		{
-			base.fullyQualifiedName  = type.SystemType;
+			base.FullyQualifiedName  = type.SystemType;
 			base.arrayDimensions     = type.RankSpecifier == null ? new int[] { } : type.RankSpecifier;
 			base.pointerNestingLevel = type.PointerNestingLevel;
 		}
 		public ReturnType Clone()
 		{
-			return new ReturnType(fullyQualifiedName, arrayDimensions, pointerNestingLevel);
+			return new ReturnType(FullyQualifiedName, arrayDimensions, pointerNestingLevel);
 		}
 	}
 }

@@ -16,11 +16,9 @@ namespace ICSharpCode.SharpDevelop.Services
 			get;
 		}
 		
-#if !LINUX					
 		Control Control {
 			get;
 		}
-#endif	
 		bool CancelEnabled {
 			get;
 			set;
@@ -29,9 +27,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		void ShowErrorMessage(string message);
 		
 		void SetMessage(string message);
-#if !LINUX					
 		void SetMessage(Image image, string message);
-#endif		
 		void SetCaretPosition(int x, int y, int charOffset);
 		void SetInsertMode(bool insertMode);
 		

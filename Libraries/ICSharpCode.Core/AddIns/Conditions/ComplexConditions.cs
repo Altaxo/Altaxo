@@ -24,7 +24,7 @@ namespace ICSharpCode.Core.AddIns.Conditions
 		
 		public override bool IsValid(object owner)
 		{
-			Debug.Assert(conditions.Count == 1);
+			System.Diagnostics.Debug.Assert(conditions.Count == 1);
 			return !conditions[0].IsValid(owner);
 		}
 	}
@@ -42,7 +42,7 @@ namespace ICSharpCode.Core.AddIns.Conditions
 		
 		public override bool IsValid(object owner)
 		{
-			Debug.Assert(conditions.Count > 1);
+			System.Diagnostics.Debug.Assert(conditions.Count > 1);
 			
 			bool valid = true;
 			
@@ -67,7 +67,7 @@ namespace ICSharpCode.Core.AddIns.Conditions
 		
 		public override bool IsValid(object owner)
 		{
-			Debug.Assert(conditions.Count > 1);
+			System.Diagnostics.Debug.Assert(conditions.Count > 1);
 			bool valid = false;
 			
 			foreach (ICondition condition in conditions) {

@@ -34,7 +34,7 @@ namespace SharpDevelop.Internal.Parser
 			if (xmlComments != null) {
 				XmlNode node = xmlComments["P:" + FullyQualifiedName] as XmlNode;
 				if (node != null) {
-					documentation = node.InnerXml;
+					Documentation = node.InnerXml;
 				}
 			}
 			

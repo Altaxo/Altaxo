@@ -49,6 +49,12 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
+		public int Offset {
+			get {
+				return offset;
+			}
+		}
+		
 		public int  Length {
 			get {
 				if (type == TextWordType.Word) {
@@ -73,6 +79,9 @@ namespace ICSharpCode.TextEditor.Document
 //		string       myword = null;
 		public string Word {
 			get {
+				if (document == null) {
+					return "";
+				}
 				return document.GetText(word.Offset + offset, length);
 //				if (myword == null) {
 //					myword = document.GetText(word.Offset + offset, length);

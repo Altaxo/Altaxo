@@ -25,7 +25,7 @@ using ICSharpCode.SharpRefactory.Parser.AST;
 
 namespace ICSharpCode.SharpRefactory.Parser
 {
-	public class CodeDOMVisitor : IASTVisitor
+	public class CodeDOMVisitor : AbstractASTVisitor
 	{
 		Stack namespaceDeclarations = new Stack();
 		Stack typeDeclarations     = new Stack();
@@ -161,12 +161,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 		}
 
 #region ICSharpCode.SharpRefactory.Parser.IASTVisitor interface implementation
-		public object Visit(INode node, object data)
-		{
-			return null;
-		}
-		
-		public object Visit(CompilationUnit compilationUnit, object data)
+		public override object Visit(CompilationUnit compilationUnit, object data)
 		{
 			CodeNamespace globalNamespace = new CodeNamespace("Global");
 			namespaces.Add(globalNamespace);
@@ -176,7 +171,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return globalNamespace;
 		}
 		
-		public object Visit(NamespaceDeclaration namespaceDeclaration, object data)
+		public override object Visit(NamespaceDeclaration namespaceDeclaration, object data)
 		{
 			ProcessSpecials(namespaceDeclaration.Specials);
 
@@ -195,7 +190,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return null;
 		}
 		
-		public object Visit(UsingDeclaration usingDeclaration, object data)
+		public override object Visit(UsingDeclaration usingDeclaration, object data)
 		{
 			ProcessSpecials(usingDeclaration.Specials);
 
@@ -203,17 +198,17 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return null;
 		}
 		
-		public object Visit(UsingAliasDeclaration usingAliasDeclaration, object data)
+		public override object Visit(UsingAliasDeclaration usingAliasDeclaration, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(AttributeSection attributeSection, object data)
+		public override object Visit(AttributeSection attributeSection, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(TypeDeclaration typeDeclaration, object data)
+		public override object Visit(TypeDeclaration typeDeclaration, object data)
 		{
 			ProcessSpecials(typeDeclaration.Specials);
 
@@ -241,7 +236,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return null;
 		}
 		
-		public object Visit(DelegateDeclaration delegateDeclaration, object data)
+		public override object Visit(DelegateDeclaration delegateDeclaration, object data)
 		{
 //			CodeTypeDelegate codeTypeDelegate = new CodeTypeDelegate(delegateDeclaration.Name);
 //			codeTypeDelegate.Parameters
@@ -250,12 +245,12 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return null;
 		}
 		
-		public object Visit(VariableDeclaration variableDeclaration, object data)
+		public override object Visit(VariableDeclaration variableDeclaration, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(FieldDeclaration fieldDeclaration, object data)
+		public override object Visit(FieldDeclaration fieldDeclaration, object data)
 		{
 			ProcessSpecials(fieldDeclaration.Specials);
 
@@ -275,7 +270,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return null;
 		}
 		
-		public object Visit(MethodDeclaration methodDeclaration, object data)
+		public override object Visit(MethodDeclaration methodDeclaration, object data)
 		{
 			ProcessSpecials(methodDeclaration.Specials);
 
@@ -300,37 +295,37 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return null;
 		}
 		
-		public object Visit(PropertyDeclaration propertyDeclaration, object data)
+		public override object Visit(PropertyDeclaration propertyDeclaration, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(PropertyGetRegion propertyGetRegion, object data)
+		public override object Visit(PropertyGetRegion propertyGetRegion, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(PropertySetRegion PropertySetRegion, object data)
+		public override object Visit(PropertySetRegion PropertySetRegion, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(EventDeclaration eventDeclaration, object data)
+		public override object Visit(EventDeclaration eventDeclaration, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(EventAddRegion eventAddRegion, object data)
+		public override object Visit(EventAddRegion eventAddRegion, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(EventRemoveRegion eventRemoveRegion, object data)
+		public override object Visit(EventRemoveRegion eventRemoveRegion, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(ConstructorDeclaration constructorDeclaration, object data)
+		public override object Visit(ConstructorDeclaration constructorDeclaration, object data)
 		{
 			ProcessSpecials(constructorDeclaration.Specials);
 
@@ -344,22 +339,22 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return null;
 		}
 		
-		public object Visit(DestructorDeclaration destructorDeclaration, object data)
+		public override object Visit(DestructorDeclaration destructorDeclaration, object data)
 		{
 			return null;
 		}
 
-		public object Visit(OperatorDeclaration operatorDeclaration, object data)
+		public override object Visit(OperatorDeclaration operatorDeclaration, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(IndexerDeclaration indexerDeclaration, object data)
+		public override object Visit(IndexerDeclaration indexerDeclaration, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(BlockStatement blockStatement, object data)
+		public override object Visit(BlockStatement blockStatement, object data)
 		{
 			ProcessSpecials(blockStatement.Specials);
 
@@ -367,7 +362,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return null;
 		}
 		
-		public object Visit(StatementExpression statementExpression, object data)
+		public override object Visit(StatementExpression statementExpression, object data)
 		{
 			object exp = statementExpression.Expression.AcceptVisitor(this, data);
 			if (exp is CodeExpression) {
@@ -397,7 +392,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return builder.ToString();
 		}
 		
-		public object Visit(LocalVariableDeclaration localVariableDeclaration, object data)
+		public override object Visit(LocalVariableDeclaration localVariableDeclaration, object data)
 		{
 			CodeVariableDeclarationStatement declStmt = null;
 
@@ -419,7 +414,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return declStmt;
 		}
 		
-		public object Visit(EmptyStatement emptyStatement, object data)
+		public override object Visit(EmptyStatement emptyStatement, object data)
 		{
 			CodeSnippetStatement emptyStmt = new CodeSnippetStatement();
 
@@ -428,7 +423,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return emptyStmt;
 		}
 		
-		public object Visit(ReturnStatement returnStatement, object data)
+		public override object Visit(ReturnStatement returnStatement, object data)
 		{
 			ProcessSpecials(returnStatement.Specials);
 
@@ -439,7 +434,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return returnStmt;
 		}
 		
-		public object Visit(IfStatement ifStatement, object data)
+		public override object Visit(IfStatement ifStatement, object data)
 		{
 			ProcessSpecials(ifStatement.Specials);
 
@@ -456,7 +451,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return ifStmt;
 		}
 		
-		public object Visit(IfElseStatement ifElseStatement, object data)
+		public override object Visit(IfElseStatement ifElseStatement, object data)
 		{
 			ProcessSpecials(ifElseStatement.Specials);
 
@@ -477,17 +472,17 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return ifStmt;
 		}
 		
-		public object Visit(WhileStatement whileStatement, object data)
+		public override object Visit(WhileStatement whileStatement, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(DoWhileStatement doWhileStatement, object data)
+		public override object Visit(DoWhileStatement doWhileStatement, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(ForStatement forStatement, object data)
+		public override object Visit(ForStatement forStatement, object data)
 		{
 			CodeIterationStatement forLoop = new CodeIterationStatement();
 
@@ -544,7 +539,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return forLoop;
 		}
 		
-		public object Visit(LabelStatement labelStatement, object data)
+		public override object Visit(LabelStatement labelStatement, object data)
 		{
 			ProcessSpecials(labelStatement.Specials);
 
@@ -556,7 +551,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return labelStmt;
 		}
 		
-		public object Visit(GotoStatement gotoStatement, object data)
+		public override object Visit(GotoStatement gotoStatement, object data)
 		{
 			ProcessSpecials(gotoStatement.Specials);
 
@@ -568,42 +563,42 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return gotoStmt;
 		}
 		
-		public object Visit(SwitchStatement switchStatement, object data)
+		public override object Visit(SwitchStatement switchStatement, object data)
 		{
 			throw new NotSupportedException("CodeDom does not support Switch Statement");
 		}
 		
-		public object Visit(BreakStatement breakStatement, object data)
+		public override object Visit(BreakStatement breakStatement, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(ContinueStatement continueStatement, object data)
+		public override object Visit(ContinueStatement continueStatement, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(GotoCaseStatement gotoCaseStatement, object data)
+		public override object Visit(GotoCaseStatement gotoCaseStatement, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(ForeachStatement foreachStatement, object data)
+		public override object Visit(ForeachStatement foreachStatement, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(LockStatement lockStatement, object data)
+		public override object Visit(LockStatement lockStatement, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(UsingStatement usingStatement, object data)
+		public override object Visit(UsingStatement usingStatement, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(TryCatchStatement tryCatchStatement, object data)
+		public override object Visit(TryCatchStatement tryCatchStatement, object data)
 		{
 			ProcessSpecials(tryCatchStatement.Specials);
 
@@ -644,7 +639,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return tryStmt;
 		}
 		
-		public object Visit(ThrowStatement throwStatement, object data)
+		public override object Visit(ThrowStatement throwStatement, object data)
 		{
 			ProcessSpecials(throwStatement.Specials);
 
@@ -656,17 +651,17 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return throwStmt;
 		}
 		
-		public object Visit(FixedStatement fixedStatement, object data)
+		public override object Visit(FixedStatement fixedStatement, object data)
 		{
 			throw new NotSupportedException("CodeDom does not support Fixed Statement");
 		}
 		
-		public object Visit(PrimitiveExpression expression, object data)
+		public override object Visit(PrimitiveExpression expression, object data)
 		{
 			return new CodePrimitiveExpression(expression.Value);
 		}
 		
-		public object Visit(BinaryOperatorExpression expression, object data)
+		public override object Visit(BinaryOperatorExpression expression, object data)
 		{
 			CodeBinaryOperatorType op = CodeBinaryOperatorType.Add;
 			switch (expression.Op) {
@@ -742,12 +737,12 @@ namespace ICSharpCode.SharpRefactory.Parser
 			                                        (CodeExpression)expression.Right.AcceptVisitor(this, data));
 		}
 		
-		public object Visit(ParenthesizedExpression expression, object data)
+		public override object Visit(ParenthesizedExpression expression, object data)
 		{
 			return expression.Expression.AcceptVisitor(this, data);
 		}
 		
-		public object Visit(InvocationExpression invocationExpression, object data)
+		public override object Visit(InvocationExpression invocationExpression, object data)
 		{
 			Expression     target     = invocationExpression.TargetObject;
 			CodeExpression targetExpr;
@@ -775,7 +770,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return new CodeMethodInvokeExpression(targetExpr, methodName, GetExpressionList(invocationExpression.Parameters));
 		}
 		
-		public object Visit(IdentifierExpression expression, object data)
+		public override object Visit(IdentifierExpression expression, object data)
 		{
 			if (IsField(expression.Identifier)) {
 				return new CodeFieldReferenceExpression(new CodeThisReferenceExpression(),
@@ -784,12 +779,12 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return new CodeVariableReferenceExpression(expression.Identifier);
 		}
 		
-		public object Visit(TypeReferenceExpression typeReferenceExpression, object data)
+		public override object Visit(TypeReferenceExpression typeReferenceExpression, object data)
 		{
 			return null;
 		}
 
-		public object Visit(UnaryOperatorExpression unaryOperatorExpression, object data)
+		public override object Visit(UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
 			CodeExpression var;
 
@@ -857,7 +852,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return null;
 		}
 		bool methodReference = false;
-		public object Visit(AssignmentExpression assignmentExpression, object data)
+		public override object Visit(AssignmentExpression assignmentExpression, object data)
 		{
 			if (assignmentExpression.Op == AssignmentOperatorType.Add) {
 				
@@ -885,69 +880,69 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return null;
 		}
 		
-		public virtual object Visit(CheckedStatement checkedStatement, object data)
+		public override object Visit(CheckedStatement checkedStatement, object data)
 		{
 			return null;
 		}
 		
-		public virtual object Visit(UncheckedStatement uncheckedStatement, object data)
+		public override object Visit(UncheckedStatement uncheckedStatement, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(SizeOfExpression sizeOfExpression, object data)
+		public override object Visit(SizeOfExpression sizeOfExpression, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(TypeOfExpression typeOfExpression, object data)
+		public override object Visit(TypeOfExpression typeOfExpression, object data)
 		{
 			return new CodeTypeOfExpression(ConvType(typeOfExpression.TypeReference.Type));
 		}
 		
-		public object Visit(CheckedExpression checkedExpression, object data)
+		public override object Visit(CheckedExpression checkedExpression, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(UncheckedExpression uncheckedExpression, object data)
+		public override object Visit(UncheckedExpression uncheckedExpression, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(PointerReferenceExpression pointerReferenceExpression, object data)
+		public override object Visit(PointerReferenceExpression pointerReferenceExpression, object data)
 		{
 			return null;
 		}
 		
-		public object Visit(CastExpression castExpression, object data)
+		public override object Visit(CastExpression castExpression, object data)
 		{
 			string typeRef = castExpression.CastTo.Type;
 			return new CodeCastExpression(typeRef, (CodeExpression)castExpression.Expression.AcceptVisitor(this, data));
 		}
 		
-		public object Visit(StackAllocExpression stackAllocExpression, object data)
+		public override object Visit(StackAllocExpression stackAllocExpression, object data)
 		{
 			// TODO
 			return null;
 		}
 		
-		public object Visit(IndexerExpression indexerExpression, object data)
+		public override object Visit(IndexerExpression indexerExpression, object data)
 		{
 			return new CodeIndexerExpression((CodeExpression)indexerExpression.TargetObject.AcceptVisitor(this, data), GetExpressionList(indexerExpression.Indices));
 		}
 		
-		public object Visit(ThisReferenceExpression thisReferenceExpression, object data)
+		public override object Visit(ThisReferenceExpression thisReferenceExpression, object data)
 		{
 			return new CodeThisReferenceExpression();
 		}
 		
-		public object Visit(BaseReferenceExpression baseReferenceExpression, object data)
+		public override object Visit(BaseReferenceExpression baseReferenceExpression, object data)
 		{
 			return new CodeBaseReferenceExpression();
 		}
 		
-		public object Visit(ArrayCreateExpression arrayCreateExpression, object data)
+		public override object Visit(ArrayCreateExpression arrayCreateExpression, object data)
 		{
 			if (arrayCreateExpression.ArrayInitializer == null) {
 				if (arrayCreateExpression.Rank != null && arrayCreateExpression.Rank.Length > 0) {
@@ -961,13 +956,13 @@ namespace ICSharpCode.SharpRefactory.Parser
 			                                     GetExpressionList(arrayCreateExpression.ArrayInitializer.CreateExpressions));
 		}
 		
-		public object Visit(ObjectCreateExpression objectCreateExpression, object data)
+		public override object Visit(ObjectCreateExpression objectCreateExpression, object data)
 		{
 			return new CodeObjectCreateExpression(ConvType(objectCreateExpression.CreateType.Type),
 			                                      objectCreateExpression.Parameters == null ? null : GetExpressionList(objectCreateExpression.Parameters));
 		}
 		
-		public object Visit(ParameterDeclarationExpression parameterDeclarationExpression, object data)
+		public override object Visit(ParameterDeclarationExpression parameterDeclarationExpression, object data)
 		{
 			return new CodeParameterDeclarationExpression(new CodeTypeReference(ConvType(parameterDeclarationExpression.TypeReference.Type)), parameterDeclarationExpression.ParameterName);
 		}
@@ -978,8 +973,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			Assembly asm = null;
 			
 			t = this.GetType(type);
-			if (t == null)
-			{
+			if (t == null) {
 				asm = typeof(System.Drawing.Point).Assembly;
 				t = asm.GetType(type);
 			}
@@ -993,8 +987,16 @@ namespace ICSharpCode.SharpRefactory.Parser
 				asm = typeof(System.String).Assembly;
 				t = asm.GetType(type);
 			}
-			
-			return t != null && t.GetField(fieldName) != null;
+			bool isField = t != null && (t.IsEnum || t.GetField(fieldName) != null);
+			if (!isField) {
+				int idx = type.LastIndexOf('.');
+				if (idx >= 0) {
+					type = type.Substring(0, idx) + "+" + type.Substring(idx + 1);
+					isField = IsField(type, fieldName);
+				}
+			}
+			Console.WriteLine(type + "." + fieldName + " -- " + isField);
+			return isField;
 		}
 		
 		bool IsFieldReferenceExpression(FieldReferenceExpression fieldReferenceExpression)
@@ -1014,7 +1016,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			return false; //Char.IsLower(fieldReferenceExpression.FieldName[0]);
 		}
 		
-		public object Visit(FieldReferenceExpression fieldReferenceExpression, object data)
+		public override object Visit(FieldReferenceExpression fieldReferenceExpression, object data)
 		{
 			if (methodReference) {
 				return new CodeMethodReferenceExpression((CodeExpression)fieldReferenceExpression.TargetObject.AcceptVisitor(this, data), fieldReferenceExpression.FieldName);
@@ -1028,7 +1030,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 						CodeTypeReferenceExpression typeRef = ConvertToIdentifier((FieldReferenceExpression)fieldReferenceExpression.TargetObject);
 						if (IsField(typeRef.Type.BaseType, fieldReferenceExpression.FieldName)) {
 							return new CodeFieldReferenceExpression(typeRef,
-							                                           fieldReferenceExpression.FieldName);
+							                                        fieldReferenceExpression.FieldName);
 						} else {
 							return new CodePropertyReferenceExpression(typeRef,
 							                                           fieldReferenceExpression.FieldName);
@@ -1042,15 +1044,15 @@ namespace ICSharpCode.SharpRefactory.Parser
 			}
 		}
 		
-		public object Visit(DirectionExpression directionExpression, object data)
+		public override object Visit(DirectionExpression directionExpression, object data)
 		{
 			return null;
 		}
-		public object Visit(ArrayInitializerExpression arrayInitializerExpression, object data)
+		public override object Visit(ArrayInitializerExpression arrayInitializerExpression, object data)
 		{
 			return null;
 		}
-		public object Visit(ConditionalExpression conditionalExpression, object data)
+		public override object Visit(ConditionalExpression conditionalExpression, object data)
 		{
 			return null;
 		}
@@ -1078,30 +1080,30 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		CodeTypeReferenceExpression ConvertToIdentifier(FieldReferenceExpression fieldReferenceExpression)
 		{
-//			CodeFieldReferenceExpression  cpre = new CodeFieldReferenceExpression (); 
-//			CodeFieldReferenceExpression firstCpre = cpre,newCpre;
 			string type = String.Empty;
 			
 			while (fieldReferenceExpression.TargetObject is FieldReferenceExpression) {
-//				newCpre = new CodeFieldReferenceExpression(); 
-//				Console.WriteLine(fieldReferenceExpression.FieldName);
-//				cpre.FieldName  = fieldReferenceExpression.FieldName;
-//				cpre.TargetObject = newCpre;
-//				cpre = newCpre;
 				type = "."  + fieldReferenceExpression.FieldName + type;
 				fieldReferenceExpression = (FieldReferenceExpression)fieldReferenceExpression.TargetObject;
 			}
+			
 			type = "."  + fieldReferenceExpression.FieldName + type;
-//			newCpre = new CodeFieldReferenceExpression(); 
-//			Console.WriteLine(fieldReferenceExpression.FieldName);
-//			cpre.FieldName  = fieldReferenceExpression.FieldName;
-//			cpre.TargetObject = newCpre;
-//			cpre = newCpre;
-				
+			
 			if (fieldReferenceExpression.TargetObject is IdentifierExpression) {
-				return new CodeTypeReferenceExpression(((IdentifierExpression)fieldReferenceExpression.TargetObject).Identifier + type);
-//				cpre.TargetObject =
-//				return firstCpre;
+				type = ((IdentifierExpression)fieldReferenceExpression.TargetObject).Identifier + type;
+				string oldType = type;
+				int idx = type.LastIndexOf('.');
+				while (idx > 0) {
+					if (Type.GetType(type) != null) {
+						break;
+					}
+					type = type.Substring(0, idx) + "+" + type.Substring(idx + 1);
+					idx = type.LastIndexOf('.');
+				}
+				if (Type.GetType(type) == null) {
+					type = oldType;
+				}
+				return new CodeTypeReferenceExpression(type);
 			} else {
 				throw new Exception();
 			}
@@ -1121,7 +1123,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			}
 			return list;
 		}
-
+		
 		Type GetType(string typeName)
 		{
 			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) 

@@ -14,6 +14,9 @@ namespace SharpDevelop.Internal.Parser
 		string FullyQualifiedName {
 			get;
 		}
+		IRegion Region {
+			get;
+		}
 
 		string Name {
 			get;

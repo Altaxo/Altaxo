@@ -71,6 +71,10 @@ namespace ICSharpCode.TextEditor.Document
 			get;
 		}
 		
+		MarkerStrategy MarkerStrategy {
+			get;
+		}
+		
 //		/// <summary>
 //		/// The <see cref="SelectionManager"/> attached to the <see cref="IDocument"/> instance
 //		/// </summary>
@@ -140,12 +144,20 @@ namespace ICSharpCode.TextEditor.Document
 		LineSegment GetLineSegment(int lineNumber);
 		
 		/// <remarks>
-		/// Get the logical line for a given visible line.
+		/// Get the first logical line for a given visible line.
 		/// example : lineNumber == 100 foldings are in the linetracker
 		/// between 0..1 (2 folded, invisible lines) this method returns 102
 		/// the 'logical' line number
 		/// </remarks>
-		int GetLogicalLine(int lineNumber);
+		int GetFirstLogicalLine(int lineNumber);
+		
+		/// <remarks>
+		/// Get the last logical line for a given visible line.
+		/// example : lineNumber == 100 foldings are in the linetracker
+		/// between 0..1 (2 folded, invisible lines) this method returns 102
+		/// the 'logical' line number
+		/// </remarks>
+		int GetLastLogicalLine(int lineNumber);
 		
 		/// <remarks>
 		/// Get the visible line for a given logical line.
@@ -154,6 +166,11 @@ namespace ICSharpCode.TextEditor.Document
 		/// the 'visible' line number
 		/// </remarks>
 		int GetVisibleLine(int lineNumber);
+		
+//		/// <remarks>
+//		/// Get the visible column for a given logical line and logical column.
+//		/// </remarks>
+//		int GetVisibleColumn(int logicalLine, int logicalColumn);
 		
 		/// <remarks>
 		/// Get the next visible line after lineNumber
@@ -237,7 +254,8 @@ namespace ICSharpCode.TextEditor.Document
 		/// </param>
 		string GetText(int offset, int length);
 #endregion
-
+		string GetText(ISegment segment);
+		
 #region ITextModel interface
 		/// <summary>
 		/// returns the logical line/column position from an offset
@@ -266,6 +284,12 @@ namespace ICSharpCode.TextEditor.Document
 		/// textarea will be painted)
 		/// </remarks>
 		void CommitUpdate();
+		
+		
+		/// <summary>
+		/// Moves, Resizes, Removes a list of segments on insert/remove/replace events.
+		/// </summary>
+		void UpdateSegmentListOnDocumentChange(ArrayList list, DocumentEventArgs e);
 		
 		/// <summary>
 		/// Is fired when CommitUpdate is called

@@ -36,9 +36,9 @@ namespace ICSharpCode.TextEditor.Document
 			set;
 		}
 		
-		/// <remarks>
+		/// <summary>
 		/// Returns a valid line number for the given offset.
-		/// </remarks>
+		/// </summary>
 		/// <param name="offset">
 		/// A offset which points to a character in the line which
 		/// line number is returned.
@@ -49,9 +49,9 @@ namespace ICSharpCode.TextEditor.Document
 		/// <exception cref="System.ArgumentException">If offset points not to a valid position</exception>
 		int GetLineNumberForOffset(int offset);
 		
-		/// <remarks>
+		/// <summary>
 		/// Returns a <see cref="LineSegment"/> for the given offset.
-		/// </remarks>
+		/// </summary>
 		/// <param name="offset">
 		/// A offset which points to a character in the line which
 		/// is returned.
@@ -62,11 +62,11 @@ namespace ICSharpCode.TextEditor.Document
 		/// <exception cref="System.ArgumentException">If offset points not to a valid position</exception>
 		LineSegment GetLineSegmentForOffset(int offset);
 		
-		/// <remarks>
+		/// <summary>
 		/// Returns a <see cref="LineSegment"/> for the given line number.
 		/// This function should be used to get a line instead of getting the
 		/// line using the <see cref="ArrayList"/>.
-		/// </remarks>
+		/// </summary>
 		/// <param name="lineNumber">
 		/// The line number which is requested.
 		/// </param>
@@ -91,41 +91,56 @@ namespace ICSharpCode.TextEditor.Document
 		/// </summary>
 		void Replace(int offset, int length, string text);
 		
-		/// <remarks>
+		/// <summary>
 		/// Sets the content of this line manager = break the text
 		/// into lines.
-		/// </remarks>
+		/// </summary>
 		void SetContent(string text);
 		
-		/// <remarks>
-		/// Get the logical line for a given visible line.
+		/// <summary>
+		/// Get the first logical line for a given visible line.
 		/// example : lineNumber == 100 foldings are in the linetracker
 		/// between 0..1 (2 folded, invisible lines) this method returns 102
 		/// the 'logical' line number
-		/// </remarks>
-		int GetLogicalLine(int lineNumber);
+		/// </summary>
+		int GetFirstLogicalLine(int lineNumber);
 		
-		/// <remarks>
+		/// <summary>
+		/// Get the last logical line for a given visible line.
+		/// example : lineNumber == 100 foldings are in the linetracker
+		/// between 0..1 (2 folded, invisible lines) this method returns 102
+		/// the 'logical' line number
+		/// </summary>
+		int GetLastLogicalLine(int lineNumber);
+		
+		/// <summary>
 		/// Get the visible line for a given logical line.
 		/// example : lineNumber == 100 foldings are in the linetracker
 		/// between 0..1 (2 folded, invisible lines) this method returns 98
 		/// the 'visible' line number
-		/// </remarks>
+		/// </summary>
 		int GetVisibleLine(int lineNumber);
 		
-		/// <remarks>
+//		/// <summary>
+//		/// Get the visible column for a given logical line and logical column.
+//		/// </summary>
+//		int GetVisibleColumn(int logicalLine, int logicalColumn);
+		
+		/// <summary>
 		/// Get the next visible line after lineNumber
-		/// </remarks>
+		/// </summary>
 		int GetNextVisibleLineAbove(int lineNumber, int lineCount);
 		
-		/// <remarks>
+		/// <summary>
 		/// Get the next visible line below lineNumber
-		/// </remarks>
+		/// </summary>
 		int GetNextVisibleLineBelow(int lineNumber, int lineCount);
 		
-		/// <remarks>
+		/// <summary>
 		/// Is fired when lines are inserted or removed
-		/// </remarks>
+		/// </summary>
 		event LineManagerEventHandler LineCountChanged;
+		
+		event LineLengthEventHandler LineLengthChanged;
 	}
 }

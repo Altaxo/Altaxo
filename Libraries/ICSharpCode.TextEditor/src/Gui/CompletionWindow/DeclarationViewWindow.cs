@@ -6,10 +6,12 @@
 // </file>
 
 using System;
+using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor.Util;
@@ -17,7 +19,17 @@ using ICSharpCode.TextEditor;
 
 namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 {
-	public class DeclarationViewWindow : Form
+	public interface IDeclarationViewWindow
+	{
+		string Description {
+			get;
+			set;
+		}
+		void ShowDeclarationViewWindow();
+		void CloseDeclarationViewWindow();
+	}
+	
+	public class DeclarationViewWindow : Form, IDeclarationViewWindow
 	{
 		string description = String.Empty;
 		
@@ -27,24 +39,29 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 			}
 			set {
 				description = value;
-				if (Visible) {
-					Refresh();
-				}
+				Refresh();
 			}
 		}
 		
-		public DeclarationViewWindow()
+		public DeclarationViewWindow(Form parent)
 		{
+			SetStyle(ControlStyles.Selectable, false);
 			StartPosition   = FormStartPosition.Manual;
 			FormBorderStyle = FormBorderStyle.None;
-			TopMost         = true;
+			Owner           = parent;
 			ShowInTaskbar   = false;
-			
-//			Enabled         = false;
 			Size            = new Size(0, 0);
-			
-			SetStyle(ControlStyles.UserPaint, true);
-			SetStyle(ControlStyles.DoubleBuffer, true);
+		}
+		
+		public void ShowDeclarationViewWindow()
+		{
+			AbstractCompletionWindow.ShowWindow(base.Handle, AbstractCompletionWindow.SW_SHOWNA);
+		}
+		
+		public void CloseDeclarationViewWindow()
+		{
+			Close();
+			Dispose();
 		}
 		
 		protected override void OnPaint(PaintEventArgs pe)

@@ -70,7 +70,7 @@ namespace ICSharpCode.SharpDevelop.BrowserDisplayBinding
 		
 		void TitleChange(object sender, DWebBrowserEvents2_TitleChangeEvent e)
 		{
-			ContentName = e.text;
+			TitleName = e.text;
 		}
 	}
 	

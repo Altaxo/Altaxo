@@ -5,11 +5,11 @@
 	
 	<!-- Template Header -->
 	<TemplateConfiguration>
-		<Name>${res:Templates.Project.C#.ConsoleProject.Name}</Name>
+		<Name>${res:Templates.Project.ConsoleProject.Name}</Name>
 		<Category>C#</Category>
 		<Icon>C#.Project.DOSProject</Icon>
 		<LanguageName>C#</LanguageName>
-		<Description>${res:Templates.Project.C#.ConsoleProject.Description}</Description>
+		<Description>${res:Templates.Project.ConsoleProject.Description}</Description>
 	</TemplateConfiguration>
 	
 	<!-- Actions -->
@@ -26,14 +26,17 @@
 		<Project name = "${ProjectName}" directory = ".">
 			<Options/>
 			<Files>
-				<File name="Main.cs"><![CDATA[// project created on ${Date} at ${Time}
+				<File name="Main.cs"><![CDATA[${StandardHeader.C#}
 using System;
 
-class MainClass
+namespace DefaultNamespace
 {
-	public static void Main(string[] args)
+	class MainClass
 	{
-		Console.WriteLine("Hello World!");
+		public static void Main(string[] args)
+		{
+			Console.WriteLine("Hello World!");
+		}
 	}
 }]]></File>
 			<File name="AssemblyInfo.cs"><![CDATA[using System.Reflection;

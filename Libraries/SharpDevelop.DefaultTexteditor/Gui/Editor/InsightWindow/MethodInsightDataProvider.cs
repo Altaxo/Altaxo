@@ -57,13 +57,15 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public void SetupDataProvider(string fileName, TextArea textArea)
 		{
 			IDocument document = textArea.Document;
-			
 			this.fileName = fileName;
 			this.document = document;
 			this.textArea = textArea;
 			initialOffset = textArea.Caret.Offset;
 			
-			string word         = TextUtilities.GetExpressionBeforeOffset(textArea, textArea.Caret.Offset);
+			IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
+			IExpressionFinder expressionFinder = parserService.GetExpressionFinder(fileName);
+			string word  = expressionFinder == null ? TextUtilities.GetExpressionBeforeOffset(textArea, textArea.Caret.Offset) : expressionFinder.FindExpression(textArea.Document.TextContent, textArea.Caret.Offset- 1);
+			
 			string methodObject = word;
 			string methodName   =  null;
 			int idx = methodObject.LastIndexOf('.');
@@ -90,7 +92,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 					methodObject = words[words.Length - 1];
 				}
 			}
-			IParserService parserService = (IParserService)ServiceManager.Services.GetService(typeof(IParserService));
 			ResolveResult results = parserService.Resolve(methodObject, caretLineNumber, caretColumn, fileName, document.TextContent);
 			Console.WriteLine("results: method obj{0} " + results, methodObject);
 			

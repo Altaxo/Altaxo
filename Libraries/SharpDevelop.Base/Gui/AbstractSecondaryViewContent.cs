@@ -14,14 +14,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 	/// </summary>
 	public abstract class AbstractSecondaryViewContent : AbstractBaseViewContent, ISecondaryViewContent
 	{
-		public virtual void Selected()
-		{
-		}
-		
-		public virtual void Deselected()
-		{
-		}
-		
 		public virtual void NotifyBeforeSave()
 		{
 		}

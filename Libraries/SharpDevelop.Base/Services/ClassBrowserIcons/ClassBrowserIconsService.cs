@@ -26,10 +26,10 @@ namespace ICSharpCode.SharpDevelop.Services
 	public class ClassBrowserIconsService : AbstractService
 	{
 		const int namespaceIndex = 3;
-		const int combineIndex   = 46;
-		const int literalIndex   = 47;
+		const int combineIndex   = 14;
+		const int literalIndex   = 15;
 		
-		const int classIndex     = 14;
+		const int classIndex     = 16;
 		const int structIndex    = classIndex + 1 * 4;
 		const int interfaceIndex = classIndex + 2 * 4;
 		const int enumIndex      = classIndex + 3 * 4;
@@ -37,7 +37,8 @@ namespace ICSharpCode.SharpDevelop.Services
 		const int propertyIndex  = classIndex + 5 * 4;
 		const int fieldIndex     = classIndex + 6 * 4;
 		const int delegateIndex  = classIndex + 7 * 4;
-		const int eventIndex     = classIndex + 8 * 4 + 2;
+		const int eventIndex     = classIndex + 8 * 4;
+		const int indexerIndex   = classIndex + 9 * 4;
 		
 		const int internalModifierOffset  = 1;
 		const int protectedModifierOffset = 2;
@@ -163,6 +164,11 @@ namespace ICSharpCode.SharpDevelop.Services
 		public int GetIcon(IMethod method)
 		{
 			return methodIndex + GetModifierOffset(method.Modifiers);
+		}
+		
+		public int GetIcon(IIndexer method)
+		{
+			return indexerIndex + GetModifierOffset(method.Modifiers);
 		}
 		
 		public int GetIcon(IProperty method)
@@ -313,7 +319,10 @@ namespace ICSharpCode.SharpDevelop.Services
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.Event"));
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.Literal"));
 			
-			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.Class")); //14
+			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.CombineIcon"));
+			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.Literal"));
+			
+			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.Class")); //16
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.InternalClass"));
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.ProtectedClass"));
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.PrivateClass"));
@@ -353,13 +362,15 @@ namespace ICSharpCode.SharpDevelop.Services
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.ProtectedDelegate"));
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.PrivateDelegate"));
 			
-			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.CombineIcon")); // 46
-			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.Literal")); // 47
-			
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.Event"));
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.InternalEvent"));
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.ProtectedEvent"));
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.PrivateEvent"));
+			
+			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.Indexer"));
+			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.InternalIndexer"));
+			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.ProtectedIndexer"));
+			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.PrivateIndexer"));
 		}
 	}
 }

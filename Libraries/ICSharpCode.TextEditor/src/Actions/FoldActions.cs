@@ -23,6 +23,7 @@ namespace ICSharpCode.TextEditor.Actions
 				fm.IsFolded = !fm.IsFolded;
 			}
 			textArea.Refresh();
+			textArea.Document.FoldingManager.NotifyFoldingsChanged(EventArgs.Empty);
 		}
 	}
 	
@@ -41,6 +42,7 @@ namespace ICSharpCode.TextEditor.Actions
 				fm.IsFolded = doFold;
 			}
 			textArea.Refresh();
+			textArea.Document.FoldingManager.NotifyFoldingsChanged(EventArgs.Empty);
 		}
 	}
 	
@@ -52,6 +54,7 @@ namespace ICSharpCode.TextEditor.Actions
 				fm.IsFolded = fm.FoldType == FoldType.MemberBody || fm.FoldType == FoldType.Region;
 			}
 			textArea.Refresh();
+			textArea.Document.FoldingManager.NotifyFoldingsChanged(EventArgs.Empty);
 		}
 	}
 }

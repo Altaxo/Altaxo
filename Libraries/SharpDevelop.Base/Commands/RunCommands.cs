@@ -64,15 +64,15 @@ namespace ICSharpCode.SharpDevelop.Commands
 					} else {
 						if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null) {
 							LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
-							ILanguageBinding binding = languageBindingService.GetBindingPerFileName(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName);
+							ILanguageBinding binding = languageBindingService.GetBindingPerFileName(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
 							
 							if (binding != null) {
-								if (binding == null || !binding.CanCompile(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName)) {
+								if (binding == null || !binding.CanCompile(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName)) {
 									IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-									messageService.ShowError("Language binding " + binding.Language + " can't compile " + WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName);
+									messageService.ShowError("Language binding " + binding.Language + " can't compile " + WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
 								} else {
 									new SaveFile().Run();
-									ICompilerResult res = binding.CompileFile(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName);
+									ICompilerResult res = binding.CompileFile(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
 									taskService.Tasks.Clear();
 									foreach (CompilerError err in res.CompilerResults.Errors) {
 										taskService.Tasks.Add(new Task(null, err));
@@ -138,15 +138,15 @@ namespace ICSharpCode.SharpDevelop.Commands
 					} else {
 						if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null) {
 							LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
-							ILanguageBinding binding = languageBindingService.GetBindingPerFileName(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName);
+							ILanguageBinding binding = languageBindingService.GetBindingPerFileName(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
 							
 							if (binding != null) {
-								if (binding == null || !binding.CanCompile(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName)) {
+								if (binding == null || !binding.CanCompile(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName)) {
 									IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-									messageService.ShowError("Language binding " + binding.Language + " can't compile " + WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName);
+									messageService.ShowError("Language binding " + binding.Language + " can't compile " + WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
 								} else {
 									new SaveFile().Run();
-									ICompilerResult res = binding.CompileFile(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName);
+									ICompilerResult res = binding.CompileFile(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
 									taskService.Tasks.Clear();
 									foreach (CompilerError err in res.CompilerResults.Errors) {
 										taskService.Tasks.Add(new Task(null, err));
@@ -189,8 +189,13 @@ namespace ICSharpCode.SharpDevelop.Commands
 		}
 	}
 	
-	public class RunCommand : AbstractMenuCommand
+	public class RunHelper
 	{
+		bool debug;
+		public RunHelper(bool debug)
+		{
+			this.debug = debug;
+		}
 		void RunThread()
 		{
 			lock (Compile.CompileLockObject) {
@@ -205,7 +210,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 								projectService.CompileCombine();
 							}
 							projectService.OnBeforeStartProject();
-							projectService.CurrentOpenCombine.Execute();
+							projectService.CurrentOpenCombine.Execute(debug);
 							
 						} catch (NoStartupCombineDefinedException) {
 							IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
@@ -216,10 +221,10 @@ namespace ICSharpCode.SharpDevelop.Commands
 							new Compile().RunWithWait();
 							if (!taskService.SomethingWentWrong) {
 								LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
-								ILanguageBinding binding = languageBindingService.GetBindingPerFileName(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName);
+								ILanguageBinding binding = languageBindingService.GetBindingPerFileName(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName);
 								if (binding != null) {
 									projectService.OnBeforeStartProject();
-									binding.Execute(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName);
+									binding.Execute(WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName, debug);
 								} else {
 									IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
 									messageService.ShowError("No runnable executable found.");
@@ -234,17 +239,86 @@ namespace ICSharpCode.SharpDevelop.Commands
 				statusBarService.SetMessage("${res:MainWindow.StatusBar.ReadyMessage}");
 			}
 		}
-		
+		public void StartThread()
+		{
+			Thread t = new Thread(new ThreadStart(RunThread));
+			t.IsBackground  = true;
+			t.Start();
+		}
+	}
+	
+	public class RunCommand : AbstractMenuCommand
+	{
 		public override void Run()
 		{
 			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-//			if (projectService.CurrentOpenCombine != null) {
-				Thread t = new Thread(new ThreadStart(RunThread));
-				t.IsBackground  = true;
-				t.Start();
-//			}
+			new RunHelper(true).StartThread();
 		}
 	}
+	
+	public class RunWithoutDebuggingCommand : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+			new RunHelper(false).StartThread();
+		}
+	}
+	
+	public class ContinueDebuggingCommand : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
+			debuggerService.Continue();
+		}
+	}
+	
+	public class BreakDebuggingCommand : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
+			debuggerService.Break();
+		}
+	}
+	
+	public class StopDebuggingCommand : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
+			debuggerService.Stop();
+		}
+	}
+	
+	public class StepDebuggingCommand : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
+			debuggerService.Step(false);
+		}
+	}
+	
+	public class StepIntoDebuggingCommand : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
+			debuggerService.Step(true);
+		}
+	}
+	
+	public class StepOutDebuggingCommand : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
+			debuggerService.StepOut();
+		}
+	}
+	
 	
 	public class BuildCurrentProject : AbstractMenuCommand
 	{

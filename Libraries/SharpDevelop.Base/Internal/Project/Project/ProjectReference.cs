@@ -8,6 +8,7 @@
 using System;
 using System.IO;
 using System.Diagnostics;
+using System.Reflection;
 using System.Xml;
 using ICSharpCode.SharpDevelop.Services;
 using System.ComponentModel;
@@ -92,11 +93,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		{
 			switch (ReferenceType) {
 				case ReferenceType.Typelib:
-#if LINUX
-					return String.Empty;
-#else
 					return new TypelibImporter().Import(this, project);
-#endif
 				case ReferenceType.Assembly:
 					return reference;
 				
@@ -135,11 +132,20 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		/// </returns>
 		static string GetPathToGACAssembly(ProjectReference refInfo)
 		{ // HACK : Only works on windows.
-			Debug.Assert(refInfo.ReferenceType == ReferenceType.Gac);
+			System.Diagnostics.Debug.Assert(refInfo.ReferenceType == ReferenceType.Gac);
 			string[] info = refInfo.Reference.Split(',');
 			
 			if (info.Length < 4) {
-				return info[0];
+				Assembly refAssembly = Assembly.LoadWithPartialName(info[0]);				
+				// if it failed, then return just the short name
+				if (refAssembly == null) {
+					return info[0];
+				}
+				// store the full name from the assembly
+				refInfo.Reference = refAssembly.FullName;
+				
+				// split up the peices again to find the assembly file path
+				info = refInfo.Reference.Split(',');
 			}
 			
 			string aName      = info[0];
@@ -158,6 +164,23 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		public object Clone()
 		{
 			return MemberwiseClone();
+		}
+		
+		public override bool Equals(object obj)
+		{
+			if (!(obj is ProjectReference)) return false;
+			if (this == obj) return true;
+			ProjectReference myProjectReference = (ProjectReference)obj;
+			if (referenceType != myProjectReference.referenceType) return false;
+			if (reference == null) {
+				return myProjectReference.reference == null;
+			}
+			return reference.ToLower().Equals(myProjectReference.reference.ToLower());
+		}
+		
+		public override int GetHashCode()
+		{
+			return referenceType.GetHashCode() ^ (reference != null ? reference.GetHashCode() : 0);
 		}
 		
 		protected virtual void OnReferenceChanged(EventArgs e) 

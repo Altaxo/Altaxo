@@ -16,7 +16,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 	/// </summary>
 	public interface IViewContent : IBaseViewContent
 	{
-		
 		/// <summary>
 		/// A generic name for the file, when it does have no file name
 		/// (e.g. newly created files)
@@ -30,7 +29,18 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// This is the whole name of the content, e.g. the file name or
 		/// the url depending on the type of the content.
 		/// </summary>
-		string ContentName {
+		/// <returns>
+		/// Title Name, if not set it returns UntitledName
+		/// </returns>
+		string TitleName {
+			get;
+			set;
+		}
+		
+		/// <summary>
+		/// Returns the file name (if any) assigned to this view.
+		/// </summary>
+		string FileName {
 			get;
 			set;
 		}
@@ -38,6 +48,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <summary>
 		/// If this property returns true the view is untitled.
 		/// </summary>
+		/// <returns>
+		/// True, if TitleName not set.
+		/// </returns>
 		bool IsUntitled {
 			get;
 		}
@@ -83,7 +96,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// <summary>
 		/// Is called each time the name for the content has changed.
 		/// </summary>
-		event EventHandler ContentNameChanged;
+		event EventHandler TitleNameChanged;
 		
 		/// <summary>
 		/// Is called when the content is changed after a save/load operation

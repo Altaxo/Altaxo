@@ -40,15 +40,15 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			this.selectDialog = selectDialog;
 			
 			this.Sorting = SortOrder.Ascending;
-//			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
+			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 			
 			ColumnHeader nameHeader = new ColumnHeader();
-			nameHeader.Text  = "name";//resourceService.GetString("Dialog.SelectReferenceDialog.COMReferencePanel.NameHeader");
+			nameHeader.Text  = resourceService.GetString("Dialog.About.VersionInfoTabName.NameColumn");
 			nameHeader.Width = 240;
 			Columns.Add(nameHeader);
 			
 			ColumnHeader directoryHeader = new ColumnHeader();
-			directoryHeader.Text  = "directory";//resourceService.GetString("Dialog.SelectReferenceDialog.COMReferencePanel.TypelibPath");
+			directoryHeader.Text  = resourceService.GetString("Dialog.SelectReferenceDialog.GacReferencePanel.PathHeader");
 			directoryHeader.Width =200;
 			Columns.Add(directoryHeader);
 			

@@ -46,7 +46,7 @@ namespace ICSharpCode.Core.AddIns.Codons
 //			if (subItems == null || subItems.Count > 0) {
 //				throw new ApplicationException("Tried to buil a command with sub commands, please check the XML definition.");
 //			}
-			Debug.Assert(Class != null && Class.Length > 0);
+			System.Diagnostics.Debug.Assert(Class != null && Class.Length > 0);
 			
 			languageBinding = (ILanguageBinding)AddIn.CreateObject(Class);
 			

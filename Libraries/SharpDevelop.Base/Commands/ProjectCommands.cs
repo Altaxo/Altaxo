@@ -24,33 +24,6 @@ using ICSharpCode.SharpDevelop.Internal.Project;
 
 namespace ICSharpCode.SharpDevelop.Commands
 {
-	public class RunTestsInProject : AbstractMenuCommand
-	{
-		public override void Run()
-		{
-			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-			
-			if (projectService.CurrentSelectedProject != null) {
-				LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
-				ILanguageBinding csc = languageBindingService.GetBindingPerLanguageName(projectService.CurrentSelectedProject.ProjectType);
-				string assembly = csc.GetCompiledOutputName(projectService.CurrentSelectedProject);
-				
-				if (!File.Exists(assembly)) {
-					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-					messageService.ShowError("Assembly not Found (Compile the project first)");
-				} else {
-					FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-					string command = fileUtilityService.SharpDevelopRootPath + 
-					                 Path.DirectorySeparatorChar + "bin" + 
-					                 Path.DirectorySeparatorChar + "nunit" + 
-					                 Path.DirectorySeparatorChar + "nunit-gui.exe";
-					string args = '"'  + assembly + '"';
-					Process.Start(command, args);
-				}
-			}
-		}
-	}
-	
 	public class ViewProjectOptions : AbstractMenuCommand
 	{
 		public override void Run()

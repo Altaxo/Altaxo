@@ -28,8 +28,10 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			
 			Button browseButton   = new Button();
 			browseButton.Location = new Point(10, 10);
-			browseButton.Text     = "Browse";
+			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+			browseButton.Text     = stringParserService.Parse("${res:Global.BrowseButtonText}");
 			browseButton.Click   += new EventHandler(SelectReferenceDialog);
+			browseButton.FlatStyle = FlatStyle.System;
 			Controls.Add(browseButton);
 		}
 		

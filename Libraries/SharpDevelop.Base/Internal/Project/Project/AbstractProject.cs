@@ -42,7 +42,10 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		protected string basedirectory   = String.Empty;
 
 		[XmlAttribute("name")]
-		protected string projectname     = "New Project";
+		protected string projectname        = "New Project";
+		
+		[XmlAttribute("standardNamespace")]
+		protected string standardNamespace  = "NewProject";
 
 		[XmlAttribute("description")]
 		protected string description     = "";
@@ -61,6 +64,18 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		
 		protected DeployInformation deployInformation = new DeployInformation();
 		FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+		
+		bool     isDirty = true;
+	
+		[Browsable(false)]
+		public bool IsDirty {
+			get {
+				return isDirty;
+			}
+			set {
+				isDirty = value;
+			}
+		}
 		
 		[Browsable(false)]
 		public string BaseDirectory {
@@ -85,6 +100,17 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 						OnNameChanged(EventArgs.Empty);
 					}
 				}
+			}
+		}
+		
+		[LocalizedProperty("${res:ICSharpCode.SharpDevelop.Internal.Project.Project.StandardNamespace}",
+		                   Description ="${res:ICSharpCode.SharpDevelop.Internal.Project.StandardNamespace.Description}")]
+		public string StandardNamespace {
+			get {
+				return standardNamespace;
+			}
+			set {
+				standardNamespace = value;
 			}
 		}
 		
@@ -136,6 +162,11 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 			set {
 				activeConfiguration = value;
+				if (!IsDirty) {
+					IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+					projectService.MarkProjectDirty(this);
+					isDirty = true;
+				}
 			}
 		}
 		
@@ -183,7 +214,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		{
 			foreach (ProjectFile file in projectFiles) {
 				// WINDOWS DEPENDENCY:
-				if (file.Name.ToUpper() == filename.ToUpper()) {
+				if (Path.GetFullPath(file.Name).ToUpper() == Path.GetFullPath(filename).ToUpper()) {
 					return true;
 				}
 			}
@@ -231,9 +262,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 						projectFiles.Add(newFile);
 					}
 				} else {
-#if !LINUX
 					new IncludeFilesDialog(this, newFiles).ShowDialog();
-#endif
 				}
 			}
 		}
@@ -317,36 +346,54 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 				XmlAttributeAttribute[]           xmlAttributes = (XmlAttributeAttribute[])fieldInfo.GetCustomAttributes(typeof(XmlAttributeAttribute), true);
 				ConvertToRelativePathAttribute[]  convertToRelPath = (ConvertToRelativePathAttribute[])fieldInfo.GetCustomAttributes(typeof(ConvertToRelativePathAttribute), true);
 				bool convertRel = convertToRelPath != null && convertToRelPath.Length > 0;
-				
 				if (xmlAttributes != null && xmlAttributes.Length > 0) {
-					XmlAttribute xmlAttribute = element.Attributes[xmlAttributes[0].Name];
-					if (xmlAttribute != null) {
-						if (convertRel && convertToRelPath[0].PredicatePropertyName != null && convertToRelPath[0].PredicatePropertyName.Length > 0) {
-							PropertyInfo myPropInfo = o.GetType().GetProperty(convertToRelPath[0].PredicatePropertyName, 
-							                                                          BindingFlags.Public |
-							                                                          BindingFlags.NonPublic |
-							                                                          BindingFlags.Instance);
-							if (myPropInfo != null) {
-								convertRel = (bool)myPropInfo.GetValue(o, null);
+					try {
+						XmlAttribute xmlAttribute = element.Attributes[xmlAttributes[0].Name];
+						if (xmlAttribute != null) {
+							if (convertRel && convertToRelPath[0].PredicatePropertyName != null && convertToRelPath[0].PredicatePropertyName.Length > 0) {
+								PropertyInfo myPropInfo = o.GetType().GetProperty(convertToRelPath[0].PredicatePropertyName, 
+								                                                          BindingFlags.Public |
+								                                                          BindingFlags.NonPublic |
+								                                                          BindingFlags.Instance);
+								if (myPropInfo != null) {
+									convertRel = (bool)myPropInfo.GetValue(o, null);
+								}
 							}
-						}
-						
-						string val = null;
-						if (convertRel) {
-							if (xmlAttribute.InnerText.Length == 0) {
-								val = String.Empty;
+							
+							string val = null;
+							if (convertRel) {
+								if (xmlAttribute.InnerText.Length == 0) {
+									val = String.Empty;
+								} else {
+									val = fileUtilityService.RelativeToAbsolutePath(basedirectory, xmlAttribute.InnerText);
+//									string command   = xmlAttribute.InnerText;
+//									string arguments = "";
+//									int    idx = command.IndexOf(' ');
+//									if (idx > 0) {
+//										arguments = command.Substring(idx + 1);
+//										command   = command.Substring(0, idx);
+//									}
+//									
+//									val = fileUtilityService.RelativeToAbsolutePath(basedirectory, command);
+//									if (arguments.Length > 0) {
+//										val += " " + arguments;
+//									}
+								}
 							} else {
-								val = fileUtilityService.RelativeToAbsolutePath(basedirectory, xmlAttribute.InnerText);
+								val = xmlAttribute.InnerText;
 							}
-						} else {
-							val = xmlAttribute.InnerText;
+							if (val != null) {
+								if (fieldInfo.FieldType.IsEnum) {
+									fieldInfo.SetValue(o, Enum.Parse(fieldInfo.FieldType,val));
+								} else {
+									fieldInfo.SetValue(o, Convert.ChangeType(val, fieldInfo.FieldType));
+								}
+							}
 						}
-						
-						if (fieldInfo.FieldType.IsEnum) {
-							fieldInfo.SetValue(o, Enum.Parse(fieldInfo.FieldType,val));
-						} else {
-							fieldInfo.SetValue(o, Convert.ChangeType(val, fieldInfo.FieldType));
-						}
+					} catch {
+						IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+						messageService.ShowMessage(fieldInfo.Name + " -- error");
+						throw;
 					}
 				} else { // add sets to the xmlElement
 					XmlSetAttribute[] xmlSetAttributes = (XmlSetAttribute[])fieldInfo.GetCustomAttributes(typeof(XmlSetAttribute), true);
@@ -414,6 +461,18 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 							fieldValue = String.Empty;
 						} else {
 							fieldValue = fileUtilityService.AbsoluteToRelativePath(basedirectory, val);
+//							string command   = val;
+//							string arguments = "";
+//							int    idx = command.IndexOf(' ');
+//							if (idx > 0) {
+//								arguments = command.Substring(idx + 1);
+//								command   = command.Substring(0, idx);
+//							}
+//							
+//							fieldValue = fileUtilityService.AbsoluteToRelativePath(basedirectory, command);
+//							if (arguments.Length > 0) {
+//								fieldValue += " " + arguments;
+//							}
 						}
 					}
 					xmlAttribute.InnerText = fieldValue == null ? String.Empty : fieldValue.ToString();
@@ -427,20 +486,27 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 						} else {
 							setElement = doc.CreateElement(xmlSetAttributes[0].Name);
 						}
-
-						// A set must always be a collection
-						ICollection collection = (ICollection)fieldInfo.GetValue(o);
-						foreach (object collectionObject in collection) {
-							XmlNodeNameAttribute[] xmlNodeNames = (XmlNodeNameAttribute[])collectionObject.GetType().GetCustomAttributes(typeof(XmlNodeNameAttribute), true);
-							if (xmlNodeNames == null || xmlNodeNames.Length != 1) {
-								throw new Exception("XmlNodeNames mismatch");
+						try {
+							// A set must always be a collection
+							ICollection collection = (ICollection)fieldInfo.GetValue(o);
+							if (collection != null) {
+								foreach (object collectionObject in collection) {
+									XmlNodeNameAttribute[] xmlNodeNames = (XmlNodeNameAttribute[])collectionObject.GetType().GetCustomAttributes(typeof(XmlNodeNameAttribute), true);
+									if (xmlNodeNames == null || xmlNodeNames.Length != 1) {
+										throw new Exception("XmlNodeNames mismatch");
+									}
+									XmlElement collectionElement = doc.CreateElement(xmlNodeNames[0].Name);
+									SetXmlAttributes(doc, collectionElement, collectionObject);
+									setElement.AppendChild(collectionElement);
+								}
 							}
-							XmlElement collectionElement = doc.CreateElement(xmlNodeNames[0].Name);
-							SetXmlAttributes(doc, collectionElement, collectionObject);
-							setElement.AppendChild(collectionElement);
-						}
-						if (element != setElement) {
-							element.AppendChild(setElement);
+							if (element != setElement) {
+								element.AppendChild(setElement);
+							}
+						} catch {
+							IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
+							messageService.ShowMessage(xmlSetAttributes[0].Name + " -- error");
+							throw;
 						}
 					} else { // finally try, if the field is from a type which has a XmlNodeName attribute attached
 						object fieldValue = fieldInfo.GetValue(o);
@@ -527,16 +593,44 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 		}
 		
-		public void CopyReferencesToOutputPath(bool force)
+		public void CopyReferencesToPath(string destination, bool force)
 		{
-			AbstractProjectConfiguration config = ActiveConfiguration as AbstractProjectConfiguration;
-			if (config == null) {
-				return;
-			}
 			foreach (ProjectReference projectReference in ProjectReferences) {
 				if ((projectReference.LocalCopy || force) && projectReference.ReferenceType != ReferenceType.Gac) {
 					string referenceFileName   = projectReference.GetReferencedFileName(this);
-					string destinationFileName = fileUtilityService.GetDirectoryNameWithSeparator(config.OutputDirectory) + Path.GetFileName(referenceFileName);
+					string destinationFileName = fileUtilityService.GetDirectoryNameWithSeparator(destination) + Path.GetFileName(referenceFileName);
+					if (projectReference.ReferenceType == ReferenceType.Project) {
+						IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+						IProject project = projectService.GetProject(projectReference.Reference);
+						if (project != null) {
+							project.CopyReferencesToPath(destination, force);
+						}
+					}
+					string referencePath = Path.GetDirectoryName(referenceFileName).ToLower();
+					if (projectReference.ReferenceType == ReferenceType.Assembly) {
+						try {
+							Assembly asm = Assembly.LoadFrom(referenceFileName);
+							if (asm != null) {
+								AssemblyName[] referenceNames = asm.GetReferencedAssemblies();
+								foreach (AssemblyName name in referenceNames) {
+									string fileName = Path.Combine(referencePath, name.Name + ".dll");
+									if (!File.Exists(fileName)) {
+										fileName = Path.Combine(referencePath, name.Name + ".exe");
+									}
+									try {
+										if (File.Exists(fileName)) {
+											File.Copy(fileName, Path.Combine(destination, Path.GetFileName(fileName)), true);
+										}
+									} catch (Exception e) {
+										Console.WriteLine("Can't copy dependend reference file from {0} to {1} reason {2}", referenceFileName, destinationFileName, e);
+									}
+								}
+							}
+						} catch (Exception e) {
+							Console.WriteLine("Exception while copying references : " + e.ToString());
+						}
+					}
+					
 					try {
 						if (destinationFileName != referenceFileName) {
 							File.Copy(referenceFileName, destinationFileName, true);
@@ -546,6 +640,15 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 					}
 				}
 			}
+		}
+		
+		public void CopyReferencesToOutputPath(bool force)
+		{
+			AbstractProjectConfiguration config = ActiveConfiguration as AbstractProjectConfiguration;
+			if (config == null) {
+				return;
+			}
+			CopyReferencesToPath(config.OutputDirectory, force);
 		}
 		
 		public virtual void Dispose()
@@ -598,7 +701,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
 			IConfiguration config = value as IConfiguration;
-			Debug.Assert(config != null, String.Format("Tried to convert {0} to IConfiguration", config));
+			System.Diagnostics.Debug.Assert(config != null, String.Format("Tried to convert {0} to IConfiguration", config));
 			if (config != null) {
 				return config.Name;
 			}

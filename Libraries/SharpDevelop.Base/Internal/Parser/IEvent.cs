@@ -11,10 +11,6 @@ namespace SharpDevelop.Internal.Parser
 {
 	public interface IEvent : IMember
 	{
-		IRegion Region {
-			get;
-		}
-		
 		IRegion BodyRegion {
 			get;
 		}

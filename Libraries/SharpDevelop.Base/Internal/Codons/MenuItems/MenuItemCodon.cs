@@ -134,7 +134,7 @@ namespace ICSharpCode.Core.AddIns.Codons
 				}
 				newItem = newMenu;
 			}
-			Debug.Assert(newItem != null);
+			System.Diagnostics.Debug.Assert(newItem != null);
 			
 			if (Icon != null) {
 				ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<Template author="Don Kackman" version="1.0">
+	
+	<Config
+		  name        = "${res:Templates.File.NewClassWizard.Name}"
+		  icon        = "VB.File.NewClass"
+		  category    = "VB"
+		  defaultname = "Class${Number}.cs"
+		  language    = "VBNET">
+		
+		<Wizard path = "/SharpDevelop/Templates/File/NewClassWizard"/>
+	</Config>
+	
+	<Description>${res:Templates.File.NewClassWizard.Description}</Description>
+	
+	<Files/>
+	<AdditionalOptions/>
+</Template>

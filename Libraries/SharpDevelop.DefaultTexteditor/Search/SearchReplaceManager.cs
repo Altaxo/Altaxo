@@ -173,7 +173,7 @@ namespace ICSharpCode.TextEditor.Document
 				TextEditorControl textArea = OpenTextArea(result.FileName);
 				
 				if (lastResult != null  && lastResult.FileName == result.FileName && 
-				    textArea.ActiveTextAreaControl.Caret.Offset != lastResult.Offset + lastResult.Length) {
+					textArea.ActiveTextAreaControl.Caret.Offset != lastResult.Offset + lastResult.Length) {
 					find.Reset();
 				}
 				int startPos = Math.Min(textArea.Document.TextLength, Math.Max(0, result.Offset));

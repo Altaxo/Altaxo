@@ -33,7 +33,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 	{
 		int    line;
 		string filename;
-
+		object tag;
+		
 		public int Line {
 			get {
 				return line;
@@ -44,20 +45,36 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			get {
 				return filename;
 			}
+			set {
+				filename = value;
+			}
 		}
-
+		public object Tag {
+			get {
+				return tag;
+			}
+		}
+		
 		public ClassScoutTag(int line, string filename)
 		{
 			this.line     = line;
 			this.filename = filename;
+		}
+		
+		public ClassScoutTag(int line, string filename, object tag)
+		{
+			this.line = line;
+			this.filename = filename;
+			this.tag = tag;
 		}
 	}
 
 	/// <summary>
 	/// This class is the project scout tree view
 	/// </summary>
-	public class ClassScout : TreeView, IPadContent
+	public class ClassScout : AbstractPadContent
 	{
+		TreeView treeView = new TreeView();
 		Panel contentPanel = new Panel();
 		int imageIndexOffset = -1;
 		ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
@@ -68,63 +85,120 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		delegate void MyD();
 		delegate void MyParseEventD(TreeNodeCollection nodes, ParseInformationEventArgs e);
 		
-		public event EventHandler TitleChanged;
-		public event EventHandler IconChanged;
+		IClassScoutNodeBuilder classBrowserNodeBuilder = new DefaultDotNetClassScoutNodeBuilder();
 
-		IClassScoutNodeBuilder[] classBrowserNodeBuilders = new IClassScoutNodeBuilder[] {
-			new DefaultDotNetClassScoutNodeBuilder()
-		};
-
-		public string Title {
+		public override Control Control {
 			get {
-				return resourceService.GetString("MainWindow.Windows.ClassScoutLabel");
+				return treeView;
+			}
+		}
+		
+		public AbstractClassScoutNode SelectedNode {
+			get {
+				return treeView.SelectedNode as AbstractClassScoutNode;
+			}
+			set {
+				treeView.SelectedNode = value;
+			}
+		}
+		
+		public ImageList ImageList {
+			get {
+				return treeView.ImageList;
 			}
 		}
 
-		public string Icon {
-			get {
-				return "Icons.16x16.Class";
-			}
-		}
-
-		public Control Control {
-			get {
-				return contentPanel;
-			}
-		}
-
-		public ClassScout()
+		public ClassScout() : base("${res:MainWindow.Windows.ClassScoutLabel}", "Icons.16x16.Class")
 		{
 			addParseInformationHandler = new ParseInformationEventHandler(OnParseInformationAdded);
 			removeParseInformationHandler = new ParseInformationEventHandler(OnParseInformationRemoved);
 			
 			ClassBrowserIconsService classBrowserIconService = (ClassBrowserIconsService)ServiceManager.Services.GetService(typeof(ClassBrowserIconsService));
 
-			this.ImageList  = classBrowserIconService.ImageList;
+			treeView.ImageList  = classBrowserIconService.ImageList;
 
 			imageIndexOffset                      = ImageList.Images.Count;
 			FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
 			IconService iconService = (IconService)ServiceManager.Services.GetService(typeof(IconService));
 			foreach (Image img in iconService.ImageList.Images) {
-				ImageList.Images.Add(img);
+				treeView.ImageList.Images.Add(img);
 			}
 
-			LabelEdit     = false;
-			HotTracking   = false;
-			AllowDrop     = true;
-			HideSelection = false;
-			Dock          = DockStyle.Fill;
+			treeView.LabelEdit     = false;
+			treeView.HotTracking   = false;
+			treeView.AllowDrop     = true;
+			treeView.HideSelection = false;
+			treeView.Dock          = DockStyle.Fill;
 
 			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
 
 			projectService.CombineOpened += new CombineEventHandler(OnCombineOpen);
 			projectService.CombineClosed += new CombineEventHandler(OnCombineClosed);
 
-			contentPanel.Controls.Add(this);
 			AmbienceService ambienceService = (AmbienceService)ServiceManager.Services.GetService(typeof(AmbienceService));
 			ambienceService.AmbienceChanged += new EventHandler(AmbienceChangedEvent);
+			
+			treeView.DoubleClick += new EventHandler(TreeViewDoubleClick);
+			treeView.MouseDown += new MouseEventHandler(TreeViewMouseDown);
+			treeView.MouseUp += new MouseEventHandler(TreeViewMouseUp);
+			treeView.BeforeExpand += new TreeViewCancelEventHandler(TreeViewBeforeExpand);
+			IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
+			fileService.FileRenamed += new FileEventHandler(RenameFile);
+			fileService.FileRemoved += new FileEventHandler(RemoveFile);
 		}
-
+		
+		void RemoveFile(object sender, FileEventArgs e)
+		{
+			string fileName = Path.GetFullPath(e.FileName).ToUpper();
+			Stack stack = new Stack();
+			foreach (TreeNode node in treeView.Nodes) {
+				stack.Push(node);
+			}
+			
+			while (stack.Count > 0) {
+				TreeNode node = (TreeNode)stack.Pop();
+				ClassScoutTag tag = node.Tag as ClassScoutTag;
+				if (tag != null) {
+					if (Path.GetFullPath(tag.FileName).ToUpper() == fileName) {
+						node.Parent.Nodes.Remove(node);
+					}
+				} else {
+					foreach (TreeNode child in node.Nodes) {
+						stack.Push(child);
+					}
+				}
+			}
+		}
+		void RenameFile(object sender, FileEventArgs e)
+		{
+			string fileName = Path.GetFullPath(e.SourceFile).ToUpper();
+			Stack stack = new Stack();
+			foreach (TreeNode node in treeView.Nodes) {
+				stack.Push(node);
+			}
+			
+			while (stack.Count > 0) {
+				TreeNode node = (TreeNode)stack.Pop();
+				ClassScoutTag tag = node.Tag as ClassScoutTag;
+				if (tag != null) {
+					if (Path.GetFullPath(tag.FileName).ToUpper() == fileName) {
+						tag.FileName = e.TargetFile;
+					}
+				}
+				foreach (TreeNode child in node.Nodes) {
+					stack.Push(child);
+				}
+			}
+		}
+		
+		void TreeViewBeforeExpand(object sender, TreeViewCancelEventArgs e)
+		{
+			AbstractClassScoutNode node = e.Node as AbstractClassScoutNode;
+			if (node != null) {
+				node.BeforeExpand();
+			}
+		}
+		
 		void AmbienceChangedEvent(object sender, EventArgs e)
 		{
 			if (parseCombine != null) {
@@ -132,14 +206,12 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			}
 		}
 
-		public void RedrawContent()
-		{
-		}
-
 		void OnCombineOpen(object sender, CombineEventArgs e)
 		{
-			Nodes.Clear();
-			Nodes.Add(new TreeNode("Loading..."));
+			treeView.Nodes.Clear();
+			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+			
+			treeView.Nodes.Add(new TreeNode(stringParserService.Parse("${res:ICSharpCode.SharpDevelop.Gui.Pads.ClassScout.LoadingNode}")));
 			StartCombineparse(e.Combine);
 		}
 
@@ -148,22 +220,29 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			IParserService parserService  = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
 			parserService.ParseInformationAdded -= addParseInformationHandler;
 			parserService.ParseInformationRemoved -= removeParseInformationHandler;
-			Nodes.Clear();
+			treeView.Nodes.Clear();
 		}
 
 		void OnParseInformationAdded(object sender, ParseInformationEventArgs e)
 		{
-			Invoke(new MyParseEventD(AddParseInformation), new object[] { Nodes, e });
+			if (Thread.CurrentThread.IsBackground) {
+				treeView.Invoke(new MyParseEventD(AddParseInformation2), new object[] { treeView.Nodes, e });
+			} else {
+				AddParseInformation2(treeView.Nodes, e);
+			}
 		}
 		
 		void OnParseInformationRemoved(object sender, ParseInformationEventArgs e)
 		{
-			Invoke(new MyParseEventD(RemoveParseInformation), new object[] { Nodes, e });
+			if (Thread.CurrentThread.IsBackground) {
+				treeView.Invoke(new MyParseEventD(RemoveParseInformation2), new object[] { treeView.Nodes, e });
+			} else {
+				RemoveParseInformation2(treeView.Nodes, e);
+			}
 		}
 		
-		protected override void OnDoubleClick(EventArgs e)
+		void TreeViewDoubleClick(object sender, EventArgs e)
 		{
-			base.OnDoubleClick(e);
 			TreeNode node = SelectedNode;
 			if (node != null) {
 				ClassScoutTag tag = node.Tag as ClassScoutTag;
@@ -181,41 +260,24 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 				}
 			}
 		}
-
-		protected override void OnMouseDown(MouseEventArgs e)
+		
+		void TreeViewMouseDown(object sender, MouseEventArgs e)
 		{
-			TreeNode node = (TreeNode)GetNodeAt(e.X, e.Y);
+			AbstractClassScoutNode node = treeView.GetNodeAt(e.X, e.Y) as AbstractClassScoutNode;
 
 			if (node != null) {
 				SelectedNode = node;
 			}
-			base.OnMouseDown(e);
 		}
-
-		protected override void OnMouseUp(MouseEventArgs e)
+		
+		void TreeViewMouseUp(object sender, MouseEventArgs e)
 		{
-			if (e.Button == MouseButtons.Right && SelectedNode != null && SelectedNode is AbstractClassScoutNode) {
+			if (e.Button == MouseButtons.Right && SelectedNode != null) {
 				AbstractClassScoutNode selectedBrowserNode = (AbstractClassScoutNode)SelectedNode;
 				if (selectedBrowserNode.ContextmenuAddinTreePath != null && selectedBrowserNode.ContextmenuAddinTreePath.Length > 0) {
 					MenuService menuService = (MenuService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(MenuService));
-					menuService.ShowContextMenu(this, selectedBrowserNode.ContextmenuAddinTreePath, this, e.X, e.Y);
+					menuService.ShowContextMenu(this, selectedBrowserNode.ContextmenuAddinTreePath, treeView, e.X, e.Y);
 				}
-			}
-
-			base.OnMouseUp(e);
-		}
-
-		protected virtual void OnTitleChanged(EventArgs e)
-		{
-			if (TitleChanged != null) {
-				TitleChanged(this, e);
-			}
-		}
-
-		protected virtual void OnIconChanged(EventArgs e)
-		{
-			if (IconChanged != null) {
-				IconChanged(this, e);
 			}
 		}
 		
@@ -232,12 +294,10 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		void StartPopulating()
 		{
 			ParseCombine(parseCombine);
-			Invoke(new MyD(DoPopulate));
+			treeView.Invoke(new MyD(DoPopulate));
 			IParserService parserService  = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
-			parserService.ParseInformationAdded += addParseInformationHandler;
-			parserService.ParseInformationRemoved += removeParseInformationHandler;
 		}
-
+		
 		public void ParseCombine(Combine combine)
 		{
 			foreach (CombineEntry entry in combine.Entries) {
@@ -248,7 +308,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 				}
 			}
 		}
-
+		
 		void ParseProject(IProject p)
 		{
 			if (p.ProjectType == "C#" || p.ProjectType == "VBNET") {
@@ -260,19 +320,22 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 	 			}
 			}
 		}
-
+		
 		void DoPopulate()
 		{
-			BeginUpdate();
-			Nodes.Clear();
+			treeView.BeginUpdate();
+			treeView.Nodes.Clear();
 			try {
-				Populate(parseCombine, Nodes);
+				Populate(parseCombine, treeView.Nodes);
 			} catch (Exception e) {
 				MessageBox.Show(e.ToString(), "Parse Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
-			EndUpdate();
+			treeView.EndUpdate();
+			IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
+			parserService.ParseInformationAdded   += addParseInformationHandler;
+			parserService.ParseInformationRemoved += removeParseInformationHandler;
 		}
-
+		
 		public void Populate(Combine combine, TreeNodeCollection nodes)
 		{
 			ClassBrowserIconsService classBrowserIconService = (ClassBrowserIconsService)ServiceManager.Services.GetService(typeof(ClassBrowserIconsService));
@@ -288,21 +351,18 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			SortUtility.QuickSort(combineNode.Nodes, TreeNodeComparer.Default);
 			nodes.Add(combineNode);
 		}
-
+		
 		void Populate(IProject p, TreeNodeCollection nodes)
 		{
 			// only C# is currently supported.
 			bool builderFound = false;
-			foreach (IClassScoutNodeBuilder classBrowserNodeBuilder in classBrowserNodeBuilders) {
-				if (classBrowserNodeBuilder.CanBuildClassTree(p)) {
-					TreeNode prjNode = classBrowserNodeBuilder.BuildClassTreeNode(p, imageIndexOffset);
-					nodes.Add(prjNode);
-					prjNode.Tag = p;
-					builderFound = true;
-					break;
-				}
+			if (classBrowserNodeBuilder.CanBuildClassTree(p)) {
+				TreeNode prjNode = classBrowserNodeBuilder.BuildClassTreeNode(p, imageIndexOffset);
+				nodes.Add(prjNode);
+				prjNode.Tag = p;
+				builderFound = true;
 			}
-
+			
 			// no builder found -> create 'dummy' node
 			if (!builderFound) {
 				TreeNode prjNode = new TreeNode(p.Name);
@@ -314,43 +374,48 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 				nodes.Add(prjNode);
 			}
 		}
-
+		
+		void AddParseInformation2(TreeNodeCollection nodes, ParseInformationEventArgs e)
+		{
+//			treeView.BeginUpdate();
+			AddParseInformation(nodes, e);
+//			treeView.EndUpdate();
+		}
+		
 		void AddParseInformation(TreeNodeCollection nodes, ParseInformationEventArgs e)
 		{
-			BeginUpdate();
 			foreach (TreeNode node in nodes) {
 				if (node.Tag is IProject) {
 					IProject p = (IProject)node.Tag;
 					if (p.IsFileInProject(e.FileName)) {
-						foreach (IClassScoutNodeBuilder classBrowserNodeBuilder in classBrowserNodeBuilders) {
-							classBrowserNodeBuilder.AddToClassTree(node, e);
-							break;
-						}
+						classBrowserNodeBuilder.AddToClassTree(node, e);
 					}
 				} else {
 					AddParseInformation(node.Nodes, e);
 				}
 			}
-			EndUpdate();
+		}
+		
+		void RemoveParseInformation2(TreeNodeCollection nodes, ParseInformationEventArgs e)
+		{
+//			treeView.BeginUpdate();
+			RemoveParseInformation(nodes, e);
+//			treeView.EndUpdate();
 		}
 		
 		void RemoveParseInformation(TreeNodeCollection nodes, ParseInformationEventArgs e)
 		{
-			BeginUpdate();
-			foreach (TreeNode node in nodes) {
+			for (int i = 0; i < nodes.Count; ++i) {
+				TreeNode node = nodes[i];
 				if (node.Tag is IProject) {
 					IProject p = (IProject)node.Tag;
 					if (p.IsFileInProject(e.FileName)) {
-						foreach (IClassScoutNodeBuilder classBrowserNodeBuilder in classBrowserNodeBuilders) {
-							classBrowserNodeBuilder.RemoveFromClassTree(node, e);
-							break;
-						}
+						classBrowserNodeBuilder.RemoveFromClassTree(node, e);
 					}
 				} else {
 					RemoveParseInformation(node.Nodes, e);
 				}
 			}
-			EndUpdate();
 		}
 	}
 }

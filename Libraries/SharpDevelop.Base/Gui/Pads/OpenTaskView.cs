@@ -19,38 +19,9 @@ using ICSharpCode.Core.Properties;
 
 namespace ICSharpCode.SharpDevelop.Gui.Pads
 {
-	public class OpenTaskView : ListView, IPadContent
+	public class OpenTaskView : AbstractPadContent
 	{
-		Panel     myPanel  = new Panel();
-		ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
-		
-		public Control Control {
-			get {
-				return myPanel;
-			}
-		}
-		
-		public string Title {
-			get {
-				return resourceService.GetString("MainWindow.Windows.TaskList");
-			}
-		}
-		
-		public string Icon {
-			get {
-				return "Icons.16x16.TaskListIcon";
-			}
-		}
-		
-		public void RedrawContent()
-		{
-			line.Text        = resourceService.GetString("CompilerResultView.LineText");
-			description.Text = resourceService.GetString("CompilerResultView.DescriptionText");
-			file.Text        = resourceService.GetString("CompilerResultView.FileText");
-			path.Text        = resourceService.GetString("CompilerResultView.PathText");
-			OnTitleChanged(null);
-			OnIconChanged(null);
-		}
+		ListView listView = new ListView();
 		
 		ColumnHeader type        = new ColumnHeader();
 		ColumnHeader line        = new ColumnHeader();
@@ -59,27 +30,32 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		ColumnHeader path        = new ColumnHeader();
 		ToolTip taskToolTip = new ToolTip();
 		
-		public OpenTaskView()
+		ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(ResourceService));
+		public override Control Control {
+			get {
+				return listView;
+			}
+		}
+		
+		public OpenTaskView() : base("${res:MainWindow.Windows.TaskList}", "Icons.16x16.TaskListIcon")
 		{
-			
 			type.Text = "!";
 			
 			RedrawContent();
+			listView.Columns.Add(type);
+			listView.Columns.Add(line);
+			listView.Columns.Add(description);
+			listView.Columns.Add(file);
+			listView.Columns.Add(path);
 			
-			Columns.Add(type);
-			Columns.Add(line);
-			Columns.Add(description);
-			Columns.Add(file);
-			Columns.Add(path);
-			
-			FullRowSelect = true;
-			AutoArrange = true;
-			Alignment   = ListViewAlignment.Left;
-			View = View.Details;
-			Dock = DockStyle.Fill;
-			GridLines  = true;
-			Activation = ItemActivation.OneClick;
-			OnResize(null);
+			listView.FullRowSelect = true;
+			listView.AutoArrange = true;
+			listView.Alignment   = ListViewAlignment.Left;
+			listView.View = View.Details;
+			listView.Dock = DockStyle.Fill;
+			listView.GridLines  = true;
+			listView.Activation = ItemActivation.OneClick;
+			ListViewResize(this, EventArgs.Empty);
 			
 			TaskService taskService        = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
 			IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
@@ -91,22 +67,13 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			projectService.CombineOpened += new CombineEventHandler(OnCombineOpen);
 			projectService.CombineClosed += new CombineEventHandler(OnCombineClosed);
 			
-			myPanel.Controls.Add(this);
-			
 			ImageList imglist = new ImageList();
 			imglist.ColorDepth = ColorDepth.Depth32Bit;
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.Error"));
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.Warning"));
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.Information"));
 			imglist.Images.Add(resourceService.GetBitmap("Icons.16x16.Question"));
-			this.SmallImageList = this.LargeImageList = imglist;
-			
-//			type.Width = 24;
-//			line.Width = 50;
-//			description.Width = 600;
-//			file.Width = 150;
-//			path.Width = 300;
-			
+			listView.SmallImageList = listView.LargeImageList = imglist;
 			// Set up the delays for the ToolTip.
 			taskToolTip.InitialDelay = 500;
 			taskToolTip.ReshowDelay = 100;
@@ -114,30 +81,31 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 //
 //			// Force the ToolTip text to be displayed whether or not the form is active.
 //			taskToolTip.ShowAlways   = false;
-
-			this.CreateControl();
+			
+			listView.ItemActivate += new EventHandler(ListViewItemActivate);
+			listView.MouseMove    += new MouseEventHandler(ListViewMouseMove);
+			listView.Resize       += new EventHandler(ListViewResize);
 		}
 		
-		protected override void Dispose(bool disposing)
+		
+		public override void RedrawContent()
 		{
-//			if (disposing) {
-//				PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
-//				propertyService.SetProperty("CompilerResultView.typeWidth", type.Width);
-//				propertyService.SetProperty("CompilerResultView.lineWidth", line.Width);
-//				propertyService.SetProperty("CompilerResultView.descriptionWidth", description.Width);
-//				propertyService.SetProperty("CompilerResultView.fileWidth", file.Width);
-//				propertyService.SetProperty("CompilerResultView.pathWidth", path.Width);
-//			}
-			base.Dispose(disposing);
+			line.Text        = resourceService.GetString("CompilerResultView.LineText");
+			description.Text = resourceService.GetString("CompilerResultView.DescriptionText");
+			file.Text        = resourceService.GetString("CompilerResultView.FileText");
+			path.Text        = resourceService.GetString("CompilerResultView.PathText");
+			OnTitleChanged(null);
+			OnIconChanged(null);
 		}
+		
 		void OnCombineOpen(object sender, CombineEventArgs e)
 		{
-			Items.Clear();
+			listView.Items.Clear();
 		}
 		
 		void OnCombineClosed(object sender, CombineEventArgs e)
 		{
-			Items.Clear();
+			listView.Items.Clear();
 		}
 		
 		void SelectTaskView(object sender, EventArgs e)
@@ -145,7 +113,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			TaskService taskService = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
 			if (taskService.Tasks.Count > 0) {
 				try {
-					Invoke(new EventHandler(SelectTaskView2));
+					listView.Invoke(new EventHandler(SelectTaskView2));
 				} catch {}
 			}
 		}
@@ -163,23 +131,21 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			}
 		}
 		
-		protected override void OnItemActivate(EventArgs e)
+		void ListViewItemActivate(object sender, EventArgs e)
 		{
-			base.OnItemActivate(e);
-			
-			if (FocusedItem != null) {
-				Task task = (Task)FocusedItem.Tag;
-				Debug.Assert(task != null);
+			if (listView.FocusedItem != null) {
+				Task task = (Task)listView.FocusedItem.Tag;
+				System.Diagnostics.Debug.Assert(task != null);
 				task.JumpToPosition();
 			}
 		}
-		protected override void OnMouseMove(MouseEventArgs e)
+		
+		void ListViewMouseMove(object sender, MouseEventArgs e)
 		{
-			base.OnMouseMove(e);
-			ListViewItem item = base.GetItemAt(e.X, e.Y);
+			ListViewItem item = listView.GetItemAt(e.X, e.Y);
 			if (item != null) {
 				Task task = (Task)item.Tag;
-				taskToolTip.SetToolTip(this, task.Description);
+				taskToolTip.SetToolTip(listView, task.Description);
 				taskToolTip.Active       = true;
 			} else {
 				taskToolTip.RemoveAll(); 
@@ -187,12 +153,11 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			}
 		}
 		
-		protected override void OnResize(EventArgs e)
+		void ListViewResize(object sender, EventArgs e)
 		{
-			base.OnResize(e);
 			type.Width = 24;
 			line.Width = 50;
-			int w = Width - type.Width - line.Width;
+			int w = listView.Width - type.Width - line.Width;
 			file.Width = w * 15 / 100;
 			path.Width = w * 15 / 100;
 			description.Width = w - file.Width - path.Width - 5;
@@ -200,15 +165,10 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		
 		public CompilerResults CompilerResults = null;
 		
-		void ShowResults2(object sender, EventArgs e)
+		void AddTasks(ICollection col)
 		{
-			Console.WriteLine("Create Open Task View Handle:" + base.Handle);
-			
-			BeginUpdate();
-			Items.Clear();
 			FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-			TaskService taskService = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
-			foreach (Task task in taskService.Tasks) {
+			foreach (Task task in col) {
 				int imageIndex = 0;
 				switch (task.TaskType) {
 					case TaskType.Warning:
@@ -250,39 +210,28 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 				});
 				item.ImageIndex = item.StateImageIndex = imageIndex;
 				item.Tag = task;
-				Items.Add(item);
+				listView.Items.Add(item);
 			}
-			EndUpdate();
+		}
+		
+		void ShowResults2(object sender, EventArgs e)
+		{
+			listView.CreateControl();
+			
+			listView.BeginUpdate();
+			listView.Items.Clear();
+			FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+			TaskService taskService = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
+			AddTasks(taskService.Tasks);
+			AddTasks(taskService.CommentTasks);
+			
+			listView.EndUpdate();
 		}
 		
 		public void ShowResults(object sender, EventArgs e)
 		{
-			Invoke(new EventHandler(ShowResults2));
+			listView.Invoke(new EventHandler(ShowResults2));
 //			SelectTaskView(null, null);
 		}
-		
-		protected virtual void OnTitleChanged(EventArgs e)
-		{
-			if (TitleChanged != null) {
-				TitleChanged(this, e);
-			}
-		}
-		protected virtual void OnIconChanged(EventArgs e)
-		{
-			if (IconChanged != null) {
-				IconChanged(this, e);
-			}
-		}
-		public event EventHandler TitleChanged;
-		public event EventHandler IconChanged;
-		
-		public new void BringToFront()
-		{
-			if (!WorkbenchSingleton.Workbench.WorkbenchLayout.IsVisible(this)) {
-				WorkbenchSingleton.Workbench.WorkbenchLayout.ShowPad(this);
-			}
-			WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this);
-		}
-
 	}
 }

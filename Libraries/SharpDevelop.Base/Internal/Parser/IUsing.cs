@@ -29,6 +29,6 @@ namespace SharpDevelop.Internal.Parser
 		string SearchNamespace(string partitialNamespaceName);
 		
 		IClass SearchType(string partitialTypeName, bool caseSensitive);
-		string SearchNamespace(string partitialNamespaceName, bool caseSensitive);
+		string SearchNamespace(string partitialNamespaceName, bool caseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitivecaseSensitive);
 	}
 }

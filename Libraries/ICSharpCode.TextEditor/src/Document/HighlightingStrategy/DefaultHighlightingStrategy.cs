@@ -24,51 +24,48 @@ namespace ICSharpCode.TextEditor.Document
 		string    name;
 		ArrayList rules = new ArrayList();
 		
-		HighlightBackground defaultColor;
+		Hashtable environmentColors = new Hashtable();
+		Hashtable properties       = new Hashtable();
+		string[]  extensions;
 		
-		HighlightColor selectionColor   = null;
-		HighlightColor vRulerColor      = null;
-		HighlightColor spaceMarkerColor = null;
-		HighlightColor tabMarkerColor   = null;
-		HighlightColor invalidLineColor = null;
-		HighlightColor lineNumberColor  = null;
-		HighlightColor eolMarkerColor   = null;
-		HighlightColor digitColor       = null;
-		HighlightColor caretmarkerColor = null;
-		HighlightColor foldLine         = null;
-		HighlightColor foldMarker       = null;
-		
-		Hashtable      properties       = new Hashtable();
-		string[]    extensions;
-		
+		HighlightColor digitColor;
 		HighlightRuleSet defaultRuleSet = null;
 		
-		
-		public DefaultHighlightingStrategy()
-		{
-			name = "Default";
-			defaultColor    = new HighlightBackground("WindowText", "Window", false, false);
-			digitColor      = new HighlightBackground("WindowText", "Window", false, false);
-			
-			lineNumberColor = new HighlightBackground("ControlDark", "Window", false, false);
-			
-			eolMarkerColor  = new HighlightColor("ControlLight", "Window", false, false);
-			spaceMarkerColor= new HighlightColor("ControlLight", "Window", false, false);
-			tabMarkerColor  = new HighlightColor("ControlLight", "Window", false, false);
-			
-			selectionColor  = new HighlightColor("HighlightText", "Highlight", false, false);
-			vRulerColor     = new HighlightColor("ControlLight", "Window", false, false);
-			
-			
-			invalidLineColor= new HighlightColor(Color.Red, false, false);
-			caretmarkerColor= new HighlightColor(Color.Yellow, false, false);
-			foldLine        = new HighlightColor(Color.Black, false, false);
-			foldMarker      = new HighlightColor(Color.White, false, false);
+		public HighlightColor DigitColor {
+			get {
+				return digitColor;
+			}
+			set {
+				digitColor = value;
+			}
 		}
 		
-		public DefaultHighlightingStrategy(string name)
+		
+		public DefaultHighlightingStrategy() : this("Default")
+		{
+		}
+		
+		public DefaultHighlightingStrategy(string name) 
 		{
 			this.name = name;
+			
+			digitColor      = new HighlightBackground("WindowText", "Window", false, false);
+			
+			// set small 'default color environment'
+			environmentColors["Default"]          = new HighlightBackground("WindowText", "Window", false, false);
+			environmentColors["Selection"]        = new HighlightColor("HighlightText", "Highlight", false, false);
+			environmentColors["VRuler"]           = new HighlightColor("ControlLight", "Window", false, false);
+			environmentColors["InvalidLines"]     = new HighlightColor(Color.Red, false, false);
+			environmentColors["CaretMarker"]      = new HighlightColor(Color.Yellow, false, false);
+			environmentColors["LineNumbers"]      = new HighlightBackground("ControlDark", "Window", false, false);
+			
+			environmentColors["FoldLine"]         = new HighlightColor(Color.FromArgb(0x80, 0x80, 0x80), Color.Black, false, false);
+			environmentColors["FoldMarker"]       = new HighlightColor(Color.FromArgb(0x80, 0x80, 0x80), Color.White, false, false);
+			environmentColors["SelectedFoldLine"] = new HighlightColor(Color.Black, false, false);
+			environmentColors["EOLMarkers"]       = new HighlightColor("ControlLight", "Window", false, false);
+			environmentColors["SpaceMarkers"]     = new HighlightColor("ControlLight", "Window", false, false);
+			environmentColors["TabMarkers"]       = new HighlightColor("ControlLight", "Window", false, false);
+			
 		}
 		
 		public Hashtable Properties {
@@ -174,97 +171,25 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
-		internal void SetDefaultColor(HighlightBackground color)
-		{
-			defaultColor = color;
-		}		
+//		internal void SetDefaultColor(HighlightBackground color)
+//		{
+//			return (HighlightColor)environmentColors[name];
+//			defaultColor = color;
+//		}		
 		
 		internal void SetColorFor(string name, HighlightColor color)
 		{
-			switch (name) {
-				case "InvalidLines":
-					invalidLineColor = color;
-					return;
-				case "EOLMarkers":
-					eolMarkerColor = color;
-					return;
-				case "Selection":
-					selectionColor = color;
-					return;
-				case "VRuler":
-					vRulerColor = color;
-					return;
-				case "SpaceMarkers":
-					spaceMarkerColor = color;
-					return;
-				case "LineNumbers":
-					lineNumberColor = color;
-					return;
-				case "TabMarkers":
-					tabMarkerColor = color;
-					return;
-				case "Digits":
-					digitColor = color;
-					return;
-				case "CaretMarker":
-					caretmarkerColor = color;
-					return;
-				case "FoldLine":
-					foldLine = color;
-					return;
-				case "FoldMarker":
-					foldMarker = color;
-					return;
-			}
-			throw new HighlightingColorNotFoundException(name);
+			environmentColors[name] = color;
 		}
 
 		public HighlightColor GetColorFor(string name)
 		{
-			// Svante Lidman, clean up the code and use only the first ones here
-			switch (name) {
-				case "DefaultColor":
-					return defaultColor;
-				case "InvalidLines" :
-				case "InvalideLines":
-					return invalidLineColor;
-				case "EOLMarkers":
-				case "EolMarker":
-					return eolMarkerColor;
-				case "Selection":
-					return selectionColor;
-				case "VRuler":
-				case "VRulerColor":
-					return vRulerColor;
-				case "SpaceMarkers":
-				case "SpaceMarker":
-					return spaceMarkerColor;
-				case "LineNumbers":
-				case "LineNumber":
-					return lineNumberColor;
-				case "TabMarkers":
-				case "TabMarker":
-					return tabMarkerColor;
-				case "Digits":
-				case "Digit":
-					return digitColor;
-				case "CaretMarker":
-				case "Caretmarker":
-					return caretmarkerColor;
-				case "FoldLine":
-					return foldLine;
-				case "FoldMarker":
-					return foldMarker;
+			if (environmentColors[name] == null) {
+				throw new Exception("Color : " + name + " not found!");
 			}
-			throw new HighlightingColorNotFoundException(name);
+			return (HighlightColor)environmentColors[name];
 		}
 		
-		public HighlightColor DigitColor {
-			get {
-				return digitColor;
-			}
-		}
-
 		public HighlightColor GetColor(IDocument document, LineSegment currentSegment, int currentOffset, int currentLength)
 		{
 			return GetColor(defaultRuleSet, document, currentSegment, currentOffset, currentLength);
@@ -721,7 +646,7 @@ namespace ICSharpCode.TextEditor.Document
 					if (c == null) {
 						c = activeSpan.Color;
 						if (c.Color == Color.Transparent) {
-							c = defaultColor;
+							c = GetColorFor("Default");
 						}
 						hasDefaultColor = true;
 					}
@@ -729,7 +654,7 @@ namespace ICSharpCode.TextEditor.Document
 				} else {
 					HighlightColor c = markNext != null ? markNext : GetColor(activeRuleSet, document, currentLine, currentOffset, currentLength);
 					if (c == null) {
-						words.Add(new TextWord(document, currentLine, currentOffset, currentLength, defaultColor, true));
+						words.Add(new TextWord(document, currentLine, currentOffset, currentLength, GetColorFor("Default"), true));
 					} else {
 						words.Add(new TextWord(document, currentLine, currentOffset, currentLength, c, false));
 					}

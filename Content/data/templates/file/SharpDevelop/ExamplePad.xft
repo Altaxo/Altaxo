@@ -1,26 +1,36 @@
 <?xml version="1.0"?>
-<Template Originator="Mike Krueger" Language="C#" Created="09/04/2003" LastModified="09/04/2003">
+<Template author="Mike Krueger" version="1.0">
 	
-	<TemplateConfiguration>
-		<Name>Simple #Develop pad</Name>
-		<Icon>C#.File.FullFile</Icon>
-		<Category>SharpDevelop</Category>
-		<LanguageName>C#</LanguageName>
-		<Description>Creates a #D pad content (for example the #D scouts)</Description>
-	</TemplateConfiguration>
+	<Config
+		  name        = "${res:Templates.File.#Develop.SimplePad.Name}"
+		  icon        = "C#.File.FullFile"
+		  category    = "#Develop"
+		  defaultname = "NewPad${Number}.cs"
+		  language    = "C#"/>
+	 
+	<Description>${res:Templates.File.#Develop.SimplePad.Description}</Description>
 	
-	<TemplateFiles>
-		<File DefaultExtension=".cs" DefaultName="EmptyC#file">
-			<![CDATA[using System;
+	<!-- 
+	Special new file templates:
+		${StandardNamespace}        -> Standardnamespace of the current project or FileNameWithoutExtension
+		${FullName}                 -> Full generated path name
+		${FileName}                 -> File name with extension
+		${FileNameWithoutExtension} -> File name without extension
+		${Extension}                -> Extension in the form ".cs"
+		${Path}                     -> Full path of the file
+	 -->
+	<Files>
+		<File name="${FullName}" language="C#"><![CDATA[${StandardHeader.C#}
+using System;
 using System.Windows.Forms;
 using ICSharpCode.SharpDevelop.Gui;
 
-namespace MyPad
+namespace ${StandardNamespace}
 {
 	/// <summary>
 	/// Description of the pad content
 	/// </summary>
-	public class MyPad : AbstractPadContent
+	public class ${FileNameWithoutExtension} : AbstractPadContent
 	{
 #region AbstractPadContent requirements
 		/// <summary>
@@ -36,9 +46,9 @@ namespace MyPad
 		}
 		
 		/// <summary>
-		/// Creates a new MyPad object
+		/// Creates a new ${FileNameWithoutExtension} object
 		/// </summary>
-		public MyPad() : base("The Title of MyPad")
+		public ${FileNameWithoutExtension}() : base("The Title of ${FileNameWithoutExtension}")
 		{
 			// TODO: Optionally set the icon resource name with Icon = "YourIconResourceName";
 		}
@@ -66,8 +76,8 @@ namespace MyPad
 }
 ]]>
 		</File>
-	</TemplateFiles>
+	</Files>
 	
-	<FileOptions/>
+	<AdditionalOptions/>
 	
 </Template>

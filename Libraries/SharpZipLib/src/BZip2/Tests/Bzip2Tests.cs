@@ -7,14 +7,17 @@ using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using ICSharpCode.SharpZipLib.BZip2;
 using NUnit.Framework;
 
-namespace ICSharpCode.SharpZipLib.Zip
+namespace ICSharpCode.SharpZipLib.BZip2
 {
 	/// <summary>
-	/// This class contains test cases for the Adler32 and Crc32 checksums
+	/// This class contains test cases for Bzip2 compression
 	/// </summary>
 	[TestFixture]
 	public class BZip2Suite
 	{
+		/// <summary>
+		/// Basic compress/decompress test BZip2
+		/// </summary>
 		[Test]
 		public void TestBZip2()
 		{

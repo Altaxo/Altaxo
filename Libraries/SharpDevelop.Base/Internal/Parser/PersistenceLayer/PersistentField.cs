@@ -16,7 +16,7 @@ namespace SharpDevelop.Internal.Parser
 		public PersistentField(BinaryReader reader, ClassProxyCollection classProxyCollection)
 		{
 			FullyQualifiedName = reader.ReadString();
-			documentation      = reader.ReadString();
+			Documentation      = reader.ReadString();
 			modifiers          = (ModifierEnum)reader.ReadUInt32();
 			
 			returnType         = new PersistentReturnType(reader, classProxyCollection);
@@ -28,7 +28,7 @@ namespace SharpDevelop.Internal.Parser
 		public void WriteTo(BinaryWriter writer)
 		{
 			writer.Write(FullyQualifiedName);
-			writer.Write(documentation);
+			writer.Write(Documentation);
 			writer.Write((uint)modifiers);
 			((PersistentReturnType)returnType).WriteTo(writer);
 		}
@@ -37,9 +37,11 @@ namespace SharpDevelop.Internal.Parser
 		{
 			modifiers          = field.Modifiers;
 			FullyQualifiedName = field.Name;
-			documentation      = field.Documentation;
-			if (documentation == null) {
-				documentation = String.Empty;
+			
+			if (field.Documentation != null) {
+				Documentation = field.Documentation;
+			}  else {
+				Documentation = String.Empty;
 			}
 			returnType         = new PersistentReturnType(classProxyCollection, field.ReturnType);
 		}

@@ -22,6 +22,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 		string localizedDescription = String.Empty;
 		string localizedCategory    = String.Empty;
 		
+		TypeConverter customTypeConverter = null;
+		
 		public override bool IsReadOnly {
 			get {
 				return this.basePropertyDescriptor.IsReadOnly;
@@ -64,6 +66,15 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 			}
 		}
 		
+		public override TypeConverter Converter {
+			get {
+				if (customTypeConverter != null) {
+					return customTypeConverter;
+				}
+				return base.Converter;
+			}
+		}
+		
 		public LocalizedPropertyDescriptor(PropertyDescriptor basePropertyDescriptor) : base(basePropertyDescriptor)
 		{
 			LocalizedPropertyAttribute localizedPropertyAttribute = null;
@@ -86,6 +97,11 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 			}
 			
 			this.basePropertyDescriptor = basePropertyDescriptor;
+			
+			// "Booleans" get a localized type converter
+			if (basePropertyDescriptor.PropertyType == typeof(System.Boolean)) {
+				customTypeConverter = new BooleanTypeConverter();
+			}
 		}
 
 		public override bool CanResetValue(object component)
@@ -97,6 +113,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 		{
 			return this.basePropertyDescriptor.GetValue(component);
 		}
+		
 		public override void ResetValue(object component)
 		{
 			this.basePropertyDescriptor.ResetValue(component);
@@ -106,10 +123,15 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 		{
 			return this.basePropertyDescriptor.ShouldSerializeValue(component);
 		}
-
+		
 		public override void SetValue(object component, object value)
 		{
-			this.basePropertyDescriptor.SetValue(component, value);
+			if (this.customTypeConverter != null && value.GetType() != PropertyType) {
+				this.basePropertyDescriptor.SetValue(component, this.customTypeConverter.ConvertFrom(value));	
+			} else {
+				this.basePropertyDescriptor.SetValue(component, value);
+			}
 		}
+		
 	}
 }

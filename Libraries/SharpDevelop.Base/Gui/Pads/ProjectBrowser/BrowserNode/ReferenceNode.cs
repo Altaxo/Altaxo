@@ -108,7 +108,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 					question = resourceService.GetString("ProjectComponent.RemoveReference.RemoveGacAssembyQuestion");
 					break;
 				default:
-					Debug.Assert(false, "Unknown reference type");
+					System.Diagnostics.Debug.Assert(false, "Unknown reference type");
 					break;
 			}
 			
@@ -120,8 +120,16 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 			if (ret == 1 || ret == -1) {
 				return false;
 			}
-		
+			Console.WriteLine("Remove : " + referenceInformation.Reference);
+			foreach (ProjectReference pr in  Project.ProjectReferences) {
+				Console.WriteLine(pr.Reference);
+			}
 			Project.ProjectReferences.Remove(referenceInformation);
+			Console.WriteLine("After:");
+			foreach (ProjectReference pr in  Project.ProjectReferences) {
+				Console.WriteLine(pr.Reference);
+			}
+			Console.WriteLine("---");
 			
 			return true;
 		}

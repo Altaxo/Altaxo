@@ -86,10 +86,14 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 		
 		public virtual void DrawItem(Graphics g, Font f, Rectangle rectangle)
 		{
+			int width = 0;
 			switch (sideTabItemStatus) {
 				case SideTabItemStatus.Normal:
-					g.DrawImage(Icon, 0, rectangle.Y);
-					g.DrawString(name, f, SystemBrushes.ControlText, new PointF(rectangle.X + Icon.Width + 1, rectangle.Y + 1));
+					if (Icon != null) {
+						g.DrawImage(Icon, 0, rectangle.Y);
+						width = Icon.Width;
+					}
+					g.DrawString(name, f, SystemBrushes.ControlText, new PointF(rectangle.X + width + 1, rectangle.Y + 1));
 					break;
 				case SideTabItemStatus.Drag:
 					ControlPaint.DrawBorder3D(g, rectangle, Border3DStyle.RaisedInner);
@@ -99,13 +103,19 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 					rectangle.Height -= 2;
 					
 					g.FillRectangle(SystemBrushes.ControlDarkDark, rectangle);
-					g.DrawImage(Icon, 0, rectangle.Y);
-					g.DrawString(name, f, SystemBrushes.HighlightText, new PointF(rectangle.X + Icon.Width + 1, rectangle.Y + 1));
+					if (Icon != null) {
+						g.DrawImage(Icon, 0, rectangle.Y);
+						width = Icon.Width;
+					}
+					g.DrawString(name, f, SystemBrushes.HighlightText, new PointF(rectangle.X + width + 1, rectangle.Y + 1));
 					break;
 				case SideTabItemStatus.Selected:
 					ControlPaint.DrawBorder3D(g, rectangle, Border3DStyle.RaisedInner);
-					g.DrawImage(Icon, 0, rectangle.Y);
-					g.DrawString(name, f, SystemBrushes.ControlText, new PointF(rectangle.X + Icon.Width + 1, rectangle.Y + 1));
+					if (Icon != null) {
+						g.DrawImage(Icon, 0, rectangle.Y);
+						width = Icon.Width;
+					}
+					g.DrawString(name, f, SystemBrushes.ControlText, new PointF(rectangle.X + width + 1, rectangle.Y + 1));
 					break;
 				case SideTabItemStatus.Choosed:
 					ControlPaint.DrawBorder3D(g, rectangle, Border3DStyle.Sunken);
@@ -116,8 +126,11 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 					
 					g.FillRectangle(new SolidBrush(ControlPaint.Light(SystemColors.Control)) , rectangle);
 					
-					g.DrawImage(Icon, 1, rectangle.Y + 1);
-					g.DrawString(name, f, SystemBrushes.ControlText, new PointF(rectangle.X + Icon.Width + 2, rectangle.Y + 2));
+					if (Icon != null) {
+						g.DrawImage(Icon, 1, rectangle.Y + 1);
+						width = Icon.Width;
+					}
+					g.DrawString(name, f, SystemBrushes.ControlText, new PointF(rectangle.X + width + 2, rectangle.Y + 2));
 					break;
 			}
 		}

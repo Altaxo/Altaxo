@@ -255,21 +255,20 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 					{
 						// add a directory
 						string directoryName   = relativeFile;
-
 						// if directoryname starts with ./ oder .\ //
 						if (directoryName.StartsWith(".")) {
 							directoryName =  directoryName.Substring(2);
 						}
-
-						string parentDirectory = Path.GetFileName(directoryName);
-
+						
+//						string parentDirectory = Path.GetFileName(directoryName);
+						
 						AbstractBrowserNode currentPathNode;
-						currentPathNode = GetPath(directoryName, parentNode, false);
-
-						if(currentPathNode == null) {
+						currentPathNode = GetPath(Path.Combine(directoryName, "DUMMY"), parentNode, true);
+						
+						if (currentPathNode == null) {
 							currentPathNode = parentNode;
 							DirectoryNode newFolderNode  = new DirectoryNode(projectFile.Name);
-							if(IsWebReference(currentPathNode)) {
+							if (IsWebReference(currentPathNode)) {
 								newFolderNode.OpenedImage = resourceService.GetBitmap("Icons.16x16.OpenWebReferenceFolder");
 								newFolderNode.ClosedImage = resourceService.GetBitmap("Icons.16x16.ClosedWebReferenceFolder");
 							} else {
@@ -375,7 +374,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 		public static AbstractBrowserNode GetPath(string filename, AbstractBrowserNode root, bool create)
 		{
 			string directory    = Path.GetDirectoryName(filename);
-			string[] treepath   = directory.Split(new char[] { Path.DirectorySeparatorChar });
+			string[] treepath   = directory.Split(Path.DirectorySeparatorChar, '\\', '/');
 			AbstractBrowserNode curpathnode = root;
 
 			foreach (string path in treepath) {

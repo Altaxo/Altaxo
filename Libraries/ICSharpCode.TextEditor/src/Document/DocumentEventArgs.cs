@@ -91,5 +91,13 @@ namespace ICSharpCode.TextEditor.Document
 			this.length   = length;
 			this.text     = text;
 		}
+		public override string ToString()
+		{
+			return String.Format("[DocumentEventArgs: Document = {0}, Offset = {1}, Text = {2}, Length = {3}]",
+			                     Document,
+			                     Offset,
+			                     Text,
+			                     Length);
+		}
 	}
 }

@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike KrÃÂ¼ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -63,6 +63,7 @@ namespace CSharpBinding
 			writer.WriteLine("/nologo");
 			writer.WriteLine("/utf8output");
 			writer.WriteLine("/w:" + compilerparameters.WarningLevel);
+			writer.WriteLine("/nowarn:" + compilerparameters.NoWarnings);
 			
 			if (compilerparameters.Debugmode) {
 				writer.WriteLine("/debug:+");
@@ -70,7 +71,7 @@ namespace CSharpBinding
 				writer.WriteLine("/d:DEBUG");
 			}
 			
-			if (!compilerparameters.RunWithWarnings) {
+			if (compilerparameters.TreatWarningsAsErrors) {
 				writer.WriteLine("/warnaserror+");
 			}
 			
@@ -111,7 +112,7 @@ namespace CSharpBinding
 			
 			writer.Close();
 			
-			string compilerName = compilerparameters.CsharpCompiler == CsharpCompiler.Csc ? GetCompilerName() : "mcs";
+			string compilerName = compilerparameters.CsharpCompiler == CsharpCompiler.Csc ? GetCompilerName(compilerparameters.CSharpCompilerVersion) : "mcs";
 			string outstr =  compilerName + " \"@" + responseFileName + "\"";
 			Executor.ExecWaitWithCapture(outstr, tf, ref output, ref error);
 			
@@ -120,6 +121,7 @@ namespace CSharpBinding
 			File.Delete(responseFileName);
 			File.Delete(output);
 			File.Delete(error);
+			WriteManifestFile(exe);
 			return result;
 		}
 		
@@ -191,7 +193,6 @@ namespace CSharpBinding
 					if (finfo.Subtype != Subtype.Directory) {
 						switch (finfo.BuildAction) {
 							case BuildAction.Compile:
-								Console.Error.WriteLine(finfo.Name);
 								writer.WriteLine('"' + finfo.Name + '"');
 								break;
 							case BuildAction.EmbedAsResource:
@@ -204,9 +205,8 @@ namespace CSharpBinding
 				if (compilerparameters.GenerateXmlDocumentation) {
 					writer.WriteLine("\"/doc:" + Path.ChangeExtension(exe, ".xml") + '"');
 				}
-			} 
-			else {
-				writer.WriteLine("-o " + exe);
+			} else {
+				writer.WriteLine("-o \"" + exe + "\"");
 				
 				if (compilerparameters.UnsafeCode) {
 					writer.WriteLine("--unsafe");
@@ -218,7 +218,7 @@ namespace CSharpBinding
 				
 				foreach (ProjectReference lib in p.ProjectReferences) {
 					string fileName = lib.GetReferencedFileName(p);
-					writer.WriteLine("-r:" + fileName );
+					writer.WriteLine("-r:\"" + fileName +"\"");
 				}
 				
 				switch (compilerparameters.CompileTarget) {
@@ -240,21 +240,20 @@ namespace CSharpBinding
 								break;
 							
 							case BuildAction.EmbedAsResource:
-								writer.WriteLine("--linkres " + finfo.Name);
+								writer.WriteLine("--linkres \"" + finfo.Name + "\"");
 								break;
 						}
 					}
-				}			
+				}
 			}
 			writer.Close();
 			
 			string output = String.Empty;
 			string error  = String.Empty; 
 			
-			string compilerName = compilerparameters.CsharpCompiler == CsharpCompiler.Csc ? GetCompilerName() : System.Environment.GetEnvironmentVariable("ComSpec") + " /c mcs";
-			string outstr = compilerName + " @" + responseFileName;
+			string compilerName = compilerparameters.CsharpCompiler == CsharpCompiler.Csc ? GetCompilerName(compilerparameters.CSharpCompilerVersion) : System.Environment.GetEnvironmentVariable("ComSpec") + " /c mcs";
+			string outstr = compilerName + " \"@" + responseFileName + "\"";
 			TempFileCollection tf = new TempFileCollection();
-			
 			Executor.ExecWaitWithCapture(outstr,  tf, ref output, ref error);
 			
 			ICompilerResult result = ParseOutput(tf, output);
@@ -262,13 +261,46 @@ namespace CSharpBinding
 			File.Delete(responseFileName);
 			File.Delete(output);
 			File.Delete(error);
+			if (compilerparameters.CompileTarget != CompileTarget.Library) {
+				WriteManifestFile(exe);
+			}
 			return result;
 		}
 		
-		string GetCompilerName()
+		// code duplication: see VB.NET backend : VBBindingCompilerManager
+		void WriteManifestFile(string fileName)
 		{
-			return fileUtilityService.GetDirectoryNameWithSeparator(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory()) + 
-			       "csc.exe";
+			string manifestFile = fileName + ".manifest";
+			if (File.Exists(manifestFile)) {
+				return;
+			}
+			StreamWriter sw = new StreamWriter(manifestFile);
+			sw.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+			sw.WriteLine("");
+			sw.WriteLine("<assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\">");
+			sw.WriteLine("	<dependency>");
+			sw.WriteLine("		<dependentAssembly>");
+			sw.WriteLine("			<assemblyIdentity");
+			sw.WriteLine("				type=\"win32\"");
+			sw.WriteLine("				name=\"Microsoft.Windows.Common-Controls\"");
+			sw.WriteLine("				version=\"6.0.0.0\"");
+			sw.WriteLine("				processorArchitecture=\"X86\"");
+			sw.WriteLine("				publicKeyToken=\"6595b64144ccf1df\"");
+			sw.WriteLine("				language=\"*\"");
+			sw.WriteLine("			/>");
+			sw.WriteLine("		</dependentAssembly>");
+			sw.WriteLine("	</dependency>");
+			sw.WriteLine("</assembly>");
+			sw.Close();
+		}
+		
+		string GetCompilerName(string compilerVersion)
+		{
+			string runtimeDirectory = Path.Combine(fileUtilityService.NETFrameworkInstallRoot, compilerVersion);
+			if (compilerVersion.Length == 0 || compilerVersion == "Standard" || !Directory.Exists(runtimeDirectory)) {
+				runtimeDirectory = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+			}
+			return '"' + Path.Combine(runtimeDirectory, "csc.exe") + '"';
 		}
 		
 		ICompilerResult ParseOutput(TempFileCollection tf, string file)

@@ -62,6 +62,9 @@ namespace System.Collections.Utility
 			if (a == null || b == null) {
 				return 1;
 			}
+			if (a.Count != b.Count) {
+				return Math.Sign(a.Count - b.Count);
+			}
 			int limit = (a.Count < b.Count) ? a.Count : b.Count;
 			for(int i=0; i < limit; i++) {
 				if (a[i] is IComparable && b[i] is IComparable) {

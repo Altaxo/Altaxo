@@ -45,18 +45,11 @@ namespace ICSharpCode.Core.Services
 		}
 		
 		
-#if !LINUX
-		readonly static string configDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + 
-		                                         Path.DirectorySeparatorChar + ".ICSharpCode" +
-		                                         Path.DirectorySeparatorChar + "SharpDevelop" +
-		                                         Path.DirectorySeparatorChar;
-#else
-		readonly static string configDirectory = "~" + 
-		                                         Path.DirectorySeparatorChar + ".ICSharpCode" +
-		                                         Path.DirectorySeparatorChar + "SharpDevelop" +
-		                                         Path.DirectorySeparatorChar;
-#endif
-#else
+		static string configDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + 
+		                                                          Path.DirectorySeparatorChar + ".ICSharpCode" +
+		                                                          Path.DirectorySeparatorChar + "SharpDevelop" +
+		                                                          Path.DirectorySeparatorChar;
+#else // ModifiedForAltaxo
     static string propertyFileName    = "SharpDevelopProperties.xml";
 		
     static string propertyFileVersion = "1.1";
@@ -90,12 +83,7 @@ namespace ICSharpCode.Core.Services
       if(confConfigDirectory==null)
         confConfigDirectory = ".ICSharpCode" + Path.DirectorySeparatorChar + "SharpDevelop";
 
-
-#if !LINUX
       configDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + confConfigDirectory +	Path.DirectorySeparatorChar;
-#else
-			configDirectory = "~" +	Path.DirectorySeparatorChar + confConfigDirectory +	Path.DirectorySeparatorChar;
-#endif
 
       // Property file name
       string confPropertyFileName = System.Configuration.ConfigurationSettings.AppSettings["PropertyFileName"];
@@ -113,12 +101,12 @@ namespace ICSharpCode.Core.Services
       if(confPropertyXmlRootNodeName!=null)
         propertyXmlRootNodeName = confPropertyXmlRootNodeName;
     }
-#endif
+#endif // ModifiedForAltaxo
+
 		/// <summary>
 		/// returns the path of the default application configuration directory
 		/// </summary>
-		public string ConfigDirectory 
-    {
+		public string ConfigDirectory {
 			get {
 				return configDirectory;
 			}
@@ -137,6 +125,11 @@ namespace ICSharpCode.Core.Services
 			} catch (PropertyFileLoadException) {
 				System.Windows.Forms.MessageBox.Show("Can't load property file", "Warning"); // don't use message service --> cyclic dependency
 			}
+		}
+
+		public static void SetConfigDirectory(string confDir)
+		{
+			configDirectory = confDir;
 		}
 		
 		void WritePropertiesToFile(string fileName)

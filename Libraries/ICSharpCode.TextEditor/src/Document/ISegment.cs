@@ -19,6 +19,7 @@ namespace ICSharpCode.TextEditor.Document
 		/// </value>
 		int Offset {
 			get;
+			set;
 		}
 		
 		/// <value>
@@ -26,6 +27,7 @@ namespace ICSharpCode.TextEditor.Document
 		/// </value>
 		int Length {
 			get;
+			set;
 		}
 	}
 	

@@ -17,18 +17,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 	public interface ISecondaryViewContent : IBaseViewContent
 	{
 		/// <summary>
-		/// Is called when the view content is selected inside the window
-		/// tab. NOT when the windows is selected.
-		/// </summary>
-		void Selected();
-		
-		/// <summary>
-		/// Is called when the view content is deselected inside the window
-		/// tab before the other window is selected. NOT when the windows is deselected.
-		/// </summary>
-		void Deselected();
-		
-		/// <summary>
 		/// Is called before the save operation of the main IViewContent
 		/// </summary>
 		void NotifyBeforeSave();

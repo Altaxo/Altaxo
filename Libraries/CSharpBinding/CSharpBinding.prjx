@@ -1,4 +1,4 @@
-<Project name="CSharpBinding" description="fewfew" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
+<Project name="CSharpBinding" standardNamespace="NewProject" description="" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
   <Contents>
     <File name=".\CSharpBindingCompilerManager.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\CSharpLanguageBinding.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -131,6 +131,7 @@
     <File name=".\Project\.svn\text-base\CSharpProject.cs.svn-base" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\Project\.svn\wcprops\CSharpCompilerParameters.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\Project\.svn\wcprops\CSharpProject.cs.svn-work" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\Parser\ExpressionFinder.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto="..\..\..\..\bin\SharpDevelop.Base.dll" localcopy="False" />
@@ -141,18 +142,18 @@
   </References>
   <DeploymentInformation target="" script="" strategy="File" />
   <Configuration runwithwarnings="True" name="Debug">
-    <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
     <Execution commandlineparameters="" consolepause="False" />
     <Output directory="..\..\..\..\AddIns\AddIns\BackendBindings" assembly="CSharpBinding" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
   </Configuration>
   <Configurations active="Debug">
     <Configuration runwithwarnings="True" name="Debug">
-      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="False" />
       <Output directory="..\..\..\..\AddIns\AddIns\BackendBindings" assembly="CSharpBinding" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
     </Configuration>
     <Configuration runwithwarnings="False" name="Release">
-      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
       <Output directory="..\..\..\..\AddIns\AddIns\BackendBindings" assembly="CSharpBinding" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
     </Configuration>

@@ -10,10 +10,6 @@ namespace SharpDevelop.Internal.Parser
 {
 	public interface IIndexer: IMember
 	{
-		IRegion Region {
-			get;
-		}
-		
 		IRegion BodyRegion {
 			get;
 		}

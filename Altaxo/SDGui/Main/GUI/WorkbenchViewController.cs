@@ -174,12 +174,37 @@ namespace Altaxo.Main.GUI
         if(m_Content!=null)
         {
           m_Content.ParentWorkbenchWindowController = this;
-          this.Title = m_Content.ContentName;
+          this.Title = m_Content.TitleName;
         
           if(this.View!=null)
             View.SetChild(m_Content.WorkbenchContentView);
         }
       }
+    }
+
+    public void RedrawContent()
+    {
+      /*
+      if (viewTabControl != null) 
+      {
+        for (int i = 0; i < viewTabControl.TabPages.Count; ++i) 
+        {
+          TabPage tabPage = viewTabControl.TabPages[i];
+          if (i == 0) 
+          {
+            tabPage.Text = stringParserService.Parse(content.TabPageText);
+          } 
+          else 
+          {
+            tabPage.Text = stringParserService.Parse(((IBaseViewContent)subViewContents[i]).TabPageText);
+          }
+        }
+      }
+      */
+    }
+
+    public void OnWindowSelected(EventArgs e)
+    {
     }
 
     public void CloseView()
@@ -353,16 +378,19 @@ namespace Altaxo.Main.GUI
     /// Closes the window, if force == true it closes the window
     /// without ask, even the content is dirty.
     /// </summary>
-    public void CloseWindow(bool force)
+    /// <returns>true, if window is closed</returns>
+    public bool CloseWindow(bool force)
     {
       if(force)
       {
         CloseView();
+        return true;
       }
       else
       {
         if(View!=null)
           View.Close();
+        return true;
       }
     }
     

@@ -45,6 +45,8 @@ namespace ICSharpCode.TextEditor.Document
 				tabIndent = value;
 			}
 		}
+		
+		
 		public IndentStyle IndentStyle {
 			get {
 				return indentStyle;

@@ -43,13 +43,13 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 		// drag & drop event. This makes the file class more useable		
 		public override DragDropEffects GetDragDropEffect(IDataObject dataObject, DragDropEffects proposedEffect)
 		{
-			Debug.Assert(Parent != null);
+			System.Diagnostics.Debug.Assert(Parent != null);
 			return ((AbstractBrowserNode)Parent).GetDragDropEffect(dataObject, proposedEffect);
 		}
 		
 		public override void DoDragDrop(IDataObject dataObject, DragDropEffects effect)
 		{
-			Debug.Assert(Parent != null);
+			System.Diagnostics.Debug.Assert(Parent != null);
 			((AbstractBrowserNode)Parent).DoDragDrop(dataObject, effect);
 		}
 		
@@ -109,9 +109,9 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 					newName += oldExtension;
 				}
 				
-				string newname = Path.GetDirectoryName(oldname) + Path.DirectorySeparatorChar + newName;
+				string newname = Path.Combine(Path.GetDirectoryName(oldname), newName);
 				
-				if (oldname != newname) {
+				if (Path.GetFullPath(oldname) != Path.GetFullPath(newname)) {
 					ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 					try {
 						IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));

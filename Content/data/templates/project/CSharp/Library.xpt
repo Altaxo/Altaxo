@@ -5,11 +5,11 @@
 	
 	<!-- Template Header -->
 	<TemplateConfiguration>
-		<Name>C# Library</Name>
+		<Name>${res:Templates.Project.ClassLibrary.Name}</Name>
 		<Category>C#</Category>
 		<Icon>C#.Project.Library</Icon>
 		<LanguageName>C#</LanguageName>
-		<Description>Creates an empty C# class library</Description>
+		<Description>${res:Templates.Project.ClassLibrary.Description}</Description>
 	</TemplateConfiguration>
 	
 	<!-- Actions -->
@@ -27,12 +27,17 @@
 			<Options Target = "Library" PauseConsoleOutput = "False" />
 
 			<Files>
-				<File name="MyClass.cs"><![CDATA[// project created on ${Date} at ${Time}
+				<File name="MyClass.cs"><![CDATA[${StandardHeader.C#}
 using System;
-
-public class MyClass
+namespace MyLibrary
 {
+	/// <summary>
+	/// Description of MyClass.
+	/// </summary>
+	public class MyClass
+	{
 
+	}
 }]]></File>
 		<File name="AssemblyInfo.cs">
 			<![CDATA[using System.Reflection;

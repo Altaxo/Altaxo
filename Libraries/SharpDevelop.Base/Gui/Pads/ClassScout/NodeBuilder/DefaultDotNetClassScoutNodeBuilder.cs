@@ -1,7 +1,7 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Kr�ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -28,11 +28,11 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 	{
 		int imageIndexOffset;
 		IAmbience languageConversion;
-
+		
 		public DefaultDotNetClassScoutNodeBuilder()
 		{
 		}
-
+		
 		public bool CanBuildClassTree(IProject project)
 		{
 			return true;
@@ -62,10 +62,16 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 				classNode.Text = c.Name;
 				classNode.SelectedImageIndex = classNode.ImageIndex = classBrowserIconService.GetIcon(c);
 				TreeNode node = GetNodeByPath(c.Namespace, parentNode.Nodes, false);
-				if (node != null) {
-					int oldIndex = SortUtility.BinarySearch(classNode, node.Nodes, TreeNodeComparer.Default);
-					if(oldIndex >= 0) {
-						node.Nodes[oldIndex].Remove();
+				if (node == null) {
+					node = parentNode;
+				}
+				int oldIndex = SortUtility.BinarySearch(classNode, node.Nodes, TreeNodeComparer.Default);
+				if (oldIndex >= 0) {
+					node.Nodes[oldIndex].Remove();
+					while (node.Nodes.Count == 0 && node.ImageIndex == classBrowserIconService.NamespaceIndex) {
+						TreeNode parent = node.Parent;
+						parent.Nodes.Remove(node);
+						node = parent;
 					}
 				}
 			}
@@ -147,70 +153,28 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		TreeNode BuildClassNode(string filename, IClass c)
 		{
 			ClassBrowserIconsService classBrowserIconService = (ClassBrowserIconsService)ServiceManager.Services.GetService(typeof(ClassBrowserIconsService));
-
+			
 			AbstractClassScoutNode classNode = new AbstractClassScoutNode(c.Name);
 			classNode.SelectedImageIndex = classNode.ImageIndex = classBrowserIconService.GetIcon(c);
 			classNode.ContextmenuAddinTreePath = "/SharpDevelop/Views/ClassScout/ContextMenu/ClassNode";
-			classNode.Tag = new ClassScoutTag(c.Region.BeginLine, filename);
-
+			classNode.Tag = new ClassScoutTag(c.Region.BeginLine, filename, c);
+			
 			// don't insert delegate 'members'
 			if (c.ClassType == ClassType.Delegate) {
-				return null;
+				return classNode;
 			}
-
-			foreach (IClass innerClass in c.InnerClasses) {
-				if (innerClass.ClassType == ClassType.Delegate) {
-					TreeNode innerClassNode = new AbstractClassScoutNode(languageConversion.Convert(innerClass));
-					innerClassNode.Tag = new ClassScoutTag(innerClass.Region.BeginLine, filename);
-					innerClassNode.SelectedImageIndex = innerClassNode.ImageIndex = classBrowserIconService.GetIcon(innerClass);
-					classNode.Nodes.Add(innerClassNode);
-				} else {
-					TreeNode n = BuildClassNode(filename, innerClass);
-					if(classNode != null) {
-						classNode.Nodes.Add(n);
-					}
-				}
-			}
-
-			foreach (IMethod method in c.Methods) {
-				TreeNode methodNode = new AbstractClassScoutNode(languageConversion.Convert(method));
-				methodNode.Tag = new ClassScoutTag(method.Region.BeginLine, filename);
-				methodNode.SelectedImageIndex = methodNode.ImageIndex = classBrowserIconService.GetIcon(method);
-				classNode.Nodes.Add(methodNode);
-			}
-			
-			foreach (IProperty property in c.Properties) {
-				TreeNode propertyNode = new AbstractClassScoutNode(languageConversion.Convert(property));
-				propertyNode.Tag = new ClassScoutTag(property.Region.BeginLine, filename);
-				propertyNode.SelectedImageIndex = propertyNode.ImageIndex = classBrowserIconService.GetIcon(property);
-				classNode.Nodes.Add(propertyNode);
-			}
-			
-			foreach (IField field in c.Fields) {
-				TreeNode fieldNode = new AbstractClassScoutNode(languageConversion.Convert(field));
-				fieldNode.Tag = new ClassScoutTag(field.Region.BeginLine, filename);
-				fieldNode.SelectedImageIndex = fieldNode.ImageIndex = classBrowserIconService.GetIcon(field);
-				classNode.Nodes.Add(fieldNode);
-			}
-			
-			foreach (IEvent e in c.Events) {
-				TreeNode eventNode = new AbstractClassScoutNode(languageConversion.Convert(e));
-				eventNode.Tag = new ClassScoutTag(e.Region.BeginLine, filename);
-				eventNode.SelectedImageIndex = eventNode.ImageIndex = classBrowserIconService.GetIcon(e);
-				classNode.Nodes.Add(eventNode);
-			}
-			
-			SortUtility.QuickSort(classNode.Nodes, TreeNodeComparer.Default);
+			classNode.Nodes.Add(new TreeNode());
 			return classNode;
 		}
 		
 		static public TreeNode GetNodeByPath(string directory, TreeNodeCollection root, bool create)
 		{
 			ClassBrowserIconsService classBrowserIconService = (ClassBrowserIconsService)ServiceManager.Services.GetService(typeof(ClassBrowserIconsService));
-
+			
 			string[] treepath   = directory.Split(new char[] { '.' });
 			TreeNodeCollection curcollection = root;
 			TreeNode           curnode       = null;
+			
 			foreach (string path in treepath) {
 				if (path.Length == 0 || path[0] == '.') {
 					continue;
@@ -221,7 +185,6 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 					if (create) {
 						TreeNode newnode = new AbstractClassScoutNode(path);
 						newnode.ImageIndex = newnode.SelectedImageIndex = classBrowserIconService.NamespaceIndex;
-
 						SortUtility.SortedInsert(newnode, curcollection, TreeNodeComparer.Default);
 						curnode = newnode;
 						curcollection = curnode.Nodes;

@@ -1,32 +1,42 @@
 <?xml version="1.0"?>
-<Template Originator="Mike Krueger" Language="C#" Created="09/04/2003" LastModified="09/04/2003">
+<Template author="Mike Krueger" version="1.0">
 	
-	<TemplateConfiguration>
-		<Name>Simple #Develop menu command</Name>
-		<Icon>C#.File.FullFile</Icon>
-		<Category>SharpDevelop</Category>
-		<LanguageName>C#</LanguageName>
-		<Description>Creates a menu command which is usable for main and context menus</Description>
-	</TemplateConfiguration>
+	<Config
+		name        = "${res:Templates.File.#Develop.MenuCommand.Name}"
+		icon        = "C#.File.FullFile"
+		category    = "#Develop"
+		defaultname = "Class${Number}.cs"
+		language    = "C#"/>
+	 
+	<Description>${res:Templates.File.#Develop.MenuCommand.Description}</Description>
 	
-	<TemplateFiles>
-		<File DefaultExtension=".cs" DefaultName="EmptyC#file">
-			<![CDATA[using System;
+	<!-- 
+	Special new file templates:
+		${StandardNamespace}        -> Standardnamespace of the current project or FileNameWithoutExtension
+		${FullName}                 -> Full generated path name
+		${FileName}                 -> File name with extension
+		${FileNameWithoutExtension} -> File name without extension
+		${Extension}                -> Extension in the form ".cs"
+		${Path}                     -> Full path of the file
+	 -->
+	<Files>
+		<File name="${FullName}" language="C#"><![CDATA[${StandardHeader.C#}
+using System;
 using System.Windows.Forms;
 
 using ICSharpCode.Core.AddIns.Codons;
 
-namespace MyMenuCommand
+namespace ${StandardNamespace}
 {
 	/// <summary>
-	/// Description of SimpleMenuCommand
+	/// Description of ${FileNameWithoutExtension}
 	/// </summary>
-	public class SimpleMenuCommand : AbstractMenuCommand
+	public class ${FileNameWithoutExtension} : AbstractMenuCommand
 	{
 		/// <summary>
-		/// Creates a new SimpleMenuCommand
+		/// Creates a new ${FileNameWithoutExtension}
 		/// </summary>
-		public SimpleMenuCommand()
+		public ${FileNameWithoutExtension}()
 		{
 			// You can enable/disable the menu command using the
 			// IsEnabled property of the AbstractMenuCommand class
@@ -43,8 +53,8 @@ namespace MyMenuCommand
 }
 ]]>
 		</File>
-	</TemplateFiles>
+	</Files>
 	
-	<FileOptions/>
+	<AdditionalOptions/>
 	
 </Template>

@@ -1322,14 +1322,14 @@ namespace Altaxo.Worksheet.GUI
       if(View!=null)
         View.TableViewTitle = Doc.Name;
 
-      this.ContentName = Doc.Name;
+      this.TitleName = Doc.Name;
     }
 
     /// <summary>
     /// This is the whole name of the content, e.g. the file name or
     /// the url depending on the type of the content.
     /// </summary>
-    public string ContentName 
+    public string TitleName 
     {
       get 
       { 
@@ -1337,19 +1337,19 @@ namespace Altaxo.Worksheet.GUI
       }
       set 
       {
-        OnContentNameChanged(EventArgs.Empty);
+        OnTitleNameChanged(EventArgs.Empty);
       }
     }
 
     /// <summary>
     /// Is called each time the name for the content has changed.
     /// </summary>
-    public event EventHandler ContentNameChanged;
+    public event EventHandler TitleNameChanged;
 
-    protected virtual void OnContentNameChanged(System.EventArgs e)
+    protected virtual void OnTitleNameChanged(System.EventArgs e)
     {
-      if(null!=ContentNameChanged)
-        ContentNameChanged(this,e);
+      if(null!=TitleNameChanged)
+        TitleNameChanged(this,e);
     }
 
     #endregion

@@ -169,6 +169,10 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs {
 		{
 			TreeNode clickedNode = ((TreeView)ControlDictionary["optionsTreeView"]).GetNodeAt(e.X, e.Y);
 			
+			if(clickedNode == null) {
+				return;
+			}
+			
 			if (e.Button == MouseButtons.Right) {
 				MenuService menuService = (MenuService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(MenuService));
 				if (clickedNode == configurationTreeNode) {

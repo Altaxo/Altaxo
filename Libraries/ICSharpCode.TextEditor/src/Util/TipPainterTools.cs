@@ -20,7 +20,7 @@ namespace ICSharpCode.TextEditor.Util
 			
 		}
 		
-		public static void DrawHelpTipFromCombinedDescription(Control control,
+		public static Size DrawHelpTipFromCombinedDescription(Control control,
 		                                                      Graphics graphics,
 		                                                      Font font,
 		                                                      string countMessage,
@@ -42,11 +42,11 @@ namespace ICSharpCode.TextEditor.Util
 				}
 			}
 			
-			DrawHelpTip(control, graphics, font, countMessage,
+			return DrawHelpTip(control, graphics, font, countMessage,
 			            basicDescription, documentation);
  		}
 
-		public static void DrawHelpTip(Control control,
+		public static Size DrawHelpTip(Control control,
 		                               Graphics graphics, Font font,
 		                               string countMessage,
 		                               string basicDescription,
@@ -56,7 +56,7 @@ namespace ICSharpCode.TextEditor.Util
 			    IsVisibleText(basicDescription) ||
 			    IsVisibleText(documentation)) {
 				// Create all the TipSection objects.
-				TipText countMessageTip = new TipText(graphics, font,
+				TipText countMessageTip = new CountTipText(graphics, font,
 				                                      countMessage);
 				
 				TipSpacer countSpacer = new TipSpacer
@@ -73,16 +73,22 @@ namespace ICSharpCode.TextEditor.Util
 				// Now put them together.
 				TipSplitter descSplitter = new TipSplitter(graphics, false,
 				                                           descriptionTip,
-				                                           docSpacer, docTip);
+				                                           docSpacer
+				                                           );
 				
 				TipSplitter mainSplitter = new TipSplitter(graphics, true,
 				                                           countMessageTip,
 				                                           countSpacer,
 				                                           descSplitter);
 				
+				TipSplitter mainSplitter2 = new TipSplitter(graphics, false,
+				                                           mainSplitter,
+				                                           docTip);
+				
 				// Show it.
-				TipPainter.DrawTip(control, graphics, mainSplitter);
+				return TipPainter.DrawTip(control, graphics, mainSplitter2);
 			}
+			return Size.Empty;
 		}
 		
 		static bool IsVisibleText(string text)

@@ -22,14 +22,12 @@ namespace Reflector.UserInterface
 	{
 		private CommandBarItemCollection items = new CommandBarItemCollection();
 		private CommandBarStyle style = CommandBarStyle.ToolBar;
-
 		private CommandBarContextMenu contextMenu = new CommandBarContextMenu();
 		private IntPtr hookHandle = IntPtr.Zero;
 		private Point lastMousePosition = new Point(0, 0);
 		private int trackHotItem = -1;
 		private int trackNextItem = -1;
 		private bool trackEscapePressed = false;
-
 		private State state = State.None;
 		private State lastState = State.None;
 		private ImageList imageList; 
@@ -43,12 +41,11 @@ namespace Reflector.UserInterface
 
 		public CommandBar()
 		{
+			this.items = new CommandBarItemCollection(this);
 			this.SetStyle(ControlStyles.UserPaint, false);
 			this.TabStop = false;
 			this.Font = SystemInformation.MenuFont;
 			this.Dock = DockStyle.Top;
-
-			this.items = new CommandBarItemCollection(this);
 		}	
 	
 		public CommandBar(CommandBarStyle style) : this()
@@ -68,7 +65,7 @@ namespace Reflector.UserInterface
 
 			base.Dispose(disposing);
 		}
-		
+
 		public CommandBarStyle Style
 		{
 			set 
@@ -77,17 +74,26 @@ namespace Reflector.UserInterface
 				this.UpdateItems(); 
 			}
 			
-			get { return this.style; }
+			get 
+			{ 
+				return this.style; 
+			}
 		}
 	
 		public CommandBarItemCollection Items
 		{
-			get { return this.items; }
+			get 
+			{ 
+				return this.items; 
+			}
 		}
 
 		protected override Size DefaultSize
 		{
-			get { return new Size(100, 22); }
+			get 
+			{ 
+				return new Size(100, 22); 
+			}
 		}
 	
 		protected override void CreateHandle() 
@@ -127,69 +133,37 @@ namespace Reflector.UserInterface
 		protected override void OnHandleCreated(EventArgs e)
 		{
 			base.OnHandleCreated(e);
-
-			NativeMethods.SendMessage(Handle, NativeMethods.TB_BUTTONSTRUCTSIZE, Marshal.SizeOf(typeof(NativeMethods.TBBUTTON)), 0);
-
-			int extendedStyle = NativeMethods.TBSTYLE_EX_HIDECLIPPEDBUTTONS | NativeMethods.TBSTYLE_EX_DOUBLEBUFFER;
-			if (style == CommandBarStyle.ToolBar)
-			{
-				extendedStyle |= NativeMethods.TBSTYLE_EX_DRAWDDARROWS;
-			}
-
-			NativeMethods.SendMessage(Handle, NativeMethods.TB_SETEXTENDEDSTYLE, 0, extendedStyle);
-
-			this.UpdateImageList();
-			
-			for (int i = 0; i < items.Count; i++)
-			{
-				NativeMethods.TBBUTTON button = new NativeMethods.TBBUTTON();
-				button.idCommand = i;
-				NativeMethods.SendMessage(this.Handle, NativeMethods.TB_INSERTBUTTON, i, ref button);
-	
-				NativeMethods.TBBUTTONINFO buttonInfo = this.GetButtonInfo(i);
-				NativeMethods.SendMessage(this.Handle, NativeMethods.TB_SETBUTTONINFO, i, ref buttonInfo);
-			}
-
-			// Add ComboBox controls.
-			this.Controls.Clear();
-			for (int i = 0; i < items.Count; i++)
-			{
-				CommandBarComboBox comboBox = this.items[i] as CommandBarComboBox;
-				if (comboBox != null)
-				{
-					NativeMethods.RECT rect = new NativeMethods.RECT();
-					NativeMethods.SendMessage(this.Handle, NativeMethods.TB_GETITEMRECT, i, ref rect);
-
-					rect.top = rect.top + (((rect.bottom - rect.top) - comboBox.Height) / 2);
-
-					comboBox.ComboBox.Location = new Point(rect.left, rect.top);
-					this.Controls.Add(comboBox.ComboBox);
-				}
-			}
-	
-			this.UpdateSize();
+			this.AddItems();
 		}
-
-		[SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)] 
+		
+		public bool IsAltGRPressed {
+			get {
+				return NativeMethods.GetAsyncKeyState(NativeMethods.VK_RMENU) < 0 && (Control.ModifierKeys & Keys.Control) == Keys.Control;
+			}
+		}
+		
+		[SecurityPermission(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
 		public override bool PreProcessMessage(ref Message message)
 		{
 			if (message.Msg == NativeMethods.WM_KEYDOWN || message.Msg == NativeMethods.WM_SYSKEYDOWN)
 			{
 				// Process shortcuts.
-				Keys keyData = (Keys) (int)message.WParam | ModifierKeys;
-				if (state == State.None)
+				Keys keyData = (Keys) (int) message.WParam | ModifierKeys;
+				
+				if (state == State.None && !IsAltGRPressed)
 				{
 					CommandBarItem[] shortcutHits = this.items[keyData];
 					if (shortcutHits.Length > 0)
 					{
 						if (this.PerformClick(shortcutHits[0]))
 						{
+							Console.WriteLine("SHORTCUTS PROCESSED");
 							return true;
 						}
 					}
 				}
 			}
-
+			
 			// All the following code is for MenuBar only.
 			if (this.Style != CommandBarStyle.Menu)
 			{
@@ -231,7 +205,7 @@ namespace Reflector.UserInterface
 				}
 			}
 
-			return false;
+			return base.PreProcessMessage(ref message);
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e)
@@ -275,6 +249,7 @@ namespace Reflector.UserInterface
 		private bool PreProcessKeyDown(ref Message message)
 		{
 			Keys keyData = (Keys)(int) message.WParam | ModifierKeys;
+			
 			if (state == State.Hot)
 			{
 				int hotItem = this.GetHotItem();
@@ -306,8 +281,9 @@ namespace Reflector.UserInterface
 					return true;
 				}
 			}
-
-			bool alt = ((keyData & Keys.Alt) != 0);
+			
+			bool alt = ((keyData & Keys.Alt) != 0) && !IsAltGRPressed;
+			
 			if ((state == State.Hot) || (alt))
 			{
 				Keys keyCode = keyData & Keys.KeyCode;
@@ -340,9 +316,10 @@ namespace Reflector.UserInterface
 			char mnemonic = (char) (int) keyCode;
 
 			CommandBarItem[] mnemonicHits = this.items[mnemonic];
-			if (mnemonicHits.Length > 0)
+			if (mnemonicHits.Length > 0 && mnemonicHits[0].IsVisible)
 			{
 				int index = items.IndexOf(mnemonicHits[0]);
+				
 				this.TrackDropDown(index);
 				return true;
 			}
@@ -376,43 +353,43 @@ namespace Reflector.UserInterface
 			return hit;
 		}
 
-		private int GetNextItem(int index)
-		{
-			if (index < 0)
-			{
-				throw new ArgumentException("index");
-			}
+        private int GetNextItem(int index)
+        {
+            if (index < 0)
+            {
+                throw new ArgumentException("index");
+            }
 
-			int count = NativeMethods.SendMessage(this.Handle, NativeMethods.TB_BUTTONCOUNT, 0, 0);
-			
-			int nextIndex = index;
-			do
-			{
-				nextIndex = (nextIndex + 1) % count;
-			}
-			while (nextIndex != index && !items[nextIndex].IsVisible);
-			
-			return nextIndex;
-		}
-			
-		private int GetPreviousItem(int index)
-		{
-			if (index < 0)
-			{
-				throw new ArgumentException("index");
-			}
+            int count = NativeMethods.SendMessage(this.Handle, NativeMethods.TB_BUTTONCOUNT, 0, 0);
+           
+            int nextIndex = index;
+            do
+            {
+                nextIndex = (nextIndex + 1) % count;
+            }
+            while ((nextIndex != index) && (!items[nextIndex].IsVisible));
+           
+            return nextIndex;
+        }
+           
+        private int GetPreviousItem(int index)
+        {
+            if (index < 0)
+            {
+                throw new ArgumentException("index");
+            }
 
-			int count = NativeMethods.SendMessage(this.Handle, NativeMethods.TB_BUTTONCOUNT, 0, 0);
-			
-			int prevIndex = index;
-			do
-			{
-				prevIndex = (prevIndex + count - 1) % count;
-			}
-			while (prevIndex != index && !items[prevIndex].IsVisible);
-			
-			return prevIndex;
-		}
+            int count = NativeMethods.SendMessage(this.Handle, NativeMethods.TB_BUTTONCOUNT, 0, 0);
+           
+            int prevIndex = index;
+            do
+            {
+                prevIndex = (prevIndex + count - 1) % count;
+            }
+            while ((prevIndex != index) && (!items[prevIndex].IsVisible));
+           
+            return prevIndex;
+        }
 
 		private int GetHotItem()
 		{
@@ -999,7 +976,7 @@ namespace Reflector.UserInterface
 				{
 					this.imageList = new ImageList();	
 					this.imageList.ImageSize = size;
-					this.imageList.ColorDepth = ColorDepth.Depth32Bit;		
+					this.imageList.ColorDepth = ColorDepth.Depth32Bit;
 
 					for (int i = 0; i < images.Length; i++)
 					{
@@ -1034,8 +1011,63 @@ namespace Reflector.UserInterface
 		{
 			if (this.IsHandleCreated)
 			{
-				this.RecreateHandle();
+				this.BeginUpdate();
+				this.RemoveItems();
+				this.AddItems();
+				this.EndUpdate();
 			}
+		}
+
+		private void AddItems()
+		{
+			NativeMethods.SendMessage(Handle, NativeMethods.TB_BUTTONSTRUCTSIZE, Marshal.SizeOf(typeof(NativeMethods.TBBUTTON)), 0);
+
+			int extendedStyle = NativeMethods.TBSTYLE_EX_HIDECLIPPEDBUTTONS | NativeMethods.TBSTYLE_EX_DOUBLEBUFFER;
+			if (style == CommandBarStyle.ToolBar)
+			{
+				extendedStyle |= NativeMethods.TBSTYLE_EX_DRAWDDARROWS;
+			}
+
+			NativeMethods.SendMessage(Handle, NativeMethods.TB_SETEXTENDEDSTYLE, 0, extendedStyle);
+
+			this.UpdateImageList();
+			
+			for (int i = 0; i < items.Count; i++)
+			{
+				NativeMethods.TBBUTTON button = new NativeMethods.TBBUTTON();
+				button.idCommand = i;
+				NativeMethods.SendMessage(this.Handle, NativeMethods.TB_INSERTBUTTON, i, ref button);
+	
+				NativeMethods.TBBUTTONINFO buttonInfo = this.GetButtonInfo(i);
+				NativeMethods.SendMessage(this.Handle, NativeMethods.TB_SETBUTTONINFO, i, ref buttonInfo);
+			}
+
+			// Add ComboBox controls.
+			this.Controls.Clear();
+			for (int i = 0; i < items.Count; i++)
+			{
+				CommandBarComboBox comboBox = this.items[i] as CommandBarComboBox;
+				if (comboBox != null)
+				{
+					NativeMethods.RECT rect = new NativeMethods.RECT();
+					NativeMethods.SendMessage(this.Handle, NativeMethods.TB_GETITEMRECT, i, ref rect);
+
+					rect.top = rect.top + (((rect.bottom - rect.top) - comboBox.Height) / 2);
+
+					comboBox.ComboBox.Location = new Point(rect.left, rect.top);
+					this.Controls.Add(comboBox.ComboBox);
+				}
+			}
+	
+			this.UpdateSize();
+		}
+
+		private void RemoveItems()
+		{
+            while (NativeMethods.SendMessage(this.Handle, NativeMethods.TB_BUTTONCOUNT, 0, 0) > 0)
+            {
+                NativeMethods.SendMessage(this.Handle, NativeMethods.TB_DELETEBUTTON, 0, 0);
+            }
 		}
 
 		private void UpdateSize()
@@ -1043,7 +1075,7 @@ namespace Reflector.UserInterface
 			if (this.style == CommandBarStyle.Menu)
 			{
 				int fontHeight = Font.Height;
-				
+
 				using (Graphics graphics = this.CreateGraphics())
 				{
 					using (TextGraphics textGraphics = new TextGraphics(graphics))
@@ -1093,8 +1125,6 @@ namespace Reflector.UserInterface
 
 		private void CommandBarItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			Debug.WriteLine("PropertyChanged " + e.PropertyName + " " + sender);
-
 			if (this.IsHandleCreated)
 			{
 				CommandBarItem item = (CommandBarItem)sender;

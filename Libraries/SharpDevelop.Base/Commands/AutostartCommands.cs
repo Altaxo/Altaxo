@@ -22,7 +22,6 @@ using ICSharpCode.Core.AddIns.Codons;
 using ICSharpCode.SharpDevelop.Services;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Gui.Dialogs;
-using ICSharpCode.SharpDevelop.Gui.ErrorHandlers;
 
 using SA = ICSharpCode.SharpAssembly.Assembly;
 
@@ -80,11 +79,12 @@ namespace ICSharpCode.SharpDevelop.Commands
 			using (WizardDialog wizard = new WizardDialog("Initialize Code Completion Database", customizer, "/SharpDevelop/CompletionDatabaseWizard")) {
 				wizard.ControlBox = false;
 				wizard.ShowInTaskbar = true;
-				if (wizard.ShowDialog() == DialogResult.OK) {
+				if (wizard.ShowDialog() == DialogResult.OK && !customizer.GetProperty("SkipDb", false)) {
 					propertyService.SetProperty("SharpDevelop.CodeCompletion.DataDirectory",
 					                            customizer.GetProperty("SharpDevelop.CodeCompletion.DataDirectory", String.Empty));
 					// restart  & exit 
 					ServiceManager.Services.UnloadAllServices();
+					((Form)WorkbenchSingleton.Workbench).Dispose();
 					System.Diagnostics.Process.Start(Path.Combine(Application.StartupPath, "SharpDevelop.exe"));
 					System.Environment.Exit(0);
 				}
@@ -105,30 +105,44 @@ namespace ICSharpCode.SharpDevelop.Commands
 	{
 		public override void Run()
 		{
-			Thread preloadThread = new Thread(new ThreadStart(PreloadThreadStart));
-			preloadThread.IsBackground = true;
-			preloadThread.Priority = ThreadPriority.Lowest;
-			preloadThread.Start();
+			// Sorry this takes WAY TOO MUCH memory :(
+//			Thread preloadThread = new Thread(new ThreadStart(PreloadThreadStart));
+//			preloadThread.IsBackground = true;
+//			preloadThread.Priority = ThreadPriority.Lowest;
+//			preloadThread.Start();
 		}
 		
-		public void PreloadThreadStart()
+		void PreloadThreadStart()
 		{
-			Console.WriteLine("#Assembly: starting preloading thread");
-			SA.SharpAssembly.Load("System");
-			Console.WriteLine("#Assembly: preloaded system");
-			SA.SharpAssembly.Load("System.Xml");
-			Console.WriteLine("#Assembly: preloaded system.xml");
-			SA.SharpAssembly.Load("System.Windows.Forms");
-			Console.WriteLine("#Assembly: preloaded system.windows.forms");
-			SA.SharpAssembly.Load("System.Drawing");
-			Console.WriteLine("#Assembly: preloaded system.drawing");
-			SA.SharpAssembly.Load("System.Data");
-			Console.WriteLine("#Assembly: preloaded system.data");
-			SA.SharpAssembly.Load("System.Design");			
-			Console.WriteLine("#Assembly: preloaded system.design");
-			SA.SharpAssembly.Load("System.Web");			
-			Console.WriteLine("#Assembly: preloaded system.web");
+			foreach (string assembly in assemblyList) {
+				SA.SharpAssembly.Load(assembly);
+				Console.WriteLine(" ...done");
+			}
 		}
+		
+		readonly static string[] assemblyList = {
+			"Microsoft.VisualBasic",
+			"Microsoft.JScript",
+			"mscorlib",
+			"System.Data",
+			"System.Design",
+			"System.DirectoryServices",
+			"System.Drawing.Design",
+			"System.Drawing",
+			"System.EnterpriseServices",
+			"System.Management",
+			"System.Messaging",
+			"System.Runtime.Remoting",
+			"System.Runtime.Serialization.Formatters.Soap",
+
+			"System.Security",
+			"System.ServiceProcess",
+			"System.Web.Services",
+			"System.Web",
+			"System.Windows.Forms",
+			"System",
+			"System.XML"
+		};
 	}
 	
 	public class StartWorkbenchCommand : AbstractCommand
@@ -188,12 +202,8 @@ namespace ICSharpCode.SharpDevelop.Commands
 				switch (System.IO.Path.GetExtension(file).ToUpper()) {
 					case ".CMBX":
 					case ".PRJX":
-						try {
-							projectService.OpenCombine(file);
-						} catch (Exception e) {
-							CombineLoadError.HandleError(e, file);
-						}
-						
+						FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+						fileUtilityService.ObservedLoad(new NamedFileOperationDelegate(projectService.OpenCombine), file);
 						break;
 					default:
 						try {
@@ -212,7 +222,11 @@ namespace ICSharpCode.SharpDevelop.Commands
 			Application.Run(f);
 			
 			// save the workbench memento in the ide properties
-			propertyService.SetProperty(workbenchMemento, WorkbenchSingleton.Workbench.CreateMemento());
+			try {
+				propertyService.SetProperty(workbenchMemento, WorkbenchSingleton.Workbench.CreateMemento());
+			} catch (Exception e) {
+				Console.WriteLine("Exception while saving workbench state: " + e.ToString());
+			}
 		}
 	}
 }

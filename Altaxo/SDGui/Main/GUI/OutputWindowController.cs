@@ -24,6 +24,7 @@ using System;
 using ICSharpCode.Core.Properties;
 using ICSharpCode.Core.Services;
 using ICSharpCode.SharpDevelop.Services;
+using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Gui.Pads;
 
 namespace Altaxo.Main.GUI
@@ -84,6 +85,39 @@ namespace Altaxo.Main.GUI
     public event System.EventHandler TitleChanged;
 
     public event System.EventHandler IconChanged;
+
+    string category;
+    public string Category 
+    {
+      get 
+      {
+        return category;
+      }
+      set
+      {
+        category = value;
+      }
+    }
+    string[] shortcut; // TODO: Inherit from AbstractPadContent
+    public string[] Shortcut 
+    {
+      get 
+      {
+        return shortcut;
+      }
+      set 
+      {
+        shortcut = value;
+      }
+    }
+    public void BringPadToFront()
+    {
+      if (!WorkbenchSingleton.Workbench.WorkbenchLayout.IsVisible(this)) 
+      {
+        WorkbenchSingleton.Workbench.WorkbenchLayout.ShowPad(this);
+      }
+      WorkbenchSingleton.Workbench.WorkbenchLayout.ActivatePad(this);
+    }
 
     public void RedrawContent()
     {

@@ -39,6 +39,19 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		/// <summary>
+		/// Is called when the view content is selected inside the window
+		/// tab. NOT when the windows is selected.
+		/// </summary>
+		void Selected();
+		
+		/// <summary>
+		/// Is called when the view content is deselected inside the window
+		/// tab before the other window is selected. NOT when the windows is deselected.
+		/// </summary>
+		void Deselected();
+		
+		
+		/// <summary>
 		/// Reinitializes the content. (Re-initializes all add-in tree stuff)
 		/// and redraws the content. Call this not directly unless you know
 		/// what you do.

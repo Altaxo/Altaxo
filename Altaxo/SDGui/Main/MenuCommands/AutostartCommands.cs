@@ -36,7 +36,7 @@ using ICSharpCode.Core.AddIns.Codons;
 using ICSharpCode.SharpDevelop.Services;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Gui.Dialogs;
-using ICSharpCode.SharpDevelop.Gui.ErrorHandlers;
+//using ICSharpCode.SharpDevelop.Gui.ErrorHandlers;
 
 //#if OriginalCode
 using SharpDevelop.Internal.Parser;

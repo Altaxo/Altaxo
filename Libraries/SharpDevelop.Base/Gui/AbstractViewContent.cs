@@ -12,8 +12,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 {
 	public abstract class AbstractViewContent : AbstractBaseViewContent, IViewContent
 	{
-		string untitledName = "";
-		string contentName  = null;
+		string untitledName = String.Empty;
+		string titleName    = null;
+		string fileName     = null;
 		
 		bool   isDirty  = false;
 		bool   isViewOnly = false;
@@ -27,19 +28,44 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public virtual string ContentName {
+		public virtual string TitleName {
 			get {
-				return contentName;
+				return IsUntitled ? untitledName : titleName;
 			}
 			set {
-				contentName = value;
-				OnContentNameChanged(EventArgs.Empty);
+				titleName = value;
+				OnTitleNameChanged(EventArgs.Empty);
 			}
+		}
+		
+		public virtual string FileName {
+			get {
+				return fileName;
+			}
+			set {
+				fileName = value;
+				OnFileNameChanged(EventArgs.Empty);
+			}
+		}
+		
+		public AbstractViewContent()
+		{
+		}
+		
+		public AbstractViewContent(string titleName)
+		{
+			this.titleName = titleName;
+		}
+		
+		public AbstractViewContent(string titleName, string fileName)
+		{
+			this.titleName = titleName;
+			this.fileName  = fileName;
 		}
 		
 		public bool IsUntitled {
 			get {
-				return contentName == null;
+				return titleName == null;
 			}
 		}
 		
@@ -70,8 +96,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public virtual void Save()
 		{
-			OnBeforeSave(EventArgs.Empty);
-			Save(contentName);
+			if (IsDirty) {
+				Save(fileName);
+			}
 		}
 		
 		public virtual void Save(string fileName)
@@ -80,7 +107,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		public abstract void Load(string fileName);
-				
+		
 		protected virtual void OnDirtyChanged(EventArgs e)
 		{
 			if (DirtyChanged != null) {
@@ -88,12 +115,20 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		protected virtual void OnContentNameChanged(EventArgs e)
+		protected virtual void OnTitleNameChanged(EventArgs e)
 		{
-			if (ContentNameChanged != null) {
-				ContentNameChanged(this, e);
+			if (TitleNameChanged != null) {
+				TitleNameChanged(this, e);
 			}
 		}
+		
+		protected virtual void OnFileNameChanged(EventArgs e)
+		{
+			if (FileNameChanged != null) {
+				FileNameChanged(this, e);
+			}
+		}
+		
 		
 		protected virtual void OnBeforeSave(EventArgs e)
 		{
@@ -102,7 +137,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 			}
 		}
 		
-		public event EventHandler ContentNameChanged;
+		public event EventHandler TitleNameChanged;
+		public event EventHandler FileNameChanged;
 		public event EventHandler DirtyChanged;
 		public event EventHandler BeforeSave;
 	}

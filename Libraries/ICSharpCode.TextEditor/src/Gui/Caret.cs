@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -47,7 +47,7 @@ namespace ICSharpCode.TextEditor
 	{
 		int       line          = 0;
 		int       column        = 0;
-		int       desiredColumn = 0;
+		int       desiredXPos   = 0;
 		CaretMode caretMode;
 		
 		static bool     caretCreated = false;
@@ -62,10 +62,10 @@ namespace ICSharpCode.TextEditor
 		/// </value>
 		public int DesiredColumn {
 			get {
-				return desiredColumn;
+				return desiredXPos;
 			}
 			set {
-				desiredColumn = value;
+				desiredXPos = value;
 			}
 		}
 		
@@ -190,6 +190,14 @@ namespace ICSharpCode.TextEditor
 			DisposeCaret();
 		}
 		
+		public Point ScreenPosition {
+			get {
+				int xpos = textArea.TextView.GetDrawingXPos(this.line, this.column);
+				return new Point(textArea.TextView.DrawingPosition.X + xpos,
+					             textArea.TextView.DrawingPosition.Y + (textArea.Document.GetVisibleLine(this.line)) * textArea.TextView.FontHeight - textArea.TextView.TextArea.VirtualTop.Y);
+			}
+		}
+		
 		public void UpdateCaretPosition()
 		{
 			if (hidden || textArea.MotherTextEditorControl.IsUpdating) {
@@ -202,10 +210,9 @@ namespace ICSharpCode.TextEditor
 				if (caretCreated) {
 					ValidateCaretPos();
 					int lineNr = this.line;
+					int xpos = textArea.TextView.GetDrawingXPos(lineNr, this.column);
 					LineSegment lineSegment = textArea.Document.GetLineSegment(lineNr);
-					int xpos = textArea.TextView.GetDrawingXPos(lineSegment, this.column);
-					Point pos = new Point(textArea.TextView.DrawingPosition.X + xpos,
-					                      textArea.TextView.DrawingPosition.Y + lineNr * textArea.TextView.FontHeight - textArea.TextView.TextArea.VirtualTop.Y);
+					Point pos = ScreenPosition;
 					if (xpos >= 0) {
 						bool success = SetCaretPos(pos.X, pos.Y);
 						if (!success) {
@@ -213,7 +220,6 @@ namespace ICSharpCode.TextEditor
 							caretCreated = false;
 							UpdateCaretPosition();
 						}
-						
 					}
 					// set the input method editor location
 					if (ime == null) {
@@ -237,7 +243,7 @@ namespace ICSharpCode.TextEditor
 //			caretCreated = false;
 		}
 		
-#region Native caret functions
+		#region Native caret functions
 		[DllImport("User32.dll")]
 		static extern bool CreateCaret(IntPtr hWnd, int hBitmap, int nWidth, int nHeight);
 		
@@ -252,13 +258,30 @@ namespace ICSharpCode.TextEditor
 		
 		[DllImport("User32.dll")]
 		static extern bool HideCaret(IntPtr hWnd);
-#endregion
+		#endregion
 		
 		protected virtual void OnPositionChanged(EventArgs e)
 		{
+			Console.WriteLine("Caret: OnPositionChanged");
+			ArrayList foldings = textArea.Document.FoldingManager.GetFoldingsFromPosition(line, column);
+			bool  shouldUpdate = false;
+			foreach (FoldMarker foldMarker in foldings) {
+				//Console.WriteLine(foldMarker);
+				shouldUpdate |= foldMarker.IsFolded;
+				foldMarker.IsFolded = false;
+			}
+			
+			if (shouldUpdate) {
+				textArea.BeginUpdate();
+				textArea.Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.WholeTextArea));
+				textArea.EndUpdate();
+				textArea.Document.FoldingManager.NotifyFoldingsChanged(EventArgs.Empty);
+			}
+			
 			if (PositionChanged != null) {
 				PositionChanged(this, e);
 			}
+			Console.WriteLine("calling ScrollToCaret");
 			textArea.ScrollToCaret();
 		}
 		

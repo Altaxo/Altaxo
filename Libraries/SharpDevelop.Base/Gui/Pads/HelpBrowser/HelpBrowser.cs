@@ -4,13 +4,14 @@
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
-
+using Microsoft.Win32;
 using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.CodeDom.Compiler;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Diagnostics;
 using System.Xml;
 using System.Reflection;
@@ -27,7 +28,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 	{
 		public HelpBrowserWindow() : base(true)
 		{
-			ContentName = "Help";
+			TitleName = "Help";
 		}
 	}
 	
@@ -71,6 +72,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		
 		static readonly string helpFileName = helpPath + "SharpDevelopHelp.zip";
 		static readonly string mainTOCFile  = "HelpConv.xml";
+		string HelpPrefix = "ms-help://MS.NETFrameworkSDK";
+		
 		
 		Panel     browserPanel = new Panel();
 		TreeView  treeView     = new TreeView();
@@ -100,6 +103,92 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			browserPanel.Controls.Add(treeView);
 			
 			LoadHelpfile();
+			ScanForLocalizedHelpPrefix();
+			
+		}
+		
+		void ScanForLocalizedHelpPrefix()
+		{
+			string localHelp = String.Concat("0x", Thread.CurrentThread.CurrentCulture.LCID.ToString("X4"));
+			RegistryKey helpKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\MSDN\7.0\Help");
+			if (helpKey == null) {
+				return;
+			}
+			
+			RegistryKey k = helpKey.OpenSubKey(localHelp);
+			bool found = false;
+			if (k != null) {
+				string v = ScanSubKeys(k);
+				if (v != null) {
+					HelpPrefix = v;
+					found = true;
+				}
+			}
+			
+			if (!found) {
+				// use default english subkey
+				k = helpKey.OpenSubKey("0x0409");
+				string v = k != null ? ScanSubKeys(k) : null;
+				if (v != null) {
+					HelpPrefix = v;
+				} else {
+					string[] subKeys = helpKey.GetSubKeyNames();
+					foreach (string subKey in subKeys) {
+						if (subKey.StartsWith("0x")) {
+							HelpPrefix = ScanSubKeys(helpKey.OpenSubKey(subKey));
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		string ScanSubKeys(RegistryKey key)
+		{
+			if (key != null) {
+				string[] subKeys = key.GetSubKeyNames();
+				if (subKeys != null) {
+					foreach (string subKey in subKeys) {
+						RegistryKey sub = key.OpenSubKey(subKey);
+						if (sub == null) {
+							continue;
+						}
+						object o = sub.GetValue(null);
+						if (o == null) {
+							continue;
+						}
+						if (o.ToString().StartsWith("Microsoft .NET Framework SDK")) {
+							return sub.GetValue("Filename").ToString();
+						}
+					}
+				}
+			}
+			return null;
+		}
+		protected string GetHelpString(string word)
+		{
+			int i = 0;
+			while ((i = word.IndexOf('.')) != -1) {
+				word = word.Remove(i,1);
+			}
+			return word;
+		}
+		
+		public void ShowHelpFromType(string type)
+		{
+			string url = String.Format("{0}/cpref/html/frlrf{1}ClassTopic.htm", 
+			                           HelpPrefix, 
+			                           GetHelpString(type));
+			ShowHelpBrowser(url);
+		}
+		
+		public void ShowHelpFromType(string type, string member)
+		{
+			string url = String.Format("{0}/cpref/html/frlrf{1}Class{2}Topic.htm", 
+			                           HelpPrefix,
+			                           GetHelpString(type),
+			                           member);
+			ShowHelpBrowser(url);
 		}
 		
 		/// <remarks>
@@ -162,7 +251,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 				}
 			}
 			s.Close();
-			Debug.Assert(false);
+			System.Diagnostics.Debug.Assert(false);
 			return null;
 		}
 		
@@ -187,6 +276,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			helpBrowserWindow.Load(url);
 			helpBrowserWindow.WorkbenchWindow.SelectWindow();
 		}
+		
+		
 		
 		void ShowHelp(TreeNode node)
 		{

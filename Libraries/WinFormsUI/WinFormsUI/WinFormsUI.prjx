@@ -1,0 +1,79 @@
+<Project name="WinFormsUI" standardNamespace="NewProject" description="" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
+  <Contents>
+    <File name=".\AssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Resources\WeifenLuo.WinFormsUI.Strings.resources" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\Resources\WeifenLuo.WinFormsUI.Resources.DockPane.ToolWindowCloseEnabled.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\Resources\WeifenLuo.WinFormsUI.Resources.DockPane.AutoHideNo.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\Resources\WeifenLuo.WinFormsUI.Resources.DockPane.AutoHideYes.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\Resources\WeifenLuo.WinFormsUI.Resources.DockPane.DocumentCloseDisabled.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\Resources\WeifenLuo.WinFormsUI.Resources.DockPane.DocumentCloseEnabled.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\Resources\WeifenLuo.WinFormsUI.Resources.DockPane.ScrollLeftDisabled.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\Resources\WeifenLuo.WinFormsUI.Resources.DockPane.ScrollLeftEnabled.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\Resources\WeifenLuo.WinFormsUI.Resources.DockPane.ScrollRightDisabled.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\Resources\WeifenLuo.WinFormsUI.Resources.DockPane.ScrollRightEnabled.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\Resources\WeifenLuo.WinFormsUI.Resources.DockPane.ToolWindowCloseDisabled.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\SplitterBase.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\AutoHideWindow.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\AutoHideWindowSplitter.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DisplayingDockList.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DockAreasEditor.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DockContent.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DockContentCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DockHelper.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DockList.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DockPane.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DockPaneCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DockPanel.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DockPanelPersist.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DockPaneSplitter.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DockWindow.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DockWindowCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DockWindowSplitter.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DragHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DragHandlerBase.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DrawHelper.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DummyControl.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Enums.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\EventArgs.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\FloatWindow.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\FloatWindowCollection.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\HiddenMdiChild.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\InertButton.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Interfaces.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Localization.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\LocalWindowsHook.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Measures.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\NestedDockingStatus.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\ResourceHelper.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\DockPaneSplitter.resx" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\FloatWindow.resx" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\InertButton.resx" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\WinFormsUI.prjx~" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name=".\Win32\Enums.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Win32\Gdi32.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Win32\Structs.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Win32\User32.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Resources\WeifenLuo.WinFormsUI.InertButton.resources" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\Resources\WeifenLuo.WinFormsUI.DockPaneSplitter.resources" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\Resources\WeifenLuo.WinFormsUI.FloatWindow.resources" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+  </Contents>
+  <References />
+  <DeploymentInformation target="" script="" strategy="File" />
+  <Configuration runwithwarnings="False" name="Debug">
+    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="False" unsafecodeallowed="False" generateoverflowchecks="False" mainclass="" target="Library" definesymbols="DEBUG;TRACE" generatexmldocumentation="False" win32Icon="" />
+    <Execution commandlineparameters="" consolepause="True" />
+    <Output directory="..\..\..\..\bin" assembly="WeifenLuo.WinFormsUI" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+  </Configuration>
+  <Configurations active="Debug">
+    <Configuration runwithwarnings="False" name="Debug">
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="False" unsafecodeallowed="False" generateoverflowchecks="False" mainclass="" target="Library" definesymbols="DEBUG;TRACE" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="True" />
+      <Output directory="..\..\..\..\bin" assembly="WeifenLuo.WinFormsUI" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+    </Configuration>
+    <Configuration runwithwarnings="False" name="Release">
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="False" optimize="True" unsafecodeallowed="False" generateoverflowchecks="False" mainclass="" target="Library" definesymbols="TRACE" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="True" />
+      <Output directory="..\..\..\..\bin" assembly="WeifenLuo.WinFormsUI" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+    </Configuration>
+  </Configurations>
+</Project>

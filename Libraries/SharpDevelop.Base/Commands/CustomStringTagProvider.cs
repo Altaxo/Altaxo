@@ -45,7 +45,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 		string GetCurrentItemPath()
 		{
 			if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null && !WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.IsViewOnly && !WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.IsUntitled) {
-				return WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName;
+				return WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName;
 			}
 			return String.Empty;
 		}
@@ -56,7 +56,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 				return projectService.GetOutputAssemblyName(projectService.CurrentSelectedProject);
 			}
 			if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null) {
-				string fileName = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName;
+				string fileName = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName;
 				return projectService.GetOutputAssemblyName(fileName);
 			}
 			return String.Empty;

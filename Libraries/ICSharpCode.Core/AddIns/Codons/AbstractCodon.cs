@@ -30,7 +30,6 @@ namespace ICSharpCode.Core.AddIns.Codons
 		[XmlMemberArrayAttribute("insertbefore")]
 		string[] insertbefore = null;
 		
-		
 		AddIn  addIn = null;
 		
 		/// <summary>

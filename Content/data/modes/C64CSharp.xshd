@@ -15,7 +15,8 @@
 		
 		<FoldLine     color = "#97A0EF"/>
 		<FoldMarker   color = "#97A0EF" bgcolor="#3F3FDF"/>
-		
+		<SelectedFoldLine color = "Black" bgcolor="Black"/>
+
 		<EOLMarkers   color = "LightBlue"/>
 		<SpaceMarkers color = "LightBlue"/>
 		<TabMarkers   color = "LightBlue"/>
@@ -34,15 +35,15 @@
 		  	<Begin>#</Begin>
 		  </Span>
 		  
-		  <Span name = "LINECOMMENT" rule = "DocumentSet" bold = "false" italic = "true" color = "LightGray" stopateol = "true">
+		  <Span name = "LINECOMMENT" rule = "DocumentSet" bold = "false" italic = "false" color = "LightGray" stopateol = "true">
 			   <Begin>///</Begin>
 		  </Span>
 		  
-		  <Span name = "LINECOMMENT" rule = "TestSet" bold = "false" italic = "true" color = "LightGray" stopateol = "true">
+		  <Span name = "LINECOMMENT" rule = "TestSet" bold = "false" italic = "false" color = "LightGray" stopateol = "true">
 			   <Begin>//@!/@</Begin>
 		  </Span>
 		  
-			<Span name = "BLOCKCOMMENT" rule = "TestSet" bold = "false" italic = "true" color = "LightGray" stopateol = "false">
+			<Span name = "BLOCKCOMMENT" rule = "TestSet" bold = "false" italic = "false" color = "LightGray" stopateol = "false">
 				<Begin>/*</Begin>
 				<End>*/</End>
 			</Span>

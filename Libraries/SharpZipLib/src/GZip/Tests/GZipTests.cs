@@ -6,14 +6,17 @@ using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using ICSharpCode.SharpZipLib.GZip;
 using NUnit.Framework;
 
-namespace ICSharpCode.SharpZipLib.Zip
+namespace ICSharpCode.SharpZipLib.GZip
 {
 	/// <summary>
-	/// This class contains test cases for the Adler32 and Crc32 checksums
+	/// This class contains test cases for GZip compression
 	/// </summary>
 	[TestFixture]
-	public class Gzip2Suite
+	public class GZipTestSuite
 	{
+		/// <summary>
+		/// Basic compress/decompress test
+		/// </summary>
 		[Test]
 		public void TestGZip()
 		{

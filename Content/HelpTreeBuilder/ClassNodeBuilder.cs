@@ -130,12 +130,20 @@ namespace ICSharpCode.HelpConverter.HelpTreeBuilder
 					found = true;
 				}
 			}
-			
-			if(! found) {
+			if (!found) {
 				// use default english subkey
-				string v = ScanSubKeys(helpKey.OpenSubKey("0x0409"));
+				k = helpKey.OpenSubKey("0x0409");
+				string v = k != null ? ScanSubKeys(k) : null;
 				if (v != null) {
 					prefix = v;
+				} else {
+					string[] subKeys = helpKey.GetSubKeyNames();
+					foreach (string subKey in subKeys) {
+						if (subKey.StartsWith("0x")) {
+							prefix = ScanSubKeys(helpKey.OpenSubKey(subKey));
+							break;
+						}
+					}
 				}
 			}
 		}

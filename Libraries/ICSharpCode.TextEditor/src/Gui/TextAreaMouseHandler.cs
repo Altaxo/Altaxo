@@ -6,6 +6,7 @@
 // </file>
 
 using System;
+using System.Collections;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -18,10 +19,10 @@ namespace ICSharpCode.TextEditor
 	/// </summary>
 	public class TextAreaMouseHandler
 	{
-		
+		ToolTip toolTip = new ToolTip();
 		TextArea  textArea;
 		bool      doubleclick = false;
-	    Point     mousepos = new Point(0, 0);
+		Point     mousepos = new Point(0, 0);
 		int       selbegin;
 		int       selend;
 		bool      clickedOnSelectedText = false;
@@ -83,7 +84,8 @@ namespace ICSharpCode.TextEditor
 			if (clickedOnSelectedText && textArea.TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y)) {
 				textArea.SelectionManager.ClearSelection();
 				
-				Point clickPosition = textArea.TextView.GetLogicalPosition(mousepos.X - textArea.TextView.DrawingPosition.X, mousepos.Y - textArea.TextView.DrawingPosition.Y);
+				Point clickPosition = textArea.TextView.GetLogicalPosition(mousepos.X - textArea.TextView.DrawingPosition.X,
+				                                                           mousepos.Y - textArea.TextView.DrawingPosition.Y);
 				textArea.Caret.Position = clickPosition;
 				textArea.SetDesiredColumn();
 			}
@@ -100,21 +102,7 @@ namespace ICSharpCode.TextEditor
 			doubleclick = false;
 			mousepos    = new Point(e.X, e.Y);
 			
-			if (textArea.GutterMargin.DrawingPosition.Contains(mousepos.X, mousepos.Y) || textArea.FoldMargin.DrawingPosition.Contains(mousepos.X, mousepos.Y)) {
-				if (e.Button == MouseButtons.Left) {
-					Point realmousepos = textArea.TextView.GetLogicalPosition(0, mousepos.Y - textArea.TextView.DrawingPosition.Y);
-					if (realmousepos.Y < textArea.Document.TotalNumberOfLines) {
-						if (selectionStartPos.Y == realmousepos.Y) {
-							textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, realmousepos, new Point(textArea.Document.GetLineSegment(realmousepos.Y).Length + 1, realmousepos.Y)));
-						} else  if (selectionStartPos.Y < realmousepos.Y && textArea.SelectionManager.HasSomethingSelected) {
-							textArea.SelectionManager.ExtendSelection(textArea.SelectionManager.SelectionCollection[0].EndPosition, realmousepos);
-						} else {
-							textArea.SelectionManager.ExtendSelection(textArea.Caret.Position, realmousepos);
-						}
-						textArea.Caret.Position = realmousepos;
-					}
-				}
-			} else if (textArea.TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y)) {
+			if (textArea.TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y)) {
 				if (clickedOnSelectedText) {
 					if (Math.Abs(mousedownpos.X - mousepos.X) >= SystemInformation.DragSize.Width / 2 ||
 					    Math.Abs(mousedownpos.Y - mousepos.Y) >= SystemInformation.DragSize.Height / 2) {
@@ -133,6 +121,41 @@ namespace ICSharpCode.TextEditor
 					}
 					
 					return;
+				}
+				if (e.Button == MouseButtons.None) {
+					FoldMarker marker = textArea.TextView.GetFoldMarkerFromPosition(mousepos.X - textArea.TextView.DrawingPosition.X,
+					                                                                mousepos.Y - textArea.TextView.DrawingPosition.Y);
+					if (marker != null && marker.IsFolded) {
+						string text = marker.InnerText;
+						
+						// max 10 lines
+						int endLines = 0;
+						for (int i = 0; i < text.Length; ++i) {
+							if (text[i] == '\n') {
+								++endLines;
+								if (endLines >= 10) {
+									text = text.Substring(0, i) + "\n\r...";
+									break;
+									
+								}
+							}
+						}
+						
+						toolTip.SetToolTip(textArea, text.Replace("\t", "    "));
+						return;
+					}
+					
+					Point clickPosition2 = textArea.TextView.GetLogicalPosition(mousepos.X - textArea.TextView.DrawingPosition.X,
+					                                                           mousepos.Y - textArea.TextView.DrawingPosition.Y);
+					ArrayList markers = textArea.Document.MarkerStrategy.GetMarkers(clickPosition2);
+					foreach (TextMarker tm in markers) {
+						if (tm.ToolTip != null) {
+							toolTip.SetToolTip(textArea, tm.ToolTip.Replace("\t", "    "));
+							return;
+						}
+					}
+					
+					toolTip.SetToolTip(textArea, null);
 				}
 				
 				if (e.Button == MouseButtons.Left) {
@@ -169,16 +192,20 @@ namespace ICSharpCode.TextEditor
 			
 			button = e.Button;
 			
-			if (textArea.GutterMargin.DrawingPosition.Contains(mousepos.X, mousepos.Y) || textArea.FoldMargin.DrawingPosition.Contains(mousepos.X, mousepos.Y)) {
-				Point realmousepos = textArea.TextView.GetLogicalPosition(0, mousepos.Y - textArea.TextView.DrawingPosition.Y);
-				if (realmousepos.Y < textArea.Document.TotalNumberOfLines) {
-					selectionStartPos = realmousepos;
-					textArea.SelectionManager.ClearSelection();
-					textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.Document, realmousepos, new Point(textArea.Document.GetLineSegment(realmousepos.Y).Length + 1, realmousepos.Y)));
-					textArea.Caret.Position = realmousepos;
-				}
-			} else if (textArea.TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y)) {
+			if (textArea.TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y)) {
 				if (button == MouseButtons.Left) {
+					FoldMarker marker = textArea.TextView.GetFoldMarkerFromPosition(mousepos.X - textArea.TextView.DrawingPosition.X,
+					                                                                mousepos.Y - textArea.TextView.DrawingPosition.Y);
+					if (marker != null && marker.IsFolded) {
+						if (textArea.SelectionManager.HasSomethingSelected) {	
+							clickedOnSelectedText = true;
+						}
+						
+						textArea.SelectionManager.SetSelection(new DefaultSelection(textArea.TextView.Document, new Point(marker.StartColumn, marker.StartLine), new Point(marker.EndColumn, marker.EndLine)));
+						textArea.Focus();
+						return;
+					}
+
 					if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift) {
 						ExtendSelectionToMouse();
 					} else {
@@ -276,6 +303,11 @@ namespace ICSharpCode.TextEditor
 			
 			textArea.SelectionManager.ClearSelection();
 			if (textArea.TextView.DrawingPosition.Contains(mousepos.X, mousepos.Y)) {
+				FoldMarker marker = textArea.TextView.GetFoldMarkerFromPosition(mousepos.X - textArea.TextView.DrawingPosition.X,
+				                                                                mousepos.Y - textArea.TextView.DrawingPosition.Y);
+				if (marker != null && marker.IsFolded) {
+					marker.IsFolded = false;
+				}
 				if (textArea.Caret.Offset < textArea.Document.TextLength) {
 					switch (textArea.Document.GetCharAt(textArea.Caret.Offset)) {
 						case '"':
@@ -291,13 +323,13 @@ namespace ICSharpCode.TextEditor
 							break;
 					
 					}
-					// HACK WARNING !!! 
-					// must refresh here, because when a error tooltip is showed and the underlined
-					// code is double clicked the textArea don't update corrctly, updateline doesn't
-					// work ... but the refresh does.
-					// Mike
-					textArea.Refresh(); 
 				}
+				// HACK WARNING !!! 
+				// must refresh here, because when a error tooltip is showed and the underlined
+				// code is double clicked the textArea don't update corrctly, updateline doesn't
+				// work ... but the refresh does.
+				// Mike
+				textArea.Refresh(); 
 			}
 		}
 	}

@@ -75,6 +75,9 @@ namespace ICSharpCode.Core.Services
 						string propertyName  = m.Groups[1].Captures[0].Value;
 						string propertyValue = null;
 						switch (propertyName.ToUpper()) {
+							case "USER": // current user
+								propertyValue = Environment.UserName;
+								break;
 							case "DATE": // current date
 								propertyValue = DateTime.Today.ToShortDateString();
 								break;
@@ -110,7 +113,11 @@ namespace ICSharpCode.Core.Services
 											case "RES":
 												IResourceService resourceService = (IResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 												if (resourceService != null) {
+													try {
 														propertyValue = Parse(resourceService.GetString(propertyName.Substring(k + 1)), customTags);
+													} catch (Exception) {
+														propertyValue = null;
+													}
 												}
 												break;
 											case "PROPERTY":

@@ -19,5 +19,9 @@ namespace CSharpBinding.Parser.SharpDevelopTree
 			this.region = region;
 			modifiers = (ModifierEnum)m;
 		}
+		public void SetModifiers(ModifierEnum m)
+		{
+			modifiers = m;
+		}
 	}
 }

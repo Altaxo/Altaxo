@@ -27,6 +27,11 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 			}
 		}
 		
+		public CastExpression(TypeReference castTo)
+		{
+			this.castTo = castTo;
+		}
+		
 		public CastExpression(TypeReference castTo, Expression expression)
 		{
 			this.castTo = castTo;

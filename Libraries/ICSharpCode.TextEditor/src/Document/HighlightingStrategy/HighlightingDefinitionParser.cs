@@ -23,9 +23,6 @@ namespace ICSharpCode.TextEditor.Document
 			// This is a pure utility class with no instances.	
 		}
 		
-		static string[] environmentColors = {"VRuler", "Selection", "LineNumbers",
-											"InvalidLines", "EOLMarkers", "SpaceMarkers", "TabMarkers",
-											"CaretMarker", "FoldLine", "FoldMarker"};
 		static ArrayList errors = null;
 		
 		public static DefaultHighlightingStrategy Parse(SyntaxMode syntaxMode, XmlTextReader xmlTextReader)
@@ -46,17 +43,15 @@ namespace ICSharpCode.TextEditor.Document
 				if (doc.DocumentElement.Attributes["extensions"]!= null) {
 					highlighter.Extensions = doc.DocumentElement.Attributes["extensions"].InnerText.Split(new char[] { ';', '|' });
 				}
-				/*
-				if (doc.DocumentElement.Attributes["indent"]!= null) {
-					highlighter.DoIndent = Boolean.Parse(doc.DocumentElement.Attributes["indent"].InnerText);
-				}
-				*/
-				XmlElement environment = doc.DocumentElement["Environment"];
-		
-				highlighter.SetDefaultColor(new HighlightBackground(environment["Default"]));
 				
-				foreach (string aColorName in environmentColors) {
-					highlighter.SetColorFor(aColorName, new HighlightColor(environment[aColorName]));
+				XmlElement environment = doc.DocumentElement["Environment"];
+				if (environment != null) {
+					foreach (XmlNode node in environment.ChildNodes) {
+						if (node is XmlElement) {
+							XmlElement el = (XmlElement)node;
+							highlighter.SetColorFor(el.Name, el.HasAttribute("bgcolor") ? new HighlightBackground(el) : new HighlightColor(el));
+						}
+					}
 				}
 				
 				// parse properties
@@ -67,7 +62,7 @@ namespace ICSharpCode.TextEditor.Document
 				}
 				
 				if (doc.DocumentElement["Digits"]!= null) {
-					highlighter.SetColorFor("Digits", new HighlightColor(doc.DocumentElement["Digits"]));
+					highlighter.DigitColor = new HighlightColor(doc.DocumentElement["Digits"]);
 				}
 				
 				XmlNodeList nodes = doc.DocumentElement.GetElementsByTagName("RuleSet");
@@ -84,8 +79,8 @@ namespace ICSharpCode.TextEditor.Document
 				} else {
 					return highlighter;		
 				}
-			} catch (Exception) {
-				MessageBox.Show("Could not load mode definition file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+			} catch (Exception e) {
+				MessageBox.Show("Could not load mode definition file.\n" + e.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
 				return null;
 			}
 		}	

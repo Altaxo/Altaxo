@@ -98,6 +98,7 @@ namespace SharpDevelop.Internal.Parser
 			}
 			
 			foreach (string str in usings) {
+//				Console.WriteLine(str);
 				string possibleType = String.Concat(str, ".", partitialTypeName);
 //				Console.WriteLine("looking for " + possibleType);
 				c = parserService.GetClass(possibleType, caseSensitive);

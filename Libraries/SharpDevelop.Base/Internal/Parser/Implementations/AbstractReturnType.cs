@@ -12,34 +12,46 @@ namespace SharpDevelop.Internal.Parser
 	[Serializable]
 	public abstract class AbstractReturnType : System.MarshalByRefObject, IReturnType
 	{
-		protected string fullyQualifiedName;
 		protected int    pointerNestingLevel;
 		protected int[]  arrayDimensions;
 		protected object declaredin = null;
-
+		string fullyQualifiedName = null;
+//		int nameHashCode = -1;
+		
 		public virtual string FullyQualifiedName {
 			get {
+				if (fullyQualifiedName == null) {
+					return String.Empty;
+				}
 				return fullyQualifiedName;
+//				return (string)AbstractNamedEntity.fullyQualifiedNames[nameHashCode];
+			}
+			set {
+				fullyQualifiedName = value;
+//				nameHashCode = value.GetHashCode();
+//				if (AbstractNamedEntity.fullyQualifiedNames[nameHashCode] == null) {
+//					AbstractNamedEntity.fullyQualifiedNames[nameHashCode] = value;
+//				}
 			}
 		}
 
 		public virtual string Name {
 			get {
-				if (fullyQualifiedName == null) {
+				if (FullyQualifiedName == null) {
 					return null;
 				}
-				string[] name = fullyQualifiedName.Split(new char[] {'.'});
+				string[] name = FullyQualifiedName.Split(new char[] {'.'});
 				return name[name.Length - 1];
 			}
 		}
 
 		public virtual string Namespace {
 			get {
-				if (fullyQualifiedName == null) {
+				if (FullyQualifiedName == null) {
 					return null;
 				}
-				int index = fullyQualifiedName.LastIndexOf('.');
-				return index < 0 ? String.Empty : fullyQualifiedName.Substring(0, index);
+				int index = FullyQualifiedName.LastIndexOf('.');
+				return index < 0 ? String.Empty : FullyQualifiedName.Substring(0, index);
 			}
 		}
 

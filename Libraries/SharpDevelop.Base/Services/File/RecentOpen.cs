@@ -38,14 +38,14 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public ArrayList RecentFile {
 			get {
-				Debug.Assert(lastfile != null, "RecentOpen : set string[] LastFile (value == null)");
+				System.Diagnostics.Debug.Assert(lastfile != null, "RecentOpen : set string[] LastFile (value == null)");
 				return lastfile;
 			}
 		}
 
 		public ArrayList RecentProject {
 			get {
-				Debug.Assert(lastproject != null, "RecentOpen : set string[] LastProject (value == null)");
+				System.Diagnostics.Debug.Assert(lastproject != null, "RecentOpen : set string[] LastProject (value == null)");
 				return lastproject;
 			}
 		}
@@ -87,7 +87,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 		}
 		
-		public void AddLastFile(string name) // TODO : improve 
+		public void AddLastFile(string name)
 		{
 			for (int i = 0; i < lastfile.Count; ++i) {
 				if (lastfile[i].ToString() == name) {
@@ -122,7 +122,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			OnRecentProjectChange();
 		}
 		
-		public void AddLastProject(string name) // TODO : improve
+		public void AddLastProject(string name)
 		{
 			for (int i = 0; i < lastproject.Count; ++i) {
 				if (lastproject[i].ToString() == name) {

@@ -16,6 +16,9 @@ using ICSharpCode.TextEditor.Document;
 
 namespace ICSharpCode.TextEditor
 {
+	public delegate void MarginMouseEventHandler(AbstractMargin sender, Point mousepos, MouseButtons mouseButtons);
+	public delegate void MarginPaintEventHandler(AbstractMargin sender, Graphics g, Rectangle rect);
+	
 	/// <summary>
 	/// This class views the line numbers and folding markers.
 	/// </summary>
@@ -69,11 +72,41 @@ namespace ICSharpCode.TextEditor
 			}
 		}
 		
-		public AbstractMargin(TextArea textArea)
+		protected AbstractMargin(TextArea textArea)
 		{
 			this.textArea = textArea;
 		}
 		
-		public abstract void Paint(Graphics g, Rectangle rect);
+		public virtual void HandleMouseDown(Point mousepos, MouseButtons mouseButtons)
+		{
+			if (MouseDown != null) {
+				MouseDown(this, mousepos, mouseButtons);
+			}
+		}
+		public virtual void HandleMouseMove(Point mousepos, MouseButtons mouseButtons)
+		{
+			if (MouseMove != null) {
+				MouseMove(this, mousepos, mouseButtons);
+			}
+		}
+		public virtual void HandleMouseLeave(EventArgs e)
+		{
+			if (MouseLeave != null) {
+				MouseLeave(this, e);
+			}
+		}
+		
+		public virtual void Paint(Graphics g, Rectangle rect)
+		{
+			if (Painted != null) {
+				Painted(this, g, rect);
+			}
+		}
+		
+		public event MarginPaintEventHandler Painted;
+		public event MarginMouseEventHandler MouseDown;
+		public event MarginMouseEventHandler MouseMove;
+		public event EventHandler            MouseLeave;
 	}
 }
+

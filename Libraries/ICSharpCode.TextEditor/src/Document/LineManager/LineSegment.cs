@@ -32,6 +32,7 @@ namespace ICSharpCode.TextEditor.Document
 			get {
 				return length;
 			}
+			
 			set {
 				length = value;
 			}
@@ -82,8 +83,11 @@ namespace ICSharpCode.TextEditor.Document
 		public LineSegment(int offset, int end, int delimiterLength)
 		{
 			this.offset          = offset;
-			this.length          = end - offset + 1;
 			this.delimiterLength = delimiterLength;
+		
+			this.TotalLength     = end - offset + 1;
+//			Console.WriteLine("delimiterLength = " + delimiterLength);
+
 		}
 		
 		public LineSegment(int offset, int length)
@@ -98,7 +102,7 @@ namespace ICSharpCode.TextEditor.Document
 		/// </summary>
 		public override string ToString()
 		{
-			return "[LineSegment: Offset = "+ offset +", TotalLength = " + length + ", DelimiterLength = " + delimiterLength + "]";
+			return "[LineSegment: Offset = "+ offset +", Length = " + Length + ", TotalLength = " + TotalLength + ", DelimiterLength = " + delimiterLength + "]";
 		}
 		
 		// Svante Lidman: reconsider whether it was the right descision to move these methids here.

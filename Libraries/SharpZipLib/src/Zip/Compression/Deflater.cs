@@ -37,7 +37,7 @@
 
 using System;
 
-namespace ICSharpCode.SharpZipLib.Zip.Compression 
+namespace ICSharpCode.SharpZipLib.Zip.Compression
 {
 	
 	/// <summary>
@@ -366,6 +366,13 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 				engine.SetLevel(lvl);
 			}
 		}
+		
+#if TEST
+		// -jr- added to simplify some test cases..
+		public int GetLevel() {
+			return level;
+		}
+#endif
 		
 		/// <summary>
 		/// Sets the compression strategy. Strategy is one of

@@ -16,6 +16,7 @@ using ICSharpCode.TextEditor.Actions;
 using ICSharpCode.TextEditor;
 using ICSharpCode.TextEditor.Gui.CompletionWindow;
 using ICSharpCode.SharpDevelop.Services;
+using ICSharpCode.SharpDevelop.Gui;
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Actions
 {
@@ -23,8 +24,9 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Actions
 	{
 		public override void Execute(TextArea services)
 		{
-			CompletionWindow completionWindow = new CompletionWindow(services.MotherTextEditorControl, "a.cs", new TemplateCompletionDataProvider());
-			completionWindow.ShowCompletionWindow('\0');
+			SharpDevelopTextAreaControl sdtac = (SharpDevelopTextAreaControl)services.MotherTextEditorControl;
+			services.AutoClearSelection = false;
+			sdtac.codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(((Form)WorkbenchSingleton.Workbench), services.MotherTextEditorControl, services.MotherTextEditorControl.FileName, new TemplateCompletionDataProvider(), '\0');
 		}
 	}
 	
@@ -32,9 +34,10 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Actions
 	{
 		public override void Execute(TextArea services)
 		{
+			SharpDevelopTextAreaControl sdtac = (SharpDevelopTextAreaControl)services.MotherTextEditorControl;
 			IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
+			sdtac.codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(((Form)WorkbenchSingleton.Workbench), services.MotherTextEditorControl, services.MotherTextEditorControl.FileName, new CodeCompletionDataProvider(true), '\0');
 			
-			Console.WriteLine("DDDSGFDS");
 		}
 	}
 }

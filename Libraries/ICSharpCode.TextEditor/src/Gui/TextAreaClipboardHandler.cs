@@ -93,6 +93,7 @@ namespace ICSharpCode.TextEditor
 						if (textArea.Document.HighlightingStrategy.Name != "Default") {
 							dataObject.SetData(DataFormats.Rtf, RtfWriter.GenerateRtf(textArea));
 						}
+						OnCopyText(new CopyTextEventArgs(str));
 						Clipboard.SetDataObject(dataObject, true);
 						return true;
 					} catch (Exception e) {
@@ -151,6 +152,32 @@ namespace ICSharpCode.TextEditor
 		public void SelectAll(object sender, EventArgs e)
 		{
 			new ICSharpCode.TextEditor.Actions.SelectWholeDocument().Execute(textArea);
+		}
+		
+		protected virtual void OnCopyText(CopyTextEventArgs e)
+		{
+			if (CopyText != null) {
+				CopyText(this, e);
+			}
+		}
+		
+		public event CopyTextEventHandler CopyText;
+	}
+	
+	public delegate void CopyTextEventHandler(object sender, CopyTextEventArgs e);
+	public class CopyTextEventArgs : EventArgs
+	{
+		string text;
+		
+		public string Text {
+			get {
+				return text;
+			}
+		}
+		
+		public CopyTextEventArgs(string text)
+		{
+			this.text = text;
 		}
 	}
 }

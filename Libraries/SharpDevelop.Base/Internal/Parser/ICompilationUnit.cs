@@ -35,5 +35,9 @@ namespace SharpDevelop.Internal.Parser
 		TagCollection TagComments {
 			get;
 		}
+		
+		ArrayList FoldingRegions {
+			get;
+		}
 	}
 }

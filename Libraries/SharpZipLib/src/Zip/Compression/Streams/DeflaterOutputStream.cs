@@ -66,6 +66,15 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// base stream the deflater depends on.
 		/// </summary>
 		protected Stream baseOutputStream;
+
+		///	<summary>
+		/// Allows client to determine if an entry can be patched after its added
+		/// </summary>
+		public bool CanPatchEntries {
+			get { 
+				return baseOutputStream.CanSeek; 
+			}
+		}
 		
 		/// <summary>
 		/// I needed to implement the abstract member.
@@ -170,10 +179,14 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			while (!def.IsNeedingInput) {
 				int len = def.Deflate(buf, 0, buf.Length);
 				
-				//	System.err.println("DOS deflated " + len + " baseOutputStream of " + buf.length);
 				if (len <= 0) {
 					break;
 				}
+				
+				if (this.Password != null) {
+					this.EncryptBlock(buf, 0, len);
+				}
+				
 				baseOutputStream.Write(buf, 0, len);
 			}
 			
@@ -256,9 +269,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 					break;
 				}
 				
-				// kidnthrain encryption alteration
 				if (this.Password != null) {
-					// plain data has been deflated. Now encrypt result
 					this.EncryptBlock(buf, 0, len);
 				}
 				
@@ -325,11 +336,11 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		}
 		
 		
-		//The beauty of xor-ing bits is that
-		//plain ^ key = enc
-		//and enc ^ key = plain
-		//accordingly, this is the exact same as the decrypt byte
-		//function in InflaterInputStream
+		// The beauty of xor-ing bits is that
+		// plain ^ key = enc
+		// and enc ^ key = plain
+		// accordingly, this is the exact same as the decrypt byte
+		// function in InflaterInputStream
 		protected byte EncryptByte()
 		{
 			uint temp = ((keys[2] & 0xFFFF) | 2);

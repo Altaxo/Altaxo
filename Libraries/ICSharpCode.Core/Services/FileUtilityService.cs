@@ -5,6 +5,7 @@
 //     <version value="$version"/>
 // </file>
 
+using Microsoft.Win32;
 using System;
 using System.IO;
 using System.Text;
@@ -55,6 +56,30 @@ namespace ICSharpCode.Core.Services
 		public FileUtilityService()
 		{
 			sharpDevelopRootPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + Path.DirectorySeparatorChar + "..";
+		}
+		
+		
+		public string NETFrameworkInstallRoot {
+			get {
+				RegistryKey installRootKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\.NETFramework");
+				object o = installRootKey.GetValue("InstallRoot");
+				return o == null ? String.Empty : o.ToString();
+			}
+		}
+		
+		public string[] GetAvaiableRuntimeVersions()
+		{
+			string   installRoot = NETFrameworkInstallRoot;
+			string[] files       = Directory.GetDirectories(installRoot);
+			
+			ArrayList runtimes = new ArrayList();
+			foreach (string file in files) {
+				string runtime = Path.GetFileName(file);
+				if (runtime.StartsWith("v")) {
+					runtimes.Add(runtime);
+				}
+			}
+			return (string[])runtimes.ToArray(typeof(string));
 		}
 		
 		public override void InitializeService()
@@ -184,6 +209,9 @@ namespace ICSharpCode.Core.Services
 					return false;
 				}
 			}
+			if (fileName.IndexOf('?') >= 0 || fileName.IndexOf('*') >= 0) {
+				return false;
+			}
 			
 			// platform dependend : Check for invalid file names (DOS)
 			// this routine checks for follwing bad file names :
@@ -248,20 +276,20 @@ namespace ICSharpCode.Core.Services
 		// Observe SAVE functions
 		public FileOperationResult ObservedSave(FileOperationDelegate saveFile, string fileName, string message, FileErrorPolicy policy)
 		{
-			Debug.Assert(IsValidFileName(fileName));
-#if !LINUX			
+			System.Diagnostics.Debug.Assert(IsValidFileName(fileName));
 			try {
 				saveFile();
 				return FileOperationResult.OK;
 			} catch (Exception e) {
 				switch (policy) {
 					case FileErrorPolicy.Inform:
-						using (SaveErrorInformDialog informDialog = new SaveErrorInformDialog(fileName, message, "Error while saving", e)) {
+						
+						using (SaveErrorInformDialog informDialog = new SaveErrorInformDialog(fileName, message, "${res:FileUtilityService.ErrorWhileSaving}", e)) {
 							informDialog.ShowDialog();
 						}
 						break;
 					case FileErrorPolicy.ProvideAlternative:
-						using (SaveErrorChooseDialog chooseDialog = new SaveErrorChooseDialog(fileName, message, "Error while saving", e, false)) {
+						using (SaveErrorChooseDialog chooseDialog = new SaveErrorChooseDialog(fileName, message, "${res:FileUtilityService.ErrorWhileSaving}", e, false)) {
 							switch (chooseDialog.ShowDialog()) {
 								case DialogResult.OK: // choose location (never happens here)
 								break;
@@ -274,15 +302,6 @@ namespace ICSharpCode.Core.Services
 						break;
 				}
 			}
-#else
-			try {
-				saveFile();
-				return FileOperationResult.OK;
-			} catch (Exception e) {
-				Console.WriteLine("Error while saving : " + e.ToString());
-			}
-	
-#endif
 			return FileOperationResult.Failed;
 		}
 		
@@ -302,21 +321,20 @@ namespace ICSharpCode.Core.Services
 		
 		public FileOperationResult ObservedSave(NamedFileOperationDelegate saveFileAs, string fileName, string message, FileErrorPolicy policy)
 		{
-			Debug.Assert(IsValidFileName(fileName));
-#if !LINUX
+			System.Diagnostics.Debug.Assert(IsValidFileName(fileName));
 			try {
 				saveFileAs(fileName);
 				return FileOperationResult.OK;
 			} catch (Exception e) {
 				switch (policy) {
 					case FileErrorPolicy.Inform:
-						using (SaveErrorInformDialog informDialog = new SaveErrorInformDialog(fileName, message, "Error while saving", e)) {
+						using (SaveErrorInformDialog informDialog = new SaveErrorInformDialog(fileName, message, "${res:FileUtilityService.ErrorWhileSaving}", e)) {
 							informDialog.ShowDialog();
 						}
 						break;
 					case FileErrorPolicy.ProvideAlternative:
 						restartlabel:
-							using (SaveErrorChooseDialog chooseDialog = new SaveErrorChooseDialog(fileName, message, "Error while saving", e, true)) {
+							using (SaveErrorChooseDialog chooseDialog = new SaveErrorChooseDialog(fileName, message, "${res:FileUtilityService.ErrorWhileSaving}", e, true)) {
 								switch (chooseDialog.ShowDialog()) {
 									case DialogResult.OK:
 										using (SaveFileDialog fdiag = new SaveFileDialog()) {
@@ -341,14 +359,6 @@ namespace ICSharpCode.Core.Services
 							break;
 				}
 			}
-#else
-			try {
-				saveFileAs(fileName);
-				return FileOperationResult.OK;
-			} catch (Exception e) {
-				Console.WriteLine("Error while saving as : " + e.ToString());
-			}
-#endif
 			return FileOperationResult.Failed;
 		}
 		
@@ -369,20 +379,19 @@ namespace ICSharpCode.Core.Services
 		// Observe LOAD functions
 		public FileOperationResult ObservedLoad(FileOperationDelegate saveFile, string fileName, string message, FileErrorPolicy policy)
 		{
-			Debug.Assert(IsValidFileName(fileName));
-#if !LINUX
+			System.Diagnostics.Debug.Assert(IsValidFileName(fileName));
 			try {
 				saveFile();
 				return FileOperationResult.OK;
 			} catch (Exception e) {
 				switch (policy) {
 					case FileErrorPolicy.Inform:
-						using (SaveErrorInformDialog informDialog = new SaveErrorInformDialog(fileName, message, "Error while loading", e)) {
+						using (SaveErrorInformDialog informDialog = new SaveErrorInformDialog(fileName, message, "${res:FileUtilityService.ErrorWhileLoading}", e)) {
 							informDialog.ShowDialog();
 						}
 						break;
 					case FileErrorPolicy.ProvideAlternative:
-						using (SaveErrorChooseDialog chooseDialog = new SaveErrorChooseDialog(fileName, message, "Error while loading", e, false)) {
+						using (SaveErrorChooseDialog chooseDialog = new SaveErrorChooseDialog(fileName, message, "${res:FileUtilityService.ErrorWhileLoading}", e, false)) {
 							switch (chooseDialog.ShowDialog()) {
 								case DialogResult.OK: // choose location (never happens here)
 								break;
@@ -395,14 +404,6 @@ namespace ICSharpCode.Core.Services
 						break;
 				}
 			}
-#else
-			try {
-				saveFile();
-				return FileOperationResult.OK;
-			} catch (Exception e) {
-				Console.WriteLine("Error while loading " + e.ToString());
-			}
-#endif
 			return FileOperationResult.Failed;
 		}
 		
@@ -417,7 +418,7 @@ namespace ICSharpCode.Core.Services
 		
 		public FileOperationResult ObservedLoad(FileOperationDelegate saveFile, string fileName)
 		{
-			return ObservedSave(saveFile, fileName, FileErrorPolicy.Inform);
+			return ObservedLoad(saveFile, fileName, FileErrorPolicy.Inform);
 		}
 		
 		class LoadWrapper

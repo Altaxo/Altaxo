@@ -33,7 +33,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			}
 			set {
 				templateGroups = value;
-				Debug.Assert(templateGroups != null);
+				System.Diagnostics.Debug.Assert(templateGroups != null);
 			}
 		}
 		

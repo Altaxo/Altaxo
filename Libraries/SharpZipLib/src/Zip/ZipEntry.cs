@@ -40,16 +40,11 @@ using System;
 namespace ICSharpCode.SharpZipLib.Zip 
 {
 	
-	public enum CompressionMethod
-	{
-		Stored   = 0,
-		Deflated = 8,
-	}
-	
 	/// <summary>
-	/// This class represents a member of a zip archive.  ZipFile and
-	/// ZipInputStream will give you instances of this class as information
-	/// about the members in an archive.  On the other hand ZipOutputStream
+	/// This class represents an entry in a zip archive.  This can be a file
+	/// or a directory
+	/// ZipFile and ZipInputStream will give you instances of this class as 
+	/// information about the members in an archive.  On the other hand ZipOutputStream
 	/// needs an instance of this class to create a new member.
 	///
 	/// author of the original java version : Jochen Hoenicke
@@ -72,13 +67,15 @@ namespace ICSharpCode.SharpZipLib.Zip
 		CompressionMethod  method = CompressionMethod.Deflated;
 		byte[] extra = null;
 		string comment = null;
-		bool   isCrypted;
 		
 		int zipFileIndex = -1;  /* used by ZipFile */
 		int flags;              /* used by ZipOutputStream */
 		int offset;             /* used by ZipFile and ZipOutputStream */
 		
-		public bool IsEncrypted {
+		/// <summary>
+		/// Get/Set flag indicating if entry is encrypted
+		/// </summary>
+		public bool IsCrypted {
 			get {
 				return (flags & 1) != 0; 
 			}
@@ -91,6 +88,9 @@ namespace ICSharpCode.SharpZipLib.Zip
 			}
 		}
 		
+		/// <summary>
+		/// Get/Set index of this entry in Zip file
+		/// </summary>
 		public int ZipFileIndex {
 			get {
 				return zipFileIndex;
@@ -100,6 +100,9 @@ namespace ICSharpCode.SharpZipLib.Zip
 			}
 		}
 		
+		/// <summary>
+		/// Get/set offset for use in central header
+		/// </summary>
 		public int Offset {
 			get {
 				return offset;
@@ -109,7 +112,10 @@ namespace ICSharpCode.SharpZipLib.Zip
 			}
 		}
 		
-		public int Flags {                                // Stops having two things represent same concept in class (flag isCrypted removed)
+		/// <summary>
+		/// Get/Set general purpose bit flag for entry
+		/// </summary>
+		public int Flags {
 			get { 
 				return flags; 
 			}
@@ -149,10 +155,13 @@ namespace ICSharpCode.SharpZipLib.Zip
 			crc            = e.crc;
 			dosTime        = e.dosTime;
 			method         = e.method;
-			extra          = e.extra;
+			ExtraData      = e.ExtraData;			/* Note use of property! */
 			comment        = e.comment;
 		}
-		
+
+		/// <summary>
+		/// Get/set version required to extract
+		/// </summary>		
 		public int Version {
 			get {
 				return version;
@@ -161,7 +170,10 @@ namespace ICSharpCode.SharpZipLib.Zip
 				version = (ushort)value;
 			}
 		}
-		
+
+		/// <summary>
+		/// Get/Set DosTime
+		/// </summary>		
 		public long DosTime {
 			get {
 				if ((known & KNOWN_TIME) == 0) {
@@ -187,7 +199,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				uint hrs  = (dosTime >> 11) & 0x1f;
 				uint day  = (dosTime >> 16) & 0x1f;
 				uint mon  = ((dosTime >> 21) & 0xf);
-				uint year = ((dosTime >> 25) & 0x7f) + 1980; /* since 1900 */
+				uint year = ((dosTime >> 25) & 0x7f) + 1980;
 				return new System.DateTime((int)year, (int)mon, (int)day, (int)hrs, (int)min, (int)sec);
 			}
 			set {
@@ -201,7 +213,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		}
 		
 		/// <summary>
-		/// Returns the entry name.  The path components in the entry are
+		/// Returns the entry name.  The path components in the entry should
 		/// always separated by slashes ('/').
 		/// </summary>
 		public string Name {
@@ -209,22 +221,6 @@ namespace ICSharpCode.SharpZipLib.Zip
 				return name;
 			}
 		}
-		
-		//		/// <summary>
-		//		/// Gets/Sets the time of last modification of the entry.
-		//		/// </summary>
-		//		/// <returns>
-		//		/// the time of last modification of the entry, or -1 if unknown.
-		//		/// </returns>
-		//		public long Time {
-		//			get {
-		//				return (known & KNOWN_TIME) != 0 ? time * 1000L : -1;
-		//			}
-		//			set {
-		//				this.time = (int) (value / 1000L);
-		//				this.known |= (ushort)KNOWN_TIME;
-		//			}
-		//		}
 		
 		/// <summary>
 		/// Gets/Sets the size of the uncompressed data.
@@ -239,7 +235,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			get {
 				return (known & KNOWN_SIZE) != 0 ? (long)size : -1L;
 			}
-			set  {
+			set {
 				if (((ulong)value & 0xFFFFFFFF00000000L) != 0) {
 					throw new ArgumentOutOfRangeException("size");
 				}
@@ -284,9 +280,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 				return (known & KNOWN_CRC) != 0 ? crc & 0xffffffffL : -1L;
 			}
 			set {
-				if (((ulong)crc & 0xffffffff00000000L) != 0) 
-				{
-					throw new Exception();
+				if (((ulong)crc & 0xffffffff00000000L) != 0) {
+					throw new ArgumentOutOfRangeException();
 				}
 				this.crc = (uint)value;
 				this.known |= (ushort)KNOWN_CRC;
@@ -294,16 +289,16 @@ namespace ICSharpCode.SharpZipLib.Zip
 		}
 		
 		/// <summary>
-		/// Gets/Sets the compression method. Only DEFLATED and STORED are supported.
+		/// Gets/Sets the compression method. Only Deflated and Stored are supported.
 		/// </summary>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// if method is not supported.
 		/// </exception>
 		/// <returns>
-		/// the compression method or -1 if unknown.
+		/// the compression method
 		/// </returns>
-		/// <see cref="ZipOutputStream.DEFLATED"/>
-		/// <see cref="ZipOutputStream.STORED"/>
+		/// <see cref="CompressionMethod.Deflated"/>
+		/// <see cref="CompressionMethod.Stored"/>
 		public CompressionMethod CompressionMethod {
 			get {
 				return method;
@@ -335,7 +330,10 @@ namespace ICSharpCode.SharpZipLib.Zip
 				if (value.Length > 0xffff) {
 					throw new System.ArgumentOutOfRangeException();
 				}
-				this.extra = value;
+				
+				this.extra = new byte[value.Length];
+				Array.Copy(value, this.extra, value.Length);
+				
 				try {
 					int pos = 0;
 					while (pos < extra.Length) {
@@ -377,8 +375,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				return comment;
 			}
 			set {
-				if (value.Length > 0xffff) 
-				{
+				if (value != null && value.Length > 0xffff) {
 					throw new ArgumentOutOfRangeException();
 				}
 				this.comment = value;
@@ -396,18 +393,6 @@ namespace ICSharpCode.SharpZipLib.Zip
 			}
 		}
 		
-		/// <value>
-		/// True, if the entry is encrypted.
-		/// </value>
-		public bool IsCrypted {
-			get {
-				return isCrypted;
-			}
-			set {
-				isCrypted = value;
-			}
-		}
-		
 		/// <summary>
 		/// Creates a copy of this zip entry.
 		/// </summary>
@@ -417,8 +402,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		}
 		
 		/// <summary>
-		/// Gets the string representation of this ZipEntry.  This is just
-		/// the name as returned by getName().
+		/// Gets the string representation of this ZipEntry.
 		/// </summary>
 		public override string ToString()
 		{

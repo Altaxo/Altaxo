@@ -62,10 +62,22 @@ namespace ICSharpCode.SharpDevelop.Services
 				displayBindingService.AttachSubWindows(newContent.WorkbenchWindow);
 			}
 		}
-		
+		public bool IsOpen(string fileName) 
+		{
+			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
+				if (content.IsUntitled) {
+					if (content.UntitledName == fileName) {
+ 						return true;
+					}
+				} else if (content.FileName == fileName) {
+					return true;
+				}
+			}
+			return false;
+		}
 		public void OpenFile(string fileName)
 		{
-			Debug.Assert(fileUtilityService.IsValidFileName(fileName));
+			System.Diagnostics.Debug.Assert(fileUtilityService.IsValidFileName(fileName));
 				
 			// test, if file fileName exists
 			if (!fileName.StartsWith("http://")) {
@@ -84,10 +96,15 @@ namespace ICSharpCode.SharpDevelop.Services
 			
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
 				// WINDOWS DEPENDENCY : ToUpper()
-				if (content.ContentName != null && 
-				    content.ContentName.ToUpper() == fileName.ToUpper()) {
-					content.WorkbenchWindow.SelectWindow();
-					return;
+				if (content.FileName != null) {
+					try {
+						if (fileName.StartsWith("http://") ? content.FileName == fileName :
+						    Path.GetFullPath(content.FileName.ToUpper()) == Path.GetFullPath(fileName.ToUpper())) {
+							content.WorkbenchWindow.SelectWindow();
+							return;
+						}
+					} catch (Exception) {
+					}
 				}
 			}
 			
@@ -127,10 +144,11 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public IWorkbenchWindow GetOpenFile(string fileName)
 		{
+			string normalizedFileName = Path.GetFullPath(fileName).ToLower();
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
-				// WINDOWS DEPENDENCY : ToUpper()
-				if (content.ContentName != null &&
-				    content.ContentName.ToUpper() == fileName.ToUpper()) {
+				string normalizedContentName = content.IsUntitled ? content.UntitledName : Path.GetFullPath(content.FileName);
+				normalizedContentName = normalizedContentName.ToLower();
+				if (normalizedContentName == normalizedFileName) {
 					return content.WorkbenchWindow;
 				}
 			}
@@ -150,7 +168,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		{
 			if (Directory.Exists(fileName)) {
 				try {
-					Directory.Delete(fileName);
+					Directory.Delete(fileName, true);
 				} catch (Exception e) {
 					IMessageService messageService = (IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
 					messageService.ShowError(e, "Can't remove directory " + fileName);
@@ -191,6 +209,21 @@ namespace ICSharpCode.SharpDevelop.Services
 					}
 					OnFileRenamed(new FileEventArgs(oldName, newName, false));
 				}
+			}
+		}
+		public void JumpToFilePosition(string fileName, int line, int column)
+		{
+			if (fileName == null || fileName.Length == 0) {
+				return;
+			}
+			OpenFile(fileName);
+			IWorkbenchWindow window = GetOpenFile(fileName);
+			if (window == null) {
+				return;
+			}
+			IViewContent content = window.ViewContent;
+			if (content is IPositionable) {
+				((IPositionable)content).JumpTo(Math.Max(0, line), Math.Max(0, column));
 			}
 		}
 		

@@ -38,9 +38,12 @@ namespace ICSharpCode.SharpAssembly.Assembly
 		static Hashtable fullNamePool = new Hashtable();
 		static Hashtable shortNamePool = new Hashtable();
 		
+		static IAssemblyCache assemblyCache;
+						
 		// initialize; load mscorlib (important, but HACK)
 		static SharpAssembly() {
 			Console.WriteLine("#Assembly: Initializing");
+			FusionApi.CreateAssemblyCache(out assemblyCache, 0);
 		
 			string mscorlibasm = typeof(System.Object).Assembly.Location;
 			SharpAssembly mscorlib = LoadFrom(mscorlibasm);  // the constructor adds the assembly to the pool
@@ -121,16 +124,13 @@ namespace ICSharpCode.SharpAssembly.Assembly
 		
 		private static string GetAssemblyLocation(string assemblyName)
 		{
-			IAssemblyCache cache;
-						
-			FusionApi.CreateAssemblyCache(out cache, 0);
 			ASSEMBLY_INFO info = new ASSEMBLY_INFO();
 			
-			cache.QueryAssemblyInfo(3, assemblyName, ref info);
+			assemblyCache.QueryAssemblyInfo(3, assemblyName, ref info);
 			if (info.cchBuf != 0)
 			{
 		 		info.pszCurrentAssemblyPathBuf = new string(new char[info.cchBuf]);
-				cache.QueryAssemblyInfo(3, assemblyName, ref info);
+				assemblyCache.QueryAssemblyInfo(3, assemblyName, ref info);
 				return info.pszCurrentAssemblyPathBuf; 
 			}
 			return "";

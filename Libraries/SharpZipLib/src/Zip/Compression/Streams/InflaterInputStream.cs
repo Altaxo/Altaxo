@@ -72,7 +72,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// </summary>
 		protected int len;
 		
-		//We just use this if we are decoding one byte at a time with the read() call
+		// We just use this if we are decoding one byte at a time with the read() call
 		private byte[] onebytebuffer = new byte[1];
 		
 		/// <summary>
@@ -83,7 +83,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		protected long csize;
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// gets a value indicating whether the current stream supports reading
 		/// </summary>
 		public override bool CanRead {
 			get {
@@ -92,17 +92,16 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Value of false indicating seeking is not supported for this stream
 		/// </summary>
 		public override bool CanSeek {
 			get {
 				return false;
-				//				return baseInputStream.CanSeek;
 			}
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Get true if stream is writeable  (TODO -jr- should be false)
 		/// </summary>
 		public override bool CanWrite {
 			get {
@@ -111,7 +110,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// A value representing the length of the stream in bytes.
 		/// </summary>
 		public override long Length {
 			get {
@@ -120,7 +119,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// The current position within the stream
 		/// </summary>
 		public override long Position {
 			get {
@@ -140,7 +139,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// sets the position within the current stream
 		/// </summary>
 		public override long Seek(long offset, SeekOrigin origin)
 		{
@@ -148,7 +147,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Set the length of the current stream
 		/// </summary>
 		public override void SetLength(long val)
 		{
@@ -156,7 +155,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Writes a sequence of bytes to stream and advances the current position
 		/// </summary>
 		public override void Write(byte[] array, int offset, int count)
 		{
@@ -164,7 +163,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		}
 		
 		/// <summary>
-		/// I needed to implement the abstract member.
+		/// Writes one byte to the current stream and advances the current position
 		/// </summary>
 		public override void WriteByte(byte val)
 		{
@@ -177,7 +176,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			throw new NotSupportedException("Asynch write not currently supported");
 		}
 		
-		//Constructors
+		// Constructors
 		
 		/// <summary>
 		/// Create an InflaterInputStream with the default decompresseor
@@ -233,10 +232,10 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 				throw new ArgumentOutOfRangeException("size <= 0");
 			}
 			
-			buf = new byte[size]; //Create the buffer
+			buf = new byte[size];
 		}
 		
-		//Methods
+		// Methods
 		
 		/// <summary>
 		/// Returns 0 once the end of the stream (EOF) has been reached.
@@ -262,13 +261,13 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		protected void Fill()
 		{
 			len = baseInputStream.Read(buf, 0, buf.Length);
-			// decrypting crypted data
+			
 			if (cryptbuffer != null) {
 				DecryptBlock(buf, 0, System.Math.Min((int)(csize - inf.TotalIn), buf.Length));
 			}
 			
 			if (len <= 0) {
-				throw new ApplicationException("Deflated stream ends early.");
+				throw new ZipException("Deflated stream ends early.");
 			}
 			inf.SetInput(buf, 0, len);
 		}
@@ -345,9 +344,10 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		}
 		
 		#region Encryption stuff
-		protected byte[] cryptbuffer = null;
 		
+		protected byte[] cryptbuffer = null;
 		uint[] keys = null;
+		
 		protected byte DecryptByte()
 		{
 			uint temp = ((keys[2] & 0xFFFF) | 2);

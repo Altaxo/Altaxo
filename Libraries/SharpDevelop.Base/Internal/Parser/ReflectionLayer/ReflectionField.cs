@@ -17,13 +17,13 @@ namespace SharpDevelop.Internal.Parser
 	{
 		public ReflectionField(FieldInfo fieldInfo, Hashtable xmlComments)
 		{
-			Debug.Assert(fieldInfo != null);
+			System.Diagnostics.Debug.Assert(fieldInfo != null);
 			FullyQualifiedName = String.Concat(fieldInfo.DeclaringType.FullName, ".", fieldInfo.Name);
 			
 			if (xmlComments != null) {
 				XmlNode node = xmlComments["F:" + FullyQualifiedName] as XmlNode;
 				if (node != null) {
-					documentation = node.InnerXml;
+					Documentation = node.InnerXml;
 				}
 			}
 			if (fieldInfo.IsInitOnly) {

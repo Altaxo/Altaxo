@@ -64,6 +64,9 @@ HttpResponse.Filter) upon construction.  I need to delay the header write
 until just before the first real write to the GZipOutputStream.  I went
 ahead and made the modifications to the library and it seems to work
 wonderfully."
-+ Added patches from jfreilly (jfreilly@hotmail.com) many, many bugs got fixed.
++ Added patches from John Reilly <jfreilly@hotmail.com> many, many bugs got fixed.
 + Added unit tests to ensure a certain level of stability
-+
+
+Changes since 0.6
++ Fix from John Reilly <jfreilly@hotmail.com>: A couple of things to fix up in TarInputStream.  Some Console.WriteLine stuff which should be removed/commented and a fix for handling directories.
++ 

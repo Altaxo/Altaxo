@@ -69,7 +69,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 			}
 			ProjectFile fInfo = (ProjectFile)fileNode.UserData;
 			
-			Debug.Assert(fInfo != null);
+			System.Diagnostics.Debug.Assert(fInfo != null);
 			
 			FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
 			string newName = fileUtilityService.GetDirectoryNameWithSeparator(baseDirectory) + Path.GetFileName(fInfo.Name);

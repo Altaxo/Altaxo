@@ -70,5 +70,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// the foreground (e.g. editable) changed to a new one.
 		/// </summary>
 		event EventHandler ActiveWorkbenchWindowChanged;
+		
+		// only needed in the workspace window when the 'secondary view content' changed
+		// it is somewhat like 'active workbench window changed'
+		void OnActiveWorkbenchWindowChanged(EventArgs e);
 	}
 }

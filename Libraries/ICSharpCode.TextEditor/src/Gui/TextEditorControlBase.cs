@@ -21,6 +21,7 @@ using System.Runtime.InteropServices;
 using System.Xml;
 using System.Text;
 
+using ICSharpCode.TextEditor.Gui.CompletionWindow;
 using ICSharpCode.TextEditor.Document;
 using ICSharpCode.TextEditor.Actions;
  
@@ -106,6 +107,7 @@ namespace ICSharpCode.TextEditor
 			}
 			set {
 				document = value;
+				document.UndoStack.TextEditorControl = this;
 			}
 		}
 		
@@ -471,13 +473,27 @@ namespace ICSharpCode.TextEditor
 				OptionsChanged();
 			}
 		}
-
+			
 #endregion
+		public abstract TextAreaControl ActiveTextAreaControl {
+			get;
+		}
 		
-		public TextEditorControlBase()
+		protected TextEditorControlBase()
 		{
 			GenerateDefaultActions();
+			HighlightingManager.Manager.ReloadSyntaxHighlighting += new EventHandler(ReloadHighlighting);
 		}
+		
+		
+		void ReloadHighlighting(object sender, EventArgs e)
+		{
+			if (Document.HighlightingStrategy != null) {
+				Document.HighlightingStrategy = HighlightingStrategyFactory.CreateHighlightingStrategy(Document.HighlightingStrategy.Name);
+				OptionsChanged();
+			}
+		}
+		
 		
 				
 		internal IEditAction GetEditAction(Keys keyData)
@@ -647,6 +663,16 @@ namespace ICSharpCode.TextEditor
 		
 		public abstract void OptionsChanged();
 		
+		// Localization ISSUES
+		
+		// used in insight window
+		public virtual string GetRangeDescription(int selectedItem, int itemCount)
+		{
+			return String.Concat(selectedItem.ToString(),
+			                     " from ",
+			                     itemCount.ToString());
+		}
+		
 		/// <remarks>
 		/// Overwritten refresh method that locks if the control is in
 		/// an update cycle.
@@ -658,6 +684,19 @@ namespace ICSharpCode.TextEditor
 			}
 			base.Refresh();
 		}
+		
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing) {
+				HighlightingManager.Manager.ReloadSyntaxHighlighting -= new EventHandler(ReloadHighlighting);
+			}
+			base.Dispose(disposing);
+		}
+		
+//		public virtual IDeclarationViewWindow CreateDeclarationViewWindow(Form parent)
+//		{
+//			return new DeclarationViewWindow(parent);
+//		}
 		
 		protected virtual void OnFileNameChanged(EventArgs e)
 		{

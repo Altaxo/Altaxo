@@ -13,7 +13,8 @@
 		
 		<FoldLine     color = "#808080" bgcolor="Black"/>
 		<FoldMarker   color = "#808080" bgcolor="White"/>
-		
+		<SelectedFoldLine color = "Black" bgcolor="Black"/>
+
 		<EOLMarkers   color = "#E0E0E5"/>
 		<SpaceMarkers color = "#E0E0E5"/>
 		<TabMarkers   color = "#E0E0E5"/>

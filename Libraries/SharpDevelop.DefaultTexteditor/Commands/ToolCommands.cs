@@ -130,9 +130,10 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 		{
 			public ToolWindowForm(TextEditorControl textEditorControl, string html)
 			{
-				Point caretPos  = textEditorControl.ActiveTextAreaControl.Caret.Position;
-				Point visualPos = new Point(textEditorControl.ActiveTextAreaControl.TextArea.TextView.GetDrawingXPos(caretPos.Y, caretPos.X) + textEditorControl.ActiveTextAreaControl.TextArea.TextView.DrawingPosition.X,
-				          (int)((1 + caretPos.Y) * textEditorControl.ActiveTextAreaControl.TextArea.TextView.FontHeight) - textEditorControl.ActiveTextAreaControl.TextArea.VirtualTop.Y - 1 + textEditorControl.ActiveTextAreaControl.TextArea.TextView.DrawingPosition.Y);
+				Point caretPos  = textEditorControl.ActiveTextAreaControl.Caret.ScreenPosition;
+				Point visualPos = new Point(Math.Min(Math.Max(caretPos.X, textEditorControl.ActiveTextAreaControl.TextArea.TextView.DrawingPosition.Left), textEditorControl.ActiveTextAreaControl.TextArea.TextView.DrawingPosition.Right), 
+				                            Math.Min(Math.Max(caretPos.Y, textEditorControl.ActiveTextAreaControl.TextArea.TextView.DrawingPosition.Top), textEditorControl.ActiveTextAreaControl.TextArea.TextView.DrawingPosition.Bottom));
+				
 				Location = textEditorControl.ActiveTextAreaControl.TextArea.PointToScreen(visualPos);
 				PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
 				

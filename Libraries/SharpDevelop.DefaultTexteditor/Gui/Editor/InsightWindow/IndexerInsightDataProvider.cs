@@ -58,13 +58,15 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			this.textArea = textArea;
 			initialOffset = textArea.Caret.Offset;
 			
-			string word         = TextUtilities.GetExpressionBeforeOffset(textArea, textArea.Caret.Offset);
+			IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
+			IExpressionFinder expressionFinder = parserService.GetExpressionFinder(fileName);
+			string word  = expressionFinder == null ? TextUtilities.GetExpressionBeforeOffset(textArea, textArea.Caret.Offset) : expressionFinder.FindExpression(textArea.Document.TextContent, textArea.Caret.Offset - 1);
+						
 			string methodObject = word;
 			
 			// the parser works with 1 based coordinates
 			int caretLineNumber      = document.GetLineNumberForOffset(textArea.Caret.Offset) + 1;
 			int caretColumn          = textArea.Caret.Offset - document.GetLineSegment(caretLineNumber - 1).Offset + 1;
-			IParserService parserService = (IParserService)ServiceManager.Services.GetService(typeof(IParserService));
 			ResolveResult results = parserService.Resolve(methodObject,
 			                                              caretLineNumber,
 			                                              caretColumn,

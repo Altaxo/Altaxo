@@ -12,8 +12,9 @@
 		
 		<LineNumbers  color = "Gray" bgcolor = "Black"/>
 		
-		<FoldLine     color = "#808080" bgcolor = "Black"/>
-		<FoldMarker   color = "#808080" bgcolor = "White"/>
+		<FoldLine     color = "Cyan" bgcolor = "Black"/>
+		<FoldMarker   color = "Cyan" bgcolor = "White"/>
+		<SelectedFoldLine color = "Green" bgcolor="Black"/>
 		
 		<EOLMarkers   color = "#E0E0E5"/>
 		<SpaceMarkers color = "#E0E0E5"/>

@@ -1,11 +1,12 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Kr�ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
 using System;
+using System.IO;
 using System.Collections;
 
 using ICSharpCode.Core.Services;
@@ -16,12 +17,18 @@ namespace ICSharpCode.SharpDevelop.Services
 {
 	public class TaskService : AbstractService
 	{
-		ArrayList tasks  = new ArrayList();
+		ArrayList tasks       = new ArrayList();
+		ArrayList commentTasks = new ArrayList();
 		string    compilerOutput = String.Empty;
 		
 		public ArrayList Tasks {
 			get {
 				return tasks;
+			}
+		}
+		public ArrayList CommentTasks {
+			get {
+				return commentTasks;
 			}
 		}
 		
@@ -90,7 +97,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			bool somethingChanged = false;
 			for (int i = 0; i < tasks.Count; ++i) {
 				Task curTask = (Task)tasks[i];
-				if (curTask.FileName == e.FileName) {
+				if (Path.GetFullPath(curTask.FileName) == Path.GetFullPath(e.FileName)) {
 					tasks.RemoveAt(i);
 					--i;
 					somethingChanged = true;
@@ -106,13 +113,29 @@ namespace ICSharpCode.SharpDevelop.Services
 		{
 			bool somethingChanged = false;
 			foreach (Task curTask in tasks) {
-				if (curTask.FileName == e.SourceFile) {
-					curTask.FileName = e.TargetFile;
+				if (Path.GetFullPath(curTask.FileName) == Path.GetFullPath(e.SourceFile)) {
+					curTask.FileName = Path.GetFullPath(e.TargetFile);
 					somethingChanged = true;
 				}
 			}
 			
 			if (somethingChanged) {
+				NotifyTaskChange();
+			}
+		}
+		
+		public void RemoveCommentTasks(string fileName)
+		{
+			bool removed = false;
+			for (int i = 0; i < commentTasks.Count; ++i) {
+				Task task = (Task)commentTasks[i];
+				if (Path.GetFullPath(task.FileName) == Path.GetFullPath(fileName)) {
+					commentTasks.RemoveAt(i);
+					removed = true;
+					--i;
+				}
+			}
+			if (removed) {
 				NotifyTaskChange();
 			}
 		}

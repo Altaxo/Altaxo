@@ -1,4 +1,4 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
@@ -32,7 +32,7 @@ namespace ICSharpCode.SharpDevelop.Internal.ExternalTool
 			}
 			set {
 				tool = value;
-				Debug.Assert(tool != null, "SharpDevelop.Tool.Data.ToolLoader : set ArrayList Tool (value == null)");
+				System.Diagnostics.Debug.Assert(tool != null, "SharpDevelop.Tool.Data.ToolLoader : set ArrayList Tool (value == null)");
 			}
 		}
 		

@@ -114,11 +114,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Lexer\Tokens.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Lexer\Reader\FileReader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -160,6 +155,11 @@
                 />
                 <File
                     RelPath = "Lexer\Specials\SpecialType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Lexer\Specials\TagComment.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -594,12 +594,27 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Parser\generated\keywordlist\Keywords.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Parser\generated\keywordlist\Tokens.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "PrettyPrinter\OutputFormatter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "PrettyPrinter\PrettyPrintData.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "PrettyPrinter\PrettyPrintOptions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

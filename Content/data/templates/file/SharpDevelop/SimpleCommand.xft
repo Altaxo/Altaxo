@@ -1,27 +1,28 @@
 <?xml version="1.0"?>
-<Template Originator="Mike Krueger" Language="C#" Created="09/04/2003" LastModified="09/04/2003">
+<Template author="Mike Krueger" version="1.0">
 	
-	<TemplateConfiguration>
-		<Name>Simple #Develop command</Name>
-		<Icon>C#.File.FullFile</Icon>
-		<Category>SharpDevelop</Category>
-		<LanguageName>C#</LanguageName>
-		<Description>Creates a command which is usable for many circumstances</Description>
-	</TemplateConfiguration>
+	<Config
+		  name        = "${res:Templates.File.#Develop.SimpleCommand.Name}"
+		  icon        = "C#.File.FullFile"
+		  category    = "#Develop"
+		  defaultname = "SimpleCommand${Number}.cs"
+		  language    = "C#"/>
+	 
+	<Description>${res:Templates.File.#Develop.SimpleCommand.Description}</Description>
 	
-	<TemplateFiles>
-		<File DefaultExtension=".cs" DefaultName="EmptyC#file">
-			<![CDATA[using System;
+	<Files>
+		<File name="${FullName}" language="C#"><![CDATA[${StandardHeader.C#}
+using System;
 using System.Windows.Forms;
 
 using ICSharpCode.Core.AddIns.Codons;
 
-namespace MyCommand
+namespace ${StandardNamespace}
 {
 	/// <summary>
-	/// Description of SimpleCommand
+	/// Description of  ${FileNameWithoutExtension}
 	/// </summary>
-	public class SimpleCommand : AbstractCommand
+	public class  ${FileNameWithoutExtension} : AbstractCommand
 	{
 		/// <summary>
 		/// Starts the command
@@ -33,8 +34,8 @@ namespace MyCommand
 	}
 }]]>
 		</File>
-	</TemplateFiles>
+	</Files>
 	
-	<FileOptions/>
+	<AdditionalOptions/>
 	
 </Template>

@@ -38,6 +38,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.OptionPanels
 			((CheckBox)ControlDictionary["enableDoublebufferingCheckBox"]).Checked = ((IProperties)CustomizationObject).GetProperty("DoubleBuffer", true);
 			((CheckBox)ControlDictionary["enableCodeCompletionCheckBox"]).Checked  = ((IProperties)CustomizationObject).GetProperty("EnableCodeCompletion", true);
 			((CheckBox)ControlDictionary["enableFoldingCheckBox"]).Checked         = ((IProperties)CustomizationObject).GetProperty("EnableFolding", true);
+			((CheckBox)ControlDictionary["showQuickClassBrowserCheckBox"]).Checked = ((IProperties)CustomizationObject).GetProperty("ShowQuickClassBrowserPanel", true);
 			
 			ControlDictionary["fontNameDisplayTextBox"].Text = ((IProperties)CustomizationObject).GetProperty("DefaultFont", selectedFont).ToString();
 			
@@ -68,6 +69,8 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.OptionPanels
 			((IProperties)CustomizationObject).SetProperty("EnableFolding",        ((CheckBox)ControlDictionary["enableFoldingCheckBox"]).Checked);
 			((IProperties)CustomizationObject).SetProperty("DefaultFont",          selectedFont);
 			((IProperties)CustomizationObject).SetProperty("Encoding",             CharacterEncodings.GetCodePageByIndex(((ComboBox)ControlDictionary["textEncodingComboBox"]).SelectedIndex));
+			((IProperties)CustomizationObject).SetProperty("ShowQuickClassBrowserPanel", ((CheckBox)ControlDictionary["showQuickClassBrowserCheckBox"]).Checked);
+			
 			return true;
 		}
 		

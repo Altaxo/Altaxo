@@ -6,6 +6,7 @@
 // </file>
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Drawing;
 using System.Diagnostics;
@@ -25,9 +26,9 @@ using ICSharpCode.SharpDevelop.Services;
 using ICSharpCode.SharpDevelop.Gui.Components;
 using ICSharpCode.TextEditor.Gui.InsightWindow;
 using ICSharpCode.TextEditor.Gui.CompletionWindow;
+using ICSharpCode.Debugger;
 
 using System.Threading;
-
 
 namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 {
@@ -37,13 +38,24 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		readonly static string editActionsPath       = "/AddIns/DefaultTextEditor/EditActions";
 		readonly static string formatingStrategyPath = "/AddIns/DefaultTextEditor/Formater";
 		
+		QuickClassBrowserPanel quickClassBrowserPanel = null;
+		ErrorDrawer errorDrawer;
+		
+		public QuickClassBrowserPanel QuickClassBrowserPanel {
+			get {
+				return quickClassBrowserPanel;
+			}
+		}
+		
 		public SharpDevelopTextAreaControl()
 		{
+			errorDrawer = new ErrorDrawer(this);
 			Document.FoldingManager.FoldingStrategy = new ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ParserFoldingStrategy();
 			GenerateEditActions();
 			
 			TextAreaDragDropHandler dragDropHandler = new TextAreaDragDropHandler();
 			Document.TextEditorProperties = new SharpDevelopTextEditorProperties();
+			
 		}
 		
 		protected override void InitializeTextAreaControl(TextAreaControl newControl)
@@ -53,13 +65,71 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			newControl.ContextMenu = menuService.CreateContextMenu(this, contextMenuPath);
 			newControl.TextArea.KeyEventHandler += new ICSharpCode.TextEditor.KeyEventHandler(HandleKeyPress);
 			newControl.SelectionManager.SelectionChanged += new EventHandler(SelectionChanged);
+			newControl.Document.DocumentChanged += new DocumentEventHandler(DocumentChanged);
 			newControl.Caret.PositionChanged += new EventHandler(CaretPositionChanged);
+			newControl.TextArea.ClipboardHandler.CopyText += new CopyTextEventHandler(ClipboardHandlerCopyText);
+			
+//			newControl.TextArea.IconBarMargin.Painted   += new MarginPaintEventHandler(PaintIconBarBreakPoints);
+//			newControl.TextArea.IconBarMargin.MouseDown += new MarginMouseEventHandler(IconBarMouseDown);
 		}
+		
+		void ClipboardHandlerCopyText(object sender, CopyTextEventArgs e)
+		{
+			ICSharpCode.SharpDevelop.Gui.Pads.SideBarView.PutInClipboardRing(e.Text);
+		}
+		public override void OptionsChanged()
+		{
+			base.OptionsChanged();
+			SharpDevelopTextEditorProperties sdtep = base.TextEditorProperties as SharpDevelopTextEditorProperties;
+			
+			if (sdtep != null) {
+				if (!sdtep.ShowQuickClassBrowserPanel) {
+ 					RemoveQuickClassBrowserPanel();
+				} else {
+					ActivateQuickClassBrowserOnDemand();
+				}
+			}
+		}
+
+// DISABLED (TAKEN OUT DEBUGGER)!		
+//		void IconBarMouseDown(AbstractMargin iconBar, Point mousepos, MouseButtons mouseButtons)
+//		{
+//			int physicalLine = iconBar.TextArea.TextView.FirstVisibleLine + (int)(mousepos.Y / iconBar.TextArea.TextView.FontHeight);
+//			int realline     = iconBar.TextArea.Document.GetFirstLogicalLine(physicalLine);
+//			if (realline >= 0 && realline < iconBar.TextArea.Document.TotalNumberOfLines) {
+//				DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
+//				debuggerService.ToggleBreakpointAt(FileName, realline + 1, 0);
+//				iconBar.TextArea.Refresh(iconBar);
+//			}
+//		}
+//		
+//		void PaintIconBarBreakPoints(AbstractMargin iconBar, Graphics g, Rectangle rect)
+//		{
+//			DebuggerService debuggerService = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
+//			lock (debuggerService.Breakpoints) {
+//				foreach (THSBreakpoint breakpoint in debuggerService.Breakpoints) {
+//					try {
+//						if (Path.GetFullPath(breakpoint.FileName) == Path.GetFullPath(FileName)) {
+//							int lineNumber = iconBar.TextArea.Document.GetVisibleLine(breakpoint.Line - 1);
+//							int yPos = (int)(lineNumber * iconBar.TextArea.TextView.FontHeight) - iconBar.TextArea.VirtualTop.Y;
+//							if (yPos >= rect.Y && yPos <= rect.Bottom) {
+//								((IconBarMargin)iconBar).DrawBreakpoint(g, yPos, breakpoint.IsEnabled);
+//							}
+//						}
+//					} catch (Exception) {}
+//				}
+//			}
+//		}
 		
 		void CaretPositionChanged(object sender, EventArgs e)
 		{
 			IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
 			statusBarService.SetCaretPosition(ActiveTextAreaControl.TextArea.TextView.GetVisualColumn(ActiveTextAreaControl.Caret.Line, ActiveTextAreaControl.Caret.Column), ActiveTextAreaControl.Caret.Line, ActiveTextAreaControl.Caret.Column);
+		}
+		
+		void DocumentChanged(object sender, DocumentEventArgs e)
+		{
+			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 		}
 		
 		void SelectionChanged(object sender, EventArgs e)
@@ -82,69 +152,125 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 		}
 		
-		
-//// Alex: routine for pulsing parser thread
-		protected void PulseParser() {
-			lock(DefaultParserService.ParserPulse) {
-				Monitor.Pulse(DefaultParserService.ParserPulse);
+		void RemoveQuickClassBrowserPanel()
+		{
+			if (quickClassBrowserPanel != null) {
+				Controls.Remove(quickClassBrowserPanel);
+				quickClassBrowserPanel.Dispose();
+				quickClassBrowserPanel = null;
+				textAreaPanel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			}
 		}
+		void ShowQuickClassBrowserPanel()
+		{
+			if (quickClassBrowserPanel == null) {
+				quickClassBrowserPanel = new QuickClassBrowserPanel(this);
+				Controls.Add(quickClassBrowserPanel);
+				textAreaPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			}
+		}
+		public void ActivateQuickClassBrowserOnDemand()
+		{
+			SharpDevelopTextEditorProperties sdtep = base.TextEditorProperties as SharpDevelopTextEditorProperties;
+			if (sdtep != null && sdtep.ShowQuickClassBrowserPanel && FileName != null) {
+				IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
+				bool quickClassPanelActive = parserService.GetParser(FileName) != null;
+				if (quickClassPanelActive) {
+					ShowQuickClassBrowserPanel();
+				} else {
+					RemoveQuickClassBrowserPanel();
+				}
+			}
+		}
+		
+		protected override void OnFileNameChanged(EventArgs e)
+		{
+			base.OnFileNameChanged(e);
+			ActivateQuickClassBrowserOnDemand();
+		}
+		
+//// Alex: routine for pulsing parser thread
+//		protected void PulseParser() {
+//			lock(DefaultParserService.ParserPulse) {
+//				Monitor.Pulse(DefaultParserService.ParserPulse);
+//			}
+//		}
 //// ALex: end of mod
 		
-		InsightWindow insightWindow = null;
+		InsightWindow        insightWindow        = null;
+		internal CodeCompletionWindow codeCompletionWindow = null;
+		
 		bool HandleKeyPress(char ch)
 		{
-			CompletionWindow completionWindow;
-			
 			string fileName = FileName;
+			if (codeCompletionWindow != null && !codeCompletionWindow.IsDisposed) {
+				codeCompletionWindow.ProcessKeyEvent(ch);
+			}
 			
 			switch (ch) {
 				case ' ':
 					//TextEditorProperties.AutoInsertTemplates
-					if (1 == 1) {
-						string word = GetWordBeforeCaret();
-						if (word != null) {
-							CodeTemplateGroup templateGroup = CodeTemplateLoader.GetTemplateGroupPerFilename(FileName);
-							
-							if (templateGroup != null) {
-								foreach (CodeTemplate template in templateGroup.Templates) {
-									if (template.Shortcut == word) {
-										InsertTemplate(template);
-										return true;
+					string word = GetWordBeforeCaret();
+					try {
+						if (word.ToLower() == "new") {
+							if (((SharpDevelopTextEditorProperties)Document.TextEditorProperties).EnableCodeCompletion) {
+								IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
+								codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(((Form)WorkbenchSingleton.Workbench), this, this.FileName, new CodeCompletionDataProvider(true), ch);
+								return false;
+							}
+						} else {
+							if (word != null) {
+								CodeTemplateGroup templateGroup = CodeTemplateLoader.GetTemplateGroupPerFilename(FileName);
+								if (templateGroup != null) {
+									foreach (CodeTemplate template in templateGroup.Templates) {
+										if (template.Shortcut == word) {
+											if (word.Length > 0) {
+												int newCaretOffset = DeleteWordBeforeCaret();
+												//// set new position in text area
+												ActiveTextAreaControl.TextArea.Caret.Position = Document.OffsetToPosition(newCaretOffset);
+											}
+											
+											InsertTemplate(template);
+											return true;
+										}
 									}
 								}
 							}
 						}
-					}
+					} catch (Exception) {}
 					goto case '.';
 				case '<':
 					try {
-						completionWindow = new CompletionWindow(this, fileName, new CommentCompletionDataProvider());
-						completionWindow.ShowCompletionWindow('<');
+						if (((SharpDevelopTextEditorProperties)Document.TextEditorProperties).EnableCodeCompletion) {
+							codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(((Form)WorkbenchSingleton.Workbench), this, fileName, new CommentCompletionDataProvider(), '<');
+						}
 					} catch (Exception e) {
 						Console.WriteLine("EXCEPTION: " + e);
 					}
 					return false;
 				case '(':
 					try {
-						if (insightWindow == null || insightWindow.IsDisposed) {
-							insightWindow = new InsightWindow(this, fileName);
+						if (((SharpDevelopTextEditorProperties)Document.TextEditorProperties).EnableCodeCompletion) {
+							if (insightWindow == null || insightWindow.IsDisposed) {
+								insightWindow = new InsightWindow(((Form)WorkbenchSingleton.Workbench), this, fileName);
+							}
+							insightWindow.AddInsightDataProvider(new MethodInsightDataProvider());
+							insightWindow.ShowInsightWindow();
 						}
-						
-						insightWindow.AddInsightDataProvider(new MethodInsightDataProvider());
-						insightWindow.ShowInsightWindow();
 					} catch (Exception e) {
 						Console.WriteLine("EXCEPTION: " + e);
 					}
 					return false;
 				case '[':
 					try {
-						if (insightWindow == null || insightWindow.IsDisposed) {
-							insightWindow = new InsightWindow(this, fileName);
+						if (((SharpDevelopTextEditorProperties)Document.TextEditorProperties).EnableCodeCompletion) {
+							if (insightWindow == null || insightWindow.IsDisposed) {
+								insightWindow = new InsightWindow(((Form)WorkbenchSingleton.Workbench), this, fileName);
+							}
+							
+							insightWindow.AddInsightDataProvider(new IndexerInsightDataProvider());
+							insightWindow.ShowInsightWindow();
 						}
-						
-						insightWindow.AddInsightDataProvider(new IndexerInsightDataProvider());
-						insightWindow.ShowInsightWindow();
 					} catch (Exception e) {
 						Console.WriteLine("EXCEPTION: " + e);
 					}
@@ -152,18 +278,20 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				case '.':
 					try {
 //						TextAreaPainter.IHaveTheFocusLock = true;
-						completionWindow = new CompletionWindow(this, fileName, new CodeCompletionDataProvider());
-						completionWindow.ShowCompletionWindow(ch);
+						if (((SharpDevelopTextEditorProperties)Document.TextEditorProperties).EnableCodeCompletion) {
+							codeCompletionWindow = CodeCompletionWindow.ShowCompletionWindow(((Form)WorkbenchSingleton.Workbench), this, fileName, new CodeCompletionDataProvider(false), ch);
+						}
 //						TextAreaPainter.IHaveTheFocusLock = false;
 					} catch (Exception e) {
 						Console.WriteLine("EXCEPTION: " + e);
 					}
 					return false;
 //// Alex: reparse file on ; - end of statement
-				case ';':
-				case ')':	// reparse on closing bracket for foreach and for definitions
-					PulseParser();
-					return false;
+//				case '}':
+//				case ';':
+//				case ')':	// reparse on closing bracket for foreach and for definitions
+//					PulseParser();
+//					return false;
 //// Alex: end of mod
 			}
 			return false;
@@ -188,16 +316,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		/// </remarks>
 		public void InsertTemplate(CodeTemplate template)
 		{
-			int newCaretOffset   = ActiveTextAreaControl.TextArea.Caret.Offset;
-			string word = GetWordBeforeCaret().Trim();
-			if (word.Length > 0) {
-				newCaretOffset = DeleteWordBeforeCaret();
-				//// set new position in text area
-				ActiveTextAreaControl.TextArea.Caret.Position = Document.OffsetToPosition(newCaretOffset);
+			string selectedText = String.Empty;
+			if (base.ActiveTextAreaControl.TextArea.SelectionManager.HasSomethingSelected) {
+				selectedText = base.ActiveTextAreaControl.TextArea.SelectionManager.SelectedText;
+				ActiveTextAreaControl.TextArea.Caret.Position = ActiveTextAreaControl.TextArea.SelectionManager.SelectionCollection[0].StartPosition;
+				base.ActiveTextAreaControl.TextArea.SelectionManager.RemoveSelectedText();
 			}
+			int newCaretOffset   = ActiveTextAreaControl.TextArea.Caret.Offset;
 			int finalCaretOffset = newCaretOffset;
 			int firstLine        = Document.GetLineNumberForOffset(newCaretOffset);
-			
+			Console.WriteLine(firstLine);
 			// save old properties, these properties cause strange effects, when not
 			// be turned off (like insert curly braces or other formatting stuff)
 			bool save1         = TextEditorProperties.AutoInsertCurlyBracket;
@@ -205,32 +333,39 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			TextEditorProperties.AutoInsertCurlyBracket = false;
 			TextEditorProperties.IndentStyle            = IndentStyle.Auto;
 			
+			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+			string templateText = stringParserService.Parse(template.Text, new string[,] { { "Selection", selectedText } });
+			
 			BeginUpdate();
-			for (int i =0; i < template.Text.Length; ++i) {
-				switch (template.Text[i]) {
+			for (int i =0; i < templateText.Length; ++i) {
+				switch (templateText[i]) {
 					case '|':
 						finalCaretOffset = newCaretOffset;
 						break;
 					case '\r':
 						break;
 					case '\t':
-						new Tab().Execute(ActiveTextAreaControl.TextArea);
-					break;
+//						new Tab().Execute(ActiveTextAreaControl.TextArea);
+						break;
 					case '\n':
 						ActiveTextAreaControl.TextArea.Caret.Position = Document.OffsetToPosition(newCaretOffset);
 						new Return().Execute(ActiveTextAreaControl.TextArea);
 						newCaretOffset = ActiveTextAreaControl.TextArea.Caret.Offset;
 						break;
 					default:
-						ActiveTextAreaControl.TextArea.InsertChar(template.Text[i]);
+						ActiveTextAreaControl.TextArea.InsertChar(templateText[i]);
 						newCaretOffset = ActiveTextAreaControl.TextArea.Caret.Offset;
 						break;
 				}
 			}
+			int lastLine = Document.GetLineNumberForOffset(newCaretOffset);
 			EndUpdate();
-			Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, firstLine, Document.GetLineNumberForOffset(newCaretOffset)));
+			Document.RequestUpdate(new TextAreaUpdate(TextAreaUpdateType.LinesBetween, firstLine, lastLine));
 			Document.CommitUpdate();
 			ActiveTextAreaControl.TextArea.Caret.Position = Document.OffsetToPosition(finalCaretOffset);
+			Console.WriteLine(firstLine + " -- " + lastLine);
+			TextEditorProperties.IndentStyle = IndentStyle.Smart;
+			Document.FormattingStrategy.IndentLines(ActiveTextAreaControl.TextArea, firstLine, lastLine);
 			
 			// restore old property settings
 			TextEditorProperties.AutoInsertCurlyBracket = save1;
@@ -241,7 +376,6 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		{
 			try {
 				IFormattingStrategy[] formater = (IFormattingStrategy[])(AddInTreeSingleton.AddInTree.GetTreeNode(formatingStrategyPath).BuildChildItems(this)).ToArray(typeof(IFormattingStrategy));
-				Console.WriteLine("SET FORMATTER : " + formater[0]);
 				if (formater != null && formater.Length > 0) {
 //					formater[0].Document = Document;
 					Document.FormattingStrategy = formater[0];
@@ -250,5 +384,20 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				Console.WriteLine(formatingStrategyPath + " doesn't exists in the AddInTree");
 			}
 		}
+		
+		public override string GetRangeDescription(int selectedItem, int itemCount)
+		{
+			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+			stringParserService.Properties["CurrentMethodNumber"]  = selectedItem.ToString("##");
+			stringParserService.Properties["NumberOfTotalMethods"] = itemCount.ToString("##");
+			return stringParserService.Parse("${res:ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.InsightWindow.NumberOfText}");
+		}
+		
+//		public override IDeclarationViewWindow CreateDeclarationViewWindow()
+//		{
+//			return new HtmlDeclarationViewWindow();
+//		}
+//		
+		
 	}
 }

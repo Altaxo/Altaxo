@@ -12,6 +12,11 @@ namespace SharpDevelop.Internal.Parser
 {
 	public interface ICompilationUnitBase
 	{
+		string FileName {
+			get;
+			set;
+		}
+		
 		bool ErrorsDuringCompile {
 			get;
 			set;

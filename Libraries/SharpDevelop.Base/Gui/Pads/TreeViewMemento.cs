@@ -86,7 +86,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		
 		public XmlElement ToXmlElement(XmlDocument doc)
 		{
-			Debug.Assert(treeView != null);
+			System.Diagnostics.Debug.Assert(treeView != null);
 			
 			XmlElement treenode  = doc.CreateElement("TreeView");
 			SaveTree(treeView.Nodes, doc, treenode);

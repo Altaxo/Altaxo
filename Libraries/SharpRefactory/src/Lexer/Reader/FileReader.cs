@@ -17,7 +17,6 @@ namespace ICSharpCode.SharpRefactory.Parser
 		
 		public FileReader(string filename)
 		{
-			Console.WriteLine("open file name " + filename);
 			StreamReader sreader = File.OpenText(filename);
 			file = sreader.ReadToEnd();
 			sreader.Close();

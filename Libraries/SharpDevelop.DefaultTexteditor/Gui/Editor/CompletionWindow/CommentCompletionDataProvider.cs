@@ -62,6 +62,12 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 		}
 		
+		public string PreSelection {
+			get {
+				return null;
+			}
+		}
+		
 		/// <remarks>
 		/// Returns true, if the given coordinates (row, column) are in the region.
 		/// </remarks>
@@ -120,6 +126,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				this.text        = text;
 				this.description = description;
 			}
+			#region System.IComparable interface implementation
+			public int CompareTo(object obj)
+			{
+				if (obj == null || !(obj is CommentCompletionData)) {
+					return -1;
+				}
+				return text.CompareTo(((CommentCompletionData)obj).text);
+			}
+			#endregion
+			
 		}
 	}
 }

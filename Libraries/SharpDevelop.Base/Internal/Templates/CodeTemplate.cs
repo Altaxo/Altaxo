@@ -26,7 +26,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			}
 			set {
 				shortcut = value;
-				Debug.Assert(shortcut != null, "ICSharpCode.SharpDevelop.Internal.Template : string Shortcut == null");
+				System.Diagnostics.Debug.Assert(shortcut != null, "ICSharpCode.SharpDevelop.Internal.Template : string Shortcut == null");
 			}
 		}
 		
@@ -36,7 +36,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			}
 			set {
 				description = value;
-				Debug.Assert(description != null, "ICSharpCode.SharpDevelop.Internal.Template : string Description == null");
+				System.Diagnostics.Debug.Assert(description != null, "ICSharpCode.SharpDevelop.Internal.Template : string Description == null");
 			}
 		}
 		
@@ -46,7 +46,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			}
 			set {
 				text = value;
-				Debug.Assert(text != null, "ICSharpCode.SharpDevelop.Internal.Template : string Text == null");
+				System.Diagnostics.Debug.Assert(text != null, "ICSharpCode.SharpDevelop.Internal.Template : string Text == null");
 			}
 		}
 		

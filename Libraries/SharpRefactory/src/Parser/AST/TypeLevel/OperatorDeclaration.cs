@@ -25,7 +25,7 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 		OperatorDeclarator opratorDeclarator;
 		Modifier           modifier;
 		ArrayList          attributes = new ArrayList();
-		BlockStatement     body;
+		Statement     body;
 		
 		// TODO: delegate OperatorDeclarator Members
 		public OperatorDeclarator OpratorDeclarator {
@@ -55,7 +55,7 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 			}
 		}
 		
-		public BlockStatement Body {
+		public Statement Body {
 			get {
 				return body;
 			}set {
@@ -85,9 +85,9 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 	
 	public class OperatorDeclarator
 	{
-		OperatorType operatorType;
+		OperatorType  operatorType;
 		TypeReference typeReference;
-		string overloadOperator;
+		int           overloadOperatorToken;
 		
 		TypeReference firstParameterType;
 		string firstParameterName;
@@ -103,6 +103,11 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 				operatorType = value;
 			}
 		}
+		public bool IsConversion {
+			get {
+				return operatorType == OperatorType.Implicit || operatorType == OperatorType.Explicit;
+			}
+		}
 		
 		public TypeReference TypeReference {
 			get {
@@ -112,14 +117,16 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 				typeReference = value;
 			}
 		}
-		public string OverloadOperator {
+		
+		public int OverloadOperatorToken {
 			get {
-				return overloadOperator;
+				return overloadOperatorToken;
 			}
 			set {
-				overloadOperator = value;
+				overloadOperatorToken = value;
 			}
 		}
+		
 		public TypeReference FirstParameterType {
 			get {
 				return firstParameterType;
@@ -153,31 +160,21 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 			}
 		}
 		
-		public OperatorDeclarator(TypeReference typeReference, string overloadOperator, TypeReference firstParameterType, string firstParameterName)
+		public OperatorDeclarator(OperatorType operatorType, TypeReference typeReference, int overloadOperatorToken, TypeReference firstParameterType, string firstParameterName, TypeReference secondParameterType, string secondParameterName)
 		{
-			operatorType = OperatorType.Unary;
+			this.operatorType = operatorType;
 			this.typeReference = typeReference;
-			this.overloadOperator = overloadOperator;
-			this.firstParameterType = firstParameterType;
-			this.firstParameterName = firstParameterName;
-		}
-		
-		public OperatorDeclarator(TypeReference typeReference, string overloadOperator, TypeReference firstParameterType, string firstParameterName, TypeReference secondParameterType, string secondParameterName)
-		{
-			operatorType = OperatorType.Binary;
-			this.typeReference = typeReference;
-			this.overloadOperator = overloadOperator;
+			this.overloadOperatorToken = overloadOperatorToken;
 			this.firstParameterType = firstParameterType;
 			this.firstParameterName = firstParameterName;
 			this.secondParameterType = secondParameterType;
 			this.secondParameterName = secondParameterName;
 		}
 		
-		public OperatorDeclarator(OperatorType operatorType,TypeReference typeReference,  string overloadOperator, TypeReference firstParameterType, string firstParameterName)
+		public OperatorDeclarator(OperatorType operatorType,TypeReference typeReference,  TypeReference firstParameterType, string firstParameterName)
 		{
-			this.operatorType = operatorType;
-			this.typeReference = typeReference;
-			this.overloadOperator = overloadOperator;
+			this.operatorType       = operatorType;
+			this.typeReference      = typeReference;
 			this.firstParameterType = firstParameterType;
 			this.firstParameterName = firstParameterName;
 		}

@@ -18,55 +18,30 @@ using ICSharpCode.SharpDevelop.Services;
 
 namespace ICSharpCode.SharpDevelop.Internal.Templates
 {
-	/// <summary>
-	/// This class defines and holds the new file templates.
-	/// </summary>
-	public class FileTemplate
+	public class TemplateProperty
 	{
-		public static ArrayList FileTemplates = new ArrayList();
-		
-		string    originator   = null;
-		string    created      = null;
-		string    lastmodified = null;
-		string    name         = null;
-		string    category     = null;
-		string    languagename = null;
-		string    description  = null;
-		string    icon         = null;
-		
-		string    wizardpath   = null;
-		
-		ArrayList files        = new ArrayList(); // contains FileDescriptionTemplate classes
-		
-		XmlElement fileoptions = null;
-		
-		public string WizardPath {
-			get {
-				return wizardpath;
-			}
-		}
-		
-		public string Originator {
-			get {
-				return originator;
-			}
-		}
-		
-		public string Created {
-			get {
-				return created;
-			}
-		}
-		
-		public string LastModified {
-			get {
-				return lastmodified;
-			}
-		}
+		string name;
+		string localizedName;
+		string type;
+		string category;
+		string description;
+		string defaultValue;
 		
 		public string Name {
 			get {
 				return name;
+			}
+		}
+		
+		public string LocalizedName {
+			get {
+				return localizedName;
+			}
+		}
+		
+		public string Type {
+			get {
+				return type;
 			}
 		}
 		
@@ -76,33 +51,191 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			}
 		}
 		
-		public string LanguageName {
-			get {
-				return languagename;
-			}
-		}
-		
 		public string Description {
 			get {
 				return description;
 			}
 		}
 		
+		public string DefaultValue {
+			get {
+				return defaultValue;
+			}
+		}
+		
+		public TemplateProperty(XmlElement propertyElement)
+		{
+			name         = propertyElement.GetAttribute("name");
+			localizedName= propertyElement.GetAttribute("localizedName");
+			type         = propertyElement.GetAttribute("type");
+			category     = propertyElement.GetAttribute("category");
+			description  = propertyElement.GetAttribute("description");
+			defaultValue = propertyElement.GetAttribute("defaultValue");
+		}
+	}
+	
+	public class TemplateScript 
+	{
+		string languageName;
+		string runAt;
+		string scriptSourceCode;
+		
+		public string LanguageName {
+			get {
+				return languageName;
+			}
+		}
+		
+		public string RunAt {
+			get {
+				return runAt;
+			}
+		}
+		string SourceText {
+			get {
+				return String.Concat("public class ScriptObject : System.MarshalByRefObject { ",
+				                     scriptSourceCode,
+				                     "}");
+			}
+		}
+		
+		
+		public TemplateScript(XmlElement scriptConfig)
+		{
+			languageName     = scriptConfig.GetAttribute("language");
+			runAt            = scriptConfig.GetAttribute("runAt");
+			scriptSourceCode = scriptConfig.InnerText;
+		}
+	}
+	
+	public class TemplateType
+	{
+		string    name;
+		Hashtable pairs = new Hashtable();
+		
+		public string Name {
+			get {
+				return name;
+			}
+		}
+		
+		public Hashtable Pairs {
+			get {
+				return pairs;
+			}
+		}
+		
+		public TemplateType(XmlElement enumType)
+		{
+			name = enumType.GetAttribute("name");
+			foreach (XmlElement node in enumType.ChildNodes) {
+				pairs[node.GetAttribute("name")] = node.GetAttribute("value");
+			}
+		}
+	}
+	
+	/// <summary>
+	/// This class defines and holds the new file templates.
+	/// </summary>
+	public class FileTemplate
+	{
+		public static ArrayList FileTemplates = new ArrayList();
+		
+		string author       = null;
+		string name         = null;
+		string category     = null;
+		string languagename = null;
+		string icon         = null;
+		string description  = null;
+		string wizardpath   = null;
+		string defaultName  = null;
+		
+		ArrayList files       = new ArrayList(); // contains FileDescriptionTemplate classes
+		ArrayList properties  = new ArrayList();
+		ArrayList scripts     = new ArrayList();
+		ArrayList customTypes = new ArrayList();
+		
+		XmlElement fileoptions = null;
+		
+		public string Author {
+			get {
+				return author;
+			}
+		}
+		public string Name {
+			get {
+				return name;
+			}
+		}
+		public string Category {
+			get {
+				return category;
+			}
+		}
+		public string LanguageName {
+			get {
+				return languagename;
+			}
+		}
 		public string Icon {
 			get {
 				return icon;
 			}
 		}
-		
-		public XmlElement FileOptions {
+		public string Description {
+			get {
+				return description;
+			}
+		}
+		public string WizardPath {
+			get {
+				return wizardpath;
+			}
+		}
+		public string DefaultName {
+			get {
+				return defaultName;
+			}
+		}
+		public XmlElement Fileoptions {
 			get {
 				return fileoptions;
 			}
 		}
 		
-		public ArrayList Files {
+		public ArrayList FileDescriptionTemplates {
 			get {
 				return files;
+			}
+		}
+		
+		public ArrayList Properties {
+			get {
+				return properties;
+			}
+		}
+		
+		public ArrayList CustomTypes {
+			get {
+				return customTypes;
+			}
+		}
+		
+		public bool HasProperties {
+			get {
+				return properties != null && properties.Count > 0;
+			}
+		}
+		
+		public ArrayList Scripts {
+			get {
+				return scripts;
+			}
+		}
+		
+		public bool HasScripts {
+			get {
+				return scripts != null && scripts.Count > 0;
 			}
 		}
 		
@@ -111,37 +244,55 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			XmlDocument doc = new XmlDocument();
 			doc.Load(filename);
 			
-			XmlElement config = doc.DocumentElement["TemplateConfiguration"];
+			author = doc.DocumentElement.GetAttribute("author");
 			
-			originator   = doc.DocumentElement.Attributes["Originator"].InnerText;
-			created      = doc.DocumentElement.Attributes["Created"].InnerText;
-			lastmodified = doc.DocumentElement.Attributes["LastModified"].InnerText;
+			XmlElement config = doc.DocumentElement["Config"];
+			name         = config.GetAttribute("name");
+			icon         = config.GetAttribute("icon");
+			category     = config.GetAttribute("category");
+			defaultName  = config.GetAttribute("defaultname");
+			languagename = config.GetAttribute("language");
 			
-			name         = config["Name"].InnerText;
-			category     = config["Category"].InnerText;
-			languagename = config["LanguageName"].InnerText;
-			
-			if (config["Description"] != null) {
-				description  = config["Description"].InnerText;
-			}
-			
-			if (config["Icon"] != null) {
-				icon         = config["Icon"].InnerText;
+			if (doc.DocumentElement["Description"] != null) {
+				description  = doc.DocumentElement["Description"].InnerText;
 			}
 			
 			if (config["Wizard"] != null) {
 				wizardpath = config["Wizard"].Attributes["path"].InnerText;
 			}
 			
-			fileoptions = doc.DocumentElement["FileOptions"];
+			if (doc.DocumentElement["Properties"] != null) {
+				XmlNodeList propertyList = doc.DocumentElement["Properties"].SelectNodes("Property");
+				foreach (XmlElement propertyElement in propertyList) {
+					properties.Add(new TemplateProperty(propertyElement));
+				}
+			}
+			
+			if (doc.DocumentElement["Types"] != null) {
+				XmlNodeList typeList = doc.DocumentElement["Types"].SelectNodes("Type");
+				foreach (XmlElement typeElement in typeList) {
+					customTypes.Add(new TemplateType(typeElement));
+				}
+			}
+			
+			fileoptions = doc.DocumentElement["AdditionalOptions"];
 			
 			// load the files
-			XmlElement files  = doc.DocumentElement["TemplateFiles"];
+			XmlElement files  = doc.DocumentElement["Files"];
 			XmlNodeList nodes = files.ChildNodes;
 			foreach (XmlElement filenode in nodes) {
-				FileDescriptionTemplate template = new FileDescriptionTemplate(filenode.Attributes["DefaultName"].InnerText + filenode.Attributes["DefaultExtension"].InnerText, filenode.InnerText);
+				FileDescriptionTemplate template = new FileDescriptionTemplate(filenode.GetAttribute("name"),
+				                                                               filenode.GetAttribute("language"),
+				                                                               filenode.InnerText);
 				this.files.Add(template);
 			}
+			
+			// load scripts (if any)
+			XmlNodeList scriptList = doc.DocumentElement.SelectNodes("Script");
+			foreach (XmlElement scriptElement in scriptList) {
+				this.scripts.Add(new TemplateScript(scriptElement));
+			}
+			
 		}
 		
 		static void LoadFileTemplate(string filename)
@@ -160,7 +311,9 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			                            Path.DirectorySeparatorChar + "file", "*.xft");
 			foreach (string file in files) {
 				try {
-					LoadFileTemplate(file);
+					if (Path.GetExtension(file) == ".xft") {
+						LoadFileTemplate(file);
+					}
 				} catch(Exception e) {
 					messageService.ShowError(e, "Error loading template file " + file + ".");
 				}

@@ -81,8 +81,8 @@ namespace ICSharpCode.SharpDevelop.Services
 		/// <seealso cref='.ClassProxyCollection.AddRange'/>
 		public int Add(ClassProxy value) 
 		{
-			nameHashtable[value.FullyQualifiedName]                          = Count;
-			caseInsensitiveNameHashtable[value.FullyQualifiedName.ToLower()] = Count;
+			nameHashtable[value.FullyQualifiedName.GetHashCode()]                          = Count;
+			caseInsensitiveNameHashtable[value.FullyQualifiedName.ToLower().GetHashCode()] = Count;
 			
 			return List.Add(value);
 		}
@@ -171,7 +171,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public int IndexOf(string fullyQualifiedName, bool caseSensitive)
 		{
-			object o = caseSensitive ? nameHashtable[fullyQualifiedName] : caseInsensitiveNameHashtable[fullyQualifiedName.ToLower()];
+			object o = caseSensitive ? nameHashtable[fullyQualifiedName.GetHashCode()] : caseInsensitiveNameHashtable[fullyQualifiedName.ToLower().GetHashCode()];
 			if (o != null) {
 				return (int)o;
 			}

@@ -322,7 +322,6 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		
 		bool blockRandomised;
 		
-		//		int bytesIn;
 		int bytesOut;
 		int bsBuff;
 		int bsLive;
@@ -493,14 +492,13 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		
 		void Initialize()
 		{
-			//			bytesIn = 0;
 			bytesOut = 0;
 			nBlocksRandomised = 0;
 			
 			/*--- Write `magic' bytes h indicating file-format == huffmanised,
 			followed by a digit indicating blockSize100k.
 			---*/
-			BsPutUChar('B');     // -jr- 18-Nov-2003 added to match BZ2 1.02 header already in BZip class but that sux a lot
+			BsPutUChar('B');
 			BsPutUChar('Z');
 			
 			BsPutUChar('h');

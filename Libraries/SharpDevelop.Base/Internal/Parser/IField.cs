@@ -11,9 +11,6 @@ namespace SharpDevelop.Internal.Parser
 {
 	public interface IField : IMember
 	{
-		IRegion Region {
-			get;
-		}
 
 	}
 }

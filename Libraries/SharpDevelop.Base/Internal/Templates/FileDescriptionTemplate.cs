@@ -16,12 +16,14 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 	public class FileDescriptionTemplate
 	{
 		string name;
+		string language;
 		string content;
 		
-		public FileDescriptionTemplate(string name, string content)
+		public FileDescriptionTemplate(string name, string language, string content)
 		{
 			this.name    = name;
-			this.content = content;
+			this.language = language;
+			this.content  = content;
 		}
 		
 		public string Name {
@@ -30,10 +32,16 @@ namespace ICSharpCode.SharpDevelop.Internal.Templates
 			}
 		}
 		
+		public string Language {
+			get {
+				return language;
+			}
+		}
 		public string Content {
 			get {
 				return content;
 			}
 		}
+		
 	}
 }

@@ -4,7 +4,7 @@
 //     <owner name="Poul Staugaard" email="poul@staugaard.dk"/>
 //     <version value="$version"/>
 // </file>
-#if !LINUX
+
 using System;
 using System.IO;
 using System.Reflection;
@@ -169,7 +169,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 				return true;
 			}
 			catch (Exception ex) {
-				Debug.WriteLine(ex.ToString());				
+				System.Diagnostics.Debug.WriteLine(ex.ToString());				
 			}
 			return false;
 		}
@@ -215,4 +215,3 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		}
 	}
 }
-#endif

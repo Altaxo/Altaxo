@@ -35,6 +35,12 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 		
+		public IDocument Document {
+			get {
+				return document;
+			}
+		}
+		
 		public int CurrentOffset {
 			get {
 //				if (document != null) {

@@ -4,7 +4,7 @@
 //     <owner name="?" email="?"/>
 //     <version value="$version"/>
 // </file>
-
+using System;
 using System.Diagnostics;
 using System.Drawing;
 
@@ -17,7 +17,7 @@ namespace ICSharpCode.TextEditor.Util
 		SizeF    tipMaxSize;
 		SizeF    tipRequiredSize;
 		
-		public TipSection(Graphics graphics)
+		protected TipSection(Graphics graphics)
 		{
 			tipGraphics = graphics;
 		}
@@ -54,10 +54,10 @@ namespace ICSharpCode.TextEditor.Util
 		
 		protected void SetRequiredSize(SizeF requiredSize)
 		{
-			Debug.Assert(requiredSize.Width >= 0 &&
-			             requiredSize.Width <= tipMaxSize.Width &&
-			             requiredSize.Height >= 0 &&
-			             requiredSize.Height <= tipMaxSize.Height);
+			requiredSize.Width  = Math.Max(0, requiredSize.Width);
+			requiredSize.Height = Math.Max(0, requiredSize.Height);
+			requiredSize.Width  = Math.Min(tipMaxSize.Width, requiredSize.Width);
+			requiredSize.Height = Math.Min(tipMaxSize.Height, requiredSize.Height);
 			
 			tipRequiredSize = requiredSize;
 		}

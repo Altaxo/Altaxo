@@ -312,7 +312,7 @@ bool IsPointer () { return la.kind == Tokens.Times; }
 /* True, if lookahead is a primitive type keyword, or *
  * if it is a type declaration followed by an ident   */
 bool IsLocalVarDecl () {
-	if (ParserUtil.IsTypeKW(la) || la.kind == Tokens.Void) return true;
+	if ((ParserUtil.IsTypeKW(la) && Peek(1).kind != Tokens.Dot) || la.kind == Tokens.Void) return true;
 	
 	StartPeek();
 	Token pt = la ;  // peek token
@@ -548,8 +548,8 @@ UsingDirective
 
 GlobalAttributeSection
 =
-	(. Point startPos = t.Location; .)
-	"[" ident                   (. if (t.val != "assembly") Error("global attribute target specifier (\"assembly\") expected");
+	
+	"[" (. Point startPos = t.Location; .) ident                   (. if (t.val != "assembly") Error("global attribute target specifier (\"assembly\") expected");
 	                               string attributeTarget = t.val;
 	                               ArrayList attributes = new ArrayList();
 	                               ICSharpCode.SharpRefactory.Parser.AST.Attribute attribute;
@@ -682,7 +682,7 @@ TypeDecl<Modifiers m, ArrayList attributes>
 	ident                           (. newType.Name = t.val; .)
 	[ ClassBase<out names>          (. newType.BaseTypes = names; .) ] (. newType.StartLocation = t.EndLocation; .)
 	ClassBody
-	[ ";" ]                         (. newType.EndLocation = t.EndLocation; 
+	[ ";" ]                         (. newType.EndLocation = t.Location; 
 	                                   compilationUnit.BlockEnd();
 	                                .)
 	| /*--- struct declaration: */  (. m.Check(Modifier.StructsInterfacesEnumsDelegates); .)
@@ -696,7 +696,7 @@ TypeDecl<Modifiers m, ArrayList attributes>
 	ident                            (. newType.Name = t.val; .)
 	[ StructInterfaces<out names>    (. newType.BaseTypes = names; .) ] (. newType.StartLocation = t.EndLocation; .)
 	StructBody
-	[ ";" ]                          (. newType.EndLocation = t.EndLocation; 
+	[ ";" ]                          (. newType.EndLocation = t.Location; 
 	                                    compilationUnit.BlockEnd();
 	                                 .)
 	| /*--- interface declaration: */ 
@@ -709,7 +709,7 @@ TypeDecl<Modifiers m, ArrayList attributes>
 	ident                            (. newType.Name = t.val; .)
 	[ InterfaceBase<out names>       (. newType.BaseTypes = names; .) ] (. newType.StartLocation = t.EndLocation; .)
 	InterfaceBody
-	[ ";" ]                          (. newType.EndLocation = t.EndLocation; 
+	[ ";" ]                          (. newType.EndLocation = t.Location; 
 	                                    compilationUnit.BlockEnd();
 	                                 .)
 	| /*--- enumeration declaration: */
@@ -725,7 +725,7 @@ TypeDecl<Modifiers m, ArrayList attributes>
 	                                 .)
 	]                                (. newType.StartLocation = t.EndLocation; .)
 	EnumBody 
-	[ ";" ]                          (. newType.EndLocation = t.EndLocation; 
+	[ ";" ]                          (. newType.EndLocation = t.Location; 
 	                                    compilationUnit.BlockEnd();
 	                                 .)
 	| /*--- delegate declaration: */
@@ -740,7 +740,7 @@ TypeDecl<Modifiers m, ArrayList attributes>
 	ident                            (. delegateDeclr.Name = t.val; .)
 	"(" [ FormalParameterList<out p> (. delegateDeclr.Parameters = p; .)
 	] ")"
-	";"                              (. delegateDeclr.EndLocation = t.EndLocation;
+	";"                              (. delegateDeclr.EndLocation = t.Location;
 	                                    compilationUnit.AddChild(delegateDeclr);
 	                                 .)
 	)
@@ -969,7 +969,7 @@ MemberModifier<Modifiers m>
 
 StructMemberDecl<Modifiers m, ArrayList attributes>
 (.
-	string qualident;
+	string qualident = null;
 	TypeReference type;
 	Expression expr;
 	ArrayList p = new ArrayList();
@@ -980,6 +980,7 @@ StructMemberDecl<Modifiers m, ArrayList attributes>
 	/*--- constant declaration: */         (. m.Check(Modifier.Constants); .)
 	"const"                                (.Point startPos = t.Location; .)
 	Type<out type> ident                   (. FieldDeclaration fd = new FieldDeclaration(attributes, type, m.Modifier | Modifier.Const);
+	                                          fd.StartLocation = startPos;
 	                                          VariableDeclaration f = new VariableDeclaration(t.val);
 	                                          fd.Fields.Add(f);
 	                                       .)
@@ -1009,7 +1010,7 @@ StructMemberDecl<Modifiers m, ArrayList attributes>
 	                                       .)
 	
 	| /*--- event declaration: */          (. m.Check(Modifier.PropertysEventsMethods); .)
-	"event"                                (. EventDeclaration eventDecl = new EventDeclaration(attributes);
+	"event"                                (. EventDeclaration eventDecl = new EventDeclaration(m.Modifier, attributes);
 	                                          eventDecl.StartLocation = t.Location;
 	                                          compilationUnit.AddChild(eventDecl);
 	                                          compilationUnit.BlockStart(eventDecl);
@@ -1049,8 +1050,21 @@ StructMemberDecl<Modifiers m, ArrayList attributes>
 	/*--- conversion operator declaration: */
 	|                                      (. m.Check(Modifier.Operators);
 	                                          if (m.isNone) Error("at least one modifier must be set"); 
+	                                          bool isImplicit = true;
 	                                       .)
-	( "implicit" | "explicit" ) "operator" Type<out type> "(" Type<out type> ident ")" ( Block<out stmt> | ";" )
+	( "implicit" | "explicit" (. isImplicit = false; .) ) 
+	"operator" Type<out type> (. TypeReference operatorType = type; .) 
+	"(" Type<out type> ident (. string varName = t.val; .) ")" ( Block<out stmt> | ";" (. stmt = null; .) )
+	(.
+		
+		OperatorDeclarator operatorDeclarator = new OperatorDeclarator(isImplicit ? OperatorType.Implicit : OperatorType.Explicit,
+		                                                               operatorType,
+		                                                               type,
+		                                                               varName);
+		OperatorDeclaration operatorDeclaration = new OperatorDeclaration(operatorDeclarator, m.Modifier, attributes);
+		operatorDeclaration.Body = stmt;
+		compilationUnit.AddChild(operatorDeclaration);
+	.)
 	
 	/*--- inner type declaration: */
 	| TypeDecl<m, attributes>
@@ -1060,9 +1074,9 @@ StructMemberDecl<Modifiers m, ArrayList attributes>
 		                                      m.Check(Modifier.Operators);
 		                                      if (m.isNone) Error("at least one modifier must be set");
 		                                   .)
-		"operator" OverloadableOperator<out op> 
-		"(" Type<out type> ident 
-		( "," Type<out type> ident         (. if (ParserUtil.IsUnaryOperator(op))
+		"operator" OverloadableOperator<out op> (. TypeReference firstType, secondType = null; string secondName = null; .)
+		"(" Type<out firstType> ident (. string firstName = t.val; .)
+		( "," Type<out secondType> ident (. secondName = t.val; .)        (. if (ParserUtil.IsUnaryOperator(op) && !ParserUtil.IsBinaryOperator(op))
 		                                      Error("too many operands for unary operator"); 
 		                                   .)
 		| /* empty */                      (. if (ParserUtil.IsBinaryOperator(op))
@@ -1070,6 +1084,18 @@ StructMemberDecl<Modifiers m, ArrayList attributes>
 		                                   .)
 		)
 		")" ( Block<out stmt> | ";" )
+		(.
+			OperatorDeclarator operatorDeclarator = new OperatorDeclarator(secondType != null ? OperatorType.Binary : OperatorType.Unary, 
+			                                                               type,
+			                                                               op.kind,
+			                                                               firstType,
+			                                                               firstName,
+			                                                               secondType,
+			                                                               secondName);
+			OperatorDeclaration operatorDeclaration = new OperatorDeclaration(operatorDeclarator, m.Modifier, attributes);
+			operatorDeclaration.Body = stmt;
+			compilationUnit.AddChild(operatorDeclaration);
+		.)
 		
 		/*--- field declaration: */
 		| IF (IsVarDecl())                 (. m.Check(Modifier.Fields); 
@@ -1176,40 +1202,43 @@ InterfaceMemberDecl
 	string name;
 	PropertyGetRegion getBlock;
 	PropertySetRegion setBlock;
+	Point startLocation = new Point(-1, -1);
 .)
 =
 	{ AttributeSection<out section>     (. attributes.Add(section); .)}
-	[ "new" (. mod = Modifier.New; .) ]
+	[ "new" (. mod = Modifier.New; startLocation = t.Location; .) ]
 	(
 		/*--- interface void method (procedure) declaration: */
-		IF (NotVoidPointer()) "void" ident (. name = t.val; .)
+		IF (NotVoidPointer()) "void" (. if (startLocation.X == -1) startLocation = t.Location; .) ident (. name = t.val; .)
 		"(" [ FormalParameterList<out parameters> ] ")" ";" (. MethodDeclaration md = new MethodDeclaration(name, mod, new TypeReference("void"), parameters, attributes);
+		                                              md.StartLocation = startLocation;
 		                                              md.EndLocation = t.EndLocation;
 		                                              compilationUnit.AddChild(md);
 		                                           .)
 		| (
-			Type<out type>
+			Type<out type> (. if (startLocation.X == -1) startLocation = t.Location; .)
 			(
-				ident                  (. name = t.val; .)
+				ident                  (. name = t.val; Point qualIdentEndLocation = t.EndLocation; .)
 				(
 					/*--- interface "not void" method (function) declaration: */
 					"(" [ FormalParameterList<out parameters> ] ")" ";" (. MethodDeclaration md = new MethodDeclaration(name, mod, type, parameters, attributes);
+					                                              md.StartLocation = startLocation;
 					                                              md.EndLocation = t.EndLocation;
 					                                              compilationUnit.AddChild(md);
 					                                           .)
 					/*--- interface property declaration: */
 					|                   (. PropertyDeclaration pd = new PropertyDeclaration(name, type, mod, attributes); compilationUnit.AddChild(pd); .)
-					"{" InterfaceAccessors<out getBlock, out setBlock> "}" (. pd.GetRegion = getBlock; pd.SetRegion = setBlock; pd.EndLocation = t.EndLocation; .)
+					"{" (. Point bodyStart = t.Location;.) InterfaceAccessors<out getBlock, out setBlock> "}" (. pd.GetRegion = getBlock; pd.SetRegion = setBlock; pd.StartLocation = startLocation; pd.EndLocation = qualIdentEndLocation; pd.BodyStart = bodyStart; pd.BodyEnd = t.EndLocation; .)
 				)
 				/*--- interface indexer declaration: */
-				| "this" "[" FormalParameterList<out p> "]" (. IndexerDeclaration id = new IndexerDeclaration(type, p, mod, attributes); compilationUnit.AddChild(id); .)
-				"{" InterfaceAccessors<out getBlock, out setBlock> "}" (. id.GetRegion = getBlock; id.SetRegion = setBlock; id.EndLocation = t.EndLocation; .)
+				| "this" "[" FormalParameterList<out p> "]" (.Point bracketEndLocation = t.EndLocation; .)  (. IndexerDeclaration id = new IndexerDeclaration(type, p, mod, attributes); compilationUnit.AddChild(id); .)
+				"{" (. Point bodyStart = t.Location;.) InterfaceAccessors<out getBlock, out setBlock> "}" (. id.GetRegion = getBlock; id.SetRegion = setBlock; id.StartLocation = startLocation;  id.EndLocation = bracketEndLocation; id.BodyStart = bodyStart; id.BodyEnd = t.EndLocation;.)
 			)
 			/*--- interface event declaration: */
-			| "event" Type<out type> ident (. EventDeclaration ed = new EventDeclaration(type, t.val, mod, attributes);
+			| "event" (. if (startLocation.X == -1) startLocation = t.Location; .) Type<out type> ident (. EventDeclaration ed = new EventDeclaration(type, t.val, mod, attributes);
 			                                  compilationUnit.AddChild(ed);
 			                               .)
-			";"                            (. ed.EndLocation = t.EndLocation; .)
+			";"                            (. ed.StartLocation = startLocation; ed.EndLocation = t.EndLocation; .)
 		)
 	)
 .
@@ -1450,16 +1479,17 @@ LocalVariableDecl<out Statement stmt>
 LocalVariableDeclarator<out VariableDeclaration var>
 (. Expression expr = null; .)
 =
-	ident (. var = new VariableDeclaration(t.val); .) [ "=" LocalVariableInitializer<out expr> (. var.Initializer = expr; .) ]
+/*	ident (. var = new VariableDeclaration(t.val); .) [ "=" LocalVariableInitializer<out expr> (. var.Initializer = expr; .) ]*/
+	ident (. var = new VariableDeclaration(t.val); .) [ "=" VariableInitializer<out expr> (. var.Initializer = expr; .) ]
 .
-
+/*
 LocalVariableInitializer<out Expression expr>
 (. expr = null; .)
 =
 	Expr<out expr>
 	| ArrayInitializer<out expr>
 .
-
+*/
 Statement
 (.
 	TypeReference type;
@@ -1684,12 +1714,12 @@ StatementExpr<out Statement stmt>
 .
 
 Expr<out Expression expr>
-(. expr = new Expression(); .)
+(. expr = null; Expression expr1 = null, expr2 = null; .)
 =
 	UnaryExpr<out expr>
 	/*--- conditional expression: */
 	(
-		ConditionalOrExpr<ref expr> [ "?" Expr<out expr> ":" Expr<out expr> ]
+		ConditionalOrExpr<ref expr> [ "?" Expr<out expr1> ":" Expr<out expr2> (. expr = new ConditionalExpression(expr, expr1, expr2);  .) ] 
 		/*--- assignment: */
 		| (. AssignmentOperatorType op; Expression val; .) AssignmentOperator<out op> Expr<out val> (. expr = new AssignmentExpression(expr, op, val); .)
 	)
@@ -1700,20 +1730,19 @@ UnaryExpr<out Expression uExpr>
 (.
 	TypeReference type = null;
 	Expression expr;
-	UnaryOperatorType uop = UnaryOperatorType.None;
-	bool isUOp = false;
-	bool isCast = false;
+	ArrayList  expressions = new ArrayList();
+	uExpr = null;
 .)
 =
 	{
-		  "+"  (. uop = UnaryOperatorType.Plus; isUOp = true; .)
-		| "-"  (. uop = UnaryOperatorType.Minus; isUOp = true; .)
-		| "!"  (. uop = UnaryOperatorType.Not;  isUOp = true;.)
-		| "~"  (. uop = UnaryOperatorType.BitNot; isUOp = true; .)
-		| "*"  (. uop = UnaryOperatorType.Star;  isUOp = true; .)
-		| "++" (. uop = UnaryOperatorType.Increment; isUOp = true; .)
-		| "--" (. uop = UnaryOperatorType.Decrement; isUOp = true; .)
-		| "&"  (. uop = UnaryOperatorType.BitWiseAnd; isUOp = true; .)
+		  "+"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Plus)); .)
+		| "-"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Minus)); .)
+		| "!"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Not)); .)
+		| "~"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.BitNot)); .)
+		| "*"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Star)); .)
+		| "++" (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Increment)); .)
+		| "--" (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.Decrement)); .)
+		| "&"  (. expressions.Add(new UnaryOperatorExpression(UnaryOperatorType.BitWiseAnd)); .)
 		
 		/*--- cast expression: */
 		/* Problem:  "(" Type ")" from here and                     *
@@ -1721,14 +1750,21 @@ UnaryExpr<out Expression uExpr>
 		 *           are not distinguishable                        *
 		 * Solution: (in IsTypeCast())                              *
 		 * use external information from compiled assembly or guess */
-		| IF (IsTypeCast()) "(" Type<out type> ")"  (. isCast = true; .)
+		| IF (IsTypeCast()) "(" Type<out type> ")"  (.  expressions.Add(new CastExpression(type)); .)
 	}
-	PrimaryExpr<out expr> (. if (isUOp) { 
-	                             uExpr = new UnaryOperatorExpression(expr, uop);
-	                         } else if (isCast) {
-	                             uExpr = new CastExpression(type, expr);
+	
+	PrimaryExpr<out expr> (. for (int i = 0; i < expressions.Count; ++i) {
+	                         	Expression nextExpression = i + 1 < expressions.Count ? (Expression)expressions[i + 1] : expr;
+	                         	if (expressions[i] is CastExpression) {
+	                         		((CastExpression)expressions[i]).Expression = nextExpression;
+	                         	} else {
+	                         		((UnaryOperatorExpression)expressions[i]).Expression = nextExpression;
+	                         	}
+	                         }
+	                         if (expressions.Count > 0) {
+	                         	uExpr = (Expression)expressions[0];
 	                         } else {
-	                             uExpr = expr;
+	                         	uExpr = expr;
 	                         }
 	                      .)
 .
@@ -1775,15 +1811,15 @@ PrimaryExpr<out Expression pexpr>
 			"(" (. ObjectCreateExpression oce = new ObjectCreateExpression(type, parameters); .) [ Argument<out expr>          (. parameters.Add(expr); .)
 			{ "," Argument<out expr>          (. parameters.Add(expr); .) } ] ")" (. pexpr = oce; .)
 			/*--- array creation expression: */
-			| (. isArrayCreation = true; ArrayCreateExpression ace = new ArrayCreateExpression(type, parameters); pexpr = ace; .)
-			"[" (. int dims = 0; ArrayList rank = new ArrayList(); .)
+			| (. isArrayCreation = true; ArrayCreateExpression ace = new ArrayCreateExpression(type); pexpr = ace; .)
+			"[" (. int dims = 0; ArrayList rank = new ArrayList(); ArrayList parameterExpression = new ArrayList(); .)
 			(
-				Expr<out expr> (. parameters.Add(expr); .) { "," Expr<out expr> (. parameters.Add(expr); .) } "]"
-				{ IF (IsDims()) "[" (.dims =0;.) { "," (.dims++;.) } (.rank.Add(dims); .) "]" } 
+				Expr<out expr> (. parameterExpression.Add(expr); .) { "," Expr<out expr> (. parameterExpression.Add(expr); .) } "]" (. parameters.Add(new ArrayCreationParameter(parameterExpression)); ace.Parameters = parameters; .)
+				{ IF (IsDims()) "[" (.dims =0;.) { "," (.dims++;.) } (.rank.Add(dims); parameters.Add(new ArrayCreationParameter(dims)); .) "]" } 
 				(. if (rank.Count > 0) { ace.Rank = (int[])rank.ToArray(typeof (int)); } .)
 				[ ArrayInitializer<out expr> (. ace.ArrayInitializer = (ArrayInitializerExpression)expr; .) ]
 				
-				| { "," } "]" { IF (IsDims()) "[" (.dims =0;.) { "," (.dims++;.) } (.parameters.Add(dims); .) "]" } ArrayInitializer<out expr> (. ace.ArrayInitializer = (ArrayInitializerExpression)expr; .)
+				| { "," (.dims++;.) } (.parameters.Add(new ArrayCreationParameter(dims)); .)  "]" { IF (IsDims()) "[" (.dims =0;.) { "," (.dims++;.) } (.parameters.Add(new ArrayCreationParameter(dims)); .) "]" } ArrayInitializer<out expr> (. ace.ArrayInitializer = (ArrayInitializerExpression)expr; ace.Parameters = parameters; .)
 			)
 /*			| ArrayInitializer<out expr> (. if (!type.IsArrayType) { Error("() or [] expected"); }  pexpr =  new ArrayCreateExpression(type, (ArrayInitializerExpression)expr); .)*/
 		)
@@ -1820,7 +1856,7 @@ PrimaryExpr<out Expression pexpr>
 .
 
 ConditionalOrExpr<ref Expression outExpr>
-(. Expression expr; .)
+(. Expression expr;   .)
 =
 	ConditionalAndExpr<ref outExpr>  { "||" UnaryExpr<out expr> ConditionalAndExpr<ref expr> (.  outExpr = new BinaryOperatorExpression(outExpr, BinaryOperatorType.LogicalOr, expr);  .) }
 .

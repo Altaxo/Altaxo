@@ -5,8 +5,6 @@
 //     <version value="$version"/>
 // </file>
 
-#if !LINUX
-
 using System;
 using System.IO;
 using System.Windows.Forms;
@@ -31,11 +29,11 @@ namespace ICSharpCode.Core.Services
 		
 		public SaveErrorChooseDialog(string fileName, string message, string dialogName, Exception exceptionGot, bool chooseLocationEnabled)
 		{
-			this.Text = dialogName;
+			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+			this.Text = stringParserService.Parse(dialogName);
 			//  Must be called for initialization
 			this.InitializeComponents(chooseLocationEnabled);
 			
-			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
 			displayMessage = stringParserService.Parse(message, new string[,] {
 				{"FileName", fileName},
 				{"Path",     Path.GetDirectoryName(fileName)},
@@ -43,15 +41,16 @@ namespace ICSharpCode.Core.Services
 				{"Exception", exceptionGot.GetType().FullName},
 			});
 			
-			descriptionTextBox.Lines = this.displayMessage.Split('\n');
+			descriptionTextBox.Lines = stringParserService.Parse(this.displayMessage).Split('\n');
 			
 			this.exceptionGot = exceptionGot;
 		}
 		
 		void ShowException(object sender, EventArgs e)
 		{
+			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
 			IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-			messageService.ShowMessage(exceptionGot.ToString(), "Exception got");
+			messageService.ShowMessage(exceptionGot.ToString(), stringParserService.Parse("${res:ICSharpCode.Core.Services.ErrorDialogs.ExceptionGotDescription}"));
 		}
 		
 		/// <summary>
@@ -84,7 +83,7 @@ namespace ICSharpCode.Core.Services
 			this.descriptionLabel.Anchor = (System.Windows.Forms.AnchorStyles.Top 
 						| (System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right));
 			this.descriptionLabel.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			this.descriptionLabel.Text = "Description";
+			this.descriptionLabel.Text = resourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.DescriptionLabel");
 			this.Controls.Add(descriptionLabel);
 			
 			// 
@@ -136,7 +135,7 @@ namespace ICSharpCode.Core.Services
 			this.exceptionButton.TabIndex = 1;
 			this.exceptionButton.Anchor = (System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right);
 			this.exceptionButton.Name = "exceptionButton";
-			this.exceptionButton.Text = "Show Exception";
+			this.exceptionButton.Text = resourceService.GetString("ICSharpCode.Core.Services.ErrorDialogs.ShowExceptionButton");
 			this.exceptionButton.Size = new Size(110, 27);
 			this.exceptionButton.Location = new Point(382, 285);
 			this.exceptionButton.Click += new EventHandler(ShowException);
@@ -163,5 +162,3 @@ namespace ICSharpCode.Core.Services
 		}
 	}
 }
-
-#endif

@@ -42,20 +42,16 @@ namespace ICSharpCode.TextEditor
 				return textArea;
 			}
 		}
+		
 		public SelectionManager SelectionManager {
 			get {
 				return textArea.SelectionManager;
 			}
 		}
+		
 		public Caret Caret {
 			get {
 				return textArea.Caret;
-			}
-		}
-		
-		public int FirstVisibleRow {
-			get {
-				return this.hScrollBar.Value - this.hScrollBar.Minimum;
 			}
 		}
 		
@@ -69,6 +65,18 @@ namespace ICSharpCode.TextEditor
 		public ITextEditorProperties TextEditorProperties {
 			get {
 				return motherTextEditorControl.TextEditorProperties;
+			}
+		}
+		
+		public VScrollBar VScrollBar {
+			get {
+				return vScrollBar;
+			}
+		}
+		
+		public HScrollBar HScrollBar {
+			get {
+				return hScrollBar;
 			}
 		}
 		
@@ -105,12 +113,11 @@ namespace ICSharpCode.TextEditor
 			                                  Width - SystemInformation.HorizontalScrollBarArrowWidth, 
 			                                  SystemInformation.VerticalScrollBarArrowHeight);
 		}
-		
 		public void AdjustScrollBars(object sender, DocumentEventArgs e)
 		{
 			vScrollBar.Minimum = 0;
-			vScrollBar.Maximum = (Document.TotalNumberOfLines + textArea.TextView.VisibleLineCount - 2) * Document.TextEditorProperties.Font.Height;
-			
+			// number of visible lines in document (folding!)
+			vScrollBar.Maximum = textArea.MaxVScrollValue;
 //			int max = 0;
 //			foreach (ISegment lineSegment in Document.ArrayList) {
 //				max = Math.Max(lineSegment.Length, max);
@@ -161,6 +168,7 @@ namespace ICSharpCode.TextEditor
 		
 		public void ScrollToCaret()
 		{
+			Console.WriteLine("ScrollToCaret in TextAreaControl");
 			int curCharMin  = (int)(this.hScrollBar.Value - this.hScrollBar.Minimum);
 			int curCharMax  = curCharMin + textArea.TextView.VisibleColumnCount;
 			
@@ -185,27 +193,32 @@ namespace ICSharpCode.TextEditor
 		public void ScrollTo(int line)
 		{
 			line = Math.Max(0, Math.Min(Document.TotalNumberOfLines - 1, line));
-			line = Document.GetLogicalLine(line);
-			
-			int curLineMin = textArea.TextView.FirstVisibleLine;
+			line = Document.GetVisibleLine(line);
+			int curLineMin = textArea.TextView.FirstPhysicalLine;
 			if (line - scrollMarginHeight < curLineMin) {
-				this.vScrollBar.Value =  Math.Max(0, Math.Min(Document.TotalNumberOfLines - 1, line - scrollMarginHeight)) * textArea.TextView.FontHeight;
+				this.vScrollBar.Value =  Math.Max(0, Math.Min(this.vScrollBar.Maximum, (line - scrollMarginHeight) * textArea.TextView.FontHeight)) ;
+				VScrollBarValueChanged(this, EventArgs.Empty);
 			} else {
 				int curLineMax = curLineMin + this.textArea.TextView.VisibleLineCount;
 				if (line + scrollMarginHeight > curLineMax) {
-					this.vScrollBar.Value = Math.Min(Document.TotalNumberOfLines - 1, 
-					                                 line - this.textArea.TextView.VisibleLineCount + scrollMarginHeight) * textArea.TextView.FontHeight;
+					if (this.textArea.TextView.VisibleLineCount == 1) {
+						this.vScrollBar.Value =  Math.Max(0, Math.Min(this.vScrollBar.Maximum, (line - scrollMarginHeight) * textArea.TextView.FontHeight)) ;
+					} else {
+						this.vScrollBar.Value = Math.Min(this.vScrollBar.Maximum,
+						                                 (line - this.textArea.TextView.VisibleLineCount + scrollMarginHeight)* textArea.TextView.FontHeight) ;
+					}
+					VScrollBarValueChanged(this, EventArgs.Empty);
 				}
 			}
 		}
 		
 		public void JumpTo(int line, int column)
 		{
+			textArea.Focus();
 			textArea.SelectionManager.ClearSelection();
 			textArea.Caret.Position = new Point(column, line);
 			textArea.SetDesiredColumn();
 			ScrollToCaret();
-			textArea.Focus();
 		}
 	}
 }

@@ -59,6 +59,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 		object Visit(FixedStatement fixedStatement, object data);
 		object Visit(CheckedStatement checkedStatement, object data);
 		object Visit(UncheckedStatement uncheckedStatement, object data);
+		object Visit(UnsafeStatement unsafeStatement, object data);
 		
 		// Expressions
 		object Visit(PrimitiveExpression      primitiveExpression, object data);
@@ -80,6 +81,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 		object Visit(ThisReferenceExpression thisReferenceExpression, object data);
 		object Visit(BaseReferenceExpression baseReferenceExpression, object data);
 		object Visit(ObjectCreateExpression objectCreateExpression, object data);
+		object Visit(ArrayCreationParameter arrayCreationParameter, object data);
 		object Visit(ArrayCreateExpression arrayCreateExpression, object data);
 		object Visit(ParameterDeclarationExpression parameterDeclarationExpression, object data);
 		object Visit(FieldReferenceExpression fieldReferenceExpression, object data);

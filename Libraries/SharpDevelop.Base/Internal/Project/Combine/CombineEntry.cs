@@ -64,21 +64,20 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		}
 		
 		public abstract void Build(bool doBuildAll);
-		public abstract void Execute();
+		public abstract void Execute(bool debug);
 		public abstract void Save();
 	}
 	
 	public class ProjectCombineEntry : CombineEntry
 	{
 		IProject project;
-		bool     isDirty = true;
 		
 		public bool IsDirty {
 			get {
-				return isDirty;
+				return project.IsDirty;
 			}
 			set {
-				isDirty = value;
+				project.IsDirty = value;
 			}
 		}
 		
@@ -102,7 +101,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 				
 		public override void Build(bool doBuildAll)
 		{ // if you change something here look at the DefaultProjectService BeforeCompile method
-			if (doBuildAll || isDirty) {
+			if (doBuildAll || IsDirty) {
 				StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
 				stringParserService.Properties["Project"] = Name;
 				IProjectService   projectService   = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
@@ -129,38 +128,57 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 				AbstractProjectConfiguration conf = project.ActiveConfiguration as AbstractProjectConfiguration;
 				taskService.CompilerOutput += stringParserService.Parse("${res:MainWindow.CompilerMessages.BuildStartedOutput}", new string[,] { {"PROJECT", Project.Name}, {"CONFIG", Project.ActiveConfiguration.Name} }) + "\n";
 				taskService.CompilerOutput += resourceService.GetString("MainWindow.CompilerMessages.PerformingMainCompilationOutput") + "\n";
-				
-				if (conf != null && File.Exists(conf.ExecuteBeforeBuild)) {
-					taskService.CompilerOutput += "Execute : " + conf.ExecuteBeforeBuild;
-					ProcessStartInfo ps = new ProcessStartInfo(conf.ExecuteBeforeBuild);
-					ps.UseShellExecute = false;
-					ps.RedirectStandardOutput = true;
-					ps.WorkingDirectory = Path.GetDirectoryName(conf.ExecuteBeforeBuild);
-					Process process = new Process();
-					process.StartInfo = ps;
-					process.Start();
-					taskService.CompilerOutput += process.StandardOutput.ReadToEnd();
+				Console.WriteLine("BUILD!!!");
+				if (conf != null && conf.ExecuteBeforeBuild != null && conf.ExecuteBeforeBuild.Length > 0) {
+					string command   = conf.ExecuteBeforeBuild;
+					string arguments = "";
+					int    idx = command.IndexOf(' ');
+					if (idx > 0) {
+						arguments = command.Substring(idx + 1);
+						command   = command.Substring(0, idx);
+					}
+					if (File.Exists(command)) {
+						taskService.CompilerOutput += "Execute : " + conf.ExecuteBeforeBuild;
+						ProcessStartInfo ps = new ProcessStartInfo(command, arguments);
+						ps.UseShellExecute = false;
+						ps.RedirectStandardOutput = true;
+						ps.WorkingDirectory = Path.GetDirectoryName(command);
+						Process process = new Process();
+						process.StartInfo = ps;
+						process.Start();
+						taskService.CompilerOutput += process.StandardOutput.ReadToEnd();
+					}
 				}
 				
 				ICompilerResult res = csc.CompileProject(project);
 				
-				if (conf != null && File.Exists(conf.ExecuteAfterBuild)) {
-					taskService.CompilerOutput += "Execute : " + conf.ExecuteAfterBuild;
-					ProcessStartInfo ps = new ProcessStartInfo(conf.ExecuteAfterBuild);
-					ps.UseShellExecute = false;
-					ps.RedirectStandardOutput = true;
-					ps.WorkingDirectory = Path.GetDirectoryName(conf.ExecuteAfterBuild);
-					Process process = new Process();
-					process.StartInfo = ps;
-					process.Start();
-					taskService.CompilerOutput += process.StandardOutput.ReadToEnd();
-				}
-				
-				isDirty = false;
+				IsDirty = false;
 				foreach (CompilerError err in res.CompilerResults.Errors) {
-					isDirty = true;
+					IsDirty = true;
 					taskService.Tasks.Add(new Task(project, err));
 				}
+				
+				if (conf != null && !IsDirty && conf.ExecuteAfterBuild != null && conf.ExecuteAfterBuild.Length > 0) {
+					taskService.CompilerOutput += "Execute : " + conf.ExecuteAfterBuild;
+					string command   = conf.ExecuteAfterBuild;
+					string arguments = "";
+					int    idx = command.IndexOf(' ');
+					if (idx > 0) {
+						arguments = command.Substring(idx + 1);
+						command   = command.Substring(0, idx);
+					}
+					if (File.Exists(command)) {
+						ProcessStartInfo ps = new ProcessStartInfo(command, arguments);
+						ps.UseShellExecute = false;
+						ps.RedirectStandardOutput = true;
+						ps.WorkingDirectory = Path.GetDirectoryName(command);
+						Process process = new Process();
+						process.StartInfo = ps;
+						process.Start();
+						taskService.CompilerOutput += process.StandardOutput.ReadToEnd();
+					}
+				}
+				
 				
 				taskService.NotifyTaskChange();
 				
@@ -174,7 +192,7 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			}
 		}
 		
-		public override void Execute()
+		public override void Execute(bool debug)
 		{
 			LanguageBindingService languageBindingService = (LanguageBindingService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(LanguageBindingService));
 			ILanguageBinding binding = languageBindingService.GetBindingPerLanguageName(project.ProjectType);
@@ -184,11 +202,10 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			TaskService taskService = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
 			
 			if (taskService.Errors == 0) {
-				if (taskService.Warnings == 0 || project.ActiveConfiguration != null && ((AbstractProjectConfiguration)project.ActiveConfiguration).RunWithWarnings) {
-					binding.Execute(project);
+				if (taskService.Warnings == 0 || project.ActiveConfiguration != null && !((AbstractProjectConfiguration)project.ActiveConfiguration).TreatWarningsAsErrors) {
+					binding.Execute(project, debug);
 				}
 			}
-
 		}
 		
 		public override void Save()
@@ -222,9 +239,9 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			combine.Build(doBuildAll);
 		}
 		
-		public override void Execute()
+		public override void Execute(bool debug)
 		{
-			combine.Execute();
+			combine.Execute(debug);
 		}
 		
 		public override void Save()

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Drawing;
 
 using ICSharpCode.Core.Properties;
+using ICSharpCode.Core.Services;
 
 namespace ICSharpCode.SharpDevelop.Gui.Components
 {
@@ -23,9 +24,13 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 		
 		public SharpMessageBox(string header, string text, params string[] buttontexts)
 		{
-			this.header = header;
-			this.text   = text;
-			this.buttontexts = buttontexts;
+			StringParserService stringParserService = (StringParserService)ServiceManager.Services.GetService(typeof(StringParserService));
+			this.header = stringParserService.Parse(header);
+			this.text   = stringParserService.Parse(text);
+			this.buttontexts = new string[buttontexts.Length];
+			for (int i = 0; i < buttontexts.Length; ++i) {
+				this.buttontexts[i] = stringParserService.Parse(buttontexts[i]);
+			}
 			InitializeComponents();
 		}
 		

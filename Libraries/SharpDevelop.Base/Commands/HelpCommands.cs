@@ -21,6 +21,27 @@ using ICSharpCode.SharpDevelop.Gui.Dialogs;
 
 namespace ICSharpCode.SharpDevelop.Commands
 {
+	
+	public class ShowSensitiveHelp : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			IWorkbenchWindow window       = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+			IHelpProvider    helpProvider = window != null ? window.ActiveViewContent as IHelpProvider : null;
+			foreach (IPadContent padContent in WorkbenchSingleton.Workbench.PadContentCollection) {
+				if (padContent is IHelpProvider && padContent.Control.ContainsFocus) {
+					((IHelpProvider)padContent).ShowHelp();
+					return;
+				}
+			}
+			
+			if (helpProvider != null) {
+				helpProvider.ShowHelp();
+			}
+			
+		}
+	}
+	
 	public class ShowHelp : AbstractMenuCommand
 	{
 		public override void Run()

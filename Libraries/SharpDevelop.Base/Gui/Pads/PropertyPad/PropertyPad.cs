@@ -95,7 +95,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		private IServiceProvider serviceProvider;
 	}
 	
-	public class PropertyPad : AbstractPadContent
+	public class PropertyPad : AbstractPadContent, IHelpProvider
 	{
 		static Panel         panel   = null;
 		static ComboBox      comboBox = null;
@@ -246,8 +246,13 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		public override void Dispose()
 		{
 			base.Dispose();
-			grid.SelectedObjects = null;
-			grid.Dispose();
+			if (grid != null) {
+				try {
+					grid.SelectedObjects = null;
+				} catch {}
+				grid.Dispose();
+				grid = null;
+			}
 		}
 		
 		public static void SetDesignableObject(object obj)
@@ -273,6 +278,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 				selectionService.SelectionChanged  -= new EventHandler(SelectionChangedHandler);
 			}
 			
+			host.TransactionClosed -= new DesignerTransactionCloseEventHandler(TransactionClose);
+			
 			IComponentChangeService componentChangeService = (IComponentChangeService)host.GetService(typeof(IComponentChangeService));
 			if (componentChangeService != null) {
 				componentChangeService.ComponentAdded   -= new ComponentEventHandler(UpdateSelectedObjects);
@@ -292,6 +299,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 				selectionService.SelectionChanging += new EventHandler(SelectionChangingHandler);
 				selectionService.SelectionChanged  += new EventHandler(SelectionChangedHandler);
 			}
+			
+			host.TransactionClosed += new DesignerTransactionCloseEventHandler(TransactionClose);
 			
 			IComponentChangeService componentChangeService = (IComponentChangeService)host.GetService(typeof(IComponentChangeService));
 			if (componentChangeService != null) {
@@ -316,15 +325,41 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 				inUpdate = false;
 			}
 		}
-		static void UpdateSelectedObjects(object sender, ComponentEventArgs e)
+		
+		
+		
+		#region ICSharpCode.SharpDevelop.Gui.IHelpProvider interface implementation
+		public void ShowHelp()
 		{
-			SetSelectableObjects(host.Container.Components);
+			if (host != null) {
+				IHelpService helpService = (IHelpService)host.GetService(typeof(IHelpService));
+				helpService.ShowHelpFromKeyword(null);
+			}
 		}
-		static void UpdateSelectedObjectsOnRename(object sender, ComponentRenameEventArgs e)
+		#endregion
+		
+		
+		static bool shouldUpdateSelectableObjects = false;
+		static void TransactionClose(object sender, DesignerTransactionCloseEventArgs e)
 		{
-			SetSelectableObjects(host.Container.Components);
+			if (shouldUpdateSelectableObjects) {
+				if (host != null) {
+					SetSelectableObjects(host.Container.Components);
+				}
+				shouldUpdateSelectableObjects = false;
+			}
+			
 		}
 		
+		static void UpdateSelectedObjects(object sender, ComponentEventArgs e)
+		{
+			shouldUpdateSelectableObjects = true;
+		}
+		
+		static void UpdateSelectedObjectsOnRename(object sender, ComponentRenameEventArgs e)
+		{
+			shouldUpdateSelectableObjects = true;
+		}
 		
 		public static void SelectionChangingHandler(object sender, EventArgs args)
 		{
@@ -350,10 +385,6 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		
 		void PropertyChanged(object sender, PropertyValueChangedEventArgs e)
 		{
-			if (host != null) {
-				DesignerTransaction transaction = host.CreateTransaction("Property Changed");
-				transaction.Commit();
-			}
 			OnPropertyValueChanged(sender, e);
 		}
 		

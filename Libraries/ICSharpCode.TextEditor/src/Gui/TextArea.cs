@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -26,6 +26,7 @@ using ICSharpCode.TextEditor.Document;
 namespace ICSharpCode.TextEditor
 {
 	public delegate bool KeyEventHandler(char ch);
+	public delegate bool DialogKeyProcessor(Keys keyData);
 	
 	/// <summary>
 	/// This class paints the textarea.
@@ -58,6 +59,12 @@ namespace ICSharpCode.TextEditor
 		public TextEditorControl MotherTextEditorControl {
 			get {
 				return motherTextEditorControl;
+			}
+		}
+		
+		public TextAreaControl MotherTextAreaControl {
+			get {
+				return motherTextAreaControl;
 			}
 		}
 		
@@ -101,14 +108,22 @@ namespace ICSharpCode.TextEditor
 				return motherTextEditorControl.Encoding;
 			}
 		}
+		public int MaxVScrollValue {
+			get {
+				return (Document.GetVisibleLine(Document.TotalNumberOfLines - 1) + 1 + TextView.VisibleLineCount * 2 / 3) * Document.TextEditorProperties.Font.Height;
+			}
+		}
 		
 		public Point VirtualTop {
 			get {
 				return virtualTop;
 			}
 			set {
-				if (virtualTop != value) {
-					virtualTop = value;
+				Point newVirtualTop = new Point(value.X, Math.Min(MaxVScrollValue, Math.Max(0, value.Y)));
+				if (virtualTop != newVirtualTop) {
+					virtualTop = newVirtualTop;
+					motherTextAreaControl.VScrollBar.Value = virtualTop.Y;
+					
 					Invalidate();
 				}
 			}
@@ -156,9 +171,10 @@ namespace ICSharpCode.TextEditor
 			ResizeRedraw = true;
 			
 			SetStyle(ControlStyles.DoubleBuffer, false);
-			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle(ControlStyles.UserPaint, true);
+//			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+//			SetStyle(ControlStyles.UserPaint, true);
 			SetStyle(ControlStyles.Opaque, false);
+			SetStyle(ControlStyles.ResizeRedraw, true);
 			
 			textView = new TextView(this);
 			
@@ -178,6 +194,7 @@ namespace ICSharpCode.TextEditor
 			
 			caret.PositionChanged += new EventHandler(SearchMatchingBracket);
 			Document.TextContentChanged += new EventHandler(TextContentChanged);
+			Document.FoldingManager.FoldingsChanged += new EventHandler(DocumentFoldingsChanged);
 		}
 		
 		public void UpdateMatchingBracket()
@@ -252,9 +269,26 @@ namespace ICSharpCode.TextEditor
 			Refresh();
 		}
 		
+		AbstractMargin lastMouseInMargin;
+		
 		protected override void OnMouseLeave(System.EventArgs e)
 		{
+			base.OnMouseLeave(e);
 			this.Cursor = Cursors.Default;
+			if (lastMouseInMargin != null) {
+				lastMouseInMargin.HandleMouseLeave(EventArgs.Empty);
+				lastMouseInMargin = null;
+			}
+		}
+		
+		protected override void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
+		{
+			base.OnMouseDown(e);
+			foreach (AbstractMargin margin in leftMargins) {
+				if (margin.DrawingPosition.Contains(e.X, e.Y)) {
+					margin.HandleMouseDown(new Point(e.X, e.Y), e.Button);
+				}
+			}
 		}
 		
 		protected override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
@@ -263,8 +297,19 @@ namespace ICSharpCode.TextEditor
 			foreach (AbstractMargin margin in leftMargins) {
 				if (margin.DrawingPosition.Contains(e.X, e.Y)) {
 					this.Cursor = margin.Cursor;
+					margin.HandleMouseMove(new Point(e.X, e.Y), e.Button);
+					if (lastMouseInMargin != margin) {
+						if (lastMouseInMargin != null) {
+							lastMouseInMargin.HandleMouseLeave(EventArgs.Empty);
+						}
+						lastMouseInMargin = margin;
+					}
 					return;
 				}
+			}
+			if (lastMouseInMargin != null) {
+				lastMouseInMargin.HandleMouseLeave(EventArgs.Empty);
+				lastMouseInMargin = null;
 			}
 			if (textView.DrawingPosition.Contains(e.X, e.Y)) {
 				this.Cursor = textView.Cursor;
@@ -288,19 +333,25 @@ namespace ICSharpCode.TextEditor
 		
 		protected override void OnPaint(System.Windows.Forms.PaintEventArgs e)
 		{
-			if (updateMargin != null) {
-				updateMargin.Paint(e.Graphics, updateMargin.DrawingPosition);
-				return;
-			}
-			if (this.motherTextEditorControl.IsInUpdate) {
-				Invalidate(e.ClipRectangle);
-				return;
-			}
 			int currentXPos = 0;
 			int currentYPos = 0;
 			bool adjustScrollBars = false;
 			Graphics  g             = e.Graphics;
 			Rectangle clipRectangle = e.ClipRectangle;
+			
+			
+			if (updateMargin != null) {
+				try {
+					updateMargin.Paint(g, updateMargin.DrawingPosition);
+				} catch (Exception ex) {
+					Console.WriteLine("Got exception : " + ex);
+				}
+//				clipRectangle.Intersect(updateMargin.DrawingPosition);
+   			}
+   			
+			if (clipRectangle.Width <= 0 || clipRectangle.Height <= 0) {
+				return;
+			}
 			
 			if (this.TextEditorProperties.UseAntiAliasedFont) {
 				g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
@@ -318,7 +369,13 @@ namespace ICSharpCode.TextEditor
 					currentXPos += margin.DrawingPosition.Width;
 					if (clipRectangle.IntersectsWith(marginRectangle)) {
 						marginRectangle.Intersect(clipRectangle);
-						margin.Paint(g, marginRectangle);
+						if (!marginRectangle.IsEmpty) {
+							try {
+								margin.Paint(g, marginRectangle);
+							} catch (Exception ex) {
+								Console.WriteLine("Got exception : " + ex);
+							}
+						}
 					}
 				}
 			}
@@ -330,15 +387,33 @@ namespace ICSharpCode.TextEditor
 			}
 			if (clipRectangle.IntersectsWith(textViewArea)) {
 				textViewArea.Intersect(clipRectangle);
-				textView.Paint(g, textViewArea);
+				if (!textViewArea.IsEmpty) {
+					try {
+						textView.Paint(g, textViewArea);
+					} catch (Exception ex) {
+						Console.WriteLine("Got exception : " + ex);
+					}
+				}
 			}
 			
 			if (adjustScrollBars) {
-				this.motherTextAreaControl.AdjustScrollBars(null, null);
+				try {
+					this.motherTextAreaControl.AdjustScrollBars(null, null);
+				} catch (Exception) {}
 			}
-			Caret.UpdateCaretPosition();
+			
+			try {
+				Caret.UpdateCaretPosition();
+			} catch (Exception) {}
+			
+			base.OnPaint(e);
 		}
-#region keyboard handling methods
+		void DocumentFoldingsChanged(object sender, EventArgs e)
+		{
+			this.motherTextAreaControl.AdjustScrollBars(null, null);
+		}
+		
+		#region keyboard handling methods
 		
 		/// <summary>
 		/// This method is called on each Keypress
@@ -409,10 +484,10 @@ namespace ICSharpCode.TextEditor
 		/// </summary>
 		public bool ExecuteDialogKey(Keys keyData)
 		{
-//			// try, if a dialog key processor was set to use this
-//			if (ProcessDialogKeyProcessor != null && ProcessDialogKeyProcessor(keyData)) {
-//				return true;
-//			}
+			// try, if a dialog key processor was set to use this
+			if (DoProcessDialogKey != null && DoProcessDialogKey(keyData)) {
+				return true;
+			}
 			
 			// if not (or the process was 'silent', use the standard edit actions
 			IEditAction action =  motherTextEditorControl.GetEditAction(keyData);
@@ -445,7 +520,7 @@ namespace ICSharpCode.TextEditor
 		{
 			return ExecuteDialogKey(keyData) || base.ProcessDialogKey(keyData);
 		}
-#endregion
+		#endregion
 		
 		public void ScrollToCaret()
 		{
@@ -611,13 +686,13 @@ namespace ICSharpCode.TextEditor
 	
 		internal void UpdateToEnd(int lineBegin) 
 		{
-			if (lineBegin > this.textView.FirstVisibleLine + textView.VisibleLineCount) {
-				return;
-			}
+//			if (lineBegin > FirstPhysicalLine + textView.VisibleLineCount) {
+//				return;
+//			}
 			
-			lineBegin     = Math.Max(Document.GetLogicalLine(lineBegin), textView.FirstVisibleLine);
-			int y         = Math.Max(    0, (int)(lineBegin  * textView.FontHeight));
-			y = Math.Max(0, y - 1 - this.virtualTop.Y);
+			lineBegin     = Math.Min(lineBegin, FirstPhysicalLine);
+			int y         = Math.Max(    0, (int)(lineBegin * textView.FontHeight));
+			y = Math.Max(0, y - this.virtualTop.Y);
 			Rectangle r = new Rectangle(0,
 			                            y, 
 			                            Width, 
@@ -634,12 +709,16 @@ namespace ICSharpCode.TextEditor
 		{
 			UpdateLines(line, line);
 		}
-	
+		int FirstPhysicalLine {
+			get {
+				return VirtualTop.Y / textView.FontHeight;
+			}
+		}
 		internal void UpdateLines(int xPos, int lineBegin, int lineEnd)
 		{
-			if (lineEnd < this.textView.FirstVisibleLine || lineBegin > this.textView.FirstVisibleLine + textView.VisibleLineCount) {
-				return;
-			}
+//			if (lineEnd < FirstPhysicalLine || lineBegin > FirstPhysicalLine + textView.VisibleLineCount) {
+//				return;
+//			}
 			
 			InvalidateLines((int)(xPos * this.TextView.GetWidth(' ')), lineBegin, lineEnd);
 		}
@@ -648,8 +727,8 @@ namespace ICSharpCode.TextEditor
 		{
 			int firstLine = textView.FirstVisibleLine;
 			
-			lineBegin     = Math.Max(Document.GetLogicalLine(lineBegin), textView.FirstVisibleLine);
-			lineEnd       = Math.Min(Document.GetLogicalLine(lineEnd),   textView.FirstVisibleLine + textView.VisibleLineCount);
+			lineBegin     = Math.Max(Document.GetVisibleLine(lineBegin), FirstPhysicalLine);
+			lineEnd       = Math.Min(Document.GetVisibleLine(lineEnd),   FirstPhysicalLine + textView.VisibleLineCount);
 			int y         = Math.Max(    0, (int)(lineBegin  * textView.FontHeight));
 			int height    = Math.Min(textView.DrawingPosition.Height, (int)((1 + lineEnd - lineBegin) * (textView.FontHeight + 1)));
 			
@@ -661,6 +740,7 @@ namespace ICSharpCode.TextEditor
 			Invalidate(r);
 		}
 #endregion
-		public event KeyEventHandler KeyEventHandler;
+		public event KeyEventHandler    KeyEventHandler;
+		public event DialogKeyProcessor DoProcessDialogKey;
 	}
 }

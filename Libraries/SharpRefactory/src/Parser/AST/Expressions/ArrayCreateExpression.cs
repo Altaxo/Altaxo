@@ -3,10 +3,62 @@ using System.Collections;
 
 namespace ICSharpCode.SharpRefactory.Parser.AST
 {
+	public class ArrayCreationParameter : AbstractNode 
+	{
+		ArrayList expressions = null;
+		int       dimensions  = -1;
+		
+		public bool IsExpressionList {
+			get {
+				return expressions != null;
+			}
+		}
+		
+		public ArrayList Expressions {
+			get {
+				return expressions;
+			}
+			set {
+				expressions = value;
+			}
+		}
+		
+		public int Dimensions {
+			get {
+				return dimensions;
+			}
+			set {
+				dimensions = value;
+			}
+		}
+		
+		public ArrayCreationParameter(ArrayList expressions)
+		{
+			this.expressions = expressions;
+		}
+		
+		public ArrayCreationParameter(int dimensions)
+		{
+			this.dimensions = dimensions;
+		}
+		
+		public override object AcceptVisitor(IASTVisitor visitor, object data)
+		{
+			return visitor.Visit(this, data);
+		}
+		
+		public override string ToString()
+		{
+			return String.Format("[ArrayCreationParameter: Dimensions={0}, Expressions={1}",
+			                     dimensions,
+			                     GetCollectionString(expressions));
+		}
+	}
+	
 	public class ArrayCreateExpression : Expression
 	{
 		TypeReference              createType       = null;
-		ArrayList                  parameters       = null; // Expressions
+		ArrayList                  parameters       = null; // ArrayCreationParameter
 		int[]                      rank             = null;
 		ArrayInitializerExpression arrayInitializer = null; // Array Initializer OR NULL
 		
@@ -46,17 +98,16 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 			}
 		}
 		
-		public ArrayCreateExpression(TypeReference createType, ArrayList parameters)
+		public ArrayCreateExpression(TypeReference createType)
 		{
 			this.createType = createType;
-			this.parameters = parameters;
 		}
 		
-		public ArrayCreateExpression(TypeReference createType, ArrayInitializerExpression arrayInitializer)
-		{
-			this.createType = createType;
-			this.arrayInitializer = arrayInitializer;
-		}
+//		public ArrayCreateExpression(TypeReference createType, ArrayInitializerExpression arrayInitializer)
+//		{
+//			this.createType = createType;
+//			this.arrayInitializer = arrayInitializer;
+//		}
 		
 		
 		public override object AcceptVisitor(IASTVisitor visitor, object data)

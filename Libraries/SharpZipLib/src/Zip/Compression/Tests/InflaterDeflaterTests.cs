@@ -6,14 +6,17 @@ using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using ICSharpCode.SharpZipLib.GZip;
 using NUnit.Framework;
 
-namespace ICSharpCode.SharpZipLib.Zip
+namespace ICSharpCode.SharpZipLib.Zip.Compression
 {
 	/// <summary>
 	/// This class contains test cases for the Adler32 and Crc32 checksums
 	/// </summary>
 	[TestFixture]
-	public class InflaterDefalaterTestSuite
+	public class InflaterDeflaterTestSuite
 	{
+		/// <summary>
+		/// Basic inflate/deflate test
+		/// </summary>
 		[Test]
 		public void TestInflateDeflate()
 		{

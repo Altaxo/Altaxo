@@ -5,11 +5,11 @@
 	
 	<!-- Template Header -->
 	<TemplateConfiguration>
-		<Name>${res:Templates.Project.Misc.BlankCombine.Name}</Name>
+		<Name>${res:Templates.Project.BlankCombine.Name}</Name>
 		<Category>SharpDevelop</Category>
 		<Icon>Icons.32x32.CombineIcon</Icon>
 		<LanguageName/>
-		<Description>${res:Templates.Project.Misc.BlankCombine.Description}</Description>
+		<Description>${res:Templates.Project.BlankCombine.Description}</Description>
 	</TemplateConfiguration>
 	
 	<!-- Template Content -->

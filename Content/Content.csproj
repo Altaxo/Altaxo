@@ -123,14 +123,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "data\optionsMdiLayoutConfig.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\optionsSideBarConfig.xml"
-                    BuildAction = "Content"
-                />
-                <File
                     RelPath = "data\vb.rsp"
                     BuildAction = "Content"
                 />
@@ -152,6 +144,10 @@
                 />
                 <File
                     RelPath = "data\ConversionStyleSheets\ShowXmlDocumentation.xsl"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\ConversionStyleSheets\SVNChangelogToXml.xsl"
                     BuildAction = "Content"
                 />
                 <File
@@ -184,6 +180,10 @@
                 />
                 <File
                     RelPath = "data\options\SharpDevelop-tools.xml"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\options\StandardHeader.xml"
                     BuildAction = "Content"
                 />
                 <File
@@ -879,84 +879,72 @@
                     RelPath = "data\resources\xslt\type.xslt"
                     BuildAction = "Content"
                 />
-                 <File
-                    RelPath = "data\templates\file\EmptyHTMLFile.xft"
+                <File
+                    RelPath = "data\templates\file\CPPNet\CPP.Empty.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\EmptyJavaFile.xft"
+                    RelPath = "data\templates\file\CPPNet\CPP.Header.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\EmptyResourceFile.xft"
+                    RelPath = "data\templates\file\CSharp\CSharp.Empty.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\EmptyTextFile.xft"
+                    RelPath = "data\templates\file\CSharp\CSharp.EmptyClass.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\EmptyXMLFile.xft"
+                    RelPath = "data\templates\file\CSharp\CSharp.Forms.Form.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\EmptyXmlForm.xft"
+                    RelPath = "data\templates\file\CSharp\CSharp.Forms.UserControl.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\EmptyXmlUserControl.xft"
+                    RelPath = "data\templates\file\CSharp\CSharp.Patterns.Singleton.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\JavaApplet.xft"
+                    RelPath = "data\templates\file\CSharp\CSharp.UnitTest.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\JavaApplication.xft"
+                    RelPath = "data\templates\file\CSharp\CSharp.Wizards.NewClass.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\JavaDialog.xft"
+                    RelPath = "data\templates\file\CSharp\CSharp.Wizards.TypedCollection.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\JavaFrame.xft"
+                    RelPath = "data\templates\file\CSharp\CSharp.Wizards.TypedHashtable.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\JavaOKDialog.xft"
+                    RelPath = "data\templates\file\Misc\EmptyHTMLFile.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\JavaPanel.xft"
+                    RelPath = "data\templates\file\Misc\EmptyResourceFile.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\CSharp\CSharpNewClassWizard.xft"
+                    RelPath = "data\templates\file\Misc\EmptyTextFile.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\CSharp\CSharpSessionStateWebService.xft"
+                    RelPath = "data\templates\file\Misc\EmptyXMLFile.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\CSharp\CSharpWebService.xft"
+                    RelPath = "data\templates\file\Misc\EmptyXmlForm.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\CSharp\EmptyCSharpFile.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CSharp\TypedCSharpCollectionFile.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CSharp\WindowsCSharpForm.xft"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\file\CSharp\WindowsCSharpUserControl.xft"
+                    RelPath = "data\templates\file\Misc\EmptyXmlUserControl.xft"
                     BuildAction = "Content"
                 />
                 <File
@@ -980,31 +968,39 @@
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\VBNet\EmptyVBFile.xft"
+                    RelPath = "data\templates\file\VBNet\VBNet.Empty.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\VBNet\VBCollectionFile.xft"
+                    RelPath = "data\templates\file\VBNet\VBNet.EmptyClass.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\VBNet\VBNETNewClassWizard.xft"
+                    RelPath = "data\templates\file\VBNet\VBNet.Forms.Form.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\VBNet\VBNETSessionStateWebService.xft"
+                    RelPath = "data\templates\file\VBNet\VBNet.Forms.UserControl.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\VBNet\VBNETWebService.xft"
+                    RelPath = "data\templates\file\VBNet\VBNet.Patterns.Singleton.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\VBNet\WindowsVBNetForm.xft"
+                    RelPath = "data\templates\file\VBNet\VBNet.UnitTest.xft"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\file\VBNet\WindowsVBNetUserControl.xft"
+                    RelPath = "data\templates\file\VBNet\VBNet.Wizards.NewClass.xft"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\templates\file\VBNet\VBNet.Wizards.TypedCollection.xft"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\templates\file\VBNet\VBNet.Wizards.TypedHashtable.xft"
                     BuildAction = "Content"
                 />
                 <File
@@ -1012,7 +1008,23 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\templates\project\CPPNet\ConsoleProject.xpt"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\templates\project\CPPNet\EmptyProject.xpt"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\templates\project\CPPNet\FormsProject.xpt"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\templates\project\CSharp\ConsoleProject.xpt"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\templates\project\CSharp\ControlLibrary.xpt"
                     BuildAction = "Content"
                 />
                 <File
@@ -1021,10 +1033,6 @@
                 />
                 <File
                     RelPath = "data\templates\project\CSharp\EmptyProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\CSharp\EmptyWindowsApplication.xpt"
                     BuildAction = "Content"
                 />
                 <File
@@ -1040,39 +1048,44 @@
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\project\Java\EmptyJavaProject.xpt"
+                    RelPath = "data\templates\project\ILAsm\ConsoleProject.xpt"
                     BuildAction = "Content"
                 />
-                <File
-                    RelPath = "data\templates\project\Java\JavaApplicationProject.xpt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\templates\project\Java\JavaConsoleApplicationProject.xpt"
-                    BuildAction = "Content"
-                />
+                <Folder RelPath = "data\templates\project\Java\" />
                 <File
                     RelPath = "data\templates\project\Misc\BlankCombine.xpt"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\project\VBNet\ConsoleVBProject.xpt"
+                    RelPath = "data\templates\project\Setup\WixProject.xpt"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\project\VBNet\EmptyVBProject.xpt"
+                    RelPath = "data\templates\project\VBNet\ConsoleProject.xpt"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\project\VBNet\FormsVBNetProject.xpt"
+                    RelPath = "data\templates\project\VBNet\ControlLibrary.xpt"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\project\VBNet\VBLibrary.xpt"
+                    RelPath = "data\templates\project\VBNet\Direct3DProject.xpt"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\templates\project\VBNet\VBService.xpt"
+                    RelPath = "data\templates\project\VBNet\EmptyProject.xpt"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\templates\project\VBNet\FormsProject.xpt"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\templates\project\VBNet\Library.xpt"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\templates\project\VBNet\Service.xpt"
                     BuildAction = "Content"
                 />
                 <File
@@ -1100,11 +1113,11 @@
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "doc\FormsDesignerIssuesThatNeedHelp.txt"
+                    RelPath = "doc\HowYouCanHelp.xml"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "doc\HowYouCanHelp.xml"
+                    RelPath = "doc\license.rtf"
                     BuildAction = "Content"
                 />
                 <File

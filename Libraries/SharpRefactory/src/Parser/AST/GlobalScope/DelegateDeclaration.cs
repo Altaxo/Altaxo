@@ -73,15 +73,6 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 			}
 		}
 		
-//		public DelegateDeclaration(string name, Modifier modifier, TypeReference returnType, ArrayList parameters, ArrayList attributes)
-//		{
-//			this.name = name;
-//			this.modifier = modifier;
-//			this.returnType = returnType;
-//			this.parameters = parameters;
-//			this.attributes = attributes;
-//		}
-		
 		public override object AcceptVisitor(IASTVisitor visitor, object data)
 		{
 			return visitor.Visit(this, data);

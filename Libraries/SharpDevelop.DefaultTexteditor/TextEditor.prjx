@@ -1,4 +1,4 @@
-<Project name="TextEditor" description="creates an empty C# project" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
+<Project name="TextEditor" standardNamespace="ICSharpCode.SharpDevelop.DefaultEditor" description="creates an empty C# project" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
   <Contents>
     <File name=".\Search\DefaultFind.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Search\IFind.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -33,7 +33,6 @@
     <File name=".\Search\SearchReplaceManager.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Actions.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Editor\SharpDevelopTextAreaControl.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Gui\Pads\CompilerMessageView.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\OptionPanels\CodeTemplatePanel.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Editor\CompletionWindow" subtype="Directory" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Editor\CompletionWindow\TemplateCompletionDataProvider.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -58,33 +57,49 @@
     <File name=".\Search\SearchStrategy\KMPSearchStrategy.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Editor\ITextAreaControlProvider.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Editor\CompletionWindow\CodeCompletionData.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Commands\CodeActions.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\GenerateCodeCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Commands\FoldingCommands.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Dialogs\SortOptionsDialog.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Editor\SharpDevelopTextEditorProperties.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Editor\ParserFoldingStrategy.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\QuickClassBrowserPanel.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Editor\CompletionWindow\HtmlDeclarationViewWindow.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeGenerators" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeGenerators\CodeGenerator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeGenerators\AbstractFieldCodeGenerator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeGenerators\ConstructorCodeGenerator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeGenerators\AbstractPropertyCodeGenerator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeGenerators\GetterCodeGenerator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeGenerators\SetterCodeGenerator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeGenerators\GetterAndSetterCodeGenerator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeGenerators\OnXXXMethodsCodeGenerator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeGenerators\InterfaceImplementorCodeGenerator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeGenerators\OverrideMethodsCodeGenerator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeGenerators\ToStringCodeGenerator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeGenerators\AbstractClassImplementorCodeGenerator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\CodeGenerators\EqualsCodeGenerator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
-    <Reference type="Assembly" refto="..\..\..\..\bin\ICSharpCode.Core.dll" localcopy="False" />
     <Reference type="Assembly" refto="..\..\..\..\bin\ICSharpCode.TextEditor.dll" localcopy="False" />
     <Reference type="Assembly" refto="..\..\..\..\bin\ICSharpCode.XmlForms.dll" localcopy="False" />
     <Reference type="Assembly" refto="..\..\..\..\bin\SharpDevelop.Base.dll" localcopy="False" />
     <Reference type="Assembly" refto="..\..\..\..\bin\CommandBar.dll" localcopy="True" />
+    <Reference type="Assembly" refto="..\..\..\..\bin\ICSharpCode.Core.dll" localcopy="True" />
   </References>
   <DeploymentInformation target="" script="" strategy="File" />
   <Configuration runwithwarnings="False" name="Debug">
-    <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
     <Execution commandlineparameters="" consolepause="True" />
     <Output directory="..\..\..\..\bin" assembly="SharpDevelop.DefaultTexteditor" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
   </Configuration>
   <Configurations active="Debug">
     <Configuration runwithwarnings="False" name="Debug">
-      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
       <Output directory="..\..\..\..\bin" assembly="SharpDevelop.DefaultTexteditor" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
     </Configuration>
     <Configuration runwithwarnings="False" name="Release">
-      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
       <Output directory="..\..\..\..\bin" assembly="SharpDevelop.DefaultTexteditor" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
     </Configuration>

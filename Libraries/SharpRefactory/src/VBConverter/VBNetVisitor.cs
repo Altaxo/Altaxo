@@ -27,7 +27,7 @@ using ICSharpCode.SharpRefactory.Parser.AST;
 
 namespace ICSharpCode.SharpRefactory.PrettyPrinter
 {
-	public class VBNetVisitor : IASTVisitor
+	public class VBNetVisitor : AbstractASTVisitor
 	{
 		StringBuilder   sourceText  = new StringBuilder();
 		int             indentLevel = 0;
@@ -41,10 +41,12 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		}
 		
 #region ICSharpCode.SharpRefactory.Parser.IASTVisitor interface implementation
-		public object Visit(INode node, object data)
+		public override object Visit(INode node, object data)
 		{
-			errors.Error(-1, -1, String.Format("visited unknown node '{0}' ", node));
-			return String.Empty;
+			errors.Error(-1, -1, String.Format("Visited INode (should NEVER HAPPEN)"));
+			Console.WriteLine("Visitor was: " + this.GetType());
+			Console.WriteLine("Node was : " + node.GetType());
+			return node.AcceptChildren(this, data);
 		}
 		
 		public void AppendIndentation()
@@ -64,7 +66,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 //			Console.WriteLine(o.ToString());
 		}
 		
-		public object Visit(CompilationUnit compilationUnit, object data)
+		public override object Visit(CompilationUnit compilationUnit, object data)
 		{
 			DebugOutput(compilationUnit);
 			new VBNetRefactory().Refactor(compilationUnit);
@@ -72,7 +74,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(NamespaceDeclaration namespaceDeclaration, object data)
+		public override object Visit(NamespaceDeclaration namespaceDeclaration, object data)
 		{
 			DebugOutput(namespaceDeclaration);
 			AppendIndentation();sourceText.Append("Namespace ");
@@ -86,7 +88,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(UsingDeclaration usingDeclaration, object data)
+		public override object Visit(UsingDeclaration usingDeclaration, object data)
 		{
 			DebugOutput(usingDeclaration);
 			AppendIndentation();sourceText.Append("Imports ");
@@ -95,7 +97,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(UsingAliasDeclaration usingAliasDeclaration, object data)
+		public override object Visit(UsingAliasDeclaration usingAliasDeclaration, object data)
 		{
 			DebugOutput(usingAliasDeclaration);
 			AppendIndentation();sourceText.Append("Imports ");
@@ -106,7 +108,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(AttributeSection attributeSection, object data)
+		public override object Visit(AttributeSection attributeSection, object data)
 		{
 			DebugOutput(attributeSection);
 			AppendIndentation();sourceText.Append("<");
@@ -126,7 +128,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 						sourceText.Append(", ");
 					}
 				}
-
+				
 				for (int i = 0; i < attr.NamedArguments.Count; ++i) {
 					NamedArgument named = (NamedArgument)attr.NamedArguments[i];
 					sourceText.Append(named.Name);
@@ -149,7 +151,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(TypeDeclaration typeDeclaration, object data)
+		public override object Visit(TypeDeclaration typeDeclaration, object data)
 		{
 			DebugOutput(typeDeclaration);
 			AppendNewLine();
@@ -210,7 +212,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(DelegateDeclaration delegateDeclaration, object data)
+		public override object Visit(DelegateDeclaration delegateDeclaration, object data)
 		{
 			DebugOutput(delegateDeclaration);
 			AppendNewLine();
@@ -236,7 +238,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(VariableDeclaration variableDeclaration, object data)
+		public override object Visit(VariableDeclaration variableDeclaration, object data)
 		{
 			// called inside ENUMS
 //			AppendAttributes(field.Attributes);
@@ -249,7 +251,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(FieldDeclaration fieldDeclaration, object data)
+		public override object Visit(FieldDeclaration fieldDeclaration, object data)
 		{
 			DebugOutput(fieldDeclaration);
 			foreach (VariableDeclaration field in fieldDeclaration.Fields) {
@@ -273,7 +275,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(MethodDeclaration methodDeclaration, object data)
+		public override object Visit(MethodDeclaration methodDeclaration, object data)
 		{
 			DebugOutput(methodDeclaration);
 			AppendNewLine();
@@ -307,7 +309,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(PropertyDeclaration propertyDeclaration, object data)
+		public override object Visit(PropertyDeclaration propertyDeclaration, object data)
 		{
 			DebugOutput(propertyDeclaration);
 			AppendNewLine();
@@ -343,7 +345,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(PropertyGetRegion propertyGetRegion, object data)
+		public override object Visit(PropertyGetRegion propertyGetRegion, object data)
 		{
 			DebugOutput(propertyGetRegion);
 			AppendAttributes(propertyGetRegion.Attributes);
@@ -360,7 +362,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(PropertySetRegion propertySetRegion, object data)
+		public override object Visit(PropertySetRegion propertySetRegion, object data)
 		{
 			DebugOutput(propertySetRegion);
 			AppendAttributes(propertySetRegion.Attributes);
@@ -378,7 +380,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(EventDeclaration eventDeclaration, object data)
+		public override object Visit(EventDeclaration eventDeclaration, object data)
 		{
 			DebugOutput(eventDeclaration);
 			AppendNewLine();
@@ -412,19 +414,19 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return data;
 		}
 		
-		public object Visit(EventAddRegion eventAddRegion, object data)
+		public override object Visit(EventAddRegion eventAddRegion, object data)
 		{
 			// should never be called:
 			throw new System.NotSupportedException();
 		}
 		
-		public object Visit(EventRemoveRegion eventRemoveRegion, object data)
+		public override object Visit(EventRemoveRegion eventRemoveRegion, object data)
 		{
 			// should never be called:
 			throw new System.NotSupportedException();
 		}
 		
-		public object Visit(ConstructorDeclaration constructorDeclaration, object data)
+		public override object Visit(ConstructorDeclaration constructorDeclaration, object data)
 		{
 			DebugOutput(constructorDeclaration);
 			AppendNewLine();
@@ -444,7 +446,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(DestructorDeclaration destructorDeclaration, object data)
+		public override object Visit(DestructorDeclaration destructorDeclaration, object data)
 		{
 			DebugOutput(destructorDeclaration);
 			AppendNewLine();
@@ -460,13 +462,13 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(OperatorDeclaration operatorDeclaration, object data)
+		public override object Visit(OperatorDeclaration operatorDeclaration, object data)
 		{
 			errors.Error(-1, -1, String.Format("Operator overloading cannot be performed"));
 			return null;
 		}
 		
-		public object Visit(IndexerDeclaration indexerDeclaration, object data)
+		public override object Visit(IndexerDeclaration indexerDeclaration, object data)
 		{
 			DebugOutput(indexerDeclaration);
 			
@@ -498,14 +500,14 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(BlockStatement blockStatement, object data)
+		public override object Visit(BlockStatement blockStatement, object data)
 		{
 			DebugOutput(blockStatement);
 			blockStatement.AcceptChildren(this, data);
 			return null;
 		}
 		
-		public object Visit(StatementExpression statementExpression, object data)
+		public override object Visit(StatementExpression statementExpression, object data)
 		{
 			DebugOutput(statementExpression);
 			AppendIndentation();sourceText.Append(statementExpression.Expression.AcceptVisitor(this, statementExpression).ToString());
@@ -513,7 +515,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(LocalVariableDeclaration localVariableDeclaration, object data)
+		public override object Visit(LocalVariableDeclaration localVariableDeclaration, object data)
 		{
 			DebugOutput(localVariableDeclaration);
 			foreach (VariableDeclaration localVar in localVariableDeclaration.Variables) {
@@ -521,9 +523,9 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				ArrayCreateExpression ace = localVar.Initializer as ArrayCreateExpression;
 				if (ace != null && (ace.ArrayInitializer == null || ace.ArrayInitializer.CreateExpressions == null)) {
 					string arrayParameters  = String.Empty;
-					foreach (Expression expr in ace.Parameters) {
+					foreach (INode node in ace.Parameters) {
 						arrayParameters += "(";
-						arrayParameters += expr.AcceptVisitor(this, data);
+						arrayParameters += node.AcceptVisitor(this, data);
 						arrayParameters += " - 1)";
 					}
 					sourceText.Append("Dim ");
@@ -546,14 +548,14 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(EmptyStatement emptyStatement, object data)
+		public override object Visit(EmptyStatement emptyStatement, object data)
 		{
 			DebugOutput(emptyStatement);
 			AppendNewLine();
 			return null;
 		}
 		
-		public object Visit(ReturnStatement returnStatement, object data)
+		public override object Visit(ReturnStatement returnStatement, object data)
 		{
 			DebugOutput(returnStatement);
 			AppendIndentation();sourceText.Append("Return");
@@ -565,7 +567,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(IfStatement ifStatement, object data)
+		public override object Visit(IfStatement ifStatement, object data)
 		{
 			DebugOutput(ifStatement);
 			AppendIndentation();
@@ -591,7 +593,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(IfElseStatement ifElseStatement, object data)
+		public override object Visit(IfElseStatement ifElseStatement, object data)
 		{
 			DebugOutput(ifElseStatement);
 			AppendIndentation();sourceText.Append("If ");
@@ -615,7 +617,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(WhileStatement whileStatement, object data)
+		public override object Visit(WhileStatement whileStatement, object data)
 		{
 			DebugOutput(whileStatement);
 			AppendIndentation();sourceText.Append("While ");
@@ -631,7 +633,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(DoWhileStatement doWhileStatement, object data)
+		public override object Visit(DoWhileStatement doWhileStatement, object data)
 		{
 			DebugOutput(doWhileStatement);
 			AppendIndentation();sourceText.Append("Do While");
@@ -647,7 +649,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(ForStatement forStatement, object data)
+		public override object Visit(ForStatement forStatement, object data)
 		{
 			DebugOutput(forStatement);
 			if (forStatement.Initializers != null) {
@@ -685,7 +687,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(LabelStatement labelStatement, object data)
+		public override object Visit(LabelStatement labelStatement, object data)
 		{
 			DebugOutput(labelStatement);
 			AppendIndentation();sourceText.Append(labelStatement.Label);
@@ -694,7 +696,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(GotoStatement gotoStatement, object data)
+		public override object Visit(GotoStatement gotoStatement, object data)
 		{
 			DebugOutput(gotoStatement);
 			AppendIndentation();sourceText.Append("Goto ");
@@ -703,7 +705,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(SwitchStatement switchStatement, object data)
+		public override object Visit(SwitchStatement switchStatement, object data)
 		{
 			DebugOutput(switchStatement);
 			AppendIndentation();sourceText.Append("Select ");
@@ -734,7 +736,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(BreakStatement breakStatement, object data)
+		public override object Visit(BreakStatement breakStatement, object data)
 		{
 			DebugOutput(breakStatement);
 			AppendIndentation();sourceText.Append("' break");
@@ -742,7 +744,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(ContinueStatement continueStatement, object data)
+		public override object Visit(ContinueStatement continueStatement, object data)
 		{
 			DebugOutput(continueStatement);
 			AppendIndentation();sourceText.Append("' continue");
@@ -750,7 +752,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(GotoCaseStatement gotoCaseStatement, object data)
+		public override object Visit(GotoCaseStatement gotoCaseStatement, object data)
 		{
 			DebugOutput(gotoCaseStatement);
 			AppendIndentation();sourceText.Append("' goto case ");
@@ -763,7 +765,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(ForeachStatement foreachStatement, object data)
+		public override object Visit(ForeachStatement foreachStatement, object data)
 		{
 			DebugOutput(foreachStatement);
 			AppendIndentation();sourceText.Append("For Each ");
@@ -783,7 +785,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(LockStatement lockStatement, object data)
+		public override object Visit(LockStatement lockStatement, object data)
 		{
 			DebugOutput(lockStatement);
 			AppendIndentation();sourceText.Append("SyncLock ");
@@ -799,7 +801,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(UsingStatement usingStatement, object data)
+		public override object Visit(UsingStatement usingStatement, object data)
 		{
 			DebugOutput(usingStatement);
 			// TODO : anything like this ?
@@ -811,7 +813,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(TryCatchStatement tryCatchStatement, object data)
+		public override object Visit(TryCatchStatement tryCatchStatement, object data)
 		{
 			DebugOutput(tryCatchStatement);
 			AppendIndentation();sourceText.Append("Try");
@@ -853,7 +855,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(ThrowStatement throwStatement, object data)
+		public override object Visit(ThrowStatement throwStatement, object data)
 		{
 			DebugOutput(throwStatement);
 			AppendIndentation();sourceText.Append("Throw ");
@@ -862,28 +864,53 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(FixedStatement fixedStatement, object data)
+		public override object Visit(FixedStatement fixedStatement, object data)
 		{
 			DebugOutput(fixedStatement);
 			errors.Error(-1, -1, String.Format("fixed statement not suported by VB.NET"));
 			return null;
 		}
 		
-		public virtual object Visit(CheckedStatement checkedStatement, object data)
+		public override object Visit(CheckedStatement checkedStatement, object data)
 		{
 			DebugOutput(checkedStatement);
 			errors.Error(-1, -1, String.Format("checked statement not suported by VB.NET"));
 			return null;
 		}
 		
-		public virtual object Visit(UncheckedStatement uncheckedStatement, object data)
+		public override object Visit(UncheckedStatement uncheckedStatement, object data)
 		{
 			DebugOutput(uncheckedStatement);
 			errors.Error(-1, -1, String.Format("unchecked statement not suported by VB.NET"));
 			return null;
 		}
 		
-		public object Visit(PrimitiveExpression primitiveExpression, object data)
+		string ConvertChar(char ch)
+		{
+			switch (ch) {
+				case '\0':
+				case '\a':
+				case '\b':
+				case '\f':
+				case '\t':
+				case '\v':
+				case '\r':
+				case '\n':
+					return "\" + Microsoft.VisualBasic.Chr(" + ((int)ch) +") + \"";
+				case '"':
+					return "\"\"";
+			}
+			return ch.ToString();
+		}
+		string ConvertString(string str)
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach (char ch in str) {
+				sb.Append(ConvertChar(ch));
+			}
+			return sb.ToString();
+		}
+		public override object Visit(PrimitiveExpression primitiveExpression, object data)
 		{
 			DebugOutput(primitiveExpression);
 			if (primitiveExpression.Value == null) {
@@ -898,20 +925,20 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			
 			if (primitiveExpression.Value is string) {
 				return String.Concat('"',
-				                     primitiveExpression.Value,
+				                     ConvertString(primitiveExpression.Value.ToString()),
 				                     '"');
 			}
 			
 			if (primitiveExpression.Value is char) {
-				return String.Concat("'",
-				                     primitiveExpression.Value,
-				                     "'");
+				return String.Concat("\"",
+				                     ConvertChar((char)primitiveExpression.Value),
+				                     "\"C");
 			}
 			
 			return primitiveExpression.Value;
 		}
 		
-		public object Visit(BinaryOperatorExpression binaryOperatorExpression, object data)
+		public override object Visit(BinaryOperatorExpression binaryOperatorExpression, object data)
 		{
 			DebugOutput(binaryOperatorExpression);
 			string op = null;
@@ -969,7 +996,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 					                     left,
 					                     ", GetType(",
 					                     right,
-					                     "), ",
+					                     ")), ",
 					                     right,
 					                     ")");
 				case BinaryOperatorType.IS:
@@ -1017,7 +1044,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			                     right);
 		}
 		
-		public object Visit(ParenthesizedExpression parenthesizedExpression, object data)
+		public override object Visit(ParenthesizedExpression parenthesizedExpression, object data)
 		{
 			DebugOutput(parenthesizedExpression);
 			string innerExpr = parenthesizedExpression.Expression.AcceptVisitor(this, data).ToString();
@@ -1031,7 +1058,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return String.Concat("(", innerExpr, ")");
 		}
 		
-		public object Visit(InvocationExpression invocationExpression, object data)
+		public override object Visit(InvocationExpression invocationExpression, object data)
 		{
 			DebugOutput(invocationExpression);
 			string backString;
@@ -1057,19 +1084,19 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return backString;
 		}
 		
-		public object Visit(IdentifierExpression identifierExpression, object data)
+		public override object Visit(IdentifierExpression identifierExpression, object data)
 		{
 			DebugOutput(identifierExpression);
 			return identifierExpression.Identifier;
 		}
 		
-		public object Visit(TypeReferenceExpression typeReferenceExpression, object data)
+		public override object Visit(TypeReferenceExpression typeReferenceExpression, object data)
 		{
 			DebugOutput(typeReferenceExpression);
 			return GetTypeString(typeReferenceExpression.TypeReference);
 		}
 		
-		public object Visit(UnaryOperatorExpression unaryOperatorExpression, object data)
+		public override object Visit(UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
 			DebugOutput(unaryOperatorExpression);
 			switch (unaryOperatorExpression.Op) {
@@ -1096,7 +1123,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			throw new System.NotSupportedException();
 		}
 		
-		public object Visit(AssignmentExpression assignmentExpression, object data)
+		public override object Visit(AssignmentExpression assignmentExpression, object data)
 		{
 			DebugOutput(assignmentExpression);
 			string op   = null;
@@ -1149,14 +1176,14 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			                     right);
 		}
 		
-		public object Visit(SizeOfExpression sizeOfExpression, object data)
+		public override object Visit(SizeOfExpression sizeOfExpression, object data)
 		{
 			DebugOutput(sizeOfExpression);
 			errors.Error(-1, -1, String.Format("sizeof expression not suported by VB.NET"));
 			return null;
 		}
 		
-		public object Visit(TypeOfExpression typeOfExpression, object data)
+		public override object Visit(TypeOfExpression typeOfExpression, object data)
 		{
 			DebugOutput(typeOfExpression);
 			return String.Concat("GetType(",
@@ -1164,25 +1191,25 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			                     ")");
 		}
 		
-		public object Visit(CheckedExpression checkedExpression, object data)
+		public override object Visit(CheckedExpression checkedExpression, object data)
 		{
 			return String.Concat("'Checked expression (can't convert):",
 			                     checkedExpression.Expression.AcceptVisitor(this, data));
 		}
 		
-		public object Visit(UncheckedExpression uncheckedExpression, object data)
+		public override object Visit(UncheckedExpression uncheckedExpression, object data)
 		{
 			return String.Concat("'Unhecked expression (can't convert):",
 			                     uncheckedExpression.Expression.AcceptVisitor(this, data));
 		}
 		
-		public object Visit(PointerReferenceExpression pointerReferenceExpression, object data)
+		public override object Visit(PointerReferenceExpression pointerReferenceExpression, object data)
 		{
 			errors.Error(-1, -1, String.Format("pointer reference (->) not suported by VB.NET"));
 			return String.Empty;
 		}
 		
-		public object Visit(CastExpression castExpression, object data)
+		public override object Visit(CastExpression castExpression, object data)
 		{
 			DebugOutput(castExpression);
 			return String.Format("CType({0}, {1})",
@@ -1190,32 +1217,32 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			                     GetTypeString(castExpression.CastTo));
 		}
 		
-		public object Visit(StackAllocExpression stackAllocExpression, object data)
+		public override object Visit(StackAllocExpression stackAllocExpression, object data)
 		{
 			errors.Error(-1, -1, String.Format("stack alloc expression not suported by VB.NET"));
 			return String.Empty;
 		}
 		
-		public object Visit(IndexerExpression indexerExpression, object data)
+		public override object Visit(IndexerExpression indexerExpression, object data)
 		{
 			DebugOutput(indexerExpression);
 			return String.Concat(indexerExpression.TargetObject.AcceptVisitor(this, data),
 			                     GetParameters(indexerExpression.Indices));
 		}
 		
-		public object Visit(ThisReferenceExpression thisReferenceExpression, object data)
+		public override object Visit(ThisReferenceExpression thisReferenceExpression, object data)
 		{
 			DebugOutput(thisReferenceExpression);
 			return "Me";
 		}
 		
-		public object Visit(BaseReferenceExpression baseReferenceExpression, object data)
+		public override object Visit(BaseReferenceExpression baseReferenceExpression, object data)
 		{
 			DebugOutput(baseReferenceExpression);
 			return "MyBase";
 		}
 		
-		public object Visit(ObjectCreateExpression objectCreateExpression, object data)
+		public override object Visit(ObjectCreateExpression objectCreateExpression, object data)
 		{
 			DebugOutput(objectCreateExpression);
 			if (IsEventHandlerCreation(objectCreateExpression)) {
@@ -1234,7 +1261,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			                     );
 		}
 		
-		public object Visit(ArrayCreateExpression arrayCreateExpression, object data)
+		public override object Visit(ArrayCreateExpression arrayCreateExpression, object data)
 		{
 			DebugOutput(arrayCreateExpression);
 			string arrayInitializer = String.Empty;
@@ -1247,10 +1274,13 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			}
 			
 			if (arrayCreateExpression.Parameters != null && arrayCreateExpression.Parameters.Count > 0) {
-				foreach (Expression expr in arrayCreateExpression.Parameters) {
-					arrayParameters += "(";
-					arrayParameters += expr.AcceptVisitor(this, data);
-					arrayParameters += ")";
+				foreach (ArrayCreationParameter param in arrayCreateExpression.Parameters) {
+					// TODO: multidimensional arrays ?
+					foreach (Expression expr in param.Expressions) {
+						arrayParameters += "(";
+						arrayParameters += expr.AcceptVisitor(this, data);
+						arrayParameters += ")";
+					}
 				}
 			} else {
 				arrayParameters = "()";
@@ -1263,13 +1293,13 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			                     );
 		}
 		
-		public object Visit(ParameterDeclarationExpression parameterDeclarationExpression, object data)
+		public override object Visit(ParameterDeclarationExpression parameterDeclarationExpression, object data)
 		{
 			// should never be called:
 			throw new System.NotImplementedException();
 		}
 		
-		public object Visit(FieldReferenceExpression fieldReferenceExpression, object data)
+		public override object Visit(FieldReferenceExpression fieldReferenceExpression, object data)
 		{
 			DebugOutput(fieldReferenceExpression);
 			if (fieldReferenceExpression.TargetObject is ObjectCreateExpression) {
@@ -1283,7 +1313,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			                     fieldReferenceExpression.FieldName);
 		}
 		
-		public object Visit(DirectionExpression directionExpression, object data)
+		public override object Visit(DirectionExpression directionExpression, object data)
 		{
 			DebugOutput(directionExpression);
 			string fieldDirection = String.Empty;
@@ -1297,14 +1327,14 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return String.Concat(fieldDirection, directionExpression.Expression.AcceptVisitor(this, data));
 		}
 		
-		public object Visit(ArrayInitializerExpression arrayInitializerExpression, object data)
+		public override object Visit(ArrayInitializerExpression arrayInitializerExpression, object data)
 		{
 			return String.Concat(" {",
 			                     GetExpressionList(arrayInitializerExpression.CreateExpressions),
 			                     "}");
 		}
 		
-		public object Visit(ConditionalExpression conditionalExpression, object data)
+		public override object Visit(ConditionalExpression conditionalExpression, object data)
 		{
 			errors.Error(-1, -1, String.Format("TODO: Conditionals :)"));
 			return String.Empty;
@@ -1411,19 +1441,11 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				builder.Append("NotInheritable ");
 			}
 			
-			if ((modifier & Modifier.Sealed) == Modifier.Sealed) {
-				builder.Append("NotInheritable ");
-			}
-			
 			if ((modifier & Modifier.Const) == Modifier.Const) {
 				builder.Append("Const ");
 			}
 			if ((modifier & Modifier.Readonly) == Modifier.Readonly) {
 				builder.Append("ReadOnly ");
-			}
-			
-			if ((modifier & Modifier.Const) == Modifier.Const) {
-				builder.Append("Const ");
 			}
 			
 			// TODO : Extern 
@@ -1506,7 +1528,6 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			if (op != null && op.Op == BinaryOperatorType.InEquality) {
 				if (op.Left is IdentifierExpression && op.Right is PrimitiveExpression && ((PrimitiveExpression)op.Right).Value == null) {
 					string identifier = ((IdentifierExpression)op.Left).Identifier;
-					Console.WriteLine(ifStatement.EmbeddedStatement);
 					StatementExpression se = null;
 					if (ifStatement.EmbeddedStatement is StatementExpression) {
 						se = (StatementExpression)ifStatement.EmbeddedStatement;
@@ -1527,7 +1548,6 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 								}
 							}
 							if (methodName != null && methodName == identifier) {
-								Console.WriteLine(methodName);
 								foreach (object o in this.currentType.Children) {
 									EventDeclaration ed = o as EventDeclaration;
 									if (ed != null) {
@@ -1600,4 +1620,3 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		}
 	}
 }
-

@@ -1,7 +1,7 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Kr�ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -48,11 +48,9 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CompletionDatabaseWi
 				SetProgressBarValue(0);
 				ControlDictionary["createButton"].Text = resourceService.GetString("Dialog.Wizards.CodeCompletionDatabaseWizard.CreateDatabasePanel.StartCreationButton");
 				EnableCancel = EnablePrevious = true;
-				ControlDictionary["fastCreationCheckBox"].Enabled = true;
 				generateThread = null;
 			} else {
 				EnableCancel = EnablePrevious = false;
-				ControlDictionary["fastCreationCheckBox"].Enabled = false;
 				generateThread = new Thread(new ThreadStart(CreateDatabase));
 				generateThread.Priority = ThreadPriority.Lowest;
 				generateThread.Start();
@@ -66,11 +64,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CompletionDatabaseWi
 			try {
 				DefaultParserService parserService  = (DefaultParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(DefaultParserService));
 				string path  = properties.GetProperty("SharpDevelop.CodeCompletion.DataDirectory", String.Empty);
-				if (((CheckBox)ControlDictionary["fastCreationCheckBox"]).Checked) {
-					parserService.GenerateCodeCompletionDatabaseFast(path, this);
-				} else {
-					parserService.GenerateEfficientCodeCompletionDatabase(path, this);
-				}
+				parserService.GenerateCodeCompletionDatabase(path, this);
 			} catch (ThreadAbortException) {
 				// do nothing, thread stopped
 			} catch (Exception e) {

@@ -33,8 +33,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			listView1.SmallImageList = FileUtility.ImageList;
 			
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
-				if (content.IsDirty && content.ContentName != null) {
-					ListViewItem item = new ListViewItem(content.ContentName, FileUtility.GetImageIndexFor(content.ContentName));
+				if (content.IsDirty && content.FileName != null) {
+					ListViewItem item = new ListViewItem(content.FileName, FileUtility.GetImageIndexFor(content.FileName));
 					item.Selected = true;
 					listView1.Items.Add(item);
 				}
@@ -49,7 +49,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		void SaveAll(object sender, EventArgs e)
 		{
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
-				if (content.IsDirty && content.ContentName != null) {
+				if (content.IsDirty && content.FileName != null) {
 					content.SaveFile();
 				}
 			}
@@ -59,9 +59,9 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		void SaveSelected(object sender, EventArgs e)
 		{
 			foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
-				if (content.IsDirty && content.ContentName != null) {
+				if (content.IsDirty && content.FileName != null) {
 					foreach (ListViewItem item in listView1.SelectedItems) {
-						if (item.Text == content.ContentName) {
+						if (item.Text == content.FileName) {
 							content.SaveFile();
 							break;
 						}

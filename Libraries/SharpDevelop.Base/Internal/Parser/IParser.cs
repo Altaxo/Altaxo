@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krueger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -119,6 +119,10 @@ namespace SharpDevelop.Internal.Parser
 			set;
 		}
 		
+		IExpressionFinder ExpressionFinder {
+			get;
+		}
+		
 		ICompilationUnitBase Parse(string fileName);
 		ICompilationUnitBase Parse(string fileName, string fileContent);
 		
@@ -132,5 +136,8 @@ namespace SharpDevelop.Internal.Parser
 		                      int caretColumn, 
 		                      string fileName,
 		                      string fileContent);
+		
+		
+		ArrayList CtrlSpace(IParserService parserService, int caretLine, int caretColumn, string fileName);
 	}
 }

@@ -2,6 +2,8 @@ using System;
 using System.Threading;
 using System.IO;
 using System.Windows.Forms;
+//// required for IWebBrowser2 access
+using Interop.SHDocVw;
 
 namespace ICSharpCode.SharpDevelop.Gui.HtmlControl
 {
@@ -97,6 +99,9 @@ namespace ICSharpCode.SharpDevelop.Gui.HtmlControl
 			object targetFrame = String.Empty;
 			object postData    = String.Empty;
 			object headers     = String.Empty;
+//// Alex: prevent dialog boxes - annoying when scripting is off
+			IWebBrowser2 iwb2=(IWebBrowser2)this.control;
+			iwb2.Silent=true;
 			this.control.Navigate("about:blank", ref flags, ref targetFrame, ref postData, ref headers);
 		}
 		

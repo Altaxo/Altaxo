@@ -17,10 +17,5 @@ namespace CSharpBinding.Parser.SharpDevelopTree
 				return null;
 			}
 		}
-		public override TagCollection TagComments {
-			get {
-				return null;
-			}
-		}
 	}
 }

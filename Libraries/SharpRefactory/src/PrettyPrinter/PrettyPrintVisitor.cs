@@ -25,29 +25,44 @@ using ICSharpCode.SharpRefactory.Parser.AST;
 
 namespace ICSharpCode.SharpRefactory.PrettyPrinter
 {
-	public class PrettyPrintVisitor : IASTVisitor
+	public class PrettyPrintVisitor : AbstractASTVisitor
 	{
 		Errors  errors = new Errors();
-		OutputFormatter outputFormatter = new OutputFormatter();
+		OutputFormatter outputFormatter;
+		PrettyPrintOptions prettyPrintOptions = new PrettyPrintOptions();
 		
 		public string Text {
 			get {
 				return outputFormatter.Text;
 			}
 		}
+		
 		public Errors Errors {
 			get {
 				return errors;
 			}
 		}
 		
-		public object Visit(INode node, object data)
+		public PrettyPrintOptions PrettyPrintOptions {
+			get {
+				return prettyPrintOptions;
+			}
+		}
+		
+		public PrettyPrintVisitor(string originalSourceFile)
 		{
-			errors.Error(-1, -1, String.Format("Visited INode (should NEVER HAPPEN) Node was : {0} ", node));
+			outputFormatter = new OutputFormatter(originalSourceFile, prettyPrintOptions);
+		}
+		
+		public override object Visit(INode node, object data)
+		{
+			errors.Error(-1, -1, String.Format("Visited INode (should NEVER HAPPEN)"));
+			Console.WriteLine("Visitor was: " + this.GetType());
+			Console.WriteLine("Node was : " + node.GetType());
 			return node.AcceptChildren(this, data);
 		}
 		
-		public object Visit(AttributeSection section, object data)
+		public override object Visit(AttributeSection section, object data)
 		{
 			outputFormatter.Indent();
 			outputFormatter.PrintToken(Tokens.OpenSquareBracket);
@@ -57,7 +72,8 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 				outputFormatter.Space();
 			}
 			Debug.Assert(section.Attributes != null);
-			foreach (ICSharpCode.SharpRefactory.Parser.AST.Attribute a in section.Attributes) {
+			for (int j = 0; j < section.Attributes.Count; ++j) {
+				ICSharpCode.SharpRefactory.Parser.AST.Attribute a = (ICSharpCode.SharpRefactory.Parser.AST.Attribute)section.Attributes[j];
 				outputFormatter.PrintIdentifier(a.Name);
 				outputFormatter.PrintToken(Tokens.OpenParenthesis);
 				this.AppendCommaSeparatedList(a.PositionalArguments);
@@ -81,32 +97,35 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 					}
 				}
 				outputFormatter.PrintToken(Tokens.CloseParenthesis);
+				if (j + 1 < section.Attributes.Count) {
+					outputFormatter.PrintToken(Tokens.Comma);
+					outputFormatter.Space();
+				}
 			}
 			outputFormatter.PrintToken(Tokens.CloseSquareBracket);
-			outputFormatter.PrintTrailingComment();
 			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(CompilationUnit compilationUnit, object data)
+		public override object Visit(CompilationUnit compilationUnit, object data)
 		{
 			compilationUnit.AcceptChildren(this, data);
+			outputFormatter.EndFile();
 			return null;
 		}
 		
-		public object Visit(UsingDeclaration usingDeclaration, object data)
+		public override object Visit(UsingDeclaration usingDeclaration, object data)
 		{
 			outputFormatter.Indent();
 			outputFormatter.PrintToken(Tokens.Using);
 			outputFormatter.Space();
 			outputFormatter.PrintIdentifier(usingDeclaration.Namespace);
 			outputFormatter.PrintToken(Tokens.Semicolon);
-			outputFormatter.PrintTrailingComment();
 			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(UsingAliasDeclaration usingAliasDeclaration, object data)
+		public override object Visit(UsingAliasDeclaration usingAliasDeclaration, object data)
 		{
 			outputFormatter.Indent();
 			outputFormatter.PrintToken(Tokens.Using);
@@ -117,12 +136,11 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			outputFormatter.Space();
 			outputFormatter.PrintIdentifier(usingAliasDeclaration.Namespace);
 			outputFormatter.PrintToken(Tokens.Semicolon);
-			outputFormatter.PrintTrailingComment();
 			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(NamespaceDeclaration namespaceDeclaration, object data)
+		public override object Visit(NamespaceDeclaration namespaceDeclaration, object data)
 		{
 			outputFormatter.Indent();
 			outputFormatter.PrintToken(Tokens.Namespace);
@@ -143,49 +161,53 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		
 		object VisitModifier(Modifier modifier)
 		{
+			ArrayList tokenList = new ArrayList();
 			if ((modifier & Modifier.Unsafe) != 0) {
-				outputFormatter.PrintToken(Tokens.Unsafe);
+				tokenList.Add(Tokens.Unsafe);
 			}
 			if ((modifier & Modifier.Public) != 0) {
-				outputFormatter.PrintToken(Tokens.Public);
+				tokenList.Add(Tokens.Public);
 			}
 			if ((modifier & Modifier.Private) != 0) {
-				outputFormatter.PrintToken(Tokens.Private);
+				tokenList.Add(Tokens.Private);
 			}
 			if ((modifier & Modifier.Protected) != 0) {
-				outputFormatter.PrintToken(Tokens.Protected);
+				tokenList.Add(Tokens.Protected);
 			}
 			if ((modifier & Modifier.Static) != 0) {
-				outputFormatter.PrintToken(Tokens.Static);
+				tokenList.Add(Tokens.Static);
 			}
 			if ((modifier & Modifier.Internal) != 0) {
-				outputFormatter.PrintToken(Tokens.Internal);
+				tokenList.Add(Tokens.Internal);
 			}
 			if ((modifier & Modifier.Override) != 0) {
-				outputFormatter.PrintToken(Tokens.Override);
+				tokenList.Add(Tokens.Override);
 			}
 			if ((modifier & Modifier.Abstract) != 0) {
-				outputFormatter.PrintToken(Tokens.Abstract);
+				tokenList.Add(Tokens.Abstract);
+			}
+			if ((modifier & Modifier.Virtual) != 0) {
+				tokenList.Add(Tokens.Virtual);
 			}
 			if ((modifier & Modifier.New) != 0) {
-				outputFormatter.PrintToken(Tokens.New);
+				tokenList.Add(Tokens.New);
 			}
 			if ((modifier & Modifier.Sealed) != 0) {
-				outputFormatter.PrintToken(Tokens.Sealed);
+				tokenList.Add(Tokens.Sealed);
 			}
 			if ((modifier & Modifier.Extern) != 0) {
-				outputFormatter.PrintToken(Tokens.Extern);
+				tokenList.Add(Tokens.Extern);
 			}
 			if ((modifier & Modifier.Const) != 0) {
-				outputFormatter.PrintToken(Tokens.Const);
+				tokenList.Add(Tokens.Const);
 			}
 			if ((modifier & Modifier.Readonly) != 0) {
-				outputFormatter.PrintToken(Tokens.Readonly);
+				tokenList.Add(Tokens.Readonly);
 			}
 			if ((modifier & Modifier.Volatile) != 0) {
-				outputFormatter.PrintToken(Tokens.Volatile);
+				tokenList.Add(Tokens.Volatile);
 			}
-			outputFormatter.Space();
+			outputFormatter.PrintTokenList(tokenList);
 			return null;
 		}
 				
@@ -254,9 +276,10 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(TypeDeclaration typeDeclaration, object data)
+		public override object Visit(TypeDeclaration typeDeclaration, object data)
 		{
 			VisitAttributes(typeDeclaration.Attributes, data);
+			outputFormatter.Indent();
 			VisitModifier(typeDeclaration.Modifier);
 			switch (typeDeclaration.Type) {
 				case Types.Class:
@@ -275,10 +298,15 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			outputFormatter.Space();
 			outputFormatter.PrintIdentifier(typeDeclaration.Name);
 			if (typeDeclaration.BaseTypes != null && typeDeclaration.BaseTypes.Count > 0) {
+				outputFormatter.Space();
 				outputFormatter.PrintToken(Tokens.Colon);
 				for (int i = 0; i < typeDeclaration.BaseTypes.Count; ++i) {
 					outputFormatter.Space();
 					outputFormatter.PrintIdentifier(typeDeclaration.BaseTypes[i]);
+					if (i + 1 < typeDeclaration.BaseTypes.Count) {
+						outputFormatter.PrintToken(Tokens.Comma);
+						outputFormatter.Space();
+					}
 				}
 			}
 			outputFormatter.NewLine();
@@ -299,7 +327,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(ParameterDeclarationExpression parameterDeclarationExpression, object data)
+		public override object Visit(ParameterDeclarationExpression parameterDeclarationExpression, object data)
 		{
 			VisitAttributes(parameterDeclarationExpression.Attributes, data);
 			VisitParamModifiers(parameterDeclarationExpression.ParamModifiers);
@@ -309,7 +337,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(DelegateDeclaration delegateDeclaration, object data)
+		public override object Visit(DelegateDeclaration delegateDeclaration, object data)
 		{
 			VisitAttributes(delegateDeclaration.Attributes, data);
 			VisitModifier(delegateDeclaration.Modifier);
@@ -326,7 +354,7 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 			return null;
 		}
 		
-		public object Visit(VariableDeclaration variableDeclaration, object data)
+		public override object Visit(VariableDeclaration variableDeclaration, object data)
 		{
 			outputFormatter.PrintIdentifier(variableDeclaration.Name);
 			if (variableDeclaration.Initializer != null) {
@@ -347,976 +375,1212 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 						outputFormatter.PrintToken(Tokens.Comma);
 						outputFormatter.Space();
 					}
+					if ((i + 1) % 10 == 0) {
+						outputFormatter.NewLine();
+						outputFormatter.Indent();
+					}
 				}
 			}
 		}
 		
-		public object Visit(EventDeclaration eventDeclaration, object data)
+		public override object Visit(EventDeclaration eventDeclaration, object data)
 		{
-//			VisitAttributes(eventDeclaration.Attributes, data);
-//			VisitModifier(eventDeclaration.Modifier);
-//			text.Append("event ");
-//			Visit(eventDeclaration.TypeReference, data);
-//			text.Append(' ');
-//			if (eventDeclaration.VariableDeclarators != null && eventDeclaration.VariableDeclarators.Count > 0) {
-//				AppendCommaSeparatedList(eventDeclaration.VariableDeclarators);
-//				text.Append(";\n");
-//			} else {
-//				text.Append(eventDeclaration.Name);
-//				text.Append(" {\n");
-//				++indentationLevel;
-//				if (eventDeclaration.AddRegion != null) {
-//					eventDeclaration.AddRegion.AcceptVisitor(this, data);
-//				}
-//				if (eventDeclaration.RemoveRegion != null) {
-//					eventDeclaration.RemoveRegion.AcceptVisitor(this, data);
-//				}
-//				--indentationLevel;
-//				Indent();
-//				text.Append("}\n");
-//			}
+			VisitAttributes(eventDeclaration.Attributes, data);
+			outputFormatter.Indent();
+			VisitModifier(eventDeclaration.Modifier);
+			outputFormatter.PrintToken(Tokens.Event);
+			outputFormatter.Space();
+			Visit(eventDeclaration.TypeReference, data);
+			outputFormatter.Space();
+			
+			if (eventDeclaration.VariableDeclarators != null && eventDeclaration.VariableDeclarators.Count > 0) {
+				AppendCommaSeparatedList(eventDeclaration.VariableDeclarators);
+				outputFormatter.PrintToken(Tokens.Semicolon);
+				outputFormatter.NewLine();
+			} else {
+				outputFormatter.PrintIdentifier(eventDeclaration.Name);
+				if (eventDeclaration.AddRegion == null && eventDeclaration.RemoveRegion == null) {
+					outputFormatter.PrintToken(Tokens.Semicolon);
+				} else {
+					outputFormatter.Space();
+					outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+					outputFormatter.NewLine();
+					++outputFormatter.IndentationLevel;
+					if (eventDeclaration.AddRegion != null) {
+						eventDeclaration.AddRegion.AcceptVisitor(this, data);
+					}
+					if (eventDeclaration.RemoveRegion != null) {
+						eventDeclaration.RemoveRegion.AcceptVisitor(this, data);
+					}
+					--outputFormatter.IndentationLevel;
+					outputFormatter.Indent();
+					outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+				}
+				outputFormatter.NewLine();
+			}
 			return null;
 		}
 		
-		public object Visit(EventAddRegion addRegion, object data)
+		public override object Visit(EventAddRegion addRegion, object data)
 		{
-//			this.VisitAttributes(addRegion.Attributes, data);
-//			Indent();
-//			VisitAttributes(addRegion.Attributes, data);
-//			text.Append("add {\n");
-//			++indentationLevel;
-//			addRegion.Block.AcceptVisitor(this, false);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			VisitAttributes(addRegion.Attributes, data);
+			outputFormatter.Indent();
+			outputFormatter.PrintIdentifier("add");
+			if (addRegion.Block == null) {
+				outputFormatter.PrintToken(Tokens.Semicolon);
+			} else {
+				outputFormatter.Space();
+				outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+				outputFormatter.NewLine();
+				++outputFormatter.IndentationLevel;
+				addRegion.Block.AcceptChildren(this, false);
+				--outputFormatter.IndentationLevel;
+				outputFormatter.Indent();
+				outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			}
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(EventRemoveRegion removeRegion, object data)
+		public override object Visit(EventRemoveRegion removeRegion, object data)
 		{
-//			this.VisitAttributes(removeRegion.Attributes, data);
-//			Indent();
-//			VisitAttributes(removeRegion.Attributes, data);
-//			text.Append("remove {\n");
-//			++indentationLevel;
-//			removeRegion.Block.AcceptVisitor(this, false);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			VisitAttributes(removeRegion.Attributes, data);
+			outputFormatter.Indent();
+			outputFormatter.PrintIdentifier("remove");
+			if (removeRegion.Block == null) {
+				outputFormatter.PrintToken(Tokens.Semicolon);
+			} else {
+				outputFormatter.Space();
+				outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+				outputFormatter.NewLine();
+				++outputFormatter.IndentationLevel;
+				removeRegion.Block.AcceptChildren(this, false);
+				--outputFormatter.IndentationLevel;
+				outputFormatter.Indent();
+				outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			}
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(FieldDeclaration fieldDeclaration, object data)
+		public override object Visit(FieldDeclaration fieldDeclaration, object data)
 		{
-//			VisitAttributes(fieldDeclaration.Attributes, data);
-//			VisitModifier(fieldDeclaration.Modifier);
-//			Visit(fieldDeclaration.TypeReference, data);
-//			text.Append(' ');
-//			AppendCommaSeparatedList(fieldDeclaration.Fields);
-//			text.Append(";\n");
+			VisitAttributes(fieldDeclaration.Attributes, data);
+			outputFormatter.Indent();
+			VisitModifier(fieldDeclaration.Modifier);
+			Visit(fieldDeclaration.TypeReference, data);
+			outputFormatter.Space();
+			AppendCommaSeparatedList(fieldDeclaration.Fields);
+			outputFormatter.PrintToken(Tokens.Semicolon);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(ConstructorDeclaration constructorDeclaration, object data)
+		public override object Visit(ConstructorDeclaration constructorDeclaration, object data)
 		{
-//			VisitAttributes(constructorDeclaration.Attributes, data);
-//			VisitModifier(constructorDeclaration.Modifier);
-//			text.Append(constructorDeclaration.Name);
-//			text.Append('(');
-//			AppendCommaSeparatedList(constructorDeclaration.Parameters);
-//			text.Append(")\n");
-//			Indent();
-//			text.Append("{\n");
-//			++indentationLevel;
-//			constructorDeclaration.Body.AcceptChildren(this, data);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			VisitAttributes(constructorDeclaration.Attributes, data);
+			outputFormatter.Indent();
+			VisitModifier(constructorDeclaration.Modifier);
+			outputFormatter.PrintIdentifier(constructorDeclaration.Name);
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			AppendCommaSeparatedList(constructorDeclaration.Parameters);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			
+			if (constructorDeclaration.ConstructorInitializer != null) {
+				outputFormatter.Space();
+				outputFormatter.PrintToken(Tokens.Colon);
+				outputFormatter.Space();
+				if (constructorDeclaration.ConstructorInitializer.ConstructorInitializerType == ConstructorInitializerType.Base) {
+					outputFormatter.PrintToken(Tokens.Base);
+				} else {
+					outputFormatter.PrintToken(Tokens.This);
+				}
+				outputFormatter.PrintToken(Tokens.OpenParenthesis);
+				AppendCommaSeparatedList(constructorDeclaration.ConstructorInitializer.Arguments);
+				outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			}
+			
+			outputFormatter.NewLine();
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			constructorDeclaration.Body.AcceptChildren(this, data);
+			--outputFormatter.IndentationLevel;
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(DestructorDeclaration destructorDeclaration, object data)
+		public override object Visit(DestructorDeclaration destructorDeclaration, object data)
 		{
-//			VisitAttributes(destructorDeclaration.Attributes, data);
-//			VisitModifier(destructorDeclaration.Modifier);
-//			text.Append('~');
-//			text.Append(destructorDeclaration.Name);
-//			text.Append('(');
-//			text.Append(")\n");
-//			Indent();
-//			text.Append("{\n");
-//			++indentationLevel;
-//			destructorDeclaration.Body.AcceptChildren(this, data);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			VisitAttributes(destructorDeclaration.Attributes, data);
+			outputFormatter.Indent();
+			VisitModifier(destructorDeclaration.Modifier);
+			outputFormatter.PrintToken(Tokens.BitwiseComplement);
+			outputFormatter.PrintIdentifier(destructorDeclaration.Name);
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			outputFormatter.NewLine();
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			destructorDeclaration.Body.AcceptChildren(this, data);
+			--outputFormatter.IndentationLevel;
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(MethodDeclaration methodDeclaration, object data)
+		public override object Visit(MethodDeclaration methodDeclaration, object data)
 		{
-//			VisitAttributes(methodDeclaration.Attributes, data);
-//			VisitModifier(methodDeclaration.Modifier);
-//			Visit(methodDeclaration.TypeReference, data);
-//			text.Append(' ');
-//			text.Append(methodDeclaration.Name);
-//			text.Append('(');
-//			AppendCommaSeparatedList(methodDeclaration.Parameters);
-//			text.Append(")\n");
-//			Indent();
-//			text.Append("{\n");
-//			++indentationLevel;
-//			methodDeclaration.Body.AcceptChildren(this, data);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			VisitAttributes(methodDeclaration.Attributes, data);
+			outputFormatter.Indent();
+			VisitModifier(methodDeclaration.Modifier);
+			Visit(methodDeclaration.TypeReference, data);
+			outputFormatter.Space();
+			outputFormatter.PrintIdentifier(methodDeclaration.Name);
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			AppendCommaSeparatedList(methodDeclaration.Parameters);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			if (methodDeclaration.Body == null) {
+				outputFormatter.PrintToken(Tokens.Semicolon);
+			} else {
+				outputFormatter.NewLine();
+				outputFormatter.Indent();
+				outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+				outputFormatter.NewLine();
+				++outputFormatter.IndentationLevel;
+				methodDeclaration.Body.AcceptChildren(this, data);
+				--outputFormatter.IndentationLevel;
+				outputFormatter.Indent();
+				outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			}
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(IndexerDeclaration indexerDeclaration, object data)
+		public override object Visit(IndexerDeclaration indexerDeclaration, object data)
 		{
-//			VisitAttributes(indexerDeclaration.Attributes, data);
-//			VisitModifier(indexerDeclaration.Modifier);
-//			Visit(indexerDeclaration.TypeReference, data);
-//			text.Append(' ');
-//			if (indexerDeclaration.NamespaceName != null && indexerDeclaration.NamespaceName.Length > 0) {
-//				text.Append(indexerDeclaration.NamespaceName);
-//				text.Append('.');
-//			}
-//			text.Append("this[");
-//			AppendCommaSeparatedList(indexerDeclaration.Parameters);
-//			text.Append("]\n");
-//			Indent();
-//			text.Append("{\n");
-//			++indentationLevel;
-//			if (indexerDeclaration.GetRegion != null) {
-//				indexerDeclaration.GetRegion.AcceptVisitor(this, data);
-//			}
-//			if (indexerDeclaration.SetRegion != null) {
-//				indexerDeclaration.SetRegion.AcceptVisitor(this, data);
-//			}
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			VisitAttributes(indexerDeclaration.Attributes, data);
+			outputFormatter.Indent();
+			VisitModifier(indexerDeclaration.Modifier);
+			Visit(indexerDeclaration.TypeReference, data);
+			outputFormatter.Space();
+			if (indexerDeclaration.NamespaceName != null && indexerDeclaration.NamespaceName.Length > 0) {
+				outputFormatter.PrintIdentifier(indexerDeclaration.NamespaceName);
+				outputFormatter.PrintToken(Tokens.Dot);
+			}
+			outputFormatter.PrintToken(Tokens.This);
+			outputFormatter.PrintToken(Tokens.OpenSquareBracket);
+			AppendCommaSeparatedList(indexerDeclaration.Parameters);
+			outputFormatter.PrintToken(Tokens.CloseSquareBracket);
+			outputFormatter.NewLine();
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			if (indexerDeclaration.GetRegion != null) {
+				indexerDeclaration.GetRegion.AcceptVisitor(this, data);
+			}
+			if (indexerDeclaration.SetRegion != null) {
+				indexerDeclaration.SetRegion.AcceptVisitor(this, data);
+			}
+			--outputFormatter.IndentationLevel;
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(PropertyDeclaration propertyDeclaration, object data)
+		public override object Visit(PropertyDeclaration propertyDeclaration, object data)
 		{
-//			VisitAttributes(propertyDeclaration.Attributes, data);
-//			VisitModifier(propertyDeclaration.Modifier);
-//			Visit(propertyDeclaration.TypeReference, data);
-//			text.Append(' ');
-//			text.Append(propertyDeclaration.Name);
-//			text.Append(" {\n");
-//			++indentationLevel;
-//			if (propertyDeclaration.GetRegion != null) {
-//				propertyDeclaration.GetRegion.AcceptVisitor(this, data);
-//			}
-//			if (propertyDeclaration.SetRegion != null) {
-//				propertyDeclaration.SetRegion.AcceptVisitor(this, data);
-//			}
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			VisitAttributes(propertyDeclaration.Attributes, data);
+			outputFormatter.Indent();
+			VisitModifier(propertyDeclaration.Modifier);
+			Visit(propertyDeclaration.TypeReference, data);
+			outputFormatter.Space();
+			outputFormatter.PrintIdentifier(propertyDeclaration.Name);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			if (propertyDeclaration.GetRegion != null) {
+				propertyDeclaration.GetRegion.AcceptVisitor(this, data);
+			}
+			if (propertyDeclaration.SetRegion != null) {
+				propertyDeclaration.SetRegion.AcceptVisitor(this, data);
+			}
+			--outputFormatter.IndentationLevel;
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(PropertyGetRegion getRegion, object data)
+		public override object Visit(PropertyGetRegion getRegion, object data)
 		{
-//			this.VisitAttributes(getRegion.Attributes, data);
-//			Indent();
-//			text.Append("get {\n");
-//			++indentationLevel;
-//			getRegion.Block.AcceptVisitor(this, false);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			this.VisitAttributes(getRegion.Attributes, data);
+			outputFormatter.Indent();
+			outputFormatter.PrintIdentifier("get");
+			if (getRegion.Block == null) {
+				outputFormatter.PrintToken(Tokens.Semicolon);
+			} else {
+				outputFormatter.Space();
+				outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+				outputFormatter.NewLine();
+				++outputFormatter.IndentationLevel;
+				getRegion.Block.AcceptChildren(this, false);
+				--outputFormatter.IndentationLevel;
+				outputFormatter.Indent();
+				outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			}
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(PropertySetRegion setRegion, object data)
+		public override object Visit(PropertySetRegion setRegion, object data)
 		{
-//			this.VisitAttributes(setRegion.Attributes, data);
-//			Indent();
-//			text.Append("set {\n");
-//			++indentationLevel;
-//			setRegion.Block.AcceptVisitor(this, false);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			this.VisitAttributes(setRegion.Attributes, data);
+			outputFormatter.Indent();
+			outputFormatter.PrintIdentifier("set");
+			if (setRegion.Block == null) {
+				outputFormatter.PrintToken(Tokens.Semicolon);
+			} else {
+				outputFormatter.Space();
+				outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+				outputFormatter.NewLine();
+				++outputFormatter.IndentationLevel;
+				setRegion.Block.AcceptChildren(this, false);
+				--outputFormatter.IndentationLevel;
+				outputFormatter.Indent();
+				outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			}
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		// TODO : Add operator declaration to the parser ... 
-		public object Visit(OperatorDeclaration operatorDeclaration, object data)
+		public override object Visit(OperatorDeclaration operatorDeclaration, object data)
 		{
-//			VisitAttributes(operatorDeclaration.Attributes, data);
-//			VisitModifier(operatorDeclaration.Modifier);
-////			Visit(operatorDeclaration.TypeReference, data);
-//			text.Append(' ');
-////			if (operatorDeclaration.OperatorType == OperatorType.Explicit) {
-////				text.Append("explicit");
-////			} else if (operatorDeclaration.OperatorType == OperatorType.Implicit) {
-////				text.Append("implicit");
-////			} else {
-////				text.Append(operatorDeclaration.overloadOperator)
-////			}
-//			text.Append('(');
-////			text.Append(operatorDeclaration.FirstParameterType);
-//			text.Append(' ');
-////			text.Append(operatorDeclaration.FirstParameterName);
-////			if (operatorDeclaration.OperatorType == OperatorType.Binary) {
-//				text.Append(", ");
-////				text.Append(operatorDeclaration.SecondParameterType);
-//				text.Append(' ');
-////				text.Append(operatorDeclaration.SecondParameterName);
-////			}
-//			text.Append(")\n");
-//			Indent();
-//			text.Append("{\n");
-//			++indentationLevel;
-//			operatorDeclaration.AcceptChildren(this, data);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			VisitAttributes(operatorDeclaration.Attributes, data);
+			outputFormatter.Indent();
+			VisitModifier(operatorDeclaration.Modifier);
+			switch (operatorDeclaration.OpratorDeclarator.OperatorType) {
+				case OperatorType.Explicit:
+					outputFormatter.PrintToken(Tokens.Explicit);
+					break;
+				case OperatorType.Implicit:
+					outputFormatter.PrintToken(Tokens.Implicit);
+					break;
+				default:
+					Visit(operatorDeclaration.OpratorDeclarator.TypeReference, data);
+					break;
+			}
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.Operator);
+			outputFormatter.Space();
+			if (!operatorDeclaration.OpratorDeclarator.IsConversion) {
+				outputFormatter.PrintIdentifier(Tokens.GetTokenString(operatorDeclaration.OpratorDeclarator.OverloadOperatorToken));
+			} else {
+				Visit(operatorDeclaration.OpratorDeclarator.TypeReference, data);
+			}
+			
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			Visit(operatorDeclaration.OpratorDeclarator.FirstParameterType, data);
+			outputFormatter.Space();
+			outputFormatter.PrintIdentifier(operatorDeclaration.OpratorDeclarator.FirstParameterName);
+			if (operatorDeclaration.OpratorDeclarator.OperatorType == OperatorType.Binary) {
+				outputFormatter.PrintToken(Tokens.Comma);
+				outputFormatter.Space();
+				Visit(operatorDeclaration.OpratorDeclarator.SecondParameterType, data);
+				outputFormatter.Space();
+				outputFormatter.PrintIdentifier(operatorDeclaration.OpratorDeclarator.SecondParameterName);
+			}
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			
+			if (operatorDeclaration.Body == null) {
+				outputFormatter.PrintToken(Tokens.Semicolon);
+				outputFormatter.NewLine();
+			} else {
+				outputFormatter.NewLine();
+				outputFormatter.Indent();
+				outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+				outputFormatter.NewLine();
+				++outputFormatter.IndentationLevel;
+				operatorDeclaration.Body.AcceptChildren(this, data);
+				--outputFormatter.IndentationLevel;
+				outputFormatter.Indent();
+				outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+				outputFormatter.NewLine();
+			}
 			return null;
 		}
 		
-		public object Visit(EmptyStatement emptyStatement, object data)
+		public override object Visit(EmptyStatement emptyStatement, object data)
 		{
-//			Indent();
-//			text.Append(";\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Semicolon);
+			outputFormatter.NewLine();
+			return null;
+		}
+		public override object Visit(BlockStatement blockStatement, object data)
+		{
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			blockStatement.AcceptChildren(this, true);
+			--outputFormatter.IndentationLevel;
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(BlockStatement blockStatement, object data)
+		public override object Visit(ForStatement forStatement, object data)
 		{
-//			bool appendBrace = true;
-//			if (data is bool) {
-//				appendBrace = (bool)data;
-//			}
-//			if (appendBrace) {
-//				Indent();
-//				text.Append("{\n");
-//				++indentationLevel;
-//			}
-//			blockStatement.AcceptChildren(this, true);
-//			if (appendBrace) {
-//				--indentationLevel;
-//				Indent();
-//				text.Append("}\n");
-//			}
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.For);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			outputFormatter.DoIndent = false;
+			outputFormatter.DoNewLine = false;
+			outputFormatter.EmitSemicolon = false;
+			if (forStatement.Initializers != null && forStatement.Initializers.Count > 0) {
+				for (int i = 0; i < forStatement.Initializers.Count; ++i) {
+					INode node = (INode)forStatement.Initializers[i];
+					node.AcceptVisitor(this, false);
+					if (i + 1 < forStatement.Initializers.Count) {
+						outputFormatter.PrintToken(Tokens.Comma);
+					}
+				}
+			} 
+			outputFormatter.EmitSemicolon = true;
+			outputFormatter.PrintToken(Tokens.Semicolon);
+			outputFormatter.EmitSemicolon = false;
+			if (forStatement.Condition != null) {
+				outputFormatter.Space();
+				forStatement.Condition.AcceptVisitor(this, data);
+			}
+			outputFormatter.EmitSemicolon = true;
+			outputFormatter.PrintToken(Tokens.Semicolon);
+			outputFormatter.EmitSemicolon = false;
+			if (forStatement.Iterator != null && forStatement.Iterator.Count > 0) {
+				outputFormatter.Space();
+				for (int i = 0; i < forStatement.Iterator.Count; ++i) {
+					INode node = (INode)forStatement.Iterator[i];
+					node.AcceptVisitor(this, false);
+					if (i + 1 < forStatement.Iterator.Count) {
+						outputFormatter.PrintToken(Tokens.Comma);
+					}
+				}
+			}
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			outputFormatter.EmitSemicolon = true;
+			outputFormatter.DoNewLine     = true;
+			outputFormatter.DoIndent      = true;
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			if (forStatement.EmbeddedStatement is BlockStatement) {
+				Visit((BlockStatement)forStatement.EmbeddedStatement, false);
+			} else {
+				forStatement.EmbeddedStatement.AcceptVisitor(this, data);
+			}
+			--outputFormatter.IndentationLevel;
 			return null;
 		}
 		
-		public object Visit(ForStatement forStatement, object data)
+		public override object Visit(ForeachStatement foreachStatement, object data)
 		{
-//			Indent();
-//			text.Append("for (");
-//			if (forStatement.Initializers != null && forStatement.Initializers.Count > 0) {
-//				foreach (INode node in forStatement.Initializers) {
-//					node.AcceptVisitor(this, false);
-//					text.Append(',');
-//				}
-//			}
-//			text.Append(';');
-//			if (forStatement.Condition != null) {
-//				forStatement.Condition.AcceptVisitor(this, data);
-//			}
-//			text.Append(';');
-//			if (forStatement.Iterator != null && forStatement.Iterator.Count > 0) {
-//				foreach (INode node in forStatement.Iterator) {
-//					node.AcceptVisitor(this, false);
-//					text.Append(',');
-//				}
-//			}
-//			text.Append(") {\n");
-//			++indentationLevel;
-//			if (forStatement.EmbeddedStatement is BlockStatement) {
-//				Visit((BlockStatement)forStatement.EmbeddedStatement, false);
-//			} else {
-//				forStatement.EmbeddedStatement.AcceptVisitor(this, data);
-//			}
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Foreach);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			Visit(foreachStatement.TypeReference, data);
+			outputFormatter.Space();
+			outputFormatter.PrintIdentifier(foreachStatement.VariableName);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.In);
+			outputFormatter.Space();
+			foreachStatement.Expression.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			if (foreachStatement.EmbeddedStatement is BlockStatement) {
+				Visit((BlockStatement)foreachStatement.EmbeddedStatement, false);
+			} else {
+				foreachStatement.EmbeddedStatement.AcceptVisitor(this, data);
+			}
+			--outputFormatter.IndentationLevel;
 			return null;
 		}
 		
-		public object Visit(ForeachStatement foreachStatement, object data)
+		public override object Visit(WhileStatement whileStatement, object data)
 		{
-//			Indent();
-//			text.Append("foreach (");
-//			Visit(foreachStatement.TypeReference, data);
-//			text.Append(' ');
-//			text.Append(foreachStatement.VariableName);
-//			text.Append(" in ");
-//			foreachStatement.Expression.AcceptVisitor(this, data);
-//			text.Append(") {\n");
-//			++indentationLevel;
-//			if (foreachStatement.EmbeddedStatement is BlockStatement) {
-//				Visit((BlockStatement)foreachStatement.EmbeddedStatement, false);
-//			} else {
-//				foreachStatement.EmbeddedStatement.AcceptVisitor(this, data);
-//			}
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.While);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			whileStatement.Condition.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			if (whileStatement.EmbeddedStatement is BlockStatement) {
+				Visit((BlockStatement)whileStatement.EmbeddedStatement, false);
+			} else {
+				whileStatement.EmbeddedStatement.AcceptVisitor(this, data);
+			}
+			--outputFormatter.IndentationLevel;
 			return null;
 		}
 		
-		public object Visit(WhileStatement whileStatement, object data)
+		public override object Visit(DoWhileStatement doWhileStatement, object data)
 		{
-//			Indent();
-//			text.Append("while (");
-//			whileStatement.Condition.AcceptVisitor(this, data);
-//			text.Append(") {\n");
-//			++indentationLevel;
-//			if (whileStatement.EmbeddedStatement is BlockStatement) {
-//				Visit((BlockStatement)whileStatement.EmbeddedStatement, false);
-//			} else {
-//				whileStatement.EmbeddedStatement.AcceptVisitor(this, data);
-//			}
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Do);
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			if (doWhileStatement.EmbeddedStatement is BlockStatement) {
+				Visit((BlockStatement)doWhileStatement.EmbeddedStatement, false);
+			} else {
+				doWhileStatement.EmbeddedStatement.AcceptVisitor(this, data);
+			}
+			--outputFormatter.IndentationLevel;
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.While);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			doWhileStatement.Condition.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			outputFormatter.PrintToken(Tokens.Semicolon);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(DoWhileStatement doWhileStatement, object data)
+		public override object Visit(BreakStatement breakStatement, object data)
 		{
-//			Indent();
-//			text.Append("do {\n");
-//			++indentationLevel;
-//			if (doWhileStatement.EmbeddedStatement is BlockStatement) {
-//				Visit((BlockStatement)doWhileStatement.EmbeddedStatement, false);
-//			} else {
-//				doWhileStatement.EmbeddedStatement.AcceptVisitor(this, data);
-//			}
-//			--indentationLevel;
-//			Indent();
-//			text.Append("} while (");
-//			doWhileStatement.Condition.AcceptVisitor(this, data);
-//			text.Append(");\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Break);
+			outputFormatter.PrintToken(Tokens.Semicolon);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(BreakStatement breakStatement, object data)
+		public override object Visit(ContinueStatement continueStatement, object data)
 		{
-//			Indent();
-//			text.Append("break;\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Continue);
+			outputFormatter.PrintToken(Tokens.Semicolon);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(ContinueStatement continueStatement, object data)
+		public override object Visit(CheckedStatement checkedStatement, object data)
 		{
-//			Indent();
-//			text.Append("continue;\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Checked);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			checkedStatement.Block.AcceptChildren(this, false);
+			--outputFormatter.IndentationLevel;
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(CheckedStatement checkedStatement, object data)
+		public override object Visit(UncheckedStatement uncheckedStatement, object data)
 		{
-//			Indent();
-//			text.Append("checked {\n");
-//			++indentationLevel;
-//			checkedStatement.Block.AcceptVisitor(this, false);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Unchecked);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			uncheckedStatement.Block.AcceptVisitor(this, false);
+			--outputFormatter.IndentationLevel;
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(UncheckedStatement uncheckedStatement, object data)
+		public override object Visit(FixedStatement fixedStatement, object data)
 		{
-//			Indent();
-//			text.Append("unchecked {\n");
-//			++indentationLevel;
-//			uncheckedStatement.Block.AcceptVisitor(this, false);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Fixed);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			Visit(fixedStatement.TypeReference, data);
+			outputFormatter.Space();
+			AppendCommaSeparatedList(fixedStatement.PointerDeclarators);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			if (fixedStatement.EmbeddedStatement is BlockStatement) {
+				Visit((BlockStatement)fixedStatement.EmbeddedStatement, false);
+			} else {
+				fixedStatement.EmbeddedStatement.AcceptVisitor(this, data);
+			}
+			--outputFormatter.IndentationLevel;
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(FixedStatement fixedStatement, object data)
+		public override object Visit(GotoCaseStatement gotoCaseStatement, object data)
 		{
-//			Indent();
-//			text.Append("fixed (");
-//			Visit(fixedStatement.TypeReference, data);
-//			text.Append(' ');
-//			AppendCommaSeparatedList(fixedStatement.PointerDeclarators);
-//			text.Append(") {\n");
-//			++indentationLevel;
-//			if (fixedStatement.EmbeddedStatement is BlockStatement) {
-//				Visit((BlockStatement)fixedStatement.EmbeddedStatement, false);
-//			} else {
-//				fixedStatement.EmbeddedStatement.AcceptVisitor(this, data);
-//			}
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Goto);
+			outputFormatter.Space();
+			if (gotoCaseStatement.IsDefaultCase) {
+				outputFormatter.PrintToken(Tokens.Default);
+			} else {
+				outputFormatter.PrintToken(Tokens.Case);
+				outputFormatter.Space();
+				gotoCaseStatement.CaseExpression.AcceptVisitor(this, data);
+			}
+			outputFormatter.PrintToken(Tokens.Semicolon);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(GotoCaseStatement gotoCaseStatement, object data)
+		public override object Visit(GotoStatement gotoStatement, object data)
 		{
-//			Indent();
-//			text.Append("goto ");
-//			if (gotoCaseStatement.IsDefaultCase) {
-//				text.Append("default");
-//			} else {
-//				text.Append("case ");
-//				gotoCaseStatement.CaseExpression.AcceptVisitor(this, data);
-//			}
-//			text.Append(";\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Goto);
+			outputFormatter.Space();
+			outputFormatter.PrintIdentifier(gotoStatement.Label);
+			outputFormatter.PrintToken(Tokens.Semicolon);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(GotoStatement gotoStatement, object data)
+		public override object Visit(IfElseStatement ifElseStatement, object data)
 		{
-//			Indent();
-//			text.Append("goto ");
-//			text.Append(gotoStatement.Label);
-//			text.Append(";\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.If);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			ifElseStatement.Condition.AcceptVisitor(this,data);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			ifElseStatement.EmbeddedStatement.AcceptVisitor(this,data);
+			--outputFormatter.IndentationLevel;
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Else);
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			ifElseStatement.EmbeddedElseStatement.AcceptVisitor(this,data);
+			--outputFormatter.IndentationLevel;
 			return null;
 		}
 		
-		public object Visit(IfElseStatement ifElseStatement, object data)
+		public override object Visit(IfStatement ifStatement, object data)
 		{
-//			Indent();
-//			text.Append("if (");
-//			ifElseStatement.Condition.AcceptVisitor(this,data);
-//			text.Append(") {\n");
-//			++indentationLevel;
-//			ifElseStatement.EmbeddedStatement.AcceptVisitor(this,data);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("} else {\n");
-//			++indentationLevel;
-//			ifElseStatement.EmbeddedElseStatement.AcceptVisitor(this,data);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.If);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			ifStatement.Condition.AcceptVisitor(this,data);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			outputFormatter.Space();
+			++outputFormatter.IndentationLevel;
+			ifStatement.EmbeddedStatement.AcceptVisitor(this,data);
+			--outputFormatter.IndentationLevel;
 			return null;
 		}
 		
-		public object Visit(IfStatement ifStatement, object data)
+		public override object Visit(LabelStatement labelStatement, object data)
 		{
-//			Indent();
-//			text.Append("if (");
-//			ifStatement.Condition.AcceptVisitor(this,data);
-//			text.Append(") {\n");
-//			++indentationLevel;
-//			ifStatement.EmbeddedStatement.AcceptVisitor(this,data);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintIdentifier(labelStatement.Label);
+			outputFormatter.PrintToken(Tokens.Colon);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(LabelStatement labelStatement, object data)
+		public override object Visit(LockStatement lockStatement, object data)
 		{
-//			Indent();
-//			text.Append(labelStatement.Label);
-//			text.Append(":\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Lock);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			lockStatement.LockExpression.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+			outputFormatter.NewLine();
+			
+			++outputFormatter.IndentationLevel;
+			lockStatement.EmbeddedStatement.AcceptVisitor(this, data);
+			--outputFormatter.IndentationLevel;
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(LockStatement lockStatement, object data)
+		public override object Visit(ReturnStatement returnStatement, object data)
 		{
-//			Indent();
-//			text.Append("lock (");
-//			lockStatement.LockExpression.AcceptVisitor(this, data);
-//			text.Append(") {\n");
-//			++indentationLevel;
-//			lockStatement.EmbeddedStatement.AcceptVisitor(this, data);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Return);
+			if (returnStatement.ReturnExpression != null) {
+				outputFormatter.Space();
+				returnStatement.ReturnExpression.AcceptVisitor(this, data);
+			}
+			outputFormatter.PrintToken(Tokens.Semicolon);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(ReturnStatement returnStatement, object data)
+		public override object Visit(SwitchStatement switchStatement, object data)
 		{
-//			Indent();
-//			text.Append("return");
-//			if (returnStatement.ReturnExpression != null) {
-//				text.Append(" ");
-//				returnStatement.ReturnExpression.AcceptVisitor(this, data);
-//			}
-//			text.Append(";\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Switch);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			switchStatement.SwitchExpression.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+			outputFormatter.NewLine();
+			++outputFormatter.IndentationLevel;
+			foreach (SwitchSection section in switchStatement.SwitchSections) {
+				for (int i = 0; i < section.SwitchLabels.Count; ++i) {
+					Expression label = (Expression)section.SwitchLabels[i];
+					if (label == null) {
+						outputFormatter.Indent();
+						outputFormatter.PrintToken(Tokens.Default);
+						outputFormatter.PrintToken(Tokens.Colon);
+						outputFormatter.NewLine();
+						continue;
+					}
+					
+					outputFormatter.Indent();
+					outputFormatter.PrintToken(Tokens.Case);
+					outputFormatter.Space();
+					label.AcceptVisitor(this, data);
+					outputFormatter.PrintToken(Tokens.Colon);
+					outputFormatter.NewLine();
+				}
+				
+				++outputFormatter.IndentationLevel;
+				section.AcceptChildren(this, data);
+				--outputFormatter.IndentationLevel;
+			}
+			--outputFormatter.IndentationLevel;
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(SwitchStatement switchStatement, object data)
+		public override object Visit(ThrowStatement throwStatement, object data)
 		{
-//			Indent();
-//			text.Append("switch (");
-//			switchStatement.SwitchExpression.AcceptVisitor(this, data);
-//			text.Append(") {\n");
-//			++indentationLevel;
-//			foreach (SwitchSection section in switchStatement.SwitchSections) {
-//				Indent();
-//				text.Append("case ");
-//				
-//				for (int i = 0; i < section.SwitchLabels.Count; ++i) {
-//					Expression label = (Expression)section.SwitchLabels[i];
-//					if (label == null) {
-//						text.Append("default:");
-//						continue;
-//					}
-//					label.AcceptVisitor(this, data);
-//					text.Append(":\n");
-//				}
-//				
-//				++indentationLevel;
-//				section.AcceptVisitor(this, data);
-//				--indentationLevel;
-//			}
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Throw);
+			if (throwStatement.ThrowExpression != null) {
+				outputFormatter.Space();
+				throwStatement.ThrowExpression.AcceptVisitor(this, data);
+			}
+			outputFormatter.PrintToken(Tokens.Semicolon);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(ThrowStatement throwStatement, object data)
+		public override object Visit(TryCatchStatement tryCatchStatement, object data)
 		{
-//			Indent();
-//			text.Append("throw ");
-//			throwStatement.ThrowExpression.AcceptVisitor(this, data);
-//			text.Append(";\n");
-			return null;
-		}
-		
-		public object Visit(TryCatchStatement tryCatchStatement, object data)
-		{
-//			Indent();
-//			text.Append("try {\n");
-//			
-//			++indentationLevel;
-//			tryCatchStatement.StatementBlock.AcceptVisitor(this, data);
-//			--indentationLevel;
-//			
-//			if (tryCatchStatement.CatchClauses != null) {
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Try);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+			outputFormatter.NewLine();
+			
+			++outputFormatter.IndentationLevel;
+			tryCatchStatement.StatementBlock.AcceptChildren(this, data);
+			--outputFormatter.IndentationLevel;
+			
+			if (tryCatchStatement.CatchClauses != null) {
 //				int generated = 0;
-//				foreach (CatchClause catchClause in tryCatchStatement.CatchClauses) {
-//					Indent();
-//					text.Append("} catch (");
-//					text.Append(catchClause.Type);
-//					text.Append(' ');
-//					if (catchClause.VariableName == null) {
-//						text.Append("generatedExceptionVariable" + generated.ToString());
-//						++generated;
-//					} else {
-//						text.Append(catchClause.VariableName);
-//					}
-//					text.Append(") {\n");
-//					++indentationLevel;
-//					catchClause.StatementBlock.AcceptVisitor(this, data);
-//					--indentationLevel;
-//				}
-//			}
-//			
-//			if (tryCatchStatement.FinallyBlock != null) {
-//				Indent();
-//				text.Append("} finally {\n");
-//				++indentationLevel;
-//				tryCatchStatement.FinallyBlock.AcceptVisitor(this, data);
-//				--indentationLevel;
-//			}
-//			Indent();
-//			text.Append("}\n");
+				foreach (CatchClause catchClause in tryCatchStatement.CatchClauses) {
+					outputFormatter.Indent();
+					outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+					outputFormatter.Space();
+					outputFormatter.PrintToken(Tokens.Catch);
+					outputFormatter.Space();
+					if (catchClause.Type == null) {
+					} else {
+						outputFormatter.PrintToken(Tokens.OpenParenthesis);
+						outputFormatter.PrintIdentifier(catchClause.Type);
+						if (catchClause.VariableName != null) {
+							outputFormatter.Space();
+							outputFormatter.PrintIdentifier(catchClause.VariableName);
+						}
+						outputFormatter.PrintToken(Tokens.CloseParenthesis);
+					}
+					outputFormatter.Space();
+					outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+					outputFormatter.NewLine();
+					++outputFormatter.IndentationLevel;
+					catchClause.StatementBlock.AcceptChildren(this, data);
+					--outputFormatter.IndentationLevel;
+				}
+			}
+			
+			if (tryCatchStatement.FinallyBlock != null) {
+				outputFormatter.Indent();
+				outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+				outputFormatter.Space();
+				outputFormatter.PrintToken(Tokens.Finally);
+				outputFormatter.Space();
+				outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+				outputFormatter.NewLine();
+				++outputFormatter.IndentationLevel;
+				tryCatchStatement.FinallyBlock.AcceptChildren(this, data);
+				--outputFormatter.IndentationLevel;
+			}
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(UsingStatement usingStatement, object data)
+		public override object Visit(UsingStatement usingStatement, object data)
 		{
-//			Indent();
-//			text.Append("using (");
-//			usingStatement.UsingStmnt.AcceptVisitor(this,data);
-//			text.Append(") {\n");
-//			++indentationLevel;
-//			usingStatement.EmbeddedStatement.AcceptVisitor(this,data);
-//			--indentationLevel;
-//			Indent();
-//			text.Append("}\n");
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Using);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			outputFormatter.DoIndent = false;
+			outputFormatter.DoNewLine = false;
+			outputFormatter.EmitSemicolon = false;
+			
+			usingStatement.UsingStmnt.AcceptVisitor(this,data);
+			outputFormatter.DoIndent = true;
+			outputFormatter.DoNewLine = true;
+			outputFormatter.EmitSemicolon = true;
+			
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+			outputFormatter.NewLine();
+			
+			++outputFormatter.IndentationLevel;
+			usingStatement.EmbeddedStatement.AcceptVisitor(this,data);
+			--outputFormatter.IndentationLevel;
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(LocalVariableDeclaration localVariableDeclaration, object data)
+		public override object Visit(LocalVariableDeclaration localVariableDeclaration, object data)
 		{
-//			Indent();
-//			VisitModifier(localVariableDeclaration.Modifier);
-//			text.Append(" ");
-//			Visit(localVariableDeclaration.Type, data);
-//			this.AppendCommaSeparatedList(localVariableDeclaration.Variables);
-//			text.Append(";\n");
+//			Console.WriteLine(localVariableDeclaration);
+			outputFormatter.Indent();
+			VisitModifier(localVariableDeclaration.Modifier);
+			Visit(localVariableDeclaration.Type, data);
+			outputFormatter.Space();
+			this.AppendCommaSeparatedList(localVariableDeclaration.Variables);
+			outputFormatter.PrintToken(Tokens.Semicolon);
+			outputFormatter.NewLine();
 			return null;
 		}
 		
-		public object Visit(StatementExpression statementExpression, object data)
+		public override object Visit(StatementExpression statementExpression, object data)
 		{
-//			Indent();
-//			statementExpression.Expression.AcceptVisitor(this, data);
-//			text.Append(";\n");
+			outputFormatter.Indent();
+			statementExpression.Expression.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.Semicolon);
+			outputFormatter.NewLine();
 			return null;
 		}
+		
+		public override object Visit(UnsafeStatement unsafeStatement, object data)
+		{
+			outputFormatter.Indent();
+			outputFormatter.PrintToken(Tokens.Unsafe);
+			unsafeStatement.Block.AcceptVisitor(this, data);
+			return null;
+		}
+		
 		
 #region Expressions
-		public object Visit(ArrayCreateExpression arrayCreateExpression, object data)
+		public override object Visit(ArrayCreateExpression arrayCreateExpression, object data)
 		{
-//			text.Append("new ");
-//			Visit(arrayCreateExpression.CreateType, null);
-//			foreach (object o in arrayCreateExpression.Parameters) {
-//				text.Append("[");
-//				if (o is int) {
-//					int num = (int)o;
-//					for (int i = 0; i < num; ++i) {
-//						text.Append(",");
-//					}
-//				} else {
-//					((Expression)o).AcceptVisitor(this, null);
-//				}
-//				text.Append("]");
-//			}
-//			
-//			if (arrayCreateExpression.Parameters.Count == 0) {
-//				text.Append("[]");
-//			}
-//			
-//			if (arrayCreateExpression.ArrayInitializer != null) {
-//				text.Append(" ");
-//				arrayCreateExpression.ArrayInitializer.AcceptVisitor(this, null);
-//			}
+			outputFormatter.PrintToken(Tokens.New);
+			outputFormatter.Space();
+			Visit(arrayCreateExpression.CreateType, null);
+			for (int i = 0; i < arrayCreateExpression.Parameters.Count; ++i) {
+				outputFormatter.PrintToken(Tokens.OpenSquareBracket);
+				ArrayCreationParameter creationParameter = (ArrayCreationParameter)arrayCreateExpression.Parameters[i];
+				if (creationParameter.IsExpressionList) {
+					AppendCommaSeparatedList(creationParameter.Expressions);
+				} else {
+					for (int j = 0; j < creationParameter.Dimensions; ++j) {
+						outputFormatter.PrintToken(Tokens.Comma);
+					}
+				}
+				outputFormatter.PrintToken(Tokens.CloseSquareBracket);
+			}
+			
+			
+			if (arrayCreateExpression.ArrayInitializer != null) {
+				outputFormatter.Space();
+				arrayCreateExpression.ArrayInitializer.AcceptVisitor(this, null);
+			}
 			return null;
 		}
 		
-		public object Visit(ArrayInitializerExpression arrayCreateExpression, object data)
+		public override object Visit(ArrayInitializerExpression arrayCreateExpression, object data)
 		{
-//			text.Append("{");
-//			this.AppendCommaSeparatedList(arrayCreateExpression.CreateExpressions);
-//			text.Append("}");
+			outputFormatter.PrintToken(Tokens.OpenCurlyBrace);
+			this.AppendCommaSeparatedList(arrayCreateExpression.CreateExpressions);
+			outputFormatter.PrintToken(Tokens.CloseCurlyBrace);
 			return null;
 		}
 		
-		public object Visit(AssignmentExpression assignmentExpression, object data)
+		public override object Visit(AssignmentExpression assignmentExpression, object data)
 		{
-//			assignmentExpression.Left.AcceptVisitor(this, data);
-//			switch (assignmentExpression.Op) {
-//				case AssignmentOperatorType.Assign:
-//					text.Append(" = ");
-//					break;
-//				case AssignmentOperatorType.Add:
-//					text.Append(" += ");
-//					break;
-//				case AssignmentOperatorType.Subtract:
-//					text.Append(" -= ");
-//					break;
-//				case AssignmentOperatorType.Multiply:
-//					text.Append(" *= ");
-//					break;
-//				case AssignmentOperatorType.Divide:
-//					text.Append(" /= ");
-//					break;
-//				case AssignmentOperatorType.ShiftLeft:
-//					text.Append(" <<= ");
-//					break;
-//				case AssignmentOperatorType.ShiftRight:
-//					text.Append(" >>= ");
-//					break;
-//				case AssignmentOperatorType.ExclusiveOr:
-//					text.Append(" ^= ");
-//					break;
-//				case AssignmentOperatorType.Modulus:
-//					text.Append(" %= ");
-//					break;
-//				case AssignmentOperatorType.BitwiseAnd:
-//					text.Append(" &= ");
-//					break;
-//				case AssignmentOperatorType.BitwiseOr:
-//					text.Append(" |= ");
-//					break;
-//			}
-//			assignmentExpression.Right.AcceptVisitor(this, data);
-//			
+			assignmentExpression.Left.AcceptVisitor(this, data);
+			outputFormatter.Space();
+			switch (assignmentExpression.Op) {
+				case AssignmentOperatorType.Assign:
+					outputFormatter.PrintToken(Tokens.Assign);
+					break;
+				case AssignmentOperatorType.Add:
+					outputFormatter.PrintToken(Tokens.PlusAssign);
+					break;
+				case AssignmentOperatorType.Subtract:
+					outputFormatter.PrintToken(Tokens.MinusAssign);
+					break;
+				case AssignmentOperatorType.Multiply:
+					outputFormatter.PrintToken(Tokens.TimesAssign);
+					break;
+				case AssignmentOperatorType.Divide:
+					outputFormatter.PrintToken(Tokens.DivAssign);
+					break;
+				case AssignmentOperatorType.ShiftLeft:
+					outputFormatter.PrintToken(Tokens.ShiftLeftAssign);
+					break;
+				case AssignmentOperatorType.ShiftRight:
+					outputFormatter.PrintToken(Tokens.ShiftRightAssign);
+					break;
+				case AssignmentOperatorType.ExclusiveOr:
+					outputFormatter.PrintToken(Tokens.XorAssign);
+					break;
+				case AssignmentOperatorType.Modulus:
+					outputFormatter.PrintToken(Tokens.ModAssign);
+					break;
+				case AssignmentOperatorType.BitwiseAnd:
+					outputFormatter.PrintToken(Tokens.BitwiseAndAssign);
+					break;
+				case AssignmentOperatorType.BitwiseOr:
+					outputFormatter.PrintToken(Tokens.BitwiseOrAssign);
+					break;
+			}
+			outputFormatter.Space();
+			assignmentExpression.Right.AcceptVisitor(this, data);
 			return null;
 		}
 		
-		public object Visit(BaseReferenceExpression baseReferenceExpression, object data)
+		public override object Visit(BaseReferenceExpression baseReferenceExpression, object data)
 		{
-//			text.Append("base");
+			outputFormatter.PrintToken(Tokens.Base);
 			return null;
 		}
 		
-		public object Visit(BinaryOperatorExpression binaryOperatorExpression, object data)
+		public override object Visit(BinaryOperatorExpression binaryOperatorExpression, object data)
 		{
-//			binaryOperatorExpression.Left.AcceptVisitor(this, data);
-//			switch (binaryOperatorExpression.Op) {
-//				case BinaryOperatorType.Add:
-//					text.Append(" + ");
-//					break;
-//				
-//				case BinaryOperatorType.Subtract:
-//					text.Append(" - ");
-//					break;
-//				
-//				case BinaryOperatorType.Multiply:
-//					text.Append(" * ");
-//					break;
-//				
-//				case BinaryOperatorType.Divide:
-//					text.Append(" / ");
-//					break;
-//				
-//				case BinaryOperatorType.Modulus:
-//					text.Append(" % ");
-//					break;
-//				
-//				case BinaryOperatorType.ShiftLeft:
-//					text.Append(" << ");
-//					break;
-//				
-//				case BinaryOperatorType.ShiftRight:
-//					text.Append(" >> ");
-//					break;
-//				
-//				case BinaryOperatorType.BitwiseAnd:
-//					text.Append(" & ");
-//					break;
-//				case BinaryOperatorType.BitwiseOr:
-//					text.Append(" | ");
-//					break;
-//				case BinaryOperatorType.ExclusiveOr:
-//					text.Append(" ^ ");
-//					break;
-//				
-//				case BinaryOperatorType.LogicalAnd:
-//					text.Append(" && ");
-//					break;
-//				case BinaryOperatorType.LogicalOr:
-//					text.Append(" || ");
-//					break;
-//				
-//				case BinaryOperatorType.AS:
-//					text.Append(" as ");
-//					break;
-//				case BinaryOperatorType.IS:
-//					text.Append(" is ");
-//					break;
-//				case BinaryOperatorType.Equality:
-//					text.Append(" == ");
-//					break;
-//				case BinaryOperatorType.GreaterThan:
-//					text.Append(" > ");
-//					break;
-//				case BinaryOperatorType.GreaterThanOrEqual:
-//					text.Append(" >= ");
-//					break;
-//				case BinaryOperatorType.InEquality:
-//					text.Append(" != ");
-//					break;
-//				case BinaryOperatorType.LessThan:
-//					text.Append(" < ");
-//					break;
-//				case BinaryOperatorType.LessThanOrEqual:
-//					text.Append(" <= ");
-//					break;
-//			}
-//			
-//			binaryOperatorExpression.Right.AcceptVisitor(this, data);
+			binaryOperatorExpression.Left.AcceptVisitor(this, data);
+			outputFormatter.Space();
+			switch (binaryOperatorExpression.Op) {
+				case BinaryOperatorType.Add:
+					outputFormatter.PrintToken(Tokens.Plus);
+					break;
+				
+				case BinaryOperatorType.Subtract:
+					outputFormatter.PrintToken(Tokens.Minus);
+					break;
+				
+				case BinaryOperatorType.Multiply:
+					outputFormatter.PrintToken(Tokens.Times);
+					break;
+				
+				case BinaryOperatorType.Divide:
+					outputFormatter.PrintToken(Tokens.Div);
+					break;
+				
+				case BinaryOperatorType.Modulus:
+					outputFormatter.PrintToken(Tokens.Mod);
+					break;
+				
+				case BinaryOperatorType.ShiftLeft:
+					outputFormatter.PrintToken(Tokens.ShiftLeft);
+					break;
+				
+				case BinaryOperatorType.ShiftRight:
+					outputFormatter.PrintToken(Tokens.ShiftRight);
+					break;
+				
+				case BinaryOperatorType.BitwiseAnd:
+					outputFormatter.PrintToken(Tokens.BitwiseAnd);
+					break;
+				case BinaryOperatorType.BitwiseOr:
+					outputFormatter.PrintToken(Tokens.BitwiseOr);
+					break;
+				case BinaryOperatorType.ExclusiveOr:
+					outputFormatter.PrintToken(Tokens.Xor);
+					break;
+				
+				case BinaryOperatorType.LogicalAnd:
+					outputFormatter.PrintToken(Tokens.LogicalAnd);
+					break;
+				case BinaryOperatorType.LogicalOr:
+					outputFormatter.PrintToken(Tokens.LogicalOr);
+					break;
+				
+				case BinaryOperatorType.AS:
+					outputFormatter.PrintToken(Tokens.As);
+					break;
+				
+				case BinaryOperatorType.IS:
+					outputFormatter.PrintToken(Tokens.Is);
+					break;
+				case BinaryOperatorType.Equality:
+					outputFormatter.PrintToken(Tokens.Equal);
+					break;
+				case BinaryOperatorType.GreaterThan:
+					outputFormatter.PrintToken(Tokens.GreaterThan);
+					break;
+				case BinaryOperatorType.GreaterThanOrEqual:
+					outputFormatter.PrintToken(Tokens.GreaterEqual);
+					break;
+				case BinaryOperatorType.InEquality:
+					outputFormatter.PrintToken(Tokens.NotEqual);
+					break;
+				case BinaryOperatorType.LessThan:
+					outputFormatter.PrintToken(Tokens.LessThan);
+					break;
+				case BinaryOperatorType.LessThanOrEqual:
+					outputFormatter.PrintToken(Tokens.LessEqual);
+					break;
+			}
+			outputFormatter.Space();
+			binaryOperatorExpression.Right.AcceptVisitor(this, data);
 			return null;
 		}
 		
-		public object Visit(CastExpression castExpression, object data)
+		public override object Visit(CastExpression castExpression, object data)
 		{
-//			text.Append("(");
-//			Visit(castExpression.CastTo, data);
-//			text.Append(")");
-//			castExpression.Expression.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			Visit(castExpression.CastTo, data);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
+			castExpression.Expression.AcceptVisitor(this, data);
 			return null;
 		}
 		
-		public object Visit(CheckedExpression checkedExpression, object data)
+		public override object Visit(CheckedExpression checkedExpression, object data)
 		{
-//			text.Append("checked(");
-//			checkedExpression.Expression.AcceptVisitor(this, data);
-//			text.Append(")");
+			outputFormatter.PrintToken(Tokens.Checked);
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			checkedExpression.Expression.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
 		}
 		
-		public object Visit(ConditionalExpression conditionalExpression, object data)
+		public override object Visit(ConditionalExpression conditionalExpression, object data)
 		{
-//			conditionalExpression.TestCondition.AcceptVisitor(this, data);
-//			text.Append(" ? ");
-//			conditionalExpression.TrueExpression.AcceptVisitor(this, data);
-//			text.Append(" : ");
-//			conditionalExpression.FalseExpression.AcceptVisitor(this, data);
+			conditionalExpression.TestCondition.AcceptVisitor(this, data);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.Question);
+			outputFormatter.Space();
+			conditionalExpression.TrueExpression.AcceptVisitor(this, data);
+			outputFormatter.Space();
+			outputFormatter.PrintToken(Tokens.Colon);
+			outputFormatter.Space();
+			conditionalExpression.FalseExpression.AcceptVisitor(this, data);
 			return null;
 		}
 		
-		public object Visit(DirectionExpression directionExpression, object data)
+		public override object Visit(DirectionExpression directionExpression, object data)
 		{
-//			switch (directionExpression.FieldDirection) {
-//				case FieldDirection.Out:
-//					text.Append("out ");
-//					break;
-//				case FieldDirection.Ref:
-//					text.Append("ref ");
-//					break;
-//			}
-//			directionExpression.Expression.AcceptVisitor(this, data);
+			switch (directionExpression.FieldDirection) {
+				case FieldDirection.Out:
+					outputFormatter.PrintToken(Tokens.Out);
+					outputFormatter.Space();
+					break;
+				case FieldDirection.Ref:
+					outputFormatter.PrintToken(Tokens.Ref);
+					outputFormatter.Space();
+					break;
+			}
+			directionExpression.Expression.AcceptVisitor(this, data);
 			return null;
 		}
 		
-		public object Visit(FieldReferenceExpression fieldReferenceExpression, object data)
+		public override object Visit(FieldReferenceExpression fieldReferenceExpression, object data)
 		{
-//			fieldReferenceExpression.TargetObject.AcceptVisitor(this, data);
-//			text.Append(".");
-//			text.Append(fieldReferenceExpression.FieldName);
+			fieldReferenceExpression.TargetObject.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.Dot);
+			outputFormatter.PrintIdentifier(fieldReferenceExpression.FieldName);
 			return null;
 		}
 		
-		public object Visit(IdentifierExpression identifierExpression, object data)
+		public override object Visit(IdentifierExpression identifierExpression, object data)
 		{
-//			text.Append(identifierExpression.Identifier);
+			outputFormatter.PrintIdentifier(identifierExpression.Identifier);
 			return null;
 		}
 		
-		public object Visit(IndexerExpression indexerExpression, object data)
+		public override object Visit(IndexerExpression indexerExpression, object data)
 		{
-//			indexerExpression.TargetObject.AcceptVisitor(this, data);
-//			text.Append("[");
-//			AppendCommaSeparatedList(indexerExpression.Indices);
-//			text.Append("]");
+			indexerExpression.TargetObject.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.OpenSquareBracket);
+			AppendCommaSeparatedList(indexerExpression.Indices);
+			outputFormatter.PrintToken(Tokens.CloseSquareBracket);
 			return null;
 		}
 		
-		public object Visit(InvocationExpression invocationExpression, object data)
+		public override object Visit(InvocationExpression invocationExpression, object data)
 		{
-//			invocationExpression.TargetObject.AcceptVisitor(this, data);
-//			text.Append("(");
-//			AppendCommaSeparatedList(invocationExpression.Parameters);
-//			text.Append(")");
+			invocationExpression.TargetObject.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			AppendCommaSeparatedList(invocationExpression.Parameters);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
 		}
 		
-		public object Visit(ObjectCreateExpression objectCreateExpression, object data)
+		public override object Visit(ObjectCreateExpression objectCreateExpression, object data)
 		{
-//			text.Append("new ");
-//			this.Visit(objectCreateExpression.CreateType, data);
-//			text.Append("(");
-//			AppendCommaSeparatedList(objectCreateExpression.Parameters);
-//			text.Append(")");
+			outputFormatter.PrintToken(Tokens.New);
+			outputFormatter.Space();
+			this.Visit(objectCreateExpression.CreateType, data);
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			AppendCommaSeparatedList(objectCreateExpression.Parameters);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
 		}
 		
-		public object Visit(ParenthesizedExpression parenthesizedExpression, object data)
+		public override object Visit(ParenthesizedExpression parenthesizedExpression, object data)
 		{
-//			text.Append("(");
-//			parenthesizedExpression.Expression.AcceptVisitor(this, data);
-//			text.Append(")");
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			parenthesizedExpression.Expression.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
 		}
 		
-		public object Visit(PointerReferenceExpression pointerReferenceExpression, object data)
+		public override object Visit(PointerReferenceExpression pointerReferenceExpression, object data)
 		{
-//			pointerReferenceExpression.Expression.AcceptVisitor(this, data);
-//			text.Append("->");
-//			text.Append(pointerReferenceExpression.Identifier);
+			pointerReferenceExpression.Expression.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.Pointer);
+			outputFormatter.PrintIdentifier(pointerReferenceExpression.Identifier);
 			return null;
 		}
 		
-		public object Visit(PrimitiveExpression primitiveExpression, object data)
+		public override object Visit(PrimitiveExpression primitiveExpression, object data)
 		{
-//			text.Append(primitiveExpression.StringValue);
+			outputFormatter.PrintIdentifier(primitiveExpression.StringValue);
 			return null;
 		}
 		
-		public object Visit(SizeOfExpression sizeOfExpression, object data)
+		public override object Visit(SizeOfExpression sizeOfExpression, object data)
 		{
-//			text.Append("sizeof(");
-//			Visit(sizeOfExpression.TypeReference, data);
-//			text.Append(")");
+			outputFormatter.PrintToken(Tokens.Sizeof);
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			Visit(sizeOfExpression.TypeReference, data);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
 		}
 		
-		public object Visit(StackAllocExpression stackAllocExpression, object data)
+		public override object Visit(StackAllocExpression stackAllocExpression, object data)
 		{
-//			text.Append("stackalloc ");
-//			Visit(stackAllocExpression.Type, data);
-//			text.Append("[");
-//			stackAllocExpression.Expression.AcceptVisitor(this, data);
-//			text.Append("]");
+			outputFormatter.PrintToken(Tokens.Stackalloc);
+			outputFormatter.Space();
+			Visit(stackAllocExpression.Type, data);
+			outputFormatter.PrintToken(Tokens.OpenSquareBracket);
+			stackAllocExpression.Expression.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.CloseSquareBracket);
 			return null;
 		}
 		
-		public object Visit(ThisReferenceExpression thisReferenceExpression, object data)
+		public override object Visit(ThisReferenceExpression thisReferenceExpression, object data)
 		{
-//			text.Append("this");
+			outputFormatter.PrintToken(Tokens.This);
 			return null;
 		}
 		
-		public object Visit(TypeOfExpression typeOfExpression, object data)
+		public override object Visit(TypeOfExpression typeOfExpression, object data)
 		{
-//			text.Append("typeof(");
-//			Visit(typeOfExpression.TypeReference, data);
-//			text.Append(")");
+			outputFormatter.PrintToken(Tokens.Typeof);
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			Visit(typeOfExpression.TypeReference, data);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
 		}
 		
-		public object Visit(TypeReferenceExpression typeReferenceExpression, object data)
+		public override object Visit(TypeReferenceExpression typeReferenceExpression, object data)
 		{
-//			Visit(typeReferenceExpression.TypeReference, data);
+			Visit(typeReferenceExpression.TypeReference, data);
 			return null;
 		}
 		
-		public object Visit(UnaryOperatorExpression unaryOperatorExpression, object data)
+		public override object Visit(UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
-//			switch (unaryOperatorExpression.Op) {
-//				case UnaryOperatorType.BitNot:
-//					text.Append("~");
-//					break;
-//				case UnaryOperatorType.Decrement:
-//					text.Append("--");
-//					break;
-//				case UnaryOperatorType.Increment:
-//					text.Append("++");
-//					break;
-//				case UnaryOperatorType.Minus:
-//					text.Append("-");
-//					break;
-//				case UnaryOperatorType.Not:
-//					text.Append("!");
-//					break;
-//				case UnaryOperatorType.Plus:
-//					text.Append("+");
-//					break;
-//				case UnaryOperatorType.PostDecrement:
-//					unaryOperatorExpression.Expression.AcceptVisitor(this, data);
-//					text.Append("--");
-//					return null;
-//				case UnaryOperatorType.PostIncrement:
-//					unaryOperatorExpression.Expression.AcceptVisitor(this, data);
-//					text.Append("++");
-//					return null;
-//				case UnaryOperatorType.Star:
-//					text.Append("*");
-//					break;
-//				case UnaryOperatorType.BitWiseAnd:
-//					text.Append("&");
-//					break;
-//			}
-//			unaryOperatorExpression.Expression.AcceptVisitor(this, data);
+			switch (unaryOperatorExpression.Op) {
+				case UnaryOperatorType.BitNot:
+					outputFormatter.PrintToken(Tokens.BitwiseComplement);
+					break;
+				case UnaryOperatorType.Decrement:
+					outputFormatter.PrintToken(Tokens.Decrement);
+					break;
+				case UnaryOperatorType.Increment:
+					outputFormatter.PrintToken(Tokens.Increment);
+					break;
+				case UnaryOperatorType.Minus:
+					outputFormatter.PrintToken(Tokens.Minus);
+					break;
+				case UnaryOperatorType.Not:
+					outputFormatter.PrintToken(Tokens.Not);
+					break;
+				case UnaryOperatorType.Plus:
+					outputFormatter.PrintToken(Tokens.Plus);
+					break;
+				case UnaryOperatorType.PostDecrement:
+					unaryOperatorExpression.Expression.AcceptVisitor(this, data);
+					outputFormatter.PrintToken(Tokens.Decrement);
+					return null;
+				case UnaryOperatorType.PostIncrement:
+					unaryOperatorExpression.Expression.AcceptVisitor(this, data);
+					outputFormatter.PrintToken(Tokens.Increment);
+					return null;
+				case UnaryOperatorType.Star:
+					outputFormatter.PrintToken(Tokens.Times);
+					break;
+				case UnaryOperatorType.BitWiseAnd:
+					outputFormatter.PrintToken(Tokens.BitwiseAnd);
+					break;
+			}
+			unaryOperatorExpression.Expression.AcceptVisitor(this, data);
 			return null;
 		}
 		
-		public object Visit(UncheckedExpression uncheckedExpression, object data)
+		public override object Visit(UncheckedExpression uncheckedExpression, object data)
 		{
-//			text.Append("unchecked(");
-//			uncheckedExpression.Expression.AcceptVisitor(this, data);
-//			text.Append(")");
+			outputFormatter.PrintToken(Tokens.Unchecked);
+			outputFormatter.PrintToken(Tokens.OpenParenthesis);
+			uncheckedExpression.Expression.AcceptVisitor(this, data);
+			outputFormatter.PrintToken(Tokens.CloseParenthesis);
 			return null;
 		}
 #endregion

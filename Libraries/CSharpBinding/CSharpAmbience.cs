@@ -249,7 +249,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				builder.Append("</i>");
 			}
 			
-			if (field.ReturnType != null) {
+			if (field.ReturnType != null  && ShowReturnType) {
 				builder.Append(Convert(field.ReturnType));
 				builder.Append(' ');
 			}
@@ -283,7 +283,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				builder.Append(GetModifier(property));
 			}
 			
-			if (property.ReturnType != null) {
+			if (property.ReturnType != null && ShowReturnType) {
 				builder.Append(Convert(property.ReturnType));
 				builder.Append(' ');
 			}
@@ -303,7 +303,7 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 			
 			if (property.Parameters.Count > 0) {
-				builder.Append(" (");
+				builder.Append("(");
 				if (IncludeHTMLMarkup) builder.Append("<br>");
 			
 				for (int i = 0; i < property.Parameters.Count; ++i) {
@@ -318,16 +318,18 @@ namespace ICSharpCode.SharpDevelop.Services
 				builder.Append(')');
 			}
 			
-			builder.Append(" { ");
-			
-			if (property.CanGet) {
-				builder.Append("get; ");
+			if (IncludeBodies) {
+				builder.Append(" { ");
+				
+				if (property.CanGet) {
+					builder.Append("get; ");
+				}
+				if (property.CanSet) {
+					builder.Append("set; ");
+				}
+				
+				builder.Append(" } ");
 			}
-			if (property.CanSet) {
-				builder.Append("set; ");
-			}
-			
-			builder.Append(" } ");
 			
 			return builder.ToString();
 		}
@@ -342,7 +344,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				builder.Append(GetModifier(e));
 			}
 			
-			if (e.ReturnType != null) {
+			if (e.ReturnType != null && ShowReturnType) {
 				builder.Append(Convert(e.ReturnType));
 				builder.Append(' ');
 			}
@@ -385,7 +387,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				builder.Append("</i>");
 			}
 			
-			if (m.ReturnType != null) {
+			if (m.ReturnType != null && ShowReturnType) {
 				builder.Append(Convert(m.ReturnType));
 				builder.Append(' ');
 			}
@@ -404,7 +406,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				builder.Append("</b>");
 			}
 			
-			builder.Append(" [");
+			builder.Append("this[");
 			if (IncludeHTMLMarkup) builder.Append("<br>");
 
 			for (int i = 0; i < m.Parameters.Count; ++i) {
@@ -432,7 +434,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				builder.Append(GetModifier(m));
 			}
 			
-			if (m.ReturnType != null) {
+			if (m.ReturnType != null && ShowReturnType) {
 				builder.Append(Convert(m.ReturnType));
 				builder.Append(' ');
 			}
@@ -459,7 +461,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				builder.Append("</b>");
 			}
 			
-			builder.Append(" (");
+			builder.Append("(");
 			if (IncludeHTMLMarkup) builder.Append("<br>");
 			
 			for (int i = 0; i < m.Parameters.Count; ++i) {
@@ -484,7 +486,6 @@ namespace ICSharpCode.SharpDevelop.Services
 					builder.Append(" {");
 				}
 			}
-			
 			return builder.ToString();
 		}
 		

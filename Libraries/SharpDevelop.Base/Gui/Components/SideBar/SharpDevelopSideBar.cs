@@ -174,7 +174,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 					return;
 				}
 			}
-			Debug.Assert(false, "Can't find clipboard ring side tab category");
+			System.Diagnostics.Debug.Assert(false, "Can't find clipboard ring side tab category");
 		}
 		
 		////////////////////////////////////////////////////////////////////////////

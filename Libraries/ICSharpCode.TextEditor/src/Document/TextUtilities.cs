@@ -13,9 +13,9 @@ using ICSharpCode.TextEditor.Undo;
 
 namespace ICSharpCode.TextEditor.Document
 {
+	
 	public sealed class TextUtilities
 	{
-		
 		/// <remarks>
 		/// This function takes a string and converts the whitespace in front of
 		/// it to tabs. If the length of the whitespace at the start of the string
@@ -48,6 +48,7 @@ namespace ICSharpCode.TextEditor.Document
 					break;
 				}
 			}
+			
 			if(i < line.Length) {
 				sb.Append(line.Substring(i-consecutiveSpaces));
 			}
@@ -73,10 +74,10 @@ namespace ICSharpCode.TextEditor.Document
 		/// That method is used in code completion to determine the expression given
 		/// to the parser for type resolve.
 		/// </remarks>
-		public static string GetExpressionBeforeOffset(TextArea textArea, int offset)
+		public static string GetExpressionBeforeOffset(TextArea textArea, int initialOffset)
 		{
 			IDocument document = textArea.Document;
-			
+			int offset = initialOffset;
 			while (offset - 1 > 0) {
 				switch (document.GetCharAt(offset - 1)) {
 					case '\n':
@@ -95,8 +96,14 @@ namespace ICSharpCode.TextEditor.Document
 						--offset;
 						break;
 					case '"':
+						if (offset < initialOffset - 1) {
+							return null;
+						}
 						return "\"\"";
 					case '\'':
+						if (offset < initialOffset - 1) {
+							return null;
+						}
 						return "'a'";
 					case '>':
 						if (document.GetCharAt(offset - 2) == '-') {
@@ -117,10 +124,7 @@ namespace ICSharpCode.TextEditor.Document
 						while (start > 0 && IsLetterDigitOrUnderscore(document.GetCharAt(start - 1))) {
 							--start;
 						}
-						
-						Console.WriteLine("{0} -- {1}", offset, start);
 						string word = document.GetText(start, offset - start).Trim();
-						Console.WriteLine("word >{0}<", word);
 						switch (word) {
 							case "ref":
 							case "out":
@@ -152,7 +156,9 @@ namespace ICSharpCode.TextEditor.Document
 				offset+=pos+1;
 				//// whitespaces and tabs, which might be inside, will be skipped by trim below
 			}							
-			return document.GetText(offset, textArea.Caret.Offset - offset ).Trim();
+			string expression = document.GetText(offset, textArea.Caret.Offset - offset ).Trim();
+			Console.WriteLine("Expr: >" + expression + "<");
+			return expression;
 		}
 		
 		
@@ -408,6 +414,30 @@ namespace ICSharpCode.TextEditor.Document
 				}
 			}
 			return true;
+		}
+		
+		static bool IsWordPart(char ch)
+		{
+			return IsLetterDigitOrUnderscore(ch) || ch == '.';
+		}
+		
+		public static string GetWordAt(IDocument document, int offset)
+		{
+			if (!IsWordPart(document.GetCharAt(offset))) {
+				return String.Empty;
+			}
+			int startOffset = offset;
+			int endOffset   = offset;
+			while (startOffset > 0 && IsWordPart(document.GetCharAt(startOffset - 1))) {
+				--startOffset;
+			}
+			
+			while (endOffset < document.TextLength - 1 && IsWordPart(document.GetCharAt(endOffset + 1))) {
+				++endOffset;
+			}
+			
+			Debug.Assert(endOffset >= startOffset);
+			return document.GetText(startOffset, endOffset - startOffset + 1);
 		}
 	}
 }

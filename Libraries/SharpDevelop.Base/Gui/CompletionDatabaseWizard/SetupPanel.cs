@@ -1,7 +1,7 @@
-﻿// <file>
+// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Kr�ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -22,6 +22,18 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CompletionDatabaseWi
 	public class SetupPanel : AbstractWizardPanel
 	{
 		static FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+		
+		public override bool ReceiveDialogMessage(DialogMessage message)
+		{
+			if (message == DialogMessage.Finish) {
+				if (((RadioButton)ControlDictionary["skipCreationRadioButton"]).Checked && CustomizationObject != null) {
+					((IProperties)CustomizationObject).SetProperty("SkipDb", true);
+				}
+			}
+			return true;
+		}
+
+		
 		void SetSuccessor(object sender, EventArgs e)
 		{
 			IsLastPanel = ((RadioButton)ControlDictionary["skipCreationRadioButton"]).Checked;

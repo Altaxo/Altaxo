@@ -1,0 +1,14 @@
+<Combine fileversion="1.0" name="WinFormsUI" description="Converted Visual Studio.NET Solution">
+  <StartMode startupentry="WinFormsUI" single="True" />
+  <Entries>
+    <Entry filename=".\WinFormsUI\WinFormsUI.prjx" />
+  </Entries>
+  <Configurations active="Debug">
+    <Configuration name="Release">
+      <Entry name="WinFormsUI" configurationname="Release" build="False" />
+    </Configuration>
+    <Configuration name="Debug">
+      <Entry name="WinFormsUI" configurationname="Debug" build="False" />
+    </Configuration>
+  </Configurations>
+</Combine>

@@ -88,6 +88,9 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public AmbienceReflectionDecorator(IAmbience conv)
 		{
+			if (conv == null) {
+				throw new System.ArgumentNullException("conv");
+			}
 			this.conv = conv;
 		}
 		

@@ -4,7 +4,7 @@
 //     <owner name="Mike Krger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
-
+using System;
 using ICSharpCode.TextEditor.Undo;
 
 namespace ICSharpCode.TextEditor.Document
@@ -17,7 +17,7 @@ namespace ICSharpCode.TextEditor.Document
 		protected int offset = -1;
 		protected int length = -1;
 		
-#region ICSharpCode.TextEditor.Document.ISegment interface implementation
+		#region ICSharpCode.TextEditor.Document.ISegment interface implementation
 		public virtual int Offset {
 			get {
 				return offset;
@@ -35,6 +35,16 @@ namespace ICSharpCode.TextEditor.Document
 				length = value;
 			}
 		}
-#endregion
+		
+		#endregion
+		
+		public override string ToString()
+		{
+			return String.Format("[AbstractSegment: Offset = {0}, Length = {1}]",
+			                     Offset,
+			                     Length);
+		}
+		
+		
 	}
 }

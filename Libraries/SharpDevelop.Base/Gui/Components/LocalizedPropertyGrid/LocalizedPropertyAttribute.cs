@@ -43,6 +43,5 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 		{
 			this.name = name;
 		}
-		
 	}
 }

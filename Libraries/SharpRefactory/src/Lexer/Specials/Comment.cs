@@ -45,5 +45,12 @@ namespace ICSharpCode.SharpRefactory.Parser
 			this.comment       = comment;
 			this.startPosition = startPosition;
 		}
+		
+		public override string ToString()
+		{
+			return String.Format("[Comment: CommentType = {0}]",
+			                     CommentType);
+		}
+		
 	}
 }

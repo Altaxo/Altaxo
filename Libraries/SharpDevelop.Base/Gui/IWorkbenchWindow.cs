@@ -46,7 +46,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// Closes the window, if force == true it closes the window
 		/// without ask, even the content is dirty.
 		/// </summary>
-		void CloseWindow(bool force);
+		/// <returns>true, if window is closed</returns>
+		bool CloseWindow(bool force);
 		
 		/// <summary>
 		/// Brings this window to front and sets the user focus to this
@@ -54,12 +55,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 		/// </summary>
 		void SelectWindow();
 		
+		void RedrawContent();
+		
 		void SwitchView(int viewNumber);
 		
 //		void OnWindowSelected(EventArgs e);
 		/// <summary>
 		/// Only for internal use.
 		/// </summary>
+		void OnWindowSelected(EventArgs e);
 		void OnWindowDeselected(EventArgs e);
 		
 		void AttachSecondaryViewContent(ISecondaryViewContent secondaryViewContent);

@@ -34,7 +34,7 @@ namespace SharpDevelop.Internal.Parser
 		public PersistentProperty(BinaryReader reader, ClassProxyCollection classProxyCollection)
 		{
 			FullyQualifiedName = reader.ReadString();
-			documentation      = reader.ReadString();
+			Documentation      = reader.ReadString();
 			uint m = reader.ReadUInt32();
 			modifiers          = (ModifierEnum)(m & (canGetFlag - 1));
 			canGet             = (m & canGetFlag) == canGetFlag;
@@ -49,7 +49,7 @@ namespace SharpDevelop.Internal.Parser
 		public void WriteTo(BinaryWriter writer)
 		{
 			writer.Write(FullyQualifiedName);
-			writer.Write(documentation);
+			writer.Write(Documentation);
 			writer.Write((uint)modifiers + (CanGet ? canGetFlag : 0) + (CanSet ? canSetFlag : 0));
 			((PersistentReturnType)returnType).WriteTo(writer);
 		}
@@ -58,9 +58,10 @@ namespace SharpDevelop.Internal.Parser
 		{
 			FullyQualifiedName = property.Name;
 			modifiers          = property.Modifiers;
-			documentation      = property.Documentation;
-			if (documentation == null) {
-				documentation = String.Empty;
+			if (property.Documentation != null) {
+				Documentation = property.Documentation;
+			} else {
+				Documentation = String.Empty;
 			}
 			
 			if (property.ReturnType != null) {

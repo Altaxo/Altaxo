@@ -33,6 +33,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 				return "Abstract Content";
 			}
 		}
+		public virtual void Selected()
+		{
+		}
+		public virtual void Deselected()
+		{
+		}
+		
 		
 		public virtual void RedrawContent()
 		{

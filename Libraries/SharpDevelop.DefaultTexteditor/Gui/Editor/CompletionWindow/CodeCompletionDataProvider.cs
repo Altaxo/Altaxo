@@ -45,9 +45,21 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		int caretLineNumber;
 		int caretColumn;
 		string fileName;
+		string preSelection = null;
 		
+		public string PreSelection {
+			get {
+				return preSelection;
+			}
+		}
 		ArrayList completionData = null;
-			
+		bool ctrlSpace;
+		
+		public CodeCompletionDataProvider(bool ctrlSpace)
+		{
+			this.ctrlSpace = ctrlSpace;
+		}
+		
 		public ICompletionData[] GenerateCompletionData(string fileName, TextArea textArea, char charTyped)
 		{
 			IDocument document =  textArea.Document;
@@ -57,44 +69,47 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			// the parser works with 1 based coordinates
 			caretLineNumber      = document.GetLineNumberForOffset(textArea.Caret.Offset) + 1;
 			caretColumn          = textArea.Caret.Offset - document.GetLineSegment(caretLineNumber - 1).Offset + 1;
-			string expression    = TextUtilities.GetExpressionBeforeOffset(textArea, textArea.Caret.Offset);
+			IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
+			IExpressionFinder expressionFinder = parserService.GetExpressionFinder(fileName);
+			string expression    = expressionFinder == null ? TextUtilities.GetExpressionBeforeOffset(textArea, textArea.Caret.Offset) : expressionFinder.FindExpression(textArea.Document.GetText(0, textArea.Caret.Offset), textArea.Caret.Offset - 1);
 			ResolveResult results;
+			preSelection  = null;
 			
-//			if (expression.Length == 0) {
-//				return null;
-//			}
+			if (ctrlSpace) {
+				if (expression == null || expression.Length == 0) {
+					preSelection = "";
+					AddResolveResults(parserService.CtrlSpace(parserService, caretLineNumber, caretColumn, fileName));
+					return (ICompletionData[])completionData.ToArray(typeof(ICompletionData));
+				}
+				int idx = expression.LastIndexOf('.');
+				if (idx > 0) {
+					preSelection = expression.Substring(idx + 1);
+					expression = expression.Substring(0, idx);
+				} else {
+					preSelection = expression;
+					AddResolveResults(parserService.CtrlSpace(parserService, caretLineNumber, caretColumn, fileName));
+					return (ICompletionData[])completionData.ToArray(typeof(ICompletionData));
+				}
+			}
+			
+			Console.WriteLine("Expression: >{0}<", expression);
+			
+			if (expression == null || expression.Length == 0) {
+				return null;
+			}
 			//// do not instantiate service here as some checks might fail
 			//IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
 			if (charTyped == ' ' && (expression.LastIndexOf("using")>=0 || expression.ToUpper().LastIndexOf("IMPORTS")>=0)) {
 				if (expression == "using" || expression.EndsWith(" using") || expression.EndsWith("\tusing")|| expression.EndsWith("\nusing")|| expression.EndsWith("\rusing") ||
 				    expression.ToUpper() == "IMPORTS" || expression.ToUpper().EndsWith(" IMPORTS") || expression.ToUpper().EndsWith("\tIMPORTS")|| expression.ToUpper().EndsWith("\nIMPORTS")|| expression.ToUpper().EndsWith("\rIMPORTS")) {
-					IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
 					string[] namespaces = parserService.GetNamespaceList("");
-//					AddResolveResults(new ResolveResult(namespaces, ShowMembers.Public));
-					AddResolveResults(new ResolveResult(namespaces));
-//					IParseInformation info = parserService.GetParseInformation(fileName);
-//					ICompilationUnit unit = info.BestCompilationUnit as ICompilationUnit;
-//					if (unit != null) {
-//						foreach (IUsing u in unit.Usings) {
-//							if (u.Region.IsInside(caretLineNumber, caretColumn)) {
-//								foreach (string usingStr in u.Usings) {
-//									results = parserService.Resolve(usingStr, caretLineNumber, caretColumn, fileName);
-//									AddResolveResults(results);
-//								}
-//								if (u.Aliases[""] != null) {
-//									results = parserService.Resolve(u.Aliases[""].ToString(), caretLineNumber, caretColumn, fileName);
-//									AddResolveResults(results);
-//								}
-//							}
-//						}
-//					}
+					AddResolveResults(namespaces);
 				}
 			} else {
 				//// we don't need to run parser on blank char here
 				if (charTyped==' ') {
 					return null;
 				}
-				IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
 				results = parserService.Resolve(expression,
 				                                caretLineNumber,
 				                                caretColumn,
@@ -106,44 +121,53 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			return (ICompletionData[])completionData.ToArray(typeof(ICompletionData));
 		}
 		
+		void AddResolveResults(ICollection list) 
+		{
+			if (list == null) {
+				return;
+			}
+			completionData.Capacity += list.Count;
+			foreach (object o in list) {
+				if (o is string) {
+					completionData.Add(new CodeCompletionData(o.ToString(), classBrowserIconService.NamespaceIndex));
+				} else if (o is IClass) {
+					completionData.Add(new CodeCompletionData((IClass)o));
+				} else if (o is IProperty) {
+					IProperty property = (IProperty)o;
+					if (property.Name != null && insertedPropertiesElements[property.Name] == null) {
+						completionData.Add(new CodeCompletionData(property));
+						insertedPropertiesElements[property.Name] = property;
+					}
+				} else if (o is IMethod) {
+					IMethod method = (IMethod)o;
+					
+					if (method.Name != null &&!method.IsConstructor) {
+						CodeCompletionData ccd = new CodeCompletionData(method);
+						if (insertedElements[method.Name] == null) {
+							completionData.Add(ccd);
+							insertedElements[method.Name] = ccd;
+						} else {
+							CodeCompletionData oldMethod = (CodeCompletionData)insertedElements[method.Name];
+							++oldMethod.Overloads;
+						}
+					}
+				} else if (o is IField) {
+					completionData.Add(new CodeCompletionData((IField)o));
+				} else if (o is IEvent) {
+					IEvent e = (IEvent)o;
+					if (e.Name != null && insertedEventElements[e.Name] == null) {
+						completionData.Add(new CodeCompletionData(e));
+						insertedEventElements[e.Name] = e;
+					}
+				}
+			}
+		}
+			
 		void AddResolveResults(ResolveResult results)
 		{
 			if (results != null) {
-				completionData.Capacity += results.Namespaces.Count +
-					results.Members.Count;
-				
-				if (results.Namespaces != null && results.Namespaces.Count > 0) {
-					foreach (string s in results.Namespaces) {
-						completionData.Add(new CodeCompletionData(s, classBrowserIconService.NamespaceIndex));
-					}
-				}
-				if (results.Members != null && results.Members.Count > 0) {
-					foreach (object o in results.Members) {
-						if (o is IClass) {
-							completionData.Add(new CodeCompletionData((IClass)o));
-						} else if (o is IProperty) {
-							IProperty property = (IProperty)o;
-							if (property.Name != null && insertedPropertiesElements[property.Name] == null) {
-								completionData.Add(new CodeCompletionData(property));
-								insertedPropertiesElements[property.Name] = property;
-							}
-						} else if (o is IMethod) {
-							IMethod method = (IMethod)o;
-							if (method.Name != null && insertedElements[method.Name] == null && !method.IsConstructor) {
-								completionData.Add(new CodeCompletionData(method));
-								insertedElements[method.Name] = method;
-							}
-						} else if (o is IField) {
-							completionData.Add(new CodeCompletionData((IField)o));
-						} else if (o is IEvent) {
-							IEvent e = (IEvent)o;
-							if (e.Name != null && insertedEventElements[e.Name] == null) {
-								completionData.Add(new CodeCompletionData(e));
-								insertedEventElements[e.Name] = e;
-							}
-						}
-					}
-				}
+				AddResolveResults(results.Namespaces);
+				AddResolveResults(results.Members);
 			}
 		}
 	}

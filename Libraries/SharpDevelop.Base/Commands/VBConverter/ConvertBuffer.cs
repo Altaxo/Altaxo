@@ -45,7 +45,7 @@ namespace ICSharpCode.SharpDevelop.Commands
 				
 				if (p.Errors.count > 0) {
 					IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
-					messageService.ShowError("Correct source code errors first (only compileable C# source code would convert).");
+					messageService.ShowError("Correct source code errors first (only correct source code would convert).");
 					return;
 				}
 				VBNetVisitor vbv = new VBNetVisitor();

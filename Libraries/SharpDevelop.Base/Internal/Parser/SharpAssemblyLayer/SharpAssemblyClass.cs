@@ -9,6 +9,8 @@ using System.Diagnostics;
 using System.Collections;
 using System.Text;
 using System.Xml;
+using System.Collections.Specialized;
+using System.Collections.Utility;
 
 using ICSharpCode.SharpAssembly.Metadata.Rows;
 using ICSharpCode.SharpAssembly.Metadata;
@@ -18,17 +20,86 @@ using ICSharpCode.SharpAssembly.Assembly;
 namespace SharpDevelop.Internal.Parser {
 	
 	[Serializable]
-	public class SharpAssemblyClass : AbstractClass
+	public class SharpAssemblyClass : AbstractNamedEntity, IClass
 	{
 		ClassCollection baseTypeCollection = new ClassCollection();
+		StringCollection baseTypes         = null;
 		
+		protected ClassType        classType;
+		protected object           declaredIn;
+
+		protected ClassCollection    innerClasses = null; //new ClassCollection();
+		protected FieldCollection    fields       = null; //new FieldCollection();
+		protected PropertyCollection properties   = null; //new PropertyCollection();
+		protected MethodCollection   methods      = null; //new MethodCollection();
+		protected EventCollection    events       = null; //new EventCollection();
+		protected IndexerCollection  indexer      = null; //new IndexerCollection();
+
+		public virtual ClassType ClassType {
+			get {
+				return classType;
+			}
+		}
+
+		public virtual IRegion Region {
+			get {
+				return null;
+			}
+		}
+		
+		public virtual IRegion BodyRegion {
+			get {
+				return null;
+			}
+		}
+
+		public object DeclaredIn {
+			get {
+				return declaredIn;
+			}
+		}
+
+		public virtual StringCollection BaseTypes {
+			get {
+				if (baseTypes == null) baseTypes = new StringCollection();
+				return baseTypes;
+			}
+		}
+		
+		public virtual ClassCollection InnerClasses {
+			get {
+				if (innerClasses == null) innerClasses = new ClassCollection();
+				return innerClasses;
+			}
+		}
+
+		public IndexerCollection Indexer {
+			get {
+				if (indexer == null) indexer = new IndexerCollection();
+				return indexer;
+			}
+		}
+
+		public IEnumerable ClassInheritanceTree {
+			get {
+				return new AbstractClass.ClassInheritanceEnumerator(this);
+			}
+		}
+		
+		protected override bool CanBeSubclass {
+			get {
+				return true;
+			}
+		}
+
 		public ClassCollection BaseTypeCollection {
 			get {
+				if (baseTypeCollection == null) baseTypeCollection = new ClassCollection();
 				return baseTypeCollection;
 			}
 		}
 		
-		public override ICompilationUnit CompilationUnit {
+		public virtual ICompilationUnit CompilationUnit {
 			get {
 				return null;
 			}
@@ -192,6 +263,7 @@ namespace SharpDevelop.Internal.Parser {
 			for (int i = 1; i <= nestedClasses.GetUpperBound(0); ++i) {
 				if (nestedClasses[i].EnclosingClass == index) {
 					IClass newclass = FromTypeDef(assembly, nestedClasses[i].NestedClassIndex);
+					if (innerClasses == null) innerClasses = new ClassCollection();
 					innerClasses.Add(newclass);
 				}
 			}
@@ -208,6 +280,7 @@ namespace SharpDevelop.Internal.Parser {
 				sect.Attributes.Add(new SharpAssemblyAttribute(assembly, customattribute));
 			}
 			
+			if (attributes == null) attributes = new AttributeSectionCollection();
 			attributes.Add(sect);
 			
 		modifiers:
@@ -265,6 +338,10 @@ namespace SharpDevelop.Internal.Parser {
 			SharpAssembly assembly = (SharpAssembly)declaredIn;
 			TypeDef[] typeDefTable = assembly.Tables.TypeDef;
 			
+			methods    = new MethodCollection();
+			events     = new EventCollection();
+			fields     = new FieldCollection();
+			properties = new PropertyCollection();
 			AddMethods(assembly, typeDefTable, typeDefIndex);
 			AddFields(assembly, typeDefTable, typeDefIndex);
 			AddProperties(assembly, typeDefTable, typeDefIndex);
@@ -442,28 +519,28 @@ namespace SharpDevelop.Internal.Parser {
 			return FullyQualifiedName;
 		}
 		
-		public override FieldCollection Fields {
+		public FieldCollection Fields {
 			get {
 				if (!membersLoaded) LoadMembers();
 				return fields;
 			}
 		}
 
-		public override PropertyCollection Properties {
+		public PropertyCollection Properties {
 			get {
 				if (!membersLoaded) LoadMembers();
 				return properties;
 			}
 		}
 
-		public override MethodCollection Methods {
+		public MethodCollection Methods {
 			get {
 				if (!membersLoaded) LoadMembers();
 				return methods;
 			}
 		}
 
-		public override EventCollection Events {
+		public EventCollection Events {
 			get {
 				if (!membersLoaded) LoadMembers();
 				return events;

@@ -122,8 +122,9 @@ namespace ICSharpCode.SharpRefactory.Parser.AST
 		public EventDeclaration()
 		{}
 		
-		public EventDeclaration(ArrayList attributes)
+		public EventDeclaration(Modifier modifier, ArrayList attributes)
 		{
+			this.modifier = modifier;
 			this.attributes = attributes;
 		}
 		

@@ -65,7 +65,5 @@ namespace ICSharpCode.TextEditor.Document
 			return String.Format("[ColumnRange: StartColumn={0}, EndColumn={1}]", startColumn, endColumn);
 		}
 		
-		
-		
 	}
 }

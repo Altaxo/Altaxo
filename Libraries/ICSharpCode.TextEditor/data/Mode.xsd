@@ -87,24 +87,32 @@
         <xsd:attribute name="color" type="xsd:string" />
         <xsd:attribute name="bgcolor" type="xsd:string" />
     </xsd:complexType>
+	
+	<xsd:complexType name="SelectedFoldLine">
+        <xsd:attribute name="bold" type="xsd:boolean" />
+        <xsd:attribute name="italic" type="xsd:boolean" />
+        <xsd:attribute name="color" type="xsd:string" />
+        <xsd:attribute name="bgcolor" type="xsd:string" />
+    </xsd:complexType>
 
 	<!-- The environment tag defines the coloring of various attributes in SharpDevelop -->
 	<xsd:complexType name="Environment">
         <xsd:sequence>
-            <xsd:element name="Default" type="Default" />
-            <xsd:element name="Selection" type="Selection" />
-            <xsd:element name="VRuler" type="VRuler" />
-            <xsd:element name="InvalidLines" type="InvalidLines" />
-            <xsd:element name="CaretMarker" type="CaretMarker" />
+            <xsd:element name="Default" type="Default" minOccurs="0" maxOccurs="1" />
+            <xsd:element name="Selection" type="Selection" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="VRuler" type="VRuler" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="InvalidLines" type="InvalidLines" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="CaretMarker" type="CaretMarker" minOccurs="0" maxOccurs="1"/>
             
-            <xsd:element name="LineNumbers" type="LineNumbers" />
+            <xsd:element name="LineNumbers" type="LineNumbers" minOccurs="0" maxOccurs="1"/>
             
-            <xsd:element name="FoldLine" type="FoldLine" />
-            <xsd:element name="FoldMarker" type="FoldMarker" />
+            <xsd:element name="FoldLine" type="FoldLine" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="FoldMarker" type="FoldMarker" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="SelectedFoldLine" type="SelectedFoldLine" minOccurs="0" maxOccurs="1"/>
             
-            <xsd:element name="EOLMarkers" type="EOLMarkers" />
-            <xsd:element name="SpaceMarkers" type="SpaceMarkers" />
-            <xsd:element name="TabMarkers" type="TabMarkers" />
+            <xsd:element name="EOLMarkers" type="EOLMarkers" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="SpaceMarkers" type="SpaceMarkers" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="TabMarkers" type="TabMarkers" minOccurs="0" maxOccurs="1"/>
             
         </xsd:sequence>
     </xsd:complexType>
@@ -304,8 +312,9 @@
 	<xsd:element name="SyntaxDefinition">
 		<xsd:complexType>
 			<xsd:sequence>
-				<!-- The Environment tag defines colors, for various standard elements in the SharpDevelop GUI -->
-				<xsd:element name="Environment" type="Environment" />		
+				<!-- The Environment tag defines colors, for various standard elements in the SharpDevelop GUI, if
+				     not given the default values are used. -->
+				<xsd:element name="Environment" type="Environment" minOccurs="0" maxOccurs="1"/>
 				
 				<!-- The Properties section defines properties which are bound to the highlighting -->
 				<xsd:element name="Properties" type="Properties" minOccurs="0" maxOccurs="1" />

@@ -35,14 +35,14 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public Control Control {
 			get {
-				Debug.Assert(statusBar != null);
+				System.Diagnostics.Debug.Assert(statusBar != null);
 				return statusBar;
 			}
 		}
 		
 		public IProgressMonitor ProgressMonitor {
 			get { 
-				Debug.Assert(statusBar != null);
+				System.Diagnostics.Debug.Assert(statusBar != null);
 				return statusBar;
 			}
 		}
@@ -52,7 +52,7 @@ namespace ICSharpCode.SharpDevelop.Services
 				return statusBar != null && statusBar.CancelEnabled;
 			}
 			set {
-				Debug.Assert(statusBar != null);
+				System.Diagnostics.Debug.Assert(statusBar != null);
 				statusBar.CancelEnabled = value;
 			}
 		}
@@ -74,20 +74,20 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public void ShowErrorMessage(string message)
 		{
-			Debug.Assert(statusBar != null);
+			System.Diagnostics.Debug.Assert(statusBar != null);
 			statusBar.ShowErrorMessage(stringParserService.Parse(message));
 		}
 		
 		public void SetMessage(string message)
 		{
-			Debug.Assert(statusBar != null);
+			System.Diagnostics.Debug.Assert(statusBar != null);
 			lastMessage = message;
 			statusBar.SetMessage(stringParserService.Parse(message));
 		}
 		
 		public void SetMessage(Image image, string message)
 		{
-			Debug.Assert(statusBar != null);
+			System.Diagnostics.Debug.Assert(statusBar != null);
 			statusBar.SetMessage(image, stringParserService.Parse(message));
 		}
 		
@@ -104,7 +104,7 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		public void Update()
 		{
-			Debug.Assert(statusBar != null);
+			System.Diagnostics.Debug.Assert(statusBar != null);
 	/*		statusBar.Panels.Clear();
 			statusBar.Controls.Clear();
 			

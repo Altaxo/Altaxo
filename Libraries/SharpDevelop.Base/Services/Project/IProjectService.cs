@@ -108,15 +108,32 @@ namespace ICSharpCode.SharpDevelop.Services
 		/// </remarks>
 		void SaveCombinePreferences();
 		
+		/// <summary>
+		/// Gets a reference (only assembly references) for a given project, if the reference
+		/// doesn't exits it creates an assembly reference to the filename.
+		/// </summary>
 		/// <remarks>
-		/// Add a reference to a given project (only assembly references)
+		/// This method doesn't update the project browser tree or save the project. It
+		/// is merly used to prevent reference duplication.
 		/// </remarks>
-		ProjectReference AddReferenceToProject(IProject prj, string filename);
+		ProjectReference GetReferenceFromProject(IProject prj, string filename);
 		
 		/// <remarks>
 		/// Add a file to a given project
 		/// </remarks>
 		ProjectFile AddFileToProject(IProject prj, string filename, BuildAction action);
+		
+		/// <summary>
+		/// Adds a reference to the project, updates the combine tree and saves the project.
+		/// </summary>
+		/// <remarks>
+		/// Duplicated references won't be added.
+		/// </remarks>
+		/// <returns>
+		/// True, if the reference was added successfully, false when the reference
+		/// was already in the project.
+		/// </returns>
+		bool AddReferenceToProject(IProject prj, ProjectReference reference);
 		
 		/// <remarks>
 		/// Add a file to a given project
@@ -133,6 +150,8 @@ namespace ICSharpCode.SharpDevelop.Services
 		/// Mark a project dirty, the project will be compiled
 		/// in the next compiler run.
 		void MarkProjectDirty(IProject project);
+		
+		IProject GetProject(string projectName);
 		
 		/// <remarks>
 		/// If the file given by fileName is inside a currently open project this method

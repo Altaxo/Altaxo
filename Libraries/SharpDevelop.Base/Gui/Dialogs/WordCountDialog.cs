@@ -91,10 +91,10 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 				case 0: {// current file
 					IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
 					if (window != null) {
-						if (window.ViewContent.ContentName == null) {
+						if (window.ViewContent.FileName == null) {
 							MessageService.ShowWarning("${res:Dialog.WordCountDialog.SaveTheFileWarning}");
 						} else {
-							Report r = GetReport(window.ViewContent.ContentName);
+							Report r = GetReport(window.ViewContent.FileName);
 							if (r != null) items.Add(r);
 							// ((ListView)ControlDictionary["resultListView"]).Items.Add(r.ToListItem());
 						}
@@ -107,11 +107,11 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 					
 					total = new Report(StringParserService.Parse("${res:Dialog.WordCountDialog.TotalText}"), 0, 0, 0);
 					foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {
-						if (content.ContentName == null) {
+						if (content.FileName == null) {
 							MessageService.ShowWarning("${res:Dialog.WordCountDialog.SaveAllFileWarning}");
 							continue;
 						} else {
-							Report r = GetReport(content.ContentName);
+							Report r = GetReport(content.FileName);
 							if (r != null) {
 								if (content.IsDirty) dirty = true;
 								total += r;

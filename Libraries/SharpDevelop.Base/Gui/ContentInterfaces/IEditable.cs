@@ -13,6 +13,14 @@ namespace ICSharpCode.SharpDevelop.Gui
 			get;
 		}
 		
+		bool EnableUndo {
+			get;
+		}
+		
+		bool EnableRedo {
+			get;
+		}
+		
 		string Text {
 			get;
 			set;

@@ -5,16 +5,19 @@
 //     <version value="$version"/>
 // </file>
 
+using System.ComponentModel;
 using System.Xml;
+using ICSharpCode.SharpDevelop.Gui.Components;
 using ICSharpCode.SharpDevelop.Internal.Project;
 
 namespace ICSharpCode.SharpDevelop.Internal.Project
 {
-	public abstract class AbstractConfiguration : IConfiguration
+	public abstract class AbstractConfiguration : LocalizedObject, IConfiguration
 	{
 		[XmlAttribute("name")]
 		protected string name = null;
 		
+		[Browsable(false)]
 		public string Name {
 			get {
 				return name;

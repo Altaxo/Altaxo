@@ -1,4 +1,4 @@
-<Project name="ICSharpCode.TextEditor" description="erzeugt ein C# Konsolenprojekt" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
+<Project name="ICSharpCode.TextEditor" standardNamespace="NewProject" description="erzeugt ein C# Konsolenprojekt" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
   <Contents>
     <File name=".\Document\DefaultDocument.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Document\DocumentEventArgs.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -553,7 +553,7 @@
     <File name=".\docs\JavaDoc\ICSharpCode\TextEditor\Util\TextUtility.html" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\Gui\CompletionWindow\ICompletionData.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\CompletionWindow\ICompletionDataProvider.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Gui\CompletionWindow\CompletionWindow.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\CompletionWindow\CodeCompletionWindow.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\CompletionWindow\DeclarationViewWindow.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\InsightWindow\IInsightDataProvider.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\InsightWindow\InsightWindow.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -615,24 +615,30 @@
     <File name="..\data\ICSharpCode.TextEditor.TextEditorControl.bmp" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
     <File name=".\Document\DefaultTextEditorProperties.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\data\RightArrow.cur" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
+    <File name=".\Document\MarkerStrategy" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\Document\MarkerStrategy\MarkerStrategy.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Document\MarkerStrategy\TextMarker.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\CompletionWindow\AbstractCompletionWindow.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\CompletionWindow\CodeCompletionListView.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\data\syntaxmodes\ILAsm-Mode.xshd" subtype="Code" buildaction="EmbedAsResource" dependson="" data="" />
   </Contents>
   <References />
   <DeploymentInformation target="" script="" strategy="File" />
   <Configuration runwithwarnings="False" name="Debug">
-    <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="0" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
     <Execution commandlineparameters="" consolepause="True" />
     <Output directory="..\..\..\..\bin" assembly="ICSharpCode.TextEditor" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
   </Configuration>
   <Configurations active="Debug">
     <Configuration runwithwarnings="False" name="Debug">
-      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="0" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
       <Output directory="..\..\..\..\bin" assembly="ICSharpCode.TextEditor" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
     </Configuration>
     <Configuration runwithwarnings="False" name="Release">
-      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" nowarn="" includedebuginformation="False" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="False" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory=".\" assembly="ICSharpCode.TextEditor" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory=".\" assembly="ICSharpCode.TextEditor" executeScript="..\..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
     </Configuration>
   </Configurations>
 </Project>

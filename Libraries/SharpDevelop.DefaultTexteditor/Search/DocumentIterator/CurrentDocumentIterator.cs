@@ -29,10 +29,10 @@ namespace ICSharpCode.TextEditor.Document
 				if (!SearchReplaceUtilities.IsTextAreaSelected) {
 					return null;
 				}
-				if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName == null) {
+				if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName == null) {
 					return WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.UntitledName;
 				}
-				return WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.ContentName;
+				return WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ViewContent.FileName;
 			}
 		}
 		

@@ -32,8 +32,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		public SharpDevelopTextEditorProperties()
 		{
-			properties                      = ((IProperties)propertyService.GetProperty("ICSharpCode.TextEditor.Document.Document.DefaultDocumentAggregatorProperties", new DefaultProperties()));
-			
+			properties = ((IProperties)propertyService.GetProperty("ICSharpCode.TextEditor.Document.Document.DefaultDocumentAggregatorProperties", new DefaultProperties()));
 		}
 		
 		public int TabIndent {
@@ -62,6 +61,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				properties.SetProperty("DocumentSelectionMode", value);
 			}
 		}
+		
+		public bool ShowQuickClassBrowserPanel {
+			get {
+				return properties.GetProperty("ShowQuickClassBrowserPanel", true);
+			}
+			set {
+				properties.SetProperty("ShowQuickClassBrowserPanel", value);
+			}
+		}
+		
 		public bool AllowCaretBeyondEOL {
 			get {
 				return properties.GetProperty("CursorBehindEOL", false);
@@ -176,7 +185,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		}
 		public bool MouseWheelScrollDown {
 			get {
-				return properties.GetProperty("MouseWheelScrollDown", false);
+				return properties.GetProperty("MouseWheelScrollDown", true);
 			}
 			set {
 				properties.SetProperty("MouseWheelScrollDown", value);
@@ -248,12 +257,20 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 				FontContainer.DefaultFont = value;
 			}
 		}
+		
+		public bool EnableCodeCompletion {
+			get {
+				return properties.GetProperty("EnableCodeCompletion", true);
+			}
+			set {
+				properties.SetProperty("EnableCodeCompletion", value);
+			}
+		}
 		/*
 		<Property key="DoubleBuffer" value="True" />
         <Property key="ShowErrors" value="True" />
-        <Property key="EnableCodeCompletion" value="True" />
+        <Property key="" value="True" />
         <Property key="AutoInsertTemplates" value="True" />
         <Property key="IndentationSize" value="4" />		 * */
-		
 	}
 }

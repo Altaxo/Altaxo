@@ -126,7 +126,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 				}
 			}
 			
-			Debug.Assert(removeEntry != null);
+			System.Diagnostics.Debug.Assert(removeEntry != null);
 			cmb.Entries.Remove(removeEntry);
 			
 			// remove execute definition
@@ -136,7 +136,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 					removeExDef = exDef;
 				}
 			}
-			Debug.Assert(removeExDef != null);
+			System.Diagnostics.Debug.Assert(removeExDef != null);
 			cmb.CombineExecuteDefinitions.Remove(removeExDef);
 			
 			// remove configuration

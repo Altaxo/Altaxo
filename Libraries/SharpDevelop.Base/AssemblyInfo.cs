@@ -4,6 +4,8 @@
 //     <owner name="Mike Krger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
+using System;
+
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -12,11 +14,11 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("SharpDevelop")]
-[assembly: AssemblyCopyright("Mike Krueger 2000-2003")]
+[assembly: AssemblyCopyright("Mike Krueger 2000-2004")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.99.1.1")]
+[assembly: AssemblyVersion("1.0.0.1")]
 
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")] // ..\\src\\SharpDevelop\\sharpdevelop.key

@@ -18,7 +18,7 @@ using System.Threading;
 
 using ICSharpCode.SharpDevelop.Internal.Project;
 using ICSharpCode.SharpDevelop.Gui;
-
+using ICSharpCode.SharpDevelop.Services;
 using ICSharpCode.Core.Services;
 
 namespace CSharpBinding
@@ -28,22 +28,22 @@ namespace CSharpBinding
 	/// </summary>
 	public class CSharpBindingExecutionManager
 	{
-		public void Execute(string filename)
+		public void Execute(string filename, bool debug)
 		{
 			string exe = Path.ChangeExtension(filename, ".exe");
-			ProcessStartInfo psi = new ProcessStartInfo(Environment.GetEnvironmentVariable("ComSpec"), "/c " + "\"" + exe + "\"" + " & pause");
-			psi.WorkingDirectory = Path.GetDirectoryName(exe);
-			psi.UseShellExecute = false;
-			try {
-				Process p = new Process();
-				p.StartInfo = psi;
-				p.Start();
-			} catch (Exception) {
-				throw new ApplicationException("Can't execute " + "\"" + exe + "\"\n(.NET bug? Try restaring SD or manual start)");
+			DebuggerService debuggerService  = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
+			if (debug) {
+				debuggerService.Start(exe, Path.GetDirectoryName(exe), "");
+			} else {
+				ProcessStartInfo psi = new ProcessStartInfo(Environment.GetEnvironmentVariable("ComSpec"), "/c " + "\"" + exe + "\"" + " & pause");
+				psi.WorkingDirectory = Path.GetDirectoryName(exe);
+				psi.UseShellExecute = false;
+				
+				debuggerService.StartWithoutDebugging(psi);
 			}
 		}
 		
-		public void Execute(IProject project)
+		public void Execute(IProject project, bool debug)
 		{
 			CSharpCompilerParameters parameters = (CSharpCompilerParameters)project.ActiveConfiguration;
 			FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
@@ -52,10 +52,11 @@ namespace CSharpBinding
 			string exe = ((CSharpCompilerParameters)project.ActiveConfiguration).OutputAssembly + ".exe";
 			string args = ((CSharpCompilerParameters)project.ActiveConfiguration).CommandLineParameters;
 			
+			bool customStartup = false;
 			ProcessStartInfo psi;
 			if (parameters.ExecuteScript != null && parameters.ExecuteScript.Length > 0) {
-				Console.WriteLine("EXECUTE SCRIPT!!!!!!");
-			psi = new ProcessStartInfo("\"" + parameters.ExecuteScript + "\"");
+				customStartup = true;
+				psi = new ProcessStartInfo("\"" + parameters.ExecuteScript + "\"");
 			} else {
 				string runtimeStarter = String.Empty;
 				
@@ -76,15 +77,13 @@ namespace CSharpBinding
 				}
 			}
 			
-			try {
-				psi.WorkingDirectory = Path.GetDirectoryName(directory);
-				psi.UseShellExecute  =  false;
-				
-				Process p = new Process();
-				p.StartInfo = psi;
-				p.Start();
-			} catch (Exception) {
-				throw new ApplicationException("Can't execute " + "\"" + directory + exe + "\"");
+			psi.WorkingDirectory = Path.GetDirectoryName(directory);
+			psi.UseShellExecute  =  false;
+			DebuggerService debuggerService  = (DebuggerService)ServiceManager.Services.GetService(typeof(DebuggerService));
+			if (debug && !customStartup) {
+				debuggerService.Start(Path.Combine(directory, exe), directory, args);
+			} else {
+				debuggerService.StartWithoutDebugging(psi);
 			}
 		}
 	}

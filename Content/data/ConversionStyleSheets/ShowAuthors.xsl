@@ -4,8 +4,8 @@
 		<HTML><HEAD></HEAD><BODY>
 			
 			<xsl:for-each select="Authors/Category">
-				<H1><xsl:value-of select="@name"/></H1>
-				<TABLE>
+				<H2><xsl:value-of select="@name"/></H2>
+				<TABLE CLASS="dtTABLE" cellspacing="0">
 					<xsl:for-each select="Author">
 						<TR>
 							<TD align="left" class="copy"><xsl:value-of select="@name"/><BR/>(<xsl:value-of select="@mail"/>)</TD>
@@ -15,26 +15,28 @@
 				</TABLE>
 			</xsl:for-each>
 			
-			<H1>Included Projects:</H1>
-			<TABLE>
+			<H2>Included Projects:</H2>
+			<TABLE CLASS="dtTABLE" cellspacing="0">
 				<xsl:for-each select="IncludedProjects/Project">
 					<TR>
-						<TD align="left" class="copy"><xsl:value-of select="@name"/></TD>
-						<TD align="left" class="copy"><xsl:value-of select="@url"/></TD>
-					</TR>
-					<TR>
+						<TD align="left" class="copy">
+							<a>
+								<xsl:attribute name="href">
+									<xsl:value-of select="@url"/>
+								</xsl:attribute>
+								<xsl:value-of select="@name"/>
+							</a>
+						</TD>
 						<TD align="left" class="copy"><xsl:value-of select="@description"/></TD>
 					</TR>
 				</xsl:for-each>
 			</TABLE>
 			
-			<H1>Greetings fly out to:</H1>
-			<TABLE>
+			<H2>Greetings fly out to:</H2>
+			<TABLE CLASS="dtTABLE" cellspacing="0">
 				<xsl:for-each select="Greetings/Person">
 					<TR>
 						<TD align="left" class="copy"><xsl:value-of select="@name"/>(<xsl:value-of select="@mail"/>)</TD>
-					</TR>
-					<TR>
 						<TD align="left" class="copy"><xsl:value-of select="@text"/></TD>
 					</TR>
 				</xsl:for-each>

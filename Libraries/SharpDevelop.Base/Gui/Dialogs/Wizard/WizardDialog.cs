@@ -224,7 +224,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		void ShowNextPanelEvent(object sender, EventArgs e)
 		{
 			int nextID = GetSuccessorNumber(this.ActivePanelNumber);
-			Debug.Assert(nextID < wizardPanels.Count && nextID >= 0);
+			System.Diagnostics.Debug.Assert(nextID < wizardPanels.Count && nextID >= 0);
 			if (!CurrentWizardPane.ReceiveDialogMessage(DialogMessage.Next)) {
 				return;
 			}
@@ -235,7 +235,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		
 		void ShowPrevPanelEvent(object sender, EventArgs e)
 		{
-			Debug.Assert(idStack.Count > 0);
+			System.Diagnostics.Debug.Assert(idStack.Count > 0);
 			if (!CurrentWizardPane.ReceiveDialogMessage(DialogMessage.Prev)) {
 				return;
 			}

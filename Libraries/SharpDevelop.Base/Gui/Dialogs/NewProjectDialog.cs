@@ -49,6 +49,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		
 		public NewProjectDialog(bool openCombine)
 		{
+			StandardHeader.SetHeaders();
 			this.openCombine = openCombine;
 			InitializeComponents();
 			
@@ -140,8 +141,9 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		{
 			foreach (ProjectTemplate template in ProjectTemplate.ProjectTemplates) {
 				TemplateItem titem = new TemplateItem(template);
-				if (titem.Template.Icon != null)
+				if (titem.Template.Icon != null) {
 					icons[titem.Template.Icon] = 0; // "create template icon"
+				}
 				Category cat = GetCategory(titem.Template.Category);
 				cat.Templates.Add(titem);
 				if (cat.Templates.Count == 1)
@@ -196,7 +198,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 				return ProjectLocation + name;
 			}
 		}
-		
+
 		string ProjectLocation {
 			get {
 				string location = ((TextBox)ControlDictionary["locationTextBox"]).Text.TrimEnd('\\', '/', Path.DirectorySeparatorChar);
@@ -205,10 +207,31 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			}
 		}
 		
-		// TODO : Format the text
 		void PathChanged(object sender, EventArgs e)
 		{
-			ControlDictionary["createInLabel"].Text = resourceService.GetString("Dialog.NewProject.ProjectAtDescription")+ " " + ProjectSolution;
+			string solutionPath = ProjectSolution;
+			try {
+				if (solutionPath.Length > 3 && Path.IsPathRooted(solutionPath)) {
+					solutionPath = solutionPath.Substring(3);
+					bool didCut = false;
+					const int maxLength = 62;
+					while (solutionPath.Length > maxLength && solutionPath.Length > 1) {
+						int idx = solutionPath.IndexOf(Path.DirectorySeparatorChar, 1);
+						if (idx < 0) {
+							break;
+						}
+						solutionPath = solutionPath.Substring(idx);
+						didCut = true;
+					}
+					solutionPath = ProjectSolution.Substring(0, 3) + (didCut ? "..." : "") + solutionPath;
+					if (solutionPath.Length > maxLength + 6) {
+						solutionPath = solutionPath.Substring(0, maxLength + 3) + "...";
+					}
+				}
+			} catch (Exception ex) { 
+				Console.WriteLine(ex);
+			}
+			ControlDictionary["createInLabel"].Text = resourceService.GetString("Dialog.NewProject.ProjectAtDescription")+ " " + solutionPath;
 		}
 		
 		void IconSizeChange(object sender, EventArgs e)
@@ -254,7 +277,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			if (!fileUtilityService.IsValidFileName(solution) || solution.IndexOf(Path.DirectorySeparatorChar) >= 0 ||
 			    !fileUtilityService.IsValidFileName(name)     || name.IndexOf(Path.DirectorySeparatorChar) >= 0 ||
 			    !fileUtilityService.IsValidFileName(location)) {
-				MessageService.ShowError("Illegal project name.\nOnly use letters, digits, space, '.' or '_'.");
+				MessageService.ShowError("${res:ICSharpCode.SharpDevelop.Gui.Dialogs.NewProjectDialog.IllegalProjectNameError}");
 				return;
 			}
 			
@@ -263,7 +286,6 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 					TemplateItem item = (TemplateItem)((ListView)ControlDictionary["templateListView"]).SelectedItems[0];
 					
 					System.IO.Directory.CreateDirectory(ProjectSolution);
-					
 					
 					ProjectCreateInformation cinfo = new ProjectCreateInformation();
 					

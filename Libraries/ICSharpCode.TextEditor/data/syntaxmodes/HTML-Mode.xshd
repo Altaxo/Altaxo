@@ -3,24 +3,6 @@
 <!-- syntaxdefinition for HTML 2000 by Mike Krueger -->
 
 <SyntaxDefinition name = "HTML" extensions = ".htm;.html">
-
-	<Environment>
-		<Default      color = "SystemColors.WindowText"    bgcolor = "SystemColors.Window"/>
-		<Selection    color = "SystemColors.HighlightText" bgcolor = "SystemColors.Highlight"/>
-<!--		<Selection    bgcolor = "LightBlue"/> -->
-		<VRuler       color = "SystemColors.ControlLight"/>
-		<InvalidLines color = "Red"/>
-		<CaretMarker  color = "Yellow"/>
-		
-		<LineNumbers  color = "SystemColors.ControlDark" bgcolor = "SystemColors.Window"/>
-		
-		<FoldLine     color = "#808080" bgcolor="Black"/>
-		<FoldMarker   color = "#808080" bgcolor="White"/>
-		
-		<EOLMarkers   color = "#E0E0E5"/>
-		<SpaceMarkers color = "#E0E0E5"/>
-		<TabMarkers   color = "#E0E0E5"/>
-	</Environment>
 	
 	<Digits   name = "Digits"   bold = "false" italic = "false" color = "DarkBlue"/>
 

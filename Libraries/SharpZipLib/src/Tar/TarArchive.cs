@@ -137,7 +137,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		/// </summary>
 		void Initialize(int recordSize)
 		{
-         this.recordSize = recordSize;
+			this.recordSize = recordSize;
 			this.rootPath   = null;
 			this.pathPrefix = null;
 			
@@ -156,9 +156,9 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		}
 		
 		///
-	   /// <summary> Set the debugging flag. </summary>
+		/// <summary> Set the debugging flag. </summary>
 		///
-		/// <param name=debugF> The new debug setting. </param>
+		/// <param name="debugF"> The new debug setting. </param>
 		
 		public void SetDebug(bool debugF)
 		{
@@ -319,8 +319,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			get {
 				if (this.tarIn != null) {
 					return this.tarIn.GetRecordSize();
-				} 
-            else if (this.tarOut != null) {
+				} else if (this.tarOut != null) {
 					return this.tarOut.GetRecordSize();
 				}
 				return TarBuffer.DefaultRecordSize;
@@ -335,8 +334,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		{
 			if (this.tarIn != null) {
 				this.tarIn.Close();
-			} 
-         else if (this.tarOut != null) {
+			} else if (this.tarOut != null) {
 				this.tarOut.Flush();
 				this.tarOut.Close();
 			}
@@ -392,7 +390,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 				try {
 					Directory.CreateDirectory(directoryName);
 				}
-            catch (Exception e) {
+				catch (Exception e) {
 					throw new IOException("error making directory path '" + directoryName + "', " + e.Message);
 				}
 			}
@@ -403,7 +401,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 		{
 			FileStream fs = File.OpenRead(filename);
 			
-         int sampleSize = System.Math.Min(4096, (int)fs.Length);
+			int sampleSize = System.Math.Min(4096, (int)fs.Length);
 			byte[] content = new byte[sampleSize];
 			
 			fs.Read(content, 0, sampleSize);
@@ -448,8 +446,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			
 			if (entry.IsDirectory) {
 				EnsureDirectoryExists(destFile);
-			} 
-         else {
+			} else {
 				string parentDirectory = Path.GetDirectoryName(destFile);
 				EnsureDirectoryExists(parentDirectory);
 				
@@ -457,8 +454,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 					if (this.verbose) {
 						OnProgressMessageEvent(entry, "Destination file already exists");
 					}
-				} 
-            else {
+				} else {
 					bool asciiTrans = false;
 					Stream outputStream = File.Create(destFile);
 					if (this.asciiTranslate) {
@@ -472,11 +468,11 @@ namespace ICSharpCode.SharpZipLib.Tar {
 //							mime = new MimeType(contentType);
 //							
 //							if (mime.getPrimaryType().equalsIgnoreCase( "text" )) {
-//							    	asciiTrans = true;
+//								asciiTrans = true;
 //							} else if ( this.transTyper != null ) {
-//							    if ( this.transTyper.isAsciiFile( entry.getName() ) ) {
-//							    	asciiTrans = true;
-//							    }
+//								if ( this.transTyper.isAsciiFile( entry.getName() ) ) {
+//									asciiTrans = true;
+//								}
 //							}
 //						} catch (MimeTypeParseException ex) {
 //						}
@@ -508,16 +504,14 @@ namespace ICSharpCode.SharpZipLib.Tar {
 									off = b + 1;
 								}
 							}
-						} 
-                  else {
+						} else {
 							outputStream.Write(rdbuf, 0, numRead);
 						}
 					}
 					
 					if (asciiTrans) {
 						outw.Close();
-					} 
-               else {
+					} else {
 						outputStream.Close();
 					}
 				}
@@ -549,8 +543,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 			//
 			if (eFile == null || eFile.Length == 0) {
 				entry = TarEntry.CreateTarEntry(entry.Name);
-			} 
-         else {
+			} else {
 				//
 				// The user may have explicitly set the entry's name to
 				// something other than the file's path, so we must save
@@ -570,63 +563,62 @@ namespace ICSharpCode.SharpZipLib.Tar {
 				asciiTrans = !IsBinary(eFile);
 
 // original java source :
-//			    	MimeType mime = null;
-//			    	string contentType = null;
-//	
-//			    	try {
-//			    		contentType = FileTypeMap.getDefaultFileTypeMap(). getContentType( eFile );
-//			    		
-//			    		mime = new MimeType( contentType );
-//			    		
-//			    		if ( mime.getPrimaryType().
-//			    		    equalsIgnoreCase( "text" ) )
-//			    		    {
-//			    		    	asciiTrans = true;
-//			    		    }
-//			    		    else if ( this.transTyper != null )
-//			    		    {
-//			    		    	if ( this.transTyper.isAsciiFile( eFile ) )
-//			    		    	{
-//			    		    		asciiTrans = true;
-//			    		    	}
-//			    		    }
-//			    	} catch ( MimeTypeParseException ex )
-//			    	{
-//	//		    		 IGNORE THIS ERROR...
-//			    	}
-//		    	
-//		    	if (this.debug) {
-//		    		Console.Error.WriteLine("CREATE TRANS? '" + asciiTrans + "'  ContentType='" + contentType + "'  PrimaryType='" + mime.getPrimaryType()+ "'" );
-//		    	}
-		    	
-		    	if (asciiTrans) {
-		    		tempFileName = Path.GetTempFileName();
-		    		
-		    		StreamReader inStream  = File.OpenText(eFile);
-		    		Stream       outStream = new BufferedStream(File.Create(tempFileName));
-		    		
-		    		while (true) {
-		    			string line = inStream.ReadLine();
-		    			if (line == null) {
-		    				break;
-		    			}
-		    			byte[] data = Encoding.ASCII.GetBytes(line);
-		    			outStream.Write(data, 0, data.Length);
-		    			outStream.WriteByte((byte)'\n');
-		    		}
-		    		
-		    		inStream.Close();
+//					MimeType mime = null;
+//					string contentType = null;
+//
+//					try {
+//						contentType = FileTypeMap.getDefaultFileTypeMap(). getContentType( eFile );
+//
+//						mime = new MimeType( contentType );
+//
+//						if ( mime.getPrimaryType().equalsIgnoreCase( "text" ) )
+//						{
+//							asciiTrans = true;
+//						}
+//						else if ( this.transTyper != null )
+//						{
+//							if ( this.transTyper.isAsciiFile( eFile ) )
+//							{
+//								asciiTrans = true;
+//							}
+//						}
+//				} catch ( MimeTypeParseException ex )
+//				{
+//	//				 IGNORE THIS ERROR...
+//				}
+//			
+//			if (this.debug) {
+//				Console.Error.WriteLine("CREATE TRANS? '" + asciiTrans + "'  ContentType='" + contentType + "'  PrimaryType='" + mime.getPrimaryType()+ "'" );
+//			}
+				
+				if (asciiTrans) {
+					tempFileName = Path.GetTempFileName();
+					
+					StreamReader inStream  = File.OpenText(eFile);
+					Stream       outStream = new BufferedStream(File.Create(tempFileName));
+					
+					while (true) {
+						string line = inStream.ReadLine();
+						if (line == null) {
+							break;
+						}
+						byte[] data = Encoding.ASCII.GetBytes(line);
+						outStream.Write(data, 0, data.Length);
+						outStream.WriteByte((byte)'\n');
+					}
+					
+					inStream.Close();
 
-		    		outStream.Flush();
-		    		outStream.Close();
-		    		
-		    		entry.Size = new FileInfo(tempFileName).Length;
-		    		
-		    		eFile = tempFileName;
-		    	}
+					outStream.Flush();
+					outStream.Close();
+					
+					entry.Size = new FileInfo(tempFileName).Length;
+					
+					eFile = tempFileName;
+				}
 			}
-		    
-		    string newName = null;
+			
+			string newName = null;
 		
 			if (this.rootPath != null) {
 				if (entry.Name.StartsWith(this.rootPath)) {
@@ -651,8 +643,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 						this.WriteEntry(list[i], recurse);
 					}
 				}
-			}
-         else {
+			} else {
 				Stream inputStream = File.OpenRead(eFile);
 				int numWritten = 0;
 				byte[] eBuf = new byte[32 * 1024];
@@ -694,3 +685,4 @@ namespace ICSharpCode.SharpZipLib.Tar {
 	** REDISTRIBUTION OF THIS SOFTWARE.
 	**
 	*/
+
