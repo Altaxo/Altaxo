@@ -3,7 +3,7 @@ using System;
 namespace Altaxo.Graph
 {
 	#region Interfaces
-	public interface IAxisScaleController : Main.IApplyController
+	public interface IAxisScaleController : Main.IApplyController, Main.IMVCController
 	{
 		void EhView_AxisOrgChanged(string text);
 		void EhView_AxisEndChanged(string text);
@@ -11,7 +11,7 @@ namespace Altaxo.Graph
 		void EhView_AxisRescaleChanged(string text);
 	}
 
-	public interface IAxisScaleView
+	public interface IAxisScaleView : Main.IMVCView
 	{
 
 		IAxisScaleController Controller { get; set; }
@@ -42,16 +42,16 @@ namespace Altaxo.Graph
 		protected Axis m_Axis;
 
 		protected string	m_AxisOrg;
-		protected bool		m_AxisOrgChanged;
+		protected string	m_Original_AxisOrg;
 
 		protected string	m_AxisEnd;
-		protected bool		m_AxisEndChanged;
+		protected string	m_Original_AxisEnd;
 
 		protected string	m_AxisType;
-		protected bool		m_AxisTypeChanged;
+		protected string	m_Original_AxisType;
 
 		protected string	m_AxisRescale;
-		protected bool		m_AxisRescaleChanged;
+		protected string	m_Original_AxisRescale;
 
 
 
@@ -61,6 +61,8 @@ namespace Altaxo.Graph
 			m_Layer = layer;
 			m_Direction = dir;
 			m_Axis = dir==AxisDirection.Horizontal ? m_Layer.XAxis : m_Layer.YAxis;
+
+			SetElements();
 		}
 
 		public IAxisScaleView View
@@ -72,43 +74,56 @@ namespace Altaxo.Graph
 					m_View.Controller = null;
 
 				m_View = value;
-				m_View.Controller = this;
-				
-				SetElements();
+
+				if(null!=m_View)
+				{
+					m_View.Controller = this;
+					SetViewElements();
+				}
 			}
+		}
+
+		public object ViewObject
+		{
+			get { return View; }
+			set { View = value as IAxisScaleView; }
 		}
 
 		public void SetElements()
 		{
-			SetAxisOrg();
-			SetAxisEnd();
-			SetAxisType();
-			SetAxisRescale();
+			SetAxisOrg(true);
+			SetAxisEnd(true);
+			SetAxisType(true);
+			SetAxisRescale(true);
+		}
+
+		public void SetViewElements()
+		{
+			SetAxisOrg(false);
+			SetAxisEnd(false);
+			SetAxisType(false);
+			SetAxisRescale(false);
 		}
 
 
-		public void SetAxisOrg()
+		public void SetAxisOrg(bool bInit)
 		{
-			if(null==m_AxisOrg) 
-			{
-				m_AxisOrg = m_Axis.Org.ToString();
-				m_AxisOrgChanged = false;
-			}
+			if(bInit) 
+				m_AxisOrg = m_Original_AxisOrg = m_Axis.Org.ToString();
+
 			if(null!=View)
 				View.InitializeAxisOrg(m_AxisOrg);
 		}
-		public void SetAxisEnd()
+		public void SetAxisEnd(bool bInit)
 		{
-			if(null==m_AxisEnd)
-			{
-				m_AxisEnd = m_Axis.End.ToString();
-				m_AxisEndChanged = false;
-			}
+			if(bInit)
+				m_AxisEnd = m_Original_AxisEnd = m_Axis.End.ToString();
+
 			if(null!=View)
 				View.InitializeAxisEnd(m_AxisEnd);
 		}
 
-		public void SetAxisType()
+		public void SetAxisType(bool bInit)
 		{
 			string[] names = new string[Axis.AvailableAxes.Keys.Count];
 			
@@ -118,36 +133,33 @@ namespace Altaxo.Graph
 			foreach(string axs in Axis.AvailableAxes.Keys)
 			{
 				names[i++] = axs;
-				if(m_Axis.GetType()==Axis.AvailableAxes[axs] && null==m_AxisType)
+				if(m_Axis.GetType()==Axis.AvailableAxes[axs])
 					curraxisname = axs;
 			}
 
-			if(null==m_AxisType)
-			{
-				m_AxisType = curraxisname;
-				m_AxisTypeChanged = false;
-			}
+			if(bInit)
+				m_AxisType = m_Original_AxisType = curraxisname;
 
 
 			if(null!=View)
 				View.InitializeAxisType(names,m_AxisType);
 		}
 
-		public void SetAxisRescale()
+		public void SetAxisRescale(bool bInit)
 		{
 			string[] names = {"automatic", "org fixed", "end fixed", "both fixed" };
-			if(null==m_AxisRescale)
+			if(bInit)
 			{
 				if(!m_Axis.OrgFixed && !m_Axis.EndFixed)
-					m_AxisRescale = names[0];
+					m_Original_AxisRescale = names[0];
 				else if(m_Axis.OrgFixed && !m_Axis.EndFixed)
-					m_AxisRescale = names[1];
+					m_Original_AxisRescale = names[1];
 				else if(!m_Axis.OrgFixed && m_Axis.EndFixed)
-					m_AxisRescale = names[2];
+					m_Original_AxisRescale = names[2];
 				else 
-					m_AxisRescale = names[3];
+					m_Original_AxisRescale = names[3];
 
-				m_AxisRescaleChanged = false;
+				m_AxisRescale = m_Original_AxisRescale;
 			}
 
 			if(null!=View)
@@ -157,6 +169,13 @@ namespace Altaxo.Graph
 
 		public bool Apply()
 		{
+			if(
+				(m_AxisOrg == m_Original_AxisOrg) &&
+				(m_AxisEnd == m_Original_AxisEnd) &&
+				(m_AxisType == m_Original_AxisType) &&
+				(m_AxisRescale == m_Original_AxisRescale))
+				return true; // all ok, we don't need to apply since nothing is changed
+
 			try
 			{
 				// retrieve the axis type from the dialog box and compare it
@@ -175,8 +194,6 @@ namespace Altaxo.Graph
 							m_Layer.YAxis = m_Axis;
 					}
 				}
-
-
 
 				switch(m_AxisRescale)
 				{
@@ -199,8 +216,10 @@ namespace Altaxo.Graph
 				double org = System.Convert.ToDouble(m_AxisOrg);
 				double end = System.Convert.ToDouble(m_AxisEnd);
 
-				if(m_AxisOrgChanged || m_AxisEndChanged)
+				if((m_AxisOrg!=m_Original_AxisOrg)  || (m_AxisEnd!=m_Original_AxisEnd))
 					m_Axis.ProcessDataBounds(org,true,end,true);
+
+				SetElements();
 			}
 			catch(Exception )
 			{
@@ -212,23 +231,19 @@ namespace Altaxo.Graph
 
 		public void EhView_AxisOrgChanged(string text)
 		{
-			m_AxisOrg = text;
-			m_AxisOrgChanged = true;
+			m_AxisOrg = text;			
 		}
 		public void EhView_AxisEndChanged(string text)
 		{
 			m_AxisEnd = text;
-			m_AxisEndChanged = true;
 		}
 		public void EhView_AxisTypeChanged(string text)
 		{
 			m_AxisType = text;
-			m_AxisTypeChanged = true;
 		}
 		public void EhView_AxisRescaleChanged(string text)
 		{
 			m_AxisRescale = text;
-			m_AxisRescaleChanged = true;
 		}
 
 	}

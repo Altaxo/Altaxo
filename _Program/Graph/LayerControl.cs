@@ -15,6 +15,7 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.ListBox m_lbEdges;
 		private System.Windows.Forms.TabControl m_TabCtrl;
 		private ILayerController m_Ctrl;
+		private int m_SuppressEvents=0;
 
 		/// <summary> 
 		/// Required designer variable.
@@ -111,20 +112,27 @@ namespace Altaxo.Graph
 			}
 		}
 
-		public void AddTab(Control window, string name)
+		public void AddTab(string name, string text)
 		{
-			System.Windows.Forms.TabPage tc = new System.Windows.Forms.TabPage(name);
-			tc.Controls.Add(window);
+			System.Windows.Forms.TabPage tc = new System.Windows.Forms.TabPage();
+			tc.Name = name;
+			tc.Text = text;
+			
 			this.m_TabCtrl.Controls.Add( tc );
 		}
 
 		private void EhTabCtrl_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			if(null!=m_Ctrl)
-				m_Ctrl.EhView_PageChanged();
+			{
+				int sel = m_TabCtrl.SelectedIndex;
+				System.Windows.Forms.TabPage tp = m_TabCtrl.TabPages[sel];
+
+				m_Ctrl.EhView_PageChanged(tp.Name);
+			}
 		}
 
-		public System.Windows.Forms.Control CurrentTabContent
+		public System.Windows.Forms.Control CurrentContent
 		{
 			get
 			{
@@ -132,20 +140,32 @@ namespace Altaxo.Graph
 				System.Windows.Forms.TabPage tp = m_TabCtrl.TabPages[sel];
 				return tp.Controls[0];
 			}
+			set
+			{
+				int sel = m_TabCtrl.SelectedIndex;
+				System.Windows.Forms.TabPage tp = m_TabCtrl.TabPages[sel];
+				if(tp.Controls.Count>0)
+					tp.Controls.RemoveAt(0);
+
+				tp.Controls.Add(value);
+				
+			}
 		}
 
 		public void InitializeSecondaryChoice(string[] names, string name)
 		{
+			++m_SuppressEvents;
 			this.m_lbEdges.Items.Clear();
 			this.m_lbEdges.Items.AddRange(names);
 			this.m_lbEdges.SelectedItem = name;
+			--m_SuppressEvents;
 		}
 
 		#endregion
 
 		private void EhSecondChoice_SelChanged(object sender, System.EventArgs e)
 		{
-			if(null!=m_Ctrl)
+			if(null!=m_Ctrl && m_SuppressEvents==0)
 				m_Ctrl.EhView_SecondChoiceChanged(this.m_lbEdges.SelectedIndex, (string)this.m_lbEdges.SelectedItem);
 		}
 	}

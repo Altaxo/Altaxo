@@ -13,6 +13,7 @@ namespace Altaxo.Graph
 	public class TitleFormatLayerControl : System.Windows.Forms.UserControl, ITitleFormatLayerView
 		{
 		protected ITitleFormatLayerController m_Ctrl;
+		protected int m_SuppressEvents=0;
 		private System.Windows.Forms.TextBox m_Format_edAxisPositionValue;
 		private System.Windows.Forms.ComboBox m_Format_cbAxisPosition;
 		private System.Windows.Forms.ComboBox m_Format_cbMinorTicks;
@@ -96,29 +97,29 @@ namespace Altaxo.Graph
 			// 
 			// m_Format_cbAxisPosition
 			// 
+			this.m_Format_cbAxisPosition.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_Format_cbAxisPosition.Location = new System.Drawing.Point(336, 120);
 			this.m_Format_cbAxisPosition.Name = "m_Format_cbAxisPosition";
 			this.m_Format_cbAxisPosition.Size = new System.Drawing.Size(96, 21);
 			this.m_Format_cbAxisPosition.TabIndex = 32;
-			this.m_Format_cbAxisPosition.Text = "comboBox1";
 			this.m_Format_cbAxisPosition.SelectionChangeCommitted += new System.EventHandler(this.EhAxisPosition_SelectionChangeCommit);
 			// 
 			// m_Format_cbMinorTicks
 			// 
+			this.m_Format_cbMinorTicks.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_Format_cbMinorTicks.Location = new System.Drawing.Point(336, 80);
 			this.m_Format_cbMinorTicks.Name = "m_Format_cbMinorTicks";
 			this.m_Format_cbMinorTicks.Size = new System.Drawing.Size(96, 21);
 			this.m_Format_cbMinorTicks.TabIndex = 31;
-			this.m_Format_cbMinorTicks.Text = "comboBox1";
 			this.m_Format_cbMinorTicks.SelectionChangeCommitted += new System.EventHandler(this.EhMinorTicks_SelectionChangeCommit);
 			// 
 			// m_Format_cbMajorTicks
 			// 
+			this.m_Format_cbMajorTicks.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_Format_cbMajorTicks.Location = new System.Drawing.Point(336, 40);
 			this.m_Format_cbMajorTicks.Name = "m_Format_cbMajorTicks";
 			this.m_Format_cbMajorTicks.Size = new System.Drawing.Size(96, 21);
 			this.m_Format_cbMajorTicks.TabIndex = 30;
-			this.m_Format_cbMajorTicks.Text = "comboBox1";
 			this.m_Format_cbMajorTicks.SelectionChangeCommitted += new System.EventHandler(this.EhMajorTicks_SelectionChangeCommit);
 			// 
 			// m_Format_cbMajorTickLength
@@ -127,7 +128,8 @@ namespace Altaxo.Graph
 			this.m_Format_cbMajorTickLength.Name = "m_Format_cbMajorTickLength";
 			this.m_Format_cbMajorTickLength.Size = new System.Drawing.Size(96, 21);
 			this.m_Format_cbMajorTickLength.TabIndex = 29;
-			this.m_Format_cbMajorTickLength.Text = "comboBox1";
+			this.m_Format_cbMajorTickLength.Text = "10";
+			this.m_Format_cbMajorTickLength.Validating += new System.ComponentModel.CancelEventHandler(this.EhMajorTickLength_Validating);
 			this.m_Format_cbMajorTickLength.SelectionChangeCommitted += new System.EventHandler(this.EhMajorTickLength_SelectionChangeCommit);
 			// 
 			// m_Format_cbThickness
@@ -136,16 +138,17 @@ namespace Altaxo.Graph
 			this.m_Format_cbThickness.Name = "m_Format_cbThickness";
 			this.m_Format_cbThickness.Size = new System.Drawing.Size(96, 21);
 			this.m_Format_cbThickness.TabIndex = 28;
-			this.m_Format_cbThickness.Text = "comboBox1";
+			this.m_Format_cbThickness.Text = "1";
+			this.m_Format_cbThickness.Validating += new System.ComponentModel.CancelEventHandler(this.EhThickness_Validating);
 			this.m_Format_cbThickness.SelectionChangeCommitted += new System.EventHandler(this.EhThickness_SelectionChangeCommit);
 			// 
 			// m_Format_cbColor
 			// 
+			this.m_Format_cbColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.m_Format_cbColor.Location = new System.Drawing.Point(56, 80);
 			this.m_Format_cbColor.Name = "m_Format_cbColor";
 			this.m_Format_cbColor.Size = new System.Drawing.Size(96, 21);
 			this.m_Format_cbColor.TabIndex = 27;
-			this.m_Format_cbColor.Text = "comboBox1";
 			this.m_Format_cbColor.SelectionChangeCommitted += new System.EventHandler(this.EhColor_SelectionChangeCommit);
 			// 
 			// label12
@@ -209,7 +212,7 @@ namespace Altaxo.Graph
 			this.m_Format_edTitle.Location = new System.Drawing.Point(56, 40);
 			this.m_Format_edTitle.Name = "m_Format_edTitle";
 			this.m_Format_edTitle.TabIndex = 19;
-			this.m_Format_edTitle.Text = "textBox1";
+			this.m_Format_edTitle.Text = "";
 			this.m_Format_edTitle.TextChanged += new System.EventHandler(this.EhTitle_TextChanged);
 			// 
 			// label1
@@ -262,11 +265,13 @@ namespace Altaxo.Graph
 			box.SelectedItem = name;
 		}
 
-		public static void InitComboBox(System.Windows.Forms.ComboBox box, string[] names, int sel)
+		public void InitComboBox(System.Windows.Forms.ComboBox box, string[] names, int sel)
 		{
+			++m_SuppressEvents;
 			box.Items.Clear();
 			box.Items.AddRange(names);
 			box.SelectedIndex = sel;
+			--m_SuppressEvents;
 		}
 
 		#region ITitleFormatLayerView Members
@@ -284,7 +289,13 @@ namespace Altaxo.Graph
 			}
 		}
 
-		public Form Form
+		public object ControllerObject
+		{
+			get { return Controller; }
+			set { Controller = (ITitleFormatLayerController)value; }
+		}
+
+		public System.Windows.Forms.Form Form
 		{
 			get
 			{
@@ -295,12 +306,16 @@ namespace Altaxo.Graph
 
 		public void InitializeShowAxis(bool bShow)
 		{
+			++m_SuppressEvents;
 			this.m_Format_chkShowAxis.Checked = bShow;
+			--m_SuppressEvents;
 		}
 
 		public void InitializeTitle(string txt)
 		{
+			++m_SuppressEvents;
 			this.m_Format_edTitle.Text = txt;
+			--m_SuppressEvents;
 		}
 
 		public void InitializeColor(string[] arr, string sel)
@@ -335,7 +350,9 @@ namespace Altaxo.Graph
 
 		public void InitializeAxisPositionValue(string txt)
 		{
+			++m_SuppressEvents;
 			this.m_Format_edAxisPositionValue.Text = txt;
+			--m_SuppressEvents;
 		}
 
 		public void InitializeAxisPositionValueEnabled(bool b)
@@ -347,56 +364,71 @@ namespace Altaxo.Graph
 
 		private void EhShowAxis_CheckedChanged(object sender, System.EventArgs e)
 		{
-			if(null!=m_Ctrl)
+			if(null!=m_Ctrl && 0==m_SuppressEvents)
 		m_Ctrl.EhView_ShowAxisChanged(this.m_Format_chkShowAxis.Checked);
 		}
 
 		private void EhTitle_TextChanged(object sender, System.EventArgs e)
 		{
-			if(null!=m_Ctrl)
+			if(null!=m_Ctrl && 0==m_SuppressEvents)
 				m_Ctrl.EhView_TitleChanged(this.m_Format_edTitle.Text);
 		}
 
 		private void EhColor_SelectionChangeCommit(object sender, System.EventArgs e)
 		{
-			if(null!=m_Ctrl)
+			if(null!=m_Ctrl && 0==m_SuppressEvents)
 				m_Ctrl.EhView_ColorChanged((string)this.m_Format_cbColor.SelectedItem);
 		}
 
 		private void EhThickness_SelectionChangeCommit(object sender, System.EventArgs e)
 		{
-			if(null!=m_Ctrl)
+			if(null!=m_Ctrl && 0==m_SuppressEvents)
 				m_Ctrl.EhView_ThicknessChanged((string)this.m_Format_cbThickness.SelectedItem);
+		}
+
+		private void EhThickness_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if(null!=m_Ctrl && 0==m_SuppressEvents)
+				m_Ctrl.EhView_ThicknessChanged((string)this.m_Format_cbThickness.Text);
 		}
 
 		private void EhMajorTickLength_SelectionChangeCommit(object sender, System.EventArgs e)
 		{
-			if(null!=m_Ctrl)
+			if(null!=m_Ctrl && 0==m_SuppressEvents)
 				m_Ctrl.EhView_MajorTickLengthChanged((string)this.m_Format_cbMajorTickLength.SelectedItem);
 		}
 
+		private void EhMajorTickLength_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if(null!=m_Ctrl && 0==m_SuppressEvents)
+				m_Ctrl.EhView_MajorTickLengthChanged((string)this.m_Format_cbMajorTickLength.SelectedItem);
+		}
+
+
 		private void EhMajorTicks_SelectionChangeCommit(object sender, System.EventArgs e)
 		{
-			if(null!=m_Ctrl)
+			if(null!=m_Ctrl && 0==m_SuppressEvents)
 				m_Ctrl.EhView_MajorTicksChanged(this.m_Format_cbMajorTicks.SelectedIndex);
 		}
 
 		private void EhMinorTicks_SelectionChangeCommit(object sender, System.EventArgs e)
 		{
-			if(null!=m_Ctrl)
+			if(null!=m_Ctrl && 0==m_SuppressEvents)
 				m_Ctrl.EhView_MinorTicksChanged(this.m_Format_cbMinorTicks.SelectedIndex);
 		}
 
 		private void EhAxisPosition_SelectionChangeCommit(object sender, System.EventArgs e)
 		{
-			if(null!=m_Ctrl)
+			if(null!=m_Ctrl && 0==m_SuppressEvents)
 				m_Ctrl.EhView_AxisPositionChanged(this.m_Format_cbAxisPosition.SelectedIndex);
 		}
 
 		private void EhAxisPositionValue_TextChanged(object sender, System.EventArgs e)
 		{
-			if(null!=m_Ctrl)
+			if(null!=m_Ctrl && 0==m_SuppressEvents)
 				m_Ctrl.EhView_AxisPositionValueChanged(this.m_Format_edAxisPositionValue.Text);
 		}
+
+
 	}
 }

@@ -354,6 +354,21 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Graph\LineScatterLayerContentsControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\LineScatterLayerContentsControl.resx"
+                    DependentUpon = "LineScatterLayerContentsControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\LineScatterLayerContentsController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\LineScatterPlotStyleControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -459,6 +474,36 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\MWControls\EventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\MWControls\MWCommon.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\MWControls\MWEnums.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\MWControls\MWTreeNodeWrapper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\MWControls\MWTreeView.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\MWControls\MWTreeView.resx"
+                    DependentUpon = "MWTreeView.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Main\AboutDialog.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -521,6 +566,11 @@
                     RelPath = "Main\MainView.resx"
                     DependentUpon = "MainView.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\ModelViewController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Main\RenameColumnDialog.cs"

@@ -5,7 +5,7 @@ namespace Altaxo.Graph
 	#region Interfaces
 	public interface ILayerController: Main.IApplyController
 	{
-		void EhView_PageChanged();
+		void EhView_PageChanged(string firstChoice);
 		void EhView_SecondChoiceChanged(int index, string item);
 
 	}
@@ -17,9 +17,9 @@ namespace Altaxo.Graph
 
 		System.Windows.Forms.Form Form	{	get; }
 
-		void AddTab(System.Windows.Forms.Control window, string name);
+		void AddTab(string name, string text);
 
-		System.Windows.Forms.Control CurrentTabContent { get; }
+		System.Windows.Forms.Control CurrentContent { get; set; }
 
 		void InitializeSecondaryChoice(string[] names, string name);
 
@@ -35,10 +35,14 @@ namespace Altaxo.Graph
 
 		protected Layer m_Layer;
 
+		private string   m_CurrentPage;
 		private EdgeType m_CurrentEdge;
+
+		Main.IMVCController m_CurrentController;
 
 		enum ElementType { Unique, HorzVert, Edge };
 
+		protected LineScatterLayerContentsController m_LayerContentsController;
 		protected AxisScaleController[] m_AxisScaleController;
 		protected TitleFormatLayerController[] m_TitleFormatLayerController;
 
@@ -65,9 +69,11 @@ namespace Altaxo.Graph
 		{
 			m_Layer = layer;
 
+			m_LayerContentsController = new LineScatterLayerContentsController(m_Layer);
+
 			m_AxisScaleController = new AxisScaleController[2]{
-																													new AxisScaleController(m_Layer,AxisScaleController.AxisDirection.Horizontal),
-																													new AxisScaleController(m_Layer,AxisScaleController.AxisDirection.Vertical)
+																													new AxisScaleController(m_Layer,AxisScaleController.AxisDirection.Vertical),
+																													new AxisScaleController(m_Layer,AxisScaleController.AxisDirection.Horizontal)
 																												};
 
 			m_TitleFormatLayerController = new TitleFormatLayerController[4]{
@@ -78,6 +84,8 @@ namespace Altaxo.Graph
 																																			};
 
 
+			m_CurrentPage = "Scale";
+			m_CurrentEdge = EdgeType.Bottom;
 
 			if(null!=View)
 				SetViewElements();
@@ -109,27 +117,64 @@ namespace Altaxo.Graph
 				return;
 
 			// add all necessary Tabs
-			View.AddTab(new AxisScaleControl(),"Scale");
-			View.AddTab(new TitleFormatLayerControl(),"Title&&Format");
+			View.AddTab("Scale","Scale");
+			View.AddTab("TitleAndFormat","Title&&Format");
+			View.AddTab("Contents","Contents");
 
 			// Set the controller of the current visible Tab
-			SetCurrentTabController();
+			SetCurrentTabController(true);
 		}
 
 
 
-		void SetCurrentTabController()
+		void SetCurrentTabController(bool pageChanged)
 		{
-			if(View.CurrentTabContent is IAxisScaleView)
+			if(null!=m_CurrentController) 
+				m_CurrentController.ViewObject=null; // detach current view
+
+			switch(m_CurrentPage)
 			{
-				SetHorzVertSecondaryChoice();
-				m_AxisScaleController[CurrHorzVertIdx].View = (IAxisScaleView)View.CurrentTabContent; 
+				case "Contents":
+					if(pageChanged)
+					{
+						SetLayerSecondaryChoice();
+						View.CurrentContent = new LineScatterLayerContentsControl();
+					}
+
+					m_CurrentController = m_LayerContentsController;
+					break;
+				case "Scale":
+					if(pageChanged)
+					{
+						SetHorzVertSecondaryChoice();
+						View.CurrentContent = new AxisScaleControl();
+					}
+
+					m_CurrentController = m_AxisScaleController[CurrHorzVertIdx];
+					
+					
+					break;
+				case "TitleAndFormat":
+					if(pageChanged)
+					{
+						SetEdgeSecondaryChoice();
+						View.CurrentContent = new TitleFormatLayerControl();
+					}
+					m_CurrentController = m_TitleFormatLayerController[CurrEdgeIdx];
+					break;
+
 			}
-			else 			if(View.CurrentTabContent is ITitleFormatLayerView)
-			{
-				SetHorzVertSecondaryChoice();
-				m_TitleFormatLayerController[CurrEdgeIdx].View = (ITitleFormatLayerView)View.CurrentTabContent; 
-			}
+
+		if(null!=m_CurrentController)
+			m_CurrentController.ViewObject = View.CurrentContent; 
+		}
+
+
+		void SetLayerSecondaryChoice()
+		{
+			string[] names = new string[1]{"Layer"};
+			string name = names[0];
+			View.InitializeSecondaryChoice(names,name);
 		}
 
 		void SetHorzVertSecondaryChoice()
@@ -139,13 +184,45 @@ namespace Altaxo.Graph
 			View.InitializeSecondaryChoice(names,name);
 		}
 
-		public void EhView_PageChanged()
+		void SetEdgeSecondaryChoice()
 		{
-			SetCurrentTabController();
+			string[] names = new string[4]{"Left","Bottom","Right","Top"};
+			string name = names[CurrEdgeIdx];
+			View.InitializeSecondaryChoice(names,name);
+		}
+	
+		public void EhView_PageChanged(string firstChoice)
+		{
+			m_CurrentPage = firstChoice;
+			SetCurrentTabController(true);
 		}
 
 		public void EhView_SecondChoiceChanged(int index, string item)
 		{
+			switch(item)
+			{
+				case "Left":
+					this.m_CurrentEdge = EdgeType.Left;
+					break;
+				case "Bottom":
+					this.m_CurrentEdge = EdgeType.Bottom;
+					break;
+				case "Right":
+					this.m_CurrentEdge = EdgeType.Right;
+					break;
+				case "Top":
+					this.m_CurrentEdge = EdgeType.Top;
+					break;
+				case "Horizontal":
+					if(this.m_CurrentEdge!=EdgeType.Bottom && this.m_CurrentEdge!=EdgeType.Top)
+						this.m_CurrentEdge=EdgeType.Bottom;
+					break;
+				case "Vertical":
+					if(this.m_CurrentEdge!=EdgeType.Left && this.m_CurrentEdge!=EdgeType.Right)
+						this.m_CurrentEdge=EdgeType.Left;
+					break;
+			}
+			SetCurrentTabController(false);
 		}
 
 
@@ -168,7 +245,7 @@ namespace Altaxo.Graph
 		{
 			int i;
 			// do the apply for all controllers that are allocated so far
-			for(i=0;i<1;i++)
+			for(i=0;i<2;i++)
 			{
 				if(!m_AxisScaleController[i].Apply())
 				{
@@ -176,6 +253,14 @@ namespace Altaxo.Graph
 				}
 			}
 
+
+			for(i=0;i<4;i++)
+			{
+				if(!m_TitleFormatLayerController[i].Apply())
+				{
+					return false;
+				}
+			}
 
 			return true;
 		}

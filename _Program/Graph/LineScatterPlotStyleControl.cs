@@ -35,6 +35,8 @@ namespace Altaxo.Graph
 	public class LineScatterPlotStyleControl : System.Windows.Forms.UserControl, ILineScatterPlotStyleView
 	{
 		private ILineScatterPlotStyleController m_Controller;
+		private int m_SuppressEvents=0;
+
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.CheckBox m_chkPlotGroupSymbol;
 		private System.Windows.Forms.CheckBox m_chkPlotGroupLineType;
@@ -582,11 +584,13 @@ namespace Altaxo.Graph
 		#endregion
 
 
-		public static void InitComboBox(System.Windows.Forms.ComboBox box, string[] names, string name)
+		public void InitComboBox(System.Windows.Forms.ComboBox box, string[] names, string name)
 		{
+			++m_SuppressEvents;
 			box.Items.Clear();
 			box.Items.AddRange(names);
 			box.SelectedItem = name;
+			--m_SuppressEvents;
 		}
 
 		#region ILineScatterPlotStyleView Members
@@ -604,7 +608,9 @@ namespace Altaxo.Graph
 
 		public void InitializeLineSymbolGapCondition(bool bGap)
 		{
+			++m_SuppressEvents;
 			this.m_chkLineSymbolGap.Checked = bGap;
+			--m_SuppressEvents;
 		}
 
 		public bool LineSymbolGap

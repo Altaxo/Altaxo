@@ -168,6 +168,12 @@ namespace Altaxo.Graph
 			get { return m_Ctrl; }
 			set { m_Ctrl = value; }
 		}
+		public object ControllerObject
+		{
+			get { return Controller; }
+			set { Controller = (IAxisScaleController)value; }
+		}
+
 
 		public System.Windows.Forms.Form Form
 		{

@@ -4,7 +4,7 @@ using System.Drawing;
 namespace Altaxo.Graph
 {
 	#region Interfaces
-	public interface ITitleFormatLayerController : Main.IApplyController
+	public interface ITitleFormatLayerController : Main.IApplyController, Main.IMVCController
 	{
 		ITitleFormatLayerView View { get; set; }
 		void EhView_ShowAxisChanged(bool bShow);
@@ -19,7 +19,7 @@ namespace Altaxo.Graph
 
 	}
 
-	public interface ITitleFormatLayerView
+	public interface ITitleFormatLayerView : Main.IMVCView
 	{
 
 		ITitleFormatLayerController Controller { get; set; }
@@ -60,29 +60,48 @@ namespace Altaxo.Graph
 		protected Layer                 m_Layer;
 		protected EdgeType              m_Edge;
  
-		protected bool		m_bShowAxis;
+		protected bool		m_ShowAxis;
+		protected bool    m_Original_ShowAxis;
+
 		protected string	m_Title;
+		protected string  m_Original_Title;
+
 		protected string	m_Color;
+		protected string  m_Original_Color;
+
 		protected string	m_Thickness;
+		protected string  m_Original_Thickness;
+
 		protected string	m_MajorTickLength;
+		protected string  m_Original_MajorTickLength;
+
 		protected int			m_MajorTicks;
+		protected int     m_Original_MajorTicks;
+
 		protected int			m_MinorTicks;
+		protected int     m_Original_MinorTicks;
+
 		protected int			m_AxisPosition;
+		protected int			m_Original_AxisPosition;
+
 		protected string	m_AxisPositionValue;
+		protected string  m_Original_AxisPositionValue;
+
 		protected bool		m_AxisPositionValueEnabled = true;
-
-		protected bool   m_bElementsInitialized = false;
-
 
 		public TitleFormatLayerController(Layer layer, EdgeType edge)
 		{
 			m_Layer = layer;
 			m_Edge  = edge;
-			this.InitializeElements();
+			this.SetElements(true);
 		}
 
-		public void InitializeElements()
+		public void SetElements(bool bInit)
 		{
+			int i;
+			System.Collections.ArrayList arr = new System.Collections.ArrayList();
+
+
 
 			XYLayerAxisStyle axstyle=null;
 			string title=null;
@@ -111,99 +130,120 @@ namespace Altaxo.Graph
 					break;
 			}
 
-			this.m_bShowAxis = bAxisEnabled ;
+			// Show Axis
+			if(bInit)
+				m_ShowAxis = m_Original_ShowAxis = bAxisEnabled ;
+			if(null!=View)
+				View.InitializeShowAxis(m_ShowAxis);
 
 			// fill axis title box
-			this.m_Title = null!=title ? title : "";
+			if(bInit)
+				m_Title = m_Original_Title = (null!=title ? title : "");
+			if(null!=View)
+				View.InitializeTitle(m_Title);
 
-			this.m_Color = PlotStyle.GetPlotColorName(axstyle.Color);
-			if(null==this.m_Color)
-				this.m_Color = "Custom";
-
-			this.m_Thickness = axstyle.Thickness.ToString();
-
-			this.m_MajorTickLength = axstyle.MajorTickLength.ToString();
-
-			this.m_MajorTicks = (axstyle.InnerMajorTicks?1:0) + (axstyle.OuterMajorTicks?2:0); 
-
-			this.m_MinorTicks = (axstyle.InnerMinorTicks?1:0) + (axstyle.OuterMinorTicks?2:0); 
-
-
-			if(axstyle.Position.Value==0)
+			// Color
+			if(bInit)
 			{
-				this.m_AxisPosition=0;
-				this.m_AxisPositionValue = "";
-				this.m_AxisPositionValueEnabled = false;
+				this.m_Original_Color = PlotStyle.GetPlotColorName(axstyle.Color);
+				if(null==this.m_Original_Color)
+					this.m_Original_Color = "Custom";
+				m_Color = m_Original_Color;
 			}
-			else if(axstyle.Position.IsRelative)
+			if(null!=View)
 			{
-				this.m_AxisPosition=1;
-				this.m_AxisPositionValue= (100.0*axstyle.Position.Value).ToString();
-				this.m_AxisPositionValueEnabled = true;
+				arr.Clear();
+				arr.Add("Custom");
+				foreach(Color c in PlotStyle.PlotColors)
+				{
+					string name = c.ToString();
+					arr.Add(name.Substring(7,name.Length-8));
+				}
+				object sarr = arr.ToArray(typeof(string));
+				View.InitializeColor((string[])sarr,this.m_Color);
 			}
-			else
+
+
+			// Thickness
+			if(bInit)
+				this.m_Thickness = m_Original_Thickness = axstyle.Thickness.ToString();
+			if(null!=View)
 			{
-				this.m_AxisPosition=2;
-				this.m_AxisPositionValue = axstyle.Position.Value.ToString();
-				this.m_AxisPositionValueEnabled = true;
+				// fill axis thickness combo box
+				double[] thicknesses = new double[]{0.0,0.2,0.5,1.0,1.5,2.0,3.0,4.0,5.0};
+				string[] s_thicknesses = new string[thicknesses.Length];
+				for(i=0;i<s_thicknesses.Length;i++)
+					s_thicknesses[i] = thicknesses[i].ToString();
+				View.InitializeThickness(s_thicknesses,this.m_Thickness);
 			}
-		
-			m_bElementsInitialized = true;
-		}
 
-		void SetViewElements()
-		{
-			if(null==View)
-				return;
-
-			int i;
-			System.Collections.ArrayList arr = new System.Collections.ArrayList();
-
-			View.InitializeShowAxis(m_bShowAxis);
-
-			// fill the color dialog box
-			arr.Clear();
-			arr.Add("Custom");
-			foreach(Color c in PlotStyle.PlotColors)
+			// Major tick length
+			if(bInit)
+			this.m_MajorTickLength = this.m_Original_MajorTickLength = axstyle.MajorTickLength.ToString();
+			if(null!=View)
 			{
-				string name = c.ToString();
-				arr.Add(name.Substring(7,name.Length-8));
+				double[] ticklengths = new double[]{3,4,5,6,8,10,12,15,18,24,32};
+				string[] s_ticklengths = new string[ticklengths.Length];
+				for(i=0;i<s_ticklengths.Length;i++)
+					s_ticklengths[i] = ticklengths[i].ToString();
+				View.InitializeMajorTickLength(s_ticklengths,this.m_MajorTickLength);
 			}
-			object sarr = arr.ToArray(typeof(string));
-			View.InitializeColor((string[])sarr,this.m_Color);
 
-			// fill axis thickness combo box
-			double[] thicknesses = new double[]{0.0,0.2,0.5,1.0,1.5,2.0,3.0,4.0,5.0};
-			string[] s_thicknesses = new string[thicknesses.Length];
-			for(i=0;i<s_thicknesses.Length;i++)
-				s_thicknesses[i] = thicknesses[i].ToString();
-			View.InitializeThickness(s_thicknesses,this.m_Thickness);
+
+			// Major ticks
+			if(bInit)
+			this.m_MajorTicks = this.m_Original_MajorTicks = (axstyle.InnerMajorTicks?1:0) + (axstyle.OuterMajorTicks?2:0); 
+			if(null!=View)
+				View.InitializeMajorTicks(new string[]{"None","In","Out","In&Out"},this.m_MajorTicks);
+
 			
-			// fill major tick lenght combo box
-			double[] ticklengths = new double[]{3,4,5,6,8,10,12,15,18,24,32};
-			string[] s_ticklengths = new string[ticklengths.Length];
-			for(i=0;i<s_ticklengths.Length;i++)
-				s_ticklengths[i] = ticklengths[i].ToString();
-			View.InitializeMajorTickLength(s_ticklengths,this.m_MajorTickLength);
+			// Minor ticks
+			if(bInit)
+				this.m_MinorTicks = this.m_Original_MinorTicks = (axstyle.InnerMinorTicks?1:0) + (axstyle.OuterMinorTicks?2:0); 
+			if(null!=View)
+				View.InitializeMinorTicks(new string[]{"None","In","Out","In&Out"},this.m_MinorTicks);
 
-			// fill the Major Ticks combo box
-			View.InitializeMajorTicks(new string[]{"None","In","Out","In&Out"},this.m_MajorTicks);
 
-			// fill the Minor Ticks combo box
-			View.InitializeMinorTicks(new string[]{"None","In","Out","In&Out"},this.m_MinorTicks);
-		
+			// Position and PositionValue
+			if(bInit)
+			{
+				if(axstyle.Position.Value==0)
+				{
+					this.m_Original_AxisPosition=0;
+					this.m_Original_AxisPositionValue = "";
+					this.m_AxisPositionValueEnabled = false;
+				}
+				else if(axstyle.Position.IsRelative)
+				{
+					this.m_Original_AxisPosition=1;
+					this.m_Original_AxisPositionValue= (100.0*axstyle.Position.Value).ToString();
+					this.m_AxisPositionValueEnabled = true;
+				}
+				else
+				{
+					this.m_Original_AxisPosition=2;
+					this.m_Original_AxisPositionValue = axstyle.Position.Value.ToString();
+					this.m_AxisPositionValueEnabled = true;
+				}
 
-			// fill the position combo box
-			View.InitializeAxisPosition(new string[] {
-																								 m_Edge.ToString(),
-																								 "% from " + m_Edge.ToString(),
-																								 "At position ="
-																							 }, this.m_AxisPosition);
+				m_AxisPosition = m_Original_AxisPosition;
+				m_AxisPositionValue = m_Original_AxisPositionValue;
+			}
 
-			View.InitializeAxisPositionValue(this.m_AxisPositionValue);
+			if(null!=View)
+			{
+				View.InitializeAxisPosition(new string[] {
+																									 m_Edge.ToString(),
+																									 "% from " + m_Edge.ToString(),
+																									 "At position ="
+																								 }, this.m_AxisPosition);
 
-			View.InitializeAxisPositionValueEnabled(this.m_AxisPositionValueEnabled);
+				View.InitializeAxisPositionValue(this.m_AxisPositionValue);
+
+				View.InitializeAxisPositionValueEnabled(this.m_AxisPositionValueEnabled);
+			}
 		}
+
 
 		#region ITitleFormatLayerController Members
 
@@ -220,15 +260,24 @@ namespace Altaxo.Graph
 					m_View.Controller = null;
 				
 				m_View = value;
-				m_View.Controller = this;
 
-				SetViewElements();
+				if(null!=m_View)
+				{
+					m_View.Controller = this;
+					SetElements(false); // set only the view elements, dont't initialize the variables
+				}
 			}
+		}
+
+		public object ViewObject
+		{
+			get { return View; }
+			set { View = value as ITitleFormatLayerView; }
 		}
 
 		public void EhView_ShowAxisChanged(bool bShow)
 		{
-			m_bShowAxis = bShow;
+			m_ShowAxis = bShow;
 		}
 
 		public void EhView_TitleChanged(string text)
@@ -298,61 +347,80 @@ namespace Altaxo.Graph
 			{
 
 				// read axis title
-				if(m_Title.Length==0)
+				if(null!=m_Title && m_Title.Length==0)
 					m_Title=null;
 
-
-				// read axis thickness
-				axstyle.Thickness = System.Convert.ToSingle(m_Thickness);
-
-				// read major thick length
-				axstyle.MajorTickLength = System.Convert.ToSingle(m_MajorTickLength);
-
-				// read major ticks
-				axstyle.InnerMajorTicks = 0!=(1&m_MajorTicks);
-				axstyle.OuterMajorTicks = 0!=(2&m_MajorTicks);
- 
-				// read minor ticks
-				axstyle.InnerMinorTicks = 0!=(1&m_MinorTicks);
-				axstyle.OuterMinorTicks = 0!=(2&m_MinorTicks);
-			
-				// read axis position
-				double posval;
-				switch(m_AxisPosition)
-				{
-					case 0:
-						axstyle.Position = new Calc.RelativeOrAbsoluteValue(0,false);
-						break;
-					case 1:
-						posval = System.Convert.ToDouble(m_AxisPositionValue);
-						axstyle.Position = new Calc.RelativeOrAbsoluteValue(posval/100,true);
-						break;
-					case 2:
-						posval = System.Convert.ToDouble(this.m_AxisPositionValue);
-						axstyle.Position = new Calc.RelativeOrAbsoluteValue(posval,false);
-						break;
-				}
-
-				// set axis enabled on the layer
+				// Axis enable and title
 				switch(m_Edge)
 				{
 					case EdgeType.Left:
-						m_Layer.LeftAxisEnabled = m_bShowAxis;
+						m_Layer.LeftAxisEnabled = m_ShowAxis;
 						m_Layer.LeftAxisTitleString = m_Title;
 						break;
 					case EdgeType.Right:
-						m_Layer.RightAxisEnabled = m_bShowAxis;
+						m_Layer.RightAxisEnabled = m_ShowAxis;
 						m_Layer.RightAxisTitleString = m_Title;
 						break;
 					case EdgeType.Bottom:
-						m_Layer.BottomAxisEnabled = m_bShowAxis;
+						m_Layer.BottomAxisEnabled = m_ShowAxis;
 						m_Layer.BottomAxisTitleString = m_Title;
 						break;
 					case EdgeType.Top:
-						m_Layer.TopAxisEnabled = m_bShowAxis;
+						m_Layer.TopAxisEnabled = m_ShowAxis;
 						m_Layer.TopAxisTitleString = m_Title;
 						break;
 				}
+
+
+				// axis color
+				if(m_Color!="Custom" && m_Color!=m_Original_Color)
+					axstyle.Color = Color.FromName(m_Color);
+
+
+				// read axis thickness
+				if(m_Thickness != m_Original_Thickness)
+					axstyle.Thickness = System.Convert.ToSingle(m_Thickness);
+
+				// read major thick length
+				if(m_MajorTickLength != m_Original_MajorTickLength)
+					axstyle.MajorTickLength = System.Convert.ToSingle(m_MajorTickLength);
+
+				// read major ticks
+				if(m_MajorTicks != m_Original_MajorTicks)
+				{
+					axstyle.InnerMajorTicks = 0!=(1&m_MajorTicks);
+					axstyle.OuterMajorTicks = 0!=(2&m_MajorTicks);
+				}
+				// read minor ticks
+				if(m_MinorTicks != m_Original_MinorTicks)
+				{
+					axstyle.InnerMinorTicks = 0!=(1&m_MinorTicks);
+					axstyle.OuterMinorTicks = 0!=(2&m_MinorTicks);
+				}
+
+
+				// read axis position
+				if(m_AxisPosition!=m_Original_AxisPosition || m_AxisPositionValue != m_Original_AxisPositionValue)
+				{
+					double posval;
+					switch(m_AxisPosition)
+					{
+						case 0:
+							axstyle.Position = new Calc.RelativeOrAbsoluteValue(0,false);
+							break;
+						case 1:
+							posval = System.Convert.ToDouble(m_AxisPositionValue);
+							axstyle.Position = new Calc.RelativeOrAbsoluteValue(posval/100,true);
+							break;
+						case 2:
+							posval = System.Convert.ToDouble(this.m_AxisPositionValue);
+							axstyle.Position = new Calc.RelativeOrAbsoluteValue(posval,false);
+							break;
+					}
+				}
+			
+
+				SetElements(true); // refill the Controller with the newly set values to ensure synchronization
 
 			}
 			catch(Exception)
