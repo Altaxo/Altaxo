@@ -34,3 +34,12 @@ Items eingedrückt dargestellt. Musste auch in meiner Workbench1-Klasse die
 Methode CreateToolbars ändern, damit der neue AltaxoToolbarService benutzt wird.
 
 
+28.10.03
+
+Bei der "Verdrahtung" meiner togglebaren Toolbar-Buttons ist eine Schwierigkeit aufgetreten: wenn ich einen
+Button gedrückt habe, sollten die anderen Buttons rausspringen (Verhalten wie Radiobuttons). Das geht auch wunderbar,
+indem man einfach den Status aller Buttons mit der Methode "UpdateToolbars()" aus der Workbench aktualisiert. Leider ist diese Methode
+nicht Bestandteil des IWorkbench Interfaces, so dass man diesen hässlichen Cast machen muss:
+
+((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+ 

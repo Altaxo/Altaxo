@@ -192,7 +192,7 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{
-		ctrl.Doc.CreateNewLayerLinkedTopX(ctrl.CurrentLayerNumber);
+			ctrl.Doc.CreateNewLayerLinkedTopX(ctrl.CurrentLayerNumber);
 		}
 	}
 
@@ -203,7 +203,7 @@ namespace Altaxo.Graph.Commands
 	{
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{
-		ctrl.Doc.CreateNewLayerLinkedRightY(ctrl.CurrentLayerNumber);
+			ctrl.Doc.CreateNewLayerLinkedRightY(ctrl.CurrentLayerNumber);
 		}
 	}
 
@@ -266,26 +266,23 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public abstract class AbstractCheckableGraphControllerCommand : AbstractCheckableMenuCommand
 	{
+		public Altaxo.Graph.GUI.GraphController Controller
+		{
+			get 
+			{
+				if(null!=App.Current && null!=App.Current.Workbench && null!=App.Current.Workbench.ActiveWorkbenchWindow)
+					return App.Current.Workbench.ActiveWorkbenchWindow.ActiveViewContent as Altaxo.Graph.GUI.GraphController;
+				else
+					return null;
+			}
+		}
+
 		/// <summary>
-		/// Determines the currently active worksheet and issues the command to that worksheet by calling
-		/// Run with the worksheet as a parameter.
+		/// This function is never be called, since this is a CheckableMenuCommand.
 		/// </summary>
 		public override void Run()
 		{
-			Altaxo.Graph.GUI.GraphController ctrl 
-				= App.Current.Workbench.ActiveWorkbenchWindow.ActiveViewContent 
-				as Altaxo.Graph.GUI.GraphController;
-			
-			if(null!=ctrl)
-				Run(ctrl);
 		}
-	
-		/// <summary>
-		/// Override this function for adding own worksheet commands. You will get
-		/// the worksheet controller in the parameter.
-		/// </summary>
-		/// <param name="ctrl">The worksheet controller this command is applied to.</param>
-		public abstract void Run(Altaxo.Graph.GUI.GraphController ctrl);
 	}
 
 	/// <summary>
@@ -293,14 +290,28 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class SelectPointerTool : AbstractCheckableGraphControllerCommand
 	{
-		public SelectPointerTool()			
+		public override bool IsChecked 
 		{
-			this.IsChecked = true;
-		}
+			get 
+			{
+				if(null!=Controller)
+				{
+					base.IsChecked = (Controller.CurrentGraphTool==GraphTools.ObjectPointer);
+				}
 
-		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
-		{
-			// do nothing here
+				return base.IsChecked;
+			}
+			set 
+			{
+				base.IsChecked = value;
+				if(true==value && null!=Controller)
+				{
+						Controller.CurrentGraphTool=GraphTools.ObjectPointer;
+				}
+
+				((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+
+			}
 		}
 	}
 
@@ -309,15 +320,28 @@ namespace Altaxo.Graph.Commands
 	/// </summary>
 	public class SelectTextTool : AbstractCheckableGraphControllerCommand
 	{
-		public SelectTextTool()			
+		public override bool IsChecked 
 		{
-			this.IsChecked = false;
-		}
+			get 
+			{
+				if(null!=Controller)
+				{
+					base.IsChecked = (Controller.CurrentGraphTool==GraphTools.Text);
+				}
 
-		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
-		{
-			// do nothing here
+				return base.IsChecked;
+			}
+			set 
+			{
+				base.IsChecked = value;
+				if(true==value && null!=Controller)
+				{
+						Controller.CurrentGraphTool=GraphTools.Text;
+				}
+
+				((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+
+			}
 		}
 	}
-
 }
