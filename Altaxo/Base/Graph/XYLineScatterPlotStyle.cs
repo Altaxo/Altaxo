@@ -398,7 +398,7 @@ namespace Altaxo.Graph
         int  rangeOffset=0;
         PlotRangeList rangeList = new PlotRangeList();
 
-        int len = myPlotAssociation.PointCount;
+        int len = myPlotAssociation.PlotRangeEnd;
         for(i=myPlotAssociation.PlotRangeStart,j=0;i<len;i++)
         {
           if(Double.IsNaN(xColumn.GetDoubleAt(i)) || Double.IsNaN(yColumn.GetDoubleAt(i)))

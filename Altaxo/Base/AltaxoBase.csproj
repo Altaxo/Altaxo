@@ -479,6 +479,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\GUI\FitPolynomialDialogControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\FitPolynomialDialogControl.resx"
+                    DependentUpon = "FitPolynomialDialogControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\FitPolynomialDialogController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\GUI\GraphController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -620,6 +635,11 @@
                 />
                 <File
                     RelPath = "Graph\GUI\XYPlotLabelStyleController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Procedures\PolynomialFitting.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

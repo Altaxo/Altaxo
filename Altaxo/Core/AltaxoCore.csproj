@@ -114,12 +114,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\ComplexArray.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\ComplexF.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Calc\ComplexMath.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\ComplexStats.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -205,6 +215,11 @@
                 />
                 <File
                     RelPath = "Calc\FFT\ChirpFFT.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\FFT\ComplexFFT.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

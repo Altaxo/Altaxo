@@ -147,6 +147,10 @@ namespace Altaxo.Graph
       return new XYColumnPlotItem(this);
     }
 
+    public XYColumnPlotData XYColumnPlotData
+    {
+      get { return m_PlotAssociation; }
+    }
 
     public override object Data
     {

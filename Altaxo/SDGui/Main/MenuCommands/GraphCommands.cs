@@ -285,6 +285,22 @@ namespace Altaxo.Graph.Commands
 
 
   /// <summary>
+  /// Handler for the menu item "Graph" - "New layer legend.
+  /// </summary>
+  public class FitPolynomial : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+      Altaxo.Graph.GUI.IFitPolynomialDialogController dlg = new Altaxo.Graph.GUI.FitPolynomialDialogController(2,double.NegativeInfinity,double.PositiveInfinity,false);
+      if(Main.GUI.DialogFactory.ShowPolynomialFitDialog(Current.MainWindow,dlg))
+      {
+       Altaxo.Graph.Procedures.PolynomialFitting.Fit(ctrl,dlg.Order,dlg.FitCurveXmin,dlg.FitCurveXmax,dlg.ShowFormulaOnGraph);
+      }
+    }
+  }
+
+
+  /// <summary>
   /// Provides a abstract class for issuing commands that apply to worksheet controllers.
   /// </summary>
   public abstract class AbstractCheckableGraphControllerCommand : AbstractCheckableMenuCommand

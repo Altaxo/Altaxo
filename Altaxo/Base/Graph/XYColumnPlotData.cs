@@ -536,7 +536,9 @@ namespace Altaxo.Graph
     /// One more than the index to the last valid plot data point. This is <b>not</b>
     /// the number of plottable points, <seealso cref="PlottablePoints"/>
     /// </summary>
-    public int PointCount
+    /// <remarks>This is not neccessarily (PlotRangeStart+PlotRangeLength), but always less or equal than this. This is because
+    /// the underlying arrays can be smaller than the proposed plot range.</remarks>
+    public int PlotRangeEnd
     {
       get
       {
@@ -689,6 +691,9 @@ namespace Altaxo.Graph
         Changed(this,new System.EventArgs());
     }
 
+    /// <summary>
+    /// Number of the first point to plot.
+    /// </summary>
     public int PlotRangeStart
     {
       get { return this.m_PlotRangeStart; }
@@ -698,6 +703,10 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Length of the plot range. The last point of the plot range is PlotRangeStart+PlotRangeLength-1.
+    /// This is not the number of plottable points!
+    /// </summary>
     public int PlotRangeLength
     {
       get { return this.m_PlotRangeLength; }
