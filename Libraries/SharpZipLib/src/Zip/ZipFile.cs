@@ -260,8 +260,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 					baseStream.Read(buffer, 0, commentLen);
 					entry.Comment = ZipConstants.ConvertToString(buffer);
 				}
-				entry.zipFileIndex = i;
-				entry.offset = offset;
+				entry.ZipFileIndex = i;
+				entry.Offset = offset;
 				entries[i] = entry;
 			}
 		}
@@ -301,7 +301,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 					return i;
 				}
 			}
-			return -1;
+			return -1; // ok
 		}
 		
 		/// <summary>
@@ -338,7 +338,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		long CheckLocalHeader(ZipEntry entry)
 		{
 			lock(baseStream) {
-				baseStream.Seek(entry.offset, SeekOrigin.Begin);
+				baseStream.Seek(entry.Offset, SeekOrigin.Begin);
 				if (ReadLeInt() != ZipConstants.LOCSIG) {
 					throw new ZipException("Wrong Local header signature");
 				}
@@ -367,7 +367,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				}
 				
 				int extraLen = entry.Name.Length + ReadLeShort();
-				return entry.offset + ZipConstants.LOCHDR + extraLen;
+				return entry.Offset + ZipConstants.LOCHDR + extraLen;
 			}
 		}
 		
@@ -391,7 +391,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				throw new InvalidOperationException("ZipFile has closed");
 			}
 			
-			int index = entry.zipFileIndex;
+			int index = entry.ZipFileIndex;
 			if (index < 0 || index >= entries.Length || entries[index].Name != entry.Name) {
 				index = GetEntryIndex(entry.Name);
 				if (index < 0) {
@@ -418,9 +418,6 @@ namespace ICSharpCode.SharpZipLib.Zip
 		public string ZipFileComment {
 			get {
 				return comment;
-			}
-			set {
-				comment = value;
 			}
 		}
 		
@@ -500,7 +497,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			public override int ReadByte()
 			{
 				if (filepos == end) {
-					return -1;
+					return -1; //ok
 				}
 				
 				lock(baseStream) {
@@ -514,7 +511,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				if (len > end - filepos) {
 					len = (int) (end - filepos);
 					if (len == 0) {
-						return -1;
+						return 0;
 					}
 				}
 				lock(baseStream) {

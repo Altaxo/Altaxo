@@ -127,7 +127,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			if (avail <= 0) {
 				FillBuf();
 				if (avail <= 0) {
-					return -1;
+					return 0;
 				}
 			}
 			if (length > avail) {
@@ -210,10 +210,20 @@ namespace ICSharpCode.SharpZipLib.Zip
 			}
 			
 			int header = ReadLeInt();
-			if (header == ZipConstants.CENSIG) {
-				/* Central Header reached. */
+			
+			// -jr- added end sig for empty zip files, Zip64 end sig and digital sig for files that have them...
+			if (header == ZipConstants.CENSIG || 
+			    header == ZipConstants.ENDSIG || 
+			    header == ZipConstants.CENDIGITALSIG || 
+			    header == ZipConstants.CENSIG64) {
+				// Central Header reached or end of empty zip file
 				Close();
 				return null;
+			}
+			// -jr- 07-Dec-2003 ignore spanning temporary signatures if found
+			// SPANNINGSIG is same as descriptor signature and is untested as yet.
+			if (header == ZipConstants.SPANTEMPSIG || header == ZipConstants.SPANNINGSIG) {
+				header = ReadLeInt();
 			}
 			
 			if (header != ZipConstants.LOCSIG) {
@@ -270,13 +280,10 @@ namespace ICSharpCode.SharpZipLib.Zip
 				InitializePassword(password);
 				cryptbuffer = new byte[12];
 				ReadFully(cryptbuffer);
-				//crc.Update(cryptbuffer);
-				for (int i = 0; i < 12; ++i) {
-					cryptbuffer[i] ^= DecryptByte();
-					UpdateKeys(cryptbuffer[i]);
+				DecryptBlock(cryptbuffer, 0, cryptbuffer.Length);
+				if ((flags & 8) == 0) {// -jr- 10-Feb-2004 Dont yet know correct size here....
+					csize -= 12;
 				}
-				//cryptbuffer = cryptbuffer2;
-				csize -= 12;
 			} else {
 				cryptbuffer = null;
 			}
@@ -376,7 +383,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		{
 			byte[] b = new byte[1];
 			if (Read(b, 0, 1) <= 0) {
-				return -1;
+				return -1; // ok
 			}
 			return b[0] & 0xff;
 		}
@@ -398,20 +405,21 @@ namespace ICSharpCode.SharpZipLib.Zip
 			}
 			
 			if (entry == null) {
-				return -1;
+				return 0;
 			}
 			bool finished = false;
 			
 			switch (method) {
 				case ZipOutputStream.DEFLATED:
 					len = base.Read(b, off, len);
-					if (len <= 0) {
+					if (len <= 0) { // TODO BUG1 -jr- Check this was < 0 but avail was not adjusted causing failure in later calls
 						if (!inf.IsFinished) {
 							throw new ZipException("Inflater not finished!?");
 						}
 						avail = inf.RemainingInput;
 						
-						if (inf.TotalIn != csize || inf.TotalOut != size) {
+						// BUG1 -jr- With bit 3 set you dont yet know the size
+						if ((flags & 8) == 0 && (inf.TotalIn != csize || inf.TotalOut != size)) {
 							throw new ZipException("size mismatch: " + csize + ";" + size + " <-> " + inf.TotalIn + ";" + inf.TotalOut);
 						}
 						inf.Reset();
@@ -439,7 +447,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 					
 					// decrypting crypted data
 					if (cryptbuffer != null) {
-						DecryptBlock(b, off, System.Math.Min((int)(csize - inf.TotalIn), len));
+						DecryptBlock(b, off, len);
 					}
 					
 					break;
@@ -453,8 +461,6 @@ namespace ICSharpCode.SharpZipLib.Zip
 				if ((flags & 8) != 0) {
 					ReadDataDescr();
 				}
-//				Console.WriteLine("{0:x}",crc.Value & 0xFFFFFFFFL);
-//				Console.WriteLine(entry.Crc);
 				
 				if ((crc.Value & 0xFFFFFFFFL) != entry.Crc && entry.Crc != -1) {
 					throw new ZipException("CRC mismatch");

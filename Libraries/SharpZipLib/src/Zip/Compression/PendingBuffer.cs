@@ -74,15 +74,15 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		
 		public void WriteByte(int b)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0)
+			if (DeflaterConstants.DEBUGGING && start != 0) {
 				throw new Exception();
+			}
 			buf[end++] = (byte) b;
 		}
 		
 		public void WriteShort(int s)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) 
-			{
+			if (DeflaterConstants.DEBUGGING && start != 0) {
 				throw new Exception();
 			}
 			buf[end++] = (byte) s;
@@ -91,8 +91,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		
 		public void WriteInt(int s)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) 
-			{
+			if (DeflaterConstants.DEBUGGING && start != 0) {
 				throw new Exception();
 			}
 			buf[end++] = (byte) s;
@@ -103,33 +102,27 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		
 		public void WriteBlock(byte[] block, int offset, int len)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) 
-			{
+			if (DeflaterConstants.DEBUGGING && start != 0) {
 				throw new Exception();
 			}
 			System.Array.Copy(block, offset, buf, end, len);
 			end += len;
 		}
 		
-		public int BitCount 
-		{
-			get 
-			{
+		public int BitCount {
+			get {
 				return bitCount;
 			}
 		}
 		
 		public void AlignToByte() 
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) 
-			{
+			if (DeflaterConstants.DEBUGGING && start != 0) {
 				throw new Exception();
 			}
-			if (bitCount > 0) 
-			{
+			if (bitCount > 0) {
 				buf[end++] = (byte) bits;
-				if (bitCount > 8) 
-				{
+				if (bitCount > 8) {
 					buf[end++] = (byte) (bits >> 8);
 				}
 			}
@@ -139,8 +132,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		
 		public void WriteBits(int b, int count)
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) 
-			{
+			if (DeflaterConstants.DEBUGGING && start != 0) {
 				throw new Exception();
 			}
 			//			if (DeflaterConstants.DEBUGGING) {
@@ -148,8 +140,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 			//			}
 			bits |= (uint)(b << bitCount);
 			bitCount += count;
-			if (bitCount >= 16) 
-			{
+			if (bitCount >= 16) {
 				buf[end++] = (byte) bits;
 				buf[end++] = (byte) (bits >> 8);
 				bits >>= 16;
@@ -159,18 +150,15 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		
 		public void WriteShortMSB(int s) 
 		{
-			if (DeflaterConstants.DEBUGGING && start != 0) 
-			{
+			if (DeflaterConstants.DEBUGGING && start != 0) {
 				throw new Exception();
 			}
 			buf[end++] = (byte) (s >> 8);
 			buf[end++] = (byte) s;
 		}
 		
-		public bool IsFlushed 
-		{
-			get 
-			{
+		public bool IsFlushed {
+			get {
 				return end == 0;
 			}
 		}
@@ -193,21 +181,17 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		/// </exception>
 		public int Flush(byte[] output, int offset, int length) 
 		{
-			if (bitCount >= 8) 
-			{
+			if (bitCount >= 8) {
 				buf[end++] = (byte) bits;
 				bits >>= 8;
 				bitCount -= 8;
 			}
-			if (length > end - start) 
-			{
+			if (length > end - start) {
 				length = end - start;
 				System.Array.Copy(buf, start, output, offset, length);
 				start = 0;
 				end = 0;
-			} 
-			else 
-			{
+			} else {
 				System.Array.Copy(buf, start, output, offset, length);
 				start += length;
 			}
@@ -216,7 +200,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression
 		
 		public byte[] ToByteArray()
 		{
-			byte[] ret = new byte[ end - start ];
+			byte[] ret = new byte[end - start];
 			System.Array.Copy(buf, start, ret, 0, ret.Length);
 			start = 0;
 			end = 0;

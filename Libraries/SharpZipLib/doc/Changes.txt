@@ -54,3 +54,16 @@ Changes since 0.4
 + Support for crypted files (decryption)
 + WinZip can't delete bug fixed (thanx to JackmanG from the SharpDevelop forum)
 + The ZipFile class has now a 'ZipFileComment' property containing the comment for the whole zip file. Contributed by John Carto.
+
+Changes since 0.51
++ some return -1 bugs fixed
++ added gzipoutputstream mods from ben@blowery.org:
+"It writes out the GZip header to the base stream as part of its constructor.
+Unfortunately, I cannot write to the underlying stream (the
+HttpResponse.Filter) upon construction.  I need to delay the header write
+until just before the first real write to the GZipOutputStream.  I went
+ahead and made the modifications to the library and it seems to work
+wonderfully."
++ Added patches from jfreilly (jfreilly@hotmail.com) many, many bugs got fixed.
++ Added unit tests to ensure a certain level of stability
++

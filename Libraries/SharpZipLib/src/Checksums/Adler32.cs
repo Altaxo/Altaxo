@@ -98,10 +98,8 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		/// <summary>
 		/// Returns the Adler32 data checksum computed so far.
 		/// </summary>
-		public long Value 
-		{
-			get 
-			{
+		public long Value {
+			get {
 				return checksum;
 			}
 		}
@@ -167,13 +165,11 @@ namespace ICSharpCode.SharpZipLib.Checksums
 		/// </param>
 		public void Update(byte[] buf, int off, int len)
 		{
-			if (buf == null) 
-			{
+			if (buf == null) {
 				throw new ArgumentNullException("buf");
 			}
 			
-			if (off < 0 || len < 0 || off + len > buf.Length) 
-			{
+			if (off < 0 || len < 0 || off + len > buf.Length) {
 				throw new ArgumentOutOfRangeException();
 			}
 			
@@ -181,19 +177,16 @@ namespace ICSharpCode.SharpZipLib.Checksums
 			uint s1 = checksum & 0xFFFF;
 			uint s2 = checksum >> 16;
 			
-			while (len > 0) 
-			{
+			while (len > 0) {
 				// We can defer the modulo operation:
 				// s1 maximally grows from 65521 to 65521 + 255 * 3800
 				// s2 maximally grows by 3800 * median(s1) = 2090079800 < 2^31
 				int n = 3800;
-				if (n > len) 
-				{
+				if (n > len) {
 					n = len;
 				}
 				len -= n;
-				while (--n >= 0) 
-				{
+				while (--n >= 0) {
 					s1 = s1 + (uint)(buf[off++] & 0xFF);
 					s2 = s2 + s1;
 				}

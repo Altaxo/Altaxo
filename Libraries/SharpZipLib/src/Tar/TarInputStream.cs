@@ -60,6 +60,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		protected IEntryFactory eFactory;
 		
 		Stream inputStream;
+
 		/// <summary>
 		/// I needed to implement the abstract member.
 		/// </summary>
@@ -76,6 +77,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </summary>
 		public override bool CanSeek 
 		{
+         // TODO is this valid?  should it return false?
 			get 
 			{
 				return inputStream.CanSeek;
@@ -132,6 +134,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </summary>
 		public override long Seek(long offset, SeekOrigin origin)
 		{
+         // TODO allow this?
 			return inputStream.Seek(offset, origin);
 		}
 		
@@ -160,30 +163,27 @@ namespace ICSharpCode.SharpZipLib.Tar
 		}
 			
 		
-		public TarInputStream(Stream inputStream) : this(inputStream, TarBuffer.DEFAULT_BLKSIZE, TarBuffer.DEFAULT_RCDSIZE)
+		public TarInputStream(Stream inputStream) : this(inputStream, TarBuffer.DefaultBlockFactor)
 		{
 		}
 		
-		public TarInputStream(Stream inputStream, int blockSize) : this(inputStream, blockSize, TarBuffer.DEFAULT_RCDSIZE)
-		{
-		}
-		
-		public TarInputStream(Stream inputStream, int blockSize, int recordSize)
+		public TarInputStream(Stream inputStream, int blockFactor)
 		{
 			this.inputStream = inputStream;
-			this.buffer      = TarBuffer.CreateInputTarBuffer(inputStream, blockSize, recordSize);
+			this.buffer      = TarBuffer.CreateInputTarBuffer(inputStream, blockFactor);
 			
-			this.readBuf = null;
+			this.readBuf   = null;
 			this.debug     = false;
 			this.hasHitEOF = false;
 			this.eFactory  = null;
 		}
 		
-		public void SetDebug(bool debugF)
+		public void SetDebug(bool debugFlag)
 		{
-			this.debug = debugF;
-			SetBufferDebug(debugF);
+			this.debug = debugFlag;
+			SetBufferDebug(debugFlag);
 		}
+
 		public void SetBufferDebug(bool debug)
 		{
 			this.buffer.SetDebug(debug);
@@ -245,7 +245,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </param>
 		public void Skip(int numToSkip)
 		{
-			// REVIEW
+			// TODO REVIEW
 			// This is horribly inefficient, but it ensures that we
 			// properly skip over bytes via the TarBuffer...
 			//
@@ -291,7 +291,24 @@ namespace ICSharpCode.SharpZipLib.Tar
 		public void Reset()
 		{
 		}
-		
+
+      void SkipToNextEntry()
+      {
+         int numToSkip = this.entrySize - this.entryOffset;
+				
+         if (this.debug) 
+         {
+            //Console.WriteLine.WriteLine("TarInputStream: SKIP currENTRY '" + this.currEntry.Name + "' SZ " + this.entrySize + " OFF " + this.entryOffset + "  skipping " + numToSkip + " bytes");
+         }
+				
+         if (numToSkip > 0) 
+         {
+            this.Skip(numToSkip);
+         }
+				
+         this.readBuf = null;
+      }
+
 		/// <summary>
 		/// Get the next entry in this tar archive. This will skip
 		/// over any remaining data in the current entry, if there
@@ -314,37 +331,25 @@ namespace ICSharpCode.SharpZipLib.Tar
 			
 			if (this.currEntry != null) 
 			{
-				int numToSkip = this.entrySize - this.entryOffset;
-				
-				if (this.debug) 
-				{
-					//Console.WriteLine.WriteLine("TarInputStream: SKIP currENTRY '" + this.currEntry.Name + "' SZ " + this.entrySize + " OFF " + this.entryOffset + "  skipping " + numToSkip + " bytes");
-				}
-				
-				if (numToSkip > 0) 
-				{
-					this.Skip(numToSkip);
-				}
-				
-				this.readBuf = null;
+            SkipToNextEntry();
 			}
 			
-			byte[] headerBuf = this.buffer.ReadRecord();
+			byte[] headerBuf = this.buffer.ReadBlock();
 			
 			if (headerBuf == null) 
 			{
 				if (this.debug) 
 				{
-					//Console.WriteLine.WriteLine("READ NULL RECORD");
+					//Console.WriteLine.WriteLine("READ NULL BLOCK");
 				}
 				
 				this.hasHitEOF = true;
 			} 
-			else if (this.buffer.IsEOFRecord(headerBuf)) 
+			else if (this.buffer.IsEOFBlock(headerBuf)) 
 			{
 				if (this.debug) 
 				{
-					//Console.WriteLine.WriteLine( "READ EOF RECORD" );
+					//Console.WriteLine.WriteLine( "READ EOF BLOCK" );
 				}
 				
 				this.hasHitEOF = true;
@@ -358,15 +363,83 @@ namespace ICSharpCode.SharpZipLib.Tar
 			{
 				try 
 				{
-					if (this.eFactory == null) 
+               TarHeader header = new TarHeader();
+               header.ParseBuffer(headerBuf);
+               this.entryOffset = 0;
+               this.entrySize = (int)header.size;
+
+               StringBuilder longName = null;
+
+               if (header.typeFlag == TarHeader.LF_GNU_LONGNAME)
+               {
+                  Console.WriteLine("TarInputStream: Long name found '" + header.name + "' size = " + header.size); // DEBUG
+
+                  byte[] nameBuffer = new byte[TarBuffer.BlockSize];
+
+                  int numToRead = this.entrySize;
+
+                  longName = new StringBuilder();
+
+                  while (numToRead > 0)
+                  {
+                     int numRead = this.Read(nameBuffer, 0, (numToRead > nameBuffer.Length ? nameBuffer.Length : numToRead));
+				
+                     if (numRead == -1) 
+                     {
+                        throw new InvalidHeaderException("Failed to read long name entry");
+                     }
+				
+                     longName.Append(TarHeader.ParseName(nameBuffer, 0, numRead).ToString());
+                     numToRead -= numRead;
+                  }
+
+                  Console.WriteLine("TarInputStream: Long name is '" + longName.ToString()); // DEBUG
+
+                  SkipToNextEntry();
+                  headerBuf = this.buffer.ReadBlock();
+               }
+               else if (header.typeFlag == TarHeader.LF_GHDR) // POSIX global extended header
+               {
+                  // Ignore things we dont understand completely for now
+                  SkipToNextEntry();
+                  headerBuf = this.buffer.ReadBlock();
+               }
+               else if (header.typeFlag == TarHeader.LF_XHDR)     // POSIX extended header
+               {
+                  // Ignore things we dont understand completely for now
+                  SkipToNextEntry();
+                  headerBuf = this.buffer.ReadBlock();
+               }
+               else if (header.typeFlag == TarHeader.LF_GNU_VOLHDR)
+               {
+                  // TODO could show volume name when verbose?
+                  SkipToNextEntry();
+                  headerBuf = this.buffer.ReadBlock();
+               }
+               else if (header.typeFlag != TarHeader.LF_NORMAL
+                  && header.typeFlag != TarHeader.LF_OLDNORM)
+               {
+                  // Ignore things we dont understand completely for now
+                  SkipToNextEntry();
+                  headerBuf = this.buffer.ReadBlock();
+               }
+
+               if (this.eFactory == null) 
 					{
-						this.currEntry = new TarEntry(headerBuf);
+                  this.currEntry = new TarEntry(headerBuf);
+                  if (longName != null)
+                  {
+                     this.currEntry.TarHeader.name.Length = 0;
+                     this.currEntry.TarHeader.name.Append(longName.ToString());
+                  }
 					} 
 					else 
 					{
-						this.currEntry = this.eFactory.CreateEntry(headerBuf);
+                  this.currEntry = this.eFactory.CreateEntry(headerBuf);
 					}
-					
+
+					// TODO -jr- ustar is not the only magic possible by any means
+               // tar, xtar, ... 
 					if (!(headerBuf[257] == 'u' && headerBuf[258] == 's' && headerBuf[259] == 't' && headerBuf[260] == 'a' && headerBuf[261] == 'r')) 
 					{
 						throw new InvalidHeaderException("header magic is not 'ustar', but '" + headerBuf[257] + headerBuf[258] + headerBuf[259] + headerBuf[260] + headerBuf[261] + 
@@ -380,7 +453,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			
 					this.entryOffset = 0;
 					
-					// REVIEW How do we resolve this discrepancy?!
+					// TODO REVIEW How do we resolve this discrepancy?!
 					this.entrySize = (int) this.currEntry.Size;
 				} 
 				catch (InvalidHeaderException ex) 
@@ -388,7 +461,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 					this.entrySize = 0;
 					this.entryOffset = 0;
 					this.currEntry = null;
-					throw new InvalidHeaderException("bad header in block " + this.buffer.GetCurrentBlockNum() + " record " + this.buffer.GetCurrentRecordNum() + ", " + ex.Message);
+					throw new InvalidHeaderException("bad header in record " + this.buffer.GetCurrentBlockNum() + " block " + this.buffer.GetCurrentBlockNum() + ", " + ex.Message);
 				}
 			}
 			return this.currEntry;
@@ -402,8 +475,8 @@ namespace ICSharpCode.SharpZipLib.Tar
 		{
 			byte[] oneByteBuffer = new byte[1];
 			int num = this.Read(oneByteBuffer, 0, 1);
-			if (num <= 0) 
-			{ // return -1 to indicate that no byte was read.
+			if (num <= 0)               // return -1 to indicate that no byte was read.
+			{
 				return -1;
 			}
 			return (int)oneByteBuffer[0];
@@ -413,10 +486,9 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// Reads bytes from the current tar archive entry.
 		/// 
 		/// This method is aware of the boundaries of the current
-		/// entry in the archive and will deal with them as if they
-		/// entry in the archive and will deal with them as if they
+		/// entry in the archive and will deal with them appropriately
 		/// </summary>
-		/// <param name="buf">
+		/// <param name="outputBuffer">
 		/// The buffer into which to place bytes read.
 		/// </param>
 		/// <param name="offset">
@@ -426,15 +498,15 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// The number of bytes to read.
 		/// </param>
 		/// <returns>
-		/// The number of bytes read, or -1 at EOF.
+		/// The number of bytes read, or 0 at end of stream/EOF.
 		/// </returns>
-		public override int Read(byte[] buf, int offset, int numToRead)
+		public override int Read(byte[] outputBuffer, int offset, int numToRead)
 		{
 			int totalRead = 0;
 			
 			if (this.entryOffset >= this.entrySize) 
 			{
-				return -1;
+				return 0;
 			}
 			
 			if ((numToRead + this.entryOffset) > this.entrySize) 
@@ -446,7 +518,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			{
 				int sz = (numToRead > this.readBuf.Length) ? this.readBuf.Length : numToRead;
 				
-				Array.Copy(this.readBuf, 0, buf, offset, sz);
+				Array.Copy(this.readBuf, 0, outputBuffer, offset, sz);
 				
 				if (sz >= this.readBuf.Length) 
 				{
@@ -455,7 +527,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 				else 
 				{
 					int newLen = this.readBuf.Length - sz;
-					byte[] newBuf = new byte[ newLen ];
+					byte[] newBuf = new byte[newLen];
 					Array.Copy(this.readBuf, sz, newBuf, 0, newLen);
 					this.readBuf = newBuf;
 				}
@@ -467,7 +539,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			
 			while (numToRead > 0) 
 			{
-				byte[] rec = this.buffer.ReadRecord();
+				byte[] rec = this.buffer.ReadBlock();
 				if (rec == null) 
 				{
 					// Unexpected EOF!
@@ -479,14 +551,14 @@ namespace ICSharpCode.SharpZipLib.Tar
 				
 				if (recLen > sz) 
 				{
-					Array.Copy(rec, 0, buf, offset, sz);
+					Array.Copy(rec, 0, outputBuffer, offset, sz);
 					this.readBuf = new byte[recLen - sz];
 					Array.Copy(rec, sz, this.readBuf, 0, recLen - sz);
 				} 
 				else 
 				{
 					sz = recLen;
-					Array.Copy(rec, 0, buf, offset, recLen);
+					Array.Copy(rec, 0, outputBuffer, offset, recLen);
 				}
 				
 				totalRead += sz;

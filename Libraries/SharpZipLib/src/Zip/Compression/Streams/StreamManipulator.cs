@@ -74,14 +74,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// </returns>
 		public int PeekBits(int n)
 		{
-			if (bits_in_buffer < n) 
-			{
-				if (window_start == window_end) 
-				{
-					return -1;
+			if (bits_in_buffer < n) {
+				if (window_start == window_end) {
+					return -1; // ok
 				}
 				buffer |= (uint)((window[window_start++] & 0xff |
-					(window[window_start++] & 0xff) << 8) << bits_in_buffer);
+				                 (window[window_start++] & 0xff) << 8) << bits_in_buffer);
 				bits_in_buffer += 16;
 			}
 			return (int)(buffer & ((1 << n) - 1));
@@ -108,8 +106,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		public int GetBits(int n)
 		{
 			int bits = PeekBits(n);
-			if (bits >= 0) 
-			{
+			if (bits >= 0) {
 				DropBits(n);
 			}
 			return bits;
@@ -122,10 +119,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// <returns>
 		/// the number of bits available.
 		/// </returns>
-		public int AvailableBits 
-		{
-			get 
-			{
+		public int AvailableBits {
+			get {
 				return bits_in_buffer;
 			}
 		}
@@ -136,10 +131,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// <returns>
 		/// the number of bytes available.
 		/// </returns>
-		public int AvailableBytes 
-		{
-			get 
-			{
+		public int AvailableBytes {
+			get {
 				return window_end - window_start + (bits_in_buffer >> 3);
 			}
 		}
@@ -153,10 +146,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			bits_in_buffer &= ~7;
 		}
 		
-		public bool IsNeedingInput 
-		{
-			get 
-			{
+		public bool IsNeedingInput {
+			get {
 				return window_start == window_end;
 			}
 		}
@@ -181,40 +172,34 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// </returns>
 		public int CopyBytes(byte[] output, int offset, int length)
 		{
-			if (length < 0) 
-			{
+			if (length < 0) {
 				throw new ArgumentOutOfRangeException("length negative");
 			}
-			if ((bits_in_buffer & 7) != 0)   
-			{
+			if ((bits_in_buffer & 7) != 0) {
 				/* bits_in_buffer may only be 0 or 8 */
 				throw new InvalidOperationException("Bit buffer is not aligned!");
 			}
 			
 			int count = 0;
-			while (bits_in_buffer > 0 && length > 0) 
-			{
+			while (bits_in_buffer > 0 && length > 0) {
 				output[offset++] = (byte) buffer;
 				buffer >>= 8;
 				bits_in_buffer -= 8;
 				length--;
 				count++;
 			}
-			if (length == 0) 
-			{
+			if (length == 0) {
 				return count;
 			}
 			
 			int avail = window_end - window_start;
-			if (length > avail) 
-			{
+			if (length > avail) {
 				length = avail;
 			}
 			System.Array.Copy(window, window_start, output, offset, length);
 			window_start += length;
 			
-			if (((window_start - window_end) & 1) != 0) 
-			{
+			if (((window_start - window_end) & 1) != 0) {
 				/* We always want an even number of bytes in input, see peekBits */
 				buffer = (uint)(window[window_start++] & 0xff);
 				bits_in_buffer = 8;
@@ -233,8 +218,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		
 		public void SetInput(byte[] buf, int off, int len)
 		{
-			if (window_start < window_end) 
-			{
+			if (window_start < window_end) {
 				throw new InvalidOperationException("Old input was not completely processed");
 			}
 			
@@ -243,13 +227,11 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			/* We want to throw an ArrayIndexOutOfBoundsException early.  The
 			* check is very tricky: it also handles integer wrap around.
 			*/
-			if (0 > off || off > end || end > buf.Length) 
-			{
+			if (0 > off || off > end || end > buf.Length) {
 				throw new ArgumentOutOfRangeException();
 			}
 			
-			if ((len & 1) != 0) 
-			{
+			if ((len & 1) != 0) {
 				/* We always want an even number of bytes in input, see peekBits */
 				buffer |= (uint)((buf[off++] & 0xff) << bits_in_buffer);
 				bits_in_buffer += 8;

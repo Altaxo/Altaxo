@@ -65,27 +65,6 @@ namespace ICSharpCode.SharpZipLib.Tar
 	/// other information. In this case the header fields are set to
 	/// defaults and the File is set to null.</p>
 	/// 
-	/// <p>
-	/// The C structure for a Tar Entry's header is:
-	/// <pre>
-	/// struct header {
-	/// 	char	name[NAMSIZ];
-	/// 	char	mode[8];
-	/// 	char	uid[8];
-	/// 	char	gid[8];
-	/// 	char	size[12];
-	/// 	char	mtime[12];
-	/// 	char	chksum[8];
-	/// 	char	linkflag;
-	/// 	char	linkname[NAMSIZ];
-	/// 	char	magic[8];
-	/// 	char	uname[TUNMLEN];
-	/// 	char	gname[TGNMLEN];
-	/// 	char	devmajor[8];
-	/// 	char	devminor[8];
-	/// 	} header;
-	/// </pre>
-	/// </p>
 	/// <see cref="TarHeader"/>
 	/// </summary>
 	public class TarEntry
@@ -93,12 +72,12 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// <summary>
 		/// If this entry represents a File, this references it.
 		/// </summary>
-		protected string    file;
+		string    file;
 		
 		/// <summary>
 		/// This is the entry's header information.
 		/// </summary>
-		protected TarHeader	header;
+		TarHeader	header;
 		
 		/// <summary>
 		/// Only Create Entries with the static CreateXYZ methods or a headerBuffer.
@@ -117,10 +96,15 @@ namespace ICSharpCode.SharpZipLib.Tar
 		public TarEntry(byte[] headerBuf)
 		{
 			this.Initialize();
-			this.ParseTarHeader(this.header, headerBuf);
+			this.header.ParseBuffer(headerBuf);
 		}
 		
-				
+
+      public TarEntry(TarHeader header)
+      {
+         file = null;
+         this.header = header;
+      }
 		
 		/// <summary>
 		/// Construct an entry with only a name. This allows the programmer
@@ -150,7 +134,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		}
 		
 		/// <summary>
-		/// Initialization code common to all constructors.
+		/// Initialization code common to all pseudo constructors.
 		/// </summary>
 		void Initialize()
 		{
@@ -410,7 +394,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 				
 				if (this.header != null) 
 				{
-					if (this.header.linkFlag == TarHeader.LF_DIR || this.header.name.ToString().EndsWith( "/" )) 
+					if (this.header.typeFlag == TarHeader.LF_DIR || this.header.name.ToString().EndsWith( "/" )) 
 					{
 						return true;
 					}
@@ -431,13 +415,18 @@ namespace ICSharpCode.SharpZipLib.Tar
 		public void GetFileTarHeader(TarHeader hdr, string file)
 		{
 			this.file = file;
-			
+
 			// bugfix from torhovl from #D forum:
 			string name = file;
-			//string name = Path.GetDirectoryName(file);
-			
-			if (Path.DirectorySeparatorChar == '\\') 
-			{ // check if the OS is a windows
+
+         // -jr- 23-Jan-2004 HAK HAK HAK, GnuTar allows device names in path where the name is not local to the current directory
+         if (Environment.CurrentDirectory == Path.GetDirectoryName(name))
+         {
+            name = Path.GetFileName(name);
+         }
+/*			
+         if (Path.DirectorySeparatorChar == '\\') 
+			{  // check if the OS is Windows
 				// Strip off drive letters!
 				if (name.Length > 2) 
 				{
@@ -450,37 +439,37 @@ namespace ICSharpCode.SharpZipLib.Tar
 					}
 				}
 			}
+*/
 			
-			name = name.Replace(Path.DirectorySeparatorChar, '/');
-			
+			name = name.Replace(Path.DirectorySeparatorChar, '/').ToLower();
+
 			// No absolute pathnames
-			// Windows (and Posix?) paths can start with "\\NetworkDrive\",
+			// Windows (and Posix?) paths can start with UNC style "\\NetworkDrive\",
 			// so we loop on starting /'s.
 			while (name.StartsWith("/")) {
 				name = name.Substring(1);
 			}
-			
+
 			hdr.linkName = new StringBuilder(String.Empty);
 			hdr.name     = new StringBuilder(name);
 			
 			if (Directory.Exists(file)) {
-				hdr.mode     = 040755; // Magic number for security access for a UNIX filesystem
-				hdr.linkFlag = TarHeader.LF_DIR;
-				if (hdr.name.Length==0 || hdr.name[hdr.name.Length - 1] != '/') { // now
+				hdr.mode     = 1003; // 01753 -jr- no octal constants!! 040755; // Magic number for security access for a UNIX filesystem
+				hdr.typeFlag = TarHeader.LF_DIR;
+				if (hdr.name.Length == 0 || hdr.name[hdr.name.Length - 1] != '/') {
 					hdr.name.Append("/");
 				}
 				
 				hdr.size     = 0;
 			} else {
-				hdr.mode     = 0100644; // Magic number for security access for a UNIX filesystem
-				hdr.linkFlag = TarHeader.LF_NORMAL;
-				//Console.WriteLine(file.Replace('/', Path.DirectorySeparatorChar));
+				hdr.mode     = 33216; // 0100700 -jr-  // 0100644; // Magic number for security access for a UNIX filesystem
+				hdr.typeFlag = TarHeader.LF_NORMAL;
 				hdr.size     = new FileInfo(file.Replace('/', Path.DirectorySeparatorChar)).Length;
 			}
 			
 			// UNDONE When File lets us get the userName, use it!
-			hdr.modTime = System.IO.File.GetLastAccessTime(file.Replace('/', Path.DirectorySeparatorChar));
-			hdr.checkSum = 0;
+         hdr.modTime = System.IO.File.GetLastWriteTimeUtc(file.Replace('/', Path.DirectorySeparatorChar)); // -jr- Unix times are in UTC
+         hdr.checkSum = 0;
 			hdr.devMajor = 0;
 			hdr.devMinor = 0;
 		}
@@ -501,13 +490,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			
 			string[]   list   = Directory.GetFileSystemEntries(this.file);
 			TarEntry[] result = new TarEntry[list.Length];
-			
-			string dirName = file;
-			if (!dirName.EndsWith(Path.DirectorySeparatorChar.ToString())) 
-			{
-				dirName += Path.DirectorySeparatorChar;
-			}
-			
+
 			for (int i = 0; i < list.Length; ++i) 
 			{
 				result[i] = TarEntry.CreateEntryFromFile(list[i]);
@@ -516,26 +499,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			return result;
 		}
 		
-		/// <summary>
-		/// Compute the checksum of a tar entry header.
-		/// </summary>
-		/// <param name = "buf">
-		/// The tar entry's header buffer.
-		/// </param>
-		/// <returns>
-		/// The computed checksum.
-		/// </returns>
-		public long ComputeCheckSum(byte[] buf)
-		{
-			long sum = 0;
-			for (int i = 0; i < buf.Length; ++i) 
-			{
-				sum += 255 & buf[i]; // TODO : I think the 255 & x isn't neccessary += buf[i] should be enough. CHECK IT!
-			}
-			return sum;
-		}
-		
-		/// <summary>
+      /// <summary>
 		/// Write an entry's header information to a header buffer.
 		/// </summary>
 		/// <param name = "outbuf">
@@ -543,122 +507,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </param>
 		public void WriteEntryHeader(byte[] outbuf)
 		{
-			int offset = 0;
-			
-			offset = TarHeader.GetNameBytes(this.header.name, outbuf, offset, TarHeader.NAMELEN);
-			offset = TarHeader.GetOctalBytes(this.header.mode, outbuf, offset, TarHeader.MODELEN);
-			offset = TarHeader.GetOctalBytes(this.header.userId, outbuf, offset, TarHeader.UIDLEN);
-			offset = TarHeader.GetOctalBytes(this.header.groupId, outbuf, offset, TarHeader.GIDLEN);
-			
-			long size = this.header.size;
-			
-			offset = TarHeader.GetLongOctalBytes(size, outbuf, offset, TarHeader.SIZELEN);
-			offset = TarHeader.GetLongOctalBytes(GetCTime(this.header.modTime), outbuf, offset, TarHeader.MODTIMELEN);
-			
-			int csOffset = offset;
-			for (int c = 0; c < TarHeader.CHKSUMLEN; ++c) 
-			{
-				outbuf[offset++] = (byte)' ';
-			}
-			
-			outbuf[offset++] = this.header.linkFlag;
-			
-			offset = TarHeader.GetNameBytes(this.header.linkName, outbuf, offset, TarHeader.NAMELEN);
-			offset = TarHeader.GetNameBytes(this.header.magic, outbuf, offset, TarHeader.MAGICLEN);
-			offset = TarHeader.GetNameBytes(this.header.userName, outbuf, offset, TarHeader.UNAMELEN);
-			offset = TarHeader.GetNameBytes(this.header.groupName, outbuf, offset, TarHeader.GNAMELEN);
-			
-			offset = TarHeader.GetOctalBytes(this.header.devMajor, outbuf, offset, TarHeader.DEVLEN);
-			offset = TarHeader.GetOctalBytes(this.header.devMinor, outbuf, offset, TarHeader.DEVLEN);
-			
-			for (; offset < outbuf.Length;) 
-			{
-				outbuf[offset++] = 0;
-			}
-			
-			long checkSum = this.ComputeCheckSum(outbuf);
-			
-			TarHeader.GetCheckSumOctalBytes(checkSum, outbuf, csOffset, TarHeader.CHKSUMLEN);
-		}
-		
-		// time conversion functions
-		readonly static long     timeConversionFactor = 10000000L;
-		readonly static DateTime datetTime1970        = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-		
-		static int GetCTime(System.DateTime dateTime)
-		{
-			return (int)((dateTime.Ticks - datetTime1970.Ticks) / timeConversionFactor);
-		}
-		
-		static DateTime GetDateTimeFromCTime(long ticks)
-		{
-			return new DateTime(datetTime1970.Ticks + ticks * timeConversionFactor);
-		}
-		
-		/// <summary>
-		/// Parse an entry's TarHeader information from a header buffer.
-		/// </summary>
-		/// <param name ="hdr">
-		/// Parse an entry's TarHeader information from a header buffer.
-		/// </param>
-		/// <param name = "header">
-		/// The tar entry header buffer to get information from.
-		/// </param>
-		public void ParseTarHeader(TarHeader hdr, byte[] header)
-		{
-			int offset = 0;
-			
-			hdr.name = TarHeader.ParseName(header, offset, TarHeader.NAMELEN);
-			
-			offset += TarHeader.NAMELEN;
-			
-			hdr.mode = (int)TarHeader.ParseOctal(header, offset, TarHeader.MODELEN);
-			
-			offset += TarHeader.MODELEN;
-			
-			hdr.userId = (int)TarHeader.ParseOctal(header, offset, TarHeader.UIDLEN);
-			
-			offset += TarHeader.UIDLEN;
-			
-			hdr.groupId = (int)TarHeader.ParseOctal(header, offset, TarHeader.GIDLEN);
-			
-			offset += TarHeader.GIDLEN;
-			
-			hdr.size = TarHeader.ParseOctal(header, offset, TarHeader.SIZELEN);
-			
-			offset += TarHeader.SIZELEN;
-			
-			hdr.modTime = GetDateTimeFromCTime(TarHeader.ParseOctal(header, offset, TarHeader.MODTIMELEN));
-			
-			offset += TarHeader.MODTIMELEN;
-			
-			hdr.checkSum = (int)TarHeader.ParseOctal(header, offset, TarHeader.CHKSUMLEN);
-			
-			offset += TarHeader.CHKSUMLEN;
-			
-			hdr.linkFlag = header[ offset++ ];
-			
-			hdr.linkName = TarHeader.ParseName(header, offset, TarHeader.NAMELEN);
-			
-			offset += TarHeader.NAMELEN;
-			
-			hdr.magic = TarHeader.ParseName(header, offset, TarHeader.MAGICLEN);
-			
-			offset += TarHeader.MAGICLEN;
-			
-			hdr.userName = TarHeader.ParseName(header, offset, TarHeader.UNAMELEN);
-			
-			offset += TarHeader.UNAMELEN;
-			
-			hdr.groupName = TarHeader.ParseName(header, offset, TarHeader.GNAMELEN);
-			
-			offset += TarHeader.GNAMELEN;
-			
-			hdr.devMajor = (int)TarHeader.ParseOctal(header, offset, TarHeader.DEVLEN);
-			
-			offset += TarHeader.DEVLEN;
-			
-			hdr.devMinor = (int)TarHeader.ParseOctal(header, offset, TarHeader.DEVLEN);
+         this.header.WriteHeader(outbuf);
 		}
 		
 		/// <summary>
@@ -672,22 +521,22 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// </param>
 		public void NameTarHeader(TarHeader hdr, string name)
 		{
-			bool isDir = name.EndsWith("/");
+			bool isDir = name.EndsWith("/");   // -jr- this is true for BSD tar but not all others I think?
 			
 			hdr.checkSum = 0;
-			hdr.devMajor = 0;
-			hdr.devMinor = 0;
 			
 			hdr.name = new StringBuilder(name);
-			hdr.mode = isDir ? 040755 : 0100644; // TODO : I think I've seen these magics before ...
-			hdr.userId   = 0;
+//			hdr.mode = isDir ? 040755 : 0100644; // TODO : I think I've seen these magics before ...
+         hdr.mode = isDir ? 1003 : 33216;
+         hdr.userId   = 0;
 			hdr.groupId  = 0;
 			hdr.size     = 0;
 			hdr.checkSum = 0;
 			
-			hdr.modTime  = DateTime.Now;//(new java.util.Date()).getTime() / 1000;
+         hdr.modTime  = DateTime.UtcNow;        // -jr- 24-Jan-2004 Unix times are in utc!
+//			hdr.modTime  = DateTime.Now;   // (new java.util.Date()).getTime() / 1000;
 			
-			hdr.linkFlag = isDir ? TarHeader.LF_DIR : TarHeader.LF_NORMAL;
+			hdr.typeFlag = isDir ? TarHeader.LF_DIR : TarHeader.LF_NORMAL;
 			
 			hdr.linkName  = new StringBuilder(String.Empty);
 			hdr.userName  = new StringBuilder(String.Empty);
@@ -698,6 +547,9 @@ namespace ICSharpCode.SharpZipLib.Tar
 		}
 	}
 }
+
+
+
 /* The original Java file had this header:
 	*
 	** Authored by Timothy Gerard Endres

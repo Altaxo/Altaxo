@@ -49,20 +49,9 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		{
 			System.IO.Stream bos = outstream;
 			System.IO.Stream bis = instream;
-			int b = bis.ReadByte();
-			if (b != 'B') 
-			{
-				return;
-			}
-			b = bis.ReadByte();
-			if (b != 'Z') 
-			{
-				return;
-			}
 			BZip2InputStream bzis = new BZip2InputStream(bis);
 			int ch = bzis.ReadByte();
-			while (ch != -1) 
-			{
+			while (ch != -1) {
 				bos.WriteByte((byte)ch);
 				ch = bzis.ReadByte();
 			}
@@ -72,13 +61,10 @@ namespace ICSharpCode.SharpZipLib.BZip2
 		public static void Compress(Stream instream, Stream outstream, int blockSize) 
 		{			
 			System.IO.Stream bos = outstream;
-			bos.WriteByte((byte)'B');
-			bos.WriteByte((byte)'Z');
 			System.IO.Stream bis = instream;
 			int ch = bis.ReadByte();
-			BZip2OutputStream bzos = new BZip2OutputStream(bos);
-			while(ch != -1) 
-			{
+			BZip2OutputStream bzos = new BZip2OutputStream(bos, blockSize);
+			while(ch != -1) {
 				bzos.WriteByte((byte)ch);
 				ch = bis.ReadByte();
 			}

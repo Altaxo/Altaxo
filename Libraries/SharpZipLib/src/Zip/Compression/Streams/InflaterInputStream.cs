@@ -96,7 +96,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// </summary>
 		public override bool CanSeek {
 			get {
-				return baseInputStream.CanSeek;
+				return false;
+				//				return baseInputStream.CanSeek;
 			}
 		}
 		
@@ -143,7 +144,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		/// </summary>
 		public override long Seek(long offset, SeekOrigin origin)
 		{
-			return baseInputStream.Seek(offset, origin);
+			throw new NotSupportedException("Seek not supported"); // -jr- 01-Dec-2003
 		}
 		
 		/// <summary>
@@ -168,6 +169,12 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		public override void WriteByte(byte val)
 		{
 			baseInputStream.WriteByte(val);
+		}
+		
+		// -jr- 01-Dec-2003 This may be flawed for some base streams?  Depends on implementation of BeginWrite
+		public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
+		{
+			throw new NotSupportedException("Asynch write not currently supported");
 		}
 		
 		//Constructors
@@ -217,7 +224,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			this.inf = inf;
 			try {
 				this.len = (int)baseInputStream.Length;
-			} catch (Exception) { 
+			} catch (Exception) {
 				// the stream may not support .Length
 				this.len = 0;
 			}
@@ -277,7 +284,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			if (nread > 0) {
 				return onebytebuffer[0] & 0xff;
 			}
-			return -1;
+			return -1; // ok
 		}
 		
 		/// <summary>
@@ -337,7 +344,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			return (long)baseInputStream.Read(tmp, 0, tmp.Length);
 		}
 		
-#region Encryption stuff
+		#region Encryption stuff
 		protected byte[] cryptbuffer = null;
 		
 		uint[] keys = null;
@@ -358,8 +365,8 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 		protected void InitializePassword(string password)
 		{
 			keys = new uint[] {
-				0x12345678, 
-				0x23456789, 
+				0x12345678,
+				0x23456789,
 				0x34567890
 			};
 			for (int i = 0; i < password.Length; ++i) {
@@ -367,18 +374,13 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams
 			}
 		}
 		
-		uint ComputeCrc32(uint oldCrc, byte bval)
-		{
-			return (uint)(Crc32.CrcTable[(oldCrc ^ bval) & 0xFF] ^ (oldCrc >> 8));
-		}
-		
 		protected void UpdateKeys(byte ch)
 		{
-			keys[0] = ComputeCrc32(keys[0], ch);
+			keys[0] = Crc32.ComputeCrc32(keys[0], ch);
 			keys[1] = keys[1] + (byte)keys[0];
 			keys[1] = keys[1] * 134775813 + 1;
-			keys[2] = ComputeCrc32(keys[2], (byte)(keys[1] >> 24));
+			keys[2] = Crc32.ComputeCrc32(keys[2], (byte)(keys[1] >> 24));
 		}
-#endregion
+		#endregion
 	}
 }

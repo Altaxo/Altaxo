@@ -145,8 +145,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 		public void SetComment(string comment)
 		{
 			byte[] commentBytes = ZipConstants.ConvertToArray(comment);
-			if (commentBytes.Length > 0xffff) 
-			{
+			if (commentBytes.Length > 0xffff) {
 				throw new ArgumentException("Comment too long.");
 			}
 			zipComment = commentBytes;
@@ -212,6 +211,14 @@ namespace ICSharpCode.SharpZipLib.Zip
 		
 		
 		bool shouldWriteBack = false;
+		// -jr- Having a hard coded flag for seek capability requires this so users can determine
+		// if the entries will be patched or not.
+		public bool CanPatchEntries {
+			get { 
+				return baseOutputStream.CanSeek; 
+			}
+		}
+		
 		long seekPos         = -1;
 		/// <summary>
 		/// Starts a new Zip entry. It automatically closes the previous
@@ -237,7 +244,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 			
 			CompressionMethod method = entry.CompressionMethod;
 			int flags = 0;
-			
+			entry.IsCrypted = Password != null;
 			switch (method) {
 				case CompressionMethod.Stored:
 					if (entry.CompressedSize >= 0) {
@@ -248,6 +255,10 @@ namespace ICSharpCode.SharpZipLib.Zip
 						}
 					} else {
 						entry.CompressedSize = entry.Size;
+					}
+					
+					if (entry.IsCrypted) {
+						entry.CompressedSize += 12;
 					}
 					
 					if (entry.Size < 0) {
@@ -270,9 +281,11 @@ namespace ICSharpCode.SharpZipLib.Zip
 			//			if (entry.DosTime < 0) {
 			//				entry.Time = System.Environment.TickCount;
 			//			}
-			
-			entry.flags  = flags;
-			entry.offset = offset;
+			if (entry.IsCrypted) {
+				flags |= 1;
+			}
+			entry.Flags  = flags;
+			entry.Offset = offset;
 			entry.CompressionMethod = (CompressionMethod)method;
 			
 			curMethod    = method;
@@ -298,7 +311,9 @@ namespace ICSharpCode.SharpZipLib.Zip
 				}
 				WriteLeShort((byte)method);
 				WriteLeInt((int)entry.DosTime);
-				seekPos = baseOutputStream.Position;
+				if (baseOutputStream.CanSeek) {
+					seekPos = baseOutputStream.Position;
+				}
 				WriteLeInt(0);
 				WriteLeInt(0);
 				WriteLeInt(0);
@@ -321,6 +336,16 @@ namespace ICSharpCode.SharpZipLib.Zip
 			baseOutputStream.Write(name, 0, name.Length);
 			baseOutputStream.Write(extra, 0, extra.Length);
 			
+			if (Password != null) {
+				InitializePassword(Password);
+				byte[] cryptbuffer = new byte[12];
+				Random rnd = new Random();
+				for (int i = 0; i < cryptbuffer.Length; ++i) {
+					cryptbuffer[i] = (byte)rnd.Next();
+				}
+				EncryptBlock(cryptbuffer, 0, cryptbuffer.Length);
+				baseOutputStream.Write(cryptbuffer, 0, cryptbuffer.Length);
+			}
 			offset += ZipConstants.LOCHDR + name.Length + extra.Length;
 			
 			/* Activate the entry. */
@@ -360,6 +385,10 @@ namespace ICSharpCode.SharpZipLib.Zip
 				throw new ZipException("size was " + size + ", but I expected " + curEntry.Size);
 			}
 			
+			if (curEntry.IsCrypted) {
+				csize += 12;
+			}
+			
 			if (curEntry.CompressedSize < 0) {
 				curEntry.CompressedSize = csize;
 			} else if (curEntry.CompressedSize != csize) {
@@ -377,9 +406,9 @@ namespace ICSharpCode.SharpZipLib.Zip
 			offset += csize;
 			
 			/* Now write the data descriptor entry if needed. */
-			if (curMethod == CompressionMethod.Deflated && (curEntry.flags & 8) != 0) {
+			if (curMethod == CompressionMethod.Deflated && (curEntry.Flags & 8) != 0) {
 				if (shouldWriteBack) {
-					curEntry.flags &= ~8;
+					curEntry.Flags &= ~8;
 					long curPos = baseOutputStream.Position;
 					baseOutputStream.Seek(seekPos, SeekOrigin.Begin);
 					WriteLeInt((int)curEntry.Crc);
@@ -420,11 +449,18 @@ namespace ICSharpCode.SharpZipLib.Zip
 					base.Write(b, off, len);
 					break;
 				case CompressionMethod.Stored:
-					baseOutputStream.Write(b, off, len);
+					if (Password != null) {
+						byte[] buf = new byte[len];
+						Array.Copy(b, off, buf, 0, len);
+						EncryptBlock(buf, 0, len);
+						baseOutputStream.Write(buf, off, len);
+					} else {
+						baseOutputStream.Write(b, off, len);
+					}
 					break;
 			}
-			
 			crc.Update(b, off, len);
+			
 			size += len;
 		}
 		
@@ -454,10 +490,8 @@ namespace ICSharpCode.SharpZipLib.Zip
 				WriteLeInt(ZipConstants.CENSIG); 
 				WriteLeShort(method == CompressionMethod.Stored ? ZIP_STORED_VERSION : ZIP_DEFLATED_VERSION);
 				WriteLeShort(method == CompressionMethod.Stored ? ZIP_STORED_VERSION : ZIP_DEFLATED_VERSION);
-				if (entry.IsCrypted) {
-					entry.flags |= 1;
-				}
-				WriteLeShort(entry.flags);
+				
+				WriteLeShort(entry.Flags);
 				WriteLeShort((short)method);
 				WriteLeInt((int)entry.DosTime);
 				WriteLeInt((int)entry.Crc);
@@ -486,8 +520,12 @@ namespace ICSharpCode.SharpZipLib.Zip
 				WriteLeShort(comment.Length);
 				WriteLeShort(0); // disk number
 				WriteLeShort(0); // internal file attr
-				WriteLeInt(0);   // external file attr
-				WriteLeInt(entry.offset);
+				if (entry.IsDirectory) {                         // -jr- 17-12-2003 mark entry as directory (from nikolam.AT.perfectinfo.com)
+					WriteLeInt(16);
+				} else {
+					WriteLeInt(0);   // external file attr
+				}
+				WriteLeInt(entry.Offset);
 				
 				baseOutputStream.Write(name,    0, name.Length);
 				baseOutputStream.Write(extra,   0, extra.Length);

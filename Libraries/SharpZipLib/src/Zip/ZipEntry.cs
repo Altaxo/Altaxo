@@ -74,9 +74,50 @@ namespace ICSharpCode.SharpZipLib.Zip
 		string comment = null;
 		bool   isCrypted;
 		
-		public int zipFileIndex = -1;  /* used by ZipFile */
-		public int flags;              /* used by ZipOutputStream */
-		public int offset;             /* used by ZipFile and ZipOutputStream */
+		int zipFileIndex = -1;  /* used by ZipFile */
+		int flags;              /* used by ZipOutputStream */
+		int offset;             /* used by ZipFile and ZipOutputStream */
+		
+		public bool IsEncrypted {
+			get {
+				return (flags & 1) != 0; 
+			}
+			set {
+				if (value) {
+					flags |= 1;
+				} else {
+					flags &= ~1;
+				}
+			}
+		}
+		
+		public int ZipFileIndex {
+			get {
+				return zipFileIndex;
+			}
+			set {
+				zipFileIndex = value;
+			}
+		}
+		
+		public int Offset {
+			get {
+				return offset;
+			}
+			set {
+				offset = value;
+			}
+		}
+		
+		public int Flags {                                // Stops having two things represent same concept in class (flag isCrypted removed)
+			get { 
+				return flags; 
+			}
+			set {
+				flags = value; 
+			}
+		}
+		
 		
 		/// <summary>
 		/// Creates a zip entry with the given name.
@@ -112,16 +153,16 @@ namespace ICSharpCode.SharpZipLib.Zip
 			comment        = e.comment;
 		}
 		
-		public ushort Version {
+		public int Version {
 			get {
 				return version;
 			}
 			set {
-				version = value;
+				version = (ushort)value;
 			}
 		}
 		
-		public uint DosTime {
+		public long DosTime {
 			get {
 				if ((known & KNOWN_TIME) == 0) {
 					return 0;
@@ -130,7 +171,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 				}
 			}
 			set {
-				this.dosTime = value;
+				this.dosTime = (uint)value;
 				known |= (ushort)KNOWN_TIME;
 			}
 		}
