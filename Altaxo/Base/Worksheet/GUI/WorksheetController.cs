@@ -2281,10 +2281,12 @@ namespace Altaxo.Worksheet.GUI
     /// <param name="e">MouseEventArgs.</param>
     public void EhView_TableAreaMouseWheel(System.Windows.Forms.MouseEventArgs e)
     {
+      /*
       int oldScrollPos = VertScrollPos;
       VertScrollPos = VertScrollPos + SystemInformation.MouseWheelScrollLines*e.Delta/120;
       Current.Console.WriteLine("MouseWheel {0}, {1}, {2}",e.Delta,oldScrollPos,VertScrollPos);
-    }
+      */
+      }
 
     public void EhView_TableAreaMouseMove(System.Windows.Forms.MouseEventArgs e)
     {

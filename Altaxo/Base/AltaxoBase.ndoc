@@ -169,7 +169,7 @@
             <property name="OutputDirectory" value="..\..\temp\doc\CoreAndBase\" />
             <property name="HtmlHelpName" value="AltaxoClassRef" />
             <property name="IncludeFavorites" value="False" />
-            <property name="Title" value="Altaxo class reference" />
+            <property name="Title" value="Altaxo(Core+Base) class reference (0.51.0.286, 2004/05/13)" />
             <property name="DefaultTOC" value="" />
             <property name="IncludeHierarchy" value="False" />
             <property name="ShowVisualBasic" value="False" />
@@ -207,7 +207,7 @@
             <property name="GetExternalSummaries" value="True" />
             <property name="Preliminary" value="False" />
             <property name="UseNDocXmlFile" value="" />
-            <property name="CleanIntermediates" value="False" />
+            <property name="CleanIntermediates" value="True" />
             <property name="DocumentAttributes" value="False" />
             <property name="ShowTypeIdInAttributes" value="False" />
             <property name="DocumentedAttributes" value="" />
