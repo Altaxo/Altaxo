@@ -199,8 +199,24 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-		((Form)WorkbenchSingleton.Workbench).Close();		}
+		((Form)WorkbenchSingleton.Workbench).Close();	
+    }
 	}
+
+  public class Duplicate : AbstractMenuCommand
+  {
+    public override void Run()
+    {
+      if(Current.Workbench.ActiveViewContent is Altaxo.Worksheet.GUI.IWorksheetController)
+      {
+        new Altaxo.Worksheet.Commands.WorksheetDuplicate().Run();
+      }
+      else if (Current.Workbench.ActiveViewContent is Altaxo.Graph.GUI.IGraphController)
+      {
+        new Altaxo.Graph.Commands.DuplicateGraph().Run();
+      }
+    }
+  }
 
   public class HelpAboutAltaxo : AbstractMenuCommand
   {

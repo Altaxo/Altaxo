@@ -795,7 +795,7 @@ namespace Altaxo.Graph
 
 			// axis related
 
-			this.m_xAxis = null==from.m_xAxis ? null : (Axis)from.m_yAxis.Clone() ;
+			this.m_xAxis = null==from.m_xAxis ? null : (Axis)from.m_xAxis.Clone() ;
 			this.m_yAxis = null==from.m_yAxis ? null : (Axis)from.m_yAxis.Clone() ;
 			this.m_LinkXAxis = from.m_LinkXAxis;
 			this.m_LinkYAxis = from.m_LinkYAxis;
