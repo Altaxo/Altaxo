@@ -666,7 +666,7 @@ namespace Altaxo.Calc.FFT
       int n)
     {
       // return status
-      bool status = true;
+      // bool status = true;
 
       // get total size of data array
       int size = 0;
@@ -743,7 +743,7 @@ namespace Altaxo.Calc.FFT
       )
     {
       // return status
-      bool status = true;
+      // bool status = true;
 
       // get total size of data array
       int size = 0;
@@ -792,7 +792,7 @@ namespace Altaxo.Calc.FFT
     public bool CyclicCorrelation(double[] data, double[] response, double[] result, int nn, double[] scratch)
     {
       // return status
-      bool status = true;
+      // bool status = true;
 
       // get total size of data array
       int size = 0;

@@ -75,6 +75,19 @@ namespace AltaxoTest.Calc
       Assertion.AssertEquals(0.016666666666666666666666666,GammaRelated.BetaI(1,3,4));
     }
 
+    [Test]
+    public void TestBetaIR()
+    {
+      // N[BetaRegularized[1/2, 3, 6], 25]
+      Assertion.AssertEquals(0.85546875,GammaRelated.BetaIR(0.5,3,6));
+    }
+
+    [Test]
+    public void TestInverseBetaIR()
+    {
+      // N[BetaRegularized[1/2, 3, 6], 25]
+      Assertion.AssertEquals(0.5,GammaRelated.InverseBeta(0.85546875,3,6));
+    }
 
   }
 }

@@ -2345,5 +2345,233 @@ namespace Altaxo.Calc
     }
     #endregion
 
+
+    #region InverseBeta
+
+    /// <summary>
+    /// InverseBeta gives the inverse of the incomplete beta function ratio.
+    /// </summary>
+    /// <param name="p">Probability (0..1)</param>
+    /// <param name="a">Parameter a.</param>
+    /// <param name="b">Parameter b.</param>
+    public static double InverseBeta(double p, double a, double b)
+    {
+      double _p = a;
+      double _q = b;
+      double _alpha = p;
+      double _beta = 1-p;
+      int _ifault = 0;
+      return _InverseBeta.xinbta_(ref _p, ref _q, ref _beta, ref _alpha, ref _ifault);
+    }
+
+    class _InverseBeta
+    {
+      static double zero = 0;
+      static double acu = 1e-14;
+      static double lower = 1e-4;
+      static double upper = 0.9999;
+      static double const1 = 2.30753;
+      static double const2 = 0.27061;
+      static double const3 = 0.99229;
+      static double const4 = 0.04481;
+      static double half = 0.5;
+      static double one = 1.0;
+      static double two = 2.0;
+      static double three = 3.0;
+      static double four = 4.0;
+      static double five = 5.0;
+      static double six = 6.0;
+      static double nine = 9.0;
+
+      public static double xinbta_(ref double p, ref  double q,  ref double beta, ref double alpha, ref int ifault)
+      {
+      /* System generated locals */
+      double ret_val, r__1, r__2;
+
+      /* Local variables */
+      double a, g, h__, r__, s, t, w, y, pp, qq, sq, tx, adj, prev;
+      bool index;
+      double yprev;
+
+      /*        ALGORITHM AS 109  APPL. STATIST. (1977) VOL.26, P.111 */
+      /*        (REPLACING ALGORITHM AS 64  APPL. STATIST. (1973), */
+      /*        VOL.22, P.411) */
+
+      /*        COMPUTES INVERSE OF INCOMPLETE BETA FUNCTION */
+      /*        RATIO FOR GIVEN POSITIVE VALUES OF THE ARGUMENTS */
+      /*        P AND Q, ALPHA BETWEEN ZERO AND ONE. */
+      /*        LOG OF COMPLETE BETA FUNCTION, BETA, IS ASSUMED TO BE */
+      /*        KNOWN. */
+
+
+      /*        DEFINE ACCURACY AND INITIALIZE */
+
+
+
+      ret_val = alpha;
+
+      /*        TEST FOR ADMISSIBILITY OF PARAMETERS */
+
+      ifault = 1;
+      if (p <= zero || q <= zero) 
+    {
+      return ret_val;
+    }
+    ifault = 2;
+    if (alpha < zero || alpha > one) 
+  {
+    return ret_val;
+  }
+  ifault = 0;
+  if (alpha == zero || alpha == one) 
+{
+  return ret_val;
+}
+
+  /*        CHANGE TAIL IF NECESSARY */
+
+  if (alpha <= half) 
+{
+  goto L1;
+}
+  a = one - alpha;
+  pp = q;
+  qq = p;
+  index = true;
+  goto L2;
+  L1:
+  a = alpha;
+  pp = p;
+  qq = q;
+  index = false;
+
+  /*        CALCULATE THE INITIAL APPROXIMATION */
+
+  L2:
+  r__1 = a * a;
+  r__2 = -Math.Log(r__1);
+  r__ = Math.Sqrt(r__2);
+  y = r__ - (const1 + const2 * r__) / (one + (const3 + const4 * r__) * r__);
+  if (pp > one && qq > one) 
+{
+  goto L5;
+}
+  r__ = qq + qq;
+  t = one / (nine * qq);
+  /* Computing 3rd power */
+  r__1 = one - t + y * Math.Sqrt(t);
+  t = r__ * (r__1 * (r__1 * r__1));
+  if (t <= zero) 
+{
+  goto L3;
+}
+  t = (four * pp + r__ - two) / t;
+  if (t <= one) 
+{
+  goto L4;
+}
+  ret_val = one - two / (t + one);
+  goto L6;
+  L3:
+  r__1 = (one - a) * qq;
+  r__2 = (Math.Log(r__1) + beta) / qq;
+  ret_val = one - Math.Exp(r__2);
+  goto L6;
+  L4:
+  r__1 = a * pp;
+  r__2 = (Math.Log(r__1) + beta) / pp;
+  ret_val = Math.Exp(r__2);
+  goto L6;
+  L5:
+  r__ = (y * y - three) / six;
+  s = one / (pp + pp - one);
+  t = one / (qq + qq - one);
+  h__ = two / (s + t);
+  r__1 = h__ + r__;
+  w = y * Math.Sqrt(r__1) / h__ - (t - s) * (r__ + five / six - two / (three * 
+  h__));
+  r__1 = w + w;
+  ret_val = pp / (pp + qq * Math.Exp(r__1));
+
+  /*        SOLVE FOR X BY A MODIFIED NEWTON-RAPHSON METHOD, */
+  /*        USING THE FUNCTION BETAIN */
+
+  L6:
+  r__ = one - pp;
+  t = one - qq;
+  yprev = zero;
+  sq = one;
+  prev = one;
+  if (ret_val < lower) 
+{
+  ret_val = lower;
+}
+  if (ret_val > upper) 
+{
+  ret_val = upper;
+}
+  L7:
+  y = BetaI(ret_val, pp, qq); // BetaIR(ret_val, pp, qq, beta);
+  if (ifault == 0) 
+{
+  goto L8;
+}
+  ifault = 3;
+  return ret_val;
+  L8:
+  r__1 = one - ret_val;
+  r__2 = beta + r__ * Math.Log(ret_val) + t * Math.Log(r__1);
+  y = (y - a) * Math.Exp(r__2);
+  if (y * yprev <= zero) 
+{
+  prev = sq;
+}
+  g = one;
+  L9:
+  adj = g * y;
+  sq = adj * adj;
+  if (sq >= prev) 
+{
+  goto L10;
+}
+  tx = ret_val - adj;
+  if (tx >= zero && tx <= one) 
+{
+  goto L11;
+}
+  L10:
+  g /= three;
+  goto L9;
+  L11:
+  if (prev <= acu) 
+{
+  goto L12;
+}
+  if (y * y <= acu) 
+{
+  goto L12;
+}
+  if (tx == zero || tx == one) 
+{
+  goto L10;
+}
+  if (tx == ret_val) 
+{
+  goto L12;
+}
+  ret_val = tx;
+  yprev = y;
+  goto L7;
+  L12:
+  if (index) 
+{
+  ret_val = one - ret_val;
+}
+  return ret_val;
+} 
+
+
+    }
+    #endregion
   } // end of class GammaRelated
 } // end of namespace

@@ -246,6 +246,7 @@ namespace Altaxo.Calc
     ///         info = 7  tol is too small. No further improvement in 
     ///                   the approximate solution x is possible. 
     /// </param>
+    /// <param name="iwa">Integer working array of length n.</param>
     /// <remarks>
     /// This is the most easy-to-use interface with the smallest number of
     /// arguments. If you need more control over the minimization process and
