@@ -27,7 +27,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 {
   public class CrossValidationWorker
   {
-    protected IROVector _xOfX;
+    protected int[] _spectralRegions;
     protected int       _numFactors;
   
     protected ICrossValidationGroupingStrategy _groupingStrategy;
@@ -41,14 +41,14 @@ namespace Altaxo.Calc.Regression.Multivariate
     public int NumberOfFactors { get { return _numFactors; }}
 
     public CrossValidationWorker(
-      IROVector xOfX,
+      int[] spectralRegions,
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
       SpectralPreprocessingOptions preprocessOptions,
       MultivariateRegression analysis
       )
     {
-      _xOfX = xOfX;
+      _spectralRegions = spectralRegions;
       _numFactors = numFactors;
       _groupingStrategy = groupingStrategy;
       _preprocessOptions = preprocessOptions;
@@ -64,13 +64,13 @@ namespace Altaxo.Calc.Regression.Multivariate
     public double[] CrossPRESS { get { return _crossPRESS; }}
 
     public CrossPRESSEvaluator(
-      IROVector xOfX,
+      int[] spectralRegions,
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
       SpectralPreprocessingOptions preprocessOptions,
       MultivariateRegression analysis
       )
-      : base(xOfX,numFactors,groupingStrategy,preprocessOptions,analysis)
+      : base(spectralRegions,numFactors,groupingStrategy,preprocessOptions,analysis)
     {
     }
 
@@ -80,7 +80,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       if(_predictedY==null || _predictedY.Rows!=YU.Rows || _predictedY.Columns!=YU.Columns)
         _predictedY = new MatrixMath.BEMatrix(YU.Rows,YU.Columns);
 
-      MultivariateRegression.PreprocessForAnalysis(_preprocessOptions,_xOfX, XX, YY, out meanX, out scaleX, out meanY, out scaleY);
+      MultivariateRegression.PreprocessForAnalysis(_preprocessOptions,_spectralRegions, XX, YY, out meanX, out scaleX, out meanY, out scaleY);
       _analysis.AnalyzeFromPreprocessed(XX,YY,_numFactors);
       _numFactors = Math.Min(_numFactors,_analysis.NumberOfFactors);
    
@@ -108,14 +108,14 @@ namespace Altaxo.Calc.Regression.Multivariate
     public IMatrix _YCrossValidationPrediction;
 
     public CrossPredictedYEvaluator(
-      IROVector xOfX,
+      int[] spectralRegions,
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
       SpectralPreprocessingOptions preprocessOptions,
       MultivariateRegression analysis,
       IMatrix YCrossValidationPrediction
       )
-      : base(xOfX,numFactors,groupingStrategy,preprocessOptions,analysis)
+      : base(spectralRegions,numFactors,groupingStrategy,preprocessOptions,analysis)
     {
       _YCrossValidationPrediction = YCrossValidationPrediction;
     }
@@ -126,7 +126,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       if(_predictedY==null || _predictedY.Rows!=YU.Rows || _predictedY.Columns!=YU.Columns)
         _predictedY = new MatrixMath.BEMatrix(YU.Rows,YU.Columns);
 
-      MultivariateRegression.PreprocessForAnalysis(_preprocessOptions,_xOfX, XX, YY,
+      MultivariateRegression.PreprocessForAnalysis(_preprocessOptions,_spectralRegions, XX, YY,
         out meanX, out scaleX, out meanY, out scaleY);
         
       _analysis.AnalyzeFromPreprocessed(XX,YY,_numFactors);
@@ -154,13 +154,13 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     public CrossPredictedXResidualsEvaluator(
       int numberOfPoints,
-      IROVector xOfX,
+      int[] spectralRegions,
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
       SpectralPreprocessingOptions preprocessOptions,
       MultivariateRegression analysis
       )
-      : base(xOfX,numFactors,groupingStrategy,preprocessOptions,analysis)
+      : base(spectralRegions,numFactors,groupingStrategy,preprocessOptions,analysis)
     {
       _numberOfPoints = numberOfPoints;
     }
@@ -169,7 +169,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       IVector meanX,scaleX,meanY,scaleY;
 
-      MultivariateRegression.PreprocessForAnalysis(_preprocessOptions,_xOfX, XX, YY,
+      MultivariateRegression.PreprocessForAnalysis(_preprocessOptions,_spectralRegions, XX, YY,
         out meanX, out scaleX, out meanY, out scaleY);
         
       _analysis.AnalyzeFromPreprocessed(XX,YY,_numFactors);
@@ -199,14 +199,14 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
     public CrossValidationResultEvaluator(
-      IROVector xOfX,
+      int[] spectralRegions,
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
       SpectralPreprocessingOptions preprocessOptions,
       MultivariateRegression analysis,
       CrossValidationResult result
       )
-      : base(xOfX,numFactors,groupingStrategy,preprocessOptions,analysis)
+      : base(spectralRegions,numFactors,groupingStrategy,preprocessOptions,analysis)
     {
       _result = result;
     }
@@ -215,7 +215,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       IVector meanX,scaleX,meanY,scaleY;
 
-      MultivariateRegression.PreprocessForAnalysis(_preprocessOptions,_xOfX, XX, YY,
+      MultivariateRegression.PreprocessForAnalysis(_preprocessOptions,_spectralRegions, XX, YY,
         out meanX, out scaleX, out meanY, out scaleY);
         
       _analysis.AnalyzeFromPreprocessed(XX,YY,_numFactors);

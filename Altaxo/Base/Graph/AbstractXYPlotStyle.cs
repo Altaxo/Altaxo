@@ -63,6 +63,10 @@ namespace Altaxo.Graph
 
     public static Color GetNextPlotColor(Color c)
     {
+      return GetNextPlotColor(c, 1);
+    }
+    public static Color GetNextPlotColor(Color c, int step)
+    {
       for(int i=0;i<PlotColors.Length;i++)
       {
         // !!!todo!!! more advanced: find the color with the closest match to a plotcolor
@@ -71,7 +75,7 @@ namespace Altaxo.Graph
         // currently implemented: find the color, if found use the next color
         // if not found, use the first plot color
         if(c.ToArgb()==PlotColors[i].ToArgb())
-          return (i+1)<PlotColors.Length ? PlotColors[i+1] : PlotColors[0];
+          return PlotColors[Calc.BasicFunctions.PMod(i+step,PlotColors.Length)];
       }
 
       // default if the color was not found

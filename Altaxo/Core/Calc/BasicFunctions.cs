@@ -437,5 +437,26 @@ namespace Altaxo.Calc
 
     #endregion
 
+    #region PMod
+
+    /// <summary>
+    /// Modulus x%y, but with result guaranted to be greater or equal to zero.
+    /// </summary>
+    /// <param name="x">Nominator.</param>
+    /// <param name="y">Denominator.</param>
+    /// <returns>The remainder of the division x by y, but guaranted to be in the positive range.</returns>
+    public static int PMod(int x, int y)
+    {
+      int result = x%y;
+
+      if(result<0)
+        result += Math.Abs(y);
+
+      return result;
+
+    }
+
+    #endregion
+
   }
 }

@@ -243,14 +243,37 @@ namespace Altaxo.Graph
 
     public override void SetToNextStyle(AbstractXYPlotStyle pstemplate, PlotGroupStyle style)
     {
-      if(0!= (style & PlotGroupStyle.Color))
-        this.Color =GetNextPlotColor(pstemplate.Color);
+     
       if(0!= (style & PlotGroupStyle.Line))
         this.XYPlotLineStyle.SetToNextLineStyle(pstemplate.XYPlotLineStyle);
       if(0!= (style & PlotGroupStyle.Symbol))
         this.XYPlotScatterStyle.SetToNextStyle(pstemplate.XYPlotScatterStyle);
+      // Color has to be the last, since during the previous operations the styles are cloned, 
+      // inclusive the color
+      if(0!= (style & PlotGroupStyle.Color))
+        this.Color =GetNextPlotColor(pstemplate.Color);
     }
 
+    public void SetIncrementalStyle(I2DPlotStyle pstemplate, PlotGroupStyle style, int step)
+    {
+      XYLineScatterPlotStyle from = pstemplate as XYLineScatterPlotStyle;
+      if(null!=from)
+
+      {
+        this.m_LineSymbolGap = from.m_LineSymbolGap;
+      }
+      
+     
+      if((0!= (style & PlotGroupStyle.Line)) && pstemplate.IsXYLineStyleSupported)
+        this.XYPlotLineStyle.SetToNextLineStyle(pstemplate.XYLineStyle,step);
+      if((0!= (style & PlotGroupStyle.Symbol)) && pstemplate.IsXYScatterStyleSupported)
+        this.XYPlotScatterStyle.SetToNextStyle(pstemplate.XYScatterStyle,step);
+      
+      // Color has to be the last, since during the previous operations the styles are cloned, 
+      // inclusive the color
+      if((0!= (style & PlotGroupStyle.Color)) && pstemplate.IsColorSupported)
+        this.Color = GetNextPlotColor(pstemplate.Color,step);
+    }
 
     public override System.Drawing.Color Color
     {

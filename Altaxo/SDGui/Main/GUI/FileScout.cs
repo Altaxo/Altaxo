@@ -190,6 +190,15 @@ namespace Altaxo.Main.GUI
               Altaxo.Serialization.Galactic.Import.ImportSpcFiles(files,ctrl.DataTable);
             }
             break;
+          case ".dat":
+          case ".txt":
+          case ".csv":
+            {
+            Worksheet.Commands.FileCommands.ImportAscii(
+              null,
+              new string[] { item.FullName });
+            }
+            break;
           default:
             fileService.OpenFile(item.FullName);
             break;

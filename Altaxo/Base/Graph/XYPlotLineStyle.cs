@@ -363,7 +363,8 @@ namespace Altaxo.Graph
       CreateEventChain();
     }
 
-    public XYPlotLineStyle(XYPlotLineStyle from)
+
+    public void CopyFrom(XYPlotLineStyle from, bool suppressChangeEvent)
     {
       this.m_PenHolder                  = null==from.m_PenHolder?null:(PenHolder)from.m_PenHolder.Clone();
       this.m_bLineSymbolGap       = from.m_bLineSymbolGap;
@@ -373,6 +374,14 @@ namespace Altaxo.Graph
       this.m_FillDirection        = from.m_FillDirection;
       this.Connection             = from.m_Connection; // beachte links nur Connection, damit das Template mit gesetzt wird
     
+      if(!suppressChangeEvent)
+        OnChanged();
+    }
+
+    public XYPlotLineStyle(XYPlotLineStyle from)
+    {
+     
+      CopyFrom(from,true);
       CreateEventChain();
     }
 
@@ -431,13 +440,18 @@ namespace Altaxo.Graph
 
     public void SetToNextLineStyle(XYPlotLineStyle template)
     {
+      SetToNextLineStyle(template, 1);
+    }
+    public void SetToNextLineStyle(XYPlotLineStyle template, int step)
+    {
+      this.CopyFrom(template,true);
+
       // note a exception: since the last dashstyle is "Custom", not only the next dash
       // style has to be defined, but also the overnect to avoid the selection of "Custom"
-      if(    (System.Enum.IsDefined(typeof(DashStyle),1+(int)template.PenHolder.DashStyle))
-        && (System.Enum.IsDefined(typeof(DashStyle),2+(int)template.PenHolder.DashStyle)))
-        this.PenHolder.DashStyle = (DashStyle)(1+(int)template.PenHolder.DashStyle);
-      else
-        this.PenHolder.DashStyle = DashStyle.Solid;
+
+      int len =  System.Enum.GetValues(typeof(DashStyle)).Length;
+      int next = step+(int)template.PenHolder.DashStyle;
+      this.PenHolder.DashStyle = (DashStyle)Calc.BasicFunctions.PMod(next,len-1);
 
       OnChanged(); // Fire Changed event
     }

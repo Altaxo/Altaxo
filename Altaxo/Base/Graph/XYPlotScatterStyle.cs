@@ -225,7 +225,7 @@ namespace Altaxo.Graph
     #endregion
 
 
-    public XYPlotScatterStyle(XYPlotScatterStyle from)
+    public void CopyFrom(XYPlotScatterStyle from, bool suppressChangeEvent)
     {
       this.m_Shape      = from.m_Shape;
       this.m_Style      = from.m_Style;
@@ -238,6 +238,13 @@ namespace Altaxo.Graph
       this.m_SymbolSize = from.m_SymbolSize;
       this.m_RelativePenWidth = from.m_RelativePenWidth;
 
+      if(!suppressChangeEvent)
+        OnChanged();
+    }
+
+    public XYPlotScatterStyle(XYPlotScatterStyle from)
+    {
+      CopyFrom(from,true);
       CreateEventChain();
     }
 
@@ -278,25 +285,29 @@ namespace Altaxo.Graph
 
     public void SetToNextStyle(XYPlotScatterStyle template)
     {
+      SetToNextStyle(template, 1);
+    }
+    public void SetToNextStyle(XYPlotScatterStyle template, int step)
+    {
+      CopyFrom(template,true);
       // first increase the shape value,
       // if this is not possible set shape to first shape, and increase the
       // style value
+      // note that the first member of the shape enum is NoSymbol, which should not be 
+      // used here
 
+      int nshapes = System.Enum.GetValues(typeof(XYPlotScatterStyles.Shape)).Length-1;
+      int nstyles = System.Enum.GetValues(typeof(XYPlotScatterStyles.Style)).Length;
 
-      if(System.Enum.IsDefined(typeof(XYPlotScatterStyles.Shape),1+(int)template.Shape))
-      {
-        Shape = (XYPlotScatterStyles.Shape)(1+(int)template.Shape);
-      }
-      else
-      {
-        Shape = XYPlotScatterStyles.Shape.Square;
+      int current = ((int)template.Style)*nshapes + ((int)template.Shape)-1;
 
-        if(System.Enum.IsDefined(typeof(XYPlotScatterStyles.Style),1+(int)template.Style))
-          Style = (XYPlotScatterStyles.Style)(1+(int)template.Style);
-        else
-          Style = XYPlotScatterStyles.Style.Solid;
-      }
+      int next = Calc.BasicFunctions.PMod(current+step, nshapes*nstyles);
 
+      int nstyle = Calc.BasicFunctions.PMod(next/nshapes,nstyles);
+      int nshape = 1+Calc.BasicFunctions.PMod(next, nshapes);
+
+      Shape = (XYPlotScatterStyles.Shape)nshape;
+      Style = (XYPlotScatterStyles.Style)nstyle;
     }
 
     public XYPlotScatterStyles.Shape Shape

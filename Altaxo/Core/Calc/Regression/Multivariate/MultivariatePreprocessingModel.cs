@@ -33,6 +33,11 @@ namespace Altaxo.Calc.Regression.Multivariate
   public interface IMultivariatePreprocessingModel
   {
    
+    int[] SpectralRegions
+    {
+      get;
+    }
+
     IROVector XOfX
     {
       get;
@@ -71,6 +76,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     
     SpectralPreprocessingOptions _preprocessOptions;
 
+    int[]     _spectralRegions;
     IROVector _xOfX;
     IROVector _xMean;
     IROVector _xScale;
@@ -83,6 +89,13 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       get { return _preprocessOptions; }
       set { _preprocessOptions = value; }
+    }
+
+
+    public int[] SpectralRegions
+    {
+      get { return _spectralRegions; }
+      set { _spectralRegions = value; }
     }
 
     public IROVector XOfX

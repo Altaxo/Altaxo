@@ -375,6 +375,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\I2DPlotStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\I2DTo2DConverter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

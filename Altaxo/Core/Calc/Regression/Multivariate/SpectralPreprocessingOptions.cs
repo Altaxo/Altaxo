@@ -180,7 +180,34 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// (But in this case almost all spectral correction methods also fails).
     /// </summary>
     /// <param name="xvalues">The vector of x values for the spectra (wavelength, frequencies...).</param>
-    public void IdentifyRegions(IROVector xvalues)
+    public void SetRegionsByIdentification(IROVector xvalues)
+    {   
+      _regions = IdentifyRegions(xvalues);
+    }
+
+    /// <summary>
+    /// Set the regions by providing an array of indices. These indices are the starting indices of the
+    /// different regions.
+    /// </summary>
+    /// <param name="regions">Starting indices of the regions. Must be ascending. You can provide null as an argument.</param>
+    public void SetRegions(int[] regions)
+    {
+      if(regions==null)
+        _regions = new int[0];
+      else
+        _regions = (int[])regions.Clone();
+    }
+
+    /// <summary>
+    /// Trys to identify spectral regions by supplying the spectral x values.
+    /// A end_of_region is recognized when the gap between two x-values is ten times higher
+    /// than the previous gap, or if the sign of the gap value changes.
+    /// This method fails if a spectral region contains only a single point (since no gap value can be obtained then).
+    /// (But in this case almost all spectral correction methods also fails).
+    /// </summary>
+    /// <param name="xvalues">The vector of x values for the spectra (wavelength, frequencies...).</param>
+    /// <returns>The array of regions. Each element in the array is the starting index of a new region into the vector xvalues.</returns>
+    public static int[] IdentifyRegions(IROVector xvalues)
     {
       System.Collections.ArrayList list = new System.Collections.ArrayList();
 
@@ -197,9 +224,8 @@ namespace Altaxo.Calc.Regression.Multivariate
         }
       }
     
-      _regions = (int[])list.ToArray(typeof(int));
+      return (int[])list.ToArray(typeof(int));
     }
-
 
     /// <summary>
     /// Gets the preprocessing method choosen.

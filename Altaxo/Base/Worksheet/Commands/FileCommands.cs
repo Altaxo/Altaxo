@@ -73,11 +73,40 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
-    public static void ImportAscii(WorksheetController ctrl, System.IO.Stream myStream)
+    public static void ImportAscii(IWorksheetController ctrl, System.IO.Stream myStream)
     {
       AsciiImporter importer = new AsciiImporter(myStream);
       AsciiImportOptions recognizedOptions = importer.Analyze(30, new AsciiImportOptions());
-      importer.ImportAscii(recognizedOptions,ctrl.DataTable);
+      importer.ImportAscii(recognizedOptions,ctrl.Doc);
+    }
+
+    public static void ImportAscii(WorksheetController ctrl, string[] filenames)
+    {
+      int startrest=0;
+
+        Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
+        
+      if(ctrl!=null)
+      {
+        using(System.IO.Stream myStream = new System.IO.FileStream(filenames[0],System.IO.FileMode.Open,System.IO.FileAccess.Read))
+        {
+          ImportAscii(ctrl, myStream);
+          myStream.Close();
+          startrest=1;
+        }
+      }
+
+        // import also the other files, but this time we create new tables
+        for(int i=startrest;i<filenames.Length;i++)
+        {
+          using(System.IO.Stream myStream = new System.IO.FileStream(filenames[0],System.IO.FileMode.Open,System.IO.FileAccess.Read))
+          {
+            Altaxo.Worksheet.GUI.IWorksheetController newwkscontroller = Current.ProjectService.CreateNewWorksheet();
+            ImportAscii(newwkscontroller,myStream);
+            myStream.Close();
+          }
+        } // for all files
+
     }
 
 
@@ -92,26 +121,7 @@ namespace Altaxo.Worksheet.Commands
 
         if(openFileDialog1.ShowDialog() == DialogResult.OK && openFileDialog1.FileNames.Length>0)
         {
-          // if user has clicked ok, import all selected files into Altaxo
-          string [] filenames = openFileDialog1.FileNames;
-          Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-          
-          System.IO.Stream myStream = new System.IO.FileStream(filenames[0],System.IO.FileMode.Open,System.IO.FileAccess.Read);
-          if((myStream = openFileDialog1.OpenFile())!= null)
-          {
-            ImportAscii(ctrl, myStream);
-            myStream.Close();
-          }
-
-          // import also the other files, but this time we create new tables
-          for(int i=1;i<filenames.Length;i++)
-          {
-            myStream = new System.IO.FileStream(filenames[0],System.IO.FileMode.Open,System.IO.FileAccess.Read);
-            Altaxo.Worksheet.GUI.IWorksheetController wkscontroller = Current.ProjectService.CreateNewWorksheet();
-            ImportAscii(ctrl,myStream);
-            myStream.Close();
-          } // for all files
-
+          ImportAscii(ctrl,openFileDialog1.FileNames);
         }
       }
     }
