@@ -31,15 +31,45 @@ namespace Altaxo.Graph
 	public interface ILineScatterLayerContentsView : Main.IMVCView
 	{
 
+		/// <summary>
+		/// Get/sets the controller of this view.
+		/// </summary>
 		ILineScatterLayerContentsController Controller { get; set; }
 
+		/// <summary>
+		/// Gets the hosting parent form of this view.
+		/// </summary>
 		System.Windows.Forms.Form Form	{	get; }
 
-		void InitializeDataAvailable(TreeNode[] nodes);
+		/// <summary>
+		/// Initializes the treeview of available data with content.
+		/// </summary>
+		/// <param name="nodes"></param>
+		void DataAvailable_Initialize(TreeNode[] nodes);
 
+		/// <summary>
+		/// Clears all selection from the DataAvailable tree view.
+		/// </summary>
+		void DataAvailable_ClearSelection();
+
+		/// <summary>
+		/// Initializes the content list box by setting the number of items.
+		/// </summary>
+		/// <param name="itemcount">Number of items.</param>
 		void Contents_SetItemCount(int itemcount);
+		/// <summary>
+		/// Select/deselect the item number idx in the content list box.
+		/// </summary>
+		/// <param name="idx">Index of the item to select/deselect.</param>
+		/// <param name="bSelected">True if the item should be selected, false if it should be deselected.</param>
 		void Contents_SetSelected(int idx, bool bSelected);
-		void Contents_Redraw();
+
+		/// <summary>
+		/// Invalidates the items idx1 and idx2 and has to force the MeasureItem call for these two items.
+		/// </summary>
+		/// <param name="idx1">Index of the first item to invalidate.</param>
+		/// <param name="idx2">Index of the second item to invalidate.</param>
+		void Contents_InvalidateItems(int idx1, int idx2);
 
 	}
 	#endregion
@@ -57,6 +87,7 @@ namespace Altaxo.Graph
 		public LineScatterLayerContentsController(Layer layer)
 		{
 			m_Layer = layer;
+			SetElements(true);
 		}
 
 		public void SetDirty()
@@ -77,7 +108,7 @@ namespace Altaxo.Graph
 					nodes[i++] = new TreeNode(dt.TableName,new TreeNode[1]{new TreeNode()});
 				}
 
-				View.InitializeDataAvailable(nodes);
+				View.DataAvailable_Initialize(nodes);
 			}
 
 			// now fill the list box with all plot associations currently inside
@@ -123,6 +154,36 @@ namespace Altaxo.Graph
 			if(bInit)
 				m_bDirty = false;
 		}
+
+
+		private PlotItem NewPlotItemFromPLCon(PLCon item)
+		{
+			if(!item.IsSingleNewItem)
+				return null;
+
+			// create a new plotassociation from the column
+			// first, get the y column from table and name
+			Data.DataTable tab = App.Current.Doc.DataSet[item.table];
+			if(null!=tab)
+			{
+				Data.DataColumn ycol = tab[item.column];
+				if(null!=ycol)
+				{
+					Data.DataColumn xcol = tab.FindXColumnOfGroup(ycol.Group);
+					if(null==xcol)
+						return  new Graph.XYDataPlot(new PlotAssociation(new Altaxo.Data.IndexerColumn(),ycol),new LineScatterPlotStyle());
+					else
+						return  new Graph.XYDataPlot(new PlotAssociation(xcol,ycol),new LineScatterPlotStyle());
+					// now enter the plotassociation back into the layer's plot association list
+				}
+			}
+			return null;
+		}
+
+
+
+
+
 
 		#region ILineScatterLayerContentsController Members
 
@@ -180,6 +241,7 @@ namespace Altaxo.Graph
 			}
 
 			View.Contents_SetItemCount(m_ItemArray.Count);
+			View.DataAvailable_ClearSelection();
 			SetDirty();
 		}
 
@@ -232,7 +294,7 @@ namespace Altaxo.Graph
 
 		public void EhView_ContentsDoubleClick(int selectedIndex)
 		{
-			PlotItem pa = ((PLCon)this.m_ItemArray[selectedIndex]).plotassociation;
+			PlotItem pa = ((PLCon)this.m_ItemArray[selectedIndex]).PlotItem;
 			if(null!=pa)
 			{
 				PlotGroup plotGroup = m_Layer.PlotItems.GetPlotGroupOf(pa);
@@ -278,6 +340,7 @@ namespace Altaxo.Graph
 					m_ItemArray[iSeg-1] = m_ItemArray[iSeg];
 					m_ItemArray[iSeg] = helpSeg;
 
+					View.Contents_InvalidateItems(iSeg-1,iSeg);
 					View.Contents_SetSelected(iSeg-1,true); // select upper item,
 					View.Contents_SetSelected(iSeg,false); // deselect lower item
 				}
@@ -298,6 +361,7 @@ namespace Altaxo.Graph
 					m_ItemArray[iSeg+1]=m_ItemArray[iSeg];
 					m_ItemArray[iSeg]=helpSeg;
 
+					View.Contents_InvalidateItems(iSeg+1,iSeg);
 					View.Contents_SetSelected(iSeg+1,true);
 					View.Contents_SetSelected(iSeg,false);
 				}
@@ -408,8 +472,96 @@ namespace Altaxo.Graph
 
 		public bool Apply()
 		{
-			// TODO:  Add LineScatterLayerContentsController.Apply implementation
-			return false;
+
+			if(!this.m_bDirty)
+				return true; // not dirty - so no need to apply something
+
+			m_Layer.PlotItems.Clear();
+
+			// now we must get all items out of the listbox and look
+			// for which items are new or changed
+			for(int i=0;i<m_ItemArray.Count;i++)
+			{
+				PLCon item = (PLCon)m_ItemArray[i];
+				PlotItem plotitem=null;
+				
+				if(item.IsSingleNewItem)
+				{
+					plotitem = this.NewPlotItemFromPLCon(item);
+					if(null!=plotitem)
+					{
+						m_Layer.PlotItems.Add(plotitem);
+					}
+				}
+				else if(item.IsSingleKnownItem)
+				{
+					plotitem = item.PlotItem;
+					m_Layer.PlotItems.Add(plotitem);
+				}
+				else if(item.IsUnchangedOldGroup)
+				{
+					// if the group was not changed, add all group members to the
+					// plotassociation collection and add the group to the group list
+					for(int j=0;j<item.m_Group.Count;j++)
+					{
+						PLCon member = (PLCon)item.m_Group[j];
+						m_Layer.PlotItems.Add(member.PlotItem);
+					} // end for
+					m_Layer.PlotItems.Add(item.m_OriginalGroup); // add the unchanged group back to the layer
+				} // if item.IsUnchangedOldGroup
+				else if(item.IsChangedOldGroup) // group exists before, but was changed
+				{
+					item.m_OriginalGroup.Clear();
+					for(int j=0;j<item.m_Group.Count;j++)
+					{
+						PLCon member = (PLCon)item.m_Group[j];
+						if(member.IsSingleKnownItem)
+						{
+							m_Layer.PlotItems.Add(member.PlotItem);
+							item.m_OriginalGroup.Add(member.PlotItem);
+						}
+						else // than it is a single new item
+						{
+							plotitem = this.NewPlotItemFromPLCon(member);
+							if(null!=plotitem)
+							{
+								m_Layer.PlotItems.Add(member.PlotItem);
+								item.m_OriginalGroup.Add(plotitem);
+							}
+						}
+					} // end for
+					m_Layer.PlotItems.Add(item.m_OriginalGroup); // add the plot group back to the layer
+				} // else if item.IsChangedOldGroup
+				else if(item.IsNewGroup) // if it is a new group
+				{
+					// 1st) create a new PlotGroup
+					PlotGroup newplotgrp = new PlotGroup(PlotGroupStyle.All);
+					// if the group was not changed, add all group members to the
+					// plotassociation collection and add the group to the group list
+					for(int j=0;j<item.m_Group.Count;j++)
+					{
+						PLCon member = (PLCon)item.m_Group[j];
+						if(member.IsSingleKnownItem)
+						{
+							m_Layer.PlotItems.Add(member.PlotItem);
+							newplotgrp.Add(member.PlotItem);
+						}
+						else // than it is a single new item
+						{
+							plotitem = this.NewPlotItemFromPLCon(member);
+							if(null!=plotitem)
+							{
+								m_Layer.PlotItems.Add(plotitem);
+								newplotgrp.Add(plotitem);
+							}
+						}
+					} // for all items in that new group
+					m_Layer.PlotItems.Add(newplotgrp); // add the new plot group to the layer
+				} // if it was a new group
+			} // end for all items in the list box
+			
+			SetElements(true); // Reload the applied contents to make sure it is synchronized
+			return true; // all ok
 		}
 
 		#endregion
@@ -434,7 +586,7 @@ namespace Altaxo.Graph
 		public class PLCon
 		{
 			public string table, column; // holds either name of table and column if freshly added
-			public PlotItem plotassociation;   // or the plot association itself in case of existing PlotAssociations
+			public PlotItem PlotItem;   // or the plot association itself in case of existing PlotAssociations
 			
 			// m_Group holds (in PLCon items) information about the group members
 			public PLCon.Collection m_Group; 
@@ -445,14 +597,14 @@ namespace Altaxo.Graph
 			{
 				this.table=table;
 				this.column=column;
-				this.plotassociation=null;
+				this.PlotItem=null;
 				this.m_Group=null;
 			}
 			public PLCon(PlotItem pa)
 			{
 				this.table=null;
 				this.column=null;
-				this.plotassociation=pa;
+				this.PlotItem=pa;
 				this.m_Group=null;
 			}
 
@@ -460,7 +612,7 @@ namespace Altaxo.Graph
 			{
 				this.table=null;
 				this.column=null;
-				this.plotassociation=null;
+				this.PlotItem=null;
 				this.m_OriginalGroup = null;
 				this.m_Group = new PLCon.Collection();
 				this.m_Group.AddRange(array);
@@ -470,7 +622,7 @@ namespace Altaxo.Graph
 			{
 				this.table=null;
 				this.column=null;
-				this.plotassociation=null;
+				this.PlotItem=null;
 
 				this.m_OriginalGroup = grp;
 				this.m_Group = new PLCon.Collection();
@@ -481,16 +633,16 @@ namespace Altaxo.Graph
 
 			public bool IsValid
 			{
-				get { return null!=plotassociation || (null!=table && null!=column); }
+				get { return null!=PlotItem || (null!=table && null!=column); }
 			}
 
 			public bool IsSingleNewItem
 			{
-				get { return null==plotassociation && null==m_Group; }
+				get { return null==PlotItem && null==m_Group; }
 			}
 			public bool IsSingleKnownItem
 			{
-				get { return null!=plotassociation && null==m_Group; }
+				get { return null!=PlotItem && null==m_Group; }
 			}
 			public bool IsGroup
 			{
@@ -514,7 +666,7 @@ namespace Altaxo.Graph
 					// the m_Group Collection
 					for(int i=0;i<m_OriginalGroup.Count;i++)
 					{
-						if(!object.ReferenceEquals(m_OriginalGroup[i],m_Group[i].plotassociation))
+						if(!object.ReferenceEquals(m_OriginalGroup[i],m_Group[i].PlotItem))
 							return false;
 					}
 					
@@ -536,8 +688,8 @@ namespace Altaxo.Graph
 
 			public override string ToString()
 			{
-				if(null!=plotassociation)
-					return plotassociation.GetName(0);
+				if(null!=PlotItem)
+					return PlotItem.GetName(0);
 				else if(table!=null && column!=null)
 					return table+"\\"+this.column;
 				else

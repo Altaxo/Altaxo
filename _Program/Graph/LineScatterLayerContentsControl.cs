@@ -244,7 +244,7 @@ namespace Altaxo.Graph
 		}
 
 
-		public void InitializeDataAvailable(TreeNode[] nodes)
+		public void DataAvailable_Initialize(TreeNode[] nodes)
 		{
 			this.m_Content_tvDataAvail.BeginUpdate();
 			// Clear the TreeView each time the method is called.
@@ -255,11 +255,11 @@ namespace Altaxo.Graph
 			this.m_Content_tvDataAvail.EndUpdate();
 		}
 
-		public void Contents_Redraw()
+		public void DataAvailable_ClearSelection()
 		{
-			this.m_Contents_lbContents.Invalidate();
+			this.m_Content_tvDataAvail.ClearSelNodes();
 		}
-
+	
 		public void Contents_SetItemCount(int newCount)
 		{
 			// please note:
@@ -279,6 +279,13 @@ namespace Altaxo.Graph
 	{
 		this.m_Contents_lbContents.SetSelected(idx,bSelect);
 	}
+
+		public void Contents_InvalidateItems(int idx1, int idx2)
+		{
+			this.m_Contents_lbContents.Items[idx1] = idx1;
+			this.m_Contents_lbContents.Items[idx2] = idx2;
+
+		}
 
 		#endregion
 

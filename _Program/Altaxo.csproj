@@ -229,6 +229,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\AxisLinkControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\AxisLinkControl.resx"
+                    DependentUpon = "AxisLinkControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\AxisLinkController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\AxisScaleControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -624,6 +639,11 @@
                 />
                 <File
                     RelPath = "Serialization\ImportGalacticSpcFiles.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\NumberParsing.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

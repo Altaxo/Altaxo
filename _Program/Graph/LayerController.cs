@@ -244,6 +244,10 @@ namespace Altaxo.Graph
 		public bool Apply()
 		{
 			int i;
+
+			if(!this.m_LayerContentsController.Apply())
+				return false;
+
 			// do the apply for all controllers that are allocated so far
 			for(i=0;i<2;i++)
 			{
