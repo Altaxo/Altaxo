@@ -25,17 +25,47 @@ namespace Altaxo.Data
 {
 	
 
+	/// <summary>
+	/// The main purpose of the column.
+	/// </summary>
 	[Serializable]
 	public enum ColumnKind
 	{
+		/// <summary>
+		/// Column values are the dependent variable (usually y in 2D-Plots, z in 3D-plots) 
+		/// </summary>
 		V=0,
+		/// <summary>
+		/// Column values are the first independent variable.
+		/// </summary>
 		X=1,
+		/// <summary>
+		/// Column values are the second independent variable.
+		/// </summary>
 		Y=2,			
+		/// <summary>
+		/// Column values are the third independent variable.
+		/// </summary>
 		Z=3,								
+		/// <summary>
+		/// Column values are +- error values.
+		/// </summary>
 		Err=4,		
-		pErr=5,					
+		/// <summary>
+		/// Column values are + error values.
+		/// </summary>
+		pErr=5,
+		/// <summary>
+		/// Column values are - errór values.
+		/// </summary>
 		mErr=6,
+		/// <summary>
+		/// Column values are labels.
+		/// </summary>
 		Label=7,
+		/// <summary>
+		/// Column values are the plot condition, i.e. if zero, the row is ignored during plotting.
+		/// </summary>
 		Condition=8
 	}
 

@@ -724,6 +724,11 @@ namespace Altaxo.Calc
 
 		//----------------------------------------------------------------------------//
 
+		/// <summary>
+		///	 Does a hartley transform of 'n' points in the array 'fz'.
+		/// </summary>
+		/// <param name="fz">The array of points.</param>
+		/// <param name="n">The number of points, must be a power of two. This precondition is not checked!</param>
 		public static void fht (double[] fz, int n)
 		{
 			int i,k,k1,k2,k3,k4,kx;
@@ -918,6 +923,15 @@ namespace Altaxo.Calc
 
 		//----------------------------------------------------------------------------//
 
+
+
+		/// <summary>
+		///      Does a fourier transform of 'n' points of the 'real' and
+		///      'imag' arrays.
+		/// </summary>
+		/// <param name="n">Number of points to transform. Have to be a power of 2 (unchecked!)</param>
+		/// <param name="real">The array holding the real part of the values.</param>
+		/// <param name="imag">The array holding the imaginary part of the values.</param>
 		public static void fht_fft (int n, double[] real, double[] imag)
 		{
 			fht(real,n);
@@ -933,8 +947,14 @@ namespace Altaxo.Calc
 			}
 		}
 
-		//----------------------------------------------------------------------------//
 
+		/// <summary>
+		///      Does an in-place inverse fourier transform of 'n' points of the 'real'
+		///      and 'imag' arrays.
+		/// </summary>
+		/// <param name="n">Number of points to transform. Have to be a power of 2 (unchecked!)</param>
+		/// <param name="real">The array holding the real part of the values.</param>
+		/// <param name="imag">The array holding the imaginary part of the values.</param>
 		public static void fht_ifft (int n, double[] real, double[] imag)
 		{
 			for (int i=1,j=n-1,k=n/2;i<k;i++,j--) 
@@ -950,8 +970,12 @@ namespace Altaxo.Calc
 			fht(imag,n);
 		}
 
-		//----------------------------------------------------------------------------//
 
+		/// <summary>
+		///      Does the inverse of a real-valued fourier transform of 'n' points.
+		/// </summary>
+		/// <param name="n">Number of points to transform. Has to be a power of 2 (unchecked).</param>
+		/// <param name="real">The array holding the fourier transform values, which will be transformed back.</param>
 		public static void fht_realifft (int n, double[] real)
 		{
 			for (int i=1,j=n-1,k=n/2;i<k;i++,j--) 
@@ -966,8 +990,14 @@ namespace Altaxo.Calc
 			fht(real,n);
 		}
 
-		//----------------------------------------------------------------------------//
-
+		/// <summary>
+		///      Does a real-valued fourier transform of 'n' points of the
+		///      'real' array.  The real part of the transform ends
+		///      up in the first half of the array and the imaginary part of the
+		///      transform ends up in the second half of the array.
+		/// </summary>
+		/// <param name="n">The number of points to transform. Has to be a power of 2 (unchecked!).</param>
+		/// <param name="real">The array holding the real values to transform.</param>
 		public static void fht_realfft (int n, double[] real)
 		{
 			fht(real,n);
@@ -981,14 +1011,5 @@ namespace Altaxo.Calc
 				real[i] = (a+b)*0.5;
 			}
 		}
-
-		//----------------------------------------------------------------------------//
-
-
-
-
-
-
-
 	}
 }

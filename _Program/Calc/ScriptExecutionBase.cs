@@ -23,10 +23,12 @@ using System;
 namespace Altaxo.Calc
 {
 	/// <summary>
-	/// ScriptExecuteBase provides the environment to execute scripts in altaxo
-	/// it provides shortcuts for math functions
-	/// and the mathematical functions with column types
+	/// ScriptExecutionBase provides the (mathematical) environment to execute scripts.
 	/// </summary>
+	/// <remarks>
+	/// ScriptExecutionBase provides shortcuts for mathematical functions for single values,
+	/// and the mathematical functions for columns.
+	/// </remarks>
 	public class ScriptExecutionBase 
 	{
 		#region Double_Mathematics
@@ -372,11 +374,24 @@ namespace Altaxo.Calc
 
 	} // end of class ScriptExecutionBase
 
+	/// <summary>
+	/// ColScriptExeBase is the base class of all column scripts.
+	/// </summary>
+	/// <remarks>
+	/// Every column script defines his own class, which is derived from here.
+	/// There is only one method in ColScriptExeBase, Execute, which has
+	/// to be overwritten by the column script in order to execute the column script.
+	/// The method provided here is not defined as abstract, but instead does nothing.
+	/// </remarks>
 	public class ColScriptExeBase : ScriptExecutionBase
 	{
+		/// <summary>
+		/// The method the column script has to overwrite in order to be able to execute the script.
+		/// This method is the entry point of the column script
+		/// </summary>
+		/// <param name="myColumn">The column on which the column script is executed.</param>
 		public virtual void Execute(Altaxo.Data.DataColumn myColumn)
 		{
 		}
 	}
-
 }

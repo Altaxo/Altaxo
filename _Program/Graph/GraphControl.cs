@@ -182,6 +182,7 @@ namespace Altaxo.Graph
 			set 
 			{
 				m_CurrentGraphTool = value;
+				// TODO  reflect the change in the tool bar
 			}
 		}
 
@@ -490,6 +491,9 @@ namespace Altaxo.Graph
 
 				ExtendedTextGraphObject tgo = new ExtendedTextGraphObject();
 				tgo.Position = layerCoord;
+
+				// deselect the text tool
+				this.CurrentGraphTool = GraphTools.ObjectPointer;
 
 				TextControlDialog dlg = new TextControlDialog(Layer[ActualLayer],tgo);
 				if(DialogResult.OK==dlg.ShowDialog(this))

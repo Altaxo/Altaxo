@@ -27,56 +27,115 @@ using Altaxo.Serialization;
 namespace Altaxo.Data
 {
 	/// <summary>
-	/// Summary description for ColumnScript.
+	/// Holds the text, the module (=executable), and some properties of a column script. 
 	/// </summary>
 	[SerializationSurrogate(0,typeof(Altaxo.Data.ColumnScript.SerializationSurrogate0))]
 	[SerializationVersion(0)]
 	[Serializable()]
 	public class ColumnScript : ICloneable, System.Runtime.Serialization.IDeserializationCallback
 	{
-		public enum ScriptStyle { SetColumnValues, SetColumn, FreeStyle };
+		/// <summary>
+		/// ScriptStyle enumerates the style of the column script.
+		/// </summary>
+		public enum ScriptStyle 
+		{
+			/// <summary>
+			/// ColumnValues are set by indexing the target column, i.e. targetcol[i]=...
+			/// The values calculated by the script must therefore be scalar values.
+			/// </summary>
+			SetColumnValues, 
+			/// <summary>
+			/// ColumnValues are set by setting the column at once, i.e. targetcol=...<para/>
+			/// The values calculated by the script must therefore be columns (1-dimensional arrays).
+			/// </summary>
+			SetColumn,
+			/// <summary>
+			/// With this style, you can write code outside the function <see cref="Altaxo.Data.ColScriptExeBase.Execute"/>
+			/// You can even define your own classes and functions for use by the column script.
+			///	</summary>
+			FreeStyle };
 
+		/// <summary>
+		/// Holds the <see cref="ScriptStyle"/> of the column script.
+		/// </summary>
 		protected ScriptStyle m_ScriptStyle = ScriptStyle.SetColumn;
 
-		// public DataColumn m_Column; // the name of the column
-
+		/// <summary>
+		/// The text of the column script.
+		/// </summary>
 		public string m_ScriptText; // the text of the script
 
+		/// <summary>
+		/// holds the first row if ScriptStyle is SetColumnValues, otherwise not used.
+		/// </summary>
 		protected string m_RowFrom="0";
 
+		/// <summary>
+		/// Holds the condition of the for-loop if ScriptStyle is SetColumnValues, otherwise not used.
+		/// </summary>
 		protected string m_RowCondition="<";
 		
+		/// <summary>
+		/// Holds the end value of the for-loop if ScriptStyle is SetColumnValues, otherwise not used.
+		/// </summary>
 		protected string m_RowTo="10";
 		
+		/// <summary>
+		/// The increment statement of the for-loop (can also be decrement or other) if ScriptStyle is SetColumnValues, otherwise not used.
+		/// </summary>
 		protected string m_RowInc="++"; // the values for the loop conditions
 
+		/// <summary>
+		/// True when the text changed from last time this flag was reseted.
+		/// </summary>
 		[NonSerialized()]
 		protected bool  m_IsDirty; // true when text changed, can be reseted
 
+		/// <summary>
+		/// False when the text has changed and was not compiled already.
+		/// </summary>
 		[NonSerialized()]
 		protected bool m_Compiled; // false when text changed and not compiled already
 
+		/// <summary>
+		/// The assembly that holds the created script class.
+		/// </summary>
 		[NonSerialized()]
 		protected System.Reflection.Assembly m_ScriptAssembly;
 
+		/// <summary>
+		/// The script object. This is a instance of the newly created script class, which is derived class of <see cref="Altaxo.Calc.ColScriptExeBase"/>
+		/// </summary>
 		[NonSerialized()]
 		protected Altaxo.Calc.ColScriptExeBase m_ScriptObject; // the compiled and created script object
 
+		/// <summary>
+		/// Holds error messages created by the compiler.
+		/// </summary>
+		/// <remarks>The column script is compiled, if it is dirty. This can happen not only
+		/// during the use of the column script dialog, but anytime when you changed the script text and
+		/// try to execute the script. That's the reason for holding the compiler error messages
+		/// here and not in the script dialog.</remarks>
 		[NonSerialized()]
 		protected string[] m_Errors=null;
 
 
 
 		#region Serialization
+		/// <summary>
+		/// Responsible for serialization of the column script version 0.
+		/// </summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
+			/// <summary>
+			/// Serializes the column script
+			/// </summary>
+			/// <param name="obj">The column script to serialize.</param>
+			/// <param name="info">Serialization info.</param>
+			/// <param name="context">Streaming context.</param>
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				Altaxo.Data.ColumnScript s = (Altaxo.Data.ColumnScript)obj;
-				// I decided _not_ to serialize the parent object, since if we only want
-				// to serialize this column, we would otherwise serialize the entire object
-				// graph
-				// info.AddValue("Parent",s.m_Table); // 
 				info.AddValue("Style",(int)s.m_ScriptStyle);
 				info.AddValue("Text",s.m_ScriptText);
 				info.AddValue("From",s.m_RowFrom);
@@ -84,6 +143,15 @@ namespace Altaxo.Data
 				info.AddValue("To",s.m_RowTo);
 				info.AddValue("Inc",s.m_RowInc);
 			}
+
+			/// <summary>
+			/// Deserialized the column script.
+			/// </summary>
+			/// <param name="obj">The uninitialized column script instance.</param>
+			/// <param name="info">Serialization info.</param>
+			/// <param name="context">Streaming context.</param>
+			/// <param name="selector">Surrogate selector.</param>
+			/// <returns></returns>
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				Altaxo.Data.ColumnScript s = (Altaxo.Data.ColumnScript)obj;
@@ -98,16 +166,27 @@ namespace Altaxo.Data
 			}
 		}
 
+		/// <summary>
+		/// Is called when deserialization has finished.
+		/// </summary>
+		/// <param name="obj"></param>
 		public virtual void OnDeserialization(object obj)
 		{
 		}
 		#endregion
 
 
+		/// <summary>
+		/// Creates an empty column script. Default Style is "Set Column".
+		/// </summary>
 		public ColumnScript()
 		{
 		}
 
+		/// <summary>
+		/// Creates a column script as a copy from another script.
+		/// </summary>
+		/// <param name="b">The script to copy from.</param>
 		public ColumnScript(ColumnScript b)
 		{
 			this.m_ScriptStyle = b.m_ScriptStyle;
@@ -124,55 +203,82 @@ namespace Altaxo.Data
 		}
 
 
+		/// <summary>
+		/// Returns the compiler errors as array of strings.
+		/// </summary>
 		public string[] Errors
 		{
 			get { return m_Errors; }
 		}
 
 
+		/// <summary>
+		/// True if the column script is dirty, i.e. the text changed since the last reset of IsDirty.
+		/// </summary>
 		public bool IsDirty
 		{
 			get { return m_IsDirty; }
 			set { m_IsDirty = value; }
 		}
 
-			public ScriptStyle Style
+		/// <summary>
+		/// Get / sets the script style.
+		/// </summary>
+		public ScriptStyle Style
 		{
 			get { return m_ScriptStyle; }
 			set { m_ScriptStyle = value; m_IsDirty=true; m_Compiled=false; }
 		}
 
 
+		/// <summary>
+		/// Get / sets the start value of the for-loop (used only if ScriptStyle is "SetColumnValues")
+		/// </summary>
 		public string ForFrom
 		{
 			get { return m_RowFrom; }
 			set { m_RowFrom = value; m_IsDirty=true; m_Compiled=false; }
 		}
 
+		/// <summary>
+		/// Get / sets the end condition of the for-loop (used only if ScriptStyle is "SetColumnValues")
+		/// </summary>
 		public string ForCondition
 		{
 			get { return m_RowCondition; }
 			set { m_RowCondition = value; m_IsDirty=true; m_Compiled=false; }
 		}
 
+		/// <summary>
+		/// Get / sets the end value of the for-loop (used only if ScriptStyle is "SetColumnValues")
+		/// </summary>
 		public string ForEnd
 		{
 			get { return m_RowTo; }
 			set { m_RowTo = value; m_IsDirty=true; m_Compiled=false; }
 		}
 
+		/// <summary>
+		/// Get / sets the increment statement of the for-loop (used only if ScriptStyle is "SetColumnValues")
+		/// </summary>
 		public string ForInc
 		{
 			get { return m_RowInc; }
 			set { m_RowInc = value; m_IsDirty=true; m_Compiled=false; }
 		}
 
+		/// <summary>
+		/// Get / sets the script text
+		/// </summary>
 		public string ScriptBody
 		{
 			get { return m_ScriptText; }
 			set { m_ScriptText = value; m_IsDirty=true; m_Compiled=false; }
 		}
 
+		/// <summary>
+		/// Gets the code header, i.e. the leading script text. It depends on the ScriptStyle.
+		/// </summary>
 		public string CodeHeader
 		{
 			get
@@ -182,27 +288,27 @@ namespace Altaxo.Data
 				{
 					case ScriptStyle.SetColumnValues:
 						codeheader =  "namespace Altaxo{\r\npublic class SetColVal : Altaxo.Calc.ColScriptExeBase{\r\n" +
-													"public override void Execute(Altaxo.Data.DataColumn myColumn) {\r\n" +
-													"Altaxo.Data.DataTable col = (null!=myColumn)? myColumn.ParentTable:null;\r\n" +
-													"Altaxo.Data.DataSet   tab = (null!=col)? col.ParentDataSet:null;\r\n"+
-													"for(int i=" + m_RowFrom + ";i" + m_RowCondition + m_RowTo + ";i" + m_RowInc + ") {\r\n";
+							"public override void Execute(Altaxo.Data.DataColumn myColumn) {\r\n" +
+							"Altaxo.Data.DataTable col = (null!=myColumn)? myColumn.ParentTable:null;\r\n" +
+							"Altaxo.Data.DataSet   tab = (null!=col)? col.ParentDataSet:null;\r\n"+
+							"for(int i=" + m_RowFrom + ";i" + m_RowCondition + m_RowTo + ";i" + m_RowInc + ") {\r\n";
 						//codestart  =  "cts[i]=";
 						//codetail = "} /*for*/ } /*Execute*/  } /*class*/  } /*namespace*/"; 
 						break;
 					case ScriptStyle.SetColumn:
 						codeheader =  "namespace Altaxo {\r\npublic class SetColVal : Altaxo.Calc.ColScriptExeBase {\r\n" +
-													"public override void Execute(Altaxo.Data.DataColumn myColumn) {\r\n" +
-													"Altaxo.Data.DataTable col = (null!=myColumn)? myColumn.ParentTable:null;\r\n"+
-													"Altaxo.Data.DataSet   tab = (null!=col)? col.ParentDataSet:null;\r\n";
+							"public override void Execute(Altaxo.Data.DataColumn myColumn) {\r\n" +
+							"Altaxo.Data.DataTable col = (null!=myColumn)? myColumn.ParentTable:null;\r\n"+
+							"Altaxo.Data.DataSet   tab = (null!=col)? col.ParentDataSet:null;\r\n";
 													
 						//codestart = "col[\"" + dataColumn.ColumnName + "\"]=";
 						//codetail = "} /*Execute*/ } /*class*/ } /*namespace*/";
 						break;
 					case ScriptStyle.FreeStyle:
 						codeheader =	"namespace Altaxo {\r\npublic class SetColVal : Altaxo.Calc.ColScriptExeBase {\r\n"+
-													"public override void Execute(Altaxo.Data.DataColumn myColumn) {\r\n" +
-													"Altaxo.Data.DataTable col = (null!=myColumn)? myColumn.ParentTable:null;\r\n"+
-													"Altaxo.Data.DataSet   tab = (null!=col)? col.ParentDataSet:null;\r\n";
+							"public override void Execute(Altaxo.Data.DataColumn myColumn) {\r\n" +
+							"Altaxo.Data.DataTable col = (null!=myColumn)? myColumn.ParentTable:null;\r\n"+
+							"Altaxo.Data.DataSet   tab = (null!=col)? col.ParentDataSet:null;\r\n";
 						//codestart = "public override void Execute(Altaxo.Data.DataTable col) {\n";
 						//codetail = " } /*class*/ } /*namespace*/ \n// You have to provide the end brace of Execute(...), after this you can add own member functions";
 						break;				
@@ -217,6 +323,9 @@ namespace Altaxo.Data
 		}
 
 
+		/// <summary>
+		/// Get the assignment statement for the column value or the column, depending on the script style.
+		/// </summary>
 		public string CodeStart
 		{
 			get
@@ -254,6 +363,9 @@ namespace Altaxo.Data
 		}
 
 
+		/// <summary>
+		/// Get the ending text of the script, dependent on the ScriptStyle.
+		/// </summary>
 		public string CodeTail
 		{
 			get
@@ -292,12 +404,23 @@ namespace Altaxo.Data
 
 
 
+		/// <summary>
+		/// Clones the column script.
+		/// </summary>
+		/// <returns>The cloned object.</returns>
 		public object Clone()
 		{
 			return new ColumnScript(this);
 		}
 
 
+		/// <summary>
+		/// Does the compilation of the script into an assembly.
+		/// If it was not compiled before or is dirty, it is compiled first.
+		/// From the compiled assembly, a new instance of the newly created script class is created
+		/// and stored in m_ScriptObject.
+		/// </summary>
+		/// <returns>True if successfully compiles, otherwise false.</returns>
 		public bool Compile()
 		{
 			bool bSucceeded=true;
@@ -361,10 +484,18 @@ namespace Altaxo.Data
 					m_Errors[0] = "Unable to create Scripting object, have you missed it?\n" + ex.ToString(); 
 				}
 			}
-				return bSucceeded;
+			return bSucceeded;
 		}
 
 
+		/// <summary>
+		/// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+		/// If the script object exists, the Execute function of this script object is called.
+		/// </summary>
+		/// <param name="myColumn">The data column this script is working on.</param>
+		/// <returns>True if executed without exceptions, otherwise false.</returns>
+		/// <remarks>If exceptions were thrown during execution, the exception messages are stored
+		/// inside the column script and can be recalled by the Errors property.</remarks>
 		public bool Execute(Altaxo.Data.DataColumn myColumn)
 		{
 			if(null==m_ScriptObject)
@@ -383,16 +514,26 @@ namespace Altaxo.Data
 				m_Errors[0] = ex.ToString();
 				return false;
 			}
-		return true;
+			return true;
 		}
 
+
+		/// <summary>
+		/// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+		/// If the script object exists, the data change notifications will be switched of (for all tables).
+		/// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
+		/// </summary>
+		/// <param name="myColumn">The data column this script is working on.</param>
+		/// <returns>True if executed without exceptions, otherwise false.</returns>
+		/// <remarks>If exceptions were thrown during execution, the exception messages are stored
+		/// inside the column script and can be recalled by the Errors property.</remarks>
 		public bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn)
 		{
 			bool bSucceeded=true;
 			Altaxo.Data.DataTable myTable=null;
 			Altaxo.Data.DataSet   myDataSet=null;
 
-		// first, test some preconditions
+			// first, test some preconditions
 			if(null==m_ScriptObject)
 			{
 				m_Errors = new string[1]{"Script Object is null"};
@@ -436,24 +577,43 @@ namespace Altaxo.Data
 	} // end of class ColumnScript
 
 
+	/// <summary>
+	/// Holds  column scripts in a hash table. The hash value is the data column the script belongs to.
+	/// </summary>
 	[Serializable]
 	public class ColumnScriptCollection : System.Collections.Hashtable
 	{
+		/// <summary>
+		/// Constructs a empty ColumnScriptCollection
+		/// </summary>
 		public ColumnScriptCollection()
 			: base()
 		{
 		}
 		
+		/// <summary>
+		/// Special deserialization constructor.
+		/// </summary>
+		/// <param name="info">Serialization info.</param>
+		/// <param name="context">Streaming context.</param>
 		public ColumnScriptCollection(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context)
 			: base(info,context)
 		{
 		}
 
+		/// <summary>
+		/// Serialization function.
+		/// </summary>
+		/// <param name="info">Serialization info.</param>
+		/// <param name="context">Streaming context.</param>
 		public override void GetObjectData(System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 		{
 			base.GetObjectData(info,context);
 		}
 
+		/// <summary>
+		/// get / set the column scripts associated with the correspondig columns.
+		/// </summary>
 		public ColumnScript this[DataColumn dc]
 		{
 			get { return base[dc] as ColumnScript; }
