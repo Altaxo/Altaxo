@@ -50,7 +50,7 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// </summary>
   public class SpectralPreprocessingOptions : System.ICloneable
   {
-	
+  
     SpectralPreprocessingMethod _method;
     int  _detrendingOrder;
     bool _ensembleScale;
@@ -197,7 +197,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         }
       }
     
-    _regions = (int[])list.ToArray(typeof(int));
+      _regions = (int[])list.ToArray(typeof(int));
     }
 
 

@@ -27,11 +27,11 @@ using System.Xml;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-	/// <summary>
-	/// Summary description for MultivariateRelated.
-	/// </summary>
-	public class MultivariateRelated
-	{
-		
-	}
+  /// <summary>
+  /// Summary description for MultivariateRelated.
+  /// </summary>
+  public class MultivariateRelated
+  {
+    
+  }
 }

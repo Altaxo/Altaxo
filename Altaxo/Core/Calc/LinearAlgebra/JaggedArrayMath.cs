@@ -58,7 +58,7 @@ namespace Altaxo.Calc.LinearAlgebra
       protected int _cols;
 
       public TransposedROMatrix(double[][] arr, int rows, int cols)
-    {
+      {
         if(arr==null)
           throw new ArgumentNullException("arr");
         if(arr.Length<cols)
@@ -70,7 +70,7 @@ namespace Altaxo.Calc.LinearAlgebra
         _arr = arr;
         _rows = rows;
         _cols = cols;
-    }
+      }
       #region IROMatrix Members
 
       public double this[int row, int col]
@@ -103,7 +103,7 @@ namespace Altaxo.Calc.LinearAlgebra
     class TransposedMatrix : TransposedROMatrix, IMatrix
     {
       public TransposedMatrix(double[][] arr, int rows, int cols)
-      : base(arr,rows,cols)
+        : base(arr,rows,cols)
       {
       }
       #region IMatrix Members

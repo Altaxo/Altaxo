@@ -162,6 +162,18 @@ namespace Altaxo.Graph
       
     }
 
+    /// <summary>
+    /// Scales the position of all items according to xscale and yscale.
+    /// </summary>
+    /// <param name="xscale"></param>
+    /// <param name="yscale"></param>
+    public void ScalePosition(double xscale, double yscale)
+    {
+      foreach(GraphicsObject o in this.InnerList)
+      {
+        GraphicsObject.ScalePosition(o,xscale,yscale);
+      }
+    }
 
     public GraphicsObject this[int index]
     {
@@ -282,6 +294,7 @@ namespace Altaxo.Graph
     {
       baseEnumerator.Reset();
     }
+
 
   }
 

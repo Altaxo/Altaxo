@@ -110,7 +110,7 @@ namespace Altaxo.Worksheet.GUI
         if(IsOwnAssembly(assembly) || ReferencesOwnAssembly(assembly.GetReferencedAssemblies()))
         {
         
-        Type[] definedtypes = assembly.GetTypes();
+          Type[] definedtypes = assembly.GetTypes();
           foreach(Type definedtype in definedtypes)
           {
             if(definedtype.IsSubclassOf(typeof(Altaxo.Calc.Regression.Multivariate.WorksheetAnalysis)) && !definedtype.IsAbstract)

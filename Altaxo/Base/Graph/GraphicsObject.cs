@@ -332,6 +332,22 @@ namespace Altaxo.Graph
       }
     }
 
+    /// <summary>
+    /// Scales the position of an item according to the provided xscale and yscale. Can be called with null for the item (in this case nothing happens).
+    /// </summary>
+    /// <param name="o">The graphics object whose position is scaled.</param>
+    /// <param name="xscale">The xscale ratio.</param>
+    /// <param name="yscale">The yscale ratio.</param>
+    public static void ScalePosition(GraphicsObject o, double xscale, double yscale)
+    {
+      if(o!=null)
+      {
+        PointF oldP = o.Position;
+        o.SetPosition(new PointF((float)(oldP.X*xscale),(float)(oldP.Y*yscale)));
+      }
+    }
+
+
     public virtual float Height
     {
       get

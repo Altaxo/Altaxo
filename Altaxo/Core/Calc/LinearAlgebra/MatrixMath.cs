@@ -792,7 +792,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <param name="m">The matrix.</param>
       /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
       public MatrixRowVector(IMatrix m, int row)
-      : this(m,row,0,m.Columns)
+        : this(m,row,0,m.Columns)
       {
       }
       /// <summary>
@@ -808,8 +808,8 @@ namespace Altaxo.Calc.LinearAlgebra
           throw new ArgumentNullException("IMatrix m is null");
         if(row<0 || row>=m.Rows)
           throw new ArgumentOutOfRangeException("The parameter row is either <0 or greater than the rows of the matrix");
-         if(columnoffset+length>m.Columns)
-           throw new ArgumentException("Columnoffset+length exceed the number of columns of the matrix");
+        if(columnoffset+length>m.Columns)
+          throw new ArgumentException("Columnoffset+length exceed the number of columns of the matrix");
 
         _m = m;
         _row = row;

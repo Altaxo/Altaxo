@@ -209,6 +209,8 @@ namespace Altaxo.Graph
       {
         // we use List here since we want to have custom actions defined below
         List[i] = value;
+        value.SetPrintableGraphBounds(m_PrintableBounds,false);
+
       }
     }
 
@@ -246,6 +248,7 @@ namespace Altaxo.Graph
     {
       // we use List for adding since we want to have custom actions below
       List.Add(l);
+      l.SetPrintableGraphBounds(m_PrintableBounds,false);
       // since we use List, we don't need to have OnLayerCollectionChanged here!
     }
 

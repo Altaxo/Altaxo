@@ -131,7 +131,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     
    
-		
+    
 
     public override void CalculateCrossPRESS(
       IMatrix matrixX,

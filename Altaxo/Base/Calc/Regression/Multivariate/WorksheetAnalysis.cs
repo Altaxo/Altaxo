@@ -1131,7 +1131,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         throw new ArgumentException("Table does not contain a PLSContentMemento");
 
       IMultivariateCalibrationModel calib = GetCalibrationModel(table);
-//      Export(table,out calib);
+      //      Export(table,out calib);
 
 
       IMatrix matrixX = GetRawSpectra(plsMemo);
@@ -1219,7 +1219,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
 
       IMultivariateCalibrationModel calibModel = GetCalibrationModel(modelTable);
-//      Export(modelTable, out calibModel);
+      //      Export(modelTable, out calibModel);
       MultivariateContentMemento memento = modelTable.GetTableProperty("Content") as MultivariateContentMemento;
 
       // Fill matrixX with spectra

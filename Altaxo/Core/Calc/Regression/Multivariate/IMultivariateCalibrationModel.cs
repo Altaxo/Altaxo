@@ -24,12 +24,12 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-	/// <summary>
-	/// IMultivariateCalibrationModel contains the basic data for a
-	/// multivariate calibration model
-	/// </summary>
-	public interface IMultivariateCalibrationModel
-	{
+  /// <summary>
+  /// IMultivariateCalibrationModel contains the basic data for a
+  /// multivariate calibration model
+  /// </summary>
+  public interface IMultivariateCalibrationModel
+  {
     int NumberOfX
     {
       get; 
@@ -68,5 +68,5 @@ namespace Altaxo.Calc.Regression.Multivariate
       get ; 
     }
 
-	}
+  }
 }

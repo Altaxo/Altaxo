@@ -30,7 +30,7 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// </summary>
   public class PLSRegression
   {
-	
+  
     /// <summary>
     /// Partial least squares (PLS) decomposition of the matrizes X and Y.
     /// </summary>
@@ -304,7 +304,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       )
     {
 
-//      int[][] groups = bExcludeGroups ? new ExcludeGroupsGroupingStrategy().Group(Y) : new ExcludeSingleMeasurementsGroupingStrategy().Group(Y);
+      //      int[][] groups = bExcludeGroups ? new ExcludeGroupsGroupingStrategy().Group(Y) : new ExcludeSingleMeasurementsGroupingStrategy().Group(Y);
       int[][] groups = groupingStrategy.Group(Y);
 
 

@@ -188,6 +188,7 @@ namespace Altaxo.Graph
     {
       this.m_Layers = new Altaxo.Graph.XYPlotLayerCollection();
       this.m_Layers.ParentObject = this;
+      this.m_Layers.SetPrintableGraphBounds(m_PrintableBounds,false);
     }
 
     public GraphDocument(GraphDocument from)

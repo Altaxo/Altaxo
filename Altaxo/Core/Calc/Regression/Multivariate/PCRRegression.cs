@@ -25,12 +25,12 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-	/// <summary>
-	/// PCRRegression contains static methods for doing principal component regression analysis and prediction of the data.
-	/// </summary>
-	public class PCRRegression
-	{
-	
+  /// <summary>
+  /// PCRRegression contains static methods for doing principal component regression analysis and prediction of the data.
+  /// </summary>
+  public class PCRRegression
+  {
+  
     public static void ExecuteAnalysis(
       IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
       IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       out IROMatrix xLoads, // out: the loads of the X matrix
       out IROMatrix xScores, // matrix of weighting values
       out IROVector V  // vector of cross products
-       )
+      )
     {
       IMatrix matrixX = new MatrixMath.BEMatrix(X.Rows,X.Columns);
       MatrixMath.Copy(X,matrixX);
@@ -133,7 +133,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       for(int nf=0;nf<numberOfFactors;nf++)
       {
-          double scale = 1/crossProduct[nf];
+        double scale = 1/crossProduct[nf];
         for(int cn=0;cn<numY;cn++)
         {
           for(int k=0;k<numX;k++)
@@ -150,8 +150,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       int numMeasurements = yLoads.Rows;
 
-       IExtensibleVector PRESS   = VectorMath.CreateExtensibleVector(numberOfFactors+1);
-       MatrixMath.BEMatrix UtY  = new MatrixMath.BEMatrix(yLoads.Rows,yLoads.Columns);
+      IExtensibleVector PRESS   = VectorMath.CreateExtensibleVector(numberOfFactors+1);
+      MatrixMath.BEMatrix UtY  = new MatrixMath.BEMatrix(yLoads.Rows,yLoads.Columns);
       MatrixMath.BEMatrix predictedY  = new MatrixMath.BEMatrix(yLoads.Rows,yLoads.Columns);
       press = PRESS;
 
@@ -160,21 +160,21 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
 
-        // now calculate PRESS by predicting the y
-        // using yp = U (w*(1/w)) U' y
-        // of course w*1/w is the identity matrix, but we use only the first factors, so using a cutted identity matrix
-        // we precalculate the last term U'y = UtY
-        // and multiplying with one row of U in every factor step, summing up the predictedY 
+      // now calculate PRESS by predicting the y
+      // using yp = U (w*(1/w)) U' y
+      // of course w*1/w is the identity matrix, but we use only the first factors, so using a cutted identity matrix
+      // we precalculate the last term U'y = UtY
+      // and multiplying with one row of U in every factor step, summing up the predictedY 
       PRESS[0] = MatrixMath.SumOfSquares(yLoads);
       for(int nf=0;nf<numberOfFactors;nf++)
+      {
+        for(int cn=0;cn<yLoads.Columns;cn++)
         {
-          for(int cn=0;cn<yLoads.Columns;cn++)
-          {
-            for(int k=0;k<yLoads.Rows;k++)
-              predictedY[k,cn] += xScores[k,nf]*UtY[nf,cn];
-          }
-          PRESS[nf+1] = MatrixMath.SumOfSquaredDifferences(yLoads,predictedY);
+          for(int k=0;k<yLoads.Rows;k++)
+            predictedY[k,cn] += xScores[k,nf]*UtY[nf,cn];
         }
+        PRESS[nf+1] = MatrixMath.SumOfSquaredDifferences(yLoads,predictedY);
+      }
      
     }
 
@@ -334,5 +334,5 @@ namespace Altaxo.Calc.Regression.Multivariate
       meanNumberOfExcludedSpectra = ((double)X.Rows)/groups.Length;
     }
 
-	}
+  }
 }

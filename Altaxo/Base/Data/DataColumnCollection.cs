@@ -2098,13 +2098,13 @@ namespace Altaxo.Data
     protected string FindUniqueColumnNameWithBase(string sbase)
     {
       // try the name directly
-        if(null==this[sbase])
-          return sbase;
+      if(null==this[sbase])
+        return sbase;
 
-        sbase = sbase+".";
+      sbase = sbase+".";
  
 
-        // then try it with all names from A-ZZ
+      // then try it with all names from A-ZZ
         
       for(string tryAppendix="A";tryAppendix!=null;tryAppendix=GetNextColumnName(tryAppendix))
       {
@@ -2112,7 +2112,7 @@ namespace Altaxo.Data
           return sbase+tryAppendix;
       }
 
-        // if no success, append a hex string
+      // if no success, append a hex string
       for(;;)
       {
         string tryName = sbase+((uint)System.Guid.NewGuid().GetHashCode()).ToString("X8");
@@ -2128,7 +2128,7 @@ namespace Altaxo.Data
     /// <returns>An unique column name based on the provided string.</returns>
     public string FindUniqueColumnName(string sbase)
     {
-       return sbase==null ? FindUniqueColumnNameWithoutBase() : FindUniqueColumnNameWithBase(sbase);
+      return sbase==null ? FindUniqueColumnNameWithoutBase() : FindUniqueColumnNameWithBase(sbase);
     }
 
 

@@ -1148,6 +1148,16 @@ namespace Altaxo.Graph
 
     #region Position and Size
 
+    const double _xDefPositionLandscape=0.14;
+    const double _yDefPositionLandscape=0.14;
+    const double _xDefSizeLandscape=0.76;
+    const double _yDefSizeLandscape=0.7;
+
+    const double _xDefPositionPortrait=0.14;
+    const double _yDefPositionPortrait=0.14;
+    const double _xDefSizePortrait=0.7;
+    const double _yDefSizePortrait=0.76;
+
 
     /// <summary>
     /// Set this layer to the default size and position.
@@ -1155,8 +1165,16 @@ namespace Altaxo.Graph
     /// <param name="prtSize">The size of the printable area of the page.</param>
     public void SizeToDefault(SizeF prtSize)
     {
-      this.Size = new SizeF(prtSize.Width*0.76f,prtSize.Height*0.7f);
-      this.Position = new PointF(prtSize.Width*0.14f,prtSize.Height*0.14f);
+      if(prtSize.Width>prtSize.Height)
+      {
+        this.Size = new SizeF(prtSize.Width*0.76f,prtSize.Height*0.7f);
+        this.Position = new PointF(prtSize.Width*0.14f,prtSize.Height*0.14f);
+      }
+      else // Portrait
+      {
+        this.Size = new SizeF(prtSize.Width*0.76f,prtSize.Height*0.7f);
+        this.Position = new PointF(prtSize.Width*0.14f,prtSize.Height*0.14f);
+      }
       this.CalculateMatrix();
     }
 
@@ -1174,19 +1192,59 @@ namespace Altaxo.Graph
     public void SetPrintableGraphBounds(RectangleF val, bool bRescale)
     {
       RectangleF oldBounds = m_PrintableGraphBounds;
+      RectangleF newBounds = val;
       m_PrintableGraphBounds=val;
 
-      if(m_PrintableGraphBounds!=oldBounds)
+      
+
+      if(m_PrintableGraphBounds!=oldBounds && bRescale)
       {
-        // TODO resize the layer properly to reflect the new dimensions
-      if(this.m_LayerWidthType==SizeType.AbsoluteValue)
-        this.m_LayerWidth *= m_PrintableGraphBounds.Width/oldBounds.Width;
+        SizeF      oldLayerSize     = this.m_LayerSize;
+
+
+        double oldxdefsize = oldBounds.Width*(oldBounds.Width>oldBounds.Height ? _xDefSizeLandscape : _xDefSizePortrait);
+        double newxdefsize = newBounds.Width*(newBounds.Width>newBounds.Height ? _xDefSizeLandscape : _xDefSizePortrait);
+        double oldydefsize = oldBounds.Height*(oldBounds.Width>oldBounds.Height ? _yDefSizeLandscape : _yDefSizePortrait);
+        double newydefsize = newBounds.Height*(newBounds.Width>newBounds.Height ? _yDefSizeLandscape : _yDefSizePortrait);
+
+
+        double oldxdeforg = oldBounds.Width*(oldBounds.Width>oldBounds.Height ? _xDefPositionLandscape : _xDefPositionPortrait);
+        double newxdeforg = newBounds.Width*(newBounds.Width>newBounds.Height ? _xDefPositionLandscape : _xDefPositionPortrait);
+        double oldydeforg = oldBounds.Height*(oldBounds.Width>oldBounds.Height ? _yDefPositionLandscape : _yDefPositionPortrait);
+        double newydeforg = newBounds.Height*(newBounds.Width>newBounds.Height ? _yDefPositionLandscape : _yDefPositionPortrait);
+
+        double xscale = newxdefsize/oldxdefsize;
+        double yscale = newydefsize/oldydefsize;
+
+        double xoffs = newxdeforg - oldxdeforg*xscale;
+        double yoffs = newydeforg - oldydeforg*yscale;
+        
+        if(this.m_LayerXPositionType == PositionType.AbsoluteValue)
+          this.m_LayerXPosition = xoffs + this.m_LayerXPosition*xscale;
+
+        if(this.m_LayerWidthType==SizeType.AbsoluteValue)
+          this.m_LayerWidth *= xscale;
+
+        if(this.m_LayerYPositionType == PositionType.AbsoluteValue)
+          this.m_LayerYPosition = yoffs + this.m_LayerYPosition*yscale;
 
         if(this.m_LayerHeightType == SizeType.AbsoluteValue)
-          this.m_LayerHeight *= m_PrintableGraphBounds.Height/oldBounds.Height;
+          this.m_LayerHeight *= yscale;
 
         CalculateMatrix();
         this.CalculateCachedSize();
+
+        // scale the position of the inner items according to the ratio of the new size to the old size
+        // note: only the size is important here, since all inner items are relative to the layer origin
+        SizeF     newLayerSize     = this.m_LayerSize;
+        xscale = newLayerSize.Width/oldLayerSize.Width;
+        yscale = newLayerSize.Height/oldLayerSize.Height;
+        GraphicsObject.ScalePosition(this.m_LeftAxisTitle,xscale,yscale);
+        GraphicsObject.ScalePosition(this.m_BottomAxisTitle,xscale,yscale);
+        GraphicsObject.ScalePosition(this.m_RightAxisTitle,xscale,yscale);
+        GraphicsObject.ScalePosition(this.m_TopAxisTitle,xscale,yscale);
+        GraphicsObject.ScalePosition(this.m_Legend,xscale,yscale);
+        this.m_GraphObjects.ScalePosition(xscale,yscale);
       }
     }
 
