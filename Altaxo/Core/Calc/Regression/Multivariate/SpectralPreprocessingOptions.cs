@@ -26,7 +26,7 @@ using System.Xml;
 using Altaxo.Calc.LinearAlgebra;
 
 
-namespace Altaxo.Calc.Regression.PLS
+namespace Altaxo.Calc.Regression.Multivariate
 {
 
   /// <summary>Gives the list of basic processing methods</summary>

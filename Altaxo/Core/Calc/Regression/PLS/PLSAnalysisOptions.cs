@@ -21,6 +21,7 @@
 #endregion
 
 using System;
+using Altaxo.Calc.Regression.Multivariate;
 
 namespace Altaxo.Calc.Regression.PLS
 {

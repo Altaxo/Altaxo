@@ -288,12 +288,22 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
-                <Folder RelPath = "Calc\Regression\PCR\" />
                 <File
-                    RelPath = "Calc\Regression\PLS\CrossPRESSCalculationType.cs"
+                    RelPath = "Calc\Regression\Multivariate\CrossPRESSCalculationType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <File
+                    RelPath = "Calc\Regression\Multivariate\SpectralPreprocessing.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Multivariate\SpectralPreprocessingOptions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <Folder RelPath = "Calc\Regression\PCR\" />
                 <File
                     RelPath = "Calc\Regression\PLS\PLS2CalibrationModel.cs"
                     SubType = "Code"
@@ -301,16 +311,6 @@
                 />
                 <File
                     RelPath = "Calc\Regression\PLS\PLSAnalysisOptions.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\Regression\PLS\SpectralPreprocessing.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Calc\Regression\PLS\SpectralPreprocessingOptions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

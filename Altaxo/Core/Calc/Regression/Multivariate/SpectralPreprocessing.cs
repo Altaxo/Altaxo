@@ -26,7 +26,7 @@ using Altaxo.Calc.LinearAlgebra;
 using System.Xml;
 
 
-namespace Altaxo.Calc.Regression.PLS
+namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
   /// Common interface for all methods for preprocessing the spectra before their usage in calibration and prediction.

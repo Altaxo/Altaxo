@@ -23,7 +23,7 @@
 using System;
 
 using Altaxo.Collections;
-
+using Altaxo.Calc.Regression.Multivariate;
 
 namespace Altaxo.Calc.Regression.PLS
 {

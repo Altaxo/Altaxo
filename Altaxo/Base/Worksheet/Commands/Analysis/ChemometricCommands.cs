@@ -26,6 +26,7 @@ using Altaxo.Collections;
 using Altaxo.Worksheet.GUI;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.PLS;
+using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Data;
 using Altaxo.Main.GUI;
 
@@ -746,6 +747,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
+
     /// <summary>
     /// Makes a PLS (a partial least squares) analysis of the table or the selected columns / rows and stores the results in a newly created table.
     /// </summary>
@@ -769,235 +771,82 @@ namespace Altaxo.Worksheet.Commands.Analysis
       SpectralPreprocessingOptions preprocessOptions
       )
     {
-      PLSContentMemento plsContent = new PLSContentMemento();
-      plsContent.SpectrumIsRow = bHorizontalOrientedSpectrum;
+      IMatrix matrixX, matrixY;
+      IROVector xOfX;
+      PLSContentMemento plsContent;
 
+      // Get matrices
+      WorksheetMethods.GetXYMatrices(
+        srctable,
+        selectedColumns,
+        selectedRows,
+        selectedPropertyColumns,
+        bHorizontalOrientedSpectrum,
+        out matrixX, out matrixY, out xOfX, out plsContent);
 
-      Altaxo.Data.DataColumn xColumnOfX=null;
-      Altaxo.Data.DataColumn labelColumnOfX=new Altaxo.Data.DoubleColumn();
+        // Preprocess
+        plsContent.SpectralPreprocessing = preprocessOptions;
+        IVector meanX,scaleX,meanY,scaleY;
+        PreprocessMatrices(preprocessOptions,xOfX,matrixX,matrixY,
+          out meanX, out scaleX, out meanY, out scaleY); 
 
+      // Analyze and Store
+ExecutePLS2Analysis(
+      matrixX,
+      matrixY,
+      xOfX,
+      meanX, scaleX,
+      meanY, scaleY,
+      plsOptions,
+      plsContent);
 
-      Altaxo.Data.DataColumnCollection concentration = bHorizontalOrientedSpectrum ? srctable.DataColumns : srctable.PropertyColumns;
-
-      
-
-      // we presume for now that the spectrum is horizontally,
-      // if not we exchange the collections later
-
-      AscendingIntegerCollection numericDataCols = new AscendingIntegerCollection();
-      AscendingIntegerCollection numericDataRows = new AscendingIntegerCollection();
-      AscendingIntegerCollection concentrationIndices = new AscendingIntegerCollection();
-
-      AscendingIntegerCollection spectralIndices = bHorizontalOrientedSpectrum ? numericDataCols : numericDataRows;
-      AscendingIntegerCollection measurementIndices = bHorizontalOrientedSpectrum ? numericDataRows : numericDataCols;
-
-
-      plsContent.ConcentrationIndices = concentrationIndices;
-      plsContent.MeasurementIndices   = measurementIndices;
-      plsContent.SpectralIndices      = spectralIndices;
-      plsContent.SpectrumIsRow        = bHorizontalOrientedSpectrum;
-      plsContent.TableName            = srctable.Name;
-      plsContent.SpectralPreprocessing = preprocessOptions;
-
-
-      bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
-      // this is the number of columns (for now), but it can be less than this in case
-      // not all columns are numeric
-      int prenumcols = bUseSelectedColumns ? selectedColumns.Count : srctable.DataColumns.ColumnCount;
-      // check for the number of numeric columns
-      int numcols = 0;
-      for(int i=0;i<prenumcols;i++)
-      {
-        int idx = bUseSelectedColumns ? selectedColumns[i] : i;
-        if(srctable[idx] is Altaxo.Data.INumericColumn)
-        {
-          numericDataCols.Add(idx);  
-          numcols++;
-        }
-      }
-
-      // check the number of rows
-      bool bUseSelectedRows = (null!=selectedRows && 0!=selectedRows.Count);
-      int numrows;
-      if(bUseSelectedRows)
-      {
-        numrows = selectedRows.Count;
-        numericDataRows.Add(selectedRows);
-      }
-      else
-      {
-        numrows = 0;
-        for(int i=0;i<numcols;i++)
-        {
-          int idx = bUseSelectedColumns ? selectedColumns[i] : i;
-          numrows = Math.Max(numrows,srctable[idx].Count);
-        }     
-        numericDataRows.Add(new IntegerRangeAsCollection(0,numrows));
-      }
-
-      if(bHorizontalOrientedSpectrum)
-      {
-        if(numcols<2)
-          return "At least two numeric columns are neccessary to do Partial Least Squares (PLS) analysis!";
+      return null;
+    }
 
     
 
-        // check that the selected columns are in exactly two groups
-        // the group which has more columns is then considered to have
-        // the spectrum, the other group is the y-values
-        int group0=-1;
-        int group1=-1;
-        int groupcount0=0;
-        int groupcount1=0;
+    /// <summary>
+    /// Preprocesses the x and y matrices before usage in multivariate calibrations.
+    /// </summary>
+    /// <param name="xOfX"></param>
+    /// <param name="matrixX"></param>
+    /// <param name="matrixY"></param>
+    /// <param name="meanX"></param>
+    /// <param name="scaleX"></param>
+    /// <param name="meanY"></param>
+    /// <param name="meanY"></param>
+    public static void PreprocessMatrices(
+       SpectralPreprocessingOptions preprocessOptions,
+      IROVector xOfX,
+      IMatrix matrixX, 
+      IMatrix matrixY,
+      out IVector meanX, out IVector scaleX,
+      out IVector meanY, out IVector scaleY)
+    {
       
+      // Before we can apply PLS, we have to center the x and y matrices
+      meanX = new MatrixMath.HorizontalVector(matrixX.Columns);
+      scaleX = new MatrixMath.HorizontalVector(matrixX.Columns);
+      //  MatrixMath.HorizontalVector scaleX = new MatrixMath.HorizontalVector(matrixX.Cols);
+      meanY = new MatrixMath.HorizontalVector(matrixY.Columns);
+      scaleY = new MatrixMath.HorizontalVector(matrixY.Columns);
+      VectorMath.Fill(scaleY,1);
 
-        for(int i=0;i<numcols;i++)
-        {
-          int grp = srctable.DataColumns.GetColumnGroup(numericDataCols[i]);
-          
+      preprocessOptions.IdentifyRegions(xOfX);
+      preprocessOptions.Process(matrixX,meanX,scaleX);
+      MatrixMath.ColumnsToZeroMean(matrixY, meanY);
+    }
 
-          if(group0<0)
-          {
-            group0=grp;
-            groupcount0=1;
-          }
-          else if(group0==grp)
-          {
-            groupcount0++;
-          }
-          else if(group1<0)
-          {
-            group1=grp;
-            groupcount1=1;
-          }
-          else if(group1==grp)
-          {
-            groupcount1++;
-          }
-          else
-          {
-            return "The columns you selected must be members of two groups (y-values and spectrum), but actually there are more than two groups!";
-          }
-        } // end for all columns
-    
-        if(groupcount1<=0)
-          return "The columns you selected must be members of two groups (y-values and spectrum), but actually only one group was detected!";
-
-        if(groupcount1<groupcount0)
-        {
-          int hlp;
-          hlp = groupcount1;
-          groupcount1=groupcount0;
-          groupcount0=hlp;
-
-          hlp = group1;
-          group1=group0;
-          group0=hlp;
-        }
-          
-        // group0 is now the group of y-values (concentrations)
-        // group1 is now the group of x-values (spectra)
-
-        // we delete group0 from numericDataCols and add it to concentrationIndices
-
-        for(int i=numcols-1;i>=0;i--)
-        {
-          int index = numericDataCols[i];
-          if(group0==srctable.DataColumns.GetColumnGroup(index))
-          {
-            numericDataCols.Remove(index);
-            concentrationIndices.Add(index);
-          }
-        }
-
-        // fill the corresponding X-Column of the spectra
-        xColumnOfX = Altaxo.Data.DataColumn.CreateColumnOfSelectedRows(
-          srctable.PropertyColumns.FindXColumnOfGroup(group1),
-          spectralIndices);
-
-      }
-      else // vertically oriented spectrum -> one spectrum is one data column
-      {
-        // we have to exchange measurementIndices and 
-
-        // if PLS on columns, than we should have property columns selected
-        // that designates the y-values
-        // so count all property columns
-
-        
-
-        bool bUseSelectedPropCols = (null!=selectedPropertyColumns && 0!=selectedPropertyColumns.Count);
-        // this is the number of property columns (for now), but it can be less than this in case
-        // not all columns are numeric
-        int prenumpropcols = bUseSelectedPropCols ? selectedPropertyColumns.Count : srctable.PropCols.ColumnCount;
-        // check for the number of numeric property columns
-        for(int i=0;i<prenumpropcols;i++)
-        {
-          int idx = bUseSelectedPropCols ? selectedPropertyColumns[i] : i;
-          if(srctable.PropCols[idx] is Altaxo.Data.INumericColumn)
-          {
-            concentrationIndices.Add(idx);
-          }
-        }
-
-        if(concentrationIndices.Count<1)
-          return "At least one numeric property column must exist to hold the y-values!";
-    
-        // fill the corresponding X-Column of the spectra
-        xColumnOfX = Altaxo.Data.DataColumn.CreateColumnOfSelectedRows(
-          srctable.DataColumns.FindXColumnOf(srctable[measurementIndices[0]]),spectralIndices);
-
-      } // else vertically oriented spectrum
-
-
-
-      // now fill the matrix
-
-      
-      // now check and fill in values
-      MatrixMath.BEMatrix matrixX;
-      MatrixMath.BEMatrix matrixY;
-
-
-      // fill in the y-values
-      matrixY = new MatrixMath.BEMatrix(measurementIndices.Count,concentrationIndices.Count);
-      for(int i=0;i<concentrationIndices.Count;i++)
-      {
-        Altaxo.Data.INumericColumn col = concentration[concentrationIndices[i]] as Altaxo.Data.INumericColumn;
-        for(int j=0;j<measurementIndices.Count;j++)
-        {
-          matrixY[j,i] = col.GetDoubleAt(measurementIndices[j]);
-        }
-      } // end fill in yvalues
-
-      matrixX = new MatrixMath.BEMatrix(measurementIndices.Count,spectralIndices.Count);
-      if(bHorizontalOrientedSpectrum)
-      {
-        for(int i=0;i<spectralIndices.Count;i++)
-        {
-          labelColumnOfX[i] = spectralIndices[i];
-          Altaxo.Data.INumericColumn col = srctable[spectralIndices[i]] as Altaxo.Data.INumericColumn;
-          for(int j=0;j<measurementIndices.Count;j++)
-          {
-            matrixX[j,i] = col.GetDoubleAt(measurementIndices[j]);
-          }
-        } // end fill in x-values
-      }
-      else // vertical oriented spectrum
-      {
-        for(int i=0;i<spectralIndices.Count;i++)
-        {
-          labelColumnOfX[i] = spectralIndices[i];
-        }
-        for(int i=0;i<measurementIndices.Count;i++)
-        {
-          Altaxo.Data.INumericColumn col = srctable[measurementIndices[i]] as Altaxo.Data.INumericColumn;
-          for(int j=0;j<spectralIndices.Count;j++)
-          {
-            matrixX[i,j] = col.GetDoubleAt(spectralIndices[j]);
-          }
-        } // end fill in x-values
-      }
+  public static void ExecutePLS2Analysis(
+    IMatrix matrixX,
+    IMatrix matrixY,
+    IROVector xColumnOfX,
+    IROVector meanX, IROVector scaleX,
+    IROVector meanY, IROVector scaleY,
+    PLSAnalysisOptions plsOptions,
+    PLSContentMemento plsContent
+    )
+  {
 
 
       // now do a PLS with it
@@ -1009,15 +858,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
      
 
-      // Before we can apply PLS, we have to center the x and y matrices
-      MatrixMath.HorizontalVector meanX = new MatrixMath.HorizontalVector(matrixX.Columns);
-      MatrixMath.HorizontalVector scaleX = new MatrixMath.HorizontalVector(matrixX.Columns);
-      //  MatrixMath.HorizontalVector scaleX = new MatrixMath.HorizontalVector(matrixX.Cols);
-      MatrixMath.HorizontalVector meanY = new MatrixMath.HorizontalVector(matrixY.Columns);
-
-      preprocessOptions.IdentifyRegions(DataColumnWrapper.ToROVector(xColumnOfX));
-      preprocessOptions.Process(matrixX,meanX,scaleX);
-      MatrixMath.ColumnsToZeroMean(matrixY, meanY);
 
       int numFactors = Math.Min(matrixX.Columns,plsOptions.MaxNumberOfFactors);
       MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,ref numFactors,xLoads,yLoads,W,V,PRESS);
@@ -1026,12 +866,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
       // now we have to create a new table where to place the calculated factors and loads
       // we will do that in a vertical oriented manner, i.e. even if the loads are
       // here in horizontal vectors: in our table they are stored in (vertical) columns
-      Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("PLS of " + srctable.Name);
+      Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("PLS of " + plsContent.TableName);
 
       // Fill the Table
       table.Suspend();
 
-      table.DataColumns.Add(xColumnOfX,_XOfX_ColumnName,Altaxo.Data.ColumnKind.X,0);
+      DoubleColumn xColOfX = new DoubleColumn();
+      VectorMath.Copy(xColumnOfX,DataColumnWrapper.ToVector(xColOfX));
+      table.DataColumns.Add(xColOfX,_XOfX_ColumnName,Altaxo.Data.ColumnKind.X,0);
 
 
       // Store X-Mean and X-Scale
@@ -1164,8 +1006,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       // add a label column for the measurement number
       Altaxo.Data.DoubleColumn measurementLabel = new Altaxo.Data.DoubleColumn();
-      for(int i=0;i<measurementIndices.Count;i++)
-        measurementLabel[i] = measurementIndices[i];
+      for(int i=0;i<plsContent.MeasurementIndices.Count;i++)
+        measurementLabel[i] = plsContent.MeasurementIndices[i];
       table.DataColumns.Add(measurementLabel,_MeasurementLabel_ColumnName,Altaxo.Data.ColumnKind.Label,_MeasurementLabel_ColumnGroup);
 
       // now add the original Y-Columns
@@ -1173,7 +1015,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       {
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
         for(int j=0;j<matrixY.Rows;j++)
-          col[j]=matrixY[j,i] + meanY[0,i];
+          col[j]=matrixY[j,i] + meanY[i];
         table.DataColumns.Add(col,_YOriginal_ColumnName+i.ToString(),Altaxo.Data.ColumnKind.X,5+i);
       }
       
@@ -1202,14 +1044,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
       } // for nFactor...
       */
    
-      table.SetTableProperty("Content",plsContent);
+    table.SetTableProperty("Content",plsContent);
 
       table.Resume();
-      mainDocument.DataTableCollection.Add(table);
+      Current.Project.DataTableCollection.Add(table);
       // create a new worksheet without any columns
       Current.ProjectService.CreateNewWorksheet(table);
-
-      return null;
+     
     }
 
 
