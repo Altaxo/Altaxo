@@ -11,28 +11,13 @@ namespace System.Drawing
 		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 		{
 			System.Drawing.Color s = (System.Drawing.Color)obj;
-			/*
-			info.AddValue("A",(int)s.A);
-			info.AddValue("R",(int)s.R);
-			info.AddValue("G",(int)s.G);
-			info.AddValue("B",(int)s.B);
-			*/
 
-			info.AddValue("Value",sm_Converter.ConvertToInvariantString(s));
+			info.SetNodeContent(sm_Converter.ConvertToInvariantString(s));
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 		{
-			
 
-			/*
-			int a = info.GetInt32("A");
-			int r = info.GetInt32("R");
-			int g = info.GetInt32("G");
-			int b = info.GetInt32("B");
-			return System.Drawing.Color.FromArgb(a,r,g,b);
-			*/
-
-			string val = info.GetString("Value");
+			string val = info.GetNodeContent();
 			return (Color)sm_Converter.ConvertFromInvariantString(val);
 		}
 	}
@@ -47,14 +32,12 @@ namespace System.Drawing
 		{
 			System.Drawing.Font s = (System.Drawing.Font)obj;
 			
-			info.AddValue("Value",sm_Converter.ConvertToInvariantString(s));
-			
-
+			info.SetNodeContent(sm_Converter.ConvertToInvariantString(s));
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 		{
 			
-			string val = info.GetString("Value");
+			string val = info.GetNodeContent();
 			return (Font)sm_Converter.ConvertFromInvariantString(val);
 		}
 	}
@@ -122,9 +105,5 @@ namespace System.Drawing
 			return new System.Drawing.RectangleF(x,y,w,h);
 		}
 	}
-
-	
-
-
 
 } // end namespace System.Drawing

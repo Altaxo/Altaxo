@@ -273,17 +273,38 @@ namespace Altaxo.Main
 
 		private void Load(string filename)
 		{
+			System.Text.StringBuilder errorText = new System.Text.StringBuilder();
+
 			System.IO.FileStream myStream = new System.IO.FileStream(filename, System.IO.FileMode.Open);
 			ZipFile zipFile = new ZipFile(myStream);
 			Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
 			AltaxoDocument newdocument = new AltaxoDocument();
-			newdocument.RestoreFromZippedFile(zipFile,info);
+			
+			try
+			{
+				newdocument.RestoreFromZippedFile(zipFile,info);
+			}
+			catch(Exception exc)
+			{
+				errorText.Append(exc.ToString());
+			}
 
-			this.CurrentOpenProject = newdocument;
-			Current.Workbench.CloseAllViews();
-			RestoreWindowStateFromZippedFile(zipFile,info,newdocument);
-						
-			myStream.Close();
+			try
+			{
+				Current.Workbench.CloseAllViews();
+				this.CurrentOpenProject = newdocument;
+				RestoreWindowStateFromZippedFile(zipFile,info,newdocument);
+				this.CurrentOpenProject.IsDirty = false;
+			}
+			catch(Exception exc)
+			{
+				errorText.Append(exc.ToString());
+				System.Windows.Forms.MessageBox.Show(Current.MainWindow,errorText.ToString(),"An error occured");
+			}
+			finally
+			{
+				myStream.Close();
+			}
 		}
 
 		/// <summary>

@@ -43,13 +43,12 @@ namespace Altaxo.Graph
 	{
 		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 		{
-			string styleval = System.Enum.GetName(typeof(PlotGroupStyle),(PlotGroupStyle)obj);
-			info.AddValue("Value",styleval);  
+			info.SetNodeContent(obj.ToString());  
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 		{
 			
-			string val = info.GetString("Value");
+			string val = info.GetNodeContent();
 			return System.Enum.Parse(typeof(PlotGroupStyle),val,true);
 		}
 	}

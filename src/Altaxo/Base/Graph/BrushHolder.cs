@@ -26,19 +26,26 @@ using System.Drawing.Drawing2D;
 namespace Altaxo.Graph
 {
 
-	public enum BrushType { SolidBrush, HatchBrush, TextureBrush, LinearGradientBrush, PathGradientBrush };
+	public enum BrushType 
+	{
+		SolidBrush,
+		HatchBrush, 
+		TextureBrush, 
+		LinearGradientBrush, 
+		PathGradientBrush
+	};
 
 	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushType),0)]
 	public class BrushTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 	{
 		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 		{
-			info.AddValue("Value",System.Enum.GetName(typeof(BrushType),obj));  
+			info.SetNodeContent(obj.ToString()); 
 		}
 		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 		{
 			
-			string val = info.GetString("Value");
+			string val = info.GetNodeContent();
 			return System.Enum.Parse(typeof(BrushType),val,true);
 		}
 	}
@@ -128,7 +135,7 @@ namespace Altaxo.Graph
 					case BrushType.HatchBrush:
 						info.AddValue("ForeColor",s.m_ForeColor);
 						info.AddValue("BackColor",s.m_BackColor);
-						info.AddValue("HatchStyle",s.m_HatchStyle);
+						info.AddEnum("HatchStyle",s.m_HatchStyle);
 						break;
 				} // end of switch
 			}
@@ -146,6 +153,7 @@ namespace Altaxo.Graph
 					case BrushType.HatchBrush:
 						s.m_ForeColor = (Color)info.GetValue("ForeColor",s);
 						s.m_BackColor = (Color)info.GetValue("BackColor",s);
+						s.m_HatchStyle = (HatchStyle)info.GetEnum("HatchStyle",typeof(HatchStyle));
 						break;
 				}
 				return s;

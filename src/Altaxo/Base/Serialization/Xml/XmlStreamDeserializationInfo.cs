@@ -16,6 +16,7 @@ namespace Altaxo.Serialization.Xml
 		byte[] m_Buffer;
 		int    m_BufferSize;
 
+		private const int _size_of_float=4;
 		private const int _size_of_double=8;
 		private const int _size_of_DateTime=8;
 
@@ -97,13 +98,17 @@ namespace Altaxo.Serialization.Xml
 			return GetString();
 		}
 
-		/*
+		
 		public object GetEnum(string name, System.Type type)
 		{
 			string val = m_Reader.ReadElementString(name);
 			return System.Enum.Parse(type,val);
 		}
-		*/
+		
+		public string GetNodeContent()
+		{
+			return m_Reader.ReadString();
+		}
 
 		public int GetInt32Attribute(string name)
 		{
@@ -165,6 +170,38 @@ namespace Altaxo.Serialization.Xml
 			else
 				m_Reader.Read();
 		}
+
+		public void GetArray(out float[] val)
+		{
+			int count = this.OpenArray();
+			val = new float[count];
+			// Attribute must be readed before ReadStartElement
+			if(count>0)
+			{
+				m_Reader.ReadStartElement(); // read the first inner element
+
+				switch(m_Reader.Name)
+				{
+					default:
+						for(int i=0;i<count;i++)
+							val[i] = XmlConvert.ToSingle(m_Reader.ReadElementString());
+						break;
+					case "Base64":
+						GetArrayOfPrimitiveTypeBase64(val,count,_size_of_float);
+						break;
+					case "BinHex":
+						GetArrayOfPrimitiveTypeBinHex(val,count,_size_of_float);
+						break;
+				} // end of switch
+				m_Reader.ReadEndElement(); // read the outer XmlElement, i.e. "DoubleArray"
+			} // if count>0
+			else
+			{
+				m_Reader.Read();
+			}
+		}
+
+
 		public void GetArray(double[] val, int count)
 		{
 			// Attribute must be readed before ReadStartElement

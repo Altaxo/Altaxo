@@ -20,6 +20,7 @@ namespace Altaxo.Serialization.Xml
 
 		private System.Collections.Specialized.StringDictionary m_Properties = new System.Collections.Specialized.StringDictionary();
 
+		private const int _size_of_float=4;
 		private const int _size_of_double=8;
 		private const int _size_of_DateTime=8;
 
@@ -93,12 +94,16 @@ namespace Altaxo.Serialization.Xml
 			m_Writer.WriteElementString(name, XmlConvert.ToString(val));
 		}
 
-		/*
-		public void AddValue(string name, System.Enum val)
+		
+		public void AddEnum(string name, System.Enum val)
 		{
 			m_Writer.WriteElementString(name, val.ToString());
 		}
-		*/
+		
+		public void SetNodeContent(string nodeContent)
+		{
+			m_Writer.WriteString(nodeContent);
+		}
 
 		public void CreateArray(string name, int count)
 		{
@@ -109,6 +114,34 @@ namespace Altaxo.Serialization.Xml
 		public void CommitArray()
 		{
 			m_Writer.WriteEndElement(); // Node "name"
+		}
+
+
+		public void AddArray(string name, float[] val, int count)
+		{
+			this.CreateArray(name,count);
+
+			if(count>0)
+			{
+				if(m_DefaultArrayEncoding==XmlArrayEncoding.Xml)
+				{
+					m_Writer.WriteAttributeString("Encoding","Xml");
+					m_Writer.WriteStartElement("e");
+					m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[0]));
+					for(int i=1;i<count;i++)
+					{
+						m_Writer.WriteRaw("</e><e>");
+						m_Writer.WriteRaw(System.Xml.XmlConvert.ToString(val[i]));
+					}
+					m_Writer.WriteEndElement(); // node "e"
+				
+				}
+				else
+				{
+					AddArrayOfPrimitiveType(name,val,count,_size_of_float,m_DefaultArrayEncoding);
+				}
+			} // count>0
+			this.CommitArray();
 		}
 
 		public void AddArray(string name, double[] val, int count)

@@ -321,33 +321,33 @@ namespace Altaxo.Graph
 
 				info.AddValue("Configured",(int)cp);
 				if(0!=(cp&PenHolder.Configured.PenType))
-					info.AddValue("Type",s.PenType);
+					info.AddEnum("Type",s.PenType);
 				if(0!=(cp & PenHolder.Configured.Alignment))
-					info.AddValue("Alignment",s.Alignment);
+					info.AddEnum("Alignment",s.Alignment);
 				if(0!=(cp & PenHolder.Configured.Brush))
 					info.AddValue("Brush",s.BrushHolder);
 				if(0!=(cp & PenHolder.Configured.Color))
 					info.AddValue("Color",s.Color);
 				if(0!=(cp & PenHolder.Configured.CompoundArray))
-					info.AddValue("CompoundArray",s.CompoundArray);
+					info.AddArray("CompoundArray",s.CompoundArray,s.CompoundArray.Length);
 				if(0!=(cp & PenHolder.Configured.DashStyle))
-					info.AddValue("DashStyle",s.DashStyle);
+					info.AddEnum("DashStyle",s.DashStyle);
 				if(0!=(cp & PenHolder.Configured.DashCap))
-					info.AddValue("DashCap",s.DashCap);
+					info.AddEnum("DashCap",s.DashCap);
 				if(0!=(cp & PenHolder.Configured.DashOffset))
 					info.AddValue("DashOffset",s.DashOffset);
 				if(0!=(cp & PenHolder.Configured.DashPattern))
-					info.AddValue("DashPattern",s.DashPattern);
+					info.AddArray("DashPattern",s.DashPattern,s.DashPattern.Length);
 				if(0!=(cp & PenHolder.Configured.EndCap))
-					info.AddValue("EndCap",s.EndCap);
+					info.AddEnum("EndCap",s.EndCap);
 				if(0!=(cp & PenHolder.Configured.LineJoin))
-					info.AddValue("LineJoin",s.LineJoin);
+					info.AddEnum("LineJoin",s.LineJoin);
 				if(0!=(cp & PenHolder.Configured.MiterLimit))
 					info.AddValue("MiterLimit",s.MiterLimit);
 				if(0!=(cp & PenHolder.Configured.StartCap))
-					info.AddValue("StartCap",s.StartCap);
+					info.AddEnum("StartCap",s.StartCap);
 				if(0!=(cp & PenHolder.Configured.Transform))
-					info.AddValue("Transform",s.Transform.Elements);
+					info.AddArray("Transform",s.Transform.Elements,s.Transform.Elements.Length);
 				if(0!=(cp & PenHolder.Configured.Width))
 					info.AddValue("Width",s.Width);
 			}
@@ -386,7 +386,7 @@ namespace Altaxo.Graph
 					s.m_Color = Color.Black;
 
 				if(0!=(cp & PenHolder.Configured.CompoundArray))
-					s.m_CompoundArray = (float[])info.GetValue("CompoundArray",typeof(float[]));
+					info.GetArray(out s.m_CompoundArray);
 				else
 					s.m_CompoundArray = new float[0];
 
@@ -406,7 +406,7 @@ namespace Altaxo.Graph
 					s.m_DashOffset=0;
 
 				if(0!=(cp & PenHolder.Configured.DashPattern))
-					s.m_DashPattern = (float[])info.GetValue("DashPattern",typeof(float[]));
+					info.GetArray(out s.m_DashPattern);
 				else
 					s.m_DashPattern = null;
 
@@ -432,7 +432,8 @@ namespace Altaxo.Graph
 
 				if(0!=(cp & PenHolder.Configured.Transform))
 				{
-					float[] el = (float[])info.GetValue("Transform",typeof(float[]));
+					float[] el;
+					info.GetArray(out el);
 					s.m_Transform = new Matrix(el[0],el[1],el[2],el[3],el[4],el[5]);
 				}
 				else

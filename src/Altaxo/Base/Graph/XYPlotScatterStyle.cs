@@ -50,12 +50,12 @@ namespace Altaxo.Graph
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				info.AddValue("Value",System.Enum.GetName(typeof(Shape),obj));  
+				info.SetNodeContent(obj.ToString());
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
-				string val = info.GetString("Value");
+				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(Shape),val,true);
 			}
 		}
@@ -78,12 +78,12 @@ namespace Altaxo.Graph
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				info.AddValue("Value",System.Enum.GetName(typeof(Style),obj));  
+				info.SetNodeContent(obj.ToString());  
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
-				string val = info.GetString("Value");
+				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(Style),val,true);
 			}
 		}
@@ -105,12 +105,12 @@ namespace Altaxo.Graph
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				info.AddValue("Value",System.Enum.GetName(typeof(DropLine),obj));  
+				info.SetNodeContent(obj.ToString());
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
-				string val = info.GetString("Value");
+				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(DropLine),val,true);
 			}
 		}

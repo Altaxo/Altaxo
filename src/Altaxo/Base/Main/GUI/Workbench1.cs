@@ -157,7 +157,6 @@ namespace ICSharpCode.SharpDevelop.Gui
 
 		protected override void OnClosing(CancelEventArgs e)
 		{
-			base.OnClosing(e);
 			Altaxo.Main.ProjectService projectService = (Altaxo.Main.ProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(Altaxo.Main.ProjectService));
 			
 			if (projectService != null)
@@ -169,6 +168,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 					projectService.AskForSavingOfProject(e);
 				}
 			}
+
+			base.OnClosing(e);
 		}
 
 	}

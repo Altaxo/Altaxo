@@ -19,15 +19,16 @@ namespace Altaxo.Serialization.Xml
 		string GetString();
 		string GetString(string name);
 
-		// object GetEnum(string name, System.Type type); // not used, see remarks on serialization
-		
+		object GetEnum(string name, System.Type type); // see remarks on serialization
+
+		string GetNodeContent(); // gets the inner text of the node directly
 
 		int GetInt32Attribute(string name);
 	
 		int OpenArray(); // get Number of Array elements
 		void CloseArray(int count);
 
-
+		void GetArray(out float[] val);
 		void GetArray(double[] val, int count);
 		void GetArray(DateTime[] val, int count);
 		void GetArray(string[] val, int count);

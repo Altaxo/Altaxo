@@ -149,6 +149,10 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Bugs.txt"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "SplashScreen.png"
                     BuildAction = "EmbeddedResource"
                 />

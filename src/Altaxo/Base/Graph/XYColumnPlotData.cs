@@ -521,11 +521,10 @@ namespace Altaxo.Graph
 			this.m_yBoundaries.Reset();
 
 			System.Diagnostics.Debug.Assert(m_PlotRangeStart>=0);
+			System.Diagnostics.Debug.Assert(m_PlotRangeLength>=0);
 
-			m_PointCount = this.m_PlotRangeLength;
-			if(m_PointCount<this.m_PlotRangeLength)
-				m_PointCount += m_PlotRangeStart;
-
+			m_PointCount = m_PlotRangeStart + m_PlotRangeLength;
+			
 			if(m_xColumn is IDefinedCount)
 				m_PointCount = System.Math.Min(m_PointCount,((IDefinedCount)m_xColumn).Count);
 			if(m_yColumn is IDefinedCount)

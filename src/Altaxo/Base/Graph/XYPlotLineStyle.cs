@@ -121,16 +121,16 @@ namespace Altaxo.Graph
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FillDirection),0)]
-		public class EdgeTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		public class FillDirectionXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				info.AddValue("Value",System.Enum.GetName(typeof(FillDirection),obj));  
+				info.SetNodeContent(obj.ToString()); 
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
-				string val = info.GetString("Value");
+				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(FillDirection),val,true);
 			}
 		}
@@ -154,12 +154,12 @@ namespace Altaxo.Graph
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				info.AddValue("Value",System.Enum.GetName(typeof(ConnectionStyle),obj));  
+				info.SetNodeContent(obj.ToString());
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
-				string val = info.GetString("Value");
+				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(ConnectionStyle),val,true);
 			}
 		}

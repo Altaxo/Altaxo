@@ -178,9 +178,6 @@ namespace Altaxo.Main.Commands
 	{
 		public override void Run()
 		{
-			if(Current.Project.IsDirty)
-				Current.ProjectService.SaveProjectAs();
-		
 			Current.ProjectService.CloseProject(false);
 		}
 	}

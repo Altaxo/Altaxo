@@ -68,12 +68,12 @@ namespace Altaxo.Graph
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				info.AddValue("Value",System.Enum.GetName(typeof(SizeType),obj));  
+				info.SetNodeContent(obj.ToString()); 
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
-				string val = info.GetString("Value");
+				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(SizeType),val,true);
 			}
 		}
@@ -145,12 +145,12 @@ namespace Altaxo.Graph
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				info.AddValue("Value",System.Enum.GetName(typeof(PositionType),obj));  
+				info.SetNodeContent(obj.ToString());
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
-				string val = info.GetString("Value");
+				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(PositionType),val,true);
 			}
 		}
@@ -179,12 +179,12 @@ namespace Altaxo.Graph
 		{
 			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
-				info.AddValue("Value",System.Enum.GetName(typeof(AxisLinkType),obj));  
+				info.SetNodeContent(obj.ToString()); 
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				
-				string val = info.GetString("Value");
+				string val = info.GetNodeContent();
 				return System.Enum.Parse(typeof(AxisLinkType),val,true);
 			}
 		}
@@ -1107,12 +1107,12 @@ namespace Altaxo.Graph
 				tgo = new TextGraphics();
 
 
-			string strg="";
+			System.Text.StringBuilder strg = new System.Text.StringBuilder();
 			for(int i=0;i<this.PlotItems.Count;i++)
 			{
-				strg+= String.Format("{0}\\L({1}) \\%({2})",(i==0?"":"\n"), i,i);
+				strg.AppendFormat("{0}\\L({1}) \\%({2})",(i==0?"":"\r\n"), i,i);
 			}
-			tgo.Text = strg;
+			tgo.Text = strg.ToString();
 
 			// if the position of the old legend is outside, use a new position
 			if(null==m_Legend || m_Legend.Position.X<0 || m_Legend.Position.Y<0 || 

@@ -88,7 +88,7 @@ namespace Altaxo.Serialization.Xml
 			m_CurrentNode.Attributes.Append(att);
 		}
 
-		public void AddValue(string name, System.Enum val)
+		public void AddEnum(string name, System.Enum val)
 		{
 			XmlElement ele = m_Doc.CreateElement(name);
 			ele.InnerText = val.ToString();
@@ -252,6 +252,15 @@ namespace Altaxo.Serialization.Xml
 
 		#region not implemented yet
 
+		public void SetNodeContent(string nodeContent)
+		{
+		}
+
+		public string GetNodeContent()
+		{
+			return string.Empty;
+		}
+
 		public void CreateArray(string name, int count)
 		{
 		}
@@ -289,9 +298,11 @@ namespace Altaxo.Serialization.Xml
 
 		public void AddArray(string name, DateTime[] val, int count) {}
 		public void AddArray(string name, string[] val, int count) {}
+		public void AddArray(string name, float[] val, int count) {}
 
 		public void GetArray(string[] val, int count) {}
 		public void GetArray(DateTime[] val, int count) {}
+		public void GetArray(out float[] val) { val=null; }
 		
 		public void AddValue(string name, bool val) {}
 		public bool GetBoolean() { return false; }
