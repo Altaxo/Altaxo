@@ -22,7 +22,7 @@
 
 using System;
 
-namespace Altaxo.Calc.Fitting
+namespace Altaxo.Calc.Regression
 {
 
   /// <summary>
