@@ -15,6 +15,13 @@ namespace Altaxo.Graph
 	/// </summary>
 	public class GraphControl : System.Windows.Forms.UserControl
 	{
+		/// <summary>
+		/// This enumeration declares the current choosen tool for the GraphControl
+		/// The numeric values have to match the icon positions in the corresponding toolbar
+		/// </summary>
+		public enum GraphTools { ObjectPointer=0, Text=1 }
+
+
 		private const double MinimumGridSize = 20;
 		private const float UnitPerInch = 72;
 
@@ -33,6 +40,7 @@ namespace Altaxo.Graph
 
 		protected Layer.LayerCollection graphLayers = new Layer.LayerCollection();
 		protected int m_ActualLayer = 0;
+		protected GraphTools m_CurrentGraphTool = GraphTools.ObjectPointer;
 
 		/// <summary> 
 		/// Required designer variable
@@ -105,6 +113,15 @@ namespace Altaxo.Graph
 		#endregion
 
 
+
+		public GraphTools CurrentGraphTool
+		{
+			get { return m_CurrentGraphTool; }
+			set 
+			{
+				m_CurrentGraphTool = value;
+			}
+		}
 
 		public bool IamOnTheActiveMdiChild
 		{

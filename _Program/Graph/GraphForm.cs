@@ -18,6 +18,7 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.ImageList m_LayerButtonImages;
 		private System.ComponentModel.IContainer components;
 		private ToolBar m_LayerToolbar=null;
+		private ToolBar m_GraphToolsToolBar=null;
 		private System.Windows.Forms.MainMenu mainMenu1;
 		private System.Windows.Forms.MenuItem menuDataPopup;
 		private System.Windows.Forms.MenuItem menuDataSeparator;
@@ -25,6 +26,7 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.MenuItem menuFile_PageSetup;
 		private System.Windows.Forms.MenuItem menuFile_Print;
 		private System.Windows.Forms.MenuItem menuFile_PrintPreview;
+		private System.Windows.Forms.ImageList m_GraphToolsImages;
 		private ToolBarButton m_PushedLayerBotton=null;
 
 	
@@ -32,13 +34,56 @@ namespace Altaxo.Graph
 		protected void OnAMdiChildActivate(object sender, EventArgs e)
 		{
 			if(((System.Windows.Forms.Form)sender).ActiveMdiChild==this)
+			{
 				this.m_GraphControl.OnActivationOfParentForm();
+			
+			
+				if(null==m_GraphToolsToolBar)
+				{
+					// 
+					// m_GraphToolsToolBar
+					// 
+					this.m_GraphToolsToolBar = new ToolBar();
+					this.m_GraphToolsToolBar.ImageList = this.m_GraphToolsImages;
+					this.m_GraphToolsToolBar.AutoSize = true;
+					//this.m_GraphToolsToolBar.ButtonSize = new System.Drawing.Size(24, 24);
+					//this.m_GraphToolsToolBar.DropDownArrows = true;
+					//this.m_GraphToolsToolBar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+					//this.m_GraphToolsToolBar.Name = "m_GraphToolsToolBar";
+					//this.m_GraphToolsToolBar.ShowToolTips = true;
+					//this.m_GraphToolsToolBar.Size = new System.Drawing.Size(2*24, 24);
+					//this.m_GraphToolsToolBar.TabIndex = 1;
+					//this.m_GraphToolsToolBar.TextAlign = System.Windows.Forms.ToolBarTextAlign.Right;
+					this.m_GraphToolsToolBar.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.m_GraphToolsToolbar_ButtonClick);
+
+					for(int i=0;i<2;i++)
+					{
+						ToolBarButton tbb = new ToolBarButton();
+						tbb.ImageIndex=i;
+						//this.m_PushedLayerBotton = tbb;
+						//tbb.Style = ToolBarButtonStyle.ToggleButton;
+						tbb.Tag = (GraphControl.GraphTools)i; 
+						m_GraphToolsToolBar.Buttons.Add(tbb);
+					}
+					this.m_GraphToolsToolBar.Dock = DockStyle.Bottom;
+				}
+				
+				foreach(ToolBarButton bt in this.m_GraphToolsToolBar.Buttons)
+					bt.Pushed = (((GraphControl.GraphTools)bt.Tag)==m_GraphControl.CurrentGraphTool);
+
+				this.m_GraphToolsToolBar.Parent = (System.Windows.Forms.Form)sender;
+					
+			}
 		}
 
 		protected void OnAMdiChildDeactivate(object sender, EventArgs e)
 		{
 			if(((System.Windows.Forms.Form)sender).ActiveMdiChild!=this)
+			{
 				this.m_GraphControl.OnDeactivationOfParentForm();
+			
+				if(null!=m_GraphToolsToolBar) m_GraphToolsToolBar.Parent=null;
+			}
 		}
 
 
@@ -115,6 +160,7 @@ namespace Altaxo.Graph
 			this.menuFile_PrintPreview = new System.Windows.Forms.MenuItem();
 			this.menuDataPopup = new System.Windows.Forms.MenuItem();
 			this.menuDataSeparator = new System.Windows.Forms.MenuItem();
+			this.m_GraphToolsImages = new System.Windows.Forms.ImageList(this.components);
 			this.SuspendLayout();
 			// 
 			// m_GraphControl
@@ -123,9 +169,11 @@ namespace Altaxo.Graph
 			this.m_GraphControl.AutoZoom = true;
 			this.m_GraphControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_GraphControl.Name = "m_GraphControl";
+			this.m_GraphControl.PageBounds = ((System.Drawing.RectangleF)(resources.GetObject("m_GraphControl.PageBounds")));
+			this.m_GraphControl.PrintableBounds = ((System.Drawing.RectangleF)(resources.GetObject("m_GraphControl.PrintableBounds")));
 			this.m_GraphControl.Size = new System.Drawing.Size(304, 266);
 			this.m_GraphControl.TabIndex = 0;
-			
+			this.m_GraphControl.Zoom = 0.2707838F;
 			// 
 			// m_LayerButtonImages
 			// 
@@ -182,6 +230,13 @@ namespace Altaxo.Graph
 			this.menuDataSeparator.Index = 0;
 			this.menuDataSeparator.Text = "-";
 			// 
+			// m_GraphToolsImages
+			// 
+			this.m_GraphToolsImages.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+			this.m_GraphToolsImages.ImageSize = new System.Drawing.Size(32, 16);
+			this.m_GraphToolsImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_GraphToolsImages.ImageStream")));
+			this.m_GraphToolsImages.TransparentColor = System.Drawing.Color.Transparent;
+			// 
 			// GraphForm
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -219,6 +274,19 @@ namespace Altaxo.Graph
 			this.m_PushedLayerBotton = e.Button;
 			m_GraphControl.ActualLayer = System.Convert.ToInt32(e.Button.Text);
 		}
+
+
+		private void m_GraphToolsToolbar_ButtonClick(object sender, System.Windows.Forms.ToolBarButtonClickEventArgs e)
+		{
+			// because the buttons should behave like radio buttons, we
+			// have to unpush all buttons except the one pushed
+			foreach(ToolBarButton bt in this.m_GraphToolsToolBar.Buttons)
+				bt.Pushed = (bt==e.Button);
+
+			this.m_GraphControl.CurrentGraphTool = (GraphControl.GraphTools)e.Button.Tag; 
+		}
+
+
 
 		private void InitLayerToolbar()
 		{
