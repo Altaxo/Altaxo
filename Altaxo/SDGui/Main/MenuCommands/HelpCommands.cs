@@ -32,6 +32,22 @@ using ICSharpCode.Core.Services;
 
 namespace Altaxo.Main.Commands
 {
+  public class ShowAltaxoProgramHelp : AbstractMenuCommand
+  {
+    public override void Run()
+    {
+      FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+      string fileName = fileUtilityService.SharpDevelopRootPath + 
+        Path.DirectorySeparatorChar + "doc" +
+        Path.DirectorySeparatorChar + "help" +
+        Path.DirectorySeparatorChar + "AltaxoHelp.chm";
+      if (fileUtilityService.TestFileExists(fileName)) 
+      {
+        Help.ShowHelp((Form)WorkbenchSingleton.Workbench, fileName);
+      }
+    }
+  }
+
   public class ShowAltaxoClassHelp : AbstractMenuCommand
   {
     public override void Run()
@@ -40,7 +56,7 @@ namespace Altaxo.Main.Commands
       string fileName = fileUtilityService.SharpDevelopRootPath + 
         Path.DirectorySeparatorChar + "doc" +
         Path.DirectorySeparatorChar + "help" +
-        Path.DirectorySeparatorChar + "AltaxoBase.chm";
+        Path.DirectorySeparatorChar + "AltaxoClassRef.chm";
       if (fileUtilityService.TestFileExists(fileName)) 
       {
         Help.ShowHelp((Form)WorkbenchSingleton.Workbench, fileName);

@@ -516,8 +516,10 @@
 			<MenuItem id="ContentBuilder" label="boguslabel" class="ICSharpCode.SharpDevelop.Commands.OpenContentsMenuBuilder" />
 		</MenuItem>
 		<MenuItem id="Help" label="${res:XML.MainMenu.HelpMenu}">
-			<MenuItem id="Help" label="${res:XML.MainMenu.HelpMenu.Topics}" icon="Icons.16x16.HelpIcon"
-				description="${res:XML.MainMenu.HelpMenu.Topics.Description}" shortcut="Alt|F1" class="Altaxo.Main.Commands.ShowAltaxoClassHelp" />
+			<MenuItem id="ProgramHelp" label="${res:XML.MainMenu.HelpMenu.ProgramHelp}" icon="Icons.16x16.HelpIcon"
+				description="${res:XML.MainMenu.HelpMenu.ProgramHelp.Description}" shortcut="Alt|F1" class="Altaxo.Main.Commands.ShowAltaxoProgramHelp" />
+			<MenuItem id="ClassHelp" label="${res:XML.MainMenu.HelpMenu.ClassHelp}" icon="Icons.16x16.HelpIcon"
+				description="${res:XML.MainMenu.HelpMenu.ClassHelp.Description}" shortcut="Alt|F1" class="Altaxo.Main.Commands.ShowAltaxoClassHelp" />
 			<MenuItem id="TipOfTheDay" label="${res:XML.MainMenu.HelpMenu.Tips}" icon="Icons.16x16.TipOfTheDay"
 				description="${res:XML.MainMenu.HelpMenu.Tips.Description}" class="ICSharpCode.SharpDevelop.Commands.ViewTipOfTheDay" />
 			<MenuItem id="Separator1" label="-" />

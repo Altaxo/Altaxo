@@ -37,19 +37,56 @@ namespace ICSharpCode.HelpConverter
 			sr.Close();
 		}
 		
+
+    #if NotModifiedForAltaxo
+    //  old MakeXmlComliant - does not work if spaces or linefeeds are between the tags
+    void MakeXmlCompliant()
+    {
+      StringBuilder strFixup =
+        new StringBuilder(Regex.Replace(hhcFileContents,
+        "(?'start'<param\\s[^>]*)(?'end'\"/?>)",
+        "${start}\"/>"));
+
+      strFixup.Replace("</OBJECT></UL>", "</OBJECT></LI></UL>");
+      strFixup.Replace("</OBJECT><LI>", "</OBJECT></LI><LI>");
+      strFixup.Replace("</OBJECT><UL><LI>", "</OBJECT></LI><UL><LI>");
+      hhcFileContents = strFixup.ToString();
+    }
+
+#else
+
+    // Method by D.Lellinger to handle different formatting of the hhc file
+    // the old method fails if there are spaces or line breaks inbetween the tags
 		void MakeXmlCompliant()
 		{
-			StringBuilder strFixup =
-			new StringBuilder(Regex.Replace(hhcFileContents,
+      string leftPart, rightPart;
+      int pos;
+			hhcFileContents = Regex.Replace(hhcFileContents,
 			                                "(?'start'<param\\s[^>]*)(?'end'\"/?>)",
-			                                "${start}\"/>"));
-			
-			strFixup.Replace("</OBJECT></UL>", "</OBJECT></LI></UL>");
-			strFixup.Replace("</OBJECT><LI>", "</OBJECT></LI><LI>");
-			strFixup.Replace("</OBJECT><UL><LI>", "</OBJECT></LI><UL><LI>");
-			hhcFileContents = strFixup.ToString();
+			                                "${start}\"/>");
+
+
+      // we divide the document into a left and a right part
+      // to prevent that a end tag is substituted if no start tag was there before in the document
+      pos = hhcFileContents.IndexOf("<UL>");
+      pos = hhcFileContents.IndexOf("<LI>",pos);
+      leftPart  = hhcFileContents.Substring(0,pos);
+      rightPart = hhcFileContents.Substring(pos,hhcFileContents.Length-pos);
+      hhcFileContents = leftPart + Regex.Replace(rightPart,"</OBJECT>\\s*</UL>","</OBJECT></LI></UL>");
+
+      pos = hhcFileContents.IndexOf("<LI>");
+      leftPart  = hhcFileContents.Substring(0,pos);
+      rightPart = hhcFileContents.Substring(pos,hhcFileContents.Length-pos);
+      hhcFileContents = leftPart + Regex.Replace(rightPart,"</OBJECT>\\s*<LI>", "</OBJECT></LI><LI>");
+
+      pos = hhcFileContents.IndexOf("<LI>");
+      leftPart  = hhcFileContents.Substring(0,pos);
+      rightPart = hhcFileContents.Substring(pos,hhcFileContents.Length-pos);
+      hhcFileContents = leftPart + Regex.Replace(rightPart,"</OBJECT>\\s*<UL>\\s*<LI>", "</OBJECT></LI><UL><LI>");
 		}
 		
+#endif
+
 		void Load(string fileName)
 		{
 			LoadHhcFile(fileName);
@@ -61,6 +98,12 @@ namespace ICSharpCode.HelpConverter
 			this.chmName = chmName;
 			
 			Load(hhcFileName);
+
+#if DEBUG && WRITEXMLCOMPLIANT
+      StreamWriter outStream = new StreamWriter(basePath + Path.DirectorySeparatorChar + hhcFileName+ ".xml");
+      outStream.Write(hhcFileContents);
+      outStream.Close();
+#endif
 			
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(hhcFileContents);
