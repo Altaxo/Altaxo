@@ -1,3 +1,24 @@
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -63,6 +84,8 @@ namespace Altaxo
 		public EventHandler MdiChildDeactivateBefore;
 		public EventHandler MdiChildActivateAfter;
 		public EventHandler MdiChildDeactivateAfter;
+		private System.Windows.Forms.MenuItem menuItem3;
+		private System.Windows.Forms.MenuItem menuHelpAbout;
 
 		public System.Windows.Forms.PrintDialog PrintDialog
 		{
@@ -162,12 +185,15 @@ namespace Altaxo
 			this.menuWindow_TileHorizontally = new System.Windows.Forms.MenuItem();
 			this.menuWindow_TileVertically = new System.Windows.Forms.MenuItem();
 			this.menuWindow_ArrangeIcons = new System.Windows.Forms.MenuItem();
+			this.menuItem3 = new System.Windows.Forms.MenuItem();
+			this.menuHelpAbout = new System.Windows.Forms.MenuItem();
 			// 
 			// mainMenu1
 			// 
 			this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																																							this.menuItem1,
-																																							this.menuWindowPopup});
+																																							this.menuWindowPopup,
+																																							this.menuItem3});
 			// 
 			// menuItem1
 			// 
@@ -239,6 +265,21 @@ namespace Altaxo
 			this.menuWindow_ArrangeIcons.Index = 3;
 			this.menuWindow_ArrangeIcons.Text = "Arrange Icons";
 			this.menuWindow_ArrangeIcons.Click += new System.EventHandler(this.menuWindow_ArrangeIcons_Click);
+			// 
+			// menuItem3
+			// 
+			this.menuItem3.Index = 2;
+			this.menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																							this.menuHelpAbout});
+			this.menuItem3.MergeOrder = 20;
+			this.menuItem3.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
+			this.menuItem3.Text = "Help";
+			// 
+			// menuHelpAbout
+			// 
+			this.menuHelpAbout.Index = 0;
+			this.menuHelpAbout.Text = "About Altaxo";
+			this.menuHelpAbout.Click += new System.EventHandler(this.menuHelpAbout_Click);
 			// 
 			// App
 			// 
@@ -448,6 +489,13 @@ namespace Altaxo
 		private void menuWindow_ArrangeIcons_Click(object sender, System.EventArgs e)
 		{
 			this.LayoutMdi(MdiLayout.ArrangeIcons);
+		}
+
+		private void menuHelpAbout_Click(object sender, System.EventArgs e)
+		{
+		
+			new Altaxo.Main.AboutDialog().ShowDialog(this);
+
 		}
 	}
 }

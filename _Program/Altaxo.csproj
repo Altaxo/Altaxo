@@ -235,6 +235,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\GraphPanel.resx"
+                    DependentUpon = "GraphPanel.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Graph\ImageGraphics.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -323,6 +328,16 @@
                     RelPath = "Graph\TextGraphObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\AboutDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\AboutDialog.resx"
+                    DependentUpon = "AboutDialog.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Main\App.ico"
