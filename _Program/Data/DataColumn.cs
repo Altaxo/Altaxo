@@ -146,6 +146,21 @@ namespace Altaxo.Data
 	[Serializable]
 	public class IndexerColumn : INumericColumn, IReadableColumn, ICloneable
 	{
+
+		#region Serialization
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IndexerColumn),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				IndexerColumn s = null!=o ? (IndexerColumn)o : new IndexerColumn();
+				return s;
+			}
+		}
+		#endregion
 		/// <summary>
 		/// Creates a cloned instance of this object.
 		/// </summary>
@@ -208,6 +223,28 @@ namespace Altaxo.Data
 		/// <summary>The spacing value between consecutive elements.</summary>
 		protected double m_Increment=1;
 
+
+		#region Serialization
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EquallySpacedColumn),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				EquallySpacedColumn s = (EquallySpacedColumn)obj;
+				info.AddValue("StartValue",s.m_Start);
+				info.AddValue("Increment",s.m_Increment);
+			}
+
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				EquallySpacedColumn s = null!=o ? (EquallySpacedColumn)o : new EquallySpacedColumn(0,1);
+				s.m_Start = info.GetDouble("StartValue");
+				s.m_Increment = info.GetDouble("Increment");
+				return s;
+			}
+		}
+		#endregion
+
 		/// <summary>
 		/// Creates a EquallySpacedColumn with starting value start and spacing increment.
 		/// </summary>
@@ -227,6 +264,7 @@ namespace Altaxo.Data
 		{
 			return new EquallySpacedColumn(m_Start, m_Increment);
 		}
+
 
 		/// <summary>
 		/// Simply returns the value i.
@@ -300,7 +338,8 @@ namespace Altaxo.Data
 		IReadableColumn, 
 		IWriteableColumn, 
 		IDefinedCount,
-		ICloneable
+		ICloneable,
+		Altaxo.Main.IDocumentNode
 	{
 		///<summary>The name of the column.</summary>
 		protected string m_ColumnName=null;
@@ -637,7 +676,7 @@ namespace Altaxo.Data
 		/// calling the function <see cref="DataColumnCollection.OnColumnDataChanged"/>, informing the parent table of this change. If the parent table
 		/// has a not-zero suspend counter, then it will suspend data changed notifications also for this column and the event is not fired.
 		/// If the suspend counter of the parent table is zero, it firstly informs its parent data set by calling the function
-		/// <see cref="DataSet.OnTableDataChanged"/>. If the suspend counter of the DataSet is not zero, then it will suspend the data changed events of the table. And the table will
+		/// <see cref="TableSet.OnTableDataChanged"/>. If the suspend counter of the TableSet is not zero, then it will suspend the data changed events of the table. And the table will
 		/// then suspend the data changed events of this column, so the event is not fired in this case<para/>
 		/// That means in the end: only if the suspend counter of this column, the parent data table, and the parent data set of this table are all zero,
 		/// then the data changed event is fired at all.</remarks>
@@ -835,6 +874,16 @@ namespace Altaxo.Data
 		{
 			get { return m_Parent; }
 			set { m_Parent = value; }
+		}
+
+		public virtual object ParentObject
+		{
+			get { return m_Parent; }
+		}
+
+		public virtual string Name
+		{
+			get { return m_ColumnName; }
 		}
 
 		protected internal void SetParent(DataColumnCollection parentcoll)

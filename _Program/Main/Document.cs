@@ -31,7 +31,7 @@ namespace Altaxo
 	[SerializationVersion(0,"Initial version of the main document only contains m_DataSet")]
 	public class AltaxoDocument : IDeserializationCallback
 	{
-		protected Altaxo.Data.DataSet m_DataSet = null; // The root of all the data
+		protected Altaxo.Data.TableSet m_DataSet = null; // The root of all the data
 		protected System.Collections.ArrayList m_Worksheets;
 		/// <summary>The list of GraphForms for the document.</summary>
 		protected System.Collections.ArrayList m_GraphForms;
@@ -43,7 +43,7 @@ namespace Altaxo
 
 		public AltaxoDocument()
 		{
-			m_DataSet = new Altaxo.Data.DataSet(this);
+			m_DataSet = new Altaxo.Data.TableSet(this);
 			m_Worksheets = new System.Collections.ArrayList();
 			m_GraphForms = new System.Collections.ArrayList();
 		}
@@ -53,14 +53,14 @@ namespace Altaxo
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				AltaxoDocument s = (AltaxoDocument)obj;
-				info.AddValue("DataSet",s.m_DataSet);
+				info.AddValue("TableSet",s.m_DataSet);
 				info.AddValue("Worksheets",s.m_Worksheets);
 				info.AddValue("GraphForms",s.m_GraphForms);
 			}
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				AltaxoDocument s = (AltaxoDocument)obj;
-				s.m_DataSet = (Altaxo.Data.DataSet)info.GetValue("DataSet",typeof(Altaxo.Data.DataSet));
+				s.m_DataSet = (Altaxo.Data.TableSet)info.GetValue("TableSet",typeof(Altaxo.Data.TableSet));
 				// s.tstObj    = (AltaxoTestObject02)info.GetValue("TstObj",typeof(AltaxoTestObject02));
 				s.m_Worksheets = (System.Collections.ArrayList)info.GetValue("Worksheets",typeof(System.Collections.ArrayList));
 				s.m_GraphForms = (System.Collections.ArrayList)info.GetValue("GraphForms",typeof(System.Collections.ArrayList));
@@ -99,7 +99,7 @@ namespace Altaxo
 
 		public AltaxoDocument(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 		{
-			m_DataSet = (Altaxo.Data.DataSet)(info.GetValue("DataSet",typeof(Altaxo.Data.DataSet)));
+			m_DataSet = (Altaxo.Data.TableSet)(info.GetValue("TableSet",typeof(Altaxo.Data.TableSet)));
 		}
 
 		public void GetObjectData(
@@ -107,10 +107,10 @@ namespace Altaxo
 			System.Runtime.Serialization.StreamingContext context
 			)
 		{
-			info.AddValue("DataSet",m_DataSet);
+			info.AddValue("TableSet",m_DataSet);
 		}
 		
-		public Altaxo.Data.DataSet DataSet
+		public Altaxo.Data.TableSet TableSet
 		{
 			get { return m_DataSet; }
 		}
@@ -142,7 +142,7 @@ namespace Altaxo
 				dt1.Add(colB);
 			}
 
-			DataSet.Add(dt1);
+			TableSet.Add(dt1);
 
 			return dt1;
 		}
@@ -156,12 +156,12 @@ namespace Altaxo
 	
 		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parent, bool bCreateDefaultColumns)
 		{
-			return CreateNewWorksheet(parent, this.DataSet.FindNewTableName(),bCreateDefaultColumns);
+			return CreateNewWorksheet(parent, this.TableSet.FindNewTableName(),bCreateDefaultColumns);
 		}
 
 		public Altaxo.Worksheet.ITableView CreateNewWorksheet(System.Windows.Forms.Form parent)
 		{
-			return CreateNewWorksheet(parent, this.DataSet.FindNewTableName(),false);
+			return CreateNewWorksheet(parent, this.TableSet.FindNewTableName(),false);
 		}
 
 

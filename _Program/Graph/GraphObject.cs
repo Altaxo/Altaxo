@@ -101,6 +101,31 @@ namespace Altaxo.Graph
 			}
 		}
 
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphObject),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				GraphObject s = (GraphObject)obj;
+				info.AddValue("Position",s.m_Position);  
+				info.AddValue("Bounds",s.m_Bounds);
+				info.AddValue("Rotation",s.m_Rotation);
+				info.AddValue("AutoSize",s.m_AutoSize);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				GraphObject s = (GraphObject)o;
+
+				s.m_Position = (PointF)info.GetValue("Position",s);  
+				s.m_Bounds = (RectangleF)info.GetValue("Bounds",s);
+				s.m_Rotation = info.GetSingle("Rotation");
+				s.m_AutoSize = info.GetBoolean("AutoSize");
+
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>

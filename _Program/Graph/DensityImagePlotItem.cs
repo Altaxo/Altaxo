@@ -83,25 +83,21 @@ namespace Altaxo.Graph
 			}
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
 			{
-				DensityImagePlotItem s = null!=o ? (DensityImagePlotItem)o : new DensityImagePlotItem();
 
-				s.m_PlotAssociation = (D2EquidistantMeshDataAssociation)info.GetValue("Data",s);
-				s.m_PlotStyle = (DensityImagePlotStyle)info.GetValue("Style",s);
-		
+				D2EquidistantMeshDataAssociation pa = (D2EquidistantMeshDataAssociation)info.GetValue("Data",o);
+				DensityImagePlotStyle ps = (DensityImagePlotStyle)info.GetValue("Style",o);
 
-				// Restore the event chain
-
-				if(null!=s.m_PlotAssociation)
+				if(o==null)
 				{
-					s.m_PlotAssociation.Changed += new EventHandler(s.OnDataChangedEventHandler);
+					return new DensityImagePlotItem(pa,ps);
 				}
-
-				if(null!=s.m_PlotStyle)
+				else
 				{
-					s.m_PlotStyle.Changed += new EventHandler(s.OnStyleChangedEventHandler);
+					DensityImagePlotItem s = (DensityImagePlotItem)o;
+					s.Data = pa;
+					s.Style = ps;
+					return s;
 				}
-
-				return s;
 			}
 		}
 

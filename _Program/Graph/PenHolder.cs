@@ -309,6 +309,144 @@ namespace Altaxo.Graph
 			} // end of SetObjectData
 		} // end of BrushHolderSurrogate0
 
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PenHolder),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				PenHolder s = (PenHolder)obj;
+				Configured cp = PenHolder._GetConfiguredPropertiesVariable(s);
+				if(s.Cached) cp|= PenHolder.Configured.InCachedMode;
+
+				info.AddValue("Configured",(int)cp);
+				if(0!=(cp&PenHolder.Configured.PenType))
+					info.AddValue("Type",s.PenType);
+				if(0!=(cp & PenHolder.Configured.Alignment))
+					info.AddValue("Alignment",s.Alignment);
+				if(0!=(cp & PenHolder.Configured.Brush))
+					info.AddValue("Brush",s.BrushHolder);
+				if(0!=(cp & PenHolder.Configured.Color))
+					info.AddValue("Color",s.Color);
+				if(0!=(cp & PenHolder.Configured.CompoundArray))
+					info.AddValue("CompoundArray",s.CompoundArray);
+				if(0!=(cp & PenHolder.Configured.DashStyle))
+					info.AddValue("DashStyle",s.DashStyle);
+				if(0!=(cp & PenHolder.Configured.DashCap))
+					info.AddValue("DashCap",s.DashCap);
+				if(0!=(cp & PenHolder.Configured.DashOffset))
+					info.AddValue("DashOffset",s.DashOffset);
+				if(0!=(cp & PenHolder.Configured.DashPattern))
+					info.AddValue("DashPattern",s.DashPattern);
+				if(0!=(cp & PenHolder.Configured.EndCap))
+					info.AddValue("EndCap",s.EndCap);
+				if(0!=(cp & PenHolder.Configured.LineJoin))
+					info.AddValue("LineJoin",s.LineJoin);
+				if(0!=(cp & PenHolder.Configured.MiterLimit))
+					info.AddValue("MiterLimit",s.MiterLimit);
+				if(0!=(cp & PenHolder.Configured.StartCap))
+					info.AddValue("StartCap",s.StartCap);
+				if(0!=(cp & PenHolder.Configured.Transform))
+					info.AddValue("Transform",s.Transform.Elements);
+				if(0!=(cp & PenHolder.Configured.Width))
+					info.AddValue("Width",s.Width);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				PenHolder s = null!=o ? (PenHolder)o : new PenHolder();
+
+				s.m_ConfiguredProperties = (Configured)info.GetInt32("Configured");
+				Configured cp = s.m_ConfiguredProperties;
+
+				// cache mode is disabled after serialization, and we
+				// can not enable it till all objects are deserialized
+				// (for instance sometimes the brushholder deserialization is finished
+				// later then the pen itself)
+				s.m_CachedMode = false;
+
+				if(0!=(cp&PenHolder.Configured.PenType))
+					s.m_PenType = (PenType)info.GetValue("Type",typeof(PenType));
+				else
+					s.m_PenType = PenType.SolidColor;
+
+				if(0!=(cp & PenHolder.Configured.Alignment))
+					s.m_Alignment = (PenAlignment)info.GetValue("Alignment",typeof(PenAlignment));
+				else
+					s.m_Alignment = PenAlignment.Center;
+
+				if(0!=(cp & PenHolder.Configured.Brush))
+					s.m_Brush = (BrushHolder)info.GetValue("Brush",typeof(BrushHolder));
+				else 
+					s.m_Brush = new BrushHolder(Color.Black);
+
+				if(0!=(cp & PenHolder.Configured.Color))
+					s.m_Color = (Color)info.GetValue("Color",typeof(Color));
+				else
+					s.m_Color = Color.Black;
+
+				if(0!=(cp & PenHolder.Configured.CompoundArray))
+					s.m_CompoundArray = (float[])info.GetValue("CompoundArray",typeof(float[]));
+				else
+					s.m_CompoundArray = new float[0];
+
+				if(0!=(cp & PenHolder.Configured.DashStyle))
+					s.m_DashStyle = (DashStyle)info.GetValue("DashStyle",typeof(DashStyle));
+				else
+					s.m_DashStyle = DashStyle.Solid;
+
+				if(0!=(cp & PenHolder.Configured.DashCap))
+					s.m_DashCap = (DashCap)info.GetValue("DashCap",typeof(DashCap));
+				else
+					s.m_DashCap = DashCap.Flat;
+
+				if(0!=(cp & PenHolder.Configured.DashOffset))
+					s.m_DashOffset = (float)info.GetSingle("DashOffset");
+				else
+					s.m_DashOffset=0;
+
+				if(0!=(cp & PenHolder.Configured.DashPattern))
+					s.m_DashPattern = (float[])info.GetValue("DashPattern",typeof(float[]));
+				else
+					s.m_DashPattern = null;
+
+				if(0!=(cp & PenHolder.Configured.EndCap))
+					s.m_EndCap = (LineCap)info.GetValue("EndCap",typeof(LineCap));
+				else 
+					s.m_EndCap = LineCap.Flat;
+
+				if(0!=(cp & PenHolder.Configured.LineJoin))
+					s.m_LineJoin = (LineJoin)info.GetValue("LineJoin",typeof(LineJoin));
+				else
+					s.m_LineJoin = LineJoin.Miter;
+
+				if(0!=(cp & PenHolder.Configured.MiterLimit))
+					s.m_MiterLimit = info.GetSingle("MiterLimit");
+				else
+					s.m_MiterLimit = 10;
+
+				if(0!=(cp & PenHolder.Configured.StartCap))
+					s.m_StartCap = (LineCap)info.GetValue("StartCap",typeof(LineCap));
+				else
+					s.m_StartCap = LineCap.Flat;
+
+				if(0!=(cp & PenHolder.Configured.Transform))
+				{
+					float[] el = (float[])info.GetValue("Transform",typeof(float[]));
+					s.m_Transform = new Matrix(el[0],el[1],el[2],el[3],el[4],el[5]);
+				}
+				else
+					s.m_Transform = new Matrix();
+
+				if(0!=(cp & PenHolder.Configured.Width))
+					s.m_Width = info.GetSingle("Width");
+				else
+					s.m_Width = 1;
+
+				return s;
+			}
+		}
+
+
 		public virtual void OnDeserialization(object obj)
 		{
 			// wire the BrushHolder

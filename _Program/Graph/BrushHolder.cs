@@ -27,6 +27,20 @@ namespace Altaxo.Graph
 {
 
 	public enum BrushType { SolidBrush, HatchBrush, TextureBrush, LinearGradientBrush, PathGradientBrush };
+
+	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrushType),0)]
+	public class BrushTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+	{
+		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+		{
+			info.AddValue("Value",System.Enum.GetName(typeof(BrushType),obj));  
+		}
+		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+		{
+			string val = info.GetString("Value");
+			return System.Enum.Parse(typeof(BrushType),val,true);
+		}
+	}
 	
 	/// <summary>
 	/// BrushSubstitute holds all information neccessary to create a brush

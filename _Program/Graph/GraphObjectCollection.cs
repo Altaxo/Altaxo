@@ -71,6 +71,34 @@ namespace Altaxo.Graph
 			}
 		}
 
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphObjectCollection),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				GraphObjectCollection s = (GraphObjectCollection)obj;
+				
+				info.CreateArray("GraphObjects",s.myList.Count);
+				for(int i=0;i<s.myList.Count;i++)
+					info.AddValue("GraphObject",s.myList[i]);
+				info.CommitArray();
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				GraphObjectCollection s = null!=o ? (GraphObjectCollection)o : new GraphObjectCollection();
+
+				int count = info.OpenArray();
+				for(int i=0;i<count;i++)
+				{
+					GraphObject go = (GraphObject)info.GetValue(s);
+					s.Add(go);
+				}
+				
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>

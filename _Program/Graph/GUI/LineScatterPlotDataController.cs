@@ -112,10 +112,10 @@ namespace Altaxo.Graph
 
 			if(null!=View)
 			{
-				string[] tables = App.Current.Doc.DataSet.GetSortedTableNames();
+				string[] tables = App.Current.Doc.TableSet.GetSortedTableNames();
 				View.Tables_Initialize(tables,0);
 				
-				string[] columns = App.Current.Doc.DataSet[tables[0]].GetColumnNames();
+				string[] columns = App.Current.Doc.TableSet[tables[0]].GetColumnNames();
 				View.Columns_Initialize(columns,0);
 
 				View.XColumn_Initialize(m_xCol==null ? String.Empty : m_xCol.FullName);
@@ -144,7 +144,7 @@ namespace Altaxo.Graph
 		{
 			if(null!=View)
 			{
-				string[] columns = App.Current.Doc.DataSet[tablename].GetColumnNames();
+				string[] columns = App.Current.Doc.TableSet[tablename].GetColumnNames();
 				View.Columns_Initialize(columns,0);
 			}
 		}
@@ -152,14 +152,14 @@ namespace Altaxo.Graph
 		public void EhView_ToX(int tableindex, string tablename, int columnindex, string columnname)
 		{
 			SetDirty();
-			m_xCol = App.Current.Doc.DataSet[tablename][columnname];
+			m_xCol = App.Current.Doc.TableSet[tablename][columnname];
 			if(null!=View)
 				View.XColumn_Initialize(m_xCol==null ? String.Empty : m_xCol.FullName);
 		}
 		public void EhView_ToY(int tableindex, string tablename, int columnindex, string columnname)
 		{
 			SetDirty();
-			m_yCol = App.Current.Doc.DataSet[tablename][columnname];
+			m_yCol = App.Current.Doc.TableSet[tablename][columnname];
 			if(null!=View)
 				View.YColumn_Initialize(m_xCol==null ? String.Empty : m_yCol.FullName);
 		}

@@ -181,6 +181,35 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYDataPlot),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				XYDataPlot s = (XYDataPlot)obj;
+				info.AddValue("Data",s.m_PlotAssociation);  
+				info.AddValue("Style",s.m_PlotStyle);  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				PlotAssociation pa = (PlotAssociation)info.GetValue("Data",typeof(PlotAssociation));
+				PlotStyle ps  = (PlotStyle)info.GetValue("Style",typeof(PlotStyle));
+
+				if(null==o)
+				{
+					return new XYDataPlot(pa, ps);
+				}
+				else
+				{
+					XYDataPlot s = (XYDataPlot)o;
+					s.Data = pa;
+					s.Style = ps;
+					return s;
+				}
+				
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization of the linear axis.
 		/// </summary>

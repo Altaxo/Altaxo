@@ -107,6 +107,28 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PhysicalBoundaries),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				PhysicalBoundaries s = (PhysicalBoundaries)obj;
+				info.AddValue("NumberOfItems",s.numberOfItems);
+				info.AddValue("MinValue",s.minValue);
+				info.AddValue("MaxValue",s.maxValue);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				PhysicalBoundaries s = (PhysicalBoundaries)o;
+
+				s.numberOfItems = info.GetInt32("NumberOfItems");  
+				s.minValue = info.GetDouble("MinValue");
+				s.maxValue = info.GetDouble("MaxValue");
+
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>
@@ -312,6 +334,22 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FinitePhysicalBoundaries),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				FinitePhysicalBoundaries s = (FinitePhysicalBoundaries)obj;
+				info.AddBaseValueEmbedded(s,typeof(FinitePhysicalBoundaries).BaseType);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				FinitePhysicalBoundaries s = null!=o ? (FinitePhysicalBoundaries)o : new FinitePhysicalBoundaries();
+				info.GetBaseValueEmbedded(s,typeof(FinitePhysicalBoundaries).BaseType,parent);
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>
@@ -440,6 +478,22 @@ namespace Altaxo.Graph
 			}
 		}
 
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PositiveFinitePhysicalBoundaries),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				PositiveFinitePhysicalBoundaries s = (PositiveFinitePhysicalBoundaries)obj;
+				info.AddBaseValueEmbedded(s,typeof(PositiveFinitePhysicalBoundaries).BaseType);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				PositiveFinitePhysicalBoundaries s = null!=o ? (PositiveFinitePhysicalBoundaries)o : new PositiveFinitePhysicalBoundaries();
+				info.GetBaseValueEmbedded(s,typeof(PositiveFinitePhysicalBoundaries).BaseType,parent);
+				return s;
+			}
+		}
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>

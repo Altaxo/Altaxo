@@ -37,6 +37,30 @@ namespace Altaxo.Graph
 		public int m_LowerBound;
 		public int m_UpperBound;
 
+		#region Serialization
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotRange),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				PlotRange s = (PlotRange)obj;
+				info.AddValue("LowerBound",s.m_LowerBound);  
+				info.AddValue("UpperBound",s.m_UpperBound);  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				PlotRange s = null!=o ? (PlotRange)o : new PlotRange(0,0);
+				
+				s.m_LowerBound = info.GetInt32("LowerBound");
+				s.m_UpperBound = info.GetInt32("UpperBound");
+
+				return s;
+			}
+		}
+		#endregion
+
+
 		public PlotRange(int lower, int upper)
 		{
 			m_LowerBound = lower;
@@ -95,6 +119,20 @@ namespace Altaxo.Graph
 			Top=3
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FillDirection),0)]
+		public class EdgeTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddValue("Value",System.Enum.GetName(typeof(FillDirection),obj));  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				string val = info.GetString("Value");
+				return System.Enum.Parse(typeof(FillDirection),val,true);
+			}
+		}
+
 		[Serializable]
 		public enum ConnectionStyle 
 		{
@@ -109,7 +147,19 @@ namespace Altaxo.Graph
 			StepHorzCenter,
 			StepVertCenter
 		}
-
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConnectionStyle),0)]
+		public class ConnectionStyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddValue("Value",System.Enum.GetName(typeof(ConnectionStyle),obj));  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				string val = info.GetString("Value");
+				return System.Enum.Parse(typeof(ConnectionStyle),val,true);
+			}
+		}
 
 	}
 
@@ -181,6 +231,38 @@ namespace Altaxo.Graph
 				s.m_bFillArea = info.GetBoolean("FillArea");
 				s.m_FillBrush = (BrushHolder)info.GetValue("FillBrush",typeof(BrushHolder));
 				s.m_FillDirection = (LineStyles.FillDirection)info.GetValue("FillDirection",typeof(LineStyles.FillDirection));
+				return s;
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineStyle),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				LineStyle s = (LineStyle)obj;
+				info.AddValue("Pen",s.m_PenHolder);  
+				info.AddValue("Connection",s.m_Connection);
+				info.AddValue("LineSymbolGap",s.m_bLineSymbolGap);
+				info.AddValue("IgnoreMissingPoints",s.m_bIgnoreMissingPoints);
+				info.AddValue("FillArea",s.m_bFillArea);
+				info.AddValue("FillBrush",s.m_FillBrush);
+				info.AddValue("FillDirection",s.m_FillDirection);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				LineStyle s = null!=o ? (LineStyle)o : new LineStyle();
+
+				s.m_PenHolder = (PenHolder)info.GetValue("Pen",typeof(PenHolder));  
+				s.Connection = (LineStyles.ConnectionStyle)info.GetValue("Connection",typeof(LineStyles.ConnectionStyle));
+				s.m_bLineSymbolGap = info.GetBoolean("LineSymbolGap");
+				s.m_bIgnoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
+				s.m_bFillArea = info.GetBoolean("FillArea");
+				s.m_FillBrush = (BrushHolder)info.GetValue("FillBrush",typeof(BrushHolder));
+				s.m_FillDirection = (LineStyles.FillDirection)info.GetValue("FillDirection",typeof(LineStyles.FillDirection));
+
+				s.CreateEventChain();
+
 				return s;
 			}
 		}

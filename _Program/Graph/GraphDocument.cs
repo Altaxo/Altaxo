@@ -121,6 +121,33 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GraphDocument),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				GraphDocument s = (GraphDocument)obj;
+
+				info.AddBaseValueEmbedded(s,typeof(GraphDocument).BaseType);
+				// now the data of our class
+				info.AddValue("PageBounds",s.m_PageBounds);
+				info.AddValue("PrintableBounds",s.m_PrintableBounds);
+
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				GraphDocument s = null!=o ? (GraphDocument)o : new GraphDocument();
+
+				info.GetBaseValueEmbedded(s,typeof(GraphDocument).BaseType,parent);
+
+				s.m_PageBounds			= (RectangleF)info.GetValue("PageBounds",s);
+				s.m_PrintableBounds = (RectangleF)info.GetValue("PrintableBounds",s);
+
+				return s;
+			}
+		}
+
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>

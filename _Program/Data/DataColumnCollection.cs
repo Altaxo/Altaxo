@@ -30,6 +30,7 @@ namespace Altaxo.Data
 	[SerializationVersion(0)]
 	public class DataColumnCollection :
 		System.Runtime.Serialization.IDeserializationCallback, 
+		Altaxo.Main.IDocumentNode,
 		IDisposable,
 		ICloneable
 	{
@@ -46,7 +47,7 @@ namespace Altaxo.Data
 		protected DataTable m_Parent=null; // the DataTable this set is belonging to
 		protected System.Collections.ArrayList m_ColumnsByNumber = new System.Collections.ArrayList();
 		protected int m_NumberOfRows=0; // the max. Number of Rows of the columns of the table
-
+		protected string m_Name;
 
 
 
@@ -201,6 +202,7 @@ namespace Altaxo.Data
 		public DataColumnCollection()
 		{
 			this.m_Parent = null;
+			this.m_Name = "PropertyColumns";
 		}
 
 		/// <summary>
@@ -209,6 +211,7 @@ namespace Altaxo.Data
 		/// <param name="from">The column collection to copy this data column collection from.</param>
 		public DataColumnCollection(DataColumnCollection from)
 		{
+			this.m_Name = from.m_Name;
 			this.m_LastColumnNameAdded = from.m_LastColumnNameAdded;
 			this.m_LastColumnNameGenerated = from.m_LastColumnNameGenerated;
 
@@ -494,11 +497,22 @@ namespace Altaxo.Data
 			}
 		}
 
-		public Altaxo.Data.DataTable Parent
+		public virtual Altaxo.Data.DataTable Parent
 		{
 			get { return m_Parent; }
 			set { m_Parent = value; }
 		}
+
+		public virtual object ParentObject
+		{
+			get { return m_Parent; }
+		}
+
+		public virtual string Name
+		{
+			get { return m_Name; }			
+		}
+
 
 		/// <summary>
 		/// get or sets the name of the Table

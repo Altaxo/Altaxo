@@ -47,7 +47,7 @@ namespace Altaxo.Data
 		/// <summary>
 		/// The parent data set this table is belonging to.
 		/// </summary>
-		protected DataSet m_ParentDataSet=null; // the dataSet that this table is belonging to
+		protected TableSet m_ParentDataSet=null; // the dataSet that this table is belonging to
 		/// <summary>
 		/// The name of this table, has to be unique if there is a parent data set, since the tables in the parent data set
 		/// can only be accessed by name.
@@ -175,14 +175,14 @@ namespace Altaxo.Data
 			m_PropertyColumns.Parent = this;
 		}
 
-		public DataTable(Altaxo.Data.DataSet parent) : base()
+		public DataTable(Altaxo.Data.TableSet parent) : base()
 		{
 			base.Parent = this;
 			this.m_ParentDataSet = parent;
 			m_PropertyColumns.Parent = this;
 		}
 
-		public DataTable(Altaxo.Data.DataSet parent, string name) : base()
+		public DataTable(Altaxo.Data.TableSet parent, string name) : base()
 		{
 			base.Parent = this;
 			this.m_ParentDataSet = parent;
@@ -210,12 +210,21 @@ namespace Altaxo.Data
 			return new DataTable(this);
 		}
 
-		public Altaxo.Data.DataSet ParentDataSet
+		public Altaxo.Data.TableSet ParentDataSet
 		{
 			get { return m_ParentDataSet; }
 			set { m_ParentDataSet = value; }
 		}
 
+		public override object ParentObject
+		{
+			get { return m_ParentDataSet; }
+		}
+
+		public override string Name
+		{
+			get { return m_TableName; }
+		}
 
 /// <summary>
 /// get or sets the name of the Table

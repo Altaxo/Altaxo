@@ -111,6 +111,38 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(D2EquidistantMeshDataAssociation),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				D2EquidistantMeshDataAssociation s = (D2EquidistantMeshDataAssociation)obj;
+				info.AddValue("XColumn",s.m_XColumn);
+				info.AddValue("YColumn",s.m_YColumn);
+				info.AddValue("DataColumns",s.m_DataColumns);
+
+				info.AddValue("XBoundaries",s.m_xBoundaries);
+				info.AddValue("YBoundaries",s.m_yBoundaries);
+				info.AddValue("VBoundaries",s.m_vBoundaries);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				D2EquidistantMeshDataAssociation s = null!=o ? (D2EquidistantMeshDataAssociation)o : new D2EquidistantMeshDataAssociation();
+
+				s.m_XColumn = (Altaxo.Data.INumericColumn)info.GetValue("XColumn",typeof(Altaxo.Data.INumericColumn));
+				s.m_YColumn = (Altaxo.Data.INumericColumn)info.GetValue("YColumn",typeof(Altaxo.Data.INumericColumn));
+				s.m_DataColumns = (Altaxo.Data.IReadableColumn[])info.GetValue("DataColumns",typeof(Altaxo.Data.IReadableColumn[]));
+		
+				s.m_xBoundaries = (PhysicalBoundaries)info.GetValue("XBoundaries",typeof(PhysicalBoundaries));
+				s.m_yBoundaries = (PhysicalBoundaries)info.GetValue("YBoundaries",typeof(PhysicalBoundaries));
+				s.m_vBoundaries = (PhysicalBoundaries)info.GetValue("VBoundaries",typeof(PhysicalBoundaries));
+
+				s.OnDeserialization(null);
+
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>
@@ -141,7 +173,12 @@ namespace Altaxo.Graph
 		}
 		#endregion
 
-
+		/// <summary>
+		/// Deserialization constructor.
+		/// </summary>
+		protected D2EquidistantMeshDataAssociation()
+		{
+		}
 
 		public D2EquidistantMeshDataAssociation(Altaxo.Data.DataColumnCollection coll, int[] selected)
 		{

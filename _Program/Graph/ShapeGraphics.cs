@@ -102,6 +102,35 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ShapeGraphic),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				ShapeGraphic s = (ShapeGraphic)obj;
+				info.AddBaseValueEmbedded(s,typeof(ShapeGraphic).BaseType);
+
+				info.AddValue("LineColor",s.m_lineColor);
+				info.AddValue("LineWidth",s.m_lineWidth);
+
+				info.AddValue("Fill",s.m_fill);
+				info.AddValue("FillColor",s.m_fillColor);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				ShapeGraphic s = (ShapeGraphic)o; 
+				info.GetBaseValueEmbedded(s,typeof(ShapeGraphic).BaseType,parent);
+
+
+				s.m_lineColor = (Color)info.GetValue("LineColor",s);
+				s.m_lineWidth = info.GetSingle("LineWidth");
+
+				s.m_fill = info.GetBoolean("Fill");
+				s.m_fillColor = (Color)info.GetValue("FillColor",s);
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>
@@ -238,6 +267,24 @@ namespace Altaxo.Graph
 					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
 				}
 	
+				return s;
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineGraphic),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				LineGraphic s = (LineGraphic)obj;
+				info.AddBaseValueEmbedded(s,typeof(LineGraphic).BaseType);
+
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				LineGraphic s = null!=o ? (LineGraphic)o : new LineGraphic(); 
+				info.GetBaseValueEmbedded(s,typeof(LineGraphic).BaseType,parent);
+
 				return s;
 			}
 		}
@@ -435,6 +482,25 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleGraphic),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				RectangleGraphic s = (RectangleGraphic)obj;
+				info.AddBaseValueEmbedded(s,typeof(RectangleGraphic).BaseType);
+
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				RectangleGraphic s = null!=o ? (RectangleGraphic)o : new RectangleGraphic(); 
+				info.GetBaseValueEmbedded(s,typeof(RectangleGraphic).BaseType,parent);
+
+				return s;
+			}
+		}
+
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>
@@ -614,6 +680,24 @@ namespace Altaxo.Graph
 			}
 		}
 
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EllipseGraphic),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				EllipseGraphic s = (EllipseGraphic)obj;
+				info.AddBaseValueEmbedded(s,typeof(EllipseGraphic).BaseType);
+
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				EllipseGraphic s = null!=o ? (EllipseGraphic)o : new EllipseGraphic(); 
+				info.GetBaseValueEmbedded(s,typeof(EllipseGraphic).BaseType,parent);
+
+				return s;
+			}
+		}
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>

@@ -269,8 +269,8 @@ namespace Altaxo.Serialization.Xml
 		public bool GetBoolean() { return false; }
 		public bool GetBoolean(string name) { return false; }
 		public double GetDouble(string name) { return 0; }
-			public double GetSingle(string name) { return 0; }
-			public double GetSingle() { return 0; }
+			public float GetSingle(string name) { return 0; }
+			public float GetSingle() { return 0; }
 		public void AddValue(string name, float val) {}
 		#endregion
 	}

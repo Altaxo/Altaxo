@@ -33,6 +33,32 @@ namespace Altaxo.Graph
 		private double width;
 		private double height;
 
+
+		#region Serialization
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleD),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				RectangleD s = (RectangleD)obj;
+				info.AddValue("X",s.x);  
+				info.AddValue("Y",s.y);  
+				info.AddValue("Width",s.width);
+				info.AddValue("Height",s.height);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				RectangleD s = null!=o ? (RectangleD)o : new RectangleD();
+				s.x = info.GetDouble("X");
+				s.y = info.GetDouble("Y");
+				s.width = info.GetDouble("Width");
+				s.height = info.GetDouble("Height");
+
+				return s;
+			}
+		}
+		#endregion
+
 		public RectangleD(double x, double y, double width, double height)
 		{
 			this.x = x;

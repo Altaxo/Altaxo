@@ -106,11 +106,11 @@ namespace Altaxo.Serialization.Xml
 			return GetInt32();
 		}
 
-		public double GetSingle()
+		public float GetSingle()
 		{
 			return XmlConvert.ToSingle(m_Reader.ReadElementString());
 		}
-		public double GetSingle(string name)
+		public float GetSingle(string name)
 		{
 			return XmlConvert.ToSingle(m_Reader.ReadElementString());
 		}
@@ -415,16 +415,25 @@ namespace Altaxo.Serialization.Xml
 
 		public void AddValue(string name, object o)
 		{
-			IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(o.GetType());
-			if(null==ss)
-				throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized",o.GetType()));
-			else
+			if(null!=o)
+			{
+				IXmlSerializationSurrogate ss = m_SurrogateSelector.GetSurrogate(o.GetType());
+				if(null==ss)
+					throw new ArgumentException(string.Format("Type {0} has no XmlSerializationSurrogate to get serialized",o.GetType()));
+				else
+				{
+					m_Writer.WriteStartElement(name);
+					m_Writer.WriteAttributeString("Type",m_SurrogateSelector.GetFullyQualifiedTypeName(o.GetType()));
+					ss.Serialize(o,this);
+					m_Writer.WriteEndElement();
+				}	
+			}
+			else // o is null, we add only an empty element
 			{
 				m_Writer.WriteStartElement(name);
-				m_Writer.WriteAttributeString("Type",m_SurrogateSelector.GetFullyQualifiedTypeName(o.GetType()));
-				ss.Serialize(o,this);
+				m_Writer.WriteAttributeString("Type","UndefinedValue");
 				m_Writer.WriteEndElement();
-			}		
+			}
 		}
 
 		public void AddBaseValueEmbedded(object o, System.Type basetype)

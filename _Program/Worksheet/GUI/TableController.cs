@@ -908,7 +908,7 @@ namespace Altaxo.Worksheet
 		{
 			Altaxo.Data.DataTable clonedTable = (Altaxo.Data.DataTable)this.DataTable.Clone();
 
-			// find a new name for the cloned table and add it to the DataSet
+			// find a new name for the cloned table and add it to the TableSet
 			clonedTable.TableName = DataTable.ParentDataSet.FindNewTableName();
 			DataTable.ParentDataSet.Add(clonedTable);
 			App.Current.CreateNewWorksheet(clonedTable);

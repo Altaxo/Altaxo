@@ -360,6 +360,11 @@ namespace Altaxo.Graph
 			mi.Click += new EventHandler(EhMenuFilePrint_OnClick);
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 
+			// File - Save Graph As
+			mi = new MenuItem("Save Graph As..");
+			mi.Click += new EventHandler(EhMenuFileSaveGraphAs_OnClick);
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+
 			// File - Export (Popup)
 			// ------------------------------------------------------------------
 			mi = new MenuItem("Export");
@@ -571,6 +576,27 @@ namespace Altaxo.Graph
 			}
 		}
 
+
+		protected void EhMenuFileSaveGraphAs_OnClick(object sender, System.EventArgs e)
+		{
+			System.IO.Stream myStream ;
+			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+ 
+			saveFileDialog1.Filter = "Xml files (*.xml)|*.xml|All files (*.*)|*.*"  ;
+			saveFileDialog1.FilterIndex = 1 ;
+			saveFileDialog1.RestoreDirectory = true ;
+ 
+			if(saveFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				if((myStream = saveFileDialog1.OpenFile()) != null)
+				{
+					Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo(myStream,true);
+					info.AddValue("Graph",this.Doc);
+					info.Finish();
+					myStream.Close();
+				}
+			}
+		}
 
 		/// <summary>
 		/// Handler for the menu item "File" - "Export Metafile".

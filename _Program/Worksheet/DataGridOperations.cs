@@ -203,7 +203,7 @@ namespace Altaxo.Worksheet
 			}
 
 			table.ResumeDataChangedNotifications();
-			mainDocument.DataSet.Add(table);
+			mainDocument.TableSet.Add(table);
 			// create a new worksheet without any columns
 			App.Current.CreateNewWorksheet(table);
 
@@ -377,7 +377,7 @@ namespace Altaxo.Worksheet
 		}
 
 			table.ResumeDataChangedNotifications();
-			mainDocument.DataSet.Add(table);
+			mainDocument.TableSet.Add(table);
 			// create a new worksheet without any columns
 			App.Current.CreateNewWorksheet(table);
 
@@ -712,7 +712,7 @@ namespace Altaxo.Worksheet
 
 
 			table.ResumeDataChangedNotifications();
-			mainDocument.DataSet.Add(table);
+			mainDocument.TableSet.Add(table);
 			// create a new worksheet without any columns
 			App.Current.CreateNewWorksheet(table);
 
@@ -827,7 +827,7 @@ namespace Altaxo.Worksheet
 			// create a worksheet
 			if(bTableCreated)
 			{
-				mainDocument.DataSet.Add(table);
+				mainDocument.TableSet.Add(table);
 				// create a new worksheet without any columns
 				App.Current.CreateNewWorksheet(table);
 
@@ -941,7 +941,7 @@ namespace Altaxo.Worksheet
 			if(null!=table)
 			{
 				table.ResumeDataChangedNotifications();
-				mainDocument.DataSet.Add(table);
+				mainDocument.TableSet.Add(table);
 				// create a new worksheet without any columns
 				App.Current.CreateNewWorksheet(table);
 
@@ -1030,7 +1030,7 @@ namespace Altaxo.Worksheet
 				table.Add(col);
 			}
 			table.ResumeDataChangedNotifications();
-			mainDocument.DataSet.Add(table);
+			mainDocument.TableSet.Add(table);
 			// create a new worksheet without any columns
 			App.Current.CreateNewWorksheet(table);
 

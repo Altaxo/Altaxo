@@ -194,11 +194,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Data\DataSet.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Data\DataTable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -220,6 +215,11 @@
                 />
                 <File
                     RelPath = "Data\OperatableObject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Data\TableSet.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -275,6 +275,16 @@
                 />
                 <File
                     RelPath = "Graph\GraphObjectCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GraphPrimitivesSerialization.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GraphSet.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -679,6 +689,11 @@
                 />
                 <File
                     RelPath = "Main\Exceptions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\IDocumentNode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

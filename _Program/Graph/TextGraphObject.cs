@@ -99,6 +99,31 @@ namespace Altaxo.Graph
 			}
 		}
 
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(TextGraphObject),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				TextGraphObject s = (TextGraphObject)obj;
+				info.AddBaseValueEmbedded(s,typeof(TextGraphObject).BaseType);
+
+				info.AddValue("Text",s.m_Text);
+				info.AddValue("Font",s.m_Font);
+				info.AddValue("Color",s.m_Color);
+
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				TextGraphObject s = null!=o ? (TextGraphObject)o : new TextGraphObject(); 
+				info.GetBaseValueEmbedded(s,typeof(TextGraphObject).BaseType,parent);
+
+				s.m_Text = info.GetString("Text");
+				s.m_Font = (Font)info.GetValue("Font",typeof(Font));
+				s.m_Color = (Color)info.GetValue("Color",typeof(Color));
+				return s;
+			}
+		}
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>
@@ -440,6 +465,20 @@ namespace Altaxo.Graph
 
 	public enum BackgroundStyle { None, BlackLine, Shadow, DarkMarbel, WhiteOut, BlackOut }
 
+	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BackgroundStyle),0)]
+	public class BackgroundStyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+	{
+		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+		{
+			info.AddValue("Value",System.Enum.GetName(typeof(BackgroundStyle),obj));  
+		}
+		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+		{
+			string val = info.GetString("Value");
+			return System.Enum.Parse(typeof(BackgroundStyle),val,true);
+		}
+	}
+
 
 	/// <summary>
 	/// ExtendedTextGraphObject provides not only simple text on a graph,
@@ -452,9 +491,34 @@ namespace Altaxo.Graph
 	{
 		[Serializable]
 		public enum XAnchorPositionType { Left, Center, Right }
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XAnchorPositionType),0)]
+			public class XAnchorPositionTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddValue("Value",System.Enum.GetName(typeof(XAnchorPositionType),obj));  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				string val = info.GetString("Value");
+				return System.Enum.Parse(typeof(XAnchorPositionType),val,true);
+			}
+		}
 		[Serializable]
 		public enum YAnchorPositionType { Top, Center, Bottom }
-
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YAnchorPositionType),0)]
+			public class YAnchorPositionTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddValue("Value",System.Enum.GetName(typeof(YAnchorPositionType),obj));  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				string val = info.GetString("Value");
+				return System.Enum.Parse(typeof(YAnchorPositionType),val,true);
+			}
+		}
 		protected string m_Text = ""; // the text, which contains the formatting symbols
 		protected Font m_Font;
 		protected BrushHolder m_BrushHolder = new BrushHolder(Color.Black);
@@ -540,6 +604,42 @@ namespace Altaxo.Graph
 				{
 					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
 				}
+				s.m_Text = info.GetString("Text");
+				s.m_Font = (Font)info.GetValue("Font",typeof(Font));
+				s.m_BrushHolder = (BrushHolder)info.GetValue("Brush",typeof(BrushHolder));
+				s.m_BackgroundStyle = (BackgroundStyle)info.GetValue("BackgroundStyle",typeof(BackgroundStyle));
+				s.m_LineSpacingFactor = info.GetSingle("LineSpacing");
+				s.m_ShadowLength = info.GetSingle("ShadowLength");
+				s.m_XAnchorType = (XAnchorPositionType)info.GetValue("XAnchor",typeof(XAnchorPositionType));
+				s.m_YAnchorType = (YAnchorPositionType)info.GetValue("YAnchor",typeof(YAnchorPositionType));
+
+				return s;
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExtendedTextGraphObject),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				ExtendedTextGraphObject s = (ExtendedTextGraphObject)obj;
+				info.AddBaseValueEmbedded(s,typeof(ExtendedTextGraphObject).BaseType);
+
+				info.AddValue("Text",s.m_Text);
+				info.AddValue("Font",s.m_Font);
+				info.AddValue("Brush",s.m_BrushHolder);
+				info.AddValue("BackgroundStyle",s.m_BackgroundStyle);
+				info.AddValue("LineSpacing",s.m_LineSpacingFactor);
+				info.AddValue("ShadowLength",s.m_ShadowLength);
+				info.AddValue("XAnchor",s.m_XAnchorType);
+				info.AddValue("YAnchor",s.m_YAnchorType);
+
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				ExtendedTextGraphObject s = null!=o ? (ExtendedTextGraphObject)o : new ExtendedTextGraphObject(); 
+				info.GetBaseValueEmbedded(s,typeof(ExtendedTextGraphObject).BaseType,parent);
+
 				s.m_Text = info.GetString("Text");
 				s.m_Font = (Font)info.GetValue("Font",typeof(Font));
 				s.m_BrushHolder = (BrushHolder)info.GetValue("Brush",typeof(BrushHolder));

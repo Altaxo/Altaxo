@@ -59,6 +59,19 @@ namespace Altaxo.Graph
 			RelativeToLinkedLayer
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SizeType),0)]
+			public class SizeTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddValue("Value",System.Enum.GetName(typeof(SizeType),obj));  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				string val = info.GetString("Value");
+				return System.Enum.Parse(typeof(SizeType),val,true);
+			}
+		}
 
 		/// <summary>
 		/// The type of the position values  (i.e. x and y position of the layer).
@@ -122,7 +135,19 @@ namespace Altaxo.Graph
 			RelativeThisFarToLinkedLayerFar
 		}
 
-
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PositionType),0)]
+			public class PositionTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddValue("Value",System.Enum.GetName(typeof(PositionType),obj));  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				string val = info.GetString("Value");
+				return System.Enum.Parse(typeof(PositionType),val,true);
+			}
+		}
 		/// <summary>
 		/// Provides how the axis is linked to the corresponding axis on the linked layer.
 		/// </summary>
@@ -143,6 +168,19 @@ namespace Altaxo.Graph
 			Custom
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AxisLinkType),0)]
+			public class AxisLinkTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddValue("Value",System.Enum.GetName(typeof(AxisLinkType),obj));  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				string val = info.GetString("Value");
+				return System.Enum.Parse(typeof(AxisLinkType),val,true);
+			}
+		}
 
 		#endregion
 
@@ -509,6 +547,161 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Layer),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				Layer s = (Layer)obj;
+				// Layer style
+				info.AddValue("FillLayerArea",s.m_bFillLayerArea);
+				info.AddValue("LayerAreaFillBrush",s.m_LayerAreaFillBrush);
+
+				// size, position, rotation and scale
+				
+				info.AddValue("WidthType",s.m_LayerWidthType);
+				info.AddValue("HeightType",s.m_LayerHeightType);
+				info.AddValue("Width",s.m_LayerWidth);
+				info.AddValue("Height",s.m_LayerHeight);
+				info.AddValue("CachedSize",s.m_LayerSize);
+
+				info.AddValue("XPositionType",s.m_LayerXPositionType);
+				info.AddValue("YPositionType",s.m_LayerYPositionType);
+				info.AddValue("XPosition",s.m_LayerXPosition);
+				info.AddValue("YPosition",s.m_LayerYPosition);
+				info.AddValue("CachedPosition",s.m_LayerPosition);
+
+				info.AddValue("Rotation",s.m_LayerAngle);
+				info.AddValue("Scale",s.m_LayerScale);
+
+				// axis related
+
+				info.AddValue("XAxis",s.m_xAxis);
+				info.AddValue("YAxis",s.m_yAxis);
+				info.AddValue("LinkXAxis",s.m_LinkXAxis);
+				info.AddValue("LinkYAxis",s.m_LinkYAxis);
+				info.AddValue("LinkXAxisOrgA",s.m_LinkXAxisOrgA);
+				info.AddValue("LinkXAxisOrgB",s.m_LinkXAxisOrgB);
+				info.AddValue("LinkXAxisEndA",s.m_LinkXAxisEndA);
+				info.AddValue("LinkXAxisEndB",s.m_LinkXAxisEndB);
+				info.AddValue("LinkYAxisOrgA",s.m_LinkYAxisOrgA);
+				info.AddValue("LinkYAxisOrgB",s.m_LinkYAxisOrgB);
+				info.AddValue("LinkYAxisEndA",s.m_LinkYAxisEndA);
+				info.AddValue("LinkYAxisEndB",s.m_LinkYAxisEndB);
+
+			
+				// Styles
+				info.AddValue("ShowLeftAxis",s.m_ShowLeftAxis);
+				info.AddValue("ShowBottomAxis",s.m_ShowBottomAxis);
+				info.AddValue("ShowRightAxis",s.m_ShowRightAxis);
+				info.AddValue("ShowTopAxis",s.m_ShowTopAxis);
+
+				info.AddValue("LeftAxisStyle",s.m_LeftAxisStyle);
+				info.AddValue("BottomAxisStyle",s.m_BottomAxisStyle);
+				info.AddValue("RightAxisStyle",s.m_RightAxisStyle);
+				info.AddValue("TopAxisStyle",s.m_TopAxisStyle);
+			
+			
+				info.AddValue("LeftLabelStyle",s.m_LeftLabelStyle);
+				info.AddValue("BottomLabelStyle",s.m_BottomLabelStyle);
+				info.AddValue("RightLabelStyle",s.m_RightLabelStyle);
+				info.AddValue("TopLabelStyle",s.m_TopLabelStyle);
+			
+		
+				// Titles and legend
+				info.AddValue("LeftAxisTitle",s.m_LeftAxisTitle);
+				info.AddValue("BottomAxisTitle",s.m_BottomAxisTitle);
+				info.AddValue("RightAxisTitle",s.m_RightAxisTitle);
+				info.AddValue("TopAxisTitle",s.m_TopAxisTitle);
+				info.AddValue("Legend",s.m_Legend);
+			
+				// Layer specific
+				info.AddValue("LinkedLayer",s.m_LinkedLayer);
+			
+				info.AddValue("GraphObjects",s.m_GraphObjects);
+				info.AddValue("Plots",s.m_PlotItems);
+
+
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				Layer s = null!=o ? (Layer)o : new Layer();
+
+				// Layer style
+				s.m_bFillLayerArea = info.GetBoolean("FillLayerArea");
+				s.m_LayerAreaFillBrush = (BrushHolder)info.GetValue("LayerAreaFillBrush",typeof(BrushHolder));
+
+
+
+				// size, position, rotation and scale
+				
+				s.m_LayerWidthType  = (SizeType)info.GetValue("WidthType",typeof(SizeType));
+				s.m_LayerHeightType = (SizeType)info.GetValue("HeightType",typeof(SizeType));
+				s.m_LayerWidth  = info.GetDouble("Width");
+				s.m_LayerHeight = info.GetDouble("Height");
+				s.m_LayerSize   = (SizeF)info.GetValue("CachedSize",typeof(SizeF));
+
+				s.m_LayerXPositionType = (PositionType)info.GetValue("XPositionType",typeof(PositionType));
+				s.m_LayerYPositionType = (PositionType)info.GetValue("YPositionType",typeof(PositionType));
+				s.m_LayerXPosition = info.GetDouble("XPosition");
+				s.m_LayerYPosition = info.GetDouble("YPosition");
+				s.m_LayerPosition = (PointF)info.GetValue("CachedPosition",typeof(PointF));
+
+				s.m_LayerAngle  = info.GetSingle("Rotation");
+				s.m_LayerScale = info.GetSingle("Scale");
+
+				// axis related
+
+				s.m_xAxis = (Axis)info.GetValue("XAxis",typeof(Axis));
+				s.m_yAxis = (Axis)info.GetValue("YAxis",typeof(Axis));
+				s.m_LinkXAxis = info.GetBoolean("LinkXAxis");
+				s.m_LinkYAxis = info.GetBoolean("LinkYAxis");
+				s.m_LinkXAxisOrgA = info.GetDouble("LinkXAxisOrgA");
+				s.m_LinkXAxisOrgB = info.GetDouble("LinkXAxisOrgB");
+				s.m_LinkXAxisEndA = info.GetDouble("LinkXAxisEndA");
+				s.m_LinkXAxisEndB = info.GetDouble("LinkXAxisEndB");
+				s.m_LinkYAxisOrgA = info.GetDouble("LinkYAxisOrgA");
+				s.m_LinkYAxisOrgB = info.GetDouble("LinkYAxisOrgB");
+				s.m_LinkYAxisEndA = info.GetDouble("LinkYAxisEndA");
+				s.m_LinkYAxisEndB = info.GetDouble("LinkYAxisEndB");
+
+
+				// Styles
+				s.m_ShowLeftAxis = info.GetBoolean("ShowLeftAxis");
+				s.m_ShowBottomAxis = info.GetBoolean("ShowBottomAxis");
+				s.m_ShowRightAxis = info.GetBoolean("ShowRightAxis");
+				s.m_ShowTopAxis = info.GetBoolean("ShowTopAxis");
+
+				s.m_LeftAxisStyle = (Graph.XYLayerAxisStyle)info.GetValue("LeftAxisStyle",typeof(Graph.XYLayerAxisStyle));
+				s.m_BottomAxisStyle = (Graph.XYLayerAxisStyle)info.GetValue("BottomAxisStyle",typeof(Graph.XYLayerAxisStyle));
+				s.m_RightAxisStyle = (Graph.XYLayerAxisStyle)info.GetValue("RightAxisStyle",typeof(Graph.XYLayerAxisStyle));
+				s.m_TopAxisStyle = (Graph.XYLayerAxisStyle)info.GetValue("TopAxisStyle",typeof(Graph.XYLayerAxisStyle));
+			
+			
+				s.m_LeftLabelStyle = (Graph.LabelStyle)info.GetValue("LeftLabelStyle",typeof(Graph.LabelStyle));
+				s.m_BottomLabelStyle = (Graph.LabelStyle)info.GetValue("BottomLabelStyle",typeof(Graph.LabelStyle));
+				s.m_RightLabelStyle = (Graph.LabelStyle)info.GetValue("RightLabelStyle",typeof(Graph.LabelStyle));
+				s.m_TopLabelStyle = (Graph.LabelStyle)info.GetValue("TopLabelStyle",typeof(Graph.LabelStyle));
+			
+			
+				// Titles and legend
+				s.m_LeftAxisTitle = (Graph.ExtendedTextGraphObject)info.GetValue("LeftAxisTitle",typeof(Graph.ExtendedTextGraphObject));
+				s.m_BottomAxisTitle = (Graph.ExtendedTextGraphObject)info.GetValue("BottomAxisTitle",typeof(Graph.ExtendedTextGraphObject));
+				s.m_RightAxisTitle = (Graph.ExtendedTextGraphObject)info.GetValue("RightAxisTitle",typeof(Graph.ExtendedTextGraphObject));
+				s.m_TopAxisTitle = (Graph.ExtendedTextGraphObject)info.GetValue("TopAxisTitle",typeof(Graph.ExtendedTextGraphObject));
+				s.m_Legend = (Graph.ExtendedTextGraphObject)info.GetValue("Legend",typeof(Graph.ExtendedTextGraphObject));
+			
+				// Layer specific
+				s.m_LinkedLayer = (Layer)info.GetValue("LinkedLayer",typeof(Layer));
+			
+				s.m_GraphObjects = (Graph.GraphObjectCollection)info.GetValue("GraphObjects",typeof(Graph.GraphObjectCollection));
+
+				s.m_PlotItems = (Altaxo.Graph.PlotList)info.GetValue("Plots",typeof(Altaxo.Graph.PlotList));
+
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>
@@ -624,7 +817,12 @@ namespace Altaxo.Graph
 		{
 		}
 
-	
+		/// <summary>
+		/// Constructor for deserialization purposes only.
+		/// </summary>
+		protected Layer()
+		{
+		}
 		/// <summary>
 		/// Creates a layer with position <paramref name="position"/> and size <paramref name="size"/>.
 		/// </summary>
@@ -2293,6 +2491,34 @@ namespace Altaxo.Graph
 					return s;
 				}
 			}
+
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LayerCollection),0)]
+				public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			{
+				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+				{
+					LayerCollection s = (LayerCollection)obj;
+					info.CreateArray("Layers",s.Count);
+					for(int i=0;i<s.Count;i++)
+						info.AddValue("Layer",s[i]);
+					info.CommitArray();
+
+				}
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+				{
+					LayerCollection s = null!=o ? (LayerCollection)o : new LayerCollection();
+
+					int count = info.OpenArray();
+					for(int i=0;i<count;i++)
+					{
+						Layer l = (Layer)info.GetValue("Layer",s);
+						s.Add(l);
+					}
+
+					return s;
+				}
+			}
+
 
 			/// <summary>
 			/// Finale measures after deserialization.

@@ -27,10 +27,25 @@ namespace Altaxo.Graph
 	[Serializable]
 	public enum PlotGroupStyle
 	{
+		None  = 0x00,
 		Color = 0x01,
 		Line  = 0x02,
 		Symbol = 0x04,
 		All = Color | Line | Symbol
+	}
+
+	[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroupStyle),0)]
+	public class PlotGroupStyleTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+	{
+		public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+		{
+			info.AddValue("Value",System.Enum.GetName(typeof(PlotGroupStyle),obj));  
+		}
+		public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+		{
+			string val = info.GetString("Value");
+			return System.Enum.Parse(typeof(PlotGroupStyle),val,true);
+		}
 	}
 
 	
@@ -85,6 +100,62 @@ namespace Altaxo.Graph
 			}
 		}
 
+
+		public class Memento
+		{
+			PlotGroupStyle m_Style;
+			int[] m_PlotItems; // stores not the plotitems itself, only the position of the items in the list
+		
+			public Memento(PlotGroup pg, PlotList plotlist)
+			{
+				m_Style = pg.Style;
+				m_PlotItems = new int[pg.Count];
+				for(int i=0;i<m_PlotItems.Length;i++)
+					m_PlotItems[i] = plotlist.IndexOf(pg[i]);
+			}
+		
+			protected Memento()
+			{
+			}
+
+			public PlotGroup GetPlotGroup(PlotList plotlist)
+			{
+				PlotGroup pg = new PlotGroup(m_Style);
+				for(int i=0;i<m_PlotItems.Length;i++)
+					pg.Add(plotlist[i]);
+			return pg;
+			}
+
+			[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroup.Memento),0)]
+				public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+			{
+				public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+				{
+					PlotGroup.Memento s = (PlotGroup.Memento)obj;
+					info.AddValue("Style",s.m_Style);  
+					info.CreateArray("PlotItems", s.m_PlotItems.Length);
+					for(int i=0;i<s.m_PlotItems.Length;i++)
+						info.AddValue("PlotItem",s.m_PlotItems[i]);
+					info.CommitArray();
+				}
+
+				public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+				{
+					PlotGroup.Memento s = null!=o ? (PlotGroup.Memento)o : new PlotGroup.Memento();
+					s.m_Style = (PlotGroupStyle)info.GetValue("Style",typeof(PlotGroupStyle));
+
+					int count = info.OpenArray();
+					s.m_PlotItems = new int[count];
+					for(int i=0;i<count;i++)
+					{
+						s.m_PlotItems[i] = info.GetInt32();
+					}
+					info.CloseArray(count);
+
+					return s;
+				}
+			}
+		}
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>
@@ -111,6 +182,9 @@ namespace Altaxo.Graph
 			m_PlotItems = new System.Collections.ArrayList();
 		}
 
+		protected PlotGroup()
+		{
+		}
 
 		/// <summary>
 		/// This is !!! not !!! cloneable, since the PlotGroup itself stores only references to PlotItems! Since the only use
@@ -274,6 +348,34 @@ namespace Altaxo.Graph
 					}
 				}
 
+				[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotGroup.Collection),0)]
+					public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+				{
+					public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+					{
+						PlotGroup.Collection s = (PlotGroup.Collection)obj;
+						
+						info.CreateArray("PlotGroups",s.Count);
+						for(int i=0;i<s.Count;i++)
+							info.AddValue("PlotGroup",s.myList[i]);
+						info.CommitArray();
+					}
+					public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+					{
+						PlotGroup.Collection s = null!=o ? (PlotGroup.Collection)o : new PlotGroup.Collection();
+
+						int count = info.OpenArray();
+						for(int i=0;i<count;i++)
+						{
+							PlotGroup gr = (PlotGroup)info.GetValue("PlotGroup",s);
+							s.Add(gr);
+						}
+						info.CloseArray(count);
+
+						return s;
+					}
+				}
+
 				/// <summary>
 				/// Finale measures after deserialization.
 				/// </summary>
@@ -326,6 +428,11 @@ namespace Altaxo.Graph
 
 				return null; // assoc belongs not to any plot group
 			}
+
+				public PlotGroup this[int i]
+				{
+					get { return (PlotGroup)this.InnerList[i]; }
+				}
 
 
 			#region IChangedEventSource Members

@@ -44,6 +44,21 @@ namespace Altaxo.Graph
 			BarVert
 		}
 
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Shape),0)]
+		public class ShapeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddValue("Value",System.Enum.GetName(typeof(Shape),obj));  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				string val = info.GetString("Value");
+				return System.Enum.Parse(typeof(Shape),val,true);
+			}
+		}
+
 		[Serializable]
 		public enum Style
 		{
@@ -57,6 +72,20 @@ namespace Altaxo.Graph
 			BarVert
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Style),0)]
+		public class StyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddValue("Value",System.Enum.GetName(typeof(Style),obj));  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				string val = info.GetString("Value");
+				return System.Enum.Parse(typeof(Style),val,true);
+			}
+		}
+
 		[Flags]
 		[Serializable]
 		public enum DropLine
@@ -68,7 +97,24 @@ namespace Altaxo.Graph
 			Right=8,
 			All=Top|Bottom|Left|Right
 		}
+	
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DropLine),0)]
+		public class DropLineXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				info.AddValue("Value",System.Enum.GetName(typeof(DropLine),obj));  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				string val = info.GetString("Value");
+				return System.Enum.Parse(typeof(DropLine),val,true);
+			}
+		}
+	
 	} // end of class ScatterStyles
+
+
 
 	[SerializationSurrogate(0,typeof(ScatterStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
@@ -128,6 +174,38 @@ namespace Altaxo.Graph
 			}
 		}
 
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ScatterStyle),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				ScatterStyle s = (ScatterStyle)obj;
+				info.AddValue("Shape",s.m_Shape);  
+				info.AddValue("Style",s.m_Style);  
+				info.AddValue("DropLine",s.m_DropLine);
+				info.AddValue("Pen",s.m_Pen);
+				info.AddValue("SymbolSize",s.m_SymbolSize);
+				info.AddValue("RelativePenWidth",s.m_RelativePenWidth);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				ScatterStyle s = null!=o ? (ScatterStyle)o : new ScatterStyle();
+
+				s.m_Shape = (ScatterStyles.Shape)info.GetValue("Shape",typeof(ScatterStyles.Shape));  
+				s.m_Style = (ScatterStyles.Style)info.GetValue("Style",typeof(ScatterStyles.Style));  
+				s.m_DropLine = (ScatterStyles.DropLine)info.GetValue("DropLine",typeof(ScatterStyles.DropLine));
+				s.m_Pen = (PenHolder)info.GetValue("Pen",typeof(PenHolder));
+				s.m_SymbolSize = info.GetSingle("SymbolSize");
+				s.m_RelativePenWidth = info.GetSingle("RelativePenWidth");
+
+				// restore the cached values
+				s.SetCachedValues();
+				s.CreateEventChain();
+
+				return s;
+			}
+		}
 		/// <summary>
 		/// Finale measures after deserialization of the linear axis.
 		/// </summary>

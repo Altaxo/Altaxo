@@ -20,8 +20,8 @@ namespace Altaxo.Serialization.Xml
 		int GetInt32(string name);
 		void AddValue(string name, int val);
 
-		double GetSingle();
-		double GetSingle(string name);
+		float GetSingle();
+		float GetSingle(string name);
 		void AddValue(string name, float val);
 
 		double GetDouble();

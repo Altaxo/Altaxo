@@ -51,6 +51,35 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYCurvePlotItem),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				XYCurvePlotItem s = (XYCurvePlotItem)obj;
+				info.AddValue("Data",s.m_PlotData);  
+				info.AddValue("Style",s.m_PlotStyle); 
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				XYCurvePlotData pa  = (XYCurvePlotData)info.GetValue("Data",typeof(PlotAssociation));
+				PlotStyle ps = (PlotStyle)info.GetValue("Style",typeof(PlotStyle));
+		
+				if(null==o)
+				{
+					return new XYCurvePlotItem(pa,ps);
+				}
+				else
+				{
+					XYCurvePlotItem s = (XYCurvePlotItem)o;
+					s.Data = pa;
+					s.Style = ps;
+					return s;
+				}
+			
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization of the linear axis.
 		/// </summary>

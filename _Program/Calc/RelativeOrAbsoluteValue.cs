@@ -36,6 +36,28 @@ namespace Altaxo.Calc
 		/// </summary>
 		private double m_Value;
 
+		#region Serialization
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RelativeOrAbsoluteValue),0)]
+			public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				RelativeOrAbsoluteValue s = (RelativeOrAbsoluteValue)obj;
+					
+				info.AddValue("IsRelative",s.m_bIsRelative);
+				info.AddValue("Value",s.m_Value);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				bool rel = info.GetBoolean("IsRelative");
+				double val = info.GetDouble("Value");
+				return new RelativeOrAbsoluteValue(val,rel);
+			}
+		}
+		#endregion
+
+
 		/// <summary>
 		/// This creates the structure with the absolute value absval.
 		/// </summary>

@@ -157,6 +157,33 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotAssociation),0)]
+		public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				PlotAssociation s = (PlotAssociation)obj;
+				
+				info.AddValue("XColumn",s.m_xColumn);
+				info.AddValue("YColumn",s.m_yColumn);
+
+				info.AddValue("XBoundaries",s.m_xBoundaries);
+				info.AddValue("YBoundaries",s.m_yBoundaries);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				PlotAssociation s = null!=o ? (PlotAssociation)o : new PlotAssociation();
+
+				s.m_xColumn = (Altaxo.Data.IReadableColumn)info.GetValue("XColumn",typeof(Altaxo.Data.IReadableColumn));
+				s.m_yColumn = (Altaxo.Data.IReadableColumn)info.GetValue("YColumn",typeof(Altaxo.Data.IReadableColumn));
+
+				s.m_xBoundaries = (PhysicalBoundaries)info.GetValue("XBoundaries",typeof(PhysicalBoundaries));
+				s.m_yBoundaries = (PhysicalBoundaries)info.GetValue("YBoundaries",typeof(PhysicalBoundaries));
+	
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>
@@ -190,7 +217,10 @@ namespace Altaxo.Graph
 			this.SetYBoundsFromTemplate( new FinitePhysicalBoundaries() );
 
 		}
-	
+
+		protected PlotAssociation()
+		{
+		}
 
 		/// <summary>
 		/// Copy constructor.

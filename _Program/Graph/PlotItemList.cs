@@ -75,6 +75,52 @@ namespace Altaxo.Graph
 			}
 		}
 
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PlotList),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				PlotList s = (PlotList)obj;
+				
+				info.CreateArray("PlotItems",s.Count);
+				for(int i=0;i<s.Count;i++)
+					info.AddValue("PlotItem",s[i]);
+				info.CommitArray();
+
+				// now serialize the PlotGroups
+				info.CreateArray("PlotGroups",s.m_PlotGroups.Count);
+				for(int i=0;i<s.m_PlotGroups.Count;i++)
+				{
+					PlotGroup pg = (PlotGroup)s.m_PlotGroups[i];
+					info.AddValue("PlotGroup",new PlotGroup.Memento(pg,s));
+				}
+				info.CommitArray(); // PlotGroups
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				PlotList s = null!=o ? (PlotList)o : new PlotList();
+
+				int count = info.OpenArray();
+				for(int i=0;i<count;i++)
+				{
+					PlotGroup gr = (PlotGroup)info.GetValue("PlotItem",s);
+					s.Add(gr);
+				}
+				info.CloseArray(count);
+				
+				count = info.OpenArray(); // PlotGroups
+				for(int i=0;i<count;i++)
+				{
+					PlotGroup.Memento pgm = (PlotGroup.Memento)info.GetValue(s);
+					s.m_PlotGroups.Add(pgm.GetPlotGroup(s));
+				}
+				info.CloseArray(count);
+				
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>
@@ -98,6 +144,13 @@ namespace Altaxo.Graph
 		{
 			m_Owner = owner;
 			m_PlotGroups = new PlotGroup.Collection();
+		}
+
+		/// <summary>
+		/// Empty constructor for deserialization.
+		/// </summary>
+		protected PlotList()
+		{
 		}
 
 		/// <summary>

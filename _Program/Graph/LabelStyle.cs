@@ -119,6 +119,27 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SimpleLabelStyle),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				SimpleLabelStyle s = (SimpleLabelStyle)obj;
+				info.AddValue("Edge",s.m_Edge);  
+				info.AddValue("Font",s.m_Font);  
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				SimpleLabelStyle s = null!=o ? (SimpleLabelStyle)o : new SimpleLabelStyle(EdgeType.Left);
+
+				s.m_Edge = (Edge)info.GetValue("Edge",s);
+				s.m_Font = (Font)info.GetValue("Font",s);
+
+				return s;
+			}
+		}
+
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>

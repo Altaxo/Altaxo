@@ -153,6 +153,29 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LineScatterPlotStyle),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				LineScatterPlotStyle s = (LineScatterPlotStyle)obj;
+				info.AddValue("LineStyle",s.m_LineStyle);  
+				info.AddValue("ScatterStyle",s.m_ScatterStyle);
+				info.AddValue("LineSymbolGap",s.m_LineSymbolGap);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				LineScatterPlotStyle s = null!=o ? (LineScatterPlotStyle)o : new LineScatterPlotStyle();
+				// do not use settings lie s.LineStyle= here, since the LineStyle is cloned, but maybe not fully deserialized here!!!
+				s.LineStyle = (LineStyle)info.GetValue("LineStyle",typeof(LineStyle));
+				// do not use settings lie s.ScatterStyle= here, since the ScatterStyle is cloned, but maybe not fully deserialized here!!!
+				s.ScatterStyle = (ScatterStyle)info.GetValue("ScatterStyle",typeof(ScatterStyle));
+				s.LineSymbolGap = info.GetBoolean("LineSymbolGap");
+
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>

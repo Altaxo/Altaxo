@@ -88,6 +88,23 @@ namespace Altaxo.Graph
 			}
 		}
 
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ImageGraphic),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				ImageGraphic s = (ImageGraphic)obj;
+				info.AddBaseValueEmbedded(s,typeof(ImageGraphic).BaseType);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				ImageGraphic s =  (ImageGraphic)o;
+				info.GetBaseValueEmbedded(s,typeof(ImageGraphic).BaseType,parent);
+				return s;
+			}
+		}
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>
@@ -182,6 +199,25 @@ namespace Altaxo.Graph
 				return s;
 			}
 		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinkedImageGraphic),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				LinkedImageGraphic s = (LinkedImageGraphic)obj;
+				info.AddBaseValueEmbedded(s,typeof(LinkedImageGraphic).BaseType);
+				info.AddValue("ImagePath",s.m_ImagePath);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				LinkedImageGraphic s = null!=o ? (LinkedImageGraphic)o : new LinkedImageGraphic();
+				info.GetBaseValueEmbedded(s,typeof(LinkedImageGraphic).BaseType,parent);
+				s.m_ImagePath = info.GetString("ImagePath");
+				return s;
+			}
+		}
+
 
 		/// <summary>
 		/// Finale measures after deserialization.
@@ -400,6 +436,25 @@ namespace Altaxo.Graph
 				{
 					throw new NotImplementedException(string.Format("Serializing a {0} without surrogate not implemented yet!",obj.GetType()));
 				}
+				s.m_Image = (Image)info.GetValue("Image",typeof(Image));
+				return s;
+			}
+		}
+
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EmbeddedImageGraphic),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				EmbeddedImageGraphic s = (EmbeddedImageGraphic)obj;
+				info.AddBaseValueEmbedded(s,typeof(EmbeddedImageGraphic).BaseType);
+				info.AddValue("Image",s.m_Image);
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				EmbeddedImageGraphic s = null!=o ? (EmbeddedImageGraphic)o : new EmbeddedImageGraphic();
+				info.GetBaseValueEmbedded(s,typeof(EmbeddedImageGraphic).BaseType,parent);
 				s.m_Image = (Image)info.GetValue("Image",typeof(Image));
 				return s;
 			}
