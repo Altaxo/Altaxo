@@ -30,7 +30,7 @@ using Altaxo.Serialization;
 // associated with an assembly.
 //
 [assembly: AssemblyTitle("AltaxoBase")]
-[assembly: AssemblyDescription("Base Library for Altaxo")]
+[assembly: AssemblyDescription("Base Library for Altaxo ($Rev$)")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
 [assembly: AssemblyProduct("Altaxo")]
@@ -49,7 +49,7 @@ using Altaxo.Serialization;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("0.5.$Rev$.*")]
+[assembly: AssemblyVersion("0.50.*")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
