@@ -29,6 +29,19 @@ using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
+	/// <summary>
+	/// This enumeration declares the current choosen tool for the GraphControl
+	/// The numeric values have to match the icon positions in the corresponding toolbar
+	/// </summary>
+	public enum GraphTools 
+	{
+		/// <summary>The tool to click to the objects, dragging them, and open the object dialogs by doubleclicking on them</summary>
+		ObjectPointer=0,
+		/// <summary>The tool to write text, i.e. to create ExtendedTextGraphObjects</summary>
+		Text=1
+	}
+
+
 
 	/// <summary>
 	/// Interface to be implemented by a form or a control to be able to show a graph. This can either be a control or a form.
@@ -75,13 +88,107 @@ namespace Altaxo.Graph
 		/// </summary>
 		Size GraphSize { get; }
 
+
+		/// <summary>
+		/// Sets the currently selected GraphTool. The View has to show a toolbar or
+		/// so to provide a possibility for choosing tools. If the value is set by this
+		/// property, the toolbar has to reflect the state of this property.
+		/// </summary>
+		/// <remarks>The view must not send back a event, if the current tool is changed by this property.
+		/// It should only send the CurrentGraphToolChanged event to the controller, if the _user_ changed the current graph tool.</remarks>
+		GraphTools CurrentGraphTool { set; }
+
+		/// <summary>
+		/// Sets the currently active layer. If the view has some means to show the
+		/// currently active layer (like a toolbar or so), it has to indicate the current
+		/// active layer by setting the state of this indicator.
+		/// </summary>
+		/// <remarks>The view must not send back a event, if the current layer is changed by this property.
+		/// It should only send the CurrentLayerChanged event to the controller, if the _user_ changed the current layer.</remarks>
+		int       CurrentLayer { set; }
+
+	}
+
+
+	interface IGraphController
+	{
+		/// <summary>
+		/// This function is called if the user changed the active layer (by a toolbar or similar).
+		/// </summary>
+		/// <param name="currentLayer">The number of the currently active layer (choosen by the user).</param>
+		void EhView_CurrentLayerChanged(int currentLayer);
+	
+		/// <summary>
+		/// This function is called if the user changed the GraphTool.
+		/// </summary>
+		/// <param name="graphTool">The new selected GraphTool.</param>
+		void EhView_CurrentGraphToolChanged(GraphTools graphTool);
+	
+
+		/// <summary>
+		/// Handles the mouse up event onto the graph in the controller class.
+		/// </summary>
+		/// <param name="e">MouseEventArgs.</param>
+		void EhView_GraphPanelMouseUp(System.Windows.Forms.MouseEventArgs e);
+
+		/// <summary>
+		/// Handles the mouse down event onto the graph in the controller class.
+		/// </summary>
+		/// <param name="e">MouseEventArgs.</param>
+		void EhView_GraphPanelMouseDown(System.Windows.Forms.MouseEventArgs e);
+
+		/// <summary>
+		/// Handles the mouse move event onto the graph in the controller class.
+		/// </summary>
+		/// <param name="e">MouseEventArgs.</param>
+		void EhView_GraphPanelMouseMove(System.Windows.Forms.MouseEventArgs e);
+
+		/// <summary>
+		/// Handles the click onto the graph event in the controller class.
+		/// </summary>
+		/// <param name="e">EventArgs.</param>
+		void EhView_GraphPanelMouseClick(System.EventArgs e);
+
+		/// <summary>
+		/// Handles the double click onto the graph event in the controller class.
+		/// </summary>
+		/// <param name="e"></param>
+		void EhView_GraphPanelMouseDoubleClick(System.EventArgs e);
+	
+	
+		/// <summary>
+		/// Handles the paint event of that area, where the graph is shown.
+		/// </summary>
+		/// <param name="e">The paint event args.</param>
+		void EhView_GraphPanelPaint(System.Windows.Forms.PaintEventArgs e);
+
+	
+		/// <summary>
+		/// Handles the event when the size of the graph area is changed.
+		/// </summary>
+		/// <param name="e">EventArgs.</param>
+		void EhView_GraphPanelSizeChanged(System.EventArgs e);
+
+		/// <summary>
+		/// Handles the event when the graph view is closed.
+		/// </summary>
+		/// <param name="e">EventArgs.</param>
+		void EhView_Closed(System.EventArgs e);
+
+		/// <summary>
+		/// Handles the event when the graph view is about to be closed.
+		/// </summary>
+		/// <param name="e">CancelEventArgs.</param>
+		void EhView_Closing(System.ComponentModel.CancelEventArgs e);
+
+
 	}
 
 
 	/// <summary>
 	/// Summary description for GraphController.
 	/// </summary>
-	public class GraphController
+	public class GraphController : IGraphController
 	{
 
 		protected System.Windows.Forms.MainMenu m_MainMenu; // the Menu of this control to be merged
@@ -91,17 +198,6 @@ namespace Altaxo.Graph
 		protected IGraphView m_View;
 
 		
-		/// <summary>
-		/// This enumeration declares the current choosen tool for the GraphControl
-		/// The numeric values have to match the icon positions in the corresponding toolbar
-		/// </summary>
-		public enum GraphTools 
-		{
-			/// <summary>The tool to click to the objects, dragging them, and open the object dialogs by doubleclicking on them</summary>
-			ObjectPointer=0,
-			/// <summary>The tool to write text, i.e. to create ExtendedTextGraphObjects</summary>
-			Text=1
-		}
 
 
 		private const double MinimumGridSize = 20;
@@ -141,6 +237,11 @@ namespace Altaxo.Graph
 		/// the data is a int object, which stores the layer number the object belongs to.
 		/// </summary>
 		protected System.Collections.Hashtable m_SelectedObjects = new System.Collections.Hashtable();
+
+		/// <summary>
+		/// This holds a frozen image of the graph during the moving time
+		/// </summary>
+		protected Bitmap m_FrozenGraph=null;
 
 
 
@@ -462,7 +563,22 @@ namespace Altaxo.Graph
 
 		#region Other event handlers
 
-		private void GraphForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+
+		/// <summary>
+		/// Handles the selection of the current layer by the <b>user</b>.
+		/// </summary>
+		/// <param name="currLayer">The current layer number as selected by the user.</param>
+		public virtual void EhView_CurrentLayerChanged(int currLayer)
+		{
+			this.CurrentLayerNumber = currLayer;
+		}
+
+		public virtual void EhView_CurrentGraphToolChanged(GraphTools currGraphTool)
+		{
+			this.m_CurrentGraphTool = currGraphTool;
+		}
+
+		public virtual void EhView_Closing(System.ComponentModel.CancelEventArgs e)
 		{
 			System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.m_View.Window,"Do you really want to close this graph?","Attention",System.Windows.Forms.MessageBoxButtons.YesNo);
 
@@ -472,7 +588,7 @@ namespace Altaxo.Graph
 			}
 		}
 
-		private void GraphForm_Closed(object sender, System.EventArgs e)
+		public virtual void EhView_Closed(System.EventArgs e)
 		{
 			App.document.RemoveGraph(this.m_View.Form);
 		}
@@ -484,7 +600,7 @@ namespace Altaxo.Graph
 			DoPaint(g,true);
 		}
 
-		protected void EhSizeChanged(EventArgs e)
+		public virtual void EhView_GraphPanelSizeChanged(EventArgs e)
 		{
 			if(m_AutoZoom)
 			{
@@ -512,46 +628,48 @@ namespace Altaxo.Graph
 		/// <param name="e">The event arguments.</param>
 		protected void EhGraphDocument_LayerCollectionChanged(object sender, System.EventArgs e)
 		{
-			
+			int oldActiveLayer = this.m_CurrentLayerNumber;
+
 			// Ensure that the current layer and current plot are valid anymore
 			EnsureValidityOfCurrentLayerNumber();
 			EnsureValidityOfCurrentPlotNumber();
-			// firstly, check if the CurrentLayerNumber or CurrentPlotNumber are valid
-			// anymore by using them
-			int nCurrLayerNum = this.CurrentLayerNumber;
-			int nCurrPlotNum  = this.CurrentPlotNumber;
 
-			MatchLayerToolbarButtons();
+
+			if(oldActiveLayer!=this.m_CurrentLayerNumber)
+				m_View.CurrentLayer = this.m_CurrentLayerNumber;
 
 		}
 
 
-		private void OnGraphPanel_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+		public virtual void EhView_GraphPanelMouseUp(System.Windows.Forms.MouseEventArgs e)
 		{
 			m_MouseState = m_MouseState.OnMouseUp(this,e);
 		}
 
-		private void OnGraphPanel_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+		public virtual void EhView_GraphPanelMouseDown(System.Windows.Forms.MouseEventArgs e)
 		{
 			m_MouseState = m_MouseState.OnMouseDown(this,e);
 		}
 
-		private void OnGraphPanel_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+		public virtual void EhView_GraphPanelMouseMove(System.Windows.Forms.MouseEventArgs e)
 		{
 			m_MouseState = this.m_MouseState.OnMouseMove(this,e);
 		}
 
-		private void OnGraphPanel_Click(object sender, System.EventArgs e)
+		public virtual void EhView_GraphPanelMouseClick(System.EventArgs e)
 		{
 			m_MouseState = m_MouseState.OnClick(this,e);
 		}
 
-		private void OnGraphPanel_DoubleClick(object sender, System.EventArgs e)
+		public virtual void EhView_GraphPanelMouseDoubleClick(System.EventArgs e)
 		{
 			m_MouseState = m_MouseState.OnDoubleClick(this,e);
 		}
 
-
+		public virtual void EhView_GraphPanelPaint(System.Windows.Forms.PaintEventArgs e)
+		{
+			this.DoPaint(e.Graphics,false);
+		}
 
 		#endregion // Other event handlers
 
@@ -639,12 +757,15 @@ namespace Altaxo.Graph
 			set 
 			{
 				m_CurrentGraphTool = value;
-				
+				m_View.CurrentGraphTool = value;
+
+				/*
 				if(null!=this.m_GraphToolsToolBar)
 				{
 					for(int i=0;i<m_GraphToolsToolBar.Buttons.Count;i++)
 						m_GraphToolsToolBar.Buttons[i].Pushed = (i==(int)value);
 				}
+	*/
 
 				// select the appropriate mouse handler
 				switch(m_CurrentGraphTool)
@@ -692,6 +813,8 @@ namespace Altaxo.Graph
 			}
 			set
 			{
+				int oldValue = this.m_CurrentLayerNumber;
+
 				// negative values are only accepted if there is no layer
 				if(value<0 && m_Graph.Layers.Count>0)
 					throw new ArgumentOutOfRangeException("CurrentLayerNumber",value,"Accepted values must be >=0 if there is at least one layer in the graph!");
@@ -701,10 +824,16 @@ namespace Altaxo.Graph
 
 				m_CurrentLayerNumber = value<0 ? -1 : value;
 
-				// reflect the change in layer number in the layer tool bar
-				this.PushCurrentlyActiveLayerToolbarButton();
+				// if something changed
+				if(oldValue!=this.m_CurrentLayerNumber)
+				{
+					// reflect the change in layer number in the layer tool bar
+					m_View.CurrentLayer = this.m_CurrentLayerNumber;
 
-				this.UpdateDataPopup();
+					// since the layer changed, also the plots changed, so the menu has
+					// to reflect the new plots
+					this.UpdateDataPopup();
+				}
 			}
 		}
 
@@ -983,25 +1112,25 @@ namespace Altaxo.Graph
 			protected PointF m_LastMouseUp;
 			protected PointF m_LastMouseDown;
 
-			public virtual MouseStateHandler OnMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+			public virtual MouseStateHandler OnMouseMove(GraphController sender, System.Windows.Forms.MouseEventArgs e)
 			{
 				return this;
 			}
-			public virtual MouseStateHandler OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+			public virtual MouseStateHandler OnMouseUp(GraphController sender, System.Windows.Forms.MouseEventArgs e)
 			{
 				m_LastMouseUp = new Point(e.X,e.Y);
 				return this;
 			}
-			public virtual MouseStateHandler OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+			public virtual MouseStateHandler OnMouseDown(GraphController sender, System.Windows.Forms.MouseEventArgs e)
 			{
 				m_LastMouseDown = new Point(e.X,e.Y);
 				return this;
 			}
-			public virtual MouseStateHandler OnClick(object sender, System.EventArgs e)
+			public virtual MouseStateHandler OnClick(GraphController sender, System.EventArgs e)
 			{
 				return this;
 			}
-			public virtual MouseStateHandler OnDoubleClick(object sender, System.EventArgs e)
+			public virtual MouseStateHandler OnDoubleClick(GraphController sender, System.EventArgs e)
 			{
 				return this;
 			}
@@ -1024,11 +1153,9 @@ namespace Altaxo.Graph
 			protected bool m_bObjectsWereMoved=false;
 
 
-			public override MouseStateHandler OnMouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+			public override MouseStateHandler OnMouseMove(GraphController grac, System.Windows.Forms.MouseEventArgs e)
 			{
-				base.OnMouseMove(sender,e);
-
-				GraphControl grac = sender as GraphControl;
+				base.OnMouseMove(grac,e);
 
 				System.Console.WriteLine("MouseMove {0},{1}",e.X,e.Y);
 
@@ -1062,9 +1189,9 @@ namespace Altaxo.Graph
 					// now paint the objects on the new position
 					if(null!=grac.m_FrozenGraph)
 					{
-						Graphics g = grac.m_GraphPanel.CreateGraphics();
+						Graphics g = grac.m_View.CreateGraphics();
 						// first paint the frozen graph, and upon that, paint all selection rectangles
-						g.DrawImageUnscaled(grac.m_FrozenGraph,0,0,grac.m_GraphPanel.Width,grac.m_GraphPanel.Height);
+						g.DrawImageUnscaled(grac.m_FrozenGraph,0,0,grac.m_View.GraphSize.Width,grac.m_View.GraphSize.Height);
 
 						// now translate the graphics to graph units and paint all selection path
 						grac.TranslateGraphicsToGraphUnits(g);
@@ -1076,7 +1203,7 @@ namespace Altaxo.Graph
 					}
 					else  // if the graph was not frozen before - what reasons ever
 					{
-						grac.m_GraphPanel.Invalidate(); // rise a normal paint event
+						grac.m_View.InvalidateGraph(); // rise a normal paint event
 					}
 
 				}
@@ -1086,7 +1213,7 @@ namespace Altaxo.Graph
 			/// <summary>
 			/// Handles the MouseDown event when the object pointer tool is selected
 			/// </summary>
-			/// <param name="sender">The sender of the event</param>
+			/// <param name="grac">The sender of the event.</param>
 			/// <param name="e">The mouse event args</param>
 			/// <remarks>
 			/// The strategy to handle the mousedown event is as following:
@@ -1098,11 +1225,9 @@ namespace Altaxo.Graph
 			///		if no (we have not clicked on already selected objects) and no shift or control key pressed -> if a object was found add it to the selected objects and activate moving mode
 			///		                                                                                               if no object was found clear the selection list, deactivate moving mode
 			/// </remarks>
-			public override MouseStateHandler OnMouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+			public override MouseStateHandler OnMouseDown(GraphController grac, System.Windows.Forms.MouseEventArgs e)
 			{
-				base.OnMouseDown(sender, e);
-
-				GraphControl grac = sender as GraphControl;
+				base.OnMouseDown(grac, e);
 
 				if(e.Button != MouseButtons.Left)
 					return this; // then there is nothing to do here
@@ -1125,7 +1250,7 @@ namespace Altaxo.Graph
 					if(bShiftKey || bControlKey) // if shift or control is pressed, remove the selection
 					{
 						grac.m_SelectedObjects.Remove(clickedSelectedObject);
-						grac.InvalidateGraph(); // repaint the graph
+						grac.m_View.InvalidateGraph(); // repaint the graph
 					}
 					else // not shift or control pressed -> so activate the object moving mode
 					{
@@ -1167,18 +1292,16 @@ namespace Altaxo.Graph
 				return this;
 			} // end of function
 
-			public override MouseStateHandler OnMouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+			public override MouseStateHandler OnMouseUp(GraphController grac, System.Windows.Forms.MouseEventArgs e)
 			{
-				GraphControl grac = sender as GraphControl;
 				System.Console.WriteLine("MouseUp {0},{1}",e.X,e.Y);
 				EndMovingObjects(grac);
 				return this;
 			}
 
-			public override MouseStateHandler OnDoubleClick(object sender, System.EventArgs e)
+			public override MouseStateHandler OnDoubleClick(GraphController grac, System.EventArgs e)
 			{
-				base.OnDoubleClick(sender,e);
-				GraphControl grac = sender as GraphControl;
+				base.OnDoubleClick(grac,e);
 
 				System.Console.WriteLine("DoubleClick!");
 
@@ -1192,7 +1315,7 @@ namespace Altaxo.Graph
 					if(graphObject is Graph.ExtendedTextGraphObject)
 					{
 						TextControlDialog dlg = new TextControlDialog(grac.Layers[nLayer],(ExtendedTextGraphObject)graphObject);
-						if(DialogResult.OK==dlg.ShowDialog(grac))
+						if(DialogResult.OK==dlg.ShowDialog(grac.m_View.Window))
 						{
 							if(!dlg.TextGraphObject.Empty)
 							{
@@ -1204,7 +1327,7 @@ namespace Altaxo.Graph
 								grac.Layers[nLayer].Remove(graphObject);
 							}
 
-							grac.InvalidateGraph(); // repaint the graph
+							grac.m_View.InvalidateGraph(); // repaint the graph
 						}
 					}
 				}
@@ -1212,7 +1335,7 @@ namespace Altaxo.Graph
 			}
 
 
-			public override MouseStateHandler OnClick(object sender, System.EventArgs e)
+			public override MouseStateHandler OnClick(GraphController grac, System.EventArgs e)
 			{
 
 				System.Console.WriteLine("Click");
@@ -1225,7 +1348,7 @@ namespace Altaxo.Graph
 			/// Actions neccessary to start the dragging of graph objects
 			/// </summary>
 			/// <param name="currentMousePosition">the current mouse position in pixel</param>
-			protected void StartMovingObjects(GraphControl grac, PointF currentMousePosition)
+			protected void StartMovingObjects(GraphController grac, PointF currentMousePosition)
 			{
 				if(!m_bMoveObjectsOnMouseMove)
 				{
@@ -1234,8 +1357,8 @@ namespace Altaxo.Graph
 					m_MoveObjectsLastMovePoint = currentMousePosition;
 
 					// create a frozen bitmap of the graph
-					Graphics g = grac.m_GraphPanel.CreateGraphics(); // do not translate the graphics here!
-					grac.m_FrozenGraph = new Bitmap(grac.m_GraphPanel.Width,grac.m_GraphPanel.Height,g);
+					Graphics g = grac.m_View.CreateGraphics(); // do not translate the graphics here!
+					grac.m_FrozenGraph = new Bitmap(grac.m_View.GraphSize.Width,grac.m_View.GraphSize.Height,g);
 					Graphics gbmp = Graphics.FromImage(grac.m_FrozenGraph);
 					grac.DoPaint(gbmp,false);
 					gbmp.Dispose();
@@ -1245,7 +1368,7 @@ namespace Altaxo.Graph
 			/// <summary>
 			/// Actions neccessary to end the dragging of graph objects
 			/// </summary>
-			protected void EndMovingObjects(GraphControl grac)
+			protected void EndMovingObjects(GraphController grac)
 			{
 				bool bRepaint = m_bObjectsWereMoved; // repaint the graph when objects were really moved
 
@@ -1258,21 +1381,21 @@ namespace Altaxo.Graph
 				}
 			
 				if(bRepaint)
-					grac.InvalidateGraph(); // redraw the contents
+					grac.m_View.InvalidateGraph(); // redraw the contents
 
 			}
 
 			/// <summary>
 			/// Clears the selection list and repaints the graph if neccessary
 			/// </summary>
-			public void ClearSelections(GraphControl grac)
+			public void ClearSelections(GraphController grac)
 			{
 				bool bRepaint = (grac.m_SelectedObjects.Count>0); // is a repaint neccessary
 				grac.m_SelectedObjects.Clear();
 				EndMovingObjects(grac);
 
 				if(bRepaint)
-					grac.InvalidateGraph(); 
+					grac.m_View.InvalidateGraph(); 
 			}
 
 
@@ -1290,14 +1413,12 @@ namespace Altaxo.Graph
 			/// <summary>
 			/// Handles the click event by opening the text tool dialog.
 			/// </summary>
-			/// <param name="sender">The graph control.</param>
+			/// <param name="grac">The graph control.</param>
 			/// <param name="e">EventArgs.</param>
 			/// <returns>The mouse state handler for handling the next mouse events.</returns>
-			public override MouseStateHandler OnClick(object sender, System.EventArgs e)
+			public override MouseStateHandler OnClick(GraphController grac, System.EventArgs e)
 			{
-				base.OnClick(sender,e);
-
-				GraphControl grac = sender as GraphControl;
+				base.OnClick(grac,e);
 
 				// get the page coordinates (in Point (1/72") units)
 				PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
@@ -1311,13 +1432,13 @@ namespace Altaxo.Graph
 				grac.CurrentGraphTool = GraphTools.ObjectPointer;
 
 				TextControlDialog dlg = new TextControlDialog(grac.Layers[grac.CurrentLayerNumber],tgo);
-				if(DialogResult.OK==dlg.ShowDialog(grac))
+				if(DialogResult.OK==dlg.ShowDialog(grac.m_View.Window))
 				{
 					// add the resulting textgraphobject to the layer
 					if(!dlg.TextGraphObject.Empty)
 					{
 						grac.Layers[grac.CurrentLayerNumber].GraphObjects.Add(dlg.TextGraphObject);
-						grac.m_GraphPanel.Invalidate();
+						grac.m_View.InvalidateGraph();
 					}
 				}
 				return new ObjectPointerMouseHandler();

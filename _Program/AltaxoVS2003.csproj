@@ -269,6 +269,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Graph\GraphView.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GraphView.resx"
+                    DependentUpon = "GraphView.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Graph\ImageGraphics.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
