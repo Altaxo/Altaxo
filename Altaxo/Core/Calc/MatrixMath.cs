@@ -1646,13 +1646,24 @@ namespace Altaxo.Calc
       } // for each spectrum in XU
     } // end partial-least-squares-predict
 
+
+    /// <summary>
+    /// Performs a PLS cross validation.
+    /// </summary>
+    /// <param name="X">Matrix of spectra (a spectra is a row of this matrix).</param>
+    /// <param name="Y">Matrix of concentrations (one sample is one row of this matrix).</param>
+    /// <param name="numFactors">Maximal number of factors to use for PLS.</param>
+    /// <param name="bExcludeGroups">If true, groups of samples with the same Y values are exluded. If false, every single sample is excluded to perform cross validation.</param>
+    /// <param name="crossPRESSMatrix">Output: This is a k*1 matrix of resulting PRESS values, k being the max. number of factors.</param>
     public static void PartialLeastSquares_CrossValidation_HO(
       IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
       IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
       int numFactors,
+      bool bExcludeGroups,
       out IMatrix crossPRESSMatrix // vertical value of PRESS values for the cross validation
       )
     {
+
       IBottomExtensibleMatrix xLoads = new MatrixMath.BEMatrix(0,0); // out: the loads of the X matrix
       IBottomExtensibleMatrix yLoads = new MatrixMath.BEMatrix(0,0); // out: the loads of the Y matrix
       IBottomExtensibleMatrix W = new MatrixMath.BEMatrix(0,0); // matrix of weighting values
@@ -1660,31 +1671,95 @@ namespace Altaxo.Calc
 
       double[] crossPRESS = null;
 
-      int numberOfExcludedSpectraOfGroup = 1;
-
-      IMatrix XX = new BEMatrix(X.Rows-numberOfExcludedSpectraOfGroup,X.Columns);
-      IMatrix YY = new BEMatrix(Y.Rows-numberOfExcludedSpectraOfGroup,Y.Columns);
-      IMatrix XU = new BEMatrix(numberOfExcludedSpectraOfGroup,X.Columns);
-      IMatrix YU = new BEMatrix(numberOfExcludedSpectraOfGroup,Y.Columns);
-      IMatrix predY = new BEMatrix(numberOfExcludedSpectraOfGroup,Y.Columns);
-
-      for(int nGroup=0;nGroup < X.Rows;nGroup++)
+      System.Collections.ArrayList groups = new System.Collections.ArrayList();
+      if(bExcludeGroups)
       {
+        // add the first y-row to the first group
+        System.Collections.ArrayList newcoll = new System.Collections.ArrayList();
+        newcoll.Add(0);
+        groups.Add(newcoll);
+        // now test all other rows of the y-matrix against the existing groups
+        for(int i=1;i<Y.Rows;i++)
+        {
+          bool bNewGroup=true;
+          for(int gr=0;gr<groups.Count;gr++)
+          {
+            int refrow = (int)(((System.Collections.ArrayList)groups[gr])[0]);
+            bool match = true;
+            for(int j=0;j<Y.Columns;j++)
+            {
+              if(Y[i,j]!= Y[refrow,j])
+              {
+                match=false;
+                break;
+              }
+            }
+            
+            if(match)
+            {
+              bNewGroup=false;
+              ((System.Collections.ArrayList)groups[gr]).Add(i);
+              break;
+            }
+          }
+          if(bNewGroup)
+          {
+            newcoll = new System.Collections.ArrayList();
+            newcoll.Add(i);
+            groups.Add(newcoll);
+          }
+        }
+      }
+      else // exclude every single spectra
+      {
+        for(int i=0;i<Y.Rows;i++)
+        {
+          System.Collections.ArrayList newcoll = new System.Collections.ArrayList();
+          newcoll.Add(i);
+          groups.Add(newcoll);
+        }
+      }
+
+
+      IMatrix XX=null; 
+      IMatrix YY=null; 
+      IMatrix XU=null; 
+      IMatrix YU=null; 
+      IMatrix predY=null; 
+
+      for(int nGroup=0 ,prevNumExcludedSpectra = int.MinValue ;nGroup < groups.Count;nGroup++)
+      {
+        System.Collections.ArrayList spectralGroup = (System.Collections.ArrayList)groups[nGroup];
+        int numberOfExcludedSpectraOfGroup = spectralGroup.Count;
+
+        if(prevNumExcludedSpectra != numberOfExcludedSpectraOfGroup)
+        {
+          XX = new BEMatrix(X.Rows-numberOfExcludedSpectraOfGroup,X.Columns);
+          YY = new BEMatrix(Y.Rows-numberOfExcludedSpectraOfGroup,Y.Columns);
+          XU = new BEMatrix(numberOfExcludedSpectraOfGroup,X.Columns);
+          YU = new BEMatrix(numberOfExcludedSpectraOfGroup,Y.Columns);
+          predY = new BEMatrix(numberOfExcludedSpectraOfGroup,Y.Columns);
+          prevNumExcludedSpectra = numberOfExcludedSpectraOfGroup;
+        }
+
+
         // build a new x and y matrix with the group information
         // fill XX and YY with values
-        int i,j;
-        for(i=0,j=0;i<X.Rows;i++)
+        for(int i=0,j=0;i<X.Rows;i++)
         {
-          if(i==nGroup)
+          if(spectralGroup.Contains(i))
             continue; // Exclude this row from the spectra
           MatrixMath.SetRow(X,i,XX,j);
           MatrixMath.SetRow(Y,i,YY,j);
           j++;
         }
         // fill XU (unknown spectra) with values
-        MatrixMath.SetRow(X,nGroup,XU,0); // x-unkown (unknown spectra)
-        MatrixMath.SetRow(Y,nGroup,YU,0); // y-unkown (unknown concentration)
-
+        for(int i=0;i<spectralGroup.Count;i++)
+        {
+          int j = (int)(spectralGroup[i]);
+          MatrixMath.SetRow(X,j,XU,i); // x-unkown (unknown spectra)
+          MatrixMath.SetRow(Y,j,YU,i); // y-unkown (unknown concentration)
+        }
 
         // do a PLS with the builded matrices
         xLoads = new MatrixMath.BEMatrix(0,0); // clear xLoads
@@ -1738,7 +1813,9 @@ namespace Altaxo.Calc
     /// <summary>
     /// Class to calculate the singular value decomposition.
     /// </summary>
-    /// <remarks>Adapted from Lutz Roeders Mapack library.</remarks>
+    /// <remarks>
+    /// <para>Adapted from Lutz Roeders Mapack library.</para>
+    /// </remarks>
     public class SingularValueDecomposition : ISingularValueDecomposition
     {
       //private Matrix U;
@@ -1748,6 +1825,7 @@ namespace Altaxo.Calc
       private double[] s; // singular values
       double[] e;
       double[] work;
+      double[] _HatDiagonal;
       private int m;
       private int n;
     
@@ -2305,6 +2383,40 @@ namespace Altaxo.Calc
       public double[] Diagonal
       {
         get { return s; }
+      }
+
+      /// <summary>
+      /// Returns the Hat diagonal. The hat diagonal is the diagonal of the Hat
+      /// matrix, which is defined as
+      /// <code>
+      ///          T  -1  T        T
+      /// H = X  (X X)   X    = U U
+      /// </code>
+      /// </summary>
+      public double[] HatDiagonal
+      {
+        get
+        {
+          if(null==_HatDiagonal)
+          {
+            BuildHatDiagonal();
+          }
+          return _HatDiagonal;
+        }
+      }
+
+      protected void BuildHatDiagonal()
+      {
+        _HatDiagonal = new double[u.Length];
+        for(int i=0;i<u.Length;i++)
+        {
+          double sum = 0;
+          int cols = u[0].Length;
+          for(int j=0;j<cols;j++)
+            sum += u[i][j]*u[i][j];
+          
+          _HatDiagonal[i] = sum;
+        }
       }
 
       public double[][] U

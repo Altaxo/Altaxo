@@ -78,87 +78,93 @@
 using System;
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Functions for nonlinear minimization.
+  /// </summary>
   public class NLFit
   {
     const double DBL_EPSILON=2.2204460492503131e-016;
     public static double sqr(double x)  { return x*x; }
 
 
+    /// <summary>
+    /// User-supplied subroutine which calculates the functions to minimize.
+    /// Calculates <c>numberOfYs</c> functions dependent on <c>numberOfParameter</c> parameters and
+    /// returns the calculated y values in array <c>ys</c>. The value of <c>info</c> should
+    /// not be changed unless  the user wants to terminate execution of LevenbergMarquardtFit. 
+    /// In this case set iflag to a negative integer. 
+    /// </summary>
+    public delegate void LMFunction(
+      int numberOfYs, 
+      int numberOfParameter,
+      double[] parameter,
+      double[] ys,
+      ref int info);
 
-    //typedef void (*LMFunction) (int,int,double*,double*,int&);
-    public delegate void LMFunction(int numberOfYs, int numberOfParameter, double[] parameter, double[] ys, ref int info);
 
+    /// <summary>
+    /// The purpose of LevenbergMarquardtFit is to minimize the sum of the 
+    /// squares of m nonlinear functions in n variables by a modification of the 
+    /// Levenberg-Marquardt algorithm. This is done by using the more 
+    /// general least-squares solver below. The user must provide a 
+    /// subroutine which calculates the functions. The Jacobian is 
+    /// then calculated by a forward-difference approximation. 
+    /// </summary>
+    /// <param name="fcn">The user supplied function which provides the values to minimize.</param>
+    /// <param name="xvec">
+    /// Array of length n containing the parameter vector. On input x must contain 
+    /// an initial estimate of the solution vector. On output x 
+    /// contains the final estimate of the solution vector. 
+    /// </param>
+    /// <param name="fvec">Output array of length m which contains the functions evaluated at the output x. </param>
+    /// <param name="tol">
+    /// Nonnegative input variable. Termination occurs 
+    /// when the algorithm estimates either that the relative 
+    /// error in the sum of squares is at most tol or that 
+    /// the relative error between x and the solution is at 
+    /// most tol. 
+    /// </param>
+    /// <param name="info">
+    /// Info is an integer output variable. If the user has 
+    /// terminated execution, info is set to the (negative) 
+    /// value of iflag. See description of fcn. Otherwise, 
+    /// info is set as follows: 
+    ///
+    ///         info = 0  improper input parameters. 
+    ///
+    ///         info = 1  algorithm estimates that the relative error 
+    ///                   in the sum of squares is at most tol. 
+    ///
+    ///         info = 2  algorithm estimates that the relative error 
+    ///                   between x and the solution is at most tol. 
+    ///
+    ///         info = 3  conditions for info = 1 and info = 2 both hold. 
+    ///
+    ///         info = 4  fvec is orthogonal to the columns of the 
+    ///                   Jacobian to machine precision. 
+    ///
+    ///         info = 5  number of calls to fcn has reached or 
+    ///                   exceeded 200*(n+1). 
+    ///
+    ///         info = 6  tol is too small. No further reduction in 
+    ///                   the sum of squares is possible. 
+    ///
+    ///         info = 7  tol is too small. No further improvement in 
+    ///                   the approximate solution x is possible. 
+    /// </param>
+    /// <remarks>
+    /// This is the most easy-to-use interface with the smallest number of
+    /// arguments. If you need more control over the minimization process and
+    /// auxilliary storage allocation you should use one of the interfaces 
+    /// described below.
+    /// </remarks>
+    public static void LevenbergMarquardtFit(
+      LMFunction fcn, 
+      double[] xvec, 
+      double[] fvec, 
+      double tol, 
+      ref int info)
 
-    public static void LevenbergMarquardtFit (LMFunction fcn, double[] xvec, double[] fvec, 
-      double tol, ref int info)
-      //
-      // The purpose of LevenbergMarquardtFit is to minimize the sum of the 
-      // squares of m nonlinear functions in n variables by a modification of the 
-      // Levenberg-Marquardt algorithm. This is done by using the more 
-      // general least-squares solver below. The user must provide a 
-      // subroutine which calculates the functions. The Jacobian is 
-      // then calculated by a forward-difference approximation. 
-      //
-      // This is the most easy-to-use interface with the smallest number of
-      // arguments. If you need more control over the minimization process and
-      // auxilliary storage allocation you should use one of the interfaces 
-      // described below.
-      //
-      //       fcn is the name of the user-supplied subroutine which 
-      //         calculates the functions. fcn should be written as follows: 
-      //
-      //         void fcn (int m, int n, double* xvec, double* fvec, int& iflag)
-      //         {
-      //            ...
-      //            calculate the functions at xvec[0..n-1] and 
-      //            return this vector in fvec[0..m-1]. 
-      //            ...
-      //         }
-      //
-      //         The value of iflag should not be changed by fcn unless 
-      //         the user wants to terminate execution of LevenbergMarquardtFit. 
-      //         In this case set iflag to a negative integer. 
-      //   
-      //       xvec is an array of length n. On input x must contain 
-      //         an initial estimate of the solution vector. On output x 
-      //         contains the final estimate of the solution vector. 
-      //
-      //       fvec is an output array of length m which contains 
-      //         the functions evaluated at the output x. 
-      //
-      //       tol is a nonnegative input variable. Termination occurs 
-      //         when the algorithm estimates either that the relative 
-      //         error in the sum of squares is at most tol or that 
-      //         the relative error between x and the solution is at 
-      //         most tol. 
-      //
-      //       info is an integer output variable. If the user has 
-      //         terminated execution, info is set to the (negative) 
-      //         value of iflag. See description of fcn. Otherwise, 
-      //         info is set as follows: 
-      //
-      //         info = 0  improper input parameters. 
-      //
-      //         info = 1  algorithm estimates that the relative error 
-      //                   in the sum of squares is at most tol. 
-      //
-      //         info = 2  algorithm estimates that the relative error 
-      //                   between x and the solution is at most tol. 
-      //
-      //         info = 3  conditions for info = 1 and info = 2 both hold. 
-      //
-      //         info = 4  fvec is orthogonal to the columns of the 
-      //                   Jacobian to machine precision. 
-      //
-      //         info = 5  number of calls to fcn has reached or 
-      //                   exceeded 200*(n+1). 
-      //
-      //         info = 6  tol is too small. No further reduction in 
-      //                   the sum of squares is possible. 
-      //
-      //         info = 7  tol is too small. No further improvement in 
-      //                   the approximate solution x is possible. 
-      //
     {
       int m,n;
       int[] iwa;
@@ -188,80 +194,79 @@ namespace Altaxo.Calc
     }
 
 
-    //void LevenbergMarquardtFit (LMFunction fcn, Vector& xvec, Vector& fvec, 
-    //          double tol, int& info, int *iwa, double *wa, int lwa)
-    public static void LevenbergMarquardtFit (LMFunction fcn, double[] xvec, double[] fvec, 
-      double tol, ref int info, int[] iwa, double[] diag, double[] fjac, int[] ipvt, double[] qtf, double[] wa1, double[] wa2, double[] wa3,
+    
+    
+    /// <summary>
+    /// The purpose of LevenbergMarquardtFit is to minimize the sum of the 
+    /// squares of m nonlinear functions in n variables by a modification of the 
+    /// Levenberg-Marquardt algorithm. This is done by using the more 
+    /// general least-squares solver below. The user must provide a 
+    /// subroutine which calculates the functions. The Jacobian is 
+    /// then calculated by a forward-difference approximation. 
+    /// </summary>
+    /// <param name="fcn">The user supplied function which provides the values to minimize.</param>
+    /// <param name="xvec">
+    /// Array of length n containing the parameter vector. On input x must contain 
+    /// an initial estimate of the solution vector. On output x 
+    /// contains the final estimate of the solution vector. 
+    /// </param>
+    /// <param name="fvec">Output array of length m which contains the functions evaluated at the output x. </param>
+    /// <param name="tol">
+    /// Nonnegative input variable. Termination occurs 
+    /// when the algorithm estimates either that the relative 
+    /// error in the sum of squares is at most tol or that 
+    /// the relative error between x and the solution is at 
+    /// most tol. 
+    /// </param>
+    /// <param name="info">
+    /// Info is an integer output variable. If the user has 
+    /// terminated execution, info is set to the (negative) 
+    /// value of iflag. See description of fcn. Otherwise, 
+    /// info is set as follows: 
+    ///
+    ///         info = 0  improper input parameters. 
+    ///
+    ///         info = 1  algorithm estimates that the relative error 
+    ///                   in the sum of squares is at most tol. 
+    ///
+    ///         info = 2  algorithm estimates that the relative error 
+    ///                   between x and the solution is at most tol. 
+    ///
+    ///         info = 3  conditions for info = 1 and info = 2 both hold. 
+    ///
+    ///         info = 4  fvec is orthogonal to the columns of the 
+    ///                   Jacobian to machine precision. 
+    ///
+    ///         info = 5  number of calls to fcn has reached or 
+    ///                   exceeded 200*(n+1). 
+    ///
+    ///         info = 6  tol is too small. No further reduction in 
+    ///                   the sum of squares is possible. 
+    ///
+    ///         info = 7  tol is too small. No further improvement in 
+    ///                   the approximate solution x is possible. 
+    /// </param>
+    /// <remarks>
+    /// This is the most easy-to-use interface with the smallest number of
+    /// arguments. If you need more control over the minimization process and
+    /// auxilliary storage allocation you should use one of the interfaces 
+    /// described below.
+    /// </remarks>
+    public static void LevenbergMarquardtFit(
+      LMFunction fcn,
+      double[] xvec,
+      double[] fvec, 
+      double tol,
+      ref int info,
+      int[] iwa,
+      double[] diag,
+      double[] fjac, 
+      int[] ipvt,
+      double[] qtf, 
+      double[] wa1, 
+      double[] wa2,
+      double[] wa3,
       double[] wa4)
-      //
-      // The purpose of LevenbergMarquardtFit is to minimize the sum of the 
-      // squares of m nonlinear functions in n variables by a modification of the 
-      // Levenberg-Marquardt algorithm. This is done by using the more 
-      // general least-squares solver below. The user must provide a 
-      // subroutine which calculates the functions. The Jacobian is 
-      // then calculated by a forward-difference approximation. 
-      //
-      // Use this interface to the Levenberg-Marquardt algorithm if you want
-      // to control the allocation of intermediate storage yourself, but leave
-      // control to the minimization process to the machine. Use the more general
-      // described below to get full control.
-      //
-      //     Arguments:
-      //
-      //       fcn is the name of the user-supplied subroutine which 
-      //         calculates the functions. fcn should be written as follows: 
-      //
-      //         void fcn (int m, int n, double* xvec, double* fvec, int& iflag)
-      //         {
-      //            ...
-      //            calculate the functions at xvec[0..n-1] and 
-      //            return this vector in fvec[0..m-1]. 
-      //            ...
-      //         }
-      //         
-      //         The value of iflag should not be changed by fcn unless 
-      //         the user wants to terminate execution of LevenbergMarquardtFit. 
-      //         In this case set iflag to a negative integer. 
-      //
-      //       xvec is an array of length n. On input x must contain 
-      //         an initial estimate of the solution vector. On output x 
-      //         contains the final estimate of the solution vector. 
-      //
-      //       fvec is an output array of length m which contains 
-      //         the functions evaluated at the output x. 
-      //
-      //       tol is a nonnegative input variable. Termination occurs 
-      //         when the algorithm estimates either that the relative 
-      //         error in the sum of squares is at most tol or that 
-      //         the relative error between x and the solution is at 
-      //         most tol. 
-      //
-      //       info is an integer output variable. if the user has 
-      //         terminated execution, info is set to the (negative) 
-      //         value of iflag. See description of fcn. Otherwise, 
-      //         info is set as follows: 
-      //
-      //         info = 0  improper input parameters. 
-      //
-      //         info = 1  algorithm estimates that the relative error 
-      //                   in the sum of squares is at most tol. 
-      //
-      //         info = 2  algorithm estimates that the relative error 
-      //                   between x and the solution is at most tol. 
-      //
-      //         info = 3  conditions for info = 1 and info = 2 both hold. 
-      //
-      //         info = 4  fvec is orthogonal to the columns of the 
-      //                   Jacobian to machine precision. 
-      //
-      //         info = 5  number of calls to fcn has reached or 
-      //                   exceeded 200*(n+1). 
-      //
-      //         info = 6  tol is too small. no further reduction in 
-      //                   the sum of squares is possible. 
-      //
-      //         info = 7  tol is too small. no further improvement in 
-      //                   the approximate solution x is possible. 
       //
       //       iwa is an integer work array of length n. 
       //
@@ -1393,35 +1398,31 @@ namespace Altaxo.Calc
     }
 
 
-    //static double enorm (int n, double *x)
+    /// <summary>
+    /// given an n-vector x, this function calculates the 
+    /// euclidean norm of x. 
+    /// </summary>
+    /// <param name="n">n is a positive integer input variable.</param>
+    /// <param name="x">x is an input array of length n. </param>
+    /// <returns>Euclidean norm of x.</returns>
+    /// <remarks>
+    /// the euclidean norm is computed by accumulating the sum of 
+    /// squares in three different sums. the sums of squares for the 
+    /// small and large components are scaled so that no overflows 
+    /// occur. non-destructive underflows are permitted. underflows 
+    /// and overflows do not occur in the computation of the unscaled 
+    /// sum of squares for the intermediate components. 
+    /// the definitions of small, intermediate and large components 
+    /// depend on two constants, rdwarf and rgiant. the main 
+    /// restrictions on these constants are that rdwarf**2 not 
+    /// underflow and rgiant**2 not overflow. the constants 
+    /// given here are suitable for every known computer. 
+    /// <para>burton s. garbow, kenneth e. hillstrom, jorge j. more</para> 
+    /// </remarks>
     public static double enorm (int n, double[] x)
       //
-      //     given an n-vector x, this function calculates the 
-      //     euclidean norm of x. 
-      //
-      //     the euclidean norm is computed by accumulating the sum of 
-      //     squares in three different sums. the sums of squares for the 
-      //     small and large components are scaled so that no overflows 
-      //     occur. non-destructive underflows are permitted. underflows 
-      //     and overflows do not occur in the computation of the unscaled 
-      //     sum of squares for the intermediate components. 
-      //     the definitions of small, intermediate and large components 
-      //     depend on two constants, rdwarf and rgiant. the main 
-      //     restrictions on these constants are that rdwarf**2 not 
-      //     underflow and rgiant**2 not overflow. the constants 
-      //     given here are suitable for every known computer. 
-      //
-      //     the function statement is 
-      //
-      //       double precision function enorm(n,x) 
-      //
-      //     where 
-      //
-      //       n is a positive integer input variable. 
-      //
-      //       x is an input array of length n. 
-      //     burton s. garbow, kenneth e. hillstrom, jorge j. more 
-      //
+  
+     
     {
       const double rdwarf = 3.834e-20;
       const double rgiant = 1.304e19;
@@ -1498,34 +1499,22 @@ namespace Altaxo.Calc
     /// <param name="x">An input array of length n. </param>
     /// <param name="startindex">The index of the first element in x to process.</param>
     /// <returns>The euclidian norm of the vector of length n, i.e. the square root of the sum of squares of the elements.</returns>
+    /// <remarks>
+    ///     the euclidean norm is computed by accumulating the sum of 
+    ///     squares in three different sums. the sums of squares for the 
+    ///     small and large components are scaled so that no overflows 
+    ///     occur. non-destructive underflows are permitted. underflows 
+    ///     and overflows do not occur in the computation of the unscaled 
+    ///     sum of squares for the intermediate components. 
+    ///     the definitions of small, intermediate and large components 
+    ///     depend on two constants, rdwarf and rgiant. the main 
+    ///     restrictions on these constants are that rdwarf**2 not 
+    ///     underflow and rgiant**2 not overflow. the constants 
+    ///     given here are suitable for every known computer. 
+    ///     <para>burton s. garbow, kenneth e. hillstrom, jorge j. more</para>
+    ///      
+    /// </remarks>
     public static double enorm (int n, double[] x, int startindex)
-      //
-      //     given an n-vector x, this function calculates the 
-      //     euclidean norm of x. 
-      //
-      //     the euclidean norm is computed by accumulating the sum of 
-      //     squares in three different sums. the sums of squares for the 
-      //     small and large components are scaled so that no overflows 
-      //     occur. non-destructive underflows are permitted. underflows 
-      //     and overflows do not occur in the computation of the unscaled 
-      //     sum of squares for the intermediate components. 
-      //     the definitions of small, intermediate and large components 
-      //     depend on two constants, rdwarf and rgiant. the main 
-      //     restrictions on these constants are that rdwarf**2 not 
-      //     underflow and rgiant**2 not overflow. the constants 
-      //     given here are suitable for every known computer. 
-      //
-      //     the function statement is 
-      //
-      //       double precision function enorm(n,x) 
-      //
-      //     where 
-      //
-      //       n is a positive integer input variable. 
-      //
-      //       x is an input array of length n. 
-      //     burton s. garbow, kenneth e. hillstrom, jorge j. more 
-      //
     {
       const double rdwarf = 3.834e-20;
       const double rgiant = 1.304e19;
@@ -1596,67 +1585,41 @@ namespace Altaxo.Calc
 
 
 
-
-    //static void fdjac2 (LMFunction fcn, int m, int n, double *x, double *fvec, double *fjac, 
-    //        int ldfjac, int& iflag, double epsfcn, double *wa)
-    public static void fdjac2 (LMFunction fcn, int m, int n, double[] x, double[] fvec, double[] fjac, 
-      int ldfjac, ref int iflag, double epsfcn, double[] wa)
-      //
-      //     this subroutine computes a forward-difference approximation 
-      //     to the m by n Jacobian matrix associated with a specified 
-      //     problem of m functions in n variables. 
-      //
-      //     the subroutine statement is 
-      //
-      //       subroutine fdjac2(fcn,m,n,x,fvec,fjac,ldfjac,iflag,epsfcn,wa) 
-      //
-      //     where 
-      //
-      //       fcn is the name of the user-supplied subroutine which 
-      //         calculates the functions. fcn should be written as follows: 
-      //
-      //         void fcn (int m, int n, double* xvec, double* fvec, int& iflag)
-      //         {
-      //            ...
-      //            calculate the functions at xvec[0..n-1] and 
-      //            return this vector in fvec[0..m-1]. 
-      //            ...
-      //         }
-      //
-      //         The value of iflag should not be changed by fcn unless 
-      //         the user wants to terminate execution of LevenbergMarquardtFit. 
-      //         In this case set iflag to a negative integer. 
-      //
-      //       m is a positive integer input variable set to the number 
-      //         of functions. 
-      //
-      //       n is a positive integer input variable set to the number 
-      //         of variables. n must not exceed m. 
-      //
-      //       x is an input array of length n. 
-      //
-      //       fvec is an input array of length m which must contain the 
-      //         functions evaluated at x. 
-      //
-      //       fjac is an output m by n array which contains the 
-      //         approximation to the Jacobian matrix evaluated at x. 
-      //
-      //       ldfjac is a positive integer input variable not less than m 
-      //         which specifies the leading dimension of the array fjac. 
-      //
-      //       iflag is an integer variable which can be used to terminate 
-      //         the execution of fdjac2. see description of fcn. 
-      //
-      //       epsfcn is an input variable used in determining a suitable 
-      //         step length for the forward-difference approximation. this 
-      //         approximation assumes that the relative errors in the 
-      //         functions are of the order of epsfcn. if epsfcn is less 
-      //         than the machine precision, it is assumed that the relative 
-      //         errors in the functions are of the order of the machine 
-      //         precision. 
-      //
-      //       wa is a work array of length m. 
-      //
+    /// <summary>
+    /// This subroutine computes a forward-difference approximation 
+    /// to the m by n Jacobian matrix associated with a specified 
+    /// problem of m functions in n variables. 
+    /// </summary>
+    /// <param name="fcn">User-supplied subroutine which  calculates the functions</param>
+    /// <param name="m">m is a positive integer input variable set to the number of functions.</param>
+    /// <param name="n">n is a positive integer input variable set to the number of variables. n must not exceed m.</param>
+    /// <param name="x">x is an input array of length n containing the parameters.</param>
+    /// <param name="fvec">fvec is an input array of length m which must contain the functions evaluated at x. </param>
+    /// <param name="fjac">fjac is an output m by n array which contains the approximation to the Jacobian matrix evaluated at x.</param>
+    /// <param name="ldfjac">ldfjac is a positive integer input variable not less than m which specifies the leading dimension of the array fjac. </param>
+    /// <param name="iflag">iflag is an integer variable which can be used to terminate the execution of fdjac2. see description of fcn.</param>
+    /// <param name="epsfcn">
+    /// epsfcn is an input variable used in determining a suitable 
+    /// step length for the forward-difference approximation. this 
+    /// approximation assumes that the relative errors in the 
+    /// functions are of the order of epsfcn. if epsfcn is less 
+    /// than the machine precision, it is assumed that the relative 
+    /// errors in the functions are of the order of the machine 
+    /// precision. 
+    /// </param>
+    /// <param name="wa">wa is a work array of length m.</param>
+    public static void fdjac2(
+      LMFunction fcn,
+      int m, 
+      int n, 
+      double[] x, 
+      double[] fvec, 
+      double[] fjac, 
+      int ldfjac,
+      ref int iflag,
+      double epsfcn,
+      double[] wa)
+     
     {
       int fjac_dim1;
       double temp, h;

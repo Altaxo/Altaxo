@@ -26,7 +26,8 @@ namespace Altaxo.Calc.Fitting
 {
 
   /// <summary>
-  /// Evaluates a function base of the variable x.
+  /// Evaluates a function base of the variable x. The function base is returned in
+  /// array <c>functionbase</c>.
   /// </summary>
   public delegate void FunctionBaseEvaluator(double x, double[] functionbase);
 
@@ -118,6 +119,13 @@ namespace Altaxo.Calc.Fitting
     }
 
 
+    /// <summary>
+    /// Calculates the mean value of <c>length</c> elements in array x starting from index <c>start</c>.
+    /// </summary>
+    /// <param name="x">The array of values.</param>
+    /// <param name="start">First element.</param>
+    /// <param name="length">Number of elements used for calculation.</param>
+    /// <returns></returns>
     public static double Mean(double[] x, int start, int length)
     {
       double sum=0;
@@ -128,6 +136,15 @@ namespace Altaxo.Calc.Fitting
       return sum/length;
     }
 
+    /// <summary>
+    /// Calculates the corrected sum of squares of <c>length</c> elements of array x starting from index <c>start</c>. The corrected sum
+    /// of squares is defined as sum of squares of the elements minus their mean value.
+    /// </summary>
+    /// <param name="x">Array of values.</param>
+    /// <param name="mean">Mean value of the values.</param>
+    /// <param name="start">Starting index.</param>
+    /// <param name="length">Number of elements used for calculation.</param>
+    /// <returns></returns>
     public static double CorrectedSumOfSquares(double[] x, double mean, int start, int length)
     {
       int end = start + length;
@@ -146,6 +163,9 @@ namespace Altaxo.Calc.Fitting
     /// </summary>
     public int NumberOfParameter { get { return _numberOfParameter; }}
 
+    /// <summary>
+    /// Returns the number of data value.
+    /// </summary>
     public int NumberOfData { get { return _numberOfData; }}
 
     /// <summary>

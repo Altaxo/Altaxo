@@ -368,6 +368,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
 
+
+
     /// <summary>
     /// Makes a PLS (a partial least squares) analysis of the table or the selected columns / rows and stores the results in a newly created table.
     /// </summary>
@@ -387,12 +389,15 @@ namespace Altaxo.Worksheet.Commands.Analysis
       bool bHorizontalOrientedSpectrum
       )
     {
+      Altaxo.Data.DataColumn xColumnOfX=null;
+      Altaxo.Data.DataColumn labelColumnOfX=null;
+
       bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
       
       // this is the number of columns (for now), but it can be less than this in case
       // not all columns are numeric
       int prenumcols = bUseSelectedColumns ? selectedColumns.Count : srctable.DataColumns.ColumnCount;
-      int[] numericDataCols = new int[prenumcols];
+      AscendingIntegerCollection numericDataCols = new Altaxo.Collections.AscendingIntegerCollection();
 
       // check for the number of numeric columns
       int numcols = 0;
@@ -401,7 +406,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         int idx = bUseSelectedColumns ? selectedColumns[i] : i;
         if(srctable[idx] is Altaxo.Data.INumericColumn)
         {
-          numericDataCols[numcols] = idx;  
+          numericDataCols.Add(idx);  
           numcols++;
         }
       }
@@ -528,6 +533,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         }
 
         // fill in the x-values
+        labelColumnOfX = new Altaxo.Data.DoubleColumn();
         matrixX = new Altaxo.Calc.MatrixMath.BEMatrix(numrows,groupcount1);
         ccol=0;
         for(int i=0;i<numcols;i++)
@@ -541,10 +547,16 @@ namespace Altaxo.Worksheet.Commands.Analysis
           {
             int rowidx = bUseSelectedRows ? selectedRows[j] : j;
             matrixX[j,ccol] = col.GetDoubleAt(rowidx);
+            labelColumnOfX[j] = rowidx;
           }
+
           ccol++;
         }
 
+        // store the corresponding X-Column of the spectra
+        xColumnOfX = Altaxo.Data.DataColumn.CreateColumnOfSelectedRows(
+          srctable.PropertyColumns.FindXColumnOfGroup(group1),
+          numericDataCols);
 
       }
       else // vertically oriented spectrum -> one spectrum is one data column
@@ -570,17 +582,24 @@ namespace Altaxo.Worksheet.Commands.Analysis
         } // end fill in yvalues
 
         // fill in the x-values, i.e. the spectrum
+        labelColumnOfX = new Altaxo.Data.DoubleColumn();
         matrixX = new Altaxo.Calc.MatrixMath.BEMatrix(numcols,numrows);
         for(int i=0;i<numcols;i++)
         {
+          labelColumnOfX[i] = numericDataCols[i];
           Altaxo.Data.INumericColumn col = srctable[numericDataCols[i]] as Altaxo.Data.INumericColumn;
           for(int j=0;j<numrows;j++)
           {
             int rowidx = bUseSelectedRows ? selectedRows[j] : j;
             matrixX[i,j] = col.GetDoubleAt(rowidx);
           }
-      
         } // end fill in x-values
+
+        // store the corresponding X-Column of the spectra
+        xColumnOfX = Altaxo.Data.DataColumn.CreateColumnOfSelectedRows(
+          srctable.DataColumns.FindXColumnOf(srctable[numericDataCols[0]]),
+          bUseSelectedRows ? selectedRows: null);
+
       } // else vertically oriented spectrum
 
 
@@ -612,6 +631,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       // Fill the Table
       table.Suspend();
 
+      table.DataColumns.Add(xColumnOfX,"XOfX",Altaxo.Data.ColumnKind.X,0);
+
       // store the x-loads - careful - they are horizontal in the matrix
       for(int i=0;i<xLoads.Rows;i++)
       {
@@ -642,7 +663,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         for(int j=0;j<W.Columns;j++)
           col[j] = W[i,j];
         
-        table.DataColumns.Add(col,"Weight"+i.ToString(),Altaxo.Data.ColumnKind.V,2);
+        table.DataColumns.Add(col,"Weight"+i.ToString(),Altaxo.Data.ColumnKind.V,0);
       }
 
       // now store the cross product vector - it is a horizontal vector
@@ -657,10 +678,19 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       // now a cross validation - this can take a long time for bigger matrices
       Altaxo.Calc.IMatrix crossPRESSMatrix;
-      Altaxo.Calc.MatrixMath.PartialLeastSquares_CrossValidation_HO(matrixX,matrixY,numFactors, out crossPRESSMatrix);
+      Altaxo.Calc.MatrixMath.PartialLeastSquares_CrossValidation_HO(matrixX,matrixY,numFactors, true, out crossPRESSMatrix);
+
+      
+      Altaxo.Data.DoubleColumn xNumFactor= new Altaxo.Data.DoubleColumn();
+
+      
       Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
       for(int i=0;i<crossPRESSMatrix.Rows;i++)
+      { 
+        xNumFactor[i]=i;
         col[i] = crossPRESSMatrix[i,0];
+      }
+      table.DataColumns.Add(xNumFactor,"NumberOfFactors",Altaxo.Data.ColumnKind.X,4);
       table.DataColumns.Add(col,"CrossPRESS",Altaxo.Data.ColumnKind.V,4);
     }
 
@@ -670,6 +700,19 @@ namespace Altaxo.Worksheet.Commands.Analysis
       
       table.DataColumns.Add(presscol,"PRESS",Altaxo.Data.ColumnKind.V,4);
       presscol[0] = Altaxo.Calc.MatrixMath.SumOfSquares(matrixY); // gives the press for 0 factors, i.e. the variance of the y-matrix
+
+      // now add the original Y-Columns
+      for(int i=0;i<matrixY.Columns;i++)
+      {
+        Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
+        for(int j=0;j<matrixY.Rows;j++)
+          col[j]=matrixY[j,i] + meanY[0,i];
+        table.DataColumns.Add(col,"YOrg"+i.ToString(),Altaxo.Data.ColumnKind.X,5+i);
+      }
+      
+      table.DataColumns.Add(labelColumnOfX,"XLabel",Altaxo.Data.ColumnKind.Label,5);
+
+      // and now the predicted Y 
       for(int nFactor=1;nFactor<=numFactors;nFactor++)
       {
         Altaxo.Calc.MatrixMath.PartialLeastSquares_Predict_HO(matrixX,xLoads,yLoads,W,V,nFactor, ref yPred);
@@ -686,7 +729,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
           for(int j=0;j<yPred.Rows;j++)
             col[j] = yPred[j,i] + meanY[0,i];
         
-          table.DataColumns.Add(col,"YPred"+nFactor.ToString()+ "_" + i.ToString(),Altaxo.Data.ColumnKind.V,5+nFactor);
+          table.DataColumns.Add(col,"YPred"+nFactor.ToString()+ "_" + i.ToString(),Altaxo.Data.ColumnKind.V,5+i);
         }
       } // for nFactor...
 

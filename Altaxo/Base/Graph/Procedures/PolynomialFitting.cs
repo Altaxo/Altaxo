@@ -131,7 +131,8 @@ namespace Altaxo.Graph.Procedures
       for(int i=0;i<earr.Length;i++)
         earr[i]=1;
 
-      double[] parameter= new double[order+1];
+      int numberOfParameter = order+1;
+      double[] parameter= new double[numberOfParameter];
       Altaxo.Calc.Fitting.LinearFitBySvd fit = 
         new Altaxo.Calc.Fitting.LinearFitBySvd(
         xarr,yarr,earr,numberOfDataPoints, order+1, new Altaxo.Calc.Fitting.FunctionBaseEvaluator(EvaluatePolynomialBase),1E-5);
@@ -139,17 +140,55 @@ namespace Altaxo.Graph.Procedures
       // Output of results
 
       Current.Console.WriteLine("");
-      Current.Console.WriteLine("---- " + DateTime.Now.ToLongDateString() + " -----------------------");
+      Current.Console.WriteLine("---- " + DateTime.Now.ToString() + " -----------------------");
       Current.Console.WriteLine("Polynomial regression of order {0} of {1} over {2}",order,plotNames[1],plotNames[0]);
 
       for(int i=0;i<fit.Parameter.Length;i++)
-        Current.Console.WriteLine("A{0}: {1} ± {2}",i, fit.Parameter[i],fit.SigmaSquare*fit.Covariances[i][i]);
+        Current.Console.WriteLine("A{0}: {1} ± {2} {3} {4}",
+          i,
+          fit.Parameter[i],
+          fit.EstimatedVariance*fit.Covariances[i][i],
+          fit.TofParameter(i),
+          1-Calc.Random.FDistribution.CDF(fit.TofParameter(i),numberOfParameter,numberOfDataPoints-1)
+          );
+
+      Current.Console.WriteLine("R²: {0}, Adjusted R²: {1}",
+      fit.RSquared,
+      fit.AdjustedRSquared);
+
+      Current.Console.WriteLine("------------------------------------------------------------");
+      Current.Console.WriteLine("Source of     Degrees of");
+      Current.Console.WriteLine("variation     freedom          Mean Square   F0      P value");
+
+      double regressionmeansquare = fit.RegressionCorrectedSumOfSquares/numberOfParameter;
+      double residualmeansquare = fit.ResidualSumOfSquares/(numberOfDataPoints-numberOfParameter-1);
+     
+      Current.Console.WriteLine("Regression    {0} {1} {2} {3} {4}",
+         numberOfParameter,
+        fit.RegressionCorrectedSumOfSquares,
+        fit.RegressionCorrectedSumOfSquares/numberOfParameter,
+        regressionmeansquare/residualmeansquare,
+        1-Calc.Random.FDistribution.CDF(regressionmeansquare/residualmeansquare,numberOfParameter,numberOfDataPoints-1)
+      );
+
+      Current.Console.WriteLine("Residual      {0} {1} {2}",
+        numberOfDataPoints-1-numberOfParameter,
+        fit.ResidualSumOfSquares,
+        residualmeansquare
+        );
 
 
+      Current.Console.WriteLine("Total         {0} {1}",
+        numberOfDataPoints-1,
+        fit.TotalCorrectedSumOfSquares
+       
+        );
+
+      Current.Console.WriteLine("------------------------------------------------------------");
 
 
-      // add the fit curve to the graph
-      IScalarFunctionDD plotfunction = new Altaxo.Graph.PolynomialFunction(fit.Parameter);
+    // add the fit curve to the graph
+    IScalarFunctionDD plotfunction = new Altaxo.Graph.PolynomialFunction(fit.Parameter);
       XYFunctionPlotItem fittedCurve = new XYFunctionPlotItem(new XYFunctionPlotData(plotfunction),new XYLineScatterPlotStyle(LineScatterPlotStyleKind.Line));
 
       ctrl.ActiveLayer.PlotItems.Add(fittedCurve);

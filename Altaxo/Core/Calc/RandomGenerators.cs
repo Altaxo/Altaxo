@@ -2285,6 +2285,19 @@ namespace Altaxo.Calc.Random
       
     public double NumF { get { return NF; }}
     public double DenomF { get { return DF; }}
+
+    /// <summary>
+    /// Returns the cumulated distribution function for value x with the distribution parameters numf and denomf.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="numf">First parameter of the distribution.</param>
+    /// <param name="denomf">Second paramenter of the distribution.</param>
+    /// <returns>The cumulated distribution (probability) of the distribution at value x.</returns>
+    public static double CDF(double x, double numf, double denomf)
+    {
+      double n1x = numf * x;
+      return GammaRelated.BetaIR(n1x/(denomf+n1x),0.5*numf,0.5*denomf);
+    }
   }
 
   #endregion

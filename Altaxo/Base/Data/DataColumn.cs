@@ -562,6 +562,69 @@ namespace Altaxo.Data
     /// <param name="v">The column the data will be copied from.</param>
     public abstract void CopyDataFrom(Altaxo.Data.DataColumn v);
     
+
+    /// <summary>
+    /// Creates a new column, consisting only of the selected rows of the original column <c>x</c>. If x is null, a new <see>Altaxo.Data.DoubleColumn</see> will
+    /// be returned, consisting of the selected row indices. 
+    /// </summary>
+    /// <param name="x">The original column (can be null).</param>
+    /// <param name="selectedRows">Selected row indices (can be null - then the entire column is used).</param>
+    /// <param name="numrows">Number of rows to create. Must not more than contained in selectedRows.</param>
+    /// <returns>A freshly created column consisting of x at the selected indices, or of the indices itself if x was null.</returns>
+    public static DataColumn CreateColumnOfSelectedRows(Altaxo.Data.DataColumn x, Altaxo.Collections.IAscendingIntegerCollection selectedRows, int numrows)
+    {
+      Altaxo.Data.DataColumn result;
+      if(x!=null)
+      {
+        result = (Altaxo.Data.DataColumn)x.Clone();
+        result.Clear();
+        for(int j=0;j<numrows;j++)
+        {
+          int rowidx = selectedRows!=null ? selectedRows[j] : j;
+          result[j] = x[rowidx];
+        }
+      }
+      else // x is null
+      {
+        result = new Altaxo.Data.DoubleColumn();
+        for(int j=0;j<numrows;j++)
+        {
+          int rowidx = selectedRows!=null ? selectedRows[j] : j;
+          result[j] = (double)rowidx;
+        }
+      }
+      return result;
+    }
+
+    /// <summary>
+    /// Creates a new column, consisting only of the selected rows of the original column <c>x</c>. If x is null, a new <see>Altaxo.Data.DoubleColumn</see> will
+    /// be returned, consisting of the selected row indices. 
+    /// </summary>
+    /// <param name="x">The original column (can be null).</param>
+    /// <param name="selectedRows">Selected row indices (can be null - then the entire column is used).</param>
+    /// <returns>A freshly created column consisting of x at the selected indices, or of the indices itself if x was null. If both x and selectedRows are null,
+    /// an empty <see>DoubleColumn</see> is returned.</returns>
+    public static DataColumn CreateColumnOfSelectedRows(Altaxo.Data.DataColumn x, Altaxo.Collections.IAscendingIntegerCollection selectedRows)
+    {
+      int numrows = 0;
+      if(selectedRows!=null)
+        numrows = selectedRows.Count;
+      else if(x!=null)
+        numrows = x.Count;
+
+      return CreateColumnOfSelectedRows(x,selectedRows,numrows);
+    }
+
+    /// <summary>
+    /// Creates a new column, consisting only of the selected rows of the original column.
+    /// </summary>
+    /// <param name="selectedRows">Selected row indices (can be null - then the entire column is used).</param>
+    /// <returns>A freshly created column consisting of x at the selected indices.</returns>
+    public DataColumn CreateColumnOfSelectedRows(Altaxo.Collections.IAscendingIntegerCollection selectedRows)
+    {
+      return CreateColumnOfSelectedRows(this,selectedRows);
+    }
+
     /// <summary>
     /// Removes a number of rows (given by <paramref name="nCount"/>) beginning from nFirstRow,
     /// i.e. remove rows number nFirstRow ... nFirstRow+nCount-1.

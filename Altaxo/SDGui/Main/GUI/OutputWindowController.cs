@@ -41,6 +41,9 @@ namespace Altaxo.Main.GUI
     {
       _view = new System.Windows.Forms.TextBox();
       _view.Multiline = true;
+      _view.WordWrap=false;
+      _view.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+      _view.Font = new System.Drawing.Font(System.Drawing.FontFamily.GenericMonospace,8);
       _view.Dock = System.Windows.Forms.DockStyle.Fill;
 
       Current.SetOutputService(this);
