@@ -77,32 +77,19 @@ namespace ICSharpCode.SharpDevelop.Gui
 
     public new void InitializeWorkspace()
     {
-      Menu = null;
-      
-      //      statusBarManager.Control.Dock = DockStyle.Bottom;
-      
-      ActiveWorkbenchWindowChanged += new EventHandler(UpdateMenu);
-
       ActiveWorkbenchWindowChanged += new EventHandler(EhAltaxoFireContentChanged);
-      
+    
+      Menu = null;
+			
+      //			statusBarManager.Control.Dock = DockStyle.Bottom;
+			
+      ActiveWorkbenchWindowChanged += new EventHandler(UpdateMenu);
+			
       MenuComplete += new EventHandler(SetStandardStatusBar);
       SetStandardStatusBar(null, null);
-      
-#if OriginalSharpDevelopCode
-      IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-      IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
-      
-      projectService.CurrentProjectChanged += new ProjectEventHandler(SetProjectTitle);
-      projectService.CombineOpened         += new CombineEventHandler(CombineOpened);
-      fileService.FileRemoved += new FileEventHandler(CheckRemovedFile);
-      fileService.FileRenamed += new FileEventHandler(CheckRenamedFile);
-      
-      fileService.FileRemoved += new FileEventHandler(fileService.RecentOpen.FileRemoved);
-      fileService.FileRenamed += new FileEventHandler(fileService.RecentOpen.FileRenamed);
-#endif
-      
-      //      TopMenu.Selected   += new CommandHandler(OnTopMenuSelected);
-      //      TopMenu.Deselected += new CommandHandler(OnTopMenuDeselected);
+			
+      //			TopMenu.Selected   += new CommandHandler(OnTopMenuSelected);
+      //			TopMenu.Deselected += new CommandHandler(OnTopMenuDeselected);
       CreateMainMenu();
       CreateToolBars();
     }
@@ -131,9 +118,16 @@ namespace ICSharpCode.SharpDevelop.Gui
     void CreateMainMenu()
     {
       TopMenu = new CommandBar(CommandBarStyle.Menu);
-      CommandBarItem[] items = (CommandBarItem[])(AddInTreeSingleton.AddInTree.GetTreeNode(mainMenuPath).BuildChildItems(this)).ToArray(typeof(CommandBarItem));
-      TopMenu.Items.Clear();
-      TopMenu.Items.AddRange(items);
+      try 
+      {
+        IAddInTreeNode node = AddInTreeSingleton.AddInTree.GetTreeNode(mainMenuPath);
+        CommandBarItem[] items = (CommandBarItem[])(node.BuildChildItems(this)).ToArray(typeof(CommandBarItem));
+        TopMenu.Items.Clear();
+        TopMenu.Items.AddRange(items);
+      } 
+      catch (TreePathNotFoundException) 
+      {
+      }
     }
 
     // this method simply copies over the enabled state of the toolbar,
