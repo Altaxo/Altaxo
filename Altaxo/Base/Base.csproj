@@ -474,6 +474,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\XYPlotLabelStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\XYPlotLayer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -670,6 +675,21 @@
                 />
                 <File
                     RelPath = "Graph\GUI\TitleFormatLayerController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\XYPlotLabelStyleControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\XYPlotLabelStyleControl.resx"
+                    DependentUpon = "XYPlotLabelStyleControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\XYPlotLabelStyleController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

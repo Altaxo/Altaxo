@@ -55,10 +55,10 @@ namespace Altaxo.Graph
 		bool m_bCachedDataValid=false;
 
 		/// <summary>The lower bound of the plot range</summary>
-		double m_RangeFrom = double.MinValue; 
+		double m_RangeFrom = double.NaN; 
 
 		/// <summary>The upper bound of the plot range</summary>
-		double m_RangeTo = double.MaxValue;
+		double m_RangeTo = double.NaN;
 
 		/// <summary>If true, the image is clipped to the layer boundaries.</summary>
 		bool   m_ClipToLayer = true;
@@ -264,6 +264,14 @@ namespace Altaxo.Graph
 		}
 
 
+		private bool NaNEqual(double a, double b)
+		{
+			if(double.IsNaN(a) && double.IsNaN(b))
+				return true;
+
+			return a==b;
+		}
+
 		public double RangeFrom
 		{
 			get { return m_RangeFrom; }
@@ -272,7 +280,7 @@ namespace Altaxo.Graph
 				double oldValue = m_RangeFrom;
 				m_RangeFrom = value;
 
-				if(m_RangeFrom != oldValue)
+				if(!NaNEqual(m_RangeFrom,oldValue))
 				{
 					m_bCachedDataValid = false;
 					OnChanged();
@@ -287,12 +295,11 @@ namespace Altaxo.Graph
 			{
 				double oldValue = m_RangeTo;
 				m_RangeTo = value;
-				if(m_RangeTo != oldValue)
+				if(!NaNEqual(m_RangeTo,oldValue))
 				{
 					m_bCachedDataValid = false;
 					OnChanged();
 				}
-
 			}
 		}
 
@@ -395,6 +402,7 @@ namespace Altaxo.Graph
 			// there is a need for rebuilding the bitmap only if the data are invalid for some reason
 			if(!m_bCachedDataValid)
 			{
+				System.Diagnostics.Trace.WriteLine("DensityImagePlotStyle.Paint, calculate image data...");
 
 				// look if the image has the right dimensions
 				if(null==m_Image || m_Image.Width != cols || m_Image.Height != rows)
@@ -413,11 +421,17 @@ namespace Altaxo.Graph
 				myPlotAssociation.SetVBoundsFromTemplate(pb); // ensure that the right v-boundary type is set
 				myPlotAssociation.MergeVBoundsInto(pb);
 
-				double vmin = Math.Max(pb.LowerBound, this.m_RangeFrom);
-				double vmax = Math.Min(pb.UpperBound, this.m_RangeTo);
+				double vmin = double.IsNaN(this.m_RangeFrom) ? pb.LowerBound : Math.Max(pb.LowerBound,this.m_RangeFrom);
+				double vmax = double.IsNaN(this.m_RangeTo) ? pb.UpperBound : Math.Min(pb.UpperBound, this.m_RangeTo);
+				double lowerBound = vmin;
+				double upperBound = vmax;
 
 				if(this.m_ScalingStyle == ScalingStyle.Logarithmic)
 				{
+					// Ensure that min and max >0
+					vmin = lowerBound = Math.Max(lowerBound,double.Epsilon);
+					vmax = upperBound = Math.Max(lowerBound,upperBound); // lowerBound is ok, to ensure that upperBound>=lowerBound
+					
 					vmin = Math.Log(vmin);
 					vmax = vmax>0 ? Math.Log(vmax) : vmin;
 				}
@@ -440,11 +454,11 @@ namespace Altaxo.Graph
 						{
 							m_Image.SetPixel(j,cols-i-1,m_ColorInvalid); // invalid pixels are transparent
 						}
-						else if(val<m_RangeFrom)
+						else if(val<lowerBound)
 						{
 							m_Image.SetPixel(j,cols-i-1,m_ColorBelow); // below the lower bound
 						}
-						else if(val>m_RangeTo)
+						else if(val>upperBound)
 						{
 							m_Image.SetPixel(j,cols-i-1,m_ColorAbove); // above the upper bound
 						}

@@ -102,7 +102,7 @@ namespace Altaxo.Graph
 
 		protected Altaxo.Data.IReadableColumn m_xColumn; // the X-Column
 		protected Altaxo.Data.IReadableColumn m_yColumn; // the Y-Column
-
+		protected Altaxo.Data.IReadableColumn m_LabelColumn; // the label column
 
 		protected int m_PlotRangeStart = 0;
 		protected int m_PlotRangeLength  = int.MaxValue;
@@ -206,9 +206,9 @@ namespace Altaxo.Graph
 			}
 
 
-			Main.DocumentPath _xColumn = null;
-			Main.DocumentPath _yColumn = null;
-			XYColumnPlotData _plotAssociation = null;
+			protected Main.DocumentPath _xColumn = null;
+			protected Main.DocumentPath _yColumn = null;
+			protected XYColumnPlotData _plotAssociation = null;
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				bool bNeedsCallback = false;
@@ -267,6 +267,71 @@ namespace Altaxo.Graph
 					bAllResolved &= (null!=yColumn);
 					if(yColumn is Altaxo.Data.IReadableColumn)
 						_plotAssociation.m_yColumn = (Altaxo.Data.IReadableColumn)yColumn;
+				}
+
+				if(bAllResolved)
+					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
+			}
+		}
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData),1)]
+			public class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
+		{
+			public new void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				XYColumnPlotData s = (XYColumnPlotData)obj;
+				base.Serialize(obj,info);
+				
+				// -----------------------Added in version 1 ------------------------
+				if(s.m_LabelColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_LabelColumn).ParentObject))
+				{
+					info.AddValue("LabelColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_LabelColumn));
+				}
+				else
+				{
+					info.AddValue("LabelColumn",s.m_LabelColumn);
+				}
+			}
+
+			public new object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+
+				base.Deserialize(o,info,parent);
+
+				bool bNeedsCallback = false;
+				XYColumnPlotData s = null!=o ? (XYColumnPlotData)o : new XYColumnPlotData();
+
+
+				object labelColumn = info.GetValue("LabelColumn",typeof(Altaxo.Data.IReadableColumn));
+
+				if(labelColumn is Altaxo.Data.IReadableColumn)
+					s.LabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
+				else if (labelColumn is Main.DocumentPath)
+					bNeedsCallback = true;
+			
+				if(bNeedsCallback)
+				{
+					XmlSerializationSurrogate1 surr = new XmlSerializationSurrogate1();
+					surr._labelColumn = labelColumn as Main.DocumentPath;
+					surr._plotAssociation = s;
+
+					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
+				}
+
+				return s;
+			}
+
+			Main.DocumentPath _labelColumn = null;
+			public new void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+			{
+				bool bAllResolved = true;
+
+				if(this._labelColumn != null)
+				{
+					object labelColumn = Main.DocumentPath.GetObject(this._labelColumn, this._plotAssociation, documentRoot);
+					bAllResolved &= (null!=labelColumn);
+					if(labelColumn is Altaxo.Data.IReadableColumn)
+						_plotAssociation.LabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
 				}
 
 				if(bAllResolved)
@@ -493,6 +558,29 @@ namespace Altaxo.Graph
 				if(null!=m_yColumn && m_yColumn is Altaxo.Data.DataColumn)
 				{
 					((Altaxo.Data.DataColumn)m_yColumn).Changed += new EventHandler(EhColumnDataChangedEventHandler);
+				}
+				m_bCachedDataValid = false;
+				this.OnChanged();
+			}
+		}
+
+		public Altaxo.Data.IReadableColumn LabelColumn
+		{
+			get
+			{
+				return m_LabelColumn;
+			}
+			set
+			{
+				if(null!=m_LabelColumn && m_LabelColumn is Altaxo.Data.DataColumn)
+				{
+					((Altaxo.Data.DataColumn)m_LabelColumn).Changed -= new EventHandler(EhColumnDataChangedEventHandler);
+				}
+
+				this.m_LabelColumn = value;
+				if(null!=m_LabelColumn && m_LabelColumn is Altaxo.Data.DataColumn)
+				{
+					((Altaxo.Data.DataColumn)m_LabelColumn).Changed += new EventHandler(EhColumnDataChangedEventHandler);
 				}
 				m_bCachedDataValid = false;
 				this.OnChanged();

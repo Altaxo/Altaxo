@@ -35,6 +35,9 @@ namespace Altaxo.Graph
 		protected XYPlotScatterStyle	m_ScatterStyle;
 		protected bool					m_LineSymbolGap;
 
+		/// <summary>The label style (is null if there is no label).</summary>
+		protected XYPlotLabelStyle    m_LabelStyle;
+
 
 
 		#region Serialization
@@ -94,6 +97,33 @@ namespace Altaxo.Graph
 				// do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
 				s.XYPlotScatterStyle = (XYPlotScatterStyle)info.GetValue("XYPlotScatterStyle",typeof(XYPlotScatterStyle));
 				s.LineSymbolGap = info.GetBoolean("LineSymbolGap");
+
+				return s;
+			}
+		}
+
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYLineScatterPlotStyle),1)]
+			public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				XYLineScatterPlotStyle s = (XYLineScatterPlotStyle)obj;
+				info.AddValue("XYPlotLineStyle",s.m_LineStyle);  
+				info.AddValue("XYPlotScatterStyle",s.m_ScatterStyle);
+				info.AddValue("LineSymbolGap",s.m_LineSymbolGap);
+				info.AddValue("LabelStyle",s.m_LabelStyle);      // new in this version
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				
+				XYLineScatterPlotStyle s = null!=o ? (XYLineScatterPlotStyle)o : new XYLineScatterPlotStyle();
+				// do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
+				s.XYPlotLineStyle = (XYPlotLineStyle)info.GetValue("XYPlotLineStyle",typeof(XYPlotLineStyle));
+				// do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
+				s.XYPlotScatterStyle = (XYPlotScatterStyle)info.GetValue("XYPlotScatterStyle",typeof(XYPlotScatterStyle));
+				s.LineSymbolGap = info.GetBoolean("LineSymbolGap");
+				s.XYPlotLabelStyle  = (XYPlotLabelStyle)info.GetValue("XYPlotLabelStyle",typeof(XYPlotLabelStyle)); // new in this version
 
 				return s;
 			}
@@ -213,6 +243,23 @@ namespace Altaxo.Graph
 			}
 		}
 
+		public  XYPlotLabelStyle XYPlotLabelStyle
+		{
+			get { return m_LabelStyle; }
+			set 
+			{
+				XYPlotLabelStyle oldValue = m_LabelStyle;
+				m_LabelStyle = value==null ? null : (XYPlotLabelStyle)value.Clone();
+
+				if(null!=oldValue)
+					oldValue.Changed -= new EventHandler(EhLabelStyleChanged);
+
+				if(null!=m_LabelStyle)
+					m_LabelStyle.Changed += new EventHandler(EhLabelStyleChanged);
+				
+				OnChanged(); // Fire Changed event
+			}
+		}
 
 		public override float SymbolSize 
 		{
@@ -280,7 +327,7 @@ namespace Altaxo.Graph
 						if(!bInPlotSpace)
 						{
 							bInPlotSpace=true;
-							rangeList.Add(new PlotRange(rangeStart,j));
+							rangeList.Add(new PlotRange(rangeStart,j,i-rangeStart));
 						}
 						continue;
 					}
@@ -310,19 +357,21 @@ namespace Altaxo.Graph
 						if(!bInPlotSpace)
 						{
 							bInPlotSpace=true;
-							rangeList.Add(new PlotRange(rangeStart,j));
+							rangeList.Add(new PlotRange(rangeStart,j,i-rangeStart));
 						}
 					}
 				} // end for
 				if(!bInPlotSpace)
 				{
 					bInPlotSpace=true;
-					rangeList.Add(new PlotRange(rangeStart,j)); // add the last range
+					rangeList.Add(new PlotRange(rangeStart,j,i-rangeStart)); // add the last range
 				}
 
 
 				// now plot the point array
-				Paint(g,layer,rangeList,ptArray);
+				PaintLine(g,layer,rangeList,ptArray);
+				PaintScatter(g,layer,rangeList,ptArray);
+				PaintLabel(g,layer,rangeList,ptArray,myPlotAssociation.LabelColumn);
 			}
 		}
 
@@ -400,23 +449,24 @@ namespace Altaxo.Graph
 
 
 			// ------------------ end of creation of plot array -----------------------------------------------
+			// in the plot array ptArray now we have the coordinates of each point
 		
 			// now plot the point array
-			Paint(g,layer,rangeList,ptArray);
+			PaintLine(g,layer,rangeList,ptArray);
 		}
 
-		public void Paint(Graphics g, Graph.XYPlotLayer layer, PlotRangeList rangeList, PointF[] ptArray)
+
+		public void PaintLine(Graphics g, Graph.XYPlotLayer layer, PlotRangeList rangeList, PointF[] ptArray)
 		{
-
-			// --------------------- now do the job of plotting ------------------------------------------------
-
-
 			// paint the line style
 			if(null!=m_LineStyle)
 			{
 				m_LineStyle.Paint(g,ptArray,rangeList,layer.Size, (m_LineSymbolGap && m_ScatterStyle.Shape!=XYPlotScatterStyles.Shape.NoSymbol)?SymbolSize:0);
 			}
+		}
 
+		public void PaintScatter(Graphics g, Graph.XYPlotLayer layer, PlotRangeList rangeList, PointF[] ptArray)
+		{
 			// paint the drop style
 			if(null!=m_ScatterStyle && m_ScatterStyle.DropLine!=XYPlotScatterStyles.DropLine.NoDrop)
 			{
@@ -505,6 +555,17 @@ namespace Altaxo.Graph
 			}
 		}
 
+		public void PaintLabel(Graphics g, Graph.XYPlotLayer layer, PlotRangeList rangeList, PointF[] ptArray, Altaxo.Data.IReadableColumn labelColumn)
+		{
+			if(labelColumn==null)
+				return;
+			// Create a default label style if it is missing
+			if(m_LabelStyle==null)
+				XYPlotLabelStyle = new XYPlotLabelStyle();
+
+			m_LabelStyle.Paint(g,layer,rangeList,ptArray,labelColumn);
+		}
+
 
 		/// <summary>
 		/// PaintSymbol paints the symbol including the line so
@@ -562,6 +623,10 @@ namespace Altaxo.Graph
 			OnChanged();
 		}
 
+		protected virtual void EhLabelStyleChanged(object sender, EventArgs e)
+		{
+			OnChanged();
+		}
 
 		#endregion
 

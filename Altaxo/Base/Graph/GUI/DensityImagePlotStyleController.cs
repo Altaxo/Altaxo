@@ -14,7 +14,7 @@ namespace Altaxo.Graph.GUI
 		/// <summary>
 		/// Called if the type of the scaling is changed.
 		/// </summary>
-		/// <param name="scalingStyle">The scaling type.</param>
+		/// <param name="scalingstyle">The scaling type.</param>
 		void EhView_ScalingStyleChanged(string scalingstyle);
 
 		/// <summary>
@@ -135,8 +135,8 @@ namespace Altaxo.Graph.GUI
 			if(null!=View)
 			{
 				View.ScalingStyle_Initialize(System.Enum.GetNames(typeof(DensityImagePlotStyle.ScalingStyle)),System.Enum.GetName(typeof(DensityImagePlotStyle.ScalingStyle),m_ScalingStyle));
-				View.RangeFrom_Initialize(m_RangeFrom.ToString());
-				View.RangeTo_Initialize(m_RangeTo.ToString());
+				View.RangeFrom_Initialize(double.IsNaN(m_RangeFrom) ? "" : m_RangeFrom.ToString());
+				View.RangeTo_Initialize(double.IsNaN(m_RangeTo) ? "" : m_RangeTo.ToString());
 				View.ColorBelow_Initialize(m_ColorBelow);
 				View.ColorAbove_Initialize(m_ColorAbove);
 				View.ColorInvalid_Initialize(m_ColorInvalid);
@@ -173,12 +173,14 @@ namespace Altaxo.Graph.GUI
 
 		public void EhView_RangeFromValidating(string rangeFrom, ref bool bCancel)
 		{
-			bCancel = !NumberConversion.IsDouble(rangeFrom, out m_RangeFrom);
+			if(!NumberConversion.IsDouble(rangeFrom, out m_RangeFrom))
+				m_RangeFrom = double.NaN;
 		}
 
 		public void EhView_RangeToValidating(string rangeTo, ref bool bCancel)
 		{
-			bCancel = !NumberConversion.IsDouble(rangeTo, out m_RangeTo);
+			if(!NumberConversion.IsDouble(rangeTo, out m_RangeTo))
+				m_RangeTo = double.NaN;
 		}
 
 		public void EhView_ColorBelowChanged(System.Drawing.Color color)

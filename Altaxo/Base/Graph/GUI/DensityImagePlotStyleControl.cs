@@ -79,7 +79,7 @@ namespace Altaxo.Graph.GUI
 			// 
 			// label24
 			// 
-			this.label24.Location = new System.Drawing.Point(16, 104);
+			this.label24.Location = new System.Drawing.Point(64, 104);
 			this.label24.Name = "label24";
 			this.label24.Size = new System.Drawing.Size(56, 16);
 			this.label24.TabIndex = 19;
@@ -106,11 +106,11 @@ namespace Altaxo.Graph.GUI
 			// 
 			// label23
 			// 
-			this.label23.Location = new System.Drawing.Point(8, 72);
+			this.label23.Location = new System.Drawing.Point(56, 72);
 			this.label23.Name = "label23";
 			this.label23.Size = new System.Drawing.Size(64, 16);
 			this.label23.TabIndex = 14;
-			this.label23.Text = "From";
+			this.label23.Text = "From:";
 			this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// m_cbColorBelow
@@ -151,7 +151,7 @@ namespace Altaxo.Graph.GUI
 			// 
 			// label1
 			// 
-			this.label1.Location = new System.Drawing.Point(16, 40);
+			this.label1.Location = new System.Drawing.Point(64, 40);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(56, 16);
 			this.label1.TabIndex = 24;
@@ -160,7 +160,7 @@ namespace Altaxo.Graph.GUI
 			// 
 			// label2
 			// 
-			this.label2.Location = new System.Drawing.Point(8, 160);
+			this.label2.Location = new System.Drawing.Point(24, 160);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(96, 16);
 			this.label2.TabIndex = 25;
@@ -169,7 +169,7 @@ namespace Altaxo.Graph.GUI
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(8, 184);
+			this.label3.Location = new System.Drawing.Point(48, 184);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(72, 16);
 			this.label3.TabIndex = 26;
@@ -178,11 +178,11 @@ namespace Altaxo.Graph.GUI
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(0, 216);
+			this.label4.Location = new System.Drawing.Point(8, 216);
 			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(120, 16);
+			this.label4.Size = new System.Drawing.Size(112, 16);
 			this.label4.TabIndex = 27;
-			this.label4.Text = "Color of invalid point";
+			this.label4.Text = "Color of invalid point:";
 			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// m_chkClipToLayer
@@ -192,7 +192,7 @@ namespace Altaxo.Graph.GUI
 			this.m_chkClipToLayer.Name = "m_chkClipToLayer";
 			this.m_chkClipToLayer.Size = new System.Drawing.Size(128, 24);
 			this.m_chkClipToLayer.TabIndex = 28;
-			this.m_chkClipToLayer.Text = "Clip image to layer";
+			this.m_chkClipToLayer.Text = "Clip image to layer:";
 			this.m_chkClipToLayer.CheckedChanged += new System.EventHandler(this.EhClipToLayer_CheckedChanged);
 			// 
 			// DensityImagePlotStyleControl

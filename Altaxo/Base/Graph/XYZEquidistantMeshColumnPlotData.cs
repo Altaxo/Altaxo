@@ -157,6 +157,8 @@ namespace Altaxo.Graph
 						info.AddValue("e",col);
 					}
 				}
+				info.CommitArray();
+
 				info.AddValue("XBoundaries",s.m_xBoundaries);
 				info.AddValue("YBoundaries",s.m_yBoundaries);
 				info.AddValue("VBoundaries",s.m_vBoundaries);

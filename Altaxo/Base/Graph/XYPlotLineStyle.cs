@@ -36,6 +36,7 @@ namespace Altaxo.Graph
 	{
 		public int m_LowerBound;
 		public int m_UpperBound;
+		public int m_OffsetToOriginal;
 
 		#region Serialization
 
@@ -66,12 +67,21 @@ namespace Altaxo.Graph
 		{
 			m_LowerBound = lower;
 			m_UpperBound = upper;
+			m_OffsetToOriginal = 0;
+		}
+
+		public PlotRange(int lower, int upper, int offset)
+		{
+			m_LowerBound = lower;
+			m_UpperBound = upper;
+			m_OffsetToOriginal = offset;
 		}
 
 		public PlotRange(PlotRange a)
 		{
 			m_LowerBound = a.m_LowerBound;
 			m_UpperBound = a.m_UpperBound;
+			m_OffsetToOriginal = a.m_OffsetToOriginal;
 		}
 
 		public int Length
@@ -89,6 +99,12 @@ namespace Altaxo.Graph
 		{
 			get { return m_UpperBound; }
 			set { m_UpperBound = value; }
+		}
+
+		public int OffsetToOriginal
+		{
+			get { return m_OffsetToOriginal; }
+			set { m_OffsetToOriginal = value; }
 		}
 
 
