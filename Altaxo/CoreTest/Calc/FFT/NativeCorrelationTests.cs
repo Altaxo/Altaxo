@@ -28,18 +28,15 @@ namespace AltaxoTest.Calc.FFT
 {
 
   [TestFixture]
-  public class TestChirpConvolution
+  public class TestNativeSplittedComplexCorrelation
   {
-    const int nLowerLimit=4;
-    const int nUpperLimit=66;
+    const int nLowerLimit=5;
+    const int nUpperLimit=100;
     const double maxTolerableEpsPerN=1E-15;
-    SplittedComplexConvolutionTests _test ;
 
-    public TestChirpConvolution()
-    {
-      _test = new SplittedComplexConvolutionTests(new SplittedComplexConvolutionTests.ConvolutionRoutine(ChirpFFT.CyclicConvolution));
-    }
+    SplittedComplexCorrelationTests _test = new SplittedComplexCorrelationTests(new SplittedComplexCorrelationTests.CorrelationRoutine(NativeFourierMethods.CyclicCorrelation));
 
+ 
 
     [Test]
     public void Test01BothZero()

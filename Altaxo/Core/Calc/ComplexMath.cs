@@ -165,26 +165,13 @@ namespace Altaxo.Calc
 
     #region AltaxoModified
 
-    /// <summary>
-    /// The exponential function of complex variable.
-    /// </summary>
-    /// <param name="c">The complex function argument.</param>
-    /// <returns>The exponential of the complex number.</returns>
-    public static Complex Exp(Complex c)
+    const double M_LOG10E = 0.43429448190325182765112891891661;
+
+    private static double square(double x) 
     {
-      double abs = Math.Exp(c.Re);
-      return new Complex(abs*Math.Cos(c.Im),abs*Math.Sin(c.Im));
+      return x*x;
     }
-  
-    /// <summary>
-    /// Logarithm of complex number.
-    /// </summary>
-    /// <param name="c">The comlpex number.</param>
-    /// <returns>The logarithm of the complex number c.</returns>
-    public static Complex Log(Complex c)
-    {
-      return new Complex(Math.Log(c.GetModulus()), Math.Atan2(c.Im,c.Re));
-    }
+
 
     /// <summary>
     /// The absolute value (modulus) of complex number.
@@ -207,6 +194,207 @@ namespace Altaxo.Calc
     {
       return c.GetArgument();
     }
+
+    /// <summary>
+    /// Create a complex number from a modulus (length) and an argument (radian)
+    /// </summary>
+    /// <param name="modulus">The modulus (length).</param>
+    /// <param name="argument">The argument (angle, radian).</param>
+    /// <returns>The complex number created from the modulus and argument.</returns>
+    public static Complex Polar(double modulus, double argument)
+    {
+      return Complex.FromModulusArgument(modulus, argument); 
+    } 
+
+    /// <summary>
+    /// Returns the complex angle whose cosine is the specified complex number.
+    /// </summary>
+    /// <param name="z">The function argument.</param>
+    /// <returns>The complex number whose cosine is the function argument z.</returns>
+    public static Complex Acos(Complex z)
+    {
+      Complex z1  = Complex.FromRealImaginary(1 - square(z.Re) + square(z.Im), -2*z.Re*z.Im);
+      double  phi = Arg(z1)/2;
+      double  r   = Math.Sqrt(Abs(z1));
+      Complex z2  = Complex.FromRealImaginary(z.Re - r*Math.Sin(phi), z.Im + r*Math.Cos(phi));
+      return Complex.FromRealImaginary(Arg(z2), -Math.Log(Abs(z2)));
+    }
+
+
+    /// <summary>
+    /// Returns the complex angle whose sine is the specified complex number.
+    /// </summary>
+    /// <param name="z">The function argument.</param>
+    /// <returns>The complex number whose sine is the function argument z.</returns>
+    public static Complex Asin(Complex z)
+    {
+      Complex z1 = Complex.FromRealImaginary(1 - square(z.Re) + square(z.Im), -2*z.Re*z.Im);
+      double phi = Arg(z1) / 2;
+      double r = Math.Sqrt(Abs(z1));
+      Complex z2 = Complex.FromRealImaginary(-z.Im + r*Math.Cos(phi), z.Re + r*Math.Sin(phi));
+      return Complex.FromRealImaginary(Arg(z2), -Math.Log(Abs(z2)));
+    }
+
+    /// <summary>
+    /// Returns the complex angle whose tangent is the specified complex number.
+    /// </summary>
+    /// <param name="z">The function argument.</param>
+    /// <returns>The complex number whose tangent is the function argument z.</returns>
+    public static Complex Atan(Complex  z)
+    {
+      double zip1 = 1 + z.Im;
+      double zre2 = square(z.Re);
+      double invlen = 1.0/(zip1*zip1 + zre2);
+      Complex z1 = Complex.FromRealImaginary(((1-z.Im)*zip1 - zre2)*invlen, 2*z.Re*invlen);
+      return Complex.FromRealImaginary(Arg(z1)/2, -Math.Log(Abs(z1))/2);
+    }
+
+
+    /// <summary>
+    /// Returns the cosine of the specified complex function argument z.
+    /// </summary>
+    /// <param name="z">Function argument.</param>
+    /// <returns>The cosine of the specified complex function argument z.</returns>
+    public static Complex Cos(Complex z)
+    {
+      double ezi  = Math.Exp(z.Im);
+      double inv = 1.0 / ezi;
+      return Complex.FromRealImaginary(0.5*Math.Cos(z.Re)*(inv+ezi), 0.5*Math.Sin(z.Re)*(inv-ezi));
+    } 
+
+
+    /// <summary>
+    /// Returns the hyperbolic cosine of the specified complex function argument z.
+    /// </summary>
+    /// <param name="z">Function argument.</param>
+    /// <returns>The hyperbolic cosine of the specified complex function argument z.</returns>
+    public static Complex Cosh(Complex  z)
+    {
+      double ezr = Math.Exp(z.Re);
+      double inv = 1.0 / ezr;
+      return Complex.FromRealImaginary(0.5*Math.Cos(z.Im)*(ezr+inv), 0.5*Math.Sin(z.Im)*(ezr-inv));
+    }
+
+
+    /// <summary>
+    /// Returns the exponential function of the complex function argument.
+    /// </summary>
+    /// <param name="z">The complex function argument.</param>
+    /// <returns>The exponential function of the spezified complex function argument.</returns>
+    public static Complex Exp(Complex z)
+    {
+      return Complex.FromModulusArgument(Math.Exp(z.Re),z.Im);
+    }
+ 
+    /// <summary>
+    /// Returns the natural (base e) logarithm of the complex function argument.
+    /// </summary>
+    /// <param name="z">The complex function argument.</param>
+    /// <returns>The natural (base e) logarithm of the complex function argument.</returns>
+    public static Complex Log(Complex z)
+    {
+      return new Complex(Math.Log(z.GetModulus()), Math.Atan2(z.Im,z.Re));
+    }
+
+    /// <summary>
+    /// Returns the base 10 logarithm of the complex function argument.
+    /// </summary>
+    /// <param name="z">The complex function argument.</param>
+    /// <returns>The base 10 logarithm of the complex function argument.</returns>
+    public static Complex Log10(Complex z)
+    {
+      return Log(z) * M_LOG10E;
+    }
+
+    /// <summary>
+    /// Returns a specified (real valued) number raised to the specified (complex valued) power.
+    /// </summary>
+    /// <param name="z">A number to be raised to a power.</param>
+    /// <param name="p">A number that specifies a power.</param>
+    /// <returns>The number z raised to the power p.</returns>
+    public static Complex Pow(double z, Complex p)
+    {
+      if (z == 0 && p.Re > 0) 
+        return Complex.Zero;
+
+      double logz = Math.Log(Math.Abs(z));
+      if (z > 0.0)
+        return Exp(p * logz);
+      else
+        return Exp(p * Complex.FromRealImaginary(logz, Math.PI));
+    }
+
+    /// <summary>
+    /// Returns a specified (complex valued) number raised to the specified (complex valued) power.
+    /// </summary>
+    /// <param name="z">A number to be raised to a power.</param>
+    /// <param name="p">A number that specifies a power.</param>
+    /// <returns>The number z raised to the power p.</returns>
+    public static Complex Pow(Complex z, Complex p)
+    {
+      if (z.Re == 0 && z.Im==0 && p.Re> 0)
+        return Complex.Zero;
+      else
+        return Exp(p * Log(z));
+    }
+
+    /// <summary>
+    /// Returns the sine of the specified complex function argument z.
+    /// </summary>
+    /// <param name="z">Function argument.</param>
+    /// <returns>The sine of the specified complex function argument z.</returns>
+    public static Complex Sin(Complex z)
+    {
+      double ezi = Math.Exp(z.Im);
+      double inv = 1.0/ezi;
+      return Complex.FromRealImaginary(0.5*Math.Sin(z.Re)*(inv+ezi), -0.5*Math.Cos(z.Re)*(inv-ezi));
+    }
+
+    /// <summary>
+    /// Returns the hyperbolic sine of the specified complex function argument z.
+    /// </summary>
+    /// <param name="z">Function argument.</param>
+    /// <returns>The hyperbolic sine of the specified complex function argument z.</returns>
+    public static Complex Sinh(Complex z)
+    {
+      double ezr =Math.Exp(z.Re);
+      double inv = 1.0/ezr;
+      return Complex.FromRealImaginary(0.5*Math.Cos(z.Im)*(ezr-inv), 0.5*Math.Sin(z.Im)*(ezr+inv));
+    }
+
+    /// <summary>
+    /// Returns the tangent of the specified complex function argument z.
+    /// </summary>
+    /// <param name="z">Function argument.</param>
+    /// <returns>The tangent of the specified complex function argument z.</returns>
+    public static Complex Tan(Complex z)
+    {
+      double sinzr = Math.Sin(z.Re);
+      double coszr = Math.Cos(z.Re);
+      double ezi   = Math.Exp(z.Im);
+      double inv   = 1.0/ezi;
+      double ediff = inv - ezi;
+      double esum  = inv + ezi;
+      return Complex.FromRealImaginary(4*sinzr*coszr, -ediff*esum)/(square(coszr*esum) + square(sinzr*ediff));
+    }
+
+    /// <summary>
+    /// Returns the hyperbolic tangent of the specified complex function argument z.
+    /// </summary>
+    /// <param name="z">Function argument.</param>
+    /// <returns>The hyperbolic tangent of the specified complex function argument z.</returns>
+    public static Complex Tanh(Complex z)
+    {
+      double sinzi = Math.Sin(z.Im);
+      double coszi = Math.Cos(z.Im);
+      double ezr   = Math.Exp(z.Re);
+      double inv   = 1.0/ezr;
+      double ediff = ezr - inv;
+      double esum  = ezr + inv;
+      return Complex.FromRealImaginary(ediff*esum, 4*sinzi*coszi)/(square(coszi*esum)+square(sinzi*ediff));
+    }
+
+
 
     #endregion
   }

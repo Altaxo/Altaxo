@@ -1094,21 +1094,106 @@ namespace Altaxo.Calc.FFT
     /// <param name="direction">The direction of the Fourier transform.</param>
     public static void RealFFT(double[] real, int n, FourierDirection direction)
     {
-      FHT(real,n);
-
-      for (int i=1,j=n-1,k=n/2;i<k;i++,j--) 
-      {
-        double a,b;
-        a = real[i];
-        b = real[j];
-        real[j] = (a-b)*0.5;
-        real[i] = (a+b)*0.5;
-      }
+      if(direction==FourierDirection.Forward)
+        RealFFT(real,n);
+      else
+        RealIFFT(real,n);
     }
 
 
     /// <summary>
-    /// Performs a convolution of two comlex arrays which are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the values of the
+    /// Performs a cyclic convolution of two real valued arrays. The content of the input arrays is destroyed during this operation.
+    /// </summary>
+    /// <param name="data">The first input array (the data).</param>
+    /// <param name="resp">The second input array (the response function).</param>
+    /// <param name="result">The result of the convolution.</param>
+    /// <param name="n">The convolution size. The provided arrays may be larger than n, but of course not smaller.</param>
+    public static void CyclicDestructiveConvolution(double[] data, double[] resp, double[] result, int n)
+    {
+      FHT(data,n);
+      FHT(resp,n);
+
+      double scale = 0.25/n;
+      int nh=n/2;
+      for (int i=1,j=n-1;i<nh;i++,j--) 
+      {
+        double a,b,re1,im1,re2,im2,re,im;
+        a = data[i];
+        b = data[j];
+        im1 = (a-b); // this is exactly (a-b)/2, but the /2 is included in the scale
+        re1 = (a+b); // this is exactly (a+b)/2, but the /2 is included in the scale
+
+        a = resp[i];
+        b = resp[j];
+        im2 = (a-b);  // this is exactly (a-b)/2, but the /2 is included in the scale
+        re2 = (a+b);  // this is exactly (a+b)/2, but the /2 is included in the scale
+
+        re = (re1*re2 - im1*im2) * scale;
+        im = (re1*im2 + im1*re2) * scale;
+   
+        result[j] = (re-im);
+        result[i] = (re+im);
+      }
+
+      // handle the zero and the half point
+      result[0] = data[0]*resp[0]/n;
+      result[nh] = data[nh]*resp[nh]/n;
+
+      FHT(result,n);
+    }
+
+
+    /// <summary>
+    /// Performs a cyclic convolution of two real valued arrays. The content of the input arrays is leaved intact.
+    /// </summary>
+    /// <param name="data">The first input array (the data).</param>
+    /// <param name="resp">The second input array (the response function).</param>
+    /// <param name="result">The result of the convolution.</param>
+    /// <param name="scratch">A helper array of at least size n. If null or a smaller array is provided, a new array will be allocated automatically.</param>
+    /// <param name="n">The convolution size. The provided arrays may be larger than n, but of course not smaller.</param>
+    public static void CyclicRealConvolution(double[] data, double[] resp, double[] result, int n, double[] scratch)
+    {
+      if(null==scratch || scratch.Length<n)
+        scratch = new double[n];
+
+      Array.Copy(data,result,n);
+      Array.Copy(resp,scratch,n);
+
+      FHT(result,n);
+      FHT(scratch,n);
+
+      double scale = 0.25/n;
+      int nh=n/2;
+      for (int i=1,j=n-1;i<nh;i++,j--) 
+      {
+        double a,b,re1,im1,re2,im2,re,im;
+        a = result[i];
+        b = result[j];
+        im1 = (a-b); // this is exactly (a-b)/2, but the /2 is included in the scale
+        re1 = (a+b); // this is exactly (a+b)/2, but the /2 is included in the scale
+
+        a = scratch[i];
+        b = scratch[j];
+        im2 = (a-b);  // this is exactly (a-b)/2, but the /2 is included in the scale
+        re2 = (a+b);  // this is exactly (a+b)/2, but the /2 is included in the scale
+
+        re = (re1*re2 - im1*im2) * scale;
+        im = (re1*im2 + im1*re2) * scale;
+   
+        result[j] = (re-im);
+        result[i] = (re+im);
+      }
+
+      // handle the zero and the half point
+      result[0] = result[0]*scratch[0]/n;
+      result[nh] = result[nh]*scratch[nh]/n;
+
+      FHT(result,n);
+    }
+
+
+    /// <summary>
+    /// Performs a convolution of two comlex arrays which are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the data into the
     /// input arrays will be destroyed!
     /// </summary>
     /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
@@ -1127,12 +1212,12 @@ namespace Altaxo.Calc.FFT
       FFT( src1real, src1imag, n);
       FFT( src2real, src2imag, n);
       ArrayMath.MultiplySplittedComplexArrays(src1real, src1imag, src2real, src2imag, resultreal, resultimag, n);
-      FastHartleyTransform.IFFT( resultreal,resultimag, n);
+      IFFT( resultreal,resultimag, n);
       ArrayMath.NormalizeArrays(resultreal, resultimag, 1.0/n, n);
     }
 
     /// <summary>
-    /// Performs a convolution of two comlex arrays which are in splitted form. The input arrays will leave intact.
+    /// Performs a convolution of two complex arrays which are in splitted form. The input arrays will leave intact.
     /// </summary>
     /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
     /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
@@ -1169,6 +1254,31 @@ namespace Altaxo.Calc.FFT
       ArrayMath.NormalizeArrays(resultreal, resultimag, 1.0/n, n);
     }
 
+
+
+    /// <summary>
+    /// Performs a correlation of two comlex arrays which are in splitted form (i.e. real and imaginary part are separate arrays). Attention: the data into the
+    /// input arrays will be destroyed!
+    /// </summary>
+    /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
+    /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
+    /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
+    /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
+    /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+    /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+    /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+    public static void CyclicCorrelationDestructive(
+      double[] src1real, double[] src1imag, 
+      double[] src2real, double[] src2imag,
+      double[] resultreal, double[] resultimag,
+      int n)
+    {
+      FFT( src1real, src1imag, n);
+      FFT( src2real, src2imag, n);
+      ArrayMath.MultiplySplittedComplexArrays(src1real, src1imag, src2real, src2imag, resultreal, resultimag, n);
+      IFFT( resultreal,resultimag, n);
+      ArrayMath.NormalizeArrays(resultreal, resultimag, 1.0/n, n);
+    }
 
 
   }

@@ -639,7 +639,7 @@ namespace Altaxo.Calc.FFT
       }
 
       ErrorExit:
-      return status;
+        return status;
     }
 
 

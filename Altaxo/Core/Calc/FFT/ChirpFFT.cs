@@ -306,36 +306,60 @@ namespace Altaxo.Calc.FFT
     }
 
 
+    /// <summary>
+    /// Returns the neccessary size for a chirp convolution of length n.
+    /// </summary>
+    /// <param name="n">The length of the convolution.</param>
+    /// <returns>Neccessary length of the scratch arrays. Note that this is based on a convolution of
+    /// base 2.</returns>
+    public static int GetNecessaryConvolutionSize(int n)
+    {
+      if(n<=2)
+        return 2;
+
+      int ldnn = 2+ld((uint)(n-1));
+      return (1<<ldnn);
+    }
+
+
+    /// <summary>
+    /// Performs a cyclic convolution of splitted complex data of arbitrary length.
+    /// </summary>
+    /// <param name="datare">Real part of the data array (first input array).</param>
+    /// <param name="dataim">Imaginary part of the data array (first input array).</param>
+    /// <param name="responsere">Real part of the response array (second input array).</param>
+    /// <param name="responseim">Imaginary part of the response array (second input array).</param>
+    /// <param name="resultre">The real part of the resulting array.</param>
+    /// <param name="resultim">The imaginary part of the resulting array.</param>
+    /// <param name="n">The convolution size. The input and result arrays may be larger, but of course not smaller than this number.</param>
     public static void CyclicConvolution(
       double[] datare, double[] dataim,
       double[] responsere, double[] responseim,
       double[] resultre, double[] resultim,
       int n)
     {
-      int msize = GetNecessaryTransformationSize(n);
+      int msize = GetNecessaryConvolutionSize(n);
+      // System.Diagnostics.Trace.WriteLine(string.Format("Enter chirp convolution with n={0}, m={1}",n,msize));
       
       double[] srcre = new double[msize];
       double[] srcim = new double[msize];
       double[] rspre = new double[msize];
       double[] rspim = new double[msize];
-      double[] resre = new double[msize];
-      double[] resim = new double[msize];
-      
+       
 
       Array.Copy(datare,srcre,n);
       Array.Copy(dataim,srcim,n);
+
+      // Copy the response not only to the beginning, but also to the end of the scratch array
       Array.Copy(responsere,rspre,n);
+      Array.Copy(responsere,1,rspre,msize-(n-1),n-1);
       Array.Copy(responseim,rspim,n);
+      Array.Copy(responseim,1,rspim,msize-(n-1),n-1);
 
-      for(int i=1;i<n;i++)
-      {
-        rspre[msize-i] = rspre[i];
-        rspim[msize-i] = rspim[i];
-      }
+      FastHartleyTransform.CyclicDestructiveConvolution(srcre,srcim,rspre,rspim,srcre,srcim,msize);
 
-     fhtconvolution(resre,resim,srcre,srcim,rspre,rspim,msize);
-      Array.Copy(resre,resultre,n);
-      Array.Copy(resim,resultim,n);
+      Array.Copy(srcre,resultre,n);
+      Array.Copy(srcim,resultim,n);
     }
 
 

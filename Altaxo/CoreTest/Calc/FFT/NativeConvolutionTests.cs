@@ -73,7 +73,7 @@ namespace AltaxoTest.Calc.FFT
     public void Test05OneImOne_OtherRandom()
     {
       for(int i=nLowerLimit;i<=nUpperLimit;i++)
-        _test.TestOneReOne_OtherRandom(i);
+        _test.TestOneImOne_OtherRandom(i);
     }
     
     [Test]

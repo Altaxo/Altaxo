@@ -24,11 +24,11 @@ using System;
 
 namespace Altaxo.Calc
 {
-	/// <summary>
-	/// ArrayMath provides some basic methods for manipulating numeric arrays.
-	/// </summary>
-	public class ArrayMath
-	{
+  /// <summary>
+  /// ArrayMath provides some basic methods for manipulating numeric arrays.
+  /// </summary>
+  public class ArrayMath
+  {
 
     /// <summary>
     /// Copies an array of <see>Complex</see> elements into an array of the real part values and an array of the imaginary part values.
@@ -89,6 +89,52 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
+    /// Multiplies two splitted complex arrays which are the result of Fourier transformations in inverse order like result=x[w]*x[-w] (w is frequency) and stores the result in a splitted complex array.
+    /// Note that this is not simply x[i]*x[n-i], since there are the special points i=0 and i=n/2.
+    /// </summary>
+    /// <param name="src1real">Real part of the first input array. Must be at least of length n.</param>
+    /// <param name="src1imag">Imaginary part of the first input array. Must be at least of length n.</param>
+    /// <param name="src2real">Real part of the first input array. Must be at least of length n.</param>
+    /// <param name="src2imag">Imaginary part of the first input array. Must be at least of length n.</param>
+    /// <param name="destreal">Real part of the resulting array. Must be at least of length n.</param>
+    /// <param name="destimag">Imaginary part of the resulting array. Must be at least of length n.</param>
+    /// <param name="n">Normally, the size of the arrays. The multiplication is done from index 0 to n-1.</param>
+    /// <remarks>The resulting array may be identical to one of the input arrays.</remarks>
+    public static void MultiplySplittedComplexArraysCrossed(
+      double[] src1real, double[] src1imag, 
+      double[] src2real, double[] src2imag,
+      double[] destreal, double[] destimag,
+      int n)
+    {
+      double real, imag;
+      int k=n/2;
+      for(int i=1,j=n-1;i<k;i++,j--)
+      {
+        real = src1real[i]*src2real[j] - src1imag[i]*src2imag[j];
+        imag = src1real[i]*src2imag[j] + src1imag[i]*src2real[j];
+        destreal[i]=real;
+        destimag[i]=imag;
+        destreal[j]=real;
+        destimag[j]=imag;
+      }
+
+      // Special points
+      real = src1real[0]*src2real[0] - src1imag[0]*src2imag[0];
+      imag = src1real[0]*src2imag[0] + src1imag[0]*src2real[0];
+      destreal[0] = real;
+      destimag[0] = imag;
+
+      if((n&1)==0) // if n is even, there is also a middle point that needs attention
+      {
+        real = src1real[k]*src2real[k] - src1imag[k]*src2imag[k];
+        imag = src1real[k]*src2imag[k] + src1imag[k]*src2real[k];
+        destreal[k] = real;
+        destimag[k] = imag;
+      }
+    }
+
+
+    /// <summary>
     /// Multiplies the elements of array arr1 and array arr2 by a factor. 
     /// </summary>
     /// <param name="arr1">The first array.</param>
@@ -103,5 +149,5 @@ namespace Altaxo.Calc
         arr2[i]*=factor;
       }
     }
-	}
+  }
 }

@@ -152,7 +152,7 @@ namespace AltaxoTest.Calc.FFT
     public void Test05OneImOne_OtherRandom()
     {
       foreach(int i in _testLengths)
-        _test.TestOneReOne_OtherRandom(i);
+        _test.TestOneImOne_OtherRandom(i);
     }
     
     [Test]
