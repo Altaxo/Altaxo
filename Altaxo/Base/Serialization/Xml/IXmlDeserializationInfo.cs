@@ -62,6 +62,8 @@ namespace Altaxo.Serialization.Xml
     /// <param name="val">The resulting deserialized array.</param>
     void GetArray(string name, out double[] val);
 
+    void GetArray(string name, out int[] val);
+
     /// <summary>
     /// Deserializes an array of double value. The xml node must be opened before with <see>OpenArray</see>
     /// </summary>

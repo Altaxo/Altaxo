@@ -116,6 +116,36 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #endregion
 
+    #region copy 
+
+    /// <summary>
+    /// Copies the source vector to the destination vector. Both vectors must have the same length.
+    /// </summary>
+    /// <param name="src">The source vector.</param>
+    /// <param name="dest">The destination vector.</param>
+    public static void Copy(IROVector src, IVector dest)
+    {
+      if(src.Length!=dest.Length)
+        throw new ArgumentException("src and destination vector have unequal length!");
+
+      Copy(src,src.LowerBound,dest,dest.LowerBound,src.Length);
+    }
+
+    /// <summary>
+    /// Copies elements of a source vector to a destination vector.
+    /// </summary>
+    /// <param name="src">The source vector.</param>
+    /// <param name="srcstart">First element of the source vector to copy.</param>
+    /// <param name="dest">The destination vector.</param>
+    /// <param name="deststart">First element of the destination vector to copy to.</param>
+    /// <param name="count">Number of elements to copy.</param>
+    public static void Copy(IROVector src, int srcstart, IVector dest, int deststart, int count)
+    {
+      for(int i=0;i<count;i++)
+        dest[i+deststart] = src[i+srcstart];
+    }
+
+    #endregion
     /// <summary>
     /// Returns the maximum of the elements in xarray.
     /// </summary>

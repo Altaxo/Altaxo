@@ -131,7 +131,7 @@ namespace Altaxo.Calc.Regression.PLS
         // new in version 1
         if(info.CurrentElementName=="SpectralPreprocessingRegions")
         {
-          double[] regions;
+          int[] regions;
           info.GetArray("SpectralPreprocessingRegions", out regions);
           s._spectralPreprocessing.Regions = regions;
           s._spectralPreprocessing.Method  = (SpectralPreprocessingMethod)info.GetEnum("SpectralPreprocessingMethod",typeof(SpectralPreprocessingMethod));

@@ -285,7 +285,10 @@ namespace Altaxo.Worksheet.Commands
       {
         PasteFromTableColumnsToSelectedRows(dg,sourcetable);
       }
-        // here should follow the exact matches with property colums
+      else if(dg.SelectedPropertyColumns.Count>0 && dg.SelectedPropertyColumns.Count == sourcetable.DataColumns.ColumnCount)
+      {
+        PasteFromTableColumnsToSelectedPropertyColumns(dg,sourcetable);
+      }
 
         // now the not exact matches
       else if(dg.SelectedDataColumns.Count>0)
@@ -401,6 +404,61 @@ namespace Altaxo.Worksheet.Commands
         // also fill in the property values
         int nDestColumnIndex = desttable.DataColumns.GetColumnNumber(destcolumn);
         FillRow(propertycolumnmap,nDestColumnIndex,sourcetable.PropCols,nSrcCol);
+      } // for all data columns
+    }
+
+
+
+    /// <summary>
+    /// Pastes data from a table (usually deserialized table from the clipboard) into a worksheet, which has
+    /// currently selected property columns. The number of selected property columns has to match the number of data (!) columns of the source table.
+    /// </summary>
+    /// <param name="dg">The worksheet to paste into.</param>
+    /// <param name="sourcetable">The table which contains the data to paste into the worksheet.</param>
+    /// <remarks>The operation is defined as follows: if the is no ro selection, the data are inserted beginning at row[0] of the destination table.
+    /// If there is a row selection, the data are inserted in the selected rows, and then in the rows after the last selected rows.
+    /// No exception is thrown if a column type does not match the corresponding source column type.
+    /// The columns to paste into do not change their name, kind or group number. But property columns in the source table
+    /// are pasted into the destination table.</remarks>
+    protected static void PasteFromTableColumnsToSelectedPropertyColumns(GUI.WorksheetController dg, Altaxo.Data.DataTable sourcetable)
+    {
+      Altaxo.Data.DataTable desttable = dg.DataTable;
+
+      // use the selected columns, then use the following columns, then add columns
+      int nDestCol=-1;
+      for(int nSrcCol=0;nSrcCol<sourcetable.DataColumns.ColumnCount;nSrcCol++)
+      {
+        nDestCol = nSrcCol<dg.SelectedPropertyColumns.Count ? dg.SelectedPropertyColumns[nSrcCol] : nDestCol+1;
+        Altaxo.Data.DataColumn destcolumn;
+        if(nDestCol<desttable.PropertyColumns.ColumnCount)
+        {
+          destcolumn = desttable.PropertyColumns[nDestCol];
+        }
+        else
+        {
+
+          string name = sourcetable.DataColumns.GetColumnName(nSrcCol);
+          int    group = sourcetable.DataColumns.GetColumnGroup(nSrcCol);
+          Altaxo.Data.ColumnKind kind = sourcetable.DataColumns.GetColumnKind(nSrcCol);
+          destcolumn = (Altaxo.Data.DataColumn)Activator.CreateInstance(sourcetable.DataColumns[nSrcCol].GetType());
+          desttable.PropertyColumns.Add(destcolumn, name, kind, group);
+        }
+        
+        // now fill the data into that column
+        Altaxo.Data.DataColumn sourcecolumn = sourcetable.DataColumns[nSrcCol];
+
+        try
+        {
+          int nDestRow=-1;
+          for(int nSrcRow=0;nSrcRow<sourcetable.DataColumns.RowCount;nSrcRow++)
+          {
+            nDestRow = nSrcRow<dg.SelectedPropertyRows.Count ? dg.SelectedPropertyRows[nSrcRow] : nDestRow+1;
+            destcolumn[nDestRow] = sourcecolumn[nSrcRow];
+          }
+        }
+        catch(Exception)
+        {
+        }
       } // for all data columns
     }
 
@@ -625,8 +683,7 @@ namespace Altaxo.Worksheet.Commands
 
       string[] formats = dao.GetFormats();
       System.Diagnostics.Trace.WriteLine("Available formats:");
-      foreach(string format in formats)
-        System.Diagnostics.Trace.WriteLine(format);
+      //foreach(string format in formats) System.Diagnostics.Trace.WriteLine(format);
 
       if(dao.GetDataPresent("Altaxo.Data.DataTable.ClipboardMemento"))
       {

@@ -52,6 +52,7 @@ namespace Altaxo.Serialization.Xml
 
     void CommitArray();
 
+    void AddArray(string name, int[] val, int count);
     void AddArray(string name, float[] val, int count);
     void AddArray(string name, double[] val, int count);
     void AddArray(string name, DateTime[] val, int count);

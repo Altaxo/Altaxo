@@ -1015,7 +1015,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       //  MatrixMath.HorizontalVector scaleX = new MatrixMath.HorizontalVector(matrixX.Cols);
       MatrixMath.HorizontalVector meanY = new MatrixMath.HorizontalVector(matrixY.Columns);
 
-
+      preprocessOptions.IdentifyRegions(DataColumnWrapper.ToROVector(xColumnOfX));
       preprocessOptions.Process(matrixX,meanX,scaleX);
       MatrixMath.ColumnsToZeroMean(matrixY, meanY);
 
@@ -1240,6 +1240,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
       exporter.Export(dlg.FileName);
     }
 
+    /// <summary>
+    /// Utility class to retrieve the calibration model stored in an worksheet and export it
+    /// either to a <see>PLS2CalibrationModel</see> or to a XML file.
+    /// </summary>
     class PLSCalibrationModelExporter
     {
       
@@ -1382,6 +1386,25 @@ namespace Altaxo.Worksheet.Commands.Analysis
         _writer.Close();
       }
 
+
+
+
+      public void ExportToLinearPredictionModel(string filename)
+      {
+        _writer = new System.Xml.XmlTextWriter(filename,System.Text.Encoding.UTF8);
+        _writer.WriteStartDocument();
+        _writer.WriteStartElement("LinearPredictionModel");
+
+        WriteProperties();
+        WriteSpectralPreprocessing();
+        WriteLinearPredictionData();
+
+        _writer.WriteEndElement(); // PLSCalibrationModel
+        _writer.WriteEndDocument();
+
+        _writer.Close();
+      }
+
       void WriteProperties()
       {
         _writer.WriteStartElement("Properties");
@@ -1420,7 +1443,18 @@ namespace Altaxo.Worksheet.Commands.Analysis
         return col.Count;
       }
 
+      void WriteSpectralPreprocessing()
+      {
+        _writer.WriteStartElement("SpectralPreprocessing");
 
+        PLSContentMemento plsMemo = _table.GetTableProperty("Content") as PLSContentMemento;
+        if(plsMemo!=null)
+        {
+          plsMemo.SpectralPreprocessing.Export(_writer);
+        }
+          
+          _writer.WriteEndElement(); 
+      }
 
       void WriteData()
       {
@@ -1433,8 +1467,18 @@ namespace Altaxo.Worksheet.Commands.Analysis
         _writer.WriteEndElement(); // Data
       }
 
+      void WriteLinearPredictionData()
+      {
+        _writer.WriteStartElement("Data");
 
-      void WriteXData()
+        WriteBasicXData(true);
+        WriteBasicYData(true);
+        WritePredictionScores();
+
+        _writer.WriteEndElement(); // Data
+      }
+
+      void WriteBasicXData(bool bWriteEndElement)
       {
         Altaxo.Data.DoubleColumn col=null;
 
@@ -1451,6 +1495,16 @@ namespace Altaxo.Worksheet.Commands.Analysis
         col = _table.DataColumns[_XScale_ColumnName] as Altaxo.Data.DoubleColumn;
         if(null==col) NotFound(_XScale_ColumnName);
         WriteVector("XScale",col, _numberOfX);
+
+        if(bWriteEndElement)
+          _writer.WriteEndElement(); // XData
+      }
+
+      void WriteXData()
+      {
+        _writer.WriteStartElement("XData");
+
+        WriteBasicXData(false);
 
         WriteXLoads();
 
@@ -1494,7 +1548,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
         _writer.WriteEndElement();
       }
 
-      void WriteYData()
+
+      void WriteBasicYData(bool bWriteEndElement)
       {
         Altaxo.Data.DoubleColumn col=null;
 
@@ -1508,6 +1563,18 @@ namespace Altaxo.Worksheet.Commands.Analysis
         if(null==col) NotFound(_YScale_ColumnName);
         WriteVector("YScale",col, _numberOfY);
 
+        if(bWriteEndElement)
+        _writer.WriteEndElement(); // YData
+      }
+
+
+      void WriteYData()
+      {
+
+        _writer.WriteStartElement("YData");
+
+        WriteBasicYData(false);
+        
         WriteYLoads();
 
         _writer.WriteEndElement(); // YData
@@ -1539,8 +1606,38 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       }
 
+      void WritePredictionScores()
+      {
+        
+        _writer.WriteStartElement("PredictionScores");
+
+        Altaxo.Calc.Regression.PLS.PLS2CalibrationModel model;
+        this.Export(out model);
+        Matrix predictionScores = new Matrix(this._numberOfY,this._numberOfX);
+        MatrixMath.PartialLeastSquares_GetPredictionScoreMatrix(model.XLoads,model.YLoads,model.XWeights,model.CrossProduct,_numberOfFactors,predictionScores);
+        
+        for(int i=0;i<_numberOfY;i++)
+        {
+          WriteVector("Score"+i.ToString(),MatrixMath.RowToVector(predictionScores,i),_numberOfX);
+        }
+        _writer.WriteEndElement();
+      }
+
 
       void WriteVector(string name, Altaxo.Data.DoubleColumn col, int numberOfData)
+      {
+        _writer.WriteStartElement(name);
+
+        for(int i=0;i<numberOfData;i++)
+        {
+          _writer.WriteElementString("e",System.Xml.XmlConvert.ToString(col[i]));
+        }
+
+
+        _writer.WriteEndElement(); // name
+      }
+
+      void WriteVector(string name, IROVector col, int numberOfData)
       {
         _writer.WriteStartElement(name);
 

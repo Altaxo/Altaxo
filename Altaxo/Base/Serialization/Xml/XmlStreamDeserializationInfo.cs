@@ -38,6 +38,7 @@ namespace Altaxo.Serialization.Xml
     byte[] m_Buffer;
     int    m_BufferSize;
 
+    private const int _size_of_int=4;
     private const int _size_of_float=4;
     private const int _size_of_double=8;
     private const int _size_of_DateTime=8;
@@ -254,6 +255,42 @@ namespace Altaxo.Serialization.Xml
             break;
           case "BinHex":
             GetArrayOfPrimitiveTypeBinHex(val,count,_size_of_double);
+            break;
+        } // end of switch
+        m_Reader.ReadEndElement(); // read the outer XmlElement, i.e. "DoubleArray"
+      } // if count>0
+      else
+      {
+        m_Reader.Read();
+      }
+    }
+
+
+    public void GetArray(string name, out int[] val)
+    {
+      int count = GetInt32Attribute("Count");
+      val = new int[count];
+      GetArray(val,count);
+    }
+
+    public void GetArray(int[] val, int count)
+    {
+      // Attribute must be readed before ReadStartElement
+      if(count>0)
+      {
+        m_Reader.ReadStartElement(); // read the first inner element
+
+        switch(m_Reader.Name)
+        {
+          default:
+            for(int i=0;i<count;i++)
+              val[i] = XmlConvert.ToInt32(m_Reader.ReadElementString());
+            break;
+          case "Base64":
+            GetArrayOfPrimitiveTypeBase64(val,count,_size_of_int);
+            break;
+          case "BinHex":
+            GetArrayOfPrimitiveTypeBinHex(val,count,_size_of_int);
             break;
         } // end of switch
         m_Reader.ReadEndElement(); // read the outer XmlElement, i.e. "DoubleArray"

@@ -337,11 +337,13 @@ namespace Altaxo.Serialization.Xml
     public void AddArray(string name, DateTime[] val, int count) {}
     public void AddArray(string name, string[] val, int count) {}
     public void AddArray(string name, float[] val, int count) {}
+    public void AddArray(string name, int[] val, int count) {}
 
     public void GetArray(string[] val, int count) {}
     public void GetArray(DateTime[] val, int count) {}
     public void GetArray(out float[] val) { val=null; }
     public void GetArray(string name, out double[] val) { val=null; }
+    public void GetArray(string name, out int[] val) { val=null; }
     
     public void AddValue(string name, bool val) {}
     public bool GetBoolean() { return false; }

@@ -698,6 +698,8 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       IMatrix _m;
       int     _row;
+      int     _coloffset;
+      int     _length;
 
       /// <summary>
       /// Constructor of a matrix row vector by providing the matrix and the row number of that matrix that is wrapped.
@@ -705,14 +707,29 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <param name="m">The matrix.</param>
       /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
       public MatrixRowVector(IMatrix m, int row)
+      : this(m,row,0,m.Columns)
+      {
+      }
+      /// <summary>
+      /// Constructor of a matrix row vector by providing the matrix and the row number of that matrix that is wrapped.
+      /// </summary>
+      /// <param name="m">The matrix.</param>
+      /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
+      /// <param name="columnoffset">First number of column that is included in the vector.</param>
+      /// <param name="length">Length of the vector.</param>
+      public MatrixRowVector(IMatrix m, int row, int columnoffset, int length)
       {
         if(m==null)
           throw new ArgumentNullException("IMatrix m is null");
         if(row<0 || row>=m.Rows)
           throw new ArgumentOutOfRangeException("The parameter row is either <0 or greater than the rows of the matrix");
+         if(columnoffset+length>m.Columns)
+           throw new ArgumentException("Columnoffset+length exceed the number of columns of the matrix");
 
         _m = m;
         _row = row;
+        _coloffset = columnoffset;
+        _length = length;
 
       }
       #region IVector Members
@@ -723,11 +740,11 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _m[_row,i];
+          return _m[_row,i+_coloffset];
         }
         set
         {
-          _m[_row,i] = value;
+          _m[_row,i+_coloffset] = value;
         }
       }
 
@@ -741,7 +758,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _m[_row,i];
+          return _m[_row,i+_coloffset];
         }
       }
 
@@ -759,7 +776,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _m.Columns-1;
+          return _length-1;
         }
       }
 
@@ -768,7 +785,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         get
         {
-          return _m.Columns;
+          return _length;
         }
       }
 
@@ -860,6 +877,172 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #endregion
     }
+    #endregion
+
+    #region SubMatrixWrapper
+
+    /// <summary>
+    /// Wraps part of a matrix so that it can be used as submatrix in operations.
+    /// </summary>
+    class SubMatrixROWrapper : IROMatrix
+    {
+      IROMatrix _m;
+      int _rowoffset, _coloffset;
+      int _rows, _cols;
+
+      #region IROMatrix Members
+
+      public SubMatrixROWrapper(IROMatrix matrix, int rowoffset, int coloffset, int rows, int cols)
+      {
+        _m = matrix;
+        _rowoffset = rowoffset;
+        _coloffset = coloffset;
+        _rows = rows;
+        _cols = cols;
+      }
+
+      public double this[int row, int col]
+      {
+        get
+        {
+          return _m[row+_rowoffset,col+_coloffset];
+        }
+      }
+
+      public int Rows
+      {
+        get
+        {
+          return _rows;
+        }
+      }
+
+      public int Columns
+      {
+        get
+        {
+          return _cols;
+        }
+      }
+
+      #endregion
+
+    }
+
+    /// <summary>
+    /// Wraps part of a matrix so that it can be used as submatrix in operations.
+    /// </summary>
+    class SubMatrixWrapper : IMatrix
+    {
+      IMatrix _m;
+      int _rowoffset, _coloffset;
+      int _rows, _cols;
+
+      #region IROMatrix Members
+
+      public SubMatrixWrapper(IMatrix matrix, int rowoffset, int coloffset, int rows, int cols)
+      {
+        _m = matrix;
+        _rowoffset = rowoffset;
+        _coloffset = coloffset;
+        _rows = rows;
+        _cols = cols;
+      }
+
+      public double this[int row, int col]
+      {
+        get
+        {
+          return _m[row+_rowoffset,col+_coloffset];
+        }
+      }
+
+      public int Rows
+      {
+        get
+        {
+          return _rows;
+        }
+      }
+
+      public int Columns
+      {
+        get
+        {
+          return _cols;
+        }
+      }
+
+      #endregion
+
+      #region IMatrix Members
+
+      double Altaxo.Calc.LinearAlgebra.IMatrix.this[int row, int col]
+      {
+        get
+        {
+          return _m[row+_rowoffset,col+_coloffset];
+        }
+        set
+        {
+          _m[row+_rowoffset,col+_coloffset] = value;
+        }
+      }
+
+      #endregion
+    }
+
+    #endregion
+
+    #region DiagonalMatrix
+
+    /// <summary>
+    /// Wraps a vector to a diagonal matrix
+    /// </summary>
+    class RODiagonalMatrixVectorWrapper : IROMatrix
+    {
+      IROVector _m;
+      int _offset, _dim;
+
+      public RODiagonalMatrixVectorWrapper(IROVector vector, int offset, int matrixdimensions)
+      {
+        _m = vector;
+        _offset = offset;
+        _dim = matrixdimensions;
+      }
+
+      #region IROMatrix Members
+
+      public double this[int row, int col]
+      {
+        get
+        {
+          if(row==col)
+            return _m[row+_offset];
+          else
+            return 0;
+        }
+      }
+
+      public int Rows
+      {
+        get
+        {
+          return _dim;
+        }
+      }
+
+      public int Columns
+      {
+        get
+        {
+          return _dim;
+        }
+      }
+
+      #endregion
+    }
+
     #endregion
 
     #endregion
@@ -967,6 +1150,16 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
+    /// Returns a vector representing a matrix row by providing the matrix and the row number of that matrix that is wrapped.
+    /// </summary>
+    /// <param name="x">The matrix.</param>
+    /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
+    public static IVector RowToVector(IMatrix x, int row, int columnoffset, int length)
+    {
+      return new MatrixRowVector(x,row,columnoffset,length);
+    }
+
+    /// <summary>
     /// Returns a vector representing a matrix column by providing the matrix and the row number of that matrix that is wrapped.
     /// </summary>
     /// <param name="x">The matrix.</param>
@@ -974,6 +1167,47 @@ namespace Altaxo.Calc.LinearAlgebra
     public static IVector ColumnToVector(IMatrix x, int column)
     {
       return new MatrixColumnVector(x,column);
+    }
+
+
+    /// <summary>
+    /// Wraps a submatrix part, so that this part can be used as a matrix in operations (read-only).
+    /// </summary>
+    /// <param name="matrix">The matrix from which a submatrix part should be wrapped.</param>
+    /// <param name="rowoffset">Starting row of the submatrix.</param>
+    /// <param name="columnoffset">Starting column of the submatrix.</param>
+    /// <param name="rows">Number of rows of the submatrix.</param>
+    /// <param name="columns">Number of columns of the submatrix.</param>
+    /// <returns>A read-only wrapper matrix that represents the submatrix part of the matrix.</returns>
+    public static IROMatrix ToROSubMatrix(IROMatrix matrix, int rowoffset, int columnoffset, int rows, int columns)
+    {
+      return new SubMatrixROWrapper(matrix,rowoffset,columnoffset,rows,columns);
+    }
+
+    /// <summary>
+    /// Wraps a submatrix part, so that this part can be used as a matrix in operations.
+    /// </summary>
+    /// <param name="matrix">The matrix from which a submatrix part should be wrapped.</param>
+    /// <param name="rowoffset">Starting row of the submatrix.</param>
+    /// <param name="columnoffset">Starting column of the submatrix.</param>
+    /// <param name="rows">Number of rows of the submatrix.</param>
+    /// <param name="columns">Number of columns of the submatrix.</param>
+    /// <returns>A wrapper matrix that represents the submatrix part of the matrix.</returns>
+    public static IMatrix ToSubMatrix(IMatrix matrix, int rowoffset, int columnoffset, int rows, int columns)
+    {
+      return new SubMatrixWrapper(matrix,rowoffset,columnoffset,rows,columns);
+    }
+
+    /// <summary>
+    /// Wraps a read-only vector to a read-only diagonal matrix.
+    /// </summary>
+    /// <param name="vector">The vector to wrap.</param>
+    /// <param name="vectoroffset">The index of the vector that is the first matrix element(0,0).</param>
+    /// <param name="matrixdimensions">The number of rows = number of columns of the diagonal matrix.</param>
+    /// <returns></returns>
+    public static IROMatrix ToRODiagonalMatrix(IROVector vector, int vectoroffset, int matrixdimensions)
+    {
+      return new RODiagonalMatrixVectorWrapper(vector,vectoroffset,matrixdimensions);
     }
 
     #endregion
@@ -2078,6 +2312,7 @@ namespace Altaxo.Calc.LinearAlgebra
       IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
       )
     {
+
       // now predicting a "unkown" spectra
       MatrixMath.Scalar si = new MatrixMath.Scalar(0);
       MatrixMath.HorizontalVector Cu = new MatrixMath.HorizontalVector(yLoads.Columns);
@@ -2125,6 +2360,53 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
       } // for each spectrum in XU
+    } // end partial-least-squares-predict
+
+
+    /// <summary>
+    /// Get the prediction score matrix. To get the predictions, you have to multiply
+    /// the spectras to predict by this prediction score matrix (in case of a single y-variable), this is
+    /// simply the dot product.
+    /// </summary>
+    /// <param name="xLoads">Matrix of spectral loads [factors,spectral bins].</param>
+    /// <param name="yLoads">Matrix of concentration loads[factors, number of concentrations].</param>
+    /// <param name="W">Matrix of spectral weightings [factors,spectral bins].</param>
+    /// <param name="V">Cross product matrix[1,factors].</param>
+    /// <param name="numFactors">Number of factors to use to calculate the score matrix.</param>
+    /// <param name="predictionScores">Output: the resulting score matrix[numberOfConcentrations, spectral bins]</param>
+    public static void PartialLeastSquares_GetPredictionScoreMatrix(
+      IROMatrix xLoads, // x-loads matrix
+      IROMatrix yLoads, // y-loads matrix
+      IROMatrix W, // weighting matrix
+      IROMatrix V,  // Cross product vector
+      int numFactors, // number of factors to use for prediction
+      IMatrix predictionScores // Matrix of predicted y-values, must be same number of rows as spectra
+      )
+    {
+
+      Matrix bidiag = new Matrix(numFactors,numFactors);
+      IROMatrix subweights = ToROSubMatrix(W,0,0,numFactors,W.Columns);
+      IROMatrix subxloads  = ToROSubMatrix(xLoads,0,0,numFactors,xLoads.Columns);
+      MultiplySecondTransposed(subxloads,subweights,bidiag);
+      IMatrix invbidiag = bidiag.Inverse;
+
+      
+      Matrix subyloads = new Matrix(numFactors,yLoads.Columns);
+      MatrixMath.Submatrix(yLoads,subyloads,0,0);
+      // multiply each row of the subyloads matrix by the appropriate weight
+      for(int i=0;i<subyloads.Rows;i++)
+        for(int j=0;j<subyloads.Columns;j++)
+          subyloads[i,j] *= V[0,i];
+
+      Matrix helper = new Matrix(numFactors,yLoads.Columns);
+      Multiply(invbidiag,subyloads,helper);
+
+      //Matrix scores = new Matrix(yLoads.Columns,xLoads.Columns);
+      MultiplyFirstTransposed(helper,subweights,predictionScores); // we calculate the transpose of scores (i.e. scores are horizontal oriented here)
+
+      // now calculate the ys from the scores and the spectra
+
+      //MultiplySecondTransposed(XU,scores,predictedY);
     } // end partial-least-squares-predict
 
 

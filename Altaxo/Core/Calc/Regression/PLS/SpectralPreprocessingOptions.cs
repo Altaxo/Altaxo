@@ -22,6 +22,7 @@
 
 
 using System;
+using System.Xml;
 using Altaxo.Calc.LinearAlgebra;
 
 
@@ -53,7 +54,7 @@ namespace Altaxo.Calc.Regression.PLS
     SpectralPreprocessingMethod _method;
     int  _detrendingOrder;
     bool _ensembleScale;
-    double[] _regions;
+    int[] _regions;
 
     /// <summary>
     /// Sets up the main method used for spectral preprocessing.
@@ -70,7 +71,7 @@ namespace Altaxo.Calc.Regression.PLS
     /// Each element of this array is an index into the spectrum. Each index parts the spectrum in two regions: one before up to the index-1, and a second
     /// beginning from the index (to the next index or to the end).
     /// </summary>
-    public double[] Regions
+    public int[] Regions
     {
       get { return _regions; }
       set { _regions = value; }
@@ -84,7 +85,7 @@ namespace Altaxo.Calc.Regression.PLS
       _method = SpectralPreprocessingMethod.None;
       _detrendingOrder = -1;
       _ensembleScale = false;
-      _regions = new double[0];
+      _regions = new int[0];
     }
 
     /// <summary>
@@ -105,7 +106,7 @@ namespace Altaxo.Calc.Regression.PLS
       this._method = from._method;
       this._detrendingOrder = from._detrendingOrder;
       this._ensembleScale = from._ensembleScale;
-      this._regions = (double[])from._regions.Clone();
+      this._regions = (int[])from._regions.Clone();
     }
 
     /// <summary>
@@ -171,6 +172,63 @@ namespace Altaxo.Calc.Regression.PLS
       get { return _method != SpectralPreprocessingMethod.MultiplicativeScatteringCorrection; }
     }
 
+    /// <summary>
+    /// Trys to identify spectral regions by supplying the spectral x values.
+    /// A end_of_region is recognized when the gap between two x-values is ten times higher
+    /// than the previous gap, or if the sign of the gap value changes.
+    /// This method fails if a spectral region contains only a single point (since no gap value can be obtained then).
+    /// (But in this case almost all spectral correction methods also fails).
+    /// </summary>
+    /// <param name="xvalues">The vector of x values for the spectra (wavelength, frequencies...).</param>
+    public void IdentifyRegions(IROVector xvalues)
+    {
+      System.Collections.ArrayList list = new System.Collections.ArrayList();
+
+      int len = xvalues.Length;
+
+      for(int i=0;i<len-2;i++)
+      {
+        double gap = Math.Abs(xvalues[i+1]-xvalues[i]);
+        double nextgap = Math.Abs(xvalues[i+2]-xvalues[i+1]);
+        if(gap!=0 && (Math.Sign(gap) == -Math.Sign(nextgap) || Math.Abs(nextgap)>10*Math.Abs(gap)))
+        {
+          list.Add(i+2);
+          i++;
+        }
+      }
+    
+    _regions = (int[])list.ToArray(typeof(int));
+    }
+
+
+    /// <summary>
+    /// Gets the preprocessing method choosen.
+    /// </summary>
+    /// <returns>The preprocessing method.</returns>
+    ISpectralPreprocessor GetPreprocessingMethod()
+    {
+      ISpectralPreprocessor result;
+      switch(_method)
+      {
+        default:
+        case SpectralPreprocessingMethod.None:
+          result = new NoSpectralCorrection();
+          break;
+        case SpectralPreprocessingMethod.MultiplicativeScatteringCorrection:
+          result = new MultiplicativeScatterCorrection();
+          break;
+        case SpectralPreprocessingMethod.StandardNormalVariate:
+          result = new StandardNormalVariateCorrection();
+          break;
+        case SpectralPreprocessingMethod.FirstDerivative:
+          result = new SavitzkyGolayCorrection(7,1,2);
+          break;
+        case SpectralPreprocessingMethod.SecondDerivative:
+          result = new SavitzkyGolayCorrection(11,2,3);
+          break;
+      }
+      return result;
+    }
 
     /// <summary>
     /// Processes the spectra in matrix xMatrix according to the set-up options.
@@ -183,30 +241,13 @@ namespace Altaxo.Calc.Regression.PLS
       // before processing, fill xScale with 1
       VectorMath.Fill(xScale,1);
 
-      switch(_method)
-      {
-        case SpectralPreprocessingMethod.None:
-          break;
-        case SpectralPreprocessingMethod.MultiplicativeScatteringCorrection:
-          new MultiplicativeScatterCorrection().Process(xMatrix,xMean,xScale);
-          break;
-        case SpectralPreprocessingMethod.StandardNormalVariate:
-          new StandardNormalVariateCorrection().Process(xMatrix,xMean,xScale);
-          break;
-        case SpectralPreprocessingMethod.FirstDerivative:
-          new SavitzkyGolayCorrection(7,1,2).Process(xMatrix,xMean,xScale);
-          break;
-        case SpectralPreprocessingMethod.SecondDerivative:
-          new SavitzkyGolayCorrection(11,2,3).Process(xMatrix,xMean,xScale);
-          break;
-      }
+      GetPreprocessingMethod().Process(xMatrix,xMean,xScale,_regions);
 
       if(UseDetrending)
-        new DetrendingCorrection(_detrendingOrder).Process(xMatrix,xMean,xScale);
-
+        new DetrendingCorrection(_detrendingOrder).Process(xMatrix,xMean,xScale,_regions);
     
       if(EnsembleMeanAfterProcessing || EnsembleScale)
-        new EnsembleMeanAndScaleCorrection(EnsembleMeanAfterProcessing,EnsembleScale).Process(xMatrix,xMean,xScale);
+        new EnsembleMeanAndScaleCorrection(EnsembleMeanAfterProcessing,EnsembleScale).Process(xMatrix,xMean,xScale,_regions);
     }
 
     /// <summary>
@@ -218,31 +259,28 @@ namespace Altaxo.Calc.Regression.PLS
     /// <param name="xScale">Vector of inverse spectral variance, must be supplied here.</param>
     public void ProcessForPrediction(IMatrix xMatrix, IROVector xMean, IROVector xScale)
     {
-      switch(_method)
-      {
-        case SpectralPreprocessingMethod.None:
-          break;
-        case SpectralPreprocessingMethod.MultiplicativeScatteringCorrection:
-          new MultiplicativeScatterCorrection().ProcessForPrediction(xMatrix,xMean,xScale);
-          break;
-        case SpectralPreprocessingMethod.StandardNormalVariate:
-          new StandardNormalVariateCorrection().ProcessForPrediction(xMatrix,xMean,xScale);
-          break;
-        case SpectralPreprocessingMethod.FirstDerivative:
-          new SavitzkyGolayCorrection(7,1,2).ProcessForPrediction(xMatrix,xMean,xScale);
-          break;
-        case SpectralPreprocessingMethod.SecondDerivative:
-          new SavitzkyGolayCorrection(11,2,3).ProcessForPrediction(xMatrix,xMean,xScale);
-          break;
-      }
+      GetPreprocessingMethod().ProcessForPrediction(xMatrix,xMean,xScale,_regions);
 
       if(UseDetrending)
-        new DetrendingCorrection(_detrendingOrder).ProcessForPrediction(xMatrix,xMean,xScale);
-
+        new DetrendingCorrection(_detrendingOrder).ProcessForPrediction(xMatrix,xMean,xScale,_regions);
     
       if(EnsembleMeanAfterProcessing || EnsembleScale)
-        new EnsembleMeanAndScaleCorrection(EnsembleMeanAfterProcessing,EnsembleScale).ProcessForPrediction(xMatrix,xMean,xScale);
+        new EnsembleMeanAndScaleCorrection(EnsembleMeanAfterProcessing,EnsembleScale).ProcessForPrediction(xMatrix,xMean,xScale,_regions);
     }
+
+    public void Export(XmlWriter writer)
+    {
+      writer.WriteStartElement("SpectralRegions");
+      for(int i=0;i<_regions.Length;i++)
+        writer.WriteElementString("e",XmlConvert.ToString(_regions[i]));
+      writer.WriteEndElement();
+
+      GetPreprocessingMethod().Export(writer);
+
+      if(UseDetrending)
+        new DetrendingCorrection(_detrendingOrder).Export(writer);
+    }
+
     #region ICloneable Members
 
     public object Clone()
