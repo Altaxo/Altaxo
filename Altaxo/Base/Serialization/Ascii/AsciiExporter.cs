@@ -1,6 +1,7 @@
+#region Disclaimer
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002 Dr. Dirk Lellinger
+//    Copyright (C) Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -17,11 +18,12 @@
 //    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 /////////////////////////////////////////////////////////////////////////////
+#endregion
 
 using System;
 using System.IO;
 
-namespace Altaxo.Serialization
+namespace Altaxo.Serialization.Ascii
 {
 	/// <summary>
 	/// AsciiExporter provides some static methods to export tables or columns to ascii files

@@ -200,7 +200,9 @@ namespace Altaxo.Data
 				if(m_Content==Content.VDouble || m_Content==Content.VDateTime)
 					return true; // we can create a double from a double (trivial) and from DateTime
 				if(m_Content==Content.VString) // if the content is a string, we have to look if it is possible to convert
-					return Altaxo.Serialization.Parsing.IsNumeric((string)m_Object);
+					return Altaxo.Serialization.NumberConversion.IsNumeric((string)m_Object);
+				else if(m_Object!=null)
+					return Altaxo.Serialization.NumberConversion.IsNumeric(m_Object.ToString());
 				else
 					return false; // it is not possible to convert the contents to a double
 			}
@@ -219,6 +221,8 @@ namespace Altaxo.Data
 				return System.Convert.ToDouble((DateTime)m_Object);
 			else if(m_Content==Content.VString)
 				return System.Convert.ToDouble((string)m_Object);
+			else if(m_Object!=null)
+				return System.Convert.ToDouble(m_Object.ToString());
 			else
 				throw new ApplicationException("Unable to convert the contents of this variant to a number, the contents is: " + this.ToString());
 		}

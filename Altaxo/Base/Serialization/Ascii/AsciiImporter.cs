@@ -22,448 +22,13 @@
 
 using System;
 
-namespace Altaxo.Serialization
+namespace Altaxo.Serialization.Ascii
 {
-	/// <summary>
-	/// This class is only intended to group some static functions for parsing of strings.
-	/// </summary>
-	public class Parsing
-	{
-
-		/// <summary>
-		/// Is the provided string a date/time?
-		/// </summary>
-		/// <param name="s">The string to parse</param>
-		/// <returns>True if the string can successfully parsed to a DateTime object.</returns>
-		public static bool IsDateTime(string s)
-		{
-			bool bRet=false;
-			try
-			{
-				System.Convert.ToDateTime(s);
-				bRet=true;
-			}
-			catch(Exception)
-			{
-			}
-			return bRet;
-		}
-
-		/// <summary>
-		/// Tests if the provided string represents a number.
-		/// </summary>
-		/// <param name="s">The string to test.</param>
-		/// <returns>True if the string represents a number.</returns>
-		public static bool IsNumeric(string s)
-		{
-			bool bRet=false;
-			try
-			{
-				System.Convert.ToDouble(s);
-				bRet=true;
-			}
-			catch(Exception)
-			{
-			}
-			return bRet;
-		}
-	}
-
-
-	public class AsciiLineStructure 
-	{
-		protected System.Collections.ArrayList mylist = new System.Collections.ArrayList();
-		protected int nLineNumber;
-		protected bool bContainsDBNull=false;
-		protected bool bDirty=true;
-		protected int prty=0;
-		protected int hash=0;
-		protected int m_CountDecimalSeparatorDot=0; // used for statistics of use of decimal separator
-		protected int m_CountDecimalSeparatorComma=0; // used for statistics of use of decimal separator
-
-		static char[] sm_ExponentChars = { 'e', 'E' };
-
-
-		public int Count
-		{
-			get
-			{
-				return mylist.Count;
-			}
-		}
-		public void Add(object o)
-		{
-			mylist.Add(o);
-			bDirty=true;
-		}
-
-
-		public int DecimalSeparatorDotCount
-		{
-			get { return m_CountDecimalSeparatorDot; }
-		}
-
-		public int DecimalSeparatorCommaCount
-		{
-			get { return m_CountDecimalSeparatorComma; }
-		}
-
-
-
-		public object this[int i]
-		{
-			get
-			{
-				return mylist[i];
-			}
-			set
-			{
-				mylist[i]=value;
-				bDirty=true;
-			}
-		}
-		
-		public int LineNumber
-		{
-			get
-			{
-				return nLineNumber;
-			}
-			set
-			{
-				nLineNumber=value;
-			}
-		}
-
-		public bool ContainsDBNull
-		{
-			get
-			{
-				if(bDirty)
-					ResetDirty();
-				return bContainsDBNull;
-			}
-		}
-
-		public int Priority
-		{
-			get
-			{
-				if(bDirty)
-					ResetDirty();
-				return prty;
-			}
-		}
-		
-		public void ResetDirty()
-		{
-			bDirty = false;
-
-			// Calculate priority and hash
-
-			int len = Count;
-			prty = 0;
-			for(int i=0;i<len;i++)
-			{
-				Type t = (Type) this[i];
-				if(t==typeof(DateTime))
-					prty += 10;
-				else if(t==typeof(Double))
-					prty += 5;
-				else if(t==typeof(String))
-					prty += 2;
-				else if(t==typeof(DBNull))
-				{
-					prty += 1;
-					bContainsDBNull=true;
-				}
-			} // for
-
-			// calculate hash
-
-			hash = Count.GetHashCode();
-			for(int i=0;i<len;i++)
-				hash = ((hash<<1) | 1) ^ this[i].GetHashCode();
-		}
-
-		public override int GetHashCode()
-		{
-			if(bDirty)
-				ResetDirty();
-			return hash;
-		}
-		public bool IsCompatibleWith(AsciiLineStructure ano)
-		{
-			// our structure can have more columns, but not lesser than ano
-			if(this.Count<ano.Count)
-				return false;
-
-			for(int i=0;i<ano.Count;i++)
-			{
-				if(this[i]==typeof(DBNull) || ano[i]==typeof(DBNull))
-					continue;
-				if(this[i]!=ano[i])
-					return false;
-			}
-			return true;
-		}
-
-		/// <summary>
-		/// make a statistics on the use of the decimal separator
-		/// the aim is to recognize automatically which is the decimal separator
-		/// the function analyses the string for commas and dots and adds a statistics
-		/// </summary>
-		/// <param name="numstring">a string which represents a numeric value</param>
-		public void AddToDecimalSeparatorStatistics(string numstring)
-		{
-			// some rules:
-			// 1.) if more than one comma (dot) is existant, it can not be the decimal separator -> it seems that the alternative character is then the decimal separator
-			// 2.) if only one comma (dot) is existent, and three digits before or back is not a comma (dot), than this is a good hint for the character to be the decimal separator
-
-			int ds,de,cs,ce;
-
-			ds=numstring.IndexOf('.'); // ds -> dot start
-			de= ds<0 ? -1 : numstring.LastIndexOf('.'); // de -> dot end
-			cs=numstring.IndexOf(','); // cs -> comma start
-			ce= cs<0 ? -1 : numstring.LastIndexOf(','); // ce -> comma end
-
-			if(ds>=0 && de!=ds)
-			{
-				m_CountDecimalSeparatorComma++;
-			}
-			if(cs>=0 && ce!=cs)
-			{
-				m_CountDecimalSeparatorDot++;
-			}
-
-			// if there is only one dot and no comma
-			if(ds>=0 && de==ds && cs<0)
-			{
-				if(numstring.IndexOfAny(sm_ExponentChars)>0) // if there is one dot, but no comma, and a Exponent char (e, E), than dot is the decimal separator
-					m_CountDecimalSeparatorDot++;
-				else if((ds>=4 && Char.IsDigit(numstring,ds-4)) || ((ds+4)<numstring.Length && Char.IsDigit(numstring,ds+4)))
-					m_CountDecimalSeparatorDot++; 			// analyze the digits before and back, if 4 chars before or back is a digit (no separator), than dot is the decimal separator
-			}
-
-			// if there is only one comma and no dot
-			if(cs>=0 && ce==cs && ds<0)
-			{
-				if(numstring.IndexOfAny(sm_ExponentChars)>0) // if there is one dot, but no comma, and a Exponent char (e, E), than dot is the decimal separator
-					m_CountDecimalSeparatorComma++;
-				else if((cs>=4 && Char.IsDigit(numstring,cs-4)) || ((cs+4)<numstring.Length && Char.IsDigit(numstring,cs+4)))
-					m_CountDecimalSeparatorComma++; 			// analyze the digits before and back, if 4 chars before or back is a digit (no separator), than dot is the decimal separator
-			}
-
-		}
-			
-	} // end class AsciiLineStructure
-
-
-	public struct NumberAndStructure
-	{
-		public int nLines;
-		public AsciiLineStructure structure;
-	} // end class
-
-
-	public class AsciiLineAnalyzer
-	{
-		public enum Separation { Tab=0, Comma=1, Semicolon=2 };
-
-		public int nNumberOfTabs=0;
-		public int nNumberOfCommas=0;
-		public int nNumberOfPoints=0;
-		public int nNumberOfSemicolons=0;
-		public int nPositionTab4=0;
-		public int nPositionTab8=0;
-
-		public System.Collections.ArrayList wordStartsTab4 = new System.Collections.ArrayList();
-		public System.Collections.ArrayList wordStartsTab8 = new System.Collections.ArrayList();
-
-		public AsciiLineStructure[] structure; 
-		public AsciiLineStructure structWithCommas = null; 
-		public AsciiLineStructure structWithSemicolons = null; 
-
-
-		public AsciiLineAnalyzer(int nLine,string sLine)
-		{
-			structure = new AsciiLineStructure[3];
-			structure[(int)Separation.Tab] = AssumeSeparator(nLine,sLine,"\t");
-			structure[(int)Separation.Comma] = AssumeSeparator(nLine,sLine,",");
-			structure[(int)Separation.Semicolon] = AssumeSeparator(nLine,sLine,";");
-		}
-		
-		public AsciiLineAnalyzer(string sLine, bool bDummy)
-		{
-			int nLen = sLine.Length;
-			if(nLen==0)
-				return;
-
-			bool bInWord=false;
-			bool bInString=false; // true when starting with " char
-			for(int i=0;i<nLen;i++)
-			{
-				char cc = sLine[i];
-
-				if(cc=='\t')
-				{
-					nNumberOfTabs++;
-					nPositionTab8 += 8-(nPositionTab8%8);
-					nPositionTab4 += 4-(nPositionTab4%4);
-					bInWord &= bInString;
-					continue;
-				}
-				else if(cc==' ')
-				{
-					bInWord &= bInString;
-					nPositionTab4++;
-					nPositionTab8++;
-				}
-				else if(cc=='\"')
-				{
-					bInWord = !bInWord;
-					bInString = !bInString;
-					if(bInWord) 
-					{
-						wordStartsTab4.Add(nPositionTab4);
-						wordStartsTab8.Add(nPositionTab8);
-					}
-
-					nPositionTab4++;
-					nPositionTab8++;
-				}
-				else if(cc>' ') // all other chars are no space chars
-				{
-					if(!bInWord)
-					{
-						bInWord=true;
-						wordStartsTab4.Add(nPositionTab4);
-						wordStartsTab8.Add(nPositionTab8);
-					}
-					nPositionTab4++;
-					nPositionTab8++;
-					
-					if(cc=='.') nNumberOfPoints++;
-					if(cc==',') nNumberOfCommas++;
-					if(cc==';') nNumberOfSemicolons++;
-				}
-			}
-		}
-
-		public static AsciiLineStructure AssumeSeparator(int nLine, string sLine, string separator)
-		{
-			AsciiLineStructure tabStruc = new AsciiLineStructure();
-			tabStruc.LineNumber = nLine;
-
-			int len =sLine.Length;
-			int ix=0;
-			for(int start=0; start<=len; start=ix+1)
-			{
-				ix = sLine.IndexOf(separator,start,len-start);
-				if(ix==-1)
-				{
-					ix = len;
-				}
-
-				// try to interpret ix first as DateTime, then as numeric and then as string
-				string substring = sLine.Substring(start,ix-start);
-				if(ix==start) // just this char is a tab, so nothing is between the last and this
-				{
-					tabStruc.Add(typeof(DBNull));
-				}
-				else if(IsNumeric(substring))
-				{
-					tabStruc.Add(typeof(double));
-					tabStruc.AddToDecimalSeparatorStatistics(substring); // make a statistics of the use of decimal separator
-				}
-				else if(IsDateTime(substring))
-				{
-					tabStruc.Add(typeof(System.DateTime));
-				}
-				else
-				{
-					tabStruc.Add(typeof(string));
-				}
-			} // end for
-			return tabStruc;
-		}
-
-		public static bool IsDateTime(string s)
-		{
-			bool bRet=false;
-			try
-			{
-				System.Convert.ToDateTime(s);
-				bRet=true;
-			}
-			catch(Exception)
-			{
-			}
-			return bRet;
-		}
-		public static bool IsNumeric(string s)
-		{
-			bool bRet=false;
-			try
-			{
-				System.Convert.ToDouble(s);
-				bRet=true;
-			}
-			catch(Exception)
-			{
-			}
-			return bRet;
-		}
-
-		public int WordStartsTab4_GetHashCode()
-		{
-			return GetHashOf(wordStartsTab4);
-		}
-
-		public int WordStartsTab8_GetHashCode()
-		{
-			return GetHashOf(wordStartsTab4);
-		}
-
-
-		public static int GetHashOf(System.Collections.ArrayList al)
-		{
-			int len = al.Count;
-			int hash = al.Count.GetHashCode();
-			for(int i=0;i<len;i++)
-				hash ^= al[i].GetHashCode();
-			
-			return hash;
-		}
-
-
-		public static int GetPriorityOf(System.Collections.ArrayList al)
-		{
-			int len = al.Count;
-			int prty = 0;
-			for(int i=0;i<len;i++)
-			{
-				Type t = (Type) al[i];
-				if(t==typeof(DateTime))
-					prty += 10;
-				else if(t==typeof(Double))
-					prty += 5;
-				else if(t==typeof(String))
-					prty += 2;
-				else if(t==typeof(DBNull))
-					prty += 1;
-			} // for
-			return prty;
-		} 
-	} // end class
-
-
-
-	public class AltaxoAsciiImporter
+	public class AsciiImporter
 	{
 		protected System.IO.Stream stream;
 
-		public AltaxoAsciiImporter(System.IO.Stream _stream)
+		public AsciiImporter(System.IO.Stream _stream)
 		{
 			this.stream = _stream;
 		}
@@ -522,16 +87,15 @@ namespace Altaxo.Serialization
 		/// <summary>
 		/// Analyzes the first <code>nLines</code> of the ascii stream.
 		/// </summary>
-		/// <param name="nLines"></param>The number of lines to analyze. It is no error if the stream contains a less number of lines than provided here.</param>
+		/// <param name="nLines">The number of lines to analyze. It is no error if the stream contains a less number of lines than provided here.</param>
 		/// <param name="defaultImportOptions">The default import options.</param>
 		/// <returns>Import options that can be used in a following step to read in the ascii stream. Null is returned if the stream contains no data.</returns>
 		public AsciiImportOptions Analyze(int nLines, AsciiImportOptions defaultImportOptions)
 		{
 
 			string sLine;
-			if(stream.CanSeek)
-				stream.Seek(0,System.IO.SeekOrigin.Begin);
 
+			stream.Position = 0;
 			System.IO.StreamReader sr = new System.IO.StreamReader(stream,System.Text.Encoding.ASCII,true);
 			System.Collections.ArrayList result = new System.Collections.ArrayList();
 		
@@ -870,30 +434,59 @@ namespace Altaxo.Serialization
 			}
 			table.Resume();
 		} // end of function ImportAscii
-	} // end class 
-	public class AsciiImportOptions
-	{
-		public bool bRenameColumns; /// rename the columns if 1st line contain  the column names
-		public bool bRenameWorksheet; // rename the worksheet to the data file name
-
-		public int nMainHeaderLines; // lines to skip (the main header)
-		public bool bDelimited;      // true if delimited by a single char
-		public char cDelimiter;      // the delimiter char
-
-		public int m_DecimalSeparatorDotCount=0;
-		public int m_DecimalSeparatorCommaCount=0;
-
-
-		public AsciiLineStructure recognizedStructure=null;
 
 
 
-
-		public AsciiImportOptions Clone()
+		/// <summary>
+		/// Imports ascii from a string into a table. Returns null (!) if nothing is imported.
+		/// </summary>
+		/// <param name="text">The text to import as ascii.</param>
+		/// <returns>The table representation of the imported text, or null if nothing is imported.</returns>
+		public static Altaxo.Data.DataTable Import(string text)
 		{
-			return (AsciiImportOptions)MemberwiseClone();
+			System.IO.MemoryStream memstream = new System.IO.MemoryStream();
+			System.IO.TextWriter textwriter = new System.IO.StreamWriter(memstream);
+			textwriter.Write(text);
+			textwriter.Flush();
+			memstream.Position = 0;
+
+			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
+			Altaxo.Serialization.Ascii.AsciiImporter importer = new Altaxo.Serialization.Ascii.AsciiImporter(memstream);
+			Altaxo.Serialization.Ascii.AsciiImportOptions options = importer.Analyze(20,new Altaxo.Serialization.Ascii.AsciiImportOptions());
+
+			if(options!=null)
+			{
+				importer.ImportAscii(options,table);
+				return table;
+			}
+			else
+			{
+				return null; 
+			}
 		}
 
-	}
 
+		/// <summary>
+		/// Imports ascii from a memory stream into a table. Returns null (!) if nothing is imported.
+		/// </summary>
+		/// <param name="stream">The stream to import ascii from.</param>
+		/// <returns>The table representation of the imported text, or null if nothing is imported.</returns>
+		public static Altaxo.Data.DataTable Import(System.IO.Stream stream)
+		{
+			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
+			Altaxo.Serialization.Ascii.AsciiImporter importer = new Altaxo.Serialization.Ascii.AsciiImporter(stream);
+			Altaxo.Serialization.Ascii.AsciiImportOptions options = importer.Analyze(20,new Altaxo.Serialization.Ascii.AsciiImportOptions());
+			if(options!=null)
+			{
+				importer.ImportAscii(options,table);
+				return table;
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+
+	} // end class 
 }

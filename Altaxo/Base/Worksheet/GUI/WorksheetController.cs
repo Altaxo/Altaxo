@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph;
 using Altaxo.Serialization;
+using Altaxo.Serialization.Ascii;
 using ICSharpCode.SharpDevelop.Gui;
 
 
@@ -724,7 +725,7 @@ namespace Altaxo.Worksheet.GUI
 
 		public void ImportAscii(System.IO.Stream myStream)
 		{
-			AltaxoAsciiImporter importer = new AltaxoAsciiImporter(myStream);
+			AsciiImporter importer = new AsciiImporter(myStream);
 			AsciiImportOptions recognizedOptions = importer.Analyze(30, new AsciiImportOptions());
 			importer.ImportAscii(recognizedOptions,this.DataTable);
 		}
@@ -783,7 +784,7 @@ namespace Altaxo.Worksheet.GUI
 				{
 					try
 					{
-						Altaxo.Serialization.AsciiExporter.ExportAscii(myStream, this.DataTable,'\t');
+						Altaxo.Serialization.Ascii.AsciiExporter.ExportAscii(myStream, this.DataTable,'\t');
 					}
 					catch(Exception ex)
 					{

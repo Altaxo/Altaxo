@@ -1314,7 +1314,7 @@ namespace Altaxo.Worksheet
 
 			for(int nCol=0;nCol<sourcetable.DataColumns.ColumnCount;nCol++)
 			{
-			// now fill the data into that column
+				// now fill the data into that column
 
 				try
 				{
@@ -1525,42 +1525,23 @@ namespace Altaxo.Worksheet
 			}
 
 			object clipboardobject=null;
+			Altaxo.Data.DataTable table=null;
 
 			if(dao.GetDataPresent("Csv"))
 				clipboardobject = dao.GetData("Csv");
 			else if(dao.GetDataPresent("Text"))
 				clipboardobject = dao.GetData("Text");
 
-			if(clipboardobject is System.IO.MemoryStream)
-			{
-				System.IO.MemoryStream memstream = (System.IO.MemoryStream)clipboardobject;
-				Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
-				Altaxo.Serialization.AltaxoAsciiImporter importer = new Altaxo.Serialization.AltaxoAsciiImporter(memstream);
-				Altaxo.Serialization.AsciiImportOptions options = importer.Analyze(20,new Altaxo.Serialization.AsciiImportOptions());
-				if(options!=null)
-				{
-					importer.ImportAscii(options,table);
-					PasteFromTable(dg,table);
-				}
-			}
-			else if(clipboardobject is string)
-			{
-				System.IO.MemoryStream memstream = new System.IO.MemoryStream();
-				System.IO.TextWriter textwriter = new System.IO.StreamWriter(memstream);
-				textwriter.Write((string)clipboardobject);
-				textwriter.Flush();
-				//textwriter.Close();
-				//memstream.Close();
 
-				Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
-				Altaxo.Serialization.AltaxoAsciiImporter importer = new Altaxo.Serialization.AltaxoAsciiImporter(memstream);
-				Altaxo.Serialization.AsciiImportOptions options = importer.Analyze(20,new Altaxo.Serialization.AsciiImportOptions());
-				if(options!=null)
-				{
-					importer.ImportAscii(options,table);
-					PasteFromTable(dg,table);
-				}
-			}
+			if(clipboardobject is System.IO.MemoryStream)
+				table = Altaxo.Serialization.Ascii.AsciiImporter.Import((System.IO.Stream)clipboardobject);
+			else if(clipboardobject is string)
+				table = Altaxo.Serialization.Ascii.AsciiImporter.Import((string)clipboardobject);
+			
+			
+			if(null!=table)
+				PasteFromTable(dg,table);
+		
 		}
 
 		/// <summary>
@@ -1601,9 +1582,9 @@ namespace Altaxo.Worksheet
 				if(!store.ContainsColumn(propname))
 				{
 					Altaxo.Data.DataColumn col;
-					if(Altaxo.Serialization.Parsing.IsDateTime(propvalue))
+					if(Altaxo.Serialization.DateTimeParsing.IsDateTime(propvalue))
 						col = new Altaxo.Data.DateTimeColumn();
-					else if(Altaxo.Serialization.Parsing.IsNumeric(propvalue))
+					else if(Altaxo.Serialization.NumberConversion.IsNumeric(propvalue))
 						col = new Altaxo.Data.DoubleColumn();
 					else
 						col = new Altaxo.Data.TextColumn();

@@ -939,37 +939,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Serialization\AsciiExporter.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Serialization\AsciiImporter.cs"
+                    RelPath = "Serialization\DateTimeParsing.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Serialization\EnumParsing.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Serialization\ExportGalacticSpcFileDialog.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Serialization\ExportGalacticSpcFileDialog.resx"
-                    DependentUpon = "ExportGalacticSpcFileDialog.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Serialization\ExportGalacticSpcFiles.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Serialization\ImportGalacticSpcFiles.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -980,6 +955,51 @@
                 />
                 <File
                     RelPath = "Serialization\SerializationAttributes.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Ascii\AsciiExporter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Ascii\AsciiImporter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Ascii\AsciiImportOptions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Ascii\AsciiLineAnalyzer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Ascii\AsciiLineStructure.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Galactic\ExportGalacticSpcFileDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Galactic\ExportGalacticSpcFileDialog.resx"
+                    DependentUpon = "ExportGalacticSpcFileDialog.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Serialization\Galactic\ExportGalacticSpcFiles.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Galactic\ImportGalacticSpcFiles.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -140,7 +140,6 @@ namespace Altaxo.Worksheet
 				s.m_SelectedTextBrush = (Graph.BrushHolder)info.GetValue("SelTextBrush",s);
 				s.m_BackgroundBrush = (Graph.BrushHolder)info.GetValue("BkgBrush",s);
 				s.m_SelectedBackgroundBrush = (Graph.BrushHolder)info.GetValue("SelBkgBrush",s);
-				s.m_TextFormat = new StringFormat();
 				s.m_TextFormat.Alignment = (StringAlignment)Enum.Parse(typeof(StringAlignment),info.GetString("Alignment"));
 				s.m_TextFont = (Font)info.GetValue("Font",s);
 				return s;
