@@ -3,7 +3,7 @@
 		<Import assembly="../bin/SharpDevelop.Base.dll"/>
 	  <Import assembly="../bin/AltaxoCore.dll"/>
 		<Import assembly="../bin/AltaxoBase.dll"/>		
-		<Import assembly="../bin/AltaxoGUI.dll"/>
+		<Import assembly="../bin/AltaxoSDGui.dll"/>
 	</Runtime>
 	<Extension path="/SharpDevelop/Workbench/Ambiences">
 		<Class id=".NET" class="ICSharpCode.SharpDevelop.Services.NetAmbience"/>

@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base", "Altaxo\Base\Base.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoBase", "Altaxo\Base\AltaxoBase.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A1006FEB-2FFC-4507-8D82-265130CDD08E} = {A1006FEB-2FFC-4507-8D82-265130CDD08E}
 	EndProjectSection
@@ -53,7 +53,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoCore", "Altaxo\Core\A
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoGUI", "Altaxo\GUI\AltaxoGUI.csproj", "{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AltaxoSDGui", "Altaxo\SDGui\AltaxoSDGui.csproj", "{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject

@@ -437,7 +437,7 @@ namespace Altaxo.Main.GUI
 				{
 					// tag is the name of the table clicked, so look for a view that has the table or
 					// create a new one
-					Current.ProjectService.OpenOrCreateViewForGraph(Current.Project.GraphDocumentCollection[tag]);
+					Current.ProjectService.OpenOrCreateGraphForGraphDocument(Current.Project.GraphDocumentCollection[tag]);
 				}
 
 			}

@@ -866,6 +866,16 @@ namespace Altaxo.Graph.GUI
 			}
 		}
 
+    /// <summary>
+    /// Creates a default view object.
+    /// </summary>
+    /// <returns>The default view object, or null if there is no default view object.</returns>
+    public virtual object CreateDefaultViewObject()
+    {
+      this.View = new GraphView();
+      return this.View;
+    }
+
 		/// <summary>
 		/// Handles the selection of the current layer by the <b>user</b>.
 		/// </summary>

@@ -9,7 +9,7 @@
             <Settings
                 ApplicationIcon = ""
                 AssemblyKeyContainerName = ""
-                AssemblyName = "AltaxoGUI"
+                AssemblyName = "AltaxoSDGui"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "copy AltaxoGui.??? ..\..\..\..\rtd\bin"
+                PostBuildEvent = "copy AltaxoSDGui.??? ..\..\..\..\rtd\bin"
                 RootNamespace = "AltaxoGUI"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -255,7 +255,7 @@
                 />
                 <File
                     RelPath = "Worksheet\GUI\TableScriptControl.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File

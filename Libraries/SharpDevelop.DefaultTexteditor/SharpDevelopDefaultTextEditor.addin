@@ -2,7 +2,7 @@
 	<Runtime>
 		<Import assembly="../bin/ICSharpCode.TextEditor.dll"/>
 		<Import assembly="../bin/SharpDevelop.DefaultTexteditor.dll"/>
-		<Import assembly="../bin/AltaxoGui.dll"/>
+		<Import assembly="../bin/AltaxoSDGui.dll"/>
 	</Runtime>
 	<Extension path="/SharpDevelop/Dialogs/OptionsDialog/CodingOptions">
 		<DialogPanel id="CodeTemplates" label="${res:Dialog.Options.CodeTemplatesText}" class="ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels.CodeTemplatePane"/>

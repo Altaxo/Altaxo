@@ -26,9 +26,10 @@ namespace Altaxo.Main.GUI
 	public interface IMVCControllerEx : IMVCController
 	{
 		/// <summary>
-		/// Creates a default view object.
+		/// Creates a default view object and assign it to the controller.
 		/// </summary>
 		/// <returns>The default view object, or null if there is no default view object.</returns>
+		/// <remarks>Don't forget not only to create the default view object, but also assign it to the controller!</remarks>
 		object CreateDefaultViewObject();
 	}
 	/// <summary>

@@ -42,6 +42,24 @@ namespace Altaxo.Graph.GUI
 	{
 		
 
+    #region Serialization
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SDGraphController),0)]
+      public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        info.AddBaseValueEmbedded(obj,typeof(SDGraphController).BaseType);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        SDGraphController s = null!=o ? (SDGraphController)o : new SDGraphController(null,true);
+        info.GetBaseValueEmbedded(s,typeof(SDGraphController).BaseType,parent);
+        return s;
+      }
+    }
+    #endregion
+
+    #region Constructors
     /// <summary>
     /// Creates a GraphController which shows the <see cref="GraphDocument"/> <paramref name="graphdoc"/>.		
     /// </summary>
@@ -57,25 +75,14 @@ namespace Altaxo.Graph.GUI
     /// <param name="graphdoc">The graph which holds the graphical elements.</param>
     /// <param name="bDeserializationConstructor">If true, this is a special constructor used only for deserialization, where no graphdoc needs to be supplied.</param>
     protected SDGraphController(GraphDocument graphdoc, bool bDeserializationConstructor)
-      : base(graphdoc,bDeserializationConstructor)
+      : base(graphdoc, bDeserializationConstructor)
     {
     }
 
-#if FormerGuiState
-		Altaxo.Main.GUI.IWorkbenchContentView Altaxo.Main.GUI.IWorkbenchContentController.WorkbenchContentView
-		{
-			get
-			{
-				return m_View;
-			}
-			set
-			{
-				this.View = value as IGraphView;
-			}
-		}
-#endif
+    #endregion
 
-#if !FormerGuiState
+
+
 		protected	ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow m_ParentWorkbenchWindowController;
 		public Main.GUI.IWorkbenchWindowController ParentWorkbenchWindowController 
 		{ 
@@ -97,7 +104,7 @@ namespace Altaxo.Graph.GUI
 				}
 			}
 		}
-#endif
+
 
 
     #region ICSharpCode.SharpDevelop.Gui

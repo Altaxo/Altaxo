@@ -78,7 +78,7 @@ namespace Altaxo.Main
 
 		public System.IO.Stream GetInputStream(IFileContainerItem item)
 		{
-			return _zip.GetInputStream((ZipEntry)item);
+			return _zip.GetInputStream(((ZipEntryWrapper)item));
 		}
 
 		public System.Collections.IEnumerator GetEnumerator()

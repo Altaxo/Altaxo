@@ -281,6 +281,10 @@ namespace Altaxo.Main
 			{
 				myStream.Close();
 			}
+
+      
+      if(errorText.Length!=0)
+        throw new ApplicationException(errorText.ToString());
 		}
 
 		/// <summary>
@@ -602,7 +606,7 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="graph">The graph for which a view must be found.</param>
 		/// <returns>The view content for the provided graph.</returns>
-		public object  OpenOrCreateViewForGraph(Altaxo.Graph.GraphDocument graph)
+		public object  OpenOrCreateGraphForGraphDocument(Altaxo.Graph.GraphDocument graph)
 		{
 	
 			// if a content exist that show that graph, activate that content

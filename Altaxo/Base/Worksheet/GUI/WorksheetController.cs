@@ -3276,6 +3276,16 @@ namespace Altaxo.Worksheet.GUI
 		{
 			get { return this.DataTable; }
 		}
+
+    /// <summary>
+    /// Creates a default view object.
+    /// </summary>
+    /// <returns>The default view object, or null if there is no default view object.</returns>
+    public virtual object CreateDefaultViewObject()
+    {
+      this.View = new WorksheetView();
+      return this.View;
+    }
 		#endregion
 
 		#region IWorkbenchContentController Members

@@ -203,14 +203,11 @@ namespace Altaxo.Main
 		/// </summary>
 		/// <param name="graph">The graph for which a view must be found.</param>
 		/// <returns>The view content for the provided graph.</returns>
-		object OpenOrCreateViewForGraph(Altaxo.Graph.GraphDocument graph);
+		object OpenOrCreateGraphForGraphDocument(Altaxo.Graph.GraphDocument graph);
 
-		/// <summary>
-		/// This function will delete a graph document and close all corresponding views.
-		/// </summary>
-		/// <param name="graph">The graph document to delete.</param>
-		/// <param name="force">If true, the graph document is deleted without safety question,
-		/// if false, the user is ask before the graph document is deleted.</param>
+    /// <summary>This will remove the Graph <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
+    /// <param name="ctrl">The Graph to remove.</param>
+    /// <remarks>No exception is thrown if the Form frm is not a member of the workbench views collection.</remarks>
 		void RemoveGraph(Altaxo.Graph.GUI.GraphController ctrl);
 
 
