@@ -1815,6 +1815,17 @@ namespace Altaxo.Calc
     /// </summary>
     /// <remarks>
     /// <para>Adapted from Lutz Roeders Mapack library.</para>
+    /// <code>Some properties of the singular value decomposition:
+    /// X - the matrix to decompose, U w V' - the decomposition.
+    ///
+    ///       -1               
+    /// (X' X)    = V (1/w^2) V'  (usually called covariance matrix)
+    /// 
+    ///                        -1    
+    /// Hat matrix H = X (X' X)  X' = U U'
+    /// 
+    /// 
+    /// </code>
     /// </remarks>
     public class SingularValueDecomposition : ISingularValueDecomposition
     {
@@ -2308,7 +2319,7 @@ namespace Altaxo.Calc
 
 
       /// <summary>
-      /// Calculates the covariance matrix Cov(i,j)=SUM_over_k( V[i,k]*V[j,k]/s[k]^2). If s[k] is zero, 1/s[k]^2 will be set to zero. If the singular value decomposition was used to make a linear fit,
+      /// Calculates the covariance matrix Cov(i,j)= (X'X)^(-1) = SUM_over_k( V[i,k]*V[j,k]/s[k]^2). If s[k] is zero, 1/s[k]^2 will be set to zero. If the singular value decomposition was used to make a linear fit,
       /// this is the variance-covariance matrix of the fitting parameters.
       /// </summary>
       /// <returns>The variance-covariance-matrix.</returns>

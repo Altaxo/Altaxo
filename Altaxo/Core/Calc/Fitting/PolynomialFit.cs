@@ -51,6 +51,22 @@ namespace Altaxo.Calc.Fitting
     double _yCorrectedSumOfSquares;
 
     /// <summary>
+    /// Vector of residuals.
+    /// </summary>
+    double[] _residuals;
+
+    /// <summary>
+    /// The reduced variance of prediction at each index. Is calculated from x' (X'X)^(-1) x.
+    /// To get the real prediction variance, the values have to be multiplicated with sigma².
+    /// </summary>
+    double[] _reducedPredictionVariance;
+
+    /// <summary>
+    /// The singular value composition of our data.
+    /// </summary>
+    MatrixMath.SingularValueDecomposition _decomposition;
+
+    /// <summary>
     /// Fits a data set linear to a given function base.
     /// </summary>
     /// <param name="xarr">The array of x values of the data set.</param>
@@ -73,6 +89,8 @@ namespace Altaxo.Calc.Fitting
       _numberOfFreeParameter = numberOfParameter;
       _numberOfData      = numberOfData;
       _parameter = new double[numberOfParameter];
+      _residual = new double[numberOfData];
+      _reducedPredictionVariance = new double[numberOfData];
 
       double[] functionBase = new double[numberOfParameter];
       double[] scaledY      = new double[numberOfData];
@@ -95,7 +113,7 @@ namespace Altaxo.Calc.Fitting
         scaledY[i] = scale*yarr[i];
       }
 
-      MatrixMath.SingularValueDecomposition decomposition = MatrixMath.GetSingularValueDecomposition(u);
+      _decomposition = MatrixMath.GetSingularValueDecomposition(u);
 
       // set singular values < thresholdLevel to zero
       // ChopSingularValues makes only sense if all columns of the x matrix have the same variance
@@ -111,10 +129,27 @@ namespace Altaxo.Calc.Fitting
         for(int j=0;j<numberOfParameter;j++)
           ypredicted += _parameter[j]*functionBase[j];
         double deviation = yarr[i]-ypredicted;
+        _residual[i] = deviation;
         _chiSquare += deviation*deviation;
       }
     
       _covarianceMatrix = decomposition.GetCovariances();
+
+
+      //calculate the reduced prediction variance x'(X'X)^(-1)x
+      for(int i=0;i<numberOfData;i++)
+      {
+        double total = 0;
+        for(j=0;j<numberOfParameter;j++)
+        {
+          double sum=0;
+          for(k=0;k<numberOfParameter;j++)
+            sum += _covarianceMatrix[j,k]*u[i,k];
+
+          total += u[i,j]*sum;
+        }
+        _reducedPredictionVariance[i] = total;
+      }
  
     }
 
@@ -222,6 +257,59 @@ namespace Altaxo.Calc.Fitting
       return Parameter[i]/StandardErrorOfParameter(i);
     }
 
+    public double[] Residual
+    {
+      get { return _residual; }
+    }
+
+
+    /// <summary>
+    /// Gives the ith PRESS residual.
+    /// </summary>
+    /// <param name="i">The index of the PRESS residual.</param>
+    /// <returns>The ith PRESS residual.</returns>
+    /// <remarks>The PRESS residual is the prediction error of the ith value, if the ith value itself
+    /// is not used in the prediction model.
+    /// <para>Ref: Introduction to linear regression analysis, 3rd ed., Wiley, p.135</para></remarks>
+    ///</remarks>
+    public double PRESSResidual(int i)
+    {
+      return _residual[i]/(1-_decomposition.HatDiagonal[i]);
+    }
+
+
+    /// <summary>
+    /// Gives the ith studentized residual.
+    /// </summary>
+    /// <param name="i">The index of the residual.</param>
+    /// <returns>The ith studentized residual.</returns>
+    /// <remarks>The studentized residual has constant variance of 1, regardless of the location of xi. 
+    /// <para>Ref: Introduction to linear regression analysis, 3rd ed., Wiley, p.134</para></remarks>
+    public double StudentizedResidual(int i)
+    {
+      return _residual[i]/Math.Sqrt((1-_decomposition.HatDiagonal[i])*this.EstimatedVariance);
+    }
+
+    /// <summary>
+    /// Gives the ith studentized residual, with the ith observation removed from the model.
+    /// </summary>
+    /// <param name="i">The index to the residual.</param>
+    /// <returns>The ith externally studentized residual.</returns>
+    /// <remarks>
+    /// As with the studentized residual, the expected variance of this residual is 1. Since the ith
+    /// observation is excluded from the model, the externally studentized residual is better suited
+    /// for outlier detection than the (normal) studentized residual.
+    /// <para>Ref: Introduction to linear regression analysis, 3rd ed., Wiley, p.136</para></remarks>
+    /// </remarks>
+    public double ExternallyStudentizedResidual(int i)
+    {
+      double ssi = this._chiSquare - square(_residual[i])/(1-_decomposition.HatDiagonal[i]);
+      ssi /= (this._numberOfData - this._numberOfFreeParameter - 1);
+
+      return _residual[i]/Math.Sqrt(ssi*(1-_decomposition.HatDiagonal[i]));
+    }
+
+
     /// <summary>
     /// Get the variance-covariance-matrix for the fit.
     /// </summary>
@@ -241,6 +329,18 @@ namespace Altaxo.Calc.Fitting
           return 0;
       }
     }
+
+    /// <summary>
+    /// Gives the variance of the prediction of the ith y-value.
+    /// </summary>
+    /// <param name="i">The index to the ith observation.</param>
+    /// <returns>The variance of the ith prediction value.</returns>
+    public double PredictionVariance(int i)
+    {
+      return this.EstimatedVariance*this._reducedPredictionVariance[i];
+    }
+
+
 
     /// <summary>Get the standard error of regression, defined as <c>Sqrt(SigmaSquare)</c>.</summary>
     public double Sigma  {  get  { return Math.Sqrt(ResidualSumOfSquares); }}

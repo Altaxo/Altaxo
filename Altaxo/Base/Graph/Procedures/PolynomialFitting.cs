@@ -143,6 +143,8 @@ namespace Altaxo.Graph.Procedures
       Current.Console.WriteLine("---- " + DateTime.Now.ToString() + " -----------------------");
       Current.Console.WriteLine("Polynomial regression of order {0} of {1} over {2}",order,plotNames[1],plotNames[0]);
 
+      Current.Console.WriteLine("Name   Value   Error    F-Value     Prob>F");
+
       for(int i=0;i<fit.Parameter.Length;i++)
         Current.Console.WriteLine("A{0}: {1} ± {2} {3} {4}",
           i,
@@ -187,14 +189,16 @@ namespace Altaxo.Graph.Procedures
       Current.Console.WriteLine("------------------------------------------------------------");
 
 
-    // add the fit curve to the graph
-    IScalarFunctionDD plotfunction = new Altaxo.Graph.PolynomialFunction(fit.Parameter);
+      // add the fit curve to the graph
+      IScalarFunctionDD plotfunction = new Altaxo.Graph.PolynomialFunction(fit.Parameter);
       XYFunctionPlotItem fittedCurve = new XYFunctionPlotItem(new XYFunctionPlotData(plotfunction),new XYLineScatterPlotStyle(LineScatterPlotStyleKind.Line));
 
       ctrl.ActiveLayer.PlotItems.Add(fittedCurve);
 
       return null;
     }
+
+
 
 
     public static void EvaluatePolynomialBase(double x, double[] pbase)
