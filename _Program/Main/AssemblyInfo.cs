@@ -59,4 +59,4 @@ using Altaxo.Serialization;
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
 
-[assembly: SupportsSerializationVersioning]
+[assembly: SupportsSerializationVersioning()]

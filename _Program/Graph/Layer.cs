@@ -26,6 +26,9 @@ namespace Altaxo.Graph
 		protected bool m_ShowRightAxis = true;
 		protected bool m_ShowTopAxis = true;
 
+		protected bool m_bFillLayerArea=false;
+		protected BrushHolder m_LayerAreaFillBrush = new BrushHolder(Color.Aqua);
+
 		protected XYLayerAxisStyle m_LeftAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Left);
 		protected XYLayerAxisStyle m_BottomAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Bottom);
 		protected XYLayerAxisStyle m_RightAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Right);
@@ -327,7 +330,9 @@ namespace Altaxo.Graph
 			//g.RotateTransform(m_LayerAngle);
 			
 			g.MultiplyTransform(matrix);
-			g.FillRectangle(Brushes.Aqua,0,0,m_LayerSize.Width,m_LayerSize.Height);
+
+			if(m_bFillLayerArea)
+				g.FillRectangle(m_LayerAreaFillBrush,0,0,m_LayerSize.Width,m_LayerSize.Height);
 
 			coll.DrawObjects(g,1);
 

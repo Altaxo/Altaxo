@@ -55,6 +55,24 @@
                     TreatWarningsAsErrors = "false"
                     WarningLevel = "4"
                 />
+                <Config
+                    Name = "DesignTimeDebugging"
+                    AllowUnsafeBlocks = "false"
+                    BaseAddress = "285212672"
+                    CheckForOverflowUnderflow = "false"
+                    ConfigurationOverrideFile = ""
+                    DefineConstants = "DEBUG;TRACE"
+                    DocumentationFile = ""
+                    DebugSymbols = "true"
+                    FileAlignment = "4096"
+                    IncrementalBuild = "true"
+                    Optimize = "false"
+                    OutputPath = "bin\Debug\"
+                    RegisterForComInterop = "false"
+                    RemoveIntegerChecks = "false"
+                    TreatWarningsAsErrors = "false"
+                    WarningLevel = "4"
+                />
             </Settings>
             <References>
                 <Reference
@@ -92,321 +110,326 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "AltaxoDocument.cs"
+                    RelPath = "Calc\complex.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "AltaxoExceptions.cs"
+                    RelPath = "Calc\FourierTransform.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "App.ico"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "AssemblyInfo.cs"
+                    RelPath = "Calc\RelativeOrAbsoluteValue.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "MainForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "MainForm.resx"
-                    DependentUpon = "MainForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "_Calc\complex.cs"
+                    RelPath = "Calc\ScriptExecutionBase.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Calc\FFT.cs"
+                    RelPath = "Data\ColumnScript.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Calc\RelativeOrAbsoluteValue.cs"
+                    RelPath = "Data\DataColumn.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Calc\ScriptExecutionBase.cs"
+                    RelPath = "Data\DataSet.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Data\AltaxoDataColumn.cs"
+                    RelPath = "Data\DataTable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Data\AltaxoDataSet.cs"
+                    RelPath = "Data\DateTimeColumn.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Data\AltaxoDataTable.cs"
+                    RelPath = "Data\DBNullColumn.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Data\AltaxoDateTimeColumn.cs"
+                    RelPath = "Data\DoubleColumn.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Data\AltaxoDBNullColumn.cs"
+                    RelPath = "Data\OperatableObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Data\AltaxoDoubleColumn.cs"
+                    RelPath = "Data\TextColumn.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Data\AltaxoTextColumn.cs"
+                    RelPath = "Data\Variant.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Data\AltaxoVariant.cs"
+                    RelPath = "Graph\Axis.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Data\ColumnScript.cs"
+                    RelPath = "Graph\AxisStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Data\OperatableObject.cs"
+                    RelPath = "Graph\BrushHolder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\Axis.cs"
+                    RelPath = "Graph\DataPlotCurve.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\AxisStyle.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "_Graph\BrushHolder.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "_Graph\DataPlotCurve.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "_Graph\GraphControl.cs"
+                    RelPath = "Graph\GraphControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\GraphControl.resx"
+                    RelPath = "Graph\GraphControl.resx"
                     DependentUpon = "GraphControl.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "_Graph\GraphForm.cs"
+                    RelPath = "Graph\GraphForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\GraphForm.resx"
+                    RelPath = "Graph\GraphForm.resx"
                     DependentUpon = "GraphForm.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "_Graph\GraphObject.cs"
+                    RelPath = "Graph\GraphObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\GraphObjectCollection.cs"
+                    RelPath = "Graph\GraphObjectCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\ImageGraphics.cs"
+                    RelPath = "Graph\ImageGraphics.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\LabelStyle.cs"
+                    RelPath = "Graph\LabelStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\Layer.cs"
+                    RelPath = "Graph\Layer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\LayerDialog.cs"
+                    RelPath = "Graph\LayerDialog.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\LayerDialog.resx"
+                    RelPath = "Graph\LayerDialog.resx"
                     DependentUpon = "LayerDialog.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "_Graph\LayerEdge.cs"
+                    RelPath = "Graph\LayerEdge.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\LineStyle.cs"
+                    RelPath = "Graph\LineStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\PenHolder.cs"
+                    RelPath = "Graph\PenHolder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\PhysicalBoundaries.cs"
+                    RelPath = "Graph\PhysicalBoundaries.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\PlotAssociation.cs"
+                    RelPath = "Graph\PlotAssociation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\PlotGroup.cs"
+                    RelPath = "Graph\PlotGroup.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\PlotStyle.cs"
+                    RelPath = "Graph\PlotStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\PlotStyleDialog.cs"
+                    RelPath = "Graph\PlotStyleDialog.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\PlotStyleDialog.resx"
+                    RelPath = "Graph\PlotStyleDialog.resx"
                     DependentUpon = "PlotStyleDialog.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "_Graph\RectangleD.cs"
+                    RelPath = "Graph\RectangleD.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\ScatterStyle.cs"
+                    RelPath = "Graph\ScatterStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\ShapeGraphics.cs"
+                    RelPath = "Graph\ShapeGraphics.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Graph\TextGraphObject.cs"
+                    RelPath = "Graph\TextGraphObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Serialization\AltaxoAsciiImporter.cs"
+                    RelPath = "Main\App.ico"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Main\AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_Serialization\SerializationAttributes.cs"
+                    RelPath = "Main\Document.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_TableView\ColumnHeaderStyle.cs"
+                    RelPath = "Main\Exceptions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_TableView\ColumnStyle.cs"
+                    RelPath = "Main\MainForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MainForm.resx"
+                    DependentUpon = "MainForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Serialization\AsciiExporter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_TableView\DataGrid.cs"
+                    RelPath = "Serialization\AsciiImporter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\SerializationAttributes.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TableView\ColumnHeaderStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TableView\ColumnStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TableView\DataGrid.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_TableView\DataGrid.resx"
+                    RelPath = "TableView\DataGrid.resx"
                     DependentUpon = "DataGrid.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "_TableView\DataGridOperations.cs"
+                    RelPath = "TableView\DataGridOperations.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_TableView\DateTimeColumnStyle.cs"
+                    RelPath = "TableView\DateTimeColumnStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_TableView\DoubleColumnStyle.cs"
+                    RelPath = "TableView\DoubleColumnStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_TableView\IndexSelection.cs"
+                    RelPath = "TableView\IndexSelection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_TableView\RowHeaderStyle.cs"
+                    RelPath = "TableView\RowHeaderStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_TableView\SetColumnValuesDialog.cs"
+                    RelPath = "TableView\SetColumnValuesDialog.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_TableView\SetColumnValuesDialog.resx"
+                    RelPath = "TableView\SetColumnValuesDialog.resx"
                     DependentUpon = "SetColumnValuesDialog.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "_TableView\TextColumnStyle.cs"
+                    RelPath = "TableView\TextColumnStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_TableView\Worksheet.cs"
+                    RelPath = "TableView\Worksheet.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "_TableView\Worksheet.resx"
+                    RelPath = "TableView\Worksheet.resx"
                     DependentUpon = "Worksheet.cs"
                     BuildAction = "EmbeddedResource"
                 />

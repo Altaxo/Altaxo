@@ -10,6 +10,11 @@ namespace Altaxo.Serialization
 		protected bool bDirty=true;
 		protected int prty=0;
 		protected int hash=0;
+		protected int m_CountDecimalSeparatorDot=0; // used for statistics of use of decimal separator
+		protected int m_CountDecimalSeparatorComma=0; // used for statistics of use of decimal separator
+
+		static char[] sm_ExponentChars = { 'e', 'E' };
+
 
 		public int Count
 		{
@@ -23,6 +28,19 @@ namespace Altaxo.Serialization
 			mylist.Add(o);
 			bDirty=true;
 		}
+
+
+		public int DecimalSeparatorDotCount
+		{
+			get { return m_CountDecimalSeparatorDot; }
+		}
+
+		public int DecimalSeparatorCommaCount
+		{
+			get { return m_CountDecimalSeparatorComma; }
+		}
+
+
 
 		public object this[int i]
 		{
@@ -120,6 +138,54 @@ namespace Altaxo.Serialization
 					return false;
 			}
 			return true;
+		}
+
+		/// <summary>
+		/// make a statistics on the use of the decimal separator
+		/// the aim is to recognize automatically which is the decimal separator
+		/// the function analyses the string for commas and dots and adds a statistics
+		/// </summary>
+		/// <param name="substring">a string which represents a numeric value</param>
+		public void AddToDecimalSeparatorStatistics(string numstring)
+		{
+			// some rules:
+			// 1.) if more than one comma (dot) is existant, it can not be the decimal separator -> it seems that the alternative character is then the decimal separator
+			// 2.) if only one comma (dot) is existent, and three digits before or back is not a comma (dot), than this is a good hint for the character to be the decimal separator
+
+			int ds,de,cs,ce;
+
+			ds=numstring.IndexOf('.'); // ds -> dot start
+			de= ds<0 ? -1 : numstring.LastIndexOf('.'); // de -> dot end
+			cs=numstring.IndexOf(','); // cs -> comma start
+			ce= cs<0 ? -1 : numstring.LastIndexOf(','); // ce -> comma end
+
+			if(ds>=0 && de!=ds)
+			{
+				m_CountDecimalSeparatorComma++;
+			}
+			if(cs>=0 && ce!=cs)
+			{
+				m_CountDecimalSeparatorDot++;
+			}
+
+			// if there is only one dot and no comma
+			if(ds>=0 && de==ds && cs<0)
+			{
+				if(numstring.IndexOfAny(sm_ExponentChars)>0) // if there is one dot, but no comma, and a Exponent char (e, E), than dot is the decimal separator
+					m_CountDecimalSeparatorDot++;
+				else if((ds>=4 && Char.IsDigit(numstring,ds-4)) || ((ds+4)<numstring.Length && Char.IsDigit(numstring,ds+4)))
+					m_CountDecimalSeparatorDot++; 			// analyze the digits before and back, if 4 chars before or back is a digit (no separator), than dot is the decimal separator
+			}
+
+			// if there is only one comma and no dot
+			if(cs>=0 && ce==cs && ds<0)
+			{
+				if(numstring.IndexOfAny(sm_ExponentChars)>0) // if there is one dot, but no comma, and a Exponent char (e, E), than dot is the decimal separator
+					m_CountDecimalSeparatorComma++;
+				else if((cs>=4 && Char.IsDigit(numstring,cs-4)) || ((cs+4)<numstring.Length && Char.IsDigit(numstring,cs+4)))
+					m_CountDecimalSeparatorComma++; 			// analyze the digits before and back, if 4 chars before or back is a digit (no separator), than dot is the decimal separator
+			}
+
 		}
 			
 	} // end class AsciiLineStructure
@@ -240,6 +306,7 @@ namespace Altaxo.Serialization
 				else if(IsNumeric(substring))
 				{
 					tabStruc.Add(typeof(double));
+					tabStruc.AddToDecimalSeparatorStatistics(substring); // make a statistics of the use of decimal separator
 				}
 				else if(IsDateTime(substring))
 				{
@@ -520,12 +587,26 @@ namespace Altaxo.Serialization
 			opt.cDelimiter = nBestSeparator==0 ? '\t' : (nBestSeparator==1 ? ',' : ';');
 			opt.recognizedStructure = st[nBestSeparator].structure;
 
+
+			// look how many header lines are in the file by comparing the structure of the first lines  with the recognized structure
 			for(int i=0;i<result.Count;i++)
 			{
 				opt.nMainHeaderLines=i;
 				if(((AsciiLineAnalyzer)result[i]).structure[nBestSeparator].IsCompatibleWith(opt.recognizedStructure))
 					break;
 			}
+
+
+			// calculate the total statistics of decimal separators
+			opt.m_DecimalSeparatorCommaCount=0;
+			opt.m_DecimalSeparatorDotCount=0;
+			for(int i=0;i<result.Count;i++)
+			{
+			opt.m_DecimalSeparatorDotCount += ((AsciiLineAnalyzer)result[i]).structure[nBestSeparator].DecimalSeparatorDotCount;
+			opt.m_DecimalSeparatorCommaCount += ((AsciiLineAnalyzer)result[i]).structure[nBestSeparator].DecimalSeparatorCommaCount;
+			}
+
+
 
 			return opt;
 
@@ -556,6 +637,32 @@ namespace Altaxo.Serialization
 						newcols.Add(new Altaxo.Data.DBNullColumn());;
 				}
 			}
+
+			// if decimal separator statistics is provided by impopt, create a number format info object
+			System.Globalization.NumberFormatInfo numberFormatInfo=null;
+			if(impopt.m_DecimalSeparatorCommaCount>0 || impopt.m_DecimalSeparatorDotCount>0)
+			{
+				numberFormatInfo = (System.Globalization.NumberFormatInfo)System.Globalization.NumberFormatInfo.CurrentInfo.Clone();
+
+				// analyse the statistics
+				if(impopt.m_DecimalSeparatorCommaCount>impopt.m_DecimalSeparatorDotCount) // the comma is the decimal separator
+				{
+					numberFormatInfo.NumberDecimalSeparator=",";
+					if(numberFormatInfo.NumberGroupSeparator==numberFormatInfo.NumberDecimalSeparator)
+						numberFormatInfo.NumberGroupSeparator=""; // in case now the group separator is also comma, remove the group separator
+				}
+				else if(impopt.m_DecimalSeparatorCommaCount<impopt.m_DecimalSeparatorDotCount) // the comma is the decimal separator
+				{
+					numberFormatInfo.NumberDecimalSeparator=".";
+					if(numberFormatInfo.NumberGroupSeparator==numberFormatInfo.NumberDecimalSeparator)
+						numberFormatInfo.NumberGroupSeparator=""; // in case now the group separator is also comma, remove the group separator
+				}
+			}
+			else // no decimal separator statistics is provided, so retrieve the numberFormatInfo object from the program options or from the current thread
+			{
+				numberFormatInfo = System.Globalization.NumberFormatInfo.CurrentInfo;
+			}
+
 
 			char [] splitchar = new char[]{impopt.cDelimiter};
 
@@ -593,7 +700,7 @@ namespace Altaxo.Serialization
 
 					if(newcols[k] is Altaxo.Data.DoubleColumn)
 					{
-						try { ((Altaxo.Data.DoubleColumn)newcols[k])[i] = System.Convert.ToDouble(substr[k]); }
+						try { ((Altaxo.Data.DoubleColumn)newcols[k])[i] = System.Convert.ToDouble(substr[k],numberFormatInfo); }
 						catch {}
 					}
 					else if( newcols[k] is Altaxo.Data.DateTimeColumn)
@@ -677,7 +784,13 @@ namespace Altaxo.Serialization
 		public bool bDelimited;      // true if delimited by a single char
 		public char cDelimiter;      // the delimiter char
 
+		public int m_DecimalSeparatorDotCount=0;
+		public int m_DecimalSeparatorCommaCount=0;
+
+
 		public AsciiLineStructure recognizedStructure=null;
+
+
 
 
 		public AsciiImportOptions Clone()

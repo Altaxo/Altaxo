@@ -50,23 +50,24 @@ namespace Altaxo.Graph
 			this.m_VertRes = grfx.DpiY;
 			grfx.Dispose();
 
+			if(null!=App.CurrentApplication) // if we are at design time, this is null and we use the default values above
+			{
+				System.Drawing.Printing.PrintDocument doc = App.CurrentApplication.PrintDocument;
 			
-			System.Drawing.Printing.PrintDocument doc = App.CurrentApplication.PrintDocument;
-
-			m_PageBounds = doc.DefaultPageSettings.Bounds;
-			// since Bounds are in 100th inch, we have to adjust them to points (72th inch)
-			m_PageBounds.X *= UnitPerInch/100;
-			m_PageBounds.Y *= UnitPerInch/100;
-			m_PageBounds.Width *= UnitPerInch/100;
-			m_PageBounds.Height *= UnitPerInch/100;
+				m_PageBounds = doc.DefaultPageSettings.Bounds;
+				// since Bounds are in 100th inch, we have to adjust them to points (72th inch)
+				m_PageBounds.X *= UnitPerInch/100;
+				m_PageBounds.Y *= UnitPerInch/100;
+				m_PageBounds.Width *= UnitPerInch/100;
+				m_PageBounds.Height *= UnitPerInch/100;
 
 
-			System.Drawing.Printing.Margins ma = doc.DefaultPageSettings.Margins;
-			m_PrintableBounds.X			= ma.Left * UnitPerInch/100;
-			m_PrintableBounds.Y			= ma.Top * UnitPerInch/100;
-			m_PrintableBounds.Width	= m_PageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
-			m_PrintableBounds.Height = m_PageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
-
+				System.Drawing.Printing.Margins ma = doc.DefaultPageSettings.Margins;
+				m_PrintableBounds.X			= ma.Left * UnitPerInch/100;
+				m_PrintableBounds.Y			= ma.Top * UnitPerInch/100;
+				m_PrintableBounds.Width	= m_PageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
+				m_PrintableBounds.Height = m_PageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
+			}
 
 			graphLayers.Add(new Altaxo.Graph.Layer(PrintableSize));
 		}

@@ -4,13 +4,16 @@ EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		ConfigName.0 = Debug
-		ConfigName.1 = Release
+		ConfigName.1 = DesignTimeDebugging
+		ConfigName.2 = Release
 	EndGlobalSection
 	GlobalSection(ProjectDependencies) = postSolution
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Debug.ActiveCfg = Debug|.NET
 		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Debug.Build.0 = Debug|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.DesignTimeDebugging.ActiveCfg = DesignTimeDebugging|.NET
+		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.DesignTimeDebugging.Build.0 = DesignTimeDebugging|.NET
 		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Release.ActiveCfg = Release|.NET
 		{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}.Release.Build.0 = Release|.NET
 	EndGlobalSection
