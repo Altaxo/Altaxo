@@ -106,7 +106,17 @@ namespace Altaxo.Worksheet.GUI
       }
       set 
       { 
-        this.m_ParentWorkbenchWindowController = value; 
+        ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow oldValue = this.m_ParentWorkbenchWindowController;
+        ICSharpCode.SharpDevelop.Gui.IWorkbenchWindow newValue = value;
+
+        if(oldValue!=null)
+          oldValue.WindowSelected -= new EventHandler(EhParent_WindowsSelected);
+
+        if(newValue!=null)
+          newValue.WindowSelected += new EventHandler(EhParent_WindowsSelected);
+
+        this.m_ParentWorkbenchWindowController = newValue; 
+
       }
     }
     
@@ -181,12 +191,19 @@ namespace Altaxo.Worksheet.GUI
       get { return true; }
     }
     
+    private void EhParent_WindowsSelected(object sender, EventArgs e)
+    {
+      Selected();
+    }
+
     /// <summary>
     /// Is called when the view content is selected inside the window
     /// tab. NOT when the windows is selected.
     /// </summary>
     public void Selected()
     {
+      if(this.View is System.Windows.Forms.Control)
+        ((System.Windows.Forms.Control)View).Focus();
     }
 		
     /// <summary>

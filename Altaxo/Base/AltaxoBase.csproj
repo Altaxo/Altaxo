@@ -148,7 +148,11 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
-                <Folder RelPath = "Calc\LinearAlgebra\" />
+                <File
+                    RelPath = "Calc\LinearAlgebra\DataColumnToVectorWrapper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
                 <File
                     RelPath = "Calc\Regression\PLS\PLSContentMemento.cs"
                     SubType = "Code"
@@ -1171,6 +1175,11 @@
                     RelPath = "Worksheet\GUI\WorksheetPanel.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\WorksheetPanel.resx"
+                    DependentUpon = "WorksheetPanel.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Worksheet\GUI\WorksheetView.cs"

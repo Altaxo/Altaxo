@@ -132,6 +132,42 @@ namespace Altaxo.Graph.Commands
   }
 
 
+  /// <summary>
+  /// Handler for the menu item "Edit" - "CopyPage".
+  /// </summary>
+  public class CopyPage : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+
+         System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
+
+      System.IO.MemoryStream stream = new System.IO.MemoryStream();
+      ctrl.SaveAsMetafile(stream);
+      stream.Flush();
+      
+
+      stream.Seek(0,System.IO.SeekOrigin.Begin);
+     // stream.Close();
+
+      System.Drawing.Graphics grfx = ctrl.View.CreateGraphGraphics();
+      IntPtr ipHdc = grfx.GetHdc();
+      System.Drawing.Imaging.Metafile mfile = new System.Drawing.Imaging.Metafile(stream,ipHdc);
+      grfx.ReleaseHdc(ipHdc);
+      grfx.Dispose();
+
+      stream.Seek(0,System.IO.SeekOrigin.Begin);
+      System.Drawing.Image imag = System.Drawing.Imaging.Metafile.FromStream(stream);
+      stream.Close();
+
+      dao.SetData(mfile);
+      dao.SetData(imag);
+
+      System.Windows.Forms.Clipboard.SetDataObject(dao,true);
+
+    }
+  }
+
   public class SaveGraphAsTemplate : AbstractGraphControllerCommand
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)

@@ -1721,9 +1721,12 @@ namespace Altaxo.Worksheet.GUI
       set
       {
         int oldValue = m_VertScrollPos;
-        m_VertScrollPos=value;
+        int newValue = value;
+        newValue = Math.Min(this.m_VertScrollMax,newValue);
+        newValue = Math.Max(-this.TotalEnabledPropertyColumns,newValue);
+        m_VertScrollPos=newValue;
 
-        if(value!=oldValue)
+        if(newValue!=oldValue)
         {
           if(m_CellEditControl.Visible)
           {
@@ -1736,7 +1739,7 @@ namespace Altaxo.Worksheet.GUI
           // can not have negative values;
           if(View!=null)
           {
-            this.View.TableViewVertScrollValue = value + this.TotalEnabledPropertyColumns;
+            this.View.TableViewVertScrollValue = newValue + this.TotalEnabledPropertyColumns;
             this.View.TableAreaInvalidate();
           }
         }
@@ -2287,11 +2290,11 @@ namespace Altaxo.Worksheet.GUI
     /// <param name="e">MouseEventArgs.</param>
     public void EhView_TableAreaMouseWheel(System.Windows.Forms.MouseEventArgs e)
     {
-      /*
+      
       int oldScrollPos = VertScrollPos;
-      VertScrollPos = VertScrollPos + SystemInformation.MouseWheelScrollLines*e.Delta/120;
-      Current.Console.WriteLine("MouseWheel {0}, {1}, {2}",e.Delta,oldScrollPos,VertScrollPos);
-      */
+      VertScrollPos = VertScrollPos - SystemInformation.MouseWheelScrollLines*e.Delta/120;
+      // Current.Console.WriteLine("MouseWheel {0}, {1}, {2}",e.Delta,oldScrollPos,VertScrollPos);
+      
     }
 
     public void EhView_TableAreaMouseMove(System.Windows.Forms.MouseEventArgs e)

@@ -122,6 +122,14 @@ namespace Altaxo.Serialization.Galactic
         //   following the x-values array
         // ---------------------------------------------------------------------
 
+        if(hdr.fversn!=0x4B)
+        {
+          if(hdr.fversn==0x4D)
+            throw new System.FormatException(string.Format("This SPC file has the old format version of {0}, the only version supported here is the new version {1}",hdr.fversn,0x4B));
+          else
+            throw new System.FormatException(string.Format("This SPC file has a version of {0}, the only version recognized here is {1}",hdr.fversn,0x4B));
+        }
+
         if(0!=(hdr.ftflgs & 0x80))
         {
           xvalues = new double[hdr.fnpts];
@@ -138,6 +146,8 @@ namespace Altaxo.Serialization.Galactic
         {
           throw new System.FormatException("The SPC file must not be a multifile; only single file format is accepted!");
         }
+
+
 
         // ---------------------------------------------------------------------
         //   following the y SUBHEADER
@@ -161,8 +171,17 @@ namespace Altaxo.Serialization.Galactic
         //   following the y-values array
         // ---------------------------------------------------------------------
         yvalues = new double[hdr.fnpts];
-        for(int i=0;i<hdr.fnpts;i++)
-          yvalues[i] = binreader.ReadSingle();
+        
+        if(hdr.fexp==0x80) //floating point format
+        {
+          for(int i=0;i<hdr.fnpts;i++)
+            yvalues[i] = binreader.ReadSingle();
+        }
+        else // fixed exponent format
+        {
+          for(int i=0;i<hdr.fnpts;i++)
+            yvalues[i] = binreader.ReadInt32()*Math.Pow(2,hdr.fexp-32);
+        }
       }
       catch(Exception e)
       {
@@ -226,7 +245,10 @@ namespace Altaxo.Serialization.Galactic
       {
         string error = ToArrays(filename,out xvalues, out yvalues);
         if(null!=error)
+        {
           errorList.Append(error);
+          continue;
+        }
 
         bool bMatchsXColumn=false;
 

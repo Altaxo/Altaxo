@@ -375,6 +375,13 @@
 						class="Altaxo.Worksheet.Commands.ExportGalacticSPC" />
 				</MenuItem>
 			</Conditional>
+			<Conditional activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
+				<MenuItem id="GraphImportExportSeparator" label="-" />
+				<MenuItem id="GraphExport" label="${res:XML.MainMenu.FileMenu.Export}">
+					<MenuItem id="GraphExportMetafile" label="${res:XML.MainMenu.FileMenu.Export.WindowsMetaFile}" icon="Icons.16x16.NewDocumentIcon"
+						description="${res:XML.MainMenu.FileMenu.Export.WindowsMetaFile.Description}" class="Altaxo.Graph.Commands.FileExportMetafile" />
+				</MenuItem>
+			</Conditional>
 			<MenuItem id="ExitSeparator" label="-" />
 			<MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.Exit}" description="${res:XML.MainMenu.FileMenu.Exit.Desription}"
 				class="Altaxo.Main.Commands.FileExit" />
@@ -390,6 +397,13 @@
 				description="${res:XML.MainMenu.EditMenu.Delete.Description}" class="ICSharpCode.SharpDevelop.Commands.Delete" />
 			<MenuItem id="SelectAll" label="${res:XML.MainMenu.EditMenu.SelectAll}" description="${res:XML.MainMenu.EditMenu.SelectAll.Description}"
 				shortcut="Control|A" class="ICSharpCode.SharpDevelop.Commands.SelectAll" />
+
+			<Conditional activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
+					<MenuItem id="GraphCopyPage" label="${res:XML.MainMenu.EditMenu.CopyPage}" icon="Icons.16x16.NewDocumentIcon"
+						description="${res:XML.MainMenu.EditMenu.CopyPage.Description}" class="Altaxo.Graph.Commands.CopyPage" />
+			</Conditional>
+
+
 		</MenuItem>
 		<MenuItem id="View" label="${res:XML.MainMenu.ViewMenu}">
 			<MenuItem id="ViewBuilder" label="" class="ICSharpCode.SharpDevelop.Commands.ViewMenuBuilder" />

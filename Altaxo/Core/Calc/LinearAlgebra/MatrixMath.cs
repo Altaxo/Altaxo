@@ -1694,7 +1694,7 @@ namespace Altaxo.Calc.LinearAlgebra
   
         // 1. Use as start vector for the y score the first column of the 
         // y-matrix
-        Submatrix(X,u); // u is now a vertical vector of concentrations of the first constituents
+        Submatrix(Y,u); // u is now a vertical vector of concentrations of the first constituents
 
         for(int iter=0;iter<maxIterations;iter++)
         {
@@ -1838,12 +1838,14 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="numFactors">Maximal number of factors to use for PLS.</param>
     /// <param name="bExcludeGroups">If true, groups of samples with the same Y values are exluded. If false, every single sample is excluded to perform cross validation.</param>
     /// <param name="crossPRESSMatrix">Output: This is a k*1 matrix of resulting PRESS values, k being the max. number of factors.</param>
+    /// <param name="meanNumberOfExcludedSpectra">On return, this gives the mean number of spectra that where excluded during the cross validation.</param>
     public static void PartialLeastSquares_CrossValidation_HO(
       IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
       IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
       int numFactors,
       bool bExcludeGroups,
-      out IMatrix crossPRESSMatrix // vertical value of PRESS values for the cross validation
+      out IMatrix crossPRESSMatrix, // vertical value of PRESS values for the cross validation
+      out double meanNumberOfExcludedSpectra
       )
     {
 
@@ -1972,6 +1974,9 @@ namespace Altaxo.Calc.LinearAlgebra
       crossPRESSMatrix = new MatrixMath.VerticalVector(numFactors+1);
       for(int i=0;i<=numFactors;i++)
         crossPRESSMatrix[i,0] = crossPRESS[i];
+
+      // calculate the mean number of excluded spectras
+      meanNumberOfExcludedSpectra = ((double)X.Rows)/groups.Count;
     }
 
     #region SingularValueDecomposition

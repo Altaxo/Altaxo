@@ -26,10 +26,9 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.PLS
 {
-
-
   public class PLS2CalibrationModel
   {
+    IROVector _xOfX;
     IROMatrix _xMean;
     IROMatrix _xScale;
     IROMatrix _yMean;
@@ -43,6 +42,13 @@ namespace Altaxo.Calc.Regression.PLS
     int _numberOfX;
     int _numberOfY;
     int _numberOfFactors;
+
+    public IROVector XOfX
+    {
+      get { return _xOfX; }
+      set { _xOfX = value; }
+    }
+
 
     public IROMatrix XMean
     {

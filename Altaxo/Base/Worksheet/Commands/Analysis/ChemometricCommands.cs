@@ -26,6 +26,7 @@ using Altaxo.Collections;
 using Altaxo.Worksheet.GUI;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.PLS;
+using Altaxo.Data;
 
 
 namespace Altaxo.Worksheet.Commands.Analysis
@@ -386,9 +387,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
     const string _YResidual_ColumnName   = "YResidual";
     const string _SpectralResidual_ColumnName = "SpectralResidual";
     const string _XLeverage_ColumnName        = "ScoreLeverage";
+    const string _FRatio_ColumnName = "F-Ratio";
+    const string _FProbability_ColumnName = "F-Probability";
 
 
     const int _NumberOfFactors_ColumnGroup = 4;
+    const int _FRatio_ColumnGroup = 4;
+    const int _FProbability_ColumnGroup = 4;
 
     const int _MeasurementLabel_ColumnGroup = 5;
 
@@ -568,6 +573,24 @@ namespace Altaxo.Worksheet.Commands.Analysis
         measurementIndices = hlp;
       }
       
+      // if there are more data than expected, we have to map the spectral indices
+      if(spectralIndices.Count>calibModel.NumberOfX)
+      {
+        double[] xofx = GetXOfSpectra(ctrl.DataTable,spectrumIsRow,spectralIndices,measurementIndices);
+
+        string errormsg;
+        AscendingIntegerCollection map = MapSpectralX(calibModel.XOfX,VectorMath.ToROVector(xofx),out errormsg);
+        if(map==null)
+          throw new ApplicationException("Can not map spectral data: " + errormsg);
+        else
+        {
+          AscendingIntegerCollection newspectralindices = new AscendingIntegerCollection();
+          for(int i=0;i<map.Count;i++)
+            newspectralindices.Add(spectralIndices[map[i]]);
+          spectralIndices = newspectralindices;
+        }
+      }
+
       IMatrix matrixX = GetRawSpectra(ctrl.DataTable,spectrumIsRow,spectralIndices,measurementIndices);
 
       MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(measurementIndices.Count,calibModel.NumberOfY);
@@ -600,6 +623,72 @@ namespace Altaxo.Worksheet.Commands.Analysis
         Current.ProjectService.OpenOrCreateWorksheetForTable(destTable);
       }
 
+    }
+
+    /// <summary>
+    /// This maps the indices of a master x column to the indices of a column to map.
+    /// </summary>
+    /// <param name="xmaster">The master column containing x-values, for instance the spectral wavelength of the PLS calibration model.</param>
+    /// <param name="xtomap">The column to map containing x-values, for instance the spectral wavelength of an unknown spectra to predict.</param>
+    /// <param name="failureMessage">In case of a mapping error, contains detailed information about the error.</param>
+    /// <returns>The indices of the mapping column that matches those of the master column. Contains as many indices as items in xmaster. In case of mapping error, returns null.</returns>
+    public static Altaxo.Collections.AscendingIntegerCollection MapSpectralX(IROVector xmaster, IROVector xtomap, out string failureMessage)
+    {
+      failureMessage = null;
+      int mastercount = xmaster.Length;
+
+      int mapcount = xtomap.Length;
+
+      if(mapcount<mastercount)
+      {
+        failureMessage = string.Format("More items to map ({0} than available ({1}",mastercount, mapcount);
+        return null;
+      }
+
+      Altaxo.Collections.AscendingIntegerCollection result = new Altaxo.Collections.AscendingIntegerCollection();
+      // return an empty collection if there is nothing to map
+      if(mastercount==0)
+        return result;
+
+      // there is only one item to map - we can not check this - return a 1:1 map
+      if(mastercount==1)
+      {
+        result.Add(0);
+        return result;
+      }
+
+
+      // presumtion here (checked before): mastercount>=2, mapcount>=1
+
+      double distanceback, distancecurrent, distanceforward;
+      int i,j;
+      for(i=0,j=0;i<mastercount && j<mapcount;j++)
+      {
+        distanceback    = j==0 ? double.MaxValue : Math.Abs(xtomap[j-1]-xmaster[i]);
+        distancecurrent = Math.Abs(xtomap[j]-xmaster[i]);
+        distanceforward = (j+1)>=mapcount ? double.MaxValue : Math.Abs(xtomap[j+1]-xmaster[i]);
+
+        if(distanceback<distancecurrent)
+        {
+          failureMessage = string.Format("Mapping error - distance of master[{0}] to current map[{1}] is greater than to previous map[{2}]",i,j,j-1);
+          return null;
+        }
+        else if(distanceforward<distancecurrent) 
+          continue;
+        else
+        {
+          result.Add(j);
+          i++;
+        }
+      }
+
+      if(i!=mastercount)
+      {
+        failureMessage =  string.Format("Mapping error- no mapping found for current master[{0}]",i-1);
+        return null;
+      }
+
+      return result;
     }
 
 
@@ -1019,11 +1108,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       Altaxo.Data.DoubleColumn crosspresscol = new Altaxo.Data.DoubleColumn();
 
+      double meanNumberOfExcludedSpectra = 0;
       if(plsOptions.CrossPRESSCalculation!=CrossPRESSCalculationType.None)
       {
         // now a cross validation - this can take a long time for bigger matrices
         IMatrix crossPRESSMatrix;
-        MatrixMath.PartialLeastSquares_CrossValidation_HO(matrixX,matrixY,numFactors, plsOptions.CrossPRESSCalculation==CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements, out crossPRESSMatrix);
+        
+        MatrixMath.PartialLeastSquares_CrossValidation_HO(matrixX,matrixY,numFactors, plsOptions.CrossPRESSCalculation==CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements, out crossPRESSMatrix, out meanNumberOfExcludedSpectra);
 
         for(int i=0;i<crossPRESSMatrix.Rows;i++)
         { 
@@ -1039,6 +1130,30 @@ namespace Altaxo.Worksheet.Commands.Analysis
       for(int i=0;i<PRESS.Rows;i++)
         presscol[i] = PRESS[i,0];
       table.DataColumns.Add(presscol,"PRESS",Altaxo.Data.ColumnKind.V,4);
+
+
+
+
+      // calculate the F-ratio and the F-Probability
+      int numberOfSignificantFactors = numFactors;
+      Altaxo.Data.DoubleColumn colForFratio = (plsOptions.CrossPRESSCalculation==CrossPRESSCalculationType.None) ? presscol : crosspresscol;
+      double pressMin=double.MaxValue;
+      for(int i=0;i<colForFratio.Count;i++)
+        pressMin = Math.Min(pressMin,colForFratio[i]);
+      DoubleColumn fratiocol = new DoubleColumn();
+      DoubleColumn fprobcol = new DoubleColumn();
+      for(int i=0;i<colForFratio.Count;i++)
+      {
+        double fratio = colForFratio[i]/pressMin;
+        double fprob  = Calc.Probability.FDistribution.CDF(fratio,matrixX.Rows-meanNumberOfExcludedSpectra,matrixX.Rows-meanNumberOfExcludedSpectra);
+        fratiocol[i] = fratio;
+        fprobcol[i]  = fprob;
+        if(fprob<0.75 && numberOfSignificantFactors>i)
+          numberOfSignificantFactors = i;
+      }
+      plsContent.PreferredNumberOfFactors = numberOfSignificantFactors;
+      table.DataColumns.Add(fratiocol,_FRatio_ColumnName,Altaxo.Data.ColumnKind.V,_FRatio_ColumnGroup);
+      table.DataColumns.Add(fprobcol,_FProbability_ColumnName,Altaxo.Data.ColumnKind.V,_FProbability_ColumnGroup);
 
       // add a label column for the measurement number
       Altaxo.Data.DoubleColumn measurementLabel = new Altaxo.Data.DoubleColumn();
@@ -1170,6 +1285,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
         Altaxo.Collections.AscendingIntegerCollection sel = new Altaxo.Collections.AscendingIntegerCollection();
         Altaxo.Data.DataColumn col;
+
+        col = _table[_XOfX_ColumnName];
+        if(col==null || !(col is INumericColumn)) NotFound(_XOfX_ColumnName);
+        calibrationSet.XOfX = new Altaxo.Calc.LinearAlgebra.DataColumnToVectorWrapper((INumericColumn)col,_numberOfX);
+
 
         sel.Clear();
         col = _table[_XMean_ColumnName];
@@ -1528,6 +1648,46 @@ namespace Altaxo.Worksheet.Commands.Analysis
       return matrixX;
     }
 
+
+    /// <summary>
+    /// Returns the corresponding x-values of the spectra (In fact only the first spectra is used to determine which x-column is used).
+    /// </summary>
+    /// <param name="srctable">The source table where the data for the spectra are located.</param>
+    /// <param name="spectrumIsRow">True if the spectra in the table are organized horizontally, false if spectra are vertically oriented.</param>
+    /// <param name="spectralIndices">The selected indices wich indicate all (wavelength, frequencies, etc.) that belong to one spectrum. If spectrumIsRow==true, this are the selected column indices, otherwise the selected row indices.</param>
+    /// <param name="measurementIndices">The indices of all measurements (spectra) selected.</param>
+    /// <returns>The x-values corresponding to the first spectrum.</returns>
+    public static double[] GetXOfSpectra(Altaxo.Data.DataTable srctable, bool spectrumIsRow, Altaxo.Collections.IAscendingIntegerCollection spectralIndices, Altaxo.Collections.IAscendingIntegerCollection measurementIndices)
+    {
+      if(srctable==null)
+        throw new ArgumentException("Argument srctable may not be null");
+     
+      int group;
+     Altaxo.Data.INumericColumn col;
+
+      if(spectrumIsRow)
+      {
+        group = srctable.DataColumns.GetColumnGroup(spectralIndices[0]);
+
+        col = srctable.PropertyColumns.FindXColumnOfGroup(group) as Altaxo.Data.INumericColumn;
+      }
+      else // vertical oriented spectrum
+      {
+        group = srctable.DataColumns.GetColumnGroup(measurementIndices[0]);
+
+        col = srctable.DataColumns.FindXColumnOfGroup(group) as Altaxo.Data.INumericColumn;
+      }
+
+      if(col==null)
+        col = new IndexerColumn();
+
+      double[] result = new double[spectralIndices.Count];
+
+      for(int i=0;i<spectralIndices.Count;i++)
+        result[i] = col.GetDoubleAt(spectralIndices[i]);
+
+      return result;
+    }
 
     /// <summary>
     /// Using the information in the plsMemo, gets the matrix of original Y (concentration) data.
@@ -2010,6 +2170,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// </summary>
     /// <param name="table">The table of PLS output data.</param>
     /// <param name="layer">The layer to plot into.</param>
+    /// <param name="preferredNumberOfFactors">The number of factors used for leverage calculation.</param>
     public static void PlotXLeverage(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int preferredNumberOfFactors)
     {
       string xcolname = _MeasurementLabel_ColumnName;

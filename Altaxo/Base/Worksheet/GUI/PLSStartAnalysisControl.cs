@@ -104,6 +104,7 @@ namespace Altaxo.Worksheet.GUI
       this.edMaxNumFactors.Name = "edMaxNumFactors";
       this.edMaxNumFactors.Size = new System.Drawing.Size(168, 20);
       this.edMaxNumFactors.TabIndex = 1;
+      this.edMaxNumFactors.Validated += new System.EventHandler(this.edMaxNumFactors_Validated);
       this.edMaxNumFactors.ValueChanged += new System.EventHandler(this.edMaxNumFactors_ValueChanged);
       // 
       // groupBox1
@@ -194,6 +195,11 @@ namespace Altaxo.Worksheet.GUI
         _controller.EhView_MaxNumberOfFactorsChanged((int)this.edMaxNumFactors.Value);
     }
 
+    private void edMaxNumFactors_Validated(object sender, System.EventArgs e)
+    {
+    if(_controller!=null)
+         _controller.EhView_MaxNumberOfFactorsChanged((int)this.edMaxNumFactors.Value);
+    }
     private void rbCrossValidationNone_CheckedChanged(object sender, System.EventArgs e)
     {
       if(_controller!=null)
@@ -213,5 +219,7 @@ namespace Altaxo.Worksheet.GUI
         _controller.EhView_CrossValidationSelected(CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements);
 
     }
+
+ 
   }
 }
