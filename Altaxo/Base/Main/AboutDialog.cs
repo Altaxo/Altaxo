@@ -151,10 +151,9 @@ namespace Altaxo.Main
         "  countless support tools that are neccessary to manage such a project (for instance\r\n"+
         "  Subversion, WinMerge, NUnit, NDoc).\r\n" +
         "\r\n" +
-        "- My wife for being so patient when I block the PC every evening, and for her\r\n" +
-        "  support and new ideas.\r\n" +
+        "- My wife for for her support, new ideas and critism.\r\n" +
         "\r\n" +
-        "                 Dr. D.Lellinger, Darmstadt 2004\r\n" +
+        "                 Dr. D. Lellinger\r\n" +
         "\r\n" +
         "\t\t    GNU GENERAL PUBLIC LICENSE\r\n\t\t       Version 2, June 1991\r\n\r\n Copyright (C)" +
         " 1989, 1991 Free Software Foundation, Inc.\r\n                       59 Temple Pla" +

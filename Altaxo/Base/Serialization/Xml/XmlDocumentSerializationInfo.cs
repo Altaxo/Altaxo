@@ -258,6 +258,11 @@ namespace Altaxo.Serialization.Xml
 
 		#region not implemented yet
 
+    public string GetNodeName()
+    {
+      return m_CurrentNode.Name;
+    }
+
 		public void SetNodeContent(string nodeContent)
 		{
 		}

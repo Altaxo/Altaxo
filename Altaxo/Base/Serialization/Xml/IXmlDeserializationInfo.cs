@@ -37,6 +37,9 @@ namespace Altaxo.Serialization.Xml
 		void OpenElement();
 		void CloseElement();
 		
+    /// <summary>Retrieves the name of the current node</summary>
+    /// <returns>The name of the current node.</returns>
+    string GetNodeName();
 
 		object GetValue(object parent);
 		object GetValue(string name, object parent);

@@ -129,6 +129,43 @@ namespace Altaxo.Graph
 			}
 		}
 
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYLineScatterPlotStyle),2)]
+      public class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYLineScatterPlotStyle s = (XYLineScatterPlotStyle)obj;
+        info.AddValue("XYPlotLineStyle",s.m_LineStyle);  
+        info.AddValue("XYPlotScatterStyle",s.m_ScatterStyle);
+        info.AddValue("LineSymbolGap",s.m_LineSymbolGap);
+
+        int nCount = null==s.m_LabelStyle ? 0 : 1;
+        info.CreateArray("OptionalStyles",nCount);
+        if(null!=s.m_LabelStyle)  info.AddValue("LabelStyle",s.m_LabelStyle); // new in this version
+        info.CommitArray();
+
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+				
+        XYLineScatterPlotStyle s = null!=o ? (XYLineScatterPlotStyle)o : new XYLineScatterPlotStyle();
+        // do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
+        s.XYPlotLineStyle = (XYPlotLineStyle)info.GetValue("XYPlotLineStyle",typeof(XYPlotLineStyle));
+        // do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
+        s.XYPlotScatterStyle = (XYPlotScatterStyle)info.GetValue("XYPlotScatterStyle",typeof(XYPlotScatterStyle));
+        s.LineSymbolGap = info.GetBoolean("LineSymbolGap");
+      
+        int nCount = info.OpenArray(); // OptionalStyles
+        
+        if(nCount==1)
+          s.XYPlotLabelStyle  = (XYPlotLabelStyle)info.GetValue("LabelStyle",typeof(XYPlotLabelStyle)); // new in this version
+
+        info.CloseArray(nCount); // OptionalStyles
+
+        return s;
+      }
+    }
+
 		/// <summary>
 		/// Finale measures after deserialization.
 		/// </summary>

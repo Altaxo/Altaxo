@@ -161,8 +161,14 @@ namespace Altaxo.Worksheet.GUI
 	
 		public string ScriptText
 		{
-			get { return this.edFormula.Text; }
-			set { this.edFormula.Text = value; }
+			get 
+      {
+        return this.edFormula.Text; 
+      }
+			set 
+      {
+        this.edFormula.Text = value;
+      }
 		}
 
 		public string ScriptName
@@ -186,7 +192,10 @@ namespace Altaxo.Worksheet.GUI
 
 		public object EditableContent
 		{
-			get { return this.edFormulaWrapper; }
+			get
+      { 
+        return this.edFormulaWrapper; 
+      }
 		}
 
 		protected override bool ProcessDialogKey(Keys keyData)

@@ -176,9 +176,10 @@ namespace Altaxo.Graph
 		}
 
 		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData),1)] // by mistake the data of version 0 and 1 are identical
 		public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
 		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
 			{
 				XYColumnPlotData s = (XYColumnPlotData)obj;
 				
@@ -203,13 +204,17 @@ namespace Altaxo.Graph
 
 				info.AddValue("XBoundaries",s.m_xBoundaries);
 				info.AddValue("YBoundaries",s.m_yBoundaries);
+
+
+       
 			}
 
 
 			protected Main.DocumentPath _xColumn = null;
 			protected Main.DocumentPath _yColumn = null;
+    
 			protected XYColumnPlotData _plotAssociation = null;
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			public virtual object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
 				bool bNeedsCallback = false;
 				XYColumnPlotData s = null!=o ? (XYColumnPlotData)o : new XYColumnPlotData();
@@ -248,7 +253,8 @@ namespace Altaxo.Graph
 				return s;
 			}
 
-			public void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+
+			private void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
 			{
 				bool bAllResolved = true;
 
@@ -274,70 +280,7 @@ namespace Altaxo.Graph
 			}
 		}
 
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData),1)]
-			public class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
-		{
-			public new void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				XYColumnPlotData s = (XYColumnPlotData)obj;
-				base.Serialize(obj,info);
-				
-				// -----------------------Added in version 1 ------------------------
-				if(s.m_LabelColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_LabelColumn).ParentObject))
-				{
-					info.AddValue("LabelColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_LabelColumn));
-				}
-				else
-				{
-					info.AddValue("LabelColumn",s.m_LabelColumn);
-				}
-			}
-
-			public new object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-
-				base.Deserialize(o,info,parent);
-
-				bool bNeedsCallback = false;
-				XYColumnPlotData s = null!=o ? (XYColumnPlotData)o : new XYColumnPlotData();
-
-
-				object labelColumn = info.GetValue("LabelColumn",typeof(Altaxo.Data.IReadableColumn));
-
-				if(labelColumn is Altaxo.Data.IReadableColumn)
-					s.LabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
-				else if (labelColumn is Main.DocumentPath)
-					bNeedsCallback = true;
-			
-				if(bNeedsCallback)
-				{
-					XmlSerializationSurrogate1 surr = new XmlSerializationSurrogate1();
-					surr._labelColumn = labelColumn as Main.DocumentPath;
-					surr._plotAssociation = s;
-
-					info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished);
-				}
-
-				return s;
-			}
-
-			Main.DocumentPath _labelColumn = null;
-			public new void EhDeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
-			{
-				bool bAllResolved = true;
-
-				if(this._labelColumn != null)
-				{
-					object labelColumn = Main.DocumentPath.GetObject(this._labelColumn, this._plotAssociation, documentRoot);
-					bAllResolved &= (null!=labelColumn);
-					if(labelColumn is Altaxo.Data.IReadableColumn)
-						_plotAssociation.LabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
-				}
-
-				if(bAllResolved)
-					info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished);
-			}
-		}
+	
 
 		/// <summary>
 		/// Finale measures after deserialization.
@@ -358,6 +301,92 @@ namespace Altaxo.Graph
 			if(null!=m_yBoundaries)
 				m_yBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
 		}
+
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotData),2)]
+      public class XmlSerializationSurrogate2 : XmlSerializationSurrogate0
+    {
+      public override void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYColumnPlotData s = (XYColumnPlotData)obj;
+        base.Serialize(obj,info);
+				
+        // -----------------------Added in version 2 ------------------------
+
+        // the rest of the plot data is stored in kind of a array
+        // so it should be easy to add more data here, and only data that are valid
+        // are been serialized
+        int nElements = s.LabelColumn==null ? 0 : 1;
+        info.CreateArray("OptionalData",nElements);
+        if(null!=s.LabelColumn)
+        {
+          if(s.m_LabelColumn is Main.IDocumentNode && !s.Equals(((Main.IDocumentNode)s.m_LabelColumn).ParentObject))
+            info.AddValue("LabelColumn",Main.DocumentPath.GetAbsolutePath((Main.IDocumentNode)s.m_LabelColumn));
+          else
+            info.AddValue("LabelColumn",s.m_LabelColumn);
+        }
+        info.CommitArray(); // end of array OptionalData
+      }
+
+      public override object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        XYColumnPlotData s = null!=o ? (XYColumnPlotData)o : new XYColumnPlotData();
+        base.Deserialize(s,info,parent);
+
+        bool bNeedsCallback = false;
+
+
+        object labelColumn = null;
+
+        int nOptionalData = info.OpenArray();
+      {
+        if(nOptionalData==1)
+        {
+          string keystring   = info.GetNodeName();
+          labelColumn = info.GetValue(parent);
+
+          if(labelColumn is Altaxo.Data.IReadableColumn)
+            s.LabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
+          else if (labelColumn is Main.DocumentPath)
+            bNeedsCallback = true;
+        }
+      }
+        info.CloseArray(nOptionalData);
+
+
+        if(bNeedsCallback)
+        {
+          XmlSerializationSurrogate2 surr = new XmlSerializationSurrogate2();
+          surr._labelColumn = labelColumn as Main.DocumentPath;
+          surr._plotAssociation = s;
+
+          info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.EhDeserializationFinished2);
+        }
+
+        return s;
+      }
+
+      Main.DocumentPath _labelColumn = null;
+      private void EhDeserializationFinished2(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+      {
+        bool bAllResolved = true;
+
+        if(this._labelColumn != null)
+        {
+          object labelColumn = Main.DocumentPath.GetObject(this._labelColumn, this._plotAssociation, documentRoot);
+          bAllResolved &= (null!=labelColumn);
+          if(labelColumn is Altaxo.Data.IReadableColumn)
+            _plotAssociation.LabelColumn = (Altaxo.Data.IReadableColumn)labelColumn;
+        }
+
+        if(bAllResolved)
+          info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.EhDeserializationFinished2);
+      }
+    }
+
+  
+
+
 		#endregion
 
 

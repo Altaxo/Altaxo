@@ -84,8 +84,8 @@ namespace Altaxo.Graph
 				info.AddValue("XOffset",s.m_XOffset);
 				info.AddValue("YOffset",s.m_YOffset);
 				info.AddValue("Rotation",s.m_Rotation);
-				info.AddValue("HorizontalAlignment",s.HorizontalAlignment);
-				info.AddValue("VerticalAlignment",s.VerticalAlignment);
+				info.AddEnum("HorizontalAlignment",s.HorizontalAlignment);
+				info.AddEnum("VerticalAlignment",s.VerticalAlignment);
 				info.AddValue("AttachToAxis",s.m_AttachToAxis);
 				info.AddValue("AttachedAxis",s.m_AttachedAxis);
 				info.AddValue("WhiteOut",s.m_WhiteOut);
@@ -106,7 +106,7 @@ namespace Altaxo.Graph
 				s.HorizontalAlignment = (System.Drawing.StringAlignment)info.GetEnum("HorizontalAlignment",typeof(System.Drawing.StringAlignment));
 				s.VerticalAlignment   = (System.Drawing.StringAlignment)info.GetEnum("VerticalAlignment",typeof(System.Drawing.StringAlignment));
 				s.m_AttachToAxis = info.GetBoolean("AttachToAxis");
-				s.m_AttachedAxis = (EdgeType)info.GetEnum("AttachedAxis",typeof(EdgeType));
+				s.m_AttachedAxis = (EdgeType)info.GetValue("AttachedAxis",parent);
 				s.m_WhiteOut = info.GetBoolean("WhiteOut");
         s.m_BackgroundBrush = (BrushHolder)info.GetValue("BackgroundBrush",s);
 

@@ -286,7 +286,10 @@ namespace Altaxo.Serialization.Xml
 			m_Reader.ReadEndElement();
 		}
 		
-
+    public string GetNodeName()
+    {
+      return m_Reader.LocalName;
+    }
 
 		public object GetValue(string name, object parentobject)
 		{
@@ -296,8 +299,6 @@ namespace Altaxo.Serialization.Xml
 		public object GetValue(object parentobject)
 		{
 			string type = m_Reader.GetAttribute("Type");
-			
-
 
 			if(null!=type)
 			{
