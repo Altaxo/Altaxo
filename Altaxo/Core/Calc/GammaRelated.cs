@@ -2349,229 +2349,402 @@ namespace Altaxo.Calc
     #region InverseBeta
 
     /// <summary>
-    /// InverseBeta gives the inverse of the incomplete beta function ratio.
+    /// InverseBeta gives the inverse of the incomplete beta function ratio <see>BetaIR</see>.
     /// </summary>
     /// <param name="p">Probability (0..1)</param>
     /// <param name="a">Parameter a.</param>
     /// <param name="b">Parameter b.</param>
-    public static double InverseBeta(double p, double a, double b)
+    public static double InverseBeta(double alpha, double p, double q)
     {
-      double _p = a;
-      double _q = b;
-      double _alpha = p;
-      double _beta = 1-p;
+      double log_beta = LnGamma(p, true) + LnGamma(q, true) - LnGamma(p+q, true);
       int _ifault = 0;
-      return _InverseBeta.xinbta_(ref _p, ref _q, ref _beta, ref _alpha, ref _ifault);
+      return _xinbta.xinbta_( p,  q, log_beta, alpha, ref _ifault);
     }
 
-    class _InverseBeta
+    class _xinbta
     {
-      static double zero = 0;
-      static double acu = 1e-14;
-      static double lower = 1e-4;
-      static double upper = 0.9999;
-      static double const1 = 2.30753;
-      static double const2 = 0.27061;
-      static double const3 = 0.99229;
-      static double const4 = 0.04481;
-      static double half = 0.5;
-      static double one = 1.0;
-      static double two = 2.0;
-      static double three = 3.0;
-      static double four = 4.0;
-      static double five = 5.0;
-      static double six = 6.0;
-      static double nine = 9.0;
+      const double c_b4 = 10.0;
+      const double sae = -308.0;
+      const double zero = 0.0;
+      const double one = 1.0;
+      const double two = 2.0;
+      const double three = 3.0;
+      const double four = 4.0;
+      const double five = 5.0;
+      const double six = 6.0;
 
-      public static double xinbta_(ref double p, ref  double q,  ref double beta, ref double alpha, ref int ifault)
+      /// <summary>
+      /// 
+      /// </summary>
+      /// <param name="p">first beta distribution parameter. Must be &gt; 0.</param>
+      /// <param name="q">second beta distribution parameter.  Must be &gt; 0.</param>
+      /// <param name="beta">Must be set to LnGamma(p)+LnGamma(q)-LnGamma(p+q).</param>
+      /// <param name="alpha">Probability (0 to 1).</param>
+      /// <param name="ifault">On return, indicates an error if not zero.</param>
+      /// <returns>The inverse of the incomplete beta ratio.</returns>
+      /// <remarks><code>
+      ///  Author:  Glen Cowan 
+      ///  Date:    5-Jan-1998 
+      ///  XINBTA  algorithm AS109  Appl. Statist. (1977) vol. 26, no. 1 
+      ///  Modified 26 April 2001 by Glen Cowan:
+      ///  variable SAE in XINBTA changed from -37D.0 to -308D.0 to avoid 
+      ///  infinite loop (only a problem on digital unix). 
+      /// </code>
+      /// </remarks>
+      public static double xinbta_(
+        double p, 
+        double q, 
+        double beta, 
+        double alpha, 
+        ref int ifault)
       {
-      /* System generated locals */
-      double ret_val, r__1, r__2;
+        /* Initialized data */
 
-      /* Local variables */
-      double a, g, h__, r__, s, t, w, y, pp, qq, sq, tx, adj, prev;
-      bool index;
-      double yprev;
+ 
 
-      /*        ALGORITHM AS 109  APPL. STATIST. (1977) VOL.26, P.111 */
-      /*        (REPLACING ALGORITHM AS 64  APPL. STATIST. (1973), */
-      /*        VOL.22, P.411) */
+        /* System generated locals */
+        double ret_val, d__1, d__2, d__3;
 
-      /*        COMPUTES INVERSE OF INCOMPLETE BETA FUNCTION */
-      /*        RATIO FOR GIVEN POSITIVE VALUES OF THE ARGUMENTS */
-      /*        P AND Q, ALPHA BETWEEN ZERO AND ONE. */
-      /*        LOG OF COMPLETE BETA FUNCTION, BETA, IS ASSUMED TO BE */
-      /*        KNOWN. */
+ 
+        /* Local variables */
+        double a, g, h__, r__, s, t, w, y, pp, qq, sq, tx, adj, acu;
+        int iex;
+        double fpu, xin;
+        bool indx;
+        double prev, yprev;
+  
+
+        /*     algorithm as 109 appl. statist. (1977), vol.26, no.1 */
+        /*     (replacing algorithm as 64  appl. statist. (1973), */
+        /*     vol.22, no.3) */
+
+        /*     Remark AS R83 and the correction in vol40(1) p.236 have been */
+        /*     incorporated in this version. */
+
+        /*     Computes inverse of the incomplete beta function */
+        /*     ratio for given positive values of the arguments */
+        /*     p and q, alpha between zero and one. */
+        /*     log of complete beta function, beta, is assumed to be known. */
+
+        /*     Auxiliary function required: BETAIN = algorithm AS63 */
 
 
-      /*        DEFINE ACCURACY AND INITIALIZE */
+        /*     Define accuracy and initialise. */
+        /*     SAE below is the most negative decimal exponent which does not */
+        /*     cause an underflow; a value of -308 or thereabouts will often be */
+        /*     OK in double precision. */
 
+        /*     data acu/1.0d-14/ */
+        /*      data SAE/-37.D0/       !  changed to -308     (GDC, 24 April 2001) */
 
+        fpu = Math.Pow(c_b4, sae);
+        ret_val = alpha;
 
-      ret_val = alpha;
+        /*     test for admissibility of parameters */
 
-      /*        TEST FOR ADMISSIBILITY OF PARAMETERS */
+        ifault = 1;
+        if (p <= zero || q <= zero) 
+        {
+          return ret_val;
+        }
+        ifault = 2;
+        if (alpha < zero || alpha > one) 
+        {
+          return ret_val;
+        }
+        ifault = 0;
+        if (alpha == zero || alpha == one) 
+        {
+          return ret_val;
+        }
 
-      ifault = 1;
-      if (p <= zero || q <= zero) 
-    {
-      return ret_val;
-    }
-    ifault = 2;
-    if (alpha < zero || alpha > one) 
-  {
-    return ret_val;
-  }
-  ifault = 0;
-  if (alpha == zero || alpha == one) 
-{
-  return ret_val;
-}
+        /*     change tail if necessary */
 
-  /*        CHANGE TAIL IF NECESSARY */
+        if (alpha <= 0.5) 
+        {
+          goto L1;
+        }
+        a = one - alpha;
+        pp = q;
+        qq = p;
+        indx = true;
+        goto L2;
+        L1:
+          a = alpha;
+        pp = p;
+        qq = q;
+        indx = false;
 
-  if (alpha <= half) 
-{
-  goto L1;
-}
-  a = one - alpha;
-  pp = q;
-  qq = p;
-  index = true;
-  goto L2;
-  L1:
-  a = alpha;
-  pp = p;
-  qq = q;
-  index = false;
+        /*     calculate the initial approximation */
 
-  /*        CALCULATE THE INITIAL APPROXIMATION */
+        L2:
+          r__ = Math.Sqrt(-Math.Log(a * a));
+        y = r__ - (r__ * 0.27061 + 2.30753) / (one + (r__ * 0.04481 + 0.99229) * r__)
+          ;
+        if (pp > one && qq > one) 
+        {
+          goto L5;
+        }
+        r__ = qq + qq;
+        t = one / (qq * 9.0);
+        /* Computing 3rd power */
+        d__1 = one - t + y * Math.Sqrt(t);
+        t = r__ * (d__1 * (d__1 * d__1));
+        if (t <= zero) 
+        {
+          goto L3;
+        }
+        t = (four * pp + r__ - two) / t;
+        if (t <= one) 
+        {
+          goto L4;
+        }
+        ret_val = one - two / (t + one);
+        goto L6;
+        L3:
+          ret_val = one - Math.Exp((Math.Log((one - a) * qq) + beta) / qq);
+        goto L6;
+        L4:
+          ret_val = Math.Exp((Math.Log(a * pp) + beta) / pp);
+        goto L6;
+        L5:
+          r__ = (y * y - three) / six;
+        s = one / (pp + pp - one);
+        t = one / (qq + qq - one);
+        h__ = two / (s + t);
+        w = y * Math.Sqrt(h__ + r__) / h__ - (t - s) * (r__ + five / six - two / (
+          three * h__));
+        ret_val = pp / (pp + qq * Math.Exp(w + w));
 
-  L2:
-  r__1 = a * a;
-  r__2 = -Math.Log(r__1);
-  r__ = Math.Sqrt(r__2);
-  y = r__ - (const1 + const2 * r__) / (one + (const3 + const4 * r__) * r__);
-  if (pp > one && qq > one) 
-{
-  goto L5;
-}
-  r__ = qq + qq;
-  t = one / (nine * qq);
-  /* Computing 3rd power */
-  r__1 = one - t + y * Math.Sqrt(t);
-  t = r__ * (r__1 * (r__1 * r__1));
-  if (t <= zero) 
-{
-  goto L3;
-}
-  t = (four * pp + r__ - two) / t;
-  if (t <= one) 
-{
-  goto L4;
-}
-  ret_val = one - two / (t + one);
-  goto L6;
-  L3:
-  r__1 = (one - a) * qq;
-  r__2 = (Math.Log(r__1) + beta) / qq;
-  ret_val = one - Math.Exp(r__2);
-  goto L6;
-  L4:
-  r__1 = a * pp;
-  r__2 = (Math.Log(r__1) + beta) / pp;
-  ret_val = Math.Exp(r__2);
-  goto L6;
-  L5:
-  r__ = (y * y - three) / six;
-  s = one / (pp + pp - one);
-  t = one / (qq + qq - one);
-  h__ = two / (s + t);
-  r__1 = h__ + r__;
-  w = y * Math.Sqrt(r__1) / h__ - (t - s) * (r__ + five / six - two / (three * 
-  h__));
-  r__1 = w + w;
-  ret_val = pp / (pp + qq * Math.Exp(r__1));
+        /*     solve for x by a modified newton-raphson method, */
+        /*     using the function betain */
 
-  /*        SOLVE FOR X BY A MODIFIED NEWTON-RAPHSON METHOD, */
-  /*        USING THE FUNCTION BETAIN */
-
-  L6:
-  r__ = one - pp;
-  t = one - qq;
-  yprev = zero;
-  sq = one;
-  prev = one;
-  if (ret_val < lower) 
-{
-  ret_val = lower;
-}
-  if (ret_val > upper) 
-{
-  ret_val = upper;
-}
-  L7:
-  y = BetaI(ret_val, pp, qq); // BetaIR(ret_val, pp, qq, beta);
-  if (ifault == 0) 
-{
-  goto L8;
-}
-  ifault = 3;
-  return ret_val;
-  L8:
-  r__1 = one - ret_val;
-  r__2 = beta + r__ * Math.Log(ret_val) + t * Math.Log(r__1);
-  y = (y - a) * Math.Exp(r__2);
-  if (y * yprev <= zero) 
-{
-  prev = sq;
-}
-  g = one;
-  L9:
-  adj = g * y;
-  sq = adj * adj;
-  if (sq >= prev) 
-{
-  goto L10;
-}
-  tx = ret_val - adj;
-  if (tx >= zero && tx <= one) 
-{
-  goto L11;
-}
-  L10:
-  g /= three;
-  goto L9;
-  L11:
-  if (prev <= acu) 
-{
-  goto L12;
-}
-  if (y * y <= acu) 
-{
-  goto L12;
-}
-  if (tx == zero || tx == one) 
-{
-  goto L10;
-}
-  if (tx == ret_val) 
-{
-  goto L12;
-}
-  ret_val = tx;
-  yprev = y;
-  goto L7;
-  L12:
-  if (index) 
-{
-  ret_val = one - ret_val;
-}
-  return ret_val;
-} 
-
+        L6:
+          r__ = one - pp;
+        t = one - qq;
+        yprev = zero;
+        sq = one;
+        prev = one;
+        if (ret_val < 1e-4) 
+        {
+          ret_val = 1e-4;
+        }
+        if (ret_val > 0.9999) 
+        {
+          ret_val = 0.9999;
+        }
+        /* Computing MAX */
+        /* Computing 2nd power */
+        d__2 = pp;
+        /* Computing 2nd power */
+        d__3 = a;
+        d__1 = -5.0 / (d__2 * d__2) - 1.0 / (d__3 * d__3) - 13.0;
+        iex = (int)Math.Max(d__1,sae);
+        acu = Math.Pow(c_b4, iex);
+        L7:
+          y = _betain.betain_(ret_val, pp, qq, beta, ref ifault);
+        if (ifault == 0) 
+        {
+          goto L8;
+        }
+        ifault = 3;
+        return ret_val;
+        L8:
+          xin = ret_val;
+        y = (y - a) * Math.Exp(beta + r__ * Math.Log(xin) + t * Math.Log(one - xin));
+        if (y * yprev <= zero) 
+        {
+          prev = Math.Max(sq,fpu);
+        }
+        g = one;
+        L9:
+          adj = g * y;
+        sq = adj * adj;
+        if (sq >= prev) 
+        {
+          goto L10;
+        }
+        tx = ret_val - adj;
+        if (tx >= zero && tx <= one) 
+        {
+          goto L11;
+        }
+        L10:
+          g /= three;
+        goto L9;
+        L11:
+          if (prev <= acu) 
+          {
+            goto L12;
+          }
+        if (y * y <= acu) 
+        {
+          goto L12;
+        }
+        if (tx == zero || tx == one) 
+        {
+          goto L10;
+        }
+        if (tx == ret_val) 
+        {
+          goto L12;
+        }
+        ret_val = tx;
+        yprev = y;
+        goto L7;
+        L12:
+          if (indx) 
+          {
+            ret_val = one - ret_val;
+          }
+        return ret_val;
+      } /* xinbta_ */
 
     }
     #endregion
+
+    #region betain
+    /// <summary>
+    /// Helper class to calculate the incomplete beta ratio if the log beta is known.
+    /// </summary>
+    class _betain
+    {
+
+      const double zero = 0.0;
+      const double one = 1.0;
+      const double acu = 1e-15;
+
+      /// <summary>
+      /// Calculates the incomplete beta ratio if log(beta) is known.
+      /// </summary>
+      /// <param name="x">upper limit of integration.  x must be in (0,1) inclusive.</param>
+      /// <param name="p">first beta distribution parameter. a must be > 0.</param>
+      /// <param name="q">second beta distribution parameter.  b must be > 0.</param>
+      /// <param name="beta">Must be set to LnGamma(p)+LnGamma(q)-LnGamma(p+q).</param>
+      /// <param name="ifault">Out: If not 0, indicates an error.</param>
+      /// <returns>The incomplete beta ration BetaIR(x,p,q).</returns>
+      /// <remarks>
+      /// <code>
+      /// Adopted from the following source:
+      /// Author:  Glen Cowan 
+      /// Date:    5-Jan-1998 
+      /// BETAIN  algorithm  AS63  Appl. Statist. (1973), vol.22, no. 3 
+      /// </code></remarks>
+      public static double betain_(
+        double x, 
+        double p, 
+        double q, 
+        double beta,
+        ref int ifault)
+      {
+        /* Initialized data */
+
+
+
+        /* System generated locals */
+        double ret_val;
+
+        /* Local variables */
+        double ai, cx, pp;
+        int ns;
+        double qq, rx, xx, psq;
+        bool indx;
+        double temp, term;
+
+
+        /*     algorithm as 63  appl. statist. (1973), vol.22, no.3 */
+
+        /*     computes incomplete beta function ratio for arguments */
+        /*     x between zero and one, p and q positive. */
+        /*     log of complete beta function, beta, is assumed to be known */
+
+
+        /*     define accuracy and initialise */
+
+        ret_val = x;
+
+        /*     test for admissibility of arguments */
+
+        ifault = 1;
+        if (p <= zero || q <= zero) 
+        {
+          return ret_val;
+        }
+        ifault = 2;
+        if (x < zero || x > one) 
+        {
+          return ret_val;
+        }
+        ifault = 0;
+        if (x == zero || x == one) 
+        {
+          return ret_val;
+        }
+
+        /*     change tail if necessary and determine s */
+
+        psq = p + q;
+        cx = one - x;
+        if (p >= psq * x) 
+        {
+          goto L1;
+        }
+        xx = cx;
+        cx = x;
+        pp = q;
+        qq = p;
+        indx = true;
+        goto L2;
+        L1:
+          xx = x;
+        pp = p;
+        qq = q;
+        indx = false;
+        L2:
+          term = one;
+        ai = one;
+        ret_val = one;
+        ns = (int) (qq + cx * psq);
+
+        /*     user soper's reduction formulae. */
+
+        rx = xx / cx;
+        L3:
+          temp = qq - ai;
+        if (ns == 0) 
+        {
+          rx = xx;
+        }
+        L4:
+          term = term * temp * rx / (pp + ai);
+        ret_val += term;
+        temp = Math.Abs(term);
+        if (temp <= acu && temp <= acu * ret_val) 
+        {
+          goto L5;
+        }
+        ai += one;
+        --ns;
+        if (ns >= 0) 
+        {
+          goto L3;
+        }
+        temp = psq;
+        psq += one;
+        goto L4;
+
+        /*     calculate result */
+
+        L5:
+          ret_val = ret_val * Math.Exp(pp * Math.Log(xx) + (qq - one) * Math.Log(cx) - beta) / pp;
+        if (indx) 
+        {
+          ret_val = one - ret_val;
+        }
+        return ret_val;
+      } /* betain_ */
+    }
+    #endregion
+
   } // end of class GammaRelated
 } // end of namespace

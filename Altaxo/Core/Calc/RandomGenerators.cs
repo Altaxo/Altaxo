@@ -2298,6 +2298,31 @@ namespace Altaxo.Calc.Random
       double n1x = numf * x;
       return GammaRelated.BetaIR(n1x/(denomf+n1x),0.5*numf,0.5*denomf);
     }
+
+    /// <summary>
+    /// Returns the probability density function for value x with the distribution parameters p and q.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <param name="p">First parameter of the distribution.</param>
+    /// <param name="q">Second paramenter of the distribution.</param>
+    /// <returns>The probability density of the distribution at value x.</returns>
+    public static double PDF(double x, double p, double q)
+    {
+     return (Math.Pow(p,p/2)*Math.Pow(q,q/2)*Math.Pow(x,(-2 + p)/2)*Math.Pow(q + p*x,(-p - q)/2))/GammaRelated.Beta(p/2,q/2);
+    }
+
+    /// <summary>
+    /// Quantile of the F-distribution.
+    /// </summary>
+    /// <param name="alpha">Probability (0..1).</param>
+    /// <param name="p">First parameter of the distribution.</param>
+    /// <param name="q">Second parameter of the distribution.</param>
+    /// <returns>The quantile of the F-Distribution.</returns>
+    public static double Quantile(double alpha, double p, double q)
+    {
+    double inverse_beta = GammaRelated.InverseBeta(1-alpha, q/2, p/2);
+    return (q/p) * (1.0 / inverse_beta - 1.0);
+    }
   }
 
   #endregion
@@ -2516,6 +2541,30 @@ namespace Altaxo.Calc.Random
     public int Num { get { return n; }}
   }
 
+  #endregion
+
+  #region StudentTDistribution
+
+  /// <summary>
+  /// Implements the Student t distribution.
+  /// </summary>
+  public class StudentTDistribution
+  {
+    public static double PDF(double x, int n)
+    {
+      return Math.Pow(n/(n + (x*x)),(1 + n)/2.0)/(Math.Sqrt(n)*GammaRelated.Beta(n/2.0,0.5));
+    }
+
+    public static double CDF(double x, int n)
+    {
+      return (1 + (1-GammaRelated.BetaIR(n/(n + (x*x)),n*0.5,0.5))*Math.Sign(x))/2.0;
+    }
+
+    public static double Quantile(double alpha, int n)
+    {
+      return Math.Sqrt(n)*Math.Sqrt(-1 + 1/GammaRelated.InverseBeta(1-Math.Abs(1 - 2*alpha),n*0.5,0.5))*Math.Sign(-1 + 2*alpha);
+    }
+  }
   #endregion
 
   #region Ranmar
