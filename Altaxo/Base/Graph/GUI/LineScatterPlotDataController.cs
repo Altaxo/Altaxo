@@ -13,8 +13,10 @@ namespace Altaxo.Graph.GUI
 
 		void EhView_ToX(int tableindex, string tablename, int columnindex, string columnname);
 		void EhView_ToY(int tableindex, string tablename, int columnindex, string columnname);
-		void EhView_EraseX();
+    void EhView_ToLabel(int tableindex, string tablename, int columnindex, string columnname);
+    void EhView_EraseX();
 		void EhView_EraseY();
+    void EhView_EraseLabel();
 
 		bool EhView_RangeFrom(int val);
 		bool EhView_RangeTo(int val);
@@ -40,6 +42,8 @@ namespace Altaxo.Graph.GUI
 
 		void XColumn_Initialize(string colname);
 		void YColumn_Initialize(string colname);
+    void LabelColumn_Initialize(string colname);
+
 
 		void PlotRangeFrom_Initialize(int from);
 		void PlotRangeTo_Initialize(int to);
@@ -62,7 +66,8 @@ namespace Altaxo.Graph.GUI
 		int m_PlotRange_To;
 		Altaxo.Data.IReadableColumn m_xCol;
 		Altaxo.Data.IReadableColumn m_yCol;
-		int m_MaxPossiblePlotRange_To;
+    Altaxo.Data.IReadableColumn m_labelCol;
+    int m_MaxPossiblePlotRange_To;
 
 		public LineScatterPlotDataController(XYColumnPlotData pa)
 		{
@@ -106,7 +111,8 @@ namespace Altaxo.Graph.GUI
 			{
 				m_xCol = m_PlotAssociation.XColumn;
 				m_yCol = m_PlotAssociation.YColumn;
-				m_PlotRange_From = m_PlotAssociation.PlotRangeStart;
+				m_labelCol = m_PlotAssociation.LabelColumn;
+        m_PlotRange_From = m_PlotAssociation.PlotRangeStart;
 				m_PlotRange_To   = m_PlotAssociation.PlotRangeLength==int.MaxValue ? int.MaxValue : m_PlotAssociation.PlotRangeStart+m_PlotAssociation.PlotRangeLength-1;
 				CalcMaxPossiblePlotRangeTo();
 			}
@@ -121,7 +127,7 @@ namespace Altaxo.Graph.GUI
 
 				View.XColumn_Initialize(m_xCol==null ? String.Empty : m_xCol.FullName);
 				View.YColumn_Initialize(m_yCol==null ? String.Empty : m_yCol.FullName);
-
+		    View.LabelColumn_Initialize(m_labelCol==null ? String.Empty : m_labelCol.FullName);
 				View.PlotRangeFrom_Initialize(m_PlotRange_From);
 				CalcMaxPossiblePlotRangeTo();
 			}
@@ -162,8 +168,15 @@ namespace Altaxo.Graph.GUI
 			SetDirty();
 			m_yCol = Current.Project.DataTableCollection[tablename][columnname];
 			if(null!=View)
-				View.YColumn_Initialize(m_xCol==null ? String.Empty : m_yCol.FullName);
+				View.YColumn_Initialize(m_yCol==null ? String.Empty : m_yCol.FullName);
 		}
+    public void EhView_ToLabel(int tableindex, string tablename, int columnindex, string columnname)
+    {
+      SetDirty();
+      m_yCol = Current.Project.DataTableCollection[tablename][columnname];
+      if(null!=View)
+        View.LabelColumn_Initialize(m_labelCol==null ? String.Empty : m_labelCol.FullName);
+    }
 		public void EhView_EraseX()
 		{
 			SetDirty();
@@ -176,9 +189,15 @@ namespace Altaxo.Graph.GUI
 			SetDirty();
 			m_yCol = null;
 			if(null!=View)
-				View.YColumn_Initialize(m_xCol==null ? String.Empty : m_yCol.FullName);
+				View.YColumn_Initialize(m_yCol==null ? String.Empty : m_yCol.FullName);
 		}
-
+    public void EhView_EraseLabel()
+    {
+      SetDirty();
+      m_labelCol = null;
+      if(null!=View)
+        View.LabelColumn_Initialize(m_labelCol==null ? String.Empty : m_labelCol.FullName);
+    }
 		public bool EhView_RangeFrom(int val)
 		{
 			SetDirty();
@@ -203,6 +222,7 @@ namespace Altaxo.Graph.GUI
 			{
 				m_PlotAssociation.XColumn = m_xCol;
 				m_PlotAssociation.YColumn = m_yCol;
+        m_PlotAssociation.LabelColumn = m_labelCol;
 				m_PlotAssociation.PlotRangeStart = this.m_PlotRange_From;
 				m_PlotAssociation.PlotRangeLength = this.m_PlotRange_To >= this.m_MaxPossiblePlotRange_To ? int.MaxValue : this.m_PlotRange_To+1-this.m_PlotRange_From;
 			}

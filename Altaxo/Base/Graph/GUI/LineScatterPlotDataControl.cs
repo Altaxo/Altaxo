@@ -26,6 +26,9 @@ namespace Altaxo.Graph.GUI
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Button m_btToLabel;
+    private System.Windows.Forms.TextBox m_edLabelColumn;
+    private System.Windows.Forms.Button m_btEraseLabel;
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -62,170 +65,208 @@ namespace Altaxo.Graph.GUI
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(LineScatterPlotDataControl));
-			this.m_cbTables = new System.Windows.Forms.ComboBox();
-			this.m_lbColumns = new System.Windows.Forms.ListBox();
-			this.m_btToX = new System.Windows.Forms.Button();
-			this.m_btToY = new System.Windows.Forms.Button();
-			this.m_edXColumn = new System.Windows.Forms.TextBox();
-			this.m_btEraseX = new System.Windows.Forms.Button();
-			this.m_edYColumn = new System.Windows.Forms.TextBox();
-			this.m_btEraseY = new System.Windows.Forms.Button();
-			this.m_nudPlotRangeFrom = new System.Windows.Forms.NumericUpDown();
-			this.m_nudPlotRangeTo = new System.Windows.Forms.NumericUpDown();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.label2 = new System.Windows.Forms.Label();
-			this.label1 = new System.Windows.Forms.Label();
-			((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeFrom)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeTo)).BeginInit();
-			this.groupBox1.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// m_cbTables
-			// 
-			this.m_cbTables.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.m_cbTables.Location = new System.Drawing.Point(8, 32);
-			this.m_cbTables.Name = "m_cbTables";
-			this.m_cbTables.Size = new System.Drawing.Size(144, 21);
-			this.m_cbTables.TabIndex = 0;
-			this.m_cbTables.SelectionChangeCommitted += new System.EventHandler(this.EhTables_SelectionChangeCommit);
-			// 
-			// m_lbColumns
-			// 
-			this.m_lbColumns.Location = new System.Drawing.Point(8, 64);
-			this.m_lbColumns.Name = "m_lbColumns";
-			this.m_lbColumns.Size = new System.Drawing.Size(144, 186);
-			this.m_lbColumns.TabIndex = 1;
-			// 
-			// m_btToX
-			// 
-			this.m_btToX.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.m_btToX.Image = ((System.Drawing.Image)(resources.GetObject("m_btToX.Image")));
-			this.m_btToX.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.m_btToX.Location = new System.Drawing.Point(160, 64);
-			this.m_btToX.Name = "m_btToX";
-			this.m_btToX.Size = new System.Drawing.Size(40, 24);
-			this.m_btToX.TabIndex = 2;
-			this.m_btToX.Text = "X";
-			this.m_btToX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.m_btToX.Click += new System.EventHandler(this.EhToX_Click);
-			// 
-			// m_btToY
-			// 
-			this.m_btToY.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.m_btToY.Image = ((System.Drawing.Image)(resources.GetObject("m_btToY.Image")));
-			this.m_btToY.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.m_btToY.Location = new System.Drawing.Point(160, 104);
-			this.m_btToY.Name = "m_btToY";
-			this.m_btToY.Size = new System.Drawing.Size(40, 24);
-			this.m_btToY.TabIndex = 3;
-			this.m_btToY.Text = "Y";
-			this.m_btToY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.m_btToY.Click += new System.EventHandler(this.EhToY_Click);
-			// 
-			// m_edXColumn
-			// 
-			this.m_edXColumn.Location = new System.Drawing.Point(208, 64);
-			this.m_edXColumn.Name = "m_edXColumn";
-			this.m_edXColumn.ReadOnly = true;
-			this.m_edXColumn.Size = new System.Drawing.Size(192, 20);
-			this.m_edXColumn.TabIndex = 4;
-			this.m_edXColumn.Text = "textBox1";
-			this.m_edXColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			// 
-			// m_btEraseX
-			// 
-			this.m_btEraseX.Image = ((System.Drawing.Image)(resources.GetObject("m_btEraseX.Image")));
-			this.m_btEraseX.Location = new System.Drawing.Point(408, 64);
-			this.m_btEraseX.Name = "m_btEraseX";
-			this.m_btEraseX.Size = new System.Drawing.Size(24, 24);
-			this.m_btEraseX.TabIndex = 5;
-			this.m_btEraseX.Click += new System.EventHandler(this.EhEraseX_Click);
-			// 
-			// m_edYColumn
-			// 
-			this.m_edYColumn.Location = new System.Drawing.Point(208, 104);
-			this.m_edYColumn.Name = "m_edYColumn";
-			this.m_edYColumn.ReadOnly = true;
-			this.m_edYColumn.Size = new System.Drawing.Size(192, 20);
-			this.m_edYColumn.TabIndex = 6;
-			this.m_edYColumn.Text = "textBox2";
-			this.m_edYColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			// 
-			// m_btEraseY
-			// 
-			this.m_btEraseY.Image = ((System.Drawing.Image)(resources.GetObject("m_btEraseY.Image")));
-			this.m_btEraseY.Location = new System.Drawing.Point(408, 104);
-			this.m_btEraseY.Name = "m_btEraseY";
-			this.m_btEraseY.Size = new System.Drawing.Size(24, 24);
-			this.m_btEraseY.TabIndex = 7;
-			this.m_btEraseY.Click += new System.EventHandler(this.EhEraseY_Click);
-			// 
-			// m_nudPlotRangeFrom
-			// 
-			this.m_nudPlotRangeFrom.Location = new System.Drawing.Point(64, 24);
-			this.m_nudPlotRangeFrom.Name = "m_nudPlotRangeFrom";
-			this.m_nudPlotRangeFrom.Size = new System.Drawing.Size(80, 20);
-			this.m_nudPlotRangeFrom.TabIndex = 8;
-			this.m_nudPlotRangeFrom.Validating += new System.ComponentModel.CancelEventHandler(this.EhPlotRangeFrom_Validating);
-			// 
-			// m_nudPlotRangeTo
-			// 
-			this.m_nudPlotRangeTo.Location = new System.Drawing.Point(200, 24);
-			this.m_nudPlotRangeTo.Name = "m_nudPlotRangeTo";
-			this.m_nudPlotRangeTo.Size = new System.Drawing.Size(72, 20);
-			this.m_nudPlotRangeTo.TabIndex = 9;
-			this.m_nudPlotRangeTo.Validating += new System.ComponentModel.CancelEventHandler(this.EhPlotRangeTo_Validating);
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this.label2);
-			this.groupBox1.Controls.Add(this.label1);
-			this.groupBox1.Controls.Add(this.m_nudPlotRangeFrom);
-			this.groupBox1.Controls.Add(this.m_nudPlotRangeTo);
-			this.groupBox1.Location = new System.Drawing.Point(16, 304);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(280, 48);
-			this.groupBox1.TabIndex = 10;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "Plot Range";
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(160, 24);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(32, 16);
-			this.label2.TabIndex = 11;
-			this.label2.Text = "To:";
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(8, 24);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(32, 16);
-			this.label1.TabIndex = 10;
-			this.label1.Text = "From:";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-			// 
-			// LineScatterPlotDataControl
-			// 
-			this.Controls.Add(this.groupBox1);
-			this.Controls.Add(this.m_btEraseY);
-			this.Controls.Add(this.m_edYColumn);
-			this.Controls.Add(this.m_btEraseX);
-			this.Controls.Add(this.m_edXColumn);
-			this.Controls.Add(this.m_btToY);
-			this.Controls.Add(this.m_btToX);
-			this.Controls.Add(this.m_lbColumns);
-			this.Controls.Add(this.m_cbTables);
-			this.Name = "LineScatterPlotDataControl";
-			this.Size = new System.Drawing.Size(432, 368);
-			((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeFrom)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeTo)).EndInit();
-			this.groupBox1.ResumeLayout(false);
-			this.ResumeLayout(false);
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(LineScatterPlotDataControl));
+      this.m_cbTables = new System.Windows.Forms.ComboBox();
+      this.m_lbColumns = new System.Windows.Forms.ListBox();
+      this.m_btToX = new System.Windows.Forms.Button();
+      this.m_btToY = new System.Windows.Forms.Button();
+      this.m_edXColumn = new System.Windows.Forms.TextBox();
+      this.m_btEraseX = new System.Windows.Forms.Button();
+      this.m_edYColumn = new System.Windows.Forms.TextBox();
+      this.m_btEraseY = new System.Windows.Forms.Button();
+      this.m_nudPlotRangeFrom = new System.Windows.Forms.NumericUpDown();
+      this.m_nudPlotRangeTo = new System.Windows.Forms.NumericUpDown();
+      this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.label2 = new System.Windows.Forms.Label();
+      this.label1 = new System.Windows.Forms.Label();
+      this.m_btToLabel = new System.Windows.Forms.Button();
+      this.m_edLabelColumn = new System.Windows.Forms.TextBox();
+      this.m_btEraseLabel = new System.Windows.Forms.Button();
+      ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeFrom)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeTo)).BeginInit();
+      this.groupBox1.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // m_cbTables
+      // 
+      this.m_cbTables.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.m_cbTables.Location = new System.Drawing.Point(8, 32);
+      this.m_cbTables.Name = "m_cbTables";
+      this.m_cbTables.Size = new System.Drawing.Size(144, 21);
+      this.m_cbTables.TabIndex = 0;
+      this.m_cbTables.SelectionChangeCommitted += new System.EventHandler(this.EhTables_SelectionChangeCommit);
+      // 
+      // m_lbColumns
+      // 
+      this.m_lbColumns.Location = new System.Drawing.Point(8, 64);
+      this.m_lbColumns.Name = "m_lbColumns";
+      this.m_lbColumns.Size = new System.Drawing.Size(144, 186);
+      this.m_lbColumns.TabIndex = 1;
+      // 
+      // m_btToX
+      // 
+      this.m_btToX.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.m_btToX.Image = ((System.Drawing.Image)(resources.GetObject("m_btToX.Image")));
+      this.m_btToX.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      this.m_btToX.Location = new System.Drawing.Point(160, 64);
+      this.m_btToX.Name = "m_btToX";
+      this.m_btToX.Size = new System.Drawing.Size(40, 24);
+      this.m_btToX.TabIndex = 2;
+      this.m_btToX.Text = "X";
+      this.m_btToX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.m_btToX.Click += new System.EventHandler(this.EhToX_Click);
+      // 
+      // m_btToY
+      // 
+      this.m_btToY.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.m_btToY.Image = ((System.Drawing.Image)(resources.GetObject("m_btToY.Image")));
+      this.m_btToY.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      this.m_btToY.Location = new System.Drawing.Point(160, 104);
+      this.m_btToY.Name = "m_btToY";
+      this.m_btToY.Size = new System.Drawing.Size(40, 24);
+      this.m_btToY.TabIndex = 3;
+      this.m_btToY.Text = "Y";
+      this.m_btToY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.m_btToY.Click += new System.EventHandler(this.EhToY_Click);
+      // 
+      // m_edXColumn
+      // 
+      this.m_edXColumn.Location = new System.Drawing.Point(208, 64);
+      this.m_edXColumn.Name = "m_edXColumn";
+      this.m_edXColumn.ReadOnly = true;
+      this.m_edXColumn.Size = new System.Drawing.Size(192, 20);
+      this.m_edXColumn.TabIndex = 4;
+      this.m_edXColumn.Text = "textBox1";
+      this.m_edXColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      // 
+      // m_btEraseX
+      // 
+      this.m_btEraseX.Image = ((System.Drawing.Image)(resources.GetObject("m_btEraseX.Image")));
+      this.m_btEraseX.Location = new System.Drawing.Point(408, 64);
+      this.m_btEraseX.Name = "m_btEraseX";
+      this.m_btEraseX.Size = new System.Drawing.Size(24, 24);
+      this.m_btEraseX.TabIndex = 5;
+      this.m_btEraseX.Click += new System.EventHandler(this.EhEraseX_Click);
+      // 
+      // m_edYColumn
+      // 
+      this.m_edYColumn.Location = new System.Drawing.Point(208, 104);
+      this.m_edYColumn.Name = "m_edYColumn";
+      this.m_edYColumn.ReadOnly = true;
+      this.m_edYColumn.Size = new System.Drawing.Size(192, 20);
+      this.m_edYColumn.TabIndex = 6;
+      this.m_edYColumn.Text = "textBox2";
+      this.m_edYColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      // 
+      // m_btEraseY
+      // 
+      this.m_btEraseY.Image = ((System.Drawing.Image)(resources.GetObject("m_btEraseY.Image")));
+      this.m_btEraseY.Location = new System.Drawing.Point(408, 104);
+      this.m_btEraseY.Name = "m_btEraseY";
+      this.m_btEraseY.Size = new System.Drawing.Size(24, 24);
+      this.m_btEraseY.TabIndex = 7;
+      this.m_btEraseY.Click += new System.EventHandler(this.EhEraseY_Click);
+      // 
+      // m_nudPlotRangeFrom
+      // 
+      this.m_nudPlotRangeFrom.Location = new System.Drawing.Point(64, 24);
+      this.m_nudPlotRangeFrom.Name = "m_nudPlotRangeFrom";
+      this.m_nudPlotRangeFrom.Size = new System.Drawing.Size(80, 20);
+      this.m_nudPlotRangeFrom.TabIndex = 8;
+      this.m_nudPlotRangeFrom.Validating += new System.ComponentModel.CancelEventHandler(this.EhPlotRangeFrom_Validating);
+      // 
+      // m_nudPlotRangeTo
+      // 
+      this.m_nudPlotRangeTo.Location = new System.Drawing.Point(200, 24);
+      this.m_nudPlotRangeTo.Name = "m_nudPlotRangeTo";
+      this.m_nudPlotRangeTo.Size = new System.Drawing.Size(72, 20);
+      this.m_nudPlotRangeTo.TabIndex = 9;
+      this.m_nudPlotRangeTo.Validating += new System.ComponentModel.CancelEventHandler(this.EhPlotRangeTo_Validating);
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Controls.Add(this.label2);
+      this.groupBox1.Controls.Add(this.label1);
+      this.groupBox1.Controls.Add(this.m_nudPlotRangeFrom);
+      this.groupBox1.Controls.Add(this.m_nudPlotRangeTo);
+      this.groupBox1.Location = new System.Drawing.Point(16, 304);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(280, 48);
+      this.groupBox1.TabIndex = 10;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Plot Range";
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(160, 24);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(32, 16);
+      this.label2.TabIndex = 11;
+      this.label2.Text = "To:";
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(8, 24);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(32, 16);
+      this.label1.TabIndex = 10;
+      this.label1.Text = "From:";
+      this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+      // 
+      // m_btToLabel
+      // 
+      this.m_btToLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.m_btToLabel.Image = ((System.Drawing.Image)(resources.GetObject("m_btToLabel.Image")));
+      this.m_btToLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      this.m_btToLabel.Location = new System.Drawing.Point(160, 144);
+      this.m_btToLabel.Name = "m_btToLabel";
+      this.m_btToLabel.Size = new System.Drawing.Size(40, 24);
+      this.m_btToLabel.TabIndex = 11;
+      this.m_btToLabel.Text = "Y";
+      this.m_btToLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.m_btToLabel.Click += new System.EventHandler(this.EhToLabel_Click);
+      // 
+      // m_edLabelColumn
+      // 
+      this.m_edLabelColumn.Location = new System.Drawing.Point(208, 144);
+      this.m_edLabelColumn.Name = "m_edLabelColumn";
+      this.m_edLabelColumn.ReadOnly = true;
+      this.m_edLabelColumn.Size = new System.Drawing.Size(192, 20);
+      this.m_edLabelColumn.TabIndex = 12;
+      this.m_edLabelColumn.Text = "textBox2";
+      this.m_edLabelColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+      // 
+      // m_btEraseLabel
+      // 
+      this.m_btEraseLabel.Image = ((System.Drawing.Image)(resources.GetObject("m_btEraseLabel.Image")));
+      this.m_btEraseLabel.Location = new System.Drawing.Point(408, 144);
+      this.m_btEraseLabel.Name = "m_btEraseLabel";
+      this.m_btEraseLabel.Size = new System.Drawing.Size(24, 24);
+      this.m_btEraseLabel.TabIndex = 13;
+      this.m_btEraseLabel.Click += new System.EventHandler(this.EhEraseLabel_Click);
+      // 
+      // LineScatterPlotDataControl
+      // 
+      this.Controls.Add(this.m_btEraseLabel);
+      this.Controls.Add(this.m_edLabelColumn);
+      this.Controls.Add(this.m_btToLabel);
+      this.Controls.Add(this.groupBox1);
+      this.Controls.Add(this.m_btEraseY);
+      this.Controls.Add(this.m_edYColumn);
+      this.Controls.Add(this.m_btEraseX);
+      this.Controls.Add(this.m_edXColumn);
+      this.Controls.Add(this.m_btToY);
+      this.Controls.Add(this.m_btToX);
+      this.Controls.Add(this.m_lbColumns);
+      this.Controls.Add(this.m_cbTables);
+      this.Name = "LineScatterPlotDataControl";
+      this.Size = new System.Drawing.Size(432, 368);
+      ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeFrom)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeTo)).EndInit();
+      this.groupBox1.ResumeLayout(false);
+      this.ResumeLayout(false);
 
-		}
+    }
 		#endregion
 
 		#region ILineScatterPlotDataView Members
@@ -275,6 +316,11 @@ namespace Altaxo.Graph.GUI
 			this.m_edYColumn.Text = colname;
 		}
 
+    public void LabelColumn_Initialize(string colname)
+    {
+      this.m_edLabelColumn.Text = colname;
+    }
+
 		public void PlotRangeFrom_Initialize(int from)
 		{
 			this.m_nudPlotRangeFrom.Minimum=0;
@@ -304,6 +350,15 @@ namespace Altaxo.Graph.GUI
 
 		}
 
+
+    private void EhToLabel_Click(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+        Controller.EhView_ToLabel(this.m_cbTables.SelectedIndex,(string)this.m_cbTables.SelectedItem,m_lbColumns.SelectedIndex,(string)this.m_lbColumns.SelectedItem);
+  
+    }
+
+
 		private void EhEraseX_Click(object sender, System.EventArgs e)
 		{
 		if(null!=Controller)
@@ -315,6 +370,12 @@ namespace Altaxo.Graph.GUI
 		if(null!=Controller)
 			Controller.EhView_EraseY();
 		}
+
+    private void EhEraseLabel_Click(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+        Controller.EhView_EraseLabel();
+    }
 
 		private void EhPlotRangeFrom_Validating(object sender, System.ComponentModel.CancelEventArgs e)
 		{
@@ -333,6 +394,8 @@ namespace Altaxo.Graph.GUI
 			if(null!=Controller)
 				Controller.EhView_TableSelectionChanged(this.m_cbTables.SelectedIndex,(string)this.m_cbTables.SelectedItem);
 		}
+
+ 
 
 		#region IMVCView Members
 

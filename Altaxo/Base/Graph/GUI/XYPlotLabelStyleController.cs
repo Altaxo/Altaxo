@@ -24,6 +24,12 @@ namespace Altaxo.Graph.GUI
 		/// <param name="newValue">The new selected item of the combo box.</param>
 		void EhView_ColorChanged(Color newValue);
 
+    /// <summary>
+    /// Called if the background color is changed.
+    /// </summary>
+    /// <param name="newValue">The new selected item of the combo box.</param>
+    void EhView_BackgroundColorChanged(Color newValue);
+
 		/// <summary>
 		/// Called if the font size is changed.
 		/// </summary>
@@ -59,6 +65,12 @@ namespace Altaxo.Graph.GUI
 		/// </summary>
 		/// <param name="newValue"></param>
 		void EhView_WhiteOutChanged(bool newValue);
+
+    /// <summary>
+    /// Called if the Independent color box check value has changed.
+    /// </summary>
+    /// <param name="newValue"></param>
+    void EhView_IndependentColorChanged(bool newValue);
 
 		/// <summary>
 		/// Called when the contents of XOffset is changed.
@@ -105,6 +117,11 @@ namespace Altaxo.Graph.GUI
 		/// Initializes the content of the Color combo box.
 		/// </summary>
 		void Color_Initialize(System.Drawing.Color color);
+
+    /// <summary>
+    /// Initializes the content of the background color combo box.
+    /// </summary>
+    void BackgroundColor_Initialize(System.Drawing.Color color);
 
 		/// <summary>
 		/// Initializes the font size combo box.
@@ -161,6 +178,12 @@ namespace Altaxo.Graph.GUI
 		/// </summary>
 		/// <param name="bWhiteOut">True if the label has a white background.</param>
 		void WhiteOut_Initialize(bool bWhiteOut);
+
+    /// <summary>
+    /// Initializes the content of the Independent color checkbox
+    /// </summary>
+    /// <param name="bIndependent">True if the label has a white background.</param>
+    void IndependentColor_Initialize(bool bIndependent);
 	
 	}
 	#endregion
@@ -176,8 +199,16 @@ namespace Altaxo.Graph.GUI
 		/// <summary>The font of the label.</summary>
 		protected string m_FontFamily;
 
+    /// <summary>
+    /// True if the color is independent of the parent plot style.
+    /// </summary>
+    protected bool m_IndependentColor;
+
 		/// <summary>The color for the label.</summary>
 		protected Color  m_Color;
+
+    /// <summary>The color for the label.</summary>
+    protected Color  m_BackgroundColor;
 	
 		/// <summary>The size of the font.</summary>
 		protected float m_FontSize;
@@ -217,7 +248,9 @@ namespace Altaxo.Graph.GUI
 			if(bInit)
 			{
 				m_FontFamily	= m_PlotStyle.Font.FontFamily.Name;
+        m_IndependentColor = m_PlotStyle.IndependentColor;
 				m_Color	= m_PlotStyle.Color;
+        m_BackgroundColor = m_PlotStyle.BackgroundColor;
 				m_FontSize = m_PlotStyle.FontSize;
 				m_HorizontalAlignment = m_PlotStyle.HorizontalAlignment;
 				m_VerticalAlignment = m_PlotStyle.VerticalAlignment;
@@ -232,7 +265,9 @@ namespace Altaxo.Graph.GUI
 			if(null!=View)
 			{
 				View.Font_Initialize(m_FontFamily);
+        View.IndependentColor_Initialize(m_IndependentColor);
 				View.Color_Initialize(m_Color);
+        View.BackgroundColor_Initialize(m_BackgroundColor);
 				View.FontSize_Initialize(new string[]{"6","8","10","12","16","24","32","48","72"},Serialization.NumberConversion.ToString(m_FontSize));
 				View.HorizontalAlignment_Initialize(System.Enum.GetNames(typeof(System.Drawing.StringAlignment)),System.Enum.GetName(typeof(System.Drawing.StringAlignment),m_HorizontalAlignment));
 				View.VerticalAlignment_Initialize(System.Enum.GetNames(typeof(System.Drawing.StringAlignment)),System.Enum.GetName(typeof(System.Drawing.StringAlignment),m_VerticalAlignment));
@@ -277,6 +312,11 @@ namespace Altaxo.Graph.GUI
 			m_Color = color;
 		}
 
+    public void EhView_BackgroundColorChanged(System.Drawing.Color color)
+    {
+      m_BackgroundColor = color;
+    }
+
 		public void EhView_FontSizeChanged(string newValue)
 		{
 			double numValue;
@@ -309,6 +349,10 @@ namespace Altaxo.Graph.GUI
 			m_WhiteOut = newValue;
 		}
 
+    public void EhView_IndependentColorChanged(bool newValue)
+    {
+      m_IndependentColor = newValue;
+    }
 
 		public void EhView_RotationValidating(string newValue, ref bool bCancel)
 		{
@@ -341,7 +385,9 @@ namespace Altaxo.Graph.GUI
 		{
 		
 			m_PlotStyle.Font = new Font(m_FontFamily,m_FontSize,GraphicsUnit.World);
+      m_PlotStyle.IndependentColor = m_IndependentColor;
 			m_PlotStyle.Color = m_Color;
+      m_PlotStyle.BackgroundColor = m_BackgroundColor;
 			m_PlotStyle.HorizontalAlignment = m_HorizontalAlignment;
 			m_PlotStyle.VerticalAlignment   = m_VerticalAlignment;
 			m_PlotStyle.AttachToAxis = m_AttachToAxis;

@@ -81,23 +81,49 @@ namespace Altaxo.Main.GUI
 
 		public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
 		{
+      XYColumnPlotData plotData = (XYColumnPlotData)pa.Data;
+      
 			// Plot Style
 			LineScatterPlotStyleController	stylectrl = new LineScatterPlotStyleController((Graph.AbstractXYPlotStyle)pa.Style,plotGroup);
 			LineScatterPlotStyleControl			styleview = new LineScatterPlotStyleControl();
 			stylectrl.View = styleview;
 
 			// Plot Data
-			LineScatterPlotDataController datactrl = new LineScatterPlotDataController((XYColumnPlotData)pa.Data);
+			LineScatterPlotDataController datactrl = new LineScatterPlotDataController(plotData);
 			LineScatterPlotDataControl    dataview = new LineScatterPlotDataControl();
 			datactrl.View = dataview;
 
-			GUI.TabbedDialogController tdcctrl = new GUI.TabbedDialogController("Line/Scatter Plot",true);
+      // Label Style
+      Graph.GUI.XYPlotLabelStyleController labelctrl = null;
+      Graph.GUI.XYPlotLabelStyleControl    labelview = null;
+      if(pa.Style is XYLineScatterPlotStyle)
+      {
+        XYLineScatterPlotStyle plotStyle = (XYLineScatterPlotStyle)pa.Style;
+        if(plotStyle.XYPlotLabelStyle!=null)
+        {
+         labelctrl = new XYPlotLabelStyleController(plotStyle.XYPlotLabelStyle);
+         labelview = new XYPlotLabelStyleControl();
+         labelctrl.View = labelview;
+        }
+      }
+
+      GUI.TabbedDialogController tdcctrl = new GUI.TabbedDialogController("Line/Scatter Plot",true);
 			tdcctrl.AddTab("Style",stylectrl,styleview);
 			tdcctrl.AddTab("Data",datactrl,dataview);
+      if(labelctrl!=null && labelview!=null)
+        tdcctrl.AddTab("Label",labelctrl,labelview);
 			GUI.TabbedDialogView  tdcview = new GUI.TabbedDialogView();
 			tdcctrl.View = tdcview;
 
-			return tdcctrl.ShowDialog(parentWindow);
+			bool result = tdcctrl.ShowDialog(parentWindow);
+
+        if(plotData.LabelColumn==null && pa.Style is XYLineScatterPlotStyle)
+        {
+          ((XYLineScatterPlotStyle)pa.Style).XYPlotLabelStyle = null;
+        }
+
+
+      return result;
 		}
 
 		public static bool ShowDensityImagePlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)

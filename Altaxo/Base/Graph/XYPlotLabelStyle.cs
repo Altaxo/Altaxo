@@ -36,6 +36,11 @@ namespace Altaxo.Graph
 		/// <summary>The font of the label.</summary>
 		protected System.Drawing.Font m_Font;
 
+    /// <summary>
+    /// True if the color of the label is not dependent on the color of the parent plot style.
+    /// </summary>
+    protected bool m_IndependentColor;
+
 		/// <summary>The brush for the label.</summary>
 		protected BrushHolder  m_Brush;
 	
@@ -48,8 +53,11 @@ namespace Altaxo.Graph
 		/// <summary>The rotation of the label.</summary>
 		protected double m_Rotation;
 
-		/// <summary>If true, the label is painted on a white background.</summary>
+		/// <summary>If true, the label is painted on a background.</summary>
 		protected bool m_WhiteOut;
+
+    /// <summary>The brush for the background.</summary>
+    protected BrushHolder  m_BackgroundBrush;
 
 		/// <summary>If true, the label is attached to one of the four edges of the layer.</summary>
 		protected bool m_AttachToAxis;
@@ -71,6 +79,7 @@ namespace Altaxo.Graph
 			{
 				XYPlotLabelStyle s = (XYPlotLabelStyle)obj;
 				info.AddValue("Font",s.m_Font);  
+        info.AddValue("IndependentColor",s.m_IndependentColor);
 				info.AddValue("Brush",s.m_Brush);  
 				info.AddValue("XOffset",s.m_XOffset);
 				info.AddValue("YOffset",s.m_YOffset);
@@ -80,6 +89,7 @@ namespace Altaxo.Graph
 				info.AddValue("AttachToAxis",s.m_AttachToAxis);
 				info.AddValue("AttachedAxis",s.m_AttachedAxis);
 				info.AddValue("WhiteOut",s.m_WhiteOut);
+        info.AddValue("BackgroundBrush",s.m_BackgroundBrush);  
 			}
 
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -88,6 +98,7 @@ namespace Altaxo.Graph
 				XYPlotLabelStyle s = null!=o ? (XYPlotLabelStyle)o : new XYPlotLabelStyle();
 
 				s.m_Font = (Font)info.GetValue("Font",s);  
+        s.m_IndependentColor = info.GetBoolean("IndependentColor");
 				s.m_Brush = (BrushHolder)info.GetValue("Brush",s);
 				s.m_XOffset = info.GetDouble("XOffset");
 				s.m_YOffset = info.GetDouble("YOffset");
@@ -97,6 +108,7 @@ namespace Altaxo.Graph
 				s.m_AttachToAxis = info.GetBoolean("AttachToAxis");
 				s.m_AttachedAxis = (EdgeType)info.GetEnum("AttachedAxis",typeof(EdgeType));
 				s.m_WhiteOut = info.GetBoolean("WhiteOut");
+        s.m_BackgroundBrush = (BrushHolder)info.GetValue("BackgroundBrush",s);
 
 				// restore the cached values
 				s.SetCachedValues();
@@ -121,11 +133,13 @@ namespace Altaxo.Graph
 		public XYPlotLabelStyle(XYPlotLabelStyle from)
 		{
 			this.m_Font       = (Font)from.m_Font.Clone();
+      this.m_IndependentColor = from.m_IndependentColor;
 			this.m_Brush			= (BrushHolder)from.m_Brush.Clone();
 			this.m_XOffset    = from.m_XOffset;
 			this.m_YOffset    = from.m_YOffset;
 			this.m_Rotation   = from.m_Rotation;
 			this.m_WhiteOut   = from.m_WhiteOut;
+      this.m_BackgroundBrush			= (BrushHolder)from.m_BackgroundBrush.Clone();
 			this.m_CachedStringFormat = (System.Drawing.StringFormat)from.m_CachedStringFormat.Clone();
 			this.m_AttachToAxis        = from.m_AttachToAxis;
 			this.m_AttachedAxis        = from.m_AttachedAxis;
@@ -136,11 +150,13 @@ namespace Altaxo.Graph
 		public XYPlotLabelStyle()
 		{
 			this.m_Font = new Font(System.Drawing.FontFamily.GenericSansSerif,8,GraphicsUnit.World);
+      this.m_IndependentColor = false;
 			this.m_Brush = new BrushHolder(Color.Black);
 			this.m_XOffset = 0;
 			this.m_YOffset = 0;
 			this.m_Rotation = 0;
 			this.m_WhiteOut = false;
+      this.m_BackgroundBrush = new BrushHolder(Color.Snow);
 			this.m_CachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
 			this.m_CachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
 			this.m_CachedStringFormat.LineAlignment   = System.Drawing.StringAlignment.Center;
@@ -187,6 +203,23 @@ namespace Altaxo.Graph
 			}
 		}
 
+    /// <summary>
+    /// Determines whether or not the color of the label is independent of the color of the parent plot style.
+    /// </summary>
+    public bool IndependentColor
+    {
+      get { return m_IndependentColor; }
+      set
+      {
+        bool oldValue = m_IndependentColor;
+        m_IndependentColor = value;
+        if(value!=oldValue)
+        {
+          OnChanged();
+        }
+      }
+    }
+
 		/// <summary>The brush color.</summary>
 		public System.Drawing.Color Color
 		{
@@ -201,6 +234,22 @@ namespace Altaxo.Graph
 				}
 			}
 		}
+
+
+    /// <summary>The background brush color.</summary>
+    public System.Drawing.Color BackgroundColor
+    {
+      get { return this.m_BackgroundBrush.Color;; }
+      set 
+      {
+        Color oldColor = this.Color;
+        if(value!=oldColor)
+        {
+          this.m_BackgroundBrush.SetSolidBrush( value );
+          OnChanged(); // Fire Changed event
+        }
+      }
+    }
 
 		/// <summary>The x offset relative to font size, i.e. a value of 1 is 1*FontSize.</summary>
 		public double XOffset
@@ -332,21 +381,58 @@ namespace Altaxo.Graph
 		public void Paint(Graphics g, string label)
 		{
 			float fontSize = this.FontSize;
-			g.DrawString(label,m_Font,m_Brush,(float)m_XOffset*fontSize,(float)m_YOffset*fontSize,m_CachedStringFormat);
+      float xpos = (float)(m_XOffset*fontSize);
+      float ypos = (float)(-m_YOffset*fontSize);
+      if(this.WhiteOut)
+      {
+        float x = xpos, y = ypos;
+       SizeF stringsize = g.MeasureString(label,this.m_Font,new PointF(xpos,ypos),m_CachedStringFormat);
+        switch(m_CachedStringFormat.Alignment)
+        {
+          case StringAlignment.Center:
+            x -= stringsize.Width/2;
+            break;
+          case StringAlignment.Far:
+            x -= stringsize.Width;
+            break;
+        }
+        switch(m_CachedStringFormat.LineAlignment)
+        {
+          case StringAlignment.Center:
+            y -= stringsize.Height/2;
+            break;
+          case StringAlignment.Far:
+            y -= stringsize.Height;
+            break;
+        }
+       g.FillRectangle(m_BackgroundBrush,x,y,stringsize.Width,stringsize.Height);
+      }
+			g.DrawString(label,m_Font,m_Brush,xpos,ypos,m_CachedStringFormat);
 		}
 
 		public void Paint(Graphics g,
 			Graph.XYPlotLayer layer,
+      Graph.AbstractXYPlotStyle parentStyle,
 			PlotRangeList rangeList,
 			PointF[] ptArray,
 			Altaxo.Data.IReadableColumn labelColumn)
 		{
+      // force color to be that of the parent style if not independent
+      if(!this.m_IndependentColor && parentStyle!=null && this.m_Brush.Color!=parentStyle.Color)
+        this.m_Brush.SetSolidBrush(parentStyle.Color);
+        
+
       // save the graphics stat since we have to translate the origin
       System.Drawing.Drawing2D.GraphicsState gs = g.Save();
 
+      double bottomPosition = layer.Size.Height;
+      double topPosition   = 0;
+      double leftPosition  = 0;
+      double rightPosition = layer.Size.Width;
 
-      float xpos=0, ypos=0;
-      float xdiff,ydiff;
+       double xpos=0, ypos=0;
+      double xpre,ypre;
+       double xdiff,ydiff;
       for(int r=0;r<rangeList.Count;r++)
       {
         int lower = rangeList[r].LowerBound;
@@ -358,12 +444,39 @@ namespace Altaxo.Graph
           if(label==null || label==string.Empty)
             continue;
           
-          xdiff = ptArray[j].X - xpos;
-          ydiff = ptArray[j].Y - ypos;
-          xpos = ptArray[j].X;
-          ypos = ptArray[j].Y;
-          g.TranslateTransform(xdiff,ydiff);
+          xpre = ptArray[j].X;
+          ypre = ptArray[j].Y;
+          
+          if(this.m_AttachToAxis)
+          {
+            switch(this.m_AttachedAxis)
+            {
+              case Graph.EdgeType.Bottom:
+                ypre = bottomPosition;
+                break;
+              case Graph.EdgeType.Left:
+                xpre = leftPosition;
+                break;
+              case Graph.EdgeType.Right:
+                xpre = rightPosition;
+                break;
+              case Graph.EdgeType.Top:
+                ypre = topPosition;
+                break;
+            }
+          }
+          
+
+          xdiff = xpre - xpos;
+          ydiff = ypre - ypos;
+          xpos =  xpre;
+          ypos =  ypre;
+          g.TranslateTransform((float)xdiff,(float)ydiff);
+          if(this.m_Rotation!=0)
+            g.RotateTransform((float)-this.m_Rotation);
           this.Paint(g,label);
+          if(this.m_Rotation!=0)
+            g.RotateTransform((float)this.m_Rotation);
           } // end for
       }
 

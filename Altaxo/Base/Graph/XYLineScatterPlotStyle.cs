@@ -565,7 +565,7 @@ namespace Altaxo.Graph
 			if(m_LabelStyle==null)
 				XYPlotLabelStyle = new XYPlotLabelStyle();
 
-			m_LabelStyle.Paint(g,layer,rangeList,ptArray,labelColumn);
+			m_LabelStyle.Paint(g,layer,this,rangeList,ptArray,labelColumn);
 		}
 
 
