@@ -225,21 +225,26 @@ namespace Altaxo.Graph
         object yColumn = info.GetValue("YColumn",typeof(Altaxo.Data.IReadableColumn));
 
         if(xColumn is Altaxo.Data.IReadableColumn)
-          s.m_xColumn = (Altaxo.Data.IReadableColumn)xColumn;
+          s.XColumn = (Altaxo.Data.IReadableColumn)xColumn;
         else if (xColumn is Main.DocumentPath)
           bNeedsCallback = true;
 
 
         if(yColumn is Altaxo.Data.IReadableColumn)
-          s.m_yColumn = (Altaxo.Data.IReadableColumn)yColumn;
+          s.YColumn = (Altaxo.Data.IReadableColumn)yColumn;
         else if (yColumn is Main.DocumentPath)
           bNeedsCallback = true;
 
 
 
         s.m_xBoundaries = (PhysicalBoundaries)info.GetValue("XBoundaries",typeof(PhysicalBoundaries));
+        if(null!=s.m_xBoundaries)
+          s.m_xBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(s.OnXBoundariesChangedEventHandler);
+
         s.m_yBoundaries = (PhysicalBoundaries)info.GetValue("YBoundaries",typeof(PhysicalBoundaries));
-  
+        if(null!=s.m_yBoundaries)
+          s.m_yBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(s.OnYBoundariesChangedEventHandler);
+
 
 
         if(bNeedsCallback)
@@ -265,7 +270,7 @@ namespace Altaxo.Graph
           object xColumn = Main.DocumentPath.GetObject(this._xColumn, this._plotAssociation, documentRoot);
           bAllResolved &= (null!=xColumn);
           if(xColumn is Altaxo.Data.IReadableColumn)
-            _plotAssociation.m_xColumn = (Altaxo.Data.IReadableColumn)xColumn;
+            _plotAssociation.XColumn = (Altaxo.Data.IReadableColumn)xColumn;
         
         }
 
@@ -274,7 +279,7 @@ namespace Altaxo.Graph
           object yColumn = Main.DocumentPath.GetObject(this._yColumn, this._plotAssociation, documentRoot);
           bAllResolved &= (null!=yColumn);
           if(yColumn is Altaxo.Data.IReadableColumn)
-            _plotAssociation.m_yColumn = (Altaxo.Data.IReadableColumn)yColumn;
+            _plotAssociation.YColumn = (Altaxo.Data.IReadableColumn)yColumn;
         }
 
         if(bAllResolved)

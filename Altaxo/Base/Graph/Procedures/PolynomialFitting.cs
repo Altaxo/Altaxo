@@ -29,8 +29,8 @@ namespace Altaxo.Graph.Procedures
 	/// <summary>
 	/// This class handels the procedure of polynomial fitting to the active curve.
 	/// </summary>
-	public class PolynomialFitting
-	{
+  public class PolynomialFitting
+  {
     /// <summary>
     /// Retrieves the data points of the current active plot.
     /// </summary>
@@ -85,64 +85,54 @@ namespace Altaxo.Graph.Procedures
       return null;
     }
 
-    public static void Fit(Altaxo.Graph.GUI.GraphController ctrl, int order, double fitCurveXmin, double fitCurveXmax, bool showFormulaOnGraph)
+    public static string Fit(Altaxo.Graph.GUI.GraphController ctrl, int order, double fitCurveXmin, double fitCurveXmax, bool showFormulaOnGraph)
     {
+      string error;
 
+      int numberOfDataPoints;
+      double[] xarr=null, yarr=null, earr=null;
+      error = GetActivePlotPoints(ctrl, ref xarr, ref yarr, out numberOfDataPoints);
+
+      if(null!=error)
+        return error;
+
+      // Error-Array
+      earr = new double[numberOfDataPoints];
+      for(int i=0;i<earr.Length;i++)
+        earr[i]=1;
+
+      double[] parameter= new double[order+1];
+      Altaxo.Calc.Fitting.LinearFitBySvd fit = 
+        new Altaxo.Calc.Fitting.LinearFitBySvd(
+          xarr,yarr,earr,numberOfDataPoints, order+1, new Altaxo.Calc.Fitting.FunctionBaseEvaluator(EvaluatePolynomialBase),1E-5);
+
+      // Output of results
+
+      for(int i=0;i<fit.Parameter.Length;i++)
+        Current.OutputService.WriteLine(string.Format("A{0}: {1} +- {2}",i, fit.Parameter[i],fit.Covariances[i][i]));
+
+
+
+
+      // add the fit curve to the graph
+      IScalarFunctionDD plotfunction = new Altaxo.Graph.PolynomialFunction(fit.Parameter);
+      XYFunctionPlotItem fittedCurve = new XYFunctionPlotItem(new XYFunctionPlotData(plotfunction),new XYLineScatterPlotStyle(LineScatterPlotStyleKind.Line));
+
+      ctrl.ActiveLayer.PlotItems.Add(fittedCurve);
+
+      return null;
     }
 
-    public delegate void FunctionBaseEvaluator(double x, double[] functionbase);
 
-    public static void SvdFit(
-      double[] xarr, 
-      double[] yarr,
-      double[] stddev,
-      int numberOfData,
-      int numberOfParameter,
-      ref double[] parameter,
-      FunctionBaseEvaluator evaluateFunctionBase,
-      double threshold)
+    public static void EvaluatePolynomialBase(double x, double[] pbase)
     {
-      double[] functionBase = new double[numberOfParameter];
-      double[] scaledY      = new double[numberOfData];
-      IMatrix u = new MatrixMath.BEMatrix( numberOfData, numberOfParameter);
-      
-
-      // Fill the function base matrix (rows: numberOfData, columns: numberOfParameter)
-      // and scale also y
-      for(int i=0;i<numberOfData;i++)
+      double xbi=1;
+      for(int i=0;i<pbase.Length;i++)
       {
-        evaluateFunctionBase(xarr[i], functionBase);
-        double scale = 1/stddev[i];
-
-        for(int j=0;i<numberOfParameter;j++)
-          u[i,j] = scale*functionBase[j];
-        
-        scaledY[i] = scale*yarr[i];
+        pbase[i] = xbi;
+        xbi*=x;
       }
+    }
 
-      MatrixMath.SingularValueDecomposition decomposition = MatrixMath.GetSingularValueDecomposition(u);
-
-      double maxSingularValue = VectorMath.Max(decomposition.Diagonal);
-
-      double thresholdLevel = threshold*maxSingularValue;
-
-      // set singular values < thresholdLevel to zero
-      for(int i=0;i<numberOfParameter;i++)
-        if(decomposition.Diagonal[i]<thresholdLevel)
-          decomposition.Diagonal[i]=0;
-
-      decomposition.Backsubstitution(scaledY,parameter);
-
-      double chiSquare = 0;
-      for(int i=0;i<numberOfParameter;i++)
-      {
-        evaluateFunctionBase(xarr[i],functionBase);
-        double ypredicted=0;
-        for(int j=0;i<numberOfParameter;j++)
-          ypredicted += parameter[j]*functionBase[j];
-        double deviation = yarr[i]-ypredicted;
-        chiSquare += deviation*deviation;
-      }
-   }
-	}
+  }
 }

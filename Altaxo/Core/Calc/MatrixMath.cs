@@ -2166,27 +2166,79 @@ namespace Altaxo.Calc
     
         double sum;
         double[] tmp = new double[n];
+        int nu = Math.Min(m,n);
 
-        for (int j=0;j<n;j++) 
+        for (int j=0;j<nu;j++) // calculate UT*B  (UT == U transposed)
         {
           sum=0.0;
           if (s[j]!=0) 
           {
-            // Nonzero result only if wj is nonzero.
+            // Nonzero result only if sj is nonzero.
             for (int i=0;i<m;i++)
               sum += u[i][j]*b[i];
-            sum /= s[j]; // This is the divide by wj .
+            sum /= s[j]; // This is the divide by sj .
           }
           tmp[j]=sum;
         }
-        for (int j=0;j<n;j++) 
+        for (int j=0;j<n;j++) // Matrix multiply by V to get answer.
         {
-          // Matrix multiply by V to get answer.
           sum=0.0;
           for (int jj=0;jj<n;jj++)
             sum += v[j][jj]*tmp[jj];
           x[j]=sum;
         }
+      }
+
+
+      /// <summary>
+      /// If singular value decomposition was used to make a linear fit,
+      /// this gives the variance-covariance matrix of the fitting parameters.
+      /// </summary>
+      /// <returns>The variance-covariance-matrix of the fitting parameters.</returns>
+      public double[][] GetCovariances()
+      {
+        double[][] cvm = MatrixMath.GetMatrixArray(m,m);
+        double[] wti = new double[m];
+        for(int i=0;i<m;i++)
+        {
+          wti[i] = 0;
+          if(s[i]!=0 && i<n)
+            wti[i] = 1/(s[i]*s[i]);
+        }
+
+        for(int i=0;i<m;i++)
+        {
+          for(int j=0;j<=i;j++)
+          {
+            double sum=0;
+            for(int k=0;k<m;k++)
+              sum += v[i][k]*v[j][k]*wti[k];
+
+            cvm[j][i] = cvm[i][j] = sum;
+          }
+        }
+
+        return cvm;
+      }
+
+      /// <summary>
+      /// Sets all singular values, that are lesser than accuracy*(maximum singular value), to zero.
+      /// </summary>
+      /// <param name="accuracy">The chop parameter, usually in the order 1E-5 or so.</param>
+      public void ChopSingularValues(double accuracy)
+      {
+        accuracy = Math.Abs(accuracy);
+
+        double maxSingularValue=double.MinValue;
+        for(int i=0;i<s.Length;i++)
+          maxSingularValue = Math.Max(maxSingularValue,s[i]);
+
+        double thresholdLevel = accuracy*maxSingularValue;
+
+        // set singular values < thresholdLevel to zero
+        for(int i=0;i<s.Length;i++)
+          if(s[i]<thresholdLevel)
+            s[i]=0;
       }
 
 

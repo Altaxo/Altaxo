@@ -501,6 +501,15 @@
 	                <MenuItem label = "-" />
 	                <MenuItem label = "${res:XML.MainMenu.PluginMenu.Manager}" description = "${res:XML.MainMenu.PluginMenu.Manager.Description}" class = "SharpDevelop.Actions.Edit.ShowPlugInManager"/> 
 	        </MenuItem>-->
+
+	<Conditional activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
+			<MenuItem id="GraphAnalysis" label="${res:XML.MainMenu.AnalysisMenu}">
+				<MenuItem id="FitPolynomial" label="${res:XML.MainMenu.AnalysisMenu.FitPolynomial}" description="${res:XML.MainMenu.AnalysisMenu.FitPolynomial.Description}"
+					class="Altaxo.Graph.Commands.FitPolynomial" />
+			</MenuItem>
+		</Conditional>
+
+
 		<MenuItem id="Window" label="${res:XML.MainMenu.WindowMenu}">
 			<Conditional action="Disable">
 				<Condition activewindow="*" />
