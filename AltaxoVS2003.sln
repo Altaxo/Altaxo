@@ -1,48 +1,48 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base", "Base\Base.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base", "Altaxo\Base\Base.csproj", "{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{AF2C9C35-FC89-4648-9D13-26538C00AFE1} = {AF2C9C35-FC89-4648-9D13-26538C00AFE1}
 		{953B27D5-7B33-49F5-B649-54396C09B361} = {953B27D5-7B33-49F5-B649-54396C09B361}
 		{A1006FEB-2FFC-4507-8D82-265130CDD08E} = {A1006FEB-2FFC-4507-8D82-265130CDD08E}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{95A2BF58-8568-4512-BD82-F0240FFC7558}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Altaxo\Test\Test.csproj", "{95A2BF58-8568-4512-BD82-F0240FFC7558}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Altaxo\Setup\Setup.vdproj", "{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zICSharpCode.Core", "..\Libraries\ICSharpCode.Core\zICSharpCode.Core.csproj", "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zICSharpCode.Core", "Libraries\ICSharpCode.Core\zICSharpCode.Core.csproj", "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zSharpDevelop.Base", "..\Libraries\SharpDevelop.Base\zSharpDevelop.Base.csproj", "{AF2C9C35-FC89-4648-9D13-26538C00AFE1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zSharpDevelop.Base", "Libraries\SharpDevelop.Base\zSharpDevelop.Base.csproj", "{AF2C9C35-FC89-4648-9D13-26538C00AFE1}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zCommandBar", "..\Libraries\CommandBar\zCommandBar.csproj", "{397ADB5E-E608-4304-A3F7-F97E62B33932}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zCommandBar", "Libraries\CommandBar\zCommandBar.csproj", "{397ADB5E-E608-4304-A3F7-F97E62B33932}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zMagicLibrary", "..\Libraries\MagicLibrary\src\zMagicLibrary.csproj", "{993E6ED0-F820-4264-9989-B6341C179CB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zMagicLibrary", "Libraries\MagicLibrary\src\zMagicLibrary.csproj", "{993E6ED0-F820-4264-9989-B6341C179CB4}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Startup", "Startup\Startup.csproj", "{63420446-3D85-4D00-BA9E-9EA7680B87E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Startup", "Altaxo\Startup\Startup.csproj", "{63420446-3D85-4D00-BA9E-9EA7680B87E0}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zICSharpCode.TextEditor", "..\Libraries\ICSharpCode.TextEditor\src\zICSharpCode.TextEditor.csproj", "{BDA1E0BB-C18F-41B0-86C7-A4CEF4B60894}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zICSharpCode.TextEditor", "Libraries\ICSharpCode.TextEditor\src\zICSharpCode.TextEditor.csproj", "{BDA1E0BB-C18F-41B0-86C7-A4CEF4B60894}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zSharpDevelop.DefaultTexteditor", "..\Libraries\SharpDevelop.DefaultTexteditor\zSharpDevelop.DefaultTexteditor.csproj", "{953B27D5-7B33-49F5-B649-54396C09B361}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zSharpDevelop.DefaultTexteditor", "Libraries\SharpDevelop.DefaultTexteditor\zSharpDevelop.DefaultTexteditor.csproj", "{953B27D5-7B33-49F5-B649-54396C09B361}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zCSharpBinding", "..\Libraries\CSharpBinding\zCSharpBinding.csproj", "{2AECC87C-9EB2-4A95-8997-A8ECFD8A707F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zCSharpBinding", "Libraries\CSharpBinding\zCSharpBinding.csproj", "{2AECC87C-9EB2-4A95-8997-A8ECFD8A707F}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
