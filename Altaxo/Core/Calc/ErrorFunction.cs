@@ -277,7 +277,7 @@ namespace Altaxo.Calc
       /// <summary>
       /// Coefficient array for Erf function
       /// </summary>
-     static readonly double[] erfcs = 
+      static readonly double[] erfcs = 
   { 
     -0.049046121234691808039984544033376,
     -0.14226120510371364237824741899631,
@@ -389,7 +389,7 @@ namespace Altaxo.Calc
       /// <summary>
       /// Coefficient array for Erf function
       /// </summary>
-   static readonly double[] erfcs = 
+      static readonly double[] erfcs = 
   { 
     -0.049046121234691808039984544033376,
     -0.14226120510371364237824741899631,
@@ -415,7 +415,7 @@ namespace Altaxo.Calc
   };
 
 
-    static readonly double[] erc2cs = 
+      static readonly double[] erc2cs = 
   { 
     -0.06960134660230950112739150826197,
     -0.04110133936262089348982212084666,
@@ -1029,7 +1029,7 @@ namespace Altaxo.Calc
       if ((xabs > rmaxreal) || (yabs > rmaxreal)) 
       {
         if(bDebug)
-        throw new ArgumentException("Absolute value of argument so large w(z) overflows");
+          throw new ArgumentException("Absolute value of argument so large w(z) overflows");
         else
           return Complex.NaN;
       }
@@ -1156,7 +1156,7 @@ namespace Altaxo.Calc
           if ((yquad > rmaxgoni) || (xquad > rmaxexp)) 
           {
             if(bDebug)
-            throw new ArgumentException("Absolute value of argument so large w(z) overflows");
+              throw new ArgumentException("Absolute value of argument so large w(z) overflows");
             else
               return Complex.NaN;
           }

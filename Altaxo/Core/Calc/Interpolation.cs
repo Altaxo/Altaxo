@@ -149,9 +149,7 @@ namespace Altaxo.Calc.Interpolation
     }
   }
 
-  public interface IScene
-  {
-  }
+  
 
 
   
@@ -178,30 +176,48 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
     /// </summary>
-    public const double DBL_EPSILON = 2.2204460492503131e-016;
+    protected const double DBL_EPSILON = 2.2204460492503131e-016;
 
+    /// <summary>Condition how to manage the left and right boundary of a spline.</summary>
     public enum BoundaryConditions 
     { 
-      Natural = 0,    // natural boundaries, zero 2nd deriv.
-      FiniteDifferences,  // finite differences for 1st derivatives
-      Supply1stDerivative,  // user supplied f'(x_lo), f'(x_hi)
-      Supply2ndDerivative,  // user supplied f''(x_lo), f''(x_hi)
-      Periodic      // periodic boundaries (NOT YET IMPLEMENTED)
+      /// <summary>natural boundaries, zero 2nd deriv.</summary>
+      Natural = 0,   
+      /// <summary>finite differences for 1st derivatives</summary>
+      FiniteDifferences,  
+      /// <summary>user supplied f'(x_lo), f'(x_hi)</summary>
+      Supply1stDerivative, 
+      /// <summary>user supplied f''(x_lo), f''(x_hi)</summary>
+      Supply2ndDerivative, 
+      /// <summary>periodic boundaries (NOT YET IMPLEMENTED)</summary>
+      Periodic 
     };
 
+    /// <summary>curve parametrization methods</summary>
     public enum Parametrization 
-    { // curve parametrization methods
-      No = 0,     // don't parametrize (default)
-      Norm2,      // use sqrt(dx^2+dy^2)
-      SqrNorm2,     // use (dx^2+dy^2)
-      Norm1       // use |dx| + |dy|
+    { 
+      /// <summary>don't parametrize (default)</summary>   
+      No = 0,    
+      /// <summary>use sqrt(dx^2+dy^2)</summary>
+      Norm2,     
+      /// <summary>use (dx^2+dy^2)</summary>
+      SqrNorm2,  
+      /// <summary>use |dx| + |dy|</summary>
+      Norm1     
     };
 
 
+    /// <summary>Reference to the vector of the independent variable.</summary>
     protected IROVector x;
+    /// <summary>Reference to the vector of the dependent variable.</summary>
     protected IROVector y;
   
     #region Helper functions
+    /// <summary>
+    /// Square of x.
+    /// </summary>
+    /// <param name="x">Argument.</param>
+    /// <returns>The square of x.</returns>
     protected static double sqr(double x)
     {
       return x*x;
@@ -210,9 +226,9 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Return True if vectors have the same index range, False otherwise.
     /// </summary>
-    /// <param name="a"></param>
-    /// <param name="b"></param>
-    /// <returns></returns>
+    /// <param name="a">First vector.</param>
+    /// <param name="b">Second vector.</param>
+    /// <returns>True if both vectors have the same LowerBounds and the same UpperBounds.</returns>
     protected static bool MatchingIndexRange (IROVector a, IROVector b)
     {
       return (a.LowerBound == b.LowerBound && a.UpperBound == b.UpperBound);
@@ -221,19 +237,18 @@ namespace Altaxo.Calc.Interpolation
 
     #region FindInterval
 
-
-    //----------------------------------------------------------------------------//
-    //
-    // int MpCurveBase::FindIntervall (double u, const Vector &x) const
-    //
-    // Find index of largest element in the increasingly ordered vector x, 
-    // which is smaller than u. If u is smaller than the smallest value in 
-    // the vector then the lowest index minus one is returned. 
-    // A fast binary search is performed.
-    // Note, that the vector must be strictly increasing.
-    //
-    //----------------------------------------------------------------------------//
-
+    /// <summary>
+    /// Find index of largest element in the increasingly ordered vector x, 
+    /// which is smaller than u. If u is smaller than the smallest value in 
+    /// the vector then the lowest index minus one is returned. 
+    /// </summary>
+    /// <param name="u">The value to search for.</param>
+    /// <param name="x">Vector of (strictly increasing) x values.</param>
+    /// <returns>The index i so that x[i]&lt;u&lt;=x[i+1]. If u is smaller than x[0] then -1 is returned.</returns>
+    /// <remarks>
+    /// A fast binary search is performed.
+    /// Note, that the vector must be strictly increasing.
+    /// </remarks>
     public static int FindIntervall (double u, IROVector x) 
     {
       int i, j;
@@ -264,12 +279,6 @@ namespace Altaxo.Calc.Interpolation
 
     #endregion
     
-
-    
-
-
-
-
     //----------------------------------------------------------------------------//
     //
     // double MpCurveBase::CubicSplineHorner (double u, 
@@ -277,31 +286,16 @@ namespace Altaxo.Calc.Interpolation
     //                        const Vector &y1, const Vector &y2, 
     //                        const Vector &y3) const
     //
-    // Return the interpolation value P(u) for a piecewise cubic curve determined
-    // by the abscissa vector x, the ordinate vector y, the 1st derivative
-    // vector y1, the 2nd derivative vector y2, and the 3rd derivative vector y3,
-    // using the Horner scheme. 
-    // All vectors must have conformant dimenions.
-    // The abscissa x(i) values must be strictly increasing.
-    // In the special case of empty data vectors (x,y) a value of 0.0 is returned.
-    //
-    // This subroutine evaluates the function
-    //
-    //    P(u) = y(i) + dx * (y1(i) + dx * (y2(i) + dx * y3(i)))
-    //
-    // where  x(i) <= u < x(i+1) and dx = u - x(i), using Horner's rule
-    //
-    //    lo <= i <= hi is the index range of the vectors.
-    //    if  u <  x(lo) then  i = lo  is used.
-    //    if  u >= x(hi) then  i = hi  is used.
+ 
+  
     //
     // Input arguments:
     // ----------------
     //
-    //    double u       = the abscissa at which the interpolation is to be evaluated
+    //    double u       = 
     //
     //    Vector &x
-    //    Vector &y      = the vectors (lo,hi) of data abscissas and ordinates
+    //    Vector &y      = 
     //
     //    Vector &y1
     //    Vector &y2
@@ -312,9 +306,40 @@ namespace Altaxo.Calc.Interpolation
     //  Notes:
     //  ------
     //
-    //    A fast binary search is performed to determine the proper interval.
-    //
     //---------------------------------------------------
+    
+    /// <summary>
+    /// Return the interpolation value P(u) for a piecewise cubic curve determined
+    /// by the abscissa vector x, the ordinate vector y, the 1st derivative
+    /// vector y1, the 2nd derivative vector y2, and the 3rd derivative vector y3,
+    /// using the Horner scheme. 
+    /// </summary>
+    /// <param name="u">The abscissa value at which the interpolation is to be evaluated.</param>
+    /// <param name="x">The vector (lo,hi) of data abscissa (must be strictly increasing).</param>
+    /// <param name="y">The vectors (lo,hi) of ordinate</param>
+    /// <param name="y1">contains the 1st derivative y'(x(i))</param>
+    /// <param name="y2">contains the 2nd derivative y''(x(i))</param>
+    /// <param name="y3">contains the 3rd derivative y'''(x(i))</param>
+    /// <returns>P(u) = y(i) + dx * (y1(i) + dx * (y2(i) + dx * y3(i))).
+    /// In the special case of empty data vectors (x,y) a value of 0.0 is returned.</returns>
+    /// <remarks><code>
+    /// All vectors must have conformant dimenions.
+    /// The abscissa x(i) values must be strictly increasing.
+    /// 
+    ///
+    /// This subroutine evaluates the function
+    ///
+    ///    P(u) = y(i) + dx * (y1(i) + dx * (y2(i) + dx * y3(i)))
+    ///
+    /// where  x(i) &lt;= u &lt; x(i+1) and dx = u - x(i), using Horner's rule
+    ///
+    ///    lo &lt;= i &lt;= hi is the index range of the vectors.
+    ///    if  u &lt;  x(lo) then  i = lo  is used.
+    ///    if  u &lt;= x(hi) then  i = hi  is used.
+    ///
+    ///    A fast binary search is performed to determine the proper interval.
+    /// </code></remarks>
+    
     public double CubicSplineHorner (double u,
       IROVector x,
       IROVector y, 
@@ -331,27 +356,25 @@ namespace Altaxo.Calc.Interpolation
       double dx = u - x[i];
       return (y[i] + dx * (y1[i] + dx * (y2[i] + dx * y3[i])));
     }
+   
 
-
-    //----------------------------------------------------------------------------//
-    //
-    // void MpCurveBase::CubicSplineCoefficients (const Vector &x, 
-    //                                            const Vector &y, 
-    //                      const Vector &y1, 
-    //                      Vector &y2, Vector &y3) const
-    //
-    // Calculate the spline coefficients y2(i) and y3(i) for a natural cubic
-    // spline, given the abscissa x(i), the ordinate y(i), and the 1st 
-    // derivative y(i).
-    //
-    // The spline interpolation can then be evaluated using Horner's rule
-    //
-    //      P(u) = y(i) + dx * (y1(i) + dx * (y2(i) + dx * y3(i)))
-    //
-    // where  x(i) <= u < x(i+1) and dx = u - x(i).
-    //
-    //----------------------------------------------------------------------------//
-
+    /// <summary>
+    /// Calculate the spline coefficients y2(i) and y3(i) for a natural cubic
+    /// spline, given the abscissa x(i), the ordinate y(i), and the 1st 
+    /// derivative y1(i).
+    /// </summary>
+    /// <param name="x">The vector (lo,hi) of data abscissa (must be strictly increasing).</param>
+    /// <param name="y">The vector (lo,hi) of ordinate.</param>
+    /// <param name="y1">The vector containing the 1st derivative y'(x(i)).</param>
+    /// <param name="y2">Output: the spline coefficients y2(i).</param>
+    /// <param name="y3">Output: the spline coefficients y3(i).</param>
+    /// <remarks><code>
+    /// The spline interpolation can then be evaluated using Horner's rule
+    ///
+    ///      P(u) = y(i) + dx * (y1(i) + dx * (y2(i) + dx * y3(i)))
+    ///
+    /// where  x(i) &lt;= u &lt; x(i+1) and dx = u - x(i).
+    /// </code></remarks>
     public void CubicSplineCoefficients (IROVector x, 
       IROVector y, 
       IROVector y1, 
@@ -373,33 +396,47 @@ namespace Altaxo.Calc.Interpolation
     }
 
     
+    /// <summary>
+    /// Interpolates a curve using abcissa x and ordinate y.
+    /// </summary>
+    /// <param name="x">The vector of abscissa values.</param>
+    /// <param name="y">The vector of ordinate values.</param>
+    /// <returns></returns>
     public abstract int Interpolate (IROVector x, IROVector y);
-    public abstract double GetX (double x);
-    public abstract double GetY (double x);
 
+    /// <summary>
+    /// Get the abscissa value in dependence on parameter u.
+    /// </summary>
+    /// <param name="u">Curve parameter.</param>
+    /// <returns>The abscissa value.</returns>
+    public abstract double GetX (double u);
 
-  
+    /// <summary>
+    /// Gets the ordinate value on dependence on parameter u.
+    /// </summary>
+    /// <param name="u">Curve parameter.</param>
+    /// <returns>The ordinate value.</returns>
+    public abstract double GetY (double u);
 
-
-    //----------------------------------------------------------------------------//
-    // void MpCurveBase::Parametrize (const Vector& x, const Vector& y, 
-    //            Vector& t, int parametrization) const
-    //
-    // Curve length parametrization. Returns the accumulated "distances"
-    // between the points (x(i),y(i)) and (x(i+1),y(i+1)) in t(i+1) 
-    // for i = lo ... hi. t(lo) = 0.0 always. 
-    //
-    // The way of parametrization is controlled by the parameter parametrization.
-    // Parametrizes curve length using: 
-    //
-    //    |dx| + |dy|       if  parametrization = Norm1
-    //    sqrt(dx^2+dy^2)   if  parametrization = Norm2
-    //    (dx^2+dy^2)       if  parametrization = SqrNorm2
-    //
-    // Parametrization using Norm2 usually gives the best results.
-    //
-    //----------------------------------------------------------------------------//
-
+    /// <summary>
+    /// Curve length parametrization. Returns the accumulated "distances"
+    /// between the points (x(i),y(i)) and (x(i+1),y(i+1)) in t(i+1) 
+    /// for i = lo ... hi. t(lo) = 0.0 always. 
+    /// </summary>
+    /// <param name="x">The vector of abscissa values.</param>
+    /// <param name="y">The vector of ordinate values.</param>
+    /// <param name="t">Output: the vector of "distances".</param>
+    /// <param name="parametrization">The parametrization rule to apply.</param>
+    /// <remarks><code>
+    /// The way of parametrization is controlled by the parameter parametrization.
+    /// Parametrizes curve length using: 
+    ///
+    ///    |dx| + |dy|       if  parametrization = Norm1
+    ///    sqrt(dx^2+dy^2)   if  parametrization = Norm2
+    ///    (dx^2+dy^2)       if  parametrization = SqrNorm2
+    ///
+    /// Parametrization using Norm2 usually gives the best results.
+    /// </code></remarks>
     public virtual void Parametrize (IROVector x, IROVector y, IVector t, Parametrization parametrization)
     {
       int lo = x.LowerBound,
@@ -434,62 +471,66 @@ namespace Altaxo.Calc.Interpolation
     }
 
     #region GetResolution and DrawCurve
-#if IncludeScene
+
+    /*
+
+        //----------------------------------------------------------------------------//
+        //
+        // int MpCurveBase::GetResolution (const Scene& scene, 
+        //             double x1, double y1, 
+        //           double x2, double y2) const
+        //
+        // Calculate the number of intermediate points neccessary to get a 
+        // smooth appearance when drawing a line segment between (x1,y1) and (x2,y2).
+        //
+        //----------------------------------------------------------------------------//
+
+        int GetResolution (IScene scene, 
+          double x1, double y1, double x2, double y2)
+      {
+      int r = scene.curve.resolution + 2;
+      Pixel2D p1( scene.Map(x1,y1)), p2(scene.Map(x2,y2) );
+      return 1 + int( (r + abs(p2.px-p1.px) + abs(p2.py-p1.py)) / (2 * r) );
+    }
+
+    */
+
+    /// <summary>
+    /// This function has to provide the points that are necessary between (x1,y1) and (x2,y2)
+    /// to get a smooth curve.
+    /// </summary>
+    public delegate int ResolutionFunction(double x1, double y1, double x2, double y2);
+
+    /// <summary>
+    /// This function serves as a sink for the calculated points of a curve.
+    /// </summary>
+    public delegate void PointSink(double x, double y, bool bLastPoint);
 
 
-    //----------------------------------------------------------------------------//
-    //
-    // int MpCurveBase::GetResolution (const Scene& scene, 
-    //             double x1, double y1, 
-    //           double x2, double y2) const
-    //
-    // Calculate the number of intermediate points neccessary to get a 
-    // smooth appearance when drawing a line segment between (x1,y1) and (x2,y2).
-    //
-    //----------------------------------------------------------------------------//
 
-    int GetResolution (IScene scene, 
-      double x1, double y1, double x2, double y2)
-  {
-  int r = scene.curve.resolution + 2;
-  Pixel2D p1( scene.Map(x1,y1)), p2(scene.Map(x2,y2) );
-  return 1 + int( (r + abs(p2.px-p1.px) + abs(p2.py-p1.py)) / (2 * r) );
-}
-
-    //----------------------------------------------------------------------------//
-    //
-    // void MpCurveBase::DrawCurve (Scene &scene, double xlo, double xhi)
-    //
-    // Draws an interpolation curve between the abscissa values xlo and xhi.
-    // It calls the virtual methods MpCurveBase::GetX() and GetY() to obtain the
-    // interpolation values. Note, that before method DrawCurve() can be called
-    // the method Interpolate() must have been called. Otherwise, not interpolation
-    // is available.
-    //
-    //  Input arguments:
-    //  ----------------
-    //   
-    //    Scene  &scene  = the scene the drawing is directed to
-    //
-    //    double xlo
-    //    double xhi     = the drawing range of the curve is [xlo,xhi]
-    //
-    //----------------------------------------------------------------------------//
-
-    public void DrawCurve (IScene scene, double x_lo, double x_hi)
+    /// <summary>
+    /// Get curve points to draw an interpolation curve between the abscissa values xlo and xhi.
+    /// It calls the virtual methods MpCurveBase::GetX() and GetY() to obtain the
+    /// interpolation values. Note, that before method DrawCurve() can be called
+    /// the method Interpolate() must have been called. Otherwise, not interpolation
+    /// is available.
+    /// </summary>
+    /// <param name="xlo">Lower bound of the drawing range.</param>
+    /// <param name="xhi">Upper bound of the drawing range.</param>
+    /// <param name="getresolution">A delegate that must provide the points necessary to draw a smooth curve between to points.</param>
+    /// <param name="setpoint">A delegate which is called with each calculated point. Can be used to draw the curve. </param>
+    public void GetCurvePoints (double xlo, double xhi, ResolutionFunction getresolution, PointSink setpoint)
     {
-      if (! scene.IsOpen()) 
-        Matpack.Error("MpCurveBase::DrawCurve: scene is not open for drawing");
-
       // nothing to draw if zero or one element
-      if (x->Length < 2) return;
+      if (x.Length < 2)
+        return;
 
       // Find index of the element in the abscissa vector x, that is smaller
       // than the lower (upper) value xlo (xhi) of the drawing range. If xlo is
       // smaller than the lowest abscissa value the lowest index minus one is
       // returned.
-      int i_lo = FindIntervall(xlo,*x),
-        i_hi = FindIntervall(xhi,*x);
+      int i_lo = FindIntervall(xlo,x),
+        i_hi = FindIntervall(xhi,x);
 
       // Interpolation values for the boundaries of the drawing range [xlo,xhi]
       double ylo = GetY(xlo),
@@ -498,45 +539,42 @@ namespace Altaxo.Calc.Interpolation
       int k;
       double x0,t,delta;
 
-      scene.MoveTo(xlo,ylo);
-      k = GetResolution(scene,xlo,ylo, (*x)(i_lo+1),(*y)(i_lo+1));
-      delta = ((*x)(i_lo+1) - xlo) / k;
+      setpoint(xlo,ylo, false);
+      k = getresolution(xlo,ylo, x[i_lo+1],y[i_lo+1]);
+      delta = (x[i_lo+1] - xlo) / k;
       for (int j = 0; j < k; j++) 
       {
         t = xlo + j * delta;
-        scene.LineTo( GetX(t), GetY(t) );
+        setpoint( GetX(t), GetY(t), false );
       }
 
       for (int i = i_lo+1; i < i_hi; i++) 
       {
-        x0 = (*x)(i);
-        k = GetResolution(scene,x0,(*y)(i),(*x)(i+1),(*y)(i+1));
-        delta = ((*x)(i+1)-x0) / k;
+        x0 = x[i];
+        k = getresolution(x0,y[i],x[i+1],y[i+1]);
+        delta = (x[i+1]-x0) / k;
         for (int j = 0; j < k; j++) 
         {
           t = x0 + j * delta;
-          scene.LineTo( GetX(t), GetY(t) );
+          setpoint( GetX(t), GetY(t), false );
         }
       }
 
-      x0 = (*x)(i_hi);
-      k = GetResolution(scene,x0,(*y)(i_hi),xhi,yhi);
+      x0 = x[i_hi];
+      k = getresolution(x0,y[i_hi],xhi,yhi);
       delta = (xhi - x0) / k;
       for (int j = 0; j < k; j++) 
       {
         t = x0 + j * delta;
-        scene.LineTo( GetX(t), GetY(t) );
+        setpoint( GetX(t), GetY(t), false );
       }  
 
       // don't forget last point
-      scene.LineTo(xhi,yhi);
-
-      // flush graphics buffer 
-      scene.Flush();  
+      setpoint(xhi,yhi, true);
     }
 
 
-#endif
+
     #endregion
 
 
@@ -640,6 +678,31 @@ namespace Altaxo.Calc.Interpolation
 
   #region FritschCarlsonCubicSpline
 
+
+  /// <summary><para>
+  /// Calculate the Fritsch-Carlson monotone cubic spline interpolation for the 
+  /// given abscissa vector x and ordinate vector y. 
+  /// All vectors must have conformant dimenions.
+  /// The abscissa vector must be strictly increasing.
+  /// </para>
+  /// <para>
+  /// The Fritsch-Carlson interpolation produces a neat monotone
+  /// piecewise cubic curve, which is especially suited for the
+  /// presentation of scientific data. 
+  /// This is the state of the art to create curves that preserve
+  /// monotonicity, although it is not so well known as Akima's
+  /// interpolation. The commonly used Akima interpolation doesn't 
+  /// produce so pleasant results.
+  /// </para>
+  /// <code>
+  /// Reference:
+  ///    F.N.Fritsch,R.E.Carlson: Monotone Piecewise Cubic
+  ///    Interpolation, SIAM J. Numer. Anal. Vol 17, No. 2, 
+  ///    April 1980
+  ///
+  /// Copyright (C) 1991-1998 by Berndt M. Gammel
+  /// </code>
+  /// </summary>
   class FritschCarlsonCubicSpline : CurveBase
   {
   
@@ -857,6 +920,8 @@ namespace Altaxo.Calc.Interpolation
   #endregion // MpFrischCarlsonCubicSpline
 
   #region AkimaCubicSpline
+  
+  
   class AkimaCubicSpline : CurveBase
   {
     protected DoubleVector y1 = new DoubleVector();

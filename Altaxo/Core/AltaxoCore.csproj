@@ -154,6 +154,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\MapackMatrix.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\Matrix.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
