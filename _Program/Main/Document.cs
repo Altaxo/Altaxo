@@ -147,7 +147,7 @@ namespace Altaxo
 			m_IsDirty=true;
 		}
 
-		public Altaxo.TableView.Worksheet CreateNewWorksheet(string worksheetName, System.Windows.Forms.Form parent, bool bCreateDefaultColumns)
+		public Altaxo.Worksheet.Worksheet CreateNewWorksheet(string worksheetName, System.Windows.Forms.Form parent, bool bCreateDefaultColumns)
 		{
 			Altaxo.Data.DataTable dt1 = new Altaxo.Data.DataTable(worksheetName);
 
@@ -165,18 +165,18 @@ namespace Altaxo
 
 			DataSet.Add(dt1);
 
-			Altaxo.TableView.Worksheet form1= new Altaxo.TableView.Worksheet(parent,this,dt1);
+			Altaxo.Worksheet.Worksheet form1= new Altaxo.Worksheet.Worksheet(parent,this,dt1);
 			form1.Text = worksheetName;
 			m_Worksheets.Add(form1);
 			return form1;
 		}
 
-		public Altaxo.TableView.Worksheet CreateNewWorksheet(System.Windows.Forms.Form parent, bool bCreateDefaultColumns)
+		public Altaxo.Worksheet.Worksheet CreateNewWorksheet(System.Windows.Forms.Form parent, bool bCreateDefaultColumns)
 		{
 			return CreateNewWorksheet(this.DataSet.FindNewTableName(),parent,bCreateDefaultColumns);
 		}
 
-		public Altaxo.TableView.Worksheet CreateNewWorksheet(System.Windows.Forms.Form parent)
+		public Altaxo.Worksheet.Worksheet CreateNewWorksheet(System.Windows.Forms.Form parent)
 		{
 			return CreateNewWorksheet(this.DataSet.FindNewTableName(),parent,true);
 		}

@@ -3,11 +3,11 @@ using System.Drawing;
 using Altaxo.Serialization;
 
 
-namespace Altaxo.TableView
+namespace Altaxo.Worksheet
 {
 	[SerializationSurrogate(0,typeof(TextColumnStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class TextColumnStyle : Altaxo.TableView.ColumnStyle
+	public class TextColumnStyle : Altaxo.Worksheet.ColumnStyle
 	{
 	
 		#region Serialization
@@ -85,7 +85,7 @@ namespace Altaxo.TableView
 			else
 				dc.DrawString(myString,m_TextFont,m_TextBrush,cellRectangle,m_TextFormat);
 		}
-	} // end of class Altaxo.TableView.DateTimeColumnStyle
+	} // end of class Altaxo.Worksheet.DateTimeColumnStyle
 
 
 

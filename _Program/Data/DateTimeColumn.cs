@@ -32,7 +32,7 @@ namespace Altaxo.Data
 				
 		public override System.Type GetColumnStyleType()
 		{
-			return typeof(Altaxo.TableView.DateTimeColumnStyle);
+			return typeof(Altaxo.Worksheet.DateTimeColumnStyle);
 		}
 
 		protected internal DateTime GetValueDirect(int idx)

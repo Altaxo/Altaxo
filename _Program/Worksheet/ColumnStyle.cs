@@ -2,10 +2,10 @@ using System;
 using System.Drawing;
 using Altaxo.Serialization;
 
-namespace Altaxo.TableView
+namespace Altaxo.Worksheet
 {
 	/// <summary>
-	/// Altaxo.TableView.ColumnStyle provides the data for visualization of the column
+	/// Altaxo.Worksheet.ColumnStyle provides the data for visualization of the column
 	/// data, for instance m_Width and color of columns
 	/// additionally, it is responsible for the conversion of data to text and vice versa
 	/// </summary>
@@ -135,7 +135,7 @@ namespace Altaxo.TableView
 	public abstract string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data);
 	public abstract void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data);
 		
-	} // end of class Altaxo.TableView.ColumnStyle
+	} // end of class Altaxo.Worksheet.ColumnStyle
 
 
 

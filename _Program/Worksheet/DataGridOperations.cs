@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace Altaxo.TableView
+namespace Altaxo.Worksheet
 {
 	public class DataGridOperations
 	{
@@ -39,7 +39,7 @@ namespace Altaxo.TableView
 				return; // nothing selected
 
 			bool bWorksheetCreated = false;
-			Altaxo.TableView.Worksheet wks=null; // the created worksheet
+			Altaxo.Worksheet.Worksheet wks=null; // the created worksheet
 			Data.DataTable table=null; // the created table
 			int currRow=0;
 			for(int si=0;si<dg.SelectedColumns.Count;si++)

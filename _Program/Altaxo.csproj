@@ -364,72 +364,72 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TableView\ColumnHeaderStyle.cs"
+                    RelPath = "Worksheet\ColumnHeaderStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TableView\ColumnStyle.cs"
+                    RelPath = "Worksheet\ColumnStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TableView\DataGrid.cs"
+                    RelPath = "Worksheet\DataGrid.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TableView\DataGrid.resx"
+                    RelPath = "Worksheet\DataGrid.resx"
                     DependentUpon = "DataGrid.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "TableView\DataGridOperations.cs"
+                    RelPath = "Worksheet\DataGridOperations.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TableView\DateTimeColumnStyle.cs"
+                    RelPath = "Worksheet\DateTimeColumnStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TableView\DoubleColumnStyle.cs"
+                    RelPath = "Worksheet\DoubleColumnStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TableView\IndexSelection.cs"
+                    RelPath = "Worksheet\IndexSelection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TableView\RowHeaderStyle.cs"
+                    RelPath = "Worksheet\RowHeaderStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TableView\SetColumnValuesDialog.cs"
+                    RelPath = "Worksheet\SetColumnValuesDialog.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TableView\SetColumnValuesDialog.resx"
+                    RelPath = "Worksheet\SetColumnValuesDialog.resx"
                     DependentUpon = "SetColumnValuesDialog.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "TableView\TextColumnStyle.cs"
+                    RelPath = "Worksheet\TextColumnStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TableView\Worksheet.cs"
+                    RelPath = "Worksheet\Worksheet.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "TableView\Worksheet.resx"
+                    RelPath = "Worksheet\Worksheet.resx"
                     DependentUpon = "Worksheet.cs"
                     BuildAction = "EmbeddedResource"
                 />

@@ -32,7 +32,7 @@ namespace Altaxo.Data
 		
 		public override System.Type GetColumnStyleType()
 		{
-			return typeof(Altaxo.TableView.TextColumnStyle);
+			return typeof(Altaxo.Worksheet.TextColumnStyle);
 		}
 
 

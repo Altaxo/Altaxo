@@ -7,16 +7,16 @@ using System.Windows.Forms;
 using System.Runtime.Serialization;
 using Altaxo.Serialization;
 
-namespace Altaxo.TableView
+namespace Altaxo.Worksheet
 {
 	public class ColumnStyleCacheItem
 	{
-		public Altaxo.TableView.ColumnStyle columnStyle;
+		public Altaxo.Worksheet.ColumnStyle columnStyle;
 		public int leftBorderPosition;
 		public int rightBorderPosition;
 
 
-		public ColumnStyleCacheItem(Altaxo.TableView.ColumnStyle cs, int leftBorderPosition, int rightBorderPosition)
+		public ColumnStyleCacheItem(Altaxo.Worksheet.ColumnStyle cs, int leftBorderPosition, int rightBorderPosition)
 		{
 			this.columnStyle = cs;
 			this.leftBorderPosition = leftBorderPosition;
@@ -76,8 +76,8 @@ namespace Altaxo.TableView
 		private System.Windows.Forms.HScrollBar hScrollBar1;
 		private int  nLastVisibleColumn=0;
 		private int  nLastFullyVisibleColumn=0;
-		public IndexSelection m_SelectedColumns = new Altaxo.TableView.IndexSelection(); // holds the selected columns
-		public IndexSelection m_SelectedRows    = new Altaxo.TableView.IndexSelection(); // holds the selected rows
+		public IndexSelection m_SelectedColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected columns
+		public IndexSelection m_SelectedRows    = new Altaxo.Worksheet.IndexSelection(); // holds the selected rows
 		private int numberOfRows=0; // cached number of rows of the table
 		private int numberOfCols=0;
 		private System.Windows.Forms.TextBox cellEditControl; // cached number of cols of the table
@@ -461,15 +461,15 @@ namespace Altaxo.TableView
 		}
 
 
-		public Altaxo.TableView.ColumnStyle GetColumnStyle(int i)
+		public Altaxo.Worksheet.ColumnStyle GetColumnStyle(int i)
 		{
 			// zuerst in der ColumnStylesCollection nach dem passenden Namen
 			// suchen, ansonsten default-Style zurückgeben
 			Altaxo.Data.DataColumn dc = m_DataTable[i];
-			Altaxo.TableView.ColumnStyle colstyle;
+			Altaxo.Worksheet.ColumnStyle colstyle;
 
 			// first look at the column styles hash table, column itself is the key
-			colstyle = (Altaxo.TableView.ColumnStyle)m_ColumnStyles[dc];
+			colstyle = (Altaxo.Worksheet.ColumnStyle)m_ColumnStyles[dc];
 			if(null!=colstyle)
 				return colstyle;
 			
@@ -482,11 +482,11 @@ namespace Altaxo.TableView
 			}
 			else
 			{
-				if(null!=(colstyle = (Altaxo.TableView.ColumnStyle)m_DefaultColumnStyles[searchstyletype]))
+				if(null!=(colstyle = (Altaxo.Worksheet.ColumnStyle)m_DefaultColumnStyles[searchstyletype]))
 					return colstyle;
 
 				// if not successfull yet, we will create a new defaultColumnStyle
-				colstyle = (Altaxo.TableView.ColumnStyle)Activator.CreateInstance(searchstyletype);
+				colstyle = (Altaxo.Worksheet.ColumnStyle)Activator.CreateInstance(searchstyletype);
 				m_DefaultColumnStyles.Add(searchstyletype,colstyle);
 				return colstyle;
 			}
@@ -546,7 +546,7 @@ namespace Altaxo.TableView
 				int actualColumnRight;
 				for(int i=firstVisibleColumn;i<m_DataTable.ColumnCount && actualColumnLeft<e.ClipRectangle.Right;i++)
 				{
-					Altaxo.TableView.ColumnStyle cs = GetColumnStyle(i);
+					Altaxo.Worksheet.ColumnStyle cs = GetColumnStyle(i);
 					actualColumnRight = actualColumnLeft+cs.Width;
 					cellRectangle.X = actualColumnLeft;
 					cellRectangle.Width = actualColumnRight-actualColumnLeft;
@@ -749,7 +749,7 @@ namespace Altaxo.TableView
 				for(int i=firstVisibleColumn;i<m_DataTable.ColumnCount;i++)
 				{
 					cellRect.X=actualColumnRight;
-					Altaxo.TableView.ColumnStyle cs = GetColumnStyle(i);
+					Altaxo.Worksheet.ColumnStyle cs = GetColumnStyle(i);
 					actualColumnRight += cs.Width;
 					if(mouseDownPosition.X<actualColumnRight)
 					{
@@ -927,7 +927,7 @@ namespace Altaxo.TableView
 			for(int i=FirstVisibleColumn;i<m_DataTable.ColumnCount && actualColumnLeft<rightBorder;i++)
 			{
 				actualColumnLeft = actualColumnRight;
-				Altaxo.TableView.ColumnStyle cs = GetColumnStyle(i);
+				Altaxo.Worksheet.ColumnStyle cs = GetColumnStyle(i);
 				actualColumnRight = actualColumnLeft+cs.Width;
 				columnStyleCache.Add(new ColumnStyleCacheItem(cs,actualColumnLeft,actualColumnRight));
 
@@ -1105,17 +1105,17 @@ namespace Altaxo.TableView
 			{
 				int sizediff = X - this.dragColumnWidth_OriginalPos;
 				
-				Altaxo.TableView.ColumnStyle cs;
+				Altaxo.Worksheet.ColumnStyle cs;
 				if(-1==dragColumnWidth_ColumnNumber)
 					cs = this.m_RowHeaderStyle;
 				else
 				{
-					cs = (Altaxo.TableView.ColumnStyle)m_ColumnStyles[m_DataTable[dragColumnWidth_ColumnNumber]];
+					cs = (Altaxo.Worksheet.ColumnStyle)m_ColumnStyles[m_DataTable[dragColumnWidth_ColumnNumber]];
 				
 					if(null==cs)
 					{
-						Altaxo.TableView.ColumnStyle template = GetColumnStyle(this.dragColumnWidth_ColumnNumber);
-						cs = (Altaxo.TableView.ColumnStyle)template.Clone();
+						Altaxo.Worksheet.ColumnStyle template = GetColumnStyle(this.dragColumnWidth_ColumnNumber);
+						cs = (Altaxo.Worksheet.ColumnStyle)template.Clone();
 						m_ColumnStyles.Add(m_DataTable[dragColumnWidth_ColumnNumber],cs);
 					}
 				}
@@ -1163,18 +1163,18 @@ namespace Altaxo.TableView
 			if(this.dragColumnWidth_InCapture)
 			{
 				int sizediff = e.X - this.dragColumnWidth_OriginalPos;
-				Altaxo.TableView.ColumnStyle cs;
+				Altaxo.Worksheet.ColumnStyle cs;
 				if(-1==dragColumnWidth_ColumnNumber)
 				{
 					cs = this.m_RowHeaderStyle;
 				}
 				else
 				{
-					cs = (Altaxo.TableView.ColumnStyle)m_ColumnStyles[m_DataTable[dragColumnWidth_ColumnNumber]];
+					cs = (Altaxo.Worksheet.ColumnStyle)m_ColumnStyles[m_DataTable[dragColumnWidth_ColumnNumber]];
 					if(null==cs)
 					{
-						Altaxo.TableView.ColumnStyle template = GetColumnStyle(this.dragColumnWidth_ColumnNumber);
-						cs = (Altaxo.TableView.ColumnStyle)template.Clone();
+						Altaxo.Worksheet.ColumnStyle template = GetColumnStyle(this.dragColumnWidth_ColumnNumber);
+						cs = (Altaxo.Worksheet.ColumnStyle)template.Clone();
 						m_ColumnStyles.Add(m_DataTable[dragColumnWidth_ColumnNumber],cs);
 					}
 				}

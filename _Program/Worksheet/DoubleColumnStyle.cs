@@ -3,13 +3,13 @@ using System.Drawing;
 using Altaxo.Serialization;
 
 
-namespace Altaxo.TableView
+namespace Altaxo.Worksheet
 {
 
 
 	[SerializationSurrogate(0,typeof(DoubleColumnStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class DoubleColumnStyle : Altaxo.TableView.ColumnStyle
+	public class DoubleColumnStyle : Altaxo.Worksheet.ColumnStyle
 	{
 
 		#region Serialization
@@ -52,7 +52,7 @@ namespace Altaxo.TableView
 
 		public override object Clone()
 		{
-			Altaxo.TableView.DoubleColumnStyle ns = new Altaxo.TableView.DoubleColumnStyle(this);
+			Altaxo.Worksheet.DoubleColumnStyle ns = new Altaxo.Worksheet.DoubleColumnStyle(this);
 			return ns;
 		}
 
@@ -90,7 +90,7 @@ namespace Altaxo.TableView
 				dc.DrawString(myString,m_TextFont,m_TextBrush,cellRectangle,m_TextFormat);
 
 		}
-	} // end of class Altaxo.TableView.DoubleColumnStyle
+	} // end of class Altaxo.Worksheet.DoubleColumnStyle
 
 
 }

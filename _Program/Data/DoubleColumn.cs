@@ -107,7 +107,7 @@ namespace Altaxo.Data
 
 		public override System.Type GetColumnStyleType()
 		{
-			return typeof(Altaxo.TableView.DoubleColumnStyle);
+			return typeof(Altaxo.Worksheet.DoubleColumnStyle);
 		}
 				
 				

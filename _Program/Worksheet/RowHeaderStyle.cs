@@ -3,11 +3,11 @@ using System.Drawing;
 using Altaxo.Serialization;
 
 
-namespace Altaxo.TableView
+namespace Altaxo.Worksheet
 {
 	[SerializationSurrogate(0,typeof(RowHeaderStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class RowHeaderStyle : Altaxo.TableView.ColumnStyle
+	public class RowHeaderStyle : Altaxo.Worksheet.ColumnStyle
 	{
 		protected int m_RowHeight=20;
 

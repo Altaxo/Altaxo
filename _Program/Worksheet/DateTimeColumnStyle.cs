@@ -3,12 +3,14 @@ using System.Drawing;
 using Altaxo.Serialization;
 
 
-namespace Altaxo.TableView
+namespace Altaxo.Worksheet
 {
-	[SerializationSurrogate(0,typeof(ColumnHeaderStyle.SerializationSurrogate0))]
+	
+	[SerializationSurrogate(0,typeof(DateTimeColumnStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class ColumnHeaderStyle : ColumnStyle
+	public class DateTimeColumnStyle : Altaxo.Worksheet.ColumnStyle
 	{
+
 		#region Serialization
 			public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 			{
@@ -32,54 +34,63 @@ namespace Altaxo.TableView
 			public override void OnDeserialization(object obj)
 			{
 				base.OnDeserialization(obj);
-			}	
-			#endregion
-
-
-		public int Height
-		{
-			get
-			{
-				return m_Size;
 			}
-			set
-			{
-				m_Size = value;
-			}	
-		}
 
-		public ColumnHeaderStyle()
+		#endregion
+
+
+
+
+
+
+		public DateTimeColumnStyle()
 		{
-			m_TextFormat.Alignment=StringAlignment.Center;
+			m_TextFormat.Alignment=StringAlignment.Far;
 			m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
 		}
 
-		public ColumnHeaderStyle(ColumnHeaderStyle chs)
-			: base(chs)
-		{
-		}
-
-		public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
-		{
-			dc.DrawRectangle(m_CellPen.Pen,cellRectangle);
-			
-			string str = string.Format("{0} ({1}{2})",data.ColumnName, data.XColumn? "X":data.Kind.ToString(),data.Group); 
-			dc.DrawString(str,m_TextFont,this.m_TextBrush,cellRectangle,m_TextFormat);
-		}
-		
-		public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
-		{
-			return data.ColumnName;
-		}
-
-		public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
+		public DateTimeColumnStyle(DateTimeColumnStyle dtcs)
+			: base(dtcs)
 		{
 		}
 
 		public override object Clone()
 		{
-			return new ColumnHeaderStyle(this);
+			return new DateTimeColumnStyle(this);
 		}
-	}
+
+		public override string GetColumnValueAtRow(int nRow, Altaxo.Data.DataColumn data)
+		{
+			DateTime val = ((Altaxo.Data.DateTimeColumn)data)[nRow];
+			return val==Altaxo.Data.DateTimeColumn.NullValue ? "" : val.ToString();
+		}
 	
+		public override void SetColumnValueAtRow(string s, int nRow, Altaxo.Data.DataColumn data)
+		{
+			DateTime newval;
+			try
+			{ 
+				newval = s.Length==0 ? Altaxo.Data.DateTimeColumn.NullValue : System.Convert.ToDateTime(s);
+				((Altaxo.Data.DateTimeColumn)data)[nRow] = newval;
+			}
+			catch(Exception) {}
+		}
+
+		public override void Paint(Graphics dc, Rectangle cellRectangle, int nRow, Altaxo.Data.DataColumn data, bool bSelected)
+		{
+			dc.DrawRectangle(m_CellPen.Pen,cellRectangle);
+		
+			if(bSelected)
+				dc.FillRectangle(m_SelectedBackgroundBrush,cellRectangle);
+		
+			string myString = ((Altaxo.Data.DateTimeColumn)data)[nRow].ToString();
+		
+			if(bSelected)
+				dc.DrawString(myString,m_TextFont,m_SelectedTextBrush,cellRectangle,m_TextFormat);
+			else
+				dc.DrawString(myString,m_TextFont,m_TextBrush,cellRectangle,m_TextFormat);
+		}
+	} // end of class Altaxo.Worksheet.DateTimeColumnStyle
+
+
 }

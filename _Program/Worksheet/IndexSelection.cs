@@ -1,6 +1,6 @@
 using System;
 
-namespace Altaxo.TableView
+namespace Altaxo.Worksheet
 {
 	/// <summary>
 	/// Summary description for IndexSelection.

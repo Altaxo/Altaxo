@@ -8,12 +8,12 @@ using System.Runtime.Serialization;
 using Altaxo.Serialization;
 
 
-namespace Altaxo.TableView
+namespace Altaxo.Worksheet
 {
 
 
 	/// <summary>
-	/// Summary description for AltaxoWorksheet.
+	/// Summary description for Altaxo.Worksheet.
 	/// </summary>
 	[SerializationSurrogate(0,typeof(Worksheet.SerializationSurrogate0))]
 	[SerializationVersion(0,"Initial version.")]
@@ -140,7 +140,7 @@ namespace Altaxo.TableView
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.altaxoDataGrid1 = new Altaxo.TableView.DataGrid();
+			this.altaxoDataGrid1 = new Altaxo.Worksheet.DataGrid();
 			this.wksMenu = new System.Windows.Forms.MainMenu();
 			this.menuColumnPopup = new System.Windows.Forms.MenuItem();
 			this.mnuAddColumn = new System.Windows.Forms.MenuItem();
@@ -344,7 +344,7 @@ namespace Altaxo.TableView
 		/// </summary>
 		
 
-		public Altaxo.TableView.DataGrid DataGrid
+		public Altaxo.Worksheet.DataGrid DataGrid
 		{
 			get { return altaxoDataGrid1; }
 			set
