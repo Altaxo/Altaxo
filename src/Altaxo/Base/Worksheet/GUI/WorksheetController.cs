@@ -684,27 +684,18 @@ namespace Altaxo.Worksheet.GUI
 
 		#endregion // Menu definition
 
-		#region Menu Handler
+		#region Menu functions
 
-		// ******************************************************************
-		// ******************************************************************
-		// File Menu
-		// ******************************************************************
-		// ******************************************************************
-	
-	protected void EhMenuFilePageSetup_OnClick(object sender, System.EventArgs e)
+
+		public void SaveTable(System.IO.Stream myStream)
 		{
+			Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
+			info.BeginWriting(myStream);
+			info.AddValue("Table",this.DataTable);
+			info.EndWriting();		
 		}
 
-		protected void EhMenuFilePrintPreview_OnClick(object sender, System.EventArgs e)
-		{
-		}
-
-		protected void EhMenuFilePrint_OnClick(object sender, System.EventArgs e)
-		{
-		}
-
-		protected void EhMenuFileSaveTableAs_OnClick(object sender, System.EventArgs e)
+		public void SaveTableAs()
 		{
 			System.IO.Stream myStream ;
 			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
@@ -717,20 +708,21 @@ namespace Altaxo.Worksheet.GUI
 			{
 				if((myStream = saveFileDialog1.OpenFile()) != null)
 				{
-					Altaxo.Serialization.Xml.XmlStreamSerializationInfo info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
-					info.BeginWriting(myStream);
-					info.AddValue("Table",this.DataTable);
-					info.EndWriting();
+					this.SaveTable(myStream);
 					myStream.Close();
 				}
 			}
 		}
 
-		// ------------------------------------------------------------------
-		// File - Import (Popup)
-		// ------------------------------------------------------------------
+		public void ImportAscii(System.IO.Stream myStream)
+		{
+			AltaxoAsciiImporter importer = new AltaxoAsciiImporter(myStream);
+			AsciiImportOptions recognizedOptions = importer.Analyze(30, new AsciiImportOptions());
+			importer.ImportAscii(recognizedOptions,this.DataTable);
+		}
 
-		protected void EhMenuFileImportAscii_OnClick(object sender, System.EventArgs e)
+
+		public void ImportAscii()
 		{
 			System.IO.Stream myStream;
 			OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -744,31 +736,14 @@ namespace Altaxo.Worksheet.GUI
 			{
 				if((myStream = openFileDialog1.OpenFile())!= null)
 				{
-					AltaxoAsciiImporter importer = new AltaxoAsciiImporter(myStream);
-					AsciiImportOptions recognizedOptions = importer.Analyze(30, new AsciiImportOptions());
-					importer.ImportAscii(recognizedOptions,this.DataTable);
+					this.ImportAscii(myStream);
 					myStream.Close();
 				}
 			}
 		}
 
-		protected void EhMenuFileImportPicture_OnClick(object sender, System.EventArgs e)
-		{
-			DataGridOperations.ImportPicture(this.DataTable);
 
-		}
-
-
-		protected void EhMenuFileImportGalacticSPC_OnClick(object sender, System.EventArgs e)
-		{
-			Altaxo.Serialization.Galactic.Import.ShowDialog(this.View.TableViewForm, this.DataTable);
-		}
-
-		// ------------------------------------------------------------------
-		// File - Export (Popup)
-		// ------------------------------------------------------------------
-
-		protected void EhMenuFileExportAscii_OnClick(object sender, System.EventArgs e)
+		public void ExportAscii()
 		{
 			System.IO.Stream myStream ;
 			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
@@ -794,8 +769,64 @@ namespace Altaxo.Worksheet.GUI
 						myStream.Close();
 					}
 				}
-	
 			}
+		}
+
+		#endregion
+
+		#region Menu Handler
+
+		// ******************************************************************
+		// ******************************************************************
+		// File Menu
+		// ******************************************************************
+		// ******************************************************************
+	
+	protected void EhMenuFilePageSetup_OnClick(object sender, System.EventArgs e)
+		{
+		}
+
+		protected void EhMenuFilePrintPreview_OnClick(object sender, System.EventArgs e)
+		{
+		}
+
+		protected void EhMenuFilePrint_OnClick(object sender, System.EventArgs e)
+		{
+		}
+
+		protected void EhMenuFileSaveTableAs_OnClick(object sender, System.EventArgs e)
+		{
+			SaveTableAs();
+		}
+
+		// ------------------------------------------------------------------
+		// File - Import (Popup)
+		// ------------------------------------------------------------------
+
+		protected void EhMenuFileImportAscii_OnClick(object sender, System.EventArgs e)
+		{
+			this.ImportAscii();
+		}
+
+		protected void EhMenuFileImportPicture_OnClick(object sender, System.EventArgs e)
+		{
+			DataGridOperations.ImportPicture(this.DataTable);
+
+		}
+
+
+		protected void EhMenuFileImportGalacticSPC_OnClick(object sender, System.EventArgs e)
+		{
+			Altaxo.Serialization.Galactic.Import.ShowDialog(this.View.TableViewForm, this.DataTable);
+		}
+
+		// ------------------------------------------------------------------
+		// File - Export (Popup)
+		// ------------------------------------------------------------------
+
+		protected void EhMenuFileExportAscii_OnClick(object sender, System.EventArgs e)
+		{
+			this.ExportAscii();
 		}
 
 		protected void EhMenuFileExportGalacticSPC_OnClick(object sender, System.EventArgs e)

@@ -81,6 +81,16 @@
 				<ToolbarItem id="SaveAll" icon="Icons.16x16.SaveAllIcon" tooltip="${res:XML.MainMenu.FileMenu.SaveAll.Description}" class="ICSharpCode.SharpDevelop.Commands.SaveAllFiles"/>
 			</Conditional>
 		</ToolbarItem>
+		<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Disable">
+			<ToolbarItem id="Worksheet">
+				<ToolbarItem id="New" icon="Icons.16x16.NewDocumentIcon" tooltip="${res:XML.MainMenu.FileMenu.New.File.Description}" class="ICSharpCode.SharpDevelop.Commands.CreateNewFile"/>
+				<ToolbarItem id="Open" icon="Icons.16x16.OpenFileIcon" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}" class="ICSharpCode.SharpDevelop.Commands.OpenFile"/>
+				<Conditional activewindow="*" action="Disable">
+					<ToolbarItem id="Save" icon="Icons.16x16.SaveIcon" tooltip="${res:XML.MainMenu.FileMenu.Save.Description}" class="ICSharpCode.SharpDevelop.Commands.SaveFile"/>
+					<ToolbarItem id="SaveAll" icon="Icons.16x16.SaveAllIcon" tooltip="${res:XML.MainMenu.FileMenu.SaveAll.Description}" class="ICSharpCode.SharpDevelop.Commands.SaveAllFiles"/>
+				</Conditional>
+			</ToolbarItem>
+		</Conditional>
 	</Extension>
 	<Extension path="/SharpDevelop/Workbench/MainMenu">
 		<MenuItem id="File" label="${res:XML.MainMenu.FileMenu}">
