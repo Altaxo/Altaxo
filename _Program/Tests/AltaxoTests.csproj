@@ -99,6 +99,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\NonLinearFit_Tests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\PFA235FFT_Tests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

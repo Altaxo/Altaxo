@@ -111,7 +111,7 @@ namespace Altaxo.Graph
 
 		protected LineStyle			m_LineStyle;
 		protected ScatterStyle	m_ScatterStyle;
-		protected bool  m_LineSymbolGap;
+		protected bool					m_LineSymbolGap;
 
 
 

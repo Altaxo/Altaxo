@@ -139,6 +139,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\NonLinearFit.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\Pfa235Convolution.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -220,6 +225,21 @@
                 />
                 <File
                     RelPath = "Graph\Axis.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\AxisScaleControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\AxisScaleControl.resx"
+                    DependentUpon = "AxisScaleControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\AxisScaleController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
