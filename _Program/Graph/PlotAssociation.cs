@@ -87,7 +87,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(PlotAssociation.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class PlotAssociation : IXYBoundsHolder
+	public class PlotAssociation : IXYBoundsHolder, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
 	{
 		protected Altaxo.Data.IReadableColumn m_xColumn; // the X-Column
 		protected Altaxo.Data.IReadableColumn m_yColumn; // the Y-Column
@@ -102,6 +102,13 @@ namespace Altaxo.Graph
 		// events
 		public event PhysicalBoundaries.BoundaryChangedHandler	XBoundariesChanged;
 		public event PhysicalBoundaries.BoundaryChangedHandler	YBoundariesChanged;
+
+
+		/// <summary>
+		/// Fired if either the data of this PlotAssociation changed or if the bounds changed
+		/// </summary>
+		public event System.EventHandler Changed;
+
 
 		#region Serialization
 		/// <summary>Used to serialize the PlotAssociation Version 0.</summary>
@@ -132,8 +139,8 @@ namespace Altaxo.Graph
 			{
 				PlotAssociation s = (PlotAssociation)obj;
 
-				s.m_xColumn = (Altaxo.Data.IReadableColumn)info.GetValue("XColumm",typeof(Altaxo.Data.IReadableColumn));
-				s.m_yColumn = (Altaxo.Data.IReadableColumn)info.GetValue("YColumm",typeof(Altaxo.Data.IReadableColumn));
+				s.m_xColumn = (Altaxo.Data.IReadableColumn)info.GetValue("XColumn",typeof(Altaxo.Data.IReadableColumn));
+				s.m_yColumn = (Altaxo.Data.IReadableColumn)info.GetValue("YColumn",typeof(Altaxo.Data.IReadableColumn));
 		
 				return s;
 			}
@@ -147,10 +154,10 @@ namespace Altaxo.Graph
 		{
 			// restore the event chain
 			if(m_xColumn is Altaxo.Data.DataColumn)
-				((Altaxo.Data.DataColumn)m_xColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChanged);
+				((Altaxo.Data.DataColumn)m_xColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
 			
 			if(m_yColumn is Altaxo.Data.DataColumn)
-				((Altaxo.Data.DataColumn)m_yColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChanged);
+				((Altaxo.Data.DataColumn)m_yColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
 		}
 		#endregion
 
@@ -166,13 +173,13 @@ namespace Altaxo.Graph
 			m_yBoundaries = new FinitePhysicalBoundaries();
 			
 			// add boundary event handler
-			m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChanged);
-			m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChanged);
+			m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
+			m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
 
 
 			// Add Event Handler
-			m_xColumn.DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChanged);
-			m_yColumn.DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChanged);
+			m_xColumn.DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
+			m_yColumn.DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
 		}
 	
 
@@ -196,11 +203,13 @@ namespace Altaxo.Graph
 			{
 				if(null!=m_xBoundaries)
 				{
-					m_xBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChanged);
+					m_xBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
 				}
 				m_xBoundaries = (PhysicalBoundaries)val.Clone();
-				m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChanged);
+				m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChangedEventHandler);
 				CalculateCachedData();
+
+				OnChanged();
 			}
 		}
 
@@ -211,77 +220,32 @@ namespace Altaxo.Graph
 			{
 				if(null!=m_yBoundaries)
 				{
-					m_yBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChanged);
+					m_yBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
 				}
 				m_yBoundaries = (PhysicalBoundaries)val.Clone();
-				m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChanged);
+				m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChangedEventHandler);
 				CalculateCachedData();
+
+				OnChanged();
 			}
 		}
 
-
-		/*
-		public PhysicalBoundaries XBounds
-		{
-			get
-			{
-				if(!this.m_bCachedDataValid)
-					this.CalculateCachedData();
-				return m_xBoundaries;
-			}
-			set
-			{
-				if(null==m_xBoundaries || value.GetType() != m_xBoundaries.GetType())
-				{
-					if(null!=m_xBoundaries)
-					{
-						m_xBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChanged);
-					}
-					m_xBoundaries = (PhysicalBoundaries)value.Clone();
-					m_xBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnXBoundariesChanged);
-					CalculateCachedData();
-				}
-			}
-		}
-
-
-		public PhysicalBoundaries YBounds
-		{
-			get
-			{
-				if(!this.m_bCachedDataValid)
-					this.CalculateCachedData();
-				return m_yBoundaries;
-			}
-			set
-			{
-				if(null==m_yBoundaries || value.GetType() != m_yBoundaries.GetType())
-				{
-					if(null!=m_yBoundaries)
-					{
-						m_yBoundaries.BoundaryChanged -= new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChanged);
-					}
-					m_yBoundaries = (PhysicalBoundaries)value.Clone();
-					m_yBoundaries.BoundaryChanged += new PhysicalBoundaries.BoundaryChangedHandler(this.OnYBoundariesChanged);
-					CalculateCachedData();
-				}
-			}
-		}
 
 		
-		*/
-
-
-		protected void OnXBoundariesChanged(object sender, BoundariesChangedEventArgs e)
+		protected virtual void OnXBoundariesChangedEventHandler(object sender, BoundariesChangedEventArgs e)
 		{
 			if(null!=this.XBoundariesChanged)
 				XBoundariesChanged(this, e);
+
+			OnChanged();
 		}
 
-		protected void OnYBoundariesChanged(object sender, BoundariesChangedEventArgs e)
+		protected virtual void OnYBoundariesChangedEventHandler(object sender, BoundariesChangedEventArgs e)
 		{
 			if(null!=this.YBoundariesChanged)
 				YBoundariesChanged(this, e);
+
+			OnChanged();
 		}
 
 
@@ -307,14 +271,14 @@ namespace Altaxo.Graph
 
 				if(null!=m_xColumn && m_xColumn is Altaxo.Data.DataColumn)
 				{
-					((Altaxo.Data.DataColumn)m_xColumn).DataChanged -= new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChanged);
+					((Altaxo.Data.DataColumn)m_xColumn).DataChanged -= new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
 				}
 
 				this.m_xColumn = value;
 
 				if(null!=m_xColumn && m_xColumn is Altaxo.Data.DataColumn)
 				{
-					((Altaxo.Data.DataColumn)m_xColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChanged);
+					((Altaxo.Data.DataColumn)m_xColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
 				}
 
 				CalculateCachedData();
@@ -331,13 +295,13 @@ namespace Altaxo.Graph
 			{
 				if(null!=m_yColumn && m_yColumn is Altaxo.Data.DataColumn)
 				{
-					((Altaxo.Data.DataColumn)m_yColumn).DataChanged -= new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChanged);
+					((Altaxo.Data.DataColumn)m_yColumn).DataChanged -= new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
 				}
 
 				this.m_yColumn = value;
 				if(null!=m_yColumn && m_yColumn is Altaxo.Data.DataColumn)
 				{
-					((Altaxo.Data.DataColumn)m_yColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChanged);
+					((Altaxo.Data.DataColumn)m_yColumn).DataChanged += new Altaxo.Data.DataColumn.DataChangedHandler(OnColumnDataChangedEventHandler);
 				}
 				CalculateCachedData();
 			}
@@ -396,11 +360,19 @@ namespace Altaxo.Graph
 
 		}
 
-		void OnColumnDataChanged(Altaxo.Data.DataColumn dc, int nMinRow, int nMaxRow, bool bRowCountDecreased)
+		void OnColumnDataChangedEventHandler(Altaxo.Data.DataColumn dc, int nMinRow, int nMaxRow, bool bRowCountDecreased)
 		{
 			// !!!todo!!! : special case if only data added to a column should
 			// be handeld separately to save computing time
 			CalculateCachedData();
+		
+			OnChanged();
+		}
+
+		protected virtual void OnChanged()
+		{
+			if(null!=Changed)
+				Changed(this,new System.EventArgs());
 		}
 	}
 }

@@ -46,6 +46,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		PlotGroupStyle m_Style;
 		System.Collections.ArrayList m_PlotItems;
+		
 		private PlotGroup.Collection m_Parent;
 
 
@@ -90,16 +91,18 @@ namespace Altaxo.Graph
 		/// <param name="obj">Not used.</param>
 		public virtual void OnDeserialization(object obj)
 		{
+			if(m_PlotItems.Count>0)
+				((PlotItem)m_PlotItems[0]).StyleChanged += new EventHandler(this.OnMasterStyleChangedEventHandler);
 		}
 		#endregion
 
 
 
-		public PlotGroup(PlotItem assoc, PlotGroupStyle style)
+		public PlotGroup(PlotItem master, PlotGroupStyle style)
 		{
 			m_Style = style;
 			m_PlotItems = new System.Collections.ArrayList();
-			m_PlotItems.Add(assoc);
+			m_PlotItems.Add(master);
 		}
 
 		public PlotGroup(PlotGroupStyle style)
@@ -123,11 +126,17 @@ namespace Altaxo.Graph
 			if(null!=assoc)
 			{
 				int cnt = m_PlotItems.Count;
+				if(cnt==0) // this is the first, i.e. the master item, it must be wired by a Changed event handler
+				{
+					assoc.StyleChanged += new EventHandler(this.OnMasterStyleChangedEventHandler);
+				}
 				if(cnt>0)
 				{
 					((PlotStyle)assoc.Style).SetToNextStyle((PlotStyle)((PlotItem)m_PlotItems[cnt-1]).Style,m_Style);
 				}
 				m_PlotItems.Add(assoc);
+
+				OnChanged();
 			}
 		}
 
@@ -139,6 +148,8 @@ namespace Altaxo.Graph
 		public void Clear()
 		{
 			m_PlotItems.Clear();
+
+			OnChanged();
 		}
 
 		public PlotItem MasterItem
@@ -161,7 +172,10 @@ namespace Altaxo.Graph
 				
 				// update the styles beginning from the master item
 				if(changed)
+				{
 					UpdateMembers();
+					OnChanged();
+				}
 			}
 		}
 
@@ -173,10 +187,22 @@ namespace Altaxo.Graph
 				for(int i=1;i<Count;i++)
 					((PlotStyle)this[i].Style).SetToNextStyle((PlotStyle)this[i-1].Style,this.m_Style);
 			}
+			// no changed event here since we track only the members structure and the grouping style
+		}
+
+		protected void OnMasterStyleChangedEventHandler(object sender, EventArgs e)
+		{
+			UpdateMembers();
+		}
+
+		protected virtual void OnChanged()
+		{
+			if(null!=m_Parent)
+				m_Parent.OnChildChangedEventHandler(this);
 		}
 
 		[Serializable]
-		public class Collection
+			public class Collection : IChangedEventSource
 		{
 			protected System.Collections.ArrayList m_List;
 
@@ -189,11 +215,15 @@ namespace Altaxo.Graph
 			{
 				g.m_Parent=this;
 				m_List.Add(g);
+
+				OnChanged();
 			}
 
 			public void Clear()
 			{
 				m_List.Clear();
+
+				OnChanged();
 			}
 
 			public PlotGroup GetPlotGroupOf(PlotItem assoc)
@@ -207,7 +237,26 @@ namespace Altaxo.Graph
 
 				return null; // assoc belongs not to any plot group
 			}
+
+
+			#region IChangedEventSource Members
+
+			public event System.EventHandler Changed;
+
+			protected virtual void OnChanged()
+			{
+				if(null!=Changed)
+					Changed(this,new EventArgs());
+			}
+
+			public virtual void OnChildChangedEventHandler(object sender)
+			{
+				OnChanged();
+			}
+
+
+			#endregion
 		} // end of class Collection
 
 	}
-	}
+}

@@ -27,7 +27,7 @@ namespace Altaxo.Graph
 {
 
 	/// <remarks>LabelStyle is the abstract base class of all LabelStyles.</remarks>
-	public abstract class LabelStyle
+	public abstract class LabelStyle : IChangedEventSource
 	{
 		/*
 		/// <summary>
@@ -49,8 +49,17 @@ namespace Altaxo.Graph
 		/// <param name="axis">The axis for which to paint the (major) labels.</param>
 		/// <param name="axisstyle">The axis style the axis is formatted with.</param>
 		public abstract void Paint(Graphics g, Layer layer, Axis axis, XYLayerAxisStyle axisstyle);
+		#region IChangedEventSource Members
 
+		public event System.EventHandler Changed;
 
+		protected virtual void OnChanged()
+		{
+			if(null!=Changed)
+				Changed(this,new EventArgs());
+		}
+
+		#endregion
 	}
 
 
@@ -65,7 +74,7 @@ namespace Altaxo.Graph
 	/// </remarks>
 	[SerializationSurrogate(0,typeof(SimpleLabelStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class SimpleLabelStyle : LabelStyle
+	public class SimpleLabelStyle : LabelStyle, System.Runtime.Serialization.IDeserializationCallback
 	{
 		protected Font m_Font = new Font(FontFamily.GenericSansSerif,18,GraphicsUnit.World);
 		protected Edge m_Edge = new Edge(EdgeType.Left); 
@@ -228,6 +237,6 @@ namespace Altaxo.Graph
 			}
 
 		}
-
+	
 	}
 }

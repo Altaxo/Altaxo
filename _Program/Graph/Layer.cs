@@ -142,7 +142,6 @@ namespace Altaxo.Graph
 
 		#endregion
 
-
 		#region Cached member variables
 		/// <summary>
 		/// The cached layer position in points (1/72 inch) relative to the upper left corner
@@ -489,9 +488,9 @@ namespace Altaxo.Graph
 			
 				s.m_GraphObjects = (Graph.GraphObjectCollection)info.GetValue("GraphObjects",typeof(Graph.GraphObjectCollection));
 				s.m_PlotGroups = (Graph.PlotGroup.Collection)info.GetValue("PlotGroups",typeof(Graph.PlotGroup.Collection));
+
 				s.m_PlotItems = (PlotList)info.GetValue("Plots",typeof(PlotList));
-
-
+				s.m_PlotItems.ParentLayer = s; // restore the parent object
 
 				return s;
 			}
@@ -506,9 +505,10 @@ namespace Altaxo.Graph
 			m_ForwardMatrix = new Matrix();
 			m_ReverseMatrix = new Matrix();
 			CalculateMatrix();
+
+			CreateEventLinks();
 		}
 		#endregion
-
 
 		#region Constructors
 
@@ -540,18 +540,53 @@ namespace Altaxo.Graph
 			m_xAxis = new LinearAxis(); // the X-Axis
 			m_yAxis = new LinearAxis(); // the Y-Axis
 
-			m_xAxis.AxisChanged += new System.EventHandler(this.OnXAxisChanged);
-			m_yAxis.AxisChanged += new System.EventHandler(this.OnYAxisChanged);
 		
 		
 			LeftAxisTitleString = "Y axis";
 			BottomAxisTitleString = "X axis";
+
+			CreateEventLinks();
+		
 		}
 
 	
 		#endregion
 
 		#region Layer properties and methods
+
+
+		void CreateEventLinks()
+		{
+			// restore the event chain
+			if(null!=m_xAxis) m_xAxis.Changed += new EventHandler(this.OnXAxisChangedEventHandler);
+			if(null!=m_yAxis) m_yAxis.Changed += new EventHandler(this.OnYAxisChangedEventHandler);
+
+			if(null!=m_LeftAxisStyle) m_LeftAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+			if(null!=m_BottomAxisStyle) m_BottomAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+			if(null!=m_RightAxisStyle) m_RightAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+			if(null!=m_TopAxisStyle) m_TopAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+
+			if(null!=m_LeftLabelStyle) m_LeftLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+			if(null!=m_BottomLabelStyle) m_BottomLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+			if(null!=m_RightLabelStyle) m_RightLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+			if(null!=m_TopLabelStyle) m_TopLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+
+		
+			if(null!=m_LeftAxisTitle) m_LeftAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+			if(null!=m_BottomAxisTitle) m_BottomAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+			if(null!=m_RightAxisTitle) m_RightAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+			if(null!=m_TopAxisTitle) m_TopAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+
+			if(null!=m_Legend) m_Legend.Changed += new EventHandler(this.OnChildChangedEventHandler);
+
+			if(null!=m_LinkedLayer) m_LinkedLayer.AxesChanged += new EventHandler(this.OnLinkedLayerAxesChanged);
+		
+			if(null!=m_GraphObjects) m_GraphObjects.Changed += new EventHandler(this.OnChildChangedEventHandler);
+
+			if(null!=m_PlotGroups) m_PlotGroups.Changed += new EventHandler(this.OnChildChangedEventHandler);
+
+			if(null!=m_PlotItems) m_PlotItems.Changed += new EventHandler(this.OnChildChangedEventHandler);
+		}
 
 		/// <summary>
 		/// The layer number.
@@ -1234,12 +1269,12 @@ namespace Altaxo.Graph
 			set
 			{
 				if(null!=m_xAxis)
-					m_xAxis.AxisChanged -= new System.EventHandler(this.OnXAxisChanged);
+					m_xAxis.Changed -= new System.EventHandler(this.OnXAxisChangedEventHandler);
 				
 				m_xAxis = value;
 
 				if(null!=m_xAxis)
-					m_xAxis.AxisChanged += new System.EventHandler(this.OnXAxisChanged);
+					m_xAxis.Changed += new System.EventHandler(this.OnXAxisChangedEventHandler);
 
 
 				// now we have to inform all the PlotItems that a new axis was loaded
@@ -1266,12 +1301,12 @@ namespace Altaxo.Graph
 			set
 			{
 				if(null!=m_yAxis)
-					m_yAxis.AxisChanged -= new System.EventHandler(this.OnYAxisChanged);
+					m_yAxis.Changed -= new System.EventHandler(this.OnYAxisChangedEventHandler);
 				
 				m_yAxis = value;
 
 				if(null!=m_yAxis)
-					m_yAxis.AxisChanged += new System.EventHandler(this.OnYAxisChanged);
+					m_yAxis.Changed += new System.EventHandler(this.OnYAxisChangedEventHandler);
 
 
 				// now we have to inform all the PlotAssociations that a new axis was loaded
@@ -1958,14 +1993,11 @@ namespace Altaxo.Graph
 				PositionChanged(this,new System.EventArgs());
 		}
 
-
-
 		protected virtual void OnAxesChanged()
 		{
 			if(null!=AxesChanged)
 				AxesChanged(this,new System.EventArgs());
 		}
-
 
 		protected void OnInvalidate()
 		{
@@ -1987,7 +2019,7 @@ namespace Altaxo.Graph
 			((PlotAssociation)sender).MergeYBoundsInto(m_yAxis.DataBounds);
 		}
 		
-		protected virtual void OnXAxisChanged(object sender, System.EventArgs e)
+		protected virtual void OnXAxisChangedEventHandler(object sender, System.EventArgs e)
 		{
 			// inform linked layers
 			if(null!=AxesChanged)
@@ -1997,7 +2029,7 @@ namespace Altaxo.Graph
 			OnInvalidate();
 		}
 
-		protected virtual void OnYAxisChanged(object sender, System.EventArgs e)
+		protected virtual void OnYAxisChangedEventHandler(object sender, System.EventArgs e)
 		{
 			// inform linked layers 
 			if(null!=AxesChanged)
@@ -2007,20 +2039,99 @@ namespace Altaxo.Graph
 			OnInvalidate();
 		}
 
+		protected virtual void OnChildChangedEventHandler(object sender, System.EventArgs e)
+		{
+			OnInvalidate();
+		}
 		
 		#endregion
 
 		#region Inner classes
 
 
-		[Serializable]
-		public class PlotList : System.Collections.CollectionBase
+			[Serializable]
+			[SerializationSurrogate(0,typeof(PlotList.SerializationSurrogate0))]
+			[SerializationVersion(0)]
+			public class PlotList : System.Collections.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, IChildChangedEventSink
 		{
-			private Layer m_Owner; // the parent of this list
+				/// <summary>The parent layer of this list.</summary>
+			private Layer m_Owner; 
+
+				/// <summary>Used for deserialization to hold the array temporarly.</summary>
+			private object[] m_DeserializedItems=null;
+
+				#region Serialization
+				/// <summary>Used to serialize the PlotList Version 0.</summary>
+				public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+				{
+					public object[] m_PlotItems = null; 
+
+					/// <summary>
+					/// Serializes PlotList Version 0.
+					/// </summary>
+					/// <param name="obj">The PlotList to serialize.</param>
+					/// <param name="info">The serialization info.</param>
+					/// <param name="context">The streaming context.</param>
+					public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+					{
+						PlotList s = (PlotList)obj;
+						info.AddValue("Data",s.InnerList.ToArray());
+					}
+
+					/// <summary>
+					/// Deserializes the PlotList Version 0.
+					/// </summary>
+					/// <param name="obj">The empty PlotList object to deserialize into.</param>
+					/// <param name="info">The serialization info.</param>
+					/// <param name="context">The streaming context.</param>
+					/// <param name="selector">The deserialization surrogate selector.</param>
+					/// <returns>The deserialized PlotList.</returns>
+					public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+					{
+						PlotList s = (PlotList)obj;
+
+						s.m_DeserializedItems = (object[])info.GetValue("Data",typeof(object[]));
+						return s;
+					}
+				}
+
+				/// <summary>
+				/// Finale measures after deserialization.
+				/// </summary>
+				/// <param name="obj">Not used.</param>
+				public virtual void OnDeserialization(object obj)
+				{
+					if(null!=m_DeserializedItems)
+					{
+						foreach(object o in m_DeserializedItems)
+						{
+							if(o is PlotItem)
+								Add(o as PlotItem);
+						}
+						
+						m_DeserializedItems = null;
+					}
+				}
+				
+				#endregion
+
+
 
 			public PlotList(Layer owner)
 			{
 				m_Owner = owner;
+			}
+
+			public Layer ParentLayer
+			{
+				get { return m_Owner; }
+				set
+				{
+					if(null==value)
+						throw new ArgumentNullException();
+					else
+						m_Owner = value;
+				}
 			}
 
 			public new void Add(Graph.PlotItem plotitem)
@@ -2029,6 +2140,8 @@ namespace Altaxo.Graph
 					throw new ArgumentNullException();
 
 				base.InnerList.Add(plotitem);
+
+				plotitem.Changed += new EventHandler(this.OnChildChanged);
 
 				if(plotitem.Data is Graph.IXBoundsHolder)
 				{
@@ -2044,13 +2157,35 @@ namespace Altaxo.Graph
 					pa.YBoundariesChanged += new PhysicalBoundaries.BoundaryChangedHandler(m_Owner.OnPlotAssociationYBoundariesChanged);
 					pa.MergeYBoundsInto(m_Owner.YAxis.DataBounds); // merge the y-boundaries in the y-Axis data boundaries
 				}
+
+				OnChanged();
 			}
 
 			public new PlotItem this[int i]
 			{
 				get { return (PlotItem)base.InnerList[i]; }
 			}
-		}
+			
+				
+				#region IChangedEventSource Members
+
+				public event System.EventHandler Changed;
+
+
+				public virtual void OnChildChanged(object child, EventArgs e)
+				{
+					if(null!=Changed)
+						Changed(this,e);
+				}
+
+				protected virtual void OnChanged()
+				{
+					if(null!=Changed)
+						Changed(this,new ChangedEventArgs(this,null));
+				}
+
+				#endregion
+			}
 
 
 
@@ -2062,7 +2197,7 @@ namespace Altaxo.Graph
 		/// all changes to the layers.</remarks>
 		[SerializationSurrogate(0,typeof(LayerCollection.SerializationSurrogate0))]
 		[SerializationVersion(0)]
-		public class LayerCollection : System.Collections.CollectionBase, System.Runtime.Serialization.IDeserializationCallback
+		public class LayerCollection : System.Collections.CollectionBase, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
 		{
 			/// <summary>Fired when something in this collection changed, as for instance
 			/// adding or deleting layers, or exchanging layers.</summary>
@@ -2071,9 +2206,9 @@ namespace Altaxo.Graph
 			private object[] m_DeserializedLayers=null;
 
 			/// <summary>
-			/// Fired if some of the layer signals that a redraw is neccessary.
+			/// Fired if either the layer collection changed or something in the layers changed
 			/// </summary>
-			public event System.EventHandler Invalidate;
+			public event System.EventHandler Changed;
 		
 			#region "Serialization"
 
@@ -2267,12 +2402,19 @@ namespace Altaxo.Graph
 			{
 				if(null!=LayerCollectionChanged)
 					LayerCollectionChanged(this,new EventArgs());
+			
+			OnChanged();
 			}
 
 			protected internal virtual void OnInvalidate(Layer sender)
 			{
-				if(null!=Invalidate)
-					Invalidate(this, new EventArgs());
+			OnChanged();
+			}
+
+			protected virtual void OnChanged()
+			{
+				if(null!=Changed)
+					Changed(this, new EventArgs());
 			}
 		}
 	

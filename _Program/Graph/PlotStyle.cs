@@ -106,12 +106,13 @@ namespace Altaxo.Graph
 
 	[SerializationSurrogate(0,typeof(LineScatterPlotStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class LineScatterPlotStyle : PlotStyle, System.Runtime.Serialization.IDeserializationCallback
+	public class LineScatterPlotStyle : PlotStyle, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource, IChildChangedEventSink
 	{
 
 		protected LineStyle			m_LineStyle;
 		protected ScatterStyle	m_ScatterStyle;
 		protected bool  m_LineSymbolGap;
+
 
 
 		#region Serialization
@@ -143,9 +144,9 @@ namespace Altaxo.Graph
 			{
 				LineScatterPlotStyle s = (LineScatterPlotStyle)obj;
 
-				s.m_LineStyle = (LineStyle)info.GetValue("LineStyle",typeof(LineStyle));
-				s.m_ScatterStyle = (ScatterStyle)info.GetValue("ScatterStyle",typeof(ScatterStyle));
-				s.m_LineSymbolGap    = info.GetBoolean("LineSymbolGap");
+				s.LineStyle = (LineStyle)info.GetValue("LineStyle",typeof(LineStyle));
+				s.ScatterStyle = (ScatterStyle)info.GetValue("ScatterStyle",typeof(ScatterStyle));
+				s.LineSymbolGap    = info.GetBoolean("LineSymbolGap");
 				return s;
 			}
 		}
@@ -164,27 +165,29 @@ namespace Altaxo.Graph
 		public LineScatterPlotStyle(LineScatterPlotStyle from)
 		{
 			
-			this.m_LineStyle				=	null==from.m_LineStyle?null:(LineStyle)from.m_LineStyle.Clone();
-			this.m_ScatterStyle			= null==from.m_ScatterStyle?null:(ScatterStyle)from.m_ScatterStyle.Clone();
+			this.LineStyle				=	null==from.m_LineStyle?null:(LineStyle)from.m_LineStyle.Clone();
+			this.ScatterStyle			= null==from.m_ScatterStyle?null:(ScatterStyle)from.m_ScatterStyle.Clone();
 			// this.m_PlotAssociation	= null; // do not clone the plotassociation!
-			this.m_LineSymbolGap    = from.m_LineSymbolGap;
+			this.LineSymbolGap    = from.m_LineSymbolGap;
 		}
 
 		public LineScatterPlotStyle()
 		{
-			this.m_LineStyle = new LineStyle();
-			this.m_ScatterStyle = new ScatterStyle();
+			this.LineStyle = new LineStyle();
+			this.ScatterStyle = new ScatterStyle();
 			// this.m_PlotAssociation = null;
-			this.m_LineSymbolGap = true;
+			this.LineSymbolGap = true;
 		}
 
 		public LineScatterPlotStyle(PlotAssociation pa)
 		{
-			this.m_LineStyle = new LineStyle();
-			this.m_ScatterStyle = new ScatterStyle();
+			this.LineStyle = new LineStyle();
+			this.ScatterStyle = new ScatterStyle();
 			// this.m_PlotAssociation = pa;
-			this.m_LineSymbolGap = true;
+			this.LineSymbolGap = true;
 		}
+
+
 
 
 		public override object Clone()
@@ -216,24 +219,7 @@ namespace Altaxo.Graph
 				this.m_ScatterStyle.Color = value;
 			}
 		}
-		/*
-		public override PlotAssociation PlotAssociation
-		{
-			get	{	return m_PlotAssociation;	}
-			set	
-			{	
-				PlotAssociation oldPlotAssociation = m_PlotAssociation;
-				m_PlotAssociation = value;
 
-				// do not change order of setting, since infinite loops may happen
-				if(null!=oldPlotAssociation && !object.ReferenceEquals(oldPlotAssociation,value))
-					oldPlotAssociation.PlotStyle = null; // good by my old plot association
-
-				if(null!=m_PlotAssociation && !object.ReferenceEquals(m_PlotAssociation.PlotStyle,this))
-					m_PlotAssociation.PlotStyle = this;
-			}
-		}
-*/
 		public override LineStyle LineStyle
 		{
 			get { return m_LineStyle; }
@@ -242,7 +228,15 @@ namespace Altaxo.Graph
 				if(null==value)
 					throw new ArgumentNullException("LineStyle","LineStyle may not be set to null in PlotStyle");
 
+				if(null!=m_LineStyle)
+					m_LineStyle.Changed -= new EventHandler(OnLineStyleChanged);
+	
 				m_LineStyle = (LineStyle)value.Clone();
+
+				if(null!=m_LineStyle)
+					m_LineStyle.Changed += new EventHandler(OnLineStyleChanged);
+				
+				OnChanged(); // Fire changed event
 			}
 		}
 
@@ -254,7 +248,15 @@ namespace Altaxo.Graph
 				if(null==value)
 					throw new ArgumentNullException("ScatterStyle","ScatterStyle may not be set to null in PlotStyle");
 
+				if(null!=m_ScatterStyle)
+					m_ScatterStyle.Changed -= new EventHandler(OnScatterStyleChanged);
+
 				m_ScatterStyle = (ScatterStyle)value.Clone();
+
+				if(null!=m_ScatterStyle)
+					m_ScatterStyle.Changed += new EventHandler(OnScatterStyleChanged);
+				
+				OnChanged(); // Fire Changed event
 			}
 		}
 
@@ -275,7 +277,11 @@ namespace Altaxo.Graph
 		public override bool LineSymbolGap 
 		{
 			get { return m_LineSymbolGap; }
-			set { m_LineSymbolGap = value; }
+			set
+			{ 
+				m_LineSymbolGap = value; 
+				OnChanged();
+			}
 		}
 
 
@@ -498,5 +504,37 @@ namespace Altaxo.Graph
 	
 			return new SizeF(2*linelen,symsize);
 		}
+		#region IChangedEventSource Members
+
+		public event System.EventHandler Changed;
+
+		protected virtual void OnChanged()
+		{
+			if(null!=Changed)
+				Changed(this,new EventArgs());
+		}
+
+		protected virtual void OnLineStyleChanged(object sender, EventArgs e)
+		{
+			OnChanged();
+		}
+
+		protected virtual void OnScatterStyleChanged(object sender, EventArgs e)
+		{
+			OnChanged();
+		}
+
+
+		#endregion
+
+		#region IChildChangedEventSink Members
+
+		public void OnChildChanged(object child, EventArgs e)
+		{
+			if(null!=Changed)
+				Changed(this,e);
+		}
+
+		#endregion
 	} // end of class LineScatterPlotStyle
 }

@@ -27,12 +27,30 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Axis is the abstract base class of all axis types including linear axis, logarithmic axis and so on.
 	/// </summary>
-	public abstract class Axis
+	public abstract class Axis : IChangedEventSource
 	{
+		#region IChangedEventSource Members
+
 		/// <summary>
 		/// Fired when the data of the axis has changed, for instance end point, org point, or tick spacing.
 		/// </summary>
-		public event System.EventHandler AxisChanged;
+		public event System.EventHandler Changed;
+
+		/// <summary>
+		/// Used to fire the axis changed event, can be overriden in child classes.
+		/// </summary>
+		protected virtual void OnChanged()
+		{
+			OnChanged(new ChangedEventArgs(this,null));
+		}
+
+		protected virtual void OnChanged(EventArgs e)
+		{
+			if(null!=Changed)
+				Changed(this,e);
+		}
+
+		#endregion
 
 		/// <summary>
 		/// PhysicalToNormal translates physical values into a normal value linear along the axis
@@ -96,15 +114,7 @@ namespace Altaxo.Graph
 		public abstract void ProcessDataBounds();
 
 
-		/// <summary>
-		/// Used to fire the axis changed event, can be overriden in child classes.
-		/// </summary>
-		protected virtual void OnAxisChanged()
-		{
-			if(null!=AxisChanged)
-				AxisChanged(this,new System.EventArgs());
-		}
-
+	
 
 		/// <summary>
 		/// Static collection that holds all available axis types.
@@ -442,7 +452,7 @@ namespace Altaxo.Graph
 				oldMajorSpan != m_MajorSpan ||
 				oldMinorTicks != m_MinorTicks)
 			{
-				OnAxisChanged();
+				OnChanged();
 			}
 		}
 
@@ -569,7 +579,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(Log10Axis.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class Log10Axis : Axis
+	public class Log10Axis : Axis, System.Runtime.Serialization.IDeserializationCallback
 	{
 		/// <summary>Decimal logarithm of axis org.</summary>
 		double m_Log10Org=0; // Log10 of physical axis org

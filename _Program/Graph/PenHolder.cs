@@ -34,7 +34,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[Altaxo.Serialization.SerializationSurrogate(0,typeof(PenHolder.PenHolderSurrogate0))]
 	[Altaxo.Serialization.SerializationVersion(0)]
-	public class PenHolder : ICloneable, IDisposable, System.Runtime.Serialization.IDeserializationCallback
+	public class PenHolder : ICloneable, IDisposable, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
 	{
 		protected PenHolder.Configured  m_ConfiguredProperties; // ORed collection of the configured properties (i.e. non-standard properties) 
 		protected PenType m_PenType; // the type of the pen
@@ -311,6 +311,9 @@ namespace Altaxo.Graph
 
 		public virtual void OnDeserialization(object obj)
 		{
+			// wire the BrushHolder
+			if(null!=this.m_Brush)
+				m_Brush.Changed += new EventHandler(this.OnBrushChangedEventHandler);
 		}
 
 		#endregion
@@ -432,6 +435,8 @@ namespace Altaxo.Graph
 				this.m_ConfiguredProperties = _GetConfiguredPropertiesVariable(value);
 				if(m_CachedMode)
 					_SetPenVariable((Pen)value.Clone());
+
+				OnChanged(); // Fire the Changed event
 			}
 		}
 
@@ -543,6 +548,8 @@ namespace Altaxo.Graph
 				m_Alignment = value;
 				if(m_CachedMode)
 					m_Pen.Alignment	= value;
+
+				OnChanged(); // Fire the Changed event
 			}
 		}
 
@@ -621,6 +628,8 @@ namespace Altaxo.Graph
 				// now set also the properties of the pen itself
 				if(m_CachedMode)
 					m_Pen.Brush = value;
+
+				OnChanged(); // Fire the Changed event
 			}
 		}
 
@@ -639,6 +648,8 @@ namespace Altaxo.Graph
 
 				if(m_CachedMode)
 					m_Pen.Color = value;
+
+				OnChanged(); // Fire the Changed event
 			}
 		}
 		public float[] CompoundArray
@@ -650,6 +661,8 @@ namespace Altaxo.Graph
 				m_CompoundArray = (float[])value.Clone();
 				if(m_CachedMode)
 					m_Pen.CompoundArray = value;
+			
+				OnChanged(); // Fire the Changed event
 			}
 		}
 		public DashCap DashCap
@@ -661,6 +674,8 @@ namespace Altaxo.Graph
 				m_DashCap = value;
 				if(m_CachedMode)
 					m_Pen.DashCap = value;
+			
+				OnChanged(); // Fire the Changed event
 			}
 		}
 		public float DashOffset
@@ -672,6 +687,8 @@ namespace Altaxo.Graph
 				m_DashOffset = value;
 				if(m_CachedMode)
 					m_Pen.DashOffset = value;
+			
+				OnChanged(); // Fire the Changed event
 			}
 		}
 		public float[] DashPattern
@@ -683,6 +700,8 @@ namespace Altaxo.Graph
 				m_DashPattern = value;
 				if(m_CachedMode)
 					m_Pen.DashPattern = value;
+			
+				OnChanged(); // Fire the Changed event
 			}
 		}
 		public DashStyle DashStyle
@@ -694,6 +713,8 @@ namespace Altaxo.Graph
 				m_DashStyle = value;
 				if(m_CachedMode)
 					m_Pen.DashStyle = value;
+			
+				OnChanged(); // Fire the Changed event
 			}
 		}
 		public LineCap EndCap
@@ -705,6 +726,8 @@ namespace Altaxo.Graph
 				m_EndCap = value;
 				if(m_CachedMode)
 					m_Pen.EndCap = value;
+			
+				OnChanged(); // Fire the Changed event
 			}
 		}
 		public LineJoin LineJoin
@@ -716,6 +739,8 @@ namespace Altaxo.Graph
 				m_LineJoin = value;
 				if(m_CachedMode)
 					m_Pen.LineJoin = value;
+			
+				OnChanged(); // Fire the Changed event
 			}
 		}
 		public float MiterLimit
@@ -727,6 +752,8 @@ namespace Altaxo.Graph
 				m_MiterLimit = value;
 				if(m_CachedMode)
 					m_Pen.MiterLimit = value;
+			
+				OnChanged(); // Fire the Changed event
 			}
 		}
 		public LineCap StartCap
@@ -738,6 +765,8 @@ namespace Altaxo.Graph
 				m_StartCap = value;
 				if(m_CachedMode)
 					m_Pen.StartCap = value;
+			
+				OnChanged(); // Fire the Changed event
 			}
 		}
 		public Matrix Transform
@@ -749,6 +778,8 @@ namespace Altaxo.Graph
 				m_Transform = value.Clone();
 				if(m_CachedMode)
 					m_Pen.Transform = value;
+			
+				OnChanged(); // Fire the Changed event
 			}
 		}
 
@@ -761,6 +792,8 @@ namespace Altaxo.Graph
 				m_Width = value;
 				if(m_CachedMode)
 					m_Pen.Width = value;
+			
+				OnChanged(); // Fire the Changed event
 			}
 		}
 
@@ -784,6 +817,23 @@ namespace Altaxo.Graph
 			if(null!=m_CompoundArray) { m_CompoundArray=null; }
 			if(null!=this.m_DashPattern) { m_DashPattern=null; }
 		}
+		#region IChangedEventSource Members
 
+		public event System.EventHandler Changed;
+
+
+
+		protected virtual void OnChanged()
+		{
+			if(null!=Changed)
+				Changed(this,new System.EventArgs());
+		}
+
+		protected virtual void OnBrushChangedEventHandler(object sender, EventArgs e)
+		{
+			OnChanged();
+		}
+
+		#endregion
 	} // end of class PenHolder
 }

@@ -29,7 +29,7 @@ namespace Altaxo.Graph
 	/// Summary description for GraphObjectCollection.
 	/// </summary>
 	[Serializable]
-	public class GraphObjectCollection : System.Collections.CollectionBase
+	public class GraphObjectCollection : System.Collections.CollectionBase, IChangedEventSource, IChildChangedEventSink
 	{
 
 		public GraphObjectCollection()
@@ -83,6 +83,7 @@ namespace Altaxo.Graph
 			 }
 			 set
 			 {
+				 value.Container = this;
 				 List[index] = value;
 			 }
 		 }
@@ -136,6 +137,22 @@ namespace Altaxo.Graph
 		{
 			List.Remove(go);
 		}
+		#region IChangedEventSource Members
+
+		public event System.EventHandler Changed;
+
+		public virtual void OnChildChanged(object child, EventArgs e)
+		{
+			if(null!=Changed)
+				Changed(this, e);
+		}
+
+		protected virtual void OnChanged()
+		{
+			if(null!=Changed)
+				Changed(this, new ChangedEventArgs(this,null));
+		}
+		#endregion
 	} // end class GraphObjectCollection
 
 

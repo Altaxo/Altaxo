@@ -35,7 +35,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[Altaxo.Serialization.SerializationSurrogate(0,typeof(BrushHolder.BrushHolderSurrogate0))]
 	[Altaxo.Serialization.SerializationVersion(0)]
-	public class BrushHolder : System.ICloneable, System.IDisposable
+	public class BrushHolder : System.ICloneable, System.IDisposable, System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
 	{
 
 		protected BrushType m_BrushType; // Type of the brush
@@ -96,6 +96,13 @@ namespace Altaxo.Graph
 				return s;
 			} // end of SetObjectData
 		} // end of BrushHolderSurrogate0
+		/// <summary>
+		/// Finale measures after deserialization of the linear axis.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+		}
 		#endregion
 
 		public BrushHolder(BrushHolder bh)
@@ -205,6 +212,8 @@ namespace Altaxo.Graph
 				}
 				
 				_SetBrushVariable(m_CachedMode ? (Brush)value.Clone() : null);
+
+				OnChanged();
 			} // end of set
 		} // end of prop. Brush
 
@@ -217,6 +226,8 @@ namespace Altaxo.Graph
 
 			if(m_CachedMode)
 				_SetBrushVariable( new SolidBrush(c) );
+
+			OnChanged();
 		}
 
 		public void SetHatchBrush(HatchStyle hs, Color fc)
@@ -232,6 +243,8 @@ namespace Altaxo.Graph
 
 			if(m_CachedMode)
 				_SetBrushVariable(new HatchBrush(hs,fc,bc) );
+
+			OnChanged();
 		}
 
 		protected void _SetBrushVariable(Brush br)
@@ -253,5 +266,16 @@ namespace Altaxo.Graph
 				m_Brush.Dispose();
 			m_Brush = null;
 		}
+		#region IChangedEventSource Members
+
+		public event System.EventHandler Changed;
+
+		protected virtual void OnChanged()
+		{
+			if(null!=Changed)
+				Changed(this, new EventArgs());
+		}
+
+		#endregion
 	} // end of class BrushHolder
 } // end of namespace

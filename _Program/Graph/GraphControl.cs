@@ -79,7 +79,7 @@ namespace Altaxo.Graph
 		private BrushHolder m_PrintableAreaBrush = new BrushHolder(Color.Snow);
 
 
-		protected GraphDocument m_Graph=new GraphDocument();
+		protected GraphDocument m_Graph;
 
 		private float m_HorizRes  = 300;
 		private float m_VertRes = 300;
@@ -167,31 +167,38 @@ namespace Altaxo.Graph
 
 			public object GetRealObject(object parent)
 			{
-				GraphControl dg = new GraphControl();
-				DeserializationFinisher finisher = new DeserializationFinisher(dg);
+				GraphControl gc = new GraphControl(parent as System.Windows.Forms.Form, m_Graph);
 			
-				if(null!=parent)
-					dg.Parent = (System.Windows.Forms.Control)parent;
-			
-				dg.m_Graph = this.m_Graph;
-				dg.m_AutoZoom = this.m_AutoZoom;
-				dg.m_Zoom = this.m_Zoom;
-				
+				gc.m_Zoom = this.m_Zoom;
+				gc.m_AutoZoom = this.m_AutoZoom;
+
+				DeserializationFinisher finisher = new DeserializationFinisher(gc);
 				// now finish the dependent objects
-				dg.m_Graph.OnDeserialization(finisher);
+				m_Graph.OnDeserialization(finisher);
 
 				// restore the event chain
 
-				return dg;
+				return gc;
 			}
 		} // end SerializationSurrogate0
 
 		#endregion
 
-
-
 		public GraphControl()
+			: this(null,null)
 		{
+		}
+
+		public GraphControl(System.Windows.Forms.Form parent, GraphDocument graphdoc)
+		{
+			if(null!=parent)
+				this.Parent = parent;
+			
+			if(null!=graphdoc)
+				this.m_Graph = graphdoc;
+			else
+				this.m_Graph = new GraphDocument();
+
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
@@ -221,7 +228,7 @@ namespace Altaxo.Graph
 				printableBounds.Width	= m_PageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
 				printableBounds.Height = m_PageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
 			
-				m_Graph.Invalidate += new EventHandler(this.OnGraphDocument_Invalidate);
+				m_Graph.Changed += new EventHandler(this.OnGraphDocument_Invalidate);
 				m_Graph.LayerCollectionChanged += new EventHandler(this.OnGraphDocument_LayerCollectionChanged);
 				m_Graph.PageBounds = pageBounds;
 				m_Graph.PrintableBounds = printableBounds;

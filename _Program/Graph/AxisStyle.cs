@@ -32,7 +32,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(XYLayerAxisStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class XYLayerAxisStyle
+	public class XYLayerAxisStyle : System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
 	{
 		/// <summary>Edge of the layer this axis is drawn on.</summary>
 		protected Edge m_Edge = new Edge(EdgeType.Left);
@@ -57,7 +57,13 @@ namespace Altaxo.Graph
 		/// <summary>Axis shift position, either provide as absolute values in point units, or as relative value relative to the layer size.</summary>
 		protected Calc.RelativeOrAbsoluteValue m_AxisPosition; // if relative, then relative to layer size, if absolute then in points
 
+	
 
+		/// <summary>Fired if anything on this style changed</summary>
+		public event System.EventHandler Changed;
+
+
+	
 		#region Serialization
 		/// <summary>Used to serialize the axis style Version 0.</summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
@@ -118,6 +124,9 @@ namespace Altaxo.Graph
 		/// <param name="obj">Not used.</param>
 		public virtual void OnDeserialization(object obj)
 		{
+			m_AxisPen.Changed += new EventHandler(OnPenChangedEventHandler);
+			m_MajorTickPen.Changed += new EventHandler(OnPenChangedEventHandler);
+			m_MinorTickPen.Changed += new EventHandler(OnPenChangedEventHandler);
 		}
 		#endregion
 
@@ -130,6 +139,11 @@ namespace Altaxo.Graph
 		public XYLayerAxisStyle(EdgeType st)
 		{
 			m_Edge = new Edge(st);
+
+			m_AxisPen.Changed += new EventHandler(OnPenChangedEventHandler);
+			m_MajorTickPen.Changed += new EventHandler(OnPenChangedEventHandler);
+			m_MinorTickPen.Changed += new EventHandler(OnPenChangedEventHandler);
+
 		}
 
 		/// <summary>
@@ -164,7 +178,14 @@ namespace Altaxo.Graph
 		public float MajorTickLength
 		{
 			get { return this.m_MajorTickLength; }
-			set { m_MajorTickLength = value; }
+			set
+			{
+				if(value!=m_MajorTickLength)
+				{
+					m_MajorTickLength = value; 
+					OnChanged(); // fire the changed event
+				}
+			}
 		}
 
 		/// <summary>Get/sets the minor tick length.</summary>
@@ -172,7 +193,14 @@ namespace Altaxo.Graph
 		public float MinorTickLength
 		{
 			get { return this.m_MinorTickLength; }
-			set { m_MinorTickLength = value; }
+			set 
+			{
+				if(value!=m_MinorTickLength)
+				{
+					m_MinorTickLength = value;
+					OnChanged(); // fire the changed event
+				}
+			}
 		}
 
 		/// <summary>Get/sets if outer major ticks are drawn.</summary>
@@ -180,7 +208,14 @@ namespace Altaxo.Graph
 		public bool OuterMajorTicks
 		{
 			get { return this.m_bOuterMajorTicks; }
-			set { this.m_bOuterMajorTicks = value; }
+			set 
+			{
+				if(value!=m_bOuterMajorTicks)
+				{
+					this.m_bOuterMajorTicks = value; 
+					OnChanged(); // fire the changed event
+				}
+			}
 		}
 
 		/// <summary>Get/sets if inner major ticks are drawn.</summary>
@@ -188,7 +223,14 @@ namespace Altaxo.Graph
 		public bool InnerMajorTicks
 		{
 			get { return this.m_bInnerMajorTicks; }
-			set { this.m_bInnerMajorTicks = value; }
+			set
+			{
+				if(value!=m_bInnerMajorTicks)
+				{
+					this.m_bInnerMajorTicks = value; 
+					OnChanged(); // fire the changed event
+				}
+			}
 		}
 
 		/// <summary>Get/sets if outer minor ticks are drawn.</summary>
@@ -196,7 +238,14 @@ namespace Altaxo.Graph
 		public bool OuterMinorTicks
 		{
 			get { return this.m_bOuterMinorTicks; }
-			set { this.m_bOuterMinorTicks = value; }
+			set 
+			{ 
+				if(value!=m_bOuterMinorTicks)
+				{
+					this.m_bOuterMinorTicks = value;
+					OnChanged(); // fire the changed event
+				}
+			}
 		}
 
 		/// <summary>Get/sets if inner minor ticks are drawn.</summary>
@@ -204,7 +253,14 @@ namespace Altaxo.Graph
 		public bool InnerMinorTicks
 		{
 			get { return this.m_bInnerMinorTicks; }
-			set { this.m_bInnerMinorTicks = value; }
+			set 
+			{ 
+				if(value!=m_bInnerMinorTicks)
+				{
+					this.m_bInnerMinorTicks = value;
+					OnChanged(); // fire the changed event
+				}
+			}
 		}
 
 		/// <summary>
@@ -221,6 +277,7 @@ namespace Altaxo.Graph
 				this.m_AxisPen.Width = value;
 				this.m_MajorTickPen.Width = value;
 				this.m_MinorTickPen.Width = value;
+				OnChanged(); // fire the changed event
 			}
 		}
 
@@ -238,6 +295,7 @@ namespace Altaxo.Graph
 				this.m_AxisPen.Color = value;
 				this.m_MajorTickPen.Color = value;
 				this.m_MinorTickPen.Color = value;
+				OnChanged(); // fire the changed event
 			}
 		}
 
@@ -249,7 +307,14 @@ namespace Altaxo.Graph
 		public Calc.RelativeOrAbsoluteValue Position
 		{
 			get { return this.m_AxisPosition; }
-			set	{	m_AxisPosition = value;		}
+			set	
+			{
+				if(value!=m_AxisPosition)
+				{
+					m_AxisPosition = value;
+					OnChanged(); // fire the changed event
+				}
+				}
 		}
 
 
@@ -322,5 +387,17 @@ namespace Altaxo.Graph
 				}
 			}
 		}
+
+		protected virtual void OnPenChangedEventHandler(object sender, EventArgs e)
+		{
+			OnChanged();
+		}
+
+		protected virtual void OnChanged()
+		{
+			if(null!=Changed)
+				Changed(this,new EventArgs());
+		}
+
 	}
 }

@@ -119,11 +119,8 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(LineStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class LineStyle : ICloneable
+	public class LineStyle : ICloneable, IChangedEventSource, IChildChangedEventSink, System.Runtime.Serialization.IDeserializationCallback
 	{
-
-	
-
 		public delegate void PaintOneRangeTemplate(
 			Graphics g, 
 			PointF[] linepts, 
@@ -194,6 +191,7 @@ namespace Altaxo.Graph
 		/// <param name="obj">Not used.</param>
 		public virtual void OnDeserialization(object obj)
 		{
+			CreateEventChain();
 		}
 		#endregion
 
@@ -209,6 +207,8 @@ namespace Altaxo.Graph
 			m_FillDirection = LineStyles.FillDirection.Bottom;
 			m_Connection    = LineStyles.ConnectionStyle.Straight;
 			m_PaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
+		
+			CreateEventChain();
 		}
 
 		public LineStyle(LineStyle from)
@@ -220,6 +220,17 @@ namespace Altaxo.Graph
 			this.m_FillBrush						= null==from.m_FillBrush?null:(BrushHolder)from.m_FillBrush.Clone();
 			this.m_FillDirection				= from.m_FillDirection;
 			this.Connection             = from.m_Connection; // beachte links nur Connection, damit das Template mit gesetzt wird
+		
+			CreateEventChain();
+		}
+
+		protected virtual void CreateEventChain()
+		{
+			if(null!=m_PenHolder)
+				m_PenHolder.Changed += new EventHandler(this.OnChildChanged);
+			
+			if(null!=m_FillBrush)
+				m_FillBrush.Changed += new EventHandler(this.OnChildChanged);
 		}
 
 		public LineStyles.ConnectionStyle Connection
@@ -262,6 +273,7 @@ namespace Altaxo.Graph
 						m_PaintOneRange = new PaintOneRangeTemplate(StepVertCenterConnection_PaintOneRange);
 						break;
 				} // end switch
+				OnChanged(); // Fire Changed event
 			}
 		}
 
@@ -274,6 +286,8 @@ namespace Altaxo.Graph
 				this.PenHolder.DashStyle = (DashStyle)(1+(int)template.PenHolder.DashStyle);
 			else
 				this.PenHolder.DashStyle = DashStyle.Solid;
+
+			OnChanged(); // Fire Changed event
 		}
 
 		public PenHolder PenHolder
@@ -290,13 +304,19 @@ namespace Altaxo.Graph
 				// ensure that if value is true, there is a fill brush which is not null
 				if(true==value && null==this.m_FillBrush)
 					this.m_FillBrush = new BrushHolder(Color.White);
+
+				OnChanged(); // Fire Changed event
 			}
 		}
  
 		public LineStyles.FillDirection FillDirection
 		{
 			get { return this.m_FillDirection; }
-			set { this.m_FillDirection = value; }
+			set 
+			{
+				this.m_FillDirection = value; 
+				OnChanged(); // Fire Changed event
+			}
 		}
 
 		public BrushHolder FillBrush
@@ -306,7 +326,11 @@ namespace Altaxo.Graph
 			{
 				// copy the brush only if not null
 				if(null!=value)
+				{
 					this.m_FillBrush = (BrushHolder)value.Clone();
+					this.m_FillBrush.Changed += new EventHandler(this.OnChildChanged);
+					OnChanged(); // Fire Changed event
+				}
 				else
 					throw new ArgumentNullException("FillBrush","FillBrush must not be set to null, instead set FillArea to false");
 			}
@@ -1115,6 +1139,21 @@ namespace Altaxo.Graph
 				gp.Reset();
 			}
 		} // end function PaintOneRange Segment3LineStyle
+		#region IChangedEventSource Members
 
+		public event System.EventHandler Changed;
+		protected virtual void OnChanged()
+		{
+			if(null!=Changed)
+				Changed(this,new EventArgs());
+		}
+		
+		public virtual void OnChildChanged(object child, EventArgs e)
+		{
+			if(null!=Changed)
+				Changed(this,e);
+		}
+
+		#endregion
 	} // end class LineStyle
 }

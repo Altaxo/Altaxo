@@ -72,7 +72,7 @@ namespace Altaxo.Graph
 
 	[SerializationSurrogate(0,typeof(ScatterStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class ScatterStyle : ICloneable
+	public class ScatterStyle : ICloneable, IChangedEventSource, System.Runtime.Serialization.IDeserializationCallback, IChildChangedEventSink
 	{
 		protected ScatterStyles.Shape			m_Shape;
 		protected ScatterStyles.Style			m_Style;
@@ -136,6 +136,7 @@ namespace Altaxo.Graph
 		{
 			// restore the cached values
 			SetCachedValues();
+			CreateEventChain();
 		}
 		#endregion
 
@@ -152,6 +153,8 @@ namespace Altaxo.Graph
 			this.m_FillBrush	= null==from.m_FillBrush?null:(BrushHolder)from.m_FillBrush.Clone();
 			this.m_SymbolSize = from.m_SymbolSize;
 			this.m_RelativePenWidth = from.m_RelativePenWidth;
+
+			CreateEventChain();
 		}
 
 		public ScatterStyle(ScatterStyles.Shape shape, ScatterStyles.Style style, float size, float penWidth, Color penColor)
@@ -165,6 +168,7 @@ namespace Altaxo.Graph
 
 			// Cached values
 			SetCachedValues();
+			CreateEventChain();
 		}
 
 
@@ -179,8 +183,14 @@ namespace Altaxo.Graph
 			this.m_bFillPath = true; // since default is solid
 			this.m_FillBrush = new BrushHolder(Color.Black);
 			this.m_Path = GetPath(m_Shape,m_Style,m_SymbolSize);
+			CreateEventChain();
 		}
 
+		protected void CreateEventChain()
+		{
+			if(null!=m_Pen)
+				m_Pen.Changed += new EventHandler(this.OnChildChanged);
+		}
 
 		public void SetToNextStyle(ScatterStyle template)
 		{
@@ -219,6 +229,8 @@ namespace Altaxo.Graph
 						m_Pen = new PenHolder(Color.Black);
 
 					SetCachedValues();
+
+					OnChanged(); // Fire Changed event
 				}
 			}
 		}
@@ -236,6 +248,8 @@ namespace Altaxo.Graph
 				{
 					this.m_Style = value;
 					SetCachedValues();
+
+					OnChanged(); // Fire Changed event
 				}
 			}
 		}
@@ -245,7 +259,11 @@ namespace Altaxo.Graph
 			get { return m_DropLine; }
 			set 
 			{
-				m_DropLine = value;
+				if(m_DropLine!=value)
+				{
+					m_DropLine = value;
+					OnChanged(); // Fire Changed event
+				}
 			}
 		}
 
@@ -256,7 +274,11 @@ namespace Altaxo.Graph
 			{
 				// ensure pen can be only set to null if NoSymbol
 				if(value!=null || ScatterStyles.Shape.NoSymbol==this.m_Shape)
+				{
 					m_Pen = null==value?null:(PenHolder)value.Clone();
+					m_Pen.Changed += new EventHandler(this.OnChildChanged);
+					OnChanged(); // Fire Changed event
+				}
 			}
 		}
 
@@ -268,6 +290,7 @@ namespace Altaxo.Graph
 			{
 				this.m_Pen.Color = value;
 				this.m_FillBrush.SetSolidBrush( value );
+				OnChanged(); // Fire Changed event
 			}
 		}
 
@@ -281,6 +304,7 @@ namespace Altaxo.Graph
 					m_SymbolSize = value;
 					m_Path = GetPath(this.m_Shape,this.m_Style,this.m_SymbolSize);
 					m_Pen.Width = m_SymbolSize*m_RelativePenWidth;
+					OnChanged(); // Fire Changed event
 				}
 			}
 		}
@@ -404,7 +428,26 @@ namespace Altaxo.Graph
 			}
 			return gp;
 		}
+		#region IChangedEventSource Members
 
-	
+		public event System.EventHandler Changed;
+
+		protected virtual void OnChanged()
+		{
+			if(null!=Changed)
+				Changed(this,new EventArgs());
+		}
+
+		#endregion
+
+		#region IChildChangedEventSink Members
+
+		public void OnChildChanged(object child, EventArgs e)
+		{
+			if(null!=Changed)
+				Changed(this,e);
+		}
+
+		#endregion
 	}
 }

@@ -32,7 +32,7 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(GraphObject.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public abstract class GraphObject
+	public abstract class GraphObject : System.Runtime.Serialization.IDeserializationCallback, IChangedEventSource
 	{
 		/// <summary>
 		/// The position of the graphical object, normally the upper left corner. Strictly spoken,
@@ -342,7 +342,20 @@ namespace Altaxo.Graph
 		}
 
 		public abstract void Paint(Graphics g, object obj);
+		#region IChangedEventSource Members
+
+		public event System.EventHandler Changed;
 
 
+		protected virtual void OnChanged()
+		{
+			if(null==this.m_Container )
+				m_Container.OnChildChanged(this,new ChangedEventArgs(this,null));
+
+			if(null!=Changed)
+				Changed(this,new ChangedEventArgs(this,null));
+		}
+
+		#endregion
 	}
 }

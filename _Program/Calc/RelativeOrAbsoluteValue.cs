@@ -89,5 +89,30 @@ namespace Altaxo.Calc
 		{
 			return m_bIsRelative ? r*m_Value : m_Value;
 		}
+
+		public static bool operator==(RelativeOrAbsoluteValue a, RelativeOrAbsoluteValue b)
+		{
+			return a.m_bIsRelative==b.m_bIsRelative && a.m_Value==b.m_Value;
+		}
+
+		public static bool operator!=(RelativeOrAbsoluteValue a, RelativeOrAbsoluteValue b)
+		{
+			return !(a==b);
+		}
+
+		public override bool Equals(object o)
+		{
+			if(!(o is RelativeOrAbsoluteValue))
+				return false;
+			else
+				return ((RelativeOrAbsoluteValue)o)==this;
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode ();
+		}
+
+
 	}
 }
