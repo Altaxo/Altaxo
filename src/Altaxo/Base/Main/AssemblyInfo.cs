@@ -29,13 +29,13 @@ using Altaxo.Serialization;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly: AssemblyTitle("")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("AltaxoBase")]
+[assembly: AssemblyDescription("Base Library for Altaxo")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany("http://altaxo.sourceforge.net")]
+[assembly: AssemblyProduct("Altaxo")]
+[assembly: AssemblyCopyright("(C) Dr. Dirk Lellinger 2002-2003")]
+[assembly: AssemblyTrademark("(C) Dr. Dirk Lellinger 2002-2003")]
 [assembly: AssemblyCulture("")]		
 
 //
@@ -49,7 +49,7 @@ using Altaxo.Serialization;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("1.1.*")]
+[assembly: AssemblyVersion("0.5.*")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 

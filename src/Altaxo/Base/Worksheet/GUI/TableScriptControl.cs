@@ -37,7 +37,8 @@ namespace Altaxo.Worksheet.GUI
 
 			// TODO: Add any initialization after the InitializeComponent call
 
-			this.ScriptName = new System.Guid().ToString() + ".cs";
+			this.ScriptName = System.Guid.NewGuid().ToString() + ".cs";
+			this.edFormula.Document.TextEditorProperties.TabIndent=2;
 		}
 
 		/// <summary> 

@@ -185,7 +185,7 @@ namespace Altaxo.Data
 	
 		public static string GenerateScriptName()
 		{
-			return new System.Guid().ToString() + ".cs";
+			return System.Guid.NewGuid().ToString();
 		}
 
 		public string ScriptName
@@ -195,7 +195,7 @@ namespace Altaxo.Data
 				if(null==m_ScriptName)
 					m_ScriptName = GenerateScriptName();
 
-				return m_ScriptName;
+				return m_ScriptName + ".cs";
 			}
 		}
 
@@ -246,15 +246,16 @@ namespace Altaxo.Data
 			get
 			{
 				return
+							"using Altaxo;\r\n" + 
 							"using Altaxo.Data;\r\n" + 
-							"namespace Altaxo\r\n" + 
+							"namespace Altaxo.TableScripts\r\n" + 
 							"{\r\n" + 
 							"\tpublic class SetTableValues : Altaxo.Calc.TableScriptExeBase\r\n" +
-							"{\r\n"+
-							"\tpublic override void Execute(Altaxo.Data.DataTable table)\r\n" +
-							"\t{\r\n" +
-							"\t\tAltaxo.Data.DataColumnCollection col = table.DataColumns;\r\n" +
-							"\t\tAltaxo.Data.DataTableCollection tables = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(table);\r\n"; 
+							"\t{\r\n"+
+							"\t\tpublic override void Execute(Altaxo.Data.DataTable table)\r\n" +
+							"\t\t{\r\n" +
+							"\t\t\tAltaxo.Data.DataColumnCollection col = table.DataColumns;\r\n" +
+							"\t\t\tAltaxo.Data.DataTableCollection tables = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(table);\r\n"; 
 			}
 		}
 
@@ -263,7 +264,7 @@ namespace Altaxo.Data
 			get
 			{
 				return
-					"\t\t// ----- add your script below this line -----\r\n\t\t";
+					"\t\t\t// ----- add your script below this line -----\r\n\t\t\t";
 			}
 		}
 
@@ -276,7 +277,7 @@ namespace Altaxo.Data
 			{
 						return 
 						"\r\n\r\n\r\n\r\n\r\n" +
-						"\t\t// ----- add your script above this line -----\r\n" +
+						"\t\t\t// ----- add your script above this line -----\r\n" +
 						"\t\t} // Execute method\r\n" +
 						"\t} // class\r\n" + 
 						"} //namespace\r\n";
@@ -324,11 +325,13 @@ namespace Altaxo.Data
 
 			parameters.GenerateInMemory = true;
 			parameters.IncludeDebugInformation = true;
+			// parameters.OutputAssembly = this.ScriptName;
 
 			// Add available assemblies including the application itself 
 			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) 
 			{
-				parameters.ReferencedAssemblies.Add(asm.Location);
+				if(!(asm is System.Reflection.Emit.AssemblyBuilder) && asm.Location!=null && asm.Location!=String.Empty)
+					parameters.ReferencedAssemblies.Add(asm.Location);
 			}
 
 			CompilerResults results = compiler.CompileAssemblyFromSource(parameters, this.ScriptText);
@@ -354,7 +357,13 @@ namespace Altaxo.Data
 
 				try
 				{
-					this.m_ScriptObject = (Altaxo.Calc.TableScriptExeBase)results.CompiledAssembly.CreateInstance("Altaxo.SetTableValues");
+					this.m_ScriptObject = (Altaxo.Calc.TableScriptExeBase)results.CompiledAssembly.CreateInstance("Altaxo.TableScripts.SetTableValues");
+					if(null==m_ScriptObject)
+					{
+						bSucceeded = false;
+						m_Errors = new string[1];
+						m_Errors[0] = "Unable to create Scripting object, have you missed it?\n"; 
+					}
 				}
 				catch (Exception ex) 
 				{

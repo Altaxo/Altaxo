@@ -153,6 +153,10 @@
                     BuildAction = "None"
                 />
                 <File
+                    RelPath = "ForNextVersionOfSharpDev.txt"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "SplashScreen.png"
                     BuildAction = "EmbeddedResource"
                 />

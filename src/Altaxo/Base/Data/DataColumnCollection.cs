@@ -536,7 +536,7 @@ namespace Altaxo.Data
 			for(int i=0;i<from.ColumnCount;i++)
 			{
 				DataColumn newCol = (DataColumn)from[i].Clone();
-				DataColumnInfo newInfo = (DataColumnInfo)GetColumnInfo(from[i]).Clone();
+				DataColumnInfo newInfo = (DataColumnInfo)from.GetColumnInfo(from[i]).Clone();
 				this.Add( newCol, newInfo);
 			}
 			// Copy all Column scripts

@@ -805,6 +805,7 @@ namespace Altaxo.Worksheet
 	
 			if(currRow!=0)
 			{
+				table = new Altaxo.Data.DataTable("Statistics of " + srctable.Name);
 				table.DataColumns.Add(colCol,"Col",Altaxo.Data.ColumnKind.X);
 				table.DataColumns.Add(colMean,"Mean");
 				table.DataColumns.Add(colSd,"Sd");

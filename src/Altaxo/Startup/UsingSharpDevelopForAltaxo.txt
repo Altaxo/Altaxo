@@ -189,3 +189,19 @@ Und zu allem Überfluß nun scheinbar ohne Debugginginformationen :(
 Musste also AssemblyInforamation.cs so abändern, dass zuerst nachgeguckt
 wird, ob die Assemblies schon geladen sind, und wenn sie geladen sind,
 werden gleich die geladenen Assemblies verwendet.
+
+25.11.2003
+
+Habe endlich die ExceptionDialogBox so abgeändert, dass nun keine Gefahr mehr
+besteht, dass Fehler in Altaxo an das SharpDevelop-Team berichtet werden. Ihr habt
+sicherlich auch so genug zu tun.
+
+
+Problem: Habe das Problem, das in meiner modalen DialogBox, in der ich 
+ein SharpDevelopTextAreaControl plaziert habe, nun das Contextmenu
+meistens ins Leere führt und zum Teil sogar echt böse ist. Z.B. führt
+der Contextmenüpunkt Close nun nicht etwa zum Schließen der DialogBox,
+sondern zum Schließen des gerade aktiven Fensters in der Anwendung.
+
+Augenscheinlichste Lösung: ich ersetze in DefaultTextEditor.addin
+die ContextMenüPunkte durch eigene Versionen.

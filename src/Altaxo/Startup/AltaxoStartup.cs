@@ -71,7 +71,7 @@ namespace ICSharpCode.SharpDevelop
 					Application.Exit();
 					break;
 				case DialogResult.Yes:
-					Process.Start("http://www.icsharpcode.net/OpenSource/SD/Forum/post.asp?method=Topic&FORUM_ID=5");
+					Process.Start("http://sourceforge.net/tracker/?func=add&group_id=73395&atid=537651");
 					break;
 			}
 		}

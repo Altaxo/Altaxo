@@ -999,7 +999,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Serialization\Xml\XmlDeserializationCodeForAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Serialization\Xml\XmlDocumentSerializationInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Xml\XmlSerializationCodeForAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

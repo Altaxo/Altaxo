@@ -52,6 +52,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 
 		#endregion
 
+		public Workbench1()
+			: base()
+		{
+			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
+			Icon = resourceService.GetIcon("Icons.MainApplicationIcon");
+		}
+
 		public new void InitializeWorkspace()
 		{
 			Menu = null;

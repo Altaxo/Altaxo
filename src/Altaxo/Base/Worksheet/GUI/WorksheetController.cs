@@ -1566,7 +1566,9 @@ namespace Altaxo.Worksheet.GUI
 		public void EhTableNameChanged(object sender, Main.NameChangedEventArgs e)
 		{
 			if(View!=null)
-				View.TableViewForm.Text = Doc.Name;
+				View.TableViewTitle = Doc.Name;
+
+			this.ContentName = Doc.Name;
 		}
 		#endregion
 
@@ -3151,7 +3153,14 @@ namespace Altaxo.Worksheet.GUI
 			}
 			set 
 			{
+				OnContentNameChanged(EventArgs.Empty);
 			}
+		}
+
+		protected virtual void OnContentNameChanged(System.EventArgs e)
+		{
+			if(null!=ContentNameChanged)
+				ContentNameChanged(this,e);
 		}
 		
 		/// <summary>
@@ -3168,7 +3177,7 @@ namespace Altaxo.Worksheet.GUI
 		/// </summary>
 		public bool IsUntitled 
 		{
-			get { return false; }
+			get { return this.Doc.Name==null || this.Doc.Name==String.Empty; }
 		}
 		
 		/// <summary>

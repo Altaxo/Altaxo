@@ -40,7 +40,11 @@ namespace ICSharpCode.SharpDevelop
 				str += "Boot Mode            : " + SystemInformation.BootMode + Environment.NewLine;
 				str += "Working Set Memory   : " + (Environment.WorkingSet / 1024) + "kb" + Environment.NewLine + Environment.NewLine;
 				Version v = Assembly.GetEntryAssembly().GetName().Version;
+#if NotModifiedForAltaxo
 				str += "SharpDevelop Version : " + v.Major + "." + v.Minor + "." + v.Revision + "." + v.Build + Environment.NewLine;
+#else
+				str += "Altaxo Version : " + v.Major + "." + v.Minor + "." + v.Revision + "." + v.Build + Environment.NewLine;
+#endif			
 			}
 			
 			str += "Exception thrown: " + Environment.NewLine;
@@ -61,7 +65,11 @@ namespace ICSharpCode.SharpDevelop
 		{
 			CopyInfoToClipboard();
 			// open IE via process.start to our bug reporting forum
+#if NotModifiedForAltaxo
 			Process.Start("http://www.icsharpcode.net/OpenSource/SD/Forum/forum.asp?FORUM_ID=5");
+#else
+			Process.Start("http://sourceforge.net/tracker/?func=add&group_id=73395&atid=537651");
+#endif
 		}
 		
 		void continueButtonClick(object sender, System.EventArgs e)
@@ -97,7 +105,11 @@ namespace ICSharpCode.SharpDevelop
 			this.reportButton.Name = "reportButton";
 			this.reportButton.Size = new System.Drawing.Size(216, 23);
 			this.reportButton.TabIndex = 4;
+#if NotModifiedForAltaxo
 			this.reportButton.Text = "Report Error to SharpDevelop Team";
+#else
+			this.reportButton.Text = "Report Error to Altaxo website";
+#endif
 			this.reportButton.Click += new System.EventHandler(this.buttonClick);
 			// 
 			// continueButton
@@ -115,9 +127,14 @@ namespace ICSharpCode.SharpDevelop
 			this.label.Name = "label";
 			this.label.Size = new System.Drawing.Size(448, 48);
 			this.label.TabIndex = 6;
+#if NotModifiedForAltaxo
 			this.label.Text = "An unhandled exception has occurred in SharpDevelop. This is unexpected and we\'d " +
 "ask you to help us improve SharpDevelop by reporting this error to the SharpDeve" +
 "lop team. ";
+#else
+			this.label.Text = "An unhandled exception has occurred in Altaxo. This is unexpected and we\'d " +
+				"ask you to help us improve Altaxo by reporting this error to the Altaxo web site.";
+#endif
 			// 
 			// label2
 			// 
@@ -125,7 +142,11 @@ namespace ICSharpCode.SharpDevelop
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(448, 80);
 			this.label2.TabIndex = 8;
+#if NotModifiedForAltaxo
 			this.label2.Text = @"How to report errors efficiently: We have set up a Web-based forum to report and track errors that are reported by users of SharpDevelop. To minimize necessary questions by the team members, in addition to providing the error message that is copied to the clipboard for easier pasting in the error report, we ask that you provide us with an as detailed as possible step-by-step procedure to reproduce this bug. ";
+#else
+			this.label2.Text = @"How to report errors efficiently: We have set up a Web-based forum to report and track errors that are reported by users of Altaxo. To minimize necessary questions by the team members, in addition to providing the error message that is copied to the clipboard for easier pasting in the error report, we ask that you provide us with an as detailed as possible step-by-step procedure to reproduce this bug. ";
+#endif
 			// 
 			// label3
 			// 
@@ -133,7 +154,11 @@ namespace ICSharpCode.SharpDevelop
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(448, 23);
 			this.label3.TabIndex = 9;
+#if NotModifiedForAltaxo
 			this.label3.Text = "Thank you for helping make SharpDevelop a better program for everyone!";
+#else
+			this.label3.Text = "Thank you for helping make Altaxo a better program for everyone!";
+#endif
 			// 
 			// includeSysInfoCheckBox
 			// 

@@ -434,10 +434,14 @@ namespace Altaxo.Graph
 			:
 			base(from)
 		{
+			m_Text = from.m_Text;
 			m_Font = null==from.Font ? null : (Font)from.Font.Clone();
 			m_BrushHolder = null==m_BrushHolder ? new BrushHolder(Color.Black):(BrushHolder)from.m_BrushHolder.Clone();
-			m_Text = from.m_Text;
 			m_BackgroundStyle = from.BackgroundStyle;
+			m_LineSpacingFactor = from.m_LineSpacingFactor;
+			m_ShadowLength = from.m_ShadowLength;
+			m_XAnchorType = from.m_XAnchorType;
+			m_YAnchorType = from.m_YAnchorType;
 	
 			// don't clone the cached items
 			m_TextLines=null;
@@ -493,6 +497,10 @@ namespace Altaxo.Graph
 			this.m_BackgroundStyle = from.m_BackgroundStyle;
 			this.m_LineSpacingFactor = from.m_LineSpacingFactor;
 			this.m_ShadowLength = from.m_ShadowLength;
+			m_XAnchorType = from.m_XAnchorType;
+			m_YAnchorType = from.m_YAnchorType;
+
+			// don't clone the cached items
 			this.m_TextLines=null;
 			this.m_bStructureInSync=false;
 			this.m_bMeasureInSync=false;

@@ -234,10 +234,11 @@ namespace Altaxo.Serialization.Galactic
 			if(System.Windows.Forms.DialogResult.OK==dlg.ShowDialog(owner))
 			{
 				// if user has clicked ok, import all selected files into Altaxo
-				Array.Sort(dlg.FileNames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
+				string [] filenames = dlg.FileNames;
+				Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
 			
 				
-				string errors = ImportSpcFiles(dlg.FileNames,table);
+				string errors = ImportSpcFiles(filenames,table);
 
 				if(errors!=null)
 				{

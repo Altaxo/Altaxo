@@ -773,7 +773,7 @@ namespace Altaxo.Serialization
 				if(null==sLine) break;
 
 				string[] substr = sLine.Split(splitchar);
-				int cnt = substr.Length;
+				int cnt = Math.Min(substr.Length,newcols.ColumnCount);
 				for(int k=0;k<cnt;k++)
 				{
 					if(substr[k].Length==0)

@@ -51,9 +51,13 @@ namespace Altaxo.Serialization.Xml
 		/// </summary>
 		/// <param name="type">The type for which the surrogate is added.</param>
 		/// <param name="surrogate">The surrogate used to serialize/deserialize the type.</param>
-		public void AddSurrogate(System.Type type, IXmlSerializationSurrogate surrogate)
+		public void AddSurrogate(System.Type type, int version, IXmlSerializationSurrogate surrogate)
 		{
-			m_Surrogates[type] = surrogate;
+			// if this attribute cares about a currently existing type,
+			// consider the highest value of version among all attributes
+			// which care for the same type as the current version of that type
+			AddTypeAndVersionIfHigher(type,version,surrogate);
+	
 			m_Surrogates[GetFullyQualifiedTypeName(type)] = surrogate;
 		}
 
@@ -78,21 +82,19 @@ namespace Altaxo.Serialization.Xml
 		public void AddSurrogate(XmlSerializationSurrogateForAttribute attr, IXmlSerializationSurrogate surrogate)
 		{
 			if(null!=attr.SerializationType)
-				AddSurrogate(attr.SerializationType, surrogate);
+				AddSurrogate(attr.SerializationType, attr.Version, surrogate);
 			else
 				AddSurrogate(attr.AssemblyName,attr.TypeName,attr.Version,surrogate);
 		}
 
-		protected void AddVersionIfHigher(System.Type type, int version)
+		protected void AddTypeAndVersionIfHigher(System.Type type, int version, IXmlSerializationSurrogate surrogate)
 		{
-			if(m_Versions.ContainsKey(type))
+			int storedversion = m_Versions.ContainsKey(type) ? (int)m_Versions[type] : int.MinValue;
+
+			if(version>storedversion)
 			{
-				if(((int)m_Versions[type])<version)
-					m_Versions[type] = version;
-			}
-			else // if not found yet simply add it to the list
-			{
-				m_Versions.Add(type,version);
+				m_Versions[type] = version;
+				m_Surrogates[type] = surrogate;
 			}
 		}
 		/// <summary>
@@ -134,7 +136,7 @@ namespace Altaxo.Serialization.Xml
 				foreach(Type definedtype in definedtypes)
 				{
 						Attribute[] surrogateattributes = Attribute.GetCustomAttributes(definedtype,typeof(XmlSerializationSurrogateForAttribute));
-					
+						
 						foreach(XmlSerializationSurrogateForAttribute att in surrogateattributes)
 						{
 							object obj = Activator.CreateInstance(definedtype);
@@ -144,11 +146,7 @@ namespace Altaxo.Serialization.Xml
 							{
 								this.AddSurrogate(att,(IXmlSerializationSurrogate)obj);
 								
-								// if this attribute cares about a currently existing type,
-								// consider the highest value of version among all attributes
-								// which care for the same type as the current version of that type
-								if(null!=att.SerializationType)
-									AddVersionIfHigher(att.SerializationType,att.Version);
+						
 							}
 						}
 				} // end foreach type

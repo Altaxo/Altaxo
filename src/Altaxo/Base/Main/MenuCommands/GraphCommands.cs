@@ -226,6 +226,7 @@ namespace Altaxo.Graph.Commands
 		public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
 		{
 			GraphDocument newDoc = new GraphDocument(ctrl.Doc);
+			Current.Project.GraphDocumentCollection.Add(newDoc);
 			Current.ProjectService.CreateNewGraph(newDoc);
 		}
 	}
