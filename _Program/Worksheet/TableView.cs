@@ -20,7 +20,7 @@ namespace Altaxo.Worksheet
 		private System.ComponentModel.Container components = null;
 		private System.Windows.Forms.VScrollBar m_VertScrollBar;
 		private System.Windows.Forms.HScrollBar m_HorzScrollBar;
-		private Altaxo.Worksheet.DataGrid.MyGridPanel m_GridPanel;
+		private Altaxo.Worksheet.TablePanel m_GridPanel;
 
 		/// <summary>
 		/// The controller that controls this view
@@ -131,6 +131,8 @@ namespace Altaxo.Worksheet
 		}
 
 		#region Windows Form Designer generated code
+	
+		
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -139,7 +141,7 @@ namespace Altaxo.Worksheet
 		{
 			this.m_VertScrollBar = new System.Windows.Forms.VScrollBar();
 			this.m_HorzScrollBar = new System.Windows.Forms.HScrollBar();
-			this.m_GridPanel = new Altaxo.Worksheet.DataGrid.MyGridPanel();
+			this.m_GridPanel = new Altaxo.Worksheet.TablePanel();
 			this.SuspendLayout();
 			// 
 			// m_VertScrollBar

@@ -387,7 +387,7 @@ namespace Altaxo.Worksheet
 					groupcount1=groupcount0;
 					groupcount0=hlp;
 
-					hlp = group0;
+					hlp = group1;
 					group1=group0;
 					group0=hlp;
 				}
@@ -395,7 +395,7 @@ namespace Altaxo.Worksheet
 				// group0 is now the group of y-values
 				// group1 is now the group of x-values
 			
-				// fill in the x-values
+				// fill in the y-values
 				matrixY = new Altaxo.Calc.MatrixMath.HOMatrix(numrows,groupcount0);
 				int ccol=0;
 				for(int i=0;i<numcols;i++)
@@ -479,14 +479,15 @@ namespace Altaxo.Worksheet
 
 			// Before we can apply PLS, we have to center the x and y matrices
 			Altaxo.Calc.MatrixMath.HorizontalVector meanX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
-			Altaxo.Calc.MatrixMath.HorizontalVector scaleX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
+		//	Altaxo.Calc.MatrixMath.HorizontalVector scaleX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
 			Altaxo.Calc.MatrixMath.HorizontalVector meanY = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixY.Cols);
 
 
-			Altaxo.Calc.MatrixMath.ColumnsToZeroMeanAndUnitVariance(matrixX, meanX, scaleX);
+			Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixX, meanX);
 			Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixY, meanY);
 
-			Altaxo.Calc.MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,5,xLoads,yLoads,W,V);
+			int numFactors = matrixX.Cols;
+			Altaxo.Calc.MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,ref numFactors,xLoads,yLoads,W,V);
 	
 
 			// now we have to create a new table where to place the calculated factors and loads
@@ -539,27 +540,45 @@ namespace Altaxo.Worksheet
 			table.Add(col);
 		}
 
+		{
+			// now a cross validation - this can take a long time for bigger matrices
+			Altaxo.Calc.IMatrix crossPRESSMatrix;
+			Altaxo.Calc.MatrixMath.PartialLeastSquares_CrossValidation_HO(matrixX,matrixY,numFactors, out crossPRESSMatrix);
+			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("CrossPRESS");
+			col.Group=4;
+			for(int i=0;i<crossPRESSMatrix.Rows;i++)
+				col[i] = crossPRESSMatrix[i,0];
+			table.Add(col);
+		}
 
 			// calculate the self predicted y values - for one factor and for two
 			Altaxo.Calc.IMatrix yPred = new Altaxo.Calc.MatrixMath.HOMatrix(matrixY.Rows,matrixY.Cols);
-			for(int numFactors=1;numFactors<=5;numFactors++)
+			Altaxo.Data.DoubleColumn presscol = new Altaxo.Data.DoubleColumn("PRESS");
+			presscol.Group = 4;
+			table.Add(presscol);
+			presscol[0] = Altaxo.Calc.MatrixMath.SumOfSquares(matrixY); // gives the press for 0 factors, i.e. the variance of the y-matrix
+			for(int nFactor=1;nFactor<=numFactors;nFactor++)
 			{
-				Altaxo.Calc.MatrixMath.PartialLeastSquares_Predict_HO(matrixX,xLoads,yLoads,W,V,numFactors, ref yPred);
+				Altaxo.Calc.MatrixMath.PartialLeastSquares_Predict_HO(matrixX,xLoads,yLoads,W,V,nFactor, ref yPred);
+
+				// Calculate the PRESS value
+				presscol[nFactor] = Altaxo.Calc.MatrixMath.SumOfSquaredDifferences(matrixY,yPred);
+
 
 				// now store the predicted y - careful - they are horizontal in the matrix,
 				// but we store them vertically now
 				for(int i=0;i<yPred.Cols;i++)
 				{
-					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("YPred"+numFactors.ToString()+ "_" + i.ToString());
-					col.Group=3+numFactors;
+					Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("YPred"+nFactor.ToString()+ "_" + i.ToString());
+					col.Group=5+nFactor;
 					for(int j=0;j<yPred.Rows;j++)
 						col[j] = yPred[j,i] + meanY[0,i];
 				
 					table.Add(col);
 				}
+			} // for nFactor...
 
-			
-			} // for numFactors...
+
 
 
 			table.ResumeDataChangedNotifications();
@@ -1000,7 +1019,6 @@ namespace Altaxo.Worksheet
 				// now copy the data object to the clipboard
 				System.Windows.Forms.Clipboard.SetDataObject(dao,true);
 			}
-
 		}
 
 		/// <summary>

@@ -2183,25 +2183,7 @@ namespace Altaxo.Graph
 				if(null!=pa)
 				{
 					PlotGroup plotGroup = m_Layer.PlotItems.GetPlotGroupOf(pa);
-					// open the plot style dialog of the selected item
-					PlotStyleDialog dlg = new PlotStyleDialog(null==plotGroup ? (PlotStyle)pa.Style : (PlotStyle)plotGroup.MasterItem.Style,plotGroup);
-					DialogResult dr = dlg.ShowDialog(this);
-					if(dr==DialogResult.OK)
-					{
-						if(null!=plotGroup)
-						{
-							plotGroup.Style = dlg.PlotGroupStyle;
-							if(plotGroup.IsIndependent)
-								pa.Style = dlg.PlotStyle;
-							else
-								plotGroup.MasterItem.Style = dlg.PlotStyle;
-						}
-						else // pa was not member of a plot group
-						{
-							pa.Style = dlg.PlotStyle;
-						}
-						this.Invalidate(); // renew the picture
-					}
+					LineScatterPlotStyleController.ShowPlotStyleDialog(this,pa,plotGroup);
 				}
 			}
 		}

@@ -43,8 +43,6 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.RadioButton m_rbtPlotGroupIndependent;
 		private System.Windows.Forms.Button m_btRemove;
 		private System.Windows.Forms.Button m_btWorksheet;
-		private System.Windows.Forms.Button m_btCancel;
-		private System.Windows.Forms.Button m_btOK;
 		private System.Windows.Forms.GroupBox m_gbSymbol;
 		private System.Windows.Forms.TextBox m_edSymbolSkipFrequency;
 		private System.Windows.Forms.Label label6;
@@ -125,8 +123,6 @@ namespace Altaxo.Graph
 			this.m_rbtPlotGroupIndependent = new System.Windows.Forms.RadioButton();
 			this.m_btRemove = new System.Windows.Forms.Button();
 			this.m_btWorksheet = new System.Windows.Forms.Button();
-			this.m_btCancel = new System.Windows.Forms.Button();
-			this.m_btOK = new System.Windows.Forms.Button();
 			this.m_gbSymbol = new System.Windows.Forms.GroupBox();
 			this.m_edSymbolSkipFrequency = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
@@ -176,9 +172,9 @@ namespace Altaxo.Graph
 			this.groupBox1.Controls.Add(this.m_chkPlotGroupColor);
 			this.groupBox1.Controls.Add(this.m_rbtPlotGroupIncremental);
 			this.groupBox1.Controls.Add(this.m_rbtPlotGroupIndependent);
-			this.groupBox1.Location = new System.Drawing.Point(448, 144);
+			this.groupBox1.Location = new System.Drawing.Point(448, 120);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(96, 208);
+			this.groupBox1.Size = new System.Drawing.Size(96, 232);
 			this.groupBox1.TabIndex = 29;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Plot Group";
@@ -190,7 +186,6 @@ namespace Altaxo.Graph
 			this.m_chkPlotGroupSymbol.Size = new System.Drawing.Size(72, 16);
 			this.m_chkPlotGroupSymbol.TabIndex = 4;
 			this.m_chkPlotGroupSymbol.Text = "Symbol";
-			this.m_chkPlotGroupSymbol.CheckedChanged += new System.EventHandler(this.EhPlotGroupSymbol_CheckedChanged);
 			// 
 			// m_chkPlotGroupLineType
 			// 
@@ -199,7 +194,6 @@ namespace Altaxo.Graph
 			this.m_chkPlotGroupLineType.Size = new System.Drawing.Size(80, 16);
 			this.m_chkPlotGroupLineType.TabIndex = 3;
 			this.m_chkPlotGroupLineType.Text = "Line Type";
-			this.m_chkPlotGroupLineType.CheckedChanged += new System.EventHandler(this.EhPlotGroupLineType_CheckedChanged);
 			// 
 			// m_chkPlotGroupColor
 			// 
@@ -208,7 +202,6 @@ namespace Altaxo.Graph
 			this.m_chkPlotGroupColor.Size = new System.Drawing.Size(72, 16);
 			this.m_chkPlotGroupColor.TabIndex = 2;
 			this.m_chkPlotGroupColor.Text = "Color";
-			this.m_chkPlotGroupColor.CheckedChanged += new System.EventHandler(this.EhPlotGroupColor_CheckedChanged);
 			// 
 			// m_rbtPlotGroupIncremental
 			// 
@@ -217,7 +210,7 @@ namespace Altaxo.Graph
 			this.m_rbtPlotGroupIncremental.Size = new System.Drawing.Size(88, 24);
 			this.m_rbtPlotGroupIncremental.TabIndex = 1;
 			this.m_rbtPlotGroupIncremental.Text = "Incremental";
-			this.m_rbtPlotGroupIncremental.CheckedChanged += new System.EventHandler(this.EhPlotGroupIncremental_CheckedChanged);
+			this.m_rbtPlotGroupIncremental.Click += new System.EventHandler(this.EhPlotGroupIndependent_Changed);
 			// 
 			// m_rbtPlotGroupIndependent
 			// 
@@ -226,41 +219,23 @@ namespace Altaxo.Graph
 			this.m_rbtPlotGroupIndependent.Size = new System.Drawing.Size(88, 24);
 			this.m_rbtPlotGroupIndependent.TabIndex = 0;
 			this.m_rbtPlotGroupIndependent.Text = "Independent";
-			this.m_rbtPlotGroupIndependent.CheckedChanged += new System.EventHandler(this.EhPlotGroupIndependent_CheckedChanged);
+			this.m_rbtPlotGroupIndependent.Click += new System.EventHandler(this.EhPlotGroupIndependent_Changed);
 			// 
 			// m_btRemove
 			// 
-			this.m_btRemove.Location = new System.Drawing.Point(456, 104);
+			this.m_btRemove.Location = new System.Drawing.Point(448, 80);
 			this.m_btRemove.Name = "m_btRemove";
-			this.m_btRemove.Size = new System.Drawing.Size(88, 24);
+			this.m_btRemove.Size = new System.Drawing.Size(96, 24);
 			this.m_btRemove.TabIndex = 28;
 			this.m_btRemove.Text = "Remove";
 			// 
 			// m_btWorksheet
 			// 
-			this.m_btWorksheet.Location = new System.Drawing.Point(456, 72);
+			this.m_btWorksheet.Location = new System.Drawing.Point(448, 48);
 			this.m_btWorksheet.Name = "m_btWorksheet";
-			this.m_btWorksheet.Size = new System.Drawing.Size(88, 24);
+			this.m_btWorksheet.Size = new System.Drawing.Size(96, 24);
 			this.m_btWorksheet.TabIndex = 27;
 			this.m_btWorksheet.Text = "Worksheet";
-			// 
-			// m_btCancel
-			// 
-			this.m_btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_btCancel.Location = new System.Drawing.Point(456, 40);
-			this.m_btCancel.Name = "m_btCancel";
-			this.m_btCancel.Size = new System.Drawing.Size(88, 24);
-			this.m_btCancel.TabIndex = 26;
-			this.m_btCancel.Text = "Cancel";
-			// 
-			// m_btOK
-			// 
-			this.m_btOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.m_btOK.Location = new System.Drawing.Point(456, 8);
-			this.m_btOK.Name = "m_btOK";
-			this.m_btOK.Size = new System.Drawing.Size(88, 24);
-			this.m_btOK.TabIndex = 25;
-			this.m_btOK.Text = "OK";
 			// 
 			// m_gbSymbol
 			// 
@@ -466,6 +441,7 @@ namespace Altaxo.Graph
 			this.m_chkLineFillArea.Size = new System.Drawing.Size(176, 16);
 			this.m_chkLineFillArea.TabIndex = 6;
 			this.m_chkLineFillArea.Text = "Fill Area";
+			this.m_chkLineFillArea.CheckedChanged += new System.EventHandler(this.EhLineFillArea_CheckedChanged);
 			// 
 			// m_cbLineWidth
 			// 
@@ -584,8 +560,6 @@ namespace Altaxo.Graph
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.m_btRemove);
 			this.Controls.Add(this.m_btWorksheet);
-			this.Controls.Add(this.m_btCancel);
-			this.Controls.Add(this.m_btOK);
 			this.Controls.Add(this.m_gbSymbol);
 			this.Controls.Add(this.m_gbLine);
 			this.Controls.Add(this.m_chkLineSymbolGap);
@@ -607,36 +581,25 @@ namespace Altaxo.Graph
 		}
 		#endregion
 
-		private void EhPlotGroupIndependent_CheckedChanged(object sender, System.EventArgs e)
+
+		public static void InitComboBox(System.Windows.Forms.ComboBox box, string[] names, string name)
 		{
-		
+			box.Items.Clear();
+			box.Items.AddRange(names);
+			box.SelectedItem = name;
 		}
 
-		private void EhPlotGroupIncremental_CheckedChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void EhPlotGroupColor_CheckedChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void EhPlotGroupLineType_CheckedChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void EhPlotGroupSymbol_CheckedChanged(object sender, System.EventArgs e)
-		{
-		
-		}
 		#region ILineScatterPlotStyleView Members
 
 		public ILineScatterPlotStyleController Controller
 		{
 			get { return m_Controller; }
 			set { m_Controller = value; }
+		}
+
+		public System.Windows.Forms.Form Form
+		{
+			get { return this.ParentForm; }
 		}
 
 		public void InitializeLineSymbolGapCondition(bool bGap)
@@ -651,8 +614,7 @@ namespace Altaxo.Graph
 
 		public void InitializeSymbolStyle(string[] arr, string sel)
 		{
-			this.m_cbSymbolStyle.Items.AddRange(arr);
-			this.m_cbSymbolStyle.SelectedItem = sel;
+			InitComboBox(this.m_cbSymbolStyle,arr,sel);
 		}
 
 		public string SymbolStyle
@@ -662,8 +624,7 @@ namespace Altaxo.Graph
 
 		public void InitializeSymbolSize(string[] arr, string sel)
 		{
-			this.m_cbSymbolSize.Items.AddRange(arr);
-			this.m_cbSymbolSize.SelectedItem = sel;
+			InitComboBox(this.m_cbSymbolSize,arr,sel);
 		}
 		public string SymbolSize
 		{
@@ -673,8 +634,7 @@ namespace Altaxo.Graph
 
 		public void InitializeSymbolShape(string[] arr, string sel)
 		{
-			this.m_cbSymbolShape.Items.AddRange(arr);
-			this.m_cbSymbolShape.SelectedItem = sel;
+			InitComboBox(this.m_cbSymbolShape,arr,sel);
 		}
 		public string SymbolShape
 		{
@@ -708,14 +668,12 @@ namespace Altaxo.Graph
 
 		public void InitializePlotType(string[] arr, string sel)
 		{
-			this.m_cbPlotType.Items.AddRange(arr);
-			this.m_cbPlotType.SelectedItem = sel;
+			InitComboBox(this.m_cbPlotType,arr,sel);
 		}
 
 		public void InitializePlotStyleColor(string[] arr, string sel)
 		{
-			this.m_cbLineSymbolColor.Items.AddRange(arr);
-			this.m_cbLineSymbolColor.SelectedItem = sel;;
+			InitComboBox(this.m_cbLineSymbolColor,arr,sel);
 		}
 		public string SymbolColor
 		{
@@ -724,8 +682,7 @@ namespace Altaxo.Graph
 
 		public void InitializeLineConnect(string[] arr, string sel)
 		{
-			this.m_cbLineConnect.Items.AddRange(arr);
-			this.m_cbLineConnect.SelectedItem = sel;;
+			InitComboBox(this.m_cbLineConnect,arr,sel);
 		}
 		public string LineConnect
 		{
@@ -734,8 +691,7 @@ namespace Altaxo.Graph
 		
 		public void InitializeLineStyle(string[] arr, string sel)
 		{
-			this.m_cbLineType.Items.AddRange(arr);
-			this.m_cbLineType.SelectedItem = sel;;
+			InitComboBox(this.m_cbLineType,arr,sel);
 		}
 		public string LineType
 		{
@@ -744,8 +700,7 @@ namespace Altaxo.Graph
 	
 		public void InitializeLineWidth(string[] arr, string sel)
 		{
-			this.m_cbLineWidth.Items.AddRange(arr);
-			this.m_cbLineWidth.SelectedItem = sel;;
+			InitComboBox(this.m_cbLineWidth,arr,sel);
 		}
 		public string LineWidth
 		{
@@ -765,10 +720,17 @@ namespace Altaxo.Graph
 			get { return m_chkLineFillArea.Checked; }
 		}
 
+		private void EhLineFillArea_CheckedChanged(object sender, System.EventArgs e)
+		{
+			bool bFill = m_chkLineFillArea.Checked;
+			this.m_cbLineFillColor.Enabled = bFill;
+			this.m_cbLineFillDirection.Enabled = bFill;
+		}
+
+
 		public void InitializeFillColor(string[] arr, string sel)
 		{
-			this.m_cbLineFillColor.Items.AddRange(arr);
-			this.m_cbLineFillColor.SelectedItem = sel;;
+			InitComboBox(this.m_cbLineFillColor,arr,sel);
 		}
 		public string LineFillColor
 		{
@@ -777,8 +739,7 @@ namespace Altaxo.Graph
 	
 		public void InitializeFillDirection(string[] arr, string sel)
 		{
-			this.m_cbLineFillDirection.Items.AddRange(arr);
-			this.m_cbLineFillDirection.SelectedItem = sel;;
+			InitComboBox(this.m_cbLineFillDirection,arr,sel);
 		}
 		public string LineFillDirection
 		{
@@ -786,7 +747,7 @@ namespace Altaxo.Graph
 		}
 	
 
-		public void InitializePlotGroupConditions(bool bIndependent, bool bColor, bool bLineType, bool bSymbol)
+		public void InitializePlotGroupConditions(bool bMemberOfPlotGroup, bool bIndependent, bool bColor, bool bLineType, bool bSymbol)
 		{
 				this.m_rbtPlotGroupIndependent.Checked=  bIndependent;
 				this.m_rbtPlotGroupIncremental.Checked= !bIndependent;
@@ -796,12 +757,25 @@ namespace Altaxo.Graph
 				this.m_chkPlotGroupLineType.Checked = bLineType;
 				this.m_chkPlotGroupSymbol.Checked = bSymbol;
 
-				this.m_rbtPlotGroupIndependent.Enabled=	!bIndependent;
-				this.m_rbtPlotGroupIncremental.Enabled=	!bIndependent;
+				this.m_rbtPlotGroupIndependent.Enabled=	 bMemberOfPlotGroup;
+				this.m_rbtPlotGroupIncremental.Enabled=	 bMemberOfPlotGroup;
 				this.m_chkPlotGroupColor.Enabled=				!bIndependent;
 				this.m_chkPlotGroupLineType.Enabled=		!bIndependent;
 				this.m_chkPlotGroupSymbol.Enabled=			!bIndependent;
 		}
+
+		private void EhPlotGroupIndependent_Changed(object sender, System.EventArgs e)
+		{
+			bool bIndependent = this.m_rbtPlotGroupIndependent.Checked;
+
+			if(Controller!=null)
+				Controller.EhView_PlotGroupIndependent_Changed(bIndependent);
+
+			this.m_chkPlotGroupColor.Enabled=				!bIndependent;
+			this.m_chkPlotGroupLineType.Enabled=		!bIndependent;
+			this.m_chkPlotGroupSymbol.Enabled=			!bIndependent;
+		}
+
 
 		public bool PlotGroupIncremental
 		{

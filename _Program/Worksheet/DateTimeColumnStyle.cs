@@ -54,6 +54,7 @@ namespace Altaxo.Worksheet
 			public override void OnDeserialization(object obj)
 			{
 				base.OnDeserialization(obj);
+				m_TextFormat.FormatFlags=StringFormatFlags.LineLimit;
 			}
 
 		#endregion

@@ -671,7 +671,7 @@ namespace Altaxo.Graph
 		/// <param name="sender">The menuitem, must be of type <see cref="DataMenuItem"/>.</param>
 		/// <param name="e">Not used.</param>
 		/// <remarks>The handler either checks the menuitem, if it was unchecked. If it was already checked,
-		/// it shows the <see cref="PlotStyleDialog"/> dialog box.
+		/// it shows the <see cref="LineScatterPlotStyleControl"/> into a dialog box.
 		/// </remarks>
 		private void EhMenuData_Data(object sender, System.EventArgs e)
 		{
@@ -701,40 +701,9 @@ namespace Altaxo.Graph
 
 				// get plot group
 				PlotGroup plotGroup = actLayer.PlotItems.GetPlotGroupOf(pa);
-				//PlotStyleDialog dlg = new PlotStyleDialog((PlotStyle)pa.Style,plotGroup);
-				
-				Graph.LineScatterPlotStyleController	ctrl = new Graph.LineScatterPlotStyleController((PlotStyle)pa.Style,plotGroup);
-				Graph.LineScatterPlotStyleControl view = new Graph.LineScatterPlotStyleControl();
-				ctrl.View = view;
-
-				Main.DialogShellController dsc = new Main.DialogShellController(
-					new Main.DialogShellView(view), ctrl);
-
-				bool dr = dsc.ShowDialog(this.m_View.Form);
 				
 				
-				/*
-				if(dr==DialogResult.OK)
-				{
-					if(null!=plotGroup)
-					{
-						plotGroup.Style = dlg.PlotGroupStyle;
-						if(plotGroup.IsIndependent)
-							pa.Style = dlg.PlotStyle;
-						else
-						{
-							plotGroup.MasterItem.Style = dlg.PlotStyle;
-							plotGroup.UpdateMembers();
-						}
-					}
-					else // pa was not member of a plot group
-					{
-						pa.Style = dlg.PlotStyle;
-					}
-
-					// this.InvalidateGraph(); // renew the picture
-				}
-				*/
+				LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);
 			}
 			
 				

@@ -107,6 +107,17 @@ namespace Altaxo.Calc
 				SetDimension(rows,cols);
 			}
 
+			public void Clear()
+			{
+				SetDimension(0,0);
+			}
+
+			public override string ToString()
+			{
+				return MatrixMath.MatrixToString(null,this);
+			}
+
+
 			#region IMatrix Members
 
 
@@ -120,7 +131,7 @@ namespace Altaxo.Calc
 			{
 				m_Rows = rows;
 				m_Cols = cols;
-				m_Array = new double[rows][];
+				m_Array = new double[2*(rows+32)][];
 				for(int i=0;i<m_Array.Length;i++)
 					m_Array[i] = new double[cols];
 			}
@@ -187,19 +198,27 @@ namespace Altaxo.Calc
 				}
 
 				int newRows = a.Rows + this.Rows;
-				double[][] newArray = new double[newRows][];	
+
+				// we must reallocate the array if neccessary
+				if(newRows>=m_Array.Length)
+				{
+					double[][] newArray = new double[2*(newRows+32)][];	
 			
-				for(int i=0;i<m_Rows;i++)
-					newArray[i] = m_Array[i]; // copy the existing horizontal vectors.
+					for(int i=0;i<m_Rows;i++)
+						newArray[i] = m_Array[i]; // copy the existing horizontal vectors.
+
+					m_Array = newArray;
+				}
+
+				// copy the new rows now
 				for(int i=m_Rows;i<newRows;i++)
 				{
-					newArray[i] = new double[m_Cols]; // create new horizontal vectors for the elements to append
+					m_Array[i] = new double[m_Cols]; // create new horizontal vectors for the elements to append
 					for(int j=0;j<m_Cols;j++)
-						newArray[i][j] = a[i-m_Rows,j]; // copy the elements
+						m_Array[i][j] = a[i-m_Rows,j]; // copy the elements
 				}
 				
 				m_Rows = newRows;
-				m_Array = newArray;
 			}
 
 			#endregion
@@ -229,6 +248,17 @@ namespace Altaxo.Calc
 				SetDimension(rows,cols);
 			}
 
+			public void Clear()
+			{
+				SetDimension(0,0);
+			}
+
+			public override string ToString()
+			{
+				return MatrixMath.MatrixToString(null,this);
+			}
+
+
 			#region IMatrix Members
 
 
@@ -242,7 +272,7 @@ namespace Altaxo.Calc
 			{
 				m_Rows = rows;
 				m_Cols = cols;
-				m_Array = new double[cols][];
+				m_Array = new double[2*(cols+32)][];
 				for(int i=0;i<m_Array.Length;i++)
 					m_Array[i] = new double[rows];
 			}
@@ -309,19 +339,27 @@ namespace Altaxo.Calc
 				}
 
 				int newCols = a.Cols + this.Cols;
-				double[][] newArray = new double[newCols][];	
+				
+				// we must newly allocate the bone array, if neccessary
+				if(newCols>=m_Array.Length)
+				{
+					double[][] newArray = new double[2*(newCols+32)][];	
 			
-				for(int i=0;i<m_Cols;i++)
-					newArray[i] = m_Array[i]; // copy the existing horizontal vectors.
+					for(int i=0;i<m_Cols;i++)
+						newArray[i] = m_Array[i]; // copy the existing horizontal vectors.
+
+					m_Array = newArray;
+				}
+
+				// copy the new rows
 				for(int i=m_Cols;i<newCols;i++)
 				{
-					newArray[i] = new double[m_Rows]; // create new horizontal vectors for the elements to append
+					m_Array[i] = new double[m_Rows]; // create new horizontal vectors for the elements to append
 					for(int j=0;j<m_Rows;j++)
-						newArray[i][j] = a[j,i-m_Cols]; // copy the elements
+						m_Array[i][j] = a[j,i-m_Cols]; // copy the elements
 				}
 				
 				m_Cols = newCols;
-				m_Array = newArray;
 			}
 
 			#endregion
@@ -345,6 +383,12 @@ namespace Altaxo.Calc
 			{
 				m_Array = new double[cols];
 			}
+
+			public override string ToString()
+			{
+				return MatrixMath.MatrixToString(null,this);
+			}
+
 
 			#region IMatrix Members
 
@@ -409,6 +453,12 @@ namespace Altaxo.Calc
 				m_Array = new double[rows];
 			}
 
+			public override string ToString()
+			{
+				return MatrixMath.MatrixToString(null,this);
+			}
+
+
 			#region IMatrix Members
 
 			/// <summary>
@@ -470,6 +520,12 @@ namespace Altaxo.Calc
 			{
 				m_Value = val;
 			}
+
+			public override string ToString()
+			{
+				return MatrixMath.MatrixToString(null,this);
+			}
+
 
 			/// <summary>
 			/// Converts the scalar to a double if neccessary.
@@ -546,6 +602,32 @@ namespace Altaxo.Calc
 		public static double Square(double x)
 		{
 			return x*x;
+		}
+
+		public static string MatrixToString(string name, IMatrix a)
+		{
+			if(null==name)
+				name="";
+
+			if(a.Rows==0 || a.Cols==0)
+				return string.Format("EmptyMatrix {0}({1},{2})",name, a.Rows, a.Cols);
+
+			System.Text.StringBuilder s = new System.Text.StringBuilder();
+			s.Append("Matrix " + name + ":");
+			for(int i=0;i<a.Rows;i++)
+			{
+				s.Append("\n(");
+				for(int j=0;j<a.Cols;j++)
+				{
+					s.Append(a[i,j].ToString());
+					if(j+1<a.Cols) 
+						s.Append(";");
+					else
+						s.Append(")");
+				}
+			}
+			return s.ToString();
+
 		}
 
 		#endregion
@@ -745,6 +827,29 @@ namespace Altaxo.Calc
 			}
 		}
 	 
+		/// <summary>
+		/// Calculates c = c - ab
+		/// </summary>
+		/// <param name="a">First multiplicant.</param>
+		/// <param name="b">Second multiplicant.</param>
+		/// <param name="c">The matrix where to subtract the result of the multipication from. Has to be of dimension (a.Rows, b.Columns).</param>
+		public static void SelfSubtractProduct(IMatrix a, double b, IMatrix c)
+		{
+			int crows = a.Rows; // the rows of resultant matrix
+			int ccols = a.Cols; // the cols of resultant matrix
+
+			// Presumtion:
+			if(c.Rows != crows || c.Cols != ccols)
+				throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",c.Rows,c.Cols,crows,ccols));
+
+			for(int i=0;i<crows;i++)
+			{
+				for(int j=0;j<ccols;j++)
+				{
+					c[i,j] -= b*a[i,j];
+				}
+			}
+		}
 
 		#endregion
 
@@ -825,6 +930,25 @@ namespace Altaxo.Calc
 					sum += Square(a[i,j]);
 			return sum;
 		}
+
+		/// <summary>
+		/// Returns the sum of the squares of differences of elements of a and b.
+		/// </summary>
+		/// <param name="a">The first matrix.</param>
+		/// <param name="b">The second matrix. Must have same dimensions than a.</param>
+		/// <returns>The sum of the squared differences of each element in a to the corresponding element in b, i.e. Sum[(a[i,j]-b[i,j])²].</returns>
+		public static double SumOfSquaredDifferences(IMatrix a, IMatrix b)
+		{
+			if(a.Rows != b.Rows || a.Cols != a.Cols)
+				throw new ArithmeticException(string.Format("The two provided matrices (a({0},{1])) and b({2},{3})) have not the same dimensions.",a.Rows,a.Cols,b.Rows,b.Cols));
+
+			double sum=0;
+			for(int i=0;i<a.Rows;i++)
+				for(int j=0;j<a.Cols;j++)
+					sum += Square(a[i,j]-b[i,j]);
+			return sum;
+		}
+		
 
 		/// <summary>
 		/// Returns the square root of the sum of the squares of the matrix a.
@@ -964,19 +1088,20 @@ namespace Altaxo.Calc
 		/// Sets one row in the destination matrix equal to the horizontal vector provided by src matix.
 		/// </summary>
 		/// <param name="src">The source matrix. Must be a horizontal vector (rows=1) with the same number of columns than the destination matrix.</param>
+		/// <param name="srcRow">The row in the source matrix where to copy from.</param>
 		/// <param name="dest">The destination matrix where to copy the horizontal vector into.</param>
-		/// <param name="row">The row in the destination matrix where to copy the vector to.</param>
-		public static void SetRow(IMatrix src, IMatrix dest, int row)
+		/// <param name="destRow">The row in the destination matrix where to copy the vector to.</param>
+		public static void SetRow(IMatrix src, int srcRow, IMatrix dest, int destRow)
 		{
-			if(row>=dest.Rows)
-				throw new ArithmeticException(string.Format("Try to set row {0} in the matrix with dim({1},{2}) is not allowed!",row,dest.Rows,dest.Cols));
-			if(src.Rows!=1)
-				throw new ArithmeticException(string.Format("Try to set row {0} with a matrix of more than one, namely {1} rows, is not allowed!",row,src.Rows));
+			if(destRow>=dest.Rows)
+				throw new ArithmeticException(string.Format("Try to set row {0} in the matrix with dim({1},{2}) is not allowed!",destRow,dest.Rows,dest.Cols));
+			if(srcRow>=src.Rows)
+				throw new ArithmeticException(string.Format("The source row number ({0}) exceeds the actual number of rows ({1})in the source matrix!",srcRow,src.Rows));
 			if(dest.Cols != src.Cols)
-				throw new ArithmeticException(string.Format("Try to set row {0}, but number of columns of the matrix ({1}) not match number of colums of the vector ({3})!",row,dest.Cols,src.Cols));
+				throw new ArithmeticException(string.Format("Number of columns of the matrix ({0}) not match number of colums of the vector ({1})!",dest.Cols,src.Cols));
 		
 			for(int j=0;j<dest.Cols;j++)
-				dest[row,j]=src[0,j];
+				dest[destRow,j]=src[srcRow,j];
 		}
 
 
@@ -1185,7 +1310,7 @@ namespace Altaxo.Calc
 		public static void PartialLeastSquares_HO(
 			IMatrix _X, // matrix of spectra (a spectra is a row of this matrix)
 			IMatrix _Y, // matrix of concentrations (a mixture is a row of this matrix)
-			int numFactors,
+			ref int numFactors,
 			IBottomExtensibleMatrix xLoads, // out: the loads of the X matrix
 			IBottomExtensibleMatrix yLoads, // out: the loads of the Y matrix
 			IBottomExtensibleMatrix W, // matrix of weighting values
@@ -1201,8 +1326,8 @@ namespace Altaxo.Calc
 			// Y : n-m matrix of concentrations
 
 
-			const int maxIterations = 500; // max number of iterations in one factorization step
-			const double accuracy = 1E-9; // accuracy that should be reached between subsequent calculations of the u-vector
+			const int maxIterations = 1500; // max number of iterations in one factorization step
+			const double accuracy = 1E-12; // accuracy that should be reached between subsequent calculations of the u-vector
 
 
 
@@ -1223,9 +1348,10 @@ namespace Altaxo.Calc
 			IMatrix p = new HorizontalVector(X.Cols); // horizontal vector of X loads
 			IMatrix q = new HorizontalVector(Y.Cols); // horizontal vector of Y loads
 
-			int maxFactors = numFactors<=0 ? X.Cols : Math.Min(numFactors,X.Cols);
+			int maxFactors = Math.Min(X.Cols,X.Rows);
+			numFactors = numFactors<=0 ? maxFactors : Math.Min(numFactors,maxFactors);
 
-			for(int nFactor=0; nFactor<maxFactors; nFactor++)
+			for(int nFactor=0; nFactor<numFactors; nFactor++)
 			{
 				Console.WriteLine("Factor_{0}:",nFactor);
 				Console.WriteLine("X:"+X.ToString());
@@ -1319,6 +1445,9 @@ namespace Altaxo.Calc
 			// xu holds a single spectrum extracted out of XU
 			MatrixMath.HorizontalVector xu = new MatrixMath.HorizontalVector(XU.Cols);
 
+			// xl holds temporarily a row of the xLoads matrix+
+			MatrixMath.HorizontalVector xl = new MatrixMath.HorizontalVector(xLoads.Cols);
+
 
 			int maxFactors = Math.Min(yLoads.Rows,numFactors);
 			
@@ -1338,13 +1467,86 @@ namespace Altaxo.Calc
 					MatrixMath.MultiplyScalar(cuadd,si*V[0,i],cuadd);
 					// Add it to the predicted y-values
 					MatrixMath.Add(Cu,cuadd,Cu);
-					// remove the contribution of the factor to the spectrum
-					// not implemented now!
+					// remove the spectral contribution of the factor from the spectrum
+					// TODO this is quite ineffective: in every loop we extract the xl vector, we have to find a shortcut for this!
+					MatrixMath.Submatrix(xLoads,xl,i,0);
+					MatrixMath.SelfSubtractProduct(xl,(double)si,xu);
 				}
 				// Cu now contains the predicted y values
-				MatrixMath.SetRow(Cu,predictedY,nSpectrum);
+				MatrixMath.SetRow(Cu,0,predictedY,nSpectrum);
 			} // for each spectrum in XU
+		} // end partial-least-squares-predict
+
+		public static void PartialLeastSquares_CrossValidation_HO(
+			IMatrix X, // matrix of spectra (a spectra is a row of this matrix)
+			IMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
+			int numFactors,
+			out IMatrix crossPRESSMatrix // vertical value of PRESS values for the cross validation
+			)
+		{
+			IBottomExtensibleMatrix xLoads = new MatrixMath.HOMatrix(0,0); // out: the loads of the X matrix
+			IBottomExtensibleMatrix yLoads = new MatrixMath.HOMatrix(0,0); // out: the loads of the Y matrix
+			IBottomExtensibleMatrix W = new MatrixMath.HOMatrix(0,0); // matrix of weighting values
+			IRightExtensibleMatrix V = new MatrixMath.VOMatrix(0,0); // matrix of cross products
+
+			double[] crossPRESS = null;
+
+			int numberOfExcludedSpectraOfGroup = 1;
+
+			IMatrix XX = new HOMatrix(X.Rows-numberOfExcludedSpectraOfGroup,X.Cols);
+			IMatrix YY = new HOMatrix(Y.Rows-numberOfExcludedSpectraOfGroup,Y.Cols);
+			IMatrix XU = new HOMatrix(numberOfExcludedSpectraOfGroup,X.Cols);
+			IMatrix YU = new HOMatrix(numberOfExcludedSpectraOfGroup,Y.Cols);
+			IMatrix predY = new HOMatrix(numberOfExcludedSpectraOfGroup,Y.Cols);
+
+			for(int nGroup=0;nGroup < X.Rows;nGroup++)
+			{
+				// build a new x and y matrix with the group information
+				// fill XX and YY with values
+				int i,j;
+				for(i=0,j=0;i<X.Rows;i++)
+				{
+					if(i==nGroup)
+						continue; // Exclude this row from the spectra
+					MatrixMath.SetRow(X,i,XX,j);
+					MatrixMath.SetRow(Y,i,YY,j);
+					j++;
+				}
+				// fill XU (unknown spectra) with values
+				MatrixMath.SetRow(X,nGroup,XU,0); // x-unkown (unknown spectra)
+				MatrixMath.SetRow(Y,nGroup,YU,0); // y-unkown (unknown concentration)
+
+
+				// do a PLS with the builded matrices
+				xLoads = new MatrixMath.HOMatrix(0,0); // clear xLoads
+				yLoads = new MatrixMath.HOMatrix(0,0); // clear yLoads
+				W			 = new MatrixMath.HOMatrix(0,0); // clear W
+				V      = new MatrixMath.VOMatrix(0,0); // clear V
+				int actnumfactors=numFactors;
+				PartialLeastSquares_HO(XX, YY, ref actnumfactors, xLoads,yLoads,W,V); 
+				numFactors = Math.Min(numFactors,actnumfactors); // if we have here a lesser number of factors, use it for all further calculations
+														
+
+				// allocate the crossPRESS vector here, since now we know about the number of factors a bit more
+				if(null==crossPRESS)
+					crossPRESS = new double[numFactors+1]; // one more since we want to have the value at factors=0 (i.e. the variance of the y-matrix)
+
+				// for all factors do now a prediction of the remaining spectra
+				crossPRESS[0] += MatrixMath.SumOfSquares(YU);
+				for(int nFactor=1;nFactor<=numFactors;nFactor++)
+				{
+					PartialLeastSquares_Predict_HO(XU,xLoads,yLoads,W,V,nFactor,ref predY);
+					crossPRESS[nFactor] += MatrixMath.SumOfSquaredDifferences(YU,predY);
+				}
+			} // for all groups
+
+
+			// copy the resulting crossPRESS values into a matrix
+			crossPRESSMatrix = new MatrixMath.VerticalVector(numFactors+1);
+			for(int i=0;i<=numFactors;i++)
+				crossPRESSMatrix[i,0] = crossPRESS[i];
 		}
+
 
 
 	} // end class MatrixMath

@@ -37,6 +37,13 @@ namespace Altaxo.Graph
 	{
 		// Get / sets the controller of this view
 		ILineScatterPlotStyleController Controller { get; set; }
+	
+		
+		/// <summary>
+		/// Returns the form this view is shown in.
+		/// </summary>
+		System.Windows.Forms.Form Form { get; }
+		
 		/// <summary>
 		/// Initialized the plot style combobox.
 		/// </summary>
@@ -134,11 +141,12 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Initializes the plot group conditions.
 		/// </summary>
+		/// <param name="bMemberOfPlotGroup">True if this PlotItem is member of a plot group.</param>
 		/// <param name="bIndependent">True if all plots independent from each other.</param>
 		/// <param name="bColor">True if the color is changed.</param>
 		/// <param name="bLineType">True if the line type is changed.</param>
 		/// <param name="bSymbol">True if the symbol shape is changed.</param>
-		void InitializePlotGroupConditions(bool bIndependent, bool bColor, bool bLineType, bool bSymbol);
+		void InitializePlotGroupConditions(bool bMemberOfPlotGroup, bool bIndependent, bool bColor, bool bLineType, bool bSymbol);
 
 
 		#region Getter
@@ -170,14 +178,15 @@ namespace Altaxo.Graph
 
 
 
-	#endregion // Getter
-}
+		#endregion // Getter
+	}
 
 	/// <summary>
 	/// This is the controller interface of the LineScatterPlotStyleView
 	/// </summary>
 	public interface ILineScatterPlotStyleController
 	{
+		void EhView_PlotGroupIndependent_Changed(bool bPlotGroupIsIndependent);
 	}
 
 	#endregion
@@ -193,7 +202,6 @@ namespace Altaxo.Graph
 		protected PlotGroup m_PlotGroup;
 		protected PlotGroupStyle m_PlotGroupStyle;
 		ILineScatterPlotStyleView m_View;
-		bool m_bEnableEvents=false;
 
 		public LineScatterPlotStyleController(PlotStyle ps, PlotGroup plotGroup)
 		{
@@ -216,6 +224,18 @@ namespace Altaxo.Graph
 		}
 
 
+		public static bool ShowPlotStyleDialog(System.Windows.Forms.Form parentWindow, PlotItem pa, PlotGroup plotGroup)
+		{
+			Graph.LineScatterPlotStyleController	ctrl = new Graph.LineScatterPlotStyleController((PlotStyle)pa.Style,plotGroup);
+			Graph.LineScatterPlotStyleControl view = new Graph.LineScatterPlotStyleControl();
+			ctrl.View = view;
+
+			Main.DialogShellController dsc = new Main.DialogShellController(
+				new Main.DialogShellView(view), ctrl);
+
+			return dsc.ShowDialog(parentWindow);
+		}
+
 		public ILineScatterPlotStyleView View
 		{
 			get { return m_View; }
@@ -224,9 +244,8 @@ namespace Altaxo.Graph
 				m_View = value;
 				m_View.Controller = this;
 
-				m_bEnableEvents=false; // disable events during fill in
-				FillDialogElements();
-				m_bEnableEvents=true; // just now enable the events
+				SetPlotGroupElements();
+				SetPlotStyleElements();
 			}
 		}
 
@@ -247,26 +266,17 @@ namespace Altaxo.Graph
 		}
 
 
-		void FillDialogElements()
+		void SetPlotGroupElements()
 		{
-			/*
-			FillColorComboBox(this.m_cbLineSymbolColor);
-			FillLineConnectComboBox(this.m_cbLineConnect);
-			FillLineStyleComboBox(this.m_cbLineType);
-			FillLineWidthComboBox(this.m_cbLineWidth);
-			FillColorComboBox(this.m_cbLineFillColor);
-			FillFillDirectionComboBox(this.m_cbLineFillDirection);
+			SetPlotGroupConditions(this.m_PlotGroup);
+		}
 
-			FillSymbolShapeComboBox(this.m_cbSymbolShape);
-			FillSymbolStyleComboBox(this.m_cbSymbolStyle);
-			FillSymbolSizeComboBox(this.m_cbSymbolSize);
-*/
-
+		void SetPlotStyleElements()
+		{
 			// now we have to set all dialog elements to the right values
 			SetPlotType(this.m_PlotStyle);
 			SetPlotStyleColor(this.m_PlotStyle);
 			SetLineSymbolGapCondition(this.m_PlotStyle);
-			SetPlotGroupConditions(this.m_PlotGroup);
 
 
 			// Scatter properties
@@ -283,30 +293,6 @@ namespace Altaxo.Graph
 			SetFillCondition(m_PlotStyle);
 			SetFillDirection(m_PlotStyle);
 			SetFillColor(m_PlotStyle);
-	
-
-			/*
-			SetLineSymbolGapCheckBox(this.m_chkLineSymbolGap, this.m_PlotStyle);
-
-			SetDropLineLeftCheckBox(this.m_chkSymbolDropLineLeft, this.m_PlotStyle);
-			SetDropLineRightCheckBox(this.m_chkSymbolDropLineRight, this.m_PlotStyle);
-			SetDropLineTopCheckBox(this.m_chkSymbolDropLineTop, this.m_PlotStyle);
-			SetDropLineBottomCheckBox(this.m_chkSymbolDropLineBottom, this.m_PlotStyle);
-
-
-			SetLineConnectComboBox(this.m_cbLineConnect,this.m_PlotStyle);
-			SetLineStyleComboBox(this.m_cbLineType,this.m_PlotStyle);
-			SetLineWidthComboBox(this.m_cbLineWidth, m_PlotStyle);
-			SetFillCheckBox(this.m_chkLineFillArea, m_PlotStyle);
-			SetFillDirectionComboBox(this.m_cbLineFillDirection,m_PlotStyle);
-			SetFillColorComboBox(this.m_cbLineFillColor, m_PlotStyle);
-			EnableDisableFillElements(this,m_PlotStyle);
-		
-			SetSymbolShapeComboBox(this.m_cbSymbolShape,m_PlotStyle);
-	
-			SetPlotGroupElements(m_PlotGroup);
-			
-			*/
 		}
 
 
@@ -340,9 +326,9 @@ namespace Altaxo.Graph
 		}
 
 	
-	public void SetSymbolShape(PlotStyle ps)
+		public void SetSymbolShape(PlotStyle ps)
 		{
-				string [] names = System.Enum.GetNames(typeof(ScatterStyles.Shape));
+			string [] names = System.Enum.GetNames(typeof(ScatterStyles.Shape));
 
 			ScatterStyles.Shape sh = ScatterStyles.Shape.NoSymbol;
 			if(null!=ps && null!=ps.ScatterStyle)
@@ -350,7 +336,7 @@ namespace Altaxo.Graph
 
 			string name = sh.ToString();
 			
-		View.InitializeSymbolShape(names,name);
+			View.InitializeSymbolShape(names,name);
 		}
 
 		public void SetLineSymbolGapCondition(PlotStyle ps)
@@ -369,7 +355,7 @@ namespace Altaxo.Graph
 			View.InitializeDropLineConditions(bLeft,bBottom,bRight,bTop);
 		}
 
-public void SetLineConnect(PlotStyle ps)
+		public void SetLineConnect(PlotStyle ps)
 		{
 
 			string [] names = System.Enum.GetNames(typeof(LineStyles.ConnectionStyle));
@@ -384,7 +370,7 @@ public void SetLineConnect(PlotStyle ps)
 			View.InitializeLineConnect(names,name);
 		}
 
-		 public void SetLineStyle(PlotStyle ps)
+		public void SetLineStyle(PlotStyle ps)
 		{
 			string [] names = System.Enum.GetNames(typeof(DashStyle));
 
@@ -399,13 +385,13 @@ public void SetLineConnect(PlotStyle ps)
 
 
 	
-	 public void SetLineWidth(PlotStyle ps)
+		public void SetLineWidth(PlotStyle ps)
 		{
 			float[] LineWidths = 
 			{	0.2f,0.5f,1,1.5f,2,3,4,5 };
-		 string[] names = new string[LineWidths.Length];
-		 for(int i=0;i<names.Length;i++)
-			 names[i] = LineWidths[i].ToString();
+			string[] names = new string[LineWidths.Length];
+			for(int i=0;i<names.Length;i++)
+				names[i] = LineWidths[i].ToString();
 
 			float linewidth = 1; // default value
 			if(null!=ps && null!=ps.LineStyle && null!=ps.LineStyle.PenHolder)
@@ -507,120 +493,143 @@ public void SetLineConnect(PlotStyle ps)
 		private void SetPlotGroupConditions(PlotGroup grp)
 		{
 			PlotGroupStyle Style = null!=grp ? grp.Style : 0;
-			if(0==Style)
-			{
-				View.InitializePlotGroupConditions(true,false,false,false);
-			}
-			else // style is not independent, i.e. incremental
-			{
-				View.InitializePlotGroupConditions(
-					true,
-					(0!=(Style&PlotGroupStyle.Color)),
-					(0!=(Style & PlotGroupStyle.Line)),
-					(0!=(Style & PlotGroupStyle.Symbol))
-					);
+	
+			View.InitializePlotGroupConditions(
+				null!=grp,
+				null!=grp && grp.IsIndependent,
+				(0!=(Style&PlotGroupStyle.Color)),
+				(0!=(Style & PlotGroupStyle.Line)),
+				(0!=(Style & PlotGroupStyle.Symbol))
+				);
 
-			}
 		}
 		#region IApplyController Members
 
 		public bool Apply()
 		{
 
-			// Plot group options first, since they determine what PlotStyle needs to be changed
-			m_PlotGroupStyle = 0;
-			if(View.PlotGroupIncremental)
+			// don't trust user input, so all into a try statement
+			try
 			{
-				if(View.PlotGroupColor)    m_PlotGroupStyle |= PlotGroupStyle.Color;
-				if(View.PlotGroupLineType) m_PlotGroupStyle |= PlotGroupStyle.Color;
-				if(View.PlotGroupSymbol)   m_PlotGroupStyle |= PlotGroupStyle.Color;
+				// Plot group options first, since they determine what PlotStyle needs to be changed
+				m_PlotGroupStyle = 0;
+				if(View.PlotGroupIncremental)
+				{
+					if(View.PlotGroupColor)    m_PlotGroupStyle |= PlotGroupStyle.Color;
+					if(View.PlotGroupLineType) m_PlotGroupStyle |= PlotGroupStyle.Line;
+					if(View.PlotGroupSymbol)   m_PlotGroupStyle |= PlotGroupStyle.Symbol;
 	
-				m_PlotStyle = m_MasterItemPlotStyle;
-			}
-			else // independent
-			{
-				m_PlotStyle = m_PlotItemPlotStyle;
-			}
+					m_PlotStyle = m_MasterItemPlotStyle!=null ? m_MasterItemPlotStyle : m_PlotStyle;
+				}
+				else // independent
+				{
+					m_PlotStyle = m_PlotItemPlotStyle;
+				}
 
 
 
-			// Symbol Gap
-			m_PlotStyle.LineSymbolGap = View.LineSymbolGap;
+				// Symbol Gap
+				m_PlotStyle.LineSymbolGap = View.LineSymbolGap;
 
-			// Symbol Color
-			string str = View.SymbolColor;
-			if(str!="Custom")
-			{
-				m_PlotStyle.Color = Color.FromName(str);
-			}
-
-
-			// Line Connect
-			m_PlotStyle.LineStyle.Connection = (LineStyles.ConnectionStyle)Enum.Parse(typeof(LineStyles.ConnectionStyle),View.LineConnect);
-			// Line Type
-			m_PlotStyle.LineStyle.PenHolder.DashStyle = (DashStyle)Enum.Parse(typeof(DashStyle),View.LineType);
-			// Line Width
-			float width = System.Convert.ToSingle(View.LineWidth);
-			m_PlotStyle.LineStyle.PenHolder.Width = width;
+				// Symbol Color
+				string str = View.SymbolColor;
+				if(str!="Custom")
+				{
+					m_PlotStyle.Color = Color.FromName(str);
+				}
 
 
-			// Fill Area
-			m_PlotStyle.LineStyle.FillArea = View.LineFillArea;
-			// Line fill direction
-			m_PlotStyle.LineStyle.FillDirection = (LineStyles.FillDirection)Enum.Parse(typeof(LineStyles.FillDirection),View.LineFillDirection);
-			// Line fill color
-			str = View.LineFillColor;
-			if(str!="Custom")
-				m_PlotStyle.LineStyle.FillBrush = new BrushHolder(Color.FromName(str));
+				// Line Connect
+				m_PlotStyle.LineStyle.Connection = (LineStyles.ConnectionStyle)Enum.Parse(typeof(LineStyles.ConnectionStyle),View.LineConnect);
+				// Line Type
+				m_PlotStyle.LineStyle.PenHolder.DashStyle = (DashStyle)Enum.Parse(typeof(DashStyle),View.LineType);
+				// Line Width
+				float width = System.Convert.ToSingle(View.LineWidth);
+				m_PlotStyle.LineStyle.PenHolder.Width = width;
 
 
-			// Symbol Shape
-			str = View.SymbolShape;
-			m_PlotStyle.ScatterStyle.Shape = (ScatterStyles.Shape)Enum.Parse(typeof(ScatterStyles.Shape),str);
-
-			// Symbol Style
-			str = View.SymbolStyle;
-			m_PlotStyle.ScatterStyle.Style = (ScatterStyles.Style)Enum.Parse(typeof(ScatterStyles.Style),str);
-
-			// Symbol Size
-			str = View.SymbolSize;
-			m_PlotStyle.SymbolSize = System.Convert.ToSingle(str);
-
-			// Drop line left
-			if(View.DropLineLeft) 
-				m_PlotStyle.ScatterStyle.DropLine |= ScatterStyles.DropLine.Left;
-			else
-				m_PlotStyle.ScatterStyle.DropLine &= (ScatterStyles.DropLine.All^ScatterStyles.DropLine.Left);
+				// Fill Area
+				m_PlotStyle.LineStyle.FillArea = View.LineFillArea;
+				// Line fill direction
+				m_PlotStyle.LineStyle.FillDirection = (LineStyles.FillDirection)Enum.Parse(typeof(LineStyles.FillDirection),View.LineFillDirection);
+				// Line fill color
+				str = View.LineFillColor;
+				if(str!="Custom")
+					m_PlotStyle.LineStyle.FillBrush = new BrushHolder(Color.FromName(str));
 
 
-			// Drop line bottom
-			if(View.DropLineBottom) 
-				m_PlotStyle.ScatterStyle.DropLine |= ScatterStyles.DropLine.Bottom;
-			else
-				m_PlotStyle.ScatterStyle.DropLine &= (ScatterStyles.DropLine.All^ScatterStyles.DropLine.Bottom);
+				// Symbol Shape
+				str = View.SymbolShape;
+				m_PlotStyle.ScatterStyle.Shape = (ScatterStyles.Shape)Enum.Parse(typeof(ScatterStyles.Shape),str);
 
-			// Drop line right
+				// Symbol Style
+				str = View.SymbolStyle;
+				m_PlotStyle.ScatterStyle.Style = (ScatterStyles.Style)Enum.Parse(typeof(ScatterStyles.Style),str);
+
+				// Symbol Size
+				str = View.SymbolSize;
+				m_PlotStyle.SymbolSize = System.Convert.ToSingle(str);
+
+				// Drop line left
+				if(View.DropLineLeft) 
+					m_PlotStyle.ScatterStyle.DropLine |= ScatterStyles.DropLine.Left;
+				else
+					m_PlotStyle.ScatterStyle.DropLine &= (ScatterStyles.DropLine.All^ScatterStyles.DropLine.Left);
+
+
+				// Drop line bottom
+				if(View.DropLineBottom) 
+					m_PlotStyle.ScatterStyle.DropLine |= ScatterStyles.DropLine.Bottom;
+				else
+					m_PlotStyle.ScatterStyle.DropLine &= (ScatterStyles.DropLine.All^ScatterStyles.DropLine.Bottom);
+
+				// Drop line right
 				if(View.DropLineRight) 
 					m_PlotStyle.ScatterStyle.DropLine |= ScatterStyles.DropLine.Right;
 				else
 					m_PlotStyle.ScatterStyle.DropLine &= (ScatterStyles.DropLine.All^ScatterStyles.DropLine.Right);
 
-			// Drop line top
-			if(View.DropLineTop) 
-				m_PlotStyle.ScatterStyle.DropLine |= ScatterStyles.DropLine.Top;
-			else
-				m_PlotStyle.ScatterStyle.DropLine &= (ScatterStyles.DropLine.All^ScatterStyles.DropLine.Top);
+				// Drop line top
+				if(View.DropLineTop) 
+					m_PlotStyle.ScatterStyle.DropLine |= ScatterStyles.DropLine.Top;
+				else
+					m_PlotStyle.ScatterStyle.DropLine &= (ScatterStyles.DropLine.All^ScatterStyles.DropLine.Top);
 
 
-			if(null!=m_PlotGroup)
+				if(null!=m_PlotGroup)
+				{
+					m_PlotGroup.Style = m_PlotGroupStyle;
+					if(!m_PlotGroup.IsIndependent)
+						m_PlotGroup.UpdateMembers();
+				}
+
+			}
+			catch(Exception ex)
 			{
-				m_PlotGroup.Style = m_PlotGroupStyle;
-				if(!m_PlotGroup.IsIndependent)
-					m_PlotGroup.UpdateMembers();
+				System.Windows.Forms.MessageBox.Show(this.View.Form,ex.ToString(),"A problem occured");
+				return false;
 			}
 
-
 			return true;
+		}
+
+		#endregion
+
+		#region ILineScatterPlotStyleController Members
+		
+		public void EhView_PlotGroupIndependent_Changed(bool bPlotGroupIsIndependent)
+		{
+			if(bPlotGroupIsIndependent)
+			{
+				m_PlotStyle = this.m_PlotItemPlotStyle;
+				this.SetPlotStyleElements();
+			}
+			else // Plot Group is dependent
+			{
+				m_PlotStyle = this.m_MasterItemPlotStyle;
+				this.SetPlotStyleElements();
+			}
+
 		}
 
 		#endregion

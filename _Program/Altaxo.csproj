@@ -374,16 +374,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\PlotStyleDialog.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\PlotStyleDialog.resx"
-                    DependentUpon = "PlotStyleDialog.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "Graph\RectangleD.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -533,6 +523,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Serialization\ImportGalacticSpcFiles.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Serialization\SerializationAttributes.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -546,16 +541,6 @@
                     RelPath = "Worksheet\ColumnStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Worksheet\DataGrid.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Worksheet\DataGrid.resx"
-                    DependentUpon = "DataGrid.cs"
-                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Worksheet\DataGridOperations.cs"
@@ -600,6 +585,11 @@
                 <File
                     RelPath = "Worksheet\TableController.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\TablePanel.cs"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File

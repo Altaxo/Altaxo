@@ -110,6 +110,7 @@ namespace Altaxo.Data
 		{
 			base.OnDeserialization(obj);
 		}
+
 		#endregion
 
 

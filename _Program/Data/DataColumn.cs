@@ -294,7 +294,7 @@ namespace Altaxo.Data
 	[SerializationVersion(0)]
 	[Serializable()]
 	public abstract class DataColumn :
-		IDisposable,
+		IDisposable,		
 		System.Runtime.Serialization.IDeserializationCallback, 
 		IReadableColumn, 
 		IWriteableColumn, 
@@ -450,6 +450,7 @@ namespace Altaxo.Data
 			this.m_MinRowChanged					= int.MaxValue;
 			this.m_Parent									= null;
 		}
+
 
 		/// <summary>
 		/// Creates a cloned instance of this object.
