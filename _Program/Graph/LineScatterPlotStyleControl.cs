@@ -639,6 +639,73 @@ namespace Altaxo.Graph
 			set { m_Controller = value; }
 		}
 
+		public void InitializeLineSymbolGapCondition(bool bGap)
+		{
+			this.m_chkLineSymbolGap.Checked = bGap;
+		}
+
+		public bool LineSymbolGap
+		{
+			get { return m_chkLineSymbolGap.Checked; }
+		}
+
+		public void InitializeSymbolStyle(string[] arr, string sel)
+		{
+			this.m_cbSymbolStyle.Items.AddRange(arr);
+			this.m_cbSymbolStyle.SelectedItem = sel;
+		}
+
+		public string SymbolStyle
+		{
+			get { return (string)m_cbSymbolStyle.SelectedItem; }
+		}
+
+		public void InitializeSymbolSize(string[] arr, string sel)
+		{
+			this.m_cbSymbolSize.Items.AddRange(arr);
+			this.m_cbSymbolSize.SelectedItem = sel;
+		}
+		public string SymbolSize
+		{
+			get { return (string)m_cbSymbolSize.SelectedItem; }
+		}
+
+
+		public void InitializeSymbolShape(string[] arr, string sel)
+		{
+			this.m_cbSymbolShape.Items.AddRange(arr);
+			this.m_cbSymbolShape.SelectedItem = sel;
+		}
+		public string SymbolShape
+		{
+			get { return (string)m_cbSymbolShape.SelectedItem; }
+		}
+
+		public void InitializeDropLineConditions(bool bLeft, bool bBottom, bool bRight, bool bTop)
+		{
+			this.m_chkSymbolDropLineLeft.Checked = bLeft;
+			this.m_chkSymbolDropLineBottom.Checked = bBottom;
+			this.m_chkSymbolDropLineRight.Checked = bRight;
+			this.m_chkSymbolDropLineTop.Checked = bTop;
+		}
+
+		public bool DropLineLeft
+		{
+			get { return m_chkSymbolDropLineLeft.Checked; }
+		}
+		public bool DropLineBottom
+		{
+			get { return m_chkSymbolDropLineBottom.Checked; }
+		}
+		public bool DropLineRight
+		{
+			get { return m_chkSymbolDropLineRight.Checked; }
+		}
+		public bool DropLineTop
+		{
+			get { return m_chkSymbolDropLineTop.Checked; }
+		}
+
 		public void InitializePlotType(string[] arr, string sel)
 		{
 			this.m_cbPlotType.Items.AddRange(arr);
@@ -650,6 +717,111 @@ namespace Altaxo.Graph
 			this.m_cbLineSymbolColor.Items.AddRange(arr);
 			this.m_cbLineSymbolColor.SelectedItem = sel;;
 		}
+		public string SymbolColor
+		{
+			get { return (string)m_cbLineSymbolColor.SelectedItem; }
+		}
+
+		public void InitializeLineConnect(string[] arr, string sel)
+		{
+			this.m_cbLineConnect.Items.AddRange(arr);
+			this.m_cbLineConnect.SelectedItem = sel;;
+		}
+		public string LineConnect
+		{
+			get { return (string)m_cbLineConnect.SelectedItem; }
+		}
+		
+		public void InitializeLineStyle(string[] arr, string sel)
+		{
+			this.m_cbLineType.Items.AddRange(arr);
+			this.m_cbLineType.SelectedItem = sel;;
+		}
+		public string LineType
+		{
+			get { return (string)m_cbLineType.SelectedItem; }
+		}
+	
+		public void InitializeLineWidth(string[] arr, string sel)
+		{
+			this.m_cbLineWidth.Items.AddRange(arr);
+			this.m_cbLineWidth.SelectedItem = sel;;
+		}
+		public string LineWidth
+		{
+			get { return (string)m_cbLineWidth.SelectedItem; }
+		}
+	
+
+		public void InitializeFillCondition(bool bFill)
+		{
+			this.m_chkLineFillArea.Checked = bFill;
+			this.m_cbLineFillColor.Enabled = bFill;
+			this.m_cbLineFillDirection.Enabled = bFill;
+		}
+
+		public bool LineFillArea 
+		{
+			get { return m_chkLineFillArea.Checked; }
+		}
+
+		public void InitializeFillColor(string[] arr, string sel)
+		{
+			this.m_cbLineFillColor.Items.AddRange(arr);
+			this.m_cbLineFillColor.SelectedItem = sel;;
+		}
+		public string LineFillColor
+		{
+			get { return (string)m_cbLineFillColor.SelectedItem; }
+		}
+	
+		public void InitializeFillDirection(string[] arr, string sel)
+		{
+			this.m_cbLineFillDirection.Items.AddRange(arr);
+			this.m_cbLineFillDirection.SelectedItem = sel;;
+		}
+		public string LineFillDirection
+		{
+			get { return (string)m_cbLineFillDirection.SelectedItem; }
+		}
+	
+
+		public void InitializePlotGroupConditions(bool bIndependent, bool bColor, bool bLineType, bool bSymbol)
+		{
+				this.m_rbtPlotGroupIndependent.Checked=  bIndependent;
+				this.m_rbtPlotGroupIncremental.Checked= !bIndependent;
+
+
+				this.m_chkPlotGroupColor.Checked = bColor;
+				this.m_chkPlotGroupLineType.Checked = bLineType;
+				this.m_chkPlotGroupSymbol.Checked = bSymbol;
+
+				this.m_rbtPlotGroupIndependent.Enabled=	!bIndependent;
+				this.m_rbtPlotGroupIncremental.Enabled=	!bIndependent;
+				this.m_chkPlotGroupColor.Enabled=				!bIndependent;
+				this.m_chkPlotGroupLineType.Enabled=		!bIndependent;
+				this.m_chkPlotGroupSymbol.Enabled=			!bIndependent;
+		}
+
+		public bool PlotGroupIncremental
+		{
+			get { return m_rbtPlotGroupIncremental.Checked; }
+		}
+
+		public bool PlotGroupColor
+		{
+			get { return m_chkPlotGroupColor.Checked; }
+		}
+		public bool PlotGroupLineType
+		{
+			get { return m_chkPlotGroupLineType.Checked; }
+		}
+		public bool PlotGroupSymbol
+		{
+			get { return m_chkPlotGroupSymbol.Checked; }
+		}
+
+
 
 		#endregion
 	}
