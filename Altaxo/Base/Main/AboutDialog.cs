@@ -131,7 +131,32 @@ namespace Altaxo.Main
       this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
       this.textBox1.Size = new System.Drawing.Size(496, 312);
       this.textBox1.TabIndex = 3;
-      this.textBox1.Text = "\t\t    GNU GENERAL PUBLIC LICENSE\r\n\t\t       Version 2, June 1991\r\n\r\n Copyright (C)" +
+      this.textBox1.Text = 
+        "\t\t    ACKNOWLEDGEMENTS\r\n" + 
+        "\r\n" +
+        "    This projects would not be possible without the great contributions of the open\r\n" + 
+        "    source community. I want to thank the authors of the projects, that are included\r\n" +
+        "    directly or indirectly in this project:\r\n" +
+        "\r\n" +
+        "- SharpDevelop, (www.icsharpcode.net), from which the GUI and the cool code completion\r\n"+
+        "  and syntax highlighting is adopted.\r\n" +
+        "- The authors of the projects that are included in SharpDevelop and therefore also in Altaxo\r\n"+
+        "\r\n" +
+        "- Matpack (B.Gammel, www.matpack.de). A lot of the function library was adopted from the\r\n" +
+        "  C++ sources of Matpack.\r\n" +
+        "\r\n" +
+        "- Exocortex DSP (exocortexdsp.sourceforge.net) contributes the complex library.\r\n" +
+        "\r\n" +
+        "- The authors of the projects that I have forgotten (sorry!), and the authors of the\r\n"+
+        "  countless support tools that are neccessary to manage such a project (for instance\r\n"+
+        "  Subversion, WinMerge, NUnit, NDoc).\r\n" +
+        "\r\n" +
+        "- My wife for being so patient when I block the PC every evening, and for her\r\n" +
+        "  support and new ideas.\r\n" +
+        "\r\n" +
+        "                 Dr. D.Lellinger, Darmstadt 2004\r\n" +
+        "\r\n" +
+        "\t\t    GNU GENERAL PUBLIC LICENSE\r\n\t\t       Version 2, June 1991\r\n\r\n Copyright (C)" +
         " 1989, 1991 Free Software Foundation, Inc.\r\n                       59 Temple Pla" +
         "ce, Suite 330, Boston, MA  02111-1307  USA\r\n Everyone is permitted to copy and d" +
         "istribute verbatim copies\r\n of this license document, but changing it is not all" +

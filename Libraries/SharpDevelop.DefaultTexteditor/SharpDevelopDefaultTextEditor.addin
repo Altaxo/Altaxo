@@ -25,9 +25,6 @@
 			<MenuItem id="ExportToHtml" insertafter="GenerateDocumentation" insertbefore="SetAsStartupProjectSeparator" label="${res:ProjectComponent.ContextMenu.HtmlExport}" class="ICSharpCode.SharpDevelop.DefaultEditor.Commands.ExportProjectToHtml"/>
 		</Conditional>
 	</Extension>
-	<Extension path="/SharpDevelop/Workbench/Views">
-		<Class id="CompilerMessageView" class="ICSharpCode.SharpDevelop.Gui.Pads.CompilerMessageView"/>
-	</Extension>
 	<Extension path="/SharpDevelop/Workbench/DisplayBindings">
 		<DisplayBinding id="Text" insertafter="Browser" supportedformats="Text Files,Source Files" class="ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBinding"/>
 	</Extension>
@@ -52,30 +49,6 @@
 		</MenuItem>
 		<MenuItem id="Separator3" label="-"/>
 		<MenuItem id="Options" label="${res:XML.TextAreaContextMenu.BufferOptions}" icon="Icons.16x16.PropertiesIcon" class="ICSharpCode.SharpDevelop.DefaultEditor.Commands.ShowBufferOptions"/>
-	</Extension>
-	<Extension path="/SharpDevelop/Workbench/ToolBar/Standard">
-		<Conditional action="Disable">
-			<Or>
-				<Condition activewindow="ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ITextEditorControlProvider"/>
-				<Condition openproject="*"/>
-			</Or>
-			<ToolbarItem id="Find" icon="Icons.16x16.FindIcon" tooltip="${res:XML.MainMenu.SearchMenu.Find.Description}" class="ICSharpCode.SharpDevelop.DefaultEditor.Commands.Find"/>
-			<ToolbarItem id="FindNext" icon="Icons.16x16.FindNextIcon" tooltip="${res:XML.MainMenu.SearchMenu.FindNext.Description}" class="ICSharpCode.SharpDevelop.DefaultEditor.Commands.FindNext"/>
-			<ToolbarItem id="Replace" icon="Icons.16x16.ReplaceIcon" tooltip="${res:XML.MainMenu.SearchMenu.Replace.Description}" class="ICSharpCode.SharpDevelop.DefaultEditor.Commands.Replace"/>
-		</Conditional>
-		<ToolbarItem id="SearchSeparator" tooltip="-"/>
-		<Conditional activewindow="ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ITextEditorControlProvider" action="Disable">
-			<ToolbarItem id="Comment" icon="Icons.16x16.CommentRegion" tooltip="${res:XML.TextAreaContextMenu.CommentUncommentSelection}" class="ICSharpCode.SharpDevelop.DefaultEditor.Commands.CommentRegion"/>
-			<!--				<ToolbarItem id = "Uncomment"
-				             icon = "Icons.16x16.UnCommentRegion"
-				             tooltip = "${res:XML.TextAreaContextMenu.UncommentSelection}"
-				             class = "ICSharpCode.SharpDevelop.DefaultEditor.Commands.UncommentRegion"/> -->
-			<ToolbarItem id="SearchSeparator2" tooltip="-"/>
-			<ToolbarItem id="ToggleBookmark" icon="Icons.16x16.ToggleBookmark" tooltip="${res:XML.MainMenu.SearchMenu.ToggleBookmark.Description}" class="ICSharpCode.SharpDevelop.DefaultEditor.Commands.ToggleBookmark"/>
-			<ToolbarItem id="PrevBookmark" icon="Icons.16x16.GotoPrevbookmark" tooltip="${res:XML.MainMenu.SearchMenu.PrevBookmark.Description}" class="ICSharpCode.SharpDevelop.DefaultEditor.Commands.PrevBookmark"/>
-			<ToolbarItem id="NextBookmark" icon="Icons.16x16.GotoNextbookmark" tooltip="${res:XML.MainMenu.SearchMenu.NextBookmark.Description}" class="ICSharpCode.SharpDevelop.DefaultEditor.Commands.NextBookmark"/>
-			<ToolbarItem id="ClearBookmarks" icon="Icons.16x16.ClearAllBookmarks" tooltip="${res:XML.MainMenu.SearchMenu.ClrBookmark.Description}" class="ICSharpCode.SharpDevelop.DefaultEditor.Commands.ClearBookmarks"/>
-		</Conditional>
 	</Extension>
 	<Extension path="/SharpDevelop/Workbench/MainMenu">
 		<MenuItem id="Search" insertafter="View" label="${res:XML.MainMenu.SearchMenu}">

@@ -11,7 +11,7 @@
 	</Extension>
 	<Extension path="/Workspace/Autostart">
 		<Class id="InitializeWorkbenchCommand" class="Altaxo.Main.Commands.InitializeWorkbench1Command" />
-		<Class id="StartCodeCompletionWizard" class="ICSharpCode.SharpDevelop.Commands.StartCodeCompletionWizard" />
+		<Class id="StartCodeCompletionWizard" class="Altaxo.Main.Commands.StartCodeCompletionWizard" />
 		<Class id="StartParserServiceThread" class="ICSharpCode.SharpDevelop.Commands.StartParserServiceThread" />
 		<!-- #assembly preload -->
 		<!-- <Class id="StartSharpAssemblyPreloadThread" class="ICSharpCode.SharpDevelop.Commands.StartSharpAssemblyPreloadThread"/> -->
@@ -211,12 +211,8 @@
 		<FileFilter id="AllFiles" name="${res:SharpDevelop.FileFilter.AllFiles}" extensions="*.*" />
 	</Extension>
 	<Extension path="/SharpDevelop/Workbench/Views">
-		<Class id="ProjectScout" class="ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser.ProjectBrowserView" />
-		<Class id="ClassScout" class="ICSharpCode.SharpDevelop.Gui.Pads.ClassScout" />
 		<Class id="FileScout" class="Altaxo.Main.GUI.FileScout" />
 		<Class id="SideBar" class="ICSharpCode.SharpDevelop.Gui.Pads.SideBarView" />
-		<Class id="OpenTaskView" class="ICSharpCode.SharpDevelop.Gui.Pads.OpenTaskView" />
-		<Class id="PropertyPad" class="ICSharpCode.SharpDevelop.Gui.Pads.PropertyPad" />
 		<Class id="HelpBrowser" class="ICSharpCode.SharpDevelop.Gui.Pads.HelpBrowser" />
 		<Class id="AltaxoProjectScout" class="Altaxo.Main.GUI.ProjectScout" />
 	</Extension>
@@ -249,6 +245,10 @@
 	</Extension>
 	<Extension path="/SharpDevelop/Workbench/ToolBar">
 		<ToolbarItem id="Standard">
+		</ToolbarItem>
+		</Extension>
+	<Extension path="/Altaxo/Workbench/ToolBar">
+		<ToolbarItem id="Standard">
 			<ToolbarItem id="New" icon="Icons.16x16.NewDocumentIcon" tooltip="${res:XML.MainMenu.FileMenu.Close.Description}"
 				class="Altaxo.Main.Commands.CloseProject" />
 			<ToolbarItem id="Open" icon="Icons.16x16.OpenFileIcon" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}"
@@ -280,26 +280,7 @@
 				<ToolbarItem id="Delete" icon="Icons.16x16.DeleteIcon" tooltip="${res:XML.MainMenu.EditMenu.Delete.Description}"
 					class="ICSharpCode.SharpDevelop.Commands.Delete" />
 			</Conditional>
-			<ToolbarItem id="CutSeparator" insertafter="Delete" insertbefore="Find" tooltip="-" />
-			<Conditional action="Disable">
-				<Or>
-					<Condition activewindow="ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ITextAreaControlProvider" />
-					<Condition iscombineopen="True" />
-				</Or>
-			</Conditional>
-			<ToolbarItem id="CompileSeparator" insertafter="ClearBookmarks" tooltip="-" />
-			<Conditional action="Disable">
-				<Or>
-					<Condition activewindow="ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.ITextAreaControlProvider" />
-					<Condition iscombineopen="True" />
-				</Or>
-				<ToolbarItem id="Compile" icon="Icons.16x16.BuildCombine" tooltip="${res:XML.MainMenu.RunMenu.Compile.Description}"
-					class="ICSharpCode.SharpDevelop.Commands.Compile" />
-				<ToolbarItem id="BuildProject" icon="Icons.16x16.BuildCurrentSelectedProject" tooltip="${res:XML.MainMenu.RunMenu.BuildProject.Description}"
-					class="ICSharpCode.SharpDevelop.Commands.BuildCurrentProject" />
-				<ToolbarItem id="Run" icon="Icons.16x16.RunProgramIcon" tooltip="${res:XML.MainMenu.RunMenu.Run.Description}"
-					class="ICSharpCode.SharpDevelop.Commands.RunCommand" />
-			</Conditional>
+			<ToolbarItem id="CutSeparator" tooltip="-" />
 			<ToolbarItem id="GraphToolSeparator" tooltip="-" />
 			<Conditional activewindow="Altaxo.Graph.GUI.SDGraphController" action="Disable">
 				<ToolbarItem id="GraphPointer" icon="Icons.16x16.GraphPointerTool" tooltip="${res:XML.MainMenu.FileMenu.New.File.Description}"
@@ -544,6 +525,14 @@
 				description="${res:XML.MainMenu.HelpMenu.GPL.Description}" class="ICSharpCode.SharpDevelop.Commands.ViewGPL" />
 			<MenuItem id="Separator2" label="-" />
 			<MenuItem id="Web" label="${res:XML.MainMenu.HelpMenu.WebMenu}">
+
+				<MenuItem id="Altaxo" label="Altaxo">
+					<MenuItem id="Homepage" label="Homepage" icon="Icons.16x16.WebSearchIcon" link="http://altaxo.sourceforge.net" />
+					<MenuItem id="Downloads" label="Downloads" icon="Icons.16x16.WebSearchIcon" link="http://sourceforge.net/projects/altaxo" />
+					<MenuItem id="ProjectPage" label="Project page" icon="Icons.16x16.WebSearchIcon" link="http://sourceforge.net/projects/altaxo/" />
+				</MenuItem>
+
+
 				<MenuItem id="ASP" label="&amp;AlphaSierraPapa" icon="Icons.16x16.WebSearchIcon" description="Visit my sponsors"
 					link="http://www.alphasierrapapa.com/" />
 				<MenuItem id="SharpDevelop" label="SharpDevelop">

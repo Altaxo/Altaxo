@@ -181,5 +181,54 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 		}
 	}
 
+
+
+  public class StartCodeCompletionWizard : AbstractCommand
+  {
+    public override void Run()
+    {
+      PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
+      string path = propertyService.GetProperty("SharpDevelop.CodeCompletion.DataDirectory", String.Empty).ToString();
+      FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+      string codeCompletionTemp = fileUtilityService.GetDirectoryNameWithSeparator(path);
+      string codeCompletionProxyFile = codeCompletionTemp + "CodeCompletionProxyDataV02.bin";
+			
+      if (!File.Exists(codeCompletionProxyFile)) 
+      {
+        RunWizard();
+        DefaultParserService parserService = (DefaultParserService)ServiceManager.Services.GetService(typeof(IParserService));
+        parserService.LoadProxyDataFile();
+      }
+    }
+		
+    void RunWizard()
+    {
+      IProperties customizer = new DefaultProperties();
+			
+      if (SplashScreenForm.SplashScreen.Visible) 
+      {
+        SplashScreenForm.SplashScreen.Close();
+      }
+      PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
+			
+      customizer.SetProperty("SharpDevelop.CodeCompletion.DataDirectory",
+        propertyService.GetProperty("SharpDevelop.CodeCompletion.DataDirectory", String.Empty));
+			
+      using (WizardDialog wizard = new WizardDialog("Initialize Code Completion Database", customizer, "/SharpDevelop/CompletionDatabaseWizard")) 
+      {
+        wizard.ControlBox = false;
+        wizard.ShowInTaskbar = true;
+        if (wizard.ShowDialog() == DialogResult.OK) 
+        {
+          propertyService.SetProperty("SharpDevelop.CodeCompletion.DataDirectory",
+            customizer.GetProperty("SharpDevelop.CodeCompletion.DataDirectory", String.Empty));
+          // restart  & exit 
+          ServiceManager.Services.UnloadAllServices();
+          System.Diagnostics.Process.Start(Path.Combine(Application.StartupPath, "AltaxoStartup.exe"));
+          System.Environment.Exit(0);
+        }
+      }
+    }
+  }
 	
 }

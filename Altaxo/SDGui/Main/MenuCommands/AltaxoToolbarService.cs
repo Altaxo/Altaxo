@@ -26,7 +26,7 @@ namespace ICSharpCode.SharpDevelop.Services
 {
 	public class AltaxoToolbarService : AbstractService
 	{
-		readonly static string toolBarPath     = "/SharpDevelop/Workbench/ToolBar";
+		readonly static string toolBarPath     = "/Altaxo/Workbench/ToolBar";
 		
 		IAddInTreeNode node;
 		
