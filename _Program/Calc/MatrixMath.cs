@@ -132,7 +132,7 @@ namespace Altaxo.Calc
 				m_Rows = rows;
 				m_Cols = cols;
 				m_Array = new double[2*(rows+32)][];
-				for(int i=0;i<m_Array.Length;i++)
+				for(int i=0;i<m_Rows;i++)
 					m_Array[i] = new double[cols];
 			}
 
@@ -273,7 +273,7 @@ namespace Altaxo.Calc
 				m_Rows = rows;
 				m_Cols = cols;
 				m_Array = new double[2*(cols+32)][];
-				for(int i=0;i<m_Array.Length;i++)
+				for(int i=0;i<m_Cols;i++)
 					m_Array[i] = new double[rows];
 			}
 
@@ -1219,18 +1219,23 @@ namespace Altaxo.Calc
 		/// <param name="accuracy">The relative residual variance that should be reached.</param>
 		/// <param name="factors">Resulting matrix of factors. You have to provide a extensible matrix of dimension(0,0) as the vertical score vectors are appended to the matrix.</param>
 		/// <param name="loads">Resulting matrix consiting of horizontal load vectors (eigenspectra). You have to provide a extensible matrix of dimension(0,0) here.</param>
+		/// <param name="residualVarianceVector">Residual variance. Element[0] is the original variance, element[1] the residual variance after the first factor subtracted and so on. You can provide null if you don't need this result.</param>
 		public static void NIPALS_HO(
 			IMatrix X,
 			int numFactors,
 			double accuracy,
 			IRightExtensibleMatrix factors,
-			IBottomExtensibleMatrix loads)
+			IBottomExtensibleMatrix loads,
+			IBottomExtensibleMatrix residualVarianceVector)
 		{
 						
 			// first center the matrix
 			//MatrixMath.ColumnsToZeroMean(X, null);
 
 			double originalVariance = Math.Sqrt(MatrixMath.SumOfSquares(X));
+			
+			if(null!=residualVarianceVector)
+				residualVarianceVector.AppendBottom(new MatrixMath.Scalar(originalVariance));
 
 	
 			IMatrix l = new HorizontalVector(X.Cols);
@@ -1285,10 +1290,12 @@ namespace Altaxo.Calc
 				// if the number of factors to calculate is not provided,
 				// calculate the norm of the residual matrix and compare with the original
 				// one
-				if(numFactors<=0)
+				if(numFactors<=0 || null!=residualVarianceVector)
 				{
-					double residualRelativeVariance = Math.Sqrt(MatrixMath.SumOfSquares(X))/originalVariance;
-					if(residualRelativeVariance <=accuracy)
+					double residualVariance = Math.Sqrt(MatrixMath.SumOfSquares(X));
+					residualVarianceVector.AppendBottom(new MatrixMath.Scalar(residualVariance));
+
+					if(residualVariance<=accuracy*originalVariance)
 					{
 						break;
 					}

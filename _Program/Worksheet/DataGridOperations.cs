@@ -107,6 +107,112 @@ namespace Altaxo.Worksheet
 
 
 		/// <summary>
+		/// Multiplies selected columns to form a matrix.
+		/// </summary>
+		/// <param name="mainDocument"></param>
+		/// <param name="srctable"></param>
+		/// <param name="selectedColumns"></param>
+		/// <returns>Null if successful, else the description of the error.</returns>
+		/// <remarks>The user must select an even number of columns. All columns of the first half of the selection 
+		/// must have the same number of rows, and all columns of the second half of selection must also have the same
+		/// number of rows. The first half of selected columns form a matrix of dimensions(firstrowcount,halfselected), and the second half
+		/// of selected columns form a matrix of dimension(halfselected, secondrowcount). The resulting matrix has dimensions (firstrowcount,secondrowcount) and is
+		/// stored in a separate worksheet.</remarks>
+		public static string MultiplyColumnsToMatrix(
+			Altaxo.AltaxoDocument mainDocument,
+			Altaxo.Data.DataTable srctable,
+			Altaxo.Worksheet.IndexSelection selectedColumns
+			)
+		{
+			// check that there are columns selected
+			if(0==selectedColumns.Count)
+				return "You must select at least two columns to multiply!";
+			// selected columns must contain an even number of columns
+			if(0!=selectedColumns.Count%2)
+				return "You selected an odd number of columns. Please select an even number of columns to multiply!";
+			// all selected columns must be numeric columns
+			for(int i=0;i<selectedColumns.Count;i++)
+			{
+				if(!(srctable[selectedColumns[i]] is Altaxo.Data.INumericColumn))
+					return string.Format("The column[{0}] (name:{1}) is not a numeric column!",selectedColumns[i],srctable[selectedColumns[i]].ColumnName);
+			}
+
+
+			int halfselect = selectedColumns.Count/2;
+		
+			// check that all columns from the first half of selected colums contain the same
+			// number of rows
+
+			int rowsfirsthalf=int.MinValue;
+			for(int i=0;i<halfselect;i++)
+			{
+				int idx = selectedColumns[i];
+				if(rowsfirsthalf<0)
+					rowsfirsthalf = srctable[idx].Count;
+				else if(rowsfirsthalf != srctable[idx].Count)
+					return "The first half of selected columns have not all the same length!";
+			}
+
+			int rowssecondhalf=int.MinValue;
+			for(int i=halfselect;i<selectedColumns.Count;i++)
+			{
+				int idx = selectedColumns[i];
+				if(rowssecondhalf<0)
+					rowssecondhalf = srctable[idx].Count;
+				else if(rowssecondhalf != srctable[idx].Count)
+					return "The second half of selected columns have not all the same length!";
+			}
+
+
+			// now create the matrices to multiply from the 
+
+			Altaxo.Calc.MatrixMath.VOMatrix firstMat = new Altaxo.Calc.MatrixMath.VOMatrix(rowsfirsthalf,halfselect);
+			for(int i=0;i<halfselect;i++)
+			{
+				Altaxo.Data.INumericColumn col = (Altaxo.Data.INumericColumn)srctable[selectedColumns[i]];
+				for(int j=0;j<rowsfirsthalf;j++)
+					firstMat[j,i] = col.GetDoubleAt(j);
+			}
+			
+			Altaxo.Calc.MatrixMath.HOMatrix secondMat = new Altaxo.Calc.MatrixMath.HOMatrix(halfselect,rowssecondhalf);
+			for(int i=0;i<halfselect;i++)
+			{
+				Altaxo.Data.INumericColumn col = (Altaxo.Data.INumericColumn)srctable[selectedColumns[i+halfselect]];
+				for(int j=0;j<rowssecondhalf;j++)
+					secondMat[i,j] = col.GetDoubleAt(j);
+			}
+
+			// now multiply the two matrices
+			Altaxo.Calc.MatrixMath.HOMatrix resultMat = new Altaxo.Calc.MatrixMath.HOMatrix(rowsfirsthalf,rowssecondhalf);
+			Altaxo.Calc.MatrixMath.Multiply(firstMat,secondMat,resultMat);
+
+
+			// and store the result in a new worksheet 
+			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("ResultMatrix of " + srctable.TableName);
+			table.SuspendDataChangedNotifications();
+
+			// first store the factors
+			for(int i=0;i<resultMat.Cols;i++)
+			{
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn(i.ToString());
+				col.Group=0;
+				for(int j=0;j<resultMat.Rows;j++)
+					col[j] = resultMat[j,i];
+				
+				table.Add(col);
+			}
+
+			table.ResumeDataChangedNotifications();
+			mainDocument.DataSet.Add(table);
+			// create a new worksheet without any columns
+			App.Current.CreateNewWorksheet(table);
+
+			return null;
+		}
+
+
+
+		/// <summary>
 		/// Makes a PCA (a principal component analysis) of the table or the selected columns / rows and stores the results in a newly created table.
 		/// </summary>
 		/// <param name="mainDocument">The main document of the application.</param>
@@ -114,13 +220,15 @@ namespace Altaxo.Worksheet
 		/// <param name="selectedColumns">The selected columns.</param>
 		/// <param name="selectedRows">The selected rows.</param>
 		/// <param name="bHorizontalOrientedSpectrum">True if a spectrum is a single row, False if a spectrum is a single column.</param>
+		/// <param name="maxNumberOfFactors">The maximum number of factors to calculate.</param>
 		/// <returns></returns>
 		public static string PrincipalComponentAnalysis(
 			Altaxo.AltaxoDocument mainDocument,
 			Altaxo.Data.DataTable srctable,
 			Altaxo.Worksheet.IndexSelection selectedColumns,
 			Altaxo.Worksheet.IndexSelection selectedRows,
-			bool bHorizontalOrientedSpectrum
+			bool bHorizontalOrientedSpectrum,
+			int maxNumberOfFactors
 			)
 		{
 			bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
@@ -202,10 +310,11 @@ namespace Altaxo.Worksheet
 			// now do PCA with the matrix
 			Altaxo.Calc.MatrixMath.VOMatrix factors = new Altaxo.Calc.MatrixMath.VOMatrix(0,0);
 			Altaxo.Calc.MatrixMath.HOMatrix loads = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
+			Altaxo.Calc.MatrixMath.HOMatrix residualVariances = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
 			Altaxo.Calc.MatrixMath.HorizontalVector meanX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Cols);
 			// first, center the matrix
 			Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixX,meanX);
-			Altaxo.Calc.MatrixMath.NIPALS_HO(matrixX,0,1E-9,factors,loads);
+			Altaxo.Calc.MatrixMath.NIPALS_HO(matrixX,maxNumberOfFactors,1E-9,factors,loads,residualVariances);
 
 			// now we have to create a new table where to place the calculated factors and loads
 			// we will do that in a vertical oriented manner, i.e. even if the loads are
@@ -215,11 +324,23 @@ namespace Altaxo.Worksheet
 			// Fill the Table
 			table.SuspendDataChangedNotifications();
 
+			// first of all store the meanscore
+		{
+			double meanScore = Altaxo.Calc.MatrixMath.LengthOf(meanX);
+			Altaxo.Calc.MatrixMath.NormalizeRows(meanX);
+		
+			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("MeanFactor");
+			col.Group=0;
+			for(int i=0;i<factors.Rows;i++)
+				col[i] = meanScore;
+			table.Add(col);
+		}
+
 			// first store the factors
 			for(int i=0;i<factors.Cols;i++)
 			{
 				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("Factor"+i.ToString());
-				col.Group=0;
+				col.Group=1;
 				for(int j=0;j<factors.Rows;j++)
 					col[j] = factors[j,i];
 				
@@ -228,8 +349,8 @@ namespace Altaxo.Worksheet
 
 			// now store the mean of the matrix
 		{
-			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("Mean");
-			col.Group=1;
+			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("MeanLoad");
+			col.Group=2;
 			for(int j=0;j<meanX.Cols;j++)
 				col[j] = meanX[0,j];
 			table.Add(col);
@@ -239,12 +360,21 @@ namespace Altaxo.Worksheet
 			for(int i=0;i<loads.Rows;i++)
 			{
 				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("Load"+i.ToString());
-				col.Group=2;
+				col.Group=3;
 				for(int j=0;j<loads.Cols;j++)
 					col[j] = loads[i,j];
 				
 				table.Add(col);
 			}
+
+			// now store the residual variances, they are vertical in the vector
+		{
+			Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("ResidualVariance");
+			col.Group=4;
+			for(int i=0;i<residualVariances.Rows;i++)
+				col[i] = residualVariances[i,0];
+			table.Add(col);
+		}
 
 			table.ResumeDataChangedNotifications();
 			mainDocument.DataSet.Add(table);

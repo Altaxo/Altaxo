@@ -637,6 +637,13 @@ namespace Altaxo.Worksheet
 			//mi.Shortcut = ShortCuts.
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 	
+			// Analysis - Multiply Columns to Matrix
+			mi = new MenuItem("Multiply columns to matrix");
+			mi.Click += new EventHandler(EhMenuAnalysisMultiplyColumnsToMatrix_OnClick);
+			//mi.Shortcut = ShortCuts.
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+
+
 			// Analysis -PCAOnRows
 			mi = new MenuItem("PCA on rows");
 			mi.Click += new EventHandler(EhMenuAnalysisPCAOnRows_OnClick);
@@ -1051,19 +1058,47 @@ namespace Altaxo.Worksheet
 			DataGridOperations.StatisticsOnRows(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows);
 		}
 
+		// Analysis - Multiply Columns to Matrix
+		protected void EhMenuAnalysisMultiplyColumnsToMatrix_OnClick(object sender, System.EventArgs e)
+		{
+		string err=DataGridOperations.MultiplyColumnsToMatrix(App.Current.Doc,this.Doc,this.SelectedColumns);
+		if(null!=err)
+			System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+		}
+
 		// Analysis - PCA on rows
 		protected void EhMenuAnalysisPCAOnRows_OnClick(object sender, System.EventArgs e)
 		{
-			string err=DataGridOperations.PrincipalComponentAnalysis(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows,true);
-			if(null!=err)
-				System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+			int maxFactors = 3;
+			Main.IntegerValueInputController ctrl = new Main.IntegerValueInputController(
+				maxFactors,
+				new Main.SingleValueDialog("Set maximum number of factors","Please enter the maximum number of factors to calculate:")
+				);
+
+			ctrl.Validator = new Altaxo.Main.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+			if(ctrl.ShowDialog(View.TableViewForm))
+			{
+				string err=DataGridOperations.PrincipalComponentAnalysis(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows,true,ctrl.EnteredContents);
+				if(null!=err)
+					System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+			}
 		}
 		// Analysis - PCA on cols
 		protected void EhMenuAnalysisPCAOnCols_OnClick(object sender, System.EventArgs e)
 		{
-			string err=DataGridOperations.PrincipalComponentAnalysis(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows,false);
-			if(null!=err)
-				System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+			int maxFactors = 3;
+			Main.IntegerValueInputController ctrl = new Main.IntegerValueInputController(
+				maxFactors,
+				new Main.SingleValueDialog("Set maximum number of factors","Please enter the maximum number of factors to calculate:")
+				);
+
+			ctrl.Validator = new Altaxo.Main.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
+			if(ctrl.ShowDialog(View.TableViewForm))
+			{
+				string err=DataGridOperations.PrincipalComponentAnalysis(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows,false,ctrl.EnteredContents);
+				if(null!=err)
+					System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+			}
 		}
 
 		// Analysis - PLS on rows
