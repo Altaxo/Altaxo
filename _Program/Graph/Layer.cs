@@ -21,20 +21,24 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Serialization;
 
 
 namespace Altaxo.Graph
 {
 	/// <summary>
-	/// Summary description for GraphLayer.
+	/// Layer represents a rectangular area on the graph, which holds plot curves, axes and graphical elements.
 	/// </summary>
-	public class Layer
+	[SerializationSurrogate(0,typeof(Layer.SerializationSurrogate0))]
+	[SerializationVersion(0)]
+	public class Layer : System.Runtime.Serialization.IDeserializationCallback
 	{
 		#region Enumerations
 
 		/// <summary>
 		/// The type of the size (i.e. width and height values.
 		/// </summary>
+		[Serializable]
 		public enum SizeType 
 		{
 			/// <summary>
@@ -57,6 +61,7 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// The type of the position values  (i.e. x and y position of the layer).
 		/// </summary>
+	[Serializable]
 		public enum PositionType 
 		{
 			/// <summary>
@@ -117,6 +122,7 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Provides how the axis is linked to the corresponding axis on the linked layer.
 		/// </summary>
+		[Serializable]
 		public enum AxisLinkType
 		{
 			/// <summary>
@@ -136,18 +142,36 @@ namespace Altaxo.Graph
 
 		#endregion
 
-		#region Member variables
 
+		#region Cached member variables
 		/// <summary>
 		/// The cached layer position in points (1/72 inch) relative to the upper left corner
 		/// of the graph document (upper left corner of the printable area).
 		/// </summary>
-		protected PointF m_LayerPosition = new PointF(119,80);
+		protected PointF m_LayerPosition = new PointF(0,0);
+
+
+		/// <summary>
+		/// The size of the layer in points (1/72 inch).
+		/// </summary>
+		/// <remarks>
+		/// In case the size is absolute (see <see cref="SizeType"/>), this is the size of the layer. Otherwise
+		/// it is only the cached value for the size, since the size is calculated then.
+		/// </remarks>
+		protected SizeF  m_LayerSize = new SizeF(0,0);
+
+		protected Matrix matrix = new Matrix();  // forward transformation matrix
+		protected Matrix matrixi = new Matrix(); // inverse transformation matrix
+
+		#endregion // Cached member variables
+
+		#region Member variables
+
 
 		/// <summary>
 		/// The layers x position value, either absolute or relative, as determined by <see cref="m_LayerXPositionType"/>.
 		/// </summary>
-		protected double m_LayerXPosition = 119;
+		protected double m_LayerXPosition = 0;
 
 		/// <summary>
 		/// The type of the x position value, see <see cref="PositionType"/>.
@@ -157,27 +181,19 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// The layers y position value, either absolute or relative, as determined by <see cref="m_LayerYPositionType"/>.
 		/// </summary>
-		protected double m_LayerYPosition = 80;
+		protected double m_LayerYPosition = 0;
 
 		/// <summary>
 		/// The type of the y position value, see <see cref="PositionType"/>.
 		/// </summary>
 		protected PositionType m_LayerYPositionType=PositionType.AbsoluteValue;
 
-		/// <summary>
-		/// The size of the layer in points (1/72 inch).
-		/// </summary>
-		/// <remarks>
-		/// In case the size is absolute (see <see cref="SizeType"/>), this is the size of the layer. Otherwise
-		/// it is only the cached value for the size, since the size is calculated then.
-		/// </remarks>
-		protected SizeF  m_LayerSize = new SizeF(626,407);
 
 		/// <summary>
 		/// The width of the layer, either as absolute value in point (1/72 inch), or as 
 		/// relative value as pointed out by <see cref="m_LayerWidthType"/>.
 		/// </summary>
-		protected double m_LayerWidth=626;
+		protected double m_LayerWidth=0;
 
 		/// <summary>
 		/// The type of the value for the layer width, see <see cref="SizeType"/>.
@@ -188,31 +204,36 @@ namespace Altaxo.Graph
 		/// The height of the layer, either as absolute value in point (1/72 inch), or as 
 		/// relative value as pointed out by <see cref="m_LayerHeightType"/>.
 		/// </summary>
-		protected double m_LayerHeight= 407;
+		protected double m_LayerHeight= 0;
 
 		/// <summary>
 		/// The type of the value for the layer height, see <see cref="SizeType"/>.
 		/// </summary>
 		protected SizeType m_LayerHeightType=SizeType.AbsoluteValue;
 
-		/// <summary>
-		/// The rotation angle (in degrees) of the layer.
-		/// </summary>
+		/// <summary>The rotation angle (in degrees) of the layer.</summary>
 		protected float  m_LayerAngle=0; // Rotation
+		
+		/// <summary>The scaling factor of the layer, normally 1.</summary>
 		protected float  m_LayerScale=1;  // Scale
-		protected Matrix matrix = new Matrix();  // forward transformation matrix
-		protected Matrix matrixi = new Matrix(); // inverse transformation matrix
 
+		/// <summary>The horizontal axis of the layer.</summary>
 		protected Axis m_xAxis; // the X-Axis
+		
+		/// <summary>The vertical axis of the layer.</summary>
 		protected Axis m_yAxis; // the Y-Axis
 
-
+		/// <summary>True if the left axis should be drawn.</summary>
 		protected bool m_ShowLeftAxis = true;
+		/// <summary>True if the bottom axis should be drawn.</summary>
 		protected bool m_ShowBottomAxis = true;
+		/// <summary>True if the right axis should be drawn.</summary>
 		protected bool m_ShowRightAxis = true;
+		/// <summary>True if the top axis should be drawn.</summary>
 		protected bool m_ShowTopAxis = true;
-
+		/// <summary>True if the layer area should be filled with a background brush.</summary>
 		protected bool m_bFillLayerArea=false;
+		/// <summary>The background brush for the layer area.</summary>
 		protected BrushHolder m_LayerAreaFillBrush = new BrushHolder(Color.Aqua);
 
 		protected XYLayerAxisStyle m_LeftAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Left);
@@ -220,10 +241,10 @@ namespace Altaxo.Graph
 		protected XYLayerAxisStyle m_RightAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Right);
 		protected XYLayerAxisStyle m_TopAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Top);
 
-		protected SimpleLabelStyle m_LeftLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Left);
-		protected SimpleLabelStyle m_BottomLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Bottom);
-		protected SimpleLabelStyle m_RightLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Right);
-		protected SimpleLabelStyle m_TopLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Top);
+		protected LabelStyle m_LeftLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Left);
+		protected LabelStyle m_BottomLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Bottom);
+		protected LabelStyle m_RightLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Right);
+		protected LabelStyle m_TopLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Top);
 
 		protected ExtendedTextGraphObject m_LeftAxisTitle = null;
 		protected ExtendedTextGraphObject m_BottomAxisTitle = null;
@@ -236,10 +257,11 @@ namespace Altaxo.Graph
 		protected GraphObjectCollection m_GraphObjects = new GraphObjectCollection();
 
 		protected PlotAssociationList m_PlotAssociations;
+
 		protected PlotGroup.Collection m_PlotGroups = new PlotGroup.Collection();
 
 		/// <summary>
-		/// The parent layer collection wich contains this layer (or null if not member of such collection).
+		/// The parent layer collection which contains this layer (or null if not member of such collection).
 		/// </summary>
 		protected LayerCollection m_ParentLayerCollection=null;
 	
@@ -297,6 +319,172 @@ namespace Altaxo.Graph
 		public event System.EventHandler AxesChanged;
 
 		#endregion
+
+		#region "Serialization"
+
+		/// <summary>Used to serialize the GraphDocument Version 0.</summary>
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes Layer Version 0.
+			/// </summary>
+			/// <param name="obj">The Layer to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				Layer s = (Layer)obj;
+
+			
+				// size, position, rotation and scale
+				
+				info.AddValue("WidthType",s.m_LayerWidthType);
+				info.AddValue("HeightType",s.m_LayerHeightType);
+				info.AddValue("Width",s.m_LayerWidth);
+				info.AddValue("Height",s.m_LayerHeight);
+				info.AddValue("CachedSize",s.m_LayerSize);
+
+				info.AddValue("XPositionType",s.m_LayerXPositionType);
+				info.AddValue("YPositionType",s.m_LayerYPositionType);
+				info.AddValue("XPosition",s.m_LayerXPosition);
+				info.AddValue("YPosition",s.m_LayerYPosition);
+				info.AddValue("CachedPosition",s.m_LayerPosition);
+
+				info.AddValue("Rotation",s.m_LayerAngle);
+				info.AddValue("Scale",s.m_LayerScale);
+
+				// axis related
+
+				info.AddValue("XAxis",s.m_xAxis);
+				info.AddValue("YAxis",s.m_yAxis);
+				info.AddValue("LinkXAxis",s.m_LinkXAxis);
+				info.AddValue("LinkYAxis",s.m_LinkYAxis);
+				info.AddValue("LinkXAxisOrgA",s.m_LinkXAxisOrgA);
+				info.AddValue("LinkXAxisOrgB",s.m_LinkXAxisOrgB);
+				info.AddValue("LinkXAxisEndA",s.m_LinkXAxisEndA);
+				info.AddValue("LinkXAxisEndB",s.m_LinkXAxisEndB);
+				info.AddValue("LinkYAxisOrgA",s.m_LinkYAxisOrgA);
+				info.AddValue("LinkYAxisOrgB",s.m_LinkYAxisOrgB);
+				info.AddValue("LinkYAxisEndA",s.m_LinkYAxisEndA);
+				info.AddValue("LinkYAxisEndB",s.m_LinkYAxisEndB);
+
+			
+				// Styles
+				info.AddValue("LeftAxisStyle",s.m_LeftAxisStyle);
+				info.AddValue("BottomAxisStyle",s.m_BottomAxisStyle);
+				info.AddValue("RightAxisStyle",s.m_RightAxisStyle);
+				info.AddValue("TopAxisStyle",s.m_TopAxisStyle);
+			
+			
+				info.AddValue("LeftLabelStyle",s.m_LeftLabelStyle);
+				info.AddValue("BottomLabelStyle",s.m_BottomLabelStyle);
+				info.AddValue("RightLabelStyle",s.m_RightLabelStyle);
+				info.AddValue("TopLabelStyle",s.m_TopLabelStyle);
+			
+			
+				// Titles and legend
+				info.AddValue("LeftAxisTitle",s.m_LeftAxisTitle);
+				info.AddValue("BottomAxisTitle",s.m_BottomAxisTitle);
+				info.AddValue("RightAxisTitle",s.m_RightAxisTitle);
+				info.AddValue("TopAxisTitle",s.m_TopAxisTitle);
+				info.AddValue("Legend",s.m_Legend);
+			
+				// Layer specific
+				info.AddValue("LinkedLayer",s.m_LinkedLayer);
+			
+				info.AddValue("GraphObjects",s.m_GraphObjects);
+				info.AddValue("PlotGroups",s.m_PlotGroups);
+				info.AddValue("PlotAssociations",s.m_PlotAssociations);
+
+			}
+
+			/// <summary>
+			/// Deserializes the Layer Version 0.
+			/// </summary>
+			/// <param name="obj">The empty Layer object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized Layer.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				Layer s = (Layer)obj;
+			
+				// size, position, rotation and scale
+				
+				s.m_LayerWidthType  = (SizeType)info.GetValue("WidthType",typeof(SizeType));
+				s.m_LayerHeightType = (SizeType)info.GetValue("HeightType",typeof(SizeType));
+				s.m_LayerWidth  = info.GetDouble("Width");
+				s.m_LayerHeight = info.GetDouble("Height");
+				s.m_LayerSize   = (SizeF)info.GetValue("CachedSize",typeof(SizeF));
+
+				s.m_LayerXPositionType = (PositionType)info.GetValue("XPositionType",typeof(PositionType));
+				s.m_LayerYPositionType = (PositionType)info.GetValue("YPositionType",typeof(PositionType));
+				s.m_LayerXPosition = info.GetDouble("XPosition");
+				s.m_LayerYPosition = info.GetDouble("YPosition");
+				s.m_LayerPosition = (PointF)info.GetValue("CachedPosition",typeof(PointF));
+
+				s.m_LayerAngle  = info.GetSingle("Rotation");
+				s.m_LayerScale = info.GetSingle("Scale");
+
+				// axis related
+
+				s.m_xAxis = (Axis)info.GetValue("XAxis",typeof(Axis));
+				s.m_yAxis = (Axis)info.GetValue("YAxis",typeof(Axis));
+				s.m_LinkXAxis = info.GetBoolean("LinkXAxis");
+				s.m_LinkYAxis = info.GetBoolean("LinkYAxis");
+				s.m_LinkXAxisOrgA = info.GetDouble("LinkXAxisOrgA");
+				s.m_LinkXAxisOrgB = info.GetDouble("LinkXAxisOrgB");
+				s.m_LinkXAxisEndA = info.GetDouble("LinkXAxisEndA");
+				s.m_LinkXAxisEndB = info.GetDouble("LinkXAxisEndB");
+				s.m_LinkYAxisOrgA = info.GetDouble("LinkYAxisOrgA");
+				s.m_LinkYAxisOrgB = info.GetDouble("LinkYAxisOrgB");
+				s.m_LinkYAxisEndA = info.GetDouble("LinkYAxisEndA");
+				s.m_LinkYAxisEndB = info.GetDouble("LinkYAxisEndB");
+
+
+				// Styles
+				s.m_LeftAxisStyle = (Graph.XYLayerAxisStyle)info.GetValue("LeftAxisStyle",typeof(Graph.XYLayerAxisStyle));
+				s.m_BottomAxisStyle = (Graph.XYLayerAxisStyle)info.GetValue("BottomAxisStyle",typeof(Graph.XYLayerAxisStyle));
+				s.m_RightAxisStyle = (Graph.XYLayerAxisStyle)info.GetValue("RightAxisStyle",typeof(Graph.XYLayerAxisStyle));
+				s.m_TopAxisStyle = (Graph.XYLayerAxisStyle)info.GetValue("TopAxisStyle",typeof(Graph.XYLayerAxisStyle));
+			
+			
+				s.m_LeftLabelStyle = (Graph.LabelStyle)info.GetValue("LeftLabelStyle",typeof(Graph.LabelStyle));
+				s.m_BottomLabelStyle = (Graph.LabelStyle)info.GetValue("BottomLabelStyle",typeof(Graph.LabelStyle));
+				s.m_RightLabelStyle = (Graph.LabelStyle)info.GetValue("RightLabelStyle",typeof(Graph.LabelStyle));
+				s.m_TopLabelStyle = (Graph.LabelStyle)info.GetValue("TopLabelStyle",typeof(Graph.LabelStyle));
+			
+			
+				// Titles and legend
+				s.m_LeftAxisTitle = (Graph.ExtendedTextGraphObject)info.GetValue("LeftAxisTitle",typeof(Graph.ExtendedTextGraphObject));
+				s.m_BottomAxisTitle = (Graph.ExtendedTextGraphObject)info.GetValue("BottomAxisTitle",typeof(Graph.ExtendedTextGraphObject));
+				s.m_RightAxisTitle = (Graph.ExtendedTextGraphObject)info.GetValue("RightAxisTitle",typeof(Graph.ExtendedTextGraphObject));
+				s.m_TopAxisTitle = (Graph.ExtendedTextGraphObject)info.GetValue("TopAxisTitle",typeof(Graph.ExtendedTextGraphObject));
+				s.m_Legend = (Graph.ExtendedTextGraphObject)info.GetValue("Legend",typeof(Graph.ExtendedTextGraphObject));
+			
+				// Layer specific
+				s.m_LinkedLayer = (Layer)info.GetValue("LinkedLayer",typeof(Layer));
+			
+				s.m_GraphObjects = (Graph.GraphObjectCollection)info.GetValue("GraphObjects",typeof(Graph.GraphObjectCollection));
+				s.m_PlotGroups = (Graph.PlotGroup.Collection)info.GetValue("PlotGroups",typeof(Graph.PlotGroup.Collection));
+				s.m_PlotAssociations = (PlotAssociationList)info.GetValue("PlotAssociations",typeof(PlotAssociationList));
+
+
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
 
 		#region Constructors
 
@@ -1846,7 +2034,9 @@ namespace Altaxo.Graph
 		/// <remarks>The <see cref="GraphDocument"/> inherits from this class, but implements
 		/// its own function for adding the layers and moving them, since it has to track
 		/// all changes to the layers.</remarks>
-		public class LayerCollection : System.Collections.CollectionBase
+		[SerializationSurrogate(0,typeof(LayerCollection.SerializationSurrogate0))]
+		[SerializationVersion(0)]
+		public class LayerCollection : System.Collections.CollectionBase, System.Runtime.Serialization.IDeserializationCallback
 		{
 			/// <summary>Fired when something in this collection changed, as for instance
 			/// adding or deleting layers, or exchanging layers.</summary>
@@ -1857,6 +2047,52 @@ namespace Altaxo.Graph
 			/// Fired if some of the layer signals that a redraw is neccessary.
 			/// </summary>
 			public event System.EventHandler Invalidate;
+
+			#region "Serialization"
+
+			/// <summary>Used to serialize the LayerCollection Version 0.</summary>
+			public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+			{
+				/// <summary>
+				/// Serializes LayerCollection Version 0.
+				/// </summary>
+				/// <param name="obj">The LayerCollection to serialize.</param>
+				/// <param name="info">The serialization info.</param>
+				/// <param name="context">The streaming context.</param>
+				public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+				{
+					LayerCollection s = (LayerCollection)obj;
+					info.AddValue("Data",s.InnerList);
+				}
+
+				/// <summary>
+				/// Deserializes the LayerCollection Version 0.
+				/// </summary>
+				/// <param name="obj">The empty GraphDocument object to deserialize into.</param>
+				/// <param name="info">The serialization info.</param>
+				/// <param name="context">The streaming context.</param>
+				/// <param name="selector">The deserialization surrogate selector.</param>
+				/// <returns>The deserialized GraphDocument.</returns>
+				public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+				{
+					LayerCollection s = (LayerCollection)obj;
+
+					System.Collections.ArrayList arr =	(System.Collections.ArrayList)info.GetValue("Data",typeof(System.Collections.ArrayList));
+					s.InnerList.AddRange(arr);
+					return s;
+				}
+			}
+
+			/// <summary>
+			/// Finale measures after deserialization.
+			/// </summary>
+			/// <param name="obj">Not used.</param>
+			public virtual void OnDeserialization(object obj)
+			{
+				
+			}
+		#endregion
+
 
 
 			/// <summary>

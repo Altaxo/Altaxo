@@ -26,16 +26,20 @@ using System.Data;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 using System.Diagnostics;
+using Altaxo.Serialization;
+
 
 namespace Altaxo.Graph
 {
 	/// <summary>
-	/// This is the class that holds all elements of a graph.
+	/// This is the class that holds all elements of a graph, especially one ore more layers.
 	/// </summary>
 	/// <remarks>The coordinate system of the graph is in units of points (1/72 inch). The origin (0,0) of the graph
 	/// is the top left corner of the printable area (and therefore _not_ the page bounds). The value of the page
 	/// bounds is stored inside the class only to know what the original page size of the document was.</remarks>
-	public class GraphDocument : Layer.LayerCollection
+	[SerializationSurrogate(0,typeof(GraphDocument.SerializationSurrogate0))]
+	[SerializationVersion(0)]
+	public class GraphDocument : Layer.LayerCollection, System.Runtime.Serialization.IDeserializationCallback
 	{
 
 		/// <summary>
@@ -51,6 +55,69 @@ namespace Altaxo.Graph
 		/// The printable area of the document, i.e. the page size minus the margins at each sC:\Users\LelliD\C\CALC\Altaxo\Altaxo\Graph\GraphDocument.cside in points (1/72 inch)
 		/// </summary>
 		private RectangleF m_PrintableBounds = new RectangleF(14, 14, 814 , 567 );
+
+		#region "Serialization"
+
+		/// <summary>Used to serialize the GraphDocument Version 0.</summary>
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes GraphDocument Version 0.
+			/// </summary>
+			/// <param name="obj">The GraphDocument to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				GraphDocument s = (GraphDocument)obj;
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				// get the serialization surrogate of the base type
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+	
+				// stream the data of the base class
+				surr.GetObjectData(obj,info,context);
+			
+				// now the data of our class
+				info.AddValue("PageBounds",s.m_PageBounds);
+				info.AddValue("PrintableBounds",s.m_PrintableBounds);
+			}
+
+			/// <summary>
+			/// Deserializes the GraphDocument Version 0.
+			/// </summary>
+			/// <param name="obj">The empty GraphDocument object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized GraphDocument.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				GraphDocument s = (GraphDocument)obj;
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				// get the serialization surrogate of the base type
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType, context, out ss);
+				
+				// deserialize the base type
+				surr.SetObjectData(obj,info,context,selector);
+
+				s.m_PageBounds			= (RectangleF)info.GetValue("PageBounds",typeof(RectangleF));
+				s.m_PrintableBounds = (RectangleF)info.GetValue("PrintableBounds",typeof(RectangleF));
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public override void OnDeserialization(object obj)
+		{
+			base.OnDeserialization(obj);
+		}
+		#endregion
+
 
 		/// <summary>
 		/// Creates a empty GraphDocument with no layers and a standard size of A4 landscape.
@@ -129,10 +196,21 @@ namespace Altaxo.Graph
 		} // end of function DoPaint
 
 
+
+		/// <summary>
+		/// Gets the default layer position in points (1/72 inch).
+		/// </summary>
+		/// <value>The default position of a (new) layer in points (1/72 inch).</value>
 		public PointF DefaultLayerPosition
 		{
 			get { return new PointF(0.145f*this.PrintableSize.Width, 0.139f*this.PrintableSize.Height); }
 		}
+
+
+		/// <summary>
+		/// Gets the default layer size in points (1/72 inch).
+		/// </summary>
+		/// <value>The default size of a (new) layer in points (1/72 inch).</value>
 		public SizeF DefaultLayerSize
 		{
 		get	{	return new SizeF(0.763f*this.PrintableSize.Width, 0.708f*this.PrintableSize.Height); }
@@ -196,6 +274,11 @@ namespace Altaxo.Graph
 
 
 		#region inherited from Layer.Collection
+
+		/// <summary>
+		/// Fires the Invalidate event.
+		/// </summary>
+		/// <param name="sender">The layer which needs to be repainted.</param>
 		protected internal override void OnInvalidate(Layer sender)
 		{
 			base.OnInvalidate(sender);

@@ -25,27 +25,54 @@ using System.Drawing.Drawing2D;
 namespace Altaxo.Graph
 {
 	/// <summary>
-	/// Summary description for GraphObject.
+	/// GraphObject is the abstract base class for graphical objects on the layer,
+	/// for instance text elements, lines, pictures, rectangles and so on.
 	/// </summary>
 	public abstract class GraphObject
 	{
+		/// <summary>
+		/// The position of the graphical object, normally the upper left corner. Strictly spoken,
+		/// this is the position of the anchor point of the object.
+		/// </summary>
 		protected PointF m_Position = new PointF(0, 0);
 //		protected SizeF  m_Size = new SizeF(0, 0);
 		protected RectangleF m_Bounds = new RectangleF(0,0,0,0);
+		/// <summary>
+		/// The rotation angle of the graphical object in reference to the layer.
+		/// </summary>
 		protected float  m_Rotation = 0;
+	/// <summary>
+	/// If true, the graphical object sizes itself, for instance simple text objects.
+	/// </summary>
 		protected bool   m_AutoSize = true;
+	/// <summary>
+	/// The parent collection this graphical object belongs to.
+	/// </summary>
 		protected GraphObjectCollection m_Container=null;
 
 
 
-
+		/// <summary>
+		/// Initializes with default values.
+		/// </summary>
 		protected GraphObject()
 		{
 		}
+
+		/// <summary>
+		/// Initializes with a certain position in points (1/72 inch).
+		/// </summary>
+		/// <param name="graphicPosition">The initial position of the graphical object.</param>
 		protected GraphObject(PointF graphicPosition)
 		{
 			SetPosition(graphicPosition);
 		}
+
+		/// <summary>
+		/// Initializes the GraphObject with a certain position in points (1/72 inch).
+		/// </summary>
+		/// <param name="posX">The initial x position of the graphical object.</param>
+		/// <param name="posY">The initial y position of the graphical object.</param>
 		protected GraphObject(float posX, float posY)
 			: this(new PointF(posX,posY))
 		{
