@@ -29,7 +29,7 @@ using System.Reflection;
 using Altaxo;
 using Altaxo.Data;
 
-namespace Altaxo.Worksheet
+namespace Altaxo.Worksheet.GUI
 {
 	/// <summary>
 	/// Summary description for WksSetColumnValuesDialog.

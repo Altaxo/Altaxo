@@ -27,11 +27,11 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	#region Interfaces
 	/// <summary>
-	/// This view interface is for showing the options of the LineScatterPlotStyle
+	/// This view interface is for showing the options of the XYLineScatterPlotStyle
 	/// </summary>
 	public interface ILineScatterPlotStyleView
 	{
@@ -194,26 +194,26 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Summary description for LineScatterPlotStyleController.
 	/// </summary>
-	public class LineScatterPlotStyleController : ILineScatterPlotStyleController, Gui.IApplyController
+	public class LineScatterPlotStyleController : ILineScatterPlotStyleController, Main.GUI.IApplyController
 	{
-		protected PlotStyle m_MasterItemPlotStyle;
-		protected PlotStyle m_PlotItemPlotStyle;
-		protected PlotStyle m_PlotStyle;
+		protected AbstractXYPlotStyle m_MasterItemPlotStyle;
+		protected AbstractXYPlotStyle m_PlotItemPlotStyle;
+		protected AbstractXYPlotStyle m_PlotStyle;
 		protected PlotGroup m_PlotGroup;
 		protected PlotGroupStyle m_PlotGroupStyle;
 		ILineScatterPlotStyleView m_View;
 
-		public LineScatterPlotStyleController(PlotStyle ps, PlotGroup plotGroup)
+		public LineScatterPlotStyleController(AbstractXYPlotStyle ps, PlotGroup plotGroup)
 		{
 			// if this plotstyle belongs to a plot group of this layer,
 			// use the master plot style instead of the plotstyle itself
 			m_PlotGroup=plotGroup;
 			m_PlotItemPlotStyle = ps;
-			m_MasterItemPlotStyle = null!=plotGroup ? (PlotStyle)plotGroup.MasterItem.Style : null;
+			m_MasterItemPlotStyle = null!=plotGroup ? (AbstractXYPlotStyle)plotGroup.MasterItem.Style : null;
 	
 			if(null!=m_PlotGroup)
 			{
-				m_PlotStyle = (PlotStyle)m_PlotGroup.MasterItem.Style;
+				m_PlotStyle = (AbstractXYPlotStyle)m_PlotGroup.MasterItem.Style;
 				m_PlotGroupStyle = m_PlotGroup.Style;
 			}
 			else // not member of a plotgroup
@@ -226,12 +226,12 @@ namespace Altaxo.Graph
 
 		public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, PlotItem pa, PlotGroup plotGroup)
 		{
-			Graph.LineScatterPlotStyleController	ctrl = new Graph.LineScatterPlotStyleController((PlotStyle)pa.Style,plotGroup);
-			Graph.LineScatterPlotStyleControl view = new Graph.LineScatterPlotStyleControl();
+			LineScatterPlotStyleController	ctrl = new LineScatterPlotStyleController((AbstractXYPlotStyle)pa.Style,plotGroup);
+			LineScatterPlotStyleControl view = new LineScatterPlotStyleControl();
 			ctrl.View = view;
 
-			Gui.DialogShellController dsc = new Gui.DialogShellController(
-				new Gui.DialogShellView(view), ctrl);
+			Main.GUI.DialogShellController dsc = new Main.GUI.DialogShellController(
+				new Main.GUI.DialogShellView(view), ctrl);
 
 			return dsc.ShowDialog(parentWindow);
 		}
@@ -251,12 +251,12 @@ namespace Altaxo.Graph
 
 		public static string [] GetPlotColorNames()
 		{
-			string[] arr = new string[1+PlotStyle.PlotColors.Length];
+			string[] arr = new string[1+AbstractXYPlotStyle.PlotColors.Length];
 
 			arr[0] = "Custom";
 
 			int i=1;
-			foreach(Color c in PlotStyle.PlotColors)
+			foreach(Color c in AbstractXYPlotStyle.PlotColors)
 			{
 				string name = c.ToString();
 				arr[i++] = name.Substring(7,name.Length-8);
@@ -296,14 +296,14 @@ namespace Altaxo.Graph
 		}
 
 
-		public void SetSymbolSize(PlotStyle ps)
+		public void SetSymbolSize(AbstractXYPlotStyle ps)
 		{
 			string[] SymbolSizes = 
 			{	"0","1","3","5","8","12","15","18","24","30"};
 
 			float symbolsize = 1;
-			if(null!=ps && null!=ps.ScatterStyle && null!=ps.ScatterStyle)
-				symbolsize = ps.ScatterStyle.SymbolSize;
+			if(null!=ps && null!=ps.XYPlotScatterStyle && null!=ps.XYPlotScatterStyle)
+				symbolsize = ps.XYPlotScatterStyle.SymbolSize;
 
 			string name = symbolsize.ToString();
 
@@ -312,13 +312,13 @@ namespace Altaxo.Graph
 		}
 
 	
-		public void SetSymbolStyle(PlotStyle ps)
+		public void SetSymbolStyle(AbstractXYPlotStyle ps)
 		{
-			string [] names = System.Enum.GetNames(typeof(ScatterStyles.Style));
+			string [] names = System.Enum.GetNames(typeof(XYPlotScatterStyles.Style));
 
-			ScatterStyles.Style sh = ScatterStyles.Style.Solid;
-			if(null!=ps && null!=ps.ScatterStyle)
-				sh = ps.ScatterStyle.Style;
+			XYPlotScatterStyles.Style sh = XYPlotScatterStyles.Style.Solid;
+			if(null!=ps && null!=ps.XYPlotScatterStyle)
+				sh = ps.XYPlotScatterStyle.Style;
 
 			string name = sh.ToString();
 		
@@ -326,57 +326,57 @@ namespace Altaxo.Graph
 		}
 
 	
-		public void SetSymbolShape(PlotStyle ps)
+		public void SetSymbolShape(AbstractXYPlotStyle ps)
 		{
-			string [] names = System.Enum.GetNames(typeof(ScatterStyles.Shape));
+			string [] names = System.Enum.GetNames(typeof(XYPlotScatterStyles.Shape));
 
-			ScatterStyles.Shape sh = ScatterStyles.Shape.NoSymbol;
-			if(null!=ps && null!=ps.ScatterStyle)
-				sh = ps.ScatterStyle.Shape;
+			XYPlotScatterStyles.Shape sh = XYPlotScatterStyles.Shape.NoSymbol;
+			if(null!=ps && null!=ps.XYPlotScatterStyle)
+				sh = ps.XYPlotScatterStyle.Shape;
 
 			string name = sh.ToString();
 			
 			View.InitializeSymbolShape(names,name);
 		}
 
-		public void SetLineSymbolGapCondition(PlotStyle ps)
+		public void SetLineSymbolGapCondition(AbstractXYPlotStyle ps)
 		{
 			bool bGap = ps.LineSymbolGap; // default
 			View.InitializeLineSymbolGapCondition( bGap );
 		}
 
-		public void SetDropLineConditions(PlotStyle ps)
+		public void SetDropLineConditions(AbstractXYPlotStyle ps)
 		{
-			bool bLeft = 0!=(ps.ScatterStyle.DropLine&ScatterStyles.DropLine.Left);
-			bool bRight = 0!=(ps.ScatterStyle.DropLine&ScatterStyles.DropLine.Right);
-			bool bTop = 0!=(ps.ScatterStyle.DropLine&ScatterStyles.DropLine.Top);
-			bool bBottom = 0!=(ps.ScatterStyle.DropLine&ScatterStyles.DropLine.Bottom);
+			bool bLeft = 0!=(ps.XYPlotScatterStyle.DropLine&XYPlotScatterStyles.DropLine.Left);
+			bool bRight = 0!=(ps.XYPlotScatterStyle.DropLine&XYPlotScatterStyles.DropLine.Right);
+			bool bTop = 0!=(ps.XYPlotScatterStyle.DropLine&XYPlotScatterStyles.DropLine.Top);
+			bool bBottom = 0!=(ps.XYPlotScatterStyle.DropLine&XYPlotScatterStyles.DropLine.Bottom);
 		
 			View.InitializeDropLineConditions(bLeft,bBottom,bRight,bTop);
 		}
 
-		public void SetLineConnect(PlotStyle ps)
+		public void SetLineConnect(AbstractXYPlotStyle ps)
 		{
 
-			string [] names = System.Enum.GetNames(typeof(LineStyles.ConnectionStyle));
+			string [] names = System.Enum.GetNames(typeof(XYPlotLineStyles.ConnectionStyle));
 		
-			LineStyles.ConnectionStyle cn = LineStyles.ConnectionStyle.NoLine; // default
+			XYPlotLineStyles.ConnectionStyle cn = XYPlotLineStyles.ConnectionStyle.NoLine; // default
 
-			if(ps!=null && ps.LineStyle!=null)
-				cn = ps.LineStyle.Connection;
+			if(ps!=null && ps.XYPlotLineStyle!=null)
+				cn = ps.XYPlotLineStyle.Connection;
 
 			string name = cn.ToString();
 
 			View.InitializeLineConnect(names,name);
 		}
 
-		public void SetLineStyle(PlotStyle ps)
+		public void SetLineStyle(AbstractXYPlotStyle ps)
 		{
 			string [] names = System.Enum.GetNames(typeof(DashStyle));
 
 			DashStyle ds = DashStyle.Solid; // default
-			if(ps!=null && ps.LineStyle!=null && ps.LineStyle.PenHolder!=null)
-				ds = ps.LineStyle.PenHolder.DashStyle;
+			if(ps!=null && ps.XYPlotLineStyle!=null && ps.XYPlotLineStyle.PenHolder!=null)
+				ds = ps.XYPlotLineStyle.PenHolder.DashStyle;
 
 			string name = ds.ToString();
 
@@ -385,7 +385,7 @@ namespace Altaxo.Graph
 
 
 	
-		public void SetLineWidth(PlotStyle ps)
+		public void SetLineWidth(AbstractXYPlotStyle ps)
 		{
 			float[] LineWidths = 
 			{	0.2f,0.5f,1,1.5f,2,3,4,5 };
@@ -394,47 +394,47 @@ namespace Altaxo.Graph
 				names[i] = LineWidths[i].ToString();
 
 			float linewidth = 1; // default value
-			if(null!=ps && null!=ps.LineStyle && null!=ps.LineStyle.PenHolder)
-				linewidth = ps.LineStyle.PenHolder.Width;
+			if(null!=ps && null!=ps.XYPlotLineStyle && null!=ps.XYPlotLineStyle.PenHolder)
+				linewidth = ps.XYPlotLineStyle.PenHolder.Width;
 
 			string name = linewidth.ToString();
 
 			View.InitializeLineWidth(names,name);
 		}
 
-		public void SetFillCondition(PlotStyle ps)
+		public void SetFillCondition(AbstractXYPlotStyle ps)
 		{
 			bool bFill = false; // default
-			if(null!=ps && null!=ps.LineStyle)
-				bFill = ps.LineStyle.FillArea;
+			if(null!=ps && null!=ps.XYPlotLineStyle)
+				bFill = ps.XYPlotLineStyle.FillArea;
 
 			View.InitializeFillCondition( bFill );
 
 		}
 
-		public void SetFillDirection(PlotStyle ps)
+		public void SetFillDirection(AbstractXYPlotStyle ps)
 		{
-			string [] names = System.Enum.GetNames(typeof(LineStyles.FillDirection));
+			string [] names = System.Enum.GetNames(typeof(XYPlotLineStyles.FillDirection));
 			
 
-			LineStyles.FillDirection dir = LineStyles.FillDirection.Bottom; // default
-			if(null!=ps && null!=ps.LineStyle)
-				dir = ps.LineStyle.FillDirection;
+			XYPlotLineStyles.FillDirection dir = XYPlotLineStyles.FillDirection.Bottom; // default
+			if(null!=ps && null!=ps.XYPlotLineStyle)
+				dir = ps.XYPlotLineStyle.FillDirection;
 
 			string name = dir.ToString();
 			View.InitializeFillDirection(names,name);
 		}
 
-		public void SetFillColor(PlotStyle ps)
+		public void SetFillColor(AbstractXYPlotStyle ps)
 		{
 			string name = "Custom"; // default
 
-			if(null!=ps && null!=ps.LineStyle && null!=ps.LineStyle.FillBrush)
+			if(null!=ps && null!=ps.XYPlotLineStyle && null!=ps.XYPlotLineStyle.FillBrush)
 			{
 				name = "Custom";
-				if(ps.LineStyle.FillBrush.BrushType==BrushType.SolidBrush) 
+				if(ps.XYPlotLineStyle.FillBrush.BrushType==BrushType.SolidBrush) 
 				{
-					name = PlotStyle.GetPlotColorName(ps.LineStyle.FillBrush.Color);
+					name = AbstractXYPlotStyle.GetPlotColorName(ps.XYPlotLineStyle.FillBrush.Color);
 					if(null==name) name = "Custom";
 				}
 			}
@@ -443,17 +443,17 @@ namespace Altaxo.Graph
 
 
 
-		public void SetPlotType(PlotStyle ps)
+		public void SetPlotType(AbstractXYPlotStyle ps)
 		{
 
 			string[] arr = { "Nothing", "Line", "Symbol", "Line_Symbol" };
 			
 			string sel = "Nothing";
-			if(null!=ps.LineStyle && null!=ps.ScatterStyle)
+			if(null!=ps.XYPlotLineStyle && null!=ps.XYPlotScatterStyle)
 				sel = "Line_Symbol";
-			else if(null!=ps.LineStyle && null==ps.ScatterStyle)
+			else if(null!=ps.XYPlotLineStyle && null==ps.XYPlotScatterStyle)
 				sel = "Line";
-			else if(null==ps.LineStyle && null!=ps.ScatterStyle)
+			else if(null==ps.XYPlotLineStyle && null!=ps.XYPlotScatterStyle)
 				sel = "Symbol";
 			else
 				sel = "Nothing";
@@ -462,26 +462,26 @@ namespace Altaxo.Graph
 		}
 
 
-		public void SetPlotStyleColor(PlotStyle ps)
+		public void SetPlotStyleColor(AbstractXYPlotStyle ps)
 		{
 			string name = "Custom"; // default
 
-			if(null!=ps && null!=ps.LineStyle && null!=ps.LineStyle.PenHolder)
+			if(null!=ps && null!=ps.XYPlotLineStyle && null!=ps.XYPlotLineStyle.PenHolder)
 			{
 				name = "Custom";
-				if(ps.LineStyle.PenHolder.PenType == PenType.SolidColor)
+				if(ps.XYPlotLineStyle.PenHolder.PenType == PenType.SolidColor)
 				{
-					name = PlotStyle.GetPlotColorName(ps.LineStyle.PenHolder.Color);
+					name = AbstractXYPlotStyle.GetPlotColorName(ps.XYPlotLineStyle.PenHolder.Color);
 					if(null==name) 
 						name = "Custom";
 				}
 			}
-			else if(null!=ps && null!=ps.ScatterStyle && null!=ps.ScatterStyle.Pen)
+			else if(null!=ps && null!=ps.XYPlotScatterStyle && null!=ps.XYPlotScatterStyle.Pen)
 			{
 				name = "Custom";
-				if(ps.ScatterStyle.Pen.PenType == PenType.SolidColor)
+				if(ps.XYPlotScatterStyle.Pen.PenType == PenType.SolidColor)
 				{
-					name = PlotStyle.GetPlotColorName(ps.ScatterStyle.Pen.Color);
+					name = AbstractXYPlotStyle.GetPlotColorName(ps.XYPlotScatterStyle.Pen.Color);
 					if(null==name) name = "Custom";
 				}
 			}
@@ -511,7 +511,7 @@ namespace Altaxo.Graph
 			// don't trust user input, so all into a try statement
 			try
 			{
-				// Plot group options first, since they determine what PlotStyle needs to be changed
+				// Plot group options first, since they determine what AbstractXYPlotStyle needs to be changed
 				m_PlotGroupStyle = 0;
 				if(View.PlotGroupIncremental)
 				{
@@ -540,31 +540,31 @@ namespace Altaxo.Graph
 
 
 				// Line Connect
-				m_PlotStyle.LineStyle.Connection = (LineStyles.ConnectionStyle)Enum.Parse(typeof(LineStyles.ConnectionStyle),View.LineConnect);
+				m_PlotStyle.XYPlotLineStyle.Connection = (XYPlotLineStyles.ConnectionStyle)Enum.Parse(typeof(XYPlotLineStyles.ConnectionStyle),View.LineConnect);
 				// Line Type
-				m_PlotStyle.LineStyle.PenHolder.DashStyle = (DashStyle)Enum.Parse(typeof(DashStyle),View.LineType);
+				m_PlotStyle.XYPlotLineStyle.PenHolder.DashStyle = (DashStyle)Enum.Parse(typeof(DashStyle),View.LineType);
 				// Line Width
 				float width = System.Convert.ToSingle(View.LineWidth);
-				m_PlotStyle.LineStyle.PenHolder.Width = width;
+				m_PlotStyle.XYPlotLineStyle.PenHolder.Width = width;
 
 
 				// Fill Area
-				m_PlotStyle.LineStyle.FillArea = View.LineFillArea;
+				m_PlotStyle.XYPlotLineStyle.FillArea = View.LineFillArea;
 				// Line fill direction
-				m_PlotStyle.LineStyle.FillDirection = (LineStyles.FillDirection)Enum.Parse(typeof(LineStyles.FillDirection),View.LineFillDirection);
+				m_PlotStyle.XYPlotLineStyle.FillDirection = (XYPlotLineStyles.FillDirection)Enum.Parse(typeof(XYPlotLineStyles.FillDirection),View.LineFillDirection);
 				// Line fill color
 				str = View.LineFillColor;
 				if(str!="Custom")
-					m_PlotStyle.LineStyle.FillBrush = new BrushHolder(Color.FromName(str));
+					m_PlotStyle.XYPlotLineStyle.FillBrush = new BrushHolder(Color.FromName(str));
 
 
 				// Symbol Shape
 				str = View.SymbolShape;
-				m_PlotStyle.ScatterStyle.Shape = (ScatterStyles.Shape)Enum.Parse(typeof(ScatterStyles.Shape),str);
+				m_PlotStyle.XYPlotScatterStyle.Shape = (XYPlotScatterStyles.Shape)Enum.Parse(typeof(XYPlotScatterStyles.Shape),str);
 
 				// Symbol Style
 				str = View.SymbolStyle;
-				m_PlotStyle.ScatterStyle.Style = (ScatterStyles.Style)Enum.Parse(typeof(ScatterStyles.Style),str);
+				m_PlotStyle.XYPlotScatterStyle.Style = (XYPlotScatterStyles.Style)Enum.Parse(typeof(XYPlotScatterStyles.Style),str);
 
 				// Symbol Size
 				str = View.SymbolSize;
@@ -572,28 +572,28 @@ namespace Altaxo.Graph
 
 				// Drop line left
 				if(View.DropLineLeft) 
-					m_PlotStyle.ScatterStyle.DropLine |= ScatterStyles.DropLine.Left;
+					m_PlotStyle.XYPlotScatterStyle.DropLine |= XYPlotScatterStyles.DropLine.Left;
 				else
-					m_PlotStyle.ScatterStyle.DropLine &= (ScatterStyles.DropLine.All^ScatterStyles.DropLine.Left);
+					m_PlotStyle.XYPlotScatterStyle.DropLine &= (XYPlotScatterStyles.DropLine.All^XYPlotScatterStyles.DropLine.Left);
 
 
 				// Drop line bottom
 				if(View.DropLineBottom) 
-					m_PlotStyle.ScatterStyle.DropLine |= ScatterStyles.DropLine.Bottom;
+					m_PlotStyle.XYPlotScatterStyle.DropLine |= XYPlotScatterStyles.DropLine.Bottom;
 				else
-					m_PlotStyle.ScatterStyle.DropLine &= (ScatterStyles.DropLine.All^ScatterStyles.DropLine.Bottom);
+					m_PlotStyle.XYPlotScatterStyle.DropLine &= (XYPlotScatterStyles.DropLine.All^XYPlotScatterStyles.DropLine.Bottom);
 
 				// Drop line right
 				if(View.DropLineRight) 
-					m_PlotStyle.ScatterStyle.DropLine |= ScatterStyles.DropLine.Right;
+					m_PlotStyle.XYPlotScatterStyle.DropLine |= XYPlotScatterStyles.DropLine.Right;
 				else
-					m_PlotStyle.ScatterStyle.DropLine &= (ScatterStyles.DropLine.All^ScatterStyles.DropLine.Right);
+					m_PlotStyle.XYPlotScatterStyle.DropLine &= (XYPlotScatterStyles.DropLine.All^XYPlotScatterStyles.DropLine.Right);
 
 				// Drop line top
 				if(View.DropLineTop) 
-					m_PlotStyle.ScatterStyle.DropLine |= ScatterStyles.DropLine.Top;
+					m_PlotStyle.XYPlotScatterStyle.DropLine |= XYPlotScatterStyles.DropLine.Top;
 				else
-					m_PlotStyle.ScatterStyle.DropLine &= (ScatterStyles.DropLine.All^ScatterStyles.DropLine.Top);
+					m_PlotStyle.XYPlotScatterStyle.DropLine &= (XYPlotScatterStyles.DropLine.All^XYPlotScatterStyles.DropLine.Top);
 
 
 				if(null!=m_PlotGroup)

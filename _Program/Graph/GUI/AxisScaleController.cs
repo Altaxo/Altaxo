@@ -1,9 +1,9 @@
 using System;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	#region Interfaces
-	public interface IAxisScaleController : Gui.IApplyController, Main.IMVCController
+	public interface IAxisScaleController : Main.GUI.IApplyController, Main.GUI.IMVCController
 	{
 		void EhView_AxisOrgChanged(string text);
 		void EhView_AxisEndChanged(string text);
@@ -11,7 +11,7 @@ namespace Altaxo.Graph
 		void EhView_AxisRescaleChanged(string text);
 	}
 
-	public interface IAxisScaleView : Main.IMVCView
+	public interface IAxisScaleView : Main.GUI.IMVCView
 	{
 
 		IAxisScaleController Controller { get; set; }
@@ -35,7 +35,7 @@ namespace Altaxo.Graph
 	{
 		public enum AxisDirection { Horizontal=0, Vertical=1 }
 		protected IAxisScaleView m_View;
-		protected Layer m_Layer;
+		protected XYPlotLayer m_Layer;
 		protected AxisDirection m_Direction;
 		
 		// Cached values
@@ -56,7 +56,7 @@ namespace Altaxo.Graph
 
 
 
-		public AxisScaleController(Layer layer, AxisDirection dir)
+		public AxisScaleController(XYPlotLayer layer, AxisDirection dir)
 		{
 			m_Layer = layer;
 			m_Direction = dir;

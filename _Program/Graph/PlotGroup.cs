@@ -112,7 +112,7 @@ namespace Altaxo.Graph
 			PlotGroupStyle m_Style;
 			int[] m_PlotItems; // stores not the plotitems itself, only the position of the items in the list
 		
-			public Memento(PlotGroup pg, PlotList plotlist)
+			public Memento(PlotGroup pg, PlotItemCollection plotlist)
 			{
 				m_Style = pg.Style;
 				m_PlotItems = new int[pg.Count];
@@ -124,7 +124,7 @@ namespace Altaxo.Graph
 			{
 			}
 
-			public PlotGroup GetPlotGroup(PlotList plotlist)
+			public PlotGroup GetPlotGroup(PlotItemCollection plotlist)
 			{
 				PlotGroup pg = new PlotGroup(m_Style);
 				for(int i=0;i<m_PlotItems.Length;i++)
@@ -195,7 +195,7 @@ namespace Altaxo.Graph
 
 		/// <summary>
 		/// This is !!! not !!! cloneable, since the PlotGroup itself stores only references to PlotItems! Since the only use
-		/// is to clone a Layer, and the PlotItems of the layer are cloned into new objects, it is not usefull here.
+		/// is to clone a XYPlotLayer, and the PlotItems of the layer are cloned into new objects, it is not usefull here.
 		/// </summary>
 		/// <returns>Null!</returns>
 		private object Clone()
@@ -204,13 +204,13 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
-		/// Clones the PlotGroup into a new collection and fixed the references to the PlotItems. It presumes, that the PlotList, from which the PlotItems are referred in the PlotGroup items,
-		/// are cloned before so that the PlotList <paramref name="newList"/> is an exact copy of the PlotList <paramref name="oldList"/>.
+		/// Clones the PlotGroup into a new collection and fixed the references to the PlotItems. It presumes, that the PlotItemCollection, from which the PlotItems are referred in the PlotGroup items,
+		/// are cloned before so that the PlotItemCollection <paramref name="newList"/> is an exact copy of the PlotItemCollection <paramref name="oldList"/>.
 		/// </summary>
-		/// <param name="newList">The new PlotList, which was cloned from oldList before.</param>
-		/// <param name="oldList">The old PlotList, to which the items in these PlotGroupList refers to.</param>
+		/// <param name="newList">The new PlotItemCollection, which was cloned from oldList before.</param>
+		/// <param name="oldList">The old PlotItemCollection, to which the items in these PlotGroupList refers to.</param>
 		/// <returns></returns>
-		public PlotGroup Clone(Altaxo.Graph.PlotList newList, Altaxo.Graph.PlotList oldList)
+		public PlotGroup Clone(Altaxo.Graph.PlotItemCollection newList, Altaxo.Graph.PlotItemCollection oldList)
 		{
 			PlotGroup newGroup = new PlotGroup(this.Style);
 
@@ -246,7 +246,7 @@ namespace Altaxo.Graph
 				}
 				if(cnt>0)
 				{
-					((PlotStyle)assoc.Style).SetToNextStyle((PlotStyle)((PlotItem)m_PlotItems[cnt-1]).Style,m_Style);
+					((AbstractXYPlotStyle)assoc.Style).SetToNextStyle((AbstractXYPlotStyle)((PlotItem)m_PlotItems[cnt-1]).Style,m_Style);
 				}
 				m_PlotItems.Add(assoc);
 
@@ -299,7 +299,7 @@ namespace Altaxo.Graph
 			if(!IsIndependent && Count>0)
 			{
 				for(int i=1;i<Count;i++)
-					((PlotStyle)this[i].Style).SetToNextStyle((PlotStyle)this[i-1].Style,this.m_Style);
+					((AbstractXYPlotStyle)this[i].Style).SetToNextStyle((AbstractXYPlotStyle)this[i-1].Style,this.m_Style);
 			}
 			// no changed event here since we track only the members structure and the grouping style
 		}
@@ -326,7 +326,7 @@ namespace Altaxo.Graph
 				{
 
 					/// <summary>
-					/// Serializes LayerCollection Version 0.
+					/// Serializes XYPlotLayerCollection Version 0.
 					/// </summary>
 					/// <param name="obj">The Collection to serialize.</param>
 					/// <param name="info">The serialization info.</param>
@@ -395,13 +395,13 @@ namespace Altaxo.Graph
 
 
 				/// <summary>
-				/// Clones the collection into a new collection and fixed the references. It presumes, that the PlotList, from which the PlotItems are referred in the PlotGroup items,
-				/// are cloned before so that the PlotList <paramref name="newList"/> is an exact copy of the PlotList <paramref name="oldList"/>.
+				/// Clones the collection into a new collection and fixed the references. It presumes, that the PlotItemCollection, from which the PlotItems are referred in the PlotGroup items,
+				/// are cloned before so that the PlotItemCollection <paramref name="newList"/> is an exact copy of the PlotItemCollection <paramref name="oldList"/>.
 				/// </summary>
-				/// <param name="newList">The new PlotList, which was cloned from oldList before.</param>
-				/// <param name="oldList">The old PlotList, to which the items in these PlotGroupList refers to.</param>
+				/// <param name="newList">The new PlotItemCollection, which was cloned from oldList before.</param>
+				/// <param name="oldList">The old PlotItemCollection, to which the items in these PlotGroupList refers to.</param>
 				/// <returns></returns>
-				public PlotGroup.Collection Clone(Altaxo.Graph.PlotList newList, Altaxo.Graph.PlotList oldList)
+				public PlotGroup.Collection Clone(Altaxo.Graph.PlotItemCollection newList, Altaxo.Graph.PlotItemCollection oldList)
 				{
 					PlotGroup.Collection coto = new PlotGroup.Collection();
 					for(int i=0;i<this.Count;i++)

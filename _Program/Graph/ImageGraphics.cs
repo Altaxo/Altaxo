@@ -28,7 +28,7 @@ namespace Altaxo.Graph
 {
 	[SerializationSurrogate(0,typeof(ImageGraphic.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public abstract class ImageGraphic : GraphObject
+	public abstract class ImageGraphic : GraphicsObject
 	{
 		#region Serialization
 		/// <summary>Used to serialize the ImageGraphic Version 0.</summary>

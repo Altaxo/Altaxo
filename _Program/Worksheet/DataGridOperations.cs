@@ -26,18 +26,18 @@ namespace Altaxo.Worksheet
 {
 	public class DataGridOperations
 	{
-		public static void PlotLine(TableController dg, bool bLine, bool bScatter)
+		public static void PlotLine(GUI.WorksheetController dg, bool bLine, bool bScatter)
 		{
-			Altaxo.Graph.LineScatterPlotStyle templatePlotStyle = new Altaxo.Graph.LineScatterPlotStyle();
+			Altaxo.Graph.XYLineScatterPlotStyle templatePlotStyle = new Altaxo.Graph.XYLineScatterPlotStyle();
 			Altaxo.Graph.PlotGroupStyle templatePlotGroupStyle = Altaxo.Graph.PlotGroupStyle.All;
 			if(!bLine)
 			{
-				templatePlotStyle.LineStyle.Connection = Altaxo.Graph.LineStyles.ConnectionStyle.NoLine;
+				templatePlotStyle.XYPlotLineStyle.Connection = Altaxo.Graph.XYPlotLineStyles.ConnectionStyle.NoLine;
 				templatePlotGroupStyle &= (Altaxo.Graph.PlotGroupStyle.All ^ Altaxo.Graph.PlotGroupStyle.Line);
 			}
 			if(!bScatter)
 			{
-				templatePlotStyle.ScatterStyle.Shape = Altaxo.Graph.ScatterStyles.Shape.NoSymbol;
+				templatePlotStyle.XYPlotScatterStyle.Shape = Altaxo.Graph.XYPlotScatterStyles.Shape.NoSymbol;
 				templatePlotGroupStyle &= (Altaxo.Graph.PlotGroupStyle.All ^ Altaxo.Graph.PlotGroupStyle.Symbol);
 			}
 
@@ -47,7 +47,7 @@ namespace Altaxo.Worksheet
 
 			int len = dg.SelectedColumns.Count;
 
-			Graph.PlotAssociation[] pa = new Graph.PlotAssociation[len];
+			Graph.XYColumnPlotData[] pa = new Graph.XYColumnPlotData[len];
 
 			for(int i=0;i<len;i++)
 			{
@@ -56,21 +56,21 @@ namespace Altaxo.Worksheet
 				Altaxo.Data.DataColumn xcol = dg.DataTable.DataColumns.FindXColumnOfGroup(ycol.Group);
 			
 				if(null!=xcol)
-					pa[i] = new Graph.PlotAssociation(xcol,ycol);
+					pa[i] = new Graph.XYColumnPlotData(xcol,ycol);
 				else
-					pa[i] = new Graph.PlotAssociation( new Altaxo.Data.IndexerColumn(), ycol);
+					pa[i] = new Graph.XYColumnPlotData( new Altaxo.Data.IndexerColumn(), ycol);
 			}
 			
 			// now create a new Graph with this plot associations
 
-			Altaxo.Graph.IGraphController gc = App.Current.CreateNewGraph();
+			Altaxo.Graph.GUI.IGraphController gc = App.Current.CreateNewGraph();
 
 
 			Altaxo.Graph.PlotGroup newPlotGroup = new Altaxo.Graph.PlotGroup(templatePlotGroupStyle);
 
 			for(int i=0;i<pa.Length;i++)
 			{
-				Altaxo.Graph.PlotItem pi = new Altaxo.Graph.XYDataPlot(pa[i],(Altaxo.Graph.LineScatterPlotStyle)templatePlotStyle.Clone());
+				Altaxo.Graph.PlotItem pi = new Altaxo.Graph.XYColumnPlotItem(pa[i],(Altaxo.Graph.XYLineScatterPlotStyle)templatePlotStyle.Clone());
 				newPlotGroup.Add(pi);
 			}
 			gc.Doc.Layers[0].PlotItems.Add(newPlotGroup);
@@ -86,19 +86,19 @@ namespace Altaxo.Worksheet
 		/// <param name="dg"></param>
 		/// <param name="bLine"></param>
 		/// <param name="bScatter"></param>
-		public static void PlotDensityImage(TableController dg, bool bLine, bool bScatter)
+		public static void PlotDensityImage(GUI.WorksheetController dg, bool bLine, bool bScatter)
 		{
 			Altaxo.Graph.DensityImagePlotStyle plotStyle = new Altaxo.Graph.DensityImagePlotStyle();
 
 			// if nothing is selected, assume that the whole table should be plotted
 			int len = dg.SelectedColumns.Count;
 
-			Graph.D2EquidistantMeshDataAssociation assoc = new Graph.D2EquidistantMeshDataAssociation(dg.Doc.DataColumns,len==0 ? null : dg.SelectedColumns.GetSelectedIndizes());
+			Graph.XYZEquidistantMeshColumnPlotData assoc = new Graph.XYZEquidistantMeshColumnPlotData(dg.Doc.DataColumns,len==0 ? null : dg.SelectedColumns.GetSelectedIndizes());
 
 			
 			// now create a new Graph with this plot associations
 
-			Altaxo.Graph.IGraphController gc = App.Current.CreateNewGraph();
+			Altaxo.Graph.GUI.IGraphController gc = App.Current.CreateNewGraph();
 
 			Altaxo.Graph.PlotItem pi = new Altaxo.Graph.DensityImagePlotItem(assoc,plotStyle);
 			gc.Doc.Layers[0].PlotItems.Add(pi);
@@ -203,7 +203,7 @@ namespace Altaxo.Worksheet
 			}
 
 			table.ResumeDataChangedNotifications();
-			mainDocument.TableSet.Add(table);
+			mainDocument.TableCollection.Add(table);
 			// create a new worksheet without any columns
 			App.Current.CreateNewWorksheet(table);
 
@@ -377,7 +377,7 @@ namespace Altaxo.Worksheet
 		}
 
 			table.ResumeDataChangedNotifications();
-			mainDocument.TableSet.Add(table);
+			mainDocument.TableCollection.Add(table);
 			// create a new worksheet without any columns
 			App.Current.CreateNewWorksheet(table);
 
@@ -712,7 +712,7 @@ namespace Altaxo.Worksheet
 
 
 			table.ResumeDataChangedNotifications();
-			mainDocument.TableSet.Add(table);
+			mainDocument.TableCollection.Add(table);
 			// create a new worksheet without any columns
 			App.Current.CreateNewWorksheet(table);
 
@@ -827,7 +827,7 @@ namespace Altaxo.Worksheet
 			// create a worksheet
 			if(bTableCreated)
 			{
-				mainDocument.TableSet.Add(table);
+				mainDocument.TableCollection.Add(table);
 				// create a new worksheet without any columns
 				App.Current.CreateNewWorksheet(table);
 
@@ -941,7 +941,7 @@ namespace Altaxo.Worksheet
 			if(null!=table)
 			{
 				table.ResumeDataChangedNotifications();
-				mainDocument.TableSet.Add(table);
+				mainDocument.TableCollection.Add(table);
 				// create a new worksheet without any columns
 				App.Current.CreateNewWorksheet(table);
 
@@ -950,7 +950,7 @@ namespace Altaxo.Worksheet
 
 
 
-		public static void FFT(TableController dg)
+		public static void FFT(GUI.WorksheetController dg)
 		{
 			int len = dg.SelectedColumns.Count;
 			if(len==0)
@@ -973,7 +973,7 @@ namespace Altaxo.Worksheet
 
 		}
 
-		public static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, TableController dg)
+		public static string TwoDimFFT(Altaxo.AltaxoDocument mainDocument, GUI.WorksheetController dg)
 		{
 			int rows = dg.Doc.DataColumns.RowCount;
 			int cols = dg.Doc.DataColumns.ColumnCount;
@@ -1030,7 +1030,7 @@ namespace Altaxo.Worksheet
 				table.DataColumns.Add(col);
 			}
 			table.ResumeDataChangedNotifications();
-			mainDocument.TableSet.Add(table);
+			mainDocument.TableCollection.Add(table);
 			// create a new worksheet without any columns
 			App.Current.CreateNewWorksheet(table);
 
@@ -1092,7 +1092,7 @@ namespace Altaxo.Worksheet
 			}	
 		}
 
-		public static void CopyToClipboard(TableController dg)
+		public static void CopyToClipboard(GUI.WorksheetController dg)
 		{
 			Altaxo.Data.DataTable dt = dg.DataTable;
 			System.Windows.Forms.DataObject dao = new System.Windows.Forms.DataObject();
@@ -1152,11 +1152,10 @@ namespace Altaxo.Worksheet
 		}
 
 
-		public static void PasteFromClipboard(TableController dg)
+		public static void PasteFromClipboard(GUI.WorksheetController dg)
 		{
 			Altaxo.Data.DataTable dt = dg.DataTable;
 			System.Windows.Forms.DataObject dao = System.Windows.Forms.Clipboard.GetDataObject() as System.Windows.Forms.DataObject;
-			int i,j;
 		
 			if(dg.SelectedColumns.Count>0)
 			{

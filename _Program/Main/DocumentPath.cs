@@ -106,7 +106,7 @@ namespace Altaxo.Main
 		}
 
 		/// <summary>
-		/// Get the absolute path of the node <code>node>/code> starting either from the root, or from the object in the depth
+		/// Get the absolute path of the node <code>node</code> starting either from the root, or from the object in the depth
 		/// <code>maxDepth</code>, whatever is reached first.
 		/// </summary>
 		/// <param name="node">The node for which the path is to be retrieved.</param>

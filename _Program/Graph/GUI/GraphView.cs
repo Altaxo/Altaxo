@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Serialization;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	/// <summary>
 	/// Summary description for GraphView.
@@ -17,7 +17,7 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.ImageList m_GraphToolsImages;
 		private System.Windows.Forms.ImageList m_LayerButtonImages;
 		private System.Windows.Forms.ToolBar m_LayerToolbar;
-		private Altaxo.Graph.GraphPanel m_GraphPanel;
+		private GraphPanel m_GraphPanel;
 		private System.ComponentModel.IContainer components;
 		private IGraphController m_Ctrl;
 
@@ -125,7 +125,7 @@ namespace Altaxo.Graph
 			this.m_GraphToolsImages = new System.Windows.Forms.ImageList(this.components);
 			this.m_LayerButtonImages = new System.Windows.Forms.ImageList(this.components);
 			this.m_LayerToolbar = new System.Windows.Forms.ToolBar();
-			this.m_GraphPanel = new Altaxo.Graph.GraphPanel();
+			this.m_GraphPanel = new GraphPanel();
 			this.SuspendLayout();
 			// 
 			// m_GraphToolsImages
@@ -425,7 +425,7 @@ namespace Altaxo.Graph
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public Altaxo.Graph.GraphTools CurrentGraphTool
+		public GraphTools CurrentGraphTool
 		{
 			set
 			{

@@ -1,10 +1,10 @@
 using System;
 using Altaxo.Serialization;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	#region Interfaces
-	public interface IAxisLinkController : Gui.IApplyController, Main.IMVCController
+	public interface IAxisLinkController : Main.GUI.IApplyController, Main.GUI.IMVCController
 	{
 		/// <summary>
 		/// Get/sets the view this controller controls.
@@ -15,7 +15,7 @@ namespace Altaxo.Graph
 		/// Called if the type of the link is changed.
 		/// </summary>
 		/// <param name="linktype">The linktype. Valid arguments are "None", "Straight" and "Custom".</param>
-		void EhView_LinkTypeChanged(Layer.AxisLinkType linktype);
+		void EhView_LinkTypeChanged(XYPlotLayer.AxisLinkType linktype);
 
 		/// <summary>
 		/// Called when the contents of OrgA is changed.
@@ -45,7 +45,7 @@ namespace Altaxo.Graph
 
 	}
 
-	public interface IAxisLinkView : Main.IMVCView
+	public interface IAxisLinkView : Main.GUI.IMVCView
 	{
 
 		/// <summary>
@@ -62,7 +62,7 @@ namespace Altaxo.Graph
 		/// Initializes the type of the link.
 		/// </summary>
 		/// <param name="linktype"></param>
-		void LinkType_Initialize(Layer.AxisLinkType linktype);
+		void LinkType_Initialize(XYPlotLayer.AxisLinkType linktype);
 
 		/// <summary>
 		/// Initializes the content of the OrgA edit box.
@@ -100,17 +100,17 @@ namespace Altaxo.Graph
 	public class AxisLinkController : IAxisLinkController
 	{
 		IAxisLinkView m_View;
-		Layer m_Layer;
+		XYPlotLayer m_Layer;
 		bool  m_bXAxis;
 
-		Layer.AxisLinkType m_LinkType;
+		XYPlotLayer.AxisLinkType m_LinkType;
 		double m_OrgA;
 		double m_OrgB;
 		double m_EndA;
 		double m_EndB;
 
 
-		public AxisLinkController(Layer layer, bool bXAxis)
+		public AxisLinkController(XYPlotLayer layer, bool bXAxis)
 		{
 			m_Layer = layer;
 			m_bXAxis = bXAxis;
@@ -172,12 +172,12 @@ namespace Altaxo.Graph
 			}
 		}
 
-		public void EhView_LinkTypeChanged(Layer.AxisLinkType linktype)
+		public void EhView_LinkTypeChanged(XYPlotLayer.AxisLinkType linktype)
 		{
 			m_LinkType = linktype;
 
 			if(null!=View)
-				View.Enable_OrgAndEnd_Boxes(linktype == Layer.AxisLinkType.Custom);
+				View.Enable_OrgAndEnd_Boxes(linktype == XYPlotLayer.AxisLinkType.Custom);
 		}
 
 		public void EhView_OrgAValidating(string orgA, ref bool bCancel)

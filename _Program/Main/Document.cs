@@ -35,11 +35,11 @@ namespace Altaxo
 		IDeserializationCallback,
 		Main.INamedObjectCollection	
 	{
-		protected Altaxo.Data.TableSet m_DataSet = null; // The root of all the data
+		protected Altaxo.Data.TableCollection m_DataSet = null; // The root of all the data
 
-		protected Altaxo.Graph.GraphSet m_GraphSet = null; // all graphs are stored here
+		protected Altaxo.Graph.GraphDocumentCollection m_GraphSet = null; // all graphs are stored here
 
-		protected Altaxo.Worksheet.TableLayoutList m_TableLayoutList = null;
+		protected Altaxo.Worksheet.WorksheetLayoutCollection m_TableLayoutList = null;
 
 		protected System.Collections.ArrayList m_Worksheets;
 		/// <summary>The list of GraphForms for the document.</summary>
@@ -52,9 +52,9 @@ namespace Altaxo
 
 		public AltaxoDocument()
 		{
-			m_DataSet = new Altaxo.Data.TableSet(this);
-			m_GraphSet = new Altaxo.Graph.GraphSet(this);
-			m_TableLayoutList = new Altaxo.Worksheet.TableLayoutList(this);
+			m_DataSet = new Altaxo.Data.TableCollection(this);
+			m_GraphSet = new Altaxo.Graph.GraphDocumentCollection(this);
+			m_TableLayoutList = new Altaxo.Worksheet.WorksheetLayoutCollection(this);
 			m_Worksheets = new System.Collections.ArrayList();
 			m_GraphForms = new System.Collections.ArrayList();
 		}
@@ -65,14 +65,14 @@ namespace Altaxo
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				AltaxoDocument s = (AltaxoDocument)obj;
-				info.AddValue("TableSet",s.m_DataSet);
+				info.AddValue("TableCollection",s.m_DataSet);
 				info.AddValue("Worksheets",s.m_Worksheets);
 				info.AddValue("GraphForms",s.m_GraphForms);
 			}
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				AltaxoDocument s = (AltaxoDocument)obj;
-				s.m_DataSet = (Altaxo.Data.TableSet)info.GetValue("TableSet",typeof(Altaxo.Data.TableSet));
+				s.m_DataSet = (Altaxo.Data.TableCollection)info.GetValue("TableCollection",typeof(Altaxo.Data.TableCollection));
 				// s.tstObj    = (AltaxoTestObject02)info.GetValue("TstObj",typeof(AltaxoTestObject02));
 				s.m_Worksheets = (System.Collections.ArrayList)info.GetValue("Worksheets",typeof(System.Collections.ArrayList));
 				s.m_GraphForms = (System.Collections.ArrayList)info.GetValue("GraphForms",typeof(System.Collections.ArrayList));
@@ -135,13 +135,13 @@ namespace Altaxo
 			}
 
 			// third, we save all TableLayouts into the TableLayouts subdirectory
-			foreach(Altaxo.Worksheet.TableLayout layout in this.m_TableLayoutList)
+			foreach(Altaxo.Worksheet.WorksheetLayout layout in this.m_TableLayoutList)
 			{
 				ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
 				zippedStream.PutNextEntry(ZipEntry);
 				zippedStream.SetLevel(0);
 				info.BeginWriting(zippedStream);
-				info.AddValue("TableLayout",layout);
+				info.AddValue("WorksheetLayout",layout);
 				info.EndWriting();
 			}
 			
@@ -176,9 +176,9 @@ namespace Altaxo
 				{
 					System.IO.Stream zipinpstream =zipFile.GetInputStream(zipEntry);
 					info.BeginReading(zipinpstream);
-					object readedobject = info.GetValue("TableLayout",this);
-					if(readedobject is Altaxo.Worksheet.TableLayout)
-						this.m_TableLayoutList.Add((Altaxo.Worksheet.TableLayout)readedobject);
+					object readedobject = info.GetValue("WorksheetLayout",this);
+					if(readedobject is Altaxo.Worksheet.WorksheetLayout)
+						this.m_TableLayoutList.Add((Altaxo.Worksheet.WorksheetLayout)readedobject);
 					info.EndReading();
 					
 				}
@@ -192,7 +192,7 @@ namespace Altaxo
 
 		public AltaxoDocument(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
 		{
-			m_DataSet = (Altaxo.Data.TableSet)(info.GetValue("TableSet",typeof(Altaxo.Data.TableSet)));
+			m_DataSet = (Altaxo.Data.TableCollection)(info.GetValue("TableCollection",typeof(Altaxo.Data.TableCollection)));
 		}
 
 		public void GetObjectData(
@@ -200,19 +200,19 @@ namespace Altaxo
 			System.Runtime.Serialization.StreamingContext context
 			)
 		{
-			info.AddValue("TableSet",m_DataSet);
+			info.AddValue("TableCollection",m_DataSet);
 		}
 		
-		public Altaxo.Data.TableSet TableSet
+		public Altaxo.Data.TableCollection TableCollection
 		{
 			get { return m_DataSet; }
 		}
-		public Altaxo.Graph.GraphSet GraphSet
+		public Altaxo.Graph.GraphDocumentCollection GraphDocumentCollection
 		{
 			get { return m_GraphSet; }
 		}
 
-		public Altaxo.Worksheet.TableLayoutList TableLayouts
+		public Altaxo.Worksheet.WorksheetLayoutCollection TableLayouts
 		{
 			get { return this.m_TableLayoutList; }
 		}
@@ -244,7 +244,7 @@ namespace Altaxo
 				dt1.DataColumns.Add(colB);
 			}
 
-			TableSet.Add(dt1);
+			TableCollection.Add(dt1);
 
 			return dt1;
 		}
@@ -252,7 +252,7 @@ namespace Altaxo
 		public Altaxo.Graph.GraphDocument CreateNewGraphDocument()
 		{
 			Altaxo.Graph.GraphDocument doc = new Altaxo.Graph.GraphDocument();
-			GraphSet.Add(doc);
+			GraphDocumentCollection.Add(doc);
 
 			return doc;
 		}
@@ -260,9 +260,9 @@ namespace Altaxo
 	
 
 
-		public Altaxo.Worksheet.TableLayout CreateNewTableLayout(Altaxo.Data.DataTable table)
+		public Altaxo.Worksheet.WorksheetLayout CreateNewTableLayout(Altaxo.Data.DataTable table)
 		{
-			Altaxo.Worksheet.TableLayout layout = new Altaxo.Worksheet.TableLayout(table);
+			Altaxo.Worksheet.WorksheetLayout layout = new Altaxo.Worksheet.WorksheetLayout(table);
 			this.m_TableLayoutList.Add(layout);
 			return layout;
 		}

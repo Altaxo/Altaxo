@@ -484,7 +484,6 @@ namespace Altaxo.Data
 			/// <summary>Serializes the DataColumn given by object obj.</summary>
 			/// <param name="obj">The <see cref="DataColumn"/> instance which should be serialized.</param>
 			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
 			/// <remarks>I decided _not_ to serialize the parent object, because there are situations were we
 			/// only want to serialize this column. But if we also serialize the parent table, we end up serializing all the object graph.
 			/// </remarks>
@@ -502,10 +501,9 @@ namespace Altaxo.Data
 			/// <summary>
 			/// Deserializes the <see cref="DataColumn"/> instance.
 			/// </summary>
-			/// <param name="obj">The empty DataColumn instance, created by the runtime.</param>
+			/// <param name="o">The empty DataColumn instance, created by the runtime.</param>
 			/// <param name="info">Serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			/// <param name="selector">The surrogate selector.</param>
+			/// <param name="parent">The parental object.</param>
 			/// <returns>The deserialized object.</returns>
 			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
 			{
@@ -679,7 +677,7 @@ namespace Altaxo.Data
 		/// calling the function <see cref="DataColumnCollection.OnColumnDataChanged"/>, informing the parent table of this change. If the parent table
 		/// has a not-zero suspend counter, then it will suspend data changed notifications also for this column and the event is not fired.
 		/// If the suspend counter of the parent table is zero, it firstly informs its parent data set by calling the function
-		/// <see cref="TableSet.OnTableDataChanged"/>. If the suspend counter of the TableSet is not zero, then it will suspend the data changed events of the table. And the table will
+		/// <see cref="TableCollection.OnTableDataChanged"/>. If the suspend counter of the TableCollection is not zero, then it will suspend the data changed events of the table. And the table will
 		/// then suspend the data changed events of this column, so the event is not fired in this case<para/>
 		/// That means in the end: only if the suspend counter of this column, the parent data table, and the parent data set of this table are all zero,
 		/// then the data changed event is fired at all.</remarks>

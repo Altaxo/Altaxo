@@ -410,16 +410,16 @@ namespace Altaxo
 					info.EndReading();
 					myStream.Close();
 
-					// if it is a table, add it to the TableSet
+					// if it is a table, add it to the TableCollection
 					if(deserObject is Altaxo.Data.DataTable)
 					{
 						Altaxo.Data.DataTable table = deserObject as Altaxo.Data.DataTable;
 						if(table.Name==null || table.Name==string.Empty)
-							table.TableName = this.Doc.TableSet.FindNewTableName();
-						else if( this.Doc.TableSet.ContainsTable(table.Name))
-							table.TableName = this.Doc.TableSet.FindNewTableName(table.Name);
+							table.TableName = this.Doc.TableCollection.FindNewTableName();
+						else if( this.Doc.TableCollection.ContainsTable(table.Name))
+							table.TableName = this.Doc.TableCollection.FindNewTableName(table.Name);
 
-						this.Doc.TableSet.Add(table);
+						this.Doc.TableCollection.Add(table);
 						info.AnnounceDeserializationEnd(this.Doc); // fire the event to resolve path references
 						
 						CreateNewWorksheet(table);
@@ -428,11 +428,11 @@ namespace Altaxo
 					{
 						Altaxo.Graph.GraphDocument graph = deserObject as Altaxo.Graph.GraphDocument;
 						if(graph.Name==null || graph.Name==string.Empty)
-							graph.Name = this.Doc.GraphSet.FindNewName();
-						else if( this.Doc.GraphSet.Contains(graph.Name))
-							graph.Name = this.Doc.GraphSet.FindNewName(graph.Name);
+							graph.Name = this.Doc.GraphDocumentCollection.FindNewName();
+						else if( this.Doc.GraphDocumentCollection.Contains(graph.Name))
+							graph.Name = this.Doc.GraphDocumentCollection.FindNewName(graph.Name);
 
-						this.Doc.GraphSet.Add(graph);
+						this.Doc.GraphDocumentCollection.Add(graph);
 						info.AnnounceDeserializationEnd(this.Doc); // fire the event to resolve path references in the graph
 
 						CreateNewGraph(graph);
@@ -781,7 +781,7 @@ namespace Altaxo
 
 			// second, we save all workbench windows into the Workbench/Views 
 			int i=0;
-			foreach(Gui.IWorkbenchWindowController ctrl in this.m_WorkbenchViews)
+			foreach(Main.GUI.IWorkbenchWindowController ctrl in this.m_WorkbenchViews)
 			{
 				i++;
 				ZipEntry ZipEntry = new ZipEntry("Workbench/Views/View"+i.ToString()+".xml");
@@ -804,7 +804,7 @@ namespace Altaxo
 					System.IO.Stream zipinpstream = zipFile.GetInputStream(zipEntry);
 					info.BeginReading(zipinpstream);
 					object readedobject = info.GetValue("Table",this);
-					if(readedobject is Gui.IWorkbenchContentController)
+					if(readedobject is Main.GUI.IWorkbenchContentController)
 						restoredControllers.Add(readedobject);
 					info.EndReading();
 				}
@@ -815,7 +815,7 @@ namespace Altaxo
 
 			// now give all restored controllers a view and show them in the Main view
 
-			foreach(Gui.IWorkbenchContentController ctrl in restoredControllers)
+			foreach(Main.GUI.IWorkbenchContentController ctrl in restoredControllers)
 			{
 				ctrl.CreateView();
 				if(ctrl.View != null)
@@ -885,32 +885,32 @@ namespace Altaxo
 		} // end method
 
 
-		public Altaxo.Worksheet.ITableController CreateNewWorksheet(string worksheetName, bool bCreateDefaultColumns)
+		public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(string worksheetName, bool bCreateDefaultColumns)
 		{
 			
 			Altaxo.Data.DataTable dt1 = this.Doc.CreateNewTable(worksheetName, bCreateDefaultColumns);
 			return CreateNewWorksheet(dt1);
 		}
 	
-		public Altaxo.Worksheet.ITableController CreateNewWorksheet(bool bCreateDefaultColumns)
+		public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(bool bCreateDefaultColumns)
 		{
-			return CreateNewWorksheet(this.Doc.TableSet.FindNewTableName(),bCreateDefaultColumns);
+			return CreateNewWorksheet(this.Doc.TableCollection.FindNewTableName(),bCreateDefaultColumns);
 		}
 
-		public Altaxo.Worksheet.ITableController CreateNewWorksheet()
+		public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet()
 		{
-			return CreateNewWorksheet(this.Doc.TableSet.FindNewTableName(),false);
+			return CreateNewWorksheet(this.Doc.TableCollection.FindNewTableName(),false);
 		}
 
 
-		public Altaxo.Worksheet.ITableController CreateNewWorksheet(Altaxo.Data.DataTable table)
+		public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet(Altaxo.Data.DataTable table)
 		{
-			Altaxo.Gui.IWorkbenchWindowController wbv_controller = new Altaxo.Gui.WorkbenchWindowController();
-			Altaxo.Gui.WorkbenchForm wbvform = new Altaxo.Gui.WorkbenchForm(this.View.Form);
+			Altaxo.Main.GUI.IWorkbenchWindowController wbv_controller = new Altaxo.Main.GUI.WorkbenchWindowController();
+			Altaxo.Main.GUI.WorkbenchForm wbvform = new Altaxo.Main.GUI.WorkbenchForm(this.View.Form);
 			wbv_controller.View = wbvform;
 
-			Altaxo.Worksheet.TableController ctrl = new Altaxo.Worksheet.TableController(this.Doc.CreateNewTableLayout(table));
-			Altaxo.Worksheet.TableView view = new Altaxo.Worksheet.TableView();
+			Altaxo.Worksheet.GUI.WorksheetController ctrl = new Altaxo.Worksheet.GUI.WorksheetController(this.Doc.CreateNewTableLayout(table));
+			Altaxo.Worksheet.GUI.WorksheetView view = new Altaxo.Worksheet.GUI.WorksheetView();
 			ctrl.View = view;
 
 			wbv_controller.Content = ctrl;
@@ -922,24 +922,24 @@ namespace Altaxo
 
 	
 
-		public Altaxo.Graph.IGraphController CreateNewGraph()
+		public Altaxo.Graph.GUI.IGraphController CreateNewGraph()
 		{
 			return CreateNewGraph(Doc.CreateNewGraphDocument());
 		}
 
 	
 
-		public Altaxo.Graph.IGraphController CreateNewGraph(Altaxo.Graph.GraphDocument graph)
+		public Altaxo.Graph.GUI.IGraphController CreateNewGraph(Altaxo.Graph.GraphDocument graph)
 		{
-			Altaxo.Gui.IWorkbenchWindowController wbv_controller = new Altaxo.Gui.WorkbenchWindowController();
-			Altaxo.Gui.WorkbenchForm wbvform = new Altaxo.Gui.WorkbenchForm(this.View.Form);
+			Altaxo.Main.GUI.IWorkbenchWindowController wbv_controller = new Altaxo.Main.GUI.WorkbenchWindowController();
+			Altaxo.Main.GUI.WorkbenchForm wbvform = new Altaxo.Main.GUI.WorkbenchForm(this.View.Form);
 			wbv_controller.View = wbvform;
 
 			if(graph==null)
 				graph = this.Doc.CreateNewGraphDocument();
 
-			Altaxo.Graph.GraphController ctrl = new Altaxo.Graph.GraphController(graph);
-			Altaxo.Graph.GraphView view = new Altaxo.Graph.GraphView();
+			Altaxo.Graph.GUI.GraphController ctrl = new Altaxo.Graph.GUI.GraphController(graph);
+			Altaxo.Graph.GUI.GraphView view = new Altaxo.Graph.GUI.GraphView();
 			ctrl.View = view;
 
 			
@@ -951,10 +951,10 @@ namespace Altaxo
 		}
 
 
-		public void ShowContentInNewWorkbenchWindow(Gui.IWorkbenchContentController contentController)
+		public void ShowContentInNewWorkbenchWindow(Main.GUI.IWorkbenchContentController contentController)
 		{
-			Altaxo.Gui.IWorkbenchWindowController wbv_controller = new Altaxo.Gui.WorkbenchWindowController();
-			Altaxo.Gui.WorkbenchForm wbvform = new Altaxo.Gui.WorkbenchForm(this.View.Form);
+			Altaxo.Main.GUI.IWorkbenchWindowController wbv_controller = new Altaxo.Main.GUI.WorkbenchWindowController();
+			Altaxo.Main.GUI.WorkbenchForm wbvform = new Altaxo.Main.GUI.WorkbenchForm(this.View.Form);
 			wbv_controller.View = wbvform;
 
 				
@@ -963,10 +963,10 @@ namespace Altaxo
 			wbvform.Show();
 		}
 
-		/// <summary>This will remove the GraphForm <paramref>frm</paramref> from the graph forms collection.</summary>
-		/// <param name="frm">The GraphForm to remove.</param>
+		/// <summary>This will remove the GraphController <paramref>ctrl</paramref> from the graph forms collection.</summary>
+		/// <param name="ctrl">The GraphController to remove.</param>
 		/// <remarks>No exception is thrown if the Form frm is not a member of the graph forms collection.</remarks>
-		public void RemoveGraph(Altaxo.Graph.GraphController ctrl)
+		public void RemoveGraph(Altaxo.Graph.GUI.GraphController ctrl)
 		{
 			if(this.m_WorkbenchViews.Contains(ctrl))
 				this.m_WorkbenchViews.Remove(ctrl);
@@ -974,10 +974,10 @@ namespace Altaxo
 				this.m_WorkbenchViews.Remove(ctrl.ParentWorkbenchWindowController);
 		}
 
-		/// <summary>This will remove the Worksheet <paramref>frm</paramref> from the corresponding forms collection.</summary>
-		/// <param name="frm">The Worksheet to remove.</param>
+		/// <summary>This will remove the Worksheet <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
+		/// <param name="ctrl">The Worksheet to remove.</param>
 		/// <remarks>No exception is thrown if the Form frm is not a member of the worksheet forms collection.</remarks>
-		public void RemoveWorksheet(Altaxo.Worksheet.TableController ctrl)
+		public void RemoveWorksheet(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
 			if(this.m_WorkbenchViews.Contains(ctrl))
 				this.m_WorkbenchViews.Remove(ctrl);
@@ -987,7 +987,7 @@ namespace Altaxo
 
 		public void RemoveAllWorkbenchViews()
 		{
-			foreach(Gui.IWorkbenchWindowController ctrl in this.m_WorkbenchViews)
+			foreach(Main.GUI.IWorkbenchWindowController ctrl in this.m_WorkbenchViews)
 				ctrl.CloseView();
 
 			this.m_WorkbenchViews.Clear();

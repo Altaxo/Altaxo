@@ -20,7 +20,7 @@
 
 using System;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	/// <summary>
 	/// GraphPanel is derived from <see cref="System.Windows.Forms.Panel"/>. It's only intention is to set

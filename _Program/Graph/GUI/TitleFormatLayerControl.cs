@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	/// <summary>
 	/// Summary description for TitleFormatLayerControl.

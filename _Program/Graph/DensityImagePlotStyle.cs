@@ -56,11 +56,11 @@ namespace Altaxo.Graph
 
 
 		#region Serialization
-		/// <summary>Used to serialize the LineScatterPlotStyle Version 0.</summary>
+		/// <summary>Used to serialize the XYLineScatterPlotStyle Version 0.</summary>
 		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
 		{
 			/// <summary>
-			/// Serializes LineScatterPlotStyle Version 0.
+			/// Serializes XYLineScatterPlotStyle Version 0.
 			/// </summary>
 			/// <param name="obj">The DensityImagePlotStyle to serialize.</param>
 			/// <param name="info">The serialization info.</param>
@@ -171,12 +171,12 @@ namespace Altaxo.Graph
 		/// <param name="gfrx">The graphics context painting in.</param>
 		/// <param name="gl">The layer painting in.</param>
 		/// <param name="plotObject">The data to plot.</param>
-		public void Paint(Graphics gfrx, Graph.Layer gl, object plotObject) // plots the curve with the choosen style
+		public void Paint(Graphics gfrx, Graph.XYPlotLayer gl, object plotObject) // plots the curve with the choosen style
 			{
-			if(!(plotObject is D2EquidistantMeshDataAssociation))
+			if(!(plotObject is XYZEquidistantMeshColumnPlotData))
 				return; // we cannot plot any other than a TwoDimMeshDataAssociation now
 
-				D2EquidistantMeshDataAssociation myPlotAssociation = (D2EquidistantMeshDataAssociation)plotObject;
+				XYZEquidistantMeshColumnPlotData myPlotAssociation = (XYZEquidistantMeshColumnPlotData)plotObject;
 
 				Altaxo.Data.INumericColumn xColumn = myPlotAssociation.XColumn as Altaxo.Data.INumericColumn;
 				Altaxo.Data.INumericColumn yColumn = myPlotAssociation.YColumn as Altaxo.Data.INumericColumn;

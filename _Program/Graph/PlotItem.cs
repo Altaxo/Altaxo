@@ -66,14 +66,14 @@ namespace Altaxo.Graph
 		/// </summary>
 		/// <param name="g">The graphics context.</param>
 		/// <param name="layer">The plot layer.</param>
-		public abstract void Paint(Graphics g, Graph.Layer layer);
+		public abstract void Paint(Graphics g, Graph.XYPlotLayer layer);
 
 
 		/// <summary>
 		/// Creates a cloned copy of this object.
 		/// </summary>
 		/// <returns>The cloned copy of this object.</returns>
-		/// <remarks>The data (DataColumns which belongs to a table in the document's TableSet) are not cloned, only the reference to this columns is cloned.</remarks>
+		/// <remarks>The data (DataColumns which belongs to a table in the document's TableCollection) are not cloned, only the reference to this columns is cloned.</remarks>
 		public abstract object Clone();
 
 
@@ -160,11 +160,11 @@ namespace Altaxo.Graph
 			OnStyleChanged();
 		}
 
-			/// <summary>
-			/// retrieves the object with the name <code>name</code>.
-			/// </summary>
-			/// <param name="name">The objects name.</param>
-			/// <returns>The object with the specified name.</returns>
+		/// <summary>
+		/// retrieves the object with the name <code>name</code>.
+		/// </summary>
+		/// <param name="name">The objects name.</param>
+		/// <returns>The object with the specified name.</returns>
 		public virtual object GetChildObjectNamed(string name)
 		{
 			switch(name)
@@ -177,11 +177,11 @@ namespace Altaxo.Graph
 			return null;
 		}
 
-			/// <summary>
-			/// Retrieves the name of the provided object.
-			/// </summary>
-			/// <param name="o">The object for which the name should be found.</param>
-			/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
+		/// <summary>
+		/// Retrieves the name of the provided object.
+		/// </summary>
+		/// <param name="o">The object for which the name should be found.</param>
+		/// <returns>The name of the object. Null if the object is not found. String.Empty if the object is found but has no name.</returns>
 		public virtual string GetNameOfChildObject(object o)
 		{
 			if(o==null)
@@ -195,208 +195,4 @@ namespace Altaxo.Graph
 		}
 
 	} // end of class PlotItem
-
-
-
-	/// <summary>
-	/// Association of data and style specialized for x-y-plots of column data.
-	/// </summary>
-	[SerializationSurrogate(0,typeof(XYDataPlot.SerializationSurrogate0))]
-	[SerializationVersion(0)]
-	public class XYDataPlot : PlotItem, System.Runtime.Serialization.IDeserializationCallback
-	{
-		protected PlotAssociation m_PlotAssociation;
-		protected PlotStyle       m_PlotStyle;
-
-		#region Serialization
-		/// <summary>Used to serialize theXYDataPlot Version 0.</summary>
-		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
-		{
-			/// <summary>
-			/// Serializes XYDataPlot Version 0.
-			/// </summary>
-			/// <param name="obj">The XYDataPlot to serialize.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
-			{
-				XYDataPlot s = (XYDataPlot)obj;
-				info.AddValue("Data",s.m_PlotAssociation);  
-				info.AddValue("Style",s.m_PlotStyle);  
-			}
-			/// <summary>
-			/// Deserializes the XYDataPlot Version 0.
-			/// </summary>
-			/// <param name="obj">The empty XYDataPlot object to deserialize into.</param>
-			/// <param name="info">The serialization info.</param>
-			/// <param name="context">The streaming context.</param>
-			/// <param name="selector">The deserialization surrogate selector.</param>
-			/// <returns>The deserialized XYDataPlot.</returns>
-			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
-			{
-				XYDataPlot s = (XYDataPlot)obj;
-
-				s.Data = (PlotAssociation)info.GetValue("Data",typeof(PlotAssociation));
-				s.Style = (PlotStyle)info.GetValue("Style",typeof(PlotStyle));
-		
-				return s;
-			}
-		}
-
-		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYDataPlot),0)]
-			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-		{
-			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-			{
-				XYDataPlot s = (XYDataPlot)obj;
-				info.AddValue("Data",s.m_PlotAssociation);  
-				info.AddValue("Style",s.m_PlotStyle);  
-			}
-			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-			{
-				
-				PlotAssociation pa = (PlotAssociation)info.GetValue("Data",typeof(PlotAssociation));
-				PlotStyle ps  = (PlotStyle)info.GetValue("Style",typeof(PlotStyle));
-
-				if(null==o)
-				{
-					return new XYDataPlot(pa, ps);
-				}
-				else
-				{
-					XYDataPlot s = (XYDataPlot)o;
-					s.Data = pa;
-					s.Style = ps;
-					return s;
-				}
-				
-			}
-		}
-
-		/// <summary>
-		/// Finale measures after deserialization of the linear axis.
-		/// </summary>
-		/// <param name="obj">Not used.</param>
-		public virtual void OnDeserialization(object obj)
-		{
-			// Restore the event chain
-
-			if(null!=m_PlotAssociation)
-			{
-				m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
-			}
-
-			if(null!=m_PlotStyle && m_PlotStyle is IChangedEventSource)
-			{
-				((IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
-			}
-		}
-		#endregion
-
-
-
-		public XYDataPlot(PlotAssociation pa, PlotStyle ps)
-		{
-			this.Data = pa;
-			this.Style = ps;
-		}
-
-		public XYDataPlot(XYDataPlot from)
-		{
-			this.Data = from.Data;   // also wires the event
-			this.Style = from.Style; // also wires the event
-		}
-
-		public override object Clone()
-		{
-			return new XYDataPlot(this);
-		}
-
-
-		public override object Data
-		{
-			get { return m_PlotAssociation; }
-			set
-			{
-				if(null==value)
-					throw new System.ArgumentNullException();
-				else if(!(value is PlotAssociation))
-					throw new System.ArgumentException("The provided data object is not of the type " + m_PlotAssociation.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
-				else
-				{
-					if(!object.ReferenceEquals(m_PlotAssociation,value))
-					{
-						if(null!=m_PlotAssociation)
-						{
-							m_PlotAssociation.Changed -= new EventHandler(OnDataChangedEventHandler);
-						}
-
-						m_PlotAssociation = (PlotAssociation)value;
-					
-						if(null!=m_PlotAssociation )
-						{
-							m_PlotAssociation.ParentObject = this;
-							m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
-						}
-
-						OnDataChanged();
-					}
-				}
-			}
-		}
-		public override object Style
-		{
-			get { return m_PlotStyle; }
-			set
-			{
-				if(null==value)
-					throw new System.ArgumentNullException();
-				else if(!(value is PlotStyle))
-					throw new System.ArgumentException("The provided data object is not of the type " + m_PlotAssociation.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
-				else
-				{
-					if(!object.ReferenceEquals(m_PlotStyle,value))
-					{
-						// delete event wiring to old PlotStyle
-						if(null!=m_PlotStyle && m_PlotStyle is IChangedEventSource)
-						{
-							((IChangedEventSource)m_PlotStyle).Changed -= new EventHandler(OnStyleChangedEventHandler);
-						}
-					
-						m_PlotStyle = (PlotStyle)value;
-
-						// create event wire to new Plotstyle
-						if(null!=m_PlotStyle && m_PlotStyle is IChangedEventSource)
-						{
-							m_PlotStyle.ParentObject = this;
-							((IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
-						}
-
-						// indicate the style has changed
-						OnStyleChanged();
-					}
-					}
-			}
-		}
-
-
-		public override string GetName(int level)
-		{
-			return m_PlotAssociation.ToString();
-		}
-
-		public override string ToString()
-		{
-			return GetName(int.MaxValue);
-		}
-
-		public override void Paint(Graphics g, Graph.Layer layer)
-		{
-			if(null!=this.m_PlotStyle)
-			{
-				m_PlotStyle.Paint(g,layer,m_PlotAssociation);
-			}
-		}
-
-	}
 }

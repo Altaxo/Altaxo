@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	/// <summary>
 	/// Summary description for LayerPositionControl.
@@ -33,9 +33,9 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.TextBox m_Layer_edLeftPosition;
 		private System.Windows.Forms.Label label15;
 		private System.Windows.Forms.GroupBox m_groupLinkXAxis;
-		private Altaxo.Graph.AxisLinkControl m_ctrlLinkXAxis;
+		private AxisLinkControl m_ctrlLinkXAxis;
 		private System.Windows.Forms.GroupBox m_groupLinkYAxis;
-		private Altaxo.Graph.AxisLinkControl m_ctrlLinkYAxis;
+		private AxisLinkControl m_ctrlLinkYAxis;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ComboBox m_cbCommonType;
 		/// <summary> 
@@ -99,10 +99,10 @@ namespace Altaxo.Graph
 			this.label16 = new System.Windows.Forms.Label();
 			this.m_Layer_edLeftPosition = new System.Windows.Forms.TextBox();
 			this.label15 = new System.Windows.Forms.Label();
-			this.m_ctrlLinkXAxis = new Altaxo.Graph.AxisLinkControl();
+			this.m_ctrlLinkXAxis = new AxisLinkControl();
 			this.m_groupLinkXAxis = new System.Windows.Forms.GroupBox();
 			this.m_groupLinkYAxis = new System.Windows.Forms.GroupBox();
-			this.m_ctrlLinkYAxis = new Altaxo.Graph.AxisLinkControl();
+			this.m_ctrlLinkYAxis = new AxisLinkControl();
 			this.label1 = new System.Windows.Forms.Label();
 			this.m_cbCommonType = new System.Windows.Forms.ComboBox();
 			this.m_groupLinkXAxis.SuspendLayout();

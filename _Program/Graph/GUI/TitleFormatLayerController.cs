@@ -1,10 +1,10 @@
 using System;
 using System.Drawing;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	#region Interfaces
-	public interface ITitleFormatLayerController : Gui.IApplyController, Main.IMVCController
+	public interface ITitleFormatLayerController : Main.GUI.IApplyController, Main.GUI.IMVCController
 	{
 		ITitleFormatLayerView View { get; set; }
 		void EhView_ShowAxisChanged(bool bShow);
@@ -19,7 +19,7 @@ namespace Altaxo.Graph
 
 	}
 
-	public interface ITitleFormatLayerView : Main.IMVCView
+	public interface ITitleFormatLayerView : Main.GUI.IMVCView
 	{
 
 		ITitleFormatLayerController Controller { get; set; }
@@ -57,7 +57,7 @@ namespace Altaxo.Graph
 	public class TitleFormatLayerController : ITitleFormatLayerController
 	{
 		protected ITitleFormatLayerView m_View;
-		protected Layer                 m_Layer;
+		protected XYPlotLayer                 m_Layer;
 		protected EdgeType              m_Edge;
  
 		protected bool		m_ShowAxis;
@@ -89,7 +89,7 @@ namespace Altaxo.Graph
 
 		protected bool		m_AxisPositionValueEnabled = true;
 
-		public TitleFormatLayerController(Layer layer, EdgeType edge)
+		public TitleFormatLayerController(XYPlotLayer layer, EdgeType edge)
 		{
 			m_Layer = layer;
 			m_Edge  = edge;
@@ -103,7 +103,7 @@ namespace Altaxo.Graph
 
 
 
-			XYLayerAxisStyle axstyle=null;
+			XYAxisStyle axstyle=null;
 			string title=null;
 			bool bAxisEnabled=false;
 			switch(m_Edge)
@@ -145,7 +145,7 @@ namespace Altaxo.Graph
 			// Color
 			if(bInit)
 			{
-				this.m_Original_Color = PlotStyle.GetPlotColorName(axstyle.Color);
+				this.m_Original_Color = AbstractXYPlotStyle.GetPlotColorName(axstyle.Color);
 				if(null==this.m_Original_Color)
 					this.m_Original_Color = "Custom";
 				m_Color = m_Original_Color;
@@ -154,7 +154,7 @@ namespace Altaxo.Graph
 			{
 				arr.Clear();
 				arr.Add("Custom");
-				foreach(Color c in PlotStyle.PlotColors)
+				foreach(Color c in AbstractXYPlotStyle.PlotColors)
 				{
 					string name = c.ToString();
 					arr.Add(name.Substring(7,name.Length-8));
@@ -326,7 +326,7 @@ namespace Altaxo.Graph
 
 		public bool Apply()
 		{
-			XYLayerAxisStyle axstyle=null;
+			XYAxisStyle axstyle=null;
 			switch(m_Edge)
 			{
 				case EdgeType.Left:

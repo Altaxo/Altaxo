@@ -27,7 +27,7 @@ using System.Windows.Forms;
 using Altaxo.Graph;
 using Altaxo.Serialization;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	/// <summary>
 	/// GraphController is our default implementation to control a graph view.
@@ -38,7 +38,7 @@ namespace Altaxo.Graph
 		:
 		IGraphController,
 		System.Runtime.Serialization.IDeserializationCallback,
-		Gui.IWorkbenchContentController
+		Main.GUI.IWorkbenchContentController
 	{
 
 		#region Member variables
@@ -479,8 +479,8 @@ namespace Altaxo.Graph
 			//mi.Shortcut = ShortCuts.
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 
-			// Graph - Layer control
-			mi = new MenuItem("Layer control");
+			// Graph - XYPlotLayer control
+			mi = new MenuItem("XYPlotLayer control");
 			mi.Click += new EventHandler(EhMenuGraphLayer_OnClick);
 			//mi.Shortcut = ShortCuts.
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
@@ -512,7 +512,7 @@ namespace Altaxo.Graph
 
 			// now it is save to get the active layer
 			int actLayerNum = this.CurrentLayerNumber;
-			Layer actLayer = this.Layers[actLayerNum];
+			XYPlotLayer actLayer = this.Layers[actLayerNum];
 
 			// then append the plot associations of the actual layer
 
@@ -720,13 +720,13 @@ namespace Altaxo.Graph
 		{
 			EnsureValidityOfCurrentLayerNumber();
 			if(null!=this.ActiveLayer)
-				Graph.LayerController.ShowDialog(this.View.Form,this.ActiveLayer);
+				LayerController.ShowDialog(this.View.Form,this.ActiveLayer);
 		}
 
 		private void EhMenuGraphAddCurvePlot_OnClick(object sender, System.EventArgs e)
 		{
 			EnsureValidityOfCurrentLayerNumber();
-			this.Doc.Layers[this.CurrentLayerNumber].PlotItems.Add(new XYCurvePlotItem(new XYCurvePlotData(),new LineScatterPlotStyle()));
+			this.Doc.Layers[this.CurrentLayerNumber].PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(),new XYLineScatterPlotStyle()));
 		}
 
 		/// <summary>
@@ -758,7 +758,7 @@ namespace Altaxo.Graph
 				// by making the plot association shown by the menu item
 				// the actual plot association
 				int actLayerNum = this.CurrentLayerNumber;
-				Layer actLayer = this.Layers[actLayerNum];
+				XYPlotLayer actLayer = this.Layers[actLayerNum];
 				if(null!=actLayer && dmi.PlotItemNumber<actLayer.PlotItems.Count)
 				{
 					dmi.Checked=true;
@@ -770,7 +770,7 @@ namespace Altaxo.Graph
 				// if it was checked before, then bring up the plot style dialog
 				// of the plot association represented by this menu item
 				int actLayerNum = this.CurrentLayerNumber;
-				Layer actLayer = this.Layers[actLayerNum];
+				XYPlotLayer actLayer = this.Layers[actLayerNum];
 				PlotItem pa = actLayer.PlotItems[CurrentPlotNumber];
 
 
@@ -779,7 +779,7 @@ namespace Altaxo.Graph
 				
 				
 				//LineScatterPlotStyleController.ShowPlotStyleDialog(this.m_View.Form,pa,plotGroup);
-				Gui.DialogFactory.ShowLineScatterPlotStyleAndDataDialog(this.m_View.Form,pa,plotGroup);
+				Main.GUI.DialogFactory.ShowLineScatterPlotStyleAndDataDialog(this.m_View.Form,pa,plotGroup);
 			}
 			
 				
@@ -1153,7 +1153,7 @@ namespace Altaxo.Graph
 				// finally, mark the selected objects
 				if(!bForPrinting && m_SelectedObjects.Count>0)
 				{
-					foreach(GraphObject graphObject in m_SelectedObjects.Keys)
+					foreach(GraphicsObject graphObject in m_SelectedObjects.Keys)
 					{
 						int nLayer = (int)m_SelectedObjects[graphObject];
 						g.DrawPath(Pens.Blue,Layers[nLayer].LayerToGraphCoordinates(graphObject.GetSelectionPath()));
@@ -1204,9 +1204,9 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
-		/// Returns the layer collection. Is the same as m_GraphDocument.Layer.
+		/// Returns the layer collection. Is the same as m_GraphDocument.XYPlotLayer.
 		/// </summary>
-		public Layer.LayerCollection Layers
+		public XYPlotLayerCollection Layers
 		{
 			get { return m_Graph.Layers; }
 		}
@@ -1215,7 +1215,7 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// Returns the currently active layer, or null if there is no active layer.
 		/// </summary>
-		public Layer ActiveLayer
+		public XYPlotLayer ActiveLayer
 		{
 			get
 			{
@@ -1289,10 +1289,10 @@ namespace Altaxo.Graph
 		{
 			EnsureValidityOfCurrentLayerNumber();
 
-			// if Layer don't exist anymore, correct CurrentLayerNumber and ActualPlotAssocitation
+			// if XYPlotLayer don't exist anymore, correct CurrentLayerNumber and ActualPlotAssocitation
 			if(null!=ActiveLayer) // if the ActiveLayer exists
 			{
-				// if the PlotAssociation don't exist anymore, correct it
+				// if the XYColumnPlotData don't exist anymore, correct it
 				if(ActiveLayer.PlotItems.Count>0) // if at least one plotitem exists
 				{
 					if(m_CurrentPlotNumber<0)
@@ -1504,12 +1504,12 @@ namespace Altaxo.Graph
 		/// <param name="pixelPos">The pixel position to test (on the graph panel)</param>
 		/// <param name="foundObject">Returns the object the position <paramref name="pixelPos"/> is pointing to, else null</param>
 		/// <returns>True when the pixel position is upon a selected object, else false</returns>
-		public bool IsPixelPositionOnAlreadySelectedObject(PointF pixelPos, out GraphObject foundObject)
+		public bool IsPixelPositionOnAlreadySelectedObject(PointF pixelPos, out GraphicsObject foundObject)
 		{
 			PointF graphXY = this.PixelToPrintableAreaCoordinates(pixelPos); // Graph area coordinates
 
 			// have we clicked on one of the already selected objects
-			foreach(GraphObject graphObject in m_SelectedObjects.Keys)
+			foreach(GraphicsObject graphObject in m_SelectedObjects.Keys)
 			{
 				int nLayer = (int)m_SelectedObjects[graphObject];
 				if(null!=graphObject.HitTest(Layers[nLayer].GraphToLayerCoordinates(graphXY)))
@@ -1531,7 +1531,7 @@ namespace Altaxo.Graph
 		/// <param name="foundObject">Found object if there is one found, else null</param>
 		/// <param name="foundInLayerNumber">The layer the found object belongs to, otherwise 0</param>
 		/// <returns>True if a object was found at the pixel coordinates <paramref name="pixelPos"/>, else false.</returns>
-		public bool FindGraphObjectAtPixelPosition(PointF pixelPos, out GraphObject foundObject, out int foundInLayerNumber)
+		public bool FindGraphObjectAtPixelPosition(PointF pixelPos, out GraphicsObject foundObject, out int foundInLayerNumber)
 		{
 			// search for a object first
 			PointF mousePT = PixelToPrintableAreaCoordinates(pixelPos);
@@ -1539,7 +1539,7 @@ namespace Altaxo.Graph
 
 			for(int nLayer=0;nLayer<Layers.Count;nLayer++)
 			{
-				Altaxo.Graph.Layer layer = Layers[nLayer];
+				Altaxo.Graph.XYPlotLayer layer = Layers[nLayer];
 				foundObject = layer.HitTest(mousePT, out gp);
 				if(null!=foundObject)
 				{
@@ -1557,7 +1557,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		/// <param name="graphObject">The graph object for which a selection rectangle has to be drawn.</param>
 		/// <param name="nLayer">The layer number the <paramref name="graphObject"/> belongs to.</param>
-		public void DrawSelectionRectangleImmediately(GraphObject graphObject, int nLayer)
+		public void DrawSelectionRectangleImmediately(GraphicsObject graphObject, int nLayer)
 		{
 			using(Graphics g = m_View.CreateGraphGraphics())
 			{
@@ -1569,7 +1569,7 @@ namespace Altaxo.Graph
 
 		#region IWorkbenchContentController Members
 
-		Altaxo.Gui.IWorkbenchContentView Altaxo.Gui.IWorkbenchContentController.View
+		Altaxo.Main.GUI.IWorkbenchContentView Altaxo.Main.GUI.IWorkbenchContentController.View
 		{
 			get
 			{
@@ -1577,7 +1577,7 @@ namespace Altaxo.Graph
 			}
 			set
 			{
-				this.View = value as Altaxo.Graph.IGraphView;
+				this.View = value as IGraphView;
 			}
 		}
 
@@ -1594,8 +1594,8 @@ namespace Altaxo.Graph
 			}
 		}
 
-		protected	Gui.IWorkbenchWindowController m_ParentWorkbenchWindowController;
-		public Gui.IWorkbenchWindowController ParentWorkbenchWindowController 
+		protected	Main.GUI.IWorkbenchWindowController m_ParentWorkbenchWindowController;
+		public Main.GUI.IWorkbenchWindowController ParentWorkbenchWindowController 
 		{ 
 			get { return m_ParentWorkbenchWindowController; }
 			set { m_ParentWorkbenchWindowController = value; }
@@ -1725,7 +1725,7 @@ namespace Altaxo.Graph
 		
 					PointF graphDiff = grac.PixelToPageDifferences(mouseDiff); // calulate the moving distance in page units = graph units
 
-					foreach(GraphObject graphObject in grac.m_SelectedObjects.Keys)
+					foreach(GraphicsObject graphObject in grac.m_SelectedObjects.Keys)
 					{
 						// get the layer number the graphObject belongs to
 						int nLayer = (int)grac.m_SelectedObjects[graphObject];
@@ -1743,7 +1743,7 @@ namespace Altaxo.Graph
 
 						// now translate the graphics to graph units and paint all selection path
 						grac.TranslateGraphicsToGraphUnits(g);
-						foreach(GraphObject graphObject in grac.m_SelectedObjects.Keys)
+						foreach(GraphicsObject graphObject in grac.m_SelectedObjects.Keys)
 						{
 							int nLayer = (int)grac.m_SelectedObjects[graphObject]; 						// get the layer number the graphObject belongs to
 							g.DrawPath(Pens.Blue,grac.Layers[nLayer].LayerToGraphCoordinates(graphObject.GetSelectionPath())); // draw the selection path
@@ -1790,7 +1790,7 @@ namespace Altaxo.Graph
 
 	
 				// have we clicked on one of the already selected objects
-				GraphObject clickedSelectedObject=null;
+				GraphicsObject clickedSelectedObject=null;
 				bool bClickedOnAlreadySelectedObjects=grac.IsPixelPositionOnAlreadySelectedObject(mouseXY, out clickedSelectedObject);
 
 				if(bClickedOnAlreadySelectedObjects)
@@ -1808,7 +1808,7 @@ namespace Altaxo.Graph
 				else // not clicked on a already selected object
 				{
 					// search for a object first
-					GraphObject clickedObject;
+					GraphicsObject clickedObject;
 					int clickedLayerNumber=0;
 					grac.FindGraphObjectAtPixelPosition(mouseXY, out clickedObject, out clickedLayerNumber);
 
@@ -1872,16 +1872,16 @@ namespace Altaxo.Graph
 				{
 					IEnumerator graphEnum = grac.m_SelectedObjects.Keys.GetEnumerator(); // get the enumerator
 					graphEnum.MoveNext(); // set the enumerator to the first item
-					GraphObject graphObject = (GraphObject)graphEnum.Current;
+					GraphicsObject graphObject = (GraphicsObject)graphEnum.Current;
 					int nLayer = (int)grac.m_SelectedObjects[graphObject];
-					if(graphObject is Graph.ExtendedTextGraphObject)
+					if(graphObject is Graph.TextGraphics)
 					{
-						TextControlDialog dlg = new TextControlDialog(grac.Layers[nLayer],(ExtendedTextGraphObject)graphObject);
+						TextControlDialog dlg = new TextControlDialog(grac.Layers[nLayer],(TextGraphics)graphObject);
 						if(DialogResult.OK==dlg.ShowDialog(grac.m_View.Window))
 						{
-							if(!dlg.TextGraphObject.Empty)
+							if(!dlg.SimpleTextGraphics.Empty)
 							{
-								((ExtendedTextGraphObject)graphObject).CopyFrom(dlg.TextGraphObject);
+								((TextGraphics)graphObject).CopyFrom(dlg.SimpleTextGraphics);
 							}
 							else // item is empty, so must be deleted in the layer and in the selectedObjects
 							{
@@ -1994,7 +1994,7 @@ namespace Altaxo.Graph
 				// with knowledge of the current active layer, calculate the layer coordinates from them
 				PointF layerCoord = grac.Layers[grac.CurrentLayerNumber].GraphToLayerCoordinates(printAreaCoord);
 
-				ExtendedTextGraphObject tgo = new ExtendedTextGraphObject();
+				TextGraphics tgo = new TextGraphics();
 				tgo.Position = layerCoord;
 
 				// deselect the text tool
@@ -2004,9 +2004,9 @@ namespace Altaxo.Graph
 				if(DialogResult.OK==dlg.ShowDialog(grac.m_View.Window))
 				{
 					// add the resulting textgraphobject to the layer
-					if(!dlg.TextGraphObject.Empty)
+					if(!dlg.SimpleTextGraphics.Empty)
 					{
-						grac.Layers[grac.CurrentLayerNumber].GraphObjects.Add(dlg.TextGraphObject);
+						grac.Layers[grac.CurrentLayerNumber].GraphObjects.Add(dlg.SimpleTextGraphics);
 						grac.m_View.InvalidateGraph();
 					}
 				}

@@ -24,7 +24,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	/// <summary>
 	/// Summary description for TextControlDialog.
@@ -52,8 +52,8 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.Button m_btGreek;
 		private System.Windows.Forms.TextBox m_edText;
 		private System.Windows.Forms.Panel m_pnPreview;
-		private Altaxo.Graph.Layer m_Layer; // parent layer
-		private ExtendedTextGraphObject m_TextObject;
+		private Altaxo.Graph.XYPlotLayer m_Layer; // parent layer
+		private TextGraphics m_TextObject;
 		private float  m_PositionX; // original x position of textobject
 		private float  m_PositionY; // original y position of textobject
 		private float  m_Rotation; // original rotation of textobject
@@ -65,7 +65,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
-		public TextControlDialog(Altaxo.Graph.Layer layer, ExtendedTextGraphObject tgo)
+		public TextControlDialog(Altaxo.Graph.XYPlotLayer layer, TextGraphics tgo)
 		{
 			//
 			// Required for Windows Form Designer support
@@ -76,7 +76,7 @@ namespace Altaxo.Graph
 			m_Layer = layer;
 
 			if(null==tgo)
-				m_TextObject = new ExtendedTextGraphObject();
+				m_TextObject = new TextGraphics();
 			else
 				m_TextObject = tgo;
 
@@ -89,7 +89,7 @@ namespace Altaxo.Graph
 		}
 
 
-		public ExtendedTextGraphObject TextGraphObject
+		public TextGraphics SimpleTextGraphics
 		{
 			get { return m_TextObject; }
 		}
@@ -102,7 +102,7 @@ namespace Altaxo.Graph
 
 			
 			// set some help values (rotation and position), since we have to change
-			// them during painting of the TextGraphObject
+			// them during painting of the SimpleTextGraphics
 			m_PositionX = m_TextObject.Position.X;
 			m_PositionY = m_TextObject.Position.Y;
 			m_Rotation  = m_TextObject.Rotation;
@@ -130,12 +130,12 @@ namespace Altaxo.Graph
 			// fill the color dialog box
 			this.m_cbFontColor.Items.Add("Custom");
 
-			foreach(Color c in PlotStyle.PlotColors)
+			foreach(Color c in AbstractXYPlotStyle.PlotColors)
 			{
 				name = c.ToString();
 				this.m_cbFontColor.Items.Add(name.Substring(7,name.Length-8));
 			}
-			name = PlotStyle.GetPlotColorName(this.m_TextObject.Color);
+			name = AbstractXYPlotStyle.GetPlotColorName(this.m_TextObject.Color);
 			if(null==name)
 				name = "Custom";
 			this.m_cbFontColor.SelectedItem = name;

@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	/// <summary>
 	/// Summary description for LineScatterLayerContentsControl.
@@ -179,7 +179,7 @@ namespace Altaxo.Graph
 			this.label14.Name = "label14";
 			this.label14.Size = new System.Drawing.Size(88, 16);
 			this.label14.TabIndex = 15;
-			this.label14.Text = "Layer Contents";
+			this.label14.Text = "XYPlotLayer Contents";
 			// 
 			// m_Content_tvDataAvail
 			// 

@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	/// <summary>
 	/// Summary description for LinkAxisControl.
@@ -195,19 +195,19 @@ namespace Altaxo.Graph
 		private void EhLinkNone_CheckedChanged(object sender, System.EventArgs e)
 		{
 			if(null!=Controller && this.m_rbLinkAxisNone.Checked==true)
-				Controller.EhView_LinkTypeChanged(Layer.AxisLinkType.None);
+				Controller.EhView_LinkTypeChanged(XYPlotLayer.AxisLinkType.None);
 		}
 
 		private void EhLinkStraight_CheckedChanged(object sender, System.EventArgs e)
 		{
 			if(null!=Controller && this.m_rbLinkAxisStraight.Checked==true)
-				Controller.EhView_LinkTypeChanged(Layer.AxisLinkType.Straight);
+				Controller.EhView_LinkTypeChanged(XYPlotLayer.AxisLinkType.Straight);
 		}
 
 		private void EhLinkCustom_CheckedChanged(object sender, System.EventArgs e)
 		{
 			if(null!=Controller && this.m_rbLinkAxisCustom.Checked==true)
-				Controller.EhView_LinkTypeChanged(Layer.AxisLinkType.Custom);
+				Controller.EhView_LinkTypeChanged(XYPlotLayer.AxisLinkType.Custom);
 		}
 
 		private void EhOrgA_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -281,19 +281,19 @@ namespace Altaxo.Graph
 			this.m_edLinkAxisEndB.Enabled = bEnab;
 		}
 
-		public void LinkType_Initialize(Layer.AxisLinkType linktype)
+		public void LinkType_Initialize(XYPlotLayer.AxisLinkType linktype)
 		{
 			switch(linktype)
 			{
-				case Layer.AxisLinkType.None:
+				case XYPlotLayer.AxisLinkType.None:
 					this.m_rbLinkAxisNone.Checked = true;
 					EnableCustom(false);
 					break;
-				case Layer.AxisLinkType.Straight:
+				case XYPlotLayer.AxisLinkType.Straight:
 					this.m_rbLinkAxisStraight.Checked = true;
 					EnableCustom(false);
 					break;
-				case Layer.AxisLinkType.Custom:
+				case XYPlotLayer.AxisLinkType.Custom:
 					this.m_rbLinkAxisCustom.Checked = true;
 					EnableCustom(true);
 					break;

@@ -1,9 +1,9 @@
 using System;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	#region Interfaces
-	public interface ILayerController: Gui.IApplyController
+	public interface ILayerController: Main.GUI.IApplyController
 	{
 		void EhView_PageChanged(string firstChoice);
 		void EhView_SecondChoiceChanged(int index, string item);
@@ -33,12 +33,12 @@ namespace Altaxo.Graph
 	{
 		protected ILayerView m_View;
 
-		protected Layer m_Layer;
+		protected XYPlotLayer m_Layer;
 
 		private string   m_CurrentPage;
 		private EdgeType m_CurrentEdge;
 
-		Main.IMVCController m_CurrentController;
+		Main.GUI.IMVCController m_CurrentController;
 
 		enum ElementType { Unique, HorzVert, Edge };
 
@@ -66,7 +66,7 @@ namespace Altaxo.Graph
 	
 
 
-		public LayerController(Layer layer)
+		public LayerController(XYPlotLayer layer)
 		{
 			m_Layer = layer;
 
@@ -185,7 +185,7 @@ namespace Altaxo.Graph
 
 		void SetLayerSecondaryChoice()
 		{
-			string[] names = new string[1]{"Layer"};
+			string[] names = new string[1]{"XYPlotLayer"};
 			string name = names[0];
 			View.InitializeSecondaryChoice(names,name);
 		}
@@ -239,14 +239,14 @@ namespace Altaxo.Graph
 		}
 
 
-		public static bool ShowDialog(System.Windows.Forms.Form parentWindow, Layer layer)
+		public static bool ShowDialog(System.Windows.Forms.Form parentWindow, XYPlotLayer layer)
 		{
 			LayerController	ctrl = new LayerController(layer);
 			LayerControl view = new LayerControl();
 			ctrl.View = view;
 
-			Gui.DialogShellController dsc = new Gui.DialogShellController(
-				new Gui.DialogShellView(view), ctrl);
+			Main.GUI.DialogShellController dsc = new Main.GUI.DialogShellController(
+				new Main.GUI.DialogShellView(view), ctrl);
 
 			return dsc.ShowDialog(parentWindow);
 		}

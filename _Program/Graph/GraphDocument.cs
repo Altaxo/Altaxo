@@ -63,7 +63,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		private RectangleF m_PrintableBounds = new RectangleF(14, 14, 814 , 567 );
 
-		Layer.LayerCollection m_Layers;
+		XYPlotLayerCollection m_Layers;
 
 		string m_Name;
 
@@ -159,7 +159,7 @@ namespace Altaxo.Graph
 				s.m_PageBounds			= (RectangleF)info.GetValue("PageBounds",s);
 				s.m_PrintableBounds = (RectangleF)info.GetValue("PrintableBounds",s);
 
-				s.m_Layers          = (Layer.LayerCollection)info.GetValue("LayerList",s);
+				s.m_Layers          = (XYPlotLayerCollection)info.GetValue("LayerList",s);
 				s.m_Layers.ParentObject = s;
 
 
@@ -183,13 +183,13 @@ namespace Altaxo.Graph
 		/// </summary>
 		public GraphDocument()
 		{
-			this.m_Layers = new Altaxo.Graph.Layer.LayerCollection();
+			this.m_Layers = new Altaxo.Graph.XYPlotLayerCollection();
 			this.m_Layers.ParentObject = this;
 		}
 
 		public GraphDocument(GraphDocument from)
 		{
-			this.m_Layers = (Layer.LayerCollection)from.m_Layers.Clone();
+			this.m_Layers = (XYPlotLayerCollection)from.m_Layers.Clone();
 			this.m_Layers.ParentObject = this;
 			this.m_PageBounds = from.m_PageBounds;
 			this.m_PrintableBounds = from.m_PrintableBounds;
@@ -279,7 +279,7 @@ namespace Altaxo.Graph
 		/// <summary>
 		/// The collection of layers of the graph.
 		/// </summary>
-		public Layer.LayerCollection Layers
+		public XYPlotLayerCollection Layers
 		{
 			get { return m_Layers; } 
 		}
@@ -327,14 +327,14 @@ namespace Altaxo.Graph
 		}
 
 
-		#region Layer Creation
+		#region XYPlotLayer Creation
 
 		/// <summary>
 		/// Creates a new layer with bottom x axis and left y axis, which is not linked.
 		/// </summary>
 		public void CreateNewLayerNormalBottomXLeftY()
 		{
-			Layer newlayer= new Layer(DefaultLayerPosition,DefaultLayerSize);
+			XYPlotLayer newlayer= new XYPlotLayer(DefaultLayerPosition,DefaultLayerSize);
 			newlayer.TopAxisEnabled=false;
 			newlayer.RightAxisEnabled=false;
 		
@@ -346,12 +346,12 @@ namespace Altaxo.Graph
 		/// </summary>
 		public void CreateNewLayerLinkedTopXRightY(int linklayernumber)
 		{
-			Layer newlayer= new Layer(DefaultLayerPosition,DefaultLayerSize);
+			XYPlotLayer newlayer= new XYPlotLayer(DefaultLayerPosition,DefaultLayerSize);
 			Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
 			// link the new layer to the last old layer
 			newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
-			newlayer.SetPosition(0,Layer.PositionType.RelativeThisNearToLinkedLayerNear,0,Layer.PositionType.RelativeThisNearToLinkedLayerNear);
-			newlayer.SetSize(1,Layer.SizeType.RelativeToLinkedLayer,1,Layer.SizeType.RelativeToLinkedLayer);
+			newlayer.SetPosition(0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear);
+			newlayer.SetSize(1,XYPlotLayer.SizeType.RelativeToLinkedLayer,1,XYPlotLayer.SizeType.RelativeToLinkedLayer);
 
 			// set enabling of axis
 			newlayer.BottomAxisEnabled=false;
@@ -364,18 +364,18 @@ namespace Altaxo.Graph
 		/// </summary>
 		public void CreateNewLayerLinkedTopXRightY_XAxisStraight(int linklayernumber)
 		{
-			Layer newlayer= new Layer(DefaultLayerPosition,DefaultLayerSize);
+			XYPlotLayer newlayer= new XYPlotLayer(DefaultLayerPosition,DefaultLayerSize);
 			Layers.Add(newlayer); // it is neccessary to add the new layer this early since we must set some properties relative to the linked layer
 			// link the new layer to the last old layer
 			newlayer.LinkedLayer = (linklayernumber>=0 && linklayernumber<Layers.Count)? Layers[linklayernumber] : null;
-			newlayer.SetPosition(0,Layer.PositionType.RelativeThisNearToLinkedLayerNear,0,Layer.PositionType.RelativeThisNearToLinkedLayerNear);
-			newlayer.SetSize(1,Layer.SizeType.RelativeToLinkedLayer,1,Layer.SizeType.RelativeToLinkedLayer);
+			newlayer.SetPosition(0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear,0,XYPlotLayer.PositionType.RelativeThisNearToLinkedLayerNear);
+			newlayer.SetSize(1,XYPlotLayer.SizeType.RelativeToLinkedLayer,1,XYPlotLayer.SizeType.RelativeToLinkedLayer);
 
 			// set enabling of axis
 			newlayer.BottomAxisEnabled=false;
 			newlayer.LeftAxisEnabled=false;
 
-			newlayer.XAxisLinkType = Layer.AxisLinkType.Straight;
+			newlayer.XAxisLinkType = XYPlotLayer.AxisLinkType.Straight;
 		}
 
 
@@ -383,13 +383,13 @@ namespace Altaxo.Graph
 		#endregion
 
 
-		#region inherited from Layer.Collection
+		#region inherited from XYPlotLayer.Collection
 
 		/// <summary>
 		/// Fires the Invalidate event.
 		/// </summary>
 		/// <param name="sender">The layer which needs to be repainted.</param>
-		protected internal virtual void OnInvalidate(Layer sender)
+		protected internal virtual void OnInvalidate(XYPlotLayer sender)
 		{
 			OnChanged();
 		}

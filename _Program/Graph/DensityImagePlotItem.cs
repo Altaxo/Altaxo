@@ -36,7 +36,7 @@ namespace Altaxo.Graph
 		PlotItem, 
 		System.Runtime.Serialization.IDeserializationCallback
 	{
-		protected D2EquidistantMeshDataAssociation m_PlotAssociation;
+		protected XYZEquidistantMeshColumnPlotData m_PlotAssociation;
 		protected DensityImagePlotStyle       m_PlotStyle;
 
 		#region Serialization
@@ -67,7 +67,7 @@ namespace Altaxo.Graph
 			{
 				DensityImagePlotItem s = (DensityImagePlotItem)obj;
 
-				s.m_PlotAssociation = (D2EquidistantMeshDataAssociation)info.GetValue("Data",typeof(D2EquidistantMeshDataAssociation));
+				s.m_PlotAssociation = (XYZEquidistantMeshColumnPlotData)info.GetValue("Data",typeof(XYZEquidistantMeshColumnPlotData));
 				s.m_PlotStyle = (DensityImagePlotStyle)info.GetValue("Style",typeof(DensityImagePlotStyle));
 		
 				return s;
@@ -88,7 +88,7 @@ namespace Altaxo.Graph
 			{
 
 				
-				D2EquidistantMeshDataAssociation pa = (D2EquidistantMeshDataAssociation)info.GetValue("Data",o);
+				XYZEquidistantMeshColumnPlotData pa = (XYZEquidistantMeshColumnPlotData)info.GetValue("Data",o);
 				DensityImagePlotStyle ps = (DensityImagePlotStyle)info.GetValue("Style",o);
 
 				if(o==null)
@@ -127,7 +127,7 @@ namespace Altaxo.Graph
 
 
 
-		public DensityImagePlotItem(D2EquidistantMeshDataAssociation pa, DensityImagePlotStyle ps)
+		public DensityImagePlotItem(XYZEquidistantMeshColumnPlotData pa, DensityImagePlotStyle ps)
 		{
 			this.Data = pa;
 			this.Style = ps;
@@ -152,7 +152,7 @@ namespace Altaxo.Graph
 			{
 				if(null==value)
 					throw new System.ArgumentNullException();
-				else if(!(value is D2EquidistantMeshDataAssociation))
+				else if(!(value is XYZEquidistantMeshColumnPlotData))
 					throw new System.ArgumentException("The provided data object is not of the type " + m_PlotAssociation.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
 				else
 				{
@@ -163,7 +163,7 @@ namespace Altaxo.Graph
 							m_PlotAssociation.Changed -= new EventHandler(OnDataChangedEventHandler);
 						}
 
-						m_PlotAssociation = (D2EquidistantMeshDataAssociation)value;
+						m_PlotAssociation = (XYZEquidistantMeshColumnPlotData)value;
 					
 						if(null!=m_PlotAssociation )
 						{
@@ -188,7 +188,7 @@ namespace Altaxo.Graph
 				{
 					if(!object.ReferenceEquals(m_PlotStyle,value))
 					{
-						// delete event wiring to old PlotStyle
+						// delete event wiring to old AbstractXYPlotStyle
 						if(null!=m_PlotStyle)
 						{
 							m_PlotStyle.Changed -= new EventHandler(OnStyleChangedEventHandler);
@@ -220,7 +220,7 @@ namespace Altaxo.Graph
 			return GetName(int.MaxValue);
 		}
 
-		public override void Paint(Graphics g, Graph.Layer layer)
+		public override void Paint(Graphics g, Graph.XYPlotLayer layer)
 		{
 			if(null!=this.m_PlotStyle)
 			{
@@ -233,7 +233,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		public override void OnDataChanged()
 		{
-			// first inform our PlotStyle of the change, so it can invalidate its cached data
+			// first inform our AbstractXYPlotStyle of the change, so it can invalidate its cached data
 			if(null!=this.m_PlotStyle)
 				m_PlotStyle.EhDataChanged(this);
 

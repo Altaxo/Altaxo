@@ -1,9 +1,9 @@
 using System;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	#region Interfaces
-	public interface ILineScatterPlotDataController : Gui.IApplyController, Main.IMVCController
+	public interface ILineScatterPlotDataController : Main.GUI.IApplyController, Main.GUI.IMVCController
 	{
 		ILineScatterPlotDataView View { get; set; }
 	
@@ -20,7 +20,7 @@ namespace Altaxo.Graph
 		bool EhView_RangeTo(int val);
 	}
 
-	public interface ILineScatterPlotDataView : Main.IMVCView
+	public interface ILineScatterPlotDataView : Main.GUI.IMVCView
 	{
 
 		/// <summary>
@@ -53,7 +53,7 @@ namespace Altaxo.Graph
 	public class LineScatterPlotDataController : ILineScatterPlotDataController
 	{
 		ILineScatterPlotDataView m_View=null;
-		PlotAssociation m_PlotAssociation;
+		XYColumnPlotData m_PlotAssociation;
 
 
 		bool m_bDirty = false;
@@ -63,7 +63,7 @@ namespace Altaxo.Graph
 		Altaxo.Data.IReadableColumn m_yCol;
 		int m_MaxPossiblePlotRange_To;
 
-		public LineScatterPlotDataController(PlotAssociation pa)
+		public LineScatterPlotDataController(XYColumnPlotData pa)
 		{
 			m_PlotAssociation = pa;
 			SetElements(true);
@@ -112,10 +112,10 @@ namespace Altaxo.Graph
 
 			if(null!=View)
 			{
-				string[] tables = App.Current.Doc.TableSet.GetSortedTableNames();
+				string[] tables = App.Current.Doc.TableCollection.GetSortedTableNames();
 				View.Tables_Initialize(tables,0);
 				
-				string[] columns = App.Current.Doc.TableSet[tables[0]].DataColumns.GetColumnNames();
+				string[] columns = App.Current.Doc.TableCollection[tables[0]].DataColumns.GetColumnNames();
 				View.Columns_Initialize(columns,0);
 
 				View.XColumn_Initialize(m_xCol==null ? String.Empty : m_xCol.FullName);
@@ -144,7 +144,7 @@ namespace Altaxo.Graph
 		{
 			if(null!=View)
 			{
-				string[] columns = App.Current.Doc.TableSet[tablename].DataColumns.GetColumnNames();
+				string[] columns = App.Current.Doc.TableCollection[tablename].DataColumns.GetColumnNames();
 				View.Columns_Initialize(columns,0);
 			}
 		}
@@ -152,14 +152,14 @@ namespace Altaxo.Graph
 		public void EhView_ToX(int tableindex, string tablename, int columnindex, string columnname)
 		{
 			SetDirty();
-			m_xCol = App.Current.Doc.TableSet[tablename][columnname];
+			m_xCol = App.Current.Doc.TableCollection[tablename][columnname];
 			if(null!=View)
 				View.XColumn_Initialize(m_xCol==null ? String.Empty : m_xCol.FullName);
 		}
 		public void EhView_ToY(int tableindex, string tablename, int columnindex, string columnname)
 		{
 			SetDirty();
-			m_yCol = App.Current.Doc.TableSet[tablename][columnname];
+			m_yCol = App.Current.Doc.TableCollection[tablename][columnname];
 			if(null!=View)
 				View.YColumn_Initialize(m_xCol==null ? String.Empty : m_yCol.FullName);
 		}

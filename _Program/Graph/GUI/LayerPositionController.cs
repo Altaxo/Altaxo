@@ -1,11 +1,11 @@
 using System;
 using Altaxo.Serialization;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 
 	#region Interfaces
-	public interface ILayerPositionController : Gui.IApplyController, Main.IMVCController
+	public interface ILayerPositionController : Main.GUI.IApplyController, Main.GUI.IMVCController
 	{
 		/// <summary>
 		/// Get/sets the view this controller controls.
@@ -27,7 +27,7 @@ namespace Altaxo.Graph
 		void EhView_ScaleChanged(string txt, ref bool bCancel);
 	}
 
-	public interface ILayerPositionView : Main.IMVCView
+	public interface ILayerPositionView : Main.GUI.IMVCView
 	{
 
 		/// <summary>
@@ -68,16 +68,16 @@ namespace Altaxo.Graph
 		ILayerPositionView m_View;
 
 		// the document
-		Layer m_Layer;
+		XYPlotLayer m_Layer;
 
 		// Shadow variables
 		double m_Left, m_Top, m_Width, m_Height, m_Rotation, m_Scale;
-		Layer.PositionType m_LeftType, m_TopType;
-		Layer.SizeType			m_HeightType, m_WidthType;
-		Layer m_LinkedLayer;
+		XYPlotLayer.PositionType m_LeftType, m_TopType;
+		XYPlotLayer.SizeType			m_HeightType, m_WidthType;
+		XYPlotLayer m_LinkedLayer;
 		IAxisLinkController m_XAxisLink, m_YAxisLink;
 
-		public LayerPositionController(Layer layer)
+		public LayerPositionController(XYPlotLayer layer)
 		{
 			m_Layer = layer;
 			SetElements(true);
@@ -121,18 +121,18 @@ namespace Altaxo.Graph
 
 
 				// Fill the comboboxes of the x and y position with possible values
-				string [] names = Enum.GetNames(typeof(Layer.PositionType));
+				string [] names = Enum.GetNames(typeof(XYPlotLayer.PositionType));
 				
-				string nameLeft = Enum.GetName(typeof(Layer.PositionType),m_LeftType);
-				string nameTop = Enum.GetName(typeof(Layer.PositionType),m_TopType);
+				string nameLeft = Enum.GetName(typeof(XYPlotLayer.PositionType),m_LeftType);
+				string nameTop = Enum.GetName(typeof(XYPlotLayer.PositionType),m_TopType);
 
 				View.InitializeLeftType(names,nameLeft);
 				View.InitializeTopType(names,nameTop);
 
 				// Fill the comboboxes of the width  and height with possible values
-				names = Enum.GetNames(typeof(Layer.SizeType));
-				string nameWidth  = Enum.GetName(typeof(Layer.SizeType),m_WidthType);
-				string nameHeigth = Enum.GetName(typeof(Layer.SizeType),m_HeightType);
+				names = Enum.GetNames(typeof(XYPlotLayer.SizeType));
+				string nameWidth  = Enum.GetName(typeof(XYPlotLayer.SizeType),m_WidthType);
+				string nameHeigth = Enum.GetName(typeof(XYPlotLayer.SizeType),m_HeightType);
 
 				View.InitializeWidthType(names,nameWidth);
 				View.InitializeHeightType(names,nameHeigth);
@@ -145,12 +145,12 @@ namespace Altaxo.Graph
 					for(int i=0;i<m_Layer.ParentLayerList.Count;i++)
 					{
 						if(!m_Layer.IsLayerDependentOnMe(m_Layer.ParentLayerList[i]))
-							arr.Add("Layer " + i.ToString());
+							arr.Add("XYPlotLayer " + i.ToString());
 					}
 				}
 
 				// now if we have a linked layer, set the selected item to the right value
-				string nameLL= null==m_LinkedLayer ? "None" : "Layer " + m_LinkedLayer.Number;
+				string nameLL= null==m_LinkedLayer ? "None" : "XYPlotLayer " + m_LinkedLayer.Number;
 
 				View.InitializeLinkedLayer((string[])arr.ToArray(typeof(string)),nameLL);
 
@@ -239,7 +239,7 @@ namespace Altaxo.Graph
 		{
 			int linkedlayernumber = -1;
 
-			if(txt.StartsWith("Layer "))
+			if(txt.StartsWith("XYPlotLayer "))
 				linkedlayernumber= System.Convert.ToInt32(txt.Substring(6));
 
 			m_LinkedLayer = linkedlayernumber<0 ? null : m_Layer.ParentLayerList[linkedlayernumber];
@@ -252,22 +252,22 @@ namespace Altaxo.Graph
 
 		public void EhView_LeftTypeChanged(string txt)
 		{
-			this.m_LeftType = (Layer.PositionType)Enum.Parse(typeof(Layer.PositionType),txt);
+			this.m_LeftType = (XYPlotLayer.PositionType)Enum.Parse(typeof(XYPlotLayer.PositionType),txt);
 		}
 
 		public void EhView_TopTypeChanged(string txt)
 		{
-			this.m_TopType = (Layer.PositionType)Enum.Parse(typeof(Layer.PositionType),txt);
+			this.m_TopType = (XYPlotLayer.PositionType)Enum.Parse(typeof(XYPlotLayer.PositionType),txt);
 		}
 
 		public void EhView_WidthTypeChanged(string txt)
 		{
-			this.m_WidthType = (Layer.SizeType)Enum.Parse(typeof(Layer.SizeType),txt);
+			this.m_WidthType = (XYPlotLayer.SizeType)Enum.Parse(typeof(XYPlotLayer.SizeType),txt);
 		}
 
 		public void EhView_HeightTypeChanged(string txt)
 		{
-			this.m_HeightType = (Layer.SizeType)Enum.Parse(typeof(Layer.SizeType),txt);
+			this.m_HeightType = (XYPlotLayer.SizeType)Enum.Parse(typeof(XYPlotLayer.SizeType),txt);
 		}
 
 		public void EhView_LeftChanged(string txt, ref bool bCancel)
@@ -275,7 +275,7 @@ namespace Altaxo.Graph
 			bCancel = !NumberConversion.IsDouble(txt, out m_Left);
 		}
 
-		void Altaxo.Graph.ILayerPositionController.EhView_TopChanged(string txt, ref bool bCancel)
+		void ILayerPositionController.EhView_TopChanged(string txt, ref bool bCancel)
 		{
 			bCancel = !NumberConversion.IsDouble(txt, out m_Top);
 		}

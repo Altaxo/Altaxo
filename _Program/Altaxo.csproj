@@ -219,7 +219,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Data\TableSet.cs"
+                    RelPath = "Data\TableCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -234,12 +234,17 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\Axis.cs"
+                    RelPath = "Graph\AbstractXYAxisLabelStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\AxisStyle.cs"
+                    RelPath = "Graph\AbstractXYPlotStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axis.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -269,42 +274,22 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\GraphObject.cs"
+                    RelPath = "Graph\GraphDocumentCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\GraphObjectCollection.cs"
+                    RelPath = "Graph\GraphicsObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\GraphPrimitivesSerialization.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\GraphSet.cs"
+                    RelPath = "Graph\GraphicsObjectCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Graph\ImageGraphics.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\LabelStyle.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\Layer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\LineStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -319,11 +304,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\PlotAssociation.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Graph\PlotGroup.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -334,12 +314,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\PlotItemList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\PlotStyle.cs"
+                    RelPath = "Graph\PlotItemCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -349,32 +324,82 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\ScatterStyle.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Graph\ShapeGraphics.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\TextGraphObject.cs"
+                    RelPath = "Graph\SimpleTextGraphics.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\TwoDimMeshDataAssociation.cs"
+                    RelPath = "Graph\SystemDrawingSerialization.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\XYCurvePlotData.cs"
+                    RelPath = "Graph\TextGraphics.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph\XYCurvePlotItem.cs"
+                    RelPath = "Graph\XYAxisLabelStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYAxisStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYColumnPlotData.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYColumnPlotItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYFunctionPlotData.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYFunctionPlotItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYLineScatterPlotStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYPlotLayer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYPlotLayerCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYPlotLineStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYPlotScatterStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYZEquidistantMeshColumnPlotData.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -538,141 +563,7 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
-                <File
-                    RelPath = "Gui\DialogFactory.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\DialogShellController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\DialogShellView.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\DialogShellView.resx"
-                    DependentUpon = "DialogShellView.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Gui\IApplyController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\IntegerAndComboBoxController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\ListBoxEntry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\ModelViewController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\RenameColumnDialog.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\RenameColumnDialog.resx"
-                    DependentUpon = "RenameColumnDialog.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Gui\SingleValueDialog.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\SingleValueDialog.resx"
-                    DependentUpon = "SingleValueDialog.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Gui\SingleValueFormController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\SpinAndComboBoxControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\SpinAndComboBoxControl.resx"
-                    DependentUpon = "SpinAndComboBoxControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Gui\TabbedDialogController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\TabbedDialogView.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\TabbedDialogView.resx"
-                    DependentUpon = "TabbedDialogView.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Gui\WorkbenchForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\WorkbenchForm.resx"
-                    DependentUpon = "WorkbenchForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Gui\WorkbenchViewController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\MWControls\EventArgs.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\MWControls\MWCommon.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\MWControls\MWEnums.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\MWControls\MWTreeNodeWrapper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\MWControls\MWTreeView.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Gui\MWControls\MWTreeView.resx"
-                    DependentUpon = "MWTreeView.cs"
-                    BuildAction = "EmbeddedResource"
-                />
+                <Folder RelPath = "GUI\" />
                 <File
                     RelPath = "Main\AboutDialog.cs"
                     SubType = "Form"
@@ -741,6 +632,140 @@
                     RelPath = "Main\NameChangedEvent.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\DialogFactory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\DialogShellController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\DialogShellView.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\DialogShellView.resx"
+                    DependentUpon = "DialogShellView.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\GUI\IApplyController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\IntegerAndComboBoxController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\ListBoxEntry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\ModelViewController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\RenameColumnDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\RenameColumnDialog.resx"
+                    DependentUpon = "RenameColumnDialog.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\GUI\SingleValueDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\SingleValueDialog.resx"
+                    DependentUpon = "SingleValueDialog.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\GUI\SingleValueFormController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\SpinAndComboBoxControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\SpinAndComboBoxControl.resx"
+                    DependentUpon = "SpinAndComboBoxControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\GUI\TabbedDialogController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\TabbedDialogView.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\TabbedDialogView.resx"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\GUI\WorkbenchForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\WorkbenchForm.resx"
+                    DependentUpon = "WorkbenchForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\GUI\WorkbenchViewController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\MWControls\EventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\MWControls\MWCommon.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\MWControls\MWEnums.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\MWControls\MWTreeNodeWrapper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\MWControls\MWTreeView.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\MWControls\MWTreeView.resx"
+                    DependentUpon = "MWTreeView.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Serialization\AsciiExporter.cs"
@@ -868,27 +893,22 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\ITableDocumentView.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Worksheet\RowHeaderStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\TableLayout.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Worksheet\TableLayoutList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Worksheet\TextColumnStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\WorksheetLayout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\WorksheetLayoutCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -908,6 +928,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Worksheet\GUI\IWorksheetDocumentView.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Worksheet\GUI\SetColumnValuesDialog.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -918,23 +943,23 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Worksheet\GUI\TableController.cs"
+                    RelPath = "Worksheet\GUI\WorksheetController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\GUI\TablePanel.cs"
+                    RelPath = "Worksheet\GUI\WorksheetPanel.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\GUI\TableView.cs"
+                    RelPath = "Worksheet\GUI\WorksheetView.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\GUI\TableView.resx"
-                    DependentUpon = "TableView.cs"
+                    RelPath = "Worksheet\GUI\WorksheetView.resx"
+                    DependentUpon = "WorksheetView.cs"
                     BuildAction = "EmbeddedResource"
                 />
             </Include>

@@ -3,10 +3,10 @@ using System.Windows.Forms;
 using System.Drawing;
 
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	#region Interfaces
-	public interface ILineScatterLayerContentsController : Gui.IApplyController, Main.IMVCController
+	public interface ILineScatterLayerContentsController : Main.GUI.IApplyController, Main.GUI.IMVCController
 	{
 		ILineScatterLayerContentsView View { get; set; }
 
@@ -28,7 +28,7 @@ namespace Altaxo.Graph
 
 	}
 
-	public interface ILineScatterLayerContentsView : Main.IMVCView
+	public interface ILineScatterLayerContentsView : Main.GUI.IMVCView
 	{
 
 		/// <summary>
@@ -79,12 +79,12 @@ namespace Altaxo.Graph
 	public class LineScatterLayerContentsController : ILineScatterLayerContentsController
 	{
 		protected ILineScatterLayerContentsView m_View;
-		protected Layer m_Layer;
+		protected XYPlotLayer m_Layer;
 
 		System.Collections.ArrayList m_ItemArray = new System.Collections.ArrayList();
 		bool m_bDirty=false;
 
-		public LineScatterLayerContentsController(Layer layer)
+		public LineScatterLayerContentsController(XYPlotLayer layer)
 		{
 			m_Layer = layer;
 			SetElements(true);
@@ -100,10 +100,10 @@ namespace Altaxo.Graph
 			// Available Items
 			if(null!=View)
 			{
-				int nTables = App.Current.Doc.TableSet.Count;
+				int nTables = App.Current.Doc.TableCollection.Count;
 				TreeNode[] nodes = new TreeNode[nTables];
 				int i=0;
-				foreach(Data.DataTable dt in App.Current.Doc.TableSet)
+				foreach(Data.DataTable dt in App.Current.Doc.TableCollection)
 				{
 					nodes[i++] = new TreeNode(dt.TableName,new TreeNode[1]{new TreeNode()});
 				}
@@ -163,7 +163,7 @@ namespace Altaxo.Graph
 
 			// create a new plotassociation from the column
 			// first, get the y column from table and name
-			Data.DataTable tab = App.Current.Doc.TableSet[item.table];
+			Data.DataTable tab = App.Current.Doc.TableCollection[item.table];
 			if(null!=tab)
 			{
 				Data.DataColumn ycol = tab[item.column];
@@ -171,9 +171,9 @@ namespace Altaxo.Graph
 				{
 					Data.DataColumn xcol = tab.DataColumns.FindXColumnOfGroup(ycol.Group);
 					if(null==xcol)
-						return  new Graph.XYDataPlot(new PlotAssociation(new Altaxo.Data.IndexerColumn(),ycol),new LineScatterPlotStyle());
+						return  new Graph.XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(),ycol),new XYLineScatterPlotStyle());
 					else
-						return  new Graph.XYDataPlot(new PlotAssociation(xcol,ycol),new LineScatterPlotStyle());
+						return  new Graph.XYColumnPlotItem(new XYColumnPlotData(xcol,ycol),new XYLineScatterPlotStyle());
 					// now enter the plotassociation back into the layer's plot association list
 				}
 			}
@@ -212,7 +212,7 @@ namespace Altaxo.Graph
 
 		public void EhView_DataAvailableBeforeExpand(TreeNode node)
 		{
-			Data.DataTable dt = App.Current.Doc.TableSet[node.Text];
+			Data.DataTable dt = App.Current.Doc.TableCollection[node.Text];
 			if(null!=dt)
 			{
 				node.Nodes.Clear();
@@ -301,7 +301,7 @@ namespace Altaxo.Graph
 			{
 				PlotGroup plotGroup = m_Layer.PlotItems.GetPlotGroupOf(pa);
 				//LineScatterPlotStyleController.ShowPlotStyleDialog(View.Form,pa,plotGroup);
-				Gui.DialogFactory.ShowLineScatterPlotStyleAndDataDialog(View.Form,pa,plotGroup);
+				Main.GUI.DialogFactory.ShowLineScatterPlotStyleAndDataDialog(View.Form,pa,plotGroup);
 			}
 		}
 

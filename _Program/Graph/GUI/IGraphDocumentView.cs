@@ -27,7 +27,7 @@ using System.Windows.Forms;
 using Altaxo.Graph;
 using Altaxo.Serialization;
 
-namespace Altaxo.Graph
+namespace Altaxo.Graph.GUI
 {
 	/// <summary>
 	/// This enumeration declares the current choosen tool for the GraphControl
@@ -61,7 +61,7 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Interface to be implemented by a form or a control to be able to show a graph. This can either be a control or a form.
 	/// </summary>
-	public interface IGraphView : Gui.IWorkbenchContentView
+	public interface IGraphView : Main.GUI.IWorkbenchContentView
 	{
 		/// <summary>Returns the windows of this view. In case the view is a Form, it returns the form. But if the view is only a control
 		/// on a form, it returns the control window.

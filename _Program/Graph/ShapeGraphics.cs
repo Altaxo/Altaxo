@@ -28,7 +28,7 @@ namespace Altaxo.Graph
 
 	[SerializationSurrogate(0,typeof(ShapeGraphic.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public abstract class ShapeGraphic : GraphObject
+	public abstract class ShapeGraphic : GraphicsObject
 	{
 
 		protected Color m_fillColor  = Color.White;
