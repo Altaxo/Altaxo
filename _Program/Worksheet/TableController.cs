@@ -150,85 +150,85 @@ namespace Altaxo.Worksheet
 		/// </summary>
 		protected virtual void SetMemberVariablesToDefault()
 		{
-		m_DeserializationSurrogate=null;
+			m_DeserializationSurrogate=null;
 
-		m_Table=null;
+			m_Table=null;
 
-		m_View = null;
+			m_View = null;
 		
-		// The main menu of this controller.
-		m_MainMenu = null; 
-		m_MenuItemEditRemove = null;
-		m_MenuItemColumnSetColumnValues = null;
+			// The main menu of this controller.
+			m_MainMenu = null; 
+			m_MenuItemEditRemove = null;
+			m_MenuItemColumnSetColumnValues = null;
 
-		// Which selection was done last: selection (i) a data column, (ii) a data row, or (iii) a property column.</summary>
-		m_LastSelectionType = SelectionType.Nothing;
+			// Which selection was done last: selection (i) a data column, (ii) a data row, or (iii) a property column.</summary>
+			m_LastSelectionType = SelectionType.Nothing;
 
-		// defaultColumnsStyles stores the default column Styles in a Hashtable
-		m_DefaultColumnStyles = new System.Collections.Hashtable();
+			// defaultColumnsStyles stores the default column Styles in a Hashtable
+			m_DefaultColumnStyles = new System.Collections.Hashtable();
 
-		// m_ColumnStyles stores the column styles for each data column individually,
-		m_ColumnStyles = new System.Collections.Hashtable();
+			// m_ColumnStyles stores the column styles for each data column individually,
+			m_ColumnStyles = new System.Collections.Hashtable();
 
 
-		// The style of the row header. This is the leftmost column that shows usually the row number.
-		m_RowHeaderStyle = new RowHeaderStyle(); // holds the style of the row header (leftmost column of data grid)
+			// The style of the row header. This is the leftmost column that shows usually the row number.
+			m_RowHeaderStyle = new RowHeaderStyle(); // holds the style of the row header (leftmost column of data grid)
 	
-		// The style of the column header. This is the upmost row that shows the name of the columns.
-		m_ColumnHeaderStyle = new ColumnHeaderStyle(); // the style of the column header (uppermost row of datagrid)
+			// The style of the column header. This is the upmost row that shows the name of the columns.
+			m_ColumnHeaderStyle = new ColumnHeaderStyle(); // the style of the column header (uppermost row of datagrid)
 	
-		// The style of the property column header. This is the leftmost column in the left of the property columns,
-		m_PropertyColumnHeaderStyle = new ColumnHeaderStyle();
+			// The style of the property column header. This is the leftmost column in the left of the property columns,
+			m_PropertyColumnHeaderStyle = new ColumnHeaderStyle();
 		
-		// holds the positions (int) of the right boundarys of the __visible__ (!) columns
-		m_ColumnStyleCache = new ColumnStyleCache();
+			// holds the positions (int) of the right boundarys of the __visible__ (!) columns
+			m_ColumnStyleCache = new ColumnStyleCache();
 		
 		
-		// Horizontal scroll position; number of first column that is shown.
-		m_HorzScrollPos=0;
+			// Horizontal scroll position; number of first column that is shown.
+			m_HorzScrollPos=0;
 		
-		// Vertical scroll position; Positive values: number of first data column
-		m_VertScrollPos=0;
-		m_HorzScrollMax=1;
-		m_VertScrollMax=1;
+			// Vertical scroll position; Positive values: number of first data column
+			m_VertScrollPos=0;
+			m_HorzScrollMax=1;
+			m_VertScrollMax=1;
 
-		m_LastVisibleColumn=0;
-		m_LastFullyVisibleColumn=0;
+			m_LastVisibleColumn=0;
+			m_LastFullyVisibleColumn=0;
 
 		
-		// Holds the indizes to the selected data columns.
-		m_SelectedColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected columns
+			// Holds the indizes to the selected data columns.
+			m_SelectedColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected columns
 		
-		// Holds the indizes to the selected rows.
-		m_SelectedRows    = new Altaxo.Worksheet.IndexSelection(); // holds the selected rows
+			// Holds the indizes to the selected rows.
+			m_SelectedRows    = new Altaxo.Worksheet.IndexSelection(); // holds the selected rows
 		
-		// Holds the indizes to the selected property columns.
-		m_SelectedPropertyColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected property columns
+			// Holds the indizes to the selected property columns.
+			m_SelectedPropertyColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected property columns
 
 
-		// Cached number of table rows.
-		m_NumberOfTableRows=0; // cached number of rows of the table
+			// Cached number of table rows.
+			m_NumberOfTableRows=0; // cached number of rows of the table
 
-		// Cached number of table columns.
-		m_NumberOfTableCols=0;
+			// Cached number of table columns.
+			m_NumberOfTableCols=0;
 		
-		// Cached number of property columns.
-		m_NumberOfPropertyCols=0; // cached number of property  columnsof the table
+			// Cached number of property columns.
+			m_NumberOfPropertyCols=0; // cached number of property  columnsof the table
 		
-		// The visibility of the property columns in the view. If true, the property columns are shown in the view.
-		m_ShowPropertyColumns=true; // are the property columns visible?
+			// The visibility of the property columns in the view. If true, the property columns are shown in the view.
+			m_ShowPropertyColumns=true; // are the property columns visible?
 		
 		
 
-		m_MouseDownPosition = new Point(0,0); // holds the position of a double click
-		m_DragColumnWidth_ColumnNumber=int.MinValue; // stores the column number if mouse hovers over separator
-		m_DragColumnWidth_OriginalPos = 0;
-		m_DragColumnWidth_OriginalWidth=0;
-		m_DragColumnWidth_InCapture=false;
+			m_MouseDownPosition = new Point(0,0); // holds the position of a double click
+			m_DragColumnWidth_ColumnNumber=int.MinValue; // stores the column number if mouse hovers over separator
+			m_DragColumnWidth_OriginalPos = 0;
+			m_DragColumnWidth_OriginalWidth=0;
+			m_DragColumnWidth_InCapture=false;
 	
 
-		m_CellEdit_IsArmed=false;
-		m_CellEdit_EditedCell = new ClickedCellInfo();
+			m_CellEdit_IsArmed=false;
+			m_CellEdit_EditedCell = new ClickedCellInfo();
 
 
 			m_CellEditControl = new System.Windows.Forms.TextBox();
@@ -608,6 +608,18 @@ namespace Altaxo.Worksheet
 			//mi.Shortcut = ShortCuts.
 			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
 	
+			// Analysis -PCAOnRows
+			mi = new MenuItem("PCA on rows");
+			mi.Click += new EventHandler(EhMenuAnalysisPCAOnRows_OnClick);
+			//mi.Shortcut = ShortCuts.
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+			
+			// Analysis -PCAOnCols
+			mi = new MenuItem("PCA on columns");
+			mi.Click += new EventHandler(EhMenuAnalysisPCAOnCols_OnClick);
+			//mi.Shortcut = ShortCuts.
+			m_MainMenu.MenuItems[index].MenuItems.Add(mi);
+
 		}
 
 		#endregion // Menu definition
@@ -880,6 +892,22 @@ namespace Altaxo.Worksheet
 		{
 			DataGridOperations.StatisticsOnRows(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows);
 		}
+
+		// Analysis - PCA on rows
+		protected void EhMenuAnalysisPCAOnRows_OnClick(object sender, System.EventArgs e)
+		{
+			string err=DataGridOperations.PrincipalComponentAnalysis(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows,true);
+			if(null!=err)
+				System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+		}
+		// Analysis - PCA on cols
+		protected void EhMenuAnalysisPCAOnCols_OnClick(object sender, System.EventArgs e)
+		{
+			string err=DataGridOperations.PrincipalComponentAnalysis(App.Current.Doc,this.Doc,this.SelectedColumns,SelectedRows,false);
+			if(null!=err)
+				System.Windows.Forms.MessageBox.Show(this.View.TableViewForm,err,"An error occured");
+		}
+
 
 		#endregion
 	
@@ -1167,7 +1195,7 @@ namespace Altaxo.Worksheet
 		{
 			// ask for table dimensions, compare with cached dimensions
 			// and adjust the scroll bars appropriate
-		if(DataTable.ColumnCount != this.m_NumberOfTableCols)
+			if(DataTable.ColumnCount != this.m_NumberOfTableCols)
 			{
 				this.m_NumberOfTableCols = DataTable.ColumnCount;
 				AdjustXScrollBarMaximum();
@@ -1643,8 +1671,8 @@ namespace Altaxo.Worksheet
 
 			//int firstTotRow = (int)Math.Max(RemainingEnabledPropertyColumns,Math.Floor((top-m_ColumnHeaderStyle.Height)/(double)m_RowHeaderStyle.Height));
 			//return FirstVisibleTableRow + Math.Max(0,firstTotRow-RemainingEnabledPropertyColumns);
-		int firstVis = (int)Math.Floor((top-posOfDataRow0)/(double)m_RowHeaderStyle.Height);
-		return (firstVis<0? 0 : firstVis ) + FirstVisibleTableRow;
+			int firstVis = (int)Math.Floor((top-posOfDataRow0)/(double)m_RowHeaderStyle.Height);
+			return (firstVis<0? 0 : firstVis ) + FirstVisibleTableRow;
 		}
 
 		/// <summary>

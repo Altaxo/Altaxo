@@ -101,14 +101,147 @@ namespace Altaxo.Worksheet
 
 			Altaxo.Graph.IGraphView gv = App.Current.CreateNewGraph();
 
-				Altaxo.Graph.PlotItem pi = new Altaxo.Graph.DensityImagePlotItem(assoc,plotStyle);
-				gv.Controller.Doc.Layers[0].PlotItems.Add(pi);
+			Altaxo.Graph.PlotItem pi = new Altaxo.Graph.DensityImagePlotItem(assoc,plotStyle);
+			gv.Controller.Doc.Layers[0].PlotItems.Add(pi);
 
 		}
 
 
+		/// <summary>
+		/// Makes a PCA (a principal component analysis) of the table or the selected columns / rows and stores the results in a newly created table.
+		/// </summary>
+		/// <param name="mainDocument">The main document of the application.</param>
+		/// <param name="srctable">The table where the data come from.</param>
+		/// <param name="selectedColumns">The selected columns.</param>
+		/// <param name="selectedRows">The selected rows.</param>
+		/// <param name="bHorizontalOrientedSpectrum">True if a spectrum is a single row, False if a spectrum is a single column.</param>
+		/// <returns></returns>
+		public static string PrincipalComponentAnalysis(
+			Altaxo.AltaxoDocument mainDocument,
+			Altaxo.Data.DataTable srctable,
+			Altaxo.Worksheet.IndexSelection selectedColumns,
+			Altaxo.Worksheet.IndexSelection selectedRows,
+			bool bHorizontalOrientedSpectrum
+			)
+		{
+			bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
+			int prenumcols = bUseSelectedColumns ? selectedColumns.Count : srctable.ColumnCount;
+			
+			// check for the number of numeric columns
+			int numcols = 0;
+			for(int i=0;i<prenumcols;i++)
+			{
+				int idx = bUseSelectedColumns ? selectedColumns[i] : i;
+				if(srctable[i] is Altaxo.Data.INumericColumn)
+					numcols++;
+			}
 
+			// check the number of rows
+			bool bUseSelectedRows = (null!=selectedRows && 0!=selectedRows.Count);
 
+			int numrows;
+			if(bUseSelectedRows)
+				numrows = selectedRows.Count;
+			else
+			{
+				numrows = 0;
+				for(int i=0;i<numcols;i++)
+				{
+					int idx = bUseSelectedColumns ? selectedColumns[i] : i;
+					numrows = Math.Max(numrows,srctable[idx].Count);
+				}			
+			}
+
+			// check that both dimensions are at least 2 - otherwise PCA is not possible
+			if(numrows<2)
+				return "At least two rows are neccessary to do Principal Component Analysis!";
+			if(numcols<2)
+				return "At least two numeric columns are neccessary to do Principal Component Analysis!";
+
+			// Create a matrix of appropriate dimensions and fill it
+
+			Altaxo.Calc.MatrixMath.HOMatrix matrixX;
+			if(bHorizontalOrientedSpectrum)
+			{
+				matrixX = new Altaxo.Calc.MatrixMath.HOMatrix(numrows,numcols);
+				int ccol = 0; // current column in the matrix
+				for(int i=0;i<prenumcols;i++)
+				{
+					int colidx = bUseSelectedColumns ? selectedColumns[i] : i;
+					Altaxo.Data.INumericColumn col = srctable[colidx] as Altaxo.Data.INumericColumn;
+					if(null!=col)
+					{
+						for(int j=0;j<numrows;j++)
+						{
+							int rowidx = bUseSelectedRows ? selectedRows[j] : j;
+							matrixX[j,ccol] = col.GetDoubleAt(rowidx);
+						}
+						++ccol;
+					}
+				}
+			} // end if it was a horizontal oriented spectrum
+			else // if it is a vertical oriented spectrum
+			{
+				matrixX = new Altaxo.Calc.MatrixMath.HOMatrix(numcols,numrows);
+				int ccol = 0; // current column in the matrix
+				for(int i=0;i<prenumcols;i++)
+				{
+					int colidx = bUseSelectedColumns ? selectedColumns[i] : i;
+					Altaxo.Data.INumericColumn col = srctable[colidx] as Altaxo.Data.INumericColumn;
+					if(null!=col)
+					{
+						for(int j=0;j<numrows;j++)
+						{
+							int rowidx = bUseSelectedRows ? selectedRows[j] : j;
+							matrixX[ccol,j] = col.GetDoubleAt(rowidx);
+						}
+						++ccol;
+					}
+				}
+			} // if it was a vertical oriented spectrum
+
+			// now do PCA with the matrix
+			Altaxo.Calc.MatrixMath.VOMatrix factors = new Altaxo.Calc.MatrixMath.VOMatrix(0,0);
+			Altaxo.Calc.MatrixMath.HOMatrix loads = new Altaxo.Calc.MatrixMath.HOMatrix(0,0);
+			Altaxo.Calc.MatrixMath.NIPALS_HO(matrixX,0,1E-9,factors,loads);
+
+			// now we have to create a new table where to place the calculated factors and loads
+			// we will do that in a vertical oriented manner, i.e. even if the loads are
+			// here in horizontal vectors: in our table they are stored in (vertical) columns
+			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable("PCA of " + srctable.TableName);
+
+			// Fill the Table
+			table.SuspendDataChangedNotifications();
+
+			// first store the factors
+			for(int i=0;i<factors.Cols;i++)
+			{
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("Fac"+i.ToString());
+				col.Group=0;
+				for(int j=0;j<factors.Rows;j++)
+					col[j] = factors[j,i];
+				
+				table.Add(col);
+			}
+
+			// now store the loads - careful - they are horizontal in the matrix
+			for(int i=0;i<loads.Rows;i++)
+			{
+				Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn("Load"+i.ToString());
+				col.Group=1;
+				for(int j=0;j<loads.Cols;j++)
+					col[j] = loads[i,j];
+				
+				table.Add(col);
+			}
+
+			table.ResumeDataChangedNotifications();
+			mainDocument.DataSet.Add(table);
+			// create a new worksheet without any columns
+			App.Current.CreateNewWorksheet(table);
+
+			return null;
+		}
 		
 		public static void StatisticsOnColumns(
 			Altaxo.AltaxoDocument mainDocument,
@@ -243,33 +376,33 @@ namespace Altaxo.Worksheet
 			if(numrows==0)
 				return;
 
-				Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
-				// add a text column and some double columns
-				// note: statistics is only possible for numeric columns since
-				// otherwise in one column doubles and i.e. dates are mixed, which is not possible
+			Altaxo.Data.DataTable table = new Altaxo.Data.DataTable();
+			// add a text column and some double columns
+			// note: statistics is only possible for numeric columns since
+			// otherwise in one column doubles and i.e. dates are mixed, which is not possible
 
-				// 1st column is the mean, and holds the sum during the calculation
-				Data.DoubleColumn c1 = new Data.DoubleColumn("Mean");
+			// 1st column is the mean, and holds the sum during the calculation
+			Data.DoubleColumn c1 = new Data.DoubleColumn("Mean");
 
-				// 2rd column is the standard deviation, and holds the square sum during calculation
-				Data.DoubleColumn c2 = new Data.DoubleColumn("sd");
+			// 2rd column is the standard deviation, and holds the square sum during calculation
+			Data.DoubleColumn c2 = new Data.DoubleColumn("sd");
 
-				// 3th column is the standard e (N)
-				Data.DoubleColumn c3 = new Data.DoubleColumn("se");
+			// 3th column is the standard e (N)
+			Data.DoubleColumn c3 = new Data.DoubleColumn("se");
 
-				// 4th column is the sum
-				Data.DoubleColumn c4 = new Data.DoubleColumn("Sum");
+			// 4th column is the sum
+			Data.DoubleColumn c4 = new Data.DoubleColumn("Sum");
 
-				// 5th column is the number of items for statistics
-				Data.DoubleColumn c5 = new Data.DoubleColumn("N");
+			// 5th column is the number of items for statistics
+			Data.DoubleColumn c5 = new Data.DoubleColumn("N");
 			
-				table.Add(c1);
-				table.Add(c2);
-				table.Add(c3);
-				table.Add(c4);
-				table.Add(c5);
+			table.Add(c1);
+			table.Add(c2);
+			table.Add(c3);
+			table.Add(c4);
+			table.Add(c5);
 
-				table.SuspendDataChangedNotifications();
+			table.SuspendDataChangedNotifications();
 
 			
 			// first fill the cols c1, c2, c5 with zeros because we want to sum up 
@@ -583,11 +716,11 @@ namespace Altaxo.Worksheet
 					if(Altaxo.Serialization.Parsing.IsDateTime(propvalue))
 						col = new Altaxo.Data.DateTimeColumn(propname);
 					else if(Altaxo.Serialization.Parsing.IsNumeric(propvalue))
-					 col = new Altaxo.Data.DoubleColumn(propname);
+						col = new Altaxo.Data.DoubleColumn(propname);
 					else
-					col = new Altaxo.Data.TextColumn(propname);
+						col = new Altaxo.Data.TextColumn(propname);
 				
-				store.Add(col); // add the column to the collection
+					store.Add(col); // add the column to the collection
 				}
 
 				// now the column is present we can store the value in it.

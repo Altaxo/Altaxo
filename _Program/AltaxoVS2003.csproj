@@ -129,6 +129,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\Matrix.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\MatrixMath.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\Pfa235Convolution.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
