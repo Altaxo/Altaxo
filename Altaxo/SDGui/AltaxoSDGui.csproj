@@ -185,6 +185,7 @@
                 />
                 <File
                     RelPath = "Main\GUI\WindowsMdiWorkbenchLayout.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

@@ -705,6 +705,26 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\GUI\GraphControllerMouseHandlers\AbstractMouseHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\GraphControllerMouseHandlers\ReadPlotItemDataMouseHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\GraphControllerMouseHandlers\TextToolMouseHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\Procedures\PolynomialFitting.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

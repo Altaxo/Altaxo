@@ -388,7 +388,7 @@ namespace Altaxo.Graph.GUI
     }
     public void Delete(object sender, EventArgs e)
     {
-      if(this.m_SelectedObjects.Count>0)
+      if(this.NumberOfSelectedObjects>0)
       {
         this.RemoveSelectedObjects();
       }

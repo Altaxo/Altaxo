@@ -28,7 +28,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Altaxo.Graph;
 using Altaxo.Serialization;
-//using ICSharpCode.SharpDevelop.Gui;
+using Altaxo.Graph.GUI.GraphControllerMouseHandlers;
 
 
 namespace Altaxo.Graph.GUI
@@ -104,11 +104,7 @@ namespace Altaxo.Graph.GUI
     /// <summary>A instance of a mouse handler class that currently handles the mouse events..</summary>
     protected MouseStateHandler m_MouseState;
 
-    /// <summary>
-    /// The hashtable of the selected objects. The key is the selected object itself,
-    /// the data is a int object, which stores the layer number the object belongs to.
-    /// </summary>
-    protected System.Collections.Hashtable m_SelectedObjects;
+
 
     /// <summary>
     /// This holds a frozen image of the graph during the moving time
@@ -274,11 +270,9 @@ namespace Altaxo.Graph.GUI
       m_CurrentGraphTool = GraphTools.ObjectPointer;
     
       // A instance of a mouse handler class that currently handles the mouse events..</summary>
-      m_MouseState= new ObjectPointerMouseHandler();
+      m_MouseState= new ObjectPointerMouseHandler(this);
 
-      // The hashtable of the selected objects. The key is the selected object itself,
-      // the data is a int object, which stores the layer number the object belongs to.
-      m_SelectedObjects = new System.Collections.Hashtable();
+      
 
       // This holds a frozen image of the graph during the moving time
       m_FrozenGraph=null;
@@ -1425,7 +1419,7 @@ namespace Altaxo.Graph.GUI
         {
           case GraphTools.ObjectPointer:
             if(!(m_MouseState is ObjectPointerMouseHandler))
-              m_MouseState = new ObjectPointerMouseHandler();
+              m_MouseState = new ObjectPointerMouseHandler(this);
             break;
           case GraphTools.Text:
             if(!(m_MouseState is TextToolMouseHandler))
@@ -1582,6 +1576,29 @@ namespace Altaxo.Graph.GUI
       }
     }
 
+    /// <summary>
+    /// Returns the number of selected objects into this graph.
+    /// </summary>
+    public int NumberOfSelectedObjects 
+    {
+      get
+      {
+        if(m_MouseState is ObjectPointerMouseHandler)
+          return ((ObjectPointerMouseHandler)m_MouseState).NumberOfSelectedObjects;
+        else
+          return 0;
+      }
+    }
+
+    /// <summary>
+    /// Remove all selected objects of this graph.
+    /// </summary>
+    public void RemoveSelectedObjects()
+    {
+      if(m_MouseState is ObjectPointerMouseHandler)
+        ((ObjectPointerMouseHandler)m_MouseState).RemoveSelectedObjects();
+    }
+
     #endregion // Properties
 
     #region Scaling and Positioning
@@ -1633,8 +1650,31 @@ namespace Altaxo.Graph.GUI
     {
       this.m_FrozenGraphIsDirty = true;
       
-      if(null!=m_View) 
+      if(null!=View) 
         m_View.InvalidateGraph();
+    }
+
+    /// <summary>
+    /// If the graph is cached, this causes an immediate redraw of the client area using the cached bitmap.
+    /// If not cached, this simply invalidates the client area.
+    /// </summary>
+    public void RepaintGraphArea()
+    {
+      if(View==null)
+        return;
+
+      if(this.m_FrozenGraph != null && !this.m_FrozenGraphIsDirty)
+      {
+        using(Graphics g = this.View.CreateGraphGraphics())
+        {
+          this.DoPaint(g,false);
+        }
+      }
+      else
+      {
+        this.View.InvalidateGraph();
+      }
+        
     }
 
     /// <summary>
@@ -1773,75 +1813,9 @@ namespace Altaxo.Graph.GUI
     #endregion // Scaling, Converting
 
 
-    /// <summary>
-    /// Clears the selection list and repaints the graph if neccessary
-    /// </summary>
-    public void ClearSelections()
-    {
-      bool bRepaint = (m_SelectedObjects.Count>0); // is a repaint neccessary
-      m_SelectedObjects.Clear();
-      
-      
-      this.m_MouseState = new ObjectPointerMouseHandler();
-
-      if(bRepaint)
-        m_View.InvalidateGraph(); 
-    }
-
-    /// <summary>
-    /// Removes the currently selected objects (currently only GraphicsObjects are removed)
-    /// </summary>
-    public void RemoveSelectedObjects()
-    {
-      System.Collections.ArrayList removedObjects = new System.Collections.ArrayList();
-      foreach(object o in this.m_SelectedObjects.Keys)
-      {
-        if(o is GraphicsObject && ((GraphicsObject)o).Container!=null)
-        {
-          GraphicsObjectCollection coll = ((GraphicsObject)o).Container;
-          coll.Remove((GraphicsObject)o);
-          removedObjects.Add(o);
-        }
-      }
-
-      if(removedObjects.Count>0)
-      {
-
-        foreach(object o in removedObjects)
-          this.m_SelectedObjects.Remove(o);
-
-        this.RefreshGraph();
-      }
-
-    }
-
-
-    /// <summary>
-    /// Determines whether or not the pixel position in <paramref name="pixelPos"/> is on a already selected object
-    /// </summary>
-    /// <param name="pixelPos">The pixel position to test (on the graph panel)</param>
-    /// <param name="foundObject">Returns the object the position <paramref name="pixelPos"/> is pointing to, else null</param>
-    /// <returns>True when the pixel position is upon a selected object, else false</returns>
-    public bool IsPixelPositionOnAlreadySelectedObject(PointF pixelPos, out IHitTestObject foundObject)
-    {
-      PointF graphXY = this.PixelToPrintableAreaCoordinates(pixelPos); // Graph area coordinates
-
-      // have we clicked on one of the already selected objects
-      foreach(IHitTestObject graphObject in m_SelectedObjects.Keys)
-      {
-        int nLayer = (int)m_SelectedObjects[graphObject];
-        // if(null!=graphObject.HitTest(Layers[nLayer].GraphToLayerCoordinates(graphXY)))
-        if(graphObject.SelectionPath.IsVisible(pixelPos))
-        {
-          foundObject = graphObject;
-          return true;
-        }
-      }
-      foundObject = null;
-      return false;
-    }
-
-
+    
+  
+ 
 
     /// <summary>
     /// Looks for a graph object at pixel position <paramref name="pixelPos"/> and returns true if one is found.
@@ -1925,800 +1899,6 @@ namespace Altaxo.Graph.GUI
     #endregion
 
     #region Inner Classes
-
-    #region Mouse Handler Classes
-
-    #region abstract mouse state handler
-    /// <summary>
-    /// The abstract base class of all MouseStateHandlers.
-    /// </summary>
-    /// <remarks>The mouse state handler are used to handle the mouse events of the graph view in different contexts,
-    /// depending on which GraphTool is choosen by the user.</remarks>
-    public abstract class MouseStateHandler
-    {
-      /// <summary>Stores the mouse position of the last mouse up event.</summary>
-      protected PointF m_LastMouseUp;
-      /// <summary>Stores the mouse position of the last mouse down event.</summary>
-      protected PointF m_LastMouseDown;
-
-      /// <summary>
-      /// Handles the mouse move event.
-      /// </summary>
-      /// <param name="sender">The GraphController that sends this event.</param>
-      /// <param name="e">MouseEventArgs as provided by the view.</param>
-      /// <returns>The next mouse state handler that should handle mouse events.</returns>
-      public virtual MouseStateHandler OnMouseMove(GraphController sender, System.Windows.Forms.MouseEventArgs e)
-      {
-        return this;
-      }
-
-      /// <summary>
-      /// Handles the mouse up event. Stores the position of the mouse into <see cref="m_LastMouseUp"/>.
-      /// </summary>
-      /// <param name="sender">The GraphController that sends this event.</param>
-      /// <param name="e">MouseEventArgs as provided by the view.</param>
-      /// <returns>The next mouse state handler that should handle mouse events.</returns>
-      public virtual MouseStateHandler OnMouseUp(GraphController sender, System.Windows.Forms.MouseEventArgs e)
-      {
-        m_LastMouseUp = new Point(e.X,e.Y);
-        return this;
-      }
-
-      /// <summary>
-      /// Handles the mouse down event. Stores the position of the mouse into <see cref="m_LastMouseDown"/>.
-      /// </summary>
-      /// <param name="sender">The GraphController that sends this event.</param>
-      /// <param name="e">MouseEventArgs as provided by the view.</param>
-      /// <returns>The next mouse state handler that should handle mouse events.</returns>
-      public virtual MouseStateHandler OnMouseDown(GraphController sender, System.Windows.Forms.MouseEventArgs e)
-      {
-        m_LastMouseDown = new Point(e.X,e.Y);
-        return this;
-      }
-      
-      /// <summary>
-      /// Handles the mouse click event.
-      /// </summary>
-      /// <param name="sender">The GraphController that sends this event.</param>
-      /// <param name="e">EventArgs as provided by the view.</param>
-      /// <returns>The next mouse state handler that should handle mouse events.</returns>
-      public virtual MouseStateHandler OnClick(GraphController sender, System.EventArgs e)
-      {
-        return this;
-      }
-      
-      /// <summary>
-      /// Handles the mouse doubleclick event.
-      /// </summary>
-      /// <param name="sender">The GraphController that sends this event.</param>
-      /// <param name="e">EventArgs as provided by the view.</param>
-      /// <returns>The next mouse state handler that should handle mouse events.</returns>
-      public virtual MouseStateHandler OnDoubleClick(GraphController sender, System.EventArgs e)
-      {
-        return this;
-      }
-
-      /// <summary>
-      /// This function is called just after the paint event.
-      /// </summary>
-      /// <param name="g"></param>
-      public virtual void AfterPaint(GraphController grac, Graphics g)
-      {
-      }
-
-      /// <summary>
-      /// This function is called if a key is pressed.
-      /// </summary>
-      /// <param name="msg"></param>
-      /// <param name="keyData"></param>
-      /// <returns></returns>
-      public virtual bool ProcessCmdKey(ref Message msg, Keys keyData)
-      {
-        return false; // per default the key is not processed
-      }
-    }
-    #endregion // abstract mouse state handler
-
-    #region Object Pointer Mouse Handler
-    /// <summary>
-    /// Handles the mouse events when the <see cref="GraphTools.ObjectPointer"/> tools is selected.
-    /// </summary>
-    public class ObjectPointerMouseHandler : MouseStateHandler
-    {
-      /// <summary>
-      /// If true, the selected objects where moved when a MouseMove event is fired
-      /// </summary>
-      protected bool m_bMoveObjectsOnMouseMove=false;
-      /// <summary>Stores the mouse position of the last point to where the selected objects where moved</summary>
-      protected PointF m_MoveObjectsLastMovePoint;
-      /// <summary>If objects where really moved during the moving mode, this value become true</summary>
-      protected bool m_bObjectsWereMoved=false;
-
-
-      /// <summary>
-      /// Handles the mouse move event.
-      /// </summary>
-      /// <param name="grac">The GraphController that sends this event.</param>
-      /// <param name="e">MouseEventArgs as provided by the view.</param>
-      /// <returns>The next mouse state handler that should handle mouse events.</returns>
-      public override MouseStateHandler OnMouseMove(GraphController grac, System.Windows.Forms.MouseEventArgs e)
-      {
-        base.OnMouseMove(grac,e);
-        
-        PointF mouseDiff = new PointF(e.X - m_MoveObjectsLastMovePoint.X, e.Y - m_MoveObjectsLastMovePoint.Y);
-        if(m_bMoveObjectsOnMouseMove && 0!= grac.m_SelectedObjects.Count && (mouseDiff.X!=0 || mouseDiff.Y!=0))
-        {
-          // move all the selected objects to the new position
-          // first update the position of the selected objects to reflect the new position
-          m_MoveObjectsLastMovePoint.X = e.X;
-          m_MoveObjectsLastMovePoint.Y = e.Y;
-
-          // indicate the objects has moved now
-          m_bObjectsWereMoved = true;
-
-
-          // this difference, which is in mouse coordinates, must first be 
-          // converted to Graph coordinates (1/72"), and then transformed for
-          // each object to the layer coordinate differences of the layer
-    
-          PointF graphDiff = grac.PixelToPageDifferences(mouseDiff); // calulate the moving distance in page units = graph units
-
-          foreach(IHitTestObject graphObject in grac.m_SelectedObjects.Keys)
-          {
-            // get the layer number the graphObject belongs to
-            //int nLayer = (int)grac.m_SelectedObjects[graphObject];
-            //PointF layerDiff = grac.Layers[nLayer].GraphToLayerDifferences(graphDiff); // calculate the moving distance in layer units
-            graphObject.ShiftPosition(graphDiff.X,graphDiff.Y);
-            // Console.WriteLine("Moving mdiff={0}, gdiff={1}, ldiff={2}", mouseDiff,graphDiff,layerDiff);
-          }
-          // now paint the objects on the new position
-          
-         
-          if(null!=grac.m_FrozenGraph)
-          {
-            Graphics g = grac.m_View.CreateGraphGraphics();
-            grac.DoPaint(g,false);
-          }
-          else  // if the graph was not frozen before - what reasons ever
-          {
-            grac.RefreshGraph(); // rise a normal paint event
-          }
-          
-
-        }
-        return this;
-      }
-
-      /// <summary>
-      /// Handles the MouseDown event when the object pointer tool is selected
-      /// </summary>
-      /// <param name="grac">The sender of the event.</param>
-      /// <param name="e">The mouse event args</param>
-      /// <remarks>
-      /// The strategy to handle the mousedown event is as following:
-      /// 
-      /// Have we clicked on already selected objects?
-      ///   if yes (we have clicked on already selected objects) and the shift or control key was pressed -> deselect the object and repaint
-      ///   if yes (we have clicked on already selected objects) and none shift nor control key was pressed-> activate the object moving  mode
-      ///   if no (we have not clicked on already selected objects) and shift or control key was pressed -> search for the object and add it to the selected objects, then aktivate moving mode
-      ///   if no (we have not clicked on already selected objects) and no shift or control key pressed -> if a object was found add it to the selected objects and activate moving mode
-      ///                                                                                                  if no object was found clear the selection list, deactivate moving mode
-      /// </remarks>
-      public override MouseStateHandler OnMouseDown(GraphController grac, System.Windows.Forms.MouseEventArgs e)
-      {
-        base.OnMouseDown(grac, e);
-
-        if(e.Button != MouseButtons.Left)
-          return this; // then there is nothing to do here
-
-        // first, if we have a mousedown without shift key and the
-        // position has changed with respect to the last mousedown
-        // we have to deselect all objects
-        PointF mouseXY = new PointF(e.X,e.Y);
-        bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
-        bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
-        PointF graphXY = grac.PixelToPrintableAreaCoordinates(mouseXY); // Graph area coordinates
-
-  
-        // have we clicked on one of the already selected objects
-        IHitTestObject clickedSelectedObject=null;
-        bool bClickedOnAlreadySelectedObjects=grac.IsPixelPositionOnAlreadySelectedObject(mouseXY, out clickedSelectedObject);
-
-        if(bClickedOnAlreadySelectedObjects)
-        {
-          if(bShiftKey || bControlKey) // if shift or control is pressed, remove the selection
-          {
-            grac.m_SelectedObjects.Remove(clickedSelectedObject);
-            grac.RefreshGraph(); // repaint the graph
-          }
-          else // not shift or control pressed -> so activate the object moving mode
-          {
-            StartMovingObjects(grac,mouseXY);
-          }
-        } // end if bClickedOnAlreadySelectedObjects
-        else // not clicked on a already selected object
-        {
-          // search for a object first
-          IHitTestObject clickedObject;
-          int clickedLayerNumber=0;
-          grac.FindGraphObjectAtPixelPosition(mouseXY, out clickedObject, out clickedLayerNumber);
-
-          if(bShiftKey || bControlKey) // if shift or control are pressed, we add the object to the selection list and start moving mode
-          {
-            if(null!=clickedObject)
-            {
-              grac.m_SelectedObjects.Add(clickedObject,clickedLayerNumber);
-              grac.DrawSelectionRectangleImmediately(clickedObject,clickedLayerNumber);
-              StartMovingObjects(grac,mouseXY);
-            }
-          }
-          else // no shift or control key pressed
-          {
-            if(null!=clickedObject)
-            {
-              ClearSelections(grac);
-              grac.m_SelectedObjects.Add(clickedObject,clickedLayerNumber);
-              grac.DrawSelectionRectangleImmediately(clickedObject,clickedLayerNumber);
-              StartMovingObjects(grac,mouseXY);
-            }
-            else // if clicked to nothing 
-            {
-              ClearSelections(grac); // clear the selection list
-            }
-          } // end else no shift or control
-
-        } // end else (not cklicked on already selected object)
-        return this;
-      } // end of function
-
-      /// <summary>
-      /// Handles the mouse up event.
-      /// </summary>
-      /// <param name="grac">The GraphController that sends this event.</param>
-      /// <param name="e">MouseEventArgs as provided by the view.</param>
-      /// <returns>The next mouse state handler that should handle mouse events.</returns>
-      public override MouseStateHandler OnMouseUp(GraphController grac, System.Windows.Forms.MouseEventArgs e)
-      {
-        base.OnMouseUp(grac,e);
-
-        System.Console.WriteLine("MouseUp {0},{1}",e.X,e.Y);
-        EndMovingObjects(grac);
-        return this;
-      }
-
-      /// <summary>
-      /// Handles the mouse doubleclick event.
-      /// </summary>
-      /// <param name="grac">The GraphController that sends this event.</param>
-      /// <param name="e">EventArgs as provided by the view.</param>
-      /// <returns>The next mouse state handler that should handle mouse events.</returns>
-      public override MouseStateHandler OnDoubleClick(GraphController grac, System.EventArgs e)
-      {
-        base.OnDoubleClick(grac,e);
-
-        // if there is exactly one object selected, try to open the corresponding configuration dialog
-        if(grac.m_SelectedObjects.Count==1)
-        {
-          IEnumerator graphEnum = grac.m_SelectedObjects.Keys.GetEnumerator(); // get the enumerator
-          graphEnum.MoveNext(); // set the enumerator to the first item
-          IHitTestObject graphObject = (IHitTestObject)graphEnum.Current;
-          int nLayer = (int)grac.m_SelectedObjects[graphObject];
-          if(graphObject.DoubleClick!=null)
-          {
-            if(true==graphObject.OnDoubleClick())
-            {
-              grac.ClearSelections();
-            }
-              
-          }
-        }
-        return this;
-      }
-
-
-      /// <summary>
-      /// Handles the mouse click event.
-      /// </summary>
-      /// <param name="grac">The GraphController that sends this event.</param>
-      /// <param name="e">EventArgs as provided by the view.</param>
-      /// <returns>The next mouse state handler that should handle mouse events.</returns>
-      public override MouseStateHandler OnClick(GraphController grac, System.EventArgs e)
-      {
-        base.OnClick(grac,e);
-
-        System.Console.WriteLine("Click");
-
-        return this;
-      }
-
-
-      /// <summary>
-      /// Actions neccessary to start the dragging of graph objects
-      /// </summary>
-      /// <param name="grac">The GraphController for which these actions should apply.</param>
-      /// <param name="currentMousePosition">the current mouse position in pixel</param>
-      protected void StartMovingObjects(GraphController grac, PointF currentMousePosition)
-      {
-        if(!m_bMoveObjectsOnMouseMove)
-        {
-          m_bMoveObjectsOnMouseMove=true;
-          m_bObjectsWereMoved=false; // up to now no objects were really moved
-          m_MoveObjectsLastMovePoint = currentMousePosition;
-
-          // create a frozen bitmap of the graph
-          /*
-          Graphics g = grac.m_View.CreateGraphGraphics(); // do not translate the graphics here!
-          grac.m_FrozenGraph = new Bitmap(grac.m_View.GraphSize.Width,grac.m_View.GraphSize.Height,g);
-          Graphics gbmp = Graphics.FromImage(grac.m_FrozenGraph);
-          grac.DoPaint(gbmp,false);
-          gbmp.Dispose();
-          */
-        }
-      }
-
-      /// <summary>
-      /// Actions neccessary to end the dragging of graph objects
-      /// </summary>
-      protected void EndMovingObjects(GraphController grac)
-      {
-        bool bRepaint = m_bObjectsWereMoved; // repaint the graph when objects were really moved
-
-        m_bMoveObjectsOnMouseMove = false;
-        m_bObjectsWereMoved=false;
-        m_MoveObjectsLastMovePoint = new Point(0,0); // this is not neccessary, but only for "order"
-        
-        
-        /*
-        if(null!=grac.m_FrozenGraph) 
-        {
-          grac.m_FrozenGraph.Dispose(); grac.m_FrozenGraph=null;
-        }
-        */
-      
-        if(bRepaint)
-        {
-          //grac.m_FrozenGraphIsDirty = true;
-          grac.RefreshGraph(); // redraw the contents
-        }
-      }
-
-      /// <summary>
-      /// Clears the selection list and repaints the graph if neccessary
-      /// </summary>
-      public void ClearSelections(GraphController grac)
-      {
-        bool bRepaint = (grac.m_SelectedObjects.Count>0); // is a repaint neccessary
-        grac.m_SelectedObjects.Clear();
-        EndMovingObjects(grac);
-
-        if(bRepaint)
-          grac.RefreshGraph(); 
-      }
-
-      public override void AfterPaint(GraphController grac, Graphics g)
-      {
-        g.TranslateTransform(grac.Doc.PrintableBounds.X,grac.Doc.PrintableBounds.Y);
-        // finally, mark the selected objects
-        if(grac.m_SelectedObjects.Count>0)
-        {
-          foreach(IHitTestObject graphObject in grac.m_SelectedObjects.Keys)
-          {
-            int nLayer = (int)grac.m_SelectedObjects[graphObject];
-            g.DrawPath(Pens.Blue,graphObject.SelectionPath);
-          }
-        }
-        base.AfterPaint (grac,g);
-      }
-
-
-    } // end of class
-
-    #endregion // object pointer mouse handler
-
-    #region Text tool mouse handler
-
-    /// <summary>
-    /// This class handles the mouse events in case the text tool is selected.
-    /// </summary>
-    public class TextToolMouseHandler : MouseStateHandler
-    {
-      /// <summary>
-      /// Handles the click event by opening the text tool dialog.
-      /// </summary>
-      /// <param name="grac">The graph control.</param>
-      /// <param name="e">EventArgs.</param>
-      /// <returns>The mouse state handler for handling the next mouse events.</returns>
-      public override MouseStateHandler OnClick(GraphController grac, System.EventArgs e)
-      {
-        base.OnClick(grac,e);
-
-        // get the page coordinates (in Point (1/72") units)
-        PointF printAreaCoord = grac.PixelToPrintableAreaCoordinates(m_LastMouseDown);
-        // with knowledge of the current active layer, calculate the layer coordinates from them
-        PointF layerCoord = grac.Layers[grac.CurrentLayerNumber].GraphToLayerCoordinates(printAreaCoord);
-
-        TextGraphics tgo = new TextGraphics();
-        tgo.Position = layerCoord;
-
-        // deselect the text tool
-        grac.CurrentGraphTool = GraphTools.ObjectPointer;
-
-        TextControlDialog dlg = new TextControlDialog(grac.Layers[grac.CurrentLayerNumber],tgo);
-        if(DialogResult.OK==dlg.ShowDialog(grac.m_View.Window))
-        {
-          // add the resulting textgraphobject to the layer
-          if(!dlg.SimpleTextGraphics.Empty)
-          {
-            grac.Layers[grac.CurrentLayerNumber].GraphObjects.Add(dlg.SimpleTextGraphics);
-            grac.RefreshGraph();
-          }
-        }
-        return new ObjectPointerMouseHandler();
-      }
-    }
-
-    #endregion // Text Tool Mouse Handler
-
-    #region Read plot item data Mouse Handler
-    /// <summary>
-    /// Handles the mouse events when the <see cref="GraphTools.ObjectPointer"/> tools is selected.
-    /// </summary>
-    public class ReadPlotItemDataMouseHandler : MouseStateHandler
-    {
-      /// <summary>
-      /// Number of the layer, in which the plot item resides which is currently selected.
-      /// </summary>
-      protected int _LayerNumber;
-     
-      /// <summary>
-      /// The number of the plot item where the cross is currently.
-      /// </summary>
-      protected int _PlotItemNumber;
-
-
-      /// <summary>
-      /// Number of the plot point which has currently the cross onto.
-      /// </summary>
-      protected int _PlotIndex;
-
-      /// <summary>
-      /// The number of the data point (index into the data row) where the cross is currently.
-      /// </summary>
-      protected int _RowIndex;
-
-      /// <summary>
-      /// The plot item where the mouse snaps in
-      /// </summary>
-      protected XYColumnPlotItem m_PlotItem;
-
-      /// <summary>
-      /// Coordinates of the red data reader cross (in printable coordinates)
-      /// </summary>
-      protected PointF m_Cross;
-
-      protected GraphController _grac;
-
-      public ReadPlotItemDataMouseHandler(GraphController grac)
-      {
-        _grac = grac;
-      }
-
-      /// <summary>
-      /// Handles the mouse move event.
-      /// </summary>
-      /// <param name="grac">The GraphController that sends this event.</param>
-      /// <param name="e">MouseEventArgs as provided by the view.</param>
-      /// <returns>The next mouse state handler that should handle mouse events.</returns>
-      public override MouseStateHandler OnMouseMove(GraphController grac, System.Windows.Forms.MouseEventArgs e)
-      {
-        base.OnMouseMove(grac,e);
-        
-        return this;
-      }
-
-      /// <summary>
-      /// Handles the MouseDown event when the plot point tool is selected
-      /// </summary>
-      /// <param name="grac">The sender of the event.</param>
-      /// <param name="e">The mouse event args</param>
-     
-      public override MouseStateHandler OnMouseDown(GraphController grac, System.Windows.Forms.MouseEventArgs e)
-      {
-        base.OnMouseDown(grac, e);
-
-        PointF mouseXY = new PointF(e.X,e.Y);
-        PointF graphXY = grac.PixelToPrintableAreaCoordinates(mouseXY);
-       
-        // search for a object first
-        IHitTestObject clickedObject;
-        int clickedLayerNumber=0;
-        grac.FindGraphObjectAtPixelPosition(mouseXY, out clickedObject, out clickedLayerNumber);
-        if(null!=clickedObject && clickedObject.HittedObject is XYColumnPlotItem)
-        {
-          m_PlotItem = (XYColumnPlotItem)clickedObject.HittedObject;
-          PointF[] transXY = new PointF[]{graphXY};
-          Matrix inv = clickedObject.Transformation.Clone();
-          inv.Invert();
-          inv.TransformPoints(transXY);
-          XYScatterPointInformation scatterPoint = m_PlotItem.GetNearestPlotPoint(clickedObject.ParentLayer,transXY[0]);
-
-          this._PlotItemNumber = GetPlotItemNumber(clickedLayerNumber,m_PlotItem);
-          this._LayerNumber = clickedLayerNumber;
-
-
-          if(null!=scatterPoint)
-          {
-            this._PlotIndex = scatterPoint.PlotIndex;
-            this._RowIndex = scatterPoint.RowIndex;
-            // convert this layer coordinates first to PrintableAreaCoordinates
-            PointF printableCoord = clickedObject.ParentLayer.LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
-            m_Cross = printableCoord;
-            m_Cross.X+=_grac.Doc.PrintableBounds.X;
-            m_Cross.Y+=_grac.Doc.PrintableBounds.Y;
-           
-            PointF newPixelCoord = _grac.PrintableAreaToPixelCoordinates(printableCoord);
-            Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
-            
-          
-            
-            Current.Console.WriteLine("{0}[{1}] X={2}, Y={3}",
-              m_PlotItem.ToString(),
-              scatterPoint.RowIndex,
-              //             scatterPoint.PlotIndex,
-              m_PlotItem.XYColumnPlotData.XColumn[scatterPoint.RowIndex],
-              m_PlotItem.XYColumnPlotData.YColumn[scatterPoint.RowIndex]);
-
-          
-          
-            // here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
-            // of the grac
-            _grac.View.InvalidateGraph(); // no refresh necessary, only invalidate to show the cross
-          }
-        }
-       
-         
-        return this;
-      } // end of function
-
-
-      
-
-
-      void ShowCross(XYScatterPointInformation scatterPoint)
-      {
-      
-          this._PlotIndex = scatterPoint.PlotIndex;
-          this._RowIndex = scatterPoint.RowIndex;
-          // convert this layer coordinates first to PrintableAreaCoordinates
-          PointF printableCoord = _grac.Layers[this._LayerNumber].LayerToGraphCoordinates(scatterPoint.LayerCoordinates);
-          m_Cross = printableCoord;
-          m_Cross.X+=_grac.Doc.PrintableBounds.X;
-          m_Cross.Y+=_grac.Doc.PrintableBounds.Y;
-           
-          PointF newPixelCoord = _grac.PrintableAreaToPixelCoordinates(printableCoord);
-          //Cursor.Position = new Point((int)(Cursor.Position.X + newPixelCoord.X - mouseXY.X),(int)(Cursor.Position.Y + newPixelCoord.Y - mouseXY.Y));
-          //Cursor.Position = ((Control)_grac.View).PointToScreen(newPixelCoord);
-          
-            
-          Current.Console.WriteLine("{0}[{1}] X={2}, Y={3}",
-            m_PlotItem.ToString(),
-            scatterPoint.RowIndex,
-            //             scatterPoint.PlotIndex,
-            m_PlotItem.XYColumnPlotData.XColumn[scatterPoint.RowIndex],
-            m_PlotItem.XYColumnPlotData.YColumn[scatterPoint.RowIndex]);
-
-          
-          
-          // here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
-          // of the grac
-          _grac.View.InvalidateGraph(); // no refresh necessary, only invalidate to show the cross
-       
-      }
-
-
-      /// <summary>
-      /// Tests presumtions for a move of the cross.
-      /// </summary>
-      /// <returns>True if the cross can be moved, false if one of the presumtions does not hold.</returns>
-      bool TestMovementPresumtions()
-      {
-        if(m_PlotItem==null)
-          return false;
-        if(_grac==null || _grac.Doc==null || _grac.Doc.Layers==null)
-          return false;
-        if(this._LayerNumber<0 || this._LayerNumber>=_grac.Doc.Layers.Count)
-          return false;
-
-        return true;
-      }
-
-      /// <summary>
-      /// Moves the cross along the plot.
-      /// </summary>
-      /// <param name="increment"></param>
-      void MoveLeftRight(int increment)
-      {
-        if(!TestMovementPresumtions())
-          return;
-
-        XYScatterPointInformation scatterPoint = m_PlotItem.GetNextPlotPoint(_grac.Doc.Layers[this._LayerNumber],this._PlotIndex,increment);
-        
-        if(null!=scatterPoint)
-          ShowCross(scatterPoint);
-      }
-
-      /// <summary>
-      /// Moves the cross to the next plot item. If no plot item is found in this layer, it moves the cross to the next layer.
-      /// </summary>
-      /// <param name="increment"></param>
-      void MoveUpDown(int increment)
-      {
-        if(!TestMovementPresumtions())
-          return;
-
-        int numlayers = _grac.Layers.Count;
-        int nextlayer = _LayerNumber;
-        int nextplotitemnumber = this._PlotItemNumber;
-
-        XYScatterPointInformation scatterPoint=null;
-        XYColumnPlotItem plotitem = null;
-        do
-        {
-          nextplotitemnumber = this._PlotItemNumber + Math.Sign(increment);
-          if(nextplotitemnumber<0)
-          {
-            nextlayer-=1;
-            nextplotitemnumber = nextlayer<0 ? int.MaxValue : _grac.Layers[nextlayer].PlotItems.Count-1;
-          }
-          else if(nextplotitemnumber>=_grac.Layers[nextlayer].PlotItems.Count)
-          {
-            nextlayer+=1;
-            nextplotitemnumber=0;
-          }
-          // check if this results in a valid information
-          if(nextlayer<0 || nextlayer>=numlayers)
-            break;
-          
-          if(nextplotitemnumber<0 || nextplotitemnumber>=_grac.Layers[nextlayer].PlotItems.Count)
-            continue;
-  
-          plotitem =  _grac.Layers[nextlayer].PlotItems[nextplotitemnumber] as XYColumnPlotItem;
-          if(null==plotitem)
-            continue;
-  
-          scatterPoint = plotitem.GetNextPlotPoint(_grac.Layers[nextlayer],this._PlotIndex,0);
-        } while(scatterPoint==null);
-      
-        if(null!=scatterPoint)
-        {
-          this.m_PlotItem = plotitem;
-          this._LayerNumber = nextlayer;
-          this._PlotItemNumber = nextplotitemnumber;
-          this._PlotIndex = scatterPoint.PlotIndex;
-          this._RowIndex = scatterPoint.RowIndex;
-
-          ShowCross(scatterPoint);
-        }
-      }
-
-
-      /// <summary>
-      /// Handles the mouse up event.
-      /// </summary>
-      /// <param name="grac">The GraphController that sends this event.</param>
-      /// <param name="e">MouseEventArgs as provided by the view.</param>
-      /// <returns>The next mouse state handler that should handle mouse events.</returns>
-      public override MouseStateHandler OnMouseUp(GraphController grac, System.Windows.Forms.MouseEventArgs e)
-      {
-        base.OnMouseUp(grac,e);
-
-        return this;
-      }
-
-      /// <summary>
-      /// Handles the mouse doubleclick event.
-      /// </summary>
-      /// <param name="grac">The GraphController that sends this event.</param>
-      /// <param name="e">EventArgs as provided by the view.</param>
-      /// <returns>The next mouse state handler that should handle mouse events.</returns>
-      public override MouseStateHandler OnDoubleClick(GraphController grac, System.EventArgs e)
-      {
-        base.OnDoubleClick(grac,e);
-
-      
-        return this;
-      }
-
-
-      /// <summary>
-      /// Handles the mouse click event.
-      /// </summary>
-      /// <param name="grac">The GraphController that sends this event.</param>
-      /// <param name="e">EventArgs as provided by the view.</param>
-      /// <returns>The next mouse state handler that should handle mouse events.</returns>
-      public override MouseStateHandler OnClick(GraphController grac, System.EventArgs e)
-      {
-        base.OnClick(grac,e);
-
-      
-
-        return this;
-      }
-
-
-      public override void AfterPaint(GraphController grac, Graphics g)
-      {
-        // draw a red cross onto the selected data point
-
-        g.DrawLine(System.Drawing.Pens.Red,m_Cross.X+1,m_Cross.Y,m_Cross.X+10,m_Cross.Y);
-        g.DrawLine(System.Drawing.Pens.Red,m_Cross.X-1,m_Cross.Y,m_Cross.X-10,m_Cross.Y);
-        g.DrawLine(System.Drawing.Pens.Red,m_Cross.X,m_Cross.Y+1,m_Cross.X,m_Cross.Y+10);
-        g.DrawLine(System.Drawing.Pens.Red,m_Cross.X,m_Cross.Y-1,m_Cross.X,m_Cross.Y-10);
-        
-        base.AfterPaint (grac,g);
-      }
-
-
-      /// <summary>
-      /// This function is called if a key is pressed.
-      /// </summary>
-      /// <param name="msg"></param>
-      /// <param name="keyData"></param>
-      /// <returns></returns>
-      public override bool ProcessCmdKey(ref Message msg, Keys keyData)
-      {
-        if(keyData == Keys.Left)
-        {
-          System.Diagnostics.Trace.WriteLine("Read tool key handler, left key pressed!");
-          MoveLeftRight(-1);
-          return true;
-        }
-        else if(keyData == Keys.Right)
-        {
-          System.Diagnostics.Trace.WriteLine("Read tool key handler, right key pressed!");
-          MoveLeftRight(1);
-          return true;
-        }
-        else if(keyData == Keys.Up)
-        {
-          MoveUpDown(1);
-          return true;
-        }
-        else if(keyData == Keys.Down)
-        {
-          MoveUpDown(-1);
-          return true;
-        }
-
-
-        return false; // per default the key is not processed
-      }
-
-
-      /// <summary>
-      /// Find the plot item number of a given plot item.
-      /// </summary>
-      /// <param name="grac"></param>
-      /// <param name="layernumber"></param>
-      /// <param name="plotitem"></param>
-      /// <returns></returns>
-      int GetPlotItemNumber(int layernumber, XYColumnPlotItem plotitem)
-      {
-        if(layernumber<_grac.Doc.Layers.Count)
-        {
-          for(int i=0;i<_grac.Doc.Layers[layernumber].PlotItems.Count;i++)
-            if(object.ReferenceEquals(_grac.Doc.Layers[layernumber].PlotItems[i],plotitem))
-              return i;
-        }
-      return -1;
-      }
-
-    } // end of class
-
-    #endregion // plot item mouse handler
-
-    #endregion // Mouse Handlers
-
 
     /// <summary>
     /// Used as menu items in the Data menu popup. Stores the plot number the menu item represents.
