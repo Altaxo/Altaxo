@@ -1,7 +1,6 @@
 <AddIn name="SharpDevelop Core" author="Mike Krueger" copyright="GPL" url="http://www.icsharpcode.net" description="SharpDevelop core module" version="1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Runtime>
 		<Import assembly="../bin/SharpDevelop.Base.dll"/>
-		<Import assembly="../bin/BeautyGui.exe"/>
 		<Import assembly="../bin/AltaxoBase.dll"/>
 	</Runtime>
 	<Extension path="/Workspace/Autostart">

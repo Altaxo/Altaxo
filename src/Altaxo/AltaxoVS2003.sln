@@ -13,10 +13,6 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeautyGUI", "BeautyGUI\BeautyGUI.csproj", "{63420446-3D85-4D00-BA9E-9EA7680B87E0}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zICSharpCode.Core", "..\Libraries\ICSharpCode.Core\zICSharpCode.Core.csproj", "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
@@ -30,6 +26,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zCommandBar", "..\Libraries
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zMagicLibrary", "..\Libraries\MagicLibrary\zMagicLibrary.csproj", "{993E6ED0-F820-4264-9989-B6341C179CB4}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Startup", "Startup\Startup.csproj", "{63420446-3D85-4D00-BA9E-9EA7680B87E0}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -56,12 +56,6 @@ Global
 		{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}.DesignTimeDebugging.Build.0 = Debug
 		{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}.Release.ActiveCfg = Release
 		{7C0AE96C-6D0A-423E-8E4A-62120F6B8061}.Release.Build.0 = Release
-		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Debug.ActiveCfg = Debug|.NET
-		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Debug.Build.0 = Debug|.NET
-		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.DesignTimeDebugging.ActiveCfg = Debug|.NET
-		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.DesignTimeDebugging.Build.0 = Debug|.NET
-		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Release.ActiveCfg = Release|.NET
-		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Release.Build.0 = Release|.NET
 		{A1006FEB-2FFC-4507-8D82-265130CDD08E}.Debug.ActiveCfg = Debug|.NET
 		{A1006FEB-2FFC-4507-8D82-265130CDD08E}.Debug.Build.0 = Debug|.NET
 		{A1006FEB-2FFC-4507-8D82-265130CDD08E}.DesignTimeDebugging.ActiveCfg = Debug|.NET
@@ -86,6 +80,12 @@ Global
 		{993E6ED0-F820-4264-9989-B6341C179CB4}.DesignTimeDebugging.Build.0 = Debug|.NET
 		{993E6ED0-F820-4264-9989-B6341C179CB4}.Release.ActiveCfg = Release|.NET
 		{993E6ED0-F820-4264-9989-B6341C179CB4}.Release.Build.0 = Release|.NET
+		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Debug.ActiveCfg = Debug|.NET
+		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Debug.Build.0 = Debug|.NET
+		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.DesignTimeDebugging.ActiveCfg = Debug|.NET
+		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.DesignTimeDebugging.Build.0 = Debug|.NET
+		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Release.ActiveCfg = Release|.NET
+		{63420446-3D85-4D00-BA9E-9EA7680B87E0}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Icon1.ico = Icon1.ico

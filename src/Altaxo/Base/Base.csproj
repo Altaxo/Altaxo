@@ -709,57 +709,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Main\Workbench1.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\Commands\AltaxoToolbarService.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\Commands\AutostartCommands.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\Commands\FileCommands.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\Commands\GraphCommands.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\Commands\SelectedColumnCondition.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\Commands\WorksheetCommands.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Main\Commands\CVS\Entries"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Main\Commands\CVS\Entries.Extra"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Main\Commands\CVS\Repository"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "Main\Commands\CVS\Root"
-                    BuildAction = "None"
-                />
-                <File
                     RelPath = "Main\GUI\DialogFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -854,6 +803,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\GUI\Workbench1.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\GUI\WorkbenchForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -897,6 +851,36 @@
                     RelPath = "Main\GUI\MWControls\MWTreeView.resx"
                     DependentUpon = "MWTreeView.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\AltaxoToolbarService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\AutostartCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\FileCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\GraphCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\SelectedColumnCondition.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\MenuCommands\WorksheetCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <Folder RelPath = "Main\Services\" />
                 <File
