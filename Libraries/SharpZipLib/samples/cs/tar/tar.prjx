@@ -1,0 +1,22 @@
+<Project fileversion="1.0" name="tar" projecttype="C#" description="erzeugt ein C# Konsolenprojekt" newfilesearch="None" enableviewstate="True" projectdocumentation="">
+  <DeploymentInformation target="" script="" strategy="File" />
+  <References>
+    <Reference assembly=".\SharpZipLib.dll" />
+  </References>
+  <Contents>
+    <File name=".\Main.cs" subtype="Code" buildaction="Compile" />
+    <File name=".\AssemblyInfo.cs" subtype="Code" buildaction="Compile" />
+  </Contents>
+  <Configurations active="Debug">
+    <Configuration name="Debug" description="">
+      <Output directory=".\bin" assembly="tar" />
+      <CodeGeneration warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution consolepause="True" runwithwarnings="False" commandlineparameters="" />
+    </Configuration>
+    <Configuration name="Release" description="">
+      <Output directory=".\" assembly="tar" />
+      <CodeGeneration warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution consolepause="True" runwithwarnings="False" commandlineparameters="" />
+    </Configuration>
+  </Configurations>
+</Project>

@@ -1,0 +1,29 @@
+<Project name="SharpZLibTestCases" description="creates an empty C# project" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
+  <Contents>
+    <File name=".\ChecksumTestSuite.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\ZipTestSuite.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\SharpZLibTestCases.dll.testconfig" subtype="Code" buildaction="Nothing" dependson="" data="" />
+  </Contents>
+  <References>
+    <Reference type="Project" refto="ICSharpCode.SharpZipLib" localcopy="True" />
+    <Reference type="Gac" refto="ICSharpCode.SharpUnit, Version=1.2.0.0, Culture=neutral, PublicKeyToken=6619f26389ac8775" localcopy="True" />
+  </References>
+  <DeploymentInformation target="" script="" strategy="File" />
+  <Configuration runwithwarnings="False" name="Debug">
+    <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <Execution commandlineparameters="" consolepause="True" />
+    <Output directory=".\" assembly="SharpZLibTestCases" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+  </Configuration>
+  <Configurations active="Debug">
+    <Configuration runwithwarnings="False" name="Debug">
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="True" />
+      <Output directory=".\" assembly="SharpZLibTestCases" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+    </Configuration>
+    <Configuration runwithwarnings="False" name="Release">
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="True" />
+      <Output directory=".\" assembly="SharpZLibTestCases" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+    </Configuration>
+  </Configurations>
+</Project>
