@@ -357,21 +357,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
     
     #endregion
 
-    #region PLS
+    #region PLS Content Memento and Calibration Model
 
-    public static void PLSOnRows(WorksheetController ctrl)
-    {
-      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,true);
-      if(null!=err)
-        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
-    }
-    public static void PLSOnColumns(WorksheetController ctrl)
-    {
-      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,false);
-      if(null!=err)
-        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
-    }
-
+    
 
     /// <summary>
     /// This class is for remembering the content of the PLS calibration and where to found the original data.
@@ -406,6 +394,38 @@ namespace Altaxo.Worksheet.Commands.Analysis
       /// </summary>
       int _PreferredNumberOfFactors;
 
+
+      #region Serialization
+
+      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PLSContentMemento),0)]
+        public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+      {
+        public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
+        {
+          PLSContentMemento s = (PLSContentMemento)obj;
+          info.AddValue("TableName",s.TableName); // name of the Table
+          info.AddValue("SpectrumIsRow",s.SpectrumIsRow);
+          info.AddValue("SpectralIndices",s.SpectralIndices);
+          info.AddValue("ConcentrationIndices",s.ConcentrationIndices);
+          info.AddValue("MeasurementIndices",s.MeasurementIndices);
+          info.AddValue("PreferredNumberOfFactors", s._PreferredNumberOfFactors); // the property columns of that table
+
+        }
+        public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo  info, object parent)
+        {
+          PLSContentMemento s = null!=o ? (PLSContentMemento)o : new PLSContentMemento();
+
+          s.TableName = info.GetString("Name");
+          s.SpectrumIsRow = info.GetBoolean("SpectrumIsRow");
+          s.SpectralIndices = (IAscendingIntegerCollection)info.GetValue("SpectralIndices",s);
+          s.ConcentrationIndices = (IAscendingIntegerCollection)info.GetValue("ConcentrationIndices",s);
+          s.MeasurementIndices = (IAscendingIntegerCollection)info.GetValue("MeasurementIndices",s);
+          s._PreferredNumberOfFactors = info.GetInt32("PreferredNumberOfFactors");
+
+          return s;
+        }
+      }
+      #endregion
 
       /// <summary>
       /// Gets the number of measurement = number of spectra
@@ -531,9 +551,132 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
 
+    public enum CrossPRESSCalculation
+    {
+      /// <summary>
+      /// No cross PRESS calculation.
+      /// </summary>
+      None,
+
+      /// <summary>
+      /// Every measurement is excluded to calculate Cross PRESS.
+      /// </summary>
+      ExcludeEveryMeasurement,
+
+      /// <summary>
+      /// Measurements (which have the same concentration values) are excluded as groups to calculate Cross PRESS.
+      /// </summary>
+      ExcludeGroupsOfSimilarMeasurements,
+
+
+    }
+
+    public class PLSAnalysisOptions
+    {
+      /// <summary>
+      /// Get/sets the maximum number of factors to calculate
+      /// </summary>
+      public int MaxNumberOfFactors;
+
+      /// <summary>
+      /// How to do the calculation of Cross PRESS values.
+      /// </summary>
+      public CrossPRESSCalculation CrossPRESSCalculation;
+    }
+    #endregion
+
+    #region PLS Table Column Names and Groups
+
+    const string _XOfX_ColumnName = "XOfX";
+    const string _XMean_ColumnName = "XMean";
+    const string _XScale_ColumnName = "XScale";
+    const string _YMean_ColumnName = "YMean";
+    const string _YScale_ColumnName = "YScale";
+
+    const string _XLoad_ColumnName = "XLoad";
+    const string _XWeight_ColumnName = "XWeight";
+    const string _YLoad_ColumnName = "YLoad";
+    const string _CrossProduct_ColumnName = "CrossP";
+
+    const string _PRESSValue_ColumnName = "PRESS";
+    const string _CrossPRESSValue_ColumnName = "CrossPRESS";
+
+    const string _NumberOfFactors_ColumnName = "NumberOfFactors";
+    const string _MeasurementLabel_ColumnName = "MeasurementLabel";
+    const string _XLabel_ColumnName = "XLabel";
+    const string _YLabel_ColumnName = "YLabel";
+
+    const string _YOriginal_ColumnName   = "YOriginal";
+    const string _YPredicted_ColumnName = "YPredicted";
+    const string _YResidual_ColumnName   = "YResidual";
+    const string _SpectralResidual_ColumnName = "SpectralResidual";
+
+    /// <summary>
+    /// Gets the column name of a Y-Residual column
+    /// </summary>
+    /// <param name="whichY">Number of y-value.</param>
+    /// <param name="numberOfFactors">Number of factors for which the redidual is calculated.</param>
+    /// <returns>The name of the column.</returns>
+    public static string GetYResidual_ColumnName(int whichY, int numberOfFactors)
+    {
+      return string.Format("{0}{1}.{2}",_YResidual_ColumnName, whichY, numberOfFactors);
+    }
+
+
+    /// <summary>
+    /// Gets the column name of a Y-Original column
+    /// </summary>
+    /// <param name="whichY">Number of y-value.</param>
+    /// <param name="numberOfFactors">Number of factors for which the redidual is calculated.</param>
+    /// <returns>The name of the column.</returns>
+    public static string GetYOriginal_ColumnName(int whichY)
+    {
+      return string.Format("{0}{1}",_YOriginal_ColumnName, whichY);
+    }
+
+    /// <summary>
+    /// Gets the column name of a Y-Predicted column
+    /// </summary>
+    /// <param name="whichY">Number of y-value.</param>
+    /// <param name="numberOfFactors">Number of factors for which the redidual is calculated.</param>
+    /// <returns>The name of the column.</returns>
+    public static string GetYPredicted_ColumnName(int whichY, int numberOfFactors)
+    {
+      return string.Format("{0}{1}.{2}",_YPredicted_ColumnName, whichY, numberOfFactors);
+    }
+
+    
+    /// <summary>
+    /// Gets the column name of a X-Residual column
+    /// </summary>
+    /// <param name="whichY">Number of y-value.</param>
+    /// <param name="numberOfFactors">Number of factors for which the redidual is calculated.</param>
+    /// <returns>The name of the column.</returns>
+    public static string GetXResidual_ColumnName(int whichY, int numberOfFactors)
+    {
+      return string.Format("{0}{1}.{2}",_SpectralResidual_ColumnName, whichY, numberOfFactors);
+    }
 
     const int _PredictedYColumnGroup = 5;
     const int _ResidualYColumnGroup = 5;
+
+
+    #endregion
+
+    #region PLS Analysis
+
+    public static void PLSOnRows(WorksheetController ctrl)
+    {
+      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,true);
+      if(null!=err)
+        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+    }
+    public static void PLSOnColumns(WorksheetController ctrl)
+    {
+      string err= PartialLeastSquaresAnalysis(Current.Project,ctrl.Doc,ctrl.SelectedColumns,ctrl.SelectedRows,ctrl.SelectedPropertyColumns,false);
+      if(null!=err)
+        System.Windows.Forms.MessageBox.Show(ctrl.View.TableViewForm,err,"An error occured");
+    }
 
     /// <summary>
     /// Makes a PLS (a partial least squares) analysis of the table or the selected columns / rows and stores the results in a newly created table.
@@ -581,6 +724,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       plsContent.MeasurementIndices   = measurementIndices;
       plsContent.SpectralIndices      = spectralIndices;
       plsContent.SpectrumIsRow        = bHorizontalOrientedSpectrum;
+      plsContent.TableName            = srctable.Name;
 
 
       bool bUseSelectedColumns = (null!=selectedColumns && 0!=selectedColumns.Count);
@@ -788,7 +932,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Calc.MatrixMath.BEMatrix yLoads   = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
       Altaxo.Calc.MatrixMath.BEMatrix W       = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
       Altaxo.Calc.MatrixMath.REMatrix V       = new Altaxo.Calc.MatrixMath.REMatrix(0,0);
+      Altaxo.Calc.MatrixMath.BEMatrix PRESS   = new Altaxo.Calc.MatrixMath.BEMatrix(0,0);
 
+     
 
       // Before we can apply PLS, we have to center the x and y matrices
       Altaxo.Calc.MatrixMath.HorizontalVector meanX = new Altaxo.Calc.MatrixMath.HorizontalVector(matrixX.Columns);
@@ -800,7 +946,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Calc.MatrixMath.ColumnsToZeroMean(matrixY, meanY);
 
       int numFactors = matrixX.Columns;
-      Altaxo.Calc.MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,ref numFactors,xLoads,yLoads,W,V);
+      Altaxo.Calc.MatrixMath.PartialLeastSquares_HO(matrixX,matrixY,ref numFactors,xLoads,yLoads,W,V,PRESS);
   
 
       // now we have to create a new table where to place the calculated factors and loads
@@ -811,7 +957,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       // Fill the Table
       table.Suspend();
 
-      table.DataColumns.Add(xColumnOfX,"XOfX",Altaxo.Data.ColumnKind.X,0);
+      table.DataColumns.Add(xColumnOfX,_XOfX_ColumnName,Altaxo.Data.ColumnKind.X,0);
 
 
       // Store X-Mean and X-Scale
@@ -824,8 +970,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
         colXScale[i] = 1;
       }
 
-      table.DataColumns.Add(colXMean,"XMean",Altaxo.Data.ColumnKind.V,0);
-      table.DataColumns.Add(colXScale,"XScale",Altaxo.Data.ColumnKind.V,0);
+      table.DataColumns.Add(colXMean,_XMean_ColumnName,Altaxo.Data.ColumnKind.V,0);
+      table.DataColumns.Add(colXScale,_XScale_ColumnName,Altaxo.Data.ColumnKind.V,0);
 
 
       // store the x-loads - careful - they are horizontal in the matrix
@@ -836,7 +982,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         for(int j=0;j<xLoads.Columns;j++)
           col[j] = xLoads[i,j];
           
-        table.DataColumns.Add(col,"XLoad"+i.ToString(),Altaxo.Data.ColumnKind.V,0);
+        table.DataColumns.Add(col,_XLoad_ColumnName+i.ToString(),Altaxo.Data.ColumnKind.V,0);
       }
 
 
@@ -850,9 +996,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
         colYScale[i] = 1;
       }
 
-      table.DataColumns.Add(colYMean, "YMean",Altaxo.Data.ColumnKind.V,1);
-      table.DataColumns.Add(colYScale,"YScale",Altaxo.Data.ColumnKind.V,1);
-
+      table.DataColumns.Add(colYMean, _YMean_ColumnName,Altaxo.Data.ColumnKind.V,1);
+      table.DataColumns.Add(colYScale,_YScale_ColumnName,Altaxo.Data.ColumnKind.V,1);
 
 
       // now store the y-loads - careful - they are horizontal in the matrix
@@ -863,7 +1008,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         for(int j=0;j<yLoads.Columns;j++)
           col[j] = yLoads[i,j];
         
-        table.DataColumns.Add(col,"YLoad"+i.ToString(),Altaxo.Data.ColumnKind.V,1);
+        table.DataColumns.Add(col,_YLoad_ColumnName+i.ToString(),Altaxo.Data.ColumnKind.V,1);
       }
 
       // now store the weights - careful - they are horizontal in the matrix
@@ -874,7 +1019,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         for(int j=0;j<W.Columns;j++)
           col[j] = W[i,j];
         
-        table.DataColumns.Add(col,"XWeight"+i.ToString(),Altaxo.Data.ColumnKind.V,0);
+        table.DataColumns.Add(col,_XWeight_ColumnName+i.ToString(),Altaxo.Data.ColumnKind.V,0);
       }
 
       // now store the cross product vector - it is a horizontal vector
@@ -883,7 +1028,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       
       for(int j=0;j<V.Columns;j++)
         col[j] = V[0,j];
-      table.DataColumns.Add(col,"CrossP",Altaxo.Data.ColumnKind.V,3);
+      table.DataColumns.Add(col,_CrossProduct_ColumnName,Altaxo.Data.ColumnKind.V,3);
     }
 
     {
@@ -902,15 +1047,21 @@ namespace Altaxo.Worksheet.Commands.Analysis
         col[i] = crossPRESSMatrix[i,0];
       }
       table.DataColumns.Add(xNumFactor,"NumberOfFactors",Altaxo.Data.ColumnKind.X,4);
-      table.DataColumns.Add(col,"CrossPRESS",Altaxo.Data.ColumnKind.V,4);
+      table.DataColumns.Add(col,_CrossPRESSValue_ColumnName,Altaxo.Data.ColumnKind.V,4);
     }
 
       // calculate the self predicted y values - for one factor and for two
       Altaxo.Calc.IMatrix yPred = new Altaxo.Calc.MatrixMath.BEMatrix(matrixY.Rows,matrixY.Columns);
       Altaxo.Data.DoubleColumn presscol = new Altaxo.Data.DoubleColumn();
-      
+      for(int i=0;i<PRESS.Rows;i++)
+        presscol[i] = PRESS[i,0];
       table.DataColumns.Add(presscol,"PRESS",Altaxo.Data.ColumnKind.V,4);
-      presscol[0] = Altaxo.Calc.MatrixMath.SumOfSquares(matrixY); // gives the press for 0 factors, i.e. the variance of the y-matrix
+
+      // add a label column for the measurement number
+      Altaxo.Data.DoubleColumn measurementLabel = new Altaxo.Data.DoubleColumn();
+      for(int i=0;i<measurementIndices.Count;i++)
+        measurementLabel[i] = measurementIndices[i];
+      table.DataColumns.Add(measurementLabel,_MeasurementLabel_ColumnName,Altaxo.Data.ColumnKind.Label,5);
 
       // now add the original Y-Columns
       for(int i=0;i<matrixY.Columns;i++)
@@ -918,11 +1069,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
         Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
         for(int j=0;j<matrixY.Rows;j++)
           col[j]=matrixY[j,i] + meanY[0,i];
-        table.DataColumns.Add(col,"YOrg"+i.ToString(),Altaxo.Data.ColumnKind.X,5+i);
+        table.DataColumns.Add(col,_YOriginal_ColumnName+i.ToString(),Altaxo.Data.ColumnKind.X,5+i);
       }
       
-      table.DataColumns.Add(labelColumnOfX,"XLabel",Altaxo.Data.ColumnKind.Label,5);
+      // table.DataColumns.Add(labelColumnOfX,"XLabel",Altaxo.Data.ColumnKind.Label,5);
 
+      /*
       // and now the predicted Y 
       for(int nFactor=1;nFactor<=numFactors;nFactor++)
       {
@@ -940,11 +1092,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
           for(int j=0;j<yPred.Rows;j++)
             col[j] = yPred[j,i] + meanY[0,i];
         
-          table.DataColumns.Add(col,"YPred"+nFactor.ToString()+ "_" + i.ToString(),Altaxo.Data.ColumnKind.V,_PredictedYColumnGroup);
+          table.DataColumns.Add(col,GetYPredicted_ColumnName(i,nFactor),Altaxo.Data.ColumnKind.V,_PredictedYColumnGroup);
         }
       } // for nFactor...
-
-
+      */
+   
       table.SetTableProperty("Content",plsContent);
 
       table.Resume();
@@ -955,6 +1107,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
       return null;
     }
 
+
+    #endregion
+
+    #region PLS Model Export
 
     public static void ExportPLSCalibration(Altaxo.Data.DataTable table)
     {
@@ -1017,28 +1173,28 @@ namespace Altaxo.Worksheet.Commands.Analysis
         Altaxo.Data.DataColumn col;
 
         sel.Clear();
-        col = _table["XMean"];
-        if(col==null) NotFound("XMean");
+        col = _table[_XMean_ColumnName];
+        if(col==null) NotFound(_XMean_ColumnName);
         sel.Add(_table.DataColumns.GetColumnNumber(col));
         calibrationSet.XMean = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfX);
 
         sel.Clear();
-        col = _table["XScale"];
-        if(col==null) NotFound("XScale");
+        col = _table[_XScale_ColumnName];
+        if(col==null) NotFound(_XScale_ColumnName);
         sel.Add(_table.DataColumns.GetColumnNumber(col));
         calibrationSet.XScale = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfX);
 
 
         
         sel.Clear();
-        col = _table["YMean"];
-        if(col==null) NotFound("YMean");
+        col = _table[_YMean_ColumnName];
+        if(col==null) NotFound(_YMean_ColumnName);
         sel.Add(_table.DataColumns.GetColumnNumber(col));
         calibrationSet.YMean = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfY);
 
         sel.Clear();
-        col = _table["YScale"];
-        if(col==null) NotFound("YScale");
+        col = _table[_YScale_ColumnName];
+        if(col==null) NotFound(_YScale_ColumnName);
         sel.Add(_table.DataColumns.GetColumnNumber(col));
         calibrationSet.YScale = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfY);
 
@@ -1046,7 +1202,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         sel.Clear();
         for(int i=0;i<_numberOfFactors;i++)
         {
-          string colname = "XWeight"+i.ToString();
+          string colname = _XWeight_ColumnName + i.ToString();
           col = _table[colname];
           if(col==null) NotFound(colname);
           sel.Add(_table.DataColumns.GetColumnNumber(col));
@@ -1057,7 +1213,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         sel.Clear();
         for(int i=0;i<_numberOfFactors;i++)
         {
-          string colname = "XLoad"+i.ToString();
+          string colname = _XLoad_ColumnName + i.ToString();
           col = _table[colname];
           if(col==null) NotFound(colname);
           sel.Add(_table.DataColumns.GetColumnNumber(col));
@@ -1068,19 +1224,19 @@ namespace Altaxo.Worksheet.Commands.Analysis
         sel.Clear();
         for(int i=0;i<_numberOfFactors;i++)
         {
-          string colname = "YLoad"+i.ToString();
+          string colname = _YLoad_ColumnName + i.ToString();
           col = _table[colname];
           if(col==null) NotFound(colname);
           sel.Add(_table.DataColumns.GetColumnNumber(col));
         }
-        calibrationSet.YLoads = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfX);
+        calibrationSet.YLoads = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfY);
 
         
         sel.Clear();
-        col = _table["CrossP"];
-        if(col==null) NotFound("CrossP");
+        col = _table[_CrossProduct_ColumnName];
+        if(col==null) NotFound(_CrossProduct_ColumnName);
         sel.Add(_table.DataColumns.GetColumnNumber(col));
-        calibrationSet.XMean = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfFactors);
+        calibrationSet.CrossProduct = new Altaxo.Calc.DataColumnToRowMatrixWrapper(_table.DataColumns,sel,_numberOfFactors);
 
 
         
@@ -1123,22 +1279,22 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       static int GetNumberOfX(Altaxo.Data.DataTable table)
       {
-        Altaxo.Data.DataColumn col = table.DataColumns["XLoad0"];
-        if(col==null) NotFound("XLoad0");
+        Altaxo.Data.DataColumn col = table.DataColumns[_XLoad_ColumnName + "0"];
+        if(col==null) NotFound(_XLoad_ColumnName + "0");
         return col.Count;
       }
 
       static int GetNumberOfY(Altaxo.Data.DataTable table)
       {
-        Altaxo.Data.DataColumn col = table.DataColumns["YLoad0"];
-        if(col==null) NotFound("YLoad0");
+        Altaxo.Data.DataColumn col = table.DataColumns[_YLoad_ColumnName + "0"];
+        if(col==null) NotFound(_YLoad_ColumnName + "0");
         return col.Count;
       }
 
       static int GetNumberOfFactors(Altaxo.Data.DataTable table)
       {
-        Altaxo.Data.DataColumn col = table.DataColumns["CrossP"];
-        if(col==null) NotFound("CrossP");
+        Altaxo.Data.DataColumn col = table.DataColumns[_CrossProduct_ColumnName];
+        if(col==null) NotFound(_CrossProduct_ColumnName);
         return col.Count;
       }
 
@@ -1162,16 +1318,16 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
         _writer.WriteStartElement("XData");
 
-        col = _table.DataColumns["XOfX"] as Altaxo.Data.DoubleColumn;
-        if(null==col) NotFound("XOfX");
+        col = _table.DataColumns[_XOfX_ColumnName] as Altaxo.Data.DoubleColumn;
+        if(null==col) NotFound(_XOfX_ColumnName);
         WriteVector("XOfX",col, _numberOfX);
 
-        col = _table.DataColumns["XMean"] as Altaxo.Data.DoubleColumn;
-        if(null==col) NotFound("XMean");
+        col = _table.DataColumns[_XMean_ColumnName] as Altaxo.Data.DoubleColumn;
+        if(null==col) NotFound(_XMean_ColumnName);
         WriteVector("XMean",col, _numberOfX);
 
-        col = _table.DataColumns["XScale"] as Altaxo.Data.DoubleColumn;
-        if(null==col) NotFound("XScale");
+        col = _table.DataColumns[_XScale_ColumnName] as Altaxo.Data.DoubleColumn;
+        if(null==col) NotFound(_XScale_ColumnName);
         WriteVector("XScale",col, _numberOfX);
 
         WriteXLoads();
@@ -1191,7 +1347,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         // Loads
         for(int i=0;i<_numberOfFactors;i++)
         {
-          string colname = "XLoad"+i.ToString();
+          string colname = _XLoad_ColumnName+i.ToString();
           col = _table.DataColumns[colname] as Altaxo.Data.DoubleColumn;
           if(null==col) NotFound(colname);
           WriteVector(colname,col, _numberOfX);
@@ -1208,7 +1364,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         // Loads
         for(int i=0;i<_numberOfFactors;i++)
         {
-          string colname = "XWeight"+i.ToString();
+          string colname = _XWeight_ColumnName+i.ToString();
           col = _table.DataColumns[colname] as Altaxo.Data.DoubleColumn;
           if(null==col) NotFound(colname);
           WriteVector(colname,col, _numberOfX);
@@ -1222,12 +1378,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
         _writer.WriteStartElement("YData");
 
-        col = _table.DataColumns["YMean"] as Altaxo.Data.DoubleColumn;
-        if(null==col) NotFound("YMean");
+        col = _table.DataColumns[_YMean_ColumnName] as Altaxo.Data.DoubleColumn;
+        if(null==col) NotFound(_YMean_ColumnName);
         WriteVector("YMean",col, _numberOfY);
 
-        col = _table.DataColumns["YScale"] as Altaxo.Data.DoubleColumn;
-        if(null==col) NotFound("YScale");
+        col = _table.DataColumns[_YScale_ColumnName] as Altaxo.Data.DoubleColumn;
+        if(null==col) NotFound(_YScale_ColumnName);
         WriteVector("YScale",col, _numberOfY);
 
         WriteYLoads();
@@ -1243,7 +1399,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         // Loads
         for(int i=0;i<_numberOfFactors;i++)
         {
-          string colname = "YLoad"+i.ToString();
+          string colname = _YLoad_ColumnName+i.ToString();
           col = _table.DataColumns[colname] as Altaxo.Data.DoubleColumn;
           if(null==col) NotFound(colname);
           WriteVector(colname,col, _numberOfY);
@@ -1255,8 +1411,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       {
         Altaxo.Data.DoubleColumn col=null;
 
-        col = _table.DataColumns["CrossP"] as Altaxo.Data.DoubleColumn;
-        if(null==col) NotFound("CrossP");
+        col = _table.DataColumns[_CrossProduct_ColumnName] as Altaxo.Data.DoubleColumn;
+        if(null==col) NotFound(_CrossProduct_ColumnName);
         WriteVector("CrossProductData", col, _numberOfFactors);
 
       }
@@ -1284,37 +1440,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #endregion
 
-    #region PLS Plot Commands
+    #region PLS Retrieving original data
 
-    /// <summary>
-    /// Plots the cross PRESS value into a provided layer.
-    /// </summary>
-    /// <param name="table">The table of PLS output data.</param>
-    /// <param name="layer">The layer to plot into.</param>
-    public static void PlotCrossPRESS(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer)
-    {
-      Altaxo.Data.DataColumn ycol = table["CrossPRESS"];
-      Altaxo.Data.DataColumn xcol = table["NumberOfFactors"];
-
-      Altaxo.Graph.XYColumnPlotData pa = new Altaxo.Graph.XYColumnPlotData(xcol,ycol);
-      Altaxo.Graph.XYLineScatterPlotStyle ps = new Altaxo.Graph.XYLineScatterPlotStyle(Altaxo.Graph.LineScatterPlotStyleKind.LineAndScatter);
-      layer.PlotItems.Add(new Altaxo.Graph.XYColumnPlotItem(pa,ps));
-
-      layer.BottomAxisTitleString = "Number of factors";
-      layer.LeftAxisTitleString   = "Cross PRESS value";
-    }
-
-    /// <summary>
-    /// Gets the column name of a Y-Residual column
-    /// </summary>
-    /// <param name="whichY">Number of y-value.</param>
-    /// <param name="numberOfFactors">Number of factors for which the redidual is calculated.</param>
-    /// <returns>The name of the column.</returns>
-    public static string GetYResidualColumnName(int whichY, int numberOfFactors)
-    {
-      return string.Format("YResidual{0}.{1}",whichY,numberOfFactors);
-    }
-
+    
 
     /// <summary>
     /// Using the information in the plsMemo, gets the matrix of original spectra. The spectra are horizontal in the matrix, i.e. each spectra is a matrix row.
@@ -1402,11 +1530,33 @@ namespace Altaxo.Worksheet.Commands.Analysis
       return matrixY;
     }
 
+    #endregion
 
-    public static Altaxo.Data.DataColumn CalculateYResidual(Altaxo.Data.DataTable table, int whichY, int numberOfFactors)
+    #region PLS Calculating values
+
+    /// <summary>
+    /// Calculated the predicted y for the component given by <c>whichY</c> and for the given number of factors.
+    /// </summary>
+    /// <param name="table">The table containing the PLS model.</param>
+    /// <param name="whichY">The number of the y component.</param>
+    /// <param name="numberOfFactors">Number of factors for calculation.</param>
+    public static void CalculateYPredicted(Altaxo.Data.DataTable table, int whichY, int numberOfFactors)
     {
-   
+      CalculatePredictedAndResidual(table,whichY,numberOfFactors,true,false,false);
+    }
 
+    public static void CalculateYResidual(Altaxo.Data.DataTable table, int whichY, int numberOfFactors)
+    {
+      CalculatePredictedAndResidual(table,whichY,numberOfFactors,false,true,false);
+    }
+
+    public static void CalculateXResidual(Altaxo.Data.DataTable table, int whichY, int numberOfFactors)
+    {
+      CalculatePredictedAndResidual(table,whichY,numberOfFactors,false,false,true);
+    }
+
+    public static void CalculatePredictedAndResidual(Altaxo.Data.DataTable table, int whichY, int numberOfFactors, bool saveYPredicted, bool saveYResidual, bool saveXResidual)
+    {
       PLSContentMemento plsMemo = table.GetTableProperty("Content") as PLSContentMemento;
 
       if(plsMemo==null)
@@ -1438,23 +1588,85 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Calc.MatrixMath.MultiplyRow(predictedY,calib.YScale,0,predictedY);
       Altaxo.Calc.MatrixMath.AddRow(predictedY,calib.YMean,0,predictedY);
 
-      // subract the original y data
-      Altaxo.Calc.MatrixMath.SubtractRow(predictedY,matrixY,whichY,predictedY);
+      if(saveYPredicted)
+      {
+        // insert a column with the proper name into the table and fill it
+        string ycolname = GetYPredicted_ColumnName(whichY,numberOfFactors);
+        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
 
-      // insert a column with the proper name into the table and fill it
-      string ycolname = GetYResidualColumnName(whichY,numberOfFactors);
-      Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
-
-      for(int i=0;i<predictedY.Rows;i++)
-        ycolumn[i] = predictedY[i,whichY];
+        for(int i=0;i<predictedY.Rows;i++)
+          ycolumn[i] = predictedY[i,whichY];
       
-      table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,_ResidualYColumnGroup);
+        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,_PredictedYColumnGroup);
+      }
 
-      return ycolumn;
+      // subract the original y data
+      Altaxo.Calc.MatrixMath.SubtractColumn(predictedY,matrixY,whichY,predictedY);
+
+      if(saveYResidual)
+      {
+        // insert a column with the proper name into the table and fill it
+        string ycolname = GetYResidual_ColumnName(whichY,numberOfFactors);
+        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
+
+        for(int i=0;i<predictedY.Rows;i++)
+          ycolumn[i] = predictedY[i,whichY];
+      
+        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,_ResidualYColumnGroup);
+      }
+
+
+      if(saveXResidual)
+      {
+        // insert a column with the proper name into the table and fill it
+        string ycolname = GetXResidual_ColumnName(whichY,numberOfFactors);
+        Altaxo.Data.DoubleColumn ycolumn = new Altaxo.Data.DoubleColumn();
+
+        for(int i=0;i<matrixX.Rows;i++)
+        {
+          double sum=0;
+          for(int j=matrixX.Columns-1;j>=0;j--)
+          {
+            sum += matrixX[i,j]*matrixX[i,j];
+          }
+          ycolumn[i] = sum;
+        }
+        table.DataColumns.Add(ycolumn,ycolname,Altaxo.Data.ColumnKind.V,_ResidualYColumnGroup);
+      }
+      
+    }
+
+    #endregion
+
+    #region PLS Plot Commands
+
+ 
+
+    /// <summary>
+    /// This plots a label plot into the provided layer.
+    /// </summary>
+    /// <param name="layer">The layer to plot into.</param>
+    /// <param name="xcol">The x column.</param>
+    /// <param name="ycol">The y column.</param>
+    /// <param name="labelcol">The label column.</param>
+    public static void PlotOnlyLabel(Altaxo.Graph.XYPlotLayer layer, Altaxo.Data.DataColumn xcol, Altaxo.Data.DataColumn ycol, Altaxo.Data.DataColumn labelcol)  
+    {
+      Altaxo.Graph.XYColumnPlotData pa = new Altaxo.Graph.XYColumnPlotData(xcol,ycol);
+      pa.LabelColumn = labelcol;
+
+      Altaxo.Graph.XYLineScatterPlotStyle ps = new Altaxo.Graph.XYLineScatterPlotStyle(Altaxo.Graph.LineScatterPlotStyleKind.LineAndScatter);
+      ps.XYPlotScatterStyle.Shape = Altaxo.Graph.XYPlotScatterStyles.Shape.NoSymbol;
+      ps.XYPlotLineStyle.Connection = Altaxo.Graph.XYPlotLineStyles.ConnectionStyle.NoLine;
+      ps.XYPlotLabelStyle = new Altaxo.Graph.XYPlotLabelStyle();
+      ps.XYPlotLabelStyle.FontSize = 10;
+      ps.XYPlotLabelStyle.BackgroundColor = System.Drawing.Color.LightCyan;
+      ps.XYPlotLabelStyle.WhiteOut=true;
+      
+      layer.PlotItems.Add(new Altaxo.Graph.XYColumnPlotItem(pa,ps));
     }
 
     /// <summary>
-    /// Plots the cross PRESS value into a provided layer.
+    /// Plots the residual y values of a given component into a provided layer.
     /// </summary>
     /// <param name="table">The table of PLS output data.</param>
     /// <param name="layer">The layer to plot into.</param>
@@ -1462,27 +1674,79 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="numberOfFactors">The number of factors used for calculation of the residuals.</param>
     public static void PlotYResiduals(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int whichY, int numberOfFactors)
     {
-      string ycolname = string.Format("YResidual{0}.{1}",whichY,numberOfFactors);
-
-     
-      Altaxo.Data.DataColumn ycol = table[ycolname];
-
+      string yrescolname = GetYResidual_ColumnName(whichY,numberOfFactors);
+      string yactcolname = GetYOriginal_ColumnName(whichY);
+ 
       // Calculate the residual if not here
-      if(ycol==null)
+      if(table[yrescolname]==null)
       {
-        ycol = CalculateYResidual(table, whichY, numberOfFactors);
+        CalculateYResidual(table, whichY, numberOfFactors);
       }
 
-      Altaxo.Data.DataColumn xcol = table.DataColumns.FindXColumnOf(ycol);
+      PlotOnlyLabel(layer,table[yactcolname],table[yrescolname],table[_MeasurementLabel_ColumnName]);
 
-      Altaxo.Graph.XYColumnPlotData pa = new Altaxo.Graph.XYColumnPlotData(xcol,ycol);
-      Altaxo.Graph.XYLineScatterPlotStyle ps = new Altaxo.Graph.XYLineScatterPlotStyle(Altaxo.Graph.LineScatterPlotStyleKind.LineAndScatter);
-      layer.PlotItems.Add(new Altaxo.Graph.XYColumnPlotItem(pa,ps));
-
-      layer.BottomAxisTitleString = "measurement number";
+      layer.BottomAxisTitleString = string.Format("Y original{0}",whichY);
       layer.LeftAxisTitleString   = string.Format("Y residual{0} (#factors:{1})",whichY,numberOfFactors);
     }
 
+    /// <summary>
+    /// Plots the x (spectral) residuals into a provided layer.
+    /// </summary>
+    /// <param name="table">The table of PLS output data.</param>
+    /// <param name="layer">The layer to plot into.</param>
+    /// <param name="whichY">The number of the component (y, concentration etc.) for which to plot the residuals.</param>
+    /// <param name="numberOfFactors">The number of factors used for calculation of the residuals.</param>
+    public static void PlotXResiduals(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int whichY, int numberOfFactors)
+    {
+      string xresidualcolname = GetXResidual_ColumnName(whichY,numberOfFactors);
+      string yactcolname = GetYOriginal_ColumnName(whichY);
+      
+      if(table[xresidualcolname]==null)
+      {
+        CalculateXResidual(table,whichY,numberOfFactors);
+      }
+
+      PlotOnlyLabel(layer,table[yactcolname],table[xresidualcolname],table[_MeasurementLabel_ColumnName]);
+
+      layer.BottomAxisTitleString = string.Format("Y original{0}",whichY);
+      layer.LeftAxisTitleString   = string.Format("X residual{0} (#factors:{1})",whichY,numberOfFactors);
+    }
+    
+    /// <summary>
+    /// Plots the predicted versus actual Y (concentration) into a provided layer.
+    /// </summary>
+    /// <param name="table">The table of PLS output data.</param>
+    /// <param name="layer">The layer to plot into.</param>
+    /// <param name="whichY">The number of the component (y, concentration etc.) for which to plot the residuals.</param>
+    /// <param name="numberOfFactors">The number of factors used for calculation of the residuals.</param>
+    public static void PlotPredictedVersusActualY(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer, int whichY, int numberOfFactors)
+    {
+      string ypredcolname = GetYPredicted_ColumnName(whichY,numberOfFactors);
+      string yactcolname = GetYOriginal_ColumnName(whichY);
+      if(table[ypredcolname]==null)
+      {
+        CalculateYPredicted(table,whichY,numberOfFactors);
+      }
+
+      PlotOnlyLabel(layer,table[yactcolname],table[ypredcolname],table[_MeasurementLabel_ColumnName]);
+
+      layer.BottomAxisTitleString = string.Format("Y original{0}",whichY);
+      layer.LeftAxisTitleString   = string.Format("Y predicted{0} (#factors:{1})",whichY,numberOfFactors);
+    }
+
+    /// <summary>
+    /// Asks the user for the preferred number of factors to use for calculation and plotting and stores that number in the 
+    /// PLS content tag of the table.
+    /// </summary>
+    /// <param name="table">The table which contains the PLS model.</param>
+    public static void QuestPreferredNumberOfFactors(Altaxo.Data.DataTable table)
+    {
+      PLSContentMemento plsMemo = table.GetTableProperty("Content") as PLSContentMemento;
+      if(plsMemo==null)
+        return;
+
+      QuestPreferredNumberOfFactors(plsMemo);
+    }
 
     public static void QuestPreferredNumberOfFactors(PLSContentMemento plsMemo)
     {
@@ -1500,10 +1764,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
     /// <summary>
-    /// Plots the rediduals of all y components invidually in a single graph.
+    /// Plots the rediduals of all y components invidually in a graph.
     /// </summary>
     /// <param name="table">The table with the PLS model data.</param>
-    public static void PlotAllYResidualsIndividually(Altaxo.Data.DataTable table)
+    public static void PlotYResiduals(Altaxo.Data.DataTable table)
     {
       PLSContentMemento plsMemo = table.GetTableProperty("Content") as PLSContentMemento;
       if(plsMemo==null)
@@ -1516,6 +1780,101 @@ namespace Altaxo.Worksheet.Commands.Analysis
         Altaxo.Graph.GUI.IGraphController graphctrl = Current.ProjectService.CreateNewGraph();
         PlotYResiduals(table,graphctrl.Doc.Layers[0],nComponent,plsMemo.PreferredNumberOfFactors);
       }
+    }
+
+    /// <summary>
+    /// Plots the prediction values of all y components invidually in a  graph.
+    /// </summary>
+    /// <param name="table">The table with the PLS model data.</param>
+    public static void PlotPredictedVersusActualY(Altaxo.Data.DataTable table)
+    {
+      PLSContentMemento plsMemo = table.GetTableProperty("Content") as PLSContentMemento;
+      if(plsMemo==null)
+        return;
+      if(plsMemo.PreferredNumberOfFactors<=0)
+        QuestPreferredNumberOfFactors(plsMemo);
+
+      for(int nComponent=0;nComponent<plsMemo.NumberOfConcentrationData;nComponent++)
+      {
+        Altaxo.Graph.GUI.IGraphController graphctrl = Current.ProjectService.CreateNewGraph();
+        PlotPredictedVersusActualY(table,graphctrl.Doc.Layers[0],nComponent,plsMemo.PreferredNumberOfFactors);
+      }
+    }
+
+    /// <summary>
+    /// Plots the x (spectral) residuals of all y components invidually in a graph.
+    /// </summary>
+    /// <param name="table">The table with the PLS model data.</param>
+    public static void PlotXResiduals(Altaxo.Data.DataTable table)
+    {
+      PLSContentMemento plsMemo = table.GetTableProperty("Content") as PLSContentMemento;
+      if(plsMemo==null)
+        return;
+      if(plsMemo.PreferredNumberOfFactors<=0)
+        QuestPreferredNumberOfFactors(plsMemo);
+
+      for(int nComponent=0;nComponent<plsMemo.NumberOfConcentrationData;nComponent++)
+      {
+        Altaxo.Graph.GUI.IGraphController graphctrl = Current.ProjectService.CreateNewGraph();
+        PlotXResiduals(table,graphctrl.Doc.Layers[0],nComponent,plsMemo.PreferredNumberOfFactors);
+      }
+    }
+
+
+    /// <summary>
+    /// Plots the PRESS value into a provided layer.
+    /// </summary>
+    /// <param name="table">The table of PLS output data.</param>
+    /// <param name="layer">The layer to plot into.</param>
+    public static void PlotPRESSValue(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer)
+    {
+      Altaxo.Data.DataColumn ycol = table[_PRESSValue_ColumnName];
+      Altaxo.Data.DataColumn xcol = table[_NumberOfFactors_ColumnName];
+
+      Altaxo.Graph.XYColumnPlotData pa = new Altaxo.Graph.XYColumnPlotData(xcol,ycol);
+      Altaxo.Graph.XYLineScatterPlotStyle ps = new Altaxo.Graph.XYLineScatterPlotStyle(Altaxo.Graph.LineScatterPlotStyleKind.LineAndScatter);
+      layer.PlotItems.Add(new Altaxo.Graph.XYColumnPlotItem(pa,ps));
+
+      layer.BottomAxisTitleString = "Number of factors";
+      layer.LeftAxisTitleString   = "PRESS value";
+    }
+
+    /// <summary>
+    /// Plots the PRESS value into a provided layer.
+    /// </summary>
+    /// <param name="table">The table of PLS output data.</param>
+    public static void PlotPRESSValue(Altaxo.Data.DataTable table)
+    {
+      Altaxo.Graph.GUI.IGraphController graphctrl = Current.ProjectService.CreateNewGraph();
+      PlotPRESSValue(table,graphctrl.Doc.Layers[0]);
+    }
+
+    /// <summary>
+    /// Plots the cross PRESS value into a provided layer.
+    /// </summary>
+    /// <param name="table">The table of PLS output data.</param>
+    /// <param name="layer">The layer to plot into.</param>
+    public static void PlotCrossPRESSValue(Altaxo.Data.DataTable table, Altaxo.Graph.XYPlotLayer layer)
+    {
+      Altaxo.Data.DataColumn ycol = table[_CrossPRESSValue_ColumnName];
+      Altaxo.Data.DataColumn xcol = table[_NumberOfFactors_ColumnName];
+
+      Altaxo.Graph.XYColumnPlotData pa = new Altaxo.Graph.XYColumnPlotData(xcol,ycol);
+      Altaxo.Graph.XYLineScatterPlotStyle ps = new Altaxo.Graph.XYLineScatterPlotStyle(Altaxo.Graph.LineScatterPlotStyleKind.LineAndScatter);
+      layer.PlotItems.Add(new Altaxo.Graph.XYColumnPlotItem(pa,ps));
+
+      layer.BottomAxisTitleString = "Number of factors";
+      layer.LeftAxisTitleString   = "Cross PRESS value";
+    }
+
+    /// <summary>
+    /// Plots the cross PRESS value into a provided layer.
+    /// </summary>
+    /// <param name="table">The table of PLS output data.</param>
+    public static void PlotCrossPRESSValue(Altaxo.Data.DataTable table)
+    {
+      Altaxo.Graph.GUI.IGraphController graphctrl = Current.ProjectService.CreateNewGraph();
+      PlotCrossPRESSValue(table,graphctrl.Doc.Layers[0]);
     }
 
     #endregion

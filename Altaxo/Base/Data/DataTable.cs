@@ -260,6 +260,63 @@ namespace Altaxo.Data
       }
     }
 
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable),2)]
+      public class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
+      {
+        Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
+        info.AddValue("Name",s.m_TableName); // name of the Table
+        info.AddValue("DataCols",s.m_DataColumns);
+        info.AddValue("PropCols", s.m_PropertyColumns); // the property columns of that table
+
+        // new in version 1
+        info.AddValue("TableScript",s.m_TableScript);
+
+        // new in version 2 - Add table properties
+        int numberproperties = s._TableProperties==null ? 0 : s._TableProperties.Keys.Count;
+        info.CreateArray("TableProperties",numberproperties);
+        if(s._TableProperties!=null)
+        {
+          foreach(string propkey in s._TableProperties.Keys)
+          {
+            info.CreateElement("e");
+            info.AddValue("Key",propkey);
+            object val = s._TableProperties[propkey];
+            info.AddValue("Value",info.IsSerializable(val) ? val : null);
+            info.CommitElement();
+          }
+        }
+        info.CommitArray();
+
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo  info, object parent)
+      {
+        Altaxo.Data.DataTable s = null!=o ? (Altaxo.Data.DataTable)o : new Altaxo.Data.DataTable();
+
+        s.m_TableName = info.GetString("Name");
+        s.m_DataColumns = (DataColumnCollection)info.GetValue("DataCols",s);
+        s.m_DataColumns.ParentObject = s;
+        s.m_PropertyColumns = (DataColumnCollection)info.GetValue("PropCols",s);
+        s.m_PropertyColumns.ParentObject = s;
+
+        // new in version 1
+        s.m_TableScript = (TableScript)info.GetValue("TableScript",s);
+
+        // new in version 2 - Add table properties
+        int numberproperties = info.OpenArray(); // "TableProperties"
+        for(int i=0;i<numberproperties;i++)
+        {
+          info.OpenElement(); // "e"
+          string propkey = info.GetString("Key");
+          object propval = info.GetValue("Value",parent);
+          info.CloseElement(); // "e"
+          s.SetTableProperty(propkey,propval);
+        }
+        info.CloseArray(numberproperties);
+        return s;
+      }
+    }
 
     public virtual void OnDeserialization(object obj)
     {

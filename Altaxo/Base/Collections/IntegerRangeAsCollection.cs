@@ -40,6 +40,31 @@ namespace Altaxo.Collections
     /// </summary>
     int _count;
 
+    #region Serialization
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IntegerRangeAsCollection),0)]
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
+      {
+        IntegerRangeAsCollection s = (IntegerRangeAsCollection)obj;
+        info.AddValue("Start",s._start);
+        info.AddValue("Count",s._count);
+
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo  info, object parent)
+      {
+        IntegerRangeAsCollection s = null!=o ? (IntegerRangeAsCollection)o : new IntegerRangeAsCollection();
+
+        s._start = info.GetInt32("Start");
+        s._count = info.GetInt32("Count");
+
+        return s;
+      }
+    }
+
+    #endregion
+
+
     /// <summary>
     /// Constructs the range by giving a start and the width.
     /// </summary>
@@ -49,6 +74,14 @@ namespace Altaxo.Collections
     {
       _start = start;
       _count = count;
+    }
+
+    /// <summary>
+    /// Empty constructor for deserialisation.
+    /// </summary>
+    protected IntegerRangeAsCollection()
+    {
+      _start=_count=0;
     }
 
     /// <summary>

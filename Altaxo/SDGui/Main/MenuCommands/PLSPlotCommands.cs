@@ -54,13 +54,54 @@ namespace Altaxo.Worksheet.Commands
       return ctrl.DataTable.GetTableProperty("Content") is Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSContentMemento;
     }
   }
-
-
-  public class PLSPlotResidualsIndividually : AbstractWorksheetControllerCommand
+  
+  public class PLSQuestPreferredNumberOfFactors : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotAllYResidualsIndividually(ctrl.DataTable);
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.QuestPreferredNumberOfFactors(ctrl.DataTable);
+    }
+  }
+
+
+  public class PLSPlotPredictedVersusActualYIndividually : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPredictedVersusActualY(ctrl.DataTable);
+    }
+  }
+
+
+  public class PLSPlotYResidualsIndividually : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotYResiduals(ctrl.DataTable);
+    }
+  }
+
+  public class PLSPlotXResidualsIndividually : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotXResiduals(ctrl.DataTable);
+    }
+  }
+
+  public class PLSPlotPRESSValue : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotPRESSValue(ctrl.DataTable);
+    }
+  }
+
+  public class PLSPlotCrossPRESSValue : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PlotCrossPRESSValue(ctrl.DataTable);
     }
   }
 }

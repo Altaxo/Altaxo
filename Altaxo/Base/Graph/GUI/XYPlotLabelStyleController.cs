@@ -298,7 +298,7 @@ namespace Altaxo.Graph.GUI
         View.WhiteOut_Initialize(m_WhiteOut);
         View.Rotation_Initialize(Serialization.NumberConversion.ToString(m_Rotation));
         View.XOffset_Initialize(Serialization.NumberConversion.ToString(m_XOffset*100));
-        View.YOffset_Initialize(Serialization.NumberConversion.ToString(m_XOffset*100));
+        View.YOffset_Initialize(Serialization.NumberConversion.ToString(m_YOffset*100));
       }
     }
     #region IXYPlotLabelStyleController Members

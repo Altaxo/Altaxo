@@ -1109,6 +1109,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Worksheet\GUI\PLSStartAnalysisControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\PLSStartAnalysisControl.resx"
+                    DependentUpon = "PLSStartAnalysisControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\PLSStartAnalysisController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Worksheet\GUI\SetColumnValuesDialog.cs"
                     SubType = "Form"
                     BuildAction = "Compile"

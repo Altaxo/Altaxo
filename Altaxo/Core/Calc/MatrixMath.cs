@@ -1098,6 +1098,37 @@ namespace Altaxo.Calc
 
     
     /// <summary>
+    /// Subtracts the column <c>bcol</c> of matrix b from all columns of matrix a. 
+    /// </summary>
+    /// <param name="a">The source matrix.</param>
+    /// <param name="b">The matrix which contains the row to subtract.</param>
+    /// <param name="bcol">The column number of matrix b.</param>
+    /// <param name="c">The destination matrix. Can be equivalent to matrix a (but not to matrix b).</param>
+    public static void SubtractColumn(IROMatrix a, IROMatrix b, int bcol,  IMatrix c)
+    {
+      int arows = a.Rows;
+      int acols = a.Columns;
+
+      int brows = b.Rows;
+      int bcols = b.Columns;
+
+      int crows = c.Rows;
+      int ccols = c.Columns;
+
+      // Presumtion:
+      if(arows != crows || acols != ccols)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1]))has not the expected dimension ({2},{3})",crows,ccols,arows,acols));
+      if(brows != arows)
+        throw new ArithmeticException(string.Format("Matrix b[{0},{1}] has not the same number of rows than matrix a[{2},{3}]!",brows,bcols,arows,acols));
+      if(object.ReferenceEquals(b,c))
+        throw new ArithmeticException("Matrix b and c are identical, which is not allowed here!");
+
+      for(int i=0;i<arows;i++)
+        for(int j=0;j<acols;j++)
+          c[i,j] = a[i,j]-b[i,bcol];
+    }
+
+    /// <summary>
     /// Divides all rows of matrix a by the row <c>rowb</c> of matrix b (element by element). 
     /// </summary>
     /// <param name="a">The source matrix.</param>
@@ -1610,7 +1641,8 @@ namespace Altaxo.Calc
       IBottomExtensibleMatrix xLoads, // out: the loads of the X matrix
       IBottomExtensibleMatrix yLoads, // out: the loads of the Y matrix
       IBottomExtensibleMatrix W, // matrix of weighting values
-      IRightExtensibleMatrix V  // matrix of cross products
+      IRightExtensibleMatrix V,  // matrix of cross products
+      IBottomExtensibleMatrix PRESS // matrix of Y PRESS values
       )
     {
       // used variables:
@@ -1646,6 +1678,11 @@ namespace Altaxo.Calc
 
       int maxFactors = Math.Min(X.Columns,X.Rows);
       numFactors = numFactors<=0 ? maxFactors : Math.Min(numFactors,maxFactors);
+
+      if(PRESS!=null)
+      {
+        PRESS.AppendBottom(new Scalar(MatrixMath.SumOfSquares(Y))); // Press value for not decomposed Y
+      }
 
       for(int nFactor=0; nFactor<numFactors; nFactor++)
       {
@@ -1709,7 +1746,9 @@ namespace Altaxo.Calc
         //MatrixMath.MultiplyScalar(t,length_of_t*v,t); // original t times the cross product
 
         MatrixMath.SelfSubtractProduct(t,p,X);
-        MatrixMath.SelfSubtractProduct(t,q,Y);
+        
+        MatrixMath.MultiplyScalar(t,v,t); // original t times the cross product
+        MatrixMath.SelfSubtractProduct(t,q,Y); // to calculate residual Y
 
         // Store the loads of X and Y in the output result matrix
         xLoads.AppendBottom(p);
@@ -1717,6 +1756,11 @@ namespace Altaxo.Calc
         W.AppendBottom(w);
         V.AppendRight(v);
     
+        if(PRESS!=null)
+        {
+          double pressValue=MatrixMath.SumOfSquares(Y);
+          PRESS.AppendBottom(new Scalar(pressValue));
+        }
         // Calculate SEPcv. If SEPcv is greater than for the actual number of factors,
         // break since the optimal number of factors was found. If not, repeat the calculations
         // with the residual matrizes for the next factor.
@@ -1898,7 +1942,7 @@ namespace Altaxo.Calc
         W      = new MatrixMath.BEMatrix(0,0); // clear W
         V      = new MatrixMath.REMatrix(0,0); // clear V
         int actnumfactors=numFactors;
-        PartialLeastSquares_HO(XX, YY, ref actnumfactors, xLoads,yLoads,W,V); 
+        PartialLeastSquares_HO(XX, YY, ref actnumfactors, xLoads,yLoads,W,V,null); 
         numFactors = Math.Min(numFactors,actnumfactors); // if we have here a lesser number of factors, use it for all further calculations
                             
 

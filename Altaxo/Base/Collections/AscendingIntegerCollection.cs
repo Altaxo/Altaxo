@@ -31,6 +31,47 @@ namespace Altaxo.Collections
   {
     protected System.Collections.SortedList _list = new System.Collections.SortedList();
 
+    #region Serialization
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AscendingIntegerCollection),0)]
+      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo  info)
+      {
+        AscendingIntegerCollection s = (AscendingIntegerCollection)obj;
+        int count = s.GetRangeCount();
+        info.CreateArray("Ranges",count);
+        int currentpos=0, rangestart=0, rangecount=0;
+        while(s.GetNextRangeAscending(ref currentpos, ref rangestart, ref rangecount))
+        {
+          info.CreateElement("e");
+          info.AddValue("Start",rangestart);
+          info.AddValue("Count",rangecount);
+          info.CommitElement();
+        }
+        info.CommitArray();
+
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo  info, object parent)
+      {
+        AscendingIntegerCollection s = null!=o ? (AscendingIntegerCollection)o : new AscendingIntegerCollection();
+
+        int count = info.OpenArray();
+
+        for(int i=0;i<count;i++)
+        {
+          info.OpenElement();
+          int rangestart = info.GetInt32("Start");
+          int rangecount = info.GetInt32("Count");
+          info.CloseElement();
+          s.AddRange(rangestart,rangecount);
+        }
+        info.CloseArray(count);
+        return s;
+      }
+    }
+
+    #endregion
+
     /// <summary>
     /// Creates an empty collection.
     /// </summary>
@@ -66,6 +107,20 @@ namespace Altaxo.Collections
       {
         return _list.Count;
       }
+    }
+
+    /// <summary>
+    /// Returns the number of integer ranges this collection represents.
+    /// </summary>
+    /// <returns>The number of contiguous integer ranges.</returns>
+    public int GetRangeCount()
+    {
+      int result=0;
+      int currentpos=0, rangestart=0, rangecount=0;
+      while(GetNextRangeAscending(ref currentpos, ref rangestart, ref rangecount))
+        result++;
+
+      return result;
     }
 
     /// <summary>
@@ -196,6 +251,16 @@ namespace Altaxo.Collections
         Add(from[i]);
     }
 
+    /// <summary>
+    /// Adds an integer range given by start and count to the collection.
+    /// </summary>
+    /// <param name="rangestart">First number of the integer range.</param>
+    /// <param name="rangecount">Length of the integer range.</param>
+    public void AddRange(int rangestart, int rangecount)
+    {
+      for(int i=0;i<rangecount;i++)
+        Add(rangestart+i);
+    }
     /// <summary>
     /// Removes an integer value from the collection.
     /// </summary>
