@@ -89,6 +89,11 @@
                     AssemblyName = "Altaxo"
                     HintPath = "..\bin\Debug\Altaxo.dll"
                 />
+                <Reference
+                    Name = "ICSharpCode.SharpZipLib"
+                    AssemblyName = "ICSharpCode.SharpZipLib"
+                    HintPath = "C:\Program Files\SharpDevelop\bin\ICSharpCode.SharpZipLib.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -105,6 +110,11 @@
                 />
                 <File
                     RelPath = "Calc\PFA235FFT_Tests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Xml\XmlStreamSerializationTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

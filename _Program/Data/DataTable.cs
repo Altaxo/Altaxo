@@ -117,6 +117,29 @@ namespace Altaxo.Data
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataTable),0)]
+		public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo	info)
+			{
+				Altaxo.Data.DataTable s = (Altaxo.Data.DataTable)obj;
+				info.AddValue("Name",s.m_TableName); // name of the Table
+				info.AddBaseValue(s);
+				info.AddValue("PropCols", s.m_PropertyColumns); // the property columns of that table
+
+			}
+			public object Deserialize(Altaxo.Serialization.Xml.IXmlSerializationInfo	info, object parent)
+			{
+				Altaxo.Data.DataTable s = new Altaxo.Data.DataTable();
+	
+				s.m_TableName = info.GetString("Name");
+				info.GetBaseValue(s,parent);
+				s.m_PropertyColumns = (DataColumnCollection)info.GetValue(s);
+
+				return s;
+			}
+		}
+
 		public override void OnDeserialization(object obj)
 		{
 			base.Parent = this;

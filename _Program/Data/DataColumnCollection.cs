@@ -111,6 +111,60 @@ namespace Altaxo.Data
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataColumnCollection),0)]
+		public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info	)
+			{
+				Altaxo.Data.DataColumnCollection s = (Altaxo.Data.DataColumnCollection)obj;
+
+				info.CreateArray("Columns",s.m_ColumnsByNumber.Count);
+				for(int i=0;i<s.m_ColumnsByNumber.Count;i++)
+					info.AddValue("Col",s.m_ColumnsByNumber[i]);
+				info.CommitArray();
+
+				// serialize the column scripts
+				info.CreateArray("Scripts",s.m_ColumnScripts.Count);
+				foreach(System.Collections.DictionaryEntry entry in s.m_ColumnScripts)
+				{
+					info.CreateElement("Script");
+					info.AddValue("ColName", ((Altaxo.Data.DataColumn)entry.Key).ColumnName);
+					info.AddValue("Content",(Altaxo.Data.ColumnScript)entry.Value);
+					info.CommitElement();
+				}
+				info.CommitArray();
+			}
+
+			public object Deserialize(Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				Altaxo.Data.DataColumnCollection s = new Altaxo.Data.DataColumnCollection();
+	
+				// deserialize the columns
+				int count = info.OpenArray();
+				for(int i=0;i<count;i++)
+				{
+					object o = info.GetValue(s);
+					if(o!=null)
+						s.Add((DataColumn)o);
+				}
+				info.CloseArray(count);
+
+				// deserialize the scripts
+				count = info.OpenArray();
+				for(int i=0;i<count;i++)
+				{
+					info.OpenElement();
+					string name = info.GetString();
+					ColumnScript script = (ColumnScript)info.GetValue(s);
+					info.CloseElement();
+					s.ColumnScripts.Add(s[name],script);
+				}
+				info.CloseArray(count); // end script array
+				return s;
+			}
+		}
+
+
 		public virtual void OnDeserialization(object obj)
 		{
 			if(!m_DeserializationFinished && obj is DeserializationFinisher)

@@ -433,6 +433,58 @@ namespace Altaxo.Data
 			}
 		}
 
+
+		/// <summary>
+		/// This class is responsible for the serialization of the DataColumn (version 0).
+		/// </summary>
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataColumn),0)]
+		public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			/// <summary>Serializes the DataColumn given by object obj.</summary>
+			/// <param name="obj">The <see cref="DataColumn"/> instance which should be serialized.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <remarks>I decided _not_ to serialize the parent object, because there are situations were we
+			/// only want to serialize this column. But if we also serialize the parent table, we end up serializing all the object graph.
+			/// </remarks>
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info	)
+			{
+				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)obj;
+				// info.AddValue("Parent",s.m_Table); // not serialize the parent, see remarks
+				info.AddValue("Name",s.m_ColumnName);
+				info.AddValue("Number",s.m_ColumnNumber);
+				info.AddValue("Count",s.m_Count);
+				info.AddValue("Kind",(int)s.m_Kind);
+				info.AddValue("Group",s.m_Group);
+			}
+
+			/// <summary>
+			/// Deserializes the <see cref="DataColumn"/> instance.
+			/// </summary>
+			/// <param name="obj">The empty DataColumn instance, created by the runtime.</param>
+			/// <param name="info">Serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The surrogate selector.</param>
+			/// <returns>The deserialized object.</returns>
+			public object Deserialize(Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				Altaxo.Data.DataColumn s = (Altaxo.Data.DataColumn)info.DeserializationInstance;
+				// s.m_Table = (Altaxo.Data.DataTable)(info.GetValue("Parent",typeof(Altaxo.Data.DataTable)));
+				
+				s.m_ColumnName = info.GetString("Name");
+				s.m_ColumnNumber = info.GetInt32("Number");
+				s.m_Count = info.GetInt32("Count");
+				s.m_Kind  = (ColumnKind)info.GetInt32("Kind");
+				s.m_Group = info.GetInt32("Group");
+
+				
+				s.m_Parent = parent as Altaxo.Data.DataColumnCollection;
+				// set the helper data
+				s.m_MinRowChanged=int.MaxValue; // area of rows, which changed during event off period
+				s.m_MaxRowChanged=int.MinValue;
+				return s;
+			}
+		}
 		/// <summary>
 		/// This function is called on end of deserialization.
 		/// </summary>

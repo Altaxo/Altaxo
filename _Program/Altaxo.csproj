@@ -743,6 +743,41 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Serialization\Xml\IXmlSerializationInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Xml\IXmlSerializationSurrogate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Xml\XmlArrayEncoding.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Xml\XmlDocumentSerializationInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Xml\XmlSerializationSurrogateForAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Xml\XmlStreamSerializationInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Xml\XmlSurrogateSelector.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Worksheet\ColumnHeaderStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

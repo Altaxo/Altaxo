@@ -131,6 +131,31 @@ namespace Altaxo.Data
 			}
 		}
 
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DoubleColumn),0)]
+		public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				Altaxo.Data.DoubleColumn s = (Altaxo.Data.DoubleColumn)obj;
+				// serialize the base class
+				info.AddBaseValue(s);
+				info.AddArray("Data",s.m_Array,s.m_Count);
+			}
+			public object Deserialize(Altaxo.Serialization.Xml.IXmlSerializationInfo info, object parent)
+			{
+				Altaxo.Data.DoubleColumn s = new Altaxo.Data.DoubleColumn();
+
+				// deserialize the base class
+				info.GetBaseValue(s,parent);
+
+				int count = info.GetInt32Attribute("Count");
+				s.m_Array = new double[count];
+				info.GetArray(s.m_Array,count);
+				s.m_Capacity = null==s.m_Array ? 0 : s.m_Array.Length;
+				return s;
+			}
+		}
+
 		public override void OnDeserialization(object obj)
 		{
 			base.OnDeserialization(obj);
