@@ -184,8 +184,10 @@ namespace Altaxo.Data
 		{
 			if(val.IsType(AltaxoVariant.Content.VDouble))
 				this[i] = val.m_Double;
+			else if(val.CanConvertedToDouble)
+				this[i] = val.ToDouble();
 			else
-				throw new ApplicationException("Error: Try to set " + this.TypeAndName + "[" + i + "] with " + val.ToString());
+				throw new ApplicationException("Error: Try to set " + this.TypeAndName + "[" + i + "] with the string " + val.ToString());
 		}
 
 		public override AltaxoVariant GetVariantAt(int i)

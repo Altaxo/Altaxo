@@ -78,7 +78,7 @@ namespace Altaxo.Data
 		bool vop_GreaterOrEqual(object a, out bool b);
 		bool vop_GreaterOrEqual_Rev(object a, out bool b);
 
-// Unary operators
+		// Unary operators
 
 		bool vop_Plus(out object a);
 		bool vop_Minus(out object a);
@@ -193,14 +193,46 @@ namespace Altaxo.Data
 			return this.m_Content==c || this.m_Content==Content.VNull;
 		}
 
+		public bool CanConvertedToDouble
+		{
+			get 
+			{
+				if(m_Content==Content.VDouble || m_Content==Content.VDateTime)
+					return true; // we can create a double from a double (trivial) and from DateTime
+				if(m_Content==Content.VString) // if the content is a string, we have to look if it is possible to convert
+					return Altaxo.Serialization.Parsing.IsNumeric((string)m_Object);
+				else
+					return false; // it is not possible to convert the contents to a double
+			}
+		}
+
+		/// <summary>
+		/// Converts the content to a double if possible. The structure remains unchanged.
+		/// </summary>
+		/// <returns>The contents converted to a double.</returns>
+		/// <remarks>An exception is thrown if the conversion fails. You have to use <see cref="CanConvertedToDouble"/> for testing if the contents can be converted to a double.</remarks>
+		public double ToDouble()
+		{
+			if(m_Content==Content.VDouble)
+				return m_Double;
+			else if(m_Content==Content.VDateTime)
+				return System.Convert.ToDouble((DateTime)m_Object);
+			else if(m_Content==Content.VString)
+				return System.Convert.ToDouble((string)m_Object);
+			else
+				throw new ApplicationException("Unable to convert the contents of this variant to a number, the contents is: " + this.ToString());
+		}
+
 		public override string ToString()
 		{
 			if(this.m_Content == Content.VNull)
 				return "(null)";
 			else if(this.m_Content == Content.VDouble)
 				return this.m_Double.ToString();
-			else 
+			else if(null!=m_Object)
 				return this.m_Object.ToString();
+			else // everything is null
+				return "";
 		}
 
 		public override bool Equals(object k)
@@ -222,11 +254,11 @@ namespace Altaxo.Data
 		}
 
 		public static explicit operator double(AltaxoVariant f) 
-			{
+		{
 			if(f.m_Content==Content.VDouble)
 				return f.m_Double;
 			throw new ApplicationException("Variant contains " + f.m_Content.ToString() + ", but expecting type Double");
-			}
+		}
 	
 		public static implicit operator AltaxoVariant(double f) 
 		{
@@ -274,9 +306,9 @@ namespace Altaxo.Data
 			else if(a.m_Content==Content.VNull && b.m_Content==Content.VNull)
 				return new AltaxoVariant();
 			else if(a.m_Content==Content.VOperatable && ((IOperatable)a.m_Object).vop_Addition(b.m_Content==Content.VDouble ? b.m_Double : b.m_Object, out result))
-					return new AltaxoVariant(result);
+				return new AltaxoVariant(result);
 			else if(b.m_Content==Content.VOperatable && ((IOperatable)b.m_Object).vop_Addition_Rev(a.m_Content==Content.VDouble ? a.m_Double : a.m_Object, out result))
-					return new AltaxoVariant(result);
+				return new AltaxoVariant(result);
 			else
 				throw new AltaxoOperatorException("Error: Try to add types " + a.m_Content.ToString() + " and " + b.m_Content.GetType().ToString());	
 		}

@@ -61,6 +61,8 @@ namespace Altaxo.Worksheet
 		private System.Windows.Forms.MenuItem m_Menu_Analysis_StatisticsOnColumns;
 		private System.Windows.Forms.MenuItem menuFilePopup;
 		private System.Windows.Forms.MenuItem menuFile_ExportAscii;
+		private System.Windows.Forms.MenuItem menuColumn_AddPropertyColumn;
+		private System.Windows.Forms.MenuItem menuColumn_ExtractPropertyValues;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -162,38 +164,38 @@ namespace Altaxo.Worksheet
 		{
 			this.altaxoDataGrid1 = new Altaxo.Worksheet.DataGrid();
 			this.wksMenu = new System.Windows.Forms.MainMenu();
-			this.menuColumnPopup = new System.Windows.Forms.MenuItem();
-			this.mnuAddColumn = new System.Windows.Forms.MenuItem();
-			this.menuSetColumnValues = new System.Windows.Forms.MenuItem();
-			this.menuColumnSetAsX = new System.Windows.Forms.MenuItem();
-			this.mnuWorksheet = new System.Windows.Forms.MenuItem();
-			this.mnuWorksheetImportAscii = new System.Windows.Forms.MenuItem();
-			this.menuWorksheetImportPicture = new System.Windows.Forms.MenuItem();
-			this.menuWorksheetTranspose = new System.Windows.Forms.MenuItem();
+			this.menuFilePopup = new System.Windows.Forms.MenuItem();
+			this.menuFile_ExportAscii = new System.Windows.Forms.MenuItem();
 			this.menuEditPopup = new System.Windows.Forms.MenuItem();
 			this.menuEditRemove = new System.Windows.Forms.MenuItem();
 			this.menuEditCopy = new System.Windows.Forms.MenuItem();
 			this.menuEditPaste = new System.Windows.Forms.MenuItem();
 			this.menuPlotPopup = new System.Windows.Forms.MenuItem();
 			this.menuPlotLine = new System.Windows.Forms.MenuItem();
+			this.mnuWorksheet = new System.Windows.Forms.MenuItem();
+			this.mnuWorksheetImportAscii = new System.Windows.Forms.MenuItem();
+			this.menuWorksheetImportPicture = new System.Windows.Forms.MenuItem();
+			this.menuWorksheetTranspose = new System.Windows.Forms.MenuItem();
+			this.menuColumnPopup = new System.Windows.Forms.MenuItem();
+			this.mnuAddColumn = new System.Windows.Forms.MenuItem();
+			this.menuSetColumnValues = new System.Windows.Forms.MenuItem();
+			this.menuColumnSetAsX = new System.Windows.Forms.MenuItem();
 			this.menuAnalysisPopup = new System.Windows.Forms.MenuItem();
 			this.menuAnalysisFFT = new System.Windows.Forms.MenuItem();
 			this.m_Menu_Analysis_StatisticsOnColumns = new System.Windows.Forms.MenuItem();
-			this.menuFilePopup = new System.Windows.Forms.MenuItem();
-			this.menuFile_ExportAscii = new System.Windows.Forms.MenuItem();
+			this.menuColumn_AddPropertyColumn = new System.Windows.Forms.MenuItem();
+			this.menuColumn_ExtractPropertyValues = new System.Windows.Forms.MenuItem();
 			this.SuspendLayout();
 			// 
 			// altaxoDataGrid1
 			// 
-			this.altaxoDataGrid1.Anchor = (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			this.altaxoDataGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right);
+				| System.Windows.Forms.AnchorStyles.Right)));
 			this.altaxoDataGrid1.BackColor = System.Drawing.SystemColors.AppWorkspace;
-			this.altaxoDataGrid1.DataTable = null;
-			this.altaxoDataGrid1.FirstVisibleColumn = 0;
-			this.altaxoDataGrid1.FirstVisibleTableRow = 0;
+			this.altaxoDataGrid1.Location = new System.Drawing.Point(0, 0);
 			this.altaxoDataGrid1.Name = "altaxoDataGrid1";
-			this.altaxoDataGrid1.Size = new System.Drawing.Size(392, 269);
+			this.altaxoDataGrid1.Size = new System.Drawing.Size(392, 250);
 			this.altaxoDataGrid1.TabIndex = 0;
 			// 
 			// wksMenu
@@ -206,64 +208,19 @@ namespace Altaxo.Worksheet
 																																						this.menuColumnPopup,
 																																						this.menuAnalysisPopup});
 			// 
-			// menuColumnPopup
+			// menuFilePopup
 			// 
-			this.menuColumnPopup.Index = 4;
-			this.menuColumnPopup.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																																										this.mnuAddColumn,
-																																										this.menuSetColumnValues,
-																																										this.menuColumnSetAsX});
-			this.menuColumnPopup.MergeOrder = 4;
-			this.menuColumnPopup.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
-			this.menuColumnPopup.Text = "Column";
-			this.menuColumnPopup.Popup += new System.EventHandler(this.menuColumnPopup_Popup);
+			this.menuFilePopup.Index = 0;
+			this.menuFilePopup.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																									this.menuFile_ExportAscii});
+			this.menuFilePopup.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
+			this.menuFilePopup.Text = "File";
 			// 
-			// mnuAddColumn
+			// menuFile_ExportAscii
 			// 
-			this.mnuAddColumn.Index = 0;
-			this.mnuAddColumn.Text = "Add";
-			this.mnuAddColumn.Click += new System.EventHandler(this.menuItem2_Click);
-			// 
-			// menuSetColumnValues
-			// 
-			this.menuSetColumnValues.Index = 1;
-			this.menuSetColumnValues.Text = "Set Column Values ...";
-			this.menuSetColumnValues.Click += new System.EventHandler(this.SetColumnValues_Click);
-			// 
-			// menuColumnSetAsX
-			// 
-			this.menuColumnSetAsX.Index = 2;
-			this.menuColumnSetAsX.Text = "Set as X";
-			this.menuColumnSetAsX.Click += new System.EventHandler(this.menuColumnSetAsX_Click);
-			// 
-			// mnuWorksheet
-			// 
-			this.mnuWorksheet.Index = 3;
-			this.mnuWorksheet.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																																								 this.mnuWorksheetImportAscii,
-																																								 this.menuWorksheetImportPicture,
-																																								 this.menuWorksheetTranspose});
-			this.mnuWorksheet.MergeOrder = 3;
-			this.mnuWorksheet.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
-			this.mnuWorksheet.Text = "Worksheet";
-			// 
-			// mnuWorksheetImportAscii
-			// 
-			this.mnuWorksheetImportAscii.Index = 0;
-			this.mnuWorksheetImportAscii.Text = "Import Ascii";
-			this.mnuWorksheetImportAscii.Click += new System.EventHandler(this.mnuWorksheetImportAscii_Click);
-			// 
-			// menuWorksheetImportPicture
-			// 
-			this.menuWorksheetImportPicture.Index = 1;
-			this.menuWorksheetImportPicture.Text = "Import Picture";
-			this.menuWorksheetImportPicture.Click += new System.EventHandler(this.menuWorksheetImportPicture_Click);
-			// 
-			// menuWorksheetTranspose
-			// 
-			this.menuWorksheetTranspose.Index = 2;
-			this.menuWorksheetTranspose.Text = "Transpose";
-			this.menuWorksheetTranspose.Click += new System.EventHandler(this.menuWorksheetTranspose_Click);
+			this.menuFile_ExportAscii.Index = 0;
+			this.menuFile_ExportAscii.Text = "Export Ascii...";
+			this.menuFile_ExportAscii.Click += new System.EventHandler(this.OnFile_ExportAscii);
 			// 
 			// menuEditPopup
 			// 
@@ -310,6 +267,67 @@ namespace Altaxo.Worksheet
 			this.menuPlotLine.Text = "Line";
 			this.menuPlotLine.Click += new System.EventHandler(this.menuPlotLine_Click);
 			// 
+			// mnuWorksheet
+			// 
+			this.mnuWorksheet.Index = 3;
+			this.mnuWorksheet.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																								 this.mnuWorksheetImportAscii,
+																																								 this.menuWorksheetImportPicture,
+																																								 this.menuWorksheetTranspose});
+			this.mnuWorksheet.MergeOrder = 3;
+			this.mnuWorksheet.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
+			this.mnuWorksheet.Text = "Worksheet";
+			// 
+			// mnuWorksheetImportAscii
+			// 
+			this.mnuWorksheetImportAscii.Index = 0;
+			this.mnuWorksheetImportAscii.Text = "Import Ascii";
+			this.mnuWorksheetImportAscii.Click += new System.EventHandler(this.mnuWorksheetImportAscii_Click);
+			// 
+			// menuWorksheetImportPicture
+			// 
+			this.menuWorksheetImportPicture.Index = 1;
+			this.menuWorksheetImportPicture.Text = "Import Picture";
+			this.menuWorksheetImportPicture.Click += new System.EventHandler(this.menuWorksheetImportPicture_Click);
+			// 
+			// menuWorksheetTranspose
+			// 
+			this.menuWorksheetTranspose.Index = 2;
+			this.menuWorksheetTranspose.Text = "Transpose";
+			this.menuWorksheetTranspose.Click += new System.EventHandler(this.menuWorksheetTranspose_Click);
+			// 
+			// menuColumnPopup
+			// 
+			this.menuColumnPopup.Index = 4;
+			this.menuColumnPopup.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																										this.mnuAddColumn,
+																																										this.menuSetColumnValues,
+																																										this.menuColumnSetAsX,
+																																										this.menuColumn_AddPropertyColumn,
+																																										this.menuColumn_ExtractPropertyValues});
+			this.menuColumnPopup.MergeOrder = 4;
+			this.menuColumnPopup.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
+			this.menuColumnPopup.Text = "Column";
+			this.menuColumnPopup.Popup += new System.EventHandler(this.menuColumnPopup_Popup);
+			// 
+			// mnuAddColumn
+			// 
+			this.mnuAddColumn.Index = 0;
+			this.mnuAddColumn.Text = "Add";
+			this.mnuAddColumn.Click += new System.EventHandler(this.menuItem2_Click);
+			// 
+			// menuSetColumnValues
+			// 
+			this.menuSetColumnValues.Index = 1;
+			this.menuSetColumnValues.Text = "Set Column Values ...";
+			this.menuSetColumnValues.Click += new System.EventHandler(this.SetColumnValues_Click);
+			// 
+			// menuColumnSetAsX
+			// 
+			this.menuColumnSetAsX.Index = 2;
+			this.menuColumnSetAsX.Text = "Set as X";
+			this.menuColumnSetAsX.Click += new System.EventHandler(this.menuColumnSetAsX_Click);
+			// 
 			// menuAnalysisPopup
 			// 
 			this.menuAnalysisPopup.Index = 5;
@@ -332,26 +350,23 @@ namespace Altaxo.Worksheet
 			this.m_Menu_Analysis_StatisticsOnColumns.Text = "Statistics on Columns";
 			this.m_Menu_Analysis_StatisticsOnColumns.Click += new System.EventHandler(this.OnAnalysis_StatisticsOnColumns);
 			// 
-			// menuFilePopup
+			// menuColumn_AddPropertyColumn
 			// 
-			this.menuFilePopup.Index = 0;
-			this.menuFilePopup.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																																									this.menuFile_ExportAscii});
-			this.menuFilePopup.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
-			this.menuFilePopup.Text = "File";
+			this.menuColumn_AddPropertyColumn.Index = 3;
+			this.menuColumn_AddPropertyColumn.Text = "Add property column";
+			this.menuColumn_AddPropertyColumn.Click += new System.EventHandler(this.menuColumn_AddPropertyColumn_Click);
 			// 
-			// menuFile_ExportAscii
+			// menuColumn_ExtractPropertyValues
 			// 
-			this.menuFile_ExportAscii.Index = 0;
-			this.menuFile_ExportAscii.Text = "Export Ascii...";
-			this.menuFile_ExportAscii.Click += new System.EventHandler(this.OnFile_ExportAscii);
+			this.menuColumn_ExtractPropertyValues.Index = 4;
+			this.menuColumn_ExtractPropertyValues.Text = "Extract property values";
+			this.menuColumn_ExtractPropertyValues.Click += new System.EventHandler(this.menuColumn_ExtractPropertyValues_Click);
 			// 
 			// Worksheet
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(392, 267);
-			this.Controls.AddRange(new System.Windows.Forms.Control[] {
-																																	this.altaxoDataGrid1});
+			this.ClientSize = new System.Drawing.Size(392, 248);
+			this.Controls.Add(this.altaxoDataGrid1);
 			this.Menu = this.wksMenu;
 			this.Name = "Worksheet";
 			this.ResumeLayout(false);
@@ -545,7 +560,25 @@ namespace Altaxo.Worksheet
 				}
 	
 			}
-		} // end of OnFile_ExportAscii
+		}
+
+		private void menuColumn_AddPropertyColumn_Click(object sender, System.EventArgs e)
+		{
+			Altaxo.Data.TextColumn nc = new Altaxo.Data.TextColumn(altaxoDataGrid1.DataTable.PropCols.FindNewColumnName());
+			altaxoDataGrid1.DataTable.PropCols.Add(nc);
+			altaxoDataGrid1.Invalidate();
+		}
+
+		private void menuColumn_ExtractPropertyValues_Click(object sender, System.EventArgs e)
+		{
+			// extract the properties from the (first) selected property column
+			if(altaxoDataGrid1.SelectedPropertyColumns.Count==0)
+				return;
+
+			Altaxo.Data.DataColumn col = altaxoDataGrid1.DataTable.PropCols[altaxoDataGrid1.SelectedPropertyColumns[0]];
+
+			DataGridOperations.ExtractPropertiesFromColumn(col,altaxoDataGrid1.DataTable.PropCols);
+		}
 
 	} // end of class
 }

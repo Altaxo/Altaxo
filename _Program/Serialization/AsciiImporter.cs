@@ -22,6 +22,52 @@ using System;
 
 namespace Altaxo.Serialization
 {
+	/// <summary>
+	/// This class is only intended to group some static functions for parsing of strings.
+	/// </summary>
+	public class Parsing
+	{
+
+		/// <summary>
+		/// Is the provided string a date/time?
+		/// </summary>
+		/// <param name="s">The string to parse</param>
+		/// <returns>True if the string can successfully parsed to a DateTime object.</returns>
+		public static bool IsDateTime(string s)
+		{
+			bool bRet=false;
+			try
+			{
+				System.Convert.ToDateTime(s);
+				bRet=true;
+			}
+			catch(Exception)
+			{
+			}
+			return bRet;
+		}
+
+		/// <summary>
+		/// Tests if the provided string represents a number.
+		/// </summary>
+		/// <param name="s">The string to test.</param>
+		/// <returns>True if the string represents a number.</returns>
+		public static bool IsNumeric(string s)
+		{
+			bool bRet=false;
+			try
+			{
+				System.Convert.ToDouble(s);
+				bRet=true;
+			}
+			catch(Exception)
+			{
+			}
+			return bRet;
+		}
+	}
+
+
 	public class AsciiLineStructure 
 	{
 		protected System.Collections.ArrayList mylist = new System.Collections.ArrayList();
@@ -622,8 +668,8 @@ namespace Altaxo.Serialization
 			opt.m_DecimalSeparatorDotCount=0;
 			for(int i=0;i<result.Count;i++)
 			{
-			opt.m_DecimalSeparatorDotCount += ((AsciiLineAnalyzer)result[i]).structure[nBestSeparator].DecimalSeparatorDotCount;
-			opt.m_DecimalSeparatorCommaCount += ((AsciiLineAnalyzer)result[i]).structure[nBestSeparator].DecimalSeparatorCommaCount;
+				opt.m_DecimalSeparatorDotCount += ((AsciiLineAnalyzer)result[i]).structure[nBestSeparator].DecimalSeparatorDotCount;
+				opt.m_DecimalSeparatorCommaCount += ((AsciiLineAnalyzer)result[i]).structure[nBestSeparator].DecimalSeparatorCommaCount;
 			}
 
 

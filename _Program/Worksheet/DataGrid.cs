@@ -89,6 +89,8 @@ namespace Altaxo.Worksheet
 		private int  m_LastFullyVisibleColumn=0;
 		public IndexSelection m_SelectedColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected columns
 		public IndexSelection m_SelectedRows    = new Altaxo.Worksheet.IndexSelection(); // holds the selected rows
+		public IndexSelection m_SelectedPropertyColumns = new Altaxo.Worksheet.IndexSelection(); // holds the selected property columns
+
 		private int m_NumberOfTableRows=0; // cached number of rows of the table
 		private int m_NumberOfPropertyCols; // cached number of property  columnsof the table
 		private bool m_ShowColumnProperties=true; // are the property columns visible?
@@ -547,6 +549,15 @@ namespace Altaxo.Worksheet
 			return m_ShowColumnProperties ? firstTotRow+VertScrollPos : 0;
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public int LastFullyVisiblePropertyColumn
+		{
+			get
+			{
+				return FirstVisiblePropertyColumn + this.FullyVisiblePropertyColumns -1;
+			}
+		}
+
 
 		public int GetTopCoordinateOfPropertyColumn(int nCol)
 		{
@@ -618,6 +629,11 @@ namespace Altaxo.Worksheet
 		public IndexSelection SelectedRows
 		{
 			get { return m_SelectedRows; }
+		}
+
+		public IndexSelection SelectedPropertyColumns
+		{
+			get { return m_SelectedPropertyColumns; }
 		}
 
 		#endregion
@@ -911,6 +927,15 @@ namespace Altaxo.Worksheet
 			cellRect.Height = this.m_RowHeaderStyle.Height;
 			return cellRect;
 		}
+	
+		private Rectangle GetCoordinatesOfPropertyCell(int nCol, int nRow)
+		{
+			Rectangle cellRect = GetXCoordinatesOfColumn(nRow);
+
+			cellRect.Y = this.GetTopCoordinateOfPropertyColumn(nCol);
+			cellRect.Height = this.m_RowHeaderStyle.Height;
+			return cellRect;
+		}
 
 
 
@@ -932,7 +957,7 @@ namespace Altaxo.Worksheet
 				{
 					e.Handled=true;
 					// Navigate to the right
-					NavigateTableCellEdit(1,0);
+					NavigateCellEdit(1,0);
 				}
 			}
 
@@ -943,11 +968,12 @@ namespace Altaxo.Worksheet
 			if(e.KeyData==System.Windows.Forms.Keys.Left)
 			{
 				// Navigate to the left if the cursor is already left
-				if(m_CellEditControl.SelectionStart==0 && (m_CellEdit_EditedCell.Row>0 || m_CellEdit_EditedCell.Column>0) )
-				{
+				//if(m_CellEditControl.SelectionStart==0 && (m_CellEdit_EditedCell.Row>0 || m_CellEdit_EditedCell.Column>0) )
+				if(m_CellEditControl.SelectionStart==0)
+					{
 					e.Handled=true;
 					// Navigate to the left
-					NavigateTableCellEdit(-1,0);
+					NavigateCellEdit(-1,0);
 				}
 			}
 			else if(e.KeyData==System.Windows.Forms.Keys.Right)
@@ -956,20 +982,20 @@ namespace Altaxo.Worksheet
 				{
 					e.Handled=true;
 					// Navigate to the right
-					NavigateTableCellEdit(1,0);
+					NavigateCellEdit(1,0);
 				}
 			}
-			else if(e.KeyData==System.Windows.Forms.Keys.Up && m_CellEdit_EditedCell.Row>0)
+			else if(e.KeyData==System.Windows.Forms.Keys.Up)
 			{
 				e.Handled=true;
 				// Navigate up
-				NavigateTableCellEdit(0,-1);
+				NavigateCellEdit(0,-1);
 			}
 			else if(e.KeyData==System.Windows.Forms.Keys.Down)
 			{
 				e.Handled=true;
 				// Navigate down
-				NavigateTableCellEdit(0,1);
+				NavigateCellEdit(0,1);
 			}
 			else if(e.KeyData==System.Windows.Forms.Keys.Enter)
 			{
@@ -983,7 +1009,7 @@ namespace Altaxo.Worksheet
 				}
 				else
 				{
-					NavigateTableCellEdit(0,1);
+					NavigateCellEdit(0,1);
 				}
 			}
 			else if(e.KeyData==System.Windows.Forms.Keys.Escape)
@@ -1047,15 +1073,32 @@ namespace Altaxo.Worksheet
 		{
 			if(this.m_CellEdit_IsArmed && this.m_CellEditControl.Modified)
 			{
-				GetColumnStyle(m_CellEdit_EditedCell.Column).SetColumnValueAtRow(m_CellEditControl.Text,m_CellEdit_EditedCell.Row,m_DataTable[m_CellEdit_EditedCell.Column]);
+				if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.DataCell)
+				{
+					GetColumnStyle(m_CellEdit_EditedCell.Column).SetColumnValueAtRow(m_CellEditControl.Text,m_CellEdit_EditedCell.Row,m_DataTable[m_CellEdit_EditedCell.Column]);
+				}
+				else if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.PropertyCell)
+				{
+					GetPropertyColumnStyle(m_CellEdit_EditedCell.Column).SetColumnValueAtRow(m_CellEditControl.Text,m_CellEdit_EditedCell.Row,m_DataTable.PropCols[m_CellEdit_EditedCell.Column]);
+				}
+				
 				this.m_CellEdit_IsArmed=false;
 			}
 		}
 
 		private void SetCellEditContent()
 		{
+			
+			if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.DataCell)
+			{
+				m_CellEditControl.Text = GetColumnStyle(m_CellEdit_EditedCell.Column).GetColumnValueAtRow(m_CellEdit_EditedCell.Row,m_DataTable[m_CellEdit_EditedCell.Column]);
+			}
+			else if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.PropertyCell)
+			{
+				m_CellEditControl.Text = this.GetPropertyColumnStyle(m_CellEdit_EditedCell.Column).GetColumnValueAtRow(m_CellEdit_EditedCell.Row,m_DataTable.PropCols[m_CellEdit_EditedCell.Column]);
+			}
+
 			m_CellEditControl.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			m_CellEditControl.Text=GetColumnStyle(m_CellEdit_EditedCell.Column).GetColumnValueAtRow(m_CellEdit_EditedCell.Row,m_DataTable[m_CellEdit_EditedCell.Column]);
 			m_CellEditControl.SelectAll();
 			m_CellEditControl.Modified=false;
 			m_CellEditControl.Show();
@@ -1063,20 +1106,37 @@ namespace Altaxo.Worksheet
 			this.m_CellEdit_IsArmed=true;
 		}
 
+
 		/// <summary>
 		/// NavigateCellEdit moves the cell edit control to the next cell
 		/// </summary>
 		/// <param name="dx">move dx cells to the right</param>
 		/// <param name="dy">move dy cells down</param>
-		protected void NavigateTableCellEdit(int dx, int dy)
+		/// <returns>True when the cell was moved to a new position, false if moving was not possible.</returns>
+		protected bool NavigateCellEdit(int dx, int dy)
+		{
+			if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.DataCell)
+			{
+				return NavigateTableCellEdit(dx,dy);
+			}
+			else if(this.m_CellEdit_EditedCell.ClickedArea == ClickedAreaType.PropertyCell)
+			{
+				return NavigatePropertyCellEdit(dx,dy);
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// NavigateTableCellEdit moves the cell edit control to the next cell
+		/// </summary>
+		/// <param name="dx">move dx cells to the right</param>
+		/// <param name="dy">move dy cells down</param>
+		/// <returns>True when the cell was moved to a new position, false if moving was not possible.</returns>
+		protected bool NavigateTableCellEdit(int dx, int dy)
 		{
 			bool bScrolled = false;
 
-			// 1. Read content of the cell edit, if neccessary write data back
-			ReadCellEditContent();		
-		
-			// 2. look whether the new cell coordinates lie inside the client area, if
-			// not scroll the worksheet appropriate
+			// Calculate the position of the new cell		
 			int newCellCol = this.m_CellEdit_EditedCell.Column + dx;
 			if(newCellCol>=m_DataTable.ColumnCount)
 			{
@@ -1099,8 +1159,17 @@ namespace Altaxo.Worksheet
 			int newCellRow = m_CellEdit_EditedCell.Row + dy;
 			if(newCellRow<0)
 				newCellRow=0;
-			// note: we do not catch the condition newCellRow>rowCount since we want to add new rows
-			
+			// note: we do not catch the condition newCellRow>rowCount here since we want to add new rows
+	
+		
+			// look if the cell position has changed
+			if(newCellRow==m_CellEdit_EditedCell.Row && newCellCol==m_CellEdit_EditedCell.Column)
+				return false; // moving was not possible, so returning false, and do nothing
+
+			// if the cell position has changed, read the old cell content
+			// 1. Read content of the cell edit, if neccessary write data back
+			ReadCellEditContent();		
+
 			int navigateToCol;
 			int navigateToRow;
 
@@ -1136,6 +1205,130 @@ namespace Altaxo.Worksheet
 			if(bScrolled)
 				m_GridPanel.Invalidate();
 
+			return true;
+		}
+
+
+		/// <summary>
+		/// NavigatePropertyCellEdit moves the cell edit control to the next cell
+		/// </summary>
+		/// <param name="dx">move dx cells to the right</param>
+		/// <param name="dy">move dy cells down</param>
+		/// <returns>True when the cell was moved to a new position, false if moving was not possible.</returns>
+		protected bool NavigatePropertyCellEdit(int dx, int dy)
+		{
+			bool bScrolled = false;
+
+		
+			// 2. look whether the new cell coordinates lie inside the client area, if
+			// not scroll the worksheet appropriate
+			int newCellCol = this.m_CellEdit_EditedCell.Column + dy;
+			if(newCellCol>=m_DataTable.PropCols.ColumnCount)
+			{
+				if(m_CellEdit_EditedCell.Row+1<m_DataTable.ColumnCount)
+				{
+					newCellCol=0;
+					dx+=1;
+				}
+				else
+				{
+					newCellCol=m_DataTable.PropCols.ColumnCount-1;
+					dx=0;
+				}
+			}
+			else if(newCellCol<0)
+			{
+				if(this.m_CellEdit_EditedCell.Row>0) // move to the last cell only if not on cell 0
+				{
+					newCellCol=m_DataTable.PropCols.ColumnCount-1;
+					dx-=1;
+				}
+				else
+				{
+					newCellCol=0;
+				}
+			}
+
+			int newCellRow = m_CellEdit_EditedCell.Row + dx;
+			if(newCellRow>=m_DataTable.ColumnCount)
+			{
+				if(newCellCol+1<m_DataTable.PropCols.ColumnCount) // move to the first cell only if not on the very last cell
+				{
+					newCellRow=0;
+					newCellCol+=1;
+				}
+				else // we where on the last cell
+				{
+					newCellRow=m_DataTable.ColumnCount-1;
+					newCellCol=m_DataTable.PropCols.ColumnCount-1;
+				}
+			}
+			else if(newCellRow<0)
+			{
+				if(this.m_CellEdit_EditedCell.Column>0) // move to the last cell only if not on cell 0
+				{
+					newCellRow=m_DataTable.ColumnCount-1;
+					newCellCol-=1;
+				}
+				else
+				{
+					newCellRow=0;
+				}
+			}
+
+			// Fix if newCellCol is outside valid area
+			if(newCellCol<0)
+				newCellCol=0;
+			else if(newCellCol>=m_DataTable.PropCols.ColumnCount)
+				newCellCol=m_DataTable.PropCols.ColumnCount-1;
+			
+			// look if the cell position has changed
+			if(newCellRow==m_CellEdit_EditedCell.Row && newCellCol==m_CellEdit_EditedCell.Column)
+				return false; // moving was not possible, so returning false, and do nothing
+
+			// 1. Read content of the cell edit, if neccessary write data back
+			ReadCellEditContent();		
+	
+
+
+			int navigateToCol;
+			int navigateToRow;
+
+
+			if(newCellCol<FirstVisiblePropertyColumn)
+				navigateToCol = newCellCol;
+			else if (newCellCol>LastFullyVisiblePropertyColumn)
+				navigateToCol = newCellRow + 1 - this.FullyVisiblePropertyColumns;
+			else
+				navigateToCol = FirstVisibleTableRow;
+
+
+			if(newCellRow<FirstVisibleColumn)
+				navigateToRow = newCellRow;
+			else if (newCellRow>LastFullyVisibleColumn)
+				navigateToRow = GetFirstVisibleColumnForLastVisibleColumn(newCellRow);
+			else
+				navigateToRow = FirstVisibleColumn;
+
+			if(navigateToRow!=FirstVisibleColumn || navigateToCol!=FirstVisibleTableRow)
+			{
+				SetScrollPositionTo(navigateToRow,navigateToCol);
+				bScrolled=true;
+			}
+			// 3. Fill the cell edit control with new content
+			m_CellEdit_EditedCell.Column=newCellCol;
+			m_CellEdit_EditedCell.Row=newCellRow;
+			m_CellEditControl.Parent = m_GridPanel;
+			Rectangle cellRect = this.GetCoordinatesOfPropertyCell(m_CellEdit_EditedCell.Column,m_CellEdit_EditedCell.Row);
+			m_CellEditControl.Location = cellRect.Location;
+			m_CellEditControl.Size = cellRect.Size;
+			SetCellEditContent();
+
+			// 4. Invalidate the client area if scrolled in step (2)
+			if(bScrolled)
+				m_GridPanel.Invalidate();
+
+			return true;
 		}
 
 
@@ -1160,6 +1353,29 @@ namespace Altaxo.Worksheet
 					m_CellEditControl.Size = clickedCell.CellRectangle.Size;
 					m_CellEditControl.LostFocus += new System.EventHandler(this.OnTextBoxLostControl);
 					this.SetCellEditContent();
+				}
+					break;
+				case ClickedAreaType.PropertyCell:
+				{
+					m_CellEdit_EditedCell=clickedCell;
+					m_CellEditControl.Parent = m_GridPanel;
+					m_CellEditControl.Location = clickedCell.CellRectangle.Location;
+					m_CellEditControl.Size = clickedCell.CellRectangle.Size;
+					m_CellEditControl.LostFocus += new System.EventHandler(this.OnTextBoxLostControl);
+					this.SetCellEditContent();
+				}
+					break;
+				case ClickedAreaType.PropertyColumnHeader:
+				{
+					bool bControlKey=(Keys.Control==(Control.ModifierKeys & Keys.Control)); // Control pressed
+					bool bShiftKey=(Keys.Shift==(Control.ModifierKeys & Keys.Shift));
+					if(m_LastSelectionType==SelectionType.DataRowSelection && !bControlKey)
+						m_SelectedRows.Clear(); // if we click a column, we remove row selections
+					if(m_LastSelectionType==SelectionType.DataColumnSelection && !bControlKey)
+						m_SelectedColumns.Clear(); // if we click a column, we remove row selections
+					m_SelectedPropertyColumns.Select(clickedCell.Column,bShiftKey,bControlKey);
+					m_LastSelectionType = SelectionType.PropertyColumnSelection;
+					m_GridPanel.Invalidate();
 				}
 					break;
 				case ClickedAreaType.DataColumnHeader:
@@ -1329,6 +1545,7 @@ namespace Altaxo.Worksheet
 			bool bAreColumnsSelected = m_SelectedColumns.Count>0;
 			bool bAreRowsSelected =    m_SelectedRows.Count>0;
 			bool bAreCellsSelected =  bAreRowsSelected || bAreColumnsSelected;
+			bool bArePropColsSelected = m_SelectedPropertyColumns.Count>0;
 
 
 			int yShift=0;
@@ -1358,10 +1575,11 @@ namespace Altaxo.Worksheet
 
 				// if visible, draw property column header items
 				yShift=this.GetTopCoordinateOfPropertyColumn(firstPropertyColumnToDraw);
-				for(int nCol=firstPropertyColumnToDraw, nInc=0;nInc<numberOfPropertyColumnsToDraw;nCol++,nInc++)
+				for(int nPropCol=firstPropertyColumnToDraw, nInc=0;nInc<numberOfPropertyColumnsToDraw;nPropCol++,nInc++)
 				{
 					cellRectangle.Y = yShift+nInc*m_RowHeaderStyle.Height;
-					this.m_PropertyColumnHeaderStyle.Paint(dc,cellRectangle,nCol,this.m_DataTable.PropCols[nCol],false);
+					bool bPropColSelected = bArePropColsSelected && m_SelectedPropertyColumns.ContainsKey(nPropCol);
+					this.m_PropertyColumnHeaderStyle.Paint(dc,cellRectangle,nPropCol,this.m_DataTable.PropCols[nPropCol],bPropColSelected);
 				}
 			}
 
@@ -1383,13 +1601,14 @@ namespace Altaxo.Worksheet
 				for(int nPropCol=firstPropertyColumnToDraw, nIncPropCol=0; nIncPropCol<numberOfPropertyColumnsToDraw; nPropCol++, nIncPropCol++)
 				{
 					Altaxo.Worksheet.ColumnStyle cs = GetPropertyColumnStyle(nPropCol);
+					bool bPropColSelected = bArePropColsSelected && m_SelectedPropertyColumns.ContainsKey(nPropCol);
 					cellRectangle.Y=this.GetTopCoordinateOfPropertyColumn(nPropCol);
 					cellRectangle.Height = m_RowHeaderStyle.Height;
 					
 					for(int nCol=firstColToDraw, nIncCol=0; nIncCol<numberOfColumnsToDraw; nCol++,nIncCol++)
 					{
 						cellRectangle = this.GetXCoordinatesOfColumn(nCol,cellRectangle);
-						cs.Paint(dc,cellRectangle,nCol,m_DataTable.PropCols[nPropCol],false);
+						cs.Paint(dc,cellRectangle,nCol,m_DataTable.PropCols[nPropCol],bPropColSelected);
 					}
 				}
 

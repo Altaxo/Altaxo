@@ -413,6 +413,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Serialization\ExportGalacticSpcFileDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\ExportGalacticSpcFileDialog.resx"
+                    DependentUpon = "ExportGalacticSpcFileDialog.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Serialization\SerializationAttributes.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

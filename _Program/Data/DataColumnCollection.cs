@@ -590,6 +590,15 @@ namespace Altaxo.Data
 		#endregion
 
 
+		/// <summary>
+		/// Test if a column of a given name is present in this collection.
+		/// </summary>
+		/// <param name="columnname">The columnname to test for presence.</param>
+		/// <returns>True if the column with the name is contained in the collection.</returns>
+		public bool ContainsColumn(string columnname)
+		{
+			return m_ColumnsByName.ContainsKey(columnname);
+		}
 
 		public virtual bool IsDirty
 		{
