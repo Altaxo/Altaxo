@@ -41,6 +41,12 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
+    public override MultivariateRegression CreateNewRegressionObject()
+    {
+      return new PCRRegression();
+    }
+
+
     public override void ExecuteAnalysis(
       IMatrix matrixX,
       IMatrix matrixY,
@@ -117,43 +123,7 @@ namespace Altaxo.Calc.Regression.Multivariate
      
     }
 
-    public override void CalculateCrossPRESS(
-      IMatrix matrixX,
-      IMatrix matrixY,
-      MultivariateAnalysisOptions plsOptions,
-      MultivariateContentMemento plsContent,
-      DataTable table
-      )
-    {
-      IROVector crossPRESSMatrix;
-      Altaxo.Data.DoubleColumn crosspresscol = new Altaxo.Data.DoubleColumn();
-
-      double meanNumberOfExcludedSpectra = 0;
-      if(plsOptions.CrossPRESSCalculation!=CrossPRESSCalculationType.None)
-      {
-        // now a cross validation - this can take a long time for bigger matrices
-        
-        PCRRegression.CrossValidation(
-          matrixX,
-          matrixY,
-          plsOptions.MaxNumberOfFactors,
-          GetGroupingStrategy(plsOptions),
-          out crossPRESSMatrix,
-          out meanNumberOfExcludedSpectra);
-
-        VectorMath.Copy(crossPRESSMatrix,DataColumnWrapper.ToVector(crosspresscol,crossPRESSMatrix.Length));
-       
-        table.DataColumns.Add(crosspresscol,GetCrossPRESSValue_ColumnName(),Altaxo.Data.ColumnKind.V,4);
-
-        plsContent.MeanNumberOfMeasurementsInCrossPRESSCalculation = plsContent.NumberOfMeasurements-meanNumberOfExcludedSpectra;
-      }
-      else
-      {
-        table.DataColumns.Add(crosspresscol,GetCrossPRESSValue_ColumnName(),Altaxo.Data.ColumnKind.V,4);
-      }
-     
-    }
-
+ 
 
     public override IMultivariateCalibrationModel GetCalibrationModel(
       DataTable calibTable)
@@ -229,22 +199,24 @@ namespace Altaxo.Calc.Regression.Multivariate
       calibrationSet.NumberOfX = numberOfX;
       calibrationSet.NumberOfY = numberOfY;
       calibrationSet.NumberOfFactors = numberOfFactors;
+      MultivariatePreprocessingModel preprocessSet = new MultivariatePreprocessingModel();
+      calibrationSet.SetPreprocessingModel(preprocessSet);
 
       Altaxo.Collections.AscendingIntegerCollection sel = new Altaxo.Collections.AscendingIntegerCollection();
       Altaxo.Data.DataColumn col;
 
       col = table[GetXOfX_ColumnName()];
       if(col==null || !(col is INumericColumn)) NotFound(GetXOfX_ColumnName());
-      calibrationSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col,numberOfX);
+     preprocessSet.XOfX = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector((INumericColumn)col,numberOfX);
 
 
       col = table[GetXMean_ColumnName()];
       if(col==null) NotFound(GetXMean_ColumnName());
-      calibrationSet.XMean = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,numberOfX);
+      preprocessSet.XMean = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,numberOfX);
 
       col = table[GetXScale_ColumnName()];
       if(col==null) NotFound(GetXScale_ColumnName());
-      calibrationSet.XScale = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,numberOfX);
+      preprocessSet.XScale = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,numberOfX);
 
 
         
@@ -252,13 +224,13 @@ namespace Altaxo.Calc.Regression.Multivariate
       col = table[GetYMean_ColumnName()];
       if(col==null) NotFound(GetYMean_ColumnName());
       sel.Add(table.DataColumns.GetColumnNumber(col));
-      calibrationSet.YMean = DataColumnWrapper.ToROVector(col,numberOfY);
+      preprocessSet.YMean = DataColumnWrapper.ToROVector(col,numberOfY);
 
       sel.Clear();
       col = table[GetYScale_ColumnName()];
       if(col==null) NotFound(GetYScale_ColumnName());
       sel.Add(table.DataColumns.GetColumnNumber(col));
-      calibrationSet.YScale = DataColumnWrapper.ToROVector(col,numberOfY);
+      preprocessSet.YScale = DataColumnWrapper.ToROVector(col,numberOfY);
 
 
       sel.Clear();
@@ -325,8 +297,8 @@ namespace Altaxo.Calc.Regression.Multivariate
         spectralResiduals);
 
       // mean and scale prediced Y
-      MatrixMath.MultiplyRow(predictedY,calib.YScale,predictedY);
-      MatrixMath.AddRow(predictedY,calib.YMean,predictedY);
+      MatrixMath.MultiplyRow(predictedY,calib.PreprocessingModel.YScale,predictedY);
+      MatrixMath.AddRow(predictedY,calib.PreprocessingModel.YMean,predictedY);
     }  
 
     /// <summary>

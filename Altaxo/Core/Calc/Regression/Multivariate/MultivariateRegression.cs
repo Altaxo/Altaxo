@@ -28,11 +28,195 @@ using System.Xml;
 namespace Altaxo.Calc.Regression.Multivariate
 {
   /// <summary>
-  /// Contains method common for all multivariate analysis.
+  /// Contains method common for all multivariate regressions.
   /// </summary>
   public abstract class MultivariateRegression
   {
+    #region Abstract members
+    /// <summary>
+    /// Creates an analyis from preprocessed spectra and preprocessed concentrations.
+    /// </summary>
+    /// <param name="matrixX">The spectral matrix (each spectrum is a row in the matrix). They must at least be centered.</param>
+    /// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
+    /// <param name="maxFactors">Maximum number of factors for analysis.</param>
+    /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
+    protected abstract void AnalyzeFromPreprocessedWithoutReset(IROMatrix matrixX, IROMatrix matrixY, int maxFactors);
+   
+    /// <summary>
+    /// This calculates the spectral residuals.
+    /// </summary>
+    /// <param name="XU">Spectra (horizontally oriented).</param>
+    /// <param name="numFactors">Number of factors used for calculation.</param>
+    /// <param name="predictedY">On return, holds the predicted y values. (They are centered).</param>
+    /// <param name="spectralResiduals">On return, holds the spectral residual values.</param>
+    public abstract void PredictedYAndSpectralResidualsFromPreprocessed(
+      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+      int numFactors, // number of factors to use for prediction
+      IMatrix predictedY,
+      IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column
+      );
 
+    public abstract void SetCalibrationModel(IMultivariateCalibrationModel calib);
+
+    #endregion
+
+    #region Properties and helpers
+    
+    protected abstract MultivariateCalibrationModel InternalCalibrationModel { get; }
+
+    public int NumberOfFactors { get { return InternalCalibrationModel.NumberOfFactors; }}
+
+    /// <summary>
+    /// This returns the number of spectral residuals. This is normally 1, but for the PLS1 analyis, it is the NumberOfY.
+    /// </summary>
+    public virtual int NumberOfSpectralResiduals { get { return 1; }}
+
+    
+    public virtual void Reset()
+    {
+      InternalCalibrationModel.NumberOfFactors=0;
+      InternalCalibrationModel.SetPreprocessingModel( null );
+    }
+
+    #endregion
+
+    #region Prediction from preprocessed
+
+    /// <summary>
+    /// This predicts concentrations of unknown spectra.
+    /// </summary>
+    /// <param name="XU">Matrix of unknown spectra (preprocessed the same way as the calibration spectra).</param>
+    /// <param name="numFactors">Number of factors used for prediction.</param>
+    /// <param name="predictedY">On return, holds the predicted y values. (They are centered).</param>
+    public virtual void PredictYFromPreprocessed(
+      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+      int numFactors, // number of factors to use for prediction
+      IMatrix predictedY // Matrix of predicted y-values, must be same number of rows as spectra
+      )
+    {
+      this.PredictedYAndSpectralResidualsFromPreprocessed(XU,numFactors,predictedY,null);
+    }
+
+
+    /// <summary>
+    /// This predicts concentrations of unknown spectra.
+    /// </summary>
+    /// <param name="XU">Matrix of unknown spectra (preprocessed the same way as the calibration spectra).</param>
+    /// <param name="numFactors">Number of factors used for prediction.</param>
+    /// <returns>The predicted y values. (They are centered).</returns>
+    public virtual IROMatrix PredictYFromPreprocessed(
+      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+      int numFactors // number of factors to use for prediction
+      )
+    {
+       IMatrix predictedY = new MatrixMath.BEMatrix(XU.Rows,InternalCalibrationModel.NumberOfY);
+      this.PredictedYAndSpectralResidualsFromPreprocessed(XU,numFactors,predictedY,null);
+      return predictedY;
+    }
+
+
+
+    /// <summary>
+    /// This calculates the spectral residuals.
+    /// </summary>
+    /// <param name="XU">Spectra (horizontally oriented).</param>
+    /// <param name="numFactors">Number of factors used for calculation.</param>
+    /// <param name="spectralResiduals">On return, holds the spectral residual values.</param>
+    public virtual void SpectralResidualsFromPreprocessed(
+      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+      int numFactors, // number of factors to use for prediction
+      IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column
+      )
+    {
+      this.PredictedYAndSpectralResidualsFromPreprocessed(XU,numFactors,null,spectralResiduals);
+    }
+
+    /// <summary>
+    /// This calculates the spectral residuals.
+    /// </summary>
+    /// <param name="XU">Spectra (horizontally oriented).</param>
+    /// <param name="numFactors">Number of factors used for calculation.</param>
+    /// <returns>The calculated spectral residuals.</returns>
+    public virtual IROMatrix SpectralResidualsFromPreprocessed(
+      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+      int numFactors // number of factors to use for prediction
+      )
+    {
+      IMatrix result = new MatrixMath.BEMatrix(XU.Rows,this.NumberOfSpectralResiduals);
+      SpectralResidualsFromPreprocessed(XU,numFactors,result);
+      return result;
+    }
+
+
+
+   
+
+    /// <summary>
+    /// This calculates the spectral residuals. The matrices are reallocated if they don't have the appropriate dimensions.
+    /// </summary>
+    /// <param name="XU">Spectra (horizontally oriented).</param>
+    /// <param name="numFactors">Number of factors used for calculation.</param>
+    /// <param name="predictedY">On return, holds the predicted y values. (They are centered). If the matrix you provide has not the appropriate dimensions, it is reallocated.</param>
+    /// <param name="spectralResiduals">On return, holds the spectral residual values.  If the matrix you provide has not the appropriate dimensions, it is reallocated.</param>
+    public virtual void PredictedYAndSpectralResidualsFromPreprocessed(
+      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+      int numFactors, // number of factors to use for prediction
+      ref IMatrix predictedY,
+      ref IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column
+      )
+    {
+      // check the dimensions of the matrices
+      if(predictedY!=null)
+      {
+        if(predictedY.Rows!=XU.Rows || predictedY.Columns != this.InternalCalibrationModel.NumberOfY)
+          predictedY = new MatrixMath.BEMatrix(XU.Rows,InternalCalibrationModel.NumberOfY);
+      }
+
+      if(spectralResiduals!=null)
+      {
+        if(spectralResiduals.Rows!=XU.Rows || spectralResiduals.Columns != this.NumberOfSpectralResiduals)
+          spectralResiduals = new MatrixMath.BEMatrix(XU.Rows,this.NumberOfSpectralResiduals);
+      }
+
+      PredictedYAndSpectralResidualsFromPreprocessed(XU,numFactors,predictedY,spectralResiduals);
+    }
+
+    /// <summary>
+    /// This calculates the spectral residuals. The matrices are reallocated if they don't have the appropriate dimensions.
+    /// </summary>
+    /// <param name="XU">Spectra (horizontally oriented).</param>
+    /// <param name="numFactors">Number of factors used for calculation.</param>
+    /// <param name="calculatePredictedY">If true, the predictedY is calculated. Otherwise, predictedY is null on return.</param>
+    /// <param name="predictedY">On return, holds the predicted y values. (They are centered). If the matrix you provide has not the appropriate dimensions, it is reallocated.</param>
+    /// <param name="calculateSpectralResiduals">If true, the spectral residuals are calculated. Otherwise spectralResiduals is null on return.</param>
+    /// <param name="spectralResiduals">On return, holds the spectral residual values.  If the matrix you provide has not the appropriate dimensions, it is reallocated.</param>
+    public virtual void PredictedYAndSpectralResidualsFromPreprocessed(
+      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+      int numFactors, // number of factors to use for prediction
+      bool calculatePredictedY,
+      out IMatrix predictedY,
+      bool calculateSpectralResiduals,
+      out IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column
+      )
+    {
+      // check the dimensions of the matrices
+      if(calculatePredictedY)
+          predictedY = new MatrixMath.BEMatrix(XU.Rows,InternalCalibrationModel.NumberOfY);
+      else
+        predictedY=null;
+
+      if(calculateSpectralResiduals)
+          spectralResiduals = new MatrixMath.BEMatrix(XU.Rows,this.NumberOfSpectralResiduals);
+      else
+        spectralResiduals = null;
+
+      PredictedYAndSpectralResidualsFromPreprocessed(XU,numFactors,predictedY,spectralResiduals);
+    }
+
+    #endregion
+
+    #region Analyze from preprocessed
+   
 
     /// <summary>
     /// Creates an analyis from preprocessed spectra and preprocessed concentrations.
@@ -41,24 +225,54 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="matrixY">The matrix of concentrations (each experiment is a row in the matrix). They must at least be centered.</param>
     /// <param name="maxFactors">Maximum number of factors for analysis.</param>
     /// <returns>A regression object, which holds all the loads and weights neccessary for further calculations.</returns>
-    public abstract void AnalyzeFromPreprocessed(IROMatrix matrixX, IROMatrix matrixY, int maxFactors);
-   
+    public void AnalyzeFromPreprocessed(IROMatrix matrixX, IROMatrix matrixY, int maxFactors)
+    {
+      Reset();
 
-    /// <summary>
-    /// This predicts concentrations of unknown spectra.
-    /// </summary>
-    /// <param name="XU">Matrix of unknown spectra (preprocessed the same way as the calibration spectra).</param>
-    /// <param name="numFactors">Number of factors used for prediction.</param>
-    /// <param name="predictedY">On return, holds the predicted y values. (They are centered).</param>
-    public abstract void PredictYFromPreprocessed(
-      IROMatrix XU, // unknown spectrum or spectra,  horizontal oriented
+      InternalCalibrationModel.NumberOfX = matrixX.Columns;
+      InternalCalibrationModel.NumberOfY = matrixY.Columns;
+
+      AnalyzeFromPreprocessedWithoutReset(matrixX,matrixY,maxFactors);
+    }
+   
+    #endregion
+
+    #region AnalyzeFromRaw
+
+    public void AnalyzeFromRaw( 
+      SpectralPreprocessingOptions preprocessOptions,
+      IROVector xOfX,
+      IMatrix matrixX,
+      IMatrix matrixY, 
+      int maxFactors)
+    {
+      Reset();
+      InternalCalibrationModel.SetPreprocessingModel( PreprocessForAnalysis(preprocessOptions,xOfX,matrixX,matrixY) );
+      
+      InternalCalibrationModel.NumberOfX = matrixX.Columns;
+      InternalCalibrationModel.NumberOfY = matrixY.Columns;
+
+      AnalyzeFromPreprocessedWithoutReset(matrixX, matrixY, maxFactors);
+    }
+
+    #endregion
+
+    #region Prediction from Raw
+
+    public void PredictYFromRaw(
+      IMatrix XU, // unknown spectrum or spectra,  horizontal oriented
       int numFactors, // number of factors to use for prediction
       IMatrix predictedY // Matrix of predicted y-values, must be same number of rows as spectra
-      );
+      )
+    {
+      PreprocessSpectraForPrediction(InternalCalibrationModel.PreprocessingModel,XU);
+      PredictYFromPreprocessed(XU,numFactors,predictedY);
+      PostprocessY(InternalCalibrationModel.PreprocessingModel,predictedY);
+    }
 
+    #endregion
 
-    public abstract int NumberOfFactors { get; }
-
+    #region Preprocessing helper functions
 
     /// <summary>
     /// Preprocesses the x and y matrices before usage in multivariate calibrations.
@@ -85,6 +299,45 @@ namespace Altaxo.Calc.Regression.Multivariate
       PreprocessYForAnalysis(matrixY,out meanY, out scaleY);
     }
 
+
+    /// <summary>
+    /// Preprocesses the x and y matrices before usage in multivariate calibrations.
+    /// </summary>
+    /// <param name="preprocessOptions">Information how to preprocess the data.</param>
+    /// <param name="xOfX">Spectral wavelength values.</param>
+    /// <param name="matrixX">Matrix of spectra.</param>
+    /// <param name="matrixY">Matrix of concentrations.</param>
+    /// <returns>The collected data about proprocessing.</returns>
+    public static MultivariatePreprocessingModel PreprocessForAnalysis(
+      SpectralPreprocessingOptions preprocessOptions,
+      IROVector xOfX,
+      IMatrix matrixX, 
+      IMatrix matrixY)
+    {
+      MultivariatePreprocessingModel data = new MultivariatePreprocessingModel();
+
+      data.PreprocessOptions = (SpectralPreprocessingOptions)preprocessOptions.Clone();
+
+      data.XOfX = xOfX;
+
+      IVector meanX, scaleX;
+
+      PreprocessSpectraForAnalysis(preprocessOptions,xOfX,matrixX,out meanX, out scaleX);
+
+      data.XMean = meanX;
+      data.XScale = scaleX;
+
+
+      IVector meanY, scaleY;
+
+      PreprocessYForAnalysis(matrixY,out meanY, out scaleY);
+
+      data.YMean = meanY;
+      data.YScale = scaleY;
+
+      return data;
+    
+    }
 
     
     /// <summary>
@@ -124,7 +377,15 @@ namespace Altaxo.Calc.Regression.Multivariate
       SpectralPreprocessingOptions preprocessOptions,
       IMatrix matrixX)
     {
-      preprocessOptions.ProcessForPrediction(matrixX,calib.XMean,calib.XScale);
+      preprocessOptions.ProcessForPrediction(matrixX,calib.PreprocessingModel.XMean,calib.PreprocessingModel.XScale);
+    }
+
+
+    public static void PreprocessSpectraForPrediction(
+      IMultivariatePreprocessingModel calib, 
+      IMatrix matrixX)
+    {
+      calib.PreprocessOptions.ProcessForPrediction(matrixX,calib.XMean,calib.XScale);
     }
 
     /// <summary>
@@ -179,7 +440,14 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
- 
+    public static void PostprocessY(IMultivariatePreprocessingModel calib, IMatrix matrixY)
+    {
+      PostprocessY(matrixY,calib.YMean,calib.YScale);
+    }
+
+    #endregion
+
+    #region Cross validation helper functions
 
     /// <summary>
     /// Function used for cross validation iteration. During cross validation, the original spectral matrix is separated into
@@ -258,8 +526,68 @@ namespace Altaxo.Calc.Regression.Multivariate
 
 
 
+    #endregion
+
+    #region Cross validation functions
+
+    public static double GetCrossPRESS(
+      IROVector xOfX,
+      IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
+      IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
+      int numFactors,
+      ICrossValidationGroupingStrategy groupingStrategy,
+      SpectralPreprocessingOptions preprocessOptions,
+      MultivariateRegression regress,
+      out IROVector crossPRESS // vertical value of PRESS values for the cross validation
+      )
+    {
+      CrossPRESSEvaluator worker = new CrossPRESSEvaluator(xOfX,numFactors,groupingStrategy,preprocessOptions,regress);
+      double result = CrossValidationIteration(X,Y,groupingStrategy,new CrossValidationIterationFunction(worker.EhCrossPRESS));
+
+      crossPRESS = VectorMath.ToROVector(worker.CrossPRESS,worker.NumberOfFactors);
+
+      return result;
+    }
 
 
+    public static double GetCrossYPredicted(
+      IROVector xOfX,
+      IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
+      IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
+      int numFactors,
+      ICrossValidationGroupingStrategy groupingStrategy,
+      SpectralPreprocessingOptions preprocessOptions,
+      MultivariateRegression regress,
+
+      IMatrix yCrossPredicted // vertical value of PRESS values for the cross validation
+      )
+    {
+      CrossPredictedYEvaluator worker = new CrossPredictedYEvaluator(xOfX,numFactors,groupingStrategy,preprocessOptions,regress,yCrossPredicted);
+      double result = CrossValidationIteration(X,Y,groupingStrategy,new CrossValidationIterationFunction(worker.EhYCrossPredicted));
+
+      return result;
+    }
+
+
+    public static double GetCrossXResiduals(
+      IROVector xOfX,
+      IROMatrix X, // matrix of spectra (a spectra is a row of this matrix)
+      IROMatrix Y, // matrix of concentrations (a mixture is a row of this matrix)
+      int numFactors,
+      ICrossValidationGroupingStrategy groupingStrategy,
+      SpectralPreprocessingOptions preprocessOptions,
+      MultivariateRegression regress,
+
+      out IROMatrix crossXResiduals
+      )
+    {
+      CrossPredictedXResidualsEvaluator worker = new CrossPredictedXResidualsEvaluator(X.Rows,xOfX,numFactors,groupingStrategy,preprocessOptions,regress);
+      double result = CrossValidationIteration(X,Y,groupingStrategy,new CrossValidationIterationFunction(worker.EhCrossValidationWorker));
+      crossXResiduals = worker.XCrossResiduals;
+      return result;
+    }
+
+    #endregion
 
   }
 }

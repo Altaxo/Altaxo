@@ -26,13 +26,50 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-  public class MultivariatePreprocessingModel : IMultivariateCalibrationModel
+
+  /// <summary>
+  /// Contains the basic data that where obtained during preprocessing.
+  /// </summary>
+  public interface IMultivariatePreprocessingModel
+  {
+   
+    IROVector XOfX
+    {
+      get;
+    }
+
+
+    IROVector XMean
+    {
+      get ; 
+    }
+
+    IROVector XScale
+    {
+      get; 
+    }
+
+    IROVector YMean
+    {
+      get ; 
+    }
+
+    IROVector YScale
+    {
+      get ; 
+    }
+
+    SpectralPreprocessingOptions PreprocessOptions
+    {
+      get;
+    }
+  }
+
+
+  public class MultivariatePreprocessingModel : IMultivariatePreprocessingModel
   {
     
-    int _numberOfX;
-    int _numberOfY;
-    int _numberOfFactors;
-
+    SpectralPreprocessingOptions _preprocessOptions;
 
     IROVector _xOfX;
     IROVector _xMean;
@@ -41,22 +78,11 @@ namespace Altaxo.Calc.Regression.Multivariate
     IROVector _yScale;
 
 
-    public int NumberOfX
-    {
-      get { return _numberOfX; }
-      set { _numberOfX = value; }
-    }
 
-    public int NumberOfY
+    public SpectralPreprocessingOptions PreprocessOptions
     {
-      get { return _numberOfY; }
-      set { _numberOfY = value; }
-    }
-
-    public int NumberOfFactors
-    {
-      get { return _numberOfFactors; }
-      set { _numberOfFactors = value; }
+      get { return _preprocessOptions; }
+      set { _preprocessOptions = value; }
     }
 
     public IROVector XOfX

@@ -26,67 +26,35 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-  public class PLS1CalibrationModel : IMultivariateCalibrationModel
+  public class PLS1CalibrationModel : MultivariateCalibrationModel
   {
-    IROVector _xOfX;
-    IROVector _xMean;
-    IROVector _xScale;
-    IROVector _yMean;
-    IROVector _yScale;
+   
 
     IROMatrix[] _xWeights;
     IROMatrix[] _xLoads;
     IROMatrix[] _yLoads;
     IROMatrix[] _crossProduct;
 
-    int _numberOfX;
-    int _numberOfY;
-    int _numberOfFactors;
+   
 
-    public PLS1CalibrationModel(int numberOfX, int numberOfY, int numberOfFactors)
+    public override int NumberOfY
     {
-      _numberOfX = numberOfX;
-      _numberOfY = numberOfY;
-      _numberOfFactors = numberOfFactors;
-
-
-      _xWeights = new IROMatrix[_numberOfY] ;
-      _xLoads = new IROMatrix[_numberOfY];
-      _yLoads = new IROMatrix[_numberOfY];
-      _crossProduct = new IROMatrix[_numberOfY];
+      get { return _numberOfY; }
+      set 
+      { _numberOfY = value;
+        Allocate(value);
+      }
     }
 
-
-    public IROVector XOfX
+   
+    protected void Allocate(int numberOfY)
     {
-      get { return _xOfX; }
-      set { _xOfX = value; }
+      _xWeights = new IROMatrix[numberOfY] ;
+      _xLoads = new IROMatrix[numberOfY];
+      _yLoads = new IROMatrix[numberOfY];
+      _crossProduct = new IROMatrix[numberOfY];
     }
 
-
-    public IROVector XMean
-    {
-      get { return _xMean; }
-      set { _xMean = value; }
-    }
-
-    public IROVector XScale
-    {
-      get { return _xScale; }
-      set { _xScale = value; }
-    }
-
-    public IROVector YMean
-    {
-      get { return _yMean; }
-      set { _yMean = value; }
-    }
-
-    public IROVector YScale
-    {
-      get { return _yScale; }
-      set { _yScale = value; }
-    }
 
     public IROMatrix[] XWeights
     {
@@ -108,23 +76,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       get { return _crossProduct; }
     }
 
-    public int NumberOfX
-    {
-      get { return _numberOfX; }
-      set { _numberOfX = value; }
-    }
-
-    public int NumberOfY
-    {
-      get { return _numberOfY; }
-      set { _numberOfY = value; }
-    }
-
-    public int NumberOfFactors
-    {
-      get { return _numberOfFactors; }
-      set { _numberOfFactors = value; }
-    }
+  
   
   }
 

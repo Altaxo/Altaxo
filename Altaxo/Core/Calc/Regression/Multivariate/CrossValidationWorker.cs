@@ -34,7 +34,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     protected SpectralPreprocessingOptions _preprocessOptions;
     protected MultivariateRegression _analysis;
       
-    protected IMatrix predY;
+
 
     
 
@@ -58,6 +58,8 @@ namespace Altaxo.Calc.Regression.Multivariate
 
   public class CrossPRESSEvaluator : CrossValidationWorker
   {
+    protected IMatrix _predictedY;
+
     double[] _crossPRESS;
     public double[] CrossPRESS { get { return _crossPRESS; }}
 
@@ -75,8 +77,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     public void EhCrossPRESS(int[]group, IMatrix XX, IMatrix YY, IMatrix XU, IMatrix YU)
     {
       IVector meanX,scaleX,meanY,scaleY;
-      if(predY==null || predY.Rows!=YU.Rows || predY.Columns!=YU.Columns)
-        predY = new MatrixMath.BEMatrix(YU.Rows,YU.Columns);
+      if(_predictedY==null || _predictedY.Rows!=YU.Rows || _predictedY.Columns!=YU.Columns)
+        _predictedY = new MatrixMath.BEMatrix(YU.Rows,YU.Columns);
 
       MultivariateRegression.PreprocessForAnalysis(_preprocessOptions,_xOfX, XX, YY, out meanX, out scaleX, out meanY, out scaleY);
       _analysis.AnalyzeFromPreprocessed(XX,YY,_numFactors);
@@ -93,15 +95,16 @@ namespace Altaxo.Calc.Regression.Multivariate
       _crossPRESS[0] += MatrixMath.SumOfSquares(YU);
       for(int nFactor=1;nFactor<=_numFactors;nFactor++)
       {
-        _analysis.PredictYFromPreprocessed(XU,nFactor,predY);
-        MultivariateRegression.PostprocessY(predY,meanY,scaleY);
-        _crossPRESS[nFactor] += MatrixMath.SumOfSquaredDifferences(YU,predY);
+        _analysis.PredictYFromPreprocessed(XU,nFactor,_predictedY);
+        MultivariateRegression.PostprocessY(_predictedY,meanY,scaleY);
+        _crossPRESS[nFactor] += MatrixMath.SumOfSquaredDifferences(YU,_predictedY);
       }
     }
   }
 
   public class CrossPredictedYEvaluator : CrossValidationWorker
   {
+    protected IMatrix _predictedY;
     public IMatrix _YCrossValidationPrediction;
 
     public CrossPredictedYEvaluator(
@@ -120,8 +123,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     public void EhYCrossPredicted(int[]group, IMatrix XX, IMatrix YY, IMatrix XU, IMatrix YU)
     {
       IVector meanX,scaleX,meanY,scaleY;
-      if(predY==null || predY.Rows!=YU.Rows || predY.Columns!=YU.Columns)
-        predY = new MatrixMath.BEMatrix(YU.Rows,YU.Columns);
+      if(_predictedY==null || _predictedY.Rows!=YU.Rows || _predictedY.Columns!=YU.Columns)
+        _predictedY = new MatrixMath.BEMatrix(YU.Rows,YU.Columns);
 
       MultivariateRegression.PreprocessForAnalysis(_preprocessOptions,_xOfX, XX, YY,
         out meanX, out scaleX, out meanY, out scaleY);
@@ -130,11 +133,114 @@ namespace Altaxo.Calc.Regression.Multivariate
       _numFactors = Math.Min(_numFactors,_analysis.NumberOfFactors);
 
       MultivariateRegression.PreprocessSpectraForPrediction(_preprocessOptions,XU,meanX,scaleX);
-      _analysis.PredictYFromPreprocessed(XU,_numFactors,predY);
-      MultivariateRegression.PostprocessY(predY,meanY,scaleY);
+      _analysis.PredictYFromPreprocessed(XU,_numFactors,_predictedY);
+      MultivariateRegression.PostprocessY(_predictedY,meanY,scaleY);
         
       for(int i=0;i<group.Length;i++)
-        MatrixMath.SetRow(predY,i,_YCrossValidationPrediction,group[i]); 
+        MatrixMath.SetRow(_predictedY,i,_YCrossValidationPrediction,group[i]); 
+    }
+  }
+
+  
+
+
+  public class CrossPredictedXResidualsEvaluator : CrossValidationWorker
+  {
+    int _numberOfPoints;
+     
+    public IMatrix _XCrossResiduals;
+
+    public IROMatrix XCrossResiduals { get { return _XCrossResiduals; }}
+
+    public CrossPredictedXResidualsEvaluator(
+      int numberOfPoints,
+      IROVector xOfX,
+      int numFactors,
+      ICrossValidationGroupingStrategy groupingStrategy,
+      SpectralPreprocessingOptions preprocessOptions,
+      MultivariateRegression analysis
+      )
+      : base(xOfX,numFactors,groupingStrategy,preprocessOptions,analysis)
+    {
+      _numberOfPoints = numberOfPoints;
+    }
+     
+    public void EhCrossValidationWorker(int[]group, IMatrix XX, IMatrix YY, IMatrix XU, IMatrix YU)
+    {
+      IVector meanX,scaleX,meanY,scaleY;
+
+      MultivariateRegression.PreprocessForAnalysis(_preprocessOptions,_xOfX, XX, YY,
+        out meanX, out scaleX, out meanY, out scaleY);
+        
+      _analysis.AnalyzeFromPreprocessed(XX,YY,_numFactors);
+      _numFactors = Math.Min(_numFactors,_analysis.NumberOfFactors);
+
+      MultivariateRegression.PreprocessSpectraForPrediction(_preprocessOptions,XU,meanX,scaleX);
+      IROMatrix xResidual = _analysis.SpectralResidualsFromPreprocessed(XU,_numFactors);
+     
+
+      
+      if(this._XCrossResiduals==null)
+        this._XCrossResiduals = new MatrixMath.BEMatrix(_numberOfPoints,xResidual.Columns);
+  
+      for(int i=0;i<group.Length;i++)
+        MatrixMath.SetRow(xResidual,i,this._XCrossResiduals,group[i]); 
+    }
+  }
+
+
+  public class CrossValidationResultEvaluator : CrossValidationWorker
+  {
+  
+    CrossValidationResult _result;
+
+    protected IMatrix _predictedY;
+    protected IMatrix _spectralResidual;
+
+
+    public CrossValidationResultEvaluator(
+      IROVector xOfX,
+      int numFactors,
+      ICrossValidationGroupingStrategy groupingStrategy,
+      SpectralPreprocessingOptions preprocessOptions,
+      MultivariateRegression analysis,
+      CrossValidationResult result
+      )
+      : base(xOfX,numFactors,groupingStrategy,preprocessOptions,analysis)
+    {
+      _result = result;
+    }
+     
+    public void EhCrossValidationWorker(int[]group, IMatrix XX, IMatrix YY, IMatrix XU, IMatrix YU)
+    {
+      IVector meanX,scaleX,meanY,scaleY;
+
+      MultivariateRegression.PreprocessForAnalysis(_preprocessOptions,_xOfX, XX, YY,
+        out meanX, out scaleX, out meanY, out scaleY);
+        
+      _analysis.AnalyzeFromPreprocessed(XX,YY,_numFactors);
+      _numFactors = Math.Min(_numFactors,_analysis.NumberOfFactors);
+
+      MultivariateRegression.PreprocessSpectraForPrediction(_preprocessOptions,XU,meanX,scaleX);
+
+      if(_predictedY==null || _predictedY.Rows!=YU.Rows || _predictedY.Columns!=YU.Columns)
+        _predictedY = new MatrixMath.BEMatrix(YU.Rows,YU.Columns);
+      if(_spectralResidual==null || _spectralResidual.Rows!=XU.Rows || _spectralResidual.Columns!=_analysis.NumberOfSpectralResiduals)
+        _spectralResidual = new MatrixMath.BEMatrix(XU.Rows,_analysis.NumberOfSpectralResiduals);
+
+
+
+      for(int nFactor=0;nFactor<=_numFactors;nFactor++)
+      {
+        _analysis.PredictedYAndSpectralResidualsFromPreprocessed(XU,nFactor,_predictedY,_spectralResidual);
+        MultivariateRegression.PostprocessY(_predictedY,meanY,scaleY);
+        
+        for(int i=0;i<group.Length;i++)
+        {
+          MatrixMath.SetRow(_predictedY,i,_result.GetPredictedYW(NumberOfFactors),group[i]); 
+          MatrixMath.SetRow(_spectralResidual,i,_result.GetSpectralResidualW(NumberOfFactors),group[i]);
+        }
+      }
     }
   }
 }

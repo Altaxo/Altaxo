@@ -314,6 +314,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       out IROVector press
       );
 
+  
+     public abstract MultivariateRegression CreateNewRegressionObject();
+
     /// <summary>
     /// Calculate the cross PRESS values and stores the results in the provided table.
     /// </summary>
@@ -322,13 +325,72 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="plsOptions">Analysis options.</param>
     /// <param name="plsContent">Information about this analysis.</param>
     /// <param name="table">Table to store the results.</param>
-    public abstract void CalculateCrossPRESS(
+    public virtual void CalculateCrossPRESS(
+      IROVector xOfX,
       IMatrix matrixX,
       IMatrix matrixY,
       MultivariateAnalysisOptions plsOptions,
       MultivariateContentMemento plsContent,
       DataTable table
-      );
+      )
+    {
+      IROVector crossPRESSMatrix;
+      
+      Altaxo.Data.DoubleColumn crosspresscol = new Altaxo.Data.DoubleColumn();
+
+      double meanNumberOfExcludedSpectra = 0;
+      if(plsOptions.CrossPRESSCalculation!=CrossPRESSCalculationType.None)
+      {
+        // now a cross validation - this can take a long time for bigger matrices
+        
+        MultivariateRegression.GetCrossPRESS(
+          xOfX,matrixX,matrixY,plsOptions.MaxNumberOfFactors,GetGroupingStrategy(plsOptions),
+          plsContent.SpectralPreprocessing,
+          this.CreateNewRegressionObject(),
+          out crossPRESSMatrix);
+
+        VectorMath.Copy(crossPRESSMatrix,DataColumnWrapper.ToVector(crosspresscol,crossPRESSMatrix.Length));
+       
+        table.DataColumns.Add(crosspresscol,GetCrossPRESSValue_ColumnName(),Altaxo.Data.ColumnKind.V,4);
+
+        plsContent.MeanNumberOfMeasurementsInCrossPRESSCalculation = plsContent.NumberOfMeasurements-meanNumberOfExcludedSpectra;
+      }
+      else
+      {
+        table.DataColumns.Add(crosspresscol,GetCrossPRESSValue_ColumnName(),Altaxo.Data.ColumnKind.V,4);
+      }
+     
+    }
+
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="mcalib"></param>
+    /// <param name="crossValidationType"></param>
+    /// <param name="preprocessOptions"></param>
+    /// <param name="matrixX">Matrix of horizontal spectra, centered and preprocessed.</param>
+    /// <param name="matrixY">Matrix of concentrations, centered.</param>
+    /// <param name="numberOfFactors"></param>
+    /// <param name="predictedY"></param>
+    /// <param name="spectralResiduals"></param>
+    public virtual void CalculateCrossPredictedY(
+      IMultivariateCalibrationModel mcalib,
+      ICrossValidationGroupingStrategy groupingStrategy,
+      SpectralPreprocessingOptions preprocessOptions,
+      IROVector xOfX,
+      IMatrix matrixX,
+      IMatrix matrixY,
+      int numberOfFactors, 
+      IMatrix predictedY, 
+      IMatrix spectralResiduals)
+    {
+      MultivariateRegression.GetCrossYPredicted(xOfX,
+        matrixX,matrixY,numberOfFactors,groupingStrategy,preprocessOptions,
+        this.CreateNewRegressionObject(),
+        predictedY);
+    }  
 
     /// <summary>
     /// Name of the Analysis, like PLS1, PLS2 or PCR.
@@ -362,6 +424,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <returns>A matrix with the prediction scores. Each score (for one y-value) is a row in the matrix.</returns>
     public abstract IROMatrix CalculatePredictionScores(DataTable table, int preferredNumberOfFactors);
 
+   
+
+
     /// <summary>
     /// For a given set of spectra, predicts the y-values and stores them in the matrix <c>predictedY</c>
     /// </summary>
@@ -371,35 +436,27 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="numberOfFactors">The number of factors used for prediction.</param>
     /// <param name="predictedY">On return, this matrix holds the predicted y-values. Each row in this matrix corresponds to the same row (spectrum) in matrixX.</param>
     /// <param name="spectralResiduals">If you set this parameter to a appropriate matrix, the spectral residuals will be stored in this matrix. Set this parameter to null if you don't need the residuals.</param>
-    public abstract void CalculatePredictedY(
-      IMultivariateCalibrationModel calib,
+    public virtual void CalculatePredictedY(
+      IMultivariateCalibrationModel mcalib,
       SpectralPreprocessingOptions preprocessOptions,
       IMatrix matrixX,
       int numberOfFactors, 
       MatrixMath.BEMatrix  predictedY, 
-      IMatrix spectralResiduals);
+      IMatrix spectralResiduals)
+    {
+     
 
+      MultivariateRegression.PreprocessSpectraForPrediction(mcalib,preprocessOptions,matrixX);
 
-    /// <summary>
-    /// For a given set of calibration (!) spectra, cross predicts the y-values and stores them in the matrix <c>predictedY</c>. Cross prediction means that the prediction is
-    /// done with exclusion of the spectra to predict from the calibration model.
-    /// </summary>
-    /// <param name="calib">The calibration model of the analysis.</param>
-    /// <param name="preprocessOptions">The information how to preprocess the spectra.</param>
-    /// <param name="matrixX">The matrix of calibration spectra. Each spectrum is a row in the matrix.</param>
-    /// <param name="numberOfFactors">The number of factors used for prediction.</param>
-    /// <param name="predictedY">On return, this matrix holds the cross predicted y-values. Each row in this matrix corresponds to the same row (spectrum) in matrixX.</param>
-    /// <param name="spectralResiduals">If you set this parameter to a appropriate matrix, the spectral residuals will be stored in this matrix. Set this parameter to null if you don't need the residuals.</param>
-    public abstract void CalculateCrossPredictedY(
-      IMultivariateCalibrationModel mcalib,
-      ICrossValidationGroupingStrategy groupingStrategy,
-      SpectralPreprocessingOptions preprocessOptions,
-      IROVector xOfX,
-      IMatrix matrixX,
-      IMatrix matrixY,
-      int numberOfFactors, 
-      IMatrix predictedY, 
-      IMatrix spectralResiduals);
+      
+      MultivariateRegression regress = this.CreateNewRegressionObject();
+      regress.SetCalibrationModel(mcalib);
+
+      regress.PredictedYAndSpectralResidualsFromPreprocessed(matrixX,numberOfFactors,predictedY,spectralResiduals);
+
+      MultivariateRegression.PostprocessY(mcalib.PreprocessingModel,predictedY);
+    }  
+
 
     #endregion
 
@@ -1177,17 +1234,12 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix matrixX = GetRawSpectra(plsMemo);
       IMatrix matrixY = GetOriginalY(plsMemo);
 
-
-      // do spectral preprocessing
-      // plsMemo.SpectralPreprocessing.ProcessForPrediction(matrixX,calib.XMean,calib.XScale);
-      // MultivariateAnalysis.PreprocessYForPrediction(matrixY,calib.YMean,calib.YScale);
-
       MatrixMath.BEMatrix predictedY = new MatrixMath.BEMatrix(matrixX.Rows,calib.NumberOfY);
       MatrixMath.BEMatrix spectralResiduals = new MatrixMath.BEMatrix(matrixX.Rows,1);
       CalculateCrossPredictedY(calib,
         GetGroupingStrategy(plsMemo.CrossValidationType),
         plsMemo.SpectralPreprocessing,
-        calib.XOfX,
+        calib.PreprocessingModel.XOfX,
         matrixX,
         matrixY,
         numberOfFactors,
@@ -1367,7 +1419,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         double[] xofx = GetXOfSpectra(srctable,spectrumIsRow,spectralIndices,measurementIndices);
 
         string errormsg;
-        AscendingIntegerCollection map = MapSpectralX(calibModel.XOfX,VectorMath.ToROVector(xofx),out errormsg);
+        AscendingIntegerCollection map = MapSpectralX(calibModel.PreprocessingModel.XOfX,VectorMath.ToROVector(xofx),out errormsg);
         if(map==null)
           throw new ApplicationException("Can not map spectral data: " + errormsg);
         else
@@ -1427,13 +1479,13 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMultivariateCalibrationModel calib = GetCalibrationModel(calibtable);
 
       // do spectral preprocessing
-      plsMemo.SpectralPreprocessing.ProcessForPrediction(matrixX,calib.XMean,calib.XScale);
+      plsMemo.SpectralPreprocessing.ProcessForPrediction(matrixX,calib.PreprocessingModel.XMean,calib.PreprocessingModel.XScale);
 
 
       // for the new table, save the spectra as column
       DoubleColumn xcol = new DoubleColumn();
       for(int i=matrixX.Columns;i>=0;i--)
-        xcol[i] = calib.XOfX[i];
+        xcol[i] = calib.PreprocessingModel.XOfX[i];
       desttable.DataColumns.Add(xcol,_XOfX_ColumnName,ColumnKind.X,0);
     
 
@@ -1523,7 +1575,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       this.StorePRESSData(press,table);
 
       if(plsOptions.CrossPRESSCalculation!=CrossPRESSCalculationType.None)
-        CalculateCrossPRESS(matrixX,matrixY,plsOptions,plsContent,table);
+        CalculateCrossPRESS(xOfX,matrixX,matrixY,plsOptions,plsContent,table);
       
       StoreFRatioData(table,plsContent);
 

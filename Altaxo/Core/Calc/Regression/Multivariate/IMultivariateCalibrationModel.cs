@@ -41,32 +41,55 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
-
-    IROVector XOfX
+    int NumberOfFactors
     {
       get;
     }
 
-
-    IROVector XMean
-    {
-      get ; 
-    }
-
-    IROVector XScale
+    IMultivariatePreprocessingModel PreprocessingModel
     {
       get; 
     }
-
-    IROVector YMean
-    {
-      get ; 
-    }
-
-    IROVector YScale
-    {
-      get ; 
-    }
-
   }
+
+  public class MultivariateCalibrationModel : IMultivariateCalibrationModel
+  {
+    protected int _numberOfX;
+    protected int _numberOfY;
+    protected int _numberOfFactors;
+
+    MultivariatePreprocessingModel _preprocessingData;
+
+
+    public IMultivariatePreprocessingModel PreprocessingModel
+    {
+      get { return _preprocessingData; }
+    }
+
+
+    public void SetPreprocessingModel(MultivariatePreprocessingModel val)
+    {
+      _preprocessingData = val; 
+    }
+
+   
+    public int NumberOfX
+    {
+      get { return _numberOfX; }
+      set { _numberOfX = value; }
+    }
+
+    public virtual int NumberOfY
+    {
+      get { return _numberOfY; }
+      set { _numberOfY = value; }
+    }
+
+    public int NumberOfFactors
+    {
+      get { return _numberOfFactors; }
+      set { _numberOfFactors = value; }
+    }
+  }
+
 }
