@@ -336,7 +336,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      ctrl.SetSelectedColumnAsX();  
+      Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsX(ctrl);
     }
   }
 
@@ -344,7 +344,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      ctrl.SetSelectedColumnAsLabel();  
+      Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsLabel(ctrl);
     }
   }
 
@@ -352,7 +352,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      ctrl.SetSelectedColumnAsValue();  
+      Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnAsValue(ctrl);
     }
   }
 
@@ -361,117 +361,17 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      if(ctrl.SelectedColumns.Count==1 && ctrl.SelectedPropertyColumns.Count==0)
-      {
-        Altaxo.Data.DataColumn col = ctrl.Doc.DataColumns[ctrl.SelectedColumns[0]];
-        Main.GUI.TextValueInputController tvctrl = new Main.GUI.TextValueInputController(
-          col.Name,
-          new Main.GUI.RenameColumnDialog()
-          );
-
-        tvctrl.Validator = new ColumnRenameValidator(col,ctrl);
-        if(tvctrl.ShowDialog(ctrl.View.TableViewForm))
-         ctrl.Doc.DataColumns.SetColumnName(col,tvctrl.InputText);
-      }
-      if(ctrl.SelectedColumns.Count==0 && ctrl.SelectedPropertyColumns.Count==1)
-      {
-        Altaxo.Data.DataColumn col = ctrl.Doc.PropCols[ctrl.SelectedPropertyColumns[0]];
-        Main.GUI.TextValueInputController tvctrl = new Main.GUI.TextValueInputController(
-          col.Name,
-          new Main.GUI.RenameColumnDialog()
-          );
-
-        tvctrl.Validator = new PropertyColumnRenameValidator(col,ctrl);
-        if(tvctrl.ShowDialog(ctrl.View.TableViewForm))
-            ctrl.Doc.PropCols.SetColumnName(col,tvctrl.InputText);
-      }
-
+      Altaxo.Worksheet.Commands.ColumnCommands.RenameSelectedColumn(ctrl);
     }
-
-    protected class ColumnRenameValidator : Main.GUI.TextValueInputController.NonEmptyStringValidator
-    {
-      Altaxo.Data.DataColumn m_Col;
-      WorksheetController m_Ctrl;
-      
-      public ColumnRenameValidator(Altaxo.Data.DataColumn col, WorksheetController ctrl)
-        : base("The column name must not be empty! Please enter a valid name.")
-      {
-        m_Col = col;
-        m_Ctrl = ctrl;
-      }
-
-      public override string Validate(string name)
-      {
-        string err = base.Validate(name);
-        if(null!=err)
-          return err;
-
-        if(m_Col.Name==name)
-          return null;
-        else if(m_Ctrl.Doc.DataColumns.ContainsColumn(name))
-          return "This column name already exists, please choose another name!";
-        else
-          return null;
-
-      }
-    }
-
-
-    protected class PropertyColumnRenameValidator : Main.GUI.TextValueInputController.NonEmptyStringValidator
-    {
-      Altaxo.Data.DataColumn m_Col;
-      WorksheetController m_Ctrl;
-      
-      public PropertyColumnRenameValidator(Altaxo.Data.DataColumn col, WorksheetController ctrl)
-        : base("The column name must not be empty! Please enter a valid name.")
-      {
-        m_Col = col;
-        m_Ctrl = ctrl;
-      }
-
-      public override string Validate(string name)
-      {
-        string err = base.Validate(name);
-        if(null!=err)
-          return err;
-
-        if(m_Col.Name==name)
-          return null;
-        else if(m_Ctrl.Doc.PropCols.ContainsColumn(name))
-          return "This column name already exists, please choose another name!";
-        else
-          return null;
-
-      }
-    }
-
   }
 
-
+  
 
   public class SetColumnGroupNumber : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      if(ctrl.SelectedColumns.Count==0)
-        return;
-
-      int grpNumber = ctrl.Doc.DataColumns.GetColumnGroup(ctrl.SelectedColumns[0]);
-      Main.GUI.IntegerValueInputController ivictrl = new Main.GUI.IntegerValueInputController(
-        grpNumber,
-        new Main.GUI.SingleValueDialog("Set group number","Please enter a group number (>=0):")
-        );
-
-      ivictrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
-      if(ivictrl.ShowDialog(ctrl.View.TableViewForm))
-      {
-        // now set the group number for all selected columns
-        for(int i=0;i<ctrl.SelectedColumns.Count;i++)
-        {
-          int idx = ctrl.SelectedColumns[i];
-          ctrl.Doc.DataColumns.SetColumnGroup(idx, ivictrl.EnteredContents);
-        }
-      }
+       Altaxo.Worksheet.Commands.ColumnCommands.SetSelectedColumnGroupNumber(ctrl);
     }
   }
 
@@ -480,14 +380,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      // extract the properties from the (first) selected property column
-      if(ctrl.SelectedPropertyColumns.Count==0)
-        return;
-
-      Altaxo.Data.DataColumn col = ctrl.DataTable.PropCols[ctrl.SelectedPropertyColumns[0]];
-
-      DataGridOperations.ExtractPropertiesFromColumn(col,ctrl.DataTable.PropCols);
-
+      Altaxo.Worksheet.Commands.ColumnCommands.ExtractPropertyValues(ctrl);
     }
   }
 

@@ -1624,58 +1624,7 @@ namespace Altaxo.Worksheet
     
     }
 
-    /// <summary>
-    /// This function searches for patterns like aaa=bbb in the items of the text column. If it finds such a item, it creates a column named aaa
-    /// and stores the value bbb at the same position in it as in the text column.
-    /// </summary>
-    /// <param name="col">The column where to search for the patterns described above.</param>
-    /// <param name="store">The column collection where to store the newly created columns of properties.</param>
-    public static void ExtractPropertiesFromColumn(Altaxo.Data.DataColumn col, Altaxo.Data.DataColumnCollection store)
-    {
-      for(int nRow=0;nRow<col.Count;nRow++)
-      {
-        ExtractPropertiesFromString(col[nRow].ToString(),store, nRow);
-      }
-    }
-
-    /// <summary>
-    /// This function searches for patterns like aaa=bbb in the provided string. If it finds such a item, it creates a column named aaa
-    /// and stores the value bbb at the same position in it as in the text column.
-    /// </summary>
-    /// <param name="strg">The string where to search for the patterns described above.</param>
-    /// <param name="store">The column collection where to store the newly created columns of properties.</param>
-    /// <param name="index">The index into the column where to store the property value.</param>
-    public static void ExtractPropertiesFromString(string strg, Altaxo.Data.DataColumnCollection store, int index)
-    {
-      string pat;
-      pat = @"(\S+)=(\S+)";
-
-      Regex r = new Regex(pat, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-      for ( Match m = r.Match(strg); m.Success; m = m.NextMatch()) 
-      {
-        string propname = m.Groups[1].ToString();
-        string propvalue = m.Groups[2].ToString();
-
-        // System.Diagnostics.Trace.WriteLine("Found the pair " + propname + " : " + propvalue);
-
-        if(!store.ContainsColumn(propname))
-        {
-          Altaxo.Data.DataColumn col;
-          if(Altaxo.Serialization.DateTimeParsing.IsDateTime(propvalue))
-            col = new Altaxo.Data.DateTimeColumn();
-          else if(Altaxo.Serialization.NumberConversion.IsNumeric(propvalue))
-            col = new Altaxo.Data.DoubleColumn();
-          else
-            col = new Altaxo.Data.TextColumn();
-        
-          store.Add(col,propname); // add the column to the collection
-        }
-
-        // now the column is present we can store the value in it.
-        store[propname][index] = new Altaxo.Data.AltaxoVariant(propvalue);
-      }   
-    }
+  
 
 
   } // end of class DataGridOperations

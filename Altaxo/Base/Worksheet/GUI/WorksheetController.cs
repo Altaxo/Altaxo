@@ -1090,96 +1090,26 @@ namespace Altaxo.Worksheet.GUI
     }
     protected void EhMenuColumnSetColumnAsX_OnClick(object sender, System.EventArgs e)
     {
-      this.SetSelectedColumnAsX();
-    }
-
-
-
-
-    protected class ColumnRenameValidator : Main.GUI.TextValueInputController.NonEmptyStringValidator
-    {
-      Altaxo.Data.DataColumn m_Col;
-      WorksheetController m_Ctrl;
-      
-      public ColumnRenameValidator(Altaxo.Data.DataColumn col, WorksheetController ctrl)
-        : base("The column name must not be empty! Please enter a valid name.")
-      {
-        m_Col = col;
-        m_Ctrl = ctrl;
-      }
-
-      public override string Validate(string name)
-      {
-        string err = base.Validate(name);
-        if(null!=err)
-          return err;
-
-        if(m_Col.Name==name)
-          return null;
-        else if(m_Ctrl.Doc.DataColumns.ContainsColumn(name))
-          return "This column name already exists, please choose another name!";
-        else
-          return null;
-
-      }
+      Commands.ColumnCommands.SetSelectedColumnAsX(this);
     }
 
     protected void EhMenuColumnRename_OnClick(object sender, System.EventArgs e)
     {
-      if(this.m_SelectedColumns.Count==0)
-        return;
-
-      Altaxo.Data.DataColumn col = Doc[m_SelectedColumns[0]];
-      Main.GUI.TextValueInputController ctrl = new Main.GUI.TextValueInputController(
-        col.Name,
-        new Main.GUI.RenameColumnDialog()
-        );
-
-      ctrl.Validator = new ColumnRenameValidator(col,this);
-      if(ctrl.ShowDialog(View.TableViewForm))
-      {
-        if(Doc.DataColumns.ContainsColumn(col))
-          Doc.DataColumns.SetColumnName(col,ctrl.InputText);
-        if(Doc.PropCols.ContainsColumn(col))
-          Doc.PropCols.SetColumnName(col,ctrl.InputText);
-      }
+      Commands.ColumnCommands.RenameSelectedColumn(this);
     }
 
     
     protected void EhMenuColumnSetGroupNumber_OnClick(object sender, System.EventArgs e)
     {
-      if(this.m_SelectedColumns.Count==0)
-        return;
-
-      int grpNumber = Doc.DataColumns.GetColumnGroup(m_SelectedColumns[0]);
-      Main.GUI.IntegerValueInputController ctrl = new Main.GUI.IntegerValueInputController(
-        grpNumber,
-        new Main.GUI.SingleValueDialog("Set group number","Please enter a group number (>=0):")
-        );
-
-      ctrl.Validator = new Altaxo.Main.GUI.IntegerValueInputController.ZeroOrPositiveIntegerValidator();
-      if(ctrl.ShowDialog(View.TableViewForm))
-      {
-        // now set the group number for all selected columns
-        for(int i=0;i<m_SelectedColumns.Count;i++)
-        {
-          int idx = m_SelectedColumns[i];
-          Doc.DataColumns.SetColumnGroup(idx, ctrl.EnteredContents);
-        }
-      }
+      Commands.ColumnCommands.SetSelectedColumnGroupNumber(this);
     }
   
 
     protected void EhMenuColumnExtractPropertyValues_OnClick(object sender, System.EventArgs e)
-    {     // extract the properties from the (first) selected property column
-      if(this.SelectedPropertyColumns.Count==0)
-        return;
-
-      Altaxo.Data.DataColumn col = this.DataTable.PropCols[this.SelectedPropertyColumns[0]];
-
-      DataGridOperations.ExtractPropertiesFromColumn(col,this.DataTable.PropCols);
-
+    { 
+      Commands.ColumnCommands.ExtractPropertyValues(this);
     }
+
     // ******************************************************************
     // ******************************************************************
     // Analysis (Popup)
@@ -1419,10 +1349,6 @@ namespace Altaxo.Worksheet.GUI
         this.View.TableAreaInvalidate();
     }
 
-    
-
-  
-
     /// <summary>
     /// Remove the selected columns, rows or property columns.
     /// </summary>
@@ -1467,63 +1393,20 @@ namespace Altaxo.Worksheet.GUI
 
 
     }
+ 
 
-
-    /// <summary>
-    /// Sets the column kind of the first selected column to a X column.
-    /// </summary>
-    public void SetSelectedColumnAsX()
-    {
-      if(SelectedColumns.Count>0)
-      {
-        this.DataTable.DataColumns.SetColumnKind(SelectedColumns[0],Altaxo.Data.ColumnKind.X);
-        SelectedColumns.Clear();
-        this.View.TableAreaInvalidate(); // draw new because 
-      }
-    }
-
-    /// <summary>
-    /// Sets the column kind of the first selected column to a label column.
-    /// </summary>
-    public void SetSelectedColumnAsLabel()
-    {
-      if(SelectedColumns.Count>0)
-      {
-        this.DataTable.DataColumns.SetColumnKind(SelectedColumns[0],Altaxo.Data.ColumnKind.Label);
-        SelectedColumns.Clear();
-        this.View.TableAreaInvalidate(); // draw new because 
-      }
-    }
-
-    /// <summary>
-    /// Sets the column kind of the first selected column to a value column.
-    /// </summary>
-    public void SetSelectedColumnAsValue()
-    {
-      if(SelectedColumns.Count>0)
-      {
-        this.DataTable.DataColumns.SetColumnKind(SelectedColumns[0],Altaxo.Data.ColumnKind.V);
-        SelectedColumns.Clear();
-        this.View.TableAreaInvalidate(); // draw new because 
-      }
-    }
-
-    /// <summary>
-    /// Sets the group number of the currently selected columns to <code>nGroup</code>.
-    /// </summary>
-    /// <param name="nGroup">The group number to set for the selected columns.</param>
-    public void SetSelectedColumnsGroup(int nGroup)
-    {
-      int len = SelectedColumns.Count;
-      for(int i=0;i<len;i++)
-      {
-        DataTable.DataColumns.SetColumnGroup(SelectedColumns[i], nGroup);
-      }
-      SelectedColumns.Clear();
-      this.View.TableAreaInvalidate();
-    }
+   
 
     #endregion
+
+    /// <summary>
+    /// Forces a redraw of the table view.
+    /// </summary>
+    public void UpdateTableView()
+    {
+      if(View!=null)
+        View.TableAreaInvalidate();
+    }
 
     #region "style related public methods"
 

@@ -656,6 +656,20 @@ namespace Altaxo.Data
       get { return m_PropertyColumns; }
     }
     
+    /// <summary>
+    /// Returns the property collection of the table.
+    /// </summary>
+    /// <remarks>To get a certain property value for a certain data column of the table,
+    /// use PropCols["propertyname", datacolumnnumber], where propertyname is the name of the property to retrieve and
+    /// columnnumber is the number of the data column for which the property should be retrieved. Unfortunately you can not reference
+    /// the data column here by name :-(, you have to know the number. Alternatively, you can reference the property (!) not by name, but
+    /// by number by using PropCols[propertycolumnnumber, datacolumnnumber]. If you only have
+    /// the data columns name, use PropCols("propertyname",this["datacolumsname"].Number] instead.
+    /// </remarks>
+    public DataColumnCollection PropertyColumns
+    {
+      get { return m_PropertyColumns; }
+    }
 
     public TableScript TableScript
     {

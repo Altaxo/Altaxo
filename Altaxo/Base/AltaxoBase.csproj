@@ -16,7 +16,7 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "Library"
-                PreBuildEvent = ""
+                PreBuildEvent = "..\..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\..\  ..\..\AssemblyInfo.cs"
                 PostBuildEvent = "copy AltaxoBase.??? ..\..\..\..\rt$(ConfigurationName)\bin"
                 RootNamespace = "Altaxo"
                 RunPostBuildEvent = "OnBuildSuccess"
@@ -1025,6 +1025,11 @@
                 />
                 <File
                     RelPath = "Worksheet\WorksheetLayoutCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\Commands\ColumnCommands.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
