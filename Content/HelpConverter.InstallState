@@ -1,0 +1,2 @@
+Dummy file. Is overwritten during invoking of HelpConverter by the installer.
+The purpose of the file is to make sure the file is removed during uninstallation.

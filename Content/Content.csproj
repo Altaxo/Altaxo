@@ -9,16 +9,16 @@
             <Settings
                 ApplicationIcon = ""
                 AssemblyKeyContainerName = ""
-                AssemblyName = "ContentProject"
+                AssemblyName = "HelpConverter"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
-                OutputType = "Library"
+                OutputType = "Exe"
                 PreBuildEvent = ""
                 PostBuildEvent = "if not exist ..\..\..\rtd\bin mkdir  ..\..\..\rtd\bin&#xd;&#xa;xcopy ..\..\AddIns\*.* ..\..\..\rtd\AddIns /E /I /Y&#xd;&#xa;xcopy ..\..\data\*.* ..\..\..\rtd\data /E /I /Y&#xd;&#xa;xcopy ..\..\doc\*.* ..\..\..\rtd\doc /E /I /Y&#xd;&#xa;"
-                RootNamespace = "ContentProject"
+                RootNamespace = ""
                 RunPostBuildEvent = "OnOutputUpdated"
                 StartupObject = ""
             >
@@ -76,7 +76,7 @@
                 />
                 <Reference
                     Name = "System.XML"
-                    AssemblyName = "System.XML"
+                    AssemblyName = "System.Xml"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
                 <Reference
@@ -96,6 +96,10 @@
                 <File
                     RelPath = "AssemblyInfo.cs"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HelpConverter.InstallState"
+                    BuildAction = "None"
                 />
                 <File
                     RelPath = "HelpSetup.cs"
