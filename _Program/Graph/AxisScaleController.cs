@@ -41,10 +41,17 @@ namespace Altaxo.Graph
 		// Cached values
 		protected Axis m_Axis;
 
-		protected string m_AxisOrg;
-		protected string m_AxisEnd;
-		protected string m_AxisType;
-		protected string m_AxisRescale;
+		protected string	m_AxisOrg;
+		protected bool		m_AxisOrgChanged;
+
+		protected string	m_AxisEnd;
+		protected bool		m_AxisEndChanged;
+
+		protected string	m_AxisType;
+		protected bool		m_AxisTypeChanged;
+
+		protected string	m_AxisRescale;
+		protected bool		m_AxisRescaleChanged;
 
 
 
@@ -78,25 +85,34 @@ namespace Altaxo.Graph
 
 		public void SetAxisOrg()
 		{
-			string name = null!=m_AxisOrg ? m_AxisOrg : m_Axis.Org.ToString();
+			if(null==m_AxisOrg) 
+			{
+				m_AxisOrg = m_Axis.Org.ToString();
+				m_AxisOrgChanged = false;
+			}
 			if(null!=View)
-				View.InitializeAxisOrg(name);
+				View.InitializeAxisOrg(m_AxisOrg);
 		}
 		public void SetAxisEnd()
 		{
-			string name = null!=m_AxisEnd ? m_AxisEnd : m_Axis.End.ToString();
+			if(null==m_AxisEnd)
+			{
+				m_AxisEnd = m_Axis.End.ToString();
+				m_AxisEndChanged = false;
+			}
 			if(null!=View)
-				View.InitializeAxisEnd(name);
+				View.InitializeAxisEnd(m_AxisEnd);
 		}
 
 		public void SetAxisType()
 		{
 			string[] names = new string[Axis.AvailableAxes.Keys.Count];
-			string name;
-			if(null!=m_AxisType)
-				name = m_AxisType;
-			else
-				name = m_Axis.GetType().ToString();
+			
+			if(null==m_AxisType)
+			{
+				m_AxisType = m_Axis.GetType().ToString();
+				m_AxisTypeChanged = false;
+			}
 
 			int i=0;
 			foreach(string axs in Axis.AvailableAxes.Keys)
@@ -105,98 +121,105 @@ namespace Altaxo.Graph
 			}
 
 			if(null!=View)
-				View.InitializeAxisType(names,name);
+				View.InitializeAxisType(names,m_AxisType);
 		}
 
 		public void SetAxisRescale()
 		{
 			string[] names = {"automatic", "org fixed", "end fixed", "both fixed" };
-			string name;
-			if(null!=m_AxisRescale)
+			if(null==m_AxisRescale)
 			{
-				name = m_AxisRescale;
-			}
-			else
-			{
-				if(!currAxis.OrgFixed && !currAxis.EndFixed)
-					name = names[0];
-				else if(currAxis.OrgFixed && !currAxis.EndFixed)
-					name = names[1];
-				else if(!currAxis.OrgFixed && currAxis.EndFixed)
-					name = names[2];
+				if(!m_Axis.OrgFixed && !m_Axis.EndFixed)
+					m_AxisRescale = names[0];
+				else if(m_Axis.OrgFixed && !m_Axis.EndFixed)
+					m_AxisRescale = names[1];
+				else if(!m_Axis.OrgFixed && m_Axis.EndFixed)
+					m_AxisRescale = names[2];
 				else 
-					name = names[3];
+					m_AxisRescale = names[3];
+
+				m_AxisRescaleChanged = false;
 			}
+
 			if(null!=View)
-				View.InitializeAxisRescale(names,name);
+				View.InitializeAxisRescale(names,m_AxisRescale);
 		}
 
 
 		protected int GetElements()
 		{
-			// retrieve the axis type from the dialog box and compare it
-			// with the current type
-			string axisname = this.m_Scale_cbType.SelectedItem.ToString();
-			System.Type axistype = (System.Type)Axis.AvailableAxes[axisname];
-			if(null!=axistype)
+			try
 			{
-				if(axistype!=currAxis.GetType())
+				// retrieve the axis type from the dialog box and compare it
+				// with the current type
+				System.Type axistype = (System.Type)Axis.AvailableAxes[m_AxisType];
+				if(null!=axistype)
 				{
-					// replace the current axis by a new axis of the type axistype
-					currAxis = (Axis)System.Activator.CreateInstance(axistype);
+					if(axistype!=m_Axis.GetType())
+					{
+						// replace the current axis by a new axis of the type axistype
+						m_Axis = (Axis)System.Activator.CreateInstance(axistype);
 
-					if((m_CurrentEdge==EdgeType.Bottom || m_CurrentEdge==EdgeType.Top))
-						m_Layer.XAxis = currAxis;
-					else
-						m_Layer.YAxis = currAxis;
+						if((m_Direction==AxisDirection.Horizontal))
+							m_Layer.XAxis = m_Axis;
+						else
+							m_Layer.YAxis = m_Axis;
+					}
 				}
+
+
+
+				switch(m_AxisRescale)
+				{
+					default:
+					case "automatic":
+						m_Axis.OrgFixed = false; m_Axis.EndFixed=false;
+						break;
+					case "org fixed":
+						m_Axis.OrgFixed = true; m_Axis.EndFixed=false;
+						break;
+					case "end fixed":
+						m_Axis.OrgFixed = false; m_Axis.EndFixed=true;
+						break;
+					case "both fixed":
+						m_Axis.OrgFixed = true; m_Axis.EndFixed=true;
+						break;
+				} // end switch
+
+
+				double org = System.Convert.ToDouble(m_AxisOrg);
+				double end = System.Convert.ToDouble(m_AxisEnd);
+
+				if(m_AxisOrgChanged || m_AxisEndChanged)
+					m_Axis.ProcessDataBounds(org,true,end,true);
 			}
-
-
-
-			switch(this.m_Scale_cbRescale.SelectedIndex)
+			catch(Exception ex)
 			{
-				default:
-				case 0:
-					m_Axis.OrgFixed = false; m_Axis.EndFixed=false;
-					break;
-				case 1:
-					m_Axis.OrgFixed = true; m_Axis.EndFixed=false;
-					break;
-				case 2:
-					m_Axis.OrgFixed = false; m_Axis.EndFixed=true;
-					break;
-				case 3:
-					m_Axis.OrgFixed = true; m_Axis.EndFixed=true;
-					break;
-			} // end switch
-
-			double org = System.Convert.ToDouble(m_Scale_edFrom.Text);
-			double end = System.Convert.ToDouble(m_Scale_edTo.Text);
-
-
-
-
-			if(this.m_Scale_FromOrToChanged)
-				currAxis.ProcessDataBounds(org,true,end,true);
+				return 1; // failure
+			}
+			
 			return 0; // all ok
 		}
 
 		public void EhView_AxisOrgChanged(string text)
 		{
 			m_AxisOrg = text;
+			m_AxisOrgChanged = true;
 		}
 		public void EhView_AxisEndChanged(string text)
 		{
 			m_AxisEnd = text;
+			m_AxisEndChanged = true;
 		}
 		public void EhView_AxisTypeChanged(string text)
 		{
 			m_AxisType = text;
+			m_AxisTypeChanged = true;
 		}
 		public void EhView_AxisRescaleChanged(string text)
 		{
 			m_AxisRescale = text;
+			m_AxisRescaleChanged = true;
 		}
 
 	}

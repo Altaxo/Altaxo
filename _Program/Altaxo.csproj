@@ -329,6 +329,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\LayerControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\LayerControl.resx"
+                    DependentUpon = "LayerControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\LayerController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\LayerDialog.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
