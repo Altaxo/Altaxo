@@ -28,7 +28,10 @@ namespace Altaxo.Graph
 	[Serializable]
 	public struct RectangleD
 	{
-		private double x, y, width, height;
+		private double x;
+		private double y;
+		private double width;
+		private double height;
 
 		public RectangleD(double x, double y, double width, double height)
 		{

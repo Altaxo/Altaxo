@@ -19,6 +19,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 using System;
+using Altaxo.Serialization;
+
 
 namespace Altaxo.Graph
 {
@@ -49,15 +51,17 @@ namespace Altaxo.Graph
 	/// boundaries of a plot association. Every plot association has two of these objects
 	/// that help tracking the boundaries of X and Y axis
 	/// </summary>
-	public abstract class PhysicalBoundaries : ICloneable
+	[SerializationSurrogate(0,typeof(PhysicalBoundaries.SerializationSurrogate0))]
+	[SerializationVersion(0)]
+	public abstract class PhysicalBoundaries : ICloneable, System.Runtime.Serialization.IDeserializationCallback
 	{
 		protected int numberOfItems=0;
 		protected double minValue=double.MaxValue;
 		protected double maxValue=double.MinValue;
 	
-		private bool m_bEventsEnabled=true;
-		private double m_SavedMinValue, m_SavedMaxValue; // stores the minValue and MaxValue in the moment if the events where disabled
-		private int    m_SavedNumberOfItems; // stores the number of items when events are disabled
+		private bool		m_bEventsEnabled=true;
+		private double	m_SavedMinValue, m_SavedMaxValue; // stores the minValue and MaxValue in the moment if the events where disabled
+		private int			m_SavedNumberOfItems; // stores the number of items when events are disabled
 
 
 		public delegate void BoundaryChangedHandler(object sender, BoundariesChangedEventArgs args);
@@ -65,6 +69,55 @@ namespace Altaxo.Graph
 
 		public event BoundaryChangedHandler		BoundaryChanged;
 		public event ItemNumberChangedHandler NumberOfItemsChanged;
+
+		#region Serialization
+		/// <summary>Used to serialize the PhysicalBoundaries Version 0.</summary>
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes PhysicalBoundaries Version 0.
+			/// </summary>
+			/// <param name="obj">The PhysicalBoundaries to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				PhysicalBoundaries s = (PhysicalBoundaries)obj;
+				info.AddValue("NumberOfItems",s.numberOfItems);
+				info.AddValue("MinValue",s.minValue);
+				info.AddValue("MaxValue",s.maxValue);
+			}
+			/// <summary>
+			/// Deserializes the PhysicalBoundaries Version 0.
+			/// </summary>
+			/// <param name="obj">The empty PhysicalBoundaries object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized PhysicalBoundaries.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				PhysicalBoundaries s = (PhysicalBoundaries)obj;
+
+				s.numberOfItems = info.GetInt32("NumberOfItems");  
+				s.minValue = info.GetDouble("MinValue");
+				s.maxValue = info.GetDouble("MaxValue");
+
+				s.m_bEventsEnabled = true;
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
 
 
 		public PhysicalBoundaries()
@@ -193,8 +246,62 @@ namespace Altaxo.Graph
 	/// FinitePhysicalBoundaries is intended to use for LinearAxis
 	/// it keeps track of the most negative and most positive value
 	/// </summary>
+	[SerializationSurrogate(0,typeof(FinitePhysicalBoundaries.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class FinitePhysicalBoundaries : PhysicalBoundaries
 	{
+		#region Serialization
+		/// <summary>Used to serialize the FinitePhysicalBoundaries Version 0.</summary>
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes FinitePhysicalBoundaries Version 0.
+			/// </summary>
+			/// <param name="obj">The FinitePhysicalBoundaries to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				FinitePhysicalBoundaries s = (FinitePhysicalBoundaries)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+
+				// serialize the base class
+				surr.GetObjectData(obj,info,context); // stream the data of the base object
+			}
+			/// <summary>
+			/// Deserializes the FinitePhysicalBoundaries Version 0.
+			/// </summary>
+			/// <param name="obj">The empty FinitePhysicalBoundaries object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized FinitePhysicalBoundaries.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				FinitePhysicalBoundaries s = (FinitePhysicalBoundaries)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+				// deserialize the base class
+				surr.SetObjectData(obj,info,context,selector);
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public override void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
 		public FinitePhysicalBoundaries()
 			: base()
 		{
@@ -254,8 +361,62 @@ namespace Altaxo.Graph
 	/// PositiveFinitePhysicalBoundaries is intended to use for logarithmic axis
 	/// it keeps track of the smallest positive and biggest positive value
 	/// </summary>
+	[SerializationSurrogate(0,typeof(PositiveFinitePhysicalBoundaries.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class PositiveFinitePhysicalBoundaries : PhysicalBoundaries
 	{
+		#region Serialization
+		/// <summary>Used to serialize the PositiveFinitePhysicalBoundaries Version 0.</summary>
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes PositiveFinitePhysicalBoundaries Version 0.
+			/// </summary>
+			/// <param name="obj">The PositiveFinitePhysicalBoundaries to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				PositiveFinitePhysicalBoundaries s = (PositiveFinitePhysicalBoundaries)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+
+				// serialize the base class
+				surr.GetObjectData(obj,info,context); // stream the data of the base object
+			}
+			/// <summary>
+			/// Deserializes the PositiveFinitePhysicalBoundaries Version 0.
+			/// </summary>
+			/// <param name="obj">The empty PositiveFinitePhysicalBoundaries object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The PositiveFinitePhysicalBoundaries surrogate selector.</param>
+			/// <returns>The deserialized PositiveFinitePhysicalBoundaries.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				PositiveFinitePhysicalBoundaries s = (PositiveFinitePhysicalBoundaries)obj;
+				// get the surrogate selector of the base class
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+				// deserialize the base class
+				surr.SetObjectData(obj,info,context,selector);
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public override void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
 		public PositiveFinitePhysicalBoundaries()
 			: base()
 		{

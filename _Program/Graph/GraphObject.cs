@@ -21,6 +21,8 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Serialization;
+
 
 namespace Altaxo.Graph
 {
@@ -28,6 +30,8 @@ namespace Altaxo.Graph
 	/// GraphObject is the abstract base class for graphical objects on the layer,
 	/// for instance text elements, lines, pictures, rectangles and so on.
 	/// </summary>
+	[SerializationSurrogate(0,typeof(GraphObject.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public abstract class GraphObject
 	{
 		/// <summary>
@@ -50,6 +54,55 @@ namespace Altaxo.Graph
 	/// </summary>
 		protected GraphObjectCollection m_Container=null;
 
+
+
+		#region Serialization
+		/// <summary>Used to serialize the GraphObject Version 0.</summary>
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes GraphObject Version 0.
+			/// </summary>
+			/// <param name="obj">The GraphObject to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				GraphObject s = (GraphObject)obj;
+				info.AddValue("Position",s.m_Position);  
+				info.AddValue("Bounds",s.m_Bounds);
+				info.AddValue("Rotation",s.m_Rotation);
+				info.AddValue("AutoSize",s.m_AutoSize);
+			}
+			/// <summary>
+			/// Deserializes the GraphObject Version 0.
+			/// </summary>
+			/// <param name="obj">The empty GraphObject object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized GraphObject.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				GraphObject s = (GraphObject)obj;
+
+				s.m_Position = (PointF)info.GetValue("Position",typeof(PointF));  
+				s.m_Bounds = (RectangleF)info.GetValue("Bounds",typeof(RectangleF));
+				s.m_Rotation = info.GetSingle("Rotation");
+				s.m_AutoSize = info.GetBoolean("AutoSize");
+
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+		}
+		#endregion
 
 
 		/// <summary>

@@ -24,20 +24,30 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph
 {
-	public enum EdgeType { Bottom, Left, Top, Right } ;
+	/// <summary>
+	/// Designates the 4 edges of a rectangular area.
+	/// </summary>
+	[Serializable]
+	public enum EdgeType { Left=0, Bottom=1, Right=2, Top=3 }
 
 	/// <summary>
-	/// LayerEdge provides some common functions that apply to one of the
-	/// edges of a rectangular layer (left, right, bottom, top).
+	/// Edge provides some common functions that apply to one of the
+	/// edges of a rectangular area (left, right, bottom, top).
 	/// </summary>
-	public class LayerEdge
+	[Serializable]
+	public struct Edge
 	{
-		public enum EdgeType { Left, Right, Bottom, Top }
-		protected EdgeType m_StyleType = EdgeType.Bottom;
+		private EdgeType m_StyleType;
 
-		public LayerEdge(EdgeType st)
+		public Edge(EdgeType st)
 		{
 			m_StyleType = st;
+		}
+
+		public EdgeType TypeOfEdge
+		{
+			get { return m_StyleType; }
+			set { m_StyleType = value; }
 		}
 
 		public PointF GetOrg(SizeF layerSize)
@@ -120,7 +130,7 @@ namespace Altaxo.Graph
 					return layerSize.Width;
 			
 			} // end of switch
-		return 0;
+			return 0;
 		}
 
 		public float GetOppositeEdgeLength(SizeF layerSize)
@@ -184,5 +194,5 @@ namespace Altaxo.Graph
 			}
 		}
 	
-	}
+	} // end of struct Edge
 }

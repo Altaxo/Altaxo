@@ -21,13 +21,14 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-
 using Altaxo.Graph.ScatterStyles;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
 	namespace ScatterStyles
 	{
+		[Serializable]
 		public enum Shape 
 		{
 			NoSymbol,
@@ -43,6 +44,7 @@ namespace Altaxo.Graph
 			BarVert
 		}
 
+		[Serializable]
 		public enum Style
 		{
 			Solid,
@@ -56,6 +58,7 @@ namespace Altaxo.Graph
 		}
 
 		[Flags]
+		[Serializable]
 		public enum DropLine
 		{
 			NoDrop=0,
@@ -67,19 +70,74 @@ namespace Altaxo.Graph
 		}
 	} // end of class ScatterStyles
 
+	[SerializationSurrogate(0,typeof(ScatterStyle.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class ScatterStyle : ICloneable
 	{
-		protected ScatterStyles.Shape m_Shape;
-		protected ScatterStyles.Style m_Style;
-		protected ScatterStyles.DropLine m_DropLine;
-		protected PenHolder           m_Pen;
-		protected float								m_SymbolSize;
-		protected float								m_RelativePenWidth;
+		protected ScatterStyles.Shape			m_Shape;
+		protected ScatterStyles.Style			m_Style;
+		protected ScatterStyles.DropLine	m_DropLine;
+		protected PenHolder								m_Pen;
+		protected float										m_SymbolSize;
+		protected float										m_RelativePenWidth;
 
 		// cached values:
 		protected GraphicsPath m_Path;
 		protected bool         m_bFillPath;
 		protected BrushHolder  m_FillBrush;
+
+
+		#region Serialization
+		/// <summary>Used to serialize the ScatterStyle Version 0.</summary>
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes ScatterStyle Version 0.
+			/// </summary>
+			/// <param name="obj">The ScatterStyle to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				ScatterStyle s = (ScatterStyle)obj;
+				info.AddValue("Shape",s.m_Shape);  
+				info.AddValue("Style",s.m_Style);  
+				info.AddValue("DropLine",s.m_DropLine);
+				info.AddValue("Pen",s.m_Pen);
+				info.AddValue("SymbolSize",s.m_SymbolSize);
+				info.AddValue("RelativePenWidth",s.m_RelativePenWidth);
+			}
+			/// <summary>
+			/// Deserializes the ScatterStyle Version 0.
+			/// </summary>
+			/// <param name="obj">The empty ScatterStyle object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized ScatterStyle.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				ScatterStyle s = (ScatterStyle)obj;
+				s.m_Shape = (ScatterStyles.Shape)info.GetValue("Shape",typeof(ScatterStyles.Shape));  
+				s.m_Style = (ScatterStyles.Style)info.GetValue("Style",typeof(ScatterStyles.Style));  
+				s.m_DropLine = (ScatterStyles.DropLine)info.GetValue("DropLine",typeof(ScatterStyles.DropLine));
+				s.m_Pen = (PenHolder)info.GetValue("Pen",typeof(PenHolder));
+				s.m_SymbolSize = info.GetSingle("SymbolSize");
+				s.m_RelativePenWidth = info.GetSingle("RelativePenWidth");
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization of the linear axis.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+			// restore the cached values
+			SetCachedValues();
+		}
+		#endregion
 
 
 		public ScatterStyle(ScatterStyle from)

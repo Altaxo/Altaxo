@@ -61,10 +61,12 @@ namespace Altaxo.Data
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				Altaxo.Data.DoubleColumn s = (Altaxo.Data.DoubleColumn)obj;
+				// get the surrogate selector of the base class
 				System.Runtime.Serialization.ISurrogateSelector ss;
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(typeof(Altaxo.Data.DataColumn),context, out ss);
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
 	
+				// serialize the base class
 				surr.GetObjectData(obj,info,context); // stream the data of the base object
 
 				if(s.m_Count!=s.m_Capacity)
@@ -83,9 +85,11 @@ namespace Altaxo.Data
 			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
 			{
 				Altaxo.Data.DoubleColumn s = (Altaxo.Data.DoubleColumn)obj;
+				// get the surrogate selector of the base class
 				System.Runtime.Serialization.ISurrogateSelector ss;
 				System.Runtime.Serialization.ISerializationSurrogate surr =
-					App.m_SurrogateSelector.GetSurrogate(typeof(Altaxo.Data.DataColumn),context, out ss);
+					App.m_SurrogateSelector.GetSurrogate(obj.GetType().BaseType,context, out ss);
+				// deserialize the base class
 				surr.SetObjectData(obj,info,context,selector);
 
 				s.m_Array = (double[])(info.GetValue("Data",typeof(double[])));

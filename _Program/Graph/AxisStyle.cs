@@ -32,8 +32,10 @@ namespace Altaxo.Graph
 	/// </summary>
 	[SerializationSurrogate(0,typeof(XYLayerAxisStyle.SerializationSurrogate0))]
 	[SerializationVersion(0)]
-	public class XYLayerAxisStyle : LayerEdge
+	public class XYLayerAxisStyle
 	{
+		/// <summary>Edge of the layer this axis is drawn on.</summary>
+		protected Edge m_Edge = new Edge(EdgeType.Left);
 		/// <summary>Pen used for painting of the axis.</summary>
 		protected PenHolder m_AxisPen = new PenHolder(Color.Black,1);
 		/// <summary>Pen used for painting of the major ticks.</summary>
@@ -69,6 +71,7 @@ namespace Altaxo.Graph
 			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
 			{
 				XYLayerAxisStyle s = (XYLayerAxisStyle)obj;
+				info.AddValue("Edge",s.m_Edge);
 				info.AddValue("AxisPen",s.m_AxisPen);  
 				info.AddValue("MajorPen",s.m_MajorTickPen);  
 				info.AddValue("MinorPen",s.m_MinorTickPen);
@@ -92,6 +95,7 @@ namespace Altaxo.Graph
 			{
 				XYLayerAxisStyle s = (XYLayerAxisStyle)obj;
 
+				s.m_Edge         = (Edge)info.GetValue("Edge",typeof(Edge));
 				s.m_AxisPen			 = (PenHolder)info.GetValue("AxisPen",typeof(PenHolder));
 				s.m_MajorTickPen = (PenHolder)info.GetValue("MajorPen",typeof(PenHolder));
 				s.m_MinorTickPen = (PenHolder)info.GetValue("MinorPen",typeof(PenHolder));
@@ -124,8 +128,8 @@ namespace Altaxo.Graph
 		/// </summary>
 		/// <param name="st">The edge of the layer the axis is positioned to.</param>
 		public XYLayerAxisStyle(EdgeType st)
-			: base(st)
 		{
+			m_Edge = new Edge(st);
 		}
 
 		/// <summary>
@@ -152,7 +156,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		public float GetOffset(SizeF layerSize)
 		{
-		return (float)m_AxisPosition.GetValueRelativeTo(this.GetOppositeEdgeLength(layerSize));
+		return (float)m_AxisPosition.GetValueRelativeTo(m_Edge.GetOppositeEdgeLength(layerSize));
 		}
 		
 		/// <summary>Get/sets the major tick length.</summary>
@@ -260,10 +264,10 @@ namespace Altaxo.Graph
 			SizeF layerSize = layer.Size;
 
 
-			PointF orgP = GetOrg(layerSize);
-			PointF endP = GetEnd(layerSize);
-			PointF outVector = OuterVector;
-			PointF offset = OuterVector;
+			PointF orgP = m_Edge.GetOrg(layerSize);
+			PointF endP = m_Edge.GetEnd(layerSize);
+			PointF outVector = m_Edge.OuterVector;
+			PointF offset = m_Edge.OuterVector;
 			float foffset = this.GetOffset(layerSize);
 			offset.X *= foffset;
 			offset.Y *= foffset;
@@ -278,7 +282,7 @@ namespace Altaxo.Graph
 			for(int i=0;i<majorticks.Length;i++)
 			{
 				double r = axis.PhysicalToNormal(majorticks[i]);
-				PointF tickorg = GetPointBetween(orgP,endP,r);
+				PointF tickorg = Edge.GetPointBetween(orgP,endP,r);
 				PointF tickend;
 				if(m_bOuterMajorTicks)
 				{
@@ -300,7 +304,7 @@ namespace Altaxo.Graph
 			for(int i=0;i<minorticks.Length;i++)
 			{
 				double r = axis.PhysicalToNormal(minorticks[i]);
-				PointF tickorg =  GetPointBetween(orgP,endP,r);
+				PointF tickorg =  Edge.GetPointBetween(orgP,endP,r);
 				PointF tickend;
 				if(m_bOuterMinorTicks)
 				{

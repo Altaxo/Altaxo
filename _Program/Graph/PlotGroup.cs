@@ -19,10 +19,12 @@
 /////////////////////////////////////////////////////////////////////////////
 
 using System;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
 	[Flags]
+	[Serializable]
 	public enum PlotGroupStyle
 	{
 		Color = 0x01,
@@ -35,11 +37,60 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Summary description for PlotGroup.
 	/// </summary>
-	public class PlotGroup
+	[SerializationSurrogate(0,typeof(PlotGroup.SerializationSurrogate0))]
+	[SerializationVersion(0)]
+	public class PlotGroup : System.Runtime.Serialization.IDeserializationCallback
 	{
 		PlotGroupStyle m_Style;
 		System.Collections.ArrayList m_PlotAssociations;
 		private PlotGroup.Collection m_Parent;
+
+
+
+		#region Serialization
+		/// <summary>Used to serialize the PlotGroup Version 0.</summary>
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes PlotGroup Version 0.
+			/// </summary>
+			/// <param name="obj">The PlotGroup to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				PlotGroup s = (PlotGroup)obj;
+				info.AddValue("Style",s.m_Style);  
+				info.AddValue("Group",s.m_PlotAssociations);  
+			}
+			/// <summary>
+			/// Deserializes the PlotGroup Version 0.
+			/// </summary>
+			/// <param name="obj">The empty axis object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized PlotGroup.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				PlotGroup s = (PlotGroup)obj;
+
+				s.m_Style = (PlotGroupStyle)info.GetValue("Style",typeof(PlotGroupStyle));
+				s.m_PlotAssociations = (System.Collections.ArrayList)info.GetValue("Group",typeof(System.Collections.ArrayList));
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
+
 
 		public PlotGroup(PlotAssociation assoc, PlotGroupStyle style)
 		{
@@ -121,6 +172,7 @@ namespace Altaxo.Graph
 			}
 		}
 
+		[Serializable]
 		public class Collection
 		{
 			protected System.Collections.ArrayList m_List;

@@ -21,6 +21,8 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Serialization;
+
 
 namespace Altaxo.Graph
 {
@@ -100,13 +102,63 @@ namespace Altaxo.Graph
 	} // end of interface PlotStyle
 
 
-	public class LineScatterPlotStyle : PlotStyle
+
+
+	[SerializationSurrogate(0,typeof(LineScatterPlotStyle.SerializationSurrogate0))]
+	[SerializationVersion(0)]
+	public class LineScatterPlotStyle : PlotStyle, System.Runtime.Serialization.IDeserializationCallback
 	{
 
 		protected LineStyle			m_LineStyle;
 		protected ScatterStyle	m_ScatterStyle;
 		// protected PlotAssociation m_PlotAssociation; // the plot association this plotstyle is for
 		protected bool  m_LineSymbolGap;
+
+
+		#region Serialization
+		/// <summary>Used to serialize the LineScatterPlotStyle Version 0.</summary>
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes LineScatterPlotStyle Version 0.
+			/// </summary>
+			/// <param name="obj">The LineScatterPlotStyle to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				LineScatterPlotStyle s = (LineScatterPlotStyle)obj;
+				info.AddValue("LineStyle",s.m_LineStyle);  
+				info.AddValue("ScatterStyle",s.m_ScatterStyle);
+				info.AddValue("LineSymbolGap",s.m_LineSymbolGap);
+			}
+			/// <summary>
+			/// Deserializes the LineScatterPlotStyle Version 0.
+			/// </summary>
+			/// <param name="obj">The empty axis object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized LineScatterPlotStyle.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				LineScatterPlotStyle s = (LineScatterPlotStyle)obj;
+
+				s.m_LineStyle = (LineStyle)info.GetValue("LineStyle",typeof(LineStyle));
+				s.m_ScatterStyle = (ScatterStyle)info.GetValue("ScatterStyle",typeof(ScatterStyle));
+				s.m_LineSymbolGap    = info.GetBoolean("LineSymbolGap");
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+		}
+		#endregion
 
 
 

@@ -236,15 +236,15 @@ namespace Altaxo.Graph
 		/// <summary>The background brush for the layer area.</summary>
 		protected BrushHolder m_LayerAreaFillBrush = new BrushHolder(Color.Aqua);
 
-		protected XYLayerAxisStyle m_LeftAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Left);
-		protected XYLayerAxisStyle m_BottomAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Bottom);
-		protected XYLayerAxisStyle m_RightAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Right);
-		protected XYLayerAxisStyle m_TopAxisStyle = new XYLayerAxisStyle(XYLayerAxisStyle.EdgeType.Top);
+		protected XYLayerAxisStyle m_LeftAxisStyle = new XYLayerAxisStyle(EdgeType.Left);
+		protected XYLayerAxisStyle m_BottomAxisStyle = new XYLayerAxisStyle(EdgeType.Bottom);
+		protected XYLayerAxisStyle m_RightAxisStyle = new XYLayerAxisStyle(EdgeType.Right);
+		protected XYLayerAxisStyle m_TopAxisStyle = new XYLayerAxisStyle(EdgeType.Top);
 
-		protected LabelStyle m_LeftLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Left);
-		protected LabelStyle m_BottomLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Bottom);
-		protected LabelStyle m_RightLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Right);
-		protected LabelStyle m_TopLabelStyle = new SimpleLabelStyle(LayerEdge.EdgeType.Top);
+		protected LabelStyle m_LeftLabelStyle = new SimpleLabelStyle(EdgeType.Left);
+		protected LabelStyle m_BottomLabelStyle = new SimpleLabelStyle(EdgeType.Bottom);
+		protected LabelStyle m_RightLabelStyle = new SimpleLabelStyle(EdgeType.Right);
+		protected LabelStyle m_TopLabelStyle = new SimpleLabelStyle(EdgeType.Top);
 
 		protected ExtendedTextGraphObject m_LeftAxisTitle = null;
 		protected ExtendedTextGraphObject m_BottomAxisTitle = null;

@@ -21,6 +21,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
@@ -30,28 +31,45 @@ namespace Altaxo.Graph
 	/// I use a class instead of a struct because it is intended to use with
 	/// arraylist
 	/// </summary>
+	[Serializable]
 	public class PlotRange
 	{
-		public int lowerBound;
-		public int upperBound;
+		public int m_LowerBound;
+		public int m_UpperBound;
 
 		public PlotRange(int lower, int upper)
 		{
-			lowerBound = lower;
-			upperBound = upper;
+			m_LowerBound = lower;
+			m_UpperBound = upper;
 		}
+
 		public PlotRange(PlotRange a)
 		{
-			lowerBound = a.lowerBound;
-			upperBound = a.upperBound;
+			m_LowerBound = a.m_LowerBound;
+			m_UpperBound = a.m_UpperBound;
 		}
 
 		public int Length
 		{
-			get { return upperBound - lowerBound; }
+			get { return m_UpperBound - m_LowerBound; }
 		}
+
+		public int LowerBound
+		{
+			get { return m_LowerBound; }
+			set { m_LowerBound = value; }
+		}
+
+		public int UpperBound
+		{
+			get { return m_UpperBound; }
+			set { m_UpperBound = value; }
+		}
+
+
 	}
 
+	[Serializable]
 	public class PlotRangeList : System.Collections.CollectionBase
 	{
 		public PlotRange this[int i]
@@ -68,14 +86,16 @@ namespace Altaxo.Graph
 
 	namespace LineStyles
 	{
+		[Serializable]
 		public enum FillDirection
 		{
-			Bottom,
-			Top,
-			Left,
-			Right
+			Left=0,
+			Bottom=1,
+			Right=2,
+			Top=3
 		}
 
+		[Serializable]
 		public enum ConnectionStyle 
 		{
 			NoLine,
@@ -97,19 +117,12 @@ namespace Altaxo.Graph
 	/// <summary>
 	/// Summary description for LineStyle.
 	/// </summary>
+	[SerializationSurrogate(0,typeof(LineStyle.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class LineStyle : ICloneable
 	{
 
-		/*
-				public enum PenStyle
-				{
-					Solid,
-					Dash,
-					Dot,
-					DashDot,
-					DashDotDot
-				}
-		*/
+	
 
 		public delegate void PaintOneRangeTemplate(
 			Graphics g, 
@@ -121,14 +134,70 @@ namespace Altaxo.Graph
 
 		// protected PenStyle				m_PenStyle  = PenStyle.Solid;
 		protected PenHolder				m_PenHolder;
+		protected LineStyles.ConnectionStyle m_Connection;
 		protected bool						m_bLineSymbolGap;
 		protected bool						m_bIgnoreMissingPoints; // treat missing points as if not present (connect lines over missing points)	
 		protected bool						m_bFillArea;
 		protected BrushHolder			m_FillBrush; // brush to fill the area under the line
 		protected LineStyles.FillDirection m_FillDirection; // the direction to fill
 
-		protected LineStyles.ConnectionStyle m_Connection;
+		// cached values
 		protected PaintOneRangeTemplate m_PaintOneRange; // subroutine to paint a single range
+
+		#region Serialization
+		/// <summary>Used to serialize the LineStyle Version 0.</summary>
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes LineStyle Version 0.
+			/// </summary>
+			/// <param name="obj">The LineStyle to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				LineStyle s = (LineStyle)obj;
+				info.AddValue("Pen",s.m_PenHolder);  
+				info.AddValue("Connection",s.m_Connection);
+				info.AddValue("LineSymbolGap",s.m_bLineSymbolGap);
+				info.AddValue("IgnoreMissingPoints",s.m_bIgnoreMissingPoints);
+				info.AddValue("FillArea",s.m_bFillArea);
+				info.AddValue("FillBrush",s.m_FillBrush);
+				info.AddValue("FillDirection",s.m_FillDirection);
+			}
+			/// <summary>
+			/// Deserializes the LineStyle Version 0.
+			/// </summary>
+			/// <param name="obj">The empty LineStyle object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized LineStyle.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				LineStyle s = (LineStyle)obj;
+
+				s.m_PenHolder = (PenHolder)info.GetValue("Pen",typeof(PenHolder));  
+				s.Connection = (LineStyles.ConnectionStyle)info.GetValue("Connection",typeof(LineStyles.ConnectionStyle));
+				s.m_bLineSymbolGap = info.GetBoolean("LineSymbolGap");
+				s.m_bIgnoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
+				s.m_bFillArea = info.GetBoolean("FillArea");
+				s.m_FillBrush = (BrushHolder)info.GetValue("FillBrush",typeof(BrushHolder));
+				s.m_FillDirection = (LineStyles.FillDirection)info.GetValue("FillDirection",typeof(LineStyles.FillDirection));
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
+
 
 		public LineStyle()
 		{
@@ -277,7 +346,7 @@ namespace Altaxo.Graph
 				// in case we ignore the missing points, all ranges can be plotted
 				// as one range, i.e. continuously
 				// for this, we create the totalRange, which contains all ranges
-				PlotRange totalRange = new PlotRange(rangeList[0].lowerBound,rangeList[rangelistlen-1].upperBound);
+				PlotRange totalRange = new PlotRange(rangeList[0].LowerBound,rangeList[rangelistlen-1].UpperBound);
 				m_PaintOneRange(g,linePoints,totalRange,layerSize,symbolGap);
 			}
 			else // we not ignore missing points, so plot all ranges separately
@@ -307,7 +376,7 @@ namespace Altaxo.Graph
 			float symbolGap)
 		{
 			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints,range.lowerBound,linepts,0,range.Length); // Extract
+			Array.Copy(linePoints,range.LowerBound,linepts,0,range.Length); // Extract
 			int lastIdx = range.Length-1;
 			GraphicsPath gp = new GraphicsPath();
 
@@ -386,7 +455,7 @@ namespace Altaxo.Graph
 			float symbolGap)
 		{
 			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints,range.lowerBound,linepts,0,range.Length); // Extract
+			Array.Copy(linePoints,range.LowerBound,linepts,0,range.Length); // Extract
 			int lastIdx = range.Length-1;
 			GraphicsPath gp = new GraphicsPath();
 
@@ -440,12 +509,12 @@ namespace Altaxo.Graph
 			// so trim the range appropriately
 			PlotRange range = new PlotRange(rangeRaw);
 			
-			range.upperBound = range.lowerBound + 3*((range.Length+2)/3)-2;
+			range.UpperBound = range.LowerBound + 3*((range.Length+2)/3)-2;
 			if(range.Length<4)
 				return; // then to less points are in this range
 
 			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints,range.lowerBound,linepts,0,range.Length); // Extract
+			Array.Copy(linePoints,range.LowerBound,linepts,0,range.Length); // Extract
 			int lastIdx = range.Length-1;
 			GraphicsPath gp = new GraphicsPath();
 
@@ -499,9 +568,9 @@ namespace Altaxo.Graph
 				return;
 
 			PointF[] linepts = new PointF[range.Length*2-1];
-			int end = range.upperBound-1;
+			int end = range.UpperBound-1;
 			int i,j;
-			for(i=0,j=range.lowerBound;j<end;i+=2,j++)
+			for(i=0,j=range.LowerBound;j<end;i+=2,j++)
 			{
 				linepts[i]=linePoints[j];
 				linepts[i+1].X = linePoints[j+1].X;
@@ -540,9 +609,9 @@ namespace Altaxo.Graph
 
 			if(this.m_bLineSymbolGap && symbolGap>0)
 			{
-				end = range.upperBound-1;
+				end = range.UpperBound-1;
 				float symbolGapSquared = symbolGap*symbolGap;
-				for(j=range.lowerBound;j<end;j++)
+				for(j=range.LowerBound;j<end;j++)
 				{
 					float xmiddle = linePoints[j+1].X;
 					float ymiddle = linePoints[j].Y;
@@ -589,9 +658,9 @@ namespace Altaxo.Graph
 				return;
 
 			PointF[] linepts = new PointF[range.Length*2-1];
-			int end = range.upperBound-1;
+			int end = range.UpperBound-1;
 			int i,j;
-			for(i=0,j=range.lowerBound;j<end;i+=2,j++)
+			for(i=0,j=range.LowerBound;j<end;i+=2,j++)
 			{
 				linepts[i]=linePoints[j];
 				linepts[i+1].X = linePoints[j].X;
@@ -630,9 +699,9 @@ namespace Altaxo.Graph
 
 			if(this.m_bLineSymbolGap && symbolGap>0)
 			{
-				end = range.upperBound-1;
+				end = range.UpperBound-1;
 				float symbolGapSquared = symbolGap*symbolGap;
-				for(j=range.lowerBound;j<end;j++)
+				for(j=range.LowerBound;j<end;j++)
 				{
 					float xmiddle = linePoints[j+1].X;
 					float ymiddle = linePoints[j].Y;
@@ -679,9 +748,9 @@ namespace Altaxo.Graph
 				return;
 
 			PointF[] linepts = new PointF[range.Length*3-2];
-			int end = range.upperBound-1;
+			int end = range.UpperBound-1;
 			int i,j;
-			for(i=0,j=range.lowerBound;j<end;i+=3,j++)
+			for(i=0,j=range.LowerBound;j<end;i+=3,j++)
 			{
 				linepts[i]=linePoints[j];
 				linepts[i+1].X = linePoints[j].X;
@@ -766,9 +835,9 @@ namespace Altaxo.Graph
 				return;
 
 			PointF[] linepts = new PointF[range.Length*3-2];
-			int end = range.upperBound-1;
+			int end = range.UpperBound-1;
 			int i,j;
-			for(i=0,j=range.lowerBound;j<end;i+=3,j++)
+			for(i=0,j=range.LowerBound;j<end;i+=3,j++)
 			{
 				linepts[i]=linePoints[j];
 				linepts[i+1].Y = linePoints[j].Y;
@@ -851,7 +920,7 @@ namespace Altaxo.Graph
 			float symbolGap)
 		{
 			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints,range.lowerBound,linepts,0,range.Length); // Extract
+			Array.Copy(linePoints,range.LowerBound,linepts,0,range.Length); // Extract
 			int lastIdx = range.Length-1;
 			GraphicsPath gp = new GraphicsPath();
 			int i;
@@ -948,7 +1017,7 @@ namespace Altaxo.Graph
 			float symbolGap)
 		{
 			PointF[] linepts = new PointF[range.Length];
-			Array.Copy(linePoints,range.lowerBound,linepts,0,range.Length); // Extract
+			Array.Copy(linePoints,range.LowerBound,linepts,0,range.Length); // Extract
 			int lastIdx;
 			GraphicsPath gp = new GraphicsPath();
 			int i;

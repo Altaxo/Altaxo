@@ -21,14 +21,15 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Serialization;
 
 namespace Altaxo.Graph
 {
 
-	/// <remarks>LabelStyle is the abstract base class of all LabelStyles. It is derived from
-	/// LayerEdge, since the formatting mainly depends on which edge of the layer the label is positioned.</remarks>
-	public abstract class LabelStyle : LayerEdge
+	/// <remarks>LabelStyle is the abstract base class of all LabelStyles.</remarks>
+	public abstract class LabelStyle
 	{
+		/*
 		/// <summary>
 		/// Creates the abstract base class instance. You have to provided, for which edge of the layer
 		/// this LabelStyle is intended.
@@ -38,6 +39,7 @@ namespace Altaxo.Graph
 			: base(st)
 		{
 		}
+		*/
 
 		/// <summary>
 		/// Abstract paint function for the LabelStyle.
@@ -61,21 +63,69 @@ namespace Altaxo.Graph
 	/// Some effort has been done to make sure that all labels have the same number of trailing decimal
 	/// digits.
 	/// </remarks>
+	[SerializationSurrogate(0,typeof(SimpleLabelStyle.SerializationSurrogate0))]
+	[SerializationVersion(0)]
 	public class SimpleLabelStyle : LabelStyle
 	{
 		protected Font m_Font = new Font(FontFamily.GenericSansSerif,18,GraphicsUnit.World);
+		protected Edge m_Edge = new Edge(EdgeType.Left); 
+
+		#region Serialization
+		/// <summary>Used to serialize the SimpleLabelStyle Version 0.</summary>
+		public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			/// <summary>
+			/// Serializes SimpleLabelStyle Version 0.
+			/// </summary>
+			/// <param name="obj">The SimpleLabelStyle to serialize.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				SimpleLabelStyle s = (SimpleLabelStyle)obj;
+				info.AddValue("Font",s.m_Font);  
+				info.AddValue("Edge",s.m_Edge);  
+			}
+			/// <summary>
+			/// Deserializes the SimpleLabelStyle Version 0.
+			/// </summary>
+			/// <param name="obj">The empty SimpleLabelStyle object to deserialize into.</param>
+			/// <param name="info">The serialization info.</param>
+			/// <param name="context">The streaming context.</param>
+			/// <param name="selector">The deserialization surrogate selector.</param>
+			/// <returns>The deserialized SimpleLabelStyle.</returns>
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				SimpleLabelStyle s = (SimpleLabelStyle)obj;
+
+				s.m_Font = (Font)info.GetValue("Font",typeof(Font));
+				s.m_Edge = (Edge)info.GetValue("Edge",typeof(Edge));
+				return s;
+			}
+		}
+
+		/// <summary>
+		/// Finale measures after deserialization.
+		/// </summary>
+		/// <param name="obj">Not used.</param>
+		public virtual void OnDeserialization(object obj)
+		{
+		}
+		#endregion
+
+
 
 		public SimpleLabelStyle(EdgeType st)
-		 : base(st)
 		{
+			m_Edge = new Edge(st);
 		}
 
 		public override void Paint(Graphics g, Layer layer, Axis axis, XYLayerAxisStyle axisstyle)
 		{
 			SizeF layerSize = layer.Size;
-			PointF orgP = GetOrg(layerSize);
-			PointF endP = GetEnd(layerSize);
-			PointF outVector = OuterVector;
+			PointF orgP = m_Edge.GetOrg(layerSize);
+			PointF endP = m_Edge.GetEnd(layerSize);
+			PointF outVector = m_Edge.OuterVector;
 			float dist_x = axisstyle.OuterDistance+axisstyle.GetOffset(layerSize); // Distance from axis tick point to label
 			float dist_y = axisstyle.OuterDistance+axisstyle.GetOffset(layerSize); // y distance from axis tick point to label
 
@@ -93,7 +143,7 @@ namespace Altaxo.Graph
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 
 			// set the alignment and line alignment of the strings
-			switch(this.m_StyleType)
+			switch(this.m_Edge.TypeOfEdge)
 			{
 				case EdgeType.Bottom:
 					strfmt.LineAlignment = StringAlignment.Near;
@@ -166,7 +216,7 @@ namespace Altaxo.Graph
 			for(int i=0;i<majorticks.Length;i++)
 			{
 				double r = axis.PhysicalToNormal(majorticks[i]);
-				PointF tickorg = GetEdgePoint(layerSize,r);
+				PointF tickorg = m_Edge.GetEdgePoint(layerSize,r);
 
 				if(bExponentialForm[i])
 					mtick = majorticks[i].ToString(exponentialformat);

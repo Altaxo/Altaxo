@@ -205,6 +205,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\Edge.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\GraphControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -273,11 +278,6 @@
                     RelPath = "Graph\LayerDialog.resx"
                     DependentUpon = "LayerDialog.cs"
                     BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Graph\LayerEdge.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Graph\LineStyle.cs"
