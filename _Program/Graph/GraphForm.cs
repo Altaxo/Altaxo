@@ -49,6 +49,8 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.MenuItem menuNewLayer_LinkedTopX;
 		private System.Windows.Forms.MenuItem menuNewLayer_LinkedRightY;
 		private System.Windows.Forms.MenuItem menuNewLayer_TopXRightY_XAxisStraight;
+		private System.Windows.Forms.MenuItem menuItem4;
+		private System.Windows.Forms.MenuItem menuFileExportPageWMF;
 		private System.Windows.Forms.MenuItem menuFile_PrintPreview;
 
 	
@@ -147,9 +149,11 @@ namespace Altaxo.Graph
 			this.menuNewLayer_LinkedTopXRightY = new System.Windows.Forms.MenuItem();
 			this.menuNewLayer_LinkedTopX = new System.Windows.Forms.MenuItem();
 			this.menuNewLayer_LinkedRightY = new System.Windows.Forms.MenuItem();
+			this.menuNewLayer_TopXRightY_XAxisStraight = new System.Windows.Forms.MenuItem();
 			this.menuDataPopup = new System.Windows.Forms.MenuItem();
 			this.menuDataSeparator = new System.Windows.Forms.MenuItem();
-			this.menuNewLayer_TopXRightY_XAxisStraight = new System.Windows.Forms.MenuItem();
+			this.menuItem4 = new System.Windows.Forms.MenuItem();
+			this.menuFileExportPageWMF = new System.Windows.Forms.MenuItem();
 			this.SuspendLayout();
 			// 
 			// m_GraphControl
@@ -177,7 +181,8 @@ namespace Altaxo.Graph
 			this.menuItem1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
 																																							this.menuFile_PageSetup,
 																																							this.menuFile_Print,
-																																							this.menuFile_PrintPreview});
+																																							this.menuFile_PrintPreview,
+																																							this.menuItem4});
 			this.menuItem1.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
 			this.menuItem1.Text = "File";
 			// 
@@ -241,6 +246,12 @@ namespace Altaxo.Graph
 			this.menuNewLayer_LinkedRightY.Text = "(Linked): Right Y";
 			this.menuNewLayer_LinkedRightY.Click += new System.EventHandler(this.menuNewLayer_LinkedRightY_Click);
 			// 
+			// menuNewLayer_TopXRightY_XAxisStraight
+			// 
+			this.menuNewLayer_TopXRightY_XAxisStraight.Index = 4;
+			this.menuNewLayer_TopXRightY_XAxisStraight.Text = "(Linked): Top X + Right Y + X Axis Straight";
+			this.menuNewLayer_TopXRightY_XAxisStraight.Click += new System.EventHandler(this.menuNewLayer_LinkedTopXRightY_XAxisStraight_Click);
+			// 
 			// menuDataPopup
 			// 
 			this.menuDataPopup.Index = 2;
@@ -256,11 +267,18 @@ namespace Altaxo.Graph
 			this.menuDataSeparator.Index = 0;
 			this.menuDataSeparator.Text = "-";
 			// 
-			// menuNewLayer_TopXRightY_XAxisStraight
+			// menuItem4
 			// 
-			this.menuNewLayer_TopXRightY_XAxisStraight.Index = 4;
-			this.menuNewLayer_TopXRightY_XAxisStraight.Text = "(Linked): Top X + Right Y + X Axis Straight";
-			this.menuNewLayer_TopXRightY_XAxisStraight.Click += new System.EventHandler(this.menuNewLayer_LinkedTopXRightY_XAxisStraight_Click);
+			this.menuItem4.Index = 3;
+			this.menuItem4.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																							this.menuFileExportPageWMF});
+			this.menuItem4.Text = "Export Page";
+			// 
+			// menuFileExportPageWMF
+			// 
+			this.menuFileExportPageWMF.Index = 0;
+			this.menuFileExportPageWMF.Text = "Windows Metafile";
+			this.menuFileExportPageWMF.Click += new System.EventHandler(this.menuFileExportPageWMF_Click);
 			// 
 			// GraphForm
 			// 
@@ -436,6 +454,26 @@ namespace Altaxo.Graph
 		private void menuNewLayer_LinkedTopXRightY_XAxisStraight_Click(object sender, System.EventArgs e)
 		{
 			m_GraphControl.menuNewLayer_LinkedTopXRightY_XAxisStraight_Click(sender, e);
+		}
+
+		private void menuFileExportPageWMF_Click(object sender, System.EventArgs e)
+		{
+			System.IO.Stream myStream ;
+			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+ 
+			saveFileDialog1.Filter = "Windows Metafiles (*.emf)|*.emf|All files (*.*)|*.*"  ;
+			saveFileDialog1.FilterIndex = 2 ;
+			saveFileDialog1.RestoreDirectory = true ;
+ 
+			if(saveFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				if((myStream = saveFileDialog1.OpenFile()) != null)
+				{
+					this.m_GraphControl.SaveAsMetafile(myStream);
+					myStream.Close();
+				} // end openfile ok
+			} // end dlgresult ok
+
 		}
 
 		public class DataMenuItem : MenuItem

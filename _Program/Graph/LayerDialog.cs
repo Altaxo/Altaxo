@@ -1528,28 +1528,34 @@ namespace Altaxo.Graph
 			string [] names;
 
 			XYLayerAxisStyle axstyle=null;
+			string title=null;
 			bool bAxisEnabled=false;
 			switch(m_CurrentEdge)
 			{
 				case EdgeType.Left:
 					axstyle = m_Layer.LeftAxisStyle;
+					title   = m_Layer.LeftAxisTitleString;
 					bAxisEnabled = m_Layer.LeftAxisEnabled;
 					break;
 				case EdgeType.Right:
 					axstyle = m_Layer.RightAxisStyle;
+					title   = m_Layer.RightAxisTitleString;
 					bAxisEnabled = m_Layer.RightAxisEnabled;
 					break;
 				case EdgeType.Bottom:
 					axstyle = m_Layer.BottomAxisStyle;
+					title   = m_Layer.BottomAxisTitleString;
 					bAxisEnabled = m_Layer.BottomAxisEnabled;
 					break;
 				case EdgeType.Top:
 					axstyle = m_Layer.TopAxisStyle;
+					title   = m_Layer.TopAxisTitleString;
 					bAxisEnabled = m_Layer.TopAxisEnabled;
 					break;
 			}
 
 			this.m_Format_chkShowAxis.Checked = bAxisEnabled;
+
 
 			this.m_Common_lbEdges.Items.Clear();
 			names = System.Enum.GetNames(typeof(Graph.EdgeType));
@@ -1559,6 +1565,8 @@ namespace Altaxo.Graph
 			}
 			this.m_Common_lbEdges.SelectedIndex = (int)m_CurrentEdge;
 
+			// fill axis title box
+			this.m_Format_edTitle.Text = null!=title ? title : "";
 
 			// fill axis thickness combo box
 			this.m_Format_cbThickness.Items.Clear();
@@ -1648,7 +1656,12 @@ namespace Altaxo.Graph
 
 			try
 			{
-			
+
+				// read axis title
+				string title = this.m_Format_edTitle.Text;
+				if(title.Length==0)
+					title=null;
+
 				// read axis color		
 				string str = (string)this.m_Format_cbColor.SelectedItem;
 				if(str!="Custom")
@@ -1695,15 +1708,19 @@ namespace Altaxo.Graph
 				{
 					case EdgeType.Left:
 						m_Layer.LeftAxisEnabled = bAxisEnabled;
+						m_Layer.LeftAxisTitleString = title;
 						break;
 					case EdgeType.Right:
 						m_Layer.RightAxisEnabled = bAxisEnabled;
+						m_Layer.RightAxisTitleString = title;
 						break;
 					case EdgeType.Bottom:
 						m_Layer.BottomAxisEnabled = bAxisEnabled;
+						m_Layer.BottomAxisTitleString = title;
 						break;
 					case EdgeType.Top:
 						m_Layer.TopAxisEnabled = bAxisEnabled;
+						m_Layer.TopAxisTitleString = title;
 						break;
 				}
 

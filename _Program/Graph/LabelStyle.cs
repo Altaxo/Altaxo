@@ -135,21 +135,25 @@ namespace Altaxo.Graph
 			{
 				mtick = majorticks[i].ToString(numinfo);
 				posdecimalseparator = mtick.LastIndexOf(numinfo.NumberDecimalSeparator);
-				if(posdecimalseparator<0) continue;
 				posexponent = mtick.LastIndexOf('E');
 				if(posexponent<0) // no exponent-> count the trailing decimal digits
 				{
 					bExponentialForm[i]=false;
-					digits = mtick.Length-posdecimalseparator-1;
-					if(digits>maxtrailingdigits)
-						maxtrailingdigits = digits;
-				}
+					if(posdecimalseparator>0)
+					{
+						digits = mtick.Length-posdecimalseparator-1;
+						if(digits>maxtrailingdigits)
+							maxtrailingdigits = digits;
+					}
+					}
 				else // the exponential form is used
 				{
 					bExponentialForm[i]=true;
 					// the total digits used for exponential form are the characters until the 'E' of the exponent
 					// minus the decimal separator minus the minus sign
-					digits = mtick[0]=='-' ? posexponent-2 : posexponent-1; // the digits
+					digits = posexponent;
+					if(posdecimalseparator>=0) --digits;
+					if(mtick[0]=='-') --digits; // the digits
 					if(digits>maxexponentialdigits)
 						maxexponentialdigits=digits;
 				}

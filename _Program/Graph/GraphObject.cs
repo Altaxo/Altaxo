@@ -30,7 +30,8 @@ namespace Altaxo.Graph
 	public abstract class GraphObject
 	{
 		protected PointF m_Position = new PointF(0, 0);
-		protected SizeF  m_Size = new SizeF(0, 0);
+//		protected SizeF  m_Size = new SizeF(0, 0);
+		protected RectangleF m_Bounds = new RectangleF(0,0,0,0);
 		protected float  m_Rotation = 0;
 		protected bool   m_AutoSize = true;
 		protected GraphObjectCollection m_Container=null;
@@ -119,7 +120,7 @@ namespace Altaxo.Graph
 			GraphicsPath gp = new GraphicsPath();
 			Matrix myMatrix = new Matrix();
 
-			gp.AddRectangle(new RectangleF(X, Y, Width, Height));
+			gp.AddRectangle(new RectangleF(X+m_Bounds.X, Y+m_Bounds.Y, Width, Height));
 			if(this.Rotation != 0)
 			{
 				myMatrix.RotateAt(this.Rotation, new PointF(X, Y), MatrixOrder.Append);
@@ -137,7 +138,7 @@ namespace Altaxo.Graph
 			Matrix myMatrix = new Matrix();
 
 
-			gp.AddRectangle(new RectangleF(X, Y, Width, Height));
+			gp.AddRectangle(new RectangleF(X+m_Bounds.X, Y+m_Bounds.Y, Width, Height));
 			if(this.Rotation != 0)
 			{
 				myMatrix.RotateAt(this.Rotation, new PointF(this.X, this.Y), MatrixOrder.Append);
@@ -208,32 +209,32 @@ namespace Altaxo.Graph
 		{
 			get
 			{
-				return m_Size.Height;
+				return m_Bounds.Height;
 			}
 			set
 			{
-				m_Size.Height = value;
+				m_Bounds.Height = value;
 			}
 		}
 		public virtual float Width
 		{
 			get
 			{
-				return m_Size.Width;
+				return m_Bounds.Width;
 			}
 			set
 			{
-				m_Size.Width = value;
+				m_Bounds.Width = value;
 			}
 		}
 
 		public virtual void SetSize(SizeF Value)
 		{
-			m_Size = Value;
+			m_Bounds.Size = Value;
 		}
 		public virtual SizeF GetSize()
 		{
-			return this.m_Size;
+			return this.m_Bounds.Size;
 		}
 
 		public SizeF Size 

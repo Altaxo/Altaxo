@@ -457,13 +457,13 @@ namespace Altaxo.Graph
 		g.PageUnit = GraphicsUnit.Point;
 
 			// set position and rotation to zero
-		m_TextObject.Position=new PointF(0,0);
-		m_TextObject.Rotation = 0;
-		m_TextObject.Paint(g,m_Layer);
+//		m_TextObject.Position=new PointF(0,0);
+//		m_TextObject.Rotation = 0;
+		m_TextObject.Paint(g,m_Layer,true);
 		
 			// restore the original position and rotation values
-			m_TextObject.Position = new PointF(m_PositionX,m_PositionY);
-			m_TextObject.Rotation = m_Rotation;
+//			m_TextObject.Position = new PointF(m_PositionX,m_PositionY);
+//			m_TextObject.Rotation = m_Rotation;
 		
 		}
 

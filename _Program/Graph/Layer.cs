@@ -329,22 +329,8 @@ namespace Altaxo.Graph
 			m_yAxis.AxisChanged += new System.EventHandler(this.OnYAxisChanged);
 		
 		
-			m_LeftAxisTitle = new ExtendedTextGraphObject();
-			m_LeftAxisTitle.Rotation=-90;
-			m_LeftAxisTitle.XAnchor = ExtendedTextGraphObject.XAnchorPositionType.Center;
-			m_LeftAxisTitle.YAnchor = ExtendedTextGraphObject.YAnchorPositionType.Bottom;
-			m_LeftAxisTitle.Text = "Y axis";
-			m_LeftAxisTitle.Position = new PointF(-0.125f*size.Width,0.5f*size.Height);
-
-			m_BottomAxisTitle = new ExtendedTextGraphObject();
-			m_BottomAxisTitle.Rotation=0;
-			m_BottomAxisTitle.XAnchor = ExtendedTextGraphObject.XAnchorPositionType.Center;
-			m_BottomAxisTitle.YAnchor = ExtendedTextGraphObject.YAnchorPositionType.Top;
-			m_BottomAxisTitle.Text = "X axis";
-			m_BottomAxisTitle.Position = new PointF(0.5f*size.Width,1.125f*size.Height);
-
-
-
+			LeftAxisTitleString = "Y axis";
+			BottomAxisTitleString = "X axis";
 		}
 
 	
@@ -371,6 +357,20 @@ namespace Altaxo.Graph
 			get { return m_GraphObjects; }
 		}
 
+		public void Remove(GraphObject go)
+		{
+			// test our own objects for removal (only that that _are_ removable)
+			if(object.ReferenceEquals(go,this.m_LeftAxisTitle))
+				m_LeftAxisTitle=null;
+			else if(object.ReferenceEquals(go,this.m_TopAxisTitle))
+				m_TopAxisTitle=null;
+			else if(object.ReferenceEquals(go,this.m_RightAxisTitle))
+				m_RightAxisTitle=null;
+			else if(object.ReferenceEquals(go,this.m_BottomAxisTitle))
+				m_BottomAxisTitle=null;
+			else if(m_GraphObjects.Contains(go))
+				m_GraphObjects.Remove(go);
+		}
 
 		/// <summary>
 		/// Get / sets the layer this layer is linked to.
@@ -1434,6 +1434,147 @@ namespace Altaxo.Graph
 			}
 		}
 
+		public ExtendedTextGraphObject LeftAxisTitle
+		{
+			get { return this.m_LeftAxisTitle; }
+			set
+			{
+				this.m_LeftAxisTitle = value;
+				this.OnInvalidate();
+			}
+		}
+
+		public ExtendedTextGraphObject RightAxisTitle
+		{
+			get { return this.m_RightAxisTitle; }
+			set
+			{
+				this.m_RightAxisTitle = value;
+				this.OnInvalidate();
+			}
+		}
+
+		public ExtendedTextGraphObject TopAxisTitle
+		{
+			get { return this.m_TopAxisTitle; }
+			set
+			{
+				this.m_TopAxisTitle = value;
+				this.OnInvalidate();
+			}
+		}
+		public ExtendedTextGraphObject BottomAxisTitle
+		{
+			get { return this.m_BottomAxisTitle; }
+			set
+			{
+				this.m_BottomAxisTitle = value;
+				this.OnInvalidate();
+			}
+		}
+
+		public string LeftAxisTitleString
+		{
+			get { return m_LeftAxisTitle!=null ? m_LeftAxisTitle.Text : null; }
+			set
+			{
+				if(value==null || value=="")
+				{
+					m_LeftAxisTitle=null;
+				}
+				else
+				{
+					if(m_LeftAxisTitle==null)
+					{
+						m_LeftAxisTitle = new ExtendedTextGraphObject();
+						m_LeftAxisTitle.Rotation=-90;
+						m_LeftAxisTitle.XAnchor = ExtendedTextGraphObject.XAnchorPositionType.Center;
+						m_LeftAxisTitle.YAnchor = ExtendedTextGraphObject.YAnchorPositionType.Bottom;
+						m_LeftAxisTitle.Position = new PointF(-0.125f*Size.Width,0.5f*Size.Height);
+					}
+
+					m_LeftAxisTitle.Text = value;
+				}
+			}
+		}
+
+		public string RightAxisTitleString
+		{
+			get { return m_RightAxisTitle!=null ? m_RightAxisTitle.Text : null; }
+			set
+			{
+				if(value==null || value=="")
+				{
+					m_RightAxisTitle=null;
+				}
+				else
+				{
+					if(m_RightAxisTitle==null)
+					{
+						m_RightAxisTitle = new ExtendedTextGraphObject();
+						m_RightAxisTitle.Rotation=-90;
+						m_RightAxisTitle.XAnchor = ExtendedTextGraphObject.XAnchorPositionType.Center;
+						m_RightAxisTitle.YAnchor = ExtendedTextGraphObject.YAnchorPositionType.Top;
+						m_RightAxisTitle.Position = new PointF(1.125f*Size.Width,0.5f*Size.Height);
+					}
+
+					m_RightAxisTitle.Text = value;
+				}
+			}
+		}
+
+		public string TopAxisTitleString
+		{
+			get { return m_TopAxisTitle!=null ? m_TopAxisTitle.Text : null; }
+			set
+			{
+				if(value==null || value=="")
+				{
+					m_TopAxisTitle=null;
+				}
+				else
+				{
+					if(m_TopAxisTitle==null)
+					{
+						m_TopAxisTitle = new ExtendedTextGraphObject();
+						m_TopAxisTitle = new ExtendedTextGraphObject();
+						m_TopAxisTitle.Rotation=0;
+						m_TopAxisTitle.XAnchor = ExtendedTextGraphObject.XAnchorPositionType.Center;
+						m_TopAxisTitle.YAnchor = ExtendedTextGraphObject.YAnchorPositionType.Bottom;
+						m_TopAxisTitle.Position = new PointF(0.5f*Size.Width,-0.125f*Size.Height);
+					}
+
+					m_TopAxisTitle.Text = value;
+				}
+			}
+		}
+
+		public string BottomAxisTitleString
+		{
+			get { return m_BottomAxisTitle!=null ? m_BottomAxisTitle.Text : null; }
+			set
+			{
+				if(value==null || value=="")
+				{
+					m_BottomAxisTitle=null;
+				}
+				else
+				{
+					if(m_BottomAxisTitle==null)
+					{
+						m_BottomAxisTitle = new ExtendedTextGraphObject();
+						m_BottomAxisTitle.Rotation=0;
+						m_BottomAxisTitle.XAnchor = ExtendedTextGraphObject.XAnchorPositionType.Center;
+						m_BottomAxisTitle.YAnchor = ExtendedTextGraphObject.YAnchorPositionType.Top;
+						m_BottomAxisTitle.Position = new PointF(0.5f*Size.Width,1.125f*Size.Height);
+					}
+
+					m_BottomAxisTitle.Text = value;
+				}
+			}
+		}
+
+
 		#endregion // Style properties
 
 		#region Painting and Hit testing
@@ -1460,8 +1601,10 @@ namespace Altaxo.Graph
 			if(m_ShowBottomAxis && null!=m_BottomAxisTitle) m_BottomAxisTitle.Paint(g,this);
 			if(m_ShowRightAxis) m_RightAxisStyle.Paint(g,this,this.m_yAxis);
 			if(m_ShowRightAxis) m_RightLabelStyle.Paint(g,this,this.m_yAxis,m_RightAxisStyle);
+			if(m_ShowRightAxis && null!=m_RightAxisTitle) m_RightAxisTitle.Paint(g,this);
 			if(m_ShowTopAxis) m_TopAxisStyle.Paint(g,this,this.m_xAxis);
 			if(m_ShowTopAxis) m_TopLabelStyle.Paint(g,this,this.m_xAxis,m_TopAxisStyle);
+			if(m_ShowTopAxis && null!=m_TopAxisTitle) m_TopAxisTitle.Paint(g,this);
 
 
 			foreach(PlotAssociation pa in m_PlotAssociations)
@@ -1476,6 +1619,33 @@ namespace Altaxo.Graph
 		{
 			PointF layerC = GraphToLayerCoordinates(pageC);
 
+
+			GraphObject[] specObjects = 
+					{
+						m_LeftAxisTitle,
+						m_BottomAxisTitle,
+						m_TopAxisTitle,
+						m_RightAxisTitle
+					};
+
+
+			// do the hit test first for the special objects of the layer
+			foreach(GraphObject go in specObjects)
+			{
+				if(null!=go)
+				{
+					gp = go.HitTest(layerC);
+					if(null!=gp)
+					{
+						gp.Transform(matrix);
+						return go;
+					}
+				}
+			}
+
+
+
+			// now hit testing the other objects in the layer
 			foreach(GraphObject go in m_GraphObjects)
 			{
 				gp = go.HitTest(layerC);

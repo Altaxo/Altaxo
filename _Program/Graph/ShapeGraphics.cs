@@ -174,15 +174,17 @@ namespace Altaxo.Graph
 		public PointF GetEndPosition()
 		{
 			PointF endPosition = new PointF(this.m_Position.X, this.m_Position.Y);
-			endPosition.X += this.m_Size.Width;
-			endPosition.Y += this.m_Size.Height;
+			endPosition.X += this.Size.Width;
+			endPosition.Y += this.Size.Height;
 			return endPosition;
 		}
 
 		public void SetEndPosition(PointF Value)
 		{
-			m_Size.Width = Value.X - this.m_Position.X;
-			m_Size.Height = Value.Y - this.m_Position.Y;
+			SizeF siz = new SizeF(
+														Value.X - this.m_Position.X,
+														Value.Y - this.m_Position.Y);
+			SetSize(siz);
 		}
 
 		public override void Paint(Graphics g, object obj)

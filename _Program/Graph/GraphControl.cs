@@ -631,6 +631,23 @@ namespace Altaxo.Graph
 			DoPaint(g,true);
 		}
 
+		public string SaveAsMetafile(System.IO.Stream stream)
+		{
+					// Code to write the stream goes here.
+					Graphics grfx = CreateGraphics();
+					IntPtr ipHdc = grfx.GetHdc();
+					System.Drawing.Imaging.Metafile mf = new System.Drawing.Imaging.Metafile(stream,ipHdc);
+					grfx.ReleaseHdc(ipHdc);
+					grfx.Dispose();
+					grfx = Graphics.FromImage(mf);
+					
+					this.m_Graph.DoPaint(grfx,true);
+
+					grfx.Dispose();
+			
+			return null;
+		}
+
 
 		private void AltaxoGraphControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
@@ -695,6 +712,8 @@ namespace Altaxo.Graph
 			}
 
 		}
+
+
 
 
 		/// <summary>
@@ -1129,7 +1148,7 @@ namespace Altaxo.Graph
 							else // item is empty, so must be deleted in the layer and in the selectedObjects
 							{
 								grac.m_SelectedObjects.Remove(graphObject);
-								grac.Layers[nLayer].GraphObjects.Remove(graphObject);
+								grac.Layers[nLayer].Remove(graphObject);
 							}
 
 							grac.InvalidateGraph(); // repaint the graph

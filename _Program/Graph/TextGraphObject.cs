@@ -318,7 +318,6 @@ namespace Altaxo.Graph
 		protected float m_WidthOfOne_n = 0; // Width of the lower letter n
 		protected float m_WidthOfThree_M = 0; // Width of three upper letters M
 	
-		protected RectangleF m_Bounds; // outer dimensions of the rectangle (without shadow or 3D-effect)
 		protected PointF m_TextOffset; // offset of text to left upper corner of outer rectangle
 
 #region "Constructors"
@@ -762,8 +761,22 @@ namespace Altaxo.Graph
 				}
 			}
 
-			this.m_Size = new SizeF(m_TextWidth+distanceXL+distanceXR,m_TextHeight+distanceYU+distanceYL);
-			this.m_Bounds = new RectangleF(new PointF(0,0),m_Size);
+			SizeF size = new SizeF(m_TextWidth+distanceXL+distanceXR,m_TextHeight+distanceYU+distanceYL);
+
+			
+			float xanchor=0;
+			float yanchor=0;
+			if(m_XAnchorType==XAnchorPositionType.Center)
+				xanchor = size.Width/2.0f;
+			else if(m_XAnchorType==XAnchorPositionType.Right)
+				xanchor = size.Width;
+
+			if(m_YAnchorType==YAnchorPositionType.Center)
+				yanchor = size.Height/2.0f;
+			else if(m_YAnchorType==YAnchorPositionType.Bottom)
+				yanchor = size.Height;
+			
+			this.m_Bounds = new RectangleF(new PointF(-xanchor,-yanchor),size);
 			this.m_TextOffset = new PointF(distanceXL,distanceYU);
 		}
 
@@ -865,37 +878,42 @@ namespace Altaxo.Graph
 				case BackgroundStyle.None:
 					break; // do nothing
 				case BackgroundStyle.BlackLine:
-					g.DrawRectangle(Pens.Black,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
+					g.DrawRectangle(Pens.Black,0,0,m_Bounds.Width,m_Bounds.Height);
 					break;
 				case BackgroundStyle.BlackOut:
-					g.FillRectangle(Brushes.Black,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
+					g.FillRectangle(Brushes.Black,0,0,m_Bounds.Width,m_Bounds.Height);
 					break;
 				case BackgroundStyle.WhiteOut:
-					g.FillRectangle(Brushes.White,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
+					g.FillRectangle(Brushes.White,0,0,m_Bounds.Width,m_Bounds.Height);
 					break;
 				case BackgroundStyle.Shadow:
 					// please note: m_Bounds is already extended to the shadow
-					g.FillRectangle(Brushes.Black,m_Bounds.X+m_ShadowLength,m_Bounds.Y+m_ShadowLength,m_Bounds.Width-m_ShadowLength,m_Bounds.Height-m_ShadowLength);
-					g.FillRectangle(Brushes.White,m_Bounds.X,m_Bounds.Y,m_Bounds.Width-m_ShadowLength,m_Bounds.Height-m_ShadowLength);
-					g.DrawRectangle(Pens.Black,m_Bounds.X,m_Bounds.Y,m_Bounds.Width-m_ShadowLength,m_Bounds.Height-m_ShadowLength);
+					g.FillRectangle(Brushes.Black,m_ShadowLength,m_ShadowLength,m_Bounds.Width-m_ShadowLength,m_Bounds.Height-m_ShadowLength);
+					g.FillRectangle(Brushes.White,0,0,m_Bounds.Width-m_ShadowLength,m_Bounds.Height-m_ShadowLength);
+					g.DrawRectangle(Pens.Black,0,0,m_Bounds.Width-m_ShadowLength,m_Bounds.Height-m_ShadowLength);
 					break;
 				case BackgroundStyle.DarkMarbel:
-					g.FillRectangle(Brushes.Black,m_Bounds.X,m_Bounds.Y,m_Bounds.Width,m_Bounds.Height);
+					g.FillRectangle(Brushes.Black,0.0f,0.0f,m_Bounds.Width,m_Bounds.Height);
 					g.FillPolygon(Brushes.LightGray,new PointF[] {
-						new PointF(m_Bounds.X,m_Bounds.Y), // upper left point
-						new PointF(m_Bounds.X+m_Bounds.Width,m_Bounds.Y), // go to the right
-						new PointF(m_Bounds.X+m_Bounds.Width-m_ShadowLength,m_Bounds.Y+m_ShadowLength), // go 45 deg left down in the upper right corner
-						new PointF(m_Bounds.X+m_ShadowLength,m_Bounds.Y+m_ShadowLength), // upper left corner of the inner rectangle
-						new PointF(m_Bounds.X+m_ShadowLength,m_Bounds.Y+m_Bounds.Height-m_ShadowLength), // lower left corner of the inner rectangle
-						new PointF(m_Bounds.X,m_Bounds.Y+m_Bounds.Height) // lower left corner
+						new PointF(0,0), // upper left point
+						new PointF(m_Bounds.Width,0), // go to the right
+						new PointF(m_Bounds.Width-m_ShadowLength,m_ShadowLength), // go 45 deg left down in the upper right corner
+						new PointF(m_ShadowLength,m_ShadowLength), // upper left corner of the inner rectangle
+						new PointF(m_ShadowLength,m_Bounds.Height-m_ShadowLength), // lower left corner of the inner rectangle
+						new PointF(0,m_Bounds.Height) // lower left corner
 					});
 
-						g.FillRectangle(Brushes.DimGray,m_Bounds.X+m_ShadowLength,m_Bounds.Y+m_ShadowLength,m_Bounds.Width-2*m_ShadowLength,m_Bounds.Height-2*m_ShadowLength);
+						g.FillRectangle(Brushes.DimGray,m_ShadowLength,m_ShadowLength,m_Bounds.Width-2*m_ShadowLength,m_Bounds.Height-2*m_ShadowLength);
 					break;
 			} // end of switch BackgroundStyle
 		}
 
 		public override void Paint(Graphics g, object obj)
+		{
+			Paint(g,obj,false);
+		}
+
+		public void Paint(Graphics g, object obj, bool bForPreview)
 		{
 			if(!this.m_bStructureInSync)
 				this.Interpret(g);
@@ -904,29 +922,25 @@ namespace Altaxo.Graph
 				this.MeasureStructure(g,obj);
 
 			System.Drawing.Drawing2D.GraphicsState gs = g.Save();
-			
-			g.TranslateTransform(X,Y);
-
-			g.RotateTransform(m_Rotation);
-
-			float xanchor=0;
-			float yanchor=0;
-			if(m_XAnchorType==XAnchorPositionType.Center)
-				xanchor = this.m_Size.Width/2.0f;
-			else if(m_XAnchorType==XAnchorPositionType.Right)
-				xanchor = this.m_Size.Width;
-
-			if(m_YAnchorType==YAnchorPositionType.Center)
-				yanchor = this.m_Size.Height/2.0f;
-			else if(m_YAnchorType==YAnchorPositionType.Bottom)
-				yanchor = this.m_Size.Height;
-			g.TranslateTransform(-xanchor,-yanchor);
-
-
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+			
+
+			if(!bForPreview)
+			{
+				g.TranslateTransform(X,Y);
+
+				g.RotateTransform(m_Rotation);
+
+				g.TranslateTransform(m_Bounds.X,m_Bounds.Y);
+			}
+
+
+
 
 			// first of all paint the background
 			PaintBackground(g);
+
+
 
 			// Modification of StringFormat is necessary to avoid 
 			// too big spaces between successive words
