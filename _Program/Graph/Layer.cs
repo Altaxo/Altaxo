@@ -72,7 +72,7 @@ namespace Altaxo.Graph
 			m_LayerPosition = new PointF(prtSize.Width*0.14f,prtSize.Height*0.14f);
 			m_LayerSize = new SizeF(prtSize.Width*0.76f,prtSize.Height*0.7f);
 
-			ExtendedTextGraphObject tgo = new ExtendedTextGraphObject(129,90,@"\L(0)Hg",new Font(FontFamily.GenericSansSerif,36,GraphicsUnit.World),Color.Black);
+			ExtendedTextGraphObject tgo = new ExtendedTextGraphObject(129,90,@"\L(0)\b(bbbbbb)aaaaaa",new Font(FontFamily.GenericSansSerif,12,GraphicsUnit.World),Color.Black);
 			tgo.Rotation = 0;
 			coll.Add(tgo);
 			CalculateMatrix();

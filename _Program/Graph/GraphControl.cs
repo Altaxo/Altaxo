@@ -61,6 +61,8 @@ namespace Altaxo.Graph
 		protected int m_ActualLayer = 0;
 		protected GraphTools m_CurrentGraphTool = GraphTools.ObjectPointer;
 		private GraphPanel m_GraphPanel;
+		protected PointF m_LastMouseDownPoint; // MouseCoordinaates of the last mouse down
+
 
 		/// <summary> 
 		/// Required designer variable
@@ -133,7 +135,9 @@ namespace Altaxo.Graph
 			this.m_GraphPanel.Name = "m_GraphPanel";
 			this.m_GraphPanel.Size = new System.Drawing.Size(150, 150);
 			this.m_GraphPanel.TabIndex = 0;
+			this.m_GraphPanel.Click += new System.EventHandler(this.OnGraphPanel_Click);
 			this.m_GraphPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.AltaxoGraphControl_Paint);
+			this.m_GraphPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OnGraphPanel_MouseDown);
 			// 
 			// GraphControl
 			// 
@@ -415,6 +419,32 @@ namespace Altaxo.Graph
 				}
 
 			}
+		}
+
+
+		
+		
+		private void OnGraphPanel_Click(object sender, System.EventArgs e)
+		{
+		
+			if(this.m_CurrentGraphTool==GraphTools.Text)
+			{
+				// get the page coordinates (in Point (1/72") units)
+				PointF pageCoord = PixelToPageCoordinates(m_LastMouseDownPoint);
+				// with knowledge of the current active layer, calculate the layer coordinates from them
+				PointF layerCoord = Layer[ActualLayer].ToLayerCoordinates(pageCoord);
+
+				ExtendedTextGraphObject tgo = new ExtendedTextGraphObject();
+				tgo.Position = layerCoord;
+
+				TextControlDialog dlg = new TextControlDialog(Layer[ActualLayer],tgo);
+				dlg.ShowDialog(this);
+			}
+		}
+
+		private void OnGraphPanel_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+		m_LastMouseDownPoint = new PointF(e.X,e.Y);
 		}
 
 		/*

@@ -325,6 +325,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\TextControlDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\TextControlDialog.resx"
+                    DependentUpon = "TextControlDialog.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Graph\TextGraphObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

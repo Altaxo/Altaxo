@@ -277,7 +277,9 @@ namespace Altaxo
 
 		public ExtendedTextGraphObject()
 		{
+			m_Font = new Font(FontFamily.GenericSansSerif,18,GraphicsUnit.World);
 		}
+
 		public ExtendedTextGraphObject(PointF graphicPosition, string text, 
 			Font textFont, Color textColor)
 		{
@@ -316,7 +318,7 @@ namespace Altaxo
 
 		protected void Interpret()
 		{
-			char[] searchchars = new Char[] { '\\', '\n', ')' };
+			char[] searchchars = new Char[] { '\\', '\r', '\n', ')' };
 				
 			if(null!=m_TextLines)
 				m_TextLines.Clear(); // delete old contents 
@@ -354,7 +356,12 @@ namespace Altaxo
 					// currTxtIdx to (bi-1) to the current text item
 					currTextItem.m_Text += m_Text.Substring(currTxtIdx,bi-currTxtIdx);
 					
-					if('\n'==m_Text[bi] && (bi+1)<m_Text.Length)
+					if('\r'==m_Text[bi])
+					{
+						// simply ignore this character, since we search for \n
+						currTxtIdx=bi+1;
+					}
+					else if('\n'==m_Text[bi])
 					{
 						currTxtIdx = bi+1;
 						// create a new line
@@ -688,7 +695,7 @@ namespace Altaxo
 						// now measure the string
 						PointF currPosPoint = new PointF(currPosX,currLinePosY + currPosY + yshift);
 
-						currSize = g.MeasureString(ti.m_Text, m_Font, currPosPoint, strfmt);
+						currSize = g.MeasureString(ti.m_Text, currFont, currPosPoint, strfmt);
 						
 						g.DrawString(ti.m_Text, currFont, new SolidBrush(m_Color), currPosPoint, strfmt);
 

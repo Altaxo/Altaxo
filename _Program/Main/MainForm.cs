@@ -99,25 +99,21 @@ namespace Altaxo
 		
 		protected override void OnMdiChildActivate(EventArgs e)
 		{
-			Console.WriteLine("ChildForm {0} activated",this.ActiveMdiChild.Name);
+			e = new EventArgs();
 
 			if(null!=MdiChildDeactivateBefore) // this is called first, only the active child should have a handler on that event so it can deactivate its own toolbars etc.
-				MdiChildDeactivateBefore(this,new EventArgs());
+				MdiChildDeactivateBefore(this,e);
 
 			if(null!=MdiChildActivateBefore) // then the child activation event is fired, so the child which is active now can register its own toolbars
-				MdiChildActivateBefore(this,new EventArgs());
-
-			this.ActiveMdiChild.Activate();
-
+				MdiChildActivateBefore(this,e);
 
 			base.OnMdiChildActivate(e); // the call to the base classes handler in the middle
 
 			if(null!=MdiChildDeactivateAfter)
-				MdiChildDeactivateAfter(this,new EventArgs());
+				MdiChildDeactivateAfter(this,e);
 
 			if(null!=MdiChildActivateAfter)
-				MdiChildActivateAfter(this,new EventArgs());
-			
+				MdiChildActivateAfter(this,e);
 		}
 
 
