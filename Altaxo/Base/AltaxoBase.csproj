@@ -530,6 +530,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\Axes\Scaling\BoundaryRescaling.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Scaling\LogarithmicAxisRescaleConditions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\Axes\Scaling\NumericAxisRescaleConditions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\GUI\AxisLinkControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -889,6 +904,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\GUI\IClassForClassAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\GUI\IntegerAndComboBoxController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -968,6 +988,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Main\GUI\UserControlForControllerAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\UserControllerForObjectAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\GUI\MWControls\EventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -998,12 +1028,22 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Main\Services\GUIFactoryService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\Services\IDataDisplayService.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Main\Services\IOutputService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\Services\ReflectionService.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
