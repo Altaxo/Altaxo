@@ -480,6 +480,169 @@ namespace Altaxo.Calc.FFT
         return status;
     }
 
+
+
+    /// <summary>
+    /// Convolves or deconvolves a splitted complex-valued data set data[] (including any
+    /// user supplied zero padding) with a response function response[].
+    /// The result is returned in the splitted complex arrays resultre[] and resultim[]. All arrays including
+    /// the scratch[] arrays must have the same dimensions (or larger).
+    /// The data set (and of course the other arrays) can be either one-dimensional,
+    /// two-dimensional, or three-dimensional, d = 1,2,3.  Each dimension must be 
+    /// of the form n = (2**p) * (3**q) * (5**r), because of the underlying FFT.
+    /// </summary>
+    /// <param name="datare">
+    /// The splitted complex-valued data set. Note, that you have to
+    /// care for end effects by zero padding. This means, 
+    /// that you have to pad the data with a number of zeros
+    /// on one end equal to the maximal positive duration
+    /// or maximal negative duration of the response function,
+    /// whichever is larger!!</param>
+    /// <param name="dataim">The imaginary part of the data array.</param>
+    /// <param name="responsere">
+    ///  The response function must be stored in wrap-around
+    ///  order. This means that the first half of the array
+    ///  response[] (in each dimension) contains the impulse
+    ///  response function at positive times, while the second
+    ///  half of the array contains the impulse response
+    ///  function at negative times, counting down from the
+    ///  element with the highest index. The array must have 
+    ///  at least the size of the data array.
+    /// </param>
+    /// <param name="responseim">The imaginary part of the response array.</param>
+    /// <param name="resultre">
+    /// The real part of the result array. It must have 
+    /// at least the size of the data array.
+    /// </param>
+    /// <param name="resultim">The imaginary part of the result array.</param>
+    /// <param name="scratchre">
+    ///  A work array. If a NULL pointer is passed the
+    /// work array is allocated and freed auotomatically.
+    /// If the array is given by the user it must have 
+    /// at least the size of the data array.
+    /// </param>
+    /// <param name="scratchim">
+    ///  A work array. If a NULL pointer is passed the
+    /// work array is allocated and freed auotomatically.
+    /// If the array is given by the user it must have 
+    /// at least the size of the data array.
+    /// </param>
+    /// <param name="isign">
+    /// If isign == forward a convolution is performed. 
+    /// If isign == inverse then a deconvolution is performed.
+    /// </param>
+    /// <returns>
+    /// In the case of a convolution (isign == forward) the value "true" is returned
+    /// always. In the case of deconvolution (isign == inverse) the value "false" is
+    /// returned if the FFT transform of the response function is exactly zero for 
+    /// some value. This indicates that the original convolution has lost all 
+    /// information at this particular frequency, so that a reconstruction is not
+    /// possible. If the transform of the response function is non-zero everywhere
+    /// the deconvolution can be performed and the value "true" is returned.
+    /// </returns>
+ 
+    public bool Convolute (
+      double[] datare, double[] dataim, 
+      double[] responsere, double[] responseim,
+      double[] resultre, double[] resultim,
+      double[] scratchre, double[] scratchim,
+      FourierDirection isign)
+    {
+      // return status
+      bool status = true;
+
+      // get total size of data array
+      int size = 0;
+      if (ndim == 0) 
+      {
+        throw new ArithmeticException("MpConvolution::Convolute no dimensions have been specified");
+      } 
+      else if (ndim == 1) 
+      {
+        size = dim[0];
+      } 
+      else if (ndim == 2) 
+      {
+        size = row_order ? (dim[0] * id) : (id * dim[1]);
+      } 
+      else if (ndim == 3) 
+      {
+        size = row_order ? (dim[0] * dim[1] * id) : (id * dim[1] * dim[2]);
+      }
+
+      // allocate the scratch array
+      //bool auto_scratch = false;
+      if ( null==scratchre )
+        scratchre = new  double[size];
+      if ( null==scratchim )
+        scratchim = new  double[size];
+
+      //---------------------------------------------------------------------------//
+      //  1-dimensional convolution (original data not are overwritten)
+      //---------------------------------------------------------------------------//
+
+      if (ndim == 1) 
+      {
+
+        // First copy the arrays data and response to result and scratch,
+        // respectively, to prevent overwriting of the original data.
+        Array.Copy(datare,resultre,size);
+        Array.Copy(dataim,resultim,size);
+        Array.Copy(responsere,scratchre, size);
+        Array.Copy(responseim,scratchim, size);
+
+        // transform both arrays simultaneously - this is a forward FFT
+        base.FFT(resultre,resultim, FourierDirection.Forward);
+        base.FFT(scratchre,scratchim, FourierDirection.Forward);
+    
+        // multiply FFTs to convolve
+        int n = dim[0];
+
+        if (isign == FourierDirection.Forward) 
+        {
+      
+          double scale = 1.0/n;
+          for (int i = 0; i < n; i++) 
+          {
+            double re = resultre[i]*scratchre[i] - resultim[i]*scratchim[i];
+            double im = resultre[i]*scratchim[i] + resultim[i]*scratchre[i];
+            resultre[i] = re*scale; 
+            resultim[i] = im*scale;
+          }
+        } 
+        else /* isign == inverse */ 
+        {
+
+          double mag;
+          if ((mag = Square(scratchre[0])+Square(scratchim[0])) == 0.0) 
+          {   // check for zero divide
+            status = false;
+            goto ErrorExit;
+          }
+          for (int i = 0; i < n; i++) 
+          {
+            double rr = resultre[i]; 
+            double ri = resultim[i]; 
+            double sr = scratchre[i];
+            double si = scratchim[i];
+            if ((mag = sr*sr + ri*ri) == 0.0)  
+            {   // check for zero divide
+              status = false;
+              goto ErrorExit;
+            }
+            resultre[i] =  (rr*sr - ri*si) / (n*mag);  // real part
+            resultim[i] =  (si*sr + ri*rr) / (n*mag);  // imaginary part 
+          }
+        }
+        // transform back - this is an inverse FFT
+        base.FFT(resultre,resultim, FourierDirection.Inverse);
+      }
+
+      ErrorExit:
+      return status;
+    }
+
+
     protected static void FillZero(double[] array)
     {
       for(int i=0;i<array.Length;i++)

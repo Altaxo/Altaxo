@@ -306,6 +306,39 @@ namespace Altaxo.Calc.FFT
     }
 
 
+    public static void CyclicConvolution(
+      double[] datare, double[] dataim,
+      double[] responsere, double[] responseim,
+      double[] resultre, double[] resultim,
+      int n)
+    {
+      int msize = GetNecessaryTransformationSize(n);
+      
+      double[] srcre = new double[msize];
+      double[] srcim = new double[msize];
+      double[] rspre = new double[msize];
+      double[] rspim = new double[msize];
+      double[] resre = new double[msize];
+      double[] resim = new double[msize];
+      
+
+      Array.Copy(datare,srcre,n);
+      Array.Copy(dataim,srcim,n);
+      Array.Copy(responsere,rspre,n);
+      Array.Copy(responseim,rspim,n);
+
+      for(int i=1;i<n;i++)
+      {
+        rspre[msize-i] = rspre[i];
+        rspim[msize-i] = rspim[i];
+      }
+
+     fhtconvolution(resre,resim,srcre,srcim,rspre,rspim,msize);
+      Array.Copy(resre,resultre,n);
+      Array.Copy(resim,resultim,n);
+    }
+
+
     /*
     public static void
       FFT(double[] x, double[] y, uint n, bool backward)

@@ -98,18 +98,18 @@ namespace ICSharpCode.SharpRefactory.Parser
 
 			if ((modifier & Modifier.Abstract) != 0)
 				attr |=  MemberAttributes.Abstract;
-			if ((modifier & Modifier.None) != 0)
-				attr |=  MemberAttributes.AccessMask;
-			if ((modifier & Modifier.None) != 0)
-				attr |=  MemberAttributes.Assembly;
+//			if ((modifier & Modifier.None) != 0)
+//				attr |=  MemberAttributes.AccessMask;
+//			if ((modifier & Modifier.None) != 0)
+//				attr |=  MemberAttributes.Assembly;
 			if ((modifier & Modifier.Const) != 0)
 				attr |=  MemberAttributes.Const;
-			if ((modifier & Modifier.None) != 0)
-				attr |=  MemberAttributes.Family;
-			if ((modifier & Modifier.None) != 0)
-				attr |=  MemberAttributes.FamilyAndAssembly;
-			if ((modifier & Modifier.None) != 0)
-				attr |=  MemberAttributes.FamilyOrAssembly;
+//			if ((modifier & Modifier.None) != 0)
+//				attr |=  MemberAttributes.Family;
+//			if ((modifier & Modifier.None) != 0)
+//				attr |=  MemberAttributes.FamilyAndAssembly;
+//			if ((modifier & Modifier.None) != 0)
+//				attr |=  MemberAttributes.FamilyOrAssembly;
 			if ((modifier & Modifier.Sealed) != 0)
 				attr |=  MemberAttributes.Final;
 			if ((modifier & Modifier.New) != 0)
@@ -122,36 +122,30 @@ namespace ICSharpCode.SharpRefactory.Parser
 				attr |=  MemberAttributes.Private;
 			if ((modifier & Modifier.Public) != 0)
 				attr |=  MemberAttributes.Public;
-			if ((modifier & Modifier.None) != 0)
-				attr |=  MemberAttributes.ScopeMask;
+//			if ((modifier & Modifier.None) != 0)
+//				attr |=  MemberAttributes.ScopeMask;
 			if ((modifier & Modifier.Static) != 0)
 				attr |=  MemberAttributes.Static;
-			if ((modifier & Modifier.None) != 0)
-				attr |=  MemberAttributes.VTableMask;
+//			if ((modifier & Modifier.None) != 0)
+//				attr |=  MemberAttributes.VTableMask;
 
 			return attr;
 		}
 
 		void ProcessSpecials(Hashtable specials)
 		{
-			if (specials == null)
+			if (specials == null) {
 				return;
-
-			foreach (object special in specials) 
-			{
-				if (special is BlankLine) 
-				{
+			}
+			
+			foreach (object special in specials) {
+				if (special is BlankLine) {
 					AddStmt(new CodeSnippetStatement());
-				} 
-				else if (special is PreProcessingDirective) 
-				{
+				} else if (special is PreProcessingDirective) {
 					// TODO
-				} 
-				else if (special is Comment) 
-				{
+				} else if (special is Comment) {
 					Comment comment = (Comment)special;
-					switch (comment.CommentType) 
-					{
+					switch (comment.CommentType) {
 						case CommentType.SingleLine:
 							AddStmt(new CodeCommentStatement(comment.CommentText, false));
 							break;
@@ -270,6 +264,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 				VariableDeclaration field = (VariableDeclaration)fieldDeclaration.Fields[i];
 				
 				CodeMemberField memberField = new CodeMemberField(new CodeTypeReference(ConvType(fieldDeclaration.TypeReference.Type)), field.Name);
+				memberField.Attributes = ConvMemberAttributes(fieldDeclaration.Modifier);
 				if (field.Initializer != null) {
 					memberField.InitExpression =  (CodeExpression)((INode)field.Initializer).AcceptVisitor(this, data);
 				}
@@ -287,7 +282,7 @@ namespace ICSharpCode.SharpRefactory.Parser
 			CodeMemberMethod memberMethod = new CodeMemberMethod();
 			memberMethod.Name = methodDeclaration.Name;
 			memberMethod.Attributes = ConvMemberAttributes(methodDeclaration.Modifier);
-
+			
 			codeStack.Push(memberMethod.Statements);
 
 			((CodeTypeDeclaration)typeDeclarations.Peek()).Members.Add(memberMethod);

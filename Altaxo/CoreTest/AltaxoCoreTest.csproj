@@ -129,12 +129,27 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\FFT\PFA235ConvolutionTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\FFT\PFA235FFT_Tests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\FFT\RealConvolutionTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\FFT\SplittedComplexConvolutionTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\FFT\TestChirpConvolution.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

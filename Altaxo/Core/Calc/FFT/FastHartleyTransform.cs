@@ -1118,7 +1118,7 @@ namespace Altaxo.Calc.FFT
     /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
     /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
     /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
-    public static void CyclicConvolution(
+    public static void CyclicDestructiveConvolution(
       double[] src1real, double[] src1imag, 
       double[] src2real, double[] src2imag,
       double[] resultreal, double[] resultimag,
@@ -1130,5 +1130,46 @@ namespace Altaxo.Calc.FFT
       FastHartleyTransform.IFFT( resultreal,resultimag, n);
       ArrayMath.NormalizeArrays(resultreal, resultimag, 1.0/n, n);
     }
+
+    /// <summary>
+    /// Performs a convolution of two comlex arrays which are in splitted form. The input arrays will leave intact.
+    /// </summary>
+    /// <param name="src1real">The real part of the first input array (will be destroyed).</param>
+    /// <param name="src1imag">The imaginary part of the first input array (will be destroyed).</param>
+    /// <param name="src2real">The real part of the second input array (will be destroyed).</param>
+    /// <param name="src2imag">The imaginary part of the second input array (will be destroyed).</param>
+    /// <param name="resultreal">The real part of the result. (may be identical with arr1 or arr2).</param>
+    /// <param name="resultimag">The imaginary part of the result (may be identical with arr1 or arr2).</param>
+    /// <param name="scratchreal">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
+    /// <param name="scratchimag">A helper array. Must be at least of length n. If null is provided here, a new scatch array will be allocated.</param>
+    /// <param name="n">The length of the convolution. Has to be equal or smaller than the array size. Has to be a power of 2!</param>
+    public static void CyclicConvolution(
+      double[] src1real, double[] src1imag, 
+      double[] src2real, double[] src2imag,
+      double[] resultreal, double[] resultimag,
+      double[] scratchreal, double[] scratchimag,
+      int n)
+    {
+      if ( null==scratchreal || scratchreal.Length<n)
+        scratchreal = new  double[n];
+      if ( null==scratchimag || scratchimag.Length<n )
+        scratchimag = new  double[n];
+
+      // First copy the arrays data and response to result and scratch,
+      // respectively, to prevent overwriting of the original data.
+      Array.Copy(src1real,resultreal, n);
+      Array.Copy(src1imag,resultimag, n);
+      Array.Copy(src2real,scratchreal, n);
+      Array.Copy(src2imag,scratchimag, n);
+
+      FFT( resultreal, resultimag, n);
+      FFT( scratchreal, scratchimag, n);
+      ArrayMath.MultiplySplittedComplexArrays(resultreal, resultimag, scratchreal, scratchimag, resultreal, resultimag, n);
+      FastHartleyTransform.IFFT( resultreal,resultimag, n);
+      ArrayMath.NormalizeArrays(resultreal, resultimag, 1.0/n, n);
+    }
+
+
+
   }
 }

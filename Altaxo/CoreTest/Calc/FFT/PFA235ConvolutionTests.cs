@@ -28,20 +28,24 @@ namespace AltaxoTest.Calc.FFT
 {
 
   [TestFixture]
-  public class TestFastHartleyConvolution
+  public class TestPFA235ConvolutionReal1D
   {
     const int nLowerLimit=4;
     const int nUpperLimit=128;
     const double maxTolerableEpsPerN=1E-15;
-    SplittedComplexConvolutionTests _test ;
+    RealConvolutionTests _test ;
 
-    public TestFastHartleyConvolution()
+    int[] _testLengths = { 2, 3, 2*2, 5, 2*2*2, 3*3, 2*5, 2*2*3, 2*3*5, 2*2*2*2*5, 2*2*3*3*5 };
+
+    public TestPFA235ConvolutionReal1D()
     {
-      _test = new SplittedComplexConvolutionTests(new SplittedComplexConvolutionTests.ConvolutionRoutine(MyConvolution));
+      _test = new RealConvolutionTests(new RealConvolutionTests.ConvolutionRoutine(MyConvolution));
     }
-    void MyConvolution(double[] re1, double[] im1, double[] re2, double[] im2,double[] re, double[] im, int n)
+
+    void MyConvolution(double[] re1, double[] re2, double[] re, int n)
     {
-     FastHartleyTransform.CyclicConvolution(re1,im1,re2,im2,re,im,null,null,n);
+      Pfa235Convolution conv = new Pfa235Convolution(n);
+      conv.Convolute(re1,re2,re,null,FourierDirection.Forward);
     }
 
 
@@ -49,7 +53,7 @@ namespace AltaxoTest.Calc.FFT
     public void Test01BothZero()
     {
       
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      foreach(int i in _testLengths)
         _test.TestBothZero(i);
     }
 
@@ -57,7 +61,7 @@ namespace AltaxoTest.Calc.FFT
     public void Test02OneZero()
     {
       
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      foreach(int i in _testLengths)
         _test.TestOneZero(i);
     }
 
@@ -65,45 +69,112 @@ namespace AltaxoTest.Calc.FFT
     [Test]
     public void Test03ReOne_ZeroPos()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      foreach(int i in _testLengths)
         _test.TestReOne_ZeroPos(i);
     }
 
     [Test]
     public void Test04OneReOne_OtherRandom()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      foreach(int i in _testLengths)
+        _test.TestOneReOne_OtherRandom(i);
+    }
+    
+    [Test]
+    public void Test05ReOne_OnePos_OtherRandom()
+    {
+      foreach(int i in _testLengths)
+        _test.TestReOne_OnePos_OtherRandom(i);
+    }
+    
+    [Test]
+    public void Test06BothRandom()
+    {
+      foreach(int i in _testLengths)
+        _test.TestBothRandom(i);
+    }
+  }
+
+  [TestFixture]
+  public class TestPFA235ConvolutionSplittedComplex1D
+  {
+    const int nLowerLimit=4;
+    const int nUpperLimit=128;
+    const double maxTolerableEpsPerN=1E-15;
+    SplittedComplexConvolutionTests _test ;
+    int[] _testLengths = { 2, 3, 2*2, 5, 2*2*2, 3*3, 2*5, 2*2*3, 2*3*5, 2*2*2*2*5, 2*2*3*3*5 };
+
+    public TestPFA235ConvolutionSplittedComplex1D()
+    {
+      _test = new SplittedComplexConvolutionTests(new SplittedComplexConvolutionTests.ConvolutionRoutine(MyConvolution));
+    }
+
+    void MyConvolution(double[] re1, double[] im1, double[] re2, double[] im2, double[] re, double[] im, int n)
+    {
+      Pfa235Convolution conv = new Pfa235Convolution(n);
+      conv.Convolute(re1,im1,re2,im2,re,im,null,null,FourierDirection.Forward);
+    }
+
+
+ 
+    [Test]
+    public void Test01BothZero()
+    {
+      
+      foreach(int i in _testLengths)
+        _test.TestBothZero(i);
+    }
+
+    [Test]
+    public void Test02OneZero()
+    {
+      
+      foreach(int i in _testLengths)
+        _test.TestOneZero(i);
+    }
+
+
+    [Test]
+    public void Test03ReOne_ZeroPos()
+    {
+      foreach(int i in _testLengths)
+        _test.TestReOne_ZeroPos(i);
+    }
+
+    [Test]
+    public void Test04OneReOne_OtherRandom()
+    {
+      foreach(int i in _testLengths)
         _test.TestOneReOne_OtherRandom(i);
     }
 
     [Test]
     public void Test05OneImOne_OtherRandom()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      foreach(int i in _testLengths)
         _test.TestOneReOne_OtherRandom(i);
     }
     
     [Test]
     public void Test06ReOne_OnePos_OtherRandom()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      foreach(int i in _testLengths)
         _test.TestReOne_OnePos_OtherRandom(i);
     }
     
     [Test]
     public void Test07ImOne_OnePos_OtherRandom()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      foreach(int i in _testLengths)
         _test.TestImOne_OnePos_OtherRandom(i);
     }
 
     [Test]
     public void Test08BothRandom()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      foreach(int i in _testLengths)
         _test.TestBothRandom(i);
     }
 
-
-	}
+  }
 }

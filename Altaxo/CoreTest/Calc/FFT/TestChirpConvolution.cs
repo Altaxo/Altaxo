@@ -28,20 +28,16 @@ namespace AltaxoTest.Calc.FFT
 {
 
   [TestFixture]
-  public class TestFastHartleyConvolution
+  public class TestChirpConvolution
   {
     const int nLowerLimit=4;
-    const int nUpperLimit=128;
+    const int nUpperLimit=66;
     const double maxTolerableEpsPerN=1E-15;
     SplittedComplexConvolutionTests _test ;
 
-    public TestFastHartleyConvolution()
+    public TestChirpConvolution()
     {
-      _test = new SplittedComplexConvolutionTests(new SplittedComplexConvolutionTests.ConvolutionRoutine(MyConvolution));
-    }
-    void MyConvolution(double[] re1, double[] im1, double[] re2, double[] im2,double[] re, double[] im, int n)
-    {
-     FastHartleyTransform.CyclicConvolution(re1,im1,re2,im2,re,im,null,null,n);
+      _test = new SplittedComplexConvolutionTests(new SplittedComplexConvolutionTests.ConvolutionRoutine(ChirpFFT.CyclicConvolution));
     }
 
 
@@ -49,7 +45,7 @@ namespace AltaxoTest.Calc.FFT
     public void Test01BothZero()
     {
       
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
         _test.TestBothZero(i);
     }
 
@@ -57,7 +53,7 @@ namespace AltaxoTest.Calc.FFT
     public void Test02OneZero()
     {
       
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
         _test.TestOneZero(i);
     }
 
@@ -65,45 +61,45 @@ namespace AltaxoTest.Calc.FFT
     [Test]
     public void Test03ReOne_ZeroPos()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
         _test.TestReOne_ZeroPos(i);
     }
 
     [Test]
     public void Test04OneReOne_OtherRandom()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
         _test.TestOneReOne_OtherRandom(i);
     }
 
     [Test]
     public void Test05OneImOne_OtherRandom()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
         _test.TestOneReOne_OtherRandom(i);
     }
     
     [Test]
     public void Test06ReOne_OnePos_OtherRandom()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
         _test.TestReOne_OnePos_OtherRandom(i);
     }
     
     [Test]
     public void Test07ImOne_OnePos_OtherRandom()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
         _test.TestImOne_OnePos_OtherRandom(i);
     }
 
     [Test]
     public void Test08BothRandom()
     {
-      for(int i=nLowerLimit;i<=nUpperLimit;i*=2)
+      for(int i=nLowerLimit;i<=nUpperLimit;i++)
         _test.TestBothRandom(i);
     }
 
 
-	}
+  }
 }
