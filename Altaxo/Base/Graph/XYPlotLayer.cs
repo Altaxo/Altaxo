@@ -2898,13 +2898,22 @@ namespace Altaxo.Graph
           Changed(this,e);
       }
  
+      /// <summary>
+      /// Calculates from two physical values the coordinates of the point. Returns true if the conversion
+      /// is possible, otherwise false.
+      /// </summary>
+      /// <param name="x">The physical x value.</param>
+      /// <param name="y">The physical y value.</param>
+      /// <param name="xout">On return, gives the x coordinate of the converted value (for instance location).</param>
+      /// <param name="yout">On return, gives the y coordinate of the converted value (for instance location).</param>
+      /// <returns>True if the conversion was successfull, false if the conversion was not possible.</returns>
       public bool Convert(double x_rel, double y_rel, out double xlocation, out double ylocation)
       {
           xlocation = _layerWidth * x_rel;
           ylocation = _layerHeight * (1-y_rel);
-          return true;
-        
+          return !double.IsNaN(xlocation) && !double.IsNaN(ylocation);
       }
+
       public event System.EventHandler Changed;
 
     }
@@ -2942,8 +2951,7 @@ namespace Altaxo.Graph
       {
         x_rel = xlocation/_layerWidth;
         y_rel = 1-ylocation/_layerHeight;
-        return true;
-        
+        return !double.IsNaN(x_rel) && !double.IsNaN(y_rel);
       }
       public event System.EventHandler Changed;
 

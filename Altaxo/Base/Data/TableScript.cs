@@ -270,10 +270,11 @@ namespace Altaxo.Data
           "{\r\n" + 
           "\tpublic class SetTableValues : Altaxo.Calc.TableScriptExeBase\r\n" +
           "\t{\r\n"+
-          "\t\tpublic override void Execute(Altaxo.Data.DataTable table)\r\n" +
+          "\t\tpublic override void Execute(Altaxo.Data.DataTable mytable)\r\n" +
           "\t\t{\r\n" +
-          "\t\t\tAltaxo.Data.DataColumnCollection col = table.DataColumns;\r\n" +
-          "\t\t\tAltaxo.Data.DataTableCollection tables = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(table);\r\n"; 
+          "\t\t\tAltaxo.Data.DataColumnCollection  col = mytable.DataColumns;\r\n" +
+          "\t\t\tAltaxo.Data.DataColumnCollection pcol = mytable.PropertyColumns;\r\n"+ 
+          "\t\t\tAltaxo.Data.DataTableCollection table = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(mytable);\r\n";
       }
     }
 

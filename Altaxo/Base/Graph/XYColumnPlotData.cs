@@ -733,7 +733,7 @@ namespace Altaxo.Graph
       out PlotRangeList rangeList,
       out PointF[] ptArray)
     {
-      const double MaxRelativeValue = 1E6;
+      const double MaxRelativeValue = 1E2;
 
       rangeList=null;
       ptArray=null;
