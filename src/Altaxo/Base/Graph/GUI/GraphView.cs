@@ -288,8 +288,8 @@ namespace Altaxo.Graph.GUI
 
 				// restore the parent - so the toolbar is shown
 				// TODO replace this by a service
-				if(App.Current!=null && App.Current.View != null)
-					m_GraphToolsToolBar.Parent = (Form)App.Current.View;
+				if(App.Current!=null && App.Current.MainWindow != null)
+					m_GraphToolsToolBar.Parent = (Form)App.Current.MainWindow;
 			}
 		}
 

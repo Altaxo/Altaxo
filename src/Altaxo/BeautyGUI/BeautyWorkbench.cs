@@ -43,7 +43,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 	/// You should not rely on this and use always the ViewObject method defined here and in the 
 	/// IExtendedWorkbench interface if you want to have a Windows Forms object.
 	/// </remarks>
-	public class BeautyWorkbench : BeautyWorkbenchWindow, IWorkbench, Altaxo.IMainController
+	public class BeautyWorkbench : BeautyWorkbenchWindow, IExtendedWorkbench, Altaxo.IMainViewEventSink
 	{
 		readonly static string mainMenuPath    = "/SharpDevelop/Workbench/MainMenu";
 		readonly static string viewContentPath = "/SharpDevelop/Workbench/Views";
@@ -634,14 +634,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 
 	
 
-		Altaxo.IMainView Altaxo.IMainController.View
-		{
-			get
-			{
-				// TODO:  Add BeautyWorkbench.Altaxo.IMainController.View getter implementation
-				return (Altaxo.IMainView) this.m_View;
-			}
-		}
+	
 
 		public Altaxo.Worksheet.GUI.IWorksheetController CreateNewWorksheet()
 		{

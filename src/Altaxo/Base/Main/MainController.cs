@@ -99,7 +99,7 @@ namespace Altaxo
 		/// <summary>
 		/// Sets the contoller for this view.
 		/// </summary>
-		Altaxo.IMainController Controller { set; }
+		Altaxo.IMainViewEventSink Controller { set; }
 
 		/// <summary>
 		/// Sets the main menu for the main window
@@ -108,21 +108,9 @@ namespace Altaxo
 	}
 
 	#endregion
-	/// <summary>
-	/// This interface has to be implemented by all Controllers that are able to controll a IMainView.
-	/// </summary>
-	public interface IMainController : ICSharpCode.SharpDevelop.Gui.IExtendedWorkbench
+
+	public interface IMainViewEventSink
 	{
-		/// <summary>
-		/// The document visualized by the controller.
-		/// </summary>
-		Altaxo.AltaxoDocument Doc { get; }
-
-		/// <summary>
-		/// The view that is controlled by the controller.
-		/// </summary>
-		IMainView View { get; }
-
 		/// <summary>
 		/// Called if the view is about to be closed.
 		/// </summary>
@@ -139,6 +127,35 @@ namespace Altaxo
 		/// This is called if the Close message or shutdown is captured from the view
 		/// </summary>
 		void EhView_CloseMessage();
+	
+	}
+
+
+	/// <summary>
+	/// This interface has to be implemented by all Controllers that are able to controll a IMainView.
+	/// </summary>
+	public interface IMainController
+	{
+		/// <summary>
+		/// The document visualized by the controller.
+		/// </summary>
+		Altaxo.AltaxoDocument Doc { get; }
+
+		/// <summary>
+		/// The view that is controlled by the controller.
+		/// </summary>
+		Form MainWindow { get; }
+
+
+		IWorkbench Workbench
+		{
+			get;
+		}
+		
+		/// <summary>
+		/// Shows the project save as dialog to save the project
+		/// </summary>
+		bool ShowProjectSaveAsDialog();
 
 
 		/// <summary>
@@ -233,33 +250,15 @@ namespace Altaxo
 		/// </summary>
 		public    AltaxoDocument m_Doc=null;
 
-		/// <summary>
-		/// The Gui component of this controller.
-		/// </summary>
-		public    IMainView m_View;
-		
-		/// <summary>
-		/// The layout manager - responsible to layout the application window.
-		/// </summary>
-		protected ICSharpCode.SharpDevelop.Gui.IWorkbenchLayout m_Layout;
-
-
-		// protected System.Collections.ArrayList m_WorkbenchViews = new System.Collections.ArrayList();
-		protected ViewContentCollection m_ViewContentCollection = new ViewContentCollection();
-		protected PadContentCollection m_PadContentCollection = new PadContentCollection();
-
-		protected IWorkbenchWindow m_ActiveWorkbenchWindow;
-
-		protected string m_Title;
-
-		MainMenu m_MainMenu;
-
 		private System.Windows.Forms.PageSetupDialog m_PageSetupDialog;
 
 		private System.Drawing.Printing.PrintDocument m_PrintDocument;
 
 		private System.Windows.Forms.PrintDialog m_PrintDialog;
 
+		MainMenu m_MainMenu;
+
+		private IWorkbench m_Workbench;
 
 		/// <summary>
 		/// Flag that indicates that the Application is about to be closed.
@@ -295,16 +294,21 @@ namespace Altaxo
 
 		#endregion
 	
-		public MainController(IMainView view, AltaxoDocument doc)
+		public MainController(AltaxoDocument doc)
 		{
+			/*
 			m_View = view;
 			m_View.Controller = this;
-			
+			*/
+
+
 			// we construct the main document
 			if(null==m_Doc)
 				m_Doc = new AltaxoDocument();
 			else
 				m_Doc = doc;
+
+
 
 			// we initialize the printer variables
 			m_PrintDocument = new System.Drawing.Printing.PrintDocument();
@@ -317,25 +321,19 @@ namespace Altaxo
 
 			// we create the menu and assign it to the view
 			this.InitializeMenu();
-			View.MainViewMenu = this.m_MainMenu;
-
-			// attach a layout before creating the first windows
-			this.WorkbenchLayout = new WindowsMdiWorkbenchLayout();
-
-			// wir konstruieren zu jeder Tabelle im Dokument ein GrafTabView
-			CreateNewWorksheet();
-
-			// we construct a empty graph by default
-			CreateNewGraph(null);
+			//View.MainViewMenu = this.m_MainMenu;
+		
 		}
 
 
 		public void SetDocumentFromFile(ZipFile zipFile, Altaxo.Serialization.Xml.XmlStreamDeserializationInfo info, AltaxoDocument restoredDoc)
 		{
 			this.m_Doc = restoredDoc;
-			this.CloseAllViews();
+			m_Workbench.CloseAllViews();
 			this.RestoreWindowStateFromZippedFile(zipFile,info,m_Doc);
 		}
+
+	
 
 		#region Menu Definition
 
@@ -651,7 +649,7 @@ namespace Altaxo
 						newdocument.RestoreFromZippedFile(zipFile,info);
 
 						m_Doc = newdocument;
-						this.CloseAllViews();
+						m_Workbench.CloseAllViews();
 						this.RestoreWindowStateFromZippedFile(zipFile,info,m_Doc);
 						
 						myStream.Close();
@@ -668,7 +666,7 @@ namespace Altaxo
 
 		private void EhMenuFileSaveAs_OnClick(object sender, System.EventArgs e)
 		{
-			this.ShowSaveAsDialog();
+			this.ShowProjectSaveAsDialog();
 		} // end method
 
 
@@ -692,29 +690,29 @@ namespace Altaxo
 
 		private void EhMenuWindowCascade_OnClick(object sender, System.EventArgs e)
 		{
-			View.Form.LayoutMdi(MdiLayout.Cascade);
+			this.MainWindow.LayoutMdi(MdiLayout.Cascade);
 		}
 
 		private void EhMenuWindowTileHorizontally_OnClick(object sender, System.EventArgs e)
 		{
-			View.Form.LayoutMdi(MdiLayout.TileHorizontal);
+			this.MainWindow.LayoutMdi(MdiLayout.TileHorizontal);
 		}
 
 		private void EhMenuWindowTileVertically_OnClick(object sender, System.EventArgs e)
 		{
-			View.Form.LayoutMdi(MdiLayout.TileVertical);
+			this.MainWindow.LayoutMdi(MdiLayout.TileVertical);
 		}
 
 		private void EhMenuWindowArrangeIcons_OnClick(object sender, System.EventArgs e)
 		{
-			View.Form.LayoutMdi(MdiLayout.ArrangeIcons);
+			this.MainWindow.LayoutMdi(MdiLayout.ArrangeIcons);
 		}
 
 		private void EhMenuWindowMinimizeAll_OnClick(object sender, System.EventArgs e)
 		{
 			//Gets forms that represent the MDI child forms 
 			//that are parented to this form in an array 
-			Form[] charr= View.Form.MdiChildren; 
+			Form[] charr= this.MainWindow.MdiChildren; 
      
 			//For each child form set the window state to Maximized 
 			foreach (Form chform in charr) 
@@ -725,7 +723,7 @@ namespace Altaxo
 		{
 			//Gets forms that represent the MDI child forms 
 			//that are parented to this form in an array 
-			Form[] charr= View.Form.MdiChildren; 
+			Form[] charr= this.MainWindow.MdiChildren; 
      
 			//For each child form set the window state to Maximized 
 			foreach (Form chform in charr) 
@@ -741,12 +739,29 @@ namespace Altaxo
 		private void EhMenuHelpAboutAltaxo_OnClick(object sender, System.EventArgs e)
 		{
 			Altaxo.Main.AboutDialog dlg = new Altaxo.Main.AboutDialog();
-			dlg.ShowDialog(View.Form);
+			dlg.ShowDialog(this.MainWindow);
 		}
 
 		#endregion
 
 		#region Properties
+
+
+		public IWorkbench Workbench
+		{
+			get { return m_Workbench; }
+			set 
+			{
+				m_Workbench = value;
+ 
+				// assign menu to (now MainWindow is valid)
+				this.MainWindow.Menu = this.m_MainMenu;
+
+				
+
+			}
+		}
+
 		public  System.Windows.Forms.PageSetupDialog PageSetupDialog
 		{
 			get { return m_PageSetupDialog; }
@@ -784,65 +799,26 @@ namespace Altaxo
 			get	{	return m_Doc; }
 		}
 
-		/// <summary>
-		/// The view that is controlled by this controller.
-		/// </summary>
-		public IMainView View
+		public Form MainWindow
 		{
-			get { return m_View; }
-		}
-
-
-		public void EhView_Closing(System.ComponentModel.CancelEventArgs e)
-		{
-			e.Cancel = true; // in doubt cancel the closing
-
-			if(this.Doc.IsDirty)
+			get 
 			{
-				System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.View.Form,"Do you want to save your document?","Attention",System.Windows.Forms.MessageBoxButtons.YesNoCancel);
-				if(dlgres==System.Windows.Forms.DialogResult.Yes)
-				{
-					if(!this.ShowSaveAsDialog())
-						e.Cancel = false;
-				}
-				else if(dlgres==System.Windows.Forms.DialogResult.No)
-				{
-					e.Cancel = false;
-				}
-				else if(dlgres==System.Windows.Forms.DialogResult.Cancel)
-				{
-					e.Cancel = true;
-				}
+				if(m_Workbench is Form)
+					return (Form)m_Workbench;
+				if(m_Workbench is IExtendedWorkbench)
+					return (Form)((IExtendedWorkbench)m_Workbench).ViewObject;
+				else
+					return null;
 			}
-			else // the document is not dirty
-			{
-				e.Cancel = false;
-			}
-
-
-
-			// update the closing flag - if e.Cancel is true, the application is not longer in the closing state
-			this.m_IsClosingAll = (false==e.Cancel);
 		}
-
-		public void EhView_Closed(System.EventArgs e)
-		{
-			View.Controller=null; // we are no longer the controller
-		}
-
-		public void EhView_CloseMessage()
-		{
-			this.m_IsClosingAll = true;
-		}
-
-
+	
 		#endregion
 
-		protected bool ShowSaveAsDialog()
+		public bool ShowProjectSaveAsDialog()
 		{
 			bool bRet = true;
 			SaveFileDialog dlg = this.GetSaveAsDialog();
-			if(dlg.ShowDialog(this.View.Form) == DialogResult.OK)
+			if(dlg.ShowDialog(this.MainWindow) == DialogResult.OK)
 			{
 				System.IO.Stream myStream;
 				if((myStream = dlg.OpenFile()) != null)
@@ -863,7 +839,7 @@ namespace Altaxo
 					}
 					catch(Exception exc)
 					{
-						System.Windows.Forms.MessageBox.Show(this.View.Form,"An error occured saving the document, details see below:\n" + exc.ToString(),"Error",System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+						System.Windows.Forms.MessageBox.Show(this.MainWindow,"An error occured saving the document, details see below:\n" + exc.ToString(),"Error",System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
 					}
 					finally
 					{
@@ -902,7 +878,7 @@ namespace Altaxo
 
 			// second, we save all workbench windows into the Workbench/Views 
 			int i=0;
-			foreach(Main.GUI.IWorkbenchContentController ctrl in this.ViewContentCollection)
+			foreach(Main.GUI.IWorkbenchContentController ctrl in m_Workbench.ViewContentCollection)
 			{
 				i++;
 				ZipEntry ZipEntry = new ZipEntry("Workbench/Views/View"+i.ToString()+".xml");
@@ -941,7 +917,7 @@ namespace Altaxo
 				ctrl.CreateView();
 				if(ctrl.WorkbenchContentView != null)
 				{
-					this.ShowView(ctrl);
+					m_Workbench.ShowView(ctrl);
 				}
 			}
 
@@ -1035,7 +1011,8 @@ namespace Altaxo
 			ctrl.View = view;
 
 
-			this.ShowView(ctrl);
+			if(null!=m_Workbench)
+				m_Workbench.ShowView(ctrl);
 
 			//wbv_controller.Content = ctrl;
 			
@@ -1072,7 +1049,8 @@ namespace Altaxo
 			//this.m_WorkbenchViews.Add(wbv_controller);
 			//wbvform.Show();
 
-			this.ShowView(ctrl);
+			if(null!=m_Workbench)
+				m_Workbench.ShowView(ctrl);
 			return ctrl;
 		}
 
@@ -1084,12 +1062,13 @@ namespace Altaxo
 		/// <remarks>No exception is thrown if the Form frm is not a member of the graph forms collection.</remarks>
 		public void RemoveGraph(Altaxo.Graph.GUI.GraphController ctrl)
 		{
-			this.CloseContent(ctrl);
+			if(null!=m_Workbench)
+				m_Workbench.CloseContent(ctrl);
 
 			//if(this.m_WorkbenchViews.Contains(ctrl))
-				//this.m_WorkbenchViews.Remove(ctrl);
+			//this.m_WorkbenchViews.Remove(ctrl);
 			//else if(ctrl.ParentWorkbenchWindowController !=null && this.m_WorkbenchViews.Contains(ctrl.ParentWorkbenchWindowController))
-				//this.m_WorkbenchViews.Remove(ctrl.ParentWorkbenchWindowController);
+			//this.m_WorkbenchViews.Remove(ctrl.ParentWorkbenchWindowController);
 		}
 
 		/// <summary>This will remove the Worksheet <paramref>ctrl</paramref> from the corresponding forms collection.</summary>
@@ -1097,23 +1076,160 @@ namespace Altaxo
 		/// <remarks>No exception is thrown if the Form frm is not a member of the worksheet forms collection.</remarks>
 		public void RemoveWorksheet(Altaxo.Worksheet.GUI.WorksheetController ctrl)
 		{
-				this.CloseContent(ctrl);
-
-			//if(this.m_WorkbenchViews.Contains(ctrl))
-				//this.m_WorkbenchViews.Remove(ctrl);
-			//else if(ctrl.ParentWorkbenchWindowController !=null && this.m_WorkbenchViews.Contains(ctrl.ParentWorkbenchWindowController))
-				//this.m_WorkbenchViews.Remove(ctrl.ParentWorkbenchWindowController);
+			if(null!=m_Workbench)
+				m_Workbench.CloseContent(ctrl);
 		}
+	}
 
-		/*
-		public void RemoveAllWorkbenchViews()
+
+	/// <summary>
+	/// The class that controls the main window, i.e. the MDI parent window, of the application.
+	/// </summary>
+	public class AltaxoWorkbench : IExtendedWorkbench, IMainViewEventSink
+	{
+
+		/// <summary>
+		/// The Gui component of this controller.
+		/// </summary>
+		public    IMainView m_View;
+		
+		/// <summary>
+		/// The layout manager - responsible to layout the application window.
+		/// </summary>
+		protected ICSharpCode.SharpDevelop.Gui.IWorkbenchLayout m_Layout;
+
+
+		// protected System.Collections.ArrayList m_WorkbenchViews = new System.Collections.ArrayList();
+		protected ViewContentCollection m_ViewContentCollection = new ViewContentCollection();
+		protected PadContentCollection m_PadContentCollection = new PadContentCollection();
+
+		protected IWorkbenchWindow m_ActiveWorkbenchWindow;
+
+		protected string m_Title;
+
+	
+
+		/// <summary>
+		/// Flag that indicates that the Application is about to be closed.
+		/// </summary>
+		private bool m_IsClosingAll;
+
+		#region Serialization
+		
+		public class AltaxoWorkbenchMemento
 		{
-			foreach(Main.GUI.IWorkbenchWindowController ctrl in this.m_WorkbenchViews)
-				this.CloseContent(ctrl);
-
-			this.m_WorkbenchViews.Clear();
+			public AltaxoWorkbenchMemento(MainController ctrl)
+			{
+			}
+			public AltaxoWorkbenchMemento()
+			{
+			}
 		}
-*/
+
+		[Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AltaxoWorkbenchMemento),0)]
+			public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+		{
+			public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+			{
+				AltaxoWorkbenchMemento s = (AltaxoWorkbenchMemento)obj;
+			}
+			public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+			{
+				
+				AltaxoWorkbenchMemento s = null!=o ? (AltaxoWorkbenchMemento)o : new AltaxoWorkbenchMemento();
+				return s;
+			}
+		}
+
+		#endregion
+	
+		public AltaxoWorkbench(IMainView view)
+		{
+			m_View = view;
+			m_View.Controller = this;
+
+
+		
+
+			// attach a layout before creating the first windows
+			this.WorkbenchLayout = new WindowsMdiWorkbenchLayout();
+		}
+
+	
+
+		#region Properties
+	
+
+		/// <summary>
+		/// Indicates if true that the Application is about to be closed. Can be used by child forms to prevent the confirmation dialog that 
+		/// normally appears also during close of the application, since the child windows also receive the closing message in this case.
+		/// </summary>
+		public bool IsClosingAll
+		{
+			get { return this.m_IsClosingAll; }
+		}
+
+		#endregion
+
+		#region IMainController members
+		
+
+		/// <summary>
+		/// The view that is controlled by this controller.
+		/// </summary>
+		public IMainView View
+		{
+			get { return m_View; }
+		}
+
+		
+
+
+		public void EhView_Closing(System.ComponentModel.CancelEventArgs e)
+		{
+			e.Cancel = true; // in doubt cancel the closing
+
+			if(App.Current.Doc.IsDirty)
+			{
+				System.Windows.Forms.DialogResult dlgres = System.Windows.Forms.MessageBox.Show(this.View.Form,"Do you want to save your document?","Attention",System.Windows.Forms.MessageBoxButtons.YesNoCancel);
+				if(dlgres==System.Windows.Forms.DialogResult.Yes)
+				{
+					if(!App.Current.ShowProjectSaveAsDialog())
+						e.Cancel = false;
+				}
+				else if(dlgres==System.Windows.Forms.DialogResult.No)
+				{
+					e.Cancel = false;
+				}
+				else if(dlgres==System.Windows.Forms.DialogResult.Cancel)
+				{
+					e.Cancel = true;
+				}
+			}
+			else // the document is not dirty
+			{
+				e.Cancel = false;
+			}
+
+
+
+			// update the closing flag - if e.Cancel is true, the application is not longer in the closing state
+			this.m_IsClosingAll = (false==e.Cancel);
+		}
+
+		public void EhView_Closed(System.EventArgs e)
+		{
+			View.Controller=null; // we are no longer the controller
+		}
+
+		public void EhView_CloseMessage()
+		{
+			this.m_IsClosingAll = true;
+		}
+
+
+		#endregion
+
 
 
 		#region ICSharpCode
@@ -1205,7 +1321,7 @@ namespace Altaxo
 		public void ShowView(IViewContent content)
 		{
 			if(null!=m_Layout)
-			m_Layout.ShowView(content);
+				m_Layout.ShowView(content);
 		}
 		
 		/// <summary>
@@ -1300,7 +1416,7 @@ namespace Altaxo
 
 		#endregion
 
-
+	
 	}
 
 
@@ -1347,11 +1463,14 @@ namespace Altaxo
 		public static void Main() 
 		{
 			if(null==sm_theApplication)
-				InitializeMainController(new MainController(new MainView(), new AltaxoDocument()));
-
+			{
+				MainController ctrl = new MainController(new AltaxoDocument());
+				ctrl.Workbench = new AltaxoWorkbench(new MainView());
+				InitializeMainController(ctrl);
+			}
 			try
 			{
-				System.Windows.Forms.Application.Run(Current.View.Form);
+				System.Windows.Forms.Application.Run(Current.MainWindow);
 			}
 			catch(Exception e)
 			{

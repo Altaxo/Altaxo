@@ -46,7 +46,7 @@ namespace Altaxo
 		/// <summary>
 		/// Holds the controller instance that controls this Form.
 		/// </summary>
-		private IMainController m_Ctrl; 
+		private IMainViewEventSink m_Ctrl; 
 	
 		public MainView()
 			{
@@ -150,7 +150,7 @@ namespace Altaxo
 		/// <summary>
 		/// Sets the contoller for this view.
 		/// </summary>
-		public Altaxo.IMainController Controller 
+		public Altaxo.IMainViewEventSink Controller 
 		{
 			set { m_Ctrl = value; }
 		}

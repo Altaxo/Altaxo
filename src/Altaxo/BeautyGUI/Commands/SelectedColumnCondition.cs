@@ -39,13 +39,13 @@ namespace Altaxo.Worksheet.Commands
 		
 		public override bool IsValid(object owner)
 		{
-			if(App.Current.ActiveWorkbenchWindow==null)
+			if(App.Current.Workbench.ActiveWorkbenchWindow==null)
 				return false;
-			if(!(App.Current.ActiveWorkbenchWindow.ActiveViewContent is Altaxo.Worksheet.GUI.WorksheetController))
+			if(!(App.Current.Workbench.ActiveWorkbenchWindow.ActiveViewContent is Altaxo.Worksheet.GUI.WorksheetController))
 				return false;
 
 			Altaxo.Worksheet.GUI.WorksheetController ctrl 
-				= App.Current.ActiveWorkbenchWindow.ActiveViewContent as Altaxo.Worksheet.GUI.WorksheetController; 
+				= App.Current.Workbench.ActiveWorkbenchWindow.ActiveViewContent as Altaxo.Worksheet.GUI.WorksheetController; 
 
 			return ctrl.SelectedColumns.Count>=1;
  		}

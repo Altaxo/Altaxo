@@ -114,7 +114,7 @@ namespace Altaxo.Main.Commands
 		{
 			bool bRet = true;
 			SaveFileDialog dlg = this.GetSaveAsDialog();
-			if(dlg.ShowDialog(App.Current.View.Form) == DialogResult.OK)
+			if(dlg.ShowDialog(App.Current.MainWindow) == DialogResult.OK)
 			{
 				System.IO.Stream myStream;
 				if((myStream = dlg.OpenFile()) != null)
@@ -132,7 +132,7 @@ namespace Altaxo.Main.Commands
 					}
 					catch(Exception exc)
 					{
-						System.Windows.Forms.MessageBox.Show(App.Current.View.Form,"An error occured saving the document, details see below:\n" + exc.ToString(),"Error",System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+						System.Windows.Forms.MessageBox.Show(App.Current.MainWindow,"An error occured saving the document, details see below:\n" + exc.ToString(),"Error",System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
 					}
 					finally
 					{

@@ -317,7 +317,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 		public event EventHandler View_ActiveWorkbenchWindowChanged;
 		#region IMainView Members
 
-		Altaxo.IMainController Altaxo.IMainView.Controller
+		Altaxo.IMainViewEventSink Altaxo.IMainView.Controller
 		{
 			set
 			{

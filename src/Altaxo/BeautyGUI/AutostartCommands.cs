@@ -38,10 +38,12 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 		public override void Run()
 		{
 
+			Altaxo.MainController ctrl = new Altaxo.MainController(new Altaxo.AltaxoDocument());
 			// HACK the new WorkbenchWindow object is by this time completely ignored by the 
 			// workbench constructor
 			BeautyWorkbench w = new ICSharpCode.SharpDevelop.Gui.BeautyWorkbench(new ICSharpCode.SharpDevelop.Gui.BeautyWorkbenchWindow(), new Altaxo.AltaxoDocument());
-			Altaxo.App.InitializeMainController(w);
+			ctrl.Workbench = w;
+			Altaxo.App.InitializeMainController(ctrl);
 			WorkbenchSingleton.Workbench = w;
 			
 			w.InitializeWorkspace();
