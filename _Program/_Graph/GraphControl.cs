@@ -19,16 +19,17 @@ namespace Altaxo.Graph
 		private const float UnitPerInch = 72;
 
 		// following default unit is point (1/72 inch)
-		private RectangleF m_SurfaceBounds = new RectangleF(0, 0, 842, 595);
-		private RectangleF m_SurfaceMargins = new RectangleF(14, 14, 814 , 567 );
+		private RectangleF m_PageBounds = new RectangleF(0, 0, 842, 595);
+		private RectangleF m_PrintableBounds = new RectangleF(14, 14, 814 , 567 );
 		private float m_HorizRes  = 300;
 		private float m_VertRes = 300;
-		private Color m_NonPrintingAreaColor = Color.LightGray;
+		private Color m_NonPrintingAreaColor = Color.Gray;
 		private int m_MarginLineWidth = 1;
 		private Color m_MarginColor = Color.Green;
 		private float m_Zoom  = 0.4f;
 		private bool  m_AutoZoom = true; // if true, the sheet is zoomed as big as possible to fit into window
-		
+		private BrushHolder m_PageGroundBrush = new BrushHolder(Color.LightGray);
+		private BrushHolder m_PrintableAreaBrush = new BrushHolder(Color.Snow);
 
 		protected LayerList graphLayers = new LayerList();
 		protected int m_ActualLayer = 0;
@@ -49,14 +50,25 @@ namespace Altaxo.Graph
 			this.m_VertRes = grfx.DpiY;
 			grfx.Dispose();
 
-			graphLayers.Add(new Altaxo.Graph.Layer());
-
 			
-//			Altaxo.Data.DoubleColumn xCol = (Altaxo.Data.DoubleColumn)App.document.DataSet["WKS0"][0];
-//			Altaxo.Data.DoubleColumn yCol = (Altaxo.Data.DoubleColumn)App.document.DataSet["WKS0"][1];
+			System.Drawing.Printing.PrintDocument doc = App.CurrentApplication.PrintDocument;
 
-//			((Graph.Layer)graphLayers[0]).plotAssociations.Add(new Graph.PlotAssociation(xCol,yCol));
+			m_PageBounds = doc.DefaultPageSettings.Bounds;
+			// since Bounds are in 100th inch, we have to adjust them to points (72th inch)
+			m_PageBounds.X *= UnitPerInch/100;
+			m_PageBounds.Y *= UnitPerInch/100;
+			m_PageBounds.Width *= UnitPerInch/100;
+			m_PageBounds.Height *= UnitPerInch/100;
 
+
+			System.Drawing.Printing.Margins ma = doc.DefaultPageSettings.Margins;
+			m_PrintableBounds.X			= ma.Left * UnitPerInch/100;
+			m_PrintableBounds.Y			= ma.Top * UnitPerInch/100;
+			m_PrintableBounds.Width	= m_PageBounds.Width - ((ma.Left+ma.Right)*UnitPerInch/100);
+			m_PrintableBounds.Height = m_PageBounds.Height - ((ma.Top+ma.Bottom)*UnitPerInch/100);
+
+
+			graphLayers.Add(new Altaxo.Graph.Layer(PrintableSize));
 		}
 
 		/// <summary> 
@@ -111,30 +123,33 @@ namespace Altaxo.Graph
 		}
 
 
-			public RectangleF SurfaceBounds
+			public RectangleF PageBounds
 		{
 			get
 			{
-				// bounds in 1/100ths of an inch, just like the printer objects use
-				return m_SurfaceBounds;
+				return m_PageBounds;
 			}
 			set
 			{
-				m_SurfaceBounds = value;
+				m_PageBounds = value;
 				this.Invalidate();
 			}
 		}
-		public virtual RectangleF SurfaceMargins
-			// bounds in 1/100ths of an inch, just like the printer objects use
+		public virtual RectangleF PrintableBounds
 		{
 			get
 			{
-				return m_SurfaceMargins;
+				return m_PrintableBounds;
 			}
 			set
 			{
-				m_SurfaceMargins = value;
+				m_PrintableBounds = value;
 			}
+		}
+
+		public virtual SizeF PrintableSize
+		{
+			get { return new SizeF(m_PrintableBounds.Width,m_PrintableBounds.Height); }
 		}
 
 		public float Zoom
@@ -192,8 +207,8 @@ namespace Altaxo.Graph
 
 		protected virtual void DrawMargins(Graphics g)
 		{
-			//Rectangle margins = ZoomRectangle(ConvertToPixels(this.m_SurfaceMargins));
-			RectangleF margins = this.m_SurfaceMargins;
+			//Rectangle margins = ZoomRectangle(ConvertToPixels(this.m_PrintableBounds));
+			RectangleF margins = this.m_PrintableBounds;
 			Pen marginPen = new Pen(m_MarginColor);
 			marginPen.DashStyle = DashStyle.Dash;
 			marginPen.Width = m_MarginLineWidth;
@@ -213,8 +228,8 @@ namespace Altaxo.Graph
 
 		protected virtual float CalculateAutoZoom()
 		{
-			float zoomh = (UnitPerInch*this.ClientSize.Width/this.m_HorizRes)/this.m_SurfaceBounds.Width;
-			float zoomv = (UnitPerInch*this.ClientSize.Height/this.m_VertRes)/this.m_SurfaceBounds.Height;
+			float zoomh = (UnitPerInch*this.ClientSize.Width/this.m_HorizRes)/this.m_PageBounds.Width;
+			float zoomv = (UnitPerInch*this.ClientSize.Height/this.m_VertRes)/this.m_PageBounds.Height;
 			return System.Math.Min(zoomh,zoomv);
 
 		}
@@ -225,15 +240,15 @@ namespace Altaxo.Graph
 			{
 				this.m_Zoom = CalculateAutoZoom();
 		
-				// System.Console.WriteLine("h={0}, v={1} {3} {4} {5}",zoomh,zoomv,UnitPerInch,this.ClientSize.Width,this.m_HorizRes, this.m_SurfaceBounds.Width);
+				// System.Console.WriteLine("h={0}, v={1} {3} {4} {5}",zoomh,zoomv,UnitPerInch,this.ClientSize.Width,this.m_HorizRes, this.m_PageBounds.Width);
 				// System.Console.WriteLine("SizeX = {0}, zoom = {1}, dpix={2},in={3}",this.ClientSize.Width,this.m_Zoom,this.m_HorizRes,this.ClientSize.Width/(this.m_HorizRes*this.m_Zoom));
 			
 				this.AutoScrollMinSize= new Size(0,0);
 			}
 			else
 			{
-				double pixelh = System.Math.Ceiling(this.m_SurfaceBounds.Width*this.m_HorizRes*this.m_Zoom/(UnitPerInch));
-				double pixelv = System.Math.Ceiling(this.m_SurfaceBounds.Height*this.m_VertRes*this.m_Zoom/(UnitPerInch));
+				double pixelh = System.Math.Ceiling(this.m_PageBounds.Width*this.m_HorizRes*this.m_Zoom/(UnitPerInch));
+				double pixelv = System.Math.Ceiling(this.m_PageBounds.Height*this.m_VertRes*this.m_Zoom/(UnitPerInch));
 				this.AutoScrollMinSize = new Size((int)pixelh,(int)pixelv);
 			}
 			base.OnSizeChanged(e);
@@ -244,77 +259,21 @@ namespace Altaxo.Graph
 
 		public void OnPrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs ppea)
 		{
-			try
-			{
 				Graphics g = ppea.Graphics;
-				// g.SmoothingMode = SmoothingMode.AntiAlias;
-				// get the dpi settings of the graphics context,
-				// for example; 96dpi on screen, 600dpi for the printer
-				// used to adjust grid and margin sizing.
-				this.m_HorizRes = g.DpiX;
-				this.m_VertRes = g.DpiY;
-
-				g.PageUnit = GraphicsUnit.Point;
-				//g.PageScale = this.m_Zoom;
-
-				float pointsh = UnitPerInch*this.AutoScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
-				float pointsv = UnitPerInch*this.AutoScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
-				g.TranslateTransform(pointsh,pointsv);
-
-				g.Clear(this.m_NonPrintingAreaColor);
-
-				System.Console.WriteLine("Paint with zoom {0}",this.m_Zoom);
-				// handle the possibility that the viewport is scrolled,
-				// adjust my origin coordintates to compensate
-				Point pt = this.AutoScrollPosition;
-				// g.TranslateTransform(pt.X, pt.Y);
-
-				int len = graphLayers.Count;
-				for(int i=0;i<len;i++)
-				{
-					((Altaxo.Graph.Layer)graphLayers[i]).Paint(g);
-				}
-
-				//DrawGrid(g);
-
-				// draw the actual objects onto the page, on top of the grid
-				/*
-								With Me.drawingObjects
-								//pass the graphics resolution onto the objects
-								//so that images and other objects can be sized
-								//correct taking the dpi into consideration.
-								.HorizontalResolution = g.DpiX
-								.VerticalResolution = g.DpiY
-								.DrawObjects(g, Me.Zoom)
-								//doesn't really draw the selected object, but instead the
-								//selection indicator, a dotted outline around the selected object
-								.DrawSelectedObject(g, m_SelectedObject, Me.Zoom)
-						End With
-						*/
-
-				//Draw dashed line margin indicators, over top of objects
-				DrawMargins(g);
-
-				/*
-						'draw selection rectangle (click and drag to select interface)
-						'on top of everything else, but transparent
-						If selectionDragging Then
-								DrawSelectionRectangle(g, selectionRect)
-						End If
-						*/
-			}
-			catch(System.Exception ex)
-			{
-				System.Windows.Forms.MessageBox.Show(this,ex.ToString());
-			}
+				DoPaint(g,true);
 		}
 
 
 		private void AltaxoGraphControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
 		{
+			Graphics g = e.Graphics;
+			DoPaint(g,false);
+		}
+
+		private void DoPaint(Graphics g, bool bForPrinting)
+		{
 			try
 			{
-				Graphics g = e.Graphics;
 				// g.SmoothingMode = SmoothingMode.AntiAlias;
 				// get the dpi settings of the graphics context,
 				// for example; 96dpi on screen, 600dpi for the printer
@@ -323,53 +282,39 @@ namespace Altaxo.Graph
 				this.m_VertRes = g.DpiY;
 
 				g.PageUnit = GraphicsUnit.Point;
-				g.PageScale = this.m_Zoom;
+				
+				if(bForPrinting)
+					g.PageScale=1;
+				else
+					g.PageScale = this.m_Zoom;
 
 				float pointsh = UnitPerInch*this.AutoScrollPosition.X/(this.m_HorizRes*this.m_Zoom);
 				float pointsv = UnitPerInch*this.AutoScrollPosition.Y/(this.m_VertRes*this.m_Zoom);
 				g.TranslateTransform(pointsh,pointsv);
 
-				g.Clear(this.m_NonPrintingAreaColor);
+				if(!bForPrinting)
+				{
+					g.Clear(this.m_NonPrintingAreaColor);
+					// Fill the page with its own color
+					g.FillRectangle(m_PageGroundBrush,this.m_PageBounds);
+					g.FillRectangle(m_PrintableAreaBrush,this.m_PrintableBounds);
+					// DrawMargins(g);
+				}
 
 				System.Console.WriteLine("Paint with zoom {0}",this.m_Zoom);
 				// handle the possibility that the viewport is scrolled,
 				// adjust my origin coordintates to compensate
 				Point pt = this.AutoScrollPosition;
-				// g.TranslateTransform(pt.X, pt.Y);
+				
+				// layers not deal with page margins, thats why translate coordinates
+				// so the printable area starts with (0,0)
+				g.TranslateTransform(this.m_PrintableBounds.X,this.m_PrintableBounds.Y);
 
 				int len = graphLayers.Count;
 				for(int i=0;i<len;i++)
 				{
 					((Altaxo.Graph.Layer)graphLayers[i]).Paint(g);
 				}
-
-				//DrawGrid(g);
-
-				// draw the actual objects onto the page, on top of the grid
-				/*
-								With Me.drawingObjects
-								//pass the graphics resolution onto the objects
-								//so that images and other objects can be sized
-								//correct taking the dpi into consideration.
-								.HorizontalResolution = g.DpiX
-								.VerticalResolution = g.DpiY
-								.DrawObjects(g, Me.Zoom)
-								//doesn't really draw the selected object, but instead the
-								//selection indicator, a dotted outline around the selected object
-								.DrawSelectedObject(g, m_SelectedObject, Me.Zoom)
-						End With
-						*/
-
-				//Draw dashed line margin indicators, over top of objects
-				DrawMargins(g);
-
-				/*
-						'draw selection rectangle (click and drag to select interface)
-						'on top of everything else, but transparent
-						If selectionDragging Then
-								DrawSelectionRectangle(g, selectionRect)
-						End If
-						*/
 			}
 			catch(System.Exception ex)
 			{

@@ -26,6 +26,7 @@ namespace Altaxo.Graph
 		private System.Windows.Forms.MenuItem menuFile_PrintPreview;
 		private ToolBarButton m_PushedLayerBotton=null;
 
+	
 		public GraphForm(System.Windows.Forms.Form parent, AltaxoDocument doc)
 		: this(parent,doc,null)
 		{
@@ -81,12 +82,12 @@ namespace Altaxo.Graph
 			this.m_GraphControl = new Altaxo.Graph.GraphControl();
 			this.m_LayerButtonImages = new System.Windows.Forms.ImageList(this.components);
 			this.mainMenu1 = new System.Windows.Forms.MainMenu();
-			this.menuDataPopup = new System.Windows.Forms.MenuItem();
-			this.menuDataSeparator = new System.Windows.Forms.MenuItem();
 			this.menuItem1 = new System.Windows.Forms.MenuItem();
 			this.menuFile_PageSetup = new System.Windows.Forms.MenuItem();
 			this.menuFile_Print = new System.Windows.Forms.MenuItem();
 			this.menuFile_PrintPreview = new System.Windows.Forms.MenuItem();
+			this.menuDataPopup = new System.Windows.Forms.MenuItem();
+			this.menuDataSeparator = new System.Windows.Forms.MenuItem();
 			this.SuspendLayout();
 			// 
 			// m_GraphControl
@@ -96,10 +97,8 @@ namespace Altaxo.Graph
 			this.m_GraphControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_GraphControl.Name = "m_GraphControl";
 			this.m_GraphControl.Size = new System.Drawing.Size(304, 266);
-			this.m_GraphControl.SurfaceBounds = ((System.Drawing.RectangleF)(resources.GetObject("m_GraphControl.SurfaceBounds")));
-			this.m_GraphControl.SurfaceMargins = ((System.Drawing.RectangleF)(resources.GetObject("m_GraphControl.SurfaceMargins")));
 			this.m_GraphControl.TabIndex = 0;
-			this.m_GraphControl.Zoom = 0.270784F;
+			
 			// 
 			// m_LayerButtonImages
 			// 
@@ -113,21 +112,6 @@ namespace Altaxo.Graph
 																																							this.menuItem1,
 																																							this.menuDataPopup});
 			// 
-			// menuDataPopup
-			// 
-			this.menuDataPopup.Index = 1;
-			this.menuDataPopup.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																																									this.menuDataSeparator});
-			this.menuDataPopup.Text = "Data";
-			this.menuDataPopup.Popup += new System.EventHandler(this.menuDataPopup_Popup);
-			this.menuDataPopup.Click += new System.EventHandler(this.menuDataPopup_Click);
-			this.menuDataPopup.Select += new System.EventHandler(this.menuDataPopup_Select);
-			// 
-			// menuDataSeparator
-			// 
-			this.menuDataSeparator.Index = 0;
-			this.menuDataSeparator.Text = "-";
-			// 
 			// menuItem1
 			// 
 			this.menuItem1.Index = 0;
@@ -135,6 +119,7 @@ namespace Altaxo.Graph
 																																							this.menuFile_PageSetup,
 																																							this.menuFile_Print,
 																																							this.menuFile_PrintPreview});
+			this.menuItem1.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
 			this.menuItem1.Text = "File";
 			// 
 			// menuFile_PageSetup
@@ -154,6 +139,21 @@ namespace Altaxo.Graph
 			this.menuFile_PrintPreview.Index = 2;
 			this.menuFile_PrintPreview.Text = "Print Prewiew..";
 			this.menuFile_PrintPreview.Click += new System.EventHandler(this.menuFile_PrintPreview_Click);
+			// 
+			// menuDataPopup
+			// 
+			this.menuDataPopup.Index = 1;
+			this.menuDataPopup.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																																									this.menuDataSeparator});
+			this.menuDataPopup.Text = "Data";
+			this.menuDataPopup.Popup += new System.EventHandler(this.menuDataPopup_Popup);
+			this.menuDataPopup.Click += new System.EventHandler(this.menuDataPopup_Click);
+			this.menuDataPopup.Select += new System.EventHandler(this.menuDataPopup_Select);
+			// 
+			// menuDataSeparator
+			// 
+			this.menuDataSeparator.Index = 0;
+			this.menuDataSeparator.Text = "-";
 			// 
 			// GraphForm
 			// 
@@ -326,21 +326,41 @@ namespace Altaxo.Graph
 		{
 			if(DialogResult.OK==App.CurrentApplication.PrintDialog.ShowDialog(this))
 			{
-
+				try
+				{
+					App.CurrentApplication.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.m_GraphControl.OnPrintPage);
+					App.CurrentApplication.PrintDocument.Print();
+				}
+				catch(Exception ex)
+				{
+					System.Windows.Forms.MessageBox.Show(this,ex.ToString());
+				}
+				finally
+				{
+					App.CurrentApplication.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.m_GraphControl.OnPrintPage);
+				}
 			}
 		}
 
 		private void menuFile_PrintPreview_Click(object sender, System.EventArgs e)
 		{
-			System.Windows.Forms.PrintPreviewDialog dlg = new System.Windows.Forms.PrintPreviewDialog();
-
-			App.CurrentApplication.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.m_GraphControl.OnPrintPage);
-
-			dlg.Document = App.CurrentApplication.PrintDocument;
-			dlg.ShowDialog(this);
-			
-			App.CurrentApplication.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.m_GraphControl.OnPrintPage);
-		}
+			try
+			{
+				System.Windows.Forms.PrintPreviewDialog dlg = new System.Windows.Forms.PrintPreviewDialog();
+				App.CurrentApplication.PrintDocument.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.m_GraphControl.OnPrintPage);
+				dlg.Document = App.CurrentApplication.PrintDocument;
+				dlg.ShowDialog(this);
+				dlg.Dispose();
+			}
+			catch(Exception ex)
+			{
+				System.Windows.Forms.MessageBox.Show(this,ex.ToString());
+			}
+			finally
+			{
+				App.CurrentApplication.PrintDocument.PrintPage -= new System.Drawing.Printing.PrintPageEventHandler(this.m_GraphControl.OnPrintPage);
+			}
+			}
 
 		public class DataMenuItem : MenuItem
 		{

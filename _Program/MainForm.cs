@@ -64,6 +64,8 @@ namespace Altaxo
 
 		public App()
 			{
+				sm_theApplication = this;
+			
 			//
 			// Required for Windows Form Designer support
 			//
@@ -132,6 +134,7 @@ namespace Altaxo
 																																							this.menuItem2,
 																																							this.menuFileOpen,
 																																							this.menuFileSaveAs});
+			this.menuItem1.MergeType = System.Windows.Forms.MenuMerge.MergeItems;
 			this.menuItem1.Text = "File";
 			// 
 			// menuItem2
