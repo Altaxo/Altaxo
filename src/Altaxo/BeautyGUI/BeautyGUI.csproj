@@ -95,24 +95,29 @@
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "MagicLibrary"
-                    AssemblyName = "MagicLibrary"
-                    HintPath = "..\..\Libraries\bin\MagicLibrary.DLL"
+                    Name = "ICSharpCode.SharpZipLib"
+                    AssemblyName = "ICSharpCode.SharpZipLib"
+                    HintPath = "..\..\Libraries\bin\ICSharpCode.SharpZipLib.dll"
                 />
                 <Reference
-                    Name = "ICSharpCode.Core"
+                    Name = "zCommandBar"
+                    Project = "{397ADB5E-E608-4304-A3F7-F97E62B33932}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "zICSharpCode.Core"
                     Project = "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "SharpDevelop.Base"
-                    Project = "{AF2C9C35-FC89-4648-9D13-26538C00AFE1}"
+                    Name = "zMagicLibrary"
+                    Project = "{993E6ED0-F820-4264-9989-B6341C179CB4}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "ICSharpCode.SharpZipLib"
-                    AssemblyName = "ICSharpCode.SharpZipLib"
-                    HintPath = "..\..\Libraries\bin\ICSharpCode.SharpZipLib.dll"
+                    Name = "zSharpDevelop.Base"
+                    Project = "{AF2C9C35-FC89-4648-9D13-26538C00AFE1}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>

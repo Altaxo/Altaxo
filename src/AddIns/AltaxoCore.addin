@@ -5,8 +5,8 @@
 		<Import assembly="../bin/BeautyGui.exe"/>
 	</Runtime>
 	<Extension path="/Workspace/Autostart">
-		<Class id="InitializeWorkbenchCommand" class="ICSharpCode.SharpDevelop.Commands.InitializeWorkbenchCommand"/>
-		<Class id="StartWorkbenchCommand" class="ICSharpCode.SharpDevelop.Commands.StartWorkbenchCommand"/>
+		<Class id="InitializeWorkbenchCommand" class="Altaxo.Main.Commands.InitializeWorkbenchCommand"/>
+		<Class id="StartWorkbenchCommand" class="Altaxo.Main.Commands.StartWorkbenchCommand"/>
 	</Extension>
 	<Extension path="/Workspace/Icons">
 		<!-- C# -->
@@ -15,9 +15,6 @@
 		<!-- VB.NET -->
 		<Icon id="VBPrj" language="VBNET" resource="VB.ProjectIcon"/>
 		<Icon id="VBFile" extensions=".vb" resource="VB.FileIcon"/>
-		<!-- Java -->
-		<Icon id="JavaPrj" language="Java" resource="JAVA.ProjectIcon"/>
-		<Icon id="JavaFile" extensions=".java" resource="JAVA.FileIcon"/>
 		<!-- Java Script -->
 		<!--                <Icon id ="JSPrj" language = "JScript" location = "icons\JavaScriptProject.png"/>
                 <Icon id ="JSFile"    location = "icons\JavaScriptFileIcon.png" extensions=".js"/>
@@ -120,17 +117,16 @@
 				<MenuItem id="GraphPrint" label="${res:XML.MainMenu.FileMenu.Print}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Print.Description}" class="Altaxo.Graph.Commands.Print"/>
 			</Conditional>
 			<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
-			<MenuItem id="ImportExportSeparator" label="-"/>
-			<MenuItem id="Import" label="${res:XML.MainMenu.FileMenu.Import}">			
-				<MenuItem id="WorksheetImportAscii" label="${res:XML.MainMenu.FileMenu.Import.Ascii}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.Ascii.Description}" class="Altaxo.Worksheet.Commands.ImportAscii"/>
-				<MenuItem id="WorksheetImportGalacticSPC" label="${res:XML.MainMenu.FileMenu.Import.GalacticSPC}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.GalacticSPC.Description}" class="Altaxo.Worksheet.Commands.ImportGalacticSPC"/>
-				<MenuItem id="WorksheetImportImage" label="${res:XML.MainMenu.FileMenu.Import.ImageData}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.ImageData.Description}" class="Altaxo.Worksheet.Commands.ImportImage"/>
-			</MenuItem>
-			<MenuItem id="Export" label="${res:XML.MainMenu.FileMenu.Export}">			
-				<MenuItem id="WorksheetExportAscii" label="${res:XML.MainMenu.FileMenu.Export.Ascii}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Export.Ascii.Description}" class="Altaxo.Worksheet.Commands.ExportAscii"/>
-				<MenuItem id="WorksheetExportGalacticSPC" label="${res:XML.MainMenu.FileMenu.Export.GalacticSPC}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Export.GalacticSPC.Description}" class="Altaxo.Worksheet.Commands.ExportGalacticSPC"/>
-			</MenuItem>
-
+				<MenuItem id="ImportExportSeparator" label="-"/>
+				<MenuItem id="Import" label="${res:XML.MainMenu.FileMenu.Import}">
+					<MenuItem id="WorksheetImportAscii" label="${res:XML.MainMenu.FileMenu.Import.Ascii}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.Ascii.Description}" class="Altaxo.Worksheet.Commands.ImportAscii"/>
+					<MenuItem id="WorksheetImportGalacticSPC" label="${res:XML.MainMenu.FileMenu.Import.GalacticSPC}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.GalacticSPC.Description}" class="Altaxo.Worksheet.Commands.ImportGalacticSPC"/>
+					<MenuItem id="WorksheetImportImage" label="${res:XML.MainMenu.FileMenu.Import.ImageData}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.ImageData.Description}" class="Altaxo.Worksheet.Commands.ImportImage"/>
+				</MenuItem>
+				<MenuItem id="Export" label="${res:XML.MainMenu.FileMenu.Export}">
+					<MenuItem id="WorksheetExportAscii" label="${res:XML.MainMenu.FileMenu.Export.Ascii}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Export.Ascii.Description}" class="Altaxo.Worksheet.Commands.ExportAscii"/>
+					<MenuItem id="WorksheetExportGalacticSPC" label="${res:XML.MainMenu.FileMenu.Export.GalacticSPC}" icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Export.GalacticSPC.Description}" class="Altaxo.Worksheet.Commands.ExportGalacticSPC"/>
+				</MenuItem>
 			</Conditional>
 			<MenuItem id="ExitSeparator" label="-"/>
 			<MenuItem id="Exit" label="${res:XML.MainMenu.FileMenu.Exit}" description="${res:XML.MainMenu.FileMenu.Exit.Desription}" class="Altaxo.Main.Commands.FileExit"/>
@@ -150,48 +146,48 @@
 		</Conditional>
 		<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
 			<MenuItem id="Worksheet" label="${res:XML.MainMenu.WorksheetMenu}">
-					<MenuItem id="AddDataColumns" label="${res:XML.MainMenu.WorksheetMenu.AddDataColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddDataColumns.Description}" class="Altaxo.Worksheet.Commands.AddDataColumns"/>
-					<MenuItem id="AddPropertyColumns" label="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.AddPropertyColumns"/>
-					<MenuItem id="Rename" label="${res:XML.MainMenu.WorksheetMenu.Rename}" description="${res:XML.MainMenu.WorksheetMenu.Rename.Description}" class="Altaxo.Worksheet.Commands.WorksheetRename"/>
-					<MenuItem id="Duplicate" label="${res:XML.MainMenu.WorksheetMenu.Duplicate}" description="${res:XML.MainMenu.WorksheetMenu.Duplicate.Description}" class="Altaxo.Worksheet.Commands.WorksheetDuplicate"/>
-					<MenuItem id="Transpose" label="${res:XML.MainMenu.WorksheetMenu.Transpose}" description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}" class="Altaxo.Worksheet.Commands.WorksheetTranspose"/>
+				<MenuItem id="AddDataColumns" label="${res:XML.MainMenu.WorksheetMenu.AddDataColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddDataColumns.Description}" class="Altaxo.Worksheet.Commands.AddDataColumns"/>
+				<MenuItem id="AddPropertyColumns" label="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns}" description="${res:XML.MainMenu.WorksheetMenu.AddPropertyColumns.Description}" class="Altaxo.Worksheet.Commands.AddPropertyColumns"/>
+				<MenuItem id="Rename" label="${res:XML.MainMenu.WorksheetMenu.Rename}" description="${res:XML.MainMenu.WorksheetMenu.Rename.Description}" class="Altaxo.Worksheet.Commands.WorksheetRename"/>
+				<MenuItem id="Duplicate" label="${res:XML.MainMenu.WorksheetMenu.Duplicate}" description="${res:XML.MainMenu.WorksheetMenu.Duplicate.Description}" class="Altaxo.Worksheet.Commands.WorksheetDuplicate"/>
+				<MenuItem id="Transpose" label="${res:XML.MainMenu.WorksheetMenu.Transpose}" description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}" class="Altaxo.Worksheet.Commands.WorksheetTranspose"/>
 			</MenuItem>
 		</Conditional>
 		<Conditional activewindow="Altaxo.Graph.GUI.GraphController" action="Exclude">
 			<MenuItem id="Graph" label="${res:XML.MainMenu.GraphMenu}">
-					<MenuItem id="NewLayer" label="${res:XML.MainMenu.NewLayerMenu}">
-						<MenuItem id="NormalBottomXLeftY" label="${res:XML.MainMenu.NewLayerMenu.NormalBottomXLeftY}" description="${res:XML.MainMenu.NewLayerMenu.NormalBottomXLeftY.Description}" class="Altaxo.Graph.Commands.NewLayerNormalBottomXLeftY"/>
-						<MenuItem id="LinkedTopXRightY" label="${res:XML.MainMenu.NewLayerMenu.LinkedTopXRightY}" description="${res:XML.MainMenu.NewLayerMenu.LinkedTopXRightY.Description}" class="Altaxo.Graph.Commands.NewLayerLinkedTopXRightY"/>
-						<MenuItem id="LinkedTopX" label="${res:XML.MainMenu.NewLayerMenu.LinkedTopX}" description="${res:XML.MainMenu.NewLayerMenu.LinkedTopX.Description}" class="Altaxo.Graph.Commands.NewLayerLinkedTopX"/>
-						<MenuItem id="LinkedRightY" label="${res:XML.MainMenu.NewLayerMenu.LinkedRightY}" description="${res:XML.MainMenu.NewLayerMenu.LinkedRightY.Description}" class="Altaxo.Graph.Commands.NewLayerLinkedRightY"/>
-						<MenuItem id="LinkedTopXRightY_XAxisStraight" label="${res:XML.MainMenu.NewLayerMenu.LinkedTopXRightY_XAxisStraight}" description="${res:XML.MainMenu.NewLayerMenu.LinkedTopXRightY_XAxisStraight.Description}" class="Altaxo.Graph.Commands.NewLayerLinkedTopXRightY_XAxisStraight"/>
-					</MenuItem>
-					<MenuItem id="AddCurvePlot" label="${res:XML.MainMenu.GraphMenu.AddCurvePlot}" description="${res:XML.MainMenu.GraphMenu.AddCurvePlot.Description}" class="Altaxo.Graph.Commands.AddCurvePlot"/>
-					<MenuItem id="LayerControl" label="${res:XML.MainMenu.GraphMenu.LayerControl}" description="${res:XML.MainMenu.GraphMenu.LayerControl.Description}" class="Altaxo.Graph.Commands.LayerControl"/>
-					<MenuItem id="NewLayerLegend" label="${res:XML.MainMenu.GraphMenu.NewLayerLegend}" description="${res:XML.MainMenu.GraphMenu.NewLayerLegend.Description}" class="Altaxo.Graph.Commands.NewLayerLegend"/>
-					<MenuItem id="Duplicate" label="${res:XML.MainMenu.GraphMenu.Duplicate}" description="${res:XML.MainMenu.GraphMenu.Duplicate.Description}" class="Altaxo.Graph.Commands.DuplicateGraph"/>
+				<MenuItem id="NewLayer" label="${res:XML.MainMenu.NewLayerMenu}">
+					<MenuItem id="NormalBottomXLeftY" label="${res:XML.MainMenu.NewLayerMenu.NormalBottomXLeftY}" description="${res:XML.MainMenu.NewLayerMenu.NormalBottomXLeftY.Description}" class="Altaxo.Graph.Commands.NewLayerNormalBottomXLeftY"/>
+					<MenuItem id="LinkedTopXRightY" label="${res:XML.MainMenu.NewLayerMenu.LinkedTopXRightY}" description="${res:XML.MainMenu.NewLayerMenu.LinkedTopXRightY.Description}" class="Altaxo.Graph.Commands.NewLayerLinkedTopXRightY"/>
+					<MenuItem id="LinkedTopX" label="${res:XML.MainMenu.NewLayerMenu.LinkedTopX}" description="${res:XML.MainMenu.NewLayerMenu.LinkedTopX.Description}" class="Altaxo.Graph.Commands.NewLayerLinkedTopX"/>
+					<MenuItem id="LinkedRightY" label="${res:XML.MainMenu.NewLayerMenu.LinkedRightY}" description="${res:XML.MainMenu.NewLayerMenu.LinkedRightY.Description}" class="Altaxo.Graph.Commands.NewLayerLinkedRightY"/>
+					<MenuItem id="LinkedTopXRightY_XAxisStraight" label="${res:XML.MainMenu.NewLayerMenu.LinkedTopXRightY_XAxisStraight}" description="${res:XML.MainMenu.NewLayerMenu.LinkedTopXRightY_XAxisStraight.Description}" class="Altaxo.Graph.Commands.NewLayerLinkedTopXRightY_XAxisStraight"/>
+				</MenuItem>
+				<MenuItem id="AddCurvePlot" label="${res:XML.MainMenu.GraphMenu.AddCurvePlot}" description="${res:XML.MainMenu.GraphMenu.AddCurvePlot.Description}" class="Altaxo.Graph.Commands.AddCurvePlot"/>
+				<MenuItem id="LayerControl" label="${res:XML.MainMenu.GraphMenu.LayerControl}" description="${res:XML.MainMenu.GraphMenu.LayerControl.Description}" class="Altaxo.Graph.Commands.LayerControl"/>
+				<MenuItem id="NewLayerLegend" label="${res:XML.MainMenu.GraphMenu.NewLayerLegend}" description="${res:XML.MainMenu.GraphMenu.NewLayerLegend.Description}" class="Altaxo.Graph.Commands.NewLayerLegend"/>
+				<MenuItem id="Duplicate" label="${res:XML.MainMenu.GraphMenu.Duplicate}" description="${res:XML.MainMenu.GraphMenu.Duplicate.Description}" class="Altaxo.Graph.Commands.DuplicateGraph"/>
 			</MenuItem>
 		</Conditional>
-			<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
+		<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
 			<MenuItem id="Column" label="${res:XML.MainMenu.ColumnMenu}">
-					<MenuItem id="SetColumnAsX" label="${res:XML.MainMenu.ColumnMenu.SetColumnAsX}" description="${res:XML.MainMenu.ColumnMenu.SetColumnAsX.Description}" class="Altaxo.Worksheet.Commands.SetColumnAsX"/>
-					<MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}" class="Altaxo.Worksheet.Commands.RenameColumn"/>
-					<MenuItem id="SetGroupNumber" label="${res:XML.MainMenu.ColumnMenu.SetGroupNumber}" description="${res:XML.MainMenu.ColumnMenu.SetGroupNumber.Description}" class="Altaxo.Worksheet.Commands.SetColumnGroupNumber"/>
-					<MenuItem id="ExtractPropertyValues" label="${res:XML.MainMenu.ColumnMenu.ExtractPropertyValues}" description="${res:XML.MainMenu.ColumnMenu.ExtractPropertyValues.Description}" class="Altaxo.Worksheet.Commands.ExtractPropertyValues"/>
-					<MenuItem id="SetColumnValues" label="${res:XML.MainMenu.ColumnMenu.SetColumnValues}" description="${res:XML.MainMenu.ColumnMenu.SetColumnValues.Description}" class="Altaxo.Worksheet.Commands.SetColumnValues"/>
+				<MenuItem id="SetColumnAsX" label="${res:XML.MainMenu.ColumnMenu.SetColumnAsX}" description="${res:XML.MainMenu.ColumnMenu.SetColumnAsX.Description}" class="Altaxo.Worksheet.Commands.SetColumnAsX"/>
+				<MenuItem id="Rename" label="${res:XML.MainMenu.ColumnMenu.Rename}" description="${res:XML.MainMenu.ColumnMenu.Rename.Description}" class="Altaxo.Worksheet.Commands.RenameColumn"/>
+				<MenuItem id="SetGroupNumber" label="${res:XML.MainMenu.ColumnMenu.SetGroupNumber}" description="${res:XML.MainMenu.ColumnMenu.SetGroupNumber.Description}" class="Altaxo.Worksheet.Commands.SetColumnGroupNumber"/>
+				<MenuItem id="ExtractPropertyValues" label="${res:XML.MainMenu.ColumnMenu.ExtractPropertyValues}" description="${res:XML.MainMenu.ColumnMenu.ExtractPropertyValues.Description}" class="Altaxo.Worksheet.Commands.ExtractPropertyValues"/>
+				<MenuItem id="SetColumnValues" label="${res:XML.MainMenu.ColumnMenu.SetColumnValues}" description="${res:XML.MainMenu.ColumnMenu.SetColumnValues.Description}" class="Altaxo.Worksheet.Commands.SetColumnValues"/>
 			</MenuItem>
 		</Conditional>
 		<Conditional activewindow="Altaxo.Worksheet.GUI.WorksheetController" action="Exclude">
 			<MenuItem id="WorksheetAnalysis" label="${res:XML.MainMenu.AnalysisMenu}">
-					<MenuItem id="1DFFT" label="${res:XML.MainMenu.AnalysisMenu.FFT}" description="${res:XML.MainMenu.AnalysisMenu.FFT.Description}" class="Altaxo.Worksheet.Commands.AnalysisFFT"/>
-					<MenuItem id="2DFFT" label="${res:XML.MainMenu.AnalysisMenu.2DFFT}" description="${res:XML.MainMenu.AnalysisMenu.2DFFT.Description}" class="Altaxo.Worksheet.Commands.Analysis2DFFT"/>
-					<MenuItem id="StatisticsOnCols" label="${res:XML.MainMenu.AnalysisMenu.StatisticsOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.StatisticsOnColumns.Description}" class="Altaxo.Worksheet.Commands.AnalysisStatisticsOnColumns"/>
-					<MenuItem id="StatisticsOnRows" label="${res:XML.MainMenu.AnalysisMenu.StatisticsOnRows}" description="${res:XML.MainMenu.AnalysisMenu.StatisticsOnRows.Description}" class="Altaxo.Worksheet.Commands.AnalysisStatisticsOnRows"/>
-					<MenuItem id="PCAOnCols" label="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns.Description}" class="Altaxo.Worksheet.Commands.AnalysisPCAOnCols"/>
-					<MenuItem id="PCAOnRows" label="${res:XML.MainMenu.AnalysisMenu.PCAOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PCAOnRows.Description}" class="Altaxo.Worksheet.Commands.AnalysisPCAOnRows"/>
-					<MenuItem id="PLSOnCols" label="${res:XML.MainMenu.AnalysisMenu.PLSOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PLSOnColumns.Description}" class="Altaxo.Worksheet.Commands.AnalysisPLSOnCols"/>
-					<MenuItem id="PLSOnRows" label="${res:XML.MainMenu.AnalysisMenu.PLSOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PLSOnRows.Description}" class="Altaxo.Worksheet.Commands.AnalysisPLSOnRows"/>
-					<MenuItem id="MultColsToMatrix" label="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix}" description="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix.Description}" class="Altaxo.Worksheet.Commands.AnalysisMultiplyColumnsToMatrix"/>
+				<MenuItem id="1DFFT" label="${res:XML.MainMenu.AnalysisMenu.FFT}" description="${res:XML.MainMenu.AnalysisMenu.FFT.Description}" class="Altaxo.Worksheet.Commands.AnalysisFFT"/>
+				<MenuItem id="2DFFT" label="${res:XML.MainMenu.AnalysisMenu.2DFFT}" description="${res:XML.MainMenu.AnalysisMenu.2DFFT.Description}" class="Altaxo.Worksheet.Commands.Analysis2DFFT"/>
+				<MenuItem id="StatisticsOnCols" label="${res:XML.MainMenu.AnalysisMenu.StatisticsOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.StatisticsOnColumns.Description}" class="Altaxo.Worksheet.Commands.AnalysisStatisticsOnColumns"/>
+				<MenuItem id="StatisticsOnRows" label="${res:XML.MainMenu.AnalysisMenu.StatisticsOnRows}" description="${res:XML.MainMenu.AnalysisMenu.StatisticsOnRows.Description}" class="Altaxo.Worksheet.Commands.AnalysisStatisticsOnRows"/>
+				<MenuItem id="PCAOnCols" label="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns.Description}" class="Altaxo.Worksheet.Commands.AnalysisPCAOnCols"/>
+				<MenuItem id="PCAOnRows" label="${res:XML.MainMenu.AnalysisMenu.PCAOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PCAOnRows.Description}" class="Altaxo.Worksheet.Commands.AnalysisPCAOnRows"/>
+				<MenuItem id="PLSOnCols" label="${res:XML.MainMenu.AnalysisMenu.PLSOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PLSOnColumns.Description}" class="Altaxo.Worksheet.Commands.AnalysisPLSOnCols"/>
+				<MenuItem id="PLSOnRows" label="${res:XML.MainMenu.AnalysisMenu.PLSOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PLSOnRows.Description}" class="Altaxo.Worksheet.Commands.AnalysisPLSOnRows"/>
+				<MenuItem id="MultColsToMatrix" label="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix}" description="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix.Description}" class="Altaxo.Worksheet.Commands.AnalysisMultiplyColumnsToMatrix"/>
 			</MenuItem>
 		</Conditional>
 		<!--	        <MenuItem id = "AddIns" label = "${res:XML.MainMenu.PluginMenu}">

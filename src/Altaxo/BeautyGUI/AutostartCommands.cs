@@ -27,7 +27,9 @@ using ICSharpCode.SharpDevelop.Gui.ErrorHandlers;
 using SharpDevelop.Internal.Parser;
 #endif
 
-namespace ICSharpCode.SharpDevelop.Commands
+using ICSharpCode.SharpDevelop.Commands;
+
+namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
 {
 	public class InitializeWorkbenchCommand : AbstractCommand
 	{

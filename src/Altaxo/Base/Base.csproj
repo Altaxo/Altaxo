@@ -115,19 +115,19 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Runtime.Serialization.Formatters.Soap.dll"
                 />
                 <Reference
-                    Name = "ICSharpCode.Core"
+                    Name = "ICSharpCode.SharpZipLib"
+                    AssemblyName = "ICSharpCode.SharpZipLib"
+                    HintPath = "..\..\Libraries\bin\ICSharpCode.SharpZipLib.dll"
+                />
+                <Reference
+                    Name = "zICSharpCode.Core"
                     Project = "{A1006FEB-2FFC-4507-8D82-265130CDD08E}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "SharpDevelop.Base"
+                    Name = "zSharpDevelop.Base"
                     Project = "{AF2C9C35-FC89-4648-9D13-26538C00AFE1}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "ICSharpCode.SharpZipLib"
-                    AssemblyName = "ICSharpCode.SharpZipLib"
-                    HintPath = "..\..\Libraries\bin\ICSharpCode.SharpZipLib.dll"
                 />
             </References>
         </Build>
