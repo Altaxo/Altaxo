@@ -1,0 +1,34 @@
+<Project name="ICSharpCode.XmlForms" description="erzeugt ein C# Konsolenprojekt" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
+  <Contents>
+    <File name=".\AssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\XmlForms\ControlDictionary.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\XmlForms\XmlLoader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\XmlForms\XmlForm.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\XmlForms\XmlUserControl.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\XmlForms\IStringValueFilter.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\XmlForms\IObjectCreator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\XmlForms\DefaultObjectCreator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\XmlForms\IPropertyValueCreator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\XmlForms\StringWrapper.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\XmlForms" subtype="Directory" buildaction="Nothing" dependson="" data="" />
+  </Contents>
+  <References />
+  <DeploymentInformation target="" script="" strategy="File" />
+  <Configuration runwithwarnings="False" name="Debug">
+    <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <Execution commandlineparameters="" consolepause="True" />
+    <Output directory="..\..\..\bin" assembly="ICSharpCode.XmlForms" executeScript="..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+  </Configuration>
+  <Configurations active="Debug">
+    <Configuration runwithwarnings="False" name="Debug">
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="True" />
+      <Output directory="..\..\..\bin" assembly="ICSharpCode.XmlForms" executeScript="..\..\..\bin\SharpDevelop.exe" executeBeforeBuild="" executeAfterBuild="" />
+    </Configuration>
+    <Configuration runwithwarnings="False" name="Release">
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="True" />
+      <Output directory="..\..\..\bin" assembly="ICSharpCode.XmlForms" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+    </Configuration>
+  </Configurations>
+</Project>
