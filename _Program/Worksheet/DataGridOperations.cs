@@ -65,7 +65,7 @@ namespace Altaxo.Worksheet
 			for(int si=0;si<dg.SelectedColumns.Count;si++)
 			{
 				Altaxo.Data.DataColumn col = dg.DataTable[dg.SelectedColumns[si]];
-				if(!(col is Altaxo.Data.INumericColumn) || !(col is Altaxo.Data.IDefinedCount))
+				if(!(col is Altaxo.Data.INumericColumn))
 					continue;
 				int rows = ((Data.IDefinedCount)col).Count;
 				if(rows==0)

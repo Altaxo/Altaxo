@@ -1034,7 +1034,6 @@ namespace Altaxo.Graph
 
 
 		private bool m_Scale_FromOrToChanged=false; // is true if From or To was changed
-		private bool m_Scale_AxisChanged=false; // true if something on the axis was changed
 		private void InitTabScale()
 		{
 			// first set the current listbox item

@@ -65,13 +65,13 @@ namespace Altaxo.Graph
 					// 
 					this.m_GraphToolsToolBar = new ToolBar();
 					this.m_GraphToolsToolBar.ImageList = this.m_GraphToolsImages;
+					this.m_GraphToolsToolBar.ButtonSize = new System.Drawing.Size(16, 24);
 					this.m_GraphToolsToolBar.AutoSize = true;
-					//this.m_GraphToolsToolBar.ButtonSize = new System.Drawing.Size(24, 24);
 					//this.m_GraphToolsToolBar.DropDownArrows = true;
 					//this.m_GraphToolsToolBar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 					//this.m_GraphToolsToolBar.Name = "m_GraphToolsToolBar";
 					//this.m_GraphToolsToolBar.ShowToolTips = true;
-					//this.m_GraphToolsToolBar.Size = new System.Drawing.Size(2*24, 24);
+					//this.m_GraphToolsToolBar.Size = new System.Drawing.Size(16, 24);
 					//this.m_GraphToolsToolBar.TabIndex = 1;
 					//this.m_GraphToolsToolBar.TextAlign = System.Windows.Forms.ToolBarTextAlign.Right;
 					this.m_GraphToolsToolBar.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.m_GraphToolsToolbar_ButtonClick);
@@ -187,13 +187,14 @@ namespace Altaxo.Graph
 			// 
 			this.m_GraphControl.ActualLayer = 0;
 			this.m_GraphControl.AutoZoom = true;
+			this.m_GraphControl.CurrentGraphTool = Altaxo.Graph.GraphControl.GraphTools.ObjectPointer;
 			this.m_GraphControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.m_GraphControl.Name = "m_GraphControl";
 			this.m_GraphControl.PageBounds = ((System.Drawing.RectangleF)(resources.GetObject("m_GraphControl.PageBounds")));
 			this.m_GraphControl.PrintableBounds = ((System.Drawing.RectangleF)(resources.GetObject("m_GraphControl.PrintableBounds")));
 			this.m_GraphControl.Size = new System.Drawing.Size(304, 266);
 			this.m_GraphControl.TabIndex = 0;
-			this.m_GraphControl.Zoom = 0.2707838F;
+			this.m_GraphControl.Zoom = 0.270784F;
 			// 
 			// m_LayerButtonImages
 			// 
@@ -253,7 +254,7 @@ namespace Altaxo.Graph
 			// m_GraphToolsImages
 			// 
 			this.m_GraphToolsImages.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-			this.m_GraphToolsImages.ImageSize = new System.Drawing.Size(32, 16);
+			this.m_GraphToolsImages.ImageSize = new System.Drawing.Size(16, 16);
 			this.m_GraphToolsImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_GraphToolsImages.ImageStream")));
 			this.m_GraphToolsImages.TransparentColor = System.Drawing.Color.Transparent;
 			// 
@@ -319,15 +320,16 @@ namespace Altaxo.Graph
 		this.m_LayerToolbar.Parent = this;
 		this.m_LayerToolbar.ImageList = this.m_LayerButtonImages;
 		this.m_LayerToolbar.AutoSize = true;
-		this.m_LayerToolbar.ButtonSize = new System.Drawing.Size(24, 22);
+		this.m_LayerToolbar.ButtonSize = new System.Drawing.Size(22, 22);
 		this.m_LayerToolbar.DropDownArrows = true;
 		this.m_LayerToolbar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
 		this.m_LayerToolbar.Name = "m_LayerToolbar";
 		this.m_LayerToolbar.ShowToolTips = true;
-		this.m_LayerToolbar.Size = new System.Drawing.Size(304, 24);
+		this.m_LayerToolbar.Size = new System.Drawing.Size(22, 44);
 		this.m_LayerToolbar.TabIndex = 1;
 		this.m_LayerToolbar.TextAlign = System.Windows.Forms.ToolBarTextAlign.Right;
 		this.m_LayerToolbar.ButtonClick += new System.Windows.Forms.ToolBarButtonClickEventHandler(this.m_LayerToolbar_ButtonClick);
+		this.m_LayerToolbar.BorderStyle = BorderStyle.None;
 
 		ToolBarButton tbb = new ToolBarButton("0");
 		tbb.Pushed=true;

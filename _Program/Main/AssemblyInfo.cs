@@ -23,6 +23,7 @@ using System.Runtime.CompilerServices;
 using Altaxo.Serialization;
 
 
+
 //
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -78,5 +79,4 @@ using Altaxo.Serialization;
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
-
-[assembly: SupportsSerializationVersioning()]
+[assembly: SupportsSerializationVersioningAttribute()]

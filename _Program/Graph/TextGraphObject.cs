@@ -53,7 +53,6 @@ namespace Altaxo.Graph
 		{
 		}
 
-
 		public TextGraphObject(PointF graphicPosition, 
 			string text, Font textFont, 
 			Color textColor, float Rotation)
@@ -372,6 +371,18 @@ namespace Altaxo.Graph
 
 #endregion
 
+		public void CopyFrom(ExtendedTextGraphObject from)
+		{
+			this.m_Text = from.m_Text;
+			this.m_Font = from.m_Font==null ? null : (Font)from.m_Font.Clone();
+			this.m_BrushHolder = from.m_BrushHolder==null ? null : (BrushHolder)from.m_BrushHolder.Clone();
+			this.m_BackgroundStyle = from.m_BackgroundStyle;
+			this.m_LineSpacingFactor = from.m_LineSpacingFactor;
+			this.m_ShadowLength = from.m_ShadowLength;
+			this.m_TextLines=null;
+			this.m_bStructureInSync=false;
+			this.m_bMeasureInSync=false;
+		}
 
 		protected void Interpret(Graphics g)
 		{
@@ -620,10 +631,8 @@ namespace Altaxo.Graph
 		protected void MeasureStructure(Graphics g, object obj)
 		{
 			PointF zeroPoint = new PointF(0,0);
-			SizeF currSize;
 	
 			float maxLineWidth=0;
-			float maxLineSpace=0;
 
 			
 			// Modification of StringFormat is necessary to avoid 

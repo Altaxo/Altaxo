@@ -109,14 +109,15 @@ namespace Altaxo.Graph
 		}
 
 		/// <summary>
-		/// process a data value
-		/// if the data value is inside the considered value range, the boundaries are
+		/// Processes a single value from a numeric column <paramref name="col"/>[<paramref name="idx"/>].
+		/// If the data value is inside the considered value range, the boundaries are
 		/// updated and the number of items is increased by one. The function has to return true
-		/// in this case. On the other hand, if the value is outside the range, the function must
+		/// in this case. On the other hand, if the value is outside the range, the function has to
 		/// return false.
 		/// </summary>
-		/// <param name="d">the data value</param>
-		/// <returns>true if data is in the tracked range, false otherwise</returns>
+		/// <param name="col">The numeric data column</param>
+		/// <param name="idx">The index into this numeric column where the data value is located</param>
+		/// <returns>True if data is in the tracked range, false if the data is not in the tracked range.</returns>
 		public abstract bool Add(Altaxo.Data.IReadableColumn col, int idx);
 
 		public abstract object Clone();

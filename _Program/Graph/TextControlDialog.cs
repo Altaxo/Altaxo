@@ -82,6 +82,10 @@ namespace Altaxo.Graph
 
 
 			FillDialogElements();
+
+			// Focus the text box and select the text
+			this.m_edText.Focus();
+			this.m_edText.SelectAll();
 		}
 
 
@@ -203,7 +207,7 @@ namespace Altaxo.Graph
 			this.m_btOK.Location = new System.Drawing.Point(368, 8);
 			this.m_btOK.Name = "m_btOK";
 			this.m_btOK.Size = new System.Drawing.Size(48, 24);
-			this.m_btOK.TabIndex = 0;
+			this.m_btOK.TabIndex = 12;
 			this.m_btOK.Text = "OK";
 			// 
 			// m_btCancel
@@ -212,7 +216,7 @@ namespace Altaxo.Graph
 			this.m_btCancel.Location = new System.Drawing.Point(368, 40);
 			this.m_btCancel.Name = "m_btCancel";
 			this.m_btCancel.Size = new System.Drawing.Size(48, 24);
-			this.m_btCancel.TabIndex = 1;
+			this.m_btCancel.TabIndex = 13;
 			this.m_btCancel.Text = "Cancel";
 			// 
 			// m_cbFonts
@@ -220,7 +224,7 @@ namespace Altaxo.Graph
 			this.m_cbFonts.Location = new System.Drawing.Point(8, 8);
 			this.m_cbFonts.Name = "m_cbFonts";
 			this.m_cbFonts.Size = new System.Drawing.Size(160, 21);
-			this.m_cbFonts.TabIndex = 2;
+			this.m_cbFonts.TabIndex = 1;
 			this.m_cbFonts.Text = "Arial";
 			this.m_cbFonts.TextChanged += new System.EventHandler(this.OncbFonts_TextChanged);
 			// 
@@ -229,7 +233,7 @@ namespace Altaxo.Graph
 			this.m_cbFontSize.Location = new System.Drawing.Point(184, 8);
 			this.m_cbFontSize.Name = "m_cbFontSize";
 			this.m_cbFontSize.Size = new System.Drawing.Size(64, 21);
-			this.m_cbFontSize.TabIndex = 3;
+			this.m_cbFontSize.TabIndex = 2;
 			this.m_cbFontSize.Text = "comboBox1";
 			this.m_cbFontSize.TextChanged += new System.EventHandler(this.OncbFontSize_TextChanged);
 			// 
@@ -238,7 +242,7 @@ namespace Altaxo.Graph
 			this.m_cbFontColor.Location = new System.Drawing.Point(264, 8);
 			this.m_cbFontColor.Name = "m_cbFontColor";
 			this.m_cbFontColor.Size = new System.Drawing.Size(88, 21);
-			this.m_cbFontColor.TabIndex = 4;
+			this.m_cbFontColor.TabIndex = 3;
 			this.m_cbFontColor.Text = "comboBox1";
 			this.m_cbFontColor.SelectedIndexChanged += new System.EventHandler(this.OncbFontColor_SelectedIndexChanged);
 			// 
@@ -247,7 +251,7 @@ namespace Altaxo.Graph
 			this.m_lblBackground.Location = new System.Drawing.Point(176, 40);
 			this.m_lblBackground.Name = "m_lblBackground";
 			this.m_lblBackground.Size = new System.Drawing.Size(72, 16);
-			this.m_lblBackground.TabIndex = 5;
+			this.m_lblBackground.TabIndex = 4;
 			this.m_lblBackground.Text = "Background";
 			// 
 			// m_cbBackground
@@ -255,7 +259,7 @@ namespace Altaxo.Graph
 			this.m_cbBackground.Location = new System.Drawing.Point(264, 40);
 			this.m_cbBackground.Name = "m_cbBackground";
 			this.m_cbBackground.Size = new System.Drawing.Size(88, 21);
-			this.m_cbBackground.TabIndex = 6;
+			this.m_cbBackground.TabIndex = 5;
 			this.m_cbBackground.Text = "comboBox1";
 			this.m_cbBackground.SelectedIndexChanged += new System.EventHandler(this.OncbBackground_SelectedIndexChanged);
 			// 
@@ -264,7 +268,7 @@ namespace Altaxo.Graph
 			this.m_lblPosX.Location = new System.Drawing.Point(8, 72);
 			this.m_lblPosX.Name = "m_lblPosX";
 			this.m_lblPosX.Size = new System.Drawing.Size(40, 16);
-			this.m_lblPosX.TabIndex = 7;
+			this.m_lblPosX.TabIndex = 6;
 			this.m_lblPosX.Text = "Pos.X";
 			this.m_lblPosX.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
@@ -273,7 +277,7 @@ namespace Altaxo.Graph
 			this.m_edPosX.Location = new System.Drawing.Point(48, 72);
 			this.m_edPosX.Name = "m_edPosX";
 			this.m_edPosX.Size = new System.Drawing.Size(72, 20);
-			this.m_edPosX.TabIndex = 8;
+			this.m_edPosX.TabIndex = 7;
 			this.m_edPosX.Text = "textBox1";
 			this.m_edPosX.TextChanged += new System.EventHandler(this.OnedPosX_TextChanged);
 			// 
@@ -282,7 +286,7 @@ namespace Altaxo.Graph
 			this.m_lblPosY.Location = new System.Drawing.Point(120, 72);
 			this.m_lblPosY.Name = "m_lblPosY";
 			this.m_lblPosY.Size = new System.Drawing.Size(40, 16);
-			this.m_lblPosY.TabIndex = 9;
+			this.m_lblPosY.TabIndex = 8;
 			this.m_lblPosY.Text = "Pos.Y";
 			this.m_lblPosY.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
@@ -291,7 +295,7 @@ namespace Altaxo.Graph
 			this.m_edPosY.Location = new System.Drawing.Point(168, 72);
 			this.m_edPosY.Name = "m_edPosY";
 			this.m_edPosY.Size = new System.Drawing.Size(80, 20);
-			this.m_edPosY.TabIndex = 10;
+			this.m_edPosY.TabIndex = 9;
 			this.m_edPosY.Text = "textBox1";
 			this.m_edPosY.TextChanged += new System.EventHandler(this.OnedPosY_TextChanged);
 			// 
@@ -300,7 +304,7 @@ namespace Altaxo.Graph
 			this.m_lblRotation.Location = new System.Drawing.Point(256, 72);
 			this.m_lblRotation.Name = "m_lblRotation";
 			this.m_lblRotation.Size = new System.Drawing.Size(32, 21);
-			this.m_lblRotation.TabIndex = 11;
+			this.m_lblRotation.TabIndex = 10;
 			this.m_lblRotation.Text = "Rot.";
 			this.m_lblRotation.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
@@ -309,77 +313,77 @@ namespace Altaxo.Graph
 			this.m_cbRotation.Location = new System.Drawing.Point(296, 72);
 			this.m_cbRotation.Name = "m_cbRotation";
 			this.m_cbRotation.Size = new System.Drawing.Size(56, 21);
-			this.m_cbRotation.TabIndex = 12;
+			this.m_cbRotation.TabIndex = 11;
 			this.m_cbRotation.Text = "comboBox1";
 			this.m_cbRotation.TextChanged += new System.EventHandler(this.On_cbRotation_TextChanged);
 			// 
 			// m_btBold
 			// 
 			this.m_btBold.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.m_btBold.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btBold.Image")));
 			this.m_btBold.Location = new System.Drawing.Point(40, 112);
 			this.m_btBold.Name = "m_btBold";
 			this.m_btBold.Size = new System.Drawing.Size(32, 24);
-			this.m_btBold.TabIndex = 13;
-			this.m_btBold.Text = "B";
+			this.m_btBold.TabIndex = 15;
 			this.m_btBold.Click += new System.EventHandler(this.OnbtBold_Click);
 			// 
 			// m_btItalic
 			// 
 			this.m_btItalic.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.m_btItalic.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btItalic.Image")));
 			this.m_btItalic.Location = new System.Drawing.Point(72, 112);
 			this.m_btItalic.Name = "m_btItalic";
 			this.m_btItalic.Size = new System.Drawing.Size(32, 24);
-			this.m_btItalic.TabIndex = 14;
-			this.m_btItalic.Text = "I";
+			this.m_btItalic.TabIndex = 16;
 			this.m_btItalic.Click += new System.EventHandler(this.OnbtItalic_Click);
 			// 
 			// m_btUnderline
 			// 
 			this.m_btUnderline.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+			this.m_btUnderline.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btUnderline.Image")));
 			this.m_btUnderline.Location = new System.Drawing.Point(104, 112);
 			this.m_btUnderline.Name = "m_btUnderline";
 			this.m_btUnderline.Size = new System.Drawing.Size(32, 24);
-			this.m_btUnderline.TabIndex = 15;
-			this.m_btUnderline.Text = "U";
+			this.m_btUnderline.TabIndex = 17;
 			this.m_btUnderline.Click += new System.EventHandler(this.OnbtUnderline_Click);
 			// 
 			// m_btSupIndex
 			// 
-			this.m_btSupIndex.Location = new System.Drawing.Point(160, 112);
+			this.m_btSupIndex.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btSupIndex.Image")));
+			this.m_btSupIndex.Location = new System.Drawing.Point(168, 112);
 			this.m_btSupIndex.Name = "m_btSupIndex";
 			this.m_btSupIndex.Size = new System.Drawing.Size(32, 24);
-			this.m_btSupIndex.TabIndex = 16;
-			this.m_btSupIndex.Text = "X²";
+			this.m_btSupIndex.TabIndex = 19;
 			this.m_btSupIndex.Click += new System.EventHandler(this.OnbtSupIndex_Click);
 			// 
 			// m_btSubIndex
 			// 
-			this.m_btSubIndex.Location = new System.Drawing.Point(192, 112);
+			this.m_btSubIndex.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btSubIndex.Image")));
+			this.m_btSubIndex.Location = new System.Drawing.Point(200, 112);
 			this.m_btSubIndex.Name = "m_btSubIndex";
 			this.m_btSubIndex.Size = new System.Drawing.Size(32, 24);
-			this.m_btSubIndex.TabIndex = 17;
-			this.m_btSubIndex.Text = "X2";
+			this.m_btSubIndex.TabIndex = 20;
 			this.m_btSubIndex.Click += new System.EventHandler(this.OnbtSubIndex_Click);
 			// 
 			// m_btGreek
 			// 
 			this.m_btGreek.Font = new System.Drawing.Font("Symbol", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.m_btGreek.Location = new System.Drawing.Point(224, 112);
+			this.m_btGreek.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btGreek.Image")));
+			this.m_btGreek.Location = new System.Drawing.Point(232, 112);
 			this.m_btGreek.Name = "m_btGreek";
-			this.m_btGreek.Size = new System.Drawing.Size(24, 24);
-			this.m_btGreek.TabIndex = 18;
-			this.m_btGreek.Text = "G";
+			this.m_btGreek.Size = new System.Drawing.Size(32, 24);
+			this.m_btGreek.TabIndex = 21;
 			this.m_btGreek.Click += new System.EventHandler(this.OnbtGreek_Click);
 			// 
 			// m_edText
 			// 
-			this.m_edText.Anchor = ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+			this.m_edText.Anchor = ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 				| System.Windows.Forms.AnchorStyles.Right);
 			this.m_edText.Location = new System.Drawing.Point(8, 144);
 			this.m_edText.Multiline = true;
 			this.m_edText.Name = "m_edText";
 			this.m_edText.Size = new System.Drawing.Size(400, 80);
-			this.m_edText.TabIndex = 19;
+			this.m_edText.TabIndex = 0;
 			this.m_edText.Text = "textBox1";
 			this.m_edText.TextChanged += new System.EventHandler(this.OnEditText_TextChanged);
 			// 
@@ -391,7 +395,7 @@ namespace Altaxo.Graph
 			this.m_pnPreview.Location = new System.Drawing.Point(8, 240);
 			this.m_pnPreview.Name = "m_pnPreview";
 			this.m_pnPreview.Size = new System.Drawing.Size(408, 96);
-			this.m_pnPreview.TabIndex = 20;
+			this.m_pnPreview.TabIndex = 22;
 			this.m_pnPreview.Paint += new System.Windows.Forms.PaintEventHandler(this.OnPanelPreview_Paint);
 			// 
 			// m_btNormal
@@ -400,16 +404,16 @@ namespace Altaxo.Graph
 			this.m_btNormal.Location = new System.Drawing.Point(8, 112);
 			this.m_btNormal.Name = "m_btNormal";
 			this.m_btNormal.Size = new System.Drawing.Size(32, 24);
-			this.m_btNormal.TabIndex = 21;
+			this.m_btNormal.TabIndex = 14;
 			this.m_btNormal.Click += new System.EventHandler(this.OnbtNormal_Click);
 			// 
 			// m_btStrikeout
 			// 
+			this.m_btStrikeout.Image = ((System.Drawing.Bitmap)(resources.GetObject("m_btStrikeout.Image")));
 			this.m_btStrikeout.Location = new System.Drawing.Point(136, 112);
 			this.m_btStrikeout.Name = "m_btStrikeout";
-			this.m_btStrikeout.Size = new System.Drawing.Size(24, 24);
-			this.m_btStrikeout.TabIndex = 22;
-			this.m_btStrikeout.Text = "S";
+			this.m_btStrikeout.Size = new System.Drawing.Size(32, 24);
+			this.m_btStrikeout.TabIndex = 18;
 			this.m_btStrikeout.Click += new System.EventHandler(this.OnbtStrikeout_Click);
 			// 
 			// TextControlDialog

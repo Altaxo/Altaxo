@@ -302,7 +302,7 @@ namespace Altaxo.Graph
 		}
 
 
-		public PointF ToLayerCoordinates(PointF pagecoordinates)
+		public PointF GraphToLayerCoordinates(PointF pagecoordinates)
 		{
 			PointF[] pf = { pagecoordinates };
 			matrixi.TransformPoints(pf);
@@ -330,7 +330,7 @@ namespace Altaxo.Graph
 		/// </summary>
 		/// <param name="gp">the graphics path to convert</param>
 		/// <returns>graphics path now in graph coordinates</returns>
-		public GraphicsPath ConvertToGraphCoordinates(GraphicsPath gp)
+		public GraphicsPath LayerToGraphCoordinates(GraphicsPath gp)
 		{
 			gp.Transform(matrix);
 			return gp;
@@ -338,7 +338,7 @@ namespace Altaxo.Graph
 
 		public GraphObject HitTest(PointF pageC, out GraphicsPath gp)
 		{
-			PointF layerC = ToLayerCoordinates(pageC);
+			PointF layerC = GraphToLayerCoordinates(pageC);
 
 			foreach(GraphObject go in m_GraphObjects)
 			{

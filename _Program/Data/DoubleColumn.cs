@@ -32,7 +32,7 @@ namespace Altaxo.Data
 	public class DoubleColumn : Altaxo.Data.DataColumn, System.Runtime.Serialization.IDeserializationCallback, INumericColumn
 	{
 		private double[] m_Array;
-		private int      m_Capacity; // shortcout to m_Array.Length;
+		private int      m_Capacity; // shortcut to m_Array.Length;
 		public static readonly double NullValue = Double.NaN;
 		
 		public DoubleColumn()
@@ -137,7 +137,7 @@ namespace Altaxo.Data
 			{
 				throw new ArgumentException("Try to copy " + v.GetType() + " to " + this.GetType(),"v"); // throw exception
 			}
-			Altaxo.Data.DoubleColumn vd = (Altaxo.Data.DoubleColumn)v;	
+			Altaxo.Data.DoubleColumn vd = (Altaxo.Data.DoubleColumn)v;
 
 			// suggestion, but __not__ implemented:
 			// if v is a standalone column, then simply take the dataarray

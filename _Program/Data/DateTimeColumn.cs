@@ -19,17 +19,21 @@
 /////////////////////////////////////////////////////////////////////////////
 
 using System;
+using Altaxo.Serialization;
+using Altaxo;
 
 namespace Altaxo.Data
 {
 	/// <summary>
 	/// Summary description for Altaxo.Data.DateTimeColumn.
 	/// </summary>
-	public class DateTimeColumn : DataColumn
+	[SerializationSurrogate(0,typeof(Altaxo.Data.DateTimeColumn.SerializationSurrogate0))]
+	[SerializationVersion(0)]
+	public class DateTimeColumn : Altaxo.Data.DataColumn, System.Runtime.Serialization.IDeserializationCallback, INumericColumn
 	{
 		private DateTime[] m_Array;
 		private int        m_Capacity; // shortcut to m_Array.Length;
-		public static readonly DateTime NullValue = DateTime.MinValue; 
+		public static readonly DateTime NullValue = DateTime.MinValue;
 	
 		public DateTimeColumn()
 		{
@@ -39,7 +43,7 @@ namespace Altaxo.Data
 			: base(name)
 	{
 	}
-		public DateTimeColumn(Altaxo.Data.DataTable parenttable, string name)
+		public DateTimeColumn(DataTable parenttable, string name)
 			: base(parenttable,name)
 	{
 	}
@@ -50,15 +54,82 @@ namespace Altaxo.Data
 			m_Capacity = initialcapacity;
 		}
 				
+
+		#region "Serialization"
+		public new class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
+		{
+			public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context	)
+			{
+				Altaxo.Data.DateTimeColumn s = (Altaxo.Data.DateTimeColumn)obj;
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(typeof(Altaxo.Data.DataColumn),context, out ss);
+	
+				surr.GetObjectData(obj,info,context); // stream the data of the base object
+
+				if(s.m_Count!=s.m_Capacity)
+				{
+					// instead of the data array itself, stream only the first m_Count
+					// array elements, since only they contain data
+					DateTime[] streamarray = new DateTime[s.m_Count];
+					System.Array.Copy(s.m_Array,streamarray,s.m_Count);
+					info.AddValue("Data",streamarray);
+				}
+				else // if the array is fully filled, we don't need to save a shrinked copy
+				{
+					info.AddValue("Data",s.m_Array);
+				}
+			}
+			public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
+			{
+				Altaxo.Data.DateTimeColumn s = (Altaxo.Data.DateTimeColumn)obj;
+				System.Runtime.Serialization.ISurrogateSelector ss;
+				System.Runtime.Serialization.ISerializationSurrogate surr =
+					App.m_SurrogateSelector.GetSurrogate(typeof(Altaxo.Data.DataColumn),context, out ss);
+				surr.SetObjectData(obj,info,context,selector);
+
+				s.m_Array = (DateTime[])(info.GetValue("Data",typeof(DateTime[])));
+				s.m_Capacity = null==s.m_Array ? 0 : s.m_Array.Length;
+				return s;
+			}
+		}
+
+		public override void OnDeserialization(object obj)
+		{
+			base.OnDeserialization(obj);
+		}
+		#endregion
+
+
+		public DateTime[] Array
+		{
+			get 
+			{
+				int len = this.Count;
+				DateTime[] arr = new DateTime[len];
+				System.Array.Copy(m_Array,0,arr,0,len);
+				return arr;
+			}
+
+			set
+			{
+				m_Array = (DateTime[])value.Clone();
+				this.m_Count = m_Array.Length;
+				this.m_Capacity = m_Array.Length;
+				this.NotifyDataChanged(0,m_Count<=0?0:m_Count-1,true);
+			}
+		}
+
+		protected internal DateTime GetValueDirect(int idx)
+		{
+				return m_Array[idx];
+		}
+
 		public override System.Type GetColumnStyleType()
 		{
 			return typeof(Altaxo.Worksheet.DateTimeColumnStyle);
 		}
 
-		protected internal DateTime GetValueDirect(int idx)
-		{
-			return m_Array[idx];
-		}			
 			
 		public override void CopyDataFrom(Altaxo.Data.DataColumn v)
 		{
@@ -66,13 +137,13 @@ namespace Altaxo.Data
 			{
 				throw new ArgumentException("Try to copy " + v.GetType() + " to " + this.GetType(),"v"); // throw exception
 			}
-			Altaxo.Data.DateTimeColumn vd = (Altaxo.Data.DateTimeColumn)v;	
+			Altaxo.Data.DateTimeColumn vd = (Altaxo.Data.DateTimeColumn)v;
 
 			// suggestion, but __not__ implemented:
 			// if v is a standalone column, then simply take the dataarray
 			// otherwise: copy the data by value	
 			int oldCount = this.m_Count;
-			if(null==vd.m_Array || 0==vd.m_Count)
+			if(null==vd.m_Array || vd.m_Count==0)
 			{
 				m_Array=null;
 				m_Capacity=0;
@@ -80,13 +151,14 @@ namespace Altaxo.Data
 			}
 			else
 			{
-				m_Array = (DateTime[])((Altaxo.Data.DateTimeColumn)v).m_Array.Clone();
+				m_Array = (DateTime[])vd.m_Array.Clone();
 				m_Capacity = m_Array.Length;
 				m_Count = ((Altaxo.Data.DateTimeColumn)v).m_Count;
 			}
 			if(oldCount>0 || m_Count>0) // message only if really was a change
 				NotifyDataChanged(0,oldCount>m_Count? (oldCount-1):(m_Count-1),m_Count<oldCount);
 		}				
+
 		protected void Realloc(int i)
 		{
 			int newcapacity1 = (int)(m_Capacity*increaseFactor+addSpace);
@@ -96,15 +168,14 @@ namespace Altaxo.Data
 			DateTime[] newarray = new DateTime[newcapacity];
 			if(m_Count>0)
 			{
-				Array.Copy(m_Array,newarray,m_Count);
+				System.Array.Copy(m_Array,newarray,m_Count);
 			}
 
 			m_Array = newarray;
+			m_Capacity = m_Array.Length;
 		}
 
 		// indexers
-
-
 		public override void SetValueAt(int i, AltaxoVariant val)
 		{
 			if(val.IsTypeOrNull(AltaxoVariant.Content.VDateTime))
@@ -118,11 +189,15 @@ namespace Altaxo.Data
 			return new AltaxoVariant(this[i]);
 		}
 
+		public double GetDoubleAt(int i)
+		{
+			return i<m_Count ? System.Convert.ToDouble(this[i]) : Double.NaN;
+		}
+
 		public override bool IsElementEmpty(int i)
 		{
 			return i<m_Count ? (DateTime.MinValue==m_Array[i]) : true;
 		}
-
 
 		public new DateTime this[int i]
 		{
@@ -135,6 +210,7 @@ namespace Altaxo.Data
 			set
 			{
 				bool bCountDecreased=false;
+
 
 				if(value==DateTime.MinValue)
 				{
@@ -151,7 +227,6 @@ namespace Altaxo.Data
 				else // value is a valid value
 				{
 					if(i>=0 && i<m_Count) // i is inside the used range
-
 					{
 						m_Array[i]=value;
 					}
@@ -179,11 +254,9 @@ namespace Altaxo.Data
 						m_Count=i+1;
 					}
 				}
-
 			NotifyDataChanged(i,i,bCountDecreased);
 			} // end set	
 		} // end indexer
-
 
 
 		public override void InsertRows(int nInsBeforeColumn, int nInsCount)
@@ -208,16 +281,38 @@ namespace Altaxo.Data
 
 		public override void RemoveRows(int nDelFirstRow, int nDelCount)
 		{
-			if(nDelCount<=0)
-				return; // nothing to do here
+			if(nDelFirstRow<0)
+				throw new ArgumentException("Row number must be greater or equal 0, but was " + nDelFirstRow.ToString(), "nDelFirstRow");
 
+			if(nDelCount<=0)
+				return; // nothing to do here, but we dont catch it
+
+			// we must be careful, since the range to delete can be
+			// above the range this column actually holds, but
+			// we must handle this the right way
 			int i,j;
-			for(i=nDelFirstRow,j=nDelFirstRow+nDelCount;j<m_Count;i++,i++)
+			for(i=nDelFirstRow,j=nDelFirstRow+nDelCount;j<m_Count;i++,j++)
 				m_Array[i]=m_Array[j];
-			m_Count=i;
+			
+			int prevCount = m_Count;
+			m_Count= i<m_Count ? i : m_Count; // m_Count can only decrease
+
+			if(m_Count!=prevCount) // raise a event only if something really changed
 			this.NotifyDataChanged(nDelFirstRow,m_Count-1,true);
 			}
 
+
+
+		#region "Operators"
+
+		// -----------------------------------------------------------------------------
+		//
+		//                        Operators
+		//
+		// -----------------------------------------------------------------------------
+
+
+		// ----------------------- Addition operator -----------------------------------
 		public static Altaxo.Data.DateTimeColumn operator +(Altaxo.Data.DateTimeColumn c1, Altaxo.Data.DoubleColumn c2)
 		{
 			int len = c1.Count<c2.Count ? c1.Count : c2.Count;
@@ -286,5 +381,8 @@ namespace Altaxo.Data
 
 			return c3;	
 		}
-	}
+				
+		#endregion
+
+	} // end Altaxo.Data.DateTimeColumn
 }

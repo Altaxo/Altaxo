@@ -27,6 +27,17 @@ namespace Altaxo.Data
 	/// </summary>
 	public abstract class OperatableObject
 	{
+
+		public override bool Equals(object o)
+		{
+			return base.Equals(o);
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+
 		// Note: unfortunately (and maybe also undocumented) we can not use
 		// the names op_Addition, op_Subtraction and so one, because these
 		// names seems to be used by the compiler for the operators itself

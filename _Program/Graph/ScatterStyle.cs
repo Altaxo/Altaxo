@@ -26,9 +26,6 @@ using Altaxo.Graph.ScatterStyles;
 
 namespace Altaxo.Graph
 {
-	/// <summary>
-	/// Summary description for ScatterStyles
-	/// </summary>
 	namespace ScatterStyles
 	{
 		public enum Shape 

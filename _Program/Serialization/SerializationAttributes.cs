@@ -130,9 +130,11 @@ namespace Altaxo.Serialization
 	} // end class SerializationVersionAttribute
 
 
-
-	[AttributeUsage(AttributeTargets.Assembly)]
+	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Module)]
 	public class SupportsSerializationVersioningAttribute : Attribute
 	{
+		public SupportsSerializationVersioningAttribute()
+		{
+		}
 	}
 }

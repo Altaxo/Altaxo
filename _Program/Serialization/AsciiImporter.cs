@@ -165,7 +165,7 @@ namespace Altaxo.Serialization
 		/// the aim is to recognize automatically which is the decimal separator
 		/// the function analyses the string for commas and dots and adds a statistics
 		/// </summary>
-		/// <param name="substring">a string which represents a numeric value</param>
+		/// <param name="numstring">a string which represents a numeric value</param>
 		public void AddToDecimalSeparatorStatistics(string numstring)
 		{
 			// some rules:
