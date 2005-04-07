@@ -896,11 +896,51 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\schemas\AddIn.xsd"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\schemas\appconfig.xsd"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\schemas\nant.xsd"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\schemas\nant-0.84.xsd"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\schemas\readme.txt"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\schemas\W3C-License.html"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\schemas\wix.xsd"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\schemas\XMLSchema.xsd"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\schemas\xslt.xsd"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\templates\file\CPPNet\CPP.Empty.xft"
                     BuildAction = "Content"
                 />
                 <File
                     RelPath = "data\templates\file\CPPNet\CPP.Header.xft"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\templates\file\CPPNet\CPP.Wizards.NewClass.xft"
                     BuildAction = "Content"
                 />
                 <File

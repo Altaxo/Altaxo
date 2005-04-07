@@ -13,6 +13,23 @@ namespace ICSharpCode.TextEditor.Util
 {
 	public class TextUtility
 	{
+		public static bool RegionRegexMatches(IDocument document, int offset, int length, string regex)
+		{
+			if (document.TextLength < offset + length) 
+			{
+				return false;
+			}
+			/*
+			for (int i = 0; i < length; ++i) 
+			{
+				if (document.GetCharAt(offset + i) != word[i]) 
+				{
+					return false;
+				}
+			}
+			*/
+			return true;
+		}
 		
 		public static bool RegionMatches(IDocument document, int offset, int length, string word)
 		{

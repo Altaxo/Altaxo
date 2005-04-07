@@ -173,6 +173,24 @@ namespace ICSharpCode.SharpDevelop.Commands
 		class FormKeyHandler : IMessageFilter
 		{
 			const int keyPressedMessage          = 0x100;
+			
+			void HideAllPads()
+			{
+				foreach (IPadContent pad in WorkbenchSingleton.Workbench.PadContentCollection) {
+					WorkbenchSingleton.Workbench.WorkbenchLayout.HidePad(pad);
+				}
+			}
+			void SelectActiveWorkbenchWindow()
+			{
+				if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null) {
+					if (!WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent.Control.ContainsFocus) {
+						if (Form.ActiveForm == (Form)WorkbenchSingleton.Workbench) {
+							WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent.Control.Focus();
+						}
+					}
+				}
+			}
+			
 			public bool PreFilterMessage(ref Message m)
 			{
 				if (m.Msg != keyPressedMessage) {
@@ -181,14 +199,14 @@ namespace ICSharpCode.SharpDevelop.Commands
 				Keys keyPressed = (Keys)m.WParam.ToInt32() | Control.ModifierKeys;
 				
 				if (keyPressed == Keys.Escape) {
-					if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null) {
-						if (!WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent.Control.ContainsFocus) {
-							if (Form.ActiveForm == (Form)WorkbenchSingleton.Workbench) {
-								WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent.Control.Focus();
-								return true;
-							} 
-						}
-					}
+					SelectActiveWorkbenchWindow();
+					return false;
+				}
+				
+				if (keyPressed == (Keys.Escape | Keys.Shift)) {
+					HideAllPads();
+					SelectActiveWorkbenchWindow();
+					return true;
 				}
 				return false;
 			}

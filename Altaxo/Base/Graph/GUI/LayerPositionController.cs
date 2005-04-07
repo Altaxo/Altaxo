@@ -47,6 +47,7 @@ namespace Altaxo.Graph.GUI
     void EhView_HeightChanged(string txt, ref bool bCancel);
     void EhView_RotationChanged(string txt, ref bool bCancel);
     void EhView_ScaleChanged(string txt, ref bool bCancel);
+    void EhView_ClipDataToFrameChanged(bool value);
   }
 
   public interface ILayerPositionView : Main.GUI.IMVCView
@@ -68,6 +69,7 @@ namespace Altaxo.Graph.GUI
     void InitializeWidth(string txt);
     void InitializeRotation(string txt);
     void InitializeScale(string txt);
+    void InitializeClipDataToFrame(bool value);
 
     void InitializeLeftType(string[] names, string txt);
     void InitializeTopType(string[] names, string txt);
@@ -96,6 +98,7 @@ namespace Altaxo.Graph.GUI
     double m_Left, m_Top, m_Width, m_Height, m_Rotation, m_Scale;
     XYPlotLayer.PositionType m_LeftType, m_TopType;
     XYPlotLayer.SizeType      m_HeightType, m_WidthType;
+    bool m_ClipDataToFrame;
     XYPlotLayer m_LinkedLayer;
     IAxisLinkController m_XAxisLink, m_YAxisLink;
 
@@ -118,12 +121,14 @@ namespace Altaxo.Graph.GUI
         m_Top       = m_Layer.UserYPosition;
         m_Rotation  = m_Layer.Rotation;
         m_Scale     = m_Layer.Scale;
+        m_ClipDataToFrame = m_Layer.ClipDataToFrame;
 
         m_LeftType = m_Layer.UserXPositionType;
         m_TopType  = m_Layer.UserYPositionType;
         m_HeightType = m_Layer.UserHeightType;
         m_WidthType = m_Layer.UserWidthType;
         m_LinkedLayer = m_Layer.LinkedLayer;
+
 
         m_XAxisLink = new AxisLinkController(m_Layer,true);
         m_YAxisLink = new AxisLinkController(m_Layer,false);
@@ -140,6 +145,7 @@ namespace Altaxo.Graph.GUI
 
         View.InitializeRotation(Serialization.NumberConversion.ToString(m_Rotation));
         View.InitializeScale(Serialization.NumberConversion.ToString(m_Scale));
+        View.InitializeClipDataToFrame(m_ClipDataToFrame);
 
 
         // Fill the comboboxes of the x and y position with possible values
@@ -200,6 +206,7 @@ namespace Altaxo.Graph.GUI
         // now update the layer
         m_Layer.Rotation = (float)m_Rotation;
         m_Layer.Scale    = (float)m_Scale;
+        m_Layer.ClipDataToFrame = m_ClipDataToFrame;
 
         m_Layer.SetSize(m_Width,m_WidthType,m_Height,m_HeightType);
         m_Layer.SetPosition(m_Left,m_LeftType,m_Top,m_TopType);
@@ -325,6 +332,11 @@ namespace Altaxo.Graph.GUI
     public void EhView_ScaleChanged(string txt, ref bool bCancel)
     {
       bCancel = !NumberConversion.IsDouble(txt, out m_Scale);
+    }
+
+    public void EhView_ClipDataToFrameChanged(bool value)
+    {
+      m_ClipDataToFrame = value;
     }
 
     #endregion

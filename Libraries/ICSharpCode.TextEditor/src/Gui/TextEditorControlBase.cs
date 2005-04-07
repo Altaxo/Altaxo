@@ -510,8 +510,6 @@ namespace ICSharpCode.TextEditor
 			}
 		}
 		
-		
-				
 		internal IEditAction GetEditAction(Keys keyData)
 		{
 			return (IEditAction)editactions[keyData];

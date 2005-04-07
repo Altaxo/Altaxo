@@ -97,6 +97,7 @@ namespace ICSharpCode.TextEditor.Document
 		
 		ILineManager          lineTrackingStrategy = null;
 		IBookMarkManager      bookmarkManager      = null;
+		ICustomLineManager    customLineManager    = null;
 		ITextBufferStrategy   textBufferStrategy   = null;
 		IFormattingStrategy   formattingStrategy   = null;
 		FoldingManager        foldingManager       = null;
@@ -201,6 +202,15 @@ namespace ICSharpCode.TextEditor.Document
 			}
 			set {
 				bookmarkManager = value;
+			}
+		}
+		
+		public ICustomLineManager CustomLineManager {
+			get {
+				return customLineManager;
+			}
+			set {
+				customLineManager = value;
 			}
 		}
 		

@@ -152,7 +152,11 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			if (item != currentListViewItem) {
 				if (item != null) {
 					Task task = (Task)item.Tag;
-					taskToolTip.SetToolTip(listView, task.Description);
+					string description = task.Description;
+					if (description != null) {
+						description = description.Replace("\t", "    ");
+					}
+					taskToolTip.SetToolTip(listView, description);
 					taskToolTip.Active       = true;
 				} else {
 					taskToolTip.RemoveAll(); 
@@ -215,7 +219,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 				ListViewItem item = new ListViewItem(new string[] {
 					String.Empty,
 					(task.Line + 1).ToString(),
-					task.Description,
+					FormatDescription(task.Description),
 					fileName,
 					path
 				});
@@ -223,6 +227,19 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 				item.Tag = task;
 				listView.Items.Add(item);
 			}
+		}
+		
+		/// <summary>
+		/// Removes new lines, carriage returns and tab characters from
+		/// the list view task description and replaces them with a space.  
+		/// </summary>
+		/// <param name="description">The task list description.</param>
+		/// <returns>A formatted task list description.</returns>
+		string FormatDescription(string description)
+		{
+			string FormattedDescription = description.Replace("\r", " ");
+			FormattedDescription = FormattedDescription.Replace("\t", " ");
+			return FormattedDescription.Replace("\n", " ");
 		}
 		
 		void ShowResults2(object sender, EventArgs e)

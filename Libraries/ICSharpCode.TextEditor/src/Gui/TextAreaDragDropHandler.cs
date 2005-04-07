@@ -74,6 +74,8 @@ namespace ICSharpCode.TextEditor
 		{
 			Point p = textArea.PointToClient(new Point(e.X, e.Y));
 			
+			if (textArea.EnableCutOrPaste == false)
+				return;
 			if (e.Data.GetDataPresent(typeof(string))) {
 				bool two = false;
 				textArea.BeginUpdate();
@@ -121,6 +123,10 @@ namespace ICSharpCode.TextEditor
 				
 				textArea.Caret.Position = new Point(realmousepos.X, lineNr);
 				textArea.SetDesiredColumn();
+				if (textArea.EnableCutOrPaste == false) {
+					e.Effect = DragDropEffects.None;
+					return;
+				}
 				if (e.Data.GetDataPresent(typeof(string))) {
 					e.Effect = GetDragDropEffect(e);
 				}

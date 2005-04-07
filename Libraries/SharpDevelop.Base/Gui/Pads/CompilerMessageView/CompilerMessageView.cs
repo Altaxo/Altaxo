@@ -17,6 +17,7 @@ using System.Diagnostics;
 using ICSharpCode.SharpDevelop.Services;
 using ICSharpCode.Core.Properties;
 using ICSharpCode.Core.Services;
+using ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels;
 
 namespace ICSharpCode.SharpDevelop.Gui.Pads
 {
@@ -32,6 +33,9 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		
 		ResourceService resourceService   = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 		ArrayList       messageCategories = new ArrayList();
+		
+		// The compiler message view properties.
+		IProperties 	properties	      = null;
 		
 		public override Control Control {
 			get {
@@ -53,7 +57,13 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			
 			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
 			messageCategory.Font = resourceService.LoadFont("Arial", 9, FontStyle.Bold);
-			textEditorControl.Font = resourceService.LoadFont("Courier New", 10);
+			
+			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
+			properties = (IProperties)propertyService.GetProperty(OutputWindowOptionsPanel.OutputWindowsProperty, new DefaultProperties());
+			textEditorControl.WordWrap = properties.GetProperty("WordWrap", true);
+			textEditorControl.Font     = FontSelectionPanel.ParseFont(properties.GetProperty("DefaultFont", new Font("Courier New", 10).ToString()).ToString());
+			properties.PropertyChanged += new PropertyEventHandler(PropertyChanged);
+			
 			myPanel.Controls.Add(textEditorControl);
 			myPanel.Controls.Add(messageCategory);
 			
@@ -64,7 +74,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 			
 			projectService.StartBuild    += new EventHandler(ProjectServiceStartBuild);
 			projectService.CombineOpened += new CombineEventHandler(ClearOnCombineEvent);
-			
+			textEditorControl.MouseDown += new MouseEventHandler(TextEditorControlMouseDown);
 			textEditorControl.CreateControl();
 		}
 		
@@ -183,6 +193,113 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads
 		void MessageCategorySelectedIndexChanged(object sender, EventArgs e)
 		{
 			OutputCategoryText();
+		}
+		
+		/// <summary>
+		/// Occurs when the mouse pointer is over the control and a
+		/// mouse button is pressed.
+		/// </summary>
+		void TextEditorControlMouseDown(object sender, MouseEventArgs e)
+		{
+			// Double click?
+			if (e.Clicks == 2) {
+				
+				// Any text?
+				if (textEditorControl.Text.Length > 0) {
+					
+					// Parse text line double clicked.
+					Point point = new Point(e.X, e.Y);
+					
+					int charIndex = textEditorControl.GetCharIndexFromPosition(point);
+					string textLine = GetTextLine(charIndex, textEditorControl.Text);
+					
+//					if (textLine != null) {
+//						Console.WriteLine("textEditorDblClick textline=" + textLine);
+//					} else {
+//						Console.WriteLine("textEditorDblClick GetTextLine returned null. CharIndex=" + charIndex);
+//					}
+					
+					FileLineReference lineReference = OutputTextLineParser.GetFileLineReference(textLine);
+					if (lineReference != null) {
+						// Open matching file.
+						JumpToFilePosition(Path.GetFullPath(lineReference.FileName),
+						                   lineReference.Line,
+						                   lineReference.Column);
+					}
+				}
+			}
+		}
+		/// <summary>
+		/// Gets the line of text that includes the specified
+		/// character index.
+		/// </summary>
+		/// <remarks>
+		/// This is used instead of using the <see cref="RichTextBox.Lines"/>
+		/// array since we have to take into account word wrapping.
+		/// </remarks>
+		string GetTextLine(int charIndex, string textLines)
+		{
+			Debug.Assert(charIndex < textLines.Length, String.Concat("CharIndex out of range. charIndex=", charIndex, ", textLines.Length=", textLines.Length));
+			
+			string textLine = String.Empty;
+			
+			int lineStartIndex = 0;
+			int lineLength = 0;
+			bool wasFound = false;
+			
+			for (int i = 0; i < textLines.Length; ++i) {
+				char ch = textLines[i];
+				
+				if (ch == '\r' || ch == '\n') {
+					// End of line.
+					if (i >= charIndex) {
+						// Found line.
+						textLine = textLines.Substring(lineStartIndex, lineLength);
+						wasFound = true;
+						break;
+					}
+					else {
+						lineStartIndex = i + 1;
+						lineLength = 0;
+					}
+				} else {
+					++lineLength;
+				}
+			}
+			
+			if (!wasFound && (lineLength > 0)) {
+				textLine = textLines.Substring(lineStartIndex, lineLength);
+			}
+			
+			return textLine;
+		}
+		
+		/// <summary>
+		/// Jumps to the specified file line number and position.
+		/// </summary>
+		/// <param name="filename">The filename.</param>
+		/// <param name="line">The line number.</param>
+		/// <param name="column">The line column</param>
+		private void JumpToFilePosition(string filename, int line, int column)
+		{
+			IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
+			fileService.JumpToFilePosition(filename, line, column);
+		}
+		
+		/// <summary>
+		/// Changes wordwrap settings if that property has changed.
+		/// </summary>
+		void PropertyChanged(object sender, PropertyEventArgs e)
+		{
+//			Console.WriteLine("OutputWindow.PropertyChanged");
+//			Console.WriteLine("e.Key=" + e.Key);
+			
+			if (e.Key == "WordWrap") {
+				textEditorControl.WordWrap = (bool)(e.NewValue);
+			}
+			if (e.Key == "DefaultFont") {
+				textEditorControl.Font     = FontSelectionPanel.ParseFont(properties.GetProperty("DefaultFont", new Font("Courier New", 10).ToString()).ToString());
+			}
 		}
 	}
 }

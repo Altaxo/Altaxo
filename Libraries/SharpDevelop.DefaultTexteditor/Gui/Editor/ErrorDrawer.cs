@@ -62,6 +62,9 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		void SetErrors(object sender, EventArgs e)
 		{
 			ClearErrors();
+			if (textEditor.FileName == null) {
+				return;
+			}
 			TaskService taskService = (TaskService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(TaskService));
 			foreach (Task task in taskService.Tasks) {
 				if (task.FileName == null || task.FileName.Length == 0 || task.Column < 0) {

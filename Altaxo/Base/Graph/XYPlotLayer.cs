@@ -285,6 +285,9 @@ namespace Altaxo.Graph
     /// <summary>The scaling factor of the layer, normally 1.</summary>
     protected float  m_LayerScale=1;  // Scale
 
+    /// <summary>If true, the data are clipped to the frame.</summary>
+    protected bool m_ClipDataToFrame=true;
+
     /// <summary>The horizontal axis of the layer.</summary>
     protected Axis m_xAxis; // the X-Axis
     
@@ -570,7 +573,7 @@ namespace Altaxo.Graph
     }
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer),0)]
-      public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -760,6 +763,33 @@ namespace Altaxo.Graph
       }
     }
 
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer),1)]
+      public class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        base.Serialize(obj, info);
+
+        XYPlotLayer s = (XYPlotLayer)obj;
+        // XYPlotLayer style
+        info.AddValue("ClipDataToFrame",s.m_ClipDataToFrame);
+      }
+
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        
+        XYPlotLayer s = null!=o ? (XYPlotLayer)o : new XYPlotLayer();
+        base.Deserialize(o,info,parent);
+
+        s.m_ClipDataToFrame = info.GetBoolean("ClipDataToFrame");
+
+        return s;
+      }
+    }
+
+
+    
     /// <summary>
     /// Finale measures after deserialization.
     /// </summary>
@@ -2212,6 +2242,23 @@ namespace Altaxo.Graph
     #endregion // Axis related
 
     #region Style properties
+
+    public bool ClipDataToFrame
+    {
+      get
+      {
+        return m_ClipDataToFrame;
+      }
+      set
+      {
+        bool oldvalue = m_ClipDataToFrame;
+        m_ClipDataToFrame = value;
+
+        if(value!=oldvalue)
+          this.OnInvalidate();
+      }
+    }
+
     public XYAxisStyle LeftAxisStyle
     {
       get { return m_LeftAxisStyle; }
@@ -2497,6 +2544,12 @@ namespace Altaxo.Graph
         m_TopAxisTitle.Paint(g,this);
       if(m_Legend!=null)
         m_Legend.Paint(g,this);
+
+
+      if(ClipDataToFrame)
+      {
+        g.SetClip(new RectangleF(new PointF(0,0),this.m_LayerSize));
+      }
 
       foreach(PlotItem pi in m_PlotItems)
       {

@@ -32,7 +32,7 @@ namespace ICSharpCode.TextEditor
 		
 		public bool EnableCut {
 			get {
-				return textArea.SelectionManager.HasSomethingSelected;
+				return textArea.SelectionManager.HasSomethingSelected && textArea.EnableCutOrPaste;
 			}
 		}
 		
@@ -46,6 +46,8 @@ namespace ICSharpCode.TextEditor
 			get {
 				// Clipboard.GetDataObject may throw an exception...
 				try {
+					if (textArea.EnableCutOrPaste == false)
+						return false;
 					IDataObject data = Clipboard.GetDataObject();
 					return data != null && data.GetDataPresent(DataFormats.Text);
 				} catch (Exception e) {
@@ -57,7 +59,7 @@ namespace ICSharpCode.TextEditor
 		
 		public bool EnableDelete {
 			get {
-				return textArea.SelectionManager.HasSomethingSelected;
+				return textArea.SelectionManager.HasSomethingSelected && textArea.EnableCutOrPaste;
 			}
 		}
 		

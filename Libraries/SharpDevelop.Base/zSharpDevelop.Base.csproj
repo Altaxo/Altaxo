@@ -404,6 +404,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\Components\FontSelectionPanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\Components\SdMenu.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
@@ -664,6 +669,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\Dialogs\OptionPanels\OutputWindowOptionsPanel.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\Dialogs\OptionPanels\PropertyGridPanel.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -859,7 +869,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\Pads\CompilerMessageView\FileLineReference.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\Pads\CompilerMessageView\MessageViewCategory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Pads\CompilerMessageView\OutputTextLineParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

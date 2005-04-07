@@ -24,6 +24,11 @@ namespace ICSharpCode.SharpDevelop.Services
 			set;
 		}
 		
+		bool Visible {
+			get;
+			set;
+		}
+		
 		void ShowErrorMessage(string message);
 		
 		void SetMessage(string message);

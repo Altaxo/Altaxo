@@ -1,0 +1,45 @@
+<Components version="1.0">
+  <System.Windows.Forms.UserControl>
+    <Name value="CreatedUserControl" />
+    <DockPadding value="" />
+    <ClientSize value="{Width=224, Height=224}" />
+    <Controls>
+      <System.Windows.Forms.GroupBox>
+        <Name value="generatedCodeGroupBox" />
+        <TabIndex value="2" />
+        <Location value="{X=8,Y=80}" />
+        <Anchor value="Top, Left, Right" />
+        <Size value="{Width=208, Height=64}" />
+        <Text value="${res:ICSharpCode.SharpDevelop.FormDesigner.Gui.OptionPanels.GeneralOptionsPanel.GeneratedCodeGroupBox}" />
+        <Controls>
+          <System.Windows.Forms.CheckBox>
+            <Name value="initializeComponentsReadOnlyCheckBox" />
+            <Location value="{X=8,Y=26}" />
+            <Size value="{Width=192, Height=24}" />
+            <Text value="${res:ICSharpCode.SharpDevelop.FormDesigner.Gui.OptionPanels.GeneralOptionsPanel.InitializeComponentesReadOnlyCheckBox}" />
+            <Anchor value="Top, Left, Right" />
+            <TabIndex value="4" />
+          </System.Windows.Forms.CheckBox>
+        </Controls>
+      </System.Windows.Forms.GroupBox>
+      <System.Windows.Forms.GroupBox>
+        <Name value="groupBox2" />
+        <TabIndex value="1" />
+        <Location value="{X=8,Y=8}" />
+        <Anchor value="Top, Left, Right" />
+        <Size value="{Width=208, Height=64}" />
+        <Text value="${res:ICSharpCode.SharpDevelop.FormDesigner.Gui.OptionPanels.GridOptionsPanel.PropertyGridGroupBox}" />
+        <Controls>
+          <System.Windows.Forms.CheckBox>
+            <Name value="sortAlphabeticalCheckBox" />
+            <Location value="{X=8,Y=25}" />
+            <Size value="{Width=192, Height=24}" />
+            <Text value="${res:ICSharpCode.SharpDevelop.FormDesigner.Gui.OptionPanels.GridOptionsPanel.PropertyGridSortCheckBox}" />
+            <Anchor value="Top, Left, Right" />
+            <TabIndex value="4" />
+          </System.Windows.Forms.CheckBox>
+        </Controls>
+      </System.Windows.Forms.GroupBox>
+    </Controls>
+  </System.Windows.Forms.UserControl>
+</Components>

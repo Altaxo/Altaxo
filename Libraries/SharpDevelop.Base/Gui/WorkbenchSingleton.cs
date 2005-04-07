@@ -53,8 +53,10 @@ namespace ICSharpCode.SharpDevelop.Gui
 		{
 			if (e.OldValue != e.NewValue) {
 				switch (e.Key) {
+					case "ICSharpCode.SharpDevelop.Gui.StatusBarVisible":
 					case "ICSharpCode.SharpDevelop.Gui.VisualStyle":
 					case "CoreProperties.UILanguage":
+					case "ICSharpCode.SharpDevelop.Gui.ToolBarVisible":
 						workbench.RedrawAllComponents();
 						break;
 				}

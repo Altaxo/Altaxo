@@ -170,7 +170,7 @@ namespace ICSharpCode.Core.AddIns
 			
 			XmlDocument doc = new XmlDocument();
 //			doc.Load(validatingReader);
-			doc.Load(new XmlTextReader(fileName));
+			doc.Load(fileName);
 			
 			if (errors != null) {
 				ReportErrors(fileName);

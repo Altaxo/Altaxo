@@ -31,6 +31,7 @@ namespace ICSharpCode.TextEditor.Document
 			doc.FoldingManager.FoldingStrategy       = new ParserFoldingStrategy();
 			doc.MarkerStrategy       = new MarkerStrategy(doc);
 			doc.BookmarkManager      = new BookmarkManager(doc.LineManager);
+			doc.CustomLineManager      = new CustomLineManager(doc.LineManager);
 			return doc;
 		}
 		

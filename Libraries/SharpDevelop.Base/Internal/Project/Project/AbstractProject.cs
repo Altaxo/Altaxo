@@ -358,6 +358,17 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			
 			SearchNewFiles();
 		}
+		
+		public IConfiguration CloneConfiguration(IConfiguration configuration)
+		{
+			XmlDocument doc = new XmlDocument();
+			XmlElement newConfig = doc.CreateElement(configurationNodeName);
+			SetXmlAttributes(doc, newConfig, configuration);
+			
+			IConfiguration newConfiguration = CreateConfiguration();
+			GetXmlAttributes(doc, newConfig, newConfiguration);
+			return newConfiguration;
+		}
 
 		void GetXmlAttributes(XmlDocument doc, XmlElement element, object o)
 		{
@@ -432,11 +443,13 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 							setElement = (XmlElement)element.SelectSingleNode("descendant::" + xmlSetAttributes[0].Name);
 						}
 						
-						IList collection = (IList)fieldInfo.GetValue(o);
-						foreach (XmlNode childNode in setElement.ChildNodes) {
-							object instance = xmlSetAttributes[0].Type.Assembly.CreateInstance(xmlSetAttributes[0].Type.FullName);
-							GetXmlAttributes(doc, (XmlElement)childNode, instance);
-							collection.Add(instance);
+						if (setElement != null) {
+							IList collection = (IList)fieldInfo.GetValue(o);
+							foreach (XmlNode childNode in setElement.ChildNodes) {
+								object instance = xmlSetAttributes[0].Type.Assembly.CreateInstance(xmlSetAttributes[0].Type.FullName);
+								GetXmlAttributes(doc, (XmlElement)childNode, instance);
+								collection.Add(instance);
+							}
 						}
 					} else { // finally try, if the field is from a type which has a XmlNodeName attribute attached
 						
@@ -654,12 +667,32 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			return null;
 		}
 		
+		bool IsEqual(string file1, string file2)
+		{
+			byte[] reference   = GetBytes(file1);
+			byte[] destination = GetBytes(file2);
+			
+			if (reference.Length != destination.Length) {
+				return false;
+			}
+			for (int i = 0; i < reference.Length; ++i) {
+				if (reference[i] != destination[i]) {
+					return false;
+				}
+			}
+			
+			return true;
+		}
+		
 		void CopyAssemblyWithReferencesToPath(string referenceFileName, string destination, bool force)
 		{
 			try {
 				string destinationFileName = fileUtilityService.GetDirectoryNameWithSeparator(destination) + Path.GetFileName(referenceFileName);
 				try {
 					if (destinationFileName != referenceFileName) {
+						if (File.Exists(destinationFileName) && IsEqual(referenceFileName, destinationFileName)) {
+							return;
+						}
 						File.Copy(referenceFileName, destinationFileName, true);
 						if (File.Exists(Path.ChangeExtension(referenceFileName, ".pdb"))) {
 							File.Copy(Path.ChangeExtension(referenceFileName, ".pdb"), Path.ChangeExtension(destinationFileName, ".pdb"), true);
@@ -774,18 +807,6 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			
 			return config;
 		}
-		
-		public IConfiguration CloneConfiguration(IConfiguration configuration)
-		{
-			XmlDocument doc = new XmlDocument();
-			XmlElement newConfig = doc.CreateElement(configurationNodeName);
-			SetXmlAttributes(doc, newConfig, configuration);
-			
-			IConfiguration newConfiguration = CreateConfiguration();
-			GetXmlAttributes(doc, newConfig, newConfiguration);
-			return newConfiguration;
-		}
-
 		
 		protected virtual void OnNameChanged(EventArgs e)
 		{

@@ -1,4 +1,4 @@
-// <file>
+﻿// <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
 //     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
@@ -55,12 +55,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 			this.dockPanel.ActiveAutoHideContent = null;
 			this.dockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			
-			IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
-			
 			((DefaultWorkbench)workbench).commandBarManager.CommandBars.Add(((DefaultWorkbench)workbench).TopMenu);
-			foreach (CommandBar toolBar in ((DefaultWorkbench)workbench).ToolBars) {
-				((DefaultWorkbench)workbench).commandBarManager.CommandBars.Add(toolBar);
-			}
 			
 			wbForm.Menu = null;
 			dockPanel.ActiveDocumentChanged += new EventHandler(ActiveMdiChanged);
@@ -70,8 +65,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 				} else {
 					dockPanel.LoadFromXml(Assembly.GetCallingAssembly().GetManifestResourceStream(configFileName), new DeserializeDockContent(GetContent));
 				}
-			} catch (Exception) {
+			} catch (Exception ex) {
 				Console.WriteLine("can't load docking configuration, version clash ?");
+				Console.WriteLine(ex);
 			}
 			
 			foreach (IPadContent content in workbench.PadContentCollection) {
@@ -87,8 +83,28 @@ namespace ICSharpCode.SharpDevelop.Gui
 			
 			
 			wbForm.Controls.Add(((DefaultWorkbench)workbench).commandBarManager);
-			wbForm.Controls.Add(statusBarService.Control);
 			
+			IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
+			wbForm.Controls.Add(statusBarService.Control);
+		}
+		
+		void ShowToolBars()
+		{
+			DefaultWorkbench wb = (DefaultWorkbench)wbForm;
+			foreach (CommandBar toolBar in wb.ToolBars) {
+				if (!wb.commandBarManager.CommandBars.Contains(toolBar)) {
+					wb.commandBarManager.CommandBars.Add(toolBar);
+				}
+			}
+		}
+		
+		void HideToolBars()
+		{
+			DefaultWorkbench wb = (DefaultWorkbench)wbForm;
+			if (wb.commandBarManager.CommandBars.Count != 1) {
+				wb.commandBarManager.CommandBars.Clear();
+				wb.commandBarManager.CommandBars.Add(wb.TopMenu);
+			}
 		}
 		
 		DockContent GetContent(string padTypeName)
@@ -235,6 +251,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 					c.Text = content.Title;
 				}
 			}
+			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
+			if (propertyService.GetProperty("ICSharpCode.SharpDevelop.Gui.ToolBarVisible", true)) {
+				ShowToolBars(); 
+			} else {
+				HideToolBars(); 
+			}
+
 		}
 		
 		public void CloseWindowEvent(object sender, EventArgs e)

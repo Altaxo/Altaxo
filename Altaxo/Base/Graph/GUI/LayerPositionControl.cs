@@ -60,6 +60,7 @@ namespace Altaxo.Graph.GUI
     private AxisLinkControl m_ctrlLinkYAxis;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.ComboBox m_cbCommonType;
+    private System.Windows.Forms.CheckBox m_Layer_ClipDataToFrame;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -121,12 +122,13 @@ namespace Altaxo.Graph.GUI
       this.label16 = new System.Windows.Forms.Label();
       this.m_Layer_edLeftPosition = new System.Windows.Forms.TextBox();
       this.label15 = new System.Windows.Forms.Label();
-      this.m_ctrlLinkXAxis = new AxisLinkControl();
+      this.m_ctrlLinkXAxis = new Altaxo.Graph.GUI.AxisLinkControl();
       this.m_groupLinkXAxis = new System.Windows.Forms.GroupBox();
       this.m_groupLinkYAxis = new System.Windows.Forms.GroupBox();
-      this.m_ctrlLinkYAxis = new AxisLinkControl();
+      this.m_ctrlLinkYAxis = new Altaxo.Graph.GUI.AxisLinkControl();
       this.label1 = new System.Windows.Forms.Label();
       this.m_cbCommonType = new System.Windows.Forms.ComboBox();
+      this.m_Layer_ClipDataToFrame = new System.Windows.Forms.CheckBox();
       this.m_groupLinkXAxis.SuspendLayout();
       this.m_groupLinkYAxis.SuspendLayout();
       this.SuspendLayout();
@@ -347,8 +349,19 @@ namespace Altaxo.Graph.GUI
       this.m_cbCommonType.Text = "m_cbCommonType";
       this.m_cbCommonType.SelectionChangeCommitted += new System.EventHandler(this.EhCommonType_SelectionChangeCommitted);
       // 
+      // m_Layer_ClipDataToFrame
+      // 
+      this.m_Layer_ClipDataToFrame.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.m_Layer_ClipDataToFrame.Location = new System.Drawing.Point(80, 256);
+      this.m_Layer_ClipDataToFrame.Name = "m_Layer_ClipDataToFrame";
+      this.m_Layer_ClipDataToFrame.Size = new System.Drawing.Size(120, 16);
+      this.m_Layer_ClipDataToFrame.TabIndex = 41;
+      this.m_Layer_ClipDataToFrame.Text = "Clip data to frame";
+      this.m_Layer_ClipDataToFrame.Validating += new System.ComponentModel.CancelEventHandler(this.EhClipDataToFrame_Validating);
+      // 
       // LayerPositionControl
       // 
+      this.Controls.Add(this.m_Layer_ClipDataToFrame);
       this.Controls.Add(this.m_cbCommonType);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.m_groupLinkYAxis);
@@ -452,6 +465,11 @@ namespace Altaxo.Graph.GUI
     public void InitializeScale(string txt)
     {
       this.m_Layer_edScale.Text = txt;
+    }
+
+    public void InitializeClipDataToFrame(bool value)
+    {
+      this.m_Layer_ClipDataToFrame.Checked = value;
     }
 
     public void InitializeLeftType(string[] names, string txt)
@@ -584,6 +602,14 @@ namespace Altaxo.Graph.GUI
         e.Cancel = bCancel;
       }
     
+    }
+
+    private void EhClipDataToFrame_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      if(null!=Controller)
+      {
+        Controller.EhView_ClipDataToFrameChanged(this.m_Layer_ClipDataToFrame.Checked);
+      }
     }
   }
 }

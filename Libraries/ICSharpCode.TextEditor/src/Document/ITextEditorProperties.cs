@@ -141,5 +141,9 @@ namespace ICSharpCode.TextEditor.Document
 			set;
 		}
 	
+		bool UseCustomLine {
+			get;
+			set;
+		}
 	}
 }

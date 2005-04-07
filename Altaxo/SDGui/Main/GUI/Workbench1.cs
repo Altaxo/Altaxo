@@ -77,19 +77,16 @@ namespace ICSharpCode.SharpDevelop.Gui
 
     public new void InitializeWorkspace()
     {
-      ActiveWorkbenchWindowChanged += new EventHandler(EhAltaxoFireContentChanged);
-    
       Menu = null;
-			
-      //			statusBarManager.Control.Dock = DockStyle.Bottom;
+
+      ActiveWorkbenchWindowChanged += new EventHandler(EhAltaxoFireContentChanged);
 			
       ActiveWorkbenchWindowChanged += new EventHandler(UpdateMenu);
 			
       MenuComplete += new EventHandler(SetStandardStatusBar);
       SetStandardStatusBar(null, null);
 			
-      //			TopMenu.Selected   += new CommandHandler(OnTopMenuSelected);
-      //			TopMenu.Deselected += new CommandHandler(OnTopMenuDeselected);
+     
       CreateMainMenu();
       CreateToolBars();
     }
@@ -97,15 +94,7 @@ namespace ICSharpCode.SharpDevelop.Gui
 
     void UpdateMenu(object sender, EventArgs e)
     {
-      // update menu
-      foreach (object o in TopMenu.Items) 
-      {
-        if (o is IStatusUpdate) 
-        {
-          ((IStatusUpdate)o).UpdateStatus();
-        }
-      }
-      
+      UpdateMenus();
       UpdateToolbars();
     }
 
@@ -118,16 +107,9 @@ namespace ICSharpCode.SharpDevelop.Gui
     void CreateMainMenu()
     {
       TopMenu = new CommandBar(CommandBarStyle.Menu);
-      try 
-      {
-        IAddInTreeNode node = AddInTreeSingleton.AddInTree.GetTreeNode(mainMenuPath);
-        CommandBarItem[] items = (CommandBarItem[])(node.BuildChildItems(this)).ToArray(typeof(CommandBarItem));
-        TopMenu.Items.Clear();
-        TopMenu.Items.AddRange(items);
-      } 
-      catch (TreePathNotFoundException) 
-      {
-      }
+      CommandBarItem[] items = (CommandBarItem[])(AddInTreeSingleton.AddInTree.GetTreeNode(mainMenuPath).BuildChildItems(this)).ToArray(typeof(CommandBarItem));
+      TopMenu.Items.Clear();
+      TopMenu.Items.AddRange(items);
     }
 
     // this method simply copies over the enabled state of the toolbar,
@@ -149,15 +131,7 @@ namespace ICSharpCode.SharpDevelop.Gui
       }
     }
 
-    public void UpdateViews(object sender, EventArgs e)
-    {
-      IPadContent[] contents = (IPadContent[])(AddInTreeSingleton.AddInTree.GetTreeNode(viewContentPath).BuildChildItems(this)).ToArray(typeof(IPadContent));
-      foreach (IPadContent content in contents) 
-      {
-        ShowPad(content);
-      }
-    }
-
+   
     public void EhProjectChanged(object sender, Altaxo.Main.ProjectEventArgs e)
     {
       UpdateMenu(null, null);

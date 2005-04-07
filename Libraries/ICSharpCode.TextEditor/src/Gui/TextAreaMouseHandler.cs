@@ -115,13 +115,15 @@ namespace ICSharpCode.TextEditor
 					clickedOnSelectedText = false;
 					ISelection selection = textArea.SelectionManager.GetSelectionAt(textArea.Caret.Offset);
 					if (selection != null) {
-						string text = selection.SelectedText;
-						if (text != null && text.Length > 0) {
-							DataObject dataObject = new DataObject ();
-							dataObject.SetData(DataFormats.UnicodeText, true, text);
-							dataObject.SetData(selection);
-							dodragdrop = true;
-							textArea.DoDragDrop(dataObject, DragDropEffects.All);
+						if (textArea.EnableCutOrPaste == true) {
+							string text = selection.SelectedText;
+							if (text != null && text.Length > 0) {
+								DataObject dataObject = new DataObject ();
+								dataObject.SetData(DataFormats.UnicodeText, true, text);
+								dataObject.SetData(selection);
+								dodragdrop = true;
+								textArea.DoDragDrop(dataObject, DragDropEffects.All);
+							}
 						}
 					}
 				}

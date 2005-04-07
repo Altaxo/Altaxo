@@ -15,7 +15,6 @@ using WeifenLuo.WinFormsUI.Win32;
 
 namespace WeifenLuo.WinFormsUI
 {
-
     internal class User32
     {
 		[DllImport("User32.dll", CharSet=CharSet.Auto)]
@@ -26,6 +25,9 @@ namespace WeifenLuo.WinFormsUI
 
 		[DllImport("User32.dll", CharSet=CharSet.Auto)]
 		public static extern IntPtr GetSysColorBrush(int index);
+
+		[DllImport("User32.dll", CharSet=CharSet.Auto)]
+		public static extern IntPtr GetDesktopWindow();
 		
 		[DllImport("User32.dll", CharSet=CharSet.Auto)]
         public static extern bool InvalidateRect(IntPtr hWnd, ref RECT rect, bool erase);

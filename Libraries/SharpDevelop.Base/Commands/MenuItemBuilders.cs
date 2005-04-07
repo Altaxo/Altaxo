@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike KrÃ¼ger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -187,6 +187,16 @@ namespace ICSharpCode.SharpDevelop.Commands
 					
 					string command = stringParserService.Parse(tool.Command);
 					string args    = stringParserService.Parse(tool.Arguments);
+					
+					if (tool.PromptForArguments) {
+						InputBox box = new InputBox();
+						box.Text = tool.MenuCommand;
+						box.Label.Text = "Enter arguments for the tool:";
+						box.TextBox.Text = args;
+						if (box.ShowDialog() != DialogResult.OK)
+							return;
+						args = box.TextBox.Text;
+					}
 					
 					try {
 						ProcessStartInfo startinfo;

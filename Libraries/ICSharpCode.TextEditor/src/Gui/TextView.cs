@@ -252,8 +252,13 @@ namespace ICSharpCode.TextEditor
 				HighlightColor caretLine = textArea.Document.HighlightingStrategy.GetColorFor("CaretMarker");
 				return BrushRegistry.GetBrush(caretLine.Color);
 			}
-			HighlightBackground background = (HighlightBackground)textArea.Document.HighlightingStrategy.GetColorFor("Default");
-			return BrushRegistry.GetBrush(background.BackgroundColor);
+			HighlightBackground background = (HighlightBackground)textArea.Document.HighlightingStrategy.GetColorFor("DefaultBackground");
+			Color bgColor = background.BackgroundColor;
+			if (textArea.MotherTextAreaControl.TextEditorProperties.UseCustomLine == true) 
+			{
+				bgColor = textArea.Document.CustomLineManager.GetCustomColor(lineNumber, bgColor);
+			}
+			return BrushRegistry.GetBrush(bgColor);
 		}
 		
 		float PaintFoldingText(Graphics g, int lineNumber, float physicalXPos, Rectangle lineRectangle, string text, bool drawSelected)

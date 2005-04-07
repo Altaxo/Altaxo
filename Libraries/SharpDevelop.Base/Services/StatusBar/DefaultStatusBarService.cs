@@ -33,6 +33,17 @@ namespace ICSharpCode.SharpDevelop.Services
 			}
 		}
 		
+		public bool Visible {
+			get {
+				System.Diagnostics.Debug.Assert(statusBar != null);
+				return statusBar.Visible;
+			}
+			set {
+				System.Diagnostics.Debug.Assert(statusBar != null);
+				statusBar.Visible = value;
+			}
+		}
+		
 		public Control Control {
 			get {
 				System.Diagnostics.Debug.Assert(statusBar != null);
@@ -98,6 +109,8 @@ namespace ICSharpCode.SharpDevelop.Services
 			} else {
 				SetMessage(lastMessage);
 			}
+			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
+			Visible = propertyService.GetProperty("ICSharpCode.SharpDevelop.Gui.StatusBarVisible", true);
 		}
 		
 		public void Update()

@@ -255,7 +255,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 		}
 		
-		bool HandleKeyPress(char ch)
+		protected bool HandleKeyPress(char ch)
 		{
 			string fileName = FileName;
 			if (codeCompletionWindow != null && !codeCompletionWindow.IsDisposed) {

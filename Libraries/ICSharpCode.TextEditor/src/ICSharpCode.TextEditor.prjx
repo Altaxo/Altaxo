@@ -9,6 +9,8 @@
     <File name=".\Document\BookmarkManager\BookmarkManager.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Document\BookmarkManager\BookmarkManagerMemento.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Document\BookmarkManager\IBookMarkManager.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Document\CustomLineManager\CustomLineManager.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Document\CustomLineManager\ICustomLineManager.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Document\FormattingStrategy\DefaultFormattingStrategy.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Document\FormattingStrategy\IFormattingStrategy.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Document\HighlightingStrategy\DefaultHighlightingStrategy.cs" subtype="Code" buildaction="Compile" dependson="" data="" />

@@ -46,11 +46,9 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 			public string ExecuteAfterBuild = String.Empty;
 			
 			[XmlAttribute("executeBeforeBuildArguments")]
-			[ConvertToRelativePath()]
 			public string ExecuteBeforeBuildArguments = String.Empty;
 			
 			[XmlAttribute("executeAfterBuildArguments")]
-			[ConvertToRelativePath()]
 			public string ExecuteAfterBuildArguments = String.Empty;
 		}
 		

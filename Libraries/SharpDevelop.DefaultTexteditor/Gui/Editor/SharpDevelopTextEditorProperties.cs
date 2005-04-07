@@ -286,6 +286,16 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 			}
 		}
 
+		bool useCustomLine = false;
+		public bool UseCustomLine {
+			get {
+				return useCustomLine;
+			}
+			set {
+				useCustomLine = value;
+			}
+		}
+
 		/*
 		<Property key="DoubleBuffer" value="True" />
         <Property key="ShowErrors" value="True" />

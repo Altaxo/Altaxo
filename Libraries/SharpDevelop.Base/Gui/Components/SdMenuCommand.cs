@@ -130,22 +130,20 @@ namespace ICSharpCode.SharpDevelop.Gui.Components
 		
 		public virtual void UpdateStatus()
 		{
+			bool isEnabled = true;
 			if (conditionCollection != null) {
 				ConditionFailedAction failedAction = conditionCollection.GetCurrentConditionFailedAction(caller);
 				bool isVisible = failedAction != ConditionFailedAction.Exclude;
 				if (base.IsVisible != isVisible) {
 					base.IsVisible = isVisible;
 				}
-				bool isEnabled = failedAction != ConditionFailedAction.Disable;
-				if (base.IsEnabled != isEnabled) {
-					base.IsEnabled = isEnabled;
-				}
+				isEnabled = failedAction != ConditionFailedAction.Disable;
 			}
 			if (menuCommand != null && menuCommand is IMenuCommand) {
-				bool isEnabled = IsEnabled & ((IMenuCommand)menuCommand).IsEnabled;
-				if (base.IsEnabled != isEnabled) {
-					base.IsEnabled = isEnabled;
-				}
+				isEnabled &= ((IMenuCommand)menuCommand).IsEnabled;
+			}
+			if (base.IsEnabled != isEnabled) {
+				base.IsEnabled = isEnabled;
 			}
 			Text = stringParserService.Parse(localizedText);
 		}

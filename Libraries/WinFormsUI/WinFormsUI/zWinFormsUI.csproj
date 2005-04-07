@@ -104,224 +104,292 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "AutoHideWindow.cs"
+                    RelPath = "Strings.ResX"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Controls\InertButton.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "AutoHideWindowSplitter.cs"
+                    RelPath = "Docking\AutoHidePane.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\AutoHidePaneCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\AutoHideStateCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\AutoHideStripBase.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DisplayingDockList.cs"
+                    RelPath = "Docking\AutoHideStripVS2003.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\AutoHideTab.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DockAreasEditor.cs"
+                    RelPath = "Docking\AutoHideTabCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DockContent.cs"
+                    RelPath = "Docking\AutoHideTabVS2003.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\AutoHideWindow.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\AutoHideWindowSplitter.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\DisplayingDockList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\DockAreasEditor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\DockContent.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DockContentCollection.cs"
+                    RelPath = "Docking\DockContentCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DockHelper.cs"
+                    RelPath = "Docking\DockHelper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DockList.cs"
+                    RelPath = "Docking\DockList.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DockPane.cs"
+                    RelPath = "Docking\DockPane.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DockPaneCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DockPanel.cs"
+                    RelPath = "Docking\DockPaneCaptionBase.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DockPanelPersist.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DockPaneSplitter.cs"
+                    RelPath = "Docking\DockPaneCaptionVS2003.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DockWindow.cs"
+                    RelPath = "Docking\DockPaneCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\DockPanel.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DockWindowCollection.cs"
+                    RelPath = "Docking\DockPanelExtender.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DockWindowSplitter.cs"
+                    RelPath = "Docking\DockPanelPersist.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\DockPaneSplitter.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DragHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DragHandlerBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DrawHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "DummyControl.cs"
+                    RelPath = "Docking\DockPaneStripBase.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Enums.cs"
+                    RelPath = "Docking\DockPaneStripVS2003.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\DockPaneTab.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "EventArgs.cs"
+                    RelPath = "Docking\DockPaneTabCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "FloatWindow.cs"
+                    RelPath = "Docking\DockPaneTabVS2003.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\DockWindow.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\DockWindowCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\DockWindowSplitter.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\DragHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\DragHandlerBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\DummyControl.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\Enums.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\EventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\FloatWindow.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "FloatWindowCollection.cs"
+                    RelPath = "Docking\FloatWindowCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "HiddenMdiChild.cs"
+                    RelPath = "Docking\HiddenMdiChild.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "InertButton.cs"
+                    RelPath = "Docking\Interfaces.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\Measures.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\NestedDockingStatus.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Docking\SplitterBase.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Interfaces.cs"
+                    RelPath = "Helpers\DrawHelper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Localization.cs"
+                    RelPath = "Helpers\Localization.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "LocalWindowsHook.cs"
+                    RelPath = "Helpers\LocalWindowsHook.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Measures.cs"
+                    RelPath = "Helpers\ResourceHelper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "NestedDockingStatus.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ResourceHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "SplitterBase.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Resources\DockPane.AutoHideNo.bmp"
+                    RelPath = "Resources\DockPaneCaption.AutoHideNo.bmp"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Resources\DockPane.AutoHideYes.bmp"
+                    RelPath = "Resources\DockPaneCaption.AutoHideYes.bmp"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Resources\DockPane.DocumentCloseDisabled.bmp"
+                    RelPath = "Resources\DockPaneCaption.CloseDisabled.bmp"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Resources\DockPane.DocumentCloseEnabled.bmp"
+                    RelPath = "Resources\DockPaneCaption.CloseEnabled.bmp"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Resources\DockPane.ScrollLeftDisabled.bmp"
+                    RelPath = "Resources\DockPaneStrip.CloseDisabled.bmp"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Resources\DockPane.ScrollLeftEnabled.bmp"
+                    RelPath = "Resources\DockPaneStrip.CloseEnabled.bmp"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Resources\DockPane.ScrollRightDisabled.bmp"
+                    RelPath = "Resources\DockPaneStrip.ScrollLeftDisabled.bmp"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Resources\DockPane.ScrollRightEnabled.bmp"
+                    RelPath = "Resources\DockPaneStrip.ScrollLeftEnabled.bmp"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Resources\DockPane.ToolWindowCloseDisabled.bmp"
+                    RelPath = "Resources\DockPaneStrip.ScrollRightDisabled.bmp"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Resources\DockPane.ToolWindowCloseEnabled.bmp"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Resources\DockPaneSplitter.resources"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Resources\FloatWindow.resources"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Resources\InertButton.resources"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Resources\Strings.resources"
+                    RelPath = "Resources\DockPaneStrip.ScrollRightEnabled.bmp"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

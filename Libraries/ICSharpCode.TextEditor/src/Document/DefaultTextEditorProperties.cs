@@ -45,6 +45,8 @@ namespace ICSharpCode.TextEditor.Document
 		string      lineTerminator = "\r\n";
 		bool        autoInsertCurlyBracket = true;
 		
+		bool        useCustomLine      = false;
+
 		public int TabIndent {
 			get {
 				return tabIndent;
@@ -267,6 +269,13 @@ namespace ICSharpCode.TextEditor.Document
 			}
 		}
 
-		
+		public bool UseCustomLine {
+			get {
+				return useCustomLine;
+			}
+			set {
+				useCustomLine = value;
+			}
+		}
 	}
 }

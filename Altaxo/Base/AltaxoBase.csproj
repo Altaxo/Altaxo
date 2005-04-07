@@ -640,6 +640,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\AxisLabeling\AbstractNumericLabelFormatting.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\AxisLabeling\NumericAxisLabelFormattingAuto.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\AxisLabeling\NumericAxisLabelFormattingFixed.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\GUI\AxisLinkControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"

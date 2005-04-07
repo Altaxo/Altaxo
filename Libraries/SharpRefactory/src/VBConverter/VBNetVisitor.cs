@@ -276,8 +276,12 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 					sourceText.Append(GetModifier(fieldDeclaration.Modifier));
 				}
 				sourceText.Append(field.Name);
-				sourceText.Append(" As ");
-				sourceText.Append(GetTypeString(fieldDeclaration.TypeReference));
+				
+				// the type can be null (enum members)
+				if(fieldDeclaration.TypeReference != null) {
+					sourceText.Append(" As ");
+					sourceText.Append(GetTypeString(fieldDeclaration.TypeReference));
+				}
 				if (field.Initializer != null) {
 					sourceText.Append(" = ");
 					sourceText.Append(field.Initializer.AcceptVisitor(this, data).ToString());

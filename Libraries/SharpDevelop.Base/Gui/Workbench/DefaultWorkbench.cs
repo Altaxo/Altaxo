@@ -1,7 +1,7 @@
 // <file>
 //     <copyright see="prj:///doc/copyright.txt"/>
 //     <license see="prj:///doc/license.txt"/>
-//     <owner name="Mike Krüger" email="mike@icsharpcode.net"/>
+//     <owner name="Mike Krger" email="mike@icsharpcode.net"/>
 //     <version value="$version"/>
 // </file>
 
@@ -232,7 +232,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 				content.RedrawContent();
 			}
 			layout.RedrawAllComponents();
-//			statusBarManager.RedrawStatusbar();
+			IStatusBarService statusBarService = (IStatusBarService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IStatusBarService));
+			statusBarService.RedrawStatusbar();
 		}
 		
 		public IXmlConvertable GetStoredMemento(IViewContent content)

@@ -43,6 +43,12 @@
 	  							<xsl:when test="$orig_author = 'nikola'">
 									<xsl:text>Nikola Kavaldjiev</xsl:text>
 	  							</xsl:when>
+	  							<xsl:when test="$orig_author = 'mattward'">
+									<xsl:text>Matt Ward</xsl:text>
+	  							</xsl:when>
+	  							<xsl:when test="$orig_author = 'ivokovacka'">
+									<xsl:text>Ifko Kovacka</xsl:text>
+	  							</xsl:when>
 	  							<xsl:otherwise>
 	  								<xsl:value-of select="./author" />
 	  							</xsl:otherwise>

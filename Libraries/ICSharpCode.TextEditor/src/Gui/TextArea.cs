@@ -423,7 +423,7 @@ namespace ICSharpCode.TextEditor
 		
 		/// <summary>
 		/// This method is called on each Keypress
-		/// </rsummary>
+		/// </summary>
 		/// <returns>
 		/// True, if the key is handled by this method and should NOT be
 		/// inserted in the textarea.
@@ -441,6 +441,14 @@ namespace ICSharpCode.TextEditor
 			if (Document.ReadOnly) {
 				return;
 			}
+
+			if (TextEditorProperties.UseCustomLine == true) {
+				if (SelectionManager.HasSomethingSelected) {
+					if (Document.CustomLineManager.IsReadOnly(SelectionManager.SelectionCollection[0], false))
+						return;
+				} else if (Document.CustomLineManager.IsReadOnly(Caret.Line, false) == true)
+					return;
+			}
 			
 			if (ch < ' ') {
 				return;
@@ -451,31 +459,24 @@ namespace ICSharpCode.TextEditor
 				Cursor.Hide();
 			}
 			
-			motherTextEditorControl.BeginUpdate();
-			switch (ch) {
-				default: // INSERT char
-					if (!HandleKeyPress(ch)) {
-						switch (Caret.CaretMode) {
-							case CaretMode.InsertMode:
-								InsertChar(ch);
-								break;
-							case CaretMode.OverwriteMode:
-								ReplaceChar(ch);
-								break;
-							default:
-								Debug.Assert(false, "Unknown caret mode " + Caret.CaretMode);
-								break;
-						}
-					}
-					break;
-			}
+			if (!HandleKeyPress(ch)) {
+				motherTextEditorControl.BeginUpdate();
+				switch (Caret.CaretMode) 
+				{
+					case CaretMode.InsertMode:
+						InsertChar(ch);
+						break;
+					case CaretMode.OverwriteMode:
+						ReplaceChar(ch);
+						break;
+					default:
+						Debug.Assert(false, "Unknown caret mode " + Caret.CaretMode);
+						break;
+				}
+				int currentLineNr = Caret.Line;
+				int delta = Document.FormattingStrategy.FormatLine(this, currentLineNr, Document.PositionToOffset(Caret.Position), ch);
 			
-			int currentLineNr = Caret.Line;
-			int delta = Document.FormattingStrategy.FormatLine(this, currentLineNr, Document.PositionToOffset(Caret.Position), ch);
-			
-			motherTextEditorControl.EndUpdate();
-			if (delta != 0) {
-//				this.motherTextEditorControl.UpdateLines(currentLineNr, currentLineNr);
+				motherTextEditorControl.EndUpdate();
 			}
 		}
 		
@@ -493,6 +494,29 @@ namespace ICSharpCode.TextEditor
 			// try, if a dialog key processor was set to use this
 			if (DoProcessDialogKey != null && DoProcessDialogKey(keyData)) {
 				return true;
+			}
+			
+			if (keyData == Keys.Back || keyData == Keys.Delete || keyData == Keys.Enter) {
+				if (TextEditorProperties.UseCustomLine == true) {
+					if (SelectionManager.HasSomethingSelected) {
+						if (Document.CustomLineManager.IsReadOnly(SelectionManager.SelectionCollection[0], false))
+							return true;
+					} else {
+						int curLineNr   = Document.GetLineNumberForOffset(Caret.Offset);
+						if (Document.CustomLineManager.IsReadOnly(curLineNr, false) == true)
+							return true;
+						if ((Caret.Column == 0) && (curLineNr - 1 >= 0) && keyData == Keys.Back &&
+							Document.CustomLineManager.IsReadOnly(curLineNr - 1, false) == true)
+							return true;
+						if (keyData == Keys.Delete) {
+							LineSegment curLine = Document.GetLineSegment(curLineNr);
+							if (curLine.Offset + curLine.Length == Caret.Offset && 
+								Document.CustomLineManager.IsReadOnly(curLineNr + 1, false) == true) {
+								return true;
+							}
+						}
+					}
+				}
 			}
 			
 			// if not (or the process was 'silent', use the standard edit actions
@@ -549,6 +573,22 @@ namespace ICSharpCode.TextEditor
 		string GenerateWhitespaceString(int length)
 		{
 			return new String(' ', length);
+		}
+
+		public bool EnableCutOrPaste
+		{
+			get {
+				if (TextEditorProperties.UseCustomLine == true) {
+					if (SelectionManager.HasSomethingSelected == true) {
+						if (Document.CustomLineManager.IsReadOnly(SelectionManager.SelectionCollection[0], false))
+							return false;
+					}
+					if (Document.CustomLineManager.IsReadOnly(Caret.Line, false) == true)
+						return false;
+				}
+				return true;
+				
+			}
 		}
 		/// <remarks>
 		/// Inserts a single character at the caret position

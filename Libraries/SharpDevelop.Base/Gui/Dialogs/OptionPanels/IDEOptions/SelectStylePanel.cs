@@ -37,12 +37,17 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs.OptionPanels
 			}			
 			
 			((ComboBox)ControlDictionary["selectAmbienceComboBox"]).Text = PropertyService.GetProperty("SharpDevelop.UI.CurrentAmbience", "CSharp");
+			
+			((CheckBox)ControlDictionary["showStatusBarCheckBox"]).Checked = PropertyService.GetProperty("ICSharpCode.SharpDevelop.Gui.StatusBarVisible", true);
+			((CheckBox)ControlDictionary["showToolBarCheckBox"]).Checked   = PropertyService.GetProperty("ICSharpCode.SharpDevelop.Gui.ToolBarVisible", true);
 		}
 		
 		public override bool StorePanelContents()
 		{
 			PropertyService.SetProperty("ICSharpCode.SharpDevelop.Gui.ProjectBrowser.ShowExtensions", ((CheckBox)ControlDictionary["showExtensionsCheckBox"]).Checked);
 			PropertyService.SetProperty("SharpDevelop.UI.CurrentAmbience", ((ComboBox)ControlDictionary["selectAmbienceComboBox"]).Text);
+			PropertyService.SetProperty("ICSharpCode.SharpDevelop.Gui.StatusBarVisible", ((CheckBox)ControlDictionary["showStatusBarCheckBox"]).Checked);
+			PropertyService.SetProperty("ICSharpCode.SharpDevelop.Gui.ToolBarVisible", ((CheckBox)ControlDictionary["showToolBarCheckBox"]).Checked);
 			return true;
 		}
 	}

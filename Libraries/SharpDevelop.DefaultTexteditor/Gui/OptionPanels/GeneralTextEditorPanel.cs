@@ -103,7 +103,7 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.OptionPanels
 			((ComboBox)ControlDictionary["textEncodingComboBox"]).SelectedIndex = encodingIndex;
 			encoding = CharacterEncodings.GetEncodingByIndex(encodingIndex).CodePage;
 			
-			Font currentFont = ParseFont(((IProperties)CustomizationObject).GetProperty("DefaultFont", new Font("Courier New", 10)).ToString());
+			Font currentFont = ParseFont(((IProperties)CustomizationObject).GetProperty("DefaultFont", new Font("Courier New", 10).ToString()).ToString());
 			
 			for (int i = 6; i <= 24; ++i) {
 				((ComboBox)ControlDictionary["fontSizeComboBox"]).Items.Add(i);

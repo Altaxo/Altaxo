@@ -78,9 +78,9 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
       Altaxo.Current.ProjectService.CurrentOpenProject = new AltaxoDocument();
 
   
-      PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
-      w.SetMemento((IXmlConvertable)propertyService.GetProperty(workbenchMemento, new WorkbenchMemento()));
-      w.UpdateViews(null, null);
+			PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
+			w.SetMemento((IXmlConvertable)propertyService.GetProperty(workbenchMemento, new WorkbenchMemento()));
+			w.UpdatePadContents(null, null);
       
 #if !ModifiedForAltaxo
       WorkbenchSingleton.CreateWorkspace();
@@ -91,6 +91,55 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
     }
   }
 
+
+  public class StartCodeCompletionWizard : AbstractCommand
+  {
+    public override void Run()
+    {
+      PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
+      string path = propertyService.GetProperty("SharpDevelop.CodeCompletion.DataDirectory", String.Empty).ToString();
+      FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+      string codeCompletionTemp = fileUtilityService.GetDirectoryNameWithSeparator(path);
+      string codeCompletionProxyFile = codeCompletionTemp + "CodeCompletionProxyDataV02.bin";
+			
+      if (!File.Exists(codeCompletionProxyFile)) 
+      {
+        RunWizard();
+        DefaultParserService parserService = (DefaultParserService)ServiceManager.Services.GetService(typeof(IParserService));
+        parserService.LoadProxyDataFile();
+      }
+    }
+		
+    void RunWizard()
+    {
+      IProperties customizer = new DefaultProperties();
+			
+      if (SplashScreenForm.SplashScreen.Visible) 
+      {
+        SplashScreenForm.SplashScreen.Close();
+      }
+      PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
+			
+      customizer.SetProperty("SharpDevelop.CodeCompletion.DataDirectory",
+        propertyService.GetProperty("SharpDevelop.CodeCompletion.DataDirectory", String.Empty));
+			
+      using (WizardDialog wizard = new WizardDialog("Initialize Code Completion Database", customizer, "/SharpDevelop/CompletionDatabaseWizard")) 
+      {
+        wizard.ControlBox = false;
+        wizard.ShowInTaskbar = true;
+        if (wizard.ShowDialog() == DialogResult.OK && !customizer.GetProperty("SkipDb", false)) 
+        {
+          propertyService.SetProperty("SharpDevelop.CodeCompletion.DataDirectory",
+            customizer.GetProperty("SharpDevelop.CodeCompletion.DataDirectory", String.Empty));
+          // restart  & exit 
+          ServiceManager.Services.UnloadAllServices();
+          ((Form)WorkbenchSingleton.Workbench).Dispose();
+          System.Diagnostics.Process.Start(Path.Combine(Application.StartupPath, "AltaxoStartup.exe"));
+          System.Environment.Exit(0);
+        }
+      }
+    }
+  }
 
   public class StartWorkbench1Command : AbstractCommand
   {
@@ -118,7 +167,56 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
         dview.Run();
       }
     }
-    
+    class FormKeyHandler : IMessageFilter
+    {
+      const int keyPressedMessage          = 0x100;
+			
+      void HideAllPads()
+      {
+        foreach (IPadContent pad in WorkbenchSingleton.Workbench.PadContentCollection) 
+        {
+          WorkbenchSingleton.Workbench.WorkbenchLayout.HidePad(pad);
+        }
+      }
+      void SelectActiveWorkbenchWindow()
+      {
+        if (WorkbenchSingleton.Workbench.ActiveWorkbenchWindow != null) 
+        {
+          if (!WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent.Control.ContainsFocus) 
+          {
+            if (Form.ActiveForm == (Form)WorkbenchSingleton.Workbench) 
+            {
+              WorkbenchSingleton.Workbench.ActiveWorkbenchWindow.ActiveViewContent.Control.Focus();
+            }
+          }
+        }
+      }
+			
+      public bool PreFilterMessage(ref Message m)
+      {
+        if (m.Msg != keyPressedMessage) 
+        {
+          return false;
+        }
+        Keys keyPressed = (Keys)m.WParam.ToInt32() | Control.ModifierKeys;
+				
+        if (keyPressed == Keys.Escape) 
+        {
+          SelectActiveWorkbenchWindow();
+          return false;
+        }
+				
+        if (keyPressed == (Keys.Escape | Keys.Shift)) 
+        {
+          HideAllPads();
+          SelectActiveWorkbenchWindow();
+          return true;
+        }
+        return false;
+      }
+    }
+
+
     public override void Run()
     {
       //#if OriginalSharpDevelopCode
@@ -135,43 +233,47 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
       idleEventHandler = new EventHandler(ShowTipOfTheDay);
       Application.Idle += idleEventHandler;
       
-#if OriginalSharpDevelopCode
+#if !ModifiedForAltaxo
 
-      IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
-      
-      // load previous combine
-      if ((bool)propertyService.GetProperty("SharpDevelop.LoadPrevProjectOnStartup", false)) 
-      {
-        object recentOpenObj = propertyService.GetProperty("ICSharpCode.SharpDevelop.Gui.MainWindow.RecentOpen");
-        if (recentOpenObj is ICSharpCode.SharpDevelop.Services.RecentOpen) 
-        {
-          ICSharpCode.SharpDevelop.Services.RecentOpen recOpen = (ICSharpCode.SharpDevelop.Services.RecentOpen)recentOpenObj;
-          if (recOpen.RecentProject.Count > 0) 
-          { 
-            projectService.OpenCombine(recOpen.RecentProject[0].ToString());
-          }
-        }
-      }
-      
-#endif
-      
-      foreach (string file in SplashScreenForm.GetRequestedFileList()) 
-      {
-        switch (System.IO.Path.GetExtension(file).ToUpper()) 
-        {
-#if OriginalSharpDevelopCode
-          case ".PRJX":
-            try 
-            {
-              projectService.OpenCombine(file);
-            } 
-            catch (Exception e) 
-            {
-              CombineLoadError.HandleError(e, file);
-            }
-            
-            break;
-#endif
+     	IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+			
+			bool didLoadCombineOrFile = false;
+			
+			foreach (string file in SplashScreenForm.GetRequestedFileList()) {
+				didLoadCombineOrFile = true;
+				switch (System.IO.Path.GetExtension(file).ToUpper()) {
+					case ".CMBX":
+					case ".PRJX":
+						FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
+						fileUtilityService.ObservedLoad(new NamedFileOperationDelegate(projectService.OpenCombine), file);
+						break;
+					default:
+						try {
+							IFileService fileService = (IFileService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IFileService));
+							fileService.OpenFile(file);
+						} catch (Exception e) {
+							Console.WriteLine("unable to open file {0} exception was :\n{1}", file, e.ToString());
+						}
+						break;
+				}
+			}
+			
+			// load previous combine
+			if (!didLoadCombineOrFile && (bool)propertyService.GetProperty("SharpDevelop.LoadPrevProjectOnStartup", false)) {
+				object recentOpenObj = propertyService.GetProperty("ICSharpCode.SharpDevelop.Gui.MainWindow.RecentOpen");
+				if (recentOpenObj is ICSharpCode.SharpDevelop.Services.RecentOpen) {
+					ICSharpCode.SharpDevelop.Services.RecentOpen recOpen = (ICSharpCode.SharpDevelop.Services.RecentOpen)recentOpenObj;
+					if (recOpen.RecentProject.Count > 0) { 
+						projectService.OpenCombine(recOpen.RecentProject[0].ToString());
+					}
+				}
+			}
+#else      
+			
+      bool didLoadCombineOrFile = false;
+      foreach (string file in SplashScreenForm.GetRequestedFileList()) {
+				didLoadCombineOrFile = true;
+				switch (System.IO.Path.GetExtension(file).ToUpper()) {
           case ".AXOPRJ":
           case ".AXOPRZ":
             try
@@ -197,65 +299,29 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
             break;
         }
       }
+
+#endif
       
-      f.Focus(); // windows.forms focus workaround  
-      
+      f.Focus(); // windows.forms focus workaround	
+			
       // finally run the workbench window ...
+      Application.AddMessageFilter(new FormKeyHandler());
       Application.Run(f);
-      
+			
       // save the workbench memento in the ide properties
-      propertyService.SetProperty(workbenchMemento, WorkbenchSingleton.Workbench.CreateMemento());
-    }
-  }
-
-
-
-  public class StartCodeCompletionWizard : AbstractCommand
-  {
-    public override void Run()
-    {
-      PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
-      string path = propertyService.GetProperty("SharpDevelop.CodeCompletion.DataDirectory", String.Empty).ToString();
-      FileUtilityService fileUtilityService = (FileUtilityService)ServiceManager.Services.GetService(typeof(FileUtilityService));
-      string codeCompletionTemp = fileUtilityService.GetDirectoryNameWithSeparator(path);
-      string codeCompletionProxyFile = codeCompletionTemp + "CodeCompletionProxyDataV02.bin";
-      
-      if (!File.Exists(codeCompletionProxyFile)) 
+      try 
       {
-        RunWizard();
-        DefaultParserService parserService = (DefaultParserService)ServiceManager.Services.GetService(typeof(IParserService));
-        parserService.LoadProxyDataFile();
-      }
-    }
-    
-    void RunWizard()
-    {
-      IProperties customizer = new DefaultProperties();
-      
-      if (SplashScreenForm.SplashScreen.Visible) 
+        propertyService.SetProperty(workbenchMemento, WorkbenchSingleton.Workbench.CreateMemento());
+      } 
+      catch (Exception e) 
       {
-        SplashScreenForm.SplashScreen.Close();
-      }
-      PropertyService propertyService = (PropertyService)ServiceManager.Services.GetService(typeof(PropertyService));
-      
-      customizer.SetProperty("SharpDevelop.CodeCompletion.DataDirectory",
-        propertyService.GetProperty("SharpDevelop.CodeCompletion.DataDirectory", String.Empty));
-      
-      using (WizardDialog wizard = new WizardDialog("Initialize Code Completion Database", customizer, "/SharpDevelop/CompletionDatabaseWizard")) 
-      {
-        wizard.ControlBox = false;
-        wizard.ShowInTaskbar = true;
-        if (wizard.ShowDialog() == DialogResult.OK) 
-        {
-          propertyService.SetProperty("SharpDevelop.CodeCompletion.DataDirectory",
-            customizer.GetProperty("SharpDevelop.CodeCompletion.DataDirectory", String.Empty));
-          // restart  & exit 
-          ServiceManager.Services.UnloadAllServices();
-          System.Diagnostics.Process.Start(Path.Combine(Application.StartupPath, "AltaxoStartup.exe"));
-          System.Environment.Exit(0);
-        }
+        Console.WriteLine("Exception while saving workbench state: " + e.ToString());
       }
     }
   }
+
+
+
+  
   
 }

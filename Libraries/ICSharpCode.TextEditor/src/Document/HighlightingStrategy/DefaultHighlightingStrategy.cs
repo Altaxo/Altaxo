@@ -52,7 +52,8 @@ namespace ICSharpCode.TextEditor.Document
 			digitColor      = new HighlightBackground("WindowText", "Window", false, false);
 			
 			// set small 'default color environment'
-			environmentColors["Default"]          = new HighlightBackground("WindowText", "Window", false, false);
+			environmentColors["DefaultBackground"]= new HighlightBackground("WindowText", "Window", false, false);
+			environmentColors["Default"]          = new HighlightColor(System.Drawing.SystemColors.WindowText, false, false);
 			environmentColors["Selection"]        = new HighlightColor("HighlightText", "Highlight", false, false);
 			environmentColors["VRuler"]           = new HighlightColor("ControlLight", "Window", false, false);
 			environmentColors["InvalidLines"]     = new HighlightColor(Color.Red, false, false);

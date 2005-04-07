@@ -293,6 +293,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Document\CustomLineManager\CustomLineManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Document\CustomLineManager\ICustomLineManager.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Document\FoldingStrategy\FoldingManager.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -78,6 +78,13 @@ namespace ICSharpCode.SharpDevelop.Gui
 			bounds = new Rectangle(Int32.Parse(boundstr[0]), Int32.Parse(boundstr[1]), 
 			                       Int32.Parse(boundstr[2]), Int32.Parse(boundstr[3]));
 			
+			// check if the position is within primary screen, if not set it on { 20, 20 }
+			Rectangle screenBounds = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+			if (bounds.X > screenBounds.Width)
+				bounds.X = 20; // default value ?
+			if (bounds.Y > screenBounds.Height)
+				bounds.Y = 20; // default value ?
+			
 			windowstate = (FormWindowState)Enum.Parse(typeof(FormWindowState), element.Attributes["formwindowstate"].InnerText);
 			
 			if (element.Attributes["defaultformwindowstate"] != null) {
