@@ -1171,6 +1171,8 @@ namespace Altaxo.Graph.GUI
       XYPlotLayer layer = hit.ParentLayer;
       TextGraphics tg = (TextGraphics)hit.HittedObject;
 
+      bool shouldDeleted = false;
+
       TextControlDialog dlg = new TextControlDialog(layer,tg);
       if(DialogResult.OK==dlg.ShowDialog(Current.MainWindow))
       {
@@ -1181,14 +1183,17 @@ namespace Altaxo.Graph.GUI
         else // item is empty, so must be deleted in the layer and in the selectedObjects
         {
           if(null!=hit.Remove)
-            return hit.Remove(hit);
+            shouldDeleted = hit.Remove(hit);
           else
-            return false;
+            shouldDeleted = false;
         }
+        // note the chante in the text graphics object
+        if(layer.ParentLayerList!=null)
+          layer.ParentLayerList.OnChildChanged(layer,EventArgs.Empty);
       }
 
 
-      return false;
+      return shouldDeleted;
     }
 
     #endregion

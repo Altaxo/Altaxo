@@ -538,7 +538,7 @@ namespace Altaxo.Graph.Commands
 
 
     /// <summary>
-    /// Test class for a selected item
+    /// Tool for reading the x-y scatter values of a data point.
     /// </summary>
   public class ReadPlotItemDataTool : AbstractGraphToolsCommand
   {
@@ -567,7 +567,37 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+   
 
+  /// <summary>
+  /// Tool for reading the x-y coordinate values of a layer.
+  /// </summary>
+  public class ReadXYCoordinatesTool : AbstractGraphToolsCommand
+  {
+    public override bool IsChecked 
+    {
+      get 
+      {
+        if(null!=Controller)
+        {
+          base.IsChecked = (Controller.CurrentGraphToolType==typeof(GUI.GraphControllerMouseHandlers.ReadXYCoordinatesMouseHandler));
+        }
+
+        return base.IsChecked;
+      }
+      set 
+      {
+        base.IsChecked = value;
+        if(true==value && null!=Controller)
+        {
+          Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.ReadXYCoordinatesMouseHandler);
+        }
+
+        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+
+      }
+    }
+  }
   /// <summary>
   /// Drawing a simple line with two points.
   /// </summary>
@@ -597,6 +627,38 @@ namespace Altaxo.Graph.Commands
       }
     }
   }
+
+
+  /// <summary>
+  /// Drawing a simple line with two points.
+  /// </summary>
+  public class ArrowLineDrawingTool : AbstractGraphToolsCommand
+  {
+    public override bool IsChecked 
+    {
+      get 
+      {
+        if(null!=Controller)
+        {
+          base.IsChecked = (Controller.CurrentGraphToolType==typeof(GUI.GraphControllerMouseHandlers.ArrowLineDrawingMouseHandler));
+        }
+
+        return base.IsChecked;
+      }
+      set 
+      {
+        base.IsChecked = value;
+        if(true==value && null!=Controller)
+        {
+          Controller.CurrentGraphToolType=typeof(GUI.GraphControllerMouseHandlers.ArrowLineDrawingMouseHandler);
+        }
+
+        ((ICSharpCode.SharpDevelop.Gui.DefaultWorkbench)ICSharpCode.SharpDevelop.Gui.WorkbenchSingleton.Workbench).UpdateToolbars();
+
+      }
+    }
+  }
+
 
 
   /// <summary>

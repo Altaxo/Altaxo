@@ -46,8 +46,8 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     {
       Graph.LineGraphic go = new LineGraphic(_Points[0].layerCoord,_Points[1].layerCoord);
       //go.Pen.EndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(2,1,true);
-      
-
+     go.Pen.EndCap = LineCap.ArrowAnchor;
+     
       // deselect the text tool
       this._grac.CurrentGraphToolType = typeof(GraphControllerMouseHandlers.ObjectPointerMouseHandler);
       _grac.Layers[_grac.CurrentLayerNumber].GraphObjects.Add(go);

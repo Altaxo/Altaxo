@@ -93,18 +93,19 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
       PointF layerXY = layer.GraphToLayerCoordinates(m_Cross);
 
-      double xr = layerXY.X/layer.Size.Width;
-      double yr = layerXY.Y/layer.Size.Height;
+      double xr;
+      double yr;
 
-      double xphys, yphys;
 
-      layer.AreaToLogicalConversion.Convert(xr,yr,out xphys, out yphys);
+      layer.AreaToLogicalConversion.Convert(layerXY.X,layerXY.Y,out xr, out yr);
+      Altaxo.Data.AltaxoVariant xphys = layer.XAxis.NormalToPhysicalVariant(xr);
+      Altaxo.Data.AltaxoVariant yphys = layer.XAxis.NormalToPhysicalVariant(yr);
 
       this.DisplayData(_grac.CurrentLayerNumber,xphys,yphys);
     }
 
 
-    void DisplayData(int layerNumber, double x, double y)
+    void DisplayData(int layerNumber, Altaxo.Data.AltaxoVariant x, Altaxo.Data.AltaxoVariant y)
     {
       Current.DataDisplay.WriteOneLine(string.Format(
         "Layer({0}) X={1}, Y={2}",
@@ -135,7 +136,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     void MoveUpDown(float increment)
     {
       
-      m_Cross.X += increment;
+      m_Cross.Y += increment;
 
       DisplayCrossCoordinates();
 
@@ -185,13 +186,30 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       }
       else if(keyData == Keys.Up)
       {
-        MoveUpDown(_MovementIncrement);
+        MoveUpDown(-_MovementIncrement);
         return true;
       }
       else if(keyData == Keys.Down)
       {
-        MoveUpDown(-_MovementIncrement);
+        MoveUpDown(_MovementIncrement);
         return true;
+      }
+      else if(keyData == Keys.Add || keyData == Keys.Oemplus)
+      {
+        if(_MovementIncrement<1024)
+          _MovementIncrement *=2;
+
+        Current.DataDisplay.WriteOneLine(string.Format("MoveIncrement: {0}",_MovementIncrement));
+        return true;
+      }
+      else if(keyData == Keys.Subtract  || keyData == Keys.OemMinus)
+      {
+        if(_MovementIncrement>=(1/1024.0))
+          _MovementIncrement /=2;
+
+        Current.DataDisplay.WriteOneLine(string.Format("MoveIncrement: {0}",_MovementIncrement));
+
+      return true;
       }
 
 

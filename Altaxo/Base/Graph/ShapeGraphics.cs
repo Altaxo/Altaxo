@@ -374,8 +374,7 @@ namespace Altaxo.Graph
       GraphicsState gs = g.Save();
       g.TranslateTransform(X, Y);
       g.RotateTransform(this.m_Rotation);
-      Pen myPen = new Pen(this.LineColor, this.LineWidth);
-      g.DrawLine(myPen, 0, 0,  Width,  Height);
+      g.DrawLine(this.Pen, 0, 0,  Width,  Height);
       g.Restore(gs);
     }
     #region IGrippableObject Members

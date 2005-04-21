@@ -285,14 +285,18 @@
 			<ToolbarItem id="CutSeparator" tooltip="-" />
 			<ToolbarItem id="GraphToolSeparator" tooltip="-" />
 			<Conditional activewindow="Altaxo.Graph.GUI.SDGraphController" action="Disable">
-				<ToolbarItem id="GraphPointer" icon="Icons.16x16.GraphPointerTool" tooltip="${res:XML.MainMenu.FileMenu.New.File.Description}"
+				<ToolbarItem id="GraphPointer" icon="Icons.16x16.GraphPointerTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Pointer.Description}"
 					class="Altaxo.Graph.Commands.SelectPointerTool" />
-				<ToolbarItem id="TextPointer" icon="Icons.16x16.TextTool" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}"
+				<ToolbarItem id="TextPointer" icon="Icons.16x16.TextTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.TextTool.Description}"
 					class="Altaxo.Graph.Commands.SelectTextTool" />
-				<ToolbarItem id="ReadPlotItemData" icon="Icons.16x16.ReadData" tooltip="${res:XML.MainMenu.FileMenu.Open.File.Description}"
+				<ToolbarItem id="ReadPlotItemData" icon="Icons.16x16.ReadData" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ReadPlotItemData.Description}"
 					class="Altaxo.Graph.Commands.ReadPlotItemDataTool" />
+				<ToolbarItem id="ReadLayerCoordinates" icon="Icons.16x16.ReadLayer" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ReadLayerCoordinates.Description}"
+					class="Altaxo.Graph.Commands.ReadXYCoordinatesTool" />
 				<ToolbarItem id="LineDrawingTool" icon="Icons.16x16.LineTool" tooltip="${res:XML.MainMenu.GraphMenu.Tools.SingleLine.Description}"
 					class="Altaxo.Graph.Commands.SingleLineDrawingTool" />
+				<ToolbarItem id="ArrowDrawingTool" icon="Icons.16x16.StraightArrow" tooltip="${res:XML.MainMenu.GraphMenu.Tools.ArrowLine.Description}"
+					class="Altaxo.Graph.Commands.ArrowLineDrawingTool" />
 				<ToolbarItem id="RectangleDrawingTool" icon="Icons.16x16.Rectangle" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Rectangle.Description}"
 					class="Altaxo.Graph.Commands.RectangleDrawingTool" />
 				<ToolbarItem id="EllipseDrawingTool" icon="Icons.16x16.Ellipse" tooltip="${res:XML.MainMenu.GraphMenu.Tools.Ellipse.Description}"
