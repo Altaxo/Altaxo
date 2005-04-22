@@ -235,6 +235,10 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\StringResources.ar.resources"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\StringResources.bg.resources"
                     BuildAction = "Content"
                 />
@@ -263,15 +267,15 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\StringResources.es-mx.resources"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\StringResources.fi.resources"
                     BuildAction = "Content"
                 />
                 <File
                     RelPath = "data\resources\StringResources.fr.resources"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\StringResources.goisern.resources"
                     BuildAction = "Content"
                 />
                 <File
@@ -291,6 +295,10 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\StringResources.lt.resources"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\StringResources.nl.resources"
                     BuildAction = "Content"
                 />
@@ -303,6 +311,10 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\StringResources.pt-br.resources"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\StringResources.ro.resources"
                     BuildAction = "Content"
                 />
@@ -312,6 +324,18 @@
                 />
                 <File
                     RelPath = "data\resources\StringResources.se.resources"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\StringResources.sl.resources"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\StringResources.sr.resources"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\StringResources.tr.resources"
                     BuildAction = "Content"
                 />
                 <File
@@ -356,6 +380,10 @@
                 />
                 <File
                     RelPath = "data\resources\dialogs\NewFileDialog.xfrm"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\dialogs\NewFileWithNameDialog.xfrm"
                     BuildAction = "Content"
                 />
                 <File
@@ -411,10 +439,18 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\dialogs\ResourceEditor\RenameEntryDialog.xfrm"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\dialogs\SharpQuery\SqlParametersInput.xfrm"
                     BuildAction = "Content"
                 />
                 <Folder RelPath = "data\resources\dialogs\UML Designer\" />
+                <File
+                    RelPath = "data\resources\filetypes\c.ico"
+                    BuildAction = "Content"
+                />
                 <File
                     RelPath = "data\resources\filetypes\cmbx.ico"
                     BuildAction = "Content"
@@ -449,6 +485,30 @@
                 />
                 <File
                     RelPath = "data\resources\filetypes\xml.ico"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\InstallerBitmaps\default-banner.bmp"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\InstallerBitmaps\default-dialog.bmp"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\InstallerBitmaps\exclamic.bmp"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\InstallerBitmaps\info.bmp"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\InstallerBitmaps\new.bmp"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\InstallerBitmaps\up.bmp"
                     BuildAction = "Content"
                 />
                 <File
@@ -612,7 +672,15 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\panels\EditStandardHeaderPanel.xfrm"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\panels\ExternalToolOptions.xfrm"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\panels\FontSelectionPanel.xfrm"
                     BuildAction = "Content"
                 />
                 <File
@@ -636,6 +704,10 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\panels\OutputWindowOptionsPanel.xfrm"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\panels\ProjectAndCombineOptions.xfrm"
                     BuildAction = "Content"
                 />
@@ -644,7 +716,19 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\panels\TaskListOptions.xfrm"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\panels\VBCompilerPanel.xfrm"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\panels\VBSpecificTextEditorOptions.xfrm"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\panels\WindowsFormsGeneralOptions.xfrm"
                     BuildAction = "Content"
                 />
                 <File
@@ -737,6 +821,14 @@
                 />
                 <File
                     RelPath = "data\resources\panels\ProjectOptions\CodeGenerationPanel.xfrm"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\panels\ProjectOptions\CPPCodeGenerationPanel.xfrm"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\panels\ProjectOptions\GeneralProjectOptions.xfrm"
                     BuildAction = "Content"
                 />
                 <File
@@ -1144,10 +1236,6 @@
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "doc\AUTHORS.xml"
-                    BuildAction = "Content"
-                />
-                <File
                     RelPath = "doc\BuiltWithSharpDevelop.png"
                     BuildAction = "Content"
                 />
@@ -1168,23 +1256,7 @@
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "doc\HowYouCanHelp.xml"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\license.rtf"
-                    BuildAction = "Content"
-                />
-                <File
                     RelPath = "doc\license.txt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\ReadMe.html"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "doc\ReadMe.sxw"
                     BuildAction = "Content"
                 />
                 <File
