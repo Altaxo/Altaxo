@@ -1434,6 +1434,15 @@ namespace Altaxo.Data
     }
 
     /// <summary>
+    /// Removes all rows.
+    /// </summary>
+    public void RemoveRowsAll()
+    {
+      RemoveRows(0,this.RowCount);
+    }
+
+
+    /// <summary>
     /// Removes the <code>selectedRows</code> from the table.
     /// </summary>
     /// <param name="selectedColumns">Collection of indices to the columns that should be removed.</param>

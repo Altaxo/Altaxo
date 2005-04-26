@@ -487,10 +487,10 @@
 					class="Altaxo.Worksheet.Commands.WorksheetTranspose" />
 				<MenuItem id="TableScript" label="${res:XML.MainMenu.WorksheetMenu.TableScript}" description="${res:XML.MainMenu.WorksheetMenu.TableScript.Description}"
 					class="Altaxo.Worksheet.Commands.OpenTableScriptDialog" />
+				<MenuItem id="ExtractTableData" label="${res:XML.MainMenu.WorksheetMenu.ExtractTableData}" description="${res:XML.MainMenu.WorksheetMenu.ExtractTableData.Description}"
+					class="Altaxo.Worksheet.Commands.OpenExtractTableDataScriptDialog" />
 				<MenuItem id="MoveRows" label="${res:XML.MainMenu.WorksheetMenu.MoveSelectedRows}" description="${res:XML.MainMenu.WorksheetMenu.MoveSelectedRows.Description}"
 					class="Altaxo.Worksheet.Commands.SetRowPosition" />
-				<MenuItem id="ExperimentalScriptWindow" label="${res:XML.MainMenu.WorksheetMenu.Transpose}"
-					description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}" class="Altaxo.Worksheet.Commands.OpenScriptDialog" />
 			</MenuItem>
 		</Conditional>
 		<Conditional activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
@@ -664,6 +664,8 @@
 				</MenuItem>
 			</MenuItem>
 			<MenuItem id="Separator3" label="-" />
+				<MenuItem id="ForceException" label="${res:XML.MainMenu.HelpMenu.ForceException}"
+					description="${res:XML.MainMenu.HelpMenu.ForceException.Description}" class="Altaxo.Worksheet.Commands.OpenScriptDialog" />
 			<MenuItem id="About" label="${res:XML.MainMenu.HelpMenu.About}" icon="Icons.16x16.AboutIcon"
 				description="${res:XML.MainMenu.HelpMenu.About.Description}" class="Altaxo.Main.Commands.HelpAboutAltaxo" />
 		</MenuItem>
@@ -789,8 +791,8 @@
 					class="Altaxo.Worksheet.Commands.WorksheetTranspose" />
 				<MenuItem id="TableScript" label="${res:XML.MainMenu.WorksheetMenu.TableScript}" description="${res:XML.MainMenu.WorksheetMenu.TableScript.Description}"
 					class="Altaxo.Worksheet.Commands.OpenTableScriptDialog" />
-				<MenuItem id="ExperimentalScriptWindow" label="${res:XML.MainMenu.WorksheetMenu.Transpose}"
-					description="${res:XML.MainMenu.WorksheetMenu.Transpose.Description}" class="Altaxo.Worksheet.Commands.OpenScriptDialog" />
+				<MenuItem id="ExtractTableData" label="${res:XML.MainMenu.WorksheetMenu.ExtractTableData}" description="${res:XML.MainMenu.WorksheetMenu.ExtractTableData.Description}"
+					class="Altaxo.Worksheet.Commands.OpenExtractTableDataScriptDialog" />
 			</MenuItem>
 		</Conditional>
 		<Conditional activewindow="Altaxo.Graph.GUI.SDGraphController" action="Exclude">
@@ -930,6 +932,8 @@
 				</MenuItem>
 			</MenuItem>
 			<MenuItem id="Separator3" label="-" />
+				<MenuItem id="ForceException" label="${res:XML.MainMenu.HelpMenu.ForceException}"
+					description="${res:XML.MainMenu.HelpMenu.ForceException.Description}" class="Altaxo.Worksheet.Commands.OpenScriptDialog" />
 			<MenuItem id="About" label="${res:XML.MainMenu.HelpMenu.About}" icon="Icons.16x16.AboutIcon"
 				description="${res:XML.MainMenu.HelpMenu.About.Description}" class="ICSharpCode.SharpDevelop.Commands.AboutSharpDevelop" />
 		</MenuItem>

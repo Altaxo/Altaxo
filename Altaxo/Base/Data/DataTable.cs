@@ -475,7 +475,7 @@ namespace Altaxo.Data
       // Clone also the table properties (deep copy)
       if(from._TableProperties!=null)
       {
-        foreach(string key in from._TableProperties)
+        foreach(string key in from._TableProperties.Keys)
         {
           ICloneable val = from._TableProperties[key] as ICloneable;
           if(null!=val)

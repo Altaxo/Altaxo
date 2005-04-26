@@ -221,7 +221,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           if(col==null) NotFound(colname);
           sel.Add(table.DataColumns.GetColumnNumber(col));
         }
-        calibrationSet.XWeights[yn] = new Altaxo.Calc.DataColumnToRowMatrixWrapper(table.DataColumns,sel,numberOfX);
+        calibrationSet.XWeights[yn] = DataTableWrapper.ToRORowMatrix(table.DataColumns,sel,numberOfX);
 
 
         sel.Clear();
@@ -232,7 +232,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           if(col==null) NotFound(colname);
           sel.Add(table.DataColumns.GetColumnNumber(col));
         }
-        calibrationSet.XLoads[yn] = new Altaxo.Calc.DataColumnToRowMatrixWrapper(table.DataColumns,sel,numberOfX);
+        calibrationSet.XLoads[yn] = DataTableWrapper.ToRORowMatrix(table.DataColumns,sel,numberOfX);
 
 
         sel.Clear();
@@ -243,14 +243,14 @@ namespace Altaxo.Calc.Regression.Multivariate
           if(col==null) NotFound(colname);
           sel.Add(table.DataColumns.GetColumnNumber(col));
         }
-        calibrationSet.YLoads[yn] = new Altaxo.Calc.DataColumnToRowMatrixWrapper(table.DataColumns,sel,numberOfY);
+        calibrationSet.YLoads[yn] = DataTableWrapper.ToRORowMatrix(table.DataColumns,sel,numberOfY);
 
         
         sel.Clear();
         col = table[GetCrossProduct_ColumnName(yn)];
         if(col==null) NotFound(GetCrossProduct_ColumnName());
         sel.Add(table.DataColumns.GetColumnNumber(col));
-        calibrationSet.CrossProduct[yn] = new Altaxo.Calc.DataColumnToRowMatrixWrapper(table.DataColumns,sel,numberOfFactors);
+        calibrationSet.CrossProduct[yn] = DataTableWrapper.ToRORowMatrix(table.DataColumns,sel,numberOfFactors);
       }
     }
 

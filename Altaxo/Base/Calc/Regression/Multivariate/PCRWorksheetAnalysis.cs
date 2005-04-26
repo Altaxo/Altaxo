@@ -171,7 +171,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         if(col==null) NotFound(colname);
         sel.Add(table.DataColumns.GetColumnNumber(col));
       }
-      calibrationSet.XScores = new Altaxo.Calc.DataColumnToColumnMatrixWrapper(table.DataColumns,sel,numberOfMeasurements);
+      calibrationSet.XScores = DataTableWrapper.ToROColumnMatrix(table.DataColumns,sel,numberOfMeasurements);
 
 
       sel.Clear();
@@ -182,7 +182,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         if(col==null) NotFound(colname);
         sel.Add(table.DataColumns.GetColumnNumber(col));
       }
-      calibrationSet.XLoads = new Altaxo.Calc.DataColumnToRowMatrixWrapper(table.DataColumns,sel,numberOfX);
+      calibrationSet.XLoads = DataTableWrapper.ToRORowMatrix(table.DataColumns,sel,numberOfX);
 
 
       sel.Clear();
@@ -193,7 +193,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         if(col==null) NotFound(colname);
         sel.Add(table.DataColumns.GetColumnNumber(col));
       }
-      calibrationSet.YLoads = new Altaxo.Calc.DataColumnToColumnMatrixWrapper(table.DataColumns,sel,numberOfMeasurements);
+      calibrationSet.YLoads = DataTableWrapper.ToROColumnMatrix(table.DataColumns,sel,numberOfMeasurements);
 
         
       sel.Clear();

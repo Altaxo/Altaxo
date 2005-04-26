@@ -28,7 +28,7 @@ namespace Altaxo.Collections
   /// This class represents a simple integer range specified by start and count, that can be used as a lightweight substitute for a <see>IndexSelection</see> if 
   /// the selection is contiguous.
   /// </summary>
-  public class IntegerRangeAsCollection : IAscendingIntegerCollection
+  public class IntegerRangeAsCollection : IAscendingIntegerCollection, ICloneable
   {
     /// <summary>
     /// The starting point of the integer range.
@@ -74,6 +74,16 @@ namespace Altaxo.Collections
     {
       _start = start;
       _count = count;
+    }
+
+    /// <summary>
+    /// Copy constructor.
+    /// </summary>
+    /// <param name="from">Object from which to copy the data.</param>
+    public IntegerRangeAsCollection(IntegerRangeAsCollection from)
+    {
+      this._start = from._start;
+      this._count = from._count;
     }
 
     /// <summary>
@@ -175,5 +185,13 @@ namespace Altaxo.Collections
         return true;
       }
     }
+    #region ICloneable Members
+
+    public object Clone()
+    {
+     return new IntegerRangeAsCollection(this);
+    }
+
+    #endregion
   }
 }

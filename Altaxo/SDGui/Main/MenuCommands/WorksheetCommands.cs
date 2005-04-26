@@ -235,6 +235,62 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class OpenExtractTableDataScriptDialog : AbstractWorksheetControllerCommand
+  {
+    const string ExtractTableDataScriptPropertyName = "Scripts/ExtractTableData";
+    Altaxo.Data.DataTable m_Table;
+
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Data.DataTable dataTable = ctrl.DataTable;
+      Data.ExtractTableDataScript script = ctrl.DataTable.GetTableProperty(ExtractTableDataScriptPropertyName) as Data.ExtractTableDataScript;
+
+      if(script==null)
+        script = new Data.ExtractTableDataScript();
+
+      Worksheet.GUI.TableScriptController controller = new Worksheet.GUI.TableScriptController(
+        new ScriptExecutionHandler(this.EhScriptExecution),script);
+      Worksheet.GUI.TableScriptControl control = new Altaxo.Worksheet.GUI.TableScriptControl();
+
+      System.Windows.Forms.Form form = new System.Windows.Forms.Form(); // the parent form used as shell for the control
+      form.Controls.Add(control);
+      form.ClientSize = control.Size;
+      control.Dock = System.Windows.Forms.DockStyle.Fill;
+      controller.View = control;
+
+      form.Text = "Extract table data from " + dataTable.Name;
+      ICSharpCode.SharpDevelop.Services.DefaultParserService parserService = (ICSharpCode.SharpDevelop.Services.DefaultParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.DefaultParserService));
+
+      System.Windows.Forms.DialogResult dlgResult = System.Windows.Forms.DialogResult.Cancel;
+
+      this.m_Table = dataTable;
+
+      if(parserService!=null)
+      {
+        parserService.RegisterModalContent(control.EditableContent);
+        dlgResult = form.ShowDialog(Altaxo.Current.MainWindow);
+        parserService.UnregisterModalContent();
+      }
+      else
+      {
+        dlgResult = form.ShowDialog(Altaxo.Current.MainWindow);
+      }
+
+      if(dlgResult==System.Windows.Forms.DialogResult.OK)
+      {
+        dataTable.SetTableProperty(ExtractTableDataScriptPropertyName, controller.m_TableScript);
+      }
+      this.m_Table = null;
+      form.Dispose();
+    }
+
+    public bool EhScriptExecution(Altaxo.Data.IScriptText script)
+    {
+      return ((Data.ExtractTableDataScript)script).Execute(m_Table);
+    }
+  }
+
+
   public class OpenTableScriptDialog : AbstractWorksheetControllerCommand
   {
     Altaxo.Data.DataTable m_Table;
@@ -287,6 +343,7 @@ namespace Altaxo.Worksheet.Commands
       return ((Altaxo.Data.TableScript)script).ExecuteWithSuspendedNotifications(m_Table);
     }
   }
+
 
 
   #endregion

@@ -27,7 +27,7 @@ namespace Altaxo.Collections
   /// <summary>
   /// The interface of a sorted collection of integers, sorted so that the smallest integers come first.
   /// </summary>
-  public interface IAscendingIntegerCollection
+  public interface IAscendingIntegerCollection : ICloneable
   {
     /// <summary>
     /// Number of integers stored in this collection.

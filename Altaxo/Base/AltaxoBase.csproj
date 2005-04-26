@@ -134,11 +134,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Calc\MatrixWrapper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Calc\RelativeOrAbsoluteValue.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -150,6 +145,11 @@
                 />
                 <File
                     RelPath = "Calc\LinearAlgebra\DataColumnWrapper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\LinearAlgebra\DataTableWrapper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -260,6 +260,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Data\ExtractTableDataScript.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Data\IDefinedCount.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -346,6 +351,11 @@
                 />
                 <File
                     RelPath = "Graph\Edge.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\FunctionEvaluationScript.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

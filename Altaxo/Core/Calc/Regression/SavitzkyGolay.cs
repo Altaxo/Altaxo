@@ -191,7 +191,7 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="array">The array of numbers to filter.</param>
     /// <param name="result">The resulting array. Must not be identical to the input array!</param>
-    public void Apply(IVector array, IVector result)
+    public void Apply(IROVector array, IVector result)
     {
       int filterPoints = _middle.Length;
       int sidePoints = (filterPoints-1)/2;

@@ -431,4 +431,48 @@ namespace Altaxo.Calc
     {
     }
   }
+
+  /// <summary>
+  /// Base class of all "extract table values "table scripts.
+  /// </summary>
+  /// <remarks>
+  /// Every table script defines his own class, which is derived from here.
+  /// There is only one method , IsRowIncluded, which has
+  /// to be overwritten by the table script in order to execute the script.
+  /// The method provided here is not defined as abstract, but instead does nothing.
+  /// </remarks>
+  public class ExtractTableValuesExeBase : ScriptExecutionBase
+  {
+    /// <summary>
+    /// This method which must be overriden by the extract table data script in order to be able to execute the script.
+    /// This method is the entry point of the table script
+    /// </summary>
+    /// <param name="myTable">The table on which the table script is executed.</param>
+    /// <param name="i">The row number of the data column collection, for which to determine if that row should be extracted or not.</param>
+    /// <returns>True if that row should be extracted, false if it should not be extracted.</returns>
+    public virtual bool IsRowIncluded(Altaxo.Data.DataTable myTable, int i)
+    {
+      return false;
+    }
+  }
+
+
+  /// <summary>
+  /// Base class of all function evaluation scripts.
+  /// </summary>
+  public class FunctionEvaluationScriptBase : ScriptExecutionBase
+  {
+    /// <summary>
+    /// This method which must be overriden by the function evaluation script in order to be able to execute the script.
+    /// </summary>
+    /// <param name="x">The x value for which the function is evaluated.</param>
+    /// <returns>The calculated y value.</returns>
+    public virtual double EvaluateFunctionValue(double x)
+    {
+      return double.NaN;
+    }
+  }
+
+
+
 }
