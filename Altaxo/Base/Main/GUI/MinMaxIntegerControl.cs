@@ -116,6 +116,7 @@ namespace Altaxo.Main.GUI
       this._edNumber.Name = "_edNumber";
       this._edNumber.Size = new System.Drawing.Size(104, 20);
       this._edNumber.TabIndex = 3;
+      this._edNumber.Validating += new System.ComponentModel.CancelEventHandler(this._edNumber_Validating);
       this._edNumber.ValueChanged += new System.EventHandler(this._edNumber_ValueChanged);
       // 
       // MinMaxIntegerControl
@@ -170,12 +171,23 @@ namespace Altaxo.Main.GUI
       _Value = _StartValue = (int)_edNumber.Value;
     }
 
+    private void _edNumber_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      if(_rbEnterNumber.Checked)
+      {
+        _Value = _StartValue = (int)_edNumber.Value;
+      }
+    }
+
     /// <summary>
     /// Get/sets the value that the user entered.
     /// </summary>
     public int Value 
     {
-      get { return _Value; }
+      get 
+      {
+        return _Value; 
+      }
       set 
       {
         _Value =  _StartValue = value;

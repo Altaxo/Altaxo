@@ -398,6 +398,61 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  public class NewUserFunction : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+      Graph.FunctionEvaluationScript script = null; // 
+
+      if(script==null)
+        script = new Graph.FunctionEvaluationScript();
+
+      Worksheet.GUI.TableScriptController controller = new Worksheet.GUI.TableScriptController(
+        new Altaxo.Worksheet.GUI.ScriptExecutionHandler(this.EhScriptExecution),script);
+      Worksheet.GUI.TableScriptControl control = new Altaxo.Worksheet.GUI.TableScriptControl();
+
+      System.Windows.Forms.Form form = new System.Windows.Forms.Form(); // the parent form used as shell for the control
+      form.Controls.Add(control);
+      form.ClientSize = control.Size;
+      control.Dock = System.Windows.Forms.DockStyle.Fill;
+      controller.View = control;
+
+      form.Text = "Create new function";
+      ICSharpCode.SharpDevelop.Services.DefaultParserService parserService = (ICSharpCode.SharpDevelop.Services.DefaultParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.DefaultParserService));
+      System.Windows.Forms.DialogResult dlgResult = System.Windows.Forms.DialogResult.Cancel;
+
+      if(parserService!=null)
+      {
+        parserService.RegisterModalContent(control.EditableContent);
+        dlgResult = form.ShowDialog(Altaxo.Current.MainWindow);
+        parserService.UnregisterModalContent();
+      }
+      else
+      {
+        dlgResult = form.ShowDialog(Altaxo.Current.MainWindow);
+      }
+
+      if(dlgResult==System.Windows.Forms.DialogResult.OK)
+      {
+        ctrl.EnsureValidityOfCurrentLayerNumber();
+
+        script = (Graph.FunctionEvaluationScript)controller.m_TableScript;
+        XYFunctionPlotItem functItem = new XYFunctionPlotItem(new XYFunctionPlotData(script),new XYLineScatterPlotStyle(LineScatterPlotStyleKind.Line));
+        ctrl.Doc.Layers[ctrl.CurrentLayerNumber].PlotItems.Add(functItem);
+      }
+    
+
+      form.Dispose();
+    }
+
+    public bool EhScriptExecution(Altaxo.Data.IScriptText script)
+    {
+      return true;
+    }
+  }
+
+
+
 
   /// <summary>
   /// Provides a abstract class for issuing commands that apply to worksheet controllers.

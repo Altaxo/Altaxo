@@ -309,6 +309,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     #endregion
+
     /// <summary>
     /// Returns the maximum of the elements in xarray.
     /// </summary>

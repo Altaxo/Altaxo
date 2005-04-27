@@ -259,6 +259,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\LinearAlgebra\VectorSpacingEvaluator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\Probability\ProbabilityDistributions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

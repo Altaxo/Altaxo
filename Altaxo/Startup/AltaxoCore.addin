@@ -509,7 +509,7 @@
 						class="Altaxo.Graph.Commands.NewLayerLinkedTopXRightY_XAxisStraight" />
 				</MenuItem>
 				<MenuItem id="AddCurvePlot" label="${res:XML.MainMenu.GraphMenu.AddCurvePlot}" description="${res:XML.MainMenu.GraphMenu.AddCurvePlot.Description}"
-					class="Altaxo.Graph.Commands.AddCurvePlot" />
+					class="Altaxo.Graph.Commands.NewUserFunction" />
 				<MenuItem id="LayerControl" label="${res:XML.MainMenu.GraphMenu.LayerControl}" description="${res:XML.MainMenu.GraphMenu.LayerControl.Description}"
 					class="Altaxo.Graph.Commands.LayerControl" />
 				<MenuItem id="NewLayerLegend" label="${res:XML.MainMenu.GraphMenu.NewLayerLegend}" description="${res:XML.MainMenu.GraphMenu.NewLayerLegend.Description}"

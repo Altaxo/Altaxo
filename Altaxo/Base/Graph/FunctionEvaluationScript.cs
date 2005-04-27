@@ -41,14 +41,14 @@ namespace Altaxo.Graph
     /// <returns>True if executed without exceptions, otherwise false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
-    double EvaluateFunctionValue(double x);
+    double Evaluate(double x);
   }
  
   /// <summary>
   /// Holds the text, the module (=executable), and some properties of a property column script. 
   /// </summary>
  
-  public class FunctionEvaluationScript : AbstractScript, IFunctionEvaluationScriptText
+  public class FunctionEvaluationScript : AbstractScript, IFunctionEvaluationScriptText, Altaxo.Calc.IScalarFunctionDD
   {
     #region Serialization
 
@@ -182,7 +182,7 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="x"></param>
     /// <returns></returns>
-    public double EvaluateFunctionValue(double x)
+    public double Evaluate(double x)
     {
       if(null==m_ScriptObject)
       {
