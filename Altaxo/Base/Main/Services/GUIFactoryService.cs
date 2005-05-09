@@ -6,20 +6,40 @@ using Altaxo.Main.GUI;
 namespace Altaxo.Main.Services
 {
 	/// <summary>
-	/// Summary description for GUIFactoryService.
+	/// Creates the appropriate GUI object for a given document type.
 	/// </summary>
 	public class GUIFactoryService
 	{
+    /// <summary>
+    /// Gets an <see>IMVCController for a given document type.</see>
+    /// </summary>
+    /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
+    /// optional, and are usually the parents of this document.</param>
+    /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+    /// <returns>The controller for that document when found. The controller is already initialized with the document. If not found, null is returned.</returns>
     public IMVCController GetController(object[] args, System.Type expectedControllerType)
     {
       return (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute),typeof(IMVCController),args);
     }
 
+    /// <summary>
+    /// Gets an <see>IMVCController for a given document type, and finding the right GUI user control for it.</see>
+    /// </summary>
+    /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
+    /// optional, and are usually the parents of this document.</param>
+    /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+    /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
     public IMVCController GetControllerAndControl(object[] args, System.Type expectedControllerType)
     {
-      IMVCController controller = (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute),typeof(IMVCController),args);
+
+      if(!ReflectionService.IsSubClassOfOrImplements(expectedControllerType,typeof(IMVCController)))
+        throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
+
+      IMVCController controller = (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute),expectedControllerType,args);
       if(controller==null)
         return null;
+
+      
 
       System.Windows.Forms.UserControl control = (System.Windows.Forms.UserControl)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControlForControllerAttribute),typeof(System.Windows.Forms.UserControl),new object[]{controller});
 
@@ -29,6 +49,72 @@ namespace Altaxo.Main.Services
       controller.ViewObject = control;
 
       return controller;
+    }
+
+    /// <summary>
+    /// Shows a configuration dialog for an object.
+    /// </summary>
+    /// <param name="args">Hierarchy of objects. Args[0] contain the object for which the configuration dialog is searched.
+    /// args[1].. can contain the parents of this object (in most cases this is not necessary.
+    /// If the return value is true, args[0] contains the configured object. </param>
+    /// <returns>True if the object was successfully configured, false otherwise.</returns>
+    /// <remarks>The presumtions to get this function working are:
+    /// <list>
+    /// <item>A controller which implements <see>Altaxo.Main.GUI.IMVCAController has to exist.</see></item>
+    /// <item>A <see>Altaxo.Main.GUI.UserControllerForObjectAttribute</see> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
+    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see>Altaxo.Main.GUI.UserControlForControllerAttribute</see> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
+    /// </list>
+    /// </remarks>
+    public bool ShowDialog(object[] args)
+    {
+      Main.GUI.IMVCAController controller = (Main.GUI.IMVCAController)Current.GUIFactoryService.GetControllerAndControl(args,typeof(Main.GUI.IMVCAController));
+      
+      if(null==controller)
+        return false;
+
+      Main.GUI.DialogShellController dlgctrl = new Altaxo.Main.GUI.DialogShellController(new Main.GUI.DialogShellView((System.Windows.Forms.UserControl)controller.ViewObject),controller,"Savitzky-Golay parameters",false);
+      
+      if(dlgctrl.ShowDialog(Current.MainWindow))
+      {
+        args[0] = controller.ModelObject;
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
+
+    /// <summary>
+    /// Shows a configuration dialog for an object.
+    /// </summary>
+    /// <param name="arg">The object to configure.
+    /// If the return value is true, arg contains the configured object. </param>
+    /// <returns>True if the object was successfully configured, false otherwise.</returns>
+    /// <remarks>The presumtions to get this function working are:
+    /// <list>
+    /// <item>A controller which implements <see>Altaxo.Main.GUI.IMVCAController has to exist.</see></item>
+    /// <item>A <see>Altaxo.Main.GUI.UserControllerForObjectAttribute</see> has to be assigned to that controller, and the argument has to be the type of the object you want to configure.</item>
+    /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see>Altaxo.Main.GUI.UserControlForControllerAttribute</see> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
+    /// </list>
+    /// </remarks>
+    public bool ShowDialog(ref object arg)
+    {
+      object[] args = new object[1];
+      args[0] = arg;
+      bool result = Current.GUIFactoryService.ShowDialog(args);
+      arg = args[0];
+      return result;
+    }
+
+
+    /// <summary>
+    /// Shows a message box with the error text.
+    /// </summary>
+    /// <param name="errortxt">The error text.</param>
+    public void ErrorMessageBox(string errortxt)
+    {
+      System.Windows.Forms.MessageBox.Show(Current.MainWindow,errortxt,"Error(s)!", System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Error);
     }
     
 	}

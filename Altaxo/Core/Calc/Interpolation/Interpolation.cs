@@ -153,7 +153,26 @@ namespace Altaxo.Calc.Interpolation
 
   
 
+  /// <summary>
+  /// Gives an interpolation function, i.e. for every given x, there is exactly one corresponding y value.
+  /// </summary>
+  public interface IInterpolationFunction
+  {
+    int Interpolate(IROVector xvec, IROVector yvec);
+    double GetYOfX(double x);
+  }
 
+  /// <summary>
+  /// Represents an interpolation curve. The curve is parametrized using a parameter u. Because of the parametrization, it is possible that
+  /// for some x values there can exist more than one corresponding y values.
+  /// </summary>
+  public interface IInterpolationCurve
+  {
+    int Interpolate(IROVector xvec, IROVector yvec);
+
+    double GetY(double u);
+    double GetX(double u);
+  }
   
 
   #region CurveBase
@@ -772,7 +791,7 @@ namespace Altaxo.Calc.Interpolation
   /// Copyright (C) 1991-1998 by Berndt M. Gammel
   /// </code>
   /// </summary>
-  class FritschCarlsonCubicSpline : CurveBase
+  public class FritschCarlsonCubicSpline : CurveBase, IInterpolationFunction
   {
   
     protected DoubleVector y1 = new DoubleVector();
@@ -889,6 +908,12 @@ namespace Altaxo.Calc.Interpolation
       return CubicSplineHorner(u,x,y,y1,y2,y3);
     }
 
+    public double GetYOfX(double u)
+    {
+      return CubicSplineHorner(u,x,y,y1,y2,y3);
+    }
+
+
     #region deriv1
 
     //-----------------------------------------------------------------------------//
@@ -982,8 +1007,7 @@ namespace Altaxo.Calc.Interpolation
         }
       } while (!stop && ++loop < max_loop);
     }
-
-
+   
   }
 
   #endregion // MpFrischCarlsonCubicSpline
@@ -991,7 +1015,7 @@ namespace Altaxo.Calc.Interpolation
   #region AkimaCubicSpline
   
   
-  class AkimaCubicSpline : CurveBase
+  public class AkimaCubicSpline : CurveBase, IInterpolationFunction
   {
     protected DoubleVector y1 = new DoubleVector();
     protected DoubleVector  y2 = new DoubleVector();
@@ -1139,6 +1163,11 @@ namespace Altaxo.Calc.Interpolation
       return u;
     }
     public override double GetY (double u)
+    {
+      return CubicSplineHorner(u,x,y,y1,y2,y3);
+    }
+
+    public double GetYOfX (double u)
     {
       return CubicSplineHorner(u,x,y,y1,y2,y3);
     }
@@ -1614,7 +1643,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
   #region RationalCubicSpline
 
-  class RationalCubicSpline : CurveBase
+  public class RationalCubicSpline : CurveBase, IInterpolationFunction
   {
     protected BoundaryConditions boundary;  
     protected double p,r1,r2;
@@ -2257,6 +2286,10 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       return u;
     }
 
+    public double GetYOfX (double u)
+    {
+      return GetY(u);
+    }
 
     public override double GetY (double u)
     {
@@ -2322,7 +2355,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
   // (4) This algorithm is also implemented in the Unix spline tool by
   //     James R. Van Zandt (jrv@mitre-bedford), 1985.
   //----------------------------------------------------------------------------//
-  class ExponentialSpline : CurveBase
+  public class ExponentialSpline : CurveBase, IInterpolationFunction
   {
     protected BoundaryConditions boundary;  
     protected double sigma,r1,r2;
@@ -2468,6 +2501,12 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     {
       return u;
     }
+
+    public double GetYOfX(double x)
+    {
+      return GetY(x);
+    }
+
     public override double GetY (double u)
     {
       int lo = x.LowerBound, 
@@ -2545,7 +2584,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
   #region PolynomialInterpolation
 
   
-  class PolynomialInterpolation : CurveBase
+  public class PolynomialInterpolation : CurveBase, IInterpolationFunction
   {
     protected DoubleVector C = new DoubleVector();
     protected DoubleVector D = new DoubleVector();
@@ -2584,6 +2623,10 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       return u;
     }
 
+    public double GetYOfX(double x)
+    {
+      return GetY(x);
+    }
     
     //----------------------------------------------------------------------------//
     //
@@ -2651,16 +2694,17 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
   #region RationalInterpolation
 
-  public class RationalInterpolation : CurveBase
+  public class RationalInterpolation : CurveBase, IInterpolationFunction
   {
-    protected DoubleVector xr,yr;
-    protected IntVector m;
+    protected DoubleVector xr = new DoubleVector();
+    protected DoubleVector yr = new DoubleVector();
+    protected IntVector m = new IntVector();
     protected int num;
     protected double epsilon;
   
     public RationalInterpolation ()
     {
-      num = 0;
+      num = 2;
       epsilon = DBL_EPSILON;
     }
 
@@ -2868,6 +2912,11 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       return u;
     }
 
+    public double GetYOfX(double x)
+    {
+      return GetY(x);
+    }
+
     readonly static double RootMax   = Math.Sqrt(double.MaxValue);
     public override double GetY (double u)
     {
@@ -2938,7 +2987,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
   #region CrossValidatedCubicSpline
 #if true
-  public class CrossValidatedCubicSpline : CurveBase
+  public class CrossValidatedCubicSpline : CurveBase, IInterpolationFunction
   {
 
     //----------------------------------------------------------------------------//
@@ -2963,15 +3012,23 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     };
 
     protected double var;
-    protected DoubleVector xstore;
-    protected DoubleVector ystore;
-    protected DoubleVector dy;
-    protected DoubleVector y0, y1, y2, y3, se, wkr, wkt, wku, wkv;
+    protected DoubleVector xstore = new DoubleVector();
+    protected DoubleVector ystore = new DoubleVector();
+    protected DoubleVector dy = new DoubleVector();
+    protected DoubleVector y0 = new DoubleVector();
+    protected DoubleVector  y1 = new DoubleVector();
+    protected DoubleVector  y2 = new DoubleVector();
+    protected DoubleVector  y3 = new DoubleVector();
+    protected DoubleVector  se = new DoubleVector();
+    protected DoubleVector  wkr = new DoubleVector();
+    protected DoubleVector  wkt = new DoubleVector();
+    protected DoubleVector  wku = new DoubleVector();
+    protected DoubleVector  wkv = new DoubleVector();
 
     public  CrossValidatedCubicSpline ()
     {
       var = -1.0;
-      dy = null;
+      
     }
 
     //----------------------------------------------------------------------------//
@@ -3743,8 +3800,20 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       return (int)error_flag;
     }
 
-    public override double GetX (double u) { return u; }
-    public override double GetY (double u) { return CubicSplineHorner(u,x,y0,y1,y2,y3); }
+    public override double GetX (double u) 
+    {
+      return u;
+    }
+
+    public double GetYOfX(double x)
+    {
+      return GetY(x);
+    }
+
+    public override double GetY (double u) 
+    {
+      return CubicSplineHorner(u,x,y0,y1,y2,y3); 
+    }
 
 
     void SetErrorVariance (IROVector dyy, double errvar)

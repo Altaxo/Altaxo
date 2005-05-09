@@ -1393,6 +1393,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Worksheet\Commands\Analysis\CalculusCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Worksheet\Commands\Analysis\ChemometricCommands.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1433,6 +1438,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Worksheet\GUI\InterpolationControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\InterpolationControl.resx"
+                    DependentUpon = "InterpolationControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\InterpolationController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Worksheet\GUI\IWorksheetDocumentView.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1464,6 +1484,21 @@
                 />
                 <File
                     RelPath = "Worksheet\GUI\PLSStartAnalysisController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\SavitzkyGolayParameterControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\SavitzkyGolayParameterControl.resx"
+                    DependentUpon = "SavitzkyGolayParameterControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\SavitzkyGolayParameterController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

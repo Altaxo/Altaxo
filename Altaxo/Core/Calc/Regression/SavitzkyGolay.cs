@@ -27,6 +27,27 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Regression
 {
   /// <summary>
+  /// Stores the set of parameters necessary to calculate Savitzky-Golay coefficients.
+  /// </summary>
+  public class SavitzkyGolayParameters
+  {
+    /// <summary>
+    /// Number of points used for Savitzky Golay Coefficients. Must be a odd positive number.
+    /// </summary>
+    public int NumberOfPoints=7;
+    
+    /// <summary>
+    /// Polynomial order used to calculate Savitzky-Golay coefficients. Has to be a positive number.
+    /// </summary>
+    public int PolynomialOrder=2;
+    
+    /// <summary>
+    /// Derivative order. Has to be zero or positive. A value of zero is used to smooth a function.
+    /// </summary>
+    public int DerivativeOrder=0;
+  }
+
+  /// <summary>
   /// SavitzkyGolay implements the calculation of the Savitzky-Golay filter coefficients and their application
   /// to smoth data, and to calculate derivatives.
   /// </summary>
@@ -134,6 +155,17 @@ namespace Altaxo.Calc.Regression
         GetCoefficients(2*numberOfSide-i,i,derivativeOrder,polynomialOrder,VectorMath.ToVector(_right[i]));
       }
     }
+
+
+    /// <summary>
+    /// This sets up a Savitzky-Golay filter.
+    /// </summary>
+    /// <param name="parameters">Set of parameters used for Savitzky-Golay filtering.</param>
+    public SavitzkyGolay(SavitzkyGolayParameters parameters)
+    : this(parameters.NumberOfPoints,parameters.DerivativeOrder,parameters.PolynomialOrder)
+    {
+    }
+
 
     /// <summary>
     /// This applies the set-up filter to an array of numbers. The left and right side is special treated by

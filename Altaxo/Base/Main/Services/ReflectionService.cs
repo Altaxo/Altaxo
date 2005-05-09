@@ -46,6 +46,74 @@ namespace Altaxo.Main.Services
 
     }
 
+
+    /// <summary>
+    /// Determines whether or not a given AssemblyName is contained in a list of names.
+    /// This is done here by comparing the FullNames.
+    /// </summary>
+    /// <param name="assemblyNames">List of AssemblyNames.</param>
+    /// <param name="searchedName">The AssemblyName for which to determine if it is contained in the list.</param>
+    /// <returns>True if it is contained in the list.</returns>
+    public static bool Contains(AssemblyName[] assemblyNames, AssemblyName searchedName)
+    {
+      foreach(AssemblyName assName in assemblyNames)
+      {
+        if(assName.FullName == searchedName.FullName)
+          return true;
+      }
+
+      return false;
+    }
+
+    /// <summary>
+    /// Gets a list of currently loaded assemblies that are dependend on the given base assembly. The base assembly is also in the returned list.
+    /// </summary>
+    /// <param name="baseAssembly">The base assembly.</param>
+    /// <returns>All assemblies, that are currently loaded and that references the given base assembly. The base assembly is also in the returned list.</returns>
+    public static System.Reflection.Assembly[] GetDependendAssemblies(Assembly baseAssembly)
+    {
+      ArrayList list = new ArrayList();
+
+      AssemblyName baseAssemblyName = baseAssembly.GetName();
+
+      System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+      foreach(Assembly assembly in assemblies)
+      {
+       if(Contains(assembly.GetReferencedAssemblies(),baseAssemblyName))
+          list.Add(assembly); 
+      }
+      list.Add(baseAssembly);
+
+      return (Assembly[])list.ToArray(typeof(System.Reflection.Assembly));
+    }
+
+
+
+    /// <summary>
+    /// This will return a list of types that are subclasses of type basetype or (when basetype is an interface)
+    /// implements basetype.
+    /// </summary>
+    /// <param name="basetype">The basetype.</param>
+    /// <returns></returns>
+    public static System.Type[] GetSubclassesOf(System.Type basetype)
+    {
+      ArrayList list = new ArrayList();
+
+      Assembly[] assemblies = GetDependendAssemblies(basetype.Assembly);
+      foreach(Assembly assembly in assemblies)
+      {
+        Type[] definedtypes = assembly.GetTypes();
+        foreach(Type definedtype in definedtypes)
+        {
+          if(IsSubClassOfOrImplements(definedtype,basetype))
+            list.Add(definedtype);
+        } // end foreach type
+      } // end foreach assembly 
+
+      return (System.Type[])list.ToArray(typeof(System.Type));
+    }
+
+
     /// <summary>
     /// For a given type of attribute, attributeType, this function returns the attribute instances and the class
     /// types this attributes apply to. If the attribute implements the IComparable interface, the list is sorted.
@@ -55,14 +123,10 @@ namespace Altaxo.Main.Services
     public static DictionaryEntry[] GetAttributeInstancesAndClassTypes(System.Type attributeType)
     {
       ArrayList list = new ArrayList();
-      Assembly attributeAssembly = attributeType.Assembly;
 
-      System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+      System.Reflection.Assembly[] assemblies = GetDependendAssemblies(attributeType.Assembly);
       foreach(Assembly assembly in assemblies)
       {
-        if(Array.IndexOf(assembly.GetReferencedAssemblies(),attributeAssembly)<0)
-          continue; // this is not depended on this assembly the attribute is defined in, so we can ignore this
-        
         Type[] definedtypes = assembly.GetTypes();
         foreach(Type definedtype in definedtypes)
         {
@@ -94,14 +158,10 @@ namespace Altaxo.Main.Services
       System.Diagnostics.Debug.Assert(IsSubClassOfOrImplements(attributeType,typeof(IClassForClassAttribute)));
 
       ArrayList list = new ArrayList();
-      Assembly attributeAssembly = attributeType.Assembly;
 
-      System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+      System.Reflection.Assembly[] assemblies = GetDependendAssemblies(attributeType.Assembly);
       foreach(Assembly assembly in assemblies)
       {
-        if(assembly!=attributeAssembly && Array.IndexOf(assembly.GetReferencedAssemblies(),attributeAssembly)<0)
-          continue; // this is not depended on this assembly the attribute is defined in, so we can ignore this
-        
         Type[] definedtypes = assembly.GetTypes();
         foreach(Type definedtype in definedtypes)
         {

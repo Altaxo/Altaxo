@@ -35,7 +35,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The argument.</param>
     /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then 0 is returned.</returns>
-    static int Ld(uint x)
+    public static int Ld(uint x)
     {
       if ( 0==x )  return  0;
 
@@ -55,7 +55,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The argument.</param>
     /// <returns>A number k so that 2^k &lt;= x &lt; 2^(k+1). If x==0 then 0 is returned.</returns>
-    static int Ld(ulong x)
+    public static int Ld(ulong x)
     {
       if ( 0==x )  return  0;
 
@@ -76,7 +76,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">Argument to test.</param>
     /// <returns>Return true if number is 0 (!) or a power of two.</returns>
-    public bool IsPowerOfTwo(int x)
+    public static bool IsPowerOfTwo(int x)
     {
       return  ((x & -x) == x);
     }
@@ -87,7 +87,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The argument to test.</param>
     /// <returns>True if x &gt; 0 and x is a power of two.</returns>
-    public bool IsNonzeroPowerOfTwo(uint x)
+    public static bool IsNonzeroPowerOfTwo(uint x)
     {
       ulong m = x-1;
       return  (((x^m)>>1) == m);
@@ -98,7 +98,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The argument to test.</param>
     /// <returns>True if x &gt; 0 and x is a power of two.</returns>
-    public bool IsNonzeroPowerOfTwo(ulong x)
+    public static bool IsNonzeroPowerOfTwo(ulong x)
     {
       ulong m = x-1;
       return  (((x^m)>>1) == m);
@@ -110,7 +110,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="x">The argument to test.</param>
     /// <returns>The argument, if it is a power of two. Else the next greater number which is a power of two.</returns>
-    public int NextPowerOfTwo(int x)
+    public static int NextPowerOfTwo(int x)
     {
       int i;
       for(i=1; i<x ;i<<=1);

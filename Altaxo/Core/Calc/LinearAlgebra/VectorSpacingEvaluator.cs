@@ -26,7 +26,7 @@ namespace Altaxo.Calc.LinearAlgebra
 {
   
 	/// <summary>
-	/// Tests the spacing between adjacent vector elements
+	/// Statistics of the spacing between adjacent vector elements. The spaces are defined in the forward direction, i.e. as vec[i+1]-vec[i].
 	/// </summary>
 	public class VectorSpacingEvaluator
 	{
@@ -46,7 +46,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int lower = vec.LowerBound;
       int upper = vec.UpperBound;
 
-      _numtotalsteps = vec.Length-1;
+      _numtotalsteps = upper-lower;
       for(int i=lower;i<upper;i++)
       {
         double step = vec[i+1]-vec[i];
@@ -63,13 +63,18 @@ namespace Altaxo.Calc.LinearAlgebra
           _sumsteps += step;
         }
       }
+
+      // if all steps are valid, we calculate sumsteps from the boundaries
+      // to enhance the accuracy.
+      if(_numvalidsteps>0 && _numtotalsteps == _numvalidsteps)
+        _sumsteps = vec[upper] - vec[lower];
     }
 
 
     /// <summary>
     /// True if all elements are mononton increasing and there are no invalid spaces.
     /// </summary>
-    public bool IsMonotonIncreasing
+    public bool IsMonotonicallyIncreasing
     {
       get
       {
@@ -80,7 +85,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// True if all elements are mononton decreasing and there are no invalid spaces.
     /// </summary>
-    public bool IsMonotonDecreasing
+    public bool IsMonotonicallyDecreasing
     {
       get
       {
@@ -92,7 +97,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// True if all elements are strongly mononton increasing and there are no invalid spaces.
     /// </summary>
-    public bool IsStrongMonotonIncreasing
+    public bool IsStrictlyMonotonicIncreasing
     {
       get
       {
@@ -103,7 +108,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// True if all elements are strongly mononton decreasing and there are no invalid spaces.
     /// </summary>
-    public bool IsStrongMonotonDecreasing
+    public bool IsStrictlyMonotonicDecreasing
     {
       get
       {
@@ -112,11 +117,11 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
-    /// True if all elements are really equally spaced. Due to the limited accuracy of floating
-    /// point arithmetic, this is in most cases only fulfilled if having integer vector elements. 
+    /// True if all elements are strictly equally spaced. Due to the limited accuracy of floating
+    /// point arithmetic, this is in generally only fulfilled when having integer vector elements. 
     /// Otherwise, please use <see>RelativeSpaceDeviation</see> to calculate the space deviation.
     /// </summary>
-    public bool IsEquallySpaced
+    public bool IsStrictlyEquallySpaced
     {
       get 
       {
@@ -163,6 +168,17 @@ namespace Altaxo.Calc.LinearAlgebra
         if(double.IsInfinity(_stepmin) || double.IsInfinity(_stepmax))
           return double.PositiveInfinity;
         return Math.Abs(_stepmax-_stepmin)/Math.Min(Math.Abs(_stepmin),Math.Abs(_stepmax));
+      }
+    }
+
+    /// <summary>
+    /// Returns the mean value of the valid spaces.
+    /// </summary>
+    public double SpaceMeanValue
+    {
+      get
+      {
+        return _sumsteps/_numvalidsteps;
       }
     }
 

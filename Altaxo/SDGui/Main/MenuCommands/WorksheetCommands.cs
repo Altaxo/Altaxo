@@ -408,7 +408,7 @@ namespace Altaxo.Worksheet.Commands
 
       if(dlgResult==System.Windows.Forms.DialogResult.OK)
       {
-        if(null != dataTable.PropertyColumns.ColumnScripts[column])
+        if(null != dataTable.DataColumns.ColumnScripts[column])
           dataTable.DataColumns.ColumnScripts[column] = (Data.IColumnScriptText)controller.m_TableScript;
         else
           dataTable.DataColumns.ColumnScripts.Add(column, controller.m_TableScript);
@@ -658,6 +658,22 @@ namespace Altaxo.Worksheet.Commands
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.ExportPLSCalibration(ctrl.DataTable);
+    }
+  }
+
+  public class AnalysisDifferentiateSmooth : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.CalculusCommands.SavitzkyGolayFiltering(ctrl);
+    }
+  }
+
+  public class AnalysisInterpolation : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.CalculusCommands.Interpolation(ctrl);
     }
   }
 

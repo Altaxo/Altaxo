@@ -540,7 +540,11 @@
 		</Conditional>
 		<Conditional activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
 			<MenuItem id="WorksheetAnalysis" label="${res:XML.MainMenu.AnalysisMenu}">
-				<MenuItem id="1DFFT" label="${res:XML.MainMenu.AnalysisMenu.FFT}" description="${res:XML.MainMenu.AnalysisMenu.FFT.Description}"
+				<MenuItem id="DiffSmooth" label="${res:XML.MainMenu.AnalysisMenu.DifferentiateSmooth}" description="${res:XML.MainMenu.AnalysisMenu.DiffSmooth.Description}"
+					class="Altaxo.Worksheet.Commands.AnalysisDifferentiateSmooth" />
+				<MenuItem id="Interpolate" label="${res:XML.MainMenu.AnalysisMenu.Interpolate}" description="${res:XML.MainMenu.AnalysisMenu.Interpolate.Description}"
+					class="Altaxo.Worksheet.Commands.AnalysisInterpolation" />
+        <MenuItem id="1DFFT" label="${res:XML.MainMenu.AnalysisMenu.FFT}" description="${res:XML.MainMenu.AnalysisMenu.FFT.Description}"
 					class="Altaxo.Worksheet.Commands.AnalysisFFT" />
 				<MenuItem id="2DFFT" label="${res:XML.MainMenu.AnalysisMenu.2DFFT}" description="${res:XML.MainMenu.AnalysisMenu.2DFFT.Description}"
 					class="Altaxo.Worksheet.Commands.Analysis2DFFT" />
@@ -840,6 +844,8 @@
 		</Conditional>
 		<Conditional activewindow="Altaxo.Worksheet.GUI.SDWorksheetController" action="Exclude">
 			<MenuItem id="WorksheetAnalysis" label="${res:XML.MainMenu.AnalysisMenu}">
+				<MenuItem id="DiffSmooth" label="${res:XML.MainMenu.AnalysisMenu.DifferentiateSmooth}" description="${res:XML.MainMenu.AnalysisMenu.DiffSmooth.Description}"
+					class="Altaxo.Worksheet.Commands.AnalysisDifferentiateSmooth" />
 				<MenuItem id="1DFFT" label="${res:XML.MainMenu.AnalysisMenu.FFT}" description="${res:XML.MainMenu.AnalysisMenu.FFT.Description}"
 					class="Altaxo.Worksheet.Commands.AnalysisFFT" />
 				<MenuItem id="2DFFT" label="${res:XML.MainMenu.AnalysisMenu.2DFFT}" description="${res:XML.MainMenu.AnalysisMenu.2DFFT.Description}"

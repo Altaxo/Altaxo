@@ -396,6 +396,25 @@ namespace Altaxo.Calc.LinearAlgebra
       return new NumericColumnToROVectorWrapper((INumericColumn)col,col.Count);
     }
 
+    /// <summary>
+    /// This returns a read-only vector of a <see>INumericColumn</see>, but the data are copyied before. Thus, if you change the data
+    /// into the numeric column, the data of the returned vector is not influenced.
+    /// </summary>
+    /// <param name="col">The column to wrap.</param>
+    /// <returns>A read-only vector which contains data copied from the numeric column.</returns>
+    public static IROVector ToROVectorCopy(DataColumn col)
+    {
+      if(!(col is INumericColumn))
+        throw new ArgumentException("Argument col can not be wrapped to a vector because it is not a numeric column");
+
+      INumericColumn ncol = col as INumericColumn;
+
+      double[] vec = new double[col.Count];
+      for(int i=col.Count-1;i>=0;i--)
+        vec[i] = ncol.GetDoubleAt(i);
+
+      return VectorMath.ToROVector(vec);
+    }
 
     /// <summary>
     /// This returns a read and writeable vector of a <see>DoubleColumn</see>
