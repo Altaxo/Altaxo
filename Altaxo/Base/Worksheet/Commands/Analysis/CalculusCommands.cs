@@ -26,6 +26,7 @@ using Altaxo.Worksheet.GUI;
 using Altaxo.Calc;
 using Altaxo.Calc.Regression;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Calc.Interpolation;
 using Altaxo.Data;
 
 namespace Altaxo.Worksheet.Commands.Analysis
@@ -136,7 +137,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       {
         double r = i/(double)(parameters.NumberOfPoints-1);
         double x = parameters.XOrg*(1-r) + parameters.XEnd*(r);
-        double y = parameters.InterpolationInstance.GetY(x);
+        double y = ((IInterpolationFunction)parameters.InterpolationInstance).GetYOfX(x);
         xRes[i]=x;
         yRes[i]=y;
       }

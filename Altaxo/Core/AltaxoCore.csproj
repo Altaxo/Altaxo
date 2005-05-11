@@ -219,7 +219,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\LinearAlgebra\DoubleVector.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\LinearAlgebra\IMatrix.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\LinearAlgebra\IntegerVector.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

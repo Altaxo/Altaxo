@@ -47,7 +47,7 @@ namespace Altaxo.Data
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        Altaxo.Data.PropertyColumnScript s = null!=o ? (Altaxo.Data.PropertyColumnScript)o : new Altaxo.Data.PropertyColumnScript();
+        Altaxo.Data.DataColumnScript s = null!=o ? (Altaxo.Data.DataColumnScript)o : new Altaxo.Data.DataColumnScript();
         
         // deserialize the base class
         info.GetBaseValueEmbedded(s,typeof(Altaxo.Data.AbstractScript),parent);
