@@ -55,6 +55,9 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
     public override void Run()
     {
 
+      ICSharpCode.Core.Services.IResourceService resourceService = (ICSharpCode.Core.Services.IResourceService)ServiceManager.Services.GetService(typeof(ICSharpCode.Core.Services.IResourceService));
+      Altaxo.Current.SetResourceService(new ResourceServiceWrapper(resourceService));      
+      
       Altaxo.Main.ProjectService projectService = (Altaxo.Main.ProjectService)ServiceManager.Services.GetService(typeof(Altaxo.Main.ProjectService));
       Altaxo.Current.SetProjectService( projectService );
 
@@ -88,6 +91,20 @@ namespace Altaxo.Main.Commands // ICSharpCode.SharpDevelop.Commands
       w.WorkbenchLayout = new SdiWorkbenchLayout();
       w.RedrawAllComponents();
 #endif  
+    }
+
+    private class ResourceServiceWrapper : Altaxo.Main.Services.IResourceService
+    {
+      ICSharpCode.Core.Services.IResourceService _service;
+      public ResourceServiceWrapper(ICSharpCode.Core.Services.IResourceService service)
+      {
+        _service = service;
+      }
+
+      public string GetString(string name)
+      {
+        return _service.GetString(name);
+      }
     }
   }
 

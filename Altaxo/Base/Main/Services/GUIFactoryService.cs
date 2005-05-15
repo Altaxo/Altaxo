@@ -57,6 +57,7 @@ namespace Altaxo.Main.Services
     /// <param name="args">Hierarchy of objects. Args[0] contain the object for which the configuration dialog is searched.
     /// args[1].. can contain the parents of this object (in most cases this is not necessary.
     /// If the return value is true, args[0] contains the configured object. </param>
+    /// <param name="title">The title of the dialog to show.</param>
     /// <returns>True if the object was successfully configured, false otherwise.</returns>
     /// <remarks>The presumtions to get this function working are:
     /// <list>
@@ -65,14 +66,14 @@ namespace Altaxo.Main.Services
     /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see>Altaxo.Main.GUI.UserControlForControllerAttribute</see> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
     /// </list>
     /// </remarks>
-    public bool ShowDialog(object[] args)
+    public bool ShowDialog(object[] args, string title)
     {
       Main.GUI.IMVCAController controller = (Main.GUI.IMVCAController)Current.GUIFactoryService.GetControllerAndControl(args,typeof(Main.GUI.IMVCAController));
       
       if(null==controller)
         return false;
 
-      Main.GUI.DialogShellController dlgctrl = new Altaxo.Main.GUI.DialogShellController(new Main.GUI.DialogShellView((System.Windows.Forms.UserControl)controller.ViewObject),controller,"Savitzky-Golay parameters",false);
+      Main.GUI.DialogShellController dlgctrl = new Altaxo.Main.GUI.DialogShellController(new Main.GUI.DialogShellView((System.Windows.Forms.UserControl)controller.ViewObject),controller,title,false);
       
       if(dlgctrl.ShowDialog(Current.MainWindow))
       {
@@ -98,11 +99,11 @@ namespace Altaxo.Main.Services
     /// <item>A GUI control (Windows Forms: UserControl) must exist, to which an <see>Altaxo.Main.GUI.UserControlForControllerAttribute</see> is assigned to, and the argument of that attribute has to be the type of the controller.</item>
     /// </list>
     /// </remarks>
-    public bool ShowDialog(ref object arg)
+    public bool ShowDialog(ref object arg, string title)
     {
       object[] args = new object[1];
       args[0] = arg;
-      bool result = Current.GUIFactoryService.ShowDialog(args);
+      bool result = Current.GUIFactoryService.ShowDialog(args,title);
       arg = args[0];
       return result;
     }
@@ -117,5 +118,39 @@ namespace Altaxo.Main.Services
       System.Windows.Forms.MessageBox.Show(Current.MainWindow,errortxt,"Error(s)!", System.Windows.Forms.MessageBoxButtons.OK,System.Windows.Forms.MessageBoxIcon.Error);
     }
     
+    /// <summary>
+    /// Gets a user friendly class name. See remarks for a detailed description how it is been obtained.
+    /// </summary>
+    /// <param name="definedtype">The type of the class for which to obtain the user friendly class name.</param>
+    /// <returns>The user friendly class name. See remarks.</returns>
+    /// <remarks>
+    /// The strategy for obtaining a user friendly class name is as follows:
+    /// <list type="">
+    /// <item>If there is a resource string "ClassNames.type" (type is replaced by the type of the class), then the resource string is returned.</item>
+    /// <item>If there is a description attribute for that class, the description string is returned.</item>
+    /// <item>The name of the class (without namespace), followed by the namespace name in paranthesis is returned.</item>
+    /// </list>
+    /// </remarks>
+    public string GetUserFriendlyClassName(System.Type definedtype)
+    {
+      string result=null;
+      
+      try
+      {
+        result = Current.ResourceService.GetString("ClassNames."+definedtype.FullName);
+      }
+      catch(Exception)
+      {
+      }
+      if(result!=null)
+        return result;
+
+      Attribute[] attributes = Attribute.GetCustomAttributes(definedtype,typeof(System.ComponentModel.DescriptionAttribute));
+      if(attributes.Length>0)
+        return ((System.ComponentModel.DescriptionAttribute)attributes[0]).Description;
+
+      return string.Format("{0} ({1})",definedtype.Name,definedtype.Namespace);
+    }
+
 	}
 }

@@ -71,7 +71,7 @@ namespace Altaxo.Worksheet.GUI
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(0, 8);
+      this.label1.Location = new System.Drawing.Point(8, 8);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(48, 16);
       this.label1.TabIndex = 0;
@@ -79,16 +79,18 @@ namespace Altaxo.Worksheet.GUI
       // 
       // _cbInterpolationClass
       // 
+      this._cbInterpolationClass.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this._cbInterpolationClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this._cbInterpolationClass.Location = new System.Drawing.Point(64, 8);
       this._cbInterpolationClass.Name = "_cbInterpolationClass";
       this._cbInterpolationClass.Size = new System.Drawing.Size(192, 21);
       this._cbInterpolationClass.TabIndex = 1;
-      this._cbInterpolationClass.Text = "comboBox1";
       this._cbInterpolationClass.SelectionChangeCommitted += new System.EventHandler(this._cbInterpolationClass_SelectionChangeCommitted);
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(0, 56);
+      this.label2.Location = new System.Drawing.Point(8, 56);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(56, 16);
       this.label2.TabIndex = 2;
@@ -96,7 +98,7 @@ namespace Altaxo.Worksheet.GUI
       // 
       // label3
       // 
-      this.label3.Location = new System.Drawing.Point(0, 88);
+      this.label3.Location = new System.Drawing.Point(8, 88);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(56, 16);
       this.label3.TabIndex = 3;
@@ -104,7 +106,7 @@ namespace Altaxo.Worksheet.GUI
       // 
       // label4
       // 
-      this.label4.Location = new System.Drawing.Point(0, 120);
+      this.label4.Location = new System.Drawing.Point(8, 120);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(56, 16);
       this.label4.TabIndex = 4;
@@ -112,6 +114,8 @@ namespace Altaxo.Worksheet.GUI
       // 
       // _edFrom
       // 
+      this._edFrom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this._edFrom.Location = new System.Drawing.Point(64, 56);
       this._edFrom.Name = "_edFrom";
       this._edFrom.Size = new System.Drawing.Size(192, 20);
@@ -121,6 +125,8 @@ namespace Altaxo.Worksheet.GUI
       // 
       // _edTo
       // 
+      this._edTo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this._edTo.Location = new System.Drawing.Point(64, 88);
       this._edTo.Name = "_edTo";
       this._edTo.Size = new System.Drawing.Size(192, 20);
@@ -130,6 +136,8 @@ namespace Altaxo.Worksheet.GUI
       // 
       // _edNumberOfPoints
       // 
+      this._edNumberOfPoints.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
       this._edNumberOfPoints.Location = new System.Drawing.Point(64, 120);
       this._edNumberOfPoints.Name = "_edNumberOfPoints";
       this._edNumberOfPoints.Size = new System.Drawing.Size(192, 20);
@@ -148,7 +156,7 @@ namespace Altaxo.Worksheet.GUI
       this.Controls.Add(this._cbInterpolationClass);
       this.Controls.Add(this.label1);
       this.Name = "InterpolationControl";
-      this.Size = new System.Drawing.Size(328, 304);
+      this.Size = new System.Drawing.Size(264, 152);
       this.ResumeLayout(false);
 
     }
@@ -214,6 +222,24 @@ namespace Altaxo.Worksheet.GUI
       this._edTo.Text = Altaxo.Serialization.GUIConversion.ToString(val);
     }
 
+    UserControl _detailControl;
+    public void SetDetailControl(object detailControl)
+    {
+      UserControl ctrl = (UserControl)detailControl;
+      // remove the old control first
+      if(_detailControl!=null)
+        this.Controls.Remove(_detailControl);
+
+      _detailControl = ctrl;
+      if(_detailControl!=null)
+      {
+        _detailControl.Location = new Point(0,this._edNumberOfPoints.Bounds.Bottom);
+        _detailControl.Size = new Size(this.ClientSize.Width,_detailControl.Size.Height);
+        _detailControl.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+        this.Controls.Add(_detailControl);
+        this.ClientSize = new Size(this.ClientSize.Width,_detailControl.Bounds.Bottom);
+      }
+    }
     #endregion
   }
 }

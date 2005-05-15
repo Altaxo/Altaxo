@@ -53,6 +53,8 @@ namespace Altaxo
 
     private static Altaxo.Main.Services.GUIFactoryService sm_theGUIFactoryService;
 
+    private static Altaxo.Main.Services.IResourceService sm_theResourceService;
+
     private static bool sm_theApplicationIsClosing;
 
     /// <summary>
@@ -101,6 +103,14 @@ namespace Altaxo
     public static Altaxo.Main.Services.GUIFactoryService GUIFactoryService
     {
       get { return sm_theGUIFactoryService; }
+    }
+
+    /// <summary>
+    /// Returns the resource service, which is used to obtain resource strings.
+    /// </summary>
+    public static Altaxo.Main.Services.IResourceService ResourceService
+    {
+      get { return sm_theResourceService; }
     }
 
     /// <summary>
@@ -176,6 +186,19 @@ namespace Altaxo
         sm_thePrintingService = printingservice; 
       else
         throw new ApplicationException("The printing service can not be re-set to another value, only initialized for the first time!");
+
+    }
+
+    /// <summary>
+    /// Sets the resource service.
+    /// </summary>
+    /// <param name="resourceservice">The instance of resource service to use in this application.</param>
+    public static void SetResourceService(Altaxo.Main.Services.IResourceService resourceservice)
+    {
+      if(null==sm_theResourceService)
+        sm_theResourceService = resourceservice; 
+      else
+        throw new ApplicationException("The resource service can not be re-set to another value, only initialized for the first time!");
 
     }
 

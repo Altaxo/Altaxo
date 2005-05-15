@@ -44,6 +44,8 @@ namespace Altaxo.Worksheet.GUI
     void InitializeNumberOfPoints(int val);
     void InitializeXOrg(double val);
     void InitializeXEnd(double val);
+
+    void SetDetailControl(object detailControl);
   }
 
 
@@ -70,6 +72,7 @@ namespace Altaxo.Worksheet.GUI
     double _xOrg;
     double _xEnd;
     Altaxo.Calc.Interpolation.CurveBase _interpolationInstance;
+    IMVCAController _interpolationDetailController;
     System.Type[] _classList;
     string[] _classListStrings;
 
@@ -80,6 +83,19 @@ namespace Altaxo.Worksheet.GUI
       _xOrg = parameters.XOrg;
       _xEnd = parameters.XEnd;
       _interpolationInstance = parameters.InterpolationInstance;
+      
+
+    }
+
+    void SetInterpolationDetailController(IMVCAController ctrl)
+    {
+      IMVCAController oldController = this._interpolationDetailController;
+      this._interpolationDetailController = ctrl;
+
+      if(_view!=null)
+      {
+        _view.SetDetailControl(ctrl==null ? null : ctrl.ViewObject);
+      }
 
     }
     #region IApplyController Members
@@ -113,7 +129,7 @@ namespace Altaxo.Worksheet.GUI
       _classList = (System.Type[])list.ToArray(typeof(System.Type));
       _classListStrings = new string[_classList.Length];
       for(int i=0;i<_classList.Length;i++)
-        _classListStrings[i] = _classList[i].ToString();
+        _classListStrings[i] = Current.GUIFactoryService.GetUserFriendlyClassName(_classList[i]);
 
 
 
@@ -121,6 +137,11 @@ namespace Altaxo.Worksheet.GUI
 
     public bool Apply()
     {
+      if(null!=_interpolationDetailController && false==_interpolationDetailController.Apply())
+      {
+        return false;
+      }
+
       if(_view!=null)
       {
         _doc.NumberOfPoints = _numberOfPoints;
@@ -174,6 +195,7 @@ namespace Altaxo.Worksheet.GUI
     public void EhValidatingClassName(int val)
     {
       this._interpolationInstance = (Altaxo.Calc.Interpolation.CurveBase)System.Activator.CreateInstance(_classList[val]);
+      SetInterpolationDetailController((IMVCAController)Current.GUIFactoryService.GetControllerAndControl(new object[]{this._interpolationInstance},typeof(IMVCAController)));
     }
 
     public void EhValidatingNumberOfPoints(string val, System.ComponentModel.CancelEventArgs e)

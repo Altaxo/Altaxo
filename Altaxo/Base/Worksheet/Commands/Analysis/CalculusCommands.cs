@@ -46,7 +46,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       object paramobject = new SavitzkyGolayParameters();
 
-      if(!Current.GUIFactoryService.ShowDialog(ref paramobject))
+      if(!Current.GUIFactoryService.ShowDialog(ref paramobject,"Savitzky-Golay parameters"))
         return;
 
       SavitzkyGolayParameters parameters = (SavitzkyGolayParameters)paramobject;
@@ -104,7 +104,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       object paramobject = new InterpolationParameters();
 
-      if(!Current.GUIFactoryService.ShowDialog(ref paramobject))
+      if(!Current.GUIFactoryService.ShowDialog(ref paramobject,"Interpolation"))
         return;
 
       InterpolationParameters parameters = (InterpolationParameters)paramobject;

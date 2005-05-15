@@ -1069,6 +1069,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\GUI\NumericDoubleValueController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\GUI\RenameColumnDialog.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -1077,6 +1082,21 @@
                     RelPath = "Main\GUI\RenameColumnDialog.resx"
                     DependentUpon = "RenameColumnDialog.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\GUI\SingleValueControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\SingleValueControl.resx"
+                    DependentUpon = "SingleValueControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\GUI\SingleValueController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Main\GUI\SingleValueDialog.cs"
@@ -1169,6 +1189,11 @@
                 />
                 <File
                     RelPath = "Main\Services\IOutputService.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\Services\IResourceService.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1438,6 +1463,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Worksheet\GUI\CrossValidatedCubicSplineController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\ExponentialSplineController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Worksheet\GUI\InterpolationControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -1484,6 +1519,16 @@
                 />
                 <File
                     RelPath = "Worksheet\GUI\PLSStartAnalysisController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\RationalCubicSplineController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\RationalInterpolationController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -24,7 +24,6 @@ namespace Altaxo.Main.Services
       }
 
       #endregion
-
     }
 
     /// <summary>

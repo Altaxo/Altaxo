@@ -767,7 +767,7 @@ namespace Altaxo.Graph
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLayer),1)]
       public class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
     {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public new void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         base.Serialize(obj, info);
 
@@ -776,7 +776,7 @@ namespace Altaxo.Graph
         info.AddValue("ClipDataToFrame",s.m_ClipDataToFrame);
       }
 
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public new object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
         XYPlotLayer s = null!=o ? (XYPlotLayer)o : new XYPlotLayer();

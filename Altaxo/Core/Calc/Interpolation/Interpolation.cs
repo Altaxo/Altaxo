@@ -20,6 +20,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #endregion
 
+#region Acknowledgements
 // The following code was translated using Matpack sources (http://www.matpack.de) (Author B.Gammel)
 // Original MatPack-1.7.3\Source\mpcurvebase.h
 //                               mpcurvebase.cc
@@ -41,26 +42,14 @@
 //                               mpratinterpol.cc
 //                               mpgcvspline.h
 //                               mpgcvspline.cc
-
-
-
-
-
-
+#endregion
 
 using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 
-
 namespace Altaxo.Calc.Interpolation
 {
-  
-
-
-
- 
-
   /// <summary>
   /// Represents an interpolation curve. The curve is parametrized using a parameter u. Because of the parametrization, it is possible that
   /// for some x values there can exist more than one corresponding y values.
@@ -1676,22 +1665,15 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         return dis + sgn * di2 * his;
       }
     }
-
-
-    
-    //----------------------------------------------------------------------------//
-    //
-    // void MpRationalCubicSpline::SetSmoothing (double smoothing) 
-    //
-    // Set the value of the smoothing paramenter. A value of p = 0 
-    // for the smoothing parameter results in a standard cubic spline. 
-    // A value of p with -1 < p < 0 results in "unsmoothing" that means 
-    // overshooting oscillations. A value of p with p > 0 gives increasing
-    // smoothness. p to infinity results in a linear interpolation. A value
-    // smaller or equal to -1.0 leads to an error.
-    //
-    //----------------------------------------------------------------------------//
-
+ 
+    /// <summary>
+    /// Set the value of the smoothing paramenter. A value of p = 0 
+    /// for the smoothing parameter results in a standard cubic spline. 
+    /// A value of p with -1 < p < 0 results in "unsmoothing" that means 
+    /// overshooting oscillations. A value of p with p > 0 gives increasing
+    /// smoothness. p to infinity results in a linear interpolation. A value
+    /// smaller or equal to -1.0 leads to an error.
+    /// </summary>
     public double Smoothing
     { 
       get
@@ -1709,47 +1691,53 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
 
     
-    //----------------------------------------------------------------------------//
-    //
-    // void MpRationalCubicSpline::SetBoundaryConditions (int boundary, 
-    //                  double b1 = 0.0, 
-    //                        double b2 = 0.0)
-    //
-    // The following values are possible:
-    //
-    //      Natural 
-    //          natural boundaries, that means the 2nd derivatives are zero 
-    //          at both boundaries. This is the default value.
-    //
-    //      FiniteDifferences
-    //          use  finite difference approximation for 1st derivatives.
-    //
-    //      Supply1stDerivative
-    //          user supplied values for 1st derivatives are given in b1 and b2
-    //          i.e. f'(x_lo) in b1
-    //               f'(x_hi) in b2
-    //
-    //      Supply2ndDerivative 
-    //          user supplied values for 2nd derivatives are given in b1 and b2
-    //          i.e. f''(x_lo) in b1
-    //               f''(x_hi) in b2
-    //
-    //      Periodic 
-    //          periodic boundary conditions for periodic curves or functions.
-    //          NOT YET IMPLEMENTED IN THIS VERSION.
-    //
-    // If the parameters b1,b2 are omitted the default value is 0.0.
-    // 
-    //----------------------------------------------------------------------------//
-
-    public void SetBoundaryConditions (BoundaryConditions bnd, 
-      double b1, double b2)
+   
+    /// <summary>
+    /// Sets the boundary conditions.
+    /// </summary>
+    /// <param name="bnd"> The boundary condition. See remarks for the possible values.</param>
+    /// <param name="b1"></param>
+    /// <param name="b2"></param>
+    /// <remarks>
+    /// <code>
+    ///      Natural 
+    ///          natural boundaries, that means the 2nd derivatives are zero 
+    ///          at both boundaries. This is the default value.
+    ///
+    ///      FiniteDifferences
+    ///          use  finite difference approximation for 1st derivatives.
+    ///
+    ///      Supply1stDerivative
+    ///          user supplied values for 1st derivatives are given in b1 and b2
+    ///          i.e. f'(x_lo) in b1
+    ///               f'(x_hi) in b2
+    ///
+    ///      Supply2ndDerivative 
+    ///          user supplied values for 2nd derivatives are given in b1 and b2
+    ///          i.e. f''(x_lo) in b1
+    ///               f''(x_hi) in b2
+    ///
+    ///      Periodic 
+    ///          periodic boundary conditions for periodic curves or functions.
+    ///          NOT YET IMPLEMENTED IN THIS VERSION.
+    /// </code>
+    /// </remarks>
+    public void SetBoundaryConditions(
+      BoundaryConditions bnd, 
+      double b1, 
+      double b2)
     {
       boundary = bnd;
       r1 = b1;
       r2 = b2;
     }
   
+    /// <summary>
+    /// Gets the boundary condition and the two condition parameters.
+    /// </summary>
+    /// <param name="b1">First boundary condition parameter.</param>
+    /// <param name="b2">Second boundary condition parameter.</param>
+    /// <returns>The boundary condition.</returns>
     public BoundaryConditions GetBoundaryConditions (out double b1, out double b2) 
     {
       b1 = r1; 
@@ -1757,25 +1745,25 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       return boundary;
     }
     
+    /// <summary>
+    /// Gets the boundary condition and the two condition parameters.
+    /// </summary>
+    /// <returns>The boundary condition.</returns>
     public BoundaryConditions GetBoundaryConditions()
     {
       return boundary;
     }
   
-  
-
-    
-    //----------------------------------------------------------------------------//
-    //
-    // void MpRationalCubicSpline::Differences (const Vector& x, Vector& dx)
-    //
-    // Calculate difference vector dx(i) from vector x(i) and 
-    // assure that x(i) is strictly monotone increasing or decreasing.
-    // Can be called with both arguments the same vector in order to 
-    // do it inplace!
-    //
-    //----------------------------------------------------------------------------//
-
+      
+   
+    /// <summary>
+    /// Calculate difference vector dx(i) from vector x(i) and 
+    /// assure that x(i) is strictly monotone increasing or decreasing.
+    /// Can be called with both arguments the same vector in order to 
+    /// do it inplace!
+    /// </summary>
+    /// <param name="x">Input vector.</param>
+    /// <param name="dx">Output vector.</param>
     public static void Differences (IROVector x, IVector dx)
     {
       int sgn;
@@ -1802,19 +1790,14 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     }
 
 
-
-    
-    //----------------------------------------------------------------------------//
-    //
-    // void MpRationalCubicSpline::InverseDifferences (const Vector& x, Vector& dx)
-    //
-    // Calculate inverse difference vector dx(i) from vector x(i) and 
-    // assure that x(i) is strictly monotone increasing or decreasing.
-    // Can be called with both arguments the same vector in order to 
-    // do it inplace!
-    //
-    //----------------------------------------------------------------------------//
-
+    /// <summary>
+    /// Calculate inverse difference vector dx(i) from vector x(i) and 
+    /// assure that x(i) is strictly monotone increasing or decreasing.
+    /// Can be called with both arguments the same vector in order to 
+    /// do it inplace!
+    /// </summary>
+    /// <param name="x">Input vector.</param>
+    /// <param name="dx">Output vector.</param>
     public static void InverseDifferences (IROVector x, IVector dx)
     {
       int lo,hi,sgn;
@@ -1839,22 +1822,13 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
       dx[hi] = 0;
     }
-
-
-
-    
-    //----------------------------------------------------------------------------//
-    //
-    // void MpRationalCubicSpline::SplineA (double p, 
-    //                        const Vector& dx, Vector& z)
-    //
-    // input parameters:   p   smoothing parameter
-    //                     dx  inverse abscissa difference vector
-    //
-    // output parameters:  z  coefficient vector SplineB1 and SplineB2
-    //         
-    //----------------------------------------------------------------------------//
-
+   
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="p">smoothing parameter</param>
+    /// <param name="dx">inverse abscissa difference vector</param>
+    /// <param name="z">output parameter: coefficient vector SplineB1 and SplineB2</param>
     protected void SplineA (double p, IROVector dx, IVector z)
     {
       double h1,h2,p2;
@@ -1874,30 +1848,22 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         h1 = h2;
       }
     }
+  
 
-    
-
-    //----------------------------------------------------------------------------//
-    //
-    // void MpRationalCubicSpline::SplineB1 (double p, 
-    //                 const Vector& dx, const Vector& y, 
-    //                 Vector& y1, Vector& f, const Vector& z)
-    //
-    //  input paramaters:    p  smoothing parameter
-    //                      dx  inverse abscissa difference vector
-    //                       y  ordinata vector
-    //                       z  the coefficients computed by SplineA
-    //                       f  working vector
-    //                      y1  1st derivative vector with elements y1(lo) and y1(hi)
-    //                          supplied by the user.
-    //
-    //  output parameters:  y1  1st derivative vector with elements
-    //                          y1(i), i = lo+1...hi-1 calculated newly
-    //
-    //----------------------------------------------------------------------------//
-
-    protected void SplineB1 (double p, 
-      IROVector dx, IROVector y, 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="p">smoothing parameter</param>
+    /// <param name="dx">inverse abscissa difference vector</param>
+    /// <param name="y">ordinata vector</param>
+    /// <param name="y1">Input: 1st derivative vector with elements y1(lo) and y1(hi) supplied by the user.
+    /// Output: 1st derivative vector with elements y1(i), i = lo+1...hi-1 calculated newly.</param>
+    /// <param name="f">working vector</param>
+    /// <param name="z">the coefficients computed by SplineA</param>
+    protected void SplineB1(
+      double p, 
+      IROVector dx, 
+      IROVector y, 
       IVector y1, IVector f, IROVector z)
     {
       int j = 0, k;
@@ -2980,9 +2946,6 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
   #region CrossValidatedCubicSpline
 
-  
- 
-
   /// <summary>
   /// Calculates a natural cubic spline curve which smoothes a given set
   /// of data points, using statistical considerations to determine the amount
@@ -3827,15 +3790,22 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     }
 
 
-    void SetErrorVariance (IROVector dyy, double errvar)
+    public void SetErrorVariance (IROVector dyy, double errvar)
     {
       dy.CopyFrom(dyy);
       var = errvar;
     }
   
-    double GetErrorVariance()
+    public double ErrorVariance
     {
-      return var;
+      get
+      {
+        return var;
+      }
+      set
+      {
+        var = value;
+      }
     }
   
     //----------------------------------------------------------------------------//

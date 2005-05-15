@@ -55,12 +55,21 @@ namespace Altaxo.Main.GUI
 
       m_HostedControl = hostedControl;
 
-      this.ResumeLayout(true);
-      this.m_HostedControl.ResumeLayout(true);
+      this.SuspendLayout();;
+      this.m_HostedControl.SuspendLayout();
       this.ClientSize = new System.Drawing.Size(m_HostedControl.Size.Width, m_HostedControl.Size.Height + this.m_ButtonPanel.Size.Height);
       this.Controls.Add(hostedControl);
+      hostedControl.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
       this.m_HostedControl.ResumeLayout(false);
       this.ResumeLayout(false);
+
+      this.m_HostedControl.SizeChanged += new EventHandler(m_HostedControl_SizeChanged);
+
+    }
+
+    private void m_HostedControl_SizeChanged(object sender, EventArgs e)
+    {
+      this.ClientSize = new System.Drawing.Size(m_HostedControl.Size.Width, m_HostedControl.Size.Height + this.m_ButtonPanel.Size.Height);
     }
 
     /// <summary>
@@ -201,5 +210,6 @@ namespace Altaxo.Main.GUI
     }
 
     #endregion
+
   }
 }
