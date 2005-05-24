@@ -7,9 +7,9 @@ namespace Altaxo.Graph.Axes
   using Scaling;
   using Boundaries;
 
-	/// <summary>
-	/// Summary description for DateTimeAxis.
-	/// </summary>
+  /// <summary>
+  /// Summary description for DateTimeAxis.
+  /// </summary>
   public class DateTimeAxis : Axis
   {
     // cached values
@@ -209,10 +209,10 @@ namespace Altaxo.Graph.Axes
     /// <returns>physical values for the minor ticks</returns>
     public DateTime[] GetMinorTicks()
     {
-     if(this.m_MinorTicks==0)
-       return new DateTime[0];
+      if(this.m_MinorTicks==0)
+        return new DateTime[0];
 
-       System.Collections.ArrayList major = GetMajorTicksAsList();
+      System.Collections.ArrayList major = GetMajorTicksAsList();
 
       return new DateTime[0];
 
@@ -326,7 +326,7 @@ namespace Altaxo.Graph.Axes
      
 
 
-     DateTime oldAxisOrg = this.m_AxisOrg;
+      DateTime oldAxisOrg = this.m_AxisOrg;
       DateTime oldAxisEnd = this.m_AxisEnd;
     
      
@@ -518,7 +518,7 @@ namespace Altaxo.Graph.Axes
           case Unit.Years:
             return RoundUpYears(d);
         }
-      return d;  
+        return d;  
       }
 
       public DateTime RoundDown(DateTime d)

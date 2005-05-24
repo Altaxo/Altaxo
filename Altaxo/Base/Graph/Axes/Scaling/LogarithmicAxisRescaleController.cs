@@ -67,5 +67,5 @@ namespace Altaxo.Graph.Axes.Scaling
     #endregion
 
   
-    }
+  }
 }

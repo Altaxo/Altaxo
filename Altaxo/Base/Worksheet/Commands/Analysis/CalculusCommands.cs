@@ -27,15 +27,17 @@ using Altaxo.Calc;
 using Altaxo.Calc.Regression;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Interpolation;
+using Altaxo.Calc.Probability;
 using Altaxo.Data;
+using Altaxo.Collections;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
-	/// <summary>
-	/// Summary description for CalculusCommands.
-	/// </summary>
-	public class CalculusCommands
-	{
+  /// <summary>
+  /// Summary description for CalculusCommands.
+  /// </summary>
+  public class CalculusCommands
+  {
 
     #region SavitzkyGolay
 
@@ -66,7 +68,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         if(calcspace.RelativeSpaceDeviation>1E-2)
         {
           System.Windows.Forms.DialogResult dlgresult = 
-          System.Windows.Forms.MessageBox.Show(Current.MainWindow,
+            System.Windows.Forms.MessageBox.Show(Current.MainWindow,
             string.Format("The x-column {0} is not equally spaced, the deviation is {1}, the mean spacing is {2}. Continue anyway?", xCol.Name, calcspace.RelativeSpaceDeviation, calcspace.SpaceMeanValue),
             "Continue?",System.Windows.Forms.MessageBoxButtons.YesNo,
             System.Windows.Forms.MessageBoxIcon.Question,
@@ -76,7 +78,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
             return;
         }
 
-         spacing = calcspace.SpaceMeanValue;
+        spacing = calcspace.SpaceMeanValue;
       }
 
       Calc.Regression.SavitzkyGolay filter = new SavitzkyGolay(parameters);
@@ -91,7 +93,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
 
       yCol.Resume();
-  }
+    }
 
     #endregion
 
@@ -149,5 +151,18 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
     #endregion
-	}
+
+    #region Multivariate linear fit
+
+ 
+
+    public static LinearFitBySvd MultivariateLinearFit(WorksheetController ctrl)
+    {
+      return Calc.Regression.Multivariate.MultivariateLinearRegression.ShowDialogAndRegress(ctrl.Doc.DataColumns,ctrl.SelectedDataColumns);
+    }
+
+
+
+    #endregion
+  }
 }

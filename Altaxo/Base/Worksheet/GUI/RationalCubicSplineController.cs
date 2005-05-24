@@ -26,21 +26,21 @@ using Altaxo.Calc.Interpolation;
 
 namespace Altaxo.Worksheet.GUI
 {
-	/// <summary>
-	/// Controls the Smoothing parameter of a rational cubic spline.
-	/// </summary>
-	[UserControllerForObject(typeof(Altaxo.Calc.Interpolation.RationalCubicSpline),100)]
-	public class RationalCubicSplineController : NumericDoubleValueController
-	{
+  /// <summary>
+  /// Controls the Smoothing parameter of a rational cubic spline.
+  /// </summary>
+  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.RationalCubicSpline),100)]
+  public class RationalCubicSplineController : NumericDoubleValueController
+  {
     RationalCubicSpline _spline;
-		public RationalCubicSplineController(RationalCubicSpline spline)
+    public RationalCubicSplineController(RationalCubicSpline spline)
       : base(spline.Smoothing)
-		{
+    {
       base._minimumValue = -0.5;
       base._isMinimumValueIncluded=false;
       _descriptionText = "Smoothing parameter p (-0.5<p<0: overshooting; p=0: cubic spline; p=infinity: linear interpolation):";
       _spline = spline;
-		}
+    }
 
     public override object ModelObject
     {
@@ -60,5 +60,5 @@ namespace Altaxo.Worksheet.GUI
       else
         return false;
     }
-	}
+  }
 }

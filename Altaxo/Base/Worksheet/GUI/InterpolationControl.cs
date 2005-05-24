@@ -9,12 +9,12 @@ using Altaxo.Main.GUI;
 
 namespace Altaxo.Worksheet.GUI
 {
-	/// <summary>
-	/// Summary description for InterpolationControl.
-	/// </summary>
-	[UserControlForController(typeof(IInterpolationParameterViewEventSink))]
-	public class InterpolationControl : System.Windows.Forms.UserControl, IInterpolationParameterView
-	{
+  /// <summary>
+  /// Summary description for InterpolationControl.
+  /// </summary>
+  [UserControlForController(typeof(IInterpolationParameterViewEventSink))]
+  public class InterpolationControl : System.Windows.Forms.UserControl, IInterpolationParameterView
+  {
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.ComboBox _cbInterpolationClass;
     private System.Windows.Forms.Label label2;
@@ -23,42 +23,42 @@ namespace Altaxo.Worksheet.GUI
     private System.Windows.Forms.TextBox _edFrom;
     private System.Windows.Forms.TextBox _edTo;
     private System.Windows.Forms.TextBox _edNumberOfPoints;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public InterpolationControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public InterpolationControl()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
+      // TODO: Add any initialization after the InitializeComponent call
 
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.label1 = new System.Windows.Forms.Label();
       this._cbInterpolationClass = new System.Windows.Forms.ComboBox();
       this.label2 = new System.Windows.Forms.Label();
@@ -160,7 +160,7 @@ namespace Altaxo.Worksheet.GUI
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     private void _cbInterpolationClass_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
@@ -183,7 +183,7 @@ namespace Altaxo.Worksheet.GUI
     private void _edNumberOfPoints_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
       if(null!=Controller)    
-    Controller.EhValidatingNumberOfPoints(this._edNumberOfPoints.Text, e);
+        Controller.EhValidatingNumberOfPoints(this._edNumberOfPoints.Text, e);
     }
     #region IInterpolationParameterView Members
 

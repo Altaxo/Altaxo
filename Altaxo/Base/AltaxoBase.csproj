@@ -159,6 +159,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\Regression\Multivariate\MultivariateLinearRegression.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\Regression\Multivariate\PCRWorksheetAnalysis.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1009,6 +1014,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\GUI\BooleanValueControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\BooleanValueControl.resx"
+                    DependentUpon = "BooleanValueControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\GUI\BooleanValueController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\GUI\DialogFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1069,6 +1089,26 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Main\GUI\MultiChildControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\MultiChildControl.resx"
+                    DependentUpon = "MultiChildControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\GUI\MultiChildController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\MultipleChoiceController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Main\GUI\NumericDoubleValueController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1082,6 +1122,26 @@
                     RelPath = "Main\GUI\RenameColumnDialog.resx"
                     DependentUpon = "RenameColumnDialog.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\GUI\SingleChoiceComboBoxControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\SingleChoiceComboBoxControl.resx"
+                    DependentUpon = "SingleChoiceComboBoxControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Main\GUI\SingleChoiceController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\SingleChoiceObjectController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Main\GUI\SingleValueControl.cs"
@@ -1489,6 +1549,11 @@
                 />
                 <File
                     RelPath = "Worksheet\GUI\IWorksheetDocumentView.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\MultivariateLinearRegressionController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

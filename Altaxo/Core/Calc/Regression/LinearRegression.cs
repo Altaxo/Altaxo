@@ -58,6 +58,11 @@ namespace Altaxo.Calc.Regression
     double[] _residual;
 
     /// <summary>
+    /// Vector of predicted values.
+    /// </summary>
+    double[] _predicted;
+
+    /// <summary>
     /// The reduced variance of prediction at each index. Is calculated from x' (X'X)^(-1) x.
     /// To get the real prediction variance, the values have to be multiplicated with sigma².
     /// </summary>
@@ -87,30 +92,88 @@ namespace Altaxo.Calc.Regression
       FunctionBaseEvaluator evaluateFunctionBase,
       double threshold)
     {
-      _numberOfParameter = numberOfParameter;
-      _numberOfFreeParameter = numberOfParameter;
-      _numberOfData      = numberOfData;
-      _parameter = new double[numberOfParameter];
-      _residual = new double[numberOfData];
-      _reducedPredictionVariance = new double[numberOfData];
+      IMatrix u = new MatrixMath.BEMatrix( numberOfData, numberOfParameter);
 
       double[] functionBase = new double[numberOfParameter];
-      double[] scaledY      = new double[numberOfData];
-      IMatrix u = new MatrixMath.BEMatrix( numberOfData, numberOfParameter);
-      
-      // Calculated some useful values
-      _yMean = Mean(yarr,0,_numberOfData);
-      _yCorrectedSumOfSquares = CorrectedSumOfSquares(yarr,_yMean,0,_numberOfData);
 
       // Fill the function base matrix (rows: numberOfData, columns: numberOfParameter)
       // and scale also y
       for(int i=0;i<numberOfData;i++)
       {
         evaluateFunctionBase(xarr[i], functionBase);
+        for(int j=0;j<numberOfParameter;j++)
+          u[i,j] = functionBase[j];
+      }
+
+      Calculate(
+        u, 
+        yarr,
+        stddev,
+        numberOfData,
+        numberOfParameter,
+        threshold);
+    }
+
+    /// <summary>
+    /// Fits a data set linear to a given x base.
+    /// </summary>
+    /// <param name="xbase">The matrix of x values of the data set. Dimensions: numberOfData x numberOfParameters. The matrix is changed during calculation!</param>
+    /// <param name="yarr">The array of y values of the data set.</param>
+    /// <param name="stddev">The array of y standard deviations of the data set.</param>
+    /// <param name="numberOfData">The number of data points (may be smaller than the array sizes of the data arrays).</param>
+    /// <param name="numberOfParameter">The number of parameters to fit == size of the function base.</param>
+    /// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
+    public LinearFitBySvd(
+      IROMatrix xbase, // NumberOfData, NumberOfParameters 
+      double[] yarr,
+      double[] stddev,
+      int numberOfData,
+      int numberOfParameter,
+      double threshold)
+    {
+      Calculate(xbase,yarr,stddev,numberOfData,numberOfParameter,threshold);
+    }
+
+    /// <summary>
+    /// Fits a data set linear to a given x base.
+    /// </summary>
+    /// <param name="xbase">The matrix of x values of the data set. Dimensions: numberOfData x numberOfParameters. The matrix is changed during calculation!</param>
+    /// <param name="yarr">The array of y values of the data set.</param>
+    /// <param name="stddev">The array of y standard deviations of the data set.</param>
+    /// <param name="numberOfData">The number of data points (may be smaller than the array sizes of the data arrays).</param>
+    /// <param name="numberOfParameter">The number of parameters to fit == size of the function base.</param>
+    /// <param name="threshold">A treshold value (usually 1E-5) used to chop the unimportant singular values away.</param>
+    public LinearFitBySvd Calculate(
+      IROMatrix xbase, // NumberOfData, NumberOfParameters 
+      double[] yarr,
+      double[] stddev,
+      int numberOfData,
+      int numberOfParameter,
+      double threshold)
+    {
+      _numberOfParameter = numberOfParameter;
+      _numberOfFreeParameter = numberOfParameter;
+      _numberOfData      = numberOfData;
+      _parameter = new double[numberOfParameter];
+      _residual = new double[numberOfData];
+      _predicted = new double[numberOfData];
+      _reducedPredictionVariance = new double[numberOfData];
+
+      double[] scaledY      = new double[numberOfData];
+      
+      // Calculated some useful values
+      _yMean = Mean(yarr,0,_numberOfData);
+      _yCorrectedSumOfSquares = CorrectedSumOfSquares(yarr,_yMean,0,_numberOfData);
+
+      MatrixMath.BEMatrix u = new MatrixMath.BEMatrix(numberOfData,numberOfParameter);
+      // Fill the function base matrix (rows: numberOfData, columns: numberOfParameter)
+      // and scale also y
+      for(int i=0;i<numberOfData;i++)
+      {
         double scale = 1/stddev[i];
 
         for(int j=0;j<numberOfParameter;j++)
-          u[i,j] = scale*functionBase[j];
+          u[i,j] = scale*xbase[i,j];
         
         scaledY[i] = scale*yarr[i];
       }
@@ -126,11 +189,11 @@ namespace Altaxo.Calc.Regression
       _chiSquare = 0;
       for(int i=0;i<numberOfData;i++)
       {
-        evaluateFunctionBase(xarr[i],functionBase);
         double ypredicted=0;
         for(int j=0;j<numberOfParameter;j++)
-          ypredicted += _parameter[j]*functionBase[j];
+          ypredicted += _parameter[j]*xbase[i,j];
         double deviation = yarr[i]-ypredicted;
+        _predicted[i] = ypredicted;
         _residual[i] = deviation;
         _chiSquare += deviation*deviation;
       }
@@ -153,8 +216,8 @@ namespace Altaxo.Calc.Regression
         _reducedPredictionVariance[i] = total;
       }
  
+      return this;
     }
-
 
     /// <summary>
     /// Calculates the mean value of <c>length</c> elements in array x starting from index <c>start</c>.
@@ -260,9 +323,20 @@ namespace Altaxo.Calc.Regression
       return Math.Abs(Parameter[i])/StandardErrorOfParameter(i);
     }
 
-    public double[] Residual
+    /// <summary>
+    /// Gets the array of residual values defined as the difference y[i]-ypredicted[i].
+    /// </summary>
+    public double[] ResidualValues
     {
       get { return _residual; }
+    }
+
+    /// <summary>
+    /// Gets the predicted dependent values
+    /// </summary>
+    public double[] PredictedValues
+    {
+      get { return _predicted; }
     }
 
 

@@ -209,7 +209,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
         Current.DataDisplay.WriteOneLine(string.Format("MoveIncrement: {0}",_MovementIncrement));
 
-      return true;
+        return true;
       }
 
 

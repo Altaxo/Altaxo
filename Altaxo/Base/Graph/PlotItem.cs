@@ -52,7 +52,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// Get/sets the data object of this plot.
     /// </summary>
-   // public abstract object Data { get; set; }
+    // public abstract object Data { get; set; }
     /// <summary>
     /// Get/sets the style object of this plot.
     /// </summary>

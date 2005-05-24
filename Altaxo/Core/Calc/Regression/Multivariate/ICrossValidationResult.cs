@@ -25,11 +25,11 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-	/// <summary>
-	/// Stores the result(s) of cross validation.
-	/// </summary>
-	public interface ICrossValidationResult
-	{
+  /// <summary>
+  /// Stores the result(s) of cross validation.
+  /// </summary>
+  public interface ICrossValidationResult
+  {
     /// <summary>
     /// Gets the predicted y values for cross validation.
     /// </summary>
@@ -54,7 +54,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     double MeanNumberOfExcludedSpectra { get; }
 
-	}
+  }
 
 
   /// <summary>
@@ -136,7 +136,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Returns the mean number of excluded spectra during cross validation.
     /// </summary>
-      public double MeanNumberOfExcludedSpectra { get { return _MeanNumberExcludedSpectra; }}
+    public double MeanNumberOfExcludedSpectra { get { return _MeanNumberExcludedSpectra; }}
 
   }
 

@@ -123,12 +123,12 @@ namespace Altaxo.Graph.Axes.Scaling
     public bool IsEqualTo( NumericAxisRescaleConditions b)
     {
       return
-    this._orgRescaling == b._orgRescaling &&
-    this._org == b._org &&
-    this._endRescaling == b._endRescaling &&
-    this._end == b._end &&
-    this._spanRescaling == b._spanRescaling &&
-    this._span == b._span;
+        this._orgRescaling == b._orgRescaling &&
+        this._org == b._org &&
+        this._endRescaling == b._endRescaling &&
+        this._end == b._end &&
+        this._spanRescaling == b._spanRescaling &&
+        this._span == b._span;
     }
    
     public virtual void SetOrgEndSpan(BoundaryRescaling orgRescaling, double org, BoundaryRescaling endRescaling, double end, BoundaryRescaling spanRescaling, double span)

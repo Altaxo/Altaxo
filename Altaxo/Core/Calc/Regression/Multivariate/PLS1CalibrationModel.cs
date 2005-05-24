@@ -41,7 +41,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       get { return _numberOfY; }
       set 
-      { _numberOfY = value;
+      {
+          _numberOfY = value;
         Allocate(value);
       }
     }

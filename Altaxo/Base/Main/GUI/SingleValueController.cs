@@ -42,12 +42,12 @@ namespace Altaxo.Main.GUI
 
   #endregion
 
-	/// <summary>
-	/// Controller for a single value. This is a string here, but in derived classes, that can be anything that can be converted to and from a string.
-	/// </summary>
-	[UserControllerForObject(typeof(string),100)]
-	public class SingleValueController : IMVCAController, ISingleValueViewEventSink
-	{
+  /// <summary>
+  /// Controller for a single value. This is a string here, but in derived classes, that can be anything that can be converted to and from a string.
+  /// </summary>
+  [UserControllerForObject(typeof(string),100)]
+  public class SingleValueController : IMVCAController, ISingleValueViewEventSink
+  {
     protected ISingleValueView _view;
     protected string _value1String;
     protected string _value1StringTemporary;

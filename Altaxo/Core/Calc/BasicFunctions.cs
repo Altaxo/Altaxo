@@ -94,57 +94,7 @@ namespace Altaxo.Calc
 
 
     #endregion
-
-
-    #region hypot2f
-
-    /// <summary>
-    /// The standard hypot() function for two arguments taking care of overflows and zerodivides. 
-    /// </summary>
-    /// <param name="x">First argument.</param>
-    /// <param name="y">Second argument.</param>
-    /// <returns>Square root of the sum of x-square and y-square.</returns>
-    public static float hypot (float x, float y)
-    {
-      float f,h;
-      float ax=Math.Abs(x), ay=Math.Abs(y);
-      if (ax > ay) 
-      {
-        f = ay/ax; h = ax;
-      }
-      else 
-      {
-        f = ax/ay; h = ay;
-      }
-      return (float)(h*Math.Sqrt(1+f*f));
-    }
-
-    #endregion
-
-    #region hypot2d
-
-    /// <summary>
-    /// The standard hypot() function for two arguments taking care of overflows and zerodivides. 
-    /// </summary>
-    /// <param name="x">First argument.</param>
-    /// <param name="y">Second argument.</param>
-    /// <returns>Square root of the sum of x-square and y-square.</returns>
-    public static double hypot (double x, double y)
-    {
-      double f,h;
-      double ax=Math.Abs(x), ay=Math.Abs(y);
-      if (ax > ay) 
-      {
-        f = ay/ax; h = ax;
-      }
-      else 
-      {
-        f = ax/ay; h = ay;
-      }
-      return h*Math.Sqrt(1+f*f);
-    }
-
-    #endregion
+ 
 
     #region hypot3f
 
@@ -212,6 +162,7 @@ namespace Altaxo.Calc
       double f,g,h;
       double ax=Math.Abs(x), ay=Math.Abs(y), az=Math.Abs(z); // use standard fabs()
       if (ax > ay) 
+      {
         if (ax > az) 
         {
           f = ay/ax; g = az/ax; h = ax;
@@ -220,17 +171,22 @@ namespace Altaxo.Calc
         {
           f = ax/az; g = ay/az; h = az;
         }
+      }
       else
+      {
         if (ay > az) 
-      {
-        f = ax/ay; g = az/ay; h = ay;
-      } 
-      else if (az != 0)
-      {
-        f = ax/az; g = ay/az; h = az;
-      } 
-      else 
-        return 0;
+        {
+          f = ax/ay; g = az/ay; h = ay;
+        } 
+        else if (az != 0)
+        {
+          f = ax/az; g = ay/az; h = az;
+        } 
+        else 
+        {
+          return 0;
+        }
+      }
       return h*Math.Sqrt(1+f*f+g*g);
     }
 

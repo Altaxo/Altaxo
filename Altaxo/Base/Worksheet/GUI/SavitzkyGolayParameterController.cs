@@ -50,12 +50,12 @@ namespace Altaxo.Worksheet.GUI
 
   #endregion
 
-	/// <summary>
-	/// Summary description for SavitzkyGolayParameterController.
-	/// </summary>
-	[UserControllerForObject(typeof(SavitzkyGolayParameters),100)]
-	public class SavitzkyGolayParameterController : Main.GUI.IMVCAController, ISavitzkyGolayParameterViewEventSink
-	{
+  /// <summary>
+  /// Summary description for SavitzkyGolayParameterController.
+  /// </summary>
+  [UserControllerForObject(typeof(SavitzkyGolayParameters),100)]
+  public class SavitzkyGolayParameterController : Main.GUI.IMVCAController, ISavitzkyGolayParameterViewEventSink
+  {
     SavitzkyGolayParameters _doc;
     ISavitzkyGolayParameterView _view;
 
@@ -63,8 +63,8 @@ namespace Altaxo.Worksheet.GUI
     int _polynomialOrder;
     int _derivativeOrder;
 
-		public SavitzkyGolayParameterController(SavitzkyGolayParameters parameters)
-		{
+    public SavitzkyGolayParameterController(SavitzkyGolayParameters parameters)
+    {
       _doc = parameters;
       _numberOfPoints = parameters.NumberOfPoints;
       _polynomialOrder = parameters.PolynomialOrder;
@@ -148,5 +148,5 @@ namespace Altaxo.Worksheet.GUI
     {
       _derivativeOrder = val;
     }
-    }
+  }
 }

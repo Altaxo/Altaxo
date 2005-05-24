@@ -24,9 +24,9 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-	/// <summary>
-	/// A vector class which provides direct access to the underlaying data array.
-	/// </summary>
+  /// <summary>
+  /// A vector class which provides direct access to the underlaying data array.
+  /// </summary>
   public class DoubleVector : IVector
   {
     protected double[] x;

@@ -189,7 +189,7 @@ namespace Altaxo.Collections
 
     public object Clone()
     {
-     return new IntegerRangeAsCollection(this);
+      return new IntegerRangeAsCollection(this);
     }
 
     #endregion

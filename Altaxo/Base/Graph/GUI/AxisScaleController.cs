@@ -199,7 +199,7 @@ namespace Altaxo.Graph.GUI
     
     
 
-        SetElements();
+      SetElements();
       
     
       

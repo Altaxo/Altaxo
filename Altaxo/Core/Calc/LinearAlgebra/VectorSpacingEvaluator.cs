@@ -25,11 +25,11 @@ using System;
 namespace Altaxo.Calc.LinearAlgebra
 {
   
-	/// <summary>
-	/// Statistics of the spacing between adjacent vector elements. The spaces are defined in the forward direction, i.e. as vec[i+1]-vec[i].
-	/// </summary>
-	public class VectorSpacingEvaluator
-	{
+  /// <summary>
+  /// Statistics of the spacing between adjacent vector elements. The spaces are defined in the forward direction, i.e. as vec[i+1]-vec[i].
+  /// </summary>
+  public class VectorSpacingEvaluator
+  {
     int _numvalidsteps=0;
     int _numtotalsteps=0;
     double _stepmin = double.PositiveInfinity;
@@ -184,5 +184,5 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 
-	}
+  }
 }

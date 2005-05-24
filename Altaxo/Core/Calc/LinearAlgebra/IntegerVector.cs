@@ -25,9 +25,9 @@ using System;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-	/// <summary>
-	/// Vector of integer elements.
-	/// </summary>
+  /// <summary>
+  /// Vector of integer elements.
+  /// </summary>
   public class IntegerVector
   {
     protected int[] x;

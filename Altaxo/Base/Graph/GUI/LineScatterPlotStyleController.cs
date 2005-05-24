@@ -613,7 +613,7 @@ namespace Altaxo.Graph.GUI
 
         if(null!=m_PlotGroup)
         {
-            m_PlotGroup.UpdateMembers(m_PlotGroupStyle,m_PlotStyle);
+          m_PlotGroup.UpdateMembers(m_PlotGroupStyle,m_PlotStyle);
         }
 
       }

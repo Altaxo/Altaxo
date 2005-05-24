@@ -2,15 +2,15 @@ using System;
 
 namespace Altaxo.Graph.AxisLabeling
 {
-	/// <summary>
-	/// Base class for turning numeric values into strings.
-	/// </summary>
-	public class AbstractNumericLabelFormatting
-	{
+  /// <summary>
+  /// Base class for turning numeric values into strings.
+  /// </summary>
+  public class AbstractNumericLabelFormatting
+  {
     /// <summary>
     /// The format string used to convert the number to the string.
     /// </summary>
-		protected string _formatString;
+    protected string _formatString;
 
 
     /// <summary>
@@ -38,5 +38,5 @@ namespace Altaxo.Graph.AxisLabeling
 
       return result;
     }
-	}
+  }
 }

@@ -77,7 +77,7 @@ namespace Altaxo.Graph.Axes.Boundaries
       }
     }
 
-      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.PhysicalBoundaries",0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Graph.PhysicalBoundaries",0)]
       [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NumericalBoundaries),1)]
       public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {

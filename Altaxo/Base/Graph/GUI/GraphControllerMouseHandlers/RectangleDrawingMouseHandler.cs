@@ -30,16 +30,16 @@ using Altaxo.Graph;
 using Altaxo.Serialization;
 namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers 
 {
-	/// <summary>
-	/// Summary description for RectangleDrawingMouseHandler.
-	/// </summary>
+  /// <summary>
+  /// Summary description for RectangleDrawingMouseHandler.
+  /// </summary>
   public class RectangleDrawingMouseHandler : AbstractRectangularToolMouseHandler
-	{
-		public RectangleDrawingMouseHandler(GraphController grac)
+  {
+    public RectangleDrawingMouseHandler(GraphController grac)
       : base(grac)
-		{
-			
-		}
+    {
+      
+    }
 
     protected override void FinishDrawing()
     {
@@ -52,7 +52,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
       _grac.RefreshGraph();
     }
  
-	}
+  }
 
 
  

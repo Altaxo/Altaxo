@@ -23,16 +23,16 @@ using System;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// This interface must be implemented by the resource service.
-	/// </summary>
-	public interface IResourceService
-	{
+  /// <summary>
+  /// This interface must be implemented by the resource service.
+  /// </summary>
+  public interface IResourceService
+  {
     /// <summary>
     /// Returns a resource string indentified by name.
     /// </summary>
     /// <param name="resourceName">The name of the resource string.</param>
     /// <returns>The resource string.</returns>
     string GetString(string resourceName);
-	}
+  }
 }

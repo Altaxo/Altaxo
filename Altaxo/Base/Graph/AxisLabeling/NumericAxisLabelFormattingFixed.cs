@@ -2,20 +2,20 @@ using System;
 
 namespace Altaxo.Graph.AxisLabeling
 {
-	/// <summary>
-	/// Summary description for NumericAxisLabelFormattingFixed.
-	/// </summary>
-	public class NumericAxisLabelFormattingFixed
-	{
+  /// <summary>
+  /// Summary description for NumericAxisLabelFormattingFixed.
+  /// </summary>
+  public class NumericAxisLabelFormattingFixed
+  {
     int _decimalplaces;
     string _formatString;
 
-		public NumericAxisLabelFormattingFixed()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
+    public NumericAxisLabelFormattingFixed()
+    {
+      //
+      // TODO: Add constructor logic here
+      //
+    }
 
 
     public string GetLabel(double tick)
@@ -31,5 +31,5 @@ namespace Altaxo.Graph.AxisLabeling
 
       return mticks;
     }
-	}
+  }
 }

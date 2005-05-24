@@ -2,17 +2,17 @@ using System;
 
 namespace Altaxo.Main.GUI
 {
-	/// <summary>
-	/// Can be used for a control to denote which type of controller can control this.
-	/// </summary>
-	public class UserControlForControllerAttribute : System.Attribute, IComparable, IClassForClassAttribute
-	{
+  /// <summary>
+  /// Can be used for a control to denote which type of controller can control this.
+  /// </summary>
+  public class UserControlForControllerAttribute : System.Attribute, IComparable, IClassForClassAttribute
+  {
     System.Type _type;
     int         _priority = 0;
-		public UserControlForControllerAttribute(System.Type type)
-		{
-			_type = type;
-		}
+    public UserControlForControllerAttribute(System.Type type)
+    {
+      _type = type;
+    }
     public UserControlForControllerAttribute(System.Type type, int priority)
     {
       _type = type;

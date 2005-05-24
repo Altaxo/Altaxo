@@ -84,7 +84,7 @@ namespace Altaxo.Worksheet.Commands
     {
       int startrest=0;
 
-        Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
+      Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
         
       if(ctrl!=null)
       {
@@ -96,16 +96,16 @@ namespace Altaxo.Worksheet.Commands
         }
       }
 
-        // import also the other files, but this time we create new tables
-        for(int i=startrest;i<filenames.Length;i++)
+      // import also the other files, but this time we create new tables
+      for(int i=startrest;i<filenames.Length;i++)
+      {
+        using(System.IO.Stream myStream = new System.IO.FileStream(filenames[0],System.IO.FileMode.Open,System.IO.FileAccess.Read))
         {
-          using(System.IO.Stream myStream = new System.IO.FileStream(filenames[0],System.IO.FileMode.Open,System.IO.FileAccess.Read))
-          {
-            Altaxo.Worksheet.GUI.IWorksheetController newwkscontroller = Current.ProjectService.CreateNewWorksheet();
-            ImportAscii(newwkscontroller,myStream);
-            myStream.Close();
-          }
-        } // for all files
+          Altaxo.Worksheet.GUI.IWorksheetController newwkscontroller = Current.ProjectService.CreateNewWorksheet();
+          ImportAscii(newwkscontroller,myStream);
+          myStream.Close();
+        }
+      } // for all files
 
     }
 

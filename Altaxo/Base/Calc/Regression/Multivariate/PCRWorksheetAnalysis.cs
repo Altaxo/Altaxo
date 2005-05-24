@@ -52,7 +52,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       DataTable table)
     {
 
-       PCRCalibrationModel calib = (PCRCalibrationModel)calibrationSet;
+      PCRCalibrationModel calib = (PCRCalibrationModel)calibrationSet;
 
 
       int numFactors = calib.NumberOfFactors;

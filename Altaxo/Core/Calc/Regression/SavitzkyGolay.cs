@@ -162,7 +162,7 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="parameters">Set of parameters used for Savitzky-Golay filtering.</param>
     public SavitzkyGolay(SavitzkyGolayParameters parameters)
-    : this(parameters.NumberOfPoints,parameters.DerivativeOrder,parameters.PolynomialOrder)
+      : this(parameters.NumberOfPoints,parameters.DerivativeOrder,parameters.PolynomialOrder)
     {
     }
 

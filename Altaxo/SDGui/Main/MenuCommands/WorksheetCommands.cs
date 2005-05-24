@@ -677,6 +677,14 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class AnalysisMultivariateLinearRegression : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.CalculusCommands.MultivariateLinearFit(ctrl);
+    }
+  }
+
 
   #endregion
 }

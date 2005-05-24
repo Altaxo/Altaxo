@@ -5,11 +5,11 @@ using Altaxo.Main.GUI;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Creates the appropriate GUI object for a given document type.
-	/// </summary>
-	public class GUIFactoryService
-	{
+  /// <summary>
+  /// Creates the appropriate GUI object for a given document type.
+  /// </summary>
+  public class GUIFactoryService
+  {
     /// <summary>
     /// Gets an <see>IMVCController for a given document type.</see>
     /// </summary>
@@ -49,6 +49,21 @@ namespace Altaxo.Main.Services
       controller.ViewObject = control;
 
       return controller;
+    }
+
+
+    /// <summary>
+    /// Searchs for a appropriate control for a given controller and attaches the control to the controller.
+    /// </summary>
+    /// <param name="controller">The controller a control is searched for.</param>
+    public void GetControl(IMVCController controller)
+    {
+      System.Windows.Forms.UserControl control = (System.Windows.Forms.UserControl)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControlForControllerAttribute),typeof(System.Windows.Forms.UserControl),new object[]{controller});
+
+      if(control==null)
+        return;
+
+      controller.ViewObject = control;
     }
 
     /// <summary>
@@ -152,5 +167,5 @@ namespace Altaxo.Main.Services
       return string.Format("{0} ({1})",definedtype.Name,definedtype.Namespace);
     }
 
-	}
+  }
 }

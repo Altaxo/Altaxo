@@ -2,11 +2,11 @@ using System;
 
 namespace Altaxo.Graph.Axes.Boundaries
 {
-	/// <summary>
-	/// Represents the boundaries of an axis.
-	/// </summary>
-	public abstract class AbstractPhysicalBoundaries : IPhysicalBoundaries
-	{
+  /// <summary>
+  /// Represents the boundaries of an axis.
+  /// </summary>
+  public abstract class AbstractPhysicalBoundaries : IPhysicalBoundaries
+  {
 
     protected int numberOfItems=0;
  
@@ -15,10 +15,10 @@ namespace Altaxo.Graph.Axes.Boundaries
     protected int m_SavedNumberOfItems; // stores the number of items when events are disabled
  
   
-		
+    
     public AbstractPhysicalBoundaries()
-		{
-			numberOfItems = 0;
+    {
+      numberOfItems = 0;
     }
 
     /// <summary>
@@ -79,10 +79,10 @@ namespace Altaxo.Graph.Axes.Boundaries
 
     public int NumberOfItems
     {
-       get 
-       { 
-         return numberOfItems;
-       } 
+      get 
+      { 
+        return numberOfItems;
+      } 
     }
 
     public virtual bool IsEmpty 

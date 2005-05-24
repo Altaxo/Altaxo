@@ -352,7 +352,7 @@ namespace Altaxo.Calc.Interpolation
 
         case Parametrization.Norm2:  
           for (i = lo+1, t[lo] = 0.0; i <= hi; i++)
-            t[i] = t[i-1] + BasicFunctions.hypot( x[i]-x[i-1],y[i]-y[i-1] );
+            t[i] = t[i-1] + RMath.Hypot( x[i]-x[i-1],y[i]-y[i-1] );
           break;
 
         case Parametrization.SqrNorm2:  
@@ -1553,7 +1553,6 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
   ///
   ///          f(i)(x) = a(i)*g1 + b(i)*g2 + c(i)*g3 + d(i)*g4
   ///
-  ///
   /// Choosing the smoothing parameter p:
   /// -----------------------------------
   ///
@@ -1669,8 +1668,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     /// <summary>
     /// Set the value of the smoothing paramenter. A value of p = 0 
     /// for the smoothing parameter results in a standard cubic spline. 
-    /// A value of p with -1 < p < 0 results in "unsmoothing" that means 
-    /// overshooting oscillations. A value of p with p > 0 gives increasing
+    /// A value of p with -1 &lt; p &lt; 0 results in "unsmoothing" that means 
+    /// overshooting oscillations. A value of p with p &gt; 0 gives increasing
     /// smoothness. p to infinity results in a linear interpolation. A value
     /// smaller or equal to -1.0 leads to an error.
     /// </summary>

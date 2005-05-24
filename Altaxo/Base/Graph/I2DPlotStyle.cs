@@ -27,11 +27,11 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph
 {
-	/// <summary>
-	/// Interface for two dimensional plot styles.
-	/// </summary>
-	public interface I2DPlotStyle
-	{
+  /// <summary>
+  /// Interface for two dimensional plot styles.
+  /// </summary>
+  public interface I2DPlotStyle
+  {
     /// <summary>
     /// Returns true if the color property is supported.
     /// </summary>
@@ -74,5 +74,5 @@ namespace Altaxo.Graph
     /// <param name="step">The number of steps distance to the template style. For instance, if step==1 the next color is used, if step==-1 the previous color is used.</param>
     void SetIncrementalStyle(I2DPlotStyle pstemplate, PlotGroupStyle style, int step);
 
-	}
+  }
 }

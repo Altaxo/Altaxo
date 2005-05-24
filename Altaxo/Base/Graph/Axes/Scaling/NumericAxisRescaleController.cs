@@ -5,15 +5,15 @@ using Altaxo.Main.GUI;
 
 namespace Altaxo.Graph.Axes.Scaling
 {
-	/// <summary>
-	/// Summary description for NumericAxisRescaleController.
-	/// </summary>
-	[UserControllerForObject(typeof(NumericAxisRescaleConditions))]
-	public class NumericAxisRescaleController 
+  /// <summary>
+  /// Summary description for NumericAxisRescaleController.
+  /// </summary>
+  [UserControllerForObject(typeof(NumericAxisRescaleConditions))]
+  public class NumericAxisRescaleController 
     :
     IOrgEndSpanViewEventReceiver,
     IMVCAController
-	{
+  {
     protected IOrgEndSpanView _view;
     protected NumericAxisRescaleConditions _doc;
     protected NumericalAxis _axis;

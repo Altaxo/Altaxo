@@ -29,50 +29,50 @@ using System.Windows.Forms;
 
 namespace Altaxo.Main.GUI
 {
-	/// <summary>
-	/// Summary description for SingleValueControl.
-	/// </summary>
+  /// <summary>
+  /// Summary description for SingleValueControl.
+  /// </summary>
   [UserControlForController(typeof(ISingleValueViewEventSink))]
-	public class SingleValueControl : System.Windows.Forms.UserControl, ISingleValueView
-	{
+  public class SingleValueControl : System.Windows.Forms.UserControl, ISingleValueView
+  {
     private System.Windows.Forms.TextBox m_edEdit;
     private System.Windows.Forms.Label m_Label1;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public SingleValueControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public SingleValueControl()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
+      // TODO: Add any initialization after the InitializeComponent call
 
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.m_edEdit = new System.Windows.Forms.TextBox();
       this.m_Label1 = new System.Windows.Forms.Label();
       this.SuspendLayout();
@@ -109,7 +109,7 @@ namespace Altaxo.Main.GUI
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     #region ISingleValueView Members
 

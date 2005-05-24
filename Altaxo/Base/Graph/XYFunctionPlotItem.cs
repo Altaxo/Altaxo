@@ -269,7 +269,7 @@ namespace Altaxo.Graph
     {
       get
       {
-       return this.m_PlotStyle.XYPlotLineStyle;
+        return this.m_PlotStyle.XYPlotLineStyle;
       }
     }
 
@@ -294,8 +294,8 @@ namespace Altaxo.Graph
     {
       if(m_PlotStyle is XYLineScatterPlotStyle)
         ((XYLineScatterPlotStyle)m_PlotStyle).SetIncrementalStyle(pstemplate,style,step);
-     // else if(m_PlotStyle is XYPlotLineStyle)
-     //   ((XYPlotLineStyle)m_PlotStyle).SetIncrementalStyle(pstemplate,style,step);
+      // else if(m_PlotStyle is XYPlotLineStyle)
+      //   ((XYPlotLineStyle)m_PlotStyle).SetIncrementalStyle(pstemplate,style,step);
     }
 
     #endregion

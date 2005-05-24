@@ -8,12 +8,12 @@ using Altaxo.Main.GUI;
 
 namespace Altaxo.Graph.GUI
 {
-	/// <summary>
-	/// Summary description for OrgEndSpanControl.
-	/// </summary>
-	[UserControlForController(typeof(IOrgEndSpanViewEventReceiver))]
-	public class OrgEndSpanControl : System.Windows.Forms.UserControl, IOrgEndSpanView
-	{
+  /// <summary>
+  /// Summary description for OrgEndSpanControl.
+  /// </summary>
+  [UserControlForController(typeof(IOrgEndSpanViewEventReceiver))]
+  public class OrgEndSpanControl : System.Windows.Forms.UserControl, IOrgEndSpanView
+  {
     IOrgEndSpanViewEventReceiver _controller;
 
     private System.Windows.Forms.Label lblLabel1;
@@ -25,10 +25,10 @@ namespace Altaxo.Graph.GUI
     private System.Windows.Forms.ComboBox cbCombo3;
     private System.Windows.Forms.TextBox edText3;
     private System.Windows.Forms.Label lblLabel3;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
     public IOrgEndSpanViewEventReceiver Controller 
     {
@@ -36,37 +36,37 @@ namespace Altaxo.Graph.GUI
       set { _controller = value; }
     }
 
-		public OrgEndSpanControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public OrgEndSpanControl()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
+      // TODO: Add any initialization after the InitializeComponent call
 
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.lblLabel1 = new System.Windows.Forms.Label();
       this.edText1 = new System.Windows.Forms.TextBox();
       this.cbCombo1 = new System.Windows.Forms.ComboBox();
@@ -169,7 +169,7 @@ namespace Altaxo.Graph.GUI
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     #region IOrgEndSpanControl Members
 

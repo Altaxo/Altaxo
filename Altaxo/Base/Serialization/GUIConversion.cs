@@ -2,12 +2,12 @@ using System;
 
 namespace Altaxo.Serialization
 {
-	/// <summary>
-	/// Responsible for converting user input into data and vice versa. The user preferences for locality are
-	/// used by this class.
-	/// </summary>
-	public class GUIConversion
-	{
+  /// <summary>
+  /// Responsible for converting user input into data and vice versa. The user preferences for locality are
+  /// used by this class.
+  /// </summary>
+  public class GUIConversion
+  {
 
 
     /// <summary>
@@ -148,5 +148,5 @@ namespace Altaxo.Serialization
 
     #endregion
 
-	}
+  }
 }

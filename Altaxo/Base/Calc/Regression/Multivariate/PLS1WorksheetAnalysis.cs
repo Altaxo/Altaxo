@@ -52,11 +52,11 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMultivariateCalibrationModel calibrationSet,
       DataTable table)
     {
-       PLS1CalibrationModel calib = (PLS1CalibrationModel)calibrationSet;
+      PLS1CalibrationModel calib = (PLS1CalibrationModel)calibrationSet;
 
       for(int yn=0;yn<calib.NumberOfY;yn++)
       {
-      // store the x-loads - careful - they are horizontal in the matrix
+        // store the x-loads - careful - they are horizontal in the matrix
         for(int i=0;i<calib.XLoads[yn].Rows;i++)
         {
           Altaxo.Data.DoubleColumn col = new Altaxo.Data.DoubleColumn();
@@ -193,7 +193,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       col = table[GetXScale_ColumnName()];
       if(col==null) NotFound(GetXScale_ColumnName());
-     preprocessSet.XScale = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,numberOfX);
+      preprocessSet.XScale = Altaxo.Calc.LinearAlgebra.DataColumnWrapper.ToROVector(col,numberOfX);
 
 
         

@@ -117,7 +117,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       int numFactors, // number of factors to use for prediction
       IMatrix predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
       IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
-        )
+      )
     {
       if(numFactors>NumberOfFactors)
         throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})",numFactors,NumberOfFactors));

@@ -879,7 +879,7 @@ namespace Altaxo.Graph
     {
       get
       {
-       return true;
+        return true;
       }
     }
 
@@ -895,7 +895,7 @@ namespace Altaxo.Graph
     {
       get
       {
-       return true;
+        return true;
       }
     }
 

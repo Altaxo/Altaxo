@@ -2,12 +2,12 @@ using System;
 
 namespace Altaxo.Main.GUI
 {
-	/// <summary>
-	/// Summary description for NumericDoubleValueController.
-	/// </summary>
-	[UserControllerForObject(typeof(double),100)]
-	public class NumericDoubleValueController : SingleValueController
-	{
+  /// <summary>
+  /// Summary description for NumericDoubleValueController.
+  /// </summary>
+  [UserControllerForObject(typeof(double),100)]
+  public class NumericDoubleValueController : SingleValueController
+  {
     protected double _value1Double;
     protected double _value1DoubleTemporary;
 
@@ -20,11 +20,11 @@ namespace Altaxo.Main.GUI
     /// <summary>If true, the maximum value itself is valid for the entered number. If false, only values lesser than the maximum value are valid.</summary>
     protected bool   _isMaximumValueIncluded=true;
 
-		public NumericDoubleValueController(double val)
+    public NumericDoubleValueController(double val)
       : base(Altaxo.Serialization.GUIConversion.ToString(val))
-		{
+    {
       _value1Double = _value1DoubleTemporary = val;
-		}
+    }
 
     public override object ModelObject
     {
@@ -68,5 +68,5 @@ namespace Altaxo.Main.GUI
       base.EhValidatingValue1(val,e);
     }
 
-	}
+  }
 }

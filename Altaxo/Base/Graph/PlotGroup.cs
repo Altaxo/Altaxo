@@ -248,7 +248,7 @@ namespace Altaxo.Graph
         if(cnt>0)
         {
           if(assoc is I2DPlotStyle && m_PlotItems[0] is I2DPlotStyle)
-          ((I2DPlotStyle)assoc).SetIncrementalStyle((I2DPlotStyle)m_PlotItems[0],m_Style, cnt);
+            ((I2DPlotStyle)assoc).SetIncrementalStyle((I2DPlotStyle)m_PlotItems[0],m_Style, cnt);
         }
         m_PlotItems.Add(assoc);
 
@@ -351,7 +351,7 @@ namespace Altaxo.Graph
     protected void OnMasterStyleChangedEventHandler(object sender, EventArgs e)
     {
       if(this._suppressStyleChangedEvents<=0)
-      UpdateMembers();
+        UpdateMembers();
     }
 
     protected virtual void OnChanged()

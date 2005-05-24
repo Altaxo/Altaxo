@@ -285,7 +285,7 @@ namespace Altaxo.Serialization.Xml
     
 
 
-    #region not implemented yet
+#region not implemented yet
 
     public string GetNodeName()
     {
@@ -369,7 +369,7 @@ namespace Altaxo.Serialization.Xml
       return null;
     }
 
-    #endregion
+#endregion
   }
 }
 

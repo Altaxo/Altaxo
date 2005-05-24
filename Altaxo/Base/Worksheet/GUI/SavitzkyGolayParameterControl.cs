@@ -30,12 +30,12 @@ using System.Windows.Forms;
 using Altaxo.Main.GUI;
 namespace Altaxo.Worksheet.GUI
 {
-	/// <summary>
-	/// Summary description for SavitzkyGolayParameterControl.
-	/// </summary>
-	[UserControlForController(typeof(ISavitzkyGolayParameterViewEventSink))]
-	public class SavitzkyGolayParameterControl : System.Windows.Forms.UserControl, ISavitzkyGolayParameterView
-	{
+  /// <summary>
+  /// Summary description for SavitzkyGolayParameterControl.
+  /// </summary>
+  [UserControlForController(typeof(ISavitzkyGolayParameterViewEventSink))]
+  public class SavitzkyGolayParameterControl : System.Windows.Forms.UserControl, ISavitzkyGolayParameterView
+  {
 
 
     private System.Windows.Forms.NumericUpDown _edNumberOfPoints;
@@ -44,10 +44,10 @@ namespace Altaxo.Worksheet.GUI
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.NumericUpDown _edPolynomialOrder;
     private System.Windows.Forms.NumericUpDown _edDerivativeOrder;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
     public ISavitzkyGolayParameterViewEventSink _controller;
 
@@ -63,37 +63,37 @@ namespace Altaxo.Worksheet.GUI
       }
     }
 
-		public SavitzkyGolayParameterControl()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public SavitzkyGolayParameterControl()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
+      // TODO: Add any initialization after the InitializeComponent call
 
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose( bool disposing )
+    {
+      if( disposing )
+      {
+        if(components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose( disposing );
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this._edNumberOfPoints = new System.Windows.Forms.NumericUpDown();
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
@@ -186,7 +186,7 @@ namespace Altaxo.Worksheet.GUI
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     #region ISavitzkyGolayParameterView Members
 

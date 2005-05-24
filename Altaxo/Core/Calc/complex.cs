@@ -137,9 +137,7 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public double GetModulus() 
     {
-      double  x = this.Re;
-      double  y = this.Im;
-      return  (double) Math.Sqrt( x*x + y*y );
+      return RMath.Hypot(Re,Im);
     }
 
     /// <summary>
@@ -159,7 +157,10 @@ namespace Altaxo.Calc
     /// <returns></returns>
     public double GetArgument() 
     {
-      return (double) Math.Atan2( this.Im, this.Re );
+      if (Re == 0 && Im == 0)
+        return 0;
+      else
+        return Math.Atan2( Im, Re );
     }
 
     //-----------------------------------------------------------------------------------

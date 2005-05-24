@@ -39,7 +39,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
     public EllipseDrawingMouseHandler(GraphController grac)
       : base(grac)
     {
-			
+      
     }
 
     protected override void FinishDrawing()

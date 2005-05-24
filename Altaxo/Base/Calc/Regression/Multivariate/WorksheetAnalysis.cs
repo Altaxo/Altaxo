@@ -340,7 +340,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
   
-     public abstract MultivariateRegression CreateNewRegressionObject();
+    public abstract MultivariateRegression CreateNewRegressionObject();
 
 
 

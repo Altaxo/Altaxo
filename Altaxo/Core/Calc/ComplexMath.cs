@@ -1,57 +1,154 @@
-/*
- * BSD Licence:
- * Copyright (c) 2001, 2002 Ben Houston [ ben@exocortex.org ]
- * Exocortex Technologies [ www.exocortex.org ]
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice, 
- * this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright 
- * notice, this list of conditions and the following disclaimer in the 
- * documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the <ORGANIZATION> nor the names of its contributors
- * may be used to endorse or promote products derived from this software
- * without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
- * DAMAGE.
+#region Disclaimer
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2004 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+
+// This library was translated to C# from the GNU Scientific Library. ( version 1.6)
+// I tried to follow the naming conventions of the Gnu Scientific Library as close as possible.
+// Following the header of the GNU Scientific library:
+
+/* complex/math.c
+ * 
+ * Copyright (C) 1996, 1997, 1998, 1999, 2000 Jorma Olavi Tähtinen, Brian Gough
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
+/* Basic complex arithmetic functions
+
+ * Original version by Jorma Olavi Tähtinen <jotahtin@cc.hut.fi>
+ *
+ * Modified for GSL by Brian Gough, 3/2000
+ */
+
+/* The following references describe the methods used in these
+ * functions,
+ *
+ *   T. E. Hull and Thomas F. Fairgrieve and Ping Tak Peter Tang,
+ *   "Implementing Complex Elementary Functions Using Exception
+ *   Handling", ACM Transactions on Mathematical Software, Volume 20
+ *   (1994), pp 215-244, Corrigenda, p553
+ *
+ *   Hull et al, "Implementing the complex arcsin and arccosine
+ *   functions using exception handling", ACM Transactions on
+ *   Mathematical Software, Volume 23 (1997) pp 299-335
+ *
+ *   Abramowitz and Stegun, Handbook of Mathematical Functions, "Inverse
+ *   Circular Functions in Terms of Real and Imaginary Parts", Formulas
+ *   4.4.37, 4.4.38, 4.4.39
+ */
+
+#endregion
 
 using System;
 using System.Diagnostics;
 
-
 namespace Altaxo.Calc 
 {
-
-  // Comments? Questions? Bugs? Tell Ben Houston at ben@exocortex.org
-  // Version: May 4, 2002
-
   /// <summary>
   /// <p>Various mathematical functions for complex numbers.</p>
   /// </summary>
   public class ComplexMath 
   {
-    
-    //---------------------------------------------------------------------------------------------------
+    #region private helper constants and functions
+    const double M_PI = Math.PI;
+    const double M_PI_2 = Math.PI/2;
+    const double GSL_DBL_EPSILON = 2.2204460492503131e-16;
+    const double M_LOG10E = 0.43429448190325182765112891891661;
 
-    private ComplexMath() 
+    private static double square(double x) 
     {
+      return x*x;
     }
 
-    //---------------------------------------------------------------------------------------------------
+    private static double hypot(double x,double y)
+    {
+      double xabs = Math.Abs(x) ;
+      double yabs = Math.Abs(y) ;
+      double min, max;
+
+      if (xabs < yabs) 
+      {
+        min = xabs ;
+        max = yabs ;
+      } 
+      else 
+      {
+        min = yabs ;
+        max = xabs ;
+      }
+
+      if (min == 0) 
+      {
+        return max ;
+      }
+
+    {
+      double u = min / max ;
+      return max * Math.Sqrt (1 + u * u) ;
+    }
+    }
+
+    #endregion
+
+
+    #region public helper elementary operations
+
+    /// <summary>
+    /// This function returns the product of the complex number a and the
+    /// imaginary number iy, z=a*(iy).
+    /// </summary>
+    /// <param name="a">First multiplicant.</param>
+    /// <param name="y">Imaginary part of second multiplicant.</param>
+    /// <returns>The product of the complex number a and the
+    /// imaginary number iy, z=a*(iy).</returns>
+    public static Complex MultiplyImaginaryNumber(Complex a, double y)
+    {                            
+      return new Complex( -y * a.Im, y * a.Re);
+    }
+
+    /// <summary>
+    /// This function returns the product of the complex number a and the
+    /// real number x, z=ax.
+    /// </summary>
+    /// <param name="a">First multiplicant.</param>
+    /// <param name="x">Real part of second multiplicant.</param>
+    /// <returns>The product of the complex number a and the
+    /// real number x, z=ax.</returns>
+    public static Complex MultiplyRealNumber(Complex a, double x)
+    {                      
+      return new Complex( x * a.Re, x * a.Im);
+    }
 
     /// <summary>
     /// Swap two complex numbers
@@ -76,101 +173,12 @@ namespace Altaxo.Calc
       a = b;
       b = temp;
     }
+
+    #endregion
+
+    #region Functions
+
     
-    //---------------------------------------------------------------------------------------------------
-
-    static private double _halfOfRoot2  = 0.5 * Math.Sqrt( 2 );
-
-    /// <summary>
-    /// Calculate the square root of a complex number
-    /// </summary>
-    /// <param name="c"></param>
-    /// <returns></returns>
-    static public ComplexF  Sqrt( ComplexF c ) 
-    {
-      double  x = c.Re;
-      double  y = c.Im;
-
-      double  modulus = Math.Sqrt( x*x + y*y );
-      int   sign  = ( y < 0 ) ? -1 : 1;
-
-      c.Re    = (float)( _halfOfRoot2 * Math.Sqrt( modulus + x ) );
-      c.Im  = (float)( _halfOfRoot2 * sign * Math.Sqrt( modulus - x ) );
-
-      return  c;
-    }
-
-    /// <summary>
-    /// Calculate the square root of a complex number
-    /// </summary>
-    /// <param name="c"></param>
-    /// <returns></returns>
-    static public Complex Sqrt( Complex c ) 
-    {
-      double  x = c.Re;
-      double  y = c.Im;
-
-      double  modulus = Math.Sqrt( x*x + y*y );
-      int   sign  = ( y < 0 ) ? -1 : 1;
-
-      c.Re    = (double)( _halfOfRoot2 * Math.Sqrt( modulus + x ) );
-      c.Im  = (double)( _halfOfRoot2 * sign * Math.Sqrt( modulus - x ) );
-
-      return  c;
-    }
-
-    //---------------------------------------------------------------------------------------------------
-
-    /// <summary>
-    /// Calculate the power of a complex number
-    /// </summary>
-    /// <param name="c"></param>
-    /// <param name="exponent"></param>
-    /// <returns></returns>
-    static public ComplexF  Pow( ComplexF c, double exponent ) 
-    {
-      double  x = c.Re;
-      double  y = c.Im;
-      
-      double  modulus   = Math.Pow( x*x + y*y, exponent * 0.5 );
-      double  argument  = Math.Atan2( y, x ) * exponent;
-
-      c.Re    = (float)( modulus * System.Math.Cos( argument ) );
-      c.Im = (float)( modulus * System.Math.Sin( argument ) );
-
-      return  c;
-    }
-
-    /// <summary>
-    /// Calculate the power of a complex number
-    /// </summary>
-    /// <param name="c"></param>
-    /// <param name="exponent"></param>
-    /// <returns></returns>
-    static public Complex Pow( Complex c, double exponent ) 
-    {
-      double  x = c.Re;
-      double  y = c.Im;
-      
-      double  modulus   = Math.Pow( x*x + y*y, exponent * 0.5 );
-      double  argument  = Math.Atan2( y, x ) * exponent;
-
-      c.Re    = (double)( modulus * System.Math.Cos( argument ) );
-      c.Im = (double)( modulus * System.Math.Sin( argument ) );
-
-      return  c;
-    }
-    
-    //---------------------------------------------------------------------------------------------------
-
-    #region AltaxoModified
-
-    const double M_LOG10E = 0.43429448190325182765112891891661;
-
-    private static double square(double x) 
-    {
-      return x*x;
-    }
 
 
     /// <summary>
@@ -185,6 +193,19 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
+    /// The squared modulus (length^2) of the complex number
+    /// </summary>
+    /// <param name="c">The complex argument.</param>
+    /// <returns>The squared modulus (length^2) of the complex number.</returns>
+    /// <remarks>Only for completeness, you can also use <code>c.GetModulusSquared()</code></remarks>
+    public static double Abs2(Complex c)
+    {
+      return c.GetModulusSquared();
+    }
+
+  
+
+    /// <summary>
     /// The argument value (also called phase) of a complex number.
     /// </summary>
     /// <param name="c">The complex number.</param>
@@ -195,60 +216,536 @@ namespace Altaxo.Calc
       return c.GetArgument();
     }
 
-    /// <summary>
-    /// Create a complex number from a modulus (length) and an argument (radian)
-    /// </summary>
-    /// <param name="modulus">The modulus (length).</param>
-    /// <param name="argument">The argument (angle, radian).</param>
-    /// <returns>The complex number created from the modulus and argument.</returns>
-    public static Complex Polar(double modulus, double argument)
-    {
-      return Complex.FromModulusArgument(modulus, argument); 
-    } 
+  
+
+  
 
     /// <summary>
-    /// Returns the complex angle whose cosine is the specified complex number.
+    /// This function returns the complex arccosine of the complex number a,
+    /// arccos(a). The branch cuts are on the real axis, less than -1
+    /// and greater than 1.
     /// </summary>
-    /// <param name="z">The function argument.</param>
-    /// <returns>The complex number whose cosine is the function argument z.</returns>
-    public static Complex Acos(Complex z)
+    /// <param name="a">The function argument.</param>
+    /// <returns>The complex arccosine of the complex number a.</returns>
+    public static Complex Acos(Complex a)
     {
-      Complex z1  = Complex.FromRealImaginary(1 - square(z.Re) + square(z.Im), -2*z.Re*z.Im);
-      double  phi = Arg(z1)/2;
-      double  r   = Math.Sqrt(Abs(z1));
-      Complex z2  = Complex.FromRealImaginary(z.Re - r*Math.Sin(phi), z.Im + r*Math.Cos(phi));
-      return Complex.FromRealImaginary(Arg(z2), -Math.Log(Abs(z2)));
+      double R = a.Re, I = a.Im;
+      Complex z;
+
+      if (I == 0)
+      {
+        z = Acos(R);
+      }
+      else
+      {
+        double x = Math.Abs (R), y = Math.Abs (I);
+        double r = hypot (x + 1, y), s = hypot (x - 1, y);
+        double A = 0.5 * (r + s);
+        double B = x / A;
+        double y2 = y * y;
+
+        double real, imag;
+
+        const double A_crossover = 1.5, B_crossover = 0.6417;
+
+        if (B <= B_crossover)
+        {
+          real = Math.Acos (B);
+        }
+        else
+        {
+          if (x <= 1)
+          {
+            double D = 0.5 * (A + x) * (y2 / (r + x + 1) + (s + (1 - x)));
+            real = Math.Atan (Math.Sqrt (D) / x);
+          }
+          else
+          {
+            double Apx = A + x;
+            double D = 0.5 * (Apx / (r + x + 1) + Apx / (s + (x - 1)));
+            real = Math.Atan ((y * Math.Sqrt (D)) / x);
+          }
+        }
+
+        if (A <= A_crossover)
+        {
+          double Am1;
+
+          if (x < 1)
+          {
+            Am1 = 0.5 * (y2 / (r + (x + 1)) + y2 / (s + (1 - x)));
+          }
+          else
+          {
+            Am1 = 0.5 * (y2 / (r + (x + 1)) + (s + (x - 1)));
+          }
+
+          imag = RMath.Log1p (Am1 + Math.Sqrt (Am1 * (A + 1)));
+        }
+        else
+        {
+          imag = Math.Log (A + Math.Sqrt (A * A - 1));
+        }
+
+        z= new Complex( (R >= 0) ? real : Math.PI - real, (I >= 0) ? -imag : imag);
+      }
+      return z;
+    }
+
+    /// <summary>
+    /// This function returns the complex arccosine of the real number a, arccos(a). 
+    /// </summary>
+    /// <param name="a">The function argument.</param>
+    /// <returns>The complex arccosine of the real number a.</returns>
+    /// <remarks>
+    /// For a between -1 and 1, the
+    /// function returns a real value in the range [0,pi]. For a
+    /// less than -1 the result has a real part of pi/2 and a
+    /// negative imaginary part.  For a greater than 1 the result
+    /// is purely imaginary and positive.
+    /// </remarks>
+    public static Complex Acos(double a)
+    {                              
+      Complex z;
+
+      if (Math.Abs (a) <= 1.0)
+      {
+        z = new Complex( Math.Acos(a), 0);
+      }
+      else
+      {
+        if (a < 0.0)
+        {
+          z = new Complex( Math.PI, -RMath.Acosh(-a));
+        }
+        else
+        {
+          z = new Complex( 0, RMath.Acosh(a));
+        }
+      }
+
+      return z;
+    }
+
+    /// <summary>
+    /// This function returns the complex hyperbolic arccosine of the complex
+    /// number a,  arccosh(a).  The branch cut is on the real axis,
+    /// less than  1.
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex hyperbolic arccosine of the complex number a.</returns>
+    public static Complex Acosh(Complex a)
+    {                  
+      Complex z = Acos(a);
+      z = MultiplyImaginaryNumber (z, z.Im > 0 ? -1.0 : 1.0);
+      return z;
+    }
+
+    /// <summary>
+    /// This function returns the complex hyperbolic arccosine of
+    /// the real number a, arccosh(a).
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex hyperbolic arccosine of
+    /// the real number a.</returns>
+    public static Complex Acosh(double a)
+    {                         
+      Complex z;
+
+      if (a >= 1)
+      {
+        z = new Complex(RMath.Acosh (a), 0);
+      }
+      else
+      {
+        if (a >= -1.0)
+        {
+          z = new Complex( 0, Math.Acos(a));
+        }
+        else
+        {
+          z = new Complex(RMath.Acosh (-a), M_PI);
+        }
+      }
+
+      return z;
+    }
+
+    /// <summary>
+    /// This function returns the complex arccotangent of the complex number a,
+    /// arccot(a) = arctan(1/a). 
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex arccotangent of the complex number a.</returns>
+    public static Complex Acot (Complex a)
+    {                            
+      Complex z;
+
+      if (a.Re == 0.0 && a.Im == 0.0)
+      {
+        z = new Complex( M_PI_2, 0);
+      }
+      else
+      {
+        z = Inverse(a);
+        z = Atan(z);
+      }
+
+      return z;
+    }
+
+    /// <summary>
+    /// This function returns the complex hyperbolic arccotangent of the complex
+    /// number a, arccoth(a) = arctanh(1/a).
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex hyperbolic arccotangent of the complex
+    /// number a.</returns>
+    public static Complex Acoth(Complex a)
+    {                            
+      return Atanh(Inverse(a));
+    }
+
+    /// <summary>
+    /// This function returns the complex arccosecant of the complex number a,
+    /// arccsc(a) = arcsin(1/a). 
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex arccosecant of the complex number a.</returns>
+    public static Complex Acsc(Complex a)
+    {           
+      return Asin(Inverse(a));
+    }
+
+    /// <summary>
+    /// This function returns the complex hyperbolic arccosecant of the complex
+    /// number a,  arccsch(a) = arcsin(1/a).
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex hyperbolic arccosecant of the complex
+    /// number a.</returns>
+    public static Complex Acsch(Complex a)
+    {                            
+      return Asinh(Inverse(a));
+    }
+
+    /// <summary>
+    /// This function returns the complex arccosecant of the real number a,
+    /// arccsc(a) = arcsin(1/a). 
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex arccosecant of the real number a.</returns>
+    public static Complex Acsc(double a)
+    {                         
+      Complex z;
+
+      if (a <= -1.0 || a >= 1.0)
+      {
+        z = new Complex( Math.Asin (1 / a), 0.0);
+      }
+      else
+      {
+        if (a >= 0.0)
+        {
+          z = new Complex( M_PI_2, -RMath.Acosh (1 / a));
+        }
+        else
+        {
+          z = new Complex( -M_PI_2, RMath.Acosh (-1 / a));
+        }
+      }
+
+      return z;
+    }
+    /// <summary>
+    /// This function returns the complex arcsecant of the complex number a,
+    /// arcsec(a) = arccos(1/a). 
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex arcsecant of the complex number a.</returns>
+    public static Complex Asec (Complex a)
+    {                            
+      return Acos(Inverse(a));
+    }
+
+    /// <summary>
+    /// This function returns the complex arcsecant of the real number a,
+    /// arcsec(a) = arccos(1/a). 
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex arcsecant of the real number a.</returns>
+    public static Complex Asec(double a)
+    {           
+      Complex z;
+
+      if (a <= -1.0 || a >= 1.0)
+      {
+        z = new Complex( Math.Acos (1 / a), 0.0);
+      }
+      else
+      {
+        if (a >= 0.0)
+        {
+          z = new Complex( 0, RMath.Acosh (1 / a));
+        }
+        else
+        {
+          z = new Complex( M_PI, -RMath.Acosh (-1 / a));
+        }
+      }
+
+      return z;
+    }
+
+    /// <summary>
+    /// This function returns the complex hyperbolic arcsecant of the complex
+    /// number a, arcsech(a) = arccosh(1/a).
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex hyperbolic arcsecant of the complex
+    /// number a.</returns>
+    public static Complex Asech(Complex a)
+    {                            
+      return Acosh(Inverse(a));
+    }
+
+    /// <summary>
+    /// This function returns the complex arcsine of the complex number a,
+    /// arcsin(a)}. The branch cuts are on the real axis, less than -1
+    /// and greater than 1.
+    /// </summary>
+    /// <param name="a">The function argument.</param>
+    /// <returns>the complex arcsine of the complex number a.</returns>
+    public static Complex Asin(Complex a)
+    {
+      double R = a.Re, I = a.Im;
+      Complex z;
+
+      if (I == 0)
+      {
+        z = Asin(R);
+      }
+      else
+      {
+        double x = Math.Abs(R), y = Math.Abs(I);
+        double r = hypot (x + 1, y), s = hypot (x - 1, y);
+        double A = 0.5 * (r + s);
+        double B = x / A;
+        double y2 = y * y;
+
+        double real, imag;
+
+        const double A_crossover = 1.5, B_crossover = 0.6417;
+
+        if (B <= B_crossover)
+        {
+          real = Math.Asin (B);
+        }
+        else
+        {
+          if (x <= 1)
+          {
+            double D = 0.5 * (A + x) * (y2 / (r + x + 1) + (s + (1 - x)));
+            real = Math.Atan (x / Math.Sqrt (D));
+          }
+          else
+          {
+            double Apx = A + x;
+            double D = 0.5 * (Apx / (r + x + 1) + Apx / (s + (x - 1)));
+            real = Math.Atan (x / (y * Math.Sqrt (D)));
+          }
+        }
+
+        if (A <= A_crossover)
+        {
+          double Am1;
+
+          if (x < 1)
+          {
+            Am1 = 0.5 * (y2 / (r + (x + 1)) + y2 / (s + (1 - x)));
+          }
+          else
+          {
+            Am1 = 0.5 * (y2 / (r + (x + 1)) + (s + (x - 1)));
+          }
+
+          imag = RMath.Log1p (Am1 + Math.Sqrt (Am1 * (A + 1)));
+        }
+        else
+        {
+          imag = Math.Log (A + Math.Sqrt (A * A - 1));
+        }
+
+        z = new Complex( (R >= 0) ? real : -real, (I >= 0) ? imag : -imag);
+      }
+
+      return z;
+    }
+
+    /// <summary>
+    /// This function returns the complex arcsine of the real number a,
+    /// arcsin(a). 
+    /// </summary>
+    /// <param name="a">The function argument.</param>
+    /// <returns>The complex arcsine of the real number a.</returns>
+    /// <remarks>
+    /// For a between -1 and 1, the
+    /// function returns a real value in the range -(pi,pi]. For
+    /// a less than -1 the result has a real part of -pi/2
+    /// and a positive imaginary part.  For a greater than 1 the
+    /// result has a real part of pi/2 and a negative imaginary part.
+    /// </remarks>
+    public static Complex Asin(double a)
+    {                               
+      Complex z;
+
+      if (Math.Abs(a) <= 1.0)
+      {
+        z = new Complex(Math.Asin(a), 0.0);
+      }
+      else
+      {
+        if (a < 0.0)
+        {
+          z = new  Complex(-M_PI_2, RMath.Acosh(-a));
+        }
+        else
+        {
+          z = new Complex(M_PI_2, -RMath.Acosh (a));
+        }
+      }
+
+      return z;
     }
 
 
     /// <summary>
-    /// Returns the complex angle whose sine is the specified complex number.
+    /// This function returns the complex hyperbolic arcsine of the
+    /// complex number a,  arcsinh(a).  The branch cuts are on the
+    /// imaginary axis, below -i and above i.
     /// </summary>
-    /// <param name="z">The function argument.</param>
-    /// <returns>The complex number whose sine is the function argument z.</returns>
-    public static Complex Asin(Complex z)
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex hyperbolic arcsine of the complex number a.</returns>
+    public static Complex Asinh(Complex a)
     {
-      Complex z1 = Complex.FromRealImaginary(1 - square(z.Re) + square(z.Im), -2*z.Re*z.Im);
-      double phi = Arg(z1) / 2;
-      double r = Math.Sqrt(Abs(z1));
-      Complex z2 = Complex.FromRealImaginary(-z.Im + r*Math.Cos(phi), z.Re + r*Math.Sin(phi));
-      return Complex.FromRealImaginary(Arg(z2), -Math.Log(Abs(z2)));
+      Complex z = MultiplyImaginaryNumber(a, 1.0);
+      z = Asin (z);
+      z = MultiplyImaginaryNumber(z, -1.0);
+      return z;
     }
 
     /// <summary>
-    /// Returns the complex angle whose tangent is the specified complex number.
+    /// This function returns the complex arctangent of the complex number
+    /// a,  arctan(a)}. The branch cuts are on the imaginary axis,
+    /// below  -i  and above  i .
     /// </summary>
-    /// <param name="z">The function argument.</param>
-    /// <returns>The complex number whose tangent is the function argument z.</returns>
-    public static Complex Atan(Complex  z)
+    /// <param name="a">The function argument.</param>
+    /// <returns>The complex arctangent of the complex number a.</returns>
+    public static Complex Atan(Complex  a)
     {
-      double zip1 = 1 + z.Im;
-      double zre2 = square(z.Re);
-      double invlen = 1.0/(zip1*zip1 + zre2);
-      Complex z1 = Complex.FromRealImaginary(((1-z.Im)*zip1 - zre2)*invlen, 2*z.Re*invlen);
-      return Complex.FromRealImaginary(Arg(z1)/2, -Math.Log(Abs(z1))/2);
+      
+      double R = a.Re, I = a.Im;
+      Complex z;
+
+      if (I == 0)
+      {
+        z = new Complex(Math.Atan(R), 0);
+      }
+      else
+      {
+        /* FIXME: This is a naive implementation which does not fully
+             take into account cancellation errors, overflow, underflow
+             etc.  It would benefit from the Hull et al treatment. */
+
+        double r = hypot (R, I);
+
+        double imag;
+
+        double u = 2 * I / (1 + r * r);
+
+        /* FIXME: the following cross-over should be optimized but 0.1
+             seems to work ok */
+
+        if (Math.Abs (u) < 0.1)
+        {
+          imag = 0.25 * (RMath.Log1p (u) - RMath.Log1p (-u));
+        }
+        else
+        {
+          double A = hypot (R, I + 1);
+          double B = hypot (R, I - 1);
+          imag = 0.5 * Math.Log (A / B);
+        }
+
+        if (R == 0)
+        {
+          if (I > 1)
+          {
+            z = new Complex( M_PI_2, imag);
+          }
+          else if (I < -1)
+          {
+            z = new Complex( -M_PI_2, imag);
+          }
+          else
+          {
+            z = new Complex( 0, imag);
+          }
+        }
+        else
+        {
+          z = new Complex( 0.5 * Math.Atan2 (2 * R, ((1 + r) * (1 - r))), imag);
+        }
+      }
+
+      return z;
+    }
+    
+    /// <summary>
+    /// This function returns the complex hyperbolic arctangent of the complex
+    /// number a,  arctanh(a).  The branch cuts are on the real
+    /// axis, less than -1 and greater than 1.
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex hyperbolic arctangent of the complex
+    /// number a.</returns>
+    public static Complex Atanh(Complex a)
+    {                            
+      if (a.Im == 0.0)
+      {
+        return Atanh(a.Re);
+      }
+      else
+      {
+        Complex z = MultiplyImaginaryNumber(a, 1.0);
+        z = Atan(z);
+        z = MultiplyImaginaryNumber(z, -1.0);
+        return z;
+      }
     }
 
+    /// <summary>
+    /// This function returns the complex hyperbolic arctangent of the real
+    /// number a, arctanh(a).
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex hyperbolic arctangent of the real
+    /// number a.</returns>
+    public static Complex Atanh(double a)
+    {                          
+      Complex z;
+
+      if (a > -1.0 && a < 1.0)
+      {
+        z = new Complex( RMath.Atanh(a), 0);
+      }
+      else
+      {
+        z = new Complex( RMath.Atanh (1 / a), (a < 0) ? M_PI_2 : -M_PI_2);
+      }
+
+      return z;
+    }
 
     /// <summary>
     /// Returns the cosine of the specified complex function argument z.
@@ -264,17 +761,60 @@ namespace Altaxo.Calc
 
 
     /// <summary>
-    /// Returns the hyperbolic cosine of the specified complex function argument z.
+    /// This function returns the complex hyperbolic cosine of the complex number
+    /// a, cosh(a) = (exp(a) + exp(-z))/2.
     /// </summary>
-    /// <param name="z">Function argument.</param>
+    /// <param name="a">Function argument.</param>
     /// <returns>The hyperbolic cosine of the specified complex function argument z.</returns>
-    public static Complex Cosh(Complex  z)
+    public static Complex Cosh(Complex  a)
     {
-      double ezr = Math.Exp(z.Re);
-      double inv = 1.0 / ezr;
-      return Complex.FromRealImaginary(0.5*Math.Cos(z.Im)*(ezr+inv), 0.5*Math.Sin(z.Im)*(ezr-inv));
+      double R = a.Re, I = a.Im;
+      return new Complex( Math.Cosh (R) * Math.Cos (I), Math.Sinh (R) * Math.Sin (I));
     }
 
+  
+
+    /// <summary>
+    /// Returns the complex cotangent of the complex number z, i.e. 1/Sin(z).
+    /// </summary>
+    /// <param name="z">The function argument.</param>
+    /// <returns>Complex cotangent of the complex number z, i.e. 1/Tan(z).</returns>
+    public static Complex Cot(Complex z)
+    {                              
+      return Inverse(Tan(z));
+    }
+
+    /// <summary>
+    /// This function returns the complex hyperbolic cotangent of the complex
+    /// number a, coth(a) = 1/tanh(a)}.
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex hyperbolic cotangent of the complex number a.</returns>
+    public static Complex Coth(Complex a)
+    {                           
+      return Inverse(Tanh(a));
+    }
+
+    /// <summary>
+    /// Returns the complex cosecant of the complex number z, i.e. 1/Sin(z).
+    /// </summary>
+    /// <param name="z">The function argument.</param>
+    /// <returns>Complex cosecant of the complex number z, i.e. 1/Sin(z).</returns>
+    public static Complex Csc(Complex z)
+    {                              
+      return Inverse(Sin(z));
+    }
+
+    /// <summary>
+    /// This function returns the complex hyperbolic cosecant of the complex
+    /// number a, csch(a) = 1/sinh(a)}.
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex hyperbolic cosecant of the complex number a.</returns>
+    public static Complex Csch(Complex a)
+    {                           
+      return Inverse(Sinh(a));
+    }
 
     /// <summary>
     /// Returns the exponential function of the complex function argument.
@@ -287,13 +827,49 @@ namespace Altaxo.Calc
     }
  
     /// <summary>
+    /// Returns the inverse of the argument z, i.e. 1/z
+    /// </summary>
+    /// <param name="z">The argument.</param>
+    /// <returns>Inverse of z, i.e. 1/z.</returns>
+    public static Complex Inverse(Complex z)
+    {                               /* z=1/a */
+      double s = 1.0 / Abs(z);
+      return new Complex((z.Re * s) * s, -(z.Im * s) * s);
+    }
+    /// <summary>
     /// Returns the natural (base e) logarithm of the complex function argument.
     /// </summary>
     /// <param name="z">The complex function argument.</param>
     /// <returns>The natural (base e) logarithm of the complex function argument.</returns>
     public static Complex Log(Complex z)
     {
-      return new Complex(Math.Log(z.GetModulus()), Math.Atan2(z.Im,z.Re));
+      return new Complex(LogAbs(z), Arg(z));
+    }
+
+    /// <summary>
+    /// Return log |z|.
+    /// </summary>
+    /// <param name="z">The complex function argument.</param>
+    /// <returns>log |z|, i.e. the natural logarithm of the absolute value of z.</returns>
+    public static double LogAbs(Complex z)
+    {                               
+      double xabs = Math.Abs(z.Re);
+      double yabs = Math.Abs(z.Im);
+      double max, u;
+
+      if (xabs >= yabs)
+      {
+        max = xabs;
+        u = yabs / xabs;
+      }
+      else
+      {
+        max = yabs;
+        u = xabs / yabs;
+      }
+
+      // Handle underflow when u is close to 0 
+      return Math.Log(max) + 0.5 * RMath.Log1p(u * u);
     }
 
     /// <summary>
@@ -305,6 +881,17 @@ namespace Altaxo.Calc
     {
       return Log(z) * M_LOG10E;
     }
+
+    /// <summary>
+    /// Create a complex number from a modulus (length) and an argument (radian)
+    /// </summary>
+    /// <param name="modulus">The modulus (length).</param>
+    /// <param name="argument">The argument (angle, radian).</param>
+    /// <returns>The complex number created from the modulus and argument.</returns>
+    public static Complex Polar(double modulus, double argument)
+    {
+      return Complex.FromModulusArgument(modulus, argument); 
+    } 
 
     /// <summary>
     /// Returns a specified (real valued) number raised to the specified (complex valued) power.
@@ -333,11 +920,88 @@ namespace Altaxo.Calc
     public static Complex Pow(Complex z, Complex p)
     {
       if (z.Re == 0 && z.Im==0 && p.Re> 0)
+      {
         return Complex.Zero;
+      }
       else
-        return Exp(p * Log(z));
+      {
+        double logr = LogAbs(z);
+        double theta = Arg(z);
+        double br = p.Re, bi = p.Im;
+
+        double rho = Math.Exp(logr * br - bi * theta);
+        double beta = theta * br + bi * logr;
+
+        return new Complex( rho * Math.Cos (beta), rho * Math.Sin (beta));
+      }
     }
 
+    /// <summary>
+    /// Calculate the power of a complex number.
+    /// </summary>
+    /// <param name="a">The function argument.</param>
+    /// <param name="b">The exponent.</param>
+    /// <returns>The power of z to the exponent b.</returns>
+    static public Complex Pow( Complex a, double b ) 
+    {
+      Complex z;
+
+      if (a.Re == 0 && a.Im == 0)
+      {
+        z = Complex.Zero;
+      }
+      else
+      {
+        double logr = LogAbs(a);
+        double theta = Arg(a);
+        double rho = Math.Exp(logr * b);
+        double beta = theta * b;
+        z = new Complex( rho * Math.Cos (beta), rho * Math.Sin (beta));
+      }
+
+      return z;
+    }
+
+    /// <summary>
+    /// Calculate the power of a complex number
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="exponent"></param>
+    /// <returns></returns>
+    static public ComplexF  Pow( ComplexF c, double exponent ) 
+    {
+      double  x = c.Re;
+      double  y = c.Im;
+      
+      double  modulus   = Math.Pow( x*x + y*y, exponent * 0.5 );
+      double  argument  = Math.Atan2( y, x ) * exponent;
+
+      c.Re    = (float)( modulus * System.Math.Cos( argument ) );
+      c.Im = (float)( modulus * System.Math.Sin( argument ) );
+
+      return  c;
+    }
+
+    /// <summary>
+    /// Returns the complex secant of the argument z, i.e. 1/Cos(z)
+    /// </summary>
+    /// <param name="a">The function argument.</param>
+    /// <returns>Complex secant of the argument z, i.e. 1/Cos(z).</returns>
+    public static Complex Sec (Complex a)
+    {                       
+      return Inverse(Cos(a));
+    }
+    
+    /// <summary>
+    /// This function returns the complex hyperbolic secant of the complex
+    /// number a, sech(a) = 1/cosh(a).
+    /// </summary>
+    /// <param name="a">Function argument.</param>
+    /// <returns>The complex hyperbolic secant of the complex number a.</returns>
+    public static Complex Sech(Complex a)
+    {                           
+      return Inverse (Cosh(a));
+    }
     /// <summary>
     /// Returns the sine of the specified complex function argument z.
     /// </summary>
@@ -351,16 +1015,125 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Returns the hyperbolic sine of the specified complex function argument z.
+    /// This function returns the complex hyperbolic sine of the complex number
+    /// a, sinh(a) = (exp(a) - exp(-a))/2.
     /// </summary>
-    /// <param name="z">Function argument.</param>
-    /// <returns>The hyperbolic sine of the specified complex function argument z.</returns>
-    public static Complex Sinh(Complex z)
+    /// <param name="a">Function argument.</param>
+    /// <returns>The hyperbolic sine of the specified complex function argument a.</returns>
+    public static Complex Sinh(Complex a)
     {
-      double ezr =Math.Exp(z.Re);
-      double inv = 1.0/ezr;
-      return Complex.FromRealImaginary(0.5*Math.Cos(z.Im)*(ezr-inv), 0.5*Math.Sin(z.Im)*(ezr+inv));
+      double R = a.Re, I = a.Im;
+      return new Complex( Math.Sinh (R) * Math.Cos (I), Math.Cosh (R) * Math.Sin (I));
     }
+
+
+    /// <summary>
+    /// Calculate the square root of the complex number c.
+    /// </summary>
+    /// <param name="c">Function argument.</param>
+    /// <returns>The square root of the complex number c.</returns>
+    public static ComplexF  Sqrt( ComplexF c ) 
+    {
+      ComplexF z;
+
+      if( c.Re == 0.0 && c.Im == 0.0)
+      {
+        z = new ComplexF(0,0);
+      }
+      else
+      {
+        double x = Math.Abs(c.Re);
+        double y = Math.Abs(c.Im);
+        double w;
+
+        if (x >= y)
+        {
+          double t = y / x;
+          w = Math.Sqrt (x) * Math.Sqrt (0.5 * (1.0 + Math.Sqrt (1.0 + t * t)));
+        }
+        else
+        {
+          double t = x / y;
+          w = Math.Sqrt (y) * Math.Sqrt (0.5 * (t + Math.Sqrt (1.0 + t * t)));
+        }
+
+        if (c.Re >= 0.0)
+        {
+          double ai = c.Im;
+          z = new ComplexF((float)w,(float)( ai / (2.0 * w)));
+        }
+        else
+        {
+          double ai = c.Im;
+          double vi = (ai >= 0) ? w : -w;
+          z = new ComplexF((float)(ai / (2.0 * vi)), (float)vi);
+        }
+      }
+      return z;
+    }
+
+    /// <summary>
+    /// Calculate the square root of the complex number c.
+    /// </summary>
+    /// <param name="c">Function argument.</param>
+    /// <returns>The square root of the complex number c.</returns>
+    public static Complex Sqrt( Complex c ) 
+    {
+      Complex z;
+
+      if( c.Re == 0.0 && c.Im == 0.0)
+      {
+        z = new Complex(0,0);
+      }
+      else
+      {
+        double x = Math.Abs(c.Re);
+        double y = Math.Abs(c.Im);
+        double w;
+
+        if (x >= y)
+        {
+          double t = y / x;
+          w = Math.Sqrt (x) * Math.Sqrt (0.5 * (1.0 + Math.Sqrt (1.0 + t * t)));
+        }
+        else
+        {
+          double t = x / y;
+          w = Math.Sqrt (y) * Math.Sqrt (0.5 * (t + Math.Sqrt (1.0 + t * t)));
+        }
+
+        if (c.Re >= 0.0)
+        {
+          double ai = c.Im;
+          z = new Complex(w, ai / (2.0 * w));
+        }
+        else
+        {
+          double ai = c.Im;
+          double vi = (ai >= 0) ? w : -w;
+          z = new Complex( ai / (2.0 * vi), vi);
+        }
+      }
+      return z;
+    }
+
+    /// <summary>
+    /// Calculate the square root of the real number x.
+    /// </summary>
+    /// <param name="x">The function argument.</param>
+    /// <returns>The square root of the number x.</returns>
+    public static Complex Sqrt( double x ) 
+    {
+      if (x >= 0)
+      {
+        return new Complex(Math.Sqrt(x), 0.0);
+      }
+      else
+      {
+        return new Complex(0.0, Math.Sqrt(-x));
+      }
+    }
+
 
     /// <summary>
     /// Returns the tangent of the specified complex function argument z.
@@ -379,22 +1152,35 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
-    /// Returns the hyperbolic tangent of the specified complex function argument z.
+    /// This function returns the complex hyperbolic tangent of the complex number
+    /// a, tanh(a) = sinh(a)/cosh(a).
     /// </summary>
-    /// <param name="z">Function argument.</param>
+    /// <param name="a">Function argument.</param>
     /// <returns>The hyperbolic tangent of the specified complex function argument z.</returns>
-    public static Complex Tanh(Complex z)
+    public static Complex Tanh(Complex a)
     {
-      double sinzi = Math.Sin(z.Im);
-      double coszi = Math.Cos(z.Im);
-      double ezr   = Math.Exp(z.Re);
-      double inv   = 1.0/ezr;
-      double ediff = ezr - inv;
-      double esum  = ezr + inv;
-      return Complex.FromRealImaginary(ediff*esum, 4*sinzi*coszi)/(square(coszi*esum)+square(sinzi*ediff));
+      double R = a.Re, I = a.Im;
+
+      Complex z;
+
+      if (Math.Abs(R) < 1.0) 
+      {
+        double D = square (Math.Cos (I)) + square(Math.Sinh (R));
+      
+        z = new Complex( Math.Sinh (R) * Math.Cosh (R) / D, 0.5 * Math.Sin (2 * I) / D);
+      }
+      else
+      {
+        double D = square(Math.Cos(I)) + square(Math.Sinh(R));
+        double F = 1 + square(Math.Cos(I) / Math.Sinh(R));
+
+        z = new Complex( 1.0 / (Math.Tanh (R) * F), 0.5 * Math.Sin (2 * I) / D);
+      }
+
+      return z;  
     }
 
-
+    
 
     #endregion
   }

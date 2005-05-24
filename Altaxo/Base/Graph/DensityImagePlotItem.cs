@@ -275,7 +275,7 @@ namespace Altaxo.Graph
     public void SetXBoundsFromTemplate(IPhysicalBoundaries val)
     {
       if(val is NumericalBoundaries)
-      this.m_PlotAssociation.SetXBoundsFromTemplate(val as NumericalBoundaries);
+        this.m_PlotAssociation.SetXBoundsFromTemplate(val as NumericalBoundaries);
     }
 
     public void MergeXBoundsInto(IPhysicalBoundaries pb)
@@ -299,7 +299,7 @@ namespace Altaxo.Graph
     public void SetYBoundsFromTemplate(IPhysicalBoundaries val)
     {
       if(val is NumericalBoundaries)
-      this.m_PlotAssociation.SetYBoundsFromTemplate(val as NumericalBoundaries);
+        this.m_PlotAssociation.SetYBoundsFromTemplate(val as NumericalBoundaries);
     }
 
     public void MergeYBoundsInto(IPhysicalBoundaries pb)

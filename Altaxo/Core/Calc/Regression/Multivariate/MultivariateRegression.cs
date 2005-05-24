@@ -340,9 +340,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       AnalyzeFromRaw(preprocessOptions,
         SpectralPreprocessingOptions.IdentifyRegions(xOfX),
-         matrixX,
-      matrixY, 
-      maxFactors);
+        matrixX,
+        matrixY, 
+        maxFactors);
     }
 
     #endregion
@@ -477,10 +477,10 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix matrixY)
     {
       MultivariatePreprocessingModel result= PreprocessForAnalysis(
-      preprocessOptions,
-      SpectralPreprocessingOptions.IdentifyRegions(xOfX),
-      matrixX, 
-      matrixY);
+        preprocessOptions,
+        SpectralPreprocessingOptions.IdentifyRegions(xOfX),
+        matrixX, 
+        matrixY);
 
       result.XOfX = xOfX;
 
@@ -856,15 +856,15 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix yCrossPredicted // vertical value of PRESS values for the cross validation
       )
     {
-     return GetCrossYPredicted(
-      SpectralPreprocessingOptions.IdentifyRegions(xOfX),
-      X, // matrix of spectra (a spectra is a row of this matrix)
-      Y, // matrix of concentrations (a mixture is a row of this matrix)
-      numFactors,
-      groupingStrategy,
-      preprocessOptions,
-      regress,
-      yCrossPredicted );
+      return GetCrossYPredicted(
+        SpectralPreprocessingOptions.IdentifyRegions(xOfX),
+        X, // matrix of spectra (a spectra is a row of this matrix)
+        Y, // matrix of concentrations (a mixture is a row of this matrix)
+        numFactors,
+        groupingStrategy,
+        preprocessOptions,
+        regress,
+        yCrossPredicted );
     }
 
 
@@ -922,16 +922,16 @@ namespace Altaxo.Calc.Regression.Multivariate
       out IROMatrix crossXResiduals
       )
     {
-     return GetCrossXResiduals(
-      SpectralPreprocessingOptions.IdentifyRegions(xOfX),
-      X, // matrix of spectra (a spectra is a row of this matrix)
-      Y, // matrix of concentrations (a mixture is a row of this matrix)
-      numFactors,
-      groupingStrategy,
-      preprocessOptions,
-      regress,
+      return GetCrossXResiduals(
+        SpectralPreprocessingOptions.IdentifyRegions(xOfX),
+        X, // matrix of spectra (a spectra is a row of this matrix)
+        Y, // matrix of concentrations (a mixture is a row of this matrix)
+        numFactors,
+        groupingStrategy,
+        preprocessOptions,
+        regress,
 
-      out crossXResiduals);
+        out crossXResiduals);
     }
 
     #endregion

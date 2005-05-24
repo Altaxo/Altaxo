@@ -5,9 +5,9 @@ using Altaxo.Main.GUI;
 
 namespace Altaxo.Main.Services
 {
-	/// <summary>
-	/// Static functions for searching by attributes.
-	/// </summary>
+  /// <summary>
+  /// Static functions for searching by attributes.
+  /// </summary>
   public class ReflectionService
   {
 
@@ -78,7 +78,7 @@ namespace Altaxo.Main.Services
       System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
       foreach(Assembly assembly in assemblies)
       {
-       if(Contains(assembly.GetReferencedAssemblies(),baseAssemblyName))
+        if(Contains(assembly.GetReferencedAssemblies(),baseAssemblyName))
           list.Add(assembly); 
       }
       list.Add(baseAssembly);

@@ -25,11 +25,11 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
-	/// <summary>
-	/// Summary description for PLS1Regression.
-	/// </summary>
-	public class PLS1Regression : MultivariateRegression
-	{
+  /// <summary>
+  /// Summary description for PLS1Regression.
+  /// </summary>
+  public class PLS1Regression : MultivariateRegression
+  {
     PLS1CalibrationModel _calib;
 
     protected IExtensibleVector _PRESS;
@@ -116,7 +116,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       int numFactors, // number of factors to use for prediction
       IMatrix predictedY, // Matrix of predicted y-values, must be same number of rows as spectra
       IMatrix spectralResiduals // Matrix of spectral residuals, n rows x 1 column, can be zero
-        )
+      )
     {
       if(numFactors>NumberOfFactors)
         throw new ArgumentOutOfRangeException(string.Format("Required numFactors (={0}) is higher than numFactors of analysis (={1})",numFactors,NumberOfFactors));
@@ -136,8 +136,8 @@ namespace Altaxo.Calc.Regression.Multivariate
           helperS // Matrix of spectral residuals, n rows x 1 column, can be zero
           );
 
-       if(null!=predictedY)
-         MatrixMath.Copy(helperY,predictedY,0,i);
+        if(null!=predictedY)
+          MatrixMath.Copy(helperY,predictedY,0,i);
         if(null!=spectralResiduals)
           MatrixMath.Copy(helperS,spectralResiduals,0,i);
       }
@@ -168,5 +168,5 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
 
-	}
+  }
 }

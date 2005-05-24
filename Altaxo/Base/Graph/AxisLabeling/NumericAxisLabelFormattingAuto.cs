@@ -2,18 +2,18 @@ using System;
 
 namespace Altaxo.Graph.AxisLabeling
 {
-	/// <summary>
-	/// Responsible for getting strings out of numeric values for the ticks, decide itself what
-	/// format to use.
-	/// </summary>
-	public class NumericAxisLabelFormattingAuto
-	{
-		public NumericAxisLabelFormattingAuto()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
+  /// <summary>
+  /// Responsible for getting strings out of numeric values for the ticks, decide itself what
+  /// format to use.
+  /// </summary>
+  public class NumericAxisLabelFormattingAuto
+  {
+    public NumericAxisLabelFormattingAuto()
+    {
+      //
+      // TODO: Add constructor logic here
+      //
+    }
 
 
     public string[] GetLabels(double[] majorticks)
@@ -72,7 +72,7 @@ namespace Altaxo.Graph.AxisLabeling
           mticks[i] = majorticks[i].ToString(fixedformat);
       }
 
-    return mticks;
+      return mticks;
     }
-	}
+  }
 }
