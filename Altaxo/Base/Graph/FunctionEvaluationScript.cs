@@ -199,5 +199,5 @@ namespace Altaxo.Graph
         return double.NaN;
       }
     }
-  } // end of class PropertyColumnScript
+  } // end of class
 }

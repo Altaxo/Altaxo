@@ -1,0 +1,230 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50215</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9EBAB076-12F4-4549-9FD5-6D2B8B387B06}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>AltaxoSDGui</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Altaxo</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;ModifiedForAltaxo</DefineConstants>
+    <DocumentationFile>bin\Debug\AltaxoSDGui.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Management">
+      <Name>System.Management</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\..\Libraries\CommandBar\zCommandBar.Vs8.csproj">
+      <Name>zCommandBar.Vs8</Name>
+      <Project>{397ADB5E-E608-4304-A3F7-F97E62B33932}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.Core\zICSharpCode.Core.Vs8.csproj">
+      <Name>zICSharpCode.Core.Vs8</Name>
+      <Project>{A1006FEB-2FFC-4507-8D82-265130CDD08E}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.TextEditor\src\zICSharpCode.TextEditor.Vs8.csproj">
+      <Name>zICSharpCode.TextEditor.Vs8</Name>
+      <Project>{BDA1E0BB-C18F-41B0-86C7-A4CEF4B60894}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\SharpDevelop.Base\zSharpDevelop.Base.Vs8.csproj">
+      <Name>zSharpDevelop.Base.Vs8</Name>
+      <Project>{AF2C9C35-FC89-4648-9D13-26538C00AFE1}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\SharpDevelop.DefaultTexteditor\zSharpDevelop.DefaultTexteditor.Vs8.csproj">
+      <Name>zSharpDevelop.DefaultTexteditor.Vs8</Name>
+      <Project>{953B27D5-7B33-49F5-B649-54396C09B361}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\SharpZipLib\src\zICSharpCode.SharpZipLib.Vs8.csproj">
+      <Name>zICSharpCode.SharpZipLib.Vs8</Name>
+      <Project>{62C31D94-812C-430E-AB9B-7DCF84D93BAE}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\WinFormsUI\WinFormsUI\zWinFormsUI.Vs8.csproj">
+      <Name>zWinFormsUI.Vs8</Name>
+      <Project>{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Base\AltaxoBase.Vs8.csproj">
+      <Name>AltaxoBase.Vs8</Name>
+      <Project>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\AltaxoCore.Vs8.csproj">
+      <Name>AltaxoCore.Vs8</Name>
+      <Project>{7045C197-9DA8-4FA4-886C-992ACADD838F}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\SDGraphControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\DataDisplayController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\FileScout.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\OutputWindowController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\ProjectScout.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\WindowsMdiWorkbenchLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\Workbench1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\WorkbenchForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\WorkbenchViewController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\AddReferenceToOwnAssemblies.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\AltaxoToolbarService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\AutostartCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\FileCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\GraphCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\HelpCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\OpenScriptDialog.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\PLSPlotCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\SelectedColumnCondition.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\MenuCommands\WorksheetCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\ProjectService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\ZippedStreamWrapper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Root\MainController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\SDWorksheetController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\TableScriptControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\TableScriptController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="Main\GUI\ProjectScout.resx">
+      <DependentUpon>ProjectScout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\GUI\WorkbenchForm.resx">
+      <DependentUpon>WorkbenchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Worksheet\GUI\TableScriptControl.resx">
+      <DependentUpon>TableScriptControl.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>copy AltaxoSDGui.??? ..\..\..\..\rt$(ConfigurationName)\bin</PostBuildEvent>
+  </PropertyGroup>
+</Project>

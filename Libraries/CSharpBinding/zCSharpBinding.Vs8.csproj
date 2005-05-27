@@ -1,0 +1,221 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50215</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2AECC87C-9EB2-4A95-8997-A8ECFD8A707F}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>CSharpBinding</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>CSharpBinding</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;ModifiedForAltaxo</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Design">
+      <Name>System.Design</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\ICSharpCode.Core\zICSharpCode.Core.Vs8.csproj">
+      <Name>zICSharpCode.Core.Vs8</Name>
+      <Project>{A1006FEB-2FFC-4507-8D82-265130CDD08E}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\ICSharpCode.TextEditor\src\zICSharpCode.TextEditor.Vs8.csproj">
+      <Name>zICSharpCode.TextEditor.Vs8</Name>
+      <Project>{BDA1E0BB-C18F-41B0-86C7-A4CEF4B60894}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\ICSharpCode.XmlForms\zICSharpCode.XmlForms.Vs8.csproj">
+      <Name>zICSharpCode.XmlForms.Vs8</Name>
+      <Project>{10C6C0B9-4EE3-416A-9D09-E1F34EF1DCEE}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpDevelop.Base\zSharpDevelop.Base.Vs8.csproj">
+      <Name>zSharpDevelop.Base.Vs8</Name>
+      <Project>{AF2C9C35-FC89-4648-9D13-26538C00AFE1}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpRefactory\src\zICSharpCode.SharpRefactory.Vs8.csproj">
+      <Name>zICSharpCode.SharpRefactory.Vs8</Name>
+      <Project>{CFB678A9-510C-4951-9023-541314265BA6}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CSharpAmbience.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CSharpBindingCompilerManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CSharpBindingExecutionManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CSharpLanguageBinding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormattingStrategy\CSharpFormattingStrategy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormattingStrategy\DocumentAccessor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="FormattingStrategy\Indentation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Gui\ChooseRuntimePanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\CodeGenerationPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\OutputOptionsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Parser\CSharpVisitor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\ExpressionFinder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\Parser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\Resolver.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\SharpDevelopTree\AttributeSection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\SharpDevelopTree\Class.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\SharpDevelopTree\CompilationUnit.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\SharpDevelopTree\Constructor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\SharpDevelopTree\Destructor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\SharpDevelopTree\Event.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\SharpDevelopTree\Field.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\SharpDevelopTree\Indexer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\SharpDevelopTree\Method.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\SharpDevelopTree\Parameter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\SharpDevelopTree\Property.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\SharpDevelopTree\ReturnType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser\TypeVisitor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Project\CSharpCompilerParameters.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Project\CSharpProject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Content Include="BackendBindings.addin" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="PrettyPrinter\Gui\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>if not exist ..\..\..\..\rt$(ConfigurationName)\AddIns\AddIns\BackendBindings mkdir ..\..\..\..\rt$(ConfigurationName)\AddIns\AddIns\BackendBindings
+copy CSharpBinding.??? ..\..\..\..\rt$(ConfigurationName)\AddIns\AddIns\BackendBindings
+copy ..\..\BackendBindings.addin ..\..\..\..\rt$(ConfigurationName)\AddIns\AddIns\BackendBindings</PostBuildEvent>
+  </PropertyGroup>
+</Project>

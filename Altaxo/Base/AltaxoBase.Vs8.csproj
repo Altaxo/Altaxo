@@ -1,0 +1,1057 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50215</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CA928A5C-9673-4FBB-A60E-F91364CC9DB5}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>Icon1.ico</ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>AltaxoBase</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Altaxo</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>bin\Debug\AltaxoBase.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DesignTimeDebugging|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap">
+      <Name>System.Runtime.Serialization.Formatters.Soap</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.Core\zICSharpCode.Core.Vs8.csproj">
+      <Name>zICSharpCode.Core.Vs8</Name>
+      <Project>{A1006FEB-2FFC-4507-8D82-265130CDD08E}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\Core\AltaxoCore.Vs8.csproj">
+      <Name>AltaxoCore.Vs8</Name>
+      <Project>{7045C197-9DA8-4FA4-886C-992ACADD838F}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\LinearAlgebra\DataColumnWrapper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\LinearAlgebra\DataTableWrapper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\MultivariateContentMemento.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\MultivariateLinearRegression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\PCRWorksheetAnalysis.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\PLS1WorksheetAnalysis.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\PLS2WorksheetAnalysis.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\PredictionModelExporter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\WorksheetAnalysis.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\RelativeOrAbsoluteValue.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\ScriptExecutionBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Collections\AscendingIntegerCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Collections\IAscendingIntegerCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Collections\IntegerRangeAsCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\AbstractScript.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\CollectionBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\ColumnKind.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\ColumnScript.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\DataColumn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\DataColumnCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\DataColumnScript.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\DataTable.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\DateTimeColumn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\DBNullColumn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\DoubleColumn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\EquallySpacedColumn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\ExtractTableDataScript.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\IDefinedCount.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\IndexerColumn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\INumericColumn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\IReadableColumn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\IWriteableColumn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\OperatableObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\PropertyColumnScript.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\TableCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\TableScript.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\TextColumn.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\Variant.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\AbstractXYAxisLabelStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\AbstractXYPlotStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Axis.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Boundaries\AbstractPhysicalBoundaries.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Boundaries\BoundariesChangedEventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Boundaries\EventHandlers.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Boundaries\FiniteDateTimeBoundaries.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Boundaries\FiniteNumericalBoundaries.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Boundaries\IPhysicalBoundaries.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Boundaries\IXBoundsHolder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Boundaries\IXYBoundsHolder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Boundaries\IYBoundsHolder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Boundaries\NumericalBoundaries.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Boundaries\PositiveFiniteNumericalBoundaries.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\DateTimeAxis.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\LinearAxis.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Log10Axis.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\NumericalAxis.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Scaling\BoundaryRescaling.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Scaling\DateTimeAxisRescaleConditions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Scaling\DateTimeAxisRescaleController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Scaling\LogarithmicAxisRescaleConditions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Scaling\LogarithmicAxisRescaleController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Scaling\NumericAxisRescaleConditions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Axes\Scaling\NumericAxisRescaleController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\AxisLabeling\AbstractNumericLabelFormatting.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\AxisLabeling\NumericAxisLabelFormattingAuto.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\AxisLabeling\NumericAxisLabelFormattingFixed.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\BrushHolder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\DensityImagePlotItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\DensityImagePlotStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Drawing2DRelated.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Edge.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\FitFunctionDDScript.cs" />
+    <Compile Include="Graph\FunctionEvaluationScript.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GraphDocument.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GraphDocumentCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GraphicsObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GraphicsObjectCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\AxisLinkControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\AxisLinkController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\AxisScaleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\AxisScaleController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\DensityImagePlotStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\DensityImagePlotStyleController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\FitPolynomialDialogControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\FitPolynomialDialogController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\GraphController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\AbstractMouseHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\AbstractRectangularToolMouseHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\ArrowLineDrawingMouseHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\EllipseDrawingMouseHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\ObjectPointerMouseHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\ReadPlotItemDataMouseHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\ReadXYCoordinatesMouseHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\RectangleDrawingMouseHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\SingleLineDrawingMouseHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\TextToolMouseHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\GraphControllerMouseHandlers\ZoomAxesMouseHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\GraphPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\GraphView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\IGraphDocumentView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\LayerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\LayerController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\LayerPositionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\LayerPositionController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\LineScatterLayerContentsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\LineScatterLayerContentsController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\LineScatterPlotDataControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\LineScatterPlotDataController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\LineScatterPlotStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\LineScatterPlotStyleController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\OrgEndSpanControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\TextControlDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\TitleFormatLayerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\TitleFormatLayerController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\XYPlotLabelStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\XYPlotLabelStyleController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\I2DPlotStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\I2DTo2DConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\IGrippableObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\IHitTestObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\ImageGraphics.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\IPlotArea.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\PenHolder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\PhysicalBoundaries.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\PlotGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\PlotItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\PlotItemCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\Procedures\PolynomialFitting.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\RectangleD.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\ShapeGraphics.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\SimpleTextGraphics.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\SystemDrawingSerialization.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\TextGraphics.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYAxisLabelStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYAxisStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYColumnPlotData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYColumnPlotItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYColumnPlotItemLabelTextStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYFunctionPlotData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYFunctionPlotItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYLineScatterPlotStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYPlotLabelStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYPlotLayer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYPlotLayerCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYPlotLineStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYPlotScatterStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYScatterPointInformation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Graph\XYZEquidistantMeshColumnPlotData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\AboutDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main\Document.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\DocumentPath.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\Exceptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\BooleanValueControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\BooleanValueController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\DialogFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\DialogShellController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\DialogShellView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\IApplyController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\IClassForClassAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\IntegerAndComboBoxController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\IWorkbench.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\ListBoxEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\MinMaxIntegerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\ModelViewController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\MultiChildControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\MultiChildController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\MultipleChoiceController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\MWControls\EventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\MWControls\MWCommon.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\MWControls\MWEnums.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\MWControls\MWTreeNodeWrapper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\MWControls\MWTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\NumericDoubleValueController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\RenameColumnDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\SingleChoiceComboBoxControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\SingleChoiceController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\SingleChoiceObjectController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\SingleValueControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\SingleValueController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\SingleValueDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\SingleValueFormController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\SpinAndComboBoxControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\TabbedDialogController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\TabbedDialogView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\UserControlForControllerAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\GUI\UserControllerForObjectAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\ICompressedFileContainerStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\IDocumentNode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\INamedObjectCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\Interfaces.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\IProjectService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\NameChangedEvent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\ParentChangedEvent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\PrintingService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\Services\GUIFactoryService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\Services\IDataDisplayService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\Services\IOutputService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\Services\IResourceService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main\Services\ReflectionService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Root\Current.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Ascii\AsciiExporter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Ascii\AsciiImporter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Ascii\AsciiImportOptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Ascii\AsciiLineAnalyzer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Ascii\AsciiLineStructure.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\DateTimeParsing.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\EnumParsing.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Galactic\ExportGalacticSpcFileDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Serialization\Galactic\ExportGalacticSpcFiles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Galactic\ImportGalacticSpcFiles.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\GUIConversion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\NumberParsing.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\SerializationAttributes.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Xml\IXmlDeserializationInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Xml\IXmlSerializationInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Xml\IXmlSerializationSurrogate.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Xml\XmlArrayEncoding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Xml\XmlDeserialiationCallbackHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Xml\XmlDeserializationCodeForAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Xml\XmlDocumentSerializationInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Xml\XmlSerializationCodeForAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Xml\XmlSerializationSurrogateForAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Xml\XmlStreamDeserializationInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Xml\XmlStreamSerializationInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Serialization\Xml\XmlSurrogateSelector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\ColumnHeaderStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\ColumnStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\Commands\Analysis\CalculusCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\Commands\Analysis\ChemometricCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\Commands\Analysis\FourierCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\Commands\Analysis\StatisticCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\Commands\ColumnCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\Commands\EditCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\Commands\FileCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\Commands\PlotCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\Commands\RowCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\Commands\WorksheetCommands.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\DateTimeColumnStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\DoubleColumnStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\ClickedAreaType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\ClickedCellInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\ColumnScriptControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\ColumnScriptController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\CrossValidatedCubicSplineController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\ExponentialSplineController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\InterpolationControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\InterpolationController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\IWorksheetDocumentView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\MultivariateLinearRegressionController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\PLSPredictValueControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\PLSPredictValueController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\PLSStartAnalysisControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\PLSStartAnalysisController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\RationalCubicSplineController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\RationalInterpolationController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\SavitzkyGolayParameterControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\SavitzkyGolayParameterController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\SetColumnValuesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\SpectralPreprocessingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\SpectralPreprocessingController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\TransposeWorksheetControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\TransposeWorksheetController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\WorksheetController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\WorksheetPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\WorksheetView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Worksheet\IndexSelection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\RowHeaderStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\TablePlusLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\TextColumnStyle.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\WorksheetLayout.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worksheet\WorksheetLayoutCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="Graph\GUI\AxisLinkControl.resx">
+      <DependentUpon>AxisLinkControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\AxisScaleControl.resx">
+      <DependentUpon>AxisScaleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\DensityImagePlotStyleControl.resx">
+      <DependentUpon>DensityImagePlotStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\FitPolynomialDialogControl.resx">
+      <DependentUpon>FitPolynomialDialogControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\GraphPanel.resx">
+      <DependentUpon>GraphPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\GraphView.resx">
+      <DependentUpon>GraphView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\LayerControl.resx">
+      <DependentUpon>LayerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\LayerPositionControl.resx">
+      <DependentUpon>LayerPositionControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\LineScatterLayerContentsControl.resx">
+      <DependentUpon>LineScatterLayerContentsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\LineScatterPlotDataControl.resx">
+      <DependentUpon>LineScatterPlotDataControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\LineScatterPlotStyleControl.resx">
+      <DependentUpon>LineScatterPlotStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\OrgEndSpanControl.resx">
+      <DependentUpon>OrgEndSpanControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\TextControlDialog.resx">
+      <DependentUpon>TextControlDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\TitleFormatLayerControl.resx">
+      <DependentUpon>TitleFormatLayerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\XYPlotLabelStyleControl.resx">
+      <DependentUpon>XYPlotLabelStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\AboutDialog.resx">
+      <DependentUpon>AboutDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\GUI\BooleanValueControl.resx">
+      <DependentUpon>BooleanValueControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\GUI\DialogShellView.resx">
+      <DependentUpon>DialogShellView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\GUI\MinMaxIntegerControl.resx">
+      <DependentUpon>MinMaxIntegerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\GUI\MultiChildControl.resx">
+      <DependentUpon>MultiChildControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\GUI\MWControls\MWTreeView.resx">
+      <DependentUpon>MWTreeView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\GUI\RenameColumnDialog.resx">
+      <DependentUpon>RenameColumnDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\GUI\SingleChoiceComboBoxControl.resx">
+      <DependentUpon>SingleChoiceComboBoxControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\GUI\SingleValueControl.resx">
+      <DependentUpon>SingleValueControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\GUI\SingleValueDialog.resx">
+      <DependentUpon>SingleValueDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\GUI\SpinAndComboBoxControl.resx">
+      <DependentUpon>SpinAndComboBoxControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\GUI\TabbedDialogView.resx" />
+    <EmbeddedResource Include="Serialization\Galactic\ExportGalacticSpcFileDialog.resx">
+      <DependentUpon>ExportGalacticSpcFileDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Worksheet\GUI\ColumnScriptControl.resx">
+      <DependentUpon>ColumnScriptControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Worksheet\GUI\InterpolationControl.resx">
+      <DependentUpon>InterpolationControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Worksheet\GUI\PLSPredictValueControl.resx">
+      <DependentUpon>PLSPredictValueControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Worksheet\GUI\PLSStartAnalysisControl.resx">
+      <DependentUpon>PLSStartAnalysisControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Worksheet\GUI\SavitzkyGolayParameterControl.resx">
+      <DependentUpon>SavitzkyGolayParameterControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Worksheet\GUI\SetColumnValuesDialog.resx">
+      <DependentUpon>SetColumnValuesDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Worksheet\GUI\SpectralPreprocessingControl.resx">
+      <DependentUpon>SpectralPreprocessingControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Worksheet\GUI\TransposeWorksheetControl.resx">
+      <DependentUpon>TransposeWorksheetControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Worksheet\GUI\WorksheetPanel.resx">
+      <DependentUpon>WorksheetPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Worksheet\GUI\WorksheetView.resx">
+      <DependentUpon>WorksheetView.cs</DependentUpon>
+    </EmbeddedResource>
+    <Content Include="Main\App.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Calc\Regression\PLS\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>rem ..\..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\..\  ..\..\AssemblyInfo.cs</PreBuildEvent>
+    <PostBuildEvent>copy AltaxoBase.??? ..\..\..\..\rt$(ConfigurationName)\bin</PostBuildEvent>
+  </PropertyGroup>
+</Project>

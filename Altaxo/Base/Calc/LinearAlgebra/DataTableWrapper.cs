@@ -185,12 +185,14 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Element accessor.
       /// </summary>
-      public double this[int row, int col]
+      public double Altaxo.Calc.LinearAlgebra.IVector.this[int row, int col]
       {
+        /*
         get
         {
           return _columns[col].GetDoubleAt(_rows[row]);
         }
+         * */
         set
         {
           ((IWriteableColumn)_columns[col])[_rows[row]] = value;

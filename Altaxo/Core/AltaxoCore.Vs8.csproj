@@ -1,0 +1,277 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50215</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7045C197-9DA8-4FA4-886C-992ACADD838F}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>AltaxoCore</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Altaxo</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>bin\Debug\AltaxoCore.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\BasicFunctions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\BesselRelated.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\BinaryMath.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\complex.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\ComplexArray.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\ComplexF.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\ComplexMath.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\ComplexStats.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\ErrorFunction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\ExpIntegralRelated.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Fourier\ArrayMath.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Fourier\ChirpFFT.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Fourier\ComplexFFT.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Fourier\FastHartleyTransform.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Fourier\FourierDirection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Fourier\NativeFourierMethods.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Fourier\Pfa235Convolution.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Fourier\Pfa235FFT.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\GammaRelated.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Interpolation\Interpolation.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\IScalarFunction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\LinearAlgebra\DoubleVector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\LinearAlgebra\IMatrix.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\LinearAlgebra\IntegerVector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\LinearAlgebra\IVector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\LinearAlgebra\JaggedArrayMath.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\LinearAlgebra\JaggedArrayMatrix.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\LinearAlgebra\MapackMatrix.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\LinearAlgebra\Matrix.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\LinearAlgebra\MatrixMath.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\LinearAlgebra\VectorMath.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\LinearAlgebra\VectorSpacingEvaluator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Polynomials.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Probability\ProbabilityDistributions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Probability\RandomGenerators.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\LinearRegression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\CrossPRESSCalculationType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\CrossValidationGroupingStrategies.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\CrossValidationWorker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\ICrossValidationResult.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\IMultivariateCalibrationModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\MultivariatePreprocessingModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\MultivariateRegression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\PCRCalibrationModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\PCRRegression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\PLS1CalibrationModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\PLS1Regression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\PLS2CalibrationModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\PLS2Regression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\PLSAnalysisOptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\SpectralPreprocessing.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Multivariate\SpectralPreprocessingOptions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\NonLinearFit.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\QuickLinearRegression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\QuickQuadraticRegression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\SavitzkyGolay.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\RMath.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Rounding.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\ScalarConstants.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\Series.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Calc\VectorCoupling.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Folder Include="Calc\Regression\PCR" />
+    <Folder Include="Calc\Regression\PLS" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>rem Update the build version of the main important assemblies
+rem ..\..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\..\  ..\..\AssemblyInfo.cs</PreBuildEvent>
+    <PostBuildEvent>copy AltaxoCore.??? ..\..\..\..\rt$(ConfigurationName)\bin</PostBuildEvent>
+  </PropertyGroup>
+</Project>

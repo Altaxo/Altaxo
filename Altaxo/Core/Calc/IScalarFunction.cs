@@ -37,4 +37,19 @@ namespace Altaxo.Calc
     /// <returns>The resulting value that the function evaluates.</returns>
     double Evaluate(double x);
   }
+
+  /// <summary>
+  /// Provides the interface to a function with one double argument, and one resulting double value.
+  /// The evaluation is parametrized by one or more parameters.
+  /// </summary>
+  public interface IParametrizedScalarFunctionDD
+  {
+    /// <summary>
+    /// The function evaluation.
+    /// </summary>
+    /// <param name="x">The argument of the function.</param>
+    /// <param name="parameters">The parameters of this function</param>
+    /// <returns>The resulting value that the function evaluates.</returns>
+    double Evaluate(double x, double[] parameters);
+  }
 }

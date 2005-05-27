@@ -1,0 +1,217 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50215</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{62C31D94-812C-430E-AB9B-7DCF84D93BAE}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>ICSharpCode.SharpZipLib</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SharpZipLib</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>bin\Debug\ICSharpCode.SharpZipLib.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>1591</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BZip2\BZip2.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BZip2\BZip2Constants.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BZip2\BZip2Exception.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BZip2\BZip2InputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BZip2\BZip2OutputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Checksums\Adler32.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Checksums\CRC32.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Checksums\IChecksum.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Checksums\StrangeCRC.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GZip\GZIPConstants.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GZip\GZipException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GZip\GzipInputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GZip\GzipOutputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SharpZipBaseException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tar\InvalidHeaderException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tar\TarArchive.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tar\TarBuffer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tar\TarEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tar\TarException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tar\TarHeader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tar\TarInputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Tar\TarOutputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\Compression\Deflater.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\Compression\DeflaterConstants.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\Compression\DeflaterEngine.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\Compression\DeflaterHuffman.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\Compression\DeflaterPending.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\Compression\Inflater.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\Compression\InflaterDynHeader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\Compression\InflaterHuffmanTree.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\Compression\PendingBuffer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\Compression\Streams\DeflaterOutputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\Compression\Streams\InflaterInputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\Compression\Streams\OutputWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\Compression\Streams\StreamManipulator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\ZipConstants.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\ZipEntry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\ZipException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\ZipFile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\ZipInputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Zip\ZipOutputStream.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>copy ..\..\..\*.key ..\..\obj</PreBuildEvent>
+    <PostBuildEvent>copy ICSharpCode.SharpZipLib.* ..\..\..\..\..\rt$(ConfigurationName)\bin</PostBuildEvent>
+  </PropertyGroup>
+</Project>

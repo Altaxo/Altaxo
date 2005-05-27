@@ -1,0 +1,139 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50215</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{63420446-3D85-4D00-BA9E-9EA7680B87E0}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>App.ico</ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>AltaxoStartup</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>
+    </RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;LellidMod</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\..\Libraries\CommandBar\zCommandBar.Vs8.csproj">
+      <Name>zCommandBar.Vs8</Name>
+      <Project>{397ADB5E-E608-4304-A3F7-F97E62B33932}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.Core\zICSharpCode.Core.Vs8.csproj">
+      <Name>zICSharpCode.Core.Vs8</Name>
+      <Project>{A1006FEB-2FFC-4507-8D82-265130CDD08E}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\SharpDevelop.Base\zSharpDevelop.Base.Vs8.csproj">
+      <Name>zSharpDevelop.Base.Vs8</Name>
+      <Project>{AF2C9C35-FC89-4648-9D13-26538C00AFE1}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\WinFormsUI\WinFormsUI\zWinFormsUI.Vs8.csproj">
+      <Name>zWinFormsUI.Vs8</Name>
+      <Project>{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="AltaxoCore.addin" />
+    <Compile Include="AltaxoStartup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dialogs\AddInTreeSettingsHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ExceptionBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <None Include="AltaxoStartup.exe.config" />
+    <None Include="App.ico" />
+    <None Include="Bugs.txt" />
+    <None Include="ForNextVersionOfSharpDev.txt" />
+    <None Include="UsingSharpDevelopForAltaxo.txt" />
+    <EmbeddedResource Include="BitmapResources.resources" />
+    <EmbeddedResource Include="SplashScreen.png" />
+    <EmbeddedResource Include="StringResources.resources" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>if not exist ..\..\..\..\rt$(ConfigurationName)\AddIns mkdir ..\..\..\..\rt$(ConfigurationName)\AddIns
+copy ..\..\AltaxoCore.addin ..\..\..\..\rt$(ConfigurationName)\AddIns</PreBuildEvent>
+    <PostBuildEvent>copy ..\..\AltaxoStartup.exe.config ..\..\..\..\rt$(ConfigurationName)\bin
+copy AltaxoStartup.* ..\..\..\..\rt$(ConfigurationName)\bin</PostBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,492 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50215</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{012F4935-9036-4F02-8C03-060EC9514A1D}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>HelpConverter</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>
+    </RootNamespace>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;ModifiedForAltaxo</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;ModifiedForAltaxo</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Configuration.Install">
+      <Name>System.Configuration.Install</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\Libraries\SharpZipLib\src\zICSharpCode.SharpZipLib.Vs8.csproj">
+      <Name>zICSharpCode.SharpZipLib.Vs8</Name>
+      <Project>{62C31D94-812C-430E-AB9B-7DCF84D93BAE}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpSetup.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\AssemblyLoader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\ClassNodeBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\DelegateNodeBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\EnumNodeBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\Generator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\InterfaceNodeBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\ITypeNodeBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\StructNodeBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HelpTreeBuilder\TypeNodeFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HhcFileParser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Main.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <None Include="HelpConverter.InstallState" />
+    <EmbeddedResource Include="HelpSetup.resx">
+      <DependentUpon>HelpSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <Content Include="data\ConversionStyleSheets\ConvertPrjx10to11.xsl" />
+    <Content Include="data\ConversionStyleSheets\ShowChangeLog.xsl" />
+    <Content Include="data\ConversionStyleSheets\ShowXmlDocumentation.xsl" />
+    <Content Include="data\ConversionStyleSheets\SVNChangelogToXml.xsl" />
+    <Content Include="data\modes\C64CSharp.xshd" />
+    <Content Include="data\modes\CSharp-Mode-VSEnh.xshd" />
+    <Content Include="data\modes\Jay-Mode.xshd" />
+    <Content Include="data\options\MainMenuItems.xml" />
+    <Content Include="data\options\SharpDevelopControlLibrary.sdcl" />
+    <Content Include="data\options\SharpDevelopProperties.xml" />
+    <Content Include="data\options\SharpDevelop-templates.xml" />
+    <Content Include="data\options\SharpDevelop-tools.xml" />
+    <Content Include="data\options\StandardHeader.xml" />
+    <Content Include="data\options\TextAreaContextMenu.xml" />
+    <Content Include="data\options\TextLib\ASCIITable.xml" />
+    <Content Include="data\options\TextLib\CSharpDocumentationTags.xml" />
+    <Content Include="data\options\TextLib\Licenses.xml" />
+    <Content Include="data\options\TextLib\SharpDevelop.xml" />
+    <Content Include="data\options\TextLib\XSLT.xml" />
+    <Content Include="data\options\TipsOfTheDay.xml" />
+    <Content Include="data\resources\AddIn.xsd" />
+    <Content Include="data\resources\AltaxoBitmap.resources" />
+    <Content Include="data\resources\AltaxoString.resources" />
+    <Content Include="data\resources\css\MsdnHelp.css" />
+    <Content Include="data\resources\css\SharpDevelopStandard.css" />
+    <Content Include="data\resources\dialogs\AddSidebarComponentsDialog.xfrm" />
+    <Content Include="data\resources\dialogs\CommonAboutDialog.xfrm" />
+    <Content Include="data\resources\dialogs\ConfigureSidebarDialog.xfrm" />
+    <Content Include="data\resources\dialogs\EditTemplateDialog.xfrm" />
+    <Content Include="data\resources\dialogs\ErrorDialog\SaveErrorChooseDialog.xfrm" />
+    <Content Include="data\resources\dialogs\ErrorDialog\SaveErrorInformDialog.xfrm" />
+    <Content Include="data\resources\dialogs\FindDialog.xfrm" />
+    <Content Include="data\resources\dialogs\FindInFilesDialog.xfrm" />
+    <Content Include="data\resources\dialogs\GotoLineNumberDialog.xfrm" />
+    <Content Include="data\resources\dialogs\InputBox.xfrm" />
+    <Content Include="data\resources\dialogs\NewFileDialog.xfrm" />
+    <Content Include="data\resources\dialogs\NewFileWithNameDialog.xfrm" />
+    <Content Include="data\resources\dialogs\NewProjectDialog.xfrm" />
+    <Content Include="data\resources\dialogs\RegExpTkGroupForm.xfrm" />
+    <Content Include="data\resources\dialogs\RegExpTkMainForm.xfrm" />
+    <Content Include="data\resources\dialogs\RenameSidebarCategoryDialog.xfrm" />
+    <Content Include="data\resources\dialogs\ReplaceDialog.xfrm" />
+    <Content Include="data\resources\dialogs\ReplaceInFilesDialog.xfrm" />
+    <Content Include="data\resources\dialogs\ResourceEditor\RenameEntryDialog.xfrm" />
+    <Content Include="data\resources\dialogs\SharpQuery\SqlParametersInput.xfrm" />
+    <Content Include="data\resources\dialogs\SortOptionsDialog.xfrm" />
+    <Content Include="data\resources\dialogs\TabbedOptionsDialog.xfrm" />
+    <Content Include="data\resources\dialogs\TreeViewOptionsDialog.xfrm" />
+    <Content Include="data\resources\dialogs\ViewGPLDialog.xfrm" />
+    <Content Include="data\resources\dialogs\WordCountDialog.xfrm" />
+    <Content Include="data\resources\filetypes\c.ico" />
+    <Content Include="data\resources\filetypes\cmbx.ico" />
+    <Content Include="data\resources\filetypes\cs.ico" />
+    <Content Include="data\resources\filetypes\Filetypes.xml" />
+    <Content Include="data\resources\filetypes\java.ico" />
+    <Content Include="data\resources\filetypes\prjx.ico" />
+    <Content Include="data\resources\filetypes\resx.ico" />
+    <Content Include="data\resources\filetypes\vb.ico" />
+    <Content Include="data\resources\filetypes\xfrm.ico" />
+    <Content Include="data\resources\filetypes\xml.ico" />
+    <Content Include="data\resources\InstallerBitmaps\default-banner.bmp" />
+    <Content Include="data\resources\InstallerBitmaps\default-dialog.bmp" />
+    <Content Include="data\resources\InstallerBitmaps\exclamic.bmp" />
+    <Content Include="data\resources\InstallerBitmaps\info.bmp" />
+    <Content Include="data\resources\InstallerBitmaps\new.bmp" />
+    <Content Include="data\resources\InstallerBitmaps\up.bmp" />
+    <Content Include="data\resources\languages\.xvpics\russia.png" />
+    <Content Include="data\resources\languages\.xvpics\south_korea.png" />
+    <Content Include="data\resources\languages\.xvpics\sweden.png" />
+    <Content Include="data\resources\languages\Arabic.png" />
+    <Content Include="data\resources\languages\badgoisern.png" />
+    <Content Include="data\resources\languages\brazil.png" />
+    <Content Include="data\resources\languages\bulgaria.png" />
+    <Content Include="data\resources\languages\chinalg.png" />
+    <Content Include="data\resources\languages\czech.png" />
+    <Content Include="data\resources\languages\denmark.png" />
+    <Content Include="data\resources\languages\england.png" />
+    <Content Include="data\resources\languages\finnish.png" />
+    <Content Include="data\resources\languages\france.png" />
+    <Content Include="data\resources\languages\germany.png" />
+    <Content Include="data\resources\languages\hungary.png" />
+    <Content Include="data\resources\languages\italy.png" />
+    <Content Include="data\resources\languages\japan.png" />
+    <Content Include="data\resources\languages\LanguageDefinition.xml" />
+    <Content Include="data\resources\languages\lithuania.png" />
+    <Content Include="data\resources\languages\mexico.png" />
+    <Content Include="data\resources\languages\netherlands.png" />
+    <Content Include="data\resources\languages\poland.png" />
+    <Content Include="data\resources\languages\portugal.png" />
+    <Content Include="data\resources\languages\romania.png" />
+    <Content Include="data\resources\languages\russia.png" />
+    <Content Include="data\resources\languages\Serbia.png" />
+    <Content Include="data\resources\languages\slovenia.png" />
+    <Content Include="data\resources\languages\south_korea.png" />
+    <Content Include="data\resources\languages\spain.png" />
+    <Content Include="data\resources\languages\sweden.png" />
+    <Content Include="data\resources\languages\uk.png" />
+    <Content Include="data\resources\languages\usa.png" />
+    <Content Include="data\resources\MenuStyle0.png" />
+    <Content Include="data\resources\MenuStyle1.png" />
+    <Content Include="data\resources\MenuStyle2.png" />
+    <Content Include="data\resources\panels\AssemblyScoutOptions.xfrm" />
+    <Content Include="data\resources\panels\BehaviorTextEditorPanel.xfrm" />
+    <Content Include="data\resources\panels\ChooseRuntimePanel.xfrm" />
+    <Content Include="data\resources\panels\CodeGenerationOptionsPanel.xfrm" />
+    <Content Include="data\resources\panels\CodeTemplatePanel.xfrm" />
+    <Content Include="data\resources\panels\CombineStartupPanel.xfrm" />
+    <Content Include="data\resources\panels\CompileFileProjectOptions.xfrm" />
+    <Content Include="data\resources\panels\CompletionDatabaseWizard\CreateNewFilePanel.xfrm" />
+    <Content Include="data\resources\panels\CompletionDatabaseWizard\CreationFinishedPanel.xfrm" />
+    <Content Include="data\resources\panels\CompletionDatabaseWizard\UseExistingFilePanel.xfrm" />
+    <Content Include="data\resources\panels\CompletionDatabaseWizard\ViewProgressPanel.xfrm" />
+    <Content Include="data\resources\panels\CompletionDatabaseWizard\WelcomePanel.xfrm" />
+    <Content Include="data\resources\panels\DeployFileOptions.xfrm" />
+    <Content Include="data\resources\panels\EditStandardHeaderPanel.xfrm" />
+    <Content Include="data\resources\panels\ExternalToolOptions.xfrm" />
+    <Content Include="data\resources\panels\FontSelectionPanel.xfrm" />
+    <Content Include="data\resources\panels\FormDesingerToolboxConfigurationPanel.xfrm" />
+    <Content Include="data\resources\panels\GeneralProjectOptions.xfrm" />
+    <Content Include="data\resources\panels\GeneralTextEditorPanel.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\ColorDialog.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\Digits.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\EditDialog.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\Environment.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\KeywordList.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\KeywordLists.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\Marker.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\Markers.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\OptionPanel.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\Properties.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\RuleSet.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\RuleSets.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\Scheme.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\Span.xfrm" />
+    <Content Include="data\resources\panels\HighlightingEditor\Spans.xfrm" />
+    <Content Include="data\resources\panels\LoadSaveOptionPanel.xfrm" />
+    <Content Include="data\resources\panels\MarkersTextEditorPanel.xfrm" />
+    <Content Include="data\resources\panels\OutputWindowOptionsPanel.xfrm" />
+    <Content Include="data\resources\panels\PrettyPrinterGUI\PrettyPrintPanel.xfrm" />
+    <Content Include="data\resources\panels\ProjectAndCombineOptions.xfrm" />
+    <Content Include="data\resources\panels\ProjectOptions\CodeGenerationPanel.xfrm" />
+    <Content Include="data\resources\panels\ProjectOptions\CPPCodeGenerationPanel.xfrm" />
+    <Content Include="data\resources\panels\ProjectOptions\GeneralProjectOptions.xfrm" />
+    <Content Include="data\resources\panels\ProjectOptions\OutputPanel.xfrm" />
+    <Content Include="data\resources\panels\ProjectOptions\VBDOCConfigurationPanel.xfrm" />
+    <Content Include="data\resources\panels\ProjectOptions\VBNetCodeGenerationPanel.xfrm" />
+    <Content Include="data\resources\panels\SelectStylePanel.xfrm" />
+    <Content Include="data\resources\panels\TaskListOptions.xfrm" />
+    <Content Include="data\resources\panels\VBCompilerPanel.xfrm" />
+    <Content Include="data\resources\panels\VBSpecificTextEditorOptions.xfrm" />
+    <Content Include="data\resources\panels\WindowsFormsGeneralOptions.xfrm" />
+    <Content Include="data\resources\panels\WindowsFormsGridOptions.xfrm" />
+    <Content Include="data\resources\SharpDevelop.ico" />
+    <Content Include="data\resources\startpage\Layout\blue\balken_links.gif" />
+    <Content Include="data\resources\startpage\Layout\blue\balken_mitte.gif" />
+    <Content Include="data\resources\startpage\Layout\blue\balken_rechts.gif" />
+    <Content Include="data\resources\startpage\Layout\brown\balken_links.gif" />
+    <Content Include="data\resources\startpage\Layout\brown\balken_mitte.gif" />
+    <Content Include="data\resources\startpage\Layout\brown\balken_rechts.gif" />
+    <Content Include="data\resources\startpage\Layout\common\blind.gif" />
+    <Content Include="data\resources\startpage\Layout\common\dot_listing.gif" />
+    <Content Include="data\resources\startpage\Layout\common\klinker_milestone.gif" />
+    <Content Include="data\resources\startpage\Layout\common\line_hor_black.gif" />
+    <Content Include="data\resources\startpage\Layout\common\milestone_col_head.gif" />
+    <Content Include="data\resources\startpage\Layout\common\pixel_weiss.gif" />
+    <Content Include="data\resources\startpage\Layout\default.css" />
+    <Content Include="data\resources\startpage\Layout\green\balken_links.gif" />
+    <Content Include="data\resources\startpage\Layout\green\balken_mitte.gif" />
+    <Content Include="data\resources\startpage\Layout\green\balken_rechts.gif" />
+    <Content Include="data\resources\startpage\Layout\orange\balken_links.gif" />
+    <Content Include="data\resources\startpage\Layout\orange\balken_mitte.gif" />
+    <Content Include="data\resources\startpage\Layout\orange\balken_rechts.gif" />
+    <Content Include="data\resources\startpage\Layout\red\balken_links.gif" />
+    <Content Include="data\resources\startpage\Layout\red\balken_mitte.gif" />
+    <Content Include="data\resources\startpage\Layout\red\balken_rechts.gif" />
+    <Content Include="data\resources\StringResources.ar.resources" />
+    <Content Include="data\resources\StringResources.bg.resources" />
+    <Content Include="data\resources\StringResources.cn-big.resources" />
+    <Content Include="data\resources\StringResources.cn-gb.resources" />
+    <Content Include="data\resources\StringResources.cz.resources" />
+    <Content Include="data\resources\StringResources.de.resources" />
+    <Content Include="data\resources\StringResources.dk.resources" />
+    <Content Include="data\resources\StringResources.es.resources" />
+    <Content Include="data\resources\StringResources.es-mx.resources" />
+    <Content Include="data\resources\StringResources.fi.resources" />
+    <Content Include="data\resources\StringResources.fr.resources" />
+    <Content Include="data\resources\StringResources.hu.resources" />
+    <Content Include="data\resources\StringResources.it.resources" />
+    <Content Include="data\resources\StringResources.jp.resources" />
+    <Content Include="data\resources\StringResources.kr.resources" />
+    <Content Include="data\resources\StringResources.lt.resources" />
+    <Content Include="data\resources\StringResources.nl.resources" />
+    <Content Include="data\resources\StringResources.pl.resources" />
+    <Content Include="data\resources\StringResources.pt.resources" />
+    <Content Include="data\resources\StringResources.pt-br.resources" />
+    <Content Include="data\resources\StringResources.ro.resources" />
+    <Content Include="data\resources\StringResources.ru.resources" />
+    <Content Include="data\resources\StringResources.se.resources" />
+    <Content Include="data\resources\StringResources.sl.resources" />
+    <Content Include="data\resources\StringResources.sr.resources" />
+    <Content Include="data\resources\StringResources.tr.resources" />
+    <Content Include="data\resources\xslt\allmembers.xslt" />
+    <Content Include="data\resources\xslt\common.xslt" />
+    <Content Include="data\resources\xslt\event.xslt" />
+    <Content Include="data\resources\xslt\field.xslt" />
+    <Content Include="data\resources\xslt\filenames.xslt" />
+    <Content Include="data\resources\xslt\individualmembers.xslt" />
+    <Content Include="data\resources\xslt\member.xslt" />
+    <Content Include="data\resources\xslt\memberoverload.xslt" />
+    <Content Include="data\resources\xslt\memberscommon.xslt" />
+    <Content Include="data\resources\xslt\namespace.xslt" />
+    <Content Include="data\resources\xslt\namespacehierarchy.xslt" />
+    <Content Include="data\resources\xslt\property.xslt" />
+    <Content Include="data\resources\xslt\syntax.xslt" />
+    <Content Include="data\resources\xslt\type.xslt" />
+    <Content Include="data\schemas\AddIn.xsd" />
+    <Content Include="data\schemas\appconfig.xsd" />
+    <Content Include="data\schemas\nant.xsd" />
+    <Content Include="data\schemas\nant-0.84.xsd" />
+    <Content Include="data\schemas\readme.txt" />
+    <Content Include="data\schemas\W3C-License.html" />
+    <Content Include="data\schemas\wix.xsd" />
+    <Content Include="data\schemas\XMLSchema.xsd" />
+    <Content Include="data\schemas\xslt.xsd" />
+    <Content Include="data\templates\file\CPPNet\CPP.Empty.xft" />
+    <Content Include="data\templates\file\CPPNet\CPP.Header.xft" />
+    <Content Include="data\templates\file\CPPNet\CPP.Wizards.NewClass.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Empty.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.EmptyClass.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Forms.Form.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Forms.UserControl.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Patterns.Singleton.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.UnitTest.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Wizards.NewClass.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Wizards.TypedCollection.xft" />
+    <Content Include="data\templates\file\CSharp\CSharp.Wizards.TypedHashtable.xft" />
+    <Content Include="data\templates\file\Misc\EmptyHTMLFile.xft" />
+    <Content Include="data\templates\file\Misc\EmptyResourceFile.xft" />
+    <Content Include="data\templates\file\Misc\EmptyTextFile.xft" />
+    <Content Include="data\templates\file\Misc\EmptyXMLFile.xft" />
+    <Content Include="data\templates\file\Misc\EmptyXmlForm.xft" />
+    <Content Include="data\templates\file\Misc\EmptyXmlUserControl.xft" />
+    <Content Include="data\templates\file\SharpDevelop\ExampleMenuCommand.xft" />
+    <Content Include="data\templates\file\SharpDevelop\ExampleOptionPanel.xft" />
+    <Content Include="data\templates\file\SharpDevelop\ExamplePad.xft" />
+    <Content Include="data\templates\file\SharpDevelop\ExampleView.xft" />
+    <Content Include="data\templates\file\SharpDevelop\SimpleCommand.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Empty.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.EmptyClass.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Forms.Form.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Forms.UserControl.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Patterns.Singleton.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.UnitTest.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Wizards.NewClass.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Wizards.TypedCollection.xft" />
+    <Content Include="data\templates\file\VBNet\VBNet.Wizards.TypedHashtable.xft" />
+    <Content Include="data\templates\project\ComplexExample.xpt.test" />
+    <Content Include="data\templates\project\CPPNet\ConsoleProject.xpt" />
+    <Content Include="data\templates\project\CPPNet\EmptyProject.xpt" />
+    <Content Include="data\templates\project\CPPNet\FormsProject.xpt" />
+    <Content Include="data\templates\project\CSharp\ConsoleProject.xpt" />
+    <Content Include="data\templates\project\CSharp\ControlLibrary.xpt" />
+    <Content Include="data\templates\project\CSharp\Direct3DProject.xpt" />
+    <Content Include="data\templates\project\CSharp\EmptyProject.xpt" />
+    <Content Include="data\templates\project\CSharp\FormsProject.xpt" />
+    <Content Include="data\templates\project\CSharp\Library.xpt" />
+    <Content Include="data\templates\project\CSharp\Service.xpt" />
+    <Content Include="data\templates\project\ILAsm\ConsoleProject.xpt" />
+    <Content Include="data\templates\project\Misc\BlankCombine.xpt" />
+    <Content Include="data\templates\project\Setup\WixProject.xpt" />
+    <Content Include="data\templates\project\VBNet\ConsoleProject.xpt" />
+    <Content Include="data\templates\project\VBNet\ControlLibrary.xpt" />
+    <Content Include="data\templates\project\VBNet\Direct3DProject.xpt" />
+    <Content Include="data\templates\project\VBNet\EmptyProject.xpt" />
+    <Content Include="data\templates\project\VBNet\FormsProject.xpt" />
+    <Content Include="data\templates\project\VBNet\Library.xpt" />
+    <Content Include="data\templates\project\VBNet\Service.xpt" />
+    <Content Include="data\vb.rsp" />
+    <Content Include="doc\AddIns\AddIn.html" />
+    <Content Include="doc\AddIns\AddIn_p1.png" />
+    <Content Include="doc\AddIns\AddIn_p10.png" />
+    <Content Include="doc\AddIns\AddIn_p11.png" />
+    <Content Include="doc\AddIns\AddIn_p12.png" />
+    <Content Include="doc\AddIns\AddIn_p13.png" />
+    <Content Include="doc\AddIns\AddIn_p14.png" />
+    <Content Include="doc\AddIns\AddIn_p15.png" />
+    <Content Include="doc\AddIns\AddIn_p16.png" />
+    <Content Include="doc\AddIns\AddIn_p17.png" />
+    <Content Include="doc\AddIns\AddIn_p18.png" />
+    <Content Include="doc\AddIns\AddIn_p19.png" />
+    <Content Include="doc\AddIns\AddIn_p2.png" />
+    <Content Include="doc\AddIns\AddIn_p20.png" />
+    <Content Include="doc\AddIns\AddIn_p21.png" />
+    <Content Include="doc\AddIns\AddIn_p22.png" />
+    <Content Include="doc\AddIns\AddIn_p23.png" />
+    <Content Include="doc\AddIns\AddIn_p24.png" />
+    <Content Include="doc\AddIns\AddIn_p25.png" />
+    <Content Include="doc\AddIns\AddIn_p26.png" />
+    <Content Include="doc\AddIns\AddIn_p27.png" />
+    <Content Include="doc\AddIns\AddIn_p28.png" />
+    <Content Include="doc\AddIns\AddIn_p29.png" />
+    <Content Include="doc\AddIns\AddIn_p3.png" />
+    <Content Include="doc\AddIns\AddIn_p30.png" />
+    <Content Include="doc\AddIns\AddIn_p31.png" />
+    <Content Include="doc\AddIns\AddIn_p32.png" />
+    <Content Include="doc\AddIns\AddIn_p33.png" />
+    <Content Include="doc\AddIns\AddIn_p34.png" />
+    <Content Include="doc\AddIns\AddIn_p35.png" />
+    <Content Include="doc\AddIns\AddIn_p36.png" />
+    <Content Include="doc\AddIns\AddIn_p37.png" />
+    <Content Include="doc\AddIns\AddIn_p4.png" />
+    <Content Include="doc\AddIns\AddIn_p5.png" />
+    <Content Include="doc\AddIns\AddIn_p6.png" />
+    <Content Include="doc\AddIns\AddIn_p7.png" />
+    <Content Include="doc\AddIns\AddIn_p8.png" />
+    <Content Include="doc\AddIns\AddIn_p9.png" />
+    <Content Include="doc\BuiltWithSharpDevelop.png" />
+    <Content Include="doc\ChangeLog.xml" />
+    <Content Include="doc\CodingStyleGuide.pdf" />
+    <Content Include="doc\CodingStyleGuide.sxw" />
+    <Content Include="doc\copyright.txt" />
+    <Content Include="doc\help\031SharpZipLib.chm" />
+    <Content Include="doc\help\031SharpZipLib.hhc" />
+    <Content Include="doc\help\AltaxoClassRef.chm" />
+    <Content Include="doc\help\AltaxoClassRef.hhc" />
+    <Content Include="doc\help\AltaxoHelp.chm" />
+    <Content Include="doc\help\AltaxoHelp.hhc" />
+    <Content Include="doc\help\HelpDescription.xml" />
+    <Content Include="doc\help\SharpDevelop.chm" />
+    <Content Include="doc\help\SharpDevelop.hhc" />
+    <Content Include="doc\help\SharpDevelop2.hhc" />
+    <Content Include="doc\help\SharpDevelopHelp.zip" />
+    <Content Include="doc\license.txt" />
+    <Content Include="doc\SharpDevelopTODO.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="data\resources\dialogs\UML Designer\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>if not exist ..\..\..\rt$(ConfigurationName)\bin mkdir  ..\..\..\rt$(ConfigurationName)\bin
+xcopy ..\..\AddIns\*.* ..\..\..\rt$(ConfigurationName)\AddIns /E /I /Y
+xcopy ..\..\data\*.* ..\..\..\rt$(ConfigurationName)\data /E /I /Y
+xcopy ..\..\doc\*.* ..\..\..\rt$(ConfigurationName)\doc /E /I /Y
+rem Dont forget to copy the 
+copy ..\..\..\Libraries\bin\Interop.SHDocVw.dll ..\..\..\rt$(ConfigurationName)\bin
+
+rem copy the HelpConverter.exe and .pdb to the bin directory
+copy HelpConverter.* ..\..\..\rt$(ConfigurationName)\bin
+
+rem Update the build version of the main important assemblies
+rem ..\..\..\Libraries\bin\AssemblySvnVersion ..\..\..\  ..\..\..\Altaxo\Startup\AssemblyInfo.cs ..\..\..\Altaxo\Core\AssemblyInfo.cs ..\..\..\Altaxo\SDGui\AssemblyInfo.cs ..\..\..\Altaxo\Base\AssemblyInfo.cs
+</PostBuildEvent>
+  </PropertyGroup>
+</Project>

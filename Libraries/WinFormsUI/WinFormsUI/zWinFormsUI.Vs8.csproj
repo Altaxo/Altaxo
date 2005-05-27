@@ -1,0 +1,273 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>8.0.50215</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D3C782BA-178E-4235-A3BA-8C11DEBB6BEE}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>WeifenLuo.WinFormsUI</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>WeifenLuo.WinFormsUI</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;ModifiedForAltaxo</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>ModifiedForAltaxo</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Design">
+      <Name>System.Design</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\InertButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\AutoHidePane.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\AutoHidePaneCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\AutoHideStateCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\AutoHideStripBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\AutoHideStripVS2003.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\AutoHideTab.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\AutoHideTabCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\AutoHideTabVS2003.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\AutoHideWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\AutoHideWindowSplitter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DisplayingDockList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockAreasEditor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Docking\DockContentCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockList.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPane.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneCaptionBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneCaptionVS2003.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPanelExtender.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPanelPersist.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneSplitter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneStripBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneStripVS2003.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneTab.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneTabCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockPaneTabVS2003.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DockWindowCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DockWindowSplitter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\DragHandler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DragHandlerBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\DummyControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Docking\Enums.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\EventArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\FloatWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Docking\FloatWindowCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\HiddenMdiChild.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Docking\Interfaces.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\Measures.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\NestedDockingStatus.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Docking\SplitterBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Helpers\DrawHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Helpers\Localization.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Helpers\LocalWindowsHook.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Helpers\ResourceHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Win32\Enums.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Win32\Gdi32.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Win32\Structs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Win32\User32.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="Resources\DockPaneCaption.AutoHideNo.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneCaption.AutoHideYes.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneCaption.CloseDisabled.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneCaption.CloseEnabled.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneStrip.CloseDisabled.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneStrip.CloseEnabled.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneStrip.ScrollLeftDisabled.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneStrip.ScrollLeftEnabled.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneStrip.ScrollRightDisabled.bmp" />
+    <EmbeddedResource Include="Resources\DockPaneStrip.ScrollRightEnabled.bmp" />
+    <EmbeddedResource Include="Strings.ResX" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>copy WeifenLuo.WinFormsUI.* ..\..\..\..\..\rt$(ConfigurationName)\bin</PostBuildEvent>
+  </PropertyGroup>
+</Project>

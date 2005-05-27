@@ -326,7 +326,7 @@ namespace Altaxo.Graph.Axes
       // calculate the number of major ticks
 
       int nFullDecades = (int)(1+Math.Floor(log10end)-Math.Ceiling(log10org));
-      int nMajorTicks = (int)Math.Floor((nFullDecades+m_DecadesPerMajorTick-1)/m_DecadesPerMajorTick);
+      int nMajorTicks = (int)Math.Floor((nFullDecades+m_DecadesPerMajorTick-1)/(double)m_DecadesPerMajorTick);
 
 
       double[] retval = new double[nMajorTicks];
