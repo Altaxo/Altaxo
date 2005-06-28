@@ -34,13 +34,11 @@ namespace Altaxo.Graph
   {
     /// <summary>
     /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-    /// If the script object exists, the function "IsRowIncluded" will be called for every row in the source tables data column collection.
-    /// If this function returns true, the corresponding row will be copyied to a new data table.
+    /// If the script object exists, the function "EvalulateFunctionValue" will be called with the provided parameter x.
+    /// If this function throws an exception, the value double.NaN will be returned.
     /// </summary>
-    /// <param name="myTable">The data table this script is working on.</param>
-    /// <returns>True if executed without exceptions, otherwise false.</returns>
-    /// <remarks>If exceptions were thrown during execution, the exception messages are stored
-    /// inside the column script and can be recalled by the Errors property.</remarks>
+    /// <param name="x">The x argument for the function.</param>
+    /// <returns>The function value.</returns>
     double Evaluate(double x);
   }
  
@@ -194,7 +192,7 @@ namespace Altaxo.Graph
       {
         return ((Altaxo.Calc.FunctionEvaluationScriptBase)m_ScriptObject).EvaluateFunctionValue(x);
       }
-      catch(Exception ex)
+      catch(Exception)
       {
         return double.NaN;
       }

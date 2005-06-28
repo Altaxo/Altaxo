@@ -30,30 +30,59 @@ using Altaxo.Data;
 namespace Altaxo.Graph
 {
 
-    public interface IFitFunctionDDScriptText : IScriptText
+    public interface IParametrizedFunctionDDScriptText : IScriptText
     {
         /// <summary>
         /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-        /// If the script object exists, the function "IsRowIncluded" will be called for every row in the source tables data column collection.
-        /// If this function returns true, the corresponding row will be copyied to a new data table.
+        /// If the script object exists, the function "Evaluate" will be called.
         /// </summary>
-        /// <param name="myTable">The data table this script is working on.</param>
-        /// <returns>True if executed without exceptions, otherwise false.</returns>
-        /// <remarks>If exceptions were thrown during execution, the exception messages are stored
-        /// inside the column script and can be recalled by the Errors property.</remarks>
+        /// <param name="x">The function argument.</param>
+        /// <returns>The function value.</returns>
+        /// <remarks>If exceptions were thrown during execution, the return value is double.NaN.
+        /// </remarks>
         double Evaluate(double x);
+
+      double Evaluate(double x, double[] parameters);
+
+      /// <summary>
+      /// Get / sets the number of parameters. If setting the number of parameters with this property,
+      /// the property <see>IsUsingUserDefinedParameterNames</see> is set to false.
+      /// </summary>
+      int NumberOfParameters { get; set; }
+
+      /// <summary>
+      /// Returns true if the script uses user defined parameter names instead of using P[0], P[1] ...
+      /// </summary>
+      bool IsUsingUserDefinedParameterNames { get; }
+
+      /// <summary>
+      /// Get / sets the user defined parameter names. If setting, this also sets the property
+      /// <see>IsUsingUserDefinedParameterNames</see> to true, and the <see>NumberOfParameters</see> to the given number
+      /// of user defined parameters.
+      /// </summary>
+      string[] UserDefinedParameterNames { get; set; }
     }
 
     /// <summary>
     /// Holds the text, the module (=executable), and some properties of a property column script. 
     /// </summary>
 
-    public class FitFunctionDDScript : AbstractScript, IFitFunctionDDScriptText
+    public class ParametrizedFunctionDDScript : AbstractScript, IParametrizedFunctionDDScriptText
     {
+        /// <summary>
+        /// Number of Parameters
+        /// </summary>
+        int _NumberOfParameters;
+
+        /// <summary>
+        /// True if we use user defined parameter names in the script.
+        /// </summary>
+        bool _IsUsingUserDefinedParameterNames;
+
         /// <summary>
         /// Names of the parameters. This is set to null if no parameter names where provided.
         /// </summary>
-        string[] _parameterNames;
+        string[] _UserDefinedParameterNames;
         /// <summary>
         /// Values of the parameters.
         /// </summary>
@@ -61,7 +90,7 @@ namespace Altaxo.Graph
 
         #region Serialization
 
-        [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Graph.FitFunctionDDScript), 0)]
+        [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Graph.ParametrizedFunctionDDScript), 0)]
         public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
         {
             public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -72,7 +101,7 @@ namespace Altaxo.Graph
             }
             public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
             {
-                Altaxo.Graph.FitFunctionDDScript s = null != o ? (Altaxo.Graph.FitFunctionDDScript)o : new Altaxo.Graph.FitFunctionDDScript();
+                Altaxo.Graph.ParametrizedFunctionDDScript s = null != o ? (Altaxo.Graph.ParametrizedFunctionDDScript)o : new Altaxo.Graph.ParametrizedFunctionDDScript();
 
                 // deserialize the base class
                 info.GetBaseValueEmbedded(s, typeof(Altaxo.Data.AbstractScript), parent);
@@ -88,7 +117,7 @@ namespace Altaxo.Graph
         /// <summary>
         /// Creates an empty script.
         /// </summary>
-        public FitFunctionDDScript()
+        public ParametrizedFunctionDDScript()
         {
         }
 
@@ -96,7 +125,7 @@ namespace Altaxo.Graph
         /// Creates a column script as a copy from another script.
         /// </summary>
         /// <param name="b">The script to copy from.</param>
-        public FitFunctionDDScript(FitFunctionDDScript b)
+        public ParametrizedFunctionDDScript(ParametrizedFunctionDDScript b)
             : base(b)
         {
         }
@@ -106,7 +135,7 @@ namespace Altaxo.Graph
         /// </summary>
         public override string ScriptObjectType
         {
-            get { return "Altaxo.Calc.FitFunctionDDScript"; }
+            get { return "Altaxo.Calc.MyParametrizedFunctionDDScript"; }
         }
 
         /// <summary>
@@ -123,7 +152,7 @@ namespace Altaxo.Graph
                   "using Altaxo.Data;\r\n" +
                   "namespace Altaxo.Calc\r\n" +
                   "{\r\n" +
-                  "\tpublic class FitFunctionDDScript : Altaxo.Calc.FunctionEvaluationScriptBase\r\n" +
+                  "\tpublic class MyParametrizedFunctionDDScript : Altaxo.Calc.FunctionEvaluationScriptBase\r\n" +
                   "\t{\r\n" +
                   "\t\tpublic override double EvaluateFunctionValue(double x, double[]P)\r\n" +
                   "\t\t{\r\n"+
@@ -200,32 +229,69 @@ namespace Altaxo.Graph
         /// <returns>The cloned object.</returns>
         public override object Clone()
         {
-            return new Altaxo.Graph.FitFunctionDDScript(this);
+            return new Altaxo.Graph.ParametrizedFunctionDDScript(this);
         }
 
-
-      public void SetParameterNames(string[] pnames)
+      public int NumberOfParameters
       {
-        int first = this.ScriptText.IndexOf(this.ParameterRegionStart);
-        if (first < 0)
-          throw new ApplicationException("The script text seems to no longer contain a parameter start region");
-        first += this.ParameterRegionStart.Length;
-        int last = this.ScriptText.IndexOf(this.ParameterRegionEnd);
-        System.Text.StringBuilder sb = new System.Text.StringBuilder();
-        sb.Append(this.ScriptText.Substring(0,first));
-        for(int i=0;i<pnames.Length;i++)
-          sb.Append(string.Format("{0}=P[{1}];\r\n",pnames[i],i));
-        sb.Append(this.ScriptText.Substring(last));
-        this.ScriptText = sb.ToString();
+        get
+        {
+          return this._NumberOfParameters;
+        }
+        set
+        {
+          this._IsUsingUserDefinedParameterNames = false;
+          this._NumberOfParameters = value;
+        }
+      }
+
+      public bool IsUsingUserDefinedParameterNames
+      {
+        get 
+        {
+          return this._IsUsingUserDefinedParameterNames;
+        }
+      
+      }
+      public string[] UserDefinedParameterNames
+      {
+        get
+        {
+          if(this._IsUsingUserDefinedParameterNames)
+            return (string[])this._UserDefinedParameterNames.Clone();
+          else
+            return null;
+        }
+        set
+        {
+          this._IsUsingUserDefinedParameterNames = true;
+          this._NumberOfParameters = value.Length;
+          this._UserDefinedParameterNames = (string[])value.Clone();
+
+          string[] pnames = value;
+          int first = this.ScriptText.IndexOf(this.ParameterRegionStart);
+          if (first < 0)
+            throw new ApplicationException("The script text seems to no longer contain a parameter start region");
+          first += this.ParameterRegionStart.Length;
+          int last = this.ScriptText.IndexOf(this.ParameterRegionEnd);
+          System.Text.StringBuilder sb = new System.Text.StringBuilder();
+          sb.Append(this.ScriptText.Substring(0,first));
+          for(int i=0;i<pnames.Length;i++)
+            sb.Append(string.Format("{0}=P[{1}];\r\n",pnames[i],i));
+          sb.Append(this.ScriptText.Substring(last));
+          this.ScriptText = sb.ToString();
+          
+        }
       }
 
 
       /// <summary>
       /// 
       /// </summary>
-      /// <param name="x"></param>
+      /// <param name="x">The main function argument.</param>
+      /// <param name="parameters">The parameters used for evalulation of the function.</param>
       /// <returns></returns>
-      public double Evaluate(double x)
+      public double Evaluate(double x, double[] parameters)
         {
             if (null == m_ScriptObject)
             {
@@ -235,12 +301,16 @@ namespace Altaxo.Graph
 
             try
             {
-                return ((Altaxo.Graph.FitFunctionDDScript)m_ScriptObject).EvaluateFunctionValue(x);
+                return ((Altaxo.Calc.IParametrizedScalarFunctionDD)m_ScriptObject).Evaluate(x,parameters);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return double.NaN;
             }
         }
+      public double Evaluate(double x)
+      {
+        return Evaluate(x,this._parameterValues);
+      }
     } // end of class
 }

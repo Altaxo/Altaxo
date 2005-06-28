@@ -7,8 +7,8 @@ namespace Altaxo.Graph.AxisLabeling
   /// </summary>
   public class NumericAxisLabelFormattingFixed
   {
-    int _decimalplaces;
-    string _formatString;
+    // int _decimalplaces;
+    string _formatString="{0}";
 
     public NumericAxisLabelFormattingFixed()
     {
@@ -26,7 +26,6 @@ namespace Altaxo.Graph.AxisLabeling
     public string[] GetLabels(double[]ticks)
     {
       // determine the number of trailing decimal digits
-      string mtick;
       string[] mticks = new string[ticks.Length];
 
       return mticks;

@@ -40,7 +40,7 @@ namespace Altaxo.Graph.GUI
     private System.Windows.Forms.ImageList m_LayerButtonImages;
     private System.Windows.Forms.ToolBar m_LayerToolbar;
     private GraphPanel m_GraphPanel;
-    private System.Windows.Forms.TextBox m_TextBox;
+   // private System.Windows.Forms.TextBox m_TextBox;
     private System.ComponentModel.IContainer components;
     private IGraphController m_Ctrl;
 

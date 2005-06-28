@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       
     Altaxo.Data.DataTable _table;
     MultivariateContentMemento _memento;
-    IMultivariateCalibrationModel _calibrationModel;
+   // IMultivariateCalibrationModel _calibrationModel;
     System.Xml.XmlWriter _writer;
 
     int _numberOfFactors;

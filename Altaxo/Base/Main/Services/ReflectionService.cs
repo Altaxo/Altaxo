@@ -151,6 +151,8 @@ namespace Altaxo.Main.Services
     /// <see>IClassForClassAttribute.TargetType</see> match the type of the target argument.
     /// </summary>
     /// <param name="attributeType">The type of attribute (this has to be a class attribute type).</param>
+    /// <param name="target">Only necessary if the attributeType is an <see>IClassForClassAttribute</see>. In this case only
+    /// those attribute instances are returned, where the target object meets the target type of the <see>IClassForClassAttribute</see>.</param>
     /// <returns>A list of dictionary entries. The keys are the attribute instances, the values are the class types this attributes apply to.</returns>
     public static DictionaryEntry[] GetAttributeInstancesAndClassTypesForClass(System.Type attributeType, object target)
     {

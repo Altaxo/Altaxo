@@ -3,7 +3,7 @@ using System;
 namespace Altaxo.Serialization
 {
   /// <summary>
-  /// Responsible for converting user input into data and vice versa. The user preferences for locality are
+  /// Responsible for converting user input (dialogs and controls) into data and vice versa. The user preferences for locality are
   /// used by this class.
   /// </summary>
   public class GUIConversion
@@ -90,11 +90,23 @@ namespace Altaxo.Serialization
     #region Double
 
     /// <summary>
+    /// Is the provided string a double?
+    /// </summary>
+    /// <param name="s">The string to parse</param>
+    /// <returns>True if the string can successfully parsed to a double.</returns>
+    public static bool IsDouble(string s)
+    {
+      double o;
+      return IsDouble(s,out o);
+    }
+
+
+    /// <summary>
     /// Is the provided string a floating point value?
     /// </summary>
     /// <param name="s">The string to parse</param>
     /// <param name="val">The value parsed (only valid if parsing was successful).</param>
-    /// <returns>True if the string can successfully parsed to a DateTime object.</returns>
+    /// <returns>True if the string can successfully parsed to a double.</returns>
     public static bool IsDouble(string s, out double  val)
     {
       bool bRet=false;

@@ -188,6 +188,96 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\ErrorScaling.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\FitElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\FitEnsemble.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\FitFunctionAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\FitFunctionSelectionControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\FitFunctionSelectionControl.resx"
+                    DependentUpon = "FitFunctionSelectionControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\FitFunctionSelectionController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\IFitFunction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\KohlrauschDecay.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\NonlinearFitControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\NonlinearFitControl.resx"
+                    DependentUpon = "NonlinearFitControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\NonlinearFitController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\NonlinearFitDocument.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\ParameterSet.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\ParameterSetController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\ParameterSetElementControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\ParameterSetElementControl.resx"
+                    DependentUpon = "ParameterSetElementControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\ParameterSetElementController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
                 <Folder RelPath = "Calc\Regression\PLS\" />
                 <File
                     RelPath = "Collections\AscendingIntegerCollection.cs"
@@ -411,6 +501,11 @@
                 />
                 <File
                     RelPath = "Graph\IPlotArea.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\ParametrizedFunctionDDScript.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -940,10 +1035,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\Procedures\NonlinearFitting.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\Procedures\PolynomialFitting.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <Folder RelPath = "Gui\Analysis\NonLinearFitting\" />
                 <File
                     RelPath = "Main\AboutDialog.cs"
                     SubType = "Form"
@@ -1195,6 +1296,7 @@
                 />
                 <File
                     RelPath = "Main\GUI\TabbedDialogView.resx"
+                    DependentUpon = "TabbedDialogView.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

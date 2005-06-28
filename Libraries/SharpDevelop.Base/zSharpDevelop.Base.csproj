@@ -380,57 +380,57 @@
                 />
                 <File
                     RelPath = "Gui\CompletionDatabaseWizard\ChooseLocationPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\CompletionDatabaseWizard\CreateDatabasePanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\CompletionDatabaseWizard\CreationFinishedPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\CompletionDatabaseWizard\SetupPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\CompletionDatabaseWizard\UseExistingFilePanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Components\FontSelectionPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Components\SdMenu.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Components\SdMenuCheckBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Components\SdMenuComboBox.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Components\SdMenuCommand.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Components\SdMenuSeparator.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -560,12 +560,12 @@
                 />
                 <File
                     RelPath = "Gui\Dialogs\AbstractOptionPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\CommonAboutDialog.cs"
-                    SubType = "Form"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
@@ -585,22 +585,22 @@
                 />
                 <File
                     RelPath = "Gui\Dialogs\InputBox.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\NewFileDialog.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\NewProjectDialog.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\ProjectOptionsDialog.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -615,7 +615,7 @@
                 />
                 <File
                     RelPath = "Gui\Dialogs\TabbedOptions.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -625,32 +625,32 @@
                 />
                 <File
                     RelPath = "Gui\Dialogs\TreeViewOptions.cs"
-                    SubType = "Form"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\ViewGPLDialog.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\WordCountDialog.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\CombineConfiguration\CombineConfigurationPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\CombineConfiguration\CombineDependencyPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\CombineConfiguration\CombineStartupPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -660,72 +660,72 @@
                 />
                 <File
                     RelPath = "Gui\Dialogs\OptionPanels\EditTemplateDialog.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\OptionPanels\ExternalToolPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\OptionPanels\OutputWindowOptionsPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\OptionPanels\PropertyGridPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\OptionPanels\IDEOptions\CodeGenerationPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\OptionPanels\IDEOptions\EditStandardHeaderPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\OptionPanels\IDEOptions\LoadSavePanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\OptionPanels\IDEOptions\ProjectAndCombinePanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\OptionPanels\IDEOptions\SelectCulturePanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\OptionPanels\IDEOptions\SelectStylePanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\OptionPanels\IDEOptions\TaskListOptions.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\OptionPanels\ProjectOptions\CompileFileProjectOptions.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\OptionPanels\ProjectOptions\DeployFileOptions.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\Dialogs\OptionPanels\ProjectOptions\GeneralProjectOptions.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -765,7 +765,7 @@
                 />
                 <File
                     RelPath = "Gui\Dialogs\Wizard\AbstractWizardPanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1010,17 +1010,17 @@
                 />
                 <File
                     RelPath = "Gui\Workbench\Layouts\SdiWorkspaceWindow.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\XmlForms\BaseSharpDevelopForm.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Gui\XmlForms\BaseSharpDevelopUserControl.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

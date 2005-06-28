@@ -195,7 +195,7 @@
                 />
                 <File
                     RelPath = "Main\GUI\Workbench1.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -265,6 +265,21 @@
                 />
                 <File
                     RelPath = "Root\MainController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\ParametrizedFunctionScriptControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\ParametrizedFunctionScriptControl.resx"
+                    DependentUpon = "ParametrizedFunctionScriptControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Worksheet\GUI\ParametrizedFunctionScriptController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

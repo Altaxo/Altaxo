@@ -106,6 +106,7 @@ namespace Altaxo.Main.Services
     /// </summary>
     /// <param name="arg">The object to configure.
     /// If the return value is true, arg contains the configured object. </param>
+    /// <param name="title">The title of the dialog.</param>
     /// <returns>True if the object was successfully configured, false otherwise.</returns>
     /// <remarks>The presumtions to get this function working are:
     /// <list>

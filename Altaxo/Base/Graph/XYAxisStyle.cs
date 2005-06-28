@@ -416,7 +416,8 @@ namespace Altaxo.Graph
     /// Gives the path where the hit test is successfull.
     /// </summary>
     /// <param name="layer"></param>
-    /// <returns></returns>
+    /// <param name="withTicks">If true, the selection path is not only drawn around the axis, but around the axis and the ticks.</param>
+    /// <returns>The graphics path of the selection rectangle.</returns>
     public virtual GraphicsPath GetSelectionPath(XYPlotLayer layer, bool withTicks)
     {
       PointF orgP;

@@ -271,6 +271,15 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
+    /// Removes an integer at a given position from the collection (e.g. in general not the integer you provide as argument is removed (!)).
+    /// </summary>
+    /// <param name="position"></param>
+    public void RemoveAt(int position)
+    {
+      _list.RemoveAt(position);
+    }
+
+    /// <summary>
     /// Clears the collection, i.e. removes all entries.
     /// </summary>
     public void Clear()

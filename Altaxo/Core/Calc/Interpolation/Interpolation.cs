@@ -1563,7 +1563,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
   /// to set the value of the smoothing paramenter. A value of p = 0 
   /// for the smoothing parameter results in a standard cubic spline. 
   /// A value of p with -1 &lt; p &lt; 0 results in "unsmoothing" that means 
-  /// overshooting oscillations. A value of p with p > 0 gives increasing
+  /// overshooting oscillations. A value of p with p &gt; 0 gives increasing
   /// smoothness. p to infinity results in a linear interpolation. A value
   /// smaller or equal to -1.0 leads to an error.
   ///
@@ -2945,13 +2945,14 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
   #region CrossValidatedCubicSpline
 
+  
   /// <summary>
   /// Calculates a natural cubic spline curve which smoothes a given set
   /// of data points, using statistical considerations to determine the amount
   /// of smoothing required as described in reference 2.
   /// </summary>
   /// <remarks>
-  //  If the error variance
+  ///  If the error variance
   /// is known, it should be supplied to the routine in 'var'. The degree of
   /// smoothing is then determined by minimizing an unbiased estimate of the
   /// true mean square error.  On the other hand, if the error variance is
@@ -2970,7 +2971,6 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
   /// These also depend on the error variance estimate and should only 
   /// be accepted if the error variance estimate is reckoned to be correct. 
   /// See reference 4.
-  ///
   /// The number of arithmetic operations and the amount of storage required by
   /// the routine are both proportional to 'n', so that very large data sets may
   /// be analysed. The data points do not have to be equally spaced or uniformly

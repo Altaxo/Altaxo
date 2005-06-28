@@ -188,8 +188,6 @@ namespace Altaxo.Graph
       {
         if(null==value)
           throw new System.ArgumentNullException();
-        else if(!(value is DensityImagePlotStyle))
-          throw new System.ArgumentException("The provided data object is not of the type " + m_PlotStyle.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
         else
         {
           if(!object.ReferenceEquals(m_PlotStyle,value))

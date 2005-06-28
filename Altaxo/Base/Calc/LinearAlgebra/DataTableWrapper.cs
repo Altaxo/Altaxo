@@ -185,14 +185,14 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Element accessor.
       /// </summary>
-      public double Altaxo.Calc.LinearAlgebra.IVector.this[int row, int col]
+      double IMatrix.this[int row, int col]
       {
-        /*
+        
         get
         {
           return _columns[col].GetDoubleAt(_rows[row]);
         }
-         * */
+         
         set
         {
           ((IWriteableColumn)_columns[col])[_rows[row]] = value;
@@ -286,7 +286,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Element accessor.
       /// </summary>
-      public double this[int row, int col]
+      double IMatrix.this[int row, int col]
       {
         get
         {
@@ -480,6 +480,32 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="rowCount">The minimum row count of all the selected columns.</param>
     /// <returns>A boolean array. If an element of the array is true at a given index, that row contains valid numeric values in all columns.</returns>
     public static bool[] GetValidNumericRows(DataColumnCollection table, IAscendingIntegerCollection selectedCols, int rowCount)
+    {
+      // determine the number of valid rows
+      bool[] rowValid = new bool[rowCount];
+      for(int i=0;i<rowCount;i++)
+        rowValid[i] = true;
+
+      for(int i=0;i<selectedCols.Count;i++)
+      {
+        INumericColumn col = (INumericColumn)table[selectedCols[i]];
+        for(int j=0;j<rowCount;j++)
+        {
+          if(double.IsNaN(col.GetDoubleAt(j)))
+            rowValid[j]=false;
+        }
+      }
+      return rowValid;
+    }
+
+    /// <summary>
+    /// Determines which of the rows of a set of columns is truly numeric, i.e. all columns in this row contains a value, which is not double.NaN.
+    /// </summary>
+    /// <param name="table">Array of numeric columns.</param>
+    /// <param name="selectedCols">The indizes of the columns in question into the collection.</param>
+    /// <param name="rowCount">The minimum row count of all the selected columns.</param>
+    /// <returns>A boolean array. If an element of the array is true at a given index, that row contains valid numeric values in all columns.</returns>
+    public static bool[] GetValidNumericRows(INumericColumn[] table, IAscendingIntegerCollection selectedCols, int rowCount)
     {
       // determine the number of valid rows
       bool[] rowValid = new bool[rowCount];

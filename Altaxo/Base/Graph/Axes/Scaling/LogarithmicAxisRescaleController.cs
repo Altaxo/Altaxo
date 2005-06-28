@@ -24,11 +24,11 @@ namespace Altaxo.Graph.Axes.Scaling
 
     public override bool EhValue1Changed(string txt)
     {
-      if(!NumberConversion.IsNumeric(txt))
+      if(!GUIConversion.IsDouble(txt))
         return true;
 
       double val;
-      NumberConversion.IsDouble(txt,out val);
+      GUIConversion.IsDouble(txt,out val);
       if(val>0) 
       {
         _org = val;
@@ -39,11 +39,11 @@ namespace Altaxo.Graph.Axes.Scaling
 
     public override bool EhValue2Changed(string txt)
     {
-      if(!NumberConversion.IsNumeric(txt))
+      if(!GUIConversion.IsDouble(txt))
         return true;
 
       double val;
-      NumberConversion.IsDouble(txt,out val);
+      GUIConversion.IsDouble(txt,out val);
       if(val>0)
       {
         _end = val;
@@ -54,11 +54,11 @@ namespace Altaxo.Graph.Axes.Scaling
 
     public override bool EhValue3Changed(string txt)
     {
-      if(!NumberConversion.IsNumeric(txt))
+      if(!GUIConversion.IsDouble(txt))
         return true;
 
       double val;
-      NumberConversion.IsDouble(txt,out val);
+      GUIConversion.IsDouble(txt,out val);
       if(val>0) 
         _span = val;
       return val<=0;

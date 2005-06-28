@@ -150,7 +150,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       DataColumnCollection table = parameters.Table;
       IAscendingIntegerCollection selectedCols = parameters.SelectedDataColumns;
       AscendingIntegerCollection selectedColsWODependent = new AscendingIntegerCollection(selectedCols);
-      selectedColsWODependent.Remove(parameters.DependentColumnIndexIntoSelection);
+      selectedColsWODependent.RemoveAt(parameters.DependentColumnIndexIntoSelection);
 
 
       IAscendingIntegerCollection validRows = DataTableWrapper.GetCollectionOfValidNumericRows(parameters.Table,selectedCols);

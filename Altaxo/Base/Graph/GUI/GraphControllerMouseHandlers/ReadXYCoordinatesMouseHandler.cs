@@ -99,7 +99,7 @@ namespace Altaxo.Graph.GUI.GraphControllerMouseHandlers
 
       layer.AreaToLogicalConversion.Convert(layerXY.X,layerXY.Y,out xr, out yr);
       Altaxo.Data.AltaxoVariant xphys = layer.XAxis.NormalToPhysicalVariant(xr);
-      Altaxo.Data.AltaxoVariant yphys = layer.XAxis.NormalToPhysicalVariant(yr);
+      Altaxo.Data.AltaxoVariant yphys = layer.YAxis.NormalToPhysicalVariant(yr);
 
       this.DisplayData(_grac.CurrentLayerNumber,xphys,yphys);
     }

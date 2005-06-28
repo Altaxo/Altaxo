@@ -3034,7 +3034,7 @@ namespace Altaxo.Calc
       static double MACHEP = 1.11022302462515654042E-16;
       static double MAXNUM = double.MaxValue;
       static double MAXLOG = 7.09782712893383996843E2;
-      static double MINLOG = -7.08396418532264106224E2;
+      // static double MINLOG = -7.08396418532264106224E2;
 
 
       static double big = 4.503599627370496e15;

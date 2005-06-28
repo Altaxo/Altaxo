@@ -1390,7 +1390,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// Transforms a <see>PointF</see> from layer coordinates to graph (=printable area) coordinates
     /// </summary>
-    /// <param name="gp">the graphics path to convert</param>
+    /// <param name="layerCoordinates">The layer coordinates to convert.</param>
     /// <returns>graphics path now in graph coordinates</returns>
     public PointF LayerToGraphCoordinates(PointF layerCoordinates)
     {
@@ -2971,13 +2971,13 @@ namespace Altaxo.Graph
       }
  
       /// <summary>
-      /// Calculates from two physical values the coordinates of the point. Returns true if the conversion
+      /// Calculates from two logical values (values between 0 and 1) the coordinates of the point. Returns true if the conversion
       /// is possible, otherwise false.
       /// </summary>
-      /// <param name="x">The physical x value.</param>
-      /// <param name="y">The physical y value.</param>
-      /// <param name="xout">On return, gives the x coordinate of the converted value (for instance location).</param>
-      /// <param name="yout">On return, gives the y coordinate of the converted value (for instance location).</param>
+      /// <param name="x_rel">The logical x value.</param>
+      /// <param name="y_rel">The logical y value.</param>
+      /// <param name="xlocation">On return, gives the x coordinate of the converted value (for instance location).</param>
+      /// <param name="ylocation">On return, gives the y coordinate of the converted value (for instance location).</param>
       /// <returns>True if the conversion was successfull, false if the conversion was not possible.</returns>
       public bool Convert(double x_rel, double y_rel, out double xlocation, out double ylocation)
       {

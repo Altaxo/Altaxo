@@ -583,6 +583,8 @@
 			<MenuItem id="GraphAnalysis" label="${res:XML.MainMenu.AnalysisMenu}">
 				<MenuItem id="FitPolynomial" label="${res:XML.MainMenu.AnalysisMenu.FitPolynomial}" description="${res:XML.MainMenu.AnalysisMenu.FitPolynomial.Description}"
 					class="Altaxo.Graph.Commands.FitPolynomial" />
+				<MenuItem id="FitNonlinear" label="${res:XML.MainMenu.AnalysisMenu.FitNonlinear}" description="${res:XML.MainMenu.AnalysisMenu.FitNonlinear.Description}"
+					class="Altaxo.Graph.Commands.FitNonlinear" />
 			</MenuItem>
 		</Conditional>
 

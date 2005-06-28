@@ -392,7 +392,7 @@ namespace Altaxo.Graph
     /// If you want to have a reaction on mouse click on a curve, implement this function.
     /// </summary>
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
-    /// <param name="myPlotAssociation">The data that are plotted.</param>
+    /// <param name="plotData">The data that are plotted.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
     /// <returns>Null if no hit, or a <see>IHitTestObject</see> if there was a hit.</returns>
     public override IHitTestObject HitTest(IPlotArea layer, object plotData, PointF hitpoint)
@@ -421,6 +421,7 @@ namespace Altaxo.Graph
     /// Returns the index of a scatter point that is nearest to the location <c>hitpoint</c>
     /// </summary>
     /// <param name="layer">The layer in which this plot item is drawn into.</param>
+    /// <param name="plotData">The data that are plotted.</param>
     /// <param name="hitpoint">The point where the mouse is pressed.</param>
     /// <returns>The index of the scatter point that is nearest to the location, or -1 if it can not be determined.</returns>
     public XYScatterPointInformation GetNearestPlotPoint(IPlotArea layer, object plotData, PointF hitpoint)

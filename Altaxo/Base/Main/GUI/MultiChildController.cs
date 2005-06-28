@@ -43,7 +43,7 @@ namespace Altaxo.Main.GUI
   #endregion
 
   /// <summary>
-  /// Controller for a single value. This is a string here, but in derived classes, that can be anything that can be converted to and from a string.
+  /// Controller for a set of child <see>IMVCAController</see>s.
   /// </summary>
   public class MultiChildController : IMVCAController, IMultiChildViewEventSink
   {

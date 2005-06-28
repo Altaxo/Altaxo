@@ -125,30 +125,30 @@ namespace Altaxo.Graph.Axes.Scaling
 
     public virtual bool EhValue1Changed(string txt)
     {
-      if(!NumberConversion.IsNumeric(txt))
+      if(!GUIConversion.IsDouble(txt))
         return true;
 
-      NumberConversion.IsDouble(txt,out _org);
+      GUIConversion.IsDouble(txt,out _org);
       _orgChanged = true;
       return false;
     }
 
     public virtual bool EhValue2Changed(string txt)
     {
-      if(!NumberConversion.IsNumeric(txt))
+      if(!GUIConversion.IsDouble(txt))
         return true;
 
-      NumberConversion.IsDouble(txt,out _end);
+      GUIConversion.IsDouble(txt,out _end);
       _endChanged = true;
       return false;   
     }
 
     public virtual bool EhValue3Changed(string txt)
     {
-      if(!NumberConversion.IsNumeric(txt))
+      if(!GUIConversion.IsDouble(txt))
         return true;
 
-      NumberConversion.IsDouble(txt,out _span);
+      GUIConversion.IsDouble(txt,out _span);
       return false;  
     }
 

@@ -557,6 +557,7 @@ namespace CSharpBinding.Parser
 #if !ModifiedForAltaxo
 			if (parserService.NamespaceExists(name,true)) {
 				return name;
+			}
 #endif
 			
 			string callspace = this.CallingClass.Namespace;

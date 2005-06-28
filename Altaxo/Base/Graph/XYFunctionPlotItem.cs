@@ -116,7 +116,7 @@ namespace Altaxo.Graph
         m_PlotData.Changed += new EventHandler(OnDataChangedEventHandler);
       }
 
-      if(null!=m_PlotStyle && m_PlotStyle is Main.IChangedEventSource)
+      if(null!=m_PlotStyle)
       {
         ((Main.IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
       }
@@ -150,8 +150,6 @@ namespace Altaxo.Graph
       {
         if(null==value)
           throw new System.ArgumentNullException();
-        else if(!(value is XYFunctionPlotData))
-          throw new System.ArgumentException("The provided data object is not of the type " + m_PlotData.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
         else
         {
           if(!object.ReferenceEquals(m_PlotData,value))
@@ -180,14 +178,12 @@ namespace Altaxo.Graph
       {
         if(null==value)
           throw new System.ArgumentNullException();
-        else if(!(value is AbstractXYPlotStyle))
-          throw new System.ArgumentException("The provided data object is not of the type " + m_PlotData.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
         else
         {
           if(!object.ReferenceEquals(m_PlotStyle,value))
           {
             // delete event wiring to old AbstractXYPlotStyle
-            if(null!=m_PlotStyle && m_PlotStyle is Main.IChangedEventSource)
+            if(null!=m_PlotStyle)
             {
               ((Main.IChangedEventSource)m_PlotStyle).Changed -= new EventHandler(OnStyleChangedEventHandler);
             }
@@ -195,7 +191,7 @@ namespace Altaxo.Graph
             m_PlotStyle = (XYLineScatterPlotStyle)value;
 
             // create event wire to new Plotstyle
-            if(null!=m_PlotStyle && m_PlotStyle is Main.IChangedEventSource)
+            if(null!=m_PlotStyle)
             {
               ((Main.IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
             }
@@ -292,10 +288,7 @@ namespace Altaxo.Graph
 
     public void SetIncrementalStyle(I2DPlotStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, int step)
     {
-      if(m_PlotStyle is XYLineScatterPlotStyle)
         ((XYLineScatterPlotStyle)m_PlotStyle).SetIncrementalStyle(pstemplate,style,step);
-      // else if(m_PlotStyle is XYPlotLineStyle)
-      //   ((XYPlotLineStyle)m_PlotStyle).SetIncrementalStyle(pstemplate,style,step);
     }
 
     #endregion

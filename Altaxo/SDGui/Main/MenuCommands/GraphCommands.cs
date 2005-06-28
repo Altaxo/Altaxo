@@ -398,6 +398,19 @@ namespace Altaxo.Graph.Commands
     }
   }
 
+  /// <summary>
+  /// Handler for the menu item "Graph" - "New layer legend.
+  /// </summary>
+  public class FitNonlinear : AbstractGraphControllerCommand
+  {
+    public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
+    {
+      string result = Altaxo.Graph.Procedures.NonlinearFitting.Fit(ctrl);
+      if(null!=result)
+        Current.GUIFactoryService.ErrorMessageBox(result);
+    }
+  }
+
   public class NewUserFunction : AbstractGraphControllerCommand
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)

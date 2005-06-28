@@ -48,6 +48,7 @@ namespace Altaxo.Worksheet.Commands
     {
 
       throw new ApplicationException("This is a menu point to provoke an exception");
+      
       /*
       Form form = new Form();
     

@@ -1441,6 +1441,13 @@ namespace Altaxo.Data
       RemoveRows(0,this.RowCount);
     }
 
+    /// <summary>
+    /// Removes all rows. Same function as <see>RemoveRowsAll</see>.
+    /// </summary>
+    public void ClearData()
+    {
+      RemoveRowsAll();
+    }
 
     /// <summary>
     /// Removes the <code>selectedRows</code> from the table.

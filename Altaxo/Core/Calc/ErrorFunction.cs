@@ -903,12 +903,12 @@ namespace Altaxo.Calc
         if( y0 <= 0.0 )
         {
           throw new ArgumentException("y0 has to be positive" );
-          return( double.NegativeInfinity );
+          // return( double.NegativeInfinity );
         }
         if( y0 >= 1.0 )
         {
           throw new ArgumentException("y0 has to be <1" );
-          return( double.PositiveInfinity);
+          // return( double.PositiveInfinity);
         }
         code = 1;
         y = y0;

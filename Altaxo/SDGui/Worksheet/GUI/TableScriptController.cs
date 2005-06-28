@@ -239,7 +239,7 @@ namespace Altaxo.Worksheet.GUI
           View.SetScriptCursorLocation(line-1,col-1);
 
       }
-      catch(Exception ex)
+      catch(Exception)
       {
       }
     }

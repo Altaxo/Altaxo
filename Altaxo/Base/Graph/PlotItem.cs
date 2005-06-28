@@ -49,6 +49,7 @@ namespace Altaxo.Graph
     /// </summary>
     protected object m_Parent;
 
+    /*
     /// <summary>
     /// Get/sets the data object of this plot.
     /// </summary>
@@ -57,6 +58,8 @@ namespace Altaxo.Graph
     /// Get/sets the style object of this plot.
     /// </summary>
     //public abstract object Style { get; set; }
+    */
+
     /// <summary>
     /// The name of the plot. It can be of different length. An argument of zero or less
     /// returns the shortest possible name, higher values return more verbose names.

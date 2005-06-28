@@ -125,7 +125,7 @@ namespace Altaxo.Graph
         m_PlotAssociation.Changed += new EventHandler(OnDataChangedEventHandler);
       }
 
-      if(null!=m_PlotStyle && m_PlotStyle is Main.IChangedEventSource)
+      if(null!=m_PlotStyle)
       {
         ((Main.IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
       }
@@ -163,8 +163,6 @@ namespace Altaxo.Graph
       {
         if(null==value)
           throw new System.ArgumentNullException();
-        else if(!(value is XYColumnPlotData))
-          throw new System.ArgumentException("The provided data object is not of the type " + m_PlotAssociation.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
         else
         {
           if(!object.ReferenceEquals(m_PlotAssociation,value))
@@ -198,14 +196,12 @@ namespace Altaxo.Graph
       {
         if(null==value)
           throw new System.ArgumentNullException();
-        else if(!(value is XYLineScatterPlotStyle))
-          throw new System.ArgumentException("The provided data object is not of the type " + m_PlotAssociation.GetType().ToString() + ", but of type " + value.GetType().ToString() + "!");
         else
         {
           if(!object.ReferenceEquals(m_PlotStyle,value))
           {
             // delete event wiring to old AbstractXYPlotStyle
-            if(null!=m_PlotStyle && m_PlotStyle is Main.IChangedEventSource)
+            if(null!=m_PlotStyle)
             {
               ((Main.IChangedEventSource)m_PlotStyle).Changed -= new EventHandler(OnStyleChangedEventHandler);
             }
@@ -213,7 +209,7 @@ namespace Altaxo.Graph
             m_PlotStyle = (XYLineScatterPlotStyle)value;
 
             // create event wire to new Plotstyle
-            if(null!=m_PlotStyle && m_PlotStyle is Main.IChangedEventSource)
+            if(null!=m_PlotStyle)
             {
               m_PlotStyle.ParentObject = this;
               ((Main.IChangedEventSource)m_PlotStyle).Changed += new EventHandler(OnStyleChangedEventHandler);
@@ -354,11 +350,7 @@ namespace Altaxo.Graph
     /// <returns>The information about the point that is nearest to the location, or null if it can not be determined.</returns>
     public XYScatterPointInformation GetNearestPlotPoint(IPlotArea layer, PointF hitpoint)
     {
-      if(this.m_PlotStyle is XYLineScatterPlotStyle)
-      {
         return ((XYLineScatterPlotStyle)m_PlotStyle).GetNearestPlotPoint(layer,m_PlotAssociation,hitpoint);
-      }
-      return null;
     }
 
     /// <summary>
@@ -371,11 +363,7 @@ namespace Altaxo.Graph
     /// <returns>Information about the new plot point find at position (oldplotindex+increment). Returns null if no such point exists.</returns>
     public XYScatterPointInformation GetNextPlotPoint(IPlotArea layer, int oldplotindex, int increment)
     {
-      if(this.m_PlotStyle is XYLineScatterPlotStyle)
-      {
         return ((XYLineScatterPlotStyle)m_PlotStyle).GetNextPlotPoint(layer,m_PlotAssociation,oldplotindex,increment);
-      }
-      return null;
     }
     #region IXBoundsHolder Members
 

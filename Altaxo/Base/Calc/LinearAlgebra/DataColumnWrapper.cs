@@ -548,7 +548,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// This returns a read and writeable vector of a <see>DoubleColumn</see>
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
-    /// <param name="nRows">The number of rows to use for the vector.</param>
+    /// <param name="selectedRows">The indices of the rows to use for the vector.</param>
     /// <returns>An IVector wrapping the <see>DoubleColumn</see>.</returns>
     public static IVector ToVector(DoubleColumn col, IAscendingIntegerCollection selectedRows)
     {

@@ -261,7 +261,7 @@ namespace Altaxo.Graph.Axes
       }
     }
     /// <summary>
-    /// Returns the <see cref="PhysicalBoundaries"/> object that is associated with that axis.
+    /// Returns the <see>FiniteDateTimeBoundaries</see> object that is associated with that axis.
     /// </summary>
     public FiniteDateTimeBoundaries DataBounds 
     {
@@ -272,7 +272,7 @@ namespace Altaxo.Graph.Axes
     } // return a PhysicalBoundarie object that is associated with that axis
     
     /// <summary>
-    /// Returns the <see cref="PhysicalBoundaries"/> object that is associated with that axis.
+    /// Returns the <see cref="IPhysicalBoundaries"/> object that is associated with that axis.
     /// </summary>
     public override IPhysicalBoundaries DataBoundsObject 
     {
