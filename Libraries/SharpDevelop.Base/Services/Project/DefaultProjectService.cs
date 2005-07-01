@@ -434,6 +434,18 @@ namespace ICSharpCode.SharpDevelop.Services
 			return null;
 		}
 		
+		public IProject RetrieveProjectForFile(ProjectFile file)
+		{
+			ArrayList projects = Combine.GetAllProjects(openCombine);
+			
+			foreach (ProjectCombineEntry projectEntry in projects) {
+				if (projectEntry.Project.ProjectFiles.Contains(file)) {
+					return projectEntry.Project;
+				}
+			}
+			return null;
+		}
+		
 		void RemoveFileFromAllProjects(string fileName)
 		{
 			ArrayList projects = Combine.GetAllProjects(openCombine);

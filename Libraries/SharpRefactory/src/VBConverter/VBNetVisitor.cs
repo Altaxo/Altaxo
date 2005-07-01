@@ -964,8 +964,11 @@ namespace ICSharpCode.SharpRefactory.PrettyPrinter
 		{
 			DebugOutput(throwStatement);
 			AppendIndentation();
-			sourceText.Append("Throw ");
-			sourceText.Append(throwStatement.ThrowExpression.AcceptVisitor(this, data).ToString());
+			sourceText.Append("Throw");
+			if (throwStatement.ThrowExpression != null) {
+				sourceText.Append(' ');
+				sourceText.Append(throwStatement.ThrowExpression.AcceptVisitor(this, data).ToString());
+			}
 			AppendNewLine();
 			return null;
 		}

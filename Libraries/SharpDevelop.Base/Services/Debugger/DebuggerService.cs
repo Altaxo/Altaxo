@@ -113,7 +113,6 @@ namespace ICSharpCode.SharpDevelop.Services
 			debugger.DebugStopped -= new EventHandler(HandleDebugStopped);
 
 			isRunning = false;
-			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 		}
 		
 		#region ICSharpCode.Core.Services.IService interface implementation
@@ -190,7 +189,6 @@ namespace ICSharpCode.SharpDevelop.Services
 				throw new ApplicationException("Can't execute " + "\"" + psi.FileName + "\"\n");
 			}
 			isRunning = true;
-			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 		}
 
 		public void Start(string fileName, string workingDirectory, string arguments)
@@ -212,7 +210,6 @@ namespace ICSharpCode.SharpDevelop.Services
 //				}
 //			}
 			isRunning = true;
-			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 		}
 		
 		public void Break()
@@ -269,7 +266,6 @@ namespace ICSharpCode.SharpDevelop.Services
 				}
 			}
 			isRunning = false;
-			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 		}
 		
 		void StandardProcessExited(object sender, EventArgs e)
@@ -278,7 +274,6 @@ namespace ICSharpCode.SharpDevelop.Services
 			standardProcess.Dispose();
 			standardProcess = null;	
 			isRunning       = false;
-			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 		}
 		
 //		protected override void OnException(ExceptionEventArgs e)

@@ -20,7 +20,6 @@ namespace ICSharpCode.TextEditor
 	/// </summary>
 	public class TextAreaMouseHandler
 	{
-		ToolTip toolTip = new ToolTip();
 		TextArea  textArea;
 		bool      doubleclick = false;
 		Point     mousepos = new Point(0, 0);
@@ -151,7 +150,7 @@ namespace ICSharpCode.TextEditor
 						}
 					}
 					sb.Replace("\t", "    ");
-					toolTip.SetToolTip(textArea, sb.ToString());
+					textArea.SetToolTip(sb.ToString());
 					return;
 				}
 				
@@ -160,12 +159,10 @@ namespace ICSharpCode.TextEditor
 				ArrayList markers = textArea.Document.MarkerStrategy.GetMarkers(clickPosition2);
 				foreach (TextMarker tm in markers) {
 					if (tm.ToolTip != null) {
-						toolTip.SetToolTip(textArea, tm.ToolTip.Replace("\t", "    "));
+						textArea.SetToolTip(tm.ToolTip.Replace("\t", "    "));
 						return;
 					}
 				}
-				
-				toolTip.SetToolTip(textArea, null);
 			}
 			
 			if (e.Button == MouseButtons.Left) {
@@ -186,8 +183,7 @@ namespace ICSharpCode.TextEditor
 				return;
 			}
 			textArea.Caret.Position = realmousepos;
-			Console.WriteLine(textArea.Caret.Position.Y);
-			if (minSelection != nilPoint) {
+			if (minSelection != nilPoint && textArea.SelectionManager.SelectionCollection.Count > 0) {
 				ISelection selection = textArea.SelectionManager.SelectionCollection[0];
 				Point min = textArea.SelectionManager.GreaterEqPos(minSelection, maxSelection) ? maxSelection : minSelection;
 				Point max = textArea.SelectionManager.GreaterEqPos(minSelection, maxSelection) ? minSelection : maxSelection;

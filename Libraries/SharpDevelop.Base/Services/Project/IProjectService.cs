@@ -153,6 +153,8 @@ namespace ICSharpCode.SharpDevelop.Services
 		
 		IProject GetProject(string projectName);
 		
+		IProject RetrieveProjectForFile(ProjectFile file);
+		
 		/// <remarks>
 		/// If the file given by fileName is inside a currently open project this method
 		/// gets the ProjectFile for this file, returns null otherwise.

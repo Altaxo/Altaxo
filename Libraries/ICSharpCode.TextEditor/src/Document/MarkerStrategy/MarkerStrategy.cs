@@ -75,9 +75,8 @@ namespace ICSharpCode.TextEditor.Document
 		
 		public ArrayList GetMarkers(Point position)
 		{
-			ArrayList markers = new ArrayList();
 			if (position.Y >= document.TotalNumberOfLines || position.Y < 0) {
-				return markers;
+				return new ArrayList();
 			}
 			LineSegment segment = document.GetLineSegment(position.Y);
 			return GetMarkers(segment.Offset + position.X);

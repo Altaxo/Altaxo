@@ -195,15 +195,13 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		public void ShowHelp()
 		{
 			string word = TextUtilities.GetWordAt(textAreaControl.Document, textAreaControl.ActiveTextAreaControl.Caret.Offset);
-			HelpBrowser helpBrowser = (HelpBrowser)WorkbenchSingleton.Workbench.GetPad(typeof(HelpBrowser));
 			IClass c = textAreaControl.QuickClassBrowserPanel != null ? textAreaControl.QuickClassBrowserPanel.GetCurrentSelectedClass() : null;
 			IParserService parserService = (IParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IParserService));
 			
 			if (c != null) {
 				IClass cl = parserService.SearchType(word, c, textAreaControl.ActiveTextAreaControl.Caret.Line, textAreaControl.ActiveTextAreaControl.Caret.Column);
 				if (cl != null) {
-					helpBrowser.ShowHelpFromType(cl.FullyQualifiedName);
-					return;
+					DynamicHelpService.ShowHelpFromType(cl.FullyQualifiedName);
 				}
 			}
 		}

@@ -90,10 +90,10 @@ namespace ICSharpCode.SharpDevelop.Services
 		}
 		public void OpenFile(string fileName)
 		{
-			System.Diagnostics.Debug.Assert(fileUtilityService.IsValidFileName(fileName));
-				
 			// test, if file fileName exists
-			if (!fileName.StartsWith("http://")) {
+			if (!fileName.StartsWith("http://") && !fileName.StartsWith("https://") && !fileName.StartsWith("ms-help://")) {
+				System.Diagnostics.Debug.Assert(fileUtilityService.IsValidFileName(fileName));
+				
 				// test, if an untitled file should be opened
 				if (!Path.IsPathRooted(fileName)) { 
 					foreach (IViewContent content in WorkbenchSingleton.Workbench.ViewContentCollection) {

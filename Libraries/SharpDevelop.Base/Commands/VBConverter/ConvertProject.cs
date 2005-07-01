@@ -54,7 +54,19 @@ namespace ICSharpCode.SharpDevelop.Commands
 			info.ProjectBasePath = outputPath;
 			info.ProjectName = originalProject.Name + " converted";
 			
-			return binding.CreateProject(info, null);
+			IProject project = binding.CreateProject(info, null);
+			project.StandardNamespace = originalProject.StandardNamespace;
+			project.Description = originalProject.Description;
+			project.Configurations.Clear();
+			foreach (IConfiguration oldConfig in originalProject.Configurations) {
+				project.Configurations.Add(project.CloneConfiguration(oldConfig));
+			}
+			
+			foreach(ProjectReference c in originalProject.ProjectReferences) {
+				project.ProjectReferences.Add((ProjectReference)c.Clone());
+			}
+			
+			return project;
 		}
 		
 		bool CopyFile(string original, string newFile)
@@ -128,10 +140,15 @@ namespace ICSharpCode.SharpDevelop.Commands
 						// Path.GetFilename can't be used because the filename can be
 						// a relative path that shouldn't get lost
 						string outFile = Path.Combine(outputPath, file.Name.Substring(len + 1));
-						outFile = Path.ChangeExtension(outFile, Extension);
-						
-						if (SaveFile(outFile, outPut)) {
-							project.ProjectFiles.Add(new ProjectFile(outFile));
+						if (outPut == null) {
+							if (CopyFile(file.Name, outFile)) {
+								project.ProjectFiles.Add(new ProjectFile(outFile));
+							}
+						} else {
+							outFile = Path.ChangeExtension(outFile, Extension);
+							if (SaveFile(outFile, outPut)) {
+								project.ProjectFiles.Add(new ProjectFile(outFile));
+							}
 						}
 					}
 				}
@@ -164,6 +181,8 @@ namespace ICSharpCode.SharpDevelop.Commands
 		
 		protected override string ConvertFile(string fileName)
 		{
+			if (Path.GetExtension(fileName).ToLower() != ".vb")
+				return null; // no need to convert this
 			ICSharpCode.SharpRefactory.Parser.VB.Parser p = new ICSharpCode.SharpRefactory.Parser.VB.Parser();
 			
 			p.Parse(new ICSharpCode.SharpRefactory.Parser.VB.Lexer(new ICSharpCode.SharpRefactory.Parser.VB.FileReader(fileName)));
@@ -189,6 +208,8 @@ namespace ICSharpCode.SharpDevelop.Commands
 		
 		protected override string ConvertFile(string fileName)
 		{
+			if (Path.GetExtension(fileName).ToLower() != ".cs")
+				return null; // no need to convert this
 			Parser p = new Parser();
 			
 			p.Parse(new Lexer(new ICSharpCode.SharpRefactory.Parser.FileReader(fileName)));

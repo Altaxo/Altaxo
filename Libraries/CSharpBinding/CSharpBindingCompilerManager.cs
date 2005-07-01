@@ -133,12 +133,12 @@ namespace CSharpBinding
 			writer.WriteLine('"' + filename + '"');
 			writer.Close();
 			
-			string compilerName = compilerparameters.CsharpCompiler == CsharpCompiler.Csc ? GetCompilerName(compilerparameters.CSharpCompilerVersion) : "mcs";
-			string outstr =  String.Concat(compilerName, " \"@", responseFileName, "\"");
+			string compilerFileName = GetCompilerFileName(compilerparameters);
+			string outstr =  String.Concat(compilerFileName, " \"@", responseFileName, "\"");
 			TempFileCollection  tf = new TempFileCollection ();
 			Executor.ExecWaitWithCapture(outstr, tf, ref output, ref error);
 			
-			ICompilerResult result = ParseOutput(tf, output);
+			ICompilerResult result = ParseOutput(tf, output, true);
 			
 			File.Delete(responseFileName);
 			File.Delete(output);
@@ -240,13 +240,26 @@ namespace CSharpBinding
 			string output = String.Empty;
 			string error  = String.Empty;
 			
-			string compilerName = compilerparameters.CsharpCompiler == CsharpCompiler.Csc ? GetCompilerName(compilerparameters.CSharpCompilerVersion) : System.Environment.GetEnvironmentVariable("ComSpec") + " /c mcs";
+			string compilerFileName = GetCompilerFileName(compilerparameters);
 			
-			string outstr = String.Concat(compilerName, compilerparameters.NoConfig ? " /noconfig" : String.Empty, " \"@", responseFileName, "\"");
+			string outstr = String.Concat(compilerFileName, compilerparameters.NoConfig ? " /noconfig" : String.Empty, " \"@", responseFileName, "\"");
 			TempFileCollection tf = new TempFileCollection();
 			Executor.ExecWaitWithCapture(outstr,  tf, ref output, ref error);
 			
-			ICompilerResult result = ParseOutput(tf, output);
+			ICompilerResult result = null;
+			if (compilerparameters.CsharpCompiler == CsharpCompiler.Csc) {
+				result = ParseOutput(tf, output, true);
+			} else {
+				// Using Mono so check the error file and parse it if it contains any 
+				// content (Mono 1.1 sends errors to the error file).
+				FileInfo info = new FileInfo(error);
+				if (info.Length > 0) {
+					result = ParseOutput(tf, error, false);
+				} else {
+					result = ParseOutput(tf, output, true);
+				}
+			}
+			
 			project.CopyReferencesToOutputPath(false);
 			File.Delete(responseFileName);
 			File.Delete(output);
@@ -284,7 +297,7 @@ namespace CSharpBinding
 			sw.Close();
 		}
 		
-		string GetCompilerName(string compilerVersion)
+		string GetMsCompilerFileName(string compilerVersion)
 		{
 			string runtimeDirectory = Path.Combine(fileUtilityService.NETFrameworkInstallRoot, compilerVersion);
 			if (compilerVersion.Length == 0 || compilerVersion == "Standard" || !Directory.Exists(runtimeDirectory)) {
@@ -293,14 +306,35 @@ namespace CSharpBinding
 			return String.Concat('"', Path.Combine(runtimeDirectory, "csc.exe"), '"');
 		}
 		
-		ICompilerResult ParseOutput(TempFileCollection tf, string file)
+		string GetCompilerFileName(CSharpCompilerParameters parameters)
+		{
+			string name = String.Empty;
+			
+			switch (parameters.CsharpCompiler) {
+				case CsharpCompiler.Csc:
+					name = GetMsCompilerFileName(parameters.CSharpCompilerVersion);
+					break;
+				case CsharpCompiler.Mcs:
+					name = System.Environment.GetEnvironmentVariable("ComSpec") + " /c mcs";
+					break;
+				case CsharpCompiler.Gmcs:
+					name = System.Environment.GetEnvironmentVariable("ComSpec") + " /c gmcs";
+					break;
+			}
+			
+			return name;
+		}
+		
+		ICompilerResult ParseOutput(TempFileCollection tf, string file, bool skipFirstLine)
 		{
 			StringBuilder compilerOutput = new StringBuilder();
 			
 			StreamReader sr = File.OpenText(file);
 			
-			// skip fist whitespace line
-			sr.ReadLine();
+			// skip first whitespace line
+			if (skipFirstLine) {
+				sr.ReadLine();
+			}
 			
 			CompilerResults cr = new CompilerResults(tf);
 			

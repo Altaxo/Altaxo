@@ -171,7 +171,7 @@ namespace CSharpBinding.Parser
 			if (methodDeclaration.Parameters != null) {
 				foreach (AST.ParameterDeclarationExpression par in methodDeclaration.Parameters) {
 					ReturnType parType = new ReturnType(par.TypeReference);
-					Parameter p = new Parameter(par.ParameterName, parType);
+					Parameter p = new Parameter(par.ParameterName, parType, par.ParamModifiers);
 					parameters.Add(p);
 				}
 			}
@@ -191,7 +191,7 @@ namespace CSharpBinding.Parser
 			if (constructorDeclaration.Parameters != null) {
 				foreach (AST.ParameterDeclarationExpression par in constructorDeclaration.Parameters) {
 					ReturnType parType = new ReturnType(par.TypeReference);
-					Parameter p = new Parameter(par.ParameterName, parType);
+					Parameter p = new Parameter(par.ParameterName, parType, par.ParamModifiers);
 					parameters.Add(p);
 				}
 			}
@@ -278,7 +278,7 @@ namespace CSharpBinding.Parser
 			if (indexerDeclaration.Parameters != null) {
 				foreach (AST.ParameterDeclarationExpression par in indexerDeclaration.Parameters) {
 					ReturnType parType = new ReturnType(par.TypeReference);
-					Parameter p = new Parameter(par.ParameterName, parType);
+					Parameter p = new Parameter(par.ParameterName, parType, par.ParamModifiers);
 					parameters.Add(p);
 				}
 			}

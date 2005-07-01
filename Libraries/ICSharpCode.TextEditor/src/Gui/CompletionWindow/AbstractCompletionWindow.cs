@@ -32,7 +32,6 @@ namespace ICSharpCode.TextEditor.Gui.CompletionWindow
 		protected AbstractCompletionWindow(Form parentForm, TextEditorControl control, string fileName)
 		{
 			workingScreen = Screen.GetWorkingArea(parentForm);
-//			SetStyle(ControlStyles.Selectable, false);
 			this.parentForm = parentForm;
 			this.control  = control;
 			this.fileName = fileName;

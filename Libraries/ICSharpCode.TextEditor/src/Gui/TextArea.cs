@@ -55,6 +55,9 @@ namespace ICSharpCode.TextEditor
 		SelectionManager selectionManager;
 		Caret            caret;
 		
+		ToolTip toolTip = new ToolTip();
+		bool toolTipSet = false;
+
 		public TextEditorControl MotherTextEditorControl {
 			get {
 				return motherTextEditorControl;
@@ -296,10 +299,32 @@ namespace ICSharpCode.TextEditor
 				}
 			}
 		}
+
+		string oldToolTip;
+		public void SetToolTip(string text)
+		{
+			toolTipSet = (text != null);
+			if (oldToolTip == text)
+				return;
+			//ToolTip toolTip = this.toolTip;
+			if (text == null) {
+				//Console.WriteLine("Tooltip disabled");
+				toolTip.SetToolTip(this, null);
+			} else {
+				//Console.WriteLine("Tooltip set to " + text);
+				//Point p = PointToClient(Control.MousePosition);
+				//p.Offset(3, 3);
+				toolTip.SetToolTip(this, text);
+			}
+			oldToolTip = text;
+		}
 		
 		protected override void OnMouseMove(System.Windows.Forms.MouseEventArgs e)
 		{
+			toolTipSet = false;
 			base.OnMouseMove(e);
+			if (!toolTipSet)
+				SetToolTip(null);
 			foreach (AbstractMargin margin in leftMargins) {
 				if (margin.DrawingPosition.Contains(e.X, e.Y)) {
 					this.Cursor = margin.Cursor;
@@ -715,6 +740,7 @@ namespace ICSharpCode.TextEditor
 			base.Dispose(disposing);
 			if (disposing) {
 				Caret.Dispose();
+				toolTip.Dispose();
 			}
 		}
 		

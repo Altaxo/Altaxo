@@ -13,6 +13,13 @@ Schema for app.config and web.config files.
 Created by Matt Ward
 GNU General Public License.
 
+manifest.xsd
+-------------
+
+Schema for .manifest files.
+Created by Matt Ward
+GNU General Public License.
+
 
 NAnt-0.84.xsd
 -------------

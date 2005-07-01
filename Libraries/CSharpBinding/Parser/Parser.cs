@@ -120,7 +120,8 @@ namespace CSharpBinding.Parser
 		
 		public ArrayList CtrlSpace(IParserService parserService, int caretLine, int caretColumn, string fileName)
 		{
-			return new Resolver().CtrlSpace(parserService, caretLine, caretColumn, fileName);
+			ArrayList result = new Resolver().CtrlSpace(parserService, caretLine, caretColumn, fileName);
+			return result;
 		}
 		
 		public ResolveResult Resolve(IParserService parserService, string expression, int caretLineNumber, int caretColumn, string fileName, string fileContent)

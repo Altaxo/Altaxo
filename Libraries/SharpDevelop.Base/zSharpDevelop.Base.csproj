@@ -254,6 +254,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Commands\ProjectBrowserCommands\WebReferenceNodeCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Commands\ProjectBrowserCommands\WebReferencesFolderNodeCommands.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Commands\VBConverter\ConvertBuffer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -730,7 +740,7 @@
                 />
                 <File
                     RelPath = "Gui\Dialogs\ReferenceDialog\AddWebReferenceDialog.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -969,6 +979,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\Pads\ProjectBrowser\BrowserNode\WebReferenceNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Pads\ProjectBrowser\BrowserNode\WebReferencesNode.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\Pads\ProjectBrowser\NodeBuilder\DefaultDotNetNodeBuilder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1010,7 +1030,7 @@
                 />
                 <File
                     RelPath = "Gui\Workbench\Layouts\SdiWorkspaceWindow.cs"
-                    SubType = "Code"
+                    SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
@@ -1835,6 +1855,11 @@
                 />
                 <File
                     RelPath = "Internal\Undo\UndoStack.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Services\HelpService.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -30,19 +30,6 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 			return true;
 		}
 
-		public static bool IsWebReference(AbstractBrowserNode node)
-		{
-			if (node != null) {
-				if (node is ProjectBrowserNode)
-					return false;
-				if (node.Text == "Web References")
-					return true;
-				return IsWebReference((AbstractBrowserNode)node.Parent);
-			}
-
-			return false;
-		}
-
 		public AbstractBrowserNode BuildProjectTreeNode(IProject project)
 		{
 			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));
@@ -218,13 +205,13 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 
 			parentNode = projectNode;
 
+			AbstractBrowserNode dependNode = null;
 			if(projectFile.DependsOn != String.Empty && projectFile.DependsOn != null) {
 				// make sure the dependant node exists
-				AbstractBrowserNode dependNode = GetPath(fileUtilityService.AbsoluteToRelativePath(project.BaseDirectory,projectFile.DependsOn), projectNode, false);
-				if(dependNode == null) {
+				dependNode = GetPath(Path.Combine(fileUtilityService.AbsoluteToRelativePath(project.BaseDirectory,projectFile.DependsOn), "DUMMY"), projectNode, false);
+				if (dependNode == null) {
 					// dependsOn does not exist, do what?
 				}
-
 			}
 
 			switch(projectFile.Subtype) {
@@ -244,8 +231,15 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 							currentPathNode1 = GetPath(relativeFile, parentNode, true);
 
 							AbstractBrowserNode newNode = new FileNode(projectFile);
-							newNode.ContextmenuAddinTreePath = FileNode.ProjectFileContextMenuPath;
-							//parentNode.Nodes.Add(newNode);
+							
+							// If node depends on a web reference then change the default
+							// context menu.
+							WebReferenceNode webRefNode = dependNode as WebReferenceNode;
+							if (webRefNode != null) {
+								newNode.ContextmenuAddinTreePath = WebReferenceNode.ChildNodeContextMenuPath;
+							} else {
+								newNode.ContextmenuAddinTreePath = FileNode.ProjectFileContextMenuPath;
+							}
 							
 							SortUtility.SortedInsert(newNode, currentPathNode1.Nodes, TreeNodeComparer.ProjectNode);
 							break;
@@ -268,32 +262,27 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 						if (currentPathNode == null) {
 							currentPathNode = parentNode;
 							DirectoryNode newFolderNode  = new DirectoryNode(projectFile.Name);
-							if (IsWebReference(currentPathNode)) {
-								newFolderNode.OpenedImage = resourceService.GetBitmap("Icons.16x16.OpenWebReferenceFolder");
-								newFolderNode.ClosedImage = resourceService.GetBitmap("Icons.16x16.ClosedWebReferenceFolder");
-							} else {
-								newFolderNode.OpenedImage = resourceService.GetBitmap("Icons.16x16.OpenFolderBitmap");
-								newFolderNode.ClosedImage = resourceService.GetBitmap("Icons.16x16.ClosedFolderBitmap");
-							}
+							newFolderNode.OpenedImage = resourceService.GetBitmap("Icons.16x16.OpenFolderBitmap");
+							newFolderNode.ClosedImage = resourceService.GetBitmap("Icons.16x16.ClosedFolderBitmap");
 							SortUtility.SortedInsert(newFolderNode, currentPathNode.Nodes, TreeNodeComparer.ProjectNode);
 						}
 					}
 					break;
 				case Subtype.WebReferences:
 					{
-						// add a web directory
+						// Check that a Web References node does not already exist.
 						string directoryName   = relativeFile;
-						// if directoryname starts with ./ oder .\ //
 						if (directoryName.StartsWith(".")) {
 							directoryName =  directoryName.Substring(2);
+						}						
+						AbstractBrowserNode currentPathNode;
+						currentPathNode = GetPath(Path.Combine(directoryName, "DUMMY"), parentNode, false);
+						
+						if (currentPathNode == null) {
+							// Web References node does not already exist.
+							WebReferencesNode newNode = new WebReferencesNode(projectFile.Name);
+							SortUtility.SortedInsert(newNode, parentNode.Nodes, TreeNodeComparer.ProjectNode);
 						}
-
-						DirectoryNode newFolderNode  = new DirectoryNode(projectFile.Name);
-						newFolderNode.OpenedImage = resourceService.GetBitmap("Icons.16x16.OpenWebReferenceFolder");
-						newFolderNode.ClosedImage = resourceService.GetBitmap("Icons.16x16.ClosedWebReferenceFolder");
-
-						string parentDirectory = Path.GetFileName(directoryName);
-						projectNode.Nodes.Insert(2, newFolderNode);
 					}
 					break;
 				case Subtype.WebForm:
@@ -338,6 +327,15 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 					break;
 				case Subtype.WebService:
 					// not supported yet
+					break;
+				case Subtype.WebReference:
+					{
+						AbstractBrowserNode currentPathNode1;
+						currentPathNode1 = GetPath(relativeFile, parentNode, true);
+						
+						WebReferenceNode newNode = new WebReferenceNode(projectFile);						
+						SortUtility.SortedInsert(newNode, currentPathNode1.Nodes, TreeNodeComparer.ProjectNode);							
+					}
 					break;
 				default:
 					// unknown file type
@@ -452,6 +450,5 @@ namespace ICSharpCode.SharpDevelop.Gui.Pads.ProjectBrowser
 			}
 			SortUtility.QuickSort(parentNode.Nodes, TreeNodeComparer.ProjectNode);
 		}
-		
 	}
 }

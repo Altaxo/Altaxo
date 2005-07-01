@@ -129,7 +129,16 @@
     <Compile Include="Main.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Content Include="data\schemas\manifest.xsd" />
+    <Content Include="data\templates\file\Misc\EmptySharpReport.xft" />
+    <Content Include="data\templates\file\Misc\EmptyWixFragment.xft" />
+    <Content Include="data\templates\project\Setup\WixProjectEx.xpt" />
+    <Content Include="data\templates\project\Setup\WixProjectVS6I.xpt" />
+    <Content Include="data\templates\project\Setup\WixProjectVSI.xpt" />
     <None Include="HelpConverter.InstallState" />
+    <Content Include="data\resources\StringResources.el.resources" />
+    <Content Include="data\resources\StringResources.no.resources" />
+    <Content Include="data\resources\StringResources.sk.resources" />
     <EmbeddedResource Include="HelpSetup.resx">
       <DependentUpon>HelpSetup.cs</DependentUpon>
     </EmbeddedResource>
@@ -193,12 +202,19 @@
     <Content Include="data\resources\filetypes\vb.ico" />
     <Content Include="data\resources\filetypes\xfrm.ico" />
     <Content Include="data\resources\filetypes\xml.ico" />
+    <Content Include="data\resources\InstallerBitmaps\Complete.ico" />
+    <Content Include="data\resources\InstallerBitmaps\Custom.ico" />
     <Content Include="data\resources\InstallerBitmaps\default-banner.bmp" />
     <Content Include="data\resources\InstallerBitmaps\default-dialog.bmp" />
     <Content Include="data\resources\InstallerBitmaps\exclamic.bmp" />
     <Content Include="data\resources\InstallerBitmaps\info.bmp" />
     <Content Include="data\resources\InstallerBitmaps\new.bmp" />
+    <Content Include="data\resources\InstallerBitmaps\Remove.ico" />
+    <Content Include="data\resources\InstallerBitmaps\Repair.ico" />
+    <Content Include="data\resources\InstallerBitmaps\Typical.ico" />
     <Content Include="data\resources\InstallerBitmaps\up.bmp" />
+    <Content Include="data\resources\InstallerBitmaps\vsi6banner.bmp" />
+    <Content Include="data\resources\InstallerBitmaps\vsibanner.bmp" />
     <Content Include="data\resources\languages\.xvpics\russia.png" />
     <Content Include="data\resources\languages\.xvpics\south_korea.png" />
     <Content Include="data\resources\languages\.xvpics\sweden.png" />
@@ -220,6 +236,7 @@
     <Content Include="data\resources\languages\lithuania.png" />
     <Content Include="data\resources\languages\mexico.png" />
     <Content Include="data\resources\languages\netherlands.png" />
+    <Content Include="data\resources\languages\norway.png" />
     <Content Include="data\resources\languages\poland.png" />
     <Content Include="data\resources\languages\portugal.png" />
     <Content Include="data\resources\languages\romania.png" />
@@ -231,9 +248,6 @@
     <Content Include="data\resources\languages\sweden.png" />
     <Content Include="data\resources\languages\uk.png" />
     <Content Include="data\resources\languages\usa.png" />
-    <Content Include="data\resources\MenuStyle0.png" />
-    <Content Include="data\resources\MenuStyle1.png" />
-    <Content Include="data\resources\MenuStyle2.png" />
     <Content Include="data\resources\panels\AssemblyScoutOptions.xfrm" />
     <Content Include="data\resources\panels\BehaviorTextEditorPanel.xfrm" />
     <Content Include="data\resources\panels\ChooseRuntimePanel.xfrm" />

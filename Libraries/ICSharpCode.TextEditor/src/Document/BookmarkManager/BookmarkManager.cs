@@ -88,11 +88,11 @@ namespace ICSharpCode.TextEditor.Document
 			OnBeforeChanged();
 			for (int i = 0; i < bookmark.Count; ++i) {
 				int mark = (int)bookmark[i];
-				if (e.LinesMoved < 0 && mark == e.LineStart) {
+				if (e.LinesMoved < 0 && mark + 1 >= e.LineStart && mark + 1 < e.LineStart - e.LinesMoved) {
 					bookmark.RemoveAt(i);
 					--i;
 					changed = true;
-				} else if (mark > e.LineStart + 1 || (e.LinesMoved < 0 && mark > e.LineStart))  {
+				} else if (mark >= e.LineStart + 1 || (e.LinesMoved < 0 && mark > e.LineStart))  {
 					changed = true;
 					bookmark[i] = mark + e.LinesMoved;
 				}

@@ -287,7 +287,6 @@
     <File name=".\Gui\Pads\ClassScout\BrowserNode\AbstractClassScoutNode.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Pads\ClassScout\NodeBuilder\DefaultDotNetClassScoutNodeBuilder.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Pads\ClassScout\NodeBuilder\IClassScoutNodeBuilder.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\Gui\Pads\HelpBrowser\HelpBrowser.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Pads\ProjectBrowser\ProjectBrowserView.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Pads\ProjectBrowser\BrowserNode\AbstractBrowserNode.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Gui\Pads\ProjectBrowser\BrowserNode\CombineBrowserNode.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -395,6 +394,15 @@
     <File name=".\Services\Debugger\DefaultDebugger.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Internal\Conditions\ActiveWindowStateCondition.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\Internal\Conditions\OpenWindowStateCondition.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Dialogs\OptionPanels\OutputWindowOptionsPanel.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Pads\CompilerMessageView\FileLineReference.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Pads\CompilerMessageView\OutputTextLineParser.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Components\FontSelectionPanel.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Services\HelpService.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Pads\ProjectBrowser\BrowserNode\WebReferencesNode.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Gui\Pads\ProjectBrowser\BrowserNode\WebReferenceNode.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\ProjectBrowserCommands\WebReferencesFolderNodeCommands.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\Commands\ProjectBrowserCommands\WebReferenceNodeCommands.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto="..\..\..\bin\ICSharpCode.XmlForms.dll" localcopy="False" />

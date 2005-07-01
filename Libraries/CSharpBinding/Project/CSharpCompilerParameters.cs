@@ -23,7 +23,8 @@ namespace CSharpBinding
 	
 	public enum CsharpCompiler {
 		Csc,
-		Mcs
+		Mcs,
+		Gmcs
 	};
 	
 	public enum NetRuntime {

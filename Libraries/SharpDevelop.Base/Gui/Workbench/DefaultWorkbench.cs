@@ -159,6 +159,8 @@ namespace ICSharpCode.SharpDevelop.Gui
 //			TopMenu.Deselected += new CommandHandler(OnTopMenuDeselected);
 			CreateMainMenu();
 			CreateToolBars();
+
+			Application.Idle += new EventHandler(OnApplicationIdle);
 		}
 		
 		public void CloseContent(IViewContent content)
@@ -336,7 +338,9 @@ namespace ICSharpCode.SharpDevelop.Gui
 		void CheckRemovedFile(object sender, FileEventArgs e)
 		{
 			if (e.IsDirectory) {
-				foreach (IViewContent content in ViewContentCollection) {
+				// collection changes during foreach loop, so iterate through array
+				// to prevent exception.
+				foreach (IViewContent content in ViewContentCollection.ToArray()) {
 					if (content.FileName.StartsWith(e.FileName)) {
 						content.WorkbenchWindow.CloseWindow(true);
 					}
@@ -456,6 +460,12 @@ namespace ICSharpCode.SharpDevelop.Gui
 				ActiveWorkbenchWindowChanged(this, e);
 			}
 		}
+		
+		void OnApplicationIdle(object sender, EventArgs e)
+		{
+			UpdateToolbars();
+		}
+		
 		public CommandBarManager commandBarManager = new CommandBarManager();
 		public CommandBar   TopMenu  = null;
 		public CommandBar[] ToolBars = null;

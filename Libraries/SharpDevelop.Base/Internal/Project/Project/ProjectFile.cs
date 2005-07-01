@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Xml;
 using ICSharpCode.SharpDevelop.Internal.Project;
 using ICSharpCode.SharpDevelop.Gui.Components;
+using ICSharpCode.SharpDevelop.Services;
 
 namespace ICSharpCode.SharpDevelop.Internal.Project
 {
@@ -20,7 +21,8 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 		WinForm,
 		WebForm,
 		XmlForm,
-		WebService,		
+		WebService,	
+		WebReference,
 		WebReferences,
 		Dataset
 	}
@@ -85,7 +87,12 @@ namespace ICSharpCode.SharpDevelop.Internal.Project
 				return buildaction;
 			}
 			set {
-				buildaction = value;
+				if (buildaction != value) {
+					buildaction = value;
+					IProjectService projectService = (IProjectService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(IProjectService));
+					projectService.MarkProjectDirty(projectService.RetrieveProjectForFile(this));
+					projectService.SaveCombine();
+				}
 			}
 		}
 		

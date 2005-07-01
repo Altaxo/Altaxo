@@ -489,13 +489,13 @@ namespace CSharpBinding.FormattingStrategy
 			for (int i = 0; i < end.Length; ++i) {
 				char c = end[i];
 				if (c == '"') {
-					if (!inString && i > 0 && start[i - 1] == '@')
+					if (!inString && i > 0 && end[i - 1] == '@')
 						return false; // no string line break for verbatim strings
 					inString = !inString;
 				}
-				if (!inString && i > 0 && start[i - 1] == '/' && (c == '/' || c == '*'))
+				if (!inString && i > 0 && end[i - 1] == '/' && (c == '/' || c == '*'))
 					break;
-				if (inString && start[i] == '\\')
+				if (inString && end[i] == '\\')
 					++i;
 			}
 			// return true if string was closed properly

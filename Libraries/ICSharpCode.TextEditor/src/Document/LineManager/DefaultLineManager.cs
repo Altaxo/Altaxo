@@ -366,7 +366,7 @@ namespace ICSharpCode.TextEditor.Document
 					++count;
 				}
 			}
-			OnLineCountChanged(new LineManagerEventArgs(document, insertPosition, count));
+			OnLineCountChanged(new LineManagerEventArgs(document, insertPosition-1, count));
 			return count;
 		}
 		

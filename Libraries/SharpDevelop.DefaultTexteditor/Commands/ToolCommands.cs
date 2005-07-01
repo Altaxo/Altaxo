@@ -46,9 +46,24 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			
 			using (ColorDialog cd = new ColorDialog()) {
 				if (cd.ShowDialog() == DialogResult.OK) {
-					string colorstr = "#" + cd.Color.ToArgb().ToString("X");
-					if (cd.Color.IsKnownColor) {
-						colorstr = cd.Color.ToKnownColor().ToString();
+					string ext = Path.GetExtension(textarea.FileName).ToLower();
+					string colorstr;
+					if (ext == ".cs" || ext == ".vb" || ext == ".boo") {
+						if (cd.Color.IsKnownColor) {
+							colorstr = "Color." + cd.Color.ToKnownColor().ToString();
+						} else if (cd.Color.A < 255) {
+							colorstr = "Color.FromArgb(0x" + cd.Color.ToArgb().ToString("x") + ")";
+						} else {
+							colorstr = string.Format("Color.FromArgb({0}, {1}, {2})", cd.Color.R, cd.Color.G, cd.Color.B);
+						}
+					} else {
+						if (cd.Color.IsKnownColor) {
+							colorstr = cd.Color.ToKnownColor().ToString();
+						} else if (cd.Color.A < 255) {
+							colorstr = "#" + cd.Color.ToArgb().ToString("X");
+						} else {
+							colorstr = string.Format("#{0:X2}{1:X2}{2:X2}", cd.Color.R, cd.Color.G, cd.Color.B);
+						}
 					}
 					
 					textarea.Document.Insert(textarea.ActiveTextAreaControl.Caret.Offset, colorstr);
@@ -190,5 +205,24 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Commands
 			}
 		}
 	}
-
+	
+	public class InsertGuidCommand : AbstractMenuCommand
+	{
+		public override void Run()
+		{
+			IWorkbenchWindow window = WorkbenchSingleton.Workbench.ActiveWorkbenchWindow;
+			if (window == null || !(window.ViewContent is ITextEditorControlProvider)) {
+				return;
+			}
+			
+			TextEditorControl textEditor = ((ITextEditorControlProvider)window.ViewContent).TextEditorControl;
+			if (textEditor == null) {
+				return;
+			}
+			
+			string newGuid = Guid.NewGuid().ToString().ToUpper();
+			
+			textEditor.ActiveTextAreaControl.TextArea.InsertString(newGuid);
+		}
+	}
 }

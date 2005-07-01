@@ -146,6 +146,15 @@ namespace ICSharpCode.SharpDevelop.Gui
 		}
 		
 		/// <summary>
+		/// Creates an array containing the values of this collection.
+		/// </summary>
+		public IViewContent[] ToArray() {
+			IViewContent[] c = new IViewContent[Count];
+			CopyTo(c, 0);
+			return c;
+		}
+		
+		/// <summary>
 		///    <para>Returns the index of a <see cref='.IViewContent'/> in
 		///       the <see cref='.ViewContentCollection'/> .</para>
 		/// </summary>

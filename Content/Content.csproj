@@ -219,18 +219,6 @@
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "data\resources\MenuStyle0.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\MenuStyle1.png"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "data\resources\MenuStyle2.png"
-                    BuildAction = "Content"
-                />
-                <File
                     RelPath = "data\resources\SharpDevelop.ico"
                     BuildAction = "Content"
                 />
@@ -260,6 +248,10 @@
                 />
                 <File
                     RelPath = "data\resources\StringResources.dk.resources"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\StringResources.el.resources"
                     BuildAction = "Content"
                 />
                 <File
@@ -303,6 +295,10 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\StringResources.no.resources"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\StringResources.pl.resources"
                     BuildAction = "Content"
                 />
@@ -324,6 +320,10 @@
                 />
                 <File
                     RelPath = "data\resources\StringResources.se.resources"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\StringResources.sk.resources"
                     BuildAction = "Content"
                 />
                 <File
@@ -488,6 +488,14 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\InstallerBitmaps\Complete.ico"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\InstallerBitmaps\Custom.ico"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\InstallerBitmaps\default-banner.bmp"
                     BuildAction = "Content"
                 />
@@ -508,7 +516,27 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\resources\InstallerBitmaps\Remove.ico"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\InstallerBitmaps\Repair.ico"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\InstallerBitmaps\Typical.ico"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\resources\InstallerBitmaps\up.bmp"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\InstallerBitmaps\vsi6banner.bmp"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\InstallerBitmaps\vsibanner.bmp"
                     BuildAction = "Content"
                 />
                 <File
@@ -581,6 +609,10 @@
                 />
                 <File
                     RelPath = "data\resources\languages\netherlands.png"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\resources\languages\norway.png"
                     BuildAction = "Content"
                 />
                 <File
@@ -996,6 +1028,10 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\schemas\manifest.xsd"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\schemas\nant.xsd"
                     BuildAction = "Content"
                 />
@@ -1080,7 +1116,15 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "data\templates\file\Misc\EmptySharpReport.xft"
+                    BuildAction = "Content"
+                />
+                <File
                     RelPath = "data\templates\file\Misc\EmptyTextFile.xft"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\templates\file\Misc\EmptyWixFragment.xft"
                     BuildAction = "Content"
                 />
                 <File
@@ -1205,6 +1249,18 @@
                 />
                 <File
                     RelPath = "data\templates\project\Setup\WixProject.xpt"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\templates\project\Setup\WixProjectEx.xpt"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\templates\project\Setup\WixProjectVS6I.xpt"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "data\templates\project\Setup\WixProjectVSI.xpt"
                     BuildAction = "Content"
                 />
                 <File

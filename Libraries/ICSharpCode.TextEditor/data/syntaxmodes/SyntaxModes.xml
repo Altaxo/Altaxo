@@ -45,7 +45,7 @@
 	
 	<Mode file       = "XML-Mode.xshd"
 	      name       = "XML"
-	      extensions = ".xml;.xsl;.xslt;.xsd;.manifest;.config;.addin;.xshd;.wxs;.build"/>
+	      extensions = ".xml;.xsl;.xslt;.xsd;.manifest;.config;.addin;.xshd;.wxs;.build;.wsdl"/>
       
 	<Mode file       = "ILAsm-Mode.xshd"
 	      name       = "ILAsm"

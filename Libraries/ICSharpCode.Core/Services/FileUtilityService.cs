@@ -147,8 +147,31 @@ namespace ICSharpCode.Core.Services
 		/// Converts a given absolute path and a given base path to a path that leads
 		/// from the base path to the absoulte path. (as a relative path)
 		/// </summary>
+		/// <remarks>
+		/// <para>The returned relative path will be of the form:</para>
+		/// <para><code>
+		/// .\Test
+		/// .\Test\Test.prjx
+		/// .\Test.prjx
+		/// .\
+		/// ..\bin
+		/// ..\..\bin\debug
+		/// </code>
+		/// </para>
+		/// </remarks>
 		public string AbsoluteToRelativePath(string baseDirectoryPath, string absPath)
 		{
+			// Remove trailing '.'
+			baseDirectoryPath=TrimTrailingDotCharacter(baseDirectoryPath);
+			
+			// Remove trailing directory separators.
+			baseDirectoryPath=TrimTrailingDirectorySeparator(baseDirectoryPath);
+			absPath=TrimTrailingDirectorySeparator(absPath);
+			
+			// Remove ".\" occurrences.
+			absPath = absPath.Replace(String.Concat(".", separators[0]), String.Empty );
+			absPath = absPath.Replace(String.Concat(".", separators[1]), String.Empty );
+
 			string[] bPath = baseDirectoryPath.Split(separators);
 			string[] aPath = absPath.Split(separators);
 			int indx = 0;
@@ -400,7 +423,7 @@ namespace ICSharpCode.Core.Services
 		// Observe LOAD functions
 		public FileOperationResult ObservedLoad(FileOperationDelegate saveFile, string fileName, string message, FileErrorPolicy policy)
 		{
-			System.Diagnostics.Debug.Assert(IsValidFileName(fileName));
+			//System.Diagnostics.Debug.Assert(IsValidFileName(fileName)); // assertion is invalid for URLs
 			try {
 				saveFile();
 				return FileOperationResult.OK;
@@ -476,6 +499,38 @@ namespace ICSharpCode.Core.Services
 		public FileOperationResult ObservedLoad(NamedFileOperationDelegate saveFileAs, string fileName)
 		{
 			return ObservedLoad(saveFileAs, fileName, FileErrorPolicy.Inform);
+		}
+
+		/// <summary>
+		/// Removes trailing '\' or '/' from a path.
+		/// </summary>
+		/// <param name="path">The path from which to remove the trailing
+		/// directory separator.</param>
+		/// <returns>A path without any trailing directory separator.</returns>
+		string TrimTrailingDirectorySeparator(string path)
+		{
+			if (path.Length == 0) return path;
+			if ((path[path.Length - 1] == separators[0]) || 
+			    (path[path.Length - 1] == separators[1]))
+			{
+				path = path.Remove(path.Length - 1, 1);
+			}
+			
+			return path;
+		}
+		
+		/// <summary>
+		/// Removes trailing '.' character from a path.
+		/// </summary>
+		/// <param name="path">The path from which to remove the trailing
+		/// '.' character.</param>
+		/// <returns>A path without any trailing '.'.</returns>
+		string TrimTrailingDotCharacter(string path)
+		{
+			if (path.Length > 0 && path[path.Length - 1] == '.')
+				return path.Remove(path.Length - 1, 1);
+			else
+				return path;
 		}
 	}
 }

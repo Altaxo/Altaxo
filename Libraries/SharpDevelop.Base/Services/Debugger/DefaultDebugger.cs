@@ -65,7 +65,6 @@ namespace ICSharpCode.SharpDevelop.Services
 			} catch (Exception) {
 				throw new ApplicationException("Can't execute " + "\"" + psi.FileName + "\"\n");
 			}
-			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 		}
 
 		public void Stop()
@@ -76,7 +75,6 @@ namespace ICSharpCode.SharpDevelop.Services
 				attachedProcess.Close();
 				attachedProcess.Dispose();
 				attachedProcess = null;
-				((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 			}
 		}
 		

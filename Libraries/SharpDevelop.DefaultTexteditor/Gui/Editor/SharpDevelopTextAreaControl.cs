@@ -160,12 +160,10 @@ namespace ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor
 		
 		void DocumentChanged(object sender, DocumentEventArgs e)
 		{
-			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 		}
 		
 		void SelectionChanged(object sender, EventArgs e)
 		{
-			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 		}
 		
 		void GenerateEditActions()

@@ -109,15 +109,21 @@ namespace ICSharpCode.TextEditor
 			OptionsChanged();
 		}
 		
+		static int GetFontHeight(Font font)
+		{
+			int h = font.Height;
+			return (h < 16) ? h + 1 : h;
+		}
+		
 		public void OptionsChanged()
 		{
-			this.fontHeight = TextEditorProperties.Font.Height;
+			this.fontHeight = GetFontHeight(TextEditorProperties.Font);
 			if (this.charWitdh != null) {
 				this.charWitdh.Clear();
 			}
 		}
 		
-#region Paint functions
+		#region Paint functions
 		public override void Paint(Graphics g, Rectangle rect)
 		{
 			if (rect.Width <= 0 || rect.Height <= 0) {
@@ -125,7 +131,7 @@ namespace ICSharpCode.TextEditor
 			}
 			
 			// Just to ensure that fontHeight and char widths are always correct...
-			if (fontHeight != TextEditorProperties.Font.Height) {
+			if (fontHeight != GetFontHeight(TextEditorProperties.Font)) {
 				OptionsChanged();
 				base.TextArea.Refresh();
 				return;
@@ -297,6 +303,7 @@ namespace ICSharpCode.TextEditor
 					g.DrawLine(BrushRegistry.GetPen(marker.Color), drawingRect.X, drawYPos, drawingRect.Right, drawYPos);
 					break;
 				case TextMarkerType.WaveLine:
+//					Console.WriteLine("Drawing wave in {0}", drawingRect);
 					int reminder = ((int)drawingRect.X) % 6;
 					for (float i = drawingRect.X - reminder; i < drawingRect.Right + reminder; i+= 6) {
 						g.DrawLine(BrushRegistry.GetPen(marker.Color), i,     drawYPos + 3 - 4, i + 3, drawYPos + 1 - 4);
@@ -314,10 +321,11 @@ namespace ICSharpCode.TextEditor
 		/// </summary>
 		/// <param name="offset">The offset.</param>
 		/// <param name="length">The length.</param>
+		/// <param name="markers">All markers that have been found.</param>
 		/// <returns>The Brush or null when no marker was found.</returns>
-		Brush GetMarkerBrushAt(int offset, int length)
+		Brush GetMarkerBrushAt(int offset, int length, out ArrayList markers)
 		{
-			ArrayList markers = Document.MarkerStrategy.GetMarkers(offset,  length);
+			markers = Document.MarkerStrategy.GetMarkers(offset, length);
 			foreach (TextMarker marker in markers) {
 				if (marker.TextMarkerType == TextMarkerType.SolidBlock) {
 					return BrushRegistry.GetBrush(marker.Color);
@@ -325,7 +333,7 @@ namespace ICSharpCode.TextEditor
 			}
 			return null;
 		}
-		                       
+		
 		
 		float PaintLinePart(Graphics g, int lineNumber, int startColumn, int endColumn, Rectangle lineRectangle, float physicalXPos)
 		{
@@ -398,7 +406,7 @@ namespace ICSharpCode.TextEditor
 							if (ColumnRange.WholeColumn.Equals(selectionRange) || logicalColumn >= selectionRange.StartColumn && logicalColumn < selectionRange.EndColumn) {
 								spaceBackgroundBrush = selectionBackgroundBrush;
 							} else {
-								Brush markerBrush = GetMarkerBrushAt(currentLine.Offset + logicalColumn,  1);
+								Brush markerBrush = GetMarkerBrushAt(currentLine.Offset + logicalColumn, 1, out markers);
 								if (!drawLineMarker && markerBrush != null) {
 									spaceBackgroundBrush = markerBrush;
 								} else if (!drawLineMarker && currentWord.SyntaxColor != null && currentWord.SyntaxColor.HasBackground) {
@@ -433,7 +441,7 @@ namespace ICSharpCode.TextEditor
 							if (ColumnRange.WholeColumn.Equals(selectionRange) || logicalColumn >= selectionRange.StartColumn && logicalColumn <= selectionRange.EndColumn - 1) {
 								spaceBackgroundBrush = selectionBackgroundBrush;
 							} else {
-								Brush markerBrush = GetMarkerBrushAt(currentLine.Offset + logicalColumn, 1);
+								Brush markerBrush = GetMarkerBrushAt(currentLine.Offset + logicalColumn, 1, out markers);
 								if (!drawLineMarker && markerBrush != null) {
 									spaceBackgroundBrush = markerBrush;
 								} else if (!drawLineMarker && currentWord.SyntaxColor != null && currentWord.SyntaxColor.HasBackground) {
@@ -461,7 +469,7 @@ namespace ICSharpCode.TextEditor
 							string word    = currentWord.Word;
 							float  lastPos = physicalXPos;
 							
-							Brush bgMarkerBrush = GetMarkerBrushAt(currentLine.Offset + logicalColumn,  word.Length);
+							Brush bgMarkerBrush = GetMarkerBrushAt(currentLine.Offset + logicalColumn,  word.Length, out markers);
 							Brush wordBackgroundBrush;
 							if (!drawLineMarker && bgMarkerBrush != null) {
 								wordBackgroundBrush = bgMarkerBrush;
@@ -534,7 +542,7 @@ namespace ICSharpCode.TextEditor
 							logicalColumn += word.Length;
 							break;
 					}
-					markers.Clear();
+					//markers.Clear();
 				}
 			}
 			

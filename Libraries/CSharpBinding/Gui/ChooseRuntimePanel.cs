@@ -38,6 +38,7 @@ namespace CSharpBinding
 			
 			((RadioButton)ControlDictionary["cscRadioButton"]).Checked = config.CsharpCompiler == CsharpCompiler.Csc;
 			((RadioButton)ControlDictionary["mcsRadioButton"]).Checked = config.CsharpCompiler == CsharpCompiler.Mcs;
+			((RadioButton)ControlDictionary["gmcsRadioButton"]).Checked = config.CsharpCompiler == CsharpCompiler.Gmcs;
 		
 			((RadioButton)ControlDictionary["cscRadioButton"]).CheckedChanged += new EventHandler(CompilerRadioButtonCheckedChanged);
 			
@@ -66,7 +67,14 @@ namespace CSharpBinding
 			} else {
 				config.NetRuntime =  NetRuntime.MonoInterpreter;
 			}
-			config.CsharpCompiler = ((RadioButton)ControlDictionary["cscRadioButton"]).Checked ? CsharpCompiler.Csc : CsharpCompiler.Mcs;
+			
+			if (((RadioButton)ControlDictionary["cscRadioButton"]).Checked) {
+				config.CsharpCompiler = CsharpCompiler.Csc;			
+			} else if (((RadioButton)ControlDictionary["mcsRadioButton"]).Checked) {
+				config.CsharpCompiler = CsharpCompiler.Mcs;
+			} else {
+				config.CsharpCompiler = CsharpCompiler.Gmcs;
+			}
 			config.CSharpCompilerVersion = ControlDictionary["compilerVersionComboBox"].Text;
 			
 			return true;

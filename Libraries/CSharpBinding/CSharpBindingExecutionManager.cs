@@ -78,9 +78,11 @@ namespace CSharpBinding
 				
 				if (parameters.CompileTarget != CompileTarget.WinExe && parameters.PauseConsoleOutput) {
 					psi = new ProcessStartInfo(Environment.GetEnvironmentVariable("ComSpec"), "/c " + runtimeStarter + "\"" + directory + exe + "\" " + args +  " & pause");
-				} else {
-					psi = new ProcessStartInfo(runtimeStarter + "\"" + directory + exe + "\"");
+				} else if (runtimeStarter.Length == 0) {
+					psi = new ProcessStartInfo("\"" + directory + exe + "\"");
 					psi.Arguments = args;
+				} else {
+					psi = new ProcessStartInfo(Environment.GetEnvironmentVariable("ComSpec"), "/c " + runtimeStarter + "\"" + directory + exe + "\" " + args);					
 				}
 			}
 			

@@ -180,6 +180,8 @@
     <Compile Include="Commands\ProjectBrowserCommands\ResourceFolderNodeCommands.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Commands\ProjectBrowserCommands\WebReferenceNodeCommands.cs" />
+    <Compile Include="Commands\ProjectBrowserCommands\WebReferencesFolderNodeCommands.cs" />
     <Compile Include="Commands\ProjectCommands.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -358,7 +360,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Dialogs\CommonAboutDialog.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Dialogs\DirtyFilesDialog.cs">
       <SubType>Code</SubType>
@@ -424,7 +426,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Dialogs\ReferenceDialog\AddWebReferenceDialog.cs">
-      <SubType>Code</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Dialogs\ReferenceDialog\AssemblyReferencePanel.cs">
       <SubType>Component</SubType>
@@ -454,10 +456,10 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Dialogs\TipOfTheDay.cs">
-      <SubType>Form</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Dialogs\TreeViewOptions.cs">
-      <SubType>Component</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Dialogs\ViewGPLDialog.cs">
       <SubType>Form</SubType>
@@ -606,6 +608,8 @@
     <Compile Include="Gui\Pads\ProjectBrowser\BrowserNode\ReferenceNode.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Gui\Pads\ProjectBrowser\BrowserNode\WebReferenceNode.cs" />
+    <Compile Include="Gui\Pads\ProjectBrowser\BrowserNode\WebReferencesNode.cs" />
     <Compile Include="Gui\Pads\ProjectBrowser\NodeBuilder\DefaultDotNetNodeBuilder.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1200,6 +1204,7 @@
     <Compile Include="Services\File\RingBuffer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Services\HelpService.cs" />
     <Compile Include="Services\IconService.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -26,11 +26,13 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		///
 		/// <summary>Creates a ServiceDescription object from a valid URI</summary>
 		/// 
-		public static ServiceDescription ReadServiceDescription(string uri) {
+		public static ServiceDescription ReadServiceDescription(string uri)
+		{
 			ServiceDescription desc = null;
 			
 			try {
 				HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+				request.Timeout = 10000; 
 				WebResponse response  = request.GetResponse();
 			
 				desc = ServiceDescription.Read(response.GetResponseStream());
@@ -49,8 +51,9 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		///
 		/// <summary>Generates a valid directory from a URI</summary>
 		/// 
-		public static string GetDirectoryFromUri(string uri) {
-			// TODO: construct the namespace using th URL in the WSDL
+		public static string GetDirectoryFromUri(string uri)
+		{
+			// TODO: construct the namespace using the URL in the WSDL
 			string tmp = uri;
 			if(uri.IndexOf("://") > -1) {
 				tmp = uri.Substring(uri.IndexOf("://") + 3);
@@ -67,8 +70,9 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		///
 		/// <summary>Generates a valid Namespace from a URI</summary>
 		/// 
-		public static string GetNamespaceFromUri(string uri) {
-			// TODO: construct the namespace using th URL in the WSDL
+		public static string GetNamespaceFromUri(string uri)
+		{
+			// TODO: construct the namespace using the URL in the WSDL
 			string tmp = uri;
 			if(uri.IndexOf("://") > -1) {
 				tmp = uri.Substring(uri.IndexOf("://") + 3);
@@ -80,7 +84,8 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		}
 		
 		
-		public static ProjectReference GenerateWebProxyDLL(IProject project, ServiceDescription desc) {
+		public static ProjectReference GenerateWebProxyDLL(IProject project, ServiceDescription desc)
+		{
 			ProjectReference refInfo = null;
 			
 			string serviceName = String.Empty;
@@ -95,7 +100,7 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			StringBuilder savedir = new StringBuilder();
 			savedir.Append(project.BaseDirectory);
 			savedir.Append(Path.DirectorySeparatorChar);
-			savedir.Append("WebReferences");			
+			savedir.Append("Web References");			
 			// second, create the path if it doesn't exist
 			DirectoryInfo di;		
 			if(!Directory.Exists(savedir.ToString()))
@@ -139,46 +144,19 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 		///
 		/// <summary>Generates a Web Service proxy DLL from a URI</summary>
 		/// 
-		public static ProjectReference GenerateWebProxyDLL(IProject project, string url) {
-									
+		public static ProjectReference GenerateWebProxyDLL(IProject project, string url)
+		{							
 			ServiceDescription desc = ReadServiceDescription(url);						
-			return GenerateWebProxyDLL(project, desc);
-									
+			return GenerateWebProxyDLL(project, desc);					
 		}
 		
-		public static ArrayList GenerateWebProxyCode(IProject project, ServiceDescription desc) {		
-			ArrayList fileList = null;
-			ResourceService resourceService = (ResourceService)ServiceManager.Services.GetService(typeof(IResourceService));				 
-			
-			string serviceName = String.Empty;
-			if(desc.Services.Count > 0) {
-				serviceName = desc.Services[0].Name;
-			} else {
-				serviceName = "UnknownService";
-			}									
-			
-			string webRefFolder = "Web References";
-			string nmspace = GetNamespaceFromUri(desc.RetrievalUrl);
-												
-			StringBuilder savedir = new StringBuilder();
-			savedir.Append(project.BaseDirectory);
-			savedir.Append(Path.DirectorySeparatorChar);
-			savedir.Append(webRefFolder);
-			savedir.Append(Path.DirectorySeparatorChar);			
-			savedir.Append(GetDirectoryFromUri(desc.RetrievalUrl) + Path.DirectorySeparatorChar + serviceName);
-			
-			// second, create the path if it doesn't exist
-			DirectoryInfo di;		
-			if(!Directory.Exists(savedir.ToString()))
-			{
-				di = Directory.CreateDirectory(savedir.ToString());
-			}
-			
+		public static void GenerateWebProxyCode(string proxyNamespace, string fileName, ServiceDescription desc)
+		{
 			// generate the assembly
 			ServiceDescriptionImporter importer = new ServiceDescriptionImporter();
 			importer.AddServiceDescription(desc, null, null);
 			
-			CodeNamespace codeNamespace = new CodeNamespace(nmspace);
+			CodeNamespace codeNamespace = new CodeNamespace(proxyNamespace);
 			CodeCompileUnit codeUnit = new CodeCompileUnit();
 			codeUnit.Namespaces.Add(codeNamespace);
 			ServiceDescriptionImportWarnings warnings = importer.Import(codeNamespace, codeUnit);
@@ -186,102 +164,142 @@ namespace ICSharpCode.SharpDevelop.Gui.Dialogs
 			CodeDomProvider provider;
 			System.CodeDom.Compiler.ICodeGenerator generator;
 			
-			String ext = String.Empty;
-			switch(project.ProjectType) {
-				case "C#":
+			switch(Path.GetExtension(fileName).ToLower()) {
+				case ".cs":
 					provider = new Microsoft.CSharp.CSharpCodeProvider();
-					ext = "cs";
 					break;
-				case "VBNET":
+				case ".vb":
 					provider = new Microsoft.VisualBasic.VBCodeProvider();					
-					ext = "vb";
 					break;
 							
 				default:
-					// project type not supported error
+					// extension not supported
 					provider = null;			
 					break;
 			}
-
-			string filename = savedir.ToString() + Path.DirectorySeparatorChar + serviceName + "WebProxy." + ext;
-			string wsdlfilename = savedir.ToString() + Path.DirectorySeparatorChar + serviceName + ".wsdl";
-						
+			
 			if(provider != null) {				
-				StreamWriter sw = new StreamWriter(filename);
+				StreamWriter sw = new StreamWriter(fileName);
 
 				generator = provider.CreateGenerator();
 				CodeGeneratorOptions options = new CodeGeneratorOptions();
 				options.BracingStyle = "C";
 				generator.GenerateCodeFromCompileUnit(codeUnit, sw, options);
 				sw.Close();
+			}
+		}
+		
+		public static ArrayList GenerateWebProxyCode(string proxyNamespace, string referenceName, IProject project, ServiceDescription desc)
+		{
+			ArrayList fileList = null;			
+			string webRefFolder = "Web References";
+				
+			StringBuilder savedir = new StringBuilder();
+			savedir.Append(project.BaseDirectory);
+			savedir.Append(Path.DirectorySeparatorChar);
+			savedir.Append(webRefFolder);
+			savedir.Append(Path.DirectorySeparatorChar);
+			
+			referenceName = GetReferenceName(project, savedir.ToString(), referenceName);
+			savedir.Append(referenceName);
+			
+			// second, create the path if it doesn't exist
+			Directory.CreateDirectory(savedir.ToString());
+			
+			String ext = String.Empty;
+			switch(project.ProjectType) {
+				case "C#":
+					ext = ".cs";
+					break;
+				case "VBNET":
+					ext = ".vb";
+					break;
+							
+				default:
+					break;
+			}
 
-				if(File.Exists(filename)) 
-				{
-					fileList = new ArrayList();
-					
-					// add project files to the list
-					ProjectFile pfile = new ProjectFile();
-					
-					pfile.Name = project.BaseDirectory + Path.DirectorySeparatorChar + webRefFolder;
-					pfile.BuildAction = BuildAction.Nothing;					
-					pfile.Subtype = Subtype.WebReferences;
-					pfile.DependsOn = String.Empty;
-					pfile.Data = String.Empty;										
-					fileList.Add(pfile);
-					
-					/*
-					pfile = new ProjectFile();
-					pfile.Name = project.BaseDirectory + @"\Web References\" + nmspace;
-					pfile.BuildAction = BuildAction.Nothing;
-					pfile.Subtype = Subtype.Directory;
-					pfile.DependsOn = project.BaseDirectory + @"\Web References\";
-					pfile.WebReferenceUrl = String.Empty;															
-					fileList.Add(pfile);
-					*/					
-					/*
-					pfile = new ProjectFile();
-					pfile.Name = project.BaseDirectory + @"\Web References\" + nmspace + @"\" + serviceName;
-					pfile.BuildAction = BuildAction.Nothing;
-					pfile.Subtype = Subtype.Directory;
-					pfile.DependsOn = project.BaseDirectory + @"\Web References\" + nmspace + @"\";
-					pfile.WebReferenceUrl = desc.RetrievalUrl;
-					fileList.Add(pfile);										
-					*/
-					// the Web Reference Proxy
-					pfile = new ProjectFile();
-					pfile.Name = filename;
-					pfile.BuildAction = BuildAction.Compile;
-					pfile.Subtype = Subtype.Code;
-					pfile.DependsOn = project.BaseDirectory + Path.DirectorySeparatorChar + webRefFolder;
-					pfile.Data = desc.RetrievalUrl;					
-					fileList.Add(pfile);										
-					
-					// the WSDL File used to generate the Proxy
-					desc.Write(wsdlfilename);
-					pfile = new ProjectFile();
-					pfile.Name = wsdlfilename;
-					pfile.BuildAction = BuildAction.Nothing;
-					pfile.Subtype = Subtype.Code;
-					pfile.DependsOn = project.BaseDirectory + Path.DirectorySeparatorChar + webRefFolder;
-					pfile.Data = desc.RetrievalUrl;
-					fileList.Add(pfile);
-				}
+			string filename = String.Concat(savedir.ToString(), Path.DirectorySeparatorChar, GetServiceName(desc), ext);
+			string wsdlfilename = String.Concat(savedir.ToString(), Path.DirectorySeparatorChar, GetServiceName(desc), ".wsdl");
+			
+			GenerateWebProxyCode(proxyNamespace, filename, desc);
+
+			if(File.Exists(filename)) 
+			{
+				fileList = new ArrayList();
+				
+				// add project files to the list
+				ProjectFile pfile = new ProjectFile();
+				
+				pfile.Name = project.BaseDirectory + Path.DirectorySeparatorChar + webRefFolder;
+				pfile.BuildAction = BuildAction.Nothing;					
+				pfile.Subtype = Subtype.WebReferences;
+				pfile.DependsOn = String.Empty;
+				pfile.Data = String.Empty;										
+				fileList.Add(pfile);
+				
+				// the Web Reference
+				pfile = new ProjectFile();
+				pfile.Name = savedir.ToString();
+				pfile.BuildAction = BuildAction.Nothing;
+				pfile.Subtype = Subtype.WebReference;
+				pfile.DependsOn = project.BaseDirectory + Path.DirectorySeparatorChar + webRefFolder;
+				pfile.Data = desc.RetrievalUrl;					
+				fileList.Add(pfile);										
+				
+				// the Web Reference Proxy
+				pfile = new ProjectFile();
+				pfile.Name = filename;
+				pfile.BuildAction = BuildAction.Compile;
+				pfile.Subtype = Subtype.Code;
+				pfile.Data = proxyNamespace;
+				pfile.DependsOn = savedir.ToString();
+				fileList.Add(pfile);										
+				
+				// the WSDL File used to generate the Proxy
+				desc.Write(wsdlfilename);
+				pfile = new ProjectFile();
+				pfile.Name = wsdlfilename;
+				pfile.BuildAction = BuildAction.Nothing;
+				pfile.Subtype = Subtype.Code;
+				pfile.Data = "WSDL";
+				pfile.DependsOn = savedir.ToString();
+				fileList.Add(pfile);
 			}
 			
 			return fileList;
 		}
+	
+		public static string GetServiceName(ServiceDescription desc)
+		{
+			string serviceName = String.Empty;
+			if(desc.Services.Count > 0) {
+				serviceName = desc.Services[0].Name;
+			} else {
+				serviceName = "UnknownService";
+			}	
+			
+			return serviceName;
+		}
 		
-		///
-		/// <summary>Generates a Web Service proxy class from a URI</summary>
-		/// 
-		public static ArrayList GenerateWebProxyCode(IProject project, string url) {
+		/// <summary>
+		/// Returns the reference name.  If the folder that will contain the 
+		/// web reference already exists this method looks for a new folder by 
+		/// adding a digit to the end of the reference name.
+		/// </summary>
+		static string GetReferenceName(IProject project, string baseFolderPath, string baseReferenceName)
+		{						
+			// if it is already in the project, or it does exists we get a new name.
+			int count = 1;
+			string referenceName = baseReferenceName;
+			string folder = Path.Combine(baseFolderPath, baseReferenceName);
+			while (project.IsFileInProject(folder) || Directory.Exists(folder)) {
+				referenceName = String.Concat(baseReferenceName, count.ToString());
+				folder = Path.Combine(baseFolderPath, referenceName);
+				++count;
+			}	
 			
-			
-			ServiceDescription desc = ReadServiceDescription(url);
-			
-			return GenerateWebProxyCode(project, desc);
-			
-			
+			return referenceName;
 		}
 	}
 }

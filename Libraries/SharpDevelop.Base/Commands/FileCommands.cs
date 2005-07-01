@@ -161,7 +161,6 @@ namespace ICSharpCode.SharpDevelop.Commands
 							fileService.RecentOpen.AddLastFile(fileName);
 							IMessageService messageService =(IMessageService)ServiceManager.Services.GetService(typeof(IMessageService));
 							messageService.ShowMessage(fileName, "${res:ICSharpCode.SharpDevelop.Commands.SaveFile.FileSaved}");
-							((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 						}
 					}
 				}

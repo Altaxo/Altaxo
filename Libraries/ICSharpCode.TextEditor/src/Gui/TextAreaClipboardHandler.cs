@@ -77,7 +77,6 @@ namespace ICSharpCode.TextEditor
 		
 		void DocumentSelectionChanged(object sender, EventArgs e)
 		{
-//			((DefaultWorkbench)WorkbenchSingleton.Workbench).UpdateToolbars();
 		}
 		
 		bool CopyTextToClipboard()
