@@ -18,4 +18,18 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
 
   public delegate double ErrorEvaluation(double yo, double yf);
+
+  public class ErrorEvaluationMethod
+  {
+    public static double Norm2(double yr, double yf)
+    {
+      double yd = yr-yf;
+      return yd*yd;
+    }
+
+    public static double Norm1(double yr, double yf)
+    {
+      return Math.Abs(yr-yf);
+    }
+  }
 }

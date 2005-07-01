@@ -30,8 +30,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 		public ParameterSetElementController(ParameterSetElement doc)
 		{
       _doc = doc;
-      _tempdoc = new ParameterSetElement();
-      _tempdoc.CopyFrom(doc);
+      _tempdoc = new ParameterSetElement(doc);
     }
 
     protected void Initialize()

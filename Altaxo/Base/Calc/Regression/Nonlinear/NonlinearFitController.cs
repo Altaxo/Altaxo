@@ -52,6 +52,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
     
     public void EhView_DoFit()
     {
+      if(true==this._parameterController.Apply())
+      {
+        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
+        _doc.FitEnsemble.Fit();
+        _doc.FitEnsemble.InitializeParameterSetFromEnsembleParameters(_doc.CurrentParameters);
+      }
+      else
+      {
+        Current.GUIFactoryService.ErrorMessageBox("Some of your parameter input is not valid!");
+      }
     }
     public void EhView_SelectFitFunction()
     {
@@ -71,7 +81,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       if(changed)
       {
-        _doc.FitEnsemble.
+        _doc.FitEnsemble.InitializeFittingSession();
+        _doc.FitEnsemble.InitializeParameterSetFromEnsembleParameters(_doc.CurrentParameters);
       }
     }
     #endregion

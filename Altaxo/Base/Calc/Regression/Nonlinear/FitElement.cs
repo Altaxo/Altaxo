@@ -150,6 +150,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _dependentVariables = new INumericColumn[1];
       _dependentVariables[0] = yColumn;
 
+      _errorEvaluation = new ErrorEvaluation[1];
+      _errorEvaluation[0] = new ErrorEvaluation(ErrorEvaluationMethod.Norm2);
+
       _rangeOfRows = IntegerRange.NewFromFirstAndCount(start,count);
 
     }
@@ -320,7 +323,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         for(int k=_independentVariables.Length-1;k>=0;k--)
           _independentValues[k] = _independentVariables[k].GetDoubleAt(_validNumericRows[i]);
 
-        _fitFunction.Evaluate(_independentValues,_parameterValues,_dependentValuesResult);
+        _fitFunction.Evaluate(_independentValues,parameter,_dependentValuesResult);
 
         // now calculate the deviation between fit and original
         for(int k=_dependentValuesResult.Length-1;k>=0;--k)

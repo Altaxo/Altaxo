@@ -22,6 +22,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// </summary>
     System.Collections.SortedList _ParametersSortedByName;
 
+    /// <summary>
+    /// Number of dependent variables.
+    /// </summary>
+    int _NumberOfDependentVariables;
+
+
     public FitElement this[int i]
     {
       get 
@@ -89,21 +95,52 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
 
-    /// <summary>
-    /// User-supplied subroutine which calculates the functions to minimize.
-    /// Calculates <c>numberOfYs</c> functions dependent on <c>numberOfParameter</c> parameters and
-    /// returns the calculated y values in array <c>ys</c>. The value of <c>info</c> should
-    /// not be changed unless  the user wants to terminate execution of LevenbergMarquardtFit. 
-    /// In this case set iflag to a negative integer. 
-    /// </summary>
-    public void LMFunction(
-      int numberOfYs, 
-      int numberOfParameter,
-      double[] parameter,
-      double[] ys,
-      ref int info)
+    public void InitializeParameterSetFromEnsembleParameters(ParameterSet pset)
     {
+      Hashtable oldset = new Hashtable();
+      foreach(ParameterSetElement ele in pset)
+      {
+        if(!oldset.ContainsKey(ele.Name))
+        oldset.Add(ele.Name,ele);
+      }
+
+      pset.Clear();
+      for(int i=0;i<this._parameterNames.Length;i++)
+      {
+        ParameterSetElement newele = new ParameterSetElement(this._parameterNames[i],this._parameterValues[i]);
+        if(oldset.ContainsKey(newele.Name))
+        {
+          ParameterSetElement oldele = (ParameterSetElement)oldset[newele.Name];
+          // newele.Parameter = oldele.Parameter;
+          newele.Vary = oldele.Vary;
+        }
+        pset.Add(newele);
+
+      }
+
+      pset.OnInitializationFinished();
     }
+
+
+    public void InitializeParametersFromParameterSet(ParameterSet pset)
+    {
+      if(pset.Count!=this._parameterNames.Length)
+        throw new ApplicationException("Number of parameters in ParameterSet does not match number of parameters in FitEnsemble!");
+
+      for(int i=0;i<pset.Count;i++)
+      {
+        this._parameterValues[i] = pset[i].Parameter;
+      }
+    }
+
+    class CachedFitElementInfo
+    {
+      public double[] Parameters;
+      public double [] Ys;
+      public int [] ParameterMapping;
+    }
+
+    CachedFitElementInfo[] _cachedFitElementInfo;
 
     public void InitializeFittingSession()
     {
@@ -130,15 +167,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
           _cachedFitElementInfo[ele].ParameterMapping[k] = (int)_ParametersSortedByName[this[ele].ParameterName(k)];
         }
       }
+
+      // Count the number of dependent variables
+      _NumberOfDependentVariables=0;
+      for(int ele=0;ele<InnerList.Count;ele++)
+        _NumberOfDependentVariables += _cachedFitElementInfo[ele].Ys.Length;
     }
 
-    class CachedFitElementInfo
-    {
-      public double[] Parameters;
-      public double [] Ys;
-      public int [] ParameterMapping;
-    }
-    CachedFitElementInfo[] _cachedFitElementInfo;
+   
 
     public void Evaluate(double[] parameter, double[] ys)
     {
@@ -159,6 +195,42 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
         ysoffset += this[ele].NumberOfDependentVariables;
       }
+
+    }
+
+    /// <summary>
+    /// User-supplied subroutine which calculates the functions to minimize.
+    /// Calculates <c>numberOfYs</c> functions dependent on <c>numberOfParameter</c> parameters and
+    /// returns the calculated y values in array <c>ys</c>. The value of <c>info</c> should
+    /// not be changed unless  the user wants to terminate execution of LevenbergMarquardtFit. 
+    /// In this case set iflag to a negative integer. 
+    /// </summary>
+    public void LMFunction(
+      int numberOfYs, 
+      int numberOfParameter,
+      double[] parameter,
+      double[] ys,
+      ref int info)
+    {
+      Evaluate(parameter,ys);
+
+      // TODO this is a speciality of the underlying levenberg marquard: it needs as many ys as number of
+      // parameters. We simulate that by copying the ys[0] to the ys that are missing.
+      if(_NumberOfDependentVariables<this._parameterValues.Length)
+      {
+        for(int i=this._parameterValues.Length-1;i>=_NumberOfDependentVariables;i--)
+          ys[i] = ys[0];
+      }
+    }
+
+
+    double[] _YS;
+    public void Fit()
+    {
+      int yslen = Math.Max(_NumberOfDependentVariables,this._parameterValues.Length);
+      _YS = new double[yslen];
+      int info=0;
+      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.LMFunction),this._parameterValues,_YS,1E-10,ref info);
 
     }
 
