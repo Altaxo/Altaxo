@@ -169,7 +169,7 @@
                 />
                 <File
                     RelPath = "Gui\ChooseRuntimePanel.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

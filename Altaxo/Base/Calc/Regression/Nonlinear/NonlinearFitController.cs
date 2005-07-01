@@ -9,6 +9,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     INonlinearFitViewEventSink Controller { get; set; }
     void SetParameterControl(object control);
     void SetSelectFunctionControl(object control);
+    void SetFitEnsembleControl(object control);
   }
 
   public interface INonlinearFitViewEventSink
@@ -29,11 +30,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     Main.GUI.IMVCAController _parameterController;
     FitFunctionSelectionController _funcselController;
+    IFitEnsembleController _fitEnsembleController;
 
     public NonlinearFitController(NonlinearFitDocument doc)
     {
       _doc = doc;
       _parameterController = (Main.GUI.IMVCAController)Current.GUIFactoryService.GetControllerAndControl(new object[]{_doc.CurrentParameters},typeof(Main.GUI.IMVCAController));
+      _fitEnsembleController = (IFitEnsembleController)Current.GUIFactoryService.GetControllerAndControl(new object[]{_doc.FitEnsemble},typeof(IFitEnsembleController));
+
       _funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count==0 ? null : _doc.FitEnsemble[0].FitFunction);
       Current.GUIFactoryService.GetControl(_funcselController);
     
@@ -45,6 +49,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         _view.SetParameterControl(_parameterController.ViewObject);
         _view.SetSelectFunctionControl(_funcselController.ViewObject);
+        _view.SetFitEnsembleControl(_fitEnsembleController.ViewObject);
       }
     }
 

@@ -199,7 +199,32 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Calc\Regression\Nonlinear\FitElementControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\FitElementControl.resx"
+                    DependentUpon = "FitElementControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Calc\Regression\Nonlinear\FitEnsemble.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\FitEnsembleControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\FitEnsembleControl.resx"
+                    DependentUpon = "FitEnsembleControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\FitEnsembleController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
