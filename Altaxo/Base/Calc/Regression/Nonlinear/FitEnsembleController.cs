@@ -9,7 +9,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
   {
     IFitEnsembleViewEventSink Controller { get; set; }
 
-    void Initialize(FitEnsemble ensemble);
+    void Initialize(FitEnsemble ensemble, object[] fitEleControls);
   }
 
   public interface IFitEnsembleViewEventSink
@@ -18,6 +18,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
   public interface IFitEnsembleController : IMVCAController
   {
+    void Refresh();
   }
 
   #endregion
@@ -30,19 +31,72 @@ namespace Altaxo.Calc.Regression.Nonlinear
     IFitEnsembleView _view;
     FitEnsemble _doc;
 
-		public FitEnsembleController(FitEnsemble doc)
+    IFitElementController[] _fitEleController;
+    int _currentFitFunctionSelIndex;
+
+    public FitEnsembleController(FitEnsemble doc)
 		{
       _doc = doc;
       Initialize();
 
     }
 
+    void Uninitialize()
+    {
+      if(_fitEleController!=null)
+      {
+        for(int i=0;i<_fitEleController.Length;i++)
+        {
+          _fitEleController[i].FitFunctionSelectionChange -= new EventHandler(EhFitFunctionSelectionChange);
+          _fitEleController[i]=null;
+        }
+      }
+    }
     public void Initialize()
     {
+      Uninitialize();
+
+      _fitEleController = new IFitElementController[_doc.Count];
+
+      object[] fitEleControls = new object[_doc.Count];
+      for(int i=0;i<_doc.Count;i++)
+      {
+        _fitEleController[i] = (IFitElementController)Current.GUIFactoryService.GetControllerAndControl(new object[]{_doc[i]},typeof(IFitElementController));
+        fitEleControls[i] = _fitEleController[i].ViewObject;
+
+        _fitEleController[i].FitFunctionSelectionChange += new EventHandler(EhFitFunctionSelectionChange);
+      }
+
       if(_view!=null)
-        _view.Initialize(_doc);
+        _view.Initialize(_doc,fitEleControls);
     }
 
+    void EhFitFunctionSelectionChange(object sender, System.EventArgs e)
+    {
+      _currentFitFunctionSelIndex = GetIndexOfController(sender);
+
+      for(int i=0;i<_fitEleController.Length;i++)
+      {
+         _fitEleController[i].FitFunctionSelected = (_currentFitFunctionSelIndex==i);
+      }
+
+     
+
+    }
+
+    int GetIndexOfController(object sender)
+    {
+      for(int i=0;i<_fitEleController.Length;i++)
+        if(object.ReferenceEquals(sender,_fitEleController[i]))
+          return i;
+
+      return -1;
+    }
+
+    public void Refresh()
+    {
+      Initialize();
+    }
     #region IMVCController Members
 
     public object ViewObject

@@ -150,7 +150,15 @@
     </Compile>
     <Compile Include="Calc\Regression\Nonlinear\ErrorScaling.cs" />
     <Compile Include="Calc\Regression\Nonlinear\FitElement.cs" />
+    <Compile Include="Calc\Regression\Nonlinear\FitElementControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Nonlinear\FitElementController.cs" />
     <Compile Include="Calc\Regression\Nonlinear\FitEnsemble.cs" />
+    <Compile Include="Calc\Regression\Nonlinear\FitEnsembleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Calc\Regression\Nonlinear\FitEnsembleController.cs" />
     <Compile Include="Calc\Regression\Nonlinear\FitFunctionAttribute.cs" />
     <Compile Include="Calc\Regression\Nonlinear\FitFunctionSelectionControl.cs">
       <SubType>UserControl</SubType>
@@ -472,6 +480,10 @@
     <Compile Include="Graph\GUI\OrgEndSpanControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Graph\GUI\SingleColumnChoiceControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Graph\GUI\SingleColumnChoiceController.cs" />
     <Compile Include="Graph\GUI\TextControlDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -954,6 +966,12 @@
     <Compile Include="Worksheet\WorksheetLayoutCollection.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="Calc\Regression\Nonlinear\FitElementControl.resx">
+      <DependentUpon>FitElementControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Calc\Regression\Nonlinear\FitEnsembleControl.resx">
+      <DependentUpon>FitEnsembleControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Calc\Regression\Nonlinear\FitFunctionSelectionControl.resx">
       <DependentUpon>FitFunctionSelectionControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -998,6 +1016,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Graph\GUI\OrgEndSpanControl.resx">
       <DependentUpon>OrgEndSpanControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Graph\GUI\SingleColumnChoiceControl.resx">
+      <DependentUpon>SingleColumnChoiceControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Graph\GUI\TextControlDialog.resx">
       <DependentUpon>TextControlDialog.cs</DependentUpon>

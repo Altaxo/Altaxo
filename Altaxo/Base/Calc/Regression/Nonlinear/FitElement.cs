@@ -54,70 +54,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
   
-    class RangedNumericColumn
-    {
-      protected INumericColumn _column;
-      private IntegerRange _range;
-
-      protected IntegerRange Range
-      {
-        get { return _range; }
-        set { _range = value; }
-      }
-
-      public INumericColumn Column
-      {
-        get
-        {
-          return _column;
-        }
-      }
-    }
-    class RangedNumericColumnAndErrorScaling : RangedNumericColumn
-    {
-      protected ErrorScaling _scaling;
-    }
-
-    class RangedNumericColumnArray : System.Collections.CollectionBase
-    {
-      public RangedNumericColumn this[int i]
-      {
-        get 
-        {
-          return (RangedNumericColumn)InnerList[i];
-        }
-        set
-        {
-          InnerList[i] = value;
-        }
-      }
-
-      public void Add(RangedNumericColumn col)
-      {
-        InnerList.Add(col);
-      }
-    }
-
-    class RangedNumericColumnAndErrorScalingArray : System.Collections.CollectionBase
-    {
-      public RangedNumericColumnAndErrorScaling this[int i]
-      {
-        get 
-        {
-          return (RangedNumericColumnAndErrorScaling)InnerList[i];
-        }
-        set
-        {
-          InnerList[i] = value;
-        }
-      }
-
-      public void Add(RangedNumericColumnAndErrorScaling col)
-      {
-        InnerList.Add(col);
-      }
-    }
-
+    
 
     #endregion
     /// <summary>
@@ -127,7 +64,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     IntegerRange _rangeOfRows;
     INumericColumn[] _independentVariables;
     INumericColumn[] _dependentVariables;
-    ErrorEvaluation[] _errorEvaluation;
+    IErrorEvaluation[] _errorEvaluation;
     string [] _parameterNames = new string[0];
     string _parameterNameStart=string.Empty;
 
@@ -137,9 +74,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
     double [] _dependentValuesResult;
     AscendingIntegerCollection _validNumericRows;
 
+    public event EventHandler Changed;
+
 
     public FitElement()
     {
+      _independentVariables = new INumericColumn[0];
+    
+      _dependentVariables = new INumericColumn[0];
+     
+      _errorEvaluation = new IErrorEvaluation[0];
+      _rangeOfRows = IntegerRange.NewFromFirstAndCount(0,int.MaxValue);
     }
 
     public FitElement(INumericColumn xColumn, INumericColumn yColumn, int start, int count)
@@ -150,8 +95,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _dependentVariables = new INumericColumn[1];
       _dependentVariables[0] = yColumn;
 
-      _errorEvaluation = new ErrorEvaluation[1];
-      _errorEvaluation[0] = new ErrorEvaluation(ErrorEvaluationMethod.Norm2);
+      _errorEvaluation = new IErrorEvaluation[1];
+      _errorEvaluation[0] = new Norm2ErrorEvaluation();
 
       _rangeOfRows = IntegerRange.NewFromFirstAndCount(start,count);
 
@@ -168,6 +113,60 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
       else
         return null;
+    }
+
+    public INumericColumn IndependentVariables(int i)
+    {
+      return this._independentVariables[i];
+    }
+
+    public void SetIndependentVariable(int i, INumericColumn col)
+    {
+      this._independentVariables[i] = col;
+    }
+
+    public INumericColumn DependentVariables(int i)
+    {
+      return this._dependentVariables[i];
+    }
+
+    public void SetDependentVariable(int i, INumericColumn col)
+    {
+      this._dependentVariables[i] = col;
+      
+      if(col!=null)
+      {
+        if(this._errorEvaluation[i]==null)
+          this._errorEvaluation[i] = new Norm2ErrorEvaluation();
+      }
+      else
+      {
+        this._errorEvaluation[i] = null;
+      }
+    }
+
+    public IErrorEvaluation ErrorEvaluation(int i)
+    {
+      return this._errorEvaluation[i];
+    }
+
+    public void SetErrorEvaluation(int i, IErrorEvaluation val)
+    {
+      this._errorEvaluation[i] = val;
+    }
+
+    public void SetParameterValues(double[] para)
+    {
+      for(int i=0;i<_parameterValues.Length;i++)
+        _parameterValues[i] = para[i];
+    }
+
+    public double[] ParameterValues
+    {
+      get
+      {
+        return _parameterValues;
+      }
     }
 
     public IFitFunction FitFunction
@@ -189,6 +188,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
           if(_fitFunction.NumberOfParameters!=_parameterNames.Length)
             InternalReallocParameters(_fitFunction.NumberOfParameters);
         }
+
+        OnChanged();
+
       }
     }
 
@@ -215,8 +217,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       // do the same also with the error scaling
 
-      ErrorEvaluation[] oldArr = _errorEvaluation;
-      ErrorEvaluation[] newArr = new ErrorEvaluation[noDep];
+      IErrorEvaluation[] oldArr = _errorEvaluation;
+      IErrorEvaluation[] newArr = new IErrorEvaluation[noDep];
       for(int i=Math.Min(newArr.Length,oldArr.Length)-1;i>=0;i--)
         newArr[i] = oldArr[i];
       this._errorEvaluation = newArr;
@@ -226,6 +228,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     void InternalReallocParameters(int noPar)
     {
       this._parameterNames = new string[noPar];
+      this._parameterValues = new double[noPar];
     }
     
 
@@ -253,6 +256,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    protected virtual void OnChanged()
+    {
+      if (null != Changed)
+        Changed(this, EventArgs.Empty);
+    }
 
     public void InitializeFittingSession()
     {
@@ -287,6 +295,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
             maxLength = Math.Min(maxLength,((IDefinedCount)cols[i]).Count);
         }
       }
+      if(maxLength==int.MaxValue)
+        maxLength=0;
+
       maxLength=Math.Min(maxLength,this._rangeOfRows.End);
 
       bool[] arr = Altaxo.Calc.LinearAlgebra.DataTableWrapper.GetValidNumericRows(cols,selectedCols,maxLength);
@@ -328,7 +339,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
         // now calculate the deviation between fit and original
         for(int k=_dependentValuesResult.Length-1;k>=0;--k)
         {
-          ys[k] += _errorEvaluation[k](_dependentValuesResult[k],_dependentVariables[k].GetDoubleAt(_validNumericRows[i]));
+          if(_dependentVariables[k]!=null)
+            ys[k] += _errorEvaluation[k].EvaluateError(_dependentVariables[k].GetDoubleAt(_validNumericRows[i]),_dependentValuesResult[k]);
         }
       }
     }

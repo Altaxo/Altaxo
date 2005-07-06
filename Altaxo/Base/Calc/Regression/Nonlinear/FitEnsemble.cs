@@ -27,6 +27,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// </summary>
     int _NumberOfDependentVariables;
 
+    public event EventHandler Changed;
 
     public FitElement this[int i]
     {
@@ -36,16 +37,31 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
       set
       {
+        FitElement oldValue = this[i];
+        oldValue.Changed -= new EventHandler(EhChildChanged);
+
         InnerList[i] = value;
+        value.Changed += new EventHandler(EhChildChanged);
       }
     }
 
     public void Add(FitElement e)
     {
       InnerList.Add(e);
+      e.Changed += new EventHandler(EhChildChanged);
     }
 
 
+    protected virtual void OnChanged()
+    {
+      if (null != Changed)
+        Changed(this, EventArgs.Empty);
+    }
+
+    protected virtual void EhChildChanged(object obj, EventArgs e)
+    {
+      OnChanged();
+    }
     
     #region Fit parameters
 
@@ -198,6 +214,22 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     }
 
+    public void DistributeParameters()
+    {
+      double[] parameter = this._parameterValues;
+
+      for(int ele=0;ele<InnerList.Count;ele++)
+      {
+        CachedFitElementInfo info = _cachedFitElementInfo[ele];
+
+        // copy of the parameter
+        for(int i=0;i<info.Parameters.Length;i++)
+          info.Parameters[i] = parameter[info.ParameterMapping[i]];
+
+        this[ele].SetParameterValues(info.Parameters);
+      }
+    }
+
     /// <summary>
     /// User-supplied subroutine which calculates the functions to minimize.
     /// Calculates <c>numberOfYs</c> functions dependent on <c>numberOfParameter</c> parameters and
@@ -232,6 +264,22 @@ namespace Altaxo.Calc.Regression.Nonlinear
       int info=0;
       NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(this.LMFunction),this._parameterValues,_YS,1E-10,ref info);
 
+    }
+
+    public double GetChiSqr()
+    {
+      int yslen = Math.Max(_NumberOfDependentVariables,this._parameterValues.Length);
+
+      _YS = new double[yslen];
+
+      int info=0;
+      LMFunction(_NumberOfDependentVariables,this._parameterValues.Length,this._parameterValues,_YS, ref info);
+
+      double result = 0;
+      for(int i=0;i<_NumberOfDependentVariables;++i)
+        result += _YS[i];
+    
+      return result;
     }
 
     #endregion

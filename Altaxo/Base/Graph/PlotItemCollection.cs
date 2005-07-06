@@ -306,6 +306,15 @@ namespace Altaxo.Graph
       OnChanged();
     }
 
+    public void Remove(Graph.PlotItem plotitem)
+    {
+      int idx = IndexOf(plotitem);
+      if(idx>=0)
+      {
+        RemoveAt(idx);
+      }
+    }
+
     public PlotItem this[int i]
     {
       get { return (PlotItem)base.InnerList[i]; }

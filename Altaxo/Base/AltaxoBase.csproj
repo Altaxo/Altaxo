@@ -209,6 +209,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Calc\Regression\Nonlinear\FitElementController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Calc\Regression\Nonlinear\FitEnsemble.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -245,6 +250,16 @@
                 />
                 <File
                     RelPath = "Calc\Regression\Nonlinear\FitFunctionSelectionController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\FitFunctionToScalarFunctionDDWrapper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Calc\Regression\Nonlinear\HavriliakNegamiFunction.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -965,6 +980,21 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Graph\GUI\SingleColumnChoiceControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\GUI\SingleColumnChoiceControl.resx"
+                    DependentUpon = "SingleColumnChoiceControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Graph\GUI\SingleColumnChoiceController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\GUI\TextControlDialog.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -1266,6 +1296,11 @@
                 />
                 <File
                     RelPath = "Main\GUI\SingleChoiceObjectController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Main\GUI\SingleInstanceChoiceController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

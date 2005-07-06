@@ -209,8 +209,17 @@ namespace Altaxo.Worksheet.GUI
       {
         foreach(string s in m_TableScript.Errors)
         {
-          string news = compilerErrorRegex.Match(s).Result("(${line},${column}) : ${msg}");
-          View.AddCompilerError(news);
+          System.Text.RegularExpressions.Match match = compilerErrorRegex.Match(s);
+          if(match.Success)
+          {
+            string news = match.Result("(${line},${column}) : ${msg}");
+          
+            View.AddCompilerError(news);
+          }
+          else
+          {
+            View.AddCompilerError(s);
+          }
         }
   
 

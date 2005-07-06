@@ -70,7 +70,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
-    public void Initialize(FitEnsemble ensemble)
+    public void Initialize(FitEnsemble ensemble, object[] fitEleControls)
     {
       // remove all child controls first.
       this.Controls.Clear();
@@ -79,15 +79,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
       // position the elements
 
       int currentYPosition = 0;
-      for(int i=0;i<ensemble.Count;i++)
+      for(int i=0;i<fitEleControls.Length;i++)
       {
-        FitElementControl fectrl = new FitElementControl();
-        fectrl.Initialize(ensemble[i]);
+        Control fectrl = (Control)fitEleControls[i];
         fectrl.Location = new Point(0,currentYPosition);
+        fectrl.Size = new Size(this.ClientSize.Width, fectrl.Size.Height);
+        fectrl.Anchor = AnchorStyles.Left | AnchorStyles.Right;
         this.Controls.Add(fectrl);
 
         currentYPosition += fectrl.Size.Height;
-        currentYPosition += fectrl.SlotHeight;
+        currentYPosition += System.Windows.Forms.SystemInformation.MenuHeight;
       }
     }
 

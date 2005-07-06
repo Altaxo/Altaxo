@@ -26,291 +26,661 @@ using System.CodeDom.Compiler;
 using System.Reflection;
 using Altaxo.Serialization;
 using Altaxo.Data;
+using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Graph
 {
 
-    public interface IParametrizedFunctionDDScriptText : IScriptText
+  public interface IParametrizedFunctionDDScriptText : IScriptText
+  {
+       
+
+    /// <summary>
+    /// Get / sets the number of parameters. If setting the number of parameters with this property,
+    /// the property <see>IsUsingUserDefinedParameterNames</see> is set to false.
+    /// </summary>
+    int NumberOfParameters { get; set; }
+
+    /// <summary>
+    /// Returns true if the script uses user defined parameter names instead of using P[0], P[1] ...
+    /// </summary>
+    bool IsUsingUserDefinedParameterNames { get; }
+
+    /// <summary>
+    /// Get / sets the user defined parameter names. If setting, this also sets the property
+    /// <see>IsUsingUserDefinedParameterNames</see> to true, and the <see>NumberOfParameters</see> to the given number
+    /// of user defined parameters.
+    /// </summary>
+    string[] UserDefinedParameterNames { get; set; }
+
+    string[] DependentVariablesNames { set; }
+
+    string[] IndependentVariablesNames { set; }
+  }
+
+  /// <summary>
+  /// Holds the text, the module (=executable), and some properties of a property column script. 
+  /// </summary>
+
+  public class ParametrizedFunctionDDScript : AbstractScript, IParametrizedFunctionDDScriptText, IFitFunction
+  {
+    /// <summary>
+    /// Number of Parameters
+    /// </summary>
+    int _NumberOfParameters;
+
+    string[] _IndependentVariablesNames = new string[]{"x"};
+    string[] _DependentVariablesNames = new string[]{"y"};
+
+
+    /// <summary>
+    /// True if we use user defined parameter names in the script.
+    /// </summary>
+    bool _IsUsingUserDefinedParameterNames;
+
+    /// <summary>
+    /// Names of the parameters. This is set to null if no parameter names where provided.
+    /// </summary>
+    string[] _UserDefinedParameterNames;
+  
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Graph.ParametrizedFunctionDDScript), 0)]
+      public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-        /// <summary>
-        /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-        /// If the script object exists, the function "Evaluate" will be called.
-        /// </summary>
-        /// <param name="x">The function argument.</param>
-        /// <returns>The function value.</returns>
-        /// <remarks>If exceptions were thrown during execution, the return value is double.NaN.
-        /// </remarks>
-        double Evaluate(double x);
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        Altaxo.Data.AbstractScript s = (Altaxo.Data.AbstractScript)obj;
 
-      double Evaluate(double x, double[] parameters);
+        info.AddBaseValueEmbedded(s, typeof(Altaxo.Data.AbstractScript));
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        Altaxo.Graph.ParametrizedFunctionDDScript s = null != o ? (Altaxo.Graph.ParametrizedFunctionDDScript)o : new Altaxo.Graph.ParametrizedFunctionDDScript();
 
-      /// <summary>
-      /// Get / sets the number of parameters. If setting the number of parameters with this property,
-      /// the property <see>IsUsingUserDefinedParameterNames</see> is set to false.
-      /// </summary>
-      int NumberOfParameters { get; set; }
+        // deserialize the base class
+        info.GetBaseValueEmbedded(s, typeof(Altaxo.Data.AbstractScript), parent);
 
-      /// <summary>
-      /// Returns true if the script uses user defined parameter names instead of using P[0], P[1] ...
-      /// </summary>
-      bool IsUsingUserDefinedParameterNames { get; }
+        return s;
+      }
+    }
 
-      /// <summary>
-      /// Get / sets the user defined parameter names. If setting, this also sets the property
-      /// <see>IsUsingUserDefinedParameterNames</see> to true, and the <see>NumberOfParameters</see> to the given number
-      /// of user defined parameters.
-      /// </summary>
-      string[] UserDefinedParameterNames { get; set; }
+
+    #endregion
+
+
+    /// <summary>
+    /// Creates an empty script.
+    /// </summary>
+    public ParametrizedFunctionDDScript()
+    {
+      _IndependentVariablesNames = new string[]{"x"};
+      _DependentVariablesNames = new string[]{"y"};
     }
 
     /// <summary>
-    /// Holds the text, the module (=executable), and some properties of a property column script. 
+    /// Creates a column script as a copy from another script.
     /// </summary>
-
-    public class ParametrizedFunctionDDScript : AbstractScript, IParametrizedFunctionDDScriptText
+    /// <param name="b">The script to copy from.</param>
+    public ParametrizedFunctionDDScript(ParametrizedFunctionDDScript b)
+      : base(b)
     {
-        /// <summary>
-        /// Number of Parameters
-        /// </summary>
-        int _NumberOfParameters;
+    }
 
-        /// <summary>
-        /// True if we use user defined parameter names in the script.
-        /// </summary>
-        bool _IsUsingUserDefinedParameterNames;
+    /// <summary>
+    /// Gives the type of the script object (full name), which is created after successfull compilation.
+    /// </summary>
+    public override string ScriptObjectType
+    {
+      get { return "Altaxo.Calc.MyParametrizedFunctionDDScript"; }
+    }
 
-        /// <summary>
-        /// Names of the parameters. This is set to null if no parameter names where provided.
-        /// </summary>
-        string[] _UserDefinedParameterNames;
-        /// <summary>
-        /// Values of the parameters.
-        /// </summary>
-        double[] _parameterValues;
-
-        #region Serialization
-
-        [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Graph.ParametrizedFunctionDDScript), 0)]
-        public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-        {
-            public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-            {
-                Altaxo.Data.AbstractScript s = (Altaxo.Data.AbstractScript)obj;
-
-                info.AddBaseValueEmbedded(s, typeof(Altaxo.Data.AbstractScript));
-            }
-            public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-            {
-                Altaxo.Graph.ParametrizedFunctionDDScript s = null != o ? (Altaxo.Graph.ParametrizedFunctionDDScript)o : new Altaxo.Graph.ParametrizedFunctionDDScript();
-
-                // deserialize the base class
-                info.GetBaseValueEmbedded(s, typeof(Altaxo.Data.AbstractScript), parent);
-
-                return s;
-            }
-        }
-
-
-        #endregion
-
-
-        /// <summary>
-        /// Creates an empty script.
-        /// </summary>
-        public ParametrizedFunctionDDScript()
-        {
-        }
-
-        /// <summary>
-        /// Creates a column script as a copy from another script.
-        /// </summary>
-        /// <param name="b">The script to copy from.</param>
-        public ParametrizedFunctionDDScript(ParametrizedFunctionDDScript b)
-            : base(b)
-        {
-        }
-
-        /// <summary>
-        /// Gives the type of the script object (full name), which is created after successfull compilation.
-        /// </summary>
-        public override string ScriptObjectType
-        {
-            get { return "Altaxo.Calc.MyParametrizedFunctionDDScript"; }
-        }
-
-        /// <summary>
-        /// Gets the code header, i.e. the leading script text. It depends on the ScriptStyle.
-        /// </summary>
-        public override string CodeHeader
-        {
-            get
-            {
-                return
-                  "using System;\r\n" +
-                  "using Altaxo;\r\n" +
-                  "using Altaxo.Calc;\r\n" +
-                  "using Altaxo.Data;\r\n" +
-                  "namespace Altaxo.Calc\r\n" +
-                  "{\r\n" +
-                  "\tpublic class MyParametrizedFunctionDDScript : Altaxo.Calc.FunctionEvaluationScriptBase\r\n" +
-                  "\t{\r\n" +
-                  "\t\tpublic override double EvaluateFunctionValue(double x, double[]P)\r\n" +
-                  "\t\t{\r\n"+
-                  ParameterRegionStart+
-                  ParameterRegionEnd;
-            }
-        }
-
-        public string ParameterRegionStart
-        {
-          get
-          {
-            return "#region Start of parameter naming\r\n";
-          }
-        }
-      public string ParameterRegionEnd
+    /// <summary>
+    /// Gets the code header, i.e. the leading script text. It depends on the ScriptStyle.
+    /// </summary>
+    public override string CodeHeader
+    {
+      get
       {
-        get
-        {
-          return "#endregion // parameter naming\r\n";
-        }
+        return
+          "using System;\r\n" +
+          "using Altaxo;\r\n" +
+          "using Altaxo.Calc;\r\n" +
+          "using Altaxo.Data;\r\n" +
+          "using Altaxo.Calc.Regression.Nonlinear;\r\n" + 
+          "namespace Altaxo.Calc\r\n" +
+          "{\r\n" +
+          "\tpublic class MyParametrizedFunctionDDScript : Altaxo.Calc.ScriptExecutionBase, IFitFunction\r\n" +
+          "\t{\r\n" +
+          this.IndependentDefinitionRegionStart+
+          this.IndependentDefinitionRegionCore+
+          this.IndependentDefinitionRegionEnd+
+          this.DependentDefinitionRegionStart+
+          this.DependentDefinitionRegionCore+
+          this.DependentDefinitionRegionEnd+
+          this.ParameterDefinitionRegionStart+
+          this.ParameterDefinitionRegionCore+
+          this.ParameterDefinitionRegionEnd+
+          "\t\tpublic override double EvaluateFunctionValue(double[] X, double[] P, double[] Y)\r\n" +
+          "\t\t{\r\n"+
+          IndependentAssignmentRegionStart+
+          "\t\t\tx=X[0];"+
+          IndependentAssignmentRegionEnd+
+          ParameterAssignmentRegionStart+
+          ParameterAssignmentRegionCore+
+          ParameterAssignmentRegionEnd;
       }
-
-        public override string CodeStart
-        {
-            get
-            {
-                return
-                  "\t\t\t// ----- add your script below this line -----\r\n";
-            }
-        }
-
-        public override string CodeUserDefault
-        {
-            get
-            {
-                return
-                  "\t\t\t\r\n" +
-                  "\t\t\treturn P[0]+P[1]*Sin(x);\r\n" +
-                  "\t\t\t\r\n"
-                  ;
-            }
-        }
-
-        public override string CodeEnd
-        {
-            get
-            {
-                return
-                  "\t\t\t// ----- add your script above this line -----\r\n";
-            }
-        }
-
-        /// <summary>
-        /// Get the ending text of the script, dependent on the ScriptStyle.
-        /// </summary>
-        public override string CodeTail
-        {
-            get
-            {
-                return
-
-                  "\t\t} // method\r\n" +
-                  "\t} // class\r\n" +
-                  "} //namespace\r\n";
-            }
-        }
-
-
-
-        /// <summary>
-        /// Clones the script.
-        /// </summary>
-        /// <returns>The cloned object.</returns>
-        public override object Clone()
-        {
-            return new Altaxo.Graph.ParametrizedFunctionDDScript(this);
-        }
-
-      public int NumberOfParameters
+    }
+    public string ParameterDefinitionRegionStart
+    {
+      get
       {
-        get
-        {
-          return this._NumberOfParameters;
-        }
-        set
-        {
-          this._IsUsingUserDefinedParameterNames = false;
-          this._NumberOfParameters = value;
-        }
+        return "#region Parameter Definition\r\n";
       }
-
-      public bool IsUsingUserDefinedParameterNames
+    }
+    public string ParameterDefinitionRegionCore
+    {
+      get
       {
-        get 
+        return string.Empty;
+      }
+    }
+    
+
+    public string ParameterDefinitionRegionEnd
+    {
+      get
+      {
+        return "#endregion // Parameter Definition\r\n";
+      }
+    }
+    public string ParameterAssignmentRegionStart
+    {
+      get
+      {
+        return "#region Parameter Assignment\r\n";
+      }
+    }
+    public string ParameterAssignmentRegionCore
+    {
+      get
+      {
+        return "";
+      }
+    }
+    public string ParameterAssignmentRegionEnd
+    {
+      get
+      {
+        return "#endregion // Parameter Assignment\r\n";
+      }
+    }
+
+
+
+    public string DependentDefinitionRegionStart
+    {
+      get
+      {
+        return "#region Dependent Variable Definition\r\n";
+      }
+    }
+    public string DependentDefinitionRegionCore
+    {
+      get
+      {
+        System.Text.StringBuilder stb = new System.Text.StringBuilder();
+        stb.Append(
+          "return  private string[] _dependentVariableName = new string[]{");
+      
+
+        for(int i=0;i<this._DependentVariablesNames.Length;i++)
         {
-          return this._IsUsingUserDefinedParameterNames;
+          stb.Append("\"" + this._DependentVariablesNames[i] + "\"");
+          if((i+1)<this._DependentVariablesNames.Length)
+            stb.Append(",");
+          else
+            stb.Append("};\r\n");
         }
+
+
+        stb.Append(
+          " };\r\n" + 
+          "public int NumberOfDependentVariables\r\n" +
+          "{\r\n"+
+          "\tget\r\n"+
+          "\t{"+
+          "\treturn _dependentVariableName.Length;\r\n"+
+          "\t}\r\n"+
+          "\t}\r\n"+
+          "public string DependentVariableName(int i)"+
+          "{"+
+          "return _dependentVariableName[i];"+
+          "}"+
+          "}"
+          );
+
+        return stb.ToString();
+      }
+    }
+    public string DependentDefinitionRegionEnd
+    {
+      get
+      {
+        return "#endregion // Dependent Variable Definition\r\n";
+      }
+    }
+    public string DependentAssignmentRegionStart
+    {
+      get
+      {
+        return "#region Dependent Variable Assignment\r\n";
+      }
+    }
+    public string DependentAssignmentRegionCore
+    {
+      get
+      {
+        System.Text.StringBuilder stb = new System.Text.StringBuilder();
+        for(int i=0;i<this._IndependentVariablesNames.Length;i++)
+        {
+          stb.Append("\t\t");
+          stb.Append("Y["+i.ToString()+"]=");
+          stb.Append(this._IndependentVariablesNames[i]);
+          stb.Append(";\r\n");
+        }
+        return stb.ToString();
+      }
+    }
+    public string DependentAssignmentRegionEnd
+    {
+      get
+      {
+        return "#endregion // Dependent Variable Assignment\r\n";
+      }
+    }
+
+    
+    public string IndependentDefinitionRegionStart
+    {
+      get
+      {
+        return "#region Independent Variable Definition\r\n";
+      }
+    }
+    public string IndependentDefinitionRegionCore
+    {
+      get
+      {
+        System.Text.StringBuilder stb = new System.Text.StringBuilder();
+        stb.Append(
+          "return  private string[] _independentVariableName = new string[]{");
+      
+
+        for(int i=0;i<this._IndependentVariablesNames.Length;i++)
+        {
+          stb.Append("\"" + this._IndependentVariablesNames[i] + "\"");
+          if((i+1)<this._IndependentVariablesNames.Length)
+            stb.Append(",");
+          else
+            stb.Append("};\r\n");
+        }
+
+
+        stb.Append(
+          " };\r\n" + 
+          "public int NumberOfDependentVariables\r\n" +
+          "{\r\n"+
+          "\tget\r\n"+
+          "\t{"+
+          "\treturn _dependentVariableName.Length;\r\n"+
+          "\t}\r\n"+
+          "\t}\r\n"+
+          "public string DependentVariableName(int i)"+
+          "{"+
+          "return _dependentVariableName[i];"+
+          "}"+
+          "}"
+          );
+
+        return stb.ToString();
+      }
+    }
+    public string IndependentDefinitionRegionEnd
+    {
+      get
+      {
+        return "#endregion //  Independent Variable Definition\r\n";
+      }
+    }
+    public string IndependentAssignmentRegionStart
+    {
+      get
+      {
+        return "#region Independent Variable Assignment\r\n";
+      }
+    }
+    public string IndependentAssignmentRegionCore
+    {
+      get
+      {
+        System.Text.StringBuilder stb = new System.Text.StringBuilder();
+        for(int i=0;i<this._IndependentVariablesNames.Length;i++)
+        {
+          stb.Append("\t\t");
+          stb.Append(this._IndependentVariablesNames[i]);
+          stb.Append("=X["+i.ToString()+"];\r\n");
+        }
+        return stb.ToString();
+      }
+    }
+    public string IndependentAssignmentRegionEnd
+    {
+      get
+      {
+        return "#endregion //  Independent Variable Assignment\r\n";
+      }
+    }
+
+
+
+
+    public override string CodeStart
+    {
+      get
+      {
+        return
+          "\t\t\t// ----- add your script below this line -----\r\n";
+      }
+    }
+
+    public override string CodeUserDefault
+    {
+      get
+      {
+        return
+          "\t\t\t\r\n" +
+          "\t\t\ty = P[0]+P[1]*Sin(x);\r\n" +
+          "\t\t\t\r\n"
+          ;
+      }
+    }
+
+    public override string CodeEnd
+    {
+      get
+      {
+        return
+          "\t\t\t// ----- add your script above this line -----\r\n";
+      }
+    }
+
+    /// <summary>
+    /// Get the ending text of the script, dependent on the ScriptStyle.
+    /// </summary>
+    public override string CodeTail
+    {
+      get
+      {
+        return
+          DependentAssignmentRegionStart+
+          "\t\t\tY[0]=y;\r\n"+
+          DependentAssignmentRegionEnd+
+          "\t\t} // method\r\n" +
+          "\t} // class\r\n" +
+          "} //namespace\r\n";
+      }
+    }
+
+
+
+    /// <summary>
+    /// Clones the script.
+    /// </summary>
+    /// <returns>The cloned object.</returns>
+    public override object Clone()
+    {
+      return new Altaxo.Graph.ParametrizedFunctionDDScript(this);
+    }
+
+    
+    public string[] DependentVariablesNames 
+    {
+      set
+      {
+        System.Text.StringBuilder sb;
+        int first,last;
+
+        this._DependentVariablesNames = (string[])value.Clone();
+        string[] names = value;
+
+        first = this.ScriptText.IndexOf(this.DependentDefinitionRegionStart);
+        if (first < 0)
+          throw new ApplicationException("The script text seems to no longer contain a dependent variables start region");
+        first += this.DependentDefinitionRegionStart.Length;
+        last = this.ScriptText.IndexOf(this.DependentDefinitionRegionEnd);
+        if(last<0)
+          throw new ApplicationException("The script text seems to no longer contain a dependent variable definition end region");
+        sb = new System.Text.StringBuilder();
+        sb.Append(this.ScriptText.Substring(0,first));
+        sb.Append(this.DependentAssignmentRegionCore);
+        sb.Append(this.ScriptText.Substring(last));
+        this.ScriptText = sb.ToString();
+
+      
+        first = this.ScriptText.IndexOf(this.DependentAssignmentRegionStart);
+        if (first < 0)
+          throw new ApplicationException("The script text seems to no longer contain a dependent variables assignment start region");
+        first += this.DependentAssignmentRegionStart.Length;
+        last = this.ScriptText.IndexOf(this.DependentAssignmentRegionEnd);
+        if(last<0)
+          throw new ApplicationException("The script text seems to no longer contain a dependent variable assignment end region");
+        sb = new System.Text.StringBuilder();
+        sb.Append(this.ScriptText.Substring(0,first));
+        sb.Append(this.DependentAssignmentRegionCore);
+        sb.Append(this.ScriptText.Substring(last));
+        this.ScriptText = sb.ToString();
+
+      }
+    }
+
+    public string[] IndependentVariablesNames 
+    {
+      set
+      {
+        System.Text.StringBuilder sb;
+        int first,last;
+        this._IndependentVariablesNames = (string[])value.Clone();
+
+        string[] names = value;
+
+        first = this.ScriptText.IndexOf(this.IndependentDefinitionRegionStart);
+        if (first < 0)
+          throw new ApplicationException("The script text seems to no longer contain an independent variables definition start region");
+        first += this.IndependentDefinitionRegionStart.Length;
+        last = this.ScriptText.IndexOf(this.IndependentDefinitionRegionEnd);
+        if(last<0)
+          throw new ApplicationException("The script text seems to no longer contain an independent variable definition end region");
+
+        sb = new System.Text.StringBuilder();
+        sb.Append(this.ScriptText.Substring(0,first));
+        sb.Append(this.IndependentAssignmentRegionCore);
+        sb.Append(this.ScriptText.Substring(last));
+        this.ScriptText = sb.ToString();
+
+        
+        
+         first = this.ScriptText.IndexOf(this.IndependentAssignmentRegionStart);
+        if (first < 0)
+          throw new ApplicationException("The script text seems to no longer contain a dependent variables assignment start region");
+        first += this.IndependentAssignmentRegionStart.Length;
+        last = this.ScriptText.IndexOf(this.IndependentAssignmentRegionEnd);
+        if(last<0)
+          throw new ApplicationException("The script text seems to no longer contain a dependent variable assignment end region");
+
+        sb = new System.Text.StringBuilder();
+        sb.Append(this.ScriptText.Substring(0,first));
+        sb.Append(this.IndependentAssignmentRegionCore);
+        sb.Append(this.ScriptText.Substring(last));
+        this.ScriptText = sb.ToString();
+
       
       }
-      public string[] UserDefinedParameterNames
-      {
-        get
-        {
-          if(this._IsUsingUserDefinedParameterNames)
-            return (string[])this._UserDefinedParameterNames.Clone();
-          else
-            return null;
-        }
-        set
-        {
-          this._IsUsingUserDefinedParameterNames = true;
-          this._NumberOfParameters = value.Length;
-          this._UserDefinedParameterNames = (string[])value.Clone();
+    }
 
-          string[] pnames = value;
-          int first = this.ScriptText.IndexOf(this.ParameterRegionStart);
-          if (first < 0)
-            throw new ApplicationException("The script text seems to no longer contain a parameter start region");
-          first += this.ParameterRegionStart.Length;
-          int last = this.ScriptText.IndexOf(this.ParameterRegionEnd);
-          System.Text.StringBuilder sb = new System.Text.StringBuilder();
-          sb.Append(this.ScriptText.Substring(0,first));
-          for(int i=0;i<pnames.Length;i++)
-            sb.Append(string.Format("{0}=P[{1}];\r\n",pnames[i],i));
-          sb.Append(this.ScriptText.Substring(last));
-          this.ScriptText = sb.ToString();
+    public bool IsUsingUserDefinedParameterNames
+    {
+      get 
+      {
+        return this._IsUsingUserDefinedParameterNames;
+      }
+      
+    }
+    public string[] UserDefinedParameterNames
+    {
+      get
+      {
+        if(this._IsUsingUserDefinedParameterNames)
+          return (string[])this._UserDefinedParameterNames.Clone();
+        else
+          return null;
+      }
+      set
+      {
+        System.Text.StringBuilder sb;
+        int first,last;
+
+        this._IsUsingUserDefinedParameterNames = true;
+        this._NumberOfParameters = value.Length;
+        this._UserDefinedParameterNames = (string[])value.Clone();
+
+        string[] pnames = value;
+        
+        first = this.ScriptText.IndexOf(this.ParameterDefinitionRegionStart);
+        if (first < 0)
+          throw new ApplicationException("The script text seems to no longer contain a parameter definition start region");
+        first += this.ParameterDefinitionRegionStart.Length;
+        last = this.ScriptText.IndexOf(this.ParameterDefinitionRegionEnd);
+        if(last<0)
+          throw new ApplicationException("The script text seems to no longer contain a parameter definition end region");
+        sb = new System.Text.StringBuilder();
+        sb.Append(this.ScriptText.Substring(0,first));
+        sb.Append(this.ParameterDefinitionRegionCore);
+        sb.Append(this.ScriptText.Substring(last));
+        this.ScriptText = sb.ToString();
+
+        
+        first = this.ScriptText.IndexOf(this.ParameterAssignmentRegionStart);
+        if (first < 0)
+          throw new ApplicationException("The script text seems to no longer contain a parameter assignment start region");
+        first += this.ParameterAssignmentRegionStart.Length;
+        last = this.ScriptText.IndexOf(this.ParameterAssignmentRegionEnd);
+        if(last<0)
+          throw new ApplicationException("The script text seems to no longer contain a parameter assignment end region");
+        sb = new System.Text.StringBuilder();
+        sb.Append(this.ScriptText.Substring(0,first));
+        sb.Append(this.ParameterDefinitionRegionCore);
+        sb.Append(this.ScriptText.Substring(last));
+        this.ScriptText = sb.ToString();
+
+      }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="x">The main function argument.</param>
+    /// <param name="parameters">The parameters used for evalulation of the function.</param>
+    /// <returns></returns>
+    public double Evaluate(double x, double[] parameters)
+    {
+      if (null == m_ScriptObject)
+      {
+        m_Errors = new string[1] { "Script Object is null" };
+        return double.NaN;
+      }
+
+      try
+      {
+        return ((Altaxo.Calc.IParametrizedScalarFunctionDD)m_ScriptObject).Evaluate(x,parameters);
+      }
+      catch (Exception)
+      {
+        return double.NaN;
+      }
+    }
+   
+    #region IFitFunction Members
+
+    public int NumberOfIndependentVariables
+    {
+      get
+      {
           
-        }
+        return this._IndependentVariablesNames.Length;
       }
+    }
 
-
-      /// <summary>
-      /// 
-      /// </summary>
-      /// <param name="x">The main function argument.</param>
-      /// <param name="parameters">The parameters used for evalulation of the function.</param>
-      /// <returns></returns>
-      public double Evaluate(double x, double[] parameters)
-        {
-            if (null == m_ScriptObject)
-            {
-                m_Errors = new string[1] { "Script Object is null" };
-                return double.NaN;
-            }
-
-            try
-            {
-                return ((Altaxo.Calc.IParametrizedScalarFunctionDD)m_ScriptObject).Evaluate(x,parameters);
-            }
-            catch (Exception)
-            {
-                return double.NaN;
-            }
-        }
-      public double Evaluate(double x)
+    public int NumberOfDependentVariables
+    {
+      get
       {
-        return Evaluate(x,this._parameterValues);
+        return this._DependentVariablesNames.Length;
       }
-    } // end of class
+    }
+
+    public int NumberOfParameters
+    {
+      get
+      {
+        return this._NumberOfParameters;
+      }
+      set
+      {
+        this._IsUsingUserDefinedParameterNames = false;
+        this._NumberOfParameters = value;
+      }
+    }
+
+    public string IndependentVariableName(int i)
+    {
+      return this._IndependentVariablesNames[i];
+    }
+
+    public string DependentVariableName(int i)
+    {
+      return this._DependentVariablesNames[i];
+    }
+
+    public string ParameterName(int i)
+    {
+      if(IsUsingUserDefinedParameterNames)
+        return this._UserDefinedParameterNames[i];
+      else
+        return "P"+i.ToString();
+    }
+
+    void Altaxo.Calc.Regression.Nonlinear.IFitFunction.Evaluate(double[] independent, double[] parameters, double[] result)
+    {
+      if (null == m_ScriptObject)
+      {
+        m_Errors = new string[1] { "Script Object is null" };
+        return;
+      }
+
+      try
+      {
+        ((Altaxo.Calc.IParametrizedFunctionDDD)m_ScriptObject).Evaluate(independent,parameters,result);
+        return;
+      }
+      catch (Exception)
+      {
+        return;
+      }
+    }
+
+    #endregion
+  } // end of class
 }

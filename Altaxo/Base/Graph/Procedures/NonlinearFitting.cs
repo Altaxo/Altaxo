@@ -37,6 +37,7 @@ namespace Altaxo.Graph.Procedures
         xyPlotItem.XYColumnPlotData.PlotRangeLength);
 
       fitdoc.FitEnsemble.Add(fitele);
+      fitdoc.FitContext = ctrl;
 
       object fitdocasobject = fitdoc;
       Current.GUIFactoryService.ShowDialog(ref fitdocasobject,"Non-linear fitting");

@@ -405,14 +405,14 @@ namespace Altaxo.Data
           {
             bSucceeded = false;
             m_Errors = new string[1];
-            m_Errors[0] = "Unable to create Scripting object, have you missed it?\n"; 
+            m_Errors[0] = string.Format("Unable to create scripting object  (expected type: {0}), please verify namespace and class name!\n",this.ScriptObjectType); 
           }
         }
         catch (Exception ex) 
         {
           bSucceeded = false;
           m_Errors = new string[1];
-          m_Errors[0] = "Unable to create Scripting object, have you missed it?\n" + ex.ToString(); 
+          m_Errors[0] = string.Format("Exception during creation of scripting object: {0}\n",ex.Message); 
         }
       }
       return bSucceeded;

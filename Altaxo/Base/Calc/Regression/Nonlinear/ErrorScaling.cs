@@ -16,20 +16,42 @@ namespace Altaxo.Calc.Regression.Nonlinear
     ScaledNorm1,
 	}
 
-
-  public delegate double ErrorEvaluation(double yo, double yf);
-
-  public class ErrorEvaluationMethod
+  /// <summary>
+  /// Interface to how to scale the differences between real quantities (dependent variables) and fitted values.
+  /// </summary>
+  public interface IErrorEvaluation
   {
-    public static double Norm2(double yr, double yf)
+    double EvaluateError(double yreal, double yfit);
+    string ShortName { get; }
+  }
+
+
+  public class Norm2ErrorEvaluation : IErrorEvaluation
+  {
+    public double EvaluateError(double yr, double yf)
     {
-      double yd = yr-yf;
-      return yd*yd;
+      double yd = yr - yf;
+      return yd * yd;
     }
 
-    public static double Norm1(double yr, double yf)
+    public string ShortName
     {
-      return Math.Abs(yr-yf);
+      get { return "N2"; }
     }
   }
+
+  public class Norm1ErrorEvaluation : IErrorEvaluation
+  {
+    public double EvaluateError(double yr, double yf)
+    {
+      return Math.Abs(yr - yf);
+    }
+
+    public string ShortName
+    {
+      get { return "N1"; }
+    }
+  }
+
+
 }

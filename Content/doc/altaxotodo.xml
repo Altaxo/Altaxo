@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="windows-1252"?>
-<TODOLIST PROJECTNAME="Altaxo" FILEFORMAT="5" NEXTUNIQUEID="42" LASTSORTBY="0" FILEVERSION="36" LASTSORTDIR="-1" LASTMODIFIED="28.04.2005">
+<TODOLIST PROJECTNAME="Altaxo" FILEFORMAT="5" NEXTUNIQUEID="45" LASTSORTBY="0" FILEVERSION="38" LASTSORTDIR="-1" LASTMODIFIED="05.07.2005">
     <TASK PRIORITY="5" LASTMOD="38308.73711806" TITLE="Unfixed bugs" ID="1" POS="1">
         <TASK STARTDATESTRING="03.12.2004" PRIORITY="5" LASTMOD="38324.71527778" TITLE="Importing and reexporting of ascii files corrupts special chars (like the degree char)" ID="37" STARTDATE="38324.71467593" POS="1"/>
         <TASK STARTDATESTRING="03.12.2004" PRIORITY="5" LASTMOD="38324.71302083" TITLE="ASCII import of dat files from file manager did not work" ID="36" STARTDATE="38324.71278935" POS="2"/>
@@ -31,6 +31,9 @@
         <TASK STARTDATESTRING="19.11.2004" PRIORITY="5" LASTMOD="38310.90310185" TITLE="PlotStyle dialog box : show the name of the plot(s)" ID="28" STARTDATE="38310.90284722" POS="2"/>
         <TASK STARTDATESTRING="19.11.2004" PRIORITY="5" LASTMOD="38310.90387731" TITLE="PlotStyle: correct the behaviour of connected plots (first varying color, then line style, then symbol)" ID="29" STARTDATE="38310.90320602" POS="3"/>
         <TASK STARTDATESTRING="14.05.2004" PRIORITY="5" LASTMOD="38121.65223380" TITLE="SPC import: Column FileName and Column Time" ID="14" STARTDATE="38121.65185185" POS="4"/>
+        <TASK STARTDATESTRING="05.07.2005" PRIORITY="5" LASTMOD="38538.62174769" TITLE="rename multiple columns at once (some kind of multiple rename dialog box)" ID="42" STARTDATE="38538.62135417" POS="5"/>
+        <TASK STARTDATESTRING="05.07.2005" PRIORITY="5" LASTMOD="38538.62224537" TITLE="Legend command with wich one can display the property column name" ID="43" STARTDATE="38538.62189815" POS="6"/>
+        <TASK STARTDATESTRING="05.07.2005" PRIORITY="5" LASTMOD="38538.66008102" TITLE="TableScript must be inherited from AbstractScript" ID="44" STARTDATE="38538.65983796" POS="7"/>
     </TASK>
     <TASK STARTDATESTRING="16.05.2004" PRIORITY="5" LASTMOD="38123.86000000" TITLE="Solved TODO" ID="18" STARTDATE="38123.85984954" POS="5">
         <TASK STARTDATESTRING="14.05.2004" PRIORITY="5" LASTMOD="38123.86017361" TITLE="16.05.04 Insert a menu item &quot;Copy column name to property column&quot;" ID="11" STARTDATE="38121.56487269" POS="1"/>

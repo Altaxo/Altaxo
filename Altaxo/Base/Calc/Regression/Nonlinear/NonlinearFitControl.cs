@@ -21,6 +21,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private System.Windows.Forms.Button _btSelect;
     private System.Windows.Forms.Button _btDoFit;
     private System.Windows.Forms.TabPage _tpFitEnsemble;
+    private System.Windows.Forms.Button _btChiSqr;
+    private System.Windows.Forms.TextBox _edChiSqr;
+    private System.Windows.Forms.Label label1;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -63,6 +66,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._tpMakeFit = new System.Windows.Forms.TabPage();
       this._btDoFit = new System.Windows.Forms.Button();
       this._tpFitEnsemble = new System.Windows.Forms.TabPage();
+      this._btChiSqr = new System.Windows.Forms.Button();
+      this._edChiSqr = new System.Windows.Forms.TextBox();
+      this.label1 = new System.Windows.Forms.Label();
       this._tabControl.SuspendLayout();
       this._tpSelectFunction.SuspendLayout();
       this._tpMakeFit.SuspendLayout();
@@ -100,6 +106,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       // 
       // _tpMakeFit
       // 
+      this._tpMakeFit.Controls.Add(this.label1);
+      this._tpMakeFit.Controls.Add(this._edChiSqr);
+      this._tpMakeFit.Controls.Add(this._btChiSqr);
       this._tpMakeFit.Controls.Add(this._btDoFit);
       this._tpMakeFit.Location = new System.Drawing.Point(4, 22);
       this._tpMakeFit.Name = "_tpMakeFit";
@@ -110,7 +119,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       // _btDoFit
       // 
       this._btDoFit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this._btDoFit.Location = new System.Drawing.Point(32, 328);
+      this._btDoFit.Location = new System.Drawing.Point(80, 328);
       this._btDoFit.Name = "_btDoFit";
       this._btDoFit.TabIndex = 0;
       this._btDoFit.Text = "Fit!";
@@ -123,6 +132,33 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._tpFitEnsemble.Size = new System.Drawing.Size(424, 358);
       this._tpFitEnsemble.TabIndex = 2;
       this._tpFitEnsemble.Text = "Details";
+      // 
+      // _btChiSqr
+      // 
+      this._btChiSqr.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this._btChiSqr.Location = new System.Drawing.Point(8, 328);
+      this._btChiSqr.Name = "_btChiSqr";
+      this._btChiSqr.Size = new System.Drawing.Size(48, 23);
+      this._btChiSqr.TabIndex = 1;
+      this._btChiSqr.Text = "ChiSqr";
+      this._btChiSqr.Click += new System.EventHandler(this._btChiSqr_Click);
+      // 
+      // _edChiSqr
+      // 
+      this._edChiSqr.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this._edChiSqr.Location = new System.Drawing.Point(264, 328);
+      this._edChiSqr.Name = "_edChiSqr";
+      this._edChiSqr.Size = new System.Drawing.Size(144, 20);
+      this._edChiSqr.TabIndex = 2;
+      this._edChiSqr.Text = "";
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(216, 328);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(40, 16);
+      this.label1.TabIndex = 3;
+      this.label1.Text = "Chi ²:";
       // 
       // NonlinearFitControl
       // 
@@ -197,6 +233,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _fitEnsembleControl.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
       this._tpFitEnsemble.Controls.Add(_fitEnsembleControl);
     }
+
+    public void SetChiSquare(double chiSquare)
+    {
+      this._edChiSqr.Text = Altaxo.Serialization.GUIConversion.ToString(chiSquare);
+    }
+
     #endregion
 
     private void _btDoFit_Click(object sender, System.EventArgs e)
@@ -211,6 +253,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
       if(_controller!=null)
         _controller.EhView_SelectFitFunction();
     
+    }
+
+    private void _btChiSqr_Click(object sender, System.EventArgs e)
+    {
+      if(_controller!=null)
+        _controller.EhView_EvaluateChiSqr();
     }
   }
 }
