@@ -19,6 +19,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     void EhView_DoFit();
     void EhView_EvaluateChiSqr();
     void EhView_SelectFitFunction();
+    void EhView_NewFitFunction();
   }
 
   #endregion
@@ -128,6 +129,16 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    public void EhView_NewFitFunction()
+    {
+      Graph.ParametrizedFunctionDDScript script = new ParametrizedFunctionDDScript();
+
+      object scriptAsObject = script;
+      if(Current.GUIFactoryService.ShowDialog(ref scriptAsObject,"Create fit function"))
+      {
+        script = (Graph.ParametrizedFunctionDDScript)scriptAsObject;
+      }
+    }
 
     System.Collections.ArrayList _functionPlotItems = new System.Collections.ArrayList();
     public void OnAfterFittingStep()

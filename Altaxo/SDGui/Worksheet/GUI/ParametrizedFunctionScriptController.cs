@@ -24,6 +24,7 @@ using System;
 using System.Text.RegularExpressions;
 using Altaxo.Data;
 using Altaxo.Graph;
+using Altaxo.Main.GUI;
 
 namespace Altaxo.Worksheet.GUI
 {
@@ -71,6 +72,7 @@ namespace Altaxo.Worksheet.GUI
   /// <summary>
   /// Summary description for TableScriptController.
   /// </summary>
+  [UserControllerForObject(typeof(IParametrizedFunctionDDScriptText))]
   public class ParametrizedFunctionScriptController : IParametrizedFunctionScriptViewEventSink, Main.GUI.IMVCAController
   {
     protected ScriptExecutionHandler m_ScriptExecution;
@@ -81,7 +83,7 @@ namespace Altaxo.Worksheet.GUI
 
     public ParametrizedFunctionScriptController(IParametrizedFunctionDDScriptText script)
     {
-        this.m_Script = script;
+      this.m_Script = script;
       if(m_Script!=null)
         m_TempScript = (IParametrizedFunctionDDScriptText)m_Script.Clone();
 

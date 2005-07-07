@@ -162,28 +162,58 @@ namespace Altaxo.Graph
           this.ParameterDefinitionRegionStart+
           this.ParameterDefinitionRegionCore+
           this.ParameterDefinitionRegionEnd+
-          "\t\tpublic override double EvaluateFunctionValue(double[] X, double[] P, double[] Y)\r\n" +
+          "\t\tpublic void Evaluate(double[] X, double[] P, double[] Y)\r\n" +
           "\t\t{\r\n"+
           IndependentAssignmentRegionStart+
-          "\t\t\tx=X[0];"+
+          IndependentAssignmentRegionCore+
           IndependentAssignmentRegionEnd+
           ParameterAssignmentRegionStart+
           ParameterAssignmentRegionCore+
-          ParameterAssignmentRegionEnd;
+          ParameterAssignmentRegionEnd+
+          DependentDeclarationRegionStart+
+          DependentDeclarationRegionCore+
+          DependentDeclarationRegionEnd;
       }
     }
     public string ParameterDefinitionRegionStart
     {
       get
       {
-        return "#region Parameter Definition\r\n";
+        return "\t\t#region Parameter Definition\r\n";
       }
     }
     public string ParameterDefinitionRegionCore
     {
       get
       {
-        return string.Empty;
+        System.Text.StringBuilder stb = new System.Text.StringBuilder();
+        stb.Append(
+          "\t\tprivate string[] _parameterName = new string[]{");
+      
+
+        for(int i=0;i<this.NumberOfParameters;i++)
+        {
+          stb.Append("\"" + this.ParameterName(i) + "\"");
+          if((i+1)<this.NumberOfParameters)
+            stb.Append(",");
+        }
+        stb.Append("};\r\n");
+
+        stb.Append(
+          "\t\tpublic int NumberOfParameters\r\n" +
+          "\t\t{\r\n"+
+          "\t\t\tget\r\n"+
+          "\t\t\t{\r\n"+
+          "\t\t\t\treturn _parameterName.Length;\r\n"+
+          "\t\t\t}\r\n"+
+          "\t\t}\r\n"+
+          "\t\tpublic string ParameterName(int i)\r\n"+
+          "\t\t{\r\n"+
+          "\t\t\treturn _parameterName[i];\r\n"+
+          "\t\t}\r\n"
+          );
+
+        return stb.ToString();
       }
     }
     
@@ -192,14 +222,14 @@ namespace Altaxo.Graph
     {
       get
       {
-        return "#endregion // Parameter Definition\r\n";
+        return "\t\t#endregion // Parameter Definition\r\n\r\n";
       }
     }
     public string ParameterAssignmentRegionStart
     {
       get
       {
-        return "#region Parameter Assignment\r\n";
+        return "\t\t\t#region Parameter Assignment\r\n";
       }
     }
     public string ParameterAssignmentRegionCore
@@ -213,7 +243,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return "#endregion // Parameter Assignment\r\n";
+        return "\t\t\t#endregion // Parameter Assignment\r\n\r\n";
       }
     }
 
@@ -223,7 +253,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return "#region Dependent Variable Definition\r\n";
+        return "\t\t#region Dependent Variable Definition\r\n";
       }
     }
     public string DependentDefinitionRegionCore
@@ -232,33 +262,31 @@ namespace Altaxo.Graph
       {
         System.Text.StringBuilder stb = new System.Text.StringBuilder();
         stb.Append(
-          "return  private string[] _dependentVariableName = new string[]{");
+          "\t\tprivate string[] _dependentVariableName = new string[]{");
       
 
         for(int i=0;i<this._DependentVariablesNames.Length;i++)
         {
           stb.Append("\"" + this._DependentVariablesNames[i] + "\"");
-          if((i+1)<this._DependentVariablesNames.Length)
-            stb.Append(",");
-          else
+          if((i+1)==this._DependentVariablesNames.Length)
             stb.Append("};\r\n");
+          else
+            stb.Append(",");
         }
 
 
         stb.Append(
-          " };\r\n" + 
-          "public int NumberOfDependentVariables\r\n" +
-          "{\r\n"+
-          "\tget\r\n"+
-          "\t{"+
-          "\treturn _dependentVariableName.Length;\r\n"+
-          "\t}\r\n"+
-          "\t}\r\n"+
-          "public string DependentVariableName(int i)"+
-          "{"+
-          "return _dependentVariableName[i];"+
-          "}"+
-          "}"
+          "\t\tpublic int NumberOfDependentVariables\r\n" +
+          "\t\t{\r\n"+
+          "\t\t\tget\r\n"+
+          "\t\t\t{\r\n"+
+          "\t\t\t\treturn _dependentVariableName.Length;\r\n"+
+          "\t\t\t}\r\n"+
+          "\t\t}\r\n"+
+          "\t\tpublic string DependentVariableName(int i)\r\n"+
+          "\t\t{\r\n"+
+          "\t\t\treturn _dependentVariableName[i];\r\n"+
+          "\t\t}\r\n"
           );
 
         return stb.ToString();
@@ -268,14 +296,46 @@ namespace Altaxo.Graph
     {
       get
       {
-        return "#endregion // Dependent Variable Definition\r\n";
+        return "\t\t#endregion //  Dependent Variable Definition\r\n\r\n";
       }
     }
+
+    public string DependentDeclarationRegionStart
+    {
+      get
+      {
+        return "\t\t\t#region ExpertsOnly - Dependent Variable Declaration\r\n";
+      }
+    }
+    public string DependentDeclarationRegionCore
+    {
+      get
+      {
+        System.Text.StringBuilder stb = new System.Text.StringBuilder();
+        for(int i=0;i<this._DependentVariablesNames.Length;i++)
+        {
+          stb.Append("\t\t\tdouble ");
+          stb.Append(this._DependentVariablesNames[i]);
+          stb.Append(";\r\n");
+        }
+      return stb.ToString();
+      }
+    }
+    
+
+    public string DependentDeclarationRegionEnd
+    {
+      get
+      {
+        return "\t\t\t#endregion // Dependent Variable Declaration\r\n\r\n";
+      }
+    }
+
     public string DependentAssignmentRegionStart
     {
       get
       {
-        return "#region Dependent Variable Assignment\r\n";
+        return "\t\t\t#region Dependent Variable Assignment\r\n";
       }
     }
     public string DependentAssignmentRegionCore
@@ -283,11 +343,11 @@ namespace Altaxo.Graph
       get
       {
         System.Text.StringBuilder stb = new System.Text.StringBuilder();
-        for(int i=0;i<this._IndependentVariablesNames.Length;i++)
+        for(int i=0;i<this._DependentVariablesNames.Length;i++)
         {
-          stb.Append("\t\t");
-          stb.Append("Y["+i.ToString()+"]=");
-          stb.Append(this._IndependentVariablesNames[i]);
+          stb.Append("\t\t\t");
+          stb.Append("Y["+i.ToString()+"] = ");
+          stb.Append(this._DependentVariablesNames[i]);
           stb.Append(";\r\n");
         }
         return stb.ToString();
@@ -297,7 +357,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return "#endregion // Dependent Variable Assignment\r\n";
+        return "\t\t\t#endregion // Dependent Variable Assignment\r\n\r\n";
       }
     }
 
@@ -306,7 +366,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return "#region Independent Variable Definition\r\n";
+        return "\t\t#region Independent Variable Definition\r\n";
       }
     }
     public string IndependentDefinitionRegionCore
@@ -315,33 +375,31 @@ namespace Altaxo.Graph
       {
         System.Text.StringBuilder stb = new System.Text.StringBuilder();
         stb.Append(
-          "return  private string[] _independentVariableName = new string[]{");
+          "\t\tprivate string[] _independentVariableName = new string[]{");
       
 
         for(int i=0;i<this._IndependentVariablesNames.Length;i++)
         {
           stb.Append("\"" + this._IndependentVariablesNames[i] + "\"");
-          if((i+1)<this._IndependentVariablesNames.Length)
-            stb.Append(",");
-          else
+          if((i+1)==this._IndependentVariablesNames.Length)
             stb.Append("};\r\n");
+          else
+            stb.Append(",");
         }
 
 
         stb.Append(
-          " };\r\n" + 
-          "public int NumberOfDependentVariables\r\n" +
-          "{\r\n"+
-          "\tget\r\n"+
-          "\t{"+
-          "\treturn _dependentVariableName.Length;\r\n"+
-          "\t}\r\n"+
-          "\t}\r\n"+
-          "public string DependentVariableName(int i)"+
-          "{"+
-          "return _dependentVariableName[i];"+
-          "}"+
-          "}"
+          "\t\tpublic int NumberOfIndependentVariables\r\n" +
+          "\t\t{\r\n"+
+          "\t\t\tget\r\n"+
+          "\t\t\t{\r\n"+
+          "\t\t\t\treturn _independentVariableName.Length;\r\n"+
+          "\t\t\t}\r\n"+
+          "\t\t}\r\n"+
+          "\t\tpublic string IndependentVariableName(int i)\r\n"+
+          "\t\t{\r\n"+
+          "\t\t\treturn _independentVariableName[i];\r\n"+
+          "\t\t}\r\n"
           );
 
         return stb.ToString();
@@ -351,14 +409,14 @@ namespace Altaxo.Graph
     {
       get
       {
-        return "#endregion //  Independent Variable Definition\r\n";
+        return "\t\t#endregion //  Independent Variable Definition\r\n\r\n";
       }
     }
     public string IndependentAssignmentRegionStart
     {
       get
       {
-        return "#region Independent Variable Assignment\r\n";
+        return "\t\t\t#region Independent Variable Assignment\r\n";
       }
     }
     public string IndependentAssignmentRegionCore
@@ -368,9 +426,12 @@ namespace Altaxo.Graph
         System.Text.StringBuilder stb = new System.Text.StringBuilder();
         for(int i=0;i<this._IndependentVariablesNames.Length;i++)
         {
-          stb.Append("\t\t");
+          stb.Append("\t\t\t");
+          stb.Append("double ");
           stb.Append(this._IndependentVariablesNames[i]);
-          stb.Append("=X["+i.ToString()+"];\r\n");
+          stb.Append(" = X[");
+          stb.Append(i.ToString());
+          stb.Append("];\r\n");
         }
         return stb.ToString();
       }
@@ -379,7 +440,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return "#endregion //  Independent Variable Assignment\r\n";
+        return "\t\t\t#endregion //  Independent Variable Assignment\r\n\r\n";
       }
     }
 
@@ -425,7 +486,7 @@ namespace Altaxo.Graph
       {
         return
           DependentAssignmentRegionStart+
-          "\t\t\tY[0]=y;\r\n"+
+          DependentAssignmentRegionCore+
           DependentAssignmentRegionEnd+
           "\t\t} // method\r\n" +
           "\t} // class\r\n" +

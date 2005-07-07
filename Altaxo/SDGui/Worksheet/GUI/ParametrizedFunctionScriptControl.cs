@@ -28,12 +28,14 @@ using System.Data;
 using System.Windows.Forms;
 
 using Altaxo.Data;
+using Altaxo.Main.GUI;
 
 namespace Altaxo.Worksheet.GUI
 {
   /// <summary>
   /// Summary description for ParametrizedFunctionScriptControl.
   /// </summary>
+  [UserControlForController(typeof(IParametrizedFunctionScriptViewEventSink))]
   public class ParametrizedFunctionScriptControl : System.Windows.Forms.UserControl, IParametrizedFunctionScriptView
   {
     //private System.Windows.Forms.TextBox edFormula;
@@ -54,6 +56,10 @@ namespace Altaxo.Worksheet.GUI
     private System.Windows.Forms.CheckBox _chkUserDefinedParameters;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.TextBox _edParameterNames;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.TextBox _edIndependentVariables;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.TextBox _edDependentVariables;
 
     private IParametrizedFunctionScriptViewEventSink m_Controller;
 
@@ -94,6 +100,9 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     private void InitializeComponent()
     {
+      this.edFormulaWrapper = new ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBindingWrapper();
+      this.edFormula = edFormulaWrapper.TextEditorControl;
+
       this.lbCompilerErrors = new System.Windows.Forms.ListBox();
       this.btUpdate = new System.Windows.Forms.Button();
       this.btCancel = new System.Windows.Forms.Button();
@@ -104,6 +113,10 @@ namespace Altaxo.Worksheet.GUI
       this._chkUserDefinedParameters = new System.Windows.Forms.CheckBox();
       this.label2 = new System.Windows.Forms.Label();
       this._edParameterNames = new System.Windows.Forms.TextBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this._edIndependentVariables = new System.Windows.Forms.TextBox();
+      this.label4 = new System.Windows.Forms.Label();
+      this._edDependentVariables = new System.Windows.Forms.TextBox();
       this.SuspendLayout();
       // 
       // lbCompilerErrors
@@ -201,8 +214,59 @@ namespace Altaxo.Worksheet.GUI
       this._edParameterNames.Text = "textBox1";
       this._edParameterNames.TextChanged += new System.EventHandler(this._edParameterNames_TextChanged);
       // 
-      // FitScriptControl
+      // label3
       // 
+      this.label3.Location = new System.Drawing.Point(8, 56);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(72, 16);
+      this.label3.TabIndex = 42;
+      this.label3.Text = "Ind.Var.";
+      // 
+      // _edIndependentVariables
+      // 
+      this._edIndependentVariables.Location = new System.Drawing.Point(136, 56);
+      this._edIndependentVariables.Name = "_edIndependentVariables";
+      this._edIndependentVariables.Size = new System.Drawing.Size(120, 20);
+      this._edIndependentVariables.TabIndex = 43;
+      this._edIndependentVariables.Text = "textBox1";
+      // 
+      // label4
+      // 
+      this.label4.Location = new System.Drawing.Point(264, 56);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(64, 16);
+      this.label4.TabIndex = 44;
+      this.label4.Text = "Dep.Var.";
+      // 
+      // _edDependentVariables
+      // 
+      this._edDependentVariables.Location = new System.Drawing.Point(320, 56);
+      this._edDependentVariables.Name = "_edDependentVariables";
+      this._edDependentVariables.Size = new System.Drawing.Size(200, 20);
+      this._edDependentVariables.TabIndex = 45;
+      this._edDependentVariables.Text = "textBox2";
+      // 
+      // edFormula
+      // 
+      this.edFormula.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
+        | System.Windows.Forms.AnchorStyles.Right)));
+      this.edFormula.Location = new System.Drawing.Point(0, 80);
+      //this.edFormula.Multiline = true;
+      this.edFormula.Name = "edFormula";
+      //this.edFormula.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+      this.edFormula.Size = new System.Drawing.Size(528, 336-80);
+      this.edFormula.TabIndex = 23;
+      this.edFormula.Text = "";
+
+      // 
+      // ParametrizedFunctionScriptControl
+      // 
+      this.Controls.Add(this.edFormula);
+      this.Controls.Add(this._edDependentVariables);
+      this.Controls.Add(this.label4);
+      this.Controls.Add(this._edIndependentVariables);
+      this.Controls.Add(this.label3);
       this.Controls.Add(this._edParameterNames);
       this.Controls.Add(this.label2);
       this.Controls.Add(this._chkUserDefinedParameters);
@@ -213,7 +277,7 @@ namespace Altaxo.Worksheet.GUI
       this.Controls.Add(this.btUpdate);
       this.Controls.Add(this.btCancel);
       this.Controls.Add(this.btDoIt);
-      this.Name = "FitScriptControl";
+      this.Name = "ParametrizedFunctionScriptControl";
       this.Size = new System.Drawing.Size(600, 428);
       this.ResumeLayout(false);
 

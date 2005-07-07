@@ -24,6 +24,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     private System.Windows.Forms.Button _btChiSqr;
     private System.Windows.Forms.TextBox _edChiSqr;
     private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Button _btNew;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -64,11 +65,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._tpSelectFunction = new System.Windows.Forms.TabPage();
       this._btSelect = new System.Windows.Forms.Button();
       this._tpMakeFit = new System.Windows.Forms.TabPage();
+      this.label1 = new System.Windows.Forms.Label();
+      this._edChiSqr = new System.Windows.Forms.TextBox();
+      this._btChiSqr = new System.Windows.Forms.Button();
       this._btDoFit = new System.Windows.Forms.Button();
       this._tpFitEnsemble = new System.Windows.Forms.TabPage();
-      this._btChiSqr = new System.Windows.Forms.Button();
-      this._edChiSqr = new System.Windows.Forms.TextBox();
-      this.label1 = new System.Windows.Forms.Label();
+      this._btNew = new System.Windows.Forms.Button();
       this._tabControl.SuspendLayout();
       this._tpSelectFunction.SuspendLayout();
       this._tpMakeFit.SuspendLayout();
@@ -88,6 +90,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       // 
       // _tpSelectFunction
       // 
+      this._tpSelectFunction.Controls.Add(this._btNew);
       this._tpSelectFunction.Controls.Add(this._btSelect);
       this._tpSelectFunction.Location = new System.Drawing.Point(4, 22);
       this._tpSelectFunction.Name = "_tpSelectFunction";
@@ -116,6 +119,33 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._tpMakeFit.TabIndex = 1;
       this._tpMakeFit.Text = "Fit";
       // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(216, 328);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(40, 16);
+      this.label1.TabIndex = 3;
+      this.label1.Text = "Chi ²:";
+      // 
+      // _edChiSqr
+      // 
+      this._edChiSqr.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this._edChiSqr.Location = new System.Drawing.Point(264, 328);
+      this._edChiSqr.Name = "_edChiSqr";
+      this._edChiSqr.Size = new System.Drawing.Size(144, 20);
+      this._edChiSqr.TabIndex = 2;
+      this._edChiSqr.Text = "";
+      // 
+      // _btChiSqr
+      // 
+      this._btChiSqr.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this._btChiSqr.Location = new System.Drawing.Point(8, 328);
+      this._btChiSqr.Name = "_btChiSqr";
+      this._btChiSqr.Size = new System.Drawing.Size(48, 23);
+      this._btChiSqr.TabIndex = 1;
+      this._btChiSqr.Text = "ChiSqr";
+      this._btChiSqr.Click += new System.EventHandler(this._btChiSqr_Click);
+      // 
       // _btDoFit
       // 
       this._btDoFit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -133,32 +163,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._tpFitEnsemble.TabIndex = 2;
       this._tpFitEnsemble.Text = "Details";
       // 
-      // _btChiSqr
+      // _btNew
       // 
-      this._btChiSqr.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this._btChiSqr.Location = new System.Drawing.Point(8, 328);
-      this._btChiSqr.Name = "_btChiSqr";
-      this._btChiSqr.Size = new System.Drawing.Size(48, 23);
-      this._btChiSqr.TabIndex = 1;
-      this._btChiSqr.Text = "ChiSqr";
-      this._btChiSqr.Click += new System.EventHandler(this._btChiSqr_Click);
-      // 
-      // _edChiSqr
-      // 
-      this._edChiSqr.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this._edChiSqr.Location = new System.Drawing.Point(264, 328);
-      this._edChiSqr.Name = "_edChiSqr";
-      this._edChiSqr.Size = new System.Drawing.Size(144, 20);
-      this._edChiSqr.TabIndex = 2;
-      this._edChiSqr.Text = "";
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(216, 328);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(40, 16);
-      this.label1.TabIndex = 3;
-      this.label1.Text = "Chi ²:";
+      this._btNew.Location = new System.Drawing.Point(120, 328);
+      this._btNew.Name = "_btNew";
+      this._btNew.TabIndex = 1;
+      this._btNew.Text = "New..";
+      this._btNew.Click += new System.EventHandler(this._btNew_Click);
       // 
       // NonlinearFitControl
       // 
@@ -259,6 +270,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       if(_controller!=null)
         _controller.EhView_EvaluateChiSqr();
+    }
+
+    private void _btNew_Click(object sender, System.EventArgs e)
+    {
+      if(_controller!=null)
+        _controller.EhView_NewFitFunction();
     }
   }
 }
