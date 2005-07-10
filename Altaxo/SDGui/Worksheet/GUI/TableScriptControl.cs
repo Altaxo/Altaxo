@@ -290,5 +290,7 @@ namespace Altaxo.Worksheet.GUI
       if(null!=Controller && null!=msg)
         Controller.EhView_GotoCompilerError(msg);
     }
+
+
   }
 }

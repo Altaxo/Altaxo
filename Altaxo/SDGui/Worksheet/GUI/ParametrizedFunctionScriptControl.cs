@@ -39,8 +39,6 @@ namespace Altaxo.Worksheet.GUI
   public class ParametrizedFunctionScriptControl : System.Windows.Forms.UserControl, IParametrizedFunctionScriptView
   {
     //private System.Windows.Forms.TextBox edFormula;
-    private ICSharpCode.TextEditor.TextEditorControl edFormula;
-    private ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBindingWrapper edFormulaWrapper;
     private System.Windows.Forms.ListBox lbCompilerErrors;
     private System.Windows.Forms.Button btUpdate;
     private System.Windows.Forms.Button btCancel;
@@ -60,6 +58,7 @@ namespace Altaxo.Worksheet.GUI
     private System.Windows.Forms.TextBox _edIndependentVariables;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.TextBox _edDependentVariables;
+    private System.Windows.Forms.Panel _panelScriptText;
 
     private IParametrizedFunctionScriptViewEventSink m_Controller;
 
@@ -68,12 +67,7 @@ namespace Altaxo.Worksheet.GUI
       // This call is required by the Windows.Forms Form Designer.
       InitializeComponent();
 
-      // TODO: Add any initialization after the InitializeComponent call
-
-      this.ScriptName = System.Guid.NewGuid().ToString() + ".cs";
-      this.edFormula.Document.TextEditorProperties.TabIndent=2;
-      this.edFormulaWrapper.textAreaControl.InitializeFormatter();
-      this.edFormulaWrapper.textAreaControl.TextEditorProperties.MouseWheelScrollDown=true;
+   
 
       this.InitializeNumberOfParameters();
     }
@@ -100,13 +94,10 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     private void InitializeComponent()
     {
-      this.edFormulaWrapper = new ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBindingWrapper();
-      this.edFormula = edFormulaWrapper.TextEditorControl;
-
-      this.lbCompilerErrors = new System.Windows.Forms.ListBox();
       this.btUpdate = new System.Windows.Forms.Button();
       this.btCancel = new System.Windows.Forms.Button();
       this.btDoIt = new System.Windows.Forms.Button();
+      this.lbCompilerErrors = new System.Windows.Forms.ListBox();
       this.btCompile = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
       this._cbNumberOfParameters = new System.Windows.Forms.ComboBox();
@@ -117,6 +108,7 @@ namespace Altaxo.Worksheet.GUI
       this._edIndependentVariables = new System.Windows.Forms.TextBox();
       this.label4 = new System.Windows.Forms.Label();
       this._edDependentVariables = new System.Windows.Forms.TextBox();
+      this._panelScriptText = new System.Windows.Forms.Panel();
       this.SuspendLayout();
       // 
       // lbCompilerErrors
@@ -246,23 +238,20 @@ namespace Altaxo.Worksheet.GUI
       this._edDependentVariables.TabIndex = 45;
       this._edDependentVariables.Text = "textBox2";
       // 
-      // edFormula
+      // _panelScriptText
       // 
-      this.edFormula.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this._panelScriptText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.edFormula.Location = new System.Drawing.Point(0, 80);
-      //this.edFormula.Multiline = true;
-      this.edFormula.Name = "edFormula";
-      //this.edFormula.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-      this.edFormula.Size = new System.Drawing.Size(528, 336-80);
-      this.edFormula.TabIndex = 23;
-      this.edFormula.Text = "";
-
+      this._panelScriptText.BackColor = System.Drawing.SystemColors.ControlLightLight;
+      this._panelScriptText.Location = new System.Drawing.Point(0, 80);
+      this._panelScriptText.Name = "_panelScriptText";
+      this._panelScriptText.Size = new System.Drawing.Size(520, 344);
+      this._panelScriptText.TabIndex = 46;
       // 
       // ParametrizedFunctionScriptControl
       // 
-      this.Controls.Add(this.edFormula);
+      this.Controls.Add(this.lbCompilerErrors);
+      this.Controls.Add(this._panelScriptText);
       this.Controls.Add(this._edDependentVariables);
       this.Controls.Add(this.label4);
       this.Controls.Add(this._edIndependentVariables);
@@ -273,7 +262,6 @@ namespace Altaxo.Worksheet.GUI
       this.Controls.Add(this._cbNumberOfParameters);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.btCompile);
-      this.Controls.Add(this.lbCompilerErrors);
       this.Controls.Add(this.btUpdate);
       this.Controls.Add(this.btCancel);
       this.Controls.Add(this.btDoIt);
@@ -312,66 +300,36 @@ namespace Altaxo.Worksheet.GUI
       this._cbNumberOfParameters.Enabled = enable;
     }
 
-    public string ScriptText
+  
+
+    Control _scriptView;
+    public void SetScriptView(object viewAsObject)
     {
-      get 
+      if(object.ReferenceEquals(_scriptView,viewAsObject) )
+        return;
+
+      if(null!=_scriptView)
       {
-        return this.edFormula.Text; 
+        this._panelScriptText.Controls.Remove(_scriptView);
       }
-      set 
+      _scriptView = (Control)viewAsObject;
+      if(null!=_scriptView)
       {
-        this.edFormula.Text = value;
-      }
-    }
-
-    public string ScriptName
-    {
-      set
-      {
-        edFormulaWrapper.TextEditorControl.FileName = value;
-        edFormulaWrapper.TitleName = value;
-        edFormulaWrapper.FileName = value;
-      }
-    }
-
-    public int ScriptCursorLocation
-    {
-      set
-      {
-        System.Drawing.Point point = edFormulaWrapper.textAreaControl.Document.OffsetToPosition(value);
-        this.edFormulaWrapper.JumpTo(point.Y,point.X);
+        _scriptView.Location = new Point(0,0);
+        _scriptView.Dock = DockStyle.Fill;
+        this._panelScriptText.Controls.Add(_scriptView);
       }
 
     }
-
-    public void SetScriptCursorLocation(int line, int column)
+  
+   
+    public void Close(bool withOK)
     {
-      this.edFormulaWrapper.JumpTo(line,column);
+      this.ParentForm.DialogResult = withOK ? DialogResult.OK : DialogResult.Cancel;
+      this.ParentForm.Close();
     }
 
-    public void MarkText(int pos1, int pos2)
-    {
-
-    }
-
-    public object EditableContent
-    {
-      get
-      { 
-        return this.edFormulaWrapper; 
-      }
-    }
-
-    protected override bool ProcessDialogKey(Keys keyData)
-    {
-      return base.ProcessDialogKey (keyData);
-    }
-
-
-    public System.Windows.Forms.Form Form
-    {
-      get { return this.ParentForm; }
-    }
+ 
 
     public void ClearCompilerErrors()
     {

@@ -33,25 +33,13 @@ namespace Altaxo.Worksheet.GUI
   {
     IParametrizedFunctionScriptViewEventSink Controller {get; set; }
     
-    string ScriptText { get; set; }
-
-    int ScriptCursorLocation { set; }
-    void SetScriptCursorLocation(int line, int column);
-    void MarkText(int pos1, int pos2);
+    void Close(bool withOK);
+    void SetScriptView(object scriptView);
 
     void SetParameterText(string text, bool enable);
     void SetNumberOfParameters(int numberOfParameters, bool enable);
 
-    /// <summary>
-    /// Sets the working name of the script. Should be set to a unique name
-    /// ending in ".cs" to signal that this is a C# script.
-    /// </summary>
-    string ScriptName { set; }
-
-    System.Windows.Forms.Form Form    { get ; }
-
     void ClearCompilerErrors();
-
     void AddCompilerError(string s);
   }
 
@@ -77,7 +65,9 @@ namespace Altaxo.Worksheet.GUI
   {
     protected ScriptExecutionHandler m_ScriptExecution;
     public IParametrizedFunctionDDScriptText m_Script;
-     public IParametrizedFunctionDDScriptText m_TempScript;
+    public IParametrizedFunctionDDScriptText m_TempScript;
+
+    public IPureScriptController _scriptController;
 
     protected IParametrizedFunctionScriptView m_View;
 
@@ -98,13 +88,18 @@ namespace Altaxo.Worksheet.GUI
     {
       if(bInit)
       {
+        _scriptController = new PureScriptController(m_TempScript);
+        _scriptController.ViewObject = new PureScriptControl();
+
+        //View.ScriptName = m_TempScript.ScriptName;
+        //_scriptController.ScriptCursorLocation = m_TempScript.UserAreaScriptOffset;
       }
 
       if(null!=View)
       {
-        View.ScriptText= m_TempScript.ScriptText;
-        View.ScriptName = m_TempScript.ScriptName;
-        View.ScriptCursorLocation = m_TempScript.UserAreaScriptOffset;
+        View.SetScriptView(_scriptController.ViewObject);
+     
+      
 
         if(m_TempScript.IsUsingUserDefinedParameterNames)
         {
@@ -161,7 +156,8 @@ namespace Altaxo.Worksheet.GUI
     private Regex compilerErrorRegex = new Regex(@".*\((?<line>\d+),(?<column>\d+)\) : (?<msg>.+)",RegexOptions.Compiled);
     public void EhView_Compile()
     {
-      m_TempScript.ScriptText = View.ScriptText;
+      _scriptController.Apply();
+      m_TempScript.ScriptText = ((IPureScriptText)_scriptController.ModelObject).ScriptText;
 
       View.ClearCompilerErrors();
 
@@ -176,7 +172,7 @@ namespace Altaxo.Worksheet.GUI
         }
   
 
-        System.Windows.Forms.MessageBox.Show(View.Form, "There were compilation errors","No success");
+        Current.GUIFactoryService.ErrorMessageBox("There were compilation errors");
         return;
       }
       else
@@ -197,8 +193,7 @@ namespace Altaxo.Worksheet.GUI
         int line = int.Parse(sline);
         int col  = int.Parse(scol);
 
-        if(View!=null)
-          View.SetScriptCursorLocation(line-1,col-1);
+        _scriptController.SetScriptCursorLocation(line-1,col-1);
 
       }
       catch(Exception)
@@ -208,16 +203,14 @@ namespace Altaxo.Worksheet.GUI
 
     public void EhView_Update()
     {
-      m_TempScript.ScriptText = View.ScriptText;
+      m_TempScript.ScriptText = ((IPureScriptText)_scriptController.ModelObject).ScriptText;
       // this.m_DataTable.TableScript = m_TableScript;
-      this.View.Form.DialogResult = System.Windows.Forms.DialogResult.OK;
-      this.View.Form.Close();
+      View.Close(true);
     }
 
     public void EhView_Cancel()
     {
-      this.View.Form.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.View.Form.Close();
+      View.Close(false);
     }
 
     bool IsValidParameterName(string name)

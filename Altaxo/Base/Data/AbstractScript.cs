@@ -30,24 +30,28 @@ namespace Altaxo.Data
 {
   #region interface
 
-  /// <summary>
-  /// Interface to a script, e.g. a table or column script
-  /// </summary>
-  public interface IScriptText : ICloneable
+
+  public interface IPureScriptText
   {
-
-
-    string ScriptName
-    {
-      get;
-    }
-
     /// <summary>
     /// Get / sets the script text
     /// </summary>
     string ScriptText
     {
       get; set;
+    }
+  }
+
+  /// <summary>
+  /// Interface to a script, e.g. a table or column script
+  /// </summary>
+  public interface IScriptText : IPureScriptText, ICloneable
+  {
+
+
+    string ScriptName
+    {
+      get;
     }
 
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="windows-1252"?>
-<TODOLIST PROJECTNAME="Altaxo" FILEFORMAT="5" NEXTUNIQUEID="45" LASTSORTBY="0" FILEVERSION="38" LASTSORTDIR="-1" LASTMODIFIED="05.07.2005">
+<TODOLIST PROJECTNAME="Altaxo" FILEFORMAT="5" NEXTUNIQUEID="48" LASTSORTBY="0" FILEVERSION="40" LASTSORTDIR="-1" LASTMODIFIED="08.07.2005">
     <TASK PRIORITY="5" LASTMOD="38308.73711806" TITLE="Unfixed bugs" ID="1" POS="1">
         <TASK STARTDATESTRING="03.12.2004" PRIORITY="5" LASTMOD="38324.71527778" TITLE="Importing and reexporting of ascii files corrupts special chars (like the degree char)" ID="37" STARTDATE="38324.71467593" POS="1"/>
         <TASK STARTDATESTRING="03.12.2004" PRIORITY="5" LASTMOD="38324.71302083" TITLE="ASCII import of dat files from file manager did not work" ID="36" STARTDATE="38324.71278935" POS="2"/>
@@ -34,6 +34,9 @@
         <TASK STARTDATESTRING="05.07.2005" PRIORITY="5" LASTMOD="38538.62174769" TITLE="rename multiple columns at once (some kind of multiple rename dialog box)" ID="42" STARTDATE="38538.62135417" POS="5"/>
         <TASK STARTDATESTRING="05.07.2005" PRIORITY="5" LASTMOD="38538.62224537" TITLE="Legend command with wich one can display the property column name" ID="43" STARTDATE="38538.62189815" POS="6"/>
         <TASK STARTDATESTRING="05.07.2005" PRIORITY="5" LASTMOD="38538.66008102" TITLE="TableScript must be inherited from AbstractScript" ID="44" STARTDATE="38538.65983796" POS="7"/>
+        <TASK STARTDATESTRING="08.07.2005" PRIORITY="5" LASTMOD="38541.62070602" TITLE="Move rows to property rows and vice versa menu command" ID="45" STARTDATE="38541.62046296" POS="8"/>
+        <TASK STARTDATESTRING="08.07.2005" PRIORITY="5" LASTMOD="38541.62125000" TITLE="In the transpose dialog, if you specify a number, that default value should be 1 (and not 0)" ID="46" STARTDATE="38541.62077546" POS="9"/>
+        <TASK STARTDATESTRING="08.07.2005" PRIORITY="5" LASTMOD="38541.62410880" TITLE="Export ascii: when exporting property columns, that should be exported so that it maintain property columns when reimporting" ID="47" STARTDATE="38541.62337963" POS="10"/>
     </TASK>
     <TASK STARTDATESTRING="16.05.2004" PRIORITY="5" LASTMOD="38123.86000000" TITLE="Solved TODO" ID="18" STARTDATE="38123.85984954" POS="5">
         <TASK STARTDATESTRING="14.05.2004" PRIORITY="5" LASTMOD="38123.86017361" TITLE="16.05.04 Insert a menu item &quot;Copy column name to property column&quot;" ID="11" STARTDATE="38121.56487269" POS="1"/>
