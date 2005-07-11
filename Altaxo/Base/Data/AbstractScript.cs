@@ -25,13 +25,14 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Reflection;
 using Altaxo.Serialization;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Data
 {
   #region interface
 
 
-  public interface IPureScriptText
+  public interface IPureScriptText : ICloneable
   {
     /// <summary>
     /// Get / sets the script text
@@ -45,7 +46,7 @@ namespace Altaxo.Data
   /// <summary>
   /// Interface to a script, e.g. a table or column script
   /// </summary>
-  public interface IScriptText : IPureScriptText, ICloneable
+  public interface IScriptText : IPureScriptText
   {
 
 
@@ -132,6 +133,11 @@ namespace Altaxo.Data
     }
 
 
+    /// <summary>
+    /// This clones the script so that the text can be modified.
+    /// </summary>
+    /// <returns></returns>
+    IScriptText CloneForModification();
     
   }
 
@@ -152,25 +158,19 @@ namespace Altaxo.Data
     public string m_ScriptText; // the text of the script
 
     /// <summary>
+    /// The result of the successfull compiler run. After this variable is set, the script text must not be changed!
+    /// </summary>
+    [NonSerialized()]
+    public IScriptCompilerResult _compilerResult;
+
+    /// <summary>
     /// True when the text changed from last time this flag was reseted.
     /// </summary>
     [NonSerialized()]
     protected bool  m_IsDirty; // true when text changed, can be reseted
-
+    
     /// <summary>
-    /// False when the text has changed and was not compiled already.
-    /// </summary>
-    [NonSerialized()]
-    protected bool m_Compiled; // false when text changed and not compiled already
-
-    /// <summary>
-    /// The assembly that holds the created script class.
-    /// </summary>
-    [NonSerialized()]
-    protected System.Reflection.Assembly m_ScriptAssembly;
-
-    /// <summary>
-    /// The script object. This is a instance of the newly created script class, which is derived class of <see cref="Altaxo.Calc.ColScriptExeBase"/>
+    /// The script object. This is a instance of the newly created script class.
     /// </summary>
     [NonSerialized()]
     protected object m_ScriptObject; // the compiled and created script object
@@ -235,14 +235,28 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     public AbstractScript(AbstractScript b)
+    : this(b,true)
+    {
+    }
+
+
+    /// <summary>
+    /// Creates a column script as a copy from another script.
+    /// </summary>
+    /// <param name="b">The script to copy from.</param>
+    public AbstractScript(AbstractScript b, bool doCopyCompileResult)
     {
       this.m_ScriptText  = b.m_ScriptText;
-      this.m_ScriptAssembly = b.m_ScriptAssembly;
       this.m_ScriptObject   = b.m_ScriptObject;
       this.m_IsDirty = b.m_IsDirty;
-      this.m_Compiled = b.m_Compiled;
       this.m_Errors   = null==b.m_Errors ? null: (string[])b.m_Errors.Clone();
+      
+      if(doCopyCompileResult)
+        this._compilerResult = b._compilerResult; // (not cloning is intented here)
+      else
+        this._compilerResult = null;
     }
+    
 
 
     /// <summary>
@@ -286,6 +300,10 @@ namespace Altaxo.Data
     {
       get 
       { 
+        if(null!=_compilerResult)
+        {
+          return _compilerResult.ScriptText(0);
+        }
         if(null==m_ScriptText)
         {
           m_ScriptText = this.CodeHeader + this.CodeStart + this.CodeUserDefault + this.CodeEnd + this.CodeTail;
@@ -294,9 +312,13 @@ namespace Altaxo.Data
       }
       set
       {
-        m_ScriptText = value; 
-        m_IsDirty=true; 
-        m_Compiled=false;
+        if(null!=_compilerResult)
+          throw new ArgumentException("After successfull compilation, the script text can not be changed any more");
+        else
+        {
+          m_ScriptText = value; 
+          m_IsDirty=true;
+        }
       }
     }
 
@@ -309,10 +331,10 @@ namespace Altaxo.Data
     {
       get
       {
-        if(null==m_ScriptText)
+        if(null==ScriptText)
           return 0;
         
-        int pos = m_ScriptText.IndexOf(this.CodeStart);
+        int pos = ScriptText.IndexOf(this.CodeStart);
 
         return pos<0 ? 0 : pos+this.CodeStart.Length;
       }
@@ -359,7 +381,7 @@ namespace Altaxo.Data
     }
 
     public abstract object Clone();
-
+    public abstract IScriptText CloneForModification();
 
     /// <summary>
     /// Does the compilation of the script into an assembly.
@@ -370,59 +392,19 @@ namespace Altaxo.Data
     /// <returns>True if successfully compiles, otherwise false.</returns>
     public bool Compile()
     {
-      bool bSucceeded=true;
+      if(_compilerResult!=null)
+        return true;
 
-      // we need nothing to do if not dirty and assembly and object is valid
-      if(this.m_Compiled && null!=m_ScriptAssembly && null!=m_ScriptObject)
+      _compilerResult = ScriptCompilerService.Compile(new string[]{ScriptText},out m_Errors);
+      bool bSucceeded = (null!=_compilerResult);
+    
+      if(_compilerResult!=null)  
       {
-        return false; // keep the error since a compiler error was detected before
-      }
-
-      this.m_Compiled = true;
-
-      Microsoft.CSharp.CSharpCodeProvider codeProvider = new Microsoft.CSharp.CSharpCodeProvider();
-
-      // For Visual Basic Compiler try this :
-      //Microsoft.VisualBasic.VBCodeProvider
-
-      System.CodeDom.Compiler.ICodeCompiler compiler = codeProvider.CreateCompiler();
-      System.CodeDom.Compiler.CompilerParameters parameters = new CompilerParameters();
-
-      parameters.GenerateInMemory = true;
-      parameters.IncludeDebugInformation = true;
-      // parameters.OutputAssembly = this.ScriptName;
-
-      // Add available assemblies including the application itself 
-      foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies()) 
-      {
-        if(!(asm is System.Reflection.Emit.AssemblyBuilder) && asm.Location!=null && asm.Location!=String.Empty)
-          parameters.ReferencedAssemblies.Add(asm.Location);
-      }
-
-      CompilerResults results = compiler.CompileAssemblyFromSource(parameters, this.ScriptText);
-
-      if (results.Errors.Count > 0) 
-      {
-        bSucceeded = false;
-        this.m_ScriptAssembly = null;
-        this.m_ScriptObject = null;
-
-        m_Errors = new string[results.Errors.Count];
-        int i=0;
-        foreach (CompilerError err in results.Errors) 
-        {
-          m_Errors[i++] = err.ToString();
-        }
-      }
-      else  
-      {
-        // try to execute application
-        this.m_ScriptAssembly = results.CompiledAssembly;
         this.m_ScriptObject = null;
 
         try
         {
-          this.m_ScriptObject = results.CompiledAssembly.CreateInstance(this.ScriptObjectType);
+          this.m_ScriptObject = _compilerResult.ScriptAssembly.CreateInstance(this.ScriptObjectType);
           if(null==m_ScriptObject)
           {
             bSucceeded = false;

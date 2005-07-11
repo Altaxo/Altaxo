@@ -20,6 +20,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #endregion
 
+#if true
 
 using System;
 using System.CodeDom;
@@ -221,6 +222,14 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     public ColumnScript(ColumnScript b)
+    : this(b,true)
+    {
+    }
+    /// <summary>
+    /// Creates a column script as a copy from another script.
+    /// </summary>
+    /// <param name="b">The script to copy from.</param>
+    public ColumnScript(ColumnScript b, bool doCopyCompileResult)
     {
       this.m_ScriptStyle = b.m_ScriptStyle;
       this.m_ScriptText  = b.m_ScriptText;
@@ -449,9 +458,17 @@ namespace Altaxo.Data
     /// <returns>The cloned object.</returns>
     public object Clone()
     {
-      return new ColumnScript(this);
+      return new ColumnScript(this,true);
     }
 
+    /// <summary>
+    /// Clones the column script.
+    /// </summary>
+    /// <returns>The cloned object.</returns>
+    public IScriptText CloneForModification()
+    {
+      return new ColumnScript(this,false);
+    }
 
     /// <summary>
     /// Does the compilation of the script into an assembly.
@@ -707,3 +724,5 @@ namespace Altaxo.Data
 
  
 }
+
+#endif

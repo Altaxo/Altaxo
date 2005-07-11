@@ -87,10 +87,18 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     public ExtractTableDataScript(ExtractTableDataScript b)
-      : base(b)
+      : this(b,true)
     {
     }
 
+    /// <summary>
+    /// Creates a column script as a copy from another script.
+    /// </summary>
+    /// <param name="b">The script to copy from.</param>
+    public ExtractTableDataScript(ExtractTableDataScript b, bool doCopyCompileResult)
+      : base(b, doCopyCompileResult)
+    {
+    }
     /// <summary>
     /// Gives the type of the script object (full name), which is created after successfull compilation.
     /// </summary>
@@ -176,7 +184,15 @@ namespace Altaxo.Data
     /// <returns>The cloned object.</returns>
     public override object Clone()
     {
-      return new ExtractTableDataScript(this);
+      return new ExtractTableDataScript(this,true);
+    }
+    /// <summary>
+    /// Clones the script.
+    /// </summary>
+    /// <returns>The cloned object.</returns>
+    public override IScriptText CloneForModification()
+    {
+      return new ExtractTableDataScript(this,false);
     }
 
     /// <summary>

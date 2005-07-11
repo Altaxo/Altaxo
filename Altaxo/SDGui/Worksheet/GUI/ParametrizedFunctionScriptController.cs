@@ -38,19 +38,10 @@ namespace Altaxo.Worksheet.GUI
 
     void SetParameterText(string text, bool enable);
     void SetNumberOfParameters(int numberOfParameters, bool enable);
-
-    void ClearCompilerErrors();
-    void AddCompilerError(string s);
   }
 
   public interface IParametrizedFunctionScriptViewEventSink
   {
-    void EhView_Execute();
-    void EhView_Compile();
-    void EhView_Update();
-    void EhView_Cancel();
-    void EhView_GotoCompilerError(string message);
-
     void EhView_ParameterChanged(int numberOfParameters, bool userDefinedParameters, string parameterNames);
   }
 
@@ -67,7 +58,7 @@ namespace Altaxo.Worksheet.GUI
     public IParametrizedFunctionDDScriptText m_Script;
     public IParametrizedFunctionDDScriptText m_TempScript;
 
-    public IPureScriptController _scriptController;
+    public IScriptController _scriptController;
 
     protected IParametrizedFunctionScriptView m_View;
 
@@ -88,8 +79,8 @@ namespace Altaxo.Worksheet.GUI
     {
       if(bInit)
       {
-        _scriptController = new PureScriptController(m_TempScript);
-        _scriptController.ViewObject = new PureScriptControl();
+        _scriptController = new ScriptController(m_TempScript);
+        _scriptController.ViewObject = new ScriptControl();
 
         //View.ScriptName = m_TempScript.ScriptName;
         //_scriptController.ScriptCursorLocation = m_TempScript.UserAreaScriptOffset;
@@ -148,70 +139,6 @@ namespace Altaxo.Worksheet.GUI
 
    
 
-    public void EhView_Execute()
-    {
-      EhView_Compile();
-    }
-
-    private Regex compilerErrorRegex = new Regex(@".*\((?<line>\d+),(?<column>\d+)\) : (?<msg>.+)",RegexOptions.Compiled);
-    public void EhView_Compile()
-    {
-      _scriptController.Apply();
-      m_TempScript.ScriptText = ((IPureScriptText)_scriptController.ModelObject).ScriptText;
-
-      View.ClearCompilerErrors();
-
-      bool bSucceeded = m_TempScript.Compile();
-
-      if(!bSucceeded)
-      {
-        foreach(string s in m_TempScript.Errors)
-        {
-          string news = compilerErrorRegex.Match(s).Result("(${line},${column}) : ${msg}");
-          View.AddCompilerError(news);
-        }
-  
-
-        Current.GUIFactoryService.ErrorMessageBox("There were compilation errors");
-        return;
-      }
-      else
-      {
-        View.AddCompilerError(DateTime.Now.ToLongTimeString() + " : Compilation successful.");
-      }
-
-
-    }
-
-    public void EhView_GotoCompilerError(string msg)
-    {
-      try
-      {
-        Match match = compilerErrorRegex.Match(msg);
-        string sline = match.Result("${line}");
-        string scol = match.Result("${column}");
-        int line = int.Parse(sline);
-        int col  = int.Parse(scol);
-
-        _scriptController.SetScriptCursorLocation(line-1,col-1);
-
-      }
-      catch(Exception)
-      {
-      }
-    }
-
-    public void EhView_Update()
-    {
-      m_TempScript.ScriptText = ((IPureScriptText)_scriptController.ModelObject).ScriptText;
-      // this.m_DataTable.TableScript = m_TableScript;
-      View.Close(true);
-    }
-
-    public void EhView_Cancel()
-    {
-      View.Close(false);
-    }
 
     bool IsValidParameterName(string name)
     {
@@ -297,12 +224,14 @@ namespace Altaxo.Worksheet.GUI
 
     public bool Apply()
     {
-      this.EhView_Compile();
-      if(m_TempScript.Errors.Length>0)
-        return false;
-      m_Script = (IParametrizedFunctionDDScriptText)m_TempScript.Clone();
-      return true;
+      if(this._scriptController.Apply())
+      {
 
+        m_Script = (IParametrizedFunctionDDScriptText)m_TempScript.Clone();
+        return true;
+      }
+      else
+        return false;
     }
 
     #endregion

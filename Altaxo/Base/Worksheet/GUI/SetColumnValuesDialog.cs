@@ -20,6 +20,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #endregion
 
+#if false
 using System;
 using System.Drawing;
 using System.Collections;
@@ -491,3 +492,4 @@ namespace Altaxo.Worksheet.GUI
     }
   }
 }
+#endif

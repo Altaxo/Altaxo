@@ -157,6 +157,10 @@ namespace Altaxo.Worksheet.GUI
 
     public void EhView_Execute()
     {
+      if(m_TableScript.ScriptText != View.ScriptText)
+      {
+        m_TableScript = m_TableScript.CloneForModification();
+      }
       m_TableScript.ScriptText = View.ScriptText;
 
       View.ClearCompilerErrors();
@@ -199,7 +203,12 @@ namespace Altaxo.Worksheet.GUI
     private Regex compilerErrorRegex = new Regex(@".*\((?<line>\d+),(?<column>\d+)\) : (?<msg>.+)",RegexOptions.Compiled);
     public void EhView_Compile()
     {
+      if(m_TableScript.ScriptText != View.ScriptText)
+      {
+        m_TableScript = m_TableScript.CloneForModification();
+      }
       m_TableScript.ScriptText = View.ScriptText;
+
 
       View.ClearCompilerErrors();
 
@@ -255,7 +264,12 @@ namespace Altaxo.Worksheet.GUI
 
     public void EhView_Update()
     {
+      if(m_TableScript.ScriptText != View.ScriptText)
+      {
+        m_TableScript = m_TableScript.CloneForModification();
+      }
       m_TableScript.ScriptText = View.ScriptText;
+
       // this.m_DataTable.TableScript = m_TableScript;
       this.View.Form.DialogResult = System.Windows.Forms.DialogResult.OK;
       this.View.Form.Close();

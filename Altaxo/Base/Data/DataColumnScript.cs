@@ -119,7 +119,16 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     public DataColumnScript(DataColumnScript b)
-      : base(b)
+      : this(b,true)
+    {
+    }
+
+    /// <summary>
+    /// Creates a column script as a copy from another script.
+    /// </summary>
+    /// <param name="b">The script to copy from.</param>
+    public DataColumnScript(DataColumnScript b, bool doCopyCompileResult)
+      : base(b,doCopyCompileResult)
     {
     }
 
@@ -212,8 +221,13 @@ namespace Altaxo.Data
     /// <returns>The cloned object.</returns>
     public override object Clone()
     {
-      return new DataColumnScript(this);
+      return new DataColumnScript(this,true);
     }
+    public override IScriptText CloneForModification()
+    {
+      return new DataColumnScript(this,false);
+    }
+
 
     /// <summary>
     /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.

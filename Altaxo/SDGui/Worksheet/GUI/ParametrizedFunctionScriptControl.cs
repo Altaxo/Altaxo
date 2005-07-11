@@ -38,12 +38,6 @@ namespace Altaxo.Worksheet.GUI
   [UserControlForController(typeof(IParametrizedFunctionScriptViewEventSink))]
   public class ParametrizedFunctionScriptControl : System.Windows.Forms.UserControl, IParametrizedFunctionScriptView
   {
-    //private System.Windows.Forms.TextBox edFormula;
-    private System.Windows.Forms.ListBox lbCompilerErrors;
-    private System.Windows.Forms.Button btUpdate;
-    private System.Windows.Forms.Button btCancel;
-    private System.Windows.Forms.Button btDoIt;
-    private System.Windows.Forms.Button btCompile;
 
     /// <summary> 
     /// Required designer variable.
@@ -94,11 +88,6 @@ namespace Altaxo.Worksheet.GUI
     /// </summary>
     private void InitializeComponent()
     {
-      this.btUpdate = new System.Windows.Forms.Button();
-      this.btCancel = new System.Windows.Forms.Button();
-      this.btDoIt = new System.Windows.Forms.Button();
-      this.lbCompilerErrors = new System.Windows.Forms.ListBox();
-      this.btCompile = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
       this._cbNumberOfParameters = new System.Windows.Forms.ComboBox();
       this._chkUserDefinedParameters = new System.Windows.Forms.CheckBox();
@@ -110,58 +99,6 @@ namespace Altaxo.Worksheet.GUI
       this._edDependentVariables = new System.Windows.Forms.TextBox();
       this._panelScriptText = new System.Windows.Forms.Panel();
       this.SuspendLayout();
-      // 
-      // lbCompilerErrors
-      // 
-      this.lbCompilerErrors.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.lbCompilerErrors.HorizontalExtent = 4096;
-      this.lbCompilerErrors.HorizontalScrollbar = true;
-      this.lbCompilerErrors.Location = new System.Drawing.Point(0, 344);
-      this.lbCompilerErrors.Name = "lbCompilerErrors";
-      this.lbCompilerErrors.Size = new System.Drawing.Size(592, 82);
-      this.lbCompilerErrors.TabIndex = 29;
-      this.lbCompilerErrors.DoubleClick += new System.EventHandler(this.EhCompilerErrors_DoubleClick);
-      // 
-      // btUpdate
-      // 
-      this.btUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btUpdate.Location = new System.Drawing.Point(536, 136);
-      this.btUpdate.Name = "btUpdate";
-      this.btUpdate.Size = new System.Drawing.Size(56, 32);
-      this.btUpdate.TabIndex = 28;
-      this.btUpdate.Text = "Update";
-      this.btUpdate.Click += new System.EventHandler(this.EhUpdate_Click);
-      // 
-      // btCancel
-      // 
-      this.btCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btCancel.Location = new System.Drawing.Point(536, 240);
-      this.btCancel.Name = "btCancel";
-      this.btCancel.Size = new System.Drawing.Size(56, 32);
-      this.btCancel.TabIndex = 27;
-      this.btCancel.Text = "Cancel";
-      this.btCancel.Click += new System.EventHandler(this.EhCancel_Click);
-      // 
-      // btDoIt
-      // 
-      this.btDoIt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btDoIt.Location = new System.Drawing.Point(536, 25);
-      this.btDoIt.Name = "btDoIt";
-      this.btDoIt.Size = new System.Drawing.Size(56, 32);
-      this.btDoIt.TabIndex = 24;
-      this.btDoIt.Text = "Do It!";
-      this.btDoIt.Click += new System.EventHandler(this.EhDoIt_Click);
-      // 
-      // btCompile
-      // 
-      this.btCompile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btCompile.Location = new System.Drawing.Point(536, 80);
-      this.btCompile.Name = "btCompile";
-      this.btCompile.Size = new System.Drawing.Size(56, 32);
-      this.btCompile.TabIndex = 36;
-      this.btCompile.Text = "Compile";
-      this.btCompile.Click += new System.EventHandler(this.EhCompile_Click);
       // 
       // label1
       // 
@@ -240,17 +177,17 @@ namespace Altaxo.Worksheet.GUI
       // 
       // _panelScriptText
       // 
-      this._panelScriptText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      this._panelScriptText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+        | System.Windows.Forms.AnchorStyles.Left) 
         | System.Windows.Forms.AnchorStyles.Right)));
       this._panelScriptText.BackColor = System.Drawing.SystemColors.ControlLightLight;
       this._panelScriptText.Location = new System.Drawing.Point(0, 80);
       this._panelScriptText.Name = "_panelScriptText";
-      this._panelScriptText.Size = new System.Drawing.Size(520, 344);
+      this._panelScriptText.Size = new System.Drawing.Size(600, 344);
       this._panelScriptText.TabIndex = 46;
       // 
       // ParametrizedFunctionScriptControl
       // 
-      this.Controls.Add(this.lbCompilerErrors);
       this.Controls.Add(this._panelScriptText);
       this.Controls.Add(this._edDependentVariables);
       this.Controls.Add(this.label4);
@@ -261,10 +198,6 @@ namespace Altaxo.Worksheet.GUI
       this.Controls.Add(this._chkUserDefinedParameters);
       this.Controls.Add(this._cbNumberOfParameters);
       this.Controls.Add(this.label1);
-      this.Controls.Add(this.btCompile);
-      this.Controls.Add(this.btUpdate);
-      this.Controls.Add(this.btCancel);
-      this.Controls.Add(this.btDoIt);
       this.Name = "ParametrizedFunctionScriptControl";
       this.Size = new System.Drawing.Size(600, 428);
       this.ResumeLayout(false);
@@ -331,52 +264,12 @@ namespace Altaxo.Worksheet.GUI
 
  
 
-    public void ClearCompilerErrors()
-    {
-      lbCompilerErrors.Items.Clear();
-    }
+   
+   
 
-    public void AddCompilerError(string s)
-    {
-      this.lbCompilerErrors.Items.Add(s);
-    }
 
-    private void EhDoIt_Click(object sender, System.EventArgs e)
-    {
-      if(null!=Controller)
-        Controller.EhView_Execute();
-    
-    }
 
-    private void EhCompile_Click(object sender, System.EventArgs e)
-    {
-      if(null!=Controller)
-        Controller.EhView_Compile();
-    
-    }
-
-    private void EhUpdate_Click(object sender, System.EventArgs e)
-    {
-      if(null!=Controller)
-        Controller.EhView_Update();
-    
-    }
-
-    private void EhCancel_Click(object sender, System.EventArgs e)
-    {
-      if(null!=Controller)
-        Controller.EhView_Cancel();
-    
-    }
-
-    private void EhCompilerErrors_DoubleClick(object sender, System.EventArgs e)
-    {
-      string msg = lbCompilerErrors.SelectedItem as string;
-
-      if(null!=Controller && null!=msg)
-        Controller.EhView_GotoCompilerError(msg);
-    }
-
+  
     private void _edParameterNames_TextChanged(object sender, System.EventArgs e)
     {
       if(null!=Controller)
