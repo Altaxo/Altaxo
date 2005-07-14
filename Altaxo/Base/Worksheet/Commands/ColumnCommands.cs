@@ -392,6 +392,7 @@ namespace Altaxo.Worksheet.Commands
 
     #region Set column values
 
+    /*
     public static void SetColumnValues(WorksheetController ctrl)
     {
       if(ctrl.SelectedDataColumns.Count<=0)
@@ -407,6 +408,7 @@ namespace Altaxo.Worksheet.Commands
 
       Altaxo.Main.GUI.DialogFactory.ShowColumnScriptDialog(ctrl.View.TableViewForm,ctrl.DataTable,dataCol,colScript);
     }
+     */
 
     #endregion
 

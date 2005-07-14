@@ -27,44 +27,47 @@ using System.Reflection;
 using Altaxo.Serialization;
 using Altaxo.Data;
 
-namespace Altaxo.Graph
+namespace Altaxo.Scripting
 {
 
-  public interface IFunctionEvaluationScriptText : IScriptText
+  public interface IExtractTableDataScriptText : IScriptText
   {
     /// <summary>
     /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-    /// If the script object exists, the function "EvalulateFunctionValue" will be called with the provided parameter x.
-    /// If this function throws an exception, the value double.NaN will be returned.
+    /// If the script object exists, the function "IsRowIncluded" will be called for every row in the source tables data column collection.
+    /// If this function returns true, the corresponding row will be copyied to a new data table.
     /// </summary>
-    /// <param name="x">The x argument for the function.</param>
-    /// <returns>The function value.</returns>
-    double Evaluate(double x);
+    /// <param name="myTable">The data table this script is working on.</param>
+    /// <returns>True if executed without exceptions, otherwise false.</returns>
+    /// <remarks>If exceptions were thrown during execution, the exception messages are stored
+    /// inside the column script and can be recalled by the Errors property.</remarks>
+    bool Execute(Altaxo.Data.DataTable myTable);
   }
  
   /// <summary>
   /// Holds the text, the module (=executable), and some properties of a property column script. 
   /// </summary>
  
-  public class FunctionEvaluationScript : AbstractScript, IFunctionEvaluationScriptText, Altaxo.Calc.IScalarFunctionDD
+  public class ExtractTableDataScript : AbstractScript, IExtractTableDataScriptText
   {
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Graph.FunctionEvaluationScript),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Data.ExtractTableDataScript",0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.ExtractTableDataScript), 1)]
       public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Altaxo.Data.AbstractScript s = (Altaxo.Data.AbstractScript)obj;
+        AbstractScript s = (AbstractScript)obj;
     
-        info.AddBaseValueEmbedded(s,typeof(Altaxo.Data.AbstractScript));
+        info.AddBaseValueEmbedded(s,typeof(AbstractScript));
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        Altaxo.Graph.FunctionEvaluationScript s = null!=o ? (Altaxo.Graph.FunctionEvaluationScript)o : new Altaxo.Graph.FunctionEvaluationScript();
+        ExtractTableDataScript s = null!=o ? (ExtractTableDataScript)o : new ExtractTableDataScript();
         
         // deserialize the base class
-        info.GetBaseValueEmbedded(s,typeof(Altaxo.Data.AbstractScript),parent);
+        info.GetBaseValueEmbedded(s,typeof(AbstractScript),parent);
         
         return s;
       }
@@ -75,9 +78,9 @@ namespace Altaxo.Graph
 
 
     /// <summary>
-    /// Creates an empty script.
+    /// Creates an empty column script. Default Style is "Set Column".
     /// </summary>
-    public FunctionEvaluationScript()
+    public ExtractTableDataScript()
     {
     }
 
@@ -85,25 +88,25 @@ namespace Altaxo.Graph
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public FunctionEvaluationScript(FunctionEvaluationScript b)
-      : base(b,false)
+    public ExtractTableDataScript(ExtractTableDataScript b)
+      : this(b,false)
     {
     }
+
     /// <summary>
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public FunctionEvaluationScript(FunctionEvaluationScript b, bool forModification)
-      : base(b,forModification)
+    public ExtractTableDataScript(ExtractTableDataScript b, bool forModification)
+      : base(b, forModification)
     {
     }
-
     /// <summary>
     /// Gives the type of the script object (full name), which is created after successfull compilation.
     /// </summary>
     public override string ScriptObjectType
     {
-      get { return "Altaxo.Calc.FunctionEvaluationScript"; }
+      get { return "Altaxo.Calc.ExtractWorksheetDataScript"; }
     }
 
     /// <summary>
@@ -120,10 +123,13 @@ namespace Altaxo.Graph
           "using Altaxo.Data;\r\n" + 
           "namespace Altaxo.Calc\r\n" + 
           "{\r\n" + 
-          "\tpublic class FunctionEvaluationScript : Altaxo.Calc.FunctionEvaluationScriptBase\r\n" +
+          "\tpublic class ExtractWorksheetDataScript : Altaxo.Calc.ExtractTableValuesExeBase\r\n" +
           "\t{\r\n"+
-          "\t\tpublic override double EvaluateFunctionValue(double x)\r\n" +
-          "\t\t{\r\n"; 
+          "\t\tpublic override bool IsRowIncluded(Altaxo.Data.DataTable mytable, int i)\r\n" +
+          "\t\t{\r\n" +
+          "\t\t\tAltaxo.Data.DataColumnCollection  col = mytable.DataColumns;\r\n" +
+          "\t\t\tAltaxo.Data.DataColumnCollection pcol = mytable.PropertyColumns;\r\n"+ 
+          "\t\t\tAltaxo.Data.DataTableCollection table = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(mytable);\r\n";
       }
     }
 
@@ -142,7 +148,7 @@ namespace Altaxo.Graph
       {
         return
           "\t\t\t\r\n" + 
-          "\t\t\treturn Sin(x);\r\n" +
+          "\t\t\treturn col[\"B\"][i]>0;\r\n" +
           "\t\t\t\r\n"
           ;
       }
@@ -180,31 +186,65 @@ namespace Altaxo.Graph
     /// <returns>The cloned object.</returns>
     public override object Clone()
     {
-      return new Altaxo.Graph.FunctionEvaluationScript(this,true);
+      return new ExtractTableDataScript(this,true);
     }
+    
 
-   
     /// <summary>
-    /// 
+    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+    /// If the script object exists, the Execute function of this script object is called.
     /// </summary>
-    /// <param name="x"></param>
-    /// <returns></returns>
-    public double Evaluate(double x)
+    /// <param name="myTable">The data table this script is working on.</param>
+    /// <returns>True if executed without exceptions, otherwise false.</returns>
+    /// <remarks>If exceptions were thrown during execution, the exception messages are stored
+    /// inside the column script and can be recalled by the Errors property.</remarks>
+    public bool Execute(Altaxo.Data.DataTable myTable)
     {
       if(null==m_ScriptObject)
       {
         m_Errors = new string[1]{"Script Object is null"};
-        return double.NaN;
+        return false;
       }
+
+
+      DataTable clonedTable = (DataTable)myTable.Clone();
+      clonedTable.DataColumns.RemoveRowsAll();
+
+
+      Altaxo.Collections.AscendingIntegerCollection rowsToCopy = new Altaxo.Collections.AscendingIntegerCollection();
+
+      int len = myTable.DataRowCount;
+
+    
 
       try
       {
-        return ((Altaxo.Calc.FunctionEvaluationScriptBase)m_ScriptObject).EvaluateFunctionValue(x);
+        Altaxo.Calc.ExtractTableValuesExeBase scriptObject = (Altaxo.Calc.ExtractTableValuesExeBase)m_ScriptObject;
+        for(int i=0;i<len;i++)
+        {
+          if(scriptObject.IsRowIncluded(myTable,i))
+            rowsToCopy.Add(i);
+        }
       }
-      catch(Exception)
+      catch(Exception ex)
       {
-        return double.NaN;
+        m_Errors = new string[1];
+        m_Errors[0] = ex.ToString();
+        return false;
       }
+
+      for(int i=myTable.DataColumns.ColumnCount-1;i>=0;i--)
+      {
+        for(int j=rowsToCopy.Count-1;j>=0;j--)
+        {
+          clonedTable.DataColumns[i][j] = myTable.DataColumns[i][rowsToCopy[j]];
+        }
+      }
+
+      Current.Project.DataTableCollection.Add(clonedTable);
+      Current.ProjectService.OpenOrCreateWorksheetForTable(clonedTable);
+
+      return true;
     }
-  } // end of class
+  } // end of class PropertyColumnScript
 }

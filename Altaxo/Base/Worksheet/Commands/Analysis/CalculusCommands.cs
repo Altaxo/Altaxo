@@ -48,7 +48,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       object paramobject = new SavitzkyGolayParameters();
 
-      if(!Current.GUIFactoryService.ShowDialog(ref paramobject,"Savitzky-Golay parameters"))
+      if(!Current.Gui.ShowDialog(ref paramobject,"Savitzky-Golay parameters"))
         return;
 
       SavitzkyGolayParameters parameters = (SavitzkyGolayParameters)paramobject;
@@ -62,7 +62,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         Calc.LinearAlgebra.VectorSpacingEvaluator calcspace = new Calc.LinearAlgebra.VectorSpacingEvaluator(Calc.LinearAlgebra.DataColumnWrapper.ToROVector(xCol));
         if(!calcspace.HasValidSpaces || calcspace.HasInvalidSpaces)
         {
-          Current.GUIFactoryService.ErrorMessageBox(string.Format("The x-column {0} contains invalid spaces (is not equally spaced)",xCol.Name));
+          Current.Gui.ErrorMessageBox(string.Format("The x-column {0} contains invalid spaces (is not equally spaced)",xCol.Name));
           return;
         }
         if(calcspace.RelativeSpaceDeviation>1E-2)
@@ -106,7 +106,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       object paramobject = new InterpolationParameters();
 
-      if(!Current.GUIFactoryService.ShowDialog(ref paramobject,"Interpolation"))
+      if(!Current.Gui.ShowDialog(ref paramobject,"Interpolation"))
         return;
 
       InterpolationParameters parameters = (InterpolationParameters)paramobject;
@@ -117,12 +117,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       if(!(yCol is INumericColumn))
       {
-        Current.GUIFactoryService.ErrorMessageBox("The selected column is not numeric!");
+        Current.Gui.ErrorMessageBox("The selected column is not numeric!");
         return;
       }
       if(!(xCol is INumericColumn))
       {
-        Current.GUIFactoryService.ErrorMessageBox("The x-column of the selected column is not numeric!");
+        Current.Gui.ErrorMessageBox("The x-column of the selected column is not numeric!");
         return;
       }
 

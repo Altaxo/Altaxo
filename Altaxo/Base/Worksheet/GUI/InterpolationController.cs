@@ -129,7 +129,7 @@ namespace Altaxo.Worksheet.GUI
       _classList = (System.Type[])list.ToArray(typeof(System.Type));
       _classListStrings = new string[_classList.Length];
       for(int i=0;i<_classList.Length;i++)
-        _classListStrings[i] = Current.GUIFactoryService.GetUserFriendlyClassName(_classList[i]);
+        _classListStrings[i] = Current.Gui.GetUserFriendlyClassName(_classList[i]);
 
 
 
@@ -195,7 +195,7 @@ namespace Altaxo.Worksheet.GUI
     public void EhValidatingClassName(int val)
     {
       this._interpolationInstance = (Altaxo.Calc.Interpolation.CurveBase)System.Activator.CreateInstance(_classList[val]);
-      SetInterpolationDetailController((IMVCAController)Current.GUIFactoryService.GetControllerAndControl(new object[]{this._interpolationInstance},typeof(IMVCAController)));
+      SetInterpolationDetailController((IMVCAController)Current.Gui.GetControllerAndControl(new object[]{this._interpolationInstance},typeof(IMVCAController)));
     }
 
     public void EhValidatingNumberOfPoints(string val, System.ComponentModel.CancelEventArgs e)

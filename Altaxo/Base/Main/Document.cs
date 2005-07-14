@@ -24,7 +24,6 @@
 using System;
 using System.Runtime.Serialization;
 using Altaxo.Serialization;
-//using ICSharpCode.SharpZipLib.Zip;
 using Altaxo.Main;
 
 namespace Altaxo
@@ -46,6 +45,9 @@ namespace Altaxo
 
     protected Altaxo.Worksheet.WorksheetLayoutCollection m_TableLayoutList = null;
 
+    private Altaxo.Scripting.FitFunctionScriptCollection _FitFunctionScripts;
+
+
     //  protected System.Collections.ArrayList m_Worksheets;
     /// <summary>The list of GraphForms for the document.</summary>
     //  protected System.Collections.ArrayList m_GraphForms;
@@ -61,6 +63,7 @@ namespace Altaxo
       m_DataSet = new Altaxo.Data.DataTableCollection(this);
       m_GraphSet = new Altaxo.Graph.GraphDocumentCollection(this);
       m_TableLayoutList = new Altaxo.Worksheet.WorksheetLayoutCollection(this);
+      _FitFunctionScripts = new Altaxo.Scripting.FitFunctionScriptCollection();
       //  m_Worksheets = new System.Collections.ArrayList();
       //  m_GraphForms = new System.Collections.ArrayList();
     }
@@ -263,6 +266,10 @@ namespace Altaxo
     {
       get { return this.m_TableLayoutList; }
     }
+   public Altaxo.Scripting.FitFunctionScriptCollection FitFunctionScripts
+    {
+      get { return _FitFunctionScripts; }
+    }
 
     protected virtual void OnDirtyChanged()
     {
@@ -334,6 +341,8 @@ namespace Altaxo
           return this.m_GraphSet;
         case "TableLayouts":
           return this.m_TableLayoutList;
+        case "FitFunctionScripts":
+          return this._FitFunctionScripts;
       }
       return null;
     }
@@ -346,6 +355,8 @@ namespace Altaxo
         return "Tables";
       else if(o.Equals(this.m_GraphSet))
         return "Graphs";
+      else if (o.Equals(this._FitFunctionScripts))
+        return "FitFunctionScripts";
       else
         return null;
     }

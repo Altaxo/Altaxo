@@ -35,8 +35,8 @@ namespace Altaxo.Gui.Scripting
   /// <summary>
   /// Summary description for ParametrizedFunctionScriptControl.
   /// </summary>
-  [UserControlForController(typeof(IParametrizedFunctionScriptViewEventSink))]
-  public class ParametrizedFunctionScriptControl : System.Windows.Forms.UserControl, IParametrizedFunctionScriptView
+  [UserControlForController(typeof(IFitFunctionScriptViewEventSink))]
+  public class FitFunctionScriptControl : System.Windows.Forms.UserControl, IFitFunctionScriptView
   {
 
     /// <summary> 
@@ -54,9 +54,9 @@ namespace Altaxo.Gui.Scripting
     private System.Windows.Forms.TextBox _edDependentVariables;
     private System.Windows.Forms.Panel _panelScriptText;
 
-    private IParametrizedFunctionScriptViewEventSink m_Controller;
+    private IFitFunctionScriptViewEventSink m_Controller;
 
-    public ParametrizedFunctionScriptControl()
+    public FitFunctionScriptControl()
     {
       // This call is required by the Windows.Forms Form Designer.
       InitializeComponent();
@@ -208,7 +208,7 @@ namespace Altaxo.Gui.Scripting
     #endregion
 
 
-    public IParametrizedFunctionScriptViewEventSink Controller
+    public IFitFunctionScriptViewEventSink Controller
     {
       get { return m_Controller; }
       set { m_Controller = value; }

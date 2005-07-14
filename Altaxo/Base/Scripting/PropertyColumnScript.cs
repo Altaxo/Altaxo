@@ -26,46 +26,47 @@ using System.CodeDom.Compiler;
 using System.Reflection;
 using Altaxo.Serialization;
 
-namespace Altaxo.Data
+namespace Altaxo.Scripting
 {
 
-  public interface IExtractTableDataScriptText : IScriptText
+  public interface IColumnScriptText : IScriptText
   {
     /// <summary>
     /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
-    /// If the script object exists, the function "IsRowIncluded" will be called for every row in the source tables data column collection.
-    /// If this function returns true, the corresponding row will be copyied to a new data table.
+    /// If the script object exists, the data change notifications will be switched of (for all tables).
+    /// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
     /// </summary>
-    /// <param name="myTable">The data table this script is working on.</param>
+    /// <param name="myColumn">The property column this script is working on.</param>
     /// <returns>True if executed without exceptions, otherwise false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
-    bool Execute(Altaxo.Data.DataTable myTable);
+    bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn);
   }
  
   /// <summary>
   /// Holds the text, the module (=executable), and some properties of a property column script. 
   /// </summary>
  
-  public class ExtractTableDataScript : AbstractScript, IExtractTableDataScriptText
+  public class PropertyColumnScript : AbstractScript, IColumnScriptText
   {
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.ExtractTableDataScript),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Data.PropertyColumnScript",0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.PropertyColumnScript), 1)]
       public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Altaxo.Data.AbstractScript s = (Altaxo.Data.AbstractScript)obj;
+        AbstractScript s = (AbstractScript)obj;
     
-        info.AddBaseValueEmbedded(s,typeof(Altaxo.Data.AbstractScript));
+        info.AddBaseValueEmbedded(s,typeof(AbstractScript));
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        Altaxo.Data.ExtractTableDataScript s = null!=o ? (Altaxo.Data.ExtractTableDataScript)o : new Altaxo.Data.ExtractTableDataScript();
+        PropertyColumnScript s = null!=o ? (PropertyColumnScript)o : new PropertyColumnScript();
         
         // deserialize the base class
-        info.GetBaseValueEmbedded(s,typeof(Altaxo.Data.AbstractScript),parent);
+        info.GetBaseValueEmbedded(s,typeof(AbstractScript),parent);
         
         return s;
       }
@@ -78,7 +79,7 @@ namespace Altaxo.Data
     /// <summary>
     /// Creates an empty column script. Default Style is "Set Column".
     /// </summary>
-    public ExtractTableDataScript()
+    public PropertyColumnScript()
     {
     }
 
@@ -86,7 +87,7 @@ namespace Altaxo.Data
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public ExtractTableDataScript(ExtractTableDataScript b)
+    public PropertyColumnScript(PropertyColumnScript b)
       : this(b,false)
     {
     }
@@ -95,16 +96,17 @@ namespace Altaxo.Data
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public ExtractTableDataScript(ExtractTableDataScript b, bool forModification)
+    public PropertyColumnScript(PropertyColumnScript b, bool forModification)
       : base(b, forModification)
     {
     }
+
     /// <summary>
     /// Gives the type of the script object (full name), which is created after successfull compilation.
     /// </summary>
     public override string ScriptObjectType
     {
-      get { return "Altaxo.Calc.ExtractWorksheetDataScript"; }
+      get { return "Altaxo.Calc.SetPropertyColumnValues"; }
     }
 
     /// <summary>
@@ -121,13 +123,14 @@ namespace Altaxo.Data
           "using Altaxo.Data;\r\n" + 
           "namespace Altaxo.Calc\r\n" + 
           "{\r\n" + 
-          "\tpublic class ExtractWorksheetDataScript : Altaxo.Calc.ExtractTableValuesExeBase\r\n" +
+          "\tpublic class SetPropertyColumnValues : Altaxo.Calc.ColScriptExeBase\r\n" +
           "\t{\r\n"+
-          "\t\tpublic override bool IsRowIncluded(Altaxo.Data.DataTable mytable, int i)\r\n" +
+          "\t\tpublic override void Execute(Altaxo.Data.DataColumn mycol)\r\n" +
           "\t\t{\r\n" +
-          "\t\t\tAltaxo.Data.DataColumnCollection  col = mytable.DataColumns;\r\n" +
-          "\t\t\tAltaxo.Data.DataColumnCollection pcol = mytable.PropertyColumns;\r\n"+ 
-          "\t\t\tAltaxo.Data.DataTableCollection table = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(mytable);\r\n";
+          "\t\t\tAltaxo.Data.DataColumnCollection pcol = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(mycol);\r\n" +
+          "\t\t\tAltaxo.Data.DataTable         mytable = Altaxo.Data.DataTable.GetParentDataTableOf(pcol);\r\n" +
+          "\t\t\tAltaxo.Data.DataColumnCollection  col = mytable==null? null : mytable.DataColumns;\r\n" +
+          "\t\t\tAltaxo.Data.DataTableCollection table = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(mytable);\r\n"; 
       }
     }
 
@@ -146,7 +149,7 @@ namespace Altaxo.Data
       {
         return
           "\t\t\t\r\n" + 
-          "\t\t\treturn col[\"B\"][i]>0;\r\n" +
+          "\t\t\tmycol.Data = pcol[\"B\"] - pcol[\"A\"];\r\n" +
           "\t\t\t\r\n"
           ;
       }
@@ -170,7 +173,7 @@ namespace Altaxo.Data
       {
         return 
           
-          "\t\t} // method\r\n" +
+          "\t\t} // Execute method\r\n" +
           "\t} // class\r\n" + 
           "} //namespace\r\n";
       }
@@ -184,19 +187,19 @@ namespace Altaxo.Data
     /// <returns>The cloned object.</returns>
     public override object Clone()
     {
-      return new ExtractTableDataScript(this,true);
+      return new PropertyColumnScript(this,true);
     }
-    
 
+  
     /// <summary>
     /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
     /// If the script object exists, the Execute function of this script object is called.
     /// </summary>
-    /// <param name="myTable">The data table this script is working on.</param>
+    /// <param name="myColumn">The data table this script is working on.</param>
     /// <returns>True if executed without exceptions, otherwise false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
-    public bool Execute(Altaxo.Data.DataTable myTable)
+    public bool Execute(Altaxo.Data.DataColumn myColumn)
     {
       if(null==m_ScriptObject)
       {
@@ -204,25 +207,9 @@ namespace Altaxo.Data
         return false;
       }
 
-
-      DataTable clonedTable = (DataTable)myTable.Clone();
-      clonedTable.DataColumns.RemoveRowsAll();
-
-
-      Altaxo.Collections.AscendingIntegerCollection rowsToCopy = new Altaxo.Collections.AscendingIntegerCollection();
-
-      int len = myTable.DataRowCount;
-
-    
-
       try
       {
-        Altaxo.Calc.ExtractTableValuesExeBase scriptObject = (Altaxo.Calc.ExtractTableValuesExeBase)m_ScriptObject;
-        for(int i=0;i<len;i++)
-        {
-          if(scriptObject.IsRowIncluded(myTable,i))
-            rowsToCopy.Add(i);
-        }
+        ((Altaxo.Calc.ColScriptExeBase)m_ScriptObject).Execute(myColumn);
       }
       catch(Exception ex)
       {
@@ -230,19 +217,70 @@ namespace Altaxo.Data
         m_Errors[0] = ex.ToString();
         return false;
       }
-
-      for(int i=myTable.DataColumns.ColumnCount-1;i>=0;i--)
-      {
-        for(int j=rowsToCopy.Count-1;j>=0;j--)
-        {
-          clonedTable.DataColumns[i][j] = myTable.DataColumns[i][rowsToCopy[j]];
-        }
-      }
-
-      Current.Project.DataTableCollection.Add(clonedTable);
-      Current.ProjectService.OpenOrCreateWorksheetForTable(clonedTable);
-
       return true;
     }
+
+
+    /// <summary>
+    /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
+    /// If the script object exists, the data change notifications will be switched of (for all tables).
+    /// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
+    /// </summary>
+    /// <param name="myColumn">The property column this script is working on.</param>
+    /// <returns>True if executed without exceptions, otherwise false.</returns>
+    /// <remarks>If exceptions were thrown during execution, the exception messages are stored
+    /// inside the column script and can be recalled by the Errors property.</remarks>
+    public bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn)
+    {
+      bool bSucceeded=true;
+      Altaxo.Data.DataTableCollection   myDataSet=null;
+
+      // first, test some preconditions
+      if(null==m_ScriptObject)
+      {
+        m_Errors = new string[1]{"Script Object is null"};
+        return false;
+      }
+
+      Altaxo.Data.DataColumnCollection myColumnCollection = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(myColumn);
+
+      Altaxo.Data.DataTable myTable = Altaxo.Data.DataTable.GetParentDataTableOf(myColumnCollection);
+
+      myDataSet = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myTable);
+
+      if(null!=myDataSet) 
+        myDataSet.Suspend();
+      else if(null!=myTable)
+        myTable.Suspend();
+      else if(null!=myColumnCollection)
+        myColumnCollection.Suspend();
+      else if(null!=myColumn)
+        myColumn.Suspend();
+
+      try
+      {
+        ((Altaxo.Calc.ColScriptExeBase)m_ScriptObject).Execute(myColumn);
+      }
+      catch(Exception ex)
+      {
+        bSucceeded = false;
+        m_Errors = new string[1];
+        m_Errors[0] = ex.ToString();
+      }
+      finally
+      {
+        if(null!=myDataSet) 
+          myDataSet.Resume();
+        else if(null!=myTable)
+          myTable.Resume();
+        else if(null!=myColumnCollection)
+          myColumnCollection.Resume();
+        else if(null!=myColumn)
+          myColumn.Resume();
+      }
+
+      return bSucceeded; 
+    }
+
   } // end of class PropertyColumnScript
 }

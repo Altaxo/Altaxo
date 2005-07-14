@@ -28,6 +28,7 @@ using Altaxo.Main;
 using Altaxo.Graph;
 using Altaxo.Graph.GUI;
 using Altaxo.Gui.Scripting;
+using Altaxo.Scripting;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -408,7 +409,7 @@ namespace Altaxo.Graph.Commands
     {
       string result = Altaxo.Graph.Procedures.NonlinearFitting.Fit(ctrl);
       if(null!=result)
-        Current.GUIFactoryService.ErrorMessageBox(result);
+        Current.Gui.ErrorMessageBox(result);
     }
   }
 
@@ -416,23 +417,23 @@ namespace Altaxo.Graph.Commands
   {
     public override void Run(Altaxo.Graph.GUI.GraphController ctrl)
     {
-      Graph.FunctionEvaluationScript script = null; // 
+      FunctionEvaluationScript script = null; // 
 
       if(script==null)
-        script = new Graph.FunctionEvaluationScript();
+        script = new FunctionEvaluationScript();
 
       object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
-      if(Current.GUIFactoryService.ShowDialog(args, "Function script"))
+      if(Current.Gui.ShowDialog(args, "Function script"))
       {
         ctrl.EnsureValidityOfCurrentLayerNumber();
 
-        script = (Graph.FunctionEvaluationScript)args[0];
+        script = (FunctionEvaluationScript)args[0];
         XYFunctionPlotItem functItem = new XYFunctionPlotItem(new XYFunctionPlotData(script),new XYLineScatterPlotStyle(LineScatterPlotStyleKind.Line));
         ctrl.Doc.Layers[ctrl.CurrentLayerNumber].PlotItems.Add(functItem);
       }
     }
 
-    public bool EhScriptExecution(Altaxo.Data.IScriptText script)
+    public bool EhScriptExecution(IScriptText script)
     {
       return true;
     }

@@ -883,7 +883,7 @@ namespace Altaxo.Worksheet.GUI
 
     protected void EhMenuColumnSetColumnValues_OnClick(object sender, System.EventArgs e)
     {
-      Commands.ColumnCommands.SetColumnValues(this);
+      //Commands.ColumnCommands.SetColumnValues(this);
     }
 
     protected void EhMenuColumnSetColumnAsX_OnClick(object sender, System.EventArgs e)

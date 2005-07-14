@@ -38,7 +38,10 @@ namespace Altaxo.Main.GUI
     void InitializeDescription(string value);
     void InitializeValue1(string value);
   }
- 
+  public interface ISingleValueController : IMVCAController
+  {
+    string DescriptionText { get; set; }
+  }
 
   #endregion
 
@@ -46,7 +49,7 @@ namespace Altaxo.Main.GUI
   /// Controller for a single value. This is a string here, but in derived classes, that can be anything that can be converted to and from a string.
   /// </summary>
   [UserControllerForObject(typeof(string),100)]
-  public class SingleValueController : IMVCAController, ISingleValueViewEventSink
+  public class SingleValueController : ISingleValueController, ISingleValueViewEventSink
   {
     protected ISingleValueView _view;
     protected string _value1String;

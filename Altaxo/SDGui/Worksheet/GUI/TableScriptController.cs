@@ -24,6 +24,7 @@ using System;
 using System.Text.RegularExpressions;
 using Altaxo.Data;
 using Altaxo.Gui.Scripting;
+using Altaxo.Scripting;
 
 namespace Altaxo.Worksheet.GUI
 {

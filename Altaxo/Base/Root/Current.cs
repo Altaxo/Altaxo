@@ -100,7 +100,7 @@ namespace Altaxo
     /// <summary>
     /// Returns the console window, which can be used by your scripts for textual output.
     /// </summary>
-    public static Altaxo.Main.Services.GUIFactoryService GUIFactoryService
+    public static Altaxo.Main.Services.GUIFactoryService Gui
     {
       get { return sm_theGUIFactoryService; }
     }

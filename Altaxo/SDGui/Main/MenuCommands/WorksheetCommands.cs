@@ -28,6 +28,7 @@ using Altaxo.Main;
 using Altaxo.Worksheet;
 using Altaxo.Worksheet.GUI;
 using Altaxo.Gui.Scripting;
+using Altaxo.Scripting;
 
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -245,13 +246,13 @@ namespace Altaxo.Worksheet.Commands
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
       m_Table = ctrl.DataTable;
-      Data.ExtractTableDataScript script = ctrl.DataTable.GetTableProperty(ExtractTableDataScriptPropertyName) as Data.ExtractTableDataScript;
+      ExtractTableDataScript script = ctrl.DataTable.GetTableProperty(ExtractTableDataScriptPropertyName) as ExtractTableDataScript;
 
       if(script==null)
-        script = new Data.ExtractTableDataScript();
+        script = new ExtractTableDataScript();
 
       object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
-      if(Current.GUIFactoryService.ShowDialog(args, "WorksheetScript of " + m_Table.Name))
+      if(Current.Gui.ShowDialog(args, "WorksheetScript of " + m_Table.Name))
       {
        m_Table.SetTableProperty(ExtractTableDataScriptPropertyName, args[0]);
       }
@@ -259,9 +260,9 @@ namespace Altaxo.Worksheet.Commands
       this.m_Table = null;
      }
 
-    public bool EhScriptExecution(Altaxo.Data.IScriptText script)
+    public bool EhScriptExecution(IScriptText script)
     {
-      return ((Data.ExtractTableDataScript)script).Execute(m_Table);
+      return ((ExtractTableDataScript)script).Execute(m_Table);
     }
   }
 
@@ -274,23 +275,23 @@ namespace Altaxo.Worksheet.Commands
     {
       m_Table = ctrl.DataTable;
       
-      Data.IScriptText script = m_Table.TableScript;
+      IScriptText script = m_Table.TableScript;
 
       if(script==null)
-        script = new Data.TableScript();
+        script = new TableScript();
 
       object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
-      if(Current.GUIFactoryService.ShowDialog(args, "WorksheetScript of " + m_Table.Name))
+      if(Current.Gui.ShowDialog(args, "WorksheetScript of " + m_Table.Name))
       {
-        m_Table.TableScript = (Data.TableScript)args[0];
+        m_Table.TableScript = (TableScript)args[0];
       }
 
       this.m_Table = null;
       
     }
-    public bool EhScriptExecution(Altaxo.Data.IScriptText script)
+    public bool EhScriptExecution(IScriptText script)
     {
-      return ((Altaxo.Data.TableScript)script).ExecuteWithSuspendedNotifications(m_Table);
+      return ((TableScript)script).ExecuteWithSuspendedNotifications(m_Table);
     }
   }
 
@@ -324,23 +325,23 @@ namespace Altaxo.Worksheet.Commands
         return;
       m_Column = dataTable.DataColumns[ctrl.SelectedDataColumns[0]];
 
-      Data.IScriptText script = (Data.IScriptText)dataTable.DataColumns.ColumnScripts[m_Column];
+      IScriptText script = (IScriptText)dataTable.DataColumns.ColumnScripts[m_Column];
       if(script==null)
-        script = new Data.DataColumnScript();
+        script = new DataColumnScript();
 
       object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
-      if(Current.GUIFactoryService.ShowDialog(args, "DataColumnScript of " + m_Column.Name))
+      if(Current.Gui.ShowDialog(args, "DataColumnScript of " + m_Column.Name))
       {
         if(null != dataTable.DataColumns.ColumnScripts[m_Column])
-          dataTable.DataColumns.ColumnScripts[m_Column] = (Altaxo.Data.IColumnScriptText)args[0];
+          dataTable.DataColumns.ColumnScripts[m_Column] = (IColumnScriptText)args[0];
         else
           dataTable.DataColumns.ColumnScripts.Add(m_Column, args[0]);
       }
       this.m_Column = null;
     }
-    public bool EhScriptExecution(Altaxo.Data.IScriptText script)
+    public bool EhScriptExecution(IScriptText script)
     {
-      return ((Altaxo.Data.DataColumnScript)script).ExecuteWithSuspendedNotifications(m_Column);
+      return ((DataColumnScript)script).ExecuteWithSuspendedNotifications(m_Column);
     }
   }
     public class OpenPropertyColumnScriptDialog : AbstractWorksheetControllerCommand
@@ -354,15 +355,15 @@ namespace Altaxo.Worksheet.Commands
           return;
        m_Column = dataTable.PropertyColumns[ctrl.SelectedPropertyColumns[0]];
 
-        Data.IScriptText script = (Data.IScriptText)dataTable.PropertyColumns.ColumnScripts[m_Column];
+        IScriptText script = (IScriptText)dataTable.PropertyColumns.ColumnScripts[m_Column];
         if(script==null)
-          script = new Data.PropertyColumnScript();
+          script = new PropertyColumnScript();
 
         object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
-        if(Current.GUIFactoryService.ShowDialog(args, "PropertyColumnScript of " + m_Column.Name))
+        if(Current.Gui.ShowDialog(args, "PropertyColumnScript of " + m_Column.Name))
         {
           if(null != dataTable.DataColumns.ColumnScripts[m_Column])
-            dataTable.DataColumns.ColumnScripts[m_Column] = (Altaxo.Data.IColumnScriptText)args[0];
+            dataTable.DataColumns.ColumnScripts[m_Column] = (IColumnScriptText)args[0];
           else
             dataTable.DataColumns.ColumnScripts.Add(m_Column, args[0]);
         }
@@ -370,9 +371,9 @@ namespace Altaxo.Worksheet.Commands
         this.m_Column = null;
       }
 
-    public bool EhScriptExecution(Altaxo.Data.IScriptText script)
+    public bool EhScriptExecution(IScriptText script)
     {
-      return ((Altaxo.Data.PropertyColumnScript)script).ExecuteWithSuspendedNotifications(m_Column);
+      return ((PropertyColumnScript)script).ExecuteWithSuspendedNotifications(m_Column);
     }
   }
 

@@ -185,6 +185,7 @@
     <Compile Include="Calc\ScriptExecutionBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Scripting\FitFunctionScriptCollection.cs" />
     <Compile Include="Collections\AscendingIntegerCollection.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -194,7 +195,7 @@
     <Compile Include="Collections\IntegerRangeAsCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\AbstractScript.cs">
+    <Compile Include="Scripting\AbstractScript.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\CollectionBase.cs">
@@ -212,7 +213,7 @@
     <Compile Include="Data\DataColumnCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\DataColumnScript.cs">
+    <Compile Include="Scripting\DataColumnScript.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\DataTable.cs">
@@ -230,7 +231,7 @@
     <Compile Include="Data\EquallySpacedColumn.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\ExtractTableDataScript.cs">
+    <Compile Include="Scripting\ExtractTableDataScript.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\IDefinedCount.cs">
@@ -251,13 +252,13 @@
     <Compile Include="Data\OperatableObject.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\PropertyColumnScript.cs">
+    <Compile Include="Scripting\PropertyColumnScript.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\TableCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\TableScript.cs">
+    <Compile Include="Scripting\TableScript.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\TextColumn.cs">
@@ -365,7 +366,7 @@
     <Compile Include="Graph\Edge.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Graph\FunctionEvaluationScript.cs">
+    <Compile Include="Scripting\FunctionEvaluationScript.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\GraphDocument.cs">
@@ -519,7 +520,7 @@
     <Compile Include="Graph\IPlotArea.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Graph\ParametrizedFunctionDDScript.cs" />
+    <Compile Include="Scripting\FitFunctionScript.cs" />
     <Compile Include="Graph\PenHolder.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -598,6 +599,22 @@
     </Compile>
     <Compile Include="Graph\XYZEquidistantMeshColumnPlotData.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Gui\Scripting\FitFunctionNameAndCategoryController.cs" />
+    <Compile Include="Gui\Scripting\FitFunctionScriptControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Scripting\FitFunctionScriptController.cs" />
+    <Compile Include="Gui\Scripting\PureScriptControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Scripting\PureScriptController.cs" />
+    <Compile Include="Gui\Scripting\ScriptControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Scripting\ScriptController.cs" />
+    <Compile Include="Gui\Scripting\ScriptExecutionDialog.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Main\AboutDialog.cs">
       <SubType>Form</SubType>
@@ -1032,6 +1049,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Graph\GUI\XYPlotLabelStyleControl.resx">
       <DependentUpon>XYPlotLabelStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Scripting\FitFunctionScriptControl.resx">
+      <DependentUpon>FitFunctionScriptControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Scripting\PureScriptControl.resx">
+      <DependentUpon>PureScriptControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Scripting\ScriptControl.resx">
+      <DependentUpon>ScriptControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Scripting\ScriptExecutionDialog.resx">
+      <DependentUpon>ScriptExecutionDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>

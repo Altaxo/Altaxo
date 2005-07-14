@@ -55,7 +55,7 @@ namespace Altaxo.Worksheet.GUI
 
       for(int i=0;i<_controller.Length;i++)
       {
-        Current.GUIFactoryService.GetControl(_controller[i]);
+        Current.Gui.GetControl(_controller[i]);
       }
 
       base.Initialize(_controller);

@@ -20,16 +20,18 @@
 /////////////////////////////////////////////////////////////////////////////
 #endregion
 
-#if true
+
 
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Reflection;
 using Altaxo.Serialization;
+using Altaxo.Scripting;
 
 namespace Altaxo.Data
 {
+#if false
   /// <summary>
   /// Holds the text, the module (=executable), and some properties of a column script. 
   /// </summary>
@@ -700,6 +702,7 @@ namespace Altaxo.Data
 
   } // end of class ColumnScript
 
+#endif
 
   /// <summary>
   /// Holds  column scripts in a hash table. The hash value is the data column the script belongs to.
@@ -749,4 +752,3 @@ namespace Altaxo.Data
  
 }
 
-#endif

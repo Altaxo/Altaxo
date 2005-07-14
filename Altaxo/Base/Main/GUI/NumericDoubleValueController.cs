@@ -48,12 +48,12 @@ namespace Altaxo.Main.GUI
         if(vald<_minimumValue || (!_isMinimumValueIncluded && vald==_minimumValue))
         {
           e.Cancel=true;
-          Current.GUIFactoryService.ErrorMessageBox(string.Format("Value must be {0} than {1}!",(_isMinimumValueIncluded?"greater or equal":"greater"), Altaxo.Serialization.GUIConversion.ToString(_minimumValue)));
+          Current.Gui.ErrorMessageBox(string.Format("Value must be {0} than {1}!",(_isMinimumValueIncluded?"greater or equal":"greater"), Altaxo.Serialization.GUIConversion.ToString(_minimumValue)));
         }
         else if(vald>_maximumValue || (!_isMaximumValueIncluded && vald==_maximumValue))
         {
           e.Cancel=true;
-          Current.GUIFactoryService.ErrorMessageBox(string.Format("Value must be {0} than {1}!",(_isMaximumValueIncluded?"less or equal":"less"),Altaxo.Serialization.GUIConversion.ToString(_maximumValue)));
+          Current.Gui.ErrorMessageBox(string.Format("Value must be {0} than {1}!",(_isMaximumValueIncluded?"less or equal":"less"),Altaxo.Serialization.GUIConversion.ToString(_maximumValue)));
         }
         else
         {

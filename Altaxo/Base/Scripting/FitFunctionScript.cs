@@ -28,14 +28,11 @@ using Altaxo.Serialization;
 using Altaxo.Data;
 using Altaxo.Calc.Regression.Nonlinear;
 
-namespace Altaxo.Graph
+namespace Altaxo.Scripting
 {
 
-  public interface IParametrizedFunctionDDScriptText : IScriptText, IFitFunction
+  public interface IFitFunctionScriptText : IScriptText, IFitFunction
   {
-       
-
-    
     /// <summary>
     /// Returns true if the script uses user defined parameter names instead of using P[0], P[1] ...
     /// </summary>
@@ -59,7 +56,7 @@ namespace Altaxo.Graph
   /// Holds the text, the module (=executable), and some properties of a property column script. 
   /// </summary>
 
-  public class ParametrizedFunctionDDScript : AbstractScript, IParametrizedFunctionDDScriptText, IFitFunction
+  public class FitFunctionScript : AbstractScript, IFitFunctionScriptText, IFitFunction
   {
   
 
@@ -80,25 +77,46 @@ namespace Altaxo.Graph
     string[] _IndependentVariablesNames = new string[]{"x"};
     string[] _DependentVariablesNames = new string[]{"y"};
 
+    string _fitFunctionName = "User";
+    string _fitFunctionCategory = "";
+    DateTime _fitFunctionCreationTime = DateTime.Now;
+
+    public DateTime CreationTime
+    {
+      get { return _fitFunctionCreationTime; }
+    }
+
+    public string FitFunctionName
+    {
+      get { return _fitFunctionName; }
+      set { _fitFunctionName = value; }
+    }
+    
+
+    public string FitFunctionCategory
+    {
+      get { return _fitFunctionCategory; }
+      set { _fitFunctionCategory = value; }
+    }
 
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Graph.ParametrizedFunctionDDScript), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitFunctionScript), 0)]
       public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Altaxo.Data.AbstractScript s = (Altaxo.Data.AbstractScript)obj;
+        AbstractScript s = (AbstractScript)obj;
 
-        info.AddBaseValueEmbedded(s, typeof(Altaxo.Data.AbstractScript));
+        info.AddBaseValueEmbedded(s, typeof(AbstractScript));
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        Altaxo.Graph.ParametrizedFunctionDDScript s = null != o ? (Altaxo.Graph.ParametrizedFunctionDDScript)o : new Altaxo.Graph.ParametrizedFunctionDDScript();
+        FitFunctionScript s = null != o ? (FitFunctionScript)o : new FitFunctionScript();
 
         // deserialize the base class
-        info.GetBaseValueEmbedded(s, typeof(Altaxo.Data.AbstractScript), parent);
+        info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
 
         return s;
       }
@@ -111,7 +129,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// Creates an empty script.
     /// </summary>
-    public ParametrizedFunctionDDScript()
+    public FitFunctionScript()
     {
     }
 
@@ -119,7 +137,7 @@ namespace Altaxo.Graph
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public ParametrizedFunctionDDScript(ParametrizedFunctionDDScript b)
+    public FitFunctionScript(FitFunctionScript b)
       : base(b,false)
     {
     }
@@ -128,7 +146,7 @@ namespace Altaxo.Graph
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public ParametrizedFunctionDDScript(ParametrizedFunctionDDScript b, bool forModification)
+    public FitFunctionScript(FitFunctionScript b, bool forModification)
       : base(b, forModification)
     {
     }
@@ -526,7 +544,7 @@ namespace Altaxo.Graph
     /// <returns>The cloned object.</returns>
     public override object Clone()
     {
-      return new Altaxo.Graph.ParametrizedFunctionDDScript(this,true);
+      return new FitFunctionScript(this,true);
     }
 
     

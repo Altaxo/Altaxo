@@ -80,6 +80,37 @@ namespace Altaxo.Main.Services
       controller.ViewObject = control;
     }
 
+
+      /// <summary>
+    /// Shows a configuration dialog for an object.
+    /// </summary>
+    /// <param name="controller">The controller to show in the dialog</param>
+    /// <param name="title">The title of the dialog to show.</param>
+    /// <returns>True if the object was successfully configured, false otherwise.</returns>
+    public bool ShowDialog(IMVCAController controller, string title)
+    {
+
+      if (controller.ViewObject == null)
+      {
+        GetControl(controller);
+      }
+
+      if (controller.ViewObject == null)
+        throw new ArgumentException("Can't find a view object for controller of type " + controller.GetType());
+
+      if (controller is Altaxo.Gui.Scripting.IScriptController)
+      {
+        System.Windows.Forms.Form dlgctrl = new Altaxo.Gui.Scripting.ScriptExecutionDialog((Altaxo.Gui.Scripting.IScriptController)controller);
+        return (System.Windows.Forms.DialogResult.OK == dlgctrl.ShowDialog(Current.MainWindow));
+      }
+      else
+      {
+        Altaxo.Main.GUI.DialogShellController dlgctrl = new Altaxo.Main.GUI.DialogShellController(new Main.GUI.DialogShellView((System.Windows.Forms.UserControl)controller.ViewObject), controller, title, false);
+        return (dlgctrl.ShowDialog(Current.MainWindow));
+      }
+    }
+
+
     /// <summary>
     /// Shows a configuration dialog for an object.
     /// </summary>
@@ -97,41 +128,20 @@ namespace Altaxo.Main.Services
     /// </remarks>
     public bool ShowDialog(object[] args, string title)
     {
-      Main.GUI.IMVCAController controller = (Main.GUI.IMVCAController)Current.GUIFactoryService.GetControllerAndControl(args,typeof(Main.GUI.IMVCAController));
+      Main.GUI.IMVCAController controller = (Main.GUI.IMVCAController)Current.Gui.GetControllerAndControl(args,typeof(Main.GUI.IMVCAController));
       
       if(null==controller)
         return false;
 
-      
-
-      if(controller is Altaxo.Gui.Scripting.IScriptController)
+      if (ShowDialog(controller, title))
       {
-       System.Windows.Forms.Form dlgctrl = new Altaxo.Gui.Scripting.ScriptExecutionDialog((Altaxo.Gui.Scripting.IScriptController)controller);
-        if(System.Windows.Forms.DialogResult.OK==dlgctrl.ShowDialog(Current.MainWindow))
-        {
-          args[0] = controller.ModelObject;
-          return true;
-        }
-        else
-        {
-          return false;
-        }
+        args[0] = controller.ModelObject;
+        return true;
       }
       else
       {
-        Altaxo.Main.GUI.DialogShellController dlgctrl = new Altaxo.Main.GUI.DialogShellController(new Main.GUI.DialogShellView((System.Windows.Forms.UserControl)controller.ViewObject),controller,title,false);
-        if(dlgctrl.ShowDialog(Current.MainWindow))
-        {
-          args[0] = controller.ModelObject;
-          return true;
-        }
-        else
-        {
-          return false;
-        }
-        }
-
-     
+        return false;
+      }
     }
 
     /// <summary>
@@ -152,7 +162,7 @@ namespace Altaxo.Main.Services
     {
       object[] args = new object[1];
       args[0] = arg;
-      bool result = Current.GUIFactoryService.ShowDialog(args,title);
+      bool result = Current.Gui.ShowDialog(args,title);
       arg = args[0];
       return result;
     }

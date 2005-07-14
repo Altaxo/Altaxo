@@ -40,7 +40,7 @@ namespace Altaxo.Graph.Procedures
       fitdoc.FitContext = ctrl;
 
       object fitdocasobject = fitdoc;
-      Current.GUIFactoryService.ShowDialog(ref fitdocasobject,"Non-linear fitting");
+      Current.Gui.ShowDialog(ref fitdocasobject,"Non-linear fitting");
 
       return null;
     }

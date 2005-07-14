@@ -573,7 +573,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Gui\Pads\FileScout.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Pads\HelpBrowser\HelpBrowser.cs">
       <SubType>Code</SubType>

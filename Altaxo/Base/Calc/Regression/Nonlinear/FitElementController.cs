@@ -70,7 +70,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       SingleColumnChoice choice = new SingleColumnChoice();
       choice.SelectedColumn = _doc.IndependentVariables(idx) as DataColumn;
       object choiceAsObject = choice;
-      if(Current.GUIFactoryService.ShowDialog(ref choiceAsObject,"Select independent column"))
+      if(Current.Gui.ShowDialog(ref choiceAsObject,"Select independent column"))
       {
         choice = (SingleColumnChoice)choiceAsObject;
 
@@ -80,7 +80,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         }
         else
         {
-          Current.GUIFactoryService.ErrorMessageBox("Choosen column is not numeric!");
+          Current.Gui.ErrorMessageBox("Choosen column is not numeric!");
         }
       }
       _view.Refresh();
@@ -90,7 +90,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       SingleColumnChoice choice = new SingleColumnChoice();
       choice.SelectedColumn = _doc.DependentVariables(idx) as DataColumn;
       object choiceAsObject = choice;
-      if (Current.GUIFactoryService.ShowDialog(ref choiceAsObject, "Select dependent column"))
+      if (Current.Gui.ShowDialog(ref choiceAsObject, "Select dependent column"))
       {
         choice = (SingleColumnChoice)choiceAsObject;
 
@@ -100,7 +100,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         }
         else
         {
-          Current.GUIFactoryService.ErrorMessageBox("Choosen column is not numeric!");
+          Current.Gui.ErrorMessageBox("Choosen column is not numeric!");
         }
       }
       _view.Refresh();
@@ -116,7 +116,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     Altaxo.Main.GUI.SingleInstanceChoice choice = new SingleInstanceChoice(typeof(IErrorEvaluation),_doc.ErrorEvaluation(idx));
 
      object choiceAsObject = choice;
-     if(Current.GUIFactoryService.ShowDialog(ref choiceAsObject, "Select error norm"))
+     if(Current.Gui.ShowDialog(ref choiceAsObject, "Select error norm"))
      {
        choice = (SingleInstanceChoice)choiceAsObject;
        _doc.SetErrorEvaluation(idx,(IErrorEvaluation)choice.Instance);

@@ -1,6 +1,8 @@
 using System;
 using Altaxo.Main.GUI;
 using Altaxo.Graph;
+using Altaxo.Scripting;
+using Altaxo.Gui.Scripting;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -39,11 +41,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
     public NonlinearFitController(NonlinearFitDocument doc)
     {
       _doc = doc;
-      _parameterController = (Main.GUI.IMVCAController)Current.GUIFactoryService.GetControllerAndControl(new object[]{_doc.CurrentParameters},typeof(Main.GUI.IMVCAController));
-      _fitEnsembleController = (IFitEnsembleController)Current.GUIFactoryService.GetControllerAndControl(new object[]{_doc.FitEnsemble},typeof(IFitEnsembleController));
+      _parameterController = (Main.GUI.IMVCAController)Current.Gui.GetControllerAndControl(new object[]{_doc.CurrentParameters},typeof(Main.GUI.IMVCAController));
+      _fitEnsembleController = (IFitEnsembleController)Current.Gui.GetControllerAndControl(new object[]{_doc.FitEnsemble},typeof(IFitEnsembleController));
 
       _funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count==0 ? null : _doc.FitEnsemble[0].FitFunction);
-      Current.GUIFactoryService.GetControl(_funcselController);
+      Current.Gui.GetControl(_funcselController);
     
     }
 
@@ -71,7 +73,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
       else
       {
-        Current.GUIFactoryService.ErrorMessageBox("Some of your parameter input is not valid!");
+        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
       }
     }
 
@@ -85,27 +87,25 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
       else
       {
-        Current.GUIFactoryService.ErrorMessageBox("Some of your parameter input is not valid!");
+        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
       }
     }
 
-    public void EhView_SelectFitFunction()
+
+    void Select(IFitFunction func)
     {
       bool changed = false;
-
-      if(_funcselController.Apply())
-      {
-        if(_doc.FitEnsemble.Count>0)
+       if(_doc.FitEnsemble.Count>0)
         {
           if(_doc.FitEnsemble[_doc.FitEnsemble.Count-1].FitFunction==null)
           {
-            _doc.FitEnsemble[_doc.FitEnsemble.Count-1].FitFunction = (IFitFunction)_funcselController.ModelObject;
+            _doc.FitEnsemble[_doc.FitEnsemble.Count-1].FitFunction = func;
             changed = true;
           }
           else
         {
             FitElement newele = new FitElement();
-            newele.FitFunction = (IFitFunction)_funcselController.ModelObject;
+            newele.FitFunction = func;
             _doc.FitEnsemble.Add(newele);
             changed=true;
         }
@@ -113,11 +113,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
         else // Count==0
         {
           FitElement newele = new FitElement();
-          newele.FitFunction = (IFitFunction)_funcselController.ModelObject;
+          newele.FitFunction = func;
           _doc.FitEnsemble.Add(newele);
           changed=true;
         }
-      }
+      
 
       if(changed)
       {
@@ -129,14 +129,33 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+
+    public void EhView_SelectFitFunction()
+    {
+      
+
+      if(_funcselController.Apply())
+      {
+        Select((IFitFunction)_funcselController.ModelObject);       
+      }
+
+    }
+
     public void EhView_NewFitFunction()
     {
-      Graph.ParametrizedFunctionDDScript script = new ParametrizedFunctionDDScript();
+      FitFunctionScript script = new FitFunctionScript();
 
       object scriptAsObject = script;
-      if(Current.GUIFactoryService.ShowDialog(ref scriptAsObject,"Create fit function"))
+      if(Current.Gui.ShowDialog(ref scriptAsObject,"Create fit function"))
       {
-        script = (Graph.ParametrizedFunctionDDScript)scriptAsObject;
+        script = (FitFunctionScript)scriptAsObject;
+
+        Current.Gui.ShowDialog(new FitFunctionNameAndCategoryController(script), "Name your script");
+
+        Current.Project.FitFunctionScripts.Add(script);
+
+        Select(script);
+        
       }
     }
 

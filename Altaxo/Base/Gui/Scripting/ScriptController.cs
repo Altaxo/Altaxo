@@ -3,6 +3,7 @@ using Altaxo.Data;
 using Altaxo.Main.GUI;
 using System.Text.RegularExpressions;
 using Altaxo.Main.Services;
+using Altaxo.Scripting;
 
 namespace Altaxo.Gui.Scripting
 {
@@ -66,7 +67,7 @@ namespace Altaxo.Gui.Scripting
       _tempDoc = _doc.CloneForModification();
       _compiledDoc=null;
 
-      _pureScriptController = (IPureScriptController)Current.GUIFactoryService.GetControllerAndControl(new object[]{_tempDoc},typeof(IPureScriptText),typeof(IPureScriptController));
+      _pureScriptController = (IPureScriptController)Current.Gui.GetControllerAndControl(new object[]{_tempDoc},typeof(IPureScriptText),typeof(IPureScriptController));
       _scriptExecutionHandler = exec;
     }
 
@@ -144,7 +145,7 @@ namespace Altaxo.Gui.Scripting
           }
   
 
-          Current.GUIFactoryService.ErrorMessageBox("There were compilation errors");
+          Current.Gui.ErrorMessageBox("There were compilation errors");
           return;
         }
         else
@@ -247,7 +248,7 @@ namespace Altaxo.Gui.Scripting
             foreach(string s in _doc.Errors)
               _view.AddCompilerError(s);
 
-            Current.GUIFactoryService.ErrorMessageBox("There were execution errors");
+            Current.Gui.ErrorMessageBox("There were execution errors");
           }
         }
       }

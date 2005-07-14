@@ -26,91 +26,92 @@ using System.CodeDom.Compiler;
 using System.Reflection;
 using Altaxo.Serialization;
 
-namespace Altaxo.Data
+namespace Altaxo.Scripting
 {
-  /// <summary>
-  /// Holds the text, the module (=executable), and some properties of a data column script. 
-  /// </summary>
  
-  public class DataColumnScript : AbstractScript, IColumnScriptText
-  {
-    #region Serialization
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.DataColumnScript),1)]
-      public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        Altaxo.Data.AbstractScript s = (Altaxo.Data.AbstractScript)obj;
+  /// <summary>
+  /// Holds the text, the module (=executable), and some properties of a column script. 
+  /// </summary>
+  [SerializationSurrogate(0,typeof(TableScript.SerializationSurrogate0))]
+  [SerializationVersion(0)]
+  [Serializable()]
+  public class TableScript 
+    :
+    AbstractScript,    
+    System.Runtime.Serialization.IDeserializationCallback
     
-        info.AddBaseValueEmbedded(s,typeof(Altaxo.Data.AbstractScript));
-      }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
-      {
-        Altaxo.Data.DataColumnScript s = null!=o ? (Altaxo.Data.DataColumnScript)o : new Altaxo.Data.DataColumnScript();
-        
-        // deserialize the base class
-        info.GetBaseValueEmbedded(s,typeof(Altaxo.Data.AbstractScript),parent);
-        
-        return s;
-      }
-    }
+  {
+   
+ 
 
-
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Data.ColumnScript",0)]
-      public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    #region Serialization
+    /// <summary>
+    /// Responsible for serialization of the column script version 0.
+    /// </summary>
+    public class SerializationSurrogate0 : System.Runtime.Serialization.ISerializationSurrogate
     {
       /// <summary>
-      /// ScriptStyle enumerates the style of the column script.
+      /// Serializes the table script
       /// </summary>
-      public enum ScriptStyle 
+      /// <param name="obj">The table script to serialize.</param>
+      /// <param name="info">Serialization info.</param>
+      /// <param name="context">Streaming context.</param>
+      public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
-        /// <summary>
-        /// ColumnValues are set by indexing the target column, i.e. targetcol[i]=...
-        /// The values calculated by the script must therefore be scalar values.
-        /// </summary>
-        SetColumnValues, 
-        /// <summary>
-        /// ColumnValues are set by setting the column at once, i.e. targetcol=...<para/>
-        /// The values calculated by the script must therefore be columns (1-dimensional arrays).
-        /// </summary>
-        SetColumn,
-        /// <summary>
-        /// With this style, you can write code outside the function <see cref="Altaxo.Calc.ColScriptExeBase.Execute"/>
-        /// You can even define your own classes and functions for use by the column script.
-        /// </summary>
-        FreeStyle };
-
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        throw new NotSupportedException("Serializing this old type is not supported any longer");
+        TableScript s = (TableScript)obj;
+        info.AddValue("Text",s.ScriptText);
       }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+
+      /// <summary>
+      /// Deserialized the column script.
+      /// </summary>
+      /// <param name="obj">The uninitialized column script instance.</param>
+      /// <param name="info">Serialization info.</param>
+      /// <param name="context">Streaming context.</param>
+      /// <param name="selector">Surrogate selector.</param>
+      /// <returns></returns>
+      public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
       {
-        Altaxo.Data.DataColumnScript s = null!=o ? (Altaxo.Data.DataColumnScript)o : new Altaxo.Data.DataColumnScript();
-        
-
-        ScriptStyle scriptStyle = (ScriptStyle)info.GetInt32("Style");
-        string      scriptText = info.GetString("Text");
-        string      rowFrom = info.GetString("From");
-        string      rowCondition = info.GetString("Cond");
-        string      rowTo = info.GetString("To");
-        string      rowInc = info.GetString("Inc");
-
-        s.ScriptText = scriptText;
-
+        TableScript s = (TableScript)obj;
+        s.ScriptText = info.GetString("Text");
         return s;
       }
     }
-  
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Data.TableScript",0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.TableScript), 1)]
+      public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        TableScript s = (TableScript)obj;
+    
+        info.AddValue("Text",s.ScriptText);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+        TableScript s = null!=o ? (TableScript)o : new TableScript();
+
+        s.ScriptText = info.GetString("Text");
+        return s;
+      }
+    }
+
+    /// <summary>
+    /// Is called when deserialization has finished.
+    /// </summary>
+    /// <param name="obj"></param>
+    public override void OnDeserialization(object obj)
+    {
+      base.OnDeserialization(obj);
+    }
     #endregion
 
 
     /// <summary>
     /// Creates an empty column script. Default Style is "Set Column".
     /// </summary>
-    public DataColumnScript()
+    public TableScript()
     {
     }
 
@@ -118,26 +119,28 @@ namespace Altaxo.Data
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public DataColumnScript(DataColumnScript b)
-      : this(b,true)
+    public TableScript(TableScript b)
+    : this(b,false)
     {
     }
-
     /// <summary>
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public DataColumnScript(DataColumnScript b, bool forModification)
+    public TableScript(TableScript b, bool forModification)
       : base(b, forModification)
     {
     }
+  
+
+
 
     /// <summary>
     /// Gives the type of the script object (full name), which is created after successfull compilation.
     /// </summary>
     public override string ScriptObjectType
     {
-      get { return "Altaxo.Calc.SetDataColumnValues"; }
+      get { return "Altaxo.Calc.SetTableValues"; }
     }
 
     /// <summary>
@@ -150,18 +153,17 @@ namespace Altaxo.Data
         return
           "using System;\r\n" + 
           "using Altaxo;\r\n" + 
-          "using Altaxo.Calc;\r\n" + 
           "using Altaxo.Data;\r\n" + 
+          "using Altaxo.Calc;\r\n" + 
           "namespace Altaxo.Calc\r\n" + 
           "{\r\n" + 
-          "\tpublic class SetDataColumnValues : Altaxo.Calc.ColScriptExeBase\r\n" +
+          "\tpublic class SetTableValues : Altaxo.Calc.TableScriptExeBase\r\n" +
           "\t{\r\n"+
-          "\t\tpublic override void Execute(Altaxo.Data.DataColumn mycol)\r\n" +
+          "\t\tpublic override void Execute(Altaxo.Data.DataTable mytable)\r\n" +
           "\t\t{\r\n" +
-          "\t\t\tAltaxo.Data.DataColumnCollection   col = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(mycol);\r\n" +
-          "\t\t\tAltaxo.Data.DataTable          mytable = Altaxo.Data.DataTable.GetParentDataTableOf(col);\r\n" +
-          "\t\t\tAltaxo.Data.DataColumnCollection  pcol = mytable==null? null : mytable.PropertyColumns;\r\n" +
-          "\t\t\tAltaxo.Data.DataTableCollection  table = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(mytable);\r\n"; 
+          "\t\t\tAltaxo.Data.DataColumnCollection  col = mytable.DataColumns;\r\n" +
+          "\t\t\tAltaxo.Data.DataColumnCollection pcol = mytable.PropertyColumns;\r\n"+ 
+          "\t\t\tAltaxo.Data.DataTableCollection table = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(mytable);\r\n";
       }
     }
 
@@ -174,14 +176,16 @@ namespace Altaxo.Data
       }
     }
 
-
     public override string CodeUserDefault
     {
       get
       {
         return
           "\t\t\t\r\n" + 
-          "\t\t\tmycol.Data = col[\"B\"] - col[\"A\"];\r\n" +
+          "\t\t\tfor(int i=0;i<col.RowCount;i++)\r\n" +
+          "\t\t\t\t{\r\n" +
+          "\t\t\t\t// Add your code here\r\n" +
+          "\t\t\t\t}\r\n" +
           "\t\t\t\r\n"
           ;
       }
@@ -197,7 +201,6 @@ namespace Altaxo.Data
       }
     }
 
-    
 
     /// <summary>
     /// Get the ending text of the script, dependent on the ScriptStyle.
@@ -206,7 +209,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return          
+        return 
           "\t\t} // Execute method\r\n" +
           "\t} // class\r\n" + 
           "} //namespace\r\n";
@@ -221,8 +224,11 @@ namespace Altaxo.Data
     /// <returns>The cloned object.</returns>
     public override object Clone()
     {
-      return new DataColumnScript(this,true);
+      return new TableScript(this,true);
     }
+
+  
+
    
 
 
@@ -230,11 +236,11 @@ namespace Altaxo.Data
     /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.
     /// If the script object exists, the Execute function of this script object is called.
     /// </summary>
-    /// <param name="myColumn">The data table this script is working on.</param>
+    /// <param name="myTable">The data table this script is working on.</param>
     /// <returns>True if executed without exceptions, otherwise false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
-    public bool Execute(Altaxo.Data.DataColumn myColumn)
+    public bool Execute(Altaxo.Data.DataTable myTable)
     {
       if(null==m_ScriptObject)
       {
@@ -244,7 +250,7 @@ namespace Altaxo.Data
 
       try
       {
-        ((Altaxo.Calc.ColScriptExeBase)m_ScriptObject).Execute(myColumn);
+        ((Altaxo.Calc.TableScriptExeBase)m_ScriptObject).Execute(myTable);
       }
       catch(Exception ex)
       {
@@ -261,11 +267,11 @@ namespace Altaxo.Data
     /// If the script object exists, the data change notifications will be switched of (for all tables).
     /// Then the Execute function of this script object is called. Afterwards, the data changed notifications are switched on again.
     /// </summary>
-    /// <param name="myColumn">The property column this script is working on.</param>
+    /// <param name="myTable">The data table this script is working on.</param>
     /// <returns>True if executed without exceptions, otherwise false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
-    public bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataColumn myColumn)
+    public bool ExecuteWithSuspendedNotifications(Altaxo.Data.DataTable myTable)
     {
       bool bSucceeded=true;
       Altaxo.Data.DataTableCollection   myDataSet=null;
@@ -277,24 +283,16 @@ namespace Altaxo.Data
         return false;
       }
 
-      Altaxo.Data.DataColumnCollection myColumnCollection = Altaxo.Data.DataColumnCollection.GetParentDataColumnCollectionOf(myColumn);
-
-      Altaxo.Data.DataTable myTable = Altaxo.Data.DataTable.GetParentDataTableOf(myColumnCollection);
-
       myDataSet = Altaxo.Data.DataTableCollection.GetParentDataTableCollectionOf(myTable);
 
       if(null!=myDataSet) 
         myDataSet.Suspend();
       else if(null!=myTable)
         myTable.Suspend();
-      else if(null!=myColumnCollection)
-        myColumnCollection.Suspend();
-      else if(null!=myColumn)
-        myColumn.Suspend();
 
       try
       {
-        ((Altaxo.Calc.ColScriptExeBase)m_ScriptObject).Execute(myColumn);
+        ((Altaxo.Calc.TableScriptExeBase)m_ScriptObject).Execute(myTable);
       }
       catch(Exception ex)
       {
@@ -308,15 +306,10 @@ namespace Altaxo.Data
           myDataSet.Resume();
         else if(null!=myTable)
           myTable.Resume();
-        else if(null!=myColumnCollection)
-          myColumnCollection.Resume();
-        else if(null!=myColumn)
-          myColumn.Resume();
       }
 
       return bSucceeded; 
     }
 
-  } // end of class DataColumnScript
-
+  } // end of class TableScript
 }

@@ -22,16 +22,16 @@
 
 using System;
 using System.Text.RegularExpressions;
-using Altaxo.Data;
+using Altaxo.Scripting;
 using Altaxo.Graph;
 using Altaxo.Main.GUI;
 
 namespace Altaxo.Gui.Scripting
 {
   #region Interfaces
-  public interface IParametrizedFunctionScriptView
+  public interface IFitFunctionScriptView
   {
-    IParametrizedFunctionScriptViewEventSink Controller {get; set; }
+    IFitFunctionScriptViewEventSink Controller {get; set; }
     
     void Close(bool withOK);
     void SetScriptView(object scriptView);
@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Scripting
     void SetNumberOfParameters(int numberOfParameters, bool enable);
   }
 
-  public interface IParametrizedFunctionScriptViewEventSink
+  public interface IFitFunctionScriptViewEventSink
   {
     void EhView_NumberOfParameterChanged(int numParameter);
     void EhView_UserDefinedParameterCheckChanged(bool userDefinedParameters);
@@ -58,21 +58,21 @@ namespace Altaxo.Gui.Scripting
   /// <summary>
   /// Summary description for TableScriptController.
   /// </summary>
-  [UserControllerForObject(typeof(IParametrizedFunctionDDScriptText),300)]
-  public class ParametrizedFunctionScriptController : IParametrizedFunctionScriptViewEventSink, Main.GUI.IMVCAController
+  [UserControllerForObject(typeof(IFitFunctionScriptText),300)]
+  public class FitFunctionScriptController : IFitFunctionScriptViewEventSink, Main.GUI.IMVCAController
   {
     protected ScriptExecutionHandler m_ScriptExecution;
-    public IParametrizedFunctionDDScriptText m_Script;
-    public IParametrizedFunctionDDScriptText m_TempScript;
+    public IFitFunctionScriptText m_Script;
+    public IFitFunctionScriptText m_TempScript;
 
     public IScriptController _scriptController;
 
-    protected IParametrizedFunctionScriptView m_View;
+    protected IFitFunctionScriptView m_View;
 
-    public ParametrizedFunctionScriptController(IParametrizedFunctionDDScriptText script)
+    public FitFunctionScriptController(IFitFunctionScriptText script)
     {
       this.m_Script = script;
-      m_TempScript = (IParametrizedFunctionDDScriptText)m_Script.CloneForModification();
+      m_TempScript = (IFitFunctionScriptText)m_Script.CloneForModification();
 
       SetElements(true);
 
@@ -103,7 +103,7 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
-    public IParametrizedFunctionScriptView View
+    public IFitFunctionScriptView View
     {
       get
       {
@@ -127,7 +127,7 @@ namespace Altaxo.Gui.Scripting
     public object ViewObject
     {
       get { return View; }
-      set { View = value as IParametrizedFunctionScriptView; }
+      set { View = value as IFitFunctionScriptView; }
     }
 
    
@@ -350,10 +350,10 @@ namespace Altaxo.Gui.Scripting
       if(this._scriptController.Apply())
       {
        
-        m_TempScript = (IParametrizedFunctionDDScriptText)_scriptController.ModelObject;
+        m_TempScript = (IFitFunctionScriptText)_scriptController.ModelObject;
        
         m_Script = m_TempScript;
-        m_TempScript = (IParametrizedFunctionDDScriptText)m_Script.CloneForModification();
+        m_TempScript = (IFitFunctionScriptText)m_Script.CloneForModification();
         return true;
       }
       else

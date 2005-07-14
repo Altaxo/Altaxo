@@ -61,7 +61,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       object[] fitEleControls = new object[_doc.Count];
       for(int i=0;i<_doc.Count;i++)
       {
-        _fitEleController[i] = (IFitElementController)Current.GUIFactoryService.GetControllerAndControl(new object[]{_doc[i]},typeof(IFitElementController));
+        _fitEleController[i] = (IFitElementController)Current.Gui.GetControllerAndControl(new object[]{_doc[i]},typeof(IFitElementController));
         fitEleControls[i] = _fitEleController[i].ViewObject;
 
         _fitEleController[i].FitFunctionSelectionChange += new EventHandler(EhFitFunctionSelectionChange);

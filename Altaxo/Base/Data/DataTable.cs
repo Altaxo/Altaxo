@@ -24,7 +24,7 @@
 using System;
 using Altaxo.Serialization;
 using Altaxo.Collections;
-
+using Altaxo.Scripting;
 
 namespace Altaxo.Data
 {

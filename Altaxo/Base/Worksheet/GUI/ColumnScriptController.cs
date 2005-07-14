@@ -20,6 +20,8 @@
 /////////////////////////////////////////////////////////////////////////////
 #endregion
 
+#if false
+
 using System;
 using Altaxo.Data;
 
@@ -297,3 +299,5 @@ namespace Altaxo.Worksheet.GUI
     }
   }
 }
+
+#endif

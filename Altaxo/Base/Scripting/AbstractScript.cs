@@ -27,7 +27,7 @@ using System.Reflection;
 using Altaxo.Serialization;
 using Altaxo.Main.Services;
 
-namespace Altaxo.Data
+namespace Altaxo.Scripting
 {
   #region interface
 
@@ -224,18 +224,19 @@ namespace Altaxo.Data
     #region Serialization
  
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Data.AbstractScript),0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase","Altaxo.Data.AbstractScript",0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Altaxo.Scripting.AbstractScript), 1)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        Altaxo.Data.AbstractScript s = (Altaxo.Data.AbstractScript)obj;
+        AbstractScript s = (AbstractScript)obj;
     
         info.AddValue("Text",s.m_ScriptText);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
-        Altaxo.Data.AbstractScript s = (Altaxo.Data.AbstractScript)o;
+        AbstractScript s = (AbstractScript)o;
         s.m_ScriptText = info.GetString("Text");
         return s;
       }

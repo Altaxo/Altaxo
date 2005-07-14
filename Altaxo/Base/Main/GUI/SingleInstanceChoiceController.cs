@@ -66,7 +66,7 @@ namespace Altaxo.Main.GUI
       string[] choices = new string[_types.Length];
       for(int i=0;i<_types.Length;i++)
       {
-        choices[i] = Current.GUIFactoryService.GetUserFriendlyClassName(_types[i]);
+        choices[i] = Current.Gui.GetUserFriendlyClassName(_types[i]);
         if(_doc.Instance!=null && _doc.Instance.GetType()==_types[i])
           selectedIndex=i;
       }

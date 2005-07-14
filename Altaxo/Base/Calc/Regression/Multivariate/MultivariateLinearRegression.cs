@@ -135,7 +135,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       object paramobject = new MultivariateLinearFitParameters(table,selectedColumns);
 
-      if(!Current.GUIFactoryService.ShowDialog(ref paramobject,"Multivariate linear fit"))
+      if(!Current.Gui.ShowDialog(ref paramobject,"Multivariate linear fit"))
         return null;
 
       MultivariateLinearFitParameters parameters = (MultivariateLinearFitParameters)paramobject;

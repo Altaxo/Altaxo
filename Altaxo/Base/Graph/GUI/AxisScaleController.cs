@@ -169,7 +169,7 @@ namespace Altaxo.Graph.GUI
     {
       if(bInit)
       {
-        m_BoundaryController = (IMVCAController)Current.GUIFactoryService.GetControllerAndControl(new object[]{_tempAxis.RescalingObject,_tempAxis},typeof(IMVCAController));
+        m_BoundaryController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[]{_tempAxis.RescalingObject,_tempAxis},typeof(IMVCAController));
       }
       if(null!=View)
       {

@@ -1,6 +1,6 @@
 using System;
 
-using Altaxo.Data;
+using Altaxo.Scripting;
 using Altaxo.Main.GUI;
 
 namespace Altaxo.Gui.Scripting
