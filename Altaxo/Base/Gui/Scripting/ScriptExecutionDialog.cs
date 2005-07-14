@@ -4,7 +4,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Scripting
 {
 	/// <summary>
 	/// Summary description for ScriptExecutionDialog.

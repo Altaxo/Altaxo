@@ -26,7 +26,7 @@ using Altaxo.Data;
 using Altaxo.Graph;
 using Altaxo.Main.GUI;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Scripting
 {
   #region Interfaces
   public interface IParametrizedFunctionScriptView
@@ -58,7 +58,7 @@ namespace Altaxo.Worksheet.GUI
   /// <summary>
   /// Summary description for TableScriptController.
   /// </summary>
-  [UserControllerForObject(typeof(IParametrizedFunctionDDScriptText))]
+  [UserControllerForObject(typeof(IParametrizedFunctionDDScriptText),300)]
   public class ParametrizedFunctionScriptController : IParametrizedFunctionScriptViewEventSink, Main.GUI.IMVCAController
   {
     protected ScriptExecutionHandler m_ScriptExecution;

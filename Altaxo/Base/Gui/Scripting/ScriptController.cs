@@ -4,7 +4,7 @@ using Altaxo.Main.GUI;
 using System.Text.RegularExpressions;
 using Altaxo.Main.Services;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Scripting
 {
   #region Interfaces
 
@@ -43,7 +43,7 @@ namespace Altaxo.Worksheet.GUI
 	/// <summary>
 	/// Summary description for ScriptController.
 	/// </summary>
-  [UserControllerForObject(typeof(IScriptText))]
+  [UserControllerForObject(typeof(IScriptText),200)]
   public class ScriptController : IScriptViewEventSink, IScriptController
   {
     IScriptView _view;

@@ -6,7 +6,7 @@ using System.Data;
 using System.Windows.Forms;
 using Altaxo.Main.GUI;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Scripting
 {
 	/// <summary>
 	/// Summary description for ScriptControl.

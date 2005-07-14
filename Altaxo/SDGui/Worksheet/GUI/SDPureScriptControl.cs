@@ -6,6 +6,7 @@ using System.Data;
 using System.Windows.Forms;
 
 using Altaxo.Main.GUI;
+using Altaxo.Gui.Scripting;
 
 
 namespace Altaxo.Worksheet.GUI
@@ -13,7 +14,7 @@ namespace Altaxo.Worksheet.GUI
 	/// <summary>
 	/// Summary description for PureScriptControl.
 	/// </summary>
-	[UserControlForController(typeof(IPureScriptViewEventSink))]
+	[UserControlForController(typeof(IPureScriptViewEventSink),110)]
 	public class SDPureScriptControl : System.Windows.Forms.UserControl, IPureScriptView
 	{
 		/// <summary> 

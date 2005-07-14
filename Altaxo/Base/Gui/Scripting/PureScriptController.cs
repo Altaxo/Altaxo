@@ -3,7 +3,7 @@ using System;
 using Altaxo.Data;
 using Altaxo.Main.GUI;
 
-namespace Altaxo.Worksheet.GUI
+namespace Altaxo.Gui.Scripting
 {
   #region Interfaces
   public interface IPureScriptView

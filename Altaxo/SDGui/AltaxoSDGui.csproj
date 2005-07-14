@@ -269,13 +269,13 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\GUI\PureScriptControl.cs"
+                    RelPath = "Worksheet\GUI\SDPureScriptControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\GUI\PureScriptControl.resx"
-                    DependentUpon = "PureScriptControl.cs"
+                    RelPath = "Worksheet\GUI\SDPureScriptControl.resx"
+                    DependentUpon = "SDPureScriptControl.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

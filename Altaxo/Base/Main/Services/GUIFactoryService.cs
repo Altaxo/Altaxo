@@ -102,17 +102,36 @@ namespace Altaxo.Main.Services
       if(null==controller)
         return false;
 
-      Main.GUI.DialogShellController dlgctrl = new Altaxo.Main.GUI.DialogShellController(new Main.GUI.DialogShellView((System.Windows.Forms.UserControl)controller.ViewObject),controller,title,false);
       
-      if(dlgctrl.ShowDialog(Current.MainWindow))
+
+      if(controller is Altaxo.Gui.Scripting.IScriptController)
       {
-        args[0] = controller.ModelObject;
-        return true;
+       System.Windows.Forms.Form dlgctrl = new Altaxo.Gui.Scripting.ScriptExecutionDialog((Altaxo.Gui.Scripting.IScriptController)controller);
+        if(System.Windows.Forms.DialogResult.OK==dlgctrl.ShowDialog(Current.MainWindow))
+        {
+          args[0] = controller.ModelObject;
+          return true;
+        }
+        else
+        {
+          return false;
+        }
       }
       else
       {
-        return false;
-      }
+        Altaxo.Main.GUI.DialogShellController dlgctrl = new Altaxo.Main.GUI.DialogShellController(new Main.GUI.DialogShellView((System.Windows.Forms.UserControl)controller.ViewObject),controller,title,false);
+        if(dlgctrl.ShowDialog(Current.MainWindow))
+        {
+          args[0] = controller.ModelObject;
+          return true;
+        }
+        else
+        {
+          return false;
+        }
+        }
+
+     
     }
 
     /// <summary>

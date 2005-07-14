@@ -27,6 +27,8 @@ using Altaxo;
 using Altaxo.Main;
 using Altaxo.Worksheet;
 using Altaxo.Worksheet.GUI;
+using Altaxo.Gui.Scripting;
+
 using ICSharpCode.SharpZipLib.Zip;
 
 namespace Altaxo.Worksheet.Commands
@@ -242,47 +244,20 @@ namespace Altaxo.Worksheet.Commands
 
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
-      Altaxo.Data.DataTable dataTable = ctrl.DataTable;
+      m_Table = ctrl.DataTable;
       Data.ExtractTableDataScript script = ctrl.DataTable.GetTableProperty(ExtractTableDataScriptPropertyName) as Data.ExtractTableDataScript;
 
       if(script==null)
         script = new Data.ExtractTableDataScript();
 
-      Worksheet.GUI.TableScriptController controller = new Worksheet.GUI.TableScriptController(
-        new ScriptExecutionHandler(this.EhScriptExecution),script);
-      Worksheet.GUI.TableScriptControl control = new Altaxo.Worksheet.GUI.TableScriptControl();
-
-      System.Windows.Forms.Form form = new System.Windows.Forms.Form(); // the parent form used as shell for the control
-      form.Controls.Add(control);
-      form.ClientSize = control.Size;
-      control.Dock = System.Windows.Forms.DockStyle.Fill;
-      controller.View = control;
-
-      form.Text = "Extract table data from " + dataTable.Name;
-      ICSharpCode.SharpDevelop.Services.DefaultParserService parserService = (ICSharpCode.SharpDevelop.Services.DefaultParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.DefaultParserService));
-
-      System.Windows.Forms.DialogResult dlgResult = System.Windows.Forms.DialogResult.Cancel;
-
-      this.m_Table = dataTable;
-
-      if(parserService!=null)
+      object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
+      if(Current.GUIFactoryService.ShowDialog(args, "WorksheetScript of " + m_Table.Name))
       {
-        parserService.RegisterModalContent(control.EditableContent);
-        dlgResult = form.ShowDialog(Altaxo.Current.MainWindow);
-        parserService.UnregisterModalContent();
+       m_Table.SetTableProperty(ExtractTableDataScriptPropertyName, args[0]);
       }
-      else
-      {
-        dlgResult = form.ShowDialog(Altaxo.Current.MainWindow);
-      }
-
-      if(dlgResult==System.Windows.Forms.DialogResult.OK)
-      {
-        dataTable.SetTableProperty(ExtractTableDataScriptPropertyName, controller.m_TableScript);
-      }
+    
       this.m_Table = null;
-      form.Dispose();
-    }
+     }
 
     public bool EhScriptExecution(Altaxo.Data.IScriptText script)
     {
@@ -295,72 +270,23 @@ namespace Altaxo.Worksheet.Commands
   {
     Altaxo.Data.DataTable m_Table;
 
-    /*
-    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
-    {
-      Altaxo.Data.DataTable dataTable = ctrl.DataTable;
-      Data.IScriptText tableScript = ctrl.DataTable.TableScript;
-
-      if(tableScript==null)
-        tableScript = new Data.TableScript();
-
-      Worksheet.GUI.TableScriptController controller = new Worksheet.GUI.TableScriptController(
-        new ScriptExecutionHandler(this.EhScriptExecution),tableScript);
-      Worksheet.GUI.TableScriptControl control = new Altaxo.Worksheet.GUI.TableScriptControl();
-
-      System.Windows.Forms.Form form = new System.Windows.Forms.Form(); // the parent form used as shell for the control
-      form.Controls.Add(control);
-      form.ClientSize = control.Size;
-      control.Dock = System.Windows.Forms.DockStyle.Fill;
-      controller.View = control;
-
-      form.Text = "WorksheetScript of " + dataTable.Name;
-      ICSharpCode.SharpDevelop.Services.DefaultParserService parserService = (ICSharpCode.SharpDevelop.Services.DefaultParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.DefaultParserService));
-
-      System.Windows.Forms.DialogResult dlgResult = System.Windows.Forms.DialogResult.Cancel;
-
-      this.m_Table = dataTable;
-
-      if(parserService!=null)
-      {
-        parserService.RegisterModalContent(control.EditableContent);
-        dlgResult = form.ShowDialog(Altaxo.Current.MainWindow);
-        parserService.UnregisterModalContent();
-      }
-      else
-      {
-        dlgResult = form.ShowDialog(Altaxo.Current.MainWindow);
-      }
-
-      if(dlgResult==System.Windows.Forms.DialogResult.OK)
-        dataTable.TableScript = (Data.TableScript)controller.m_TableScript;
-
-      this.m_Table = null;
-      form.Dispose();
-    }
-*/
-
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
       m_Table = ctrl.DataTable;
       
-      Data.IScriptText tableScript = m_Table.TableScript;
+      Data.IScriptText script = m_Table.TableScript;
 
-      if(tableScript==null)
-        tableScript = new Data.TableScript();
+      if(script==null)
+        script = new Data.TableScript();
 
-      object tableScriptAsObject = tableScript;
-      IScriptController controller = (IScriptController)Current.GUIFactoryService.GetControllerAndControl(new object[]{tableScript,new ScriptExecutionHandler(this.EhScriptExecution)}, typeof(IScriptController));
-      System.Windows.Forms.Form form = new Altaxo.Worksheet.GUI.ScriptExecutionDialog(controller); // the parent form used as shell for the control
-      form.Text = "WorksheetScript of " + m_Table.Name;
-
-      if(DialogResult.OK==form.ShowDialog())
+      object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
+      if(Current.GUIFactoryService.ShowDialog(args, "WorksheetScript of " + m_Table.Name))
       {
-        m_Table.TableScript = (Data.TableScript)controller.ModelObject;
+        m_Table.TableScript = (Data.TableScript)args[0];
       }
 
       this.m_Table = null;
-      form.Dispose();
+      
     }
     public bool EhScriptExecution(Altaxo.Data.IScriptText script)
     {
@@ -396,50 +322,21 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Data.DataTable dataTable = ctrl.DataTable;
       if(ctrl.SelectedDataColumns.Count==0)
         return;
-      Altaxo.Data.DataColumn column = dataTable.DataColumns[ctrl.SelectedDataColumns[0]];
+      m_Column = dataTable.DataColumns[ctrl.SelectedDataColumns[0]];
 
-      Data.IScriptText script = (Data.IScriptText)dataTable.DataColumns.ColumnScripts[column];
+      Data.IScriptText script = (Data.IScriptText)dataTable.DataColumns.ColumnScripts[m_Column];
       if(script==null)
         script = new Data.DataColumnScript();
 
-      Worksheet.GUI.TableScriptController controller = new Worksheet.GUI.TableScriptController(
-        new ScriptExecutionHandler(this.EhScriptExecution),script);
-      Worksheet.GUI.TableScriptControl control = new Altaxo.Worksheet.GUI.TableScriptControl();
-
-      System.Windows.Forms.Form form = new System.Windows.Forms.Form(); // the parent form used as shell for the control
-      form.Controls.Add(control);
-      form.ClientSize = control.Size;
-      control.Dock = System.Windows.Forms.DockStyle.Fill;
-      controller.View = control;
-
-      form.Text = "DataColScript of " + column.Name;
-      ICSharpCode.SharpDevelop.Services.DefaultParserService parserService = (ICSharpCode.SharpDevelop.Services.DefaultParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.DefaultParserService));
-
-      System.Windows.Forms.DialogResult dlgResult = System.Windows.Forms.DialogResult.Cancel;
-
-      this.m_Column = column;
-
-      if(parserService!=null)
+      object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
+      if(Current.GUIFactoryService.ShowDialog(args, "DataColumnScript of " + m_Column.Name))
       {
-        parserService.RegisterModalContent(control.EditableContent);
-        dlgResult = form.ShowDialog(Altaxo.Current.MainWindow);
-        parserService.UnregisterModalContent();
-      }
-      else
-      {
-        dlgResult = form.ShowDialog(Altaxo.Current.MainWindow);
-      }
-
-      if(dlgResult==System.Windows.Forms.DialogResult.OK)
-      {
-        if(null != dataTable.DataColumns.ColumnScripts[column])
-          dataTable.DataColumns.ColumnScripts[column] = (Data.IColumnScriptText)controller.m_TableScript;
+        if(null != dataTable.DataColumns.ColumnScripts[m_Column])
+          dataTable.DataColumns.ColumnScripts[m_Column] = (Altaxo.Data.IColumnScriptText)args[0];
         else
-          dataTable.DataColumns.ColumnScripts.Add(column, controller.m_TableScript);
+          dataTable.DataColumns.ColumnScripts.Add(m_Column, args[0]);
       }
-
       this.m_Column = null;
-      form.Dispose();
     }
     public bool EhScriptExecution(Altaxo.Data.IScriptText script)
     {
@@ -455,50 +352,22 @@ namespace Altaxo.Worksheet.Commands
         Altaxo.Data.DataTable dataTable = ctrl.DataTable;
         if(ctrl.SelectedPropertyColumns.Count==0)
           return;
-        Altaxo.Data.DataColumn column = dataTable.PropertyColumns[ctrl.SelectedPropertyColumns[0]];
+       m_Column = dataTable.PropertyColumns[ctrl.SelectedPropertyColumns[0]];
 
-        Data.IScriptText script = (Data.IScriptText)dataTable.PropertyColumns.ColumnScripts[column];
+        Data.IScriptText script = (Data.IScriptText)dataTable.PropertyColumns.ColumnScripts[m_Column];
         if(script==null)
           script = new Data.PropertyColumnScript();
 
-        Worksheet.GUI.TableScriptController controller = new Worksheet.GUI.TableScriptController(
-          new ScriptExecutionHandler(this.EhScriptExecution),script);
-        Worksheet.GUI.TableScriptControl control = new Altaxo.Worksheet.GUI.TableScriptControl();
-
-        System.Windows.Forms.Form form = new System.Windows.Forms.Form(); // the parent form used as shell for the control
-        form.Controls.Add(control);
-        form.ClientSize = control.Size;
-        control.Dock = System.Windows.Forms.DockStyle.Fill;
-        controller.View = control;
-
-        form.Text = "PropColScript of " + column.Name;
-        ICSharpCode.SharpDevelop.Services.DefaultParserService parserService = (ICSharpCode.SharpDevelop.Services.DefaultParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.DefaultParserService));
-
-        System.Windows.Forms.DialogResult dlgResult = System.Windows.Forms.DialogResult.Cancel;
-
-        this.m_Column = column;
-
-        if(parserService!=null)
+        object[] args = new object[]{script,new ScriptExecutionHandler(this.EhScriptExecution)};
+        if(Current.GUIFactoryService.ShowDialog(args, "PropertyColumnScript of " + m_Column.Name))
         {
-          parserService.RegisterModalContent(control.EditableContent);
-          dlgResult = form.ShowDialog(Altaxo.Current.MainWindow);
-          parserService.UnregisterModalContent();
-        }
-        else
-        {
-          dlgResult = form.ShowDialog(Altaxo.Current.MainWindow);
-        }
-
-        if(dlgResult==System.Windows.Forms.DialogResult.OK)
-        {
-          if(null != dataTable.PropertyColumns.ColumnScripts[column])
-            dataTable.PropertyColumns.ColumnScripts[column] = (Data.IColumnScriptText)controller.m_TableScript;
+          if(null != dataTable.DataColumns.ColumnScripts[m_Column])
+            dataTable.DataColumns.ColumnScripts[m_Column] = (Altaxo.Data.IColumnScriptText)args[0];
           else
-            dataTable.PropertyColumns.ColumnScripts.Add(column, controller.m_TableScript);
+            dataTable.DataColumns.ColumnScripts.Add(m_Column, args[0]);
         }
 
         this.m_Column = null;
-        form.Dispose();
       }
 
     public bool EhScriptExecution(Altaxo.Data.IScriptText script)

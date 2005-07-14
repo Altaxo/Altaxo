@@ -1116,6 +1116,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Gui\Scripting\PureScriptControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Scripting\PureScriptControl.resx"
+                    DependentUpon = "PureScriptControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Gui\Scripting\PureScriptController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
