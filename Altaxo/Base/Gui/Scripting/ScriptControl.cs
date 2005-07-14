@@ -4,16 +4,19 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
+using Altaxo.Main.GUI;
 
 namespace Altaxo.Worksheet.GUI
 {
 	/// <summary>
 	/// Summary description for ScriptControl.
 	/// </summary>
+	[UserControlForController(typeof(IScriptViewEventSink))]
 	public class ScriptControl : System.Windows.Forms.UserControl, IScriptView
 	{
     private System.Windows.Forms.Splitter _vertSplitter;
     private System.Windows.Forms.ListBox lbCompilerErrors;
+    private System.Windows.Forms.Panel _panelText;
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -52,6 +55,7 @@ namespace Altaxo.Worksheet.GUI
 		{
       this._vertSplitter = new System.Windows.Forms.Splitter();
       this.lbCompilerErrors = new System.Windows.Forms.ListBox();
+      this._panelText = new System.Windows.Forms.Panel();
       this.SuspendLayout();
       // 
       // _vertSplitter
@@ -60,7 +64,7 @@ namespace Altaxo.Worksheet.GUI
       this._vertSplitter.Location = new System.Drawing.Point(0, 357);
       this._vertSplitter.Name = "_vertSplitter";
       this._vertSplitter.Size = new System.Drawing.Size(408, 3);
-      this._vertSplitter.TabIndex = 0;
+      this._vertSplitter.TabIndex = 1;
       this._vertSplitter.TabStop = false;
       // 
       // lbCompilerErrors
@@ -69,13 +73,23 @@ namespace Altaxo.Worksheet.GUI
       this.lbCompilerErrors.Location = new System.Drawing.Point(0, 262);
       this.lbCompilerErrors.Name = "lbCompilerErrors";
       this.lbCompilerErrors.Size = new System.Drawing.Size(408, 95);
-      this.lbCompilerErrors.TabIndex = 1;
+      this.lbCompilerErrors.TabIndex = 2;
       this.lbCompilerErrors.DoubleClick += new System.EventHandler(this.lbCompilerErrors_DoubleClick);
+      // 
+      // _panelText
+      // 
+      this._panelText.Dock = System.Windows.Forms.DockStyle.Fill;
+      this._panelText.Location = new System.Drawing.Point(0, 0);
+      this._panelText.Name = "_panelText";
+      this._panelText.Size = new System.Drawing.Size(408, 262);
+      this._panelText.TabIndex = 0;
       // 
       // ScriptControl
       // 
-      this.Controls.Add(this.lbCompilerErrors);
+      this.Controls.Add(this._panelText);
       this.Controls.Add(this._vertSplitter);
+      this.Controls.Add(this.lbCompilerErrors);
+     
       this.Name = "ScriptControl";
       this.Size = new System.Drawing.Size(408, 360);
       this.ResumeLayout(false);
@@ -101,18 +115,21 @@ namespace Altaxo.Worksheet.GUI
     Control _scriptView;
     public void AddPureScriptView(object scriptView)
     {
-      if(object.Equals(_scriptView,scriptView))
+      if (object.Equals(_scriptView, scriptView))
+      {
         return;
+      }
 
       if(null!=_scriptView)
-        this.Controls.Remove(_scriptView);
-      _scriptView = _scriptView;
+        this._panelText.Controls.Remove(_scriptView);
+      _scriptView = (Control)scriptView;
       if(null!=_scriptView)
       {
         _scriptView.Location = new Point(0,0);
-        _scriptView.Size = new Size(this.ClientSize.Width,this.lbCompilerErrors.Location.Y);
-        _scriptView.Dock = DockStyle.Top;
-        this.Controls.Add(_scriptView);
+        _scriptView.Size = _panelText.Size;
+        _scriptView.Dock = DockStyle.Fill;
+        this._panelText.Controls.Add(_scriptView);
+        this.ActiveControl = _scriptView;
       }
     }
 

@@ -61,10 +61,7 @@ namespace Altaxo.Worksheet.GUI
 
 
 
-  /// <summary>
-  /// Executes the script provided in the argument.
-  /// </summary>
-  public delegate bool ScriptExecutionHandler(IScriptText script);
+ 
 
   #endregion
 

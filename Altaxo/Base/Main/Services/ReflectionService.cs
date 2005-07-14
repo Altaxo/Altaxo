@@ -36,7 +36,10 @@ namespace Altaxo.Main.Services
     {
       if(basetype.IsInterface)
       {
-        return Array.IndexOf(subtype.GetInterfaces(),basetype)>=0;
+        if(subtype==basetype)
+          return true;
+        else
+          return Array.IndexOf(subtype.GetInterfaces(),basetype)>=0;
       }
       else
       {
@@ -156,6 +159,21 @@ namespace Altaxo.Main.Services
     /// <returns>A list of dictionary entries. The keys are the attribute instances, the values are the class types this attributes apply to.</returns>
     public static DictionaryEntry[] GetAttributeInstancesAndClassTypesForClass(System.Type attributeType, object target)
     {
+      return GetAttributeInstancesAndClassTypesForClass(attributeType, target, null);
+    }
+
+    /// <summary>
+    /// For a given type of attribute, attributeType, this function returns the attribute instances and the class
+    /// types this attributes apply to. If the attribute implements the IComparable interface, the list is sorted. The attribute has
+    /// to implement the <see>IClassForClassAttribute</see> interface, and only those attributes are considered, for which the
+    /// <see>IClassForClassAttribute.TargetType</see> match the type of the target argument.
+    /// </summary>
+    /// <param name="attributeType">The type of attribute (this has to be a class attribute type).</param>
+    /// <param name="target">Only necessary if the attributeType is an <see>IClassForClassAttribute</see>. In this case only
+    /// those attribute instances are returned, where the target object meets the target type of the <see>IClassForClassAttribute</see>.</param>
+    /// <returns>A list of dictionary entries. The keys are the attribute instances, the values are the class types this attributes apply to.</returns>
+    public static DictionaryEntry[] GetAttributeInstancesAndClassTypesForClass(System.Type attributeType, object target, System.Type overrideObjectType)
+    {
       System.Diagnostics.Debug.Assert(IsSubClassOfOrImplements(attributeType,typeof(IClassForClassAttribute)));
 
       ArrayList list = new ArrayList();
@@ -171,8 +189,19 @@ namespace Altaxo.Main.Services
           foreach(Attribute att in attributes)
           {
             if(att is IClassForClassAttribute)
-              if(((IClassForClassAttribute)att).TargetType.IsInstanceOfType(target))
-                list.Add(new DictionaryEntry(att,definedtype));
+            {
+              if(overrideObjectType==null)
+              {
+                if(((IClassForClassAttribute)att).TargetType.IsInstanceOfType(target))
+                  list.Add(new DictionaryEntry(att,definedtype));
+              }
+              else
+              {
+                if(IsSubClassOfOrImplements(overrideObjectType,((IClassForClassAttribute)att).TargetType))
+                  list.Add(new DictionaryEntry(att,definedtype));
+
+              }
+            }
           }
         } // end foreach type
       } // end foreach assembly 
@@ -215,8 +244,6 @@ namespace Altaxo.Main.Services
       return result;
     }
 
-   
-
     /// <summary>
     /// Tries to get a class instance for a given attribute type. All loaded assemblies are searched for classes that attributeType applies to,
     /// then for all found classes the instantiation of a class is tried, until a instance is created successfully. Here, the attributeType has
@@ -230,9 +257,28 @@ namespace Altaxo.Main.Services
     /// This process is repeated until the instantiation was successfull or the argument list is empty (empty constructor is tried at last).</remarks>
     public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type expectedType, object[] creationArgs)
     {
+      return GetClassForClassInstanceByAttribute(attributeType, expectedType,  creationArgs, null);
+    }
+   
+
+    /// <summary>
+    /// Tries to get a class instance for a given attribute type. All loaded assemblies are searched for classes that attributeType applies to,
+    /// then for all found classes the instantiation of a class is tried, until a instance is created successfully. Here, the attributeType has
+    /// to implement <see>IClassForClassAttribute</see>, and creationArg[0] has to match the type in <see>IClassForClassAttribute.TargetType</see>
+    /// </summary>
+    /// <param name="attributeType">The type of attribute  the class(es) to instantiate must be assigned to.</param>
+    /// <param name="expectedType">The expected type of return value.</param>
+    /// <param name="creationArgs">The creation arguments used to instantiate a class.</param>
+    /// <param name="overrideArgs0Type">Usually null. If you provide a type here, it has to be a base type of the typeof(creationArgs[0]). By this you
+    /// can "downgrade" creationArgs[0], so that only attributes for the base type are looked for.</param>
+    /// <returns>The instance of the first class for which the instantiation was successfull and results in the expectedType. Otherwise null.</returns>
+    /// <remarks>The instantiation is tried first with the full argument list. If that fails, the last element of the argument list is chopped and the instantiation is tried again.
+    /// This process is repeated until the instantiation was successfull or the argument list is empty (empty constructor is tried at last).</remarks>
+    public static object GetClassForClassInstanceByAttribute(System.Type attributeType, System.Type expectedType, object[] creationArgs, System.Type overrideArgs0Type)
+    {
       object result=null;
       // 1st search for all classes that wear the UserControllerForObject attribute
-      DictionaryEntry[] list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(attributeType,creationArgs[0]);
+      DictionaryEntry[] list = ReflectionService.GetAttributeInstancesAndClassTypesForClass(attributeType,creationArgs[0],overrideArgs0Type);
 
       for(int i=list.Length-1;i>=0;i--)
       {

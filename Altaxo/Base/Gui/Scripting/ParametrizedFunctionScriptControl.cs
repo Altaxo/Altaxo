@@ -141,7 +141,7 @@ namespace Altaxo.Worksheet.GUI
       this._edParameterNames.Size = new System.Drawing.Size(384, 20);
       this._edParameterNames.TabIndex = 41;
       this._edParameterNames.Text = "textBox1";
-      this._edParameterNames.TextChanged += new System.EventHandler(this._edParameterNames_TextChanged);
+      this._edParameterNames.Validating += new System.ComponentModel.CancelEventHandler(this._edParameterNames_TextChanged);
       // 
       // label3
       // 
@@ -158,6 +158,7 @@ namespace Altaxo.Worksheet.GUI
       this._edIndependentVariables.Size = new System.Drawing.Size(120, 20);
       this._edIndependentVariables.TabIndex = 43;
       this._edIndependentVariables.Text = "textBox1";
+      this._edIndependentVariables.Validating += new System.ComponentModel.CancelEventHandler(this._edIndependentVariables_Validating);
       // 
       // label4
       // 
@@ -174,6 +175,7 @@ namespace Altaxo.Worksheet.GUI
       this._edDependentVariables.Size = new System.Drawing.Size(200, 20);
       this._edDependentVariables.TabIndex = 45;
       this._edDependentVariables.Text = "textBox2";
+      this._edDependentVariables.Validating += new System.ComponentModel.CancelEventHandler(this._edDependentVariables_Validating);
       // 
       // _panelScriptText
       // 
@@ -218,6 +220,15 @@ namespace Altaxo.Worksheet.GUI
       this._edParameterNames.Enabled = enable;
     }
 
+    public void SetIndependentVariableText(string text)
+    {
+      this._edIndependentVariables.Text = text;
+    }
+    public void SetDependentVariableText(string text)
+  {
+    this._edDependentVariables.Text = text;
+  }
+
     public void InitializeNumberOfParameters()
     {
       this._cbNumberOfParameters.BeginUpdate();
@@ -227,6 +238,13 @@ namespace Altaxo.Worksheet.GUI
 
       this._cbNumberOfParameters.EndUpdate();
     }
+
+    public void SetCheckUseUserDefinedParameters(bool useUserDefParameters)
+    {
+      this._chkUserDefinedParameters.Checked = useUserDefParameters;
+    }
+
+
     public void SetNumberOfParameters(int numberOfParameters, bool enable)
     {
       this._cbNumberOfParameters.SelectedIndex = numberOfParameters;
@@ -270,20 +288,38 @@ namespace Altaxo.Worksheet.GUI
 
 
   
-    private void _edParameterNames_TextChanged(object sender, System.EventArgs e)
+    private void _edParameterNames_TextChanged(object sender, System.ComponentModel.CancelEventArgs e)
     {
       if(null!=Controller)
-        Controller.EhView_ParameterChanged(this._cbNumberOfParameters.SelectedIndex, this._chkUserDefinedParameters.Checked, this._edParameterNames.Text);
+        Controller.EhView_UserDefinedParameterTextChanged(this._edParameterNames.Text);
     }
 
     private void _cbNumberOfParameters_SelectionChangeCommitted(object sender, System.EventArgs e)
     {
-     _edParameterNames_TextChanged(sender,e);
+      if (null != Controller)
+        Controller.EhView_NumberOfParameterChanged(this._cbNumberOfParameters.SelectedIndex);
     }
 
     private void _chkUserDefinedParameters_CheckedChanged(object sender, System.EventArgs e)
     {
-      _edParameterNames_TextChanged(sender,e);
+      if (null != Controller)
+        Controller.EhView_UserDefinedParameterCheckChanged(_chkUserDefinedParameters.Checked);
+
+      this._cbNumberOfParameters.Enabled = !_chkUserDefinedParameters.Checked;
+      this._edParameterNames.Enabled = _chkUserDefinedParameters.Checked;
+    }
+
+    private void _edIndependentVariables_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+    if(null!=Controller)
+      Controller.EhView_IndependentVariableTextChanged(this._edIndependentVariables.Text);
+    }
+
+    private void _edDependentVariables_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+      if(null!=Controller)
+        Controller.EhView_DependentVariableTextChanged(this._edDependentVariables.Text);
+    
     }
   }
 }

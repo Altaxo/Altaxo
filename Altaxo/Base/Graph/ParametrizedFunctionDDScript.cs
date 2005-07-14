@@ -31,20 +31,15 @@ using Altaxo.Calc.Regression.Nonlinear;
 namespace Altaxo.Graph
 {
 
-  public interface IParametrizedFunctionDDScriptText : IScriptText
+  public interface IParametrizedFunctionDDScriptText : IScriptText, IFitFunction
   {
        
 
-    /// <summary>
-    /// Get / sets the number of parameters. If setting the number of parameters with this property,
-    /// the property <see>IsUsingUserDefinedParameterNames</see> is set to false.
-    /// </summary>
-    int NumberOfParameters { get; set; }
-
+    
     /// <summary>
     /// Returns true if the script uses user defined parameter names instead of using P[0], P[1] ...
     /// </summary>
-    bool IsUsingUserDefinedParameterNames { get; }
+    bool IsUsingUserDefinedParameterNames { get; set;}
 
     /// <summary>
     /// Get / sets the user defined parameter names. If setting, this also sets the property
@@ -56,6 +51,8 @@ namespace Altaxo.Graph
     string[] DependentVariablesNames { set; }
 
     string[] IndependentVariablesNames { set; }
+
+    new int NumberOfParameters { get; set; }
   }
 
   /// <summary>
@@ -64,25 +61,26 @@ namespace Altaxo.Graph
 
   public class ParametrizedFunctionDDScript : AbstractScript, IParametrizedFunctionDDScriptText, IFitFunction
   {
-    /// <summary>
-    /// Number of Parameters
-    /// </summary>
-    int _NumberOfParameters;
-
-    string[] _IndependentVariablesNames = new string[]{"x"};
-    string[] _DependentVariablesNames = new string[]{"y"};
-
+  
 
     /// <summary>
     /// True if we use user defined parameter names in the script.
     /// </summary>
-    bool _IsUsingUserDefinedParameterNames;
+    bool _IsUsingUserDefinedParameterNames=true;
 
+    /// <summary>
+    /// Number of Parameters
+    /// </summary>
+    int _NumberOfParameters=2;
     /// <summary>
     /// Names of the parameters. This is set to null if no parameter names where provided.
     /// </summary>
-    string[] _UserDefinedParameterNames;
+    string[] _UserDefinedParameterNames = new string[]{"A","B"};
   
+    string[] _IndependentVariablesNames = new string[]{"x"};
+    string[] _DependentVariablesNames = new string[]{"y"};
+
+
 
     #region Serialization
 
@@ -115,8 +113,6 @@ namespace Altaxo.Graph
     /// </summary>
     public ParametrizedFunctionDDScript()
     {
-      _IndependentVariablesNames = new string[]{"x"};
-      _DependentVariablesNames = new string[]{"y"};
     }
 
     /// <summary>
@@ -124,7 +120,7 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     public ParametrizedFunctionDDScript(ParametrizedFunctionDDScript b)
-      : base(b,true)
+      : base(b,false)
     {
     }
 
@@ -132,8 +128,8 @@ namespace Altaxo.Graph
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public ParametrizedFunctionDDScript(ParametrizedFunctionDDScript b, bool doCopyCompileResult)
-      : base(b,doCopyCompileResult)
+    public ParametrizedFunctionDDScript(ParametrizedFunctionDDScript b, bool forModification)
+      : base(b, forModification)
     {
     }
     /// <summary>
@@ -141,9 +137,10 @@ namespace Altaxo.Graph
     /// </summary>
     public override string ScriptObjectType
     {
-      get { return "Altaxo.Calc.MyParametrizedFunctionDDScript"; }
+      get { return "Altaxo.Calc.MyFitFunction"; }
     }
 
+    #region Text Definitions
     /// <summary>
     /// Gets the code header, i.e. the leading script text. It depends on the ScriptStyle.
     /// </summary>
@@ -159,8 +156,10 @@ namespace Altaxo.Graph
           "using Altaxo.Calc.Regression.Nonlinear;\r\n" + 
           "namespace Altaxo.Calc\r\n" +
           "{\r\n" +
-          "\tpublic class MyParametrizedFunctionDDScript : Altaxo.Calc.ScriptExecutionBase, IFitFunction\r\n" +
+          "\tpublic class MyFitFunction : Altaxo.Calc.FitFunctionExeBase\r\n" +
           "\t{\r\n" +
+          "\t\tpublic MyFitFunction()\r\n"+
+          "\t\t{\r\n"+
           this.IndependentDefinitionRegionStart+
           this.IndependentDefinitionRegionCore+
           this.IndependentDefinitionRegionEnd+
@@ -170,7 +169,9 @@ namespace Altaxo.Graph
           this.ParameterDefinitionRegionStart+
           this.ParameterDefinitionRegionCore+
           this.ParameterDefinitionRegionEnd+
-          "\t\tpublic void Evaluate(double[] X, double[] P, double[] Y)\r\n" +
+          "\t\t}\r\n"+
+          "\r\n"+
+          "\t\tpublic override void Evaluate(double[] X, double[] P, double[] Y)\r\n" +
           "\t\t{\r\n"+
           IndependentAssignmentRegionStart+
           IndependentAssignmentRegionCore+
@@ -196,7 +197,7 @@ namespace Altaxo.Graph
       {
         System.Text.StringBuilder stb = new System.Text.StringBuilder();
         stb.Append(
-          "\t\tprivate string[] _parameterName = new string[]{");
+          "\t\t_parameterNames = new string[]{");
       
 
         for(int i=0;i<this.NumberOfParameters;i++)
@@ -207,6 +208,7 @@ namespace Altaxo.Graph
         }
         stb.Append("};\r\n");
 
+        /*
         stb.Append(
           "\t\tpublic int NumberOfParameters\r\n" +
           "\t\t{\r\n"+
@@ -220,6 +222,7 @@ namespace Altaxo.Graph
           "\t\t\treturn _parameterName[i];\r\n"+
           "\t\t}\r\n"
           );
+          */
 
         return stb.ToString();
       }
@@ -244,7 +247,20 @@ namespace Altaxo.Graph
     {
       get
       {
-        return "";
+        System.Text.StringBuilder stb = new System.Text.StringBuilder();
+        if(this.IsUsingUserDefinedParameterNames)
+        {
+          for(int i=0;i<this.NumberOfParameters;i++)
+          {
+            stb.Append("\t\t\t");
+            stb.Append("double ");
+            stb.Append(this.ParameterName(i));
+            stb.Append(" = P[");
+            stb.Append(i.ToString());
+            stb.Append("];\r\n");
+          }
+        }
+        return stb.ToString();
       }
     }
     public string ParameterAssignmentRegionEnd
@@ -270,7 +286,7 @@ namespace Altaxo.Graph
       {
         System.Text.StringBuilder stb = new System.Text.StringBuilder();
         stb.Append(
-          "\t\tprivate string[] _dependentVariableName = new string[]{");
+          "\t\t_dependentVariableNames = new string[]{");
       
 
         for(int i=0;i<this._DependentVariablesNames.Length;i++)
@@ -282,7 +298,7 @@ namespace Altaxo.Graph
             stb.Append(",");
         }
 
-
+/*
         stb.Append(
           "\t\tpublic int NumberOfDependentVariables\r\n" +
           "\t\t{\r\n"+
@@ -296,7 +312,7 @@ namespace Altaxo.Graph
           "\t\t\treturn _dependentVariableName[i];\r\n"+
           "\t\t}\r\n"
           );
-
+*/
         return stb.ToString();
       }
     }
@@ -383,7 +399,7 @@ namespace Altaxo.Graph
       {
         System.Text.StringBuilder stb = new System.Text.StringBuilder();
         stb.Append(
-          "\t\tprivate string[] _independentVariableName = new string[]{");
+          "\t\t_independentVariableNames = new string[]{");
       
 
         for(int i=0;i<this._IndependentVariablesNames.Length;i++)
@@ -395,7 +411,7 @@ namespace Altaxo.Graph
             stb.Append(",");
         }
 
-
+/*
         stb.Append(
           "\t\tpublic int NumberOfIndependentVariables\r\n" +
           "\t\t{\r\n"+
@@ -409,7 +425,7 @@ namespace Altaxo.Graph
           "\t\t\treturn _independentVariableName[i];\r\n"+
           "\t\t}\r\n"
           );
-
+*/
         return stb.ToString();
       }
     }
@@ -502,7 +518,7 @@ namespace Altaxo.Graph
       }
     }
 
-
+    #endregion
 
     /// <summary>
     /// Clones the script.
@@ -513,14 +529,7 @@ namespace Altaxo.Graph
       return new Altaxo.Graph.ParametrizedFunctionDDScript(this,true);
     }
 
-    /// <summary>
-    /// Clones the script.
-    /// </summary>
-    /// <returns>The cloned object.</returns>
-    public override IScriptText CloneForModification()
-    {
-      return new Altaxo.Graph.ParametrizedFunctionDDScript(this,false);
-    }
+    
 
     
     public string[] DependentVariablesNames 
@@ -542,9 +551,25 @@ namespace Altaxo.Graph
           throw new ApplicationException("The script text seems to no longer contain a dependent variable definition end region");
         sb = new System.Text.StringBuilder();
         sb.Append(this.ScriptText.Substring(0,first));
-        sb.Append(this.DependentAssignmentRegionCore);
+        sb.Append(this.DependentDefinitionRegionCore);
         sb.Append(this.ScriptText.Substring(last));
         this.ScriptText = sb.ToString();
+
+
+        first = this.ScriptText.IndexOf(this.DependentDeclarationRegionStart);
+        if (first < 0)
+          throw new ApplicationException("The script text seems to no longer contain an dependent variables declaration start region");
+        first += this.DependentDeclarationRegionStart.Length;
+        last = this.ScriptText.IndexOf(this.DependentDeclarationRegionEnd);
+        if(last<0)
+          throw new ApplicationException("The script text seems to no longer contain an dependent variable declaration end region");
+
+        sb = new System.Text.StringBuilder();
+        sb.Append(this.ScriptText.Substring(0,first));
+        sb.Append(this.DependentDeclarationRegionCore);
+        sb.Append(this.ScriptText.Substring(last));
+        this.ScriptText = sb.ToString();
+
 
       
         first = this.ScriptText.IndexOf(this.DependentAssignmentRegionStart);
@@ -583,11 +608,10 @@ namespace Altaxo.Graph
 
         sb = new System.Text.StringBuilder();
         sb.Append(this.ScriptText.Substring(0,first));
-        sb.Append(this.IndependentAssignmentRegionCore);
+        sb.Append(this.IndependentDefinitionRegionCore);
         sb.Append(this.ScriptText.Substring(last));
         this.ScriptText = sb.ToString();
 
-        
         
          first = this.ScriptText.IndexOf(this.IndependentAssignmentRegionStart);
         if (first < 0)
@@ -613,8 +637,64 @@ namespace Altaxo.Graph
       {
         return this._IsUsingUserDefinedParameterNames;
       }
+      set
+      {
+        if (value == true && _IsUsingUserDefinedParameterNames==false)
+        {
+          string[] oldNames = this._UserDefinedParameterNames;
+          if(oldNames==null) 
+            oldNames = new string[0];
+
+          string[] newNames= new string[_NumberOfParameters];
+
+          int len = Math.Min(oldNames.Length,newNames.Length);
+          for(int i=0;i<len;++i)
+            newNames[i] = oldNames[i];
+          for(int i=len;i<newNames.Length;++i)
+            newNames[i] = "P"+i.ToString();
+
+          this.UserDefinedParameterNames = newNames;
+        }
+
+        _IsUsingUserDefinedParameterNames = value;
+        SetParametersInScript();
+      }
       
     }
+
+    void SetParametersInScript()
+    {
+      System.Text.StringBuilder sb;
+      int first, last;
+
+      first = this.ScriptText.IndexOf(this.ParameterDefinitionRegionStart);
+      if (first < 0)
+        throw new ApplicationException("The script text seems to no longer contain a parameter definition start region");
+      first += this.ParameterDefinitionRegionStart.Length;
+      last = this.ScriptText.IndexOf(this.ParameterDefinitionRegionEnd);
+      if (last < 0)
+        throw new ApplicationException("The script text seems to no longer contain a parameter definition end region");
+      sb = new System.Text.StringBuilder();
+      sb.Append(this.ScriptText.Substring(0, first));
+      sb.Append(this.ParameterDefinitionRegionCore);
+      sb.Append(this.ScriptText.Substring(last));
+      this.ScriptText = sb.ToString();
+
+      first = this.ScriptText.IndexOf(this.ParameterAssignmentRegionStart);
+      if (first < 0)
+        throw new ApplicationException("The script text seems to no longer contain a parameter assignment start region");
+      first += this.ParameterAssignmentRegionStart.Length;
+      last = this.ScriptText.IndexOf(this.ParameterAssignmentRegionEnd);
+      if (last < 0)
+        throw new ApplicationException("The script text seems to no longer contain a parameter assignment end region");
+      sb = new System.Text.StringBuilder();
+      sb.Append(this.ScriptText.Substring(0, first));
+      sb.Append(this.ParameterAssignmentRegionCore);
+      sb.Append(this.ScriptText.Substring(last));
+      this.ScriptText = sb.ToString();
+
+    }
+
     public string[] UserDefinedParameterNames
     {
       get
@@ -626,42 +706,13 @@ namespace Altaxo.Graph
       }
       set
       {
-        System.Text.StringBuilder sb;
-        int first,last;
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
         this._IsUsingUserDefinedParameterNames = true;
         this._NumberOfParameters = value.Length;
         this._UserDefinedParameterNames = (string[])value.Clone();
 
-        string[] pnames = value;
-        
-        first = this.ScriptText.IndexOf(this.ParameterDefinitionRegionStart);
-        if (first < 0)
-          throw new ApplicationException("The script text seems to no longer contain a parameter definition start region");
-        first += this.ParameterDefinitionRegionStart.Length;
-        last = this.ScriptText.IndexOf(this.ParameterDefinitionRegionEnd);
-        if(last<0)
-          throw new ApplicationException("The script text seems to no longer contain a parameter definition end region");
-        sb = new System.Text.StringBuilder();
-        sb.Append(this.ScriptText.Substring(0,first));
-        sb.Append(this.ParameterDefinitionRegionCore);
-        sb.Append(this.ScriptText.Substring(last));
-        this.ScriptText = sb.ToString();
-
-        
-        first = this.ScriptText.IndexOf(this.ParameterAssignmentRegionStart);
-        if (first < 0)
-          throw new ApplicationException("The script text seems to no longer contain a parameter assignment start region");
-        first += this.ParameterAssignmentRegionStart.Length;
-        last = this.ScriptText.IndexOf(this.ParameterAssignmentRegionEnd);
-        if(last<0)
-          throw new ApplicationException("The script text seems to no longer contain a parameter assignment end region");
-        sb = new System.Text.StringBuilder();
-        sb.Append(this.ScriptText.Substring(0,first));
-        sb.Append(this.ParameterDefinitionRegionCore);
-        sb.Append(this.ScriptText.Substring(last));
-        this.ScriptText = sb.ToString();
-
+        this.SetParametersInScript();
       }
     }
 
@@ -696,8 +747,10 @@ namespace Altaxo.Graph
     {
       get
       {
-          
-        return this._IndependentVariablesNames.Length;
+        if (this.m_ScriptObject != null)
+          return ((IFitFunction)m_ScriptObject).NumberOfIndependentVariables;
+        else
+          return this._IndependentVariablesNames.Length;
       }
     }
 
@@ -705,6 +758,9 @@ namespace Altaxo.Graph
     {
       get
       {
+        if (this.m_ScriptObject != null)
+          return ((IFitFunction)m_ScriptObject).NumberOfDependentVariables;
+        else
         return this._DependentVariablesNames.Length;
       }
     }
@@ -713,31 +769,51 @@ namespace Altaxo.Graph
     {
       get
       {
-        return this._NumberOfParameters;
+        if (this.m_ScriptObject != null)
+          return ((IFitFunction)m_ScriptObject).NumberOfParameters;
+        else
+          return this._NumberOfParameters;
       }
       set
       {
-        this._IsUsingUserDefinedParameterNames = false;
-        this._NumberOfParameters = value;
+        if (this.m_ScriptObject != null)
+          throw new ApplicationException("Number of parameters can not be changed after successfull compilation");
+        else
+        {
+          this._IsUsingUserDefinedParameterNames = false;
+          this._NumberOfParameters = value;
+          this.SetParametersInScript();
+        }
       }
     }
 
     public string IndependentVariableName(int i)
     {
+      if (this.m_ScriptObject != null)
+        return ((IFitFunction)m_ScriptObject).IndependentVariableName(i);
+      else
       return this._IndependentVariablesNames[i];
     }
 
     public string DependentVariableName(int i)
     {
+      if (this.m_ScriptObject != null)
+        return ((IFitFunction)m_ScriptObject).DependentVariableName(i);
+      else
       return this._DependentVariablesNames[i];
     }
 
     public string ParameterName(int i)
     {
-      if(IsUsingUserDefinedParameterNames)
-        return this._UserDefinedParameterNames[i];
+      if (this.m_ScriptObject != null)
+        return ((IFitFunction)m_ScriptObject).ParameterName(i);
       else
-        return "P"+i.ToString();
+      {
+        if (IsUsingUserDefinedParameterNames)
+          return this._UserDefinedParameterNames[i];
+        else
+          return "P[" + i.ToString() + "]";
+      }
     }
 
     void Altaxo.Calc.Regression.Nonlinear.IFitFunction.Evaluate(double[] independent, double[] parameters, double[] result)
@@ -750,7 +826,7 @@ namespace Altaxo.Graph
 
       try
       {
-        ((Altaxo.Calc.IParametrizedFunctionDDD)m_ScriptObject).Evaluate(independent,parameters,result);
+        ((IFitFunction)m_ScriptObject).Evaluate(independent,parameters,result);
         return;
       }
       catch (Exception)

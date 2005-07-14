@@ -86,15 +86,15 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     public FunctionEvaluationScript(FunctionEvaluationScript b)
-      : base(b,true)
+      : base(b,false)
     {
     }
     /// <summary>
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public FunctionEvaluationScript(FunctionEvaluationScript b, bool doCopyCompileResult)
-      : base(b,doCopyCompileResult)
+    public FunctionEvaluationScript(FunctionEvaluationScript b, bool forModification)
+      : base(b,forModification)
     {
     }
 
@@ -183,14 +183,7 @@ namespace Altaxo.Graph
       return new Altaxo.Graph.FunctionEvaluationScript(this,true);
     }
 
-    /// <summary>
-    /// Clones the script.
-    /// </summary>
-    /// <returns>The cloned object.</returns>
-    public override IScriptText CloneForModification()
-    {
-      return new Altaxo.Graph.FunctionEvaluationScript(this,false);
-    }
+   
     /// <summary>
     /// 
     /// </summary>

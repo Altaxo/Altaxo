@@ -295,6 +295,7 @@ namespace Altaxo.Worksheet.Commands
   {
     Altaxo.Data.DataTable m_Table;
 
+    /*
     public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
     {
       Altaxo.Data.DataTable dataTable = ctrl.DataTable;
@@ -337,7 +338,30 @@ namespace Altaxo.Worksheet.Commands
       this.m_Table = null;
       form.Dispose();
     }
+*/
 
+    public override void Run(Altaxo.Worksheet.GUI.WorksheetController ctrl)
+    {
+      m_Table = ctrl.DataTable;
+      
+      Data.IScriptText tableScript = m_Table.TableScript;
+
+      if(tableScript==null)
+        tableScript = new Data.TableScript();
+
+      object tableScriptAsObject = tableScript;
+      IScriptController controller = (IScriptController)Current.GUIFactoryService.GetControllerAndControl(new object[]{tableScript,new ScriptExecutionHandler(this.EhScriptExecution)}, typeof(IScriptController));
+      System.Windows.Forms.Form form = new Altaxo.Worksheet.GUI.ScriptExecutionDialog(controller); // the parent form used as shell for the control
+      form.Text = "WorksheetScript of " + m_Table.Name;
+
+      if(DialogResult.OK==form.ShowDialog())
+      {
+        m_Table.TableScript = (Data.TableScript)controller.ModelObject;
+      }
+
+      this.m_Table = null;
+      form.Dispose();
+    }
     public bool EhScriptExecution(Altaxo.Data.IScriptText script)
     {
       return ((Altaxo.Data.TableScript)script).ExecuteWithSuspendedNotifications(m_Table);

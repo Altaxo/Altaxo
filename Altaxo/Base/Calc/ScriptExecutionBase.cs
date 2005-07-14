@@ -456,6 +456,87 @@ namespace Altaxo.Calc
     }
   }
 
+  public abstract class FitFunctionExeBase : ScriptExecutionBase, Altaxo.Calc.Regression.Nonlinear.IFitFunction
+  {
+    protected string[] _independentVariableNames;
+    protected string[] _dependentVariableNames;
+    protected string[] _parameterNames;
+
+    /// <summary>
+    /// Number of independent variables (i.e. x).
+    /// </summary>
+    public virtual int NumberOfIndependentVariables 
+    {
+      get
+      {
+        return _independentVariableNames.Length;
+      }
+    }
+
+    /// <summary>
+    /// Number of dependent variables (i.e. y, in Altaxo this is commonly called v like value).
+    /// </summary>
+    public virtual int NumberOfDependentVariables
+    {
+      get
+      {
+        return _dependentVariableNames.Length;
+      }
+    }
+
+    /// <summary>
+    /// Number of parameters of this fit function.
+    /// </summary>
+    public virtual int NumberOfParameters 
+    {
+      get
+      {
+        return _parameterNames.Length;
+      }
+    }
+
+    /// <summary>
+    /// Returns the ith independent variable name.
+    /// </summary>
+    /// <param name="i">Index of the independent variable.</param>
+    /// <returns>The name of the ith independent variable.</returns>
+    public virtual string IndependentVariableName(int i)
+    {
+      return _independentVariableNames[i];
+    }
+
+    /// <summary>
+    /// Returns the ith dependent variable name.
+    /// </summary>
+    /// <param name="i">Index of the dependent variable.</param>
+    /// <returns>The name of the ith dependent variable.</returns>
+    public virtual string DependentVariableName(int i)
+  {
+    return _dependentVariableNames[i];
+  }
+
+
+    /// <summary>
+    /// Returns the ith parameter name.
+    /// </summary>
+    /// <param name="i">Index of the parameter.</param>
+    /// <returns>The name of the ith paramter.</returns>
+    public virtual string ParameterName(int i)
+    {
+      return _parameterNames[i];
+    }
+
+
+
+    /// <summary>
+    /// This evaluates a function value. 
+    /// </summary>
+    /// <param name="independent">The independent variables.</param>
+    /// <param name="parameters">Parameters for evaluation.</param>
+    /// <param name="result">On return, this array contains the one (or more) evaluated
+    /// function values at the point (independent).</param>
+    public abstract void Evaluate(double[] independent, double[] parameters, double[] result);
+  }
 
   /// <summary>
   /// Base class of all function evaluation scripts.

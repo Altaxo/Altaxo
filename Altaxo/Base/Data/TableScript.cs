@@ -119,15 +119,15 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     public TableScript(TableScript b)
-    : this(b,true)
+    : this(b,false)
     {
     }
     /// <summary>
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public TableScript(TableScript b, bool doCopyCompileResult)
-      : base(b,doCopyCompileResult)
+    public TableScript(TableScript b, bool forModification)
+      : base(b, forModification)
     {
     }
   
@@ -226,14 +226,7 @@ namespace Altaxo.Data
       return new TableScript(this,true);
     }
 
-    /// <summary>
-    /// Clones the script.
-    /// </summary>
-    /// <returns>The cloned object.</returns>
-    public override IScriptText CloneForModification()
-    {
-      return new TableScript(this,false);
-    }
+  
 
    
 

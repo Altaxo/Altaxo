@@ -269,21 +269,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Worksheet\GUI\ParametrizedFunctionScriptControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Worksheet\GUI\ParametrizedFunctionScriptControl.resx"
-                    DependentUpon = "ParametrizedFunctionScriptControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Worksheet\GUI\ParametrizedFunctionScriptController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Worksheet\GUI\PureScriptControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -292,26 +277,6 @@
                     RelPath = "Worksheet\GUI\PureScriptControl.resx"
                     DependentUpon = "PureScriptControl.cs"
                     BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Worksheet\GUI\PureScriptController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Worksheet\GUI\ScriptControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Worksheet\GUI\ScriptControl.resx"
-                    DependentUpon = "ScriptControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Worksheet\GUI\ScriptController.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Worksheet\GUI\SDWorksheetController.cs"

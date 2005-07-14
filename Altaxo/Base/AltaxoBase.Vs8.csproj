@@ -164,6 +164,8 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Calc\Regression\Nonlinear\FitFunctionSelectionController.cs" />
+    <Compile Include="Calc\Regression\Nonlinear\FitFunctionToScalarFunctionDDWrapper.cs" />
+    <Compile Include="Calc\Regression\Nonlinear\HavriliakNegamiFunction.cs" />
     <Compile Include="Calc\Regression\Nonlinear\IFitFunction.cs" />
     <Compile Include="Calc\Regression\Nonlinear\KohlrauschDecay.cs" />
     <Compile Include="Calc\Regression\Nonlinear\NonlinearFitControl.cs">
@@ -684,6 +686,7 @@
     <Compile Include="Main\GUI\SingleChoiceObjectController.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Main\GUI\SingleInstanceChoiceController.cs" />
     <Compile Include="Main\GUI\SingleValueControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -750,6 +753,7 @@
     <Compile Include="Main\Services\ReflectionService.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Main\Services\ScriptCompilerService.cs" />
     <Compile Include="Root\Current.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1053,6 +1057,7 @@
     <EmbeddedResource Include="Main\GUI\SingleChoiceComboBoxControl.resx">
       <DependentUpon>SingleChoiceComboBoxControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Main\GUI\SingleInstanceChoiceControl.resx" />
     <EmbeddedResource Include="Main\GUI\SingleValueControl.resx">
       <DependentUpon>SingleValueControl.cs</DependentUpon>
     </EmbeddedResource>

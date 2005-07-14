@@ -7,6 +7,12 @@ using Altaxo.Main.Services;
 namespace Altaxo.Worksheet.GUI
 {
   #region Interfaces
+
+  /// <summary>
+  /// Executes the script provided in the argument.
+  /// </summary>
+  public delegate bool ScriptExecutionHandler(IScriptText script);
+
   public interface IScriptView
   {
     IScriptViewEventSink Controller {get; set; }
@@ -23,6 +29,7 @@ namespace Altaxo.Worksheet.GUI
 
   public interface IScriptController : Main.GUI.IMVCAController
   {
+    void SetText(string text);
     void Compile();
     void Update();
     void Cancel();
@@ -36,20 +43,36 @@ namespace Altaxo.Worksheet.GUI
 	/// <summary>
 	/// Summary description for ScriptController.
 	/// </summary>
-	public class ScriptController : IScriptViewEventSink, IScriptController
-	{
+  [UserControllerForObject(typeof(IScriptText))]
+  public class ScriptController : IScriptViewEventSink, IScriptController
+  {
     IScriptView _view;
     IScriptText _doc;
+    IScriptText _tempDoc;
+    IScriptText _compiledDoc;
+    protected ScriptExecutionHandler _scriptExecutionHandler;
 
     IPureScriptController _pureScriptController;
     private Regex _compilerErrorRegex = new Regex(@".*\((?<line>\d+),(?<column>\d+)\) : (?<msg>.+)",RegexOptions.Compiled);
 
 
-		public ScriptController(IScriptText doc)
-		{
+    public ScriptController(IScriptText doc)
+    : this(doc,null)
+    {
+    }
+    public ScriptController(IScriptText doc, ScriptExecutionHandler exec)
+    {
       _doc = doc;
-			_pureScriptController = new PureScriptController(_doc);
-      _pureScriptController.ViewObject=new PureScriptControl();
+      _tempDoc = _doc.CloneForModification();
+      _compiledDoc=null;
+
+      _pureScriptController = (IPureScriptController)Current.GUIFactoryService.GetControllerAndControl(new object[]{_tempDoc},typeof(IPureScriptText),typeof(IPureScriptController));
+      _scriptExecutionHandler = exec;
+    }
+
+    public void SetText(string text)
+    {
+      _pureScriptController.SetText(text);
     }
 
     public void Initialize()
@@ -58,6 +81,7 @@ namespace Altaxo.Worksheet.GUI
       {
         _view.ClearCompilerErrors();
         _view.AddPureScriptView(_pureScriptController.ViewObject);
+        _pureScriptController.SetScriptCursorLocation( _tempDoc.UserAreaScriptOffset);
       }
     }
     #region IScriptViewEventSink Members
@@ -73,7 +97,7 @@ namespace Altaxo.Worksheet.GUI
         int col  = int.Parse(scol);
 
         
-          _pureScriptController.SetScriptCursorLocation(line-1,col-1);
+        _pureScriptController.SetScriptCursorLocation(line-1,col-1);
 
       }
       catch(Exception)
@@ -87,16 +111,23 @@ namespace Altaxo.Worksheet.GUI
 
     public void Compile()
     {
+      _compiledDoc = null;
+
       if(_pureScriptController.Apply())
       {
+        _tempDoc.ScriptText = _pureScriptController.Model.ScriptText;
+
         if(null!=_view)
           _view.ClearCompilerErrors();
 
-        string[] errors;
-        IScriptCompilerResult result = Main.Services.ScriptCompilerService.Compile(new string[]{_doc.ScriptText}, out errors);
+        IScriptText compiledDoc = _tempDoc.CloneForModification();
+        bool result = compiledDoc.Compile();
 
-        if(null==result)
+        string[] errors = compiledDoc.Errors;
+        if(result==false)
         {
+          _compiledDoc = null;
+
           foreach(string s in errors)
           {
             System.Text.RegularExpressions.Match match = _compilerErrorRegex.Match(s);
@@ -118,6 +149,8 @@ namespace Altaxo.Worksheet.GUI
         }
         else
         {
+          _compiledDoc = compiledDoc;
+          
           _view.AddCompilerError(DateTime.Now.ToLongTimeString() + " : Compilation successful.");
         }
       }
@@ -126,8 +159,22 @@ namespace Altaxo.Worksheet.GUI
 
     public void Update()
     {
-      _pureScriptController.Apply();
+      if(_pureScriptController.Apply())
+      {
+        _tempDoc.ScriptText = this._pureScriptController.Model.ScriptText;
+
+        if(null!=_compiledDoc && _tempDoc.ScriptText==_compiledDoc.ScriptText)
+        {
+          _doc = _compiledDoc;
+        }
+        else if(_doc.IsReadOnly && _doc.ScriptText != _pureScriptController.Model.ScriptText)
+          _doc = _doc.CloneForModification();
+        _doc.ScriptText = _pureScriptController.Model.ScriptText;
+      }
+      _tempDoc = (IScriptText)_doc.Clone();
     }
+
+  
 
     public void Cancel()
     {
@@ -172,8 +219,39 @@ namespace Altaxo.Worksheet.GUI
 
     public bool Apply()
     {
-      // TODO:  Add ScriptController.Apply implementation
-      return false;
+      bool applyresult = false;
+
+      if(_pureScriptController.Apply())
+      {
+        _tempDoc.ScriptText = this._pureScriptController.Model.ScriptText;
+        if(null!=_compiledDoc && _tempDoc.ScriptText==_compiledDoc.ScriptText)
+        {
+          _doc = _compiledDoc;
+          applyresult = true;
+        }
+        else
+        {
+          Compile();
+          if(null!=_compiledDoc)
+          {
+            _doc = _compiledDoc;
+            applyresult = true;
+          }
+        }
+        
+        if(applyresult == true && _scriptExecutionHandler!=null)
+        {
+          applyresult = _scriptExecutionHandler(_doc);
+          if(applyresult==false)
+          {
+            foreach(string s in _doc.Errors)
+              _view.AddCompilerError(s);
+
+            Current.GUIFactoryService.ErrorMessageBox("There were execution errors");
+          }
+        }
+      }
+      return applyresult;
     }
 
     #endregion

@@ -43,6 +43,10 @@ namespace Altaxo.Data
     }
   }
 
+  public class ScriptText
+{
+}
+
   /// <summary>
   /// Interface to a script, e.g. a table or column script
   /// </summary>
@@ -54,6 +58,12 @@ namespace Altaxo.Data
     {
       get;
     }
+ 
+    object ScriptObject
+    {
+      get;
+    }
+
 
 
     /// <summary>
@@ -132,13 +142,31 @@ namespace Altaxo.Data
       get;
     }
 
+    
+  
+    /// <summary>
+    /// Copies the content of a script to here.
+    /// </summary>
+    /// <param name="script">The script to copy from.</param>
+    /// <param name="forModification">If false, the script incl. compiled assembly is copied. If true,
+    /// the compiled assembly is not copied, so that the script text can be modified.</param>
+    void CopyFrom(IScriptText script, bool forModification);
+
 
     /// <summary>
     /// This clones the script so that the text can be modified.
     /// </summary>
     /// <returns></returns>
     IScriptText CloneForModification();
-    
+   
+    /// <summary>
+    /// Returns true when the script text can not be modified. Use <see>CloneForModification</see> to
+    /// obtain a writable copy.
+    /// </summary>
+    bool IsReadOnly
+    {
+      get;
+    }
   }
 
   #endregion
@@ -235,7 +263,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     public AbstractScript(AbstractScript b)
-    : this(b,true)
+      : this(b,false)
     {
     }
 
@@ -244,20 +272,34 @@ namespace Altaxo.Data
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public AbstractScript(AbstractScript b, bool doCopyCompileResult)
+    /// <param name="forModification">If false, the script incl. compiled assembly is copied. If true,
+    /// the compiled assembly is not copied, so that the script text can be modified.</param>
+    public AbstractScript(AbstractScript b, bool forModification)
+    {
+     CopyFrom(b, forModification);
+    }
+    
+
+    /// <summary>
+    /// Copies the content of a script to here.
+    /// </summary>
+    /// <param name="script">The script to copy from.</param>
+    /// <param name="forModification">If false, the script incl. compiled assembly is copied. If true,
+    /// the compiled assembly is not copied, so that the script text can be modified.</param>
+    public void CopyFrom(AbstractScript b, bool forModification)
     {
       this.m_ScriptText  = b.m_ScriptText;
       this.m_ScriptObject   = b.m_ScriptObject;
       this.m_IsDirty = b.m_IsDirty;
       this.m_Errors   = null==b.m_Errors ? null: (string[])b.m_Errors.Clone();
       
-      if(doCopyCompileResult)
-        this._compilerResult = b._compilerResult; // (not cloning is intented here)
-      else
-        this._compilerResult = null;
+        this._compilerResult = forModification ? null :  b._compilerResult; // (not cloning is intented here)
     }
-    
 
+    void IScriptText.CopyFrom(IScriptText from, bool forModification)
+    {
+      CopyFrom((AbstractScript)from,forModification);
+    }
 
     /// <summary>
     /// Returns the compiler errors as array of strings.
@@ -267,7 +309,21 @@ namespace Altaxo.Data
       get { return m_Errors; }
     }
 
+    public Assembly ScriptAssembly
+    {
+      get
+      {
+        return _compilerResult==null ? null : _compilerResult.ScriptAssembly;
+      }
+    }
 
+    public object ScriptObject
+    {
+      get
+      {
+        return this.m_ScriptObject;
+      }
+    }
     /// <summary>
     /// True if the column script is dirty, i.e. the text changed since the last reset of IsDirty.
     /// </summary>
@@ -293,6 +349,14 @@ namespace Altaxo.Data
       }
     }
 
+    public bool IsReadOnly
+    {
+      get
+      {
+        return _compilerResult!=null;
+      }
+    }
+
     /// <summary>
     /// Get / sets the script text
     /// </summary>
@@ -312,7 +376,7 @@ namespace Altaxo.Data
       }
       set
       {
-        if(null!=_compilerResult)
+        if(IsReadOnly)
           throw new ArgumentException("After successfull compilation, the script text can not be changed any more");
         else
         {
@@ -381,8 +445,15 @@ namespace Altaxo.Data
     }
 
     public abstract object Clone();
-    public abstract IScriptText CloneForModification();
-
+    public virtual IScriptText CloneForModification()
+    {
+      AbstractScript result = (AbstractScript)Clone();
+      result._compilerResult = null;
+      result.m_ScriptObject = null;
+      return result;
+    }
+    
+  
     /// <summary>
     /// Does the compilation of the script into an assembly.
     /// If it was not compiled before or is dirty, it is compiled first.

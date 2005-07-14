@@ -720,7 +720,7 @@ namespace Altaxo.Data
       {
         DataColumn srccol = (DataColumn)d.Key; // the original column this script belongs to
         DataColumn destcol = this[srccol.Name]; // the new (cloned) column the script now belongs to
-        ColumnScript destscript = (ColumnScript)((ColumnScript)d.Value).Clone(); // the cloned script
+        object destscript = ((ICloneable)d.Value).Clone(); // the cloned script
 
         // add the cloned script to the own collection
         this.ColumnScripts.Add(destcol,destscript);

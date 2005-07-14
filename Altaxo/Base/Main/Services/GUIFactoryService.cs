@@ -31,11 +31,24 @@ namespace Altaxo.Main.Services
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
     public IMVCController GetControllerAndControl(object[] args, System.Type expectedControllerType)
     {
+      return GetControllerAndControl(args,null,expectedControllerType);
+    }
+
+
+    /// <summary>
+    /// Gets an <see>IMVCController for a given document type, and finding the right GUI user control for it.</see>
+    /// </summary>
+    /// <param name="args">The argument list. The first element args[0] is the document for which the controller is searched. The following elements are
+    /// optional, and are usually the parents of this document.</param>
+    /// <param name="expectedControllerType">Type of controller that you expect to return.</param>
+    /// <returns>The controller for that document when found. The controller is already initialized with the document. If no controller is found for the document, or if no GUI control is found for the controller, the return value is null.</returns>
+    public IMVCController GetControllerAndControl(object[] args, System.Type overrideArg0Type, System.Type expectedControllerType)
+    {
 
       if(!ReflectionService.IsSubClassOfOrImplements(expectedControllerType,typeof(IMVCController)))
         throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
 
-      IMVCController controller = (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute),expectedControllerType,args);
+      IMVCController controller = (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute),expectedControllerType,args,overrideArg0Type);
       if(controller==null)
         return null;
 
@@ -50,6 +63,7 @@ namespace Altaxo.Main.Services
 
       return controller;
     }
+
 
 
     /// <summary>

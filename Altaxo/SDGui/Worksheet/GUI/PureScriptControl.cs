@@ -7,13 +7,14 @@ using System.Windows.Forms;
 
 using Altaxo.Main.GUI;
 
+
 namespace Altaxo.Worksheet.GUI
 {
 	/// <summary>
 	/// Summary description for PureScriptControl.
 	/// </summary>
 	[UserControlForController(typeof(IPureScriptViewEventSink))]
-	public class PureScriptControl : System.Windows.Forms.UserControl, IPureScriptView
+	public class SDPureScriptControl : System.Windows.Forms.UserControl, IPureScriptView
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -23,9 +24,10 @@ namespace Altaxo.Worksheet.GUI
 
     private ICSharpCode.TextEditor.TextEditorControl edFormula;
     private ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBindingWrapper edFormulaWrapper;
+    ICSharpCode.SharpDevelop.Services.DefaultParserService _parserService = (ICSharpCode.SharpDevelop.Services.DefaultParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.DefaultParserService));
 
 
-		public PureScriptControl()
+		public SDPureScriptControl()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
@@ -41,7 +43,7 @@ namespace Altaxo.Worksheet.GUI
       this.edFormulaWrapper = new ICSharpCode.SharpDevelop.DefaultEditor.Gui.Editor.TextEditorDisplayBindingWrapper();
       this.edFormula = edFormulaWrapper.TextEditorControl;
 
-       
+      this.edFormula.VisibleChanged += new EventHandler(edFormula_VisibleChanged);
       this.edFormula.Location = new System.Drawing.Point(0, 0);
       this.edFormula.Dock = DockStyle.Fill;
       //this.edFormula.Multiline = true;
@@ -61,32 +63,26 @@ namespace Altaxo.Worksheet.GUI
     }
 
     bool _registered;
-    protected override void OnEnter(EventArgs e)
+    void Register()
     {
-      if(false==_registered)
+      if(_parserService!=null)
       {
-        if(_controller!=null)
+        if(!_registered)
         {
-          _registered=true;
-          _controller.EhView_RegisterEditableContent(this.EditableContent);
+          _registered = true;
+          _parserService.RegisterModalContent(EditableContent);
         }
       }
-      base.OnEnter (e);
     }
-
-    protected override void OnLeave(EventArgs e)
+    void Unregister()
     {
-      if(true==_registered)
+      if(_parserService!=null)
       {
-        if(_controller!=null)
-        {
-          _registered = false;
-          _controller.EhView_UnregisterEditableContent(this.EditableContent);
-        }
+        _parserService.UnregisterModalContent();
+        _registered = false;
       }
-      base.OnLeave (e);
     }
-
+  
     private object EditableContent
     {
       get
@@ -107,6 +103,15 @@ namespace Altaxo.Worksheet.GUI
 				{
 					components.Dispose();
 				}
+
+        if(_registered)
+          Unregister();
+
+        if(edFormulaWrapper!=null)
+          edFormulaWrapper.Dispose();
+        if(edFormula!=null)
+          edFormula.Dispose();
+
 			}
 			base.Dispose( disposing );
 		}
@@ -186,64 +191,29 @@ namespace Altaxo.Worksheet.GUI
 
     #endregion
 
-    class ParentFormMonitor
+  
+
+    Form _parentForm;
+    private void edFormula_VisibleChanged(object sender, EventArgs e)
     {
-      public event EventHandler ParentFormOpen;
-      public event EventHandler ParentFormClose;
-      Control _control;
-      Form _parentForm;
-      Control _parentControl;
-
-      public ParentFormMonitor(UserControl control)
+      if(edFormula.Visible)
       {
-        _control = control;
-      }
-      public void Start()
-      {
-        _parentControl = _control;
-       for(;;)
+        if(null==_parentForm)
         {
-          if(_parentControl.Parent is Form)
-          {
-            _parentForm = (Form)_parentControl.Parent;
-            break;
-          }
-          else if(_parentControl.Parent!=null)
-          {
-            _parentControl = _parentControl.Parent;
-          }
-          else
-          {
-            break;
-          }
+          _parentForm = this.FindForm();
+          _parentForm.Closing += new CancelEventHandler(_parentForm_Closing);
+
+          Register();
+          
+         
         }
-
-        if(_parentControl!=null)
-        {
-          _parentControl.ParentChanged += new EventHandler(_parentControl_ParentChanged);
-        }
-       
-        if(_parentForm!=null)
-        {
-          if(this.ParentFormOpen!=null)
-            ParentFormOpen(this,EventArgs.Empty);
-
-          _parentForm.Closed += new EventHandler(ParentForm_Closed);
-        }
-
-      }
-
-      private void ParentForm_Closed(object sender, EventArgs e)
-      {
-        if(this.ParentFormClose!=null)
-          ParentFormClose(this,EventArgs.Empty);
-
-      }
-
-      private void _parentControl_ParentChanged(object sender, EventArgs e)
-      {
       }
     }
-   
+
+    private void _parentForm_Closing(object sender, CancelEventArgs e)
+    {
+      Unregister();
+     
+    }
   }
 }

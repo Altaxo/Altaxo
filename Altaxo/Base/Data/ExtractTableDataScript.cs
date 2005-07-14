@@ -87,7 +87,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     public ExtractTableDataScript(ExtractTableDataScript b)
-      : this(b,true)
+      : this(b,false)
     {
     }
 
@@ -95,8 +95,8 @@ namespace Altaxo.Data
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public ExtractTableDataScript(ExtractTableDataScript b, bool doCopyCompileResult)
-      : base(b, doCopyCompileResult)
+    public ExtractTableDataScript(ExtractTableDataScript b, bool forModification)
+      : base(b, forModification)
     {
     }
     /// <summary>
@@ -186,14 +186,7 @@ namespace Altaxo.Data
     {
       return new ExtractTableDataScript(this,true);
     }
-    /// <summary>
-    /// Clones the script.
-    /// </summary>
-    /// <returns>The cloned object.</returns>
-    public override IScriptText CloneForModification()
-    {
-      return new ExtractTableDataScript(this,false);
-    }
+    
 
     /// <summary>
     /// Executes the script. If no instance of the script object exists, a error message will be stored and the return value is false.

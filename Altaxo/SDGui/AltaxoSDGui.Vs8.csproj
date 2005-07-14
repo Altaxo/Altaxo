@@ -149,7 +149,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Main\GUI\ProjectScout.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Main\GUI\WindowsMdiWorkbenchLayout.cs">
       <SubType>Code</SubType>
@@ -202,6 +202,18 @@
     <Compile Include="Root\MainController.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Worksheet\GUI\ParametrizedFunctionScriptControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\ParametrizedFunctionScriptController.cs" />
+    <Compile Include="Worksheet\GUI\PureScriptControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\PureScriptController.cs" />
+    <Compile Include="Worksheet\GUI\ScriptControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Worksheet\GUI\ScriptController.cs" />
     <Compile Include="Worksheet\GUI\SDWorksheetController.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -216,6 +228,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Main\GUI\WorkbenchForm.resx">
       <DependentUpon>WorkbenchForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Worksheet\GUI\ParametrizedFunctionScriptControl.resx">
+      <DependentUpon>ParametrizedFunctionScriptControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Worksheet\GUI\PureScriptControl.resx">
+      <DependentUpon>PureScriptControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Worksheet\GUI\ScriptControl.resx">
+      <DependentUpon>ScriptControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Worksheet\GUI\TableScriptControl.resx">
       <DependentUpon>TableScriptControl.cs</DependentUpon>

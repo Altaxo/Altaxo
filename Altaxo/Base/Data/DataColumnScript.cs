@@ -127,8 +127,8 @@ namespace Altaxo.Data
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public DataColumnScript(DataColumnScript b, bool doCopyCompileResult)
-      : base(b,doCopyCompileResult)
+    public DataColumnScript(DataColumnScript b, bool forModification)
+      : base(b, forModification)
     {
     }
 
@@ -223,10 +223,7 @@ namespace Altaxo.Data
     {
       return new DataColumnScript(this,true);
     }
-    public override IScriptText CloneForModification()
-    {
-      return new DataColumnScript(this,false);
-    }
+   
 
 
     /// <summary>

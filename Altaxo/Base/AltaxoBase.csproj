@@ -1101,6 +1101,51 @@
                 />
                 <Folder RelPath = "Gui\Analysis\NonLinearFitting\" />
                 <File
+                    RelPath = "Gui\Scripting\ParametrizedFunctionScriptControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Scripting\ParametrizedFunctionScriptControl.resx"
+                    DependentUpon = "ParametrizedFunctionScriptControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\Scripting\ParametrizedFunctionScriptController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Scripting\PureScriptController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Scripting\ScriptControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Scripting\ScriptControl.resx"
+                    DependentUpon = "ScriptControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\Scripting\ScriptController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Scripting\ScriptExecutionDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Scripting\ScriptExecutionDialog.resx"
+                    DependentUpon = "ScriptExecutionDialog.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Main\AboutDialog.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -1781,7 +1826,7 @@
                 />
                 <File
                     RelPath = "Worksheet\GUI\SetColumnValuesDialog.cs"
-                    SubType = "Form"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

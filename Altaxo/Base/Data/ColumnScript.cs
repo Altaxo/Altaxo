@@ -222,14 +222,19 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="b">The script to copy from.</param>
     public ColumnScript(ColumnScript b)
-    : this(b,true)
+    : this(b, false)
     {
     }
     /// <summary>
     /// Creates a column script as a copy from another script.
     /// </summary>
     /// <param name="b">The script to copy from.</param>
-    public ColumnScript(ColumnScript b, bool doCopyCompileResult)
+    public ColumnScript(ColumnScript b, bool forModification)
+    {
+      CopyFrom(b, forModification);
+    }
+
+    void CopyFrom(ColumnScript b, bool forModification)
     {
       this.m_ScriptStyle = b.m_ScriptStyle;
       this.m_ScriptText  = b.m_ScriptText;
@@ -244,7 +249,10 @@ namespace Altaxo.Data
       this.m_Errors   = null==b.m_Errors ? null: (string[])b.m_Errors.Clone();
     }
 
-
+    void IScriptText.CopyFrom(IScriptText from, bool forModification)
+    {
+      CopyFrom((ColumnScript)from, forModification);
+    }
     /// <summary>
     /// Returns the compiler errors as array of strings.
     /// </summary>
@@ -316,6 +324,14 @@ namespace Altaxo.Data
     {
       get { return m_ScriptText; }
       set { m_ScriptText = value; m_IsDirty=true; m_Compiled=false; }
+    }
+
+    public object ScriptObject
+    {
+      get
+      {
+        return this.m_ScriptObject;
+      }
     }
 
     /// <summary>
@@ -467,9 +483,17 @@ namespace Altaxo.Data
     /// <returns>The cloned object.</returns>
     public IScriptText CloneForModification()
     {
-      return new ColumnScript(this,false);
+      return new ColumnScript(this,true);
     }
 
+  
+    public bool IsReadOnly
+    {
+      get
+      {
+        return false;
+      }
+    }
     /// <summary>
     /// Does the compilation of the script into an assembly.
     /// If it was not compiled before or is dirty, it is compiled first.

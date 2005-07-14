@@ -18,14 +18,27 @@ namespace Altaxo.Worksheet.GUI
 
   public interface IPureScriptViewEventSink
   {
-   void EhView_RegisterEditableContent(object editableContent);
-   void EhView_UnregisterEditableContent(object editableContent);
   }
 
 
   public interface IPureScriptController : Main.GUI.IMVCAController
   {
+
+    // Initializes or reinitializes the script controller.
+    void SetText(string text);
+
     void SetScriptCursorLocation(int line, int column);
+
+    void SetScriptCursorLocation(int offset);
+    
+    /// <summary>
+    /// Gets the most current script text (if a view is present, it returns the script text of the view).
+    /// </summary>
+    /// <returns></returns>
+    string GetCurrentScriptText();
+
+    IPureScriptText Model { get; }
+
   }
 
   #endregion
@@ -38,17 +51,22 @@ namespace Altaxo.Worksheet.GUI
 	{
     IPureScriptView _view;
     IPureScriptText _doc;
-
-    ICSharpCode.SharpDevelop.Services.DefaultParserService _parserService = (ICSharpCode.SharpDevelop.Services.DefaultParserService)ICSharpCode.Core.Services.ServiceManager.Services.GetService(typeof(ICSharpCode.SharpDevelop.Services.DefaultParserService));
-
+ 
     public PureScriptController(IPureScriptText doc)
 		{
 			_doc = doc;
     }
 
+    public void SetText(string text)
+    {
+      if(_view!=null)
+        _view.ScriptText = text;
+    }
 
     public void Initialize()
     {
+      if (_view != null)
+        _view.ScriptText = _doc.ScriptText;
     }
 
     #region IMVCController Members
@@ -102,22 +120,7 @@ namespace Altaxo.Worksheet.GUI
 
     #region IPureScriptViewEventSink Members
 
-    public void EhView_RegisterEditableContent(object editableContent)
-    {
-      if(_parserService!=null)
-      {
-        _parserService.RegisterModalContent(editableContent);
-      }
-
-    }
-
-    public void EhView_UnregisterEditableContent(object editableContent)
-    {
-      if(_parserService!=null)
-      {
-        _parserService.UnregisterModalContent();
-      }
-    }
+   
 
     #endregion
 
@@ -126,6 +129,32 @@ namespace Altaxo.Worksheet.GUI
     {
       if(_view!=null)
         _view.SetScriptCursorLocation(line,column);
+    }
+
+    public void SetScriptCursorLocation(int offset)
+    {
+      if(_view!=null)
+        _view.ScriptCursorLocation = offset;
+    }
+
+    /// <summary>
+    /// Gets the most current script text (if a view is present, it returns the script text of the view).
+    /// </summary>
+    /// <returns></returns>
+    public string GetCurrentScriptText()
+    {
+      if (_view != null)
+        return _view.ScriptText;
+      else
+        return _doc.ScriptText;
+    }
+
+    public IPureScriptText Model
+    {
+      get
+      {
+        return _doc;
+      }
     }
     #endregion
   }
