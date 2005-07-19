@@ -335,11 +335,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Data\AbstractScript.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Data\CollectionBase.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -365,11 +360,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Data\DataColumnScript.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Data\DataTable.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -391,11 +381,6 @@
                 />
                 <File
                     RelPath = "Data\EquallySpacedColumn.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Data\ExtractTableDataScript.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -430,17 +415,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Data\PropertyColumnScript.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Data\TableCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Data\TableScript.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -486,11 +461,6 @@
                 />
                 <File
                     RelPath = "Graph\Edge.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\FunctionEvaluationScript.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -541,11 +511,6 @@
                 />
                 <File
                     RelPath = "Graph\IPlotArea.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Graph\ParametrizedFunctionDDScript.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1101,17 +1066,22 @@
                 />
                 <Folder RelPath = "Gui\Analysis\NonLinearFitting\" />
                 <File
-                    RelPath = "Gui\Scripting\ParametrizedFunctionScriptControl.cs"
+                    RelPath = "Gui\Scripting\FitFunctionNameAndCategoryController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Scripting\FitFunctionScriptControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Gui\Scripting\ParametrizedFunctionScriptControl.resx"
-                    DependentUpon = "ParametrizedFunctionScriptControl.cs"
+                    RelPath = "Gui\Scripting\FitFunctionScriptControl.resx"
+                    DependentUpon = "FitFunctionScriptControl.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Gui\Scripting\ParametrizedFunctionScriptController.cs"
+                    RelPath = "Gui\Scripting\FitFunctionScriptController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1490,6 +1460,101 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Scripting\AbstractScript.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Scripting\DataColumnScript.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Scripting\ExtractTableDataScript.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Scripting\FitFunctionScript.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Scripting\FitFunctionScriptCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Scripting\FunctionEvaluationScript.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Scripting\PropertyColumnScript.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Scripting\TableScript.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Scripting\.svn\empty-file"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Scripting\.svn\entries"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Scripting\.svn\format"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Scripting\.svn\README.txt"
+                    BuildAction = "Content"
+                />
+                <Folder RelPath = "Scripting\.svn\prop-base\" />
+                <Folder RelPath = "Scripting\.svn\props\" />
+                <File
+                    RelPath = "Scripting\.svn\text-base\AbstractScript.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Scripting\.svn\text-base\DataColumnScript.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Scripting\.svn\text-base\ExtractTableDataScript.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Scripting\.svn\text-base\FitFunctionScript.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Scripting\.svn\text-base\FitFunctionScriptCollection.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Scripting\.svn\text-base\FunctionEvaluationScript.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Scripting\.svn\text-base\PropertyColumnScript.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <File
+                    RelPath = "Scripting\.svn\text-base\TableScript.cs.svn-base"
+                    BuildAction = "None"
+                />
+                <Folder RelPath = "Scripting\.svn\tmp\prop-base\" />
+                <Folder RelPath = "Scripting\.svn\tmp\props\" />
+                <Folder RelPath = "Scripting\.svn\tmp\text-base\" />
+                <Folder RelPath = "Scripting\.svn\tmp\wcprops\" />
+                <Folder RelPath = "Scripting\.svn\wcprops\" />
+                <File
                     RelPath = "Serialization\DateTimeParsing.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1556,6 +1621,11 @@
                 />
                 <File
                     RelPath = "Serialization\Galactic\ImportGalacticSpcFiles.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Serialization\Xml\AssemblyAndTypeSurrogate.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1731,7 +1801,7 @@
                 />
                 <File
                     RelPath = "Worksheet\GUI\ColumnScriptControl.cs"
-                    SubType = "UserControl"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

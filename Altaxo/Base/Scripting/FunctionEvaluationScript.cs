@@ -191,6 +191,9 @@ namespace Altaxo.Scripting
     /// <returns></returns>
     public double Evaluate(double x)
     {
+      if(null==m_ScriptObject && !m_WasTriedToCompile)
+        Compile();
+
       if(null==m_ScriptObject)
       {
         m_Errors = new string[1]{"Script Object is null"};

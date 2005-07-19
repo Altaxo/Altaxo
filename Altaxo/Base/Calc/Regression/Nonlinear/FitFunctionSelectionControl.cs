@@ -110,6 +110,60 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return null;
     }
 
+
+    #region Node classes
+
+    enum RootNodeType { Builtin, Document, User };
+
+    class RootNode : TreeNode
+    {
+      public RootNodeType RootNodeType;
+
+      public RootNode(string text, RootNodeType type)
+      :
+      base(text)
+      {
+        RootNodeType = type;
+        this.Tag = type;
+      }
+    }
+
+    class CategoryNode : TreeNode
+    {
+      public CategoryNode(string text) : base(text) { }
+    }
+
+    class LeafNode : TreeNode
+    {
+      public LeafNode(string text) : base(text) { }  
+    }
+
+    class BuiltinLeafNode : LeafNode
+    {
+      public System.Type FunctionType;
+
+      public BuiltinLeafNode(string text, System.Type functionType)
+        : base(text)
+      {
+        FunctionType = functionType;
+        this.Tag = functionType;
+      }
+    }
+
+    class DocumentLeafNode : LeafNode
+    {
+      public IFitFunction FunctionInstance;
+      public DocumentLeafNode(string text, IFitFunction func)
+        : base(text)
+      {
+        FunctionInstance = func;
+        this.Tag = func;
+      }
+    }
+
+
+    #endregion
+
     public void InitializeFitFunctionList(DictionaryEntry[] entries, Type currentSelection)
     {
       // The key of the entries is the FitFunctionAttribute, the value is the type of the fitting function
@@ -117,7 +171,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       this._twFitFunctions.BeginUpdate();
       this._twFitFunctions.Nodes.Clear();
 
-      TreeNodeCollection root = this._twFitFunctions.Nodes; 
+      RootNode rnode = new RootNode("Builtin", RootNodeType.Builtin);
+      this._twFitFunctions.Nodes.Add(rnode);
+      TreeNodeCollection root = rnode.Nodes; 
 
 
       foreach(DictionaryEntry entry in entries)
@@ -133,19 +189,60 @@ namespace Altaxo.Calc.Regression.Nonlinear
           TreeNode node = GetPathNode(where,path[j]);
           if(node==null)
           {
-            node = new TreeNode(path[j]);
+            node = new CategoryNode(path[j]);
             where.Add(node);
           }
           where = node.Nodes;
         }
 
-        TreeNode leaf = new TreeNode(attr.Name);
-        leaf.Tag = fitfunctype;
+        BuiltinLeafNode leaf = new BuiltinLeafNode(attr.Name,fitfunctype);
         where.Add(leaf);
       }
       this._twFitFunctions.EndUpdate();
     }
 
+
+    public void InitializeDocumentFitFunctionList(DictionaryEntry[] entries, object currentSelection)
+    {
+      // The key of the entries is the name string, the value is the object
+
+      this._twFitFunctions.BeginUpdate();
+
+         RootNode rnode = new RootNode("Document", RootNodeType.Document);
+         this._twFitFunctions.Nodes.Add(rnode);
+      TreeNodeCollection root = rnode.Nodes;
+
+      foreach (DictionaryEntry entry in entries)
+      {
+        string fullname = (string)entry.Key;
+        IFitFunction fitfunc = (IFitFunction)entry.Value;
+
+#if NET_2_0 
+        string[] path = fullname.Split(new char[] { '\\', '/' },true);
+#else
+          string[] path = fullname.Split(new char[] { '\\', '/' });
+#endif
+        
+        if(path.Length==0)
+          continue;
+
+        TreeNodeCollection where = root;
+        for (int j = 0; j < path.Length-1; j++)
+        {
+          TreeNode node = GetPathNode(where, path[j]);
+          if (node == null)
+          {
+            node = new CategoryNode(path[j]);
+            where.Add(node);
+          }
+          where = node.Nodes;
+        }
+
+        TreeNode leaf = new DocumentLeafNode(path[path.Length-1],fitfunc);
+        where.Add(leaf);
+      }
+      this._twFitFunctions.EndUpdate();
+    }
     #endregion
 
     private void _twFitFunctions_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)

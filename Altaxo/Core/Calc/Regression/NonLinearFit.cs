@@ -20,6 +20,7 @@
 /////////////////////////////////////////////////////////////////////////////
 #endregion
 
+
 // The following code was translated using Matpack sources (http://www.matpack.de) (Author B.Gammel)
 
 
@@ -76,6 +77,8 @@
 // ----------
 
 using System;
+using Altaxo.Calc.LinearAlgebra;
+
 namespace Altaxo.Calc.Regression
 {
   /// <summary>
@@ -988,7 +991,7 @@ namespace Altaxo.Calc.Regression
       for (j = 0; j < n; ++j) // LELLID!! 
         wa1[j] = temp * diag[j];
 
-      qrslov(n, r, ldr, ipvt, wa1, qtb, x, sdiag ,wa2);
+      qrsolve(n, r, ldr, ipvt, wa1, qtb, x, sdiag ,wa2);
 
       for (j = 0; j < n; ++j) // LELLID!!
         wa2[j] = diag[j] * x[j];
@@ -1044,7 +1047,7 @@ namespace Altaxo.Calc.Regression
 
     //static void qrslov (int n, double *r, int ldr, int *ipvt, 
     //        double *diag, double *qtb, double *x, double *sdiag, double *wa)
-    public static void qrslov (int n, double[] r, int ldr, int[] ipvt, 
+    public static void qrsolve (int n, double[] r, int ldr, int[] ipvt, 
       double[] diag, double[] qtb, double[] x, double[] sdiag, double[] wa)
       //
       //     given an m by n matrix a, an n by n diagonal matrix d, 
@@ -1660,5 +1663,177 @@ namespace Altaxo.Calc.Regression
           fjac[i + j * fjac_dim1] = (wa[i] - fvec[i]) / h;
       }
     }
+ 
+#if false
+
+    /// <summary>
+    /// Compute the covariance matrix  cov = inv (J^T J) by QRP^T decomposition of J.
+    /// </summary>
+    /// <param name="?"></param>
+    /// <returns></returns>
+    /// <remarks>The source code of this function is originated from the
+    /// GNU scientific library V1.6. multifit/covar.c Author Brian Gough</remarks>
+    int gsl_multifit_covar (IROMatrix J, double epsrel, IMatrix covar)
+  {
+    double tolr;
+
+    size_t i, j, k;
+    size_t kmax = 0;
+
+    double[,] r;
+    double[] tau;
+    double[] norm;
+    gsl_permutation * perm;
+
+    int m = J.Columns, n = J.Rows;
+  
+    if (m < n) 
+  {
+    throw new ArgumentException("Jacobian be rectangular M x N with M >= N");
+  }
+
+  if (covar.Columns != covar.Rows || covar.Columns != n)
+{
+  throw new ArgumentException("Covariance matrix must be square and match second dimension of jacobian");
+}
+
+  r = new double[m, n];
+  tau = new double[n];
+  perm = gsl_permutation_alloc (n) ;
+  norm = new double[n] ;
+  
+{
+  int signum = 0;
+  gsl_matrix_memcpy (r, J);
+  gsl_linalg_QRPT_decomp (r, tau, perm, &signum, norm);
+}
+  
+  
+  /* Form the inverse of R in the full upper triangle of R */
+
+  tolr = epsrel * fabs(gsl_matrix_get(r, 0, 0));
+
+  for (k = 0 ; k < n ; k++)
+{
+  double rkk = gsl_matrix_get(r, k, k);
+
+  if (fabs(rkk) <= tolr)
+{
+  break;
+}
+
+  gsl_matrix_set(r, k, k, 1.0/rkk);
+
+  for (j = 0; j < k ; j++)
+{
+  double t = gsl_matrix_get(r, j, k) / rkk;
+  gsl_matrix_set (r, j, k, 0.0);
+
+  for (i = 0; i <= j; i++)
+{
+  double rik = gsl_matrix_get (r, i, k);
+  double rij = gsl_matrix_get (r, i, j);
+              
+  gsl_matrix_set (r, i, k, rik - t * rij);
+}
+}
+  kmax = k;
+}
+
+  /* Form the full upper triangle of the inverse of R^T R in the full
+     upper triangle of R */
+
+  for (k = 0; k <= kmax ; k++)
+{
+  for (j = 0; j < k; j++)
+{
+  double rjk = gsl_matrix_get (r, j, k);
+
+  for (i = 0; i <= j ; i++)
+{
+  double rij = gsl_matrix_get (r, i, j);
+  double rik = gsl_matrix_get (r, i, k);
+
+  gsl_matrix_set (r, i, j, rij + rjk * rik);
+}
+}
+      
+{
+  double t = gsl_matrix_get (r, k, k);
+
+  for (i = 0; i <= k; i++)
+{
+  double rik = gsl_matrix_get (r, i, k);
+
+  gsl_matrix_set (r, i, k, t * rik);
+};
+}
+}
+
+  /* Form the full lower triangle of the covariance matrix in the
+     strict lower triangle of R and in w */
+
+  for (j = 0 ; j < n ; j++)
+{
+  size_t pj = gsl_permutation_get (perm, j);
+      
+  for (i = 0; i <= j; i++)
+{
+  size_t pi = gsl_permutation_get (perm, i);
+
+  double rij;
+
+  if (j > kmax)
+{
+  gsl_matrix_set (r, i, j, 0.0);
+  rij = 0.0 ;
+}
+  else 
+{
+  rij = gsl_matrix_get (r, i, j);
+}
+
+  if (pi > pj)
+{
+  gsl_matrix_set (r, pi, pj, rij); 
+} 
+  else if (pi < pj)
+{
+  gsl_matrix_set (r, pj, pi, rij);
+}
+
+}
+      
+{ 
+  double rjj = gsl_matrix_get (r, j, j);
+  gsl_matrix_set (covar, pj, pj, rjj);
+}
+}
+
+     
+  /* symmetrize the covariance matrix */
+
+  for (j = 0 ; j < n ; j++)
+{
+  for (i = 0; i < j ; i++)
+{
+  double rji = gsl_matrix_get (r, j, i);
+
+  gsl_matrix_set (covar, j, i, rji);
+  gsl_matrix_set (covar, i, j, rji);
+}
+}
+
+  gsl_matrix_free (r);
+  gsl_permutation_free (perm);
+  gsl_vector_free (tau);
+  gsl_vector_free (norm);
+
+  return GSL_SUCCESS;
+} 
+
+#endif
+
+
   } // end class
 } // end namespace

@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Scripting
   /// Summary description for TableScriptController.
   /// </summary>
   [UserControllerForObject(typeof(IFitFunctionScriptText),300)]
-  public class FitFunctionScriptController : IFitFunctionScriptViewEventSink, Main.GUI.IMVCAController
+  public class FitFunctionScriptController : IFitFunctionScriptViewEventSink, IScriptController
   {
     protected ScriptExecutionHandler m_ScriptExecution;
     public IFitFunctionScriptText m_Script;
@@ -349,7 +349,6 @@ namespace Altaxo.Gui.Scripting
     {
       if(this._scriptController.Apply())
       {
-       
         m_TempScript = (IFitFunctionScriptText)_scriptController.ModelObject;
        
         m_Script = m_TempScript;
@@ -363,5 +362,28 @@ namespace Altaxo.Gui.Scripting
     }
 
     #endregion
-  }
+
+    #region IScriptController Members
+
+    public void SetText(string text)
+    {
+      this._scriptController.SetText(text);
+    }
+
+    public void Compile()
+    {
+      this._scriptController.Compile();
+    }
+
+    public void Update()
+    {
+      this._scriptController.Update();
+    }
+
+    public void Cancel()
+    {
+    }
+
+    #endregion
+}
 }

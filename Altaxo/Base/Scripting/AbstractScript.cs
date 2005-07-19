@@ -197,6 +197,14 @@ namespace Altaxo.Scripting
     [NonSerialized()]
     protected bool  m_IsDirty; // true when text changed, can be reseted
     
+
+    /// <summary>
+    /// True when the script text was already tried to compile.
+    /// </summary>
+    [NonSerialized()]
+    protected bool  m_WasTriedToCompile; 
+
+
     /// <summary>
     /// The script object. This is a instance of the newly created script class.
     /// </summary>
@@ -292,9 +300,12 @@ namespace Altaxo.Scripting
       this.m_ScriptText  = b.m_ScriptText;
       this.m_ScriptObject   = b.m_ScriptObject;
       this.m_IsDirty = b.m_IsDirty;
+      
+      this.m_WasTriedToCompile = forModification ? false : b.m_WasTriedToCompile;
+      
       this.m_Errors   = null==b.m_Errors ? null: (string[])b.m_Errors.Clone();
       
-        this._compilerResult = forModification ? null :  b._compilerResult; // (not cloning is intented here)
+      this._compilerResult = forModification ? null :  b._compilerResult; // (not cloning is intented here)
     }
 
     void IScriptText.CopyFrom(IScriptText from, bool forModification)
@@ -383,6 +394,7 @@ namespace Altaxo.Scripting
         {
           m_ScriptText = value; 
           m_IsDirty=true;
+          m_WasTriedToCompile = false;
         }
       }
     }
@@ -462,8 +474,10 @@ namespace Altaxo.Scripting
     /// and stored in m_ScriptObject.
     /// </summary>
     /// <returns>True if successfully compiles, otherwise false.</returns>
-    public bool Compile()
+    public virtual bool Compile()
     {
+      this.m_WasTriedToCompile = true;
+
       if(_compilerResult!=null)
         return true;
 

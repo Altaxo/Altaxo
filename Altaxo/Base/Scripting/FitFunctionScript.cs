@@ -105,6 +105,8 @@ namespace Altaxo.Scripting
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitFunctionScript), 0)]
       public new class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+      FitFunctionScript _deserializedObject;
+
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         AbstractScript s = (AbstractScript)obj;
@@ -118,7 +120,24 @@ namespace Altaxo.Scripting
         // deserialize the base class
         info.GetBaseValueEmbedded(s, typeof(AbstractScript), parent);
 
+        XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
+        surr._deserializedObject = s;
+        info.DeserializationFinished +=new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
+
         return s;
+      }
+
+      private void info_DeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+      {
+        info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(info_DeserializationFinished);
+
+        if(documentRoot is AltaxoDocument)
+        {
+          AltaxoDocument doc = documentRoot as AltaxoDocument;
+
+          // add this script to the collection of scripts
+          doc.FitFunctionScripts.Add(_deserializedObject);
+        }
       }
     }
 
@@ -743,6 +762,10 @@ namespace Altaxo.Scripting
     /// <returns></returns>
     public double Evaluate(double x, double[] parameters)
     {
+
+      if(null == m_ScriptObject && !m_WasTriedToCompile)
+        Compile();
+
       if (null == m_ScriptObject)
       {
         m_Errors = new string[1] { "Script Object is null" };
@@ -836,6 +859,12 @@ namespace Altaxo.Scripting
 
     void Altaxo.Calc.Regression.Nonlinear.IFitFunction.Evaluate(double[] independent, double[] parameters, double[] result)
     {
+      if (null == m_ScriptObject)
+      {
+        if(!this.m_WasTriedToCompile)
+          Compile();
+      }
+
       if (null == m_ScriptObject)
       {
         m_Errors = new string[1] { "Script Object is null" };

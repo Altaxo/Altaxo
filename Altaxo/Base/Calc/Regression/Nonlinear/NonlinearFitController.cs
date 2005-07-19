@@ -155,6 +155,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
         Current.Project.FitFunctionScripts.Add(script);
 
         Select(script);
+
+        _funcselController.Refresh();
         
       }
     }
@@ -183,7 +185,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
             {
               Altaxo.Graph.XYFunctionPlotItem plotItem = (Altaxo.Graph.XYFunctionPlotItem)_functionPlotItems[funcNumber];
               FitFunctionToScalarFunctionDDWrapper wrapper = (FitFunctionToScalarFunctionDDWrapper)plotItem.Data.Function;
-              wrapper.Initialize(fitEle.FitFunction,k,fitEle.ParameterValues);
+              wrapper.Initialize(fitEle.FitFunction,k,0,fitEle.ParameterValues);
             }
             else
             {

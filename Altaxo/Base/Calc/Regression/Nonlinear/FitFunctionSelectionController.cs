@@ -1,13 +1,18 @@
 using System;
 using System.Text;
 using System.Collections;
+using Altaxo.Scripting;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
+
   public interface IFitFunctionSelectionView
   {
+   
+
     IFitFunctionSelectionViewEventSink Controller { get; set; }
     void InitializeFitFunctionList(DictionaryEntry[] entries, System.Type currentSelection);
+    void InitializeDocumentFitFunctionList(DictionaryEntry[] entries, object currentSelection);
   }
 
   public interface IFitFunctionSelectionViewEventSink
@@ -15,6 +20,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
     void EhView_SelectionChanged(object selectedtag);
   }
 
+  public interface IFitFunctionSelectionController : Main.GUI.IMVCAController
+  {
+    void Refresh();
+  }
 
   public class FitFunctionSelectionController : IFitFunctionSelectionViewEventSink, Main.GUI.IMVCAController
   {
@@ -29,13 +38,32 @@ namespace Altaxo.Calc.Regression.Nonlinear
       Initialize();
     }
 
+
+    public void Refresh()
+    {
+      Initialize();
+    }
+
     public void Initialize()
     {
       if(_view!=null)
       {
         DictionaryEntry[] entries = Altaxo.Main.Services.ReflectionService.GetAttributeInstancesAndClassTypes(typeof(FitFunctionAttribute));
         _view.InitializeFitFunctionList(entries,_tempdoc==null ? null : _tempdoc.GetType());
+        _view.InitializeDocumentFitFunctionList(GetDocumentEntries(), null);
       }
+    }
+
+
+    DictionaryEntry[] GetDocumentEntries()
+    {
+      ArrayList arr = new ArrayList();
+      foreach(FitFunctionScript func in Current.Project.FitFunctionScripts)
+      {
+        arr.Add(new DictionaryEntry(func.FitFunctionCategory+"\\"+func.FitFunctionName,func));
+      }
+
+      return (DictionaryEntry[])arr.ToArray(typeof(DictionaryEntry));
     }
 
     public void EhView_SelectionChanged(object selectedtag)
@@ -43,6 +71,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
       if(selectedtag is System.Type)
       {
         _tempdoc = System.Activator.CreateInstance((System.Type)selectedtag) as IFitFunction;
+      }
+      else if (selectedtag is IFitFunction)
+      {
+        _tempdoc = (IFitFunction)selectedtag;
       }
 
     }
