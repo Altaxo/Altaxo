@@ -794,7 +794,7 @@ namespace Altaxo.Graph
         return;
       // Create a default label style if it is missing
       if(m_LabelStyle==null)
-        XYPlotLabelStyle = new XYPlotLabelStyle();
+        XYPlotLabelStyle = new XYPlotLabelStyle(labelColumn);
 
       m_LabelStyle.Paint(g,layer,this,rangeList,ptArray,labelColumn);
     }

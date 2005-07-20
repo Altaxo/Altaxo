@@ -456,7 +456,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Dialogs\TipOfTheDay.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Gui\Dialogs\TreeViewOptions.cs">
       <SubType>Form</SubType>

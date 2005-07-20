@@ -194,9 +194,9 @@ namespace Altaxo.Graph.GUI
         {
           Data.DataColumn xcol = tab.DataColumns.FindXColumnOf(ycol);
           if(null==xcol)
-            return  new Graph.XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(),ycol),new XYLineScatterPlotStyle());
+            return  new Graph.XYColumnPlotItem(new XYColumnPlotData(new Altaxo.Data.IndexerColumn(),ycol),new XYPlotStyleCollection(LineScatterPlotStyleKind.Scatter));
           else
-            return  new Graph.XYColumnPlotItem(new XYColumnPlotData(xcol,ycol),new XYLineScatterPlotStyle());
+            return  new Graph.XYColumnPlotItem(new XYColumnPlotData(xcol,ycol),new XYPlotStyleCollection(LineScatterPlotStyleKind.LineAndScatter));
           // now enter the plotassociation back into the layer's plot association list
         }
       }

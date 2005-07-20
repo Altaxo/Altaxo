@@ -570,12 +570,18 @@ namespace Altaxo.Graph
 
     public bool IsSymbolSizeProvider
     {
-      get { return true; }
+      get 
+      {
+        return this.m_Shape != Shape.NoSymbol; 
+      }
     }
 
     public bool IsSymbolSizeReceiver
     {
-      get { return true; }
+      get
+      {
+        return this.m_Shape != Shape.NoSymbol; ; 
+      }
     }
 
    

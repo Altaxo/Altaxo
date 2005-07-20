@@ -29,7 +29,7 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph
 {
-  public interface I2DPlotStyle
+  public interface I2DPlotStyle : Main.IChangedEventSource
   {
     /// <summary>
     /// Returns true if the color property get is supported, i.e. the style provides a color.

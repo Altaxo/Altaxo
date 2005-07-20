@@ -28,11 +28,58 @@ namespace Altaxo.Graph
     /// </summary>
     ArrayList _innerList;
 
+    int _eventSuspendCount;
+    bool _changeEventPending;
+
+
+    #region Serialization
+  
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotStyleCollection), 0)]
+    public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYPlotStyleCollection s = (XYPlotStyleCollection)obj;
+
+        info.CreateArray("Styles",s._innerList.Count);
+        for (int i = 0; i < s._innerList.Count; i++)
+          info.AddValue("e", s._innerList[i]);
+        info.CommitArray();
+
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        int count = info.OpenArray();
+        I2DPlotStyle[] array = new I2DPlotStyle[count];
+        for (int i = 0; i < count; i++)
+          array[i] = (I2DPlotStyle)info.GetValue("e",this);
+        info.CloseArray(count);
+
+        if (o == null)
+        {
+          return new XYPlotStyleCollection(array);
+        }
+        else
+        {
+          XYPlotStyleCollection s = (XYPlotStyleCollection)o;
+          for (int i = 0; i < count; i++)
+            s.Add(array[i]);
+          return s;
+        }
+      }
+    }
+
+    #endregion
+
+
     public XYPlotStyleCollection(I2DPlotStyle[] styles)
     {
       _innerList = new ArrayList();
       for(int i=0;i<styles.Length;++i)
-        _innerList.Add(styles[i]);
+        if(styles[i]!=null)
+          this.Add(styles[i],false);
 
       this.InternalGetProviders();
     }
@@ -63,6 +110,21 @@ namespace Altaxo.Graph
       }
     }
 
+    public XYPlotStyleCollection()
+    : this(LineScatterPlotStyleKind.Line)
+    {
+    }
+
+    public XYPlotStyleCollection(XYPlotStyleCollection from)
+    {
+      this._changeEventPending = false;
+      this._eventSuspendCount = 0;
+      this._colorProvider = from._colorProvider;
+      this._symbolSizeProvider = from._symbolSizeProvider;
+      this._innerList = new ArrayList();
+      for (int i = 0; i < from._innerList.Count; ++i)
+        Add(from[i]);
+    }
 
     public I2DPlotStyle this[int i]
     {
@@ -74,8 +136,22 @@ namespace Altaxo.Graph
 
     public void Add(I2DPlotStyle toadd)
     {
-      this._innerList.Add(toadd);
-      InternalGetProviders();
+      Add(toadd,true);
+    }
+    protected void Add(I2DPlotStyle toadd, bool withReorganizationAndEvents)
+    {
+      if (toadd != null)
+      {
+        this._innerList.Add(toadd);
+        toadd.Changed += new EventHandler(this.OnChildChanged);
+
+        if (withReorganizationAndEvents)
+        {
+          InternalGetProviders();
+
+          OnChanged();
+        }
+      }
     }
 
     void InternalGetProviders()
@@ -100,12 +176,37 @@ namespace Altaxo.Graph
         }
       }
 
+      Suspend();
+      Color color = _colorProvider >= 0 ? this[_colorProvider].Color : Color.Black;
+      float symbolSize = _symbolSizeProvider >= 0 ? this[_symbolSizeProvider].SymbolSize : 0;
+      for (int i = 0; i < _innerList.Count; i++)
+      {
+        if (this[i].IsColorReceiver)
+          this[i].Color = color;
 
+        if (this[i].IsSymbolSizeReceiver)
+          this[i].SymbolSize = symbolSize;
+      }
+      Resume();
+    }
+
+    void Suspend()
+    {
+      ++_eventSuspendCount;
+    }
+    void Resume()
+    {
+      --_eventSuspendCount;
+      if (0 == _eventSuspendCount)
+      {
+        if (_changeEventPending)
+          OnChanged();
+      }
     }
 
     public override object Clone()
     {
-      throw new Exception("The method or operation is not implemented.");
+      return new XYPlotStyleCollection(this);
     }
 
 
@@ -155,7 +256,7 @@ namespace Altaxo.Graph
       // now Paint the symbols
       for (int i = 0; i < _innerList.Count; ++i)
       {
-        if (this[i] is XYPlotLineStyle)
+        if (this[i] is XYPlotScatterStyle)
         {
           XYPlotScatterStyle scatterStyle = this[i] as XYPlotScatterStyle;
           if (scatterStyle.Shape != XYPlotScatterStyles.Shape.NoSymbol)
@@ -260,13 +361,22 @@ namespace Altaxo.Graph
 
     public event EventHandler Changed;
 
+    protected virtual void OnChanged()
+    {
+      if (_eventSuspendCount == 0 && null != Changed)
+        Changed(this, new EventArgs());
+      else
+        _changeEventPending = true;
+    }
+
     #endregion
 
     #region IChildChangedEventSink Members
 
     public void OnChildChanged(object child, EventArgs e)
     {
-      throw new Exception("The method or operation is not implemented.");
+      if (null != Changed)
+        Changed(this, e);
     }
 
     #endregion
@@ -280,22 +390,22 @@ namespace Altaxo.Graph
 
     public bool IsXYLineStyleSupported
     {
-      get { return this.XYLineStyle != null; }
+      get { return this.XYPlotLineStyle != null; }
     }
 
     public XYPlotLineStyle XYLineStyle
     {
-      get { return this.XYLineStyle; }
+      get { return this.XYPlotLineStyle; }
     }
 
     public bool IsXYScatterStyleSupported
     {
-      get { return this.XYScatterStyle != null; }
+      get { return this.XYPlotScatterStyle != null; }
     }
 
     public XYPlotScatterStyle XYScatterStyle
     {
-      get { return this.XYScatterStyle; }
+      get { return this.XYPlotScatterStyle; }
     }
 
     #endregion

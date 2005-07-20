@@ -1465,7 +1465,6 @@ namespace Altaxo.Graph
       }
       set
       {
-        this._useLineSymbolGap = value!=0;
         this._symbolGap = value;
       }
     }

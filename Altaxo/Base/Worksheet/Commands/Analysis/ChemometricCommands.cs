@@ -626,13 +626,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Graph.XYColumnPlotData pa = new Altaxo.Graph.XYColumnPlotData(xcol,ycol);
       pa.LabelColumn = labelcol;
 
-      Altaxo.Graph.XYLineScatterPlotStyle ps = new Altaxo.Graph.XYLineScatterPlotStyle(Altaxo.Graph.LineScatterPlotStyleKind.LineAndScatter);
-      ps.XYPlotScatterStyle.Shape = Altaxo.Graph.XYPlotScatterStyles.Shape.NoSymbol;
+      Altaxo.Graph.XYPlotStyleCollection ps = new Altaxo.Graph.XYPlotStyleCollection(Altaxo.Graph.LineScatterPlotStyleKind.Line);
       ps.XYPlotLineStyle.Connection = Altaxo.Graph.XYPlotLineStyles.ConnectionStyle.NoLine;
-      ps.XYPlotLabelStyle = new Altaxo.Graph.XYPlotLabelStyle();
-      ps.XYPlotLabelStyle.FontSize = 10;
-      ps.XYPlotLabelStyle.BackgroundColor = System.Drawing.Color.LightCyan;
-      ps.XYPlotLabelStyle.WhiteOut=true;
+      Altaxo.Graph.XYPlotLabelStyle labelStyle = new Altaxo.Graph.XYPlotLabelStyle(labelcol);
+      labelStyle.FontSize = 10;
+      labelStyle.BackgroundColor = System.Drawing.Color.LightCyan;
+      labelStyle.WhiteOut = true;
+      ps.Add(labelStyle);
       
       layer.PlotItems.Add(new Altaxo.Graph.XYColumnPlotItem(pa,ps));
     }
@@ -971,7 +971,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Data.DataColumn xcol = table[WorksheetAnalysis.GetNumberOfFactors_ColumnName()];
 
       Altaxo.Graph.XYColumnPlotData pa = new Altaxo.Graph.XYColumnPlotData(xcol,ycol);
-      Altaxo.Graph.XYLineScatterPlotStyle ps = new Altaxo.Graph.XYLineScatterPlotStyle(Altaxo.Graph.LineScatterPlotStyleKind.LineAndScatter);
+      Altaxo.Graph.XYPlotStyleCollection ps = new Altaxo.Graph.XYPlotStyleCollection(Altaxo.Graph.LineScatterPlotStyleKind.LineAndScatter);
       layer.PlotItems.Add(new Altaxo.Graph.XYColumnPlotItem(pa,ps));
 
       layer.BottomAxisTitleString = "Number of factors";
@@ -999,7 +999,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Data.DataColumn xcol = table[WorksheetAnalysis.GetNumberOfFactors_ColumnName()];
 
       Altaxo.Graph.XYColumnPlotData pa = new Altaxo.Graph.XYColumnPlotData(xcol,ycol);
-      Altaxo.Graph.XYLineScatterPlotStyle ps = new Altaxo.Graph.XYLineScatterPlotStyle(Altaxo.Graph.LineScatterPlotStyleKind.LineAndScatter);
+      Altaxo.Graph.XYPlotStyleCollection ps = new Altaxo.Graph.XYPlotStyleCollection(Altaxo.Graph.LineScatterPlotStyleKind.LineAndScatter);
       layer.PlotItems.Add(new Altaxo.Graph.XYColumnPlotItem(pa,ps));
 
       layer.BottomAxisTitleString = "Number of factors";

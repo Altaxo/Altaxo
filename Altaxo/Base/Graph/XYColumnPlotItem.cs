@@ -40,7 +40,7 @@ namespace Altaxo.Graph
   {
 
     protected XYColumnPlotData m_PlotAssociation;
-    protected XYLineScatterPlotStyle m_PlotStyle;
+    protected XYPlotStyleCollection m_PlotStyle;
 
     // TODO : here should be a collection of PlotData, which can be accessed
     // by name, for instance "LabelData"
@@ -76,7 +76,7 @@ namespace Altaxo.Graph
         XYColumnPlotItem s = (XYColumnPlotItem)obj;
 
         s.Data = (XYColumnPlotData)info.GetValue("Data",typeof(XYColumnPlotData));
-        s.Style = (XYLineScatterPlotStyle)info.GetValue("Style",typeof(XYLineScatterPlotStyle));
+        s.Style = (XYPlotStyleCollection)info.GetValue("Style",typeof(XYPlotStyleCollection));
     
         return s;
       }
@@ -85,6 +85,9 @@ namespace Altaxo.Graph
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotItem),0)]
       public class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
+        XYColumnPlotData _item;
+      XYPlotLabelStyle _label;
+
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         XYColumnPlotItem s = (XYColumnPlotItem)obj;
@@ -95,7 +98,21 @@ namespace Altaxo.Graph
       {
         
         XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data",typeof(XYColumnPlotData));
-        XYLineScatterPlotStyle ps  = (XYLineScatterPlotStyle)info.GetValue("Style",typeof(XYLineScatterPlotStyle));
+        XYLineScatterPlotStyle lsps  = (XYLineScatterPlotStyle)info.GetValue("Style",typeof(XYLineScatterPlotStyle));
+        if (lsps.XYPlotLineStyle != null)
+          lsps.XYPlotLineStyle.LineSymbolGap = lsps.LineSymbolGap; // this has changed and is now hosted in the LineStyle itself
+        
+        XYPlotStyleCollection ps = new XYPlotStyleCollection(new I2DPlotStyle[] { lsps.XYPlotLineStyle, lsps.XYPlotScatterStyle, lsps.XYPlotLabelStyle });
+          if (lsps.XYPlotLabelStyle != null)
+          {
+            XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
+            surr._item = pa;
+            surr._label = lsps.XYPlotLabelStyle;
+            info.DeserializationFinished += new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(surr.info_DeserializationFinished);
+          }
+         
+        
+
 
         if(null==o)
         {
@@ -110,10 +127,51 @@ namespace Altaxo.Graph
         }
         
       }
+
+        void info_DeserializationFinished(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object documentRoot)
+        {
+          if (_item.LabelColumn != null)
+          {
+            _label.LabelColumn = _item.LabelColumn;
+            info.DeserializationFinished -= new Altaxo.Serialization.Xml.XmlDeserializationCallbackEventHandler(this.info_DeserializationFinished);
+          }
+        }
+
+    }
+
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYColumnPlotItem), 1)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYColumnPlotItem s = (XYColumnPlotItem)obj;
+        info.AddValue("Data", s.m_PlotAssociation);
+        info.AddValue("Style", s.m_PlotStyle);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        XYColumnPlotData pa = (XYColumnPlotData)info.GetValue("Data", typeof(XYColumnPlotData));
+        XYPlotStyleCollection ps = (XYPlotStyleCollection)info.GetValue("Style", typeof(XYPlotStyleCollection));
+
+        if (null == o)
+        {
+          return new XYColumnPlotItem(pa, ps);
+        }
+        else
+        {
+          XYColumnPlotItem s = (XYColumnPlotItem)o;
+          s.Data = pa;
+          s.Style = ps;
+          return s;
+        }
+
+      }
     }
 
     /// <summary>
-    /// Finale measures after deserialization of the linear axis.
+    /// Finale measures after deserialization.
     /// </summary>
     /// <param name="obj">Not used.</param>
     public virtual void OnDeserialization(object obj)
@@ -134,7 +192,7 @@ namespace Altaxo.Graph
 
 
 
-    public XYColumnPlotItem(XYColumnPlotData pa, XYLineScatterPlotStyle ps)
+    public XYColumnPlotItem(XYColumnPlotData pa, XYPlotStyleCollection ps)
     {
       this.Data = pa;
       this.Style = ps;
@@ -143,7 +201,7 @@ namespace Altaxo.Graph
     public XYColumnPlotItem(XYColumnPlotItem from)
     {
       this.Data = from.Data;   // also wires the event
-      this.Style = from.Style; // also wires the event
+      this.Style = (XYPlotStyleCollection)from.Style.Clone(); // also wires the event
     }
 
     public override object Clone()
@@ -189,7 +247,7 @@ namespace Altaxo.Graph
         }
       }
     }
-    public XYLineScatterPlotStyle Style
+    public XYPlotStyleCollection Style
     {
       get { return m_PlotStyle; }
       set
@@ -206,7 +264,7 @@ namespace Altaxo.Graph
               ((Main.IChangedEventSource)m_PlotStyle).Changed -= new EventHandler(OnStyleChangedEventHandler);
             }
           
-            m_PlotStyle = (XYLineScatterPlotStyle)value;
+            m_PlotStyle = (XYPlotStyleCollection)value;
 
             // create event wire to new Plotstyle
             if(null!=m_PlotStyle)
@@ -279,20 +337,22 @@ namespace Altaxo.Graph
 
     private string GetName(Data.IReadableColumn col, int level)
     {
-      if(col is Data.DataColumn)
+      if (col is Data.DataColumn)
       {
         Altaxo.Data.DataTable table = Altaxo.Data.DataTable.GetParentDataTableOf((DataColumn)col);
-        string tablename = table==null ? string.Empty : table.Name + "\\";
-        string collectionname = table==null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
-        if(level<=0)
+        string tablename = table == null ? string.Empty : table.Name + "\\";
+        string collectionname = table == null ? string.Empty : (table.PropertyColumns.ContainsColumn((DataColumn)col) ? "PropCols\\" : "DataCols\\");
+        if (level <= 0)
           return ((DataColumn)col).Name;
-        else if(level==1)
+        else if (level == 1)
           return tablename + ((DataColumn)col).Name;
         else
           return tablename + collectionname + ((DataColumn)col).Name;
       }
-      else
+      else if (col != null)
         return col.FullName;
+      else
+        return string.Empty;
     }
 
 
@@ -305,7 +365,11 @@ namespace Altaxo.Graph
     {
       if(null!=this.m_PlotStyle)
       {
-        m_PlotStyle.Paint(g,layer,m_PlotAssociation);
+        PlotRangeList rangeList;
+        PointF[] plotPoints;
+        this.m_PlotAssociation.GetRangesAndPoints(layer, out rangeList, out plotPoints);
+        if (rangeList != null)
+          this.m_PlotStyle.Paint(g, layer, rangeList, plotPoints);
       }
     }
 
@@ -330,17 +394,26 @@ namespace Altaxo.Graph
     /// <returns>Null if no hit, or a <see>IHitTestObject</see> if there was a hit.</returns>
     public override IHitTestObject HitTest(IPlotArea layer, PointF hitpoint)
     {
-      if(null!=this.m_PlotStyle)
+      XYColumnPlotData myPlotAssociation = this.m_PlotAssociation;
+      if(null==myPlotAssociation)
+        return null;
+
+      PlotRangeList rangeList;
+      PointF[] ptArray;
+      if(myPlotAssociation.GetRangesAndPoints(layer,out rangeList,out ptArray))
       {
-        IHitTestObject result = m_PlotStyle.HitTest(layer,m_PlotAssociation,hitpoint);
-        if(null!=result)
-          result.HittedObject = this;
-        return result;
-        
+        GraphicsPath gp = new GraphicsPath();
+        gp.AddLines(ptArray);
+        if(gp.IsOutlineVisible(hitpoint.X,hitpoint.Y,new Pen(Color.Black,5)))
+        {
+          gp.Widen(new Pen(Color.Black,5));
+          return new HitTestObject(gp,this);
+        }
       }
 
       return null;
     }
+
 
     /// <summary>
     /// Returns the index of a scatter point that is nearest to the location <c>hitpoint</c>
@@ -350,8 +423,39 @@ namespace Altaxo.Graph
     /// <returns>The information about the point that is nearest to the location, or null if it can not be determined.</returns>
     public XYScatterPointInformation GetNearestPlotPoint(IPlotArea layer, PointF hitpoint)
     {
-        return ((XYLineScatterPlotStyle)m_PlotStyle).GetNearestPlotPoint(layer,m_PlotAssociation,hitpoint);
+
+   
+      XYColumnPlotData myPlotAssociation = this.m_PlotAssociation;
+      if(null==myPlotAssociation)
+        return null;
+
+      PlotRangeList rangeList;
+      PointF[] ptArray;
+      if(myPlotAssociation.GetRangesAndPoints(layer,out rangeList,out ptArray))
+      {
+        double mindistance = double.MaxValue;
+        int minindex = -1;
+        for(int i=0;i<ptArray.Length;i++)
+        {
+          double distance = Drawing2DRelated.Distance(hitpoint,ptArray[i]);
+          if(distance<mindistance)
+          {
+            mindistance = distance;
+            minindex = i;
+          }
+        }
+        // ok, minindex is the point we are looking for
+        // so we have a look in the rangeList, what row it belongs to
+        int rowindex = rangeList.GetRowIndexForPlotIndex(minindex);
+
+        return new XYScatterPointInformation(ptArray[minindex],rowindex,minindex);
+      }
+
+
+      return null;
     }
+
+     
 
     /// <summary>
     /// For a given plot point of index oldplotindex, finds the index and coordinates of a plot point
@@ -363,8 +467,31 @@ namespace Altaxo.Graph
     /// <returns>Information about the new plot point find at position (oldplotindex+increment). Returns null if no such point exists.</returns>
     public XYScatterPointInformation GetNextPlotPoint(IPlotArea layer, int oldplotindex, int increment)
     {
-        return ((XYLineScatterPlotStyle)m_PlotStyle).GetNextPlotPoint(layer,m_PlotAssociation,oldplotindex,increment);
+ 
+      XYColumnPlotData myPlotAssociation = this.m_PlotAssociation;
+      if(null==myPlotAssociation)
+        return null;
+
+      PlotRangeList rangeList;
+      PointF[] ptArray;
+      if(myPlotAssociation.GetRangesAndPoints(layer,out rangeList,out ptArray))
+      {
+        if(ptArray.Length==0)
+          return null;
+
+        int minindex = oldplotindex + increment;
+        minindex = Math.Max(minindex,0);
+        minindex = Math.Min(minindex,ptArray.Length-1);
+        // ok, minindex is the point we are looking for
+        // so we have a look in the rangeList, what row it belongs to
+        int rowindex = rangeList.GetRowIndexForPlotIndex(minindex);
+        return new XYScatterPointInformation(ptArray[minindex],rowindex,minindex);
+      }
+
+
+      return null;
     }
+    
     #region IXBoundsHolder Members
 
     void EhXBoundariesChanged(object sender, BoundariesChangedEventArgs args)

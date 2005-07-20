@@ -1166,7 +1166,7 @@ namespace Altaxo.Graph
     public void AddPlotAssociation(XYColumnPlotData[] pal)
     {
       foreach(XYColumnPlotData pa in pal)
-        this.m_PlotItems.Add(new XYColumnPlotItem(pa,new XYLineScatterPlotStyle()));
+        this.m_PlotItems.Add(new XYColumnPlotItem(pa,new XYPlotStyleCollection()));
     }
   
 

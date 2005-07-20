@@ -485,6 +485,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Graph\I2DPlotItemStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Graph\I2DPlotStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -626,6 +631,11 @@
                 />
                 <File
                     RelPath = "Graph\XYPlotScatterStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Graph\XYPlotStyleCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

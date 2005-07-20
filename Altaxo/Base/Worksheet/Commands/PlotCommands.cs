@@ -49,17 +49,21 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bScatter">If true, the scatter style is activated (the points are plotted as symbols).</param>
     public static void PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter)
     {
-      Altaxo.Graph.XYLineScatterPlotStyle templatePlotStyle = new Altaxo.Graph.XYLineScatterPlotStyle();
+      Altaxo.Graph.XYPlotStyleCollection templatePlotStyle;
+      if(bLine && bScatter)
+        templatePlotStyle  = new Altaxo.Graph.XYPlotStyleCollection(Graph.LineScatterPlotStyleKind.LineAndScatter);
+      else if (bLine)
+        templatePlotStyle = new Altaxo.Graph.XYPlotStyleCollection(Graph.LineScatterPlotStyleKind.Line);
+      else
+        templatePlotStyle = new Altaxo.Graph.XYPlotStyleCollection(Graph.LineScatterPlotStyleKind.Scatter);
+
       Altaxo.Graph.PlotGroupStyle templatePlotGroupStyle = Altaxo.Graph.PlotGroupStyle.All;
       if(!bLine)
       {
-        templatePlotStyle.XYPlotLineStyle.Connection = Altaxo.Graph.XYPlotLineStyles.ConnectionStyle.NoLine;
         templatePlotGroupStyle &= (Altaxo.Graph.PlotGroupStyle.All ^ Altaxo.Graph.PlotGroupStyle.Line);
       }
       if(!bScatter)
       {
-        templatePlotStyle.LineSymbolGap = false;
-        templatePlotStyle.XYPlotScatterStyle.Shape = Altaxo.Graph.XYPlotScatterStyles.Shape.NoSymbol;
         templatePlotGroupStyle &= (Altaxo.Graph.PlotGroupStyle.All ^ Altaxo.Graph.PlotGroupStyle.Symbol);
       }
 
@@ -104,7 +108,7 @@ namespace Altaxo.Worksheet.Commands
 
       for(int i=0;i<nNumberOfPlotData;i++)
       {
-        Altaxo.Graph.PlotItem pi = new Altaxo.Graph.XYColumnPlotItem(pa[i],(Altaxo.Graph.XYLineScatterPlotStyle)templatePlotStyle.Clone());
+        Altaxo.Graph.PlotItem pi = new Altaxo.Graph.XYColumnPlotItem(pa[i],(Altaxo.Graph.XYPlotStyleCollection)templatePlotStyle.Clone());
         newPlotGroup.Add(pi);
       }
       gc.Doc.Layers[0].PlotItems.Add(newPlotGroup);

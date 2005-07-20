@@ -69,6 +69,8 @@ namespace Altaxo.Graph
     /// <summary>The axis where the label is attached to (if it is attached).</summary>
     protected Graph.EdgeType m_AttachedAxis;
 
+    protected Altaxo.Data.IReadableColumn m_LabelColumn;
+
     // cached values:
     protected System.Drawing.StringFormat m_CachedStringFormat;
 
@@ -133,6 +135,15 @@ namespace Altaxo.Graph
     }
     #endregion
 
+    /// <summary>
+    /// For deserialization purposes.
+    /// </summary>
+    protected XYPlotLabelStyle()
+    {
+      this.m_CachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
+      this.m_CachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
+      this.m_CachedStringFormat.LineAlignment = System.Drawing.StringAlignment.Center;
+    }
 
     public XYPlotLabelStyle(XYPlotLabelStyle from)
     {
@@ -147,11 +158,12 @@ namespace Altaxo.Graph
       this.m_CachedStringFormat = (System.Drawing.StringFormat)from.m_CachedStringFormat.Clone();
       this.m_AttachToAxis        = from.m_AttachToAxis;
       this.m_AttachedAxis        = from.m_AttachedAxis;
+      this.m_LabelColumn = from.m_LabelColumn;
 
       CreateEventChain();
     }
 
-    public XYPlotLabelStyle()
+    public XYPlotLabelStyle(Altaxo.Data.IReadableColumn labelColumn)
     {
       this.m_Font = new Font(System.Drawing.FontFamily.GenericSansSerif,8,GraphicsUnit.World);
       this.m_IndependentColor = false;
@@ -166,15 +178,29 @@ namespace Altaxo.Graph
       this.m_CachedStringFormat.LineAlignment   = System.Drawing.StringAlignment.Center;
       this.m_AttachToAxis = false;
       this.m_AttachedAxis = EdgeType.Bottom;
+      this.m_LabelColumn = labelColumn;
 
       CreateEventChain();
     }
+
 
     protected void CreateEventChain()
     {
       // if we change from color to a brush, add the brush events here
     }
 
+    public Altaxo.Data.IReadableColumn LabelColumn
+    {
+      get
+      {
+        return m_LabelColumn;
+      }
+      set
+      {
+        m_LabelColumn = value;
+        OnChanged();
+      }
+    }
 
     /// <summary>The font of the label.</summary>
     public Font Font
@@ -318,7 +344,10 @@ namespace Altaxo.Graph
     /// <summary>Horizontal alignment of the label.</summary>
     public System.Drawing.StringAlignment HorizontalAlignment
     {
-      get { return this.m_CachedStringFormat.Alignment; }
+      get 
+      {
+        return this.m_CachedStringFormat.Alignment; 
+      }
       set
       {
         System.Drawing.StringAlignment oldValue = this.HorizontalAlignment;
@@ -540,23 +569,23 @@ namespace Altaxo.Graph
 
     public bool IsSymbolSizeProvider
     {
-      get { return true; }
+      get { return false; }
     }
 
     public bool IsSymbolSizeReceiver
     {
-      get { return true; }
+      get { return false; }
     }
 
     public float SymbolSize
     {
       get
       {
-        return this.FontSize;
+        return 0;
       }
       set
       {
-        this.FontSize = value;
+        
       }
     }
 
@@ -565,7 +594,7 @@ namespace Altaxo.Graph
      PlotRangeList rangeList,
      PointF[] ptArray)
     {
-      this.Paint(g, layer, null, rangeList, ptArray, null);
+      this.Paint(g, layer, null, rangeList, ptArray, this.m_LabelColumn);
     }
 
     #endregion
