@@ -696,7 +696,7 @@ namespace Altaxo.Graph.GUI
     private void EhMenuGraphAddCurvePlot_OnClick(object sender, System.EventArgs e)
     {
       EnsureValidityOfCurrentLayerNumber();
-      this.Doc.Layers[this.CurrentLayerNumber].PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(new PolynomialFunction(new double[]{0,0,1})),new XYLineScatterPlotStyle()));
+      this.Doc.Layers[this.CurrentLayerNumber].PlotItems.Add(new XYFunctionPlotItem(new XYFunctionPlotData(new PolynomialFunction(new double[]{0,0,1})),new XYPlotStyleCollection(LineScatterPlotStyleKind.Line)));
     }
 
     /// <summary>

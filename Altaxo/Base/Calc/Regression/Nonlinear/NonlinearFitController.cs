@@ -191,7 +191,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
             {
               FitFunctionToScalarFunctionDDWrapper wrapper = new FitFunctionToScalarFunctionDDWrapper(fitEle.FitFunction,k, fitEle.ParameterValues);
               Altaxo.Graph.XYFunctionPlotData plotdata = new Altaxo.Graph.XYFunctionPlotData(wrapper);
-              Altaxo.Graph.XYFunctionPlotItem plotItem = new Altaxo.Graph.XYFunctionPlotItem(plotdata,new Altaxo.Graph.XYLineScatterPlotStyle(LineScatterPlotStyleKind.Line));
+              Altaxo.Graph.XYFunctionPlotItem plotItem = new Altaxo.Graph.XYFunctionPlotItem(plotdata,new Altaxo.Graph.XYPlotStyleCollection(LineScatterPlotStyleKind.Line));
               graph.ActiveLayer.PlotItems.Add(plotItem);
               _functionPlotItems.Add(plotItem);
             }

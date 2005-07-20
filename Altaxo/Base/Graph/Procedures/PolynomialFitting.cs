@@ -242,7 +242,7 @@ namespace Altaxo.Graph.Procedures
 
       // add the fit curve to the graph
       IScalarFunctionDD plotfunction = new Altaxo.Graph.PolynomialFunction(fit.Parameter);
-      XYFunctionPlotItem fittedCurve = new XYFunctionPlotItem(new XYFunctionPlotData(plotfunction),new XYLineScatterPlotStyle(LineScatterPlotStyleKind.Line));
+      XYFunctionPlotItem fittedCurve = new XYFunctionPlotItem(new XYFunctionPlotData(plotfunction),new XYPlotStyleCollection(LineScatterPlotStyleKind.Line));
 
       ctrl.ActiveLayer.PlotItems.Add(fittedCurve);
 

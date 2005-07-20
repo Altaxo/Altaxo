@@ -25,6 +25,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Serialization;
 using Altaxo.Data;
+using Altaxo.Graph.Axes;
 
 namespace Altaxo.Graph
 {
@@ -36,7 +37,7 @@ namespace Altaxo.Graph
   public class XYFunctionPlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, Graph.I2DPlotItemStyle
   {
     protected XYFunctionPlotData m_PlotData;
-    protected XYLineScatterPlotStyle  m_PlotStyle;
+    protected XYPlotStyleCollection  m_PlotStyle;
 
     #region Serialization
     /// <summary>Used to serialize theXYDataPlot Version 0.</summary>
@@ -67,7 +68,7 @@ namespace Altaxo.Graph
         XYFunctionPlotItem s = (XYFunctionPlotItem)obj;
 
         s.m_PlotData = (XYFunctionPlotData)info.GetValue("Data",typeof(XYColumnPlotData));
-        s.m_PlotStyle = (XYLineScatterPlotStyle)info.GetValue("Style",typeof(XYLineScatterPlotStyle));
+        s.m_PlotStyle = (XYPlotStyleCollection)info.GetValue("Style", typeof(XYPlotStyleCollection));
     
         return s;
       }
@@ -86,8 +87,10 @@ namespace Altaxo.Graph
       {
         
         XYFunctionPlotData pa  = (XYFunctionPlotData)info.GetValue("Data",typeof(XYColumnPlotData));
-        XYLineScatterPlotStyle ps = (XYLineScatterPlotStyle)info.GetValue("Style",typeof(XYLineScatterPlotStyle));
-    
+        XYLineScatterPlotStyle lsps = (XYLineScatterPlotStyle)info.GetValue("Style",typeof(XYLineScatterPlotStyle));
+
+        XYPlotStyleCollection ps = new XYPlotStyleCollection(new I2DPlotStyle[] { lsps.XYLineStyle, lsps.XYScatterStyle });
+        
         if(null==o)
         {
           return new XYFunctionPlotItem(pa,ps);
@@ -100,6 +103,36 @@ namespace Altaxo.Graph
           return s;
         }
       
+      }
+    }
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYFunctionPlotItem), 1)]
+    public class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        XYFunctionPlotItem s = (XYFunctionPlotItem)obj;
+        info.AddValue("Data", s.m_PlotData);
+        info.AddValue("Style", s.m_PlotStyle);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+
+        XYFunctionPlotData pa = (XYFunctionPlotData)info.GetValue("Data", typeof(XYColumnPlotData));
+        XYPlotStyleCollection ps = (XYPlotStyleCollection)info.GetValue("Style", typeof(XYPlotStyleCollection));
+
+        if (null == o)
+        {
+          return new XYFunctionPlotItem(pa, ps);
+        }
+        else
+        {
+          XYFunctionPlotItem s = (XYFunctionPlotItem)o;
+          s.Data = pa;
+          s.Style = ps;
+          return s;
+        }
+
       }
     }
 
@@ -125,7 +158,7 @@ namespace Altaxo.Graph
 
 
 
-    public XYFunctionPlotItem(XYFunctionPlotData pa, XYLineScatterPlotStyle ps)
+    public XYFunctionPlotItem(XYFunctionPlotData pa, XYPlotStyleCollection ps)
     {
       this.Data = pa;
       this.Style = ps;
@@ -171,7 +204,7 @@ namespace Altaxo.Graph
         }
       }
     }
-    public XYLineScatterPlotStyle Style
+    public XYPlotStyleCollection Style
     {
       get { return m_PlotStyle; }
       set
@@ -188,7 +221,7 @@ namespace Altaxo.Graph
               ((Main.IChangedEventSource)m_PlotStyle).Changed -= new EventHandler(OnStyleChangedEventHandler);
             }
           
-            m_PlotStyle = (XYLineScatterPlotStyle)value;
+            m_PlotStyle = (XYPlotStyleCollection)value;
 
             // create event wire to new Plotstyle
             if(null!=m_PlotStyle)
@@ -217,13 +250,104 @@ namespace Altaxo.Graph
       return GetName(int.MaxValue);
     }
 
+    
+
     public override void Paint(Graphics g, IPlotArea layer)
     {
-      if(null!=this.m_PlotStyle)
+      const int functionPoints = 1000;
+      const double MaxRelativeValue = 1E6;
+
+
+      // allocate an array PointF to hold the line points
+      PointF[] ptArray = new PointF[functionPoints];
+
+      // double xorg = layer.XAxis.Org;
+      // double xend = layer.XAxis.End;
+      // Fill the array with values
+      // only the points where x and y are not NaNs are plotted!
+
+      int i, j;
+
+      bool bInPlotSpace = true;
+      int rangeStart = 0;
+      PlotRangeList rangeList = new PlotRangeList();
+      I2DTo2DConverter logicalToArea = layer.LogicalToAreaConversion;
+
+      NumericalAxis xaxis = layer.XAxis as NumericalAxis;
+      NumericalAxis yaxis = layer.YAxis as NumericalAxis;
+      if (xaxis == null || yaxis == null)
+        return;
+
+      for (i = 0, j = 0; i < functionPoints; i++)
       {
-        m_PlotStyle.Paint(g,layer,m_PlotData);
+        double x_rel = ((double)i) / (functionPoints - 1);
+        double x = xaxis.NormalToPhysical(x_rel);
+        double y = this.m_PlotData.Evaluate(x);
+
+        if (Double.IsNaN(x) || Double.IsNaN(y))
+        {
+          if (!bInPlotSpace)
+          {
+            bInPlotSpace = true;
+            rangeList.Add(new PlotRange(rangeStart, j));
+          }
+          continue;
+        }
+
+
+        // double x_rel = layer.XAxis.PhysicalToNormal(x);
+        double y_rel = yaxis.PhysicalToNormal(y);
+
+        // chop relative values to an range of about -+ 10^6
+        if (y_rel > MaxRelativeValue)
+          y_rel = MaxRelativeValue;
+        if (y_rel < -MaxRelativeValue)
+          y_rel = -MaxRelativeValue;
+
+        // after the conversion to relative coordinates it is possible
+        // that with the choosen axis the point is undefined 
+        // (for instance negative values on a logarithmic axis)
+        // in this case the returned value is NaN
+        double xcoord, ycoord;
+        if (logicalToArea.Convert(x_rel, y_rel, out xcoord, out ycoord))
+        {
+          if (bInPlotSpace)
+          {
+            bInPlotSpace = false;
+            rangeStart = j;
+          }
+          ptArray[j].X = (float)xcoord;
+          ptArray[j].Y = (float)ycoord;
+          j++;
+        }
+        else
+        {
+          if (!bInPlotSpace)
+          {
+            bInPlotSpace = true;
+            rangeList.Add(new PlotRange(rangeStart, j));
+          }
+        }
+      } // end for
+      if (!bInPlotSpace)
+      {
+        bInPlotSpace = true;
+        rangeList.Add(new PlotRange(rangeStart, j)); // add the last range
       }
+
+
+
+      // ------------------ end of creation of plot array -----------------------------------------------
+      // in the plot array ptArray now we have the coordinates of each point
+
+      // now plot the point array
+
+      if (null != this.m_PlotStyle)
+      {
+        m_PlotStyle.Paint(g, layer, rangeList, ptArray);
+      } 
     }
+
 
     /// <summary>
     /// This routine ensures that the plot item updates all its cached data and send the appropriate
@@ -288,7 +412,7 @@ namespace Altaxo.Graph
 
     public void SetIncrementalStyle(I2DPlotItemStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, int step)
     {
-        ((XYLineScatterPlotStyle)m_PlotStyle).SetIncrementalStyle(pstemplate,style,step);
+        ((XYPlotStyleCollection)m_PlotStyle).SetIncrementalStyle(pstemplate,style,step);
     }
 
     #endregion

@@ -6,7 +6,12 @@ using System.Drawing.Drawing2D;
 
 namespace Altaxo.Graph
 {
-  class XYPlotStyleCollection : AbstractXYPlotStyle
+  public class XYPlotStyleCollection 
+    :
+    AbstractXYPlotStyle,
+    Main.IChangedEventSource, 
+    Main.IChildChangedEventSink,
+    I2DPlotItemStyle
   {
     /// <summary>
     /// Index to the color provider. Is set to -1 if no color provider currently exists.
@@ -23,11 +28,39 @@ namespace Altaxo.Graph
     /// </summary>
     ArrayList _innerList;
 
-    public XYPlotStyleCollection()
+    public XYPlotStyleCollection(I2DPlotStyle[] styles)
+    {
+      _innerList = new ArrayList();
+      for(int i=0;i<styles.Length;++i)
+        _innerList.Add(styles[i]);
+
+      this.InternalGetProviders();
+    }
+
+    public XYPlotStyleCollection(LineScatterPlotStyleKind kind)
     {
       _innerList = new ArrayList();
       _colorProvider = -1;
       _symbolSizeProvider = -1;
+
+      switch (kind)
+      {
+        case LineScatterPlotStyleKind.Line:
+          Add(new XYPlotLineStyle());
+          _colorProvider = 0;
+          break;
+        case LineScatterPlotStyleKind.Scatter:
+          Add(new XYPlotScatterStyle());
+          _colorProvider = 0;
+          _symbolSizeProvider = 0;
+          break;
+        case LineScatterPlotStyleKind.LineAndScatter:
+          Add(new XYPlotLineStyle());
+          Add(new XYPlotScatterStyle());
+          _colorProvider = 0;
+          _symbolSizeProvider = 1;
+          break;
+      }
     }
 
 
@@ -39,29 +72,50 @@ namespace Altaxo.Graph
       }
     }
 
+    public void Add(I2DPlotStyle toadd)
+    {
+      this._innerList.Add(toadd);
+      InternalGetProviders();
+    }
+
+    void InternalGetProviders()
+    {
+      _colorProvider = -1;
+      for (int i = 0; i < _innerList.Count; i++)
+      {
+        if (this[i].IsColorProvider)
+        {
+          _colorProvider = i;
+          break;
+        }
+      }
+
+      _symbolSizeProvider = -1;
+      for (int i = 0; i < _innerList.Count; i++)
+      {
+        if (this[i].IsSymbolSizeProvider)
+        {
+          _symbolSizeProvider = i;
+          break;
+        }
+      }
+
+
+    }
+
     public override object Clone()
     {
       throw new Exception("The method or operation is not implemented.");
     }
 
-    public override void Paint(System.Drawing.Graphics g, IPlotArea gl, object plotObject)
-    {
-      if (plotObject is XYColumnPlotData)
-      {
-        XYColumnPlotData pd = (XYColumnPlotData)plotObject;
-        PlotRangeList rangeList;
-        PointF[] plotPoints;
-        pd.GetRangesAndPoints(gl, out rangeList, out plotPoints);
-        if (rangeList != null)
-          Paint(g, gl, pd, rangeList, plotPoints);
-      }
-      else if (plotObject is Altaxo.Calc.IScalarFunctionDD)
-      {
-        Paint(g, gl, (Altaxo.Calc.IScalarFunctionDD)plotObject);
-      }
-    }
 
-    public void Paint(Graphics g, IPlotArea layer, XYColumnPlotData myPlotAssociation, PlotRangeList rangeList, PointF[] ptArray)
+    public override void Paint(Graphics g, IPlotArea layer, object plotObject)
+    {
+      throw new NotImplementedException();
+    }
+  
+
+    public void Paint(Graphics g, IPlotArea layer, PlotRangeList rangeList, PointF[] ptArray)
     {
       for (int i = 0; i < _innerList.Count; i++)
       {
@@ -133,6 +187,24 @@ namespace Altaxo.Graph
         this.Color = GetNextPlotColor(ps.Color);
     }
 
+    public void SetIncrementalStyle(I2DPlotItemStyle pstemplate, PlotGroupStyle style, int step)
+    {
+     
+
+      if ((0 != (style & PlotGroupStyle.Line)) && pstemplate.IsXYLineStyleSupported)
+        if(this.XYPlotLineStyle!=null)
+          this.XYPlotLineStyle.SetToNextLineStyle(pstemplate.XYLineStyle, step);
+      
+      if ((0 != (style & PlotGroupStyle.Symbol)) && pstemplate.IsXYScatterStyleSupported)
+        if(this.XYPlotScatterStyle!=null)
+          this.XYPlotScatterStyle.SetToNextStyle(pstemplate.XYScatterStyle, step);
+
+      // Color has to be the last, since during the previous operations the styles are cloned, 
+      // inclusive the color
+      if ((0 != (style & PlotGroupStyle.Color)) && pstemplate.IsColorProvider)
+        this.Color = GetNextPlotColor(pstemplate.Color, step);
+    }
+
     public override System.Drawing.Color Color
     {
       get
@@ -183,5 +255,49 @@ namespace Altaxo.Graph
         throw new Exception("The method or operation is not implemented.");
       }
     }
+
+    #region IChangedEventSource Members
+
+    public event EventHandler Changed;
+
+    #endregion
+
+    #region IChildChangedEventSink Members
+
+    public void OnChildChanged(object child, EventArgs e)
+    {
+      throw new Exception("The method or operation is not implemented.");
+    }
+
+    #endregion
+
+    #region I2DPlotItemStyle Members
+
+    public bool IsColorProvider
+    {
+      get { return _colorProvider >= 0; }
+    }
+
+    public bool IsXYLineStyleSupported
+    {
+      get { return this.XYLineStyle != null; }
+    }
+
+    public XYPlotLineStyle XYLineStyle
+    {
+      get { return this.XYLineStyle; }
+    }
+
+    public bool IsXYScatterStyleSupported
+    {
+      get { return this.XYScatterStyle != null; }
+    }
+
+    public XYPlotScatterStyle XYScatterStyle
+    {
+      get { return this.XYScatterStyle; }
+    }
+
+    #endregion
 }
 }
