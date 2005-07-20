@@ -21,53 +21,59 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Text;
-
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
+
 namespace Altaxo.Graph
 {
-  public interface I2DPlotStyle
+  /// <summary>
+  /// Interface for two dimensional plot styles.
+  /// </summary>
+  public interface I2DPlotItemStyle
   {
     /// <summary>
     /// Returns true if the color property get is supported, i.e. the style provides a color.
     /// </summary>
     bool IsColorProvider { get; }
 
-    /// <summary>
-    /// Returns true if the color of this plot style can be set.
-    /// </summary>
-    bool IsColorReceiver { get; }
 
     /// <summary>
     /// Returns the color of the style. If not supported, returns Color.Black.
-    /// Sets the color. If <see>IsColorReceiver</see> is false, this should throw an exception
     /// </summary>
-    System.Drawing.Color Color { get; set; }
+    System.Drawing.Color Color { get; }
 
 
     /// <summary>
-    /// Returns true if this style provides the symbol size.
+    /// Returns true if the line style property is supported.
     /// </summary>
-    bool IsSymbolSizeProvider { get; }
+    bool IsXYLineStyleSupported { get; }
 
     /// <summary>
-    ///  Returns true if for this style the <see>SymbolSize</see> property can be set.
+    /// Returns the line style property. If not supported, returns null.
     /// </summary>
-    bool IsSymbolSizeReceiver { get; }
+    XYPlotLineStyle XYLineStyle { get; }
+
+
 
     /// <summary>
-    /// Get / sets the symbol size.
+    /// Returns true if the scatter style property is supported.
     /// </summary>
-    float SymbolSize { get; set; }
+    bool IsXYScatterStyleSupported { get; }
+
+    /// <summary>
+    /// Returns the scatter style property. If not supported, returns null.
+    /// </summary>
+    XYPlotScatterStyle XYScatterStyle { get; }
 
 
-    void Paint(Graphics g, IPlotArea layer, PlotRangeList rangeList, PointF[] ptArray);
+    /// <summary>
+    /// Sets this style according to a template with step times increment.
+    /// </summary>
+    /// <param name="pstemplate">The template style.</param>
+    /// <param name="style">Information of what in particular to vary (color, line style, symbol style).</param>
+    /// <param name="step">The number of steps distance to the template style. For instance, if step==1 the next color is used, if step==-1 the previous color is used.</param>
+    void SetIncrementalStyle(I2DPlotItemStyle pstemplate, PlotGroupStyle style, int step);
+
   }
-
-
- 
-
 }

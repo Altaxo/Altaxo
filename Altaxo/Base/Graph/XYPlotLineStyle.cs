@@ -238,7 +238,14 @@ namespace Altaxo.Graph
   /// </summary>
   [SerializationSurrogate(0,typeof(XYPlotLineStyle.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class XYPlotLineStyle : ICloneable, Main.IChangedEventSource, Main.IChildChangedEventSink, System.Runtime.Serialization.IDeserializationCallback, Graph.I2DPlotStyle
+  public class XYPlotLineStyle
+    :
+    ICloneable,
+    Main.IChangedEventSource,
+    Main.IChildChangedEventSink,
+    System.Runtime.Serialization.IDeserializationCallback, 
+    Graph.I2DPlotItemStyle,
+    I2DPlotStyle
   {
     public delegate void PaintOneRangeTemplate(
       Graphics g, 
@@ -249,16 +256,17 @@ namespace Altaxo.Graph
 
 
     // protected PenStyle       m_PenStyle  = PenStyle.Solid;
-    protected PenHolder       m_PenHolder;
-    protected XYPlotLineStyles.ConnectionStyle m_Connection;
-    protected bool            m_bLineSymbolGap;
-    protected bool            m_bIgnoreMissingPoints; // treat missing points as if not present (connect lines over missing points) 
-    protected bool            m_bFillArea;
-    protected BrushHolder     m_FillBrush; // brush to fill the area under the line
-    protected XYPlotLineStyles.FillDirection m_FillDirection; // the direction to fill
+    protected PenHolder       _penHolder;
+    protected XYPlotLineStyles.ConnectionStyle _connectionStyle;
+    protected bool            _useLineSymbolGap;
+    protected float _symbolGap;
+    protected bool            _ignoreMissingPoints; // treat missing points as if not present (connect lines over missing points) 
+    protected bool            _fillArea;
+    protected BrushHolder     _fillBrush; // brush to fill the area under the line
+    protected XYPlotLineStyles.FillDirection _fillDirection; // the direction to fill
 
     // cached values
-    protected PaintOneRangeTemplate m_PaintOneRange; // subroutine to paint a single range
+    protected PaintOneRangeTemplate _cachedPaintOneRange; // subroutine to paint a single range
 
     #region Serialization
     /// <summary>Used to serialize the XYPlotLineStyle Version 0.</summary>
@@ -273,13 +281,13 @@ namespace Altaxo.Graph
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         XYPlotLineStyle s = (XYPlotLineStyle)obj;
-        info.AddValue("Pen",s.m_PenHolder);  
-        info.AddValue("Connection",s.m_Connection);
-        info.AddValue("LineSymbolGap",s.m_bLineSymbolGap);
-        info.AddValue("IgnoreMissingPoints",s.m_bIgnoreMissingPoints);
-        info.AddValue("FillArea",s.m_bFillArea);
-        info.AddValue("FillBrush",s.m_FillBrush);
-        info.AddValue("FillDirection",s.m_FillDirection);
+        info.AddValue("Pen",s._penHolder);  
+        info.AddValue("Connection",s._connectionStyle);
+        info.AddValue("LineSymbolGap",s._useLineSymbolGap);
+        info.AddValue("IgnoreMissingPoints",s._ignoreMissingPoints);
+        info.AddValue("FillArea",s._fillArea);
+        info.AddValue("FillBrush",s._fillBrush);
+        info.AddValue("FillDirection",s._fillDirection);
       }
       /// <summary>
       /// Deserializes the XYPlotLineStyle Version 0.
@@ -293,13 +301,13 @@ namespace Altaxo.Graph
       {
         XYPlotLineStyle s = (XYPlotLineStyle)obj;
 
-        s.m_PenHolder = (PenHolder)info.GetValue("Pen",typeof(PenHolder));  
+        s._penHolder = (PenHolder)info.GetValue("Pen",typeof(PenHolder));  
         s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection",typeof(XYPlotLineStyles.ConnectionStyle));
-        s.m_bLineSymbolGap = info.GetBoolean("LineSymbolGap");
-        s.m_bIgnoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
-        s.m_bFillArea = info.GetBoolean("FillArea");
-        s.m_FillBrush = (BrushHolder)info.GetValue("FillBrush",typeof(BrushHolder));
-        s.m_FillDirection = (XYPlotLineStyles.FillDirection)info.GetValue("FillDirection",typeof(XYPlotLineStyles.FillDirection));
+        s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
+        s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
+        s._fillArea = info.GetBoolean("FillArea");
+        s._fillBrush = (BrushHolder)info.GetValue("FillBrush",typeof(BrushHolder));
+        s._fillDirection = (XYPlotLineStyles.FillDirection)info.GetValue("FillDirection",typeof(XYPlotLineStyles.FillDirection));
         return s;
       }
     }
@@ -310,26 +318,26 @@ namespace Altaxo.Graph
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         XYPlotLineStyle s = (XYPlotLineStyle)obj;
-        info.AddValue("Pen",s.m_PenHolder);  
-        info.AddValue("Connection",s.m_Connection);
-        info.AddValue("LineSymbolGap",s.m_bLineSymbolGap);
-        info.AddValue("IgnoreMissingPoints",s.m_bIgnoreMissingPoints);
-        info.AddValue("FillArea",s.m_bFillArea);
-        info.AddValue("FillBrush",s.m_FillBrush);
-        info.AddValue("FillDirection",s.m_FillDirection);
+        info.AddValue("Pen",s._penHolder);  
+        info.AddValue("Connection",s._connectionStyle);
+        info.AddValue("LineSymbolGap",s._useLineSymbolGap);
+        info.AddValue("IgnoreMissingPoints",s._ignoreMissingPoints);
+        info.AddValue("FillArea",s._fillArea);
+        info.AddValue("FillBrush",s._fillBrush);
+        info.AddValue("FillDirection",s._fillDirection);
       }
       public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
         
         XYPlotLineStyle s = null!=o ? (XYPlotLineStyle)o : new XYPlotLineStyle();
 
-        s.m_PenHolder = (PenHolder)info.GetValue("Pen",typeof(PenHolder));  
+        s._penHolder = (PenHolder)info.GetValue("Pen",typeof(PenHolder));  
         s.Connection = (XYPlotLineStyles.ConnectionStyle)info.GetValue("Connection",typeof(XYPlotLineStyles.ConnectionStyle));
-        s.m_bLineSymbolGap = info.GetBoolean("LineSymbolGap");
-        s.m_bIgnoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
-        s.m_bFillArea = info.GetBoolean("FillArea");
-        s.m_FillBrush = (BrushHolder)info.GetValue("FillBrush",typeof(BrushHolder));
-        s.m_FillDirection = (XYPlotLineStyles.FillDirection)info.GetValue("FillDirection",typeof(XYPlotLineStyles.FillDirection));
+        s._useLineSymbolGap = info.GetBoolean("LineSymbolGap");
+        s._ignoreMissingPoints = info.GetBoolean("IgnoreMissingPoints");
+        s._fillArea = info.GetBoolean("FillArea");
+        s._fillBrush = (BrushHolder)info.GetValue("FillBrush",typeof(BrushHolder));
+        s._fillDirection = (XYPlotLineStyles.FillDirection)info.GetValue("FillDirection",typeof(XYPlotLineStyles.FillDirection));
 
         s.CreateEventChain();
 
@@ -351,14 +359,14 @@ namespace Altaxo.Graph
 
     public XYPlotLineStyle()
     {
-      m_PenHolder = new PenHolder(Color.Black);
-      m_bLineSymbolGap = true;
-      m_bIgnoreMissingPoints=false;
-      m_bFillArea = false;
-      m_FillBrush = new BrushHolder(Color.Black);
-      m_FillDirection = XYPlotLineStyles.FillDirection.Bottom;
-      m_Connection    = XYPlotLineStyles.ConnectionStyle.Straight;
-      m_PaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
+      _penHolder = new PenHolder(Color.Black);
+      _useLineSymbolGap = true;
+      _ignoreMissingPoints=false;
+      _fillArea = false;
+      _fillBrush = new BrushHolder(Color.Black);
+      _fillDirection = XYPlotLineStyles.FillDirection.Bottom;
+      _connectionStyle    = XYPlotLineStyles.ConnectionStyle.Straight;
+      _cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
     
       CreateEventChain();
     }
@@ -366,13 +374,14 @@ namespace Altaxo.Graph
 
     public void CopyFrom(XYPlotLineStyle from, bool suppressChangeEvent)
     {
-      this.m_PenHolder                  = null==from.m_PenHolder?null:(PenHolder)from.m_PenHolder.Clone();
-      this.m_bLineSymbolGap       = from.m_bLineSymbolGap;
-      this.m_bIgnoreMissingPoints = from.m_bIgnoreMissingPoints;
-      this.m_bFillArea            = from.m_bFillArea;
-      this.m_FillBrush            = null==from.m_FillBrush?null:(BrushHolder)from.m_FillBrush.Clone();
-      this.m_FillDirection        = from.m_FillDirection;
-      this.Connection             = from.m_Connection; // beachte links nur Connection, damit das Template mit gesetzt wird
+      this._penHolder                  = null==from._penHolder?null:(PenHolder)from._penHolder.Clone();
+      this._useLineSymbolGap       = from._useLineSymbolGap;
+      this._symbolGap = from._symbolGap;
+      this._ignoreMissingPoints = from._ignoreMissingPoints;
+      this._fillArea            = from._fillArea;
+      this._fillBrush            = null==from._fillBrush?null:(BrushHolder)from._fillBrush.Clone();
+      this._fillDirection        = from._fillDirection;
+      this.Connection             = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
     
       if(!suppressChangeEvent)
         OnChanged();
@@ -387,58 +396,68 @@ namespace Altaxo.Graph
 
     protected virtual void CreateEventChain()
     {
-      if(null!=m_PenHolder)
-        m_PenHolder.Changed += new EventHandler(this.EhChildChanged);
+      if(null!=_penHolder)
+        _penHolder.Changed += new EventHandler(this.EhChildChanged);
       
-      if(null!=m_FillBrush)
-        m_FillBrush.Changed += new EventHandler(this.EhChildChanged);
+      if(null!=_fillBrush)
+        _fillBrush.Changed += new EventHandler(this.EhChildChanged);
     }
 
     public XYPlotLineStyles.ConnectionStyle Connection
     {
-      get { return m_Connection; }
+      get { return _connectionStyle; }
       set 
       {
-        m_Connection = value;
-        switch(m_Connection)
+        _connectionStyle = value;
+        switch(_connectionStyle)
         {
           case XYPlotLineStyles.ConnectionStyle.NoLine:
-            m_PaintOneRange = new PaintOneRangeTemplate(NoConnection_PaintOneRange);
+            _cachedPaintOneRange = new PaintOneRangeTemplate(NoConnection_PaintOneRange);
             break;
           default:
           case XYPlotLineStyles.ConnectionStyle.Straight:
-            m_PaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
+            _cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
             break;
           case XYPlotLineStyles.ConnectionStyle.Segment2:
-            m_PaintOneRange = new PaintOneRangeTemplate(Segment2Connection_PaintOneRange);
+            _cachedPaintOneRange = new PaintOneRangeTemplate(Segment2Connection_PaintOneRange);
             break;
           case XYPlotLineStyles.ConnectionStyle.Segment3:
-            m_PaintOneRange = new PaintOneRangeTemplate(Segment3Connection_PaintOneRange);
+            _cachedPaintOneRange = new PaintOneRangeTemplate(Segment3Connection_PaintOneRange);
             break;
           case XYPlotLineStyles.ConnectionStyle.Spline:
-            m_PaintOneRange = new PaintOneRangeTemplate(SplineConnection_PaintOneRange);
+            _cachedPaintOneRange = new PaintOneRangeTemplate(SplineConnection_PaintOneRange);
             break;
           case XYPlotLineStyles.ConnectionStyle.Bezier:
-            m_PaintOneRange = new PaintOneRangeTemplate(BezierConnection_PaintOneRange);
+            _cachedPaintOneRange = new PaintOneRangeTemplate(BezierConnection_PaintOneRange);
             break;
           case XYPlotLineStyles.ConnectionStyle.StepHorz:
-            m_PaintOneRange = new PaintOneRangeTemplate(StepHorzConnection_PaintOneRange);
+            _cachedPaintOneRange = new PaintOneRangeTemplate(StepHorzConnection_PaintOneRange);
             break;
           case XYPlotLineStyles.ConnectionStyle.StepVert:
-            m_PaintOneRange = new PaintOneRangeTemplate(StepVertConnection_PaintOneRange);
+            _cachedPaintOneRange = new PaintOneRangeTemplate(StepVertConnection_PaintOneRange);
             break;
           case XYPlotLineStyles.ConnectionStyle.StepHorzCenter:
-            m_PaintOneRange = new PaintOneRangeTemplate(StepHorzCenterConnection_PaintOneRange);
+            _cachedPaintOneRange = new PaintOneRangeTemplate(StepHorzCenterConnection_PaintOneRange);
             break;
           case XYPlotLineStyles.ConnectionStyle.StepVertCenter:
-            m_PaintOneRange = new PaintOneRangeTemplate(StepVertCenterConnection_PaintOneRange);
+            _cachedPaintOneRange = new PaintOneRangeTemplate(StepVertCenterConnection_PaintOneRange);
             break;
         } // end switch
         OnChanged(); // Fire Changed event
       }
     }
 
-
+    public bool LineSymbolGap
+    {
+      get
+      {
+        return _useLineSymbolGap;
+      }
+      set
+      {
+        _useLineSymbolGap = value;
+      }
+    }
 
     public void SetToNextLineStyle(XYPlotLineStyle template)
     {
@@ -460,18 +479,18 @@ namespace Altaxo.Graph
 
     public PenHolder PenHolder
     {
-      get { return m_PenHolder; }
+      get { return _penHolder; }
     }
 
     public bool FillArea
     {
-      get { return this.m_bFillArea; }
+      get { return this._fillArea; }
       set 
       { 
-        this.m_bFillArea = value;
+        this._fillArea = value;
         // ensure that if value is true, there is a fill brush which is not null
-        if(true==value && null==this.m_FillBrush)
-          this.m_FillBrush = new BrushHolder(Color.White);
+        if(true==value && null==this._fillBrush)
+          this._fillBrush = new BrushHolder(Color.White);
 
         OnChanged(); // Fire Changed event
       }
@@ -479,24 +498,24 @@ namespace Altaxo.Graph
  
     public XYPlotLineStyles.FillDirection FillDirection
     {
-      get { return this.m_FillDirection; }
+      get { return this._fillDirection; }
       set 
       {
-        this.m_FillDirection = value; 
+        this._fillDirection = value; 
         OnChanged(); // Fire Changed event
       }
     }
 
     public BrushHolder FillBrush
     {
-      get { return this.m_FillBrush; }
+      get { return this._fillBrush; }
       set 
       {
         // copy the brush only if not null
         if(null!=value)
         {
-          this.m_FillBrush = (BrushHolder)value.Clone();
-          this.m_FillBrush.Changed += new EventHandler(this.EhChildChanged);
+          this._fillBrush = (BrushHolder)value.Clone();
+          this._fillBrush.Changed += new EventHandler(this.EhChildChanged);
           OnChanged(); // Fire Changed event
         }
         else
@@ -512,11 +531,13 @@ namespace Altaxo.Graph
 
     public virtual void PaintLine(Graphics g, PointF beg, PointF end)
     {
-      if(null!=m_PenHolder)
+      if(null!=_penHolder)
       {
-        g.DrawLine(m_PenHolder,beg,end);
+        g.DrawLine(_penHolder,beg,end);
       }
     }
+
+
 
     public virtual void Paint(
       Graphics g, 
@@ -528,8 +549,8 @@ namespace Altaxo.Graph
     {
       
       // ensure that brush and pen are cached
-      if(null!=m_PenHolder) m_PenHolder.Cached=true;
-      if(null!=m_FillBrush) m_FillBrush.Cached = true;
+      if(null!=_penHolder) _penHolder.Cached=true;
+      if(null!=_fillBrush) _fillBrush.Cached = true;
 
       int rangelistlen = rangeList.Count;
 
@@ -538,19 +559,19 @@ namespace Altaxo.Graph
       layer.LogicalToAreaConversion.Convert(1,1,out xright, out ytop);
       SizeF layerSize = new SizeF((float)Math.Abs(xright-xleft),(float)Math.Abs(ybottom-ytop));
 
-      if(this.m_bIgnoreMissingPoints)
+      if(this._ignoreMissingPoints)
       {
         // in case we ignore the missing points, all ranges can be plotted
         // as one range, i.e. continuously
         // for this, we create the totalRange, which contains all ranges
         PlotRange totalRange = new PlotRange(rangeList[0].LowerBound,rangeList[rangelistlen-1].UpperBound);
-        m_PaintOneRange(g,linePoints,totalRange,layerSize,symbolGap);
+        _cachedPaintOneRange(g,linePoints,totalRange,layerSize,symbolGap);
       }
       else // we not ignore missing points, so plot all ranges separately
       {
         for(int i=0;i<rangelistlen;i++)
         {
-          m_PaintOneRange(g,linePoints,rangeList[i],layerSize,symbolGap);
+          _cachedPaintOneRange(g,linePoints,rangeList[i],layerSize,symbolGap);
         }
       }
     }
@@ -577,7 +598,7 @@ namespace Altaxo.Graph
       int lastIdx = range.Length-1;
       GraphicsPath gp = new GraphicsPath();
 
-      if(m_bFillArea)
+      if(_fillArea)
       {
         /*
         double xleft,xright,ytop,ybottom;
@@ -585,7 +606,7 @@ namespace Altaxo.Graph
         layer.LogicalToAreaConversion.Convert(1,1,out xright, out ytop);
         SizeF layerSize = new SizeF(Math.Abs(xright-xleft),Math.Abs(ybottom-ytop));
         */
-        switch(this.m_FillDirection)
+        switch(this._fillDirection)
         {
           case XYPlotLineStyles.FillDirection.Bottom:
             // create a graphics path with the linePoints
@@ -611,7 +632,7 @@ namespace Altaxo.Graph
         }
         
         gp.CloseFigure();
-        g.FillPath(this.m_FillBrush,gp);
+        g.FillPath(this._fillBrush,gp);
         gp.Reset();
       }
 
@@ -621,7 +642,7 @@ namespace Altaxo.Graph
       // to the exclusion criteria that a line only appears between two symbols (rel<0.5)
       // if the symbols do not overlap. So for a big array of points it is very likely
       // that the symbols overlap and no line between the symbols needs to be plotted
-      if(this.m_bLineSymbolGap && symbolGap>0)
+      if(this._useLineSymbolGap && symbolGap>0)
       {
         float xdiff,ydiff,rel,startx, starty, stopx, stopy;
         for(int i=0;i<lastIdx;i++)
@@ -640,14 +661,14 @@ namespace Altaxo.Graph
             gp.StartFigure();
           }
         } // end for
-        g.DrawPath(this.m_PenHolder,gp);
+        g.DrawPath(this._penHolder,gp);
         gp.Reset();
       }
       else // no line symbol gap required, so we can use DrawLines to draw the lines
       {
         if(linepts.Length>1) // we don't want to have a drawing exception if number of points is only one
         {
-          g.DrawLines(this.m_PenHolder, linepts);
+          g.DrawLines(this._penHolder, linepts);
         }
       }
     } // end function PaintOneRange
@@ -669,9 +690,9 @@ namespace Altaxo.Graph
       int lastIdx = range.Length-1;
       GraphicsPath gp = new GraphicsPath();
 
-      if(m_bFillArea)
+      if(_fillArea)
       {
-        switch(this.m_FillDirection)
+        switch(this._fillDirection)
         {
           case XYPlotLineStyles.FillDirection.Bottom:
             // create a graphics path with the linePoints
@@ -697,13 +718,13 @@ namespace Altaxo.Graph
         }
         
         gp.CloseFigure();
-        g.FillPath(this.m_FillBrush,gp);
+        g.FillPath(this._fillBrush,gp);
         gp.Reset();
       }
 
       // unfortuately, there is no easy way to support line/symbol gaps
       // thats why I ignore this value and draw a curve through the points
-      g.DrawCurve(this.m_PenHolder, linepts);
+      g.DrawCurve(this._penHolder, linepts);
 
     } // end function PaintOneRange (Spline)
 
@@ -728,9 +749,9 @@ namespace Altaxo.Graph
       int lastIdx = range.Length-1;
       GraphicsPath gp = new GraphicsPath();
 
-      if(m_bFillArea)
+      if(_fillArea)
       {
-        switch(this.m_FillDirection)
+        switch(this._fillDirection)
         {
           case XYPlotLineStyles.FillDirection.Bottom:
             // create a graphics path with the linePoints
@@ -756,13 +777,13 @@ namespace Altaxo.Graph
         }
         
         gp.CloseFigure();
-        g.FillPath(this.m_FillBrush,gp);
+        g.FillPath(this._fillBrush,gp);
         gp.Reset();
       }
 
       // unfortuately, there is no easy way to support line/symbol gaps
       // thats why I ignore this value and draw a curve through the points
-      g.DrawBeziers(this.m_PenHolder, linepts);
+      g.DrawBeziers(this._penHolder, linepts);
 
     } // end function PaintOneRange BezierLineStyle
 
@@ -791,11 +812,11 @@ namespace Altaxo.Graph
 
       GraphicsPath gp = new GraphicsPath();
 
-      if(m_bFillArea)
+      if(_fillArea)
       {
         gp.AddLines(linepts);
 
-        switch(this.m_FillDirection)
+        switch(this._fillDirection)
         {
           case XYPlotLineStyles.FillDirection.Bottom:
             // create a graphics path with the linePoints
@@ -813,11 +834,11 @@ namespace Altaxo.Graph
         }
         
         gp.CloseFigure();
-        g.FillPath(this.m_FillBrush,gp);
+        g.FillPath(this._fillBrush,gp);
         gp.Reset();
       }
 
-      if(this.m_bLineSymbolGap && symbolGap>0)
+      if(this._useLineSymbolGap && symbolGap>0)
       {
         end = range.UpperBound-1;
         float symbolGapSquared = symbolGap*symbolGap;
@@ -848,12 +869,12 @@ namespace Altaxo.Graph
           if(xrel1<xrel2 || yrel1<yrel2)
             gp.StartFigure();
         }
-        g.DrawPath(this.m_PenHolder,gp);
+        g.DrawPath(this._penHolder,gp);
         gp.Reset();
       }
       else
       {
-        g.DrawLines(this.m_PenHolder, linepts);
+        g.DrawLines(this._penHolder, linepts);
       }
     } // end function PaintOneRange StepHorzLineStyle
 
@@ -881,11 +902,11 @@ namespace Altaxo.Graph
 
       GraphicsPath gp = new GraphicsPath();
 
-      if(m_bFillArea)
+      if(_fillArea)
       {
         gp.AddLines(linepts);
 
-        switch(this.m_FillDirection)
+        switch(this._fillDirection)
         {
           case XYPlotLineStyles.FillDirection.Bottom:
             // create a graphics path with the linePoints
@@ -903,11 +924,11 @@ namespace Altaxo.Graph
         }
         
         gp.CloseFigure();
-        g.FillPath(this.m_FillBrush,gp);
+        g.FillPath(this._fillBrush,gp);
         gp.Reset();
       }
 
-      if(this.m_bLineSymbolGap && symbolGap>0)
+      if(this._useLineSymbolGap && symbolGap>0)
       {
         end = range.UpperBound-1;
         float symbolGapSquared = symbolGap*symbolGap;
@@ -938,12 +959,12 @@ namespace Altaxo.Graph
           if(xrel1<xrel2 || yrel1<yrel2)
             gp.StartFigure();
         }
-        g.DrawPath(this.m_PenHolder,gp);
+        g.DrawPath(this._penHolder,gp);
         gp.Reset();
       }
       else
       {
-        g.DrawLines(this.m_PenHolder, linepts);
+        g.DrawLines(this._penHolder, linepts);
       }
     } // end function PaintOneRange StepVertLineStyle
 
@@ -973,11 +994,11 @@ namespace Altaxo.Graph
 
       GraphicsPath gp = new GraphicsPath();
 
-      if(m_bFillArea)
+      if(_fillArea)
       {
         gp.AddLines(linepts);
 
-        switch(this.m_FillDirection)
+        switch(this._fillDirection)
         {
           case XYPlotLineStyles.FillDirection.Bottom:
             // create a graphics path with the linePoints
@@ -995,11 +1016,11 @@ namespace Altaxo.Graph
         }
         
         gp.CloseFigure();
-        g.FillPath(this.m_FillBrush,gp);
+        g.FillPath(this._fillBrush,gp);
         gp.Reset();
       }
 
-      if(this.m_bLineSymbolGap && symbolGap>0)
+      if(this._useLineSymbolGap && symbolGap>0)
       {
         end = linepts.Length-1;
         float symbolGapSquared = symbolGap*symbolGap;
@@ -1025,12 +1046,12 @@ namespace Altaxo.Graph
             }
           }
         } // for loop
-        g.DrawPath(this.m_PenHolder,gp);
+        g.DrawPath(this._penHolder,gp);
         gp.Reset();
       }
       else
       {
-        g.DrawLines(this.m_PenHolder, linepts);
+        g.DrawLines(this._penHolder, linepts);
       }
     } // end function PaintOneRange StepVertMiddleLineStyle
 
@@ -1060,11 +1081,11 @@ namespace Altaxo.Graph
 
       GraphicsPath gp = new GraphicsPath();
 
-      if(m_bFillArea)
+      if(_fillArea)
       {
         gp.AddLines(linepts);
 
-        switch(this.m_FillDirection)
+        switch(this._fillDirection)
         {
           case XYPlotLineStyles.FillDirection.Bottom:
             // create a graphics path with the linePoints
@@ -1082,11 +1103,11 @@ namespace Altaxo.Graph
         }
         
         gp.CloseFigure();
-        g.FillPath(this.m_FillBrush,gp);
+        g.FillPath(this._fillBrush,gp);
         gp.Reset();
       }
 
-      if(this.m_bLineSymbolGap && symbolGap>0)
+      if(this._useLineSymbolGap && symbolGap>0)
       {
         end = linepts.Length-1;
         float symbolGapSquared = symbolGap*symbolGap;
@@ -1112,12 +1133,12 @@ namespace Altaxo.Graph
             }
           }
         } // for loop
-        g.DrawPath(this.m_PenHolder,gp);
+        g.DrawPath(this._penHolder,gp);
         gp.Reset();
       }
       else
       {
-        g.DrawLines(this.m_PenHolder, linepts);
+        g.DrawLines(this._penHolder, linepts);
       }
     } // end function PaintOneRange StepHorzMiddleLineStyle
 
@@ -1135,9 +1156,9 @@ namespace Altaxo.Graph
       GraphicsPath gp = new GraphicsPath();
       int i;
 
-      if(m_bFillArea)
+      if(_fillArea)
       {
-        switch(this.m_FillDirection)
+        switch(this._fillDirection)
         {
           case XYPlotLineStyles.FillDirection.Bottom:
             for(i=0;i<lastIdx;i+=2)
@@ -1174,7 +1195,7 @@ namespace Altaxo.Graph
         }
         
         gp.CloseFigure();
-        g.FillPath(this.m_FillBrush,gp);
+        g.FillPath(this._fillBrush,gp);
         gp.Reset();
       }
 
@@ -1184,7 +1205,7 @@ namespace Altaxo.Graph
       // to the exclusion criteria that a line only appears between two symbols (rel<0.5)
       // if the symbols do not overlap. So for a big array of points it is very likely
       // that the symbols overlap and no line between the symbols needs to be plotted
-      if(this.m_bLineSymbolGap && symbolGap>0)
+      if(this._useLineSymbolGap && symbolGap>0)
       {
         float xdiff,ydiff,rel,startx, starty, stopx, stopy;
         for(i=0;i<lastIdx;i+=2)
@@ -1203,7 +1224,7 @@ namespace Altaxo.Graph
             gp.StartFigure();
           }
         } // end for
-        g.DrawPath(this.m_PenHolder,gp);
+        g.DrawPath(this._penHolder,gp);
         gp.Reset();
       }
       else // no line symbol gap required, so we can use DrawLines to draw the lines
@@ -1213,7 +1234,7 @@ namespace Altaxo.Graph
           gp.AddLine(linepts[i].X,linepts[i].Y,linepts[i+1].X,linepts[i+1].Y);
           gp.StartFigure();
         } // end for
-        g.DrawPath(this.m_PenHolder,gp);
+        g.DrawPath(this._penHolder,gp);
         gp.Reset();
       }
     } // end function PaintOneRange Segment2LineStyle
@@ -1232,10 +1253,10 @@ namespace Altaxo.Graph
       GraphicsPath gp = new GraphicsPath();
       int i;
 
-      if(m_bFillArea)
+      if(_fillArea)
       {
         lastIdx = range.Length-2;
-        switch(this.m_FillDirection)
+        switch(this._fillDirection)
         {
           case XYPlotLineStyles.FillDirection.Bottom:
             for(i=0;i<lastIdx;i+=3)
@@ -1276,7 +1297,7 @@ namespace Altaxo.Graph
         }
         
         gp.CloseFigure();
-        g.FillPath(this.m_FillBrush,gp);
+        g.FillPath(this._fillBrush,gp);
         gp.Reset();
       }
 
@@ -1288,7 +1309,7 @@ namespace Altaxo.Graph
       // that the symbols overlap and no line between the symbols needs to be plotted
       lastIdx = range.Length-1;
 
-      if(this.m_bLineSymbolGap && symbolGap>0)
+      if(this._useLineSymbolGap && symbolGap>0)
       {
         float xdiff,ydiff,rel,startx, starty, stopx, stopy;
         for(i=0;i<lastIdx;i++)
@@ -1310,7 +1331,7 @@ namespace Altaxo.Graph
             }
           }
         } // end for
-        g.DrawPath(this.m_PenHolder,gp);
+        g.DrawPath(this._penHolder,gp);
         gp.Reset();
       }
       else // no line symbol gap required, so we can use DrawLines to draw the lines
@@ -1321,7 +1342,7 @@ namespace Altaxo.Graph
           gp.AddLine(linepts[i+1].X,linepts[i+1].Y,linepts[i+2].X,linepts[i+2].Y);
           gp.StartFigure();
         } // end for
-        g.DrawPath(this.m_PenHolder,gp);
+        g.DrawPath(this._penHolder,gp);
         gp.Reset();
       }
     } // end function PaintOneRange Segment3LineStyle
@@ -1349,7 +1370,7 @@ namespace Altaxo.Graph
 
     #region I2DPlotStyle Members
 
-    public bool IsColorSupported
+    public bool IsColorProvider
     {
       get
       {
@@ -1361,7 +1382,11 @@ namespace Altaxo.Graph
     {
       get
       {
-        return this.m_PenHolder.Color;
+        return this._penHolder.Color;
+      }
+      set
+      {
+        this._penHolder.Color = value;
       }
     }
 
@@ -1399,7 +1424,7 @@ namespace Altaxo.Graph
       }
     }
 
-    public void SetIncrementalStyle(I2DPlotStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, int step)
+    public void SetIncrementalStyle(I2DPlotItemStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, int step)
     {
       
         
@@ -1409,10 +1434,52 @@ namespace Altaxo.Graph
       
       // Color has to be the last, since during the previous operations the styles are cloned, 
       // inclusive the color
-      if((0!= (style & PlotGroupStyle.Color)) && pstemplate.IsColorSupported)
-        this.m_PenHolder.Color = AbstractXYPlotStyle.GetNextPlotColor(pstemplate.Color,step);
+      if((0!= (style & PlotGroupStyle.Color)) && pstemplate.IsColorProvider)
+        this._penHolder.Color = AbstractXYPlotStyle.GetNextPlotColor(pstemplate.Color,step);
     }
 
     #endregion
-  } // end class XYPlotLineStyle
+
+    #region I2DPlotItemStyle Members
+
+    public bool IsColorReceiver
+    {
+      get { return true; }
+    }
+
+    public bool IsSymbolSizeProvider
+    {
+      get { return false; }
+    }
+
+    public bool IsSymbolSizeReceiver
+    {
+      get { return true; } // we need the symbol size to determine the gap
+    }
+
+    float I2DPlotStyle.SymbolSize
+    {
+      get
+      {
+        throw new Exception("The method or operation is not implemented.");
+      }
+      set
+      {
+        this._useLineSymbolGap = value!=0;
+        this._symbolGap = value;
+      }
+    }
+
+    public void Paint(Graphics g, IPlotArea layer, PlotRangeList rangeList, PointF[] ptArray)
+    {
+      this.Paint(g, ptArray, rangeList, layer, this._symbolGap);
+    }
+
+    #endregion
+
+  
+
+
+
+} // end class XYPlotLineStyle
 }

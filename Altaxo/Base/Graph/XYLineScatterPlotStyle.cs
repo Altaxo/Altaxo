@@ -51,7 +51,7 @@ namespace Altaxo.Graph
     : AbstractXYPlotStyle,
     System.Runtime.Serialization.IDeserializationCallback,
     Main.IChangedEventSource, Main.IChildChangedEventSink,
-    I2DPlotStyle
+    I2DPlotItemStyle
   {
 
     protected XYPlotLineStyle     m_LineStyle;
@@ -876,7 +876,7 @@ namespace Altaxo.Graph
 
     #region I2DPlotStyle Members
 
-    public bool IsColorSupported
+    public bool IsColorProvider
     {
       get
       {
@@ -884,7 +884,7 @@ namespace Altaxo.Graph
       }
     }
 
-    Color Altaxo.Graph.I2DPlotStyle.Color
+    Color Altaxo.Graph.I2DPlotItemStyle.Color
     {
       get
       {
@@ -924,7 +924,7 @@ namespace Altaxo.Graph
       }
     }
 
-    public void SetIncrementalStyle(I2DPlotStyle pstemplate, PlotGroupStyle style, int step)
+    public void SetIncrementalStyle(I2DPlotItemStyle pstemplate, PlotGroupStyle style, int step)
     {
       XYLineScatterPlotStyle from = pstemplate as XYLineScatterPlotStyle;
       if(null!=from)
@@ -941,7 +941,7 @@ namespace Altaxo.Graph
       
       // Color has to be the last, since during the previous operations the styles are cloned, 
       // inclusive the color
-      if((0!= (style & PlotGroupStyle.Color)) && pstemplate.IsColorSupported)
+      if((0!= (style & PlotGroupStyle.Color)) && pstemplate.IsColorProvider)
         this.Color = GetNextPlotColor(pstemplate.Color,step);
     }
 

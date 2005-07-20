@@ -34,7 +34,8 @@ namespace Altaxo.Graph
     ICloneable,
     Main.IChangedEventSource,
     System.Runtime.Serialization.IDeserializationCallback, 
-    Main.IChildChangedEventSink
+    Main.IChildChangedEventSink,
+    I2DPlotStyle
   {
     /// <summary>The font of the label.</summary>
     protected System.Drawing.Font m_Font;
@@ -524,5 +525,49 @@ namespace Altaxo.Graph
     }
 
     #endregion
-  }
+
+    #region I2DPlotStyle Members
+
+    public bool IsColorProvider
+    {
+      get { return true; }
+    }
+
+    public bool IsColorReceiver
+    {
+      get { return this.IndependentColor == false; }
+    }
+
+    public bool IsSymbolSizeProvider
+    {
+      get { return true; }
+    }
+
+    public bool IsSymbolSizeReceiver
+    {
+      get { return true; }
+    }
+
+    public float SymbolSize
+    {
+      get
+      {
+        return this.FontSize;
+      }
+      set
+      {
+        this.FontSize = value;
+      }
+    }
+
+    public void Paint(Graphics g,
+     IPlotArea layer,
+     PlotRangeList rangeList,
+     PointF[] ptArray)
+    {
+      this.Paint(g, layer, null, rangeList, ptArray, null);
+    }
+
+    #endregion
+}
 }

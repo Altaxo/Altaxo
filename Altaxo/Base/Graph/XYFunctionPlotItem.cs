@@ -33,7 +33,7 @@ namespace Altaxo.Graph
   /// </summary>
   [SerializationSurrogate(0,typeof(XYFunctionPlotItem.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class XYFunctionPlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, Graph.I2DPlotStyle
+  public class XYFunctionPlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, Graph.I2DPlotItemStyle
   {
     protected XYFunctionPlotData m_PlotData;
     protected XYLineScatterPlotStyle  m_PlotStyle;
@@ -237,7 +237,7 @@ namespace Altaxo.Graph
     }
     #region I2DPlotStyle Members
 
-    public bool IsColorSupported
+    public bool IsColorProvider
     {
       get
       {
@@ -286,7 +286,7 @@ namespace Altaxo.Graph
       }
     }
 
-    public void SetIncrementalStyle(I2DPlotStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, int step)
+    public void SetIncrementalStyle(I2DPlotItemStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, int step)
     {
         ((XYLineScatterPlotStyle)m_PlotStyle).SetIncrementalStyle(pstemplate,style,step);
     }

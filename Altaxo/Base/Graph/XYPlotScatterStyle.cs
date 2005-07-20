@@ -123,7 +123,13 @@ namespace Altaxo.Graph
 
   [SerializationSurrogate(0,typeof(XYPlotScatterStyle.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class XYPlotScatterStyle : ICloneable, Main.IChangedEventSource, System.Runtime.Serialization.IDeserializationCallback, Main.IChildChangedEventSink
+  public class XYPlotScatterStyle 
+    : 
+    I2DPlotStyle,
+    ICloneable,
+    Main.IChangedEventSource,
+    System.Runtime.Serialization.IDeserializationCallback,
+    Main.IChildChangedEventSink
   {
     protected XYPlotScatterStyles.Shape     m_Shape;
     protected XYPlotScatterStyles.Style     m_Style;
@@ -549,5 +555,130 @@ namespace Altaxo.Graph
     }
 
     #endregion
-  }
+
+    #region I2DPlotItemStyle Members
+
+    public bool IsColorProvider
+    {
+      get { return true; }
+    }
+
+    public bool IsColorReceiver
+    {
+      get { return true; }
+    }
+
+    public bool IsSymbolSizeProvider
+    {
+      get { return true; }
+    }
+
+    public bool IsSymbolSizeReceiver
+    {
+      get { return true; }
+    }
+
+   
+
+    #endregion
+
+
+    public void Paint(Graphics g, IPlotArea layer, PlotRangeList rangeList, PointF[] ptArray)
+    {
+      // paint the drop style
+      if (this.DropLine != XYPlotScatterStyles.DropLine.NoDrop)
+      {
+        PenHolder ph = this.Pen;
+        ph.Cached = true;
+        Pen pen = ph.Pen; // do not dispose this pen, since it is cached
+        //       float xe=layer.Size.Width;
+        //       float ye=layer.Size.Height;
+
+        double xleft, xright, ytop, ybottom;
+        layer.LogicalToAreaConversion.Convert(0, 0, out xleft, out ybottom);
+        layer.LogicalToAreaConversion.Convert(1, 1, out xright, out ytop);
+        float xe = (float)xright;
+        float ye = (float)ybottom;
+
+        if ((0 != (this.DropLine & XYPlotScatterStyles.DropLine.Top)) && (0 != (this.DropLine & XYPlotScatterStyles.DropLine.Bottom)))
+        {
+          for (int j = 0; j < ptArray.Length; j++)
+          {
+            float x = ptArray[j].X;
+            g.DrawLine(pen, x, 0, x, ye);
+          }
+        }
+        else if (0 != (this.DropLine & XYPlotScatterStyles.DropLine.Top))
+        {
+          for (int j = 0; j < ptArray.Length; j++)
+          {
+            float x = ptArray[j].X;
+            float y = ptArray[j].Y;
+            g.DrawLine(pen, x, 0, x, y);
+          }
+        }
+        else if (0 != (this.DropLine & XYPlotScatterStyles.DropLine.Bottom))
+        {
+          for (int j = 0; j < ptArray.Length; j++)
+          {
+            float x = ptArray[j].X;
+            float y = ptArray[j].Y;
+            g.DrawLine(pen, x, y, x, ye);
+          }
+        }
+
+        if ((0 != (this.DropLine & XYPlotScatterStyles.DropLine.Left)) && (0 != (this.DropLine & XYPlotScatterStyles.DropLine.Right)))
+        {
+          for (int j = 0; j < ptArray.Length; j++)
+          {
+            float y = ptArray[j].Y;
+            g.DrawLine(pen, 0, y, xe, y);
+          }
+        }
+        else if (0 != (this.DropLine & XYPlotScatterStyles.DropLine.Right))
+        {
+          for (int j = 0; j < ptArray.Length; j++)
+          {
+            float x = ptArray[j].X;
+            float y = ptArray[j].Y;
+            g.DrawLine(pen, x, y, xe, y);
+          }
+        }
+        else if (0 != (this.DropLine & XYPlotScatterStyles.DropLine.Left))
+        {
+          for (int j = 0; j < ptArray.Length; j++)
+          {
+            float x = ptArray[j].X;
+            float y = ptArray[j].Y;
+            g.DrawLine(pen, 0, y, x, y);
+          }
+        }
+      } // end paint the drop style
+
+
+      // paint the scatter style
+      if (this.Shape != XYPlotScatterStyles.Shape.NoSymbol)
+      {
+        // save the graphics stat since we have to translate the origin
+        System.Drawing.Drawing2D.GraphicsState gs = g.Save();
+
+
+        float xpos = 0, ypos = 0;
+        float xdiff, ydiff;
+        for (int j = 0; j < ptArray.Length; j++)
+        {
+          xdiff = ptArray[j].X - xpos;
+          ydiff = ptArray[j].Y - ypos;
+          xpos = ptArray[j].X;
+          ypos = ptArray[j].Y;
+          g.TranslateTransform(xdiff, ydiff);
+          this.Paint(g);
+        } // end for
+
+        g.Restore(gs); // Restore the graphics state
+
+      }
+    }
+
+}
 }

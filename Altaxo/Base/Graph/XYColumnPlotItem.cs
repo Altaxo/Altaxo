@@ -36,7 +36,7 @@ namespace Altaxo.Graph
   /// </summary>
   [SerializationSurrogate(0,typeof(XYColumnPlotItem.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class XYColumnPlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, IXBoundsHolder, IYBoundsHolder, Graph.I2DPlotStyle
+  public class XYColumnPlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, IXBoundsHolder, IYBoundsHolder, Graph.I2DPlotItemStyle
   {
 
     protected XYColumnPlotData m_PlotAssociation;
@@ -411,11 +411,11 @@ namespace Altaxo.Graph
 
     #region I2DPlotStyle Members
 
-    public bool IsColorSupported
+    public bool IsColorProvider
     {
       get
       {
-        return this.m_PlotStyle.IsColorSupported;
+        return this.m_PlotStyle.IsColorProvider;
       }
     }
 
@@ -459,7 +459,7 @@ namespace Altaxo.Graph
       }
     }
 
-    public void SetIncrementalStyle(I2DPlotStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, int step)
+    public void SetIncrementalStyle(I2DPlotItemStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, int step)
     {
       this.m_PlotStyle.SetIncrementalStyle(pstemplate,style,step);
     }

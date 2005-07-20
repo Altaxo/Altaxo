@@ -206,12 +206,12 @@ namespace Altaxo.Graph
     /// The size and position of the printable area of the entire graph document.
     /// Needed to calculate "relative to page size" layer size values.
     /// </summary>
-    protected RectangleF m_PrintableGraphBounds;
+    protected RectangleF _cachedPrintableGraphBounds;
     /// <summary>
     /// The cached layer position in points (1/72 inch) relative to the upper left corner
     /// of the graph document (upper left corner of the printable area).
     /// </summary>
-    protected PointF m_LayerPosition = new PointF(0,0);
+    protected PointF _cachedLayerPosition = new PointF(0,0);
 
 
     /// <summary>
@@ -221,17 +221,17 @@ namespace Altaxo.Graph
     /// In case the size is absolute (see <see cref="SizeType"/>), this is the size of the layer. Otherwise
     /// it is only the cached value for the size, since the size is calculated then.
     /// </remarks>
-    protected SizeF  m_LayerSize = new SizeF(0,0);
+    protected SizeF  _cachedLayerSize = new SizeF(0,0);
 
-    protected Matrix m_ForwardMatrix = new Matrix();  // forward transformation m_ForwardMatrix
-    protected Matrix m_ReverseMatrix = new Matrix(); // inverse transformation m_ForwardMatrix
+    protected Matrix _cachedForwardMatrix = new Matrix();  // forward transformation m_ForwardMatrix
+    protected Matrix _cachedReverseMatrix = new Matrix(); // inverse transformation m_ForwardMatrix
 
     #endregion // Cached member variables
 
     #region Member variables
 
     /// <summary>True if the layer area should be filled with a background brush.</summary>
-    protected bool m_bFillLayerArea=false;
+    protected bool _fillLayerArea=false;
     /// <summary>The background brush for the layer area.</summary>
     protected BrushHolder m_LayerAreaFillBrush = new BrushHolder(Color.Aqua);
 
@@ -239,87 +239,127 @@ namespace Altaxo.Graph
     /// <summary>
     /// The layers x position value, either absolute or relative, as determined by <see cref="m_LayerXPositionType"/>.
     /// </summary>
-    protected double m_LayerXPosition = 0;
+    protected double _layerXPosition = 0;
 
     /// <summary>
     /// The type of the x position value, see <see cref="PositionType"/>.
     /// </summary>
-    protected PositionType m_LayerXPositionType=PositionType.AbsoluteValue;
+    protected PositionType _layerXPositionType=PositionType.AbsoluteValue;
 
     /// <summary>
     /// The layers y position value, either absolute or relative, as determined by <see cref="m_LayerYPositionType"/>.
     /// </summary>
-    protected double m_LayerYPosition = 0;
+    protected double _layerYPosition = 0;
 
     /// <summary>
     /// The type of the y position value, see <see cref="PositionType"/>.
     /// </summary>
-    protected PositionType m_LayerYPositionType=PositionType.AbsoluteValue;
+    protected PositionType _layerYPositionType=PositionType.AbsoluteValue;
 
 
     /// <summary>
     /// The width of the layer, either as absolute value in point (1/72 inch), or as 
     /// relative value as pointed out by <see cref="m_LayerWidthType"/>.
     /// </summary>
-    protected double m_LayerWidth=0;
+    protected double _layerWidth=0;
 
     /// <summary>
     /// The type of the value for the layer width, see <see cref="SizeType"/>.
     /// </summary>
-    protected SizeType m_LayerWidthType=SizeType.AbsoluteValue;
+    protected SizeType _layerWidthType=SizeType.AbsoluteValue;
 
     /// <summary>
     /// The height of the layer, either as absolute value in point (1/72 inch), or as 
     /// relative value as pointed out by <see cref="m_LayerHeightType"/>.
     /// </summary>
-    protected double m_LayerHeight= 0;
+    protected double _layerHeight= 0;
 
     /// <summary>
     /// The type of the value for the layer height, see <see cref="SizeType"/>.
     /// </summary>
-    protected SizeType m_LayerHeightType=SizeType.AbsoluteValue;
+    protected SizeType _layerHeightType=SizeType.AbsoluteValue;
 
     /// <summary>The rotation angle (in degrees) of the layer.</summary>
-    protected float  m_LayerAngle=0; // Rotation
+    protected float  _layerAngle=0; // Rotation
     
     /// <summary>The scaling factor of the layer, normally 1.</summary>
-    protected float  m_LayerScale=1;  // Scale
+    protected float  _layerScale=1;  // Scale
 
     /// <summary>If true, the data are clipped to the frame.</summary>
-    protected bool m_ClipDataToFrame=true;
+    protected bool _clipDataToFrame=true;
 
     /// <summary>The horizontal axis of the layer.</summary>
-    protected Axis m_xAxis; // the X-Axis
+    protected Axis _xAxis; // the X-Axis
     
     /// <summary>The vertical axis of the layer.</summary>
-    protected Axis m_yAxis; // the Y-Axis
+    protected Axis _yAxis; // the Y-Axis
 
     /// <summary>True if the left axis should be drawn.</summary>
-    protected bool m_ShowLeftAxis = true;
+    protected bool _showLeftAxis = true;
     /// <summary>True if the bottom axis should be drawn.</summary>
-    protected bool m_ShowBottomAxis = true;
+    protected bool _showBottomAxis = true;
     /// <summary>True if the right axis should be drawn.</summary>
-    protected bool m_ShowRightAxis = true;
+    protected bool _showRightAxis = true;
     /// <summary>True if the top axis should be drawn.</summary>
-    protected bool m_ShowTopAxis = true;
+    protected bool _showTopAxis = true;
 
-    protected XYAxisStyle m_LeftAxisStyle = new XYAxisStyle(EdgeType.Left);
-    protected XYAxisStyle m_BottomAxisStyle = new XYAxisStyle(EdgeType.Bottom);
-    protected XYAxisStyle m_RightAxisStyle = new XYAxisStyle(EdgeType.Right);
-    protected XYAxisStyle m_TopAxisStyle = new XYAxisStyle(EdgeType.Top);
+    protected XYAxisStyle _leftAxisStyle = new XYAxisStyle(EdgeType.Left);
+    protected XYAxisStyle _bottomAxisStyle = new XYAxisStyle(EdgeType.Bottom);
+    protected XYAxisStyle _rightAxisStyle = new XYAxisStyle(EdgeType.Right);
+    protected XYAxisStyle _topAxisStyle = new XYAxisStyle(EdgeType.Top);
 
-    protected AbstractXYAxisLabelStyle m_LeftLabelStyle = new XYAxisLabelStyle(EdgeType.Left);
-    protected AbstractXYAxisLabelStyle m_BottomLabelStyle = new XYAxisLabelStyle(EdgeType.Bottom);
-    protected AbstractXYAxisLabelStyle m_RightLabelStyle = new XYAxisLabelStyle(EdgeType.Right);
-    protected AbstractXYAxisLabelStyle m_TopLabelStyle = new XYAxisLabelStyle(EdgeType.Top);
+    protected AbstractXYAxisLabelStyle _leftLabelStyle = new XYAxisLabelStyle(EdgeType.Left);
+    protected AbstractXYAxisLabelStyle _bottomLabelStyle = new XYAxisLabelStyle(EdgeType.Bottom);
+    protected AbstractXYAxisLabelStyle _rightLabelStyle = new XYAxisLabelStyle(EdgeType.Right);
+    protected AbstractXYAxisLabelStyle _topLabelStyle = new XYAxisLabelStyle(EdgeType.Top);
 
-    protected TextGraphics m_LeftAxisTitle = null;
-    protected TextGraphics m_BottomAxisTitle = null;
-    protected TextGraphics m_RightAxisTitle = null;
-    protected TextGraphics m_TopAxisTitle = null;
+    protected TextGraphics _leftAxisTitle = null;
+    protected TextGraphics _bottomAxisTitle = null;
+    protected TextGraphics _rightAxisTitle = null;
+    protected TextGraphics _topAxisTitle = null;
 
-    protected TextGraphics m_Legend = null;
+    protected TextGraphics _legend = null;
 
+    /// <summary>
+    /// This class summarizes all members that are belonging to one edge of the layer.
+    /// </summary>
+    public class XYPlotLayerEdgeProperties
+    {
+      EdgeType _edgeType;
+      bool _showAxis;
+      protected XYAxisStyle _axisStyle = new XYAxisStyle(EdgeType.Left);
+      AbstractXYAxisLabelStyle _labelStyle = new XYAxisLabelStyle(EdgeType.Left);
+      TextGraphics _axisTitle = null;
+
+      public XYPlotLayerEdgeProperties(EdgeType type)
+      {
+        _edgeType = type;
+        _showAxis = true;
+        _axisStyle = new XYAxisStyle(_edgeType);
+        _labelStyle = new XYAxisLabelStyle(_edgeType);
+        _axisTitle = null;
+      }
+    }
+
+    class XYLayerAxisProperties
+    {
+      protected Axis _axis; // the X-Axis
+
+      /// <summary>Indicate if x-axis is linked to the linked layer x axis.</summary>
+      protected bool _linkAxis;
+
+      /// <summary>The value a of x-axis link for link of origin: org' = a + b*org.</summary>
+      protected double _linkAxisOrgA;
+
+      /// <summary>The value b of x-axis link for link of origin: org' = a + b*org.</summary>
+      protected double _linkAxisOrgB;
+
+      /// <summary>The value a of x-axis link for link of end: end' = a + b*end.</summary>
+      protected double _linkAxisEndA;
+
+      /// <summary>The value b of x-axis link for link of end: end' = a + b*end.</summary>
+      protected double _linkAxisEndB;
+    }
 
     protected GraphicsObjectCollection m_GraphObjects = new GraphicsObjectCollection();
 
@@ -415,30 +455,30 @@ namespace Altaxo.Graph
 
       
         // XYPlotLayer style
-        info.AddValue("FillLayerArea",s.m_bFillLayerArea);
+        info.AddValue("FillLayerArea",s._fillLayerArea);
         info.AddValue("LayerAreaFillBrush",s.m_LayerAreaFillBrush);
 
         // size, position, rotation and scale
         
-        info.AddValue("WidthType",s.m_LayerWidthType);
-        info.AddValue("HeightType",s.m_LayerHeightType);
-        info.AddValue("Width",s.m_LayerWidth);
-        info.AddValue("Height",s.m_LayerHeight);
-        info.AddValue("CachedSize",s.m_LayerSize);
+        info.AddValue("WidthType",s._layerWidthType);
+        info.AddValue("HeightType",s._layerHeightType);
+        info.AddValue("Width",s._layerWidth);
+        info.AddValue("Height",s._layerHeight);
+        info.AddValue("CachedSize",s._cachedLayerSize);
 
-        info.AddValue("XPositionType",s.m_LayerXPositionType);
-        info.AddValue("YPositionType",s.m_LayerYPositionType);
-        info.AddValue("XPosition",s.m_LayerXPosition);
-        info.AddValue("YPosition",s.m_LayerYPosition);
-        info.AddValue("CachedPosition",s.m_LayerPosition);
+        info.AddValue("XPositionType",s._layerXPositionType);
+        info.AddValue("YPositionType",s._layerYPositionType);
+        info.AddValue("XPosition",s._layerXPosition);
+        info.AddValue("YPosition",s._layerYPosition);
+        info.AddValue("CachedPosition",s._cachedLayerPosition);
 
-        info.AddValue("Rotation",s.m_LayerAngle);
-        info.AddValue("Scale",s.m_LayerScale);
+        info.AddValue("Rotation",s._layerAngle);
+        info.AddValue("Scale",s._layerScale);
 
         // axis related
 
-        info.AddValue("XAxis",s.m_xAxis);
-        info.AddValue("YAxis",s.m_yAxis);
+        info.AddValue("XAxis",s._xAxis);
+        info.AddValue("YAxis",s._yAxis);
         info.AddValue("LinkXAxis",s.m_LinkXAxis);
         info.AddValue("LinkYAxis",s.m_LinkYAxis);
         info.AddValue("LinkXAxisOrgA",s.m_LinkXAxisOrgA);
@@ -452,29 +492,29 @@ namespace Altaxo.Graph
 
       
         // Styles
-        info.AddValue("ShowLeftAxis",s.m_ShowLeftAxis);
-        info.AddValue("ShowBottomAxis",s.m_ShowBottomAxis);
-        info.AddValue("ShowRightAxis",s.m_ShowRightAxis);
-        info.AddValue("ShowTopAxis",s.m_ShowTopAxis);
+        info.AddValue("ShowLeftAxis",s._showLeftAxis);
+        info.AddValue("ShowBottomAxis",s._showBottomAxis);
+        info.AddValue("ShowRightAxis",s._showRightAxis);
+        info.AddValue("ShowTopAxis",s._showTopAxis);
 
-        info.AddValue("LeftAxisStyle",s.m_LeftAxisStyle);
-        info.AddValue("BottomAxisStyle",s.m_BottomAxisStyle);
-        info.AddValue("RightAxisStyle",s.m_RightAxisStyle);
-        info.AddValue("TopAxisStyle",s.m_TopAxisStyle);
+        info.AddValue("LeftAxisStyle",s._leftAxisStyle);
+        info.AddValue("BottomAxisStyle",s._bottomAxisStyle);
+        info.AddValue("RightAxisStyle",s._rightAxisStyle);
+        info.AddValue("TopAxisStyle",s._topAxisStyle);
       
       
-        info.AddValue("LeftLabelStyle",s.m_LeftLabelStyle);
-        info.AddValue("BottomLabelStyle",s.m_BottomLabelStyle);
-        info.AddValue("RightLabelStyle",s.m_RightLabelStyle);
-        info.AddValue("TopLabelStyle",s.m_TopLabelStyle);
+        info.AddValue("LeftLabelStyle",s._leftLabelStyle);
+        info.AddValue("BottomLabelStyle",s._bottomLabelStyle);
+        info.AddValue("RightLabelStyle",s._rightLabelStyle);
+        info.AddValue("TopLabelStyle",s._topLabelStyle);
       
     
         // Titles and legend
-        info.AddValue("LeftAxisTitle",s.m_LeftAxisTitle);
-        info.AddValue("BottomAxisTitle",s.m_BottomAxisTitle);
-        info.AddValue("RightAxisTitle",s.m_RightAxisTitle);
-        info.AddValue("TopAxisTitle",s.m_TopAxisTitle);
-        info.AddValue("Legend",s.m_Legend);
+        info.AddValue("LeftAxisTitle",s._leftAxisTitle);
+        info.AddValue("BottomAxisTitle",s._bottomAxisTitle);
+        info.AddValue("RightAxisTitle",s._rightAxisTitle);
+        info.AddValue("TopAxisTitle",s._topAxisTitle);
+        info.AddValue("Legend",s._legend);
       
         // XYPlotLayer specific
         info.AddValue("LinkedLayer",s.LinkedLayer);
@@ -498,32 +538,32 @@ namespace Altaxo.Graph
         XYPlotLayer s = (XYPlotLayer)obj;
       
         // XYPlotLayer style
-        s.m_bFillLayerArea = info.GetBoolean("FillLayerArea");
+        s._fillLayerArea = info.GetBoolean("FillLayerArea");
         s.m_LayerAreaFillBrush = (BrushHolder)info.GetValue("LayerAreaFillBrush",typeof(BrushHolder));
 
 
 
         // size, position, rotation and scale
         
-        s.m_LayerWidthType  = (SizeType)info.GetValue("WidthType",typeof(SizeType));
-        s.m_LayerHeightType = (SizeType)info.GetValue("HeightType",typeof(SizeType));
-        s.m_LayerWidth  = info.GetDouble("Width");
-        s.m_LayerHeight = info.GetDouble("Height");
-        s.m_LayerSize   = (SizeF)info.GetValue("CachedSize",typeof(SizeF));
+        s._layerWidthType  = (SizeType)info.GetValue("WidthType",typeof(SizeType));
+        s._layerHeightType = (SizeType)info.GetValue("HeightType",typeof(SizeType));
+        s._layerWidth  = info.GetDouble("Width");
+        s._layerHeight = info.GetDouble("Height");
+        s._cachedLayerSize   = (SizeF)info.GetValue("CachedSize",typeof(SizeF));
 
-        s.m_LayerXPositionType = (PositionType)info.GetValue("XPositionType",typeof(PositionType));
-        s.m_LayerYPositionType = (PositionType)info.GetValue("YPositionType",typeof(PositionType));
-        s.m_LayerXPosition = info.GetDouble("XPosition");
-        s.m_LayerYPosition = info.GetDouble("YPosition");
-        s.m_LayerPosition = (PointF)info.GetValue("CachedPosition",typeof(PointF));
+        s._layerXPositionType = (PositionType)info.GetValue("XPositionType",typeof(PositionType));
+        s._layerYPositionType = (PositionType)info.GetValue("YPositionType",typeof(PositionType));
+        s._layerXPosition = info.GetDouble("XPosition");
+        s._layerYPosition = info.GetDouble("YPosition");
+        s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition",typeof(PointF));
 
-        s.m_LayerAngle  = info.GetSingle("Rotation");
-        s.m_LayerScale = info.GetSingle("Scale");
+        s._layerAngle  = info.GetSingle("Rotation");
+        s._layerScale = info.GetSingle("Scale");
 
         // axis related
 
-        s.m_xAxis = (Axis)info.GetValue("XAxis",typeof(Axis));
-        s.m_yAxis = (Axis)info.GetValue("YAxis",typeof(Axis));
+        s._xAxis = (Axis)info.GetValue("XAxis",typeof(Axis));
+        s._yAxis = (Axis)info.GetValue("YAxis",typeof(Axis));
         s.m_LinkXAxis = info.GetBoolean("LinkXAxis");
         s.m_LinkYAxis = info.GetBoolean("LinkYAxis");
         s.m_LinkXAxisOrgA = info.GetDouble("LinkXAxisOrgA");
@@ -537,29 +577,29 @@ namespace Altaxo.Graph
 
 
         // Styles
-        s.m_ShowLeftAxis = info.GetBoolean("ShowLeftAxis");
-        s.m_ShowBottomAxis = info.GetBoolean("ShowBottomAxis");
-        s.m_ShowRightAxis = info.GetBoolean("ShowRightAxis");
-        s.m_ShowTopAxis = info.GetBoolean("ShowTopAxis");
+        s._showLeftAxis = info.GetBoolean("ShowLeftAxis");
+        s._showBottomAxis = info.GetBoolean("ShowBottomAxis");
+        s._showRightAxis = info.GetBoolean("ShowRightAxis");
+        s._showTopAxis = info.GetBoolean("ShowTopAxis");
 
-        s.m_LeftAxisStyle = (Graph.XYAxisStyle)info.GetValue("LeftAxisStyle",typeof(Graph.XYAxisStyle));
-        s.m_BottomAxisStyle = (Graph.XYAxisStyle)info.GetValue("BottomAxisStyle",typeof(Graph.XYAxisStyle));
-        s.m_RightAxisStyle = (Graph.XYAxisStyle)info.GetValue("RightAxisStyle",typeof(Graph.XYAxisStyle));
-        s.m_TopAxisStyle = (Graph.XYAxisStyle)info.GetValue("TopAxisStyle",typeof(Graph.XYAxisStyle));
+        s._leftAxisStyle = (Graph.XYAxisStyle)info.GetValue("LeftAxisStyle",typeof(Graph.XYAxisStyle));
+        s._bottomAxisStyle = (Graph.XYAxisStyle)info.GetValue("BottomAxisStyle",typeof(Graph.XYAxisStyle));
+        s._rightAxisStyle = (Graph.XYAxisStyle)info.GetValue("RightAxisStyle",typeof(Graph.XYAxisStyle));
+        s._topAxisStyle = (Graph.XYAxisStyle)info.GetValue("TopAxisStyle",typeof(Graph.XYAxisStyle));
       
       
-        s.m_LeftLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("LeftLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
-        s.m_BottomLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("BottomLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
-        s.m_RightLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("RightLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
-        s.m_TopLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("TopLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
+        s._leftLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("LeftLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
+        s._bottomLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("BottomLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
+        s._rightLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("RightLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
+        s._topLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("TopLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
       
       
         // Titles and legend
-        s.m_LeftAxisTitle = (Graph.TextGraphics)info.GetValue("LeftAxisTitle",typeof(Graph.TextGraphics));
-        s.m_BottomAxisTitle = (Graph.TextGraphics)info.GetValue("BottomAxisTitle",typeof(Graph.TextGraphics));
-        s.m_RightAxisTitle = (Graph.TextGraphics)info.GetValue("RightAxisTitle",typeof(Graph.TextGraphics));
-        s.m_TopAxisTitle = (Graph.TextGraphics)info.GetValue("TopAxisTitle",typeof(Graph.TextGraphics));
-        s.m_Legend = (Graph.TextGraphics)info.GetValue("Legend",typeof(Graph.TextGraphics));
+        s._leftAxisTitle = (Graph.TextGraphics)info.GetValue("LeftAxisTitle",typeof(Graph.TextGraphics));
+        s._bottomAxisTitle = (Graph.TextGraphics)info.GetValue("BottomAxisTitle",typeof(Graph.TextGraphics));
+        s._rightAxisTitle = (Graph.TextGraphics)info.GetValue("RightAxisTitle",typeof(Graph.TextGraphics));
+        s._topAxisTitle = (Graph.TextGraphics)info.GetValue("TopAxisTitle",typeof(Graph.TextGraphics));
+        s._legend = (Graph.TextGraphics)info.GetValue("Legend",typeof(Graph.TextGraphics));
       
         // XYPlotLayer specific
         s.m_LinkedLayer = (XYPlotLayer)info.GetValue("LinkedLayer",typeof(XYPlotLayer));
@@ -579,30 +619,30 @@ namespace Altaxo.Graph
       {
         XYPlotLayer s = (XYPlotLayer)obj;
         // XYPlotLayer style
-        info.AddValue("FillLayerArea",s.m_bFillLayerArea);
+        info.AddValue("FillLayerArea",s._fillLayerArea);
         info.AddValue("LayerAreaFillBrush",s.m_LayerAreaFillBrush);
 
         // size, position, rotation and scale
         
-        info.AddValue("WidthType",s.m_LayerWidthType);
-        info.AddValue("HeightType",s.m_LayerHeightType);
-        info.AddValue("Width",s.m_LayerWidth);
-        info.AddValue("Height",s.m_LayerHeight);
-        info.AddValue("CachedSize",s.m_LayerSize);
+        info.AddValue("WidthType",s._layerWidthType);
+        info.AddValue("HeightType",s._layerHeightType);
+        info.AddValue("Width",s._layerWidth);
+        info.AddValue("Height",s._layerHeight);
+        info.AddValue("CachedSize",s._cachedLayerSize);
 
-        info.AddValue("XPositionType",s.m_LayerXPositionType);
-        info.AddValue("YPositionType",s.m_LayerYPositionType);
-        info.AddValue("XPosition",s.m_LayerXPosition);
-        info.AddValue("YPosition",s.m_LayerYPosition);
-        info.AddValue("CachedPosition",s.m_LayerPosition);
+        info.AddValue("XPositionType",s._layerXPositionType);
+        info.AddValue("YPositionType",s._layerYPositionType);
+        info.AddValue("XPosition",s._layerXPosition);
+        info.AddValue("YPosition",s._layerYPosition);
+        info.AddValue("CachedPosition",s._cachedLayerPosition);
 
-        info.AddValue("Rotation",s.m_LayerAngle);
-        info.AddValue("Scale",s.m_LayerScale);
+        info.AddValue("Rotation",s._layerAngle);
+        info.AddValue("Scale",s._layerScale);
 
         // axis related
 
-        info.AddValue("XAxis",s.m_xAxis);
-        info.AddValue("YAxis",s.m_yAxis);
+        info.AddValue("XAxis",s._xAxis);
+        info.AddValue("YAxis",s._yAxis);
         info.AddValue("LinkXAxis",s.m_LinkXAxis);
         info.AddValue("LinkYAxis",s.m_LinkYAxis);
         info.AddValue("LinkXAxisOrgA",s.m_LinkXAxisOrgA);
@@ -616,29 +656,29 @@ namespace Altaxo.Graph
 
       
         // Styles
-        info.AddValue("ShowLeftAxis",s.m_ShowLeftAxis);
-        info.AddValue("ShowBottomAxis",s.m_ShowBottomAxis);
-        info.AddValue("ShowRightAxis",s.m_ShowRightAxis);
-        info.AddValue("ShowTopAxis",s.m_ShowTopAxis);
+        info.AddValue("ShowLeftAxis",s._showLeftAxis);
+        info.AddValue("ShowBottomAxis",s._showBottomAxis);
+        info.AddValue("ShowRightAxis",s._showRightAxis);
+        info.AddValue("ShowTopAxis",s._showTopAxis);
 
-        info.AddValue("LeftAxisStyle",s.m_LeftAxisStyle);
-        info.AddValue("BottomAxisStyle",s.m_BottomAxisStyle);
-        info.AddValue("RightAxisStyle",s.m_RightAxisStyle);
-        info.AddValue("TopAxisStyle",s.m_TopAxisStyle);
+        info.AddValue("LeftAxisStyle",s._leftAxisStyle);
+        info.AddValue("BottomAxisStyle",s._bottomAxisStyle);
+        info.AddValue("RightAxisStyle",s._rightAxisStyle);
+        info.AddValue("TopAxisStyle",s._topAxisStyle);
       
       
-        info.AddValue("LeftLabelStyle",s.m_LeftLabelStyle);
-        info.AddValue("BottomLabelStyle",s.m_BottomLabelStyle);
-        info.AddValue("RightLabelStyle",s.m_RightLabelStyle);
-        info.AddValue("TopLabelStyle",s.m_TopLabelStyle);
+        info.AddValue("LeftLabelStyle",s._leftLabelStyle);
+        info.AddValue("BottomLabelStyle",s._bottomLabelStyle);
+        info.AddValue("RightLabelStyle",s._rightLabelStyle);
+        info.AddValue("TopLabelStyle",s._topLabelStyle);
       
     
         // Titles and legend
-        info.AddValue("LeftAxisTitle",s.m_LeftAxisTitle);
-        info.AddValue("BottomAxisTitle",s.m_BottomAxisTitle);
-        info.AddValue("RightAxisTitle",s.m_RightAxisTitle);
-        info.AddValue("TopAxisTitle",s.m_TopAxisTitle);
-        info.AddValue("Legend",s.m_Legend);
+        info.AddValue("LeftAxisTitle",s._leftAxisTitle);
+        info.AddValue("BottomAxisTitle",s._bottomAxisTitle);
+        info.AddValue("RightAxisTitle",s._rightAxisTitle);
+        info.AddValue("TopAxisTitle",s._topAxisTitle);
+        info.AddValue("Legend",s._legend);
       
         // XYPlotLayer specific
         info.AddValue("LinkedLayer", null!=s.m_LinkedLayer ? Main.DocumentPath.GetRelativePathFromTo(s,s.m_LinkedLayer) : null);
@@ -658,32 +698,32 @@ namespace Altaxo.Graph
         XYPlotLayer s = null!=o ? (XYPlotLayer)o : new XYPlotLayer();
 
         // XYPlotLayer style
-        s.m_bFillLayerArea = info.GetBoolean("FillLayerArea");
+        s._fillLayerArea = info.GetBoolean("FillLayerArea");
         s.m_LayerAreaFillBrush = (BrushHolder)info.GetValue("LayerAreaFillBrush",typeof(BrushHolder));
 
 
 
         // size, position, rotation and scale
         
-        s.m_LayerWidthType  = (SizeType)info.GetValue("WidthType",typeof(SizeType));
-        s.m_LayerHeightType = (SizeType)info.GetValue("HeightType",typeof(SizeType));
-        s.m_LayerWidth  = info.GetDouble("Width");
-        s.m_LayerHeight = info.GetDouble("Height");
-        s.m_LayerSize   = (SizeF)info.GetValue("CachedSize",typeof(SizeF));
+        s._layerWidthType  = (SizeType)info.GetValue("WidthType",typeof(SizeType));
+        s._layerHeightType = (SizeType)info.GetValue("HeightType",typeof(SizeType));
+        s._layerWidth  = info.GetDouble("Width");
+        s._layerHeight = info.GetDouble("Height");
+        s._cachedLayerSize   = (SizeF)info.GetValue("CachedSize",typeof(SizeF));
 
-        s.m_LayerXPositionType = (PositionType)info.GetValue("XPositionType",typeof(PositionType));
-        s.m_LayerYPositionType = (PositionType)info.GetValue("YPositionType",typeof(PositionType));
-        s.m_LayerXPosition = info.GetDouble("XPosition");
-        s.m_LayerYPosition = info.GetDouble("YPosition");
-        s.m_LayerPosition = (PointF)info.GetValue("CachedPosition",typeof(PointF));
+        s._layerXPositionType = (PositionType)info.GetValue("XPositionType",typeof(PositionType));
+        s._layerYPositionType = (PositionType)info.GetValue("YPositionType",typeof(PositionType));
+        s._layerXPosition = info.GetDouble("XPosition");
+        s._layerYPosition = info.GetDouble("YPosition");
+        s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition",typeof(PointF));
 
-        s.m_LayerAngle  = info.GetSingle("Rotation");
-        s.m_LayerScale = info.GetSingle("Scale");
+        s._layerAngle  = info.GetSingle("Rotation");
+        s._layerScale = info.GetSingle("Scale");
 
         // axis related
 
-        s.m_xAxis = (Axis)info.GetValue("XAxis",typeof(Axis));
-        s.m_yAxis = (Axis)info.GetValue("YAxis",typeof(Axis));
+        s._xAxis = (Axis)info.GetValue("XAxis",typeof(Axis));
+        s._yAxis = (Axis)info.GetValue("YAxis",typeof(Axis));
         s.m_LinkXAxis = info.GetBoolean("LinkXAxis");
         s.m_LinkYAxis = info.GetBoolean("LinkYAxis");
         s.m_LinkXAxisOrgA = info.GetDouble("LinkXAxisOrgA");
@@ -697,29 +737,29 @@ namespace Altaxo.Graph
 
 
         // Styles
-        s.m_ShowLeftAxis = info.GetBoolean("ShowLeftAxis");
-        s.m_ShowBottomAxis = info.GetBoolean("ShowBottomAxis");
-        s.m_ShowRightAxis = info.GetBoolean("ShowRightAxis");
-        s.m_ShowTopAxis = info.GetBoolean("ShowTopAxis");
+        s._showLeftAxis = info.GetBoolean("ShowLeftAxis");
+        s._showBottomAxis = info.GetBoolean("ShowBottomAxis");
+        s._showRightAxis = info.GetBoolean("ShowRightAxis");
+        s._showTopAxis = info.GetBoolean("ShowTopAxis");
 
-        s.m_LeftAxisStyle = (Graph.XYAxisStyle)info.GetValue("LeftAxisStyle",typeof(Graph.XYAxisStyle));
-        s.m_BottomAxisStyle = (Graph.XYAxisStyle)info.GetValue("BottomAxisStyle",typeof(Graph.XYAxisStyle));
-        s.m_RightAxisStyle = (Graph.XYAxisStyle)info.GetValue("RightAxisStyle",typeof(Graph.XYAxisStyle));
-        s.m_TopAxisStyle = (Graph.XYAxisStyle)info.GetValue("TopAxisStyle",typeof(Graph.XYAxisStyle));
+        s._leftAxisStyle = (Graph.XYAxisStyle)info.GetValue("LeftAxisStyle",typeof(Graph.XYAxisStyle));
+        s._bottomAxisStyle = (Graph.XYAxisStyle)info.GetValue("BottomAxisStyle",typeof(Graph.XYAxisStyle));
+        s._rightAxisStyle = (Graph.XYAxisStyle)info.GetValue("RightAxisStyle",typeof(Graph.XYAxisStyle));
+        s._topAxisStyle = (Graph.XYAxisStyle)info.GetValue("TopAxisStyle",typeof(Graph.XYAxisStyle));
       
       
-        s.m_LeftLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("LeftLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
-        s.m_BottomLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("BottomLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
-        s.m_RightLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("RightLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
-        s.m_TopLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("TopLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
+        s._leftLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("LeftLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
+        s._bottomLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("BottomLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
+        s._rightLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("RightLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
+        s._topLabelStyle = (Graph.AbstractXYAxisLabelStyle)info.GetValue("TopLabelStyle",typeof(Graph.AbstractXYAxisLabelStyle));
       
       
         // Titles and legend
-        s.m_LeftAxisTitle = (Graph.TextGraphics)info.GetValue("LeftAxisTitle",typeof(Graph.TextGraphics));
-        s.m_BottomAxisTitle = (Graph.TextGraphics)info.GetValue("BottomAxisTitle",typeof(Graph.TextGraphics));
-        s.m_RightAxisTitle = (Graph.TextGraphics)info.GetValue("RightAxisTitle",typeof(Graph.TextGraphics));
-        s.m_TopAxisTitle = (Graph.TextGraphics)info.GetValue("TopAxisTitle",typeof(Graph.TextGraphics));
-        s.m_Legend = (Graph.TextGraphics)info.GetValue("Legend",typeof(Graph.TextGraphics));
+        s._leftAxisTitle = (Graph.TextGraphics)info.GetValue("LeftAxisTitle",typeof(Graph.TextGraphics));
+        s._bottomAxisTitle = (Graph.TextGraphics)info.GetValue("BottomAxisTitle",typeof(Graph.TextGraphics));
+        s._rightAxisTitle = (Graph.TextGraphics)info.GetValue("RightAxisTitle",typeof(Graph.TextGraphics));
+        s._topAxisTitle = (Graph.TextGraphics)info.GetValue("TopAxisTitle",typeof(Graph.TextGraphics));
+        s._legend = (Graph.TextGraphics)info.GetValue("Legend",typeof(Graph.TextGraphics));
       
         // XYPlotLayer specific
         Main.DocumentPath linkedLayer = (Main.DocumentPath)info.GetValue("LinkedLayer",typeof(XYPlotLayer));
@@ -773,7 +813,7 @@ namespace Altaxo.Graph
 
         XYPlotLayer s = (XYPlotLayer)obj;
         // XYPlotLayer style
-        info.AddValue("ClipDataToFrame",s.m_ClipDataToFrame);
+        info.AddValue("ClipDataToFrame",s._clipDataToFrame);
       }
 
       public new object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
@@ -782,7 +822,7 @@ namespace Altaxo.Graph
         XYPlotLayer s = null!=o ? (XYPlotLayer)o : new XYPlotLayer();
         base.Deserialize(o,info,parent);
 
-        s.m_ClipDataToFrame = info.GetBoolean("ClipDataToFrame");
+        s._clipDataToFrame = info.GetBoolean("ClipDataToFrame");
 
         return s;
       }
@@ -796,8 +836,8 @@ namespace Altaxo.Graph
     /// <param name="obj">Not used.</param>
     public void OnDeserialization(object obj)
     {
-      m_ForwardMatrix = new Matrix();
-      m_ReverseMatrix = new Matrix();
+      _cachedForwardMatrix = new Matrix();
+      _cachedReverseMatrix = new Matrix();
       CalculateMatrix();
 
       CreateEventLinks();
@@ -813,32 +853,32 @@ namespace Altaxo.Graph
     public XYPlotLayer(XYPlotLayer from)
     {
       // XYPlotLayer style
-      this.m_bFillLayerArea = from.m_bFillLayerArea;
+      this._fillLayerArea = from._fillLayerArea;
       this.m_LayerAreaFillBrush = null==from.m_LayerAreaFillBrush ? null : (BrushHolder)from.m_LayerAreaFillBrush.Clone();
 
       // size, position, rotation and scale
-      this.m_LayerWidthType  = from.m_LayerWidthType;
-      this.m_LayerHeightType = from.m_LayerHeightType;
-      this.m_LayerWidth  = from.m_LayerWidth;
-      this.m_LayerHeight = from.m_LayerHeight ;
-      this.m_LayerSize   = from.m_LayerSize;
+      this._layerWidthType  = from._layerWidthType;
+      this._layerHeightType = from._layerHeightType;
+      this._layerWidth  = from._layerWidth;
+      this._layerHeight = from._layerHeight ;
+      this._cachedLayerSize   = from._cachedLayerSize;
 
       this._LogicalToAreaConverter = new LogicalToAreaConverter(this);
       this._AreaToLogicalConverter = new AreaToLogicalConverter(this);
 
-      this.m_LayerXPositionType = from.m_LayerXPositionType;
-      this.m_LayerYPositionType = from.m_LayerYPositionType;
-      this.m_LayerXPosition = from.m_LayerXPosition ;
-      this.m_LayerYPosition = from.m_LayerYPosition;
-      this.m_LayerPosition = from.m_LayerPosition;
+      this._layerXPositionType = from._layerXPositionType;
+      this._layerYPositionType = from._layerYPositionType;
+      this._layerXPosition = from._layerXPosition ;
+      this._layerYPosition = from._layerYPosition;
+      this._cachedLayerPosition = from._cachedLayerPosition;
 
-      this.m_LayerAngle  =from.m_LayerAngle;
-      this.m_LayerScale = from.m_LayerScale;
+      this._layerAngle  =from._layerAngle;
+      this._layerScale = from._layerScale;
 
       // axis related
 
-      this.m_xAxis = null==from.m_xAxis ? null : (Axis)from.m_xAxis.Clone() ;
-      this.m_yAxis = null==from.m_yAxis ? null : (Axis)from.m_yAxis.Clone() ;
+      this._xAxis = null==from._xAxis ? null : (Axis)from._xAxis.Clone() ;
+      this._yAxis = null==from._yAxis ? null : (Axis)from._yAxis.Clone() ;
       this.m_LinkXAxis = from.m_LinkXAxis;
       this.m_LinkYAxis = from.m_LinkYAxis;
       this.m_LinkXAxisOrgA = from.m_LinkXAxisOrgA;
@@ -852,29 +892,29 @@ namespace Altaxo.Graph
 
 
       // Styles
-      this.m_ShowLeftAxis = from.m_ShowLeftAxis;
-      this.m_ShowBottomAxis = from.m_ShowBottomAxis;
-      this.m_ShowRightAxis = from.m_ShowRightAxis;
-      this.m_ShowTopAxis = from.m_ShowTopAxis;
+      this._showLeftAxis = from._showLeftAxis;
+      this._showBottomAxis = from._showBottomAxis;
+      this._showRightAxis = from._showRightAxis;
+      this._showTopAxis = from._showTopAxis;
 
-      this.m_LeftAxisStyle = null==from.m_LeftAxisStyle ? null : (Graph.XYAxisStyle)from.m_LeftAxisStyle.Clone();
-      this.m_BottomAxisStyle = null==from.m_BottomAxisStyle ? null : (Graph.XYAxisStyle)from.m_BottomAxisStyle.Clone();
-      this.m_RightAxisStyle = null==from.m_RightAxisStyle ? null : (Graph.XYAxisStyle)from.m_RightAxisStyle.Clone();
-      this.m_TopAxisStyle = null==from.m_TopAxisStyle ? null : (Graph.XYAxisStyle)from.m_TopAxisStyle.Clone();
+      this._leftAxisStyle = null==from._leftAxisStyle ? null : (Graph.XYAxisStyle)from._leftAxisStyle.Clone();
+      this._bottomAxisStyle = null==from._bottomAxisStyle ? null : (Graph.XYAxisStyle)from._bottomAxisStyle.Clone();
+      this._rightAxisStyle = null==from._rightAxisStyle ? null : (Graph.XYAxisStyle)from._rightAxisStyle.Clone();
+      this._topAxisStyle = null==from._topAxisStyle ? null : (Graph.XYAxisStyle)from._topAxisStyle.Clone();
       
       
-      this.m_LeftLabelStyle = null==from.m_LeftLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from.m_LeftLabelStyle.Clone();
-      this.m_BottomLabelStyle = null==from.m_BottomLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from.m_BottomLabelStyle.Clone();
-      this.m_RightLabelStyle = null==from.m_RightLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from.m_RightLabelStyle.Clone();
-      this.m_TopLabelStyle = null==from.m_TopLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from.m_TopLabelStyle.Clone();
+      this._leftLabelStyle = null==from._leftLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._leftLabelStyle.Clone();
+      this._bottomLabelStyle = null==from._bottomLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._bottomLabelStyle.Clone();
+      this._rightLabelStyle = null==from._rightLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._rightLabelStyle.Clone();
+      this._topLabelStyle = null==from._topLabelStyle ? null : (Graph.AbstractXYAxisLabelStyle)from._topLabelStyle.Clone();
       
       
       // Titles and legend
-      this.m_LeftAxisTitle = null==from.m_LeftAxisTitle ? null : (Graph.TextGraphics)from.m_LeftAxisTitle.Clone();
-      this.m_BottomAxisTitle = null==from.m_BottomAxisTitle ? null : (Graph.TextGraphics)from.m_BottomAxisTitle.Clone();
-      this.m_RightAxisTitle = null==from.m_RightAxisTitle ? null : (Graph.TextGraphics)from.m_RightAxisTitle.Clone();
-      this.m_TopAxisTitle = null==from.m_TopAxisTitle ? null : (Graph.TextGraphics)from.m_TopAxisTitle.Clone();
-      this.m_Legend = null==from.m_Legend ? null : (Graph.TextGraphics)from.m_Legend.Clone();
+      this._leftAxisTitle = null==from._leftAxisTitle ? null : (Graph.TextGraphics)from._leftAxisTitle.Clone();
+      this._bottomAxisTitle = null==from._bottomAxisTitle ? null : (Graph.TextGraphics)from._bottomAxisTitle.Clone();
+      this._rightAxisTitle = null==from._rightAxisTitle ? null : (Graph.TextGraphics)from._rightAxisTitle.Clone();
+      this._topAxisTitle = null==from._topAxisTitle ? null : (Graph.TextGraphics)from._topAxisTitle.Clone();
+      this._legend = null==from._legend ? null : (Graph.TextGraphics)from._legend.Clone();
       
       // XYPlotLayer specific
       this.m_LinkedLayer = from.m_LinkedLayer; // do not clone here, parent collection's duty to fix this!
@@ -886,8 +926,8 @@ namespace Altaxo.Graph
       // special way neccessary to handle plot groups
       //this.m_PlotGroups = null==from.m_PlotGroups ? null : from.m_PlotGroups.Clone(this.m_PlotItems,from.m_PlotItems);
 
-      m_ForwardMatrix = new Matrix();
-      m_ReverseMatrix = new Matrix();
+      _cachedForwardMatrix = new Matrix();
+      _cachedReverseMatrix = new Matrix();
       CalculateMatrix();
 
       CreateEventLinks();
@@ -933,8 +973,8 @@ namespace Altaxo.Graph
       m_PlotItems = new Altaxo.Graph.PlotItemCollection(this);
 
       // create axes and add event handlers to them
-      m_xAxis = new LinearAxis(); // the X-Axis
-      m_yAxis = new LinearAxis(); // the Y-Axis
+      _xAxis = new LinearAxis(); // the X-Axis
+      _yAxis = new LinearAxis(); // the Y-Axis
 
     
     
@@ -955,26 +995,26 @@ namespace Altaxo.Graph
     void CreateEventLinks()
     {
       // restore the event chain
-      if(null!=m_xAxis) m_xAxis.Changed += new EventHandler(this.OnXAxisChangedEventHandler);
-      if(null!=m_yAxis) m_yAxis.Changed += new EventHandler(this.OnYAxisChangedEventHandler);
+      if(null!=_xAxis) _xAxis.Changed += new EventHandler(this.OnXAxisChangedEventHandler);
+      if(null!=_yAxis) _yAxis.Changed += new EventHandler(this.OnYAxisChangedEventHandler);
 
-      if(null!=m_LeftAxisStyle) m_LeftAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      if(null!=m_BottomAxisStyle) m_BottomAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      if(null!=m_RightAxisStyle) m_RightAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      if(null!=m_TopAxisStyle) m_TopAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if(null!=_leftAxisStyle) _leftAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if(null!=_bottomAxisStyle) _bottomAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if(null!=_rightAxisStyle) _rightAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if(null!=_topAxisStyle) _topAxisStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
-      if(null!=m_LeftLabelStyle) m_LeftLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      if(null!=m_BottomLabelStyle) m_BottomLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      if(null!=m_RightLabelStyle) m_RightLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      if(null!=m_TopLabelStyle) m_TopLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if(null!=_leftLabelStyle) _leftLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if(null!=_bottomLabelStyle) _bottomLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if(null!=_rightLabelStyle) _rightLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if(null!=_topLabelStyle) _topLabelStyle.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
     
-      if(null!=m_LeftAxisTitle) m_LeftAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      if(null!=m_BottomAxisTitle) m_BottomAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      if(null!=m_RightAxisTitle) m_RightAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
-      if(null!=m_TopAxisTitle) m_TopAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if(null!=_leftAxisTitle) _leftAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if(null!=_bottomAxisTitle) _bottomAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if(null!=_rightAxisTitle) _rightAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if(null!=_topAxisTitle) _topAxisTitle.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
-      if(null!=m_Legend) m_Legend.Changed += new EventHandler(this.OnChildChangedEventHandler);
+      if(null!=_legend) _legend.Changed += new EventHandler(this.OnChildChangedEventHandler);
 
       if(null!=m_LinkedLayer) m_LinkedLayer.AxesChanged += new EventHandler(this.OnLinkedLayerAxesChanged);
     
@@ -1012,16 +1052,16 @@ namespace Altaxo.Graph
     public void Remove(GraphicsObject go)
     {
       // test our own objects for removal (only that that _are_ removable)
-      if(object.ReferenceEquals(go,this.m_LeftAxisTitle))
-        m_LeftAxisTitle=null;
-      else if(object.ReferenceEquals(go,this.m_TopAxisTitle))
-        m_TopAxisTitle=null;
-      else if(object.ReferenceEquals(go,this.m_RightAxisTitle))
-        m_RightAxisTitle=null;
-      else if(object.ReferenceEquals(go,this.m_BottomAxisTitle))
-        m_BottomAxisTitle=null;
-      else if(object.ReferenceEquals(go,this.m_Legend))
-        m_Legend=null;
+      if(object.ReferenceEquals(go,this._leftAxisTitle))
+        _leftAxisTitle=null;
+      else if(object.ReferenceEquals(go,this._topAxisTitle))
+        _topAxisTitle=null;
+      else if(object.ReferenceEquals(go,this._rightAxisTitle))
+        _rightAxisTitle=null;
+      else if(object.ReferenceEquals(go,this._bottomAxisTitle))
+        _bottomAxisTitle=null;
+      else if(object.ReferenceEquals(go,this._legend))
+        _legend=null;
       else if(m_GraphObjects.Contains(go))
         m_GraphObjects.Remove(go);
 
@@ -1141,15 +1181,15 @@ namespace Altaxo.Graph
       // remove the legend if there are no plot curves on the layer
       if(PlotItems.Count==0)
       {
-        m_Legend=null;
+        _legend=null;
         OnInvalidate();
         return;
       }
 
       TextGraphics tgo;
 
-      if(m_Legend!=null)
-        tgo = new TextGraphics(m_Legend);
+      if(_legend!=null)
+        tgo = new TextGraphics(_legend);
       else
         tgo = new TextGraphics();
 
@@ -1162,13 +1202,13 @@ namespace Altaxo.Graph
       tgo.Text = strg.ToString();
 
       // if the position of the old legend is outside, use a new position
-      if(null==m_Legend || m_Legend.Position.X<0 || m_Legend.Position.Y<0 || 
-        m_Legend.Position.X>this.Size.Width || m_Legend.Position.Y>this.Size.Height)
+      if(null==_legend || _legend.Position.X<0 || _legend.Position.Y<0 || 
+        _legend.Position.X>this.Size.Width || _legend.Position.Y>this.Size.Height)
         tgo.SetPosition(new PointF(0.1f*this.Size.Width,0.1f*this.Size.Height));
       else
-        tgo.SetPosition(m_Legend.Position);
+        tgo.SetPosition(_legend.Position);
 
-      m_Legend = tgo;
+      _legend = tgo;
 
       OnInvalidate();
     }
@@ -1226,23 +1266,23 @@ namespace Altaxo.Graph
     /// </summary>
     public RectangleF PrintableGraphBounds
     {
-      get { return m_PrintableGraphBounds; }
+      get { return _cachedPrintableGraphBounds; }
     }
     public SizeF PrintableGraphSize
     {
-      get { return m_PrintableGraphBounds.Size; }
+      get { return _cachedPrintableGraphBounds.Size; }
     }
     public void SetPrintableGraphBounds(RectangleF val, bool bRescale)
     {
-      RectangleF oldBounds = m_PrintableGraphBounds;
+      RectangleF oldBounds = _cachedPrintableGraphBounds;
       RectangleF newBounds = val;
-      m_PrintableGraphBounds=val;
+      _cachedPrintableGraphBounds=val;
 
       
 
-      if(m_PrintableGraphBounds!=oldBounds && bRescale)
+      if(_cachedPrintableGraphBounds!=oldBounds && bRescale)
       {
-        SizeF      oldLayerSize     = this.m_LayerSize;
+        SizeF      oldLayerSize     = this._cachedLayerSize;
 
 
         double oldxdefsize = oldBounds.Width*(oldBounds.Width>oldBounds.Height ? _xDefSizeLandscape : _xDefSizePortrait);
@@ -1262,38 +1302,38 @@ namespace Altaxo.Graph
         double xoffs = newxdeforg - oldxdeforg*xscale;
         double yoffs = newydeforg - oldydeforg*yscale;
         
-        if(this.m_LayerXPositionType == PositionType.AbsoluteValue)
-          this.m_LayerXPosition = xoffs + this.m_LayerXPosition*xscale;
+        if(this._layerXPositionType == PositionType.AbsoluteValue)
+          this._layerXPosition = xoffs + this._layerXPosition*xscale;
 
-        if(this.m_LayerWidthType==SizeType.AbsoluteValue)
-          this.m_LayerWidth *= xscale;
+        if(this._layerWidthType==SizeType.AbsoluteValue)
+          this._layerWidth *= xscale;
 
-        if(this.m_LayerYPositionType == PositionType.AbsoluteValue)
-          this.m_LayerYPosition = yoffs + this.m_LayerYPosition*yscale;
+        if(this._layerYPositionType == PositionType.AbsoluteValue)
+          this._layerYPosition = yoffs + this._layerYPosition*yscale;
 
-        if(this.m_LayerHeightType == SizeType.AbsoluteValue)
-          this.m_LayerHeight *= yscale;
+        if(this._layerHeightType == SizeType.AbsoluteValue)
+          this._layerHeight *= yscale;
 
         CalculateMatrix();
         this.CalculateCachedSize();
 
         // scale the position of the inner items according to the ratio of the new size to the old size
         // note: only the size is important here, since all inner items are relative to the layer origin
-        SizeF     newLayerSize     = this.m_LayerSize;
+        SizeF     newLayerSize     = this._cachedLayerSize;
         xscale = newLayerSize.Width/oldLayerSize.Width;
         yscale = newLayerSize.Height/oldLayerSize.Height;
-        GraphicsObject.ScalePosition(this.m_LeftAxisTitle,xscale,yscale);
-        GraphicsObject.ScalePosition(this.m_BottomAxisTitle,xscale,yscale);
-        GraphicsObject.ScalePosition(this.m_RightAxisTitle,xscale,yscale);
-        GraphicsObject.ScalePosition(this.m_TopAxisTitle,xscale,yscale);
-        GraphicsObject.ScalePosition(this.m_Legend,xscale,yscale);
+        GraphicsObject.ScalePosition(this._leftAxisTitle,xscale,yscale);
+        GraphicsObject.ScalePosition(this._bottomAxisTitle,xscale,yscale);
+        GraphicsObject.ScalePosition(this._rightAxisTitle,xscale,yscale);
+        GraphicsObject.ScalePosition(this._topAxisTitle,xscale,yscale);
+        GraphicsObject.ScalePosition(this._legend,xscale,yscale);
         this.m_GraphObjects.ScalePosition(xscale,yscale);
       }
     }
 
     public PointF Position
     {
-      get { return this.m_LayerPosition; }
+      get { return this._cachedLayerPosition; }
       set
       {
         SetPosition(value.X,PositionType.AbsoluteValue,value.Y,PositionType.AbsoluteValue);
@@ -1302,7 +1342,7 @@ namespace Altaxo.Graph
 
     public SizeF Size
     {
-      get { return this.m_LayerSize; }
+      get { return this._cachedLayerSize; }
       set
       {
         SetSize(value.Width,SizeType.AbsoluteValue, value.Height,SizeType.AbsoluteValue);
@@ -1311,10 +1351,10 @@ namespace Altaxo.Graph
 
     public float Rotation
     {
-      get { return this.m_LayerAngle; }
+      get { return this._layerAngle; }
       set
       {
-        this.m_LayerAngle = value;
+        this._layerAngle = value;
         this.CalculateMatrix();
         this.OnInvalidate();
       }
@@ -1322,10 +1362,10 @@ namespace Altaxo.Graph
 
     public float Scale
     {
-      get { return this.m_LayerScale; }
+      get { return this._layerScale; }
       set
       {
-        this.m_LayerScale = value;
+        this._layerScale = value;
         this.CalculateMatrix();
         this.OnInvalidate();
       }
@@ -1333,19 +1373,19 @@ namespace Altaxo.Graph
 
     protected void CalculateMatrix()
     {
-      m_ForwardMatrix.Reset();
-      m_ForwardMatrix.Translate(m_LayerPosition.X,m_LayerPosition.Y);
-      m_ForwardMatrix.Scale(m_LayerScale,m_LayerScale);
-      m_ForwardMatrix.Rotate(m_LayerAngle);
-      m_ReverseMatrix=m_ForwardMatrix.Clone();
-      m_ReverseMatrix.Invert();
+      _cachedForwardMatrix.Reset();
+      _cachedForwardMatrix.Translate(_cachedLayerPosition.X,_cachedLayerPosition.Y);
+      _cachedForwardMatrix.Scale(_layerScale,_layerScale);
+      _cachedForwardMatrix.Rotate(_layerAngle);
+      _cachedReverseMatrix=_cachedForwardMatrix.Clone();
+      _cachedReverseMatrix.Invert();
     }
 
 
     public PointF GraphToLayerCoordinates(PointF pagecoordinates)
     {
       PointF[] pf = { pagecoordinates };
-      m_ReverseMatrix.TransformPoints(pf);
+      _cachedReverseMatrix.TransformPoints(pf);
       return pf[0];
     }
 
@@ -1356,7 +1396,7 @@ namespace Altaxo.Graph
     /// <param name="g">The graphics state to change.</param>
     public void GraphToLayerCoordinates(Graphics g)
     {
-      g.MultiplyTransform(m_ForwardMatrix);
+      g.MultiplyTransform(_cachedForwardMatrix);
     }
 
     /// <summary>
@@ -1369,7 +1409,7 @@ namespace Altaxo.Graph
       // not very intelligent, maybe there is a simpler way to transform without
       // taking the translation into account
       PointF[] pf = { new PointF(pagediff.X + this.Position.X, pagediff.Y + this.Position.Y) };
-      m_ReverseMatrix.TransformPoints(pf);
+      _cachedReverseMatrix.TransformPoints(pf);
       return pf[0];
     }
 
@@ -1382,7 +1422,7 @@ namespace Altaxo.Graph
     /// <returns>graphics path now in graph coordinates</returns>
     public GraphicsPath LayerToGraphCoordinates(GraphicsPath gp)
     {
-      gp.Transform(m_ForwardMatrix);
+      gp.Transform(_cachedForwardMatrix);
       return gp;
     }
 
@@ -1395,7 +1435,7 @@ namespace Altaxo.Graph
     public PointF LayerToGraphCoordinates(PointF layerCoordinates)
     {
       PointF[]result = new PointF[]{layerCoordinates}; 
-      m_ForwardMatrix.TransformPoints(result);
+      _cachedForwardMatrix.TransformPoints(result);
       return result[0];
     }
 
@@ -1403,10 +1443,10 @@ namespace Altaxo.Graph
 
     public void SetPosition(double x, PositionType xpostype, double y, PositionType ypostype)
     {
-      this.m_LayerXPosition = x;
-      this.m_LayerXPositionType = xpostype;
-      this.m_LayerYPosition = y;
-      this.m_LayerYPositionType = ypostype;
+      this._layerXPosition = x;
+      this._layerXPositionType = xpostype;
+      this._layerYPosition = y;
+      this._layerYPositionType = ypostype;
 
       CalculateCachedPosition();
     }
@@ -1581,11 +1621,11 @@ namespace Altaxo.Graph
     protected void CalculateCachedPosition()
     {
       PointF newPos = new PointF(
-        (float)XPositionToPointUnits(this.m_LayerXPosition,this.m_LayerXPositionType),
-        (float)YPositionToPointUnits(this.m_LayerYPosition, this.m_LayerYPositionType));
-      if(newPos != this.m_LayerPosition)
+        (float)XPositionToPointUnits(this._layerXPosition,this._layerXPositionType),
+        (float)YPositionToPointUnits(this._layerYPosition, this._layerYPositionType));
+      if(newPos != this._cachedLayerPosition)
       {
-        this.m_LayerPosition=newPos;
+        this._cachedLayerPosition=newPos;
         this.CalculateMatrix();
         OnPositionChanged();
       }
@@ -1594,10 +1634,10 @@ namespace Altaxo.Graph
 
     public void SetSize(double width, SizeType widthtype, double height, SizeType heighttype)
     {
-      this.m_LayerWidth = width;
-      this.m_LayerWidthType = widthtype;
-      this.m_LayerHeight = height;
-      this.m_LayerHeightType = heighttype;
+      this._layerWidth = width;
+      this._layerWidthType = widthtype;
+      this._layerHeight = height;
+      this._layerHeightType = heighttype;
 
       CalculateCachedSize();
     }
@@ -1688,11 +1728,11 @@ namespace Altaxo.Graph
     protected void CalculateCachedSize()
     {
       SizeF newSize = new SizeF(
-        (float)WidthToPointUnits(this.m_LayerWidth,this.m_LayerWidthType),
-        (float)HeightToPointUnits(this.m_LayerHeight, this.m_LayerHeightType));
-      if(newSize != this.m_LayerSize)
+        (float)WidthToPointUnits(this._layerWidth,this._layerWidthType),
+        (float)HeightToPointUnits(this._layerHeight, this._layerHeightType));
+      if(newSize != this._cachedLayerSize)
       {
-        this.m_LayerSize=newSize;
+        this._cachedLayerSize=newSize;
         this.CalculateMatrix();
         OnSizeChanged();
       }
@@ -1703,56 +1743,56 @@ namespace Altaxo.Graph
     /// <value>User x position value of the layer.</value>
     public double UserXPosition
     {
-      get { return this.m_LayerXPosition; }
+      get { return this._layerXPosition; }
     }
 
     /// <summary>Returns the user y position value of the layer.</summary>
     /// <value>User y position value of the layer.</value>
     public double UserYPosition
     {
-      get { return this.m_LayerYPosition; }
+      get { return this._layerYPosition; }
     }
 
     /// <summary>Returns the user width value of the layer.</summary>
     /// <value>User width value of the layer.</value>
     public double UserWidth
     {
-      get { return this.m_LayerWidth; }
+      get { return this._layerWidth; }
     }
 
     /// <summary>Returns the user height value of the layer.</summary>
     /// <value>User height value of the layer.</value>
     public double UserHeight
     {
-      get { return this.m_LayerHeight; }
+      get { return this._layerHeight; }
     }
 
     /// <summary>Returns the type of the user x position value of the layer.</summary>
     /// <value>Type of the user x position value of the layer.</value>
     public PositionType UserXPositionType
     {
-      get { return this.m_LayerXPositionType; }
+      get { return this._layerXPositionType; }
     }
 
     /// <summary>Returns the type of the user y position value of the layer.</summary>
     /// <value>Type of the User y position value of the layer.</value>
     public PositionType UserYPositionType
     {
-      get { return this.m_LayerYPositionType; }
+      get { return this._layerYPositionType; }
     }
 
     /// <summary>Returns the type of the the user width value of the layer.</summary>
     /// <value>Type of the User width value of the layer.</value>
     public SizeType UserWidthType
     {
-      get { return this.m_LayerWidthType; }
+      get { return this._layerWidthType; }
     }
 
     /// <summary>Returns the the type of the user height value of the layer.</summary>
     /// <value>Type of the User height value of the layer.</value>
     public SizeType UserHeightType
     {
-      get { return this.m_LayerHeightType; }
+      get { return this._layerHeightType; }
     }
 
 
@@ -1787,18 +1827,18 @@ namespace Altaxo.Graph
     /// <value>The x axis of the layer.</value>
     public Axis XAxis
     {
-      get { return m_xAxis; }
+      get { return _xAxis; }
       set
       {
-        if(!object.ReferenceEquals(m_xAxis,value))
+        if(!object.ReferenceEquals(_xAxis,value))
         {
-          if(null!=m_xAxis)
-            m_xAxis.Changed -= new System.EventHandler(this.OnXAxisChangedEventHandler);
+          if(null!=_xAxis)
+            _xAxis.Changed -= new System.EventHandler(this.OnXAxisChangedEventHandler);
         
-          m_xAxis = value;
+          _xAxis = value;
 
-          if(null!=m_xAxis)
-            m_xAxis.Changed += new System.EventHandler(this.OnXAxisChangedEventHandler);
+          if(null!=_xAxis)
+            _xAxis.Changed += new System.EventHandler(this.OnXAxisChangedEventHandler);
 
 
           // now we have to inform all the PlotItems that a new axis was loaded
@@ -1814,22 +1854,22 @@ namespace Altaxo.Graph
       //but (alas!) not all boundaries are now of the new type!
       m_PlotAssociationXBoundariesChanged_EventSuspendCount++; 
         
-      m_xAxis.DataBoundsObject.BeginUpdate(); // Suppress events from the y-axis now
-      m_xAxis.DataBoundsObject.Reset();
+      _xAxis.DataBoundsObject.BeginUpdate(); // Suppress events from the y-axis now
+      _xAxis.DataBoundsObject.Reset();
       foreach(PlotItem pa in this.PlotItems)
       {
         if(pa is IXBoundsHolder)
         {
           // first ensure the right data bound object is set on the XYColumnPlotData
-          ((IXBoundsHolder)pa).SetXBoundsFromTemplate(m_xAxis.DataBoundsObject); // ensure that data bound object is of the right type
+          ((IXBoundsHolder)pa).SetXBoundsFromTemplate(_xAxis.DataBoundsObject); // ensure that data bound object is of the right type
           // now merge the bounds with x and yAxis
-          ((IXBoundsHolder)pa).MergeXBoundsInto(m_xAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+          ((IXBoundsHolder)pa).MergeXBoundsInto(_xAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         
         }
       }
       m_PlotAssociationXBoundariesChanged_EventSuspendCount = Math.Max(0,m_PlotAssociationXBoundariesChanged_EventSuspendCount-1);
-      m_xAxis.DataBoundsObject.EndUpdate();
-      m_xAxis.ProcessDataBounds();
+      _xAxis.DataBoundsObject.EndUpdate();
+      _xAxis.ProcessDataBounds();
     }
    
   
@@ -1837,18 +1877,18 @@ namespace Altaxo.Graph
     /// <value>The y axis of the layer.</value>
     public Axis YAxis
     {
-      get { return m_yAxis; }
+      get { return _yAxis; }
       set
       {
-        if(!object.ReferenceEquals(m_yAxis,value))
+        if(!object.ReferenceEquals(_yAxis,value))
         {
-          if(null!=m_yAxis)
-            m_yAxis.Changed -= new System.EventHandler(this.OnYAxisChangedEventHandler);
+          if(null!=_yAxis)
+            _yAxis.Changed -= new System.EventHandler(this.OnYAxisChangedEventHandler);
         
-          m_yAxis = value;
+          _yAxis = value;
 
-          if(null!=m_yAxis)
-            m_yAxis.Changed += new System.EventHandler(this.OnYAxisChangedEventHandler);
+          if(null!=_yAxis)
+            _yAxis.Changed += new System.EventHandler(this.OnYAxisChangedEventHandler);
 
 
           // now we have to inform all the PlotAssociations that a new axis was loaded
@@ -1865,22 +1905,22 @@ namespace Altaxo.Graph
       //but (alas!) not all boundaries are now of the new type!
       m_PlotAssociationYBoundariesChanged_EventSuspendCount++; 
 
-      m_yAxis.DataBoundsObject.BeginUpdate();
-      m_yAxis.DataBoundsObject.Reset();
+      _yAxis.DataBoundsObject.BeginUpdate();
+      _yAxis.DataBoundsObject.Reset();
       foreach(PlotItem pa in this.PlotItems)
       {
         if(pa is IYBoundsHolder)
         {
           // first ensure the right data bound object is set on the XYColumnPlotData
-          ((IYBoundsHolder)pa).SetYBoundsFromTemplate(m_yAxis.DataBoundsObject); // ensure that data bound object is of the right type
+          ((IYBoundsHolder)pa).SetYBoundsFromTemplate(_yAxis.DataBoundsObject); // ensure that data bound object is of the right type
           // now merge the bounds with x and yAxis
-          ((IYBoundsHolder)pa).MergeYBoundsInto(m_yAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+          ((IYBoundsHolder)pa).MergeYBoundsInto(_yAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         
         }
       }
       m_PlotAssociationYBoundariesChanged_EventSuspendCount = Math.Max(0,m_PlotAssociationYBoundariesChanged_EventSuspendCount-1);
-      m_yAxis.DataBoundsObject.EndUpdate();
-      m_yAxis.ProcessDataBounds();
+      _yAxis.DataBoundsObject.EndUpdate();
+      _yAxis.ProcessDataBounds();
     }
     
 
@@ -2218,7 +2258,7 @@ namespace Altaxo.Graph
 
       if(IsXAxisLinked && null!=LinkedLayer)
       {
-        this.m_xAxis.ProcessDataBounds( 
+        this._xAxis.ProcessDataBounds( 
           m_LinkXAxisOrgA+m_LinkXAxisOrgB*LinkedLayer.XAxis.OrgAsVariant,true,
           m_LinkXAxisEndA+m_LinkXAxisEndB*LinkedLayer.XAxis.EndAsVariant,true);
 
@@ -2226,7 +2266,7 @@ namespace Altaxo.Graph
 
       if(IsYAxisLinked && null!=LinkedLayer)
       {
-        this.m_yAxis.ProcessDataBounds( 
+        this._yAxis.ProcessDataBounds( 
           m_LinkYAxisOrgA+m_LinkYAxisOrgB*LinkedLayer.YAxis.OrgAsVariant,true,
           m_LinkYAxisEndA+m_LinkYAxisEndB*LinkedLayer.YAxis.EndAsVariant,true);
       }
@@ -2247,12 +2287,12 @@ namespace Altaxo.Graph
     {
       get
       {
-        return m_ClipDataToFrame;
+        return _clipDataToFrame;
       }
       set
       {
-        bool oldvalue = m_ClipDataToFrame;
-        m_ClipDataToFrame = value;
+        bool oldvalue = _clipDataToFrame;
+        _clipDataToFrame = value;
 
         if(value!=oldvalue)
           this.OnInvalidate();
@@ -2261,47 +2301,47 @@ namespace Altaxo.Graph
 
     public XYAxisStyle LeftAxisStyle
     {
-      get { return m_LeftAxisStyle; }
+      get { return _leftAxisStyle; }
     }
     public XYAxisStyle BottomAxisStyle
     {
-      get { return m_BottomAxisStyle; }
+      get { return _bottomAxisStyle; }
     }
     public XYAxisStyle RightAxisStyle
     {
-      get { return m_RightAxisStyle; }
+      get { return _rightAxisStyle; }
     }
     public XYAxisStyle TopAxisStyle
     {
-      get { return m_TopAxisStyle; }
+      get { return _topAxisStyle; }
     }
 
 
     public AbstractXYAxisLabelStyle LeftLabelStyle
     {
-      get { return m_LeftLabelStyle; }
+      get { return _leftLabelStyle; }
     }
     public AbstractXYAxisLabelStyle RightLabelStyle
     {
-      get { return m_RightLabelStyle; }
+      get { return _rightLabelStyle; }
     }
     public AbstractXYAxisLabelStyle BottomLabelStyle
     {
-      get { return m_BottomLabelStyle; }
+      get { return _bottomLabelStyle; }
     }
     public AbstractXYAxisLabelStyle TopLabelStyle
     {
-      get { return m_TopLabelStyle; }
+      get { return _topLabelStyle; }
     }
     
     public bool LeftAxisEnabled
     {
-      get { return this.m_ShowLeftAxis; }
+      get { return this._showLeftAxis; }
       set
       {
-        if(value!=this.m_ShowLeftAxis)
+        if(value!=this._showLeftAxis)
         {
-          m_ShowLeftAxis = value;
+          _showLeftAxis = value;
           this.OnInvalidate();
         }
       }
@@ -2309,36 +2349,36 @@ namespace Altaxo.Graph
 
     public bool BottomAxisEnabled
     {
-      get { return this.m_ShowBottomAxis; }
+      get { return this._showBottomAxis; }
       set
       {
-        if(value!=this.m_ShowBottomAxis)
+        if(value!=this._showBottomAxis)
         {
-          m_ShowBottomAxis = value;
+          _showBottomAxis = value;
           this.OnInvalidate();
         }
       }
     }
     public bool RightAxisEnabled
     {
-      get { return this.m_ShowRightAxis; }
+      get { return this._showRightAxis; }
       set
       {
-        if(value!=this.m_ShowRightAxis)
+        if(value!=this._showRightAxis)
         {
-          m_ShowRightAxis = value;
+          _showRightAxis = value;
           this.OnInvalidate();
         }
       }
     }
     public bool TopAxisEnabled
     {
-      get { return this.m_ShowTopAxis; }
+      get { return this._showTopAxis; }
       set
       {
-        if(value!=this.m_ShowTopAxis)
+        if(value!=this._showTopAxis)
         {
-          m_ShowTopAxis = value;
+          _showTopAxis = value;
           this.OnInvalidate();
         }
       }
@@ -2346,64 +2386,64 @@ namespace Altaxo.Graph
 
     public TextGraphics LeftAxisTitle
     {
-      get { return this.m_LeftAxisTitle; }
+      get { return this._leftAxisTitle; }
       set
       {
-        this.m_LeftAxisTitle = value;
+        this._leftAxisTitle = value;
         this.OnInvalidate();
       }
     }
 
     public TextGraphics RightAxisTitle
     {
-      get { return this.m_RightAxisTitle; }
+      get { return this._rightAxisTitle; }
       set
       {
-        this.m_RightAxisTitle = value;
+        this._rightAxisTitle = value;
         this.OnInvalidate();
       }
     }
 
     public TextGraphics TopAxisTitle
     {
-      get { return this.m_TopAxisTitle; }
+      get { return this._topAxisTitle; }
       set
       {
-        this.m_TopAxisTitle = value;
+        this._topAxisTitle = value;
         this.OnInvalidate();
       }
     }
     public TextGraphics BottomAxisTitle
     {
-      get { return this.m_BottomAxisTitle; }
+      get { return this._bottomAxisTitle; }
       set
       {
-        this.m_BottomAxisTitle = value;
+        this._bottomAxisTitle = value;
         this.OnInvalidate();
       }
     }
 
     public string LeftAxisTitleString
     {
-      get { return m_LeftAxisTitle!=null ? m_LeftAxisTitle.Text : null; }
+      get { return _leftAxisTitle!=null ? _leftAxisTitle.Text : null; }
       set
       {
         string newtitle = (value==null || value==String.Empty) ? null : value;
-        bool bChanged = !string.Equals(m_LeftAxisTitle,newtitle);
-        if(m_LeftAxisTitle==null && newtitle!=null)
-          if(m_LeftAxisTitle==null)
+        bool bChanged = !string.Equals(_leftAxisTitle,newtitle);
+        if(_leftAxisTitle==null && newtitle!=null)
+          if(_leftAxisTitle==null)
           {
-            m_LeftAxisTitle = new TextGraphics();
-            m_LeftAxisTitle.Rotation=-90;
-            m_LeftAxisTitle.XAnchor = TextGraphics.XAnchorPositionType.Center;
-            m_LeftAxisTitle.YAnchor = TextGraphics.YAnchorPositionType.Bottom;
-            m_LeftAxisTitle.Position = new PointF(-0.125f*Size.Width,0.5f*Size.Height);
+            _leftAxisTitle = new TextGraphics();
+            _leftAxisTitle.Rotation=-90;
+            _leftAxisTitle.XAnchor = TextGraphics.XAnchorPositionType.Center;
+            _leftAxisTitle.YAnchor = TextGraphics.YAnchorPositionType.Bottom;
+            _leftAxisTitle.Position = new PointF(-0.125f*Size.Width,0.5f*Size.Height);
           }
 
         if(newtitle!=null)
-          m_LeftAxisTitle.Text = newtitle;
+          _leftAxisTitle.Text = newtitle;
         else
-          m_LeftAxisTitle = null;
+          _leftAxisTitle = null;
 
         if(bChanged)
           this.OnInvalidate();  
@@ -2412,24 +2452,24 @@ namespace Altaxo.Graph
 
     public string RightAxisTitleString
     {
-      get { return m_RightAxisTitle!=null ? m_RightAxisTitle.Text : null; }
+      get { return _rightAxisTitle!=null ? _rightAxisTitle.Text : null; }
       set
       {
         string newtitle = (value==null || value==String.Empty) ? null : value;
-        bool bChanged = !string.Equals(m_RightAxisTitle,newtitle);
-        if(m_RightAxisTitle==null && newtitle!=null)
+        bool bChanged = !string.Equals(_rightAxisTitle,newtitle);
+        if(_rightAxisTitle==null && newtitle!=null)
         {
-          m_RightAxisTitle = new TextGraphics();
-          m_RightAxisTitle.Rotation=-90;
-          m_RightAxisTitle.XAnchor = TextGraphics.XAnchorPositionType.Center;
-          m_RightAxisTitle.YAnchor = TextGraphics.YAnchorPositionType.Top;
-          m_RightAxisTitle.Position = new PointF(1.125f*Size.Width,0.5f*Size.Height);
+          _rightAxisTitle = new TextGraphics();
+          _rightAxisTitle.Rotation=-90;
+          _rightAxisTitle.XAnchor = TextGraphics.XAnchorPositionType.Center;
+          _rightAxisTitle.YAnchor = TextGraphics.YAnchorPositionType.Top;
+          _rightAxisTitle.Position = new PointF(1.125f*Size.Width,0.5f*Size.Height);
         }
 
         if(newtitle!=null)
-          m_RightAxisTitle.Text = newtitle;
+          _rightAxisTitle.Text = newtitle;
         else
-          m_RightAxisTitle = null;
+          _rightAxisTitle = null;
 
         if(bChanged)
           this.OnInvalidate();        
@@ -2438,24 +2478,24 @@ namespace Altaxo.Graph
 
     public string TopAxisTitleString
     {
-      get { return m_TopAxisTitle!=null ? m_TopAxisTitle.Text : null; }
+      get { return _topAxisTitle!=null ? _topAxisTitle.Text : null; }
       set
       {
         string newtitle = (value==null || value==String.Empty) ? null : value;
-        bool bChanged = !string.Equals(m_TopAxisTitle,newtitle);
-        if(m_TopAxisTitle==null && newtitle!=null)
+        bool bChanged = !string.Equals(_topAxisTitle,newtitle);
+        if(_topAxisTitle==null && newtitle!=null)
         {
-          m_TopAxisTitle = new TextGraphics();
-          m_TopAxisTitle.Rotation=0;
-          m_TopAxisTitle.XAnchor = TextGraphics.XAnchorPositionType.Center;
-          m_TopAxisTitle.YAnchor = TextGraphics.YAnchorPositionType.Bottom;
-          m_TopAxisTitle.Position = new PointF(0.5f*Size.Width,-0.125f*Size.Height);
+          _topAxisTitle = new TextGraphics();
+          _topAxisTitle.Rotation=0;
+          _topAxisTitle.XAnchor = TextGraphics.XAnchorPositionType.Center;
+          _topAxisTitle.YAnchor = TextGraphics.YAnchorPositionType.Bottom;
+          _topAxisTitle.Position = new PointF(0.5f*Size.Width,-0.125f*Size.Height);
         }
 
         if(newtitle!=null)
-          m_TopAxisTitle.Text = newtitle;
+          _topAxisTitle.Text = newtitle;
         else
-          m_TopAxisTitle = null;
+          _topAxisTitle = null;
 
         if(bChanged)
           this.OnInvalidate();
@@ -2466,24 +2506,24 @@ namespace Altaxo.Graph
 
     public string BottomAxisTitleString
     {
-      get { return m_BottomAxisTitle!=null ? m_BottomAxisTitle.Text : null; }
+      get { return _bottomAxisTitle!=null ? _bottomAxisTitle.Text : null; }
       set
       {
         string newtitle = (value==null || value==String.Empty) ? null : value;
-        bool bChanged = !string.Equals(m_BottomAxisTitle,newtitle);
-        if(m_BottomAxisTitle==null && newtitle!=null)
+        bool bChanged = !string.Equals(_bottomAxisTitle,newtitle);
+        if(_bottomAxisTitle==null && newtitle!=null)
         {
-          m_BottomAxisTitle = new TextGraphics();
-          m_BottomAxisTitle.Rotation=0;
-          m_BottomAxisTitle.XAnchor = TextGraphics.XAnchorPositionType.Center;
-          m_BottomAxisTitle.YAnchor = TextGraphics.YAnchorPositionType.Top;
-          m_BottomAxisTitle.Position = new PointF(0.5f*Size.Width,1.125f*Size.Height);
+          _bottomAxisTitle = new TextGraphics();
+          _bottomAxisTitle.Rotation=0;
+          _bottomAxisTitle.XAnchor = TextGraphics.XAnchorPositionType.Center;
+          _bottomAxisTitle.YAnchor = TextGraphics.YAnchorPositionType.Top;
+          _bottomAxisTitle.Position = new PointF(0.5f*Size.Width,1.125f*Size.Height);
         }
 
         if(newtitle!=null)
-          m_BottomAxisTitle.Text = newtitle;
+          _bottomAxisTitle.Text = newtitle;
         else
-          m_BottomAxisTitle = null;
+          _bottomAxisTitle = null;
 
         if(bChanged)
           this.OnInvalidate();
@@ -2500,14 +2540,14 @@ namespace Altaxo.Graph
       //g.TranslateTransform(m_LayerPosition.X,m_LayerPosition.Y);
       //g.RotateTransform(m_LayerAngle);
       
-      g.MultiplyTransform(m_ForwardMatrix);
+      g.MultiplyTransform(_cachedForwardMatrix);
 
-      if(m_bFillLayerArea)
-        g.FillRectangle(m_LayerAreaFillBrush,0,0,m_LayerSize.Width,m_LayerSize.Height);
+      if(_fillLayerArea)
+        g.FillRectangle(m_LayerAreaFillBrush,0,0,_cachedLayerSize.Width,_cachedLayerSize.Height);
 
       m_GraphObjects.DrawObjects(g,1,this);
 
-      RectangleF layerBounds = new RectangleF(m_LayerPosition,m_LayerSize);
+      RectangleF layerBounds = new RectangleF(_cachedLayerPosition,_cachedLayerSize);
 
 
       // Before we paint the axis, we have to make sure that all plot items
@@ -2518,37 +2558,37 @@ namespace Altaxo.Graph
       }
 
 
-      if(m_ShowLeftAxis)
-        m_LeftAxisStyle.Paint(g,this,this.m_yAxis);
-      if(m_ShowLeftAxis)
-        m_LeftLabelStyle.Paint(g,this,this.m_yAxis,m_LeftAxisStyle);
-      if(m_ShowLeftAxis && null!=m_LeftAxisTitle)
-        m_LeftAxisTitle.Paint(g,this);
-      if(m_ShowBottomAxis)
-        m_BottomAxisStyle.Paint(g,this,this.m_xAxis);
-      if(m_ShowBottomAxis)
-        m_BottomLabelStyle.Paint(g,this,this.m_xAxis,m_BottomAxisStyle);
-      if(m_ShowBottomAxis && null!=m_BottomAxisTitle)
-        m_BottomAxisTitle.Paint(g,this);
-      if(m_ShowRightAxis)
-        m_RightAxisStyle.Paint(g,this,this.m_yAxis);
-      if(m_ShowRightAxis)
-        m_RightLabelStyle.Paint(g,this,this.m_yAxis,m_RightAxisStyle);
-      if(m_ShowRightAxis && null!=m_RightAxisTitle)
-        m_RightAxisTitle.Paint(g,this);
-      if(m_ShowTopAxis)
-        m_TopAxisStyle.Paint(g,this,this.m_xAxis);
-      if(m_ShowTopAxis)
-        m_TopLabelStyle.Paint(g,this,this.m_xAxis,m_TopAxisStyle);
-      if(m_ShowTopAxis && null!=m_TopAxisTitle)
-        m_TopAxisTitle.Paint(g,this);
-      if(m_Legend!=null)
-        m_Legend.Paint(g,this);
+      if(_showLeftAxis)
+        _leftAxisStyle.Paint(g,this,this._yAxis);
+      if(_showLeftAxis)
+        _leftLabelStyle.Paint(g,this,this._yAxis,_leftAxisStyle);
+      if(_showLeftAxis && null!=_leftAxisTitle)
+        _leftAxisTitle.Paint(g,this);
+      if(_showBottomAxis)
+        _bottomAxisStyle.Paint(g,this,this._xAxis);
+      if(_showBottomAxis)
+        _bottomLabelStyle.Paint(g,this,this._xAxis,_bottomAxisStyle);
+      if(_showBottomAxis && null!=_bottomAxisTitle)
+        _bottomAxisTitle.Paint(g,this);
+      if(_showRightAxis)
+        _rightAxisStyle.Paint(g,this,this._yAxis);
+      if(_showRightAxis)
+        _rightLabelStyle.Paint(g,this,this._yAxis,_rightAxisStyle);
+      if(_showRightAxis && null!=_rightAxisTitle)
+        _rightAxisTitle.Paint(g,this);
+      if(_showTopAxis)
+        _topAxisStyle.Paint(g,this,this._xAxis);
+      if(_showTopAxis)
+        _topLabelStyle.Paint(g,this,this._xAxis,_topAxisStyle);
+      if(_showTopAxis && null!=_topAxisTitle)
+        _topAxisTitle.Paint(g,this);
+      if(_legend!=null)
+        _legend.Paint(g,this);
 
 
       if(ClipDataToFrame)
       {
-        g.SetClip(new RectangleF(new PointF(0,0),this.m_LayerSize));
+        g.SetClip(new RectangleF(new PointF(0,0),this._cachedLayerSize));
       }
 
       foreach(PlotItem pi in m_PlotItems)
@@ -2562,7 +2602,7 @@ namespace Altaxo.Graph
 
     private IHitTestObject ForwardTransform(IHitTestObject o)
     {
-      o.Transform(m_ForwardMatrix);
+      o.Transform(_cachedForwardMatrix);
       o.ParentLayer=this;
       return o;
     }
@@ -2576,11 +2616,11 @@ namespace Altaxo.Graph
 
       GraphicsObject[] specObjects = 
           {
-            m_LeftAxisTitle,
-            m_BottomAxisTitle,
-            m_TopAxisTitle,
-            m_RightAxisTitle,
-            m_Legend
+            _leftAxisTitle,
+            _bottomAxisTitle,
+            _topAxisTitle,
+            _rightAxisTitle,
+            _legend
           };
 
 
@@ -2603,9 +2643,9 @@ namespace Altaxo.Graph
       GraphicsPath layercorners = new GraphicsPath();
       float catchrange = 6;
       layercorners.AddEllipse(-catchrange,-catchrange,2*catchrange,2*catchrange);
-      layercorners.AddEllipse(m_LayerSize.Width-catchrange,0-catchrange,2*catchrange,2*catchrange);
-      layercorners.AddEllipse(0-catchrange,m_LayerSize.Height-catchrange,2*catchrange,2*catchrange);
-      layercorners.AddEllipse(m_LayerSize.Width-catchrange,m_LayerSize.Height-catchrange,2*catchrange,2*catchrange);
+      layercorners.AddEllipse(_cachedLayerSize.Width-catchrange,0-catchrange,2*catchrange,2*catchrange);
+      layercorners.AddEllipse(0-catchrange,_cachedLayerSize.Height-catchrange,2*catchrange,2*catchrange);
+      layercorners.AddEllipse(_cachedLayerSize.Width-catchrange,_cachedLayerSize.Height-catchrange,2*catchrange,2*catchrange);
       layercorners.CloseAllFigures();
       if(layercorners.IsVisible(layerC))
       {
@@ -2618,22 +2658,22 @@ namespace Altaxo.Graph
 
       // hit testing the axes - first a small area around the axis line
       // if hitting this, the editor for scaling the axis should be shown
-      if(m_ShowLeftAxis && null!=(hit = m_LeftAxisStyle.HitTest(this,layerC,false)))
+      if(_showLeftAxis && null!=(hit = _leftAxisStyle.HitTest(this,layerC,false)))
       {
         hit.DoubleClick=AxisScaleEditorMethod;
         return ForwardTransform(hit);
       }
-      if(m_ShowBottomAxis && null!=(hit = m_BottomAxisStyle.HitTest(this,layerC,false)))
+      if(_showBottomAxis && null!=(hit = _bottomAxisStyle.HitTest(this,layerC,false)))
       {
         hit.DoubleClick=AxisScaleEditorMethod;
         return ForwardTransform(hit);
       }
-      if(m_ShowRightAxis && null!=(hit = m_RightAxisStyle.HitTest(this,layerC,false)))
+      if(_showRightAxis && null!=(hit = _rightAxisStyle.HitTest(this,layerC,false)))
       {
         hit.DoubleClick=AxisScaleEditorMethod;
         return ForwardTransform(hit);
       }
-      if(m_ShowTopAxis && null!=(hit = m_TopAxisStyle.HitTest(this,layerC,false)))
+      if(_showTopAxis && null!=(hit = _topAxisStyle.HitTest(this,layerC,false)))
       {
         hit.DoubleClick=AxisScaleEditorMethod;
         return ForwardTransform(hit);
@@ -2642,44 +2682,44 @@ namespace Altaxo.Graph
 
       // hit testing the axes - secondly now wiht the ticks
       // in this case the TitleAndFormat editor for the axis should be shown
-      if(m_ShowLeftAxis && null!=(hit = m_LeftAxisStyle.HitTest(this,layerC,true)))
+      if(_showLeftAxis && null!=(hit = _leftAxisStyle.HitTest(this,layerC,true)))
       {
         if(hit.DoubleClick==null) hit.DoubleClick=AxisStyleEditorMethod;
         return ForwardTransform(hit);
       }
-      if(m_ShowBottomAxis && null!=(hit = m_BottomAxisStyle.HitTest(this,layerC,true)))
+      if(_showBottomAxis && null!=(hit = _bottomAxisStyle.HitTest(this,layerC,true)))
       {
         if(hit.DoubleClick==null) hit.DoubleClick=AxisStyleEditorMethod;
         return ForwardTransform(hit);
       }
-      if(m_ShowRightAxis && null!=(hit = m_RightAxisStyle.HitTest(this,layerC,true)))
+      if(_showRightAxis && null!=(hit = _rightAxisStyle.HitTest(this,layerC,true)))
       {
         if(hit.DoubleClick==null) hit.DoubleClick=AxisStyleEditorMethod;
         return ForwardTransform(hit);
       }
-      if(m_ShowTopAxis && null!=(hit = m_TopAxisStyle.HitTest(this,layerC,true)))
+      if(_showTopAxis && null!=(hit = _topAxisStyle.HitTest(this,layerC,true)))
       {
         if(hit.DoubleClick==null) hit.DoubleClick=AxisStyleEditorMethod;
         return ForwardTransform(hit);
       }
 
       // hit testing the axes labels
-      if(m_ShowLeftAxis && null!=(hit = this.m_LeftLabelStyle.HitTest(this,layerC)))
+      if(_showLeftAxis && null!=(hit = this._leftLabelStyle.HitTest(this,layerC)))
       {
         if(hit.DoubleClick==null) hit.DoubleClick=AxisLabelStyleEditorMethod;
         return ForwardTransform(hit);
       }
-      if(m_ShowBottomAxis && null!=(hit = m_BottomLabelStyle.HitTest(this,layerC)))
+      if(_showBottomAxis && null!=(hit = _bottomLabelStyle.HitTest(this,layerC)))
       {
         if(hit.DoubleClick==null) hit.DoubleClick=AxisLabelStyleEditorMethod;
         return ForwardTransform(hit);
       }
-      if(m_ShowRightAxis && null!=(hit = m_RightLabelStyle.HitTest(this,layerC)))
+      if(_showRightAxis && null!=(hit = _rightLabelStyle.HitTest(this,layerC)))
       {
         if(hit.DoubleClick==null) hit.DoubleClick=AxisLabelStyleEditorMethod;
         return ForwardTransform(hit);
       }
-      if(m_ShowTopAxis && null!=(hit = m_TopLabelStyle.HitTest(this,layerC)))
+      if(_showTopAxis && null!=(hit = _topLabelStyle.HitTest(this,layerC)))
       {
         if(hit.DoubleClick==null) hit.DoubleClick=AxisLabelStyleEditorMethod;
         return ForwardTransform(hit);
@@ -2762,29 +2802,29 @@ namespace Altaxo.Graph
       GraphicsObject go = (GraphicsObject)o.HittedObject;
       XYPlotLayer layer = o.ParentLayer;
 
-      if(object.ReferenceEquals(go,layer.m_Legend))
+      if(object.ReferenceEquals(go,layer._legend))
       {
-        layer.m_Legend=null;
+        layer._legend=null;
         return true;
       }
-      else if(object.ReferenceEquals(go,layer.m_LeftAxisTitle))
+      else if(object.ReferenceEquals(go,layer._leftAxisTitle))
       {
-        layer.m_LeftAxisTitle=null;
+        layer._leftAxisTitle=null;
         return true;
       }
-      else if(object.ReferenceEquals(go,layer.m_BottomAxisTitle))
+      else if(object.ReferenceEquals(go,layer._bottomAxisTitle))
       {
-        layer.m_BottomAxisTitle=null;
+        layer._bottomAxisTitle=null;
         return true;
       }
-      else if(object.ReferenceEquals(go,layer.m_RightAxisTitle))
+      else if(object.ReferenceEquals(go,layer._rightAxisTitle))
       {
-        layer.m_RightAxisTitle=null;
+        layer._rightAxisTitle=null;
         return true;
       }
-      else if(object.ReferenceEquals(go,layer.m_TopAxisTitle))
+      else if(object.ReferenceEquals(go,layer._topAxisTitle))
       {
-        layer.m_TopAxisTitle=null;
+        layer._topAxisTitle=null;
         return true;
       }
 
@@ -2805,17 +2845,17 @@ namespace Altaxo.Graph
       if(0==m_PlotAssociationXBoundariesChanged_EventSuspendCount)
       {
         // now we have to inform all the PlotAssociations that a new axis was loaded
-        m_xAxis.DataBoundsObject.BeginUpdate();
-        m_xAxis.DataBoundsObject.Reset();
+        _xAxis.DataBoundsObject.BeginUpdate();
+        _xAxis.DataBoundsObject.Reset();
         foreach(PlotItem pa in this.PlotItems)
         {
           if(pa is IXBoundsHolder)
           {
             // merge the bounds with x and yAxis
-            ((IXBoundsHolder)pa).MergeXBoundsInto(m_xAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+            ((IXBoundsHolder)pa).MergeXBoundsInto(_xAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
           }
         }
-        m_xAxis.DataBoundsObject.EndUpdate();
+        _xAxis.DataBoundsObject.EndUpdate();
       }
     }
 
@@ -2834,18 +2874,18 @@ namespace Altaxo.Graph
       if(0==m_PlotAssociationYBoundariesChanged_EventSuspendCount)
       {
         // now we have to inform all the PlotAssociations that a new axis was loaded
-        m_yAxis.DataBoundsObject.BeginUpdate();
-        m_yAxis.DataBoundsObject.Reset();
+        _yAxis.DataBoundsObject.BeginUpdate();
+        _yAxis.DataBoundsObject.Reset();
         foreach(PlotItem pa in this.PlotItems)
         {
           if(pa is IYBoundsHolder)
           {
             // merge the bounds with x and yAxis
-            ((IYBoundsHolder)pa).MergeYBoundsInto(m_yAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
+            ((IYBoundsHolder)pa).MergeYBoundsInto(_yAxis.DataBoundsObject); // merge all x-boundaries in the x-axis boundary object
         
           }
         }
-        m_yAxis.DataBoundsObject.EndUpdate();
+        _yAxis.DataBoundsObject.EndUpdate();
       }
     }
     

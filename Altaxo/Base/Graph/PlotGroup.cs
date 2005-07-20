@@ -247,8 +247,8 @@ namespace Altaxo.Graph
         }
         if(cnt>0)
         {
-          if(assoc is I2DPlotStyle && m_PlotItems[0] is I2DPlotStyle)
-            ((I2DPlotStyle)assoc).SetIncrementalStyle((I2DPlotStyle)m_PlotItems[0],m_Style, cnt);
+          if(assoc is I2DPlotItemStyle && m_PlotItems[0] is I2DPlotItemStyle)
+            ((I2DPlotItemStyle)assoc).SetIncrementalStyle((I2DPlotItemStyle)m_PlotItems[0],m_Style, cnt);
         }
         m_PlotItems.Add(assoc);
 
@@ -327,15 +327,15 @@ namespace Altaxo.Graph
       // update the styles beginning from the master item
       if(!IsIndependent && Count>masteritem)
       {
-        I2DPlotStyle masterstyle = this[masteritem] as I2DPlotStyle;
+        I2DPlotItemStyle masterstyle = this[masteritem] as I2DPlotItemStyle;
         if(masterstyle!=null)
         {
           for(int i=0;i<Count;i++)
           {
             if(i==masteritem)
               continue;
-            if(this[i] is I2DPlotStyle)
-              ((I2DPlotStyle)this[i]).SetIncrementalStyle(masterstyle,this.m_Style,i-masteritem);
+            if(this[i] is I2DPlotItemStyle)
+              ((I2DPlotItemStyle)this[i]).SetIncrementalStyle(masterstyle,this.m_Style,i-masteritem);
           }
         }
         // no changed event here since we track only the members structure and the grouping style
