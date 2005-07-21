@@ -1076,6 +1076,101 @@
                 />
                 <Folder RelPath = "Gui\Analysis\NonLinearFitting\" />
                 <File
+                    RelPath = "Gui\Common\TabbedElementControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Common\TabbedElementControl.resx"
+                    DependentUpon = "TabbedElementControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\Common\TabbedElementController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYColumnPlotDataControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYColumnPlotDataControl.resx"
+                    DependentUpon = "XYColumnPlotDataControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYColumnPlotDataController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYColumnPlotItemController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotGroupControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotGroupControl.resx"
+                    DependentUpon = "XYPlotGroupControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotGroupController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotLabelStyleControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotLabelStyleControl.resx"
+                    DependentUpon = "XYPlotLabelStyleControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotLabelStyleController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotLineStyleControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotLineStyleControl.resx"
+                    DependentUpon = "XYPlotLineStyleControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotLineStyleController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotScatterStyleControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotScatterStyleControl.resx"
+                    DependentUpon = "XYPlotScatterStyleControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotScatterStyleController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\Scripting\FitFunctionNameAndCategoryController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

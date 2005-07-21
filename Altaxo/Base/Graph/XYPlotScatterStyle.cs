@@ -368,6 +368,19 @@ namespace Altaxo.Graph
       }
     }
 
+    public bool IsVisible
+    {
+      get
+      {
+        if (m_Shape != XYPlotScatterStyles.Shape.NoSymbol)
+          return true;
+        if (m_DropLine != DropLine.NoDrop)
+          return true;
+
+        return false;
+      }
+    }
+
     public PenHolder Pen
     {
       get { return this.m_Pen; }

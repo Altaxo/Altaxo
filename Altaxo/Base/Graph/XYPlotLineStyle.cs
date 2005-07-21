@@ -523,6 +523,18 @@ namespace Altaxo.Graph
       }
     }
 
+    public bool IsVisible
+    {
+      get
+      {
+        if (_connectionStyle!= Altaxo.Graph.XYPlotLineStyles.ConnectionStyle.NoLine)
+          return true;
+        if (_fillArea)
+          return true;
+
+        return false;
+      }
+    }
 
     public object Clone()
     {

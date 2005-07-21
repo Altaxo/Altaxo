@@ -100,8 +100,12 @@ namespace Altaxo.Main.GUI
       }
     }
 
-
     public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
+    {
+      return Current.Gui.ShowDialog(new object[]{pa,plotGroup},pa.Name);
+    }
+
+/*  public static bool ShowLineScatterPlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
     {
       
       // Plot Style
@@ -163,6 +167,7 @@ namespace Altaxo.Main.GUI
       return result;
     }
 
+*/
     public static bool ShowDensityImagePlotStyleAndDataDialog(System.Windows.Forms.Form parentWindow, Graph.PlotItem pa, PlotGroup plotGroup)
     {
       // Plot Style

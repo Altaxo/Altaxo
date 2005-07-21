@@ -186,6 +186,36 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph\I2DPlotItemStyle.cs" />
+    <Compile Include="Gui\Common\ControlViewElement.cs" />
+    <Compile Include="Gui\Common\MultiChildController.cs" />
+    <Compile Include="Gui\Common\MultiChildControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\TabbedElementControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Common\TabbedElementController.cs" />
+    <Compile Include="Gui\Graph\XYColumnPlotDataControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\XYColumnPlotDataController.cs" />
+    <Compile Include="Gui\Graph\XYColumnPlotItemController.cs" />
+    <Compile Include="Gui\Graph\XYPlotGroupControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotGroupController.cs" />
+    <Compile Include="Gui\Graph\XYPlotLabelStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotLabelStyleController.cs" />
+    <Compile Include="Gui\Graph\XYPlotLineStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotLineStyleController.cs" />
+    <Compile Include="Gui\Graph\XYPlotScatterStyleControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotScatterStyleController.cs" />
     <Compile Include="Scripting\FitFunctionScriptCollection.cs" />
     <Compile Include="Collections\AscendingIntegerCollection.cs">
       <SubType>Code</SubType>
@@ -1052,6 +1082,27 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Graph\GUI\XYPlotLabelStyleControl.resx">
       <DependentUpon>XYPlotLabelStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\MultiChildControl.resx">
+      <DependentUpon>MultiChildControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Common\TabbedElementControl.resx">
+      <DependentUpon>TabbedElementControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYColumnPlotDataControl.resx">
+      <DependentUpon>XYColumnPlotDataControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYPlotGroupControl.resx">
+      <DependentUpon>XYPlotGroupControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYPlotLabelStyleControl.resx">
+      <DependentUpon>XYPlotLabelStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYPlotLineStyleControl.resx">
+      <DependentUpon>XYPlotLineStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYPlotScatterStyleControl.resx">
+      <DependentUpon>XYPlotScatterStyleControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Scripting\FitFunctionScriptControl.resx">
       <DependentUpon>FitFunctionScriptControl.cs</DependentUpon>

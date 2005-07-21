@@ -65,6 +65,18 @@ namespace Altaxo.Main.Services
     }
 
 
+    /// <summary>
+    /// Searchs for a appropriate control for a given controller with restriction to a given type.
+    /// The control is not (!) attached to the controller. You have to do this manually.
+    /// </summary>
+    /// <param name="controller">The controller a control is searched for.</param>
+    /// <param name="expectedType">The expected type of the control.</param>
+    /// <returns>The control with the type provided as expectedType argument, or null if no such controller was found.</returns>
+    public object GetControl(IMVCController controller, System.Type expectedType)
+    {
+      return ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControlForControllerAttribute), expectedType, new object[] { controller });
+    }
+
 
     /// <summary>
     /// Searchs for a appropriate control for a given controller and attaches the control to the controller.

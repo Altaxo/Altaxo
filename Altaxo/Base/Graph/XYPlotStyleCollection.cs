@@ -134,6 +134,14 @@ namespace Altaxo.Graph
       }
     }
 
+    public int Count
+    {
+      get
+      {
+        return _innerList.Count;
+      }
+    }
+
     public void Add(I2DPlotStyle toadd)
     {
       Add(toadd,true);
@@ -153,6 +161,22 @@ namespace Altaxo.Graph
         }
       }
     }
+
+    public void Insert(int whichposition, I2DPlotStyle toinsert )
+    {
+      if (toinsert != null)
+      {
+        this._innerList.Insert(whichposition, toinsert);
+        toinsert.Changed += new EventHandler(this.OnChildChanged);
+
+        
+          InternalGetProviders();
+
+          OnChanged();
+       
+      }
+    }
+
 
     void InternalGetProviders()
     {
