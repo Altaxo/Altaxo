@@ -1076,6 +1076,26 @@
                 />
                 <Folder RelPath = "Gui\Analysis\NonLinearFitting\" />
                 <File
+                    RelPath = "Gui\Common\ControlViewElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Common\MultiChildControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Common\MultiChildControl.resx"
+                    DependentUpon = "MultiChildControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\Common\MultiChildController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Gui\Common\TabbedElementControl.cs"
                     SubType = "UserControl"
                     BuildAction = "Compile"
@@ -1167,6 +1187,21 @@
                 />
                 <File
                     RelPath = "Gui\Graph\XYPlotScatterStyleController.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotStyleCollectionControl.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotStyleCollectionControl.resx"
+                    DependentUpon = "XYPlotStyleCollectionControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Gui\Graph\XYPlotStyleCollectionController.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

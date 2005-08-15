@@ -24,7 +24,9 @@ using System;
 using Altaxo.Serialization;
 using System.Drawing;
 using Altaxo.Graph;
+using Altaxo.Graph.GUI;
 using Altaxo.Main.GUI;
+using Altaxo.Data;
 
 namespace Altaxo.Gui.Graph
 {
@@ -111,6 +113,11 @@ namespace Altaxo.Gui.Graph
     /// <param name="newValue">Contents of the edit field.</param>
     /// <param name="bCancel">Normally false, this can be set to true if RangeFrom is not a valid entry.</param>
     void EhView_RotationValidating(string newValue, ref bool bCancel);
+
+    /// <summary>
+    /// Is called when the user wants to select a new label column.
+    /// </summary>
+    void EhView_SelectLabelColumn();
   }
 
   public interface IXYPlotLabelStyleView
@@ -121,6 +128,13 @@ namespace Altaxo.Gui.Graph
     /// </summary>
     IXYPlotLabelStyleViewEventSink Controller { get; set; }
 
+
+    /// <summary>
+    /// Initializes the name of the label column.
+    /// </summary>
+    /// <param name="labelColumnAsText">Label column's name.</param>
+    void LabelColumn_Initialize(string labelColumnAsText);
+    
     /// <summary>
     /// Initializes the font family combo box.
     /// </summary>
@@ -255,6 +269,8 @@ namespace Altaxo.Gui.Graph
     /// <summary>The rotation of the label.</summary>
     protected double _rotation;
 
+    protected IReadableColumn _labelColumn;
+
     public XYPlotLabelStyleController(XYPlotLabelStyle plotStyle)
     {
       _doc = plotStyle;
@@ -279,6 +295,7 @@ namespace Altaxo.Gui.Graph
         _rotation     = _doc.Rotation;
         _xOffset      = _doc.XOffset;
         _yOffset      = _doc.YOffset;
+        _labelColumn = _doc.LabelColumn;
       }
 
       if(null!=View)
@@ -296,6 +313,16 @@ namespace Altaxo.Gui.Graph
         View.Rotation_Initialize(Serialization.NumberConversion.ToString(_rotation));
         View.XOffset_Initialize(Serialization.NumberConversion.ToString(_xOffset*100));
         View.YOffset_Initialize(Serialization.NumberConversion.ToString(_yOffset*100));
+        InitializeLabelColumnText();
+      }
+    }
+
+    void InitializeLabelColumnText()
+    {
+      if(View!=null)
+      {
+        string name = _labelColumn==null ? string.Empty : _labelColumn.FullName;
+        View.LabelColumn_Initialize(name);
       }
     }
     #region IXYPlotLabelStyleController Members
@@ -395,6 +422,26 @@ namespace Altaxo.Gui.Graph
         _yOffset/=100;
     }
 
+    public void EhView_SelectLabelColumn()
+    {
+      SingleColumnChoice choice = new SingleColumnChoice();
+      choice.SelectedColumn = _doc.LabelColumn as DataColumn;
+      object choiceAsObject = choice;
+      if(Current.Gui.ShowDialog(ref choiceAsObject,"Select label column"))
+      {
+        choice = (SingleColumnChoice)choiceAsObject;
+
+        if (choice.SelectedColumn is IReadableColumn)
+        {
+          _labelColumn = (IReadableColumn)choice.SelectedColumn;
+          InitializeLabelColumnText();
+        }
+        else
+        {
+          Current.Gui.ErrorMessageBox("Choosen column is not numeric!");
+        }
+      }
+    }
   
     #endregion
 
@@ -415,6 +462,7 @@ namespace Altaxo.Gui.Graph
       _doc.Rotation     = _rotation;
       _doc.XOffset      = _xOffset;
       _doc.YOffset      = _yOffset;
+      _doc.LabelColumn  = _labelColumn;
 
       return true;
     }

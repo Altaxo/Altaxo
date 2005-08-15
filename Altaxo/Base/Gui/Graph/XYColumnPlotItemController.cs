@@ -13,27 +13,42 @@ namespace Altaxo.Gui.Graph
 	public class XYColumnPlotItemController : TabbedElementController, Main.GUI.IMVCAController, IXYPlotGroupViewEventSink
 	{
     XYColumnPlotItem _doc;
+    XYColumnPlotItem _tempdoc;
     
     I2DPlotStyle _additionalStyle;
     int _insertAdditionalStyle;
     IXYPlotGroupView _plotGroupView;
 
+    IXYPlotStyleCollectionController _styleCollectionController;
 
 		public XYColumnPlotItemController(XYColumnPlotItem doc)
 		{
 			_doc = doc;
-      Initialize();
+      _tempdoc = (XYColumnPlotItem)_doc.Clone();
+
+      InitializeCollectionAndData();
+      InitializeStyles();
     }
 
-    void Initialize()
+    void InitializeCollectionAndData()
     {
+
+      _styleCollectionController = (IXYPlotStyleCollectionController)Current.Gui.GetControllerAndControl(new object[]{_tempdoc.Style},typeof(IXYPlotStyleCollectionController));
+      AddTab("Styles",_styleCollectionController,_styleCollectionController.ViewObject);
+      _styleCollectionController.CollectionChangeCommit += new EventHandler(_styleCollectionController_CollectionChangeCommit);
 
       _plotGroupView = (IXYPlotGroupView)Current.Gui.GetControl(this,typeof(IXYPlotGroupView));
 
      
 
-      IMVCAController ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.Data, _doc }, typeof(IMVCAController));
+      IMVCAController ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Data, _tempdoc }, typeof(IMVCAController));
       AddTab("Data", ctrl, ctrl.ViewObject);
+    }
+
+    void InitializeStyles()
+    {
+
+     IMVCAController ctrl;
 
       // prepare the style 
       // if there is only one line style or one scatter style,
@@ -41,19 +56,19 @@ namespace Altaxo.Gui.Graph
       _additionalStyle = null;
       I2DPlotStyle[] lineScatterPair = new I2DPlotStyle[2];
 
-      if (_doc.Style.Count > 0)
+      if (_tempdoc.Style.Count > 0)
       {
-        if (_doc.Style[0] is XYPlotLineStyle && (_doc.Style.Count == 1 || !(_doc.Style[1] is XYPlotScatterStyle)))
+        if (_tempdoc.Style[0] is XYPlotLineStyle && (_tempdoc.Style.Count == 1 || !(_tempdoc.Style[1] is XYPlotScatterStyle)))
         {
           XYPlotScatterStyle scatterStyle = new XYPlotScatterStyle();
           _additionalStyle = scatterStyle;
           scatterStyle.Shape = Altaxo.Graph.XYPlotScatterStyles.Shape.NoSymbol;
 
           _insertAdditionalStyle = 1;
-          lineScatterPair[0] = _doc.Style[0];
+          lineScatterPair[0] = _tempdoc.Style[0];
           lineScatterPair[1] = _additionalStyle;
         }
-        else if (_doc.Style[0] is XYPlotScatterStyle && (_doc.Style.Count == 1 || !(_doc.Style[1] is XYPlotLineStyle)))
+        else if (_tempdoc.Style[0] is XYPlotScatterStyle && (_tempdoc.Style.Count == 1 || !(_tempdoc.Style[1] is XYPlotLineStyle)))
         {
           XYPlotLineStyle lineStyle = new XYPlotLineStyle();
           _additionalStyle = lineStyle;
@@ -61,17 +76,17 @@ namespace Altaxo.Gui.Graph
 
           _insertAdditionalStyle = 0;
           lineScatterPair[0] = _additionalStyle;
-          lineScatterPair[1] = _doc.Style[0];
+          lineScatterPair[1] = _tempdoc.Style[0];
         }
-        else if (_doc.Style.Count >= 2 &&
+        else if (_tempdoc.Style.Count >= 2 &&
           (
-          ((_doc.Style[0] is XYPlotLineStyle) && (_doc.Style[1] is XYPlotScatterStyle)) ||
-            ((_doc.Style[0] is XYPlotScatterStyle) && (_doc.Style[1] is XYPlotLineStyle))
+          ((_tempdoc.Style[0] is XYPlotLineStyle) && (_tempdoc.Style[1] is XYPlotScatterStyle)) ||
+            ((_tempdoc.Style[0] is XYPlotScatterStyle) && (_tempdoc.Style[1] is XYPlotLineStyle))
             )
             )
         {
-          lineScatterPair[0] = _doc.Style[0];
-          lineScatterPair[1] = _doc.Style[1];
+          lineScatterPair[0] = _tempdoc.Style[0];
+          lineScatterPair[1] = _tempdoc.Style[1];
         }
         else
         {
@@ -100,11 +115,13 @@ namespace Altaxo.Gui.Graph
       }
 
 
-      for (int i = continue_With_I; i < _doc.Style.Count; i++)
+      for (int i = continue_With_I; i < _tempdoc.Style.Count; i++)
       {
-        ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.Style[i] }, typeof(IMVCAController));
+        ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _tempdoc.Style[i] }, typeof(IMVCAController));
         AddTab("Style " + (i + 1).ToString(), ctrl, ctrl.ViewObject);
       }
+
+    base.SetElements(false);
     }
 
 
@@ -122,14 +139,21 @@ namespace Altaxo.Gui.Graph
 
     #region IApplyController Members
 
+    int _applySuspend; // to avoid multiple invoking here because some of the child controls
+                       // have this here as controller too     
     public bool Apply()
     {
+      if(_applySuspend++ > 0)
+        return true;
+
+      bool applyResult = false;
       for(int i=0;i<TabCount;i++)
       {
         if(false==Tab(i).Controller.Apply())
         {
           BringTabToFront(i);
-          return false;
+          applyResult = false;
+          goto end_of_function;
         }
       }
 
@@ -141,10 +165,16 @@ namespace Altaxo.Gui.Graph
 
       if (bAdditionalStyleIsVisible)
       {
-        _doc.Style.Insert(_insertAdditionalStyle,_additionalStyle);
+        _tempdoc.Style.Insert(_insertAdditionalStyle,_additionalStyle);
       }
 
-      return true;
+      _doc.CopyFrom(_tempdoc);
+
+      applyResult = true;
+
+      end_of_function:
+        _applySuspend--;
+      return applyResult;
     }
 
     #endregion
@@ -157,5 +187,33 @@ namespace Altaxo.Gui.Graph
     }
 
     #endregion
-}
+
+    #region Helper Controller classes
+
+    class MyPlotStyleCollectionController : XYPlotStyleCollectionController
+    {
+      XYColumnPlotItemController _parent;
+
+      public MyPlotStyleCollectionController(XYColumnPlotItemController parent)
+        : base(parent._tempdoc.Style)
+      {
+        _parent = parent;
+      }
+
+    }
+
+
+    #endregion
+
+    private void _styleCollectionController_CollectionChangeCommit(object sender, EventArgs e)
+    {
+      if(true==_styleCollectionController.Apply())
+      {
+        // remove the tabs 2..
+        RemoveTabRange(2,TabCount-2);
+        InitializeStyles();
+
+      }
+    }
+  }
 }

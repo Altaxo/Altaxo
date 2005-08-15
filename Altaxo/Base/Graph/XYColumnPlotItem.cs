@@ -200,9 +200,14 @@ namespace Altaxo.Graph
 
     public XYColumnPlotItem(XYColumnPlotItem from)
     {
-      this.Data = from.Data;   // also wires the event
-      this.Style = (XYPlotStyleCollection)from.Style.Clone(); // also wires the event
+     CopyFrom(from);
     }
+
+    public void CopyFrom(XYColumnPlotItem from)
+  {
+    this.Data = from.Data;   // also wires the event
+    this.Style = (XYPlotStyleCollection)from.Style.Clone(); // also wires the event
+  }
 
     public override object Clone()
     {

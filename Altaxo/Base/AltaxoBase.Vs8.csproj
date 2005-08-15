@@ -216,6 +216,10 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Gui\Graph\XYPlotScatterStyleController.cs" />
+    <Compile Include="Gui\Graph\XYPlotStyleCollectionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Gui\Graph\XYPlotStyleCollectionController.cs" />
     <Compile Include="Scripting\FitFunctionScriptCollection.cs" />
     <Compile Include="Collections\AscendingIntegerCollection.cs">
       <SubType>Code</SubType>
@@ -1103,6 +1107,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Graph\XYPlotScatterStyleControl.resx">
       <DependentUpon>XYPlotScatterStyleControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Gui\Graph\XYPlotStyleCollectionControl.resx">
+      <DependentUpon>XYPlotStyleCollectionControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Gui\Scripting\FitFunctionScriptControl.resx">
       <DependentUpon>FitFunctionScriptControl.cs</DependentUpon>

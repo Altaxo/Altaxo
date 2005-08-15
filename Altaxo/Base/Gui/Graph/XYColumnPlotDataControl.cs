@@ -50,9 +50,6 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Button m_btToLabel;
-    private System.Windows.Forms.TextBox m_edLabelColumn;
-    private System.Windows.Forms.Button m_btEraseLabel;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -103,9 +100,6 @@ namespace Altaxo.Gui.Graph
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
-      this.m_btToLabel = new System.Windows.Forms.Button();
-      this.m_edLabelColumn = new System.Windows.Forms.TextBox();
-      this.m_btEraseLabel = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeFrom)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeTo)).BeginInit();
       this.groupBox1.SuspendLayout();
@@ -237,43 +231,8 @@ namespace Altaxo.Gui.Graph
       this.label1.Text = "From:";
       this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
-      // m_btToLabel
+      // XYColumnPlotDataControl
       // 
-      this.m_btToLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-      this.m_btToLabel.Image = ((System.Drawing.Image)(resources.GetObject("m_btToLabel.Image")));
-      this.m_btToLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-      this.m_btToLabel.Location = new System.Drawing.Point(160, 144);
-      this.m_btToLabel.Name = "m_btToLabel";
-      this.m_btToLabel.Size = new System.Drawing.Size(40, 24);
-      this.m_btToLabel.TabIndex = 11;
-      this.m_btToLabel.Text = "L";
-      this.m_btToLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-      this.m_btToLabel.Click += new System.EventHandler(this.EhToLabel_Click);
-      // 
-      // m_edLabelColumn
-      // 
-      this.m_edLabelColumn.Location = new System.Drawing.Point(208, 144);
-      this.m_edLabelColumn.Name = "m_edLabelColumn";
-      this.m_edLabelColumn.ReadOnly = true;
-      this.m_edLabelColumn.Size = new System.Drawing.Size(192, 20);
-      this.m_edLabelColumn.TabIndex = 12;
-      this.m_edLabelColumn.Text = "textBox2";
-      this.m_edLabelColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-      // 
-      // m_btEraseLabel
-      // 
-      this.m_btEraseLabel.Image = ((System.Drawing.Image)(resources.GetObject("m_btEraseLabel.Image")));
-      this.m_btEraseLabel.Location = new System.Drawing.Point(408, 144);
-      this.m_btEraseLabel.Name = "m_btEraseLabel";
-      this.m_btEraseLabel.Size = new System.Drawing.Size(24, 24);
-      this.m_btEraseLabel.TabIndex = 13;
-      this.m_btEraseLabel.Click += new System.EventHandler(this.EhEraseLabel_Click);
-      // 
-      // LineScatterPlotDataControl
-      // 
-      this.Controls.Add(this.m_btEraseLabel);
-      this.Controls.Add(this.m_edLabelColumn);
-      this.Controls.Add(this.m_btToLabel);
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.m_btEraseY);
       this.Controls.Add(this.m_edYColumn);
@@ -283,7 +242,7 @@ namespace Altaxo.Gui.Graph
       this.Controls.Add(this.m_btToX);
       this.Controls.Add(this.m_lbColumns);
       this.Controls.Add(this.m_cbTables);
-      this.Name = "LineScatterPlotDataControl";
+      this.Name = "XYColumnPlotDataControl";
       this.Size = new System.Drawing.Size(432, 368);
       ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeFrom)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.m_nudPlotRangeTo)).EndInit();
@@ -334,11 +293,7 @@ namespace Altaxo.Gui.Graph
       this.m_edYColumn.Text = colname;
     }
 
-    public void LabelColumn_Initialize(string colname)
-    {
-      this.m_edLabelColumn.Text = colname;
-    }
-
+   
     public void PlotRangeFrom_Initialize(int from)
     {
       this.m_nudPlotRangeFrom.Minimum=0;
@@ -369,13 +324,6 @@ namespace Altaxo.Gui.Graph
     }
 
 
-    private void EhToLabel_Click(object sender, System.EventArgs e)
-    {
-      if(null!=Controller)
-        Controller.EhView_ToLabel(this.m_cbTables.SelectedIndex,(string)this.m_cbTables.SelectedItem,m_lbColumns.SelectedIndex,(string)this.m_lbColumns.SelectedItem);
-  
-    }
-
 
     private void EhEraseX_Click(object sender, System.EventArgs e)
     {
@@ -389,12 +337,7 @@ namespace Altaxo.Gui.Graph
         Controller.EhView_EraseY();
     }
 
-    private void EhEraseLabel_Click(object sender, System.EventArgs e)
-    {
-      if(null!=Controller)
-        Controller.EhView_EraseLabel();
-    }
-
+   
     private void EhPlotRangeFrom_Validating(object sender, System.ComponentModel.CancelEventArgs e)
     {
       if(null!=Controller)

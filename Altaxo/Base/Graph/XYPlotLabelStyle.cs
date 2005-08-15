@@ -138,7 +138,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// For deserialization purposes.
     /// </summary>
-    protected XYPlotLabelStyle()
+    protected XYPlotLabelStyle(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       this.m_CachedStringFormat = new StringFormat(StringFormatFlags.NoWrap);
       this.m_CachedStringFormat.Alignment = System.Drawing.StringAlignment.Center;
@@ -161,6 +161,11 @@ namespace Altaxo.Graph
       this.m_LabelColumn = from.m_LabelColumn;
 
       CreateEventChain();
+    }
+
+    public XYPlotLabelStyle()
+      : this((Altaxo.Data.IReadableColumn)null)
+    {
     }
 
     public XYPlotLabelStyle(Altaxo.Data.IReadableColumn labelColumn)

@@ -115,6 +115,30 @@ namespace Altaxo.Main.Services
       return (System.Type[])list.ToArray(typeof(System.Type));
     }
 
+    /// <summary>
+    /// This will return a list of types that are subclasses of type basetype or (when basetype is an interface)
+    /// implements basetype.
+    /// </summary>
+    /// <param name="basetype">The basetype.</param>
+    /// <returns></returns>
+    public static System.Type[] GetNonAbstractSubclassesOf(System.Type basetype)
+    {
+      ArrayList list = new ArrayList();
+
+      Assembly[] assemblies = GetDependendAssemblies(basetype.Assembly);
+      foreach(Assembly assembly in assemblies)
+      {
+        Type[] definedtypes = assembly.GetTypes();
+        foreach(Type definedtype in definedtypes)
+        {
+          if(!definedtype.IsAbstract && 
+            IsSubClassOfOrImplements(definedtype,basetype))
+            list.Add(definedtype);
+        } // end foreach type
+      } // end foreach assembly 
+
+      return (System.Type[])list.ToArray(typeof(System.Type));
+    }
 
     /// <summary>
     /// For a given type of attribute, attributeType, this function returns the attribute instances and the class

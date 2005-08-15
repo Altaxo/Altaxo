@@ -54,7 +54,8 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.CheckBox m_chkLineSymbolGap;
     private System.Windows.Forms.Button m_btLineSymbolColorDetails;
     private System.Windows.Forms.ComboBox m_cbLineSymbolColor;
-    private System.Windows.Forms.Label m_lblLineSymbolColor;
+        private System.Windows.Forms.CheckBox _chkIndependentColor;
+        private System.Windows.Forms.CheckBox _chkHideColor;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -107,7 +108,8 @@ namespace Altaxo.Gui.Graph
       this.m_chkLineSymbolGap = new System.Windows.Forms.CheckBox();
       this.m_btLineSymbolColorDetails = new System.Windows.Forms.Button();
       this.m_cbLineSymbolColor = new System.Windows.Forms.ComboBox();
-      this.m_lblLineSymbolColor = new System.Windows.Forms.Label();
+      this._chkIndependentColor = new System.Windows.Forms.CheckBox();
+      this._chkHideColor = new System.Windows.Forms.CheckBox();
       this.m_gbLine.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -142,6 +144,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbLineFillColor
       // 
+      this.m_cbLineFillColor.FormattingEnabled = true;
       this.m_cbLineFillColor.Location = new System.Drawing.Point(80, 176);
       this.m_cbLineFillColor.Name = "m_cbLineFillColor";
       this.m_cbLineFillColor.Size = new System.Drawing.Size(120, 21);
@@ -150,6 +153,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbLineFillDirection
       // 
+      this.m_cbLineFillDirection.FormattingEnabled = true;
       this.m_cbLineFillDirection.Location = new System.Drawing.Point(80, 152);
       this.m_cbLineFillDirection.Name = "m_cbLineFillDirection";
       this.m_cbLineFillDirection.Size = new System.Drawing.Size(121, 21);
@@ -183,6 +187,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbLineWidth
       // 
+      this.m_cbLineWidth.FormattingEnabled = true;
       this.m_cbLineWidth.Location = new System.Drawing.Point(80, 80);
       this.m_cbLineWidth.Name = "m_cbLineWidth";
       this.m_cbLineWidth.Size = new System.Drawing.Size(121, 21);
@@ -191,6 +196,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbLineType
       // 
+      this.m_cbLineType.FormattingEnabled = true;
       this.m_cbLineType.Location = new System.Drawing.Point(80, 48);
       this.m_cbLineType.Name = "m_cbLineType";
       this.m_cbLineType.Size = new System.Drawing.Size(121, 21);
@@ -199,6 +205,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbLineConnect
       // 
+      this.m_cbLineConnect.FormattingEnabled = true;
       this.m_cbLineConnect.Location = new System.Drawing.Point(80, 16);
       this.m_cbLineConnect.Name = "m_cbLineConnect";
       this.m_cbLineConnect.Size = new System.Drawing.Size(121, 21);
@@ -231,7 +238,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_chkLineSymbolGap
       // 
-      this.m_chkLineSymbolGap.Location = new System.Drawing.Point(8, 8);
+      this.m_chkLineSymbolGap.Location = new System.Drawing.Point(8, 88);
       this.m_chkLineSymbolGap.Name = "m_chkLineSymbolGap";
       this.m_chkLineSymbolGap.Size = new System.Drawing.Size(112, 24);
       this.m_chkLineSymbolGap.TabIndex = 22;
@@ -247,27 +254,39 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbLineSymbolColor
       // 
+      this.m_cbLineSymbolColor.FormattingEnabled = true;
       this.m_cbLineSymbolColor.Location = new System.Drawing.Point(8, 56);
       this.m_cbLineSymbolColor.Name = "m_cbLineSymbolColor";
       this.m_cbLineSymbolColor.Size = new System.Drawing.Size(152, 21);
       this.m_cbLineSymbolColor.TabIndex = 20;
       this.m_cbLineSymbolColor.Text = "comboBox1";
       // 
-      // m_lblLineSymbolColor
+      // _chkIndependentColor
       // 
-      this.m_lblLineSymbolColor.Location = new System.Drawing.Point(8, 40);
-      this.m_lblLineSymbolColor.Name = "m_lblLineSymbolColor";
-      this.m_lblLineSymbolColor.Size = new System.Drawing.Size(100, 16);
-      this.m_lblLineSymbolColor.TabIndex = 19;
-      this.m_lblLineSymbolColor.Text = "Line/Symbol Color";
+      this._chkIndependentColor.Location = new System.Drawing.Point(8, 8);
+      this._chkIndependentColor.Name = "_chkIndependentColor";
+      this._chkIndependentColor.Size = new System.Drawing.Size(128, 16);
+      this._chkIndependentColor.TabIndex = 24;
+      this._chkIndependentColor.Text = "independent color";
+      this._chkIndependentColor.CheckedChanged += new System.EventHandler(this._chkIndependentColor_CheckedChanged);
+      // 
+      // _chkHideColor
+      // 
+      this._chkHideColor.Location = new System.Drawing.Point(8, 32);
+      this._chkHideColor.Name = "_chkHideColor";
+      this._chkHideColor.Size = new System.Drawing.Size(136, 16);
+      this._chkHideColor.TabIndex = 25;
+      this._chkHideColor.Text = "publish color";
+      this._chkHideColor.CheckedChanged += new System.EventHandler(this._chkHideColor_CheckedChanged);
       // 
       // XYPlotLineStyleControl
       // 
+      this.Controls.Add(this._chkHideColor);
+      this.Controls.Add(this._chkIndependentColor);
       this.Controls.Add(this.m_gbLine);
       this.Controls.Add(this.m_chkLineSymbolGap);
       this.Controls.Add(this.m_btLineSymbolColorDetails);
       this.Controls.Add(this.m_cbLineSymbolColor);
-      this.Controls.Add(this.m_lblLineSymbolColor);
       this.Name = "XYPlotLineStyleControl";
       this.Size = new System.Drawing.Size(224, 368);
       this.m_gbLine.ResumeLayout(false);
@@ -377,13 +396,45 @@ namespace Altaxo.Gui.Graph
     {
       InitComboBox(this.m_cbLineFillDirection,arr,sel);
     }
+
+       
+      
     public string LineFillDirection
     {
       get { return (string)m_cbLineFillDirection.SelectedItem; }
     }
   
+        public void InitializeIndependentColor(bool val)
+        {
+          this._chkIndependentColor.Checked = val;
+         _chkIndependentColor_CheckedChanged(_chkIndependentColor.Checked,EventArgs.Empty);
+        }
 
+        public bool IndependentColor { get { return this._chkIndependentColor.Checked; }}
 
+        private void _chkIndependentColor_CheckedChanged(object sender, System.EventArgs e)
+        {
+          this._chkHideColor.Enabled = _chkIndependentColor.Checked;
+          this.m_cbLineSymbolColor.Enabled = _chkIndependentColor.Checked;
+          this.m_btLineSymbolColorDetails.Enabled = _chkIndependentColor.Checked;
+
+          if(this._controller!=null)
+          {
+           
+          }
+        }
+
+        public void InitializePublishColor(bool val)
+        {
+          this._chkHideColor.Checked = val;
+        }
+
+        public bool PublishColor { get { return this._chkHideColor.Checked; }}
+
+        private void _chkHideColor_CheckedChanged(object sender, System.EventArgs e)
+        {
+        
+        }
 
 
     #endregion

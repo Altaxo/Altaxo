@@ -48,5 +48,53 @@ namespace Altaxo.Graph
       double y = p1.Y - p2.Y;
       return Math.Sqrt(x*x+y*y);
     }
+
+    /// <summary>
+    /// Calculates the squared distance between a finite line and a point.
+    /// </summary>
+    /// <param name="lineOrg">The location of the line origin.</param>
+    /// <param name="lineEnd">The location of the line end.</param>
+    /// <param name="point">The location of the point.</param>
+    /// <returns>The squared distance between the line (threated as having a finite length) and the point.</returns>
+    public static double SquareDistanceLineToPoint(PointF lineOrg, PointF lineEnd, PointF point)
+    {
+      float linex = lineEnd.X-lineOrg.X;
+      float liney = lineEnd.Y-lineOrg.Y;
+      float pointx = point.X-lineOrg.X;
+      float pointy = point.Y-lineOrg.Y;
+
+      float rsquare = linex*linex+liney*liney;
+      float xx=linex*pointx+liney*pointy;
+      if(xx<=0) // the point is located before the line, so use
+      {         // the distance of the line origin to the point
+        return pointx*pointx+pointy*pointy;
+      }
+      else if(xx>=rsquare) // the point is located after the line, so use
+      {                   // the distance of the line end to the point
+        pointx = point.X - lineEnd.X;
+        pointy = point.Y - lineEnd.Y;
+        return pointx*pointx+pointy*pointy;
+      }
+      else // the point is located in the middle of the line, use the
+      {     // distance from the line to the point
+        float yy = liney*pointx-linex*pointy;
+        return yy*yy/rsquare;
+      }
+    }
+
+    public static bool IsPointIntoDistance(PointF lineOrg, PointF lineEnd, PointF point, float distance)
+    {
+      // first a quick test if the point is far outside the circle
+      // that is spanned from the middle of the line and has at least
+      // a radius of half of the line length plus the distance
+      float xm = (lineOrg.X+lineEnd.X)/2;
+      float ym = (lineOrg.Y+lineEnd.Y)/2;
+      float r = Math.Abs(lineOrg.X-xm)+Math.Abs(lineOrg.Y-ym)+distance;
+      if(Math.Max(Math.Abs(point.X-xm),Math.Abs(point.Y-ym))>r)
+        return false;
+      else
+        return SquareDistanceLineToPoint(lineOrg,lineEnd,point)<=distance*distance;
+
+    }
   }
 }

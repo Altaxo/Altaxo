@@ -117,13 +117,23 @@ namespace Altaxo.Graph
 
     public XYPlotStyleCollection(XYPlotStyleCollection from)
     {
+      CopyFrom(from);
+    }
+    public void CopyFrom(XYPlotStyleCollection from)
+    {
+      Suspend();
+
+      Clear();
+
       this._changeEventPending = false;
       this._eventSuspendCount = 0;
       this._colorProvider = from._colorProvider;
       this._symbolSizeProvider = from._symbolSizeProvider;
       this._innerList = new ArrayList();
       for (int i = 0; i < from._innerList.Count; ++i)
-        Add(from[i]);
+        Add((I2DPlotStyle)from[i].Clone());
+
+      Resume();
     }
 
     public I2DPlotStyle this[int i]
@@ -146,6 +156,7 @@ namespace Altaxo.Graph
     {
       Add(toadd,true);
     }
+
     protected void Add(I2DPlotStyle toadd, bool withReorganizationAndEvents)
     {
       if (toadd != null)
@@ -159,6 +170,24 @@ namespace Altaxo.Graph
 
           OnChanged();
         }
+      }
+    }
+
+   public void AddRange(I2DPlotStyle[] toadd)
+    {
+      if (toadd != null)
+      {
+        for(int i=0;i<toadd.Length;i++)
+        {
+          this._innerList.Add(toadd[i]);
+          toadd[i].Changed += new EventHandler(this.OnChildChanged);
+        }
+
+      
+          InternalGetProviders();
+
+          OnChanged();
+       
       }
     }
 
@@ -177,6 +206,40 @@ namespace Altaxo.Graph
       }
     }
 
+    public void Clear()
+    {
+      if(_innerList!=null)
+      {
+        for(int i=0;i<Count;i++)
+          this[i].Changed -= new EventHandler(this.OnChildChanged);
+
+        this._innerList.Clear();
+
+        InternalGetProviders();
+        OnChanged();
+      }
+    }
+
+    public void RemoveAt(int idx)
+    {
+      I2DPlotStyle removed = this[idx];
+      _innerList.RemoveAt(idx);
+      removed.Changed -= new EventHandler(this.OnChildChanged);
+
+      InternalGetProviders();
+      OnChanged();
+    }
+
+    public void ExchangeItemPositions(int pos1, int pos2)
+    {
+      I2DPlotStyle item1 = this[pos1];
+      _innerList[pos1] = _innerList[pos2];
+      _innerList[pos2] = item1;
+
+      InternalGetProviders();
+      OnChanged();
+
+    }
 
     void InternalGetProviders()
     {
@@ -214,9 +277,17 @@ namespace Altaxo.Graph
       Resume();
     }
 
+    public void BeginUpdate()
+    {
+      Suspend();
+    }
     void Suspend()
     {
       ++_eventSuspendCount;
+    }
+    public void EndUpdate()
+    {
+      Resume();
     }
     void Resume()
     {
@@ -349,6 +420,23 @@ namespace Altaxo.Graph
       }
     }
 
+    public override float SymbolSize
+    {
+      get
+      {
+        return this._symbolSizeProvider<0 ? 0 : this[_symbolSizeProvider].SymbolSize;
+      }
+      set
+      {
+        if(this._symbolSizeProvider>=0)
+        {
+          if(this[_symbolSizeProvider].IsSymbolSizeReceiver)
+            this[_symbolSizeProvider].SymbolSize = value;
+        }
+      }
+    }
+
+
       public override XYPlotLineStyle XYPlotLineStyle
     {
       get
@@ -399,6 +487,9 @@ namespace Altaxo.Graph
 
     public void OnChildChanged(object child, EventArgs e)
     {
+      if(this._eventSuspendCount==0)
+        InternalGetProviders();
+
       if (null != Changed)
         Changed(this, e);
     }

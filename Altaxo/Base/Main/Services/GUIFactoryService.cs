@@ -19,7 +19,7 @@ namespace Altaxo.Main.Services
     /// <returns>The controller for that document when found. The controller is already initialized with the document. If not found, null is returned.</returns>
     public IMVCController GetController(object[] args, System.Type expectedControllerType)
     {
-      return (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute),typeof(IMVCController),args);
+      return (IMVCController)ReflectionService.GetClassForClassInstanceByAttribute(typeof(UserControllerForObjectAttribute),expectedControllerType,args);
     }
 
     /// <summary>

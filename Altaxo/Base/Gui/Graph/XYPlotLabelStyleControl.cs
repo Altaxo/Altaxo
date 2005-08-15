@@ -33,7 +33,7 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Graphical interface for adjusting the style of a XYPlotLabel.
   /// </summary>
-      	[UserControlForController(typeof(IXYPlotLabelStyleViewEventSink))]
+  [UserControlForController(typeof(IXYPlotLabelStyleViewEventSink))]
   public class XYPlotLabelStyleControl : System.Windows.Forms.UserControl, IXYPlotLabelStyleView
   {
     private IXYPlotLabelStyleViewEventSink _controller;
@@ -58,6 +58,9 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.ComboBox m_cbVerticalAlignment;
     private System.Windows.Forms.CheckBox m_chkIndependentColor;
     private System.Windows.Forms.ComboBox m_cbBackgroundColor;
+    private System.Windows.Forms.TextBox _edLabelColumn;
+    private System.Windows.Forms.Button _btSelectLabelColumn;
+    private System.Windows.Forms.Label label2;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -115,6 +118,9 @@ namespace Altaxo.Gui.Graph
       this.label6 = new System.Windows.Forms.Label();
       this.m_chkIndependentColor = new System.Windows.Forms.CheckBox();
       this.m_cbBackgroundColor = new System.Windows.Forms.ComboBox();
+      this._edLabelColumn = new System.Windows.Forms.TextBox();
+      this._btSelectLabelColumn = new System.Windows.Forms.Button();
+      this.label2 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -314,8 +320,37 @@ namespace Altaxo.Gui.Graph
       this.m_cbBackgroundColor.Text = "comboBox1";
       this.m_cbBackgroundColor.SelectionChangeCommitted += new System.EventHandler(this.EhBackgroundColor_SelectionChangeCommitted);
       // 
+      // _edLabelColumn
+      // 
+      this._edLabelColumn.Location = new System.Drawing.Point(128, 8);
+      this._edLabelColumn.Name = "_edLabelColumn";
+      this._edLabelColumn.Size = new System.Drawing.Size(240, 20);
+      this._edLabelColumn.TabIndex = 36;
+      this._edLabelColumn.Text = "textBox1";
+      // 
+      // _btSelectLabelColumn
+      // 
+      this._btSelectLabelColumn.Location = new System.Drawing.Point(376, 8);
+      this._btSelectLabelColumn.Name = "_btSelectLabelColumn";
+      this._btSelectLabelColumn.Size = new System.Drawing.Size(56, 20);
+      this._btSelectLabelColumn.TabIndex = 37;
+      this._btSelectLabelColumn.Text = "Select ..";
+      this._btSelectLabelColumn.Click += new System.EventHandler(this.EhSelectLabelColumn_Click);
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(8, 8);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(112, 20);
+      this.label2.TabIndex = 38;
+      this.label2.Text = "LabelColumn:";
+      this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+      // 
       // XYPlotLabelStyleControl
       // 
+      this.Controls.Add(this.label2);
+      this.Controls.Add(this._btSelectLabelColumn);
+      this.Controls.Add(this._edLabelColumn);
       this.Controls.Add(this.m_cbBackgroundColor);
       this.Controls.Add(this.m_chkIndependentColor);
       this.Controls.Add(this.m_chkWhiteOut);
@@ -468,6 +503,12 @@ namespace Altaxo.Gui.Graph
     
     }
 
+    private void EhSelectLabelColumn_Click(object sender, System.EventArgs e)
+    {
+      if(null!=Controller)
+        Controller.EhView_SelectLabelColumn();
+    }
+
 
    
     #region IXYPlotLabelStyleView Members
@@ -485,6 +526,7 @@ namespace Altaxo.Gui.Graph
     }
 
   
+    
 
     public static void InitComboBox(System.Windows.Forms.ComboBox box, string[] names, string name)
     {
@@ -511,6 +553,11 @@ namespace Altaxo.Gui.Graph
       box.SelectedItem = choosenfontfamily;
     }
 
+
+    public void LabelColumn_Initialize(string labelColumnAsText)
+    {
+      this._edLabelColumn.Text = labelColumnAsText;
+    }
 
     public void Font_Initialize(string fontfamily)
     {
@@ -585,6 +632,8 @@ namespace Altaxo.Gui.Graph
     }
 
     #endregion
+
+
    
   }
 }

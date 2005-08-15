@@ -52,6 +52,8 @@ namespace Altaxo.Gui.Common
     /// <param name="view">The view (must be currently of type Control.</param>
     void AddTab(string title, object view);
 
+   
+
     /// <summary>
     /// Activates the tab page with the title <code>title</code>.
     /// </summary>
@@ -72,6 +74,13 @@ namespace Altaxo.Gui.Common
   public interface ITabbedElementController 
   {
     void BringTabToFront(int i);
+
+    /// <summary>
+    /// Removes a number of tab elements.
+    /// </summary>
+    /// <param name="firstTab">Index of the first tab to remove.</param>
+    /// <param name="count">Number of tabs to remove.</param>
+    void RemoveTabRange(int firstTab, int count);
   }
 
 
@@ -119,6 +128,12 @@ namespace Altaxo.Gui.Common
       _tabs.Add(new ControlViewElement(title,controller,view));
     }
 
+    public void RemoveTabRange(int firstTab, int count)
+    {
+      _tabs.RemoveRange(firstTab, count);
+      SetElements(false);
+    }
+
     /// <summary>
     /// Get / sets the view of this controller.
     /// </summary>
@@ -151,7 +166,7 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    void SetElements(bool bInit)
+    protected void SetElements(bool bInit)
     {
 
       if(null!=View)

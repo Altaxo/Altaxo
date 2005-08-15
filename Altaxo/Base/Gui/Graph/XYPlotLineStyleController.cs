@@ -41,6 +41,9 @@ namespace Altaxo.Gui.Graph
     IXYPlotLineStyleViewEventSink Controller { get; set; }
     
     
+    void InitializeIndependentColor(bool val);
+    void InitializePublishColor(bool val);
+
     /// <summary>
     /// Initializes the plot style color combobox.
     /// </summary>
@@ -102,6 +105,8 @@ namespace Altaxo.Gui.Graph
     #region Getter
 
     bool LineSymbolGap { get; }
+    bool IndependentColor { get; }
+    bool PublishColor { get; }
     string SymbolColor { get; }
     string LineConnect { get; }
     string LineType    { get; }
@@ -192,6 +197,9 @@ namespace Altaxo.Gui.Graph
     {
       if(_view!=null)
       {
+        _view.InitializeIndependentColor(_tempDoc.IndependentColor);
+        _view.InitializePublishColor(_tempDoc.PublishColor);
+
         // now we have to set all dialog elements to the right values
         SetPlotStyleColor();
         SetLineSymbolGapCondition();
@@ -309,6 +317,8 @@ namespace Altaxo.Gui.Graph
           _doc.Color = Color.FromName(str);
         }
 
+        _doc.IndependentColor = _view.IndependentColor;
+        _doc.PublishColor = _view.PublishColor;
 
         // Line Connect
         _doc.Connection = (Altaxo.Graph.XYPlotLineStyles.ConnectionStyle)Enum.Parse(typeof(Altaxo.Graph.XYPlotLineStyles.ConnectionStyle),_view.LineConnect);

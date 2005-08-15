@@ -264,6 +264,8 @@ namespace Altaxo.Graph
     protected bool            _fillArea;
     protected BrushHolder     _fillBrush; // brush to fill the area under the line
     protected XYPlotLineStyles.FillDirection _fillDirection; // the direction to fill
+    protected bool            _independentColor;
+    protected bool            _publishColor;
 
     // cached values
     protected PaintOneRangeTemplate _cachedPaintOneRange; // subroutine to paint a single range
@@ -345,6 +347,28 @@ namespace Altaxo.Graph
       }
     }
 
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XYPlotLineStyle),1)]
+      public class XmlSerializationSurrogate1 : XmlSerializationSurrogate0
+    {
+      public new void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        base.Serialize(obj,info);
+        XYPlotLineStyle s = (XYPlotLineStyle)obj;
+        info.AddValue("IndependentColor",s._independentColor);
+        info.AddValue("PublishColor",s._publishColor);
+      }
+      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      {
+       XYPlotLineStyle s =  (XYPlotLineStyle)base.Deserialize(o,info,parent);
+       s._independentColor = info.GetBoolean("IndependentColor");
+        s._publishColor = info.GetBoolean("PublishColor");
+
+        s.CreateEventChain();
+
+        return s;
+      }
+    }
+
     /// <summary>
     /// Finale measures after deserialization.
     /// </summary>
@@ -367,7 +391,8 @@ namespace Altaxo.Graph
       _fillDirection = XYPlotLineStyles.FillDirection.Bottom;
       _connectionStyle    = XYPlotLineStyles.ConnectionStyle.Straight;
       _cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
-    
+      _independentColor = false;
+      _publishColor = true;
       CreateEventChain();
     }
 
@@ -382,7 +407,9 @@ namespace Altaxo.Graph
       this._fillBrush            = null==from._fillBrush?null:(BrushHolder)from._fillBrush.Clone();
       this._fillDirection        = from._fillDirection;
       this.Connection             = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
-    
+      this._independentColor      = from._independentColor;
+      this._publishColor          = from._publishColor;
+
       if(!suppressChangeEvent)
         OnChanged();
     }
@@ -455,9 +482,44 @@ namespace Altaxo.Graph
       }
       set
       {
+        bool oldValue = _useLineSymbolGap;
         _useLineSymbolGap = value;
+        if(value!=oldValue)
+          OnChanged();
       }
     }
+
+    public bool IndependentColor
+    {
+      get
+      {
+        return _independentColor;
+      }
+      set
+      {
+        bool oldValue = _independentColor;
+        _independentColor = value;
+        if(value!=oldValue)
+          OnChanged();
+      }
+    }
+
+    public bool PublishColor
+    {
+      get
+      {
+        return _publishColor;
+      }
+      set
+      {
+        bool oldValue = _publishColor;
+        _publishColor = value;
+        if(value!=oldValue)
+          OnChanged();
+      }
+    }
+
+
 
     public void SetToNextLineStyle(XYPlotLineStyle template)
     {
@@ -1386,7 +1448,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return true;
+        return this._publishColor;
       }
     }
 
@@ -1456,7 +1518,7 @@ namespace Altaxo.Graph
 
     public bool IsColorReceiver
     {
-      get { return true; }
+      get { return !this._independentColor; }
     }
 
     public bool IsSymbolSizeProvider

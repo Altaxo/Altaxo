@@ -37,10 +37,9 @@ namespace Altaxo.Gui.Graph
 
     void EhView_ToX(int tableindex, string tablename, int columnindex, string columnname);
     void EhView_ToY(int tableindex, string tablename, int columnindex, string columnname);
-    void EhView_ToLabel(int tableindex, string tablename, int columnindex, string columnname);
     void EhView_EraseX();
     void EhView_EraseY();
-    void EhView_EraseLabel();
+ 
 
     bool EhView_RangeFrom(int val);
     bool EhView_RangeTo(int val);
@@ -60,7 +59,6 @@ namespace Altaxo.Gui.Graph
 
     void XColumn_Initialize(string colname);
     void YColumn_Initialize(string colname);
-    void LabelColumn_Initialize(string colname);
 
 
     void PlotRangeFrom_Initialize(int from);
@@ -151,7 +149,6 @@ namespace Altaxo.Gui.Graph
 
         View.XColumn_Initialize(m_xCol==null ? String.Empty : m_xCol.FullName);
         View.YColumn_Initialize(m_yCol==null ? String.Empty : m_yCol.FullName);
-        View.LabelColumn_Initialize(m_labelCol==null ? String.Empty : m_labelCol.FullName);
         View.PlotRangeFrom_Initialize(m_PlotRange_From);
         CalcMaxPossiblePlotRangeTo();
       }
@@ -194,13 +191,6 @@ namespace Altaxo.Gui.Graph
       if(null!=View)
         View.YColumn_Initialize(m_yCol==null ? String.Empty : m_yCol.FullName);
     }
-    public void EhView_ToLabel(int tableindex, string tablename, int columnindex, string columnname)
-    {
-      SetDirty();
-      m_labelCol = Current.Project.DataTableCollection[tablename][columnname];
-      if(null!=View)
-        View.LabelColumn_Initialize(m_labelCol==null ? String.Empty : m_labelCol.FullName);
-    }
     public void EhView_EraseX()
     {
       SetDirty();
@@ -214,13 +204,6 @@ namespace Altaxo.Gui.Graph
       m_yCol = null;
       if(null!=View)
         View.YColumn_Initialize(m_yCol==null ? String.Empty : m_yCol.FullName);
-    }
-    public void EhView_EraseLabel()
-    {
-      SetDirty();
-      m_labelCol = null;
-      if(null!=View)
-        View.LabelColumn_Initialize(m_labelCol==null ? String.Empty : m_labelCol.FullName);
     }
     public bool EhView_RangeFrom(int val)
     {
