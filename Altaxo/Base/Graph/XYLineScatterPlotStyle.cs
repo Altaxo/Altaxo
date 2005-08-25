@@ -36,6 +36,10 @@ namespace Altaxo.Graph
   [Flags]
   public enum LineScatterPlotStyleKind
   {
+    /// <summary>
+    /// Neither line nor scatter used.
+    /// </summary>
+    Empty=0,
     /// <summary>Line only. No symbol plotted, no line-symbol-gap.</summary>
     Line=1,
     /// <summary>Scatter only. No line is plotted, no line-symbol gap.</summary>
@@ -44,14 +48,13 @@ namespace Altaxo.Graph
     LineAndScatter=3
   }
 
-
+#if true // must be kept for old deserialization
   [SerializationSurrogate(0,typeof(XYLineScatterPlotStyle.SerializationSurrogate0))]
   [SerializationVersion(0)]
   public class XYLineScatterPlotStyle
     : AbstractXYPlotStyle,
     System.Runtime.Serialization.IDeserializationCallback,
-    Main.IChangedEventSource, Main.IChildChangedEventSink,
-    I2DPlotItemStyle
+    Main.IChangedEventSource, Main.IChildChangedEventSink   
   {
 
     protected XYPlotLineStyle     m_LineStyle;
@@ -118,7 +121,7 @@ namespace Altaxo.Graph
         // do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
         s.XYPlotLineStyle = (XYPlotLineStyle)info.GetValue("XYPlotLineStyle",typeof(XYPlotLineStyle));
         // do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
-        s.XYPlotScatterStyle = (XYPlotScatterStyle)info.GetValue("XYPlotScatterStyle",typeof(XYPlotScatterStyle));
+        s.ScatterStyle = (XYPlotScatterStyle)info.GetValue("XYPlotScatterStyle",typeof(XYPlotScatterStyle));
         s.LineSymbolGap = info.GetBoolean("LineSymbolGap");
 
         return s;
@@ -144,7 +147,7 @@ namespace Altaxo.Graph
         // do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
         s.XYPlotLineStyle = (XYPlotLineStyle)info.GetValue("XYPlotLineStyle",typeof(XYPlotLineStyle));
         // do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
-        s.XYPlotScatterStyle = (XYPlotScatterStyle)info.GetValue("XYPlotScatterStyle",typeof(XYPlotScatterStyle));
+        s.ScatterStyle = (XYPlotScatterStyle)info.GetValue("XYPlotScatterStyle",typeof(XYPlotScatterStyle));
         s.LineSymbolGap = info.GetBoolean("LineSymbolGap");
         s.XYPlotLabelStyle  = (XYPlotLabelStyle)info.GetValue("XYPlotLabelStyle",typeof(XYPlotLabelStyle)); // new in this version
 
@@ -175,7 +178,7 @@ namespace Altaxo.Graph
         // do not use settings lie s.XYPlotLineStyle= here, since the XYPlotLineStyle is cloned, but maybe not fully deserialized here!!!
         s.XYPlotLineStyle = (XYPlotLineStyle)info.GetValue("XYPlotLineStyle",typeof(XYPlotLineStyle));
         // do not use settings lie s.XYPlotScatterStyle= here, since the XYPlotScatterStyle is cloned, but maybe not fully deserialized here!!!
-        s.XYPlotScatterStyle = (XYPlotScatterStyle)info.GetValue("XYPlotScatterStyle",typeof(XYPlotScatterStyle));
+        s.ScatterStyle = (XYPlotScatterStyle)info.GetValue("XYPlotScatterStyle",typeof(XYPlotScatterStyle));
         s.LineSymbolGap = info.GetBoolean("LineSymbolGap");
       
         int nCount = info.OpenArray(); // OptionalStyles
@@ -209,7 +212,7 @@ namespace Altaxo.Graph
     {
       
       this.XYPlotLineStyle        = from.m_LineStyle;
-      this.XYPlotScatterStyle     = from.m_ScatterStyle;
+      this.ScatterStyle     = from.m_ScatterStyle;
       // this.m_PlotAssociation = null; // do not clone the plotassociation!
       this.LineSymbolGap    = from.m_LineSymbolGap;
     }
@@ -225,7 +228,7 @@ namespace Altaxo.Graph
         this.XYPlotLineStyle = new XYPlotLineStyle();
       
       if(0!=(kind&LineScatterPlotStyleKind.Scatter))
-        this.XYPlotScatterStyle = new XYPlotScatterStyle();
+        this.ScatterStyle = new XYPlotScatterStyle();
 
       this.LineSymbolGap = kind==LineScatterPlotStyleKind.LineAndScatter;
     }
@@ -233,7 +236,7 @@ namespace Altaxo.Graph
     public XYLineScatterPlotStyle(XYColumnPlotData pa)
     {
       this.XYPlotLineStyle = new XYPlotLineStyle();
-      this.XYPlotScatterStyle = new XYPlotScatterStyle();
+      this.ScatterStyle = new XYPlotScatterStyle();
       // this.m_PlotAssociation = pa;
       this.LineSymbolGap = true;
     }
@@ -247,20 +250,7 @@ namespace Altaxo.Graph
     }
 
 
-    public override void SetToNextStyle(AbstractXYPlotStyle pstemplate, PlotGroupStyle style)
-    {
-     
-      if(0!= (style & PlotGroupStyle.Line))
-        this.XYPlotLineStyle.SetToNextLineStyle(pstemplate.XYPlotLineStyle);
-      if(0!= (style & PlotGroupStyle.Symbol))
-        this.XYPlotScatterStyle.SetToNextStyle(pstemplate.XYPlotScatterStyle);
-      // Color has to be the last, since during the previous operations the styles are cloned, 
-      // inclusive the color
-      if(0!= (style & PlotGroupStyle.Color))
-        this.Color =GetNextPlotColor(pstemplate.Color);
-    }
-
- 
+    
 
     public override System.Drawing.Color Color
     {
@@ -282,7 +272,7 @@ namespace Altaxo.Graph
       }
     }
 
-    public override XYPlotLineStyle XYPlotLineStyle
+    public  XYPlotLineStyle XYPlotLineStyle
     {
       get { return m_LineStyle; }
       set 
@@ -299,19 +289,38 @@ namespace Altaxo.Graph
       }
     }
 
-    public override XYPlotScatterStyle XYPlotScatterStyle
+    public override XYPlotScatterStyles.ShapeAndStyle XYPlotScatterStyle
     {
-      get { return m_ScatterStyle; }
+      get { return new XYPlotScatterStyles.ShapeAndStyle(m_ScatterStyle.Shape, m_ScatterStyle.Style); }
       set 
       {
         if(null!=m_ScatterStyle)
           m_ScatterStyle.Changed -= new EventHandler(OnScatterStyleChanged);
-        
-        m_ScatterStyle = null==value ? null : (XYPlotScatterStyle)value.Clone();
+
+        m_ScatterStyle = new XYPlotScatterStyle();
+        m_ScatterStyle.Shape = value.Shape;
+        m_ScatterStyle.Style = value.Style;
 
         if(null!=m_ScatterStyle)
           m_ScatterStyle.Changed += new EventHandler(OnScatterStyleChanged);
         
+        OnChanged(); // Fire Changed event
+      }
+    }
+
+    public XYPlotScatterStyle ScatterStyle
+    {
+      get { return m_ScatterStyle; }
+      set
+      {
+        if (null != m_ScatterStyle)
+          m_ScatterStyle.Changed -= new EventHandler(OnScatterStyleChanged);
+
+        m_ScatterStyle = null==value ? null : (XYPlotScatterStyle)value.Clone();;
+
+        if (null != m_ScatterStyle)
+          m_ScatterStyle.Changed += new EventHandler(OnScatterStyleChanged);
+
         OnChanged(); // Fire Changed event
       }
     }
@@ -509,7 +518,7 @@ namespace Altaxo.Graph
       Altaxo.Data.INumericColumn yColumn = myPlotAssociation.YColumn as Altaxo.Data.INumericColumn;
 
       if(null==xColumn || null==yColumn)
-        return false; // this plotstyle is only for x and y double columns
+        return false; // this plotitem is only for x and y double columns
 
       if(myPlotAssociation.PlottablePoints<=0)
         return false;
@@ -830,7 +839,7 @@ namespace Altaxo.Graph
       }
       // now Paint the symbol
       if(null!=this.XYPlotScatterStyle && this.XYPlotScatterStyle.Shape != XYPlotScatterStyles.Shape.NoSymbol)
-        this.XYPlotScatterStyle.Paint(g);
+        this.ScatterStyle.Paint(g);
 
       g.Restore(gs);
   
@@ -884,13 +893,7 @@ namespace Altaxo.Graph
       }
     }
 
-    Color Altaxo.Graph.I2DPlotItemStyle.Color
-    {
-      get
-      {
-        return this.Color;
-      }
-    }
+   
 
     public bool IsXYLineStyleSupported
     {
@@ -908,6 +911,8 @@ namespace Altaxo.Graph
       }
     }
 
+
+
     public bool IsXYScatterStyleSupported
     {
       get
@@ -924,7 +929,7 @@ namespace Altaxo.Graph
       }
     }
 
-    public void SetIncrementalStyle(I2DPlotItemStyle pstemplate, PlotGroupStyle style, int step)
+    public void SetIncrementalStyle(I2DGroupablePlotStyle pstemplate, PlotGroupStyle style, bool concurrently, bool strict, int step)
     {
       XYLineScatterPlotStyle from = pstemplate as XYLineScatterPlotStyle;
       if(null!=from)
@@ -941,10 +946,12 @@ namespace Altaxo.Graph
       
       // Color has to be the last, since during the previous operations the styles are cloned, 
       // inclusive the color
-      if((0!= (style & PlotGroupStyle.Color)) && pstemplate.IsColorProvider)
-        this.Color = GetNextPlotColor(pstemplate.Color,step);
+      if((0!= (style & PlotGroupStyle.Color)) && pstemplate.IsColorSupported)
+        this.Color = PlotColors.Colors.GetNextPlotColor(pstemplate.Color, step);
     }
 
     #endregion
   } // end of class XYLineScatterPlotStyle
+
+#endif
 }

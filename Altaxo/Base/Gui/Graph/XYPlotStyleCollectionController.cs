@@ -93,11 +93,10 @@ namespace Altaxo.Gui.Graph
     public void InitializePredefinedStyles()
     {
    
-      string[] names = new string[1];
-      names[0]="Custom";
-
+      string[] names = XYPlotStyleCollectionTemplates.GetAvailableNamesPlusCustom();
+      int idx = XYPlotStyleCollectionTemplates.GetIndexOfAvailableNamesPlusCustom(_doc);
       if(_view!=null)
-        _view.InitializePredefinedStyles(names,0);
+        _view.InitializePredefinedStyles(names,idx);
     }
 
     #region IXYPlotStyleCollectionViewEventSink Members
@@ -172,14 +171,23 @@ namespace Altaxo.Gui.Graph
 
     public void EhView_PredefinedStyleSelected(int selectedindex)
     {
-      
+      if (selectedindex == 0)
+        return;
+
+        XYPlotStyleCollection template = XYPlotStyleCollectionTemplates.GetTemplate(selectedindex - 1);
+        _tempdoc.Clear();
+        for (int i = 0; i < template.Count; i++)
+          _tempdoc.Add(template[i]);
+
+        UpdateStyleList(new int[0]);
+        OnCollectionChangeCommit();
     }
 
     #endregion
 
-     #region CollectionController Members
+    #region CollectionController Members
 
-     public event EventHandler CollectionChangeCommit;
+    public event EventHandler CollectionChangeCommit;
      public virtual void OnCollectionChangeCommit()
      {
        if(CollectionChangeCommit!=null)

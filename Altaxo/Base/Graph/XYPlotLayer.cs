@@ -237,7 +237,7 @@ namespace Altaxo.Graph
 
 
     /// <summary>
-    /// The layers x position value, either absolute or relative, as determined by <see cref="m_LayerXPositionType"/>.
+    /// The layers x position value, either absolute or relative, as determined by <see cref="_layerXPositionType"/>.
     /// </summary>
     protected double _layerXPosition = 0;
 
@@ -247,7 +247,7 @@ namespace Altaxo.Graph
     protected PositionType _layerXPositionType=PositionType.AbsoluteValue;
 
     /// <summary>
-    /// The layers y position value, either absolute or relative, as determined by <see cref="m_LayerYPositionType"/>.
+    /// The layers y position value, either absolute or relative, as determined by <see cref="_layerYPositionType"/>.
     /// </summary>
     protected double _layerYPosition = 0;
 
@@ -259,7 +259,7 @@ namespace Altaxo.Graph
 
     /// <summary>
     /// The width of the layer, either as absolute value in point (1/72 inch), or as 
-    /// relative value as pointed out by <see cref="m_LayerWidthType"/>.
+    /// relative value as pointed out by <see cref="_layerWidthType"/>.
     /// </summary>
     protected double _layerWidth=0;
 
@@ -270,7 +270,7 @@ namespace Altaxo.Graph
 
     /// <summary>
     /// The height of the layer, either as absolute value in point (1/72 inch), or as 
-    /// relative value as pointed out by <see cref="m_LayerHeightType"/>.
+    /// relative value as pointed out by <see cref="_layerHeightType"/>.
     /// </summary>
     protected double _layerHeight= 0;
 
@@ -924,7 +924,7 @@ namespace Altaxo.Graph
       this.m_PlotItems = null==from.m_PlotItems ? null : new Altaxo.Graph.PlotItemCollection(this,from.m_PlotItems);
 
       // special way neccessary to handle plot groups
-      //this.m_PlotGroups = null==from.m_PlotGroups ? null : from.m_PlotGroups.Clone(this.m_PlotItems,from.m_PlotItems);
+      //this.m_PlotGroups = null==from.m_PlotGroups ? null : from.m_PlotGroups.Clone(this._plotItems,from._plotItems);
 
       _cachedForwardMatrix = new Matrix();
       _cachedReverseMatrix = new Matrix();
@@ -1614,9 +1614,9 @@ namespace Altaxo.Graph
 
 
     /// <summary>
-    /// Sets the cached position value in <see cref="m_LayerPosition"/> by calculating it
-    /// from the position values (<see cref="m_LayerXPosition"/> and <see cref="m_LayerYPosition"/>) 
-    /// and the position types (<see cref="m_LayerXPositionType"/> and <see cref="m_LayerYPositionType"/>).
+    /// Sets the cached position value in <see cref="_cachedLayerPosition"/> by calculating it
+    /// from the position values (<see cref="_layerXPosition"/> and <see cref="_layerYPosition"/>) 
+    /// and the position types (<see cref="_layerXPositionType"/> and <see cref="_layerYPositionType"/>).
     /// </summary>
     protected void CalculateCachedPosition()
     {
@@ -1721,9 +1721,9 @@ namespace Altaxo.Graph
 
 
     /// <summary>
-    /// Sets the cached size value in <see cref="m_LayerSize"/> by calculating it
-    /// from the position values (<see cref="m_LayerWidth"/> and <see cref="m_LayerHeight"/>) 
-    /// and the size types (<see cref="m_LayerWidthType"/> and <see cref="m_LayerHeightType"/>).
+    /// Sets the cached size value in <see cref="_cachedLayerSize"/> by calculating it
+    /// from the position values (<see cref="_layerWidth"/> and <see cref="_layerHeight"/>) 
+    /// and the size types (<see cref="_layerWidthType"/> and <see cref="_layerHeightType"/>).
     /// </summary>
     protected void CalculateCachedSize()
     {

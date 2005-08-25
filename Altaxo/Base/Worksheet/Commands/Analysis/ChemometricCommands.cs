@@ -626,8 +626,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       Altaxo.Graph.XYColumnPlotData pa = new Altaxo.Graph.XYColumnPlotData(xcol,ycol);
       pa.LabelColumn = labelcol;
 
-      Altaxo.Graph.XYPlotStyleCollection ps = new Altaxo.Graph.XYPlotStyleCollection(Altaxo.Graph.LineScatterPlotStyleKind.Line);
-      ps.XYPlotLineStyle.Connection = Altaxo.Graph.XYPlotLineStyles.ConnectionStyle.NoLine;
+      Altaxo.Graph.XYPlotStyleCollection ps = new Altaxo.Graph.XYPlotStyleCollection(Altaxo.Graph.LineScatterPlotStyleKind.Empty);
       Altaxo.Graph.XYPlotLabelStyle labelStyle = new Altaxo.Graph.XYPlotLabelStyle(labelcol);
       labelStyle.FontSize = 10;
       labelStyle.BackgroundColor = System.Drawing.Color.LightCyan;

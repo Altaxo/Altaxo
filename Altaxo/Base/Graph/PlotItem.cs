@@ -54,11 +54,13 @@ namespace Altaxo.Graph
     /// Get/sets the data object of this plot.
     /// </summary>
     // public abstract object Data { get; set; }
+    */
+
     /// <summary>
     /// Get/sets the style object of this plot.
     /// </summary>
-    //public abstract object Style { get; set; }
-    */
+    public abstract object StyleObject { get; set; }
+    
 
     /// <summary>
     /// The name of the plot. It can be of different length. An argument of zero or less

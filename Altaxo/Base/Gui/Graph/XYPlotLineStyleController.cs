@@ -42,8 +42,7 @@ namespace Altaxo.Gui.Graph
     
     
     void InitializeIndependentColor(bool val);
-    void InitializePublishColor(bool val);
-
+ 
     /// <summary>
     /// Initializes the plot style color combobox.
     /// </summary>
@@ -106,7 +105,7 @@ namespace Altaxo.Gui.Graph
 
     bool LineSymbolGap { get; }
     bool IndependentColor { get; }
-    bool PublishColor { get; }
+   
     string SymbolColor { get; }
     string LineConnect { get; }
     string LineType    { get; }
@@ -176,15 +175,14 @@ namespace Altaxo.Gui.Graph
 
     public static string [] GetPlotColorNames()
     {
-      string[] arr = new string[1+AbstractXYPlotStyle.PlotColors.Length];
+      string[] arr = new string[1+PlotColors.Colors.Count];
 
       arr[0] = "Custom";
 
       int i=1;
-      foreach(Color c in AbstractXYPlotStyle.PlotColors)
+      foreach(PlotColor c in PlotColors.Colors)
       {
-        string name = c.ToString();
-        arr[i++] = name.Substring(7,name.Length-8);
+        arr[i++] = c.Name;
       }
 
       return arr;
@@ -198,7 +196,7 @@ namespace Altaxo.Gui.Graph
       if(_view!=null)
       {
         _view.InitializeIndependentColor(_tempDoc.IndependentColor);
-        _view.InitializePublishColor(_tempDoc.PublishColor);
+       
 
         // now we have to set all dialog elements to the right values
         SetPlotStyleColor();
@@ -269,7 +267,7 @@ namespace Altaxo.Gui.Graph
         name = "Custom";
         if(_tempDoc.FillBrush.BrushType==BrushType.SolidBrush) 
         {
-          name = AbstractXYPlotStyle.GetPlotColorName(_tempDoc.FillBrush.Color);
+          name = PlotColors.Colors.GetPlotColorName(_tempDoc.FillBrush.Color);
           if(null==name)
             name = "Custom";
         }
@@ -287,7 +285,7 @@ namespace Altaxo.Gui.Graph
         name = "Custom";
         if(_tempDoc.PenHolder.PenType == PenType.SolidColor)
         {
-          name = AbstractXYPlotStyle.GetPlotColorName(_tempDoc.PenHolder.Color);
+          name = PlotColors.Colors.GetPlotColorName(_tempDoc.PenHolder.Color);
           if(null==name) 
             name = "Custom";
         }
@@ -318,8 +316,7 @@ namespace Altaxo.Gui.Graph
         }
 
         _doc.IndependentColor = _view.IndependentColor;
-        _doc.PublishColor = _view.PublishColor;
-
+       
         // Line Connect
         _doc.Connection = (Altaxo.Graph.XYPlotLineStyles.ConnectionStyle)Enum.Parse(typeof(Altaxo.Graph.XYPlotLineStyles.ConnectionStyle),_view.LineConnect);
         // Line Type

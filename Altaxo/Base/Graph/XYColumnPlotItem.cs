@@ -36,7 +36,7 @@ namespace Altaxo.Graph
   /// </summary>
   [SerializationSurrogate(0,typeof(XYColumnPlotItem.SerializationSurrogate0))]
   [SerializationVersion(0)]
-  public class XYColumnPlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, IXBoundsHolder, IYBoundsHolder, Graph.I2DPlotItemStyle
+  public class XYColumnPlotItem : PlotItem, System.Runtime.Serialization.IDeserializationCallback, IXBoundsHolder, IYBoundsHolder
   {
 
     protected XYColumnPlotData m_PlotAssociation;
@@ -102,7 +102,7 @@ namespace Altaxo.Graph
         if (lsps.XYPlotLineStyle != null)
           lsps.XYPlotLineStyle.LineSymbolGap = lsps.LineSymbolGap; // this has changed and is now hosted in the LineStyle itself
         
-        XYPlotStyleCollection ps = new XYPlotStyleCollection(new I2DPlotStyle[] { lsps.XYPlotLineStyle, lsps.XYPlotScatterStyle, lsps.XYPlotLabelStyle });
+        XYPlotStyleCollection ps = new XYPlotStyleCollection(new I2DPlotStyle[] { lsps.XYPlotLineStyle, lsps.ScatterStyle, lsps.XYPlotLabelStyle });
           if (lsps.XYPlotLabelStyle != null)
           {
             XmlSerializationSurrogate0 surr = new XmlSerializationSurrogate0();
@@ -251,6 +251,12 @@ namespace Altaxo.Graph
           }
         }
       }
+    }
+
+    public override object StyleObject
+    {
+      get { return m_PlotStyle; }
+      set { this.Style = (XYPlotStyleCollection)value; }
     }
     public XYPlotStyleCollection Style
     {
@@ -541,9 +547,18 @@ namespace Altaxo.Graph
 
     #endregion
 
-    #region I2DPlotStyle Members
+    /*
+    #region I2DGroupablePlotStyle Members
 
-    public bool IsColorProvider
+    object I2DGroupablePlotStyle.PlotStyle
+    {
+      get
+      {
+        return this.m_PlotStyle;
+      }
+    }
+
+    public bool IsColorSupported
     {
       get
       {
@@ -567,7 +582,7 @@ namespace Altaxo.Graph
       }
     }
 
-    public XYPlotLineStyle XYLineStyle
+    public System.Drawing.Drawing2D.DashStyle XYLineStyle
     {
       get
       {
@@ -583,7 +598,7 @@ namespace Altaxo.Graph
       }
     }
 
-    public XYPlotScatterStyle XYScatterStyle
+    public XYPlotScatterStyles.ShapeAndStyle XYScatterStyle
     {
       get
       {
@@ -591,11 +606,12 @@ namespace Altaxo.Graph
       }
     }
 
-    public void SetIncrementalStyle(I2DPlotItemStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, int step)
+    public void SetIncrementalStyle(I2DGroupablePlotStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, bool concurrently, bool strict, int step)
     {
-      this.m_PlotStyle.SetIncrementalStyle(pstemplate,style,step);
+      this.m_PlotStyle.SetIncrementalStyle(pstemplate,style,concurrently,strict,step);
     }
 
     #endregion
+     */
   }
 }

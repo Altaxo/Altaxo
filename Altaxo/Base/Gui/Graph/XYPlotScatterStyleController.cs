@@ -60,6 +60,12 @@ namespace Altaxo.Gui.Graph
     void InitializeSymbolSize(string[] arr , string sel);
 
     /// <summary>
+    /// Initializes the independent symbol size check box.
+    /// </summary>
+    /// <param name="val">True when independent symbol size is choosen.</param>
+    void InitializeIndependentSymbolSize(bool val);
+
+    /// <summary>
     /// Initializes the symbol style combobox.
     /// </summary>
     /// <param name="arr">String array of possible selections</param>
@@ -84,13 +90,17 @@ namespace Altaxo.Gui.Graph
     void InitializeDropLineConditions(bool bLeft, bool bBottom, bool bRight, bool bTop);
 
     
-
+    void InitializeIndependentColor(bool val);
+   
    
 
     #region Getter
 
+    bool IndependentColor { get; }
+    
     string SymbolColor { get; }
     string SymbolShape {get; }
+    bool   IndependentSymbolSize { get; }
     string SymbolStyle {get; }
     string SymbolSize  {get; }
 
@@ -132,15 +142,14 @@ namespace Altaxo.Gui.Graph
 
     public static string [] GetPlotColorNames()
     {
-      string[] arr = new string[1+AbstractXYPlotStyle.PlotColors.Length];
+      string[] arr = new string[1+PlotColors.Colors.Count];
 
       arr[0] = "Custom";
 
       int i=1;
-      foreach(Color c in AbstractXYPlotStyle.PlotColors)
+      foreach(PlotColor c in PlotColors.Colors)
       {
-        string name = c.ToString();
-        arr[i++] = name.Substring(7,name.Length-8);
+        arr[i++] = c.Name;
       }
 
       return arr;
@@ -154,7 +163,9 @@ namespace Altaxo.Gui.Graph
       if(_view!=null)
       {
         // now we have to set all dialog elements to the right values
-     
+        _view.InitializeIndependentColor(_tempDoc.IndependentColor);
+        _view.InitializeIndependentSymbolSize(_tempDoc.IndependentSymbolSize);
+       
         SetPlotStyleColor();
       
 
@@ -220,7 +231,7 @@ namespace Altaxo.Gui.Graph
         name = "Custom";
         if(_tempDoc.Pen.PenType == PenType.SolidColor)
         {
-          name = AbstractXYPlotStyle.GetPlotColorName(_tempDoc.Pen.Color);
+          name = PlotColors.Colors.GetPlotColorName(_tempDoc.Pen.Color);
           if(null==name) 
             name = "Custom";
         }
@@ -272,6 +283,10 @@ namespace Altaxo.Gui.Graph
         {
           _doc.Color = Color.FromName(str);
         }
+
+        _doc.IndependentColor = _view.IndependentColor;
+      
+        _doc.IndependentSymbolSize = _view.IndependentSymbolSize;
 
         // Symbol Shape
         str = _view.SymbolShape;

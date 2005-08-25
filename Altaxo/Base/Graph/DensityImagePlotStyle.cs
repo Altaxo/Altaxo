@@ -387,7 +387,7 @@ namespace Altaxo.Graph
       Altaxo.Data.INumericColumn yColumn = myPlotAssociation.YColumn as Altaxo.Data.INumericColumn;
 
       if(null==xColumn || null==yColumn)
-        return; // this plotstyle is only for x and y double columns
+        return; // this plotitem is only for x and y double columns
 
 
 

@@ -195,6 +195,7 @@ namespace Altaxo.Graph.GUI
 
   #endregion
 
+#if false
   /// <summary>
   /// Summary description for LineScatterPlotStyleController.
   /// </summary>
@@ -210,8 +211,8 @@ namespace Altaxo.Graph.GUI
 
     public LineScatterPlotStyleController(AbstractXYPlotStyle ps, PlotGroup plotGroup)
     {
-      // if this plotstyle belongs to a plot group of this layer,
-      // use the master plot style instead of the plotstyle itself
+      // if this plotitem belongs to a plot group of this layer,
+      // use the master plot style instead of the plotitem itself
       m_PlotGroup=plotGroup;
       m_PlotItemPlotStyle = ps;
   
@@ -261,15 +262,14 @@ namespace Altaxo.Graph.GUI
 
     public static string [] GetPlotColorNames()
     {
-      string[] arr = new string[1+AbstractXYPlotStyle.PlotColors.Length];
+      string[] arr = new string[1+PlotColors.Colors.Count];
 
       arr[0] = "Custom";
 
       int i=1;
-      foreach(Color c in AbstractXYPlotStyle.PlotColors)
+      foreach(PlotColor c in PlotColors.Colors)
       {
-        string name = c.ToString();
-        arr[i++] = name.Substring(7,name.Length-8);
+        arr[i++] = c.Name;
       }
 
       return arr;
@@ -449,7 +449,7 @@ namespace Altaxo.Graph.GUI
         name = "Custom";
         if(ps.XYPlotLineStyle.FillBrush.BrushType==BrushType.SolidBrush) 
         {
-          name = AbstractXYPlotStyle.GetPlotColorName(ps.XYPlotLineStyle.FillBrush.Color);
+          name = PlotColors.Colors.GetPlotColorName(ps.XYPlotLineStyle.FillBrush.Color);
           if(null==name) name = "Custom";
         }
       }
@@ -486,7 +486,7 @@ namespace Altaxo.Graph.GUI
         name = "Custom";
         if(ps.XYPlotLineStyle.PenHolder.PenType == PenType.SolidColor)
         {
-          name = AbstractXYPlotStyle.GetPlotColorName(ps.XYPlotLineStyle.PenHolder.Color);
+          name = PlotColors.Colors.GetPlotColorName(ps.XYPlotLineStyle.PenHolder.Color);
           if(null==name) 
             name = "Custom";
         }
@@ -496,7 +496,7 @@ namespace Altaxo.Graph.GUI
         name = "Custom";
         if(ps.XYPlotScatterStyle.Pen.PenType == PenType.SolidColor)
         {
-          name = AbstractXYPlotStyle.GetPlotColorName(ps.XYPlotScatterStyle.Pen.Color);
+          name = PlotColors.Colors.GetPlotColorName(ps.XYPlotScatterStyle.Pen.Color);
           if(null==name) name = "Custom";
         }
       }
@@ -661,4 +661,6 @@ namespace Altaxo.Graph.GUI
 
     #endregion
   } // end of class LineScatterPlotStyleController
+#endif
+
 } // end of namespace

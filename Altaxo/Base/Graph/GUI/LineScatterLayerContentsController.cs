@@ -586,7 +586,7 @@ namespace Altaxo.Graph.GUI
         else if(item.IsNewGroup) // if it is a new group
         {
           // 1st) create a new PlotGroup
-          PlotGroup newplotgrp = new PlotGroup(PlotGroupStyle.All);
+          PlotGroup newplotgrp = new PlotGroup(PlotGroupStyle.All,false,false);
           // if the group was not changed, add all group members to the
           // plotassociation collection and add the group to the group list
           for(int j=0;j<item.m_Group.Count;j++)

@@ -185,13 +185,13 @@ namespace Altaxo.Data
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         Altaxo.Data.DataTableCollection s = (Altaxo.Data.DataTableCollection)obj;
-        // info.AddValue("Parent",s.m_Parent);
+        // info.AddValue("Parent",s._parent);
         info.AddValue("Tables",s.m_TablesByName);
       }
       public object SetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context,System.Runtime.Serialization.ISurrogateSelector selector)
       {
         Altaxo.Data.DataTableCollection s = (Altaxo.Data.DataTableCollection)obj;
-        // s.m_Parent = (AltaxoDocument)(info.GetValue("Parent",typeof(AltaxoDocument)));
+        // s._parent = (AltaxoDocument)(info.GetValue("Parent",typeof(AltaxoDocument)));
         s.m_TablesByName = (System.Collections.SortedList)(info.GetValue("Tables",typeof(System.Collections.SortedList)));
 
         // setup helper objects
@@ -206,7 +206,7 @@ namespace Altaxo.Data
       {
         m_DeserializationFinished = true;
         DeserializationFinisher finisher = new DeserializationFinisher(this);
-        // set the m_Parent object for the data tables
+        // set the _parent object for the data tables
         foreach(DataTable dt in m_TablesByName.Values)
         {
           dt.ParentObject = this;

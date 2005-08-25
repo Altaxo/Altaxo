@@ -50,12 +50,12 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.ComboBox m_cbSymbolSize;
     private System.Windows.Forms.ComboBox m_cbSymbolStyle;
     private System.Windows.Forms.ComboBox m_cbSymbolShape;
-    private System.Windows.Forms.Label m_lblSymbolSize;
     private System.Windows.Forms.Label m_lblSymbolStyle;
     private System.Windows.Forms.Label m_lblSymbolShape;
     private System.Windows.Forms.Button m_btLineSymbolColorDetails;
     private System.Windows.Forms.ComboBox m_cbLineSymbolColor;
-    private System.Windows.Forms.Label m_lblLineSymbolColor;
+      private System.Windows.Forms.CheckBox _chkIndependentColor;
+      private System.Windows.Forms.CheckBox _chkIndependentSize;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -104,18 +104,19 @@ namespace Altaxo.Gui.Graph
       this.m_cbSymbolSize = new System.Windows.Forms.ComboBox();
       this.m_cbSymbolStyle = new System.Windows.Forms.ComboBox();
       this.m_cbSymbolShape = new System.Windows.Forms.ComboBox();
-      this.m_lblSymbolSize = new System.Windows.Forms.Label();
       this.m_lblSymbolStyle = new System.Windows.Forms.Label();
       this.m_lblSymbolShape = new System.Windows.Forms.Label();
       this.m_btLineSymbolColorDetails = new System.Windows.Forms.Button();
       this.m_cbLineSymbolColor = new System.Windows.Forms.ComboBox();
-      this.m_lblLineSymbolColor = new System.Windows.Forms.Label();
+      this._chkIndependentColor = new System.Windows.Forms.CheckBox();
+      this._chkIndependentSize = new System.Windows.Forms.CheckBox();
       this.m_gbSymbol.SuspendLayout();
       this.m_gbSymbolDropLine.SuspendLayout();
       this.SuspendLayout();
       // 
       // m_gbSymbol
       // 
+      this.m_gbSymbol.Controls.Add(this._chkIndependentSize);
       this.m_gbSymbol.Controls.Add(this.m_edSymbolSkipFrequency);
       this.m_gbSymbol.Controls.Add(this.label6);
       this.m_gbSymbol.Controls.Add(this.m_chkSymbolSkipPoints);
@@ -123,19 +124,21 @@ namespace Altaxo.Gui.Graph
       this.m_gbSymbol.Controls.Add(this.m_cbSymbolSize);
       this.m_gbSymbol.Controls.Add(this.m_cbSymbolStyle);
       this.m_gbSymbol.Controls.Add(this.m_cbSymbolShape);
-      this.m_gbSymbol.Controls.Add(this.m_lblSymbolSize);
       this.m_gbSymbol.Controls.Add(this.m_lblSymbolStyle);
       this.m_gbSymbol.Controls.Add(this.m_lblSymbolShape);
-      this.m_gbSymbol.Location = new System.Drawing.Point(8, 56);
+      this.m_gbSymbol.Controls.Add(this._chkIndependentColor);
+      this.m_gbSymbol.Controls.Add(this.m_btLineSymbolColorDetails);
+      this.m_gbSymbol.Controls.Add(this.m_cbLineSymbolColor);
+      this.m_gbSymbol.Location = new System.Drawing.Point(8, 0);
       this.m_gbSymbol.Name = "m_gbSymbol";
-      this.m_gbSymbol.Size = new System.Drawing.Size(216, 232);
+      this.m_gbSymbol.Size = new System.Drawing.Size(224, 328);
       this.m_gbSymbol.TabIndex = 24;
       this.m_gbSymbol.TabStop = false;
       this.m_gbSymbol.Text = "Symbol";
       // 
       // m_edSymbolSkipFrequency
       // 
-      this.m_edSymbolSkipFrequency.Location = new System.Drawing.Point(128, 200);
+      this.m_edSymbolSkipFrequency.Location = new System.Drawing.Point(128, 296);
       this.m_edSymbolSkipFrequency.Name = "m_edSymbolSkipFrequency";
       this.m_edSymbolSkipFrequency.Size = new System.Drawing.Size(72, 20);
       this.m_edSymbolSkipFrequency.TabIndex = 9;
@@ -143,7 +146,7 @@ namespace Altaxo.Gui.Graph
       // 
       // label6
       // 
-      this.label6.Location = new System.Drawing.Point(8, 200);
+      this.label6.Location = new System.Drawing.Point(8, 296);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(64, 16);
       this.label6.TabIndex = 8;
@@ -151,7 +154,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_chkSymbolSkipPoints
       // 
-      this.m_chkSymbolSkipPoints.Location = new System.Drawing.Point(80, 200);
+      this.m_chkSymbolSkipPoints.Location = new System.Drawing.Point(80, 296);
       this.m_chkSymbolSkipPoints.Name = "m_chkSymbolSkipPoints";
       this.m_chkSymbolSkipPoints.Size = new System.Drawing.Size(48, 16);
       this.m_chkSymbolSkipPoints.TabIndex = 7;
@@ -163,7 +166,7 @@ namespace Altaxo.Gui.Graph
       this.m_gbSymbolDropLine.Controls.Add(this.m_chkSymbolDropLineTop);
       this.m_gbSymbolDropLine.Controls.Add(this.m_chkSymbolDropLineRight);
       this.m_gbSymbolDropLine.Controls.Add(this.m_chkSymbolDropLineLeft);
-      this.m_gbSymbolDropLine.Location = new System.Drawing.Point(24, 112);
+      this.m_gbSymbolDropLine.Location = new System.Drawing.Point(16, 208);
       this.m_gbSymbolDropLine.Name = "m_gbSymbolDropLine";
       this.m_gbSymbolDropLine.Size = new System.Drawing.Size(184, 80);
       this.m_gbSymbolDropLine.TabIndex = 6;
@@ -204,15 +207,15 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbSymbolSize
       // 
-      this.m_cbSymbolSize.Location = new System.Drawing.Point(56, 80);
+      this.m_cbSymbolSize.Location = new System.Drawing.Point(96, 176);
       this.m_cbSymbolSize.Name = "m_cbSymbolSize";
-      this.m_cbSymbolSize.Size = new System.Drawing.Size(152, 21);
+      this.m_cbSymbolSize.Size = new System.Drawing.Size(112, 21);
       this.m_cbSymbolSize.TabIndex = 5;
       this.m_cbSymbolSize.Text = "comboBox1";
       // 
       // m_cbSymbolStyle
       // 
-      this.m_cbSymbolStyle.Location = new System.Drawing.Point(56, 48);
+      this.m_cbSymbolStyle.Location = new System.Drawing.Point(56, 144);
       this.m_cbSymbolStyle.Name = "m_cbSymbolStyle";
       this.m_cbSymbolStyle.Size = new System.Drawing.Size(152, 21);
       this.m_cbSymbolStyle.TabIndex = 4;
@@ -220,24 +223,16 @@ namespace Altaxo.Gui.Graph
       // 
       // m_cbSymbolShape
       // 
-      this.m_cbSymbolShape.Location = new System.Drawing.Point(56, 16);
+      this.m_cbSymbolShape.Location = new System.Drawing.Point(56, 112);
       this.m_cbSymbolShape.Name = "m_cbSymbolShape";
-      this.m_cbSymbolShape.Size = new System.Drawing.Size(144, 21);
+      this.m_cbSymbolShape.Size = new System.Drawing.Size(152, 21);
       this.m_cbSymbolShape.TabIndex = 3;
       this.m_cbSymbolShape.Text = "comboBox1";
       this.m_cbSymbolShape.SelectionChangeCommitted += new System.EventHandler(this.EhSymbolShape_SelectionChangeCommit);
       // 
-      // m_lblSymbolSize
-      // 
-      this.m_lblSymbolSize.Location = new System.Drawing.Point(8, 80);
-      this.m_lblSymbolSize.Name = "m_lblSymbolSize";
-      this.m_lblSymbolSize.Size = new System.Drawing.Size(40, 16);
-      this.m_lblSymbolSize.TabIndex = 2;
-      this.m_lblSymbolSize.Text = "Size";
-      // 
       // m_lblSymbolStyle
       // 
-      this.m_lblSymbolStyle.Location = new System.Drawing.Point(8, 48);
+      this.m_lblSymbolStyle.Location = new System.Drawing.Point(8, 152);
       this.m_lblSymbolStyle.Name = "m_lblSymbolStyle";
       this.m_lblSymbolStyle.Size = new System.Drawing.Size(40, 16);
       this.m_lblSymbolStyle.TabIndex = 1;
@@ -245,7 +240,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_lblSymbolShape
       // 
-      this.m_lblSymbolShape.Location = new System.Drawing.Point(8, 24);
+      this.m_lblSymbolShape.Location = new System.Drawing.Point(8, 120);
       this.m_lblSymbolShape.Name = "m_lblSymbolShape";
       this.m_lblSymbolShape.Size = new System.Drawing.Size(64, 16);
       this.m_lblSymbolShape.TabIndex = 0;
@@ -253,36 +248,42 @@ namespace Altaxo.Gui.Graph
       // 
       // m_btLineSymbolColorDetails
       // 
-      this.m_btLineSymbolColorDetails.Location = new System.Drawing.Point(176, 24);
+      this.m_btLineSymbolColorDetails.Location = new System.Drawing.Point(162, 48);
       this.m_btLineSymbolColorDetails.Name = "m_btLineSymbolColorDetails";
-      this.m_btLineSymbolColorDetails.Size = new System.Drawing.Size(48, 24);
+      this.m_btLineSymbolColorDetails.Size = new System.Drawing.Size(48, 20);
       this.m_btLineSymbolColorDetails.TabIndex = 21;
       this.m_btLineSymbolColorDetails.Text = "Adv..";
       // 
       // m_cbLineSymbolColor
       // 
-      this.m_cbLineSymbolColor.Location = new System.Drawing.Point(8, 24);
+      this.m_cbLineSymbolColor.Location = new System.Drawing.Point(8, 48);
       this.m_cbLineSymbolColor.Name = "m_cbLineSymbolColor";
-      this.m_cbLineSymbolColor.Size = new System.Drawing.Size(160, 21);
+      this.m_cbLineSymbolColor.Size = new System.Drawing.Size(152, 21);
       this.m_cbLineSymbolColor.TabIndex = 20;
       this.m_cbLineSymbolColor.Text = "comboBox1";
       // 
-      // m_lblLineSymbolColor
+      // _chkIndependentColor
       // 
-      this.m_lblLineSymbolColor.Location = new System.Drawing.Point(8, 8);
-      this.m_lblLineSymbolColor.Name = "m_lblLineSymbolColor";
-      this.m_lblLineSymbolColor.Size = new System.Drawing.Size(100, 16);
-      this.m_lblLineSymbolColor.TabIndex = 19;
-      this.m_lblLineSymbolColor.Text = "Line/Symbol Color";
+      this._chkIndependentColor.Location = new System.Drawing.Point(8, 24);
+      this._chkIndependentColor.Name = "_chkIndependentColor";
+      this._chkIndependentColor.Size = new System.Drawing.Size(128, 16);
+      this._chkIndependentColor.TabIndex = 26;
+      this._chkIndependentColor.Text = "independent Color";
+      this._chkIndependentColor.CheckedChanged += new System.EventHandler(this._chkIndependentColor_CheckedChanged);
+      // 
+      // _chkIndependentSize
+      // 
+      this._chkIndependentSize.Location = new System.Drawing.Point(16, 176);
+      this._chkIndependentSize.Name = "_chkIndependentSize";
+      this._chkIndependentSize.Size = new System.Drawing.Size(80, 24);
+      this._chkIndependentSize.TabIndex = 27;
+      this._chkIndependentSize.Text = "indep. Size";
       // 
       // XYPlotScatterStyleControl
       // 
       this.Controls.Add(this.m_gbSymbol);
-      this.Controls.Add(this.m_btLineSymbolColorDetails);
-      this.Controls.Add(this.m_cbLineSymbolColor);
-      this.Controls.Add(this.m_lblLineSymbolColor);
       this.Name = "XYPlotScatterStyleControl";
-      this.Size = new System.Drawing.Size(232, 296);
+      this.Size = new System.Drawing.Size(232, 336);
       this.m_gbSymbol.ResumeLayout(false);
       this.m_gbSymbolDropLine.ResumeLayout(false);
       this.ResumeLayout(false);
@@ -330,6 +331,15 @@ namespace Altaxo.Gui.Graph
     {
       get { return (string)m_cbSymbolSize.SelectedItem; }
     }
+
+      public void InitializeIndependentSymbolSize(bool val)
+      {
+        this._chkIndependentSize.Checked = val;
+      }
+      public bool IndependentSymbolSize
+      {
+        get { return this._chkIndependentSize.Checked; }
+      }
 
 
     public void InitializeSymbolShape(string[] arr, string sel)
@@ -381,12 +391,38 @@ namespace Altaxo.Gui.Graph
     {
     }
 
+      public void InitializeIndependentColor(bool val)
+      {
+        this._chkIndependentColor.Checked = val;
+        _chkIndependentColor_CheckedChanged(_chkIndependentColor.Checked,EventArgs.Empty);
+      }
  
+      public bool IndependentColor 
+      {
+        get
+        {
+          return this._chkIndependentColor.Checked; 
+        }
+      }
+
+      private void _chkIndependentColor_CheckedChanged(object sender, System.EventArgs e)
+      {
+        this.m_cbLineSymbolColor.Enabled = _chkIndependentColor.Checked;
+        this.m_btLineSymbolColorDetails.Enabled = _chkIndependentColor.Checked;
+
+        if(this._controller!=null)
+        {
+           
+        }
+      }
+
   
 
 
 
 
     #endregion
+
+     
   }
 }

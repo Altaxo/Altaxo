@@ -181,6 +181,12 @@ namespace Altaxo.Graph
         }
       }
     }
+
+    public override object StyleObject
+    {
+      get { return m_PlotStyle; }
+      set { this.Style = (DensityImagePlotStyle)value; }
+    }
     public DensityImagePlotStyle Style
     {
       get { return m_PlotStyle; }

@@ -35,52 +35,6 @@ namespace Altaxo.Graph
   {
     protected object m_Parent;
 
-    public static Color[] PlotColors = 
-      {
-        Color.Black,
-        Color.Red,
-        Color.Green,
-        Color.Blue,
-        Color.Magenta,
-        Color.Yellow,
-        Color.Coral
-      };
-
-
-    public static string GetPlotColorName(Color c)
-    {
-      for(int i=0;i<PlotColors.Length;i++)
-      {
-        if(c.ToArgb()==PlotColors[i].ToArgb())
-        {
-          string name = PlotColors[i].ToString();
-          return name.Substring(7,name.Length-8);
-        }
-      }
-      return null;
-    }
-
-
-    public static Color GetNextPlotColor(Color c)
-    {
-      return GetNextPlotColor(c, 1);
-    }
-    public static Color GetNextPlotColor(Color c, int step)
-    {
-      for(int i=0;i<PlotColors.Length;i++)
-      {
-        // !!!todo!!! more advanced: find the color with the closest match to a plotcolor
-        // and use the next color then
-
-        // currently implemented: find the color, if found use the next color
-        // if not found, use the first plot color
-        if(c.ToArgb()==PlotColors[i].ToArgb())
-          return PlotColors[Calc.BasicFunctions.PMod(i+step,PlotColors.Length)];
-      }
-
-      // default if the color was not found
-      return PlotColors[0];
-    }
 
     public abstract object Clone();
     public abstract void Paint(Graphics g, IPlotArea gl, object plotObject); // plots the curve with the choosen style
@@ -89,13 +43,13 @@ namespace Altaxo.Graph
     // public abstract XYColumnPlotData XYColumnPlotData  { get; set; } 
 
 
-    public abstract void SetToNextStyle(AbstractXYPlotStyle ps, PlotGroupStyle style);
+    // public abstract void SetToNextStyle(AbstractXYPlotStyle ps, PlotGroupStyle style);
 
     public abstract System.Drawing.Color Color { get; set; }
     
-    public abstract XYPlotLineStyle     XYPlotLineStyle { get; set; }
+    // public abstract System.Drawing.Drawing2D.DashStyle  XYPlotLineStyle { get; set; }
     
-    public abstract XYPlotScatterStyle    XYPlotScatterStyle { get; set; }
+    public abstract XYPlotScatterStyles.ShapeAndStyle XYPlotScatterStyle { get; set; }
 
     public virtual float SymbolSize 
     {

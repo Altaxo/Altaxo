@@ -104,7 +104,7 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Graph.GUI.IGraphController gc = Current.ProjectService.CreateNewGraph();
 
 
-      Altaxo.Graph.PlotGroup newPlotGroup = new Altaxo.Graph.PlotGroup(templatePlotGroupStyle);
+      Altaxo.Graph.PlotGroup newPlotGroup = new Altaxo.Graph.PlotGroup(templatePlotGroupStyle,false,true);
 
       for(int i=0;i<nNumberOfPlotData;i++)
       {

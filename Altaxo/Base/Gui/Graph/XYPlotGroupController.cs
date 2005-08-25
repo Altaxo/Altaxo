@@ -42,22 +42,24 @@ namespace Altaxo.Gui.Graph
     /// <summary>
     /// Initializes the plot group conditions.
     /// </summary>
-    /// <param name="bMemberOfPlotGroup">True if this PlotItem is member of a plot group.</param>
-    /// <param name="bIndependent">True if all plots independent from each other.</param>
     /// <param name="bColor">True if the color is changed.</param>
     /// <param name="bLineType">True if the line type is changed.</param>
     /// <param name="bSymbol">True if the symbol shape is changed.</param>
-    void InitializePlotGroupConditions(bool bMemberOfPlotGroup, bool bIndependent, bool bColor, bool bLineType, bool bSymbol);
+    /// <param name="bConcurrently">True if all styles are changed concurrently.</param>
+    /// <param name="bStrict">True if the depending plot styles are enforced to have strictly the same properties than the parent style.</param>
+    void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, bool bStrict);
 
 
     #region Getter
 
    
 
-    bool PlotGroupIncremental { get; }
+    bool PlotGroupStrict { get; }
     bool PlotGroupColor { get; }
     bool PlotGroupLineType { get; }
     bool PlotGroupSymbol { get; }
+    bool PlotGroupConcurrently { get; }
+    bool PlotGroupUpdate { get; }
 
 
 
@@ -71,7 +73,7 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   public interface IXYPlotGroupViewEventSink
   {
-    void EhView_PlotGroupIndependent_Changed(bool bPlotGroupIsIndependent);
+    
   }
   #endregion
 

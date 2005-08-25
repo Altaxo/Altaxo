@@ -66,10 +66,13 @@ namespace Altaxo.Graph
     /// <summary>
     /// Designates which dependencies the plot styles have on each other.
     /// </summary>
-    PlotGroupStyle m_Style;
-    System.Collections.ArrayList m_PlotItems;
+    PlotGroupStyle _changeStyle;
+    bool _changeStylesConcurrently;
+    bool _changeStylesStrictly;
+
+    System.Collections.ArrayList _plotItems;
     
-    private PlotGroup.Collection m_Parent;
+    private PlotGroup.Collection _parent;
 
     private int _suppressStyleChangedEvents=0;
 
@@ -86,8 +89,8 @@ namespace Altaxo.Graph
       public void GetObjectData(object obj,System.Runtime.Serialization.SerializationInfo info,System.Runtime.Serialization.StreamingContext context  )
       {
         PlotGroup s = (PlotGroup)obj;
-        info.AddValue("Style",s.m_Style);  
-        info.AddValue("Group",s.m_PlotItems);  
+        info.AddValue("Style",s._changeStyle);  
+        info.AddValue("Group",s._plotItems);  
       }
       /// <summary>
       /// Deserializes the PlotGroup Version 0.
@@ -101,8 +104,8 @@ namespace Altaxo.Graph
       {
         PlotGroup s = (PlotGroup)obj;
 
-        s.m_Style = (PlotGroupStyle)info.GetValue("Style",typeof(PlotGroupStyle));
-        s.m_PlotItems = (System.Collections.ArrayList)info.GetValue("Group",typeof(System.Collections.ArrayList));
+        s._changeStyle = (PlotGroupStyle)info.GetValue("Style",typeof(PlotGroupStyle));
+        s._plotItems = (System.Collections.ArrayList)info.GetValue("Group",typeof(System.Collections.ArrayList));
         return s;
       }
     }
@@ -111,14 +114,19 @@ namespace Altaxo.Graph
     public class Memento
     {
       PlotGroupStyle m_Style;
-      int[] m_PlotItems; // stores not the plotitems itself, only the position of the items in the list
+      bool _concurrently;
+      bool _strict;
+      int[] _plotItemIndices; // stores not the plotitems itself, only the position of the items in the list
     
       public Memento(PlotGroup pg, PlotItemCollection plotlist)
       {
         m_Style = pg.Style;
-        m_PlotItems = new int[pg.Count];
-        for(int i=0;i<m_PlotItems.Length;i++)
-          m_PlotItems[i] = plotlist.IndexOf(pg[i]);
+        _concurrently = pg.ChangeStylesConcurrently;
+        _strict = pg.ChangeStylesStrictly;
+
+        _plotItemIndices = new int[pg.Count];
+        for(int i=0;i<_plotItemIndices.Length;i++)
+          _plotItemIndices[i] = plotlist.IndexOf(pg[i]);
       }
     
       protected Memento()
@@ -127,8 +135,8 @@ namespace Altaxo.Graph
 
       public PlotGroup GetPlotGroup(PlotItemCollection plotlist)
       {
-        PlotGroup pg = new PlotGroup(m_Style);
-        for(int i=0;i<m_PlotItems.Length;i++)
+        PlotGroup pg = new PlotGroup(m_Style,_concurrently,_strict);
+        for(int i=0;i<_plotItemIndices.Length;i++)
           pg.Add(plotlist[i]);
         return pg;
       }
@@ -140,9 +148,9 @@ namespace Altaxo.Graph
         {
           PlotGroup.Memento s = (PlotGroup.Memento)obj;
           info.AddValue("Style",s.m_Style);  
-          info.CreateArray("PlotItems", s.m_PlotItems.Length);
-          for(int i=0;i<s.m_PlotItems.Length;i++)
-            info.AddValue("PlotItem",s.m_PlotItems[i]);
+          info.CreateArray("PlotItems", s._plotItemIndices.Length);
+          for(int i=0;i<s._plotItemIndices.Length;i++)
+            info.AddValue("PlotItem",s._plotItemIndices[i]);
           info.CommitArray();
         }
 
@@ -153,10 +161,10 @@ namespace Altaxo.Graph
           s.m_Style = (PlotGroupStyle)info.GetValue("Style",typeof(PlotGroupStyle));
 
           int count = info.OpenArray();
-          s.m_PlotItems = new int[count];
+          s._plotItemIndices = new int[count];
           for(int i=0;i<count;i++)
           {
-            s.m_PlotItems[i] = info.GetInt32();
+            s._plotItemIndices[i] = info.GetInt32();
           }
           info.CloseArray(count);
 
@@ -170,24 +178,30 @@ namespace Altaxo.Graph
     /// <param name="obj">Not used.</param>
     public virtual void OnDeserialization(object obj)
     {
-      if(m_PlotItems.Count>0)
-        ((PlotItem)m_PlotItems[0]).StyleChanged += new EventHandler(this.OnMasterStyleChangedEventHandler);
+      if(_plotItems.Count>0)
+        ((PlotItem)_plotItems[0]).StyleChanged += new EventHandler(this.OnMasterStyleChangedEventHandler);
     }
     #endregion
 
 
 
-    public PlotGroup(PlotItem master, PlotGroupStyle style)
+    public PlotGroup(PlotItem master, PlotGroupStyle style, bool concurrently, bool strict)
     {
-      m_Style = style;
-      m_PlotItems = new System.Collections.ArrayList();
-      m_PlotItems.Add(master);
+      _changeStyle = style;
+      _changeStylesConcurrently = concurrently;
+      _changeStylesStrictly = strict;
+
+      _plotItems = new System.Collections.ArrayList();
+      _plotItems.Add(master);
     }
 
-    public PlotGroup(PlotGroupStyle style)
+    public PlotGroup(PlotGroupStyle style, bool concurrently, bool strict)
     {
-      m_Style = style;
-      m_PlotItems = new System.Collections.ArrayList();
+      _changeStyle = style;
+      _changeStylesConcurrently = concurrently;
+      _changeStylesStrictly = strict;
+
+      _plotItems = new System.Collections.ArrayList();
     }
 
     protected PlotGroup()
@@ -213,7 +227,7 @@ namespace Altaxo.Graph
     /// <returns></returns>
     public PlotGroup Clone(Altaxo.Graph.PlotItemCollection newList, Altaxo.Graph.PlotItemCollection oldList)
     {
-      PlotGroup newGroup = new PlotGroup(this.Style);
+      PlotGroup newGroup = new PlotGroup(this.Style,this._changeStylesConcurrently,this._changeStylesStrictly);
 
       for(int i=0;i<this.Count;i++)
       {
@@ -228,63 +242,86 @@ namespace Altaxo.Graph
 
     public int Count
     {
-      get { return null!=m_PlotItems ? m_PlotItems.Count : 0; }
+      get { return null!=_plotItems ? _plotItems.Count : 0; }
     }
 
     public PlotItem this[int i]
     {
-      get { return (PlotItem)m_PlotItems[i]; }
+      get { return (PlotItem)_plotItems[i]; }
     }
 
     public void Add(PlotItem assoc)
     {
       if(null!=assoc)
       {
-        int cnt = m_PlotItems.Count;
+        /*
+        int cnt = _plotItems.Count;
         if(cnt==0) // this is the first, i.e. the master item, it must be wired by a Changed event handler
         {
           assoc.StyleChanged += new EventHandler(this.OnMasterStyleChangedEventHandler);
         }
         if(cnt>0)
         {
-          if(assoc is I2DPlotItemStyle && m_PlotItems[0] is I2DPlotItemStyle)
-            ((I2DPlotItemStyle)assoc).SetIncrementalStyle((I2DPlotItemStyle)m_PlotItems[0],m_Style, cnt);
+          if(assoc is I2DPlotItem && _plotItems[0] is I2DPlotItem)
+            ((I2DPlotItem)assoc).SetIncrementalStyle((I2DPlotItem)_plotItems[0],_changeStyle,_changeStylesConcurrently,_changeStylesStrictly, cnt);
         }
-        m_PlotItems.Add(assoc);
+        */
+        _plotItems.Add(assoc);
 
         OnChanged();
       }
     }
 
+    /// <summary>
+    /// Sets the style properties of this plot group.
+    /// </summary>
+    /// <param name="style">The information about what to vary.</param>
+    /// <param name="concurrently">If true, all styles are varied concurrently.</param>
+    /// <param name="strict">If true, the slave plot items are enforced to have the same properties than the master plot item.</param>
+    /// <returns>True when at least one of the properties was changed (i.e. different).</returns>
+    public bool SetPropertiesOnly(PlotGroupStyle style, bool concurrently, bool strict)
+    {
+      bool bChanged = _changeStyle != style || _changeStylesConcurrently != concurrently || _changeStylesStrictly != strict;
+
+      _changeStyle = style;
+      _changeStylesConcurrently = concurrently;
+      _changeStylesStrictly = strict;
+
+      if (bChanged)
+        OnChanged();
+
+      return bChanged;
+    }
+
     public bool Contains(PlotItem assoc)
     {
-      return this.m_PlotItems.Contains(assoc);
+      return this._plotItems.Contains(assoc);
     }
 
     public void Clear()
     {
-      m_PlotItems.Clear();
+      _plotItems.Clear();
 
       OnChanged();
     }
 
     public PlotItem MasterItem
     {
-      get { return m_PlotItems.Count>0 ? (PlotItem)m_PlotItems[0] : null; }
+      get { return _plotItems.Count>0 ? (PlotItem)_plotItems[0] : null; }
     }
 
     public bool IsIndependent 
     {
-      get { return this.m_Style == 0; }
+      get { return this._changeStyle == 0; }
     }
 
     public PlotGroupStyle Style
     {
-      get { return this.m_Style; }
+      get { return this._changeStyle; }
       set 
       {
-        bool changed = (this.m_Style!=value);
-        this.m_Style = value;
+        bool changed = (this._changeStyle!=value);
+        this._changeStyle = value;
         
         // update the styles beginning from the master item
         if(changed)
@@ -295,21 +332,54 @@ namespace Altaxo.Graph
       }
     }
 
-
-    public void UpdateMembers(PlotGroupStyle groupstyle, object plotstyle)
+    public bool ChangeStylesConcurrently
     {
-      bool changed = (this.m_Style!=groupstyle);
-      m_Style = groupstyle;
+      get { return this._changeStylesConcurrently; }
+      set
+      {
+        bool changed = (_changeStylesConcurrently != value);
+        this._changeStylesConcurrently = value;
 
-      UpdateMembers(plotstyle);
+        // update the styles beginning from the master item
+        if (changed)
+        {
+          UpdateMembers();
+          OnChanged();
+        }
+      }
+    }
+
+    public bool ChangeStylesStrictly
+    {
+      get { return this._changeStylesStrictly; }
+      set
+      {
+        bool changed = (_changeStylesStrictly != value);
+        this._changeStylesStrictly = value;
+
+        // update the styles beginning from the master item
+        if (changed)
+        {
+          UpdateMembers();
+          OnChanged();
+        }
+      }
+    }
+
+    public void UpdateMembers(PlotGroupStyle groupstyle, object plotitem)
+    {
+      bool changed = (this._changeStyle!=groupstyle);
+      _changeStyle = groupstyle;
+
+      UpdateMembers(plotitem);
       if(changed)
         OnChanged();
 
     }
+   
 
-    public void UpdateMembers(object plotitem)
+    public void UpdateMembers( object plotitem)
     {
-      
       for(int i=0;i<Count;i++)
       {
         if(object.ReferenceEquals(this[i],plotitem))
@@ -327,15 +397,15 @@ namespace Altaxo.Graph
       // update the styles beginning from the master item
       if(!IsIndependent && Count>masteritem)
       {
-        I2DPlotItemStyle masterstyle = this[masteritem] as I2DPlotItemStyle;
+        I2DGroupablePlotStyle masterstyle = this[masteritem].StyleObject as I2DGroupablePlotStyle;
         if(masterstyle!=null)
         {
           for(int i=0;i<Count;i++)
           {
             if(i==masteritem)
               continue;
-            if(this[i] is I2DPlotItemStyle)
-              ((I2DPlotItemStyle)this[i]).SetIncrementalStyle(masterstyle,this.m_Style,i-masteritem);
+            if(this[i].StyleObject is I2DGroupablePlotStyle)
+              ((I2DGroupablePlotStyle)this[i].StyleObject).SetIncrementalStyle(masterstyle,this._changeStyle, this._changeStylesConcurrently, this._changeStylesStrictly, i-masteritem);
           }
         }
         // no changed event here since we track only the members structure and the grouping style
@@ -350,14 +420,16 @@ namespace Altaxo.Graph
 
     protected void OnMasterStyleChangedEventHandler(object sender, EventArgs e)
     {
+      /*
       if(this._suppressStyleChangedEvents<=0)
         UpdateMembers();
+       */
     }
 
     protected virtual void OnChanged()
     {
-      if(null!=m_Parent)
-        m_Parent.OnChildChangedEventHandler(this);
+      if(null!=_parent)
+        _parent.OnChildChangedEventHandler(this);
     }
 
     [SerializationSurrogate(0,typeof(PlotGroup.Collection.SerializationSurrogate0))]
@@ -457,7 +529,7 @@ namespace Altaxo.Graph
 
       public void Add(PlotGroup g)
       {
-        g.m_Parent=this;
+        g._parent=this;
         base.InnerList.Add(g);
 
         OnChanged();

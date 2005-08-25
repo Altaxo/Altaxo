@@ -28,14 +28,16 @@ using System.Drawing.Drawing2D;
 namespace Altaxo.Graph
 {
   /// <summary>
-  /// Interface for two dimensional plot styles.
+  /// Interface for two dimensional groupable plot styles.
   /// </summary>
-  public interface I2DPlotItemStyle
+  public interface I2DGroupablePlotStyle
   {
+   
+
     /// <summary>
     /// Returns true if the color property get is supported, i.e. the style provides a color.
     /// </summary>
-    bool IsColorProvider { get; }
+    bool IsColorSupported { get; }
 
 
     /// <summary>
@@ -52,7 +54,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// Returns the line style property. If not supported, returns null.
     /// </summary>
-    XYPlotLineStyle XYLineStyle { get; }
+    System.Drawing.Drawing2D.DashStyle XYLineStyle { get; }
 
 
 
@@ -64,7 +66,7 @@ namespace Altaxo.Graph
     /// <summary>
     /// Returns the scatter style property. If not supported, returns null.
     /// </summary>
-    XYPlotScatterStyle XYScatterStyle { get; }
+    XYPlotScatterStyles.ShapeAndStyle XYScatterStyle { get; }
 
 
     /// <summary>
@@ -72,8 +74,9 @@ namespace Altaxo.Graph
     /// </summary>
     /// <param name="pstemplate">The template style.</param>
     /// <param name="style">Information of what in particular to vary (color, line style, symbol style).</param>
+    /// <param name="changeConcurrently">If true, the varying styles are changed concurrently.</param>
+    /// <param name="changeStrictly">If true, the slave styles are enforced to have the same structure and properties than the master style (except for the varying styles).</param>
     /// <param name="step">The number of steps distance to the template style. For instance, if step==1 the next color is used, if step==-1 the previous color is used.</param>
-    void SetIncrementalStyle(I2DPlotItemStyle pstemplate, PlotGroupStyle style, int step);
-
+    void SetIncrementalStyle(I2DGroupablePlotStyle pstemplate, PlotGroupStyle style, bool changeConcurrently, bool changeStrictly, int step);
   }
 }

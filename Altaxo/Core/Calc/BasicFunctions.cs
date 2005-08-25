@@ -409,7 +409,25 @@ namespace Altaxo.Calc
         result += Math.Abs(y);
 
       return result;
+    }
 
+    /// <summary>
+    /// Calculates the number of wraps w. This is the number of range wraps that must be taken to
+    /// go from start to start+offset.
+    /// </summary>
+    /// <param name="len">Length of the range.</param>
+    /// <param name="start">Start point.</param>
+    /// <param name="offset">Offset.</param>
+    /// <returns>Number of range wraps when going from start to start+offset. In case offset is negative,
+    /// the function returns a negative value.</returns>
+    public static int NumberOfWraps(int len, int start, int offset)
+    {
+      len = Math.Abs(len);
+      start = PMod(start, len);
+      if (offset >= 0)
+        return (offset + start) / len;
+      else
+        return (offset + start - len + 1) / len;
     }
 
     #endregion

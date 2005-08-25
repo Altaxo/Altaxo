@@ -431,15 +431,10 @@ namespace Altaxo.Gui.Graph
       {
         choice = (SingleColumnChoice)choiceAsObject;
 
-        if (choice.SelectedColumn is IReadableColumn)
-        {
-          _labelColumn = (IReadableColumn)choice.SelectedColumn;
+       
+          _labelColumn = choice.SelectedColumn;
           InitializeLabelColumnText();
-        }
-        else
-        {
-          Current.Gui.ErrorMessageBox("Choosen column is not numeric!");
-        }
+        
       }
     }
   

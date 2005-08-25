@@ -9,9 +9,9 @@ namespace Altaxo.Graph
   public class XYPlotStyleCollection 
     :
     AbstractXYPlotStyle,
+    Graph.I2DGroupablePlotStyle,
     Main.IChangedEventSource, 
-    Main.IChildChangedEventSink,
-    I2DPlotItemStyle
+    Main.IChildChangedEventSink
   {
     /// <summary>
     /// Index to the color provider. Is set to -1 if no color provider currently exists.
@@ -163,6 +163,25 @@ namespace Altaxo.Graph
       {
         this._innerList.Add(toadd);
         toadd.Changed += new EventHandler(this.OnChildChanged);
+
+        if (withReorganizationAndEvents)
+        {
+          InternalGetProviders();
+
+          OnChanged();
+        }
+      }
+    }
+
+    protected void Replace(I2DPlotStyle ps, int idx, bool withReorganizationAndEvents)
+    {
+      if (ps != null)
+      {
+        I2DPlotStyle oldStyle = this[idx];
+        oldStyle.Changed -= new EventHandler(this.OnChildChanged);
+
+        ps.Changed += new EventHandler(this.OnChildChanged);
+        this._innerList[idx] = ps;
 
         if (withReorganizationAndEvents)
         {
@@ -364,59 +383,76 @@ namespace Altaxo.Graph
       return new SizeF(2 * linelen, symsize);
     }
 
-    public override void SetToNextStyle(AbstractXYPlotStyle ps, PlotGroupStyle style)
+    
+    public void SetIncrementalStyle(I2DGroupablePlotStyle masterplotstyle, PlotGroupStyle style, bool concurrently, bool strict, int step)
     {
-      XYPlotLineStyle lineStyle;
-      XYPlotScatterStyle scatterStyle;
+      if (strict && (masterplotstyle is XYPlotStyleCollection))
+      {
+        XYPlotStyleCollection template = (XYPlotStyleCollection)masterplotstyle;
+        int len = Math.Min(this.Count,template.Count);
+        for (int i = 0; i < len; i++)
+        {
+          if (this[i].GetType() == template[i].GetType())
+          {
+            this.Replace((I2DPlotStyle)template[i].Clone(), i, true);
+          }
+        }
+      }
 
-      if (0 != (style & PlotGroupStyle.Line))
-        if(null!=(lineStyle=this.XYPlotLineStyle))
-          lineStyle.SetToNextLineStyle(ps.XYPlotLineStyle);
-      
-      if (0 != (style & PlotGroupStyle.Symbol))
-        if(null!=(scatterStyle=this.XYPlotScatterStyle))
-          scatterStyle.SetToNextStyle(ps.XYPlotScatterStyle);
-      
-      // Color has to be the last, since during the previous operations the styles are cloned, 
-      // inclusive the color
-      if (0 != (style & PlotGroupStyle.Color))
-        this.Color = GetNextPlotColor(ps.Color);
-    }
+      if (concurrently) // change styles concurrently
+      {
+        if ((0 != (style & PlotGroupStyle.Line)) && masterplotstyle.IsXYLineStyleSupported)
+          this.SetToNextLineStyle(masterplotstyle.XYLineStyle, step);
 
-    public void SetIncrementalStyle(I2DPlotItemStyle pstemplate, PlotGroupStyle style, int step)
-    {
-     
+        if ((0 != (style & PlotGroupStyle.Symbol)) && masterplotstyle.IsXYScatterStyleSupported)
+            this.SetToNextScatterStyle(masterplotstyle.XYScatterStyle, step);
 
-      if ((0 != (style & PlotGroupStyle.Line)) && pstemplate.IsXYLineStyleSupported)
-        if(this.XYPlotLineStyle!=null)
-          this.XYPlotLineStyle.SetToNextLineStyle(pstemplate.XYLineStyle, step);
-      
-      if ((0 != (style & PlotGroupStyle.Symbol)) && pstemplate.IsXYScatterStyleSupported)
-        if(this.XYPlotScatterStyle!=null)
-          this.XYPlotScatterStyle.SetToNextStyle(pstemplate.XYScatterStyle, step);
+        // Color has to be the last, since during the previous operations the styles are cloned, 
+        // inclusive the color
+        if ((0 != (style & PlotGroupStyle.Color)) && masterplotstyle.IsColorSupported)
+          this.Color = PlotColors.Colors.GetNextPlotColor(masterplotstyle.Color, step);
+      }
+      else // change sequentially
+      {
+        int nextstep = step;
+        if ((0 != (style & PlotGroupStyle.Color)) && masterplotstyle.IsColorSupported)
+          this.Color = PlotColors.Colors.GetNextPlotColor(masterplotstyle.Color, step, out nextstep);
 
-      // Color has to be the last, since during the previous operations the styles are cloned, 
-      // inclusive the color
-      if ((0 != (style & PlotGroupStyle.Color)) && pstemplate.IsColorProvider)
-        this.Color = GetNextPlotColor(pstemplate.Color, step);
+        int nextnextstep = nextstep;
+        if ((0 != (style & PlotGroupStyle.Symbol)) && masterplotstyle.IsXYScatterStyleSupported)
+            this.SetToNextScatterStyle(masterplotstyle.XYScatterStyle, nextstep, out nextnextstep);
+
+        if ((0 != (style & PlotGroupStyle.Line)) && masterplotstyle.IsXYLineStyleSupported)
+          if (this.IsXYLineStyleSupported)
+            this.SetToNextLineStyle(masterplotstyle.XYLineStyle, nextnextstep);
+
+      }
+
     }
 
     public override System.Drawing.Color Color
     {
       get
       {
-        if (_colorProvider > 0)
+        if (_colorProvider >= 0)
           return this[_colorProvider].Color;
         else
           return Color.Black;
       }
       set
       {
+        BeginUpdate();
+        if (_colorProvider >= 0)
+          this[_colorProvider].Color = value;
+
+        
         for (int i = 0; i < _innerList.Count; ++i)
         {
-          if (this[i].IsColorReceiver)
+          if (i!=_colorProvider && this[i].IsColorReceiver)
             this[i].Color = value;
         }
+        EndUpdate();
+        
       }
     }
 
@@ -437,31 +473,72 @@ namespace Altaxo.Graph
     }
 
 
-      public override XYPlotLineStyle XYPlotLineStyle
+      public  System.Drawing.Drawing2D.DashStyle XYPlotLineStyle
     {
       get
       {
         for (int i = 0; i < _innerList.Count; ++i)
           if (this[i] is XYPlotLineStyle)
-            return this[i] as XYPlotLineStyle;
+            return (this[i] as XYPlotLineStyle).PenHolder.DashStyle;
 
-        return null;
+        return DashStyle.Custom;
       }
       set
       {
-        throw new Exception("The method or operation is not implemented.");
+        BeginUpdate();
+        for (int i = 0; i < _innerList.Count; ++i)
+        {
+          if (this[i] is XYPlotLineStyle)
+          {
+            (this[i] as XYPlotLineStyle).PenHolder.DashStyle = value;
+          }
+        }
+        EndUpdate();
       }
     }
 
-    public override XYPlotScatterStyle XYPlotScatterStyle
+    public void SetToNextLineStyle(System.Drawing.Drawing2D.DashStyle style, int step)
+    {
+      BeginUpdate();
+      for (int i = 0; i < _innerList.Count; ++i)
+      {
+        if (this[i] is XYPlotLineStyle)
+        {
+          (this[i] as XYPlotLineStyle).SetToNextLineStyle(style, step);
+        }
+      }
+      EndUpdate();
+    }
+    public void SetToNextScatterStyle(XYPlotScatterStyles.ShapeAndStyle style, int step)
+    {
+      int wraps;
+      SetToNextScatterStyle(style, step, out wraps);
+    }
+    public void SetToNextScatterStyle(XYPlotScatterStyles.ShapeAndStyle style, int step, out int wraps)
+    {
+      XYPlotScatterStyles.ShapeAndStyle newstyle = new Altaxo.Graph.XYPlotScatterStyles.ShapeAndStyle();
+      newstyle.SetToNextStyle(style,step, out wraps);
+
+      BeginUpdate();
+      for (int i = 0; i < _innerList.Count; ++i)
+      {
+        if (this[i] is XYPlotScatterStyle)
+        {
+          (this[i] as XYPlotScatterStyle).SetShapeAndStyle(newstyle);
+        }
+      }
+      EndUpdate();
+    }
+
+      public override XYPlotScatterStyles.ShapeAndStyle XYPlotScatterStyle
     {
       get
       {
         for (int i = 0; i < _innerList.Count; ++i)
           if (this[i] is XYPlotScatterStyle)
-            return this[i] as XYPlotScatterStyle;
+            return new XYPlotScatterStyles.ShapeAndStyle(((XYPlotScatterStyle)this[i]).Shape, ((XYPlotScatterStyle)this[i]).Style);
 
-        return null;
+        return XYPlotScatterStyles.ShapeAndStyle.Empty;
       }
       set
       {
@@ -496,7 +573,7 @@ namespace Altaxo.Graph
 
     #endregion
 
-    #region I2DPlotItemStyle Members
+    #region I2DPlotItem Members
 
     public bool IsColorProvider
     {
@@ -508,19 +585,45 @@ namespace Altaxo.Graph
       get { return this.XYPlotLineStyle != null; }
     }
 
-    public XYPlotLineStyle XYLineStyle
+    public System.Drawing.Drawing2D.DashStyle XYLineStyle
     {
       get { return this.XYPlotLineStyle; }
     }
 
     public bool IsXYScatterStyleSupported
     {
-      get { return this.XYPlotScatterStyle != null; }
+      get
+      {
+        for (int i = 0; i < _innerList.Count; ++i)
+          if (this[i] is XYPlotScatterStyle)
+            return true;
+
+        return false;
+      }
     }
 
-    public XYPlotScatterStyle XYScatterStyle
+    public XYPlotScatterStyles.ShapeAndStyle XYScatterStyle
     {
-      get { return this.XYPlotScatterStyle; }
+      get
+      {
+        for (int i = 0; i < _innerList.Count; ++i)
+          if (this[i] is XYPlotScatterStyle)
+            return new Altaxo.Graph.XYPlotScatterStyles.ShapeAndStyle(((XYPlotScatterStyle)this[i]).Shape,((XYPlotScatterStyle)this[i]).Style);
+
+        return null;
+      }
+    }
+
+    #endregion
+
+
+
+    #region I2DGroupablePlotStyle Members
+
+   
+    public bool IsColorSupported
+    {
+      get { return this._colorProvider >=0; }
     }
 
     #endregion

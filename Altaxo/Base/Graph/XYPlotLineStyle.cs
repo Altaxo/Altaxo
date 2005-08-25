@@ -244,7 +244,6 @@ namespace Altaxo.Graph
     Main.IChangedEventSource,
     Main.IChildChangedEventSink,
     System.Runtime.Serialization.IDeserializationCallback, 
-    Graph.I2DPlotItemStyle,
     I2DPlotStyle
   {
     public delegate void PaintOneRangeTemplate(
@@ -255,7 +254,7 @@ namespace Altaxo.Graph
       float symbolGap);
 
 
-    // protected PenStyle       m_PenStyle  = PenStyle.Solid;
+   
     protected PenHolder       _penHolder;
     protected XYPlotLineStyles.ConnectionStyle _connectionStyle;
     protected bool            _useLineSymbolGap;
@@ -265,7 +264,7 @@ namespace Altaxo.Graph
     protected BrushHolder     _fillBrush; // brush to fill the area under the line
     protected XYPlotLineStyles.FillDirection _fillDirection; // the direction to fill
     protected bool            _independentColor;
-    protected bool            _publishColor;
+   
 
     // cached values
     protected PaintOneRangeTemplate _cachedPaintOneRange; // subroutine to paint a single range
@@ -355,14 +354,13 @@ namespace Altaxo.Graph
         base.Serialize(obj,info);
         XYPlotLineStyle s = (XYPlotLineStyle)obj;
         info.AddValue("IndependentColor",s._independentColor);
-        info.AddValue("PublishColor",s._publishColor);
+        
       }
-      public object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
+      public new object Deserialize(object o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object parent)
       {
        XYPlotLineStyle s =  (XYPlotLineStyle)base.Deserialize(o,info,parent);
        s._independentColor = info.GetBoolean("IndependentColor");
-        s._publishColor = info.GetBoolean("PublishColor");
-
+       
         s.CreateEventChain();
 
         return s;
@@ -392,7 +390,7 @@ namespace Altaxo.Graph
       _connectionStyle    = XYPlotLineStyles.ConnectionStyle.Straight;
       _cachedPaintOneRange = new PaintOneRangeTemplate(StraightConnection_PaintOneRange);
       _independentColor = false;
-      _publishColor = true;
+     
       CreateEventChain();
     }
 
@@ -408,7 +406,7 @@ namespace Altaxo.Graph
       this._fillDirection        = from._fillDirection;
       this.Connection             = from._connectionStyle; // beachte links nur Connection, damit das Template mit gesetzt wird
       this._independentColor      = from._independentColor;
-      this._publishColor          = from._publishColor;
+      
 
       if(!suppressChangeEvent)
         OnChanged();
@@ -504,36 +502,23 @@ namespace Altaxo.Graph
       }
     }
 
-    public bool PublishColor
-    {
-      get
-      {
-        return _publishColor;
-      }
-      set
-      {
-        bool oldValue = _publishColor;
-        _publishColor = value;
-        if(value!=oldValue)
-          OnChanged();
-      }
-    }
 
 
 
-    public void SetToNextLineStyle(XYPlotLineStyle template)
+
+    public void SetToNextLineStyle(System.Drawing.Drawing2D.DashStyle template)
     {
       SetToNextLineStyle(template, 1);
     }
-    public void SetToNextLineStyle(XYPlotLineStyle template, int step)
+    public void SetToNextLineStyle(System.Drawing.Drawing2D.DashStyle template, int step)
     {
-      this.CopyFrom(template,true);
+     // this.CopyFrom(template,true);
 
       // note a exception: since the last dashstyle is "Custom", not only the next dash
       // style has to be defined, but also the overnect to avoid the selection of "Custom"
 
       int len =  System.Enum.GetValues(typeof(DashStyle)).Length;
-      int next = step+(int)template.PenHolder.DashStyle;
+      int next = step+(int)template;
       this.PenHolder.DashStyle = (DashStyle)Calc.BasicFunctions.PMod(next,len-1);
 
       OnChanged(); // Fire Changed event
@@ -1448,7 +1433,7 @@ namespace Altaxo.Graph
     {
       get
       {
-        return this._publishColor;
+        return true;
       }
     }
 
@@ -1498,7 +1483,7 @@ namespace Altaxo.Graph
       }
     }
 
-    public void SetIncrementalStyle(I2DPlotItemStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, int step)
+    public void SetIncrementalStyle(I2DGroupablePlotStyle pstemplate, Altaxo.Graph.PlotGroupStyle style, int step)
     {
       
         
@@ -1508,13 +1493,13 @@ namespace Altaxo.Graph
       
       // Color has to be the last, since during the previous operations the styles are cloned, 
       // inclusive the color
-      if((0!= (style & PlotGroupStyle.Color)) && pstemplate.IsColorProvider)
-        this._penHolder.Color = AbstractXYPlotStyle.GetNextPlotColor(pstemplate.Color,step);
+      if((0!= (style & PlotGroupStyle.Color)) && pstemplate.IsColorSupported)
+        this._penHolder.Color = PlotColors.Colors.GetNextPlotColor(pstemplate.Color, step);
     }
 
     #endregion
 
-    #region I2DPlotItemStyle Members
+    #region I2DPlotItem Members
 
     public bool IsColorReceiver
     {

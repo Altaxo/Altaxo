@@ -167,7 +167,7 @@ namespace Altaxo.Graph.GUI
       // Color
       if(bInit)
       {
-        this.m_Original_Color = AbstractXYPlotStyle.GetPlotColorName(axstyle.Color);
+        this.m_Original_Color = PlotColors.Colors.GetPlotColorName(axstyle.Color);
         if(null==this.m_Original_Color)
           this.m_Original_Color = "Custom";
         m_Color = m_Original_Color;
@@ -176,10 +176,9 @@ namespace Altaxo.Graph.GUI
       {
         arr.Clear();
         arr.Add("Custom");
-        foreach(Color c in AbstractXYPlotStyle.PlotColors)
+        foreach(PlotColor c in PlotColors.Colors)
         {
-          string name = c.ToString();
-          arr.Add(name.Substring(7,name.Length-8));
+          arr.Add(c.Name);
         }
         object sarr = arr.ToArray(typeof(string));
         View.InitializeColor((string[])sarr,this.m_Color);

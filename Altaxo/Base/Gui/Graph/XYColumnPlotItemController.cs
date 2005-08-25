@@ -14,15 +14,20 @@ namespace Altaxo.Gui.Graph
 	{
     XYColumnPlotItem _doc;
     XYColumnPlotItem _tempdoc;
+    PlotGroup _parentPlotGroup;
     
     I2DPlotStyle _additionalStyle;
     int _insertAdditionalStyle;
     IXYPlotGroupView _plotGroupView;
 
     IXYPlotStyleCollectionController _styleCollectionController;
-
-		public XYColumnPlotItemController(XYColumnPlotItem doc)
+    public XYColumnPlotItemController(XYColumnPlotItem doc)
+     : this(doc,null)
+    {
+    }
+		public XYColumnPlotItemController(XYColumnPlotItem doc, PlotGroup parent)
 		{
+      _parentPlotGroup = parent;
 			_doc = doc;
       _tempdoc = (XYColumnPlotItem)_doc.Clone();
 
@@ -38,6 +43,14 @@ namespace Altaxo.Gui.Graph
       _styleCollectionController.CollectionChangeCommit += new EventHandler(_styleCollectionController_CollectionChangeCommit);
 
       _plotGroupView = (IXYPlotGroupView)Current.Gui.GetControl(this,typeof(IXYPlotGroupView));
+      if (_parentPlotGroup != null)
+        _plotGroupView.InitializePlotGroupConditions(
+          0 != (_parentPlotGroup.Style & PlotGroupStyle.Color),
+          0 != (_parentPlotGroup.Style & PlotGroupStyle.Line),
+          0 != (_parentPlotGroup.Style & PlotGroupStyle.Symbol),
+          _parentPlotGroup.ChangeStylesConcurrently,
+          _parentPlotGroup.ChangeStylesStrictly
+          );
 
      
 
@@ -147,6 +160,10 @@ namespace Altaxo.Gui.Graph
         return true;
 
       bool applyResult = false;
+
+
+
+
       for(int i=0;i<TabCount;i++)
       {
         if(false==Tab(i).Controller.Apply())
@@ -170,6 +187,22 @@ namespace Altaxo.Gui.Graph
 
       _doc.CopyFrom(_tempdoc);
 
+
+      if (null != _parentPlotGroup)
+      {
+        PlotGroupStyle plotGroupStyle = 0;
+          if (_plotGroupView.PlotGroupColor)
+            plotGroupStyle |= PlotGroupStyle.Color;
+          if (_plotGroupView.PlotGroupLineType)
+            plotGroupStyle |= PlotGroupStyle.Line;
+          if (_plotGroupView.PlotGroupSymbol)
+            plotGroupStyle |= PlotGroupStyle.Symbol;
+
+          _parentPlotGroup.SetPropertiesOnly(plotGroupStyle, _plotGroupView.PlotGroupConcurrently, _plotGroupView.PlotGroupStrict);
+          if (_plotGroupView.PlotGroupUpdate)
+            _parentPlotGroup.UpdateMembers(plotGroupStyle, _doc);
+      }
+
       applyResult = true;
 
       end_of_function:
@@ -183,7 +216,7 @@ namespace Altaxo.Gui.Graph
 
     public void EhView_PlotGroupIndependent_Changed(bool bPlotGroupIsIndependent)
     {
-      throw new Exception("The method or operation is not implemented.");
+      
     }
 
     #endregion
@@ -201,6 +234,8 @@ namespace Altaxo.Gui.Graph
       }
 
     }
+
+    
 
 
     #endregion

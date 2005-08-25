@@ -697,7 +697,7 @@ namespace Altaxo.Graph
       Altaxo.Data.INumericColumn yColumn = this.YColumn as Altaxo.Data.INumericColumn;
 
       if(null==xColumn || null==yColumn)
-        return false; // this plotstyle is only for x and y double columns
+        return false; // this plotitem is only for x and y double columns
 
       if(this.PlottablePoints<=0)
         return false;

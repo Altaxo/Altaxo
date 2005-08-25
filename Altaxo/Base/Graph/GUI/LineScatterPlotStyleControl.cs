@@ -29,6 +29,7 @@ using System.Windows.Forms;
 
 namespace Altaxo.Graph.GUI
 {
+#if false
   /// <summary>
   /// Summary description for LineScatterPlotStyleControl.
   /// </summary>
@@ -810,4 +811,5 @@ namespace Altaxo.Graph.GUI
 
     #endregion
   }
+#endif
 }

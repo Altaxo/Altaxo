@@ -132,12 +132,11 @@ namespace Altaxo.Graph.GUI
       // fill the color dialog box
       this.m_cbFontColor.Items.Add("Custom");
 
-      foreach(Color c in AbstractXYPlotStyle.PlotColors)
+      foreach (PlotColor c in PlotColors.Colors)
       {
-        name = c.ToString();
-        this.m_cbFontColor.Items.Add(name.Substring(7,name.Length-8));
+        this.m_cbFontColor.Items.Add(c.Name);
       }
-      name = AbstractXYPlotStyle.GetPlotColorName(this.m_TextObject.Color);
+      name = PlotColors.Colors.GetPlotColorName(this.m_TextObject.Color);
       if(null==name)
         name = "Custom";
       this.m_cbFontColor.SelectedItem = name;

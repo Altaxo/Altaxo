@@ -43,10 +43,12 @@ namespace Altaxo.Gui.Graph
     private System.Windows.Forms.CheckBox m_chkPlotGroupSymbol;
     private System.Windows.Forms.CheckBox m_chkPlotGroupLineType;
     private System.Windows.Forms.CheckBox m_chkPlotGroupColor;
-    private System.Windows.Forms.RadioButton m_rbtPlotGroupIncremental;
-    private System.Windows.Forms.RadioButton m_rbtPlotGroupIndependent;
     private System.Windows.Forms.Button m_btRemove;
     private System.Windows.Forms.Button m_btWorksheet;
+            private System.Windows.Forms.RadioButton _rbtSequential;
+            private System.Windows.Forms.RadioButton _rbtConcurrently;
+            private System.Windows.Forms.CheckBox _chkStrict;
+            private System.Windows.Forms.CheckBox _chkUpdate;
     /// <summary> 
     /// Required designer variable.
     /// </summary>
@@ -87,20 +89,24 @@ namespace Altaxo.Gui.Graph
       this.m_chkPlotGroupSymbol = new System.Windows.Forms.CheckBox();
       this.m_chkPlotGroupLineType = new System.Windows.Forms.CheckBox();
       this.m_chkPlotGroupColor = new System.Windows.Forms.CheckBox();
-      this.m_rbtPlotGroupIncremental = new System.Windows.Forms.RadioButton();
-      this.m_rbtPlotGroupIndependent = new System.Windows.Forms.RadioButton();
+      this._rbtSequential = new System.Windows.Forms.RadioButton();
+      this._rbtConcurrently = new System.Windows.Forms.RadioButton();
       this.m_btRemove = new System.Windows.Forms.Button();
       this.m_btWorksheet = new System.Windows.Forms.Button();
+      this._chkStrict = new System.Windows.Forms.CheckBox();
+      this._chkUpdate = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this._chkUpdate);
+      this.groupBox1.Controls.Add(this._chkStrict);
       this.groupBox1.Controls.Add(this.m_chkPlotGroupSymbol);
       this.groupBox1.Controls.Add(this.m_chkPlotGroupLineType);
       this.groupBox1.Controls.Add(this.m_chkPlotGroupColor);
-      this.groupBox1.Controls.Add(this.m_rbtPlotGroupIncremental);
-      this.groupBox1.Controls.Add(this.m_rbtPlotGroupIndependent);
+      this.groupBox1.Controls.Add(this._rbtSequential);
+      this.groupBox1.Controls.Add(this._rbtConcurrently);
       this.groupBox1.Location = new System.Drawing.Point(8, 72);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(96, 232);
@@ -110,7 +116,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_chkPlotGroupSymbol
       // 
-      this.m_chkPlotGroupSymbol.Location = new System.Drawing.Point(8, 128);
+      this.m_chkPlotGroupSymbol.Location = new System.Drawing.Point(8, 72);
       this.m_chkPlotGroupSymbol.Name = "m_chkPlotGroupSymbol";
       this.m_chkPlotGroupSymbol.Size = new System.Drawing.Size(72, 16);
       this.m_chkPlotGroupSymbol.TabIndex = 4;
@@ -118,7 +124,7 @@ namespace Altaxo.Gui.Graph
       // 
       // m_chkPlotGroupLineType
       // 
-      this.m_chkPlotGroupLineType.Location = new System.Drawing.Point(8, 104);
+      this.m_chkPlotGroupLineType.Location = new System.Drawing.Point(8, 48);
       this.m_chkPlotGroupLineType.Name = "m_chkPlotGroupLineType";
       this.m_chkPlotGroupLineType.Size = new System.Drawing.Size(80, 16);
       this.m_chkPlotGroupLineType.TabIndex = 3;
@@ -126,29 +132,27 @@ namespace Altaxo.Gui.Graph
       // 
       // m_chkPlotGroupColor
       // 
-      this.m_chkPlotGroupColor.Location = new System.Drawing.Point(8, 80);
+      this.m_chkPlotGroupColor.Location = new System.Drawing.Point(8, 24);
       this.m_chkPlotGroupColor.Name = "m_chkPlotGroupColor";
       this.m_chkPlotGroupColor.Size = new System.Drawing.Size(72, 16);
       this.m_chkPlotGroupColor.TabIndex = 2;
       this.m_chkPlotGroupColor.Text = "Color";
       // 
-      // m_rbtPlotGroupIncremental
+      // _rbtSequential
       // 
-      this.m_rbtPlotGroupIncremental.Location = new System.Drawing.Point(8, 48);
-      this.m_rbtPlotGroupIncremental.Name = "m_rbtPlotGroupIncremental";
-      this.m_rbtPlotGroupIncremental.Size = new System.Drawing.Size(88, 24);
-      this.m_rbtPlotGroupIncremental.TabIndex = 1;
-      this.m_rbtPlotGroupIncremental.Text = "Incremental";
-      this.m_rbtPlotGroupIncremental.Click += new System.EventHandler(this.EhPlotGroupIndependent_Changed);
+      this._rbtSequential.Location = new System.Drawing.Point(8, 96);
+      this._rbtSequential.Name = "_rbtSequential";
+      this._rbtSequential.Size = new System.Drawing.Size(88, 24);
+      this._rbtSequential.TabIndex = 1;
+      this._rbtSequential.Text = "Sequential";
       // 
-      // m_rbtPlotGroupIndependent
+      // _rbtConcurrently
       // 
-      this.m_rbtPlotGroupIndependent.Location = new System.Drawing.Point(8, 24);
-      this.m_rbtPlotGroupIndependent.Name = "m_rbtPlotGroupIndependent";
-      this.m_rbtPlotGroupIndependent.Size = new System.Drawing.Size(88, 24);
-      this.m_rbtPlotGroupIndependent.TabIndex = 0;
-      this.m_rbtPlotGroupIndependent.Text = "Independent";
-      this.m_rbtPlotGroupIndependent.Click += new System.EventHandler(this.EhPlotGroupIndependent_Changed);
+      this._rbtConcurrently.Location = new System.Drawing.Point(8, 120);
+      this._rbtConcurrently.Name = "_rbtConcurrently";
+      this._rbtConcurrently.Size = new System.Drawing.Size(88, 24);
+      this._rbtConcurrently.TabIndex = 0;
+      this._rbtConcurrently.Text = "Concurrently";
       // 
       // m_btRemove
       // 
@@ -166,12 +170,28 @@ namespace Altaxo.Gui.Graph
       this.m_btWorksheet.TabIndex = 27;
       this.m_btWorksheet.Text = "Worksheet";
       // 
-      // LineScatterPlotStyleControl
+      // _chkStrict
+      // 
+      this._chkStrict.Location = new System.Drawing.Point(8, 200);
+      this._chkStrict.Name = "_chkStrict";
+      this._chkStrict.Size = new System.Drawing.Size(72, 24);
+      this._chkStrict.TabIndex = 5;
+      this._chkStrict.Text = "Strict";
+      // 
+      // _chkUpdate
+      // 
+      this._chkUpdate.Location = new System.Drawing.Point(8, 176);
+      this._chkUpdate.Name = "_chkUpdate";
+      this._chkUpdate.Size = new System.Drawing.Size(64, 24);
+      this._chkUpdate.TabIndex = 6;
+      this._chkUpdate.Text = "Update";
+      // 
+      // XYPlotGroupControl
       // 
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.m_btRemove);
       this.Controls.Add(this.m_btWorksheet);
-      this.Name = "LineScatterPlotStyleControl";
+      this.Name = "XYPlotGroupControl";
       this.Size = new System.Drawing.Size(112, 312);
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
@@ -200,38 +220,24 @@ namespace Altaxo.Gui.Graph
  
     
 
-    public void InitializePlotGroupConditions(bool bMemberOfPlotGroup, bool bIndependent, bool bColor, bool bLineType, bool bSymbol)
+    public void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, bool bStrict)
     {
-      this.m_rbtPlotGroupIndependent.Checked=  bIndependent;
-      this.m_rbtPlotGroupIncremental.Checked= !bIndependent;
-
+      this._rbtConcurrently.Checked=  bConcurrently;
+      this._rbtSequential.Checked = !bConcurrently;
 
       this.m_chkPlotGroupColor.Checked = bColor;
       this.m_chkPlotGroupLineType.Checked = bLineType;
       this.m_chkPlotGroupSymbol.Checked = bSymbol;
 
-      this.m_rbtPlotGroupIndependent.Enabled=  bMemberOfPlotGroup;
-      this.m_rbtPlotGroupIncremental.Enabled=  bMemberOfPlotGroup;
-      this.m_chkPlotGroupColor.Enabled=       !bIndependent;
-      this.m_chkPlotGroupLineType.Enabled=    !bIndependent;
-      this.m_chkPlotGroupSymbol.Enabled=      !bIndependent;
+      this._chkStrict.Checked = bStrict;
+      this._chkUpdate.Checked = true;
     }
 
-    private void EhPlotGroupIndependent_Changed(object sender, System.EventArgs e)
+   
+
+    public bool PlotGroupConcurrently
     {
-      bool bIndependent = this.m_rbtPlotGroupIndependent.Checked;
-
-      if(Controller!=null)
-        Controller.EhView_PlotGroupIndependent_Changed(bIndependent);
-
-      this.m_chkPlotGroupColor.Enabled=       !bIndependent;
-      this.m_chkPlotGroupLineType.Enabled=    !bIndependent;
-      this.m_chkPlotGroupSymbol.Enabled=      !bIndependent;
-    }
-
-    public bool PlotGroupIncremental
-    {
-      get { return m_rbtPlotGroupIncremental.Checked; }
+      get { return this._rbtConcurrently.Checked; }
     }
 
     public bool PlotGroupColor
@@ -246,6 +252,16 @@ namespace Altaxo.Gui.Graph
     {
       get { return m_chkPlotGroupSymbol.Checked; }
     }
+            public bool PlotGroupStrict
+            {
+              get { return this._chkStrict.Checked; }
+            }
+
+            public bool PlotGroupUpdate
+            {
+              get { return this._chkUpdate.Checked; }
+            }
+
 
 
 
